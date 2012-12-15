@@ -94,7 +94,8 @@ ZZp Ideal := opts -> (I) -> (
 	  S.isBasic = true;
 	  S.ideal = I;
 	  S.baseRings = {ZZ};
-     	  commonEngineRingInitializations S;
+   	  commonEngineRingInitializations S;
+      initializeEngineLinearAlgebra S;
 	  S.relations = gensI;
 	  S.isCommutative = true;
 	  S.presentation = matrix{{n}};
@@ -107,6 +108,23 @@ ZZp Ideal := opts -> (I) -> (
 	  --lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
+initializeEngineLinearAlgebra = method()
+initializeEngineLinearAlgebra Ring := (R) -> (
+    R#"EngineLinearAlgebra" = true;
+    R.determinant = (f) -> (
+        -- The following information 
+        -- f is a Matrix in the ring R
+        -- f should be a square matrix, with free modules for both source and target
+         m := mutableMatrix(f, Dense=>true);
+         new R from rawLinAlgDeterminant raw m
+         );
+    R.inverse = (f) -> (
+        A := mutableMatrix(f, Dense=>true);
+        R := ring A;
+        if numRows A =!= numColumns A then error "expected square matrix";
+        matrix map(R,rawLinAlgInvert(raw A))
+        );
+    )
 
 isPrimeField = method()
 isPrimeField Ring := (R) -> (
@@ -558,6 +576,62 @@ NONTEST = (str) -> null
 -- Linear algebra tests -----------
 -----------------------------------
 TEST ///
+loadPackage "FastLinearAlgebra"
+    kk = ZZp 101
+
+    M3 = mutableMatrix(kk, 200, 200)
+    fillMatrix M3;
+    time M3^-1;
+    time m3 = matrix M3;
+    time m3^-1;
+    time det m3
+    time rank m3 -- still using old code
+    time rank M3
+            
+    L = ZZ/101
+    M3 = mutableMatrix(L, 200, 200)
+    fillMatrix M3;
+    m3 = matrix M3;
+    time m3^-1;
+    m3 = matrix M3;
+    time det m3
+    time rank m3
+    
+    L = ZZp 101
+    f = random(L^4, L^2)
+    g = image f
+    h = map(g, L^3, matrix(L, {{1,2,0},{-1,4,1}}))
+    ker h -- currently calls gb
+    coker h
+    prune oo -- error
+    modulo(f, f) -- this one calls gb (actually, syz)
+    rank h -- these currently call gb too
+    rank f
+    det (f * (dual f))
+    det((dual f) * f)
+    p = (dual f) * f
+    p^-1 -- this did call a gb, now it does not
+    p^-1 * p 
+    gens gb f
+    f // f -- doesn't work.  (is trying to call rawSolve)
+
+    -- matrix multiplication over ZZp p should use the fast matrix mult routines, at least for some size?
+    -- inverse: done
+    -- kernel: call nullSpace, although kernel also does other things, e.g. modulo.
+    -- syz: call nullSpace directly
+    -- modulo??
+    -- prune??  Doesn't even work with this ring.
+    -- rank: not connected to matrices yet (partly because it also needs modulo...?)
+    -- ISSUE: how to determine the cutoff for Dense vs Sparse?
+    
+    -- row and column ranks for matrices: not implemented.  Should it be?
+    -- // should use solve code that we have just written.
+    --   issue here: matrices are more general, so we need to check that it is 
+    --     a matrix of free modules?
+///
+
+
+TEST ///
 
     kk = ZZp 101
     R = kk[t]
@@ -567,6 +641,12 @@ TEST ///
     assert(M1 * M2 == mutableMatrix((matrix M1) * (matrix M2)))
     assert(rank M1 == 3)
     assert(rank M2 == 3)
+
+    det M1
+    m1 = matrix M1
+    assert(det m1 == det M1)
+    m1^-1 -- not calling the "correct" routine?
+    M1^-1
 
     assert(M1 * invert M1  == mutableIdentity(kk, 3))
     assert(M1^-1 == invert M1)
@@ -724,6 +804,24 @@ TEST ///
     assert(cp == (t-1)^2);
     assert(mp == cp);  -- this fails some of the time!!
     )
+///
+
+TEST ///
+  kk = ZZp 67108859
+  M = mutableMatrix(kk, 10, 10, Dense=>true)
+  fillMatrix M
+  trace M -- not defined
+  det M
+  M*M
+  M+M
+  transpose M -- redo in engine
+  ker M  -- not written
+  syz M  -- not written
+  nullSpace M
+  
+  R = kk[a..d]
+  I = ideal random(R^1, R^{-4,-4}) -- display of 2-d polys has too many parens
+  gens gb I;
 ///
 
 -- move good tests above this line

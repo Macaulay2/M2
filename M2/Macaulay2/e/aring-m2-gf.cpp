@@ -39,11 +39,11 @@ namespace M2 {
     
     ring_elem oneR = mOriginalRing.from_int(1);
     
-    mGeneratorExponent = static_cast<size_t>(-1);
+    mGeneratorExponent = static_cast<GFElement>(-1);
     ring_elem x = mOriginalRing.var(0);
     if (mOriginalRing.is_equal(mPrimitiveElement, x))
       mGeneratorExponent = 1;
-    for (size_t i=2; i<=mOne; i++)
+    for (GFElement i=2; i<=mOne; i++)
       {
 	ring_elem g = mOriginalRing.mult(polys[i-1], mPrimitiveElement);
 	polys.push_back(g);
@@ -61,13 +61,13 @@ namespace M2 {
       }
 #endif
     ASSERT(polys.size() == mOrder);
-    ASSERT(mGeneratorExponent != static_cast<size_t>(-1));
+    ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
     
     // Set 'one_table'.
-    mOneTable = newarray_atomic(size_t,mOrder);
+    mOneTable = newarray_atomic(GFElement,mOrder);
     mOneTable[0] = mOrderMinusOne;
 
-    for (size_t i=1; i<=mOrderMinusOne; i++)
+    for (GFElement i=1; i<=mOrderMinusOne; i++)
       {
         if (SYSTEM_INTERRUPTED) 
           {
@@ -75,7 +75,7 @@ namespace M2 {
             return;
           }
 	ring_elem f1 = mOriginalRing.add(polys[i], oneR);
-        size_t j;
+    GFElement j;
 	for (j=0; j<=mOrderMinusOne; j++)
           if (mOriginalRing.is_equal(f1, polys[j]))
             break;
@@ -87,10 +87,10 @@ namespace M2 {
       }
     
     // Create the ZZ/P ---> GF(Q) inclusion map
-    mFromIntTable = newarray_atomic(size_t,mCharac);
-    size_t a = mOne;;
+    mFromIntTable = newarray_atomic(GFElement,mCharac);
+    GFElement a = mOne;;
     mFromIntTable[0] = 0;
-    for (size_t i=1; i<mCharac; i++)
+    for (GFElement i=1; i<mCharac; i++)
       {
         mFromIntTable[i] = a;
         a = mOneTable[a];
@@ -104,13 +104,13 @@ namespace M2 {
     o << " 1     = " << mOne << std::endl;
     o << " -1    = " << mMinusOne << std::endl;
     o << " fromZZ: " << std::endl << "    ";
-    for (size_t i = 0; i<mCharac; i++)
+    for (GFElement i = 0; i<mCharac; i++)
       {
         if ((i+1) % 10 == 0) o << std::endl << "    ";
         o << mFromIntTable[i] << " ";
       }
     o << std::endl << " oneTable: " << std::endl << "    ";
-    for (size_t i = 0; i<mOrder; i++)
+    for (GFElement i = 0; i<mOrder; i++)
       {
         if ((i+1) % 10 == 0) o << std::endl << "    ";
         o << mOneTable[i] << " ";

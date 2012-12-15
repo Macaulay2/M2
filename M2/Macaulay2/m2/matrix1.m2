@@ -664,9 +664,14 @@ dual(Matrix) := Matrix => {} >> o -> f -> (
 Matrix.InverseMethod =
 inverse Matrix := (cacheValue symbol inverse) (
      m -> (
-	  (quo,rem) := quotientRemainder(id_(target m), m);
-	  if rem != 0 then error "matrix not invertible";
-	  quo))
+      if hasEngineLinearAlgebra ring m then (
+          << "calling ffpack version of InverseMethod" << endl;
+          (ring m).inverse m)
+      else (
+	      (quo,rem) := quotientRemainder(id_(target m), m);
+	      if rem != 0 then error "matrix not invertible";
+	      quo))
+     )
 
 Matrix _ Array := Matrix => (f,v) -> f * (source f)_v
 Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f

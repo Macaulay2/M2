@@ -972,7 +972,7 @@ void convolve(const PolyRing *R,
 {
   const Ring *K = R->getCoefficientRing();
   ring_elem invn;
-  int n = input_relems.size() - 1; // array is 0..n, with the 0 part being ignored.
+  size_t n = input_relems.size() - 1; // array is 0..n, with the 0 part being ignored.
   // first set [1, e1] := [1, h1].
   output_relems[0] = input_relems[0];
   for (int i=1; i<=n; i++)

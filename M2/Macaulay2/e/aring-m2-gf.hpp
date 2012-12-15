@@ -15,6 +15,7 @@ class RingElement;
 
 namespace M2 {
 
+  typedef int GFElement;
   /// ingroup rings
   ///
   /// @brief 
@@ -34,33 +35,33 @@ namespace M2 {
     // debug display of the tables
     void display(std::ostream &o) const;
 
-    size_t characteristic() const { return mCharac; }
-    size_t dimension() const { return mDimension; }
-    size_t order() const { return mOrder; }
-    size_t one() const { return mOne; }
-    size_t minusOne() const { return mMinusOne; }
-    size_t orderMinusOne() const { return mOrderMinusOne; }
-    size_t oneTable(size_t a) const { return mOneTable[a]; }
-    size_t fromZZTable(size_t a) const { return mFromIntTable[a]; }
+    GFElement characteristic() const { return mCharac; }
+    GFElement dimension() const { return mDimension; }
+    GFElement order() const { return mOrder; }
+    GFElement one() const { return mOne; }
+    GFElement minusOne() const { return mMinusOne; }
+    GFElement orderMinusOne() const { return mOrderMinusOne; }
+    GFElement oneTable(GFElement a) const { return mOneTable[a]; }
+    GFElement fromZZTable(GFElement a) const { return mFromIntTable[a]; }
     
     const PolynomialRing& ring() const { return mOriginalRing; }
     const ring_elem primitiveElement() const { return mPrimitiveElement; }
-    size_t generatorExponent() const { return mGeneratorExponent; }
+    GFElement generatorExponent() const { return mGeneratorExponent; }
   private:
     // CONSTANT usable fields. 
-    size_t mCharac;
-    size_t mDimension;
-    size_t mOrder;
-    size_t mOne;
-    size_t mMinusOne;
-    size_t mOrderMinusOne;
+    GFElement mCharac;
+    GFElement mDimension;
+    GFElement mOrder;
+    GFElement mOne;
+    GFElement mMinusOne;
+    GFElement mOrderMinusOne;
     
-    size_t* mOneTable;
-    size_t* mFromIntTable;
+    GFElement* mOneTable;
+    GFElement* mFromIntTable;
     
     const PolynomialRing& mOriginalRing;
     const ring_elem mPrimitiveElement; // is an element of mOriginalRing
-    size_t mGeneratorExponent;  
+    GFElement mGeneratorExponent;  
     // the given generator of mOriginalRing is 
     // mPrimitiveElement^mGeneratorExponent (in this ring).
     
@@ -95,7 +96,7 @@ namespace M2 {
     ARingGFM2(const PolynomialRing &R,
               const ring_elem a);
 
-    size_t characteristic() const { return mGF.characteristic(); }
+    GFElement characteristic() const { return mGF.characteristic(); }
 
     void text_out(buffer &o) const;
 
@@ -209,7 +210,7 @@ namespace M2 {
             }
           else
             {
-              if (mGF.characteristic() == 2)
+                if (mGF.characteristic() == 2)
                 result = 0;
               else
                 result = modulus_add(a, mGF.oneTable(mGF.one()), mGF.orderMinusOne());
@@ -306,7 +307,7 @@ namespace M2 {
 
     void random(ElementType &result) const
     {
-      result = rawRandomInt((int32_t)characteristic());
+      result = rawRandomInt(static_cast<int32_t>(characteristic()));
     }
 
 

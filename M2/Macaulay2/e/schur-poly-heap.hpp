@@ -40,7 +40,7 @@ inline schur_poly_heap::schur_poly_heap(const SchurRing2 *S0)
 
 inline void schur_poly_heap::add(ring_elem p)
 {
-  int len = S->size(p);
+  size_t len = S->size(p);
   int i= 0;
   while (len >= heap_size[i]) i++;
   add_to(heap[i], p);

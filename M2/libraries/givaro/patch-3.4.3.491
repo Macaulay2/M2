@@ -1,3 +1,32 @@
+--- givaro-3.4.3.491//src/library/poly1/givpoly1proot.inl.orig	2012-09-27 14:58:51.000000000 +0200
++++ givaro-3.4.3.491//src/library/poly1/givpoly1proot.inl	2012-09-27 15:00:40.000000000 +0200
+@@ -594,14 +594,14 @@ namespace Givaro {
+ 	template<class Domain, class Tag, class RandIter >
+ 	inline typename Poly1FactorDom<Domain,Tag, RandIter>::Rep& Poly1FactorDom<Domain,Tag, RandIter>::give_prim_root(Rep& R, const Rep& F)  const
+ 	{
+-		Degree n; degree(n,F);
++		Degree n; this->degree(n,F);
+ 		Residu_t MOD = _domain.residu();
+ 		//    this->write(std::cout << "Give Pr: ", F) << std::endl;
+ 
+ 
+ 		// Search for a primitive BINOMIAL : X^i + a
+ 		for(Degree di=1;di<n;++di) {
+-			init(R, di);
++			this->init(R, di);
+ 			//         for(Residu_t a=MOD; a--; )
+ 			for(Residu_t a=0; a<MOD;++a ) {
+ 				_domain.assign(R[0],a);
+@@ -611,7 +611,7 @@ namespace Givaro {
+ 		}
+ 		// Search for a primitive TRINOMIAL : X^i + b*X^j + a
+ 		for(Degree di=2;di<n;++di) {
+-			init(R, di);
++			this->init(R, di);
+ 			for(Degree dj=1;dj<di;++dj)
+ 				//             for(Residu_t b=MOD; b--;)
+ 				for(Residu_t b=0; b<MOD;++b) {
+
 diff -rupN givaro-3.4.3.491//src/kernel/zpz/givgfq.inl givaro-3.4.3.491.copy//src/kernel/zpz/givgfq.inl
 --- givaro-3.4.3.491//src/kernel/zpz/givgfq.inl  2011-05-24 17:32:04.000000000 +0200
 +++ givaro-3.4.3.491.copy//src/kernel/zpz/givgfq.new.inl  2012-03-30 16:31:12.000000000 +0200
@@ -78,6 +107,444 @@ diff -rupN givaro-3.4.3.491//src/kernel/zpz/givgfq.inl givaro-3.4.3.491.copy//sr
  
  
      template<typename TT> inline void GFqDom<TT>::Init() {}
+
+--- givaro-3.4.3.491//src/library/poly1/givpoly1proot.inl	2012-09-28 00:23:23.000000000 +0200
++++ givaro-3.4.3.491//src/library/poly1/givpoly1proot.inl.new	2012-09-28 00:23:42.000000000 +0200
+@@ -362,7 +362,7 @@ namespace Givaro {
+ 	template<class Domain, class Tag, class RandIter >
+ 	inline typename Poly1FactorDom<Domain,Tag, RandIter>::Element& Poly1FactorDom<Domain,Tag, RandIter>::creux_random_irreducible (Element& R, Degree n) const
+ 	{
+-		init(R, n);
++		this->init(R, n);
+ 
+ 		Residu_t MOD = _domain.residu();
+ 
+@@ -398,7 +398,7 @@ namespace Givaro {
+ 	{
+ 		// Search for a monic irreducible Polynomial
+ 		// with random Elements
+-		init(R, n);
++		this->init(R, n);
+ 		Residu_t MOD = _domain.residu();
+ 
+ 		if (find_irred_randomial(R,n,MOD))
+@@ -417,9 +417,9 @@ namespace Givaro {
+ 	template<class Domain, class Tag, class RandIter >
+ 	inline typename Poly1FactorDom<Domain,Tag, RandIter>::Element& Poly1FactorDom<Domain,Tag, RandIter>::ixe_irreducible (Element& R, Degree n) const
+ 	{
+-		init(R, n);
++		this->init(R, n);
+ 		Element IXE;
+-		init(IXE,Degree(1));
++		this->init(IXE,Degree(1));
+ 		Residu_t MOD = _domain.residu();
+ 
+ 		// Search for an irreducible BINOMIAL : X^n + a
+@@ -455,9 +455,9 @@ namespace Givaro {
+ 	template<class Domain, class Tag, class RandIter >
+ 	inline typename Poly1FactorDom<Domain,Tag, RandIter>::Element& Poly1FactorDom<Domain,Tag, RandIter>::ixe_irreducible2 (Element& R, Degree n) const
+ 	{
+-		init(R, n);
++		this->init(R, n);
+ 		Element IXE;
+-		init(IXE,Degree(1));
++		this->init(IXE,Degree(1));
+ 		Residu_t MOD = _domain.residu();
+ 
+ 		// Search for an irreducible BINOMIAL : X^n + a
+@@ -498,16 +498,16 @@ namespace Givaro {
+ 		// Square free ?
+ 		Rep W,D; this->gcd(W,diff(D,P),P);
+ 		Degree d, dP;
+-		if (degree(d,W) > 0) return 0;
++		if (this->degree(d,W) > 0) return 0;
+ 		IntFactorDom<> FD;
+ 
+-		long n = degree(dP,P).value();
++		long n = this->degree(dP,P).value();
+ 		IntFactorDom<>::Rep qn;
+ 
+ 		FD.pow( qn, IntFactorDom<>::Rep(MOD), n);
+-		Rep Unit, G1; init(Unit, Degree(1));
++		Rep Unit, G1; this->init(Unit, Degree(1));
+ 		this->powmod(G1, Unit, qn, P);
+-		if (degree(d, sub(D,G1,Unit)) >= 0) return 0;
++		if (this->degree(d, sub(D,G1,Unit)) >= 0) return 0;
+ 
+ 		std::vector<IntFactorDom<>::Rep> Lp; std::vector<unsigned long> Le;
+ 		FD.set(Lp, Le, n );
+@@ -515,7 +515,7 @@ namespace Givaro {
+ 			long ttmp;
+ 			FD.pow( qn, IntFactorDom<>::Rep(MOD), n/FD.convert(ttmp,*p) );
+ 			this->powmod(G1, Unit, qn, P);
+-			if (degree(d, sub(D,G1,Unit)) < 0) return 0;
++			if (this->degree(d, sub(D,G1,Unit)) < 0) return 0;
+ 		}
+ 
+ 		return 1;
+@@ -534,13 +534,13 @@ namespace Givaro {
+ 	{
+ 		bool isproot = 0;
+ 		Rep A, G;
+-		mod(A,P,F);
++		this->mod(A,P,F);
+ 		Degree d;
+-		if ( degree(d, this->gcd(G,A,F)) == 0) {
++		if ( this->degree(d, this->gcd(G,A,F)) == 0) {
+ 			Residu_t MOD = _domain.residu();
+ 			IntFactorDom<> FD;
+ 			IntFactorDom<>::Element IMOD( MOD ), q, qp;
+-			degree(d,F);
++			this->degree(d,F);
+ 			//         FD.pow(q ,IMOD, d.value());
+ 			//         FD.sub(qp, q, FD.one);
+ 			FD.subin( FD.pow(qp ,IMOD, d.value()) , FD.one);
+@@ -560,13 +560,13 @@ namespace Givaro {
+ 	inline typename IntegerDom::Element Poly1FactorDom<Domain,Tag, RandIter>::order( const Rep& P, const Rep& F)  const
+ 	{
+ 		bool isproot = 0;
+-		Rep A, G; mod(A,P,F);
++		Rep A, G; this->mod(A,P,F);
+ 		Degree d;
+-		if ( degree(d, this->gcd(G,A,F)) == 0) {
++		if ( this->degree(d, this->gcd(G,A,F)) == 0) {
+ 			Residu_t MOD = _domain.residu();
+ 			IntFactorDom<> FD;
+ 			IntFactorDom<>::Element IMOD( MOD ), g, gg, tt, qp;
+-			degree(d,F);
++			this->degree(d,F);
+ 			//         FD.pow(q ,IMOD, d.value());
+ 			//         FD.sub(qp, q, FD.one);
+ 			FD.subin( FD.pow(qp ,IMOD, d.value()) , FD.one);
+@@ -642,7 +642,7 @@ namespace Givaro {
+ 	template<class Domain, class Tag, class RandIter >
+ 	inline typename Poly1FactorDom<Domain,Tag, RandIter>::Rep& Poly1FactorDom<Domain,Tag, RandIter>::give_random_prim_root(Rep& R, const Rep& F)  const
+ 	{
+-		Degree n; degree(n,F);
++		Degree n; this->degree(n,F);
+ 		Residu_t MOD = _domain.residu();
+ 
+ 		// Search for a primitive Polynomial
+--- givaro-3.4.3.491//src/library/poly1/givpoly1factor.inl	2011-05-24 17:32:05.000000000 +0200
++++ givaro-3.4.3.491//src/library/poly1/givpoly1factor.inl.new	2012-09-28 00:23:49.000000000 +0200
+@@ -33,7 +33,7 @@ inline void Poly1FactorDom<Domain,Tag, R
+     , Degree d
+     , Residu_t MOD) const
+ {
+-    Degree dG;degree(dG,G);
++    Degree dG;this->degree(dG,G);
+     if (dG == d)
+         L.push_back(G);
+     else {
+@@ -41,7 +41,7 @@ inline void Poly1FactorDom<Domain,Tag, R
+         while (! splitted) {
+             Rep tmp, G1;
+             this->gcd(G1, G, this->random(_g, tmp, dG-1));
+-            Degree dG1; degree(dG1,G1);
++            Degree dG1; this->degree(dG1,G1);
+ // write(std::cerr << "SF rd: ", tmp) << std::endl;
+ // write(std::cerr << "SF G1: ", G1) << std::endl;
+             if ( dG1 != dG) {
+@@ -53,8 +53,8 @@ inline void Poly1FactorDom<Domain,Tag, R
+                 Integer pp = (power(Integer(MOD), d.value()) - 1)/2;
+ // std::cerr << "pp: " << pp << std::endl;
+                 Rep tp, tp2, G2;
+-                this->gcd(G2,G, sub(tp2, this->powmod(tp, tmp, pp, G) , _domain.one) );
+-                Degree dG2; degree(dG2,G2);
++                this->gcd(G2,G, this->sub(tp2, this->powmod(tp, tmp, pp, G) , _domain.one) );
++                Degree dG2; this->degree(dG2,G2);
+ // write(std::cerr << "SF t2: ", tp2) << std::endl;
+ // write(std::cerr << "SF G2: ", G2) << std::endl;
+                 if ( dG2 != dG) {
+@@ -64,7 +64,7 @@ inline void Poly1FactorDom<Domain,Tag, R
+                     }
+ // UNNECESSARY : ANYTHING FOUND BY G3 WOULD HAVE THE COFACTOR IN G2
+                      Rep G3; this->gcd(G3, G, add(tp2,tp,_domain.one) );
+-                     Degree dG3; degree(dG3,G3);
++                     Degree dG3; this->degree(dG3,G3);
+ // write(std::cerr << "SF t3: ", tp2) << std::endl;
+ // write(std::cerr << "SF G3: ", G3) << std::endl;
+                      if (( dG3 != dG) && (dG3 > 0 )) {
+@@ -84,7 +84,7 @@ inline typename Poly1FactorDom<Domain,Ta
+     , const Rep& G
+     , Degree d
+     , Residu_t MOD)  const  {
+-    Degree dG;degree(dG,G);
++    Degree dG;this->degree(dG,G);
+     if (dG == d)
+         return G1.copy(G) ;
+     else {
+@@ -93,15 +93,15 @@ inline typename Poly1FactorDom<Domain,Ta
+             this->gcd(G1, G, this->random(_g, tmp, d));
+ // write(std::cerr << "SF rd: ", tmp) << std::endl;
+ // write(std::cerr << "SF G1: ", G1) << std::endl;
+-            Degree dG1; degree(dG1,G1);
++            Degree dG1; this->degree(dG1,G1);
+             if ( dG1 != dG) {
+                 if (dG1 > 0 ) {
+                     return G1;
+                 }
+                 Integer pp = (power(Integer(MOD), d.value()) - 1)/2;
+                 Rep tp, tp2, G2;
+-                this->gcd(G2,G, sub(tp2, this->powmod(tp, tmp, pp, G) , _domain.one) );
+-                Degree dG2; degree(dG2,G2);
++                this->gcd(G2,G, this->sub(tp2, this->powmod(tp, tmp, pp, G) , _domain.one) );
++                Degree dG2; this->degree(dG2,G2);
+ // write(std::cerr << "SF t2: ", tp2) << std::endl;
+ // write(std::cerr << "SF G2: ", G2) << std::endl;
+                 if ( dG2 != dG) {
+@@ -110,7 +110,7 @@ inline typename Poly1FactorDom<Domain,Ta
+                     }
+ // UNNECESSARY : ANYTHING FOUND BY G3 WOULD HAVE THE COFACTOR IN G2
+                      Rep G3; this->gcd(G3, G, add(tp2,tp,_domain.one) );
+-                     Degree dG3; degree(dG3,G3);
++                     Degree dG3; this->degree(dG3,G3);
+ // write(std::cerr << "SF t3: ", tp2) << std::endl;
+ // write(std::cerr << "SF G3: ", G3) << std::endl;
+                      if (( dG3 != dG) && (dG3 > 0 )) {
+@@ -138,21 +138,21 @@ inline void Poly1FactorDom<Domain,Tag, R
+ // write(std::cerr << "DD in: ", f) << std::endl;
+     Rep W, D, P = f;
+     Degree dP;
+-    Rep Unit, G1; init(Unit, Degree(1));
++    Rep Unit, G1; this->init(Unit, Degree(1));
+     W.copy(Unit);
+-    degree(dP,P); Degree dPo = (dP/2);
++    this->degree(dP,P); Degree dPo = (dP/2);
+     for(Degree dp = 1; dp <= dPo; ++dp) {
+ // std::cerr << "DD degree: " << dp << std::endl;
+         this->powmod(W, D.copy(W), MOD, P);
+-        this->gcd (G1,sub(D,W,Unit), P) ;
+-        Degree dG1; degree(dG1,G1);
++        this->gcd (G1,this->sub(D,W,Unit), P) ;
++        Degree dG1; this->degree(dG1,G1);
+ // write(std::cerr << "DD found: ", G1) << ", of degree " << dG1 << std::endl;
+         if ( dG1 > 0 ) {
+             SplitFactor (L, G1, dp, MOD);
+             divin(P,G1);
+         }
+     }
+-    degree(dP,P);
++    this->degree(dP,P);
+     if (dP > 0)
+         L.push_back(P);
+ // write(std::cerr << "DD: ", P) << std::endl;
+@@ -171,7 +171,7 @@ Poly1FactorDom<Domain,Tag, RandIter>::CZ
+ 	       Residu_t MOD)  const
+ {
+ // write(std::cerr << "CZ in: ", P) << std::endl;
+-    Degree dp; degree(dp,P);
++    Degree dp; this->degree(dp,P);
+     size_t nb=dp.value()+1;
+     Rep * g = new Rep[nb];
+     sqrfree(nb,g,P);
+@@ -202,17 +202,17 @@ inline bool Poly1FactorDom<Domain,Tag, R
+ 								  , Residu_t MOD ) const
+ {
+ 	Rep W,D;
+-	this->gcd(W,diff(D,P),P);
++	this->gcd(W,this->diff(D,P),P);
+ 	Degree d, dP;
+-	if (degree(d,W) > 0) return 0;
++	if (this->degree(d,W) > 0) return 0;
+ 	// Distinct degree free ?
+-	Rep Unit, G1; init(Unit, Degree(1));
++	Rep Unit, G1; this->init(Unit, Degree(1));
+ 	W.copy(Unit);
+-	degree(dP,P); Degree dPo = (dP/2);
++	this->degree(dP,P); Degree dPo = (dP/2);
+ 	for(Degree dp = 1; dp <= dPo; ++dp) {
+ 		this->powmod(W, D.copy(W), MOD, P);
+-		this->gcd (G1, sub(D,W,Unit), P) ;
+-		if ( degree(d,G1) > 0 ) return 0;
++		this->gcd (G1, this->sub(D,W,Unit), P) ;
++		if ( this->degree(d,G1) > 0 ) return 0;
+ 	}
+ 	return 1;
+ }
+@@ -236,17 +236,17 @@ inline typename Poly1FactorDom<Domain,Ta
+ // write(cerr << "In factor P':", D) << "(deg: " << degree(d,D) << ")" << endl;
+ // write(cerr << "In factor P^P':", W) << "(deg: " << degree(d,W) << ")" << endl;
+ 
+-    if (degree(d,W) > 0) return W;
++    if (this->degree(d,W) > 0) return W;
+         // Distinct degree free ?
+-    Rep Unit, G1; init(Unit, Degree(1));
++    Rep Unit, G1; this->init(Unit, Degree(1));
+ // write(cerr << "In factor U:", Unit) << endl;
+     W.copy(Unit);
+-    degree(dP,P); Degree dPo = (dP/2);
++    this->degree(dP,P); Degree dPo = (dP/2);
+     for(Degree dp = 1; dp <= dPo; ++dp) {
+-// write(cerr << "In factor W:(deg: " << degree(d,W) << "):", W) << endl;
++// write(cerr << "In factor W:(deg: " << this->degree(d,W) << "):", W) << endl;
+         this->powmod(W, D.copy(W), MOD, P);
+-        this->gcd (G1, sub(D,W,Unit), P) ;
+-        Degree dG1; degree(dG1,G1);
++        this->gcd (G1, this->sub(D,W,Unit), P) ;
++        Degree dG1; this->degree(dG1,G1);
+         if ( dG1 > 0 ) {
+             if (dG1 < dP)
+                 return W.copy(G1);
+
+--- givaro-3.4.3.491//src/kernel/integer/givintnumtheo.inl	2011-05-24 17:32:04.000000000 +0200
++++ givaro-3.4.3.491//src/kernel/integer/givintnumtheo.inl.new	2012-09-28 00:23:35.000000000 +0200
+@@ -28,8 +28,8 @@ namespace Givaro {
+ 	template<class RandIter>
+ 	typename IntNumTheoDom<RandIter>::Rep& IntNumTheoDom<RandIter>::phi(Rep& res, const Rep& n) const
+ 	{
+-		if (isleq(n,1)) return res=n;
+-		if (isleq(n,3)) return sub(res,n,this->one);
++		if (this->isleq(n,1)) return res=n;
++		if (this->isleq(n,3)) return this->sub(res,n,this->one);
+ 		std::list<Rep> Lf;
+ 		Father_t::set(Lf,n);
+ 		//return phi (res,Lf,n);
+@@ -41,11 +41,11 @@ namespace Givaro {
+ 	template< template<class, class> class Container, template<class> class Alloc>
+ 	typename IntNumTheoDom<RandIter>::Rep& IntNumTheoDom<RandIter>::phi(Rep& res, const Container<Rep, Alloc<Rep> >& Lf, const Rep& n) const
+ 	{
+-		if (isleq(n,1)) return res=n;
+-		if (isleq(n,3)) return sub(res,n,this->one);
++		if (this->isleq(n,1)) return res=n;
++		if (this->isleq(n,3)) return this->sub(res,n,this->one);
+ 		res = n; Rep t,m;
+ 		for(typename Container<Rep, Alloc<Rep> >::const_iterator f=Lf.begin(); f!=Lf.end(); ++f)
+-			mul(res, divexact(t,res,*f), sub(m, *f, this->one));
++			this->mul(res, this->divexact(t,res,*f), this->sub(m, *f, this->one));
+ 		return res;
+ 	}
+ 
+@@ -95,15 +95,15 @@ namespace Givaro {
+ 		// n must be in {2,4,p^m,2p^m} where p is an odd prime
+ 		// else infinite loop
+ 
+-		if (isleq(n,4)) return sub(A,n,this->one);
++		if (this->isleq(n,4)) return this->sub(A,n,this->one);
+ 		if (isZero(mod(A,n,4))) return A=this->zero;
+ 		Rep p,ismod2, q, no2, root;
+-		if (isZero(mod(ismod2,n,2))) divexact(no2,n,2); else no2=n;
++		if (isZero(mod(ismod2,n,2))) this->divexact(no2,n,2); else no2=n;
+ 		p=no2;
+ 		int k = 1;
+ 		while (! isprime(p) ) {
+ 			sqrt(root, p);
+-			while (mul(q,root,root) == p) {
++			while (this->mul(q,root,root) == p) {
+ 				p = root;
+ 				sqrt(root,p);
+ 			}
+@@ -114,7 +114,7 @@ namespace Givaro {
+ 				if (q < p) p = q;
+ 			}
+ 		}
+-		if (isZero(ismod2)) mul(q,p,2); else q=p;
++		if (isZero(ismod2)) this->mul(q,p,2); else q=p;
+ 		for(;q != n;++k,q*=p) ;
+ 		Rep phin, tmp;
+ 		phi(phin,p);
+@@ -149,7 +149,7 @@ namespace Givaro {
+ 		while (! found) {
+ 			do {
+ 				this->random(this->_g, A, p);
+-				addin( modin(A,sub(tmp,p,7)) , 7);
++				this->addin( modin(A,this->sub(tmp,p,7)) , 7);
+ 			} while ( ! isOne(gcd(tmp,A,p)) );
+ 			found = (int) ++runs;
+ 			for(f=Lf.begin();(f!=Lf.end() && found);f++)
+@@ -232,7 +232,7 @@ namespace Givaro {
+ 
+ 			//  1-(1+2/(p-1))*(1-1/L^2)^log_B(Q)  < 1-(1+2^(-log_2(p)))*(1-1/L^2)^log_B(Q);
+ 			essai = L;
+-			mul(Temp, essai, L);
++			this->mul(Temp, essai, L);
+ 			error = 1-1.0/(double)Temp;
+ 			error = power(error, logp(Q,Temp) );
+ 			error *= (1.0+1.0/((double)Q-1.0));
+@@ -317,7 +317,7 @@ namespace Givaro {
+ 	{
+ 
+ 		std::vector<Rep> Lf;
+-		Rep phin; sub(phin,n,this->one);
++		Rep phin; this->sub(phin,n,this->one);
+ 		Father_t::set(Lf,phin);
+ 		return prim_root_of_prime(A, Lf, phin, n);
+ 	}
+@@ -357,7 +357,7 @@ namespace Givaro {
+ 				this->powmod(tmp, prime, this->div(expo, primeorder, *f), n);
+ 				if (isOne(tmp)) {
+ 					newLf.push_back(*f);
+-					while (isZero(mod(tmp,expo,*f)) && isOne( this->powmod(tmp, prime, this->div(temp, expo, *f), n) ) ) { expo = temp; }
++					while (isZero(this->mod(tmp,expo,*f)) && isOne( this->powmod(tmp, prime, this->div(temp, expo, *f), n) ) ) { expo = temp; }
+ 					primeorder = expo;
+ 					//                 std::cerr << "2 Order (Div): " << primeorder << std::endl;
+ 				} else {
+@@ -423,8 +423,8 @@ namespace Givaro {
+ 	{
+ 		// n must be in {2,4,p^m,2p^m} where p is an odd prime
+ 		// else returns zero
+-		if (isleq(n,4)) return sub(A,n,this->one);
+-		if (isZero(mod(A,n,4))) return A=this->zero;
++		if (this->isleq(n,4)) return this->sub(A,n,this->one);
++		if (isZero(this->mod(A,n,4))) return A=this->zero;
+ 		Rep phin, tmp;
+ 		phi(phin,n);
+ 		std::list<Rep> Lf;
+@@ -433,15 +433,15 @@ namespace Givaro {
+ 		for(f=Lf.begin();f!=Lf.end();++f)
+ 			this->div(*f,phin,*f);
+ 		int found=0;
+-		for(A = 2;(isleq(A,n) && (! found));addin(A,1)) {
++		for(A = 2;(this->isleq(A,n) && (! found));this->addin(A,1)) {
+ 			if (isOne(gcd(tmp,A,n))) {
+ 				found = 1;
+ 				for(f=Lf.begin();(f!=Lf.end() && found);f++)
+ 					found = (! isOne( this->powmod(tmp,A,*f,n)) );
+ 			}
+ 		}
+-		if (isleq(A,n))
+-			return subin(A,1);
++		if (this->isleq(A,n))
++			return this->subin(A,1);
+ 		else
+ 			return A=this->zero;
+ 	}
+@@ -510,7 +510,7 @@ namespace Givaro {
+ 	template<class RandIter>
+ 	typename IntNumTheoDom<RandIter>::Rep& IntNumTheoDom<RandIter>::prim_inv(Rep& A, const Rep& n) const
+ 	{
+-		if (isleq(n,4)) return sub(A,n,this->one);
++		if (this->isleq(n,4)) return this->sub(A,n,this->one);
+ 		if (areEqual(n,8)) return init(A,3);
+ 		return prim_base(A, n);
+ 	}
+@@ -518,7 +518,7 @@ namespace Givaro {
+ 	template<class RandIter>
+ 	typename IntNumTheoDom<RandIter>::Rep& IntNumTheoDom<RandIter>::prim_elem(Rep& A, const Rep& n) const
+ 	{
+-		if (isleq(n,4)) {
++		if (this->isleq(n,4)) {
+ 			Rep tmp;
+ 			return this->sub(A,n,this->one);
+ 		}
+@@ -565,7 +565,7 @@ namespace Givaro {
+ 			return dom_power(z, p, e-2, *this);
+ 		} else {
+ 			Rep tmp;
+-			return mulin( dom_power(z, p, e-1, *this), sub(tmp, p, this->one) );
++			return mulin( dom_power(z, p, e-1, *this), this->sub(tmp, p, this->one) );
+ 		}
+ 	}
+ 
+@@ -579,7 +579,7 @@ namespace Givaro {
+ 			return dom_power(z, p, e-2, *this);
+ 		} else {
+ 			Rep tmp;
+-			return mulin( dom_power(z, p, e-1, *this), sub(tmp, p, this->one) );
++			return mulin( dom_power(z, p, e-1, *this), this->sub(tmp, p, this->one) );
+ 		}
+ 	}
+
 diff -rupN givaro-3.4.3.491//src/kernel/zpz/givextension.h givaro-3.4.3.491.copy//src/kernel/zpz/givextension.h
 --- givaro-3.4.3.491//src/kernel/zpz/givextension.h	2011-05-24 17:32:04.000000000 +0200
 +++ givaro-3.4.3.491.copy//src/kernel/zpz/givextension.h	2012-01-30 14:36:27.916056625 +0100
