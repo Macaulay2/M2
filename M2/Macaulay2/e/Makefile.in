@@ -30,6 +30,7 @@ endif
 tags:: @srcdir@/TAGS
 @srcdir@/TAGS: Makefile.in @srcdir@/*.hpp @srcdir@/*.h @srcdir@/*.cpp @srcdir@/*.c \
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
+		 @srcdir@/unit-tests/*.cpp \
 		 @srcdir@/../e-includes/statuscodes
 	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
@@ -83,6 +84,9 @@ clean::; rm -f *.dep dep-*.tmp typecode.db
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
 endif
+
+check:
+	$(MAKE) -C unit-tests $@
 
 # this requires gnu sort and gnu uniq commands
 NMFLAGS = -o

@@ -1,0 +1,6 @@
+This file contains unit tests for engine.
+
+Run tests (and compiles them) using: make check
+  Currently, this also is when the file gtest-includes is compiled (which takes a bit of time)
+
+Currently, the source files (except gtest-include.cpp) are compiled during 'make'
