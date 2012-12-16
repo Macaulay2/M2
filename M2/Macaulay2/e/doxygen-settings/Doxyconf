@@ -288,7 +288,7 @@ HTML_HEADER            =
 
 HTML_FOOTER            =
 
-HTML_STYLESHEET        = $(DOXYGEN_OUTPUT_DIR)/styleSheetFile.css
+# HTML_STYLESHEET        = $(DOXYGEN_OUTPUT_DIR)/styleSheetFile.css
 
 HTML_COLORSTYLE_HUE    = 220
 
