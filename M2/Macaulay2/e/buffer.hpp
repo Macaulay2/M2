@@ -4,9 +4,7 @@
 #define _buffer_hpp_
 
 #include <string>
-
-#include "engine.h"
-#include "newdelete.hpp"
+#include "engine-includes.hpp"
 
 const int BUFFER_INITIAL_CAPACITY = 100;
 

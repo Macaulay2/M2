@@ -6,6 +6,7 @@
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
+#include "rand.h"
 
 class Z_mod;
 class RingMap;

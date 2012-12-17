@@ -12,7 +12,6 @@
 #define IF_DEBUG(X)
 #endif
 
-#include "engine.h"
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
