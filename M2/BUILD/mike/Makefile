@@ -93,7 +93,7 @@ debug64 : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="clang -m64" CXX="clang++ -m64" \
+		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
