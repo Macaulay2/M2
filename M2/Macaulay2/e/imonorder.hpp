@@ -6,8 +6,9 @@
 /* This is the internal form of the monomial ordering */
 /* Used in monomial encoding/decoding/comparison */
 
+#include "engine-includes.hpp"
+#include "rand.h"
 #include <alloca.h>
-#include "engine.h"
 #include "monordering.h"
 
 typedef int * exponents;

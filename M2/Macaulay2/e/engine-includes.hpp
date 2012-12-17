@@ -40,6 +40,8 @@
 #define IF_DEBUG(X)
 #endif
 
+typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
+
 #endif
 
 // Local Variables:
