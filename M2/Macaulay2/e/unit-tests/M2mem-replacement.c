@@ -4,6 +4,19 @@
 
 #include "M2mem-replacement.h"
 
+/* trapchk: taken from d/debug.h *************************************/
+void *trapaddr = (void *)1;
+int trapcount = 0;
+int trapset = 0;
+
+void trap(void) {}		/* I used to be concerned that this function would get optimized away, but it isn't static ... */
+
+void *pointers[10];		/* during debugging we can put pointers here, visible to the garbage collector */
+void trapchk(void *p) { 
+     trapcount++;
+     if (trapcount == trapset || p == trapaddr || p == (void *)~(intptr_t)trapaddr) trap();
+}
+/*********************************************************************/
 
 void outofmem(void) {
      const char *msg = "\n\n *** out of memory, exiting ***\n";
