@@ -3,7 +3,7 @@
 #define _queue_hh_
 
 #include "style.hpp"
-#include <algorithm>
+//#include <algorithm>
 const int block_size = 128;
 
 #define QUEUE(T) queue<T>

@@ -2,24 +2,14 @@
 
 #include "style.hpp"
 #include "mem.hpp"
-#include "intarray.hpp"
 #include "hash.hpp"
-#include "engine.h"
-
-#include "array.hpp"
-#include "queue.hpp"
-#include "ZZ.hpp"
 #include "QQ.hpp"
-
 #include "poly.hpp"
 
 extern void factory_setup_1(); // M2-factory.cpp
 
 unsigned long mutable_object::next_hash_sequence_number = 1000;
 long object::next_hash_sequence_number = -7;
-
-template class array< char * >;
-template class queue< int >;
 
 const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
                                16384, 65536, 262144, 1048576, 4194304,

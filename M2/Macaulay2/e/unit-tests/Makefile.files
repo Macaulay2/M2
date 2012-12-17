@@ -2,13 +2,20 @@ E_CCFILES := \
 
 UNITTEST_CCFILES := \
     testMain \
+    M2mem-replacement \
+    M2-replacement \
     ringZZp-test
+
+UNITTEST_CFILES += \
+    ../newdelete
+
+#    ../buffer \
 
 UNITTEST_TARGET := testMain
 
 GTEST_DIR := ../../../libraries/final/gtest/
 
-UNITTEST_CFILES :=
+
 UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
 UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
 
