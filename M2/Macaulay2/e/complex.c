@@ -1,11 +1,14 @@
 // Copyright 2007  Michael E. Stillman
 
+#include "complex.h"
+#include "engine-includes.hpp"
+
+#if 0
 #include <gc/gc.h>
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
 #include "../d/debug.h"
-
-#include "complex.h"
+#endif
 
 void mpfc_init_set(gmp_CC result, gmp_CC a)
 {

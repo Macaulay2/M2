@@ -11,15 +11,21 @@
 #include <mpfr.h>
 
 #if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
+  #include <engine-exports.h>
 #endif
 
 #if HAVE_STDINT_H
-#include <stdint.h>
+  #include <stdint.h>
 #elif HAVE_INTTYPES_H
-#include <inttypes.h>
+  #include <inttypes.h>
 #else
-#error integer type definitions not available
+  #error integer type definitions not available
+#endif
+
+#ifndef __cplusplus  /* These are coming from newdelete.hpp, in C++ */
+  #include <gc/gc.h>
+  #include "../d/M2mem.h"
+  #include "../d/debug.h"
 #endif
 
 #ifndef BASECLASS
@@ -32,7 +38,11 @@
 #endif
 
 #ifdef DEBUG
+#ifdef _cplusplus
 #include <cassert>
+#else
+#endif
+#include <assert.h>
 #define ASSERT(X) assert(X);
 #define IF_DEBUG(X) X
 #else
