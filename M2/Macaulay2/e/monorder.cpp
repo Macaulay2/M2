@@ -49,6 +49,8 @@ mon_order::mon_order(mon_order_types t, M2_arrayint d,M2_arrayint wts)
   for (unsigned int i=0; i<wts->len; i++)
     weights[i] = wts->array[i];
 
+  typedef int *ptr_to_int;
+
   degs = newarray_atomic(int,n);
   order = newarray(ptr_to_int,n);
   inv_order = newarray(ptr_to_int,n);

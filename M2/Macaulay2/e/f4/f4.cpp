@@ -2,6 +2,7 @@
 
 // TODO: this code needs to be worked on
 #include <ctime>
+#include <algorithm>
 
 #include "f4.hpp"
 #include "../freemod.hpp"

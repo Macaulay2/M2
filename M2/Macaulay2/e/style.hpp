@@ -2,6 +2,9 @@
 #ifndef _style_hh_
 #define _style_hh_
 
+#include "engine-includes.hpp"
+
+#if 0
 #include <cmath>    // to get fabs(), gcc 3.0
 #include <stdio.h>
 #include <stddef.h>
@@ -12,6 +15,7 @@
 #include <algorithm>
 #include <gmp.h>
 #include <mpfr.h>
+#endif
 
 #define VECTOR(T) std::vector< T, gc_allocator< T > >
 #define INTSIZE(a) static_cast<int>((a).size())
@@ -19,10 +23,6 @@
 #include "error.h"
 #include "buffer.hpp"
 #include "mem.hpp"
-
-typedef unsigned int unsigned_int;
-typedef int *ptr_to_int;
-typedef unsigned int *ptr_to_unsigned_int;
 
 #if defined(_WIN32)
 template <class T>

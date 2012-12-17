@@ -1,5 +1,6 @@
 // Copyright 2005 Michael E. Stillman
 
+#include <algorithm>
 #include "f4-spairs.hpp"
 
 F4SPairSet::F4SPairSet(const MonomialInfo *M0, const gb_array &gb0)
