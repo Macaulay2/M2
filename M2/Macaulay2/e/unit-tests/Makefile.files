@@ -7,9 +7,11 @@ UNITTEST_CCFILES := \
     ringZZp-test
 
 UNITTEST_CFILES += \
-    ../newdelete
+    ../buffer
 
-#    ../buffer \
+#    ../newdelete
+
+
 
 UNITTEST_TARGET := testMain
 

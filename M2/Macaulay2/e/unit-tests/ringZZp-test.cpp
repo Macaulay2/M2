@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-//#include "buffer.hpp"
+#include "buffer.hpp"
 
 bool testfcn() { return true; }
 
@@ -18,21 +18,19 @@ TEST(Nothing, ideal) {
 }
 
 TEST(Buffer, make1) {
-    // buffer o;
-    //    char *s = o.str();
-    char *s = "";
-    fprintf(stderr, ".[%s].\n", s);
+    buffer o;
+    char *s = o.str();
+    //fprintf(stderr, ".[%s].\n", s);
     int c = strcmp("", s);
     EXPECT_EQ(c, 0);
 }
 
-#if 0
-TEST(Buffer, make1) {
+TEST(Buffer, make2) {
     buffer o;
     o << "hi there";
     char *s = o.str();
-    fprintf(stderr, "..%s..\n", s);
+    //fprintf(stderr, "..%s..\n", s);
     int c = strcmp("hi there", s);
     EXPECT_EQ(c, 0);
 }
-#endif
+
