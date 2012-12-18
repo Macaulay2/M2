@@ -15,7 +15,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 #    -I../../e-includes
 
 
-LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr 
+LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl -framework vecLib
 
 .PHONY: place_into_lib runtests
 

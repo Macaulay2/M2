@@ -10,3 +10,7 @@ M2_string M2_tostringn(char *s, int n)
     //GC_CHECK_CLOBBER(p);
     return p;
 }
+
+char newline[] = "\n";
+
+int M2_gbTrace = 0;
