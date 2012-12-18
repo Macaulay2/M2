@@ -2,8 +2,7 @@
 #ifndef __interrupted__hpp__
 #define  __interrupted__hpp__
 
-#include "../system/supervisorinterface.h"
-#define system_interrupted() test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
+extern bool system_interrupted();
 
 #endif
 
