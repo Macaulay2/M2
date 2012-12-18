@@ -5,7 +5,7 @@
 #include "geores.hpp"
 #include "buffer.hpp"
 #include "text-io.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 bool res2_comp::stop_conditions_ok()
 {
 
@@ -62,7 +62,8 @@ enum ComputationStatusCode res2_comp::skeleton(int level)
       // so this routine may be used to increase the degree bound
       // note: also need to redo monomial ideals...
       new_pairs(p);
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+      if (system_interrupted())
+        return COMP_INTERRUPTED;
     }
   resn[level]->state = RES_MONORDER;
   return COMP_COMPUTING;
@@ -142,7 +143,8 @@ enum ComputationStatusCode res2_comp::do_pairs(int level, int degree)
           if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
             return COMP_DONE_SYZYGY_LIMIT;
         }
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+      if (system_interrupted())
+        return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }
@@ -170,7 +172,8 @@ enum ComputationStatusCode res2_comp::do_pairs_by_level(int level)
       if (stop_.pair_limit > 0 && npairs-nleft >= stop_.pair_limit)
         return COMP_DONE_PAIR_LIMIT;
       //      if (--PairLimit == 0) return COMP_DONE_PAIR_LIMIT;
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+      if (system_interrupted())
+        return COMP_INTERRUPTED;
     }
 
   if (do_by_level == 2)
@@ -249,7 +252,8 @@ enum ComputationStatusCode res2_comp::do_pairs_by_degree(int level, int degree)
           if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
             return COMP_DONE_SYZYGY_LIMIT;
         }
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+      if (system_interrupted())
+        return COMP_INTERRUPTED;
     }
   return COMP_COMPUTING;
 }

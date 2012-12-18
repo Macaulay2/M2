@@ -3,7 +3,7 @@
 #include "res-a1-poly.hpp"
 #include "res-a1.hpp"
 #include "text-io.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 //////////////////////////////////////////////
 //  Initialization of a computation  /////////
 //////////////////////////////////////////////
@@ -988,7 +988,8 @@ enum ComputationStatusCode res_comp::gens(int deg)
             return COMP_DONE_PAIR_LIMIT;
           if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
             return COMP_DONE_SYZYGY_LIMIT;
-          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+          if (system_interrupted())
+            return COMP_INTERRUPTED;
         }
 
       sort_pairs(1, deg); // Sort the level 1 GB elements
@@ -1017,7 +1018,8 @@ enum ComputationStatusCode res_comp::pairs(int level, int deg)
         {
           mypairs->next_new_pair = p->next;
           new_pairs(p);
-          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+          if (system_interrupted())
+            return COMP_INTERRUPTED;
         }
     }
   return COMP_COMPUTING;
@@ -1047,7 +1049,8 @@ enum ComputationStatusCode res_comp::reductions(int level, int deg)
           return COMP_DONE_PAIR_LIMIT;
         if (stop_.syzygy_limit > 0 && nminimal >= stop_.syzygy_limit)
           return COMP_DONE_SYZYGY_LIMIT;
-        if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return COMP_INTERRUPTED;
+        if (system_interrupted())
+          return COMP_INTERRUPTED;
       }
   return COMP_COMPUTING;
 }

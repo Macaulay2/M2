@@ -2,7 +2,7 @@
 
 #include "det.hpp"
 #include "text-io.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 DetComputation::DetComputation(const Matrix *M0, int p0,
                                bool do_exterior0,
                                int strategy0)
@@ -164,7 +164,7 @@ int DetComputation::calc(int nsteps)
         return COMP_DONE;
       if (--nsteps == 0)
         return COMP_DONE_STEPS;
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+      if (system_interrupted())
         return COMP_INTERRUPTED;
     }
 }

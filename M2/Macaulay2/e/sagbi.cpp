@@ -271,7 +271,7 @@ Matrix *sagbi::subduct(const Matrix *m,
 // //   return COMP_DONE;
 // //       if (++nloops > maxnloops) return COMP_DONE_STEPS;
 // //       if (*deg && (_current_degree > *deg)) return COMP_DONE_DEGREE_LIMIT;
-// //       if (test_Field(interrupts_interruptedFlag)) return COMP_INTERRUPTED;
+// //       if (system_interrupted()) return COMP_INTERRUPTED;
 // //
 // //       // Determine S-pairs
 // //       ret = find_pairs();  // sets _new_pairs, uses _current_degree.

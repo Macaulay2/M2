@@ -6,7 +6,7 @@
 
 #include "f4.hpp"
 #include "../freemod.hpp"
-#include "../../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 #include <tr1/unordered_map>
 
@@ -896,7 +896,7 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
 
   for (;;)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+      if (system_interrupted())
         {
           is_done = COMP_INTERRUPTED;
           break;

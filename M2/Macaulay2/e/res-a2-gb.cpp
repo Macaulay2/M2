@@ -6,7 +6,7 @@
 #include "text-io.hpp"
 #include "comp-gb.hpp"
 #include "matrix-con.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 void gb2_comp::setup(FreeModule *FFsyz,
                      stash *mi_stash0,
@@ -772,7 +772,7 @@ enum ComputationStatusCode gb2_comp::calc_gb(int deg)
       for (;;)
         {
           if (ret != COMP_COMPUTING) break;
-          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+          if (system_interrupted())
             {
               ret = COMP_INTERRUPTED;
               break;
