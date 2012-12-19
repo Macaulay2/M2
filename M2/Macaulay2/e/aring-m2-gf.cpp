@@ -8,8 +8,7 @@
 #include "aring-m2-gf.hpp"
 #include "ringmap.hpp"
 
-#include "../system/supervisorinterface.h"
-#define SYSTEM_INTERRUPTED test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))
+#include "interrupted.hpp"
 
 extern "C" void dringelem(const Ring *R, const ring_elem f);
 
@@ -69,7 +68,7 @@ namespace M2 {
 
     for (GFElement i=1; i<=mOrderMinusOne; i++)
       {
-        if (SYSTEM_INTERRUPTED) 
+          if (system_interrupted()) 
           {
             // first clean up?
             return;

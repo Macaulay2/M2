@@ -5,7 +5,7 @@
 #include "matrix.hpp"
 #include "frac.hpp"
 #include "text-io.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 bool LLLoperations::checkThreshold(ring_elem num, ring_elem den)
 {
   // Makes sure that 1/4 < num/den <= 1
@@ -259,7 +259,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
   LLLstate->get_entry(0,n+2,alphaTop);  // Don't free alphaTop!
   LLLstate->get_entry(0,n+3,alphaBottom);
 
-  while (k < n && nsteps != 0 && !test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+  while (k < n && nsteps != 0 && !system_interrupted())
     {
       if (M2_gbTrace >= 1)
         {

@@ -6,15 +6,16 @@ include ../Makefile.common
 include @srcdir@/Makefile.files
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
-     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include 
+     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
+	 -I../../e-includes -I@srcdir@/../../d -I../../d \
+	 -I@srcdir@/../../c
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
 
-LOADLIBES += -lstdc++
-
+LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl # -framework vecLib
 
 .PHONY: place_into_lib runtests
 

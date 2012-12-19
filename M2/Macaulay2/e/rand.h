@@ -3,22 +3,7 @@
 #ifndef _rand_h_
 #define _rand_h
 
-#include <M2/config.h>
-#include <stdio.h>
-#include <gmp.h>
-#include <mpfr.h>
-
-#if !defined(SAFEC_EXPORTS)
-#include <engine-exports.h>
-#endif
-
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
+#include "engine-includes.hpp"
 
 #if defined(__cplusplus)
 extern "C" {

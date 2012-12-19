@@ -3,16 +3,6 @@
 #ifndef _aring_hpp_
 #define _aring_hpp_
 
-#ifdef DEBUG
-#include <cassert>
-#define ASSERT(X) assert(X);
-#define IF_DEBUG(X) X
-#else
-#define ASSERT(X)
-#define IF_DEBUG(X)
-#endif
-
-#include "engine.h"
 #include "ringelem.hpp"
 #include "buffer.hpp"
 

@@ -17,7 +17,7 @@
 
 #include "f4/monsort.hpp"
 
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 #define PrintingDegree 0x0001
 
@@ -2254,7 +2254,7 @@ void gbA::do_computation()
         // np_i is initialized at the beginning, and also here.
             while (np_i < n_gb)
               {
-                if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                  if (system_interrupted())
                   {
                     set_status(COMP_INTERRUPTED);
                     return;
@@ -2350,7 +2350,7 @@ void gbA::do_computation()
                     return;
                   }
 
-                if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                if (system_interrupted())
                   {
                     set_status(COMP_INTERRUPTED);
                     return;
@@ -2367,7 +2367,7 @@ void gbA::do_computation()
               {
                 while (ar_j < n_gb)
                   {
-                    if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+                      if (system_interrupted())
                       {
                         set_status(COMP_INTERRUPTED);
                         return;

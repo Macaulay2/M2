@@ -7,23 +7,8 @@
    \mainpage Hi, this is my main documentation page.
  */
 
-#include <M2/config.h>
-#ifndef M2_CONFIG_H
-#error M2/config.h file included was not ours
-#endif
-
-#include <stdio.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
-
-#include "rand.h" // This now contains the engine interface with random numbers
-
-typedef int32_t deg_t;  // this is the integer type to use for degrees and weights
+#include "engine-includes.hpp"
+#include "rand.h" // engine interface for random numbers
 
 #if defined(__cplusplus)
 class Monomial;
@@ -57,13 +42,6 @@ typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
-#endif
-
-#ifdef __cplusplus
-#define BASECLASS : public our_new_delete
-#include "newdelete.hpp"
-#else
-#define BASECLASS
 #endif
 
 #if defined(NO_CONST)

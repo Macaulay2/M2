@@ -32,7 +32,7 @@ private:
 #include "monoid.hpp"
 #include "ringmap.hpp"
 #include "poly.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 #include "aring-m2-gf.hpp"
 #include <iostream>
@@ -101,7 +101,7 @@ bool GF::initialize_GF(const RingElement *prim)
   _one_table[0] = Q_-1;
   for (i=1; i<=Q_-1; i++)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+      if (system_interrupted())
         return false;
       ring_elem f1 = _originalR->add(polys[i], oneR);
       for (j=1; j<=Q_-1; j++)

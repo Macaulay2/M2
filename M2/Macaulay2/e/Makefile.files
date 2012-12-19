@@ -5,6 +5,7 @@
 ##################
 
 INTERFACE = \
+	interrupted \
 	cra \
 	aring-RRR \
 	aring-tower \

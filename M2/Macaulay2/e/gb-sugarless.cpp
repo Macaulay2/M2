@@ -5,7 +5,7 @@
 #include "text-io.hpp"
 #include "matrix-con.hpp"
 #include "gbweight.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 // is_min field of gb_elem:
 //  0 not a mingen (produced by an spair), not minimal gb elem
@@ -777,7 +777,7 @@ void GBinhom_comp::start_computation()
 
   for (;;)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+      if (system_interrupted())
         {
           is_done = COMP_INTERRUPTED;
           break;

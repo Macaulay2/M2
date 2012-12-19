@@ -2,7 +2,7 @@
 #include "matrix.hpp"
 #include "matrix-con.hpp"
 #include "ntuple.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 class KBasis
 {
@@ -187,7 +187,7 @@ void KBasis::basis0_full(int firstvar)
 {
   Bag *b;
 
-  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return;
+  if (system_interrupted()) return;
   if (kb_monideal->search_expvector(kb_exp,b)) return;
 
   insert();
@@ -207,7 +207,7 @@ void KBasis::basis0_singly_graded(int firstvar)
 {
   Bag *b;
 
-  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return;
+  if (system_interrupted()) return;
   if (kb_monideal->search_expvector(kb_exp,b)) return;
 
   if (hi_degree && kb_exp_weight > kb_target_hi_weight)
@@ -241,7 +241,7 @@ void KBasis::basis0_multi_graded(int firstvar)
 {
   Bag *b;
 
-  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return;
+  if (system_interrupted()) return;
   if (kb_monideal->search_expvector(kb_exp,b)) return;
 
 
@@ -304,7 +304,7 @@ void KBasis::compute()
   if (limit == 0) return;
   for (int i=0; i<bottom_matrix->n_rows(); i++)
     {
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return;
+      if (system_interrupted()) return;
       kb_comp = i;
 
       // Make the monomial ideal: this should contain only
@@ -429,7 +429,7 @@ Matrix /* or null */ *KBasis::k_basis(const Matrix *bottom,
   if (lo != NULL && hi != NULL && lo[0] > hi[0]) return KB.value();
 
   KB.compute();
-  if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field))) return 0;
+  if (system_interrupted()) return 0;
   return KB.value();
 }
 

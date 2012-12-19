@@ -1,17 +1,8 @@
 // Copyright 2009 Michael E. Stillman
 
-#include <M2/config.h>
-#include <stdio.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
-
 #include "imonorder.hpp"
 #include "overflow.hpp"
+#include <alloca.h>
 
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)

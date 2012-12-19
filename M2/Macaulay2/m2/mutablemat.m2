@@ -170,6 +170,10 @@ LUdecomposition Matrix := (A) -> (
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
+     R := ring A;
+     if hasEngineLinearAlgebra R then (
+         return map(R,rawLinAlgSolve(raw A, raw b, true));
+         );
      if (opts#Precision !=0) then (
 		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
 		b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
@@ -180,9 +184,9 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      if opts.ClosestFit
      then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
      else rawSolve(raw A,raw b,raw x);
-     matrix x)
+     x)
 solve(Matrix,Matrix) := opts -> (A,b) -> (
-     solve(mutableMatrix(A,Dense=>true),
+     matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
 

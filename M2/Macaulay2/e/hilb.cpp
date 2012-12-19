@@ -2,7 +2,7 @@
 
 #include "hilb.hpp"
 #include "relem.hpp"
-#include "../system/supervisorinterface.h"
+#include "interrupted.hpp"
 
 int partition_table::representative(int x)
 {
@@ -389,7 +389,7 @@ int hilb_comp::calc(int n_steps)
           int result = step();
           if (result == COMP_DONE)
             return COMP_DONE;
-          if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+          if (system_interrupted())
             return COMP_INTERRUPTED;
         }
       return COMP_DONE_STEPS;
@@ -399,7 +399,7 @@ int hilb_comp::calc(int n_steps)
       int result = step();
       if (result == COMP_DONE)
         return COMP_DONE;
-      if (test_Field(THREADLOCAL(interrupts_interruptedFlag,struct atomic_field)))
+      if (system_interrupted())
         return COMP_INTERRUPTED;
     }
 }

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "schorder.hpp"
 #include "matrix.hpp"
 #include "comb.hpp"

@@ -124,6 +124,15 @@ initializeEngineLinearAlgebra Ring := (R) -> (
         if numRows A =!= numColumns A then error "expected square matrix";
         matrix map(R,rawLinAlgInvert(raw A))
         );
+    R.solveLinear = (f,g, rightside) -> (
+        -- solve f*X = g, or (if rightside is false), X*f = g
+        if ring f =!= ring g then error "expected same base rings";
+        A := mutableMatrix(f, Dense=>true);
+        B := mutableMatrix(g, Dense=>true);
+        R := ring A;
+        result := map(R,rawLinAlgSolve(raw A,raw B,rightside));
+        matrix result
+        );
     )
 
 isPrimeField = method()
@@ -159,14 +168,21 @@ rank MutableMatrix := (M) -> rawLinAlgRank raw M
 
 determinant MutableMatrix := opts -> (M) -> (
      R := ring M;
-     new R from rawLinAlgDeterminant raw M
+     if hasEngineLinearAlgebra R then 
+       new R from rawLinAlgDeterminant raw M
+     else
+       error "determinant of mutable matrices over this ring is not implemented"
      )
 
 invert = method()
 invert MutableMatrix := (A) -> (
      R := ring A;
-     if numRows A =!= numColumns A then error "expected square matrix";
-     map(R,rawLinAlgInvert(raw A))
+     if hasEngineLinearAlgebra R then (
+         if numRows A =!= numColumns A then error "expected square matrix";
+         map(R,rawLinAlgInvert(raw A))
+         )
+     else 
+       error "inverse of mutable matrices over this ring is not implemented"
      )
 
 MutableMatrix ^ ZZ := (A, r) -> (
@@ -607,14 +623,16 @@ loadPackage "FastLinearAlgebra"
     modulo(f, f) -- this one calls gb (actually, syz)
     rank h -- these currently call gb too
     rank f
-    det (f * (dual f))
-    det((dual f) * f)
-    p = (dual f) * f
+    det (f * (transpose f))
+    det((transpose f) * f)
+    p = (transpose f) * f
     p^-1 -- this did call a gb, now it does not
-    p^-1 * p 
+    p^-1 * p -- should call mutliplication routine for mutable matrices?
     gens gb f
     f // f -- doesn't work.  (is trying to call rawSolve)
 
+    
+    
     -- matrix multiplication over ZZp p should use the fast matrix mult routines, at least for some size?
     -- inverse: done
     -- kernel: call nullSpace, although kernel also does other things, e.g. modulo.
@@ -630,6 +648,67 @@ loadPackage "FastLinearAlgebra"
     --     a matrix of free modules?
 ///
 
+TEST ///
+    -- test of routines involving modules (subquotients especially) over ZZp
+    restart
+    loadPackage "FastLinearAlgebra"
+    R = ZZp 101
+    N = 1000
+    f = random(R^N, R^(N//2));
+    g = random(target f, R^(N//2 + 70));    
+    time M = subquotient(f,g);
+    
+    -- need the following routine:
+    -- modulo(f,g), where
+    --  f : F --> H  F,G,H are all free R-modules
+    --  g : G --> H
+    -- returns a matrix of the form:  P --> F, P is also a free module
+    -- such that P --> F --> H/(image g) is exact.
+    -- TODO: figure out how to do this using the fast linear algebra methods we have.
+    
+    -- another one: 'prune'
+    -- prune M, where M is a module, returns an isomorphic module, which is minimally generated and presented.
+    -- over a field, this means: write M = R^a, determine a.  Also need the maps
+    -- R^a --> M, M --> R^a.
+    
+    -- another one: "*"
+    
+    -- others: "//", "%".
+    -- f % g does the following: (f, g are matrices with same number of rows).
+    --   form a GB of g (over ZZp this is the column reduced echelon form for the matrix)
+    --   now compute f % g, meaning: reduce each column of f by the columns of g, returning
+    --   a matrix of same shape as f.
+    -- f // g:  f:F-->H, g:G-->H like above, then f//g has shape: F-->G, s.t. g (f//g) = f.
+    --   this one is precisely linear solving.
+///
+
+TEST ///
+    restart
+    loadPackage "FastLinearAlgebra"
+    R = ZZp 101
+    f = matrix{{1_R,2},{3,4}}
+    g = matrix{{1_R},{1_R}}
+    g//f
+    h = R.solveLinear(f,g,true)
+    assert(f*h == g)
+    solveLinear(mutableMatrix f, mutableMatrix g, RightSide=>true)    
+
+    -- TODO: error, the following should give a size error, but doesn't
+    R.solveLinear(f,g,false)
+    solveLinear(mutableMatrix f, mutableMatrix g, RightSide=>false)    
+///
+
+TEST ///  -- CRASHING TEST 19 Dec 2012 Jakob+Mike    
+    restart
+    loadPackage "FastLinearAlgebra"
+    R = ZZp 101
+
+    N = 700
+    f = random(R^N, R^N);  -- this is very slow
+    g = random(R^N, R^100);
+    h = time g//f; -- crash: sometimes creating f above crashes too
+    R.solveLinear(f,g,true)
+///
 
 TEST ///
 
