@@ -360,15 +360,21 @@ document {
      efficient for computing Gröbner bases and syzygies.  The size of Gröbner bases
      of submodules using such orders is often much much smaller than if a position over term
      or term over position order would be used.  We call these Schreyer orders, after
-     Frank Olaf-Schreyer, who used them to give an algorithm for syzygies, and who also 
-     recognized many of their beneficial properties.  See Schreyer.... for more 
+     Frank-Olaf Schreyer, who used them to give an algorithm for syzygies, and who also
+     recognized many of their beneficial properties.  See [S1] and [S2] for more
      information.",
+     BR{},
+     UL {
+	 LI {"[S1] ", EM "Die Berechnung von Syzygien mit dem verallgemeinerten Weierstrassschen Divisionssatz.", "(F.-O. Schreyer, Diplomarbeit, Hamburg, 1980).\n"},
+	 LI {"[S2] ", EM "A standard basis approach to syzygies of canonical curves.", "J. reine angew. Math. 421, 83-123 (1991)"}},
      PARA{},
-     TEX /// Given a free $R$-module $G$, a set of monomials $m_0, \ldots, m_(s-1)$ of $G$,
+     TEX /// Given a free $R$-module $G$, a set of monomials $m_0, \ldots, m_{s-1}$ of $G$,
      and a monomial order on the monomials of $G$, the induced order, or, Schreyer
      order on $F = R^s$ is defined by:
      $a F_i > b F_j$ (in $F$) iff $a m_i > b m_j$ (in $G$), or $a m_i and b m_j$
-     are scalar multiples of each other, and $i>j$, where $F_i$ are the unit column vectors of $F$
+     are scalar multiples of each other, and $i>j$, where $F_i$ are the unit column vectors of $F$.
+     Typically the monomials $m_0, \ldots, m_{s-1}$ are the initial monomials of a Gröbner basis
+     of a submodule of $G$.
      ///,
      PARA{},
      "In Macaulay2, free modules with a Schreyer order on them can be created using ", 
