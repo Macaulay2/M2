@@ -4,8 +4,11 @@ Stillman.  David Eisenbud joined the project a number of years ago, and many use
 are writing packages for the system, and some are contributing source code.
 
 See our web page 
+
   http://www.macaulay2.com 
+
 for more details, and binary releases. Report bugs via the github issue tracker at 
+
   http://github.com/Macaulay2/M2/.  
 
 This repository contains the source code for Macaulay2, and is intended to
