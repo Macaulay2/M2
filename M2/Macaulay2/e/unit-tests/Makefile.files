@@ -1,152 +1,12 @@
-
-E_OBJFILES_OLD := \
-  f4/f4 \
-  f4/f4-syz \
-  f4/f4-mem \
-  f4/f4-monlookup \
-  f4/f4-types \
-  f4/f4-computation \
-  f4/f4-spairs \
-  f4/f4-m2-interface \
-  f4/hilb-fcn \
-  f4/monhashtable \
-  f4/monsort \
-  f4/moninfo \
-  f4/ntuple-monomial \
-  f4/varpower-monomial \
-  f4/gausser \
-	ntl-internal \
-	ntl-debugio \
-	matrix-kbasis \
-	matrix-symm \
-	matrix-sort \
-	ring-vecs \
-        res-a2-gb \
-	engine \
-    error \
-    table \
-    exptable \
-    monordering \
-    complex \
-    rand \
-	cra \
-	aring-RRR \
-	aring-tower \
-	aring-m2-gf \
-	aring-promoter \
-	aring-glue \
-	aring-zzp \
-	aring-gf \
-	aring-ffpack \
-	aring \
-	schurSn \
-	schur2 \
-	spair-heap \
-	dpoly \
-	tower \
-	interreduce \
-	gb-test1 \
-	finalize \
-	NAG \
-	overflow \
-	memory-status \
-	exceptions \
-	newdelete \
-	imonorder \
-	sagbi \
-	monideal-minprimes \
-	dmat-LU \
-	lapack \
-	LLL \
-	fractionfreeLU \
-	ntl-interface \
-	mat \
-	dmat \
-	smat \
-	coeffrings \
-	Eschreyer \
-	gbweight \
-	qring \
-	polyquotient \
-	poly \
-	debug \
-	comp \
-	comp-gb \
-	comp-gb-proxy \
-	comp-gb-declared \
-	comp-res \
-	res-a0 \
-	res-a0-poly \
-	res-a1 \
-	res-a1-poly \
-	res-a2 \
-	reducedgb \
-	reducedgb-field \
-	reducedgb-marked \
-	reducedgb-field-local \
-	reducedgb-ZZ \
-	montable \
-	montableZZ \
-	schorder \
-	GF \
-	ZZ \
-	QQ \
-	RRR \
-	CCC \
-	assprime \
-	buffer \
-	comb \
-	det \
-	frac \
-	franzi-brp \
-	freemod \
-	gb-default \
-	gb-homog2 \
-	gb-sugarless \
-	gb-toric \
-	gb-walk \
-	gbring \
-	gauss \
-	hermite \
-	hilb \
-	int-bag \
-	intarray \
-	matrix \
-	matrix-con \
-	mem \
-	monideal \
-	monoid \
-	monomial \
-	ntuple \
-	polyring \
-	pfaff \
-	relem \
-	ring \
-	ringmap \
-	schur \
-	skew \
-	skewpoly \
-	solvable \
-	spair \
-	text-io \
-	varpower \
-	weylalg \
-	ZZp
-
 UNITTEST_CCFILES := \
     testMain \
     M2-cpp-replacement \
     M2mem-replacement \
-    M2-replacement \
+    basics-test \
     ringZZp-test
 
-#    ringZZ-test
-
 UNITTEST_CFILES += \
-
-#    ../buffer \
-#    ../newdelete
-
+    M2-replacement
 
 
 UNITTEST_TARGET := testMain
@@ -159,3 +19,7 @@ E_OBJECT_FILES := $(addsuffix .o, $(E_FILES) $(F4_FILES))
 
 UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
 UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
+# End:

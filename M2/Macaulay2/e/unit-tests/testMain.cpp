@@ -4,7 +4,7 @@
 extern "C" int breakOnMe () { return 0; }
 
 int break1 = breakOnMe ();
-float pi = 3.1415;
+double pi = 3.1415;
 int break2 = breakOnMe ();
 
 #ifdef NDEBUG
@@ -18,3 +18,8 @@ int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// indent-tabs-mode: nil
+// End:

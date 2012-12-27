@@ -18,7 +18,7 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 #    -I../../e-includes
 
 
-LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl -pthread -framework vecLib
+LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl -pthread -framework vecLib -lgivaro -llinbox
 
 .PHONY: place_into_lib runtests
 
@@ -48,5 +48,5 @@ include $(UNITTEST_CFILES:=.dep) $(UNITTEST_CCFILES:=.dep)
 endif
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 # End:

@@ -4,12 +4,7 @@ void factory_setup_1()
 {
 }
 
-class RingElement;
-
-const RingElement /* or null */ *rawExtendedGCDRingElement(const RingElement *f, 
-                                                           const RingElement *g, 
-                                                           const RingElement **A, 
-                                                           const RingElement **B)
-{
-    return 0;
-}
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// indent-tabs-mode: nil
+// End:
