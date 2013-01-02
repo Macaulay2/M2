@@ -65,11 +65,12 @@ debug64-linbox : always
 	mkdir -p debug64-linbox
 	cd debug64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" \
+		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
+		--enable-memtailor \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
