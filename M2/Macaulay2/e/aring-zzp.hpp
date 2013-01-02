@@ -35,8 +35,12 @@ namespace M2 {
 
     ARingZZp(size_t prime);
 
+    ~ARingZZp();
+
     // ring informational
     size_t characteristic() const { return charac; }
+
+    size_t cardinality() const { return charac; }
 
     static int findPrimitiveRoot(int P);
 
@@ -133,7 +137,10 @@ namespace M2 {
     void negate(elem &result, elem a) const
     {
       if (a != 0)
-        result = p - a;
+        {
+          result = minus_one + a;
+          if (result > p1) result -= p1;
+        }
       else
         result = 0;
     }

@@ -80,6 +80,8 @@ namespace M2 {
     // ring informational
     UTT characteristic() const { return mCharac; }
 
+    UTT cardinality() const { return mCharac; }
+
     ElementType getGenerator() const
     {
         if (not generatorComputed_m)
