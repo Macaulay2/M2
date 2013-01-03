@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gc/gc.h>
+extern "C"  void IM2_initialize(void);
 
 extern "C" int breakOnMe () { return 0; }
 
@@ -15,6 +16,7 @@ int break2 = breakOnMe ();
 
 int main(int argc, char **argv) {
     GC_INIT();
+    IM2_initialize();
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

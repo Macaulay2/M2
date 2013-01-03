@@ -7,6 +7,9 @@
 
 #include "ringmap.hpp"
 
+// Uncomment the following line to see debugging output
+//#define DEBUG_GF
+
 namespace M2 {
 
 //std::vector<GFqDom<long>::Residu_t> irreducible_11_2;
@@ -20,7 +23,10 @@ namespace M2 {
       givaroField(FieldType(charact_, extensionDegree_)),
       givaroRandomIterator( FieldType::randIter(givaroField ))     
     {
-    
+           mCardinality = mCharac;
+           for (int j=1; j<mDimension; j++)
+               mCardinality *= mCharac;
+      
             /// @todo: remove debug code
             /// debug code:
             getModPolynomialCoeffs();
@@ -54,6 +60,10 @@ namespace M2 {
       givaroRandomIterator( FieldType::randIter(givaroField )),
       mGeneratorExponent(1)
     {
+           mCardinality = mCharac;
+           for (int j=1; j<mDimension; j++)
+               mCardinality *= mCharac;
+
             /// @jakob: find out if the irreducible polynomial is checked in givaro.     
             UTT localdegree = M2arrayGetDegree(modPolynomial);
         
@@ -79,13 +89,19 @@ namespace M2 {
       givaroRandomIterator( FieldType::randIter(givaroField )),
       mGeneratorExponent(1)
     {
+
+      mCardinality = mCharac;
+      for (int j=1; j<mDimension; j++)
+        mCardinality *= mCharac;
+
+#ifdef DEBUG_GF
       std::vector<UTT> debugGenPoly = M2arrayToStdVec(charact_, generatorPoly);
       std::cerr << "generatorPoly: ";
       for (int i=0; i<debugGenPoly.size(); i++) {
         std::cerr << debugGenPoly[i] << " ";
       }
       std::cerr << std::endl;
-
+#endif
             /// @jakob: find out if the irreducible polynomial is checked in givaro.     
             UTT localdegree = M2arrayGetDegree(modPolynomial);
         
@@ -149,15 +165,18 @@ namespace M2 {
 
     ARingGF::UTT ARingGF::M2arrayToGFRepresentation( ARingGF::UTT pCharac ,const  M2_arrayint & m2array ) 
     {
+#ifdef DEBUG_GF
        std::cerr << "M2arrayToGFRepresentation"  << std::endl;
+#endif
         ARingGF::UTT rep=0;
         assert( m2array->len > 1  );
         assert( sizeof( m2array->array[0] ) < sizeof( ARingGF::UTT) );
 
         for ( ARingGF::STT pos =  m2array->len-1 ; pos>=0;pos--)
         {
+#ifdef DEBUG_GF
             std::cerr << " m2array->array["<< pos << "]" <<  m2array->array[pos] << std::endl;
-
+#endif
             if (m2array->array[pos]>=0 ) 
             {
                  assert( (ARingGF::UTT)(m2array->array[pos]) < pCharac); 
@@ -178,7 +197,9 @@ namespace M2 {
     {
         UTT  packedPolynomial;
         packedPolynomial = this->givaroField.convert(packedPolynomial, el );
+#ifdef DEBUG_GF
         std::cerr << "packedPolynomial = " << packedPolynomial << std::endl;
+#endif
         return elementRepresentationToM2Array(packedPolynomial);
     }
 
@@ -198,7 +219,9 @@ namespace M2 {
     std::vector< ARingGF::UTT> ARingGF::M2arrayToStdVec( ARingGF::UTT pCharac, const  M2_arrayint &  m2array ) 
     {
         // std::vector< UTT > stdvec;
+#ifdef DEBUG_GF
        std::cerr << "M2arrayToStdVec"  << std::endl;
+#endif
         assert( m2array->len > 0  );
 
         std::vector< ARingGF::UTT> vec;
@@ -247,11 +270,15 @@ namespace M2 {
 
 M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum, UTT charac ) 
 {
+#ifdef DEBUG_GF
     std::cerr << "representationToM2Array:\n";
+#endif
     M2_arrayint     polynomialCoeffs = M2_makearrayint(coeffNum);
+#ifdef DEBUG_GF
     std::cerr << "coeffNum" << coeffNum << std::endl;
     std::cerr << "charac" << charac << std::endl;
     std::cerr << "representation" << representation << std::endl;
+#endif
     long exp = 0;
     assert( representation !=0 );
     
@@ -262,12 +289,14 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
         UTT  remainder = representation%charac;
         representation = representation/charac;
         polynomialCoeffs->array[ exp ]= remainder;
-        
+
+#ifdef DEBUG_GF        
         //debug:
         if (exp >0 )
              std::cerr << " + ";
          std::cerr << remainder <<"*" << "X^" << exp;
         // end debug
+#endif
         exp++;
     }
     assert( representation ==0 );
@@ -276,7 +305,9 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
          assert(exp < coeffNum);
          polynomialCoeffs->array[ exp ] = 0;
     }
+#ifdef DEBUG_GF
     std::cerr << "\n";
+#endif
     return polynomialCoeffs;
 }
 
@@ -287,7 +318,9 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum 
 
 M2_arrayint ARingGF::elementRepresentationToM2Array(UTT polynomialRep) const
 {
+#ifdef DEBUG_GF
      std::cerr << "representationToM2Array:\n";
+#endif
     long coeffNum  ;
     return representationToM2Array(polynomialRep, coeffNum = this->mDimension );
 }
@@ -295,7 +328,9 @@ M2_arrayint ARingGF::elementRepresentationToM2Array(UTT polynomialRep) const
 
 M2_arrayint ARingGF::modPolynomialRepresentationToM2Array(UTT polynomialRep) const
 {
+#ifdef DEBUG_GF
     std::cerr << "modPolynomialRepresentationToM2Array:\n";
+#endif
     long coeffNum  ;
     return representationToM2Array(polynomialRep, coeffNum = this->mDimension +1 );
 }
@@ -305,7 +340,9 @@ M2_arrayint ARingGF::modPolynomialRepresentationToM2Array(UTT polynomialRep) con
 /// @todo problems, if characteristic does not fit in a int.
 M2_arrayint ARingGF::getModPolynomialCoeffs() const
 {
+#ifdef DEBUG_GF
     std::cerr << "getModPolynomialCoeffs\n";
+#endif
     long coeffNum=this->mDimension + 1;
     M2_arrayint     modPolynomialCoeffs = M2_makearrayint(coeffNum);
     UTT             modPolynomialRepresentation = this->givaroField.irreducible();
@@ -315,15 +352,19 @@ M2_arrayint ARingGF::getModPolynomialCoeffs() const
 
 M2_arrayint ARingGF::getGeneratorCoeffs() const
 {
+#ifdef DEBUG_GF
     std::cerr << "getGeneratorCoeffs\n";
+#endif
     long coeffNum = this->mDimension + 1;
     M2_arrayint     generatorPolynomialCoeffs = M2_makearrayint(coeffNum);
     ElementType genRep,packedGenPolynomial; ///todo: typ (gen) eigentlich UTT?
     givaroField.generator(genRep);
     packedGenPolynomial = givaroField.generator();
 
+#ifdef DEBUG_GF
     std::cerr << "packedGenPolynomial " << packedGenPolynomial << std::endl;
     std::cerr << "genRep " << genRep << std::endl;
+#endif
     //assert(gen==genRep);
     //UTT  generatorRepresentation;
     //generatorRepresentation = this->givaroField.convert(generatorRepresentation,gen);
@@ -333,15 +374,23 @@ M2_arrayint ARingGF::getGeneratorCoeffs() const
 
 ring_elem  ARingGF::getGenerator() const
 {
+#ifdef DEBUG_GF
    std::cerr << "  ARingGF::getGenerator()" << std::endl;
+#endif
     ElementType packedGenPolynomial = givaroField.generator();  
     ElementType genRep;
     givaroField.generator(genRep);
 
+#ifdef DEBUG_GF
      std::cerr << "packedGenPolynomial " << packedGenPolynomial << std::endl;
     std::cerr << "genRep " << genRep << std::endl;
+#endif
+
      elementRepresentationToM2Array( packedGenPolynomial ) ;
+
+#ifdef DEBUG_GF
     std::cerr << "end elementRepresentationToM2Array " << genRep << std::endl;
+#endif
 
     ring_elem result;
     //to_ring_elem(result,packedGenPolynomial);
@@ -349,7 +398,6 @@ ring_elem  ARingGF::getGenerator() const
     //std::cerr << " result " << *result << std::endl;
     return result;
 }
-
 
 bool ARingGF::is_unit(const ElementType f) const 	
     {   return givaroField.isunit(f); }
@@ -364,7 +412,9 @@ bool ARingGF::is_equal(const ElementType f, const ElementType g) const
 /// compare exponents of the used generator
 int ARingGF::compare_elems(const ElementType f, const ElementType g) const 
 {
+#ifdef DEBUG_GF
     std::cerr << "ARingGF::compare_elems" << std::endl;
+#endif
     if (f < g) return -1; 
     if (f > g) return 1;
 
@@ -376,8 +426,9 @@ int ARingGF::compare_elems(const ElementType f, const ElementType g) const
 ///@todo also consider conversion problems depending on 'elem' type
 int ARingGF::get_int(const ElementType f) const 
 {
-    
+#ifdef DEBUG_GF    
     std::cerr << "ARingGF::get_int" << std::endl;
+#endif
     assert(false);
     return f; 
 }
@@ -387,7 +438,9 @@ int ARingGF::get_int(const ElementType f) const
 /// @todo problems if type 'elem' is bigger than  int
 int ARingGF::get_repr(const ElementType f) const 
 {
+#ifdef DEBUG_GF
     std::cerr << "get_repr" << std::endl;
+#endif
     int result;
     givaroField.convert(result,f);
     return result; 
@@ -404,14 +457,19 @@ int ARingGF::get_repr(const ElementType f) const
     void ARingGF::copy(ElementType &result, const ElementType a) const { result = a; }
 
 
-/// @todo possible problem if type UTT is smaller than an int?
-void ARingGF::set_from_int(ElementType &result, int a) const 
-{
-    //std::cerr << "ARingGF::set_from_int" << std::endl;
-    a = a % mCharac; 
-    if (a < 0) a += mCharac;
-    givaroField.init(result, a);
-}
+    /// @todo possible problem if type UTT is smaller than an int?
+    void ARingGF::set_from_int(ElementType &result, int a) const 
+    {
+      //std::cerr << "ARingGF::set_from_int" << std::endl;
+      a = a % static_cast<long>(mCharac); // strange: if mCharac isn't cast away from unsigned, 
+                                          // then a is coerced to unsigned, and get the wrong answer!
+      // e.g:
+      //  (-5) % (unsigned long)(5) == 1
+      //  (-5) % (long)(5) == 0.  Wow!
+
+      if (a < 0) a += mCharac;
+      givaroField.init(result, a);
+    }
 
     void ARingGF::set_from_mpz(ElementType &result, const mpz_ptr a) const 
     {
@@ -577,7 +635,9 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     int exp[1];
     ElementType genRep;
     givaroField.generator(genRep);
+#ifdef DEBUG_GF
     std::cerr << "genRep " << genRep << std::endl;
+#endif
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;

@@ -1,4 +1,4 @@
-// Copyright 2012-2013 Michael E. Stillman
+// Copyright 2013 Michael E. Stillman
 
 #include <cstdio>
 #include <string>
@@ -8,13 +8,12 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "ZZp.hpp"
-#include "aring-ffpack.hpp"
-#include "aring-zzp.hpp"
+#include "debug.hpp"
+#include "aring-gf.hpp"
 #include "ring-test.hpp"
 
-const int nelements = 200;
-int randomVals[nelements] = {
+static const int nelements = 200;
+static int randomVals[nelements] = {
   2666036, 85344567, 71531106, 8755168, 53852118, 88167705, 22475268, 41297550, 91010248, 44033907, 
   33751711, 95042283, 701143, 62443598, 55048281, 17723663, 85240587, 25979106, 47819861, 90244528, 
   11275250, 22798387, 68996632, 76613634, 48760025, 24733508, 27522895, 56224559, 66749385, 49236242, 
@@ -36,8 +35,11 @@ int randomVals[nelements] = {
   35340937, 98935118, 77343644, 78522496, 46395773, 35429063, 54767177, 14130046, 2726640, 44257782, 
   31615869, 83095327, 15062803, 92772905, 25189126, 86464567, 43372313, 24240507, 96790882, 99639739};
 
+
 template<>
-bool getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::ARingZZpFFPACK::ElementType& result)
+bool getElement<M2::ARingGF>(const M2::ARingGF& R, 
+                                    int index, 
+                                    M2::ARingGF::ElementType& result)
 {
   if (index >= nelements) return false;
   //  int idx = index % R.cardinality();
@@ -45,96 +47,84 @@ bool getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::
   return true;
 }
 
-template<>
-bool getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::ElementType& result)
-{
-  if (index >= nelements) return false;
-  R.set_var(result, 0);
-  //  std::cout << "generator = " << result << std::endl;
-  R.power(result, result, randomVals[index]);
-  //std::cout << "gen^" << randomVals[index] << " = " << result << std::endl;
-  return true;
-}
+#if defined(HAVE_GIVARO)
+  TEST(ARingGFGivaro, create) {
+    M2::ARingGF R(5,3);
+      
+    EXPECT_EQ(ringName(R), "GF(5,3,Givaro)");
+    EXPECT_EQ(R.cardinality(), 125);
+    EXPECT_EQ(R.characteristic(), 5);
 
-TEST(RingZZp, create) {
-  const Z_mod *R = Z_mod::create(101);
-  EXPECT_FALSE(R == 0);
-  buffer o;
-  o << "Ring being tested: ";
-  R->text_out(o);
-  fprintf(stdout, "%s\n", o.str());
-}
+    M2_arrayint gen_modpoly = R.getModPolynomialCoeffs();
+    std::cout << "minimal polynomial = ";
+    dintarray(gen_modpoly);
+    std::cout << std::endl;
 
-#if defined(HAVE_FFLAS_FFPACK)
-TEST(ARingZZpFFPACK, create) {
-  M2::ARingZZpFFPACK R(101);
-  
-  EXPECT_EQ(ringName(R), "ZZpFPACK(101,1)");
-  testSomeMore(R);
+    M2_arrayint gen_coeffs = R.getGeneratorCoeffs();
+    std::cout << "generator polynomial = ";
+    dintarray(gen_coeffs);
+    std::cout << std::endl;
 
-  std::cout << "max modulus for ffpack zzp: " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
-}
+    // Check what values integers go to
+    M2::ARingGF::ElementType a;
+    R.init(a);
+    for (int i=-5; i<R.characteristic(); i++)
+      {
+        R.set_from_int(a, i);
+        M2_arrayint coeffs = R.fieldElementToM2Array(a);
+        if (i >= 0) EXPECT_EQ(coeffs->array[0], i);
+        EXPECT_EQ(coeffs->len, 3);
+        for (int j=1; j<3; j++)
+          EXPECT_EQ(coeffs->array[j], 0);
+        std::cout << i << " = ";
+        dintarray(coeffs);
+        std::cout << std::endl;
+      }
+    R.clear(a);
 
-TEST(ARingZZpFFPACK, arithmetic) {
-  M2::ARingZZpFFPACK R(101);
-  testFiniteField(R);
-}
-#endif 
+    testSomeMore(R);
+  }
 
-TEST(ARingZZp, create) {
-  M2::ARingZZp R(101);
-  M2::ARingZZp::ElementType a;
-  buffer o;
+  TEST(ARingGFGivaro, random) {
+    M2::ARingGF R(7,2);
+    M2::ARingGF::ElementType a;
+    R.init(a);
+    int counts[49];
+    for (int i=0; i<49; i++)
+      counts[i] = 0;
+    for (int i=0; i<49*200; i++)
+      {
+        R.random(a);
+        EXPECT_TRUE(a >= 0);
+        EXPECT_TRUE(a < 49);
+        counts[a]++;
+      }
+#if 0
+    double sum = 0;
+    for (int i=0; i<49; i++)
+      {
+        std::cout << i << "  " << counts[i] << std::endl;
+        sum += (counts[i]-200)^2;
+      }
 
-  EXPECT_EQ(ringName(R), "AZZ/101");
-  EXPECT_EQ(R.cardinality(), 101);
-  EXPECT_EQ(R.characteristic(), 101);
-  // Now check what the generator is, as an integer
-  R.init(a);
-  R.set_var(a, 0);
-  R.elem_text_out(o, a, true, true, false);
-  std::cout << "generator is " << o.str() << std::endl;
-  R.clear(a);
+    sum /= (49*200);
+    std::cout << "chi = " << sum << std::endl;
+    for (int i=0; i<49; i++)
+      {
+        a = i;
+        M2_arrayint f = R.fieldElementToM2Array(a);
+        dintarray(f);
+        std::cout << std::endl;
+      }
+#endif
+    R.clear(a);
+  }
 
-}
+  TEST(ARingGFGivaro, arithmetic) {
+    M2::ARingGF R(5,3);
+    testFiniteField(R);
+  }
 
-TEST(ARingZZp, arithmetic101) {
-  M2::ARingZZp R(101);
-  testFiniteField(R);
-}
-
-TEST(ARingZZp, arithmetic2) {
-  M2::ARingZZp R(2);
-  testFiniteField(R);
-}
-
-TEST(ARingZZp, arithmetic3) {
-  M2::ARingZZp R(3);
-  testFiniteField(R);
-}
-
-#if defined(HAVE_FFLAS_FFPACK)
-TEST(ARingZZpFFPACK, arithmetic101) {
-  M2::ARingZZpFFPACK R(101);
-  testFiniteField(R);
-}
-
-//TODO: commented out because it appears wrong.  Perhaps p=2 isn't allowed here?
-//TEST(ARingZZpFFPACK, arithmetic2) {
-//  M2::ARingZZpFFPACK R(2);
-//  testFiniteField(R);
-//}
-
-TEST(ARingZZpFFPACK, arithmetic3) {
-  M2::ARingZZpFFPACK R(3);
-  testFiniteField(R);
-}
-
-//TODO: commented out because it takes too long:
-//TEST(ARingZZpFFPACK, arithmetic67108879) {
-//  M2::ARingZZpFFPACK R(67108879);
-//  testFiniteField(R);
-//}
 #endif 
 
 // Local Variables:
