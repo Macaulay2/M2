@@ -42,7 +42,7 @@ TEST(RingTower, create)
   const Tower* R = Tower::create(101, varnames);
   EXPECT_TRUE(R != 0);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
-
+  EXPECT_EQ(R->n_vars(), 2);
   for (int i=1; i<500; i++)
     {
       ring_elem f = R->random();
@@ -51,6 +51,28 @@ TEST(RingTower, create)
       R->elem_text_out(o,f);
       std::cout << o.str() << std::endl;
     }
+}
+
+TEST(RingTower, elems)
+{
+  std::vector<std::string> vars = {"a", "b"};
+  M2_ArrayString varnames = toM2ArrayString(vars);
+  const Tower* R = Tower::create(101, varnames);
+
+  ring_elem a = R->var(0);
+  ring_elem b = R->var(1);
+
+  buffer o;
+  o << "a="; R->elem_text_out(o, a);
+  o << " b="; R->elem_text_out(o, b);
+  ring_elem c = R->add(a,R->from_int(2));
+  c = R->add(c,b);
+  o << " c="; R->elem_text_out(o, c);
+  ring_elem d = R->power(c,2);
+  o << " d="; R->elem_text_out(o, d);
+  o << newline;
+
+  std::cout << o.str();
 }
 
 // Local Variables:

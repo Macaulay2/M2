@@ -1,7 +1,7 @@
 // Copyright 2013 Michael E. Stillman
 #include "rings-test.hpp"
 
-static int ntrials = 5000;
+static int ntrials = 100; //5000;
 static bool maxH_initialized = false;
 static mpz_t maxH;
 
