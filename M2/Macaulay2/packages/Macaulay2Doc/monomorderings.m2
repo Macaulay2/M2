@@ -361,12 +361,13 @@ document {
      of submodules using such orders is often much much smaller than if a position over term
      or term over position order would be used.  We call these Schreyer orders, after
      Frank-Olaf Schreyer, who used them to give an algorithm for syzygies, and who also
-     recognized many of their beneficial properties.  See [S1] and [S2] for more
-     information.",
+     recognized many of their beneficial properties.  See [S1] and [S2] for the algorithm,
+     and [LS] for improvements and details on the implementation in Macaulay2",
      BR{},
      UL {
+	 LI {"[LS] ", EM "Strategies for computing minimal free resolutions.", "(R. LaScala and M. Stillman, J. Symb. Comp. 26, 409-431, 1998).\n"},
 	 LI {"[S1] ", EM "Die Berechnung von Syzygien mit dem verallgemeinerten Weierstrassschen Divisionssatz.", "(F.-O. Schreyer, Diplomarbeit, Hamburg, 1980).\n"},
-	 LI {"[S2] ", EM "A standard basis approach to syzygies of canonical curves.", "J. reine angew. Math. 421, 83-123 (1991)"}},
+	 LI {"[S2] ", EM "A standard basis approach to syzygies of canonical curves.", "F.-O. Schreyer, J. reine angew. Math. 421, 83-123 (1991)"}},
      PARA{},
      TEX /// Given a free $R$-module $G$, a set of monomials $m_0, \ldots, m_{s-1}$ of $G$,
      and a monomial order on the monomials of $G$, the induced order, or, Schreyer
