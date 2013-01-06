@@ -11,8 +11,8 @@ include @srcdir@/Makefile.files
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
-	 -I@srcdir@/../../c
-
+	 -I@srcdir@/../../c 
+CXXFLAGS += -std=gnu++0x
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes

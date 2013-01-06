@@ -17,7 +17,7 @@
 template <typename RingType>
 ring_elem getElement(const RingType& R, int index);
 
-static int ntrials = 50000;
+static int ntrials = 5000;
 static bool maxH_initialized = false;
 static mpz_t maxH;
 
@@ -911,8 +911,8 @@ TEST(RingCCC, power)
       ring_elem b = R->power(a, e1);
       ring_elem c = R->power(a, e2);
       ring_elem d = R->power(a, e1+e2);
-      ring_elem e = R->mult(b,c);
 #if 0
+      ring_elem e = R->mult(b,c);
       mpfr_printf("b=(%.30Rf,%.30Rf)\n",BIGCC_RE(b), BIGCC_IM(b));
       mpfr_printf("c=(%.30Rf,%.30Rf)\n",BIGCC_RE(c), BIGCC_IM(c));
       mpfr_printf("d=(%.30Rf,%.30Rf)\n",BIGCC_RE(d), BIGCC_IM(d));
@@ -959,7 +959,6 @@ TEST(RingCCC, syzygy)
       EXPECT_TRUE(almostEqual(R, 94, result, R->zero()));
     }
 }
-
 
 
 // Local Variables:

@@ -5,7 +5,8 @@ UNITTEST_CCFILES := \
     basics-test \
     ringZZp-test \
     ring-GF-test \
-    ring-ZZ-test
+    ring-ZZ-test \
+    ring-tower-test
 
 UNITTEST_CFILES += \
     M2-replacement
