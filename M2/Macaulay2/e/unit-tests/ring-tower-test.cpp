@@ -8,11 +8,10 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "ZZ.hpp"
-#include "ZZp.hpp"
-#include "QQ.hpp"
-#include "RRR.hpp"
+#include "tower.hpp"
+
 #include "ring-test.hpp"
+#include "rings-test.hpp"
 
 // First: we need a routne to read a polynomial from a string.
 // Format:  variables are a..zA..Z, and then [1], [2], ...
@@ -30,10 +29,28 @@ M2_ArrayString toM2ArrayString(std::vector<std::string> &strs)
   return a;
 }
 
+template <>
+ring_elem getElement<Tower>(const Tower&  R, int index)
+{
+}
+
 //////////////////////////////////////////////////
 TEST(RingTower, create)
 {
   std::vector<std::string> vars = {"a", "b"};
+  M2_ArrayString varnames = toM2ArrayString(vars);
+  const Tower* R = Tower::create(101, varnames);
+  EXPECT_TRUE(R != 0);
+  EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
+
+  for (int i=1; i<500; i++)
+    {
+      ring_elem f = R->random();
+      buffer o;
+      o << "f = ";
+      R->elem_text_out(o,f);
+      std::cout << o.str() << std::endl;
+    }
 }
 
 // Local Variables:

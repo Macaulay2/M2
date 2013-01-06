@@ -5,7 +5,7 @@ UNITTEST_CCFILES := \
     basics-test \
     ringZZp-test \
     ring-GF-test \
-    ring-ZZ-test \
+    rings-test \
     ring-tower-test
 
 UNITTEST_CFILES += \
