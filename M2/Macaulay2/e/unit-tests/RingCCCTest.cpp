@@ -1,58 +1,62 @@
 // Copyright 2013 Michael E. Stillman
-
-
 #include "RingTest.hpp"
-#include "RRR.hpp"
+
+#include "CCC.hpp"
 #include "ZZp.hpp"
 
-bool almostEqual(const RRR* R, int nbits, ring_elem a, ring_elem b)
+bool almostEqual(const CCC* R, int nbits, ring_elem a, ring_elem b)
 {
   mpfr_t epsilon;  
   mpfr_init2(epsilon, 100);
   mpfr_set_ui_2exp(epsilon, 1, -nbits, GMP_RNDN);
   
-  ring_elem c = R->subtract(a,b);
-  bool ret =  mpfr_cmpabs(c.mpfr_val,epsilon) < 0;
+  ring_elem f = R->subtract(a,b);
+  mpfr_ptr f1 = BIGCC_RE(f);
+  bool re_is_zero = (mpfr_cmpabs(f1,epsilon) < 0);
+  mpfr_ptr f2 = BIGCC_IM(f);
+  bool im_is_zero = (mpfr_cmpabs(f2,epsilon) < 0);
 
+  bool ret = re_is_zero && im_is_zero;
   mpfr_clear(epsilon);
   return ret;
 }
 
 template <>
-ring_elem getElement<RRR>(const RRR&  R, int index)
+ring_elem getElement<CCC>(const CCC&  R, int index)
 {
   if (index < 50) return R.from_int(index-25);
   return R.random();
 }
 
-TEST(RingRRR, create)
+////////////////////////////////////////////////////////
+TEST(RingCCC, create)
 {
-  Ring *R = RRR::create(100);
+  Ring *R = CCC::create(100);
   EXPECT_TRUE(R != 0);
 
   EXPECT_TRUE(dynamic_cast< const Z_mod * >(R) == 0);
-  EXPECT_TRUE(dynamic_cast< const RRR * >(R) != 0);
+  EXPECT_TRUE(dynamic_cast< const CCC * >(R) != 0);
   EXPECT_FALSE(R->is_ZZ());
-  EXPECT_TRUE(R->is_RRR());
-  EXPECT_EQ(ringName(*R), "RRR_100");
+  EXPECT_TRUE(R->is_CCC());
+  EXPECT_EQ(ringName(*R), "CCC_100");
 }
-TEST(RingRRR, ones)
+TEST(RingCCC, ones)
 {
-  Ring *R = RRR::create(100);
+  Ring *R = CCC::create(100);
   EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
   EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
   EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
   EXPECT_TRUE(R->is_zero(R->from_int(0)));
 }
-TEST(RingRRR, negate)
+TEST(RingCCC, negate)
 {
-  RRR *R = RRR::create(100);
+  CCC *R = CCC::create(100);
   testRingNegate(R, ntrials);
 }
-TEST(RingRRR, add)
+TEST(RingCCC, add)
 {
-  RRR *R = RRR::create(100);
-  RingElementGenerator<RRR> gen(*R);
+  CCC *R = CCC::create(100);
+  RingElementGenerator<CCC> gen(*R);
 
   for (int i=0; i<ntrials; i++)
     {
@@ -65,15 +69,15 @@ TEST(RingRRR, add)
       EXPECT_TRUE(almostEqual(R,98,a,e));
     }
 }
-TEST(RingRRR, subtract)
+TEST(RingCCC, subtract)
 {
-  RRR *R = RRR::create(100);
+  CCC *R = CCC::create(100);
   testRingSubtract(R, ntrials);
 }
-TEST(RingRRR, multDivide)
+TEST(RingCCC, multDivide)
 {
-  RRR *R = RRR::create(100);
-  RingElementGenerator<RRR> gen(*R);
+  CCC *R = CCC::create(100);
+  RingElementGenerator<CCC> gen(*R);
   for (int i=0; i<ntrials; i++)
     {
       // test: (a*b) // b == a
@@ -90,10 +94,10 @@ TEST(RingRRR, multDivide)
     }
 
 }
-TEST(RingRRR, axioms)
+TEST(RingCCC, axioms)
 {
-  RRR *R = RRR::create(100);
-  RingElementGenerator<RRR> gen(*R);
+  CCC *R = CCC::create(100);
+  RingElementGenerator<CCC> gen(*R);
   for (int i=0; i<ntrials; i++)
     {
       ring_elem a = gen.nextElement();
@@ -124,17 +128,23 @@ TEST(RingRRR, axioms)
       // test: a*(b+c) == a*b + a*c
       d = R->mult(a, R->add(b,c));
       e = R->add(R->mult(a,b), R->mult(a,c));
-      EXPECT_TRUE(almostEqual(R,94,d,e));
+#if 0
+      mpfr_printf("a=(%.20Rf,%.20Rf)\n",BIGCC_RE(a), BIGCC_IM(a));
+      mpfr_printf("b=(%.20Rf,%.20Rf)\n",BIGCC_RE(b), BIGCC_IM(b));
+      mpfr_printf("a*(b+c)=(%.20Rf,%.20Rf)\n",BIGCC_RE(d), BIGCC_IM(d));
+      mpfr_printf("a*b+a*c=(%.20Rf,%.20Rf)\n",BIGCC_RE(e), BIGCC_IM(e));
+#endif
+      EXPECT_TRUE(almostEqual(R,92,d,e));
     }
 
 }
-TEST(RingRRR, power)
+TEST(RingCCC, power)
 {
-  RRR *R = RRR::create(100);
+  CCC *R = CCC::create(100);
 
   mpz_t gmp1;
   mpz_init(gmp1);
-  RingElementGenerator<RRR> gen(*R);
+  RingElementGenerator<CCC> gen(*R);
   for (int i=0; i<ntrials; i++)
     {
       ring_elem a = gen.nextElement();
@@ -148,7 +158,14 @@ TEST(RingRRR, power)
       ring_elem b = R->power(a, e1);
       ring_elem c = R->power(a, e2);
       ring_elem d = R->power(a, e1+e2);
-      EXPECT_TRUE(almostEqual(R,96,R->mult(b,c),d));
+#if 0
+      ring_elem e = R->mult(b,c);
+      mpfr_printf("b=(%.30Rf,%.30Rf)\n",BIGCC_RE(b), BIGCC_IM(b));
+      mpfr_printf("c=(%.30Rf,%.30Rf)\n",BIGCC_RE(c), BIGCC_IM(c));
+      mpfr_printf("d=(%.30Rf,%.30Rf)\n",BIGCC_RE(d), BIGCC_IM(d));
+      mpfr_printf("e=(%.30Rf,%.30Rf)\n",BIGCC_RE(e), BIGCC_IM(e));
+#endif
+      EXPECT_TRUE(almostEqual(R,80,R->mult(b,c),d));
 
       // Make sure that powers via mpz work (at least for small exponents)
       mpz_set_si(gmp1, e1);
@@ -157,13 +174,13 @@ TEST(RingRRR, power)
     }
   mpz_clear(gmp1);
 }
-TEST(RingRRR, syzygy)
+TEST(RingCCC, syzygy)
 {
-  // NOTE: RRR::syzygy, CCC::syzygy are not useful functions.
+  // NOTE: CCC::syzygy, CCC::syzygy are not useful functions.
   // Should we remove these tests, and the corresponding functions?
-  RRR *R = RRR::create(100);
+  CCC *R = CCC::create(100);
 
-  RingElementGenerator<RRR> gen(*R);
+  RingElementGenerator<CCC> gen(*R);
   for (int i=0; i<ntrials; i++)
     {
       ring_elem u, v;
@@ -186,7 +203,7 @@ TEST(RingRRR, syzygy)
       EXPECT_TRUE(almostEqual(R,98,v, a));
       R->syzygy(a,b,u,v);
       ring_elem result = R->add(R->mult(a,u), R->mult(b,v));
-      EXPECT_TRUE(almostEqual(R, 95, result, R->zero()));
+      EXPECT_TRUE(almostEqual(R, 94, result, R->zero()));
     }
 }
 

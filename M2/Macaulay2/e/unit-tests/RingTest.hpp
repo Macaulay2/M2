@@ -3,15 +3,14 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
-#include <sstream>
+//#include <sstream>
 #include <memory>
 #include <gtest/gtest.h>
-#include <mpfr.h>
+//#include <mpfr.h>
 
 #include "ZZ.hpp"
-#include "ZZp.hpp"
-#include "QQ.hpp"
-#include "RRR.hpp"
+
+const int ntrials = 100; // 5000
 
 template<typename T>
 std::string ringName(const T &R)

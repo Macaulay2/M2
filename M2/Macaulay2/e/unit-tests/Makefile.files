@@ -5,13 +5,15 @@ UNITTEST_CCFILES := \
     basics-test \
     ARingZZpTest \
     ARingGFTest \
+    RingZZTest \
+    RingZZpTest \
+    RingQQTest \
     RingRRRTest \
-    rings-test \
-    ring-tower-test
+    RingCCCTest \
+    RingTowerTest
 
 UNITTEST_CFILES += \
     M2-replacement
-
 
 UNITTEST_TARGET := testMain
 
