@@ -10,7 +10,7 @@
 
 #include "debug.hpp"
 #include "aring-gf.hpp"
-#include "ring-test.hpp"
+#include "ARingTest.hpp"
 
 static const int nelements = 200;
 static int randomVals[nelements] = {

@@ -11,7 +11,7 @@
 #include "ZZp.hpp"
 #include "aring-ffpack.hpp"
 #include "aring-zzp.hpp"
-#include "ring-test.hpp"
+#include "ARingTest.hpp"
 
 const int nelements = 200;
 int randomVals[nelements] = {

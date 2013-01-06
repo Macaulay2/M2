@@ -12,7 +12,15 @@
 #include "ZZp.hpp"
 #include "QQ.hpp"
 #include "RRR.hpp"
-#include "ring-test.hpp"
+
+template<typename T>
+std::string ringName(const T &R)
+{
+  buffer o;
+  R.text_out(o);
+  std::string result = o.str();
+  return result;
+}
 
 template <typename RingType>
 ring_elem getElement(const RingType& R, int index);
@@ -254,3 +262,8 @@ void testRingSyzygy(const T* R, int ntrials)
   // over ZZ:
   // syzygy(a,b) returns (b/c, -a/c), where c = +- gcd(a,b), with same sign as b
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// indent-tabs-mode: nil
+// End:
