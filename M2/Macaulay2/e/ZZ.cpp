@@ -222,8 +222,6 @@ bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
 void RingZZ::lower_content(ring_elem &c, ring_elem g) const
 // c is a content elem, g is in ring
 {
-  // if f is 0, do f=sign(g), else f=sign(f)
-  // return whether f is zero
   if (is_zero(c))
     {
       c = g;
@@ -378,6 +376,7 @@ ring_elem RingZZ::gcd_extended(const ring_elem f, const ring_elem g,
 void RingZZ::syzygy(const ring_elem a, const ring_elem b,
                ring_elem &x, ring_elem &y) const
 {
+  ASSERT(!is_zero(b));
   // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
   if (RingZZ::is_zero(a))
     {

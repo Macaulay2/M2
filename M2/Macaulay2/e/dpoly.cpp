@@ -210,7 +210,7 @@ void DPoly::increase_size_0(int newdeg, poly &f)
         newelems[i] = fp[i];
       for (int i = f->deg+1; i < newdeg+1; i++)
         newelems[i] = 0;
-      delete [] fp;
+      deletearray(fp);
       f->arr.ints = newelems;
       f->len = newdeg+1;
       f->deg = newdeg;
@@ -228,7 +228,7 @@ void DPoly::increase_size_n(int newdeg, poly &f)
         newelems[i] = fp[i];
       for (int i = f->deg+1; i < newdeg+1; i++)
         newelems[i] = 0;
-      delete [] fp;
+      deletearray(fp);
       f->arr.polys = newelems;
       f->len = newdeg+1;
       f->deg = newdeg;
@@ -270,7 +270,7 @@ void DPoly::dealloc_poly(poly &f)
  // only f is freed, not any pointers in the array of f
 {
   if (f == 0) return;
-  delete [] f->arr.polys;
+  deletearray(f->arr.polys);
   delete f;
   f = 0;
 }
@@ -311,7 +311,7 @@ poly DPoly::read_poly_n(char * &str, int level)
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
   poly result = DPoly::alloc_poly_n(len-1, elems);
-  delete [] elems;
+  deletearray(elems);
   return result;
 }
 
@@ -353,7 +353,7 @@ poly DPoly::read_poly_0(char * &str)
   // the only way to get here is if *str == ']'.  Eat that char.
   str++;
   poly result = DPoly::alloc_poly_0(len-1, elems);
-  delete [] elems;
+  deletearray(elems);
   return result;
 }
 

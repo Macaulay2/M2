@@ -4,8 +4,11 @@
 ## Source code ###
 ##################
 
-INTERFACE = \
+INTERFACE2 = \
 	interrupted \
+	newdelete \
+
+INTERFACE = \
 	cra \
 	aring-RRR \
 	aring-tower \
@@ -28,7 +31,6 @@ INTERFACE = \
 	overflow \
 	memory-status \
 	exceptions \
-	newdelete \
 	imonorder \
 	sagbi \
 	monideal-minprimes \
@@ -110,6 +112,10 @@ INTERFACE = \
 	weylalg \
 	ZZp
 
+COMMANDS2 = \
+	x-monideal \
+	x-factor
+
 COMMANDS = \
 	ntl-internal \
 	ntl-debugio \
@@ -123,10 +129,8 @@ COMMANDS = \
 	x-monom \
 	x-monoid \
 	x-relem \
-	x-factor \
 	x-free \
 	x-mat \
-	x-monideal \
 	x-gb \
 	x-ringmap \
 	x-mutablemat \
@@ -148,7 +152,7 @@ DD_FILES = #test
 ## end of source code files ##
 ##############################
 
-CC_FILES := $(INTERFACE) $(COMMANDS)
+CC_FILES := $(INTERFACE) $(INTERFACE2) $(COMMANDS) $(COMMANDS2)
 FILES := $(CC_FILES) $(C_FILES)
 LOFILES := $(addsuffix .lo,$(CC_FILES) $(C_FILES))
 ENGINE_CCFILES := $(addsuffix .cpp,$(CC_FILES))
@@ -164,5 +168,5 @@ else
 ENGINE_OBJFILES := $(ENGINE_OFILES)
 endif
 
-HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE)) $(E_H)
+HHFILES := $(addsuffix .hpp, $(NAMES_H) $(NAMES) $(INTERFACE) $(INTERFACE2)) $(E_H)
 ENGINE_SRCFILES := $(ENGINE_CCFILES) $(ENGINE_CFILES) $(HHFILES) $(ENGINE_DDFILES) $(ENGINE_DFILES) 

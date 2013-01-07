@@ -28,8 +28,9 @@ namespace M2 {
 
     prim_root = findPrimitiveRoot(p);
 
-    log_table = new int[p]; // newarray_atomic(int,p);
-    exp_table = new int[p]; // newarray_atomic(int,p);
+    log_table = newarray_atomic(int,p);
+    exp_table = newarray_atomic(int,p);
+
     for (i=0, n=1; i<p-1; i++, n=(n*prim_root)%p)
       {
         log_table[n] = i;  // i = log_(base _prim_root)(n)
@@ -38,6 +39,7 @@ namespace M2 {
     exp_table[p1] = 1;
     exp_table[0] = 0;
     log_table[1] = p1;
+    log_table[0] = 0;
 
 #if 0
     fprintf(stderr, "char %d primitive %d\n", p, prim_root);
@@ -52,7 +54,8 @@ namespace M2 {
   }
 
   ARingZZp::ARingZZp(size_t p0)
-    : p(p0),
+    : charac(p0),
+      p(p0),
       p1(p-1)
   {
     if (p==2)
@@ -61,6 +64,12 @@ namespace M2 {
       minus_one = (p-1)/2;
 
     initialize_tables();
+  }
+
+  ARingZZp::~ARingZZp()
+  {
+    deletearray(log_table);
+    deletearray(exp_table);
   }
 
   void ARingZZp::text_out(buffer &o) const 

@@ -9,4 +9,7 @@
 // enter the src directory.                                                                                                           
 #include <../src/gtest-all.cc>
 
-
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// indent-tabs-mode: nil
+// End:

@@ -1,4 +1,4 @@
-// Copyright 2011 Michael E. Stillman
+// Copyright 2012 Michael E. Stillman
 
 #include <cstdio>
 #include <string>
@@ -9,6 +9,7 @@
 #include <mpfr.h>
 
 #include "buffer.hpp"
+#include "text-io.hpp"
 
 bool testfcn() { return true; }
 
@@ -34,3 +35,7 @@ TEST(Buffer, make2) {
     EXPECT_EQ(c, 0);
 }
 
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// indent-tabs-mode: nil
+// End:
