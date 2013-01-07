@@ -492,6 +492,12 @@ Hom(Module, Module) := Module => (M,N) -> (
      )
 -- An alternate Hom routine:
 Hom(Module, Module) := Module => (M,N) -> (
+    if isFreeModule M and isFreeModule N then (
+        dualM := dual M;
+        MN := dualM ** N;
+        MN.cache.Hom = {M, N, dualM, N};
+        return MN;
+        );
      homog := isHomogeneous M and isHomogeneous N;
      if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
      -- This version is perhaps less transparent, but is
