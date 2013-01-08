@@ -506,7 +506,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      mdual := transpose m;
      n := presentation N;
      h1 := modulo(mdual ** target n, target mdual ** n);
-     MN := trim subquotient(h1,source mdual ** n);
+     MN = trim subquotient(h1,source mdual ** n);
      -- Now we store the information that 'homomorphism'
      -- will need to reconstruct the map corresponding to
      -- an element.
