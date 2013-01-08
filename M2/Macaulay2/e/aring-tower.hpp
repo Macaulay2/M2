@@ -64,7 +64,7 @@ namespace M2 {
     static const ARingTower * create(const ARingTower &R, const std::vector<ElementType> &extensions);
 
 
-    int n_vars() const { return mNumVars; }
+    size_t n_vars() const { return mNumVars; }
     const ARingZZpFFPACK& baseRing() const { return mBaseRing; }
     const std::vector<std::string>& varNames() const { return mVarNames; }
     unsigned long characteristic() const { return mBaseRing.characteristic(); }
@@ -244,8 +244,8 @@ namespace M2 {
 
   private:
     const ARingZZpFFPACK &mBaseRing;
-    unsigned int mStartLevel;
-    unsigned int mNumVars;
+    int mStartLevel;
+    int mNumVars;
 
     const std::vector<std::string> mVarNames;
     std::vector<ElementType> mExtensions;

@@ -62,6 +62,7 @@ namespace M2 {
       R->init(a);
       R->set_from_int(a,n);
       R->to_ring_elem(result, a);
+      R->clear(a);
       return result;
     }
 
@@ -73,6 +74,7 @@ namespace M2 {
       R->init(a);
       R->set_from_mpz(a,n);
       R->to_ring_elem(result, a);
+      R->clear(a);
       return result;
     }
     virtual ring_elem from_rational(mpq_ptr q) const
@@ -83,6 +85,7 @@ namespace M2 {
       R->init(a);
       R->set_from_mpq(a,q);
       R->to_ring_elem(result, a);
+      R->clear(a);
       return result;
     }
     virtual bool from_BigReal(gmp_RR q, ring_elem &result) const
@@ -91,6 +94,7 @@ namespace M2 {
       R->init(a);
       bool ret = R->set_from_BigReal(a,q);
       R->to_ring_elem(result, a);
+      R->clear(a);
       return ret;
     }
 
@@ -102,6 +106,7 @@ namespace M2 {
       R->init(a);
       R->set_var(a,v);
       R->to_ring_elem(result, a);
+      R->clear(a);
       return result;
     }
 
@@ -143,34 +148,50 @@ namespace M2 {
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling is_unit\n");
       ElementType a;
+      R->init(a);
       R->from_ring_elem(a, f);
-      return R->is_unit(a);
+      bool ret = R->is_unit(a);
+      R->clear(a);
+      return ret;
     }
 
     virtual bool is_zero(const ring_elem f) const
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling is_zero\n");
       ElementType a;
+      R->init(a);
       R->from_ring_elem(a, f);
-      return R->is_zero(a);
+      bool ret = R->is_zero(a);
+      R->clear(a);
+      return ret;
     }
 
     virtual bool is_equal(const ring_elem f, const ring_elem g) const
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling is_equal\n");
       ElementType a, b;
+      R->init(a);
+      R->init(b);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
-      return R->is_equal(a,b);
+      bool ret = R->is_equal(a,b);
+      R->clear(a);
+      R->clear(b);
+      return ret;
     }
 
     virtual int compare_elems(const ring_elem f, const ring_elem g) const
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling compare_elems\n");
       ElementType a, b;
+      R->init(a);
+      R->init(b);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
-      return R->compare_elems(a,b);
+      int ret = R->compare_elems(a,b);
+      R->clear(a);
+      R->clear(b);
+      return ret;
     }
 
     virtual ring_elem copy(const ring_elem f) const
@@ -178,10 +199,13 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling copy\n");
       ElementType a,b;
       ring_elem result;
+      R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
       R->copy(b,a);
       R->to_ring_elem(result,b);
+      R->clear(a);
+      R->clear(b);
       return result;
     }
 
@@ -196,10 +220,13 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling negate\n");
       ElementType a,b;
       ring_elem result;
+      R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
       R->negate(b,a);
       R->to_ring_elem(result,b);
+      R->clear(a);
+      R->clear(b);
       return result;
     }
 
@@ -208,11 +235,16 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling add\n");
       ElementType a, b, c;
       ring_elem result;
+      R->init(a);
+      R->init(b);
       R->init(c);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
       R->add(c,a,b);
       R->to_ring_elem(result,c);
+      R->clear(a);
+      R->clear(b);
+      R->clear(c);
       return result;
     }
 
@@ -221,11 +253,16 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling subtract\n");
       ElementType a, b, c;
       ring_elem result;
+      R->init(a);
+      R->init(b);
       R->init(c);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
       R->subtract(c,a,b);
       R->to_ring_elem(result,c);
+      R->clear(a);
+      R->clear(b);
+      R->clear(c);
       return result;
     }
 
@@ -234,11 +271,16 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling mult\n");
       ElementType a, b, c;
       ring_elem result;
+      R->init(a);
+      R->init(b);
       R->init(c);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
       R->mult(c,a,b);
       R->to_ring_elem(result,c);
+      R->clear(a);
+      R->clear(b);
+      R->clear(c);
       return result;
     }
 
@@ -247,10 +289,13 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling power mpz\n");
       ElementType a,b;
       ring_elem result;
+      R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
       R->power_mpz(b,a,n);
       R->to_ring_elem(result,b);
+      R->clear(a);
+      R->clear(b);
       return result;
     }
 
@@ -259,10 +304,13 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling power int\n");
       ElementType a,b;
       ring_elem result;
+      R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
       R->power(b,a,n);
       R->to_ring_elem(result,b);
+      R->clear(a);
+      R->clear(b);
       return result;
     }
 
@@ -271,10 +319,13 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling invert\n");
       ElementType a,b;
       ring_elem result;
+      R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
       R->invert(b,a);
       R->to_ring_elem(result,b);
+      R->clear(a);
+      R->clear(b);
       return result;
     }
 
@@ -283,11 +334,16 @@ namespace M2 {
       if (displayArithmeticCalls) fprintf(stderr, "calling divide\n");
       ElementType a, b, c;
       ring_elem result;
+      R->init(a);
+      R->init(b);
       R->init(c);
       R->from_ring_elem(a, f);
       R->from_ring_elem(b,g);
       R->divide(c,a,b);
       R->to_ring_elem(result,c);
+      R->clear(a);
+      R->clear(b);
+      R->clear(c);
       return result;
     }
 
@@ -296,6 +352,8 @@ namespace M2 {
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling syzygy\n");
       ElementType a, b, xe, ye;
+      R->init(a);
+      R->init(b);
       R->init(xe);
       R->init(ye);
       R->from_ring_elem(a, f);
@@ -303,6 +361,10 @@ namespace M2 {
       R->syzygy(a,b, xe,ye);
       R->to_ring_elem(x,xe);
       R->to_ring_elem(y,ye);
+      R->clear(a);
+      R->clear(b);
+      R->clear(xe);
+      R->clear(ye);
     }
 
     virtual ring_elem random() const
@@ -313,6 +375,7 @@ namespace M2 {
       R->init(a);
       R->random(a);
       R->to_ring_elem(result,a);
+      R->clear(a);
       return result;
     }
 
@@ -324,8 +387,10 @@ namespace M2 {
     {
       if (displayArithmeticCalls) fprintf(stderr, "calling elem_text_out\n");
       ElementType a;
+      R->init(a);
       R->from_ring_elem(a, f);
       R->elem_text_out(o,a,p_one,p_plus,p_parens);
+      R->clear(a);
     }
 
     // map : this = R --> S, f in R
@@ -335,8 +400,10 @@ namespace M2 {
     {
       ElementType a;
       ring_elem result;
+      R->init(a);
       R->from_ring_elem(a, f);
       R->eval(map, a, first_var, result);
+      R->clear(a);
       return result;
     }
   };
