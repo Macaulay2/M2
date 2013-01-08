@@ -1,25 +1,28 @@
 # @configure_input@
 include ../../../include/config.Makefile
 VPATH = @srcdir@
+SRCDIR = @srcdir@
 DEPENDS = yes
 include ../Makefile.common
+include @srcdir@/../Makefile.files
+include @srcdir@/../f4/Makefile.files
 include @srcdir@/Makefile.files
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
-	 -I@srcdir@/../../c
-
+	 -I@srcdir@/../../c 
+CXXFLAGS += -std=gnu++0x
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
 
-LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl # -framework vecLib
+LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl -pthread -framework vecLib -lgivaro -llinbox
 
 .PHONY: place_into_lib runtests
 
-all: $(UNITTEST_OBJECT_FILES)
+all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 
 check: runtests
 
@@ -37,14 +40,13 @@ COMPILE.cc += $(MORE_OPTIONS)
 
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/unit-tests/Makefile
-clean::; rm -f *.o *.rpo
+clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE
 distclean: clean; rm -f Makefile
 
-clean::; rm -f *.dep dep-*.tmp LOGFILE
 ifeq "$(DEPENDS)" "yes"
 include $(UNITTEST_CFILES:=.dep) $(UNITTEST_CCFILES:=.dep)
 endif
 
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 # End:

@@ -820,10 +820,13 @@ adjacencyMatrix(Digraph) := G -> (
 	  AM))
 
 degreeMatrix = method()
-degreeMatrix(Graph) := G -> matrix apply(#keys(G),i->apply(#keys(G),j->if i==j then #(G#((keys G)_i)) else 0))
+degreeMatrix(Graph) := G -> (
+    -- The actual graph is stored in in the value of 'graph'
+    H := G#graph;
+    matrix apply(#keys(H),i->apply(#keys(H),j->if i==j then #(H#((keys H)_i)) else 0)))
 
 laplacianMatrix = method()
-laplacianMatrix(Graph) := G -> degreeMatrix G - adjacencyMatrix
+laplacianMatrix(Graph) := G -> degreeMatrix G - adjacencyMatrix G
 
 incidenceMatrix = method()
      -- Input: A graph
@@ -1407,9 +1410,18 @@ assert(nondescendents(H,c) === set {a,b})
 assert(foreFathers(H,c) === set {a,b})
 ///
 
+-- laplacianMatrix
+TEST ///
+K5 = graph { {x1, {x2,x3,x4,x5}}, {x2, {x3,x4,x5}}, {x3, {x4,x5}}, {x4, {x5}} }
+M = matrix {{4, -1, -1, -1, -1}, {-1, 4, -1, -1, -1}, {-1, -1, 4, -1, -1}, {-1, -1, -1, 4, -1}, {-1, -1, -1, -1, 4}}
+assert (laplacianMatrix K5 == M);
+///
+
+
+
+---------- UNUSED STUFF FOR FUTURE EXPERIMENTS ----------
+
 end
-
-
 
 doc ///
   Key

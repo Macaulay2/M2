@@ -111,6 +111,7 @@ class ARingGF : public RingInterface
    
     UTT     mCharac;
     UTT     mDimension; ///< same as extensionDegree
+    UTT     mCardinality; ///< number of elements in the field, if less than some bound, otherwise 0.
 
     const PolynomialRing*   mOriginalRing;
     const ring_elem         mPrimitiveElement; // is an element of mOriginalRing
@@ -149,15 +150,17 @@ class ARingGF : public RingInterface
     // ring informational
    UTT   characteristic() const { return mCharac; }
 
+   UTT   cardinality() const { return mCardinality; }
+
     /** @name IO
     @{ */
             void text_out(buffer &o) const { o << "GF(" << mCharac << "," << mDimension << ",Givaro)"; }
 
             void elem_text_out(buffer &o, 
                                 const  ElementType a,
-                                bool p_one, 
-                                bool p_plus, 
-                                bool p_parens) const;
+                                bool p_one=true, 
+                                bool p_plus=false, 
+                                bool p_parens=false) const;
 
     /** @} */
 
