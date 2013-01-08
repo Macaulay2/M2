@@ -331,7 +331,7 @@ M2_arrayintOrNull MutableMat<Mat>::LU(MutableMatrix *L,
 				      MutableMatrix *U) const
 {
   ERROR("LU decomposition currently not implemented for this ring and matrix type");
-  return false;
+  return NULL;
 }
 
 template<typename Mat>
@@ -377,7 +377,7 @@ template <> M2_arrayintOrNull MutableMat< DMat<M2::ARingZZp> >::LU(MutableMatrix
   if (L2 == 0 || U2 == 0)
     {
       ERROR("requires dense mutable matrices over ZZ/p");
-      return false;
+      return NULL;
     }
   const MatType *A2 = get_Mat();
   return DMatLU<M2::ARingZZp>::LU(A2,L2,U2);
@@ -391,7 +391,7 @@ template <> M2_arrayintOrNull MutableMat< DMat<Ring_RRR> >::LU(MutableMatrix *L,
   if (L2 == 0 || U2 == 0)
     {
       ERROR("requires dense mutable matrices over RR");
-      return false;
+      return NULL;
     }
   const MatType *A2 = get_Mat();
   return Lapack::LU(A2,L2,U2);
@@ -405,7 +405,7 @@ template <> M2_arrayintOrNull MutableMat< DMat<CoefficientRingCCC> >::LU(Mutable
   if (L2 == 0 || U2 == 0)
     {
       ERROR("requires dense mutable matrices over CC");
-      return false;
+      return NULL;
     }
   const MatType *A2 = get_Mat();
   return Lapack::LU(A2,L2,U2);
