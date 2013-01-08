@@ -67,6 +67,7 @@ opt64-flint : always
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-memtailor \
+		--enable-mathic \
 		--enable-flint \
 		--disable-strip \
 		--enable-download \
