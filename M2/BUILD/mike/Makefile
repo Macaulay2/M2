@@ -55,6 +55,19 @@ opt64-linbox : always
 		--enable-givaro \
 		--enable-linbox \
 		--enable-memtailor \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+opt64-flint : always
+	mkdir -p opt64-flint
+	cd opt64-flint; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-memtailor \
+		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"

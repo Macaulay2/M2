@@ -6,7 +6,8 @@ use util;
 header "
 
 #include <M2mem.h>
-#include <arith.h>
+#include <flint/arith.h>
+#include <flint/fmpz_factor.h>
 
 util_arrayZZ flint_factor(gmp_ZZ x) {
      int i;
@@ -15,7 +16,7 @@ util_arrayZZ flint_factor(gmp_ZZ x) {
      fmpz_factor_t factor;
      fmpz_factor_init(factor);
      fmpz_factor(factor,n);
-     int len = factor->length;
+     int len = factor->num;
      util_arrayZZ result = getmemarraytype(util_arrayZZ,2*len+1);
      result->len = 2*len+1;
      for (i=0; i<result->len; i++) {

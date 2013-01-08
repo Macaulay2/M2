@@ -36,6 +36,7 @@ int randomVals[nelements] = {
   35340937, 98935118, 77343644, 78522496, 46395773, 35429063, 54767177, 14130046, 2726640, 44257782, 
   31615869, 83095327, 15062803, 92772905, 25189126, 86464567, 43372313, 24240507, 96790882, 99639739};
 
+#if defined(HAVE_FFLAS_FFPACK)
 template<>
 bool getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::ARingZZpFFPACK::ElementType& result)
 {
@@ -44,6 +45,7 @@ bool getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::
   R.power(result, R.getGenerator(), randomVals[index]);
   return true;
 }
+#endif
 
 template<>
 bool getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::ElementType& result)
