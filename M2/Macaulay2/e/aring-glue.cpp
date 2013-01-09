@@ -18,11 +18,11 @@ namespace M2 {
   }
 
   template<typename RingType>
-  bool ConcreteRing<RingType>::promote(const Ring *S, 
+  bool ConcreteRing<RingType>::promote(const Ring *R, 
                                        const ring_elem fR, 
                                        ring_elem &resultS) const
   {
-    const Ring *R = this;
+    const Ring *S = this;
     fprintf(stderr, "calling promote\n");
     typedef RingPromoter RP;
     if (R == globalZZ)
