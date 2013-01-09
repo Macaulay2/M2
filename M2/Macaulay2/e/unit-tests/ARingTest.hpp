@@ -1,6 +1,11 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
+template<typename T> 
+std::istream &fromStream(std::istream &i, 
+                         const T& R, 
+                         typename T::ElementType &result);
+
 template <typename T> bool getElement(const T& R, int index, typename T::ElementType& result);
 
 template<typename T>

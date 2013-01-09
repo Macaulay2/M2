@@ -10,7 +10,8 @@ UNITTEST_CCFILES := \
     RingQQTest \
     RingRRRTest \
     RingCCCTest \
-    RingTowerTest
+    RingTowerTest \
+    fromStream
 
 UNITTEST_CFILES += \
     M2-replacement

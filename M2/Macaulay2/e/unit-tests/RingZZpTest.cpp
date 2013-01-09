@@ -10,6 +10,19 @@ ring_elem getElement<Z_mod>(const Z_mod&  R, int index)
   return R.from_int(a.get_mpz());
 }
 
+TEST(RingZZmod32003, fromStream)
+{
+  std::istringstream i("+1234 +345 -235*a");
+  Z_mod *R = Z_mod::create(32003);
+  ring_elem a;
+  while (fromStream(i, *R, a))
+    {
+      buffer o;
+      R->elem_text_out(o, a);
+      std::cout << o.str() << " peek: " << "." << static_cast<char>(i.peek()) << "." << std::endl;
+    }
+}
+
 ///////////////////////////////////////////////
 TEST(RingZZmod101, create)
 {
@@ -118,7 +131,6 @@ TEST(RingZZmod2, syzygy)
   Z_mod* R = Z_mod::create(2);
   testRingSyzygy(R, ntrials);
 }
-
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
 // indent-tabs-mode: nil

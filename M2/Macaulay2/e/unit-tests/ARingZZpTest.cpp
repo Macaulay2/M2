@@ -115,6 +115,29 @@ TEST(ARingZZp, arithmetic3) {
   testFiniteField(R);
 }
 
+TEST(ARingZZp, fromStream)
+{
+  std::istringstream i("+1234 +345 -235*a");
+  M2::ARingZZp R(32003);
+  M2::ARingZZp::ElementType a;
+  R.init(a);
+  while (true)
+    {
+      while (isspace(i.peek()))
+        i.get();
+
+      if (!isdigit(i.peek()) && i.peek() != '+' && i.peek() != '-')
+        break;
+
+      fromStream(i, R, a);
+
+      buffer o;
+      R.elem_text_out(o, a);
+      std::cout << o.str() << " peek: " << i.peek() << std::endl;
+    }
+  R.clear(a);
+}
+
 #if defined(HAVE_FFLAS_FFPACK)
 TEST(ARingZZpFFPACK, arithmetic101) {
   M2::ARingZZpFFPACK R(101);

@@ -10,6 +10,7 @@ INTERFACE2 = \
 
 INTERFACE = \
 	cra \
+	aring-zz-flint \
 	aring-RRR \
 	aring-tower \
 	aring-m2-gf \
