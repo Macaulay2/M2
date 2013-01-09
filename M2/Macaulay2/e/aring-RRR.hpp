@@ -42,7 +42,7 @@ namespace M2 {
 
     // ring informational
     size_t characteristic() const { return 0; }
-
+    unsigned long get_precision() const { return mPrecision; }
     void text_out(buffer &o) const;
 
     /////////////////////////////////
