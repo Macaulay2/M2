@@ -15,6 +15,7 @@ namespace M2 {
 //std::vector<GFqDom<long>::Residu_t> irreducible_11_2;
 //GFqDom<long> gfqField(11,2,irreducible_11_2);
 
+
     ARingGF::ARingGF(	 UTT charact_, 
                          UTT extensionDegree_)  :   
       mCharac(charact_),

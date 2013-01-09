@@ -83,29 +83,25 @@ void testCoercions(const T& R)
   for (int i = -1000; i<1000; i++)
     {
       mpz_set_si(m, i);
-      mpz_add(m, m, base);
-      R.set_from_mpz(a,m);
+      mpz_add(m, m, base); // m = base + i
+      R.set_from_mpz(a,m); // a = (base + i) mod charac
       R.set_from_int(b,i);
-      R.add(b,c,b);
-      EXPECT_EQ(a,b);
+      R.add(b,c,b); // b = (base mod charac) + (i mod charac)
+      EXPECT_EQ(a,b); // a, b should be equal
     }
 
   // set_from_mpq
   for (int i=1; i<300; i++)
     {
       mpq_set_si(n1, 43999, i);
-      mpq_canonicalize(n1);
+      mpq_canonicalize(n1); // n1 = 43999/i
 
-      //      bool lifts = false;
+      // check that (43999 mod charac)/(i mod charac) == n1 mod charac
+      // if (i mod charac) is not zero.
       if (i % (R.characteristic()) == 0) continue;
       R.set_from_mpq(a, n1);
       R.set_from_int(b, 43999);
       R.set_from_int(c, i);
-      //      if (i % R.characteristic() == 0)
-      //        {
-      //          //          EXPECT_TRUE(lifts);
-      //          continue;
-      //        }
       if (!R.is_zero(c))
         {
           R.divide(c,b,c);
@@ -366,7 +362,7 @@ void testPower(const T& R)
       R.mult(c,a,c); 
       EXPECT_TRUE(R.is_equal(c, one));
 
-      R.power(c, a, -2);  // test a^-1 * a == 1
+      R.power(c, a, -2);  // test a^-2 * a^3 == a
       R.power(d, a, 3); 
       R.mult(d, c, d);
       EXPECT_TRUE(R.is_equal(d, a));
@@ -388,9 +384,7 @@ void testFiniteField(const T& R)
   testMultiply(R);
   testDivide(R); //fails in char 2, ffpack
   testReciprocal(R);
-
-
-  //  testPower(R);// fails
+  testPower(R);// fails?
   testAxioms(R);
   
   //TODO: test promote, lift, syzygy(?), (ringmaps)

@@ -67,22 +67,6 @@ TEST(RingZZp, create) {
   fprintf(stdout, "%s\n", o.str());
 }
 
-#if defined(HAVE_FFLAS_FFPACK)
-TEST(ARingZZpFFPACK, create) {
-  M2::ARingZZpFFPACK R(101);
-  
-  EXPECT_EQ(ringName(R), "ZZpFPACK(101,1)");
-  testSomeMore(R);
-
-  std::cout << "max modulus for ffpack zzp: " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
-}
-
-TEST(ARingZZpFFPACK, arithmetic) {
-  M2::ARingZZpFFPACK R(101);
-  testFiniteField(R);
-}
-#endif 
-
 TEST(ARingZZp, create) {
   M2::ARingZZp R(101);
   M2::ARingZZp::ElementType a;
@@ -139,6 +123,22 @@ TEST(ARingZZp, fromStream)
 }
 
 #if defined(HAVE_FFLAS_FFPACK)
+TEST(ARingZZpFFPACK, create) {
+  M2::ARingZZpFFPACK R(101);
+  
+  EXPECT_EQ(ringName(R), "ZZpFPACK(101,1)");
+  testSomeMore(R);
+
+  std::cout << "max modulus for ffpack zzp: " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
+
+  M2::ARingZZpFFPACK::ElementType a;
+  R.init(a);
+  R.set_from_int(a, 99);
+  R.set_from_int(a, 101);
+  R.set_from_int(a, 103);
+  R.clear(a);
+}
+
 TEST(ARingZZpFFPACK, arithmetic101) {
   M2::ARingZZpFFPACK R(101);
   testFiniteField(R);
@@ -161,6 +161,7 @@ TEST(ARingZZpFFPACK, arithmetic3) {
 //  testFiniteField(R);
 //}
 #endif 
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
