@@ -311,9 +311,6 @@ const Matrix * rawMatrixCRA(const Matrix *f,
                             mpz_t m,
                             mpz_t n)
 {
-
-  const Ring *R = f->get_ring(); // not used
-
   // Error handling:
   if (f->get_ring() != g->get_ring())
   {
@@ -342,7 +339,6 @@ const Matrix * rawMatrixCRA(const Matrix *f,
   mpz_clear(vn);
   mpz_clear(mn);
   return result;
-
 }
 
 

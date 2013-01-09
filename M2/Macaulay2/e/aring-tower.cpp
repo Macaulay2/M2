@@ -23,7 +23,7 @@ ARingTower::ARingTower(const BaseRingType &baseRing,
     mExtensions()
 {
   ASSERT(names.size() >= 1);
-  mNumVars = names.size();
+  mNumVars = static_cast<int>(names.size());
   mStartLevel = mNumVars - 1;
 
   // Now copy all of the extension polynomials
@@ -119,8 +119,8 @@ void ARingTower::clear(int level, poly &f) const
 void ARingTower::reset_degree(poly &f) const
 {
   if (f == 0) return;
-  int fdeg = f->deg;
-  for (int j = fdeg; j>=0; --j)
+  size_t fdeg = f->deg;
+  for (size_t j = fdeg; j>=0; --j)
     if (f->polys[j] != 0) {
       f->deg = j;
       return;

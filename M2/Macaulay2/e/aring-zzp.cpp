@@ -55,7 +55,7 @@ namespace M2 {
 
   ARingZZp::ARingZZp(size_t p0)
     : charac(p0),
-      p(p0),
+      p(static_cast<int>(p0)),
       p1(p-1)
   {
     if (p==2)

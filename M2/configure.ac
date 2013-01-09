@@ -834,7 +834,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor gtest ")
+AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic gtest ")
 BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -869,6 +869,16 @@ AC_SUBST(ENABLE_MEMTAILOR,no)
 AC_ARG_ENABLE(memtailor,
     [AS_HELP_STRING(--enable-memtailor,enable building the memtailor library and linking with it)],
     AC_DEFINE(HAVE_MEMTAILOR,1,[whether we are linking with the memtailor library])
+    BUILD_memtailor=yes
+    ENABLE_MEMTAILOR=yes
+    )
+
+AC_SUBST(ENABLE_MATHIC,no)
+AC_ARG_ENABLE(mathic,
+    [AS_HELP_STRING(--enable-mathic,enable building the mathic library and linking with it)],
+    AC_DEFINE(HAVE_MATHIC,1,[whether we are linking with the mathic library])
+    BUILD_mathic=yes
+    ENABLE_MATHIC=yes
     BUILD_memtailor=yes
     ENABLE_MEMTAILOR=yes
     )
@@ -1328,6 +1338,10 @@ fi
 
 if test $BUILD_memtailor = yes
 then BUILTLIBS="-lmemtailor $BUILTLIBS"
+fi
+
+if test $BUILD_mathic = yes
+then BUILTLIBS="-lmathic $BUILTLIBS"
 fi
 
 test "$USE_FCLIBS" = no && FCLIBS=

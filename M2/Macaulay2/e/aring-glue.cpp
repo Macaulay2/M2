@@ -7,7 +7,7 @@ namespace M2 {
   ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
   {
     ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-    result->initialize_ring(R->characteristic());
+    result->initialize_ring(static_cast<int>(R->characteristic()));
     result->declare_field();
 
     result->zeroV = result->from_int(0);
@@ -111,8 +111,10 @@ namespace M2 {
     // lift: need to compute (primite_element)^e
 
     ElementType a;
+    R->init(a);
     R->from_ring_elem(a, f);
     bool retval = R->lift(Rg,a,result);
+    R->clear(a);
     return retval;
   }
 

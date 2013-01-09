@@ -264,7 +264,7 @@ transitiveClosure (List, List) := Matrix => (G, R) -> (
         H := floydWarshall D;
         matrix apply(#G, i -> apply(#G, j -> if H#(i, j) < 1/0. then 1 else 0))
         )
-    else matrix apply(vertices D, v -> ( Dv := descendents(D, v); apply(vertices D, u -> if u === v or member(u, Dv) then 1 else 0)))
+    else matrix apply(Graphs$vertices D, v -> ( Dv := descendents(D, v); apply(Graphs$vertices D, u -> if u === v or member(u, Dv) then 1 else 0)))
     )
 
 ------------------------------------------

@@ -492,6 +492,12 @@ Hom(Module, Module) := Module => (M,N) -> (
      )
 -- An alternate Hom routine:
 Hom(Module, Module) := Module => (M,N) -> (
+    if isFreeModule M and isFreeModule N then (
+        dualM := dual M;
+        MN := dualM ** N;
+        MN.cache.Hom = {M, N, dualM, N};
+        return MN;
+        );
      homog := isHomogeneous M and isHomogeneous N;
      if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
      -- This version is perhaps less transparent, but is
@@ -500,7 +506,7 @@ Hom(Module, Module) := Module => (M,N) -> (
      mdual := transpose m;
      n := presentation N;
      h1 := modulo(mdual ** target n, target mdual ** n);
-     MN := trim subquotient(h1,source mdual ** n);
+     MN = trim subquotient(h1,source mdual ** n);
      -- Now we store the information that 'homomorphism'
      -- will need to reconstruct the map corresponding to
      -- an element.

@@ -12,17 +12,22 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c 
-CXXFLAGS += -std=gnu++0x
+CXXFLAGS += -std=gnu++0x #-coverage
+LDFLAGS += #-coverage
+
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
 
-LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lntl -pthread -framework vecLib -lgivaro -llinbox
+LOADLIBES += @BUILTLIBS@ @LIBS@ -lstdc++
+#LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
 
 .PHONY: place_into_lib runtests
 
 all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
+	echo @BUILTLIBS@
+	echo @LIBS@
 
 check: runtests
 

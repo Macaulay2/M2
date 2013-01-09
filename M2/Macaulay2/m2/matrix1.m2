@@ -634,7 +634,10 @@ Hom(Matrix, Module) := Matrix => (f,N) -> (
      --Hom(M',N)    
      M'N :=Hom(target f, N);
      --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN, M'N, ((mfdual**cN) * generators M'N)//generators MN)
+     if isFreeModule N and N == (ring N)^1 then
+       map(MN, M'N, mfdual)
+     else 
+       map(MN, M'N, ((mfdual**cN) * generators M'N)//generators MN)
      )
 
 Hom(Module, Matrix) := Matrix => (M,g) -> (

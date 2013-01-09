@@ -35,7 +35,7 @@ static int randomVals[nelements] = {
   35340937, 98935118, 77343644, 78522496, 46395773, 35429063, 54767177, 14130046, 2726640, 44257782, 
   31615869, 83095327, 15062803, 92772905, 25189126, 86464567, 43372313, 24240507, 96790882, 99639739};
 
-
+#if defined(HAVE_GIVARO)
 template<>
 bool getElement<M2::ARingGF>(const M2::ARingGF& R, 
                                     int index, 
@@ -47,7 +47,6 @@ bool getElement<M2::ARingGF>(const M2::ARingGF& R,
   return true;
 }
 
-#if defined(HAVE_GIVARO)
   TEST(ARingGFGivaro, create) {
     M2::ARingGF R(5,3);
       

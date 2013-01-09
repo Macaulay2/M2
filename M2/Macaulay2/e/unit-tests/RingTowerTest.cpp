@@ -42,7 +42,7 @@ TEST(RingTower, create)
   EXPECT_TRUE(R != 0);
   EXPECT_EQ(ringName(*R), "Tower[ZZ/101[a,b]]");
   EXPECT_EQ(R->n_vars(), 2);
-  for (int i=1; i<500; i++)
+  for (int i=1; i<1; i++)
     {
       ring_elem f = R->random();
       buffer o;
