@@ -88,12 +88,6 @@ namespace M2 {
       mpfr_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
     }
 
-    // 'get' functions
-
-    int get_int(elem f) const { ASSERT(false); return 0; }
-
-    int get_repr(elem f) const { ASSERT(false); return 0; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { 
