@@ -3,6 +3,7 @@ UNITTEST_CCFILES := \
     M2-cpp-replacement \
     M2mem-replacement \
     basics-test \
+    ARingRRRTest \
     ARingZZpTest \
     ARingGFTest \
     RingZZTest \
