@@ -836,7 +836,6 @@ bool gb2_comp::is_done()
 Matrix *gb2_comp::make_lead_term_matrix()
 {
   MatrixConstructor result(F, gb.length());
-  ring_elem one = originalR->getCoefficientRing()->one();
   for (int i=0; i<gb.length(); i++)
     {
       gb_elem *g = gb[i];

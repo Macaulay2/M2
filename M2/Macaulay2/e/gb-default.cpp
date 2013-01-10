@@ -310,14 +310,14 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
                               gbelem_type minlevel,
                               int deg)
 {
-  int f_wt, f_leadweight;
+  int f_leadweight;
   gbelem *g = reinterpret_cast<gbelem *>(gbelem_stash->new_elem());
   g->g.f = f;
   g->g.fsyz = fsyz;
   g->lead = exponents_make();
   R->gbvector_get_lead_exponents(_F, f, g->lead);
   g->deg = deg;
-  f_wt = weightInfo_->gbvector_weight(f, f_leadweight);
+  weightInfo_->gbvector_weight(f, f_leadweight); // return value not used
   g->gap = deg - weightInfo_->gbvector_term_weight(f);
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
@@ -1655,15 +1655,8 @@ int gbA::find_good_divisor(exponents e,
     //// these assignments are repeated verbatim below, sigh
     gap = gb[j]->gap-egap;
     if (gap < 0) gap = 0;
-    int minlevel = gb[j]->minlevel;
-    int deg  = gb[j]->deg;
-    int size  = gb[j]->size;
-    ////
     while (true) {
          int mingap = gap;
-         //int maxminlevel = minlevel;
-         //int mindeg = deg;
-         //int minsize  = size;
          int best = j;
          do {
               if (++i == n) {
@@ -1676,16 +1669,9 @@ int gbA::find_good_divisor(exponents e,
               j = divisors[i]->_val;
               gap = gb[j]->gap-egap;
               if (gap < 0) gap = 0;
-              minlevel = gb[j]->minlevel;
-              deg   = gb[j]->deg;
-              size  = gb[j]->size;
          } while (!
                   ( gap < mingap || gap == mingap &&
-                    // ( minlevel > maxminlevel || minlevel == maxminlevel &&
-                    // ( deg < mindeg || deg == mindeg &&
-                    // ( size < minsize || size == minsize &&
                           false
-                    // )))
       )
     );
     }
