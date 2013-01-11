@@ -11,8 +11,6 @@
 #include "aring-RRR.hpp"
 #include "ARingTest.hpp"
 
-const int ntrials = 5000;
-
 bool almostEqual(const M2::ARingRRR& R, int nbits, const M2::ARingRRR::ElementType& a, const M2::ARingRRR::ElementType& b)
 {
   mpfr_t epsilon;  
@@ -29,11 +27,18 @@ bool almostEqual(const M2::ARingRRR& R, int nbits, const M2::ARingRRR::ElementTy
   return ret;
 }
 
-void getElementRRR(const M2::ARingRRR&  R, int index, M2::ARingRRR::ElementType& result)
+template<>
+void getElement<M2::ARingRRR>(const M2::ARingRRR&  R, int index, M2::ARingRRR::ElementType& result)
 {
   if (index < 50) R.set_from_int(result, index-25);
   else R.random(result);
 }
+
+//void getElementRRR(const M2::ARingRRR&  R, int index, M2::ARingRRR::ElementType& result)
+//{
+//  if (index < 50) R.set_from_int(result, index-25);
+//  else R.random(result);
+//}
 
 TEST(ARingRRR, create)
 {
@@ -42,8 +47,9 @@ TEST(ARingRRR, create)
   EXPECT_EQ(R.characteristic(), 0);
 }
 
-void testRingNegate(const M2::ARingRRR& R, int ntrials)
+void testRingNegateRRR(const M2::ARingRRR& R, int ntrials)
 {
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c;  
   R.init(a);  
   R.init(b);  
@@ -51,7 +57,7 @@ void testRingNegate(const M2::ARingRRR& R, int ntrials)
   for (int i=0; i<ntrials; i++)
     {
       // test: (-a) + (a) == 0
-      R.random(a);
+      gen.nextElement(a);
       R.negate(b,a);
       R.add(c,a,b);
       EXPECT_TRUE(R.is_zero(c));
@@ -64,12 +70,13 @@ void testRingNegate(const M2::ARingRRR& R, int ntrials)
 TEST(ARingRRR, negate)
 {
   M2::ARingRRR R(100); 
-  testRingNegate(R, ntrials);
+  testRingNegateRRR(R, ntrials);
 }
 
 TEST(ARingRRR, add)
 {
   M2::ARingRRR R(100);
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c,d,e;  
   R.init(a);  
   R.init(b);  
@@ -79,8 +86,8 @@ TEST(ARingRRR, add)
   for (int i=0; i<ntrials; i++)
     {
       // test: (a+b) + (-b) == a
-      R.random(a);
-      R.random(b);
+      gen.nextElement(a);
+      gen.nextElement(b);
       R.add(c,a,b);
       R.negate(d,b);
       R.add(e,c,d); // should be a
@@ -96,6 +103,7 @@ TEST(ARingRRR, add)
 TEST(ARingRRR, subtract)
 {
   M2::ARingRRR R(100);
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c,e;  
   R.init(a);  
   R.init(b);  
@@ -104,8 +112,8 @@ TEST(ARingRRR, subtract)
   for (int i=0; i<ntrials; i++)
     {
       // test: (a-b) + (b) == a
-      R.random(a);
-      R.random(b);
+      gen.nextElement(a);
+      gen.nextElement(b);
       R.subtract(c,a,b);
       R.add(e,c,b); // should be a
       EXPECT_TRUE(almostEqual(R,98,a,e));
@@ -119,6 +127,7 @@ TEST(ARingRRR, subtract)
 TEST(ARingRRR, multDivide)
 {
   M2::ARingRRR R(100);
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c,d;  
   R.init(a);  
   R.init(b);  
@@ -127,8 +136,8 @@ TEST(ARingRRR, multDivide)
   for (int i=0; i<ntrials; i++)
     {
       // test: (a*b) // b == a
-      R.random(a);
-      R.random(b);
+      gen.nextElement(a);
+      gen.nextElement(b);
       R.mult(c,a,b);
       if (R.is_zero(b))
         EXPECT_TRUE(R.is_zero(c));
@@ -147,6 +156,7 @@ TEST(ARingRRR, multDivide)
 TEST(ARingRRR, axioms)
 {
   M2::ARingRRR R(100);
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c,d,e;  
   R.init(a);  
   R.init(b);  
@@ -155,9 +165,9 @@ TEST(ARingRRR, axioms)
   R.init(e);
   for (int i=0; i<ntrials; i++)
     {
-      R.random(a);
-      R.random(b);
-      R.random(c);
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
       // Test commutativity
       // test: a*b = b*a
       // test: a+b == b+a
@@ -201,6 +211,7 @@ TEST(ARingRRR, axioms)
 TEST(ARingRRR, power)
 {
   M2::ARingRRR R(100);
+  ARingElementGenerator<M2::ARingRRR> gen(R);
   M2::ARingRRR::ElementType a,b,c,d;  
   R.init(a);  
   R.init(b);  
@@ -210,7 +221,7 @@ TEST(ARingRRR, power)
   mpz_init(gmp1);
   for (int i=0; i<ntrials; i++)
     {
-      R.random(a);
+      gen.nextElement(a);
       //TODO: what should the answer here be?
       //EXPECT_TRUE(R->is_equal(R->power(a, 0), R->one())); // 0^0 == 1 too?
       R.power(b,a,1);
