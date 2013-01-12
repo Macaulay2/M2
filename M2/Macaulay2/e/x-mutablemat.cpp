@@ -765,6 +765,8 @@ M2_arrayintOrNull rawLU1(const MutableMatrix *A,
   // LU are placed in the same LU matrix
   //TODO: MES write this.
   //  return A->LU(LU);
+  ERROR("not implemented yet");
+  return NULL;
 }
 
 MutableMatrix* rawLUSolve(MutableMatrix* resultX, 

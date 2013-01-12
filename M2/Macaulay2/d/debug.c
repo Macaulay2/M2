@@ -26,9 +26,8 @@ void trapchk(void *p) {
 #define STDERR 2
 int badBlock() {
      char buf[120];
-     int r;
      sprintf(buf,"%s:%d: internal error: smashed block in memory block allocator\n",__FILE__,__LINE__);
-     r = write(STDERR,buf,strlen(buf));
+     write(STDERR,buf,strlen(buf));
      abort();
 }
 
