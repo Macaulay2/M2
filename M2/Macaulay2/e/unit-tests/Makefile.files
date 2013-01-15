@@ -12,6 +12,7 @@ UNITTEST_CCFILES := \
     RingRRRTest \
     RingCCCTest \
     RingTowerTest \
+    DMatZZpTest \
     fromStream
 
 UNITTEST_CFILES += \

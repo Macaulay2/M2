@@ -1,5 +1,8 @@
 // Copyright 2013 Michael E. Stillman
 
+#ifndef __ring_test_hpp__
+#define __ring_test_hpp__
+
 #include <cstdio>
 #include <string>
 #include <iostream>
@@ -269,6 +272,8 @@ void testRingSyzygy(const T* R, int ntrials)
   // over ZZ:
   // syzygy(a,b) returns (b/c, -a/c), where c = +- gcd(a,b), with same sign as b
 }
+
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
