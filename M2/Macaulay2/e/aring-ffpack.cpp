@@ -91,7 +91,7 @@ namespace M2 {
 
   void ARingZZpFFPACK::init(ElementType &result) const
   { 
-    M2_ASSERT(0 == mFfpackField.zero);
+    //    M2_ASSERT(0 == mFfpackField.zero);
     result = 0;
   } 
 
@@ -102,7 +102,7 @@ namespace M2 {
   
   void ARingZZpFFPACK::set_zero(ElementType &result) const
   { 
-    M2_ASSERT(0 == mFfpackField.zero);
+    // M2_ASSERT(0 == mFfpackField.zero);
     result = 0;
   }
   
