@@ -1,4 +1,4 @@
--- Copyright 2011, 2012: David Cook II, Sonja Mapes, Gwyn Whieldon
+-- Copyright 2011, 2012, 2013: David Cook II, Sonja Mapes, Gwyn Whieldon
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
@@ -17,17 +17,25 @@ if version#"VERSION" <= "1.4" then (
 
 newPackage select((
     "Posets",
-        Version => "1.0.5", 
-        Date => "16. November 2012",
+        Version => "1.0.5.1", 
+        Date => "21. January 2013",
         Authors => {
             {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
         Headline => "Package for processing posets and order complexes",
-        Configuration => {"DefaultPDFViewer" => "open", "DefaultPrecompute" => true, "DefaultSuppressLabels" => true},
+        Configuration => {
+            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux; is there a way to check this?
+            "DefaultPrecompute" => true, 
+            "DefaultSuppressLabels" => true
+            },
         DebuggingMode => true,
-        if version#"VERSION" > "1.4" then PackageExports => {"Graphs", "SimplicialComplexes", "Graphs", "FourTiTwo"}
+        if version#"VERSION" > "1.4" then PackageExports => {
+            "SimplicialComplexes", 
+            "Graphs", 
+            "FourTiTwo"
+            }
         ), x -> x =!= null)
 
 if version#"VERSION" <= "1.4" then (
@@ -829,8 +837,8 @@ facePoset SimplicialComplex := Poset => D -> (
 -- Outputs: List of ideals of intersections, excluding the intersection of no hyperplanes and intersections which are empty.
 hyperplaneEquivalence = method()
 hyperplaneEquivalence (List,Ring) := List => (L,R) -> (
-    allideals:=unique drop(apply(subsets L, h-> ideal gens gb ideal h),1);
-    select(allideals, I-> not I == ideal(sub(1,R)))
+    allideals := unique drop(apply(subsets L, h -> ideal gens gb ideal h), 1);
+    select(allideals, I -> not I == ideal(sub(1, R)))
     )
 
 -- Inputs:
@@ -839,25 +847,21 @@ hyperplaneEquivalence (List,Ring) := List => (L,R) -> (
 -- Outputs: Pairs of ideals (I,J), with I < J if J contains I
 hyperplaneInclusions = method()
 hyperplaneInclusions(List,Ring) := List => (L, R) -> (
-    H:=apply(L, l-> sub(l, R));
-    coverPairs:={};
-    for l from 1 to #H-1 do
-        for k to #H-1 do 
-            if unique apply(flatten entries gens H_k, f-> f % gens H_l) === {sub(0,R)} then 
-                coverPairs = append(coverPairs,{L_k,H_l});
-    coverPairs
+    H := apply(L, l -> sub(l, R));
+    coverPairs := {};
+    flatten for l from 1 to #H - 1 list for k to #H - 1 list
+        if unique apply(flatten entries gens H_k, f -> f % gens H_l) === {sub(0, R)} then {L_k, H_l} else continue
     )
 
 -- Inputs:
 --      L = equations defining arrangement
 --      R = ring
 -- Outputs: Intersection poset of hyperplane arrangement.
--- In theory, this should work on arrangements of hypersurfaces.  In practice, throws an error saying "antisymmetry fails."
 intersectionLattice = method()
 intersectionLattice (List, Ring) := Poset => (L, R)-> (
     G := hyperplaneEquivalence(L, R);
     rel := hyperplaneInclusions(G, R);
-    poset(G, rel)
+    adjoinMin(poset(G, rel), sub(ideal "0", R))
     )
 
 lcmLattice = method( Options => { symbol Strategy => "recursive" })
@@ -1562,14 +1566,16 @@ hPolynomial Poset := RingElement => opts -> P -> (
 moebiusFunction = method()
 moebiusFunction Poset := HashTable => P -> (
     mu := new MutableHashTable;
+    F := flatten filtration P;
+    P = naturalLabeling P;
     for i to #P.GroundSet-1 do (
-        gtp := principalOrderIdeal'(P, i);
+        gtp := principalOrderIdeal(P, i);
         for j to #P.GroundSet-1 do mu#(j, i) = if i === j then 1 else if not member(j, gtp) then 0 else -sum(gtp, z -> if mu#?(j, z) then mu#(j, z) else 0);
         );
-    applyKeys(new HashTable from mu, (i, j) -> (P.GroundSet_i, P.GroundSet_j))
+    applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
     )
 
--- r_i*x^i: r_i is the number of rank i vertices in P
+-- r_i*x^i, where r_i is the number of rank i vertices in P
 rankGeneratingFunction = method(Options => {symbol VariableName => getSymbol "q"})
 rankGeneratingFunction Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
