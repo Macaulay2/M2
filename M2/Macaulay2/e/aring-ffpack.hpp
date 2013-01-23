@@ -29,7 +29,7 @@ namespace M2 {
 #else
 #include <fflas-ffpack/field/modular-balanced.h>
 #include <fflas-ffpack/ffpack/ffpack.h>
-#include <givaro/givgfq.h>
+//#include <givaro/givgfq.h>
 
 namespace M2 {
 
@@ -55,8 +55,8 @@ namespace M2 {
 
     typedef  uint32_t UTT; ////// attention: depends on STT;currently manual update
 
-    // to use the signed_trait thing, we need givaro....
-    typedef Signed_Trait<UTT>::signed_type STT;///< types depends on FieldType definition!
+    // see http://en.cppreference.com/w/cpp/types !
+    typedef std::make_signed<UTT>::type STT;
 
     // if no givaro, use this:
     //typedef  int32_t STT; /// attention: depends on UTT; currently manual update
