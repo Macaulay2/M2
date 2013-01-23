@@ -672,6 +672,8 @@ M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
   return FF_LUComputation::DO(M);
 }
 
+#include <fplll-interface.h>
+
 M2_bool rawLLL(MutableMatrix *M,
                 MutableMatrix /* or null */ *U,
                 gmp_QQ threshold,
@@ -680,6 +682,11 @@ M2_bool rawLLL(MutableMatrix *M,
   if (strategy == 0)
     {
       return LLLoperations::LLL(M,U,threshold);
+    }
+
+    if (strategy == 4)    //fplll, pfush...
+    {
+      return fp_LLL(M,U,strategy);
     }
 
   long a = mpz_get_si(mpq_numref(threshold));
