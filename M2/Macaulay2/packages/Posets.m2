@@ -17,8 +17,8 @@ if version#"VERSION" <= "1.4" then (
 
 newPackage select((
     "Posets",
-        Version => "1.0.5.1",
-        Date => "21. January 2013",
+        Version => "1.0.5.2",
+        Date => "23. January 2013",
         Authors => {
             {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
@@ -167,6 +167,7 @@ export {
     "maximalChains",
     --
     -- Enumerative invariants
+    "boundedRegions",
     "characteristicPolynomial",
     "flagfPolynomial",
     "flaghPolynomial",
@@ -175,6 +176,7 @@ export {
     "hPolynomial",
     "moebiusFunction",
     "rankGeneratingFunction",
+    "realRegions",
     "zetaPolynomial",
     --
     -- Properties
@@ -861,7 +863,7 @@ intersectionLattice = method()
 intersectionLattice (List, Ring) := Poset => (L, R)-> (
     G := hyperplaneEquivalence(L, R);
     rel := hyperplaneInclusions(G, R);
-    adjoinMin(poset(G, rel), sub(ideal "0", R))
+    adjoinMin(poset(G, rel), ideal 0_R)
     )
 
 lcmLattice = method( Options => { symbol Strategy => "recursive" })
@@ -1053,7 +1055,7 @@ projectivizeArrangement (List, Ring) := Poset => (L, R) -> (
     newL := apply(L, h -> homogenize(sub(h, S), Z));
     G := hyperplaneEquivalence(newL, S);
     rel := hyperplaneInclusions(G, S);
-    adjoinMin(poset(G, rel), sub(ideal "0", R))
+    adjoinMin(poset(G, rel), ideal 0_R)
     )
 
 randomPoset = method(Options => {symbol Bias => 0.5})
@@ -1497,6 +1499,12 @@ maximalChains Poset := List => P -> (
 -- Enumerative invariants
 ------------------------------------------
 
+boundedRegions = method()
+boundedRegions(List, Ring) := (A, R) -> (
+    M := moebiusFunction adjoinMax(intersectionLattice(A, R), ideal 1_R);
+    abs(M#(ideal 0_R, ideal 1_R))
+    )
+
 characteristicPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
 characteristicPolynomial Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
@@ -1581,6 +1589,13 @@ rankGeneratingFunction Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
     R := ZZ(monoid [opts.VariableName]);
     sum(pairs tally rankFunction P, p -> p_1 * (R_0)^(p_0))
+    )
+
+realRegions = method()
+realRegions(List, Ring) := (A, R) -> (
+    L := intersectionLattice(A, R);
+    M := moebiusFunction L;
+    sum apply(L.GroundSet, i -> abs(M#(ideal 0_R, i)))
     )
 
 -- zeta(i) = the number of weak-chains of i-1 vertices in P
@@ -4783,6 +4798,34 @@ doc ///
 -- Enumerative invariants
 ------------------------------------------
 
+-- boundedRegions
+doc ///
+    Key
+        boundedRegions
+        (boundedRegions,List,Ring)
+    Headline
+        computes the number of bounded regions a hyperplane arrangement divides the space in to
+    Usage
+        b = boundedRegions(A, R)
+    Inputs
+        A:List
+            of polynomials defining the hyperplanes
+        R:Ring
+    Outputs
+        b:ZZ
+            the number of bounded regions
+    Description
+        Text
+            TODO: Gwyn fills this in please.
+        Example
+            R = RR[x,y];
+            A = {x+y,x,x-y,y+1};
+            boundedRegions(A, R)
+    SeeAlso
+        intersectionLattice
+        realRegions
+///
+
 -- characteristicPolynomial
 doc ///
     Key
@@ -5066,6 +5109,34 @@ doc ///
     SeeAlso
         isRanked
         rankPoset
+///
+
+-- realRegions
+doc ///
+    Key
+        realRegions
+        (realRegions,List,Ring)
+    Headline
+        computes the number of regions a hyperplane arrangement divides the space in to
+    Usage
+        b = realRegions(A, R)
+    Inputs
+        A:List
+            of polynomials defining the hyperplanes
+        R:Ring
+    Outputs
+        b:ZZ
+            the number of regions
+    Description
+        Text
+            TODO: Gwyn fills this in please.
+        Example
+            R = RR[x,y];
+            A = {x+y,x,x-y,y+1};
+            realRegions(A, R)
+    SeeAlso
+        boundedRegions
+        intersectionLattice
 ///
 
 -- zetaPolynomial
