@@ -40,7 +40,7 @@ CHECKTARGET =										\
     test-subst test-sumiter test-thue test-trans test-zetak test-zn
 
 BUILDTARGET = lib-sta
-INSTALLTARGET = install-lib-sta install-include
+INSTALLTARGET = install-lib-sta install-bin-sta install-include
 PACKAGE-DISTCLEAN-TARGET = .
 
 ifeq (@SHARED@,yes)
