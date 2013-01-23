@@ -154,11 +154,35 @@ TEST(ARingZZpFFPACK, arithmetic3) {
   testFiniteField(R, ntrials);
 }
 
+TEST(ARingZZpFFPACK, arithmetic66000007) {
+  M2::ARingZZpFFPACK R(66000007);
+
+  testCoercions(R);
+  testNegate(R, ntrials);
+  testAdd(R, ntrials);
+  testSubtract(R, ntrials);
+  testMultiply(R, ntrials);
+  testDivide(R, ntrials);
+  testReciprocal(R, ntrials);
+  testPower(R, ntrials);
+  testAxioms(R, ntrials);
+}
+
 //TODO: commented out because it takes too long:
-//TEST(ARingZZpFFPACK, arithmetic67108879) {
-//  M2::ARingZZpFFPACK R(67108879);
-//  testFiniteField(R);
-//}
+// Actually: now this characteristic seems too big?!
+TEST(ARingZZpFFPACK, arithmetic67108859) {
+  M2::ARingZZpFFPACK R(67108859);
+
+  testCoercions(R);
+  testNegate(R, ntrials);
+  testAdd(R, ntrials);
+  testSubtract(R, ntrials);
+  testMultiply(R, ntrials);
+  testDivide(R, ntrials);
+  testReciprocal(R, ntrials);
+  testPower(R, ntrials);
+  testAxioms(R, ntrials);
+}
 #endif 
 
 
