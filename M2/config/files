@@ -60,6 +60,7 @@ libraries/cddlib/Makefile
 libraries/glpk/Makefile
 libraries/linbox/Makefile
 libraries/givaro/Makefile
+libraries/fplll/Makefile
 libraries/polymake/Makefile
 libraries/normaliz/Makefile
 libraries/pari/Makefile
