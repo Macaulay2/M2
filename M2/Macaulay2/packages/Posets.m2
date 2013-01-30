@@ -17,16 +17,16 @@ if version#"VERSION" <= "1.4" then (
 
 newPackage select((
     "Posets",
-        Version => "1.0.5.2",
-        Date => "23. January 2013",
+        Version => "1.0.5.3",
+        Date => "30. January 2013",
         Authors => {
             {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
             {Name => "Gwyn Whieldon", Email => "whieldon@hood.edu", HomePage => "http://www.hood.edu/Academics/Departments/Mathematics/Faculty/Gwyneth-Whieldon.html"}
         },
-        Headline => "Package for processing posets and order complexes",
+        Headline => "Package for processing partially ordered sets (posets)",
         Configuration => {
-            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux; is there a way to check this?
+            "DefaultPDFViewer" => "open", -- "open" for Macs and "evince" for Linux
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
@@ -208,7 +208,7 @@ export {
 ------------------------------------------
 
 ------------------------------------------
--- Non-exported, strongly prevalent functions
+-- Non-exported functions
 ------------------------------------------
 
 indexElement := (P,A) -> position(P.GroundSet, i -> i === A)
@@ -239,7 +239,7 @@ poset (List, List, Matrix) := Poset => opts -> (G, R, M) -> (
         symbol GroundSet => G,
         symbol Relations => toList \ R,
         symbol RelationMatrix => M,
-        symbol cache => new CacheTable from {"name" => "unnamed Poset"}
+        symbol cache => new CacheTable from {"name" => "Unnamed Poset"}
         })
 poset (List, List) := Poset => opts -> (G, R) -> poset(G, R = toList \ R, transitiveClosure(G, R), opts)
 poset (List, Function) := Poset => opts -> (G, cmp) -> (
@@ -254,7 +254,7 @@ Poset.GlobalAssignHook = (sym, val) -> (
      )
 
 net Poset := p -> (
-     if p.cache#"name" === "unnamed Poset" then "Relation matrix: " | net p.RelationMatrix else toString p.cache#"name")
+     if p.cache#"name" === "Unnamed Poset" then "Relation Matrix: " | net p.RelationMatrix else toString p.cache#"name")
 toString Poset := p -> toString p.cache#"name"
 
 Poset _ ZZ := Thing => (P, i) -> P.GroundSet#i
@@ -269,7 +269,7 @@ transitiveClosure (List, List) := Matrix => (G, R) -> (
     idx := hashTable apply(#G, i -> G_i => i);
     R = for r in R list if first r === last r then continue else {idx#(first r), idx#(last r)};
     D := digraph merge(applyValues(partition(first, R), v -> last \ v), hashTable apply(#G, i -> i => {}), join);
-    -- Once descendents no longer breaks for cyclic graphs, the next four lines can be removed.
+    -- The next four lines are a temporary work around for descendents [sic] which breaks for cyclic graphs.
     if isCyclic D then (
         H := floydWarshall D;
         matrix apply(#G, i -> apply(#G, j -> if H#(i, j) < 1/0. then 1 else 0))
@@ -433,7 +433,7 @@ distributiveLattice Poset := Poset => P -> (
     )
 
 -- The method dual is given in the Core and has options.
--- As we don't need the options, we discard them.
+-- Since we don't need the options, we simply discard them.
 dual Poset := Poset => {} >> opts -> P -> (
     Q := poset(P.GroundSet, reverse \ P.Relations, transpose P.RelationMatrix, AntisymmetryStrategy => "none");
     if posets'Precompute then (
@@ -503,7 +503,7 @@ subposet (Poset, List) := Poset => (P, L) -> dropElements(P, toList(set P.Ground
 ------------------------------------------
 adjoinMax = method()
 adjoinMax (Poset,Thing) := Poset => (P, a) -> (
-    if member(a, P.GroundSet) then error "The new maximal element a must not be a vertex in P.";
+    if member(a, P.GroundSet) then error "The new maximal element must not be a vertex in P.";
     Q := poset(P.GroundSet | {a},
           P.Relations | apply(P.GroundSet, g-> {g,a}),
           matrix{{P.RelationMatrix, transpose matrix {toList (#P.GroundSet:1)}},{matrix {toList((#P.GroundSet):0)},1}},
@@ -524,7 +524,7 @@ adjoinMax Poset := Poset => P -> adjoinMax(P, 1 + max prepend(0, select(P.Ground
 
 adjoinMin = method()
 adjoinMin (Poset,Thing) := Poset => (P, a) -> (
-    if member(a, P.GroundSet) then error "The new minimal element a must not be a vertex in P.";
+    if member(a, P.GroundSet) then error "The new minimal element must not be a vertex in P.";
     Q := poset(P.GroundSet | {a},
           apply(P.GroundSet, g -> {a,g}) | P.Relations,
           matrix{{P.RelationMatrix, transpose matrix {toList (#P.GroundSet:0)}}, {matrix{toList (#P.GroundSet:1)},1}},
@@ -575,7 +575,7 @@ Poset - List := dropElements
 -- Ported from Stembridge's Maple Package
 isomorphism = method()
 isomorphism (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
-    -- Test for quick bail-out.
+    -- Test for a quick bail-out.
     if #coveringRelations P != #coveringRelations Q or #mu != #nu or any(#mu, i -> #mu#i != #nu#i) then return null;
     -- This relabels P, Q, mu, and nu so that the labels are guaranteed to be sensible.
     idxP := hashTable apply(#P.GroundSet, i -> P.GroundSet_i => i);
@@ -585,13 +585,14 @@ isomorphism (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
     Q' := indexLabeling Q;
     nu' := (S -> apply(S, q -> idxQ#q)) \ nu;
     isom := isomorphism'(P', mu', Q', nu');
-    -- This converts the isomorphism (if extant) back to P & Q relevancy.
+    -- This converts the isomorphism (if extant) back to P & Q labels.
     if isom === null then null else applyValues(applyKeys(isom, k -> P_k), v -> Q_v)
     )
 isomorphism (Poset, Poset) := HashTable => (P, Q) -> isomorphism(P, {P.GroundSet}, Q, {Q.GroundSet})
 
--- Actual workhorse: Separated from base method.
+-- Workhorse of the method isomorphism.
 -- Assumes P & Q are labeled sensibly (with integers).
+-- non-exported
 isomorphism' = method()
 isomorphism' (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
     -- 0. Check for non-partitions.
@@ -641,10 +642,11 @@ isomorphism' (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
     mu' = pick(0, j, mu');
     for i from 0 to m-1 do (
         isom' = isomorphism'(P, mu', Q, pick(i, j, nu'));
-        if isom' =!= null then return merge(sisom, isom', (a,b) -> error "Something broke!");
+        if isom' =!= null then return merge(sisom, isom', (a,b) -> error "Something broke: please contact the package maintainers with the input parameters you used.");
         );
     null
     )
+
 -- The product method is defined in the Core.
 product (Poset, Poset) := Poset => (P, Q) ->
     poset(flatten for p in P.GroundSet list for q in Q.GroundSet list {p, q},
@@ -686,7 +688,8 @@ booleanLattice ZZ := Poset => n -> (
     P
     )
 
--- Recursive booleanLattice creation method.  Builds filtration and rankFunction recursively.
+-- Recursive booleanLattice creation method.  Builds filtration and rankFunction recursively, if desired.
+-- non-exported
 booleanLattice' = method()
 booleanLattice' ZZ := Poset => n -> (
     if n == 0 then (
@@ -781,13 +784,13 @@ divisorPoset (RingElement, RingElement):= Poset =>(m, n) -> (
             P := divisorPoset (n//m);
             poset(apply(P.GroundSet, v -> v * m), apply(P.Relations, r -> {m * first r, m * last r}), P.RelationMatrix, AntisymmetryStrategy => "none")
             ) else error "The first monomial does not divide the second."
-        ) else error "The monomials must be in same ring."
+        ) else error "The monomials must be in the same ring."
     )
 
 divisorPoset (List, List, PolynomialRing):= Poset => (m, n, R) -> (
     makeMonomialFromDegree := (R, d) -> product apply(numgens R, i-> R_i^(d#i));
     if #m === #n and #n === numgens R then divisorPoset(makeMonomialFromDegree(R, m), makeMonomialFromDegree(R, n))
-    else error "Wrong number of variables in the first or the second exponent vector."
+    else error "Wrong number of variables in one of the exponent vectors."
     )
 
 dominanceLattice = method()
@@ -829,36 +832,21 @@ facePoset SimplicialComplex := Poset => D -> (
     P
     )
 
--- Hyperplane Arrangement Lattice:
--- As written, this would most likely work for any type of arrangement lattice.
--- Given a set of linear forms defining the hyperplanes in the arrangement, returns set of intersection ideals.
---
--- Inputs:
---      L = equations defining hyperplanes
---      R = ring
--- Outputs: List of ideals of intersections, excluding the intersection of no hyperplanes and intersections which are empty.
+-- non-exported
 hyperplaneEquivalence = method()
-hyperplaneEquivalence (List,Ring) := List => (L,R) -> (
+hyperplaneEquivalence (List, Ring) := List => (L, R) -> (
     allideals := unique drop(apply(subsets L, h -> ideal gens gb ideal h), 1);
-    select(allideals, I -> not I == ideal(sub(1, R)))
+    select(allideals, I -> not I == ideal 1_R)
     )
 
--- Inputs:
---      L = list of ideals produced by method hyperplaneEquivalence
---      R = ring
--- Outputs: Pairs of ideals (I,J), with I < J if J contains I
+-- non-exported
 hyperplaneInclusions = method()
-hyperplaneInclusions(List,Ring) := List => (L, R) -> (
+hyperplaneInclusions(List, Ring) := List => (L, R) -> (
     H := apply(L, l -> sub(l, R));
-    coverPairs := {};
     flatten for l from 1 to #H - 1 list for k to #H - 1 list
         if unique apply(flatten entries gens H_k, f -> f % gens H_l) === {sub(0, R)} then {L_k, H_l} else continue
     )
 
--- Inputs:
---      L = equations defining arrangement
---      R = ring
--- Outputs: Intersection poset of hyperplane arrangement.
 intersectionLattice = method()
 intersectionLattice (List, Ring) := Poset => (L, R)-> (
     G := hyperplaneEquivalence(L, R);
@@ -870,8 +858,8 @@ lcmLattice = method( Options => { symbol Strategy => "recursive" })
 lcmLattice Ideal := Poset => opts -> I -> (
     str := if isMonomialIdeal I then opts.Strategy else "subsets";
     Ground := if str === "subsets" then prepend(1_(ring I), unique (lcm \ drop(subsets I_*, 1)))
-        else if str === "recursive" then apply(lcmLatticeProduceGroundSet I_*, D -> (ring I)_D)
-        else error "The option Strategy must be 'subsets' or 'recursive.'";
+        else if str === "recursive" then apply(lcmLatticeRecursive I_*, D -> (ring I)_D)
+        else error "The option Strategy must be either 'subsets' or 'recursive.'";
     Rels := flatten for i to #Ground-1 list for j from i+1 to #Ground-1 list
         if Ground_i % Ground_j == 0 then {Ground_j, Ground_i}
         else if Ground_j % Ground_i == 0 then {Ground_i, Ground_j}
@@ -880,9 +868,9 @@ lcmLattice Ideal := Poset => opts -> I -> (
     poset(Ground, Rels, RelsMatrix, AntisymmetryStrategy => "none")
     )
 
--- Used by lcmLattice for the "recursive" Strategy
+-- non-exported
 protect next
-lcmLatticeProduceGroundSet = G -> (
+lcmLatticeRecursive = G -> (
     if #G === 0 then return {{}}; -- empty set has 1 as a divisor.
     n := numgens ring first G;
     -- Base Case: 1 can be made bigger by *every* generator.
@@ -919,8 +907,7 @@ ncPartition = L -> new NCPartition from ncPart \ L
 net NCPart := L -> horizontalJoin(net \ L)
 net NCPartition := L -> if #L === 0 then net "empty" else (net L#0) | horizontalJoin apply(#L - 1, i -> "/" | net L#(i + 1))
 
--- Given a noncrossing partition P and the ith part of the partition,
--- produces the noncrossing partitions covered by P.
+-- non-exported
 ncpCovers = method()
 ncpCovers (NCPartition, ZZ) := List => (P, i) -> (
     if #(A := P_i) <= 1 then return {{},{}};
@@ -931,18 +918,16 @@ ncpCovers (NCPartition, ZZ) := List => (P, i) -> (
 ncpCovers NCPartition := List => P -> flatten \ transpose apply(#P, i -> ncpCovers(P, i))
 ncpCovers ZZ := List => n -> {{ncPartition {toList(0 ..< n)}}, {}}
 
--- Generates all noncrossing partitions and the noncrossing partition lattice.
+-- non-exported
 ncpGenerator = method()
 ncpGenerator ZZ := List => n -> (
     levels := {{n}};
     flatten \ transpose apply(n, k -> levels = unique@@flatten \ transpose (ncpCovers \ first levels))
     )
 
--- Uses ncpGenerator above to produce all noncrossing partitions:
 ncPartitions = method()
 ncPartitions ZZ := List => n -> first ncpGenerator n
 
--- Uses ncpGenerator above to produce noncrossing pairing lattice:
 ncpLattice = method()
 ncpLattice ZZ := Poset => n -> (
     GR := ncpGenerator n;
@@ -1043,10 +1028,6 @@ plueckerPoset ZZ := Poset => n -> (
     P
     )
 
--- Inputs:
---      L = equations defining (possibly nonprojective) arrangement
---      R = ring
--- Outputs: Intersection poset of projectivized hyperplane arrangement.
 projectivizeArrangement = method()
 projectivizeArrangement (List, Ring) := Poset => (L, R) -> (
     Z := local Z;
@@ -1062,9 +1043,9 @@ randomPoset = method(Options => {symbol Bias => 0.5})
 randomPoset (List) := Poset => opts -> (G) -> (
     if not instance(opts.Bias, RR) and not instance(opts.Bias, QQ) and not instance(opts.Bias, ZZ) then error "The option Bias must be a ZZ, QQ, or RR.";
     b := if instance(opts.Bias, ZZ) then (
-        if opts.Bias > 0 then 1.0/opts.Bias else error "The option Bias (as a ZZ) must be at least 1."
+        if opts.Bias > 0 then 1.0/opts.Bias else error "The option Bias (as an element of ZZ) must be at least 1."
         ) else opts.Bias;
-    if b < 0 or b > 1 then error "The option Bias must be at least 0 and at most 1.";
+    if b < 0 or b > 1 then error "The option Bias (as an element of QQ or RR) must be at least 0 and at most 1.";
     poset(G, flatten for i from 0 to #G-1 list for j from i+1 to #G-1 list if random 1.0 < opts.Bias then {G_i, G_j} else continue, AntisymmetryStrategy => "none")
     )
 randomPoset (ZZ) := Poset => opts -> n -> randomPoset(toList(1..n), opts)
@@ -1266,7 +1247,6 @@ connectedComponents Poset := List => P -> (
     )
 
 -- Ported from Stembridge's Maple Package
--- F = filtration P; F_0 is the minimal elements of P, F_1 is the minimal elements of P-F_0, &c.
 -- Notice that flatten filtration P is a linear extension of P.
 filtration = method()
 filtration Poset := List => P -> (
@@ -1284,7 +1264,7 @@ filtration Poset := List => P -> (
     )
 
 joinExists = method()
-joinExists (Poset,Thing,Thing) := Boolean => (P, a, b) -> (
+joinExists (Poset, Thing, Thing) := Boolean => (P, a, b) -> (
     OIa := principalFilter'(P, indexElement(P, a));
     OIb := principalFilter'(P, indexElement(P, b));
     upperBounds := toList (set(OIa)*set(OIb));
@@ -1323,7 +1303,6 @@ meetExists (Poset, Thing, Thing) := Boolean => (P,a,b) -> (
 
 meetIrreducibles = method()
 meetIrreducibles Poset := List => P -> (
-    -- want to compute meets only for non-comparable elements
     if not isLattice P then error "The poset is not a lattice.";
     nonComparablePairs := select(subsets(P.GroundSet,2), posspair -> not compare(P, posspair#0,posspair#1) and not compare(P,posspair#1,posspair#0));
     meets := select(unique flatten apply(nonComparablePairs, posspair -> if meetExists(P, posspair#0, posspair#1) then posetMeet(P,posspair#0, posspair#1)), i -> i =!= null);
@@ -1337,7 +1316,7 @@ minimalElements Poset := List => P -> (
     )
 
 posetJoin = method()
-posetJoin (Poset,Thing,Thing) := List => (P,a,b)  -> (
+posetJoin (Poset, Thing, Thing) := List => (P,a,b)  -> (
     OIa := principalFilter'(P, indexElement(P, a));
     OIb := principalFilter'(P, indexElement(P, b));
     upperBounds := toList (set(OIa)*set(OIb));
@@ -1345,13 +1324,13 @@ posetJoin (Poset,Thing,Thing) := List => (P,a,b)  -> (
     else (
         M := P.RelationMatrix;
         heightUpperBounds := flatten apply(upperBounds, i -> sum entries M_{i});
-        if #(select(heightUpperBounds, i -> i == min heightUpperBounds)) > 1 then error "The join does not exist; the least upper bound not unique."
+        if #(select(heightUpperBounds, i -> i == min heightUpperBounds)) > 1 then error "The join does not exist; the least upper bound is not unique."
         else P.GroundSet_(upperBounds_{position (heightUpperBounds, l -> l == min heightUpperBounds)})
         )
     )
 
 posetMeet = method()
-posetMeet (Poset,Thing,Thing) := List => (P,a,b) ->(
+posetMeet (Poset, Thing, Thing) := List => (P,a,b) ->(
     Fa := principalOrderIdeal'(P, indexElement(P, a));
     Fb := principalOrderIdeal'(P, indexElement(P, b));
     lowerBounds:= toList (set(Fa)*set(Fb));
@@ -1359,7 +1338,7 @@ posetMeet (Poset,Thing,Thing) := List => (P,a,b) ->(
     else (
         M := P.RelationMatrix;
         heightLowerBounds := flatten apply(lowerBounds, i -> sum entries M_{i});
-        if #(select(heightLowerBounds, i -> i == max heightLowerBounds)) > 1 then error "The meet does not exist; the greatest lower bound not unique."
+        if #(select(heightLowerBounds, i -> i == max heightLowerBounds)) > 1 then error "The meet does not exist; the greatest lower bound is not unique."
         else P.GroundSet_(lowerBounds_{position (heightLowerBounds, l -> l == max heightLowerBounds)})
         )
     )
@@ -1382,8 +1361,6 @@ rankFunction Poset := List => P -> (
     P.cache.rankFunction = last \ rk
     )
 
--- Ranked:  There exists an integer ranking-function r on the groundset of P
---          such that for each x and y in P: if y covers x then r(y)-r(x) = 1.
 rankPoset = method()
 rankPoset Poset := List => P -> (
     rk := rankFunction P;
@@ -1430,7 +1407,7 @@ coveringRelations Poset := List => P -> (
     )
 
 flagChains = method()
-flagChains (Poset,List) := List => (P, L) -> (
+flagChains (Poset, List) := List => (P, L) -> (
     if not isRanked P then error "The poset must be ranked.";
     rkP := rankPoset P;
     if #L == 0 then {} else if #L == 1 then apply(rkP_(first L), p -> {p}) else (
@@ -1516,8 +1493,6 @@ characteristicPolynomial Poset := RingElement => opts -> P -> (
     )
 
 -- Following Stanley's definition in EC1
--- f_i * q_i_1 * ... * q_i_k (where i = (i_1, ..., i_k) is strictly increasing):
--- f_i is the number of chains of k vertices hitting ranks i.
 flagfPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
 flagfPolynomial Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
@@ -1536,7 +1511,6 @@ flaghPolynomial Poset := RingElement => opts -> P -> (
     if denominator fhp == -1_R then -numerator fhp else numerator fhp
     )
 
--- f_i*q^i: f_i is the number of chains of i vertices in P
 -- aka: chainPolynomial.
 fPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
 fPolynomial Poset := RingElement => opts -> P -> (
@@ -1546,8 +1520,6 @@ fPolynomial Poset := RingElement => opts -> P -> (
     sum(-1..dim oP, i -> fV#i * R_0^(i + 1))
     )
 
--- The union of k chains in P has maximum size equal to the
--- sum of the first k terms in the Greene-Kleitman partition.
 greeneKleitmanPartition = method(Options => {symbol Strategy => "antichains"})
 greeneKleitmanPartition Poset := Partition => opts -> P -> (
     if P.cache.?greeneKleitmanPartition then return P.cache.greeneKleitmanPartition;
@@ -1583,7 +1555,6 @@ moebiusFunction Poset := HashTable => P -> (
     applyKeys(new HashTable from mu, (i, j) -> (F_i, F_j))
     )
 
--- r_i*x^i, where r_i is the number of rank i vertices in P
 rankGeneratingFunction = method(Options => {symbol VariableName => getSymbol "q"})
 rankGeneratingFunction Poset := RingElement => opts -> P -> (
     if not isRanked P then error "The poset must be ranked.";
@@ -1598,7 +1569,6 @@ realRegions(List, Ring) := (A, R) -> (
     sum apply(L.GroundSet, i -> abs(M#(ideal 0_R, i)))
     )
 
--- zeta(i) = the number of weak-chains of i-1 vertices in P
 zetaPolynomial = method(Options => {symbol VariableName => getSymbol "q"})
 zetaPolynomial Poset := RingElement => opts -> P -> (
     oP := orderComplex P;
@@ -1779,7 +1749,8 @@ doc ///
             --
             A few methods in this package have been ported from John Stembridge's Maple
             package implementing posets, which is available at
-            @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.
+            @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.  Such methods
+            are noted both in the source code and in the documentation.
 ///
 
 ------------------------------------------
@@ -1797,12 +1768,12 @@ doc ///
         a class for partially ordered sets (posets)
     Description
         Text
-            This class is a type of HashTable which represents finite posets.  It consists
+            This class is a type of @TO "HashTable"@ which represents finite posets.  It consists
             of a ground set, a list of relationships ${a,b}$ where $a \leq b$, and a matrix
             encoding these relations.
         Example
             G = {1,2,3,4};                  -- the ground set
-            R = {{1,2},{1,3},{2,4},{3,4}};  -- a list of relations "generating" all relations
+            R = {{1,2},{1,3},{2,4},{3,4}};  -- a list of cover relations
             P = poset(G, R)                 -- the poset with its relations matrix computed
     SeeAlso
         poset
@@ -2060,7 +2031,7 @@ doc ///
     Description
         Text
             Many routines in this package are written to take advantage
-            of known structure on some posets to quickyl precompute some
+            of known structure on some posets to quickly precompute some
             of the cached data.  However, this may not always be desirable,
             and so this flag toggles whether precomputation occurs.  It
             can be set with the @TO "setPrecompute"@ method.
@@ -2365,7 +2336,7 @@ doc ///
 
             The $P$-partition ring is more simply generated by the monomials corresponding
             to the connected order ideals of $P$.  This method returns the toric quotient algebra,
-            whose toric ideal is minimially generated, isomorphic to the $P$-partition ring.
+            whose toric ideal is minimally generated, isomorphic to the $P$-partition ring.
         Example
             P = poset {{1,2}, {2,4}, {3,4}, {3,5}};
             pPartitionRing P
@@ -2624,7 +2595,7 @@ doc ///
     Description
         Text
             This method simply relabels the ground set of the poset
-            based on givne labeling.
+            based on given labeling.
         Example
             P = chain 5;
             l = hashTable { 1 => a, 2 => b, 3 => c, 4 => d, 5 => e};
@@ -2997,7 +2968,7 @@ doc ///
         D:Poset
     Description
         Text
-            The diamond product of two ranked posets is the cartesian
+            The diamond product of two ranked posets is the Cartesian
             product of the posets with their minimal elements removed
             and a new minimal element adjoined to the product.
         Example
@@ -3103,11 +3074,11 @@ doc ///
         Q:Poset
     Outputs
         R:Poset
-            the cartesian product of $P$ and $Q$
+            the Cartesian product of $P$ and $Q$
     Description
         Text
-            The cartesian product of the posets $P$ and $Q$ is the
-            new poset whose ground set is the cartesian product of
+            The Cartesian product of the posets $P$ and $Q$ is the
+            new poset whose ground set is the Cartesian product of
             the ground sets of $P$ and $Q$ and with partial order
             given by $(a,b) \leq (c,d)$ if and only if $a \leq c$
             and $b \leq d$.
@@ -3392,8 +3363,8 @@ doc ///
         P:Poset
     Description
         Text
-            The dominance lattice of partitons of $n$ is the
-            lattice of partitons of $n$ under the dominance
+            The dominance lattice of partitions of $n$ is the
+            lattice of partitions of $n$ under the dominance
             ordering.  Suppose $p$ and $q$ are two partitions
             of $n$.  Then $p$ is less than or equal to $q$
             if and only if the $k$-th partial sum of $p$
@@ -3488,7 +3459,7 @@ doc ///
         Text
             The LCM lattice of an @TO "Ideal"@ is the set of all
             LCMs of subsets of the generators of the ideal with partial
-            ordering given by divisbility.  These are particularly useful
+            ordering given by divisibility.  These are particularly useful
             in the study of resolutions of monomial ideals.
         Example
             R = QQ[x,y];
@@ -4816,7 +4787,8 @@ doc ///
             the number of bounded regions
     Description
         Text
-            TODO: Gwyn fills this in please.
+            This method computes the number of bounded regions cut out by the
+            hyperplane arrangement.
         Example
             R = RR[x,y];
             A = {x+y,x,x-y,y+1};
@@ -5129,7 +5101,8 @@ doc ///
             the number of regions
     Description
         Text
-            TODO: Gwyn fills this in please.
+            This method computes the number of regions cut out by the
+            hyperplane arrangement.
         Example
             R = RR[x,y];
             A = {x+y,x,x-y,y+1};
@@ -5919,18 +5892,13 @@ doc ///
         rankFunction
 ///
 
-undocumented { "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPart), (net,NCPartition), (net,Poset),"Random" };
+undocumented { "Random", "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPart), (net,NCPartition), (net,Poset) };
 
 ------------------------------------------
 ------------------------------------------
 -- Tests
 ------------------------------------------
 ------------------------------------------
-
--- DC2, 1725, 16. August 2011:
--- I think tests should be structured systematically.  I propose two possible styles:
---  * Each test would generate one or more posets and then run most if not all methods on the given poset(s).
---  * Each test only tests one method but on a variety of posets.
 
 ------------------------------------------
 ------------------------------------------
