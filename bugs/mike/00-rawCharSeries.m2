@@ -4,13 +4,18 @@
 --    test/decompose4.m2 (crashing bug)
 --    00-bug-radical (gives WRONG answer)
 
+kk = QQ
+R = kk[x,y]
+I = ideal"3x2-5"
+I = ideal"1/2x2-5/3"
+debug Core
+rawCharSeries raw gens I
 -----------------
 -- example from: 00-kahle-isPrime.m2
 -----------------
-kk = ZZ/32003 -- this one just goes off into never never land, doesn't return
+--kk = ZZ/32003 -- this one just goes off into never never land, doesn't return
 kk = QQ -- this one crashes very early
 R = kk[x1,x2,x3,x4,x5,x6, MonomialOrder=>Lex] -- crashes with this ring and QQ
---R = kk[x1,x2,x3,x4,x5,x6, MonomailOrder]  -- crashes with this ring and QQ
 I = ideal(x1^2*x2^2*x5^8*x6^8-x3^4*x4^4,x2^8*x3^2*x4^8*x5^2-x1^4*x6^4,x1^8*x3^8*x4^2*x6^2-x2^4*x5^4)
 debug Core
 m = gens I
@@ -28,8 +33,11 @@ J1 = ideal(J_0, J_1, 4*J_2)
   -- the only difference between J and J1 is the factor of 4 on the last generator of J
 debug Core
 rawCharSeries raw gens J1 -- works
-rawCharSeries raw gens J -- CRASHES not so much
+rawCharSeries raw gens J -- CRASHES
 
+R = QQ[v_1]
+f= -153750943071/2*v_1^3-635215450586*v_1^2-3631862913640*v_1+334197355680
+g=1898159791*v_1-171912220
 -----------------
 -- example from: 00-bug-radical
 -----------------

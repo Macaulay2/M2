@@ -184,43 +184,38 @@ namespace M2 {
     mFfpackField.div(result,a,b);
   }
 
-  /// @jakob: don't need mpz here.  Instead, let's write the code using doubling exponentiation code.
-  ///  this might be in ffpack?
-
-  void ARingZZpFFPACK::power(ElementType &result, const ElementType a, const  STT n) const
+  void ARingZZpFFPACK::power(ElementType &result, const ElementType a, STT n) const
   {
-    if (not mFfpackField.isZero(a)) 
+    if (is_zero(a))
       {
-        mpz_t  mpz_n;
-        mpz_t  mpz_tmp;
-        mpz_init( mpz_n);
-        mpz_init( mpz_tmp);
-        mpz_set_si   (mpz_n,n);
-        //std::cerr << "n = " << n << std::endl;
-        //std::cerr << "mpz_n = " << mpz_n << std::endl;
-        STT tmp  = static_cast< STT>(mpz_fdiv_r_ui(mpz_tmp, mpz_n, mCharac -1)  );
-        if ( tmp==0 )
-          {
-            //result = mFfpackField.one;
-            result = 1.;
-            return;
-            // result=givaroField.one;
-          }
-        
-        //std::cerr << "tmp = " << tmp << std::endl;
-        assert(tmp>0); // tmp<0 should never occur
-        result = 1.;
-        while (tmp>0) 
-          {
-            mFfpackField.mulin(result,a);
-            tmp--;
-          }
+        if (n < 0) 
+          ERROR("division by zero");
+        set(result, a);
+        return;
       }
-    else
+    ElementType base;
+    set(base, a);
+    if (n < 0)
       {
-        if (n<0)
-          ERROR(" division by zero");
-        result = a;
+        invert(base,base);
+        n = -n;
+      }
+    n = n % (mCharac-1);
+    set_from_int(result, 1);
+    if (n == 0)
+      return;
+
+    // Now use doubling algorithm
+    M2_ASSERT(n > 0);
+    for (;;)
+      {
+        if ((n % 2) != 0)
+          mFfpackField.mulin(result,base); // result *= base
+        n >>= 1;
+        if (n == 0)
+          return;
+        else
+          mFfpackField.mulin(base, base); // base = base^2
       }
   }
   
