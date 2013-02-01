@@ -18,8 +18,21 @@ Istring = "ideal((v2-1)*(v3-1),
   (v1-1)*(v3+1)*(v4+1)*(v6+1),
   (v1-1)*(v3+1)*(v4+1)*(v5-1),
   (v1-1)*(v2-1)*(v5-1)*(v7-1))"
+codim4primes = "
+  {ideal (v2 - 1, v4 + 1, v5 - 1, v6 + 1),
+   ideal (v3 - 1, v4 + 1, v5 - 1, v7 - 1),
+   ideal (v3 - 1, v4 + 1, v6 + 1, v7 - 1),
+   ideal (v2 - 1, v4 + 1, v6 + 1, v7 - 1),
+   ideal (v2 - 1, v3 - 1, v4 + 1, v7 - 1),
+   ideal (v1 + 1, v2 - 1, v4 + 1, v7 - 1),
+   ideal (v2 - 1, v4 + 1, v5 - 1, v7 - 1),
+   ideal (v1 - 1, v2 - 1, v4 + 1, v6 + 1),
+   ideal (v1 - 1, v2 - 1, v6 + 1, v7 + 1)}"
+
 R1 = QQ[v7,v6,v5,v4,v3,v2,v1, MonomialOrder=>Lex]
 I1 = value Istring
+P41 = value codim4primes
+for p in P41 list (((gens I1)%p) == 0)
 P1 = ideal(v1+1,v2-1,v4+1,v7-1)
 assert((gens I1) % P1 == 0)
 assert(degree I1 == 9)
@@ -27,6 +40,8 @@ assert(codim I1 == 4)
 
 R2 = ZZ/101[v7,v6,v5,v4,v3,v2,v1, MonomialOrder=>Lex]
 I2 = value Istring
+P42 = value codim4primes
+for p in P42 list (((gens I2)%p) == 0)
 P2 = ideal(v1+1,v2-1,v4+1,v7-1)
 assert((gens I2) % P2 == 0)
 assert(degree I1 == 9)
@@ -96,7 +111,7 @@ C2 = rawCharSeries raw gens I2 -- also seems wrong?  But different from C1!
  ( v2+1, v3-1, v4+1, v5*v6-1*v6+v5-1, v7-1 ) )
 
 -- C1 after contract:
--- 25 here, still only 6 of codim 4.
+-- 25 here, still only 6 of codim 4. (same on ubuntu and mac rMBP)
 ( ( v3-1, v4+1, v6+1, v1*v2*v5*v7-1*v2*v5*v7-v1*v5*v7+1*v5*v7-v1*v2*v7+1*v2*v7+v1*v7-1*v7-v1*v2*v5+1*v2*v5+v1*v5-1*v5+v1*v2-1*v2-v1+1 ),
  ( v3-1, v4+1, v5-1, v2*v6*v7+1*v6*v7+v2*v7+1*v7-v2*v6-1*v6-v2-1 ),
  ( v3-1, v4+1, v5-1, v6+1, v1*v2*v7+1*v2*v7-v1*v7-1*v7-v1*v2-1*v2+v1+1 ),
@@ -219,7 +234,7 @@ C2 = rawCharSeries raw gens I2 -- also seems wrong?  But different from C1!
  ( v2+100, v4+1, v5+100, v6*v7+1*v7+100*v6+100 ) )
 
 -- C2 after contract
--- 24 total, 7 linear!  Still incorrect...
+-- 24 total, 7 linear!  Still incorrect... (seems same on mac and ubuntu, at least the numbers...)
 ( ( 100*v3+1, v4+1, v6+1, v1*v2*v5*v7+100*v2*v5*v7+100*v1*v5*v7+1*v5*v7+100*v1*v2*v7+1*v2*v7+v1*v7+100*v7+100*v1*v2*v5+1*v2*v5+v1*v5+100*v5+v1*v2+100*v2+100*v1+1 ),
  ( 100*v3+1, v4+1, 100*v5+1, v2*v6*v7+1*v6*v7+v2*v7+1*v7+100*v2*v6+100*v6+100*v2+100 ),
  ( 100*v3+1, v4+1, 100*v5+1, v6+1, v1*v2*v7+1*v2*v7+100*v1*v7+100*v7+100*v1*v2+100*v2+v1+1 ),
