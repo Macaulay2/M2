@@ -975,20 +975,10 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	twoconds/last);
     )
 
+TEST ///
 -----------------------
 -- Test Here:
---restart
---debug needsPackage "NumericalSchubertCalculus"-
---------------------------------------------------
---TEST ///
---twoconds = take(SchPblm,2);
---l1=first first twoconds;
---F1= last first twoconds;
---l2= first last twoconds;
---F2= last last twoconds;
---remaining'conditions'and'flags=drop(SchPblm,2);
---newDag = playCheckers(l1,l2,2,4);
---resolveNode(newDag,remaining'conditions'and'flags);
+debug needsPackage "NumericalSchubertCalculus"
 
 --SchPblm = {({2,1}), ({1})};
 --twoconds = take(SchPblm,2)
@@ -1012,6 +1002,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 
 --///
 -----------------------
+///
 
 ---------------------------------
 --- changeFlags
