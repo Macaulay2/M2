@@ -53,6 +53,7 @@ export {
    Solutions,
    solveSchubertProblem,
    changeFlags, -- temporary
+   makePolynomials, -- temporary
    SolutionsSuperset -- temporary
    }
 
@@ -976,37 +977,40 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 
 -----------------------
 -- Test Here:
-restart
-debug needsPackage "NumericalSchubertCalculus"
+--restart
+--debug needsPackage "NumericalSchubertCalculus"-
+--------------------------------------------------
+--TEST ///
+--twoconds = take(SchPblm,2);
+--l1=first first twoconds;
+--F1= last first twoconds;
+--l2= first last twoconds;
+--F2= last last twoconds;
+--remaining'conditions'and'flags=drop(SchPblm,2);
+--newDag = playCheckers(l1,l2,2,4);
+--resolveNode(newDag,remaining'conditions'and'flags);
 
-twoconds = take(SchPblm,2);
-l1=first first twoconds;
-F1= last first twoconds;
-l2= first last twoconds;
-F2= last last twoconds;
-remaining'conditions'and'flags=drop(SchPblm,2);
-newDag = playCheckers(l1,l2,2,4);
-resolveNode(newDag,remaining'conditions'and'flags);
+--SchPblm = {({2,1}), ({1})};
+--twoconds = take(SchPblm,2)
+--l1= first twoconds
+--if class last twoconds === Sequence then( 
+--l2= first last twoconds
+--F2= last last twoconds
+--)
+--remaining'conditions'and'flags=drop(SchPblm,2);
+--newDag = playCheckers(l1,l2,2,4);
+--resolveNode(newDag,remaining'conditions'and'flags);
+--peek newDag
 
-SchPblm = {({2,1}), ({1})};
-twoconds = take(SchPblm,2)
-l1= first twoconds
-if class last twoconds === Sequence then( 
-l2= first last twoconds
-F2= last last twoconds
-)
-remaining'conditions'and'flags=drop(SchPblm,2);
-newDag = playCheckers(l1,l2,2,4);
-resolveNode(newDag,remaining'conditions'and'flags);
-peek newDag
+--solveSchubertProblem(SchPblm,2,4)
 
-solveSchubertProblem(SchPblm,2,4)
+--SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+--solveSchubertProblem(SchPblm,2,4)
 
-SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
-solveSchubertProblem(SchPblm,2,4)
+--SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+--solveSchubertProblem(SchPblm,2,4)
 
-SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
-solveSchubertProblem(SchPblm,2,4)
+--///
 -----------------------
 
 ---------------------------------
@@ -1077,22 +1081,23 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
    track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
    )
 
-TEST ///
+--TEST ///
+---------
 -- Test the function that
 -- moves solutions wrt flags A
 -- to solutions wrt flags B
-restart
-debug needsPackage "NumericalSchubertCalculus"
-needsPackage "NumericalAlgebraicGeometry"
-Rng = FFF[x_{1,1}, x_{1,2}];
-MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
-conds = {{1},{1}};
-Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
-sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
-Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
-solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
-assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
-///
+--restart
+--debug needsPackage "NumericalSchubertCalculus"
+--needsPackage "NumericalAlgebraicGeometry"
+--Rng = FFF[x_{1,1}, x_{1,2}];
+--MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
+--conds = {{1},{1}};
+--Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
+--sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
+--Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
+--solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
+--assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+--///
 
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
