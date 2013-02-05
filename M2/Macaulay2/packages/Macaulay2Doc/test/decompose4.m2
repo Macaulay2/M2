@@ -47,3 +47,28 @@ L = ideal"2c+d-12,
 C = decompose L
 assert(C == {ideal(d+4,b^2+16*b+128,a-4*b-32,c-8), ideal(d,b,a-4,c-6)})
 
+end
+-- boiled down version of "used to crash" example above (jan 2013)
+kk = QQ
+S = kk[a,b,c,d]
+J = ideal(4*c^2+a*d-4*b*d-4*c*d+3*d^2-48*c+16*d+144,2*a*c-4*c^2+3*b*d+4*c*d-3*d^2-12*a-4*b+48*c-16*d-144,-b*c^2+(1/4)*b^2*d+(1/2)*b*c*d+c^2*d-(1/2)*b*d^2-(1/2)*c*d^2+(1/4)*d^3+10*b*c-4*b*d-10*c*d-24*b+28*d)
+irreducibleCharacteristicSeries J -- crashes
+
+decompose J  -- crashes
+decompose trim J  -- ok
+debug Core
+
+     T = kk ( monoid [ Variables => S.generatorSymbols, Degrees => (degrees S), MonomialOrder => Lex, Heft => heft S ] )
+     m1 = sub(m, vars T)
+     rawCharSeries raw m1
+
+-- Here is a simple crash:
+kk = QQ
+S = kk[a,b,c,d, MonomialOrder=>Lex]
+J = ideal(4*c^2+a*d-4*b*d-4*c*d+3*d^2-48*c+16*d+144,2*a*c-4*c^2+3*b*d+4*c*d-3*d^2-12*a-4*b+48*c-16*d-144,-b*c^2+(1/4)*b^2*d+(1/2)*b*c*d+c^2*d-(1/2)*b*d^2-(1/2)*c*d^2+(1/4)*d^3+10*b*c-4*b*d-10*c*d-24*b+28*d)
+J1 = ideal(J_0, J_1, 4*J_2)
+  -- the only difference between J and J1 is the factor of 4 on the last generator of J
+debug Core
+rawCharSeries raw gens J1 -- works
+rawCharSeries raw gens J -- not so much
+------------------------------
