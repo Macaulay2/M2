@@ -211,7 +211,10 @@ export {
 -- Non-exported functions
 ------------------------------------------
 
-indexElement := (P,A) -> position(P.GroundSet, i -> i === A)
+indexElement := (P, a) -> (
+    j := position(P.GroundSet, i -> i === a);
+    if j === null then error("The element [" | toString a | "] is not in the poset.") else j
+    )
 
 principalOrderIdeal' := (P, i) -> positions(flatten entries(P.RelationMatrix_i), j -> j != 0)
 
