@@ -10,6 +10,7 @@ INTERFACE2 = \
 
 INTERFACE = \
 	cra \
+	aring-zz-flint \
 	aring-RRR \
 	aring-tower \
 	aring-m2-gf \
@@ -39,6 +40,7 @@ INTERFACE = \
 	LLL \
 	fractionfreeLU \
 	ntl-interface \
+    fplll-interface \
 	mat \
 	dmat \
 	smat \

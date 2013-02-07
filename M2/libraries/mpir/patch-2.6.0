@@ -1,0 +1,13 @@
+--- mpir-2.6.0/mpirxx.h	2013-01-08 22:42:59.744761218 +0100
++++ mpir-2.6.0/mpirxx.h	2013-01-08 22:45:13.370090672 +0100
+@@ -1707,8 +1707,8 @@ public:
+   mpir_si get_si() const { return mpz_get_si(mp); }
+   mpir_ui get_ui() const { return mpz_get_ui(mp); }
+ #if defined( _STDINT_H ) || defined ( _STDINT_H_ ) || defined ( _STDINT )
+-  intmax_t get_sx() const { return mpz_get_sx(mp); }
+-  uintmax_t get_ux() const { return mpz_get_ux(mp); }
++//  intmax_t get_sx() const { return mpz_get_sx(mp); }
++//  uintmax_t get_ux() const { return mpz_get_ux(mp); }
+ #endif
+   double get_d() const { return mpz_get_d(mp); }
+ 

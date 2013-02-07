@@ -3,6 +3,7 @@ UNITTEST_CCFILES := \
     M2-cpp-replacement \
     M2mem-replacement \
     basics-test \
+    ARingRRRTest \
     ARingZZpTest \
     ARingGFTest \
     RingZZTest \
@@ -10,7 +11,9 @@ UNITTEST_CCFILES := \
     RingQQTest \
     RingRRRTest \
     RingCCCTest \
-    RingTowerTest
+    RingTowerTest \
+    DMatZZpTest \
+    fromStream
 
 UNITTEST_CFILES += \
     M2-replacement

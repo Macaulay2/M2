@@ -1,10 +1,13 @@
 // Copyright 1996  Michael E. Stillman
 
 #include "spair.hpp"
+#include <iostream>
 
 // The following is constant
-static const int spair_heap_size[NHEAP] = {4, 16, 64, 256, 1024, 4048, 16384,
-   65536, 262144, 1677721};
+
+static const int spair_heap_size[NHEAP] = {
+  4, 16, 64, 256, 1024, 4048, 16384,
+  65536, 262144, 1048576, 16777216, 268435456};
 
 s_pair_heap::s_pair_heap(const Monoid *MM)
 : M(MM),
@@ -176,6 +179,12 @@ void s_pair_heap::insert(s_pair *&p)
   while (n_in_heap[i] >= spair_heap_size[i])
     {
       i++;
+      if (i >= NHEAP) 
+        {
+          std::cerr << "too many spairs: aborting" << std::endl;
+          std::cerr << "n_in_heap[" << i << "]=" << n_in_heap[i-1] << std::endl;
+          abort();
+        }
       heap[i] = merge(heap[i-1], heap[i]);
       n_in_heap[i] += n_in_heap[i-1];
       heap[i-1] = NULL;
@@ -192,6 +201,7 @@ void s_pair_heap::insert(s_pair *p, int len)
   while (len >= spair_heap_size[i]) i++;
   heap[i] = merge(p, heap[i]);
   n_in_heap[i] += len;
+  std::cout << "n_in_heap[" << i << "]=" << n_in_heap[i] << std::endl;
   p = NULL;
   while (n_in_heap[i] >= spair_heap_size[i])
     {

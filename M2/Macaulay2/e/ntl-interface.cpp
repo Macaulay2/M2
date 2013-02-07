@@ -73,7 +73,7 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
   int ncols = M->n_cols();
 
   NTL::ZZ d;
-  long rk;
+  // Note that the LLL routines all return the rank, but we ignore this return value.
   double delta = static_cast<double>(numer)/static_cast<double>(denom);
 
   if (M2_gbTrace >= 10)
@@ -84,123 +84,123 @@ bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int str
   switch (strategy) {
   case 2:
     if (!V)
-      rk = LLL(d,*A,numer,denom);
+      LLL(d,*A,numer,denom);
     else
-      rk = LLL(d,*A,*V,numer,denom);
+      LLL(d,*A,*V,numer,denom);
     break;
 
   case useNTL+GS+useLLL+FP:
     if (!V)
-      rk = LLL_FP(*A,delta);
+      LLL_FP(*A,delta);
     else
-      rk = LLL_FP(*A,*V,delta);
+      LLL_FP(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+QP:
   case useNTL+GS+useLLL+QP1:
     if (!V)
-      rk = LLL_QP(*A,delta);
+      LLL_QP(*A,delta);
     else
-      rk = LLL_QP(*A,*V,delta);
+      LLL_QP(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+XD:
     if (!V)
-      rk = LLL_XD(*A,delta);
+      LLL_XD(*A,delta);
     else
-      rk = LLL_XD(*A,*V,delta);
+      LLL_XD(*A,*V,delta);
     break;
   case useNTL+GS+useLLL+useRR:
     if (!V)
-      rk = LLL_RR(*A,delta);
+      LLL_RR(*A,delta);
     else
-      rk = LLL_RR(*A,*V,delta);
+      LLL_RR(*A,*V,delta);
     break;
 
   case useNTL+GS+useBKZ+FP:
     if (!V)
-      rk = BKZ_FP(*A,delta);
+      BKZ_FP(*A,delta);
     else
-      rk = BKZ_FP(*A,*V,delta);
+      BKZ_FP(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+QP:
     if (!V)
-      rk = BKZ_QP(*A,delta);
+      BKZ_QP(*A,delta);
     else
-      rk = BKZ_QP(*A,*V,delta);
+      BKZ_QP(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+QP1:
     if (!V)
-      rk = BKZ_QP1(*A,delta);
+      BKZ_QP1(*A,delta);
     else
-      rk = BKZ_QP1(*A,*V,delta);
+      BKZ_QP1(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+XD:
     if (!V)
-      rk = BKZ_XD(*A,delta);
+      BKZ_XD(*A,delta);
     else
-      rk = BKZ_XD(*A,*V,delta);
+      BKZ_XD(*A,*V,delta);
     break;
   case useNTL+GS+useBKZ+useRR:
     if (!V)
-      rk = BKZ_RR(*A,delta);
+      BKZ_RR(*A,delta);
     else
-      rk = BKZ_RR(*A,*V,delta);
+      BKZ_RR(*A,*V,delta);
     break;
 
   case useNTL+Givens+useLLL+FP:
     if (!V)
-      rk = G_LLL_FP(*A,delta);
+      G_LLL_FP(*A,delta);
     else
-      rk = G_LLL_FP(*A,*V,delta);
+      G_LLL_FP(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+QP:
   case useNTL+Givens+useLLL+QP1:
     if (!V)
-      rk = G_LLL_QP(*A,delta);
+      G_LLL_QP(*A,delta);
     else
-      rk = G_LLL_QP(*A,*V,delta);
+      G_LLL_QP(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+XD:
     if (!V)
-      rk = G_LLL_XD(*A,delta);
+      G_LLL_XD(*A,delta);
     else
-      rk = G_LLL_XD(*A,*V,delta);
+      G_LLL_XD(*A,*V,delta);
     break;
   case useNTL+Givens+useLLL+useRR:
     if (!V)
-      rk = G_LLL_RR(*A,delta);
+      G_LLL_RR(*A,delta);
     else
-      rk = G_LLL_RR(*A,*V,delta);
+      G_LLL_RR(*A,*V,delta);
     break;
 
   case useNTL+Givens+useBKZ+FP:
     if (!V)
-      rk = G_BKZ_FP(*A,delta);
+      G_BKZ_FP(*A,delta);
     else
-      rk = G_BKZ_FP(*A,*V,delta);
+      G_BKZ_FP(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+QP:
     if (!V)
-      rk = G_BKZ_QP(*A,delta);
+      G_BKZ_QP(*A,delta);
     else
-      rk = G_BKZ_QP(*A,*V,delta);
+      G_BKZ_QP(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+QP1:
     if (!V)
-      rk = G_BKZ_QP1(*A,delta);
+      G_BKZ_QP1(*A,delta);
     else
-      rk = G_BKZ_QP1(*A,*V,delta);
+      G_BKZ_QP1(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+XD:
     if (!V)
-      rk = G_BKZ_XD(*A,delta);
+      G_BKZ_XD(*A,delta);
     else
-      rk = G_BKZ_XD(*A,*V,delta);
+      G_BKZ_XD(*A,*V,delta);
     break;
   case useNTL+Givens+useBKZ+useRR:
     if (!V)
-      rk = G_BKZ_RR(*A,delta);
+      G_BKZ_RR(*A,delta);
     else
-      rk = G_BKZ_RR(*A,*V,delta);
+      G_BKZ_RR(*A,*V,delta);
     break;
   default:
     delete A;

@@ -1,12 +1,14 @@
 VPATH = @srcdir@
 
 # license for mpir: GNU LGPL v2.1 or later
-VERSION = 2.4.0
+VERSION = 2.6.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
-# URL = http://www.mpir.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.mpir.org
+# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
 
 CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
 ifeq (@SHARED@,no)

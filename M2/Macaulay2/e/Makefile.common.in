@@ -67,7 +67,7 @@ ntl_interface.o: ntl_interface.cpp
 %.dep: %.cpp
 	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
-	@       @CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+	@       @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
 
 %.dep: %.c
 	@ echo "@CC@  -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE

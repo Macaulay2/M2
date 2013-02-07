@@ -1,7 +1,30 @@
 #ifndef __ring_test_hpp__
 #define __ring_test_hpp__
 
-template <typename T> bool getElement(const T& R, int index, typename T::ElementType& result);
+const int ntrials = 1000;
+
+template <typename RingType>
+void getElement(const RingType& R, int index, typename RingType::ElementType &result);
+
+
+template <typename RingType>
+class ARingElementGenerator
+{
+public:
+  ARingElementGenerator(const RingType& R) : mRing(R), mNext(0) {}
+  
+  void nextElement(typename RingType::ElementType &result) {getElement<RingType>(mRing, ++mNext, result);}
+  void reset() {mNext = 0;}
+private:
+  const RingType& mRing;
+  int mNext;
+};
+
+
+template<typename T> 
+std::istream &fromStream(std::istream &i, 
+                         const T& R, 
+                         typename T::ElementType &result);
 
 template<typename T>
 void testSomeMore(const T& R)
@@ -33,15 +56,15 @@ void testSomeMore(const T& R)
 }
 
 template <typename T>
-void testNegate(const T& R)
+void testNegate(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b;
   R.init(a);
   R.init(b);
-  int next = 0;
-  while(true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
+      gen.nextElement(a);
       R.negate(b,a);
       R.add(b,a,b);
       EXPECT_TRUE(R.is_zero(b)); // test: (-a) + a == 0
@@ -78,29 +101,25 @@ void testCoercions(const T& R)
   for (int i = -1000; i<1000; i++)
     {
       mpz_set_si(m, i);
-      mpz_add(m, m, base);
-      R.set_from_mpz(a,m);
+      mpz_add(m, m, base); // m = base + i
+      R.set_from_mpz(a,m); // a = (base + i) mod charac
       R.set_from_int(b,i);
-      R.add(b,c,b);
-      EXPECT_EQ(a,b);
+      R.add(b,c,b); // b = (base mod charac) + (i mod charac)
+      EXPECT_EQ(a,b); // a, b should be equal
     }
 
   // set_from_mpq
   for (int i=1; i<300; i++)
     {
       mpq_set_si(n1, 43999, i);
-      mpq_canonicalize(n1);
+      mpq_canonicalize(n1); // n1 = 43999/i
 
-      //      bool lifts = false;
+      // check that (43999 mod charac)/(i mod charac) == n1 mod charac
+      // if (i mod charac) is not zero.
       if (i % (R.characteristic()) == 0) continue;
       R.set_from_mpq(a, n1);
       R.set_from_int(b, 43999);
       R.set_from_int(c, i);
-      //      if (i % R.characteristic() == 0)
-      //        {
-      //          //          EXPECT_TRUE(lifts);
-      //          continue;
-      //        }
       if (!R.is_zero(c))
         {
           R.divide(c,b,c);
@@ -117,8 +136,9 @@ void testCoercions(const T& R)
 }
 
 template <typename T>
-void testAxioms(const T& R)
+void testAxioms(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d, e, f;
   R.init(a);
   R.init(b);
@@ -126,12 +146,11 @@ void testAxioms(const T& R)
   R.init(d);
   R.init(e);
   R.init(f);
-  int next = 0;
-  while(true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
-      if (!getElement(R, ++next, c)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
 
       // Test commutativity
       // test: a*b = b*a
@@ -175,18 +194,18 @@ void testAxioms(const T& R)
 }
 
 template <typename T>
-void testAdd(const T& R)
+void testAdd(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d;
   R.init(a);
   R.init(b);
   R.init(c);
   R.init(d);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
       R.add(c,a,b); // c = a+b
       R.negate(d,b); // d = -b
 
@@ -218,18 +237,20 @@ void testAdd(const T& R)
 }
 
 template <typename T>
-void testSubtract(const T& R)
+void testSubtract(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d;
   R.init(a);
   R.init(b);
   R.init(c);
   R.init(d);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
+      gen.nextElement(d);
       R.add(c,a,b); // c = a+b
       R.subtract(d,c,b);  // d = (a+b) - b
       EXPECT_TRUE(R.is_equal(d,a));
@@ -241,8 +262,9 @@ void testSubtract(const T& R)
 }
 
 template <typename T>
-void testMultiply(const T& R)
+void testMultiply(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d, zero;
   R.init(a);
   R.init(b);
@@ -250,11 +272,12 @@ void testMultiply(const T& R)
   R.init(d);
   R.init(zero);
   R.set_from_int(zero, 0);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
+      gen.nextElement(d);
       R.mult(c,a,zero);
       EXPECT_TRUE(R.is_equal(c, zero));
       //TODO: finish this with more tests
@@ -267,8 +290,9 @@ void testMultiply(const T& R)
 }
 
 template <typename T>
-void testDivide(const T& R)
+void testDivide(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d, zero;
   R.init(a);
   R.init(b);
@@ -276,13 +300,14 @@ void testDivide(const T& R)
   R.init(d);
   R.init(zero);
   R.set_from_int(zero, 0);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
       // c = a*b
       // c//a == b
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
+      gen.nextElement(c);
+      gen.nextElement(d);
       if (R.is_zero(a)) continue;
       R.mult(c,a,b);
       R.divide(d,c,a);
@@ -296,20 +321,20 @@ void testDivide(const T& R)
 }
 
 template <typename T>
-void testReciprocal(const T& R)
+void testReciprocal(const T& R, int ntrials)
 {
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, one;
   R.init(a);
   R.init(b);
   R.init(c);
   R.init(one);
   R.set_from_int(one, 1);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
       // c = 1/a
       // 1/a * a == 1
-      if (!getElement(R, ++next, a)) break;
+      gen.nextElement(a);
       if (R.is_zero(a)) continue;
       R.invert(b,a);
       R.mult(c,b,a);
@@ -322,7 +347,7 @@ void testReciprocal(const T& R)
 }
 
 template <typename T>
-void testPower(const T& R)
+void testPower(const T& R, int ntrials)
 {
   // test the following: (x=generator of the finite field, q = card of field)
   // check: x^i != x, for 2 <= i <= characteristic-??
@@ -335,6 +360,7 @@ void testPower(const T& R)
   // a^3 == a*a*a
   // a^0 == 1, what if a == 0?
   // 1^n == 1, various n
+  ARingElementGenerator<T> gen(R);
   typename T::ElementType a, b, c, d, one;
   int q = static_cast<int>(R.cardinality());
   R.init(one);
@@ -343,11 +369,10 @@ void testPower(const T& R)
   R.init(c);
   R.init(d);
   R.set_from_int(one, 1);
-  int next = 0;
-  while (true)
+  for (int i=0; i<ntrials; i++)
     {
-      if (!getElement(R, ++next, a)) break;
-      if (!getElement(R, ++next, b)) break;
+      gen.nextElement(a);
+      gen.nextElement(b);
 
       R.power(c, a, q); 
       EXPECT_TRUE(R.is_equal(c,a)); // test a^q == q
@@ -361,7 +386,7 @@ void testPower(const T& R)
       R.mult(c,a,c); 
       EXPECT_TRUE(R.is_equal(c, one));
 
-      R.power(c, a, -2);  // test a^-1 * a == 1
+      R.power(c, a, -2);  // test a^-2 * a^3 == a
       R.power(d, a, 3); 
       R.mult(d, c, d);
       EXPECT_TRUE(R.is_equal(d, a));
@@ -374,19 +399,17 @@ void testPower(const T& R)
 }
 
 template <typename T>
-void testFiniteField(const T& R)
+void testFiniteField(const T& R, int ntrials)
 {
   testCoercions(R);
-  testNegate(R);
-  testAdd(R); //fails in char 2, ffpack (negating 1 gives -1)...
-  testSubtract(R); //fails in char 2, ffpack
-  testMultiply(R);
-  testDivide(R); //fails in char 2, ffpack
-  testReciprocal(R);
-
-
-  //  testPower(R);// fails
-  testAxioms(R);
+  testNegate(R, ntrials);
+  testAdd(R, ntrials); //fails in char 2, ffpack (negating 1 gives -1)...
+  testSubtract(R, ntrials); //fails in char 2, ffpack
+  testMultiply(R, ntrials);
+  testDivide(R, ntrials); //fails in char 2, ffpack
+  testReciprocal(R, ntrials);
+  testPower(R, ntrials);// fails?
+  testAxioms(R, ntrials);
   
   //TODO: test promote, lift, syzygy(?), (ringmaps)
   // test random number generation?

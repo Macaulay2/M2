@@ -124,7 +124,7 @@ TEST(RingRRR, axioms)
       // test: a*(b+c) == a*b + a*c
       d = R->mult(a, R->add(b,c));
       e = R->add(R->mult(a,b), R->mult(a,c));
-      EXPECT_TRUE(almostEqual(R,94,d,e));
+      EXPECT_TRUE(almostEqual(R,92,d,e));
     }
 
 }

@@ -42,7 +42,7 @@ namespace M2 {
 
     // ring informational
     size_t characteristic() const { return 0; }
-
+    unsigned long get_precision() const { return mPrecision; }
     void text_out(buffer &o) const;
 
     /////////////////////////////////
@@ -87,12 +87,6 @@ namespace M2 {
       init(result);
       mpfr_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
     }
-
-    // 'get' functions
-
-    int get_int(elem f) const { ASSERT(false); return 0; }
-
-    int get_repr(elem f) const { ASSERT(false); return 0; }
 
     // 'init', 'init_set' functions
 

@@ -41,7 +41,7 @@ struct s_pair : public our_new_delete
   gbvector *fsyz;               // A vector in NGB_comp::syz.rows()
 };
 
-const int NHEAP = 10;
+const int NHEAP = 12;
 
 class s_pair_heap : public our_new_delete
 {

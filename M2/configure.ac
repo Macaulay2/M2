@@ -608,6 +608,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   QthPower
   EliminationMatrices
   EllipticIntegrals
+  Triplets
 ")
 
 # convert the newlines in the list above to spaces
@@ -827,6 +828,7 @@ AC_SUBST(BUILTLIBS,)
 #    linbox needs fflas-ffpack and givaro
 #    fflas-ffpack needs givaro and lapack
 #    mpir is used by givaro
+#    mpir and mpfr is used byfplll
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
@@ -834,7 +836,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic gtest ")
+AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic gtest ")
 BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -1231,8 +1233,17 @@ AC_ARG_ENABLE(linbox,
     ENABLE_FFLAS_FFPACK=yes
     )
 
+AC_SUBST(ENABLE_FPLLL,no)
+AC_ARG_ENABLE(fplll,
+    [AS_HELP_STRING(--enable-fplll,[enable building the fplll library and linking with it])],
+    AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
+    BUILD_fplll=yes
+    ENABLE_FPLLL=yes
+    )
+    
 test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
+test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
 AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
 

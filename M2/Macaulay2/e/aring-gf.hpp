@@ -57,6 +57,7 @@ namespace M2 {
 #include <givaro/givpower.h>
 #include <givaro/givpoly1padic.h>
 
+#include <type_traits>
 
 
 
@@ -81,7 +82,9 @@ class ARingGF : public RingInterface
     typedef ElementType     elem;
 
     typedef  FieldType::Residu_t     UTT; ///< types depends on FieldType definition!
-    typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types depends on FieldType definition!
+    //typedef Signed_Trait<FieldType::Residu_t>::signed_type  STT;///< types depends on FieldType definition!
+
+    typedef std::make_signed<FieldType::Residu_t>::type STT;
 
 
     ARingGF( UTT charac_,   UTT dimension_);

@@ -37,14 +37,14 @@ static int randomVals[nelements] = {
 
 #if defined(HAVE_GIVARO)
 template<>
-bool getElement<M2::ARingGF>(const M2::ARingGF& R, 
-                                    int index, 
-                                    M2::ARingGF::ElementType& result)
+void getElement<M2::ARingGF>(const M2::ARingGF& R, 
+                             int index, 
+                             M2::ARingGF::ElementType& result)
 {
-  if (index >= nelements) return false;
-  //  int idx = index % R.cardinality();
-  R.power(result, R.getGenerator(), randomVals[index]);
-  return true;
+  if (index >= nelements) 
+    R.power(result, R.getGenerator(), rawRandomInt(R.cardinality()));
+  else 
+    R.power(result, R.getGenerator(), randomVals[index]);
 }
 
   TEST(ARingGFGivaro, create) {
@@ -121,7 +121,7 @@ bool getElement<M2::ARingGF>(const M2::ARingGF& R,
 
   TEST(ARingGFGivaro, arithmetic) {
     M2::ARingGF R(5,3);
-    testFiniteField(R);
+    testFiniteField(R, ntrials);
   }
 
 #endif 
