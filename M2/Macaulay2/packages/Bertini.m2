@@ -17,7 +17,7 @@ newPackage(
     "keep files" => true
   },
   DebuggingMode => false,
-  AuxiliaryFiles => false,
+  AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
 
@@ -377,7 +377,6 @@ cleanupOutput String := s -> (
 readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
 
 readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
-
 local pt;
 local coord;
 local coords;
@@ -440,6 +439,7 @@ local R;
 --  junk at end is the matrix of patch coefficients -- MPTYPE on first line, then number or rows & columns on second, then the coeffs
 
        l := lines get (dir|"/raw_data"); -- grabs all lines of the file
+       --print l; --remove me
        numVars = value(first l);
        l = drop(l,2);
        solNum = value(first l);
@@ -449,7 +449,6 @@ local R;
 
        wList := {}; --list of witness sets
        pts:={}; 
-
        while solNum > -1 do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
             maxPrec := value(first l);
             l = drop(l,1);
@@ -487,9 +486,9 @@ local R;
             --N = map(CC^0,CC^4,0);
             --ws = witnessSet(ideal F, N, {pt});
 	    --wList = join(wList, {ws});
-	    pts=join(pts,{pt})
+	    pts=join(pts,{pt});
             );
-       pts
+       return pts
          --nv = numericalVariety wList;
        )
 
@@ -534,8 +533,8 @@ local R;
 	    --wList = join(wList, {ws});
 	    pts=join(pts,{pt})
             );
-       pts
-         --nv = numericalVariety wList;
+       return pts
+         
        )
 
 	    
@@ -699,6 +698,7 @@ local R;
         };
 
         nv = numericalVariety wList;
+	return nv
 
       )
 
@@ -743,9 +743,7 @@ local R;
 	    );     
 
     ) else error "unknown output file";  
---  pts;
-  if o.runType==0 then return pts else return nv;
- 
+
   )
 
 --trackBertini = method(TypicalValue => List)
