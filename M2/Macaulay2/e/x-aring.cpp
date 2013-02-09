@@ -11,6 +11,11 @@
 
 #include "polyring.hpp"
 
+#ifdef HAVE_MEMTAILOR
+#include "memtailor/memtailor.h"
+memt::BufferPool testBuffer(16);
+#endif
+
 const Ring /* or null */ *rawARingZZp(int p)
   /* p must be a prime number <= 32767 */
 {
