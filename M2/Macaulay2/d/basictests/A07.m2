@@ -1,5 +1,5 @@
 
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 -- test parallel assignment
 
@@ -41,7 +41,7 @@ assert(h() === 3)
 assert(g() === 3)
 assert(h() === 4)
 
-assert( class aaaa === Symbol )
+assert( class aa === Symbol )
 assert( class a0 === Symbol )
 assert( class a0b === Symbol )
 assert( class a0b7 === Symbol )

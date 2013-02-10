@@ -12,13 +12,13 @@ endif
 M2_OPTCFILES += M2inits1.cc M2inits2.cc M2inits3.cc 
 M2_CFILES += gmp_aux.c 
 M2_LASTCFILES += M2types.c scclib.c M2lib.c M2mem.c gdbm_interface.c
-M2_CFILES += main.c
+M2_CFILES += main.c 
 M2_MADECFILES := startup.c
 M2_OBJECTS += $(M2_MADECFILES:.c=.o)
 M2_OBJECTS += ../regex/regex.o
 M2_CCFILES := gmp_init.cc
 M2_OBJECTS += $(M2_CCFILES:.cc=.o)
-M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h
+M2_HFILES := getpagesize.h types.h M2inits.h M2mem.h debug.h startup-header.h startup-trailer.h
 
 M2_DFILES :=
 M2_DFILES += arithmetic.d
@@ -114,6 +114,7 @@ M2_DFILES += texmacs.d
 M2_DFILES += interp.d
 
 # should automate these dependencies
+actors5.o : @srcdir@/startup-header.h
 actors5.o basic.o : \
 	@srcdir@/../e/engine.h \
 	@srcdir@/../e/rand.h \

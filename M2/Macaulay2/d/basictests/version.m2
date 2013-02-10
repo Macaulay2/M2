@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 v = version#"VERSION"
 assert ( #v > 2 )

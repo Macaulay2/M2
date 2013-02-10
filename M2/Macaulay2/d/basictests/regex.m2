@@ -1,5 +1,5 @@
-assert := x -> if not x then error "assertion failed "
-match := X -> null =!= regex X
+assert = x -> if not x then error "assertion failed "
+match = X -> null =!= regex X
 assert not match(".a", "  \na  ")
 assert     match("^a", "  \na  ")
 assert     match(".a", "  a  ")

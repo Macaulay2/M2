@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed"
+assert = x -> if not x then error "assertion failed"
 g = x -> (3;4+5*6^return;8;error "oops")
 h = x -> (3;for i from 1 to 3 do 4+5*6^return {i,x};8;error "oops")
 p = x -> (h x;okay)

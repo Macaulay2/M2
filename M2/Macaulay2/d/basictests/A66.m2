@@ -1,5 +1,5 @@
 
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 -- test join
 

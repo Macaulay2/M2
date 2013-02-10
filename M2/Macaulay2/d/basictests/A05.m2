@@ -97,29 +97,29 @@ assert(apply(apply({33,44},i -> () -> i),f -> f()) === {33,44})
 
 -- test scan
 
-iii = 0
-scan(5,i -> iii = iii + 1)
-assert(iii === 5)
+ii = 0
+scan(5,i -> ii = ii + 1)
+assert(ii === 5)
 
-iii = 0
-scan(5,(i) -> iii = iii + 1)
-assert(iii === 5)
+ii = 0
+scan(5,(i) -> ii = ii + 1)
+assert(ii === 5)
 
-iii = 0
-scan({1,2,3,4,5},i -> iii = iii + 1)
-assert(iii === 5)
+ii = 0
+scan({1,2,3,4,5},i -> ii = ii + 1)
+assert(ii === 5)
 
-iii = 0
-scan(5,i -> (()->(); iii = iii + 1))
-assert(iii === 5)
+ii = 0
+scan(5,i -> (()->(); ii = ii + 1))
+assert(ii === 5)
 
-iii = 0
-scan(5,(i) -> (()->(); iii = iii + 1))
-assert(iii === 5)
+ii = 0
+scan(5,(i) -> (()->(); ii = ii + 1))
+assert(ii === 5)
 
-iii = 0
-scan({1,2,3,4,5},i -> (()->(); iii = iii + 1))
-assert(iii === 5)
+ii = 0
+scan({1,2,3,4,5},i -> (()->(); ii = ii + 1))
+assert(ii === 5)
 
 apply(0 .. 5, i -> (
 	j := j;

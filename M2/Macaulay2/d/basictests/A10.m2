@@ -1,8 +1,7 @@
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 -- test #
 
-a = symbol a
 x = hashTable {}
 y = hashTable {(a,x)}
 

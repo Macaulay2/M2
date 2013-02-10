@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed"
+assert = x -> if not x then error "assertion failed"
 
 v = Pari$factorint (12 * 2^32 + 3)
 if v === ((2, 3, 5, 13, 41, 61, 1321), (2, 1, 2, 1, 1, 1, 1)) then error "pari/gmp integer conversion: 32-bit reversal"

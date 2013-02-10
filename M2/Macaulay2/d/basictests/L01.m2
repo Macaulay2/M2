@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 f = x -> 33
 assert( 33 === f() )
 assert( 33 === f(3,3) )

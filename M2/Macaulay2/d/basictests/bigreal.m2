@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 x = toRR(2/3)
 y = toRR(5)

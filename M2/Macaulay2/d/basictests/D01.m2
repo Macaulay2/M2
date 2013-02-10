@@ -1,4 +1,4 @@
-assert := x -> if not x then error "assertion failed "
+assert = x -> if not x then error "assertion failed "
 
 -- an error here would mean a symbol got stored in the wrong bucket
 scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> assert ( d#nam === sym ) ) )

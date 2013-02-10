@@ -574,6 +574,11 @@ Exit(err:Error):void := exit(
      );
 
 header "#include <unistd.h>";
+header "#include \"startup-header.h\"";
+export cachedFile := { filename:string, contents:string };
+export startupFile := cachedFile(
+     tostring(Ccode(constcharstar,"startupFile.filename")),
+     tostring(Ccode(constcharstar,"startupFile.contents")));
 export process():void := (
      localFrame = globalFrame;
      previousLineNumber = -1;			  -- might have done dumpdata()
@@ -586,7 +591,7 @@ export process():void := (
      -- setLoadDepth(loadDepth);				    -- loaddata() in M2lib.c increments it, so we have to reflect that at top level
      everytimeRun();
      -- we don't know the right directory; calls commandInterpreter and eventually returns:
-     ret := readeval(stringTokenFile(startupFile,startupString),false,false);
+     ret := readeval(stringTokenFile(startupFile.filename,startupFile.contents),false,false);
      when ret is err:Error do (
 	  if !err.printed then printError(err);		    -- just in case
 	  if stopIfError
@@ -602,6 +607,29 @@ export process():void := (
      value(toExpr("exit 0"));				    -- try to exit the user's way
      exit(failedExitExit);		   -- if that doesn't work, try harder and indicate an error
      );
+
+export testStrings := (
+     new array(cachedFile) len Ccode(int,"num_testStrings") at i 
+     do provide cachedFile(
+     	  tostring(Ccode(constcharstar,"testStrings[",i,"].filename")),
+     	  tostring(Ccode(constcharstar,"testStrings[",i,"].contents"))));
+setupconst("startupString", toExpr(startupFile.contents));
+runBasicTests(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 0 then (
+	  foreach cf in testStrings do (
+	       ret := readeval(stringTokenFile(cf.filename,cf.contents),false,false);
+	       when ret is err:Error do (
+		    if !err.printed then printError(err);		    -- just in case
+		    if stopIfError
+		    then Exit(err)
+		    else if !topLevel()				    -- give a prompt for debugging
+		    then Exit(err))
+	       else nothing);
+	  nullE)
+     else WrongNumArgs(0)
+     else WrongNumArgs(0));
+setupfun("runBasicTests",runBasicTests);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d interp.o "
