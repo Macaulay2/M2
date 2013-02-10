@@ -256,7 +256,6 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \

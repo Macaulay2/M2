@@ -224,7 +224,7 @@ static struct enter_factory foo1;
 
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
-#if DEBUG
+#if 1
 void showvar(Variable &t) { cout << t << endl; }
 void showcf(CanonicalForm &t) { cout << t << endl; }
 void showcfl(CFList &t) { cout << t << endl; }
@@ -668,6 +668,71 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
      catch (exc::engine_error e) {
           ERROR(e.what());
           return NULL;
+     }
+}
+
+CFList convertToCFList(const Matrix &M, 
+                       bool inExtension
+                       )
+{
+  CFList I;
+  for (int i = 0; i < M.n_rows(); i++) {
+    for (int j=0; j < M.n_cols(); j++) {
+      const RingElement *g;
+      {
+        g = RingElement::make_raw(M.get_ring(), M.elem(i,j));
+      }
+      I.append(convertToFactory(*g,inExtension));
+    }
+  }
+  return I;
+}
+
+void rawFactorOverTower(const RingElement *g,
+                        const Matrix *tower,
+                        engine_RawRingElementArrayOrNull *result_factors,
+                        M2_arrayintOrNull *result_powers)
+{
+  // g is expected to be a polynomial in one variable over the polynomials in 'tower'.
+  // tower should define a finite, irreducible ring extension, which is prime over the base field.
+  // result: as in rawFactor, the factors and their powers are placed into result_factors and
+  // result_powers.
+     try {
+          const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
+          *result_factors = 0;
+          *result_powers = 0;
+          if (P == 0) {
+               ERROR("expected polynomial ring");
+               return;
+          }
+          struct enter_factory foo(P);
+          if (foo.mode == modeError) return;
+
+          CFFList q;
+          init_seeds();
+
+          int success = 0;
+          CanonicalForm h = convertToFactory(*g,false);
+          CFList T = convertToCFList(*tower, false);
+          q = newfactoras(h, T, success);
+     
+          int nfactors = q.length();
+
+          *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
+          (*result_factors)->len = nfactors;
+
+          *result_powers = M2_makearrayint(nfactors);
+
+          int next = 0;
+          for (CFFListIterator i = q; i.hasItem(); i++) {
+            (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
+            (*result_powers)->array[next++] = i.getItem().exp();
+          }
+          if (error()) *result_factors = NULL, *result_powers = NULL;
+     }
+     catch (exc::engine_error e) {
+          ERROR(e.what());
+          return;
      }
 }
 
