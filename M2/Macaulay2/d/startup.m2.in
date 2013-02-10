@@ -416,6 +416,10 @@ usage := arg -> (
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
      << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
+     << "    --check n          run tests to level n" << newline
+     << "                           n=1: basic tests" << newline
+     << "                           n=2: test Core" << newline
+     << "                           n=3: test all packages" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
@@ -514,6 +518,12 @@ action2 := hashTable {
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
+	  ),
+     "--check" => arg -> if phase == 1 then (
+	  if arg == "1" then runBasicTests()
+	  else if arg == "2" then error ("--check ",arg," not implemented yet")
+	  else if arg == "3" then error ("--check ",arg," not implemented yet")
+	  else error ("--check ",arg,": expected 1, 2, or 3")
 	  )
      }
 

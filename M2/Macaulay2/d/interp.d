@@ -618,7 +618,12 @@ runBasicTests(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) == 0 then (
 	  foreach cf in testStrings do (
+	       stderr << "-- testing " << cf.filename << endl;
+	       save := globalDictionary;
+	       globalDictionary = newGlobalDictionary();
+	       globalDictionary.outerDictionary = Macaulay2Dictionary;
 	       ret := readeval(stringTokenFile(cf.filename,cf.contents),false,false);
+     	       globalDictionary = save;
 	       when ret is err:Error do (
 		    if !err.printed then printError(err);		    -- just in case
 		    if stopIfError
