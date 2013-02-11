@@ -62,7 +62,8 @@ export {
   "compnum",
   "dimen",
   "numpts",
-  "digits"
+  "digits",
+  "RawData"
 --  "points"
 }
 
@@ -129,7 +130,7 @@ bertiniSample List := o -> F -> (
          ) 
 
 --  The following will NOT be functional until we have (and include in the arg list) a numerical irreducible decomposition data type.
-bertiniComponentMemberTest = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{}})
+bertiniComponentMemberTest = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,StartSolutions=>{}})
 bertiniComponentMemberTest List := o -> F -> (  
 --F is the list of polynomials.
          L := {runType=>4};
@@ -138,9 +139,11 @@ bertiniComponentMemberTest List := o -> F -> (
          bertiniSolve(F,o3)
          ) 
 
-bertiniRefineSols = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{},digits=>-1})
+bertiniRefineSols = method(TypicalValue => List, Options=>{StartSolutions=>{},RawData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{},digits=>-1})
 bertiniRefineSols List := o -> F -> ( 
 --F is the list of polynomials.
+--RawData is the file path for the appropriate raw_data file
+--solutions to be refined should be entered in StartSolutions for now
          L := {runType=>5};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
@@ -152,7 +155,7 @@ bertiniRefineSols List := o -> F -> (
 -- bertiniSolve: This is the main control function:
 ---------------------------------------------------
 
-bertiniSolve = method(TypicalValue => List, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
+bertiniSolve = method(TypicalValue => List, Options=>{StartSystem=>{},StartSolutions=>{},RawData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
 
 bertiniSolve List := o -> F -> (  -- F is the list of polynomials
   	  dir := makeBertiniInput(F,o);   -- creates the input file
@@ -166,13 +169,19 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
           if o.runType == 2 then ( -- PosDim 
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
-          if o.runType == 3 then ( -- Sample 
-            stdio << "Run terminated.  Sampling will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n\n"
-    	    --run("cd "|dir|"; "|BERTINIexe|" < sample_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
+           if o.runType == 3 then ( -- Sample 
+            --stdio << "Run terminated.  Sampling will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n\n"
+	    copyFile("/Users/MacMath/Desktop/SampleExample/witness_data",dir|"/witness_data");
+	    --remove previous line after we have a way to write a
+	   --withess_data file
+    	    run("cd "|dir|"; "|BERTINIexe|" < sample_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
           if o.runType == 4 then ( -- Membership  
-            stdio << "Run terminated.  Component membership will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n"
-    	    --run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
+            --stdio << "Run terminated.  Component membership will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n"
+    	    copyFile("/Users/MacMath/Desktop/SampleExample/witness_data",dir|"/witness_data");
+  	   --remove previous line after we have a way to write a
+	   --withess_data file
+	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
           if o.runType == 5 then ( -- Refine/Sharpen 
     	    run("cd "|dir|"; "|BERTINIexe|" < sharpen_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
@@ -191,7 +200,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 -- makeBertiniInput
 -------------------
 
-makeBertiniInput = method(TypicalValue=>Nothing, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})  
+makeBertiniInput = method(TypicalValue=>Nothing,Options=>{StartSystem=>{},StartSolutions=>{},RawData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})  
 makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
 
   v := gens ring T#0; -- variables
@@ -263,9 +272,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
     f << "TRACKTYPE: 1;\n";
   if o.runType == 3 then --sample component -- need dim and compnum from user, along with witness_data file (in file or data type???), then need to create short script to handle interactive session 
     f << "TRACKTYPE: 2;\n";
-  if o.runType == 4 then --membership test -- need to create file from points (o.Points should be nonempty!)
+  if o.runType == 4 then --membership test -- need to create file from points (o.StartSolutions should be nonempty!)
     f << "TRACKTYPE: 3;\n";
-  if o.runType == 5 then --refine solutions -- need to create file from points (o.Points should be nonempty, and digits should be specified by user)
+  if o.runType == 5 then --refine solutions -- need to create file from points (o.StartSolutions,o.RawData should be nonempty, and digits should be specified by user)
     f << "SHARPENONLY: 1;\n";
  
   f << endl << "END;\n\n";  -- end of config section
@@ -336,6 +345,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
        );
 
 
+
   if (o.runType==5) then ( -- writing out file with points in the case of a refine run
        f = openOut (dir|"/points"); -- the only name for Bertini's sharpening points file 
        f << #o.StartSolutions << endl << endl;
@@ -349,7 +359,11 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
        f << "5" << endl << o.digits << endl << "2" << endl << "points" << endl;
        close f;
        );
-
+  
+  if (o.runType==5) then (  --copies raw_data file to tmp directory
+       copyFile(o.RawData, dir|"/raw_data")
+       );
+     
   if (o.runType==3) then ( -- writing out file with query responses in case of a sample run
        f = openOut(dir|"/sample_script");
        f << o.dimen << endl << o.compnum << endl << o.numpts << endl << "0" << endl << "sample_points" << endl;  -- sampled points will be written file named sample_points
@@ -374,7 +388,7 @@ cleanupOutput String := s -> (
 -----------------------
 
 
-readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{StartSystem=>{},StartSolutions=>{},gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{StartSystem=>{},StartSolutions=>{},RawData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
 
 readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
 local pt;
@@ -702,7 +716,50 @@ local R;
 
       )
 
+-----START SAMPLE
 
+  else if (o.runType == 3) then ( 
+              
+       l := lines get (dir|"/sample_points"); -- grabs all lines of the file
+       numVars = #var's;
+       numberOfSolutions := value(first l);
+       l = drop(l,1);
+       --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
+       --stdio << "Solutions:" << endl << endl;
+       solNum = 1;
+       
+       
+       pts:={}; 
+       
+
+       while solNum <= numberOfSolutions do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
+     	    solNum=solNum+1;
+	    maxPrec := value(first l);
+            l = drop(l,1);
+	    print "FIND ME LOOP";
+	    
+
+            coords = {};
+            for j from 1 to numVars do ( -- grab each coordinate
+              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+              l = drop(l,1);
+              --print coords; --remove me
+	      );
+	 
+            pt = new Point;
+            pt.Coordinates = coords; --we want to output these
+            --N = map(CC^0,CC^4,0);
+            --ws = witnessSet(ideal F, N, {pt});
+	    --wList = join(wList, {ws});
+	    pts=join(pts,{pt})
+            );
+       solNum=1;
+       return pts
+         
+       )
+
+--END SAMPLE
 
 
 --  else if (o.runType == -1) then ( --if ZeroDim, we actually want to read raw_data, but this works until that is fully implemented. 
