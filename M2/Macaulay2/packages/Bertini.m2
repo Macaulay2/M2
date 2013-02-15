@@ -103,6 +103,8 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{--StartSystem=
 	  gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniParameterHomotopy (List, List,List) := o -> (S,F,Sols) -> (
 --F is the list of polynomials
+--S is the start system
+--Sols are the start solutions
          L := {runType=>1};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
@@ -348,16 +350,16 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
 
 
   if (o.runType==5) then ( -- writing out file with points in the case of a refine run
-       f = openOut (dir|"/points"); -- the only name for Bertini's sharpening points file 
-       f << #o.StartSolutions << endl << endl;
-       scan(o.StartSolutions, s->(
-		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
-		 f << endl;
-		 ));
-       close f;
+--       f = openOut (dir|"/points"); -- the only name for Bertini's sharpening points file 
+--       f << #o.StartSolutions << endl << endl;
+--       scan(o.StartSolutions, s->(
+--		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
+--		 f << endl;
+--		 ));
+--       close f;
 
        f = openOut (dir|"/sharpen_script"); -- writing out file with query responses in case of a refine/sharpen run
-       f << "5" << endl << o.digits << endl << "2" << endl << "points" << endl;
+       f << "5" << endl << o.digits << endl << "1" << endl;
        close f;
        );
   
@@ -441,7 +443,7 @@ local R;
   var's := gens ring F#0; -- variables
   R = QQ[var's]; --setting the ring
 
-  if (o.runType == 0) then ( --raw_data, for zeroDim 
+  if (o.runType == 0 or o.runType == 5) then ( --raw_data, for zeroDim 
 --raw_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  0  
@@ -479,7 +481,9 @@ local R;
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
               coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+              if (o.runType==0) then (
+		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+	      else (coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}));-- Change me to the correct precision
               l = drop(l,1);
               --print coords; --remove me
 	      );
