@@ -1750,12 +1750,12 @@ debug loadPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
 W1 = new WitnessSet from {
      Equations=>ideal {x^2+y^2+z^2-1},
-     Slice=>sub(matrix "1,0,0,0;0,1,0,0",R),
-     Points=>{(0,0,1),(0,0,-1)}
+     Slice=>matrix "1,0,0,0;0,1,0,0",
+     Points=>{{(0,0,1)},{(0,0,-1)}}/point
      } 
 sliceEquations (W1#Slice,R)
-W2 = moveSlice(W1, sub(matrix "0,1,0,0;0,0,1,0",R)
-     )
+W2 = moveSlice(W1, matrix "0,1,0,0;0,0,1,0")
+peek W2
 ///
 
 splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
