@@ -144,12 +144,12 @@ bertiniComponentMemberTest List := o -> F -> (
          bertiniSolve(F,o3)
          ) 
 
-bertiniRefineSols = method(TypicalValue => List, Options=>{StartSolutions=>{},RawData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{},digits=>-1})
-bertiniRefineSols List := o -> F -> ( 
+bertiniRefineSols = method(TypicalValue => List, Options=>{RawData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{},digits=>-1})
+bertiniRefineSols (List,List) := o -> (F,p) -> ( 
 --F is the list of polynomials.
 --RawData is the file path for the appropriate raw_data file
 --solutions to be refined should be entered in StartSolutions for now
-         L := {runType=>5};
+         L := {runType=>5,StartSolutions=>p};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
          bertiniSolve(F,o3)
@@ -189,7 +189,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
           if o.runType == 5 then ( -- Refine/Sharpen 
-    	    run("cd "|dir|"; "|BERTINIexe|" < sharpen_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
+    	    run("cd "|dir|"; "|BERTINIexe|" < sharpen_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log--OUREDIT
             );
           readSolutionsBertini(dir,F,o) -- o contains runType, so we can switch inside readSolutionsBertini
           )
@@ -366,7 +366,37 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
        );
   
   if (o.runType==5) then (  --copies raw_data file to tmp directory
-       copyFile(o.RawData, dir|"/raw_data")
+--       copyFile(o.RawData, dir|"/raw_data")
+     	 f:=openOut(dir|"/raw_data");
+  	 f << toString(#v+1)<<endl;
+	 f << toString(0)<<endl;
+	 for i from 0 to #o.StartSolutions-1 do(
+	   f << toString(i)<<endl;
+	   f << toString(52)<<endl;
+	   f << "1 0" <<endl;	   
+	   scan(coordinates ((o.StartSolutions)_i), 
+		c->f<<realPart(c) <<" "<<imaginaryPart(c)<<endl);
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;
+		f << "1" <<endl;);
+	 f << "-1"<<endl;
+	 f << endl;
+	 f << "2"<<endl;
+	 f<< "1 "|toString(#v+1)<<endl;
+     	 f<<"1 0"<<endl;
+	 for i from 0 to #v-1 do(
+	      f<<"0 0"<<endl;
+	      );
+	 
+	 
+	 close f;
+     
+
        );
   
   if (o.runType==3) then (  --copies witness_data file to tmp directory
@@ -982,4 +1012,32 @@ doc ///
      bertiniSample(W,12)
 ///;
 
+doc ///
+ Key 
+   bertiniRefineSols
+   (bertiniRefineSols,List,List)
+ Headline
+   solve zero-dimensional system of equations 
+ Usage
+   S = bertiniZeroDimSolve F
+ Inputs
+   F:List
+     whose entries are polynomials (system need not be square) 
+ Outputs
+   S:List
+     of solutions of type Point
+ Description
+   Text
+     Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
+     This function builds a Bertini input file from the system F and calls Bertini on 
+     this input file.  Solutions are pulled from machine readable file finitesolutions
+     and returned as a list.
+   Example
+     R = CC[x,y]
+     F = {x^2-1,y^2-1}
+     S = bertiniZeroDimSolve F
+///;
+
 end
+
+
