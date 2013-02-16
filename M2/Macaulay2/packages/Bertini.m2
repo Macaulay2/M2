@@ -64,7 +64,9 @@ export {
   "numpts",
   "digits",
   "RawData",
-  "WitnessData"
+  "WitnessData",
+  "WitnessDataFileName",
+  "ComponentNumber"
 --  "points"
 }
 
@@ -100,7 +102,7 @@ bertiniZeroDimSolve List := o -> F -> (
 
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{--StartSystem=>{},-- StartSolutions=>{}
-	  gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniParameterHomotopy (List, List,List) := o -> (S,F,Sols) -> (
 --F is the list of polynomials
 --S is the start system
@@ -114,7 +116,7 @@ bertiniParameterHomotopy (List, List,List) := o -> (S,F,Sols) -> (
          )
 
 --  The following will NOT be funcitonal until we have (and include as output) a numerical irreducible decomposition data type. 
-bertiniPosDimSolve = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniPosDimSolve List := o -> F -> (  
 --F is the list of polynomials
          L := {runType=>2};
@@ -123,13 +125,13 @@ bertiniPosDimSolve List := o -> F -> (
          bertiniSolve(F,o3)
          ) 
 
-bertiniSample = method(TypicalValue => List, Options=>{WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1})
-bertiniSample List := o -> F -> (  
+bertiniSample = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+bertiniSample (WitnessSet,ZZ) := o -> (W, n) -> (  
 --F is the list of polynomials
-         L := {runType=>3};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-         bertiniSolve(F,o3)
+         L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n, 	    WitnessData=>W.WitnessDataFileName};
+	 o2 := new OptionTable from L;
+         o3 := o ++ o2 ;
+         bertiniSolve(equations(W),o3)
          ) 
 
 --  The following will NOT be functional until we have (and include in the arg list) a numerical irreducible decomposition data type.
@@ -650,14 +652,16 @@ local R;
           ); 
 	 
 	  for j from 0 to maxCompNum do ( --loop through the component numbers in this codim to break them into witness sets
- 	    ptsInWS := {}; --stores all points in the same witness set
+	    ptsInWS := {}; --stores all points in the same witness set
             for k from 0 to #pts-1 do (
 	      --print (j,k); 
 	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k}); --save the point if its in the current component (component j)
 	    );
-            N = map(CC^0,CC^4,0);
+            N = map(CC^0,CC^(numVars+1),0);
             ws = witnessSet(ideal F,N, ptsInWS); --turn these points into a witness set
-            wList = join(wList, {ws}); --add witness set to list
+            ws.ComponentNumber=j;
+	    ws.WitnessDataFileName=dir|"/witness_data";
+	    wList = join(wList, {ws}); --add witness set to list
             listOfCodims = join(listOfCodims, {codimNum});
           );
         );
@@ -719,7 +723,7 @@ local R;
           if (#coeffList > 0) then
             N = matrix(coeffList)
           else
-            N = map(CC^0,CC^4,0); 
+            N = map(CC^0,CC^(numVars+1),0); --change me, maybe? 
           (wList#codimNum).Slice = N;
  	  
         };
@@ -749,7 +753,6 @@ local R;
      	    solNum=solNum+1;
 	    maxPrec := value(first l);
             l = drop(l,1);
-	    print "FIND ME LOOP";
 	    
 
             coords = {};
@@ -855,37 +858,128 @@ doc ///
     Example
       R = CC[x,y]
       F = {x^2-1,y^2-1}
-      solns = bertiniSolve(F)
+      solns = bertiniZeroDimSolve(F)
 ///;
 
---doc ///
---  Key 
---    bertiniSolve
---    (bertiniSolve,List)
---    (bertiniSolve,List,HashTable)
---  Headline
---    temporarily a method for doing a zero-dimensional Bertini run, soon to be deprecated
---  Usage
---    S = bertiniSolve F
---  Inputs
---    F:List
---      whose entries are polynomials (system need not be square) 
---  Outputs
---    S:List
---      whose entries are the solutions found by Bertini, with junk points removed if system is not square
---  Description
---    Text
---      For now, this function simply builds a Bertini style input file from F and calls Bertini on 
---      this input file.  Solutions are currently pulled from machine readable file finitesolutions
---      and returned as a list.
---    Example
---      R = CC[x,y]
---      F = {x^2-1,y^2-1}
---      S = bertiniSolve F
---///;
+doc ///
+ Key 
+   bertiniZeroDimSolve
+   (bertiniZeroDimSolve,List)
+ Headline
+   solve zero-dimensional system of equations 
+ Usage
+   S = bertiniZeroDimSolve F
+ Inputs
+   F:List
+     whose entries are polynomials (system need not be square) 
+ Outputs
+   S:List
+     of solutions of type Point
+ Description
+   Text
+     Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
+     This function builds a Bertini input file from the system F and calls Bertini on 
+     this input file.  Solutions are pulled from machine readable file finitesolutions
+     and returned as a list.
+   Example
+     R = CC[x,y]
+     F = {x^2-1,y^2-1}
+     S = bertiniZeroDimSolve F
+///;
 
--- slices
--- dehom
--- doc
+
+doc ///
+  Key
+    MPTYPE
+    PRECISION
+    ODEPREDICTOR
+    TRACKTOLBEFOREEG
+    TRACKTOLDURINGEG
+    FINALTOL
+    MAXNORM
+    MINSTEPSIZEBEFOREEG
+    MINSTEPSIZEDURINGEG
+    IMAGTHRESHOLD
+    COEFFBOUND
+    DEGREEBOUND
+    CONDNUMTHRESHOLD
+    RANDOMSEED
+    SINGVALZEROTOL
+    ENDGAMENUM
+    USEREGENERATION
+    SECURITYLEVEL
+    SCREENOUT
+    OUTPUTLEVEL
+    STEPSFORINCREASE
+    MAXNEWTONITS
+    MAXSTEPSIZE
+    MAXNUMBERSTEPS
+    MAXCYCLENUM
+    REGENSTARTLEVEL
+  Headline
+    Options for bertini.m2 functions.
+  Description  
+    Text
+      To be added later. 
+///;
+
+doc ///
+ Key 
+   bertiniPosDimSolve
+   (bertiniPosDimSolve,List)
+ Headline
+   solve positive-dimensional system of equations 
+ Usage
+   V = bertiniPosDimSolve F
+ Inputs
+   F:List
+     whose entries are polynomials (system need not be square) 
+ Outputs
+   V:NumericalVariety 
+     a numerical description of irreducible components of the variety defined by F
+ Description
+   Text
+     Finds solutions to the positive-dimensional system F via numerical polynomial homotopy continuation.
+     This function builds a Bertini input file from the system F and calls Bertini on 
+     this input file.  
+   Example
+     R = CC[x,y,z]
+     F = {(y^2+x^2+z^2-1)*x,
+	  (y^2+x^2+z^2-1)*y}
+     S = bertiniPosDimSolve F
+///;
+
+
+-- bertiniSample(
+  --   {f1},dimen=>1,compnum=>1,numpts=>12,WitnessData=>wdf)
+
+
+doc ///
+ Key 
+   bertiniSample
+   (bertiniSample,WitnessSet,ZZ)
+ Headline
+   sample points from an irreducible component of a variety
+ Usage
+   V = bertiniSample (W, n)
+ Inputs
+   W:WitnessSet
+     irreducible
+   n:ZZ
+     number of desired sample points 	   
+ Outputs
+   L:List 
+     sample points 
+ Description
+   Text
+     Samples points from an irreducible component of a variety using Bertini.   
+   Example
+     R = CC[x,y,z]
+     F = {(y^2+x^2+z^2-1)*x,
+	  (y^2+x^2+z^2-1)*y}
+     NV = bertiniPosDimSolve(F)
+     W = NV#1_0 --z-axis
+     bertiniSample(W,12)
+///;
 
 end
