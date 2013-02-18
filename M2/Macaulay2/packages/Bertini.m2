@@ -26,6 +26,8 @@ export {
   "bertiniParameterHomotopy",
   "bertiniPosDimSolve",
   "bertiniSample",
+  "bertiniTrackHomotopy",
+  "bertiniSolve",
   "bertiniComponentMemberTest",
   "bertiniRefineSols",
   "StartSystem",  
@@ -57,19 +59,28 @@ export {
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
   "REGENSTARTLEVEL",
-  "runType",
-  "compnum",
-  "dimen",
-  "numpts",
-  "digits",
-  "RawData",
-  "WitnessData",
-  "WitnessDataFileName",
-  "ComponentNumber",
-  "NVariety"
+  "MaximumPrecision",
+  "FunctionResidual",
+  "NewtonResidual",
+  "CycleNumber",
+  "Success",
+  "SolutionNumber"  
 --  "points"
 }
 
+
+  protect runType
+  protect compnum
+  protect dimen
+  protect numpts
+  protect digits
+  protect RawData
+  protect WitnessData
+  protect WitnessDataFileName
+  protect ComponentNumber
+  protect NVariety
+  protect PathVariable
+  
 needsPackage "NAGtypes"
 
 --##########################################################################--
@@ -101,9 +112,9 @@ bertiniZeroDimSolve List := o -> F -> (
          ) 
 
 
-bertiniParameterHomotopy = method(TypicalValue => List, Options=>{--StartSystem=>{},-- StartSolutions=>{}
+bertiniSegmentHomotopy = method(TypicalValue => List, Options=>{--StartSystem=>{},-- StartSolutions=>{}
 	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
-bertiniParameterHomotopy (List, List,List) := o -> (S,F,Sols) -> (
+bertiniSegmentHomotopy (List, List,List) := o -> (S,F,Sols) -> (
 --F is the list of polynomials
 --S is the start system
 --Sols are the start solutions
@@ -144,23 +155,33 @@ bertiniComponentMemberTest (NumericalVariety, List) := o -> (NV, pts) -> (
          bertiniSolve(NV.Equations,o3)
          ) 
 
-bertiniRefineSols = method(TypicalValue => List, Options=>{RawData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{},digits=>-1})
-bertiniRefineSols (List,List) := o -> (F,p) -> ( 
+bertiniRefineSols = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>1e-4,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{}})
+bertiniRefineSols (List,List,ZZ) := o -> (F,p,d) -> ( 
 --F is the list of polynomials.
 --RawData is the file path for the appropriate raw_data file
 --solutions to be refined should be entered in StartSolutions for now
-         L := {runType=>5,StartSolutions=>p};
+         L := {runType=>5,StartSolutions=>p,digits=>d};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
          bertiniSolve(F,o3)
          ) 
 
 
+bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
+	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
+bertiniTrackHomotopy (List, RingElement,List) := o -> (H,t,S1) -> (
+         L := {runType=>6,StartSolutions=>S1,PathVariable=>t};
+         o2 := new OptionTable from L;
+         o3 := o ++ o2;
+         bertiniSolve(H,o3)
+         )
+
+
 ---------------------------------------------------
 -- bertiniSolve: This is the main control function:
 ---------------------------------------------------
 
-bertiniSolve = method(TypicalValue => List, Options=>{StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
+bertiniSolve = method(TypicalValue => List, Options=>{StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 
 bertiniSolve List := o -> F -> (  -- F is the list of polynomials
   	  dir := makeBertiniInput(F,o);   -- creates the input file
@@ -191,6 +212,10 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
           if o.runType == 5 then ( -- Refine/Sharpen 
     	    run("cd "|dir|"; "|BERTINIexe|" < sharpen_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log--OUREDIT
             );
+          if o.runType == 6 then ( -- track homotopy
+    	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
+            );
+       
           readSolutionsBertini(dir,F,o) -- o contains runType, so we can switch inside readSolutionsBertini
           )
 
@@ -205,10 +230,14 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 -- makeBertiniInput
 -------------------
 
-makeBertiniInput = method(TypicalValue=>Nothing,Options=>{StartSystem=>{},StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null, gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})  
-makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
-
+makeBertiniInput = method(TypicalValue=>Nothing,Options=>{StartSystem=>{},
+	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null, gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+makeBertiniInput List := o -> T -> ( -- T=polynomials 
+  startS1:=apply(o.StartSolutions,p->(if class(p)===Point then coordinates(p)
+       else p));
+  t:=o.PathVariable;
   v := gens ring T#0; -- variables
+  if o.runType==6  then(assert member(t,v); v=delete(t,v));  --special for runtype6
   dir := temporaryFileName(); -- build a directory to store temporary data 
   makeDirectory dir; 
   f := openOut (dir|"/input"); -- typical (but not only possible) name for Bertini's input file 
@@ -281,12 +310,13 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
     f << "TRACKTYPE: 3;\n";
   if o.runType == 5 then --refine solutions -- need to create file from points (o.StartSolutions,o.RawData should be nonempty, and digits should be specified by user)
     f << "SHARPENONLY: 1;\n";
- 
+  if o.runType == 6 then --trackHomotopy
+    f << "USERHOMOTOPY: 1;\n";
   f << endl << "END;\n\n";  -- end of config section
 
   -- The following block is the input section of the input file
   f << "INPUT" << endl << endl;
-  if o.runType==1 then  -- if user-defined, declaration type of vars is "variable"
+  if member(o.runType,{1,6}) then  -- if user-defined, declaration type of vars is "variable"
     f << "variable "
   else f << "variable_group "; -- if not user-defined, dec type of vars if "variable_group"
   scan(#v, i->  -- now we list the variables in a single list  ...  What about an mhom structure???
@@ -300,6 +330,10 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
        then f << "f" << i << ", "
        else f << "f" << i << ";" << endl << endl
       );
+  f << "pathvariable "<<" daejT; " <<endl; --we chose daejT because we needed a name no one would choose so we chose our initials and T
+  f << "parameter "<<toString(t)|" ;" <<endl;
+  f << toString(t)|"= daejT ;"<<endl;
+
   bertiniNumbers := p->if class p === CC 
   then toString realPart p | "+" | toString imaginaryPart p | "*I"
   else ( L := toExternalString p; 
@@ -329,10 +363,10 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
   close f;
 
   --Now we build auxilary files for various sorts of runs:
-  if (o.runType==1) then ( -- writing out start file in the case of a param run
+  if member(o.runType,{1,6}) then ( -- writing out start file in the case of a param run
        f = openOut (dir|"/start"); -- the only name for Bertini's start solutions file 
-       f << #o.StartSolutions << endl << endl;
-       scan(o.StartSolutions, s->(
+       f << #startS1 << endl << endl;
+       scan(startS1, s->(
 		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
 		 f << endl;
 		 ));
@@ -341,8 +375,8 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
 
   if (o.runType==4) then ( -- writing out file with points in the case of a membership run
        f = openOut (dir|"/member_points"); -- the only name for Bertini's membership points file 
-       f << #o.StartSolutions << endl << endl;
-       scan(o.StartSolutions, s->(
+       f << #startS1 << endl << endl;
+       scan(startS1, s->(
 		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
 		 f << endl;
 		 ));
@@ -353,8 +387,8 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
 
   if (o.runType==5) then ( -- writing out file with points in the case of a refine run
 --       f = openOut (dir|"/points"); -- the only name for Bertini's sharpening points file 
---       f << #o.StartSolutions << endl << endl;
---       scan(o.StartSolutions, s->(
+--       f << #startS1 << endl << endl;
+--       scan(startS1, s->(
 --		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
 --		 f << endl;
 --		 ));
@@ -370,11 +404,11 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials of target system
      	 f:=openOut(dir|"/raw_data");
   	 f << toString(#v+1)<<endl;
 	 f << toString(0)<<endl;
-	 for i from 0 to #o.StartSolutions-1 do(
+	 for i from 0 to #startS1-1 do(
 	   f << toString(i)<<endl;
 	   f << toString(52)<<endl;
 	   f << "1 0" <<endl;	   
-	   scan(coordinates ((o.StartSolutions)_i), 
+	   scan(coordinates ((startS1)_i), 
 		c->f<<realPart(c) <<" "<<imaginaryPart(c)<<endl);
 		f << "1" <<endl;
 		f << "1" <<endl;
@@ -431,7 +465,7 @@ cleanupOutput String := s -> (
 -----------------------
 
 
-readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0})
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 
 readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
 local pt;
@@ -473,7 +507,7 @@ local R;
 
   s := {};
   var's := gens ring F#0; -- variables
-  R = QQ[var's]; --setting the ring
+  --R = QQ[var's]; --setting the ring
 
   if (o.runType == 0 or o.runType == 5) then ( --raw_data, for zeroDim 
 --raw_data output file structure:
@@ -530,17 +564,20 @@ local R;
               );
 
             --print dehomCoords; --remove me
-
-            funcResid = value(cleanupOutput(first l)); l=drop(l,1);
-            condNum = value(cleanupOutput(first l)); l=drop(l,1);
-            newtonResid = value(cleanupOutput(first l)); l=drop(l,1);
-            lastT = value(cleanupOutput(first l)); l=drop(l,3);
-            cycleNum = value(first l); l=drop(l,1);
-            success = value(first l); l=drop(l,1);
-            solNum = value(first l);
+ 	    pt = new Point;
+            pt.MaximumPrecision=maxPrec;
+	    pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+            pt.CycleNumber = value(first l); l=drop(l,1);
+--            pt.Success = if(value(first l)==1) then true;       
+		 l=drop(l,1);
+            pt.SolutionNumber = value(first l);
+     	    solNum=pt.SolutionNumber;
             l = drop(l,1); 
 
-            pt = new Point;
+           
             pt.Coordinates = dehomCoords; --we want to output these
             --N = map(CC^0,CC^4,0);
             --ws = witnessSet(ideal F, N, {pt});
@@ -551,7 +588,7 @@ local R;
          --nv = numericalVariety wList;
        )
 
-  else if (o.runType == 1) then ( 
+  else if (o.runType == 1 or o.runType==6) then ( 
               
        l := lines get (dir|"/raw_data"); -- grabs all lines of the file
        numVars = value(first l);
@@ -576,16 +613,19 @@ local R;
 	      );
 	 
 
-            funcResid = value(cleanupOutput(first l)); l=drop(l,1);
-            condNum = value(cleanupOutput(first l)); l=drop(l,1);
-            newtonResid = value(cleanupOutput(first l)); l=drop(l,1);
-            lastT = value(cleanupOutput(first l)); l=drop(l,3);
-            cycleNum = value(first l); l=drop(l,1);
-            success = value(first l); l=drop(l,1);
-            solNum = value(first l);
+ 	    pt = new Point;
+            pt.MaximumPrecision=maxPrec;
+	    pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.ConditionNumber = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
+            pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
+            pt.CycleNumber = value(first l); l=drop(l,1);
+--            pt.Success = if(value(first l)==1) then true;       
+		 l=drop(l,1);
+            pt.SolutionNumber = value(first l);
+     	    solNum=pt.SolutionNumber;
             l = drop(l,1); 
-
-            pt = new Point;
+           
             pt.Coordinates = coords; --we want to output these
             --N = map(CC^0,CC^4,0);
             --ws = witnessSet(ideal F, N, {pt});
@@ -1081,29 +1121,112 @@ doc ///
 doc ///
  Key 
    bertiniRefineSols
-   (bertiniRefineSols,List,List)
+   (bertiniRefineSols,List,List,ZZ)
  Headline
-   solve zero-dimensional system of equations 
+   sharpen solutions to a prescribed number of digits
  Usage
-   S = bertiniZeroDimSolve F
+   S = bertiniRefineSols(F,l,d)
  Inputs
    F:List
      whose entries are polynomials (system need not be square) 
+   l:List
+     whose entries are points to be sharpened
+   d:ZZ
+     number of digits 
+   
  Outputs
    S:List
      of solutions of type Point
  Description
    Text
-     Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
-     This function builds a Bertini input file from the system F and calls Bertini on 
-     this input file.  Solutions are pulled from machine readable file finitesolutions
-     and returned as a list.
+     We take the list l of solutions of F and sharpen them to d digits.
    Example
      R = CC[x,y]
-     F = {x^2-1,y^2-1}
-     S = bertiniZeroDimSolve F
+     F = {x^2-2,y^2-2}
+     sols = bertiniZeroDimSolve (F)
+     S = bertiniRefineSols (F,sols,100)
+     coords = coordinates S_0
+     coords_0
+///;
+end
+doc ///
+ Key 
+   bertiniParameterHomotopy
+   (bertiniParameterHomotopy,List,List,List)
+ Headline
+   runs parameter homotopy in Bertini
+ Usage
+   S = bertiniParameterHomotopy(F,P,T)
+ Inputs
+   F:List
+     whose entries are polynomials (system need not be square) 
+   P:List
+     parameter names
+   T:List
+     whose entries are lists of target parameter values
+   
+ Outputs
+   S:List
+     whose entries are lists of solutions for each target system
+ Description
+   Text
+     Runs both stages of Bertini's parameter homotopy method.
+   Example
 ///;
 
+doc ///
+ Key 
+   bertiniTrackHomotopy
+   (bertiniTrackHomotopy,List,RingElement,List)
+ Headline
+   runs user-defined homotopy in Bertini
+ Usage
+   S0 = bertiniTrackHomotopy(H,t,sols)
+ Inputs
+   H:List
+     whose entries are polynomials depending on t (must be square) 
+   t:RingElement
+     path variable 
+   S1:List
+     start solutions (solutions of H when t=1)   
+ Outputs
+   S0:List
+     target solutions (solutions of H when t=0)
+ Description
+   Text
+     Runs Bertini's user-defined homotopy.
+   Example
+///;
+
+doc ///
+ Key 
+   bertiniSegmentHomotopy
+   (bertiniSegmentHomotopy,List, List, List)
+ Headline
+   constructs and tracks a straight-line homotopy
+ Usage
+   S0 = bertiniSegmentHomotopy()
+ Inputs
+   start:List
+     start system, list of polynomial equations 
+   tar:List
+     target system, list of polynomial equations 
+   S1:List
+     start solutions (solutions of start system when t=1)   
+ Outputs
+   S0:List
+     target solutions (solutions of target system when t=0)
+ Description
+   Text
+     Constructs and tracks a straight line homotopy from the start system to the target system.
+   Example
+     R=CC[x,y]
+     start={x^3-1, y^3-1}
+     tar={x^3+y^3-4,x^3+2*y-1}
+     --input start system, target system, list of start points
+     bertiniSegmentHomotopy(
+     start,tar,{{1,1},{-.5-0.86603*ii,1},{1,-0.5+0.86603*ii}})
+///;
 end
 
 
