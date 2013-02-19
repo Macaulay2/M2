@@ -1,0 +1,12 @@
+VPATH = @srcdir@
+VERSION = 20130212
+URL = http://www.math.uiuc.edu/Macaulay2/Extra
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = autoreconf -i
+CONFIGOPTIONS = --disable-shared
+include ../Makefile.library
+CONFIGENV += PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig:/usr/local
+Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mathicgb/Makefile
+# Local Variables:
+# compile-command: "make -w -C $M2BUILDDIR/libraries/mathicgb "
+# End:
