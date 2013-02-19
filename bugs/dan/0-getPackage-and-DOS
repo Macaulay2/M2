@@ -1,0 +1,4 @@
+getPackage can fail on a DOS-encoded file, because the function
+for removing the HTML header is too agressive:
+
+body := response -> replace("^(.|.\r\n)*\r\n\r\n","",response)
