@@ -47,6 +47,7 @@ libraries/boost/Makefile
 libraries/mpack/Makefile
 libraries/memtailor/Makefile
 libraries/mathic/Makefile
+libraries/mathicgb/Makefile
 libraries/gtest/Makefile
 libraries/qd/Makefile
 libraries/mpc/Makefile
