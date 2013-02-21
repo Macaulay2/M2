@@ -46,3 +46,4 @@ raw f
 F = source f
 raw F
 F2 = exteriorPower(2,F) -- crash!
+raw F2

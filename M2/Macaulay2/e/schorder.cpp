@@ -227,8 +227,7 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
 {
   // This routine is only called from FreeModule::exterior.
   // Therefore: p is in the range 0 < p <= rk.
-  SchreyerOrder *result = 0;
-
+  SchreyerOrder *result = new SchreyerOrder(M);
   int rk = rank();
 
   M2_ASSERT(pp > 0);
