@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 #include "schorder.hpp"
 #include "matrix.hpp"
@@ -221,32 +222,41 @@ SchreyerOrder *SchreyerOrder::tensor(const SchreyerOrder *G) const
 }
 
 
-SchreyerOrder *SchreyerOrder::exterior(int p) const
+SchreyerOrder *SchreyerOrder::exterior(int pp) const
      // p th exterior power
 {
   // This routine is only called from FreeModule::exterior.
-  // Therefore: p is in the range 0 < p < rk.
+  // Therefore: p is in the range 0 < p <= rk.
   SchreyerOrder *result = 0;
 
   int rk = rank();
 
-  int *a = newarray_atomic(int,p);
-  for (int i=0; i<p; i++) a[i] = i;
+  M2_ASSERT(pp > 0);
+  M2_ASSERT(pp <= rk);
+  size_t p = static_cast<size_t>(pp);
+
+  std::cout << "p = " << p << " rk=" << rk << std::endl;
+  Subset a(p, 0);
+  for (size_t i=0; i<p; i++) a[i] = i;
+  
+  //  int *a = newarray_atomic(int,p);
+  //  for (int i=0; i<p; i++) a[i] = i;
 
   int *base = M->make_one();
   int next = 0;
   do
     {
       M->one(base);
-      for (int r=0; r<p; r++)
+      for (size_t r=0; r<p; r++)
         M->mult(base, base_monom(a[r]), base);
 
       result->append(next++, base);
     }
-  while (comb::increment(p, rk, a));
+  //  while (comb::increment(p, rk, a));
+  while (Subsets::increment(rk, a));
 
   M->remove(base);
-  deletearray(a);
+  //  deletearray(a);
 
   return result;
 }

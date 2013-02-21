@@ -15,3 +15,20 @@ M = wedgeProduct(3,4,F);
 assert(numRows M == 120)
 assert(numColumns M == 25200)
 -- how else to check wedgeProduct??
+
+F = R^5
+M = wedgeProduct(2,3,F);
+assert(numRows M == 1)
+assert(numColumns M == 100)
+ansM = matrix(R, {{
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+            0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 
+            0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+            0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+            0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 
+            0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 
+            0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 
+            0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 
+            0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+assert(M == ansM)

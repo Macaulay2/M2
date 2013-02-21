@@ -36,3 +36,13 @@ f = schreyerOrder matrix{{a^3-b*c, a*b*c-c-1, 2*c*d-1}}
 g = symmetricPower(3,f)
 rawSource raw g
 assert(schreyerOrder source g == diagonalMatrix matrix{(flatten entries g)/leadMonomial})
+
+
+----- test of schreyer orders with exterior power
+R = QQ[a..d]
+f = schreyerOrder vars R
+debug Core
+raw f
+F = source f
+raw F
+F2 = exteriorPower(2,F) -- crash!

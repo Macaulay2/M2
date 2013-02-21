@@ -1028,31 +1028,29 @@ Matrix /* or null */ *Matrix::koszul(int p) const
       return 0;
     }
 
-  comb C(n_cols(), p);
-
   FreeModule *F = cols()->exterior(p-1);
   FreeModule *G = cols()->exterior(p);
   const Ring *R = get_ring();
   MatrixConstructor mat(F,G,degree_shift());
   if (p <= 0 || p > n_cols()) return mat.to_matrix();
-  int *a = newarray_atomic(int,p);
+
+  Subsets C(n_cols(), p);
+  Subset a(p, 0);
   for (int c=0; c < G->rank(); c++)
     {
-      C.decode(c, a,p);
+      C.decode(c, a);
       int negate = ((p % 2) != 0);
       for (int r=p-1; r>=0; r--)
         {
           negate = !negate;
-          std::swap(a[p-1], a[r]);
-          int x = C.encode(a, p-1);
-          ring_elem f = elem(0, a[p-1]);
+          size_t x = C.encodeBoundary(r, a);
+          ring_elem f = elem(0, a[r]);
           if (negate)
             R->negate_to(f);
 
           mat.set_entry(x,c,f);
         }
     }
-  deletearray(a);
   return mat.to_matrix();
 }
 
@@ -1227,33 +1225,29 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
       return mat.to_matrix();
     }
 
-  comb C(F->rank(), p+q);
-  int *a = newarray_atomic(int,p);
-  int *b = newarray_atomic(int,q);
-  int *c = newarray_atomic(int,p+q);
+  Subsets C(F->rank(), p+q);
+  Subset a(p, 0);
+  Subset b(q, 0);
+  Subset c(p+q,0);
   int col = 0;
 
   for (int i=0; i<Fp->rank(); i++)
     {
-      C.decode(i, a, p);
+      C.decode(i, a);
       for (int j=0; j<Fq->rank(); j++)
         {
-          C.decode(j, b, q);
-          int sgn = comb::mult_subsets(p,a,q,b,c);
+          C.decode(j, b);
+          int sgn = Subsets::concatenateSubsets(a,b,c);
           if (sgn == 0)
             {
               col++;
               continue;
             }
           ring_elem r = F->get_ring()->from_int(sgn);
-          int row = C.encode(c,p+q);
+          size_t row = C.encode(c);
           mat.set_entry(row,col++,r);
         }
     }
-
-  deletearray(a);
-  deletearray(b);
-  deletearray(c);
   return mat.to_matrix();
 }
 
