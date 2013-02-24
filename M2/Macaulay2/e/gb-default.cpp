@@ -319,6 +319,7 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   g->deg = deg;
   weightInfo_->gbvector_weight(f, f_leadweight); // return value not used
   g->gap = deg - weightInfo_->gbvector_term_weight(f);
+  //  g->gap =0; // MES: this is a test 9 Jan 2013.
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
   return g;

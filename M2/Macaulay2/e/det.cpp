@@ -3,6 +3,8 @@
 #include "det.hpp"
 #include "text-io.hpp"
 #include "interrupted.hpp"
+#include "comb.hpp"
+
 DetComputation::DetComputation(const Matrix *M0, int p0,
                                bool do_exterior0,
                                int strategy0)
@@ -59,20 +61,20 @@ DetComputation::DetComputation(const Matrix *M0, int p0,
   done = false;
 
 
-  row_set = newarray_atomic(int,p);
-  col_set = newarray_atomic(int,p);
+  row_set = newarray_atomic(size_t,p);
+  col_set = newarray_atomic(size_t,p);
 
-  for (int i=0; i<p; i++)
+  for (size_t i=0; i<p; i++)
     {
       row_set[i] = i;
       col_set[i] = i;
     }
 
   D = newarray(ring_elem *,p);
-  for (int i=0; i<p; i++)
+  for (size_t i=0; i<p; i++)
     {
       D[i] = newarray(ring_elem,p);
-      for (int j=0; j<p;j++) D[i][j] = ZERO_RINGELEM;
+      for (size_t j=0; j<p;j++) D[i][j] = ZERO_RINGELEM;
     }
 }
 
@@ -83,7 +85,7 @@ DetComputation::~DetComputation()
 
   if (D)
     {
-      for (int i=0; i<p; i++)
+      for (size_t i=0; i<p; i++)
         deletearray(D[i]);
       deletearray(D);
     }
@@ -116,10 +118,10 @@ int DetComputation::step()
     R->remove(r);
 
   this_row++;
-  if (!comb::increment(p, M->n_rows(), row_set))
+  if (!Subsets::increment(M->n_rows(), p, row_set))
     {
       // Now we increment column
-      if (!comb::increment(p, M->n_cols(), col_set))
+      if (!Subsets::increment(M->n_cols(), p, col_set))
         {
           done = true;
           return COMP_DONE;
@@ -127,7 +129,7 @@ int DetComputation::step()
       // Now set the row set back to initial value
       this_col++;
       this_row = 0;
-      for (int i=0; i<p; i++) row_set[i]=i;
+      for (size_t i=0; i<p; i++) row_set[i]=i;
     }
   return COMP_COMPUTING;
 }
@@ -141,16 +143,15 @@ void DetComputation::clear()
 void DetComputation::set_next_minor(const int *rows, const int *cols)
 {
   if (do_exterior) return;
-  int i;
-  if (rows != NULL && comb::valid_subset(p, M->n_rows(), rows))
-    for (i=0; i<p; i++) row_set[i] = rows[i];
+  if (rows != NULL && Subsets::isValid(M->n_rows(), p, rows))
+    for (size_t i=0; i<p; i++) row_set[i] = rows[i];
   else
-    for (i=0; i<p; i++) row_set[i] = i;
+    for (size_t i=0; i<p; i++) row_set[i] = i;
 
-  if (cols != NULL && comb::valid_subset(p, M->n_cols(), cols))
-    for (i=0; i<p; i++) col_set[i] = cols[i];
+  if (cols != NULL && Subsets::isValid(M->n_cols(), p, cols))
+    for (size_t i=0; i<p; i++) col_set[i] = cols[i];
   else
-    for (i=0; i<p; i++) col_set[i] = i;
+    for (size_t i=0; i<p; i++) col_set[i] = i;
 }
 
 int DetComputation::calc(int nsteps)
@@ -169,18 +170,18 @@ int DetComputation::calc(int nsteps)
     }
 }
 
-void DetComputation::get_minor(int *r, int *c, int p0, ring_elem **D0)
+void DetComputation::get_minor(size_t *r, size_t *c, int p0, ring_elem **D0)
 {
-  for (int i=0; i<p0; i++)
-    for (int j=0; j<p0; j++)
+  for (size_t i=0; i<p0; i++)
+    for (size_t j=0; j<p0; j++)
       D0[i][j] = M->elem(r[i],c[j]);
 }
 
-bool DetComputation::get_pivot(ring_elem **D0, int r, ring_elem &pivot, int &pivot_col)
+bool DetComputation::get_pivot(ring_elem **D0, int r, ring_elem &pivot, size_t &pivot_col)
   // Get a non-zero column 0..r in the r th row.
 {
   // MES: it would be worthwhile to find a good pivot.
-  for (int c=0; c<=r; c++)
+  for (size_t c=0; c<=r; c++)
     if (!R->is_zero(D0[r][c]))
     {
       pivot_col = c;
@@ -207,15 +208,15 @@ ring_elem DetComputation::detmult(ring_elem f1, ring_elem g1,
   return a;
 }
 
-void DetComputation::gauss(ring_elem **D0, int i, int r, int pivot_col, ring_elem lastpivot)
+void DetComputation::gauss(ring_elem **D0, size_t i, size_t r, size_t pivot_col, ring_elem lastpivot)
 {
   ring_elem f = D0[i][pivot_col];
   ring_elem pivot = D0[r][pivot_col];
 
-  for (int c=0; c<pivot_col; c++)
+  for (size_t c=0; c<pivot_col; c++)
     D0[i][c] = detmult(pivot,D0[i][c],f,D0[r][c],lastpivot);
 
-  for (int c=pivot_col+1; c<=r; c++)
+  for (size_t c=pivot_col+1; c<=r; c++)
     D0[i][c-1] = detmult(pivot,D0[i][c],f,D0[r][c],lastpivot);
 
   R->remove(f);
@@ -225,31 +226,31 @@ ring_elem DetComputation::bareiss_det()
 {
   // Computes the determinant of the p by p matrix D. (dense form).
   int sign = 1;
-  int pivot_col;
+  size_t pivot_col;
 
   ring_elem pivot = R->from_int(0);
   ring_elem lastpivot = R->from_int(0);
 
-  for (int r=p-1; r>=1; --r)
+  for (size_t r=p-1; r>=1; --r)
     {
       R->remove(lastpivot);
       lastpivot = pivot;
       if (!get_pivot(D, r, pivot, pivot_col)) // sets pivot_col and pivot
         {
           // Remove the rest of D.
-          for (int i=0; i<=r; i++)
-            for (int j=0; j<=r; j++)
+          for (size_t i=0; i<=r; i++)
+            for (size_t j=0; j<=r; j++)
               R->remove(D[i][j]);
           R->remove(lastpivot);
           return R->from_int(0);
         }
-      for (int i=0; i<r; i++)
+      for (size_t i=0; i<r; i++)
         gauss(D,i,r,pivot_col,lastpivot);
 
       if (((r + pivot_col) % 2) == 1)
         sign = -sign;  // MES: do I need to rethink this logic?
 
-      for (int c=0; c<=r; c++)
+      for (size_t c=0; c<=r; c++)
         if (c != pivot_col)
           R->remove(D[r][c]);
         else
@@ -265,19 +266,15 @@ ring_elem DetComputation::bareiss_det()
 
   return r;
 }
-ring_elem DetComputation::calc_det(int *r, int *c, int p0)
+ring_elem DetComputation::calc_det(size_t *r, size_t *c, int p0)
      // Compute the determinant of the minor with rows r[0]..r[p0-1]
      // and columns c[0]..c[p0-1].
 {
-//  int found;
-//  const ring_elem &result = lookup(r,c,p0,found);
-//  if (found) return result;
-  int i;
   if (p0 == 1) return M->elem(r[0],c[0]);
   ring_elem answer = R->from_int(0);
 
   int negate = 1;
-  for (i=p0-1; i>=0; i--)
+  for (int i=p0-1; i>=0; i--)
     {
       std::swap(c[i],c[p0-1]);
       negate = !negate;
@@ -300,7 +297,7 @@ ring_elem DetComputation::calc_det(int *r, int *c, int p0)
   // pulling out the columns has disordered c. Fix it.
 
   int temp = c[p0-1];
-  for (i=p0-1; i>0; i--)
+  for (size_t i=p0-1; i>0; i--)
     c[i] = c[i-1];
   c[0] = temp;
 

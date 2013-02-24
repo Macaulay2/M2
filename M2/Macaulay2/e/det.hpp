@@ -4,7 +4,6 @@
 #define _det_hh_
 
 #include "matrix.hpp"
-#include "comb.hpp"
 #include "matrix-con.hpp"
 
 const int DET_BAREISS = 0;
@@ -35,25 +34,25 @@ class DetComputation : public our_new_delete
                                 // collect non-zero minors
   int strategy;                 // 0: use Bareiss (fraction free, DOMAINS only)
                                 // 1: use cofactor method.
-  int * row_set;
-  int * col_set;
-  int this_row;
-  int this_col;
+  size_t * row_set;
+  size_t * col_set;
+  size_t this_row;
+  size_t this_col;
 
   ring_elem **D;                // size p by p, dense representation.
 
-  void get_minor(int *r, int *c, int p, ring_elem **D);
+  void get_minor(size_t *r, size_t *c, int p, ring_elem **D);
   // Sets D[0..p-1,0..p-1] with the given minor of M.
 
   // Used in Bareiss:
-  bool get_pivot(ring_elem **D, int p, ring_elem &pivot, int &pivot_col);
+  bool get_pivot(ring_elem **D, int p, ring_elem &pivot, size_t &pivot_col);
   ring_elem detmult(ring_elem f1, ring_elem g1,
                     ring_elem f2, ring_elem g2,
                     ring_elem d);
-  void gauss(ring_elem **D, int i, int r, int pivot_col, ring_elem lastpivot);
+  void gauss(ring_elem **D, size_t i, size_t r, size_t pivot_col, ring_elem lastpivot);
 
 
-  ring_elem calc_det(int *r, int *c, int p);
+  ring_elem calc_det(size_t *r, size_t *c, int p);
      // Compute the determinant of the minor with rows r[0]..r[p-1]
      // and columns c[0]..c[p-1].
 
