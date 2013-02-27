@@ -55,6 +55,7 @@ opt64-linbox : always
 		--enable-givaro \
 		--enable-linbox \
 		--enable-memtailor \
+		--enable-mathic \
 		--enable-flint \
 		--disable-strip \
 		--enable-download \
