@@ -35,7 +35,7 @@ private:
 public:
   SMat():R(0), coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
-  SMat(const Ring *R0, const CoeffRing * coeffR0, int nrows, int ncols); // Makes a zero matrix
+  SMat(const Ring *R0, const CoeffRing * coeffR0, size_t nrows, size_t ncols); // Makes a zero matrix
 
   SMat(const SMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
 
@@ -54,7 +54,7 @@ public:
   const CoeffRing& ring() const { return *coeffR; }
 
   //  void set_matrix(const SMat<CoeffRing> *mat0);
-  void initialize(int nrows, int ncols, sparsevec **cols);
+  void initialize(size_t nrows, size_t ncols, sparsevec **cols);
   //  void resize(int nrows, int ncols);
 
   class iterator : public our_new_delete

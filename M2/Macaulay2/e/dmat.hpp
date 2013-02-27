@@ -73,7 +73,7 @@ public:
 
   DMat():R(0), coeffR(0), nrows_(0), ncols_(0), array_(0) {} // Makes a zero matrix
 
-  DMat(const Ring *R, const ACoeffRing *R0, int nrows, int ncols); // Makes a zero matrix
+  DMat(const Ring *R, const ACoeffRing *R0, size_t nrows, size_t ncols); // Makes a zero matrix
 
   DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
 
@@ -92,8 +92,8 @@ public:
   const CoeffRing& ring() const { return *coeffR; }
 
   void set_matrix(const DMat<CoeffRing> *mat0);
-  void initialize(int nrows, int ncols, const elem *array);
-  void resize(int nrows, int ncols);
+  void initialize(size_t nrows, size_t ncols, const elem *array);
+  void resize(size_t nrows, size_t ncols);
 
   // These functions are used for interface with e.g. lapack, ffpack.
   const elem * get_array() const { return array_; }
@@ -325,8 +325,8 @@ public:
 private:
   const Ring *R; // To interface to the outside world
   const CoeffRing * coeffR; // Same as R, optimized for speed.  R->get_CoeffRing()
-  int nrows_;
-  int ncols_;
+  size_t nrows_;
+  size_t ncols_;
   elem *array_; // array has length nrows*ncols
                 // columns stored one after another
 };
@@ -336,7 +336,7 @@ private:
 /////////////////////////
 
 template<typename CoeffRing>
-DMat<CoeffRing>::DMat(const Ring *R0, const CoeffRing *coeffR0, int nrows, int ncols)
+DMat<CoeffRing>::DMat(const Ring *R0, const CoeffRing *coeffR0, size_t nrows, size_t ncols)
   : R(R0),
     coeffR(coeffR0),
     nrows_(nrows),
@@ -366,7 +366,7 @@ DMat<CoeffRing>::DMat(const DMat<CoeffRing> &m)
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::initialize(int nrows, int ncols, const elem *array)
+void DMat<CoeffRing>::initialize(size_t nrows, size_t ncols, const elem *array)
 {
   nrows_ = nrows;
   ncols_ = ncols;
@@ -383,7 +383,7 @@ void DMat<CoeffRing>::initialize(int nrows, int ncols, const elem *array)
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::resize(int new_nrows, int new_ncols)
+void DMat<CoeffRing>::resize(size_t new_nrows, size_t new_ncols)
 {
   size_t new_len = static_cast<size_t>(new_nrows) * static_cast<size_t>(new_ncols);
   if (new_len == 0 || new_len != nrows_ * ncols_)

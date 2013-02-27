@@ -73,8 +73,8 @@ inline const MatT * MutableMatrix::coerce() const
 }
 
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
-						int nrows, 
-						int ncols, 
+						size_t nrows, 
+						size_t ncols, 
 						bool dense)
 {
   if (nrows < 0 | ncols < 0)

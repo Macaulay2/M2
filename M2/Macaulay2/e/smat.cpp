@@ -526,7 +526,7 @@ void SMat<CoeffRing>::vec_delete_rows(sparsevec *&v, int i, int j) const
 // SMat //////////////////
 //////////////////////////
 template<typename CoeffRing>
-SMat<CoeffRing>::SMat(const Ring *R0, const CoeffRing *coeffR0, int nrows, int ncols)
+SMat<CoeffRing>::SMat(const Ring *R0, const CoeffRing *coeffR0, size_t nrows, size_t ncols)
   : R(R0),
     coeffR(coeffR0),
     nrows_(nrows),
@@ -559,19 +559,19 @@ template <> SMat<CoefficientRingR>::SMat(const Ring *R0, int nrows, int ncols)
 #endif
 
 template<typename CoeffRing>
-void SMat<CoeffRing>::initialize(int nrows, int ncols, sparsevec **cols)
+void SMat<CoeffRing>::initialize(size_t nrows, size_t ncols, sparsevec **cols)
 {
   nrows_ = nrows;
   ncols_ = ncols;
   columns_ = newarray(sparsevec *,ncols);
   if (cols == 0)
     {
-      for (int i=0; i<ncols; i++)
+      for (size_t i=0; i<ncols; i++)
         columns_[i] = 0;
     }
   else
     {
-      for (int i=0; i<ncols; i++)
+      for (size_t i=0; i<ncols; i++)
         columns_[i] = vec_copy(*cols++);
     }
 }
@@ -654,7 +654,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::scale_row(int i, elem r)
   /* row(i) <- r * row(i) */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_scale_row(columns_[c], i, r);
 }
 
@@ -669,7 +669,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::divide_row(int i, elem r)
   /* row(i) <- row(i) / r */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_divide_row(columns_[c], i, r);
 }
 
@@ -684,7 +684,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::row_op(int i, elem r, int j)
   /* row(i) <- row(i) + r * row(j) */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_row_op(columns_[c], i, r, j);
 }
 
@@ -703,7 +703,7 @@ void SMat<CoeffRing>::row2by2(int r1, int r2,
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_row_op2(columns_[c], r1,r2,a1,a2,b1,b2);
 }
 
@@ -744,13 +744,13 @@ template<typename CoeffRing>
 bool SMat<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
 {
   // We copy one row to another location for each cycle in 'perm' of length > 1.
-  int nrows_to_permute = perm->len;
+  size_t nrows_to_permute = perm->len;
   bool *done = newarray_atomic(bool,nrows_to_permute);
-  for (int i=0; i<nrows_to_permute; i++)
+  for (size_t i=0; i<nrows_to_permute; i++)
     done[i] = true;
-  for (int i=0; i<nrows_to_permute; i++)
+  for (size_t i=0; i<nrows_to_permute; i++)
     {
-      int j = perm->array[i];
+      size_t j = perm->array[i];
       if (!done[j])
         {
           ERROR("expected permutation");
@@ -759,7 +759,7 @@ bool SMat<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
         }
       done[j] = false;
     }
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_permute(columns_[c], start_row, perm);
   return true;
 }
@@ -767,14 +767,14 @@ bool SMat<CoeffRing>::row_permute(int start_row, M2_arrayint perm)
 template<typename CoeffRing>
 bool SMat<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
 {
-  int ncols_to_permute = perm->len;
+  size_t ncols_to_permute = perm->len;
   bool *done = newarray_atomic(bool,ncols_to_permute);
   sparsevec **tmpvecs = newarray(sparsevec *, ncols_to_permute);
-  for (int i=0; i<ncols_to_permute; i++)
+  for (size_t i=0; i<ncols_to_permute; i++)
     done[i] = true;
-  for (int i=0; i<ncols_to_permute; i++)
+  for (size_t i=0; i<ncols_to_permute; i++)
     {
-      int j = perm->array[i];
+      size_t j = perm->array[i];
       if (!done[j])
         {
           ERROR("expected permutation");
@@ -783,9 +783,9 @@ bool SMat<CoeffRing>::column_permute(int start_col, M2_arrayint perm)
         }
       done[j] = false;
     }
-  for (int i=0; i<ncols_to_permute; i++)
+  for (size_t i=0; i<ncols_to_permute; i++)
     tmpvecs[i] = columns_[start_col + perm->array[i]];
-  for (int i=0; i<ncols_to_permute; i++)
+  for (size_t i=0; i<ncols_to_permute; i++)
     columns_[start_col + i] = tmpvecs[i];
   deletearray(tmpvecs);
   deletearray(done);
@@ -798,12 +798,12 @@ void SMat<CoeffRing>::insert_columns(int i, int n_to_add)
 {
   sparsevec **tmp = columns_;
   columns_ = 0;
-  int orig_ncols = ncols_;
+  size_t orig_ncols = ncols_;
 
   initialize(nrows_, ncols_ + n_to_add, 0);
-  for (int c=0; c<i; c++)
+  for (size_t c=0; c<i; c++)
     columns_[c] = tmp[c];
-  for (int c=i; c<orig_ncols; c++)
+  for (size_t c=i; c<orig_ncols; c++)
     columns_[c+n_to_add] = tmp[c];
 
   deletearray(tmp);
@@ -813,7 +813,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::insert_rows(int i, int n_to_add)
 /* Insert n_to_add rows directly BEFORE row i. */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_insert_rows(columns_[c], i, n_to_add);
   nrows_ += n_to_add;
 }
@@ -822,17 +822,17 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::delete_columns(int i, int j)
 /* Delete columns i .. j from M */
 {
-  for (int c=i; c<=j; c++)
+  for (size_t c=i; c<=j; c++)
     vec_remove(columns_[c]);
   sparsevec **tmp = columns_;
   columns_ = 0;
-  int ndeleted = j-i+1;
-  int orig_ncols = ncols_;
+  size_t ndeleted = j-i+1;
+  size_t orig_ncols = ncols_;
 
   initialize(nrows_, ncols_ - (j-i+1), 0);
-  for (int c=0; c<i; c++)
+  for (size_t c=0; c<i; c++)
     columns_[c] = tmp[c];
-  for (int c=j+1; c<orig_ncols; c++)
+  for (size_t c=j+1; c<orig_ncols; c++)
     columns_[c-ndeleted] = tmp[c];
 
   deletearray(tmp);
@@ -842,7 +842,7 @@ template<typename CoeffRing>
 void SMat<CoeffRing>::delete_rows(int i, int j)
 /* Delete rows i .. j from M */
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     vec_delete_rows(columns_[c], i, j);
   nrows_ -= (j-i+1);
 }
@@ -877,7 +877,7 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 template<typename CoeffRing>
 bool SMat<CoeffRing>::is_zero() const
 {
-  for (int c=0; c<ncols_; c++)
+  for (size_t c=0; c<ncols_; c++)
     if (columns_[c] != 0)
       return false;
   return true;
@@ -906,8 +906,8 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_array
   coeffR = A.coeffR;
   initialize(rows->len, cols->len, NULL);
 
-  for (int r=0; r<rows->len; r++)
-    for (int c=0; c<cols->len; c++)
+  for (size_t r=0; r<rows->len; r++)
+    for (size_t c=0; c<cols->len; c++)
       {
         elem f;
         A.get_entry(rows->array[r],cols->array[c],f);
@@ -921,8 +921,8 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
   R = A.R;
   coeffR = A.coeffR;
   initialize(A.n_rows(), cols->len, NULL);
-  for (int r=0; r<nrows_; r++)
-    for (int c=0; c<cols->len; c++)
+  for (size_t r=0; r<nrows_; r++)
+    for (size_t c=0; c<cols->len; c++)
       {
         elem f;
         A.get_entry(r,cols->array[c],f);
@@ -938,7 +938,7 @@ void SMat<CoeffRing>::addInPlace(const SMat<CoeffRing>& B)
   ASSERT(B.n_rows() == n_rows());
   ASSERT(B.n_cols() == n_cols());
 
-  for (int c=0; c<n_cols(); c++)
+  for (size_t c=0; c<n_cols(); c++)
     {
       sparsevec *v = vec_copy(B.columns_[c]);
       vec_add_to(columns_[c], v);
@@ -954,7 +954,7 @@ void SMat<CoeffRing>::subtractInPlace(const SMat<CoeffRing>& B)
   ASSERT(B.n_rows() == n_rows());
   ASSERT(B.n_cols() == n_cols());
 
-  for (int c=0; c<n_cols(); c++)
+  for (size_t c=0; c<n_cols(); c++)
     {
       sparsevec *v = vec_copy(B.columns_[c]);
       vec_negate(v);
@@ -966,7 +966,7 @@ template <typename CoeffRing>
 void SMat<CoeffRing>::negateInPlace()
   // this = -this
 {
-  for (int c=0; c<n_cols(); c++)
+  for (size_t c=0; c<n_cols(); c++)
     for (sparsevec *p = columns_[c]; p != NULL; p=p->next)
       ring().negate(p->coeff, p->coeff);
 }
@@ -975,7 +975,7 @@ template <typename CoeffRing>
 void SMat<CoeffRing>::scalarMultInPlace(const elem &f)
   // this = f * this
 {
-  for (int c=0; c<n_cols(); c++)
+  for (size_t c=0; c<n_cols(); c++)
     vec_scale(columns_[c], f);
 }
 

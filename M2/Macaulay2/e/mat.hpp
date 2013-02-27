@@ -44,7 +44,7 @@ public:
 
   virtual bool is_dense() const = 0;
 
-  static MutableMatrix *zero_matrix(const Ring *R, int nrows, int ncols, bool dense);
+  static MutableMatrix *zero_matrix(const Ring *R, size_t nrows, size_t ncols, bool dense);
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 

@@ -30,7 +30,11 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
                                             int ncols,
                                             M2_bool is_dense)
 {
-  return MutableMatrix::zero_matrix(R,nrows,ncols,is_dense);
+  M2_ASSERT(nrows >= 0);
+  M2_ASSERT(ncols >= 0);
+  size_t nr = static_cast<size_t>(nrows);
+  size_t nc = static_cast<size_t>(ncols);
+  return MutableMatrix::zero_matrix(R,nr,nc,is_dense);
 }
 
 MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)

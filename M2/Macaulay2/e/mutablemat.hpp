@@ -54,7 +54,7 @@ private:
   // Specific template instances must provide these functions
   MutableMat() {}
 
-  MutableMat(const Ring *R, const CoeffRing *coeffR, int nrows, int ncols)
+  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
     : mat(R,coeffR,nrows,ncols) {}
 
   MutableMat(Mat &m) : mat(m) {}
@@ -84,7 +84,7 @@ public:
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
 
-  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, int nrows, int ncols)
+  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
   {
     return new MutableMat(R,coeffR,nrows,ncols);
   }
