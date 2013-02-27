@@ -194,7 +194,7 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
 )
 generateBipartiteGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, m, e) -> generateBipartiteGraphs(n, m, e, e, opts)
 generateBipartiteGraphs (ZZ, ZZ) := List => opts -> (n, m) -> generateBipartiteGraphs(n, m, 0, m * (n-m), opts)
-generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..n), i -> generateBipartiteGraphs(n, i, opts))
+generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..<n), i -> generateBipartiteGraphs(n, i, opts))
 
 -- Generates all graphs of a given type.
 generateGraphs = method(Options => {OnlyConnected => false, OnlyBiconnected => false, OnlyTriangleFree => false, Only4CycleFree => false, OnlyBipartite => false, MinDegree => null, MaxDegree => null})
