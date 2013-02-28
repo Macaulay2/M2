@@ -9,6 +9,7 @@ union ring_elem;
 // The only reason "RingType" is present is to more easily
 //   communicate with the rest of Macaulay2
 
+
 class MutableMatrix;
 
 template<typename ACoeffRing>
@@ -18,6 +19,8 @@ public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
   typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
+
+  typedef SMat<ACoeffRing> EigenvalueMatrixType;
 
   //typedef typename CoeffRing::ring_type RingType;
 

@@ -44,6 +44,20 @@ struct is_givaro_or_ffpack< M2::ARingGF >{
 
 class MutableMatrix;
 
+template <typename RingType>
+class EigenvalueType
+{
+public:
+  typedef RingType Ring;
+};
+
+template<>
+class EigenvalueType<Ring_RRR>
+{
+public:
+  typedef CoefficientRingCCC Ring;
+};
+
 /**
  * \ingroup matrices
  */
@@ -54,6 +68,8 @@ public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
   typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
+
+  typedef DMat<typename EigenvalueType<ACoeffRing>::Ring> EigenvalueMatrixType;
 
   DMat():R(0), coeffR(0), nrows_(0), ncols_(0), array_(0) {} // Makes a zero matrix
 
