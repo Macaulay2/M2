@@ -536,7 +536,27 @@ moveCheckers Array := blackred -> (
 -- TEST
 --moveCheckers({3,5,4,2,1,0},{3,NC,NC,5,NC,1})
 
-
+-----------------
+-- playCheckers
+-----------------
+-- Function that gets a specific node and plays
+-- a checkerboard game between two varieties X1 and X2
+--
+-- It sets up the game, and then it uses
+-- the combinatorial LR-rule to make deformations
+-- between the Schubert variety X2 to X1
+-- It stores all the information in a HashTable
+-------------------
+-- If we want to compute X1\cap X2 \cap X3 \cap...\cap Xn
+-- we first play the checkers with X1 and X2
+--
+-- input1:
+--         l1, l2, two partitions (representing X1 and X2)
+--         k,n the Grassmannian where they live
+-- Output1:
+--         Dag - a Hashtable with all the checkermoves played
+--
+-------------------
 playCheckers = method(TypicalValue => MutableHashTable)
 playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      all'nodes := new MutableHashTable;
@@ -571,14 +591,28 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
     -- )
 )
 
+------------------------
+-- PlayCheckers will also play the next checkerboard game
+-- in the Tournament.
+-- Input: 
+--       board 
+--       father (the checkergame this game came from)
+--       typeofmove?
+--       all'nodes - the list of games played already
+--
+-- THIS IS THE RECURSIVE CALL OF PLAYCHECKERS
+----------------------------
 playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all'nodes) ->(
     -- Document this function!! it is not understandable
     -- all'nodes is a HashTable whose keys are boards,
     -- and this is where we store all nodes that we have
     -- already visited.
-     node'exists := all'nodes#?board; 
+    --
+    -- Abr started the documentation of this function on Feb 6, 2013
+    --------------------------------------------
+     node'exists := all'nodes#?board; -- check if we already played this game
      self := if node'exists  
-     then all'nodes#board 
+     then all'nodes#board  -- if so, then glue solutions, otherwise, start a new hashtable
      else new MutableHashTable from {
 	  Board => board, 
 	  IsResolved => false,
@@ -625,6 +659,7 @@ printTree MutableHashTable := node ->(
 --playCheckers({1},{1},2,4)
 --playCheckers({1,1},{2,1},3,6)
 --playCheckers({2,1},{1,1},3,6)
+
 
 -----------------
 --- makeLocalCoordinates
@@ -934,6 +969,28 @@ if not node.IsResolved then (
      node.IsResolved = true;
      ) -- END resolveNode
 
+-------------------
+-- findLeaves
+-------------------
+-- Function that scans a Dag (from a playCheckers)
+-- and output all the boards
+-- corresponding to the leaves 
+-- of the checker game
+-------------------
+findLeaves = method()
+findLeaves MutableHashTable := node ->(
+    leaves := new List;
+    if toString node.CriticalRow == "leaf" then (
+	leaves = leaves|{node};
+	)else(
+	scan(node.Children, c-> leaves = leaves|{findLeaves c});
+	);
+    flatten leaves
+)
+
+-----------------
+-- pasteSlns'to'Leaf
+-----------------
 
 ---------------
 -- solveSchubertProblem
@@ -952,21 +1009,51 @@ if not node.IsResolved then (
 --    list of solutions
 ---------------
 solveSchubertProblem = method()
-solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
+solveSchubertProblem(Sequence,ZZ,ZZ) := (SchPblm,k,n) ->(
+    -- SchPblm is a sequence with two entries
+    -- Partitions = list of partitions
+    -- Flags = List of Flags
+    (Partitions, Flgs) := SchPblm;
     -- take the first two conditions
-    twoconds := take(SchPblm,2);
-    -- extract the partitions and the flags
-    l1 :=first first twoconds;
-    F1 := last first twoconds;
-    l2 := first last twoconds;
-    F2 := last last twoconds;
+    twoconds := take(Partitions,2);
+    twoFlags := take(Flgs,2);
+    remaining'conditions'and'flags = (drop(Partitions,2), drop(Flgs,2));
+    l1:=verifyLength(first twoconds,k);
+    l2:=verifyLength(last twoconds,k);
+    F1:=first twoFlags;
+    F2:=last twoFlags;
+    
+    Slns:={};
+    checkOrthogonal := l1+reverse l2;
+    if sum(checkOrthogonal) == k*(n-k) and #(unique checkOrthogonal)>1 then 
+       Slns
+    else(
+	newDag := playCheckers(l1,l2,k,n);
+	-- if newDag is Resolved then return the solution, 
+	-- otherwise look at the leaves
+	if newDag.IsResolved then 
+	   Slns = Slns|newDag.Solutions;
+	else(
+	    Leaf := findLeaves newDag;
+	    apply(Leaf, l->(
+		    -- l is the hash table corresponding to the leaf
+		    mleaf :=flatten unique redcheckers2partitions last l.Board --partition corresponding to the leaf
+		    S := solveSchubertProblem(
+			(prepend(mleaf,first remaining'conditions'and'flags),
+			prepend(id_(FFF^n), last remaining'conditions'and'flags)),
+		    	k,n
+			);
+		    ));
+	    
+	    );
+	); 
+    
+------- the next part is just trash
     << "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
-    remaining'conditions'and'flags:=drop(SchPblm,2);
     newDag := playCheckers(l1,l2,k,n);
     resolveNode(newDag,remaining'conditions'and'flags);
     -- we do a change of coordinates
---    B:=solve(F2,rsort id_(FFF^n));
-    
+    MX := makeLocalCoordinates newDag.Board;
     -- Need to glue solutions from the node of a Dag to solutions
     -- of the leaf of the previous Dag
     changeFlags(newDag.Solutions, 
@@ -975,25 +1062,24 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	twoconds/last);
     )
 
-TEST ///
+--TEST ///
 -----------------------
 -- Test Here:
-debug needsPackage "NumericalSchubertCalculus"
+--debug needsPackage "NumericalSchubertCalculus"
 
 --SchPblm = {({2,1}), ({1})};
 --twoconds = take(SchPblm,2)
 --l1= first twoconds
 --if class last twoconds === Sequence then( 
---l2= first last twoconds
+--l2= first last twoconds;
 --F2= last last twoconds
 --)
 --remaining'conditions'and'flags=drop(SchPblm,2);
---newDag = playCheckers(l1,l2,2,4);
+--newDag = playCheckers(l1,last twoconds,2,4);
 --resolveNode(newDag,remaining'conditions'and'flags);
 --peek newDag
 
 --solveSchubertProblem(SchPblm,2,4)
-
 --SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
 --solveSchubertProblem(SchPblm,2,4)
 
@@ -1002,7 +1088,7 @@ debug needsPackage "NumericalSchubertCalculus"
 
 --///
 -----------------------
-///
+
 
 ---------------------------------
 --- changeFlags
@@ -1022,6 +1108,7 @@ debug needsPackage "NumericalSchubertCalculus"
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
+changeFlags := method() --temporary
 changeFlags = method()
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->(
    (conditions,flagsA,flagsB) := conds'A'B; 
@@ -1074,11 +1161,23 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
 
 --TEST ///
 ---------
--- Test the function that
+-- Test the function changeFlags that
 -- moves solutions wrt flags A
 -- to solutions wrt flags B
---restart
---debug needsPackage "NumericalSchubertCalculus"
+--
+-----------------
+-- If you want to run this example:
+-- 1.- you need to uncomment it AFTER loading NumericalSchubertCalculus package
+-- 2.- you need to load the NumercialAlgebraicGeometry package
+-- 3.- you need to manually load the function makePolynomials
+-- 4.- you need to manually load the function changeFlags
+-- 5.- you need to manually load the function changeflagsLinear
+--
+-- You could avoid all this maybe if you can run this example at the end of
+-- the code, where the other examples are.
+-----------------
+--
+--needsPackage "NumericalSchubertCalculus"
 --needsPackage "NumericalAlgebraicGeometry"
 --Rng = FFF[x_{1,1}, x_{1,2}];
 --MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
@@ -1259,7 +1358,10 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
      e1 := position(black, b->b==r);
      i < e1 and i >= e0
      )
- 
+
+--
+-- Feb 8... NEED To FIX the next function!!!
+-- 
 ---------------
 -- SolveLinAlg
 ---------------
@@ -1300,14 +1402,25 @@ solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
     (k,n):=kn;
     -- l,m are partitions
     -- L,M are matrices representing the flags
-    ll:=l+reverse(m);
+    ll:=unique(l+reverse(m));
     if #ll==1 and first ll == n then(
-	l1 := partition2bracket(l,k,n);
-	l1 = apply(l1, i-> i-1);
-	{solve(L,M_l1)}
+	--l1 := partition2bracket(l,k,n);
+	--l1 = apply(l1, i-> i-1);
+	--{solve(L,M_l1)}
+	l1:= partition2bracket(l,k,n);
+	matrix apply(l1, i-> L_(i-1))
 	)else {} 
     )
 
+-----------
+-- Testing Example:
+-- 
+-- Solve the Linear Algebra problem:
+-- {2,1} vs {1} w.r.t. std flag and opp flag
+-- in G(2,4):
+--
+Flg = id_(FFF^4);
+solveLinAlg(({2,1},Flg), ({1,0}, rsort Flg), (2,4))
 
 -----------------------------
 -- end Numerical LR-Homotopies
@@ -1732,12 +1845,28 @@ root = playCheckers({1},{1},2,4)
 resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
 assert(#root.Solutions==2)
 -- not a tree
+
+-- Problem (2,1)^3=2 in G(3,6)
 root = playCheckers({2,1,0},{2,1,0},3,6)
 time resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
 assert(#root.Solutions==2)
 peek root
 -- test code and assertions here
 -- may have as many TEST sections as needed
+
+-- Problem (2,1)^2*(1)*(2) = 3 in G(3,6)
+root = playCheckers({2,1},{2,1},3,6)
+time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
+assert(#root.Solutions==3)
+peek root
+printTree root
+-- Problem (2,1)*(2)^3 = 2 in G(3,6) 
+-- This problem has a non-trivial tree (not like the problem of 4 lines)
+root = playCheckers({2},{2},3,6)
+time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6))})
+assert(#root.Solutions == 2)
+peek root
+printTree root
 ///
 
 end
