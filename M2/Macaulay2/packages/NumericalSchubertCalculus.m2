@@ -96,7 +96,7 @@ ERROR'TOLERANCE := 0.001
 -- 2 = verify solutions against blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
 -- 4 = new experimental stuff kicks in
-DEBUG'LEVEL = 3
+DEBUG'LEVEL = 4
 
 
 solutionsHash := new MutableHashTable;
@@ -777,12 +777,27 @@ if not node.IsResolved then (
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
 	       
 	       if validpartition then(
-		   node.Solutions = solveSchubertProblem(
+		   node.Solutions = 
+		   --S := 
+		   solveSchubertProblem(
 		       prepend(
 			   (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
 			   remaining'conditions'and'flags
 			   ),
 		       k,n);
+		   print "And These are the solutions obtained:";
+		   print(node.Solutions);
+		   --MX := makeLocalCoordinates node.Board ;
+		   --conds := {lambda};
+		   --Flags1 := {id_(FFF^n)};
+		   --Flags2:= {};
+		   --scan(remaining'conditions'and'flags, c-> (
+			--   conds = append(conds, first c);
+			--   Flags1 = append(Flags1, last c);
+			--   Flags2 = append(Flags2, last c);
+			--   ));
+		   --node.Solutions = changeFlags(MX, S, (conds, Flags1, Flags2));
+		   node.IsResolved = true;
 		   -- assert(???); --verify that the solutions fit the localization pattern 
 	       	   )else(   
 		   << "-- partition is not valid: " << lambda << endl;
@@ -969,28 +984,6 @@ if not node.IsResolved then (
      node.IsResolved = true;
      ) -- END resolveNode
 
--------------------
--- findLeaves
--------------------
--- Function that scans a Dag (from a playCheckers)
--- and output all the boards
--- corresponding to the leaves 
--- of the checker game
--------------------
-findLeaves = method()
-findLeaves MutableHashTable := node ->(
-    leaves := new List;
-    if toString node.CriticalRow == "leaf" then (
-	leaves = leaves|{node};
-	)else(
-	scan(node.Children, c-> leaves = leaves|{findLeaves c});
-	);
-    flatten leaves
-)
-
------------------
--- pasteSlns'to'Leaf
------------------
 
 ---------------
 -- solveSchubertProblem
@@ -1009,19 +1002,16 @@ findLeaves MutableHashTable := node ->(
 --    list of solutions
 ---------------
 solveSchubertProblem = method()
-solveSchubertProblem(Sequence,ZZ,ZZ) := (SchPblm,k,n) ->(
-    -- SchPblm is a sequence with two entries
-    -- Partitions = list of partitions
-    -- Flags = List of Flags
-    (Partitions, Flgs) := SchPblm;
+solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
+    -- SchPblm is a list of sequences with two entries
+    -- a partition and a flag
+    twoconds := take(SchPblm,2);
+    remaining'conditions'and'flags := drop(SchPblm,2);
     -- take the first two conditions
-    twoconds := take(Partitions,2);
-    twoFlags := take(Flgs,2);
-    remaining'conditions'and'flags = (drop(Partitions,2), drop(Flgs,2));
-    l1:=verifyLength(first twoconds,k);
-    l2:=verifyLength(last twoconds,k);
-    F1:=first twoFlags;
-    F2:=last twoFlags;
+    l1:=verifyLength(first first twoconds,k);
+    l2:=verifyLength(first last twoconds,k);
+    F1:=last first twoconds;
+    F2:=last last twoconds;
     
     Slns:={};
     checkOrthogonal := l1+reverse l2;
@@ -1029,38 +1019,40 @@ solveSchubertProblem(Sequence,ZZ,ZZ) := (SchPblm,k,n) ->(
        Slns
     else(
 	newDag := playCheckers(l1,l2,k,n);
-	-- if newDag is Resolved then return the solution, 
-	-- otherwise look at the leaves
-	if newDag.IsResolved then 
-	   Slns = Slns|newDag.Solutions;
-	else(
-	    Leaf := findLeaves newDag;
-	    apply(Leaf, l->(
-		    -- l is the hash table corresponding to the leaf
-		    mleaf :=flatten unique redcheckers2partitions last l.Board --partition corresponding to the leaf
-		    S := solveSchubertProblem(
-			(prepend(mleaf,first remaining'conditions'and'flags),
-			prepend(id_(FFF^n), last remaining'conditions'and'flags)),
-		    	k,n
-			);
-		    ));
-	    
-	    );
+	resolveNode(newDag, remaining'conditions'and'flags);
+	MX := makeLocalCoordinates newDag.Board ;
+	conds := {l1,l2};
+	Flags1 := {id_(FFF^n),rsort id_(FFF^n)};
+	Flags2:= {F1,F2};
+	scan(remaining'conditions'and'flags, c-> (
+		conds = append(conds, first c);
+		Flags1 = append(Flags1, last c);
+		Flags2 = append(Flags2, last c);
+		));
+	-------------------------
+	-- The problem is in the bottom of the newDag:
+	-- 
+	-- the coordinates MX does not have any variables
+	-- therefore, changeFlags cannot do the change of flags
+	--------------------------
+	changeFlags(MX, newDag.Solutions, (conds, Flags1, Flags2))
 	); 
-    
+    )-- end of solveSchubertProblem
+
 ------- the next part is just trash
-    << "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
-    newDag := playCheckers(l1,l2,k,n);
-    resolveNode(newDag,remaining'conditions'and'flags);
-    -- we do a change of coordinates
-    MX := makeLocalCoordinates newDag.Board;
-    -- Need to glue solutions from the node of a Dag to solutions
-    -- of the leaf of the previous Dag
-    changeFlags(newDag.Solutions, 
-	twoconds/first, 
-	{id_(FFF^n),rsort id_(FFF^n)}|(remaining'conditions'and'flags/last), 
-	twoconds/last);
-    )
+    --<< "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
+    --newDag := playCheckers(l1,l2,k,n);
+    --resolveNode(newDag,remaining'conditions'and'flags);
+    ---- we do a change of coordinates
+    --MX := makeLocalCoordinates newDag.Board;
+    ---- Need to glue solutions from the node of a Dag to solutions
+    ---- of the leaf of the previous Dag
+    --changeFlags(newDag.Solutions, 
+	--twoconds/first, 
+	--{id_(FFF^n),rsort id_(FFF^n)}|(remaining'conditions'and'flags/last), 
+	--twoconds/last);
+
+
 
 --TEST ///
 -----------------------
@@ -1087,8 +1079,6 @@ solveSchubertProblem(Sequence,ZZ,ZZ) := (SchPblm,k,n) ->(
 --solveSchubertProblem(SchPblm,2,4)
 
 --///
------------------------
-
 
 ---------------------------------
 --- changeFlags
@@ -1108,19 +1098,21 @@ solveSchubertProblem(Sequence,ZZ,ZZ) := (SchPblm,k,n) ->(
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
-changeFlags := method() --temporary
+--changeFlags := method() --temporary
 changeFlags = method()
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->(
    (conditions,flagsA,flagsB) := conds'A'B; 
    flagsS := flagsA;
    solutionsS := solutionsA;
-   n := numcols flagsA#0;
-   scan(n, i->(
-      flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
-      solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
-      flagsS = flagsT;
-      solutionsS = solutionsT/coordinates;
-      ));
+   if solutionsA!={} then(
+       n := numcols flagsA#0;
+       scan(n, i->(
+      	       flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
+      	       solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
+      	       flagsS = flagsT;
+      	       solutionsS = solutionsT/coordinates;
+      	       ));
+       );
    solutionsS
    )
 
