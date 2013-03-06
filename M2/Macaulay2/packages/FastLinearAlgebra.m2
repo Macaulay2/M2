@@ -2031,6 +2031,16 @@ XXXXXXXXXXXXXX
 --     too busy in February to do anything on this.
 --
 -- next meeting: 6 Mar 2013
+--   for milestone of finally getting this into the system:
+--     a. top level code to do the following:
+--        call ZZ/p  (initialize lin alg functions)
+--        make sure all of the lin alg routines can be called at top level
+--           (e.g. det, solveLinear, rank, ...) both for matrices and mutable matrices
+--     b. unit tests for this code
+--     c. get rid of all (or most) of the warning messages from the compiler
+--     d. make the 'linbox' configure option the default
+--     e. make sure that we are using correct implementation for each ZZ/p.
+--     f. clean up the template code for calling these function (in e dir)
 time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
 N = 400
 time m1 = map(ZZ^N, ZZ^N, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2);
