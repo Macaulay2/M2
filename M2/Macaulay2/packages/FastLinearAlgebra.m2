@@ -2012,17 +2012,20 @@ det(M - t*id_(P^3))
 --           and therefore we should also use it extensively ;-)
 --
 -- TODO: Jakob and Mike (9 Jan 2013)
---   1. make sure 'not', 'and', 'or' work on gcc 4.5, and in std c++
+--   1. make sure 'not', 'and', 'or' work on gcc 4.5, and in std c++ - ok for gcc 4.5.3 and latest cygwin.
 --   2. need M2_ASSERT and maybe also an assert that will be run in production code.
 --   3. invert, divide: should these raise an exception, or return false if not invertible?
 --   4. power: rewrite this.  Maybe it is in ffpack now?
 --   5. computeGenerator: is this a reasonable implementation?  If not, find something better.
 --   6. for promote, lift, eval: can we place these out of the class?
 --   7. do we really need 'syzygy' here?
---   8. Signed_Trait ?  remove dependence on givaro for ffpack
+--   8. Signed_Trait ?  remove dependence on givaro for ffpack DONE, but requires g++ -std=c++0x. 
+--      Problem: defining CXXFLAGS=-std=c++0x is not sufficient, since somewhere in the makefiles CXX is used without CXXFLAGS.
 --   9. use static_cast when possible.
 --   10. how to get gcc to shut up about uninitialized data in calls to R.init(a) ?
---   11. find c++ formatting tool(s)
+--   11. find c++ formatting tool(s) - astyle, bcpp, Uncrustify
+--     (http://stackoverflow.com/questions/841075/best-c-code-formatter-beautifier, http://www.suodenjoki.dk/us/archive/2010/cpp-checkstyle.htm)
+--     request to Mike: not to indent curly braces: http://emacswiki.org/emacs/IndentingC
 --   12. add unit tests for all the aring-ffpack functions.  (e.g. compare_elems).
 
 R = GF(2,7)
