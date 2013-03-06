@@ -266,8 +266,19 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 }
 
 #include "dmat-ffpack.cpp"
+#include "lapack.hpp"
 
+bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x)
+{
+  std::cout << "calling Lapack::solve" << std::endl;
+  return Lapack::solve(&A, &b, &x);
+}
 
+bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<CoefficientRingCCC> &result_eigenvalues)
+{
+  std::cout << "calling Lapack::eigenvalues" << std::endl;
+  return Lapack::eigenvalues(&A, &result_eigenvalues);
+}
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;

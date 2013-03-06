@@ -55,7 +55,23 @@ opt64-linbox : always
 		--enable-givaro \
 		--enable-linbox \
 		--enable-memtailor \
+		--enable-mathic \
 		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+opt64-fplll : always
+	mkdir -p opt64-fplll
+	cd opt64-fplll; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-flint \
+		--enable-fplll \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
@@ -84,7 +100,6 @@ debug64-linbox : always
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
-		--enable-memtailor \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
@@ -242,7 +257,6 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \

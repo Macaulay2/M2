@@ -3,7 +3,12 @@
 #ifndef _mutable_mat_hpp_
 #define _mutable_mat_hpp_
 
+#include <iostream>
 #include "mat.hpp"
+
+class CoefficientRingCCC;
+class Ring_RRR;
+template <typename RT> class DMat;
 
 inline bool error_column_bound(int c, int ncols)
 {
@@ -578,6 +583,103 @@ public:
                                              const RingElement* a,
                                              const RingElement* b);
 };
+
+template<typename Mat>
+bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
+  // resets x, find a solution of Ax=b, return false if no such exists.
+{
+  const MutableMat* b1 = dynamic_cast<const MutableMat<Mat>*>(b);
+  MutableMat* x1 = dynamic_cast<MutableMat<Mat>*>(x);
+
+  if (b1 == 0 or x1 == 0)
+    {
+      ERROR("expected matrices of the same type");
+      return false;
+    }
+
+  M2_ASSERT(& b1->getMat().ring() == & getMat().ring());
+  M2_ASSERT(& x1->getMat().ring() == & getMat().ring());
+
+  // The following line modifies x1, and therefore x
+  return solve1(getMat(), b1->getMat(), x1->getMat());
+}
+
+template<typename Mat>
+bool MutableMat<Mat>::eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const
+{
+  typedef MutableMat<typename Mat::EigenvalueMatrixType> EVMat;
+  EVMat* eigenvals1 = dynamic_cast<EVMat*>(eigenvals);
+  
+  if (eigenvals1 == 0)
+    {
+      ERROR("wrong ring for eigenvalue computation");
+      return false;
+    }
+  return eigenvalues1(getMat(), eigenvals1->getMat());
+}
+
+
+
+
+
+template <typename T>
+size_t MutableMat<T>::rank() const 
+{
+  return mat.rank();
+}
+
+template <typename T>
+const RingElement* MutableMat<T>::determinant() const 
+{
+  ring_elem det;
+  elem a;
+  mat.determinant(a);
+  mat.get_CoeffRing()->to_ring_elem(det, a);
+  return RingElement::make_raw(mat.get_ring(), det);
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::invert() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  bool val = mat.invert(result->mat);
+  if (!val)
+    {
+      delete result;
+      return 0;
+    }
+  return result;
+}
+
+template <typename T>
+M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
+{
+  return mat.rankProfile(row_profile);
+}
+
+
+///////////////////////////////////////////////
+template<typename MT>
+bool solve1(const MT &A, const MT &b, MT& x)
+{
+  std::cout << "calling base template for solve1" << std::endl;
+  ERROR("'solve' not implemented for this ring amd matrix type");
+  return false;
+}
+
+
+bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x);
+
+
+template<typename MT>
+bool eigenvalues1(const MT &A, typename MT::EigenvalueMatrixType &eigenvals)
+{
+  std::cout << "calling base template for eigenvalues1" << std::endl;
+  ERROR("'eigenvalues' not implemented for this ring amd matrix type");
+  return false;
+}
+
+bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<Ring_RRR> &eigenvalues);
 
 #endif
 

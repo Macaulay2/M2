@@ -7,7 +7,6 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include <iostream>
-#include <type_traits>
 
 
 //enable this lines to trick Kdevelop
@@ -58,6 +57,7 @@ namespace M2 {
 #include <givaro/givpower.h>
 #include <givaro/givpoly1padic.h>
 
+#include <type_traits>
 
 
 

@@ -1,0 +1,69 @@
+Mike's Macaulay2 project list
+
+1. Bug fixes
+  currently: 
+    0-fmoore-quotientBug-jan2013.m2
+  and gb over ZZ issues:
+    00-bug-gbZZ13.m2
+    ~/src/M2-git/M2/Macaulay2/packages/Macaulay2Doc/test/slow/gbZZbug3-a.m2
+
+2. Free resolutions and complexes
+  a. prune of a non-minimal resolution (or complex?)
+  b. more operations on complexes
+    e.g.: take code from workshops (Chris and Jason code?)
+    try out Spectral sequence code when they are ready
+    connecting homomorphisms, etc.
+  c. exterior power, etc. of a complex.
+
+  Talked to Jason McCullough about this.  He says go ahead.
+  code is in M2-development/msri2010: ExtFunctor, Functoriality
+  I have placed a package called HomologicalAlgebra into packages.
+    But what should we call it?
+    It should be pre-loaded anyway.
+
+3. Primary Decomposition (with F. Hinkelmann, F. Moore)
+
+4. Non-commutative GB's
+  talk with Frank Moore, Colin, Toby Stafford, make a wishlist of what is desired,
+  AND example computations.
+
+  Frank has a package: in WFU workshop, NCAlgebra.m2
+5. improve saturations
+
+6. improve elimination
+
+7. improve GB over a field
+
+8. improve GB over ZZ
+
+9. tower rings.  Includes factorization over extension towers.
+
+10. integral closure
+
+11. Better linear algebra:
+
+  11A: over finite fields.  With Jakob
+
+  11B: over RRR, CCC.  With Anton.
+
+12. Connect Bjarke's code to M2
+
+13. Try out and use the parallel stuff that Bill added:
+  memory usage: really want each thread to not interfere here
+  several algorithms at once: choose best.
+
+14. Use mathic and memtailor when possible
+
+15. connect flint
+  MAKE PROGRAMMER POST!!
+
+16. tryM2  (F. Hinkelmann and L. Kastner)
+
+17. Workshop organization
+  Frank Moore, Dave Swinarski, Sonja Mapes: Aug 2013 or Jan 2014.
+    looks like one will be in Aug 2013 at Cornell.
+  Hiro Abo and Zach Teitler: 2014?
+  scientific meeting: Aug 2014 where?  Who will help organize that?
+
+
+     

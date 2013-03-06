@@ -43,8 +43,8 @@ Module ** Module := Module => (M,N) -> (
 		    if M.?relations then M.relations ** N))
 	  else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations ))))
 
-Matrix ** Module := Matrix => (f,M) -> f ** id_M
-Module ** Matrix := Matrix => (M,f) -> id_M ** f
+Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
+Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
 
 -----------------------------------------------------------------------------
 -- base change

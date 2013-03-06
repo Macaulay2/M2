@@ -2048,6 +2048,7 @@ FreeModule *res2_comp::minimal_free_of(int i) const
   result = P->make_Schreyer_FreeModule();
   if (i < 0 || i >= resn.length()-1)
     return result;
+  if (do_by_level > 0) return free_of(i);
 
   int *deg = degree_monoid()->make_one();
   int n = 0;
@@ -2113,6 +2114,7 @@ Matrix *res2_comp::make_minimal(int i) const
   const FreeModule *G = minimal_free_of(i);
   MatrixConstructor result(F, G, NULL);
   if (i <= 0 || i >= resn.length()-1) return result.to_matrix();
+  if (do_by_level > 0) return make(i);
 
   array<res2_pair *> elems;
   array<res2term *> stripped;

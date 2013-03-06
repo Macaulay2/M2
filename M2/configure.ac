@@ -608,6 +608,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   QthPower
   EliminationMatrices
   EllipticIntegrals
+  Triplets
 ")
 
 # convert the newlines in the list above to spaces
@@ -835,7 +836,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic gtest ")
+AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic mathicgb gtest ")
 BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -878,6 +879,18 @@ AC_SUBST(ENABLE_MATHIC,no)
 AC_ARG_ENABLE(mathic,
     [AS_HELP_STRING(--enable-mathic,enable building the mathic library and linking with it)],
     AC_DEFINE(HAVE_MATHIC,1,[whether we are linking with the mathic library])
+    BUILD_mathic=yes
+    ENABLE_MATHIC=yes
+    BUILD_memtailor=yes
+    ENABLE_MEMTAILOR=yes
+    )
+
+AC_SUBST(ENABLE_MATHICGB,no)
+AC_ARG_ENABLE(mathicgb,
+    [AS_HELP_STRING(--enable-mathicgb,enable building the mathicgb library and linking with it)],
+    AC_DEFINE(HAVE_MATHICGB,1,[whether we are linking with the mathicgb library])
+    BUILD_mathicgb=yes
+    ENABLE_MATHICGB=yes
     BUILD_mathic=yes
     ENABLE_MATHIC=yes
     BUILD_memtailor=yes
@@ -1352,6 +1365,10 @@ fi
 
 if test $BUILD_mathic = yes
 then BUILTLIBS="-lmathic $BUILTLIBS"
+fi
+
+if test $BUILD_mathicgb = yes
+then BUILTLIBS="-lmathicgb $BUILTLIBS"
 fi
 
 test "$USE_FCLIBS" = no && FCLIBS=

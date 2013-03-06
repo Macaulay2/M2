@@ -286,37 +286,36 @@ FreeModule *FreeModule::tensor(const FreeModule *G) const
   return result;
 }
 
-FreeModule *FreeModule::exterior(int p) const
+FreeModule *FreeModule::exterior(int pp) const
      // p th exterior power
 {
   FreeModule *result;
-
-  int rk = rank();
-
-  if (p == 0)
+  if (pp == 0)
     return get_ring()->make_FreeModule(1);
   else
     result = new_free();
-  if (p > rk || p < 0) return result;
 
-  int *a = newarray_atomic(int,p);
-  for (int i=0; i<p; i++)
-    a[i] = i;
+  int rk = rank();
+  if (pp > rk || pp < 0) return result;
 
+  size_t p = static_cast<size_t>(pp);
+  
+  Subset a(p, 0);
+  for (size_t i=0; i<p; i++) a[i] = i;
+  
   int *deg = degree_monoid()->make_one();
   do
     {
       degree_monoid()->one(deg);
 
-      for (int r=0; r<p; r++)
+      for (size_t r=0; r<p; r++)
         degree_monoid()->mult(deg, degree(a[r]), deg);
 
       result->append(deg);
     }
-  while (comb::increment(p, rk, a));
+  while (Subsets::increment(rk, a));
 
   degree_monoid()->remove(deg);
-  deletearray(a);
 
   if (schreyer != NULL)
     result->schreyer = schreyer->exterior(p);
