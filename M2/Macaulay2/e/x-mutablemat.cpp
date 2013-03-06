@@ -22,7 +22,13 @@ MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
                                                  int n,
                                                  M2_bool is_dense)
 {
-  return MutableMatrix::identity(R, n, is_dense);
+  if (n < 0)
+    {
+      ERROR("expected non-negative integer");
+      return 0;
+    }
+  size_t nrows = static_cast<size_t>(n);
+  return MutableMatrix::identity(R, nrows, is_dense);
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
@@ -61,18 +67,20 @@ unsigned long IM2_MutableMatrix_hash(const MutableMatrix *M)
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
 {
-  return M->n_rows();
+  size_t nrows = M->n_rows();
+  return static_cast<int>(nrows);
 }
 
 int IM2_MutableMatrix_n_cols(const MutableMatrix *M)
 {
-  return M->n_cols();
+  size_t ncols = M->n_cols();
+  return static_cast<int>(ncols);
 }
 
 void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems)
 {
-  int nrows = M->n_rows();
-  int ncols = M->n_cols();
+  int nrows = static_cast<int>(M->n_rows());
+  int ncols = static_cast<int>(M->n_cols());
   const Ring *R = M->get_ring();
   for (long i=0; i<nelems; i++)
     {
@@ -90,8 +98,8 @@ void rawMutableMatrixFillRandomDensity(MutableMatrix *M, double density, int spe
   bool doing_fraction = false;
   int threshold = 0;
 
-  int nrows = M->n_rows();
-  int ncols = M->n_cols();
+  int nrows = static_cast<int>(M->n_rows());
+  int ncols = static_cast<int>(M->n_cols());
   const Ring *R = M->get_ring();
 
   if (density != 1.0)

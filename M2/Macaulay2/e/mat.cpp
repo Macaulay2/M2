@@ -196,10 +196,10 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
   return 0;
 }
 
-MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
+MutableMatrix *MutableMatrix::identity(const Ring *R, size_t nrows, bool dense)
 {
   MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
-  for (int i=0; i<nrows; i++)
+  for (size_t i=0; i<nrows; i++)
     result->set_entry(i,i,R->from_int(1));
   return result;
 }
@@ -211,7 +211,7 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
                                          m->n_cols(),
                                          prefer_dense);
   Matrix::iterator i(m);
-  for (int c=0; c<m->n_cols(); c++)
+  for (unsigned int c=0; c<m->n_cols(); c++)
     {
       for (i.set(c); i.valid(); i.next())
         result->set_entry(i.row(), c, i.entry());
@@ -221,13 +221,13 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
 
 Matrix *MutableMatrix::to_matrix() const
 {
-  int nrows = n_rows();
-  int ncols = n_cols();
+  size_t nrows = n_rows();
+  size_t ncols = n_cols();
   FreeModule *F = get_ring()->make_FreeModule(nrows);
   MatrixConstructor result(F,ncols);
   ring_elem f;
   iterator *i = begin();
-  for (int c=0; c<ncols; c++)
+  for (size_t c=0; c<ncols; c++)
     {
       ring_elem a;
       for (i->set(c); i->valid(); i->next())
@@ -244,13 +244,13 @@ Matrix *MutableMatrix::to_matrix() const
 void MutableMatrix::text_out(buffer &o) const
 {
   const Ring *R = get_ring();
-  int nrows = n_rows();
-  int ncols = n_cols();
+  size_t nrows = n_rows();
+  size_t ncols = n_cols();
   buffer *p = new buffer[nrows];
-  int r;
-  for (int c=0; c<ncols; c++)
+  size_t r;
+  for (size_t c=0; c<ncols; c++)
     {
-      int maxcount = 0;
+      size_t maxcount = 0;
       for (r=0; r<nrows; r++)
         {
           ring_elem f;
@@ -263,7 +263,7 @@ void MutableMatrix::text_out(buffer &o) const
             maxcount = p[r].size();
         }
       for (r=0; r<nrows; r++)
-        for (int k=maxcount+1-p[r].size(); k > 0; k--)
+        for (size_t k=maxcount+1-p[r].size(); k > 0; k--)
           p[r] << ' ';
     }
   for (r=0; r<nrows; r++)
@@ -281,7 +281,7 @@ bool MutableMatrix::set_values(M2_arrayint rows,
 {
   if (rows->len != cols->len || rows->len != values->len)
     return false;
-  for (int i=rows->len-1; i>=0; i--)
+  for (size_t i=0; i<rows->len; i++)
     {
       if (!set_entry(rows->array[i], cols->array[i], values->array[i]->get_value()))
         return false;

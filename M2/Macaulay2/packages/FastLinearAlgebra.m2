@@ -56,8 +56,6 @@ export {
 
 debug Core
 
-savedZZpQuotients := new MutableHashTable
-
 powerMod = method()
 powerMod(ZZ,ZZ,ZZ) := (a,b,c) -> error "ha ha: not done yet!"
 
@@ -74,66 +72,6 @@ isGenerator = (n,P) -> (
 	    all(factor (P-1), v -> 1 != powerMod(n, (P-1)//v#0, P))))
   )
 
-ZZp = method(Options=> {ARing => true})
-ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
-ZZp Ideal := opts -> (I) -> (
-     gensI := generators I;
-     if ring gensI =!= ZZ then error "expected an ideal of ZZ";
-     n := gcd flatten entries gensI;
-     if n < 0 then n = -n;
-     if n === 0 then ZZ
-     else if savedZZpQuotients#?n 
-     then savedZZpQuotients#n
-     else (
-	  --if n > 32767 then error "large characteristics not implemented yet";
-	  if n > 1 and not isPrime n
-	  then error "ZZ/n not implemented yet for composite n";
-	  S := new QuotientRing from 
-	    if opts.ARing then rawARingGaloisField(n,1)  else rawZZp n;  -- rawARingZZp n
-	  S.cache = new CacheTable;
-	  S.isBasic = true;
-	  S.ideal = I;
-	  S.baseRings = {ZZ};
-   	  commonEngineRingInitializations S;
-      initializeEngineLinearAlgebra S;
-	  S.relations = gensI;
-	  S.isCommutative = true;
-	  S.presentation = matrix{{n}};
-	  S.order = S.char = n;
-	  S.dim = 0;					    -- n != 0 and n!= 1
-	  expression S := x -> expression raw x;
-	  fraction(S,S) := S / S := (x,y) -> x//y;
-	  S.frac = S;		  -- ZZ/n with n PRIME!
-	  savedZZpQuotients#n = S;
-	  --lift(S,QQ) := opts -> liftZZmodQQ;
-	  S))
-
-initializeEngineLinearAlgebra = method()
-initializeEngineLinearAlgebra Ring := (R) -> (
-    R#"EngineLinearAlgebra" = true;
-    R.determinant = (f) -> (
-        -- The following information 
-        -- f is a Matrix in the ring R
-        -- f should be a square matrix, with free modules for both source and target
-         m := mutableMatrix(f, Dense=>true);
-         new R from rawLinAlgDeterminant raw m
-         );
-    R.inverse = (f) -> (
-        A := mutableMatrix(f, Dense=>true);
-        R := ring A;
-        if numRows A =!= numColumns A then error "expected square matrix";
-        matrix map(R,rawLinAlgInvert(raw A))
-        );
-    R.solveLinear = (f,g, rightside) -> (
-        -- solve f*X = g, or (if rightside is false), X*f = g
-        if ring f =!= ring g then error "expected same base rings";
-        A := mutableMatrix(f, Dense=>true);
-        B := mutableMatrix(g, Dense=>true);
-        R := ring A;
-        result := map(R,rawLinAlgSolve(raw A,raw B,rightside));
-        matrix result
-        );
-    )
 
 isPrimeField = method()
 isPrimeField Ring := (R) -> (
@@ -1697,6 +1635,34 @@ P = ZZ/101[t]
 M = matrix {{41, 41, -29}, {-36, 19, 11}, {31, 15, -23}}
 det(M - t*id_(P^3))
 ///
+
+TEST ///
+restart
+debug Core
+R = ZZp(23, "ARing"=>true)
+--R2 = ZZp(23, "ARing"=>false)
+R2 = ZZ/23
+raw R
+raw R2
+hasEngineLinearAlgebra R
+hasEngineLinearAlgebra R2
+
+m = mutableMatrix(R, 15, 15)
+fillMatrix m
+
+m2 = mutableMatrix(R2, 15, 15)
+fillMatrix m2
+
+needsPackage "FastLinearAlgebra"
+solveLinear(m,m)
+solveLinear(m2,m2) -- failed.
+
+det m
+det m2 -- isn't working?
+det matrix m2
+
+XXXXXXXXXXXXXX
+///
 -- TODO:
 --   top level M2 package (this file): calls the rawFFPack routines
 --   interface.dd:  glue functions to call engine functions
@@ -2038,7 +2004,33 @@ det(M - t*id_(P^3))
 --   1. inline routines in aring-ffpack.{hpp,cpp}
 --   2. power/inverse for aring-ffpack
 --   3. fplll interface
-
+--
+-- 29 Jan 2013
+--   shorter meeting
+--  mike todo:
+--   make fplll a standard install?
+--     make linear algebra code ready for 1.5.1?  or 1.6?
+--   latest scientifuc linux (version 6.3) uses gcc 4.4.6, too bad!
+--     check on std++0x and gcc 4.4.6, and what is available.
+--   make sure the linear algebra routines runwith the original ZZ/p.
+--     maybe only need to connect the top level routines:
+--       1. need to run initializeEngineLinearAlgebra for ZZ/p rings.
+--       2. det seems to be implemented this way
+--       3. * is not done in the engine yet?
+--       4. figure out which other ones need to be implemented for ZZ/p
+--       5. there is an "error message bumped" error that needs to be fixed.
+--       6. the ZZp routine should be placed into the M2 Core.
+--          and should have an option to choose FFPACK or M2.
+--          ZZ/23 -- doesn't allow options.  So no way to choose between ffpack and other implementations.
+--     we started this: moved ZZp code from FastLinearAlgebra to quotring.m2
+--     but we need to make sure that the templates for the linear algebra routines are all
+--         defined.
+--     change class templates to function templates for the linear algebra routines.
+--   keep adding in unit tests for aring functions and for dmat functions.
+--  jakob todo:
+--     too busy in February to do anything on this.
+--
+-- next meeting: 6 Mar 2013
 time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
 N = 400
 time m1 = map(ZZ^N, ZZ^N, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2);
