@@ -790,6 +790,7 @@ export {
 	symbol isQuotientOf,
 	symbol isQuotientRing,
 	symbol isReady,
+	symbol isCanceled,
 	symbol isReal,
 	symbol isRegularFile,
 	symbol isRing,
