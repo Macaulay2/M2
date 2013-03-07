@@ -54,7 +54,8 @@ export {
    solveSchubertProblem,
    changeFlags, -- temporary
    makePolynomials, -- temporary
-   SolutionsSuperset -- temporary
+   SolutionsSuperset, -- temporary
+   checkIncidenceSolution --temporary
    }
 
 -------------------------
@@ -1411,9 +1412,60 @@ solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
 -- {2,1} vs {1} w.r.t. std flag and opp flag
 -- in G(2,4):
 --
-Flg = id_(FFF^4);
-solveLinAlg(({2,1},Flg), ({1,0}, rsort Flg), (2,4))
+--Flg = id_(FFF^4);
+--solveLinAlg(({2,1},Flg), ({1,0}, rsort Flg), (2,4))
 
+----------------------
+-- checkIncidenceSolution
+----------------------
+-- Function that given a proposed
+-- n by k matrix, it checks
+-- if it satisfies incidence conditions
+----------------------
+-- Input:
+--    M -- n by k matrix (representing an element of G(k,n)
+--    SchbPrblm -- Schubert problem given as
+--    	           list of sequences of the form
+--    	      	   {(l1,F1),...,(lm,Fm)}
+-- Output:
+--    True or False
+-----------------------
+checkIncidenceSolution = method()
+checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
+    n:= numRows H;
+    k:= numColumns H;
+    verif:= true;
+    scan(SchbPrblm, T->(
+	    (l,F) := T;
+	    b:=partition2bracket(l,k,n);
+	    HXF:=promote(H|F,FFF);
+	    scan(#b, r->( 
+		    c := b#r;
+		    rnk := k+c-(r+1)+1;
+		    if(rnk<= n) then(
+		    	chooseCols:= subsets(k+c,rnk);
+			chooseRows:= subsets(n,rnk);
+			scan(chooseRows, rws->(
+				scan(chooseCols, cls->(
+		    			if(norm det submatrix(HXF_{0..k+c-1},rws,cls)>ERROR'TOLERANCE)then(
+					    verif=false;
+					    );
+					));
+				));
+			);
+		    ));
+	    ));
+    verif
+    )
+
+--
+-- TEST
+-- H = promote(matrix{{1,0},{0,0},{0,1},{0,0}},FFF)
+-- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, rsort id_(FFF^4))}
+-- checkIncidenceSolution(H, SchbPrblm)
+-- 
+-- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, random(FFF^4,FFF^4))}
+-- checkIncidenceSolution(H, SchbPrblm)
 -----------------------------
 -- end Numerical LR-Homotopies
 -----------------------------
