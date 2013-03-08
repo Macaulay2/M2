@@ -695,6 +695,15 @@ isReadyFun(e:Expr):Expr := (
      else WrongArg("a file or a task"));
 setupfun("isReady",isReadyFun);
 
+
+isCanceledFun(e:Expr):Expr := (
+     when e
+     -- # typical value: isCanceled, Task, Boolean
+     is tc:TaskCell do toExpr(!taskRunning(tc.body.task) && !taskKeepRunning(tc.body.task))  
+     else WrongArg("a task"));
+setupfun("isCanceled",isCanceledFun);
+
+
 atEOFfun(e:Expr):Expr := (
      when e
      is f:file do toExpr ( !f.input || f.eof || f.insize == f.inindex && isReady(f.infd) > 0 

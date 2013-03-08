@@ -25,7 +25,7 @@ f = map(S^1,module I,{{a^3,b^3,c^3}})
 fh = Hom(f,S^1)
 assert( target fh === Hom(source f,S^1) )
 assert( source fh === Hom(target f,S^1) )
-assert( fh === map(image map(S^{{3},{3},{3}},S^1,{{a^3}, {b^3}, {c^3}}),image map(S^1,S^1,{{1}}),{{1}}) )
+assert( fh === map(image map(S^{{3},{3},{3}},S^1,{{a^3}, {b^3}, {c^3}}),S^1,{{1}}) )
 
 
 M = module ((ideal(a,b))^3)

@@ -73,8 +73,8 @@ inline const MatT * MutableMatrix::coerce() const
 }
 
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
-						int nrows, 
-						int ncols, 
+						size_t nrows, 
+						size_t ncols, 
 						bool dense)
 {
   if (nrows < 0 | ncols < 0)
@@ -196,10 +196,10 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
   return 0;
 }
 
-MutableMatrix *MutableMatrix::identity(const Ring *R, int nrows, bool dense)
+MutableMatrix *MutableMatrix::identity(const Ring *R, size_t nrows, bool dense)
 {
   MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
-  for (int i=0; i<nrows; i++)
+  for (size_t i=0; i<nrows; i++)
     result->set_entry(i,i,R->from_int(1));
   return result;
 }
@@ -211,7 +211,7 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
                                          m->n_cols(),
                                          prefer_dense);
   Matrix::iterator i(m);
-  for (int c=0; c<m->n_cols(); c++)
+  for (unsigned int c=0; c<m->n_cols(); c++)
     {
       for (i.set(c); i.valid(); i.next())
         result->set_entry(i.row(), c, i.entry());
@@ -221,13 +221,13 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
 
 Matrix *MutableMatrix::to_matrix() const
 {
-  int nrows = n_rows();
-  int ncols = n_cols();
+  size_t nrows = n_rows();
+  size_t ncols = n_cols();
   FreeModule *F = get_ring()->make_FreeModule(nrows);
   MatrixConstructor result(F,ncols);
   ring_elem f;
   iterator *i = begin();
-  for (int c=0; c<ncols; c++)
+  for (size_t c=0; c<ncols; c++)
     {
       ring_elem a;
       for (i->set(c); i->valid(); i->next())
@@ -244,13 +244,13 @@ Matrix *MutableMatrix::to_matrix() const
 void MutableMatrix::text_out(buffer &o) const
 {
   const Ring *R = get_ring();
-  int nrows = n_rows();
-  int ncols = n_cols();
+  size_t nrows = n_rows();
+  size_t ncols = n_cols();
   buffer *p = new buffer[nrows];
-  int r;
-  for (int c=0; c<ncols; c++)
+  size_t r;
+  for (size_t c=0; c<ncols; c++)
     {
-      int maxcount = 0;
+      size_t maxcount = 0;
       for (r=0; r<nrows; r++)
         {
           ring_elem f;
@@ -263,7 +263,7 @@ void MutableMatrix::text_out(buffer &o) const
             maxcount = p[r].size();
         }
       for (r=0; r<nrows; r++)
-        for (int k=maxcount+1-p[r].size(); k > 0; k--)
+        for (size_t k=maxcount+1-p[r].size(); k > 0; k--)
           p[r] << ' ';
     }
   for (r=0; r<nrows; r++)
@@ -281,7 +281,7 @@ bool MutableMatrix::set_values(M2_arrayint rows,
 {
   if (rows->len != cols->len || rows->len != values->len)
     return false;
-  for (int i=rows->len-1; i>=0; i--)
+  for (size_t i=0; i<rows->len; i++)
     {
       if (!set_entry(rows->array[i], cols->array[i], values->array[i]->get_value()))
         return false;
@@ -309,7 +309,6 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
 {
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
 }
-
 
 template<typename Mat>
 bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
@@ -721,41 +720,6 @@ MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring* Rgenera
 /// Fast Linear Algebra Routines ////////
 /////////////////////////////////////////
 
-template <typename T>
-size_t MutableMat<T>::rank() const 
-{
-  return mat.rank();
-}
-
-template <typename T>
-const RingElement* MutableMat<T>::determinant() const 
-{
-  ring_elem det;
-  elem a;
-  mat.determinant(a);
-  mat.get_CoeffRing()->to_ring_elem(det, a);
-  return RingElement::make_raw(mat.get_ring(), det);
-}
-
-template <typename T>
-MutableMatrix* MutableMat<T>::invert() const
-{
-  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
-  bool val = mat.invert(result->mat);
-  if (!val)
-    {
-      delete result;
-      return 0;
-    }
-  return result;
-}
-
-template <typename T>
-M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
-{
-  return mat.rankProfile(row_profile);
-}
-  
 template <typename T>
 MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
 {

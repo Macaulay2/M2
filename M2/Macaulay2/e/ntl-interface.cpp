@@ -31,16 +31,15 @@ NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
 MutableMatrix *mutableMatrix_from_NTL_mat_ZZ(const NTL::mat_ZZ *A)
 {
   // AGAIN: form the TRANSPOSE of A
-  int ncols = static_cast<int>(A->NumRows());
-  int nrows = static_cast<int>(A->NumCols());
-
+  size_t ncols = A->NumRows();
+  size_t nrows = A->NumCols();
   MutableMatrix *B = MutableMatrix::zero_matrix(globalZZ, nrows, ncols, false);
 
   mpz_t a;
   mpz_init(a);
 
-  for (int i=0; i<ncols; i++)
-    for (int j=0; j<nrows; j++)
+  for (size_t i=0; i<ncols; i++)
+    for (size_t j=0; j<nrows; j++)
       {
         if ((*A)(i+1,j+1) != 0)
           {

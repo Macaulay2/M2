@@ -55,6 +55,7 @@ opt64-linbox : always
 		--enable-givaro \
 		--enable-linbox \
 		--enable-memtailor \
+		--enable-mathic \
 		--enable-flint \
 		--disable-strip \
 		--enable-download \
@@ -256,7 +257,6 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \

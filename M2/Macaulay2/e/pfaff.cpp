@@ -1,5 +1,6 @@
 // Copyright 1996 Michael E. Stillman.
 
+#include "comb.hpp"
 #include "pfaff.hpp"
 #include "interrupted.hpp"
 
@@ -22,7 +23,7 @@ PfaffianComputation::PfaffianComputation(const Matrix *M0, int p0)
       done = true;
       return;
     }
-  row_set = newarray_atomic(int,p);
+  row_set = newarray_atomic(size_t,p);
   for (int i=0; i<p; i++) row_set[i] = i;
 }
 
@@ -43,7 +44,7 @@ int PfaffianComputation::step()
   else
     R->remove(r);
 
-  if (comb::increment(p, M->n_cols(), row_set))
+  if (Subsets::increment(M->n_cols(), p, row_set))
     return COMP_COMPUTING;
 
   // Otherwise, we are at the end.
@@ -65,7 +66,7 @@ int PfaffianComputation::calc(int nsteps)
     }
 }
 
-ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
+ring_elem PfaffianComputation::calc_pfaff(size_t *r, int p2)
      // Compute the pfaffian of the (skew symmetric)
      // minor with rows and columns r[0]..r[p2-1].
      // assumption: p2 is an even number.
@@ -96,8 +97,8 @@ ring_elem PfaffianComputation::calc_pfaff(int *r, int p2)
 
   // pulling out the columns has disordered r. Fix it.
 
-  int temp = r[p2-2];
-  for (int i=p2-2; i>0; i--)
+  size_t temp = r[p2-2];
+  for (size_t i=p2-2; i>0; i--)
     r[i] = r[i-1];
   r[0] = temp;
 

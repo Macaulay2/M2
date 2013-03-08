@@ -4,7 +4,6 @@
 #define _pfaff_hh_
 
 #include "matrix.hpp"
-#include "comb.hpp"
 #include "matrix-con.hpp"
 
 class MatrixConstructor;
@@ -24,9 +23,9 @@ class PfaffianComputation : public our_new_delete
 
   int p;
   bool done;
-  int * row_set;
+  size_t * row_set;
 
-  ring_elem calc_pfaff(int *r, int p);
+  ring_elem calc_pfaff(size_t *r, int p);
      // Compute the pfaffian of the minor with rows
      // and columns r[0]..r[p-1]
 
@@ -44,6 +43,13 @@ public:
   Matrix *pfaffians() { return pfaffs.to_matrix(); }
 
   const Ring * get_ring () const { return R; }
+
+#if 0
+private:
+  int mSize; // size of pfaffians to be computed
+  bool mIsDone; // is the computation completed?
+  MatrixConstructor mPfaffians; // the result 1xN matrix of all mSize x mSize pfaffians
+#endif
 };
 
 #endif

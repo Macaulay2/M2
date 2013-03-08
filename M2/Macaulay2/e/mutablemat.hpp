@@ -3,11 +3,21 @@
 #ifndef _mutable_mat_hpp_
 #define _mutable_mat_hpp_
 
+#include <iostream>
 #include "mat.hpp"
 
-inline bool error_column_bound(int c, int ncols)
+class CoefficientRingCCC;
+class Ring_RRR;
+template <typename RT> class DMat;
+namespace M2 {
+  class ARingZZp;
+};
+
+#include "linalg.hpp"
+
+inline bool error_column_bound(size_t c, size_t ncols)
 {
-  if (c < 0 || c >= ncols)
+  if (c >= ncols)
     {
       ERROR("column out of range");
       return true;
@@ -15,9 +25,9 @@ inline bool error_column_bound(int c, int ncols)
   return false;
 }
 
-inline bool error_row_bound(int r, int nrows)
+inline bool error_row_bound(size_t r, size_t nrows)
 {
-  if (r < 0 || r >= nrows)
+  if (r >= nrows)
     {
       ERROR("row out of range");
       return true;
@@ -49,7 +59,7 @@ private:
   // Specific template instances must provide these functions
   MutableMat() {}
 
-  MutableMat(const Ring *R, const CoeffRing *coeffR, int nrows, int ncols)
+  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
     : mat(R,coeffR,nrows,ncols) {}
 
   MutableMat(Mat &m) : mat(m) {}
@@ -66,33 +76,37 @@ public:
   Mat& getMat() { return mat; }
   const Mat& getMat() const { return mat; }
 
+#if 1
+  // MESXXX
   class iterator : public MutableMatrix::iterator
   {
     typename Mat::iterator i;
   public:
     iterator(const Mat *M0) : i(M0) {}
-    void set(int col0) { i.set(col0); }
+    void set(size_t col0) { i.set(col0); }
     void next() { i.next(); }
     bool valid() { return i.valid(); }
-    int row() { return i.row(); }
+    size_t row() { return i.row(); }
     elem value() { return i.value(); }
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
-
-  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, int nrows, int ncols)
+#endif
+  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
   {
     return new MutableMat(R,coeffR,nrows,ncols);
   }
 
   //  static MutableMat *grab_Mat(const Mat *m);
 
+#if 1
+  // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
-
+#endif
   virtual const Ring * get_ring() const { return mat.get_ring(); }
 
-  virtual int n_rows() const { return mat.n_rows(); }
+  virtual size_t n_rows() const { return mat.n_rows(); }
 
-  virtual int n_cols() const { return mat.n_cols(); }
+  virtual size_t n_cols() const { return mat.n_cols(); }
 
   virtual bool is_dense() const { return mat.is_dense(); }
 
@@ -113,24 +127,24 @@ public:
     return new MutableMat(*m); // places copy into result
   }
 
-  virtual int lead_row(int col) const { return mat.lead_row(col); }
+  virtual size_t lead_row(size_t col) const { return mat.lead_row(col); }
   /* returns the largest index row which has a non-zero value in column 'col'.
      returns -1 if the column is 0 */
 
-  virtual int lead_row(int col, ring_elem &result) const
+  virtual size_t lead_row(size_t col, ring_elem &result) const
   /* returns the largest index row which has a non-zero value in column 'col'.
      Also sets result to be the entry at this index.
      returns -1 if the column is 0 */
   {
     elem b;
     mat.get_CoeffRing()->set_zero(b);
-    int ret = mat.lead_row(col, b);
+    size_t ret = mat.lead_row(col, b);
     if (ret >= 0)
       mat.get_CoeffRing()->to_ring_elem(result, b);
     return ret;
   }
 
-  virtual bool get_entry(int r, int c, ring_elem &result) const
+  virtual bool get_entry(size_t r, size_t c, ring_elem &result) const
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
   {
@@ -149,7 +163,7 @@ public:
     return false;
   }
 
-  virtual bool set_entry(int r, int c, const ring_elem a)
+  virtual bool set_entry(size_t r, size_t c, const ring_elem a)
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
   {
     if (error_row_bound(r,n_rows())) return false;
@@ -166,30 +180,30 @@ public:
   // The following routines return false if one of the row or columns given
   // is out of range.
 
-  virtual bool interchange_rows(int i, int j)
+  virtual bool interchange_rows(size_t i, size_t j)
   /* swap rows: row(i) <--> row(j) */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       return false;
     mat.interchange_rows(i,j);
     return true;
   }
 
-  virtual bool interchange_columns(int i, int j)
+  virtual bool interchange_columns(size_t i, size_t j)
   /* swap columns: column(i) <--> column(j) */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       return false;
     mat.interchange_columns(i,j);
     return true;
   }
 
-  virtual bool scale_row(int i, ring_elem r)
+  virtual bool scale_row(size_t i, ring_elem r)
   /* row(i) <- r * row(i) */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(i,nrows))
       return false;
     elem b;
@@ -198,10 +212,10 @@ public:
     return true;
   }
 
-  virtual bool scale_column(int i, ring_elem r)
+  virtual bool scale_column(size_t i, ring_elem r)
   /* column(i) <- r * column(i) */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(i,ncols))
       return false;
     elem b;
@@ -210,10 +224,10 @@ public:
     return true;
   }
 
-  virtual bool divide_row(int i, ring_elem r)
+  virtual bool divide_row(size_t i, ring_elem r)
   /* row(i) <- row(i) / r */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(i,nrows))
       return false;
     elem b;
@@ -222,10 +236,10 @@ public:
     return true;
   }
 
-  virtual bool divide_column(int i, ring_elem r)
+  virtual bool divide_column(size_t i, ring_elem r)
   /* column(i) <- column(i) / r */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(i,ncols))
       return false;
     elem b;
@@ -234,10 +248,10 @@ public:
     return true;
   }
 
-  virtual bool row_op(int i, ring_elem r, int j)
+  virtual bool row_op(size_t i, ring_elem r, size_t j)
   /* row(i) <- row(i) + r * row(j) */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       return false;
     if (i == j) return true;
@@ -247,10 +261,10 @@ public:
     return true;
   }
 
-  virtual bool column_op(int i, ring_elem r, int j)
+  virtual bool column_op(size_t i, ring_elem r, size_t j)
   /* column(i) <- column(i) + r * column(j) */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       return false;
     if (i == j) return true;
@@ -260,14 +274,14 @@ public:
     return true;
   }
 
-  virtual bool column2by2(int c1, int c2,
+  virtual bool column2by2(size_t c1, size_t c2,
                           ring_elem a1, ring_elem a2,
                           ring_elem b1, ring_elem b2)
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     if (c1 == c2) return true;
@@ -280,14 +294,14 @@ public:
     return true;
   }
 
-  virtual bool row2by2(int r1, int r2,
+  virtual bool row2by2(size_t r1, size_t r2,
                        ring_elem a1, ring_elem a2,
                        ring_elem b1, ring_elem b2)
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(r1,nrows) || error_row_bound(r2,nrows))
       return false;
     if (r1 == r2) return true;
@@ -300,9 +314,9 @@ public:
     return true;
   }
 
-  virtual bool dot_product(int c1, int c2, ring_elem &result) const
+  virtual bool dot_product(size_t c1, size_t c2, ring_elem &result) const
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     elem a;
@@ -312,17 +326,17 @@ public:
     return true;
   }
 
-  virtual bool row_permute(int start_row, M2_arrayint perm)
+  virtual bool row_permute(size_t start_row, M2_arrayint perm)
   {
     return mat.row_permute(start_row, perm);
   }
 
-  virtual bool column_permute(int start_col, M2_arrayint perm)
+  virtual bool column_permute(size_t start_col, M2_arrayint perm)
   {
     return mat.column_permute(start_col, perm);
   }
 
-  virtual bool insert_columns(int i, int n_to_add)
+  virtual bool insert_columns(size_t i, size_t n_to_add)
   /* Insert n_to_add columns directly BEFORE column i. */
   {
     if (i < 0 || i > n_cols() || n_to_add < 0)
@@ -334,7 +348,7 @@ public:
     return true;
   }
 
-  virtual bool insert_rows(int i, int n_to_add)
+  virtual bool insert_rows(size_t i, size_t n_to_add)
   /* Insert n_to_add rows directly BEFORE row i. */
   {
     if (i < 0 || i > n_rows() || n_to_add < 0)
@@ -346,10 +360,10 @@ public:
     return true;
   }
 
-  virtual bool delete_columns(int i, int j)
+  virtual bool delete_columns(size_t i, size_t j)
   /* Delete columns i .. j from M */
   {
-    int ncols = n_cols();
+    size_t ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       {
         ERROR("column index out of range");
@@ -360,10 +374,10 @@ public:
     return true;
   }
 
-  virtual bool delete_rows(int i, int j)
+  virtual bool delete_rows(size_t i, size_t j)
   /* Delete rows i .. j from M */
   {
-    int nrows = n_rows();
+    size_t nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       {
         ERROR("row index out of range");
@@ -375,13 +389,13 @@ public:
 
   virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const
   {
-    for (int r = 0; r<rows->len; r++)
+    for (size_t r = 0; r<rows->len; r++)
       if (rows->array[r] < 0 || rows->array[r] >= n_rows())
         {
           ERROR("row index %d out of bounds 0..%d", rows->array[r], n_rows()-1);
           return 0;
         }
-    for (int c = 0; c<cols->len; c++)
+    for (size_t c = 0; c<cols->len; c++)
       if (cols->array[c] < 0 || cols->array[c] >= n_cols())
         {
           ERROR("column index %d out of bounds 0..%d", cols->array[c], n_cols()-1);
@@ -394,7 +408,7 @@ public:
 
   virtual MutableMatrix * submatrix(M2_arrayint cols) const
   {
-    for (int c = 0; c<cols->len; c++)
+    for (size_t c = 0; c<cols->len; c++)
       if (cols->array[c] < 0 || cols->array[c] >= n_cols())
         {
           ERROR("column index %d out of bounds 0..%d", cols->array[c], n_cols()-1);
@@ -578,6 +592,79 @@ public:
                                              const RingElement* a,
                                              const RingElement* b);
 };
+
+
+
+
+
+
+template <typename T>
+size_t MutableMat<T>::rank() const 
+{
+  return mat.rank();
+}
+
+template <typename T>
+const RingElement* MutableMat<T>::determinant() const 
+{
+  ring_elem det;
+  elem a;
+  mat.determinant(a);
+  mat.get_CoeffRing()->to_ring_elem(det, a);
+  return RingElement::make_raw(mat.get_ring(), det);
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::invert() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  bool val = mat.invert(result->mat);
+  if (!val)
+    {
+      delete result;
+      return 0;
+    }
+  return result;
+}
+
+template <typename T>
+M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
+{
+  return mat.rankProfile(row_profile);
+}
+
+
+///////////////////////////////////////////////
+#if 0
+#include "dmat.hpp"
+template<typename MT>
+bool solve1(const MT &A, const MT &b, MT& x)
+{
+  std::cout << "calling base template for solve1" << std::endl;
+  ERROR("'solve' not implemented for this ring amd matrix type");
+  return false;
+}
+
+template<typename CoeffRing>
+bool solve1< DMat<CoeffRing> >(const DMat<CoeffRing> &A, const DMat<CoeffRing> &b, DMat<CoeffRing>& x)
+{
+  std::cout << "calling DMat template for solve1" << std::endl;
+  return DMatLU<typename MT::CoeffRing>::solve(&A, &b, &x);
+}
+
+bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x);
+//bool solve1(const DMat<M2::ARingZZp> &A, const DMat<M2::ARingZZp> &b, DMat<M2::ARingZZp> &x);
+#endif
+
+template<typename MT>
+bool eigenvalues1(const MT &A, typename MT::EigenvalueMatrixType &eigenvals)
+{
+  std::cout << "calling base template for eigenvalues1" << std::endl;
+  ERROR("'eigenvalues' not implemented for this ring amd matrix type");
+  return false;
+}
+
+bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<Ring_RRR> &eigenvalues);
 
 #endif
 
