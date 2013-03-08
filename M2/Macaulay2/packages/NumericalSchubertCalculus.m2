@@ -623,11 +623,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
      if not node'exists then ( --add the ultimate node part here...
 --<< "this is node'exists "<< node'exists<<endl;
 	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
-     	 if numgens ring coordX == 0 then ( 
-	     print "great success: we hit the ULTIMATE LEAF";
-	     self.Solutions = {lift(coordX,FFF)};
-	     self.IsResolved = true;
-	     )else(
+     	 if numgens ring coordX > 0 then ( 
      	     (children,c) := moveCheckers board;
      	     self.CriticalRow = c;
      	     self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
@@ -715,15 +711,18 @@ makeLocalCoordinates Array := blackred ->(
 resolveNode = method()
 resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->  
 if not node.IsResolved then (
-     n := #node.Board#0;
-     coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
---     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
---	  print "great success: we hit the ULTIMATE LEAF";
+   n := #node.Board#0;
+   coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
+   if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
+	     print "great success: we hit the ULTIMATE LEAF";
+	     node.Solutions = {lift(coordX,FFF)};
+	     node.IsResolved = true;
+	     node.FlagM = rsort id_(FFF^n);
 --	  if #remaining'conditions'and'flags > 0
 --	  then error "invalid Schubert problem"
 --	  else node.Solutions = {lift(coordX,FFF)};
---	  )
---     else ( -- coordX has variables
+	  )
+   else ( -- coordX has variables
      black := first node.Board;
           
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n) --change here
@@ -778,14 +777,14 @@ if not node.IsResolved then (
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
 	       
 	       if validpartition then(
-		   node.Solutions = 
-		   --S := 
-		   solveSchubertProblem(
+		   S := solveSchubertProblem(
 		       prepend(
 			   (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
 			   remaining'conditions'and'flags
 			   ),
 		       k,n);
+		   node.Solutions = apply(S,s->sub(coordX, matrix{solutionToChart(s,coordX)}));
+
 		   print "And These are the solutions obtained:";
 		   print(node.Solutions);
 		   --MX := makeLocalCoordinates node.Board ;
@@ -981,9 +980,9 @@ if not node.IsResolved then (
      	  scan(node.Solutions, X->
 	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
      	  );
-     --); -- END coordX has variables
+     ); -- END coordX has variables
      node.IsResolved = true;
-     ) -- END resolveNode
+   ) -- END resolveNode
 
 
 ---------------
@@ -1023,7 +1022,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	resolveNode(newDag, remaining'conditions'and'flags);
 	--MX := makeLocalCoordinates newDag.Board ;
 	conds := {l1,l2};
-	Flags1 := {id_(FFF^n),rsort id_(FFF^n)};
+	Flags1 := {id_(FFF^n),newDag.FlagM};
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
 		conds = append(conds, first c);
@@ -1944,7 +1943,7 @@ doc ///
 
 TEST ///
 restart 
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 -----------------------
 -- 4 lines in P^3
 root = playCheckers({1},{1},2,4)

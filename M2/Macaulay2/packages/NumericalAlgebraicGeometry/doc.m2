@@ -52,7 +52,7 @@ document {
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
-	Usage => "setDefault(p1=>v1, p2=>v2, ...)\nv = getDefault p",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
 		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
