@@ -1112,9 +1112,10 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     G := genericMatrix(R,k,k);
     f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
     nk := n*k;
-    A := map(CC^nk,CC^nk,(i,j)->(f#i)_(R_j));
+    nParameters := k^2+#gens RMX; -- number of parameters in f
+    A := map(CC^nk,CC^nParameters,(i,j)->(f#i)_(R_j));
     b := map(CC^nk,CC^1,(i,j)->-(f#i)_(1_R));
-    X := solve(A,b);
+    X := solve(A,b, ClosestFit=>true);
     drop(flatten entries X, k*k) -- drop a_(i,j) coordinates      
     )
 changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
