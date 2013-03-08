@@ -23,24 +23,28 @@ protected:
   MutableMatrix() {}
   virtual ~MutableMatrix() {}
 public:
+#if 1
+  // MESXXX
   class iterator : public our_new_delete
   {
   public:
     virtual ~iterator() {}
-    virtual void set(int col) = 0;
+    virtual void set(size_t col) = 0;
     virtual void next() = 0;
     virtual bool valid() = 0;
-    virtual int row() = 0;
+    virtual size_t row() = 0;
     virtual void copy_ring_elem(ring_elem &a) = 0;
   };
-
+#endif
+#if 1
+  // MESXX
   virtual iterator * begin() const = 0;
-
+#endif
   virtual const Ring * get_ring() const = 0;
 
-  virtual int n_rows() const = 0;
+  virtual size_t n_rows() const = 0;
 
-  virtual int n_cols() const = 0;
+  virtual size_t n_cols() const = 0;
 
   virtual bool is_dense() const = 0;
 
@@ -48,7 +52,7 @@ public:
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
-  static MutableMatrix *identity(const Ring *R, int nrows, bool dense);
+  static MutableMatrix *identity(const Ring *R, size_t nrows, bool dense);
 
   static MutableMatrix *from_matrix(const Matrix *N, bool is_dense);
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
@@ -87,76 +91,76 @@ public:
   // The following routines return false if one of the row or columns given
   // is out of range.
 
-  virtual int lead_row(int col) const = 0;
+  virtual size_t lead_row(size_t col) const = 0;
   /* returns the largest index row which has a non-zero value in column 'col'.
      returns -1 if the column is 0 */
 
-  virtual int lead_row(int col, ring_elem &result) const = 0;
+  virtual size_t lead_row(size_t col, ring_elem &result) const = 0;
   /* returns the largest index row which has a non-zero value in column 'col'.
      Also sets result to be the entry at this index.
      returns -1 if the column is 0 */
 
-  virtual bool get_entry(int r, int c, ring_elem &result) const = 0;
+  virtual bool get_entry(size_t r, size_t c, ring_elem &result) const = 0;
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
 
-  virtual bool set_entry(int r, int c, const ring_elem a) = 0;
+  virtual bool set_entry(size_t r, size_t c, const ring_elem a) = 0;
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  virtual bool interchange_rows(int i, int j) = 0;
+  virtual bool interchange_rows(size_t i, size_t j) = 0;
   /* swap rows: row(i) <--> row(j) */
 
-  virtual bool interchange_columns(int i, int j) = 0;
+  virtual bool interchange_columns(size_t i, size_t j) = 0;
   /* swap columns: column(i) <--> column(j) */
 
-  virtual bool scale_row(int i, ring_elem r) = 0;
+  virtual bool scale_row(size_t i, ring_elem r) = 0;
   /* row(i) <- r * row(i) */
 
-  virtual bool scale_column(int i, ring_elem r) = 0;
+  virtual bool scale_column(size_t i, ring_elem r) = 0;
   /* column(i) <- r * column(i) */
 
-  virtual bool divide_row(int i, ring_elem r) = 0;
+  virtual bool divide_row(size_t i, ring_elem r) = 0;
   /* row(i) <- row(i) / r */
 
-  virtual bool divide_column(int i, ring_elem r) = 0;
+  virtual bool divide_column(size_t i, ring_elem r) = 0;
   /* column(i) <- column(i) / r */
 
-  virtual bool row_op(int i, ring_elem r, int j) = 0;
+  virtual bool row_op(size_t i, ring_elem r, size_t j) = 0;
   /* row(i) <- row(i) + r * row(j) */
 
-  virtual bool column_op(int i, ring_elem r, int j) = 0;
+  virtual bool column_op(size_t i, ring_elem r, size_t j) = 0;
   /* column(i) <- column(i) + r * column(j) */
 
-  virtual bool column2by2(int c1, int c2,
+  virtual bool column2by2(size_t c1, size_t c2,
                           ring_elem a1, ring_elem a2,
                           ring_elem b1, ring_elem b2) = 0;
   /* column(c1) <- a1 * column(c1) + a2 * column(c2),
      column(c2) <- b1 * column(c1) + b2 * column(c2)
   */
 
-  virtual bool row2by2(int r1, int r2,
+  virtual bool row2by2(size_t r1, size_t r2,
                        ring_elem a1, ring_elem a2,
                        ring_elem b1, ring_elem b2) = 0;
   /* row(r1) <- a1 * row(r1) + a2 * row(r2),
      row(r2) <- b1 * row(r1) + b2 * row(r2)
   */
 
-  virtual bool dot_product(int i, int j, ring_elem &result) const = 0;
+  virtual bool dot_product(size_t i, size_t j, ring_elem &result) const = 0;
 
-  virtual bool row_permute(int start_row, M2_arrayint perm) = 0;
+  virtual bool row_permute(size_t start_row, M2_arrayint perm) = 0;
 
-  virtual bool column_permute(int start_col, M2_arrayint perm) = 0;
+  virtual bool column_permute(size_t start_col, M2_arrayint perm) = 0;
 
-  virtual bool insert_columns(int i, int n_to_add) = 0;
+  virtual bool insert_columns(size_t i, size_t n_to_add) = 0;
   /* Insert n_to_add columns directly BEFORE column i. */
 
-  virtual bool insert_rows(int i, int n_to_add) = 0;
+  virtual bool insert_rows(size_t i, size_t n_to_add) = 0;
   /* Insert n_to_add rows directly BEFORE row i. */
 
-  virtual bool delete_columns(int i, int j) = 0;
+  virtual bool delete_columns(size_t i, size_t j) = 0;
   /* Delete columns i .. j from M */
 
-  virtual bool delete_rows(int i, int j) = 0;
+  virtual bool delete_rows(size_t i, size_t j) = 0;
   /* Delete rows i .. j from M */
 
   ///////////////////////////////
@@ -294,12 +298,12 @@ public:
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */
-  virtual void               addMultipleTo(const MutableMatrix* A,
-                                             const MutableMatrix* B,
-                                             bool transposeA,
-                                             bool transposeB,
-                                             const RingElement* a,
-                                             const RingElement* b)
+  virtual void  addMultipleTo(const MutableMatrix* A,
+                              const MutableMatrix* B,
+                              bool transposeA,
+                              bool transposeB,
+                              const RingElement* a,
+                              const RingElement* b)
   {
     //std::cerr << "MutableMatrix : rawLinAlgAddMultipleTo" << std::endl;
     return ;

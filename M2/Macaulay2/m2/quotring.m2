@@ -45,10 +45,81 @@ Ring / Module := QuotientRing => (R,I) -> (
 
 savedQuotients := new MutableHashTable
 
+savedZZpQuotients := new MutableHashTable
+
 liftZZmodQQ := (r,S) -> (
      needsPackage "LLLBases";
      v := (value getGlobalSymbol "LLL") syz matrix {{-1,lift(r,ZZ),char ring r}};
      v_(0,0) / v_(1,0))
+
+--------------------------------
+ZZp = method(Options=> {"ARing" => true})
+ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
+ZZp Ideal := opts -> (I) -> (
+     gensI := generators I;
+     if ring gensI =!= ZZ then error "expected an ideal of ZZ";
+     n := gcd flatten entries gensI;
+     if n < 0 then n = -n;
+     if n === 0 then 
+         ZZ
+     else if opts#"ARing" and savedZZpQuotients#?n then
+         savedZZpQuotients#n
+     else if not opts#"ARing" and savedQuotients#?n then
+         savedQuotients#n
+     else (
+	  --if n > 32767 then error "large characteristics not implemented yet";
+	  if n > 1 and not isPrime n
+	  then error "ZZ/n not implemented yet for composite n";
+	  S := new QuotientRing from 
+	    if opts#"ARing" then rawARingGaloisField(n,1)  else rawZZp n;  -- rawARingZZp n
+	  S.cache = new CacheTable;
+	  S.isBasic = true;
+	  S.ideal = I;
+	  S.baseRings = {ZZ};
+   	  commonEngineRingInitializations S;
+      initializeEngineLinearAlgebra S;
+	  S.relations = gensI;
+	  S.isCommutative = true;
+	  S.presentation = matrix{{n}};
+	  S.order = S.char = n;
+	  S.dim = 0;					    -- n != 0 and n!= 1
+	  expression S := x -> expression raw x;
+	  fraction(S,S) := S / S := (x,y) -> x//y;
+	  S.frac = S;		  -- ZZ/n with n PRIME!
+      if opts#"ARing" then
+  	    savedZZpQuotients#n = S
+      else
+  	    savedQuotients#n = S;
+      lift(S,QQ) := opts -> liftZZmodQQ;
+	  S))
+
+initializeEngineLinearAlgebra = method()
+initializeEngineLinearAlgebra Ring := (R) -> (
+    R#"EngineLinearAlgebra" = true;
+    R.determinant = (f) -> (
+        -- The following information 
+        -- f is a Matrix in the ring R
+        -- f should be a square matrix, with free modules for both source and target
+         m := mutableMatrix(f, Dense=>true);
+         new R from rawLinAlgDeterminant raw m
+         );
+    R.inverse = (f) -> (
+        A := mutableMatrix(f, Dense=>true);
+        R := ring A;
+        if numRows A =!= numColumns A then error "expected square matrix";
+        matrix map(R,rawLinAlgInvert(raw A))
+        );
+    R#"solveLinear" = (f,g, rightside) -> (
+        -- solve f*X = g, or (if rightside is false), X*f = g
+        if ring f =!= ring g then error "expected same base rings";
+        A := mutableMatrix(f, Dense=>true);
+        B := mutableMatrix(g, Dense=>true);
+        R := ring A;
+        result := map(R,rawLinAlgSolve(raw A,raw B,rightside));
+        matrix result
+        );
+    )
+--------------------------------
 
 ZZquotient := (R,I) -> (
      gensI := generators I;
@@ -79,6 +150,8 @@ ZZquotient := (R,I) -> (
 	  savedQuotients#n = S;
 	  lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
+
+ZZquotientNEW := (R,I) -> ZZp(R,I,"ARing"=>false)
 
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
