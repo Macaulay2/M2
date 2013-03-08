@@ -1395,14 +1395,34 @@ solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
     (k,n):=kn;
     -- l,m are partitions
     -- L,M are matrices representing the flags
+    
     ll:=unique(l+reverse(m));
-    if #ll==1 and first ll == n then(
-	--l1 := partition2bracket(l,k,n);
+    if #ll==1 and first ll == n-k then(
+	l1 := partition2bracket(l,k,n);
+	l2 := rsort partition2bracket(m,k,n);
+	Soln:=transpose matrix{toList(n:0)};
+	apply(#l1, i->(
+		A:= L_{0..l1#i-1}|M_{0..l2#i-1};
+		Rng := FFF[Z_1..Z_(n+1)];
+		Vec:= transpose vars Rng;
+		LinEquations:=sort first entries gens gb ideal(promote(A,Rng) * Vec);
+		B:=mutableMatrix id_(FFF^(n+1));
+		apply(n, i->(
+		    B_(i,i)=-coefficient(Z_(n+1),LinEquations#i)/coefficient(Z_(n-i),LinEquations#i);
+		    ));
+	    	C := A * matrix B;
+		columnSol:=C_{n}; --take the last column
+		apply(n, i->(
+			columnSol = columnSol+C_{i};
+			));
+		Soln = Soln|columnSol;
+		));
+	compress Soln
 	--l1 = apply(l1, i-> i-1);
 	--{solve(L,M_l1)}
-	l1:= partition2bracket(l,k,n);
-	matrix apply(l1, i-> L_(i-1))
-	)else {} 
+	--l1:= partition2bracket(l,k,n);
+	--matrix apply(l1, i-> L_(i-1))
+	)--else {} 
     )
 
 -----------
@@ -1438,7 +1458,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
     scan(SchbPrblm, T->(
 	    (l,F) := T;
 	    b:=partition2bracket(l,k,n);
-	    HXF:=promote(H|F,FFF);
+	    HXF:=promote(H|F,ring H);
 	    scan(#b, r->( 
 		    c := b#r;
 		    rnk := k+c-(r+1)+1;
