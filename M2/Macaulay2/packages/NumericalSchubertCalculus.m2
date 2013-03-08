@@ -1021,7 +1021,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     else(
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, remaining'conditions'and'flags);
-	MX := makeLocalCoordinates newDag.Board ;
+	--MX := makeLocalCoordinates newDag.Board ;
 	conds := {l1,l2};
 	Flags1 := {id_(FFF^n),rsort id_(FFF^n)};
 	Flags2:= {F1,F2};
@@ -1036,8 +1036,9 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- the coordinates MX does not have any variables
 	-- therefore, changeFlags cannot do the change of flags
 	--------------------------
-	changeFlags(MX, newDag.Solutions, (conds, Flags1, Flags2))
-	); 
+ 	changeFlags(newDag.Solutions, -- these are matrices in absolute coordinates
+	    (conds, Flags1, Flags2))
+	)
     )-- end of solveSchubertProblem
 
 ------- the next part is just trash
@@ -1101,7 +1102,39 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 ---------------------------------
 --changeFlags := method() --temporary
 changeFlags = method()
-changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->(
+solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of valuesof the parameters)
+solutionToChart(Matrix, Matrix) := (s,MX) -> (
+    k := numcols s;
+    n := numrows s;
+    a := symbol a;
+    RMX := ring MX;
+    R := (coefficientRing RMX)[a_(1,1)..a_(k,k),gens RMX];
+    G := genericMatrix(R,k,k);
+    f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
+    nk := n*k;
+    A := map(CC^nk,CC^nk,(i,j)->(f#i)_(R_j));
+    b := map(CC^nk,CC^1,(i,j)->-(f#i)_(1_R));
+    X := solve(A,b);
+    drop(flatten entries X, k*k) -- drop a_(i,j) coordinates      
+    )
+changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
+   if #solutionsA == 0 then return {};
+   (conditions,flagsA,flagsB) := conds'A'B; 
+   SchA := apply(#conditions, i->(conditions#i,flagsA#i));
+   SchB := apply(#conditions, i->(conditions#i,flagsB#i));
+   assert all(solutionsA, s->checkIncidenceSolution(s,SchA));
+   s := first solutionsA;
+   n := numrows s;
+   k := numcols s;
+   x := symbol x;
+   R := CC[x_(1,1)..x_(k,n-k)];
+   MX := sub(random(CC^n,CC^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
+   solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   ret := apply(solutionsB, s->sub(MX, matrix{s}));
+   assert all(ret, s->checkIncidenceSolution(s,SchB));
+   ret
+   )
+changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    flagsS := flagsA;
    solutionsS := solutionsA;
@@ -1147,12 +1180,12 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
       condsTarget = append(condsTarget, (conditions#i, flagsT#i));
    ));
    -- create Start and Target systems
-   S := first entries gens makePolynomials(MX, condsStart);
-   T := first entries gens makePolynomials(MX, condsTarget);
+   m := numgens ring MX;
+   (S,T) := squareUpPolynomials(m,makePolynomials(MX, condsStart),makePolynomials(MX, condsTarget))/flatten@@entries;
    track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
    )
 
---TEST ///
+TEST ///
 ---------
 -- Test the function changeFlags that
 -- moves solutions wrt flags A
@@ -1170,17 +1203,17 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
 -- the code, where the other examples are.
 -----------------
 --
---needsPackage "NumericalSchubertCalculus"
---needsPackage "NumericalAlgebraicGeometry"
---Rng = FFF[x_{1,1}, x_{1,2}];
---MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
---conds = {{1},{1}};
---Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
---sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
---Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
---solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
---assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
---///
+needsPackage "NumericalSchubertCalculus"
+needsPackage "NumericalAlgebraicGeometry"
+Rng = FFF[x_{1,1}, x_{1,2}];
+MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
+conds = {{1},{1}};
+Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
+sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
+Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
+solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
+assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
+///
 
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
@@ -1321,6 +1354,10 @@ makePolynomials(Matrix, List) := (MX, conds) ->(
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
+squareUpPolynomials(ZZ,Ideal,Ideal) := (m,eqs1,eqs2) ->  (
+    G := random(FFF^(numgens eqs1), FFF^m);
+    (gens eqs1 * G, gens eqs2 * G)
+    )
 
 -----------------------------
 -- Tracks a homotopy
@@ -1388,42 +1425,42 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- we need to make a change of coordinates
 -- to post the actual solutions when we give 
 -- the flags of the problem.
-solveLinAlg = method(TypicalValue => List)
-solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
-    (l,L):= lL;
-    (m,M):= mM;
-    (k,n):=kn;
-    -- l,m are partitions
-    -- L,M are matrices representing the flags
+-- solveLinAlg = method(TypicalValue => List)
+-- solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
+--     (l,L):= lL;
+--     (m,M):= mM;
+--     (k,n):=kn;
+--     -- l,m are partitions
+--     -- L,M are matrices representing the flags
     
-    ll:=unique(l+reverse(m));
-    if #ll==1 and first ll == n-k then(
-	l1 := partition2bracket(l,k,n);
-	l2 := rsort partition2bracket(m,k,n);
-	Soln:=transpose matrix{toList(n:0)};
-	apply(#l1, i->(
-		A:= L_{0..l1#i-1}|M_{0..l2#i-1};
-		Rng := FFF[Z_1..Z_(n+1)];
-		Vec:= transpose vars Rng;
-		LinEquations:=sort first entries gens gb ideal(promote(A,Rng) * Vec);
-		B:=mutableMatrix id_(FFF^(n+1));
-		apply(n, i->(
-		    B_(i,i)=-coefficient(Z_(n+1),LinEquations#i)/coefficient(Z_(n-i),LinEquations#i);
-		    ));
-	    	C := A * matrix B;
-		columnSol:=C_{n}; --take the last column
-		apply(n, i->(
-			columnSol = columnSol+C_{i};
-			));
-		Soln = Soln|columnSol;
-		));
-	compress Soln
-	--l1 = apply(l1, i-> i-1);
-	--{solve(L,M_l1)}
-	--l1:= partition2bracket(l,k,n);
-	--matrix apply(l1, i-> L_(i-1))
-	)--else {} 
-    )
+--     ll:=unique(l+reverse(m));
+--     if #ll==1 and first ll == n-k then(
+-- 	l1 := partition2bracket(l,k,n);
+-- 	l2 := rsort partition2bracket(m,k,n);
+-- 	Soln:=transpose matrix{toList(n:0)};
+-- 	apply(#l1, i->(
+-- 		A:= L_{0..l1#i-1}|M_{0..l2#i-1};
+-- 		Rng := FFF[Z_1..Z_(n+1)];
+-- 		Vec:= transpose vars Rng;
+-- 		LinEquations:=sort first entries gens gb ideal(promote(A,Rng) * Vec);
+-- 		B:=mutableMatrix id_(FFF^(n+1));
+-- 		apply(n, i->(
+-- 		    B_(i,i)=-coefficient(Z_(n+1),LinEquations#i)/coefficient(Z_(n-i),LinEquations#i);
+-- 		    ));
+-- 	    	C := A * matrix B;
+-- 		columnSol:=C_{n}; --take the last column
+-- 		apply(n, i->(
+-- 			columnSol = columnSol+C_{i};
+-- 			));
+-- 		Soln = Soln|columnSol;
+-- 		));
+-- 	compress Soln
+-- 	--l1 = apply(l1, i-> i-1);
+-- 	--{solve(L,M_l1)}
+-- 	--l1:= partition2bracket(l,k,n);
+-- 	--matrix apply(l1, i-> L_(i-1))
+-- 	)--else {} 
+--     )
 
 -----------
 -- Testing Example:
@@ -1467,7 +1504,11 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 			chooseRows:= subsets(n,rnk);
 			scan(chooseRows, rws->(
 				scan(chooseCols, cls->(
-		    			if(norm det submatrix(HXF_{0..k+c-1},rws,cls)>ERROR'TOLERANCE)then(
+		    			if(
+					    (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
+						print n;
+						n )
+					    >ERROR'TOLERANCE)then(
 					    verif=false;
 					    );
 					));
