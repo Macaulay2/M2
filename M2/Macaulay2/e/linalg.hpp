@@ -11,6 +11,7 @@ struct LinAlg
   static bool solve(const MT &A, const MT&b, MT& X)
   {
     ERROR("...");
+    return false;
   }
 };
 

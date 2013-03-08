@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include "mat.hpp"
-#include "linalg.hpp"
 
 class CoefficientRingCCC;
 class Ring_RRR;
@@ -76,6 +75,8 @@ public:
   Mat& getMat() { return mat; }
   const Mat& getMat() const { return mat; }
 
+#if 1
+  // MESXXX
   class iterator : public MutableMatrix::iterator
   {
     typename Mat::iterator i;
@@ -88,7 +89,7 @@ public:
     elem value() { return i.value(); }
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
-
+#endif
   static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
   {
     return new MutableMat(R,coeffR,nrows,ncols);
@@ -96,8 +97,10 @@ public:
 
   //  static MutableMat *grab_Mat(const Mat *m);
 
+#if 1
+  // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
-
+#endif
   virtual const Ring * get_ring() const { return mat.get_ring(); }
 
   virtual size_t n_rows() const { return mat.n_rows(); }
@@ -589,39 +592,6 @@ public:
                                              const RingElement* b);
 };
 
-template<typename Mat>
-bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
-  // resets x, find a solution of Ax=b, return false if no such exists.
-{
-  const MutableMat* b1 = dynamic_cast<const MutableMat<Mat>*>(b);
-  MutableMat* x1 = dynamic_cast<MutableMat<Mat>*>(x);
-
-  if (b1 == 0 or x1 == 0)
-    {
-      ERROR("expected matrices of the same type");
-      return false;
-    }
-
-  M2_ASSERT(& b1->getMat().ring() == & getMat().ring());
-  M2_ASSERT(& x1->getMat().ring() == & getMat().ring());
-
-  // The following line modifies x1, and therefore x
-  return LinAlg<Mat>::solve(getMat(), b1->getMat(), x1->getMat());
-}
-
-template<typename Mat>
-bool MutableMat<Mat>::eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const
-{
-  typedef MutableMat<typename Mat::EigenvalueMatrixType> EVMat;
-  EVMat* eigenvals1 = dynamic_cast<EVMat*>(eigenvals);
-  
-  if (eigenvals1 == 0)
-    {
-      ERROR("wrong ring for eigenvalue computation");
-      return false;
-    }
-  return eigenvalues1(getMat(), eigenvals1->getMat());
-}
 
 
 

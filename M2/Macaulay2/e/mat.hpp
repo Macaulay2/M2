@@ -23,6 +23,8 @@ protected:
   MutableMatrix() {}
   virtual ~MutableMatrix() {}
 public:
+#if 1
+  // MESXXX
   class iterator : public our_new_delete
   {
   public:
@@ -33,9 +35,11 @@ public:
     virtual size_t row() = 0;
     virtual void copy_ring_elem(ring_elem &a) = 0;
   };
-
+#endif
+#if 1
+  // MESXX
   virtual iterator * begin() const = 0;
-
+#endif
   virtual const Ring * get_ring() const = 0;
 
   virtual size_t n_rows() const = 0;

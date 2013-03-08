@@ -856,7 +856,6 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 #warning "write set_submatrix"
 #endif
   return false;
-  MutableMatrix::iterator *i = M->begin();
 #if 0
 //   size_t ncols = M->n_cols();
 //   for (size_t c=0; c<ncols; c++)
@@ -870,8 +869,6 @@ bool SMat<CoeffRing>::set_submatrix(M2_arrayint rows,
 //       first += nrows_;
 //     }
 #endif
-  delete i;
-  return true;
 }
 
 template<typename CoeffRing>

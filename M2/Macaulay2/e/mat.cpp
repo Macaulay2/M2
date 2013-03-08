@@ -310,6 +310,13 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
 }
 
+template<typename Mat>
+bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
+  // resets x, find a solution of Ax=b, return false if no such exists.
+{
+  ERROR("solving linear equations is not implemented for this ring and matrix type");
+  return false;
+}
 
 template<typename Mat>
 bool MutableMat<Mat>::nullspaceU(MutableMatrix *x) const
@@ -324,6 +331,13 @@ M2_arrayintOrNull MutableMat<Mat>::LU(MutableMatrix *L,
 {
   ERROR("LU decomposition currently not implemented for this ring and matrix type");
   return NULL;
+}
+
+template<typename Mat>
+bool MutableMat<Mat>::eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const
+{
+  ERROR("eigenvalues requires dense mutable matrices over RR or CC");
+  return false;
 }
 
 template<typename Mat>
@@ -394,6 +408,48 @@ template <> M2_arrayintOrNull MutableMat< DMat<CoefficientRingCCC> >::LU(Mutable
     }
   const MatType *A2 = get_Mat();
   return Lapack::LU(A2,L2,U2);
+}
+
+template <> bool MutableMat< DMat<Ring_RRR> >::solve(const MutableMatrix *b, MutableMatrix *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const MatType *b2 = b->coerce<MatType>();
+  MatType *x2 = x->coerce<MatType>();
+  if (b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over RR");
+      return false;
+    }
+  const MatType *A2 = get_Mat();
+  return Lapack::solve(A2,b2,x2);
+}
+
+template <> bool MutableMat< DMat<CoefficientRingCCC> >::solve(const MutableMatrix *b, MutableMatrix *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const MatType *b2 = b->coerce<MatType>();
+  MatType *x2 = x->coerce<MatType>();
+  if (b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over CC");
+      return false;
+    }
+  const MatType *A2 = get_Mat();
+  return Lapack::solve(A2,b2,x2);
+}
+
+template <> bool MutableMat< DMat<M2::ARingZZp> >::solve(const MutableMatrix *b, MutableMatrix *x) const
+  // resets x, find a basis of solutions for Ax=b
+{
+  const MatType *b2 = b->coerce<MatType>();
+  MatType *x2 = x->coerce<MatType>();
+  if (b2 == 0 || x2 == 0)
+    {
+      ERROR("requires dense mutable matrices over ZZ/p");
+      return false;
+    }
+  const MatType *A2 = get_Mat();
+  return DMatLU<M2::ARingZZp>::solve(A2,b2,x2);
 }
 
 template <> bool MutableMat< DMat<M2::ARingZZp> >::nullspaceU(MutableMatrix *x) const
