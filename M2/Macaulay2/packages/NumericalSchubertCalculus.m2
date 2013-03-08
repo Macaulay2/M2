@@ -1388,7 +1388,7 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- we need to make a change of coordinates
 -- to post the actual solutions when we give 
 -- the flags of the problem.
-ksolveLinAlg = method(TypicalValue => List)
+solveLinAlg = method(TypicalValue => List)
 solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
     (l,L):= lL;
     (m,M):= mM;
