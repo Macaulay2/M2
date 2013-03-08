@@ -13,6 +13,7 @@ namespace M2 {
   class ARingZZp;
 };
 
+#include "linalg.hpp"
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
