@@ -1026,8 +1026,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	resolveNode(newDag, remaining'conditions'and'flags);
 	conds := {l1,l2};
 	Flags1 := {id_(FFF^n),
-	    --newDag.FlagM
-	    rsort id_(FFF^n)
+	    newDag.FlagM
 	    };
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
@@ -1041,7 +1040,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- the coordinates MX does not have any variables
 	-- therefore, changeFlags cannot do the change of flags
 	--------------------------
- 	changeFlags(newDag.Solutions, -- these are matrices in absolute coordinates
+ 	changeFlags(newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
     )-- end of solveSchubertProblem
