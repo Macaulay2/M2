@@ -97,7 +97,7 @@ ERROR'TOLERANCE := 0.001
 -- 2 = verify solutions against blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
 -- 4 = new experimental stuff kicks in
-DEBUG'LEVEL = 3
+DEBUG'LEVEL = 4
 
 
 solutionsHash := new MutableHashTable;
@@ -717,7 +717,7 @@ if not node.IsResolved then (
 	     print "great success: we hit the ULTIMATE LEAF";
 	     node.Solutions = {lift(coordX,FFF)};
 	     node.IsResolved = true;
-	     node.FlagM= rsort id_(FFF^n);
+	     node.FlagM= id_(FFF^n);
 --	  if #remaining'conditions'and'flags > 0
 --	  then error "invalid Schubert problem"
 --	  else node.Solutions = {lift(coordX,FFF)};
