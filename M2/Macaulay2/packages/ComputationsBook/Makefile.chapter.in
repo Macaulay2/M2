@@ -5,7 +5,7 @@ include ../../../../include/config.Makefile
 all: check
 check: test.out.expected.trim test.out.trim
 	if ! diff -b -u test.out.expected.trim test.out.trim ;\
-	then echo 'test failed: *** [Macaulay2/packages/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
+	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/packages/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
 	     false ;\
 	fi
 diff:
