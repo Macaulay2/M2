@@ -19,7 +19,7 @@ export {
      -- service functions
      generalEquations, 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "WitnessSet", "witnessSet", "equations", "slice", "points", "setName",
      "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
      -- numerical variety
      "NumericalVariety", "numericalVariety",
@@ -168,7 +168,8 @@ sortSolutions List := o -> sols -> (
 -----------------------------------------------------------------------
 -- WITNESS SET = {
 --   Equations,            -- an ideal  
---   Slice,                -- a list of linear equations OR a matrix (of their coefficients)
+--   Slice,                -- a matrix of coefficients of linear equations 
+--                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
 --   IsIrreducible         -- true, false, or null
 --   }
@@ -182,12 +183,17 @@ codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> W.Equations
-net WitnessSet := W -> if not W.?IsIrreducible or W.IsIrreducible===null or not W.IsIrreducible 
-                       then "[dim=" | net dim W |",deg="| net degree W | "]" else "(dim=" | net dim W |",deg="| net degree W | ")" 
+net WitnessSet := W -> if W.?Name then net W.Name else (
+    if not W.?IsIrreducible or W.IsIrreducible===null or not W.IsIrreducible 
+    then "[dim=" | net dim W |",deg="| net degree W | "]" 
+    else "(dim=" | net dim W |",deg="| net degree W | ")"
+    ) 
+setName = method()
+setName (WitnessSet, Thing) := (W, name) -> W.Name = name
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> 
-  new WitnessSet from { Equations => I, Slice => S_*, Points => VerticalList P, IsIrreducible=>null }
+  new WitnessSet from { Equations => I, Slice => sliceEquationsToMatrix S, Points => VerticalList P, IsIrreducible=>null }
 witnessSet (Ideal,Matrix,List) := (I,S,P) -> 
   new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P, IsIrreducible=>null}
 
@@ -198,15 +204,24 @@ equations = method() -- returns list of equations
 equations WitnessSet := (W) -> (W.Equations)_*
 
 slice = method() -- returns linear equations for the slice (in both cases)   
-slice WitnessSet := (W) -> ( if class W.Slice === List then W.Slice
-     else if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
-     else error "ill-formed slice in WitnessSet" )
+slice WitnessSet := (W) -> ( 
+    --if class W.Slice === List then W.Slice
+    --else 
+    if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
+    else error "ill-formed slice in WitnessSet" )
 
-sliceEquations = method(TypicalValue=>List) 
-sliceEquations (Matrix,Ring) := (S,R) -> (
--- make slicing plane equations
-     apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
-     )
+sliceEquations = method(TypicalValue=>List) -- make slicing plane equations 
+sliceEquations (Matrix,Ring) := (S,R) -> 
+  apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+
+sliceEquationsToMatrix = method()
+sliceEquationsToMatrix Ideal := I -> (
+    R := ring I;
+    if numgens I > 0 then 
+    matrix apply(I_*, f -> apply(gens R, x->coefficient(x,f))|{coefficient(1_R,f)})
+    else 
+    map(R^0,R^(numgens R + 1),0)
+    )  
 
 {**********************************************************************
 NumericalVariety = {
@@ -281,7 +296,7 @@ generalEquations WitnessSet := (W) -> (
      else (
 	  -- take random combinations of the equations
 	  neweqns := (generators ideal W) * random(R^ngens, R^(n-d));
-	  witnessSet(ideal neweqns, ideal W.Slice, W.Points))
+	  witnessSet(ideal neweqns, slice W, points W))
      )
 
 beginDocumentation()
@@ -381,6 +396,7 @@ p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>1
 peek p 
      	///
 	}
+
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
 	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
@@ -431,6 +447,26 @@ document {
 R = CC[x,y]	
 w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
 peek w
+     	///
+	}
+
+
+document {
+	Key => {setName,(setName, WitnessSet, Thing)},
+	Headline => "give a name to a witness set",
+	Usage => "out = setName(W,name)",
+	Inputs => { 
+	     "W" => WitnessSet,
+	     "name" => Thing => {"the name to be displayed on the screen"}
+	     },
+	Outputs => {"out"=>Thing},
+	PARA {"Used to construct a witness set of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
+	     " and that ", TT "P", " is a subset of the intersection of ", TT "V(E)", " and ", TT "V(S)", "."},
+        EXAMPLE lines ///
+R = CC[x,y]	
+w = witnessSet( ideal(x^2+y^2-1), ideal(x), {{{0,1}},{{0,-1}}}/point)
+setName(w, " _ "||"/ \\"||"\\_/") 
+{w,w,w}
      	///
 	}
 

@@ -1,5 +1,8 @@
 #ifndef NEWDELETE_H
 #define NEWDELETE_H 1
+
+#define M2_ASSERT assert
+
 #define GC_REDIRECT_TO_LOCAL
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"

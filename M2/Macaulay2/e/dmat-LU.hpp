@@ -16,9 +16,9 @@ class DMatLU
   typedef typename CoeffRing::elem elem;
 
   static void set_pivot_info(const DMat<CoeffRing> *A,
-                      int ncols, // columns 0..ncols-1 are considered
+                      size_t ncols, // columns 0..ncols-1 are considered
                       M2_arrayint &pivotcols,
-                      int &n_pivots);
+                      size_t &n_pivots);
 
   static void solveF(const DMat<CoeffRing> *L, // m by m
               M2_arrayint perm, // 0..m-1
@@ -27,7 +27,7 @@ class DMatLU
 
   static void solveB(const DMat<CoeffRing> *U, // m by n
                      M2_arrayint pivotcols,
-                     int npivots,
+                     size_t npivots,
                      const elem *y, // length m
                      elem *x); // length n
 
@@ -35,8 +35,8 @@ class DMatLU
            DMat<CoeffRing> *L,
            DMat<CoeffRing> *U,
            M2_arrayint perm, // modified, should be of length >= A->n_rows()
-           int &n_pivot_rows, // how many have already been set
-           int col
+           size_t &n_pivot_rows, // how many have already been set
+           size_t col
            );
 
   static bool solve(const DMat<CoeffRing> *L,
@@ -53,14 +53,14 @@ class DMatLU
                      DMat<CoeffRing> *x); // x is replaced with a matrix with the same
                                          // number of columns as U
 
-  static int rank(const DMat<CoeffRing> *U); // don't need L or permutation
+  static size_t rank(const DMat<CoeffRing> *U); // don't need L or permutation
 
   static elem determinant(const DMat<CoeffRing> *L, // not needed
                           const DMat<CoeffRing> *U,
                           M2_arrayint permutation);
   // What about: rank, determinant, obtaining P, L, U as matrices?
 
-  static int rank(DMat<CoeffRing> *U);
+  static size_t rank(DMat<CoeffRing> *U);
 
 public:
   static M2_arrayint LU(const DMat<CoeffRing> *A,
@@ -90,21 +90,21 @@ public:
 //   static void LU1(DMat<CoeffRing> *A, // col-th column is modified
 //                    M2_arrayint perm, // modified, should be of length >= A->n_rows()
 //                    M2_arrayint pivotcols, // modified, of length >= A->n_rows()
-//                    int &n_pivot_rows, // how many have already been set
-//                    int col
+//                    size_t &n_pivot_rows, // how many have already been set
+//                    size_t col
 //                    );
 //
 //   static bool solve1(DMat<CoeffRing> *A, // in LU format
 //                  M2_arrayint perm, // modified, should be of length >= A->n_rows()
 //                  M2_arrayint pivotcols, // modified, of length >= A->n_rows()
-//                  int &n_pivot_rows, // how many have already been set
+//                  size_t &n_pivot_rows, // how many have already been set
 //                  DMat<CoeffRing> *b); // replaces b with the solution
 //   // returns true iff every column of b has a solution
 //
 //   static void kernel1(DMat<CoeffRing> *A, // in LU format
 //                  M2_arrayint perm, // modified, should be of length >= A->n_rows()
 //                  M2_arrayint pivotcols, // modified, of length >= A->n_rows()
-//                  int &n_pivot_rows, // how many have already been set
+//                  size_t &n_pivot_rows, // how many have already been set
 //                  DMat<CoeffRing> *result); // replaces this with a matrix whose
 //                                               // columns form the kernel of the original A.
 // public:
@@ -113,7 +113,7 @@ public:
 //   static M2_arrayint LU_one_step(DMat<CoeffRing> *LU, // modifies last col of LU,
 //                                                    // might also swap rows
 //                               M2_arrayint permutation,
-//                               int this_col);
+//                               size_t this_col);
 //
 //   static bool solve(DMat<CoeffRing> *LU, // in LU format
 //                  M2_arrayint permutation, // should be of length >= A->n_rows()
