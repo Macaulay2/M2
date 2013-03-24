@@ -289,7 +289,7 @@ public:
   // in this case.
   virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
                                                       bool right_side) const { 
-    return std::pair<bool, MutableMatrix*>(0,NULL); 
+    return std::pair<bool, MutableMatrix*>(0,static_cast<MutableMatrix*>(NULL)); 
   }
 
   /** C=this,A,B should be mutable matrices over the same ring, and a,b
