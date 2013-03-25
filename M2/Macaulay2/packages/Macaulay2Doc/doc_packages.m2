@@ -181,6 +181,10 @@ document {
 	  be loaded separately, Macaulay2 examples in the documentation can
 	  be run, and the whole documentation can be stored in a database."},
      PARA { "For an example, see ", TO "an example of a package" },
+     PARA {
+	  "To write documentation without using the function ", TT "beginDocumentation", ", which is just
+	  an optimization, use ", TO "needsPackage", " to load the packages ", TT "SimpleDoc", " and ", TT "Text", "."
+	  },
      SeeAlso => { installPackage, check, "writing documentation" }
      }
 document {
