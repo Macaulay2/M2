@@ -717,8 +717,7 @@ if not node.IsResolved then (
 	     print "great success: we hit the ULTIMATE LEAF";
 	     node.Solutions = {lift(coordX,FFF)};
 	     node.IsResolved = true;
---	     node.FlagM = map(FFF^n,FFF^n,(i,j)->if i+j<n then 1 else 0);
-	     node.FlagM = rsort id_(FFF^n);
+	     node.FlagM= id_(FFF^n);
 --	  if #remaining'conditions'and'flags > 0
 --	  then error "invalid Schubert problem"
 --	  else node.Solutions = {lift(coordX,FFF)};
@@ -1026,9 +1025,8 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, remaining'conditions'and'flags);
 	conds := {l1,l2};
-	Flags1 := {
-	    newDag.FlagM,
-	    id_(FFF^n)
+	Flags1 := {id_(FFF^n),
+	    newDag.FlagM
 	    };
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
@@ -1189,9 +1187,7 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
    -- create Start and Target systems
    m := numgens ring MX;
    (S,T) := squareUpPolynomials(m,makePolynomials(MX, condsStart),makePolynomials(MX, condsTarget))/flatten@@entries;
-   sols := track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR));
-   assert all(sols, s->status s == Regular);
-   sols
+   track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
    )
 
 TEST ///
@@ -1517,8 +1513,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 		  (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
 		   print n;
 		   n) >ERROR'TOLERANCE)then(
-	             1/0;
-		     verif=false;
+	             verif=false;
 	        );
 	      ));
          ));
@@ -1955,7 +1950,6 @@ restart
 debug needsPackage "NumericalSchubertCalculus"
 -----------------------
 -- 4 lines in P^3
-
 SchPblm = {({1},id_(FFF^4)), ({1},random(FFF^4,FFF^4)),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
 solveSchubertProblem(SchPblm,2,4)
 
