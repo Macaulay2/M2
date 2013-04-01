@@ -1,5 +1,6 @@
 VERSION = 1.2.0
-URL = http://www.linalg.org
+#URL = http://www.linalg.org
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PRECONFIGURE = autoconf
 
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)

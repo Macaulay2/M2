@@ -45,8 +45,9 @@ assert( image ftrimmed == image f )
     lim = 10
     G = res (N, LengthLimit => lim)
     J=ker G.dd_lim
-    G#(lim+1) = J
-    G.dd#(lim+1) = inducedMap(G_lim,G_(lim+1))
+-- the following 2 lines are commented out, as this is not supposed to be allowed behavior!
+--    G#(lim+1) = J
+--    G.dd#(lim+1) = inducedMap(G_lim,G_(lim+1))
     id_(F**S) ** id_G
 
 
