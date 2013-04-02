@@ -63,12 +63,24 @@ moduleAsExt(Module,Ring) := (MM,R) ->(
     phiT := map(Ks_0,Kt_0,insertT phi);
     print betti phiT;
     print "next command causes the crash";
-    error "debug me";
 --    error();
     extend(dsum(rank source phi, K), 
 	dsum(rank target phi,R^{2}**K2), 
 	phiT)    
         )
+end
+
+restart
+--load "bug-extend.m2"
+load "~/src/M2-git/bugs/mike/00-eisenbud-bug-extend.m2"
+  kk = ZZ/101;
+  S = kk[a,b,c];
+  ff = matrix{{a^2, b^2}};
+  R = S/ideal ff;
+  Ops = kk[x_1,x_2]
+  MM = Ops^1/ideal(x_1^2*x_2)  
+  moduleAsExt(MM,R)
+
 end
 
 restart
