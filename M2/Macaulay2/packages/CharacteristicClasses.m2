@@ -7,8 +7,8 @@
 
 newPackage(
 	"CharacteristicClasses",
-	Version => "0.2", 
-    	Date => "September 3, 2012",
+	Version => "0.21", 
+    	Date => "March 19, 2013",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "jost@math.su.se", 
 		  HomePage => "http://www.math.su.se/~jost"}},
@@ -433,10 +433,24 @@ internalCSM = {ResidualStrategy => Symbolic} >> opts -> I -> (
      -- and the codimension of V(I)
      ambientDim := numgens ring I - 1;
      coDimension := ambientDim - (dim I - 1);
+     
+     -- obtain ring of ambient space and the dimension of I
+     R := ring I;
+     dimension := dim Proj(R/I) ;
+     
+     -- take care of the special cases I = (0) and I = (1) 
+     if I == ideal(0_R) then (
+	  csmList := apply(0..dimension, i-> binomial(dimension+1, i));
+	  return (csmList,ambientDim);
+	  );
+     if I == ideal(1_R) then (
+	  csmList = {};
+	  return (csmList,ambientDim);
+	  ); 
           
      -- compute the Chern-Schwartz-MacPherson class of V(I) from the Chern-Schwartz-MacPherson classes of
      -- hypersurfaces containing V(I), with the help of exclusion-inclusion
-     csmList := toList( ambientDim+1:0 );
+     csmList = toList( ambientDim+1:0 );
      for subset in drop(subsets first entries gens I, 1) do (
 	  csmList = csmList + (-1)^(length subset - 1) * (internalCSMhyp( product subset, ResidualStrategy=>opts.ResidualStrategy) );
 	  );
@@ -951,7 +965,7 @@ TEST ///
 -------------------------------------------------------
 -- References
 ------------------------------------------------------
--- [1] A method to compute Segre classes (David Eklund, Christine Jost, Chris Peterson), 2011, available at arXiv:1109.5895v1 [math.AG]
+-- [1] A method to compute Segre classes (David Eklund, Christine Jost, Chris Peterson), Journal of Algebra and Its Applications 12(2), 2013
 -- [2] Bertini: Software for Numerical Algebraic Geometry (Daniel J. Bates, Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), available at http://www.nd.edu/~sommese/bertini
--- [3] Regenerative cascade homotopies for solving polynomial systems (Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), Applied Mathematics and Computation
--- [4] Numeric computation of the Euler characteristic of projective varieties (Christine Jost), to be submitted
+-- [3] Regenerative cascade homotopies for solving polynomial systems (Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), Applied Mathematics and Computation 218(4), 2011
+-- [4] An algorithm for computing the topological Euler characteristic of complex projective varieties (Christine Jost), to be submitted, arXiv:1301.4128 [math.AG]

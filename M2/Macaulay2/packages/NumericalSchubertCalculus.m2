@@ -717,7 +717,7 @@ if not node.IsResolved then (
 	     print "great success: we hit the ULTIMATE LEAF";
 	     node.Solutions = {lift(coordX,FFF)};
 	     node.IsResolved = true;
-	     node.FlagM = rsort id_(FFF^n);
+	     node.FlagM= id_(FFF^n);
 --	  if #remaining'conditions'and'flags > 0
 --	  then error "invalid Schubert problem"
 --	  else node.Solutions = {lift(coordX,FFF)};
@@ -772,6 +772,9 @@ if not node.IsResolved then (
 	       print(node.Board);
 	       lambda := output2partition(last node.Board);
 	       print(lambda);
+	       print("remaning Conditions:");
+	       print(remaining'conditions'and'flags);
+	       print("---------");
 	       k:=#lambda;
 	       validpartition := true;
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
@@ -818,7 +821,7 @@ if not node.IsResolved then (
      	  red'sorted := sort delete(NC, red);
 	  M := node.FlagM;
 	  M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
-      	  if not father.?FlagM then father.FlagM = M'' 
+	  if not father.?FlagM then father.FlagM = M'' 
 	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
 	  
 --	  if movetype=={2,2,0} and r == 1 then 1/0;
@@ -863,7 +866,8 @@ if not node.IsResolved then (
 			      )
 		    	 );
 	       	    M'X' = promote(M,Rt) * VwrtM;
-	       	    ) 
+		    -- debugging here!!! -March 9, 2012
+		    ) 
 	       else if member(movetype,{{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then (-- case SWAP(middle row)		    
 	       	    bigR := red'sorted#(s+1); -- row of the second moving red checker
 		    rightmost'col'B := position(black, j->j==r);
@@ -908,7 +912,7 @@ if not node.IsResolved then (
 		    	      || submatrix(Xt, {r+2..n-1}, {j})	    
 			      )
 		    	 );
-	       	    M'X' = promote(M,Rt) * VwrtM;         
+	       	    M'X' = promote(M,Rt) * VwrtM;
 		    )
 	       -- implementing this case separately gives lower degree polynomials
 --	       else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
@@ -1020,9 +1024,10 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     else(
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, remaining'conditions'and'flags);
-	--MX := makeLocalCoordinates newDag.Board ;
 	conds := {l1,l2};
-	Flags1 := {id_(FFF^n),newDag.FlagM};
+	Flags1 := {id_(FFF^n),
+	    newDag.FlagM
+	    };
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
 		conds = append(conds, first c);
@@ -1035,7 +1040,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- the coordinates MX does not have any variables
 	-- therefore, changeFlags cannot do the change of flags
 	--------------------------
- 	changeFlags(newDag.Solutions, -- these are matrices in absolute coordinates
+ 	changeFlags(newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
     )-- end of solveSchubertProblem
@@ -1489,35 +1494,34 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -----------------------
 checkIncidenceSolution = method()
 checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
-    n:= numRows H;
-    k:= numColumns H;
-    verif:= true;
-    scan(SchbPrblm, T->(
-	    (l,F) := T;
-	    b:=partition2bracket(l,k,n);
-	    HXF:=promote(H|F,ring H);
-	    scan(#b, r->( 
-		    c := b#r;
-		    rnk := k+c-(r+1)+1;
-		    if(rnk<= n) then(
-		    	chooseCols:= subsets(k+c,rnk);
-			chooseRows:= subsets(n,rnk);
-			scan(chooseRows, rws->(
-				scan(chooseCols, cls->(
-		    			if(
-					    (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
-						print n;
-						n )
-					    >ERROR'TOLERANCE)then(
-					    verif=false;
-					    );
-					));
-				));
-			);
-		    ));
-	    ));
-    verif
-    )
+  n:= numRows H;
+  k:= numColumns H;
+  verif:= true;
+  scan(SchbPrblm, T->(
+    (l,F) := T;
+    b:=partition2bracket(l,k,n);
+    HXF:=promote(H|F,ring H);
+    scan(#b, r->( 
+       c := b#r;
+       rnk := k+c-(r+1)+1;
+       if(rnk<= n) then(
+         chooseCols:= subsets(k+c,rnk);
+	 chooseRows:= subsets(n,rnk);
+	 scan(chooseRows, rws->(
+	   scan(chooseCols, cls->(
+	      if(
+		  (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
+		   print n;
+		   n) >ERROR'TOLERANCE)then(
+	             verif=false;
+	        );
+	      ));
+         ));
+       );
+     ));
+   ));
+   verif
+   )
 
 --
 -- TEST
@@ -1946,6 +1950,9 @@ restart
 debug needsPackage "NumericalSchubertCalculus"
 -----------------------
 -- 4 lines in P^3
+SchPblm = {({1},id_(FFF^4)), ({1},random(FFF^4,FFF^4)),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+solveSchubertProblem(SchPblm,2,4)
+
 root = playCheckers({1},{1},2,4)
 resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
 assert(#root.Solutions==2)

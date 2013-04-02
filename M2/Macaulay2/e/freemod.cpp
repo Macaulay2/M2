@@ -247,8 +247,8 @@ FreeModule *FreeModule::direct_sum(const FreeModule *G) const
   for (i=0; i<G->rank(); i++)
     result->append(G->degree(i));
 
-  if (schreyer != NULL && G->schreyer != NULL)
-    result->schreyer = schreyer->direct_sum(G->schreyer);
+  //  if (schreyer != NULL && G->schreyer != NULL)
+  //    result->schreyer = schreyer->direct_sum(G->schreyer);
 
   return result;
 }
@@ -258,8 +258,8 @@ void FreeModule::direct_sum_to(const FreeModule *G)
   for (int i=0; i<G->rank(); i++)
     append(G->degree(i));
 
-  if (schreyer != NULL && G->schreyer != NULL)
-    schreyer->append_order(G->schreyer);
+  //  if (schreyer != NULL && G->schreyer != NULL)
+  //    schreyer->append_order(G->schreyer);
 }
 
 FreeModule *FreeModule::tensor(const FreeModule *G) const
