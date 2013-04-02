@@ -428,6 +428,12 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
      << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
      << "    LOADDATA_DEBUG            (loaddata: verbose debugging messages)" << newline
+     << "    GC_INITIAL_HEAP_SIZE      (gc: initial heap size in bytes)" << newline
+     << "    GC_PRINT_STATS            (gc: turn on logging)" << newline
+     << "    GC_PRINT_VERBOSE_STATS    (gc: turn on more verbose logging)" << newline
+     << "    GC_LOG_FILE               (gc: name of log file)" << newline
+     << "    GC_DUMP_REGULARLY         (gc: dump state regularly)" << newline
+     << "    GC_NPROCS                 (gc: number of threads to use, linux)" << newline
      ;)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
