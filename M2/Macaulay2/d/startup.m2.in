@@ -550,8 +550,9 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       arg = commandLine#argno;
 	       if action#?arg then action#arg arg
 	       else if action2#?arg then (
-		    if argno < #commandLine + 1
-		    then action2#arg commandLine#(argno = argno + 1)
+		    argno = argno + 1;
+		    if argno < #commandLine
+		    then action2#arg commandLine#argno
 		    else error("command line option ", arg, " missing argument")
 		    )
 	       else if arg#0 == "-" then (
