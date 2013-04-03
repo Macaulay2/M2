@@ -319,7 +319,9 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
   g->deg = deg;
   weightInfo_->gbvector_weight(f, f_leadweight); // return value not used
   g->gap = deg - weightInfo_->gbvector_term_weight(f);
-  //  g->gap =0; // MES: this is a test 9 Jan 2013.
+  if (f->next == 0) // a monomial.  This is a hack: we should lower the gap value when we can.
+    // the problem though is that this sometimes slows down the computation dramatically.
+    g->gap = 0;
   g->size = R->gbvector_n_terms(f);
   g->minlevel = minlevel;
   return g;
