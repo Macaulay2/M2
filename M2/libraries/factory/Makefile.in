@@ -6,11 +6,11 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 3.1.4.1
+VERSION = 3.1.6
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 TARFILE = factory-$(VERSIONH).tar.gz
 TARDIR = factory
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
