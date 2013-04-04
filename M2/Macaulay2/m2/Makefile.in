@@ -68,7 +68,7 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		../emacs/makesyms.m2 \
 		loads.awk \
 		@srcdir@/../*/COPYRIGHT \
-		@srcdir@/../packages/Macaulay2Doc/basictests/*.m2 \
+		@srcdir@/../d/basictests/*.m2 \
 		@srcdir@/../book/*.m2 \
 		@srcdir@/../packages/*.m2 \
 		@srcdir@/../packages/*/*.m2 \
@@ -79,7 +79,6 @@ clean::; rm -f TAGS @srcdir@/TAGS @srcdir@/TAGS.doc
 		Makefile.in \
 		Makefile.tests \
 		../emacs/Makefile.in \
-		../packages/Macaulay2Doc/basictests/Makefile.in \
 		../packages/Macaulay2Doc/test/Makefile.in \
 		../packages/Macaulay2Doc/test/Makefile.test.in \
 		../packages/Macaulay2Doc/test/slow/Makefile.in \

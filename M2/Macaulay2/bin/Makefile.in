@@ -32,6 +32,9 @@ relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+check: $(EXEFILE)
+	$< --check 1 --stop -E "exit 0"
+
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@

@@ -416,6 +416,10 @@ usage := arg -> (
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
      << "    --top-srcdir '...' add top source or build tree '...' to initial path" << newline
+     << "    --check n          run tests to level n" << newline
+     << "                           n=1: basic tests" << newline
+     << "                           n=2: test Core" << newline
+     << "                           n=3: test all packages" << newline
      << "environment:"       << newline
      << "    M2ARCH             a hint to find the dumpdata file as" << newline
      << "                       bin/../cache/Macaulay2-$M2ARCH-data, where bin is the" << newline
@@ -424,6 +428,12 @@ usage := arg -> (
      << "    LOADDATA_IGNORE_CHECKSUMS (loaddata: disable verification of memory map checksums)" << newline
      << "    COMPAREVDSO               (loaddata: enable verification for the vdso segment)" << newline
      << "    LOADDATA_DEBUG            (loaddata: verbose debugging messages)" << newline
+     << "    GC_INITIAL_HEAP_SIZE      (gc: initial heap size in bytes)" << newline
+     << "    GC_PRINT_STATS            (gc: turn on logging)" << newline
+     << "    GC_PRINT_VERBOSE_STATS    (gc: turn on more verbose logging)" << newline
+     << "    GC_LOG_FILE               (gc: name of log file)" << newline
+     << "    GC_DUMP_REGULARLY         (gc: dump state regularly)" << newline
+     << "    GC_NPROCS                 (gc: number of threads to use, linux)" << newline
      ;)
 
 tryLoad := (ofn,fn) -> if fileExists fn then (
@@ -514,6 +524,12 @@ action2 := hashTable {
      "--prefix" => arg -> if phase == 1 or phase == 3 then (
 	  if not match("/$",arg) then arg = arg | "/";
 	  prefixDirectory = arg;
+	  ),
+     "--check" => arg -> if phase == 1 then (
+	  if arg == "1" then runBasicTests()
+	  else if arg == "2" then error ("--check ",arg," not implemented yet")
+	  else if arg == "3" then error ("--check ",arg," not implemented yet")
+	  else error ("--check ",arg,": expected 1, 2, or 3")
 	  )
      }
 
@@ -540,8 +556,9 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       arg = commandLine#argno;
 	       if action#?arg then action#arg arg
 	       else if action2#?arg then (
-		    if argno < #commandLine + 1
-		    then action2#arg commandLine#(argno = argno + 1)
+		    argno = argno + 1;
+		    if argno < #commandLine
+		    then action2#arg commandLine#argno
 		    else error("command line option ", arg, " missing argument")
 		    )
 	       else if arg#0 == "-" then (

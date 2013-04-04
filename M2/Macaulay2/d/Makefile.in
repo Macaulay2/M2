@@ -174,10 +174,21 @@ clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
 BSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1"/'
 startup.m2: startup.m2.in ; cd ../.. ; ./config.status Macaulay2/d/startup.m2
-startup.c: startup.m2
-	(\
-	 echo 'char startupString[] =' ; cat startup.m2                         | sed $(SSTRING) ; echo  ';' ; \
-	 echo 'char startupFile  [] =' ; echo @abs_srcdir@/startup.m2.in        | sed $(BSTRING) ; echo  ';' ; \
+startup.c: startup-header.h startup.m2 @srcdir@/basictests/*.m2 Makefile
+	: making $@
+	@(\
+	 cat @srcdir@/startup-header.h; \
+	 echo 'cached_file startupFile = {' ; \
+	     echo @abs_srcdir@/startup.m2.in | sed $(BSTRING) ; \
+	     echo  ',' ; \
+	     cat startup.m2 | sed $(SSTRING) ; \
+	 echo  '};' ; \
+	 echo 'cached_file testStrings[] = {' ; \
+	 for i in @abs_srcdir@/basictests/*.m2 ; \
+	 do echo '{' ; echo $$i | sed $(BSTRING) ; echo  ',' ; cat $$i | sed $(SSTRING) ; echo  '},' ; \
+	 done ; \
+	 echo '};' ; \
+	 cat @srcdir@/startup-trailer.h; \
         ) >$@
 clean:: ; rm -f startup.c
 clean-startup.c:; rm -f startup.c
@@ -198,5 +209,5 @@ clean::; rm -f .gdbinit .gdb-directories
 LOADLIBES = -lgc
 
 # Local Variables:
-# compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 # End:
