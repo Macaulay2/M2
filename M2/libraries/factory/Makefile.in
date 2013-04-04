@@ -57,15 +57,19 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #      #include <wchar.h>
 #    }
 
-.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h 
+.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h \
+			$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc
 $(LIBRARIESDIR)/include/factory/assert.h : $(BUILDDIR)/assert.h .compiled-$(VERSION) 
 	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
+	@INSTALL_DATA@ $< $@
+$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/ftmpl_list.cc .compiled-$(VERSION) 
+	$(MKDIR_P) $(LIBRARIESDIR)/include/factory/templates
 	@INSTALL_DATA@ $< $@
 
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf \
-		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* \
+		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* include/factory \
 		lib/libcf.a lib/libcfmem.a ;\
 	fi
 
