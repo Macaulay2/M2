@@ -1,0 +1,24 @@
+see
+
+	http://blog.regehr.org/archives/905
+
+and try this on M2:
+
+    Catching Integer Errors with Clang
+
+    Peng Li and I at Utah, along with our collaborators Will Dietz and Vikram Adve
+    at UIUC, wrote an integer overflow checker for Clang which has found problems
+    in most C/C++ codes that we have looked at. Do you remember how pervasive
+    memory safety errors were before Valgrind came out? Integer overflows are that
+    way right now.
+
+    An exciting recent development is that due to a ton of work done by Will, our
+    checker is now in the Clang trunk. Taking a cue from the excellent address
+    sanitizer, it is called the integer sanitizer. To use it, check out and build
+    the latest Clang (you must also build Compiler-RT) and then compile your code
+    using the -fsanitize=integer or -fsanitize=undefined option. The former will
+    tell you about well-defined but possibly erroneous unsigned overflows, whereas
+    the latter will only tell you about undefined behaviors (including some
+    non-integer-related ones). For more details on these options, see Clang’s
+    documentation for its code generation options. The integer sanitizer is not yet
+    in a released version of Clang, but we expect it to be part of the 3.3 release.

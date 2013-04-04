@@ -12,8 +12,8 @@ VPATH = @srcdir@
 # # pari maintainers have been known to break URL's, so we copy their software to another server:
 # # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.5.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.5.3
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 

@@ -11,7 +11,7 @@ SUBDIRS = compat util probe regex c
 ifeq "@DUMPDATA@" "yes"
 SUBDIRS += dumpdata
 endif
-SUBDIRS += e-includes d e system kernel bin packages/Macaulay2Doc/basictests m2 emacs man packages html-check-links tests
+SUBDIRS += e-includes d e system kernel bin m2 emacs man packages html-check-links tests
 SUBDIRS += book
 SUBDIRS += packages/Macaulay2Doc/test
 

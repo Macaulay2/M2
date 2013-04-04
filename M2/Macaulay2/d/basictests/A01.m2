@@ -4,8 +4,6 @@
 
 -- this file is for testing built-in functions
 
-stdio << "testing A01.m2\n" << flush
-
 assert = x -> if not x then error "assertion failed "
 
 -- test {}

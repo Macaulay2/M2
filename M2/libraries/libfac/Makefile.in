@@ -1,10 +1,10 @@
 # license for libfac: freely, with copyright notice, state if modifications are made
 #   see file 00README for details
 
-VERSION = 3.1.4
+VERSION = 3.1.6
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 TARDIR = libfac
-PATCHFILE = @abs_srcdir@/patch-3.1.4
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 LICENSEFILES = 00README COPYING
 BUILDTARGET = libfac.a
