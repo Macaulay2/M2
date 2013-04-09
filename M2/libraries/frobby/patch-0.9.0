@@ -1,6 +1,6 @@
-diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/main.cpp	2012-07-28 21:18:12.000000000 -0400
+diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
+--- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/main.cpp	2013-03-25 08:06:29.000000000 -0400
 @@ -24,6 +24,7 @@
  
  #include <ctime>
@@ -9,9 +9,9 @@ diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/librar
  
  /** This function runs the Frobby console interface. the ::main
      function calls this function after having set up DEBUG-specific
-diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
---- /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/randomDataGenerators.cpp	2012-07-28 22:58:34.000000000 -0400
+diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
+--- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-03-25 08:06:29.000000000 -0400
 @@ -25,6 +25,7 @@
  
  #include <limits>
@@ -20,3 +20,20 @@ diff -ur /Users/dan/src/M2/trunk/M2/BUILD/dan/builds.tmp/mac64.production/librar
  
  void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
    VarNames names(variableCount);
+diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
+--- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 16:09:13.000000000 -0400
++++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-04-08 17:17:08.000000000 -0400
+@@ -3,9 +3,9 @@
+ frobby=../../bin/frobby
+ testhelper=../testScripts/testhelper
+ test="$1"
+-tmpFile=/tmp/frobbyEulerRadicalTmp
+-tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
+-tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
++tmpFile=./frobbyEulerRadicalTmp
++tmpFileInverted=./frobbyEulerRadicalInvertedTmp
++tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
+ genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
+ stdPivots="popvar rarevar popgcd any random"
+ shift
+ 
