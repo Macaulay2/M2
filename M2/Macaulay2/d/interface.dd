@@ -3208,6 +3208,12 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -- Groebner bases and resolutions and computations
 -----------------------------------------------------------------------------
 
+export rawMGB(e:Expr):Expr := (
+     when e
+     is x:RawMatrixCell do toExpr( Ccode( RawMatrix, "rawMGB(", x.p, ")" ))
+     else WrongArg("a raw matrix"));
+setupfun("rawMGB",rawMGB);
+
 export rawStartComputation(e:Expr):Expr := (
      when e is c:RawComputationCell do toExpr(Ccode(RawComputationOrNull, "rawStartComputation(", c.p, ")"))
      else WrongArg("a raw computation"));

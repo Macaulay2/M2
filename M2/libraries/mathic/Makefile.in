@@ -1,7 +1,8 @@
 VPATH = @srcdir@
-VERSION = 20130206
+#VERSION = 20130206
+VERSION = 20130408
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
 include ../Makefile.library
