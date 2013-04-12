@@ -12,6 +12,11 @@
 #include "gb-walk.hpp"
 #include "relem.hpp"
 
+#include "poly.hpp"
+#include <sstream>
+#include <iostream>
+#include "matrix-stream.hpp"
+
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
 void test_over_RR_or_CC(const Ring *R)
@@ -956,6 +961,45 @@ M2_string engineMemory()
      }
 }
 
+#if defined(HAVE_MATHICGB)
+#include "mathicgb.h"
+#endif
+
+const Matrix * rawMGB(const Matrix *inputMatrix)
+{
+  const Ring *R = inputMatrix->get_ring();
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  int charac = P->charac();
+  int nvars = P->n_vars();
+#if defined(HAVE_MATHICGB)
+  mgb::GroebnerConfiguration configuration(charac, nvars);
+  mgb::GroebnerInputIdealStream input(configuration);
+  mgb::IdealStreamChecker<mgb::GroebnerInputIdealStream> checked(input);
+
+  matrixToStream(inputMatrix, checked); 
+
+  std::ostringstream computedStr;
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
+
+  MatrixStream matStream(P);
+  //  mgb::computeGroebnerBasis(input, checked);
+  mgb::computeGroebnerBasis(input, matStream);
+  return matStream.value();
+
+  std::cout << "result: " << std::endl;
+  std::cout << computedStr.str() << std::endl;
+
+  return inputMatrix;
+  return matStream.value();
+#endif
+  return inputMatrix;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -1563,6 +1563,12 @@ enum gbTraceValues
    * Computation routines for Groebner bases *
    *******************************************/
 
+  /* 
+     routine to compute a Groebner basis of an ideal in a polynomial ring
+     over a finite prime field.  Interfaces to mathicgb.
+   */
+  const Matrix* /* or null */ rawMGB(const Matrix* input); /* connected: rawMGB */
+
   Computation /* or null */ *IM2_GB_make(const Matrix *m,
                                  M2_bool collect_syz,
                                  int n_rows_to_keep,
