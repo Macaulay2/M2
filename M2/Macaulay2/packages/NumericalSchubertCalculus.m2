@@ -55,7 +55,8 @@ export {
    changeFlags, -- temporary
    makePolynomials, -- temporary
    SolutionsSuperset, -- temporary
-   checkIncidenceSolution --temporary
+   checkIncidenceSolution, --temporary
+   moveFlags2Flags --temporary
    }
 
 -------------------------
@@ -75,7 +76,7 @@ export {
 --
 -- Date: April 5, 2012
 --
--- Last Update: December 09, 2012
+-- Last Update: March 22, 2013
 ------------------------------------
 
 -- needsPackage "NumericalAlgebraicGeometry"
@@ -157,7 +158,6 @@ output2bracket List := outp -> (
      apply(br, x-> x=x+1)
 ) 
 
----- this is an unused function:
 ---- input: redcheckers
 ---- output: list with the two partitions that generate
 ----         that redchecker board
@@ -176,6 +176,10 @@ bracket2partition(List,ZZ) := (l, n) -> (
 --     l = reverse sort l;
      partitn := for i to #l-1 list (n-#l)+(i+1)-l#i 
 )
+
+--------------------------------
+-- Numerical Pieri Homotopies --
+--------------------------------
 
 ---------------------------
 --  skewSchubertVariety  --
@@ -371,8 +375,7 @@ trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
 -----------------------------
 -- Numerical LR-Homotopies
 -----------------------------
----------------------
--- change this method to be between checkers
+
 ---------------------
 -- input: two schubert conditions l and m
 --			entered as brackets
@@ -428,63 +431,63 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
 --        critrow - the critical row
 moveRed = method(TypicalValue => List)
 moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
-	------------------------------------------------
-	-- We need to check first if it is a valid configuration
-	-- that is why I have been having errors
-	------------------------------------------------
-	 n := #redposition; -- n is the size of the checkboard
-	 split:=0;
-     critrow := 0;
-     critdiag := 0;
-     g:=2; -- These are two flags to indicate in which situation we are 
-     r:=2;
-     indx := new List;
-     redpos := new MutableList from redposition;
-     -- find the "critical row"
-     indx = for i to n-blackdown#0-1 list n-1-i;
-     apply(indx, j -> (
-	  if redpos#j === blackdown#1 then (
-	       critrow = j;
-	       if j == blackdown#0 then g=0 else g=1;
-	  ) 
-     ));
-     -- find the "critical diagonal"
-     indx= for i to blackdown#0-1 list i;
-     indx = reverse indx;
-     apply(indx, j->(
-	  if blackdown#0-j+redpos#j == n then(
-	       critdiag = j;
-	       if blackup === {j,redpos#j} then r=0 else r=1;
-	  )
-     ));
-     if r == 0 then (
-	  redpos#(blackup#0)=redpos#(blackup#0)-1;
-	  if g == 0 then redpos#(blackdown#0) = redpos#(blackdown#0)+1;
-	  if g == 1 then redpos#critrow = redpos#critrow + 1;
-     ) else if r == 1 then (
-	  if g == 0 then(
-	       redpos#critrow = redpos#critdiag;
-	       redpos#critdiag = NC;
-	       redpos#(blackup#0) = blackdown#1;
-	  ) else if g == 1 then(
-	       block := 0;
-	       blockindx := for i to critrow-1-critdiag-1 list critrow-1-i;
-	       apply(blockindx, b -> if redpos#critrow < redpos#b and redpos#b < redpos#critdiag then block = 1);
-	       if block != 1 then (
-		    -- switch the rows of the red checkers in the critical diagonal and row
-		    -- then, move the left one over to the column of the ascending black
-		    redpos#critrow = redpos#critdiag;
-		    redpos#critdiag = NC;
-		    redpos#(blackup#0) = blackdown#1;
-		    split = 1;
-	       );
-	  );
-     ) else if r == 2 and g == 0 then (
-     	  redpos#(blackup#0)=redpos#critrow;
-	  redpos#critrow = NC;
-     );
-     if split == 0 then {(toList redpos,{r,g,split})} else {(redposition,{r,g,0}), (toList redpos,{r,g,split})}
-)
+    ------------------------------------------------
+    -- We need to check first if it is a valid configuration
+    -- that is why I have been having errors
+    ------------------------------------------------
+    n := #redposition; -- n is the size of the checkboard
+    split:=0;
+    critrow := 0;
+    critdiag := 0;
+    g:=2; -- These are two flags to indicate in which situation we are 
+    r:=2;
+    indx := new List;
+    redpos := new MutableList from redposition;
+    -- find the "critical row"
+    indx = for i to n-blackdown#0-1 list n-1-i;
+    apply(indx, j -> (
+	    if redpos#j === blackdown#1 then (
+	       	critrow = j;
+	       	if j == blackdown#0 then g=0 else g=1;
+	  	) 	
+     	    ));    
+    -- find the "critical diagonal"
+    indx= for i to blackdown#0-1 list i;
+    indx = reverse indx;
+    apply(indx, j->(
+	    if blackdown#0-j+redpos#j == n then(
+	       	critdiag = j;
+	       	if blackup === {j,redpos#j} then r=0 else r=1;
+	  	)
+     	    ));
+    if r == 0 then (
+	redpos#(blackup#0)=redpos#(blackup#0)-1;
+	if g == 0 then redpos#(blackdown#0) = redpos#(blackdown#0)+1;
+	if g == 1 then redpos#critrow = redpos#critrow + 1;
+     	) else if r == 1 then (
+	if g == 0 then(
+	    redpos#critrow = redpos#critdiag;
+	    redpos#critdiag = NC;
+	    redpos#(blackup#0) = blackdown#1;
+	    ) else if g == 1 then(
+	    block := 0;
+	    blockindx := for i to critrow-1-critdiag-1 list critrow-1-i;
+	    apply(blockindx, b -> if redpos#critrow < redpos#b and redpos#b < redpos#critdiag then block = 1);
+	    if block != 1 then (
+		-- switch the rows of the red checkers in the critical diagonal and row
+		-- then, move the left one over to the column of the ascending black
+		redpos#critrow = redpos#critdiag;
+		redpos#critdiag = NC;
+		redpos#(blackup#0) = blackdown#1;
+		split = 1;
+	       	);
+	    );
+     	) else if r == 2 and g == 0 then (
+	redpos#(blackup#0)=redpos#critrow;
+	redpos#critrow = NC;
+     	);
+    if split == 0 then {(toList redpos,{r,g,split})} else {(redposition,{r,g,0}), (toList redpos,{r,g,split})}
+    )
 -- TEST THE FUNCTION HERE!!
 
 --moveRed({0,2},{2,1},{NC,3,NC,1})
@@ -717,7 +720,7 @@ if not node.IsResolved then (
 	     print "great success: we hit the ULTIMATE LEAF";
 	     node.Solutions = {lift(coordX,FFF)};
 	     node.IsResolved = true;
-	     node.FlagM= id_(FFF^n);
+	     node.FlagM= rsort id_(FFF^n);
 --	  if #remaining'conditions'and'flags > 0
 --	  then error "invalid Schubert problem"
 --	  else node.Solutions = {lift(coordX,FFF)};
@@ -750,7 +753,7 @@ if not node.IsResolved then (
 	       	    --// and uncomment the following line (deleting the line after that)
 	       	    Soluciones,
 	       	    --time solveSystem flatten entries polynomials, 
-	       	    s-> norm sub(gens all'polynomials,matrix s) < ERROR'TOLERANCE * 
+	       	    s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
 	       	    norm matrix s * 
 	       	    norm sub(last coefficients gens all'polynomials,CC)
 	       	    ), 
@@ -786,7 +789,8 @@ if not node.IsResolved then (
 			   remaining'conditions'and'flags
 			   ),
 		       k,n);
-		   node.Solutions = apply(S,s->sub(coordX, matrix{solutionToChart(s,coordX)}));
+		   -- HERE!!!
+		   node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
 
 		   print "And These are the solutions obtained:";
 		   print(node.Solutions);
@@ -1014,8 +1018,8 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     -- take the first two conditions
     l1:=verifyLength(first first twoconds,k);
     l2:=verifyLength(first last twoconds,k);
-    F1:=last first twoconds;
-    F2:=last last twoconds;
+    F1:=promote(last first twoconds,FFF);
+    F2:=promote(last last twoconds,FFF);
     
     Slns:={};
     checkOrthogonal := l1+reverse l2;
@@ -1025,13 +1029,35 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, remaining'conditions'and'flags);
 	conds := {l1,l2};
-	Flags1 := {id_(FFF^n),
-	    newDag.FlagM
+	--Changed here March 22:
+	--
+	-- resolveNode gives a solution in local coords
+	-- of {l1}*{l2} w.r.t {FlagM, Id}
+	-- we multiply the solution S by FlagM
+	-- and we obtain a solution of the Sch. problem
+	-- {l1,...,lm} with respect to
+	-- {FlagM, Id, F3,...,Fm}
+	-- 
+	-- we need to make a change of flags
+	-- to send (FlagM,Id)-->(Id,F2)
+	-------------------------------
+	localFlags := {
+	    newDag.FlagM,
+	    id_(FFF^n)
 	    };
+	localFlags1:= {id_(FFF^n),F2}; --
+	Transf := moveFlags2Flags(localFlags,localFlags1);
+	-- Transf gives three matrices
+	-- A,T1,T2, such that
+	--          A*FlagM = Id*T1 (representing the standard flag)
+	--          A*Id = F2*T2 (representing the same flag as F2)
+	GL := first Transf;
+	T1:=Transf#1;
+	Flags1 := {id_(FFF^n),F2}; 
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
 		conds = append(conds, first c);
-		Flags1 = append(Flags1, last c);
+		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
 		));
 	-------------------------
@@ -1040,24 +1066,11 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- the coordinates MX does not have any variables
 	-- therefore, changeFlags cannot do the change of flags
 	--------------------------
- 	changeFlags(newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
+	--Transf := matrix(entries newDag.FlagM/reverse);
+	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
     )-- end of solveSchubertProblem
-
-------- the next part is just trash
-    --<< "calling playCheckers from solveSchubert "<< l1<< l2<<k<<n<< endl;
-    --newDag := playCheckers(l1,l2,k,n);
-    --resolveNode(newDag,remaining'conditions'and'flags);
-    ---- we do a change of coordinates
-    --MX := makeLocalCoordinates newDag.Board;
-    ---- Need to glue solutions from the node of a Dag to solutions
-    ---- of the leaf of the previous Dag
-    --changeFlags(newDag.Solutions, 
-	--twoconds/first, 
-	--{id_(FFF^n),rsort id_(FFF^n)}|(remaining'conditions'and'flags/last), 
-	--twoconds/last);
-
 
 
 --TEST ///
@@ -1086,6 +1099,55 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 
 --///
 
+----------------------------
+-- changeCoordsSolutions
+----------------------------
+-- !!! this function should be removed!!!
+changeCoordsSolutions = method()
+changeCoordsSolutions Matrix := MX ->(
+    k := numcols MX;
+    n := numrows MX;
+    a := symbol a;
+    RMX := ring MX;
+    indx:= subsets(0..n-1,k)/toSequence;
+    Vars := apply(indx, i-> a_(i));
+    R:= (coefficientRing RMX)[Vars, gens RMX];
+    G := mutableIdentity(R,n);
+    scan(indx, i->G_i=a_i);
+    --s:= mutableMatrix random(FFF^n,FFF^k);
+    Temp:=entries transpose MX;
+    zeroes:=apply(Temp, t->position(t, i-> i==1));
+    s := transpose matrix apply(zeroes, i->(
+	    cl:=for j from 0 to i list 1;
+	    cl2:=for j from i to n-1 list 0;
+	    cl|drop(cl2,1)	    
+	    ));
+    f:=flatten entries(matrix G*sub(s,R)-sub(MX,R));
+    nk := n*k;
+    numParameters := #Vars+#gens RMX;
+    A:= map(CC^nk, CC^numParameters, (i,j)-> (f#i)_(R_j));
+    b := map(CC^nk, CC^1, (i,j)-> -(f#i)_(1_R));
+    X := solve(A,b, ClosestFit=>true);
+    Vals:=take(flatten entries X, #Vars); -- take a_(i,j) coordinates
+    scan(#indx, i->G_(indx#i) = Vals#i);
+    sub(matrix G, coefficientRing RMX)
+    )
+
+-- NEED TO FIX THE FUNCTION
+-- changeFlags!!!
+--
+--------- March 24, 2013
+-- need to create a linear homotopy
+-- from one set of flags to another
+-- by changing column by column
+-- for each of the flags 
+--
+-- Later, we can speed up a little
+-- by just creating the homotopy
+-- between the flags, by changing
+-- only the relevant parts of the 
+-- flag...
+--------------------------
 ---------------------------------
 --- changeFlags
 ---------------------------------
@@ -1095,18 +1157,17 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 -- to solutions written w.r.t flagsB
 --
 -- Input:
---    MX -- X -> A localization pattern, M -> flag
+--    MX -- X -> A localization pattern, M -> flag (Information about the 
+--    	      first two flags determines the localization pattern X)
 --    solutionsA -> solutions to the problem specialized to flagsA
 --    conds'A'B -> sequence with conditions and flags as follows: 
---    	  conditions = list of partitions (L1,..., Lm), _not_pairs (partition, flag)
---    	  flagsA = (A1,...,Am)
---    	  flagsB = (B1,...,Bm)
+--    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
+--    	  flagsA = (A3,...,Am)
+--    	  flagsB = (B3,...,Bm)
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
---changeFlags := method() --temporary
-changeFlags = method()
-solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of valuesof the parameters)
+solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
 solutionToChart(Matrix, Matrix) := (s,MX) -> (
     k := numcols s;
     n := numrows s;
@@ -1122,6 +1183,7 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     X := solve(A,b, ClosestFit=>true);
     drop(flatten entries X, k*k) -- drop a_(i,j) coordinates      
     )
+changeFlags = method()
 changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
    if #solutionsA == 0 then return {};
    (conditions,flagsA,flagsB) := conds'A'B; 
@@ -1135,25 +1197,47 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    R := CC[x_(1,1)..x_(k,n-k)];
    MX := sub(random(CC^n,CC^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
-   ret := apply(solutionsB, s->sub(MX, matrix{s}));
+   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE,sub(MX, matrix{s})));
    assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
+
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
-   flagsS := flagsA;
+--   flagsS := flagsA;
    solutionsS := solutionsA;
    if solutionsA!={} then(
-       n := numcols flagsA#0;
-       scan(n, i->(
-      	       flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
-      	       solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
-      	       flagsS = flagsT;
+       t:= symbol t;
+       n := numcols last flagsA;
+       R := ring last flagsA;
+       R1 := R[t];
+       Mt := matrix{{t}};
+       Mt1 := matrix{{1-t}};
+        scan(n, i->(
+	       -- start when t = 0, target when t = 1
+	       flagsHomot := apply(#flagsA, f-> (
+		       FlagBB := sub(flagsB#f,R1);
+		       FlagAA := sub(flagsA#f,R1);
+		       FlagBB_{0..i-1}|
+		       (FlagBB_{i}*Mt - FlagAA_{i}*Mt1)|
+		       FlagAA_{i+1..n-1}
+		       ));
+	       RMx := ring MX;
+	       m := numgens RMx;
+       	       R2 := (coefficientRing RMx)[t,gens RMx];
+	       Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R2),conditions,flagsHomot));
+	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
+	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
+	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, gamma=>exp(2*pi*ii*random RR));
+	       --flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
+      	       --solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
+	       --flagsS = flagsT;
       	       solutionsS = solutionsT/coordinates;
       	       ));
        );
    solutionsS
    )
+
 
 -------------------------------
 -- changeFlagsLinear
@@ -1190,6 +1274,48 @@ changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
    track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
    )
 
+--changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
+--   (conditions,flagsS,flagsT):= conds'S'T;
+--   t := symbol t;
+--   R := ring MX;
+--   n:= numRows MX;
+--   R1 := (coefficientRing R)[t,gens R];
+--   T1:=mutableIdentity(R1,n);
+--   T2:=mutableIdentity(R1,n);
+--   scan(n, i->(
+--	   T1_(i,i)=1-t; -- start is when t=0
+--	   T2_(i,i)=t; -- target is when t=1
+--	   ));
+--   condsStart := {};
+--   condsTarget := {};
+--   scan(#conditions, i->(
+--	   condsStart = append(condsStart, (conditions#i, flagsS#i*matrix(T1)+flagsT#i*matrix(T2)))
+--	   ));
+--   print(last(flagsS)*matrix(T1)+last(flagsT)*matrix(T2));
+-- --   scan(#conditions, i->(
+-- --      condsStart = append(condsStart, (conditions#i, flagsS#i*matrix(T1)));
+-- --      condsTarget = append(condsTarget, (conditions#i, flagsT#i*matrix(T2)));
+-- --   ));
+   -- create Start and Target systems
+--   m := numgens ring MX;
+--   Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R1),condsStart));
+--   print Polys;
+--   A0 := map(R,R1,prepend(1_R,gens R));
+--   A1 := map(R,R1,prepend(0_R, gens R));
+-- --   A0:=map(CC^m,CC^(m+1), (i,j)->(Polys#i)_(R1_j));
+-- --   A1:= transpose matrix{toList(m:1)} | A0_{1..m};
+--   S := {};
+--   T := {};
+--   scan(Polys, p->(
+--	   S = append(S,A0(p));
+--	   T = append(T,A1(p));
+--	   ));
+-- --   S:= flatten entries squareUpPolynomials(m, makePolynomials(MX,condsStart));
+-- --   T:= flatten entries squareUpPolynomials(m, makePolynomials(MX,condsTarget));
+-- --  (S,T) := squareUpPolynomials(m,makePolynomials(MX, condsStart),makePolynomials(MX, condsTarget))/flatten@@entries;
+--   track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
+--   )
+
 TEST ///
 ---------
 -- Test the function changeFlags that
@@ -1208,7 +1334,7 @@ TEST ///
 -- the code, where the other examples are.
 -----------------
 --
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 Rng = FFF[x_{1,1}, x_{1,2}];
 MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
@@ -1218,8 +1344,70 @@ sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
 Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
 solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)
-///
+/// --end of TEST
 
+
+-------------------------------
+-- moveFlags2Flags
+--
+-- function that finds linear transformations
+-- to send two flags (F1, F2) to other two
+-- flags (G1,G2). The idea is based on the fact
+-- that any two flags can be send to the standard
+-- flag and the opposite standard flag.
+--
+-- The idea is to get a matrix A in GL(n)
+-- and two triangular matrices T1, T2 such that
+--
+--   A*F1*T1^-1 = G1
+--   A*F2*T2^-1 = G2
+---------------------------------
+-- Input:
+--    {F1,F2} - list of two start flags
+--    {G1,G2} - list of two target flags
+-- Output:
+--    {A,T1,T2} - list of three matrices
+--         A - invertible nxn matrix
+--         T1 - upper triangular matrix with 1's in
+--              with 1's in the diagonal
+--         T2 - upper triangular matrix with nonzero
+--              entries in the diagonal
+---------------------------------
+moveFlags2Flags = method()
+moveFlags2Flags (List, List) := (F's, G's)->(
+    F1:=first F's;
+    F2:=last F's;
+    G1:=first G's;
+    G2:=last G's;
+    n:=numColumns F1;
+    a := symbol a;
+    x := symbol x;
+    y := symbol y;
+    indx:= subsets(0..n-1,2)/toSequence;
+    Vars := sort(flatten apply(indx, i-> {x_(i),y_(i)})|apply(n,i-> y_(i,i)));
+    R:= (ring F1)[a_(0,0)..a_(n-1,n-1),Vars];
+    A := genericMatrix(R,n,n);
+    T1 := mutableIdentity(R,n);
+    T2 := mutableIdentity(R,n);
+    scan(indx, i-> (T1_i=x_i; T2_i=y_i));
+    apply(n,i-> T2_(i,i)=y_(i,i));
+    T1 = matrix T1;
+    T2 = matrix T2;
+    p1:=flatten entries(A*F1-G1*T1);
+    p2:=flatten entries(A*F2-G2*T2);
+    Eqs:= p1|p2; 
+    A1 := map(CC^(2*n^2),CC^(2*n^2),(i,j)->(Eqs#i)_(R_j));
+    b1 := map(CC^(2*n^2),CC^1,(i,j)->-(Eqs#i)_(1_R));
+    X := transpose solve(A1,b1);
+    {sub(A, X), sub(T1, X), sub(T2, X)}    
+    )
+
+
+--------------------------
+-- toRawSolutions
+--
+-- Need to document this function
+-------------------------
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
      a := flatten entries coordX;
@@ -1346,7 +1534,14 @@ makePolynomials(Matrix, List) := (MX, conds) ->(
      n := numgens target MX;
      eqs := sum(conds, lF ->(
 	       (l,F) := lF;
-	       MXF:=MX|promote(F,R);
+	       ------------------
+	       -- March 23:
+	       --
+	       -- we need to make sure that F is
+	       -- a flag in the working field FFF
+	       --F = promote(F,FFF);
+	       ----------------
+	       MXF:=MX|sub(F,R);
 	       b := partition2bracket(l,k,n);
 	       sum(#b, r->( 
 			 c := b#r;
@@ -1355,14 +1550,27 @@ makePolynomials(Matrix, List) := (MX, conds) ->(
      	       ));
      eqs 
 )
-
+makePolynomials(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
+    R := ring MX;
+    k := numcols MX;
+    n := numrows MX;
+    eqs := sum(#conds, i->(
+	    MXF := MX|sub(flagsHomotopy#i,R);
+	    b:= partition2bracket(conds#i,k,n);
+	    sum(#b,r->(
+		    c := b#r;
+		    minors(k+c-(r+1)+1, MXF_{0..k+c-1})
+		    ))
+	    ));
+    eqs
+    )
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
-squareUpPolynomials(ZZ,Ideal,Ideal) := (m,eqs1,eqs2) ->  (
-    G := random(FFF^(numgens eqs1), FFF^m);
-    (gens eqs1 * G, gens eqs2 * G)
-    )
+--squareUpPolynomials(ZZ,Ideal,Ideal) := (m,eqs1,eqs2) ->  (
+--    G := random(FFF^(numgens eqs1), FFF^m);
+--    (gens eqs1 * G, gens eqs2 * G)
+--    )
 
 -----------------------------
 -- Tracks a homotopy
@@ -1948,17 +2156,54 @@ doc ///
 TEST ///
 restart 
 debug needsPackage "NumericalSchubertCalculus"
+setRandomSeed 0
 -----------------------
 -- 4 lines in P^3
-SchPblm = {({1},id_(FFF^4)), ({1},random(FFF^4,FFF^4)),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
+SchPblm = {({1},id_(FFF^4)), 
+    ({1},random(FFF^4,FFF^4)),
+    ({1},random(FFF^4,FFF^4)), 
+    ({1},random(FFF^4,FFF^4))};
+
 solveSchubertProblem(SchPblm,2,4)
+
+restart 
+debug needsPackage "NumericalSchubertCalculus"
+ setRandomSeed 2
+
+Pblm = {({1},id_(FFF^4)),
+    ({1},rsort id_(FFF^4)), 
+    ({1},transpose matrix {{1,1,1,1},{0,1,2,3},{0,0,2,6},{0,0,0,1}}),
+    ({1},transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}})}
+
+solveSchubertProblem(Pblm, 2,4)
+break
+
+-- Problem (2,1)^3=2 in G(3,6)
+SchPblm = {({2,1},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6)),({2,1},random(FFF^6,FFF^6))}
+solveSchubertProblem(SchPblm,3,6)
+-- not a simple tree
+
+-- Problem (2,1)*(2)^3 = 2 in G(3,6) 
+-- This problem has a non-trivial tree (not like the problem of 4 lines)
+Pblm={({2},random(FFF^6,FFF^6)),
+    ({2}, random(FFF^6,FFF^6)),
+    ({2},random(FFF^6,FFF^6)), 
+    ({2,1},random(FFF^6,FFF^6))}
+solveSchubertProblem(Pblm,3,6)
+
+-- Problem (1)*(2)*(2,1)^2 = 3 in G(3,6)
+Pblm={({1},random(FFF^6,FFF^6)),
+    ({2}, random(FFF^6,FFF^6)),
+    ({2,1},random(FFF^6,FFF^6))}
+solveSchubertProblem(Pblm,3,6)
+-- code breaks here
+----------------------
+
 
 root = playCheckers({1},{1},2,4)
 resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
 assert(#root.Solutions==2)
--- not a tree
 
--- Problem (2,1)^3=2 in G(3,6)
 root = playCheckers({2,1,0},{2,1,0},3,6)
 time resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
 assert(#root.Solutions==2)
