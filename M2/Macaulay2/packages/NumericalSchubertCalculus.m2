@@ -1954,7 +1954,7 @@ solveSchubertProblem(SchPblm,2,4)
 
 restart 
 debug needsPackage "NumericalSchubertCalculus"
- setRandomSeed 2
+-- setRandomSeed 2
 
 Pblm = {({1},id_(FFF^4)),
     ({1},rsort id_(FFF^4)), 
@@ -1962,7 +1962,23 @@ Pblm = {({1},id_(FFF^4)),
     ({1},transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}})}
 
 solveSchubertProblem(Pblm, 2,4)
---break
+-- we need to make a column reduction
+-- to see if these solutions are real
+S = oo;
+Sreduced = apply(S, s->(
+	M1:= matrix{
+	    {s_(0,0)^(-1), -s_(0,1)*s_(0,0)^-1},
+	    {0, 1}};
+	s1 := clean_0.001 s*M1;
+	M2 := matrix{
+	    {1,0},
+	    {-s1_(3,0)*s1_(3,1)^-1 ,s1_(3,1)^-1 }
+	    };
+	s2 := clean(0.001, s1*M2);
+	s2
+	));
+Sreduced
+
 
 -- Problem (2,1)^3=2 in G(3,6)
 SchPblm = {({2,1},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6)),({2,1},random(FFF^6,FFF^6))}
