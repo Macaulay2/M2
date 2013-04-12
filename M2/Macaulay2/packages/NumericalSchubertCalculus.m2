@@ -759,16 +759,8 @@ if not node.IsResolved then (
 	       	    ), 
 	       ss-> (map(CC,ring coordX,matrix ss)) coordX
 	       );      	  
-     	  if node.Children == {} then ( -- change Also Here
-	      --------------------------------------
-	       --(Vars,Coeffs) := coefficients polynomials;
-	       --rws:= numRows Coeffs - 1;
-	       -- we solve the linear system
-	       --Soluts:= - inverse transpose Coeffs^{0..rws-1} * transpose Coeffs^{rws};
-	       --node.Solutions = {(map(CC,ring coordX,matrix sub(transpose Soluts, CC))) coordX}
-	       --print(node.SolutionsSuperset);
-	       --print({(map(CC,ring coordX,matrix sub(transpose Soluts, CC))) coordX});
-	       ------------------------
+     	  if node.Children == {} then ( 
+	      ------------------------
 	       -- Precondition this with the DEBUG LeVEL
 	       if DEBUG'LEVEL >= 4 then (
 	       print "calling solveSchubertProblem from resolveNode ";
@@ -789,21 +781,16 @@ if not node.IsResolved then (
 			   remaining'conditions'and'flags
 			   ),
 		       k,n);
-		   -- HERE!!!
+		   ---------------------
+		   -- April 12:
+		   ---------------------
+		   -- Had to clear zeroes in the matrix
+		   -- after transforming the matrix to be 
+		   -- with respect to the local coordinates
 		   node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
 
 		   print "And These are the solutions obtained:";
 		   print(node.Solutions);
-		   --MX := makeLocalCoordinates node.Board ;
-		   --conds := {lambda};
-		   --Flags1 := {id_(FFF^n)};
-		   --Flags2:= {};
-		   --scan(remaining'conditions'and'flags, c-> (
-			--   conds = append(conds, first c);
-			--   Flags1 = append(Flags1, last c);
-			--   Flags2 = append(Flags2, last c);
-			--   ));
-		   --node.Solutions = changeFlags(MX, S, (conds, Flags1, Flags2));
 		   node.IsResolved = true;
 		   -- assert(???); --verify that the solutions fit the localization pattern 
 	       	   )else(   
@@ -811,7 +798,7 @@ if not node.IsResolved then (
 		   node.Solutions = {}; 
 		   );
 	           )
-	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
+--	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
      	       ); 
      	  );
      scan(node.Fathers, father'movetype->(
@@ -870,7 +857,6 @@ if not node.IsResolved then (
 			      )
 		    	 );
 	       	    M'X' = promote(M,Rt) * VwrtM;
-		    -- debugging here!!! -March 9, 2012
 		    ) 
 	       else if member(movetype,{{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then (-- case SWAP(middle row)		    
 	       	    bigR := red'sorted#(s+1); -- row of the second moving red checker
@@ -1060,44 +1046,11 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
 		));
-	-------------------------
-	-- The problem is in the bottom of the newDag:
-	-- 
-	-- the coordinates MX does not have any variables
-	-- therefore, changeFlags cannot do the change of flags
-	--------------------------
-	--Transf := matrix(entries newDag.FlagM/reverse);
 	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
     )-- end of solveSchubertProblem
 
-
---TEST ///
------------------------
--- Test Here:
---debug needsPackage "NumericalSchubertCalculus"
-
---SchPblm = {({2,1}), ({1})};
---twoconds = take(SchPblm,2)
---l1= first twoconds
---if class last twoconds === Sequence then( 
---l2= first last twoconds;
---F2= last last twoconds
---)
---remaining'conditions'and'flags=drop(SchPblm,2);
---newDag = playCheckers(l1,last twoconds,2,4);
---resolveNode(newDag,remaining'conditions'and'flags);
---peek newDag
-
---solveSchubertProblem(SchPblm,2,4)
---SchPblm = {({1},id_(FFF^4)), ({1},rsort(id_(FFF^4))),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
---solveSchubertProblem(SchPblm,2,4)
-
---SchPblm = {({1}), ({1}),({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))};
---solveSchubertProblem(SchPblm,2,4)
-
---///
 
 ----------------------------
 -- changeCoordsSolutions
@@ -1133,11 +1086,8 @@ changeCoordsSolutions Matrix := MX ->(
     sub(matrix G, coefficientRing RMX)
     )
 
--- NEED TO FIX THE FUNCTION
--- changeFlags!!!
---
 --------- March 24, 2013
--- need to create a linear homotopy
+-- created a linear homotopy
 -- from one set of flags to another
 -- by changing column by column
 -- for each of the flags 
@@ -1204,7 +1154,6 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
 
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
---   flagsS := flagsA;
    solutionsS := solutionsA;
    if solutionsA!={} then(
        t:= symbol t;
@@ -1229,9 +1178,6 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
 	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, gamma=>exp(2*pi*ii*random RR));
-	       --flagsT := apply(#flagsS, f-> flagsS#f_{0..i-1}|flagsB#f_{i..n-1});
-      	       --solutionsT:= changeFlagsLinear (MX, solutionsS, (conditions, flagsS, flagsT));
-	       --flagsS = flagsT;
       	       solutionsS = solutionsT/coordinates;
       	       ));
        );
@@ -1239,89 +1185,13 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
    )
 
 
--------------------------------
--- changeFlagsLinear
---
--- function to follow solutions from one
--- flag to another using linear homotopies
---
--- this is an auxilary function that create
--- the start and the target system and uses
--- homotopy cont. to track the solutions
----------------------------------
--- Input:
---    MX -- X -> A localization pattern, M -> flag
---    solutionsS -> solutions to the problem specialized to a start system of Flags
---    conds'S'T -> sequence with conditions and flags as follows: 
---    	  conditions = list of partitions (L1,..., Lm), _not_pairs (partition, flag)
---    	  flagsS = starting flags (S1,...,Sm)
---    	  flagsT = target flags (T1,...,Tm)
--- Output:
---    List of solutions written w.r.t. flags T
----------------------------------
-changeFlagsLinear = method()
-changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
-   (conditions,flagsS,flagsT):= conds'S'T;
-   condsStart := {};
-   condsTarget := {};
-   scan(#conditions, i->(
-      condsStart = append(condsStart, (conditions#i, flagsS#i));
-      condsTarget = append(condsTarget, (conditions#i, flagsT#i));
-   ));
-   -- create Start and Target systems
-   m := numgens ring MX;
-   (S,T) := squareUpPolynomials(m,makePolynomials(MX, condsStart),makePolynomials(MX, condsTarget))/flatten@@entries;
-   track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
-   )
-
---changeFlagsLinear (Matrix, List, Sequence) := (MX, solutionsS,conds'S'T)->(
---   (conditions,flagsS,flagsT):= conds'S'T;
---   t := symbol t;
---   R := ring MX;
---   n:= numRows MX;
---   R1 := (coefficientRing R)[t,gens R];
---   T1:=mutableIdentity(R1,n);
---   T2:=mutableIdentity(R1,n);
---   scan(n, i->(
---	   T1_(i,i)=1-t; -- start is when t=0
---	   T2_(i,i)=t; -- target is when t=1
---	   ));
---   condsStart := {};
---   condsTarget := {};
---   scan(#conditions, i->(
---	   condsStart = append(condsStart, (conditions#i, flagsS#i*matrix(T1)+flagsT#i*matrix(T2)))
---	   ));
---   print(last(flagsS)*matrix(T1)+last(flagsT)*matrix(T2));
--- --   scan(#conditions, i->(
--- --      condsStart = append(condsStart, (conditions#i, flagsS#i*matrix(T1)));
--- --      condsTarget = append(condsTarget, (conditions#i, flagsT#i*matrix(T2)));
--- --   ));
-   -- create Start and Target systems
---   m := numgens ring MX;
---   Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R1),condsStart));
---   print Polys;
---   A0 := map(R,R1,prepend(1_R,gens R));
---   A1 := map(R,R1,prepend(0_R, gens R));
--- --   A0:=map(CC^m,CC^(m+1), (i,j)->(Polys#i)_(R1_j));
--- --   A1:= transpose matrix{toList(m:1)} | A0_{1..m};
---   S := {};
---   T := {};
---   scan(Polys, p->(
---	   S = append(S,A0(p));
---	   T = append(T,A1(p));
---	   ));
--- --   S:= flatten entries squareUpPolynomials(m, makePolynomials(MX,condsStart));
--- --   T:= flatten entries squareUpPolynomials(m, makePolynomials(MX,condsTarget));
--- --  (S,T) := squareUpPolynomials(m,makePolynomials(MX, condsStart),makePolynomials(MX, condsTarget))/flatten@@entries;
---   track(S,T,solutionsS, gamma=>exp(2*pi*ii*random RR))
---   )
-
 TEST ///
 ---------
 -- Test the function changeFlags that
 -- moves solutions wrt flags A
 -- to solutions wrt flags B
 --
+-- This function doesn't really test if they are actual solutions
 -----------------
 -- If you want to run this example:
 -- 1.- you need to uncomment it AFTER loading NumericalSchubertCalculus package
@@ -1602,89 +1472,6 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
      i < e1 and i >= e0
      )
 
---
--- Feb 8... NEED To FIX the next function!!!
--- 
----------------
--- SolveLinAlg
----------------
--- A function to solve the linear
--- algebra problem that comes from
--- intersecting two Schubert varieties
--- with respect to complementary
--- partitions
---
--- we use this function to solve the
--- Ultimate Leaf of the tree
---
--- Input: two sequences (l,L) , (m,M)
---  	where l,m are brackets
---      L,M are flags (i.e., square matrices)
---
--- Output: a list 
---      if l,m are complementary, then returns
---      the matrix with the solutions
---      if they are not complementary, then
---      returns an empty list (as the problem
---      has no solutions)
---
--- Note: we start by assuming that the flags
--- L and M are in general position
----------------
-
--- OJO!! right now it assumes that the first
--- two flags are opposite flags e_1,...,e_m
--- and e_m,e_m-1, ... e_1
--- we need to make a change of coordinates
--- to post the actual solutions when we give 
--- the flags of the problem.
--- solveLinAlg = method(TypicalValue => List)
--- solveLinAlg(Sequence,Sequence,Sequence):=(lL,mM,kn) -> (
---     (l,L):= lL;
---     (m,M):= mM;
---     (k,n):=kn;
---     -- l,m are partitions
---     -- L,M are matrices representing the flags
-    
---     ll:=unique(l+reverse(m));
---     if #ll==1 and first ll == n-k then(
--- 	l1 := partition2bracket(l,k,n);
--- 	l2 := rsort partition2bracket(m,k,n);
--- 	Soln:=transpose matrix{toList(n:0)};
--- 	apply(#l1, i->(
--- 		A:= L_{0..l1#i-1}|M_{0..l2#i-1};
--- 		Rng := FFF[Z_1..Z_(n+1)];
--- 		Vec:= transpose vars Rng;
--- 		LinEquations:=sort first entries gens gb ideal(promote(A,Rng) * Vec);
--- 		B:=mutableMatrix id_(FFF^(n+1));
--- 		apply(n, i->(
--- 		    B_(i,i)=-coefficient(Z_(n+1),LinEquations#i)/coefficient(Z_(n-i),LinEquations#i);
--- 		    ));
--- 	    	C := A * matrix B;
--- 		columnSol:=C_{n}; --take the last column
--- 		apply(n, i->(
--- 			columnSol = columnSol+C_{i};
--- 			));
--- 		Soln = Soln|columnSol;
--- 		));
--- 	compress Soln
--- 	--l1 = apply(l1, i-> i-1);
--- 	--{solve(L,M_l1)}
--- 	--l1:= partition2bracket(l,k,n);
--- 	--matrix apply(l1, i-> L_(i-1))
--- 	)--else {} 
---     )
-
------------
--- Testing Example:
--- 
--- Solve the Linear Algebra problem:
--- {2,1} vs {1} w.r.t. std flag and opp flag
--- in G(2,4):
---
---Flg = id_(FFF^4);
---solveLinAlg(({2,1},Flg), ({1,0}, rsort Flg), (2,4))
-
 ----------------------
 -- checkIncidenceSolution
 ----------------------
@@ -1719,7 +1506,6 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 	   scan(chooseCols, cls->(
 	      if(
 		  (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
-		   print n;
 		   n) >ERROR'TOLERANCE)then(
 	             verif=false;
 	        );
@@ -2176,7 +1962,7 @@ Pblm = {({1},id_(FFF^4)),
     ({1},transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}})}
 
 solveSchubertProblem(Pblm, 2,4)
-break
+--break
 
 -- Problem (2,1)^3=2 in G(3,6)
 SchPblm = {({2,1},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6)),({2,1},random(FFF^6,FFF^6))}
