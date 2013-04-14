@@ -1566,8 +1566,9 @@ enum gbTraceValues
   /* 
      routine to compute a Groebner basis of an ideal in a polynomial ring
      over a finite prime field.  Interfaces to mathicgb.
+     reducer: 0 is ClassicReducer, 1 is MatrixReducer
    */
-  const Matrix* /* or null */ rawMGB(const Matrix* input); /* connected: rawMGB */
+  const Matrix* /* or null */ rawMGB(const Matrix* input, int reducer); /* connected: rawMGB */
 
   Computation /* or null */ *IM2_GB_make(const Matrix *m,
                                  M2_bool collect_syz,

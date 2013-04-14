@@ -3209,9 +3209,15 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -----------------------------------------------------------------------------
 
 export rawMGB(e:Expr):Expr := (
-     when e
-     is x:RawMatrixCell do toExpr( Ccode( RawMatrix, "rawMGB(", x.p, ")" ))
-     else WrongArg("a raw matrix"));
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is M:RawMatrixCell do
+     when s.1 is p:ZZcell do if !isInt(p) then WrongArgSmallInteger(1) else
+          toExpr( Ccode( RawMatrix, "rawMGB(", M.p, ",", toInt(p), ")" ))
+     else WrongArgZZ(2)
+     else WrongArgMatrix(1)
+     else WrongNumArgs(2)
+     );
 setupfun("rawMGB",rawMGB);
 
 export rawStartComputation(e:Expr):Expr := (

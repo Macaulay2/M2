@@ -965,7 +965,33 @@ M2_string engineMemory()
 #include "mathicgb.h"
 #endif
 
-const Matrix * rawMGB(const Matrix *inputMatrix)
+void rawDisplayMatrixStream(const Matrix *inputMatrix)
+{
+  const Ring *R = inputMatrix->get_ring();
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return;
+    }
+  int charac = P->charac();
+  int nvars = P->n_vars();
+#if defined(HAVE_MATHICGB)
+  mgb::GroebnerConfiguration configuration(charac, nvars);
+  mgb::GroebnerInputIdealStream input(configuration);
+
+  std::ostringstream computedStr;
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamChecker<decltype(computed)> checked(computed);
+
+  matrixToStream(inputMatrix, checked); 
+
+  std::cout << "result: " << std::endl;
+  std::cout << computedStr.str() << std::endl;
+#endif
+}
+
+const Matrix * rawMGB(const Matrix *inputMatrix, int reducer)
 {
   const Ring *R = inputMatrix->get_ring();
   const PolyRing *P = R->cast_to_PolyRing();
@@ -978,24 +1004,21 @@ const Matrix * rawMGB(const Matrix *inputMatrix)
   int nvars = P->n_vars();
 #if defined(HAVE_MATHICGB)
   mgb::GroebnerConfiguration configuration(charac, nvars);
-  mgb::GroebnerInputIdealStream input(configuration);
-  mgb::IdealStreamChecker<mgb::GroebnerInputIdealStream> checked(input);
+  const auto reducerType = reducer == 0 ?
+    mgb::GroebnerConfiguration::ClassicReducer :
+    mgb::GroebnerConfiguration::MatrixReducer;
+  configuration.setReducer(reducerType);
 
-  matrixToStream(inputMatrix, checked); 
+  mgb::GroebnerInputIdealStream input(configuration);
 
   std::ostringstream computedStr;
   mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
   mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
 
+  matrixToStream(inputMatrix, input); 
   MatrixStream matStream(P);
   //  mgb::computeGroebnerBasis(input, checked);
   mgb::computeGroebnerBasis(input, matStream);
-  return matStream.value();
-
-  std::cout << "result: " << std::endl;
-  std::cout << computedStr.str() << std::endl;
-
-  return inputMatrix;
   return matStream.value();
 #endif
   return inputMatrix;
