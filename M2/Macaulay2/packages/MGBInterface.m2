@@ -26,6 +26,7 @@ export {write,
      mgbStr,
      runMGB,
      doMGB,
+     testRawMGB,
      testMGB
      }
 
@@ -206,13 +207,49 @@ doMGB Ideal := opts -> (J) -> (
      time readPolys(projectName, ring J)
      )
 
+testRawMGB = method()
+testRawMGB Ideal := (I) -> (
+     time G2 := flatten entries gens if isHomogeneous I then gb(I, Algorithm=>LinearAlgebra) else gb I;
+     time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
+     time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));
+     assert(#G2 == #G3);
+     assert(#G2 == #G4);
+     lt2 := monomialIdeal(G2/leadTerm);
+     lt3 := monomialIdeal(G3/leadTerm);
+     lt4 := monomialIdeal(G4/leadTerm);
+     assert(#G2 == numgens lt2);
+     assert(#G2 == numgens lt3);
+     assert(#G2 == numgens lt4);
+     assert(lt2 == lt3);
+     assert(lt2 == lt4);
+     gb2 := forceGB matrix{G2};
+     gb3 := forceGB matrix{G3};
+     gb4 := forceGB matrix{G4};
+     assert((gens gb2) % gb3 == 0);
+     assert((gens gb3) % gb2 == 0);
+     assert((gens gb2) % gb4 == 0);
+     assert((gens gb4) % gb2 == 0);
+     assert((gens gb3) % gb4 == 0);
+     assert((gens gb4) % gb3 == 0);
+     )
+testRawMGB List := (L) -> (
+     -- L should be a list of (String, String)
+     -- where the first string is the name, and the second should evaluate to
+     -- an ideal in the variables a,b,c,...
+     for e in L do (
+          << "testing: " << e#0 << endl;
+          J := value e#1;
+          testRawMGB J
+          );
+     )
+
 testMGB = method()
 testMGB Ideal := (I) -> (
      time G1 := doMGB I;
      time G2 := flatten entries gens if isHomogeneous I then gb(I, Algorithm=>LinearAlgebra) else gb I;
      --time G2 := flatten entries gens gb I;
-     time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0));
-     time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1));
+     time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
+     time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));
      assert(#G1 == #G2);
      assert(#G1 == #G3);
      assert(#G1 == #G4);
@@ -316,7 +353,7 @@ myexamples = {
      {"f744","f744()"},
      {"schransTroost","schransTroost()"}
      }
-testMGB myexamples
+testRawMGB myexamples
 for e in myexamples do (
      << "testing: " << e#0 << endl;
      J = value e#1;
@@ -330,7 +367,8 @@ for e in myexamples do (
   R = ZZ/101[a..d]
   I = ideal"a2-bc,a3-b3,a4-b4-c4"
   debug Core
-  rawMGB raw gens I
+  rawMGB(raw gens I, 1, 1, "F4")
+  rawMGB(raw gens I, 1, 4, "F4")
   makeExampleFiles("first-eg", I)
   runMGB I
 ///
@@ -344,8 +382,8 @@ TEST ///
   I = bayes148() -- #GB: 3626
   time gb I;  -- 24 seconds, < 80 MB real memory
   time gb(I, Algorithm=>LinearAlgebra); -- 36 seconds, about 774 MB, real memory
-  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0)); -- 4.24 sec, < 98 MB
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1)); -- 176 sec, 2.4 GB
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 4.24 sec, < 98 MB
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- 176 sec, 2.4 GB
   
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"bayes148", "bayes148()"}});
@@ -381,8 +419,9 @@ TEST ///
   I = hilbertkunz1() -- #GB: 150
   time gb I;  -- 
   time gb(I, Algorithm=>LinearAlgebra); -- 36.2 sec, 440 MB real memory, 725 MB virtual
-  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0)); -- 5.5 sec
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1)); -- 2.3 sec
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 5.5 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "F4")); -- 1.9 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- 1.9 sec
   
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"hilbertkunz1", "hilbertkunz1()"}});
@@ -399,8 +438,8 @@ TEST ///
   I = yang1() -- #GB: 
   time gb I;  -- 37.2 sec
   time gb(I, Algorithm=>LinearAlgebra); -- 36 sec
-  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0)); -- 4.02  sec
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1)); -- 171.7 sec (at 1000 spairs per group, time goes way down, I think, to about 24 sec?)
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 4.02  sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "F4")); -- 171.7 sec (at 1000 spairs per group, time goes way down, I think, to about 24 sec?)
   
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"yang1", "yang1()"}});
@@ -429,6 +468,26 @@ TEST ///
   -- run the following:
   mgb gb random5556 -reducer 26  -log +all
   mgb gb random5556 -reducer 26 # -log +all
+///
+
+TEST ///
+  -- benchmarking example, jason210
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  J1 = jason210()
+  R = ring J1
+  time gb J1;  -- 25 sec
+  time gb(J1, Algorithm=>LinearAlgebra); -- 8.8 sec
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, "")); -- 3  sec
+  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "")); -- 6 sec
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"jason210", "jason210()"}});
+  -- run the following:
+  mgb gb jason210 -reducer 26  -log +all
+  mgb gb jason210 -reducer 26 # -log +all
 ///
 
 --franzi-siphon-naive

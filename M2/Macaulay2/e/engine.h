@@ -1568,7 +1568,11 @@ enum gbTraceValues
      over a finite prime field.  Interfaces to mathicgb.
      reducer: 0 is ClassicReducer, 1 is MatrixReducer
    */
-  const Matrix* /* or null */ rawMGB(const Matrix* input, int reducer); /* connected: rawMGB */
+  const Matrix* /* or null */ rawMGB(const Matrix* input, 
+                                     int reducer,
+                                     int nthreads,
+                                     const M2_string logging
+                                     ); /* connected: rawMGB */
 
   Computation /* or null */ *IM2_GB_make(const Matrix *m,
                                  M2_bool collect_syz,

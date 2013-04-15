@@ -3210,13 +3210,21 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 
 export rawMGB(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
+     if length(s) != 4 then WrongNumArgs(4) else
      when s.0 is M:RawMatrixCell do
-     when s.1 is p:ZZcell do if !isInt(p) then WrongArgSmallInteger(1) else
-          toExpr( Ccode( RawMatrix, "rawMGB(", M.p, ",", toInt(p), ")" ))
+     when s.1 is reducer:ZZcell do if !isInt(reducer) then WrongArgSmallInteger(1) else
+     when s.2 is nthreads:ZZcell do if !isInt(nthreads) then WrongArgSmallInteger(2) else
+     when s.3 is logging:stringCell do
+          toExpr( Ccode( RawMatrix, "rawMGB(", M.p, 
+                    ",", toInt(reducer), 
+                    ",", toInt(nthreads), 
+                    ",", logging.v, 
+                    ")" ))
+     else WrongArgString(4)
+     else WrongArgZZ(3)          
      else WrongArgZZ(2)
      else WrongArgMatrix(1)
-     else WrongNumArgs(2)
+     else WrongNumArgs(4)
      );
 setupfun("rawMGB",rawMGB);
 

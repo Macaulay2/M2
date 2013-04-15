@@ -991,7 +991,10 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
 #endif
 }
 
-const Matrix * rawMGB(const Matrix *inputMatrix, int reducer)
+const Matrix * rawMGB(const Matrix *inputMatrix, 
+                      int reducer,
+                      int nthreads,
+                      M2_string logging)
 {
   const Ring *R = inputMatrix->get_ring();
   const PolyRing *P = R->cast_to_PolyRing();
@@ -1000,14 +1003,23 @@ const Matrix * rawMGB(const Matrix *inputMatrix, int reducer)
       ERROR("expected a polynomial ring");
       return 0;
     }
+  if (nthreads <= 0)
+    {
+      ERROR("mgb: expected a positive number of threads");
+      return 0;
+    }
   int charac = P->charac();
   int nvars = P->n_vars();
 #if defined(HAVE_MATHICGB)
   mgb::GroebnerConfiguration configuration(charac, nvars);
+
   const auto reducerType = reducer == 0 ?
     mgb::GroebnerConfiguration::ClassicReducer :
     mgb::GroebnerConfiguration::MatrixReducer;
   configuration.setReducer(reducerType);
+  configuration.setMaxThreadCount(nthreads);
+  std::string log(logging->array, logging->len);
+  configuration.setLogging(log.c_str());
 
   mgb::GroebnerInputIdealStream input(configuration);
 
