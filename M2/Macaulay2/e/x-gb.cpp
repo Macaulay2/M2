@@ -991,6 +991,12 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
 #endif
 }
 
+// The following (in x-monoid.cpp) needs to be put into a header file.
+extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
+                                     std::vector<int>& mat,
+                                     bool& base_is_revlex);
+
+
 const Matrix * rawMGB(const Matrix *inputMatrix, 
                       int reducer,
                       int nthreads,
@@ -1020,6 +1026,20 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
   configuration.setMaxThreadCount(nthreads);
   std::string log(logging->array, logging->len);
   configuration.setLogging(log.c_str());
+
+
+  std::vector<int> mat;
+  bool base_is_revlex = true;
+  // Now set the monomial ordering info
+  if (!monomialOrderingToMatrix(* P->getMonoid()->getMonomialOrdering(), mat, base_is_revlex))
+    {
+      ERROR("monomial ordering is not appropriate for Groebner basis computation");
+      return 0;
+    }
+  configuration.setMonomialOrder((base_is_revlex ? 
+                                    mgb::GroebnerConfiguration::BaseOrder::ReverseLexicographicBaseOrder 
+                                  : mgb::GroebnerConfiguration::BaseOrder::LexicographicBaseOrder),
+                                 mat);
 
   mgb::GroebnerInputIdealStream input(configuration);
 
