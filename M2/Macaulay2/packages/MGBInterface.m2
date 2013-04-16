@@ -39,6 +39,18 @@ write Ring  := (R) -> (
      s1 | s2 | "\n"
      )
 
+write Ring  := (R) -> (
+     -- R should be a polynomial ring
+     debug Core;
+     (mo, tiebreak) := monomialOrderMatrix R;
+     wts := entries mo;
+     s1 := char R | " " | numgens R | " " | toString(#wts) | "\n";
+     s2 := concatenate for wtvec in wts list (
+          "   " | (concatenate between(" ", wtvec/toString)) | "\n"
+          );
+     s1 | s2
+     )
+
 toClassic = method()
 toClassic Ideal := (I) -> (
      g := concatenate between("\n", apply(numgens I, i -> replace(///[\*\^]///,"",toString I_i)));
@@ -374,6 +386,110 @@ for e in myexamples do (
 ///
 
 TEST ///
+  restart
+  loadPackage "MGBInterface"
+  R = ZZ/101[a..d, MonomialOrder=>Eliminate 1]
+  I = ideal"a2-bc, ab-cd"
+  testRawMGB I
+  gens gb I
+  debug Core
+  time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
+  time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- Doesn't finish
+    
+  R = ZZ/101[a..d]
+  I = ideal"a2-bc, ab-cd"
+  gens gb I
+///
+
+TEST ///
+  -- A simple elimination example
+  restart
+  loadPackage "MGBInterface"
+  R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
+  I = ideal"s4-a,s3t-b,st3-c,t4-d"
+  testRawMGB I
+  gens gb I
+  debug Core
+  time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
+  time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- Doesn't finish
+    
+  R = ZZ/101[a..d]
+  I = ideal"a2-bc, ab-cd"
+  gens gb I
+///
+
+TEST ///
+  --isaac97-32003 (from bugs/mike/gbB-refactor-gb/gb-elim-examples.m2)
+  -- this is no longer slow (3-14-10)
+  restart
+  loadPackage "MGBInterface"
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => Lex]
+  J1 = ideal"
+    -2w2+9wx+8x2+9wy+9xy+6y2-7wz-3xz-7yz-6z2-4w+8x+4y+8z+2,
+    3w2-5wx+4x2-3wy+2xy+9y2-6wz-2xz+6yz+7z2+9w+7x+5y+7z+5,
+    7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
+    8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8"
+  debug Core
+  time G3 := flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, ""));  -- crashes
+
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => {1,1,1,1}]
+  J1 = sub(J1, R1)
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, ""));  -- doesn't seem to finish...
+
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => Eliminate 3]
+  J1 = sub(J1, R1)
+  debug Core
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, ""));  -- doesn't seem to finish...
+  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "F4"));  -- doesn't seem to finish...
+///
+
+TEST ///
+  -- benchmarking example, hcyclic8
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  I = (hcyclicn 8)() -- #GB: 3626
+  gbTrace = 1
+  time gb(I, Strategy=>LongPolynomial);  -- 
+  time gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);  -- 294 sec!!
+  time gb(I, Algorithm=>LinearAlgebra); -- 7.6 sec
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 87.475 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));  -- 3.1 sec
+
+  time gens forceGB(matrix{G3}) == gens forceGB(matrix{G4})
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"hcyclic8", "(hcyclicn 8)()"}});
+  -- run the following:
+  mgb gb hcyclic8 -reducer 26 -thread 1 # -log +all
+  mgb gb hcyclic8  # -log +all
+///
+
+TEST ///
+  -- benchmarking example, cyclic8
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  I = (cyclicn 8)() -- #GB: 
+  gbTrace = 1
+  time gb(I, Strategy=>LongPolynomial);  364.35 sec, #monoms=668573, #nonminGB=1175
+  time gb(I, Algorithm=>Sugarless); -- >500 sec
+  time gb(I, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- >500 sec
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 250.77 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));  -- 4.3 sec
+
+  time gens forceGB(matrix{G3}) == gens forceGB(matrix{G4})
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"cyclic8", "(cyclicn 8)()"}});
+  -- run the following:
+  mgb gb cyclic8 -reducer 26 -thread 1 # -log +all
+  mgb gb cyclic8  # -log +all
+///
+
+TEST ///
   -- benchmarking example, bayes148
   restart
   load "MGBInterface/f5ex.m2"
@@ -427,6 +543,32 @@ TEST ///
   makeExampleFiles(prefixDir, {{"hilbertkunz1", "hilbertkunz1()"}});
   -- run the following:
   mgb gb hilbertkunz1 -reducer 26 -sP 100000000 -log +all
+///
+
+TEST ///
+  -- benchmarking example, hilbertkunz2
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  I = hilbertkunz2() -- #GB: 
+  time gb I;  -- 
+  time gb(I, Algorithm=>LinearAlgebra); -- 
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "F4")); --  sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- sec
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"hilbertkunz2", "hilbertkunz2()"}});
+  -- run the following:
+  mgb gb hilbertkunz2 -reducer 26  -log # 464.007s, approx 3 GB
+  mgb gb hilbertkunz2 -reducer 26 -thre 4 -log # 265.818s
+  time mgb gb hilbertkunz2 -reducer 26 -thre 8 -log # 275.4s
+  time mgb gb hilbertkunz2 -reducer 26 -thre 1 # 432.3 sec
+  magma <hilbertkunz2.magma  # Total time: 772.629 seconds, Total memory usage: 2416.66MB
+  
+  time mgb gb hilbertkunz2 -log  # seems slow...
+  Singular <hilbertkunz2.sing # time=3786 sec, #gb=7471 #monoms=54976568
 ///
 
 TEST ///
