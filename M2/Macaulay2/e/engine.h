@@ -121,6 +121,13 @@ extern "C" {
 
   M2_arrayint moGetWeightValues(const struct MonomialOrdering *mo);
 
+  M2_arrayintOrNull rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo);
+  /* return a (flattened) matrix corresponding to the monomial ordering 'mo'.
+     If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, one further value of "0" is added.
+     The returned value represents a matrix with #vars columns, and #gradings weights, in row-major order
+     (each row is contiguous in memory), plus the one extra entry.
+     NULL is returned if 'mo' has Inverses=>true, or corresponds to a non-commutative monoid.
+  */
 
   /**************************************************/
   /**** Monoid routines *****************************/

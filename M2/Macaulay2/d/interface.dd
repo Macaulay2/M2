@@ -522,6 +522,12 @@ export rawNumberOfInvertibleVariables(e:Expr):Expr := (
      else WrongArg("a monomial ordering"));
 setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 
+export rawMonomialOrderingToMatrix(e:Expr):Expr := (
+     when e
+     is m:RawMonomialOrderingCell do
+	      toExpr(Ccode(RawArrayIntOrNull, "rawMonomialOrderingToMatrix(", m.p, ")"))
+     else WrongArg("a monomial ordering"));
+setupfun("rawMonomialOrderingToMatrix",rawMonomialOrderingToMatrix);
 -----------------------------------------------------------------------------
 -- monoids
 
