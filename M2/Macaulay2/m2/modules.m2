@@ -215,8 +215,8 @@ toExternalString Module := M -> (
 	  then "image " | toExternalString M.generators
 	  else (
 	       if all(degrees M, deg -> all(deg, zero)) 
-	       then toString ring M | "^" | numgens M
-	       else toString ring M | "^" | toExternalString (- degrees M)
+	       then "(" | toString ring M | ")^" | numgens M
+	       else "(" | toString ring M | ")^" | toExternalString (- degrees M)
 	       )
 	  )
      )
