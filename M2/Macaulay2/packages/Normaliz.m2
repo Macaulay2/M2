@@ -497,11 +497,12 @@ checkNmzExecVersion=()->
   if (nmzExecVersion=="") then (
     cmd := "! " | getNmzExec() | " 2>&1 </dev/null || true";
     result := get cmd;
-    if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | getNmzExec());
-    nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", result);
+    if not match("Normaliz ([0-9.]*)",result) then error("normaliz executable not found: " | getNmzExec());
+    nmzExecVersion = replace("(.|\n)*Normaliz ([0-9.]+)(.|\n)*", "\\2", result);
+    if not match("\\`[0-9.]+\\'$",nmzExecVersion) then error ("failed to recognize version number of program normaliz");
   );
   if (nmzExecVersion < nmzMinExecVersion) then
-    error("normaliz: Normaliz executable to old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
+    error("normaliz: Normaliz executable ("|getNmzExec()|") too old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
 )
 
 
