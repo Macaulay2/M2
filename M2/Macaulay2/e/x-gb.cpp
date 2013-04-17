@@ -1009,9 +1009,9 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
       ERROR("expected a polynomial ring");
       return 0;
     }
-  if (nthreads <= 0)
+  if (nthreads < 0)
     {
-      ERROR("mgb: expected a positive number of threads");
+      ERROR("mgb: expected a non-negative number of threads");
       return 0;
     }
   int charac = P->charac();

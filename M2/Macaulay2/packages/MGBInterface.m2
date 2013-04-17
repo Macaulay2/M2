@@ -221,7 +221,7 @@ doMGB Ideal := opts -> (J) -> (
      time readPolys(projectName, ring J)
      )
 
-MGB = method(Options => {"Reducer"=>null, "Threads"=>1, "Log"=>""})
+MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "Log"=>""})
   -- possible values for Reducer: "Classic", "F4",  (0,1)
   -- see 'mgb help logs' for format of the Logs argument.
 MGB Ideal := opts -> (I) -> (
