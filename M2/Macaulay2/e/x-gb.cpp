@@ -1041,6 +1041,14 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
                                   : mgb::GroebnerConfiguration::BaseOrder::LexicographicBaseOrder),
                                  mat);
 
+#if 0
+  // Debug information
+  printf("Setting monomial order:");
+  for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
+  printf("\n");
+  printf("  Base=%d\n", base_is_revlex);
+#endif
+
   mgb::GroebnerInputIdealStream input(configuration);
 
   std::ostringstream computedStr;
@@ -1051,7 +1059,9 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
   MatrixStream matStream(P);
   //  mgb::computeGroebnerBasis(input, checked);
   mgb::computeGroebnerBasis(input, matStream);
-  return matStream.value();
+  const Matrix* result = matStream.value();
+  //  rawDisplayMatrixStream(result);
+  return result;
 #endif
   return inputMatrix;
 }

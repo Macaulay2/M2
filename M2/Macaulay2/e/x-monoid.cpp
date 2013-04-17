@@ -81,7 +81,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
       case MO_LEX:
       case MO_LEX2:
       case MO_LEX4:
-        printf("lex %d\n", p->nvars);
+        //printf("lex %d\n", p->nvars);
         last_element = mat.size();
         for (int j=0; j<p->nvars; j++)
           {
@@ -93,7 +93,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
       case MO_GREVLEX:
       case MO_GREVLEX2:
       case MO_GREVLEX4:
-        printf("grevlex %d %ld\n", p->nvars, p->wts);
+        //printf("grevlex %d %ld\n", p->nvars, p->wts);
         write_weights(mat, nvars, firstvar, p->wts, p->nvars);
         last_element = mat.size();
         for (int j=p->nvars-1; j>=1; --j)
@@ -106,7 +106,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
       case MO_GREVLEX_WTS:
       case MO_GREVLEX2_WTS:
       case MO_GREVLEX4_WTS:
-        printf("grevlex_wts %d %ld\n", p->nvars, p->wts);
+        //printf("grevlex_wts %d %ld\n", p->nvars, p->wts);
         write_weights(mat, nvars, firstvar, p->wts, p->nvars);
         last_element = mat.size();
         for (int j=p->nvars-1; j>=1; --j)
@@ -117,7 +117,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
         firstvar += p->nvars;
         break;
       case MO_REVLEX:
-        printf("revlex %d\n", p->nvars);
+        //printf("revlex %d\n", p->nvars);
         last_element = mat.size();
         for (int j=p->nvars-1; j>=0; --j)
           {
@@ -127,7 +127,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
         firstvar += p->nvars;
         break;
       case MO_WEIGHTS:
-        printf("weights %d\n", p->nvars);
+        //printf("weights %d\n", p->nvars);
         write_weights(mat, nvars, 0, p->wts, p->nvars);
         last_element = mat.size();
         last = WEIGHTS;
