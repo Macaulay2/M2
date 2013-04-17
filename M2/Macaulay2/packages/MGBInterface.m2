@@ -221,7 +221,7 @@ doMGB Ideal := opts -> (J) -> (
      time readPolys(projectName, ring J)
      )
 
-MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "Log"=>""})
+MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
   -- possible values for Reducer: "Classic", "F4",  (0,1)
   -- see 'mgb help logs' for format of the Logs argument.
 MGB Ideal := opts -> (I) -> (
@@ -230,11 +230,13 @@ MGB Ideal := opts -> (I) -> (
                 else if opts#"Reducer" === "F4" then 1
                 else if opts#"Reducer" === "Classic" then 0
                 else error ///Expected "F4" or "Classic" as reducer type///;
+     spairGroupSize := if instance(opts#"SPairGroupSize", ZZ) then opts#"SPairGroupSize"
+                else error "expected an integer for SPairGroupSize";
      nthreads := if instance(opts#"Threads", ZZ) then opts#"Threads"
                 else error "expected an integer for number of threads to use";
      log := if instance(opts#"Log", String) then opts#"Log"
                 else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
-     rawgb := rawMGB(raw gens I, reducer, nthreads, log);
+     rawgb := rawMGB(raw gens I, reducer, spairGroupSize, nthreads, log);
      flatten entries map(ring I, rawgb)
      )
      
@@ -438,7 +440,8 @@ TEST ///
 *}
   R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
   I = ideal"s4-a,s3t-b,st3-c,t4-d"
-
+  
+  runMGB
   G2 = MGB I
   G3 = MGBF4 I
   G4 = MGBF4(I, "Log"=>"all")
@@ -594,6 +597,7 @@ SLOWER ///
   mgb gb hilbertkunz1 -reducer 26
   magma <hilbertkunz1.magma [mike rMBP; Magma V2.18-11; 4.3 sec]
   Singular <hilbertkunz1.sing [mike rMBP; Singular 3-1-5; 4.1 sec]
+*}
 ///
 
 end
@@ -799,6 +803,8 @@ TEST ///
   loadPackage "MGBInterface"
   debug Core
   I = yang1() -- #GB: 
+  time G2 = MGB I;
+  time G3 = MGBF4(I, "SPairGroupSize"=>1, "Log"=>"F4");
   time gb I;  -- 37.2 sec
   time gb(I, Algorithm=>LinearAlgebra); -- 36 sec
   time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 4.02  sec
