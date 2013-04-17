@@ -24,6 +24,8 @@ export {write,
      makeExampleFiles,
      helpMGB,
      mgbStr,
+     MGB,
+     MGBF4,
      runMGB,
      doMGB,
      testRawMGB,
@@ -37,6 +39,18 @@ write Ring  := (R) -> (
      D := apply(degrees R, first);
      s2 := concatenate(for d in D list (" "|d));
      s1 | s2 | "\n"
+     )
+
+write Ring  := (R) -> (
+     -- R should be a polynomial ring
+     debug Core;
+     (mo, tiebreak) := monomialOrderMatrix R;
+     wts := entries mo;
+     s1 := char R | " " | numgens R | " " | toString(#wts) | "\n";
+     s2 := concatenate for wtvec in wts list (
+          "   " | (concatenate between(" ", wtvec/toString)) | "\n"
+          );
+     s1 | s2
      )
 
 toClassic = method()
@@ -147,7 +161,7 @@ helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
 
 mgbStr = method(Options => options runMGB)
 mgbStr String := opts -> (projectName) -> (
-     execString := opts#"Executable" | " gb "|projectName|" ";
+     execString := "time "| opts#"Executable" | " gb "|projectName|" ";
      -- now add in the options
      for k in keys opts do (
           if mgbOptions#?k and opts#k =!= null then (
@@ -207,11 +221,31 @@ doMGB Ideal := opts -> (J) -> (
      time readPolys(projectName, ring J)
      )
 
+MGB = method(Options => {"Reducer"=>null, "Threads"=>1, "Log"=>""})
+  -- possible values for Reducer: "Classic", "F4",  (0,1)
+  -- see 'mgb help logs' for format of the Logs argument.
+MGB Ideal := opts -> (I) -> (
+     reducer := if opts#"Reducer" === null then 0
+                else if instance(opts#"Reducer", ZZ) then opts#"Reducer"
+                else if opts#"Reducer" === "F4" then 1
+                else if opts#"Reducer" === "Classic" then 0
+                else error ///Expected "F4" or "Classic" as reducer type///;
+     nthreads := if instance(opts#"Threads", ZZ) then opts#"Threads"
+                else error "expected an integer for number of threads to use";
+     log := if instance(opts#"Log", String) then opts#"Log"
+                else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
+     rawgb := rawMGB(raw gens I, reducer, nthreads, log);
+     flatten entries map(ring I, rawgb)
+     )
+     
+MGBF4 = method(Options => options MGB)
+MGBF4 Ideal := opts -> (I) -> MGB(I, opts, "Reducer"=>"F4")
+
 testRawMGB = method()
 testRawMGB Ideal := (I) -> (
      time G2 := flatten entries gens if isHomogeneous I then gb(I, Algorithm=>LinearAlgebra) else gb I;
-     time G3 := flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
-     time G4 := flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));
+     time G3 := MGB I; -- flatten entries map(ring I, rawMGB(raw gens I, 0, 1, ""));
+     time G4 := MGBF4 I; -- flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));
      assert(#G2 == #G3);
      assert(#G2 == #G4);
      lt2 := monomialIdeal(G2/leadTerm);
@@ -286,21 +320,284 @@ testMGB List := (L) -> (
           );
      )
 
-end
-
+--SLOWER = (str) -> TEST str
+SLOWER = (str) -> null
+BENCHMARK = (str) -> null
+-------------------------------------------------------------
 TEST ///
--- crerating some test files
+-- running some test files, checking results against M2
 restart
 load "MGBInterface/f5ex.m2"
 loadPackage "MGBInterface"
 myexamples = {
+     {"weispfenning94", "weispfenning94()"},
+     {"liu", "liu()"},
+     {"buchberger87", "buchberger87()"},
+     {"gerdt93","gerdt93()"},
      {"trinks", "trinks()"},
-     {"eco6", "eco6()"}
+     {"eco6", "eco6()"},
+     {"sym33","sym33()"},
+     {"hairer1","hairer1()"},
+     {"f633", "f633()"},
+     {"katsura5","katsura5()"},
+     {"katsura6","katsura6()"},
+     {"katsura7","katsura7()"},
+     {"uteshevBikker","uteshevBikker()"},
+     {"hfeSegers","hfeSegers()"},
+     {"gonnet83","gonnet83()"},
+     {"f744","f744()"},
+     {"schransTroost","schransTroost()"}
      }
-prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
-makeExampleFiles(prefixDir, myexamples)
+time testRawMGB myexamples
+time for e in myexamples do (
+     << "running: " << e#0 << endl;
+     J = value e#1;
+     MGB J
+     )
+time for e in myexamples do (
+     << "running: " << e#0 << endl;
+     J = value e#1;
+     MGBF4 J
+     )
+
+-- This next one only works currently if mgb is configured to output .gb files
+  {*
+    for e in myexamples do (
+       << "testing: " << e#0 << endl;
+       J = value e#1;
+       testMGB J
+       )
+  *}
+-- The following need the mgb executable to be installed in the 
+-- given place.
+{*
+for e in myexamples do (
+     << "running: " << e#0 << endl;
+     J = value e#1;
+     runMGB J
+     )
+for e in myexamples do (
+     << "running: " << e#0 << endl;
+     J = value e#1;
+     runMGB(J, "Reducer" => 26)
+     )
+*}
 ///
 
+TEST ///
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+  R = ZZ/101[a..d]
+  I = ideal"a2-bc,a3-b3,a4-b4-c4"
+  G2 = MGB I
+  G3 = MGBF4 I
+  G4 = MGBF4(I, "Log"=>"all")
+  assert(G3 == G4)
+
+  g1 = gens gb I
+  g2 = gens forceGB matrix{G2}
+  g3 = gens forceGB matrix{G3}
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+{*
+  -- run this if you wish to test the mgb executable
+  makeExampleFiles("first-eg", I)
+  runMGB I
+  runMGB(I, "Reducer"=>26)
+*}
+
+///
+
+TEST ///
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+  R = ZZ/101[a..d, MonomialOrder=>Eliminate 1]
+  I = ideal"a2-bc, ab-cd"
+  G2 = MGB I
+  G3 = MGBF4 I
+  G4 = MGBF4(I, "Log"=>"all")
+  assert(G3 == G4)
+
+  g1 = gens gb I
+  g2 = gens forceGB matrix{G2}
+  g3 = gens forceGB matrix{G3}
+  assert(g1 == g2)
+  assert(g1 == g3)
+///
+
+TEST ///
+  -- rational quartic example
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+  R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
+  I = ideal"s4-a,s3t-b,st3-c,t4-d"
+
+  G2 = MGB I
+  G3 = MGBF4 I
+  G4 = MGBF4(I, "Log"=>"all")
+  assert(G3 == G4)
+
+  g1 = gens gb I
+  g2 = gens forceGB matrix{G2}
+  g3 = gens forceGB matrix{G3}
+  assert(g1 == g2)
+  assert(g1 == g3)
+///
+
+
+SLOWER ///
+  -- benchmarking example, jason210
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = jason210()
+  R = ring J1
+
+  time G2 = MGB J1;  -- [mike rMBP; 17 April 2013; 2.9 sec]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013; 5.7 sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; 25.9 sec]
+  time G1a = gens gb(ideal J1_*, Algorithm=>LinearAlgebra); -- [mike rMBP; 17 April 2013; 8.0 sec]
+
+  time g1a = gens forceGB G1a;
+  assert(g1a == g1)
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+{*
+  -- To create the example file:  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"jason210", "jason210()"}});
+
+  -- run the following in the shell.
+  mgb gb jason210
+  mgb gb jason210 -reducer 26  -log +all
+  mgb gb jason210 -reducer 26 # -log +all
+*}
+///
+
+TEST ///
+  --isaac97-32003 (from bugs/mike/gbB-refactor-gb/gb-elim-examples.m2)
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => Lex]
+  J1 = ideal"
+    -2w2+9wx+8x2+9wy+9xy+6y2-7wz-3xz-7yz-6z2-4w+8x+4y+8z+2,
+    3w2-5wx+4x2-3wy+2xy+9y2-6wz-2xz+6yz+7z2+9w+7x+5y+7z+5,
+    7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
+    8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8"
+-- UNCOMMENT once Lex is working ok
+{*
+  MGBF4(J1, "Log"=>"all");  -- FAILS NOW (just doesn't finish)
+  time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;   sec]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013;   sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013;  sec]
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+*}
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => {1,1,1,1}]
+  J1 = ideal"
+    -2w2+9wx+8x2+9wy+9xy+6y2-7wz-3xz-7yz-6z2-4w+8x+4y+8z+2,
+    3w2-5wx+4x2-3wy+2xy+9y2-6wz-2xz+6yz+7z2+9w+7x+5y+7z+5,
+    7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
+    8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8"
+  time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;  .06 sec]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013;  1.8 sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; .009 sec]
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+  
+  R1 = ZZ/32003[w,x,y,z,MonomialOrder => Eliminate 3]
+  J1 = sub(J1, R1)
+
+  time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;  .0003 sec]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013;  .003 sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; .009 sec]
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+///
+
+SLOWER ///
+  --joswig-101 (from gbB-refactor-gb/gb-elim-examples.m2)
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+  R1 = ZZ/101[x4,x3,x2,x1,s,t,MonomialOrder=>Eliminate 4]
+  J1 = ideal (
+       1 + s^2  * x1 * x3 + s^8 * x2 * x3 + s^19 * x1 * x2 * x4,
+       x1 + s^8 * x1 * x2 * x3 + s^19 * x2 * x4,
+       x2 + s^10 * x3 * x4 + s^11 * x1 * x4,
+       x3 + s^4 * x1 * x2 + s^19 * x1 * x3 * x4 + s^24 * x2 * x3 * x4,
+       x4 + s^31 * x1 * x2 * x3 * x4
+       )
+  time G2 = MGB J1;  -- [mike rMBP; 16 April 2013; SLOW > 14 minutes]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013; 35 sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; 298 sec]
+
+  --time g2 = gens forceGB matrix{G2};  -- add back in once it is faster
+  time g3 = gens forceGB matrix{G3};
+  --assert(g1 == g2) -- add back in once g2 can be computed
+  assert(g1 == g3)
+///
+
+SLOWER ///
+  -- benchmarking example, hilbertkunz1
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = hilbertkunz1() -- #GB=150 #monoms=454535
+
+  time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;  4.9 sec]
+  time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013;  1.7 sec]
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; 86.4 sec]
+  time G1a = gens gb(ideal J1_*, Algorithm=>LinearAlgebra); -- [mike rMBP; 17 April 2013; 37.5 sec]
+
+  time g1a = gens forceGB G1a;
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1a == g1)
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"hilbertkunz1", "hilbertkunz1()"}});
+
+  -- run the following in the shell
+  mgb gb hilbertkunz1 -reducer 26  -log +all
+  mgb gb hilbertkunz1 -reducer 26
+  magma <hilbertkunz1.magma [mike rMBP; Magma V2.18-11; 4.3 sec]
+  Singular <hilbertkunz1.sing [mike rMBP; Singular 3-1-5; 4.1 sec]
+///
+
+end
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 TEST ///
 -- running some test files, checking results against M2
 restart
@@ -329,48 +626,106 @@ eg = (prefixDir|"/"|(myexamples#0#0))
 runMGB (prefixDir|"/"|(myexamples#0#0))
 ///
 
+
+
+
 TEST ///
--- running some test files, checking results against M2
-restart
-load "MGBInterface/f5ex.m2"
-loadPackage "MGBInterface"
-myexamples = {
-     {"weispfenning94", "weispfenning94()"},
-     {"liu", "liu()"},
-     {"buchberger87", "buchberger87()"},
-     {"gerdt93","gerdt93()"},
-     {"trinks", "trinks()"},
-     {"eco6", "eco6()"},
-     {"sym33","sym33()"},
-     {"hairer1","hairer1()"},
-     {"f633", "f633()"},
-     {"katsura5","katsura5()"},
-     {"katsura6","katsura6()"},
-     {"katsura7","katsura7()"},
-     {"uteshevBikker","uteshevBikker()"},
-     {"hfeSegers","hfeSegers()"},
-     {"gonnet83","gonnet83()"},
-     {"f744","f744()"},
-     {"schransTroost","schransTroost()"}
-     }
-testRawMGB myexamples
-for e in myexamples do (
-     << "testing: " << e#0 << endl;
-     J = value e#1;
-     testMGB J
-     )
+  -- sottile-Y^8Y2 (although the desired one is over QQ
+  R1 = QQ[x1, x2, x3, x4, x5, x6, x7, x8, x9, x10]
+  J1 = ideal(
+       -(22/3)*x2*x3+(22/3)*x1*x4+(704/9)*x2*x5-110*x4*x5-(704/9)*x1*x6+110*x3*x6-(19558/27)*x2*x7+(3520/3)*x4*x7-1650*x6*x7+(19558/27)*x1*x8-(3520/3)*x3*x8+1650*x5*x8+(530816/81)*x2*x9-(97790/9)*x4*x9+17600*x6*x9-24750*x8*x9-(530816/81)*x1*x10+(97790/9)*x3*x10-17600*x5*x10+24750*x7*x10+(387404864/729)*x1+(14345782/243)*x2-(71728910/81)*x3-(2654080/27)*x4+(13270400/9)*x5+(488950/3)*x6-2444750*x7-264000*x8+3960000*x9+371250*x10+5568750,
+       -(1/10)*x2*x3+(1/10)*x1*x4+(31/100)*x2*x5-(6/25)*x4*x5-(31/100)*x1*x6+(6/25)*x3*x6-(721/1000)*x2*x7+(93/125)*x4*x7-(72/125)*x6*x7+(721/1000)*x1*x8-(93/125)*x3*x8+(72/125)*x5*x8+(14911/10000)*x2*x9-(2163/1250)*x4*x9+(1116/625)*x6*x9-(864/625)*x8*x9-(14911/10000)*x1*x10+(2163/1250)*x3*x10-(1116/625)*x5*x10+(864/625)*x7*x10+(5386591/1000000)*x1+(289201/100000)*x2-(867603/125000)*x3-(44733/12500)*x4+(134199/15625)*x5+(12978/3125)*x6-(155736/15625)*x7-(13392/3125)*x8+(160704/15625)*x9+(10368/3125)*x10+124416/15625,
+       (1/4)*x2*x3-(1/4)*x1*x4-(1/4)*x2*x5+(15/256)*x4*x5+(1/4)*x1*x6-(15/256)*x3*x6+(49/256)*x2*x7-(15/256)*x4*x7+(225/16384)*x6*x7-(49/256)*x1*x8+(15/256)*x3*x8-(225/16384)*x5*x8-(17/128)*x2*x9+(735/16384)*x4*x9-(225/16384)*x6*x9+(3375/1048576)*x8*x9+(17/128)*x1*x10-(735/16384)*x3*x10+(225/16384)*x5*x10-(3375/1048576)*x7*x10-(931/16384)*x1-(1441/16384)*x2+(21615/1048576)*x3+(255/8192)*x4-(3825/524288)*x5-(11025/1048576)*x6+(165375/67108864)*x7+(3375/1048576)*x8-(50625/67108864)*x9-(50625/67108864)*x10-759375/4294967296,
+       -x1+(2/7)*x3-(4/49)*x5+(8/343)*x7-(16/2401)*x9-32/16807,
+       -x2+(2/7)*x4-(4/49)*x6+(8/343)*x8-(16/2401)*x10+64/117649,
+       (2/7)*x2*x3-(2/7)*x1*x4-(4/49)*x2*x5+(4/49)*x1*x6+(8/343)*x2*x7-(8/343)*x1*x8-(16/2401)*x2*x9+(16/2401)*x1*x10-(64/117649)*x1-(32/16807)*x2,
+       -x2*x3+x1*x4+(4/49)*x4*x5-(4/49)*x3*x6-(8/343)*x4*x7+(8/343)*x3*x8+(16/2401)*x4*x9-(16/2401)*x3*x10+(64/117649)*x3+(32/16807)*x4,
+       x2*x5-(2/7)*x4*x5-x1*x6+(2/7)*x3*x6+(8/343)*x6*x7-(8/343)*x5*x8-(16/2401)*x6*x9+(16/2401)*x5*x10-(64/117649)*x5-(32/16807)*x6,
+       -x2*x7+(2/7)*x4*x7-(4/49)*x6*x7+x1*x8-(2/7)*x3*x8+(4/49)*x5*x8+(16/2401)*x8*x9-(16/2401)*x7*x10+(64/117649)*x7+(32/16807)*x8,
+       x2*x9-(2/7)*x4*x9+(4/49)*x6*x9-(8/343)*x8*x9-x1*x10+(2/7)*x3*x10-(4/49)*x5*x10+(8/343)*x7*x10-(64/117649)*x9-(32/16807)*x10,
+       -(9/20)*x2*x3+(9/20)*x1*x4+(9/400)*x2*x5+(9/400)*x4*x5-(9/400)*x1*x6-(9/400)*x3*x6-(189/8000)*x2*x7-(9/8000)*x4*x7-(9/8000)*x6*x7+(189/8000)*x1*x8+(9/8000)*x3*x8+(9/8000)*x5*x8+(369/160000)*x2*x9+(189/160000)*x4*x9+(9/160000)*x6*x9+(9/160000)*x8*x9-(369/160000)*x1*x10-(189/160000)*x3*x10-(9/160000)*x5*x10-(9/160000)*x7*x10+(11529/64000000)*x1+(4149/3200000)*x2+(4149/64000000)*x3+(369/3200000)*x4+(369/64000000)*x5+(189/3200000)*x6+(189/64000000)*x7+(9/3200000)*x8+(9/64000000)*x9+(9/3200000)*x10-9/64000000,
+       -(7/90)*x2*x3+(7/90)*x1*x4-(329/8100)*x2*x5-(7/1350)*x4*x5+(329/8100)*x1*x6+(7/1350)*x3*x6-(11683/729000)*x2*x7-(329/121500)*x4*x7-(7/20250)*x6*x7+(11683/729000)*x1*x8+(329/121500)*x3*x8+(7/20250)*x5*x8-(371441/65610000)*x2*x9-(11683/10935000)*x4*x9-(329/1822500)*x6*x9-(7/303750)*x8*x9+(371441/65610000)*x1*x10+(11683/10935000)*x3*x10+(329/1822500)*x5*x10+(7/303750)*x7*x10-(323420489/531441000000)*x1+(11148907/5904900000)*x2-(11148907/88573500000)*x3+(371441/984150000)*x4-(371441/14762250000)*x5+(11683/164025000)*x6-(11683/2460375000)*x7+(329/27337500)*x8-(329/410062500)*x9+(7/4556250)*x10+7/68343750,
+       -(3/56)*x2*x3+(3/56)*x1*x4-(135/3136)*x2*x5-(27/3136)*x4*x5+(135/3136)*x1*x6+(27/3136)*x3*x6-(4563/175616)*x2*x7-(1215/175616)*x4*x7-(243/175616)*x6*x7+(4563/175616)*x1*x8+(1215/175616)*x3*x8+(243/175616)*x5*x8-(137295/9834496)*x2*x9-(41067/9834496)*x4*x9-(10935/9834496)*x6*x9-(2187/9834496)*x8*x9+(137295/9834496)*x1*x10+(41067/9834496)*x3*x10+(10935/9834496)*x5*x10+(2187/9834496)*x7*x10-(105336855/30840979456)*x1+(3878523/550731776)*x2-(34906707/30840979456)*x3+(1235655/550731776)*x4-(11120895/30840979456)*x5+(369603/550731776)*x6-(3326427/30840979456)*x7+(98415/550731776)*x8-(885735/30840979456)*x9+(19683/550731776)*x10+177147/30840979456,
+       (24/35)*x2*x3-(24/35)*x1*x4+(1776/1225)*x2*x5+(24/35)*x4*x5-(1776/1225)*x1*x6-(24/35)*x3*x6+(102024/42875)*x2*x7+(1776/1225)*x4*x7+(24/35)*x6*x7-(102024/42875)*x1*x8-(1776/1225)*x3*x8-(24/35)*x5*x8+(5374176/1500625)*x2*x9+(102024/42875)*x4*x9+(1776/1225)*x6*x9+(24/35)*x8*x9-(5374176/1500625)*x1*x10-(102024/42875)*x3*x10-(1776/1225)*x5*x10-(24/35)*x7*x10+(13597146576/1838265625)*x1-(272709624/52521875)*x2+(272709624/52521875)*x3-(5374176/1500625)*x4+(5374176/1500625)*x5-(102024/42875)*x6+(102024/42875)*x7-(1776/1225)*x8+(1776/1225)*x9-(24/35)*x10-24/35,
+       -(1/4)*x2*x3+(1/4)*x1*x4-(17/16)*x2*x5-(9/8)*x4*x5+(17/16)*x1*x6+(9/8)*x3*x6-(217/64)*x2*x7-(153/32)*x4*x7-(81/16)*x6*x7+(217/64)*x1*x8+(153/32)*x3*x8+(81/16)*x5*x8-(2465/256)*x2*x9-(1953/128)*x4*x9-(1377/64)*x6*x9-(729/32)*x8*x9+(2465/256)*x1*x10+(1953/128)*x3*x10+(1377/64)*x5*x10+(729/32)*x7*x10-(269297/4096)*x1+(26281/1024)*x2-(236529/2048)*x3+(22185/512)*x4-(199665/1024)*x5+(17577/256)*x6-(158193/512)*x7+(12393/128)*x8-(111537/256)*x9+(6561/64)*x10+59049/128  );
+  loadPackage "MGBInterface"
+  R = ZZ/32003[gens R1, MonomialOrder=>{10:1}]
+     
+  R = ZZ/32003[gens R1, MonomialOrder=>Lex]
+  R = ZZ/32003[gens R1]
+  J = sub(J1, R)
+  debug Core
+  time G3 = flatten entries map(ring J, rawMGB(raw gens J, 0, 1, ""));  -- takes > 14 minutes (16 April 2013)
+  time G4 = flatten entries map(ring J, rawMGB(raw gens J, 1, 1, "F4"));  -- 36 sec
+  
 ///
 
-///
-  restart
-  loadPackage "MGBInterface"
-  R = ZZ/101[a..d]
-  I = ideal"a2-bc,a3-b3,a4-b4-c4"
+TEST ///
+  R1 = ZZ/2003 [X_0..X_35, Degrees => {{1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, {1}, 
+	                        {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}, {2}}, 
+    MonomialOrder => {Weights=>{18:1, 18:2}, Weights=>{18:1}, RevLex=>36},
+	MonomialSize => 8]
+  J1 = ideal (-X_0*X_9-X_1*X_12+X_18,
+     -X_0*X_10-X_1*X_13+X_19,
+     -X_0*X_11-X_1*X_14+X_20,-X_3*X_9-X_4*X_12+X_21,-X_3*X_10-X_4*X_13+X_22,-X_3*X_11-X_4*X_14+X_23,-X_6*X_9-X_7*X_12+X_24,
+     -X_6*X_10-X_7*X_13+X_25,-X_6*X_11-X_7*X_14+X_26,-X_2*X_9-X_1*X_12-X_2*X_12-X_0*X_15-X_1*X_15-X_2*X_15+X_27,
+     -X_2*X_10-X_1*X_13-X_2*X_13-X_0*X_16-X_1*X_16-X_2*X_16+X_28,-X_2*X_11-X_1*X_14-X_2*X_14-X_0*X_17-X_1*X_17-X_2*X_17+X_29,
+     -X_5*X_9-X_4*X_12-X_5*X_12-X_3*X_15-X_4*X_15-X_5*X_15+X_30,-X_5*X_10-X_4*X_13-X_5*X_13-X_3*X_16-X_4*X_16-X_5*X_16+X_31,
+     -X_5*X_11-X_4*X_14-X_5*X_14-X_3*X_17-X_4*X_17-X_5*X_17+X_32,-X_8*X_9-X_7*X_12-X_8*X_12-X_6*X_15-X_7*X_15-X_8*X_15+X_33,
+     -X_8*X_10-X_7*X_13-X_8*X_13-X_6*X_16-X_7*X_16-X_8*X_16+X_34,
+     -X_8*X_11-X_7*X_14-X_8*X_14-X_6*X_17-X_7*X_17-X_8*X_17+X_35)
+
   debug Core
-  rawMGB(raw gens I, 1, 1, "F4")
-  rawMGB(raw gens I, 1, 4, "F4")
-  makeExampleFiles("first-eg", I)
-  runMGB I
+  monomialOrderMatrix R1
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, ""));  -- 
+  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "F4Detail"));  -- 
+
+///
+
+TEST ///
+  -- benchmarking example, hcyclic8
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  I = (hcyclicn 8)() -- #GB: 3626
+  gbTrace = 1
+  time gb(I, Strategy=>LongPolynomial);  -- 
+  time gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);  -- 294 sec!!
+  time gb(I, Algorithm=>LinearAlgebra); -- 7.6 sec
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 87.475 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));  -- 3.1 sec
+
+  time gens forceGB(matrix{G3}) == gens forceGB(matrix{G4})
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"hcyclic8", "(hcyclicn 8)()"}});
+  -- run the following:
+  mgb gb hcyclic8 -reducer 26 -thread 1 # -log +all
+  mgb gb hcyclic8  # -log +all
+///
+
+TEST ///
+  -- benchmarking example, cyclic8
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+  debug Core
+  I = (cyclicn 8)() -- #GB: 
+  gbTrace = 1
+  time gb(I, Strategy=>LongPolynomial);  364.35 sec, #monoms=668573, #nonminGB=1175
+  time gb(I, Algorithm=>Sugarless); -- >500 sec
+  time gb(I, Algorithm=>Sugarless, Strategy=>LongPolynomial); -- >500 sec
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 250.77 sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));  -- 4.3 sec
+
+  time gens forceGB(matrix{G3}) == gens forceGB(matrix{G4})
+  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"cyclic8", "(cyclicn 8)()"}});
+  -- run the following:
+  mgb gb cyclic8 -reducer 26 -thread 1 # -log +all
+  mgb gb cyclic8  # -log +all
 ///
 
 TEST ///
@@ -410,23 +765,31 @@ TEST ///
   mgb gb bayes148 -reducer 26 -sP 100000000 -log +all
 ///
 
+
 TEST ///
-  -- benchmarking example, hilbertkunz1
+  -- benchmarking example, hilbertkunz2
   restart
   load "MGBInterface/f5ex.m2"
   loadPackage "MGBInterface"
   debug Core
-  I = hilbertkunz1() -- #GB: 150
+  I = hilbertkunz2() -- #GB: 
   time gb I;  -- 
-  time gb(I, Algorithm=>LinearAlgebra); -- 36.2 sec, 440 MB real memory, 725 MB virtual
-  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 5.5 sec
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "F4")); -- 1.9 sec
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- 1.9 sec
+  time gb(I, Algorithm=>LinearAlgebra); -- 
+  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "F4")); --  sec
+  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, "")); -- sec
   
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
-  makeExampleFiles(prefixDir, {{"hilbertkunz1", "hilbertkunz1()"}});
+  makeExampleFiles(prefixDir, {{"hilbertkunz2", "hilbertkunz2()"}});
   -- run the following:
-  mgb gb hilbertkunz1 -reducer 26 -sP 100000000 -log +all
+  mgb gb hilbertkunz2 -reducer 26  -log # 464.007s, approx 3 GB
+  mgb gb hilbertkunz2 -reducer 26 -thre 4 -log # 265.818s
+  time mgb gb hilbertkunz2 -reducer 26 -thre 8 -log # 275.4s
+  time mgb gb hilbertkunz2 -reducer 26 -thre 1 # 432.3 sec
+  magma <hilbertkunz2.magma  # Total time: 772.629 seconds, Total memory usage: 2416.66MB
+  
+  time mgb gb hilbertkunz2 -log  # seems slow...
+  Singular <hilbertkunz2.sing # time=3786 sec, #gb=7471 #monoms=54976568
 ///
 
 TEST ///
@@ -460,8 +823,8 @@ TEST ///
   I = J1; -- #GB: 
   time gb J1;  --  sec
   time gb(J1, Algorithm=>LinearAlgebra); -- 27.0 sec
-  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0)); --   sec
-  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1)); -- 14.6 sec
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, "")); --   sec
+  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "")); -- 14.6 sec
   
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
   makeExampleFiles(prefixDir, {{"random5556", "random5556()"}});
@@ -470,25 +833,6 @@ TEST ///
   mgb gb random5556 -reducer 26 # -log +all
 ///
 
-TEST ///
-  -- benchmarking example, jason210
-  restart
-  load "MGBInterface/f5ex.m2"
-  loadPackage "MGBInterface"
-  debug Core
-  J1 = jason210()
-  R = ring J1
-  time gb J1;  -- 25 sec
-  time gb(J1, Algorithm=>LinearAlgebra); -- 8.8 sec
-  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, "")); -- 3  sec
-  time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "")); -- 6 sec
-  
-  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
-  makeExampleFiles(prefixDir, {{"jason210", "jason210()"}});
-  -- run the following:
-  mgb gb jason210 -reducer 26  -log +all
-  mgb gb jason210 -reducer 26 # -log +all
-///
 
 --franzi-siphon-naive
   -- has 131 components, same as franzi-siphon-nonnaive
@@ -511,7 +855,7 @@ TEST ///
   -- The only one of the following which finish is G3.
   time gb J1;  --  sec
   time gb(J1, Algorithm=>LinearAlgebra); --  sec
-  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0)); -- 183.6 sec, mbg version: 156 sec (28,880 GB elements)
+  time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, "")); -- 183.6 sec, mbg version: 156 sec (28,880 GB elements)
     -- note: mgb version does not actually pass over the answer.
   time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1)); --  sec
   
