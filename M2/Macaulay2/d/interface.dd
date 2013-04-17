@@ -3221,7 +3221,7 @@ export rawMGB(e:Expr):Expr := (
      when s.1 is reducer:ZZcell do if !isInt(reducer) then WrongArgSmallInteger(1) else
      when s.2 is nthreads:ZZcell do if !isInt(nthreads) then WrongArgSmallInteger(2) else
      when s.3 is logging:stringCell do
-          toExpr( Ccode( RawMatrix, "rawMGB(", M.p, 
+          toExpr( Ccode( RawMatrixOrNull, "rawMGB(", M.p, 
                     ",", toInt(reducer), 
                     ",", toInt(nthreads), 
                     ",", logging.v, 
