@@ -3,7 +3,7 @@
 
 fixtitle = method()
 fixtitle Nothing := identity
-fixtitle String := s -> replace("\"","&quot;",s)
+fixtitle String := s -> replace("\"","&quot;",s)	    -- " just in case emacs gets confused
 
 Macaulay2HomePage := () -> "http://www.math.uiuc.edu/Macaulay2/"
 
@@ -1300,7 +1300,7 @@ viewHelp = key -> (
      if key === () then {
 	  i := applicationDirectory() | "index.html";
 	  if not fileExists i then error("missing file (run makePackageIndex() or start M2 without -q): ",i);
-	  show new URL from { fix i }
+	  show new URL from { "file://" | i }		    -- formerly (for cygwin): fix i
 	  }
      else (
 	  fn := htmlFilename2(toFinalDocumentTag getPrimary makeDocumentTag key,Layout#1);

@@ -36,6 +36,9 @@ URL = http://www.math.uiuc.edu/Macaulay2/Extra
 # for gc "make check" requires far too much memory
 VLIMIT := 2500000
 MLIMIT := $(VLIMIT)
+# oddly, unless the VLIMIT is bigger than 2GB, the test subthread_create fails with this message
+# under Ubuntu 12.10:
+# Thread #164 creation failed: Resource temporarily unavailable
 
 CONFIGOPTIONS += --enable-cplusplus
 

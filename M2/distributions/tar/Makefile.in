@@ -1,13 +1,9 @@
 # @configure_input@
 include ../../include/config.Makefile
-.PHONY: src src.gz src.bz2 tarballs tarballs.gz tarballs.bz2
+.PHONY: tarballs tarballs.gz tarballs.bz2
 D=../../
-S=@package@.tar
 E=@package@-@MACHINE@.tar
 C=@package@-common.tar
-SG=$(S).gz
-SJ=$(S).bz2
-SZ=$(S).@COMPRESS@
 EG=$(E).gz
 EJ=$(E).bz2
 CG=$(C).gz
@@ -20,15 +16,12 @@ check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
 check-strip-enabled:; [ @STRIP@ = yes ]
 tarballs:: tarballs.@COMPRESS@
-src: $(D)$(SZ)
-src.gz: $(D)$(SZ)
-src.bz2: $(D)$(SJ)
 #
 J=$(D)$(CJ) $(D)$(EJ)
 G=$(D)$(CG) $(D)$(EG)
 tarballs.bz2: $(J)
 tarballs.gz: $(G)
-clean::; rm -rf $(J) $(G) $(D)$(SZ) $(D)$(SJ)
+clean::; rm -rf $(J) $(G)
 T=@TAR@ --create --owner=0 --group=0 --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=$@
 A=--transform 's,^\.,@package@,'
 B=--transform 's,^,@package@/,'
@@ -38,8 +31,6 @@ $(D)$(CJ) : always ; $(TJ) -C @pre_prefix@ $(A) .
 $(D)$(CG) : always ; $(TG) -C @pre_prefix@ $(A) .
 $(D)$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
 $(D)$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
-$(D)$(SJ) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TJ) -C @top_srcdir@ $(B) --files-from=-
-$(D)$(SG) : always ; (cd @top_srcdir@ ; svn-ls) | egrep -v '/$$' | $(TG) -C @top_srcdir@ $(B) --files-from=-
 Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean:; rm -rf Makefile
 srcfiles:; cd @top_srcdir@ ; svn-ls

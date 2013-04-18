@@ -154,9 +154,13 @@ export limitFiles(n:int):int := Ccode(returns, "
      return setrlimit(RLIMIT_NOFILE,&lim);
      ");
 export limitProcesses(n:int):int := Ccode(returns, "
-     struct rlimit lim;
-     lim.rlim_cur = lim.rlim_max = n;
-     return setrlimit(RLIMIT_NPROC,&lim);
+     #ifdef RLIMIT_NPROC
+       struct rlimit lim;
+       lim.rlim_cur = lim.rlim_max = n;
+       return setrlimit(RLIMIT_NPROC,&lim);
+     #else
+       return -1;
+     #endif
      ");
 
 -- Local Variables:

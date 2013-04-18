@@ -2,7 +2,11 @@
 #include "supervisorinterface.h"
 #include <iostream>
 #include <stdlib.h>
+#include <M2/config.h>
+#ifdef HAVE_UNISTD_H
+// "sleep" is declared here:
 #include <unistd.h>
+#endif
 
 static volatile bool finished[2000][2000];
 
