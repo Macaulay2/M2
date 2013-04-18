@@ -1,0 +1,15 @@
+-- This is test 7 from NormalToricVarieties.  It uses far too much memory.  There must be a leak. 
+-- I've disabled the test, so after fixing, re-enable.
+
+needsPackage "NormalToricVarieties"
+setRandomSeed 123456
+for i to 4 do (
+  j := random(20);
+  X := smoothFanoToricVariety(5,10*i+j);
+  assert(isSmooth X and isFano X))
+setRandomSeed 123456
+for i to 4 do (
+  j := random(200);
+  X := smoothFanoToricVariety(6,100*i+j);
+  << 100*i +j << endl;
+  assert(isSmooth X and isFano X))

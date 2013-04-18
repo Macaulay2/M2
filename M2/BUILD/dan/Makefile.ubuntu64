@@ -20,10 +20,12 @@ else
 default: arch-chk all check
 
 ifeq ($(PRODUCTION),yes)
+    SIGN = yes
     CONFIGOPTIONS += --enable-deb
     CONFIGOPTIONS += --disable-common-staging-area
     DIRECTORY = ubuntu64.production
 else
+    SIGN = no
     INSTALLOPTIONS += prefix=$(HOME)/local/encap
 endif
 

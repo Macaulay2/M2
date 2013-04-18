@@ -547,7 +547,6 @@ adjoinMin (Poset,Thing) := Poset => (P, a) -> (
 adjoinMin Poset := Poset => P -> adjoinMin(P, -1 + min prepend(1, select(P.GroundSet, x -> class x === ZZ)))
 
 areIsomorphic = method()
-areIsomorphic (Poset, List, Poset, List) := Boolean => (P, mu, Q, nu) -> isomorphism(P, mu, Q, nu) =!= null
 areIsomorphic (Poset, Poset) := Boolean => (P, Q) -> isomorphism(P, Q) =!= null
 Poset == Poset := areIsomorphic
 
@@ -575,79 +574,43 @@ dropElements (Poset, List) := Poset => (P, L) -> (
 dropElements (Poset, Function) := Poset => (P, f) -> dropElements(P, select(P.GroundSet, p -> f p))
 Poset - List := dropElements
 
--- Ported from Stembridge's Maple Package
+-- Inspired by Stembridge's Maple Package
 isomorphism = method()
-isomorphism (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
-    -- Test for a quick bail-out.
-    if #coveringRelations P != #coveringRelations Q or #mu != #nu or any(#mu, i -> #mu#i != #nu#i) then return null;
-    -- This relabels P, Q, mu, and nu so that the labels are guaranteed to be sensible.
-    idxP := hashTable apply(#P.GroundSet, i -> P.GroundSet_i => i);
-    P' := indexLabeling P;
-    mu' := (S -> apply(S, p -> idxP#p)) \ mu;
-    idxQ := hashTable apply(#Q.GroundSet, i -> Q.GroundSet_i => i);
-    Q' := indexLabeling Q;
-    nu' := (S -> apply(S, q -> idxQ#q)) \ nu;
-    isom := isomorphism'(P', mu', Q', nu');
-    -- This converts the isomorphism (if extant) back to P & Q labels.
-    if isom === null then null else applyValues(applyKeys(isom, k -> P_k), v -> Q_v)
-    )
-isomorphism (Poset, Poset) := HashTable => (P, Q) -> isomorphism(P, {P.GroundSet}, Q, {Q.GroundSet})
-
--- Workhorse of the method isomorphism.
--- Assumes P & Q are labeled sensibly (with integers).
--- non-exported
-isomorphism' = method()
-isomorphism' (Poset, List, Poset, List) := HashTable => (P, mu, Q, nu) -> (
-    -- 0. Check for non-partitions.
-    mu' := flatten mu;
-    if #mu' != #P.GroundSet and isSubset(mu', P.GroundSet) then error "The list mu is not a partition of the ground set of P.";
-    nu' := flatten nu;
-    if #nu' != #Q.GroundSet and isSubset(nu', Q.GroundSet) then error "The list nu is not a partition of the ground set of Q.";
-    -- 1. Do the graphs have incompatible vertex partitions or number of coveringRelations?
-    if #coveringRelations P != #coveringRelations Q or #mu != #nu or any(#mu, i -> #mu#i != #nu#i) then return null;
-    -- 2. Is there a lucky isomorphism?
-    isom' := hashTable apply(mu', nu', (i, j) -> i => j);
-    if isSubset(apply(coveringRelations P, r -> {isom'#(first r), isom'#(last r)}), coveringRelations Q) then return isom';
-    -- 3. Partition the vertices of P and Q based on the number of in and out edges.
-    cvrSep := (P, mu, q) -> (
-        cp := partition(first, coveringRelations P);
-        cvrby := apply(P.GroundSet, g -> if cp#?g then last \ cp#g else {});
-        cp = partition(last, coveringRelations P);
-        cvr := apply(P.GroundSet, g -> if cp#?g then first \ cp#g else {});
-        mugrp := hashTable flatten apply(#mu, i -> apply(mu_i, p -> p => i));
-        partition(first, apply(#P.GroundSet, i -> {sum(cvrby_i, j -> q^(-mugrp#j-1)) + sum(cvr_i, j -> q^(mugrp#j+1)), P.GroundSet_i}))
+isomorphism (Poset, Poset) := HashTable => (P, Q) -> (
+    -- Test for a quick bail-out (also puts the covering relations in the cache).
+    if #P_* != #Q_* or #coveringRelations P != #coveringRelations Q then return null;
+    -- Partition the vertices based on (#leq, #geq, #covering, #coveredBy).
+    vertexPartition := P -> (
+        leq := sum \ entries transpose P.RelationMatrix;
+        geq := sum \ entries P.RelationMatrix;
+        cr := transpose P.cache.coveringRelations;
+        if #cr == 0 then cr = {{}};
+        covering := tally last cr;
+        coveredBy := tally first cr;
+        partition(i -> {leq_i, geq_i, if covering#?i then covering#i else 0, if coveredBy#?i then coveredBy#i else 0}, 0..<#P_*)
         );
-    q := local q;
-    R := ZZ(monoid[q, Inverses => true, MonomialOrder => Lex]);
-    sepP := cvrSep(P, sort \ mu, R_0);
-    sepQ := cvrSep(Q, sort \ nu, R_0);
-    -- 4. Was the repartition non-trivial?  If so, recurse.
-    kP := sort keys sepP;
-    if kP =!= sort keys sepQ or any(keys sepP, k -> #sepP#k != #sepQ#k) then return null;
-    mu' = apply(kP, k -> last \ sepP#k);
-    nu' = apply(kP, k -> last \ sepQ#k);
-    if #mu' > #mu then return isomorphism'(P, mu', Q, nu');
-    -- 4a. Restrict P and Q to non-singleton sets.
-    pp := partition(a -> #a == 1, mu');
-    sisom := hashTable if pp#?true then (
-        P = dropElements(P, flatten pp#true);
-        mu' = pp#false;
-        pq := partition(a -> #a == 1, nu');
-        Q = dropElements(Q, flatten pq#true);
-        nu' = pq#false;
-        apply(flatten pp#true, flatten pq#true, (i, j) -> i => j)
-        ) else {};
-    -- 5. Break the smallest part of mu into a singleton and the rest.
-    --    Check this against doing the same thing to nu in all possible ways.
-    m := min apply(mu', a -> #a);
-    j := position(mu', a -> #a == m);
-    pick := (i, j, mu) -> join(take(mu, j), {{mu_j_i}, drop(mu_j, {i,i})}, take(mu, j+1-#mu));
-    mu' = pick(0, j, mu');
-    for i from 0 to m-1 do (
-        isom' = isomorphism'(P, mu', Q, pick(i, j, nu'));
-        if isom' =!= null then return merge(sisom, isom', (a,b) -> error "Something broke: please contact the package maintainers with the input parameters you used.");
+    vpP := vertexPartition P;
+    vpQ := vertexPartition Q;
+    -- Check for compatible vertex partitions.
+    if sort keys vpP != sort keys vpQ or any(keys vpP, k -> #vpP#k != #vpQ#k) then return null;
+    -- This method attempts to find an isomorphism by considering permutations of each part, one at a time.
+    buildIsoCand := (vpK, isoCand) -> (
+        -- If vpK is empty, then we've found an isomorphism!
+        if #vpK == 0 then return isoCand;
+        for p in permutations vpK_0_0 do (
+            isoCand' := merge(isoCand, new HashTable from apply(vpK_0_0, i -> (vpP#(vpK_0_1))#i => (vpQ#(vpK_0_1))#(p#i)), join);
+            -- Check that the restricted covering relations of P are covering relations of Q.
+            restrictedCRP := select(P.cache.coveringRelations, c -> member(first c, keys isoCand') and member(last c, keys isoCand'));
+            isomorph := if isSubset(apply(restrictedCRP, c -> {isoCand'#(first c), isoCand'#(last c)}), Q.cache.coveringRelations) then buildIsoCand(drop(vpK, 1), isoCand');
+            -- If we found one, then return it.
+            if isomorph =!= null then return isomorph;
+            );
         );
-    null
+    -- Isolated vertices (key {1,1,0,0}) can be mapped to each other in any order.
+    isoCand := new HashTable from apply(if vpP#?{1,1,0,0} then #vpP#{1,1,0,0} else 0, i -> (vpP#{1,1,0,0})_i => (vpQ#{1,1,0,0})_i);
+    iso := buildIsoCand(sort apply(keys vpP - set {{1,1,0,0}}, k -> {#vpP#k, k}), isoCand);
+    -- If iso is non-null, then it is an isomorphism on the indices.  Make it an isomorphism on the vertices.
+    if iso =!= null then new HashTable from apply(keys iso, k -> P_k => Q_(iso#k))
     )
 
 -- The product method is defined in the Core.
@@ -2875,14 +2838,12 @@ doc ///
 doc ///
     Key
         areIsomorphic
-        (areIsomorphic,Poset,List,Poset,List)
         (areIsomorphic,Poset,Poset)
         (symbol ==,Poset,Poset)
     Headline
         determines if two posets are isomorphic
     Usage
         r = areIsomorphic(P, Q)
-        r = areIsomorphic(P, mu, Q, nu)
         r = P == Q
     Inputs
         P:Poset
@@ -2899,9 +2860,6 @@ doc ///
             Two posets are isomorphic if there is a partial order
             preserving bijection between the ground sets of the posets
             which preserves the specified ground set partitions.
-
-            If $mu$ and $nu$ are not specified, then the trivial partitions
-            (the entire ground set in a single part) are used.
         Example
             C = chain 5;
             P = poset {{a,b},{b,c},{c,d},{d,e}};
@@ -2911,14 +2869,10 @@ doc ///
             the boolean lattice on $n$ elements.  These are also
             isomorphic to the divisor lattice on the product of $n$ distinct primes.
         Example
-            B = booleanLattice 5;
-            B == product(5, i -> chain 2)
-            B == divisorPoset (2*3*5*7*11)
-            B == divisorPoset (2^2*3*5*7)
-        Text
-            This method uses the method @TO "isomorphism"@, which was ported
-            from John Stembridge's Maple package available at
-            @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.
+            B = booleanLattice 4;
+            B == product(4, i -> chain 2)
+            B == divisorPoset (2*3*5*7)
+            B == divisorPoset (2^2*3*5)
     SeeAlso
         isomorphism
         removeIsomorphicPosets
@@ -3027,19 +2981,13 @@ doc ///
     Key
         isomorphism
         (isomorphism,Poset,Poset)
-        (isomorphism,Poset,List,Poset,List)
     Headline
         computes an isomorphism between isomorphic posets
     Usage
         pi' = isomorphism(P, Q)
-        pi' = isomorphism(P, mu, Q, nu)
     Inputs
         P:Poset
-        mu:List
-            a partition of the ground set of $P$ into classes
         Q:Poset
-        nu:List
-            a partition of the ground set of $Q$ into classes
     Outputs
         pi':HashTable
             which specifies a partial order preserving bijection
@@ -3049,13 +2997,10 @@ doc ///
             Two posets are isomorphic if there is a partial order
             preserving bijection between the ground sets of the posets
             which preserves the specified ground set partitions.
-
-            If $mu$ and $nu$ are not specified, then the trivial partitions
-            (the entire ground set in a single part) are used.
         Example
             isomorphism(divisorPoset (2*3*5), booleanLattice 3)
         Text
-            This method was ported from John Stembridge's Maple package available at
+            This method was inspired by John Stembridge's Maple package available at
             @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.
     SeeAlso
         areIsomorphic
@@ -3092,10 +3037,8 @@ doc ///
             the boolean lattice on $n$ elements.  These are also
             isomorphic to the divisor lattice on the product of $n$ distinct primes.
         Example
-            B = booleanLattice 5;
-            B == product(5, i -> chain 2)
-            B == divisorPoset (2*3*5*7*11)
-            B == divisorPoset (2^2*3*5*7)
+            B = booleanLattice 4;
+            B == product(4, i -> chain 2)
     SeeAlso
         diamondProduct
 ///
@@ -3123,11 +3066,9 @@ doc ///
         Example
             L = {chain 4, divisorPoset (2^3), booleanLattice 3, booleanLattice 2, product(3, i -> chain 2)};
             removeIsomorphicPosets L
-        Text
-            This method uses the method @TO "isomorphism"@, which was ported
-            from John Stembridge's Maple package available at
-            @HREF "http://www.math.lsa.umich.edu/~jrs/maple.html#posets"@.
     SeeAlso
+        areIsomorphic
+        isomorphism
         Posets
 ///
 

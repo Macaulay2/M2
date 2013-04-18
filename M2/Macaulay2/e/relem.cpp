@@ -20,8 +20,8 @@ int RingElement::n_terms(int nvars) const
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0)
     {
-      ERROR("expected polynomial ring");
-      return 0;
+      if (is_zero()) return 0;
+      return 1;
     }
   return P->n_logical_terms(nvars,val);
 }

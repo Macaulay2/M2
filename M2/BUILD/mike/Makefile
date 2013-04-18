@@ -45,6 +45,69 @@ opt64-givaro : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+opt64-mathic : always
+	mkdir -p opt64-mathic
+	cd opt64-mathic; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
+		--build=x86_64-apple-darwin \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+debug64-mathic : always
+	mkdir -p debug64-mathic
+	cd debug64-mathic; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
+		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+
+linux-opt64-mathic : always
+	mkdir -p opt64-mathic
+	cd opt64-mathic; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
+		--disable-frobby \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+linux-debug64-mathic : always
+	mkdir -p debug64-mathic
+	cd debug64-mathic; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		CPPFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib -ltbb" \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--disable-frobby \
+		--enable-debug \
+		--disable-optimize \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 opt64-linbox : always
 	mkdir -p opt64-linbox
 	cd opt64-linbox; ../../../configure \

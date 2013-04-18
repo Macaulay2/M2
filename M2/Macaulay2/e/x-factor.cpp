@@ -13,6 +13,7 @@ using std::endl;
 #define Matrix MaTrIx
 #include <factor.h>             // from Messollen's libfac
 #undef Matrix
+#undef ASSERT
 #include <NTL/ZZ.h>
 
 #include "matrix.hpp"
@@ -147,9 +148,9 @@ static __mpz_struct toInteger(CanonicalForm h) {
        int RationalMode = isOn(SW_RATIONAL) ? (Off(SW_RATIONAL), 1) : 0;
        if (h < 0) { sign = -1; h = -h; } else sign = 1;
        while ( h != 0 ) {
-            CanonicalForm k = h % base;
+            CanonicalForm k = h % (int)base;
             v.append(k.intval());
-            h = h/base;
+            h = h/(int)base;
        }
        if (RationalMode) On(SW_RATIONAL);
      }

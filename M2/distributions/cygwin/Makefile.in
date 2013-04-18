@@ -30,13 +30,11 @@ announce:
 	@ echo "============================================================================="
 Macaulay2-files: \
 	     server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION).tar.bz2 \
-	     server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2/setup.hint
 clean::; rm -f server/Macaulay2/*.tar.bz2
 clean::; rm -f server/Macaulay2/setup.hint
 Macaulay2-icon-files: \
 	     server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION).tar.bz2 \
-	     server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION)-src.tar.bz2 \
 	     server/Macaulay2-icons/setup.hint
 server/Macaulay2-icons/setup.hint: @srcdir@/server/Macaulay2-icons/setup.hint.in
 	cd ../..; ./config.status distributions/cygwin/server/Macaulay2-icons/setup.hint
@@ -69,7 +67,6 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 
 server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION).tar.bz2 : .prepared
 	(cd files && @FAKEROOT@ @TAR@ cjf - *) >$@
-server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION)-src.tar.bz2 \
 server/Macaulay2-icons/Macaulay2-icons-$(ICONS_VERSION)-$(ICONS_DISTRIBUTION).tar.bz2 : \
 		@srcdir@/Macaulay2-icons \
 		@srcdir@/Macaulay2-icons/* \
@@ -94,7 +91,7 @@ packages-used: libraries-used
 	cat $< \
 	| ( while read x ; do cygcheck -f $$x ; done ; echo xorg-server ; echo cygutils ; echo emacs-X11 ; echo xinit ) \
 	| sort | uniq \
-	| sed 's/\([a-zA-Z0-9]*\)-\([0-9.]*\)-.*/\1 \2/' \
+	| sed 's/\([a-zA-Z0-9]*\)-\([0-9._]*\)-.*/\1 \2/' \
 	| tee $@
 clean::; rm -f packages-used
 
@@ -106,10 +103,6 @@ setup.hint: setup.hint-base packages-used
 	  echo ) | tee $@
 
 server/Macaulay2/setup.hint : setup.hint server/Macaulay2 ; cp $< $@
-server/Macaulay2/Macaulay2-@PACKAGE_VERSION@-$(DISTRIBUTION)-src.tar.bz2 : ../../Macaulay2-@PACKAGE_VERSION@.tar.bz2
-	cp $< $@
-../../Macaulay2-@PACKAGE_VERSION@.tar.bz2: always
-	$(MAKE) -C ../tar src.bz2
 
 upload:; rsync --verbose --compress --archive --rsh='ssh -x -a' server/. u00:to/Macaulay2/Repositories/cygwin-test
 

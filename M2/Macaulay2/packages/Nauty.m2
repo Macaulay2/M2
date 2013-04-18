@@ -1,7 +1,7 @@
 -------------------
 -- Package Header
 -------------------
--- Copyright 2010, 2011 David W. Cook II
+-- Copyright 2010, 2011, 2013 David W. Cook II
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
@@ -12,8 +12,8 @@ if version#"VERSION" <= "1.4" then needsPackage "EdgeIdeals"
 
 newPackage select((
     "Nauty",
-    Version => "1.4.3",
-    Date => "23. August 2011",
+    Version => "1.4.3.1",
+    Date => "01. March 2013",
     Authors => {{Name => "David Cook II",
                  Email => "dcook8@nd.edu",
                  HomePage => "http://www.nd.edu/~dcook8"}},
@@ -192,9 +192,13 @@ filterGraphs (List, List) := List => (L, fl) -> filterGraphs(L, buildGraphFilter
 generateBipartiteGraphs = method(Options => {OnlyConnected => false, Class2DistinctNeighborhoods => false, Class2Degree2 => false, Class2MaxCommonNeighbors => null, MaxDegree => null, MinDegree => null})
 generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
     if n < 1 then error("generateBipartiteGraphs: nauty does not like graphs with non-positive numbers of vertices.");
-    if m == 0 then return generateBipartiteGraphs(n, n, le, ue, opts);
     if m < 0 then error("generateBipartiteGraphs: The first class cannot have a negative number of vertices.");
     if m > n then error("generateBipartiteGraphs: The first class has too many vertices.");
+    if m == 0 then (
+        if n == 1 then return {"@"};
+        if opts.OnlyConnected then return {};
+        m = n;
+        );
     if le > ue or le > m*(n-m) or ue < 0 then return {};
 
     cmdStr := "genbg -q" | 
@@ -210,7 +214,7 @@ generateBipartiteGraphs (ZZ, ZZ, ZZ, ZZ) := List => opts -> (n, m, le, ue) -> (
 )
 generateBipartiteGraphs (ZZ, ZZ, ZZ) := List => opts -> (n, m, e) -> generateBipartiteGraphs(n, m, e, e, opts)
 generateBipartiteGraphs (ZZ, ZZ) := List => opts -> (n, m) -> generateBipartiteGraphs(n, m, 0, m * (n-m), opts)
-generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(toList (1..n), i -> generateBipartiteGraphs(n, i, opts))
+generateBipartiteGraphs ZZ := List => opts -> n -> unique flatten apply(n, i -> generateBipartiteGraphs(n, i, opts))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ, ZZ) := List => opts -> (R, m, le, ue) -> apply(generateBipartiteGraphs(#gens R, m, le, ue, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ, ZZ) := List => opts -> (R, m, e) -> apply(generateBipartiteGraphs(#gens R, m, e, opts), g -> stringToGraph(g, R))
 generateBipartiteGraphs (PolynomialRing, ZZ) := List => opts -> (R, m) -> apply(generateBipartiteGraphs(#gens R, m, opts), g -> stringToGraph(g, R))
@@ -1844,6 +1848,7 @@ TEST ///
     -- All bipartite graphs in R with Class1 of size 3 and 1-2 edges.
     assert(#generateBipartiteGraphs(6, 3, 1, 2) == 4);
     assert(apply(toList(1..8), n -> #removeIsomorphs generateBipartiteGraphs n) == {1, 2, 3, 7, 13, 35, 88, 303}); --A033995
+    assert(apply(toList(1..8), n -> #removeIsomorphs generateBipartiteGraphs(n, OnlyConnected => true)) == {1, 1, 1, 3, 5, 17, 44, 182}); --A005142
 ///
 
 -- generateGraphs

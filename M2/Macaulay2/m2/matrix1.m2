@@ -315,9 +315,12 @@ flatten Matrix := Matrix => m -> (
 flip = method()
 flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
-align := f -> (
-     if isHomogeneous f and any(degree f, i -> i =!= 0) then map(target f,,f) else f
-     )
+align := g -> (
+     -- generator and relation maps can just as well have a nonzero degree
+     -- this function zeroes the degree, preserving homogeneity
+     deg := degree g;
+     if all (deg, zero) then g
+     else map(target g, source g ** (ring g)^{ -deg }, g, Degree => apply(#deg, x->0)))
 
 subquotient = method(TypicalValue => Module)
 subquotient(Nothing,Matrix) := (null,relns) -> (
@@ -580,6 +583,7 @@ ideal Matrix := Ideal => (f) -> (
      if not isFreeModule target f or not isFreeModule source f 
      then error "expected map between free modules";
      f = flatten f;			  -- in case there is more than one row
+     f = align f;			  -- in case degree f is nonzero
      if target f != R^1 then (
      	  f = map(R^1,,f);
 	  )

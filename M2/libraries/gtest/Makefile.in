@@ -2,6 +2,7 @@
 URL = http://macaulay2.com/Extra
 MLIMIT = 1400000
 VLIMIT = 1400000
+TLIMIT = 400
 VERSION = 1.6.0
 INSTALLCMD = rm -f $(BUILTLIBPATH)/gtest && ln -s ../gtest/$(BUILDDIR) $(BUILTLIBPATH)/gtest
 include ../Makefile.library

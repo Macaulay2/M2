@@ -23,6 +23,7 @@ class PolyRing : public PolyRingFlat
   friend class FreeModule;
   friend class ChineseRemainder;
 
+  friend class MatrixStream;  // for new_term()
   void initialize_poly_ring(const Ring *K, const Monoid *M,
                             const PolynomialRing *deg_ring);
   // Only to be called from initialize_poly_ring and make_trivial_ZZ_poly_ring

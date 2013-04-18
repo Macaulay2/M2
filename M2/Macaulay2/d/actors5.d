@@ -4,11 +4,6 @@ use actors2;
 
 header "#include \"../e/engine.h\"";
 
-header "extern char startupString[];";
-export startupString := tostring(Ccode(constcharstar,"startupString"));
-header "extern char startupFile[];";
-export startupFile := tostring(Ccode(constcharstar,"startupFile"));
-
 getParsing(e:Expr):Expr := (
      when e
      is s:SymbolClosure
@@ -553,7 +548,6 @@ endlfun(e:Expr):Expr := (
      );
 setupfun("endl",endlfun).Protected = false;
 setupconst("newline", toExpr(newline));
-setupconst("startupString", toExpr(startupString));
 
 remove(x:Sequence,i:int):Sequence := (
      n := length(x);

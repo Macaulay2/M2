@@ -52,7 +52,7 @@ document {
 	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
-	Usage => "setDefault(p1=>v1, p2=>v2, ...)\nv = getDefault p",
+	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
 	Inputs => { {TT "p, p1, p2", ", ", TO "Symbol", "(s), the name(s) of parameter(s)"},
 	     	  Attempts => {" (meaning Attempts = ", toString DEFAULT.Attempts, "). The maximal number of attempts (e.g., to make a random regular homotopy)."},
 		  SingularConditionNumber => {" (meaning SingularConditionNumber = ", toString DEFAULT.SingularConditionNumber, "). Matrix is considered to be singular 
@@ -590,7 +590,7 @@ document {
 	EXAMPLE lines ///
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
 setRandomSeed 7
 V = numericalVariety I 
 peek V

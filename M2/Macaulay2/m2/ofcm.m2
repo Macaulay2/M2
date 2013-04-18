@@ -572,6 +572,22 @@ promote(MonoidElement, RingElement) := RingElement => (m,R) -> (
      if not instance(m,M) then error "expected monomial from same ring";
      new R from rawTerm(R.RawRing, raw 1_k, m.RawMonomial))
 
+
+----------------------------
+-- monomial order code -----
+-- this should go in its own file...
+monomialOrderMatrix = method()
+monomialOrderMatrix RawMonomialOrdering := (mo) -> (
+     nvars := rawNumberOfVariables mo;
+     mat := rawMonomialOrderingToMatrix mo;
+     -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
+     -- there may be no other elements of mat, so the next line needs to handle that case.
+     ordermat := if #mat === 1 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-1),nvars);
+     (ordermat, if last mat == 0 then Lex else RevLex)
+     )
+monomialOrderMatrix Monoid := (M) -> monomialOrderMatrix M.RawMonomialOrdering
+monomialOrderMatrix Ring := (R) -> monomialOrderMatrix monoid R
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

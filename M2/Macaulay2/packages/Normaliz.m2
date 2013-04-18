@@ -2,7 +2,7 @@
 
 {*
 Copyright 2009, 2010 Winfried Bruns and Gesa Kaempf.
-Copyright 2011 Christof Soeger
+Copyright 2011, 2012 Christof Soeger
 
 You may redistribute this file under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 2 of
@@ -11,11 +11,11 @@ the License, or any later version.
 
 newPackage(
            "Normaliz",
-           Version=>"2.2",
-           Date=>"Mai 18, 2011",
+           Version=>"2.3",
+           Date=>"June 30, 2012",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
-					{Name=> "Christof Soeger",
+                    {Name=> "Christof Soeger",
                     Email=>"csoeger@uni-osnabrueck.de"}},
            Headline=>"a package to use Normaliz in Macaulay 2",
            DebuggingMode => false,
@@ -26,19 +26,20 @@ newPackage(
 		"acceptance date" => "2010-08-08",
 		"published article URI" => "http://www.j-sag.org/Volume2/jsag-4-2010.pdf",
 		"published code URI" => "http://www.j-sag.org/Volume2/Normaliz.m2",
-     	        "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Normaliz.m2",
+		"repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/Normaliz.m2",
 		"release at publication" => 11859,	    -- as an integer
 		"version at publication" => "2.0",
 		"volume number" => "2",
 		"volume URI" => "http://www.j-sag.org/volume2.html"
 		}
-           )
+)
 
 export{rmNmzFiles,
        writeNmzData, readNmzData, readMultipleNmzData,
        normaliz, setNmzOption, showNmzOptions,
        normalToricRing, intclToricRing, ehrhartRing, intclMonIdeal,
-       torusInvariants, finiteDiagInvariants, diagInvariants, RationalCone, allComputations,
+       torusInvariants, finiteDiagInvariants, diagInvariants, RationalCone,
+       allComputations, grading,
        intersectionValRings, intersectionValRingIdeals,
        MonomialSubalgebra,  createMonomialSubalgebra,
        getNumInvs
@@ -103,8 +104,8 @@ nmzNumberThreads=1;
 nmzUserCalled=true;  -- whether the user calls a method
 nmzFile="";
 nmzVersion="";     -- normaliz
-nmzExecVersion=""; -- needs to be nmzRequiredExecVersion
-nmzRequiredExecVersion="2.7"; -- required normaliz version
+nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
+nmzMinExecVersion="2.8"; -- minimal normaliz version
 nmzGen=true;      -- indicates whether ".gen" is generated
 -- component 1 is name of option
 -- 2 is default value
@@ -114,15 +115,13 @@ nmzGen=true;      -- indicates whether ".gen" is generated
 
 nmzOptions= new MutableList from {
             new MutableList from {"supp",false,"-s",false},
-            new MutableList from {"triang",false,"-v",false},
-            new MutableList from {"volume",false,"-V",false},
+            new MutableList from {"triang",false,"-tT",false},
+            new MutableList from {"volume",false,"-v",false},
             new MutableList from {"hvect",false,"-p",false},
-            new MutableList from {"hvect_l",false,"-P",false},
             new MutableList from {"height1",false,"-1",false},
             new MutableList from {"normal",false,"-n",true},
             new MutableList from {"normal_l",false,"-N",true},
             new MutableList from {"hilb",false,"-h",true},
-            new MutableList from {"hilb_l",false,"-H",true},
             new MutableList from {"dual",false,"-d",true},
             new MutableList from {"control",false,"-c",2},
             new MutableList from {"allf",false,"-a",2},
@@ -278,9 +277,12 @@ doWriteNmzData(List):=(matrices)->
         );
         outf << s << endl;
      );
-    outf << nmzMode << endl
-   );
-   outf  << close;
+     if (nmzMode==20) then
+        outf << "grading" << endl
+     else
+        outf << nmzMode << endl;
+  );
+  outf  << close;
 );
 
 -- writes the given data in a normaliz input file
@@ -317,17 +319,18 @@ readNmzData(String):=(nmzSuffix)->
         error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
     );
 
+    if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
     inf:=get(nmzFile|"."|nmzSuffix);
     s:=lines(inf);
     nmzGen:={};
-    i:=2;
+    numRows:=value s#0;
+    numCols:=value s#1;
     t:="";
-    while(i<#s)
+    for i from 2 to numRows+1
     do(
        t = select("[0-9-]+",s#i);
        gen:=apply(t,value);
        nmzGen=append(nmzGen,gen);
-       i=i+1;
     );
     if(nmzGen!={})
     then  return(matrix(nmzGen))
@@ -339,7 +342,7 @@ readNmzData(String):=(nmzSuffix)->
 readMultipleNmzData=method()
 readMultipleNmzData String:=nmzSuffix->
 (
-     if(nmzFilename=="" and nmzUserCalled) then error("readNmzData: no filename specified");
+     if(nmzFilename=="" and nmzUserCalled) then error("readMultipleNmzData: no filename specified");
 
     if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
 
@@ -347,6 +350,8 @@ readMultipleNmzData String:=nmzSuffix->
     then(
         error("readMultipleNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
     );
+
+    if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
 
     inf:=get(nmzFile|"."|nmzSuffix);
     s:=lines(inf);
@@ -357,27 +362,26 @@ readMultipleNmzData String:=nmzSuffix->
 
     while(b<#s)
     do(
-    nmzGen:={};
-    numRows:=value s#b;
-    numCols:=value s#(b+1);
-    if(numRows==0)
-    then L=append(L,matrix(for j from 0 to numCols-1 list {}))
-    else(
-    for i from b+2 to b+1+numRows
-    do(
-       t = select("[0-9-]+",s#i);
-       gen:=apply(t,value);
-       nmzGen=append(nmzGen,gen);
+      nmzGen:={};
+      numRows:=value s#b;
+      numCols:=value s#(b+1);
+      if(numRows==0)
+        then L=append(L,matrix(for j from 0 to numCols-1 list {}))
+      else(
+        for i from b+2 to b+1+numRows
+        do(
+          t = select("[0-9-]+",s#i);
+          gen:=apply(t,value);
+          nmzGen=append(nmzGen,gen);
+        );
+        -- function matrix expects nonempty list
+        if(nmzGen!={})
+        then  L=append(L,matrix(nmzGen));
+        --else  L=append(L,{{}});  -- better {{},{},...,{}};
+      );
+      b=b+numRows+3;
     );
-
-    -- function matrix expects nonempty list
-    if(nmzGen!={})
-    then  L=append(L,matrix(nmzGen));
-    --else  L=append(L,{{}});  -- better {{},{},...,{}};
-    );
-    b=b+numRows+3;
-   );
-   return L;
+    return L;
 );
 
 -------------------------------------------------------------
@@ -399,6 +403,7 @@ getNumInvs=()->
     if(not fileExists(nmzFile|".inv"))
     then error("getNumInvs: No file "|nmzFile|".inv"|" found.");
 
+    if debugLevel > 0 then << "--reading " << nmzFile << ".inv" << endl;
     inf:=get(nmzFile|".inv");
     s:=lines(inf);
 
@@ -492,38 +497,36 @@ checkNmzExecVersion=()->
   if (nmzExecVersion=="") then (
     cmd := "! " | getNmzExec() | " 2>&1 </dev/null || true";
     result := get cmd;
-    if not match("^Normaliz ([0-9.]*)\n",result) then error("normaliz executable not found: " | getNmzExec());
-    nmzExecVersion = replace("^Normaliz ([0-9.]*)(.|\n)*", "\\1", result);
+    if not match("Normaliz ([0-9.]*)",result) then error("normaliz executable not found: " | getNmzExec());
+    nmzExecVersion = replace("(.|\n)*Normaliz ([0-9.]+)(.|\n)*", "\\2", result);
+    if not match("\\`[0-9.]+\\'$",nmzExecVersion) then error ("failed to recognize version number of program normaliz");
   );
-  if (nmzExecVersion =!= nmzRequiredExecVersion) then
-    error("Normaliz: 'normaliz' executable is version " | nmzExecVersion | ", but version " | nmzRequiredExecVersion | " is needed");
+  if (nmzExecVersion < nmzMinExecVersion) then
+    error("normaliz: Normaliz executable ("|getNmzExec()|") too old (" | nmzExecVersion | "), at least version " | nmzMinExecVersion | " needed!");
 )
 
 
 normaliz=method(Options=>true)
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 normaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
 (
-  return runNormaliz(allComputations=>o.allComputations,{(sgr,nmzMode)});
+  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
+                     {(sgr,nmzMode)});
 );
 
 normaliz(List):=opts>>o->(s)->
 (
-  return runNormaliz(allComputations=>o.allComputations,s);
+  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading, s);
 );
 
 
--- sequence should contain pairs (sgr,nmzMode); with nmzMode=4,5 or 6 if sequence has length >1
+-- sequence should contain pairs (sgr,nmzMode); with nmzMode=4,5 or 6 if sequence has length >1, 20 (grading) is allowed additionally
 runNormaliz=method(Options=>true)
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 runNormaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
 (
-  return runNormaliz(allComputations=>o.allComputations,{(sgr,nmzMode)});
-);
-
-runNormaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
-(
-  return runNormaliz(allComputations=>o.allComputations,{(sgr,nmzMode)});
+  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
+                     {(sgr,nmzMode)});
 );
 
 runNormaliz(List):=opts>>o->(s)->
@@ -537,11 +540,14 @@ runNormaliz(List):=opts>>o->(s)->
     then(
          for p in s
          do(
-            if(p#1!=4 and p#1!=5 and p#1!=6)
+            if(p#1!=4 and p#1!=5 and p#1!=6 and p#1!=20)
             then error("normaliz: multiple input matrices are only allowed in modes 4,5 or 6");
          );
     );
 
+    if (#o.grading > 0) then (
+        s = append(s, (matrix{o.grading}, 20));
+    );
     doWriteNmzData(s);
     options:=collectNmzOptions();
 
@@ -570,7 +576,7 @@ runNormaliz(List):=opts>>o->(s)->
      rc:=new RationalCone from {"gen"=> nmzData, "inv" =>getNumInvs()};
      if(nmzFilename=="") then rmNmzFiles();
      return rc;
-     );
+    );
 
     -- read all files written
     files:={ "inv"=>getNumInvs()};
@@ -675,12 +681,13 @@ intmat2mons(Matrix,Ring,ZZ,ZZ):=(expoVecs,r,d,c)->
 -------------------------------------------------------------
 
 runIntclToricRing=method(Options=>true)
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 runIntclToricRing(Ideal,ZZ):=opts>>o->(I,nmzMode)->
 (
     expoVecs:=mons2intmat(I);
 
-     res:=runNormaliz(allComputations=>o.allComputations,expoVecs,nmzMode);
+     res:=runNormaliz(allComputations=>o.allComputations,grading=>o.grading,
+                      expoVecs,nmzMode);
      if(instance(res,Nothing))
      then return
      else(
@@ -691,37 +698,39 @@ runIntclToricRing(Ideal,ZZ):=opts>>o->(I,nmzMode)->
 );
 
 intclToricRing=method(Options=>true)
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 intclToricRing List :=opts>>o->L->
 (
   if(not uniform(ring \ L))
   then error("intclToricRing: monomials must be elements of the same ring")
-  else( if(#L==0)
-       then error("intclToricRing: empty list");
-    return runIntclToricRing(allComputations=>o.allComputations,ideal L,0);
-   );
+  else(
+    if(#L==0)
+      then error("intclToricRing: empty list");
+    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,
+                             ideal L,0);
+  );
 );
 
 intclToricRing MonomialSubalgebra :=opts>>o->S->
 (
-  return intclToricRing(allComputations=>o.allComputations, gens S);
+  return intclToricRing(allComputations=>o.allComputations, grading=>o.grading, gens S);
 );
 
 normalToricRing=method(Options=>true);
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 normalToricRing List :=opts>>o->L->
 (
   if(not uniform(ring \ L))
   then error("normalToricRing: monomials must be elements of the same ring")
   else( if(#L==0)
        then error("normalToricRing: empty list");
-    return runIntclToricRing(allComputations=>o.allComputations,ideal L,1);
+    return runIntclToricRing(allComputations=>o.allComputations,grading=>o.grading,ideal L,1);
   );
 );
 
 normalToricRing MonomialSubalgebra :=opts>>o->S->
 (
-  return normalToricRing(allComputations=>o.allComputations, gens S);
+  return normalToricRing(allComputations=>o.allComputations,grading=>o.grading, gens S);
 );
 
 -- input binomial ideal
@@ -744,15 +753,24 @@ normalToricRing (Ideal,Thing) :=opts>>o->(I,t)->(
      );
    );
    M=matrix M;
-   nmzData:=(normaliz(allComputations=>o.allComputations,M,10))#"gen";
+   nmzCone:=normaliz(allComputations=>o.allComputations,grading=>o.grading,M,10);
+   nmzData:=nmzCone#"gen";
    r:=rank nmzData;
    n:=numgens R;
    R=(coefficientRing R)[t_1..t_(n-r)];
-   return createMonomialSubalgebra(for i in entries nmzData list R_i)
+   S := createMonomialSubalgebra(for i in entries nmzData list R_i);
+   S.cache#"cone"=nmzCone;
+   return S;
 );
 
+--------------------------------------------------------
+
+-- Rees Algebra / Monomial Ideals
+
+--------------------------------------------------------
+
 runIntclMonIdeal=method(Options=>true)
-opts={allComputations=>false}
+opts={allComputations=>false, grading=>{}}
 runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
 (
    -- new variable for Rees algebra
@@ -770,7 +788,7 @@ runIntclMonIdeal(Ideal,ZZ):=opts>>o->(I,nmzMode)->
     images:=delete(last gens S, gens S);
     f:=map(S,ring I,images);
     I= f(I);
-    return runIntclMonIdeal(allComputations=>o.allComputations,I,nmzMode,last gens S);
+    return runIntclMonIdeal(allComputations=>o.allComputations,grading=>o.grading,I,nmzMode,last gens S);
 );
 
 
@@ -784,7 +802,7 @@ runIntclMonIdeal(Ideal,ZZ,RingElement):=opts>>o->(I,nmzMode,t)->
     numIvs:={};
     c:= index t;
     expoVecs:=mons2intmat(I,c);
-    res:=runNormaliz(allComputations=>o.allComputations,expoVecs,nmzMode);
+    res:=runNormaliz(allComputations=>o.allComputations,grading=>o.grading,expoVecs,nmzMode);
 
     if(not nmzGen) then return;
 
@@ -797,10 +815,33 @@ runIntclMonIdeal(Ideal,ZZ,RingElement):=opts>>o->(I,nmzMode,t)->
     return (S1,S2);
 );
 
+intclMonIdeal=method(Options=>true)
+opts={allComputations=>false, grading=>{}}
+intclMonIdeal Ideal :=opts>>o->I->
+(
+    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,3);
+    return (ideal gens intcl,alg);
+);
+
+-- if there is a free variable in the ring, it can be given as second argument
+intclMonIdeal (Ideal,RingElement) :=opts>>o->(I,t)->
+(
+    if(not member(t, gens ring I))
+    then error("intclMonIdeal: second argument must be a variable of the ring of the ideal.");
+
+    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations, grading=>o.grading,I,3,t);
+    return (ideal gens intcl, alg);
+);
+
+--------------------------------------------------------
+
+-- Ehrhart ring
+
+--------------------------------------------------------
 
 ehrhartRing=method(Options=>true)
-opts={allComputations=>false}
-ehrhartRing List :=opts>>o->L->
+opts1={allComputations=>false}  --For polytopes we use a fixed grading
+ehrhartRing List :=opts1>>o->L->
 (
   if(not uniform(ring \ L))
   then error("ehrhartRing: monomials must be elements of the same ring")
@@ -810,13 +851,13 @@ ehrhartRing List :=opts>>o->L->
   return  runIntclMonIdeal(allComputations=>o.allComputations,ideal L,2);
 );
 
---ehrhartRing MonomialSubalgebra :=opts>>o->S->
+--ehrhartRing MonomialSubalgebra :=opts1>>o->S->
 --(
 --  return ehrhartRing(allComputations=>o.allComputations,gens S);
 --);
 
 -- if there is a free variable in the ring, it can be given as second argument
-ehrhartRing (List,RingElement):=opts>>o->(L,t)->
+ehrhartRing (List,RingElement):=opts1>>o->(L,t)->
 (
     if(not uniform(ring \ L))
   then error("ehrhartRing: monomials must be elements of the same ring")
@@ -831,35 +872,20 @@ ehrhartRing (List,RingElement):=opts>>o->(L,t)->
     return (latticePoints,ehrhartRing);
 );
 
---ehrhartRing (MonomialSubalgebra,RingElement):=opts>>o->(S,t)->
+--ehrhartRing (MonomialSubalgebra,RingElement):=opts1>>o->(S,t)->
 --(
 --  return ehrhartRing(allComputations=>o.allComputations,gens S,t);
 --);
 
-intclMonIdeal=method(Options=>true)
-opts={allComputations=>false}
-intclMonIdeal Ideal :=opts>>o->I->
-(
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations,I,3);
-    return (ideal gens intcl,alg);
-);
-
--- if there is a free variable in the ring, it can be given as second argument
-intclMonIdeal (Ideal,RingElement) :=opts>>o->(I,t)->
-(
-    if(not member(t, gens ring I))
-    then error("intclMonIdeal: second argument must be a variable of the ring of the ideal.");
-
-    (intcl,alg):=runIntclMonIdeal(allComputations=>o.allComputations,I,3,t);
-    return (ideal gens intcl, alg);
-);
 --------------------------------------------------------
 
 -- torus invariants and valuation rings and ideals
 
 --------------------------------------------------------
-torusInvariants=method()
-torusInvariants (Matrix, Ring) :=(T,R)->
+opts={allComputations=>false, grading=>{}}
+
+torusInvariants = method(Options=>true)
+torusInvariants (Matrix, Ring) := opts>>o -> (T,R) ->
 (
 
     if(numgens(R)!=numColumns(T))
@@ -867,41 +893,47 @@ torusInvariants (Matrix, Ring) :=(T,R)->
           error("torusInvariants: wrong number of columns in matrix");
     );
 
-    M:=runNormaliz(T,5);
+    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, T,5);
     if(not nmzGen) then return;  -- M=null
 
     rt:=createMonomialSubalgebra intmat2mons(M#"gen",R);
+    rt.cache#"cone"=M;
     return rt;
 )
 
-finiteDiagInvariants=method();
-finiteDiagInvariants(Matrix,Ring) := (M,R) ->
+finiteDiagInvariants = method(Options=>true);
+finiteDiagInvariants (Matrix,Ring) := opts>>o -> (M,R) ->
 (
   if(numgens R != numColumns M-1)
   then error("finiteDiagInvariants: wrong number of columns in matrix");
 
-  rt:= (normaliz(M,6))#"gen";
-
+  cone:= normaliz(allComputations=>o.allComputations, grading=>o.grading,M,6);
+  rt := cone#"gen";
   if(instance(rt,Nothing,rt)) then return createEmptyMonomialSubalgebra R;
 
-  return createMonomialSubalgebra intmat2mons(rt,R);
+  S := createMonomialSubalgebra intmat2mons(rt,R);
+  S.cache#"cone"=cone;
+  return S;
 );
 
-diagInvariants=method();
-diagInvariants(Matrix,Matrix,Ring) := (T,F,R) ->
+diagInvariants = method(Options=>true);
+diagInvariants (Matrix,Matrix,Ring) := opts>>o -> (T,F,R) ->
 (
   if(numgens R != numColumns T or numgens R != numColumns F -1)
   then error("diagInvariants: wrong number of columns in matrix");
 
-  rt:=(normaliz({(T,5),(F,6)}))#"gen";
+  cone:=(normaliz(allComputations=>o.allComputations, grading=>o.grading,{(T,5),(F,6)}));
+  rt := cone#"gen";
 
   if(instance(rt,Nothing)) then return createEmptyMonomialSubalgebra R;
 
-  return createMonomialSubalgebra intmat2mons(rt,R);
+  S := createMonomialSubalgebra intmat2mons(rt,R);
+  S.cache#"cone"=cone;
+  return S;
 );
 
-intersectionValRings=method()
-intersectionValRings (Matrix,Ring) :=(V,R)->
+intersectionValRings = method(Options=>true)
+intersectionValRings (Matrix,Ring) := opts>>o -> (V,R) ->
 (
     if(numgens(R)!=numColumns(V))
     then(
@@ -911,19 +943,19 @@ intersectionValRings (Matrix,Ring) :=(V,R)->
     I:=id_(ZZ^(numColumns(V))); -- identity matrix
     V1:=I||V;
 
-    M:=runNormaliz(V1,4);
+    M:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,4);
 
 
     if(not nmzGen) then return; -- M=null
 
     vr:=createMonomialSubalgebra intmat2mons(M#"gen",R);
+    vr.cache#"cone"=M;
     return vr;
 )
 
 
-
-intersectionValRingIdeals=method()
-intersectionValRingIdeals(Matrix,Ring):=(V,R)->
+intersectionValRingIdeals = method(Options=>true)
+intersectionValRingIdeals (Matrix,Ring) := opts>>o -> (V,R) ->
 (
     nc:=numColumns(V);
     if(numgens(R)!=nc-1)
@@ -941,11 +973,12 @@ intersectionValRingIdeals(Matrix,Ring):=(V,R)->
     );
     V1=matrix(V1);
 
-    M:=runNormaliz(V1,4);
-    if(not nmzGen) then return; -- M=null
-    M=M#"gen";
+    nmzCone:=runNormaliz(allComputations=>o.allComputations, grading=>o.grading, V1,4);
+    if(not nmzGen) then return; -- nmzCone=null
+    M:=nmzCone#"gen";
 
     R1:=createMonomialSubalgebra intmat2mons(M,R,0,numColumns M-1);
+    R1.cache#"cone"=nmzCone; -- ????? TODO
     R2:=intmat2mons(M,R,1,numColumns M-1);
 
     return new HashTable from {"subalgebra"=>R1, "module generators"=>R2};
@@ -957,29 +990,35 @@ beginDocumentation()
 document {
      Key => Normaliz,
      Headline => "an interface to use Normaliz in Macaulay 2",
-     "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.7"," within Macaulay 2.",
+     "The package ", EM "Normaliz"," provides an interface for the use of ", TT "Normaliz 2.8"," within Macaulay 2.",
 
-PARA{}, "The program ", TT "Normaliz 2.7", " (referred to as ", TT "Normaliz", " in the following) is mainly a tool for computing the Hilbert basis of a rational cone or, in other terms, for solving linear systems of inequalities.  Several additional data can be computed.
+PARA{}, "The program ", TT "Normaliz 2.8", " (referred to as ", TT "Normaliz", " in the following) is mainly a tool for computing the Hilbert bases and enumerative invariants of rational cones. Several additional data can be computed.
 It is included in the Macaulay 2 distribution. For more details on the program, see ", HREF "http://www.math.uos.de/normaliz/", ".
-For the theory of affine semigroups and the notions of commutative algebra we refer to W. Bruns and J. Gubeladze, ", EM "Polytopes, rings and K-theory.", " Springer 2009. For algorithms see  W. Bruns and R. Koch, ", EM "Computing the integral closure of an affine semigroup. ", "Uni. Iaggelonicae Acta Math. 39, (2001), 59-70 and ",   "W. Bruns and B. Ichim ", EM "Normaliz: Algorithms for affine monoids and rational cones,"," J. Algebra
-(2010)", ", available at ", HREF "http://dx.doi.org/10.1016/j.jalgebra.2010.01.031",
+For the theory of affine semigroups and the notions of commutative algebra we refer to
+W. Bruns and J. Gubeladze, ", EM "Polytopes, rings and K-theory.", " Springer 2009.",
+PARA{},"For algorithms see: ",
+UL{
+{ "W. Bruns and R. Koch, ", EM "Computing the integral closure of an affine semigroup. ", "Univ. Iagiell. Acta Math. 39, (2001), 59-70"},
+{ "W. Bruns and B. Ichim ", EM "Normaliz: Algorithms for affine monoids and rational cones,"," J. Algebra (2010)", ", available at ", HREF "http://dx.doi.org/10.1016/j.jalgebra.2010.01.031"},
+{ "W. Bruns, B. Ichim and C.Soeger ", EM "The power of pyramid decomposition in Normaliz,"," arXiv:1206.1916v1", ", available at ", HREF "http://arxiv.org/abs/1206.1916v1"},
+},
 
-
-PARA{},"Using ", TT "Normaliz", " one may compute the following: ",
+PARA{},"Using ", TT "Normaliz", " one may for example compute the following: ",
 UL{
    {TO "The Hilbert basis and the support hyperplanes of a rational cone."},
-   {TO "The lattice points and the support hyperplanes of an integral polytope."},
+   {TO "The lattice points, Ehrhart series and the support hyperplanes of an integral polytope."},
    {TOH "The generators of the integral closure of the Rees algebra of a monomial ideal." },
 },
 
-PARA{},"If the associated semigroup or corresponding semigroup algebra is homogeneous in a certain sense, then one may also compute the h-vector and Hilbert polynomial of the semigroup.",
+PARA{},"If the associated semigroup or corresponding semigroup algebra is graded, then one may also compute the Hilbert series and Hilbert (quasi)polynomial of the semigroup.",
 
-PARA{}, "The package gives direct access to ", TT "Normaliz", ". The exchange of data between ", TT "Normaliz", " and Macaulay 2 is via files, the only possibility offered by ", TT "Normaliz", " in its present version. These files are automatically created and erased behind the scenes. As long as one wants to use only the ring-theoretic functions there is no need for file management. The key function for the direct use of ", TT "Normaliz", " is ", TO normaliz, ", which calls the program ", TT "Normaliz", ". To handle the in- and output one can use the functions ", TO writeNmzData, " and ", TO readNmzData, ", to set the options for the program ", TO setNmzOption, ". The output files are explained in ", TO "output files written by Normaliz",".",
+PARA{}, "The package gives direct access to ", TT "Normaliz", ". The exchange of data between ", TT "Normaliz", " and Macaulay 2 is via files. These files are automatically created and erased behind the scenes. As long as one wants to use only the ring-theoretic functions there is no need for file management. The key function for the direct use of ", TT "Normaliz", " is ", TO normaliz, ", which calls the program ", TT "Normaliz", ". To handle the in- and output one can use the functions ", TO writeNmzData, " and ", TO readNmzData, ", to set the options for the program ", TO setNmzOption, ". The output files are explained in ", TO "output files written by Normaliz",".",
 
 PARA{},"If you want to keep the results of the computations by ", TT "Normaliz"," (i.e. the files written by the program), the package offers several methods for this purpose, see ", TO "Keeping results of the computation by Normaliz", " for an example how to do this.",
 
+PARA{},"The package introduces two new classes ", TO MonomialSubalgebra , " and " , TO RationalCone, ".",
 
-PARA{}, "The package provides four top level functions that aim at objects of type ideal:",
+PARA{}, "The package provides four top level functions that aim directly at algebraic objects:",
 UL{
    TO normalToricRing,
    TO intclToricRing,
@@ -1003,7 +1042,7 @@ document {
 "We want to calculate the Hilbert basis of a rational cone.  The cone may be given by ",
 UL{
    "a system of generators;",
-   "a linear system of inequations;",
+   "a linear system of inequalities;",
    " a linear system of equations."
 },
 PARA{}, "First of all consider the cone generated by the 16 vectors",
@@ -1096,7 +1135,7 @@ normaliz(eq,5)
 }
 
 document {
-     Key => "The lattice points and the support hyperplanes of an integral polytope.",
+     Key => "The lattice points, Ehrhart series and the support hyperplanes of an integral polytope.",
 
 "The lattice points of the integral polytope with the 4 vertices",
 PRE"
@@ -1246,7 +1285,7 @@ assert (ring createMonomialSubalgebra {x^2*y, x*z, z^3}===R)
 document {
   Key => RationalCone,
   Headline => "class of rational cones",
-PARA{}, "The method ", TO normaliz, " returns an object of type RationalCone. By default, that cone contains only the content of the output file .gen, under the key \"gen\", i.e. the generators that have been computed and the content of the output file .inv, which contains some additional data. Note that Normaliz writes the generators as rows, in contrast to the convention used in M2.",
+PARA{}, "The method ", TO normaliz, " returns an object of type RationalCone. By default, that cone contains only the content of the output file .gen, under the key \"gen\" (i.e. the generators that have been computed) and the content of the output file .inv, which contains some additional data. Note that Normaliz writes the generators as rows, in contrast to the convention used in M2.",
 EXAMPLE lines ///
 setNmzOption("allf",true);
 eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1}, {0, 1, 1, -1,  0,  0, -1,  0,  0}, {1, 0, 1,  0, -1,  0,  0, -1,  0}, {1, 1, 0,  0,  0, -1,  0,  0, -1}, {0, 1, 1,  0, -1,  0,  0,  0, -1}, {1, 1, 0,  0, -1,  0, -1,  0,  0}};
@@ -1370,7 +1409,7 @@ document {
           nmzFilename="VeryInteresting";
           R=ZZ/37[x,y,z];
           normalToricRing {x^2*y, y^3};
-          get ("VeryInteresting.typ")
+          get ("VeryInteresting.cst")
           rmNmzFiles();
           nmzFilename
           ///,
@@ -1469,6 +1508,7 @@ document {
      PARA{},"Reads an output file of ", TT "Normaliz", " containing an integer matrix and returns it as a ", TO "Matrix", ", whose rows contains the data computed (in contrast to the convention used in M2). To read the ", TT ".inv", " file, use ", TO getNumInvs, ". The filename is created from the current filename specified by the user and the suffix given to the function. The possible suffixes depend on the input and the computation mode. The computation mode is controled via the options, see ", TO setNmzOption, ". For the possible output files see ", TO "output files written by Normaliz", ". For more details we refer to the documentation of ", TT "Normaliz", " available as pdf file at ", HREF "http://www.math.uos.de/normaliz/", ".",
      EXAMPLE lines ///
          nmzFilename="example" -- to keep the files
+         setNmzOption("allf",true); -- to write all files
          mat=matrix({{1,2,3},{4,5,6},{7,8,10}});
          normaliz(mat,0)
          readNmzData "typ"
@@ -1565,7 +1605,7 @@ TEST ///
 
 
 document {
-     Key => {(normaliz, Matrix, ZZ), [(normaliz, Matrix, ZZ), allComputations]},
+     Key => {(normaliz, Matrix, ZZ), [(normaliz, Matrix, ZZ), allComputations], [(normaliz,Matrix,ZZ),grading]},
      Headline => "calls Normaliz",
      Usage => "normaliz(mat,nmzType)",
      Inputs => {
@@ -1590,7 +1630,7 @@ eq=matrix {{1, 1, 1, -1, -1, -1,  0,  0,  0}, {1, 1, 1,  0,  0,  0, -1, -1, -1},
 rc=normaliz(eq,5);
 rc#"gen"
 ///,
-PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,").",
+PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,"). It can also be used with the option ", TO grading ,".",
 EXAMPLE lines ///
 arc=normaliz(allComputations=>true,eq,5);
 arc#"gen"
@@ -1618,7 +1658,7 @@ TEST ///
 }
 
 document{
-    Key =>  {(normaliz, List), [(normaliz, List), allComputations]},
+    Key =>  {(normaliz, List), [(normaliz, List), allComputations],[(normaliz,List),grading]},
      Headline => "calls Normaliz with several input matrices",
   Usage => "normaliz L",
      Inputs => {
@@ -1634,7 +1674,7 @@ cg=matrix {{1,0,0,0,0,0,0,0,0,2},{0,0,1,0,0,0,0,0,0,2},{0,0,0,0,0,0,1,0,0,2},{0,
 rc=normaliz({(hy,4),(eq,5),(cg,6)});
 rc#"gen"
 ///,
-PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,").",
+PARA{}, "To obtain all the information written by ", TT "Normaliz", " set the option ", TO allComputations, " to true (to decide which information shall be written by ", TT "Normaliz", " use the options for ", TT "Normaliz", ", see ", TO setNmzOption, "). Then the method returns an object of type RationalCone whose keys are the suffixes of all the output files written, with value the content of the corresponding output file, which is an matrix whose rows contain the data computed, except for the suffix ", TT "inv", ", for which the type is a ", TO HashTable," (see also ", TO getNumInvs,"). It can also be used with the option ", TO grading ,".",
 EXAMPLE lines ///
 setNmzOption("allf",true);
 arc=normaliz(allComputations=>true,{(hy,4),(eq,5),(cg,6)});
@@ -1649,7 +1689,7 @@ SeeAlso => {RationalCone, readNmzData,"Keeping results of the computation by Nor
 
 document {
      Key => allComputations,
-PARA{}, "allComputations is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ". Its default value is false. If it is set to true, the cone in the Cachetable of the monomial subalgebra returned contains not only the generators, but all the data that have been computed by ", TT "Normaliz", " (what this includes depends on the type and the options set, see ", TO "output files written by Normaliz",").",
+PARA{}, "allComputations is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is false. If it is set to true, the cone in the cache table of the monomial subalgebra returned contains not only the generators, but all the data that have been computed by ", TT "Normaliz", " (what this includes depends on the type and the options set, see ", TO "output files written by Normaliz",").",
 EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           L={x^3, x^2*y, y^3, x*y^2};
@@ -1659,11 +1699,28 @@ EXAMPLE lines ///
 }
 
 document {
+     Key => {grading},
+PARA{}, "grading is an option for ", TO normaliz, ", ", TO intclToricRing, ", ", TO normalToricRing, ", ", TO intclMonIdeal, ", ",TO torusInvariants, ", ",TO finiteDiagInvariants, ", ",TO diagInvariants, ", ",TO intersectionValRings, ", ",TO intersectionValRingIdeals, ". Its default value is an empty list. If it is set to a list of integers it will be used as grading. This has no influence on the generators of the computed objects, but on additional data like the multiplicity or the hilbert series.
+The grading may have non-positive entries, but it must give positive values for all generators.",
+EXAMPLE lines ///
+          R=ZZ/37[x,y,t];
+          L={x^3, x^2*y, y^3, x*y^2};
+          T=intclToricRing(allComputations=>true,L);
+          T.cache#"cone"#"inv"#"hilbert series num"
+          T.cache#"cone"#"inv"#"hilbert series denom"
+          T=intclToricRing(allComputations=>true,grading=>{3,2,1},L);
+          T.cache#"cone"#"inv"#"hilbert series num"
+          T.cache#"cone"#"inv"#"hilbert series denom"
+     ///,
+SeeAlso => {allComputations},
+}
+
+document {
      Key => {getNumInvs},
      Headline => "returns the numerical invariants computed",
      Usage => "getNumInvs()",
      Outputs => {HashTable => "the numerical invariants"},
-     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the weights, the h-vector and the Hilbert polynomial and a ", TO Boolean, " for homogeneous and primary.",
+     PARA{},"This function returns a hashtable containing the invariants printed to the file with suffix ", TT "inv", ", if the files are kept, i.e., if a filename is specified (see ", TO "Keeping results of the computation by Normaliz", "). The key of an entry is a ", TO String, " describing the invariant, the value is the invariant, namely an ", TO ZZ, " for rank, index, multiplicity, a ", TO Sequence, " for the grading, the Hilbert series and the Hilbert quasi-polynomial and a ", TO Boolean, " for graded and primary (in the case of a rees algebra).",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3,x^2*y,y^3);
@@ -1671,7 +1728,8 @@ document {
           setNmzOption("hilb",true);
           intclMonIdeal I;
           invs=getNumInvs()
-          hvector=invs#"h-vector"
+          hvector=invs#"hilbert series num"
+          invs#"hilbert series denom"
           rmNmzFiles();
           ///,
 TEST ///
@@ -1682,7 +1740,7 @@ TEST ///
 {0, 0, 0, 1}});
           normaliz(sgr,0);
           n=getNumInvs();
-          assert ( n#"hilbert basis elements"==19 and n#"number extreme rays"==4 and n#"rank"==4 and n#"index"==30 and n#"number support hyperplanes"==4 and n#"homogeneous"==true and n#"height 1 elements"==18 and n#"homogeneous weights"==(0,0,0,1) and n#"multiplicity"==30 )
+          assert ( n#"hilbert basis elements"==19 and n#"number extreme rays"==4 and n#"rank"==4 and n#"index"==30 and n#"number support hyperplanes"==4 and n#"graded"==true and n#"degree 1 elements"==18 and n#"grading"==(0,0,0,1) and n#"multiplicity"==30 )
     rmNmzFiles();
      ///,
      }
@@ -1699,16 +1757,14 @@ document {
      "Computation mode:",
      UL{
         {TT "-s", ":   supp, only the support hyperplanes are computed."},
-        {TT "-v", ":   triang, computes the support hyperplanes, the triangulation and the multiplicity."},
-        {TT "-V", ":   volume, computes the support hyperplanes and the multiplicity."},
-        {TT "-p", ":   hvect, computes the support hyperplanes, the triangulation, the multiplicity, the h-vector and the Hilbert polynomial."},
-        {TT "-P", ":   hvect_l, computes the support hyperplanes, the multiplicity, the h-vector and the Hilbert polynomial."},
+        {TT "-tT", ":   triang, computes the support hyperplanes, the triangulation and the multiplicity."},
+        {TT "-v", ":   volume, computes the support hyperplanes and the multiplicity."},
+        {TT "-p", ":   hvect, computes the support hyperplanes, the multiplicity, the h-vector and the Hilbert polynomial."},
        {TT "-n",  ":   normal, computes the support hyperplanes, the triangulation, the multiplicity and the Hilbert basis."},
-       {TT "-N",  ":   normal_l, computes the support hyperplanes, the multiplicity and the Hilbert basis."},
-       {TT "-h",  ":   hilb, computes the support hyperplanes, the triangulation, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial."},
-       {TT "-H",  ":   hilb_l, computes the support hyperplanes, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial."},
+       {TT "-N",  ":   normal_l, computes the support hyperplanes and the Hilbert basis."},
+       {TT "-h",  ":   hilb, computes the support hyperplanes, the multiplicity, the Hilbert basis, the h-vector and the Hilbert polynomial."},
        {TT "-1",  ":   heigth1, computes the Hilbert basis elements of heigth 1."},
-       {TT "-d",  ":   dual, computes the Hilbert basis using Pottier's algorithm, cf. L. Pottier, ", EM "The Euclide algorithm in dimension n.", " Research report, ISSAC 96, ACM Press 1996. It is available only in type 4 and 5."}
+       {TT "-d",  ":   dual, computes the Hilbert basis using Pottier's algorithm, cf. L. Pottier, ", EM "The Euclide algorithm in dimension n.", " Research report, ISSAC 96, ACM Press 1996."}
      },
 	 "The options with _l indicate that they are in particular usefull for big examples.",
      "Further options:",
@@ -1719,7 +1775,7 @@ document {
         {TT "-B", ":   bigint, use indefinite precision arithmetic",},
         {TT "-x=<N>", ": threads, there ",TT "<N>"," stands for a positive integer limiting the number of threads that ", TT "Normaliz"," can access on your system. The default value is ", TT "<N>=",TEX"\\infty",". If you want to run ", TT "Normaliz"," in a strictly serial mode, choose ", TT "<N>=1",". If this option is enabled,",TT "<N>"," is taken as the value stored in the global variable ", TO "nmzNumberThreads","."}
      },
-     PARA{},"Note that it makes no sense to activate more than one of the computation mode options. The ", TT "-f", " option, which makes the ", TT ".gen, .inv, .typ, .cst", " files to be printed, is always set. The default value of all options is ", TT "false",".",
+     PARA{},"Note that it makes no sense to activate more than one of the computation mode options. The ", TT "-f", " option, which makes the ", TT ".gen, .inv, .cst", " files to be printed, is always set. The default value of all options is ", TT "false",".",
      PARA{}, "To check which options are set use ", TO showNmzOptions,".",
      EXAMPLE lines ///
           setNmzOption("triang",true);
@@ -1796,7 +1852,7 @@ L=for i in l list R_i; --rafa1409
      }
 
 document {
-     Key => {[(normalToricRing,List),allComputations]},
+     Key => {[(normalToricRing,List),allComputations],[(normalToricRing,List),grading]},
      Headline => "normalization of a toric ring",
      Usage => "normalToricRing L",
      Inputs => {List => "the generators of the toric ring"},
@@ -1825,7 +1881,7 @@ document {
 }
 
 document {
-     Key => {[(normalToricRing,MonomialSubalgebra),allComputations]},
+     Key => {[(normalToricRing,MonomialSubalgebra),allComputations],[(normalToricRing,MonomialSubalgebra),grading]},
      Headline => "normalization of a toric ring",
      Usage => "normalToricRing S",
      Inputs => {MonomialSubalgebra => "the toric ring"},
@@ -1840,7 +1896,7 @@ document {
 }
 
 document {
-     Key => {(normalToricRing,Ideal,Thing),[(normalToricRing,Ideal,Thing),allComputations]},
+     Key => {(normalToricRing,Ideal,Thing),[(normalToricRing,Ideal,Thing),allComputations],[(normalToricRing,Ideal,Thing),grading]},
      Headline => "normalization of a toric ring given by a binomial ideal",
      Usage => "normalToricRing(I,t)",
      Inputs => {Ideal => "a binomial ideal defining the toric ring",
@@ -1917,7 +1973,7 @@ L=for i in l list R_i; -- rproj2
      }
 
 document {
-     Key => {[(intclToricRing,List),allComputations]},
+     Key => {[(intclToricRing,List),allComputations],[(intclToricRing,List),grading]},
      Headline => "integral closure of a toric ring",
      Usage => "intclToricRing L",
      Inputs => {
@@ -1950,7 +2006,7 @@ document {
 }
 
 document {
-     Key => {[(intclToricRing,MonomialSubalgebra),allComputations]},
+     Key => {[(intclToricRing,MonomialSubalgebra),allComputations], [(intclToricRing,MonomialSubalgebra),grading]},
      Headline => "integral closure of a toric ring",
      Usage => "intclToricRing S",
      Inputs => {
@@ -2181,14 +2237,15 @@ document {
 }
 
 document {
-     Key => { [(intclMonIdeal,Ideal),allComputations]},
+     Key => { [(intclMonIdeal,Ideal),allComputations],[(intclMonIdeal,Ideal),grading]},
      Headline => "normalization of Rees algebra",
      Usage => "intclMonIdeal I",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal",},
      Outputs => {
 	      Ideal => "the integral closure of the input ideal",
 	      MonomialSubalgebra => "the normalization of the Rees algebra of I"},
-     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
+     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns the integral closure of the ideal I and the normalization of its Rees algebra. Since the Rees algebra is defined in a polynomial ring with an additional variable, the function creates a new polynomial ring with an additional variable.
+If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned. This method can also be used with the option ",TO grading,".",
      EXAMPLE lines ///
           R=ZZ/37[x,y];
           I=ideal(x^3, x^2*y, y^3, x*y^2);
@@ -2198,7 +2255,8 @@ document {
 }
 
 document {
-     Key => {[(intclMonIdeal,Ideal,RingElement),allComputations]},
+     Key => {[(intclMonIdeal,Ideal,RingElement),allComputations],
+            [(intclMonIdeal,Ideal,RingElement),grading]},
      Headline => "normalization of Rees algebra",
      Usage => "intclMonIdeal(I,t)",
      Inputs => {Ideal => "the leading monomials of the elements of the ideal are considered as generators of a monomial ideal",
@@ -2206,7 +2264,7 @@ document {
      Outputs => {
 	      Ideal => "the integral closure of the input ideal",
 	      MonomialSubalgebra => "the normalization of the Rees algebra of I"},
-     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns the integral closure of the ideal I and the normalization of its Rees algebra. If there is a free variable in the original ring (i.e. a variable that does not appear in any of the generators of I), you can give the function that variable as second input. The function then uses it instead of creating a new one. Note that in this case the input ideal is considered as ideal in the smaller polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned.",
+     PARA{},"The leading monomials of the elements of I are considered as generators of a monomial ideal. This function computes the integral closure of ", TEX "I\\subset R", " in the polynomial ring R[t] and the normalization of its Rees algebra. If ", TEX "f_1,\\ldots,f_m", " are the monomial generators of I, then the normalization of the Rees algebra is the integral closure of ", TEX "K[f_1t,\\ldots,f_nt]", " in R[t]. For a definition of the Rees algebra (or Rees ring) see Bruns and Herzog, Cohen-Macaulay rings, Cambridge University Press 1998, p. 182. The function returns the integral closure of the ideal I and the normalization of its Rees algebra. If there is a free variable in the original ring (i.e. a variable that does not appear in any of the generators of I), you can give the function that variable as second input. The function then uses it instead of creating a new one. Note that in this case the input ideal is considered as ideal in the smaller polynomial ring. If the option ", TO allComputations, " is set to true, all data that has been computed by ", TT "Normaliz", " is stored in a ", TO RationalCone, " in the CacheTable of the monomial subalgebra returned. This method can also be used with the option ",TO grading,".",
      EXAMPLE lines ///
           R=ZZ/37[x,y,t];
           I=ideal(x^3, x^2*y, y^3, x*y^2);
@@ -2216,7 +2274,10 @@ document {
 }
 
 document {
-     Key => { torusInvariants, (torusInvariants, Matrix,Ring)},
+     Key => { torusInvariants, (torusInvariants, Matrix,Ring),
+              [(torusInvariants,Matrix,Ring),allComputations],
+              [(torusInvariants,Matrix,Ring),grading]
+            },
      Headline => "ring of invariants of torus action",
      Usage => "torusInvariants(T,R)",
      Inputs => {
@@ -2227,16 +2288,19 @@ document {
                  MonomialSubalgebra => {"the ring of invariants ",TEX "R^T"}
      },
      PARA{}," Let ", TEX "T=(K^*)^r"," be the ", TEX "r","-dimensional torus acting on the polynomial ring ",TEX "R=K[X_1,\\ldots,X_n]"," diagonally. Such an action can be described as follows: there are integers ",TEX "a_{ij}, i=1,\\ldots,r, j=1,\\ldots,n",", such that ",TEX "(\\lambda_1,\\ldots,\\lambda_r)\\in T"," acts by the substitution ",BR{},BR{}, TEX "X_j\\mapsto \\lambda_1^{a_{1j}}*\\ldots*\\lambda_r^{a_{rj}}X_j,", "    ", TEX "j=1,\\ldots,n.", BR{},BR{},"The function takes the matrix ", TEX "(a_{ij})", " as input and computes the ring of invariants ",TEX "R^T=\\{f\\in R: \\lambda f=f", " for all ", TEX "\\lambda \\in T\\}",".",
+PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",
      EXAMPLE lines ///
           R=QQ[x,y,z,w];
           T=matrix({{-1,-1,2,0},{1,1,-2,-1}});
           torusInvariants(T,R)
      ///,
-     SeeAlso => {finiteDiagInvariants, diagInvariants}
+     SeeAlso => {finiteDiagInvariants, diagInvariants},
      }
 
 document {
-     Key => { diagInvariants, (diagInvariants,Matrix,Matrix,Ring)},
+     Key => { diagInvariants, (diagInvariants,Matrix,Matrix,Ring),
+              [(diagInvariants,Matrix,Matrix,Ring),allComputations],
+              [(diagInvariants,Matrix,Matrix,Ring),grading]},
      Headline => "ring of invariants of a diagonalizable group action",
      Usage => "diagInvariants(T,U,R)",
      Inputs => {
@@ -2247,17 +2311,20 @@ document {
      Outputs => {
                  MonomialSubalgebra => {"the ring of invariants"}},
      PARA{}, "This function computes the ring of invariants of a diagonalizable group ", TEX "D = T\\times G", " where T is a torus and G is a finite abelian group, both acting diagonally on the polynomial ring ", TEX "K[X_1,\\ldots,X_n]",". The group actions are specified by the input matrices M and N. The first matrix specifies the torus action, the second the action of the finite group. See ", TO torusInvariants, " or ", TO finiteDiagInvariants, " for more detail. The output is the monomial subalgebra of invariants.",
+PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",
      EXAMPLE lines ///
           R=QQ[x,y,z,w];
           T=matrix({{-1,-1,2,0},{1,1,-2,-1}});
           U=matrix{{1,1,1,1,5},{1,0,2,0,7}}
           diagInvariants(T,U,R)
     ///,
-    SeeAlso => {torusInvariants, finiteDiagInvariants}
+    SeeAlso => {torusInvariants, finiteDiagInvariants},
 }
 
 document {
-     Key => { finiteDiagInvariants, (finiteDiagInvariants,Matrix,Ring)},
+     Key => { finiteDiagInvariants, (finiteDiagInvariants,Matrix,Ring),
+              [(finiteDiagInvariants,Matrix,Ring),allComputations],
+              [(finiteDiagInvariants,Matrix,Ring),grading],},
      Headline => "ring of invariants of a finite group action",
      Usage => "finiteDiagInvariants(U,R)",
      Inputs => {
@@ -2270,6 +2337,7 @@ document {
 TEX "u_{i1}a_1+...+u_{in} a_n \\equiv \\ 0 mod ord(g_i),  i=1,\\ldots,w", ".
 The input to the function is the ", TEX "w\\times (n+1)", " matrix U with rows ", TEX "u_{i1} \\ldots u_{in} ord(g_i), i=1,\\ldots,w", ".
 The output is the monomial subalgebra of invariants ", TEX "R^G=\\{f\\in R : g_i f= f ", " for all ", TEX "i=1,\\ldots,w\\}",".",
+PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",
 EXAMPLE lines ///
  R=QQ[x,y,z,w];
 
@@ -2280,7 +2348,9 @@ SeeAlso => {diagInvariants, torusInvariants}
 }
 
 document {
-     Key => { intersectionValRings, (intersectionValRings,Matrix,Ring)},
+     Key => { intersectionValRings, (intersectionValRings,Matrix,Ring),
+              [(intersectionValRings,Matrix,Ring),grading],
+              [(intersectionValRings,Matrix,Ring),allComputations]},
      Headline => "intersection of ring of valuations",
      Usage => "intersectionValRings(v,r)",
      Inputs => {
@@ -2289,7 +2359,8 @@ document {
 },
      Outputs => {
                  MonomialSubalgebra => {"the subalgebra consisting of the elements with valuation ",TEX "\\geq 0", " for all given valuations"}},
-     PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function computes the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,r\\}"," that is the intersection of the valuation rings of the given valuations ", TEX "v_1, \\ldots,v_r", ", i.e. it consists of all elements of R that have a nonnegative value for all r valuations. It takes as input the matrix ", TEX "V=(v_i(X_j))"," whose rows correspond to the values of the indeterminates."},
+     PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function computes the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,r\\}"," that is the intersection of the valuation rings of the given valuations ", TEX "v_1, \\ldots,v_r", ", i.e. it consists of all elements of R that have a nonnegative value for all r valuations. It takes as input the matrix ", TEX "V=(v_i(X_j))"," whose rows correspond to the values of the indeterminates.",
+PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ".",},
      EXAMPLE lines ///
          R=QQ[x,y,z,w];
          V0=matrix({{0,1,2,3},{-1,1,2,1}});
@@ -2299,7 +2370,9 @@ document {
      }
 
 document {
-     Key => { intersectionValRingIdeals, (intersectionValRingIdeals,Matrix,Ring)},
+     Key => { intersectionValRingIdeals, (intersectionValRingIdeals,Matrix,Ring),
+              [(intersectionValRingIdeals,Matrix,Ring),grading],
+              [(intersectionValRingIdeals,Matrix,Ring),allComputations]},
      Headline => "intersection of valuation ideals",
      Usage => "intersectionValRingIdeals(v,r)",
      Inputs => {
@@ -2307,7 +2380,8 @@ document {
                 Ring => " the basering"
      },
      Outputs => {HashTable => "the subalgebra and the generators of the module over it"},
-     PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function takes as input the matrix ", TEX "V=(v_i(X_j))", ", whose rows correspond to the values of the indeterminates for for r valuations ", TEX "v_1, \\ldots,v_r",", with an additional column holding lower bounds ", TEX "w_1,\\ldots,w_r \\in \\ZZ",". It returns the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}",", the intersection of the valuation rings of the r valuations, and a system of generators of the S-submodule ", TEX "M=\\{f\\in R: v_i(f)\\geq w_i, i=1,\\ldots,n\\}"," over R, which consists of the elements whose i-th valuation is greater or equal to the i-th bound ", TEX "w_i",". If ", TEX "w_i>=0", " for all i, then M is an ideal in S."},
+     PARA{},{"A discrete monomial valuation ", TEX "v"," on ", TEX "R=K[X_1,\\ldots,X_n]"," is determined by the values ", TEX "v(X_j)"," of the indeterminates. This function takes as input the matrix ", TEX "V=(v_i(X_j))", ", whose rows correspond to the values of the indeterminates for for r valuations ", TEX "v_1, \\ldots,v_r",", with an additional column holding lower bounds ", TEX "w_1,\\ldots,w_r \\in \\ZZ",". It returns the subalgebra ", TEX "S=\\{f\\in R: v_i(f)\\geq 0, i=1,\\ldots,n\\}",", the intersection of the valuation rings of the r valuations, and a system of generators of the S-submodule ", TEX "M=\\{f\\in R: v_i(f)\\geq w_i, i=1,\\ldots,n\\}"," over R, which consists of the elements whose i-th valuation is greater or equal to the i-th bound ", TEX "w_i",". If ", TEX "w_i>=0", " for all i, then M is an ideal in S.",
+PARA{},"This method can be used with the options ", TO allComputations, " and ", TO grading , ". The additional data can be accessed via the subalgebra in the ",TO HashTable,".",},
      EXAMPLE lines ///
            R=QQ[x,y,z,w];
            V=matrix({{0,1,2,3,4},{-1,1,2,1,3}});

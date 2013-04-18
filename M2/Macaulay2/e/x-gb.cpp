@@ -12,6 +12,11 @@
 #include "gb-walk.hpp"
 #include "relem.hpp"
 
+#include "poly.hpp"
+#include <sstream>
+#include <iostream>
+#include "matrix-stream.hpp"
+
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
 void test_over_RR_or_CC(const Ring *R)
@@ -956,6 +961,112 @@ M2_string engineMemory()
      }
 }
 
+#if defined(HAVE_MATHICGB)
+#include "mathicgb.h"
+#endif
+
+void rawDisplayMatrixStream(const Matrix *inputMatrix)
+{
+  const Ring *R = inputMatrix->get_ring();
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return;
+    }
+  int charac = P->charac();
+  int nvars = P->n_vars();
+#if defined(HAVE_MATHICGB)
+  mgb::GroebnerConfiguration configuration(charac, nvars);
+  mgb::GroebnerInputIdealStream input(configuration);
+
+  std::ostringstream computedStr;
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamChecker<decltype(computed)> checked(computed);
+
+  matrixToStream(inputMatrix, checked); 
+
+  std::cout << "result: " << std::endl;
+  std::cout << computedStr.str() << std::endl;
+#endif
+}
+
+// The following (in x-monoid.cpp) needs to be put into a header file.
+extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
+                                     std::vector<int>& mat,
+                                     bool& base_is_revlex);
+
+
+const Matrix * rawMGB(const Matrix *inputMatrix, 
+                      int reducer,
+                      int spairGroupSize, // a value of 0 means let the algorithm choose
+                      int nthreads,
+                      M2_string logging)
+{
+  const Ring *R = inputMatrix->get_ring();
+  const PolyRing *P = R->cast_to_PolyRing();
+  if (P == 0) 
+    {
+      ERROR("expected a polynomial ring");
+      return 0;
+    }
+  if (nthreads < 0)
+    {
+      ERROR("mgb: expected a non-negative number of threads");
+      return 0;
+    }
+  int charac = P->charac();
+  int nvars = P->n_vars();
+#if defined(HAVE_MATHICGB)
+  mgb::GroebnerConfiguration configuration(charac, nvars);
+
+  const auto reducerType = reducer == 0 ?
+    mgb::GroebnerConfiguration::ClassicReducer :
+    mgb::GroebnerConfiguration::MatrixReducer;
+  configuration.setReducer(reducerType);
+  configuration.setMaxSPairGroupSize(spairGroupSize);
+  configuration.setMaxThreadCount(nthreads);
+  std::string log(logging->array, logging->len);
+  configuration.setLogging(log.c_str());
+
+
+  std::vector<int> mat;
+  bool base_is_revlex = true;
+  // Now set the monomial ordering info
+  if (!monomialOrderingToMatrix(* P->getMonoid()->getMonomialOrdering(), mat, base_is_revlex))
+    {
+      ERROR("monomial ordering is not appropriate for Groebner basis computation");
+      return 0;
+    }
+  configuration.setMonomialOrder((base_is_revlex ? 
+                                    mgb::GroebnerConfiguration::BaseOrder::ReverseLexicographicBaseOrder 
+                                  : mgb::GroebnerConfiguration::BaseOrder::LexicographicBaseOrder),
+                                 mat);
+
+#if 0
+  // Debug information
+  printf("Setting monomial order:");
+  for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
+  printf("\n");
+  printf("  Base=%d\n", base_is_revlex);
+#endif
+
+  mgb::GroebnerInputIdealStream input(configuration);
+
+  std::ostringstream computedStr;
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
+
+  matrixToStream(inputMatrix, input); 
+  MatrixStream matStream(P);
+  //  mgb::computeGroebnerBasis(input, checked);
+  mgb::computeGroebnerBasis(input, matStream);
+  const Matrix* result = matStream.value();
+  //  rawDisplayMatrixStream(result);
+  return result;
+#endif
+  return inputMatrix;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

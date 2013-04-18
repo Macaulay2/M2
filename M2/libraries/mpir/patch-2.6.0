@@ -1,6 +1,7 @@
---- mpir-2.6.0/mpirxx.h	2013-01-08 22:42:59.744761218 +0100
-+++ mpir-2.6.0/mpirxx.h	2013-01-08 22:45:13.370090672 +0100
-@@ -1707,8 +1707,8 @@ public:
+diff -ur mpir-2.6.0/mpirxx.h mpir-2.6.0/mpirxx.h
+--- mpir-2.6.0/mpirxx.h	2012-10-13 07:34:22.000000000 -0400
++++ mpir-2.6.0/mpirxx.h	2013-04-02 21:54:34.000000000 -0400
+@@ -1707,8 +1707,8 @@
    mpir_si get_si() const { return mpz_get_si(mp); }
    mpir_ui get_ui() const { return mpz_get_ui(mp); }
  #if defined( _STDINT_H ) || defined ( _STDINT_H_ ) || defined ( _STDINT )
@@ -11,3 +12,15 @@
  #endif
    double get_d() const { return mpz_get_d(mp); }
  
+diff -ur mpir-2.6.0/tests/mpz/t-scan.c mpir-2.6.0/tests/mpz/t-scan.c
+--- mpir-2.6.0/tests/mpz/t-scan.c	2012-10-03 16:07:32.000000000 -0400
++++ mpir-2.6.0/tests/mpz/t-scan.c	2013-04-02 21:56:41.000000000 -0400
+@@ -84,7 +84,7 @@
+ 
+               for (isize = 0; isize <= size; isize++)
+                 {
+-                  for (oindex = 0; oindex <= numberof (offset); oindex++)
++                  for (oindex = 0; oindex < numberof (offset); oindex++)
+                     {
+                       o = offset[oindex];
+                       if ((int) isize*GMP_NUMB_BITS < -o)

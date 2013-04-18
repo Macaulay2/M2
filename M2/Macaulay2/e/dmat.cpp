@@ -247,7 +247,8 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   std::vector<size_t> P(nelems, -1);
   std::vector<size_t> Qt(nelems, -1);
 
-  size_t rk = LUdivine(mat->ring().field(),
+  // ignore return value (rank) of:
+  LUdivine(mat->ring().field(),
                        FFLAS::FflasNonUnit,
                        (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
                        mat->n_cols(),
@@ -266,19 +267,8 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 }
 
 #include "dmat-ffpack.cpp"
+#include "dmat-LU.hpp"
 #include "lapack.hpp"
-
-bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x)
-{
-  std::cout << "calling Lapack::solve" << std::endl;
-  return Lapack::solve(&A, &b, &x);
-}
-
-bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<CoefficientRingCCC> &result_eigenvalues)
-{
-  std::cout << "calling Lapack::eigenvalues" << std::endl;
-  return Lapack::eigenvalues(&A, &result_eigenvalues);
-}
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;

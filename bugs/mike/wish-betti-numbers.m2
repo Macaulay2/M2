@@ -1,3 +1,12 @@
+SortStrategy bits:
+  2^16  -- geobuckets
+  2^14  -- auto-reduce:  auto_reduce = 1
+    2^14 + 2^15  -- auto_reduce = 3
+    2^15 -- auto_reduce = 2
+  2^13 -- do_by_level=1 (returns non-minimal res)
+    2^13 + 2^18 -- do_by_level=2:  level strip
+  2^17 -- do_by_degree (do by flat degree, not slanted degree).  Also non-minimal?
+
 -- Wish: compute the graded Betti numbers of a free resolution without minimalizing it
 -- This is my "scratch" area for experimentation.  It is checked in because I use it on several 
 -- machines
@@ -34,9 +43,9 @@ gbTrace=3
 time res(J, SortStrategy=>0, Strategy=>0)
 J = ideal J_*;
 res(J, StopBeforeComputation=>true, SortStrategy=>3, Strategy=>0)
-time C = res(J, SortStrategy=>2^16, Strategy=>0)
+time C = res(J, SortStrategy=>2^13, Strategy=>0)
 time res(J, SortStrategy=>2^16+2^17, Strategy=>0)
-time time C = res(J, SortStrategy=>2^16 + 2^17 + 2^18, Strategy=>0)
+time time C = res(ideal gens gb J, SortStrategy=>2^16 + 2^17 + 2^18, Strategy=>0)
 time res J;
 
 debug Core
@@ -58,6 +67,90 @@ J = ideal(a^2-b*c, a*c^2-b*d^2, a^2*e^5-b^3*c*d^3)
 gens gb J
 C = res J
 
+-------------------------------
+--
+restart
+-- type:
+--  COMPARE_MONORDER: 4
+--  COMPARE_LEX: 0
+--  COMPARE_ORDER: 3
+--  COMPARE_LEX_EXTENDED: 1
+--  COMPARE_LEX_EXTENDED2: 2
+
+COMPARE = (type, descend, reverse, degree) -> (
+    result := type;
+    if descend then result = result + 2^3;
+    if reverse then result = result + 2^4;
+    if degree then result = result + 2^5;
+    result
+    )
+GEO = 2^16  -- geobuckets
+AUTO = (r) -> if r == 1 then 2^14 else if r == 2 then 2^15 else if r == 3 then 2^14+2^15
+LEVEL = (r) -> if r == 1 then 2^14 else if r ==2 then 2^14 + 2^18
+DEG = 2^17
+
+AUTO 3 == 2^14 + 2^15
+AUTO 2 == 2^15
+AUTO 1 == 2^14
+LEVEL 1
+LEVEL 2
+N = 7
+D = 3
+R = ZZ/101[vars(0..N-1), MonomialSize=>8]
+F = random(R^1, R^{-D})
+J = ideal fromDual F
+
+for i from 0 to 4 do (
+  J = ideal J_*;
+  time res(J, Strategy=>0, SortStrategy=>(2^6 * i + GEO + LEVEL 2))
+  )
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(DEG)) -- NOT MINIMAL
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(LEVEL 1)) -- 
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + LEVEL 1)) -- 
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(LEVEL 2)) -- non minimal but quite fast
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 3 + LEVEL 1)) -- non minimal but quite fast
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + LEVEL 2)) -- non minimal but quite fast
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 3))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 1))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 2))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 3))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(AUTO 3)) -- monomial overflow!! BUG!
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(AUTO 1))
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(AUTO 2)) -- monomial overflow, and displays lots
+
+J = ideal J_*;
+time res(J, Strategy=>0, SortStrategy=>(GEO + AUTO 3))
+
+----------------------------------------------------
 
 time C = res(J, SortStrategy=>2^13 + 2^16, Strategy=>0)
 time C = res(J, SortStrategy=>2^16, Strategy=>0)
@@ -104,3 +197,4 @@ betti C
 -- c. find these matrices
 -- d. compute their ranks (use linbox/ffpack routines over finite fields)
 -- e. use this info to return a new Betti tally, with minimal betti numbers
+

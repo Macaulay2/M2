@@ -121,6 +121,13 @@ extern "C" {
 
   M2_arrayint moGetWeightValues(const struct MonomialOrdering *mo);
 
+  M2_arrayintOrNull rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo);
+  /* return a (flattened) matrix corresponding to the monomial ordering 'mo'.
+     If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, one further value of "0" is added.
+     The returned value represents a matrix with #vars columns, and #gradings weights, in row-major order
+     (each row is contiguous in memory), plus the one extra entry.
+     NULL is returned if 'mo' has Inverses=>true, or corresponds to a non-commutative monoid.
+  */
 
   /**************************************************/
   /**** Monoid routines *****************************/
@@ -1562,6 +1569,18 @@ enum gbTraceValues
   /*******************************************
    * Computation routines for Groebner bases *
    *******************************************/
+
+  /* 
+     routine to compute a Groebner basis of an ideal in a polynomial ring
+     over a finite prime field.  Interfaces to mathicgb.
+     reducer: 0 is ClassicReducer, 1 is MatrixReducer
+   */
+  const Matrix* /* or null */ rawMGB(const Matrix* input, 
+                                     int reducer,
+                                     int spairGroupSize,
+                                     int nthreads,
+                                     const M2_string logging
+                                     ); /* connected: rawMGB */
 
   Computation /* or null */ *IM2_GB_make(const Matrix *m,
                                  M2_bool collect_syz,

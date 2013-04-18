@@ -881,13 +881,7 @@ int IM2_RingElement_n_terms(
           int nvars, /* number of variables in an outermost monoid */
           const RingElement *a)
 {
-     try {
-          return a->n_terms(nvars);
-     }
-     catch (exc::engine_error e) {
-          ERROR(e.what());
-          return 0;
-     }
+  return a->n_terms(nvars);
 }
 
 engine_RawArrayPairOrNull IM2_RingElement_list_form(

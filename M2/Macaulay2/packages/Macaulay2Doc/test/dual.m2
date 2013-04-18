@@ -35,7 +35,7 @@ transpose f ** N  -- this one is a map of free modules, but doesn't compose?
 
 -- And now: test the speed
 R = QQ[a..d]
-time f = random(R^500, R^{500:-1});
+time f = random(R^100, R^{100:-1});
 time tf1 = dual f;
 time tf2 = transpose f;
 assert(tf1 == tf2)

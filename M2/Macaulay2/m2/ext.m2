@@ -112,6 +112,8 @@ Ext(Module,Module) := Module => (M,N) -> (
   pN := lift(presentation N,A);
   M' := cokernel ( pM | p ** id_(target pM) );
   N' := cokernel ( pN | p ** id_(target pN) );
+  assert isHomogeneous M';
+  assert isHomogeneous N';
   C := complete resolution M';
   X := getSymbol "X";
   K := coefficientRing A;
