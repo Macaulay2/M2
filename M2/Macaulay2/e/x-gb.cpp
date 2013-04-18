@@ -999,6 +999,7 @@ extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
 
 const Matrix * rawMGB(const Matrix *inputMatrix, 
                       int reducer,
+                      int spairGroupSize, // a value of 0 means let the algorithm choose
                       int nthreads,
                       M2_string logging)
 {
@@ -1023,6 +1024,7 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
     mgb::GroebnerConfiguration::ClassicReducer :
     mgb::GroebnerConfiguration::MatrixReducer;
   configuration.setReducer(reducerType);
+  configuration.setMaxSPairGroupSize(spairGroupSize);
   configuration.setMaxThreadCount(nthreads);
   std::string log(logging->array, logging->len);
   configuration.setLogging(log.c_str());

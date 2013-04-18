@@ -46,11 +46,13 @@ write Ring  := (R) -> (
      debug Core;
      (mo, tiebreak) := monomialOrderMatrix R;
      wts := entries mo;
-     s1 := char R | " " | numgens R | " " | toString(#wts) | "\n";
+     s1 := char R | " " | numgens R;
+     s1a := if tiebreak === Lex then " lex " else " revlex ";
+     s1b := toString(#wts) | "\n";
      s2 := concatenate for wtvec in wts list (
           "   " | (concatenate between(" ", wtvec/toString)) | "\n"
           );
-     s1 | s2
+     s1 | s1a | s1b | s2
      )
 
 toClassic = method()
@@ -139,29 +141,18 @@ mgbOptions = hashTable {
 optionsMGB = join(
      apply(keys mgbOptions, k -> k => null),
      {
-          "Executable" => "~/src/github/mathicgb/rel/mgb"
+          "Executable" => "~/src/github/mathicgb/rel/mgb",
+          "Algorithm" => null -- default is "gb", other option is "sig"
           }
      )
 runMGB = method(Options => optionsMGB)
-
-{*
-runMGB = method(Options => {
-	  Order => 4, 
-	  Reducer => 4, 
-	  DivLookup => 2, 
-	  SyzTable => 2,
-	  Verbose => 0, 
-	  FullReduction=>true, 
-	  Algorithm => 0,
-	  FileName => "/tmp/foo1",
-	  Executable => "~/src/github/mathicgb/rel/mgb"})
-*}
 
 helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
 
 mgbStr = method(Options => options runMGB)
 mgbStr String := opts -> (projectName) -> (
-     execString := "time "| opts#"Executable" | " gb "|projectName|" ";
+     alg := if opts#"Algorithm" === "sig" then " sig " else " gb ";
+     execString := "time "| opts#"Executable" | alg |projectName|" ";
      -- now add in the options
      for k in keys opts do (
           if mgbOptions#?k and opts#k =!= null then (
@@ -221,7 +212,7 @@ doMGB Ideal := opts -> (J) -> (
      time readPolys(projectName, ring J)
      )
 
-MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "Log"=>""})
+MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
   -- possible values for Reducer: "Classic", "F4",  (0,1)
   -- see 'mgb help logs' for format of the Logs argument.
 MGB Ideal := opts -> (I) -> (
@@ -230,11 +221,13 @@ MGB Ideal := opts -> (I) -> (
                 else if opts#"Reducer" === "F4" then 1
                 else if opts#"Reducer" === "Classic" then 0
                 else error ///Expected "F4" or "Classic" as reducer type///;
+     spairGroupSize := if instance(opts#"SPairGroupSize", ZZ) then opts#"SPairGroupSize"
+                else error "expected an integer for SPairGroupSize";
      nthreads := if instance(opts#"Threads", ZZ) then opts#"Threads"
                 else error "expected an integer for number of threads to use";
      log := if instance(opts#"Log", String) then opts#"Log"
                 else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
-     rawgb := rawMGB(raw gens I, reducer, nthreads, log);
+     rawgb := rawMGB(raw gens I, reducer, spairGroupSize, nthreads, log);
      flatten entries map(ring I, rawgb)
      )
      
@@ -438,7 +431,8 @@ TEST ///
 *}
   R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
   I = ideal"s4-a,s3t-b,st3-c,t4-d"
-
+  
+  runMGB
   G2 = MGB I
   G3 = MGBF4 I
   G4 = MGBF4(I, "Log"=>"all")
@@ -594,7 +588,183 @@ SLOWER ///
   mgb gb hilbertkunz1 -reducer 26
   magma <hilbertkunz1.magma [mike rMBP; Magma V2.18-11; 4.3 sec]
   Singular <hilbertkunz1.sing [mike rMBP; Singular 3-1-5; 4.1 sec]
+*}
 ///
+
+BENCHMARK ///
+  -- benchmarking example, hcyclic8
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = (hcyclicn 8)() -- #GB: 3626
+
+  -- vars=8, numgens=8, homogeneous.
+  -- #gb=1182, topdegree=29, #monoms=676,400
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013; 86.6 sec] #monoms=757,245
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013; 3.0  sec] #monoms=676,400
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013;  416 sec] #monoms=676,400
+  time G1a = gens gb(ideal J1_*, Algorithm=>LinearAlgebra); -- [mike rMBP; 17 April 2013; 7.6 sec], #monoms=676,400
+
+  time g1a = gens forceGB G1a;
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1a == g2)
+  assert(g1a == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  J2 = trim J1;
+  runMGB(J2, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013; 410 sec] #monoms in sig basis: 3,314,052
+  runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013; 3.7 sec] #monoms=676,400
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"hcyclic8", "(hcyclicn 8)()"}});
+  makeExampleFiles(prefixDir, {{"hcyclic8-trimmed", "trim ((hcyclicn 8)())"}});
+
+  -- run the following in the shell
+  time mgb gb hcyclic8 -reducer 26 -thread 4 # [mike rMBP;                 2.8 sec]
+  magma <hcyclic8.magma                      # [mike rMBP; Magma V2.18-11; 2.4 sec]
+  Singular <hcyclic8.sing                    # [mike rMBP; Singular 3-1-5; 32.2 sec] #monoms=757,035
+
+  time mgb gb hcyclic8-trimmed -reducer 26 -thread 4      # [mike rMBP;                 2.7 sec]
+  time magma <hcyclic8-trimmed.magma                      # [mike rMBP; Magma V2.18-11; 2.6 sec]
+  time Singular <hcyclic8-trimmed.sing                    # [mike rMBP; Singular 3-1-5; 32.3 sec] #monoms=757,035
+*}
+///
+
+BENCHMARK ///
+  -- benchmarking example, yang1
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = yang1(); -- #GB: 
+
+  -- vars=48, numgens=66, homogeneous.
+  -- #gb=4761, topdegree=5, #monoms=54,324
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013; 4.1 sec] #monoms=54,324
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013;  sec] #monoms=
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; 34.0 sec]
+  time G1a = gens gb(ideal J1_*, Algorithm=>LinearAlgebra); -- [mike rMBP; 17 April 2013; 35.1 sec]
+
+  time g1a = gens forceGB G1a;
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1a == g2)
+  assert(g1a == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  runMGB(J1, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis:
+  runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"yang1", "yang1()"}});
+
+  -- run the following in the shell
+  time mgb gb yang1 -reducer 26 -thread 4 # [mike rMBP;                  sec]
+  magma <yang1.magma                      # [mike rMBP; Magma V2.18-11; 19.4 sec]
+  Singular <yang1.sing                    # [mike rMBP; Singular 3-1-5; 45.6 sec] #monoms=54,324
+*}
+///
+
+BENCHMARK ///
+  -- benchmarking example, cyclic8
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = (cyclicn 8)() -- #GB: 
+
+  -- vars=8, numgens=8, inhomogeneous.
+  -- #gb=372, topleaddegree=14, #monoms=93,490
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013;  sec] #monoms=
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013; 4.1 sec] #monoms=
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013;  sec] #monoms=
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  J2 = trim J1;
+  runMGB(J2, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis: 
+  runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"cyclic8", "(cyclicn 8)()"}});
+
+  -- run the following in the shell
+  time mgb gb cyclic8 -reducer 26 -thread 4 # [mike rMBP;                  sec]
+  magma <cyclic8.magma                      # [mike rMBP; Magma V2.18-11;  sec]
+  Singular <cyclic8.sing                    # [mike rMBP; Singular 3-1-5;  sec] #monoms=
+*}
+///
+
+BENCHMARK ///
+  -- This one is way too easy over grevlex, so do it over Lex
+  -- sottile-Y^8Y2 (although the desired one is over QQ)
+  -- comes from Sottile's large Schubert problem program
+{*
+  restart
+  loadPackage "MGBInterface"
+*}
+
+  R1 = ZZ/32003[x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, MonomialOrder=>Lex];
+  J1 = ideal(
+       -10675*x2*x3+10675*x1*x4+7190*x2*x5-110*x4*x5-7190*x1*x6+110*x3*x6+8758*x2*x7+11841*x4*x7-1650*x6*x7-8758*x1*x8-11841*x3*x8+1650*x5*x8+1417*x2*x9+3358*x4*x9-14403*x6*x9+7253*x8*x9-1417*x1*x10-3358*x3*x10+14403*x5*x10-7253*x7*x10+8660*x1+7805*x2+10937*x3+10748*x4-1205*x5+13636*x6-12522*x7-7976*x8-8372*x9-12786*x10+228,
+       -9601*x2*x3+9601*x1*x4+7361*x2*x5+2560*x4*x5-7361*x1*x6-2560*x3*x6-2977*x2*x7-7936*x4*x7+6144*x6*x7+2977*x1*x8+7936*x3*x8-6144*x5*x8-11638*x2*x9+12057*x4*x9+6556*x6*x9+8345*x8*x9+11638*x1*x10-12057*x3*x10-6556*x5*x10-8345*x7*x10+9792*x1-4819*x2+5165*x3+15130*x4-4309*x5-9735*x6-8639*x7+9868*x8-10882*x9+11975*x10-3263,
+       8001*x2*x3-8001*x1*x4-8001*x2*x5-625*x4*x5+8001*x1*x6+625*x3*x6+8626*x2*x7+625*x4*x7-5647*x6*x7-8626*x1*x8-625*x3*x8+5647*x5*x8-9251*x2*x9+5022*x4*x9+5647*x6*x9+4177*x8*x9+9251*x1*x10-5022*x3*x10-5647*x5*x10-4177*x7*x10+6440*x1-4229*x2-11510*x3+10669*x4+14001*x5+9824*x6+13699*x7+4177*x8+9522*x9+9522*x10+5232,
+       -x1+9144*x3+11103*x5-12316*x7-1053*x9+4271,
+       -x2+9144*x4+11103*x6-12316*x8-1053*x10-10364,
+       9144*x2*x3-9144*x1*x4+11103*x2*x5-11103*x1*x6-12316*x2*x7+12316*x1*x8-1053*x2*x9+1053*x1*x10+10364*x1+4271*x2,
+       -x2*x3+x1*x4-11103*x4*x5+11103*x3*x6+12316*x4*x7-12316*x3*x8+1053*x4*x9-1053*x3*x10-10364*x3-4271*x4,
+       x2*x5-9144*x4*x5-x1*x6+9144*x3*x6-12316*x6*x7+12316*x5*x8-1053*x6*x9+1053*x5*x10+10364*x5+4271*x6,
+       -x2*x7+9144*x4*x7+11103*x6*x7+x1*x8-9144*x3*x8-11103*x5*x8+1053*x8*x9-1053*x7*x10-10364*x7-4271*x8,
+       x2*x9-9144*x4*x9-11103*x6*x9+12316*x8*x9-x1*x10+9144*x3*x10+11103*x5*x10-12316*x7*x10+10364*x9+4271*x10,
+       4800*x2*x3-4800*x1*x4-240*x2*x5-240*x4*x5+240*x1*x6+240*x3*x6+252*x2*x7+12*x4*x7+12*x6*x7-252*x1*x8-12*x3*x8-12*x5*x8+6376*x2*x9+6388*x4*x9+6400*x6*x9+6400*x8*x9-6376*x1*x10-6388*x3*x10-6400*x5*x10-6400*x7*x10-11507*x1-12495*x2+7376*x3+13120*x4+656*x5+6720*x6+336*x7+320*x8+16*x9+320*x10-16,
+       10312*x2*x3-10312*x1*x4-15239*x2*x5+2821*x4*x5+15239*x1*x6-2821*x3*x6+3800*x2*x7-5283*x4*x7-4079*x6*x7-3800*x1*x8+5283*x3*x8+4079*x5*x8-10512*x2*x9+10921*x4*x9+12449*x6*x9-4539*x8*x9+10512*x1*x10-10921*x3*x10-12449*x5*x10+4539*x7*x10-5949*x1+10010*x2-11335*x3+13502*x4+7634*x5+3539*x6-4503*x7-5097*x8+13141*x9-6098*x10+1727,
+       14287*x2*x3-14287*x1*x4+15481*x2*x5-9705*x4*x5-15481*x1*x6+9705*x3*x6+9001*x2*x7-12942*x4*x7-8989*x6*x7-9001*x1*x8+12942*x3*x8+8989*x5*x8+2459*x2*x9+4304*x4*x9-937*x6*x9-6588*x8*x9-2459*x1*x10-4304*x3*x10+937*x5*x10+6588*x7*x10+418*x1-13102*x2-8181*x3+9320*x4+3074*x5+8452*x6-12788*x7+3008*x8-14199*x9-5799*x10+15641,
+       15545*x2*x3-15545*x1*x4-12852*x2*x5+15545*x4*x5+12852*x1*x6-15545*x3*x6+8487*x2*x7-12852*x4*x7+15545*x6*x7-8487*x1*x8+12852*x3*x8-15545*x5*x8-15837*x2*x9+8487*x4*x9-12852*x6*x9+15545*x8*x9+15837*x1*x10-8487*x3*x10+12852*x5*x10-15545*x7*x10+6492*x1-4662*x2+4662*x3+15837*x4-15837*x5-8487*x6+8487*x7+12852*x8-12852*x9-15545*x10-15545,
+       -8001*x2*x3+8001*x1*x4-10002*x2*x5+12000*x4*x5+10002*x1*x6-12000*x3*x6-6504*x2*x7-13006*x4*x7-10006*x6*x7+6504*x1*x8+13006*x3*x8+10006*x5*x8-14636*x2*x9+2735*x4*x9+5479*x6*x9-13024*x8*x9+14636*x1*x10-2735*x3*x10-5479*x5*x10+13024*x7*x10-2105*x1+932*x2-4194*x3+1856*x4-8352*x5+3694*x6+15380*x7-8654*x8+6940*x9-5398*x10+7712);
+  R2 = (ZZ/32003)[gens R1, MonomialOrder=>{10:1}];
+  J2 = sub(J1, R2)
+
+  -- vars=10, numgens=15, inhomogeneous.
+  -- #gb=, topdegree=, #monoms=
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013;  sec] #monoms=
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013;  sec] #monoms=
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013;  sec] #monoms=
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  J1t = trim J1;
+  runMGB(J1t, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis: 
+  runMGB(J1, "Reducer"=>26) --       [mike rMBP; 17 April 2013;  sec] #monoms=
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir | "/sottile-Y8Y2-lex", J1)
+
+  -- run the following in the shell [I'm not sure how to get lex in these systems!!]
+  time mgb gb sottile-Y8Y2-lex -reducer 26 -thread 4 # [mike rMBP;                  sec]
+  magma <sottile-Y8Y2-lex.magma                      # [mike rMBP; Magma V2.18-11;  sec]
+  Singular <sottile-Y8Y2-lex.sing                    # [mike rMBP; Singular 3-1-5;  sec] #monoms=
+*}
+///
+
+
+
 
 end
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -682,28 +852,6 @@ TEST ///
 
 ///
 
-TEST ///
-  -- benchmarking example, hcyclic8
-  restart
-  load "MGBInterface/f5ex.m2"
-  loadPackage "MGBInterface"
-  debug Core
-  I = (hcyclicn 8)() -- #GB: 3626
-  gbTrace = 1
-  time gb(I, Strategy=>LongPolynomial);  -- 
-  time gb(I, Algorithm=>Homogeneous2, Strategy=>LongPolynomial);  -- 294 sec!!
-  time gb(I, Algorithm=>LinearAlgebra); -- 7.6 sec
-  time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 87.475 sec
-  time G4 = flatten entries map(ring I, rawMGB(raw gens I, 1, 1, ""));  -- 3.1 sec
-
-  time gens forceGB(matrix{G3}) == gens forceGB(matrix{G4})
-  
-  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
-  makeExampleFiles(prefixDir, {{"hcyclic8", "(hcyclicn 8)()"}});
-  -- run the following:
-  mgb gb hcyclic8 -reducer 26 -thread 1 # -log +all
-  mgb gb hcyclic8  # -log +all
-///
 
 TEST ///
   -- benchmarking example, cyclic8
@@ -799,6 +947,8 @@ TEST ///
   loadPackage "MGBInterface"
   debug Core
   I = yang1() -- #GB: 
+  time G2 = MGB I;
+  time G3 = MGBF4(I, "SPairGroupSize"=>1, "Log"=>"F4");
   time gb I;  -- 37.2 sec
   time gb(I, Algorithm=>LinearAlgebra); -- 36 sec
   time G3 = flatten entries map(ring I, rawMGB(raw gens I, 0, 1, "")); -- 4.02  sec

@@ -580,7 +580,10 @@ monomialOrderMatrix = method()
 monomialOrderMatrix RawMonomialOrdering := (mo) -> (
      nvars := rawNumberOfVariables mo;
      mat := rawMonomialOrderingToMatrix mo;
-     (matrix pack(drop(mat,-1), nvars), if last mat == 0 then Lex else RevLex)
+     -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
+     -- there may be no other elements of mat, so the next line needs to handle that case.
+     ordermat := if #mat === 1 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-1),nvars);
+     (ordermat, if last mat == 0 then Lex else RevLex)
      )
 monomialOrderMatrix Monoid := (M) -> monomialOrderMatrix M.RawMonomialOrdering
 monomialOrderMatrix Ring := (R) -> monomialOrderMatrix monoid R

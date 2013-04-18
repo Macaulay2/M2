@@ -1577,6 +1577,7 @@ enum gbTraceValues
    */
   const Matrix* /* or null */ rawMGB(const Matrix* input, 
                                      int reducer,
+                                     int spairGroupSize,
                                      int nthreads,
                                      const M2_string logging
                                      ); /* connected: rawMGB */
