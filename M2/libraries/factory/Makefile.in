@@ -6,11 +6,11 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 3.1.4.1
+VERSION = 3.1.6
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 TARFILE = factory-$(VERSIONH).tar.gz
 TARDIR = factory
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
@@ -57,15 +57,19 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #      #include <wchar.h>
 #    }
 
-.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h 
+.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h \
+			$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc
 $(LIBRARIESDIR)/include/factory/assert.h : $(BUILDDIR)/assert.h .compiled-$(VERSION) 
 	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
+	@INSTALL_DATA@ $< $@
+$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/ftmpl_list.cc .compiled-$(VERSION) 
+	$(MKDIR_P) $(LIBRARIESDIR)/include/factory/templates
 	@INSTALL_DATA@ $< $@
 
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf \
-		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* \
+		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* include/factory \
 		lib/libcf.a lib/libcfmem.a ;\
 	fi
 

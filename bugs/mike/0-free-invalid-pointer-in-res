@@ -1,0 +1,26 @@
+R=QQ[x,y,z,Degrees=>{1,2,3}]
+S=R/ideal(x^6+y^3+z^2+x*y*z)
+res coker vars S
+oo.dd_3
+det oo
+
+
+thallium$ ~/src/M2/github/DanGrayson/M2/M2/BUILD/dan/builds.tmp/mac64.debug/M2 < 0-free-invalid-pointer-in-res 
+Macaulay2, version 1.5.0.1
+with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+i1 : R=QQ[x,y,z,Degrees=>{1,2,3}]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : S=R/ideal(x^6+y^3+z^2+x*y*z)
+
+o2 = S
+
+o2 : QuotientRing
+
+i3 : res coker vars S
+Attempt to free invalid pointer 0x100000010
+Invalid pointer passed to free()

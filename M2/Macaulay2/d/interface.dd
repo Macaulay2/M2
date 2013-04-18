@@ -522,6 +522,12 @@ export rawNumberOfInvertibleVariables(e:Expr):Expr := (
      else WrongArg("a monomial ordering"));
 setupfun("rawNumberOfInvertibleVariables",rawNumberOfInvertibleVariables);
 
+export rawMonomialOrderingToMatrix(e:Expr):Expr := (
+     when e
+     is m:RawMonomialOrderingCell do
+	      toExpr(Ccode(RawArrayIntOrNull, "rawMonomialOrderingToMatrix(", m.p, ")"))
+     else WrongArg("a monomial ordering"));
+setupfun("rawMonomialOrderingToMatrix",rawMonomialOrderingToMatrix);
 -----------------------------------------------------------------------------
 -- monoids
 
@@ -3207,6 +3213,29 @@ setupfun("rawMatrixColumnScale",rawMatrixColumnScale);
 -----------------------------------------------------------------------------
 -- Groebner bases and resolutions and computations
 -----------------------------------------------------------------------------
+
+export rawMGB(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 5 then WrongNumArgs(4) else
+     when s.0 is M:RawMatrixCell do
+     when s.1 is reducer:ZZcell do if !isInt(reducer) then WrongArgSmallInteger(1) else
+     when s.2 is spairGroupSize:ZZcell do if !isInt(spairGroupSize) then WrongArgSmallInteger(2) else
+     when s.3 is nthreads:ZZcell do if !isInt(nthreads) then WrongArgSmallInteger(3) else
+     when s.4 is logging:stringCell do
+          toExpr( Ccode( RawMatrixOrNull, "rawMGB(", M.p, 
+                    ",", toInt(reducer), 
+                    ",", toInt(spairGroupSize),
+                    ",", toInt(nthreads), 
+                    ",", logging.v, 
+                    ")" ))
+     else WrongArgString(5)
+     else WrongArgZZ(4)          
+     else WrongArgZZ(3)
+     else WrongArgZZ(2)
+     else WrongArgMatrix(1)
+     else WrongNumArgs(5)
+     );
+setupfun("rawMGB",rawMGB);
 
 export rawStartComputation(e:Expr):Expr := (
      when e is c:RawComputationCell do toExpr(Ccode(RawComputationOrNull, "rawStartComputation(", c.p, ")"))

@@ -12,6 +12,7 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # increase the limit, because two of the tests run by mpir's "make check" will
 # not run in just 400000:
 VLIMIT = 600000
+MLIMIT = 600000
 
 CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
 ifeq (@SHARED@,no)

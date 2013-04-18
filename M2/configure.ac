@@ -836,7 +836,7 @@ AC_SUBST(BUILTLIBS,)
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint memtailor mathic mathicgb gtest ")
+AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
 BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
@@ -866,6 +866,8 @@ AC_ARG_ENABLE(fflas-ffpack,
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
     )
+
+BUILD_gtest=yes
 
 AC_SUBST(ENABLE_MEMTAILOR,no)
 AC_ARG_ENABLE(memtailor,
@@ -897,7 +899,6 @@ AC_ARG_ENABLE(mathicgb,
     ENABLE_MEMTAILOR=yes
     )
 
-BUILD_gtest=yes
 
 PROGLIST=" $PROGLIST "
 AC_ARG_WITH(unbuilt-programs, 

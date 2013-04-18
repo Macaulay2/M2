@@ -2,7 +2,10 @@
 
 chkrun = cmd -> (
      r := run cmd;
-     if r == 1002 then (
+     if r == 1002		-- for which systems could this be the return value?
+     or r == 2			-- 2 is the return value for Mac OS X and linux
+     or r == 512		-- 512 can be the return value for Mac OS X
+     then (
 	  stderr << newline;
 	  error("run: subprocess interrupted");
 	  );
