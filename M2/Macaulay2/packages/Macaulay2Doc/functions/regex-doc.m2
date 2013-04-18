@@ -76,6 +76,7 @@ document {
 	  {TT "?", " -- match previous expression 1 or 0 times"},
 	  {TT "(...)", " -- subpattern grouping"},
 	  {TT "|", " -- match expression to left or expression to right"},
+	  {TT "{m}", " -- match previous expression exactly m times"},
 	  {TT "{m,n}", " -- match previous expression at least m and at most n times"},
 	  {TT "{,n}", " -- match previous expression at most n times"},
 	  {TT "{m,}", " -- match previous expression at least m times"},
