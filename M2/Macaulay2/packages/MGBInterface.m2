@@ -635,6 +635,79 @@ BENCHMARK ///
 ///
 
 BENCHMARK ///
+  -- benchmarking example, yang1
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = yang1(); -- #GB: 
+
+  -- vars=48, numgens=66, homogeneous.
+  -- #gb=4761, topdegree=5, #monoms=54,324
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013; 4.1 sec] #monoms=54,324
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013;  sec] #monoms=
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013; 34.0 sec]
+  time G1a = gens gb(ideal J1_*, Algorithm=>LinearAlgebra); -- [mike rMBP; 17 April 2013; 35.1 sec]
+
+  time g1a = gens forceGB G1a;
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1a == g2)
+  assert(g1a == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  runMGB(J1, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis:
+  runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"yang1", "yang1()"}});
+
+  -- run the following in the shell
+  time mgb gb yang1 -reducer 26 -thread 4 # [mike rMBP;                  sec]
+  magma <yang1.magma                      # [mike rMBP; Magma V2.18-11; 19.4 sec]
+  Singular <yang1.sing                    # [mike rMBP; Singular 3-1-5; 45.6 sec] #monoms=54,324
+*}
+///
+
+BENCHMARK ///
+  -- benchmarking example, cyclic8
+{*
+  restart
+  load "MGBInterface/f5ex.m2"
+  loadPackage "MGBInterface"
+*}
+  J1 = (cyclicn 8)() -- #GB: 
+
+  -- vars=8, numgens=8, inhomogeneous.
+  -- #gb=372, topleaddegree=14, #monoms=93,490
+  time G2 = MGB J1;  --    [mike rMBP; 17 April 2013;  sec] #monoms=
+  time G3 = MGBF4 J1; --   [mike rMBP; 17 April 2013; 4.1 sec] #monoms=
+  time g1 = gens gb J1; -- [mike rMBP; 17 April 2013;  sec] #monoms=
+
+  time g2 = gens forceGB matrix{G2};
+  time g3 = gens forceGB matrix{G3};
+  assert(g1 == g2)
+  assert(g1 == g3)
+
+  -- now try runMGB with the signature based algorithm, f4-parallel
+  J2 = trim J1;
+  runMGB(J2, "Algorithm"=>"sig") -- [mike rMBP; 17 April 2013;  sec] #monoms in sig basis: 
+  runMGB(J1, "Reducer"=>26) --      [mike rMBP; 17 April 2013;  sec] #monoms=
+{*
+  -- to make the example file  
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples"
+  makeExampleFiles(prefixDir, {{"cyclic8", "(cyclicn 8)()"}});
+
+  -- run the following in the shell
+  time mgb gb cyclic8 -reducer 26 -thread 4 # [mike rMBP;                  sec]
+  magma <cyclic8.magma                      # [mike rMBP; Magma V2.18-11;  sec]
+  Singular <cyclic8.sing                    # [mike rMBP; Singular 3-1-5;  sec] #monoms=
+*}
+///
+
+BENCHMARK ///
   -- This one is way too easy over grevlex, so do it over Lex
   -- sottile-Y^8Y2 (although the desired one is over QQ)
   -- comes from Sottile's large Schubert problem program
