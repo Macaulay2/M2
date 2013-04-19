@@ -36,8 +36,8 @@ namespace M2 {
 
   /**  @todo Remove this function?  IE: rewrite it?
    //  http://www.johnkerl.org/doc/ffcomp.pdf
-   */
-
+   */ 
+ 
   ARingZZpFFPACK::ElementType ARingZZpFFPACK::computeGenerator() const
   {
     for (UTT currIntElem=2; currIntElem < mCharac; currIntElem++)
@@ -98,8 +98,8 @@ namespace M2 {
   void ARingZZpFFPACK::clear(ElementType &result) const
   { 
     /* nothing */
-  }
-  
+  }  
+   
   void ARingZZpFFPACK::set_zero(ElementType &result) const
   { 
     // M2_ASSERT(0 == mFfpackField.zero);
@@ -114,13 +114,13 @@ namespace M2 {
   /// @todo possible problem if type UTT is smaller than an int?
   void ARingZZpFFPACK::set_from_int(ElementType &result, int a) const
   {
-    mFfpackField.init(result, a);
+    mFfpackField.init(result, static_cast<long>(a));
   }
   
   void ARingZZpFFPACK::set_from_mpz(ElementType &result, const mpz_ptr a) const
   {
-    UTT b = static_cast<UTT>(mpz_fdiv_ui(a, mCharac));
-    mFfpackField.init(result,  b);
+    unsigned long b = static_cast<UTT>(mpz_fdiv_ui(a, mCharac));
+    mFfpackField.init(result,  b ); 
   }
   
   /// @Mike: change all uses of set_from_mpq to return bool
