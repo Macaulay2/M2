@@ -481,7 +481,6 @@ TEST ///
   R = ZZ/101[s,t,a..d, MonomialOrder=>Eliminate 2, Degrees=>{1,1,4,4,4,4}]
   I = ideal"s4-a,s3t-b,st3-c,t4-d"
   
-  runMGB
   G2 = MGB I
   G3 = MGBF4 I
   G4 = MGBF4(I, "Log"=>"all")
