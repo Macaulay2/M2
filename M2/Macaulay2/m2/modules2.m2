@@ -183,7 +183,9 @@ hilbertFunction(List,Ring) := (d,R) -> hilbertFunction(d,R^1)
 hilbertFunction(List,Ideal) := hilbertFunction(List,Module) := (d,M) -> (
      if not all(d,i->class i === ZZ) then error "expected degree to be an integer or list of integers";
      if degreeLength M =!= #d then error "degree length mismatch";
-     f := hilbertSeries(M, Order => 1 + sum((options ring M).Heft,d,times));
+     h := (options ring M).Heft;
+     if h === null then error "hilbertFunction: ring has no heft vector";
+     f := hilbertSeries(M, Order => 1 + sum(h,d,times));
      U := monoid ring f;
      coefficient(U_d,f))
 
