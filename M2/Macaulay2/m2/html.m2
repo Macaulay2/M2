@@ -467,7 +467,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      -- running the examples:
      if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      if ulimit === null then (
-	  ulimit = utest "-t 350" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
+	  ulimit = utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192";
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
      rundir := temporaryFileName() | "-rundir/";
