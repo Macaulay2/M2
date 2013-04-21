@@ -129,6 +129,7 @@ void stack_trace() {
 #	  define i 0
 	  D;
 #	  undef i
+#ifdef BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT
 #	  define i 1
 	  D;
 #	  undef i
@@ -249,6 +250,7 @@ void stack_trace() {
 #	  define i 39
 	  D;
 #	  undef i
+#endif
      }
      fprintf(stderr,"-- end stack trace\n");
      signal(SIGSEGV,old);

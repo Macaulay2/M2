@@ -1461,6 +1461,17 @@ do eval t=\$BUILD_$i
    test "$t" = yes && BUILDPROGLIST="$BUILDPROGLIST $i"
 done
 
+AC_MSG_CHECKING([whether __builtin_return_address accepts a non-zero argument])
+AC_LANG(C)
+SAVE="$CFLAGS"
+CFLAGS="$CFLAGS -Werror"
+AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM([], [[__builtin_return_address(1);]])],
+	[  AC_DEFINE(BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT,1,[Define if __builtin_return_address accepts a non-zero argument])
+	   AC_MSG_RESULT(yes)],
+	[  AC_MSG_RESULT(no) ])
+CFLAGS="$SAVE"
+
 TESTFLAG=-Wno-strict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
 AC_SUBST(HAVE_NO_STRICT_ALIASING,)
