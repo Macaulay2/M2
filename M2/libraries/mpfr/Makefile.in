@@ -3,10 +3,31 @@
 # license:          version 3.0  : GNU Lesser General Public License version 3 or later (LGPL v3+)
 #				   so our binary distributions should be distributed under GPL 3
 
+#############################################################################
+
 VERSION = 3.0.1
+
+#############################################################################
+
+# warning: version 3.1.2 breaks 'check loadPackage "EllipticIntegrals"'!  But it might be gc related.  Here's debug output:
+
+# i15 : scan(-4 .. 4, i -> scan(-4 .. 4, j -> (
+#       	       assert( distance(E.exp ( .2p200 ), E.exp ( .2p200 + i * E.Period' + j * E.Period )) < 1e-50 );
+#       	       assert( distance(E.exp ( .2p200+.3p200*ii ), E.exp ( .2p200+.3p200*ii + i * E.Period' + j * E.Period )) < 1e-50 );
+#       	       )));
+# GC_debug_free: found previously deallocated (?) object at 0x10fc7da30 in or near object at 0x10fc7da40(<smashed>, appr. sz = 57)
+# stdio:27:16:(3):[2]: error: assertion failed
+
+# VERSION = 3.1.2
+# TARFILE = mpfr-$(VERSION).tar.xz
+# UNTARCMD = xz --decompress < $(TARFILE_DIR)/$(TARFILE) | @TAR@ xf -
+
+#############################################################################
 
 # warning: version 3.1.0 breaks 'check loadPackage "EllipticIntegrals"'!
 #VERSION = 3.1.0
+
+#############################################################################
 
 RELAX = yes
 # URL = http://www.mpfr.org/mpfr-$(VERSION)
