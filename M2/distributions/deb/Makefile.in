@@ -12,13 +12,29 @@ TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 ifeq (@ARCH@,x86_64)
 DEBARCH=amd64
 else
-DEBARCH=@ARCH@
+ifeq (@ARCH@,i686)
+# libgc needs to be compiled with i686 to get multiple threads
+DEBARCH=i386
+else
+$(error unrecognized architecture @ARCH@)
+endif
 endif
 
 PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
 PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
 
 all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
+
+ifeq ($(SIGN),yes)
+all: sign
+else
+all: no-sign
+endif
+sign: ../../$(PKG_DEB).sig  ../../$(PKG_COM_DEB).sig 
+no-sign:; @ echo 'You may have wanted to sign the *.deb files with the command  make SIGN=yes'
+%.sig:
+%.sig: %; gpg --local-user Macaulay2 --detach-sign $^
+
 chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # Debian prefers stripped binaries, but we don't:
 # chk-opts: check-strip-enabled
@@ -133,8 +149,9 @@ libraries-really-used: libraries-used libraries-used-directly
 packages-used: libraries-really-used
 	cat $^ |								\
 	while read x ;								\
+	x=`readlink -f "$$x"` ;							\
 	do @FIND@ /var/lib/dpkg/info -name \*.list | xargs egrep -l "^$$x";	\
-	done | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
+	done | sort | uniq | sed -r -e 's=.*/==' -e 's=(:.*)?\.list$$==' >$@
 clean::; rm -f packages-used
 macaulay2/control : macaulay2/control.prelim macaulay2/data.tar.gz packages-used
 	(cat $< &&								\

@@ -1,0 +1,9 @@
+S = ZZ/101[a,b,c]
+M = coker vars S
+R = S/ideal"a3"
+Ext(R**M, R**M) -- works
+Ext(M,M) --fails
+
+-- due to:
+
+basis_3 (QQ[])
