@@ -12,6 +12,19 @@ newPackage("VersalDeformations",
         {Name => "Nathan Owen Ilten",
 	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
 	  Email => "nilten@cs.uchicago.edu"}},
+    Certification => {
+	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
+	 "journal URI" => "http://j-sag.org/",
+	 "article title" => "Versal deformations and local Hilbert schemes",
+	 "acceptance date" => "2012-06-05",
+	 "published article URI" => "http://j-sag.org/Volume4/jsag-3-2012.pdf",
+	 "published code URI" => "http://j-sag.org/Volume4/VersalDeformations.m2",
+	 "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/VersalDeformations.m2",
+	 "release at publication" => 14710,
+	 "version at publication" => "1.0",
+	 "volume number" => "4",
+	 "volume URI" => "http://j-sag.org/Volume4/"
+	 },
     Configuration => {"DefaultDefParam"=>"t"}
     )
 
