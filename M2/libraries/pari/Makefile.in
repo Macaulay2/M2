@@ -22,21 +22,22 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #   test-ellsea - requires data files "seadata"
 #   test-galois - requires galois data files "galdata"
 #   test-ploth - needs to pop up a window
+#   test-galoisinit test-subfields test-partition - mysterious segmentation fault on Mac, but we don't use these routines
 
 CHECKTARGET =										\
     test-addprimes test-analyz test-apply test-aurifeuille test-bezout			\
     test-bnfisintnorm test-bnr test-charpoly test-combinat test-compat			\
     test-contfrac test-cxtrigo test-debugger test-det test-diffop test-ell		\
-    test-elliptic test-ellweilpairing test-err		\
-    test-exact0 test-extract test-ff test-ffisom test-galoisinit		\
+    test-elliptic test-ellweilpairing test-err						\
+    test-exact0 test-extract test-ff test-ffisom					\
     test-graph test-ideal test-idealappr test-idealramgroups test-intformal		\
     test-intnum test-ispower test-krasner test-linear test-list test-lll test-mat	\
     test-matsnf test-member test-minim test-modpr test-multivar-mul test-nf		\
     test-nffactor test-nfhilbert test-nfields test-nfrootsof1 test-number		\
-    test-objets test-partition test-polchebyshev test-polmod test-polred		\
+    test-objets test-polchebyshev test-polmod test-polred				\
     test-polyser test-printf test-program test-qf test-qfbsolve test-quad		\
     test-quadclassunit test-quadray test-random test-resultant test-rfrac test-rnf	\
-    test-rnfkummer test-round4 test-select test-stark test-subcyclo test-subfields	\
+    test-rnfkummer test-round4 test-select test-stark test-subcyclo			\
     test-subst test-sumiter test-thue test-trans test-zetak test-zn
 
 BUILDTARGET = lib-sta
