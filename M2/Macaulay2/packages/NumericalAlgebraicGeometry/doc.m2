@@ -1,4 +1,5 @@
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", arXiv:0911.1783" 
+refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", arXiv:1105.5992" 
 refIntroToNAG := "A.J. Sommese, J. Verschelde, and C.W. Wampler, \"Introduction to numerical algebraic geometry\", 
                   in \"Solving polynomial equations\" (2005), 301--338" 
 refSWbook := "A.J. Sommese and C.W. Wampler, \"The numerical solution of systems of polynomials\",
@@ -517,9 +518,13 @@ document {
 	Key => {Certified},
 	Headline => "a value for the option Predictor that triggers certified tracking",
 	PARA {
-       	     "Tells basic functions, e.g., ", TO track, ", to use soft certification described in"
+       	     "Tells basic functions, e.g., ", TO track, ", to use ", EM "soft", " certification described in"
 	     },
 	refBeltranLeykin,
+        PARA {
+	    "The code for ", EM "robust", " certification is not incorporated in this package at the moment; the location of this stand-alone code is in the references of " 
+	    },
+	refBeltranLeykinRobust, 
 	PARA{"The functions related to this paper are:"},
 	certifiedTrackingFunctions,
 	EXAMPLE lines ///
