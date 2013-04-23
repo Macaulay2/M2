@@ -67,32 +67,91 @@ document {
      Caveat => {"Hom of two chain complexes is not yet implemented"},
      SeeAlso => {resolution}
      }
-document { 
-     Key => {(Hom,Matrix,Module),(Hom,Module,Matrix),
-	  (Hom,Module,ChainComplexMap),(Hom,ChainComplexMap,Module)},
-     Headline => "induced map on Hom modules",
-     Usage => "Hom(f,M)\nHom(M,f)",
-     Inputs => {
-	  "f" => {"a map ", TT "N1 --> N2", " of modules or ", ofClass ChainComplex}, 
-	  "M" => {"over the same ring ", TT "R", " as ", TT "f"}
-	  },
-     Outputs => {
-	  Matrix => {"either the map ", TT "Hom_R(N2,M) --> Hom_R(N1,M)", " in the first case,
-	    or the map ", TT "Hom_R(M,N1) --> Hom_R(M,N2)", " in the second case"}
-	  },
-     "If ", TT "f", " is a map of chain complexes, then the result is a ", ofClass ChainComplexMap, ".",
-     EXAMPLE lines ///
-     	  R = QQ[a..d];
-	  I = ideal(a*b,c*d);
-	  J = I + ideal(a*d);
-	  f = inducedMap(module J,module I)
-	  g = Hom(R^3,f)
-	  ker g
-	  image g
-	  ///,
-     Caveat => "Not all possible combinations are implemented yet",
-     SeeAlso => {}
-     }
+
+multidoc ///
+Node
+ Key
+  (Hom,Matrix,Matrix)
+ Headline
+  induced map on Hom
+ Usage
+  Hom(f,g)
+ Inputs
+  f:
+  g:
+ Outputs
+  :
+   the map on Hom induced by the maps {\tt f} and {\tt g}
+Node
+ Key
+  (Hom,Matrix,Module)
+ Headline
+  induced map on Hom
+ Usage
+  Hom(f,M)
+ Inputs
+  f:
+  M:
+ Outputs
+  :
+   the induced map on Hom
+ Description
+  Example
+   R = QQ[x]
+   f = vars R
+   M = image f
+   g = Hom(f,M)
+   target g
+   source g
+Node
+ Key
+  (Hom,Module,Matrix)
+ Headline
+  induced map on Hom
+ Usage
+  Hom(M,f)
+ Inputs
+  M:
+  f:
+ Outputs
+  :
+   the induced map on Hom
+ Description
+  Example
+   R = QQ[x]
+   f = vars R
+   M = image f
+   g = Hom(M,f)
+   target g
+   source g
+Node
+ Key
+  (Hom,Module,ChainComplexMap)
+ Headline
+  induced map on Hom
+ Usage
+  Hom(M,f)
+ Inputs
+  M:
+  f:
+ Outputs
+  :
+   the induced map on Hom
+Node
+ Key
+  (Hom,ChainComplexMap,Module)
+ Headline
+  induced map on Hom
+ Usage
+  Hom(f,M)
+ Inputs
+  M:
+  f:
+ Outputs
+  :
+   the induced map on Hom
+///
+
 document { 
      Key => {(Hom,CoherentSheaf,CoherentSheaf),
 	  (Hom, SheafOfRings, SheafOfRings),

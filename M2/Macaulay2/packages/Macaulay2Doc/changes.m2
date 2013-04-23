@@ -25,36 +25,36 @@ document {
 	  LI {
 	       "obsolete functions",
 	       UL {
-		    LI "'mutableZero' has been replaced by ", TO "mutableMatrix", "",
-		    LI "'unlist' has been replaced by ", TO "toSequence", "",
-		    LI "'evaluate' has been replaced by ", TO "value", "",
-		    LI "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'",
-		    LI "'verticalJoin' has been replaced by ", TO "stack", "",
-		    LI "'netRows' has been replaced by ", TO "unstack", "",
-		    LI "'name' has been replaced by ", TO "toString", "",
-		    LI "'quote' has been replaced by ", TO "symbol", "",
-		    LI "'Numeric' has been replaced by ", TO "numeric", "",
-		    LI "'submodule' has been removed",
-		    LI "'monomialCurve' has been replaced by ", TO "monomialCurveIdeal", "",
-		    LI "'assign' has been replaced by ", TO "<-", "",
-		    LI "'minprimes' has been replaced by ", TO "independentSets", "",
-		    LI "'elapsedTime' has been renamed to ", TO "cpuTime", "",
-		    LI "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
+		    LI { "'mutableZero' has been replaced by ", TO "mutableMatrix" },
+		    LI { "'unlist' has been replaced by ", TO "toSequence" },
+		    LI { "'evaluate' has been replaced by ", TO "value" },
+		    LI { "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'" },
+		    LI { "'verticalJoin' has been replaced by ", TO "stack" },
+		    LI { "'netRows' has been replaced by ", TO "unstack" },
+		    LI { "'name' has been replaced by ", TO "toString" },
+		    LI { "'quote' has been replaced by ", TO "symbol" },
+		    LI { "'Numeric' has been replaced by ", TO "numeric" },
+		    LI { "'submodule' has been removed" },
+		    LI { "'monomialCurve' has been replaced by ", TO "monomialCurveIdeal" },
+		    LI { "'assign' has been replaced by ", TO "<-" },
+		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
+		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
 		    }
 	       },
 	  LI {
 	       "obsolete methods",
 	       UL {
-		    LI "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead",
-		    LI "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead",
-		    LI "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead",
-		    LI "'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead",
-		    LI "'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead",
-		    LI "'RingElement _ List' has been replaced: use 'part(d,f)' instead",
-		    LI "'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead",
-		    LI "'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead",
-		    LI "'map(Module,Module)' has been removed: use 'inducedMap' instead",
-		    LI "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead"
+		    LI { "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead" },
+		    LI { "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead" },
+		    LI { "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead" },
+		    LI { "'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead" },
+		    LI { "'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead" },
+		    LI { "'RingElement _ List' has been replaced: use 'part(d,f)' instead" },
+		    LI { "'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead" },
+		    LI { "'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead" },
+		    LI { "'map(Module,Module)' has been removed: use 'inducedMap' instead" },
+		    LI { "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead" }
 		    }
 	       }
 	  }
@@ -102,9 +102,8 @@ document {
 	  LI { "functionality added or improved:",
 	       UL {
 	       	    LI { "Factoring of polynomials over non-prime Galois fields has been added, using the ", TO "Singular-Factory", " library." },
-		    LI { "Added methods for ", TO (Hom,Matrix,Module), ", ", TO (Hom,Module,Matrix), ", ", TO (truncate,ZZ,ZZ,Matrix), ", 
-    			 and ", TO (truncate,ZZ, Matrix), ", written by David Eisenbud."
-			 },
+		    LI { "The methods for ", TO (Hom,Matrix,Module), " and ", TO (Hom,Module,Matrix), " now handle non-free modules.
+			 There is also a new method for ", TO (Hom,Matrix,Matrix), "." },
 		    },
 	       },
 	  LI { "functionality changed:",
@@ -142,10 +141,7 @@ document {
 	       UL {
 		    LI {
 			 "A facility for scheduling tasks to be performed in parallel (in threads) has been developed.
-			 See ", TO "addCancelTask", ", ", TO "addDependencyTask", ", ", TO "addStartTask", ", 
-			 ", TO "allowableThreads", ", ", TO "cancelTask", ", ", TO "createTask", ", ", TO "limitFiles", ", 
-			 ", TO "limitProcesses", ", ", TO "maxAllowableThreads", ", ", TO "schedule", ", ", TO "setIOExclusive", ",
-			 ", TO "setIOSynchronized", ", ", TO "setIOUnSynchronized", ", and ", TO "taskResult", "."
+			 See ", TO "parallel programming with threads and tasks", "."
 			 }
 	       	    }
 	       },
@@ -212,6 +208,10 @@ document {
 			 "The function ", TO "newPackage", " now has two new options, ", TO "PackageExports", " and ", TO "PackageImports", ",
 			 which provide a more robust way to specify that other packages should be loaded when this new
 			 package is loaded."
+			 },
+		    LI {
+			 "The new functions ", TO "limitFiles", " and ", TO "limitProcesses", " can be used to impose resource limits on the current
+			 process."
 			 }
 		    }
 	       },

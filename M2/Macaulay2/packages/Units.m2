@@ -289,3 +289,14 @@ twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
 twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
 
 export values Units#"private dictionary"
+
+beginDocumentation()
+
+multidoc ///
+Node
+ Key
+  Units
+ Description
+  Text
+   This package converts various units of measure to others.
+///

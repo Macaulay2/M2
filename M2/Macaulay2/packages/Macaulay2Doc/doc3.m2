@@ -1449,9 +1449,11 @@ document {
 	  "If the name of the temporary file will be given to an external program, it may be necessary to
 	  concatenate it with ", TO "rootPath", " or ", TO "rootURI", " to enable the external program to find the file."
 	  },
+     PARA {
+	  "The temporary file name is derived from the value of the environment variable ", TT "TMPDIR", ", if it has one."
+	  },
      SeeAlso => {File, "rootPath", "rootURI"}
      }
-
 
 document { Key => info,
      Headline => "convert hypertext to info format",
@@ -1459,8 +1461,8 @@ document { Key => info,
      }
 
 document { Key => "nullaryMethods",
-     "This experimental hash table is to contain methods for handling the case where a method function, ", TT "f", " say, is called with
-     0 argument, i.e., as ", TT "f()", "."
+     "This experimental hash table is to contain methods for handling the case where a method function, ", TT "f", ", say, is called with
+     0 arguments, i.e., as ", TT "f()", "."
      }
 
 document { Key => pager,
