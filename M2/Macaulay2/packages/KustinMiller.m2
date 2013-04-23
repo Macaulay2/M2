@@ -22,8 +22,8 @@ newPackage(
 	     "published article URI" => "http://j-sag.org/Volume4/jsag-2-2012.pdf",
 	     "published code URI" => "http://j-sag.org/Volume4/KustinMiller.m2",
 	     "repository code URI" => "svn://svn.macaulay2.com/Macaulay2/trunk/M2/Macaulay2/packages/KustinMiller.m2",
-	     "release at publication" => 1.4,	    -- as an integer
-	     "version at publication" => "14712",
+	     "release at publication" => 14712,
+	     "version at publication" => "1.4",
 	     "volume number" => "4",
 	     "volume URI" => "http://j-sag.org/Volume4/"
 	     }
