@@ -71,10 +71,10 @@ document {
 	  --      },
 	  LI { "packages that have been published and certified:",
 	       UL {
-		    LI { TO "VersalDeformations::VersalDeformations", ", a package for calculating tangent and obstruction spaces as well as power series solutions for deformation problems involving isolated singularities and projective schemes,
+		    LI { star, " ", TO "VersalDeformations::VersalDeformations", ", a package for calculating tangent and obstruction spaces as well as power series solutions for deformation problems involving isolated singularities and projective schemes,
 			 has been published." 
 			 },
-		    LI { TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex,
+		    LI { star, " ", TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex,
 			 has been published." 
 			 },
 	       	    }
@@ -102,28 +102,21 @@ document {
 	  LI { "functionality added or improved:",
 	       UL {
 	       	    LI { "Factoring of polynomials over non-prime Galois fields has been added, using the ", TO "Singular-Factory", " library." },
-		    LI {
-			 "Added methods for ", TO (Hom,Matrix,Module), ", ", TO (Hom,Module,Matrix), ", ", TO (truncate,ZZ,ZZ,Matrix), ", 
+		    LI { "Added methods for ", TO (Hom,Matrix,Module), ", ", TO (Hom,Module,Matrix), ", ", TO (truncate,ZZ,ZZ,Matrix), ", 
     			 and ", TO (truncate,ZZ, Matrix), ", written by David Eisenbud."
 			 },
 		    },
 	       },
 	  LI { "functionality changed:",
 	       UL {
-		    LI {
-			 "changed the order of loading packages inside a
-			 package, as specified by ", TO "PackageImports", " and
-			 ", TO "PackageExports", " options, so that the order
-			 of loading is easy to
-			 specify (to avoid problems with shadowed variables).
-			 The packages are loaded with ", TO "needsPackage", ",
-			 and now the imported packages are loaded before the
-			 exported packages.  So, if there is a problem, just
-			 replicate all the exported packages in the list of
-			 imports, and juggle the order of the list of imports."
+		    LI { "changed the order of loading packages inside a package, as specified by ", TO "PackageImports",
+			 " and ", TO "PackageExports", " options, so that the order of loading is easy to specify (to
+			 avoid problems with shadowed variables).  The packages are loaded with ", TO "needsPackage", ",
+			 and now the imported packages are loaded before the exported packages.  So, if there is a
+			 problem, just replicate all the exported packages in the list of imports, and juggle the order of
+			 the list of imports."
 			 },
-		    LI {
-			 "The function ", TO "temporaryFileName", " now obeys the TMPDIR environment variable, 
+		    LI { "The function ", TO "temporaryFileName", " now obeys the TMPDIR environment variable, 
 			 the way other unix applications do, rather than putting temporary files into the 
 			 directory ", TT "/tmp", "."
 			 },
@@ -147,15 +140,62 @@ document {
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
-		    "A facility for scheduling tasks to be performed in parallel (in threads) has been developed ... "
+		    LI {
+			 "A facility for scheduling tasks to be performed in parallel (in threads) has been developed.
+			 See ", TO "addCancelTask", ", ", TO "addDependencyTask", ", ", TO "addStartTask", ", 
+			 ", TO "allowableThreads", ", ", TO "cancelTask", ", ", TO "createTask", ", ", TO "limitFiles", ", 
+			 ", TO "limitProcesses", ", ", TO "maxAllowableThreads", ", ", TO "schedule", ", ", TO "setIOExclusive", ",
+			 ", TO "setIOSynchronized", ", ", TO "setIOUnSynchronized", ", and ", TO "taskResult", "."
+			 }
 	       	    }
+	       },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    LI { star, " ", TO "Nauty::Nauty", ", a package for an interface to the program ", TT "nauty", ", which
+			 provides efficient methods for determining whether
+            		 graphs are isomorphic, generating all graphs with particular properties,
+            		 generating random graphs, and more,
+			 has been published." 
+			 },
+		    LI { star, " ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", ", a package for using 
+			 polynomial homotopy continuation to solve systems of polynomial equations and describing positive-dimensional 
+			 complex algebraic varieties, has been published." 
+			 },
+		    LI { star, " ", TO "Binomials::Binomials", ", a package for binomial ideals with a particular focus on
+			 intersection decompositions and associated primes,
+			 has been published." 
+			 },
+		    }
 	       },
 	  LI { "new packages:",
 	       UL {
 		    LI { TO "BIBasis::BIBasis", ", a package for constructing reduced Pommaret and Gröbner bases in a Boolean ring,
 			 has been added." },
+		    LI { TO "CharacteristicClasses::CharacteristicClasses", ", a package for degrees of Chern classes and other characteristic classes of projective schemes,
+			 has been added." },
 		    LI { TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex construction,
-			 has been added." }
+			 has been added." },
+		    LI { TO "MonomialAlgebras::MonomialAlgebras", ", a package for decomposing a monomial algebra as a module over a subalgebra,
+			 has been added." },
+		    LI { TO "MonomialMultiplierIdeals::MonomialMultiplierIdeals", ", a package for computing multiplier ideals of monomial ideals,
+			 has been added." },
+		    LI { TO "NautyGraphs::NautyGraphs", ", a package for an interface to ", TT "nauty", " (Graphs fork),
+			 has been added." },
+		    LI { TO "QthPower::QthPower", ", a package for computing the integral closure of type I affine domains,
+			 has been added." },
+		    LI { TO "RandomObjects::RandomObjects", ", ",
+			 TO "RandomCanonicalCurves::RandomCanonicalCurves", ", ",
+			 TO "RandomCurves::RandomCurves", ", ",
+			 TO "RandomGenus14Curves::RandomGenus14Curves", ", ",
+			 TO "RandomPlaneCurves::RandomPlaneCurves", ", ",
+			 TO "RandomSpaceCurves::RandomSpaceCurves", ", packages for the construction of random points of unirational moduli spaces,
+			 have been added." },
+		    LI { TO "TensorComplexes::TensorComplexes", ", a package for multilinear algebra for the construction of tensor complexes,
+			 has been added." },
+		    LI { TO "Units::Units", ", a package for conversion of units of measure,
+			 has been added." },
+		    LI { TO "VersalDeformations::VersalDeformations", ", a package for calculating versal deformations and local Hilbert schemes,
+			 has been added." },
 	  	    }
 	       },
 	  -- LI { "improved packages:",
@@ -185,14 +225,14 @@ document {
 	       	    }
 	       }
 	  -- LI { "new constants and operators:",
-	  --      -- UL {
-	  --      -- 	    }
+	  --      UL {
 	  --      }
+	  -- }
 	  }
      }
 
 document {
-     Key => "changes, 1.4",
+     Key => "changes, 1.4",				    -- the branch for 1.4 was created 2010-09-23 with release 12341
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
