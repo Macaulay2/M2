@@ -8,6 +8,7 @@ document {
 	  TO "changes, 1.3.1",
 	  TO "changes, 1.4",
 	  TO "changes, 1.5",
+	  TO "changes, 1.6",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -15,24 +16,30 @@ document {
 document {
      Key => "list of obsolete functions",
      UL {
+          LI {
+	       "obsolete classes",
+	       UL {
+		    LI { TT "Thread", " has been replaced by ", TO "Task" },
+		    }
+	       },
 	  LI {
 	       "obsolete functions",
 	       UL {
-		    LI "'mutableZero' has been replaced by mutableMatrix",
-		    LI "'unlist' has been replaced by toSequence",
-		    LI "'evaluate' has been replaced by 'value'",
+		    LI "'mutableZero' has been replaced by ", TO "mutableMatrix", "",
+		    LI "'unlist' has been replaced by ", TO "toSequence", "",
+		    LI "'evaluate' has been replaced by ", TO "value", "",
 		    LI "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'",
-		    LI "'verticalJoin' has been replaced by 'stack'",
-		    LI "'netRows' has been replaced by 'unstack'",
-		    LI "'name' has been replaced by 'toString'",
-		    LI "'quote' has been replaced by 'symbol'",
-		    LI "'Numeric' has been replaced by 'numeric'",
+		    LI "'verticalJoin' has been replaced by ", TO "stack", "",
+		    LI "'netRows' has been replaced by ", TO "unstack", "",
+		    LI "'name' has been replaced by ", TO "toString", "",
+		    LI "'quote' has been replaced by ", TO "symbol", "",
+		    LI "'Numeric' has been replaced by ", TO "numeric", "",
 		    LI "'submodule' has been removed",
-		    LI "'monomialCurve' has been replaced by 'monomialCurveIdeal'",
-		    LI "'assign' has been replaced by '<-'",
-		    LI "'minprimes' has been replaced by 'independentSets'",
-		    LI "function 'elapsedTime' has been renamed to 'cpuTime'",
-		    LI "function 'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
+		    LI "'monomialCurve' has been replaced by ", TO "monomialCurveIdeal", "",
+		    LI "'assign' has been replaced by ", TO "<-", "",
+		    LI "'minprimes' has been replaced by ", TO "independentSets", "",
+		    LI "'elapsedTime' has been renamed to ", TO "cpuTime", "",
+		    LI "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
 		    }
 	       },
 	  LI {
@@ -56,7 +63,87 @@ document {
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
 
 document {
-     Key => "changes, 1.5",
+     Key => "changes, 1.6",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    LI { TO "VersalDeformations::VersalDeformations", ", a package for calculating tangent and obstruction spaces as well as power series solutions for deformation problems involving isolated singularities and projective schemes,
+			 has been published." 
+			 },
+		    LI { TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex,
+			 has been published." 
+			 },
+	       	    }
+	       },
+	  LI { "new packages:",
+	       UL {
+		    LI { TO "PushForward::PushForward", ", a package for for computing the push-forward functor for finite ring maps,
+			 has been added.  (It should have been added to the previous distribution.)" 
+			 },
+		    LI { TO "EliminationMatrices::EliminationMatrices", ", a package for computing resultants,
+			 has been added." 
+			 },
+		    LI { TO "EllipticIntegrals::EllipticIntegrals", ", a package for numerical computation of elliptic integrals and elliptic functions,
+			 has been added." 
+			 },
+		    LI { TO "Triplets::Triplets", ", a package for computing Betti diagrams and hypercohomology tables associated to triplets of degree sequences,
+			 has been added." 
+			 },
+	  	    }
+	       },
+	  -- LI { "improved packages:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  LI { "functionality added or improved:",
+	       UL {
+	       	    LI { "Factoring of polynomials over non-prime Galois fields has been added, using the ", TO "Singular-Factory", " library." },
+		    LI {
+			 "Added methods for ", TO (Hom,Matrix,Module), ", ", TO (Hom,Module,Matrix), ", ", TO (truncate,ZZ,ZZ,Matrix), ", 
+    			 and ", TO (truncate,ZZ, Matrix), ", written by David Eisenbud."
+			 },
+		    },
+	       },
+	  LI { "functionality changed:",
+	       UL {
+		    LI {
+			 "changed the order of loading packages inside a
+			 package, as specified by ", TO "PackageImports", " and
+			 ", TO "PackageExports", " options, so that the order
+			 of loading is easy to
+			 specify (to avoid problems with shadowed variables).
+			 The packages are loaded with ", TO "needsPackage", ",
+			 and now the imported packages are loaded before the
+			 exported packages.  So, if there is a problem, just
+			 replicate all the exported packages in the list of
+			 imports, and juggle the order of the list of imports."
+			 },
+		    LI {
+			 "The function ", TO "temporaryFileName", " now obeys the TMPDIR environment variable, 
+			 the way other unix applications do, rather than putting temporary files into the 
+			 directory ", TT "/tmp", "."
+			 },
+	       	    }
+	       },
+	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	       UL {
+		    LI { "New functions ", TO "fileReadable", ", ", TO "fileWritable", ", ", TO "fileExecutable", " provide information
+			 about file permissions."
+	       	    	 },
+		    LI { "The class ", TO "Task", " replaces ", TT "Thread", ", and the function ", TO "isCanceled", " tells whether
+			 a task has been canceled."
+	       	    	 },
+	       	    }
+	       }
+     	  }
+     }
+
+document {
+     Key => "changes, 1.5",				    -- the 1.5 branch was created 2012-05-21 with svn release 14617
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
