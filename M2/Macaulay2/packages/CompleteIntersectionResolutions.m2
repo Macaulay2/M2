@@ -12,49 +12,49 @@ newPackage(
 
 	  export{
 	   --some utilities
---	   hf,
---	   submoduleByDegrees,	   
---	   submatrixByDegrees,
---    	   toArray,
-	   splittings,
+--	   "hf",
+--	   "submoduleByDegrees",	   
+--	   "submatrixByDegrees",
+--    	   "toArray",
+	   "splittings",
 	   --things related to complete intersection resolutions
-	   ExtModule, 
-	   evenExtModule, 
-	   oddExtModule,
-	   ExtModuleData,
-	   makeT,
---	   isSurjCIOperator,
---	   splitResolution,
---	   decomposeResolution,
-	   cosyzygyRes,	  
-	   matrixFactorization,
-	   Check, -- optional arg for matrixFactorization
-	   BRanks,
-	   ARanks,
-	   bMaps,
-	   dMaps,
-	   psiMaps,
-	   hMaps,
-	   mfBound,
-	   highSyzygy,
-	   Optimism, -- optional arg for highSyzygy etc
-	   finiteBettiNumbers,
-           infiniteBettiNumbers,
-	   makeHomotopies,
-	   makeHomotopies1,
-           exteriorTorModule,
-	   TateResolution,
-	   makeModule,
-	   isLinear,
-	   freeExteriorSummand,
-	   S2,
-	   twoMonomials,
-	   sumTwoMonomials,
-	   moduleAsExt,
-	   hfModuleAsExt,
-	   koszulExtension,
-	   makeFiniteResolution,	   
-	   complexity
+	   "ExtModule", 
+	   "evenExtModule", 
+	   "oddExtModule",
+	   "ExtModuleData",
+	   "makeT",
+--	   "isSurjCIOperator",
+--	   "splitResolution",
+--	   "decomposeResolution",
+	   "cosyzygyRes",	  
+	   "matrixFactorization",
+	   "Check", -- optional arg for matrixFactorization
+	   "BRanks",
+	   "ARanks",
+	   "bMaps",
+	   "dMaps",
+	   "psiMaps",
+	   "hMaps",
+	   "mfBound",
+	   "highSyzygy",
+	   "Optimism", -- optional arg for highSyzygy etc
+	   "finiteBettiNumbers",
+           "infiniteBettiNumbers",
+	   "makeHomotopies",
+	   "makeHomotopies1",
+           "exteriorTorModule",
+	   "TateResolution",
+	   "makeModule",
+	   "isLinear",
+	   "freeExteriorSummand",
+	   "S2",
+	   "twoMonomials",
+	   "sumTwoMonomials",
+	   "moduleAsExt",
+	   "hfModuleAsExt",
+	   "koszulExtension",
+	   "makeFiniteResolution",	   
+	   "complexity"
 	   }
 
 hf=(range, m)->(
@@ -82,7 +82,7 @@ toArray List := L -> splice [toSequence L]
 toArray ZZ := n->[n]
 
 transpose Module := M -> coker transpose presentation M
-    --this is Auslanders transpose functor
+    --this is Auslander's transpose functor
     
 
 
@@ -214,7 +214,7 @@ isSurjCIOperator(Matrix, ChainComplex) := (F,G) ->(
      2
      )
 
-///
+{*
 restart
 loadPackage "CompleteIntersectionResolutions"
 kk= ZZ/101
@@ -228,7 +228,7 @@ G = res(M, LengthLimit =>4)
 isSurjCIOperator(F,G)
 G = res(M, LengthLimit =>10)
 isSurjCIOperator(F,G)
-///
+*}
 
 splittings = method()
 splittings (Matrix, Matrix) := (a,b) -> (
@@ -257,7 +257,7 @@ splittings (Matrix, Matrix) := (a,b) -> (
      {map(source a, target a, sigma), map(source b, target b,tau)}
      )
 
-///
+{*
 restart
 loadPackage "CompleteIntersectionResolutions"
 kk= ZZ/101
@@ -276,7 +276,7 @@ sigma = spl_0; tau=spl_1;
      assert(sigma*tau==0);
      assert(B*tau == id_(target B));
      assert(sigma*A == id_(source A));
-///
+*}
 
 
 cosyzygyRes = method()
@@ -593,7 +593,8 @@ ExtModuleData Module := M -> (
 	 <<toString presentation M);
      {E0,E1,r0,r1}
      )
-///
+
+{*
 restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
@@ -622,7 +623,7 @@ viewHelp "CompleteIntersectionResolutions"
   betti res coker vars R
   ExtModuleData coker vars R
  
-///
+*}
 
 
     
@@ -643,7 +644,7 @@ highSyzygy Module := opts -> M0 ->(
     F := res(M0, LengthLimit => len);
     coker F.dd_len)
 
-///%%
+{*
 
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
@@ -721,7 +722,7 @@ m1 = {x_0^2*x_2^4, x_0*x_1^4*x_2}
 M0 = R^1/ideal(m1_0+m1_1);
 MF = matrixFactorization(ff, highSyzygy M0);
 netList BRanks MF
-///
+*}
 
 finiteBettiNumbers = method()
 finiteBettiNumbers List := MF -> (
@@ -754,13 +755,13 @@ infiniteBettiNumbers (List,ZZ) := (MF,len) -> (
 	     )
      )
      
-///
+{*
 restart
 loadPackage("CompleteIntersectionResolutions", Reload => true)
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp finiteBettiNumbers
-///
+*}
     
 --The following functions are used in makeHomotopies
 expo = method()
@@ -867,7 +868,7 @@ makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      hashTable pairs H
      )
 
-///
+{*
 restart
 loadPackage("CompleteIntersectionResolutions", Reload =>true)
 kk=ZZ/101
@@ -886,7 +887,7 @@ F= res (ideal vars S)
 F = res ideal"a4,b2"
 H = makeHomotopies1(f,F,3)
 netList select(keys H, k->H#k!=0)
-///
+*}
 
 
 exteriorTorModule = method()
@@ -953,13 +954,14 @@ freeExteriorSummand(Module) := M -> (
      nongens := (0_E*M):soc;
      freegens := (basis (M/nongens))//inducedMap(M/nongens,M)
      )
-///
+{*
 restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp "CompleteIntersectionResolutions"
-///
-///
+*}
+
+{*
 restart
 loadPackage( "CompleteIntersectionResolutions", Reload => true)
 kk= ZZ/101
@@ -1040,7 +1042,7 @@ phi = presentation PT;
 isLinear phi
 submatrixByDegrees(phi,{0},{2})
 
-///
+*}
 
 --load "HomMatrixModule.m2" -- still necessary in 1.5?
 
@@ -1060,7 +1062,7 @@ S2(ZZ,Module) := Matrix => (b,M)-> (
 --     inducedMap(truncate(b,target s),truncate(b,source s),s)
      )
 
-///
+{*
 restart
 loadPackage "CompleteIntersectionResolutions"
 S = kk[a,b,c]
@@ -1092,7 +1094,7 @@ S=kk[a,b,c]
 I = ideal (vars S)^[3]
 f = map(S^1,module I,(vars S)^[3])
 matrix f
-///
+*}
 
 
 
@@ -1298,7 +1300,7 @@ moduleAsExt(Module,Ring) := (M,R) ->(
     assert isHomogeneous(d1+d2);
     prune coker(d1+d2))
 
-///
+{*
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 n=3;c=3;
@@ -1319,7 +1321,7 @@ n=3;c=3;
   N =  moduleAsExt(MM,R)
   betti res( N, LengthLimit => 10)
   hfModuleAsExt(10,MM,n)
-  ///
+*}
   
 koszulExtension = method()
 koszulExtension(ChainComplex,ChainComplex,Matrix,Matrix) := (FF, BB, psi1, ff) ->(
@@ -1366,7 +1368,8 @@ complexity List := mf -> (
     br := BRanks mf;
     L := select(br, pair->pair_0!=0);
     #L)
-///
+
+{*
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 toArray = method()
@@ -1385,7 +1388,7 @@ F.dd_1
 G.dd_2
 F.dd_2
 
-///
+*}
 
 
 -----------------------------
@@ -1479,7 +1482,7 @@ assert( (makeT(ff,F,3)) === {map(R^{{-4},{-4},{-4}},R^{{-4},{-4},{-4},{-4},{-4},
   assert(betti F ==  betti G)
 ///
 
-///
+{*
 restart
 loadPackage"CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
@@ -1487,7 +1490,7 @@ check "CompleteIntersectionResolutions"
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 
-///
+*}
 
 
 -----------------------------
@@ -2765,12 +2768,12 @@ SeeAlso
   BRanks
 ///
 
-///
+{*
 restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 viewHelp matrixFactorization
-///
+*}
 
 doc///
 Key
@@ -3254,6 +3257,3 @@ doc ///
         SeeAlso
 	 twoMonomials
      ///
---docTemplate
-
-end--
