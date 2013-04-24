@@ -382,16 +382,7 @@ SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_Loca
 }
 void SupervisorThread::start()
 {
-  const size_t min_stackSize = 8 * 1024 * 1024;
-  size_t stackSize = 0;
-  pthread_attr_t stackSizeAttribute;
-  if (pthread_attr_init(&stackSizeAttribute)) 
-    abort();
-  if (pthread_attr_getstacksize(&stackSizeAttribute, &stackSize))
-    abort();
-  if (stackSize < min_stackSize && pthread_attr_setstacksize (&stackSizeAttribute, min_stackSize))
-    abort();
-  if (pthread_create(&m_ThreadId,&stackSizeAttribute,SupervisorThread::threadEntryPoint,this))
+  if(pthread_create(&m_ThreadId,NULL,SupervisorThread::threadEntryPoint,this))
     abort();
 }
 void SupervisorThread::threadEntryPoint()
