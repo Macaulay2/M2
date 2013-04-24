@@ -1,15 +1,13 @@
 # license for gfan: GPL v2
-# VERSION = 0.4
-# PATCHFILE = @abs_srcdir@/patch-0.4
-GFAN_VERSION = 0.4plus
+GFAN_VERSION = 0.5
 VERSION = $(GFAN_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)
-# URL = http://www.math.tu-berlin.de/~jensen/software/gfan
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+# URL = http://home.imf.au.dk/jensen/software/gfan/gfan.html
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 TARFILE = gfan$(VERSION).tar.gz
 TARDIR = gfan$(VERSION)
 CONFIGURECMD = true
-BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CCC="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp
+BUILDOPTIONS = CC="$(CC) $(CPPFLAGS)" CXX="$(CXX) $(CPPFLAGS)" CLINKER="$(CC) $(LDFLAGS)" CCLINKER="$(CXX) $(LDFLAGS)" PREFIX=/nowhere CDD_LINKOPTIONS=-lcddgmp
 INSTALLOPTIONS = PREFIX=$(LIBRARIESDIR)
 CHECKTARGET = .
 STRIPFILES = gfan@EXEEXT@
