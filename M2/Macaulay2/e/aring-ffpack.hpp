@@ -28,6 +28,7 @@ namespace M2 {
 };
 #else
 #include <fflas-ffpack/field/modular-balanced.h>
+#include <fflas-ffpack/field/modular-double.h>
 #include <fflas-ffpack/ffpack/ffpack.h>
 //#include <givaro/givgfq.h>
 
@@ -37,7 +38,7 @@ namespace M2 {
      @ingroup rings
      
      @brief wrapper for the FFPACK::ModularBalanced<double> field implementation
-  */
+  */ 
   
   class ARingZZpFFPACK : public RingInterface
   {
@@ -48,7 +49,8 @@ namespace M2 {
     // problem: givaro isn't necessarily defined here
     static const RingID ringID = ring_FFPACK;
     
-    typedef FFPACK::ModularBalanced<double> FieldType;
+    //typedef FFPACK::ModularBalanced<double> FieldType;
+    typedef FFPACK::Modular<double> FieldType;
 
     typedef FieldType::Element ElementType;
     typedef ElementType elem;
@@ -210,6 +212,10 @@ namespace M2 {
     
     static inline double getMaxModulus() 
     {
+      if  (std::is_same<FFPACK::Modular<double> , FieldType>::value)
+      {
+	    return FieldType::getMaxModulus()/2;
+      }
       return FieldType::getMaxModulus();
     }
   /** @} */
