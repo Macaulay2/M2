@@ -1,6 +1,6 @@
 # URL = http://cs.anu.edu.au/~bdm/nauty
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
-VERSION = 24r2
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+VERSION = 25r2
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
