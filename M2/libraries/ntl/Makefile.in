@@ -2,13 +2,13 @@
 # @configure_input@
 # http://www.shoup.net
 # a library for doing number theory
-VERSION = 5.5.2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 6.0.0
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
 # URL = http://shoup.net/ntl
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 CONFIGURECMD = ./configure $(CONFIGUREOPTIONS)
 
 ifeq (@DEBUG@,yes)
