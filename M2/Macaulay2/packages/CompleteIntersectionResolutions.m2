@@ -1662,7 +1662,7 @@ Description
   The resolution of a module over a hypersurface ring 
   (graded or local) is always periodic of period at most 2 (Eisenbud, "Homological Algebra Over A Complete Intersection",
   Trans. Am. Math. Soc. 260 (1980) 35--64),
-  but the assymptotic structure of minimal resolutions over a 
+  but the asymptotic structure of minimal resolutions over a 
   complete intersection is a topic of active research. 
   This package contains code that helps analyze (graded) examples. 
   
