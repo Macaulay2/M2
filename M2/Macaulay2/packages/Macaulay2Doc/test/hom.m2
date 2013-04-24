@@ -39,11 +39,3 @@ assert( (minimalPresentation Hom(f,M)) ===
 assert( (minimalPresentation Hom(f,f)) === 
      map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
 
--- tests for truncate of matrices, from David:
-kk=ZZ/101
-S = kk[a,b]
-f = map(S^1,S^{ -2},{{a^2}})
-assert( (betti minimalPresentation truncate(2,f)) === new BettiTally from {(0,{2},2) => 3, (1,{2},2) => 1} )
-assert( (truncate(2,3,f)) === map(image map(S^1,S^{{ -2},{ -2},{ -2}},{{a^2, a*b, b^2}}),image map(S^{{ -2}},S^{{ -3},{ -3}},{{a, b}}),{{a, b}, {0, 0}, {0, 0}}) )
-assert( (minimalPresentation truncate(-1,1,f)) === map(S^1,S^{{ -2}},{{a^2}}) )
-assert( (minimalPresentation truncate(0,4,f)) === map(S^1,cokernel map(S^{{ -4},{ -4},{ -4}},S^{{ -5},{ -5}},{{ -b, 0}, {a, -b}, {0, a}}),{{a^4, a^3*b, a^2*b^2}}) )
