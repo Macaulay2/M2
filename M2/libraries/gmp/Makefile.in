@@ -2,9 +2,10 @@ VPATH = @srcdir@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
 
-# 4.2.2 is now LGPL version 3, which we may not want to use, so stick with 4.2.1 for now
-VERSION = 4.2.1
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# starting with 4.2.2 is LGPL version 3
+VERSION = 5.1.1
+TAROPTIONS = --bzip2
+TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)
