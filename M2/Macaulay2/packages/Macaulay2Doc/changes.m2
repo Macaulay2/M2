@@ -93,7 +93,7 @@ document {
 		    LI { TO "Triplets::Triplets", ", a package for computing Betti diagrams and hypercohomology tables associated to triplets of degree sequences,
 			 has been added." 
 			 },
-		    LI { TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " a package for analyzing the asymptotic
+		    LI { TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", ", a package for analyzing the asymptotic
 			 structure of minimal resolutions over a complete intersection, has been added."
 			 },
 	  	    }
