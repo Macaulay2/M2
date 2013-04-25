@@ -1,7 +1,7 @@
 newPackage(
               "CompleteIntersectionResolutions",
               Version => "1.0", 
-              Date => "April 2013",
+              Date => "April 24, 2013",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
