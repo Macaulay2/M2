@@ -296,6 +296,8 @@ multidoc ///
 Node
  Key
   Units
+ Headline
+  units conversion and physical constants
  Description
   Text
    This package converts various units of measure to others.

@@ -1,6 +1,7 @@
 -- -*- coding: utf-8 -*-
 document {
      Key => {Macaulay2Doc,"Macaulay2"},
+     Headline => "Macaulay2 documentation", 
      PARA IMG ("src" => replace("PKG","Style",currentLayout#"package") | "9planets.gif", "alt" => "image of nine planets"),
      "Macaulay2 is a software system devoted to supporting research in 
      algebraic geometry and commutative algebra, developed with funding
