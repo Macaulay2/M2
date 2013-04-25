@@ -31,6 +31,11 @@ Node
       This package is inspired by @ HREF{"http://stromme.uib.no/home/schubert/", "schubert"} @, which was written by
       @ HREF{"http://www.math.uiuc.edu/~katz/", "Sheldon Katz"} @ and @ HREF{"http://stromme.uib.no/", "Stein A. Strømme"} @.
 
+      The theory behind the computations of intersection rings of flag bundles has been made rigorous in the paper 
+      {\em Computations in intersection rings of flag bundles} by Grayson, Seceleanu, and Stillman:
+      see @ HREF {"http://arxiv.org/abs/1205.4190","arXiv:1205.4190"} @.  The paper also treats the case
+      of isotropic flag bundles, with the corresponding algorithms appearing here for the first time.
+
   Subnodes
     "Lines on hypersurfaces"
     "Conics on a quintic threefold"
@@ -1181,12 +1186,25 @@ Node
 --------
 Node
   Key
+   Isotropic
+  Headline
+   make an isotropic flag bundle
+  Description
+   Text
+    {\tt Isotropic} is the name for an optional argument that directs the construction
+    of an isotropic flag bundle.
+--------
+Node
+  Key
     flagBundle
     VariableNames
     (flagBundle,List)
     (flagBundle,List,AbstractSheaf)
     (flagBundle,List,AbstractVariety)
+    (flagBundle,List,ZZ)
+    [flagBundle,QuotientBundles]
     [flagBundle,VariableNames]
+    [flagBundle,Isotropic]
   Headline
    make a flag bundle
   Usage
@@ -1198,8 +1216,10 @@ Node
    r:List
     a list $\{r_0, ..., r_{n-1}\}$ of non-negative integers
    E:AbstractSheaf
-    whose rank is the sum of the integers.  If $E$ is, instead, @ ofClass AbstractVariety @ then a trivial sheaf
-    on it is used.  If $E$ is omitted, then a trivial sheaf on @ TO point @ is used.
+    whose flag bundle is to be formed.  
+    If $E$ is, instead, @ ofClass AbstractVariety @ then a trivial sheaf on it is used.  
+    If $E$ is, instead, @ ofClass ZZ @ then a trivial sheaf on @ TO point @ of rank $E$ is used.  
+    If $E$ is omitted, then a trivial sheaf on @ TO point @ is used; its rank is the sum of the entries of $r$.
    VariableNames => Thing
     used for specifying how the generators of the intersection ring of the resulting flag bundle are to be named.
     If no value is provided, then @ TT "H_(i,j)" @ = $H_{i,j}$ denotes the j-th Chern class of i-th tautological sheaf.
@@ -1209,6 +1229,11 @@ Node
     If the i-th entry is a symbol, say {\tt c}, then the names are @ TT "c_1 .. c_(r_i)" @.
     If the i-th entry is a string, say {\tt c}, then the names are {\tt c1}, {\tt c2}, {\tt c3}, ... .
     If the i-th entry is a list, its entries are used as the names.
+   QuotientBundles => Boolean
+    whether the additional tautological subquotient bundle, needed to make up the discrepancy between the
+    sum of the rank specified by $r$ and the rank of $E$, should be at the bottom of the filtration.
+   Isotropic => Boolean
+    whether to produce the isotropic flag bundle; in that case, the vector bundle should have even rank.
   Outputs
    F:FlagBundle
     the flag bundle over the variety of $E$ parametrizing filtrations $0 = E_0 \subseteq{} E_1 \subseteq{}
@@ -1629,14 +1654,6 @@ Node
   SeeAlso
    (symbol ^*,AbstractVarietyMap)
    extensionAlgebra
---------
-Node
-  Key
-    PushForward
-  Headline
-   a symbol used internally as a key for storing the push forward map in an abstract variety map
-  SeeAlso
-   (symbol _*,AbstractVarietyMap)
 --------
 Node
   Key

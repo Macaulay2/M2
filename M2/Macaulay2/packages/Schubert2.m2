@@ -2,8 +2,8 @@
 newPackage(
 	"Schubert2",
 	AuxiliaryFiles => true,
-    	Version => "0.4",
-    	Date => "September 30, 2010",
+    	Version => "0.7",
+    	Date => "April 24, 2013",
 	Authors => {
 	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
@@ -13,11 +13,10 @@ newPackage(
 	     },
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "computations of characteristic classes for varieties without equations",
-        DebuggingMode => true
+        DebuggingMode => false,
+	PackageImports => {"SchurRings"},
+	PackageExports => {"PushForward"}		    -- we export it because we use the symbol "PushForward" as a key in hash tables
     	)
-
-needsPackage "SchurRings"
-needsPackage "PushForward"
 
 schurVersion = value SchurRings.Options.Version
 -- EorH is defined in SchurRings, version .5
@@ -27,7 +26,7 @@ export { "AbstractSheaf", "abstractSheaf", "AbstractVariety", "abstractVariety",
      "AbstractVarietyMap", "adams", "Base", "blowup", "BundleRanks", "Bundles", "VarietyDimension", "Bundle",
      "TautologicalLineBundle", "ch", "chern", "ChernCharacter", "ChernClass", "ChernClassVariable", "ctop", "exceptionalDivisor", "FlagBundle",
      "flagBundle", "projectiveBundle'", "projectiveBundle", "projectiveSpace'", "projectiveSpace", "PP'", "PP", "integral", "IntersectionRing",
-     "intersectionRing", "Rank","PullBack", "PushForward", "ChernClassVariableTable",
+     "intersectionRing", "Rank","PullBack", "ChernClassVariableTable",
      "schur", "SectionClass", "sectionClass", "segre", "StructureMap", "TangentBundle", "tangentBundle", "cotangentBundle", "todd",
      "sectionZeroLocus", "degeneracyLocus", "degeneracyLocus2", "kernelBundle",
      "VariableNames", "VariableName", "SubBundles", "QuotientBundles", "point", "base", 
@@ -306,10 +305,10 @@ abstractVarietyMap(AbstractVariety,AbstractVariety,MethodFunction,MethodFunction
      f := new AbstractVarietyMap from {
 	  global source => Src,
 	  global target => Targ,
-	  PullBack => pullback,
-	  PushForward => pushforward,
-	  DefaultPushForward => opts.DefaultPushForward,
-	  DefaultPullBack => opts.DefaultPullBack
+	  global PullBack => pullback,
+	  global PushForward => pushforward,
+	  global DefaultPushForward => opts.DefaultPushForward,
+	  global DefaultPullBack => opts.DefaultPullBack
 	  };
      if (opts.SectionClass =!= null) then f.SectionClass = opts.SectionClass;
      SrcRing := intersectionRing Src;
