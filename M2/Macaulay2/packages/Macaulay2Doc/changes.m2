@@ -195,7 +195,7 @@ document {
 			 TO "RandomCanonicalCurves::RandomCanonicalCurves", ", ",
 			 TO "RandomCurves::RandomCurves", ", ",
 			 TO "RandomGenus14Curves::RandomGenus14Curves", ", ",
-			 TO "RandomPlaneCurves::RandomPlaneCurves", ", ",
+			 TO "RandomPlaneCurves::RandomPlaneCurves", ", and ",
 			 TO "RandomSpaceCurves::RandomSpaceCurves", ", packages for the construction of random points of unirational moduli spaces,
 			 have been added." },
 		    LI { TO "TensorComplexes::TensorComplexes", ", a package for multilinear algebra for the construction of tensor complexes,
