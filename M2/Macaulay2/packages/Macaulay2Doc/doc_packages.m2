@@ -173,7 +173,12 @@ document {
      Headline => "package item: start documentation section",
      Usage => "beginDocumentation()",
      Consequences => {
-	  { "Initiates the documentation section of a package.  Loads the packages ", TO "SimpleDoc::SimpleDoc", " and ", TO "Text::Text", "." }
+	  { 
+	       "Initiates the documentation section of a package:
+	       If the documentation has previously been processed and stored, then the rest of
+	       the file after the invocation of ", TO "beginDocumentation", " will be skipped.
+	       Otherwise the packages ", TO "SimpleDoc::SimpleDoc", " and ", TO "Text::Text", "
+	       will be loaded and the rest of the file will be loaded." }
 	  },
      PARA {
 	  "Documentation for a package, and tests for the package, are 
@@ -182,7 +187,7 @@ document {
 	  be run, and the whole documentation can be stored in a database."},
      PARA { "For an example, see ", TO "an example of a package" },
      PARA {
-	  "To write documentation without using the function ", TT "beginDocumentation", ", which is just
+	  "To write documentation without using the function ", TO "beginDocumentation", ", which is just
 	  an optimization, use ", TO "needsPackage", " to load the packages ", TT "SimpleDoc", " and ", TT "Text", "."
 	  },
      SeeAlso => { installPackage, check, "writing documentation" }
