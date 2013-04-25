@@ -14,8 +14,7 @@ newPackage(
 	HomePage => "http://www.math.uiuc.edu/Macaulay2/",
     	Headline => "computations of characteristic classes for varieties without equations",
         DebuggingMode => false,
-	PackageImports => {"SchurRings"},
-	PackageExports => {"PushForward"}		    -- we export it because we use the symbol "PushForward" as a key in hash tables
+	PackageImports => {"SchurRings","PushForward"}
     	)
 
 schurVersion = value SchurRings.Options.Version
