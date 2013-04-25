@@ -105,7 +105,10 @@ document {
 			 Among the new algorithms implemented are procedures for computing the vanishing ideal of a graphical model 
 			 and for checking for identifiable parameters in Gaussian mixed graph models. These procedures can be used 
 			 to study fundamental problems about graphical models."
-			 }
+			 },
+		    LI { "The package ", TO "Schubert2::Schubert2", " now handles intersection rings of ", EM "isotropic", " flag bundles,
+			 with an algorithm based on a theorem in a paper of Grayson, Seceleanu, and Stillman."
+			 },
 	       	    }
 	       },
 	  LI { "functionality added or improved:",
