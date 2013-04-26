@@ -52,7 +52,7 @@ CxCd = (g,d) -> (
 	  TangentBundle => abstractSheaf(CxCd, 
 	       Rank => 1, 
 	       ChernClass => 1 + (2-2*g) * eta),
-	  PushForward => pf2
+	  symbol PushForward => pf2
 	  -- PullBack => 
 	  -- SectionClass => 
 	  };

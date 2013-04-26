@@ -253,6 +253,19 @@ document {
      TT "kill f", " -- kill the process associated with the file ", TT "f", "."
      }
 
+multidoc ///
+Node
+ Key
+  (kill,ZZ)
+ Usage
+  kill n
+ Inputs
+  n:
+ Consequences
+  Item
+   the process with id number {\tt n} is killed
+///
+
 document {
      Key => closeIn,
      Headline => "close an input file",

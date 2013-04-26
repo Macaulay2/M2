@@ -1,6 +1,6 @@
 dnl This is the only place where the Macaulay2 version number appears:
 
-    AC_INIT(Macaulay 2, 1.5.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
+    AC_INIT(Macaulay 2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
 
 dnl When incrementing the version number, add an entry to distributions/deb/changelog, too.
 
@@ -609,6 +609,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   EliminationMatrices
   EllipticIntegrals
   Triplets
+  CompleteIntersectionResolutions
 ")
 
 # convert the newlines in the list above to spaces

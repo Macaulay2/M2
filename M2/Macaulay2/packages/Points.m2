@@ -200,6 +200,7 @@ beginDocumentation()
 
 document {
      Key => Points,
+     Headline => "computing with sets of points",
      "A package to compute with points in affine and projective spaces",
      {*
      Subnodes => {

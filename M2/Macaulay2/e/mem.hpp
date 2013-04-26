@@ -135,7 +135,7 @@ inline void stash::delete_elem(void *p)
       return;
     }
   acquireSpinLock(&list_spinlock);
-  bzero(p,element_size);        // we clear this element because it's free, and it may contain words that look like pointers to gc
+  memset(p,0,element_size);        // we clear this element because it's free, and it may contain words that look like pointers to gc
   *(reinterpret_cast<void **>(p)) = free_list;
   free_list = p;
   releaseSpinLock(&list_spinlock);

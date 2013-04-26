@@ -5,7 +5,7 @@ newPackage(
      Date => "July 1, 2008",
      AuxiliaryFiles => true,
      Authors => {{Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},
-     Headline => "functions for primary decomposition (pre-loaded)"
+     Headline => "functions for primary decomposition"
      )
 
 export {
@@ -194,6 +194,7 @@ beginDocumentation()
 
 document {
      Key => PrimaryDecomposition,
+     Headline => "functions for primary decomposition",
      "This package provides computations with components
      of ideals, including minimal and associated primes, radicals, and
      primary decompositions of ideals.",

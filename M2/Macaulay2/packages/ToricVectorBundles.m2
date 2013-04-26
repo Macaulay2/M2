@@ -1970,7 +1970,7 @@ beginDocumentation()
 
 document {
      Key => ToricVectorBundles,
-     Headline => "for cohomology computations of equivariant vector bundles on toric varieties",
+     Headline => "cohomology computations of equivariant vector bundles on toric varieties",
      
      "Using the descriptions of Kaneyama and Klyachko this package implements the construction of
      equivariant vector bundles on toric varieties.",

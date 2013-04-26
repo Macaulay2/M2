@@ -896,6 +896,7 @@ beginDocumentation()
 
 document {
      Key => QthPower,
+     Headline => "an implementation of the qth-Power algorithm",
      ---------------------------------------------------------------------------
      -- PURPOSE : Compute the integral closure of a type I integral domain
      --           (see Leonard 2001, Leonard and Pellikaan 2003, Leonard 2009)

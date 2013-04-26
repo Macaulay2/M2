@@ -98,6 +98,7 @@ beginDocumentation()
 
 document {
      Key => {GenericInitialIdeal},
+     Headline => "find the generic initial ideal of a given ideal",
      TT "GenericInitialIdeal", " is a package for computing generic initial ideals of ideals in a polynomial ring, that is, the monomial ideal of lead terms after a random change of coordinates.  All of these routines are probabilistic: 
 with high probability, they give the correct answer, but it could be the case that the choice of coordinates is too special."
      }

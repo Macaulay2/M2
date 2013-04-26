@@ -88,57 +88,60 @@ createTask(e:Expr):Expr := (
      else WrongNumArgs(1,2)
      else createTask2(e,emptySequenceE));
 
+-- # typical value: createTask, Function, Thing, Task
+-- # typical value: createTask, Function, Task
 setupfun("createTask",createTask);
 
 addStartTask2(e1:Expr,e2:Expr):Expr := (
-     when e1 is task:TaskCell do (
+     when e1 is task:TaskCell do
      when e2 is start:TaskCell do (
-     taskAddStartTask(task.body.task,start.body.task); nullE)
-     else WrongArg("Expect 2 tasks as arguments"))
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     	  taskAddStartTask(task.body.task,start.body.task); 
+	  nullE)
+     else WrongArg(2,"a task")
+     else WrongArg(1,"a task"));
 
 addStartTaskM2(e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 2 then (addStartTask2(args.0,args.1); nullE)
-     else WrongNumArgs(1,2)
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+-- # typical value: addStartTask, Task, Task, Nothing
 setupfun("addStartTask",addStartTaskM2);
 
 addDependencyTask2(e1:Expr,e2:Expr):Expr := (
-     when e1 is task:TaskCell do (
+     when e1 is task:TaskCell do 
      when e2 is dep:TaskCell do (
-     taskAddDependency(task.body.task,dep.body.task); nullE)
-     else WrongArg("Expect 2 tasks as arguments"))
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     	  taskAddDependency(task.body.task,dep.body.task); 
+	  nullE)
+     else WrongArg(2,"a task")
+     else WrongArg(1,"a task"));
 
 addDependencyTaskM2(e:Expr):Expr := (
      when e is args:Sequence do
-     if length(args) == 2 then (addDependencyTask2(args.0,args.1); nullE)
-     else WrongNumArgs(1,2)
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     if length(args) == 2 
+     then (
+	  addDependencyTask2(args.0,args.1); 
+	  nullE)
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+-- # typical value: addDependencyTask, Task, Task, Nothing
 setupfun("addDependencyTask",addDependencyTaskM2);
 
-
 addCancelTask2(e1:Expr,e2:Expr):Expr := (
-     when e1 is task:TaskCell do (
+     when e1 is task:TaskCell do
      when e2 is cancel:TaskCell do (
-     taskAddCancelTask(task.body.task,cancel.body.task); nullE)
-     else WrongArg("Expect 2 tasks as arguments"))
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     	  taskAddCancelTask(task.body.task,cancel.body.task); 
+	  nullE)
+     else WrongArg(2,"a task")
+     else WrongArg(1,"a task"));
 
 addCancelTaskM2(e:Expr):Expr := (
      when e is args:Sequence do
      if length(args) == 2 then (addCancelTask2(args.0,args.1); nullE)
-     else WrongNumArgs(1,2)
-     else WrongArg("Expect 2 tasks as arguments")
-);
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+-- # typical value: addCancelTask, Task, Task, Nothing
 setupfun("addCancelTask",addCancelTaskM2);
-
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
@@ -185,7 +188,6 @@ taskResult(e:Expr):Expr := (
      else WrongArg("a task"));
 -- # typical value: taskResult, Task, Thing
 setupfun("taskResult",taskResult);
-
 
 setupfun("setIOSynchronized",setIOSynchronized);
 setupfun("setIOUnSynchronized",setIOUnSynchronized);

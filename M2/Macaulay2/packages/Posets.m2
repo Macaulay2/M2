@@ -17,8 +17,8 @@ if version#"VERSION" <= "1.4" then (
 
 newPackage select((
     "Posets",
-        Version => "1.0.5.3",
-        Date => "30. January 2013",
+        Version => "1.0.6",
+        Date => "26. April 2013",
         Authors => {
             {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
             {Name => "Sonja Mapes", Email => "smapes1@nd.edu", HomePage => "http://www.nd.edu/~smapes1/"},
@@ -115,7 +115,6 @@ export {
     "lcmLattice",
     "ncpLattice",
     "ncPartitions",
-        "NCPart",
         "NCPartition",
     "partitionLattice",
         "setPartition",
@@ -864,21 +863,18 @@ lcmLatticeRecursive = G -> (
     )
 
 -- Portions of code for generating NCPartitions contributed by Andrew Hoefel.
--- New Types for Noncrossing Partitions to improve diplay of results.
-NCPart = new Type of List
+-- New Type for Noncrossing Partitions to improve diplay of results.
 NCPartition = new Type of List
 
-ncPart = L -> new NCPart from L
-ncPartition = L -> new NCPartition from ncPart \ L
-net NCPart := L -> horizontalJoin(net \ L)
-net NCPartition := L -> if #L === 0 then net "empty" else (net L#0) | horizontalJoin apply(#L - 1, i -> "/" | net L#(i + 1))
+ncPartition = L -> new NCPartition from toList \ L
+net NCPartition := L -> if #L === 0 then net "empty" else horizontalJoin(net \ L#0) | horizontalJoin apply(#L - 1, i -> "/" | horizontalJoin(net \ L#(i + 1)))
 
 -- non-exported
 ncpCovers = method()
 ncpCovers (NCPartition, ZZ) := List => (P, i) -> (
     if #(A := P_i) <= 1 then return {{},{}};
     indexSet := flatten apply(toList(1 ..< #A), i -> apply(#A - i + 1, j -> toList(j..j + i - 1)));
-    gamma := ncPartition \ apply(indexSet, L -> sort flatten apply(#P, j -> if i == j then {ncPart A_L, select(A, i -> not member(i, ncPart A_L))} else {P#j}));
+    gamma := ncPartition \ apply(indexSet, L -> sort flatten apply(#P, j -> if i == j then {A_L, select(A, i -> not member(i, A_L))} else {P#j}));
     {gamma, apply(gamma, g -> {P, g})}
     )
 ncpCovers NCPartition := List => P -> flatten \ transpose apply(#P, i -> ncpCovers(P, i))
@@ -1735,7 +1731,7 @@ doc ///
     Description
         Text
             This class is a type of @TO "HashTable"@ which represents finite posets.  It consists
-            of a ground set, a list of relationships ${a,b}$ where $a \leq b$, and a matrix
+            of a ground set, a list of relationships $\{a,b\}$ where $a \leq b$, and a matrix
             encoding these relations.
         Example
             G = {1,2,3,4};                  -- the ground set
@@ -1889,7 +1885,7 @@ doc ///
             M = matrix apply(G, g -> apply(G, h -> if h %g == 0 then 1 else 0));
             P = poset(G, R, M)
         Text
-            In the previous example the vertices of the poset were @TO "RingElements"@.  In fact,
+            In the previous example the vertices of the poset were @TO "RingElement"@s.  In fact,
             the Posets package does not require the vertices to be of any particular type.  However,
             this also means when the package makes calls to external methods, it sometimes must
             relabel the vertices (usually to the index of the vertex in $G$).
@@ -2112,6 +2108,7 @@ doc ///
         index of the vertices in the @TO "GroundSet"@.
     SeeAlso
         coveringRelations
+        displayPoset
 ///
 
 -- hibiIdeal
@@ -2457,11 +2454,11 @@ doc ///
             elements of the poset
     Outputs
         F:List
-            containing all elements greater than at least one of the given elements
+            containing all elements greater than or equal to at least one of the given elements
     Description
         Text
             The filter of a given set of elements of a poset is all the
-            elements in the poset which are greater than at least one
+            elements in the poset which are greater than or equal to at least one
             of the elements in the given set.
         Example
             P = booleanLattice 3;
@@ -2644,7 +2641,7 @@ doc ///
             the open interval in $P$ between $a$ and $b$
     Description
         Text
-            The closed interval between $a$ and $b$ is the subposet of $P$
+            The open interval between $a$ and $b$ is the subposet of $P$
             induced by the elements $z$ such that $p < z < q$.  If
             $a$ and $b$ are incomparable, then an error is thrown.
         Example
@@ -2660,7 +2657,7 @@ doc ///
         orderIdeal
         (orderIdeal,Poset,List)
     Headline
-        computes the elements above given elements in a poset
+        computes the elements below given elements in a poset
     Usage
         I = orderIdeal(P, L)
     Inputs
@@ -2669,11 +2666,11 @@ doc ///
             elements of the poset
     Outputs
         I:List
-            containing all elements greater than at least one of the given elements
+            containing all elements less than or equal to at least one of the given elements
     Description
         Text
-           The filter of a given set of elements of a poset is all the
-           elements in the poset which are greater than at least one
+           The order ideal of a given set of elements of a poset is all the
+           elements in the poset which are less than or equal to at least one
            of the elements in the given set.
         Example
             P = booleanLattice 3;
@@ -2699,11 +2696,11 @@ doc ///
             an element of the poset
     Outputs
         F:List
-            containing all elements greater than the given element
+            containing all elements greater than or equal to the given element
     Description
         Text
             The filter of a given element of a poset is all the
-            elements in the poset which are greater than the element.
+            elements in the poset which are greater than or equal to the element.
         Example
             P = booleanLattice 3;
             principalFilter(P, "101")
@@ -2728,11 +2725,11 @@ doc ///
             an element of the poset
     Outputs
         I:List
-            containing all elements less than the given elements
+            containing all elements less than or equal to the given elements
     Description
         Text
             The order ideal of a element of a poset is all the
-            elements in the poset which are less than the given element.
+            elements in the poset which are less than or equal to the given element.
         Example
             P = booleanLattice 3;
             principalOrderIdeal(P, "101")
@@ -2847,11 +2844,7 @@ doc ///
         r = P == Q
     Inputs
         P:Poset
-        mu:List
-            a partition of the ground set of $P$ into classes
         Q:Poset
-        nu:List
-            a partition of the ground set of $Q$ into classes
     Outputs
         r:Boolean
             whether $P$ and $Q$ are isomorphic as posets
@@ -3404,10 +3397,13 @@ doc ///
             The LCM lattice of an @TO "Ideal"@ is the set of all
             LCMs of subsets of the generators of the ideal with partial
             ordering given by divisibility.  These are particularly useful
-            in the study of resolutions of monomial ideals.
+            in the study of resolutions of monomial ideals.  Note that the minimal
+            element of an LCM lattice will always be defined to be $1$ in the ring $R$
+            containing $I$ rather than $1$ in ZZ.
         Example
             R = QQ[x,y];
-            lcmLattice monomialIdeal(x^2, x*y, y^2)
+            L = lcmLattice monomialIdeal(x^2, x*y, y^2)
+            compare (L, 1_R, x^2*y);
         Text
             Note that if $I$ is not a @TO "MonomialIdeal"@, then
             the method automatically uses the Strategy "subsets."
@@ -3449,7 +3445,6 @@ doc ///
         ncPartitions
         (ncPartitions,ZZ)
         NCPartition
-        NCPart
     Headline
         generates the non-crossing partitions of size $n$
     Usage
@@ -3660,15 +3655,17 @@ doc ///
             component of the resolution.
         Example
             R = QQ[x,y,z];
-            C = res ideal(x,y,z)
+            C = res ideal(y*z,x*z,x^2*y)
             resolutionPoset C
+            (resolutionPoset C).GroundSet
         Text
             Moreover, the resolution-poset of a @TO "MonomialIdeal"@
             can be labeled as the @TO "lcm"@ of the generators involved
             at each level.  As the lcm needn't be unique at each step,
             we simply append it to the base labeling, as above.
         Example
-            resolutionPoset monomialIdeal(x,y,z)
+            P = resolutionPoset monomialIdeal(y*z,x*z,x^2*y)
+            P.GroundSet
 ///
 
 -- standardMonomialPoset
@@ -3831,11 +3828,9 @@ doc ///
             which gives the calling path of a PDF-viewer
         Jitter=>Boolean
             whether to randomly jitter the poset vertices
-    Outputs
-        n:Nothing
     Description
         Text
-            This method generates a PDF of the Poset view LaTeX code which
+            This method generates a PDF of the Hasse Diagram of the Poset view LaTeX code which
             uses TikZ.  The method attempts to display the PDF via the
             specified PDFViewer.  See @TO "texPoset"@ for more about the
             representation.
@@ -3847,6 +3842,7 @@ doc ///
         texPoset
         Jitter
         SuppressLabels
+        hasseDiagram
 ///
 
 -- gapConvertPoset
@@ -3961,7 +3957,7 @@ doc ///
             a TikZ-figure of $P$
     Description
         Text
-            This method creates a TikZ-figure of the given poset which
+            This method creates a TikZ-figure of the Hasse diagram of the given poset which
             can be included in a LaTeX file.  The representation places
             the vertices on horizontal lines corresponding to the
             @TO "filtration"@ of the poset.  The only displayed edges are
@@ -4088,7 +4084,7 @@ doc ///
         filtration
         (filtration,Poset)
     Headline
-        generates the filtration of a posett
+        generates the filtration of a poset
     Usage
         F = filtration P
     Inputs
@@ -4372,7 +4368,9 @@ doc ///
 
             This method returns one such ranking function.
         Example
+            (chain 5).GroundSet
             rankFunction chain 5
+            (booleanLattice 3).GroundSet
             rankFunction booleanLattice 3
         Text
             This method was ported from John Stembridge's Maple package available at
@@ -4466,7 +4464,7 @@ doc ///
     Inputs
         P:Poset
         k:ZZ
-            select on antichains of a given length
+            if specified length of returned antichains
     Outputs
         L:List
             containing all antichains of $P$
@@ -4509,7 +4507,7 @@ doc ///
     Inputs
         P:Poset
         k:ZZ
-            select on chains of a given length
+            if specified length of returned chains
     Outputs
         L:List
             containing all chains of $P$
@@ -4719,7 +4717,7 @@ doc ///
         boundedRegions
         (boundedRegions,List,Ring)
     Headline
-        computes the number of bounded regions a hyperplane arrangement divides the space in to
+        computes the number of bounded regions a hyperplane arrangement divides the space into
     Usage
         b = boundedRegions(A, R)
     Inputs
@@ -5033,7 +5031,7 @@ doc ///
         realRegions
         (realRegions,List,Ring)
     Headline
-        computes the number of regions a hyperplane arrangement divides the space in to
+        computes the number of regions a hyperplane arrangement divides the space into
     Usage
         b = realRegions(A, R)
     Inputs
@@ -5684,9 +5682,9 @@ doc ///
             whether $P$ is Sperner
     Description
         Text
-            The ranked poset $P$ is Sperner if the maximum size of a rank
+            The ranked poset $P$ is Sperner if the maximum size of a set of elements with the same rank
             is the @TO "dilworthNumber"@ of $P$.  That is, $P$ is Sperner
-            if the maximum size of a rank is the maximum size of an antichain.
+            if the maximum size of a set of elements with the same rank is the maximum size of an antichain.
 
             The $n$ @TO "chain"@ and the $n$ @TO "booleanLattice"@ are Sperner.
         Example
@@ -5695,7 +5693,7 @@ doc ///
             isSperner booleanLattice n
         Text
             However, the following poset is non-Sperner as it has an antichain
-            of size $4$ but both ranks are of size $3$.
+            of size $4$ but the set of elements of rank $0$ and the set of elements of rank $1$ are both of size $3$.
         Example
             P = poset {{1,4}, {1,5}, {1,6}, {2,6}, {3,6}};
             isSperner P
@@ -5727,15 +5725,15 @@ doc ///
     Description
         Text
             The ranked poset $P$ is strict Sperner if the @TO "maximalAntichains"@
-            are the ranks of the poset.
+            are the sets of elements with the same rank.
 
             The $n$ @TO "chain"@ is strict Sperner as the maximal antichains and the
-            ranks are singletons.
+            sets of elements with the same rank are singletons.
         Example
             isStrictSperner chain 5
         Text
             The $n$ @TO "booleanLattice"@, for $n \geq 3$, is not strict Sperner as
-            it has maximal antichains which are not ranks.
+            it has maximal antichains which are not sets of elements with the same rank.
         Example
             B = booleanLattice 3;
             isStrictSperner B
@@ -5836,7 +5834,7 @@ doc ///
         rankFunction
 ///
 
-undocumented { "Random", "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPart), (net,NCPartition), (net,Poset) };
+undocumented { "Random", "VariableName", (toExternalString,Poset), (toString,Poset), (net,NCPartition), (net,Poset) };
 
 ------------------------------------------
 ------------------------------------------

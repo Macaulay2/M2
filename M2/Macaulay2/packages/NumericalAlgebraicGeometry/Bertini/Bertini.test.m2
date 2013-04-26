@@ -18,6 +18,6 @@ sols = solveSystem(T, Software=>BERTINI)
 sols = track(S,T,solsS,Software=>BERTINI)
 
 setDefault (Software=>BERTINI) 
-V = numericalVariety F
+V = numericalVariety ideal T
 
 

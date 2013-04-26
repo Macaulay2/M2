@@ -14,8 +14,13 @@ Node
   schedule
   taskResult
   cancelTask
+  isCanceled
+  setIOExclusive
+  setIOSynchronized
+  setIOUnSynchronized
   "allowableThreads"
   "threadVariable"
+  "maxAllowableThreads"
   Task
  Description
   Text
@@ -82,19 +87,23 @@ Node
     
     Using the functions above, essentially any parallel functionality needed can be created. 
     
-    Low level C api functionality using the same scheduler also exists in the
+    Low level C API functionality using the same scheduler also exists in the
     Macaulay2/system directory. It works essentially the same way as the
     Macaulay2 interface.
 
-    Warning: Access to external libraries such as singular, etc, may not
+    Warning: Access to external libraries such as singular, etc., may not
     currently be thread safe.
 Node
  Key
+  (addCancelTask, Task, Task)
   addCancelTask
  Headline
   specify that the completion of one task triggers the cancellation of another
  Usage
   addCancelTask(t,u)
+ Inputs
+  t:Task
+  u:Task
  Consequences
   Item
    when the task {\tt t} is finished, then the task {\tt u} will be cancelled
@@ -103,14 +112,14 @@ Node
   (cancelTask,Task)
   cancelTask
  Headline
-  stop a thread
+  stop a task
  Usage
   cancelTask t
  Inputs
   t:
  Consequences
   Item
-   The thread {\tt t} is interrupted by setting a flag.  Eventually it will stop.
+   The task {\tt t} is interrupted by setting a flag.  Eventually it will stop.
  Description
   Example
    n = 0
@@ -147,7 +156,7 @@ Node
   t:Task
  Outputs
   :
-   a new thread computing the value of the {\tt f(x)}, or, if {\tt x} is not provided, then of {\tt f()}.
+   a new task computing the value of the {\tt f(x)}, or, if {\tt x} is not provided, then of {\tt f()}.
    Alternatively, the task {\tt t}, created previously with @ TO createTask @, is sheduled for execution.
  Description
   Text
@@ -155,7 +164,7 @@ Node
    by printing {\tt t}.  When the computation is finished, as can be detected with @ TO (isReady,Task) @,
    the final value can be retrieved with @ TO (taskResult,Task) @.
    
-   If @ TO "notify" @ is set to @ TO true @, then useful messages are printed when the thread changes state.
+   If @ TO "notify" @ is set to @ TO true @, then useful messages are printed when the task changes state.
   Example
    f = x -> 2^x
    t = createTask(f,3)
@@ -169,7 +178,7 @@ Node
  Key
   Task
  Headline
-  the class of all threads
+  the class of all tasks
 Node
  Key
   (taskResult,Task)
@@ -187,7 +196,7 @@ Node
    an error will be signaled.
  Consequences
   Item
-   The field in {\tt t} where the return value is stored is set to @ TO null @, and the thread is
+   The field in {\tt t} where the return value is stored is set to @ TO null @, and the task is
    considered to have completely terminated.  Attempting to fetch the return value a second time
    will signal an error.
 Node
@@ -213,20 +222,22 @@ Node
  Key
   (isReady,Task)
  Headline
-  whether a thread is finished
+  whether a task is finished
  Usage
   isReady t
  Inputs
   t:
  Outputs
   :
-   whether the thread {\tt t} has finished executing and a return value is available
+   whether the task {\tt t} has finished executing and a return value is available
  Description
   Text
    The return value can be retrieved with @ TO (taskResult, Task )@.
 Node
  Key
   createTask
+  (createTask, Function, Thing)
+  (createTask, Function)
  Headline
   create a task
  Usage
@@ -248,6 +259,7 @@ Node
    taskResult t
 Node
  Key
+  (addDependencyTask, Task, Task)
   addDependencyTask
  Headline
   schedule a task, but ensure that it will not run until another task finishes
@@ -262,7 +274,10 @@ Node
    task {\tt u} finishes
 Node
  Key
+  (addStartTask, Task, Task)
   addStartTask
+ Headline
+  schedule a task upon completion of another
  Usage
   addStartTask(t,u)
  Inputs
@@ -286,14 +301,92 @@ Node
 Node
  Key
   "allowableThreads"
+ Headline
+  the current maximum number of simultaneously running tasks
  Usage
   allowableThreads = n
  Consequences
   Item
    The number of threads devoted to computation of tasks is set to {\tt n}.  The
    number includes the main thread, but not the threads started independently by
-   the garbage collector.  Thus the maximum number of background tasks running
-   will be {\tt n-1}.
+   the garbage collector.  Thus the maximum number of background tasks running simultaneously
+   will be {\tt n-1}.  The value of {\tt n} should be not larger than the value
+   of @ TO "maxAllowableThreads" @.
  SeeAlso
   "parallel programming with threads and tasks"
+Node
+ Key
+  "maxAllowableThreads"
+ Headline
+  the maximum possibl number of simultaneously running tasks
+ Usage
+  maxAllowableThreads
+ Outputs
+  :ZZ
+   the maximum number to which @ TO "allowableThreads" @ can be set
+ Description
+  Example
+   maxAllowableThreads
+ SeeAlso
+  "parallel programming with threads and tasks"
+Node
+ Key
+  setIOExclusive
+ Headline
+  exclusive I/O for the current thread
+ Usage
+  setIOExclusive()
+ Consequences
+  Item
+   the current thread becomes the only one permitted to use the files @ TO stdio @ and @ TO stderr @
+ SeeAlso
+  "parallel programming with threads and tasks"
+  setIOUnSynchronized
+  setIOSynchronized
+Node
+ Key
+  setIOSynchronized
+ Headline
+  synchronized I/O for threads
+ Usage
+  setIOSynchronized()
+ Consequences
+  Item
+   threads are permitted to use the files @ TO stdio @ and @ TO stderr @ to output complete lines only
+ Caveat
+   this function is experimental
+ SeeAlso
+  "parallel programming with threads and tasks"
+  setIOUnSynchronized
+  setIOExclusive
+Node
+ Key
+  setIOUnSynchronized
+ Headline
+  unsynchronized I/O for threads
+ Usage
+  setIOUnSynchronized()
+ Consequences
+  Item
+   threads are permitted to use the files @ TO stdio @ and @ TO stderr @ in an unregulated manner
+ SeeAlso
+  "parallel programming with threads and tasks"
+  setIOSynchronized
+  setIOExclusive
+Node
+ Key
+  (isCanceled,Task)
+  isCanceled
+ Headline
+  whether a task has been canceled
+ Usage
+  isCanceled t
+ Inputs
+  t:
+ Outputs
+  :
+   whether the task {\tt t} has been canceled
+ SeeAlso
+  "parallel programming with threads and tasks"
+  cancelTask
 ///

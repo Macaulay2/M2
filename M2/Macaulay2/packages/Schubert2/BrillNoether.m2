@@ -49,7 +49,7 @@ CxPic = (g,d) -> (
 	  symbol source => CxPic,
 	  symbol target => Pic,
 	  TangentBundle => abstractSheaf(CxPic, Rank => 1, ChernClass => 1 + (2-2*g) * eta),
-	  PushForward => pf2
+	  symbol PushForward => pf2
 	  -- PullBack => 
 	  -- SectionClass => 
 	  };

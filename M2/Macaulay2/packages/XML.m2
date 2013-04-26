@@ -97,6 +97,8 @@ multidoc ///
 Node
   Key
     XML
+  Headline
+    an XML parser
   Description
     Text
 

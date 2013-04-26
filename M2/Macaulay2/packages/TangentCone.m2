@@ -39,6 +39,7 @@ beginDocumentation()
 
 document {
      Key => "TangentCone",
+     Headline => "tangent cones",
      "This package provides a single function that computes the tangent cone at a point."
      }
 

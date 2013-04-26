@@ -1236,18 +1236,21 @@ fileReadable(e:Expr):Expr := (
      when e is name:stringCell do toExpr(fileReadable(expandFileName(name.v)))
      else WrongArgString()
      );
+-- # typical value: fileReadable, String, Boolean
 setupfun("fileReadable",fileReadable);
 
 fileWritable(e:Expr):Expr := (
      when e is name:stringCell do toExpr(fileWritable(expandFileName(name.v)))
      else WrongArgString()
      );
+-- # typical value: fileWritable, String, Boolean
 setupfun("fileWritable",fileWritable);
 
 fileExecutable(e:Expr):Expr := (
      when e is name:stringCell do toExpr(fileExecutable(expandFileName(name.v)))
      else WrongArgString()
      );
+-- # typical value: fileExecutable, String, Boolean
 setupfun("fileExecutable",fileExecutable);
 
 removeDirectory(e:Expr):Expr := (

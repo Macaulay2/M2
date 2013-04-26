@@ -144,10 +144,11 @@ TEST(ARingZZpFFPACK, arithmetic101) {
 }
 
 //TODO: commented out because it appears wrong.  Perhaps p=2 isn't allowed here?
-//TEST(ARingZZpFFPACK, arithmetic2) {
-//  M2::ARingZZpFFPACK R(2);
-//  testFiniteField(R);
-//}
+// strange: does not fail on my thinkpad...
+TEST(ARingZZpFFPACK, arithmetic2) {
+  M2::ARingZZpFFPACK R(2);
+  testFiniteField(R,ntrials);
+}
 
 TEST(ARingZZpFFPACK, arithmetic3) {
   M2::ARingZZpFFPACK R(3);
@@ -171,7 +172,7 @@ TEST(ARingZZpFFPACK, arithmetic66000007) {
 //TODO: commented out because it takes too long:
 // Actually: now this characteristic seems too big?!
 TEST(ARingZZpFFPACK, arithmetic67108859) {
-  M2::ARingZZpFFPACK R(67108859);
+  M2::ARingZZpFFPACK R(67108859);  
 
   testCoercions(R);
   testNegate(R, ntrials);
@@ -183,6 +184,21 @@ TEST(ARingZZpFFPACK, arithmetic67108859) {
   testPower(R, ntrials);
   testAxioms(R, ntrials);
 }
+
+TEST(ARingZZpFFPACK, arithmetic33500479) {
+  M2::ARingZZpFFPACK R(33500479);  
+
+  testCoercions(R);
+  testNegate(R, ntrials);
+  testAdd(R, ntrials);
+  testSubtract(R, ntrials);
+  testMultiply(R, ntrials);
+  testDivide(R, ntrials);
+  testReciprocal(R, ntrials);
+  testPower(R, ntrials);
+  testAxioms(R, ntrials);
+}
+
 #endif 
 
 
