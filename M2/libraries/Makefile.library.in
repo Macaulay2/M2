@@ -116,13 +116,8 @@ endif
 .configured-$(VERSION) : .patched-$(VERSION)
 	@ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
-ifneq ($(PATCHFILE),)
-.patched-$(VERSION) : $(PATCHFILE)
-PATCHCMD = cd $(UNTARDIR) && patch -p0 $(PATCHOPTIONS) <$(PATCHFILE)
-else
-PATCHCMD = :
-endif
-.patched-$(VERSION) : $(TARFILE_DIR)/$(TARFILE)
+PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
+.patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
 	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \

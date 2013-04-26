@@ -2,9 +2,7 @@
 
 #				pari
 
-# The svn server pari-testing branch (2.4.3, development) is said to have 
-# much better documentation, and the stable branch is said to be stale.
-#      svn://pari.math.u-bordeaux.fr/pari/trunk
+# svn://pari.math.u-bordeaux.fr/pari/trunk
 
 HOMEPAGE = http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@

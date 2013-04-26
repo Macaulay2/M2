@@ -146,7 +146,8 @@ browse = x -> (
 beginDocumentation()
 
 document {
-     Key => Browse
+     Key => Browse,
+     Headline => "a method for browsing and examining Macaulay2 data structures"
      }
 
 document {

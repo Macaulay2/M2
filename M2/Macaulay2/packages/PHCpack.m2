@@ -56,7 +56,7 @@ export {
 
 protect ErrorTolerance, protect Iterations,
 protect Bits, protect ResidualTolerance, 
-protect Append
+protect Append 
 
 --##########################################################################--
 -- GLOBAL VARIABLES 
@@ -75,6 +75,52 @@ needsPackage "NAGtypes"
 -- INTERNAL METHODS
 --##########################################################################--
 
+----------------------------------
+-- NumericalVariety
+----------------------------------
+
+--the following defines the type NumericalVariety
+--if the user is using an old version of NAGtypes.
+
+if not((class(NumericalVariety))===Type) then
+     (--export {generalEquations, "IsIrreducible"};
+      --protect generalEquations;
+      protect IsIrreducible;
+      NumericalVariety = new Type of MutableHashTable;
+      NumericalVariety.synonym = "numerical variety";
+      dim NumericalVariety := V -> max select(keys V, k->class k === ZZ);
+      degree NumericalVariety := V -> (
+     	   d := dim V;
+     	   sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
+     	   );
+      numericalVariety = method(TypicalValue=>NumericalVariety);
+      numericalVariety List := Ws -> (
+     	   V := new NumericalVariety;
+     	   scan(Ws, W->(
+	       	     d := dim W;
+	       	     if V#?d then V#d = V#d | {W} else V#d = {W};
+	       	     ));     
+     	   check V;
+     	   V
+     	   );
+      check NumericalVariety := o-> V -> (
+     	   if any(keys V, k->(class k =!= ZZ or k<0)) 
+     	   then error "the keys of a NumericalVariety should be nonnegative integers";
+     	   scan(keys V, k->if class k === ZZ then scan(V#k, W->(
+		    	  if dim W != k then 
+		    	  error "dimension of a witness set does not match the key in NumericalVariety";
+		    	  )));
+     	   );
+      net NumericalVariety := V -> (
+     	   out := "A variety of dimension " | net dim V |" with components in";
+     	   scan(keys V, k->if class k === ZZ then (
+	       	     row := "dim "|net k|": ";
+	       	     scan(V#k, W->row = row|" "|net W);
+	       	     out = out || row;
+	       	     ));
+     	   out
+     	   ) 	  
+      )  
 ----------------------------------
 --- File read/write operations ---
 ----------------------------------
@@ -314,6 +360,36 @@ outputToPoint HashTable := (H)->{
   ConditionNumber => (H#"rco")^(-1), 
   LastT => H#"time"
 }
+
+----------------------------------
+----add slack variables-----------
+----------------------------------
+
+addSlackVars = method()
+addSlackVars WitnessSet := (W) -> (
+     -- creates a new system of polynomials, in variables:
+     -- old set of variables, and zz1, ..., zzd, where
+     -- d is the dimension of W.
+     R := ring W;
+     n := numgens R;
+     d := dim W; -- this will be the number of slack variables to add
+     W1 := generalEquations W;
+     -- Add in new variables zz1, ..., zzd,
+     --  this changes the equations, the slice, and the points
+     slackvars := apply(d, i->getSymbol("zz"|toString (i+1)));
+     newR := (coefficientRing R)[gens R, slackvars];
+     newvars := (vars newR)_{n..n+d-1};
+     -- new slice:
+     newSlice := apply(d, i -> sub(W1.Slice#i,newR) + newR_(n + i));
+     -- add a linear matrix 
+     A := random(newR^(d),newR^(n-d));
+     AZ := newvars * A;
+     newEqns := (sub(gens ideal W1, newR) + AZ) | newvars;
+     -- new points
+     zeros := toList apply(d, i -> 0_(coefficientRing R));
+     newPoints := apply(W1.Points, pt -> point({join(coordinates(pt),zeros)}));
+     witnessSet(ideal newEqns, ideal newSlice, newPoints)
+     )
 
 -------------------------------------------------------
 ------------  Witness Superset Filters  ---------------

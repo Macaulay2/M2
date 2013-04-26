@@ -35,7 +35,7 @@ ZZ.texMath = ///{\mathbb Z}///
 QQ.synonym = "rational number"
 QQ.texMath = ///{\mathbb Q}///
 Ring.synonym = "ring"
-Task.synonym = "thread"
+Task.synonym = "task"
 
 uniform = (x) -> same apply(x,class)
 

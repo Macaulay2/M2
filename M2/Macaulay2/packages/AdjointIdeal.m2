@@ -625,9 +625,9 @@ beginDocumentation()
 
 doc ///
   Key
-    "AdjointIdeal"
+    AdjointIdeal
   Headline
-    "Adjoint ideal of a plane curve and related computations"
+    Adjoint ideal of a plane curve and related computations
   Description
    Text
 

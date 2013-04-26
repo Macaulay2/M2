@@ -14,6 +14,10 @@ f0=ff*((f1*f2*f3)^k);
 time assert (f0 % ideal((f1)^(p+k),(f2)^(p+k),(f3)^(p+k)) == 0)
 
 J = ideal((f1)^(p+k),(f2)^(p+k),(f3)^(p+k))
+
+-- I don't understand why the following line runs out of memory when the test is run with the makefile under Mac OS,
+-- but not when I try the same thing by running M2 myself.  So, if it runs out of memory during "make check",
+-- try it separately.  Then if it works, declare it passes the test.
 time assert (f0 % J == 0)
 
 

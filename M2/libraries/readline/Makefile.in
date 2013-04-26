@@ -1,16 +1,13 @@
-#VERSION = 5.2
-#PATCHES = 001 002 003 004 005 006 007 008 009 010 011 012 013
+# readline is licensed under GPL v3
+LICENSEFILES = COPYING
 
-# VERSION = 6.0
-# PATCHES = 001 002 003 004
-
-VERSION = 6.1
-PATCHES = 001 002
+VERSION = 6.2
+PATCHES = 001 002 003 004
 
 RELAX = yes
 # URL = ftp://ftp.gnu.org/gnu/readline
 # PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples
@@ -26,9 +23,12 @@ endif
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
-PATCHFILES := $(addprefix $(TARFILE_DIR)/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
+PATCHFILE := $(addprefix $(TARFILE_DIR)/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
+
+PATCHCMD = cd $(BUILDDIR) && for i in $(PATCHFILE) ; do echo patching with $$i ; patch -p0 < $$i ; done
+
 ifeq (@DOWNLOAD@,yes)
-$(PATCHFILES) :
+$(PATCHFILE) :
 	rm -f $@
 ifneq (@WGET@,)
 	cd $(TARFILE_DIR) && @WGET@ $(PATCHURL)/$(notdir $@)
@@ -36,9 +36,8 @@ else
 	cd $(TARFILE_DIR) && @CURL@ -o $(notdir $@) $(PATCHURL)/$(notdir $@)
 endif
 else
-$(PATCHFILES) :; echo "patch file not available, and downloading not enabled: $@" >&2 ; false
+$(PATCHFILE) :; echo "patch file not available, and downloading not enabled: $@" >&2 ; false
 endif
-fetch: $(PATCHFILES)
 
 clean::
 	rm -rf $(LIBRARIESDIR)/lib/libhistory.* $(LIBRARIESDIR)/lib/libreadline.* \

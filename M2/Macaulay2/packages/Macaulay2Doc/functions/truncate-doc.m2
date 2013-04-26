@@ -2,7 +2,8 @@
 --- author(s): MES
 --- notes: 
 
-doc ///
+multidoc ///
+ Node
    Key
      truncate
      (truncate,ZZ,Module)

@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage (
      "Benchmark",
-     Headline => "a standard Macaulay2 benchmark",
+     Headline => "standard Macaulay2 benchmarks",
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
 	  {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"}
@@ -253,6 +253,8 @@ multidoc ///
 Node
  Key
   Benchmark
+ Headline
+  standard Macaulay2 benchmarks
  Description
   Text
    This package provides some standard benchmarks for gauging the speed of

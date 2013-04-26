@@ -382,6 +382,7 @@ SupervisorThread::SupervisorThread(int localThreadId):m_KeepRunning(true),m_Loca
 }
 void SupervisorThread::start()
 {
+#ifndef __CYGWIN__
   const size_t min_stackSize = 8 * 1024 * 1024;
   size_t stackSize = 0;
   pthread_attr_t stackSizeAttribute;
@@ -391,8 +392,12 @@ void SupervisorThread::start()
     abort();
   if (stackSize < min_stackSize && pthread_attr_setstacksize (&stackSizeAttribute, min_stackSize))
     abort();
-  if (pthread_create(&m_ThreadId,&stackSizeAttribute,SupervisorThread::threadEntryPoint,this))
-    abort();
+  #define StackSizeParameter &stackSizeAttribute
+#else
+  #define StackSizeParameter NULL
+#endif
+  if (pthread_create(&m_ThreadId,StackSizeParameter,SupervisorThread::threadEntryPoint,this))
+    perror("pthread_create: failed"), abort();
 }
 void SupervisorThread::threadEntryPoint()
 {

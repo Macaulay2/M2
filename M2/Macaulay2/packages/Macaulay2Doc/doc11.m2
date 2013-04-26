@@ -604,7 +604,8 @@ document {
      ///
      }
 
-doc ///
+multidoc ///
+Node
      Key
      	  (matrix,Vector)
      Usage
@@ -618,6 +619,77 @@ doc ///
      	  Example
 	       v = vector {1,2,3}
 	       matrix v
+Node
+     Key
+     	  limitFiles
+     Usage
+     	  limitFiles n
+     Inputs
+     	  n:ZZ
+     Consequences
+     	  Item
+	       the number of open file descriptors for the current process will be limited to {\tt n}
+Node
+     Key
+     	  limitProcesses
+     Usage
+     	  limitProcesses n
+     Inputs
+     	  n:ZZ
+     Consequences
+     	  Item
+	       the number of simultaneous processes for the current user will be limited to {\tt n}
+Node
+ Key
+  (fileWritable,String)
+  fileWritable
+ Usage
+  fileWritable n
+ Inputs
+  n:
+ Outputs
+  :
+   whether the file whose name is given by the string {\tt n} is writable
+ Description
+  Example
+   fileWritable "."
+ SeeAlso
+  fileReadable
+  fileExecutable
+Node
+ Key
+  (fileReadable,String)
+  fileReadable
+ Usage
+  fileReadable n
+ Inputs
+  n:
+ Outputs
+  :
+   whether the file whose name is given by the string {\tt n} is readable
+ Description
+  Example
+   fileReadable "."
+ SeeAlso
+  fileWritable
+  fileExecutable
+Node
+ Key
+  (fileExecutable,String)
+  fileExecutable
+ Usage
+  fileExecutable n
+ Inputs
+  n:
+ Outputs
+  :
+   whether the file whose name is given by the string {\tt n} is executable
+ Description
+  Example
+   fileExecutable "."
+ SeeAlso
+  fileWritable
+  fileReadable
 ///
 
 -- Local Variables:

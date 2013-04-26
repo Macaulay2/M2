@@ -1,34 +1,35 @@
 -- -*- M2-comint -*- {* hash: -1285962778 *}
+--loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y,z];
 
 i2 : f = { x^2 - y, x^3 - z };
 
 i3 : fe1 = constructEmbedding(f,1);
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/3PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/1PHCoutput
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/3PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/1PHCoutput
 
 i4 : toString fe1
 
-o4 = {x^2-y+(-.876078-.482169*ii)*zz1, x^3-z+(-.471909+.881647*ii)*zz1, zz1,
-     (-.846265-.532762*ii)*x+(-.910917+.41259*ii)*y+(.677852-.735199*ii)*z
-     +(-.699703-.714433*ii)*zz1-.474234-.880399*ii}
+o4 = {x^2-y+(-.200288-.979737*ii)*zz1, x^3-z+(.584209-.811603*ii)*zz1, zz1,
+     (.983404+.18143*ii)*x+(.996696+.0812267*ii)*y+(-.99595-.0899065*ii)*z
+     +(-.411914+.911223*ii)*zz1-.785149+.619307*ii}
 
 i5 : R = CC[x,y,z];
 
 i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
 
 i7 : fe1 = constructEmbedding(f,1);
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/6PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/7PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-27792-0/5PHCoutput
+calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/6PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/7PHCsession
+output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/5PHCoutput
 
 i8 : toString fe1
 
-o8 = {x^2-y+(-.551285-.564916*ii)*ss1+(.77357-.633711*ii)*zz1,
-     x^3-z+(.414804+.553842*ii)*ss1+(.830507+.557008*ii)*zz1,
-     x*y-z+(-.961799-.389181*ii)*ss1+(-.210311+.977634*ii)*zz1,
-     -y^2+x*z+(-.683657-.949288*ii)*ss1+(-.956551-.291565*ii)*zz1,
-     (.379149-.925336*ii)*x+(-.971882+.23547*ii)*y+(-.498218-.867052*ii)*z
-     +(.489434+.87204*ii)*ss1+(-.380695-.9247*ii)*zz1+.837744-.546064*ii}
+o8 = {x^2-y+(-.517053-.301215*ii)*ss1+(.44113-.897443*ii)*zz1,
+     x^3-z+(-.807631-.115119*ii)*ss1+(-.338609+.940927*ii)*zz1,
+     x*y-z+(-.145323+.149572*ii)*ss1+(.107681-.994185*ii)*zz1,
+     -y^2+x*z+(.135875-.440999*ii)*ss1+(.576771-.816906*ii)*zz1,
+     (-.654952-.755671*ii)*x+(.965941+.258763*ii)*y+(.657153+.753757*ii)*z
+     +(-.0744425-.997225*ii)*ss1+(.92541-.378968*ii)*zz1-.252792-.967521*ii}
 
 i9 : 

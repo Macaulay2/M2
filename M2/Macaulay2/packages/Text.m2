@@ -16,6 +16,7 @@ beginDocumentation()
 
 document {
      Key => Text,
+     Headline => "documentation and hypertext",
      PARA {
 	  "This package is a repository for functions related to documentation and hypertext."
 	  }

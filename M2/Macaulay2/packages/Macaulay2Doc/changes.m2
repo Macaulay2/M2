@@ -8,6 +8,7 @@ document {
 	  TO "changes, 1.3.1",
 	  TO "changes, 1.4",
 	  TO "changes, 1.5",
+	  TO "changes, 1.6",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -15,39 +16,45 @@ document {
 document {
      Key => "list of obsolete functions",
      UL {
+          LI {
+	       "obsolete classes",
+	       UL {
+		    LI { TT "Thread", " has been replaced by ", TO "Task" },
+		    }
+	       },
 	  LI {
 	       "obsolete functions",
 	       UL {
-		    LI "'mutableZero' has been replaced by mutableMatrix",
-		    LI "'unlist' has been replaced by toSequence",
-		    LI "'evaluate' has been replaced by 'value'",
-		    LI "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'",
-		    LI "'verticalJoin' has been replaced by 'stack'",
-		    LI "'netRows' has been replaced by 'unstack'",
-		    LI "'name' has been replaced by 'toString'",
-		    LI "'quote' has been replaced by 'symbol'",
-		    LI "'Numeric' has been replaced by 'numeric'",
-		    LI "'submodule' has been removed",
-		    LI "'monomialCurve' has been replaced by 'monomialCurveIdeal'",
-		    LI "'assign' has been replaced by '<-'",
-		    LI "'minprimes' has been replaced by 'independentSets'",
-		    LI "function 'elapsedTime' has been renamed to 'cpuTime'",
-		    LI "function 'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'"
+		    LI { "'mutableZero' has been replaced by ", TO "mutableMatrix" },
+		    LI { "'unlist' has been replaced by ", TO "toSequence" },
+		    LI { "'evaluate' has been replaced by ", TO "value" },
+		    LI { "'seq x' has been replaced by 'singleton x', which has been replaced by '1:x'" },
+		    LI { "'verticalJoin' has been replaced by ", TO "stack" },
+		    LI { "'netRows' has been replaced by ", TO "unstack" },
+		    LI { "'name' has been replaced by ", TO "toString" },
+		    LI { "'quote' has been replaced by ", TO "symbol" },
+		    LI { "'Numeric' has been replaced by ", TO "numeric" },
+		    LI { "'submodule' has been removed" },
+		    LI { "'monomialCurve' has been replaced by ", TO "monomialCurveIdeal" },
+		    LI { "'assign' has been replaced by ", TO "<-" },
+		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
+		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
 		    }
 	       },
 	  LI {
 	       "obsolete methods",
 	       UL {
-		    LI "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead",
-		    LI "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead",
-		    LI "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead",
-		    LI "'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead",
-		    LI "'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead",
-		    LI "'RingElement _ List' has been replaced: use 'part(d,f)' instead",
-		    LI "'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead",
-		    LI "'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead",
-		    LI "'map(Module,Module)' has been removed: use 'inducedMap' instead",
-		    LI "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead"
+		    LI { "'map(Ideal)' has been removed: use 'map(module I,module I, 1)' instead" },
+		    LI { "'map(Ideal,Ideal)' has been removed: use 'map(module I,module J)' instead" },
+		    LI { "'map(Module,Matrix)' has been replaced: use 'map(M,,f)' instead" },
+		    LI { "'map(Module,RingElement)' has been removed: use 'map(M,M,r)' instead" },
+		    LI { "'RingElement _ ZZ' has been replaced: use 'part(n,f)' instead" },
+		    LI { "'RingElement _ List' has been replaced: use 'part(d,f)' instead" },
+		    LI { "'diff(RingElement)' has been removed: use 'diff(vars ring f, f)' instead" },
+		    LI { "'diff(Matrix)' has been removed: use 'diff(vars ring f, f)' instead" },
+		    LI { "'map(Module,Module)' has been removed: use 'inducedMap' instead" },
+		    LI { "'monomialIdeal(R)' has been removed: use 'monomialIdeal(0_R)' instead" }
 		    }
 	       }
 	  }
@@ -56,19 +63,147 @@ document {
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
 
 document {
-     Key => "changes, 1.5",
+     Key => "changes, 1.6",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    LI { star, " ", TO "VersalDeformations::VersalDeformations", ", a package for calculating tangent and obstruction spaces as well as power series solutions for deformation problems involving isolated singularities and projective schemes,
+			 has been published." 
+			 },
+		    LI { star, " ", TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex,
+			 has been published." 
+			 },
+	       	    }
+	       },
+	  LI { "new packages:",
+	       UL {
+		    LI { TO "PushForward::PushForward", ", a package for for computing the push-forward functor for finite ring maps,
+			 has been added.  (It should have been added to the previous distribution.)" 
+			 },
+		    LI { TO "EliminationMatrices::EliminationMatrices", ", a package for computing resultants,
+			 has been added." 
+			 },
+		    LI { TO "EllipticIntegrals::EllipticIntegrals", ", a package for numerical computation of elliptic integrals and elliptic functions,
+			 has been added." 
+			 },
+		    LI { TO "Triplets::Triplets", ", a package for computing Betti diagrams and hypercohomology tables associated to triplets of degree sequences,
+			 has been added." 
+			 },
+		    LI { TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", ", a package for analyzing the asymptotic
+			 structure of minimal resolutions over a complete intersection, has been added."
+			 },
+	  	    }
+	       },
+	  LI { "improved packages:",
+	       UL {
+     	       	    LI { "The package ", TO "GraphicalModels::GraphicalModels", " has been extended significantly by its authors.
+			 The previous version of this package was simply a basic extension of the package ", TO "Markov::Markov", ".
+			 Among the new algorithms implemented are procedures for computing the vanishing ideal of a graphical model 
+			 and for checking for identifiable parameters in Gaussian mixed graph models. These procedures can be used 
+			 to study fundamental problems about graphical models."
+			 },
+		    LI { "The package ", TO "Schubert2::Schubert2", " now handles intersection rings of ", EM "isotropic", " flag bundles,
+			 with an algorithm based on a theorem in a paper of Grayson, Seceleanu, and Stillman."
+			 },
+	       	    }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+	       	    LI { "Factoring of polynomials over non-prime Galois fields has been added, using the ", TO "Singular-Factory", " library." },
+		    LI { "The methods for ", TO (Hom,Matrix,Module), " and ", TO (Hom,Module,Matrix), " now handle non-free modules.
+			 There is also a new method for ", TO (Hom,Matrix,Matrix), "." },
+		    },
+	       },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "changed the order of loading packages inside a package, as specified by ", TO "PackageImports",
+			 " and ", TO "PackageExports", " options, so that the order of loading is easy to specify (to
+			 avoid problems with shadowed variables).  The packages are loaded with ", TO "needsPackage", ",
+			 and now the imported packages are loaded before the exported packages.  So, if there is a
+			 problem, just replicate all the exported packages in the list of imports, and juggle the order of
+			 the list of imports."
+			 },
+		    LI { "The function ", TO "temporaryFileName", " now obeys the TMPDIR environment variable, 
+			 the way other unix applications do, rather than putting temporary files into the 
+			 directory ", TT "/tmp", "."
+			 },
+	       	    }
+	       },
+	  LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	       UL {
+		    LI { "New functions ", TO "fileReadable", ", ", TO "fileWritable", ", ", TO "fileExecutable", " provide information
+			 about file permissions."
+	       	    	 },
+		    LI { "The class ", TO "Task", " replaces ", TT "Thread", ", and the function ", TO "isCanceled", " tells whether
+			 a task has been canceled."
+	       	    	 },
+	       	    }
+	       }
+     	  }
+     }
+
+document {
+     Key => "changes, 1.5",				    -- the 1.5 branch was created 2012-05-21 with svn release 14617
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
-		    "A facility for scheduling tasks to be performed in parallel (in threads) has been developed ... "
+		    LI {
+			 "A facility for scheduling tasks to be performed in parallel (in threads) has been developed.
+			 See ", TO "parallel programming with threads and tasks", "."
+			 }
 	       	    }
+	       },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    LI { star, " ", TO "Nauty::Nauty", ", a package for an interface to the program ", TT "nauty", ", which
+			 provides efficient methods for determining whether
+            		 graphs are isomorphic, generating all graphs with particular properties,
+            		 generating random graphs, and more,
+			 has been published." 
+			 },
+		    LI { star, " ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", ", a package for using 
+			 polynomial homotopy continuation to solve systems of polynomial equations and describing positive-dimensional 
+			 complex algebraic varieties, has been published." 
+			 },
+		    LI { star, " ", TO "Binomials::Binomials", ", a package for binomial ideals with a particular focus on
+			 intersection decompositions and associated primes,
+			 has been published." 
+			 },
+		    }
 	       },
 	  LI { "new packages:",
 	       UL {
 		    LI { TO "BIBasis::BIBasis", ", a package for constructing reduced Pommaret and Gröbner bases in a Boolean ring,
 			 has been added." },
+		    LI { TO "CharacteristicClasses::CharacteristicClasses", ", a package for degrees of Chern classes and other characteristic classes of projective schemes,
+			 has been added." },
 		    LI { TO "KustinMiller::KustinMiller", ", a package for unprojection and the Kustin-Miller complex construction,
-			 has been added." }
+			 has been added." },
+		    LI { TO "MonomialAlgebras::MonomialAlgebras", ", a package for decomposing a monomial algebra as a module over a subalgebra,
+			 has been added." },
+		    LI { TO "MonomialMultiplierIdeals::MonomialMultiplierIdeals", ", a package for computing multiplier ideals of monomial ideals,
+			 has been added." },
+		    LI { TO "NautyGraphs::NautyGraphs", ", a package for an interface to ", TT "nauty", " (Graphs fork),
+			 has been added." },
+		    LI { TO "QthPower::QthPower", ", a package for computing the integral closure of type I affine domains,
+			 has been added." },
+		    LI { TO "RandomObjects::RandomObjects", ", ",
+			 TO "RandomCanonicalCurves::RandomCanonicalCurves", ", ",
+			 TO "RandomCurves::RandomCurves", ", ",
+			 TO "RandomGenus14Curves::RandomGenus14Curves", ", ",
+			 TO "RandomPlaneCurves::RandomPlaneCurves", ", and ",
+			 TO "RandomSpaceCurves::RandomSpaceCurves", ", packages for the construction of random points of unirational moduli spaces,
+			 have been added." },
+		    LI { TO "TensorComplexes::TensorComplexes", ", a package for multilinear algebra for the construction of tensor complexes,
+			 has been added." },
+		    LI { TO "Units::Units", ", a package for conversion of units of measure,
+			 has been added." },
+		    LI { TO "VersalDeformations::VersalDeformations", ", a package for calculating versal deformations and local Hilbert schemes,
+			 has been added." },
 	  	    }
 	       },
 	  -- LI { "improved packages:",
@@ -85,6 +220,10 @@ document {
 			 "The function ", TO "newPackage", " now has two new options, ", TO "PackageExports", " and ", TO "PackageImports", ",
 			 which provide a more robust way to specify that other packages should be loaded when this new
 			 package is loaded."
+			 },
+		    LI {
+			 "The new functions ", TO "limitFiles", " and ", TO "limitProcesses", " can be used to impose resource limits on the current
+			 process."
 			 }
 		    }
 	       },
@@ -98,14 +237,14 @@ document {
 	       	    }
 	       }
 	  -- LI { "new constants and operators:",
-	  --      -- UL {
-	  --      -- 	    }
+	  --      UL {
 	  --      }
+	  -- }
 	  }
      }
 
 document {
-     Key => "changes, 1.4",
+     Key => "changes, 1.4",				    -- the branch for 1.4 was created 2010-09-23 with release 12341
      UL {
 	  LI { "major improvements and additions:",
 	       UL {
