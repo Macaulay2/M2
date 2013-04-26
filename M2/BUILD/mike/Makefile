@@ -119,6 +119,7 @@ opt64-linbox : always
 		--enable-linbox \
 		--enable-memtailor \
 		--enable-mathic \
+		--enable-mathicgb \
 		--enable-flint \
 		--disable-strip \
 		--enable-download \
