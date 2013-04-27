@@ -20,10 +20,11 @@ BUILDTARGET += shared
 INSTALLTARGET += install-shared
 endif
 
+# warning: we have to set PATCHFILE first, so the dependencies work out, but $(TARFILE_DIR) isn't defined yet, so we use its value here:
+PATCHFILE = $(addprefix @abs_top_srcdir@/BUILD/tarfiles/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
-
-PATCHFILE := $(addprefix $(TARFILE_DIR)/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
 
 PATCHCMD = cd $(BUILDDIR) && for i in $(PATCHFILE) ; do echo patching with $$i ; patch -p0 < $$i ; done
 
