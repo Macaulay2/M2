@@ -8,7 +8,7 @@ Macaulay2 on MacOS X
 Welcome to Macaulay2!
 
 This file tells how to get Macaulay2 installed and running on your MacOS X
-10.7, or 10.8 system.  If you have any difficulty with these instructions,
+10.7 or 10.8 system.  If you have any difficulty with these instructions,
 please email us.
 
 Step 1.  Download Macaulay2.
