@@ -52,7 +52,7 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
   // Last four columns just have entries in row 0:
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
-  int n = A->n_cols();
+  size_t n = A->n_cols();
   LLLstate = MutableMatrix::zero_matrix(globalZZ,n,n+4,A->is_dense());
   if (n > 0)
     {
@@ -238,7 +238,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
                          MutableMatrix *LLLstate,
                          int nsteps)
 {
-  int n = A->n_cols();
+  size_t n = A->n_cols();
   if (n == 0) return COMP_DONE;
 
   // Extract the state from LLLstate:

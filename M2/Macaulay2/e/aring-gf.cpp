@@ -461,14 +461,18 @@ int ARingGF::get_repr(const ElementType f) const
     /// @todo possible problem if type UTT is smaller than an int?
     void ARingGF::set_from_int(ElementType &result, int a) const 
     {
+#warning "fix the casting spaghetti here!"
       //std::cerr << "ARingGF::set_from_int" << std::endl;
-      a = a % static_cast<long>(mCharac); // strange: if mCharac isn't cast away from unsigned, 
+      ElementType p = static_cast<ElementType>(mCharac);
+      ElementType a1 = (a >= 0 ? static_cast<ElementType>(a) : static_cast<ElementType>(a + p));
+      a1 = a1 % p;
+      //      a = a % static_cast<long>(mCharac); // strange: if mCharac isn't cast away from unsigned, 
                                           // then a is coerced to unsigned, and get the wrong answer!
       // e.g:
       //  (-5) % (unsigned long)(5) == 1
       //  (-5) % (long)(5) == 0.  Wow!
-
-      if (a < 0) a += mCharac;
+//REmoved, since we are now making it non-negative earlier (28 April 2013)
+//if (a < 0) a += mCharac;
       givaroField.init(result, a);
     }
 

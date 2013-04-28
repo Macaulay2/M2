@@ -104,7 +104,9 @@ ring_elem Tower::var(int v) const
 
 bool Tower::is_unit(const ring_elem f) const
 {
-  poly f1 = TOWER_VAL(f);
+  //  poly f1 = TOWER_VAL(f);
+#warning "write Tower::is_unit"
+  return false;
   //TODO: finish
   // Compute inverse of f, see if it is null...
 }
@@ -251,7 +253,7 @@ class TowerEvaluator : public DPolyTraverser
     //  H->add, or target->add_to
     vp.shrink(0);
     varpower::from_ntuple(nvars, exp, vp);
-    ring_elem c = K->from_int(coeff);
+    ring_elem c = K->from_int(static_cast<int>(coeff));
     ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
     H->add(a);
     return true;
@@ -289,7 +291,8 @@ ring_elem Tower::eval(const RingMap *map, const ring_elem f, int first_var) cons
 
 bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 {
-  poly f1 = TOWER_VAL(f);
+  //  poly f1 = TOWER_VAL(f);
+#warning "write Tower::promote"
   // What Rf should be allowed?
 
   //TODO: finish
@@ -299,9 +302,9 @@ bool Tower::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 
 bool Tower::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 {
-  poly f1 = TOWER_VAL(f);
+  //  poly f1 = TOWER_VAL(f);
   // What Rg should be allowed?
-
+#warning "write Tower::lift"
   //TODO: finish
 
   return false;
@@ -311,6 +314,7 @@ bool Tower::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 void Tower::syzygy(const ring_elem a, const ring_elem b,
                    ring_elem &x, ring_elem &y) const
 {
+#warning "write Tower::syzygy"
   //TODO: finish
 }
 

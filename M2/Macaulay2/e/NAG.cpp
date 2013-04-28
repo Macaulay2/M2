@@ -230,7 +230,7 @@ int add_constant_get_position(VECTOR(typename Field::element_type)& consts, type
 {
   //!!! smarter implementation coming !!!
   consts.push_back(c);
-  return consts.size()-1;
+  return static_cast<int>(consts.size())-1;
 }
 
 /* create the part of slp computing f, return the position of the final operation */
@@ -317,7 +317,7 @@ SLP<Field> /* or null */ *SLP<Field>::make(const PolyRing *R, ring_elem e)
 
     // make program
     res->program = M2_makearrayint(prog.length() + 2/* accounts for lines +2,+3 */ + SLP_HEADER_LEN);
-    res->program->array[0] = res->num_consts = consts.size();
+    res->program->array[0] = res->num_consts = static_cast<int>(consts.size());
     prog.append(slpEND);
     prog.append(out+res->num_consts+res->num_inputs); // position of the output
 

@@ -164,7 +164,6 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
   int nblocks = 0;
   int nvars = 0;
   int hascomponent = 0;
-  int isnoncomm = 0;
   for (i=0; i<mo->len; i++)
     {
       struct mon_part_rec_ *t = mo->array[i];
@@ -172,7 +171,6 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
       if (t->type == MO_POSITION_DOWN || t->type == MO_POSITION_UP)
         hascomponent++;
       else if (t->type == MO_NC_LEX)
-        isnoncomm = 1;
       if (t->type != MO_WEIGHTS)
         nvars += t->nvars;
     }

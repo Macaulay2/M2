@@ -43,8 +43,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
   ERROR("lapack not present");
   return NULL;
 #else
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = M2_makearrayint(rows);
@@ -130,8 +130,8 @@ M2_RRR Lapack::det(const LMatrixRR *A)
   ERROR("lapack not present");
   return NULL;
 #else
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = M2_makearrayint(rows);
@@ -210,8 +210,8 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  int bsize = b->n_cols();
+  int size = static_cast<int>(A->n_rows());
+  int bsize = static_cast<int>(b->n_cols());
   int info;
 
   /* make sure matrix is square */
@@ -275,8 +275,8 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -340,8 +340,8 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -422,8 +422,8 @@ bool Lapack::eigenvalues_symmetric(const LMatrixRR *A, LMatrixRR *eigvals)
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -483,8 +483,8 @@ bool Lapack::eigenvectors_symmetric(const LMatrixRR *A,
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -547,8 +547,8 @@ bool Lapack::SVD(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR *U, LMatrixRR *
 #else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
@@ -614,8 +614,8 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
 #else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
@@ -670,7 +670,7 @@ bool Lapack::SVD_divide_conquer(const LMatrixRR *A, LMatrixRR *Sigma, LMatrixRR 
   deletearray(vt);
   deletearray(sigma);
 
-  return true;
+  return ret;
 #endif
 }
 
@@ -683,10 +683,10 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
   bool ret = true;
   char job = 'N';
   int info;
-  int rows = A->n_rows();
-  int cols = A->n_cols();
-  int brows = b->n_rows();
-  int bcols = b->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
+  int brows = static_cast<int>(b->n_rows());
+  int bcols = static_cast<int>(b->n_cols());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
@@ -765,10 +765,10 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   return false;
 #else
   bool ret = true;
-  int rows = A->n_rows();
-  int cols = A->n_cols();
-  int brows = b->n_rows();
-  int bcols = b->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
+  int brows = static_cast<int>(b->n_rows());
+  int bcols = static_cast<int>(b->n_cols());
   double rcond = -1.0;  // use machine precision
   int rank, info;
   int min = (rows < cols) ? rows : cols;
@@ -854,8 +854,8 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
   ERROR("lapack not present");
   return NULL;
 #else
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
   M2_arrayint result = M2_makearrayint(rows);
@@ -1009,8 +1009,8 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 #else
 
   bool ret = true;
-  int size = A->n_rows();
-  int bsize = b->n_cols();
+  int size = static_cast<int>(A->n_rows());
+  int bsize = static_cast<int>(b->n_cols());
   int info;
   const CCC *CCR = A->get_ring()->cast_to_CCC();
   ASSERT(CCR != 0);
@@ -1018,7 +1018,7 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
 
 
   /* make sure matrix is square */
-  if (size != A->n_cols())
+  if (size != static_cast<int>(A->n_cols()))
     {
       ERROR("expected a square matrix");
       return false;
@@ -1194,8 +1194,8 @@ bool Lapack::eigenvalues(const LMatrixCC *A, LMatrixCC *eigvals)
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -1256,8 +1256,8 @@ bool Lapack::eigenvectors(const LMatrixCC *A, LMatrixCC *eigvals, LMatrixCC *eig
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size !=A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size !=static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -1324,8 +1324,8 @@ bool Lapack::eigenvalues_hermitian(const LMatrixCC *A, LMatrixRR *eigvals)
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -1384,8 +1384,8 @@ bool Lapack::eigenvectors_hermitian(const LMatrixCC *A, LMatrixRR *eigvals, LMat
   ERROR("lapack not present");
   return false;
 #else
-  int size = A->n_rows();
-  if (size != A->n_cols()) {
+  int size = static_cast<int>(A->n_rows());
+  if (size != static_cast<int>(A->n_cols())) {
     ERROR("expected a square matrix");
     return false;
   }
@@ -1450,8 +1450,8 @@ bool Lapack::SVD(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC *U, LMatrixCC *
 #else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
@@ -1518,8 +1518,8 @@ bool Lapack::SVD_divide_conquer(const LMatrixCC *A, LMatrixRR *Sigma, LMatrixCC 
 #else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
-  int rows = A->n_rows();
-  int cols = A->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
   int info;
   int min = (rows <= cols) ? rows : cols;
 
@@ -1590,10 +1590,10 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   bool ret = true;
   char job = 'N';
   int info;
-  int rows = A->n_rows();
-  int cols = A->n_cols();
-  int brows = b->n_rows();
-  int bcols = b->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
+  int brows = static_cast<int>(b->n_rows());
+  int bcols = static_cast<int>(b->n_cols());
   int min = (rows <= cols) ? rows : cols;
   int max = (rows >= cols) ? rows : cols;
   int wsize = min + ((bcols >=  max) ? bcols : max);
@@ -1672,10 +1672,10 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
   return false;
 #else
   bool ret = true;
-  int rows = A->n_rows();
-  int cols = A->n_cols();
-  int brows = b->n_rows();
-  int bcols = b->n_cols();
+  int rows = static_cast<int>(A->n_rows());
+  int cols = static_cast<int>(A->n_cols());
+  int brows = static_cast<int>(b->n_rows());
+  int bcols = static_cast<int>(b->n_cols());
   double rcond = -1.0;
   int rank, info;
   int min = (rows < cols) ? rows : cols;

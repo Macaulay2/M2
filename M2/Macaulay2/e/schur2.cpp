@@ -188,7 +188,7 @@ void SchurRing2::elem_text_out(buffer &o,
                                bool p_parens) const
 {
   const schur_poly *g = f.schur_poly_val;
-  int n = g->size();
+  size_t n = g->size();
 
   bool needs_parens = p_parens && (n > 1);
   if (needs_parens)
@@ -341,6 +341,8 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
   /* write me */
+#warning "compare_elems method needs to be written"
+  return 0;
 }
 bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_elem &resultRE) const
 {
@@ -636,7 +638,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR, const ring_e
       return 0;
     }
   const schur_poly *f1 = f.schur_poly_val;
-  int n = f1->size();
+  int n = static_cast<int>(f1->size()); // this is here because the lengths of arrays for M3 front end use int as length field.
   engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,n));
   engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,n));
   monoms->len = n;
