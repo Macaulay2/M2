@@ -221,19 +221,21 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
 
 Matrix *MutableMatrix::to_matrix() const
 {
-  size_t nrows = n_rows();
-  size_t ncols = n_cols();
+#warning "FreeModule has limit size of int, not size_t"
+  int nrows = static_cast<int>(n_rows());
+  int ncols = static_cast<int>(n_cols());
   FreeModule *F = get_ring()->make_FreeModule(nrows);
   MatrixConstructor result(F,ncols);
   ring_elem f;
   iterator *i = begin();
-  for (size_t c=0; c<ncols; c++)
+  for (int c=0; c<ncols; c++)
     {
       ring_elem a;
       for (i->set(c); i->valid(); i->next())
         {
           i->copy_ring_elem(a);
-          result.set_entry(i->row(), c, a);
+          int r = static_cast<int>(i->row());
+          result.set_entry(r, c, a);
         }
     }
   delete i;

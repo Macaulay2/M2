@@ -309,7 +309,7 @@ FreeModule *FreeModule::exterior(int pp) const
       degree_monoid()->one(deg);
 
       for (size_t r=0; r<p; r++)
-        degree_monoid()->mult(deg, degree(a[r]), deg);
+        degree_monoid()->mult(deg, degree(static_cast<int>(a[r])), deg);
 
       result->append(deg);
     }
@@ -318,7 +318,7 @@ FreeModule *FreeModule::exterior(int pp) const
   degree_monoid()->remove(deg);
 
   if (schreyer != NULL)
-    result->schreyer = schreyer->exterior(p);
+    result->schreyer = schreyer->exterior(pp);
   return result;
 }
 
