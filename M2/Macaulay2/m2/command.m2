@@ -5,7 +5,7 @@ chkrun = cmd -> (
      if r == 2			-- 2 is the return value for Mac OS X and linux
      then (
 	  stderr << newline;
-	  error("run: subprocess interrupted: return code " | toString r);
+	  error("run: subprocess interrupted");
 	  );
      r) 
 
