@@ -419,7 +419,7 @@ scan(reverse toList(1..c), p->(
 --END OF MAIN LOOP
 --Now put together the maps for output. All the work is done except
 --for the creation of the homotopies.
-    if fail == true then return("cannot complete MF");
+    if fail == true then error "cannot complete MF";
     --lift all the relevant maps to S
     scan(toList(1..c), p-> (
 	    BS#p = substitute(B1#p, S);
@@ -1559,6 +1559,7 @@ Description
   resolution takes place over an intermediate complete
   intersection:
  Example
+  setRandomSeed 0
   S = ZZ/101[a,b,c,d]
   ff1 = matrix"a3,b3,c3,d3"
   ff =ff1*random(source ff1, source ff1)
@@ -1606,6 +1607,7 @@ Description
   that grow as a polynomial of degree at most equal to the codimension-1.
   The complexity is one more than the degree of this polynomial.
  Example
+  setRandomSeed 0
   S = ZZ/101[a,b,c,d];
   ff1 = matrix"a3,b3,c3,d3";
   ff =ff1*random(source ff1, source ff1);
@@ -1646,8 +1648,6 @@ Description
   Implements the construction in the paper
   "Matrix Factorizations in Higher Codimension"
   by Eisenbud and Peeva.  
- Example
-    
 SeeAlso
  makeFiniteResolution
 ///
