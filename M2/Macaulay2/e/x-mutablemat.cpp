@@ -379,7 +379,7 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  int nrows = M->n_rows();
+  size_t nrows = M->n_rows();
   if (start < 0 || start + perm->len > nrows)
     {
       ERROR("row indices out of range");
@@ -403,7 +403,7 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  int ncols = M->n_cols();
+  size_t ncols = M->n_cols();
   if (start < 0 || start + perm->len > ncols)
     {
       ERROR("column indices out of range");
@@ -499,8 +499,8 @@ void perform_reduction(MutableMatrix *M,
 
 void reduce_pivots(MutableMatrix *M)
 {
-  int nr = M->n_rows()-1;
-  int nc = M->n_cols()-1;
+  int nr = static_cast<int>(M->n_rows())-1;
+  int nc = static_cast<int>(M->n_cols())-1;
   if (nr < 0 || nc < 0) return;
   const Ring *K = M->get_ring();
   ring_elem one = K->one();
@@ -524,7 +524,7 @@ void reduce_pivots(MutableMatrix *M)
             pivot_type = -1;
           if (pivot_type != 0)
             {
-              perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+              perform_reduction(M, static_cast<int>(p->row()), i, nr--, nc--, pivot_type);
               if (nr < 0 || nc < 0) return;
               // restart loop with the (new) column i
               i = -1;
@@ -548,7 +548,7 @@ void reduce_pivots(MutableMatrix *M)
           else if (K->is_equal(minus_one, coef))
             pivot_type = -1;
 
-          perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+          perform_reduction(M, static_cast<int>(p->row()), i, nr--, nc--, pivot_type);
           if (nr < 0 || nc < 0) return;
           // restart loop with the (new) column i
           i = -1;
@@ -1063,7 +1063,7 @@ engine_RawRingElementArray convertRingelemsToArray(const Ring *R,
 {
   size_t len = elems.size();
   engine_RawRingElementArray result = getmemarraytype( engine_RawRingElementArray, len );
-  result->len = len;
+  result->len = static_cast<int>(len);
   for (size_t i=0; i<len; i++)
     result->array[i] = RingElement::make_raw( R, static_cast<int>(elems[i]) );
   

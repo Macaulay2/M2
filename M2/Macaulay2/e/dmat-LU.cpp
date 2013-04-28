@@ -3,28 +3,6 @@
 
 #include "text-io.hpp"
 
-#if 0
-
-template <typename CoeffRing>
-
-void ddmat(const DMat<CoeffRing> *A)
-{
-  buffer o;
-  MutableMat< CoeffRing, DMat<CoeffRing> > *B =
-    MutableMat< CoeffRing, DMat<CoeffRing> >::grab_Mat(A);
-  B->text_out(o);
-  emit(o.str());
-}
-
-template void ddmat<CoefficientRingZZp>(const Mat<CoefficientRingZZp> *A);
-
-#else
-
-#warning "some non-compiling code here commented out by Dan, might need to be put back in"
-
-#endif
-
-
 #define MAT(M,i,j) (M)->get_array()[j*nrows+i]
 
 //////////////////////////////////
@@ -166,13 +144,13 @@ void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
   // This allocates space for pivotcols
 {
   const CoeffRing *K = U->get_CoeffRing();
-  size_t nrows = U->n_rows();
+  int nrows = static_cast<int>(U->n_rows());
 
   pivotcols = M2_makearrayint(nrows); // pivot columns 0..npivots-1
 
   const elem *loc = U->get_array();
-  size_t this_row = 0;
-  size_t this_col = 0;
+  int this_row = 0;
+  int this_col = 0;
   while (this_col < ncols && this_row < nrows)
     {
       if (!K->is_zero(*loc))
@@ -203,9 +181,9 @@ M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
   U->resize(nrows,ncols);
 
   // These will be set in LU1
-  M2_arrayint perm = M2_makearrayint(nrows);
+  M2_arrayint perm = M2_makearrayint(static_cast<int>(nrows));
   size_t npivots = 0;
-  for (size_t i=0; i<nrows; i++)
+  for (int i=0; i<nrows; i++)
     perm->array[i] = i;
 
   for (size_t c=0; c<ncols; c++)

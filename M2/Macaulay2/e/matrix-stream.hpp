@@ -75,11 +75,11 @@ void matrixToStream(const Matrix* M, T& stream)
   const Ring *KK = P->getCoefficientRing();
   size_t nvars = P->n_vars();
   size_t npolys = M->n_cols();
-  size_t charac = P->charac();
+  int charac = static_cast<int>(P->charac());
   M2_ASSERT(charac > 0);
   exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(nvars)); // allocated on stack
   stream.idealBegin(npolys);
-  for (size_t i=0; i<npolys; i++)
+  for (int i=0; i<npolys; i++)
     {
       Nterm *t = M->elem(0,i);
 

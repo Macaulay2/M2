@@ -172,7 +172,7 @@ M2_arrayint rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo)
 
   if (monomialOrderingToMatrix(*mo, mat, base))
     {
-      result = M2_makearrayint(mat.size()+1);
+      result = M2_makearrayint(static_cast<int>(mat.size())+1);
       for (size_t i=0; i<mat.size(); i++)
         result->array[i] = mat[i];
       result->array[mat.size()] = (base ? 1 : 0);

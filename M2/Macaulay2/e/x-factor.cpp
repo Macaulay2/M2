@@ -149,7 +149,7 @@ static __mpz_struct toInteger(CanonicalForm h) {
        if (h < 0) { sign = -1; h = -h; } else sign = 1;
        while ( h != 0 ) {
             CanonicalForm k = h % (int)base;
-            v.append(k.intval());
+            v.append(static_cast<int>(k.intval()));
             h = h/(int)base;
        }
        if (RationalMode) On(SW_RATIONAL);
@@ -181,7 +181,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                mpq_clear(&z);
                return ret;
           }
-          else if (h.inFF()) return RingElement::make_raw(R, R->from_int(h.intval()));
+          else if (h.inFF()) return RingElement::make_raw(R, R->from_int(static_cast<int>(h.intval())));
           else if (h.inExtension()) {
                assert( algebraicElement_M2 != NULL );
                ring_elem result = R->from_int(0);

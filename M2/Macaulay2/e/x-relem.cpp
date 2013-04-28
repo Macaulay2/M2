@@ -403,7 +403,7 @@ const Ring *rawSchurSnRing(const Ring *A, int n)
 
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
 {
-  return Tower::create(charac, names);
+  return Tower::create(static_cast<int>(charac), names);
 }
 
 const Ring /* or null */ *rawTowerRing2(const Ring *R1, M2_ArrayString new_names)
