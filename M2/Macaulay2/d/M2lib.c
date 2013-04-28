@@ -71,10 +71,15 @@ static void oursignal(int sig, void (*handler)(int)) {
   sigfillset(&act.sa_mask);
   sigaction(sig,&act,NULL); /* old way: signal(sig,interrupt_handler); */
 }
+
+static int have_arg_no_int;
+
 void system_handleInterruptsSetup(M2_bool handleInterrupts) {
-  oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
-  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
-}
+     if (!have_arg_no_int) {
+	  oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
+	  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
+	  }
+     }
 
 static void unblock(int sig) {
   sigset_t s;
@@ -559,7 +564,10 @@ void* interpFunc(void* vargs2)
      return NULL;
 }
 
-/* these get put into startup.c by Makefile.in */
+int have_arg(char **argv, const char *arg) {
+     for (;*argv;argv++) if (0 == strcmp(*argv,arg)) return TRUE;
+     return FALSE;
+     }
 
 int Macaulay2_main(argc,argv)
 int argc; 
@@ -693,7 +701,10 @@ char **argv;
      }
 
      signal(SIGPIPE,SIG_IGN);
-     system_handleInterruptsSetup(TRUE);
+     have_arg_no_int = have_arg(argv,"--int");
+     if (have_arg_no_int)
+	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
+     else system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
      vargs->argv=saveargv;

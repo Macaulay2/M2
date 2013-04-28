@@ -6,12 +6,25 @@ things to do manually before release
 		  C-c C-cstdio:1:15:(3): error: interrupted
 
 		i12 : run "sleep 10"
-		  C-c C-c
+		  C-c C-c			<-- interrupted immediately -->
 		o12 = 2				<-- right answer
 
 		i2 : run "sleep 10"
 		  C-c C-c			<-- too much delay -->
 		o2 = 0				<-- wrong answer
+
+	see whether the "--int" command line option works to suppress SIGINT handling:
+
+		   $ M2 --stop --int
+		   i1 : C-c C-c
+		   $ echo $?
+		   130				<-- right answer
+
+		   $ M2 --stop --int -e 'print hi ; while true do 1'
+		     				<-- wait for "hi" to be printed
+		   C-c C-c			<-- interrupted immediately -->
+		   $ echo $?
+		   130				<-- right answer
 
         see 0-final-check-interactive-input-behaviour if changes have been made to top level user interaction
 
