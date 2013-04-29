@@ -110,10 +110,8 @@ gcmem.exe gcmem: LDLIBS = -lgc
 mem: LDLIBS =
 
 clean::; rm -rf files src-files
-distclean:: clean
-	rm -f Makefile Macaulay2.README setup.hint
-	$(MAKE) -C server $@
-clean::; $(MAKE) -C server $@
+distclean:: clean; rm -f Makefile Macaulay2.README setup.hint
+distclean signature clean::; $(MAKE) -C server $@
 Makefile: Makefile.in; cd ../..; ./config.status distributions/cygwin/Makefile
 server/Makefile: server/Makefile.in; cd ../..; ./config.status distributions/cygwin/server/Makefile
 postinstall.sh: postinstall.sh.in; cd ../..; ./config.status distributions/cygwin/postinstall.sh
