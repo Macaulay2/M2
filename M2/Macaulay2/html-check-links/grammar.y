@@ -166,7 +166,7 @@ static void checkURL(char *s0) {
   if (strseg(s,"file://")) s += 7;
   {char *t; t = strrchr(s,'#'); if (t != NULL) *t = 0;}
   if (*s == 0) return;
-  if (s[0] == '/' && isascii(s[1]) && isupper(s[1]) && s[2] == ':') {
+  if (s[0] == '/' && isascii((int)s[1]) && isupper((int)s[1]) && s[2] == ':') {
     /* absolute path in Windows */
     s++;
     if (!abs_links) demangle_error("absolute link",s0);
