@@ -11,6 +11,7 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # increase the limit, because two of the tests run by mpir's "make check" will
 # not run in just 400000:
+TLIMIT = 250
 VLIMIT = 600000
 MLIMIT = 600000
 
