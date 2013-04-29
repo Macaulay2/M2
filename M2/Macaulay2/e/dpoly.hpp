@@ -9,7 +9,7 @@
 // Later, we will extend this to multivariate polynomials and function fields
 
 #include <cstdio>
-#include <strstream>
+#include <sstream>
 #include "ringelem.hpp"
 #include "buffer.hpp"
 
@@ -23,9 +23,10 @@ typedef const struct poly_struct * const_poly;
 /**
  * \ingroup polynomialrings
  */
+
 struct poly_struct : public our_new_delete {
-  unsigned long deg;
-  unsigned long len;
+  int deg;
+  int len;
   union {
     long *ints;  // array of integers.  at level == 0
     poly *polys; // array of more ptrs to poly structs, at level > 0
@@ -84,8 +85,8 @@ public:
 
   static void increase_size_0(int newdeg, poly &f);
   static void increase_size_n(int newdeg, poly &f);
-  static poly alloc_poly_n(long deg, poly *elems=0);
-  static poly alloc_poly_0(long deg, long *elems=0);
+  static poly alloc_poly_n(int deg, poly *elems=0);
+  static poly alloc_poly_0(int deg, long *elems=0);
   static void dealloc_poly(poly &f);
 
   static void display_poly(FILE *fil, int level, const poly f);

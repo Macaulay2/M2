@@ -1,7 +1,7 @@
 #include "dpoly.hpp"
 #include <cstdlib>
 #include <cctype>
-#include <strstream>
+#include <sstream>
 #include <cassert>
 #include "ZZ.hpp"
 
@@ -43,7 +43,7 @@ void ZZp_INVERT(long charac, long &result, long b) {
   if (v < 0) v += charac;
   result = v;
 }
-void ZZp_RANDOM(long charac, long &result) { result = rawRandomInt(charac); }
+void ZZp_RANDOM(long charac, long &result) { result = rawRandomInt(static_cast<int32_t>(charac)); }
 
 void DPoly::initialize(long p, int nvars0, const_poly *ext0)
 {
@@ -235,7 +235,7 @@ void DPoly::increase_size_n(int newdeg, poly &f)
     }
 }
 
-poly DPoly::alloc_poly_n(long deg, poly *elems)
+poly DPoly::alloc_poly_n(int deg, poly *elems)
 // if elems == 0, then set all coeffs to 0.
 {
   poly result = new poly_struct;
@@ -251,7 +251,7 @@ poly DPoly::alloc_poly_n(long deg, poly *elems)
   return result;
 }
 
-poly DPoly::alloc_poly_0(long deg, long *elems)
+poly DPoly::alloc_poly_0(int deg, long *elems)
 {
   poly result = new poly_struct;
   result->arr.ints = newarray_atomic(long, deg+1);
@@ -394,11 +394,11 @@ std::ostream& DPoly::append_to_stream(std::ostream &o, int level, const poly f)
 }
 char *DPoly::to_string(int level, const poly f)
 {
-  std::ostrstream o;
+  std::ostringstream o;
   append_to_stream(o, level, f);
   o << '\0';
-  char *s = o.str(); // only valid until o is destroyed
-  int n = strlen(s);
+  const char *s = o.str().c_str(); // only valid until o is destroyed
+  size_t n = strlen(s);
   char *result = new char[n+1];
   strcpy(result, s);
   return result;
@@ -560,7 +560,7 @@ int DPoly::compare(int level, poly f, poly g)
     {
       for (int i=f->deg; i>=0; i--)
         {
-          int cmp = f->arr.ints[i] - g->arr.ints[i];
+          long cmp = f->arr.ints[i] - g->arr.ints[i];
           if (cmp > 0) return -1;
           if (cmp < 0) return 1;
         }
@@ -1375,12 +1375,13 @@ poly DPoly::lowerP(int level, const poly f)
   int i,j;
   poly result;
   if (f == 0) return 0;
-  int newdeg = f->deg / charac; // should be exact...
+  int charac_as_int = static_cast<int>(charac);
+  int newdeg = f->deg / charac_as_int; // should be exact...
   if (level == 0)
     {
       result = alloc_poly_0(newdeg);
       // In this situation, we just need to grab every p*i coeff...
-      for (i=0, j=0; i<=newdeg; i++, j += charac)
+      for (i=0, j=0; i<=newdeg; i++, j += charac_as_int)
         result->arr.ints[i] = f->arr.ints[j];
     }
   else
@@ -1391,8 +1392,8 @@ poly DPoly::lowerP(int level, const poly f)
       unsigned long extdeg = 1;
       for (i=0; i<level; i++)
         extdeg *= degree_of_extension(i);
-      mpz_ui_pow_ui(order, charac, extdeg-1);
-      for (i=0, j=0; i<=newdeg; i++, j += charac)
+      mpz_ui_pow_ui(order, charac_as_int, extdeg-1);
+      for (i=0, j=0; i<=newdeg; i++, j += charac_as_int)
         {
           // need p-th roots of the coefficients.  So we take p^(n-1)
           // power (if coefficients are in field of size p^n)
