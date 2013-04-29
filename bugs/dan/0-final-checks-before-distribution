@@ -13,12 +13,28 @@ things to do manually before release
 		  C-c C-c			<-- too much delay -->
 		o2 = 0				<-- wrong answer
 
+
+		i3 : uninstallPackage "Schubert2"; installPackage "Schubert2"
+			...
+						<-- wait for it to start running examples:
+		--making example results for Riemann-Roch on a curve in file /Users/dan/Library/Application Support/Macaulay2/local/share/doc/Macaulay2/Schubert2/example-output/___Riemann-__Roch_spon_spa_spcurve.out
+		ulimit -t 700; ulimit -s 8192; cd /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-69452-0/9-rundir/; /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/M2 --silent --print-width 77 --stop --int --no-readline -q -e 'loadPackage("Schubert2", Reload => true, FileName => "/Users/dan/src/M2/github/Macaulay2-M2-clone/M2/Macaulay2/packages/Schubert2.m2")' <"/var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-69452-0/4___Riemann-__Roch_spon_spa_spcurve.m2" >>"/Users/dan/Library/Application Support/Macaulay2/local/share/doc/Macaulay2/Schubert2/example-output/___Riemann-__Roch_spon_spa_spcurve.errors" 2>&1
+		  C-c C-c			<-- then interrupt it:
+		  				<-- expect it to stop immediately with something like this:
+		/Users/dan/Library/Application Support/Macaulay2/local/share/doc/Macaulay2/Schubert2/example-output/___Riemann-__Roch_spon_spa_spcurve.errors:0:1: (output file) error: Macaulay2 exited with return code 2
+		/var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-69452-0/4___Riemann-__Roch_spon_spa_spcurve.m2:0:1: (input file)
+		stdio:4:1:(3): error: subprocess interrupted
+
 	see whether the "--int" command line option works to suppress SIGINT handling:
+
+ 		   <-- see whether you can interrupt M2 while it's waiting for input:
 
 		   $ M2 --stop --int
 		   i1 : C-c C-c
 		   $ echo $?
 		   130				<-- right answer
+
+ 		   <-- see whether you can interrupt M2 while it's running:
 
 		   $ M2 --stop --int -e 'print hi ; while true do 1'
 		     				<-- wait for "hi" to be printed
