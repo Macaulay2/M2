@@ -1639,7 +1639,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
         {
           M->to_expvector(h->monom, exp);
           get_part_of_expvector(vars, exp, g->comp, scratch_exp);
-          int val = exponent_table_get(E, scratch_exp);
+          int val = static_cast<int>(exponent_table_get(E, scratch_exp));
           if (val > 0)
             {
               M->from_expvector(exp, mon);

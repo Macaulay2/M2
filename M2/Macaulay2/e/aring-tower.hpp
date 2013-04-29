@@ -19,8 +19,8 @@ namespace M2 {
   typedef struct poly_struct * poly;
 
   struct poly_struct  {
-    unsigned long deg;
-    unsigned long len;
+    int deg;
+    int len;
     union {
       ARingZZpFFPACK::ElementType* coeffs;
       //      long* ints;  // array of integers.  at level == 0
@@ -213,8 +213,8 @@ namespace M2 {
     bool is_one(int level, const poly f) const;  // TODO: write this
     bool is_equal(int level, const poly f, const poly g) const;
 
-    poly alloc_poly_n(long deg) const;
-    poly alloc_poly_0(long deg) const;
+    poly alloc_poly_n(int deg) const;
+    poly alloc_poly_0(int deg) const;
     void dealloc_poly(poly &f) const;
 
     poly copy(int level, const poly f) const;

@@ -274,7 +274,7 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
 #ifdef DEBUG_GF
     std::cerr << "representationToM2Array:\n";
 #endif
-    M2_arrayint     polynomialCoeffs = M2_makearrayint(coeffNum);
+    M2_arrayint     polynomialCoeffs = M2_makearrayint(static_cast<int>(coeffNum));
 #ifdef DEBUG_GF
     std::cerr << "coeffNum" << coeffNum << std::endl;
     std::cerr << "charac" << charac << std::endl;
@@ -289,7 +289,7 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
         assert(exp < coeffNum);
         UTT  remainder = representation%charac;
         representation = representation/charac;
-        polynomialCoeffs->array[ exp ]= remainder;
+        polynomialCoeffs->array[ exp ]= static_cast<int>(remainder);
 
 #ifdef DEBUG_GF        
         //debug:
@@ -344,11 +344,8 @@ M2_arrayint ARingGF::getModPolynomialCoeffs() const
 #ifdef DEBUG_GF
     std::cerr << "getModPolynomialCoeffs\n";
 #endif
-    long coeffNum=this->mDimension + 1;
-    M2_arrayint     modPolynomialCoeffs = M2_makearrayint(coeffNum);
     UTT             modPolynomialRepresentation = this->givaroField.irreducible();
     return modPolynomialRepresentationToM2Array( modPolynomialRepresentation );
-
 } 
 
 M2_arrayint ARingGF::getGeneratorCoeffs() const
@@ -356,8 +353,6 @@ M2_arrayint ARingGF::getGeneratorCoeffs() const
 #ifdef DEBUG_GF
     std::cerr << "getGeneratorCoeffs\n";
 #endif
-    long coeffNum = this->mDimension + 1;
-    M2_arrayint     generatorPolynomialCoeffs = M2_makearrayint(coeffNum);
     ElementType genRep,packedGenPolynomial; ///todo: typ (gen) eigentlich UTT?
     givaroField.generator(genRep);
     packedGenPolynomial = givaroField.generator();
@@ -431,7 +426,7 @@ int ARingGF::get_int(const ElementType f) const
     std::cerr << "ARingGF::get_int" << std::endl;
 #endif
     assert(false);
-    return f; 
+    return 0;
 }
 
 
@@ -674,7 +669,8 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
       result = mOriginalRing->from_int(1);
     else
       {
-        result = mOriginalRing->power(mPrimitiveElement, f);
+#warning "This call to power might be incorrect.  Jakob: please look at it"
+        result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
     
     return true;
@@ -682,7 +678,8 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
 
   void ARingGF::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
-    result = map->get_ring()->power(map->elem(first_var), f);
+    ring_elem a(reinterpret_cast<Nterm*>(f));
+    result = map->get_ring()->power(map->elem(first_var), a);
   }
 
 };
