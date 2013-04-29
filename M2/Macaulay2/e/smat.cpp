@@ -397,6 +397,8 @@ void SMat<CoeffRing>::vec_row_op2(sparsevec *&v,
   ring().set_zero(c2);
   ring().set_zero(c3);
   ring().set_zero(c4);
+  ring().set_zero(e1);
+  ring().set_zero(e2);
   bool r1_nonzero = vec_get_entry(v,r1,e1);
   bool r2_nonzero = vec_get_entry(v,r2,e2);
   if (!r1_nonzero && !r2_nonzero) return;
@@ -907,7 +909,7 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_array
     for (size_t c=0; c<cols->len; c++)
       {
         elem f;
-        //coeffR->init(f);
+        coeffR->init(f);
         A.get_entry(rows->array[r],cols->array[c],f);
         set_entry(r,c,f);
       }
@@ -923,6 +925,7 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
     for (size_t c=0; c<cols->len; c++)
       {
         elem f;
+        coeffR->init(f);
         //        coeffR->init(f);
         A.get_entry(r,cols->array[c],f);
         set_entry(r,c,f);

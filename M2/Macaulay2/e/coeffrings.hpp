@@ -197,6 +197,8 @@ public:
 
   int to_int(int f) const { return exp_table[f]; }
 
+  void init(elem& result) const {}
+
   void init_set(elem &result, elem a) const { result = a; }
 
   void set_zero(elem &result) const { result = zero; }
@@ -310,6 +312,8 @@ public:
     mpfr_init2(&result, R->get_precision());
     mpfr_set_si(&result, 0, GMP_RNDN);
   }
+
+  void init(elem& result) const { mpfr_init2(&result, R->get_precision()); }
 
   void set(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
 
@@ -493,6 +497,10 @@ public:
     mpfc_set_si(&result, 0);
   }
 
+  void init(elem &result) const {
+    mpfc_init(&result, R->get_precision());
+  }
+
   void set(elem &result, elem a) const { mpfc_set(&result, &a); }
 
   bool is_equal(elem a, elem b ) const { return mpfc_is_equal(&a,&b); }
@@ -553,6 +561,8 @@ public:
   }
 
   void init_set(elem &result, elem a) const { result = a; }
+
+  void init(elem& result) const { result = R->zero(); }
 
   void set_zero(elem &result) const { result = R->zero(); }
 

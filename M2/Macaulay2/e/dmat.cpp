@@ -222,9 +222,9 @@ inline const MatT * MutableMatrix::coerce() const
 
 M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v)
 {
-  M2_arrayint result = M2_makearrayint(v.size());
+  M2_arrayint result = M2_makearrayint(static_cast<int>(v.size()));
   for (size_t i = 0; i < v.size(); i++)
-    result->array[i] = v[i];
+    result->array[i] = static_cast<int>(v[i]);
   return result;
 }
 

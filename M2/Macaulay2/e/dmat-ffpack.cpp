@@ -149,9 +149,9 @@
                                          N,mat.n_rows(),
                                          prof);
         
-        M2_arrayint profile = M2_makearrayint(rk);
+        M2_arrayint profile = M2_makearrayint(static_cast<int>(rk));
         for (size_t i=0; i<rk; i++)
-          profile->array[i] = prof[i];
+          profile->array[i] = static_cast<int>(prof[i]);
     
         delete [] prof;
         deletearray(N);

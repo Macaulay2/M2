@@ -20,6 +20,8 @@ public:
 
   CoefficientRingZZ_NTL(const RingZZ *R0) { }
 
+  void init(elem& result) const {}
+
   void init_set(elem &result, const elem &a) const { result = a; }
 
   void set_zero(elem &result) const { result = 0; }
