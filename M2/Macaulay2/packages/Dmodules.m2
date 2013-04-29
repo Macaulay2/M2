@@ -9,7 +9,7 @@ newPackage("Dmodules",
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
 	  {Name => "Harrison Tsai"}
 	  },
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 load "./Dmodules/Dmodules.m2"

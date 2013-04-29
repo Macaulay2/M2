@@ -42,7 +42,7 @@ newPackage(
 	  {Name => "Gregory G. Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
 	  },
      Headline => "hyperplane arrangements",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export {Arrangement, arrangement, arrangementLibrary, CentralArrangement,

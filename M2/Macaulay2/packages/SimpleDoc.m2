@@ -274,7 +274,7 @@ newPackage(
 		  Email => \"\", 
 		  HomePage => \"\"}},
     	Headline => \"\",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {}

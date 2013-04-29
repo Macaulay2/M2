@@ -18,7 +18,7 @@ newPackage(
 		  Email => "jbiermann@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/People/Grads/biermann.html"}},
     	Headline => "A (new) Primary Decomposition Package following loosely the GTZ algorithm",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {

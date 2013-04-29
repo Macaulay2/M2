@@ -22,7 +22,7 @@ newPackage(
 	    HomePage => "http://www.stephanieyang.com"}
          },
    Headline => "Hodge integrals on the moduli space of curves",
-   DebuggingMode => true
+   DebuggingMode => false
    )
 
    export {"hodgeRing", "wittenTau", "integral", "kappa", "lambda", "psi", "ch"}

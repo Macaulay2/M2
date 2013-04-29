@@ -8,7 +8,7 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "Canonical subalgebra bases (sagbi bases)",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {subalgebraBasis, "sagbi" => subalgebraBasis, PrintLevel}

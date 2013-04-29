@@ -13,7 +13,7 @@ newPackage(
 		  HomePage => "" }
 	     },
     	Headline => "Fast linear algebra over finite fields: interface to ffpack",
-        DebuggingMode => true
+        DebuggingMode => false
     	)
 
 

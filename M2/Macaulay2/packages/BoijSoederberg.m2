@@ -8,7 +8,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
 	     },
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {

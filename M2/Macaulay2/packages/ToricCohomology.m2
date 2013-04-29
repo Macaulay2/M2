@@ -4,7 +4,7 @@ newPackage("ToricCohomology",
     Date => "June 10, 2009",
     Authors => {
          {Name => "Alexandra Seceleanu", Email => "asecele2@illinois.edu"}},
-    DebuggingMode => true,
+    DebuggingMode => false,
     AuxiliaryFiles=>false,
     Configuration => {}
     )

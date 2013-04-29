@@ -7,7 +7,7 @@ newPackage("DGAlgebras",
 	  {Name => "Frank Moore",
 	   HomePage => "http://www.math.cornell.edu/~frankmoore",
 	   Email => "frankmoore@math.cornell.edu"}},
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export {DGAlgebra, freeDGAlgebra, setDiff, natural, cycles,

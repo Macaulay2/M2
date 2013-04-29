@@ -14,7 +14,7 @@ newPackage(
 	  {Name => "Bart Snapp", Email => "snapp@math.ohio-state.edu", HomePage => "http://www.math.ohio-state.edu/~snapp/"}
 	  },
      Headline => "aids in computations related to depth",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 --=========================================================================--

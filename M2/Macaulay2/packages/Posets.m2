@@ -30,7 +30,7 @@ newPackage select((
             "DefaultPrecompute" => true,
             "DefaultSuppressLabels" => true
             },
-        DebuggingMode => true,
+        DebuggingMode => false,
         if version#"VERSION" > "1.4" then PackageExports => {
             "SimplicialComplexes",
             "Graphs",

@@ -7,7 +7,7 @@ newPackage(
 		  Email => "boehm@math.uni-sb.de", 
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}},
     	Headline => "Rational parametrization of rational plane curves and related computations",
-    	DebuggingMode => true,
+    	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
 	PackageExports => {"AdjointIdeal"},

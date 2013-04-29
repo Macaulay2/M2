@@ -7,7 +7,7 @@ newPackage(
                   HomePage => ""}},
         Headline => "Experimental package for mathicgb interface.  Not meant for general use",
         PackageExports => {"ExampleIdeals"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 debug Core

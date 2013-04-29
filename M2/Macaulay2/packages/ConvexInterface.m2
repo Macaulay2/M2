@@ -7,7 +7,7 @@ newPackage(
 		  HomePage =>"http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline =>"Interface to Convex",
-    	DebuggingMode =>true,
+    	DebuggingMode => false,
         Configuration =>{"ConvexPath"=>""},
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true
