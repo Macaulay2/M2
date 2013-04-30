@@ -12,7 +12,7 @@ newPackage(
 	     },
     	Headline => "Bernstein-Gelfand-Gelfand correspondence",
 	PackageExports => {"BoijSoederberg"},
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {

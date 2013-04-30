@@ -12,7 +12,7 @@ newPackage(
 	     },
     	Headline => "Integral Closure",
 
-    	DebuggingMode => true,
+    	DebuggingMode => false,
 	AuxiliaryFiles => true
     	)
 --

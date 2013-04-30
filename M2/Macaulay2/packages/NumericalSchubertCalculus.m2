@@ -10,7 +10,7 @@ newPackage(
                   HomePage => "www.math.tamu.edu/~asanchez"}},
         Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
 	PackageImports => {"NumericalAlgebraicGeometry"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {   

@@ -24,7 +24,7 @@ newPackage(
       HomePage => "http://math.boisestate.edu/~zteitler/",
       Headline => "A Macaulay2 package to compute multiplier ideals of monomial ideals",
       AuxiliaryFiles => false,
-      DebuggingMode => true
+      DebuggingMode => false
       )
 
 -- MonomialMultiplierIdeals

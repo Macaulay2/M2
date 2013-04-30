@@ -23,7 +23,7 @@ newPackage(
 
                    },
     	Headline => "Construction of random curves",
-    	DebuggingMode => true
+    	DebuggingMode => false
         )
 end
 

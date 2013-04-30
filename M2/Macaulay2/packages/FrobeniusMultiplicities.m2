@@ -25,7 +25,7 @@ newPackage(
      Headline => "Computes successive approximations of Hilbert-Kunz and related
                   multiplicities in characteristic p > 0.  Frobenius action on
 		  modules and free complexes is implemented as well.",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 --=========================================================================--

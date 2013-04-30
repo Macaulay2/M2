@@ -7,7 +7,7 @@ newPackage(
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
 	      PackageExports => {"BGG"},
-              DebuggingMode => true
+              DebuggingMode => false
               )
 
 	  export{
@@ -2000,12 +2000,13 @@ doc ///
      mfBound M0
      M = betti res highSyzygy M0
      netList BRanks matrixFactorization(ff, highSyzygy M0)
-    Text
-     In this case as in all others we have examined, 
-     greater "Optimism" is not 
-     justified:
-    Example
-     matrixFactorization(ff, highSyzygy(M0, Optimism=>1));
+    -- David: I converted matrixFactorization so it signals an error when it fails, so this example no longer works:
+    -- Text
+    --  In this case as in all others we have examined, 
+    --  greater "Optimism" is not 
+    --  justified:
+    -- Example
+    --  matrixFactorization(ff, highSyzygy(M0, Optimism=>1));
    Caveat
     A bug in the total Ext script means that the oddExtModule
     is sometimes zero, and this can cause a wrong value to be

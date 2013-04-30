@@ -7,7 +7,7 @@ newPackage(
                   HomePage => ""}},
         Headline => "a test suite for the Macaulay2 engine",
 	PackageExports => {"FastLinearAlgebra"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export { ringOps, 

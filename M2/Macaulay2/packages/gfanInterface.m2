@@ -13,7 +13,7 @@ newPackage(
 			 "fig2devpath" => "",
 	     "keep files" => true
 	      },
-    	DebuggingMode => true,
+    	DebuggingMode => false,
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true,
 	PackageExports => {"Polymake"}

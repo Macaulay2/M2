@@ -76,9 +76,9 @@ static int have_arg_no_int;
 
 void system_handleInterruptsSetup(M2_bool handleInterrupts) {
      if (!have_arg_no_int) {
-	  oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
 	  oursignal(SIGINT,handleInterrupts ? interrupt_handler : SIG_DFL);
 	  }
+     oursignal(SIGALRM,handleInterrupts ? alarm_handler : SIG_DFL);
      }
 
 static void unblock(int sig) {
@@ -704,7 +704,8 @@ char **argv;
      have_arg_no_int = have_arg(argv,"--int");
      if (have_arg_no_int)
 	  rl_catch_signals = FALSE; /* tell readline not to catch signals, such as SIGINT */
-     else system_handleInterruptsSetup(TRUE);
+
+     system_handleInterruptsSetup(TRUE);
      
      vargs = GC_MALLOC_UNCOLLECTABLE(sizeof(struct saveargs));
      vargs->argv=saveargv;

@@ -7,7 +7,7 @@ newPackage(
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
     Headline => 
     "An implementation of the qth-Power algorithm",
-    DebuggingMode => true,
+    DebuggingMode => false,
     Reload => true
 )
 ------------------------------------------------------------------------

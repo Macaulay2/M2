@@ -25,7 +25,7 @@ newPackage(
 		},
     	Headline => "OpenMath for Macaulay2",
 	PackageExports => {"XML","ConwayPolynomials"},
-    	DebuggingMode => true,
+    	DebuggingMode => false,
 		AuxiliaryFiles => true
     	)
 

@@ -23,7 +23,7 @@ newPackage(
 	  "volume number" => "2",
 	  "volume URI" => "http://j-sag.org/Volume2/"
 	  },
-     DebuggingMode => true
+     DebuggingMode => false
 )
 
 export {"deformMCMModule", "xi"}

@@ -17,7 +17,7 @@ newPackage(
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "Construction of random plane curves",
-    	DebuggingMode => true
+    	DebuggingMode => false
         )
 
 if not version#"VERSION" >= "1.4" then

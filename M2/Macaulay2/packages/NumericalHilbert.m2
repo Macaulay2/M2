@@ -6,7 +6,7 @@ newPackage(
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "some local Hilbert series functions",
-     DebuggingMode => true
+     DebuggingMode => false
 )
 
 export {

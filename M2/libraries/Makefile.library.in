@@ -14,7 +14,7 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 CHECKTARGET ?= check
 CHECKOPTIONS ?= 
-CHECKCMD ?= time $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
+CHECKCMD ?= time $(MAKE) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
@@ -194,7 +194,7 @@ recheck:
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	$(LIMIT); $(CHECKCMD)
+	$(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles

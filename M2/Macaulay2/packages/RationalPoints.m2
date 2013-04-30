@@ -10,7 +10,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nat.j.stapleton@gmail.com"}
 	  },
      Headline => "find the common zeroes of a set of polynomials with coefficients in a finite field",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 --==========================================================

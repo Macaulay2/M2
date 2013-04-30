@@ -8,7 +8,7 @@ newPackage(
 	      },
    	Headline => "Triplets of degree sequences, and associated Betti diagrams
 and cohomology tables",
-   	DebuggingMode => true,
+   	DebuggingMode => false,
 	Reload => true
    	)
 export {
