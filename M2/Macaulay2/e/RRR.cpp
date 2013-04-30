@@ -21,7 +21,7 @@ bool RRR::initialize_RRR(unsigned long prec)
   initialize_ring(0);
   declare_field();
   precision = prec;
-  _elem_size = sizeof(mpfr_t);
+  _elem_size = static_cast<int>(sizeof(mpfr_t));
   _zero_elem = new_elem();
 
   zeroV = from_int(0);

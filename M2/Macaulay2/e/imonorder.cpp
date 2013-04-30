@@ -171,6 +171,9 @@ MonomialOrder *monomialOrderMake(const MonomialOrdering *mo)
       if (t->type == MO_POSITION_DOWN || t->type == MO_POSITION_UP)
         hascomponent++;
       else if (t->type == MO_NC_LEX)
+        {
+          // Currently, do nothing.
+        }
       if (t->type != MO_WEIGHTS)
         nvars += t->nvars;
     }

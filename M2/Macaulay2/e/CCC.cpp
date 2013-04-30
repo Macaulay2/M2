@@ -15,7 +15,7 @@ bool CCC::initialize_CCC(unsigned long prec)
   initialize_ring(0);
   declare_field();
   precision = prec;
-  _elem_size = sizeofstructtype(gmp_CC);
+  _elem_size = static_cast<int>(sizeofstructtype(gmp_CC));
   _zero_elem = new_elem();
 
   zeroV = from_int(0);

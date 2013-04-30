@@ -291,11 +291,11 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
 const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_names)
 {
   try {
-    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(K);
+    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
     if (K == 0)
       {
-	ERROR("expected a tower ring");
-	return NULL;
+        ERROR("expected a tower ring");
+        return NULL;
       }
     const M2::ARingTower &A = K->ring();
     
@@ -313,14 +313,14 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_name
 const Ring /* or null */ *rawARingTower3(const Ring *R1, engine_RawRingElementArray eqns)
 {
   try {
-    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(K);
+    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
     if (K == 0)
       {
-	ERROR("expected a tower ring");
-	return NULL;
+        ERROR("expected a tower ring");
+        return NULL;
       }
     const M2::ARingTower &A = K->ring();
-
+    
     std::vector<M2::ARingTower::ElementType> extensions;
     
     for (int i=0; i<eqns->len; i++)

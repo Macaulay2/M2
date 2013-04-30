@@ -12,7 +12,7 @@
 bool QQ::initialize_QQ()
 {
   initialize_ring(0);
-  _elem_size = sizeof(mpq_t);
+  _elem_size = static_cast<int>(sizeof(mpq_t));
   _zero_elem = new_elem();// this sets the element to 0.
 #if 0
 //   trans_one = globalZZ->from_int(1);
