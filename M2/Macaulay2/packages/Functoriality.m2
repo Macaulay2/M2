@@ -19,7 +19,7 @@ newPackage(
 	  },
      Headline => "Adds functoriality to the Tor and Ext functions within M2 as well as functionality for the connecting homomorphisms.
                   Some functions to access the canonical maps associated with the mapping cone of a chain complex map are also included.",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 --=========================================================================--

@@ -8,7 +8,7 @@ newPackage(
 	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
 	  },
      Headline => "Some additional ChainComplex Functions.",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export(isExact)

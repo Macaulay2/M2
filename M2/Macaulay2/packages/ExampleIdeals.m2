@@ -8,7 +8,7 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a package consisting of examples of ideals",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 needsPackage "Markov"

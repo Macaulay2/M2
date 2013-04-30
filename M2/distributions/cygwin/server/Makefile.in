@@ -1,6 +1,6 @@
 all signature: setup.ini.sig
 setup.ini: Macaulay2/* Macaulay2-icons/*
-	genini Macaulay2 Macaulay2-icons >setup.ini.tmp
+	genini --okmissing=source Macaulay2 Macaulay2-icons >setup.ini.tmp
 	mv setup.ini.tmp setup.ini
 setup.ini.sig: setup.ini
 	rm -f "$@"

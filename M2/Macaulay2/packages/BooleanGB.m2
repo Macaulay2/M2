@@ -8,7 +8,7 @@ newPackage(
     {Name => "Mike Stillman"},
     {Name => "Elizabeth Arnold"}},
     Headline => "Groebner Bases for Ideals in Boolean Polynomial Quotient Ring",
-    DebuggingMode => true
+    DebuggingMode => false
     )
 
 exportFrom_Core {"gbBoolean"}

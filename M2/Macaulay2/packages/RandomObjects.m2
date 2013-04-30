@@ -18,7 +18,7 @@ newPackage ("RandomObjects",
 	      Email    => "schreyer@math.uni-sb.de",
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}},
         Headline => "a framework for making random objects in algebraic geometry",
-    	DebuggingMode => true
+    	DebuggingMode => false
         )
 
 

@@ -7,7 +7,7 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "a Macaulay2 package for local equations of Hilbert and other parameter schemes",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export { 

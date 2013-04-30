@@ -19,7 +19,7 @@ newPackage(
 	       Email => "de@msri.org",
 	       HomePage=>"http://www.msri.org/~de"}},
      Headline => "make a 3-generator ideal with an \"any\" resolution",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 export{bruns, 
