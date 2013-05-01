@@ -717,12 +717,12 @@ fi
 
 AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
-if test "$DPM" = yes 
+if test "$DMG" = yes 
 then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-dpm both specified])
+     then AC_MSG_ERROR([--disable-optimize and --enable-dmg both specified])
      fi
      if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-dpm both specified])
+     then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
      fi
 fi
 
@@ -1597,12 +1597,16 @@ fi
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 
-# for some distributions, prefix should be /usr
-if test "$prefix" != /usr
-then test "$CYGWIN"  = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
-     test "$DEB"     = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
-     test "$RPM"     = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
-fi
+# for some distributions, we know what the prefix should be:
+test "$CYGWIN"  = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
+test "$DEB"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
+test "$RPM"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
+test "$DMG"     = yes && test "$prefix" != /Applications/Macaulay2-$PACKAGE_VERSION && 
+     AC_MSG_ERROR(--enable-dmg specified and --prefix not set to /Applications/Macaulay2-$PACKAGE_VERSION)
+
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
 fi
