@@ -1,30 +1,38 @@
 # @configure_input@
+# to avoiding tidying, run "make -o tidy"
 include ../../include/config.Makefile
-TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
-all: dmg maybe-tidy
+all: dmg tidy
 dmg: ../../$(PKG_DMG)
-ifeq ($(TIDY),yes)
-maybe-tidy: tidy
-else
-maybe-tidy:
-endif
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-../../$(PKG_DMG) : Makefile always
+../../$(PKG_DMG) : Makefile always file_preparation library_preparation
+	rm -f "$@"
+	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+file_preparation: always
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
 	umask 022 ; $(T) -C @pre_exec_prefix@ . | @TAR@ xfp - -C files/@package@
 	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files/@package@
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
-	rm -f "$@"
-	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+library_preparation: file_preparation
+	$(MKDIR_P) files/@package@/@tail_libdir@
+	for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* ;\
+	 do if [ -f $$i -a -x $$i ] ;\
+	    then echo $$i >&2 ;\
+		 otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)' \
+		 | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/' ;\
+	    fi ;\
+	 done | sort \
+	      | uniq \
+	      | while read f ; do ls -l $$f ; @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ; done
+	ls -l files/@package@/@tail_libdir@
 tidy:; rm -rf files
 clean:: tidy; rm -f "../../$(PKG_DMG)"
 distclean: clean; rm -f Makefile
 Makefile: Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/distributions/dmg "
+# compile-command: "make -C $M2BUILDDIR/distributions/dmg -o tidy "
 # End:
