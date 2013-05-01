@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
+#include "reader.hpp"
 #include "ZZp.hpp"
 #include "aring-ffpack.hpp"
 #include "aring-zzp.hpp"
@@ -199,6 +200,20 @@ TEST(ARingZZpFFPACK, arithmetic33500479) {
   testAxioms(R, ntrials);
 }
 
+TEST(ARingZZp, read) {
+  std::string a = "-42378489327498312749c3";
+  std::istringstream i(a);
+
+  M2::ARingZZp R(101);
+  M2::Reader<M2::ARingZZp> reader(R);
+  M2::ARingZZp::ElementType b, c;
+  R.init(b);
+  R.init(c);
+  reader.read(i, b);
+  R.set_from_int(c, 3);
+
+  EXPECT_TRUE(R.is_equal(b,c));
+}
 #endif 
 
 

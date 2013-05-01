@@ -670,6 +670,13 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     else
       {
 #warning "This call to power might be incorrect.  Jakob: please look at it"
+        // For this code here to work, we need to compute 
+        // If f is (zeta)^a, where zeta is the primitive element, then
+        // we want here:
+        //   mPrimitiveElement^a
+        // Also: want to insure that mPrimitiveElement is the same element as zeta!
+        // (And the defining polynomials are the same too).
+        // TODO: add tests and M2_ASSERT's for all of these conditions
         result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
     

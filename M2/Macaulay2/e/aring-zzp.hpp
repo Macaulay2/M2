@@ -253,6 +253,7 @@ namespace M2 {
     }
 
     void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
+
   private:
     void initialize_tables();
     

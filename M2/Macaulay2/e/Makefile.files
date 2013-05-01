@@ -9,6 +9,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	reader \
 	matrix-stream \
 	cra \
 	aring-zz-flint \
