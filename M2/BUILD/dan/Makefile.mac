@@ -50,10 +50,8 @@ ifeq ($(GIVARO),yes)
 CONFIGOPTIONS += --enable-givaro
 endif
 
-ifeq ($(FIX_UNWIND),yes)
-# try this one if configuration fails because of an undefined symbol Unwind_Resume
-CONFIGOPTIONS += LDFLAGS=-static-libgcc
-endif
+# the standard gcc under Mac OS X is buggy, so we typically compile the latest one, and hence must link statically with its libraries:
+CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
 
 unexport DEBUG
 unexport PROFILE
@@ -75,8 +73,8 @@ ifeq ($(PRODUCTION),yes)
    default: check install
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY).production
+   PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
-   INSTALLOPTIONS += prefix=$(HOME)/local/encap
    ifeq ($(DEBUG),yes)
       $(error PRODUCTION=yes and DEBUG=yes)
    endif
