@@ -107,10 +107,14 @@ make.
 
 Now continute building the program this way:
 
-	./configure
+	./configure --enable-download
 	make
 	make check			# optional
 	make install
+
+On some systems, especially if you are building a binary distribution of Macaulay2,
+additional arguments should be given to the "./configure" command, and are explained
+below.
 
 Alternatively, especially if you would like to build versions for multiple
 architectures, or if you want confidence that "make clean" and "make distclean"
@@ -120,7 +124,7 @@ provided for that purpose:
 
 	mkdir BUILD/normal
 	cd BUILD/normal
-	../../configure
+	../../configure --enable-download
 	make
 	make check			# optional
 	make install
@@ -129,7 +133,7 @@ By default, the files are installed in appropriate subdirectories of
 /usr/local.  To specify a different location (prefix) you may use an option to
 the configure script:
 
-	../../configure --prefix=/foo/bar
+	../../configure --enable-download --prefix=/foo/bar
 
 Or, to specify a different location temporarily you may add an option to the
 "make install" line:
@@ -237,6 +241,14 @@ Mark both shell scripts executable.
 MacOS X notes
 ----------------------
 
-    For specific scripts that we use to build the disk images,
-    see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
+    For specific scripts that we use to build the disk images, see
+    BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
+    The standard gcc under Mac OS X is based on LLVM and buggy, so we typically
+    compile the latest gcc, and hence must link statically with its libraries.
+
+    To build a binary distribution, use these "configure" options:
+
+    	./configure --prefix=/Applications/Macaulay2-1.6 LDFLAGS="-static-libstdc++ -static-libgcc" --enable-encap --enable-download
+
+    , where "1.6" is replaced by the current version number, found at the top of the file "configure.ac".
