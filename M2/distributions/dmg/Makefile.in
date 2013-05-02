@@ -6,7 +6,7 @@ DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
 
 # -rpath is broken under Mac OS X, since each dynamic library specifies whether to use it, and the gcc libraries we link with don't use it:
-DISTRIBUTE_BINARY_SWITCH = echo 'error: *** program linked with non-system dynamic library, perhaps configure with --enable-static-gcc-libs' >&2 ; exit 1
+DISTRIBUTE_BINARY_SWITCH = echo 'error: *** program linked with non-system dynamic library' >&2 ; exit 1
 
 all: dmg tidy
 dmg: ../../$(PKG_DMG)
