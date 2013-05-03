@@ -21,6 +21,10 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #   test-galois - requires galois data files "galdata"
 #   test-ploth - needs to pop up a window
 #   test-galoisinit test-subfields test-partition - mysterious segmentation fault on Mac, but we don't use these routines
+#   test-program - fails under cygwin with this explanatory message after segfault:
+#		NOTE: the problem noted in 'program' is that install() does not work in your
+#		configuration (gp-sta only), so you will not be able to use this feature.
+#		Otherwise you can safely ignore the above warning.
 
 CHECKTARGET =										\
     test-addprimes test-analyz test-apply test-aurifeuille test-bezout			\
@@ -33,7 +37,7 @@ CHECKTARGET =										\
     test-matsnf test-member test-minim test-modpr test-multivar-mul test-nf		\
     test-nffactor test-nfhilbert test-nfields test-nfrootsof1 test-number		\
     test-objets test-polchebyshev test-polmod test-polred				\
-    test-polyser test-printf test-program test-qf test-qfbsolve test-quad		\
+    test-polyser test-printf test-qf test-qfbsolve test-quad				\
     test-quadclassunit test-quadray test-random test-resultant test-rfrac test-rnf	\
     test-rnfkummer test-round4 test-select test-stark test-subcyclo			\
     test-subst test-sumiter test-thue test-trans test-zetak test-zn
@@ -53,14 +57,17 @@ ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
 INSTALLOPTIONS = -C `config/objdir`.prf
 BUILDOPTIONS = -C `config/objdir`.prf
+CHECKOPTIONS = -C `config/objdir`.prf
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
 INSTALLOPTIONS = -C `config/objdir`.dbg
 BUILDOPTIONS = -C `config/objdir`.dbg
+CHECKOPTIONS = -C `config/objdir`.dbg
 else
 INSTALLOPTIONS = -C `config/objdir`
 BUILDOPTIONS = -C `config/objdir`
+CHECKOPTIONS = -C `config/objdir`
 endif
 endif
 

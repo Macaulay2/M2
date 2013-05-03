@@ -1,20 +1,6 @@
 # -*- makefile-gmake -*-
 
-# to install packages:
-#  sudo apt-get install -y ...
-# see ../../INSTALL for the list of packages
-
-## TO DO : fix the i386/i686 problem so the control file and the name of the *.deb both have i386 instead
-## TO DO : 
-
-# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev libz-dev libreadline-dev libncurses-dev unzip
-# note: libreadline-gplv2-dev is the GPL v2 (old) version of libreadline
-
-# for ubuntu 12.10:
-# Note, selecting 'zlib1g-dev' instead of 'libz-dev'
-# Note, selecting 'libncurses5-dev' instead of 'libncurses-dev'
-# Package libreadline5-dev is not available, but is referred to by another package.
-# sudo apt-get install -y openssh-server xbase-clients subversion make autoconf gcc libc6-dev g++ gfortran flex bison liblapack-dev libgdbm-dev libgc-dev libpari-dev patch libmpfr-dev libntl-dev libcdd-dev libxml2-dev zlib1g-dev libreadline-dev libncurses5-dev unzip
+# see ../../INSTALL for the packages to install
 
 export CC =
 export CXX = 
