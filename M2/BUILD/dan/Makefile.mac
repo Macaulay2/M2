@@ -50,8 +50,9 @@ ifeq ($(GIVARO),yes)
 CONFIGOPTIONS += --enable-givaro
 endif
 
-# the standard gcc under Mac OS X is buggy, so we typically compile the latest one, and hence must link statically with its libraries:
-CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
+# The standard gcc under Mac OS X is buggy, so we typically compile the latest one. 
+# We tried linking statically with its libraries, but it makes c++ exceptions not work:
+# CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
 
 unexport DEBUG
 unexport PROFILE

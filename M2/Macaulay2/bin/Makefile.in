@@ -41,9 +41,15 @@ M2_LDFLAGS += -Wl,-rpath,@libdir@
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@
 
 ifeq (@OS@,MacOS)
+
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
 ## The number 1000000 is hex.
 M2_LDFLAGS += -Wl,-stack_size,10000000
+
+## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
+## the editing is done in distributions/dmg/Makefile
+M2_LDFLAGS += -headerpad_max_install_names
+
 endif
 
 M2_LDFLAGS += $(LDFLAGS)

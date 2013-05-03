@@ -19,6 +19,13 @@ LIBRARIESDIR := $(PREFIX)
 BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
+
+ifeq (@OS@,MacOS)
+## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
+## the editing is done in distributions/dmg/Makefile
+LDFLAGS += -headerpad_max_install_names
+endif
+
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 CONFIGOPTIONS += --build=@build_alias@
@@ -32,7 +39,8 @@ COMPILEFLAGS  =					\
 	CXXFLAGS="$(CXXFLAGS)"			\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
-	FCFLAGS="$(FCFLAGS)"
+	FCFLAGS="$(FCFLAGS)"			\
+	TARGET_ARCH=$(TARGET_ARCH)
 ALLFLAGS = \
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\

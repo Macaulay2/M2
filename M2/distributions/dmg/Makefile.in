@@ -5,9 +5,6 @@ VPATH = @srcdir@
 DEPENDS = yes
 PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
 
-# -rpath is broken under Mac OS X, since each dynamic library specifies whether to use it, and the gcc libraries we link with don't use it:
-DISTRIBUTE_BINARY_SWITCH = echo 'error: *** program linked with non-system dynamic library' >&2 ; exit 1
-
 all: dmg tidy
 dmg: ../../$(PKG_DMG)
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
@@ -22,18 +19,63 @@ file_preparation: always
 	umask 022 ; $(T) -C @pre_prefix@ . | @TAR@ xfp - -C files/@package@
 	cp @srcdir@/ReadMe-MacOSX.rtf files/@package@
 	ln -s @package@/ReadMe-MacOSX.rtf files
+
+# Sadly, the number "../"s in the install_name_tool commands below depends on the particular Macaulay2 Layout.
+# The dynamic libraries we might need to relocate are these: libstdc++.6.dylib libgcc_s.1.dylib
+# and that's only if we compile with a non-system build of gcc.
+# Three symbolic prefixes for finding a library :
+#     @executable_path : relative to the path to the executable
+#     @loader_path     : relative to the path to the library that wants the library
+#     @rpath           : relative to any path installed on the path with the -rpath option to ld
 library_preparation: file_preparation
+
 	$(MKDIR_P) files/@package@/@tail_libdir@
-	for i in files/@package@/@tail_bindir@/* files/@package@/@tail_programsdir@/* ;\
-	 do if [ -f $$i -a -x $$i ] ;\
-	    then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)' \
-		 | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/' ;\
-	    fi ;\
-	 done | sort \
-	      | uniq \
-	      | while read f; do ls -l $$f ; $(DISTRIBUTE_BINARY_SWITCH); @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ; done
+
+	(																\
+	  for i in files/@package@/@tail_bindir@/* ;											\
+	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
+	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
+		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
+		  | while read f;													\
+		    do (b=`basename $$f` ; set -xe ; install_name_tool -change $$f @executable_path/../lib/$$b $$i ) || exit 1 ; 	\
+		       echo $$f ; 													\
+		       done ;														\
+	     fi ;															\
+	  done ;															\
+	  for i in files/@package@/@tail_programsdir@/* ;										\
+	  do if [ -f $$i -a -x $$i -a ! -h $$i ] ;											\
+	     then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'					\
+		  | sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'								\
+		  | while read f;													\
+		    do (b=`basename $$f` ; set -xe ; install_name_tool -change $$f @executable_path/../../../lib/$$b $$i ) || exit 1 ; 	\
+		       echo $$f ; 													\
+		       done ;														\
+	     fi ;															\
+	  done																\
+	) | sort															\
+	  | uniq															\
+	  | while read f; do ls -l $$f ; (set -x ; @INSTALL_PROGRAM@ $$f files/@package@/@tail_libdir@ ) ; done
+
+	for i in files/@package@/@tail_libdir@/* ;							\
+	do if [ -f $$i -a -x $$i -a ! -h $$i ] ;							\
+	   then otool -L $$i | grep '^\t' | grep -v '^[[:space:]]*\(/usr/lib/\|/System/Library/\)'	\
+		| sed 's/^[[:space:]]*\(.*\) (compatibility version .*/\1/'				\
+		| while read f;										\
+		  do (bf=`basename $$f` ;								\
+		      bi=`basename $$i` ;								\
+		      set -x ; \
+		      if [ $$bf = $$bi ] ;								\
+		      then set -xe ; install_name_tool -id $$bi $$i ;					\
+		      else set -xe ; install_name_tool -change $$f @loader_path/$$bf $$i ; 		\
+		      fi ) || exit 1 ;									\
+		     echo $$f ;										\
+		     done ;										\
+	   fi ;												\
+	done
+
 	: dynamic libraries to be distributed:
-	ls -l files/@package@/@tail_libdir@
+	cd files/@package@/@tail_libdir@ && for i in * ; do if [ -f $$i ] ; then (echo "-- $$i" ; set -x ; ls -l $$i ; otool -L $$i ) ; fi ; done
+
 tidy:; rm -rf files
 clean:: tidy; rm -f "../../$(PKG_DMG)"
 distclean: clean; rm -f Makefile

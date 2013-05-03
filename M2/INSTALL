@@ -245,10 +245,4 @@ MacOS X notes
     BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
     The standard gcc under Mac OS X is based on LLVM and buggy, so we typically
-    compile the latest gcc, and hence must link statically with its libraries.
-
-    To build a binary distribution, use these "configure" options:
-
-    	./configure --prefix=/Applications/Macaulay2-1.6 LDFLAGS="-static-libstdc++ -static-libgcc" --enable-encap --enable-download
-
-    , where "1.6" is replaced by the current version number, found at the top of the file "configure.ac".
+    compile the latest gcc.

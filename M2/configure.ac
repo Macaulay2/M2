@@ -1726,6 +1726,9 @@ AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) # as in layout.m2.in
 AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
+# Here we define the Macaulay2 layout, once and for all.
+# There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
+
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)
 AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
