@@ -202,7 +202,7 @@ namespace M2 {
       R->init(a);
       R->init(b);
       R->from_ring_elem(a, f);
-      R->copy(b,a);
+      R->set(b,a);
       R->to_ring_elem(result,b);
       R->clear(a);
       R->clear(b);

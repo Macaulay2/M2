@@ -19,6 +19,7 @@
 #include "aring-RRR.hpp"
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
+#include "aring-zz-flint.hpp"
 
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
@@ -806,6 +807,11 @@ MutableMatrix *M2::ARingGFM2::makeMutableMatrix(const Ring* R, size_t nrows, siz
 }
 #endif
 
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZ>(const Ring* Rgeneral,
+                                                 const M2::ARingZZ* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
                                                  const M2::ARingZZp* R,
                                                  size_t nrows,

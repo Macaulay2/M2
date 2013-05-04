@@ -87,7 +87,7 @@ public:
     void next() { i.next(); }
     bool valid() { return i.valid(); }
     size_t row() { return i.row(); }
-    elem value() { return i.value(); }
+    const elem& value() { return i.value(); }
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
 #endif
@@ -137,7 +137,9 @@ public:
      returns -1 if the column is 0 */
   {
     elem b;
+    mat.get_CoeffRing()->init(b);
     mat.get_CoeffRing()->set_zero(b);
+
     size_t ret = mat.lead_row(col, b);
     if (ret >= 0)
       mat.get_CoeffRing()->to_ring_elem(result, b);
@@ -151,6 +153,8 @@ public:
     if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
       {
         elem a;
+        
+        mat.get_CoeffRing()->init(a);
         mat.get_CoeffRing()->set_zero(a);
         if (mat.get_entry(r,c,a))
           {

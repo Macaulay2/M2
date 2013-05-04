@@ -569,6 +569,7 @@ void DMat<CoeffRing>::row_op(size_t i, const elem &r, size_t j)
   elem *loc2 = array_ + j;
 
   elem f;
+  ring().init(f);
   ring().set_zero(f);
   for (size_t c=0; c<ncols_; c++)
     {
@@ -577,6 +578,7 @@ void DMat<CoeffRing>::row_op(size_t i, const elem &r, size_t j)
       loc1 += nrows_;
       loc2 += nrows_;
     }
+  ring().clear(f);
 }
 
 template<typename CoeffRing>
@@ -587,6 +589,7 @@ void DMat<CoeffRing>::column_op(size_t i, const elem &r, size_t j)
   elem *loc2 = array_ + nrows_*j;
 
   elem f;
+  ring().init(f);
   ring().set_zero(f);
   for (size_t a=0; a<nrows_; a++)
     {
@@ -595,6 +598,7 @@ void DMat<CoeffRing>::column_op(size_t i, const elem &r, size_t j)
       loc1++;
       loc2++;
     }
+  ring().clear(f);
 }
 
 template<typename CoeffRing>
@@ -609,6 +613,10 @@ void DMat<CoeffRing>::row2by2(size_t r1, size_t r2,
   elem *loc2 = array_ + r2;
 
   elem f1,f2,g1,g2;
+  ring().init(f1);
+  ring().init(f2);
+  ring().init(g1);
+  ring().init(g2);
   ring().set_zero(f1);
   ring().set_zero(f2);
   ring().set_zero(g1);
@@ -627,6 +635,10 @@ void DMat<CoeffRing>::row2by2(size_t r1, size_t r2,
       loc1 += nrows_;
       loc2 += nrows_;
     }
+  ring().clear(f1);
+  ring().clear(f2);
+  ring().clear(g1);
+  ring().clear(g2);
 }
 
 template<typename CoeffRing>
@@ -641,6 +653,10 @@ void DMat<CoeffRing>::column2by2(size_t c1, size_t c2,
   elem *loc2 = array_ + c2 * nrows_;
 
   elem f1,f2,g1,g2;
+  ring().init(f1);
+  ring().init(f2);
+  ring().init(g1);
+  ring().init(g2);
   ring().set_zero(f1);
   ring().set_zero(f2);
   ring().set_zero(g1);
@@ -823,6 +839,7 @@ void DMat<CoeffRing>::insert_rows(size_t i, size_t n_to_add)
 {
   elem *tmp = array_;
   elem zero;
+  ring().init(zero);
   ring().set_zero(zero);
   size_t old_nrows = nrows_;
 
@@ -836,6 +853,7 @@ void DMat<CoeffRing>::insert_rows(size_t i, size_t n_to_add)
   for (size_t r=i; r<old_nrows; r++)
     copy_elems(ncols_, array_ + r + n_to_add, nrows_, tmp + r, old_nrows);
   deletearray(tmp);
+  ring().clear(zero);
 }
 
 template<typename CoeffRing>

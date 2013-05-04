@@ -109,8 +109,6 @@ namespace M2 {
 
     void set_zero(elem &result) const { result = 0; }
 
-    void copy(elem &result, elem a) const { result = a; }
-
     void set_from_int(elem &result, int a) const {
       a = a % p;
       if (a < 0) a += p;

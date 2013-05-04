@@ -269,6 +269,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 #include "dmat-ffpack.cpp"
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
+#include "aring-zz-flint.hpp"
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;
@@ -283,6 +284,9 @@ template class DMat<M2::ARingGFM2>;
 template class DMat<M2::ARingZZpFFPACK>;
 template class DMat<M2::ARingGF>;
 template class DMat<M2::ARingRRR>;
+
+template class DMat<M2::ARingZZ>;
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

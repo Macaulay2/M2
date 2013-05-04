@@ -4,6 +4,7 @@
 #include "relem.hpp"
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
+#include "aring-zz-flint.hpp"
 #include "aring-gf.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-ffpack.hpp"
@@ -17,6 +18,16 @@
 memt::BufferPool testBuffer(16);
 #endif
 
+const Ring* /* or null */ rawARingFlintZZ()
+{
+#if HAVE_FLINT
+  M2::ARingZZ *A = new M2::ARingZZ();
+  return M2::ConcreteRing<M2::ARingZZ>::create(A);
+#else
+  ERROR("M2 not configured with --enable-flint");
+  return 0;
+#endif
+}
 const Ring /* or null */ *rawARingZZp(int p)
   /* p must be a prime number <= 32767 */
 {

@@ -317,6 +317,8 @@ public:
 
   void set(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
 
+  void clear(elem& result) const { mpfr_clear(&result); }
+
   bool is_zero(elem result) const { return mpfr_cmp_si(&result, 0) == 0; }
 
   bool is_equal(elem a, elem b ) const { return mpfr_cmp(&a,&b) == 0; }
@@ -501,6 +503,10 @@ public:
     mpfc_init(&result, R->get_precision());
   }
 
+  void clear(elem& result) const {
+    mpfc_clear(&result);
+  }
+
   void set(elem &result, elem a) const { mpfc_set(&result, &a); }
 
   bool is_equal(elem a, elem b ) const { return mpfc_is_equal(&a,&b); }
@@ -563,6 +569,8 @@ public:
   void init_set(elem &result, elem a) const { result = a; }
 
   void init(elem& result) const { result = R->zero(); }
+
+  void clear(elem& result) const { /* do nothing */ }
 
   void set_zero(elem &result) const { result = R->zero(); }
 
