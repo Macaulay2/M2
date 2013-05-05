@@ -6,6 +6,7 @@
 #    mingw64-x86_64-gcc-fortran
 #    mingw64-x86_64-gcc-g++
 #    mingw64-x86_64-pthreads
+#    mingw64-x86_64-zlib
 
 # (setup's log file is here: /var/log/setup.log)
 
@@ -26,6 +27,9 @@ CONFIGOPTIONS += CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include
 CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include/libxml2
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
+# the system libraries are in /usr/x86_64-w64-mingw32/sys-root/mingw
+# CONFIGOPTIONS +=     LIBS=-lwsock32
+CONFIGOPTIONS +=     LIBS=-lws2_32
 include Makefile.include
 # Local Variables:
 # compile-command: "time make -f Makefile.mingw "
