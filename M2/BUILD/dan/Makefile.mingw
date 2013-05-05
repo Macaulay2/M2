@@ -24,6 +24,7 @@ CONFIGOPTIONS += --prefix=/nowhere
 CONFIGOPTIONS += --host=x86_64-w64-mingw32
 CONFIGOPTIONS += CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include
+CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include/libxml2
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
 include Makefile.include
 # Local Variables:
