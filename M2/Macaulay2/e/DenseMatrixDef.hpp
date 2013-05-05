@@ -15,10 +15,12 @@ template<typename ACoeffRing>
 class DenseMatrixDef
 {
 public:
-  typedef typename ACoeffRing::ElementType ElementType;
+  typedef typename ACoeffRing::elem ElementType;
+
+  DenseMatrixDef() : mRing(0), mNumRows(0), mNumColumns(0), mArray(0) {}
 
   DenseMatrixDef(const ACoeffRing& R, size_t nrows, size_t ncols)
-    : mRing(R), mNumRows(nrows), mNumColumns(ncols)
+    : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
@@ -34,7 +36,7 @@ public:
       }
   }
   DenseMatrixDef(const DenseMatrixDef<ACoeffRing>& M)
-    : mRing(M.ring()), mNumRows(M.numRows()), mNumColumns(M.numColumns())
+    : mRing(& M.ring()), mNumRows(M.numRows()), mNumColumns(M.numColumns())
   {
     size_t len = mNumRows * mNumColumns;
     if (len == 0)
@@ -54,7 +56,7 @@ public:
     delete [] mArray;
   }
 
-  const ACoeffRing& ring() const { return mRing; }
+  const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return mNumRows; }
   size_t numColumns() const { return mNumColumns; }
 
@@ -62,7 +64,7 @@ public:
   ElementType* array() { return mArray; }
   ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
 private:
-  const ACoeffRing& mRing;
+  const ACoeffRing* mRing;
   size_t mNumRows;
   size_t mNumColumns;
   ElementType* mArray;
@@ -78,14 +80,16 @@ public:
   typedef M2::ARingZZpFlint ACoeffRing;
   typedef typename ACoeffRing::ElementType ElementType;
 
+  DenseMatrixDef() : mRing(0) {}
+
   DenseMatrixDef(const ACoeffRing& R, size_t nrows, size_t ncols)
-    : mRing(R)
+    : mRing(&R)
   {
     nmod_mat_init(mArray, nrows, ncols, R.characteristic());
   }
 
   DenseMatrixDef(const DenseMatrixDef<ACoeffRing>& M)
-    : mRing(M.ring())
+    : mRing(& M.ring())
   {
     nmod_mat_init_set(mArray, M.mArray);
   }
@@ -95,7 +99,7 @@ public:
     nmod_mat_clear(mArray);
   }
 
-  const ACoeffRing& ring() const { return mRing; }
+  const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return nmod_mat_nrows(mArray); }
   size_t numColumns() const { return nmod_mat_ncols(mArray); }
 
@@ -105,7 +109,7 @@ public:
 public:
   // Other routines from flint nmod_mat interface
 private:
-  const ACoeffRing& mRing;
+  const ACoeffRing* mRing;
   nmod_mat_t mArray;
 };
 
