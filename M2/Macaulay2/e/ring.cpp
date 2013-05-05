@@ -10,6 +10,19 @@
 
 const Monoid * Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 
+#if 1
+RingZZ* makeIntegerRing()
+{
+  return new RingZZ;
+}
+#endif
+#if 0
+ARingZZ* makeIntegerRing()
+{
+  return new M2::ConcreteRing<M2::ARingZZ>;
+}
+#endif
+
 void Ring::initialize_ring(int P0,
                            const PolynomialRing *DR,
                            const M2_arrayint heft_vec)

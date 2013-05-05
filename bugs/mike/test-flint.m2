@@ -13,4 +13,4 @@ a*b
 b*b
 b^2
 M = rawMutableMatrix(R, 3, 4, true)
-rawFillMutableMatrix
+rawMutableMatrixFillRandom(M, )

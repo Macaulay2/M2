@@ -467,8 +467,9 @@ public:
 #define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))
 
 #include "ZZ.hpp"
-extern RingZZ *globalZZ;
-extern QQ *globalQQ;
+extern RingZZ* globalZZ;
+extern RingZZ* makeIntegerRing();
+extern QQ* globalQQ;
 #endif
 
 // Local Variables:

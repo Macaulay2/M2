@@ -55,7 +55,8 @@ void PolyRing::make_trivial_ZZ_poly_ring()
 {
   if (trivial_poly_ring != 0) return;
 
-  globalZZ = new RingZZ;
+  //  globalZZ = new RingZZ;
+  globalZZ = makeIntegerRing();
   Monoid *M = Monoid::get_trivial_monoid();
   trivial_poly_ring = new PolyRing();
 

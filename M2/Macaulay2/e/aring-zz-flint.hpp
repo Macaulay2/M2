@@ -36,7 +36,6 @@ namespace M2 {
   public:
     static const RingID ringID = ring_ZZZ;
     
-    //    typedef fmpz_t ElementType;
     typedef fmpz ElementType;
     typedef ElementType elem;
 
