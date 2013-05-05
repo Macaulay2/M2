@@ -31,6 +31,8 @@ namespace M2 {
 
     ~ARingZZpFlint();
 
+    nmod_t flintModulus() const { return mModulus; }
+
     // ring informational
     size_t characteristic() const { return mCharac; }
 
