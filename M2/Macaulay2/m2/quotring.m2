@@ -45,15 +45,13 @@ Ring / Module := QuotientRing => (R,I) -> (
 
 savedQuotients := new MutableHashTable
 
-savedZZpQuotients := new MutableHashTable
-
 liftZZmodQQ := (r,S) -> (
      needsPackage "LLLBases";
      v := (value getGlobalSymbol "LLL") syz matrix {{-1,lift(r,ZZ),char ring r}};
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {"ARing" => true})
+ZZp = method(Options=> {"Choose" => null}) -- values allowed: "FLINT", "FFPACK", "ARING"
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
      gensI := generators I;
@@ -62,16 +60,18 @@ ZZp Ideal := opts -> (I) -> (
      if n < 0 then n = -n;
      if n === 0 then 
          ZZ
-     else if opts#"ARing" and savedZZpQuotients#?n then
-         savedZZpQuotients#n
-     else if not opts#"ARing" and savedQuotients#?n then
-         savedQuotients#n
+     else if savedQuotients#?(opts#"Choose", n) then
+         savedQuotients#(opts#"Choose", n)
      else (
-	  --if n > 32767 then error "large characteristics not implemented yet";
-	  if n > 1 and not isPrime n
+	  if not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
+      typ := opts#"Choose";
 	  S := new QuotientRing from 
-	    if opts#"ARing" then rawARingGaloisField(n,1)  else rawZZp n;  -- rawARingZZp n
+	    if typ === "FFPACK" then rawARingGaloisField(n,1)  
+        else if typ === "FLINT" then rawARingZZpFlint n
+        else if typ === "ARING" then rawARingZZp n
+        else if typ === null then rawZZp n
+        else error("unknown implementation choice: "|typ);
 	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;
@@ -86,10 +86,7 @@ ZZp Ideal := opts -> (I) -> (
 	  expression S := x -> expression raw x;
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
-      if opts#"ARing" then
-  	    savedZZpQuotients#n = S
-      else
-  	    savedQuotients#n = S;
+      savedQuotients#(typ, n) = S;
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 

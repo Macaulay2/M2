@@ -5,6 +5,7 @@
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
 #include "aring-zz-flint.hpp"
+#include "aring-zzp-flint.hpp"
 #include "aring-gf.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-ffpack.hpp"
@@ -18,7 +19,7 @@
 memt::BufferPool testBuffer(16);
 #endif
 
-const Ring* /* or null */ rawARingFlintZZ()
+const Ring* /* or null */ rawARingZZFlint()
 {
 #if HAVE_FLINT
   M2::ARingZZ *A = new M2::ARingZZ();
@@ -28,9 +29,10 @@ const Ring* /* or null */ rawARingFlintZZ()
   return 0;
 #endif
 }
-const Ring /* or null */ *rawARingZZp(int p)
-  /* p must be a prime number <= 32767 */
+
+const Ring /* or null */ *rawARingZZp(unsigned long p)
 {
+  std::cout << "Prime is " << p;
   if (p <= 1 || p >= 32750)
     {
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
@@ -38,6 +40,12 @@ const Ring /* or null */ *rawARingZZp(int p)
     }
   M2::ARingZZp *A = new M2::ARingZZp(p);
   return M2::ConcreteRing<M2::ARingZZp>::create(A);
+}
+const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
+{
+  std::cout << "Prime is " << p;
+  M2::ARingZZpFlint *A = new M2::ARingZZpFlint(p);
+  return M2::ConcreteRing<M2::ARingZZpFlint>::create(A);
 }
 
 const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)

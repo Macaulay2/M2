@@ -29,7 +29,7 @@ namespace M2 {
     ring_example = 0,
     ring_ZZZ,
     ring_ZZp,
-    ring_ZZpFLINT,
+    ring_ZZpFlint,
     ring_logZZp,
     ring_GF,
     ring_GFM2,

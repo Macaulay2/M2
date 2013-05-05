@@ -598,25 +598,32 @@ setupfun("rawZZp", rawZZp);
 
 export rawARingZZp(e:Expr):Expr := (
      when e is p:ZZcell do 
-       if !isInt(p)
+       if !isULong(p)
        then WrongArgSmallInteger(1)
        else (
-	    P := toInt(p);
-	    if P <= 1 || P >= 32750
-              then WrongArg(1, "ZZ/p: expected a prime number n range 1 <= p <= 32749")
-	      else
-                toExpr(Ccode(RawRingOrNull, "rawARingZZp(", P, ")")))
+	    P := toULong(p);
+        toExpr(Ccode(RawRingOrNull, "rawARingZZp(", P, ")")))
      else WrongArgZZ());
 setupfun("rawARingZZp", rawARingZZp);
 
+export rawARingZZpFlint(e:Expr):Expr := (
+     when e is p:ZZcell do 
+       if !isULong(p)
+       then WrongArgSmallInteger(1)
+       else (
+	    P := toULong(p);
+        toExpr(Ccode(RawRingOrNull, "rawARingZZpFlint(", P, ")")))
+     else WrongArgZZ());
+setupfun("rawARingZZpFlint", rawARingZZpFlint);
+
 -- flint rings
-export rawARingFlintZZ(e:Expr):Expr := (
+export rawARingZZFlint(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
-     then toExpr(Ccode(RawRing,"rawARingFlintZZ()"))
+     then toExpr(Ccode(RawRing,"rawARingZZFlint()"))
      else WrongNumArgs(0)
      else WrongNumArgs(0)
      );
-setupfun("rawARingFlintZZ", rawARingFlintZZ);
+setupfun("rawARingZZFlint", rawARingZZFlint);
 
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)

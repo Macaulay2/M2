@@ -12,6 +12,7 @@ INTERFACE = \
 	reader \
 	matrix-stream \
 	cra \
+	aring-zzp-flint \
 	aring-zz-flint \
 	aring-RRR \
 	aring-tower \

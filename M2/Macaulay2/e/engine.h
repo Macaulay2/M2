@@ -154,7 +154,7 @@ extern "C" {
   /**** ARing routines ******************************/
   /**************************************************/
 
-  const Ring /* or null */ *rawARingZZp(int p); /* connected */
+  const Ring /* or null */ *rawARingZZp(unsigned long p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 32749 */
 
   const Ring /* or null */ *rawARingGaloisField1(const RingElement *prim); /* connected */
@@ -187,7 +187,10 @@ extern "C" {
   /**************************************************/
   /**** ARing flint routines ************************/
   /**************************************************/
-  const Ring* /* or null */ rawARingFlintZZ(); /* connected */
+  const Ring* /* or null */ rawARingZZFlint(); /* connected */
+
+  const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
+    /* Expects a prime number p in range 2 <= p <= 2^64-1 */
 
   /**************************************************/
   /**** Ring routines *******************************/
