@@ -20,9 +20,11 @@
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 #include "aring-zz-flint.hpp"
+#include "aring-zzp-flint.hpp"
 
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
+//#include "dmat-zzp-flint.hpp"
 
 #if 0
 // Considering this kind of code
@@ -814,6 +816,11 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZ>(const Ring* Rgene
                                                  bool dense);
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
                                                  const M2::ARingZZp* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFlint>(const Ring* Rgeneral,
+                                                 const M2::ARingZZpFlint* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
