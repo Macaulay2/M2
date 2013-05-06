@@ -183,7 +183,11 @@ public:
 
   size_t rank() const;
 
+  size_t new_rank() const;
+
   void determinant(elem &result) const;
+
+  void new_determinant(elem &result) const;
 
   // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
   // the matrix is not invertible, or

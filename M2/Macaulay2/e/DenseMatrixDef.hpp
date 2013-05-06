@@ -108,6 +108,8 @@ public:
   ElementType& entry(size_t row, size_t column) { return nmod_mat_entry(mArray, row, column); }
 public:
   // Other routines from flint nmod_mat interface
+  const nmod_mat_t& nmod_mat() const { return mArray; }
+  nmod_mat_t& nmod_mat() { return mArray; }
 private:
   const ACoeffRing* mRing;
   nmod_mat_t mArray;

@@ -1042,7 +1042,20 @@ size_t SMat<CoeffRing>::rank() const
 }
 
 template<typename CoeffRing>
+size_t SMat<CoeffRing>::new_rank() const
+{
+  ERROR("not implemented for this ring yet");
+  return static_cast<size_t>(-1);
+}
+
+template<typename CoeffRing>
 void SMat<CoeffRing>::determinant(elem &result) const
+{
+  ERROR("not implemented for this ring yet");
+}
+
+template<typename CoeffRing>
+void SMat<CoeffRing>::new_determinant(elem &result) const
 {
   ERROR("not implemented for this ring yet");
 }

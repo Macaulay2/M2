@@ -605,7 +605,7 @@ public:
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
-  return mat.rank();
+  return mat.new_rank();
 }
 
 template <typename T>
@@ -613,7 +613,8 @@ const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
   elem a;
-  mat.determinant(a);
+  mat.ring().init(a);
+  mat.new_determinant(a);
   mat.get_CoeffRing()->to_ring_elem(det, a);
   return RingElement::make_raw(mat.get_ring(), det);
 }

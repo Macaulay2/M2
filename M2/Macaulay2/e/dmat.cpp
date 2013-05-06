@@ -18,16 +18,45 @@
 #include "aring-zzp.hpp"
 #include "aring-ffpack.hpp"
 
+
  #include <typeinfo>
 
 #include "dmat-RRR.hpp"
-
-
+//#include "dmat-ffpack.cpp"
+#include "aring-zzp-flint.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // dmat code that might have alternate implementations, depending of type //
 ////////////////////////////////////////////////////////////////////////////
 
+size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::rank(const MatType& mat)
+{
+    std::cout << "Calling DenseMatrixLinAlg::rank" << std::endl;
+    /// @note 1. matrix data (N) is modified by FFPACK
+    /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
+    MatType N(mat); // copy of matrix mat.
+    size_t result = FFPACK::Rank(mat.ring().field(), mat.numColumns(), mat.numRows(), N.array(), mat.numRows());
+    return result;
+}
+
+void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::determinant(const MatType& mat, ElementType& result_det)
+{
+    std::cout << "Calling DenseMatrixLinAlg::determinant" << std::endl;
+    /// @note 1. matrix data (N) is modified by FFPACK
+    /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
+    MatType N(mat);
+    result_det = FFPACK::Det(mat.ring().field(), mat.numColumns(), mat.numRows(),  N.array(),  mat.numRows());
+}
+
+bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::inverse(const MatType& mat, MatType& result_inv)
+{
+    M2_ASSERT(mat.numRows() == mat.NumColumns());
+    MatType N(mat);
+    size_t n = mat.numRows();
+    int nullspacedim;
+    FFPACK::Invert2(mat.ring().field(), n, N.array(), n, result_inv.array(), n, nullspacedim);
+    return (nullspacedim == 0);
+}
 
 ///////////////////////////////////
 /// Fast linear algebra routines //
@@ -64,13 +93,6 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::determinant(elem &result) const
 {
   ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::invert(DMat<CoeffRing> &inverse) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
 }
 
 template<typename CoeffRing>
@@ -266,7 +288,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   return 0;
 }
 
-#include "dmat-ffpack.cpp"
+
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
 #include "aring-zz-flint.hpp"

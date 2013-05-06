@@ -11,6 +11,7 @@ class Ring;
 #include "coeffrings.hpp"
 
 #include "DenseMatrixDef.hpp"
+#include "DenseMatrixLinAlg.hpp"
 
 #if 0
 #include "ZZp.hpp"
@@ -89,8 +90,6 @@ public:
   elem* array() { return mMatrix.array(); }
 
   void grab(DMat *M);// swaps M and this.
-
-  //  DMat<CoeffRing> *copy() const;
 
   bool is_dense() const { return true; }
 
@@ -277,8 +276,12 @@ public:
 #endif
 
   size_t rank() const;
+
+  size_t new_rank() const;
  
   void determinant(elem &result) const;
+
+  void new_determinant(elem &result) const;
 
   // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
   // the matrix is not invertible, or
@@ -1045,6 +1048,24 @@ bool DMat<CoeffRing>::is_equal(const DMat& B) const
     if (!ring().is_equal(*elemsA++, *elemsB++))
       return false;
   return true;
+}
+
+template <typename CoeffRing>
+size_t DMat<CoeffRing>::new_rank() const
+{
+  return DenseMatrixLinAlg<CoeffRing>::rank(mMatrix);
+}
+
+template <typename CoeffRing>
+void DMat<CoeffRing>::new_determinant(ElementType& result_det) const
+{
+  DenseMatrixLinAlg<CoeffRing>::determinant(mMatrix, result_det);
+}
+
+template <typename CoeffRing>
+bool DMat<CoeffRing>::invert(DMat& result_inverse) const
+{
+ return DenseMatrixLinAlg<CoeffRing>::inverse(mMatrix, result_inverse.mMatrix);
 }
 
 #endif
