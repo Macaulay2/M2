@@ -4,7 +4,7 @@
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 VERSION = 1.9.1
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --disable-shared LIBS=-lmissing
 endif
 
 include ../Makefile.library
