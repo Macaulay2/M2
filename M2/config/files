@@ -35,6 +35,8 @@ distributions/deb/macaulay2/postinst
 distributions/deb/macaulay2/prerm
 distributions/deb/macaulay2/preinst
 libraries/Makefile
+libraries/missing/Makefile
+libraries/missing/src/Makefile
 libraries/Makefile.library
 libraries/M2/Makefile
 libraries/gc/Makefile
