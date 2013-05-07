@@ -1,4 +1,5 @@
-# license for gdbm: GPL v2
+# license for gdbm: GPL v3 or later
+LICENSEFILES = COPYING
 
 # URL = ftp://ftp.gnu.org/gnu/gdbm
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
