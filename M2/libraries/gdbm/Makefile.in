@@ -3,11 +3,13 @@
 # URL = ftp://ftp.gnu.org/gnu/gdbm
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 VERSION = 1.9.1
+
 ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared LIBS=-lmissing
+CONFIGOPTIONS += --disable-shared
 endif
 
 include ../Makefile.library
+LIBS += -lmissing
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gdbm/Makefile
 uninstall clean::
 	if [ -d $(LIBRARIESDIR) ] ; \

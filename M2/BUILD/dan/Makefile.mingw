@@ -20,15 +20,26 @@
 #   ftp://xmlsoft.org/libxml2/libxml2-sources-2.9.0.tar.gz
 #   ./configure --without-python --prefix=$HOME/local/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --disable-shared CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 
+# cpp search path:
+# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include
+# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include-fixed
+# /usr/x86_64-w64-mingw32/sys-root/mingw/include
+
+# ld search path:
+# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3
+# /usr/x86_64-w64-mingw32/lib64
+# /usr/x86_64-w64-mingw32/lib
+# /usr/x86_64-w64-mingw32/sys-root/mingw/lib
+
+export PATH = /usr/x86_64-w64-mingw32/bin:$(PATH)
 DIRECTORY = mingw
 CONFIGOPTIONS += --prefix=/nowhere
 CONFIGOPTIONS += --host=x86_64-w64-mingw32
-CONFIGOPTIONS += CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
-CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include
-CONFIGOPTIONS += CPPFLAGS=-I$(HOME)/local/x86_64-w64-mingw32/include/libxml2
+CONFIGOPTIONS +=  CC=x86_64-w64-mingw32-gcc
+CONFIGOPTIONS += CXX=x86_64-w64-mingw32-g++
+# we define _POSIX so signal.h will define SIGPIPE
+CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2 -D_POSIX"
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
-# the system libraries are in /usr/x86_64-w64-mingw32/sys-root/mingw
-# CONFIGOPTIONS +=     LIBS=-lwsock32
 CONFIGOPTIONS +=     LIBS=-lws2_32
 include Makefile.include
 # Local Variables:

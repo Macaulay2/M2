@@ -20,6 +20,10 @@ CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
 
+# here we set the variables that "configure" uses
+# this is the only way to add libraries to the linking done by "gdbm", since it doesn't use LDLIBS or LOADLIBES
+LIBS = @LIBS@
+
 # Macaulay 2 file system layout definitions, dependent on $(prefix) and PackageName.
 #  see http://www.pathname.com/fhs/
 #      http://fink.sourceforge.net/doc/packaging/fslayout.php
