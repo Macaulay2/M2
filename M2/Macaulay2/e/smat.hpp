@@ -224,6 +224,8 @@ public:
                      ElementType& a,
                      ElementType& b);
 
+  void mult(const SMat<ACoeffRing>& B,
+            SMat<ACoeffRing>& result) const;
 
   // this += B, assertion failure on bad ring or bad sizes
   void addInPlace(const SMat& B);

@@ -58,6 +58,84 @@ bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::inverse(const MatType& mat, MatType&
     return (nullspacedim == 0);
 }
 
+void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::mult(const MatType& A, const MatType& B, MatType& C)
+{
+    // This one is a bit harder, as we need to be careful about rows/columns, and the ffpack routine
+    // is so general.
+    // We assume that result_product has been just created
+
+    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
+    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
+
+    size_t m = B.numColumns();
+    size_t n = A.numRows();
+        
+    size_t k = A.numColumns();
+    size_t k2 = B.numRows();
+
+    ElementType a;
+    C.ring().init(a);
+    C.ring().set_from_int(a, 1);
+    FFLAS::fgemm( C.ring().field(),
+                  tB, tA,
+                  m,n,k,
+                  a,
+                  B.array(),
+                  B.numRows(),
+                  A.array(),
+                  A.numRows(),
+                  a,
+                  C.array(),
+                  C.numRows()
+                  );
+}
+
+bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::solveLinear(const MatType& A, const MatType& B, MatType& X)
+{
+}
+
+size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatType& result_nullspace)
+{
+#if 0
+    bool right_side = false; // because FFPACK stores by rows, not by columns.
+
+    M2_ASSERT(mat.numRows() == mat.NumColumns());
+    MatType N(mat);
+    size_t nr = mat.numRows();
+    size_t nc = mat.numColumns();
+
+    ElementType *nullspaceFFPACK = 0;  //  FFPACK will allocate space and fill this in
+    
+    size_t nullspace_dim;
+    size_t nullspace_leading_dim;
+    
+    FFPACK::NullSpaceBasis(mat.ring().field(),
+                           (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+                           nc, nr, N, nr, nullspaceFFPACK, nullspace_leading_dim, nullspace_dim);
+    
+    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
+
+    //NOTUSED? size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
+    if (right_side && nullspace_dim != nullspace_leading_dim)
+      {
+        std::cerr << "error: this should not happen!" << std::endl;
+      }
+    else if (!right_side && nullspace_leading_dim != nc)
+      {
+        std::cerr << "error: this should not happen either!" << std::endl;
+      }
+    
+    if (right_side)
+      nullspace.resize(nullspace_dim,nr);
+    else
+      nullspace.resize(nc,nullspace_dim);
+    
+    mat.copy_elems(nullspace.n_rows() * nullspace.n_cols(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
+    
+    delete [] nullspaceFFPACK;
+#endif
+}
+
 ///////////////////////////////////
 /// Fast linear algebra routines //
 ///////////////////////////////////

@@ -1058,6 +1058,12 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
     return C;
 }
 
+MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
+                                           const MutableMatrix* B)
+{
+  return A->mult(B);
+}
+
 engine_RawRingElementArray convertRingelemsToArray(const Ring *R, 
                                                    std::vector<M2::ARingZZpFFPACK::ElementType> &elems)
 {

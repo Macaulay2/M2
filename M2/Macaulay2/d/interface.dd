@@ -2840,6 +2840,20 @@ export rawLinAlgInvert(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgInvert",rawLinAlgInvert);
 
+export rawLinAlgMult(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is m:RawMutableMatrixCell do
+     when s.1 is n:RawMutableMatrixCell do
+       toExpr(Ccode(RawMutableMatrixOrNull, 
+               "rawLinAlgMult(", m.p, ",", 
+               n.p, 
+               ")" ))
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawLinAlgMult",rawLinAlgMult);
+
 export rawLinAlgRankProfile(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else

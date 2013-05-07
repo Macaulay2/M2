@@ -494,16 +494,6 @@ public:
     return result;
   }
 
-  virtual MutableMat * mult(const MutableMatrix *B) const
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.mult(B));
-    return result;
-  }
-
   virtual MutableMat * mult(const RingElement *f) const
   // return f*this.  return NULL of sizes or types do not match.
   {
@@ -595,6 +585,8 @@ public:
                                              bool transposeB,
                                              const RingElement* a,
                                              const RingElement* b);
+
+  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const;
 };
 
 
@@ -629,6 +621,31 @@ MutableMatrix* MutableMat<T>::invert() const
       delete result;
       return 0;
     }
+  return result;
+}
+
+template <typename T>
+MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
+{
+  // First, make sure B has the same ring/type as 'this'.
+  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  if (B1 == 0)
+    {
+      ERROR("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
+      return 0;
+    }
+  // Second, make sure the sizes are correct.
+  if (mat.n_cols() != B1->n_rows())
+    {
+      ERROR("matrix sizes do not match in matrix multiplication");
+      return 0;
+    }
+  // create the result matrix
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), B->n_cols());
+
+  // Call the resulting matrix routine.
+  mat.mult(B1->mat, result->mat);
+
   return result;
 }
 

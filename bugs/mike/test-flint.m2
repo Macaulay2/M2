@@ -122,25 +122,79 @@ rawLinAlgRank raw oo
 rank M
 rank matrix M
 
--- Test of determinant
+TEST /// 
+ -- test of small matrix multiplication in flint and ffpack
+ restart
+ debug Core
+ R1 = ZZp(101, "Choose"=>"FFPACK")
+ R2 = ZZp(101, "Choose"=>"FLINT")
+  E = {{1,4},{7,1}}
+  E2 = {{3,34},{17,22}}
+  M1 = matrix E
+  M2 = matrix E2
+  (M1*M2) ** ZZ/101
+  ansMult = {{71,21}, {38, 58}}
+  
+  -- First do ffpack
+  M1 = mutableMatrix matrix(R1, E)  
+  M2 = mutableMatrix matrix(R1, E2)
+  assert(ansMult == entries rawLinAlgMult(raw M1,raw M2))
+
+  -- now flint
+  M1 = mutableMatrix matrix(R2, E)
+  M2 = mutableMatrix matrix(R2, E2)
+  assert(ansMult == entries rawLinAlgMult(raw M1,raw M2))
+  assert(M1_(0,1) == 4)
+///
+
 TEST ///
+  -- timing for matrix mult
+  restart
+  debug Core
+  N = 3
+  R1 = ZZp(101, "Choose"=>"FFPACK")
+  R2 = ZZp(101, "Choose"=>"FLINT")
+
+  M1 = mutableMatrix(R1, N, 3*N)
+  M2 = mutableMatrix(R1, 3*N, N)
+  fillMatrix M1;
+  fillMatrix M2;
+  time rawLinAlgMult(raw M1, raw M2);  -- not working yet...
+  time rawLinAlgDeterminant raw M1
+  
+  M1 = mutableMatrix(R2, N, N)
+  M2 = mutableMatrix(R2, N, N)
+  fillMatrix M1;
+  fillMatrix M2;
+  time rawLinAlgMult(raw M1, raw M2);  -- not working yet...
+  time rawLinAlgDeterminant raw M1  
+  
+///
+TEST ///
+-- Test of determinant
  debug Core
  E = {{86, 13, 36, 39, 39, 88, 7, 0, 66, 86}, {23, 10, 77, 15, 25, 33, 30, 29, 45, 13}, {77, 9, 78, 34, 7, 40, 52, 82, 36, 55}, {66, 100, 92, 27, 87, 97, 32, 6, 96, 29}, {81, 79, 21, 50, 56, 80, 28, 94, 93, 60}, {22, 15, 1, 36, 35, 59, 74, 46, 86, 31}, {82, 83, 98, 40, 19, 11, 14, 78, 29, 94}, {28, 16, 43, 44, 90, 33, 71, 34, 62, 27}, {28, 49, 81, 85, 98, 31, 85, 65, 78, 70}, {1, 33, 4, 92, 17, 17, 69, 27, 40, 30}}
  (det matrix E) % 101
 
   E = {{1,4},{7,1}}
-
+  E2 = {{3,34},{17,22}}
  R = ZZ/101 
  M = matrix(R, E)  
+ M2 = matrix(R,E2)
  det M
- 
+ M*M2 
+
  R = ZZp(101, "Choose"=>"FFPACK")
  M = mutableMatrix matrix(R, E)
+ M2 = mutableMatrix matrix(R, E2)
  rawLinAlgDeterminant(raw M)
+ rawLinAlgMult(raw M, raw M2)
 
  R = ZZp(101, "Choose"=>"FLINT")
  M = mutableMatrix matrix(R, E)
+ M2 = mutableMatrix matrix(R, E2)
  rawLinAlgDeterminant(raw M)
+ rawLinAlgMult(raw M, raw M2)
 
  N = 4000
  N = 1000
@@ -157,7 +211,9 @@ N = 2
  fillMatrix M;
  time rawLinAlgDeterminant(raw M);
  time rawLinAlgInvert(raw M) ;
- 
+ M2 = mutableMatrix(R1, N, N)
+ fillMatrix M2;
+ rawLinAlgMult(raw M, raw M2)
 
  R2 = ZZp(101, "Choose"=>"FLINT")
  M = mutableMatrix(R2, N, N)

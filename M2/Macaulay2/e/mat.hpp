@@ -189,10 +189,6 @@ public:
   // note: can subtract a sparse + dense
   //       can subtract a matrix over RR and one over CC and/or one over ZZ.
 
-  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const = 0;
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
 
   virtual MutableMatrix /* or null */ * mult(const RingElement *f) const = 0;
   // return f*this.  return NULL of sizes or types do not match.
@@ -308,6 +304,14 @@ public:
     //std::cerr << "MutableMatrix : rawLinAlgAddMultipleTo" << std::endl;
     return ;
   }
+
+  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const {
+    ERROR("not implemented for this ring/mutable matrix type");
+    return 0;
+  }
+  // return this * B.  
+  // both matrices must be of the same type.
+  // If not, or sizes don't match, NULL is returned.
 
 };
 

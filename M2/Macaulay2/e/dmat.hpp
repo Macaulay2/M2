@@ -14,12 +14,6 @@ class Ring;
 #include "DenseMatrixLinAlg.hpp"
 
 #if 0
-#include "ZZp.hpp"
-#include "aring-ffpack.hpp"
-#include "aring-gf.hpp"
-#endif
-
-#if 0
 // enable_if is probably only available for never standard, e.g. compiler flag -std=c++0x
 template<bool, typename T = void> 
   struct enable_if {};
@@ -323,6 +317,10 @@ public:
       the characteristic polynomial is
       det(t*I - this) = a0 + a1 * t + ... + an * t^n .
   */
+
+  void mult(const DMat<ACoeffRing>& B,
+            DMat<ACoeffRing>& result) const;
+
   engine_RawRingElementArrayOrNull characteristicPolynomial() const;
 
   /** if 'this' is a square n x n matrix, return
@@ -1066,6 +1064,12 @@ template <typename CoeffRing>
 bool DMat<CoeffRing>::invert(DMat& result_inverse) const
 {
  return DenseMatrixLinAlg<CoeffRing>::inverse(mMatrix, result_inverse.mMatrix);
+}
+
+template <typename CoeffRing>
+void DMat<CoeffRing>::mult(const DMat& B, DMat& result_product) const
+{
+  return DenseMatrixLinAlg<CoeffRing>::mult(mMatrix, B.mMatrix, result_product.mMatrix);
 }
 
 #endif

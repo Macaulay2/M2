@@ -1300,6 +1300,12 @@ extern "C" {
                                                       const RingElement* a,
                                                       const RingElement* b);
 
+  /* return A*B, where A,B are mutable matrices, over same ring, same density type.
+   */
+  MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
+                                             const MutableMatrix* B);
+
+
   engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A);
   // returns an array whose coefficients give the characteristic polynomial of the square matrix A
 

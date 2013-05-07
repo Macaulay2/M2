@@ -1098,6 +1098,12 @@ void SMat<CoeffRing>::addMultipleTo(const SMat<CoeffRing> &A,
   ERROR("not implemented for this ring yet");
 }
 
+template<typename CoeffRing>
+void SMat<CoeffRing>::mult(const SMat<CoeffRing>& B,
+                           SMat<CoeffRing>& result) const
+{
+  ERROR("not implemented for this ring yet");
+}
 
 #include "aring-ffpack.hpp"
 #include "aring-zz-flint.hpp"
