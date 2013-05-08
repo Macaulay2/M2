@@ -9,6 +9,7 @@
 
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
+#include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 
 template<typename ACoeffRing>
@@ -70,6 +71,49 @@ private:
   ElementType* mArray;
 };
 
+
+template<>
+class DenseMatrixDef<M2::ARingZZ>
+{
+public:
+  typedef M2::ARingZZ ACoeffRing;
+  typedef typename ACoeffRing::ElementType ElementType;
+
+  DenseMatrixDef() : mRing(0) {}
+
+  DenseMatrixDef(const ACoeffRing& R, size_t nrows, size_t ncols)
+    : mRing(&R)
+  {
+    fmpz_mat_init(mArray, nrows, ncols);
+  }
+
+  DenseMatrixDef(const DenseMatrixDef<ACoeffRing>& M)
+    : mRing(& M.ring())
+  {
+    fmpz_mat_init_set(mArray, M.mArray);
+  }
+
+  ~DenseMatrixDef() 
+  {
+    fmpz_mat_clear(mArray);
+  }
+
+  const ACoeffRing& ring() const { return *mRing; }
+  size_t numRows() const { return fmpz_mat_nrows(mArray); }
+  size_t numColumns() const { return fmpz_mat_ncols(mArray); }
+
+  const ElementType* array() const { return mArray->entries; }
+  ElementType* array() { return mArray->entries; }
+  ElementType& entry(size_t row, size_t column) { return * fmpz_mat_entry(mArray, row, column); }
+public:
+  // Other routines from flint nmod_mat interface
+  const fmpz_mat_t& fmpz_mat() const { return mArray; }
+  fmpz_mat_t& fmpz_mat() { return mArray; }
+private:
+  const ACoeffRing* mRing;
+  fmpz_mat_t mArray;
+};
+
 //////////////////////////////////////////////////////////////
 // Flint: use nmod_mat for implementation of dense matrices //
 //////////////////////////////////////////////////////////////
@@ -115,55 +159,6 @@ private:
   nmod_mat_t mArray;
 };
 
-#if 0
-template<typename ACoeffRing, typename MatDef>
-class DMat
-{
-public:
-  typedef ACoeffRing CoeffRing;
-  typedef typename CoeffRing::ElementType ElementType;
-
-  typedef typename EigenvalueMatrixType< DMat<ACoeffRing, MatDef> >::type EigenvalueType;
-
-  //  typedef DMat<typename EigenvalueType<ACoeffRing>::Ring> EigenvalueMatrixType;
-
-  //  DMat(): mGeneralRing(0), mRing(0), array_(0) {} // Makes a zero matrix
-
-  // Makes a zero matrix of size nrows x ncols
-  DMat(const Ring* R, const ACoeffRing& R0, size_t nrows, size_t ncols)
-    : mGeneralRing(R),
-      mRing(R0),
-      mMatrix(R0,nrows,ncols)
-  {
-  }
-
-  //  DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
-
-  // Copies (clones) M
-  DMat(const DMat<ACoeffRing> &M)
-    : mGeneralRing(M.get_ring()),
-      mRing(M.ring()),
-      mMatrix(M.clone(M.ring()))
-  {
-  }
-
-  bool is_dense() const { return true; }
-
-  size_t n_rows() const { return mMatrix.numRows(); }
-  size_t n_cols() const { return mMatrix.numColumns(); }
-  const Ring * get_ring() const { return mGeneralRing; }
-  const CoeffRing* get_CoeffRing() const { return &mRing; }
-  const CoeffRing& ring() const { return mRing; }
-
-  const ElementType* array() const { return mMatrix.array(); }
-  ElementType* array() { return mMatrix.array(); }
-
-private:
-  const Ring* mGeneralRing;
-  const CoeffRing& mRing;
-  MatType mMatrix;
-};
-#endif
 #endif
 
 // Local Variables:

@@ -7,7 +7,8 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "rand.h"
-#include "flint/flint.h"
+#include "flint/arith.h"
+#include "flint/nmod_vec.h"
 
 class RingMap;
 
@@ -67,8 +68,12 @@ namespace M2 {
     void set_zero(ElementType &result) const { result = 0; }
 
     void set_from_int(ElementType &result, int a) const {
-      printf("called ARingZZpFlint::set_from_int\n");
-      M2_ASSERT(0);
+      //printf("called deprecated and inefficient ARingZZpFlint::set_from_int\n");
+      fmpz_t b;
+      fmpz_init(b);
+      fmpz_set_si(b, a);
+      result = fmpz_fdiv_ui(b, mCharac);
+      fmpz_clear(b);
     }
 
     void set_var(ElementType &result, int v) const { result = 1; }

@@ -10,6 +10,7 @@
 #include "exceptions.hpp"
 #include "DenseMatrixDef.hpp"
 #include "aring-ffpack.hpp"
+#include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 
 template<typename RT> // ring type
@@ -90,6 +91,55 @@ public:
   static bool solveLinear(const MatType& A, const MatType& B, MatType& X);
 
   static size_t nullSpace(const MatType& A, MatType& result_nullspace);
+};
+
+template<>
+class DenseMatrixLinAlg<M2::ARingZZ>
+{
+public:
+  typedef M2::ARingZZ RT;
+  typedef DenseMatrixDef<RT> MatType;
+  typedef MatType::ElementType ElementType;
+
+  static size_t rank(const MatType& A) { 
+    std::cout << "calling flint rank code" << std::endl;
+    return fmpz_mat_rank(A.fmpz_mat()); 
+  }
+
+  static void determinant(const MatType& A, ElementType& result_det) {
+    fmpz_mat_det(& result_det, A.fmpz_mat());
+  }
+
+  static bool inverse(const MatType& A, MatType& result_inv) {
+    ElementType den;
+    A.ring().init(den);
+    bool result = fmpz_mat_inv(result_inv.fmpz_mat(), &den, A.fmpz_mat());
+    if (!fmpz_is_pm1(&den)) 
+      result = false;
+    A.ring().clear(den);
+    return result;
+  }
+
+  static void mult(const MatType& A, const MatType& B, MatType& result_product) {
+    // The A1 and B1 on the next line are switched because the memory layout expected
+    // is the transpose of what we have for DMat.
+    fmpz_mat_mul(result_product.fmpz_mat(), B.fmpz_mat(), A.fmpz_mat());
+  }
+
+  static bool solveLinear(const MatType& A, const MatType& B, MatType& X) {
+    ElementType den;
+    A.ring().init(den);
+    bool result = fmpz_mat_solve(X.fmpz_mat(), &den, B.fmpz_mat(), A.fmpz_mat());
+    if (!fmpz_is_pm1(&den)) 
+      result = false;
+    A.ring().clear(den);
+    return result;
+  }
+
+  static size_t nullSpace(const MatType& A, MatType& result_nullspace) {
+    long rank = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
+    return (A.numColumns() - rank);
+  }
 };
 
 template<>
