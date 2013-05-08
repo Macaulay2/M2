@@ -23,6 +23,11 @@ CONFIGOPTIONS += --disable-shared
 endif
 include ../Makefile.library
 
+ifeq (@host@,x86_64-w64-mingw32)
+# to work around a bug, where yasm puts no global symbols in the *.o files
+CONFIGOPTIONS += --host=none_64-w64-mingw32 RANLIB=x86_64-w64-mingw32-ranlib AS=x86_64-w64-mingw32-as STRIP=x86_64-w64-mingw32-strip AR=x86_64-w64-mingw32-ar DLLTOOL=x86_64-w64-mingw32-dlltool OBJDUMP=x86_64-w64-mingw32-objdump
+endif
+
 ifeq (@DEBUG@ @GCC@,yes yes)
 CC := $(CC) -g
 CXX := $(CXX) -g

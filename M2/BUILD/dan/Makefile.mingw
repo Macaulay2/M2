@@ -31,10 +31,15 @@
 # /usr/x86_64-w64-mingw32/lib
 # /usr/x86_64-w64-mingw32/sys-root/mingw/lib
 
-export PATH = /usr/x86_64-w64-mingw32/bin:$(PATH)
+# get the proper binutils
+# export PATH = /usr/x86_64-w64-mingw32/bin:$(PATH)
+
+# get the dll's needed for running the programs
+export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)
+
 DIRECTORY = mingw
 CONFIGOPTIONS += --prefix=/nowhere
-CONFIGOPTIONS += --host=x86_64-w64-mingw32
+CONFIGOPTIONS += --host=x86_64-w64-mingw32 --build=i686-pc-cygwin
 CONFIGOPTIONS +=  CC=x86_64-w64-mingw32-gcc
 CONFIGOPTIONS += CXX=x86_64-w64-mingw32-g++
 # we define _POSIX so signal.h will define SIGPIPE

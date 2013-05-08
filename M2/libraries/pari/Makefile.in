@@ -1,6 +1,5 @@
-# license for pari: GPL v2
-
-#				pari
+# license for pari: GPL v2 or later
+LICENSEFILES = ../README ../COPYING
 
 # svn://pari.math.u-bordeaux.fr/pari/trunk
 
@@ -51,25 +50,31 @@ BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
+HOST_OS = @host_os@
+ifeq ($(HOST_OS),mingw32)
+HOST_OS = mingw
+BUILDDIR = $(UNTARDIR)/$(TARDIR)/Omingw-x86_64
+endif
 
-ifeq (@PROFILING@,yes)
-CONFIGURECMD += -pg
-INSTALLOPTIONS = -C `config/objdir`.prf
-BUILDOPTIONS = -C `config/objdir`.prf
-CHECKOPTIONS = -C `config/objdir`.prf
-else
-ifeq (@DEBUG@,yes)
-CONFIGURECMD += -g
-INSTALLOPTIONS = -C `config/objdir`.dbg
-BUILDOPTIONS = -C `config/objdir`.dbg
-CHECKOPTIONS = -C `config/objdir`.dbg
-else
-INSTALLOPTIONS = -C `config/objdir`
-BUILDOPTIONS = -C `config/objdir`
-CHECKOPTIONS = -C `config/objdir`
-endif
-endif
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=@host_cpu@-$(HOST_OS)
+
+# ifeq (@PROFILING@,yes)
+# CONFIGURECMD += -pg
+# INSTALLOPTIONS = -C `config/objdir`.prf
+# BUILDOPTIONS = -C `config/objdir`.prf
+# CHECKOPTIONS = -C `config/objdir`.prf
+# else
+# ifeq (@DEBUG@,yes)
+# CONFIGURECMD += -g
+# INSTALLOPTIONS = -C `config/objdir`.dbg
+# BUILDOPTIONS = -C `config/objdir`.dbg
+# CHECKOPTIONS = -C `config/objdir`.dbg
+# else
+# INSTALLOPTIONS = -C `config/objdir`
+# BUILDOPTIONS = -C `config/objdir`
+# CHECKOPTIONS = -C `config/objdir`
+# endif
+# endif
 
 CONFIGURECMD += | tee pari-config.log
 
@@ -78,12 +83,12 @@ include ../Makefile.library
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1
-config-chk: .config-checked-$(VERSION)
-clean::; rm -f .config-checked-*
-.config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
-	: test whether pari successfully found gmp library during configuration :
-	grep 'Using GNU MP' $^
-	touch $@
+# config-chk: .config-checked-$(VERSION)
+# clean::; rm -f .config-checked-*
+# .config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
+# 	: test whether pari successfully found gmp library during configuration :
+# 	grep 'Using GNU MP' $^
+# 	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example
