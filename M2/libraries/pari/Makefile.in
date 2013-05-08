@@ -1,5 +1,5 @@
 # license for pari: GPL v2 or later
-LICENSEFILES = ../README ../COPYING
+LICENSEFILES = README COPYING
 
 # svn://pari.math.u-bordeaux.fr/pari/trunk
 
