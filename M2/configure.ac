@@ -71,29 +71,17 @@ done
 
 test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
 
-AC_CHECK_PROGS(MAKE,gmake make)
-AC_CHECK_PROGS(WGET,wget)
-AC_CHECK_PROGS(CURL,curl)
-AC_CHECK_PROGS(OBJDUMP,objdump)
-AC_CHECK_PROGS(OBJCOPY,objcopy)
-AC_CHECK_PROGS(ETAGS,etags :)
-AC_CHECK_PROGS(LINTIAN,lintian)
-AC_CHECK_PROGS(LDD,ldd)
-AC_CHECK_PROGS(OTOOL,otool)
-AC_CHECK_PROGS(FAKEROOT,fakeroot)
-AC_CHECK_PROGS(RPMLINT,rpmlint)
-AC_CHECK_PROGS(TAR,gtar gnutar tar)
-AC_CHECK_PROGS(FIND,gfind find)
-AC_CHECK_PROGS(STRIPCMD,strip)
-if test "$STRIPCMD" != ""
-then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
-     if strip --help 2>&1 | grep remove-section >/dev/null
-     then val=yes
-     else val=no
-     fi
-     AC_MSG_RESULT($val)
-     AC_SUBST(STRIP_REMOVE_SECTION,$val)
-fi
+AC_CHECK_PROGS(MAKE,gmake make,false)
+AC_CHECK_PROGS(WGET,wget,false)
+AC_CHECK_PROGS(CURL,curl,false)
+AC_CHECK_PROGS(ETAGS,etags,false)
+AC_CHECK_PROGS(LINTIAN,lintian,false)
+AC_CHECK_PROGS(LDD,ldd,false)
+AC_CHECK_PROGS(OTOOL,otool,false)
+AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
+AC_CHECK_PROGS(RPMLINT,rpmlint,false)
+AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
+AC_CHECK_PROGS(FIND,gfind find,false)
 
 AC_MSG_CHECKING(whether $MAKE is GNU make)
 if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
@@ -163,7 +151,7 @@ esac
 case $OS in
   # Here we normalize the name of the OS for windows for startup.m2, which
   # needs to know that C:/FOO/BAR is an absolute path.
-  CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
+  CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
 esac
 
 test "$ISSUE" || ISSUE=$REL
@@ -198,6 +186,24 @@ dnl AC_ARG_VAR(CXX,C++ compiler to use)
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
+
+AC_CHECK_TOOL(AR,ar,false)
+AC_CHECK_TOOL(AS,as,false)
+AC_CHECK_TOOL(DLLTOOL,dlltool,false)
+AC_CHECK_TOOL(LD,ld,false)
+AC_CHECK_TOOL(OBJDUMP,objdump,false)
+AC_CHECK_TOOL(OBJCOPY,objcopy,false)
+AC_CHECK_TOOL(STRIP,strip,false)
+
+if test "$STRIP" != "false"
+then AC_MSG_CHECKING(whether the strip command $STRIP accepts the remove-section option)
+     if $STRIP --help 2>&1 | grep remove-section >/dev/null
+     then val=yes
+     else val=no
+     fi
+     AC_MSG_RESULT($val)
+     AC_SUBST(STRIP_REMOVE_SECTION,$val)
+fi
 
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
@@ -251,6 +257,8 @@ dnl AC_PROG_MKDIR_P()
 
 AC_CHECK_SIZEOF([int *])
 AC_SUBST(SIZEOF_INT_P,$ac_cv_sizeof_int_p)
+AC_CHECK_SIZEOF([long])
+AC_SUBST(SIZEOF_LONG,$ac_cv_sizeof_long)
 
 dnl Now we make the 32 bit / 64 bit choice explicit, because config.guess may guess it's a 32 bit system even though gcc compiles
 dnl 64 bit object code by default, and then mpir's configure script (versions 1.2.1 and 1.3.0-rc1) gets confused.
@@ -358,7 +366,7 @@ EOF
 	fi
 	./conf_main
 	) 2>&AS_MESSAGE_LOG_FD 1>&AS_MESSAGE_LOG_FD
-    then CONSTRUCTOR_ORDER=`./conf_main`
+    then CONSTRUCTOR_ORDER=`./conf_main | tr -d '\r'`
 	 case $CONSTRUCTOR_ORDER in
 	     *o1*o3*) CONSTRUCTOR_ORDER_OBJ=LR ;;
 	     *o3*o1*) CONSTRUCTOR_ORDER_OBJ=RL ;;
@@ -376,13 +384,21 @@ AC_HEADER_TIME() # time.h sys/time.h
 AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h stdlib.h syscall.h)
 AC_CHECK_HEADERS(sys/types.h execinfo.h)
+AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 AC_SEARCH_LIBS(clock_gettime,rt)
-AC_SEARCH_LIBS(socket,socket)
+
+dnl winsock2.h should be used with ws2_32.lib; it defines:
+dnl 	accept bind closesocket connect freeaddrinfo getaddrinfo gethostbyaddr
+dnl 	gethostbyname gethostname getnameinfo getpeername getprotobyname
+dnl 	getprotobynumber getservbyname getservbyport getsockname getsockopt htonl htons
+dnl 	inet_addr inet_ntoa inet_ntop inet_pton ioctlsocket listen ntohl ntohs recv
+dnl 	recvfrom select send sendto setsockopt shutdown socket
+AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
+
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
-AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync])
+AC_CHECK_FUNCS([ somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync ])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
@@ -390,6 +406,12 @@ AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
 	#include <errno.h>
 	])
 AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
+AC_CHECK_DECLS(SIGPIPE,,
+	[ CPPFLAGS="$CPPFLAGS -D_POSIX" ; 
+	  unset ac_cv_have_decl_SIGPIPE ; dnl clear the cache so we get a second chance
+	  AC_CHECK_DECLS(SIGPIPE,,
+	  	[AC_MSG_ERROR([SIGPIPE not defined in signal.h])],[#include <signal.h>]) ],
+	[#include <signal.h>])
 
 AC_SUBST(__INTEL_COMPILER,no)
 AC_CHECK_DECL(__INTEL_COMPILER,__INTEL_COMPILER=yes)
@@ -409,7 +431,7 @@ AC_DEFINE_UNQUOTED(HAVE_PERSONALITY,$HAVE_PERSONALITY,[whether personality() is 
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
@@ -1551,7 +1573,7 @@ do case $i in
 	#   ncurses: has a database which we aren't providing and whose location we don't know
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
-	-lncurses | -lsocket  | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	-lncurses | -lsocket | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
 	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
 	# and later we'll figure out a run-time test for whether pari is based on gmp
 	# # we must link statically with some libraries:
@@ -1762,5 +1784,5 @@ AC_OUTPUT()
 
 dnl Local Variables:
 dnl mode: autoconf
-dnl compile-command: "make -f Makefile"
+dnl compile-command: "make -f Makefile "
 dnl End:

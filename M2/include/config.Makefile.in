@@ -75,13 +75,11 @@ vpath %.so $(BUILTLIBPATH)/lib
 LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 export LD_LIBRARY_PATH
 export PATH := @abs_top_srcdir@/bin:${PATH}
-AR = ar
+
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))
 MAKEFLAGS += -w
 endif
-ifeq "@OS@ @ARCH@" "Linux alpha"
-AS = gcc -c -x assembler-with-cpp
-endif
+
 M2_CPPFLAGS += @M2_CPPFLAGS@
 ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
@@ -128,8 +126,8 @@ M2_CXXFLAGS += -Wconversion $(M2_BOTH)
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 endif
 endif
-STRIPCMD = @STRIPCMD@
-ifeq "$(STRIP)" "yes"
+STRIP = @STRIP@
+ifeq "$(ENABLE_STRIP)" "yes"
 ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
 endif

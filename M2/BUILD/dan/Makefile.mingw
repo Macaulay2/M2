@@ -21,31 +21,28 @@
 #   ./configure --without-python --prefix=$HOME/local/x86_64-w64-mingw32 --host=x86_64-w64-mingw32 --disable-shared CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++
 
 # cpp search path:
-# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include
-# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include-fixed
-# /usr/x86_64-w64-mingw32/sys-root/mingw/include
+# find /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include /usr/lib/gcc/x86_64-w64-mingw32/4.5.3/include-fixed /usr/x86_64-w64-mingw32/sys-root/mingw/include
 
 # ld search path:
-# /usr/lib/gcc/x86_64-w64-mingw32/4.5.3
-# /usr/x86_64-w64-mingw32/lib64
-# /usr/x86_64-w64-mingw32/lib
-# /usr/x86_64-w64-mingw32/sys-root/mingw/lib
+# find /usr/lib/gcc/x86_64-w64-mingw32/4.5.3 /usr/x86_64-w64-mingw32/lib64 /usr/x86_64-w64-mingw32/lib /usr/x86_64-w64-mingw32/sys-root/mingw/lib
 
-# get the proper binutils
-# export PATH = /usr/x86_64-w64-mingw32/bin:$(PATH)
+# binary/text mode options
+# /usr/x86_64-w64-mingw32/sys-root/mingw/lib/binmode.o
+# /usr/x86_64-w64-mingw32/sys-root/mingw/lib/txtmode.o
 
-# get the dll's needed for running the programs
+
+# get the libraries needed for running the programs
 export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)
 
 DIRECTORY = mingw
 CONFIGOPTIONS += --prefix=/nowhere
 CONFIGOPTIONS += --host=x86_64-w64-mingw32 --build=i686-pc-cygwin
-CONFIGOPTIONS +=  CC=x86_64-w64-mingw32-gcc
-CONFIGOPTIONS += CXX=x86_64-w64-mingw32-g++
-# we define _POSIX so signal.h will define SIGPIPE
-CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2 -D_POSIX"
+CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2"
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
-CONFIGOPTIONS +=     LIBS=-lws2_32
+CONFIGOPTIONS += --with-issue=mingw64
+
+AM_DEFAULT_VERBOSITY = 1 
+
 include Makefile.include
 # Local Variables:
 # compile-command: "time make -f Makefile.mingw "

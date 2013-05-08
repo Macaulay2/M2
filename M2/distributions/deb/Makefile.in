@@ -41,7 +41,7 @@ chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'

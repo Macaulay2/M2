@@ -186,12 +186,12 @@ endif
 ifneq "@OBJCOPY@" ""
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
-ifeq "$(STRIP)" "yes"
-ifneq "@STRIPCMD@" ""
+ifeq "$(ENGINE_STRIP)" "yes"
+ifneq "@STRIP@" ":"
 ifeq (@STRIP_REMOVE_SECTION@,yes)
-	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+	@STRIP@ --remove-section=.comment --remove-section=.note "$@".tmp
 else
-	@STRIPCMD@ "$@".tmp
+	@STRIP@ "$@".tmp
 ifneq "@OBJCOPY@" ""
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif
