@@ -123,7 +123,7 @@ ifeq ($(LICENSEFILES),)
 	@ echo warning: no license files to be installed
 else
 	$(MKDIR_P) $(LICENSE_DIR)
-	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+	cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
 endif
 	touch $@
 
