@@ -267,20 +267,32 @@ leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
 setup(LeftDivideS,leftDividefun);
 
 header "
+#ifdef HAVE_SYS_IOCTL_H
  #include <sys/ioctl.h>
+#endif
+#ifdef HAVE_TERMIOS_H
  #include <termios.h>
- ";
+#endif
+";
 
 WindowWidth(fd:int):int := Ccode(returns,"
+   #ifdef HAVE_SYS_IOCTL_H
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
-     ");
+   #else
+     return -1;
+   #endif
+");
 WindowHeight(fd:int):int := Ccode(returns,"
+   #ifdef HAVE_SYS_IOCTL_H
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
-     ");
+   #else
+     return -1;
+   #endif
+");
 
 fileWidth(e:Expr):Expr := (
      when e
@@ -379,7 +391,7 @@ NetFileAppend(e:Expr):Expr := (
 installMethod(LessLessS,netFileClass,stringClass,NetFileAppend);
 installMethod(LessLessS,netFileClass,netClass,NetFileAppend);
 		   
-address(f:Frame):ulong := Ccode(ulong,"((unsigned long)",f,")");
+address(f:Frame):ulong := Ccode(ulong,"((unsigned long)(intptr_t)",f,")");
 
 showFrames(f:Frame):void := (
      stdIO << " frames bound :";
@@ -531,7 +543,6 @@ unstack(e:Expr):Expr := (
 setupfun("unstack",unstack);
 
 header "#include <unistd.h>";
-alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
 alarm(e:Expr):Expr := (
      when e is i:ZZcell do 
      if isInt(i)

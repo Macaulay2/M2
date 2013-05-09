@@ -26,10 +26,12 @@ export determineExceptionFlag():void := (
      );
 header "
 #ifdef HAVE_UNISTD_H
+ /* under mingw64 io.h, included by unistd.h, optionally declares alarm() */
+ #define __USE_MINGW_ALARM
  #include <unistd.h>
 #endif
 ";
-alarm(x:uint) ::= Ccode(int,"
+export alarm(x:uint) ::= Ccode(int,"
      #ifdef HAVE_ALARM
       alarm(",x,")
      #else

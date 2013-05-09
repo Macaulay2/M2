@@ -30,6 +30,8 @@
 # /usr/x86_64-w64-mingw32/sys-root/mingw/lib/binmode.o
 # /usr/x86_64-w64-mingw32/sys-root/mingw/lib/txtmode.o
 
+export CC =
+
 # get the libraries needed for running the programs
 # consider also adding this to your path so you can run makefiles other than through this one
 export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)

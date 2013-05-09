@@ -186,19 +186,6 @@ AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
-AC_PROG_RANLIB()
-AC_PROG_INSTALL()
-AC_PROG_AWK()
-
-AC_CHECK_TOOL(AR,ar,false)
-AC_CHECK_TOOL(AS,as,false)
-AC_CHECK_TOOL(DLLTOOL,dlltool,false)
-AC_CHECK_TOOL(LD,ld,false)
-AC_CHECK_TOOL(OBJDUMP,objdump,false)
-AC_CHECK_TOOL(OBJCOPY,objcopy,false)
-AC_CHECK_TOOL(STRIP,strip,false)
-
-AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 
 if test "$STRIP" != "false"
 then AC_MSG_CHECKING(whether the strip command $STRIP accepts the remove-section option)
@@ -216,9 +203,26 @@ AC_SUBST(M2_CPPFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
+
 AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
+
 AC_PROG_YACC()
+AC_PROG_RANLIB()
+AC_PROG_INSTALL()
+AC_PROG_AWK()
+
+AC_CHECK_TOOL(AR,ar,false)
+AC_CHECK_TOOL(AS,as,false)
+AC_CHECK_TOOL(DLLTOOL,dlltool,false)
+AC_CHECK_TOOL(LD,ld,false)
+AC_CHECK_TOOL(OBJDUMP,objdump,false)
+AC_CHECK_TOOL(OBJCOPY,objcopy,false)
+AC_CHECK_TOOL(STRIP,strip,false)
+
+AC_MSG_NOTICE([checking for C compiler for build environment...])
+AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
+AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
 if test "$DEBUG" = yes
 then CPPFLAGS="$CPPFLAGS -DDEBUG"
@@ -404,7 +408,7 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
