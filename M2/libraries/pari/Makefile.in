@@ -66,7 +66,7 @@ INSTALLOPTIONS = -C O$(HOST_OS)-$(HOST_CPU)
 BUILDOPTIONS   = -C O$(HOST_OS)-$(HOST_CPU)
 CHECKOPTIONS   = -C O$(HOST_OS)-$(HOST_CPU)
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
+CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib  ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
 
 CONFIGURECMD += | tee pari-config.log
 
