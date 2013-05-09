@@ -385,13 +385,15 @@ EOF
     else AC_MSG_ERROR([test failed, see config.log])
     fi
 
-AC_HEADER_TIME() # time.h sys/time.h
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h sys/wait.h sys/resource.h io.h linux/personality.h)
+AC_HEADER_TIME()
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h)
 AC_CHECK_HEADERS(stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h stdlib.h syscall.h)
-AC_CHECK_HEADERS(sys/types.h execinfo.h)
+AC_CHECK_HEADERS(sys/types.h execinfo.h unistd.h math.h pthread.h assert.h alloca.h malloc.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
+dnl winsock2.h should be included before including windows.h
+dnl  pthread.h includes windows.h
+dnl   therefore winsock2.h should be included before pthread
 AC_SEARCH_LIBS(clock_gettime,rt)
-
 dnl winsock2.h should be used with ws2_32.lib; it defines:
 dnl 	accept bind closesocket connect freeaddrinfo getaddrinfo gethostbyaddr
 dnl 	gethostbyname gethostname getnameinfo getpeername getprotobyname
@@ -399,11 +401,10 @@ dnl 	getprotobynumber getservbyname getservbyport getsockname getsockopt htonl h
 dnl 	inet_addr inet_ntoa inet_ntop inet_pton ioctlsocket listen ntohl ntohs recv
 dnl 	recvfrom select send sendto setsockopt shutdown socket
 AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
-
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([ somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync ])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[

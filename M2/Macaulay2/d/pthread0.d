@@ -7,7 +7,17 @@ declarations "
     #ifndef _REENTRANT
       #define _REENTRANT
     #endif
-    #include <pthread.h>
+     /* to get HAVE_WINSOCK2_H, etc., we include M2/config.h: */
+    #include <M2/config.h>
+    #ifdef HAVE_WINSOCK2_H
+     #include <winsock2.h>
+       /* under mingw64 winsock2.h should be included before including windows.h
+	   and pthread.h and gc.h include windows.h
+	    therefore winsock2.h should be included before pthread.h and gc.h */
+    #endif
+    #ifdef HAVE_PTHREAD_H
+     #include <pthread.h>
+    #endif
     #define GC_THREADS
     #include <gc/gc.h>
     #include <../system/mutex.h>

@@ -24,8 +24,18 @@ export determineExceptionFlag():void := (
      store(exceptionFlag, test(interruptedFlag) || steppingFlag || alarmedFlag);
      setinterruptflag(int(load(interruptedFlag)));
      );
-header "#include <unistd.h>";
-alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
+header "
+#ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+#endif
+";
+alarm(x:uint) ::= Ccode(int,"
+     #ifdef HAVE_ALARM
+      alarm(",x,")
+     #else
+      -1
+     #endif
+     ");
 export clearAlarm():void := alarm(uint(0));
 export clearAllFlags():void := (
      setinterruptflag(0);

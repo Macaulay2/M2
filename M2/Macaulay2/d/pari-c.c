@@ -123,7 +123,7 @@ mpz_mat *pari_factorint(mpz_t x, long flags) {
   return f;
 }
 
-bool pari_isprime(mpz_t x) {
+Bool pari_isprime(mpz_t x) {
   long f;
   {
     INIT;
@@ -135,7 +135,7 @@ bool pari_isprime(mpz_t x) {
   return f != 0;
 }
 
-bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
+Bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
   long f;
   {
     INIT;
@@ -205,6 +205,23 @@ void pari_test() {
 
   CLOSE;
 }
+
+// now undefine some macros defined in <pari/paricom.h> :
+char *get_pari_version() {
+  /*
+    /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
+    /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+    It's disappointing that the version number of libpari.so is not available at run time.
+  */
+  static char buf[20];
+  sprintf(buf,\"%d.%d.%d\",
+	  0xff & (PARI_VERSION_CODE >> 16),
+	  0xff & (PARI_VERSION_CODE >> 8),
+	  0xff & (PARI_VERSION_CODE >> 0)
+	  );
+  return buf;
+}
+
 
 /*
  Local Variables:

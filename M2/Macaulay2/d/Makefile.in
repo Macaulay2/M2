@@ -142,10 +142,14 @@ M2INCLUDES += -I@srcdir@/../regex
 
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
+
+CPPFLAGS += -Wno-fatal-errors
+
 CFLAGS += $(M2_CFLAGS) -Werror
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wno-unused-label
 endif
+
 # # C standards
 # ## CFLAGS += -std=c89
 # # c99 allows declarations and statements to be mingled:
