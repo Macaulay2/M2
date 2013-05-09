@@ -35,6 +35,8 @@ public:
 template<typename ACoeffRing>
 class DMat : public our_new_delete
 {
+  typedef DenseMatrixLinAlg<ACoeffRing> LinAlg;
+  //  typedef DenseMatrixArithmetic<CoeffRing> Arithmetic;
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
@@ -47,10 +49,14 @@ public:
   DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
   DMat(const DMat<ACoeffRing> &M); // Copies (clones) M into 'this'
 
+  const Ring * get_ring() const { return mGeneralRing; }
   const CoeffRing& ring() const { return mMatrix.ring(); }
   const CoeffRing* get_CoeffRing() const { return & ring(); }
+
   size_t numRows() const { return mMatrix.numRows(); }
   size_t numColumns() const { return mMatrix.numColumns(); }
+  size_t n_rows() const { return numRows(); }
+  size_t n_cols() const { return numColumns(); }
 
   const ElementType* array() const { return mMatrix.array(); }
   ElementType* array() { return mMatrix.array(); }
@@ -59,10 +65,6 @@ public:
   ElementType * get_array() { return array(); }
 
   bool is_dense() const { return true; }
-
-  size_t n_rows() const { return numRows(); }
-  size_t n_cols() const { return numColumns(); }
-  const Ring * get_ring() const { return mGeneralRing; }
 
   void set_matrix(const DMat<CoeffRing>& mat0);
   void resize(size_t nrows, size_t ncols);
@@ -85,8 +87,8 @@ public:
   public:
     void set(size_t col0) {
       col = col0;
-      begin = M->array() + (col0+1) * (M->n_rows());
-      end = begin-M->n_rows();
+      begin = M->array() + (col0+1) * (M->numRows());
+      end = begin-M->numRows();
       to_next_valid();
     }
     iterator(const DMat<CoeffRing> *M0) : M(M0),
@@ -184,11 +186,6 @@ public:
   void delete_rows(size_t i, size_t j);
   /* Delete rows i .. j from M */
 
-#if 0
-  bool set_submatrix(M2_arrayint rows,
-                     M2_arrayint cols,
-                     const MutableMatrix *N);
-#endif
   bool is_zero() const;
 
   bool is_equal(const DMat& B) const;
@@ -213,24 +210,27 @@ public:
 
   void setFromSubmatrix(const DMat &A, M2_arrayint cols);
 
-#if 0
-  template<class RingType>
-  size_t rank(typename enable_if<is_givaro_or_ffpack<RingType>::value >::type* dummy = 0) const;
-#endif
-
   size_t rank() const;
-
-  size_t new_rank() const;
- 
   void determinant(ElementType &result) const;
 
-  void new_determinant(ElementType &result) const;
+  size_t new_rank() const
+  {
+    return LinAlg::rank(mMatrix);
+  }
+
+  void new_determinant(ElementType &result_det) const
+  {
+    LinAlg::determinant(mMatrix, result_det);
+  }
 
   // Set 'inverse' with the inverse of 'this'.  If the matrix is not square, or 
   // the matrix is not invertible, or
   // the ring is one in which the matrix cannot be inverted,
   // then false is returned, and an error message is set.
-  bool invert(DMat<ACoeffRing> &inverse) const;
+  bool invert(DMat<ACoeffRing> &result_inverse) const
+  {
+    return LinAlg::inverse(mMatrix, result_inverse.mMatrix);
+  }
 
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
@@ -268,7 +268,10 @@ public:
   */
 
   void mult(const DMat<ACoeffRing>& B,
-            DMat<ACoeffRing>& result) const;
+            DMat<ACoeffRing>& result_product) const
+  {
+    return DenseMatrixLinAlg<CoeffRing>::mult(mMatrix, B.mMatrix, result_product.mMatrix);
+  }
 
   engine_RawRingElementArrayOrNull characteristicPolynomial() const;
 
@@ -575,6 +578,10 @@ void DMat<CoeffRing>::column2by2(size_t c1, size_t c2,
       ring().set(*loc1++, f1);
       ring().set(*loc2++, g1);
     }
+  ring().clear(f1);
+  ring().clear(f2);
+  ring().clear(g1);
+  ring().clear(g2);
 }
 
 template<typename CoeffRing>
@@ -585,20 +592,26 @@ void DMat<CoeffRing>::dot_product(size_t i, size_t j, ElementType &result) const
   ring().set_zero(result);
 
   ElementType f;
+  ring().init(f);
   ring().set_zero(f);
   for (size_t r=0; r<numRows(); r++)
     {
       ring().mult(f,*loc1++,*loc2++);
       ring().add(result,result, f);
     }
+  ring().clear(f);
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::copy_elems(size_t n_to_copy, ElementType *target, size_t target_stride, const ElementType *source, size_t stride) const
+void DMat<CoeffRing>::copy_elems(size_t n_to_copy, 
+                                 ElementType *target, 
+                                 size_t target_stride, 
+                                 const ElementType *source, 
+                                 size_t stride) const
 {
   for (size_t i=0; i<n_to_copy; i++)
     {
-      *target = *source;
+      ring().set(*target, *source);
       target += target_stride;
       source += stride;
     }
@@ -625,6 +638,8 @@ bool DMat<CoeffRing>::row_permute(size_t start_row, M2_arrayint perm)
       done[j] = false;
     }
   ElementType *tmp = newarray_clear(ElementType,numColumns());
+  for (size_t c=0; c<numColumns(); c++)
+    ring().init(tmp[c]);
   size_t next = 0;
   ElementType *arr = array() + start_row;
 
@@ -654,6 +669,8 @@ bool DMat<CoeffRing>::row_permute(size_t start_row, M2_arrayint perm)
           done[r] = true;
         }
     }
+  for (size_t c=0; c<numColumns(); c++)
+    ring().clear(tmp[c]);
   deletearray(tmp);
   deletearray(done);
   return true;
@@ -679,6 +696,8 @@ bool DMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
       done[j] = false;
     }
   ElementType *tmp = newarray_clear(ElementType,numRows());
+  for (size_t r=0; r<numRows(); r++)
+    ring().init(tmp[r]);
   size_t next = 0;
   ElementType *arr = array() + start_col * numRows();
 
@@ -708,6 +727,8 @@ bool DMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
           done[r] = true;
         }
     }
+  for (size_t r=0; r<numRows(); r++)
+    ring().clear(tmp[r]);
   deletearray(tmp);
   deletearray(done);
   return true;
@@ -796,33 +817,6 @@ bool DMat<CoeffRing>::is_zero() const
   return true;
 }
 
-#if 0
-template<typename CoeffRing>
-bool DMat<CoeffRing>::set_submatrix(M2_arrayint rows,
-                                    M2_arrayint cols,
-                                    const MutableMatrix *M)
-{
-#ifdef DEVELOPMENT
-#warning "set_submatrix"
-#endif
-#if 0
-//   elem *first = array_ + first_row + numRows() * first_col;
-//   long ncols = M->n_cols();
-//   for (long c=0; c<ncols; c++)
-//     {
-//       for (i->set(c); i->valid(); i->next())
-//      {
-//        ring_elem a;
-//        i->copy_ring_elem(a);
-//        ring().from_ring_elem(*(first + i->row()), a);
-//      }
-//       first += numRows();
-//     }
-#endif
-  return true;
-}
-#endif
-
 template<typename CoeffRing>
 void DMat<CoeffRing>::setFromSubmatrix(const DMat& A, 
                                        M2_arrayint rows,
@@ -849,11 +843,11 @@ void DMat<CoeffRing>::addInPlace(const DMat<CoeffRing>& B)
   // this += B.
   // assumption:the assert statements below:
 {
-  ASSERT(&B.ring() == &ring());
-  ASSERT(B.n_rows() == n_rows());
-  ASSERT(B.n_cols() == n_cols());
+  M2_ASSERT(&B.ring() == &ring());
+  M2_ASSERT(B.numRows() == numRows());
+  M2_ASSERT(B.numColumns() == numColumns());
   
-  for (size_t i=0; i<n_rows()*n_cols(); i++)
+  for (size_t i=0; i<numRows()*numColumns(); i++)
     {
       ring().add(array()[i], array()[i], B.array()[i]);
     }
@@ -864,11 +858,11 @@ void DMat<CoeffRing>::subtractInPlace(const DMat<CoeffRing>& B)
   // this -= B.
   // assumption:the assert statements below:
 {
-  ASSERT(&B.ring() == &ring());
-  ASSERT(B.n_rows() == n_rows());
-  ASSERT(B.n_cols() == n_cols());
+  M2_ASSERT(&B.ring() == &ring());
+  M2_ASSERT(B.numRows() == numRows());
+  M2_ASSERT(B.numColumns() == numColumns());
   
-  for (size_t i=0; i<n_rows()*n_cols(); i++)
+  for (size_t i=0; i<numRows()*numColumns(); i++)
     {
       ring().subtract(array()[i], array()[i], B.array()[i]);
     }
@@ -878,7 +872,7 @@ template <typename CoeffRing>
 void DMat<CoeffRing>::negateInPlace()
   // this = -this
 {
-  for (size_t i=0; i<n_rows()*n_cols(); i++)
+  for (size_t i=0; i<numRows()*numColumns(); i++)
     {
       ring().negate(array()[i], array()[i]);
     }
@@ -888,7 +882,7 @@ template <typename CoeffRing>
 void DMat<CoeffRing>::scalarMultInPlace(const ElementType &f)
   // this = f * this
 {
-  for (size_t i=0; i<n_rows()*n_cols(); i++)
+  for (size_t i=0; i<numRows()*numColumns(); i++)
     {
       ring().mult(array()[i], f, array()[i]);
     }
@@ -897,40 +891,16 @@ void DMat<CoeffRing>::scalarMultInPlace(const ElementType &f)
 template <typename CoeffRing>
 bool DMat<CoeffRing>::is_equal(const DMat& B) const
 {
-  ASSERT(&ring() == &B.ring())
-  if (B.n_rows() != n_rows()) return false;
-  if (B.n_cols() != n_cols()) return false;
-  size_t top = n_rows() * n_cols();
+  M2_ASSERT(&ring() == &B.ring());
+  if (B.numRows() != numRows()) return false;
+  if (B.numColumns() != numColumns()) return false;
+  size_t top = numRows() * numColumns();
   const ElementType * elemsA = get_array();
   const ElementType * elemsB = B.get_array();
   for (size_t i = 0; i < top; i++)
     if (!ring().is_equal(*elemsA++, *elemsB++))
       return false;
   return true;
-}
-
-template <typename CoeffRing>
-size_t DMat<CoeffRing>::new_rank() const
-{
-  return DenseMatrixLinAlg<CoeffRing>::rank(mMatrix);
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::new_determinant(ElementType& result_det) const
-{
-  DenseMatrixLinAlg<CoeffRing>::determinant(mMatrix, result_det);
-}
-
-template <typename CoeffRing>
-bool DMat<CoeffRing>::invert(DMat& result_inverse) const
-{
- return DenseMatrixLinAlg<CoeffRing>::inverse(mMatrix, result_inverse.mMatrix);
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::mult(const DMat& B, DMat& result_product) const
-{
-  return DenseMatrixLinAlg<CoeffRing>::mult(mMatrix, B.mMatrix, result_product.mMatrix);
 }
 
 #endif

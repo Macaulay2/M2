@@ -661,14 +661,6 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M
   return M->submatrix(rows,cols);
 }
 
-bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
-                                     M2_arrayint rows,
-                                     M2_arrayint cols,
-                                     const MutableMatrix *N)
-{
-  return M->set_submatrix(rows,cols,N);
-}
-
 MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
                                                    M2_arrayint cols)
 {
