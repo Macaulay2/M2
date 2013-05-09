@@ -1,6 +1,6 @@
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/main.cpp	2013-04-21 15:00:54.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/main.cpp	2013-05-08 18:18:46.322436000 -0500
 @@ -24,6 +24,7 @@
  
  #include <ctime>
@@ -9,9 +9,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  
  /** This function runs the Frobby console interface. the ::main
      function calls this function after having set up DEBUG-specific
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-04-21 15:00:54.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-05-08 18:18:46.327436300 -0500
 @@ -25,6 +25,7 @@
  
  #include <limits>
@@ -20,9 +20,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  
  void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
    VarNames names(variableCount);
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/test/messages/runtest	2013-04-21 15:18:15.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/test/messages/runtest	2013-05-08 18:18:46.331436600 -0500
 @@ -9,7 +9,7 @@
  action="$1"
  shift
@@ -32,9 +32,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  echo "$1" > $tmpFile
  shift
  
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-04-21 15:00:54.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
++++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-05-08 18:18:46.339437000 -0500
 @@ -3,9 +3,9 @@
  frobby=../../bin/frobby
  testhelper=../testScripts/testhelper
@@ -48,9 +48,9 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
  stdPivots="popvar rarevar popgcd any random"
  shift
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/testhelper	2013-04-21 15:00:54.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
++++ frobby_v0.9.0/test/testScripts/testhelper	2013-05-08 18:18:46.344437300 -0500
 @@ -57,10 +57,10 @@
  
  origParams="$*" # used for debug output below
@@ -66,3 +66,62 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  
  frobby="$origFrobby"
  frobbyOut="$origFrobbyOut"
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/Makefile	2013-05-08 18:49:02.859336000 -0500
+@@ -70,7 +70,7 @@
+   BIN_INSTALL_DIR = "/usr/local/bin/"
+ endif
+ 
+-cflags = $(CFLAGS) $(CPPFLAGS) -Wall -ansi -pedantic -I $(GMP_INC_DIR)	\
++cflags = $(CFLAGS) $(CPPFLAGS) -Wall -I $(GMP_INC_DIR)	\
+          -Wno-uninitialized -Wno-unused-parameter
+ program = frobby
+ library = libfrobby.a
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp frobby_v0.9.0/src/FrobbyStringStream.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2013-05-08 18:53:10.169481300 -0500
+@@ -41,6 +41,11 @@
+   return *this;
+ }
+ 
++FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long long integer) {
++  appendIntegerToString(_str, integer);
++  return *this;
++}
++
+ FrobbyStringStream& FrobbyStringStream::operator<<(unsigned long integer) {
+   appendIntegerToString(_str, integer);
+   return *this;
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h frobby_v0.9.0/src/FrobbyStringStream.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/FrobbyStringStream.h	2013-05-08 18:52:38.841689500 -0500
+@@ -25,6 +25,7 @@
+  used for operations that need to be efficient. */
+ class FrobbyStringStream {
+  public:
++  FrobbyStringStream& operator<<(unsigned long long integer);
+   FrobbyStringStream& operator<<(unsigned long integer);
+   FrobbyStringStream& operator<<(unsigned int integer);
+   FrobbyStringStream& operator<<(const mpz_class& integer);
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h frobby_v0.9.0/src/Term.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/Term.h	2013-05-08 18:51:37.650189500 -0500
+@@ -95,7 +95,7 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
+-  Exponent operator[](unsigned long offset) const {
++  Exponent operator[](unsigned long long offset) const {
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
+@@ -109,7 +109,7 @@
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }
+-  Exponent& operator[](unsigned long offset) {
++  Exponent& operator[](unsigned long long offset) {
+     ASSERT(offset < _varCount);
+     return _exponents[offset];
+   }

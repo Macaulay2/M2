@@ -30,8 +30,8 @@
 # /usr/x86_64-w64-mingw32/sys-root/mingw/lib/binmode.o
 # /usr/x86_64-w64-mingw32/sys-root/mingw/lib/txtmode.o
 
-
 # get the libraries needed for running the programs
+# consider also adding this to your path so you can run makefiles other than through this one
 export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)
 
 DIRECTORY = mingw
@@ -40,8 +40,6 @@ CONFIGOPTIONS += --host=x86_64-w64-mingw32 --build=i686-pc-cygwin
 CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2"
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
 CONFIGOPTIONS += --with-issue=mingw64
-
-AM_DEFAULT_VERBOSITY = 1 
 
 include Makefile.include
 # Local Variables:
