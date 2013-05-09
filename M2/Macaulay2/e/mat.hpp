@@ -171,11 +171,6 @@ public:
 
   virtual MutableMatrix * submatrix(M2_arrayint cols) const = 0;
 
-  virtual bool set_submatrix(M2_arrayint rows,
-                             M2_arrayint cols,
-                             const MutableMatrix *N) = 0;
-  // returns false iff there is an error
-
   virtual bool is_zero() const = 0;
 
 

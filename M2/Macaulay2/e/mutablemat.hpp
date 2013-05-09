@@ -423,14 +423,6 @@ public:
     return result;
   }
 
-  virtual bool set_submatrix(M2_arrayint rows,
-                             M2_arrayint cols,
-                             const MutableMatrix *N)
-  // returns false iff there is an error
-  {
-    //    return mat.set_submatrix(rows,cols,N);
-  }
-
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////

@@ -35,14 +35,15 @@ public:
 template<typename ACoeffRing>
 class DMat : public our_new_delete
 {
+  typedef typename EigenvalueType<ACoeffRing>::Ring EigenvalueRing;
   typedef DenseMatrixLinAlg<ACoeffRing> LinAlg;
   //  typedef DenseMatrixArithmetic<CoeffRing> Arithmetic;
 public:
   typedef ACoeffRing CoeffRing;
-  typedef typename CoeffRing::elem elem;
-  typedef elem ElementType; // same as elem.  Will possibly remove 'elem' later.
+  typedef typename CoeffRing::elem ElementType;
+  typedef ElementType elem; // same as ElementType.  Will possibly remove 'elem' later.
 
-  typedef DMat<typename EigenvalueType<ACoeffRing>::Ring> EigenvalueMatrixType;
+  typedef DMat<EigenvalueRing> EigenvalueMatrixType;
 
   DMat() {} // Makes an unusable matrix, over no ring.
   DMat(const Ring *R, const ACoeffRing *R0, size_t nrows, size_t ncols); // Makes a zero matrix
