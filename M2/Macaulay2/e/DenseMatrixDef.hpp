@@ -7,6 +7,7 @@
  * \ingroup matrices
  */
 
+#include <iostream>
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include "aring-zz-flint.hpp"
@@ -57,13 +58,24 @@ public:
     delete [] mArray;
   }
 
+  // swap the actual matrices of 'this' and 'M'.
+  void swap(DenseMatrixDef<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    std::swap(mNumRows, M.mNumRows);
+    std::swap(mNumColumns, M.mNumColumns);
+    std::swap(mArray, M.mArray);
+  }
+
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return mNumRows; }
   size_t numColumns() const { return mNumColumns; }
 
   const ElementType* array() const { return mArray; }
   ElementType* array() { return mArray; }
+
   ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
+  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
 private:
   const ACoeffRing* mRing;
   size_t mNumRows;
@@ -98,13 +110,30 @@ public:
     fmpz_mat_clear(mArray);
   }
 
+  // swap the actual matrices of 'this' and 'M'.
+  void swap(DenseMatrixDef<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    fmpz_mat_swap(mArray, M.mArray);
+  }
+
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return fmpz_mat_nrows(mArray); }
   size_t numColumns() const { return fmpz_mat_ncols(mArray); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }
-  ElementType& entry(size_t row, size_t column) { return * fmpz_mat_entry(mArray, row, column); }
+
+  ElementType& entry(size_t row, size_t column) { 
+    M2_ASSERT(row < numRows());
+    M2_ASSERT(column < numColumns());
+    return * fmpz_mat_entry(mArray, row, column); 
+  }
+  const ElementType& entry(size_t row, size_t column) const { 
+    M2_ASSERT(row < numRows());
+    M2_ASSERT(column < numColumns());
+    return * fmpz_mat_entry(mArray, row, column); 
+  }
 public:
   // Other routines from flint nmod_mat interface
   const fmpz_mat_t& fmpz_mat() const { return mArray; }
@@ -143,13 +172,23 @@ public:
     nmod_mat_clear(mArray);
   }
 
+  // swap the actual matrices of 'this' and 'M'.
+  // The rings must be the same.
+  void swap(DenseMatrixDef<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    std::swap(mArray, M.mArray);
+  }
+
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return nmod_mat_nrows(mArray); }
   size_t numColumns() const { return nmod_mat_ncols(mArray); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }
+
   ElementType& entry(size_t row, size_t column) { return nmod_mat_entry(mArray, row, column); }
+  const ElementType& entry(size_t row, size_t column) const { return nmod_mat_entry(mArray, row, column); }
 public:
   // Other routines from flint nmod_mat interface
   const nmod_mat_t& nmod_mat() const { return mArray; }

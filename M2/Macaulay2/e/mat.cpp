@@ -294,16 +294,6 @@ bool MutableMatrix::set_values(M2_arrayint rows,
   return true;
 }
 
-#if 0
-template<typename Mat>
-MutableMat<Mat> *MutableMat<Mat>::grab_Mat(const Mat *m) {
-    MutableMat *result = new MutableMat;
-    Mat *copy_m = m->copy();
-    result->mat.grab(copy_m);
-    return result;
-  }
-#endif
-
 ///////////////////////////////////
 //// Linear algebra routines //////
 ///////////////////////////////////

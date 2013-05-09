@@ -18,11 +18,7 @@
 #include "aring-zzp.hpp"
 #include "aring-ffpack.hpp"
 
-
- #include <typeinfo>
-
 #include "dmat-RRR.hpp"
-//#include "dmat-ffpack.cpp"
 #include "aring-zzp-flint.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -71,7 +67,7 @@ void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::mult(const MatType& A, const MatType
     size_t n = A.numRows();
         
     size_t k = A.numColumns();
-    size_t k2 = B.numRows();
+    //    size_t k2 = B.numRows();
 
     ElementType a;
     C.ring().init(a);
@@ -92,6 +88,7 @@ void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::mult(const MatType& A, const MatType
 
 bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::solveLinear(const MatType& A, const MatType& B, MatType& X)
 {
+  return false;
 }
 
 size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatType& result_nullspace)
@@ -134,6 +131,7 @@ size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatT
     
     delete [] nullspaceFFPACK;
 #endif
+    return 0;
 }
 
 ///////////////////////////////////
@@ -158,7 +156,7 @@ size_t DMat<M2::ARingRRR>::rank() const
 }
 
 template<>
-void DMat<M2::ARingRRR>::determinant(elem &result) const
+void DMat<M2::ARingRRR>::determinant(ElementType &result) const
 {
   LUDecompositionRRR::determinantRRR(*this, result);
 }
@@ -168,7 +166,7 @@ void DMat<M2::ARingRRR>::determinant(elem &result) const
 //////////////////////////////////////
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::determinant(elem &result) const
+void DMat<CoeffRing>::determinant(ElementType &result) const
 {
   ERROR("not implemented for this ring yet");
 }
@@ -231,7 +229,7 @@ template <> double *DMat<M2::ARingRRR>::make_lapack_array() const
   long len = n_rows() * n_cols();
   double *result = newarray_atomic(double, len);
 
-  const elem *a = array();
+  const ElementType *a = array();
   double *p = result;
   for (long i=0; i<len; i++)
     *p++ = mpfr_get_d(a++, GMP_RNDN);
@@ -242,7 +240,7 @@ template <> void DMat<M2::ARingRRR>::fill_from_lapack_array(double *lapack_array
 {
   long len = n_rows() * n_cols();
 
-  elem *a = array();
+  ElementType *a = array();
   double *p = lapack_array;
   for (long i=0; i<len; i++)
     mpfr_set_d(a++, *p++, GMP_RNDN);
@@ -255,7 +253,7 @@ template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
   long len = n_rows() * n_cols();
   double *result = newarray_atomic(double, len);
 
-  const elem *a = array();
+  const ElementType *a = array();
   double *p = result;
   for (long i=0; i<len; i++)
     *p++ = mpfr_get_d(a++, GMP_RNDN);
@@ -266,7 +264,7 @@ template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack
 {
   long len = n_rows() * n_cols();
 
-  elem *a = array();
+  ElementType *a = array();
   double *p = lapack_array;
   for (long i=0; i<len; i++)
     mpfr_set_d(a++, *p++, GMP_RNDN);
@@ -277,7 +275,7 @@ template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
   long len = n_rows() * n_cols();
   double *result = newarray_atomic(double, 2*len);
 
-  const elem *a = array();
+  const ElementType *a = array();
   double *p = result;
   for (long i=0; i<len; i++)
     {
@@ -292,7 +290,7 @@ template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack
 {
   long len = n_rows() * n_cols();
 
-  elem *a = array();
+  ElementType *a = array();
   double *p = lapack_array;
   for (long i=0; i<len; i++)
     {
@@ -371,7 +369,6 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 #include "lapack.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
-//#include "dmat-zzp-flint.hpp"
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;

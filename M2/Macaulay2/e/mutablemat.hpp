@@ -428,7 +428,7 @@ public:
                              const MutableMatrix *N)
   // returns false iff there is an error
   {
-    return mat.set_submatrix(rows,cols,N);
+    //    return mat.set_submatrix(rows,cols,N);
   }
 
   ///////////////////////////////
