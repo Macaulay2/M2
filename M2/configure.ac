@@ -20,6 +20,9 @@ C_CONFIG_ARGS=` echo "$ac_configure_args" | sed -e 's=\\\\=\\\\\\\\=g' -e 's=\\"
 AC_DEFINE_UNQUOTED(CONFIG_ARGS,"$C_CONFIG_ARGS",arguments used for configure)
 AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
+AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
+m4_include(config/ax_prog_cc_for_build.m4)
+
 define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 dnl we should be able to replace IS_DECLARED with AC_CHECK_DECLS:
 AC_DEFUN(IS_DECLARED,[
@@ -194,6 +197,8 @@ AC_CHECK_TOOL(LD,ld,false)
 AC_CHECK_TOOL(OBJDUMP,objdump,false)
 AC_CHECK_TOOL(OBJCOPY,objcopy,false)
 AC_CHECK_TOOL(STRIP,strip,false)
+
+AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 
 if test "$STRIP" != "false"
 then AC_MSG_CHECKING(whether the strip command $STRIP accepts the remove-section option)
@@ -1600,11 +1605,13 @@ AC_MSG_NOTICE([     LIBS_DYNAMIC   = $LIBS_DYNAMIC])
 AC_MSG_NOTICE([     FCLIBS_STATIC  = $FCLIBS_STATIC])
 AC_MSG_NOTICE([     FCLIBS_DYNAMIC = $FCLIBS_DYNAMIC])
 AC_MSG_NOTICE([using CC            = $CC])
+AC_MSG_NOTICE([using CPP           = $CPP])
 AC_MSG_NOTICE([using CPPFLAGS      = $CPPFLAGS])
 AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
 AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
+AC_MSG_NOTICE([using CC_FOR_BUILD  = $CC_FOR_BUILD])
 
 function subset {
     # whether the words of $1 are among the words of $2

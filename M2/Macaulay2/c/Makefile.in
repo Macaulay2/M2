@@ -5,6 +5,12 @@ all: tags
 endif
 all: scc1 scc-core.o
 include ../../include/config.Makefile
+
+# In this directory, we compile "scc1", the D to C translator, which we want to run
+# on the "build" machine, in the sense of autoconf.  So we do not want the cross-compiling compiler:
+CC = @CC_FOR_BUILD@
+LDFLAGS = @LDFLAGS_FOR_BUILD@
+
 top_srcdir = @top_srcdir@
 VPATH = @srcdir@
 ############################################
@@ -17,7 +23,7 @@ YFLAGS := -vdlt
 
 # we don't include @LIBS@ here because including -llapack would make it also
 # necessary to link with the fortran support libraries:
-LOADLIBES += -lgdbm -lm -lmissing
+LOADLIBES += -lgdbm -lm
 
 CNAMES := scc1.c readfile.c error.c dictionary.c list.c cprint.c type.c chk.c compat.c debugging.c
 HFILES := $(CNAMES:.c=.h) scc.h grammar.h keywords.h
@@ -41,13 +47,11 @@ LOADLIBES += @GC_LIBS@
 
 ############################## compiling
 scc1: $(OFILES) 
-	@echo "LIBS: $(LIBS)"
-	@echo "LIBS: @LIBS@"
-	@echo "SCCFLAGS: $(SCCFLAGS)"
+	@echo "LDFLAGS: $(LDFLAGS)"
 	$(CC)  $(LDFLAGS) $(CFLAGS)  $(OFILES) $(LOADLIBES) $(LIBS) -o scc1
 
 $(OFILES) : $(HFILES)
-grammar.o: grammar.c; @CC@ $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
+grammar.o: grammar.c; $(CC) $(CPPFLAGS) $(CFLAGS) -c $< $(OUTPUT_OPTION)
 ############################## debugging, and building *.d and *.dd test programs
 all:.gdbinit
 .gdbinit:.gdbinit.in;cp $^ $@

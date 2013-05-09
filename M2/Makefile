@@ -36,7 +36,7 @@ PATH := autoconf/final/bin:$(PATH)
 export PATH
 
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
-configure : configure.ac config/files # aclocal.m4
+configure : configure.ac config/files config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
 get-autoconf :
