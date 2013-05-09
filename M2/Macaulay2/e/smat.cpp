@@ -997,39 +997,6 @@ void SMat<CoeffRing>::scalarMultInPlace(const elem &f)
     vec_scale(columns_[c], f);
 }
 
-template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::mult(const MutableMatrix *B) const
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
-{
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
-}
-
-template <typename CoeffRing>
-SMat<CoeffRing> * SMat<CoeffRing>::mult(const elem &f) const
-// return f*this.  return NULL of sizes or types do not match.
-{
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
-}
-
-template <typename CoeffRing>
-M2_arrayint columnEchelonForm(SMat<CoeffRing> *A)
-{
-#ifdef DEVELOPMENT
-#warning "to be written"
-#endif
-  return 0;
-}
-
-
-
 ///////////////////////////////////
 /// Fast linear algebra routines //
 ///////////////////////////////////

@@ -67,6 +67,8 @@ public:
 
   bool is_dense() const { return true; }
 
+  void text_out(buffer& o) const;
+
   void set_matrix(const DMat<CoeffRing>& mat0);
   void resize(size_t nrows, size_t ncols);
 
@@ -325,6 +327,39 @@ template<typename CoeffRing>
 double * DMat<CoeffRing>::get_lapack_array() const
 {
   return 0;
+}
+
+template<typename CoeffRing>
+void DMat<CoeffRing>::text_out(buffer& o) const
+{
+  buffer *p = new buffer[numRows()];
+  for (size_t c=0; c<numColumns(); c++)
+    {
+      size_t maxcount = 0;
+      for (size_t r=0; r<numRows(); r++)
+        {
+          const ElementType& f = mMatrix.entry(r,c);
+          if (!ring().is_zero(f))
+            {
+#warning "don't forget to write elem_text_out for CoeffRing's"
+              //              ring().elem_text_out(p[r], f);
+            }
+          else
+            p[r] << ".";
+          if (p[r].size() > maxcount)
+            maxcount = p[r].size();
+        }
+      for (size_t r=0; r<numRows(); r++)
+        for (size_t k=maxcount+1-p[r].size(); k > 0; k--)
+          p[r] << ' ';
+    }
+  for (size_t r=0; r<numRows(); r++)
+    {
+      p[r] << '\0';
+      char *s = p[r].str();
+      o << s << newline;
+    }
+  delete[] p;
 }
 
 template<typename CoeffRing>
