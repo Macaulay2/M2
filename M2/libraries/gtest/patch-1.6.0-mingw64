@@ -1,0 +1,80 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gtest/tmp/gtest-1.6.0/fused-src/gtest/gtest.h gtest-1.6.0/fused-src/gtest/gtest.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gtest/tmp/gtest-1.6.0/fused-src/gtest/gtest.h	2011-04-15 14:54:57.000000000 -0500
++++ gtest-1.6.0/fused-src/gtest/gtest.h	2013-05-08 22:35:32.375611900 -0500
+@@ -2135,7 +2135,7 @@
+     0,                  // 0 seconds.
+     n * 1000L * 1000L,  // And n ms.
+   };
+-  nanosleep(&time, NULL);
++  /* nanosleep(&time, NULL); */
+ }
+ 
+ // Allows a controller thread to pause execution of newly created
+@@ -2276,14 +2276,15 @@
+     // We don't protect writing to owner_ here, as it's the caller's
+     // responsibility to ensure that the current thread holds the
+     // mutex when this is called.
+-    owner_ = 0;
++    owner_.p = 0;
++    owner_.x = 0;
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&mutex_));
+   }
+ 
+   // Does nothing if the current thread holds the mutex. Otherwise, crashes
+   // with high probability.
+   void AssertHeld() const {
+-    GTEST_CHECK_(owner_ == pthread_self())
++    GTEST_CHECK_(owner_.p == pthread_self().p)
+         << "The current thread is not holding the mutex @" << this;
+   }
+ 
+@@ -2311,7 +2312,8 @@
+  public:
+   Mutex() {
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&mutex_, NULL));
+-    owner_ = 0;
++    owner_.p = 0;
++    owner_.x = 0;
+   }
+   ~Mutex() {
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&mutex_));
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gtest/tmp/gtest-1.6.0/include/gtest/internal/gtest-port.h gtest-1.6.0/include/gtest/internal/gtest-port.h
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gtest/tmp/gtest-1.6.0/include/gtest/internal/gtest-port.h	2011-04-15 14:49:10.000000000 -0500
++++ gtest-1.6.0/include/gtest/internal/gtest-port.h	2013-05-08 22:35:12.283462700 -0500
+@@ -1073,7 +1073,7 @@
+     0,                  // 0 seconds.
+     n * 1000L * 1000L,  // And n ms.
+   };
+-  nanosleep(&time, NULL);
++  /* nanosleep(&time, NULL); */
+ }
+ 
+ // Allows a controller thread to pause execution of newly created
+@@ -1214,14 +1214,15 @@
+     // We don't protect writing to owner_ here, as it's the caller's
+     // responsibility to ensure that the current thread holds the
+     // mutex when this is called.
+-    owner_ = 0;
++    owner_.p = 0;
++    owner_.x = 0;
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_unlock(&mutex_));
+   }
+ 
+   // Does nothing if the current thread holds the mutex. Otherwise, crashes
+   // with high probability.
+   void AssertHeld() const {
+-    GTEST_CHECK_(owner_ == pthread_self())
++    GTEST_CHECK_(owner_.p == pthread_self().p)
+         << "The current thread is not holding the mutex @" << this;
+   }
+ 
+@@ -1249,7 +1250,8 @@
+  public:
+   Mutex() {
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_init(&mutex_, NULL));
+-    owner_ = 0;
++    owner_.p = 0;
++    owner_.x = 0;
+   }
+   ~Mutex() {
+     GTEST_CHECK_POSIX_SUCCESS_(pthread_mutex_destroy(&mutex_));
