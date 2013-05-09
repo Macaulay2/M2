@@ -852,7 +852,7 @@ AC_SUBST(BUILTLIBS,)
 #    linbox needs fflas-ffpack and givaro
 #    fflas-ffpack needs givaro and lapack
 #    mpir is used by givaro
-#    mpir and mpfr is used byfplll
+#    mpir and mpfr is used by fplll
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
@@ -868,11 +868,15 @@ BUILD_ALWAYS=" gtest "
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
+BUILD_missing=yes
+BUILTLIBS="-lmissing $BUILTLIBS"
+
 for i in $PROGLIST
 do eval BUILD_$i=yes
 done
-
-BUILD_missing=yes
+dnl make some programs optional:
+BUILD_lrslib=no
+BUILD_cddplus=no
 
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
