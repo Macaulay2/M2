@@ -109,7 +109,7 @@ INCLUDEFILES ?=
 	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s --strip-program=@STRIP@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib

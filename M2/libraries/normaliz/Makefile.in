@@ -1,6 +1,7 @@
 # license for normaliz: GPL v3
 
 VERSION = 2.9
+PATCHFILE = @abs_srcdir@/patch-2.9
 # http://www.mathematik.uni-osnabrueck.de/normaliz/Normaliz2.9/Normaliz2.9.zip
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
@@ -33,6 +34,7 @@ CONFIGURECMD = true
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \
+		RANLIB="@RANLIB@" \
 		GMPFLAGS="$(LDFLAGS) -lgmpxx -lgmp"
 PROGRAMS = normaliz
 LICENSEFILES = COPYING
