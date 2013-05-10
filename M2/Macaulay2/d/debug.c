@@ -1,5 +1,4 @@
 #include <gc/gc.h>
-#define __USE_MINGW_ALARM
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>

@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 #ifdef HAVE_STDLIB_H
-#define __USE_MINGW_ALARM
 #include <stdlib.h>
 #endif
 

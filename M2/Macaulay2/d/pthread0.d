@@ -9,7 +9,6 @@ declarations "
       #define _REENTRANT
     #endif
     #ifdef HAVE_WINSOCK2_H
-     #define __USE_MINGW_ALARM
      #include <winsock2.h>
        /* under mingw64 winsock2.h should be included before including windows.h
 	   and pthread.h and gc.h include windows.h

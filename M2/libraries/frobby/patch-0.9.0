@@ -1,74 +1,6 @@
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/main.cpp	2013-05-08 18:18:46.322436000 -0500
-@@ -24,6 +24,7 @@
- 
- #include <ctime>
- #include <cstdlib>
-+#include <unistd.h>
- 
- /** This function runs the Frobby console interface. the ::main
-     function calls this function after having set up DEBUG-specific
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-05-08 18:18:46.327436300 -0500
-@@ -25,6 +25,7 @@
- 
- #include <limits>
- #include <ctime>
-+#include <unistd.h>
- 
- void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
-   VarNames names(variableCount);
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/test/messages/runtest	2013-05-08 18:18:46.331436600 -0500
-@@ -9,7 +9,7 @@
- action="$1"
- shift
- 
--tmpFile="/tmp/errorTestHelperTmp"
-+tmpFile="./errorTestHelperTmp"
- echo "$1" > $tmpFile
- shift
- 
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-05-08 18:18:46.339437000 -0500
-@@ -3,9 +3,9 @@
- frobby=../../bin/frobby
- testhelper=../testScripts/testhelper
- test="$1"
--tmpFile=/tmp/frobbyEulerRadicalTmp
--tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
--tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
-+tmpFile=./frobbyEulerRadicalTmp
-+tmpFileInverted=./frobbyEulerRadicalInvertedTmp
-+tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
- genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
- stdPivots="popvar rarevar popgcd any random"
- shift
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
-+++ frobby_v0.9.0/test/testScripts/testhelper	2013-05-08 18:18:46.344437300 -0500
-@@ -57,10 +57,10 @@
- 
- origParams="$*" # used for debug output below
- origFrobby="../../bin/frobby"
--origFrobbyOut="/tmp/frobbyTestScriptTemporary_standardOutput"
--origFrobbyErr="/tmp/frobbyTestScriptTemporary_standardError"
--frobbyChangedErr="/tmp/frobbyTestScriptTemporary_standardErrorChanged"
--frobbyChangedInput="/tmp/frobbyTestScriptTemporary_standardInput"
-+origFrobbyOut="./frobbyTestScriptTemporary_standardOutput"
-+origFrobbyErr="./frobbyTestScriptTemporary_standardError"
-+frobbyChangedErr="./frobbyTestScriptTemporary_standardErrorChanged"
-+frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
- 
- frobby="$origFrobby"
- frobbyOut="$origFrobbyOut"
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/Makefile	2013-05-08 18:49:02.859336000 -0500
++++ frobby_v0.9.0/Makefile	2013-05-10 14:30:25.599394200 -0500
 @@ -70,7 +70,7 @@
    BIN_INSTALL_DIR = "/usr/local/bin/"
  endif
@@ -78,9 +10,17 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
           -Wno-uninitialized -Wno-unused-parameter
  program = frobby
  library = libfrobby.a
+@@ -217,6 +217,7 @@
+ 	  $(patsubst $(outdir)main.o,,$(objs))
+ else
+ 	ar crs bin/$(library) $(patsubst $(outdir)main.o,,$(objs))
++	$(RANLIB) bin/$(library)
+ endif
+ 
+ # Compile and output object files.
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp frobby_v0.9.0/src/FrobbyStringStream.cpp
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.cpp	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2013-05-08 18:53:10.169481300 -0500
++++ frobby_v0.9.0/src/FrobbyStringStream.cpp	2013-05-10 11:42:01.840492200 -0500
 @@ -41,6 +41,11 @@
    return *this;
  }
@@ -95,7 +35,7 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
    return *this;
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h frobby_v0.9.0/src/FrobbyStringStream.h
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/FrobbyStringStream.h	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/FrobbyStringStream.h	2013-05-08 18:52:38.841689500 -0500
++++ frobby_v0.9.0/src/FrobbyStringStream.h	2013-05-10 11:42:01.843492400 -0500
 @@ -25,6 +25,7 @@
   used for operations that need to be efficient. */
  class FrobbyStringStream {
@@ -106,7 +46,7 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
    FrobbyStringStream& operator<<(const mpz_class& integer);
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h frobby_v0.9.0/src/Term.h
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/Term.h	2011-09-23 15:09:12.000000000 -0500
-+++ frobby_v0.9.0/src/Term.h	2013-05-08 18:51:37.650189500 -0500
++++ frobby_v0.9.0/src/Term.h	2013-05-10 11:42:01.846492600 -0500
 @@ -95,7 +95,7 @@
      ASSERT(offset < _varCount);
      return _exponents[offset];
@@ -125,3 +65,71 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp
      ASSERT(offset < _varCount);
      return _exponents[offset];
    }
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp frobby_v0.9.0/src/main.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/main.cpp	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/main.cpp	2013-05-10 11:42:01.819491000 -0500
+@@ -24,6 +24,7 @@
+ 
+ #include <ctime>
+ #include <cstdlib>
++#include <unistd.h>
+ 
+ /** This function runs the Frobby console interface. the ::main
+     function calls this function after having set up DEBUG-specific
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp frobby_v0.9.0/src/randomDataGenerators.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/src/randomDataGenerators.cpp	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/src/randomDataGenerators.cpp	2013-05-10 11:42:01.822491200 -0500
+@@ -25,6 +25,7 @@
+ 
+ #include <limits>
+ #include <ctime>
++#include <unistd.h>
+ 
+ void generateLinkedListIdeal(BigIdeal& ideal, size_t variableCount) {
+   VarNames names(variableCount);
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest frobby_v0.9.0/test/messages/runtest
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/messages/runtest	2011-09-23 15:09:12.000000000 -0500
++++ frobby_v0.9.0/test/messages/runtest	2013-05-10 11:42:01.825491400 -0500
+@@ -9,7 +9,7 @@
+ action="$1"
+ shift
+ 
+-tmpFile="/tmp/errorTestHelperTmp"
++tmpFile="./errorTestHelperTmp"
+ echo "$1" > $tmpFile
+ shift
+ 
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test frobby_v0.9.0/test/testScripts/run_euler_test
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/run_euler_test	2011-09-23 15:09:13.000000000 -0500
++++ frobby_v0.9.0/test/testScripts/run_euler_test	2013-05-10 11:42:01.829491600 -0500
+@@ -3,9 +3,9 @@
+ frobby=../../bin/frobby
+ testhelper=../testScripts/testhelper
+ test="$1"
+-tmpFile=/tmp/frobbyEulerRadicalTmp
+-tmpFileInverted=/tmp/frobbyEulerRadicalInvertedTmp
+-tmpFileTransposed=/tmp/frobbyEulerRadicalTransposedTmp
++tmpFile=./frobbyEulerRadicalTmp
++tmpFileInverted=./frobbyEulerRadicalInvertedTmp
++tmpFileTransposed=./frobbyEulerRadicalTransposedTmp
+ genPivots="rarevar popvar maxsupp minsupp any random rarest raremax"
+ stdPivots="popvar rarevar popgcd any random"
+ shift
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper frobby_v0.9.0/test/testScripts/testhelper
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/test/testScripts/testhelper	2011-09-23 15:09:13.000000000 -0500
++++ frobby_v0.9.0/test/testScripts/testhelper	2013-05-10 11:42:01.833491800 -0500
+@@ -57,10 +57,10 @@
+ 
+ origParams="$*" # used for debug output below
+ origFrobby="../../bin/frobby"
+-origFrobbyOut="/tmp/frobbyTestScriptTemporary_standardOutput"
+-origFrobbyErr="/tmp/frobbyTestScriptTemporary_standardError"
+-frobbyChangedErr="/tmp/frobbyTestScriptTemporary_standardErrorChanged"
+-frobbyChangedInput="/tmp/frobbyTestScriptTemporary_standardInput"
++origFrobbyOut="./frobbyTestScriptTemporary_standardOutput"
++origFrobbyErr="./frobbyTestScriptTemporary_standardError"
++frobbyChangedErr="./frobbyTestScriptTemporary_standardErrorChanged"
++frobbyChangedInput="./frobbyTestScriptTemporary_standardInput"
+ 
+ frobby="$origFrobby"
+ frobbyOut="$origFrobbyOut"

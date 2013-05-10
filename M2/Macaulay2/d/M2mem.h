@@ -1,7 +1,6 @@
 #ifndef M2mem_included
 #define M2mem_included
 
-#define __USE_MINGW_ALARM
 #include <stdlib.h>
 #include <scc-core.h>
 

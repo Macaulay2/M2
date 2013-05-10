@@ -1,6 +1,5 @@
 #include <string.h>
 #include <stdio.h>
-#define __USE_MINGW_ALARM
 #include <stdlib.h>
 #include "M2mem.h"
 

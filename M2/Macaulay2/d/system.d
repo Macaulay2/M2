@@ -34,7 +34,6 @@ declarations "
  #define _GNU_SOURCE
 #endif
 #ifdef HAVE_UNISTD_H
- #define __USE_MINGW_ALARM
  #include <unistd.h>
 #endif
 #ifdef HAVE_MATH_H

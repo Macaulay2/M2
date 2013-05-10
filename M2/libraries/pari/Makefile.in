@@ -72,6 +72,10 @@ CONFIGURECMD += | tee pari-config.log
 
 include ../Makefile.library
 
+# get the right binary utilities by putting them on the path, since no
+# configure option is offered for specifying them:
+CONFIGENV += PATH="/usr/@host@/bin:$(PATH)"
+
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1

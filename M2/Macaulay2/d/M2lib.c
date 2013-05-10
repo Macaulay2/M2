@@ -1,7 +1,5 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
-#define __USE_MINGW_ALARM
-
 #include "interp-exports.h"
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */

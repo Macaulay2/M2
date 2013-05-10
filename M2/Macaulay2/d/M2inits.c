@@ -1,7 +1,6 @@
 /* this file contains all initializations needed to get going, even if Macaulay2_main() is not called at all */
 
 #include <assert.h>
-#define __USE_MINGW_ALARM
 #include <stdlib.h>
 #include <stdio.h>
 #include <gmp.h>

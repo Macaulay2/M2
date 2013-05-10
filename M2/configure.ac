@@ -412,12 +412,11 @@ AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,h_errlist],,,[
 	#include <errno.h>
 	])
 AC_CHECK_DECLS([__environ,_environ,environ],,,unistd.h)
-AC_CHECK_DECLS(SIGPIPE,,
-	[ CPPFLAGS="$CPPFLAGS -D_POSIX" ; 
-	  unset ac_cv_have_decl_SIGPIPE ; dnl clear the cache so we get a second chance
-	  AC_CHECK_DECLS(SIGPIPE,,
-	  	[AC_MSG_ERROR([SIGPIPE not defined in signal.h])],[#include <signal.h>]) ],
-	[#include <signal.h>])
+
+if test $host_os = mingw32
+then CPPFLAGS="$CPPFLAGS -D_POSIX" # arrange for SIGPIPE to get defined
+     CPPFLAGS="$CPPFLAGS -D__USE_MINGW_ALARM" # for SIGALRM to get defined
+fi
 
 AC_SUBST(__INTEL_COMPILER,no)
 AC_CHECK_DECL(__INTEL_COMPILER,__INTEL_COMPILER=yes)

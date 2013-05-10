@@ -1,3 +1,6 @@
+
+#					frobby
+
 # license for frobby: GPL v2 or later
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
@@ -15,11 +18,12 @@ URL = http://www.math.uiuc.edu/Macaulay2/Extra
 # URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
-	CFLAGS="$(CFLAGS)" \
-	CXX="$(CXX)" \
-	LDFLAGS="$(LDFLAGS)" \
-	CPPFLAGS="$(CPPFLAGS)"
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
+	CFLAGS="$(CFLAGS)"				\
+	CXX="$(CXX)"					\
+	LDFLAGS="$(LDFLAGS)"				\
+	CPPFLAGS="$(CPPFLAGS)"				\
+	RANLIB="@RANLIB@"
 CHECKOPTIONS = $(BUILDOPTIONS)
 
 # this ought to prevent trouble with carriage returns
