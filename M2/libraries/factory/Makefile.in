@@ -76,6 +76,7 @@ uninstall clean ::
 post-install: $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed
 $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed : $(LIBRARIESDIR)/lib/libcfmem.a
 	ar -d "$^" newdelete.o
+	@RANLIB@ "$^"
 	touch "$@"
 
 # Local Variables:
