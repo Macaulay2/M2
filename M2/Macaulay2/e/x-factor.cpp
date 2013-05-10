@@ -12,6 +12,7 @@ using std::endl;
 
 #define Matrix MaTrIx
 #include <factor.h>             // from Messollen's libfac
+#undef INT64
 #undef Matrix
 #undef ASSERT
 #include <NTL/ZZ.h>

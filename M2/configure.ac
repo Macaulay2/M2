@@ -1527,17 +1527,6 @@ M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
 
-
-AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
-AC_LANG(C)
-SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wfatal-errors"
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    M2_CPPFLAGS="$M2_CPPFLAGS -Wfatal-errors"
-    AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
-    AC_MSG_RESULT(no))
-CFLAGS=$SAVE
-
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
