@@ -80,6 +80,7 @@ ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
 pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
+version-tmp.cc: pari-c.h
 ifeq "@__INTEL_COMPILER@" "no"
 pari-c.o: CFLAGS += -Wno-unused
 endif
@@ -172,7 +173,9 @@ M2.o : ../../include/M2/config.h
 
 all: M2inits1.o
 all: libM2inits2.a
-libM2inits2.a: M2inits2.o ; ar ru $@ $^
+libM2inits2.a: M2inits2.o
+	:; @AR@ ru $@ $^
+	:; @RANLIB@ $@
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'

@@ -153,7 +153,10 @@ endif
 ifeq (@XML@,yes)
 M2_LIBRARIES += -lxml2
 endif
-M2_LIBRARIES += -lm -lc
+M2_LIBRARIES += -lm
+ifneq (@host_os@,mingw32)
+M2_LIBRARIES += -lc
+endif
 ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
 M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else

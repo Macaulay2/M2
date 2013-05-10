@@ -30,6 +30,12 @@
 #   /usr/x86_64-w64-mingw32/sys-root/mingw/lib/txtmode.o
 #   and see the use of _setmode in M2lib.c
 
+# The compiler needs to know whether a function is coming from a dynamic
+# library, in which case it is declared with "__attribute__ ((dllimport))" and
+# the name is prefixed with __imp__ instead of with _ .  The variable
+# LIBXML_STATIC is used by the libxml include files to decide whether to add
+# the attribute.
+
 export CC =
 
 # get the libraries needed for running the programs
@@ -38,7 +44,7 @@ export PATH := /usr/x86_64-w64-mingw32/sys-root/mingw/bin:$(PATH)
 
 DIRECTORY = mingw
 CONFIGOPTIONS += --host=x86_64-w64-mingw32
-CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2"
+CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/local/x86_64-w64-mingw32/include/libxml2 -DLIBXML_STATIC"
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
 CONFIGOPTIONS += --with-issue=mingw64
 
