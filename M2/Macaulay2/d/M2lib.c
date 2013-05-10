@@ -1,5 +1,7 @@
 /*		Copyright 1994 by Daniel R. Grayson		*/
 
+#define __USE_MINGW_ALARM
+
 #include "interp-exports.h"
 
 /* defining GDBM_STATIC makes the cygwin version work, and is irrelevant for the other versions */
@@ -86,10 +88,14 @@ void system_handleInterruptsSetup(M2_bool handleInterrupts) {
      }
 
 static void unblock(int sig) {
+ #ifdef HAVE_SIGPROCMASK
   sigset_t s;
   sigemptyset(&s);
   sigaddset(&s,sig);
   sigprocmask(SIG_UNBLOCK,&s,NULL);
+ #else
+  signal(sig,SIG_DFL);
+ #endif
 }
 
 static void alarm_handler(int sig) {
@@ -148,7 +154,7 @@ void stack_trace() {
 	  setjmp(stack_trace_jump)
 	 #endif
 	 ) {
-#	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
+#	  define D fprintf(stderr,"level %d -- return addr: 0x%p -- frame: 0x%p\n",i,__builtin_return_address(i),__builtin_frame_address(i))
 #	  define i 0
 	  D;
 #	  undef i
@@ -523,7 +529,9 @@ extern char *GC_stackbottom;
 extern void arginits(int, const char **);
 extern bool gotArg(const char *arg, const char ** argv);
 
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
+#endif
 
 static void call_shared_library() {
 #if 0
@@ -547,7 +555,7 @@ static void call_shared_library() {
 
 void* testFunc(void* q )
 {
-  printf("testfunc %lu\n",(unsigned long)q);
+  printf("testfunc %p\n",q);
   return NULL;
 }
 
@@ -637,7 +645,7 @@ char **argv;
      Py_Initialize();
 #endif
 
-#ifdef HAVE_PERSONALITY && !PROFILING
+#if defined HAVE_PERSONALITY && !PROFILING
      if (!gotArg("--no-personality", (const char **)argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
@@ -672,7 +680,8 @@ char **argv;
 
 #ifdef HAVE__SETMODE
      {
-     extern void _setmode(int, int);
+	  /* extern void _setmode(int, int); */
+	  /* extern int  _setmode(int, int); */
      _setmode(STDIN ,_O_BINARY);
      _setmode(STDOUT,_O_BINARY);
      _setmode(STDERR,_O_BINARY);

@@ -50,7 +50,7 @@ rebuild-world1: arch-chk distclean-or-rm-rf
 distclean-or-rm-rf:
 	$(MAKE) -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
 rebuild-world2:make-configure
-make-configure:; $(MAKE) -C ../..
+make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
