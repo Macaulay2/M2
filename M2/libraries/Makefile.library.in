@@ -82,7 +82,9 @@ show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
-uncompile:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile: uncompile-basic uncompile-extra
+uncompile-basic:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile-extra:
 recompile: uncompile compile
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install

@@ -26,11 +26,13 @@ DEB_LDFLAGS =
 endif
 
 CONFIGUREOPTIONS =								\
-	PREFIX=@pre_libm2dir@						\
+	WIZARD=off \
+	PREFIX=@pre_libm2dir@							\
 	LIBDIR=@pre_librariesdir@						\
 	INCLUDEDIR=@pre_libm2dir@/include					\
-	DOCDIR=@pre_libm2dir@/share/doc					\
+	DOCDIR=@pre_libm2dir@/share/doc						\
 	NTL_GMP_LIP=on NTL_STD_CXX=on NTL_NO_INIT_TRANS=on NTL_CXX_ONLY=on	\
+	RANLIB="@RANLIB@"							\
 	CC="@CXX@"								\
 	CXX="@CXX@"								\
 	CFLAGS="$(CFLAGS) $(DEB_CFLAGS)"					\
@@ -70,6 +72,8 @@ INSTALLOPTIONS =				\
 INSTALLCMD = $(MAKE) $(INSTALLOPTIONS) install
 
 include ../Makefile.library
+
+uncompile-extra:; @ cd $(BUILDDIR) && $(MAKE) clobber
 check: check-once
 check-once: .installed-$(VERSION)
 	$(MAKE) -C $(BUILDDIR) check
