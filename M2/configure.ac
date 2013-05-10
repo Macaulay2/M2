@@ -68,7 +68,6 @@ AC_CHECK_PROGS(WGET,wget,false)
 AC_CHECK_PROGS(CURL,curl,false)
 AC_CHECK_PROGS(ETAGS,etags,false)
 AC_CHECK_PROGS(LINTIAN,lintian,false)
-AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(OTOOL,otool,false)
 AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
 AC_CHECK_PROGS(RPMLINT,rpmlint,false)
@@ -208,6 +207,7 @@ AC_CHECK_TOOL(LD,ld,false)
 AC_CHECK_TOOL(OBJDUMP,objdump,false)
 AC_CHECK_TOOL(OBJCOPY,objcopy,false)
 AC_CHECK_TOOL(STRIP,strip,false)
+AC_CHECK_TOOL(LDD,ldd,false)
 
 AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
@@ -395,7 +395,7 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
 
