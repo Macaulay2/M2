@@ -1,6 +1,7 @@
 #ifndef _mutex_h_
 #define _mutex_h_
 #include <pthread.h>
+#undef ERROR			/* undo mingw64 damage */
 #include <../include/M2/config.h>
 #ifdef __cplusplus
 extern "C" {

@@ -397,6 +397,8 @@ AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality])
 
+AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
+
 AC_FUNC_ACCEPT_ARGTYPES()
 AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
 
