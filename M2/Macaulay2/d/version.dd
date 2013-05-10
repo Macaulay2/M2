@@ -1,14 +1,15 @@
 --		Copyright 2010 by Daniel R. Grayson 
 
+use M2;
 use hashtables;
 
 declarations "
-   #include <M2/config.h>
    #ifdef HAVE_WINSOCK2_H
     #include <winsock2.h>
       /* under mingw64 winsock2.h should be included before including windows.h
 	  pthread.h includes windows.h
 	   therefore winsock2.h should be included before pthread */
+    #undef ERROR
    #endif
    #if USE_MYSQL
      #include <mysql/mysql.h>

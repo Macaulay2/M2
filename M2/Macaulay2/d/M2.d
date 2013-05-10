@@ -1,4 +1,7 @@
 -- Copyright 2010 by Daniel R. Grayson
+declarations "
+#include <M2/config.h>
+";
 use arithmetic;
 export string := array(char);
 export arrayint := array(int);
@@ -146,8 +149,6 @@ export args := array(string)();
 export gbTrace := 0;
 export notify := false;
 export readonlyfiles := false;				    -- see stdio.d
-
-declarations "#include <M2/config.h>";
 export USE_THREADS ::= Ccode(bool,"
      #ifndef PACKAGE_NAME
        #error \"M2/config.h not included\"

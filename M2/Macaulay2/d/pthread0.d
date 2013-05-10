@@ -1,3 +1,4 @@
+use M2;
 declarations "
 
     /* gc doc tells us to include pthread.h before gc.h */
@@ -7,13 +8,12 @@ declarations "
     #ifndef _REENTRANT
       #define _REENTRANT
     #endif
-     /* to get HAVE_WINSOCK2_H, etc., we include M2/config.h: */
-    #include <M2/config.h>
     #ifdef HAVE_WINSOCK2_H
      #include <winsock2.h>
        /* under mingw64 winsock2.h should be included before including windows.h
 	   and pthread.h and gc.h include windows.h
 	    therefore winsock2.h should be included before pthread.h and gc.h */
+     #undef ERROR
     #endif
     #ifdef HAVE_PTHREAD_H
      #include <pthread.h>

@@ -20,6 +20,7 @@ header "
     /* under mingw64 winsock2.h should be included before including windows.h
 	pthread.h includes windows.h
 	 therefore winsock2.h should be included before pthread */
+  #undef ERROR
  #endif
  #include <pthread.h>
 #endif
@@ -33,6 +34,7 @@ declarations "
  #define _GNU_SOURCE
 #endif
 #ifdef HAVE_UNISTD_H
+ #define __USE_MINGW_ALARM
  #include <unistd.h>
 #endif
 #ifdef HAVE_MATH_H

@@ -408,7 +408,7 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink openlistener])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
@@ -1477,14 +1477,23 @@ AC_LANG(C)
 AC_MSG_CHECKING([whether getaddrinfo can handle numeric service (port) numbers])
 AC_RUN_IFELSE([AC_LANG_SOURCE([
     #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netdb.h>
-    main() { struct addrinfo *addr; return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr); }
+    #ifdef HAVE_SYS_SOCKET_H
+     #include <sys/socket.h>
+    #endif
+    #ifdef HAVE_WINSOCK2_H
+     #include <winsock2.h>
+    #endif
+    #ifdef HAVE_NETDB_H
+     #include <netdb.h>
+    #endif
+    main() { 
+       struct addrinfo *addr; 
+       return 0 != getaddrinfo("1.2.3.4", "80", 0, &addr) ? 99 : 0 ;
+       }
     ])],
-    GETADDRINFO_WORKS=1;AC_MSG_RESULT(yes),
-    GETADDRINFO_WORKS=0;AC_MSG_RESULT(no),
-    AC_MSG_RESULT([yes (cross-compiling, not tested)]))
-AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,$GETADDRINFO_WORKS,[whether getaddrinfo can handle numeric service (port) numbers])
+    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT(yes)],
+    [if test $? = 99 ; then AC_MSG_RESULT(no) ; else AC_MSG_ERROR([test file failed to compile]) ; fi],
+    [AC_DEFINE_UNQUOTED(GETADDRINFO_WORKS,1,[whether getaddrinfo can handle numeric service (port) numbers])] [AC_MSG_RESULT([probably (cross-compiling, not tested)])])
 
 AC_SUBST(BUILDLIST,)
 for i in $LIBLIST $PROGLIST

@@ -542,7 +542,6 @@ unstack(e:Expr):Expr := (
      else WrongArg("a net"));
 setupfun("unstack",unstack);
 
-header "#include <unistd.h>";
 alarm(e:Expr):Expr := (
      when e is i:ZZcell do 
      if isInt(i)
@@ -1152,7 +1151,13 @@ echoOff(e:Expr):Expr := (
      );
 setupfun("echoOff",echoOff);
 header "#include <signal.h>";
-kill(pid:int,sig:int) ::= Ccode(int,"kill(",pid,",",sig,")");
+kill(pid:int,sig:int) ::= Ccode(int,"
+     #ifdef HAVE_KILL
+      kill(",pid,",",sig,")
+     #else
+      -1
+     #endif
+     ");
 kill(e:Expr):Expr := (
      when e 
      is pid:ZZcell do if !isInt(pid) then WrongArgSmallInteger() else (

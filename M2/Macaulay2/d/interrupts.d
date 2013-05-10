@@ -24,13 +24,6 @@ export determineExceptionFlag():void := (
      store(exceptionFlag, test(interruptedFlag) || steppingFlag || alarmedFlag);
      setinterruptflag(int(load(interruptedFlag)));
      );
-header "
-#ifdef HAVE_UNISTD_H
- /* under mingw64 io.h, included by unistd.h, optionally declares alarm() */
- #define __USE_MINGW_ALARM
- #include <unistd.h>
-#endif
-";
 export alarm(x:uint) ::= Ccode(int,"
      #ifdef HAVE_ALARM
       alarm(",x,")

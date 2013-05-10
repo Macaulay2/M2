@@ -239,6 +239,10 @@ int system_strnumcmp(M2_string s,M2_string t) {
      return ret;
 }
 
+#ifndef PACKAGE_NAME
+#error "M2/config.h not included"
+#endif
+
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
      int n = pids->len;
@@ -248,8 +252,12 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
 	  M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
 	  z->len = n;
 	  for (i=0; i<n; i++) {
+	       #ifdef HAVE_WAIT4
 	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
 	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
+	       #else
+	       z->array[i] = -1;
+	       #endif
 	  }
 	  return z;
      }
@@ -302,7 +310,13 @@ M2_string system_readlink(M2_string filename) {
   M2_string s = NULL;
   while (TRUE) {
     char buf[size];
-    int r = readlink(fn,buf,sizeof buf);
+    int r = 
+      #ifdef HAVE_READLINK
+      readlink(fn,buf,sizeof buf)
+      #else
+      -1
+      #endif
+      ;
     if (r == -1) {
       s = M2_tostring("");
       break;
@@ -326,17 +340,27 @@ int system_chdir(M2_string filename) {
 
 static bool isDirectory(const char *cname) {
   struct stat buf;
-  int r = lstat(cname,&buf);
+  int r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+      (cname,&buf);
   return r != ERROR && S_ISDIR(buf.st_mode);
 }
 
 M2_string system_realpath(M2_string filename) {
+ #ifdef HAVE_REALPATH
   char *fn = M2_tocharstar(filename);
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
   if (isDirectory(r)) strcat(r,"/");
   GC_FREE(fn);
   return r == NULL ? NULL : M2_tostring(buf);
+ #else
+  return filename;
+ #endif
 }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth) {
@@ -515,7 +539,13 @@ int system_isDirectory(M2_string name) {
 int system_isRegularFile(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
-  int r = lstat(cname,&buf);
+  int r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+    (cname,&buf);
   GC_FREE(cname);
   return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
@@ -565,7 +595,13 @@ int system_fileTime(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
   int r;
-  r = lstat(cname,&buf);
+  r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+      (cname,&buf);
   GC_FREE(cname);
   if (r == ERROR) return -1;
   return buf.st_mtime;
@@ -583,7 +619,13 @@ int system_setFileTime(M2_string name, int modtime) {
 
 int system_mkdir(M2_string name) {
   char *cname = M2_tocharstar(name);
-  int r = mkdir(cname,0777);
+  int r = 
+    #ifdef __MINGW32__
+    mkdir(cname)
+    #else
+    mkdir(cname,0777)
+    #endif
+    ;
   GC_FREE(cname);
   return r;
 }
@@ -605,7 +647,13 @@ int system_unlink(M2_string name) {
 int system_link(M2_string oldfilename,M2_string newfilename) {
   char *old = M2_tocharstar(oldfilename);
   char *new = M2_tocharstar(newfilename);
-  int r = link(old,new);
+  int r = 
+    #ifdef HAVE_LINK
+    link(old,new)
+    #else
+    -1
+    #endif
+    ;
   GC_FREE(old);
   GC_FREE(new);
   return r;
@@ -614,7 +662,13 @@ int system_link(M2_string oldfilename,M2_string newfilename) {
 int system_symlink(M2_string oldfilename,M2_string newfilename) {
   char *old = M2_tocharstar(oldfilename);
   char *new = M2_tocharstar(newfilename);
-  int r = symlink(old,new);
+  int r = 
+    #ifdef HAVE_SYMLINK
+    symlink(old,new)
+    #else
+    -1
+    #endif
+    ;
   GC_FREE(old);
   GC_FREE(new);
   return r;
@@ -863,7 +917,6 @@ int system_openlistener(M2_string interface,M2_string serv) {
      return sd;
      }
 
-extern int errno;
 #if defined(HAVE_DECL_SYS_NERR) && !HAVE_DECL_SYS_NERR
 extern int sys_nerr;
 #endif

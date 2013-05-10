@@ -79,7 +79,7 @@ M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow
+pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
 ifeq "@__INTEL_COMPILER@" "no"
 pari-c.o: CFLAGS += -Wno-unused
 endif

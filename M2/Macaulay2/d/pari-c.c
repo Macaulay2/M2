@@ -214,7 +214,7 @@ char *get_pari_version() {
     It's disappointing that the version number of libpari.so is not available at run time.
   */
   static char buf[20];
-  sprintf(buf,\"%d.%d.%d\",
+  sprintf(buf,"%d.%d.%d",
 	  0xff & (PARI_VERSION_CODE >> 16),
 	  0xff & (PARI_VERSION_CODE >> 8),
 	  0xff & (PARI_VERSION_CODE >> 0)

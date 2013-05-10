@@ -153,7 +153,12 @@ extern char *gnu_get_libc_version();
 
 #include "../dumpdata/dumpdata.h"
 
-extern sigjmp_buf interrupt_jump; /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
+ /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
+ #ifdef HAVE_SIGLONGJMP
+  extern sigjmp_buf interrupt_jump;
+ #else
+  extern jmp_buf interrupt_jump;
+ #endif
 extern bool interrupt_jump_set;
 extern int reading_from_readline;
 
