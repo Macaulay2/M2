@@ -12,7 +12,7 @@
 #include "types.h"
 #include "debug.h"
 
-#if HAVE_ALLOCA_H
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #else
 #ifdef __GNUC__
@@ -27,17 +27,17 @@
 #error PROFILING not defined
 #endif
 
-#if HAVE_LINUX_PERSONALITY_H
+#ifdef HAVE_LINUX_PERSONALITY_H
 #include <linux/personality.h>
 #undef personality
 #endif
 
-#if HAVE_DECL_ADDR_NO_RANDOMIZE
+#ifdef HAVE_DECL_ADDR_NO_RANDOMIZE
 #else
 #define ADDR_NO_RANDOMIZE 0x0040000
 #endif
 
-#if HAVE_PERSONALITY
+#ifdef HAVE_PERSONALITY
 extern long personality(unsigned long persona);
 #endif
 
@@ -637,7 +637,7 @@ char **argv;
      Py_Initialize();
 #endif
 
-#if HAVE_PERSONALITY && !PROFILING
+#ifdef HAVE_PERSONALITY && !PROFILING
      if (!gotArg("--no-personality", (const char **)argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);

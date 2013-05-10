@@ -22,20 +22,9 @@ AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 
 AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
 m4_include(config/ax_prog_cc_for_build.m4)
+m4_include(config/ax_func_accept_argtypes.m4)
 
-define(TO_UPPER,[translit($1, [a-z], [A-Z])])
-dnl we should be able to replace IS_DECLARED with AC_CHECK_DECLS:
-AC_DEFUN(IS_DECLARED,[
-  AC_CACHE_CHECK([whether $2 is declared],[m2_cv_$2_is_declared],
-  	[AC_LANG(C)]
-	[AC_COMPILE_IFELSE([AC_LANG_SOURCE([$3
-	    int main () { $1 x = $2 ; } ])],
-	 m2_cv_$2_is_declared=yes,
-	 m2_cv_$2_is_declared=no)
-	])
-  test $m2_cv_$2_is_declared = no; val=$?
-  AC_DEFINE_UNQUOTED(TO_UPPER($2_IS_DECLARED),$val,[whether $2 is declared in errno.h or stdio.h])
-])
+dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
 echo "relevant environment variable values, if any:"
 for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
@@ -408,10 +397,17 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
-AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink openlistener])
+AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl])
+
+AC_FUNC_ACCEPT_ARGTYPES()
+AC_DEFINE_UNQUOTED(SOCKLEN_T,[`echo "$ac_cv_func_accept_arg3" | sed 's/ \*$//'`],[socket length type used by accept()])
+
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
-AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
+AC_CHECK_DECLS([sys_errlist,sys_nerr,herror,h_errlist],,,[
+	#ifdef HAVE_STDLIB_H
+	 #include <stdlib.h>
+	#endif
 	#include <stdio.h>
 	#include <errno.h>
 	])
@@ -1545,13 +1541,6 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
-
-IS_DECLARED(char **,sys_errlist, [
-      #include <stdio.h>
-      #include <errno.h>])
-IS_DECLARED(char **,h_errlist, [
-      #include <stdio.h>
-      #include <errno.h>])
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 

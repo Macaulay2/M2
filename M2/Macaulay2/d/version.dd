@@ -174,14 +174,14 @@ setupconst("version", Expr(toHashTable(Sequence(
    "libfac version" => Ccode(constcharstar,"libfac_version"),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
-	 #if HAVE_PARI
+	 #ifdef HAVE_PARI
 	   get_pari_version()
 	 #else
 	   \"not present\"
 	 #endif
 	 "),
    "flint version" => Ccode(constcharstar,"
-	 #if HAVE_FLINT
+	 #ifdef HAVE_FLINT
 	   \"2.2\" /* just a guess! */
 	 #else
 	   \"not present\"
