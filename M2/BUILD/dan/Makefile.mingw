@@ -48,7 +48,13 @@ CONFIGOPTIONS += CPPFLAGS="-I$(HOME)/local/x86_64-w64-mingw32/include -I$(HOME)/
 CONFIGOPTIONS +=  LDFLAGS=-L$(HOME)/local/x86_64-w64-mingw32/lib
 CONFIGOPTIONS += --with-issue=mingw64
 
+ifeq ($(DEBUG),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-debug --disable-optimize
+   DIRECTORY := $(DIRECTORY).debug
+endif
+
 include Makefile.include
 # Local Variables:
-# compile-command: "time make -f Makefile.mingw "
+# compile-command: "time make -f Makefile.mingw DEBUG=no "
 # End:

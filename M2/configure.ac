@@ -231,16 +231,16 @@ fi
 [
  CFLAGS=` echo $CFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
  CXXFLAGS=` echo $CXXFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
- FFLAGS=` echo $FFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
+ FCFLAGS=` echo $FCFLAGS | sed -e 's/-O[0-9]//g' -e 's/   */ /g' -e 's/^  *//' -e 's/ * $//' `
 ]
 
 if test "$OPTIMIZE" = yes
 then CFLAGS="$CFLAGS -O2"
      CXXFLAGS="$CXXFLAGS -O2"
-     FFLAGS="$FFLAGS -O2"
+     FCFLAGS="$FCFLAGS -O2"
 else CFLAGS="$CFLAGS -O0"
      CXXFLAGS="$CXXFLAGS -O0"
-     FFLAGS="$FFLAGS -O0"
+     FCFLAGS="$FCFLAGS -O0"
 fi
 
 AC_SUBST(GCCVERSION,)
@@ -531,8 +531,8 @@ AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,in
 AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
-test "$DEBUG" = "yes" && STRIP=no
-test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
+test "$DEBUG" = "yes" && ENABLE_STRIP=no
+test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
 
 AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
 "

@@ -68,7 +68,11 @@ STRIPFILES    ?=
 ifeq ($(STRIPFILES),)
   STRIPCMD = :
 else
+ ifeq (@ENABLE_STRIP@,yes)
   STRIPCMD = @STRIP@ $(STRIPFILES)
+ else
+  STRIPCMD = :
+ endif
 endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
