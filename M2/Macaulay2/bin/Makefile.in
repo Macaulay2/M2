@@ -102,7 +102,7 @@ else
 ifeq (@OS@,MacOS)
 # we know about it
 else
-$(warning no static linking method configured for this OS or linker)
+$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE))
 endif
 endif
 endif
@@ -186,6 +186,8 @@ endif
 ifneq (@OTOOL@,)
 	- @OTOOL@ -L $@.tmp
 endif
+
+ifneq "@DEBUG@" "yes"
 ifneq "@OBJCOPY@" ""
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
@@ -201,6 +203,8 @@ endif
 endif
 endif
 endif
+endif
+
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
 ifneq (@OBJDUMP@,)

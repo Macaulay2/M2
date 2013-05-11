@@ -40,20 +40,28 @@ static void closepari() __attribute__ ((destructor));
 
 static int self_initialized;
 
+static int pari_disabled;
+
 static void initpari() {
+  if (pari_disabled) return;
   static int firsttime = TRUE;
+  if (firsttime) {
+    firsttime = FALSE;
+    if ( sizeof(*gen_0) != sizeof(mp_limb_t) ) {
+      /* our routine for direct copying does this one word at a time */
+      pari_disabled = TRUE;
+      return;
+    }
+  }
   if (gen_0 == NULL /* && FALSE /-* groan */ ) {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
     self_initialized = TRUE;
-  }
-  if (firsttime) {
-    firsttime = FALSE;
-    assert( sizeof(*gen_0) == sizeof(mp_limb_t) ); /* our routine for direct copying does this one word at a time */
   }
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
 static void closepari() {
+  if (pari_disabled) return;
   if (self_initialized) {
     pari_close_opts(INIT_DFTm);
     gen_0 = NULL;
@@ -71,6 +79,7 @@ static void closepari() {
 #endif
 
 static GEN toPari(mpz_t x) {
+  if (pari_disabled) return NULL;
   int n = x->_mp_size, i;
   long m;
   long sign = 1;
@@ -85,6 +94,7 @@ static GEN toPari(mpz_t x) {
 }
 
 static void INTtoGmp(mpz_t z, GEN y) {
+  if (pari_disabled) return;
   int i, m = lg(y), n = m-2;
   mpz_init2(z,8 * sizeof(*y) * n);
   for (i=0; i<n; i++) z->_mp_d[i] = (mp_limb_t)gel(y,2+fix(n,i));
@@ -93,6 +103,7 @@ static void INTtoGmp(mpz_t z, GEN y) {
 
 
 static mpz_col *COLtoGmp(GEN y) {
+  if (pari_disabled) return NULL;
   int i, m = lg(y), n = m-1;
   mpz_col *z = (mpz_col *)getmem(varsizeof(z,n));
   z->n = n;
@@ -104,6 +115,7 @@ static mpz_col *COLtoGmp(GEN y) {
 }
 
 static mpz_mat *MATtoGmp(GEN y) {
+  if (pari_disabled) return NULL;
   int i, m = lg(y), n = m-1;
   mpz_mat *z = (mpz_mat *)getmem(varsizeof(z,n));
   z->n = n;
@@ -114,6 +126,7 @@ static mpz_mat *MATtoGmp(GEN y) {
 mpz_mat *pari_factorint(mpz_t x, long flags) {
   mpz_mat *f;
   {
+    if (pari_disabled) return NULL;
     INIT;
     pari_sp save_stack_pointer = avma;
     f = MATtoGmp(factorint(toPari(x),flags));
@@ -123,9 +136,10 @@ mpz_mat *pari_factorint(mpz_t x, long flags) {
   return f;
 }
 
-Bool pari_isprime(mpz_t x) {
+int pari_isprime(mpz_t x) {
   long f;
   {
+    if (pari_disabled) return -1;
     INIT;
     pari_sp save_stack_pointer = avma;
     f = isprime(toPari(x));
@@ -135,9 +149,10 @@ Bool pari_isprime(mpz_t x) {
   return f != 0;
 }
 
-Bool pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
+int pari_ispseudoprime(mpz_t x, long flags) { /* used in pari.d */
   long f;
   {
+    if (pari_disabled) return -1;
     INIT;
     pari_sp save_stack_pointer = avma;
     f = ispseudoprime(toPari(x), flags);
@@ -185,6 +200,7 @@ static void testnum1(mpz_t x) {		/* to be called from the debugger */
 }
 
 void pari_test() {
+  if (pari_disabled) return;
   INIT;
 
   mpz_t x;
@@ -213,11 +229,12 @@ char *get_pari_version() {
     /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
     It's disappointing that the version number of libpari.so is not available at run time.
   */
-  static char buf[20];
-  sprintf(buf,"%d.%d.%d",
+  static char buf[40];
+  sprintf(buf,"%d.%d.%d%s",
 	  0xff & (PARI_VERSION_CODE >> 16),
 	  0xff & (PARI_VERSION_CODE >> 8),
-	  0xff & (PARI_VERSION_CODE >> 0)
+	  0xff & (PARI_VERSION_CODE >> 0),
+	  pari_disabled ? " (disabled)" : ""
 	  );
   return buf;
 }
