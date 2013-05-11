@@ -1,6 +1,6 @@
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp gfan0.5/app_minkowski.cpp
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp	2011-01-25 09:33:15.000000000 -0600
-+++ gfan0.5/app_minkowski.cpp	2013-05-11 00:00:20.352222200 -0500
++++ gfan0.5/app_minkowski.cpp	2013-05-11 00:11:37.016925200 -0500
 @@ -160,7 +160,7 @@
  	    //log0 fprintf(Stderr,"4");
  	    f.insert(c);
@@ -12,11 +12,12 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan
  	log1 fprintf(Stderr,"Resolving symmetries.\n");
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/application.cpp gfan0.5/application.cpp
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/application.cpp	2011-01-25 09:33:16.000000000 -0600
-+++ gfan0.5/application.cpp	2013-05-11 00:07:28.508711300 -0500
-@@ -21,13 +21,9 @@
++++ gfan0.5/application.cpp	2013-05-11 00:32:32.435731000 -0500
+@@ -20,14 +20,9 @@
+ {
    // extracts filename from argv[0]
    int l=strlen(p);
-   assert(l>0);
+-  assert(l>0);
 -  do
 -    {
 -      l--;
@@ -24,22 +25,9 @@ diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan
 -  while(p[l]!=0 && p[l]!='/');
 -
 -  return p+l+1;
-+  if (l>4 && 0 == strcmp(p+l-4,".exe")) p[l=l-4] = 0; // chop off any trailing ".exe", present under mingw64
++  if (l>4 && 0 == strcmp(p+l-4,".exe")) p[l-=4] = 0; // chop off any trailing ".exe", present under mingw64
 +  while (l>0 && p[l-1]!='/' && p[l-1]!='\\') l--;
 +  return p+l;
  }
  
  static char* tail(char *p)
-diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/padic.cpp gfan0.5/padic.cpp
---- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/padic.cpp	2011-01-25 09:33:16.000000000 -0600
-+++ gfan0.5/padic.cpp	2013-05-11 00:04:14.580619200 -0500
-@@ -5,7 +5,9 @@
-  *      Author: anders
-  */
- 
-+#ifndef DEBUG
- #define DEBUG if(0)
-+#endif
- 
- #include "padic.h"
- #include "polynomial.h"
