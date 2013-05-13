@@ -57,16 +57,26 @@ endif
 unexport DEBUG
 unexport PROFILE
 
-CC = gcc
-CXX = g++
+CC := gcc
+CXX := g++
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
-CONFIGOPTIONS += CC="$(CC) -m64" CXX="$(CXX) -m64" --build=x86_64-apple-darwin
+CC  += -m64
+CXX += -m64
+export MPIR_CONFIGOPTIONS=ABI=64
 else
 DIRECTORY := mac32
-CONFIGOPTIONS += CC="$(CC) -m32" CXX="$(CXX) -m32" --build=i386-apple-darwin
+CC  += -m32
+CXX += -m32
+export MPIR_CONFIGOPTIONS=ABI=32
 endif
+
+V = -mmacosx-version-min=10.6
+CC  += $V
+CXX += $V
+
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 
 default: all
 
