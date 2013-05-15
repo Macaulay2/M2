@@ -1077,7 +1077,12 @@ void SMat<CoeffRing>::mult(const SMat<CoeffRing>& B,
 #include "aring-zzp-flint.hpp"
 template class SMat<CoefficientRingZZ_NTL>;
 template class SMat<M2::ARingZZp>;
+
+#ifdef HAVE_FLINT
 template class SMat<M2::ARingZZpFlint>;
+template class SMat<M2::ARingZZ>;
+#endif // HAVE_FLINT
+
 template class SMat<M2::ARingTower>;
 template class SMat<M2::ARingZZpFFPACK>;
 template class SMat<M2::ARingGF>;
@@ -1088,7 +1093,7 @@ template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;
 template class SMat<M2::ARingRRR>;
 
-template class SMat<M2::ARingZZ>;
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

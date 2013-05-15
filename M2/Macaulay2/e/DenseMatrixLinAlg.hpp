@@ -9,9 +9,15 @@
 
 #include "exceptions.hpp"
 #include "DenseMatrixDef.hpp"
+
+#ifdef HAVE_FFLAS_FFPACK
 #include "aring-ffpack.hpp"
+#endif
+
+#ifdef HAVE_FLINT
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
+#endif
 
 template<typename RT> // ring type
 class DenseMatrixLinAlg
@@ -72,6 +78,7 @@ public:
   // is_equal
 };
 
+#ifdef HAVE_FFLAS_FFPACK
 template<>
 class DenseMatrixLinAlg<M2::ARingZZpFFPACK>
 {
@@ -92,7 +99,9 @@ public:
 
   static size_t nullSpace(const MatType& A, MatType& result_nullspace);
 };
+#endif
 
+#ifdef HAVE_FLINT
 template<>
 class DenseMatrixLinAlg<M2::ARingZZ>
 {
@@ -141,7 +150,9 @@ public:
     return (A.numColumns() - rank);
   }
 };
+#endif
 
+#ifdef HAVE_FLINT
 template<>
 class DenseMatrixLinAlg<M2::ARingZZpFlint>
 {
@@ -184,6 +195,7 @@ public:
     return (A.numColumns() - rank);
   }
 };
+#endif
 
 #endif
 

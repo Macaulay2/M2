@@ -76,6 +76,7 @@ public:
   double *make_lapack_array() const; // creates an array of doubles (or 0, if not applicable)
   void fill_from_lapack_array(double *lapack_array);  // The size of the array should match the size of this.
 
+  // Warning: iterator cannot be used on a matrix with no entries
   class iterator : public our_new_delete
   {
     const DMat<CoeffRing> *M;
@@ -89,6 +90,7 @@ public:
     }
   public:
     void set(size_t col0) {
+      M2_ASSERT(M->array() != 0);
       col = col0;
       begin = M->array() + (col0+1) * (M->numRows());
       end = begin-M->numRows();
@@ -427,14 +429,15 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::interchange_rows(size_t i, size_t j)
   /* swap rows: row(i) <--> row(j) */
 {
+  M2_ASSERT(i < numRows());
+  M2_ASSERT(j < numRows());
+  if (i == j) return;
   ElementType *loc1 = array() + i;
   ElementType *loc2 = array() + j;
 
   for (size_t c=0; c<numColumns(); c++)
     {
-      ElementType tmp = *loc1;
-      *loc1 = *loc2;
-      *loc2 = tmp;
+      ring().swap(*loc1, *loc2);
       loc1 += numRows();
       loc2 += numRows();
     }
@@ -444,13 +447,16 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::interchange_columns(size_t i, size_t j)
   /* swap columns: column(i) <--> column(j) */
 {
+  M2_ASSERT(i < numColumns());
+  M2_ASSERT(j < numColumns());
+  if (i == j) return;
   ElementType *loc1 = array() + numRows()*i;
   ElementType *loc2 = array() + numRows()*j;
   for (size_t r=0; r<numRows(); r++)
     {
-      ElementType tmp = *loc1;
-      *loc1++ = *loc2;
-      *loc2++ = tmp;
+      ring().swap(*loc1, *loc2);
+      loc1++;
+      loc2++;
     }
 }
 
@@ -458,6 +464,7 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::scale_row(size_t i, const ElementType &r)
   /* row(i) <- r * row(i) */
 {
+  M2_ASSERT(i < numRows());
   ElementType *loc = array() + i;
   for (size_t c=0; c<numColumns(); c++)
     {
@@ -470,6 +477,7 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::scale_column(size_t i, const ElementType &r)
   /* column(i) <- r * column(i) */
 {
+  M2_ASSERT(i < numColumns());
   ElementType *loc = array() + numRows()*i;
   for (size_t a=0; a<numRows(); a++)
     {
@@ -828,6 +836,9 @@ template<typename CoeffRing>
 void DMat<CoeffRing>::delete_rows(size_t i, size_t j)
 /* Delete rows i .. j from M */
 {
+  M2_ASSERT(i < numRows());
+  M2_ASSERT(j < numRows());
+  M2_ASSERT(i <= j);
   size_t n_to_delete = j-i+1;
   size_t new_nrows = numRows() - n_to_delete;
   DenseMatrixDef<CoeffRing> newMatrix(ring(), new_nrows, numColumns());
@@ -847,7 +858,9 @@ void DMat<CoeffRing>::delete_rows(size_t i, size_t j)
 template<typename CoeffRing>
 bool DMat<CoeffRing>::is_zero() const
 {
-  for (const ElementType *t = array() + numRows()*numColumns() - 1; t >= array(); t--)
+  size_t len = numRows() * numColumns();
+  if (len == 0) return true;
+  for (const ElementType *t = array() + len - 1; t >= array(); t--)
     if (!ring().is_zero(*t))
       return false;
   return true;

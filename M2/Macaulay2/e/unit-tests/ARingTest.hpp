@@ -417,6 +417,17 @@ void testFiniteField(const T& R, int ntrials)
   // get generator
 }
 
+template <typename T>
+void testARingInterface(const T& R)
+{
+  // this test makes sure that all of the interface functions required 
+  // actually exist.
+
+  const RingID rid = R.ringID;
+  std::cout << "ring ID: " << rid << std::endl;
+  
+  size_t characteristic
+}
 #endif
 
 // Local Variables:

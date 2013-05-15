@@ -599,7 +599,8 @@ const RingElement* MutableMat<T>::determinant() const
   elem a;
   mat.ring().init(a);
   mat.new_determinant(a);
-  mat.get_CoeffRing()->to_ring_elem(det, a);
+  mat.ring().to_ring_elem(det, a);
+  mat.ring().clear(a);
   return RingElement::make_raw(mat.get_ring(), det);
 }
 

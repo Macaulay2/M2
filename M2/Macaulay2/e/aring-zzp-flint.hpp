@@ -7,10 +7,12 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "rand.h"
-#include "flint/arith.h"
-#include "flint/nmod_vec.h"
 
 class RingMap;
+
+#ifdef HAVE_FLINT
+#include "flint/arith.h"
+#include "flint/nmod_vec.h"
 
 namespace M2 {
 /**
@@ -38,6 +40,11 @@ namespace M2 {
     size_t characteristic() const { return mCharac; }
 
     size_t cardinality() const { return mCharac; }
+
+    unsigned long computeHashValue(const elem& a) const 
+    { 
+      return static_cast<unsigned long>(a);
+    }
 
     void text_out(buffer &o) const;
 
@@ -214,6 +221,7 @@ namespace M2 {
     static int findPrimitiveRoot(int P); //do we need this?
 #endif
 
+#endif // HAVE_FLINT
 #endif
 
 // Local Variables:

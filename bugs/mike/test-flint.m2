@@ -1,3 +1,4 @@
+
 debug Core
 R = rawARingZZFlint()
 a = 1_R
@@ -13,7 +14,29 @@ a*b
 b*b
 b^2
 M = rawMutableMatrix(R, 3, 4, true)
+rawMutableMatrixFillRandomDensity(M,1.0,0);
+M
 
+N = rawMutableMatrix(R, 4, 5, true)
+rawMutableMatrixFillRandomDensity(N,1.0,0);
+N
+rawLinAlgMult(M,N)
+
+E = {{99, 76, 12}, {78, 28, 96}, {43, 7, 45}}
+det matrix E
+M = rawMutableMatrix(R, 3, 3, true)
+for i from 0 to 2 do for j from 0 to 2 do M_(i,j) = (E#i#j)_R
+M
+rawLinAlgDeterminant M == 97284
+rawLinAlgMult(M,M)
+
+M = rawMutableMatrix(R, 1000, 1000, true);
+rawMutableMatrixFillRandomDensity(M,1.0,0);
+M
+time rawLinAlgMult(M,M);
+rawLinAlgDeterminant M
+
+fillMatrix M
 R101 = rawARingZZpFlint(101)
 select(2^36+1 .. 2^36 + 500, isPrime)
 P = 68719476767

@@ -21,10 +21,13 @@
 #include "dmat-RRR.hpp"
 #include "aring-zzp-flint.hpp"
 
+#include <typeinfo>
+
 ////////////////////////////////////////////////////////////////////////////
 // dmat code that might have alternate implementations, depending of type //
 ////////////////////////////////////////////////////////////////////////////
 
+#ifdef HAVE_FFLAS_FFPACK
 size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::rank(const MatType& mat)
 {
     std::cout << "Calling DenseMatrixLinAlg::rank" << std::endl;
@@ -133,7 +136,7 @@ size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatT
 #endif
     return 0;
 }
-
+#endif // HAVE_FFLAS_FFPACK
 ///////////////////////////////////
 /// Fast linear algebra routines //
 ///////////////////////////////////
@@ -381,11 +384,17 @@ template class DMat<CoefficientRingR>;
 
 template class DMat<M2::ARingGFM2>;
 template class DMat<M2::ARingZZpFFPACK>;
+
+#ifdef HAVE_FFLAS_FFPACK
 template class DMat<M2::ARingZZpFlint>;
+template class DMat<M2::ARingZZ>;
+#endif
+
 template class DMat<M2::ARingGF>;
 template class DMat<M2::ARingRRR>;
 
-template class DMat<M2::ARingZZ>;
+
+
 
 
 // Local Variables:

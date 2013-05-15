@@ -43,9 +43,14 @@ const Ring /* or null */ *rawARingZZp(unsigned long p)
 }
 const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
 {
+#ifdef HAVE_FLINT
   std::cout << "Prime is " << p;
   M2::ARingZZpFlint *A = new M2::ARingZZpFlint(p);
   return M2::ConcreteRing<M2::ARingZZpFlint>::create(A);
+#else
+  ERROR("M2 not configured with --enable-flint");
+  return 0;
+#endif
 }
 
 const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)

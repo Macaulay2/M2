@@ -3,6 +3,8 @@
 #include "aring-zzp.hpp"
 #include "aring-promoter.hpp"
 #include "ringmap.hpp"
+
+#ifdef HAVE_FLINT
 #include "aring-zzp-flint.hpp"
 
 namespace M2 {
@@ -50,6 +52,7 @@ namespace M2 {
   }
 
 };
+#endif // HAVE_FLINT
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

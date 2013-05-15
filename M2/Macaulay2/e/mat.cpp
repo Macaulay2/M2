@@ -229,6 +229,8 @@ Matrix *MutableMatrix::to_matrix() const
   int ncols = static_cast<int>(n_cols());
   FreeModule *F = get_ring()->make_FreeModule(nrows);
   MatrixConstructor result(F,ncols);
+  if (nrows == 0 || ncols == 0)
+    return result.to_matrix();
   ring_elem f;
   iterator *i = begin();
   for (int c=0; c<ncols; c++)
@@ -799,13 +801,15 @@ MutableMatrix *M2::ARingGFM2::makeMutableMatrix(const Ring* R, size_t nrows, siz
 }
 #endif
 
-template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZ>(const Ring* Rgeneral,
-                                                 const M2::ARingZZ* R,
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
+                                                 const M2::ARingZZp* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
-template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
-                                                 const M2::ARingZZp* R,
+
+#ifdef HAVE_FLINT
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZ>(const Ring* Rgeneral,
+                                                 const M2::ARingZZ* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
@@ -814,6 +818,8 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFlint>(const Ring*
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
+#endif
+
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingTower>(const Ring* Rgeneral,
                                                  const M2::ARingTower* R,
                                                  size_t nrows,

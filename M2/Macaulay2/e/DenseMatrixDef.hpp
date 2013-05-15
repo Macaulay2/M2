@@ -8,10 +8,13 @@
  */
 
 #include <iostream>
+
+#ifdef HAVE_FLINT
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
+#endif
 
 template<typename ACoeffRing>
 class DenseMatrixDef
@@ -74,8 +77,13 @@ public:
   const ElementType* array() const { return mArray; }
   ElementType* array() { return mArray; }
 
-  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
-  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
+  // When we store in row major order, we can change to these values:
+  //  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
+  //  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
+
+  ElementType& entry(size_t row, size_t column) { return mArray[mNumRows * column + row]; }
+  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumRows * column + row]; }
+
 private:
   const ACoeffRing* mRing;
   size_t mNumRows;
@@ -84,6 +92,7 @@ private:
 };
 
 
+#ifdef HAVE_FLINT
 template<>
 class DenseMatrixDef<M2::ARingZZ>
 {
@@ -142,10 +151,12 @@ private:
   const ACoeffRing* mRing;
   fmpz_mat_t mArray;
 };
+#endif
 
 //////////////////////////////////////////////////////////////
 // Flint: use nmod_mat for implementation of dense matrices //
 //////////////////////////////////////////////////////////////
+#ifdef HAVE_FLINT
 template<>
 class DenseMatrixDef<M2::ARingZZpFlint>
 {
@@ -197,6 +208,7 @@ private:
   const ACoeffRing* mRing;
   nmod_mat_t mArray;
 };
+#endif
 
 #endif
 
