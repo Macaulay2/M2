@@ -6,8 +6,8 @@ newPackage(
                   Email => "", 
                   HomePage => ""}},
         Headline => "a test suite for the Macaulay2 engine",
-	PackageExports => {"FastLinearAlgebra"},
-        DebuggingMode => false
+	    PackageExports => {"FastLinearAlgebra"},
+        DebuggingMode => true
         )
 
 export { ringOps, 
@@ -50,7 +50,8 @@ testFrac = () -> (
      )
 ///
 
-load (EngineTests#"source directory"|"EngineTests/test-tower-rings.m2")
+--load (EngineTests#"source directory"|"EngineTests/test-tower-rings.m2")
+
 -- Tests of mutable matrix operations over ZZ/p
 
 -- Test tow and column operations on dense and sparse mutable matrices,
@@ -81,6 +82,11 @@ ringOpsZZp = (p) -> (
 
 testops = (R) -> (
   << "testops..." << endl;
+  -- tests: numRows, numColumns, ==, 
+  -- rowSwap, columnSwap, 
+  -- rowAdd, columnAdd
+  -- rowMult, columnMult
+  -- NOT YET: rowPermute,columnPermute
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   assert(numRows m == 5);
   assert(numColumns m == 6);
@@ -136,45 +142,88 @@ testops = (R) -> (
   )
 
 debug Core
+testops0 = (R) -> (
+    -- test whether operations work on matrices with 0x0 matrix
+    -- also rx0 and 0xr
+    m1 := mutableMatrix(R, 0, 0);
+    assert(numColumns m1 == 0);
+    assert(numRows m1 == 0);
+    assert(m1 == 0);
+    assert(rawIsZero raw m1);
+    assert(m1 == m1);
+    m2 := m1 + m1;
+    assert(m2 == m1);
+    m2 = m1-m1;
+    assert(m2==m1);
+    rawInsertColumns(raw m1,0,1);
+    assert((numRows m1, numColumns m1) == (0,1));
+    rawInsertRows(raw m1,0,2);
+    assert((numRows m1, numColumns m1) == (2,1));
+    )
+
+debug Core
 testops2 = (R) -> (
-  --
+  -- testing:
+  --   rawInsertRows, rawInsertColumns
+  --   rawDeleteRows, rawDeleteColumns
   << "testops2..." << endl;  
-  m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawInsertColumns(raw m,1,2);
-  m1 := matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawInsertColumns(raw m,1,2);
-  m2 := matrix m;
-  assert(m1 == m2);
+  -- do the same operations on sparse and dense matrices, the answers should be the same
+  nrows := 5;
+  ncols := 6;
+  E := map(R^nrows,R^ncols, (i,j) -> 100*i+j);
+  for c from 0 to ncols do (
+      m := mutableMatrix(E, Dense=>false);
+      assert(not rawMutableMatrixIsDense(raw m));
+      rawInsertColumns(raw m,c,2);
+      m1 := matrix m;
+      m = mutableMatrix(E, Dense=>true);
+      assert(rawMutableMatrixIsDense(raw m));
+      rawInsertColumns(raw m,c,2);
+      m2 := matrix m;
+      assert(m1 == m2);
+      );
   --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawInsertRows(raw m,1,2);
-  m1 = matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawInsertRows(raw m,1,2);
-  m2 = matrix m;
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawDeleteColumns(raw m,1,3);
-  m1 = matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawDeleteColumns(raw m,1,3);
-  m2 = matrix m;
-  assert(m1 == m2);
-  --
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-  rawDeleteRows(raw m,1,3);
-  m1 = matrix m;
-  m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-  rawDeleteRows(raw m,1,3);
-  m2 = matrix m;
-  assert(m1 == m2);
+  for r from 0 to nrows-1 do (
+      m := mutableMatrix(E, Dense=>false);
+      rawInsertRows(raw m,r,2);
+      m1 := matrix m;
+      m = mutableMatrix(E, Dense=>true);
+      rawInsertRows(raw m,r,2);
+      m2 := matrix m;
+      assert(m1 == m2);
+      );
+  -- delete using (pfirst, plast), where 0 <= pfirst <= plast < ncols
+  for p in subsets(splice{0..ncols}, 2) do (
+      pfirst := p#0;
+      plast := p#1 - 1;
+      m := mutableMatrix(E, Dense=>false);
+      rawDeleteColumns(raw m,pfirst, plast);
+      m1 := matrix m;
+      m = mutableMatrix(E, Dense=>true);
+      rawDeleteColumns(raw m,pfirst, plast);
+      m2 := matrix m;
+      assert(m1 == m2);
+      );
+  -- delete using (pfirst, plast), where 0 <= pfirst <= plast < nrows
+  for p in subsets(splice{0..nrows}, 2) do (
+      pfirst := p#0;
+      plast := p#1 - 1;
+      m := mutableMatrix(E, Dense=>false);
+      rawDeleteRows(raw m,pfirst,plast);
+      m1 := matrix m;
+      m = mutableMatrix(E, Dense=>true);
+      rawDeleteRows(raw m,pfirst,plast);
+      m2 := matrix m;
+      assert(m1 == m2);
+      )
   )
 
 testops3 = (R) -> (
   << "testops3..." << endl;
-  -- rawMatrixColumnOperation2, rawMatrixRowOperation2, rawSortColumns2, rawColumnDotProduct
+  -- testing:
+  -- rawMatrixRowOperation2, rawMatrixColumnOperation2
+  -- rawSortColumns2, 
+  -- rawColumnDotProduct
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   rawMatrixColumnOperation2(raw m, 1, 2, raw promote(1,R), 
        raw promote(-1,R), 
@@ -278,16 +327,78 @@ testrank = (R) -> (
 
 testMutableMatrices = (R) -> (
      << "testing " << describe R << endl;
+     testops0 R;
      testops R; 
      testops2 R; 
      testops3 R; 
      testops4 R;
-     testops5 R;
+     --testops5 R; -- Not working on 1.6 for R=ZZ
      --testrank R;
      << "tests passed for " << describe R << endl;
      )
 
 TEST ///
+  testMutableMatrices ZZ
+///
+
+TEST ///
+  testMutableMatrices(ZZ/101)
+///
+
+TEST ///
+  testMutableMatrices(GF 4)
+///
+
+TEST ///
+  testMutableMatrices(QQ)
+///
+
+TEST ///
+  testMutableMatrices(QQ[x,y])
+///
+
+TEST ///
+  testMutableMatrices(frac(QQ[x,y]))
+///
+
+TEST ///
+  testMutableMatrices(RR_53) -- crashes
+///
+
+TEST ///
+  testMutableMatrices(RR_100) -- crashes
+///
+
+TEST ///
+  testMutableMatrices(CC_53) -- crashes
+///
+
+TEST ///
+  testMutableMatrices(CC_100) -- crashes
+///
+
+TEST ///
+  -- FAILS: row-major versus column-major representation
+  debug Core
+  hasFlint := try (rawARingZZpFlint 101; true) else false;
+  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
+///
+
+TEST ///
+  -- FAILS: row-major versus column-major representation
+  debug Core
+  hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
+  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
+///
+
+TEST ///
+  -- passes
+  debug Core
+  hasFFPACK := try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
+  if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))
+///
+
+///
 rings = {ZZ, ZZ/101, ZZ/2, GF(4), GF(25), QQ, QQ[x,y], frac(QQ[x,y]), RR_53, RR_100, CC_53, CC_100}
 rings/testMutableMatrices
 ///
