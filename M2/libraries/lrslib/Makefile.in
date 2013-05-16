@@ -7,11 +7,13 @@ HOMEPAGE = http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 # URL = http://cgm.cs.mcgill.ca/~avis/C/lrslib
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
 VERSION = 042c
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARFILE = lrslib-$(VERSION).tar.gz
 PROGRAMS = lrs redund lra1 redund1 nash setupnash setupnash2 fourier buffer 2nash
 LICENSEFILES = lrslib.html COPYING
 CONFIGURECMD = true
 BUILDTARGET = all
+BUILDOPTIONS = LDFLAGS="$(LDFLAGS)" CC="$(CC)" TARGET_ARCH=$(TARGET_ARCH)
 INSTALLCMD = true
 CHECKCMD = true
 include ../Makefile.library

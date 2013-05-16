@@ -79,6 +79,7 @@ AC_CHECK_PROGS(OBJCOPY,objcopy)
 AC_CHECK_PROGS(ETAGS,etags :)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
+AC_CHECK_PROGS(OTOOL,otool)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 AC_CHECK_PROGS(RPMLINT,rpmlint)
 AC_CHECK_PROGS(TAR,gtar gnutar tar)
@@ -381,7 +382,7 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
-AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
+AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
@@ -717,12 +718,12 @@ fi
 
 AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
-if test "$DPM" = yes 
+if test "$DMG" = yes 
 then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-dpm both specified])
+     then AC_MSG_ERROR([--disable-optimize and --enable-dmg both specified])
      fi
      if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-dpm both specified])
+     then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
      fi
 fi
 
@@ -836,15 +837,24 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
+#    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
+#	we always build it, and every program should link with it
+#	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
-BUILD_ALWAYS=" gtest "
+AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
+
+# a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
+# even if the option "--disable-building" is specified:
+BUILD_ALWAYS=" missing gtest "
+
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 for i in $PROGLIST
 do eval BUILD_$i=yes
 done
+
+BUILD_missing=yes
 
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
@@ -1597,12 +1607,16 @@ fi
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 
-# for some distributions, prefix should be /usr
-if test "$prefix" != /usr
-then test "$CYGWIN"  = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
-     test "$DEB"     = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
-     test "$RPM"     = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
-fi
+# for some distributions, we know what the prefix should be:
+test "$CYGWIN"  = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
+test "$DEB"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
+test "$RPM"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
+test "$DMG"     = yes && test "$prefix" != /Applications/Macaulay2-$PACKAGE_VERSION && 
+     AC_MSG_ERROR(--enable-dmg specified and --prefix not set to /Applications/Macaulay2-$PACKAGE_VERSION)
+
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
 fi
@@ -1720,6 +1734,9 @@ AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) # as in layout.m2.in
 AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) # as in layout.m2.in
 AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
+
+# Here we define the Macaulay2 layout, once and for all.
+# There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)

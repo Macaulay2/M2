@@ -35,16 +35,21 @@ relink:
 check: $(EXEFILE)
 	$< --check 1 --stop -E "exit 0"
 
-ifeq (@OS@ @SHARED@,Linux yes)
-ifneq (@BUILDLIST@,)
+# we specify the search path for finding shareable libraries, in case there are any,
+# but we haven't yet distributed any shareable libraries:
+M2_LDFLAGS += -Wl,-rpath,@libdir@
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@
-endif
-endif
 
 ifeq (@OS@,MacOS)
+
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
 ## The number 1000000 is hex.
 M2_LDFLAGS += -Wl,-stack_size,10000000
+
+## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
+## the editing is done in distributions/dmg/Makefile
+M2_LDFLAGS += -headerpad_max_install_names
+
 endif
 
 M2_LDFLAGS += $(LDFLAGS)
@@ -175,6 +180,9 @@ $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp
 endif
+ifneq (@OTOOL@,)
+	- @OTOOL@ -L $@.tmp
+endif
 ifneq "@OBJCOPY@" ""
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
@@ -215,5 +223,5 @@ distclean: clean; rm -f Makefile
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/bin/Makefile
 
 # Local Variables:
-# compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/bin'\" && make -C $M2BUILDDIR/Macaulay2/bin "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin relink "
 # End:
