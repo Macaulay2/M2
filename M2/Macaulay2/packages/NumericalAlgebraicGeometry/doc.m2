@@ -549,11 +549,9 @@ document {
 setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
-regeneration F 
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
-cs = regeneration I_*
      	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
 	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
@@ -571,12 +569,9 @@ document {
 setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
-W = first regeneration F 
-decompose W
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
-regeneration I_* / decompose
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
 	     If monodromy breakup algorithm fails to classify some points, the unnclassified points appear 
@@ -597,8 +592,6 @@ R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
 setRandomSeed 7
-V = numericalVariety I 
-peek V
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
