@@ -1614,8 +1614,6 @@ test "$DEB"     = yes && test "$prefix" != /usr &&
      AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 test "$RPM"     = yes && test "$prefix" != /usr && 
      AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
-test "$DMG"     = yes && test "$prefix" != /Applications/Macaulay2-$PACKAGE_VERSION && 
-     AC_MSG_ERROR(--enable-dmg specified and --prefix not set to /Applications/Macaulay2-$PACKAGE_VERSION)
 
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
