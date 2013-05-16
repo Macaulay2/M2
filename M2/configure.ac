@@ -865,7 +865,11 @@ AC_SUBST(BUILTLIBS,)
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
-BUILD_ALWAYS=" gtest "
+
+# a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
+# even if the option "--disable-building" is specified:
+BUILD_ALWAYS=" missing gtest "
+
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
