@@ -168,8 +168,10 @@ clean::; rm -f $(EXEFILE) timestamp.o
 #    many linux distributions, such as Fedora and gentoo.
 #    But we've had a report of it not working...
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
+	@ echo "compiling timestamp.c"
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
-	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
+	@ echo "linking M2 executable from Makefile in Macaulay2/bin/"
+	@ time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 	if [ -x /usr/bin/execstack ] ; then execstack -c "$@".tmp ; fi
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)

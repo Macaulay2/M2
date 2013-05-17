@@ -33,7 +33,8 @@ tags:: @srcdir@/TAGS
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 @srcdir@/unit-tests/*.cpp \
 		 @srcdir@/../e-includes/statuscodes
-	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
+	@ echo " ** making etags file"
+	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
 # overflows
 LDLIBS = @GC_LIBS@

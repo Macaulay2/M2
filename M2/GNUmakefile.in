@@ -84,7 +84,8 @@ show: config.status
 	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
-protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
+protect-configs:
+	 @ chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
 	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
