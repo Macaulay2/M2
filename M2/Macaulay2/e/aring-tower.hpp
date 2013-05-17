@@ -73,6 +73,11 @@ namespace M2 {
     // The following are he routines required to be of type "RingInterface"
     ///////////////////////////////////
 
+    unsigned long computeHashValue(const elem& a) const 
+    { 
+      return static_cast<unsigned long>(a->deg);
+    }
+
     void text_out(buffer &o) const;
 
     /////////////////////////////////////////////////////////

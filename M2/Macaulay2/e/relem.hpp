@@ -97,7 +97,7 @@ public:
 };
 
 inline RingElement::RingElement(const Ring *R0, ring_elem f) :
-  immutable_object(0), R(R0), val(f)
+  immutable_object(R0->compute_hash_value(f)), R(R0), val(f)
 {
 }
 

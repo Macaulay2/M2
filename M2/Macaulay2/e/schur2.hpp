@@ -126,6 +126,8 @@ public:
 
 
   ////// from Ring //////////////////////////////////////////
+  virtual unsigned long compute_hash_value(const ring_elem a) const;
+
   virtual void text_out(buffer &o) const;
   virtual void elem_text_out(buffer &o,
                              const ring_elem f,

@@ -504,6 +504,10 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R)
   return P->getDenominatorRing();
 }
 /*********************************************************************/
+unsigned long IM2_RingElement_hash(const RingElement *a)
+{
+  return a->get_hash_value();
+}
 
 const Ring * IM2_RingElement_ring(const RingElement *a)
 {

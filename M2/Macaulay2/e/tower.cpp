@@ -63,6 +63,12 @@ Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
   return result;
 }
 
+unsigned long Tower::compute_hash_value(const ring_elem a) const
+{
+  //TODO: MES, write me.
+  return 3212415;
+}
+
 void Tower::text_out(buffer &o) const
 {
   o << "Tower[ZZ/" << charac() << "[";

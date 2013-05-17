@@ -45,6 +45,12 @@ namespace M2 {
     unsigned long get_precision() const { return mPrecision; }
     void text_out(buffer &o) const;
 
+    unsigned long computeHashValue(const elem& a) const 
+    { 
+      double d = mpfr_get_d(&a, GMP_RNDN);
+      return static_cast<unsigned long>(d);
+    }
+
     /////////////////////////////////
     // ElementType informational ////
     /////////////////////////////////

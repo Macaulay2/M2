@@ -36,6 +36,8 @@ public:
 
   virtual void text_out(buffer &o) const;
 
+  virtual unsigned long compute_hash_value(const ring_elem a) const;
+
   virtual int coerce_to_int(ring_elem a) const;
 
   ring_elem numerator(ring_elem q) const;

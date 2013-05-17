@@ -46,6 +46,11 @@ namespace M2 {
     size_t characteristic() const { return 0; }
     
     size_t cardinality() const { return static_cast<size_t>(-1); }
+
+    unsigned long computeHashValue(const elem& a) const 
+    { 
+      return fmpz_get_ui(&a);
+    }
     
     /** @name properties
         @{     

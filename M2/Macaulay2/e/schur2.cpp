@@ -83,6 +83,12 @@ void tableau2::display() const
 }
 
 //////////////////////////////////////////
+unsigned long SchurRing2::compute_hash_value(const ring_elem a) const
+{
+  //TODO: MES, write me.
+  return 95864398;
+}
+
 bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b)
 {
   return a.ic == b.ic;

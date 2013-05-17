@@ -237,6 +237,8 @@ public:
   ////////////////////////
   // Arithmetic //////////
   ////////////////////////
+  virtual unsigned long compute_hash_value(const ring_elem a) const;
+
   virtual ring_elem var(int v) const = 0;
 
   /////////////////////////

@@ -35,6 +35,7 @@ public:
   static Tower * create(const Tower *R, VECTOR(ring_elem) &extensions);
 
 // The following are all the routines required by 'ring'
+  virtual unsigned long compute_hash_value(const ring_elem a) const;
 
   virtual void text_out(buffer &o) const;
 

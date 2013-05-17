@@ -109,6 +109,12 @@ inline int Z_mod::int_to_exp(int a) const
   return _log_table[(n < 0 ? n+P : n)];
 }
 
+unsigned long Z_mod::compute_hash_value(const ring_elem a) const
+{
+  return static_cast<unsigned long>(a.int_val);
+}
+
+
 void Z_mod::elem_text_out(buffer &o,
                         const ring_elem a,
                         bool p_one,

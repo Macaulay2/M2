@@ -63,7 +63,7 @@ export hash(e:Expr):int := (
 	  0
 	  -- int(Ccode(ulong, "IM2_RingMap_hash(",x.p,")" ))
 	  )
-     is x:RawRingElementCell do 12345
+     is x:RawRingElementCell do int(Ccode(ulong, "IM2_RingElement_hash(",x.p,")" ))
      is x:RawMonomialIdealCell do 12346
      is s:SpecialExpr do s.Class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash

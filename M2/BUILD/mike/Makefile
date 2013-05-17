@@ -125,6 +125,26 @@ opt64-linbox : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+debug64-linbox : always
+	mkdir -p debug64-linbox
+	cd debug64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-debug \
+		--disable-optimize \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 opt64-fplll : always
 	mkdir -p opt64-fplll
 	cd opt64-fplll; ../../../configure \
@@ -155,7 +175,7 @@ opt64-flint : always
 
 #		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" 
 
-debug64-linbox : always
+debug64-linbox-only : always
 	mkdir -p debug64-linbox
 	cd debug64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \

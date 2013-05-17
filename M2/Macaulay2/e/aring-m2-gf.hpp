@@ -120,6 +120,11 @@ namespace M2 {
     }
 
   public:
+    unsigned long computeHashValue(const elem& a) const 
+    { 
+      return static_cast<unsigned long>(a);
+    }
+
     int get_repr(elem f) const { /*TODO: WRITE WRITE ;*/ assert(false); return 0; }
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const

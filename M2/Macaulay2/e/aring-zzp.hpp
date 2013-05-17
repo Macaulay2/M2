@@ -50,6 +50,8 @@ namespace M2 {
     // Routines to help in switch from coeffrings to aring //
     // these will be renamed or go away (hopefully) /////////
     /////////////////////////////////////////////////////////
+    unsigned long computeHashValue(const elem& a) const { return static_cast<unsigned long>(a); }
+
     void init_set(elem &result, elem a) const { result = a; }
     void set(elem &result, elem a) const { result = a; }
 

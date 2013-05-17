@@ -51,6 +51,12 @@ mpfr_ptr RRR::new_elem() const
   return result;
 }
 
+unsigned long RRR::compute_hash_value(const ring_elem a) const
+{
+  double b = mpfr_get_d(MPF_VAL(a), GMP_RNDN);
+  return static_cast<unsigned long>(12347.*b);
+}
+
 ring_elem RRR::random() const
 {
   gmp_RR result = rawRandomRR(precision);

@@ -210,6 +210,8 @@ public:
   //////////////////////
   // Ring arithmetic ///
   //////////////////////
+  virtual unsigned long compute_hash_value(const ring_elem a) const = 0;
+
   virtual int coerce_to_int(ring_elem a) const;
 
   ring_elem one() const { return oneV; }

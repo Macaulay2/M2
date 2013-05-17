@@ -37,6 +37,14 @@ void QQ::text_out(buffer &o) const
   o << "QQ";
 }
 
+unsigned long QQ::compute_hash_value(const ring_elem f) const
+{
+  gmp_QQ a = MPQ_VAL(f);
+  unsigned long numhash = compute_hash_value_mpz(mpq_numref(a));
+  unsigned long denhash = compute_hash_value_mpz(mpq_denref(a));
+  return 13253 * numhash + 7647 * denhash;
+}
+
 gmp_QQ QQ::new_elem() const
 {
   gmp_QQ result = getmemstructtype(gmp_QQ);

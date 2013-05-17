@@ -155,6 +155,11 @@ class ARingGF : public RingInterface
 
    UTT   cardinality() const { return mCardinality; }
 
+  unsigned long computeHashValue(const elem& a) const 
+  { 
+    return static_cast<unsigned long>(a);
+  }
+
     /** @name IO
     @{ */
             void text_out(buffer &o) const { o << "GF(" << mCharac << "," << mDimension << ",Givaro)"; }

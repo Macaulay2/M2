@@ -61,6 +61,8 @@ public:
   // To get a bignum from a RingElement a, use: a.get_value().get_mpz()
   // To get a bignum from an ring_elem  a, use: a.get_mpz()
 
+  virtual unsigned long compute_hash_value(const ring_elem a) const;
+
   virtual int coerce_to_int(ring_elem a) const;
 
   virtual ring_elem from_int(int n) const;
@@ -123,6 +125,7 @@ public:
 
 };
 
+unsigned long compute_hash_value_mpz(mpz_ptr a);
 #endif
 
 // Local Variables:
