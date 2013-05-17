@@ -49,7 +49,7 @@ void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::determinant(const MatType& mat, Elem
 
 bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::inverse(const MatType& mat, MatType& result_inv)
 {
-    M2_ASSERT(mat.numRows() == mat.NumColumns());
+    M2_ASSERT(mat.numRows() == mat.numColumns());
     MatType N(mat);
     size_t n = mat.numRows();
     int nullspacedim;
