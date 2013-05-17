@@ -552,7 +552,7 @@ F = {x^2+y^2-1, x*y};
 regeneration F 
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
 cs = regeneration I_*
      	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
@@ -575,7 +575,7 @@ W = first regeneration F
 decompose W
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-0.5)*(y-x^2), sph*(y-0.5)*(z-x^3), sph*(z-0.5)*(z-x^3)*(y-x^3)};
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
 regeneration I_* / decompose
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
