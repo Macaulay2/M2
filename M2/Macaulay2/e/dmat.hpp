@@ -824,8 +824,6 @@ void DMat<CoeffRing>::delete_columns(size_t i, size_t j)
     {
       for (size_t c=0; c<i; c++)
         ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t c=i; c<=j; c++)
-        ring().clear(mMatrix.entry(r,c));
       for (size_t c=j+1; c<numColumns(); c++)
         ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c-n_to_delete));
     }
@@ -847,8 +845,6 @@ void DMat<CoeffRing>::delete_rows(size_t i, size_t j)
     {
       for (size_t r=0; r<i; r++)
         ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t r=i; r<=j; r++)
-        ring().clear(mMatrix.entry(r,c));
       for (size_t r=j+1; r<numRows(); r++)
         ring().swap(mMatrix.entry(r,c), newMatrix.entry(r-n_to_delete,c));
     }

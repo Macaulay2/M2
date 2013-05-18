@@ -306,7 +306,7 @@ public:
 
   CoefficientRingRRR(const RRR *R0) : R(R0) {}
 
-  void init_set(elem &result, elem a) const { mpfr_init_set(&result, &a, GMP_RNDN); }
+  void init_set(elem &result, const elem& a) const { mpfr_init_set(&result, &a, GMP_RNDN); }
 
   void set_zero(elem &result) const {
     mpfr_init2(&result, R->get_precision());
@@ -315,30 +315,30 @@ public:
 
   void init(elem& result) const { mpfr_init2(&result, R->get_precision()); }
 
-  void set(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
+  void set(elem &result, const elem& a) const { mpfr_set(&result, &a, GMP_RNDN); }
 
   void clear(elem& result) const { mpfr_clear(&result); }
 
-  bool is_zero(elem result) const { return mpfr_cmp_si(&result, 0) == 0; }
+  bool is_zero(const elem& result) const { return mpfr_cmp_si(&result, 0) == 0; }
 
-  bool is_equal(elem a, elem b ) const { return mpfr_cmp(&a,&b) == 0; }
+  bool is_equal(const elem& a, const elem& b ) const { return mpfr_cmp(&a,&b) == 0; }
 
-  void invert(elem &result, elem a) const { mpfr_si_div(&result, 1, &a, GMP_RNDN); }
+  void invert(elem &result, const elem& a) const { mpfr_si_div(&result, 1, &a, GMP_RNDN); }
 
-  void subtract_multiple(elem &result, elem a, elem b) const;
+  void subtract_multiple(elem &result, const elem& a, const elem& b) const;
     // result -= a*b
 
-  void add(elem &result, elem a, elem b) const { mpfr_add(&result, &a, &b, GMP_RNDN); }
+  void add(elem &result, const elem& a, const elem& b) const { mpfr_add(&result, &a, &b, GMP_RNDN); }
 
-  void negate(elem &result, elem a) const { mpfr_neg(&result, &a, GMP_RNDN); }
+  void negate(elem &result, const elem& a) const { mpfr_neg(&result, &a, GMP_RNDN); }
 
-  void subtract(elem &result, elem a, elem b) const { mpfr_sub(&result, &a, &b, GMP_RNDN); }
+  void subtract(elem &result, const elem& a, const elem& b) const { mpfr_sub(&result, &a, &b, GMP_RNDN); }
 
-  void mult(elem &result, elem a, elem b) const { mpfr_mul(&result, &a, &b, GMP_RNDN); }
+  void mult(elem &result, const elem& a, const elem& b) const { mpfr_mul(&result, &a, &b, GMP_RNDN); }
 
-  void divide(elem &result, elem a, elem b) const { mpfr_div(&result, &a, &b, GMP_RNDN); }
+  void divide(elem &result, const elem& a, const elem& b) const { mpfr_div(&result, &a, &b, GMP_RNDN); }
 
-  void to_ring_elem(ring_elem &result, const elem a) const  {
+  void to_ring_elem(ring_elem &result, const elem& a) const  {
     R->from_BigReal(const_cast<elem *>(&a), result);
   }
 
@@ -347,7 +347,7 @@ public:
     mpfr_init_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
   }
 
-  void swap(elem &a, elem &b) const
+  void swap(elem& a, elem& b) const
   {
     elem tmp = a;
     a = b;

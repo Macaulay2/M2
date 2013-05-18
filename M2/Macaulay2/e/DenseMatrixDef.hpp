@@ -58,7 +58,8 @@ public:
     size_t len = mNumRows * mNumColumns;
     for (size_t i=0; i<len; i++)
       ring().clear(mArray[i]);
-    delete [] mArray;
+    if (mArray != 0) 
+      delete [] mArray;
   }
 
   // swap the actual matrices of 'this' and 'M'.
