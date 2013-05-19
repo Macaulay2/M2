@@ -317,6 +317,8 @@ public:
 
   void set(elem &result, const elem& a) const { mpfr_set(&result, &a, GMP_RNDN); }
 
+  void set_from_int(elem &result, int a) const { mpfr_set_si(&result, a, GMP_RNDN); }
+
   void clear(elem& result) const { mpfr_clear(&result); }
 
   bool is_zero(const elem& result) const { return mpfr_cmp_si(&result, 0) == 0; }
@@ -508,6 +510,8 @@ public:
   }
 
   void set(elem &result, elem a) const { mpfc_set(&result, &a); }
+
+  void set_from_int(elem &result, int a) const { mpfc_set_si(&result, a); }
 
   bool is_equal(elem a, elem b ) const { return mpfc_is_equal(&a,&b); }
 

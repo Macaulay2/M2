@@ -31,9 +31,9 @@ private:
   };
 
 public:
-  SMat():R(0), coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
+  SMat():coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
-  SMat(const Ring *R0, const CoeffRing * coeffR0, size_t nrows, size_t ncols); // Makes a zero matrix
+  SMat(const CoeffRing * coeffR0, size_t nrows, size_t ncols); // Makes a zero matrix
 
   SMat(const SMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
 
@@ -47,7 +47,6 @@ public:
 
   size_t n_rows() const { return nrows_; }
   size_t n_cols() const { return ncols_; }
-  const Ring * get_ring() const { return R; }
   const CoeffRing * get_CoeffRing() const { return coeffR; }
   const CoeffRing& ring() const { return *coeffR; }
 

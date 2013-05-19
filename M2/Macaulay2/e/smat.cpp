@@ -544,9 +544,8 @@ void SMat<CoeffRing>::vec_delete_rows(sparsevec *&v, size_t i, size_t j) const
 // SMat //////////////////
 //////////////////////////
 template<typename CoeffRing>
-SMat<CoeffRing>::SMat(const Ring *R0, const CoeffRing *coeffR0, size_t nrows, size_t ncols)
-  : R(R0),
-    coeffR(coeffR0),
+SMat<CoeffRing>::SMat(const CoeffRing *coeffR0, size_t nrows, size_t ncols)
+  : coeffR(coeffR0),
     nrows_(nrows),
     ncols_(ncols)
 {
@@ -555,26 +554,12 @@ SMat<CoeffRing>::SMat(const Ring *R0, const CoeffRing *coeffR0, size_t nrows, si
 
 template<typename CoeffRing>
 SMat<CoeffRing>::SMat(const SMat &M)
-  : R(M.R),
-    coeffR(M.coeffR),
+  : coeffR(M.coeffR),
     nrows_(M.nrows_),
     ncols_(M.ncols_)
 {
   initialize(nrows_,ncols_,M.columns_);
 }
-
-#if 0
-//TODO: MES remove this once above compiles.
-template <> SMat<CoefficientRingR>::SMat(const Ring *R0, size_t nrows, size_t ncols)
-  : R(R0),
-    coeffR(0),
-    nrows_(nrows),
-    ncols_(ncols)
-{
-  coeffR = new CoefficientRingR(R0);
-  initialize(nrows,ncols,0);
-}
-#endif
 
 template<typename CoeffRing>
 void SMat<CoeffRing>::initialize(size_t nrows, size_t ncols, sparsevec **cols)
@@ -597,7 +582,6 @@ void SMat<CoeffRing>::initialize(size_t nrows, size_t ncols, sparsevec **cols)
 template<typename CoeffRing>
 void SMat<CoeffRing>::grab(SMat<CoeffRing> *M)
 {
-  std::swap(R,M->R);
   std::swap(coeffR,M->coeffR);
   std::swap(nrows_,M->nrows_);
   std::swap(ncols_,M->ncols_);
@@ -917,7 +901,6 @@ bool SMat<CoeffRing>::is_equal(const SMat& B) const
 template <typename CoeffRing>
 void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_arrayint cols)
 {
-  R = A.R;
   coeffR = A.coeffR;
   initialize(rows->len, cols->len, NULL);
 
@@ -934,7 +917,6 @@ void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint rows, M2_array
 template <typename CoeffRing>
 void SMat<CoeffRing>::setFromSubmatrix(const SMat &A, M2_arrayint cols)
 {
-  R = A.R;
   coeffR = A.coeffR;
   initialize(A.n_rows(), cols->len, NULL);
   for (size_t r=0; r<nrows_; r++)

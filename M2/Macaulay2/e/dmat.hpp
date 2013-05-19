@@ -45,12 +45,13 @@ public:
 
   typedef DMat<EigenvalueRing> EigenvalueMatrixType;
 
+  //  typedef ApproximateLinAlg<ACoeffRing> ApproximateLinAlg;
+
   DMat() {} // Makes an unusable matrix, over no ring.
-  DMat(const Ring *R, const ACoeffRing *R0, size_t nrows, size_t ncols); // Makes a zero matrix
+  DMat(const ACoeffRing *R0, size_t nrows, size_t ncols); // Makes a zero matrix
   DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
   DMat(const DMat<ACoeffRing> &M); // Copies (clones) M into 'this'
 
-  const Ring * get_ring() const { return mGeneralRing; }
   const CoeffRing& ring() const { return mMatrix.ring(); }
   const CoeffRing* get_CoeffRing() const { return & ring(); }
 
@@ -298,23 +299,20 @@ private:
 /////////////////////////
 
 template<typename CoeffRing>
-DMat<CoeffRing>::DMat(const Ring *R0, const CoeffRing *coeffR0, size_t nrows, size_t ncols)
-  : mGeneralRing(R0),
-    mMatrix(*coeffR0, nrows, ncols)
+DMat<CoeffRing>::DMat(const CoeffRing *coeffR0, size_t nrows, size_t ncols)
+  : mMatrix(*coeffR0, nrows, ncols)
 {
 }
 
 template<typename CoeffRing>
 DMat<CoeffRing>::DMat(const DMat<CoeffRing> &m, size_t nrows, size_t ncols)
-  : mGeneralRing(m.get_ring()),
-    mMatrix(m.ring(), nrows, ncols)
+  : mMatrix(m.ring(), nrows, ncols)
 {
 }
 
 template<typename CoeffRing>
 DMat<CoeffRing>::DMat(const DMat<CoeffRing> &m)
-  : mGeneralRing(m.get_ring()),
-    mMatrix(m.mMatrix)
+  : mMatrix(m.mMatrix)
 {
 }
 

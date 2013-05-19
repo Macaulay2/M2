@@ -161,7 +161,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
       else
 	return MutableMat< SMat<Ring_RRR> >
 	  ::zero_matrix(R, ARRR->get_ARing(),nrows,ncols);
-}
+    }
   if (R->is_CCC())
     {
       const CCC *ACCC = R->cast_to_CCC();

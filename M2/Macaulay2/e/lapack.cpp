@@ -1012,9 +1012,14 @@ bool Lapack::solve(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
   int size = static_cast<int>(A->n_rows());
   int bsize = static_cast<int>(b->n_cols());
   int info;
+
+  //TODO: MES The next 6 lines need to be removed/cleaned up 
+#if 0
   const CCC *CCR = A->get_ring()->cast_to_CCC();
   ASSERT(CCR != 0);
   unsigned long precision= CCR->get_precision();
+#endif
+  unsigned long precision = 53; // Just used below in code that I think is not active.
 
 
   /* make sure matrix is square */

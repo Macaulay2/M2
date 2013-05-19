@@ -224,8 +224,8 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   // For each column of b, solveF, then solveB 9result into same col of x
   const CoeffRing *K = A->get_CoeffRing();
 
-  DMat<CoeffRing> *L = new DMat<CoeffRing>(A->get_ring(), A->get_CoeffRing(), A->n_rows(), A->n_rows());
-  DMat<CoeffRing> *U = new DMat<CoeffRing>(A->get_ring(), A->get_CoeffRing(), A->n_rows(), A->n_cols());
+  DMat<CoeffRing> *L = new DMat<CoeffRing>(A->get_CoeffRing(), A->n_rows(), A->n_rows());
+  DMat<CoeffRing> *U = new DMat<CoeffRing>(A->get_CoeffRing(), A->n_rows(), A->n_cols());
 
   M2_arrayint P = LU(A,L,U);
 
@@ -291,7 +291,9 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
              pivotcols,n_pivots,
              U->get_array() + nrows*c,
              x->get_array() + x->n_rows() * thiscol);
-      K->from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());
+
+      K->set_from_int(MAT(x,c,thiscol), -1);
+      //      K->from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());
       thiscol++;
     }
 }

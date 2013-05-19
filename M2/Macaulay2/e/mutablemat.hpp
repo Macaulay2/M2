@@ -47,7 +47,9 @@ public:
   typedef typename Mat::CoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
 
+  //  typedef typename Mat::ApproximateLinAlg ApproximateLinAlg;
 private:
+  const Ring* mRing;
   Mat mat;
   // This class wraps the operations for Mat to make a MutableMatrix
 
@@ -60,14 +62,14 @@ private:
   MutableMat() {}
 
   MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-    : mat(R,coeffR,nrows,ncols) {}
+    : mRing(R), mat(coeffR,nrows,ncols) {}
 
-  MutableMat(Mat &m) : mat(m) {}
+  MutableMat(const Ring* R, const Mat &m) : mRing(R), mat(m) {}
 
 public:
   // Make a zero matrix, using the same ring and density taken from 'mat'.
   MutableMat* makeZeroMatrix(size_t nrows, size_t ncols) const {
-    return zero_matrix(mat.get_ring(), &mat.ring(), nrows, ncols);
+    return zero_matrix(get_ring(), &mat.ring(), nrows, ncols);
   }
 
   Mat * get_Mat() { return &mat; }
@@ -102,7 +104,7 @@ public:
   // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
 #endif
-  virtual const Ring * get_ring() const { return mat.get_ring(); }
+  virtual const Ring * get_ring() const { return mRing; }
 
   virtual size_t n_rows() const { return mat.n_rows(); }
 
@@ -123,8 +125,11 @@ public:
 
   virtual MutableMat *clone() const
   {
-    Mat *m = new Mat(mat); // copies mat
-    return new MutableMat(*m); // places copy into result
+    MutableMat* result = new MutableMat(mRing, mat);
+    return result;
+    //    result->mat.copy(mat);
+    //    Mat *m = new Mat(mat); // copies mat
+    //    return new MutableMat(*m); // places copy into result
   }
 
   virtual size_t lead_row(size_t col) const { return mat.lead_row(col); }
@@ -163,7 +168,7 @@ public:
           }
       }
 
-    result = mat.get_ring()->zero();
+    result = get_ring()->zero();
     return false;
   }
 
@@ -601,7 +606,7 @@ const RingElement* MutableMat<T>::determinant() const
   mat.new_determinant(a);
   mat.ring().to_ring_elem(det, a);
   mat.ring().clear(a);
-  return RingElement::make_raw(mat.get_ring(), det);
+  return RingElement::make_raw(get_ring(), det);
 }
 
 template <typename T>
@@ -648,6 +653,28 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
   return mat.rankProfile(row_profile);
 }
 
+#if 0
+// MES, 19 May 2013: Do we want to do it like this?
+template <typename T> 
+bool MutableMat<T>::SVD(MutableMatrix *Sigma,
+                        MutableMatrix *U,
+                        MutableMatrix *VT,
+                        bool use_divide_and_conquer) const
+{
+  const MatType *A2 = get_Mat();
+  MatType *Sigma2 = Sigma->coerce<MatType>();
+  MatType *U2 = U->coerce<MatType>();
+  MatType *VT2 = VT->coerce<MatType>();
+  if (Sigma2 == 0 || U2 == 0 || VT2 == 0)
+    {
+      ERROR("requires dense mutable matrices over the same ring");
+      return false;
+    }
+
+  int strategy = (use_divide_and_conquer ? 1 : 0);
+  return DenseApproxLinAlg::SVD(A2,Sigma,U2,VT2,strategy);
+}
+#endif
 
 ///////////////////////////////////////////////
 #if 0

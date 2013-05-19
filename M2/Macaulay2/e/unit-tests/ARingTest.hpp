@@ -423,11 +423,10 @@ void testARingInterface(const T& R)
   // this test makes sure that all of the interface functions required 
   // actually exist.
 
-  const RingID rid = R.ringID;
+  const M2::RingID rid = R.ringID;
   std::cout << "ring ID: " << rid << std::endl;
-  
-  size_t characteristic
 }
+
 #endif
 
 // Local Variables:
