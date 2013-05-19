@@ -749,12 +749,15 @@ void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
   const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
 
   typename T::ElementType fa, fb;
-  mat.get_CoeffRing()->from_ring_elem(fa, a->get_value());
-  mat.get_CoeffRing()->from_ring_elem(fb, b->get_value());
+  mat.ring().init(fa);
+  mat.ring().init(fb);
+  mat.ring().from_ring_elem(fa, a->get_value());
+  mat.ring().from_ring_elem(fb, b->get_value());
 
   mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  
-  return ;
+
+  mat.ring().clear(fa);
+  mat.ring().clear(fb);
 }
 
 

@@ -142,12 +142,12 @@ public:
      returns -1 if the column is 0 */
   {
     elem b;
-    mat.get_CoeffRing()->init(b);
-    mat.get_CoeffRing()->set_zero(b);
+    mat.ring().init(b);
+    mat.ring().set_zero(b);
 
     size_t ret = mat.lead_row(col, b);
     if (ret >= 0)
-      mat.get_CoeffRing()->to_ring_elem(result, b);
+      mat.ring().to_ring_elem(result, b);
     return ret;
   }
 
@@ -159,11 +159,11 @@ public:
       {
         elem a;
         
-        mat.get_CoeffRing()->init(a);
-        mat.get_CoeffRing()->set_zero(a);
+        mat.ring().init(a);
+        mat.ring().set_zero(a);
         if (mat.get_entry(r,c,a))
           {
-            mat.get_CoeffRing()->to_ring_elem(result,a);
+            mat.ring().to_ring_elem(result,a);
             return true;
           }
       }
@@ -178,7 +178,7 @@ public:
     if (error_row_bound(r,n_rows())) return false;
     if (error_column_bound(c,n_cols())) return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,a);
+    mat.ring().from_ring_elem(b,a);
     mat.set_entry(r,c,b);
     return true;
   }
@@ -216,7 +216,7 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.scale_row(i,b);
     return true;
   }
@@ -228,7 +228,7 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.scale_column(i,b);
     return true;
   }
@@ -240,7 +240,7 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.divide_row(i,b);
     return true;
   }
@@ -252,7 +252,7 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.divide_column(i,b);
     return true;
   }
@@ -265,7 +265,7 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.row_op(i,b,j);
     return true;
   }
@@ -278,7 +278,7 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
+    mat.ring().from_ring_elem(b,r);
     mat.column_op(i,b,j);
     return true;
   }
@@ -295,10 +295,10 @@ public:
       return false;
     if (c1 == c2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
+    mat.ring().from_ring_elem(aa1,a1);
+    mat.ring().from_ring_elem(aa2,a2);
+    mat.ring().from_ring_elem(bb1,b1);
+    mat.ring().from_ring_elem(bb2,b2);
     mat.column2by2(c1,c2,aa1,aa2,bb1,bb2);
     return true;
   }
@@ -315,10 +315,10 @@ public:
       return false;
     if (r1 == r2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
+    mat.ring().from_ring_elem(aa1,a1);
+    mat.ring().from_ring_elem(aa2,a2);
+    mat.ring().from_ring_elem(bb1,b1);
+    mat.ring().from_ring_elem(bb2,b2);
     mat.row2by2(r1,r2,aa1,aa2,bb1,bb2);
     return true;
   }
@@ -329,9 +329,9 @@ public:
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     elem a;
-    mat.get_CoeffRing()->set_zero(a);
+    mat.ring().set_zero(a);
     mat.dot_product(c1,c2,a);
-    mat.get_CoeffRing()->to_ring_elem(result,a);
+    mat.ring().to_ring_elem(result,a);
     return true;
   }
 

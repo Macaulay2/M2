@@ -47,7 +47,7 @@ public:
 
   size_t n_rows() const { return nrows_; }
   size_t n_cols() const { return ncols_; }
-  const CoeffRing * get_CoeffRing() const { return coeffR; }
+  //  const CoeffRing * get_CoeffRing() const { return coeffR; }
   const CoeffRing& ring() const { return *coeffR; }
 
   //  void set_matrix(const SMat<CoeffRing> *mat0);
@@ -73,7 +73,7 @@ public:
     size_t row() { return v->row; }
 
     void copy_elem(ring_elem &result) {
-      M->get_CoeffRing()->to_ring_elem(result, value());
+      M->ring().to_ring_elem(result, value());
     }
   };
 

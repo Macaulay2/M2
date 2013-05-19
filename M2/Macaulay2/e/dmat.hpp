@@ -53,7 +53,7 @@ public:
   DMat(const DMat<ACoeffRing> &M); // Copies (clones) M into 'this'
 
   const CoeffRing& ring() const { return mMatrix.ring(); }
-  const CoeffRing* get_CoeffRing() const { return & ring(); }
+  //  const CoeffRing* get_CoeffRing() const { return & ring(); }
 
   size_t numRows() const { return mMatrix.numRows(); }
   size_t numColumns() const { return mMatrix.numColumns(); }
@@ -85,9 +85,9 @@ public:
     const ElementType *begin;
     const ElementType *end;
     void to_next_valid() {
-      const CoeffRing *R = M->get_CoeffRing();
+      const CoeffRing& R = M->ring();
       --begin;
-      while (begin >= end && R->is_zero(*begin)) --begin;
+      while (begin >= end && R.is_zero(*begin)) --begin;
     }
   public:
     void set(size_t col0) {
@@ -107,7 +107,7 @@ public:
     size_t row() { return (begin-end); }
 
     void copy_elem(ring_elem &result) {
-      M->get_CoeffRing()->to_ring_elem(result, value());
+      M->ring().to_ring_elem(result, value());
     }
   };
 
