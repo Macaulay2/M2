@@ -130,7 +130,7 @@ size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatT
     else
       nullspace.resize(nc,nullspace_dim);
     
-    mat.copy_elems(nullspace.n_rows() * nullspace.n_cols(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
+    mat.copy_elems(nullspace.numRows() * nullspace.numColumns(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
     
     delete [] nullspaceFFPACK;
 #endif
@@ -227,81 +227,6 @@ void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
 
 
 
-template <> double *DMat<M2::ARingRRR>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, len);
-
-  const ElementType *a = array();
-  double *p = result;
-  for (long i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
-  return result;
-}
-
-template <> void DMat<M2::ARingRRR>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  ElementType *a = array();
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
-}
-
-
-
-template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, len);
-
-  const ElementType *a = array();
-  double *p = result;
-  for (long i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
-  return result;
-}
-
-template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  ElementType *a = array();
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
-}
-
-template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, 2*len);
-
-  const ElementType *a = array();
-  double *p = result;
-  for (long i=0; i<len; i++)
-    {
-      *p++ = mpfr_get_d(a->re, GMP_RNDN);
-      *p++ = mpfr_get_d(a->im, GMP_RNDN);
-      a++;
-    }
-  return result;
-}
-
-template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  ElementType *a = array();
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    {
-      mpfr_set_d(a->re, *p++, GMP_RNDN);
-      mpfr_set_d(a->im, *p++, GMP_RNDN);
-      a++;
-    }
-}
 
 #include "mutablemat.hpp"
 
@@ -342,8 +267,8 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
       //      ERROR("LUDivine not defined for this ring");
       //      return 0;
     }
-  size_t nelems = mat->n_cols();
-  if (mat->n_rows() > mat->n_cols()) nelems = mat->n_rows();
+  size_t nelems = mat->numColumns();
+  if (mat->numRows() > mat->numColumns()) nelems = mat->numRows();
 
   std::vector<size_t> P(nelems, -1);
   std::vector<size_t> Qt(nelems, -1);
@@ -352,10 +277,10 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   LUdivine(mat->ring().field(),
                        FFLAS::FflasNonUnit,
                        (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
-                       mat->n_cols(),
-                       mat->n_rows(),
+                       mat->numColumns(),
+                       mat->numRows(),
                        mat->get_array(),
-                       mat->n_rows(),
+                       mat->numRows(),
                        &P[0], 
                        &Qt[0]);
 

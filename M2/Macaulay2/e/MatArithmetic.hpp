@@ -14,6 +14,48 @@ public:
   typedef DMat<RT> Mat;
   typedef typename Mat::ElementType ElementType;
 
+  static bool isZero(const Mat& A)
+  {
+    size_t len = A.numRows() * A.numColumns();
+    if (len == 0) return true;
+    for (const ElementType *t = A.array() + len - 1; t >= A.array(); t--)
+      if (!A.ring().is_zero(*t))
+        return false;
+    return true;
+  }
+
+  static bool isEqual(const Mat& A, const Mat& B)
+  {
+    M2_ASSERT(&A.ring() == &B.ring());
+    if (B.numRows() != A.numRows()) return false;
+    if (B.numColumns() != A.numColumns()) return false;
+    size_t top = A.numRows() * A.numColumns();
+    const ElementType * elemsA = A.get_array();
+    const ElementType * elemsB = B.get_array();
+    for (size_t i = 0; i < top; i++)
+      if (!A.ring().is_equal(*elemsA++, *elemsB++))
+        return false;
+    return true;
+  }
+
+  static void scalarMultInPlace(Mat& A, const ElementType &f)
+  {
+    for (size_t i=0; i<A.numRows()*A.numColumns(); i++)
+      {
+        A.ring().mult(A.array()[i], f, A.array()[i]);
+      }
+  }
+
+  static void negateInPlace(Mat& A)
+  // A = -A
+  {
+    size_t len = A.numRows() * A.numColumns();
+    for (size_t i=0; i<len; i++)
+      {
+        A.ring().negate(A.array()[i], A.array()[i]);
+      }
+  }
+
   static void addInPlace(Mat&A, const Mat& B)
   // A += B.
   {
@@ -21,12 +63,27 @@ public:
     M2_ASSERT(B.numRows() == A.numRows());
     M2_ASSERT(B.numColumns() == A.numColumns());
     
-    for (size_t i=0; i<A.numRows()*A.numColumns(); i++)
+    size_t len = A.numRows() * A.numColumns();
+    for (size_t i=0; i<len; i++)
       {
         A.ring().add(A.array()[i], A.array()[i], B.array()[i]);
       }
   }
 
+  static void subtractInPlace(Mat& A, const Mat& B)
+  // A -= B
+  {
+    M2_ASSERT(&B.ring() == &A.ring());
+    M2_ASSERT(B.numRows() == A.numRows());
+    M2_ASSERT(B.numColumns() == A.numColumns());
+    
+    size_t len = A.numRows() * A.numColumns();
+    for (size_t i=0; i<len; i++)
+      {
+        A.ring().subtract(A.array()[i], A.array()[i], B.array()[i]);
+      }
+  }
+  
 };
 
 template <typename RT>
@@ -36,9 +93,45 @@ public:
   typedef SMat<RT> Mat;
   typedef typename Mat::ElementType ElementType;
 
+  static bool isZero(const Mat& A)
+  {
+    return A.is_zero();
+  }
+
+  static bool isEqual(const Mat& A, const Mat& B)
+  {
+    return A.is_equal(B);
+  }
+
+  static void scalarMultInPlace(Mat& A, const ElementType &f)
+  // A = f*A
+  {
+    A.scalarMultInPlace(f);
+  }
+
+  static void negateInPlace(Mat& A)
+  // A = -A
+  {
+    A.negateInPlace();
+  }
+
   static void addInPlace(Mat&A, const Mat& B) 
   {
+    M2_ASSERT(&B.ring() == &A.ring());
+    M2_ASSERT(B.numRows() == A.numRows());
+    M2_ASSERT(B.numColumns() == A.numColumns());
+
     A.addInPlace(B);
+  }
+
+  static void subtractInPlace(Mat& A, const Mat& B)
+  // A -= B
+  {
+    M2_ASSERT(&B.ring() == &A.ring());
+    M2_ASSERT(B.numRows() == A.numRows());
+    M2_ASSERT(B.numColumns() == A.numColumns());
+
+    A.subtractInPlace(B);
   }
 };
 

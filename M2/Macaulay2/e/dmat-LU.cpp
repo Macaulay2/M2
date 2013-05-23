@@ -20,7 +20,7 @@ bool DMatLU<CoeffRing>::LU1(const DMat<CoeffRing> *A, // col-th column is modifi
   // Returns true if a new pivot is found
 {
   const CoeffRing& K = A->ring();
-  size_t nrows = A->n_rows();
+  size_t nrows = A->numRows();
   elem sum;
   elem a;
   K.set_zero(a);
@@ -93,7 +93,7 @@ void DMatLU<CoeffRing>::solveF(const DMat<CoeffRing> *L, // m by m
                                elem *y) // length m
 {
   const CoeffRing& K = L->ring();
-  size_t nrows = L->n_rows();
+  size_t nrows = L->numRows();
   elem a;
   K.set_zero(a);
 
@@ -117,7 +117,7 @@ void DMatLU<CoeffRing>::solveB(const DMat<CoeffRing> *U, // m by n
                                elem *x) // length n
 {
   const CoeffRing& K = U->ring();
-  size_t nrows = U->n_rows();
+  size_t nrows = U->numRows();
   elem a;
   K.set_zero(a);
 
@@ -144,7 +144,7 @@ void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
   // This allocates space for pivotcols
 {
   const CoeffRing& K = U->ring();
-  int nrows = static_cast<int>(U->n_rows());
+  int nrows = static_cast<int>(U->numRows());
 
   pivotcols = M2_makearrayint(nrows); // pivot columns 0..npivots-1
 
@@ -174,8 +174,8 @@ M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
                                   DMat<CoeffRing> *&U
                                   )
 {
-  size_t nrows = A->n_rows();
-  size_t ncols = A->n_cols();
+  size_t nrows = A->numRows();
+  size_t ncols = A->numColumns();
 
   L->resize(nrows,nrows);
   U->resize(nrows,ncols);
@@ -196,8 +196,8 @@ template <typename CoeffRing>
 size_t DMatLU<CoeffRing>::rank(DMat<CoeffRing> *U)
 {
   const CoeffRing& K = U->ring();
-  size_t nrows = U->n_rows();
-  size_t ncols = U->n_cols();
+  size_t nrows = U->numRows();
+  size_t ncols = U->numColumns();
 
   elem *loc = U->get_array();
   size_t this_row = 0;
@@ -224,25 +224,25 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   // For each column of b, solveF, then solveB 9result into same col of x
   const CoeffRing& K = A->ring();
 
-  DMat<CoeffRing> *L = new DMat<CoeffRing>(& A->ring(), A->n_rows(), A->n_rows());
-  DMat<CoeffRing> *U = new DMat<CoeffRing>(& A->ring(), A->n_rows(), A->n_cols());
+  DMat<CoeffRing> *L = new DMat<CoeffRing>(& A->ring(), A->numRows(), A->numRows());
+  DMat<CoeffRing> *U = new DMat<CoeffRing>(& A->ring(), A->numRows(), A->numColumns());
 
   M2_arrayint P = LU(A,L,U);
 
   M2_arrayint pivotcols;
   size_t n_pivots;
 
-  size_t nrowsA = A->n_rows();
+  size_t nrowsA = A->numRows();
 
-  set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
+  set_pivot_info(U,U->numColumns(),pivotcols,n_pivots);
 
-  x->resize(A->n_cols(), b->n_cols());
+  x->resize(A->numColumns(), b->numColumns());
   elem *y = newarray(elem, nrowsA);
-  for (size_t i=0; i<A->n_rows(); i++)
+  for (size_t i=0; i<A->numRows(); i++)
     K.set_zero(y[i]);
   const elem *bcol = b->get_array();
   elem *xcol = x->get_array();
-  for (size_t i=0; i<b->n_cols(); i++)
+  for (size_t i=0; i<b->numColumns(); i++)
     {
       solveF(L,P,bcol,y);
       bool is_sol = true;
@@ -256,8 +256,8 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
           return false;
         }
       solveB(U,pivotcols,n_pivots,y,xcol);
-      xcol += x->n_rows();
-      bcol += b->n_rows();
+      xcol += x->numRows();
+      bcol += b->numRows();
     }
 
   deletearray(y);
@@ -269,18 +269,18 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
                                    DMat<CoeffRing> *x) // resulting kernel
 {
   const CoeffRing& K = U->ring();
-  size_t nrows = U->n_rows();
+  size_t nrows = U->numRows();
 
   M2_arrayint pivotcols;
   size_t n_pivots;
 
-  set_pivot_info(U,U->n_cols(),pivotcols,n_pivots);
+  set_pivot_info(U,U->numColumns(),pivotcols,n_pivots);
 
-  x->resize(U->n_cols(), U->n_cols() - n_pivots);
+  x->resize(U->numColumns(), U->numColumns() - n_pivots);
   int *nextpivotcol = pivotcols->array;
   int *endpivotcol = nextpivotcol + pivotcols->len;
   size_t thiscol = 0;
-  for (size_t c=0; c<U->n_cols(); c++)
+  for (size_t c=0; c<U->numColumns(); c++)
     {
       if (nextpivotcol < endpivotcol && c == *nextpivotcol)
         {
@@ -290,7 +290,7 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
       solveB(U,
              pivotcols,n_pivots,
              U->get_array() + nrows*c,
-             x->get_array() + x->n_rows() * thiscol);
+             x->get_array() + x->numRows() * thiscol);
 
       K.set_from_int(MAT(x,c,thiscol), -1);
       //      K.from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());

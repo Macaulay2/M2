@@ -60,12 +60,11 @@ public:
 
   size_t numRows() const { return nrows_; }
   size_t numColumns() const { return ncols_; }
-  size_t n_rows() const { return nrows_; }
-  size_t n_cols() const { return ncols_; }
-  //  const CoeffRing * get_CoeffRing() const { return coeffR; }
+  //  size_t n_rows() const { return nrows_; }
+  //  size_t n_cols() const { return ncols_; }
+
   const CoeffRing& ring() const { return *coeffR; }
 
-  //  void set_matrix(const SMat<CoeffRing> *mat0);
   void initialize(size_t nrows, size_t ncols, sparsevec **cols);
   //  void resize(size_t nrows, size_t ncols);
 

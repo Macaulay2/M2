@@ -109,9 +109,9 @@ public:
 #endif
   virtual const Ring * get_ring() const { return mRing; }
 
-  virtual size_t n_rows() const { return mat.n_rows(); }
+  virtual size_t n_rows() const { return mat.numRows(); }
 
-  virtual size_t n_cols() const { return mat.n_cols(); }
+  virtual size_t n_cols() const { return mat.numColumns(); }
 
   virtual bool is_dense() const { return mat.is_dense(); }
 
@@ -469,7 +469,7 @@ public:
 
   virtual bool is_zero() const
   {
-    return mat.is_zero();
+    return MatArith::isZero(getMat());
   }
 
   virtual bool is_equal(const MutableMatrix *B) const
@@ -477,7 +477,7 @@ public:
     const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
     if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
       return false;
-    return getMat().is_equal(B1->getMat());
+    return MatArith::isEqual(getMat(), B1->getMat());
   }
 
   virtual MutableMat * add(const MutableMatrix *B) const
@@ -494,7 +494,7 @@ public:
         ERROR("expected matrices with the same ring");
         return NULL;
       }
-    if (B1->n_rows() != n_rows() || B1->n_cols() != n_cols())
+    if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
       {
         ERROR("expected matrices of the same shape");
         return NULL;
@@ -508,21 +508,32 @@ public:
   virtual MutableMatrix * negate() const
   {
     MutableMat *result = clone();
-    result->getMat().negateInPlace();
+    MatArith::negateInPlace(result->getMat());
     return result;
   }
 
   virtual MutableMat * subtract(const MutableMatrix *B) const
   // return this - B.  return NULL of sizes or types do not match.
   {
-    const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
-    if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
+    const Mat *B1 = B->coerce<Mat>();
+    if (B1 == NULL) 
       {
-        ERROR("expected matrices with same sparsity and same base ring");
-        return 0;
+        ERROR("expected matrices with the same ring and sparsity");
+        return NULL;
       }
-    MutableMat *result = clone();
-    result->getMat().subtractInPlace(B1->getMat());
+    if (B->get_ring() != get_ring())
+      {
+        ERROR("expected matrices with the same ring");
+        return NULL;
+      }
+    if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
+      {
+        ERROR("expected matrices of the same shape");
+        return NULL;
+      }
+
+    MutableMat* result = clone();
+    MatArith::subtractInPlace(result->getMat(), *B1);
     return result;
   }
 
@@ -535,11 +546,13 @@ public:
         return 0;
       }
     elem a;
+    mat.ring().init(a);
     mat.ring().from_ring_elem(a, f->get_value());
 
     MutableMat *result = clone();
-    result->mat.scalarMultInPlace(a);
+    MatArith::scalarMultInPlace(result->mat, a);
 
+    mat.ring().clear(a);
     return result;
   }
 
@@ -668,7 +681,7 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
       return 0;
     }
   // Second, make sure the sizes are correct.
-  if (mat.n_cols() != B1->n_rows())
+  if (mat.numColumns() != B1->n_rows())
     {
       ERROR("matrix sizes do not match in matrix multiplication");
       return 0;

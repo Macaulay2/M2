@@ -63,24 +63,15 @@ public:
 
 
   const CoeffRing& ring() const { return mMatrix.ring(); }
-  //  const CoeffRing* get_CoeffRing() const { return & ring(); }
 
   size_t numRows() const { return mMatrix.numRows(); }
   size_t numColumns() const { return mMatrix.numColumns(); }
-  size_t n_rows() const { return numRows(); }
-  size_t n_cols() const { return numColumns(); }
-
 
   bool is_dense() const { return true; }
 
   void text_out(buffer& o) const;
 
-  void set_matrix(const DMat<CoeffRing>& mat0);
   void resize(size_t nrows, size_t ncols);
-
-  double *get_lapack_array() const; // redefined by RR,CC
-  double *make_lapack_array() const; // creates an array of doubles (or 0, if not applicable)
-  void fill_from_lapack_array(double *lapack_array);  // The size of the array should match the size of this.
 
   // Warning: iterator cannot be used on a matrix with no entries
   class iterator : public our_new_delete
@@ -128,22 +119,9 @@ public:
   void set_entry(size_t r, size_t c, const ElementType &a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  bool is_zero() const;
-
-  bool is_equal(const DMat& B) const;
-
   ///////////////////////////////////
   /// Fast linear algebra routines //
   ///////////////////////////////////
-
-  // this -= B, assertion failure on bad ring or bad sizes
-  void subtractInPlace(const DMat& B);
-
-  // this = -this
-  void negateInPlace();
-
-  // this = f * this
-  void scalarMultInPlace(const ElementType &f);
 
   void setFromSubmatrix(const DMat &A, M2_arrayint rows, M2_arrayint cols);
 
@@ -234,7 +212,6 @@ private:
   DenseMatrixDef<ACoeffRing>& getInternalMatrix() { return mMatrix; }
   const DenseMatrixDef<ACoeffRing>& getInternalMatrix() const { return mMatrix; }
 
-  const Ring* mGeneralRing; // To interface to the outside world
   DenseMatrixDef<CoeffRing> mMatrix;
 };
 
@@ -265,12 +242,6 @@ void DMat<CoeffRing>::resize(size_t new_nrows, size_t new_ncols)
 {
   DenseMatrixDef<CoeffRing> newMatrix(ring(), new_nrows, new_ncols);
   mMatrix.swap(newMatrix); // when newMatrix is removed, it frees elements of matrix too
-}
-
-template<typename CoeffRing>
-double * DMat<CoeffRing>::get_lapack_array() const
-{
-  return 0;
 }
 
 template<typename CoeffRing>
@@ -307,13 +278,6 @@ void DMat<CoeffRing>::text_out(buffer& o) const
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::set_matrix(const DMat<CoeffRing>& mat0)
-{
-  DenseMatrixDef<CoeffRing> newMatrix(mat0.mMatrix);
-  mMatrix.swap(newMatrix); // when newMatrix is removed, it frees elements of matrix too
-}
-
-template<typename CoeffRing>
 bool DMat<CoeffRing>::get_entry(size_t r, size_t c, ElementType &result) const
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
@@ -344,17 +308,6 @@ void DMat<CoeffRing>::copy_elems(size_t n_to_copy,
 }
 
 template<typename CoeffRing>
-bool DMat<CoeffRing>::is_zero() const
-{
-  size_t len = numRows() * numColumns();
-  if (len == 0) return true;
-  for (const ElementType *t = array() + len - 1; t >= array(); t--)
-    if (!ring().is_zero(*t))
-      return false;
-  return true;
-}
-
-template<typename CoeffRing>
 void DMat<CoeffRing>::setFromSubmatrix(const DMat& A, 
                                        M2_arrayint rows,
                                        M2_arrayint cols)
@@ -373,56 +326,6 @@ void DMat<CoeffRing>::setFromSubmatrix(const DMat& A,
   for (size_t r = 0; r < numRows(); r++)
     for (size_t c = 0; c < cols->len; c++)
       ring().set(mMatrix.entry(r,c), A.mMatrix.entry(r,cols->array[c]));
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::subtractInPlace(const DMat<CoeffRing>& B)
-  // this -= B.
-  // assumption:the assert statements below:
-{
-  M2_ASSERT(&B.ring() == &ring());
-  M2_ASSERT(B.numRows() == numRows());
-  M2_ASSERT(B.numColumns() == numColumns());
-  
-  for (size_t i=0; i<numRows()*numColumns(); i++)
-    {
-      ring().subtract(array()[i], array()[i], B.array()[i]);
-    }
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::negateInPlace()
-  // this = -this
-{
-  for (size_t i=0; i<numRows()*numColumns(); i++)
-    {
-      ring().negate(array()[i], array()[i]);
-    }
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::scalarMultInPlace(const ElementType &f)
-  // this = f * this
-{
-  for (size_t i=0; i<numRows()*numColumns(); i++)
-    {
-      ring().mult(array()[i], f, array()[i]);
-    }
-}
-
-template <typename CoeffRing>
-bool DMat<CoeffRing>::is_equal(const DMat& B) const
-{
-  M2_ASSERT(&ring() == &B.ring());
-  if (B.numRows() != numRows()) return false;
-  if (B.numColumns() != numColumns()) return false;
-  size_t top = numRows() * numColumns();
-  const ElementType * elemsA = get_array();
-  const ElementType * elemsB = B.get_array();
-  for (size_t i = 0; i < top; i++)
-    if (!ring().is_equal(*elemsA++, *elemsB++))
-      return false;
-  return true;
 }
 
 #endif

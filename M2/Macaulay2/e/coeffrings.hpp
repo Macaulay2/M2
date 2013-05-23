@@ -302,6 +302,7 @@ class CoefficientRingRRR : public our_new_delete
 public:
   typedef RRR ring_type;
   typedef __mpfr_struct elem;
+  typedef  elem ElementType;
   const RRR *R;
 
   CoefficientRingRRR(const RRR *R0) : R(R0) {}
@@ -486,6 +487,7 @@ class CoefficientRingCCC : public our_new_delete
 public:
   typedef CCC ring_type;
   typedef gmp_CC_struct elem; // components are re, im
+  typedef elem ElementType;
   typedef CoefficientRingRRR::elem real_elem;
 
   CCC *R;
