@@ -15,6 +15,7 @@ namespace M2 {
 
 #include "linalg.hpp"
 #include "MatElementaryOps.hpp"
+#include "MatArithmetic.hpp"
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
@@ -49,6 +50,7 @@ public:
   typedef typename CoeffRing::elem elem;
 
   typedef MatElementaryOps<Mat> MatOps;
+  typedef MatArithmetic<Mat> MatArith;
 private:
   const Ring* mRing;
   Mat mat;
@@ -499,7 +501,7 @@ public:
       }
 
     MutableMat* result = clone();
-    result->getMat().addInPlace(*B1);
+    MatArith::addInPlace(result->getMat(), *B1);
     return result;
   }
 

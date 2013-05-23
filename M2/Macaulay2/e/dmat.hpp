@@ -30,6 +30,7 @@ public:
 };
 
 template <typename MT> class MatElementaryOps;
+template <typename MT> class MatArithmetic;
 template <typename RT> class DMatLU;
 
 /**
@@ -40,6 +41,7 @@ class DMat : public our_new_delete
 {
   friend class Lapack;
   friend class MatElementaryOps<DMat>;
+  friend class MatArithmetic<DMat>;
   friend class DMatLU<ACoeffRing>;
 
   typedef typename EigenvalueType<ACoeffRing>::Ring EigenvalueRing;
@@ -116,19 +118,6 @@ public:
 
 
 public:
-  size_t lead_row(size_t col) const;
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     returns -1 if the column is 0 */
-
-  size_t lead_row(size_t col, ElementType &result) const;
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     Also sets result to be the entry at this index.
-     returns -1 if the column is 0, or if col is out of range
-     No error is flagged. */
-
-  ///////////////////////////////
-  // Row and column operations //
-  ///////////////////////////////
   // The following routines return false if one of the row or columns given
   // is out of range.
 
@@ -139,62 +128,6 @@ public:
   void set_entry(size_t r, size_t c, const ElementType &a);
   // Returns false if (r,c) is out of range, or the ring of a is wrong.
 
-  void interchange_rows(size_t i, size_t j);
-  /* swap rows: row(i) <--> row(j) */
-
-  void interchange_columns(size_t i, size_t j);
-  /* swap columns: column(i) <--> column(j) */
-
-  void scale_row(size_t i, const ElementType &r);
-  /* row(i) <- r * row(i) */
-
-  void scale_column(size_t i, const ElementType &r);
-  /* column(i) <- r * column(i) */
-
-  void divide_row(size_t i, const ElementType &r);
-  /* row(i) <- row(i) / r */
-
-  void divide_column(size_t i, const ElementType &r);
-  /* column(i) <- column(i) / r */
-
-  void row_op(size_t i, const ElementType &r, size_t j);
-  /* row(i) <- row(i) + r * row(j) */
-
-  void column_op(size_t i, const ElementType &r, size_t j);
-  /* column(i) <- column(i) + r * column(j) */
-
-  void column2by2(size_t c1, size_t c2,
-                  const ElementType &a1, const ElementType &a2,
-                  const ElementType &b1, const ElementType &b2);
-  /* column(c1) <- a1 * column(c1) + a2 * column(c2),
-     column(c2) <- b1 * column(c1) + b2 * column(c2)
-  */
-
-  void row2by2(size_t r1, size_t r2,
-               const ElementType &a1, const ElementType &a2,
-               const ElementType &b1, const ElementType &b2);
-  /* row(r1) <- a1 * row(r1) + a2 * row(r2),
-     row(r2) <- b1 * row(r1) + b2 * row(r2)
-  */
-
-  void dot_product(size_t i, size_t j, ElementType &result) const;
-
-  bool row_permute(size_t start_row, M2_arrayint perm);
-
-  bool column_permute(size_t start_col, M2_arrayint perm);
-
-  void insert_columns(size_t i, size_t n_to_add);
-  /* Insert n_to_add columns directly BEFORE column i. */
-
-  void insert_rows(size_t i, size_t n_to_add);
-  /* Insert n_to_add rows directly BEFORE row i. */
-
-  void delete_columns(size_t i, size_t j);
-  /* Delete columns i .. j from M */
-
-  void delete_rows(size_t i, size_t j);
-  /* Delete rows i .. j from M */
-
   bool is_zero() const;
 
   bool is_equal(const DMat& B) const;
@@ -202,9 +135,6 @@ public:
   ///////////////////////////////////
   /// Fast linear algebra routines //
   ///////////////////////////////////
-
-  // this += B, assertion failure on bad ring or bad sizes
-  void addInPlace(const DMat& B);
 
   // this -= B, assertion failure on bad ring or bad sizes
   void subtractInPlace(const DMat& B);
@@ -384,45 +314,6 @@ void DMat<CoeffRing>::set_matrix(const DMat<CoeffRing>& mat0)
 }
 
 template<typename CoeffRing>
-size_t DMat<CoeffRing>::lead_row(size_t col) const
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     returns -1 if the column is 0 */
-{
-  const ElementType *last = array() + numRows() * col;
-  const ElementType *loc = last + numRows() - 1;
-  for ( ; loc >= last; loc--)
-    {
-      if (!ring().is_zero(*loc))
-        return (loc-last);
-    }
-  return -1;
-}
-
-template<typename CoeffRing>
-size_t DMat<CoeffRing>::lead_row(size_t col, ElementType &result) const
-  /* returns the largest index row which has a non-zero value in column 'col'.
-     Also sets result to be the entry at this index.
-     returns -1 if the column is 0, or if col is out of range
-     No error is flagged. */
-{
-  const ElementType *last = array() + numRows() * col;
-  const ElementType *loc = last + numRows() - 1;
-  for ( ; loc >= last; loc--)
-    {
-      if (!ring().is_zero(*loc))
-        {
-          ring().set(result, *loc);
-          return static_cast<size_t>(loc-last);
-        }
-    }
-  return -1;
-}
-
-///////////////////////////////
-// Row and column operations //
-///////////////////////////////
-
-template<typename CoeffRing>
 bool DMat<CoeffRing>::get_entry(size_t r, size_t c, ElementType &result) const
   // Returns false if (r,c) is out of range or if result is 0.  No error
   // is returned. result <-- this(r,c), and is set to zero if false is returned.
@@ -438,227 +329,6 @@ void DMat<CoeffRing>::set_entry(size_t r, size_t c, const ElementType &a)
 }
 
 template<typename CoeffRing>
-void DMat<CoeffRing>::interchange_rows(size_t i, size_t j)
-  /* swap rows: row(i) <--> row(j) */
-{
-  M2_ASSERT(i < numRows());
-  M2_ASSERT(j < numRows());
-  if (i == j) return;
-  ElementType *loc1 = array() + i;
-  ElementType *loc2 = array() + j;
-
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      ring().swap(*loc1, *loc2);
-      loc1 += numRows();
-      loc2 += numRows();
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::interchange_columns(size_t i, size_t j)
-  /* swap columns: column(i) <--> column(j) */
-{
-  M2_ASSERT(i < numColumns());
-  M2_ASSERT(j < numColumns());
-  if (i == j) return;
-  ElementType *loc1 = array() + numRows()*i;
-  ElementType *loc2 = array() + numRows()*j;
-  for (size_t r=0; r<numRows(); r++)
-    {
-      ring().swap(*loc1, *loc2);
-      loc1++;
-      loc2++;
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::scale_row(size_t i, const ElementType &r)
-  /* row(i) <- r * row(i) */
-{
-  M2_ASSERT(i < numRows());
-  ElementType *loc = array() + i;
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      ring().mult(*loc, r, *loc); // *loc = r * *loc
-      loc += numRows();
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::scale_column(size_t i, const ElementType &r)
-  /* column(i) <- r * column(i) */
-{
-  M2_ASSERT(i < numColumns());
-  ElementType *loc = array() + numRows()*i;
-  for (size_t a=0; a<numRows(); a++)
-    {
-      ring().mult(*loc, r, *loc);
-      loc++;
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::divide_row(size_t i, const ElementType &r)
-  /* row(i) <- row(i) / r */
-{
-  ElementType *loc = array() + i;
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      ring().divide(*loc, *loc, r);
-      loc += numRows();
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::divide_column(size_t i, const ElementType &r)
-  /* column(i) <- column(i) / r */
-{
-  ElementType *loc = array() + numRows()*i;
-  for (size_t a=0; a<numRows(); a++)
-    {
-      ring().divide(*loc, *loc, r);
-      loc++;
-    }
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::row_op(size_t i, const ElementType &r, size_t j)
-  /* row(i) <- row(i) + r * row(j) */
-{
-  ElementType *loc1 = array() + i;
-  ElementType *loc2 = array() + j;
-
-  ElementType f;
-  ring().init(f);
-  ring().set_zero(f);
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      ring().mult(f,r,*loc2);
-      ring().add(*loc1, f, *loc1);
-      loc1 += numRows();
-      loc2 += numRows();
-    }
-  ring().clear(f);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::column_op(size_t i, const ElementType &r, size_t j)
-  /* column(i) <- column(i) + r * column(j) */
-{
-  ElementType *loc1 = array() + numRows()*i;
-  ElementType *loc2 = array() + numRows()*j;
-
-  ElementType f;
-  ring().init(f);
-  ring().set_zero(f);
-  for (size_t a=0; a<numRows(); a++)
-    {
-      ring().mult(f,r,*loc2);
-      ring().add(*loc1, *loc1, f);
-      loc1++;
-      loc2++;
-    }
-  ring().clear(f);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::row2by2(size_t r1, size_t r2,
-               const ElementType &a1, const ElementType &a2,
-               const ElementType &b1, const ElementType &b2)
-  /* row(r1) <- a1 * row(r1) + a2 * row(r2),
-     row(r2) <- b1 * row(r1) + b2 * row(r2)
-  */
-{
-  ElementType *loc1 = array() + r1;
-  ElementType *loc2 = array() + r2;
-
-  ElementType f1,f2,g1,g2;
-  ring().init(f1);
-  ring().init(f2);
-  ring().init(g1);
-  ring().init(g2);
-  ring().set_zero(f1);
-  ring().set_zero(f2);
-  ring().set_zero(g1);
-  ring().set_zero(g2);
-  for (size_t i=0; i<numColumns(); i++)
-    {
-      ring().mult(f1,a1,*loc1);
-      ring().mult(f2,a2,*loc2);
-      ring().mult(g1,b1,*loc1);
-      ring().mult(g2,b2,*loc2);
-
-      ring().add(f1,f1,f2);
-      ring().add(g1,g1,g2);
-      ring().set(*loc1, f1);
-      ring().set(*loc2, g1);
-      loc1 += numRows();
-      loc2 += numRows();
-    }
-  ring().clear(f1);
-  ring().clear(f2);
-  ring().clear(g1);
-  ring().clear(g2);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::column2by2(size_t c1, size_t c2,
-                  const ElementType &a1, const ElementType &a2,
-                  const ElementType &b1, const ElementType &b2)
-  /* column(c1) <- a1 * column(c1) + a2 * column(c2),
-     column(c2) <- b1 * column(c1) + b2 * column(c2)
-  */
-{
-  ElementType *loc1 = array() + c1 * numRows();
-  ElementType *loc2 = array() + c2 * numRows();
-
-  ElementType f1,f2,g1,g2;
-  ring().init(f1);
-  ring().init(f2);
-  ring().init(g1);
-  ring().init(g2);
-  ring().set_zero(f1);
-  ring().set_zero(f2);
-  ring().set_zero(g1);
-  ring().set_zero(g2);
-  for (size_t i=0; i<numRows(); i++)
-    {
-      ring().mult(f1,a1,*loc1);
-      ring().mult(f2,a2,*loc2);
-      ring().mult(g1,b1,*loc1);
-      ring().mult(g2,b2,*loc2);
-
-      ring().add(f1,f1,f2);
-      ring().add(g1,g1,g2);
-      ring().set(*loc1++, f1);
-      ring().set(*loc2++, g1);
-    }
-  ring().clear(f1);
-  ring().clear(f2);
-  ring().clear(g1);
-  ring().clear(g2);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::dot_product(size_t i, size_t j, ElementType &result) const
-{
-  const ElementType *loc1 = array() + numRows()*i;
-  const ElementType *loc2 = array() + numRows()*j;
-  ring().set_zero(result);
-
-  ElementType f;
-  ring().init(f);
-  ring().set_zero(f);
-  for (size_t r=0; r<numRows(); r++)
-    {
-      ring().mult(f,*loc1++,*loc2++);
-      ring().add(result,result, f);
-    }
-  ring().clear(f);
-}
-
-template<typename CoeffRing>
 void DMat<CoeffRing>::copy_elems(size_t n_to_copy, 
                                  ElementType *target, 
                                  size_t target_stride, 
@@ -671,196 +341,6 @@ void DMat<CoeffRing>::copy_elems(size_t n_to_copy,
       target += target_stride;
       source += stride;
     }
-}
-
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::row_permute(size_t start_row, M2_arrayint perm)
-{
-  // We copy one row to another location for each cycle in 'perm' of length > 1.
-  size_t nrows_to_permute = perm->len;
-  bool *done = newarray_atomic(bool,nrows_to_permute);
-  for (size_t i=0; i<nrows_to_permute; i++)
-    done[i] = true;
-  for (size_t i=0; i<nrows_to_permute; i++)
-    {
-      size_t j = perm->array[i];
-      if (!done[j])
-        {
-          ERROR("expected permutation");
-          deletearray(done);
-          return false;
-        }
-      done[j] = false;
-    }
-  ElementType *tmp = newarray_clear(ElementType,numColumns());
-  for (size_t c=0; c<numColumns(); c++)
-    ring().init(tmp[c]);
-  size_t next = 0;
-  ElementType *arr = array() + start_row;
-
-  while (next < nrows_to_permute)
-    {
-      if (done[next] || perm->array[next] == next)
-        {
-          next++;
-        }
-      else
-        {
-          // store row 'next' into tmp
-          copy_elems(numColumns(),tmp,1,arr + next, numRows());
-
-          size_t r = next;
-          for (;;)
-            {
-              // copy row perm[r] to row r
-              copy_elems(numColumns(), arr + r, numRows(), arr + perm->array[r], numRows());
-              done[r] = true;
-              size_t next_r = perm->array[r];
-              if (next_r == next) break; // and so r is the previous one
-              r = perm->array[r];
-            }
-          // Now copy tmp back
-          copy_elems(numColumns(), arr + r, numRows(), tmp, 1);
-          done[r] = true;
-        }
-    }
-  for (size_t c=0; c<numColumns(); c++)
-    ring().clear(tmp[c]);
-  deletearray(tmp);
-  deletearray(done);
-  return true;
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::column_permute(size_t start_col, M2_arrayint perm)
-{
-  // We copy one column to another location for each cycle in 'perm' of length > 1.
-  size_t ncols_to_permute = perm->len;
-  bool *done = newarray_atomic(bool,ncols_to_permute);
-  for (size_t i=0; i<ncols_to_permute; i++)
-    done[i] = true;
-  for (size_t i=0; i<ncols_to_permute; i++)
-    {
-      size_t j = perm->array[i];
-      if (!done[j])
-        {
-          ERROR("expected permutation");
-          deletearray(done);
-          return false;
-        }
-      done[j] = false;
-    }
-  ElementType *tmp = newarray_clear(ElementType,numRows());
-  for (size_t r=0; r<numRows(); r++)
-    ring().init(tmp[r]);
-  size_t next = 0;
-  ElementType *arr = array() + start_col * numRows();
-
-  while (next < ncols_to_permute)
-    {
-      if (done[next] || perm->array[next] == next)
-        {
-          next++;
-        }
-      else
-        {
-          // store col 'next' into tmp
-          copy_elems(numRows(),tmp,1,arr + next * numRows(), 1);
-
-          size_t r = next;
-          for (;;)
-            {
-              // copy col perm[r] to col r
-              copy_elems(numRows(), arr + r * numRows(), 1, arr + perm->array[r] * numRows(), 1);
-              done[r] = true;
-              size_t next_r = perm->array[r];
-              if (next_r == next) break; // and so r is the previous one
-              r = perm->array[r];
-            }
-          // Now copy tmp back
-          copy_elems(numRows(), arr + r * numRows(), 1, tmp, 1);
-          done[r] = true;
-        }
-    }
-  for (size_t r=0; r<numRows(); r++)
-    ring().clear(tmp[r]);
-  deletearray(tmp);
-  deletearray(done);
-  return true;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::insert_columns(size_t i, size_t n_to_add)
-/* Insert n_to_add columns directly BEFORE column i. */
-{
-  size_t new_ncols = numColumns() + n_to_add;
-  DenseMatrixDef<CoeffRing> newMatrix(ring(), numRows(), new_ncols);
-
-  for (size_t r=0; r<numRows(); r++)
-    {
-      for (size_t c=0; c<i; c++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t c=i; c<numColumns(); c++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c+n_to_add));
-    }
-  mMatrix.swap(newMatrix);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::insert_rows(size_t i, size_t n_to_add)
-/* Insert n_to_add rows directly BEFORE row i. */
-{
-  size_t new_nrows = numRows() + n_to_add;
-  DenseMatrixDef<CoeffRing> newMatrix(ring(), new_nrows, numColumns());
-
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      for (size_t r=0; r<i; r++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t r=i; r<numRows(); r++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r+n_to_add,c));
-    }
-  mMatrix.swap(newMatrix);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::delete_columns(size_t i, size_t j)
-/* Delete columns i .. j from M */
-{
-  size_t n_to_delete = j-i+1;
-  size_t new_ncols = numColumns() - n_to_delete;
-  DenseMatrixDef<CoeffRing> newMatrix(ring(), numRows(), new_ncols);
-
-  for (size_t r=0; r<numRows(); r++)
-    {
-      for (size_t c=0; c<i; c++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t c=j+1; c<numColumns(); c++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c-n_to_delete));
-    }
-  mMatrix.swap(newMatrix);
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::delete_rows(size_t i, size_t j)
-/* Delete rows i .. j from M */
-{
-  M2_ASSERT(i < numRows());
-  M2_ASSERT(j < numRows());
-  M2_ASSERT(i <= j);
-  size_t n_to_delete = j-i+1;
-  size_t new_nrows = numRows() - n_to_delete;
-  DenseMatrixDef<CoeffRing> newMatrix(ring(), new_nrows, numColumns());
-
-  for (size_t c=0; c<numColumns(); c++)
-    {
-      for (size_t r=0; r<i; r++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r,c));
-      for (size_t r=j+1; r<numRows(); r++)
-        ring().swap(mMatrix.entry(r,c), newMatrix.entry(r-n_to_delete,c));
-    }
-  mMatrix.swap(newMatrix);
 }
 
 template<typename CoeffRing>
@@ -893,21 +373,6 @@ void DMat<CoeffRing>::setFromSubmatrix(const DMat& A,
   for (size_t r = 0; r < numRows(); r++)
     for (size_t c = 0; c < cols->len; c++)
       ring().set(mMatrix.entry(r,c), A.mMatrix.entry(r,cols->array[c]));
-}
-
-template <typename CoeffRing>
-void DMat<CoeffRing>::addInPlace(const DMat<CoeffRing>& B)
-  // this += B.
-  // assumption:the assert statements below:
-{
-  M2_ASSERT(&B.ring() == &ring());
-  M2_ASSERT(B.numRows() == numRows());
-  M2_ASSERT(B.numColumns() == numColumns());
-  
-  for (size_t i=0; i<numRows()*numColumns(); i++)
-    {
-      ring().add(array()[i], array()[i], B.array()[i]);
-    }
 }
 
 template <typename CoeffRing>
