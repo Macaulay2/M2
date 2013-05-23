@@ -29,12 +29,19 @@ public:
   typedef CoefficientRingCCC Ring;
 };
 
+template <typename MT> class MatElementaryOps;
+template <typename RT> class DMatLU;
+
 /**
  * \ingroup matrices
  */
 template<typename ACoeffRing>
 class DMat : public our_new_delete
 {
+  friend class Lapack;
+  friend class MatElementaryOps<DMat>;
+  friend class DMatLU<ACoeffRing>;
+
   typedef typename EigenvalueType<ACoeffRing>::Ring EigenvalueRing;
   typedef DenseMatrixLinAlg<ACoeffRing> LinAlg;
   //  typedef DenseMatrixArithmetic<CoeffRing> Arithmetic;
@@ -52,6 +59,7 @@ public:
   DMat(const DMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
   DMat(const DMat<ACoeffRing> &M); // Copies (clones) M into 'this'
 
+
   const CoeffRing& ring() const { return mMatrix.ring(); }
   //  const CoeffRing* get_CoeffRing() const { return & ring(); }
 
@@ -60,11 +68,6 @@ public:
   size_t n_rows() const { return numRows(); }
   size_t n_cols() const { return numColumns(); }
 
-  const ElementType* array() const { return mMatrix.array(); }
-  ElementType* array() { return mMatrix.array(); }
-  // These functions are used for interface with e.g. lapack, ffpack.
-  const ElementType * get_array() const { return array(); }
-  ElementType * get_array() { return array(); }
 
   bool is_dense() const { return true; }
 
@@ -289,7 +292,18 @@ public:
   engine_RawRingElementArrayOrNull minimalPolynomial() const;
 
   void copy_elems(size_t n_to_copy, ElementType *target, size_t target_stride, const ElementType *source, size_t stride) const;
+
+
+  const ElementType* array() const { return mMatrix.array(); }
+  ElementType* array() { return mMatrix.array(); }
+  // These functions are used for interface with e.g. lapack, ffpack.
+  const ElementType * get_array() const { return array(); }
+  ElementType * get_array() { return array(); }
 private:
+
+  DenseMatrixDef<ACoeffRing>& getInternalMatrix() { return mMatrix; }
+  const DenseMatrixDef<ACoeffRing>& getInternalMatrix() const { return mMatrix; }
+
   const Ring* mGeneralRing; // To interface to the outside world
   DenseMatrixDef<CoeffRing> mMatrix;
 };
@@ -341,7 +355,7 @@ void DMat<CoeffRing>::text_out(buffer& o) const
           const ElementType& f = mMatrix.entry(r,c);
           if (!ring().is_zero(f))
             {
-#warning "don't forget to write elem_text_out for CoeffRing's"
+              //#warning "don't forget to write elem_text_out for CoeffRing's"
               //              ring().elem_text_out(p[r], f);
             }
           else

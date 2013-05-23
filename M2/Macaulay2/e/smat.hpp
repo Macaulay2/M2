@@ -8,6 +8,8 @@ union ring_elem;
 
 class MutableMatrix;
 
+template<typename MT> class MatElementaryOps;
+
 template<typename ACoeffRing>
 class SMat : public our_new_delete
 {
@@ -30,6 +32,17 @@ private:
     ElementType coeff;
   };
 
+  friend class MatElementaryOps<SMat>;
+  const sparsevec* column(size_t c) const 
+  { 
+    M2_ASSERT(c < n_cols());
+    return columns_[c]; 
+  }
+  sparsevec* column(size_t c)
+  { 
+    M2_ASSERT(c < n_cols());
+    return columns_[c]; 
+  }
 public:
   SMat():coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
@@ -45,6 +58,8 @@ public:
 
   bool is_dense() const { return false; }
 
+  size_t numRows() const { return nrows_; }
+  size_t numColumns() const { return ncols_; }
   size_t n_rows() const { return nrows_; }
   size_t n_cols() const { return ncols_; }
   //  const CoeffRing * get_CoeffRing() const { return coeffR; }

@@ -14,6 +14,7 @@ namespace M2 {
 };
 
 #include "linalg.hpp"
+#include "MatElementaryOps.hpp"
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
@@ -47,7 +48,7 @@ public:
   typedef typename Mat::CoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
 
-  //  typedef typename Mat::ApproximateLinAlg ApproximateLinAlg;
+  typedef MatElementaryOps<Mat> MatOps;
 private:
   const Ring* mRing;
   Mat mat;
@@ -132,7 +133,7 @@ public:
     //    return new MutableMat(*m); // places copy into result
   }
 
-  virtual size_t lead_row(size_t col) const { return mat.lead_row(col); }
+  virtual size_t lead_row(size_t col) const { return MatOps::lead_row(mat,col); }
   /* returns the largest index row which has a non-zero value in column 'col'.
      returns -1 if the column is 0 */
 
@@ -145,9 +146,11 @@ public:
     mat.ring().init(b);
     mat.ring().set_zero(b);
 
-    size_t ret = mat.lead_row(col, b);
+    size_t ret = MatOps::lead_row(mat, col, b);
     if (ret >= 0)
       mat.ring().to_ring_elem(result, b);
+
+    mat.ring().clear(b);
     return ret;
   }
 
@@ -195,7 +198,7 @@ public:
     size_t nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       return false;
-    mat.interchange_rows(i,j);
+    MatOps::interchange_rows(mat,i,j);
     return true;
   }
 
@@ -205,7 +208,7 @@ public:
     size_t ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       return false;
-    mat.interchange_columns(i,j);
+    MatOps::interchange_columns(mat,i,j);
     return true;
   }
 
@@ -216,8 +219,10 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.scale_row(i,b);
+    MatOps::scale_row(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -228,8 +233,10 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.scale_column(i,b);
+    MatOps::scale_column(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -240,8 +247,10 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.divide_row(i,b);
+    MatOps::divide_row(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -252,8 +261,10 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.divide_column(i,b);
+    MatOps::divide_column(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -265,8 +276,10 @@ public:
       return false;
     if (i == j) return true;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.row_op(i,b,j);
+    MatOps::row_op(mat,i,b,j);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -278,8 +291,10 @@ public:
       return false;
     if (i == j) return true;
     elem b;
+    mat.ring().init(b);
     mat.ring().from_ring_elem(b,r);
-    mat.column_op(i,b,j);
+    MatOps::column_op(mat,i,b,j);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -295,11 +310,19 @@ public:
       return false;
     if (c1 == c2) return true;
     elem aa1, aa2, bb1, bb2;
+    mat.ring().init(aa1);
+    mat.ring().init(aa2);
+    mat.ring().init(bb1);
+    mat.ring().init(bb2);
     mat.ring().from_ring_elem(aa1,a1);
     mat.ring().from_ring_elem(aa2,a2);
     mat.ring().from_ring_elem(bb1,b1);
     mat.ring().from_ring_elem(bb2,b2);
-    mat.column2by2(c1,c2,aa1,aa2,bb1,bb2);
+    MatOps::column2by2(mat,c1,c2,aa1,aa2,bb1,bb2);
+    mat.ring().clear(aa1);
+    mat.ring().clear(aa2);
+    mat.ring().clear(bb1);
+    mat.ring().clear(bb2);
     return true;
   }
 
@@ -319,7 +342,15 @@ public:
     mat.ring().from_ring_elem(aa2,a2);
     mat.ring().from_ring_elem(bb1,b1);
     mat.ring().from_ring_elem(bb2,b2);
-    mat.row2by2(r1,r2,aa1,aa2,bb1,bb2);
+    mat.ring().from_ring_elem(aa1,a1);
+    mat.ring().from_ring_elem(aa2,a2);
+    mat.ring().from_ring_elem(bb1,b1);
+    mat.ring().from_ring_elem(bb2,b2);
+    MatOps::row2by2(mat,r1,r2,aa1,aa2,bb1,bb2);
+    mat.ring().clear(aa1);
+    mat.ring().clear(aa2);
+    mat.ring().clear(bb1);
+    mat.ring().clear(bb2);
     return true;
   }
 
@@ -329,20 +360,22 @@ public:
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     elem a;
+    mat.ring().init(a);
     mat.ring().set_zero(a);
-    mat.dot_product(c1,c2,a);
+    MatOps::dot_product(mat,c1,c2,a);
     mat.ring().to_ring_elem(result,a);
+    mat.ring().clear(a);
     return true;
   }
 
   virtual bool row_permute(size_t start_row, M2_arrayint perm)
   {
-    return mat.row_permute(start_row, perm);
+    return MatOps::row_permute(mat, start_row, perm);
   }
 
   virtual bool column_permute(size_t start_col, M2_arrayint perm)
   {
-    return mat.column_permute(start_col, perm);
+    return MatOps::column_permute(mat, start_col, perm);
   }
 
   virtual bool insert_columns(size_t i, size_t n_to_add)
@@ -353,7 +386,7 @@ public:
         ERROR("cannot insert %l columns before column %ln",n_to_add,i);
         return false;
       }
-    mat.insert_columns(i, n_to_add);
+    MatOps::insert_columns(mat, i, n_to_add);
     return true;
   }
 
@@ -365,7 +398,7 @@ public:
         ERROR("cannot insert %l rows before row %ln",n_to_add,i);
         return false;
       }
-    mat.insert_rows(i, n_to_add);
+    MatOps::insert_rows(mat, i, n_to_add);
     return true;
   }
 
@@ -379,7 +412,7 @@ public:
         return false;
       }
 
-    mat.delete_columns(i, j);
+    MatOps::delete_columns(mat, i, j);
     return true;
   }
 
@@ -392,7 +425,7 @@ public:
         ERROR("row index out of range");
         return false;
       }
-    mat.delete_rows(i, j);
+    MatOps::delete_rows(mat, i, j);
     return true;
   }
 
