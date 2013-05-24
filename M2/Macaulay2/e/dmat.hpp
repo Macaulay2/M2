@@ -190,23 +190,10 @@ public:
     return DenseMatrixLinAlg<CoeffRing>::mult(mMatrix, B.mMatrix, result_product.mMatrix);
   }
 
-  engine_RawRingElementArrayOrNull characteristicPolynomial() const;
-
-  /** if 'this' is a square n x n matrix, return
-      an array, {a0,a1,a2,...,am} such that
-      the minimal monic polynomial of 'this' is
-      a0 + a1 * t + ... + am * t^m .
-  */
-  engine_RawRingElementArrayOrNull minimalPolynomial() const;
-
   void copy_elems(size_t n_to_copy, ElementType *target, size_t target_stride, const ElementType *source, size_t stride) const;
-
 
   const ElementType* array() const { return mMatrix.array(); }
   ElementType* array() { return mMatrix.array(); }
-  // These functions are used for interface with e.g. lapack, ffpack.
-  const ElementType * get_array() const { return array(); }
-  ElementType * get_array() { return array(); }
 private:
 
   DenseMatrixDef<ACoeffRing>& getInternalMatrix() { return mMatrix; }

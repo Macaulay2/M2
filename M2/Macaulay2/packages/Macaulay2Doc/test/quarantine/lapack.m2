@@ -145,7 +145,7 @@ assert(checkEigenvectors M < 1e-14)
 
 M = random(CC^100,CC^100);
 eigenvalues M
-
+checkEigenvectors M
 --------------------------------------
 -- Eigenvalues and eigenvectrs of   --
 -- Symmetric and Hermitian matrices --

@@ -1080,7 +1080,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
       ERROR("expected a dense mutable matrix over the ffpack finite field");
       return 0;
     }
-  M2::ARingZZpFFPACK::ElementType* elemsA = B->get_Mat()->get_array();
+  M2::ARingZZpFFPACK::ElementType* elemsA = B->get_Mat()->array();
   std::vector< M2::ARingZZpFFPACK::ElementType > charpoly;
 
   FFPACK::CharPoly(B->get_Mat()->ring().field(), charpoly, A->n_rows(), elemsA, A->n_rows());
@@ -1110,7 +1110,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
   typedef M2::ARingZZpFFPACK::ElementType Element;
   typedef std::vector<Element> Polynomial;
 
-  Element* elemsA = B->get_Mat()->get_array();
+  Element* elemsA = B->get_Mat()->array();
   size_t n = B->n_rows();
   Polynomial minpoly(n);
 

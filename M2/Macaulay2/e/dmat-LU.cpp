@@ -3,7 +3,7 @@
 
 #include "text-io.hpp"
 
-#define MAT(M,i,j) (M)->get_array()[j*nrows+i]
+#define MAT(M,i,j) (M)->array()[j*nrows+i]
 
 //////////////////////////////////
 // Private routines //////////////
@@ -148,7 +148,7 @@ void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
 
   pivotcols = M2_makearrayint(nrows); // pivot columns 0..npivots-1
 
-  const elem *loc = U->get_array();
+  const elem *loc = U->array();
   int this_row = 0;
   int this_col = 0;
   while (this_col < ncols && this_row < nrows)
@@ -199,7 +199,7 @@ size_t DMatLU<CoeffRing>::rank(DMat<CoeffRing> *U)
   size_t nrows = U->numRows();
   size_t ncols = U->numColumns();
 
-  elem *loc = U->get_array();
+  elem *loc = U->array();
   size_t this_row = 0;
   for (size_t this_col=0; this_col<ncols; this_col++)
     {
@@ -240,8 +240,8 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   elem *y = newarray(elem, nrowsA);
   for (size_t i=0; i<A->numRows(); i++)
     K.set_zero(y[i]);
-  const elem *bcol = b->get_array();
-  elem *xcol = x->get_array();
+  const elem *bcol = b->array();
+  elem *xcol = x->array();
   for (size_t i=0; i<b->numColumns(); i++)
     {
       solveF(L,P,bcol,y);
@@ -289,8 +289,8 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
         }
       solveB(U,
              pivotcols,n_pivots,
-             U->get_array() + nrows*c,
-             x->get_array() + x->numRows() * thiscol);
+             U->array() + nrows*c,
+             x->array() + x->numRows() * thiscol);
 
       K.set_from_int(MAT(x,c,thiscol), -1);
       //      K.from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());

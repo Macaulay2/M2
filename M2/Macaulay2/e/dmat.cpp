@@ -195,20 +195,6 @@ bool DMat<CoeffRing>::solveLinear(DMat<CoeffRing> &X, const DMat<CoeffRing> &B, 
 }
 
 template<typename CoeffRing>
-engine_RawRingElementArrayOrNull DMat<CoeffRing>::characteristicPolynomial() const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-engine_RawRingElementArrayOrNull DMat<CoeffRing>::minimalPolynomial() const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
 void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
                                     const DMat<CoeffRing> &B,
                                     bool transposeA,
@@ -279,7 +265,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
                        (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
                        mat->numColumns(),
                        mat->numRows(),
-                       mat->get_array(),
+                       mat->array(),
                        mat->numRows(),
                        &P[0], 
                        &Qt[0]);
