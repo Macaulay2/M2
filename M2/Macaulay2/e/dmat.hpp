@@ -300,7 +300,7 @@ void DMat<CoeffRing>::setFromSubmatrix(const DMat& A,
                                        M2_arrayint cols)
 {
   resize(rows->len, cols->len); // resets 'this' to zero matrix
-  for (size_t r = 0; r < numRows(); r++)
+  for (size_t r = 0; r < rows->len; r++)
     for (size_t c = 0; c < cols->len; c++)
       ring().set(mMatrix.entry(r,c), A.mMatrix.entry(rows->array[r],cols->array[c]));
 }
