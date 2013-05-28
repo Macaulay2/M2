@@ -1606,6 +1606,7 @@ Description
   that grow as a polynomial of degree at most equal to the codimension-1.
   The complexity is one more than the degree of this polynomial.
  Example
+  setRandomSeed 0
   S = ZZ/101[a,b,c,d];
   ff1 = matrix"a3,b3,c3,d3";
   ff =ff1*random(source ff1, source ff1);
