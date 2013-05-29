@@ -30,9 +30,10 @@ public:
   void operator++() { mCurrent += mStride; }
   const ElementType& operator*() { return *mCurrent; }
   bool operator==(DMatConstIterator& i) const { return(&(*i) == mCurrent); }
+  bool operator!=(DMatConstIterator& i) const { return(&(*i) != mCurrent); }
 private:
   const ElementType* mCurrent;
-  const size_t mStride;
+  size_t mStride;
 };
 
 template<typename ACoeffRing>
@@ -51,9 +52,10 @@ public:
   void operator++() { mCurrent += mStride; }
   ElementType& operator*() { return *mCurrent; }
   bool operator==(DMatConstIterator<ACoeffRing>& i) const { return(&(*i) == mCurrent); }
+  bool operator!=(DMatConstIterator<ACoeffRing>& i) const { return(&(*i) != mCurrent); }
 private:
   ElementType* mCurrent;
-  const size_t mStride;
+  size_t mStride;
 };
 
 template<typename ACoeffRing>
@@ -128,8 +130,6 @@ public:
   ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
   ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
-  const ElementType* array() const { return mArray; }
-  ElementType* array() { return mArray; }
 
   // When we store in row major order, we can change to these values:
   //  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
@@ -143,6 +143,9 @@ public:
     DMat newMatrix(ring(), new_nrows, new_ncols);
     swap(newMatrix);
   }
+
+  const ElementType* array() const { return mArray; }
+  ElementType* array() { return mArray; }
 
 private:
   const ACoeffRing* mRing;

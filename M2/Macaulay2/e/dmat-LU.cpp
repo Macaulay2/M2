@@ -4,6 +4,8 @@
 #include "text-io.hpp"
 
 #define MAT(M,i,j) (M)->array()[j*nrows+i]
+#define MAT(M,i,j) (M)->entry(i,j)
+
 
 //////////////////////////////////
 // Private routines //////////////
