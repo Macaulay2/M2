@@ -22,6 +22,66 @@ template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 #include "MatElementaryOps.hpp"
 #include "MatArithmetic.hpp"
 #include "MatLinAlg.hpp"
+#include "matrix-con.hpp"
+
+//template<typename MatType> Matrix* toMatrix(const Ring* R, const MatType& A)
+//{
+//  std::cout << "called general to_matrix" << std::endl;
+//  return 0;
+//}
+template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
+{
+  std::cout << "called DMat to_matrix" << std::endl;
+
+  int nrows = static_cast<int>(A.numRows());
+  int ncols = static_cast<int>(A.numColumns());
+  FreeModule *F = R->make_FreeModule(nrows);
+  MatrixConstructor result(F,ncols);
+  if (nrows == 0 || ncols == 0)
+    return result.to_matrix();
+
+  for (int c=0; c<ncols; c++)
+    {
+      int r=0;
+      auto end = A.columnEnd(c);
+      for(auto j = A.columnBegin(c); not(j == end); ++j, ++r)
+        {
+          if (not A.ring().is_zero(*j))
+            {
+              ring_elem a;
+              A.ring().to_ring_elem(a, *j);
+              result.set_entry(r, c, a);
+            }
+        }
+    }
+  result.compute_column_degrees();
+  return result.to_matrix();
+}
+template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const SMat<CoeffRing>& A)
+{
+  std::cout << "called SMat to_matrix" << std::endl;
+
+  int nrows = static_cast<int>(A.numRows());
+  int ncols = static_cast<int>(A.numColumns());
+  FreeModule *F = R->make_FreeModule(nrows);
+  MatrixConstructor result(F,ncols);
+  if (nrows == 0 || ncols == 0)
+    return result.to_matrix();
+  ring_elem f;
+  auto i = A.begin();
+  for (int c=0; c<ncols; c++)
+    {
+      ring_elem a;
+      for (i.set(c); i.valid(); i.next())
+        {
+          i.copy_elem(a);
+          int r = static_cast<int>(i.row());
+          result.set_entry(r, c, a);
+        }
+    }
+  result.compute_column_degrees();
+  return result.to_matrix();
+}
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
@@ -122,6 +182,10 @@ public:
 
   virtual bool is_dense() const { return isDense(mat); }
 
+  virtual Matrix* to_matrix() const
+  {
+    return toMatrix(get_ring(), mat);
+  }
   virtual MutableMat *copy(bool prefer_dense) const
   {
 #if 0

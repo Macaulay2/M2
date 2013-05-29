@@ -12,6 +12,50 @@
 #include "aring-zzp-flint.hpp"
 #endif
 
+template<typename ACoeffRing> class DMat;
+
+template<typename ACoeffRing>
+class DMatConstIterator
+{
+public:
+  typedef DMat<ACoeffRing> Mat;
+  typedef typename Mat::ElementType ElementType;
+
+  DMatConstIterator(const ElementType* start, size_t stride)
+    : mCurrent(start),
+      mStride(stride)
+  {
+  }
+
+  void operator++() { mCurrent += mStride; }
+  const ElementType& operator*() { return *mCurrent; }
+  bool operator==(DMatConstIterator& i) const { return(&(*i) == mCurrent); }
+private:
+  const ElementType* mCurrent;
+  const size_t mStride;
+};
+
+template<typename ACoeffRing>
+class DMatIterator
+{
+public:
+  typedef DMat<ACoeffRing> Mat;
+  typedef typename Mat::ElementType ElementType;
+
+  DMatIterator(ElementType* start, size_t stride)
+    : mCurrent(start),
+      mStride(stride)
+  {
+  }
+
+  void operator++() { mCurrent += mStride; }
+  ElementType& operator*() { return *mCurrent; }
+  bool operator==(DMatConstIterator<ACoeffRing>& i) const { return(&(*i) == mCurrent); }
+private:
+  ElementType* mCurrent;
+  const size_t mStride;
+};
+
 template<typename ACoeffRing>
 class DMat
 {
@@ -19,6 +63,9 @@ public:
   typedef ACoeffRing CoeffRing;
   typedef typename ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
+
+  typedef DMatIterator<ACoeffRing> Iterator;
+  typedef DMatConstIterator<ACoeffRing> ConstIterator;
 
   DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(0) {}
 
@@ -73,6 +120,14 @@ public:
   size_t numRows() const { return mNumRows; }
   size_t numColumns() const { return mNumColumns; }
 
+  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
+
+  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
+
   const ElementType* array() const { return mArray; }
   ElementType* array() { return mArray; }
 
@@ -107,6 +162,9 @@ public:
   typedef typename ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
 
+  typedef DMatIterator<ACoeffRing> Iterator;
+  typedef DMatConstIterator<ACoeffRing> ConstIterator;
+
   DMat() : mRing(0) {}
 
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
@@ -136,6 +194,14 @@ public:
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return fmpz_mat_nrows(mArray); }
   size_t numColumns() const { return fmpz_mat_ncols(mArray); }
+
+  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
+
+  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }
@@ -179,6 +245,9 @@ public:
   typedef typename ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
 
+  typedef DMatIterator<ACoeffRing> Iterator;
+  typedef DMatConstIterator<ACoeffRing> ConstIterator;
+
   DMat() : mRing(0) {}
 
   DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
@@ -209,6 +278,14 @@ public:
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return nmod_mat_nrows(mArray); }
   size_t numColumns() const { return nmod_mat_ncols(mArray); }
+
+  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
+
+  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }

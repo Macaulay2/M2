@@ -221,6 +221,7 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
   return result;
 }
 
+#if 0
 Matrix *MutableMatrix::to_matrix() const
 {
 #warning "reinstate MutableMatrix::to_matrix when iterator is available"
@@ -250,6 +251,9 @@ Matrix *MutableMatrix::to_matrix() const
 #endif
   return 0;
 }
+#endif
+
+
 
 void MutableMatrix::text_out(buffer &o) const
 {

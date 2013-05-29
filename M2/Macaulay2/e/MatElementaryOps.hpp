@@ -4,8 +4,8 @@
 #define _mat_elementary_ops_hpp_
 
 template <typename MT> class MatElementaryOps;
-#include "dmat.hpp"
-#include "smat.hpp"
+template <typename RT> class DMat;
+template <typename RT> class SMat;
 
 template <typename RT>
 class MatElementaryOps< DMat<RT> >
@@ -14,7 +14,10 @@ public:
   typedef DMat<RT> Mat;
   typedef typename Mat::ElementType ElementType;
 private:
-  static void copy_elems(const RT& R, size_t n_to_copy, ElementType *target, size_t target_stride, const ElementType *source, size_t stride)
+  static void copy_elems(const RT& R, 
+                         size_t n_to_copy, 
+                         ElementType *target, size_t target_stride, 
+                         const ElementType *source, size_t stride)
   {
     for (size_t i=0; i<n_to_copy; i++)
       {

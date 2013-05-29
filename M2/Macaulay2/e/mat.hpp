@@ -58,7 +58,7 @@ public:
   // If the ring is RR or CC, and dense is true, then MutableMatrixRR or
   // MutableMatrixCC will be used.
 
-  Matrix *to_matrix() const;
+  virtual Matrix *to_matrix() const = 0;
 
   void text_out(buffer &o) const;
 

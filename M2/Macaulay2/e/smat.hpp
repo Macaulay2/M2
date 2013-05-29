@@ -91,6 +91,7 @@ public:
     }
   };
 
+  iterator begin() const { return iterator(this); }
 
 public:
   size_t lead_row(size_t col) const;
