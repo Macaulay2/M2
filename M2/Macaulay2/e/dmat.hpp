@@ -3,9 +3,7 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
-#include <cstddef>
-#include <utility>
-#include "coeffrings.hpp"
+#include "engine-includes.hpp"
 
 #ifdef HAVE_FLINT
 #include <flint/arith.h>
