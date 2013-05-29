@@ -13,9 +13,15 @@ namespace M2 {
   class ARingZZp;
 };
 
-#include "linalg.hpp"
+template<typename RT> class DMat;
+template<typename RT> class SMat;
+template<typename MT> bool isDense(const MT& mat);
+template<typename RT> bool isDense(const DMat<RT>& mat) { return true; }
+template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
+
 #include "MatElementaryOps.hpp"
 #include "MatArithmetic.hpp"
+#include "MatLinAlg.hpp"
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
@@ -51,6 +57,7 @@ public:
 
   typedef MatElementaryOps<Mat> MatOps;
   typedef MatArithmetic<Mat> MatArith;
+  typedef MatLinAlg<Mat> LinAlg;
 private:
   const Ring* mRing;
   Mat mat;
@@ -65,7 +72,7 @@ private:
   MutableMat() {}
 
   MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-    : mRing(R), mat(coeffR,nrows,ncols) {}
+    : mRing(R), mat(*coeffR,nrows,ncols) {}
 
   MutableMat(const Ring* R, const Mat &m) : mRing(R), mat(m) {}
 
@@ -81,7 +88,7 @@ public:
   Mat& getMat() { return mat; }
   const Mat& getMat() const { return mat; }
 
-#if 1
+#if 0
   // MESXXX
   class iterator : public MutableMatrix::iterator
   {
@@ -103,7 +110,7 @@ public:
 
   //  static MutableMat *grab_Mat(const Mat *m);
 
-#if 1
+#if 0
   // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
 #endif
@@ -113,7 +120,7 @@ public:
 
   virtual size_t n_cols() const { return mat.numColumns(); }
 
-  virtual bool is_dense() const { return mat.is_dense(); }
+  virtual bool is_dense() const { return isDense(mat); }
 
   virtual MutableMat *copy(bool prefer_dense) const
   {
@@ -165,12 +172,9 @@ public:
         elem a;
         
         mat.ring().init(a);
-        mat.ring().set_zero(a);
-        if (mat.get_entry(r,c,a))
-          {
-            mat.ring().to_ring_elem(result,a);
-            return true;
-          }
+        MatOps::getEntry(mat, r, c, a);
+        mat.ring().to_ring_elem(result,a);
+        return (not mat.ring().is_zero(a));
       }
 
     result = get_ring()->zero();
@@ -183,8 +187,10 @@ public:
     if (error_row_bound(r,n_rows())) return false;
     if (error_column_bound(c,n_cols())) return false;
     elem b;
-    mat.ring().from_ring_elem(b,a);
-    mat.set_entry(r,c,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b, a);
+    MatOps::setEntry(mat, r,c, b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -446,7 +452,7 @@ public:
           return 0;
         }
     MutableMat *result = new MutableMat(*this); // zero matrix, over the same ring
-    result->getMat().setFromSubmatrix(getMat(), rows, cols);
+    MatOps::setFromSubmatrix(getMat(), rows, cols, result->getMat());
     return result;
   }
 
@@ -459,7 +465,7 @@ public:
           return 0;
         }
     MutableMat *result = new MutableMat(*this); // zero matrix, over the same ring
-    result->getMat().setFromSubmatrix(getMat(), cols);
+    MatOps::setFromSubmatrix(getMat(), cols, result->getMat());
     return result;
   }
 
@@ -642,7 +648,8 @@ public:
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
-  return mat.new_rank();
+  return LinAlg::rank(mat);
+  //  return mat.new_rank();
 }
 
 template <typename T>
@@ -651,7 +658,7 @@ const RingElement* MutableMat<T>::determinant() const
   ring_elem det;
   elem a;
   mat.ring().init(a);
-  mat.new_determinant(a);
+  LinAlg::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
   mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
@@ -661,7 +668,7 @@ template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
-  bool val = mat.invert(result->mat);
+  bool val = LinAlg::inverse(mat, result->mat);
   if (!val)
     {
       delete result;
@@ -690,7 +697,7 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), B->n_cols());
 
   // Call the resulting matrix routine.
-  mat.mult(B1->mat, result->mat);
+  LinAlg::mult(mat, B1->mat, result->mat);
 
   return result;
 }
@@ -698,7 +705,7 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
-  return mat.rankProfile(row_profile);
+  return LinAlg::rankProfile(mat, row_profile);
 }
 
 #if 0

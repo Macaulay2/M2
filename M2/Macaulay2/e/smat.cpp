@@ -544,8 +544,8 @@ void SMat<CoeffRing>::vec_delete_rows(sparsevec *&v, size_t i, size_t j) const
 // SMat //////////////////
 //////////////////////////
 template<typename CoeffRing>
-SMat<CoeffRing>::SMat(const CoeffRing *coeffR0, size_t nrows, size_t ncols)
-  : coeffR(coeffR0),
+SMat<CoeffRing>::SMat(const CoeffRing& coeffR0, size_t nrows, size_t ncols)
+  : coeffR(&coeffR0),
     nrows_(nrows),
     ncols_(ncols)
 {

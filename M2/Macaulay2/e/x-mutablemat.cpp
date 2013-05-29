@@ -499,6 +499,8 @@ void perform_reduction(MutableMatrix *M,
 
 void reduce_pivots(MutableMatrix *M)
 {
+#warning "reinstate reduce_pivots after iterator is fixed"
+#if 0
   int nr = static_cast<int>(M->n_rows())-1;
   int nc = static_cast<int>(M->n_cols())-1;
   if (nr < 0 || nc < 0) return;
@@ -508,6 +510,8 @@ void reduce_pivots(MutableMatrix *M)
 
   // After using the pivot element, it is moved to [nrows-1,ncols-1]
   // and nrows and ncols are decremented.
+
+
 
   MutableMatrix::iterator *p = M->begin();
   for (int i=0; i<=nc; i++)
@@ -555,6 +559,7 @@ void reduce_pivots(MutableMatrix *M)
           break;
         }
     }
+#endif
 }
 
 ////////////////////////////

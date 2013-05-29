@@ -224,8 +224,8 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
   // For each column of b, solveF, then solveB 9result into same col of x
   const CoeffRing& K = A->ring();
 
-  DMat<CoeffRing> *L = new DMat<CoeffRing>(& A->ring(), A->numRows(), A->numRows());
-  DMat<CoeffRing> *U = new DMat<CoeffRing>(& A->ring(), A->numRows(), A->numColumns());
+  DMat<CoeffRing> *L = new DMat<CoeffRing>(A->ring(), A->numRows(), A->numRows());
+  DMat<CoeffRing> *U = new DMat<CoeffRing>(A->ring(), A->numRows(), A->numColumns());
 
   M2_arrayint P = LU(A,L,U);
 

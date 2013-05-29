@@ -566,6 +566,7 @@ class CoefficientRingR : public our_new_delete
 public:
   typedef Ring ring_type;
   typedef ring_elem elem;
+  typedef elem ElementType;
 
   CoefficientRingR(const Ring *R0)
     : R(R0)

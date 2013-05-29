@@ -3,13 +3,241 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
-union ring_elem;
-class Ring;
-
-#include "newdelete.hpp"
-#include "ring.hpp"
+#include <cstddef>
+#include <utility>
 #include "coeffrings.hpp"
 
+#ifdef HAVE_FLINT
+#include <flint/arith.h>
+#include <flint/nmod_mat.h>
+#include "aring-zz-flint.hpp"
+#include "aring-zzp-flint.hpp"
+#endif
+
+template<typename ACoeffRing>
+class DMat
+{
+public:
+  typedef ACoeffRing CoeffRing;
+  typedef typename ACoeffRing::ElementType ElementType;
+  typedef ElementType elem;
+
+  DMat() : mRing(0), mNumRows(0), mNumColumns(0), mArray(0) {}
+
+  DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
+    : mRing(&R), mNumRows(nrows), mNumColumns(ncols)
+  {
+    size_t len = mNumRows * mNumColumns;
+    if (len == 0)
+      mArray = 0;
+    else
+      {
+        mArray = new ElementType[len];
+        for (size_t i=0; i<len; i++)
+          {
+            ring().init(mArray[i]);
+            ring().set_zero(mArray[i]);
+          }
+      }
+  }
+  DMat(const DMat<ACoeffRing>& M)
+    : mRing(& M.ring()), mNumRows(M.numRows()), mNumColumns(M.numColumns())
+  {
+    size_t len = mNumRows * mNumColumns;
+    if (len == 0)
+      mArray = 0;
+    else
+      {
+        mArray = new ElementType[len];
+        for (size_t i=0; i<len; i++)
+          ring().init_set(mArray[i], M.array()[i]);
+      }
+  }
+  ~DMat()
+  {
+    size_t len = mNumRows * mNumColumns;
+    for (size_t i=0; i<len; i++)
+      ring().clear(mArray[i]);
+    if (mArray != 0) 
+      delete [] mArray;
+  }
+
+  // swap the actual matrices of 'this' and 'M'.
+  void swap(DMat<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    std::swap(mNumRows, M.mNumRows);
+    std::swap(mNumColumns, M.mNumColumns);
+    std::swap(mArray, M.mArray);
+  }
+
+  const ACoeffRing& ring() const { return *mRing; }
+  size_t numRows() const { return mNumRows; }
+  size_t numColumns() const { return mNumColumns; }
+
+  const ElementType* array() const { return mArray; }
+  ElementType* array() { return mArray; }
+
+  // When we store in row major order, we can change to these values:
+  //  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
+  //  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
+
+  ElementType& entry(size_t row, size_t column) { return mArray[mNumRows * column + row]; }
+  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumRows * column + row]; }
+
+  void resize(size_t new_nrows, size_t new_ncols)
+  {
+    DMat newMatrix(ring(), new_nrows, new_ncols);
+    swap(newMatrix);
+  }
+
+private:
+  const ACoeffRing* mRing;
+  size_t mNumRows;
+  size_t mNumColumns;
+  ElementType* mArray;
+};
+
+
+#ifdef HAVE_FLINT
+template<>
+class DMat<M2::ARingZZ>
+{
+public:
+  typedef M2::ARingZZ ACoeffRing;
+  typedef ACoeffRing CoeffRing;
+  typedef typename ACoeffRing::ElementType ElementType;
+  typedef ElementType elem;
+
+  DMat() : mRing(0) {}
+
+  DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
+    : mRing(&R)
+  {
+    fmpz_mat_init(mArray, nrows, ncols);
+  }
+
+  DMat(const DMat<ACoeffRing>& M)
+    : mRing(& M.ring())
+  {
+    fmpz_mat_init_set(mArray, M.mArray);
+  }
+
+  ~DMat() 
+  {
+    fmpz_mat_clear(mArray);
+  }
+
+  // swap the actual matrices of 'this' and 'M'.
+  void swap(DMat<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    fmpz_mat_swap(mArray, M.mArray);
+  }
+
+  const ACoeffRing& ring() const { return *mRing; }
+  size_t numRows() const { return fmpz_mat_nrows(mArray); }
+  size_t numColumns() const { return fmpz_mat_ncols(mArray); }
+
+  const ElementType* array() const { return mArray->entries; }
+  ElementType* array() { return mArray->entries; }
+
+  ElementType& entry(size_t row, size_t column) { 
+    M2_ASSERT(row < numRows());
+    M2_ASSERT(column < numColumns());
+    return * fmpz_mat_entry(mArray, row, column); 
+  }
+  const ElementType& entry(size_t row, size_t column) const { 
+    M2_ASSERT(row < numRows());
+    M2_ASSERT(column < numColumns());
+    return * fmpz_mat_entry(mArray, row, column); 
+  }
+
+  void resize(size_t new_nrows, size_t new_ncols)
+  {
+    DMat newMatrix(ring(), new_nrows, new_ncols);
+    swap(newMatrix);
+  }
+public:
+  // Other routines from flint nmod_mat interface
+  const fmpz_mat_t& fmpz_mat() const { return mArray; }
+  fmpz_mat_t& fmpz_mat() { return mArray; }
+private:
+  const ACoeffRing* mRing;
+  fmpz_mat_t mArray;
+};
+#endif
+
+//////////////////////////////////////////////////////////////
+// Flint: use nmod_mat for implementation of dense matrices //
+//////////////////////////////////////////////////////////////
+#ifdef HAVE_FLINT
+template<>
+class DMat<M2::ARingZZpFlint>
+{
+public:
+  typedef M2::ARingZZpFlint ACoeffRing;
+  typedef ACoeffRing CoeffRing;
+  typedef typename ACoeffRing::ElementType ElementType;
+  typedef ElementType elem;
+
+  DMat() : mRing(0) {}
+
+  DMat(const ACoeffRing& R, size_t nrows, size_t ncols)
+    : mRing(&R)
+  {
+    nmod_mat_init(mArray, nrows, ncols, R.characteristic());
+  }
+
+  DMat(const DMat<ACoeffRing>& M)
+    : mRing(& M.ring())
+  {
+    nmod_mat_init_set(mArray, M.mArray);
+  }
+
+  ~DMat() 
+  {
+    nmod_mat_clear(mArray);
+  }
+
+  // swap the actual matrices of 'this' and 'M'.
+  // The rings must be the same.
+  void swap(DMat<ACoeffRing>& M) 
+  {
+    std::swap(mRing, M.mRing);
+    std::swap(mArray, M.mArray);
+  }
+
+  const ACoeffRing& ring() const { return *mRing; }
+  size_t numRows() const { return nmod_mat_nrows(mArray); }
+  size_t numColumns() const { return nmod_mat_ncols(mArray); }
+
+  const ElementType* array() const { return mArray->entries; }
+  ElementType* array() { return mArray->entries; }
+
+  ElementType& entry(size_t row, size_t column) { return nmod_mat_entry(mArray, row, column); }
+  const ElementType& entry(size_t row, size_t column) const { return nmod_mat_entry(mArray, row, column); }
+
+  void resize(size_t new_nrows, size_t new_ncols)
+  {
+    DMat newMatrix(ring(), new_nrows, new_ncols);
+    swap(newMatrix);
+  }
+public:
+  // Other routines from flint nmod_mat interface
+  const nmod_mat_t& nmod_mat() const { return mArray; }
+  nmod_mat_t& nmod_mat() { return mArray; }
+private:
+  const ACoeffRing* mRing;
+  nmod_mat_t mArray;
+};
+#endif
+
+
+#if 0
+// Below this is the "OLD" version of dmat.hpp
+// The "NEW" version is coming from DenseMatrixDef
+// We will see what we need to pha
 #include "DenseMatrixDef.hpp"
 #include "DenseMatrixLinAlg.hpp"
 
@@ -45,8 +273,6 @@ class DMat : public our_new_delete
   friend class DMatLU<ACoeffRing>;
 
   typedef typename EigenvalueType<ACoeffRing>::Ring EigenvalueRing;
-  typedef DenseMatrixLinAlg<ACoeffRing> LinAlg;
-  //  typedef DenseMatrixArithmetic<CoeffRing> Arithmetic;
 public:
   typedef ACoeffRing CoeffRing;
   typedef typename CoeffRing::elem ElementType;
@@ -314,6 +540,7 @@ void DMat<CoeffRing>::setFromSubmatrix(const DMat& A,
     for (size_t c = 0; c < cols->len; c++)
       ring().set(mMatrix.entry(r,c), A.mMatrix.entry(r,cols->array[c]));
 }
+#endif // #if 0 starting "OLD" dmat code
 
 #endif
 

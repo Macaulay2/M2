@@ -4,6 +4,7 @@
 #define _mat_arithmetic_hpp_
 
 template <typename MT> class MatElementaryOps;
+template <typename MT> class MatArithmetic;
 #include "dmat.hpp"
 #include "smat.hpp"
 
@@ -30,8 +31,8 @@ public:
     if (B.numRows() != A.numRows()) return false;
     if (B.numColumns() != A.numColumns()) return false;
     size_t top = A.numRows() * A.numColumns();
-    const ElementType * elemsA = A.get_array();
-    const ElementType * elemsB = B.get_array();
+    const ElementType * elemsA = A.array();
+    const ElementType * elemsB = B.array();
     for (size_t i = 0; i < top; i++)
       if (!A.ring().is_equal(*elemsA++, *elemsB++))
         return false;

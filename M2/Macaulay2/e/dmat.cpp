@@ -2,62 +2,44 @@
 
 #include "exceptions.hpp"
 
-#include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
-#include "ZZp.hpp"
-#include "aring-RRR.hpp"
-#include "aring-gf.hpp"
-#include "aring-m2-gf.hpp"
-#include "aring-tower.hpp"
-
 #include "dmat.hpp"
-#include "mat.hpp"
-#include "mpfr.h"
-#include <iostream>
-
-#include "aring-zzp.hpp"
-#include "aring-ffpack.hpp"
-
-#include "dmat-RRR.hpp"
-#include "aring-zzp-flint.hpp"
-
-#include <typeinfo>
+#include "MatLinAlg.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // dmat code that might have alternate implementations, depending of type //
 ////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_FFLAS_FFPACK
-size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::rank(const MatType& mat)
+size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::rank(const Mat& mat)
 {
-    std::cout << "Calling DenseMatrixLinAlg::rank" << std::endl;
+    std::cout << "Calling MatLinAlg::rank" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
     /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
-    MatType N(mat); // copy of matrix mat.
+    Mat N(mat); // copy of matrix mat.
     size_t result = FFPACK::Rank(mat.ring().field(), mat.numColumns(), mat.numRows(), N.array(), mat.numRows());
     return result;
 }
 
-void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::determinant(const MatType& mat, ElementType& result_det)
+void MatLinAlg< DMat<M2::ARingZZpFFPACK> >::determinant(const Mat& mat, ElementType& result_det)
 {
-    std::cout << "Calling DenseMatrixLinAlg::determinant" << std::endl;
+    std::cout << "Calling MatLinAlg::determinant" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
     /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
-    MatType N(mat);
+    Mat N(mat);
     result_det = FFPACK::Det(mat.ring().field(), mat.numColumns(), mat.numRows(),  N.array(),  mat.numRows());
 }
 
-bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::inverse(const MatType& mat, MatType& result_inv)
+bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::inverse(const Mat& mat, Mat& result_inv)
 {
     M2_ASSERT(mat.numRows() == mat.numColumns());
-    MatType N(mat);
+    Mat N(mat);
     size_t n = mat.numRows();
     int nullspacedim;
     FFPACK::Invert2(mat.ring().field(), n, N.array(), n, result_inv.array(), n, nullspacedim);
     return (nullspacedim == 0);
 }
 
-void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::mult(const MatType& A, const MatType& B, MatType& C)
+void MatLinAlg< DMat<M2::ARingZZpFFPACK> >::mult(const Mat& A, const Mat& B, Mat& C)
 {
     // This one is a bit harder, as we need to be careful about rows/columns, and the ffpack routine
     // is so general.
@@ -89,18 +71,18 @@ void DenseMatrixLinAlg<M2::ARingZZpFFPACK>::mult(const MatType& A, const MatType
                   );
 }
 
-bool DenseMatrixLinAlg<M2::ARingZZpFFPACK>::solveLinear(const MatType& A, const MatType& B, MatType& X)
+bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat& B, Mat& X)
 {
   return false;
 }
 
-size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatType& result_nullspace)
+size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::nullSpace(const Mat& mat, Mat& result_nullspace)
 {
 #if 0
     bool right_side = false; // because FFPACK stores by rows, not by columns.
 
     M2_ASSERT(mat.numRows() == mat.NumColumns());
-    MatType N(mat);
+    Mat N(mat);
     size_t nr = mat.numRows();
     size_t nc = mat.numColumns();
 
@@ -137,81 +119,18 @@ size_t DenseMatrixLinAlg<M2::ARingZZpFFPACK>::nullSpace(const MatType& mat, MatT
     return 0;
 }
 #endif // HAVE_FFLAS_FFPACK
-///////////////////////////////////
-/// Fast linear algebra routines //
-///////////////////////////////////
 
-template<typename CoeffRing>
-size_t DMat<CoeffRing>::rank() const
-{
-  ERROR("not implemented for this ring yet");
-  return static_cast<size_t>(-3);
-}
+//template<> 
+//size_t DMat<M2::ARingRRR>::rank() const
+//{
+//  return LUDecompositionRRR::rankRRR(*this);
+//}
 
-///////////////////////////////////
-/// Real linear algebra routines //
-///////////////////////////////////
-
-template<> 
-size_t DMat<M2::ARingRRR>::rank() const
-{
-  return LUDecompositionRRR::rankRRR(*this);
-}
-
-template<>
-void DMat<M2::ARingRRR>::determinant(ElementType &result) const
-{
-  LUDecompositionRRR::determinantRRR(*this, result);
-}
-
-//////////////////////////////////////
-/// Generic linear algebra routines //
-//////////////////////////////////////
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::determinant(ElementType &result) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-M2_arrayintOrNull DMat<CoeffRing>::rankProfile(bool row_profile) const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::nullSpace(DMat<CoeffRing> &nullspace, bool right_side) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::solveLinear(DMat<CoeffRing> &X, const DMat<CoeffRing> &B, bool right_size) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
-                                    const DMat<CoeffRing> &B,
-                                    bool transposeA,
-                                    bool transposeB,
-                                    const ElementType& a,
-                                    const ElementType& b)
-{
-  std::cerr << "DMat  addMultipleTo" << std::endl;
-    std::cerr << "typeid: " << typeid(CoeffRing).name () << std::endl;
-  ERROR("addMultipleTo not implemented for this ring yet");
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-
-
-
+//template<>
+//void DMat<M2::ARingRRR>::determinant(ElementType &result) const
+//{
+//  LUDecompositionRRR::determinantRRR(*this, result);
+//}
 
 
 #include "mutablemat.hpp"
@@ -283,6 +202,12 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 #include "lapack.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
+#include "aring-zzp.hpp"
+#include "aring-tower.hpp"
+#include "aring-m2-gf.hpp"
+#include "aring-gf.hpp"
+#include "coeffrings-zz.hpp"
+#include "coeffrings.hpp"
 
 template class DMat<CoefficientRingZZ_NTL>;
 template class DMat<M2::ARingZZp>;

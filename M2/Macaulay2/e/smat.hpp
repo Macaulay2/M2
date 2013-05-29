@@ -46,7 +46,7 @@ private:
 public:
   SMat():coeffR(0), nrows_(0), ncols_(0), columns_(0) {} // Makes a zero matrix
 
-  SMat(const CoeffRing * coeffR0, size_t nrows, size_t ncols); // Makes a zero matrix
+  SMat(const CoeffRing& coeffR0, size_t nrows, size_t ncols); // Makes a zero matrix
 
   SMat(const SMat<ACoeffRing> &M, size_t nrows, size_t ncols); // Makes a zero matrix, same ring.
 
