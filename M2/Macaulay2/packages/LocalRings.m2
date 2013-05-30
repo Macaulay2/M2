@@ -8,7 +8,7 @@ newPackage(
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike/"}
 	     },
     	Headline => "Local rings at the origin",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {

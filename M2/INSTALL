@@ -50,7 +50,10 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu:
-    sudo apt-get install -y autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time xbase-clients 
+    sudo apt-get install -y autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
+	# note: libz-dev seems to have been replaced by zlib1g-dev
+	# note: libncurses-dev seems to have been replaced by libncurses5-dev
+	# note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
 
   Debian:
     sudo apt-get install -y autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
@@ -104,10 +107,14 @@ make.
 
 Now continute building the program this way:
 
-	./configure
+	./configure --enable-download
 	make
 	make check			# optional
 	make install
+
+On some systems, especially if you are building a binary distribution of Macaulay2,
+additional arguments should be given to the "./configure" command, and are explained
+below.
 
 Alternatively, especially if you would like to build versions for multiple
 architectures, or if you want confidence that "make clean" and "make distclean"
@@ -117,7 +124,7 @@ provided for that purpose:
 
 	mkdir BUILD/normal
 	cd BUILD/normal
-	../../configure
+	../../configure --enable-download
 	make
 	make check			# optional
 	make install
@@ -126,7 +133,7 @@ By default, the files are installed in appropriate subdirectories of
 /usr/local.  To specify a different location (prefix) you may use an option to
 the configure script:
 
-	../../configure --prefix=/foo/bar
+	../../configure --enable-download --prefix=/foo/bar
 
 Or, to specify a different location temporarily you may add an option to the
 "make install" line:
@@ -234,6 +241,8 @@ Mark both shell scripts executable.
 MacOS X notes
 ----------------------
 
-    For specific scripts that we use to build the disk images,
-    see BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
+    For specific scripts that we use to build the disk images, see
+    BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
 
+    The standard gcc under Mac OS X is based on LLVM and buggy, so we typically
+    compile the latest gcc.

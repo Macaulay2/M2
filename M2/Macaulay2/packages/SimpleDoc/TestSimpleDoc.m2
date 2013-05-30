@@ -10,7 +10,7 @@ newPackage(
 		  Email => "mike@math.cornell.edu", 
 		  HomePage => "http://www.math.cornell.edu/~mike/"}},
     	Headline => "test module for SimpleDoc",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {f10, f11, f12, f13, f14}

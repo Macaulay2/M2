@@ -57,19 +57,17 @@ if not instance(bertini'path,String) then error "Expected configuration option p
 -- The strategy Symbolic uses Groebner basis computations, the strategy Bertini uses numeric 
 -- computations carried out by Bertini [2].  
 export {
-     segreClass, 
-     chernClass, 
-     segreClassList, 
-     chernClassList,
-     CSMClass,
-     CSMClassList, 
-     eulerChar,
-     ResidualStrategy, 
-     Symbolic, 
-     Bertini
+     "segreClass", 
+     "chernClass", 
+     "segreClassList", 
+     "chernClassList",
+     "CSMClass",
+     "CSMClassList", 
+     "eulerChar",
+     "ResidualStrategy", 
+     "Symbolic", 
+     "Bertini"
      }
-
-
 
 -- The computation of the Segre classes is done by the internal function internalSegreClassList, which 
 -- returns a list with the degrees of the Segre Classes and the dimension of the ambient space. The 

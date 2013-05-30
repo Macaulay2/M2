@@ -9,7 +9,7 @@ newPackage(
 		     HomePage => "http://www.math.okstate.edu/~chris"}
 	},
 	Headline => "A Macaulay 2 package for manipulating lexicographic-type monomial ideals",
-	DebuggingMode => true
+	DebuggingMode => false
 	)
 
 export {macaulayRep, macaulayBound, macaulayLowerOperator, isHF, hilbertFunct, 

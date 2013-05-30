@@ -7,7 +7,7 @@ newPackage(
 		  HomePage => "http://www.math.uni-sb.de/ag/schreyer/jb/"}
                   },
     	Headline => "Interface to Maple",
-    	DebuggingMode => true,
+    	DebuggingMode => false,
         Configuration => {"MapleCommand"=>"maple"},
 	CacheExampleOutput => true,
 	AuxiliaryFiles => true

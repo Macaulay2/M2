@@ -14,7 +14,7 @@ document { Key => "packages provided with Macaulay2",
 	       local p;
 	       (dictionaryPath,loadedPackages,currentPackage,p) = (dictionaryPath,loadedPackages,currentPackage,
 		    try 
-		    needsPackage(pkg,DebuggingMode => true)
+		    needsPackage(pkg,DebuggingMode => false)
 		    else (
 			 stderr << "--warning: *** package " << pkg << " failed to load while generating list of packages provided with Macaulay2" << endl;
 			 if PackageDictionary#?pkg and instance(value PackageDictionary#pkg,Package)

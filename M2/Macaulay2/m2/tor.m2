@@ -41,14 +41,14 @@ Tor(ZZ, Module, Module) := Module => opts -> (i,M,N) -> (
 	       else C_i ** N)))
 
 
-Tor(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Tor^i(module J,f,opts)
-Tor(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Tor^i(f,R^1,opts)
-Tor(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Tor^i(f,module J,opts)
-Tor(ZZ, Module, Ring) := opts -> (i,M,R) -> Tor^i(M,R^1,opts)
-Tor(ZZ, Module, Ideal) := opts -> (i,M,J) -> Tor^i(M,module J,opts)
-Tor(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Tor^i(module I,R^1,opts)
-Tor(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Tor^i(module I,module J,opts)
-Tor(ZZ, Ideal, Module) := opts -> (i,I,N) -> Tor^i(module I,N,opts)
+Tor(ZZ, Ideal, Matrix) := opts -> (i,J,f) -> Tor_i(module J,f,opts)
+Tor(ZZ, Matrix, Ring) := opts -> (i,f,R) -> Tor_i(f,R^1,opts)
+Tor(ZZ, Matrix, Ideal) := opts -> (i,f,J) -> Tor_i(f,module J,opts)
+Tor(ZZ, Module, Ring) := opts -> (i,M,R) -> Tor_i(M,R^1,opts)
+Tor(ZZ, Module, Ideal) := opts -> (i,M,J) -> Tor_i(M,module J,opts)
+Tor(ZZ, Ideal, Ring) := opts -> (i,I,R) -> Tor_i(module I,R^1,opts)
+Tor(ZZ, Ideal, Ideal) := opts -> (i,I,J) -> Tor_i(module I,module J,opts)
+Tor(ZZ, Ideal, Module) := opts -> (i,I,N) -> Tor_i(module I,N,opts)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

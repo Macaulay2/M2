@@ -1,11 +1,11 @@
-{\rtf1\ansi\ansicpg1252\cocoartf949\cocoasubrtf540
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf370
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red36\green79\blue171;}
-\margl1440\margr1440\vieww12920\viewh16900\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\qc\pardirnatural
+\margl1440\margr1440\vieww16620\viewh21880\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\qc
 
 \f0\b\fs24 \cf0 Macaulay2 on MacOS X\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0 \cf0 \
 	    by Daniel R. Grayson <dan@math.uiuc.edu>\
@@ -15,35 +15,29 @@
 \
 Welcome to Macaulay2!\
 \
-This file tells how to get Macaulay2 installed and running on your MacOS X 10.4, 10.5 or 10.6 system, for either power pc, or intel macs.  If you have any difficulty with these instructions, please email us.\
+This file tells how to get Macaulay2 installed and running on your MacOS X 10.7, or 10.8 system.  If you have any difficulty with these instructions, please email us.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b \cf0 Step 1.  Download Macaulay2.
 \b0 \
 \
-In your browser, download one of the files\
+In your browser, download the file\
 \
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-x86_64-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-i386-MacOS-10.5.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-i386-MacOS-10.4.dmg\
-	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.3-powerpc-MacOS-10.4.dmg\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\tx13208\pardirnatural
+\cf0 	http://www.math.uiuc.edu/Macaulay2/Downloads/MacOSX/Macaulay2-1.6-x86_64-MacOS-10.8.dmg\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 \
+If there is a later version, use that instead. This should work fine under MacOSX version 10.7.\
 \
-If there is a later version, use that instead. \
+If you are running an older version of MacOSX, then we recommend either compiling Macaulay2 yourself, or asking on our Macaulay2 google group to see if someone else has created a distribution for your operating system.\
 \
-You need to know \
-	(a) if you are running MacOS 10.4 or 10.5 or 10.6\
-	(b) if you want powerpc, i386 (Intel Core Duo), or x86_64 (Intel Core 2 Duo).\
-\
-You can find this information by choosing "About this Mac" under the Apple menu.  The versions for 10.4 should run on 10.5, but the versions for 10.5 do 
-\b not
-\b0  work on 10.4!  The 10.5 Macaulay2 binary appears to work fine for 10.6.\
-\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
-\b Step 2. Important step for 10.5 and 10.6 users!!!
+\b \cf0 Step 2. Important step: Unquarantine the disk image file!!!
 \b0 \
 \
-If you are running MacOS 10.4, disregard this step.  If you are running MacOS 10.5 or 10.6, first unmount the disk image, if Safari or Firefox mounted it for you.  \
+First unmount the disk image, if Safari or Firefox mounted it for you.  \
 \
 Start the Terminal application (located in the Utilities folder in the Application folder).  In the Terminal window, type:\
 \
@@ -52,15 +46,15 @@ Start the Terminal application (located in the Utilities folder in the Applicati
 	cd ~/Desktop\
 	xattr -d com.apple.quarantine Macaulay2*.dmg\
 \
-(If the system responds "No such xattr: com.apple.quarantine", then the file had not been quarantined, and everything should be fine.)\
+(If the system responds "No such xattr: com.apple.quarantine", then the file had not been quarantined, and everything should be fine.)  The reason for this step: if you do not do it, then the system will ask you, every time you open a Macaulay2 help page, whether it is safe to do so.  This quickly gets old!\
 \
 
 \b Step 3. Unpack the disk image\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0 \cf0 \
 Mount this disk image by double-clicking on it, and drag the Macaulay2 folder in this mounted disk to somewhere on your disk. One possible location is your Applications folder (your system Applications folder, at top level on your main disk).   \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b \cf0 \
 Step 4. Installation
@@ -72,7 +66,7 @@ The easiest way to set up these files is to do the following in a Terminal windo
 \
 First change to the Macaulay2 folder (here we suppose that it is in your Applications folder), and then run the 'setup' routine in Macaulay2:\
 \
-	cd /Applications/Macaulay2-1.3\
+	cd /Applications/Macaulay2-1.6\
 	cd bin\
 	./M2\
 	  setup()  -- this line and the next are typed inside of Macaulay2: answer the prompts which follow.\
@@ -84,46 +78,46 @@ This allows you to run Macaulay2 by typing 'M2' (without the quotes) at a termin
 
 \b \
 Step 5. Try M2 in a terminal window\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0 \cf0 \
 In a Terminal window, type 'M2' (without the quotes).  If Macaulay2 has been installed properly, and your .profile startup file has been correctly modified, then you should see a prompt such as this:\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural
 
-\f1\fs18 \cf0 	indigo% M2\
-	Macaulay 2, version 1.3\
-	with packages: Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra,\
-               SchurRings, TangentCone\
+\f1\fs18 \cf0 	bash% M2\
+	Macaulay 2, version 1.6\
+	with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone\
+\
 	i1 : \
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\fs24 \cf0 At this point you should try something simple in Macaulay2, such as\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f1\fs18 \cf0 \
 	printWidth = 60\
 	R = QQ[a..d]\
 	(a+b+c+d)^4\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\fs24 \cf0 Now type\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f1\fs18 \cf0 	viewHelp\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\fs24 \cf0 \
 This starts your default web browser (if it is not already running), and then opens the main Macaulay2 documentation page index.html file mentioned below.  We suggest that you bookmark this page.  By the way, to get the html help on a topic, such as "ideals", use\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f1\fs18 \cf0 	viewHelp "ideals"\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \f0\fs24 \cf0 To exit Macaulay2, type one of: exit, end, or quit.
 \f1\fs18 \
@@ -131,10 +125,10 @@ This starts your default web browser (if it is not already running), and then op
 	exit\
 
 \f0\fs24 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b \cf0 The Macaulay2 application directory (folder)\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0 \cf0 \
 If this is the first time that you have run a recent version of Macaulay2 from your user account, Macaulay2 creates an "application folder" in your home:\
@@ -160,7 +154,15 @@ After creating this directory, Macaulay2
 \
 The directory  "local" is used by Macaulay2 to manage installed packages: you should mostly ignore this directory.  If you are upgrading from previous versions of Macaulay2, you may wish to delete the folder: local.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+Under MacOSX 10.7 and higher, Apple has decided to make the Library folder invisible.  There are several ways to get into this folder.  One way is to type (or, better, cut and paste) the following into a Terminal window:\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+\cf0 	cd ~/Library/Application\\ Support/Macaulay2\
+	open .\
+\
+This opens the Macaulay2 support folder in the finder.\
+\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b \cf0 Step 6. Enjoy!
 \b0 \
@@ -184,7 +186,7 @@ In System Preferences, change the keys for dashboard and expose, so that the fun
 \
 
 \b Aquamacs (recommended)\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b0 \cf0 \
 Aquamacs is a MacOSX implementation of emacs, which is designed to play well with other applications and MacOSX concepts: drag and drop, cut and paste all work.  Download the latest version of Aquamacs at \
@@ -193,37 +195,13 @@ It is quite nice to use these days.  After downloading it and moving it to your 
 \
 I like smaller fonts, personally.  Changing the fonts is fairly self explanatory: Under the menu item "Options", choose "Appearance", and then set the font to a fixed-width font.  Then choose "Save Options" under the "Options" menu.\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
 
 \b \cf0 Emacs in a terminal window.
 \b0 \
 \
 The version of emacs which comes with MacOSX only runs inside a terminal window.  The function keys generally work correctly, but you must know many of the emacs keystrokes, since the mouse button is not enabled in this version of emacs. \
 \
-It is suggested that you change your "option key" to a "meta key":  Under Tiger, in Terminal, open the Window Preferences menu item under the "Terminal" menu, choose "Keyboard", and click the box to use the option key as a meta key, and then click: "Use settings as defaults".  Under Leopard, the directions are similar.\
-\
-
-\b Emacs under X11.
-\b0 \
-\
-The mouse button works in this version of emacs, and is my editor of choice.  It does not support drag and drop, and doesn't play as nicely with other mac applications, but it works fine.  To install this, do the following:\
-\
-
-\b (a) 
-\b0 Install X11 (Tiger only.  On Leopard, X11 is installed by default).  This is found on the MacOSX install disks, but on versions 10.4 and earlier, Apple doesn't install it by default.  You can go back and install just that (you can access it via the optional installs mpkg). \
-\
-
-\b (b) 
-\b0 Install fink.  You should do this in any case.  It is a great way to bring open source software to your mac.  Find (the very easy) instructions at http://fink.sourceforge.net.\
-\
-
-\b (c) 
-\b0 Use fink to install emacs.  The simplest way is to use FinkCommander (recommended), which comes with the fink disk image.\
-\
-
-\b (d) 
-\b0 Tweaking.  Under X11, choose "Preferences" under the X11 menu item.  Unclick the box that says: "Enable Keyboard shortcuts under X11". \
-\
-At this point, your emacs should be functional.  Start X11 (in the Utilities folder in the Applications folder, once you have installed it from the mac install disks), and in a terminal, type 'emacs&', without the quotes.  Once emacs starts up, try pressing F12.  If Macaulay2 starts up, you are on your way!\
+It is suggested that you change your "option key" to a "meta key":  In Terminal, open the Preferences menu item, click "Settings", choose "Keyboard", and click the box to use the option key as a meta key.\
 \
 }

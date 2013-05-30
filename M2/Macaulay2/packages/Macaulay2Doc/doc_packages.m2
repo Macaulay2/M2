@@ -286,7 +286,7 @@ document {
 	 {Name => "author1", Email => "email1", HomePage => "url1"}
 	 {Name => "author2", Email => "email2", HomePage => "url2"},
 	 },
-    DebuggingMode => true,
+    DebuggingMode => false,
     HomePage => "http://univ.edu/~user/PACKAGENAME/",
     Configuration => {}
     )///,

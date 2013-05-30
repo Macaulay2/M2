@@ -15,7 +15,7 @@ newPackage("Graphs",
 	  },
      ---- Also Doug Torrance.  --- clearly a current author.  Current role of Amelia and Tina?
      ---- Shaowei Lin and Alex Diaz contributed mixedGraph
-     DebuggingMode => true,
+     DebuggingMode => false,
      Headline => "Data types, visualization, and basic functions for graphs",
      Version => "0.1"
      )

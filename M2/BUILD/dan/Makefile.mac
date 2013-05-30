@@ -50,24 +50,33 @@ ifeq ($(GIVARO),yes)
 CONFIGOPTIONS += --enable-givaro
 endif
 
-ifeq ($(FIX_UNWIND),yes)
-# try this one if configuration fails because of an undefined symbol Unwind_Resume
-CONFIGOPTIONS += LDFLAGS=-static-libgcc
-endif
+# The standard gcc under Mac OS X is buggy, so we typically compile the latest one. 
+# We tried linking statically with its libraries, but it makes c++ exceptions not work:
+# CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
 
 unexport DEBUG
 unexport PROFILE
 
-CC = gcc
-CXX = g++
+CC := gcc
+CXX := g++
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
-CONFIGOPTIONS += CC="$(CC) -m64" CXX="$(CXX) -m64" --build=x86_64-apple-darwin
+CC  += -m64
+CXX += -m64
+export MPIR_CONFIGOPTIONS=ABI=64
 else
 DIRECTORY := mac32
-CONFIGOPTIONS += CC="$(CC) -m32" CXX="$(CXX) -m32" --build=i386-apple-darwin
+CC  += -m32
+CXX += -m32
+export MPIR_CONFIGOPTIONS=ABI=32
 endif
+
+V = -mmacosx-version-min=10.6
+CC  += $V
+CXX += $V
+
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 
 default: all
 
@@ -75,8 +84,8 @@ ifeq ($(PRODUCTION),yes)
    default: check install
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY).production
+   PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
-   INSTALLOPTIONS += prefix=$(HOME)/local/encap
    ifeq ($(DEBUG),yes)
       $(error PRODUCTION=yes and DEBUG=yes)
    endif

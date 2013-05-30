@@ -31,7 +31,7 @@ newPackage(
 	      Email => "sorin@math.sunysb.edu"},
 	 {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu"}},  
     	Headline => "Rees algebras",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export{

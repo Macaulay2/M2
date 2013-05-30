@@ -376,10 +376,16 @@ TEST ///
 
 TEST ///
   testMutableMatrices(CC_100)
+
+TEST ///
+  -- note: row-major versus column-major representation
+  debug Core
+  hasFlint := try (rawARingZZpFlint 101; true) else false;
+  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
 ///
 
 TEST ///
-  -- FAILS: row-major versus column-major representation
+  -- note: row-major versus column-major representation
   debug Core
   hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
   if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))

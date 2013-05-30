@@ -51,7 +51,7 @@ newPackage(
       Name => "Dumitru Stamate", 
       Email => "dumitru.stamate@fmi.unibuc.ro"}},
   Headline => "multilinear algebra with labeled bases",
-  DebuggingMode => true
+  DebuggingMode => false
   )
 
 export {
