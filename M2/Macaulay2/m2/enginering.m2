@@ -129,7 +129,7 @@ multipleLiftMatrix = opts -> (m,v) -> (
 
 multipleLiftDegrees = multiplePromoteDegrees = (dF,v) -> ( scan(v, p -> dF = p dF); dF )
 
-promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(R,n)
+promote(ZZ,RingElement) := (n,R) -> new R from rawFromNumber(raw R,n)
 
 commonRingInitializations = (F) -> (
      lift(F,F) := opts -> (f,F) -> f;
@@ -212,7 +212,7 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-toString EngineRing := R -> if hasAnAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary) else toString R.RawRing
+toString EngineRing := R -> if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary) else toString R.RawRing
 
 ZZ _ EngineRing := 
 RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)

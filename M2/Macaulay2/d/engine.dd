@@ -176,9 +176,9 @@ export (M:RawMatrix) * (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      --    respectively.  The degree of the result is the sum of the two degrees */
      );
 export (M:RawMutableMatrix) * (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"not implemented for mutable matrices\");
-     return 0;
-     // return M->mult(N);
+     //ERROR(\"not implemented for mutable matrices\");
+     //turn 0;
+     return M->mult(N);
      "
      -- /* If the sizes do not match, then NULL is returned.  If they do match,
      --    the multiplication is performed, and the source and target are taken from N,M

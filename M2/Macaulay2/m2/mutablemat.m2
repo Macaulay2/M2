@@ -57,6 +57,9 @@ MutableMatrix + MutableMatrix := (m,n) -> map(ring m, raw m + raw n)
 MutableMatrix - MutableMatrix := (m,n) -> map(ring m, raw m - raw n)
 MutableMatrix * MutableMatrix := (m,n) -> map(ring m, raw m * raw n)
 RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
+MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
+ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);

@@ -19,6 +19,8 @@ template<typename MT> bool isDense(const MT& mat);
 template<typename RT> bool isDense(const DMat<RT>& mat) { return true; }
 template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 
+#include "dmat.hpp"
+#include "smat.hpp"
 #include "MatElementaryOps.hpp"
 #include "MatArithmetic.hpp"
 #include "MatLinAlg.hpp"
@@ -31,8 +33,6 @@ template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 //}
 template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
 {
-  std::cout << "called DMat to_matrix" << std::endl;
-
   int nrows = static_cast<int>(A.numRows());
   int ncols = static_cast<int>(A.numColumns());
   FreeModule *F = R->make_FreeModule(nrows);
@@ -59,8 +59,6 @@ template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const DMat<CoeffRin
 }
 template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const SMat<CoeffRing>& A)
 {
-  std::cout << "called SMat to_matrix" << std::endl;
-
   int nrows = static_cast<int>(A.numRows());
   int ncols = static_cast<int>(A.numColumns());
   FreeModule *F = R->make_FreeModule(nrows);
@@ -410,10 +408,10 @@ public:
       return false;
     if (r1 == r2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.ring().from_ring_elem(aa1,a1);
-    mat.ring().from_ring_elem(aa2,a2);
-    mat.ring().from_ring_elem(bb1,b1);
-    mat.ring().from_ring_elem(bb2,b2);
+    mat.ring().init(aa1);
+    mat.ring().init(aa2);
+    mat.ring().init(bb1);
+    mat.ring().init(bb2);
     mat.ring().from_ring_elem(aa1,a1);
     mat.ring().from_ring_elem(aa2,a2);
     mat.ring().from_ring_elem(bb1,b1);

@@ -187,6 +187,15 @@ public:
     fmpz_mat_clear(mArray);
   }
 
+  // storage for these rings is row-major, which is reflected in these iterator functions
+  Iterator rowBegin(size_t row) { return Iterator(array() + row * numColumns(), 1); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row * numColumns(), 1); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + (row+1) * numColumns(), 1); }
+
+  Iterator columnBegin(size_t col) { return Iterator(array() + col, numColumns()); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col, numColumns()); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + col + numRows() * numColumns(), numColumns()); }
+
   // swap the actual matrices of 'this' and 'M'.
   void swap(DMat<ACoeffRing>& M) 
   {
@@ -198,13 +207,6 @@ public:
   size_t numRows() const { return fmpz_mat_nrows(mArray); }
   size_t numColumns() const { return fmpz_mat_ncols(mArray); }
 
-  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
-  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
-  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
-
-  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
-  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
-  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }
@@ -270,6 +272,15 @@ public:
     nmod_mat_clear(mArray);
   }
 
+  // storage for these rings is row-major, which is reflected in these iterator functions
+  Iterator rowBegin(size_t row) { return Iterator(array() + row * numColumns(), 1); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row * numColumns(), 1); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + (row+1) * numColumns(), 1); }
+
+  Iterator columnBegin(size_t col) { return Iterator(array() + col, numColumns()); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col, numColumns()); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + col + numRows() * numColumns(), numColumns()); }
+
   // swap the actual matrices of 'this' and 'M'.
   // The rings must be the same.
   void swap(DMat<ACoeffRing>& M) 
@@ -281,14 +292,6 @@ public:
   const ACoeffRing& ring() const { return *mRing; }
   size_t numRows() const { return nmod_mat_nrows(mArray); }
   size_t numColumns() const { return nmod_mat_ncols(mArray); }
-
-  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
-  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
-  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
-
-  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
-  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
-  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
   const ElementType* array() const { return mArray->entries; }
   ElementType* array() { return mArray->entries; }
