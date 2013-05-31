@@ -594,7 +594,6 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   BIBasis
   KustinMiller
   Units
-  MonomialMultiplierIdeals
   NautyGraphs
   VersalDeformations
   CharacteristicClasses
@@ -611,6 +610,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   EllipticIntegrals
   Triplets
   CompleteIntersectionResolutions
+  MultiplierIdeals
 ")
 
 # convert the newlines in the list above to spaces
