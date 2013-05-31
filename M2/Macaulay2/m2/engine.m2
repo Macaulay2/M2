@@ -313,10 +313,6 @@ rawExtract(RawMutableMatrix,Sequence,Sequence) := (m,r,c) -> rawSubmatrix(m,spli
 RawMatrix _ Sequence := 
 RawMutableMatrix _ Sequence := (m,rc) -> ((r,c) -> rawExtract(m,r,c)) rc
 
-rawExtractColumns = method()
-rawExtractColumns(RawMatrix,Sequence) :=
-rawExtractColumns(RawMutableMatrix,Sequence) := (m,c) -> rawExtract(m, 0 .. rank target m - 1, c)
-
 RawMutableMatrix == RawMutableMatrix := RawMatrix == RawMatrix := rawIsEqual
 
 RawMatrix == ZZ := RawMutableMatrix == ZZ := (v,n) -> if n === 0 then rawIsZero v else error "comparison with nonzero integer"
