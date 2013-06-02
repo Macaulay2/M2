@@ -441,6 +441,17 @@ M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
   return M->is_equal(N);
 }
 
+MutableMatrix /* or null */ * rawMutableMatrixTranspose(MutableMatrix* M)
+{
+     try {
+          return M->transpose();
+     }
+     catch (exc::engine_error e) {
+          ERROR(e.what());
+          return NULL;
+     }
+}
+
 M2_bool rawMutableMatrixIsDense(const MutableMatrix *M)
 {
   return M->is_dense();

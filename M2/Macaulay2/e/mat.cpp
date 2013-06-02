@@ -187,7 +187,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	  ::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
     }
   // In this case, we just use ring elem arithmetic
-  const CoefficientRingR *cR = new CoefficientRingR(R);
+  const CoefficientRingR *cR = R->getCoefficientRingR();
   if (dense)
     return MutableMat< DMat<CoefficientRingR> >
       ::zero_matrix(R,cR,nrows,ncols);

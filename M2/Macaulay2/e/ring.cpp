@@ -7,6 +7,7 @@
 #include "poly.hpp"
 
 #include "freemod.hpp"
+#include "coeffrings.hpp"
 
 const Monoid * Ring::degree_monoid() const { return degree_ring->getMonoid(); }
 
@@ -22,6 +23,13 @@ ARingZZ* makeIntegerRing()
   return new M2::ConcreteRing<M2::ARingZZ>;
 }
 #endif
+
+const CoefficientRingR* Ring::getCoefficientRingR() const
+{
+  if (cR == 0)
+    cR = new CoefficientRingR(this);
+  return cR;
+}
 
 void Ring::initialize_ring(int P0,
                            const PolynomialRing *DR,

@@ -190,6 +190,8 @@ public:
 
   virtual MutableMatrix * negate() const = 0;
 
+  virtual MutableMatrix /* or null */ * transpose() const = 0;
+
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////

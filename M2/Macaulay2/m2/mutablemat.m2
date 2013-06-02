@@ -66,6 +66,7 @@ MutableMatrix _ Sequence = (M,ij,val) -> (
      (raw M)_ij = raw val; 
      val)
 
+transpose MutableMatrix := (f) -> map(ring f, rawDual raw f)
 --------------------------------
 -- submatrices -----------------
 --------------------------------

@@ -84,7 +84,21 @@ public:
         A.ring().subtract(A.array()[i], A.array()[i], B.array()[i]);
       }
   }
-  
+
+  static void transpose(const Mat& A, Mat& result)
+  {
+    M2_ASSERT(&A != &result);  // these cannot be aliased!
+    M2_ASSERT(result.numRows() == A.numColumns());
+    M2_ASSERT(result.numColumns() == A.numRows());
+    for (size_t c = 0; c < A.numColumns(); ++c)
+      {
+        auto i = A.columnBegin(c);
+        auto j = result.rowBegin(c);
+        auto end = A.columnEnd(c);
+        for ( ; i != end; ++i, ++j)
+          A.ring().set(*j, *i);
+      }
+  }
 };
 
 template <typename RT>
@@ -133,6 +147,16 @@ public:
     M2_ASSERT(B.numColumns() == A.numColumns());
 
     A.subtractInPlace(B);
+  }
+
+  static void transpose(const Mat& A, Mat& result)
+  {
+    // result should be the 0 matrix of the correct size.
+    M2_ASSERT(&A != &result);  // these cannot be aliased!
+    M2_ASSERT(result.numRows() == A.numColumns());
+    M2_ASSERT(result.numColumns() == A.numRows());
+    throw exc::engine_error("'transpose' not writtten for sparse mutable matrices");
+    //TDO: MES: write this!!
   }
 };
 

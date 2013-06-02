@@ -40,6 +40,9 @@ class SumCollector;
 
 class ARing;
 class MutableMatrix;
+
+class CoefficientRingR;
+
 /**
     @ingroup rings
 
@@ -60,6 +63,8 @@ protected:
   // Question: does this include coefficient variables in the ring?
 
   const ARing *AR;
+  mutable const CoefficientRingR* cR;  // set to NULL.  If a ring does not have a better "ARing" or "coeffring" implementation,
+                               // then calling getCoefficientRingR() will set this, and return it.
   ring_elem _non_unit;
   int _isfield;         // 1: means yes, or declared yes.
                         // 0: means not declared to be so.
@@ -77,6 +82,8 @@ protected:
   Ring() : heft_vector(0) {}
 public:
   virtual ~Ring();
+
+  const CoefficientRingR* getCoefficientRingR() const;
 
   ////////////////////////
   // Ring informational //

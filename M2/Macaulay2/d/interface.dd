@@ -1815,7 +1815,8 @@ export rawDual(e:Expr):Expr := (
      when e
      is F:RawFreeModuleCell do toExpr(Ccode(RawFreeModuleOrNull, "IM2_FreeModule_dual(", F.p, ")" ))
      is M:RawMatrixCell do toExpr(Ccode(RawMatrixOrNull, "IM2_Matrix_transpose(", M.p, ")" ))
-     else WrongArg("a raw free module or matrix"));
+     is M:RawMutableMatrixCell do toExpr(Ccode(RawMutableMatrixOrNull, "rawMutableMatrixTranspose(", M.p, ")" ))
+     else WrongArg("a raw free module, matrix, or mutable matrix"));
 setupfun("rawDual",rawDual);
 
 export rawDirectSum(e:Expr):Expr := (

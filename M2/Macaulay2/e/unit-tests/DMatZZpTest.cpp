@@ -15,18 +15,17 @@ TEST(DMatZZp, create)
   //  M2::ConcreteRing<RingZZp>* R0 = M2::ConcreteRing<RingZZp>::create(R);
   auto R0 = M2::ConcreteRing<RingZZp>::create(R);
 
-  MatZZp M(R0, R, 5, 5);  // Why does this need R0??
+  MatZZp M(*R, 5, 5);  // Why does this need R0??
 
   EXPECT_TRUE(& M.ring() == R);
-  EXPECT_TRUE(M.get_ring() == R0);
 
   RingZZp::ElementType a,b;
   R->init(a);
   R->init(b);
   R->set_from_int(a, 13);
-  M.set_entry(0,2,a);
+  R->set(M.entry(0,2), a);
 
-  M.get_entry(0,2,b);
+  R->set(b, M.entry(0,2));
   EXPECT_TRUE(R->is_equal(a,b));
 }
 

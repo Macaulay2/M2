@@ -1268,6 +1268,9 @@ extern "C" {
   /* Using row and column operations, use unit pivots to reduce the matrix */
   /* A return value of false means that the computation was interrupted */
 
+  /** return the transpose of A */
+  MutableMatrix* rawMutableMatrixTranspose(MutableMatrix* A);
+
   size_t rawLinAlgRank(MutableMatrix* M);
 
   /** requires: M should be a square matrix.  

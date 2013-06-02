@@ -78,10 +78,11 @@ isPrimeField Ring := (R) -> (
      true
      )
 
-transpose MutableMatrix := (M) -> (
-     << "warning: rewrite to be in the engine" << endl;
-     mutableMatrix transpose matrix M
-     )
+-- Now in the engine:
+--transpose MutableMatrix := (M) -> (
+--     << "warning: rewrite to be in the engine" << endl;
+--     mutableMatrix transpose matrix M
+--     )
 
 --MutableMatrix + MutableMatrix := (A,B) -> (
 --     << "warning: rewrite to be in the engine" << endl;
@@ -93,7 +94,8 @@ transpose MutableMatrix := (M) -> (
 --     mutableMatrix(matrix A - matrix B)
 --     )
 
-ZZ * MutableMatrix := (a,M) -> (a_(ring M)) * M
+-- the following is now in m2/mutablemat.m2
+--ZZ * MutableMatrix := (a,M) -> (a_(ring M)) * M
 
 --RingElement * MutableMatrix := (a,M) -> (
 --     << "warning: rewrite to be in the engine" << endl;

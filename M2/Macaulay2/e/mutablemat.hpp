@@ -624,6 +624,13 @@ public:
     return result;
   }
 
+  virtual MutableMat /* or null */ * transpose() const
+  {
+    MutableMat *result = makeZeroMatrix(n_cols(), n_rows());
+    MatArith::transpose(getMat(), result->getMat());
+    return result;
+  }
+
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////

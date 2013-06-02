@@ -86,7 +86,7 @@ testops = (R) -> (
   -- rowSwap, columnSwap, 
   -- rowAdd, columnAdd
   -- rowMult, columnMult
-  -- NOT YET: rowPermute,columnPermute
+  -- rowPermute,columnPermute (TODO: make sure these are correct, not just the same for dense and sparse)
   m := mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   assert(numRows m == 5);
   assert(numColumns m == 6);
@@ -126,7 +126,6 @@ testops = (R) -> (
   m2 = matrix columnMult(m, 1, 14);
   assert(m1 == m2);
   --
-  {*
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
   m1 = matrix columnPermute(m,1,{2,0,1});
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
@@ -138,7 +137,6 @@ testops = (R) -> (
   m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
   m2 = matrix rowPermute(m,1,{2,0,1});  
   assert(m1 == m2);
-    *}
   )
 
 debug Core
@@ -298,33 +296,59 @@ testops5 = (R) -> (
      assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
      assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
      -- submatrices for sparse matrix types:
-     --m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     --submatrix(m, {1,2,4,2}, {3,2,1});
-     --submatrix(matrix m, {1,2,4,3}, {3,2,1})
-     --assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix submatrix(matrix m, {1,2,4,3}, {3,2,1}));
-     --assert(submatrix(m, {3,2,1}) == mutableMatrix submatrix(matrix m, {3,2,1}));
-     )
-{*
-testops5 = (R) -> (
-     -- still being constructed
-     m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>true);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
      m = mutableMatrix(map(R^5,R^6, (i,j) -> 100*i+j), Dense=>false);
-     assert(2*m == m+m);
-     assert(3*m == m+m+m);
+     submatrix(m, {1,2,4,3}, {3,2,1});
+     submatrix(matrix m, {1,2,4,3}, {3,2,1});
+     assert(submatrix(m, {1,2,4,3}, {3,2,1}) == mutableMatrix(submatrix(matrix m, {1,2,4,3}, {3,2,1}), Dense=>false));
+     assert(submatrix(m, {3,2,1}) == mutableMatrix(submatrix(matrix m, {3,2,1}), Dense=>false));
      )
-*}
 
 debug FastLinearAlgebra
 
-testrank = (R) -> (
+testRank = (R) -> (
      << "testrank..." << endl;
      m1 := random(R^5, R^11);
      m2 := random(R^11, R^6);
      m := mutableMatrix(m1 * m2);
      assert(5 == rank m); -- this can fail every now and then.
      )
+
+<< "warning: not testing transpose of sparse mutable matrices yet" << endl;
+testTranspose = (R) -> (
+    --M := mutableMatrix(R, 3, 5);
+    M := mutableMatrix(R, 3, 5, Dense=>true);
+    fillMatrix M;
+    N := transpose M;
+    N2 := transpose N;
+    N3 := transpose N2;
+    assert(M == N2);
+    assert(N == N3);
+    assert(numRows M == numColumns N);
+    assert(numRows N == numColumns M);
+    for r from 0 to numRows M - 1 do for c from 0 to numColumns M - 1 do (
+        assert(M_(r,c) == N_(c,r));
+        );
+    -- Now test trivial cases
+    M0 := mutableMatrix(R, 0, 0);
+    M1 := transpose M0;
+    assert(M0 == M1);
+    M0 = mutableMatrix(R, 0, 4);
+    M1 = transpose M0;
+    assert(numColumns M1 == 0);
+    assert(numRows M1 == 4);
+    )
+
+testMult = (R) -> (
+    -- start with matrices M and N (same size)
+    -- compute M * (transpose N), N * (transpose M).  These should be the same up to transpose
+    )
+testSolve = (R) -> (
+    E = map(R^2, R^2, {{1, 4}, {2, 3}})
+    B = map(R^2, R^1, {{3}, {7}})
+    M = mutableMatrix E
+    B = mutableMatrix B
+    rawLinAlgSolve(raw M,raw B, true) -- doesn't seem to be implemented yet.
+    )
 
 testMutableMatrices = (R) -> (
      << "testing " << describe R << endl;
@@ -333,8 +357,9 @@ testMutableMatrices = (R) -> (
      testops2 R; 
      testops3 R; 
      testops4 R;
-     --testops5 R; -- Not working on 1.6 for R=ZZ
-     --testrank R;
+     testops5 R; -- Not working on 1.6 for R=ZZ
+     testTranspose R;
+     --testRank R;
      << "tests passed for " << describe R << endl;
      )
 
@@ -376,16 +401,10 @@ TEST ///
 
 TEST ///
   testMutableMatrices(CC_100)
-
-TEST ///
-  -- note: row-major versus column-major representation
-  debug Core
-  hasFlint := try (rawARingZZpFlint 101; true) else false;
-  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
 ///
 
 TEST ///
-  -- note: row-major versus column-major representation
+  -- FAILS: row-major versus column-major representation
   debug Core
   hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
   if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
