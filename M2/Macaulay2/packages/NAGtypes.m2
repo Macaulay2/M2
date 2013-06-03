@@ -241,6 +241,20 @@ SERVICE FUNCTIONS:
   
 *}
 NumericalVariety.synonym = "numerical variety"
+NumericalVariety.GlobalAssignHook = globalAssignFunction
+NumericalVariety.GlobalReleaseHook = globalReleaseFunction
+net NumericalVariety := V -> if hasAttribute(V,ReverseDictionary) 
+    then toString getAttribute(V,ReverseDictionary) 
+    else (
+     	out := "A variety of dimension " | net dim V |" with components in";
+     	scan(keys V, k->if class k === ZZ then (
+	       	row := "dim "|net k|": ";
+	       	scan(V#k, W->row = row|" "|net W);
+	       	out = out || row;
+	       	));
+     	out
+     	)
+
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 degree NumericalVariety := V -> (
      d := dim V;
@@ -263,15 +277,6 @@ check NumericalVariety := o-> V -> (
 		    if dim W != k then 
 		    error "dimension of a witness set does not match the key in NumericalVariety";
 		    )));
-     )
-net NumericalVariety := V -> (
-     out := "A variety of dimension " | net dim V |" with components in";
-     scan(keys V, k->if class k === ZZ then (
-	       row := "dim "|net k|": ";
-	       scan(V#k, W->row = row|" "|net W);
-	       out = out || row;
-	       ));
-     out
      )
 
 generalEquations = method()
