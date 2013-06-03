@@ -3254,6 +3254,7 @@ doc ///
 	  M0 = R/(m1, m2)
 	  where m1 and m2 are monomials of the same degree.
          Example
+     	  setRandomSeed 0
 	  twoMonomials(2,3)
         SeeAlso
 	 twoMonomials
