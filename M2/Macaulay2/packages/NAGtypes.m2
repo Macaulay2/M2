@@ -241,11 +241,8 @@ SERVICE FUNCTIONS:
   
 *}
 NumericalVariety.synonym = "numerical variety"
-NumericalVariety.GlobalAssignHook = globalAssignFunction
-NumericalVariety.GlobalReleaseHook = globalReleaseFunction
-net NumericalVariety := V -> if hasAttribute(V,ReverseDictionary) 
-    then toString getAttribute(V,ReverseDictionary) 
-    else (
+///
+net NumericalVariety := V -> (
      	out := "A variety of dimension " | net dim V |" with components in";
      	scan(keys V, k->if class k === ZZ then (
 	       	row := "dim "|net k|": ";
@@ -254,6 +251,14 @@ net NumericalVariety := V -> if hasAttribute(V,ReverseDictionary)
 	       	));
      	out
      	)
+///
+globalAssignment NumericalVariety
+///
+restart 
+loadPackage "NAGtypes"
+V = new NumericalVariety
+new NumericalVariety
+///
 
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 degree NumericalVariety := V -> (
