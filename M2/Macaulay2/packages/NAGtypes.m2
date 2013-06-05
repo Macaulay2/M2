@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.4.0.1",
-     Date => "August, 2012",
+     Version => "1.6.0.1",
+     Date => "June, 2013",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -27,8 +27,9 @@ export {
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
      "Point", "point", "coordinates",
-     isRealPoint, realPoints, plugIn, residual, relativeErrorEstimate, classifyPoint,
-     "Tolerance", "sortSolutions", "areEqual", "isGEQ",
+     "isRealPoint", "realPoints", "plugIn", "residual", "relativeErrorEstimate", "classifyPoint",
+     "toAffineChart",
+     "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
@@ -169,6 +170,76 @@ sortSolutions List := o -> sols -> (
      apply(sorted, i->sols#i)
      )
 
+toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
+toAffineChart (ZZ,List) := List => (k,x) -> (
+     if k<0 or k>#x then error "chart number is out of range ";
+     if x#k == 0 then return infinity;
+     y := apply(x, c->c/x#k);
+     take(y,k) | drop(y,k+1)
+     ) 
+
+-- !!! this seems to be unused
+-- projectiveDistance = method()
+-- projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
+-- projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
+
+solutionDuplicates = method(TypicalValue=>MutableHashTable)
+solutionDuplicates List := sols -> ( 
+-- find positions of duplicate solutions
+-- IN: list of solutions
+-- OUT: H = MutableHashTable with entries of the form i=>j (sols#i is a duplicate for sols#j);
+--      connected components (which are cycles) in the graph stored in H correspond to clusters of "duplicates" 
+--      i=>i indicates a nonduplicate
+     H := new MutableHashTable;
+     for j from 0 to #sols-1 do (
+	  H#j = j;
+	  i := j-1;
+	  while i>=0 do
+	  if areEqual(sols#i,sols#j) then (
+	       H#j = H#i;
+	       H#i = j;
+	       i = -1
+	       ) 
+	  else i = i - 1;
+	  );
+     H
+     )
+
+groupClusters = method()
+groupClusters MutableHashTable := H -> (
+-- processes the output of solutionDuplicates to get a list of clusters of solutions
+     cs := {};
+     apply(keys H, a->if H#a=!=null then (
+	       c := {a};
+	       b := H#a; 
+	       H#a = null;
+	       while b != a do (
+	       	    c = c | {b};
+	       	    bb := H#b;
+		    H#b = null;
+		    b = bb;
+	       	    );
+	       cs = cs | {c};
+	       ));
+     cs
+     )
+
+solutionsWithMultiplicity = method()
+solutionsWithMultiplicity List := sols -> ( 
+     clusters := groupClusters solutionDuplicates sols;
+     apply(clusters, c->(
+	       s := new Point from sols#(first c);
+	       if (s.Multiplicity = #c)>1 then s.SolutionStatus = Singular;
+	       s
+	       ))
+     )
+
+TEST ///
+a = point {{0,1}}
+b = point {{0.000000001,1+0.00000000001*ii}}
+c = point {{0.001*ii,1}}
+assert (# solutionsWithMultiplicity {a,b,c} == 2)
+///
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
@@ -334,10 +405,6 @@ generalEquations WitnessSet := (W) -> (
 beginDocumentation()
 
 undocumented {(generalEquations,WitnessSet)}
- --warning: symbol has no documentation: NAGtypes :: 
---warning: symbol has no documentation: NAGtypes :: 
---warning: symbol has no documentation: NAGtypes :: 
---warning: symbol has no documentation: NAGtypes :: 
 --warning: symbol has no documentation: NAGtypes :: Norm
 --warning: symbol has no documentation: NAGtypes :: MaxConditionNumber
 
@@ -639,19 +706,20 @@ document {
      }
 document {
      Key => {realPoints, (realPoints,List)},
-     Headline => "determine whether a point is real",
+     Headline => "select real points",
      Usage => "R = realPoints L",
      Inputs => {
 	     "L" => {TO2{Point,"points"}}
 	     },
      Outputs => {"R"=>{TO2{Point,"points"}, " that are real (up to ", TO Tolerance, ")"}},
-     PARA{},
+     PARA{"Selects real points from a list of points using the function ", TO isRealPoint, "."},
      EXAMPLE lines ///
      needsPackage "NumericalAlgebraicGeometry"
      R = CC[x,y];
      sols = solveSystem{x^6-y^4, x-y-2}
      realPoints sols
-     ///
+     ///,
+     SeeAlso => {realPoints}
      }
 document {
      Key => {(norm,Thing,Point)},
@@ -737,8 +805,48 @@ doc ///
       L = generalEquations(2,F)      
 ///
 
+document {
+     Key => {solutionsWithMultiplicity, (solutionsWithMultiplicity,List)},
+     Headline => "replaces clusters of approximately equal points with single points with multiplicity",
+     Usage => "M = solutionsWithMultiplicity S",
+     Inputs => {
+	     "S" => {TO2{Point,"points"}}
+	     },
+     Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
+     PARA{"Clusters the points and outputs w list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
+	 " equal to the size of the cluster. If the multiplicity is not 1, then ", TT "p.", TO SolutionStatus, " is set to ", TO Singular, 
+	 "; otherwise, it is inherited from one of the points in the cluster."},
+     PARA{"Whether two points are approximately equal is decided by the function ", TO areEqual, " that depends on ", TO Tolerance, "."},
+     EXAMPLE lines ///
+     a = point {{0,1}}
+     b = point {{0.000000001,1+0.00000000001*ii}}
+     c = point {{0.001*ii,1}}
+     M = solutionsWithMultiplicity {a,b,c}
+     peek M
+     ///,
+     Caveat => {"A point in a cluster may be farther than ", TO Tolerance, 
+	 " from another point in the cluster. (In that case there has to be another point in the cluster that is within the ", 
+	 TO Tolerance, ".)"}
+     }
 
-TEST ///
+document {
+	Key => {(toAffineChart, ZZ, List), toAffineChart},
+	Headline => "coordinates of a point in the projective space in an affine chart",
+	Usage => "y = toAffineChart(i,x)",
+	Inputs => {
+	     "i" => "the number of the standard chart",
+	     "x" => "projective coordinates of a point"
+	     },
+	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
+	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
+	EXAMPLE lines ///
+toAffineChart(2,{1,2,3,4,5,6}) 
+toAffineChart(2,{1,2,0,4,5,6}) 
+     	///,
+	SeeAlso => {areEqual}
+	}
+
+TEST /// -- miscellaneous tests
 CC[x,y]
 S = {x^2+y^2-6, 2*x^2-y}
 p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
@@ -751,6 +859,7 @@ p2 =  point {{1.001,2.3+ii}}
 p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
+
 endPackage "NAGtypes" 
 
 end

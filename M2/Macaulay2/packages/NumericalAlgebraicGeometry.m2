@@ -57,7 +57,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", "toAffineChart",
+     "numericalRank", 
      "regeneration", 
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -1944,17 +1944,6 @@ numericalVariety Ideal := I -> (
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
-toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
-toAffineChart (ZZ,List) := List => (k,x) -> (
-     if k<0 or k>#x then error "chart number is out of range ";
-     if x#k == 0 then return infinity;
-     y := apply(x, c->c/x#k);
-     take(y,k) | drop(y,k+1)
-     ) 
-
-projectiveDistance = method()
-projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
-projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
 
 selectUnique = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 selectUnique List := o -> sols ->(
@@ -1963,57 +1952,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-solutionDuplicates = method(TypicalValue=>MutableHashTable)
-solutionDuplicates List := sols -> ( 
--- find positions of duplicate solutions
--- IN: list of solutions
--- OUT: H = MutableHashTable with entries of the form i=>j (sols#i is a duplicate for sols#j);
---      connected components (which are cycles) in the graph stored in H correspond to clusters of "duplicates" 
---      i=>i indicates a nonduplicate
-     H := new MutableHashTable;
-     for j from 0 to #sols-1 do (
-	  H#j = j;
-	  i := j-1;
-	  while i>=0 do
-	  if areEqual(sols#i,sols#j) then (
-	       H#j = H#i;
-	       H#i = j;
-	       i = -1
-	       ) 
-	  else i = i - 1;
-	  );
-     H
-     )
-
-groupClusters = method()
-groupClusters MutableHashTable := H -> (
--- processes the output of solutionDuplicates to get a list of clusters of solutions
-     cs := {};
-     apply(keys H, a->if H#a=!=null then (
-	       c := {a};
-	       b := H#a; 
-	       H#a = null;
-	       while b != a do (
-	       	    c = c | {b};
-	       	    bb := H#b;
-		    H#b = null;
-		    b = bb;
-	       	    );
-	       cs = cs | {c};
-	       ));
-     cs
-     )
-
-solutionsWithMultiplicity = method()
-solutionsWithMultiplicity List := sols -> ( 
-     clusters := groupClusters solutionDuplicates sols;
-     apply(clusters, c->(
-	       s := new Point from sols#(first c);
-	       if (s.Multiplicity = #c)>1 and s.SolutionStatus === Regular then s.SolutionStatus = Singular;
-	       s
-	       ))
-     )
-
 singularSolutions = method() -- decide on the tolerance!!!
 singularSolutions(List,List) := (T,sols) -> (
 -- find positions of singular solutions in sols

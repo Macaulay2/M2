@@ -409,27 +409,6 @@ track(S,T,{(1,1),(1,-1),(-1,1),(-1,-1)})
 	}
 
 document {
-	Key => {(toAffineChart, ZZ, List), toAffineChart},
-	Headline => "coordinates of a point in the projective space in an affine chart",
-	Usage => "y = toAffineChart(i,x)",
-	Inputs => {
-	     "i" => "the numebr of the standard chart",
-	     "x" => "projective coordinates of a point"
-	     },
-	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
-	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
-	EXAMPLE lines ///
-toAffineChart(2,{1,2,3,4,5,6}) 
-toAffineChart(2,{1,2,0,4,5,6}) 
-CC[x,y];
-s = track({x^2-y^2},{x*y},{{1,1}})
-toAffineChart(0, coordinates s#0)
-toAffineChart(1, coordinates s#0)
-     	///,
-	SeeAlso => {solveSystem, areEqual}
-	}
-
-document {
 	Key => {(randomSd, List), randomSd},
 	Headline => "a random homogeneous system of polynomial equations",
 	Usage => "T = randomSd d",
