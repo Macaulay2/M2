@@ -20,9 +20,11 @@ export {
      generalEquations, 
      -- witness set
      "WitnessSet", "witnessSet", "equations", "slice", "points", "setName",
-     "Equations", "Slice", "Points", "sliceEquations", "IsIrreducible",
+     "Equations", "Slice", "Points", "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
+     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
      -- numerical variety
      "NumericalVariety", "numericalVariety",
+     "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
      "Point", "point", "coordinates",
      isRealPoint, realPoints, plugIn, residual, relativeErrorEstimate, classifyPoint,
@@ -34,8 +36,11 @@ export {
      }
 
 Point = new Type of MutableHashTable 
+-- ProjectivePoint = new Type of Point -- do we really need this?
 WitnessSet = new Type of MutableHashTable 
+ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
+ProjectiveNumericalVariety = new Type of NumericalVariety
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -174,6 +179,11 @@ sortSolutions List := o -> sols -> (
 --   IsIrreducible         -- true, false, or null
 --   }
 -- caveat: we assume that #Equations = dim(Slice)   
+--
+-- PROJECTIVE WITNESS SET = { ... same as WITNESS SET ..., 
+--     AffineChart         -- one-row matrix of coefficients of a the linear equation of the chart
+--                            (e.g., [1,2,3] corresponds to x+2y+3=1)  
+--     }
 WitnessSet.synonym = "witness set"
 protect Tolerance -- ???
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
@@ -207,12 +217,20 @@ slice = method() -- returns linear equations for the slice (in both cases)
 slice WitnessSet := (W) -> ( 
     --if class W.Slice === List then W.Slice
     --else 
-    if class W.Slice === Matrix then sliceEquations(W.Slice, ring W)
+    if class W.Slice === Matrix then (
+	if class W === ProjectiveWitnessSet 
+	then projectiveSliceEquations(W.Slice, ring W)
+	else sliceEquations(W.Slice, ring W)
+	)
     else error "ill-formed slice in WitnessSet" )
 
 sliceEquations = method(TypicalValue=>List) -- make slicing plane equations 
 sliceEquations (Matrix,Ring) := (S,R) -> 
   apply(numrows S, i->(sub(S^{i},R) * transpose(vars R | matrix{{1_R}}))_(0,0)) 
+
+projectiveSliceEquations = method(TypicalValue=>List) -- make slicing plane equations 
+projectiveSliceEquations (Matrix,Ring) := (S,R) -> 
+  apply(numrows S, i->(sub(S^{i},R) * transpose vars R)_(0,0)) 
 
 sliceEquationsToMatrix = method()
 sliceEquationsToMatrix Ideal := I -> (
@@ -222,6 +240,10 @@ sliceEquationsToMatrix Ideal := I -> (
     else 
     map(R^0,R^(numgens R + 1),0)
     )  
+
+projectiveWitnessSet = method(TypicalValue=>ProjectiveWitnessSet)
+projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) -> 
+  new WitnessSet from { Equations => I, AffineChart => C, Slice => S, Points => VerticalList P, IsIrreducible=>null}
 
 {**********************************************************************
 NumericalVariety = {
@@ -439,7 +461,7 @@ document {
 	  {TT "Points", ", a list of ", TO2(Point, "points")},
 	  {TT "IsIrreducible", " that takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
 	  },
-     SeeAlso => {witnessSet, NumericalVariety}
+     SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
      }
 document {
 	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
@@ -451,14 +473,48 @@ document {
 	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
 	     },
 	Outputs => {"w"=> WitnessSet},
-	PARA {"Used to construct a witness set of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
+	PARA {"Used to construct a witness set of a component of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
 	     " and that ", TT "P", " is a subset of the intersection of ", TT "V(E)", " and ", TT "V(S)", "."},
         EXAMPLE lines ///
 R = CC[x,y]	
 w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
 peek w
-     	///
+///
 	}
+document {
+     Key => {ProjectiveWitnessSet, AffineChart},
+     Headline => "a projective witness set",
+     "This type stores a witness set of an equidimensional projective solution component. ", 
+     SeeAlso => {WitnessSet, projectiveWitnessSet}
+     }
+-- !!! something strange is going on with EXAMPLE in this node:
+-- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
+-- document {
+-- 	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
+-- 	Headline => "construct a ProjectiveWitnessSet",
+-- 	Usage => "w = projectiveWitnessSet(E,C,S,P)",
+-- 	Inputs => { 
+-- 	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
+-- 	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
+-- 	     "S" => Matrix => {" complex coefficients of a linear system"},
+-- 	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+-- 	     },
+-- 	Outputs => {"w"=> ProjectiveWitnessSet},
+-- 	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
+-- 	    ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
+-- 	    " are of complementary dimensions and that ", TT "P", " is a subset of the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
+-- 	,
+--         EXAMPLE lines ///
+-- R = CC[x,y,z]
+-- w = projectiveWitnessSet(
+--     ideal(x^2+y^2+2*z^2),
+--     matrix{{0,0,1}}, -- chart: Z=1
+--     matrix{{1,-1,0}},
+--     {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
+--     )
+-- peek w
+-- ///
+-- }
 
 
 document {
@@ -481,9 +537,10 @@ setName(w, " _ "||"/ \\"||"\\_/")
 	}
 
 document {
-	Key => {(sliceEquations,Matrix,Ring),sliceEquations},
+	Key => {(sliceEquations,Matrix,Ring),sliceEquations,
+	    (projectiveSliceEquations,Matrix,Ring),projectiveSliceEquations},
 	Headline => "slicing linear functions",
-	Usage => "S = sliceEquations(M,R)",
+	Usage => "S = sliceEquations(M,R), S = projectiveSliceEquations(M,R)",
 	Inputs => { 
 	     "M"=> Matrix => " contains the coefficients of the slicing linear polynomials",
 	     "R"=> Ring => " where the output polynomials belong"
@@ -493,6 +550,7 @@ document {
 	EXAMPLE lines ///
 R = CC[x,y]	
 sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
+projectiveSliceEquations(matrix{{1,2,3},{4,5,6*ii}}, CC[x,y,z])
      	///
 	}
 
