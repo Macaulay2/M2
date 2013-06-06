@@ -5,7 +5,7 @@ needsPackage "Graphs"
 newPackage(
      "GraphicalModels",
      Version => "1.0",
-     Date => "April 2013",
+     Date => "April, 2013",
      Authors => {
 	  {Name => "Luis Garcia-Puente",
 	   Email => "lgarcia@shsu.edu",

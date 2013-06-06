@@ -1,4 +1,5 @@
-# license for frobby: GPL v2
+# license for frobby: GPL v2 or later
+LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2
 #VERSION = mike3

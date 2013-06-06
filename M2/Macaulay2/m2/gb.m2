@@ -259,7 +259,7 @@ syz = method(
      Options => select(pairs options gb, (k,v) -> not notForSyz#?k)
      )
 
-rawsort := m -> rawExtractColumns(m,rawSortColumns(m,1,1))
+rawsort := m -> rawSubmatrix(m,rawSortColumns(m,1,1))
 
 generators      GroebnerBasis := Matrix => opts -> (G) -> map(target unbag G.matrix,,rawGBGetMatrix G.RawComputation)
 mingens         GroebnerBasis := Matrix => opts -> (G) -> map(target unbag G.matrix,,rawsort rawGBMinimalGenerators G.RawComputation)
