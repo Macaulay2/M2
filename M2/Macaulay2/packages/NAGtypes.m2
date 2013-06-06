@@ -36,6 +36,9 @@ export {
      "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure"
      }
 
+-- DEBUG CORE ----------------------------------------
+debug Core; -- to enable engine routines
+
 Point = new Type of MutableHashTable 
 -- ProjectivePoint = new Type of Point -- do we really need this?
 WitnessSet = new Type of MutableHashTable 
@@ -334,17 +337,20 @@ SERVICE FUNCTIONS:
   
 *}
 NumericalVariety.synonym = "numerical variety"
-///
 net NumericalVariety := V -> (
-     	out := "A variety of dimension " | net dim V |" with components in";
-     	scan(keys V, k->if class k === ZZ then (
-	       	row := "dim "|net k|": ";
-	       	scan(V#k, W->row = row|" "|net W);
-	       	out = out || row;
-	       	));
-     	out
-     	)
-///
+    if hasAnAttribute V then (
+	if hasAttribute(V,PrintNet) then return getAttribute(V,PrintNet);
+  	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
+  	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
+  	);
+    out := "A variety of dimension " | net dim V |" with components in";
+    scan(keys V, k->if class k === ZZ then (
+	    row := "dim "|net k|": ";
+	    scan(V#k, W->row = row|" "|net W);
+	    out = out || row;
+	    ));
+    out
+    )
 globalAssignment NumericalVariety
 ///
 restart 
@@ -556,32 +562,32 @@ document {
      }
 -- !!! something strange is going on with EXAMPLE in this node:
 -- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
--- document {
--- 	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
--- 	Headline => "construct a ProjectiveWitnessSet",
--- 	Usage => "w = projectiveWitnessSet(E,C,S,P)",
--- 	Inputs => { 
--- 	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
--- 	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
--- 	     "S" => Matrix => {" complex coefficients of a linear system"},
--- 	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
--- 	     },
--- 	Outputs => {"w"=> ProjectiveWitnessSet},
--- 	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
--- 	    ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
--- 	    " are of complementary dimensions and that ", TT "P", " is a subset of the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
--- 	,
---         EXAMPLE lines ///
--- R = CC[x,y,z]
--- w = projectiveWitnessSet(
---     ideal(x^2+y^2+2*z^2),
---     matrix{{0,0,1}}, -- chart: Z=1
---     matrix{{1,-1,0}},
---     {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
---     )
--- peek w
--- ///
--- }
+document {
+	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
+	Headline => "construct a ProjectiveWitnessSet",
+	Usage => "w = projectiveWitnessSet(E,C,S,P)",
+	Inputs => { 
+	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
+	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
+	     "S" => Matrix => {" complex coefficients of a linear system"},
+	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+	     },
+	Outputs => {"w"=> ProjectiveWitnessSet},
+	-- PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
+	--     ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
+	--     " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
+	-- ,
+        EXAMPLE lines ///
+R = CC[x,y,z]
+w = projectiveWitnessSet(
+    ideal(x^2+y^2+2*z^2),
+    matrix{{0,0,1}}, -- chart: Z=1
+    matrix{{1,-1,0}},
+    {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
+    )
+peek w
+///
+}
 
 
 document {
