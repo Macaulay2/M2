@@ -19,7 +19,7 @@ export {
      -- service functions
      generalEquations, 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", "setName",
+     "WitnessSet", "witnessSet", "equations", "slice", "points", 
      "Equations", "Slice", "Points", "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
      "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
      -- numerical variety
@@ -60,19 +60,28 @@ ProjectiveNumericalVariety = new Type of NumericalVariety
 --   DeflationNumber => number of first-order deflations 
 --   }
 Point.synonym = "point"
-point = method()
-point Point := p -> new Point from p
-point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 net Point := p -> (
+    if hasAnAttribute p then (
+	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
+  	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
+  	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
+  	);
      if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 
      else if p.SolutionStatus === Singular then net toSequence p.Coordinates
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === NumericalRankFailure then net "[N]"
      else error "the point is corrupted"
-     ) 
+    ) 
+globalAssignment Point
+
+point = method()
+point Point := p -> new Point from p
+point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
+
 coordinates = method()
 coordinates Point := p -> p.Coordinates
+
 status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
 
@@ -259,6 +268,18 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 --                            (e.g., [1,2,3] corresponds to x+2y+3=1)  
 --     }
 WitnessSet.synonym = "witness set"
+net WitnessSet := W -> (
+    if hasAnAttribute W then (
+	if hasAttribute(W,PrintNet) then return getAttribute(W,PrintNet);
+  	if hasAttribute(W,PrintNames) then return net getAttribute(W,PrintNames);
+  	if hasAttribute(W,ReverseDictionary) then return toString getAttribute(W,ReverseDictionary);
+  	);
+    if not W.?IsIrreducible or W.IsIrreducible===null or not W.IsIrreducible 
+    then "[dim=" | net dim W |",deg="| net degree W | "]" 
+    else "(dim=" | net dim W |",deg="| net degree W | ")"
+    ) 
+globalAssignment WitnessSet
+
 protect Tolerance -- ???
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 
@@ -267,13 +288,6 @@ codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> W.Equations
-net WitnessSet := W -> if W.?Name then net W.Name else (
-    if not W.?IsIrreducible or W.IsIrreducible===null or not W.IsIrreducible 
-    then "[dim=" | net dim W |",deg="| net degree W | "]" 
-    else "(dim=" | net dim W |",deg="| net degree W | ")"
-    ) 
-setName = method()
-setName (WitnessSet, Thing) := (W, name) -> W.Name = name
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> 
@@ -352,12 +366,6 @@ net NumericalVariety := V -> (
     out
     )
 globalAssignment NumericalVariety
-///
-restart 
-loadPackage "NAGtypes"
-V = new NumericalVariety
-new NumericalVariety
-///
 
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 degree NumericalVariety := V -> (
@@ -422,19 +430,37 @@ document {
      	  " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
      	  TO "PHCpack::PHCpack", "."
 	  },  
-     "Main datatypes: ",
+     PARA{"Main datatypes: "},
+     UL{    
+	 {TO "Point", " -- numerical approximation of a point in a complex space (and related methods)"},
+	 {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
+	 {TO "NumericalVariety", " -- a numerical description of a variety"}
+	 },
+     PARA{"See the corresponding documentation nodes for description of provided service functions."},
+     PARA {"Other service functions: "},
      UL{
-	  {TO "Point", " -- numerical approximation of a point in a complex space (and related methods)"},
-	  {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
-	  {TO "NumericalVariety", " -- a numerical description of a variety"}
-	  },
-     "Other service functions: ",
-     UL{
-	  {TO "areEqual", " -- compare numbers, points, lists of points"},
-	  {TO "sortSolutions", " -- sort lists of points"},
-	  {TO "generalEquations", " -- "}
-	  }
+	 {TO "areEqual", " -- compare numbers, points, lists of points"},
+	 {TO "sortSolutions", " -- sort lists of points"},
+	 {TO "generalEquations", " -- "}
+	 },
+     PARA {
+     	 "We display the objects of all new types showing only partial data. 
+     	 Moreover, if an object is assigned to a global variable, only the name of the variable is shown. Use ", TO peek, 
+     	 " for more information."
+     	 },
+     EXAMPLE lines ///
+R = CC[x,y]	
+I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+origin = point {{0.,0.}}
+numericalVariety {witnessSet(I, ideal R, {origin}),w1}
+V = oo
+peek V
+peek w1
+peek origin
+///
      }
+
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, (net, Point),
@@ -487,6 +513,7 @@ document {
 	  {TT "Tracker", " -- reserved for developers"}
 	  }
      }
+
 document {
 	Key => {(point,List), point},
 	Headline => "construct a Point",
@@ -536,6 +563,7 @@ document {
 	  },
      SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
      }
+
 document {
 	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
 	Headline => "construct a WitnessSet",
@@ -554,12 +582,14 @@ w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}
 peek w
 ///
 	}
+
 document {
      Key => {ProjectiveWitnessSet, AffineChart},
      Headline => "a projective witness set",
      "This type stores a witness set of an equidimensional projective solution component. ", 
      SeeAlso => {WitnessSet, projectiveWitnessSet}
      }
+
 -- !!! something strange is going on with EXAMPLE in this node:
 -- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
 document {
@@ -573,10 +603,10 @@ document {
 	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
 	     },
 	Outputs => {"w"=> ProjectiveWitnessSet},
-	-- PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
-	--     ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
-	--     " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
-	-- ,
+	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
+	    ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
+	    " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
+	,
         EXAMPLE lines ///
 R = CC[x,y,z]
 w = projectiveWitnessSet(
@@ -588,26 +618,6 @@ w = projectiveWitnessSet(
 peek w
 ///
 }
-
-
-document {
-	Key => {setName,(setName, WitnessSet, Thing)},
-	Headline => "give a name to a witness set",
-	Usage => "out = setName(W,name)",
-	Inputs => { 
-	     "W" => WitnessSet,
-	     "name" => Thing => {"the name to be displayed on the screen"}
-	     },
-	Outputs => {"out"=>Thing},
-	PARA {"Used to construct a witness set of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
-	     " and that ", TT "P", " is a subset of the intersection of ", TT "V(E)", " and ", TT "V(S)", "."},
-        EXAMPLE lines ///
-R = CC[x,y]	
-w = witnessSet( ideal(x^2+y^2-1), ideal(x), {{{0,1}},{{0,-1}}}/point)
-setName(w, " _ "||"/ \\"||"\\_/") 
-{w,w,w}
-     	///
-	}
 
 document {
 	Key => {(sliceEquations,Matrix,Ring),sliceEquations,
