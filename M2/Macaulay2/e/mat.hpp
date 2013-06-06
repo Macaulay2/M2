@@ -279,7 +279,7 @@ public:
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
-  // in this case.
+  // if there is no solution.
   virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
                                                       bool right_side) const { 
     return std::pair<bool, MutableMatrix*>(0,static_cast<MutableMatrix*>(NULL)); 

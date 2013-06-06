@@ -1,6 +1,7 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "exceptions.hpp"
+#include "error.h"
 
 #include "dmat.hpp"
 #include "MatLinAlg.hpp"
@@ -71,52 +72,126 @@ void MatLinAlg< DMat<M2::ARingZZpFFPACK> >::mult(const Mat& A, const Mat& B, Mat
                   );
 }
 
+size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::nullSpace(const Mat &mat, 
+                                                       bool right_side,
+                                                       Mat &nullspace)
+
+{
+  right_side = !right_side; // because FFPACK stores by rows, not by columns.
+
+  Mat N(mat); // copy of mat
+  size_t nr = mat.numRows();
+  size_t nc = mat.numColumns();
+  
+  ElementType *nullspaceFFPACK = 0;
+  
+  size_t nullspace_dim;
+  size_t nullspace_leading_dim;
+  
+  FFPACK::NullSpaceBasis(mat.ring().field(),
+                         (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+                         nc, nr, N.array(), nr, nullspaceFFPACK, nullspace_leading_dim, nullspace_dim);
+  
+  std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
+  if (right_side && nullspace_dim != nullspace_leading_dim)
+    {
+      std::cerr << "error: this should not happen!" << std::endl;
+    }
+  else if (!right_side && nullspace_leading_dim != nc)
+    {
+      std::cerr << "error: this should not happen either!" << std::endl;
+    }
+  
+  if (right_side)
+    nullspace.resize(nullspace_dim,nr);
+  else
+    nullspace.resize(nc,nullspace_dim);
+
+  std::swap(nullspace.array(), nullspaceFFPACK);
+  //  mat.copy_elems(nullspace.n_rows() * nullspace.n_cols(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
+
+  delete [] nullspaceFFPACK;
+  return nullspace_dim;
+}
+
+M2_arrayintOrNull MatLinAlg< DMat<M2::ARingZZpFFPACK> >::rankProfile(const Mat& mat,
+                                                                     bool row_profile)
+{
+  // Note that FFPack stores matrices by row, not column, the opposite of what we do.
+  // So row_profile true means use ffpack column rank profile!
+  row_profile = not row_profile; // TODO: once matrices are stored row-major, this should be removed.
+  Mat N(mat);
+  
+  size_t * prof; // this is where the result will be placed
+  size_t rk;
+  if (row_profile)
+    rk = FFPACK::RowRankProfile(mat.ring().field(),
+                                mat.numColumns(),mat.numRows(),
+                                N.array(),mat.numRows(),
+                                prof);
+  else
+    rk = FFPACK::ColumnRankProfile(mat.ring().field(),
+                                   mat.numColumns(),mat.numRows(),
+                                   N.array(),mat.numRows(),
+                                   prof);
+  
+  M2_arrayint profile = M2_makearrayint(static_cast<int>(rk));
+  for (size_t i=0; i<rk; i++)
+    profile->array[i] = static_cast<int>(prof[i]);
+  
+  delete [] prof;
+  return profile;
+}
+
+bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
+{
+  std::cerr << "inside FFpackSolveLinear" << std::endl;
+
+  size_t a_rows = A.numRows();
+  size_t a_cols = A.numColumns();
+  
+  size_t b_rows = B.numRows();
+  size_t b_cols = B.numColumns();
+
+  Mat copyA(A);
+  Mat copyB(B);
+
+  // preallocate the space for the solutions:
+  size_t x_rows = (right_side ? a_cols : b_rows);
+  size_t x_cols = (right_side ? b_cols : a_rows);
+
+  X.resize(x_rows, x_cols); // sets it to 0 too.
+  
+  int info; // >0 if the system is inconsistent, ==0 means success
+  
+  FFPACK::fgesv(A.ring().field(),
+                (!right_side ? FFLAS::FflasLeft : FFLAS::FflasRight),
+                a_cols, a_rows, 
+                (!right_side ? b_cols : b_rows),
+                copyA.array(),
+                a_rows, // leading dim of A
+                X.array(), x_rows,
+                copyB.array(), b_rows,
+                &info);
+  
+  if (info > 0)
+    {
+      // the system is inconsistent
+      ERROR("the system is inconsistent");
+      return false;
+    }
+  
+  return true;
+} 
+
 bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat& B, Mat& X)
 {
-  return false;
+  return solveLinear(A, B, true, X);
 }
 
 size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::nullSpace(const Mat& mat, Mat& result_nullspace)
 {
-#if 0
-    bool right_side = false; // because FFPACK stores by rows, not by columns.
-
-    M2_ASSERT(mat.numRows() == mat.NumColumns());
-    Mat N(mat);
-    size_t nr = mat.numRows();
-    size_t nc = mat.numColumns();
-
-    ElementType *nullspaceFFPACK = 0;  //  FFPACK will allocate space and fill this in
-    
-    size_t nullspace_dim;
-    size_t nullspace_leading_dim;
-    
-    FFPACK::NullSpaceBasis(mat.ring().field(),
-                           (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
-                           nc, nr, N, nr, nullspaceFFPACK, nullspace_leading_dim, nullspace_dim);
-    
-    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
-
-    //NOTUSED? size_t nullspace_nrows = (right_side ? nc : nullspace_dim);
-    if (right_side && nullspace_dim != nullspace_leading_dim)
-      {
-        std::cerr << "error: this should not happen!" << std::endl;
-      }
-    else if (!right_side && nullspace_leading_dim != nc)
-      {
-        std::cerr << "error: this should not happen either!" << std::endl;
-      }
-    
-    if (right_side)
-      nullspace.resize(nullspace_dim,nr);
-    else
-      nullspace.resize(nc,nullspace_dim);
-    
-    mat.copy_elems(nullspace.numRows() * nullspace.numColumns(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
-    
-    delete [] nullspaceFFPACK;
-#endif
-    return 0;
+  return nullSpace(mat, true, result_nullspace);
 }
 #endif // HAVE_FFLAS_FFPACK
 

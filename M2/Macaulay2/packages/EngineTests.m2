@@ -350,6 +350,16 @@ testSolve = (R) -> (
     rawLinAlgSolve(raw M,raw B, true) -- doesn't seem to be implemented yet.
     )
 
+testNullspace = (R) -> (
+    debug Core
+    R = ZZp(32003, "Choose"=>"FFPACK")
+    E = map(R^2, R^3, {{1, 4, 5}, {2, 3, 6}})
+    M = mutableMatrix E
+    X = map(R, rawLinAlgNullSpace(raw M, true))
+    assert((matrix M) * (matrix X) == 0);
+    M * X  -- crash!!
+    )
+
 testMutableMatrices = (R) -> (
      << "testing " << describe R << endl;
      testops0 R;

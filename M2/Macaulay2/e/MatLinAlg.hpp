@@ -122,22 +122,13 @@ public:
 
   static bool solveLinear(const Mat& A, const Mat& B, Mat& X);
 
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X);
+
   static size_t nullSpace(const Mat& A, Mat& result_nullspace);
 
-  static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
-  {
-    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
-  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
-  {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-  }
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
-  }
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace);
 
+  static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile);
 };
 #endif
 

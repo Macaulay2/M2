@@ -145,7 +145,7 @@ public:
   }
 
   const ElementType* array() const { return mArray; }
-  ElementType* array() { return mArray; }
+  ElementType*& array() { return mArray; }
 
 private:
   const ACoeffRing* mRing;
@@ -209,7 +209,7 @@ public:
 
 
   const ElementType* array() const { return mArray->entries; }
-  ElementType* array() { return mArray->entries; }
+  ElementType*& array() { return mArray->entries; }
 
   ElementType& entry(size_t row, size_t column) { 
     M2_ASSERT(row < numRows());
@@ -294,7 +294,7 @@ public:
   size_t numColumns() const { return nmod_mat_ncols(mArray); }
 
   const ElementType* array() const { return mArray->entries; }
-  ElementType* array() { return mArray->entries; }
+  ElementType*&  array() { return mArray->entries; }
 
   ElementType& entry(size_t row, size_t column) { return nmod_mat_entry(mArray, row, column); }
   const ElementType& entry(size_t row, size_t column) const { return nmod_mat_entry(mArray, row, column); }
