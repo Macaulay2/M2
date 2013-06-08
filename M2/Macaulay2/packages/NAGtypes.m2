@@ -195,8 +195,8 @@ toAffineChart (ZZ,List) := List => (k,x) -> (
 -- projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
 -- projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
 
-solutionDuplicates = method(TypicalValue=>MutableHashTable)
-solutionDuplicates List := sols -> ( 
+solutionDuplicates = method(TypicalValue=>MutableHashTable, Options=>{Tolerance=>1e-6})
+solutionDuplicates List := o -> sols -> ( 
 -- find positions of duplicate solutions
 -- IN: list of solutions
 -- OUT: H = MutableHashTable with entries of the form i=>j (sols#i is a duplicate for sols#j);
@@ -207,7 +207,7 @@ solutionDuplicates List := sols -> (
 	  H#j = j;
 	  i := j-1;
 	  while i>=0 do
-	  if areEqual(sols#i,sols#j) then (
+	  if areEqual(sols#i,sols#j,o) then (
 	       H#j = H#i;
 	       H#i = j;
 	       i = -1
@@ -236,9 +236,9 @@ groupClusters MutableHashTable := H -> (
      cs
      )
 
-solutionsWithMultiplicity = method()
-solutionsWithMultiplicity List := sols -> ( 
-     clusters := groupClusters solutionDuplicates sols;
+solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+solutionsWithMultiplicity List := o-> sols -> ( 
+     clusters := groupClusters solutionDuplicates(sols,o);
      apply(clusters, c->(
 	       s := new Point from sols#(first c);
 	       if (s.Multiplicity = #c)>1 then s.SolutionStatus = Singular;
@@ -280,7 +280,6 @@ net WitnessSet := W -> (
     ) 
 globalAssignment WitnessSet
 
-protect Tolerance -- ???
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 
      else error "ill-formed slice in WitnessSet" )
@@ -606,17 +605,17 @@ document {
 	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
 	    ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
 	    " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
-	,
-        EXAMPLE lines ///
-R = CC[x,y,z]
-w = projectiveWitnessSet(
-    ideal(x^2+y^2+2*z^2),
-    matrix{{0,0,1}}, -- chart: Z=1
-    matrix{{1,-1,0}},
-    {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
-    )
-peek w
-///
+-- 	,
+--         EXAMPLE lines ///
+-- R = CC[x,y,z]
+-- w = projectiveWitnessSet(
+--     ideal(x^2+y^2+2*z^2),
+--     matrix{{0,0,1}}, -- chart: Z=1
+--     matrix{{1,-1,0}},
+--     {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
+--     )
+-- peek w
+-- ///
 }
 
 document {
@@ -823,13 +822,13 @@ doc ///
 
 document {
      Key => {solutionsWithMultiplicity, (solutionsWithMultiplicity,List)},
-     Headline => "replaces clusters of approximately equal points with single points with multiplicity",
+     Headline => "replaces clusters of approximately equal points by single points with multiplicity",
      Usage => "M = solutionsWithMultiplicity S",
      Inputs => {
 	     "S" => {TO2{Point,"points"}}
 	     },
      Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
-     PARA{"Clusters the points and outputs w list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
+     PARA{"Clusters the points and outputs a list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
 	 " equal to the size of the cluster. If the multiplicity is not 1, then ", TT "p.", TO SolutionStatus, " is set to ", TO Singular, 
 	 "; otherwise, it is inherited from one of the points in the cluster."},
      PARA{"Whether two points are approximately equal is decided by the function ", TO areEqual, " that depends on ", TO Tolerance, "."},
