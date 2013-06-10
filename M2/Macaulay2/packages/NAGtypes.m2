@@ -350,13 +350,14 @@ SERVICE FUNCTIONS:
   
 *}
 NumericalVariety.synonym = "numerical variety"
+ProjectiveNumericalVariety.synonym = "projective numerical variety"
 net NumericalVariety := V -> (
     if hasAnAttribute V then (
 	if hasAttribute(V,PrintNet) then return getAttribute(V,PrintNet);
   	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
   	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
   	);
-    out := "A variety of dimension " | net dim V |" with components in";
+    out := ofClass class V | " of dimension " | net dim V |" with components in";
     scan(keys V, k->if class k === ZZ then (
 	    row := "dim "|net k|": ";
 	    scan(V#k, W->row = row|" "|net W);
@@ -365,6 +366,7 @@ net NumericalVariety := V -> (
     out
     )
 globalAssignment NumericalVariety
+globalAssignment ProjectiveNumericalVariety
 
 dim NumericalVariety := V -> max select(keys V, k->class k === ZZ)
 degree NumericalVariety := V -> (
@@ -381,6 +383,9 @@ numericalVariety List := Ws -> (
      check V;
      V
      )
+projectiveNumericalVariety = method(TypicalValue=>ProjectiveNumericalVariety)
+projectiveNumericalVariety List := Ws -> new ProjectiveNumericalVariety from numericalVariety Ws
+
 check NumericalVariety := o-> V -> (
      if any(keys V, k->(class k =!= ZZ or k<0)) 
      then error "the keys of a NumericalVariety should be nonnegative integers";
@@ -603,8 +608,15 @@ document {
 	     },
 	Outputs => {"w"=> ProjectiveWitnessSet},
 	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
-	    ". It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
+	    ". ", " An affine chart is specified by the matrix of the coefficients of the (normalized) linear equation defining the chart: e.g., ",
+	    TT "ax+by+cz=1", " is encoded as ", TT "[a,b,c]", "." }, 
+	PARA {"It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
 	    " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
+	,
+	EXAMPLE lines ///
+R = CC[x,y,z]	
+w = projectiveWitnessSet( ideal(x^2+y^2+2*z^2), matrix{{0,0,1}}, matrix{{1,-1,0}}, {point {{0.999999*ii,0.999999*ii,1.}}, point {{ -1.000001*ii,-1.000001*ii,1.}}} )
+peek w///
 -- 	,
 --         EXAMPLE lines ///
 -- R = CC[x,y,z]
@@ -769,15 +781,14 @@ document {
      SeeAlso => {WitnessSet}
      }
 document {
-	Key => {(numericalVariety,List), numericalVariety},
+	Key => {(numericalVariety,List), numericalVariety, (projectiveNumericalVariety,List), projectiveNumericalVariety},
 	Headline => "construct a numerical variety",
-	Usage => "V = numericalVariety Ws",
+	Usage => "V = numericalVariety Ws; V = projectiveNumericalVariety Ws; ",
 	Inputs => { 
---	     "I" => "the defining ideal of the variety",
-	     "Ws" => {"contains (irreducible) witness sets representing components of a variety"}
+	     "Ws" => {"contains (projective) witness sets representing components of a variety"}
 	     },
 	Outputs => {"V"=> NumericalVariety},
-	PARA {"Used to construct a numerical variety. It is NOT expected that every witness set ", TT "W", 
+	PARA {"Constructs a numerical (affine or projective) variety. It is NOT expected that every witness set ", TT "W", 
 	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
         EXAMPLE lines ///
 R = CC[x,y]	
@@ -785,7 +796,8 @@ I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
 w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
 w0 = witnessSet(I, ideal R, {point {{0.,0.}}})
 V = numericalVariety {w0,w1}
-     	///
+     	///,
+	SeeAlso => {WitnessSet, ProjectiveWitnessSet}
 	}
 
 doc ///
