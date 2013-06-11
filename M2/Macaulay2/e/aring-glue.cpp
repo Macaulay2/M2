@@ -17,6 +17,79 @@ namespace M2 {
     return result;
   }
 
+  // Rings considered:
+  // ZZ, ZZFLINT
+  // QQ, QQFLINT
+  // ZZp, ZZpFFPACK, ZZpFLINT
+  // GF, GFGIVARO
+  // RR, CC (implemented using doubles)
+  // RRR, CCC (using mpfr)
+  // ZZtFLINT
+  // ZZptFLINT
+  // Poly (base: ?? over a set of variables)
+  // PolyQuotient
+  // Frac(R), where R=Poly or PolyQuotient??
+  // Tower(base)
+
+  // Operations considered:
+  // promote
+  // lift
+  // eval
+
+  // promote: assuming there is a *natural* map (S = this)
+  // R --> S, and an element fR of R, this function
+  // returns in 'resultS' the image of the element fR.
+  //
+  // Cases:
+  //  1. ZZ --> S.  Every class implements such a function: from_mpz
+  //  2. R==S: returns (a copy of) fR.
+  // Now for all of the cases implemented:
+  // 
+
+  //  3. ZZ/p --> ZZ/p (where the ZZ/p are all different types of mod
+  //     p integers, but where the characteristic is the same
+  //     the implementation lifts to an int (or mpz?) and does from_int.
+  //
+  //  4. ZZ/p --> GF(p^r)
+  //     
+  //  5. QQ --> RR, CC, RRR, CCC
+  //  6. RR --> RRR,CC,CCC
+  //  7. RRR --> CCC
+  //  8. R --> R[x,...], R[vars]/I
+  //  9. R[vars]/I --> R[vars]/J
+  //  10. R --> frac R
+
+  //  11. ZZtFLINT --> ZZ[t]
+  //  12. ZZ[t] --> ZZtFLINT
+  //
+  //  13. ZZ <---> ZZFlint
+  template<typename RingType>
+  bool ConcreteRing<RingType>::newpromote(const Ring *R, 
+                                       const ring_elem fR, 
+                                       ring_elem &resultS) const
+  {
+    const Ring *S = this;
+    fprintf(stderr, "calling promote\n");
+    typedef RingPromoter RP;
+    if (R == globalZZ)
+      {
+        resultS = S->from_int(fR.get_mpz());
+        return true;
+      }
+    if (R == S)
+      {
+        resultS = copy(fR);
+        return true;
+      }
+    //    Promote<RingType>::promote(const Ring* R, const ring_elem fR, ring(), ElementType& result);
+    ElementType result;
+    ring().init(result);
+    bool retval = Promoter::NewPromoter::newpromote(R, fR, ring(), result);
+    ring().to_ring_elem(resultS, result);
+    ring().clear(result);
+    return retval;
+  }
+
   template<typename RingType>
   bool ConcreteRing<RingType>::promote(const Ring *R, 
                                        const ring_elem fR, 

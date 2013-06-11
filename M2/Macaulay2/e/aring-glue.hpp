@@ -138,6 +138,10 @@ namespace M2 {
 
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const;
 
+    virtual bool newpromote(const Ring *R, 
+                            const ring_elem fR, 
+                            ring_elem &resultS) const;
+
     //* If there is a "natural" map S --> R=this, where f is an element of
     // R, then result is set to an element f in S which maps to f, and true is returned.
     // Otherwise, false is returned.
