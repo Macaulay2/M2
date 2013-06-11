@@ -1,7 +1,7 @@
 // Copyright 2005  Michael E. Stillman
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 #include "ZZp.hpp"
 #include "smat.hpp"
 #include "mat.hpp"
@@ -1057,7 +1057,7 @@ void SMat<CoeffRing>::mult(const SMat<CoeffRing>& B,
 #include "aring-ffpack.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
-template class SMat<CoefficientRingZZ_NTL>;
+template class SMat<M2::ARingZZGMP>;
 template class SMat<M2::ARingZZp>;
 
 #ifdef HAVE_FLINT

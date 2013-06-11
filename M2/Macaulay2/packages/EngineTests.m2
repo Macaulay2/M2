@@ -343,19 +343,19 @@ testMult = (R) -> (
     -- compute M * (transpose N), N * (transpose M).  These should be the same up to transpose
     )
 testSolve = (R) -> (
-    E = map(R^2, R^2, {{1, 4}, {2, 3}})
-    B = map(R^2, R^1, {{3}, {7}})
-    M = mutableMatrix E
-    B = mutableMatrix B
+    E := map(R^2, R^2, {{1, 4}, {2, 3}});
+    B := map(R^2, R^1, {{3}, {7}});
+    M := mutableMatrix E;
+    B = mutableMatrix B;
     rawLinAlgSolve(raw M,raw B, true) -- doesn't seem to be implemented yet.
     )
 
 testNullspace = (R) -> (
-    debug Core
-    R = ZZp(32003, "Choose"=>"FFPACK")
-    E = map(R^2, R^3, {{1, 4, 5}, {2, 3, 6}})
-    M = mutableMatrix E
-    X = map(R, rawLinAlgNullSpace(raw M, true))
+    debug Core;
+    --R := ZZp(32003, "Choose"=>"FFPACK");
+    E := map(R^2, R^3, {{1, 4, 5}, {2, 3, 6}});
+    M := mutableMatrix E;
+    X := map(R, rawLinAlgNullSpace(raw M, true));
     assert((matrix M) * (matrix X) == 0);
     M * X  -- crash!!
     )

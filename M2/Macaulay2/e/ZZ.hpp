@@ -6,8 +6,10 @@
 #include "ring.hpp"
 #include <gmp.h>
 #include <mpfr.h>
-class CoefficientRingZZ_NTL;
 
+namespace M2 {
+  class ARingZZGMP;
+};
 
 // The following lines are here only to remove complaints about old style casts from gmp
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
@@ -18,7 +20,7 @@ extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return 
 */
 class RingZZ : public Ring
 {
-  friend class CoefficientRingZZ_NTL;
+  friend class M2::ARingZZGMP;
 
   int _elem_size;
   mpz_ptr _zero_elem;
@@ -26,7 +28,7 @@ class RingZZ : public Ring
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
-  CoefficientRingZZ_NTL *coeffR;
+  M2::ARingZZGMP *coeffR;
 protected:
   virtual ~RingZZ() {}
 
@@ -43,8 +45,8 @@ public:
   RingZZ * cast_to_RingZZ() { return this; }
   const RingZZ * cast_to_RingZZ() const { return this; }
 
-  CoefficientRingZZ_NTL * get_CoeffRing() const { return coeffR; }
-  CoefficientRingZZ_NTL * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  M2::ARingZZGMP * get_CoeffRing() const { return coeffR; }
+  M2::ARingZZGMP * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
 
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }

@@ -6,7 +6,7 @@
 #include "mutablemat.hpp"
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 
 #include "matrix-con.hpp"
 #include "matrix.hpp"
@@ -128,11 +128,11 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  return MutableMat< DMat<CoefficientRingZZ_NTL> >
+	  return MutableMat< DMat<M2::ARingZZGMP> >
 	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
 	}
       else
-	  return MutableMat< SMat<CoefficientRingZZ_NTL> >
+	  return MutableMat< SMat<M2::ARingZZGMP> >
 	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
     }
   if (R->is_RRR())
@@ -866,7 +866,7 @@ template class MutableMat< DMat<M2::ARingZZp> >;
 template class MutableMat< DMat<M2::ARingRRR> >;
 template class MutableMat< DMat<CoefficientRingRRR> >;
 template class MutableMat< DMat<CoefficientRingCCC> >;
-template class MutableMat< DMat<CoefficientRingZZ_NTL> >;
+template class MutableMat< DMat<M2::ARingZZGMP> >;
 template class MutableMat< DMat<CoefficientRingR> >;
 template class MutableMat< DMat<M2::ARingTower> >;
 
@@ -874,7 +874,7 @@ template class MutableMat< SMat<M2::ARingZZp> >;
 template class MutableMat< SMat<M2::ARingRRR> >;
 template class MutableMat< SMat<CoefficientRingRRR> >;
 template class MutableMat< SMat<CoefficientRingCCC> >;
-template class MutableMat< SMat<CoefficientRingZZ_NTL> >;
+template class MutableMat< SMat<M2::ARingZZGMP> >;
 template class MutableMat< SMat<CoefficientRingR> >;
 template class MutableMat< SMat<M2::ARingTower> >;
 

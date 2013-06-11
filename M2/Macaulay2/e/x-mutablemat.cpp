@@ -7,7 +7,7 @@
 #include "GF.hpp"
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 #include "mat.hpp"
 #include "fractionfreeLU.hpp"
 #include "LLL.hpp"
@@ -693,6 +693,7 @@ M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
 }
 
 #include <fplll-interface.h>
+#include "ntl-interface.hpp"
 
 M2_bool rawLLL(MutableMatrix *M,
                 MutableMatrix /* or null */ *U,

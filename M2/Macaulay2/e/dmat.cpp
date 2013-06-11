@@ -281,10 +281,10 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 #include "aring-tower.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-gf.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 #include "coeffrings.hpp"
 
-template class DMat<CoefficientRingZZ_NTL>;
+template class DMat<M2::ARingZZGMP>;
 template class DMat<M2::ARingZZp>;
 template class DMat<M2::ARingTower>;
 

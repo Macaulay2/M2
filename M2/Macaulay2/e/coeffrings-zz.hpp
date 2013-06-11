@@ -8,17 +8,20 @@
 #include "ZZ.hpp"
 #include "ntl-interface.hpp"
 
+#include "aring-zz-gmp.hpp"
+
+#if 0
 /**
  * \ingroup coeffrings
  */
-class CoefficientRingZZ_NTL : public our_new_delete
+class M2::ARingZZGMP : public our_new_delete
 {
 public:
   typedef RingZZ ring_type;
   typedef NTL::ZZ elem;
   typedef NTL::ZZ ElementType;
 
-  CoefficientRingZZ_NTL(const RingZZ *R0) { }
+  M2::ARingZZGMP(const RingZZ *R0) { }
 
   void init(elem& result) const {}
 
@@ -87,6 +90,7 @@ public:
     NTL::swap(a,b);
   }
 };
+#endif
 
 #endif
 

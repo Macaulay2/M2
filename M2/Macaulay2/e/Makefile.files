@@ -13,6 +13,7 @@ INTERFACE = \
 	matrix-stream \
 	cra \
 	DenseMatrixDef \
+	aring-zz-gmp \
 	aring-zzp-flint \
 	aring-zz-flint \
 	aring-RRR \
