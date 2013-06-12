@@ -12,7 +12,8 @@ newPackage(
 
 export { ringOps, 
      testMutableMatrices,
-     testFrac
+     testFrac,
+     testGF
      }
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
@@ -381,8 +382,47 @@ TEST ///
   testMutableMatrices(ZZ/101)
 ///
 
+testGF = (strategy) -> (
+    R := null;
+    assert(strategy===null or strategy==="New" or strategy==="Givaro" or strategy==="CompleteGivaro");
+    low := 1;
+    hi := i -> 20;
+    -- This upper bound for CompleteGivaro is made to match the default SizeLimit of 10000.
+    if strategy === "CompleteGivaro" then (
+        low = 2;
+        hi = p -> if p == 2 then 13 
+        else if p == 3 then 10 
+        else if p == 5 then 5 
+        else if p == 7 then 4
+        else if p < 23 then 3
+        else if p < 100 then 2
+        else 1;
+        );
+    for i from low to hi 2 do (
+        << "doing " <<  (2,i) << endl;
+        R = GF(2^i, Strategy=>strategy);
+        testMutableMatrices R;
+        );
+    for i from low to hi 3 do (
+        R = GF(3^i, Strategy=>strategy);
+        testMutableMatrices R;
+        );
+    for i from low to hi 5 do (
+        R = GF(5^i, Strategy=>strategy);
+        testMutableMatrices R;
+        );
+    for i from low to hi 7 do (
+        R = GF(7,i, Strategy=>strategy);
+        testMutableMatrices R;
+        );
+    )
+
 TEST ///
-  testMutableMatrices(GF 4)
+  testGF null
+  testGF "New"  
+  testGF "Givaro"
+--  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
+    -- the size is too big
 ///
 
 TEST ///
