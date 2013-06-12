@@ -8,7 +8,7 @@
 #include "aring-zzp-flint.hpp"
 #include "aring-gf.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
 
 #include "polyring.hpp"

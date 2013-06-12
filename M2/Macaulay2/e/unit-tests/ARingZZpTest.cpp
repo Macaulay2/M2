@@ -10,7 +10,7 @@
 
 #include "reader.hpp"
 #include "ZZp.hpp"
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "aring-zzp.hpp"
 #include "ARingTest.hpp"
 

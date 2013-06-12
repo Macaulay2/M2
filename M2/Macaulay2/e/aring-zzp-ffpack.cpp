@@ -1,6 +1,6 @@
 // Copyright 2011 Michael E. Stillman
 
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "error.h"
 #define M2_ASSERT assert
 

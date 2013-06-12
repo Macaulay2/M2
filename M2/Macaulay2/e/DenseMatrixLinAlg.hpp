@@ -11,7 +11,7 @@
 #include "DenseMatrixDef.hpp"
 
 #ifdef HAVE_FFLAS_FFPACK
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #endif
 
 #ifdef HAVE_FLINT

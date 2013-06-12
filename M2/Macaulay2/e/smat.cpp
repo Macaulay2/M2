@@ -1054,7 +1054,7 @@ void SMat<CoeffRing>::mult(const SMat<CoeffRing>& B,
   ERROR("not implemented for this ring yet");
 }
 
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-qq-flint.hpp"

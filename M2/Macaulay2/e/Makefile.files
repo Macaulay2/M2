@@ -24,7 +24,7 @@ INTERFACE = \
 	aring-glue \
 	aring-zzp \
 	aring-gf \
-	aring-ffpack \
+	aring-zzp-ffpack \
 	aring \
 	schurSn \
 	schur2 \

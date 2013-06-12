@@ -15,7 +15,7 @@
 #include "exceptions.hpp"
 
 #include "matrix.hpp"
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "mutablemat.hpp"
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
