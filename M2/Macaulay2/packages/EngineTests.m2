@@ -370,7 +370,7 @@ testMutableMatrices = (R) -> (
      testops5 R; -- Not working on 1.6 for R=ZZ
      testTranspose R;
      --testRank R;
-     << "tests passed for " << describe R << endl;
+     << "tests passed for " << raw R << endl;
      )
 
 TEST ///
@@ -414,14 +414,12 @@ TEST ///
 ///
 
 TEST ///
-  -- FAILS: row-major versus column-major representation
   debug Core
   hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
   if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
 ///
 
 TEST ///
-  -- passes
   debug Core
   hasFFPACK := try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
   if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))

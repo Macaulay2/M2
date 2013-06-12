@@ -1057,11 +1057,13 @@ void SMat<CoeffRing>::mult(const SMat<CoeffRing>& B,
 #include "aring-ffpack.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
+#include "aring-qq-flint.hpp"
 template class SMat<M2::ARingZZGMP>;
 template class SMat<M2::ARingZZp>;
 
 #ifdef HAVE_FLINT
 template class SMat<M2::ARingZZpFlint>;
+template class SMat<M2::ARingQQFlint>;
 template class SMat<M2::ARingZZ>;
 #endif // HAVE_FLINT
 

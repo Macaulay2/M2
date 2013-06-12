@@ -56,6 +56,8 @@ export {
 
 debug Core
 
+initializeEngineLinearAlgebra QQ
+
 powerMod = method()
 powerMod(ZZ,ZZ,ZZ) := (a,b,c) -> error "ha ha: not done yet!"
 

@@ -47,7 +47,7 @@ namespace M2 {
     
     size_t cardinality() const { return static_cast<size_t>(-1); }
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned long computeHashValue(const ElementType& a) const 
     { 
       return fmpz_get_ui(&a);
     }
@@ -56,8 +56,8 @@ namespace M2 {
         @{     
     */
     
-    bool is_unit(const ElementType f) const {return fmpz_is_one(&f) or fmpz_cmp_si(&f,-1) == 0;}
-    bool is_zero(const ElementType f) const {return fmpz_is_zero(&f);}
+    bool is_unit(const ElementType& f) const {return fmpz_is_one(&f) or fmpz_cmp_si(&f,-1) == 0;}
+    bool is_zero(const ElementType& f) const {return fmpz_is_zero(&f);}
     
     /** @} */
     
@@ -65,55 +65,55 @@ namespace M2 {
     /** @name operators
         @{ */
     
-    bool is_equal(const ElementType f,const ElementType g) const {return fmpz_equal(&f,&g);}
-    int compare_elems(const ElementType f,const ElementType g) const {return fmpz_cmp(&f,&g);}
+    bool is_equal(const ElementType& f,const ElementType& g) const {return fmpz_equal(&f,&g);}
+    int compare_elems(const ElementType& f,const ElementType& g) const {return fmpz_cmp(&f,&g);}
     /** @} */
     
     /** @name init_set
         @{ */
     
-    void init_set(elem &result, const elem& a) const {fmpz_init_set(&result, &a);}
+    void init_set(ElementType& result, const ElementType& a) const {fmpz_init_set(&result, &a);}
 
-    void init(elem &result) const {fmpz_init(&result);}
+    void init(ElementType& result) const {fmpz_init(&result);}
 
-    void clear(elem &result) const {fmpz_clear(&result);}
+    void clear(ElementType& result) const {fmpz_clear(&result);}
     
-    void set(elem &result, const elem& a) const {fmpz_set(&result, &a);}
+    void set(ElementType& result, const ElementType& a) const {fmpz_set(&result, &a);}
     
-    void set_zero(elem &result) const {fmpz_set_si(&result, 0);}
+    void set_zero(ElementType& result) const {fmpz_set_si(&result, 0);}
     
-    void set_from_int(elem &result, int a) const {fmpz_set_si(&result, a);}
+    void set_from_int(ElementType& result, int a) const {fmpz_set_si(&result, a);}
     
-    void set_from_mpz(elem &result,const mpz_ptr a) const {
+    void set_from_mpz(ElementType& result,const mpz_ptr a) const {
       //printf("ARingZZ::calling set_from_mpz\n");
       fmpz_set_mpz(&result, a);
     }
     
-    void set_from_mpq(elem &result,const mpq_ptr a) const {M2_ASSERT(false);}
+    void set_from_mpq(ElementType& result,const mpq_ptr a) const {M2_ASSERT(false);}
     
-    bool set_from_BigReal(elem &result, gmp_RR a) const {return false;}
+    bool set_from_BigReal(ElementType& result, gmp_RR a) const {return false;}
     
-    void set_var(elem &result, int v) const {fmpz_set_si(&result,1);}
+    void set_var(ElementType& result, int v) const {fmpz_set_si(&result,1);}
     
     /** @} */
     
     
     /** @name arithmetic
         @{ */
-    void negate(elem &result,const elem a) const {fmpz_neg(&result,&a);}
+    void negate(ElementType& result,const ElementType& a) const {fmpz_neg(&result,&a);}
     
-    void invert(elem &result,const elem a) const {if (is_unit(a)) set(result,a); else set_zero(result);}
+    void invert(ElementType& result,const ElementType& a) const {if (is_unit(a)) set(result,a); else set_zero(result);}
     
-    void add(elem &result, const elem a,const elem b) const {fmpz_add(&result,&a,&b);}
+    void add(ElementType& result, const ElementType& a,const ElementType& b) const {fmpz_add(&result,&a,&b);}
     
-    void subtract(ElementType &result,const  ElementType a,const  ElementType b) const {fmpz_sub(&result,&a,&b);}
+    void subtract(ElementType& result,const  ElementType& a,const  ElementType& b) const {fmpz_sub(&result,&a,&b);}
     
-    void subtract_multiple(elem &result,const  elem a,const  elem b) const {fmpz_submul(&result,&a,&b);}
+    void subtract_multiple(ElementType& result,const  ElementType& a,const  ElementType& b) const {fmpz_submul(&result,&a,&b);}
     
-    void mult(elem &result,const  elem a,const  elem b) const {fmpz_mul(&result,&a,&b);}
+    void mult(ElementType& result,const  ElementType& a,const  ElementType& b) const {fmpz_mul(&result,&a,&b);}
     
     ///@brief test doc
-    bool divide(elem &result,const  elem a,const  elem b) const {
+    bool divide(ElementType& result,const  ElementType& a,const  ElementType& b) const {
       if (fmpz_divisible(&a,&b)) {
         fmpz_divexact(&result,&a,&b); 
         return true;
@@ -121,28 +121,28 @@ namespace M2 {
         return false;
     }
     
-    void power(elem &result,const  elem a,const unsigned long  n) const {
+    void power(ElementType& result,const  ElementType& a,const unsigned long  n) const {
       M2_ASSERT(n >= 0);
       return fmpz_pow_ui(&result,&a,n);
     }
     
-    void power_mpz(elem &result,const  elem a,const  mpz_ptr n) const {
+    void power_mpz(ElementType& result,const  ElementType& a,const  mpz_ptr n) const {
       if (mpz_fits_ulong_p(n))
         fmpz_pow_ui(&result,&a,mpz_get_ui(n));
       else
         throw exc::engine_error("attempted to take a power of an integer to too large of a power");
     }
     
-    void syzygy(const ElementType a, const ElementType b,
-                ElementType &x, ElementType &y) const;
+    void syzygy(const ElementType& a, const ElementType& b,
+                ElementType& x, ElementType& y) const;
     /** @} */
     
     
     /** @name misc
         @{ */
-    void swap(ElementType &a, ElementType &b) const {fmpz_swap(&a,&b);}
+    void swap(ElementType& a, ElementType& b) const {fmpz_swap(&a,&b);}
     
-    void random(ElementType &result) const {fmpz_randm(&result, mRandomState, mMaxHeight);}
+    void random(ElementType& result) const {fmpz_randm(&result, mRandomState, mMaxHeight);}
     /** @} */
 
 
@@ -161,20 +161,14 @@ namespace M2 {
     /** @name translation functions
         @{ */
     
-    void to_ring_elem(ring_elem &result, const ElementType &a) const
+    void to_ring_elem(ring_elem &result, const ElementType& a) const
     {
       fmpz b;
       fmpz_init_set(&b,&a);
-
-#if 0
-      buffer o;
-      o << "input=";
-      elem_text_out(o, b, 
-#endif
       result.poly_val = reinterpret_cast<Nterm*>(b);
     }
     
-    void from_ring_elem(ElementType &result, const ring_elem &a) const
+    void from_ring_elem(ElementType& result, const ring_elem &a) const
     {
       fmpz t = reinterpret_cast<fmpz>(const_cast<Nterm*>(a.poly_val));
       fmpz_set(&result, &t);
@@ -182,14 +176,14 @@ namespace M2 {
     
     /** @} */
     
-    bool promote(const Ring *Rf, const ring_elem f, elem &result) const {return false;}
+    bool promote(const Ring *Rf, const ring_elem f, ElementType& result) const {return false;}
     
-    bool lift(const Ring *Rg, const elem f, ring_elem &result) const {return false;}
+    bool lift(const Ring *Rg, const ElementType& f, ring_elem &result) const {return false;}
     
     // map : this --> target(map)
     //       primelem --> map->elem(first_var)
     // evaluate map(f)
-    void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
+    void eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const;
     
   private:
     mutable flint_rand_t mRandomState;

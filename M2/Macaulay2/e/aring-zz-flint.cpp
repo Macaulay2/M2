@@ -20,7 +20,7 @@ namespace M2 {
     fmpz_clear(mMaxHeight);
   }
 
-  void ARingZZ::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
+  void ARingZZ::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
   {
     mpz_t temp;
     flint_mpz_init_set_readonly(temp, &f);
@@ -52,8 +52,8 @@ namespace M2 {
       }
   }
 
-  void ARingZZ::syzygy(const ElementType a, const ElementType b,
-                       ElementType &x, ElementType &y) const
+  void ARingZZ::syzygy(const ElementType& a, const ElementType& b,
+                       ElementType& x, ElementType& y) const
   {
     M2_ASSERT(!is_zero(b));
     // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
@@ -75,7 +75,7 @@ namespace M2 {
         set(y, a);
         return;
       }
-    elem g;
+    ElementType g;
     init(g);
     fmpz_gcd(&g,&a,&b);
     divide(y,a,g);

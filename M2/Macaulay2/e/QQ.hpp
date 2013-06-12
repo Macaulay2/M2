@@ -5,6 +5,9 @@
 
 #include "ZZ.hpp"
 
+namespace M2 {
+  class ARingQQFlint;
+};
 /**
     @ingroup rings
 */
@@ -12,6 +15,8 @@ class QQ : public Ring
 {
   int _elem_size;
   gmp_QQ _zero_elem;
+
+  M2::ARingQQFlint *mARing;
 
   gmp_QQ new_elem() const;
   void remove_elem(gmp_QQ f) const;
@@ -25,6 +30,8 @@ public:
 
   QQ * cast_to_QQ() { return this; }
   const QQ * cast_to_QQ() const { return this; }
+
+  const M2::ARingQQFlint * get_ARing() const { return mARing; }  //TODO: MES: change to ARing type once implemented.
 
   virtual bool is_QQ() const         { return true; }
   virtual bool is_basic_ring() const { return false; }

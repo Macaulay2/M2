@@ -20,7 +20,10 @@
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 #include "aring-zz-flint.hpp"
+#include "aring-qq-flint.hpp"
 #include "aring-zzp-flint.hpp"
+
+#include "QQ.hpp"
 
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
@@ -134,6 +137,17 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
       else
 	  return MutableMat< SMat<M2::ARingZZGMP> >
 	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
+    }
+  if (R == globalQQ)
+    {
+      if (dense)
+	{
+	  return MutableMat< DMat<M2::ARingQQFlint> >
+	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
+	}
+      else
+	  return MutableMat< SMat<M2::ARingQQFlint> >
+	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
     }
   if (R->is_RRR())
     {
@@ -826,6 +840,11 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgen
 #ifdef HAVE_FLINT
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZ>(const Ring* Rgeneral,
                                                  const M2::ARingZZ* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingQQFlint>(const Ring* Rgeneral,
+                                                 const M2::ARingQQFlint* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);

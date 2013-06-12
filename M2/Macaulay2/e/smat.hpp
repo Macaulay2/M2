@@ -35,12 +35,12 @@ private:
   friend class MatElementaryOps<SMat>;
   const sparsevec* column(size_t c) const 
   { 
-    M2_ASSERT(c < n_cols());
+    M2_ASSERT(c < numColumns());
     return columns_[c]; 
   }
   sparsevec* column(size_t c)
   { 
-    M2_ASSERT(c < n_cols());
+    M2_ASSERT(c < numColumns());
     return columns_[c]; 
   }
 public:

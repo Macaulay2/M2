@@ -288,7 +288,6 @@ template class DMat<M2::ARingZZGMP>;
 template class DMat<M2::ARingZZp>;
 template class DMat<M2::ARingTower>;
 
-
 template class DMat<CoefficientRingRRR>;
 template class DMat<CoefficientRingCCC>;
 template class DMat<CoefficientRingR>;
@@ -296,7 +295,7 @@ template class DMat<CoefficientRingR>;
 template class DMat<M2::ARingGFM2>;
 template class DMat<M2::ARingZZpFFPACK>;
 
-#ifdef HAVE_FFLAS_FFPACK
+#ifdef HAVE_FLINT
 template class DMat<M2::ARingZZpFlint>;
 template class DMat<M2::ARingZZ>;
 #endif
