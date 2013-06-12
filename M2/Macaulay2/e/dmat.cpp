@@ -280,7 +280,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 #include "aring-zzp.hpp"
 #include "aring-tower.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-zz-gmp.hpp"
 #include "coeffrings.hpp"
 
@@ -300,7 +300,7 @@ template class DMat<M2::ARingZZpFlint>;
 template class DMat<M2::ARingZZ>;
 #endif
 
-template class DMat<M2::ARingGF>;
+template class DMat<M2::ARingGFGivaro>;
 template class DMat<M2::ARingRRR>;
 
 

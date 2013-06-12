@@ -8,7 +8,7 @@
 
 #include "aring-zzp.hpp"
 #include "aring-RRR.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-tower.hpp"
 
@@ -1069,7 +1069,7 @@ template class SMat<M2::ARingZZ>;
 
 template class SMat<M2::ARingTower>;
 template class SMat<M2::ARingZZpFFPACK>;
-template class SMat<M2::ARingGF>;
+template class SMat<M2::ARingGFGivaro>;
 template class SMat<M2::ARingGFM2>;
 
 template class SMat<CoefficientRingRRR>;

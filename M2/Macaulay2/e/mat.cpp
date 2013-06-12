@@ -15,7 +15,7 @@
 #include "aring-zzp.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-RRR.hpp"
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
@@ -810,13 +810,13 @@ MutableMatrix *M2::ARingZZp::makeMutableMatrix(const Ring* R, size_t nrows, size
     ::zero_matrix(R,this,nrows,ncols);
 }
 
-MutableMatrix *M2::ARingGF::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
+MutableMatrix *M2::ARingGFGivaro::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
 {
   if (dense)
-    return MutableMat< DMat<M2::ARingGF> >
+    return MutableMat< DMat<M2::ARingGFGivaro> >
       ::zero_matrix(R,this,nrows,ncols);
 
-  return MutableMat< SMat<M2::ARingGF> >
+  return MutableMat< SMat<M2::ARingGFGivaro> >
     ::zero_matrix(R,this,nrows,ncols);
 }
 
@@ -865,8 +865,8 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
-template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingGF>(const Ring* Rgeneral,
-                                                 const M2::ARingGF* R,
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingGFGivaro>(const Ring* Rgeneral,
+                                                 const M2::ARingGFGivaro* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
@@ -900,8 +900,8 @@ template class MutableMat< SMat<M2::ARingTower> >;
 template class MutableMat< DMat<M2::ARingZZpFFPACK> >;
 template class MutableMat< SMat<M2::ARingZZpFFPACK> >;
 
-template class MutableMat< DMat<M2::ARingGF> >;
-template class MutableMat< SMat<M2::ARingGF> >;
+template class MutableMat< DMat<M2::ARingGFGivaro> >;
+template class MutableMat< SMat<M2::ARingGFGivaro> >;
 
 template class MutableMat< DMat<M2::ARingGFM2> >;
 template class MutableMat< SMat<M2::ARingGFM2> >;

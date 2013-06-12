@@ -6,7 +6,7 @@
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
 #include "aring-RRR.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-tower.hpp"
@@ -26,8 +26,8 @@ namespace M2 {
       return false;
     }
 
-    static bool mypromote(const ARingGF &R, 
-                        const ARingGF::ElementType &fR, 
+    static bool mypromote(const ARingGFGivaro &R, 
+                        const ARingGFGivaro::ElementType &fR, 
                         const ARingZZp &S, 
                         ARingZZp::ElementType &fS)
     {
@@ -72,14 +72,14 @@ namespace M2 {
                       const ARingZZp& S, ARingZZp::ElementType& resultS)
       {
         switch (R->ringID()) {
-        case M2::ring_GF: return newpromoter<ARingGF,ARingZZp>(R,fR,S,resultS);
+        case M2::ring_GF: return newpromoter<ARingGFGivaro,ARingZZp>(R,fR,S,resultS);
         case M2::ring_FFPACK: return newpromoter<ARingZZpFFPACK,ARingZZp>(R,fR,S,resultS);
         default: return false;
         }
       }
       
       static bool newpromote(const Ring* R, const ring_elem fR, 
-                      const ARingGF& S, ARingGF::ElementType& resultS)
+                      const ARingGFGivaro& S, ARingGFGivaro::ElementType& resultS)
       {
         return false;
       }
@@ -158,9 +158,9 @@ namespace M2 {
 
 //#if defined(HAVE_GIVARO)
     static bool promote(const ARingZZp &R, 
-                 const ARingGF &S, 
+                 const ARingGFGivaro &S, 
                  const ARingZZp::ElementType &fR, 
-                 ARingGF::ElementType &fS)
+                 ARingGFGivaro::ElementType &fS)
     {
       return false;
     }
@@ -173,34 +173,34 @@ namespace M2 {
       return false;
     }
     
-    static bool promote(const ARingGF &R, 
-                 const ARingGF &S, 
-                 const ARingGF::ElementType &fR, 
-                 ARingGF::ElementType &fS)
+    static bool promote(const ARingGFGivaro &R, 
+                 const ARingGFGivaro &S, 
+                 const ARingGFGivaro::ElementType &fR, 
+                 ARingGFGivaro::ElementType &fS)
     {
       return false;
     }
     
-    static bool promote(const ARingGF &R, 
+    static bool promote(const ARingGFGivaro &R, 
                  const ARingZZp &S, 
-                 const ARingGF::ElementType &fR, 
+                 const ARingGFGivaro::ElementType &fR, 
                  ARingZZp::ElementType &fS)
     {
       return false;
     }
     
-    static bool promote(const ARingGF &R, 
+    static bool promote(const ARingGFGivaro &R, 
                  const ARingZZpFFPACK &S, 
-                 const ARingGF::ElementType &fR, 
+                 const ARingGFGivaro::ElementType &fR, 
                  ARingZZpFFPACK::ElementType &fS)
     {
       return false;
     }
     
     static bool promote(const ARingZZpFFPACK &R, 
-                 const ARingGF &S, 
+                 const ARingGFGivaro &S, 
                  const ARingZZpFFPACK::ElementType &fR, 
-                 ARingGF::ElementType &fS)
+                 ARingGFGivaro::ElementType &fS)
     {
       return false;
     }

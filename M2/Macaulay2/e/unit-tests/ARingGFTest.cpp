@@ -9,7 +9,7 @@
 #include <mpfr.h>
 
 #include "debug.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "ARingTest.hpp"
 
 static const int nelements = 200;
@@ -37,9 +37,9 @@ static int randomVals[nelements] = {
 
 #if defined(HAVE_GIVARO)
 template<>
-void getElement<M2::ARingGF>(const M2::ARingGF& R, 
+void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R, 
                              int index, 
-                             M2::ARingGF::ElementType& result)
+                             M2::ARingGFGivaro::ElementType& result)
 {
   if (index >= nelements) 
     R.power(result, R.getGenerator(), rawRandomInt(R.cardinality()));
@@ -47,8 +47,8 @@ void getElement<M2::ARingGF>(const M2::ARingGF& R,
     R.power(result, R.getGenerator(), randomVals[index]);
 }
 
-  TEST(ARingGFGivaro, create) {
-    M2::ARingGF R(5,3);
+  TEST(ARingGFGivaroGivaro, create) {
+    M2::ARingGFGivaro R(5,3);
       
     EXPECT_EQ(ringName(R), "GF(5,3,Givaro)");
     EXPECT_EQ(R.cardinality(), 125);
@@ -65,7 +65,7 @@ void getElement<M2::ARingGF>(const M2::ARingGF& R,
     std::cout << std::endl;
 
     // Check what values integers go to
-    M2::ARingGF::ElementType a;
+    M2::ARingGFGivaro::ElementType a;
     R.init(a);
     for (int i=-5; i<R.characteristic(); i++)
       {
@@ -84,9 +84,9 @@ void getElement<M2::ARingGF>(const M2::ARingGF& R,
     testSomeMore(R);
   }
 
-  TEST(ARingGFGivaro, random) {
-    M2::ARingGF R(7,2);
-    M2::ARingGF::ElementType a;
+  TEST(ARingGFGivaroGivaro, random) {
+    M2::ARingGFGivaro R(7,2);
+    M2::ARingGFGivaro::ElementType a;
     R.init(a);
     int counts[49];
     for (int i=0; i<49; i++)
@@ -119,8 +119,8 @@ void getElement<M2::ARingGF>(const M2::ARingGF& R,
     R.clear(a);
   }
 
-  TEST(ARingGFGivaro, arithmetic) {
-    M2::ARingGF R(5,3);
+  TEST(ARingGFGivaroGivaro, arithmetic) {
+    M2::ARingGFGivaro R(5,3);
     testFiniteField(R, ntrials);
   }
 

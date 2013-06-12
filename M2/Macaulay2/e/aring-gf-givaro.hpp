@@ -25,20 +25,20 @@ class RingMap;
 namespace M2 {
 
    
-   class ARingGF : public DummyRing
+   class ARingGFGivaro : public DummyRing
    //class ARingGF : public ARingGFM2
    {
     public:
         static const RingID ringID = ring_GF;
 
-        typedef M2::ARingGF             ring_type ;
+        typedef M2::ARingGFGivaro             ring_type ;
      
-        ARingGF( int charac_,   int dimension_)  {};
-        ARingGF( int charac_,  
+        ARingGFGivaro( int charac_,   int dimension_)  {};
+        ARingGFGivaro( int charac_,  
            const M2_arrayint & modPolynomial, 
            const PolynomialRing &originalR
            )  {}
-        ARingGF( int charac_,  
+        ARingGFGivaro( int charac_,  
            const M2_arrayint & modPolynomial, 
            const M2_arrayint & primitiveElement, 
            const PolynomialRing &originalR
@@ -69,7 +69,7 @@ namespace M2 {
     @brief wrapper for the  Givaro::GFqDom<>  galois field implementation
 */
 /// @todo: think about deriving from RingInterface AND from Ring
-class ARingGF : public RingInterface
+class ARingGFGivaro : public RingInterface
 {
 
   public:
@@ -77,7 +77,7 @@ class ARingGF : public RingInterface
 
     typedef Givaro::GFqDom<long>    FieldType;
     typedef FieldType::Element      ElementType;
-    typedef M2::ARingGF             ring_type ;
+    typedef M2::ARingGFGivaro             ring_type ;
   
     typedef ElementType     elem;
 
@@ -87,7 +87,7 @@ class ARingGF : public RingInterface
     typedef std::make_signed<FieldType::Residu_t>::type STT;
 
 
-    ARingGF( UTT charac_,   UTT dimension_);
+    ARingGFGivaro( UTT charac_,   UTT dimension_);
 
   // returns a polynomial that Givaro would choose for this GF(mCharac^dim).
   // We hope that if the polynomial is F(t), that t is a generator of the
@@ -95,13 +95,13 @@ class ARingGF : public RingInterface
   //TODO: check whether Givaro can handle F(t) with t not primitive.
   static const M2_arrayint findMinimalPolynomial(UTT charac, UTT dim);
 
-  ARingGF( UTT charac_,  
+  ARingGFGivaro( UTT charac_,  
            const M2_arrayint & modPolynomial, 
            const PolynomialRing &originalR
            //TODO: other information too?
            );
 
-  ARingGF( UTT charac_,  
+  ARingGFGivaro( UTT charac_,  
            const M2_arrayint & modPolynomial,
             const M2_arrayint & generatorPoly,  
            const PolynomialRing &originalR

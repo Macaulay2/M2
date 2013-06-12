@@ -1,6 +1,6 @@
 // Copyright 2011 Michael E. Stillman
 
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "error.h"
 
 #if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
@@ -16,7 +16,7 @@ namespace M2 {
 //GFqDom<long> gfqField(11,2,irreducible_11_2);
 
 
-    ARingGF::ARingGF(	 UTT charact_, 
+    ARingGFGivaro::ARingGFGivaro(	 UTT charact_, 
                          UTT extensionDegree_)  :   
       mCharac(charact_),
       mDimension(extensionDegree_),
@@ -35,7 +35,7 @@ namespace M2 {
 
            /*
           
-            ARingGF *testGF = new ARingGF(charact_, getModPolynomialCoeffs() );
+            ARingGFGivaro *testGF = new ARingGFGivaro(charact_, getModPolynomialCoeffs() );
     
             std::cerr <<"random"<< std::endl;
             ElementType rnd ;
@@ -50,14 +50,14 @@ namespace M2 {
     }
 
 
-    ARingGF::ARingGF(  UTT charact_, 
+    ARingGFGivaro::ARingGFGivaro(  UTT charact_, 
                        const M2_arrayint & modPolynomial,
                        const PolynomialRing &originalRing)  :   
       mCharac(charact_),
       mDimension( M2arrayGetDegree(modPolynomial) ),
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
-      givaroField( FieldType( charact_,mDimension, ARingGF::M2arrayToStdVec(charact_, modPolynomial) )),
+      givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial) )),
       givaroRandomIterator( FieldType::randIter(givaroField )),
       mGeneratorExponent(1)
     {
@@ -78,7 +78,7 @@ namespace M2 {
             getModPolynomialCoeffs();
     }
 
-  ARingGF::ARingGF(  UTT charact_, 
+  ARingGFGivaro::ARingGFGivaro(  UTT charact_, 
                        const M2_arrayint & modPolynomial,
                        const M2_arrayint & generatorPoly,
                        const PolynomialRing &originalRing)  :   
@@ -86,7 +86,7 @@ namespace M2 {
       mDimension( M2arrayGetDegree(modPolynomial) ),
       mOriginalRing(&originalRing),
       mPrimitiveElement(originalRing.var(0)),
-      givaroField( FieldType( charact_,mDimension, ARingGF::M2arrayToStdVec(charact_, modPolynomial), ARingGF::M2arrayToStdVec(charact_, generatorPoly) )),
+      givaroField( FieldType( charact_,mDimension, ARingGFGivaro::M2arrayToStdVec(charact_, modPolynomial), ARingGFGivaro::M2arrayToStdVec(charact_, generatorPoly) )),
       givaroRandomIterator( FieldType::randIter(givaroField )),
       mGeneratorExponent(1)
     {
@@ -117,9 +117,9 @@ namespace M2 {
     }
 
   
-  const M2_arrayint ARingGF::findMinimalPolynomial(UTT charac, UTT dim)
+  const M2_arrayint ARingGFGivaro::findMinimalPolynomial(UTT charac, UTT dim)
   {
-    //ARingGF tmp(charac,dim);
+    //ARingGFGivaro tmp(charac,dim);
     //return tmp.getModPolynomialCoeffs();
 
    FieldType Zp(charac,1);
@@ -164,28 +164,28 @@ namespace M2 {
         return (representationToM2Array(irreducible, dim+1 ,charac) );
   }
 
-    ARingGF::UTT ARingGF::M2arrayToGFRepresentation( ARingGF::UTT pCharac ,const  M2_arrayint & m2array ) 
+    ARingGFGivaro::UTT ARingGFGivaro::M2arrayToGFRepresentation( ARingGFGivaro::UTT pCharac ,const  M2_arrayint & m2array ) 
     {
 #ifdef DEBUG_GF
        std::cerr << "M2arrayToGFRepresentation"  << std::endl;
 #endif
-        ARingGF::UTT rep=0;
+        ARingGFGivaro::UTT rep=0;
         assert( m2array->len > 1  );
-        assert( sizeof( m2array->array[0] ) < sizeof( ARingGF::UTT) );
+        assert( sizeof( m2array->array[0] ) < sizeof( ARingGFGivaro::UTT) );
 
-        for ( ARingGF::STT pos =  m2array->len-1 ; pos>=0;pos--)
+        for ( ARingGFGivaro::STT pos =  m2array->len-1 ; pos>=0;pos--)
         {
 #ifdef DEBUG_GF
             std::cerr << " m2array->array["<< pos << "]" <<  m2array->array[pos] << std::endl;
 #endif
             if (m2array->array[pos]>=0 ) 
             {
-                 assert( (ARingGF::UTT)(m2array->array[pos]) < pCharac); 
+                 assert( (ARingGFGivaro::UTT)(m2array->array[pos]) < pCharac); 
                 rep= rep*pCharac+   (m2array->array[pos])    ;
             }
             if (m2array->array[pos]<0 ) 
             {           
-                 assert( (ARingGF::UTT)( - (m2array->array[pos]) ) < pCharac);
+                 assert( (ARingGFGivaro::UTT)( - (m2array->array[pos]) ) < pCharac);
                 rep= rep*pCharac+  (m2array->array[pos]+pCharac)  ;
             }
         }
@@ -194,7 +194,7 @@ namespace M2 {
     }
 
 
-    M2_arrayint     ARingGF::fieldElementToM2Array(ElementType el) const
+    M2_arrayint     ARingGFGivaro::fieldElementToM2Array(ElementType el) const
     {
         UTT  packedPolynomial;
         packedPolynomial = this->givaroField.convert(packedPolynomial, el );
@@ -205,9 +205,9 @@ namespace M2 {
     }
 
     
-    ARingGF::UTT     ARingGF::M2arrayGetDegree( const  M2_arrayint &  m2array ) 
+    ARingGFGivaro::UTT     ARingGFGivaro::M2arrayGetDegree( const  M2_arrayint &  m2array ) 
     {
-        ARingGF::UTT degree=0;
+        ARingGFGivaro::UTT degree=0;
         ///@jakob find out the type of m2array->len
         for ( UTT pos=0 ;pos < m2array->len; pos++)
         {
@@ -217,7 +217,7 @@ namespace M2 {
         return degree;
     }
 
-    std::vector< ARingGF::UTT> ARingGF::M2arrayToStdVec( ARingGF::UTT pCharac, const  M2_arrayint &  m2array ) 
+    std::vector< ARingGFGivaro::UTT> ARingGFGivaro::M2arrayToStdVec( ARingGFGivaro::UTT pCharac, const  M2_arrayint &  m2array ) 
     {
         // std::vector< UTT > stdvec;
 #ifdef DEBUG_GF
@@ -225,7 +225,7 @@ namespace M2 {
 #endif
         assert( m2array->len > 0  );
 
-        std::vector< ARingGF::UTT> vec;
+        std::vector< ARingGFGivaro::UTT> vec;
 
         vec.resize( M2arrayGetDegree(m2array)+1  );       
 
@@ -234,12 +234,12 @@ namespace M2 {
            vec[pos]=  m2array->array[pos] ;          
             if (m2array->array[pos]>=0 ) 
             {
-                 assert( (ARingGF::UTT)(m2array->array[pos]) < pCharac); 
+                 assert( (ARingGFGivaro::UTT)(m2array->array[pos]) < pCharac); 
                 vec[pos]=  m2array->array[pos] ;          
             }
             if (m2array->array[pos]<0 ) 
             {           
-               assert( (ARingGF::UTT)( - (m2array->array[pos]) ) < pCharac);
+               assert( (ARingGFGivaro::UTT)( - (m2array->array[pos]) ) < pCharac);
                vec[pos]=  (m2array->array[pos]+pCharac)  ;
             }             
         }
@@ -247,7 +247,7 @@ namespace M2 {
     }
 
 /// @mike correct output : print generator variable of the ring instead of 'X', whatever generator variable will be 
-        void ARingGF::elem_text_out(buffer &o, 
+        void ARingGFGivaro::elem_text_out(buffer &o, 
         const ElementType a, 
         bool p_one, 
         bool p_plus, 
@@ -269,7 +269,7 @@ namespace M2 {
 }
 
 
-M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum, UTT charac ) 
+M2_arrayint ARingGFGivaro::representationToM2Array(UTT representation,  long coeffNum, UTT charac ) 
 {
 #ifdef DEBUG_GF
     std::cerr << "representationToM2Array:\n";
@@ -312,12 +312,12 @@ M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum,
     return polynomialCoeffs;
 }
 
-M2_arrayint ARingGF::representationToM2Array(UTT representation,  long coeffNum ) const
+M2_arrayint ARingGFGivaro::representationToM2Array(UTT representation,  long coeffNum ) const
 {
     return (representationToM2Array(representation,coeffNum,mCharac));
 }
 
-M2_arrayint ARingGF::elementRepresentationToM2Array(UTT polynomialRep) const
+M2_arrayint ARingGFGivaro::elementRepresentationToM2Array(UTT polynomialRep) const
 {
 #ifdef DEBUG_GF
      std::cerr << "representationToM2Array:\n";
@@ -327,7 +327,7 @@ M2_arrayint ARingGF::elementRepresentationToM2Array(UTT polynomialRep) const
 }
 
 
-M2_arrayint ARingGF::modPolynomialRepresentationToM2Array(UTT polynomialRep) const
+M2_arrayint ARingGFGivaro::modPolynomialRepresentationToM2Array(UTT polynomialRep) const
 {
 #ifdef DEBUG_GF
     std::cerr << "modPolynomialRepresentationToM2Array:\n";
@@ -339,7 +339,7 @@ M2_arrayint ARingGF::modPolynomialRepresentationToM2Array(UTT polynomialRep) con
 
 /// returns mod polynomial coefficients as array of integers.
 /// @todo problems, if characteristic does not fit in a int.
-M2_arrayint ARingGF::getModPolynomialCoeffs() const
+M2_arrayint ARingGFGivaro::getModPolynomialCoeffs() const
 {
 #ifdef DEBUG_GF
     std::cerr << "getModPolynomialCoeffs\n";
@@ -348,7 +348,7 @@ M2_arrayint ARingGF::getModPolynomialCoeffs() const
     return modPolynomialRepresentationToM2Array( modPolynomialRepresentation );
 } 
 
-M2_arrayint ARingGF::getGeneratorCoeffs() const
+M2_arrayint ARingGFGivaro::getGeneratorCoeffs() const
 {
 #ifdef DEBUG_GF
     std::cerr << "getGeneratorCoeffs\n";
@@ -368,10 +368,10 @@ M2_arrayint ARingGF::getGeneratorCoeffs() const
     return elementRepresentationToM2Array( packedGenPolynomial ) ;    
 }
 
-ring_elem  ARingGF::getGenerator() const
+ring_elem  ARingGFGivaro::getGenerator() const
 {
 #ifdef DEBUG_GF
-   std::cerr << "  ARingGF::getGenerator()" << std::endl;
+   std::cerr << "  ARingGFGivaro::getGenerator()" << std::endl;
 #endif
     ElementType packedGenPolynomial = givaroField.generator();  
     ElementType genRep;
@@ -395,21 +395,21 @@ ring_elem  ARingGF::getGenerator() const
     return result;
 }
 
-bool ARingGF::is_unit(const ElementType f) const 	
+bool ARingGFGivaro::is_unit(const ElementType f) const 	
     {   return givaroField.isunit(f); }
 
-bool ARingGF::is_zero(const ElementType f) const 	
+bool ARingGFGivaro::is_zero(const ElementType f) const 	
     {   return givaroField.isZero(f); }
 
-bool ARingGF::is_equal(const ElementType f, const ElementType g) const 	
+bool ARingGFGivaro::is_equal(const ElementType f, const ElementType g) const 	
 {   return	givaroField.areEqual(f,g); }
 
 
 /// compare exponents of the used generator
-int ARingGF::compare_elems(const ElementType f, const ElementType g) const 
+int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const 
 {
 #ifdef DEBUG_GF
-    std::cerr << "ARingGF::compare_elems" << std::endl;
+    std::cerr << "ARingGFGivaro::compare_elems" << std::endl;
 #endif
     if (f < g) return -1; 
     if (f > g) return 1;
@@ -420,10 +420,10 @@ int ARingGF::compare_elems(const ElementType f, const ElementType g) const
 
 ///@todo how should this function behave? 
 ///@todo also consider conversion problems depending on 'elem' type
-int ARingGF::get_int(const ElementType f) const 
+int ARingGFGivaro::get_int(const ElementType f) const 
 {
 #ifdef DEBUG_GF    
-    std::cerr << "ARingGF::get_int" << std::endl;
+    std::cerr << "ARingGFGivaro::get_int" << std::endl;
 #endif
     assert(false);
     return 0;
@@ -432,7 +432,7 @@ int ARingGF::get_int(const ElementType f) const
 
 /// @todo where this function will be used? ; 
 /// @todo problems if type 'elem' is bigger than  int
-int ARingGF::get_repr(const ElementType f) const 
+int ARingGFGivaro::get_repr(const ElementType f) const 
 {
 #ifdef DEBUG_GF
     std::cerr << "get_repr" << std::endl;
@@ -444,20 +444,20 @@ int ARingGF::get_repr(const ElementType f) const
 
     // 'init', 'init_set' functions
 
-    void ARingGF::init(ElementType &result) const              { result = givaroField.zero;  }
+    void ARingGFGivaro::init(ElementType &result) const              { result = givaroField.zero;  }
 
-    void ARingGF::clear(ElementType &result) const             { /* nothing */ }
+    void ARingGFGivaro::clear(ElementType &result) const             { /* nothing */ }
 
-    void ARingGF::set_zero(ElementType &result) const          { result = givaroField.zero; }
+    void ARingGFGivaro::set_zero(ElementType &result) const          { result = givaroField.zero; }
 
-    void ARingGF::copy(ElementType &result, const ElementType a) const { result = a; }
+    void ARingGFGivaro::copy(ElementType &result, const ElementType a) const { result = a; }
 
 
     /// @todo possible problem if type UTT is smaller than an int?
-    void ARingGF::set_from_int(ElementType &result, int a) const 
+    void ARingGFGivaro::set_from_int(ElementType &result, int a) const 
     {
 #warning "fix the casting spaghetti here!"
-      //std::cerr << "ARingGF::set_from_int" << std::endl;
+      //std::cerr << "ARingGFGivaro::set_from_int" << std::endl;
       ElementType p = static_cast<ElementType>(mCharac);
       ElementType a1 = (a >= 0 ? static_cast<ElementType>(a) : static_cast<ElementType>(a + p));
       a1 = a1 % p;
@@ -471,7 +471,7 @@ int ARingGF::get_repr(const ElementType f) const
       givaroField.init(result, a);
     }
 
-    void ARingGF::set_from_mpz(ElementType &result, const mpz_ptr a) const 
+    void ARingGFGivaro::set_from_mpz(ElementType &result, const mpz_ptr a) const 
     {
         //std::cerr << "set_from_mpz" << std::endl;
         UTT b = static_cast< UTT>(mpz_fdiv_ui(a, mCharac));
@@ -480,7 +480,7 @@ int ARingGF::get_repr(const ElementType f) const
        // std::cerr << "result " << result << std::endl;
     }
 
-    void ARingGF::set_from_mpq(ElementType &result, const mpq_ptr a) const {
+    void ARingGFGivaro::set_from_mpq(ElementType &result, const mpq_ptr a) const {
       //  std::cerr << "set_from_mpq" << std::endl;
         ElementType n, d;
         set_from_mpz(n, mpq_numref(a));
@@ -489,44 +489,44 @@ int ARingGF::get_repr(const ElementType f) const
     }
 
     // arithmetic
-    void ARingGF::negate(ElementType &result, const ElementType a) const
+    void ARingGFGivaro::negate(ElementType &result, const ElementType a) const
     {
         givaroField.neg(result,a);
     }
 
     /// if a is zero, the result is 1 , but is that what we expect?
     /// I vote for two invert functions, one with this check and one without.(Jakob)
-    void ARingGF::invert(ElementType &result, const ElementType a) const
+    void ARingGFGivaro::invert(ElementType &result, const ElementType a) const
     {
-       // std::cerr << "ARingGF::invert" << std::endl;
+       // std::cerr << "ARingGFGivaro::invert" << std::endl;
         if ( givaroField.isZero(a))
             ERROR(" division by zero");
         givaroField.inv(result,a);
     }
 
 
-    void ARingGF::add(ElementType &result, const ElementType a, const ElementType b) const
+    void ARingGFGivaro::add(ElementType &result, const ElementType a, const ElementType b) const
     {
         givaroField.add(result,a,b);
     }
 
-    void ARingGF::subtract(ElementType &result, const ElementType a, const ElementType b) const
+    void ARingGFGivaro::subtract(ElementType &result, const ElementType a, const ElementType b) const
     {
         givaroField.sub(result,a,b);
     }
 
     /// @param c[in][out] c = c- a*b
-    void ARingGF::subtract_multiple(ElementType &c, const ElementType a, const ElementType b) const
+    void ARingGFGivaro::subtract_multiple(ElementType &c, const ElementType a, const ElementType b) const
     {
         givaroField. maxpyin(c,a,b);
     }
 
-    void ARingGF::mult(ElementType &result, const ElementType a, const ElementType b) const
+    void ARingGFGivaro::mult(ElementType &result, const ElementType a, const ElementType b) const
     {
         givaroField.mul(result,a,b);
     }
 
-    void ARingGF::divide(ElementType &result, const ElementType a, const ElementType b) const
+    void ARingGFGivaro::divide(ElementType &result, const ElementType a, const ElementType b) const
     {
         if ( givaroField.isZero(b))
            ERROR(" division by zero");
@@ -534,7 +534,7 @@ int ARingGF::get_repr(const ElementType f) const
     }
 
    /// @jakob: overflow can be occured due to multiplication. use exact mpz for multiply and modulo operation instead!
-    void ARingGF::power(ElementType &result, const ElementType a, const  STT n) const
+    void ARingGFGivaro::power(ElementType &result, const ElementType a, const  STT n) const
     {
         if (givaroField.isnzero(a)) 
         {
@@ -573,7 +573,7 @@ int ARingGF::get_repr(const ElementType f) const
     }
 
     ///@todo ensure that  givaroField.cardinality() fits in a unsigned long, otherwise instead of mpz_fdiv_ui a different function has to be called)
-    void ARingGF::power_mpz(ElementType &result, const  ElementType a, const  mpz_ptr n) const
+    void ARingGFGivaro::power_mpz(ElementType &result, const  ElementType a, const  mpz_ptr n) const
     {
         STT n1 = static_cast< STT>(mpz_fdiv_ui(n, givaroField.cardinality()-1));
 
@@ -583,14 +583,14 @@ int ARingGF::get_repr(const ElementType f) const
     }
 
     ///@note dublicate code
-    void ARingGF::swap(ElementType &a, ElementType &b) const
+    void ARingGFGivaro::swap(ElementType &a, ElementType &b) const
     {
       ElementType tmp = a;
       a = b;
       b = tmp;
     }
 
-    void ARingGF::elem_text_out(buffer &o, 
+    void ARingGFGivaro::elem_text_out(buffer &o, 
                 const ElementType a, 
                 bool p_one, 
                 bool p_plus, 
@@ -601,7 +601,7 @@ int ARingGF::get_repr(const ElementType f) const
        no need to consider the case a==0 or b==0.
     */
 
-    void ARingGF::syzygy(const ElementType a, const ElementType b,
+    void ARingGFGivaro::syzygy(const ElementType a, const ElementType b,
                         ElementType &x, ElementType &y) const
    
     {
@@ -611,14 +611,14 @@ int ARingGF::get_repr(const ElementType f) const
     }
 
     /// @jakob: document possible overflow and other nasty things
-    void ARingGF::random(FieldType::randIter &it, ElementType &result) const
+    void ARingGFGivaro::random(FieldType::randIter &it, ElementType &result) const
     {
          givaroField.random( it,result);
       //   std::cerr << " givaroField.cardinality()" << givaroField.cardinality();
       //   std::cerr << " givaroRandomIterator()" << it();
     }
 
-    void ARingGF::random(ElementType &result) const
+    void ARingGFGivaro::random(ElementType &result) const
     {
         return  random(givaroRandomIterator,result);
         //result = rawRandomInt((int32_t) givaroField.cardinality());
@@ -627,7 +627,7 @@ int ARingGF::get_repr(const ElementType f) const
 
 extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_elem f);
 
-  bool ARingGF::promote(const Ring *Rf, const ring_elem f, ElementType &result) const
+  bool ARingGFGivaro::promote(const Ring *Rf, const ring_elem f, ElementType &result) const
   {
     if (mOriginalRing != Rf) return false;
 
@@ -654,7 +654,7 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     
   }
 
-  bool ARingGF::lift(const Ring *Rg, const ElementType f, ring_elem &result) const
+  bool ARingGFGivaro::lift(const Ring *Rg, const ElementType f, ring_elem &result) const
   {
     // Rg = Z/p[x]/F(x) ---> GF(p,n)
     // promotion: need to be able to know the value of 'x'.
@@ -683,7 +683,7 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     return true;
   }
 
-  void ARingGF::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
+  void ARingGFGivaro::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
     ring_elem a(reinterpret_cast<Nterm*>(f));
     result = map->get_ring()->power(map->elem(first_var), a);

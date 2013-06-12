@@ -112,22 +112,22 @@ namespace M2 {
     case M2::ring_ZZp:
       switch (S->ringID()) {
       case M2::ring_ZZp: return false;
-      case M2::ring_GF: return RP::promoter<ARingZZp,ARingGF>(R,S,fR,resultS);
+      case M2::ring_GF: return RP::promoter<ARingZZp,ARingGFGivaro>(R,S,fR,resultS);
       case M2::ring_FFPACK: return RP::promoter<ARingZZp,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
       break;
     case M2::ring_GF:
       switch (S->ringID()) {
-      case M2::ring_ZZp: return RP::promoter<ARingGF,ARingZZp>(R,S,fR,resultS);
-      case M2::ring_GF: return RP::promoter<ARingGF,ARingGF>(R,S,fR,resultS);
-      case M2::ring_FFPACK: return RP::promoter<ARingGF,ARingZZpFFPACK>(R,S,fR,resultS);
+      case M2::ring_ZZp: return RP::promoter<ARingGFGivaro,ARingZZp>(R,S,fR,resultS);
+      case M2::ring_GF: return RP::promoter<ARingGFGivaro,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_FFPACK: return RP::promoter<ARingGFGivaro,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
     case M2::ring_FFPACK:
       switch (S->ringID()) {
       case M2::ring_ZZp: return RP::promoter<ARingZZpFFPACK,ARingZZp>(R,S,fR,resultS);
-      case M2::ring_GF: return RP::promoter<ARingZZpFFPACK,ARingGF>(R,S,fR,resultS);
+      case M2::ring_GF: return RP::promoter<ARingZZpFFPACK,ARingGFGivaro>(R,S,fR,resultS);
       case M2::ring_FFPACK: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
@@ -164,7 +164,7 @@ namespace M2 {
   }
 
   template<>
-  bool ConcreteRing<ARingGF>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+  bool ConcreteRing<ARingGFGivaro>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   {
     // Rf = Z/p[x]/F(x) ---> GF(p,n)
     // promotion: need to be able to know the value of 'x'.
@@ -177,7 +177,7 @@ namespace M2 {
   }
 
   template<>
-  bool ConcreteRing<ARingGF>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  bool ConcreteRing<ARingGFGivaro>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   {
     // Rf = Z/p[x]/F(x) ---> GF(p,n)
     // promotion: need to be able to know the value of 'x'.
@@ -201,7 +201,7 @@ namespace M2 {
 #endif
   
   template class ConcreteRing< ARingGFM2 >;
-  template class ConcreteRing< ARingGF >;
+  template class ConcreteRing< ARingGFGivaro >;
 
   template class ConcreteRing<ARingRRR>;
   template class ConcreteRing<ARingTower>;

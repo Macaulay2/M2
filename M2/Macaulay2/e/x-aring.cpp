@@ -6,7 +6,7 @@
 #include "aring-zzp.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
-#include "aring-gf.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
@@ -93,9 +93,9 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
 
 /// @todo why parameters are ints and not longs or mpz's? is an overflow possible?
 /// @todo check prime for primality (probably at top of Macaulay2)
-/// @todo ARingGF uses tables and may consume a huge amount of memory -
-///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGF, create polynomial representation?
-/// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGF?
+/// @todo ARingGFGivaro uses tables and may consume a huge amount of memory -
+///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGFGivaro, create polynomial representation?
+/// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGFGivaro?
 ///@todo: return Macaulay Galois field in some cases.
 
 const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
@@ -131,8 +131,8 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
 	    ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
 	    return 0;
 	  }
-        M2::ARingGF *A = new M2::ARingGF(prime,dimension);
-        return M2::ConcreteRing<M2::ARingGF>::create(A);
+        M2::ARingGFGivaro *A = new M2::ARingGFGivaro(prime,dimension);
+        return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
 #else
        ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
        return 0;
@@ -214,8 +214,8 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
     return 0;
     
   try {
-    M2::ARingGF *A = new M2::ARingGF(R->charac(), modPoly, primitiveElementPoly, *R);
-    return M2::ConcreteRing<M2::ARingGF>::create(A);
+    M2::ARingGFGivaro *A = new M2::ARingGFGivaro(R->charac(), modPoly, primitiveElementPoly, *R);
+    return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -227,13 +227,13 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
 M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 {
 #if defined(HAVE_GIVARO)
-  const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(R);
+  const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
     {
       ERROR("expected a GaloisField");
       return 0;
     }
-  const M2::ARingGF &A = RGF->ring();
+  const M2::ARingGFGivaro &A = RGF->ring();
   return A.getModPolynomialCoeffs();
 #else
   ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
@@ -245,13 +245,13 @@ M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 const RingElement* rawARingGFGenerator(const Ring *R)
 {
 #if defined(HAVE_GIVARO)
- const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(R);
+ const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
     {
       ERROR("expected a GaloisField");
       return 0;
     }
-  const M2::ARingGF &A = RGF->ring();
+  const M2::ARingGFGivaro &A = RGF->ring();
   return RingElement::make_raw( R, A.getGenerator() );
 #else
   ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
@@ -263,14 +263,14 @@ const RingElement* rawARingGFGenerator(const Ring *R)
 M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 {
 #if defined(HAVE_GIVARO)
-  const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(f->get_ring());
+  const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(f->get_ring());
   if (RGF == 0)
   {
       ERROR("expected a GaloisField");
       return 0;
   }
-  const M2::ARingGF &A = RGF->ring();
-  M2::ARingGF::ElementType a;
+  const M2::ARingGFGivaro &A = RGF->ring();
+  M2::ARingGFGivaro::ElementType a;
   A.from_ring_elem(a, f->get_value());
   return A.fieldElementToM2Array(a);
 #else
