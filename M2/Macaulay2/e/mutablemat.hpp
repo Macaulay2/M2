@@ -749,6 +749,7 @@ MutableMatrix* MutableMat<T>::invert() const
 template <typename T>
 MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
 {
+  std::cout << "MutableMat::mult" << std::endl;
   // First, make sure B has the same ring/type as 'this'.
   const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   if (B1 == 0)
@@ -765,6 +766,7 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
   // create the result matrix
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), B->n_cols());
 
+  std::cout << "about to call LinAlg::mult" << std::endl;
   // Call the resulting matrix routine.
   LinAlg::mult(mat, B1->mat, result->mat);
 

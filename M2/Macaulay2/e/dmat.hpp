@@ -295,7 +295,6 @@ public:
   size_t numRows() const { return fmpq_mat_nrows(mArray); }
   size_t numColumns() const { return fmpq_mat_ncols(mArray); }
 
-
   const ElementType* array() const { return mArray->entries; }
   ElementType*& array() { return mArray->entries; }
 

@@ -24,7 +24,7 @@ getMinorsStrategy := (R,options) -> (
 
 minors = method(Options => { Limit => infinity, First => null, Strategy => null })
 exteriorPower = method(Options => { Strategy => null })
-determinant = method(Options => { Strategy => null })
+-- def of determinant moved to methods.m2
 
 exteriorPower(ZZ,Module) := Module => options -> (p,M) -> (
      R := ring M;

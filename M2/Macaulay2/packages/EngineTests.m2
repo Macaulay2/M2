@@ -307,12 +307,54 @@ testops5 = (R) -> (
 debug FastLinearAlgebra
 
 testRank = (R) -> (
-     << "testrank..." << endl;
+     << "testrank (TODO:finish it)..." << endl;
      m1 := random(R^5, R^11);
      m2 := random(R^11, R^6);
      m := mutableMatrix(m1 * m2);
      assert(5 == rank m); -- this can fail every now and then.
+     N := 300;
+     M := 200;
+     m3 := mutableMatrix(ZZ, N, M);
+     m4 := mutableMatrix(ZZ, M, N);
+     fillMatrix m3;
+     fillMatrix m4;
+     m3 = time mutableMatrix sub(matrix m3, QQ);
+     m4 = time mutableMatrix sub(matrix m4, QQ);
+     time (m3*m4); -- MUCH faster than next line!
+     time m5 := mutableMatrix((matrix m3) * (matrix m4));
+     assert(m3*m4 == m5);
+     debug Core;
+     time rawLinAlgDeterminant raw m5;
+     time det m5; -- doesn't work yet
+     time rank m5; -- crashes: duplicate large block deallocation
+     -- test of inverse:
+     m1 = mutableMatrix(QQ, 4, 4);
+     fillMatrix m1 ;
+     inverse m1; -- doesn't work yet
+     m2 = map(QQ, rawLinAlgInvert raw m1);
+     m1*m2 == mutableIdentity(QQ, 4);
      )
+
+testRankFailing = () -> (
+     debug Core;
+     R := ZZFlint;
+     (N,M) := (100,70);
+     m3 := mutableMatrix(R, N, M);
+     m4 := mutableMatrix(R, M, N);
+     fillMatrix m3;
+     fillMatrix m4;
+     m5 := m3*m4;
+     assert(0 == det m5);
+     rank m5;  -- crash for R==ZZFlint
+     m6 := m4*m3;
+     rank m3;
+     rank m4;
+     rank m6 ;-- crash for R==ZZFlint
+     rawLinAlgDeterminant raw m5;
+     rawLinAlgRank raw m5; -- 
+     )
+     
+-- linalg part1: mult, det, rank, inverse, 
 
 << "warning: not testing transpose of sparse mutable matrices yet" << endl;
 testTranspose = (R) -> (
@@ -339,10 +381,20 @@ testTranspose = (R) -> (
     assert(numRows M1 == 4);
     )
 
-testMult = (R) -> (
-    -- start with matrices M and N (same size)
-    -- compute M * (transpose N), N * (transpose M).  These should be the same up to transpose
+testDeterminant = (R) -> (
+    M := mutableMatrix(R, 2, 2);
+    fillMatrix M;
+    assert(determinant M == M_(0,0) * M_(1,1) - M_(0,1) * M_(1,0));
     )
+
+testMult = (R) -> (
+    E := {{1_R, 2_R, 3_R}, {7_R, 0_R, 0_R}};
+    m1 := mutableMatrix E;
+    m2 := mutableMatrix transpose E;
+    assert(matrix(m1*m2) == (matrix m1) * (matrix m2));
+    assert(matrix(m2*m1) == (matrix m2) * (matrix m1));
+    )
+
 testSolve = (R) -> (
     E := map(R^2, R^2, {{1, 4}, {2, 3}});
     B := map(R^2, R^1, {{3}, {7}});
@@ -389,7 +441,7 @@ testGF = (strategy) -> (
     hi := i -> 20;
     -- This upper bound for CompleteGivaro is made to match the default SizeLimit of 10000.
     if strategy === "CompleteGivaro" then (
-        low = 2;
+        low = 2; -- this is an ERROR: it should be able to handle low==1. 
         hi = p -> if p == 2 then 13 
         else if p == 3 then 10 
         else if p == 5 then 5 
@@ -470,6 +522,36 @@ rings = {ZZ, ZZ/101, ZZ/2, GF(4), GF(25), QQ, QQ[x,y], frac(QQ[x,y]), RR_53, RR_
 rings/testMutableMatrices
 ///
 
+TEST ///
+  -- Which rings have linear algebra routines defined?
+  debug Core
+  hasLinAlgRank = (R) -> (
+      M = mutableMatrix(R, 4, 4);
+      fillMatrix M;
+      rawLinAlgRank raw M
+      );
+
+  hasEngineLinearAlgebra(ZZ)
+  hasEngineLinearAlgebra(ZZFlint)
+  hasEngineLinearAlgebra(QQ)
+  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FLINT"))
+  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FFPACK"))
+  hasEngineLinearAlgebra(ZZ/101)
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>null))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"New"))
+
+  hasLinAlgRank ZZ  -- NO
+  hasLinAlgRank QQ  -- NO
+  hasLinAlgRank (ZZp(101, "Choose"=>"FLINT")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, "Choose"=>"FFPACK")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, "Choose"=>null))
+
+  debug Core
+  initializeEngineLinearAlgebra QQ
+
+
+///
 TEST ///
 -- of rawDiscreteLog
 debug Core

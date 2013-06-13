@@ -142,7 +142,7 @@ public:
   typedef Mat::ElementType ElementType;
 
   static size_t rank(const Mat& A) { 
-    std::cout << "calling flint rank code" << std::endl;
+    std::cout << "calling flint rankZZ code" << std::endl;
     return fmpz_mat_rank(A.fmpz_mat()); 
   }
 
@@ -163,7 +163,7 @@ public:
   static void mult(const Mat& A, const Mat& B, Mat& result_product) {
     // The A1 and B1 on the next line are switched because the memory layout expected
     // is the transpose of what we have for DMat.
-    fmpz_mat_mul(result_product.fmpz_mat(), B.fmpz_mat(), A.fmpz_mat());
+    fmpz_mat_mul(result_product.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
   }
 
   static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
@@ -238,6 +238,74 @@ public:
     Mat& A1 = const_cast<Mat&>(A); // needed because nmod_mat_solve doesn't declare params const
     long rank = nmod_mat_nullspace(result_nullspace.nmod_mat(), A1.nmod_mat());
     return (A.numColumns() - rank);
+  }
+
+  static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
+  {
+    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
+  {
+    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
+  }
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
+  {
+    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return false;
+  }
+};
+#endif
+
+#ifdef HAVE_FLINT
+template<>
+class MatLinAlg< DMat<M2::ARingQQFlint> >
+{
+public:
+  typedef M2::ARingQQFlint RT;
+  typedef DMat<RT> Mat;
+  typedef Mat::ElementType ElementType;
+
+  static size_t rank(const Mat& A) { 
+    std::cerr << "calling flint rank code" << std::endl;
+    // fmpq_mat has no rank function.
+    // So we clear denominators row-wise (or column-wise), and compute the rank of that matrix.
+    fmpz_mat_t m1;
+    fmpz_mat_init(m1, A.numRows(), A.numColumns());
+    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
+    fmpz_mat_print_pretty(m1);
+    std::cerr << "calling fmpz_mat_rank" << std::endl;
+    size_t rk = fmpz_mat_rank(m1);
+    std::cerr << "about to clear m1" << std::endl;
+    fmpz_mat_clear(m1);
+    std::cerr << "returning " << rk << std::endl;
+    return rk;
+  }
+
+  static void determinant(const Mat& A, ElementType& result_det) {
+    fmpq_mat_det(&result_det, A.fmpq_mat());
+  }
+
+  static bool inverse(const Mat& A, Mat& result_inv) {
+    return fmpq_mat_inv(result_inv.fmpq_mat(), A.fmpq_mat());
+  }
+
+  static void mult(const Mat& A, const Mat& B, Mat& result_product) {
+    std::cout << "calling flintQQ matrix mult code" << std::endl;
+    // The A and B on the next line are switched because the memory layout expected
+    // is the transpose of what we have for DMat.
+    fmpq_mat_mul(result_product.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
+  }
+
+  static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
+    Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
+    Mat& B1 = const_cast<Mat&>(B);
+    //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
+  }
+
+  static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
+    Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
+    //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
+    //    return (A.numColumns() - rank);
   }
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)

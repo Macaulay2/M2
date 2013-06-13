@@ -42,7 +42,7 @@ export {
    RightSide,
    characteristicPolynomial,
    minimalPolynomial,
-   nullSpace,
+--   nullSpace,
    invert,
    rowRankProfile,
    columnRankProfile,
@@ -106,26 +106,26 @@ isPrimeField Ring := (R) -> (
 --    addMultipleTo()
 --     )
 
-rank MutableMatrix := (M) -> rawLinAlgRank raw M
+--rank MutableMatrix := (M) -> rawLinAlgRank raw M
 
-determinant MutableMatrix := opts -> (M) -> (
-     R := ring M;
-     if hasEngineLinearAlgebra R then 
-       new R from rawLinAlgDeterminant raw M
-     else
-       error "determinant of mutable matrices over this ring is not implemented"
-     )
+--determinant MutableMatrix := opts -> (M) -> (
+--     R := ring M;
+--     if hasEngineLinearAlgebra R then 
+--       new R from rawLinAlgDeterminant raw M
+--     else
+--       error "determinant of mutable matrices over this ring is not implemented"
+--     )
 
-invert = method()
-invert MutableMatrix := (A) -> (
-     R := ring A;
-     if hasEngineLinearAlgebra R then (
-         if numRows A =!= numColumns A then error "expected square matrix";
-         map(R,rawLinAlgInvert(raw A))
-         )
-     else 
-       error "inverse of mutable matrices over this ring is not implemented"
-     )
+--invert = method()
+--invert MutableMatrix := (A) -> (
+--     R := ring A;
+--     if hasEngineLinearAlgebra R then (
+--         if numRows A =!= numColumns A then error "expected square matrix";
+--         map(R,rawLinAlgInvert(raw A))
+--         )
+--     else 
+--       error "inverse of mutable matrices over this ring is not implemented"
+--     )
 
 MutableMatrix ^ ZZ := (A, r) -> (
      if r == 0 then 
@@ -145,11 +145,11 @@ rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
 columnRankProfile = method()
 columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
 
-nullSpace = method(Options => {RightSide=>true})
-nullSpace(MutableMatrix) := opts -> (M) -> (
-     R := ring M;
-     map(R, rawLinAlgNullSpace(raw M, opts.RightSide))
-     )
+--nullSpace = method(Options => {RightSide=>true})
+--nullSpace(MutableMatrix) := opts -> (M) -> (
+--     R := ring M;
+--     map(R, rawLinAlgNullSpace(raw M, opts.RightSide))
+--     )
 
 solveLinear = method(Options => options nullSpace)
 solveLinear(MutableMatrix, MutableMatrix) := opts -> (A,B) -> (
