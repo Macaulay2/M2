@@ -2405,3 +2405,39 @@ installPackage("MonomialAlgebras");
 check MonomialAlgebras
 viewHelp MonomialAlgebras
 *}
+
+end
+restart
+installPackage "MonomialAlgebras"
+check "MonomialAlgebras"
+
+restart
+needsPackage "MonomialAlgebras";
+B = {{4,0,0},{2,2,0},{2,0,2},{0,2,2},{0,3,1},{3,1,0},{1,1,2}}; 
+K = ZZ/101;
+S = K[x_1..x_7, Degrees=>B];
+IB = binomialIdeal S;
+R = newRing(ring IB, Degrees => {7:1});
+betti res sub(IB,R)
+dc = decomposeMonomialAlgebra S
+
+KA = ring first first values dc;
+T = newRing(ring ideal KA, Degrees => {5:1});
+J = sub(ideal KA,T);
+betti res J
+
+I1 = first (values dc)#0
+g = matrix entries sub(gens I1, T);
+betti res image map(coker gens J, source g, g)
+
+regularityMA S
+
+degree J
+
+B = {{4,0,0},{0,4,0},{0,0,4},{1,0,3},{0,2,2},{3,0,1},{1,2,1}};
+S = K[x_1..x_7, Degrees => B];
+decomposeMonomialAlgebra S
+
+isSeminormalMA B
+
+isBuchsbaumMA B
