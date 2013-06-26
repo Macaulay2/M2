@@ -6,7 +6,7 @@ newPackage(
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "some local Hilbert series functions",
-     DebuggingMode => false
+     DebuggingMode => true
 )
 
 export {
@@ -79,7 +79,6 @@ dualInfo (Matrix) := o -> (igens) -> (
      --outputs
      dbasis   := new Matrix;
      gcorners := new List;
-     sbasis   := new List;
      regul    := 0;
      hseries  := new Sequence;
      hpoly    := 0;
@@ -115,6 +114,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      
      --Sylvester array strategies
      if deg == -1 then (
+	  sbasis := {};
 	  if o.Strategy == DZ or o.Strategy == BM then (
 	       d := 0;
 	       (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
@@ -127,9 +127,10 @@ dualInfo (Matrix) := o -> (igens) -> (
 	       );
 	  regul = first degree lcm monomialIdeal gcorners;
 	  hseries = apply(regul, i->hilbertC(gcorners, i));
+	  if o.ProduceSB then gcorners = sbasis;
 	  );
      
-     (dbasis, gcorners, sbasis, regul, hseries, hpoly)
+     (dbasis, gcorners, regul, hseries, hpoly)
      );
 
 --Finds kernel numerically with SVD or symbolically depending on the base field
@@ -141,7 +142,7 @@ findKernel = (M, tol) -> (
      if precision 1_R < infinity then (
 	  (svs, U, Vt) := SVD M;
 	  cols := toList select(0..#svs-1, i->(svs#i > tol));
-	  submatrix'(transpose Vt,,cols)
+	  submatrix'(adjointMatrix Vt,,cols)
 	  ) else (
 	  gens kernel M
 	  )
@@ -254,7 +255,8 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
  	       else kern = map(R^(#(flatten dmons)),R^0,0);
 	       kern = sub(kern, coefficientRing R);
 	       ) else (
-	       kern = findKernel(transpose DZmatrix(igens, d, true), tol);
+	       M = DZmatrix(igens,d,true);
+	       kern = findKernel(transpose M, tol);
 	       );
 	  newBasis = first entries parseKernel(kern, dmons, tol);
 	  --if tol > 0 then newBasis = apply(newBasis,b->clean(10*tol,b));
@@ -301,8 +303,8 @@ homogenizedLCMdegree = (a,b) -> (
 newMonomialGens = (oldGens, newBasis, dmons, d) -> (
      mons := first entries sort(matrix{flatten dmons}, MonomialOrder=>Descending);
      newBasis = first entries sort(matrix{newBasis/gLeadMonomial}, MonomialOrder=>Descending);
-     print mons;
-     print newBasis;
+     --print mons;
+     --print newBasis;
      newGens := {};
      i := 0;
      for m in mons do (
@@ -406,6 +408,7 @@ gDegree = f -> first degree gLeadMonomial f;
 --performs Gaussian reduction on M but starting from the bottom right
 rowReduce = method(TypicalValue => Matrix)
 rowReduce (Matrix, RR) := (M, tol) -> (
+     --print M;
      R := ring M;
      (m,n) := (numrows M, numcols M);
      rindex := m-1;
@@ -420,9 +423,10 @@ rowReduce (Matrix, RR) := (M, tol) -> (
     	  if a == -1 then continue;
     	  rowSwap(M,a,rindex);
 	  c := M_(rindex,n-k);
-    	  --for i from 0 to n-1 do M_(rindex,i) = M_(rindex,i)/c;
+	  --print c;
+    	  for i from 0 to n-1 do M_(rindex,i) = M_(rindex,i)/c;
     	  for l from 0 to m-1 do
-      	       if l != rindex then (d := M_(l,n-k); for i from 0 to n-1 do M_(l,i) = M_(l,i)-d*M_(rindex,i)/c);
+      	       if l != rindex then (d := M_(l,n-k); for i from 0 to n-1 do M_(l,i) = M_(l,i)-d*M_(rindex,i));
     	  rindex = rindex-1;
     	  --print (n-k,rindex,a,aval);
 	  --print new Matrix from M;
@@ -445,6 +449,14 @@ innerProduct = (v,w) -> (
      sum(#c,i->(c#i#0)*(c#i#1))
      );
 
+adjointMatrix = M -> (
+     M = sub(M, CC);
+     M' := mutableMatrix transpose M;
+     for i from 0 to (numrows M')-1 do (
+     	  for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
+	  );
+     matrix M'
+     );
 
 {*
 beginDocumentation()
