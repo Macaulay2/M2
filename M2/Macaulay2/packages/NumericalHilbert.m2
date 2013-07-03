@@ -23,7 +23,8 @@ export {
      dualSpace,
      ProduceSB,
      rowReduce,
-     eliminationDual
+     eliminatingDual,
+     colonDual
      }
 
 DualSpace = new Type of MutableHashTable
@@ -134,8 +135,8 @@ dualInfo (Matrix) := o -> (igens) -> (
      (dbasis, gcorners, regul, hseries, hpoly)
      );
 
-eliminationDual = method(TypicalValue => List, Options => {Point => {}, Tolerance => -1.})
-eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
+eliminatingDual = method(TypicalValue => List, Options => {Point => {}, Tolerance => -1.})
+eliminatingDual (Matrix, ZZ, List) := o -> (igens, r, varList) -> (
      R := ring igens;
      n := numgens R;
      tol := o.Tolerance;
@@ -147,7 +148,10 @@ eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
      eBasis := {};
      eBasisSize := 0;
      ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
-     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>{ -1},Weights=>n:-1}, Global => false];
+     wvec := new MutableList from (n:0);
+     for v in varList do apply(n, i->(if v == R_i then wvec#i = -1));
+     wvec = toList wvec;
+     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>wvec,Weights=>n:-1}, Global => false];
      while d <= lastd + ecart + 1 do (
 	  dmons = dmons | entries basis(d,R);
 	  M := transpose DZmatrix(igens,d,false);
@@ -161,7 +165,27 @@ eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
 	  eBasisSize = #eBasis;
 	  d = d+1;
 	  );
-     eBasis
+     apply(eBasis, b->sub(b,R))
+     );
+
+colonDual = method(TypicalValue => List)
+colonDual (List, List) := (dualSpace, L) -> (
+     R := ring first dualSpace;
+     for l in L do (
+	  (m,c) := coefficients matrix{dualSpace};
+     	  m = flatten entries m;
+	  M := matrix{toList(#m:0_R)};
+	  for term in terms l do (
+	       mdiff := apply(m, mon->(
+			 d := diff(term,mon);
+			 if d != 0 then d = leadMonomial d;
+			 d
+			 ));
+	       M = M + (leadCoefficient term)*(matrix{mdiff});
+	       );
+	  dualSpace = flatten entries (M*c);
+	  );
+     dualSpace
      );
 
 {*

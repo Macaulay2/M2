@@ -32,4 +32,6 @@ restart
 loadPackage "NumericalHilbert"
 R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix{{x-y^2}}
-eliminationDual(M,3)
+E3 = eliminatingDual(M,3,{R_0})
+E2 = eliminatingDual(M,2,{R_0})
+E2' = colonDual(E3,{R_0})
