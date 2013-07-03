@@ -22,7 +22,8 @@ export {
      GB,
      dualSpace,
      ProduceSB,
-     rowReduce
+     rowReduce,
+     eliminationDual
      }
 
 DualSpace = new Type of MutableHashTable
@@ -50,7 +51,7 @@ hilbertSeries DualSpace := o -> V -> (
 isBasis = method()
 isBasis DualSpace := V -> kernel V#"generators" == 0;
 
-DualSpace == DualSpace := (V,W) -> kernel(V#"generators" + W#"generators") == kernel(V#"generators");
+DualSpace == DualSpace := (V,W) -> image(W#"generators") == image(V#"generators");
 
 -----------------------------------------------------------------------------------------
 
@@ -132,6 +133,77 @@ dualInfo (Matrix) := o -> (igens) -> (
      
      (dbasis, gcorners, regul, hseries, hpoly)
      );
+
+eliminationDual = method(TypicalValue => List, Options => {Point => {}, Tolerance => -1.})
+eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
+     R := ring igens;
+     n := numgens R;
+     tol := o.Tolerance;
+     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
+     if o.Point != {} then igens = sub(igens, matrix{gens R + apply(o.Point,p->sub(p,R))});
+     lastd := -1;
+     d := 0;
+     dmons := {};
+     eBasis := {};
+     eBasisSize := 0;
+     ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
+     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>(n-1):-1,Weights=>{ -1}}, Global => false];
+     while d <= lastd + ecart + 1 do (
+	  dmons = dmons | entries basis(d,R);
+	  M := transpose DZmatrix(igens,d,false);
+	  kern := findKernel(M,tol);
+	  dualBasis := (matrix{flatten dmons})*sub(kern,R);
+	  dualBasis = sub(dualBasis,S);
+	  (mons, N) := coefficients dualBasis;
+	  dualBasis = flatten entries parseKernel(sub(N,coefficientRing S),entries mons,tol);
+	  eBasis = select(dualBasis, b->(degree(S_(n-1), first terms b) <= r));
+	  if #eBasis > eBasisSize then lastd = d;
+	  eBasisSize = #eBasis;
+	  d = d+1;
+	  );
+     eBasis
+     );
+
+{*
+initializeD = (igens, d, tol, strategy) -> (
+     ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
+     tdeg := d;
+     if d == -1 then tdeg = max(apply(first entries igens, gDegree));
+     if d == -1 and strategy == BM then (
+	  0
+	  );
+     D := new MutableHashTable from {
+	  igens => igens,
+	  deg => -1,
+	  tol => tol;
+	  targetDegree => tdeg,
+	  ecart => ecart,
+	  Strategy => strategy, --DZ, BM or GB
+	  SA => (d == -1),
+	  M => null, --the main matrix
+	  kernelM => {}, --a reduced basis for the kernel of M
+	  dualBasis => {},
+	  colBasis => {}, --a list of the polynomials corresponding to the columns of M
+	  dmons => {}, --a nested list of all monomials at each degree
+	  hseries => {}, --the Hilbert series computed so far
+	  gcorners => {}, --the g-corners computed so far
+	  sbasis => {}, --the reduced standard basis elements computed so far
+	  }
+     );
+
+advanceD = (D) -> (
+     D.deg = D.deg+1;
+     if D.Strategy == DZ then D.M = DZmatrix(D.igens, D.deg, D.SA);
+   --if D.Strategy == ST then D.M = STmatrix(D.igens, D.deg);
+     --if D.Strategy == BM then (D.M, D.colBasis) = BMmatrix(D);
+     --(D.kernelM, D.dualBasis) = kern(D.M, D.colBasis, D.tol);
+     if not D.SA then (
+	  h' := if D.deg = 0 then 0 else D.hseries#(D.deg-1);
+	  h := #D.dualBasis - h';
+	  D.hseries = append(h, D.hseries);
+	  )
+     );
+*}
 
 --Finds kernel numerically with SVD or symbolically depending on the base field
 findKernel = (M, tol) -> (
@@ -331,7 +403,7 @@ DZmatrix (Matrix, ZZ, Boolean) := o -> (igens, d, syl) -> (
                if #newp > 0 then p = p|matrix {newp};
 	       );
      	  );
-     (coefficients(p, Monomials => flatten take(dmons,{0,d})))#1
+     (coefficients(p, Monomials => flatten dmons))#1
      );
 
 --Stetter-Thallinger algorithm to find the matrices corresponding to the dual space
@@ -434,7 +506,7 @@ rowReduce (Matrix, RR) := (M, tol) -> (
      if tol > 0 then clean(tol,new Matrix from M) else new Matrix from M
      );
 
---auxilary function
+--remove non-minimal standard basis elements
 sbReduce = L -> (
      L = L / first;
      Lgood := select(0..#L-1, i->(
