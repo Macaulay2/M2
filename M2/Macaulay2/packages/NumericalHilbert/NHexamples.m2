@@ -31,5 +31,5 @@ image CV == image CW
 restart
 loadPackage "NumericalHilbert"
 R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
-M = matrix{{x^2-y}}
+M = matrix{{x-y^2}}
 eliminationDual(M,3)

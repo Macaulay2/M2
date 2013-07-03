@@ -147,7 +147,7 @@ eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
      eBasis := {};
      eBasisSize := 0;
      ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
-     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>(n-1):-1,Weights=>{ -1}}, Global => false];
+     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>{ -1},Weights=>n:-1}, Global => false];
      while d <= lastd + ecart + 1 do (
 	  dmons = dmons | entries basis(d,R);
 	  M := transpose DZmatrix(igens,d,false);
@@ -156,7 +156,7 @@ eliminationDual (Matrix, ZZ) := o -> (igens, r) -> (
 	  dualBasis = sub(dualBasis,S);
 	  (mons, N) := coefficients dualBasis;
 	  dualBasis = flatten entries parseKernel(sub(N,coefficientRing S),entries mons,tol);
-	  eBasis = select(dualBasis, b->(degree(S_(n-1), first terms b) <= r));
+	  eBasis = select(dualBasis, b->(degree(S_0, last terms b) <= r));
 	  if #eBasis > eBasisSize then lastd = d;
 	  eBasisSize = #eBasis;
 	  d = d+1;
