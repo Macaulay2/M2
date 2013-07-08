@@ -30,8 +30,12 @@ image CV == image CW
 
 restart
 loadPackage "NumericalHilbert"
+debug NumericalHilbert
 R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
 M = matrix{{x-y^2}}
+M = matrix{{x^3-y^2}}
+M = matrix{{(x^3-y^2)^2, (x+y)*(x^3-y^2)}}
 E3 = eliminatingDual(M,3,{R_0})
 E2 = eliminatingDual(M,2,{R_0})
 E2' = colonDual(E3,{R_0})
+dualCompare(E2,E2')

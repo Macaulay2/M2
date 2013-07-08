@@ -24,7 +24,8 @@ export {
      ProduceSB,
      rowReduce,
      eliminatingDual,
-     colonDual
+     colonDual,
+     dualCompare
      }
 
 DualSpace = new Type of MutableHashTable
@@ -151,7 +152,7 @@ eliminatingDual (Matrix, ZZ, List) := o -> (igens, r, varList) -> (
      wvec := new MutableList from (n:0);
      for v in varList do apply(n, i->(if v == R_i then wvec#i = -1));
      wvec = toList wvec;
-     S := (coefficientRing R)[gens R, MonomialOrder => {Weights=>wvec,Weights=>n:-1}, Global => false];
+     S := (coefficientRing R)(monoid[gens R, MonomialOrder => {Weights=>wvec,Weights=>n:-1}, Global => false]);
      while d <= lastd + ecart + 1 do (
 	  dmons = dmons | entries basis(d,R);
 	  M := transpose DZmatrix(igens,d,false);
@@ -187,6 +188,18 @@ colonDual (List, List) := (dualSpace, L) -> (
 	  );
      dualSpace
      );
+
+dualCompare = method(TypicalValue => Boolean, Options => {Tolerance => -1.})
+dualCompare (List, List) := o -> (V,W) -> (
+     R := ring first V;
+     tol := o.Tolerance;
+     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
+     c := (coefficients matrix{V|W})#1;
+     r := findRank(c,tol);
+     r == findRank(c_(toList(0..#V-1)),tol) and r == findRank(c_(toList(#V..#V+#W-1)),tol)
+     );
+     
+     
 
 {*
 initializeD = (igens, d, tol, strategy) -> (
@@ -228,6 +241,18 @@ advanceD = (D) -> (
 	  )
      );
 *}
+
+findRank = (M, tol) -> (
+     R := ring M;
+     M = sub(M, coefficientRing R);
+     if numgens target M == 0 then return 0;
+     if precision 1_R < infinity then (
+	  svs := (SVD M)#0;
+	  #select(svs, s->(s > tol))
+	  ) else (
+	  rank M
+	  )
+     );
 
 --Finds kernel numerically with SVD or symbolically depending on the base field
 findKernel = (M, tol) -> (
