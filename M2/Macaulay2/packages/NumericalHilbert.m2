@@ -6,7 +6,7 @@ newPackage(
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "some local Hilbert series functions",
-     DebuggingMode => false
+     DebuggingMode => true
 )
 
 export {
@@ -22,7 +22,10 @@ export {
      GB,
      dualSpace,
      ProduceSB,
-     rowReduce
+     rowReduce,
+     eliminatingDual,
+     colonDual,
+     dualCompare
      }
 
 DualSpace = new Type of MutableHashTable
@@ -50,7 +53,7 @@ hilbertSeries DualSpace := o -> V -> (
 isBasis = method()
 isBasis DualSpace := V -> kernel V#"generators" == 0;
 
-DualSpace == DualSpace := (V,W) -> kernel(V#"generators" + W#"generators") == kernel(V#"generators");
+DualSpace == DualSpace := (V,W) -> image(W#"generators") == image(V#"generators");
 
 -----------------------------------------------------------------------------------------
 
@@ -79,7 +82,6 @@ dualInfo (Matrix) := o -> (igens) -> (
      --outputs
      dbasis   := new Matrix;
      gcorners := new List;
-     sbasis   := new List;
      regul    := 0;
      hseries  := new Sequence;
      hpoly    := 0;
@@ -115,6 +117,7 @@ dualInfo (Matrix) := o -> (igens) -> (
      
      --Sylvester array strategies
      if deg == -1 then (
+	  sbasis := {};
 	  if o.Strategy == DZ or o.Strategy == BM then (
 	       d := 0;
 	       (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
@@ -127,9 +130,128 @@ dualInfo (Matrix) := o -> (igens) -> (
 	       );
 	  regul = first degree lcm monomialIdeal gcorners;
 	  hseries = apply(regul, i->hilbertC(gcorners, i));
+	  if o.ProduceSB then gcorners = sbasis;
 	  );
      
-     (dbasis, gcorners, sbasis, regul, hseries, hpoly)
+     (dbasis, gcorners, regul, hseries, hpoly)
+     );
+
+eliminatingDual = method(TypicalValue => List, Options => {Point => {}, Tolerance => -1.})
+eliminatingDual (Matrix, ZZ, List) := o -> (igens, r, varList) -> (
+     R := ring igens;
+     n := numgens R;
+     tol := o.Tolerance;
+     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
+     if o.Point != {} then igens = sub(igens, matrix{gens R + apply(o.Point,p->sub(p,R))});
+     lastd := -1;
+     d := 0;
+     dmons := {};
+     eBasis := {};
+     eBasisSize := 0;
+     ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
+     wvec := new MutableList from (n:0);
+     for v in varList do apply(n, i->(if v == R_i then wvec#i = -1));
+     wvec = toList wvec;
+     S := (coefficientRing R)(monoid[gens R, MonomialOrder => {Weights=>wvec,Weights=>n:-1}, Global => false]);
+     while d <= lastd + ecart + 1 do (
+	  dmons = dmons | entries basis(d,R);
+	  M := transpose DZmatrix(igens,d,false);
+	  kern := findKernel(M,tol);
+	  dualBasis := (matrix{flatten dmons})*sub(kern,R);
+	  dualBasis = sub(dualBasis,S);
+	  (mons, N) := coefficients dualBasis;
+	  dualBasis = flatten entries parseKernel(sub(N,coefficientRing S),entries mons,tol);
+	  eBasis = select(dualBasis, b->(degree(S_0, last terms b) <= r));
+	  if #eBasis > eBasisSize then lastd = d;
+	  eBasisSize = #eBasis;
+	  d = d+1;
+	  );
+     apply(eBasis, b->sub(b,R))
+     );
+
+colonDual = method(TypicalValue => List)
+colonDual (List, List) := (dualSpace, L) -> (
+     R := ring first dualSpace;
+     for l in L do (
+	  (m,c) := coefficients matrix{dualSpace};
+     	  m = flatten entries m;
+	  M := matrix{toList(#m:0_R)};
+	  for term in terms l do (
+	       mdiff := apply(m, mon->(
+			 d := diff(term,mon);
+			 if d != 0 then d = leadMonomial d;
+			 d
+			 ));
+	       M = M + (leadCoefficient term)*(matrix{mdiff});
+	       );
+	  dualSpace = flatten entries (M*c);
+	  );
+     dualSpace
+     );
+
+dualCompare = method(TypicalValue => Boolean, Options => {Tolerance => -1.})
+dualCompare (List, List) := o -> (V,W) -> (
+     R := ring first V;
+     tol := o.Tolerance;
+     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
+     c := (coefficients matrix{V|W})#1;
+     r := findRank(c,tol);
+     r == findRank(c_(toList(0..#V-1)),tol) and r == findRank(c_(toList(#V..#V+#W-1)),tol)
+     );
+     
+     
+
+{*
+initializeD = (igens, d, tol, strategy) -> (
+     ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
+     tdeg := d;
+     if d == -1 then tdeg = max(apply(first entries igens, gDegree));
+     if d == -1 and strategy == BM then (
+	  0
+	  );
+     D := new MutableHashTable from {
+	  igens => igens,
+	  deg => -1,
+	  tol => tol;
+	  targetDegree => tdeg,
+	  ecart => ecart,
+	  Strategy => strategy, --DZ, BM or GB
+	  SA => (d == -1),
+	  M => null, --the main matrix
+	  kernelM => {}, --a reduced basis for the kernel of M
+	  dualBasis => {},
+	  colBasis => {}, --a list of the polynomials corresponding to the columns of M
+	  dmons => {}, --a nested list of all monomials at each degree
+	  hseries => {}, --the Hilbert series computed so far
+	  gcorners => {}, --the g-corners computed so far
+	  sbasis => {}, --the reduced standard basis elements computed so far
+	  }
+     );
+
+advanceD = (D) -> (
+     D.deg = D.deg+1;
+     if D.Strategy == DZ then D.M = DZmatrix(D.igens, D.deg, D.SA);
+   --if D.Strategy == ST then D.M = STmatrix(D.igens, D.deg);
+     --if D.Strategy == BM then (D.M, D.colBasis) = BMmatrix(D);
+     --(D.kernelM, D.dualBasis) = kern(D.M, D.colBasis, D.tol);
+     if not D.SA then (
+	  h' := if D.deg = 0 then 0 else D.hseries#(D.deg-1);
+	  h := #D.dualBasis - h';
+	  D.hseries = append(h, D.hseries);
+	  )
+     );
+*}
+
+findRank = (M, tol) -> (
+     R := ring M;
+     M = sub(M, coefficientRing R);
+     if numgens target M == 0 then return 0;
+     if precision 1_R < infinity then (
+	  svs := (SVD M)#0;
+	  #select(svs, s->(s > tol))
+	  ) else (
+	  rank M
+	  )
      );
 
 --Finds kernel numerically with SVD or symbolically depending on the base field
@@ -141,7 +263,7 @@ findKernel = (M, tol) -> (
      if precision 1_R < infinity then (
 	  (svs, U, Vt) := SVD M;
 	  cols := toList select(0..#svs-1, i->(svs#i > tol));
-	  submatrix'(transpose Vt,,cols)
+	  submatrix'(adjointMatrix Vt,,cols)
 	  ) else (
 	  gens kernel M
 	  )
@@ -254,7 +376,8 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
  	       else kern = map(R^(#(flatten dmons)),R^0,0);
 	       kern = sub(kern, coefficientRing R);
 	       ) else (
-	       kern = findKernel(transpose DZmatrix(igens, d, true), tol);
+	       M = DZmatrix(igens,d,true);
+	       kern = findKernel(transpose M, tol);
 	       );
 	  newBasis = first entries parseKernel(kern, dmons, tol);
 	  --if tol > 0 then newBasis = apply(newBasis,b->clean(10*tol,b));
@@ -301,8 +424,8 @@ homogenizedLCMdegree = (a,b) -> (
 newMonomialGens = (oldGens, newBasis, dmons, d) -> (
      mons := first entries sort(matrix{flatten dmons}, MonomialOrder=>Descending);
      newBasis = first entries sort(matrix{newBasis/gLeadMonomial}, MonomialOrder=>Descending);
-     print mons;
-     print newBasis;
+     --print mons;
+     --print newBasis;
      newGens := {};
      i := 0;
      for m in mons do (
@@ -329,7 +452,7 @@ DZmatrix (Matrix, ZZ, Boolean) := o -> (igens, d, syl) -> (
                if #newp > 0 then p = p|matrix {newp};
 	       );
      	  );
-     (coefficients(p, Monomials => flatten take(dmons,{0,d})))#1
+     (coefficients(p, Monomials => flatten dmons))#1
      );
 
 --Stetter-Thallinger algorithm to find the matrices corresponding to the dual space
@@ -406,6 +529,7 @@ gDegree = f -> first degree gLeadMonomial f;
 --performs Gaussian reduction on M but starting from the bottom right
 rowReduce = method(TypicalValue => Matrix)
 rowReduce (Matrix, RR) := (M, tol) -> (
+     --print M;
      R := ring M;
      (m,n) := (numrows M, numcols M);
      rindex := m-1;
@@ -420,9 +544,10 @@ rowReduce (Matrix, RR) := (M, tol) -> (
     	  if a == -1 then continue;
     	  rowSwap(M,a,rindex);
 	  c := M_(rindex,n-k);
-    	  --for i from 0 to n-1 do M_(rindex,i) = M_(rindex,i)/c;
+	  --print c;
+    	  for i from 0 to n-1 do M_(rindex,i) = M_(rindex,i)/c;
     	  for l from 0 to m-1 do
-      	       if l != rindex then (d := M_(l,n-k); for i from 0 to n-1 do M_(l,i) = M_(l,i)-d*M_(rindex,i)/c);
+      	       if l != rindex then (d := M_(l,n-k); for i from 0 to n-1 do M_(l,i) = M_(l,i)-d*M_(rindex,i));
     	  rindex = rindex-1;
     	  --print (n-k,rindex,a,aval);
 	  --print new Matrix from M;
@@ -430,7 +555,7 @@ rowReduce (Matrix, RR) := (M, tol) -> (
      if tol > 0 then clean(tol,new Matrix from M) else new Matrix from M
      );
 
---auxilary function
+--remove non-minimal standard basis elements
 sbReduce = L -> (
      L = L / first;
      Lgood := select(0..#L-1, i->(
@@ -445,6 +570,14 @@ innerProduct = (v,w) -> (
      sum(#c,i->(c#i#0)*(c#i#1))
      );
 
+adjointMatrix = M -> (
+     M = sub(M, CC);
+     M' := mutableMatrix transpose M;
+     for i from 0 to (numrows M')-1 do (
+     	  for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
+	  );
+     matrix M'
+     );
 
 {*
 beginDocumentation()
