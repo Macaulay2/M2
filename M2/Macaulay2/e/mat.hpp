@@ -206,6 +206,11 @@ public:
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const = 0;
 
+  // replace 'this=A' with a matrix which encodes both 'L' and 'U', returning a permutation P
+  // of 0..numRows A-1 s.t. LU = PA
+  //  virtual M2_arrayintOrNull LUInPlace() const = 0;
+
+
   virtual bool eigenvalues(MutableMatrix *eigenvals, bool is_symm_or_hermitian) const = 0;
 
   virtual bool eigenvectors(MutableMatrix *eigenvals,

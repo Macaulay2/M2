@@ -156,7 +156,7 @@ public:
     M2_ASSERT(result.numRows() == A.numColumns());
     M2_ASSERT(result.numColumns() == A.numRows());
     throw exc::engine_error("'transpose' not writtten for sparse mutable matrices");
-    //TDO: MES: write this!!
+    //TODO: MES: write this!!
   }
 };
 

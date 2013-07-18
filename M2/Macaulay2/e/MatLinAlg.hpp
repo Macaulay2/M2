@@ -26,37 +26,103 @@ public:
   typedef MT Mat;
   typedef typename Mat::ElementType ElementType;
 
+  /// @brief the rank of a matrix
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  /// This version is deterministic.
   static size_t rank(const Mat& A)
   {
     throw exc::engine_error("'rank' not implemented for this kind of matrix over this ring");
     return 0;
   }
 
+  /// @brief the determinant of a square matrix
+  ///
+  /// result_det should be a previously initialized ElementType.
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
   static void determinant(const Mat& A, ElementType& result_det)
   {
     throw exc::engine_error("'determinant' not implemented for this kind of matrix over this ring");
   }
 
-  // Set 'result_inv' with the inverse of 'A'.  If the matrix is not square, or 
-  // the matrix is not invertible, or
-  // the ring is one in which the matrix cannot be inverted,
-  // then an exception is thown.
+  /// @brief the inverse of a square matrix
+  ///
+  /// result_inv is set to the inverse of the square matrix A, if A is invertible.
+  /// result_inv should be a Mat, with the same ring/type as the input matrix A.
+  ///   result_inv does not need to be the same size as A, it will be resized if needed.
+  /// returns true exactly when the matrix is invertible, and result_inv has been set.
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  /// throws an error if the matrix is not square.
+  ///
+  /// Note: the inverse of a 0 x 0 matrix is another 0 x 0 matrix.
   static bool inverse(const Mat& A, Mat& result_inv)
   {
     throw exc::engine_error("'invert' not implemented for this kind of matrix over this ring");
   }
 
+  /// @brief the product of two matrices
+  ///
+  /// result_product is set to the product A*B
+  /// result_product should be a Mat, with the same ring/type as the input matrices A,B.
+  ///   result_product does not need to be the same size as A*B, it will be resized if needed.
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  /// throws an error if the number of columns of A is not the number of rows of B.
+  /// result_prod should not be the same as A or B (assertion error).
   static void mult(const Mat& A, const Mat& B, Mat& result_product)
   {
     throw exc::engine_error("'mult matrices' not implemented for this kind of matrix over this ring");
   }
 
-  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
-  // C = C + A*B
+  /// @brief the left or right null space of a matrix
+  ///
+  /// if right_side is true then 
+  ///   result_nullspace is set to the matrix whose columns form a basis for {x | Ax = 0}.
+  /// if right_side is false then
+  ///   result_nullspace is set to the matrix whose rows form a basis for {x | xA = 0}.
+  /// Returns the dimension of the nullspace.
+  ///
+  /// result_nullspace should be a Mat, with the same ring/type as the input matrix A.
+  ///   result_nullspace does not need to be the correct size, it will be resized if needed.
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
   {
-    throw exc::engine_error("'addMultipleTo' not implemented for this kind of matrix over this ring");
+    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
   }
 
+  // If A is non-singular, then place into X the unique solution to AX=B.
+  // otherwise return false
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
+  {
+    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return false;
+  }
+
+  // Questions: 
+  // (1) do we need a non-singular solve function?
+  // (2) should we have an inplace LU decomposition function?
+  //   answer: at top level in M2, probably not.
+  //   But internally it might be very useful.
+  //   if so: 
+  //     LU --> rank, det, nullspace, solving, row-reduced echelon form
+
+  // Other functiond needed:
+  // (1) rref
+  // (2) LU = PA decomposition.
+  //     other decompositions?
+  // (3) char polynomial
+  // (4) minimal polynomial
+  
+  // Change this to:
+  //   static void rankProfile(const Mat& A, bool row_profile, std::vector<size_t>& profile);)
+  static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
+  {
+    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  // TO BE REMOVED?
   // If A is non-singular, then place into X the unique solution to AX=B.
   // otherwise return false
   static bool solveLinear(const Mat& A, const Mat& B, Mat& X)
@@ -65,31 +131,20 @@ public:
     return false;
   }
 
-  // If A is non-singular, then place into X the unique solution to AX=B.
-  // otherwise return false
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
+  // TO BE REMOVED:
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  // C = C + A*B
   {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
+    throw exc::engine_error("'addMultipleTo' not implemented for this kind of matrix over this ring");
   }
 
-  // Find a spanning set for the null space.
-  // Set 'result_nullspace' with a matrix whose columns span {x | Ax = 0}
-  // Return the dimension of the nullspace
+  // TO BE REMOVED:
   static size_t nullSpace(const Mat& A, Mat& result_nullspace) 
   {
     throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
   }
 
-  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
-  {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-  }
 
-  static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
-  {
-    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
 
   // To add?
   // transpose
@@ -120,13 +175,13 @@ public:
 
   static void mult(const Mat& A, const Mat& B, Mat& result_product);
 
-  static bool solveLinear(const Mat& A, const Mat& B, Mat& X);
-
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X);
-
   static size_t nullSpace(const Mat& A, Mat& result_nullspace);
 
   static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace);
+
+  static bool solveLinear(const Mat& A, const Mat& B, Mat& X);
+
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible);
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile);
 };
@@ -166,6 +221,19 @@ public:
     fmpz_mat_mul(result_product.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
   }
 
+  static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
+    long rank = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
+    return (A.numColumns() - rank);
+  }
+
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
+  {
+    if (not right_side)
+      throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
+    return nullSpace(A, result_nullspace);
+  }
+
+
   static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
     ElementType den;
     A.ring().init(den);
@@ -176,23 +244,17 @@ public:
     return result;
   }
 
-  static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
-    long rank = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
-    return (A.numColumns() - rank);
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
+  {
+    //TODO: write this routine in the cases which are not handled
+    if (not right_side or not declare_A_is_invertible)
+      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return solveLinear(A,B,X);
   }
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
-  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
-  {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-  }
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
   }
 };
 #endif
@@ -228,11 +290,6 @@ public:
     nmod_mat_mul(result_product.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
   }
 
-  static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
-    Mat& A1 = const_cast<Mat&>(A); // needed because nmod_mat_solve doesn't declare params const
-    Mat& B1 = const_cast<Mat&>(B);
-    return nmod_mat_solve(X.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
-  }
 
   static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
     Mat& A1 = const_cast<Mat&>(A); // needed because nmod_mat_solve doesn't declare params const
@@ -240,18 +297,29 @@ public:
     return (A.numColumns() - rank);
   }
 
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
+  {
+    if (not right_side)
+      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
+    return nullSpace(A,true,result_nullspace);
+  }
+
+  static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
+    Mat& A1 = const_cast<Mat&>(A); // needed because nmod_mat_solve doesn't declare params const
+    Mat& B1 = const_cast<Mat&>(B);
+    return nmod_mat_solve(X.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
+  }
+
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
+  {
+    if (not right_side or not declare_A_is_invertible)
+      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return solveLinear(A,B,X);
+  }
+
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
-  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
-  {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-  }
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
   }
 };
 #endif
@@ -296,30 +364,37 @@ public:
     fmpq_mat_mul(result_product.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
   }
 
-  static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
-    Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
-    Mat& B1 = const_cast<Mat&>(B);
-    //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
-  }
-
   static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
     Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
     //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
     //    return (A.numColumns() - rank);
+    return 0;
+  }
+  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
+  {
+    if (not right_side)
+      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
+    return nullSpace(A,true,result_nullspace);
+  }
+
+
+  static bool solveLinear(const Mat& A, const Mat& B, Mat& X) {
+    Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
+    Mat& B1 = const_cast<Mat&>(B);
+    //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
+    return false;
+  }
+  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
+  {
+    //TODO: write this routine in the cases which are not handled
+    if (not right_side or not declare_A_is_invertible)
+      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return solveLinear(A,B,X);
   }
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
-  static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
-  {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-  }
-  static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
   }
 };
 #endif

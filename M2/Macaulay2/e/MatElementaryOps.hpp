@@ -507,6 +507,114 @@ public:
     mat.ring().set(mat.entry(r,c), a);
   }
 
+private:
+#if 0
+  // MES June 2013: working on this code
+  // Internal functino for reduceByPivots
+  static void perform_reduction(Mat& M,
+                                size_t r, size_t c,
+                                size_t nr, size_t nc,
+                                int pivot_type)
+  // Subroutine of reduceByPivots()
+  // pivot_type: 1 means pivot is 1, -1 means pivot is -1, 0 means pivot is unit
+  {
+    // Swap rows r, nr
+    // Swap cols c, nc
+    // Use (nr,nc) location to remove all terms in columns 0..nc-1
+    //   and in row nr.
+    // Replace column nc with all zeros, except 1 in nr row.
+    const Ring *R = M->get_ring();
+    M->interchange_columns(c,nc);
+    M->interchange_rows(r,nr);
+    ring_elem pivot;
+    long pivotrow = M->lead_row(nc, pivot);
+    if (pivot_type == -1) // pivot is -1
+      M->scale_column(nc,pivot);
+    else if (pivot_type == 0)
+      M->divide_column(nc, pivot);
+    for (int i=0; i<nc; i++)
+      {
+        ring_elem coef;
+        pivotrow = M->lead_row(i,coef);
+        if (pivotrow < 0) continue;
+        if (pivotrow == nr)
+          {
+            // Do the reduction
+            //            M.ring().negate(M.entry(pivotrow, i));
+            ring_elem f = R->negate(coef);
+            M->column_op(i, f, nc);
+          }
+      }
+    M->scale_column(nc, R->zero());
+    M->set_entry(nr,nc,R->one());
+  }
+  
+  static void reduceByPivots(Mat& M)
+  {
+    if (M.numRows() == 0 or M.numColumns() == 0) return;
+    size_t nr = M.numRows()-1;
+    size_t nc = M.numColumns()-1;
+
+    const Ring *K = M->get_ring();
+    ring_elem one = K->one();
+    ring_elem minus_one = K->minus_one();
+    
+    // After using the pivot element, it is moved to [nrows-1,ncols-1]
+    // and nrows and ncols are decremented.
+
+    MutableMatrix::iterator *p = M->begin();
+    for (int i=0; i<=nc; i++)
+      {
+        p->set(i);
+        for (; p->valid(); p->next())
+          {
+            int pivot_type = 0;
+            ring_elem coef;
+            p->copy_ring_elem(coef);
+            if (K->is_equal(one, coef))
+              pivot_type = 1;
+            else if (K->is_equal(minus_one, coef))
+              pivot_type = -1;
+            if (pivot_type != 0)
+              {
+                perform_reduction(M, static_cast<int>(p->row()), i, nr, nc, pivot_type);
+                if (nr == 0 or nc == 0) return;
+                --nr;
+                --nc;
+                // restart loop with the (new) column i
+                i = -1;
+                break;
+              }
+          }
+      }
+    
+    // Now search for other possible pivots
+    for (int i=0; i<=nc; i++)
+      {
+        p->set(i);
+        for (; p->valid(); p->next())
+          {
+            ring_elem coef;
+            p->copy_ring_elem(coef);
+            if (!K->is_unit(coef)) continue;
+            int pivot_type = 0;
+            if (K->is_equal(one, coef))
+              pivot_type = 1;
+            else if (K->is_equal(minus_one, coef))
+              pivot_type = -1;
+            
+            perform_reduction(M, static_cast<int>(p->row()), i, nr, nc, pivot_type);
+            if (nr == 0 or nc == 0) return;
+            --nr;
+            --nc;
+            // restart loop with the (new) column i
+            i = -1;
+            break;
+          }
+      }
+}
+#endif
+
 };
 
 template <typename RT>

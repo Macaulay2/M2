@@ -753,7 +753,7 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
 { 
   const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = LinAlg::solveLinear(mat, B1->mat, right_side, solns->mat);
+  bool retval = LinAlg::solveLinear(mat, B1->mat, right_side, solns->mat, false);
   //  bool retval = mat.solveLinear(solns->mat, B1->mat, right_side);
   return std::pair<bool, MutableMatrix*>(retval, solns);
 }

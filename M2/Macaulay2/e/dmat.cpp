@@ -143,7 +143,11 @@ M2_arrayintOrNull MatLinAlg< DMat<M2::ARingZZpFFPACK> >::rankProfile(const Mat& 
   return profile;
 }
 
-bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X)
+bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, 
+                                                        const Mat& B, 
+                                                        bool right_side, 
+                                                        Mat& X, 
+                                                        bool declare_A_is_invertible)
 {
   std::cerr << "inside FFpackSolveLinear" << std::endl;
 
@@ -186,7 +190,7 @@ bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat&
 
 bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat& B, Mat& X)
 {
-  return solveLinear(A, B, true, X);
+  return solveLinear(A, B, true, X, false);
 }
 
 size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::nullSpace(const Mat& mat, Mat& result_nullspace)
