@@ -3,6 +3,9 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
+#include <utility>
+#include <algorithm>
+
 #include "engine-includes.hpp"
 
 #ifdef HAVE_FLINT

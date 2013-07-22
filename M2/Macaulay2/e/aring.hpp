@@ -59,6 +59,10 @@ class DummyRing : public RingInterface
 
         int characteristic()  const  {return 0; }
 
+        unsigned long computeHashValue(const elem& a) const 
+        { 
+          return static_cast<unsigned long>(a); 
+        }
 
         int get_int(elem f) const {return 0;}
         int get_repr(elem f) const {return 0;}

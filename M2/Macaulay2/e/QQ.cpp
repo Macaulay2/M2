@@ -23,7 +23,9 @@ bool QQ::initialize_QQ()
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
+#if defined(HAVE_FLINT)
   mARing = new M2::ARingQQFlint;
+#endif
 
   return true;
 }

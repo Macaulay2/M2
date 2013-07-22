@@ -10,8 +10,12 @@
 #include "aring-zzp-ffpack.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-tower.hpp"
+
 #include "aring-zz-flint.hpp"
+
+#if defined(HAVE_FLINT)
 #include "aring-zzp-flint.hpp"
+#endif
 
 namespace M2 {
   namespace Promoter {
@@ -95,12 +99,14 @@ namespace M2 {
       {
         return false;
       }
-      
+
+#if defined(HAVE_FLINT)
       static bool newpromote(const Ring* R, const ring_elem fR, 
                       const ARingZZpFlint& S, ARingZZpFlint::ElementType& resultS)
       {
         return false;
       }
+#endif
       
       static bool newpromote(const Ring* R, const ring_elem fR, 
                       const ARingGFM2& S, ARingGFM2::ElementType& resultS)

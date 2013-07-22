@@ -138,6 +138,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	  return MutableMat< SMat<M2::ARingZZGMP> >
 	    ::zero_matrix(globalZZ,globalZZ->get_ARing(),nrows,ncols);
     }
+#if defined(HAVE_FLINT)
   if (R == globalQQ)
     {
       if (dense)
@@ -149,6 +150,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	  return MutableMat< SMat<M2::ARingQQFlint> >
 	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
     }
+#endif
   if (R->is_RRR())
     {
       const RRR * ARRR = R->cast_to_RRR();
