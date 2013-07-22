@@ -290,7 +290,6 @@ public:
     nmod_mat_mul(result_product.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
   }
 
-
   static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
     Mat& A1 = const_cast<Mat&>(A); // needed because nmod_mat_solve doesn't declare params const
     long rank = nmod_mat_nullspace(result_nullspace.nmod_mat(), A1.nmod_mat());
@@ -299,6 +298,7 @@ public:
 
   static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
   {
+    //TODO: WRITE ME
     if (not right_side)
       throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
     return nullSpace(A,true,result_nullspace);
@@ -312,6 +312,7 @@ public:
 
   static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
   {
+    //TODO: WRITE ME
     if (not right_side or not declare_A_is_invertible)
       throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
     return solveLinear(A,B,X);
@@ -319,6 +320,7 @@ public:
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
+    //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
   }
 };
@@ -365,6 +367,7 @@ public:
   }
 
   static size_t nullSpace(const Mat& A, Mat& result_nullspace) {
+    //TODO: WRITE ME
     Mat& A1 = const_cast<Mat&>(A); // needed because fmpq_mat_solve doesn't declare params const
     //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
     //    return (A.numColumns() - rank);
@@ -372,6 +375,7 @@ public:
   }
   static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace) 
   {
+    //TODO: write this routine in the cases which are not handled
     if (not right_side)
       throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
     return nullSpace(A,true,result_nullspace);
@@ -394,6 +398,7 @@ public:
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
+    //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
   }
 };

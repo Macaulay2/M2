@@ -127,17 +127,17 @@ isPrimeField Ring := (R) -> (
 --       error "inverse of mutable matrices over this ring is not implemented"
 --     )
 
-MutableMatrix ^ ZZ := (A, r) -> (
-     if r == 0 then 
-       return mutableIdentity(ring A, numRows A);
-     if r < 0 then (
-	  r = -r;
-	  A = invert A;
-	  );
-     result := A;
-     if r > 1 then for i from 2 to r do result = result * A;
-     result     
-     )
+--MutableMatrix ^ ZZ := (A, r) -> (
+--     if r == 0 then 
+--       return mutableIdentity(ring A, numRows A);
+--     if r < 0 then (
+--	  r = -r;
+--	  A = invert A;
+--	  );
+--     result := A;
+--     if r > 1 then for i from 2 to r do result = result * A;
+--     result     
+--     )
 
 rowRankProfile = method()
 rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
@@ -190,11 +190,10 @@ addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
 	  raw a, raw b);
      C)
 
-MutableMatrix * MutableMatrix := (A,B) -> (
-     C := mutableMatrix(ring A, numRows A, numColumns B, Dense=>true);
-     addMultipleTo(C,A,B)
-     )
-
+--MutableMatrix * MutableMatrix := (A,B) -> (
+--     C := mutableMatrix(ring A, numRows A, numColumns B, Dense=>true);
+--     addMultipleTo(C,A,B)
+--     )
 
 characteristicPolynomial = method()
 characteristicPolynomial(MutableMatrix, Ring) := (M, P) -> (

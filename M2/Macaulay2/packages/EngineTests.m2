@@ -354,8 +354,6 @@ testRankFailing = () -> (
      rawLinAlgRank raw m5; -- 
      )
      
--- linalg part1: mult, det, rank, inverse, 
-
 << "warning: not testing transpose of sparse mutable matrices yet" << endl;
 testTranspose = (R) -> (
     --M := mutableMatrix(R, 3, 5);
@@ -400,7 +398,8 @@ testSolve = (R) -> (
     B := map(R^2, R^1, {{3}, {7}});
     M := mutableMatrix E;
     B = mutableMatrix B;
-    rawLinAlgSolve(raw M,raw B, true) -- doesn't seem to be implemented yet.
+    X := map(R, rawLinAlgSolve(raw M,raw B, true));
+    assert(M*X-B == 0)
     )
 
 testNullspace = (R) -> (
@@ -413,6 +412,10 @@ testNullspace = (R) -> (
     M * X  -- crash!!
     )
 
+testRankProfile = (R) -> (
+    error "not written yet"
+    );
+
 testMutableMatrices = (R) -> (
      << "testing " << describe R << endl;
      testops0 R;
@@ -420,7 +423,7 @@ testMutableMatrices = (R) -> (
      testops2 R; 
      testops3 R; 
      testops4 R;
-     testops5 R; -- Not working on 1.6 for R=ZZ
+     testops5 R;
      testTranspose R;
      --testRank R;
      << "tests passed for " << raw R << endl;
@@ -532,8 +535,8 @@ TEST ///
       );
 
   hasEngineLinearAlgebra(ZZ)
-  hasEngineLinearAlgebra(ZZFlint)
-  hasEngineLinearAlgebra(QQ)
+  assert hasEngineLinearAlgebra(ZZFlint)
+  assert hasEngineLinearAlgebra(QQ)
   assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FLINT"))
   assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FFPACK"))
   hasEngineLinearAlgebra(ZZ/101)
@@ -541,17 +544,16 @@ TEST ///
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"New"))
 
-  hasLinAlgRank ZZ  -- NO
-  hasLinAlgRank QQ  -- NO
+  --hasLinAlgRank ZZ  -- NO
+  --hasLinAlgRank QQ  -- NO
   hasLinAlgRank (ZZp(101, "Choose"=>"FLINT")) -- yes, this one works!
   hasLinAlgRank (ZZp(101, "Choose"=>"FFPACK")) -- yes, this one works!
-  hasLinAlgRank (ZZp(101, "Choose"=>null))
+  --hasLinAlgRank (ZZp(101, "Choose"=>null)) -- NO
 
   debug Core
   initializeEngineLinearAlgebra QQ
-
-
 ///
+
 TEST ///
 -- of rawDiscreteLog
 debug Core

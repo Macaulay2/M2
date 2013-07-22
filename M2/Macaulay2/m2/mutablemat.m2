@@ -262,6 +262,18 @@ nullSpace(MutableMatrix) := (M) -> (
      R := ring M;
      map(R, rawLinAlgNullSpace raw M)
      )
+
+MutableMatrix ^ ZZ := (A, r) -> (
+     if r == 0 then 
+       return mutableIdentity(ring A, numRows A);
+     if r < 0 then (
+	  r = -r;
+	  A = inverse A;
+	  );
+     result := A;
+     if r > 1 then for i from 2 to r do result = result * A;
+     result     
+     )
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
