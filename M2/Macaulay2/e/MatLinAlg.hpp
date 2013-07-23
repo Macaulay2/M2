@@ -7,6 +7,7 @@
  * \ingroup matrices
  */
 
+#include <iostream>
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
