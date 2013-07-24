@@ -193,10 +193,6 @@ bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat&
   return solveLinear(A, B, true, X, false);
 }
 
-size_t MatLinAlg< DMat<M2::ARingZZpFFPACK> >::nullSpace(const Mat& mat, Mat& result_nullspace)
-{
-  return nullSpace(mat, true, result_nullspace);
-}
 #endif // HAVE_FFLAS_FFPACK
 
 //template<> 

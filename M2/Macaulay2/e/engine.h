@@ -1279,7 +1279,7 @@ extern "C" {
    */
   const RingElement* rawLinAlgDeterminant(MutableMatrix* A);
 
-  MutableMatrix* rawLinAlgInvert(MutableMatrix* A);
+  MutableMatrix* rawLinAlgInverse(MutableMatrix* A);
 
   M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
 
@@ -1295,6 +1295,16 @@ extern "C" {
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */ 
+
+  void rawLinAlgAddMult(MutableMatrix* C,
+                        const MutableMatrix* A,
+                        const MutableMatrix* B);
+
+  void rawLinAlgSubMult(MutableMatrix* C,
+                        const MutableMatrix* A,
+                        const MutableMatrix* B);
+
+#if 0
   MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
                                                       const MutableMatrix* A,
                                                       const MutableMatrix* B,
@@ -1302,7 +1312,7 @@ extern "C" {
                                                       M2_bool transposeB,
                                                       const RingElement* a,
                                                       const RingElement* b);
-
+#endif
   /* return A*B, where A,B are mutable matrices, over same ring, same density type.
    */
   MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
@@ -1317,7 +1327,7 @@ extern "C" {
 
 
 
-
+#if 0
   RingElement *rawFFPackDeterminant(MutableMatrix *M);
   /* connected to rawFFPackDeterminant, MES */
   /* requires: M should be a square matrix over a prime finite field */
@@ -1360,6 +1370,7 @@ extern "C" {
 
   M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A);
   /* connected, MES */
+#endif
 
   engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A);
 

@@ -2834,12 +2834,12 @@ export rawLinAlgDeterminant(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgDeterminant",rawLinAlgDeterminant);
 
-export rawLinAlgInvert(e:Expr):Expr := (
+export rawLinAlgInverse(e:Expr):Expr := (
      when e
      is m:RawMutableMatrixCell
-     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgInvert(", m.p, ")" ))
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgInverse(", m.p, ")" ))
      else WrongArgMutableMatrix());
-setupfun("rawLinAlgInvert",rawLinAlgInvert);
+setupfun("rawLinAlgInverse",rawLinAlgInverse);
 
 export rawLinAlgMult(e:Expr):Expr := (
      when e is s:Sequence do
@@ -2897,33 +2897,41 @@ export rawLinAlgSolve(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("rawLinAlgSolve", rawLinAlgSolve);
 
-export rawLinAlgAddMultipleTo(e:Expr):Expr := (
+export rawLinAlgAddMult(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 7 then WrongNumArgs(7) else
+     if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is C:RawMutableMatrixCell do
      when s.1 is A:RawMutableMatrixCell do
-     when s.2 is B:RawMutableMatrixCell do
-     when s.5 is a:RawRingElementCell do
-     when s.6 is b:RawRingElementCell do
-     if !isBoolean(s.3) then WrongArgBoolean(4)
-     else if !isBoolean(s.4) then WrongArgBoolean(5) 
-     else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawLinAlgAddMultipleTo(", 
+     when s.2 is B:RawMutableMatrixCell do (
+	       Ccode(void, "rawLinAlgAddMult(", 
 	       C.p, ",", 
 	       A.p, ",", 
-	       B.p, ",", 
-	       toBoolean(s.3), ",",
-	       toBoolean(s.4), ",",
-	       a.p, ",", 
-	       b.p,
-	       ")"))
-     else WrongArg(7,"a raw ring element")
-     else WrongArg(6,"a raw ring element")
+	       B.p, ")");
+           nullE           
+       )
      else WrongArgMutableMatrix(3)
      else WrongArgMutableMatrix(2)
      else WrongArgMutableMatrix(1)
-     else WrongNumArgs(7));
-setupfun("rawLinAlgAddMultipleTo", rawLinAlgAddMultipleTo);
+     else WrongNumArgs(3));
+setupfun("rawLinAlgAddMult", rawLinAlgAddMult);
+
+export rawLinAlgSubMult(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3) else
+     when s.0 is C:RawMutableMatrixCell do
+     when s.1 is A:RawMutableMatrixCell do
+     when s.2 is B:RawMutableMatrixCell do (
+	       Ccode(void, "rawLinAlgSubMult(", 
+	       C.p, ",", 
+	       A.p, ",", 
+	       B.p, ")");
+           nullE           
+       )
+     else WrongArgMutableMatrix(3)
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(3));
+setupfun("rawLinAlgSubMult", rawLinAlgSubMult);
 
 export rawLinAlgCharPoly(e:Expr):Expr := (
      when e

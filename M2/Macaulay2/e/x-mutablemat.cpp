@@ -1018,27 +1018,57 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 
 size_t rawLinAlgRank(MutableMatrix* M)
 {
-  return M->rank();
+  try {
+    return M->rank();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return 0;
+  }
 }
 
 const RingElement* rawLinAlgDeterminant(MutableMatrix* A)
 {
-  return A->determinant();
+  try {
+    return A->determinant();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
-MutableMatrix* rawLinAlgInvert(MutableMatrix* A)
+MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
 {
-  return A->invert();
+  try {
+    return A->invert();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
 {
-  return A->rankProfile(row_profile);
+  try {
+    return A->rankProfile(row_profile);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side)
 {
-  return A->nullSpace(right_side);
+  try {
+    return A->nullSpace(right_side);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
@@ -1067,10 +1097,34 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
     return C;
 }
 
+void rawLinAlgAddMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+#warning "write rawLinAlgAddMult"
+  //TODO: write me
+  C->addMultipleTo(A,B);
+}
+
+void rawLinAlgSubMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+#warning "write rawLinAlgSubMult"
+  //TODO: write me
+  C->subtractMultipleTo(A,B);
+}
+
 MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
                                            const MutableMatrix* B)
 {
-  return A->mult(B);
+  try {
+    return A->mult(B);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 engine_RawRingElementArray convertRingelemsToArray(const Ring *R, 
