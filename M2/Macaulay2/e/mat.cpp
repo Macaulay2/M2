@@ -20,7 +20,7 @@
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 #include "aring-zz-flint.hpp"
-#include "aring-qq-flint.hpp"
+#include "aring-qq.hpp"
 #include "aring-zzp-flint.hpp"
 
 #include "QQ.hpp"

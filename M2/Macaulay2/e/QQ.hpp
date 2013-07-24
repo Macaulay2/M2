@@ -4,7 +4,7 @@
 #define _QQ_hh_
 
 #include "ZZ.hpp"
-#include "aring-QQ.hpp"
+#include "aring-qq.hpp"
 
 /**
     @ingroup rings

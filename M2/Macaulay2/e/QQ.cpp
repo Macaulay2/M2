@@ -8,7 +8,6 @@
 #include "relem.hpp"
 #include "ringmap.hpp"
 #include "gbring.hpp"
-#include "aring-qq-flint.hpp"
 
 bool QQ::initialize_QQ()
 {
