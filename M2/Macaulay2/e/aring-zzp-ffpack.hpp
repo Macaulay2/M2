@@ -23,6 +23,7 @@ namespace M2 {
     typedef M2::ARingZZpFFPACK   ring_type;
     
     ARingZZpFFPACK(int charac) {}
+
   };
   
 };

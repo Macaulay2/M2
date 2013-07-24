@@ -143,11 +143,11 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  return MutableMat< DMat<M2::ARingQQFlint> >
+	  return MutableMat< DMat<M2::ARingQQ> >
 	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
 	}
       else
-	  return MutableMat< SMat<M2::ARingQQFlint> >
+	  return MutableMat< SMat<M2::ARingQQ> >
 	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
     }
 #endif
