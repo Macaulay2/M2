@@ -1136,7 +1136,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
      if #solsT == 0 then return solsT;
      
      ref'sols := null;
-     if not isProjective then (
+     if isProjective then (
      	  if o.Software === M2engine then ( -- engine refiner is primitive
 --      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
 --                if PT=!=null then (
@@ -1144,13 +1144,18 @@ refine (List,List) := List => o -> (T,solsT) -> (
 --  		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
 --  		    	      ), s->{s}); -- old format
 -- 		    );
--- 	       error "refine is not implemented in the engine yet";
+	       error "refine is not implemented in the engine yet";
 	       ) 
-	  else if o.Software === PHCPACK then (
-	       ref'sols = refinePHCpack(T,solsT,o)/point
-	       );
-	  );
-     -- M2 part 
+	   else error "refining projective solutions is not implemented yet";
+    	  );  
+    if o.Software === PHCPACK then  return refinePHCpack(T,solsT,o)/point;
+    if o.Software === BERTINI then (
+	-- bits to decimals 
+	-- decimals := ceiling(o.Bits * log 2 / log 10);
+	return bertiniRefineSols(T,solsT,o.Bits)
+	);
+
+     -- Software=>M2 (and Software=>M2engine for now)
      if ref'sols === null then (
      	  n'iterations := o.Iterations; 
      	  T = matrix {T};
