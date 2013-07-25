@@ -186,6 +186,10 @@ public:
   static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible);
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile);
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B);
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B);
 };
 #endif
 
@@ -258,6 +262,20 @@ public:
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
   }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpz_mat_mul(D.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
+    fmpz_mat_add(C.fmpz_mat(), C.fmpz_mat(), D.fmpz_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpz_mat_mul(D.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
+    fmpz_mat_sub(C.fmpz_mat(), C.fmpz_mat(), D.fmpz_mat());
+  }
 };
 #endif
 
@@ -324,6 +342,20 @@ public:
   {
     //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    nmod_mat_mul(D.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+    nmod_mat_add(C.nmod_mat(), C.nmod_mat(), D.nmod_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    nmod_mat_mul(D.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+    nmod_mat_sub(C.nmod_mat(), C.nmod_mat(), D.nmod_mat());
   }
 };
 #endif
@@ -402,6 +434,20 @@ public:
   {
     //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpq_mat_mul(D.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
+    fmpq_mat_add(C.fmpq_mat(), C.fmpq_mat(), D.fmpq_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpq_mat_mul(D.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
+    fmpq_mat_sub(C.fmpq_mat(), C.fmpq_mat(), D.fmpq_mat());
   }
 };
 #endif

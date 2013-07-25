@@ -159,6 +159,10 @@ solveLinear(MutableMatrix, MutableMatrix) := opts -> (A,B) -> (
      map(R,rawLinAlgSolve(raw A,raw B,opts.RightSide))
      )
 
+-----------------------------------
+-- addMultipleTo: HASH CHANGED!! -- 
+-----------------------------------
+
 addMultipleTo = method(Options => {
 	  TransposeA => false, 
 	  TransposeB => false, 
@@ -184,10 +188,10 @@ addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
       if ( k!=k2 or numRows C != m or numColumns C != n ) then 
         error("matrix sizes are not compatible!");
 --
-     rawLinAlgAddMultipleTo(raw C, raw A, raw B,
-	  opts.TransposeA, 
-	  opts.TransposeB, 
-	  raw a, raw b);
+--     rawLinAlgAddMultipleTo(raw C, raw A, raw B,
+--	  opts.TransposeA, 
+--	  opts.TransposeB, 
+--	  raw a, raw b);
      C)
 
 --MutableMatrix * MutableMatrix := (A,B) -> (

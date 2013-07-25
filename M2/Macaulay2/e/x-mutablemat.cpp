@@ -1016,14 +1016,14 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 // DMat<X>  -- one for each X, and one that is the "default" (default: DONE)
 // SMat<X> -- one for each X and one that is the "default" (default: DONE)
 
-size_t rawLinAlgRank(MutableMatrix* M)
+long rawLinAlgRank(MutableMatrix* M)
 {
   try {
     return M->rank();
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
-    return 0;
+    return -1;
   }
 }
 
@@ -1097,24 +1097,37 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
     return C;
 }
 
-void rawLinAlgAddMult(MutableMatrix* C,
+M2_bool rawLinAlgAddMult(MutableMatrix* C,
                       const MutableMatrix* A,
                       const MutableMatrix* B)
 {
-#warning "write rawLinAlgAddMult"
-  //TODO: write me
-  C->addMultipleTo(A,B);
+  try {
+    C->addMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
-void rawLinAlgSubMult(MutableMatrix* C,
+M2_bool rawLinAlgSubMult(MutableMatrix* C,
                       const MutableMatrix* A,
                       const MutableMatrix* B)
 {
-#warning "write rawLinAlgSubMult"
-  //TODO: write me
-  C->subtractMultipleTo(A,B);
+  try {
+    C->subtractMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
+/* Note: the following routine is *not* called by the front end, as 
+   the * operator for MutableMatrix is implemented directly in d/engine.dd
+*/
 MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
                                            const MutableMatrix* B)
 {

@@ -2902,12 +2902,11 @@ export rawLinAlgAddMult(e:Expr):Expr := (
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is C:RawMutableMatrixCell do
      when s.1 is A:RawMutableMatrixCell do
-     when s.2 is B:RawMutableMatrixCell do (
-	       Ccode(void, "rawLinAlgAddMult(", 
+     when s.2 is B:RawMutableMatrixCell do possibleEngineError(
+	       Ccode(bool, "rawLinAlgAddMult(", 
 	       C.p, ",", 
 	       A.p, ",", 
-	       B.p, ")");
-           nullE           
+	       B.p, ")")
        )
      else WrongArgMutableMatrix(3)
      else WrongArgMutableMatrix(2)
@@ -2920,12 +2919,11 @@ export rawLinAlgSubMult(e:Expr):Expr := (
      if length(s) != 3 then WrongNumArgs(3) else
      when s.0 is C:RawMutableMatrixCell do
      when s.1 is A:RawMutableMatrixCell do
-     when s.2 is B:RawMutableMatrixCell do (
-	       Ccode(void, "rawLinAlgSubMult(", 
+     when s.2 is B:RawMutableMatrixCell do possibleEngineError(
+	       Ccode(bool, "rawLinAlgSubMult(", 
 	       C.p, ",", 
 	       A.p, ",", 
-	       B.p, ")");
-           nullE           
+	       B.p, ")")
        )
      else WrongArgMutableMatrix(3)
      else WrongArgMutableMatrix(2)

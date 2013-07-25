@@ -398,12 +398,29 @@ testMultSimple = (R) -> (
     assert(matrix(m2*m1) == (matrix m2) * (matrix m1));
     )
 
-testMult = (R) -> (
-    testMultSimple R;
-    debug Core;
-    R = ZZp(33554393, "Choose"=>"FFPACK");
-    R1 = ZZp(33554393, "Choose"=>"FLINT");
+testMultAddSub = (R1) -> (
+    A := mutableMatrix(R1,3,6);
+    B := mutableMatrix(R1,6,5);
+    C := mutableMatrix(R1,3,5);
+    fillMatrix A; fillMatrix B; fillMatrix C;
+    C1 := matrix C;
+    rawLinAlgAddMult(raw C,raw A,raw B);
+    assert(C1 + (matrix A) * (matrix B) == matrix C);
+    C = mutableMatrix C1;
+    rawLinAlgSubMult(raw C,raw A,raw B);
+    assert(C1 - (matrix A) * (matrix B) == matrix C);
+    rawLinAlgRank raw C
+    )
 
+testMult = (R) -> (
+    R1 := ZZp(33554393, "Choose"=>"FFPACK");
+    R2 := ZZp(33554393, "Choose"=>"FLINT");
+    R3 := ZZFlint;
+    testMultSimple R;
+    testMultAddSub R1;
+    testMultAddSub R2;
+    testMultAddSub R3;
+    testMultAddSub QQ;
     N := 500;
     M := mutableMatrix(R1, N, N);
     fillMatrix M;

@@ -193,6 +193,96 @@ bool MatLinAlg< DMat<M2::ARingZZpFFPACK> >::solveLinear(const Mat& A, const Mat&
   return solveLinear(A, B, true, X, false);
 }
 
+ static void ARingZZpFFPACKAddMultipleTo( DMat<M2::ARingZZpFFPACK> &C,
+                                                      const DMat<M2::ARingZZpFFPACK> &A,
+                                                      const DMat<M2::ARingZZpFFPACK> &B,
+                                                      bool transposeA,
+                                                      bool transposeB,
+                                                      const typename DMat<M2::ARingZZpFFPACK>::ElementType &a,
+                                                      const typename DMat<M2::ARingZZpFFPACK>::ElementType &b)
+    /* A,B,C should be mutable matrices over a finite prime field, and a,b
+       elements of this field.
+       C = b*C + a * op(A)*op(B),
+       where op(A) = A or transpose(A), depending on transposeA
+       where op(B) = B or transpose(B), depending on transposeB
+       connected to rawFFPackAddMultipleTo, MES
+    */
+  {
+   typedef DMat<M2::ARingZZpFFPACK> Mat;
+    FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+    FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+  
+    // determine m,n,k
+    size_t m = (transposeA ? A.numColumns() : A.numRows() );
+    size_t n = (transposeB ? B.numRows() : B.numColumns() );
+    size_t k = (transposeA ? A.numRows() : A.numColumns() );
+    size_t k2 = (transposeB ? B.numColumns() : B.numRows());
+    if (k != k2)
+      {
+        throw exc::engine_error("matrices have wrong shape to be multiplied");
+        return ;
+      }
+  
+    Mat copyA(A);
+    Mat copyB(B);
+  
+    FFLAS::fgemm( A.ring().field(),
+                  tA, tB,
+                  m,n,k,
+                  a,
+                  copyA.array(),
+                  A.numColumns(),
+                  copyB.array(),
+                  B.numColumns(),
+                  b,
+                  C.array(),
+                  C.numColumns()
+                  );
+    return  ;
+  }
+  
+     void MatLinAlg< DMat<M2::ARingZZpFFPACK> >::addMultipleTo( Mat &C, const Mat & A,  const Mat & B       )
+   {
+        bool transposeA;
+        
+                                                      bool transposeB;
+        ElementType one;
+        
+        A.ring().set_from_int( one,1 );
+  
+        ARingZZpFFPACKAddMultipleTo( C, A, B,  
+                       transposeA=false,
+                       transposeB=false,  
+                       one,  
+                       one
+                     );
+        return;
+}
+
+void MatLinAlg< DMat<M2::ARingZZpFFPACK> >::subtractMultipleTo(Mat &C,
+                                                      const Mat &A,
+                                                      const Mat &B       )
+   {
+        bool transposeA;
+        bool transposeB;
+                                                      
+     
+        ElementType a,b;
+        
+        A.ring().set_from_int( b,1 );
+        A.ring().invert( a, b );
+      
+        
+        ARingZZpFFPACKAddMultipleTo( C, A, B,  
+                       transposeA=false,
+                       transposeB=false,  
+                       a,  
+                       b
+                     );
+       return;
+}
+                                                     
+
 #endif // HAVE_FFLAS_FFPACK
 
 //template<> 

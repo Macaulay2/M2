@@ -1271,11 +1271,15 @@ extern "C" {
   /** return the transpose of A */
   MutableMatrix* rawMutableMatrixTranspose(MutableMatrix* A);
 
-  size_t rawLinAlgRank(MutableMatrix* M);
+  /**
+     returns the rank of the matrix M.  If 'rank' is not defined on this type of matrix,
+     then returns -1 (and an error message is given).
+   */
+  long rawLinAlgRank(MutableMatrix* M);
 
   /** requires: M should be a square matrix.  
       If not, or if the ring has not implemented this routine,
-      then -1 is returned (and an error message is given).
+      then null is returned (and an error message is given).
    */
   const RingElement* rawLinAlgDeterminant(MutableMatrix* A);
 
@@ -1296,11 +1300,17 @@ extern "C" {
      where op(B) = B or transpose(B), depending on transposeB
   */ 
 
-  void rawLinAlgAddMult(MutableMatrix* C,
+  /** set C += A*B.  If not implemented, or sizes/rings are not compatible
+      then false is returned.  Otherwise true is returned.
+  */
+  M2_bool rawLinAlgAddMult(MutableMatrix* C,
                         const MutableMatrix* A,
                         const MutableMatrix* B);
 
-  void rawLinAlgSubMult(MutableMatrix* C,
+  /** set C -= A*B.  If not implemented, or sizes/rings are not compatible
+      then false is returned.  Otherwise true is returned.
+  */
+  M2_bool rawLinAlgSubMult(MutableMatrix* C,
                         const MutableMatrix* A,
                         const MutableMatrix* B);
 
