@@ -8,7 +8,7 @@ newPackage(
      Email => "bates@math.colostate.edu",
      HomePage => "http://www.math.colostate.edu/~bates"}, 
     {Name => "Elizabeth Gross"},
-    {Name => "Jose Israel Rodriguez",
+    {Name => "Jose Israel Rodriguez III",
      Email => "jo.ro@berkeley.edu",
      HomePage => "http://math.berkeley.edu/~jrodrig/"},
     {Name => "Anton Leykin",
