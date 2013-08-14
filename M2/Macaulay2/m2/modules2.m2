@@ -354,7 +354,7 @@ multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      c := codim M;
-     if c === infinity then 1_A else part(c,onem numerator poincare M))
+     if c === infinity then 0_A else part(c,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 

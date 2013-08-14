@@ -512,7 +512,7 @@ document {
      Outputs => { {"the multidegree of ", TT "M", ".  If ", TT "M", " is an ideal, the corresponding quotient ring is used."} },
      PARA {
 	  "The multidegree is defined on page 165 of ", EM "Combinatorial Commutative Algebra", ", by
-	  Miller and Sturmfels, on page 165.  It is an element of the degrees ring of ", TT "M", ".  Our
+	  Miller and Sturmfels.  It is an element of the degrees ring of ", TT "M", ".  Our
 	  implementation agrees with their definition provided the heft vector of the ring has every entry equal to 1.
 	  See also ", EM "Gröbner geometry of Schubert polynomials", ", by Allen Knutson and Ezra Miller."
 	  },
