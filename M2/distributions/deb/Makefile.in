@@ -16,7 +16,11 @@ ifeq (@ARCH@,i686)
 # libgc needs to be compiled with i686 to get multiple threads
 DEBARCH=i386
 else
+ifeq (@ARCH@,armv7l)
+DEBARCH=armel
+else
 $(error unrecognized architecture @ARCH@)
+endif
 endif
 endif
 
