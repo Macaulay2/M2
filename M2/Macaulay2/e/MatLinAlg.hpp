@@ -153,7 +153,7 @@ public:
     throw exc::engine_error("'subtractMultipleTo' not implemented for this kind of matrix over this ring");
   }
 
-  // Other functiond possibly desired:
+  // Other functions possibly desired:
   // (1) rref
   // (2) LU = PA decomposition.
   //     other decompositions?
