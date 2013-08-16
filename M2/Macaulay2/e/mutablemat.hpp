@@ -6,6 +6,7 @@
 #include <iostream>
 #include "mat.hpp"
 
+
 class CoefficientRingCCC;
 class Ring_RRR;
 template <typename RT> class DMat;
@@ -23,8 +24,9 @@ template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 #include "smat.hpp"
 #include "MatElementaryOps.hpp"
 #include "MatArithmetic.hpp"
-#include "MatLinAlg.hpp"
 #include "matrix-con.hpp"
+
+#include "mat-linalg.hpp"
 
 //template<typename MatType> Matrix* toMatrix(const Ring* R, const MatType& A)
 //{
@@ -115,7 +117,6 @@ public:
 
   typedef MatElementaryOps<Mat> MatOps;
   typedef MatArithmetic<Mat> MatArith;
-  typedef MatLinAlg<Mat> LinAlg;
 private:
   const Ring* mRing;
   Mat mat;
@@ -723,8 +724,7 @@ public:
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
-  return LinAlg::rank(mat);
-  //  return mat.new_rank();
+  return MatrixOppies::rank(mat);
 }
 
 template <typename T>
@@ -733,7 +733,7 @@ const RingElement* MutableMat<T>::determinant() const
   ring_elem det;
   elem a;
   mat.ring().init(a);
-  LinAlg::determinant(mat, a);
+  MatrixOppies::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
   mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
@@ -743,7 +743,7 @@ template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
-  bool val = LinAlg::inverse(mat, result->mat);
+  bool val = MatrixOppies::inverse(mat, result->mat);
   if (!val)
     {
       delete result;
@@ -772,9 +772,9 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
   // create the result matrix
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), B->n_cols());
 
-  std::cout << "about to call LinAlg::mult" << std::endl;
+  std::cout << "about to call MatrixOppies::mult" << std::endl;
   // Call the resulting matrix routine.
-  LinAlg::mult(mat, B1->mat, result->mat);
+  MatrixOppies::mult(mat, B1->mat, result->mat);
 
   return result;
 }
@@ -790,7 +790,7 @@ void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
   if (mat.numRows() != A1->n_rows() or mat.numColumns() != B1->n_cols())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  LinAlg::addMultipleTo(mat,A1->mat,B1->mat);
+  MatrixOppies::addMultipleTo(mat,A1->mat,B1->mat);
 }
 
 template <typename T>
@@ -804,13 +804,13 @@ void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
   if (mat.numRows() != A1->n_rows() or mat.numColumns() != B1->n_cols())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  LinAlg::subtractMultipleTo(mat,A1->mat,B1->mat);
+  MatrixOppies::subtractMultipleTo(mat,A1->mat,B1->mat);
 }
 
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
-  return LinAlg::rankProfile(mat, row_profile);
+  return MatrixOppies::rankProfile(mat, row_profile);
 }
 
 #if 0

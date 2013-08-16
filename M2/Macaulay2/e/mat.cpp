@@ -745,7 +745,7 @@ MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
 {
   MutableMat<T>* ker = makeZeroMatrix(0,0);
   //  mat.nullSpace(ker->mat, right_side);
-  LinAlg::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
+  MatrixOppies::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
   return ker;
 }
 
@@ -755,7 +755,7 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
 { 
   const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = LinAlg::solveLinear(mat, B1->mat, right_side, solns->mat, false);
+  bool retval = MatrixOppies::solveLinear(mat, B1->mat, right_side, solns->mat, false);
   //  bool retval = mat.solveLinear(solns->mat, B1->mat, right_side);
   return std::pair<bool, MutableMatrix*>(retval, solns);
 }
@@ -783,7 +783,7 @@ void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
 
 
   //  mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  //  LinAlg::addMultipleTo(mat, A1->mat, B1->mat, transposeA, transposeB, fa, fb);
+  //  MatrixOppies::addMultipleTo(mat, A1->mat, B1->mat, transposeA, transposeB, fa, fb);
   mat.ring().clear(fa);
   mat.ring().clear(fb);
 #endif
