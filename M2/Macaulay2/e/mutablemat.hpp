@@ -23,9 +23,9 @@ template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 #include "dmat.hpp"
 #include "smat.hpp"
 #include "MatElementaryOps.hpp"
-#include "MatArithmetic.hpp"
 #include "matrix-con.hpp"
 
+#include "mat-arith.hpp"
 #include "mat-linalg.hpp"
 
 //template<typename MatType> Matrix* toMatrix(const Ring* R, const MatType& A)
@@ -116,7 +116,6 @@ public:
   typedef typename CoeffRing::elem elem;
 
   typedef MatElementaryOps<Mat> MatOps;
-  typedef MatArithmetic<Mat> MatArith;
 private:
   const Ring* mRing;
   Mat mat;
@@ -538,7 +537,7 @@ public:
 
   virtual bool is_zero() const
   {
-    return MatArith::isZero(getMat());
+    return MatrixOppies::isZero(getMat());
   }
 
   virtual bool is_equal(const MutableMatrix *B) const
@@ -546,7 +545,7 @@ public:
     const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
     if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
       return false;
-    return MatArith::isEqual(getMat(), B1->getMat());
+    return MatrixOppies::isEqual(getMat(), B1->getMat());
   }
 
   virtual MutableMat * add(const MutableMatrix *B) const
@@ -570,14 +569,14 @@ public:
       }
 
     MutableMat* result = clone();
-    MatArith::addInPlace(result->getMat(), *B1);
+    MatrixOppies::addInPlace(result->getMat(), *B1);
     return result;
   }
 
   virtual MutableMatrix * negate() const
   {
     MutableMat *result = clone();
-    MatArith::negateInPlace(result->getMat());
+    MatrixOppies::negateInPlace(result->getMat());
     return result;
   }
 
@@ -602,7 +601,7 @@ public:
       }
 
     MutableMat* result = clone();
-    MatArith::subtractInPlace(result->getMat(), *B1);
+    MatrixOppies::subtractInPlace(result->getMat(), *B1);
     return result;
   }
 
@@ -619,7 +618,7 @@ public:
     mat.ring().from_ring_elem(a, f->get_value());
 
     MutableMat *result = clone();
-    MatArith::scalarMultInPlace(result->mat, a);
+    MatrixOppies::scalarMultInPlace(result->mat, a);
 
     mat.ring().clear(a);
     return result;
@@ -628,7 +627,7 @@ public:
   virtual MutableMat /* or null */ * transpose() const
   {
     MutableMat *result = makeZeroMatrix(n_cols(), n_rows());
-    MatArith::transpose(getMat(), result->getMat());
+    MatrixOppies::transpose(getMat(), result->getMat());
     return result;
   }
 
