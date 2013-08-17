@@ -1084,19 +1084,6 @@ MutableMatrix* rawLinAlgSolve(const MutableMatrix* A,
   return 0;
 }
 
-MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
-                                                    const MutableMatrix* A,
-                                                    const MutableMatrix* B,
-                                                    M2_bool transposeA,
-                                                    M2_bool transposeB,
-                                                    const RingElement* a,
-                                                    const RingElement* b)
-{
-    std::cerr << "x-mutableMat : rawLinAlgAddMultipleTo" << std::endl;
-    C->addMultipleTo(A,B,transposeA,transposeB,a,b);
-    return C;
-}
-
 M2_bool rawLinAlgAddMult(MutableMatrix* C,
                       const MutableMatrix* A,
                       const MutableMatrix* B)

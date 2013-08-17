@@ -290,23 +290,6 @@ public:
     return std::pair<bool, MutableMatrix*>(0,static_cast<MutableMatrix*>(NULL)); 
   }
 
-  /** C=this,A,B should be mutable matrices over the same ring, and a,b
-     elements of this ring. AND of the same density type.
-     C = b*C + a * op(A)*op(B),
-     where op(A) = A or transpose(A), depending on transposeA
-     where op(B) = B or transpose(B), depending on transposeB
-  */
-  virtual void  addMultipleTo(const MutableMatrix* A,
-                              const MutableMatrix* B,
-                              bool transposeA,
-                              bool transposeB,
-                              const RingElement* a,
-                              const RingElement* b)
-  {
-    //std::cerr << "MutableMatrix : rawLinAlgAddMultipleTo" << std::endl;
-    return ;
-  }
-
   virtual void  addMultipleTo(const MutableMatrix* A,
                               const MutableMatrix* B)
   {

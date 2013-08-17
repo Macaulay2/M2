@@ -718,40 +718,6 @@ MutableMatrix* M2::makeMutableZeroMatrix(const Ring* Rgeneral,
 }
 
 /////////////////////////////////////////
-/// Fast Linear Algebra Routines ////////
-/////////////////////////////////////////
-
-template <typename T>
-void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
-                                  const MutableMatrix* B,
-                                  bool transposeA,
-                                  bool transposeB,
-                                  const RingElement* a,
-                                  const RingElement* b)
-{
-#warning "MutableMat::addMultipleTo needs def"
-#if 0
-  std::cerr << "somewhere addMultipleTo" << std::endl;
-
-  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
-
-  typename T::ElementType fa, fb;
-  mat.ring().init(fa);
-  mat.ring().init(fb);
-  mat.ring().from_ring_elem(fa, a->get_value());
-  mat.ring().from_ring_elem(fb, b->get_value());
-
-
-  //  mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  //  MatrixOppies::addMultipleTo(mat, A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  mat.ring().clear(fa);
-  mat.ring().clear(fb);
-#endif
-}
-
-
-/////////////////////////////////////////
 #if 0
 MutableMatrix *M2::ARingZZpFFPACK::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
 {
