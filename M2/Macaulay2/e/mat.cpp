@@ -717,48 +717,9 @@ MutableMatrix* M2::makeMutableZeroMatrix(const Ring* Rgeneral,
     ::zero_matrix(Rgeneral,R,nrows,ncols);
 }
 
-#if 0
-//TODO: Mike, Jakob.  Once we have sparse linbox matrices implemented, this
-// might be how we create them.
-template<>
-MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring* Rgeneral,
-                                         const M2::ARingZZpFFPACK* R,
-                                         size_t nrows,
-                                         size_t ncols,
-                                         bool dense)
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingZZpFFPACK> >
-      ::zero_matrix(Rgeneral,R,nrows,ncols);
-
-  return MutableMat< SparseLinboxMat<M2::ARingZZpFFPACK> >
-    ::zero_matrix(Rgeneral,R,nrows,ncols);
-}
-#endif
-
 /////////////////////////////////////////
 /// Fast Linear Algebra Routines ////////
 /////////////////////////////////////////
-
-template <typename T>
-MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
-{
-  MutableMat<T>* ker = makeZeroMatrix(0,0);
-  //  mat.nullSpace(ker->mat, right_side);
-  MatrixOppies::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
-  return ker;
-}
-
-template <typename T>
-std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
-                                                           bool right_side) const 
-{ 
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
-  MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = MatrixOppies::solveLinear(mat, B1->mat, right_side, solns->mat, false);
-  //  bool retval = mat.solveLinear(solns->mat, B1->mat, right_side);
-  return std::pair<bool, MutableMatrix*>(retval, solns);
-}
 
 template <typename T>
 void MutableMat<T>::addMultipleTo(const MutableMatrix* A,

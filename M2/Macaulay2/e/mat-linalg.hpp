@@ -465,7 +465,7 @@ namespace MatrixOppies
                           DMatQQFlint& result_nullspace) 
   {
     //TODO: WRITE ME
-    DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
+    //DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
     //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
     //    return (A.numColumns() - rank);
     return 0;
@@ -484,8 +484,9 @@ namespace MatrixOppies
                           const DMatQQFlint& B, 
                           DMatQQFlint& X) 
   {
-    DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
-    DMatQQFlint& B1 = const_cast<DMatQQFlint&>(B);
+    //TODO: WRITE ME
+    //DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
+    //DMatQQFlint& B1 = const_cast<DMatQQFlint&>(B);
     //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
     return false;
   }

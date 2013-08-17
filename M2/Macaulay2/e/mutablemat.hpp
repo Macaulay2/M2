@@ -752,6 +752,24 @@ MutableMatrix* MutableMat<T>::invert() const
 }
 
 template <typename T>
+std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
+                                                           bool right_side) const 
+{ 
+  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  MutableMat<T>* solns = makeZeroMatrix(0,0);
+  bool retval = MatrixOppies::solveLinear(mat, B1->mat, right_side, solns->mat, false);
+  return std::pair<bool, MutableMatrix*>(retval, solns);
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
+{
+  MutableMat<T>* ker = makeZeroMatrix(0,0);
+  MatrixOppies::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
+  return ker;
+}
+
+template <typename T>
 MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
 {
   std::cout << "MutableMat::mult" << std::endl;
