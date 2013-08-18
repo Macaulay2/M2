@@ -93,70 +93,74 @@ public:
     throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
   }
 
-  // If A is non-singular, then place into X the unique solution to AX=B.
-  // otherwise return false
+  /// @brief solve a linear equation AX=B or XA=B
+  ///
+  /// if right_side is true then 
+  ///   X is set to a matrix which solves AX=B.
+  /// if right_side is false then
+  ///   X is set to a matrix which solves XA=B.
+  ///
+  /// true is returned iff this equation has a solution.
+  ///
+  /// declare_A_is_invertible is a hint: if true, then A is assumed to be a square invertible matrix.
+  ///   If A is not invertible, and declare_A_is_invertible is true, then the routine may either fail or crash.
+  /// if declare_A_is_invertible is false, then no such assumption is made.
   static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible)
   {
     throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
     return false;
   }
 
-  // Questions: 
-  // (1) do we need a non-singular solve function?
-  // (2) should we have an inplace LU decomposition function?
-  //   answer: at top level in M2, probably not.
-  //   But internally it might be very useful.
-  //   if so: 
-  //     LU --> rank, det, nullspace, solving, row-reduced echelon form
+  /// @brief solve AX=B, return true if the system has a solution.
+  static bool solveLinear(const Mat& A, const Mat& B, Mat& X)
+  {
+    return solveLinear(A,B,true,X,false);
+  }
 
-  // Other functiond needed:
-  // (1) rref
-  // (2) LU = PA decomposition.
-  //     other decompositions?
-  // (3) char polynomial
-  // (4) minimal polynomial
-  
-  // Change this to:
-  //   static void rankProfile(const Mat& A, bool row_profile, std::vector<size_t>& profile);)
+  /// @brief Returns either the row or column rank profile of A
+  ///
+  /// if row_profile is true, then row profile is computed, otherwise
+  /// the column profile is computed.
+  ///
+  /// The return value is an ascending sequence of non-negative integers
+  /// with an entry a occuring iff the submatrix of A of the first
+  /// (a-1) rows (resp columns) has lower rank than the submatrix of the 
+  /// first a rows (resp columns).  
+  ///
+  /// Notice that if the matrix is non-zero and the first row is 
+  /// non-zero, then the first entry will be 0.
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile)
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
   }
 
-  // TO BE REMOVED?
-  // If A is non-singular, then place into X the unique solution to AX=B.
-  // otherwise return false
-  static bool solveLinear(const Mat& A, const Mat& B, Mat& X)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
-  }
-
-  // TO BE REMOVED:
+  /// @brief Set C += A*B
+  /// 
+  /// Throws an exception if not yet implementd for this ring/matrix type.
+  /// The sizes of C,A,B must be compatible.  These are checked only via assertions.
   static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
   // C = C + A*B
   {
     throw exc::engine_error("'addMultipleTo' not implemented for this kind of matrix over this ring");
   }
 
-  // TO BE REMOVED:
-  static size_t nullSpace(const Mat& A, Mat& result_nullspace) 
+  /// @brief Set C -= A*B
+  /// 
+  /// Throws an exception if not yet implementd for this ring/matrix type.
+  /// The sizes of C,A,B must be compatible.  These are checked only via assertions.
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  // C = C - A*B
   {
-    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
+    throw exc::engine_error("'subtractMultipleTo' not implemented for this kind of matrix over this ring");
   }
 
-
-
-  // To add?
-  // transpose
-  // multiply by a scalar
-  // -A
-  // A = A + B
-  // A = A-B
-  // A = A + B*C
-  // A = A - B*C
-  // trace
-  // is_equal
+  // Other functions possibly desired:
+  // (1) rref
+  // (2) LU = PA decomposition.
+  //     other decompositions?
+  // (3) char polynomial
+  // (4) minimal polynomial
+  
 };
 
 #ifdef HAVE_FFLAS_FFPACK
@@ -176,8 +180,6 @@ public:
 
   static void mult(const Mat& A, const Mat& B, Mat& result_product);
 
-  static size_t nullSpace(const Mat& A, Mat& result_nullspace);
-
   static size_t nullSpace(const Mat& A, bool right_side, Mat& result_nullspace);
 
   static bool solveLinear(const Mat& A, const Mat& B, Mat& X);
@@ -185,6 +187,10 @@ public:
   static bool solveLinear(const Mat& A, const Mat& B, bool right_side, Mat& X, bool declare_A_is_invertible);
 
   static M2_arrayintOrNull rankProfile(const Mat& A, bool row_profile);
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B);
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B);
 };
 #endif
 
@@ -257,6 +263,20 @@ public:
   {
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
   }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpz_mat_mul(D.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
+    fmpz_mat_add(C.fmpz_mat(), C.fmpz_mat(), D.fmpz_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpz_mat_mul(D.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
+    fmpz_mat_sub(C.fmpz_mat(), C.fmpz_mat(), D.fmpz_mat());
+  }
 };
 #endif
 
@@ -323,6 +343,20 @@ public:
   {
     //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    nmod_mat_mul(D.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+    nmod_mat_add(C.nmod_mat(), C.nmod_mat(), D.nmod_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    nmod_mat_mul(D.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+    nmod_mat_sub(C.nmod_mat(), C.nmod_mat(), D.nmod_mat());
   }
 };
 #endif
@@ -401,6 +435,20 @@ public:
   {
     //TODO: WRITE ME
     throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  static void addMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpq_mat_mul(D.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
+    fmpq_mat_add(C.fmpq_mat(), C.fmpq_mat(), D.fmpq_mat());
+  }
+
+  static void subtractMultipleTo(Mat& C, const Mat& A, const Mat& B)
+  {
+    Mat D(C.ring(), A.numRows(), B.numColumns());
+    fmpq_mat_mul(D.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
+    fmpq_mat_sub(C.fmpq_mat(), C.fmpq_mat(), D.fmpq_mat());
   }
 };
 #endif

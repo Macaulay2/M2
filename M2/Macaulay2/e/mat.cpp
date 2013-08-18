@@ -20,7 +20,7 @@
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
 #include "aring-zz-flint.hpp"
-#include "aring-qq-flint.hpp"
+#include "aring-qq.hpp"
 #include "aring-zzp-flint.hpp"
 
 #include "QQ.hpp"
@@ -143,11 +143,11 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     {
       if (dense)
 	{
-	  return MutableMat< DMat<M2::ARingQQFlint> >
+	  return MutableMat< DMat<M2::ARingQQ> >
 	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
 	}
       else
-	  return MutableMat< SMat<M2::ARingQQFlint> >
+	  return MutableMat< SMat<M2::ARingQQ> >
 	    ::zero_matrix(globalQQ,globalQQ->get_ARing(),nrows,ncols);
     }
 #endif

@@ -104,7 +104,7 @@ initializeEngineLinearAlgebra Ring := (R) -> (
         A := mutableMatrix(f, Dense=>true);
         R := ring A;
         if numRows A =!= numColumns A then error "expected square matrix";
-        matrix map(R,rawLinAlgInvert(raw A))
+        matrix map(R,rawLinAlgInverse(raw A))
         );
     R#"solveLinear" = (f,g, rightside) -> (
         -- solve f*X = g, or (if rightside is false), X*f = g

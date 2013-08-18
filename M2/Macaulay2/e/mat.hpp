@@ -307,6 +307,16 @@ public:
     return ;
   }
 
+  virtual void  addMultipleTo(const MutableMatrix* A,
+                              const MutableMatrix* B)
+  {
+  }
+
+  virtual void  subtractMultipleTo(const MutableMatrix* A,
+                                   const MutableMatrix* B)
+  {
+  }
+
   virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const {
     ERROR("not implemented for this ring/mutable matrix type");
     return 0;

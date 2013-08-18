@@ -473,11 +473,11 @@ Module ** ChainComplex := ChainComplex => (M,C) -> (
      D)
 
 Module ** ChainComplexMap := ChainComplexMap => (M,f) -> (
-     map(M ** target f, M ** source f, i -> M ** f_i)
+     map(M ** target f, M ** source f, i -> M ** f_i, Degree => degree f)
      )
 
 ChainComplexMap ** Module := ChainComplexMap => (f,M) -> (
-     map(target f ** M, source f ** M, i -> f_i ** M)
+     map(target f ** M, source f ** M, i -> f_i ** M, Degree => degree f)
      )
 
 -----------------------------------------------------------------------------
@@ -952,7 +952,7 @@ map(ChainComplex,ChainComplex,Function) := ChainComplexMap => options -> (C,D,f)
      h
      )
 
-map(ChainComplex,ChainComplex,ChainComplexMap) := ChainComplexMap => options -> (C,D,f) -> map(C,D,k -> f_k)
+map(ChainComplex,ChainComplex,ChainComplexMap) := ChainComplexMap => opts -> (C,D,f) -> map(C,D,k -> f_k,opts)
 
 inducedMap(ChainComplex,ChainComplex) := ChainComplexMap => options -> (C,D) -> (
      h := new ChainComplexMap;

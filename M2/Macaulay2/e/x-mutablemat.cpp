@@ -1016,29 +1016,59 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 // DMat<X>  -- one for each X, and one that is the "default" (default: DONE)
 // SMat<X> -- one for each X and one that is the "default" (default: DONE)
 
-size_t rawLinAlgRank(MutableMatrix* M)
+long rawLinAlgRank(MutableMatrix* M)
 {
-  return M->rank();
+  try {
+    return M->rank();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return -1;
+  }
 }
 
 const RingElement* rawLinAlgDeterminant(MutableMatrix* A)
 {
-  return A->determinant();
+  try {
+    return A->determinant();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
-MutableMatrix* rawLinAlgInvert(MutableMatrix* A)
+MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
 {
-  return A->invert();
+  try {
+    return A->invert();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
 {
-  return A->rankProfile(row_profile);
+  try {
+    return A->rankProfile(row_profile);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side)
 {
-  return A->nullSpace(right_side);
+  try {
+    return A->nullSpace(right_side);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
@@ -1067,10 +1097,47 @@ MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
     return C;
 }
 
+M2_bool rawLinAlgAddMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+  try {
+    C->addMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+M2_bool rawLinAlgSubMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+  try {
+    C->subtractMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+/* Note: the following routine is *not* called by the front end, as 
+   the * operator for MutableMatrix is implemented directly in d/engine.dd
+*/
 MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
                                            const MutableMatrix* B)
 {
-  return A->mult(B);
+  try {
+    return A->mult(B);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 engine_RawRingElementArray convertRingelemsToArray(const Ring *R, 

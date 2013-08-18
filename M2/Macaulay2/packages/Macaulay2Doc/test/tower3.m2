@@ -43,7 +43,7 @@ a = R2_0
 y = R2_1
 F = y^4 + a * y^2 + (a+1)
 assert(rawDiff(0,F) == 0)
-rawDiff(0, y^3 + a*y^5 + 1)
+assert(rawDiff(0, y^3 + a*y^5 + 1) == y^2 + a*y^4)
 
 -- example of squarefree fact
 R1 = rawTowerRing(101, (1:"x"))
@@ -113,7 +113,7 @@ debug Core
 R1 = rawTowerRing(17, 1:"x")
 x = R1_0
 F = x^3-x
---distinctDegreeFactorization F
+distinctDegreeFactorization F
 
 w = x
 rawDegree(0,F)
@@ -128,7 +128,7 @@ x^2 % F
 x^4 % F
 
 
-R = ZZ[x,y,h0,h1,h2,h3,h4]
+R = ZZ[symbol x,symbol y,symbol h0,symbol h1,symbol h2,symbol h3,symbol h4]
 F = y^5 + x^2*(h0+h1*y+h2*y^2+h3*y^3+h4*y^4)
 F' = diff(y,F)
 resultant(F,F',y)

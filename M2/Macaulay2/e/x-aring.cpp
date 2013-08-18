@@ -122,15 +122,15 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
         }*/
         if (dimension==1 && M2::ARingZZpFFPACK::getMaxModulus()> prime) 
         {
-	  std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
+          std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
           M2::ARingZZpFFPACK *A = new M2::ARingZZpFFPACK(prime);
           return M2::ConcreteRing<M2::ARingZZpFFPACK>::create(A);
         }
-	if (dimension==1)
-	  {
-	    ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
-	    return 0;
-	  }
+        if (dimension==1)
+          {
+            ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
+            return 0;
+          }
         M2::ARingGFGivaro *A = new M2::ARingGFGivaro(prime,dimension);
         return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
 #else
@@ -161,11 +161,11 @@ const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
       {
-	int coef = R->getCoefficientRing()->coerce_to_int(t->coeff);
+        int coef = R->getCoefficientRing()->coerce_to_int(t->coeff);
         R->getMonoid()->to_expvector(t->monom, exp);
-	ASSERT(exp[0] >= 0);
-	ASSERT(exp[0] <= deg);
-	polynomialCoeffs->array[exp[0]] = coef;
+        ASSERT(exp[0] >= 0);
+        ASSERT(exp[0] <= deg);
+        polynomialCoeffs->array[exp[0]] = coef;
       }
   return polynomialCoeffs;
 }

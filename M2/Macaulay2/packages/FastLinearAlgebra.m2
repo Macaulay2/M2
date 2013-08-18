@@ -159,6 +159,10 @@ solveLinear(MutableMatrix, MutableMatrix) := opts -> (A,B) -> (
      map(R,rawLinAlgSolve(raw A,raw B,opts.RightSide))
      )
 
+-----------------------------------
+-- addMultipleTo: HASH CHANGED!! -- 
+-----------------------------------
+
 addMultipleTo = method(Options => {
 	  TransposeA => false, 
 	  TransposeB => false, 
@@ -184,10 +188,10 @@ addMultipleTo(MutableMatrix,MutableMatrix,MutableMatrix) := opts -> (C,A,B) -> (
       if ( k!=k2 or numRows C != m or numColumns C != n ) then 
         error("matrix sizes are not compatible!");
 --
-     rawLinAlgAddMultipleTo(raw C, raw A, raw B,
-	  opts.TransposeA, 
-	  opts.TransposeB, 
-	  raw a, raw b);
+--     rawLinAlgAddMultipleTo(raw C, raw A, raw B,
+--	  opts.TransposeA, 
+--	  opts.TransposeB, 
+--	  raw a, raw b);
      C)
 
 --MutableMatrix * MutableMatrix := (A,B) -> (
@@ -2129,6 +2133,14 @@ XXXXXXXXXXXXXX
 --     d. make the 'linbox' configure option the default
 --     e. make sure that we are using correct implementation for each ZZ/p.
 --     f. clean up the template code for calling these function (in e dir)
+
+-- TODO from meeting on 24 July 2013
+--  a. rawLinAlgAddMult, rawLinAlgSubMult need to be implemented
+--  b. better tests in packages/EngineTests.m2 for lin alg routines
+--  c. solveLinear crashes on larger input, why?
+--  d. make sure entire lin alg interface is complete, extra code should be removed.
+--  e. rawLinAlgRank: isn't checking for errors.
+
 time m1 = map(ZZ^10, ZZ^10, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2)
 N = 400
 time m1 = map(ZZ^N, ZZ^N, (j,i) -> (i+1)^3 * (j+1)^2 + i + j + 2);
