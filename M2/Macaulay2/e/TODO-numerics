@@ -20,27 +20,6 @@ A. Linear Algebra over approx fields:
   need: precision (element)
         precision (matrix) -- not make much sense?
 
-B. SLP's
-  coefficients
-  variables
-  outputs
-
-  request that all operations be done with a give, specific (and same) precision.
-  
-  use name EvaluationCircuit?
-
-  virtual abstract class StraightLineProgram -- interface with interpreter
-  specific implementation (template wrapper)
-  ConcreteSLP<RingType>
-    ConcreteSLP<ARingCCC>
-  map: n-tuple of elements of R --> m-tuple of elements of R
-       map: DMat<R> --> DMat<R>, where each has 1 row.
-
-  arings:
-  mainclass "Ring", abstract class, "ringelem" is a union type of possible 
-    ring elements.
-  ConcreteRing<RingType> wrapper class (e.g. RingType=ARingCCC)
-  lots of ARing classes, giving us lots of rings.
 
 show Anton MutableMatrix structure:
   MutableMatrix -- abstract class
