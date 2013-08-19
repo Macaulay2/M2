@@ -73,10 +73,11 @@ export {
 ------------------------------------
 -- Authors: Anton Leykin
 --          Abraham Martin del Campo
+--          Frank Sottile
 --
 -- Date: April 5, 2012
 --
--- Last Update: March 22, 2013
+-- Last Update: August 19, 2013
 ------------------------------------
 
 -- needsPackage "NumericalAlgebraicGeometry"
@@ -89,6 +90,7 @@ NC = infinity
 FFF = QQ
 FFF = RR
 FFF = CC
+FFF = CC_53
 ERROR'TOLERANCE := 0.001
 ------------------
 -- Debug Level --
@@ -193,7 +195,7 @@ skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      l = verifyLength(l, k);
      m = verifyLength(m, k);
      d := (k*(n-k)-sum(l)-sum(m));
-     R := CC[vars(53..d+52)]; -- ring where the variables for the matrix lie
+     R := FFF[vars(53..d+52)]; -- ring where the variables for the matrix lie
      r := 0;
      matrix (
      	  for i from 1 to k list (
@@ -254,7 +256,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- d is the number of variables i.e. the codimension of the Schubert variety E_{l,m}
      ------------
      d := (k*(n-k)-sum(l)-sum(m));
-     S := CC[vars(53..d+52)];
+     S := FFF[vars(53..d+52)];
      T:= apply(#m, i->n-k+i-m#i);
      -- P is a list with the indeces where the special flag has ones
      P:=toList(set toList(0..n-1)-T);
@@ -276,7 +278,7 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
 	 l = verifyLength(l, k);
 	 m = verifyLength(m, k);
    d := k*(n-k)-sum(l)-sum(m);
-   apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)))
+   apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
    )
 
      
@@ -312,7 +314,7 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       S := apply(take(G,d-1), g->det( matrix E || sub(g, ring E),Strategy=>Cofactor)) | {det(precookPieriHomotopy(kn,l,m), Strategy=>Cofactor)};
       ---- Create the target system T ----
       T := apply(take(G,d), g->det( matrix E || sub(g, ring E), Strategy=>Cofactor)); 
-      newR := CC_53(monoid[gens ring first S]);
+      newR := FFF(monoid[gens ring first S]);
       S = S/(s->sub(s,newR));
       T = T/(t->sub(t,newR));
       ------------------------
@@ -735,18 +737,16 @@ if not node.IsResolved then (
      	  -- temporary: creates a superset of solutions via a blackbox solver
      	  all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
      	  polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
-     	  
-	  if DEBUG'LEVEL >= 2 then(
-	       ---* this part is to time and keep track of what is the expensive part of the computation
-     	       if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
-	       Soluciones:=solveSystem flatten entries polynomials;
-	       if DEBUG'LEVEL == 3 then (
-		    blckbxtime2 := cpuTime();
-		    <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
-		    );
-	       ---*
-	       );
-	  
+	  ---* this part is to time and keep track of what is the expensive part of the computation
+	  if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
+	  ---*
+	  Soluciones:=solveSystem flatten entries polynomials;
+	  ---*
+	  if DEBUG'LEVEL == 3 then (
+	      blckbxtime2 := cpuTime();
+	      <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
+	      );
+	  ---*
      	  node.SolutionsSuperset = apply(
 	       select(
 	       	    --// After finish with the timing, remove the previous part and the next line
@@ -755,21 +755,25 @@ if not node.IsResolved then (
 	       	    --time solveSystem flatten entries polynomials, 
 	       	    s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
 	       	    norm matrix s * 
-	       	    norm sub(last coefficients gens all'polynomials,CC)
+	       	    norm sub(last coefficients gens all'polynomials,FFF)
 	       	    ), 
-	       ss-> (map(CC,ring coordX,matrix ss)) coordX
-	       );      	  
+	       ss-> (map(FFF,ring coordX,matrix ss)) coordX
+	       );
+     	   );
+	   -- close if DEBUG'LEVEL>= 2 HERE
+      	  
      	  if node.Children == {} then ( 
+	       lambda := output2partition(last node.Board);
 	      ------------------------
-	       -- Precondition this with the DEBUG LeVEL
-	       if DEBUG'LEVEL >= 4 then (
+	       -- THIS WAS PRECONDITIONED WITH DEBUG'LEVEL BUT NOW IT'S NOT
+	       --if DEBUG'LEVEL >= 4 then (
 	       print "calling solveSchubertProblem from resolveNode ";
 	       print(node.Board);
-	       lambda := output2partition(last node.Board);
 	       print(lambda);
 	       print("remaning Conditions:");
 	       print(remaining'conditions'and'flags);
 	       print("---------");
+	       ---------------------------
 	       k:=#lambda;
 	       validpartition := true;
 	       scan(lambda, i-> if i>n-k then validpartition = false) ;
@@ -797,10 +801,9 @@ if not node.IsResolved then (
 		   << "-- partition is not valid: " << lambda << endl;
 		   node.Solutions = {}; 
 		   );
-	           )
+	           --)
 --	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
      	       ); 
-     	  );
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
      	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
@@ -923,7 +926,7 @@ if not node.IsResolved then (
 	       scan(startSolutions,  
 		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
 			 norm matrix{s} * 
-			 norm sub(last coefficients polys,CC)));
+			 norm sub(last coefficients polys,FFF)));
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
 	       	    t1:= cpuTime();
 		    );
@@ -933,7 +936,7 @@ if not node.IsResolved then (
 	       	    << node.Board << " -- trackHomotopy time: " << (t2-t1) << endl;
 	       	    );
 	       apply(targetSolutions, sln->( 
-		    M''X'' := (map(CC,Rt,matrix{{1}}|matrix sln)) M'X';
+		    M''X'' := (map(FFF,Rt,matrix{{1}}|matrix sln)) M'X';
 		    X'' := inverse M'' * M''X'';
 		    if not member(movetype,{ {2,0,0},{2,1,0},{1,1,0} }) -- SWAP CASE
 		    then (
@@ -1078,8 +1081,8 @@ changeCoordsSolutions Matrix := MX ->(
     f:=flatten entries(matrix G*sub(s,R)-sub(MX,R));
     nk := n*k;
     numParameters := #Vars+#gens RMX;
-    A:= map(CC^nk, CC^numParameters, (i,j)-> (f#i)_(R_j));
-    b := map(CC^nk, CC^1, (i,j)-> -(f#i)_(1_R));
+    A:= map(FFF^nk, FFF^numParameters, (i,j)-> (f#i)_(R_j));
+    b := map(FFF^nk, FFF^1, (i,j)-> -(f#i)_(1_R));
     X := solve(A,b, ClosestFit=>true);
     Vals:=take(flatten entries X, #Vars); -- take a_(i,j) coordinates
     scan(#indx, i->G_(indx#i) = Vals#i);
@@ -1128,8 +1131,8 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
     nk := n*k;
     nParameters := k^2+#gens RMX; -- number of parameters in f
-    A := map(CC^nk,CC^nParameters,(i,j)->(f#i)_(R_j));
-    b := map(CC^nk,CC^1,(i,j)->-(f#i)_(1_R));
+    A := map(FFF^nk,FFF^nParameters,(i,j)->(f#i)_(R_j));
+    b := map(FFF^nk,FFF^1,(i,j)->-(f#i)_(1_R));
     X := solve(A,b, ClosestFit=>true);
     drop(flatten entries X, k*k) -- drop a_(i,j) coordinates      
     )
@@ -1144,8 +1147,8 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    n := numrows s;
    k := numcols s;
    x := symbol x;
-   R := CC[x_(1,1)..x_(k,n-k)];
-   MX := sub(random(CC^n,CC^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
+   R := FFF[x_(1,1)..x_(k,n-k)];
+   MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
    ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    assert all(ret, s->checkIncidenceSolution(s,SchB));
@@ -1266,8 +1269,8 @@ moveFlags2Flags (List, List) := (F's, G's)->(
     p1:=flatten entries(A*F1-G1*T1);
     p2:=flatten entries(A*F2-G2*T2);
     Eqs:= p1|p2; 
-    A1 := map(CC^(2*n^2),CC^(2*n^2),(i,j)->(Eqs#i)_(R_j));
-    b1 := map(CC^(2*n^2),CC^1,(i,j)->-(Eqs#i)_(1_R));
+    A1 := map(FFF^(2*n^2),FFF^(2*n^2),(i,j)->(Eqs#i)_(R_j));
+    b1 := map(FFF^(2*n^2),FFF^1,(i,j)->-(Eqs#i)_(1_R));
     X := transpose solve(A1,b1);
     {sub(A, X), sub(T1, X), sub(T2, X)}    
     )
@@ -1499,15 +1502,16 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
     scan(#b, r->( 
        c := b#r;
        rnk := k+c-(r+1)+1;
+       print("These are the residuals");
        if(rnk<= n) then(
          chooseCols:= subsets(k+c,rnk);
 	 chooseRows:= subsets(n,rnk);
 	 scan(chooseRows, rws->(
 	   scan(chooseCols, cls->(
-	      if(
-		  (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
-		   n) >ERROR'TOLERANCE)then(
-	             verif=false;
+		   n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
+		   if n>ERROR'TOLERANCE then(
+	               verif=false;
+		       print(n);
 	        );
 	      ));
          ));
@@ -1557,7 +1561,7 @@ findGaloisElement(Sequence, List, List) :=(prblm, flgs, solns) ->(
      -- We will work only from a short loop
      -- so we need only the first two rows
      -- of a random flag
-     F := matrix apply(2, i->apply(n,j->random CC));
+     F := matrix apply(2, i->apply(n,j->random FFF));
      swaps := {0,1,0,1};
      tmpMtrx := mutableMatrix(flgs#(d-1) || F);
      tempSlns := solns;
@@ -1758,7 +1762,7 @@ doc ///
        	 m = {1,1,0}
        	 ----  Generate random flags G----
        	 d = k*(n-k)-sum(l)-sum(m);
-       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
        	 ---------------------------------
        	 solveSimpleSchubert((k,n),l,m,G)
    SeeAlso
@@ -1795,8 +1799,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
    	  ---------------------------------
    	  trackSimpleSchubert((k,n),(l,m),G,F)
        Text
@@ -1808,8 +1812,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
    	  ---------------------------------
    	  Solns = solveSimpleSchubert((k,n),l,m,G);
           trackSimpleSchubert((k,n),(l,m),G,F, StartSolutions=>Solns)
