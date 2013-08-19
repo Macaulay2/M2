@@ -1147,7 +1147,7 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    R := CC[x_(1,1)..x_(k,n-k)];
    MX := sub(random(CC^n,CC^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
-   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE,sub(MX, matrix{s})));
+   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
