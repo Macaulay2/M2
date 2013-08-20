@@ -1314,15 +1314,6 @@ extern "C" {
                         const MutableMatrix* A,
                         const MutableMatrix* B);
 
-#if 0
-  MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
-                                                      const MutableMatrix* A,
-                                                      const MutableMatrix* B,
-                                                      M2_bool transposeA,
-                                                      M2_bool transposeB,
-                                                      const RingElement* a,
-                                                      const RingElement* b);
-#endif
   /* return A*B, where A,B are mutable matrices, over same ring, same density type.
    */
   MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,

@@ -61,22 +61,6 @@ inline const MatType* coerceMatrix(const MutableMatrix* A)
   } 
 #endif
 
-template<typename MatT> 
-inline MatT * MutableMatrix::coerce()
-{
-  MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-template<typename MatT> 
-inline const MatT * MutableMatrix::coerce() const
-{
-  const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 						size_t nrows, 
 						size_t ncols, 
@@ -237,40 +221,6 @@ MutableMatrix *MutableMatrix::from_matrix(const Matrix *m, bool prefer_dense)
   return result;
 }
 
-#if 0
-Matrix *MutableMatrix::to_matrix() const
-{
-#warning "reinstate MutableMatrix::to_matrix when iterator is available"
-#if 0
-#warning "FreeModule has limit size of int, not size_t"
-  int nrows = static_cast<int>(n_rows());
-  int ncols = static_cast<int>(n_cols());
-  FreeModule *F = get_ring()->make_FreeModule(nrows);
-  MatrixConstructor result(F,ncols);
-  if (nrows == 0 || ncols == 0)
-    return result.to_matrix();
-  ring_elem f;
-  iterator *i = begin();
-  for (int c=0; c<ncols; c++)
-    {
-      ring_elem a;
-      for (i->set(c); i->valid(); i->next())
-        {
-          i->copy_ring_elem(a);
-          int r = static_cast<int>(i->row());
-          result.set_entry(r, c, a);
-        }
-    }
-  delete i;
-  result.compute_column_degrees();
-  return result.to_matrix();
-#endif
-  return 0;
-}
-#endif
-
-
-
 void MutableMatrix::text_out(buffer &o) const
 {
   const Ring *R = get_ring();
@@ -330,6 +280,7 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
 }
 
+#if 0
 template<typename Mat>
 bool MutableMat<Mat>::solve(const MutableMatrix *b, MutableMatrix *x) const
   // resets x, find a solution of Ax=b, return false if no such exists.
@@ -701,6 +652,7 @@ template <> bool MutableMat< DMat<CoefficientRingCCC> >::least_squares(const Mut
       return Lapack::least_squares_deficient(A2,b2,x2);
     }
 }
+#endif
 
 template<class RingType>
 MutableMatrix* M2::makeMutableZeroMatrix(const Ring* Rgeneral,
@@ -717,122 +669,7 @@ MutableMatrix* M2::makeMutableZeroMatrix(const Ring* Rgeneral,
     ::zero_matrix(Rgeneral,R,nrows,ncols);
 }
 
-#if 0
-//TODO: Mike, Jakob.  Once we have sparse linbox matrices implemented, this
-// might be how we create them.
-template<>
-MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZpFFPACK>(const Ring* Rgeneral,
-                                         const M2::ARingZZpFFPACK* R,
-                                         size_t nrows,
-                                         size_t ncols,
-                                         bool dense)
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingZZpFFPACK> >
-      ::zero_matrix(Rgeneral,R,nrows,ncols);
-
-  return MutableMat< SparseLinboxMat<M2::ARingZZpFFPACK> >
-    ::zero_matrix(Rgeneral,R,nrows,ncols);
-}
-#endif
-
 /////////////////////////////////////////
-/// Fast Linear Algebra Routines ////////
-/////////////////////////////////////////
-
-template <typename T>
-MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
-{
-  MutableMat<T>* ker = makeZeroMatrix(0,0);
-  //  mat.nullSpace(ker->mat, right_side);
-  LinAlg::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
-  return ker;
-}
-
-template <typename T>
-std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
-                                                           bool right_side) const 
-{ 
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
-  MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = LinAlg::solveLinear(mat, B1->mat, right_side, solns->mat, false);
-  //  bool retval = mat.solveLinear(solns->mat, B1->mat, right_side);
-  return std::pair<bool, MutableMatrix*>(retval, solns);
-}
-
-template <typename T>
-void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
-                                  const MutableMatrix* B,
-                                  bool transposeA,
-                                  bool transposeB,
-                                  const RingElement* a,
-                                  const RingElement* b)
-{
-#warning "MutableMat::addMultipleTo needs def"
-#if 0
-  std::cerr << "somewhere addMultipleTo" << std::endl;
-
-  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
-
-  typename T::ElementType fa, fb;
-  mat.ring().init(fa);
-  mat.ring().init(fb);
-  mat.ring().from_ring_elem(fa, a->get_value());
-  mat.ring().from_ring_elem(fb, b->get_value());
-
-
-  //  mat.addMultipleTo(A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  //  LinAlg::addMultipleTo(mat, A1->mat, B1->mat, transposeA, transposeB, fa, fb);
-  mat.ring().clear(fa);
-  mat.ring().clear(fb);
-#endif
-}
-
-
-/////////////////////////////////////////
-#if 0
-MutableMatrix *M2::ARingZZpFFPACK::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingZZpFFPACK> >
-      ::zero_matrix(R,this,nrows,ncols);
-
-  return MutableMat< SMat<M2::ARingZZpFFPACK> >
-    ::zero_matrix(R,this,nrows,ncols);
-}
-
-MutableMatrix *M2::ARingZZp::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingZZp> >
-      ::zero_matrix(R,this,nrows,ncols);
-
-  return MutableMat< SMat<M2::ARingZZp> >
-    ::zero_matrix(R,this,nrows,ncols);
-}
-
-MutableMatrix *M2::ARingGFGivaro::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingGFGivaro> >
-      ::zero_matrix(R,this,nrows,ncols);
-
-  return MutableMat< SMat<M2::ARingGFGivaro> >
-    ::zero_matrix(R,this,nrows,ncols);
-}
-
-MutableMatrix *M2::ARingGFM2::makeMutableMatrix(const Ring* R, size_t nrows, size_t ncols, bool dense) const
-{
-  if (dense)
-    return MutableMat< DMat<M2::ARingGFM2> >
-      ::zero_matrix(R,this,nrows,ncols);
-
-  return MutableMat< SMat<M2::ARingGFM2> >
-    ::zero_matrix(R,this,nrows,ncols);
-}
-#endif
-
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingZZp>(const Ring* Rgeneral,
                                                  const M2::ARingZZp* R,
                                                  size_t nrows,
