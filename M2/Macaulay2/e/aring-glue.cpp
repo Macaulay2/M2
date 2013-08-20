@@ -206,6 +206,7 @@ namespace M2 {
   template class ConcreteRing<ARingRRR>;
   template class ConcreteRing<ARingTower>;
 
+  template class ConcreteRing<ARingCCC>;
 
   ///////////////////////////
   // Matrix creation ////////

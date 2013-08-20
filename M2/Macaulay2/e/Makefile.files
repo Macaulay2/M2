@@ -19,6 +19,7 @@ INTERFACE = \
 	aring-qq-flint \
 	aring-zzp-flint \
 	aring-RRR \
+	aring-CCC \
 	aring-tower \
 	aring-m2-gf \
 	aring-promoter \

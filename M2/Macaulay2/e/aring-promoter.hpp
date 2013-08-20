@@ -6,6 +6,7 @@
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
 #include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 #include "aring-gf-givaro.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-m2-gf.hpp"
@@ -120,6 +121,12 @@ namespace M2 {
         return false;
       }
       
+      static bool newpromote(const Ring* R, const ring_elem fR, 
+                      const ARingCCC& S, ARingCCC::ElementType& resultS)
+      {
+        return false;
+      }
+
       static bool newpromote(const Ring* R, const ring_elem fR, 
                       const ARingTower& S, ARingTower::ElementType& resultS)
       {

@@ -30,6 +30,7 @@
 #include "aring.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();
@@ -84,16 +85,14 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-#ifdef use_new_RRR
   return M2::ConcreteRing<M2::ARingRRR>::create(new M2::ARingRRR(prec));
-#else
-  return RRR::create(prec);
-#endif
+  //return RRR::create(prec);
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
 {
-  return CCC::create(prec);
+  return M2::ConcreteRing<M2::ARingCCC>::create(new M2::ARingCCC(prec));
+  //return CCC::create(prec);
 }
 
 const Ring *IM2_Ring_trivial_polyring()

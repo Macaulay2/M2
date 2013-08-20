@@ -6,22 +6,22 @@
 #include "mutablemat.hpp"
 
 #include "coeffrings.hpp"
-#include "aring-zz-gmp.hpp"
 
 #include "matrix-con.hpp"
 #include "matrix.hpp"
 
 #include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
+#include "aring-zz-gmp.hpp"
+#include "aring-zz-flint.hpp"
 #include "aring-zzp.hpp"
 #include "aring-zzp-ffpack.hpp"
+#include "aring-zzp-flint.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-gf-givaro.hpp"
-#include "aring-RRR.hpp"
 #include "aring-glue.hpp"
 #include "aring-tower.hpp"
-#include "aring-zz-flint.hpp"
 #include "aring-qq.hpp"
-#include "aring-zzp-flint.hpp"
 
 #include "QQ.hpp"
 
@@ -719,9 +719,15 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingRRR>(const Ring* Rgen
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingCCC>(const Ring* Rgeneral,
+                                                 const M2::ARingCCC* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
 
 template class MutableMat< DMat<M2::ARingZZp> >;
 template class MutableMat< DMat<M2::ARingRRR> >;
+template class MutableMat< DMat<M2::ARingCCC> >;
 template class MutableMat< DMat<CoefficientRingRRR> >;
 template class MutableMat< DMat<CoefficientRingCCC> >;
 template class MutableMat< DMat<M2::ARingZZGMP> >;
@@ -730,6 +736,7 @@ template class MutableMat< DMat<M2::ARingTower> >;
 
 template class MutableMat< SMat<M2::ARingZZp> >;
 template class MutableMat< SMat<M2::ARingRRR> >;
+template class MutableMat< SMat<M2::ARingCCC> >;
 template class MutableMat< SMat<CoefficientRingRRR> >;
 template class MutableMat< SMat<CoefficientRingCCC> >;
 template class MutableMat< SMat<M2::ARingZZGMP> >;

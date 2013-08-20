@@ -340,6 +340,8 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
+#include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-qq.hpp"
 #include "aring-zzp-flint.hpp"
@@ -370,6 +372,7 @@ template class DMat<M2::ARingQQFlint>;
 
 template class DMat<M2::ARingGFGivaro>;
 template class DMat<M2::ARingRRR>;
+template class DMat<M2::ARingCCC>;
 
 
 

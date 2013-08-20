@@ -55,19 +55,19 @@ namespace M2 {
     // ElementType informational ////
     /////////////////////////////////
 
-    bool is_unit(ElementType f) const { 
+    bool is_unit(const ElementType& f) const { 
       return !is_zero(f); 
     }
 
-    bool is_zero(ElementType f) const {
+    bool is_zero(const ElementType& f) const {
       return mpfr_cmp_si(&f, 0) == 0;
     }
     
-    bool is_equal(ElementType f, ElementType g) const { 
+    bool is_equal(const ElementType& f, const ElementType& g) const { 
       return mpfr_cmp(&f,&g) == 0;
     }
 
-    int compare_elems(ElementType f, ElementType g) const {
+    int compare_elems(const ElementType& f, const ElementType& g) const {
       int cmp = mpfr_cmp(&f,&g);
       if (cmp < 0) return -1;
       if (cmp > 0) return 1;
@@ -90,102 +90,100 @@ namespace M2 {
 
     void from_ring_elem(ElementType &result, const ring_elem &a) const
     {
-      init(result);
       mpfr_set(&result, reinterpret_cast<mpfr_ptr>(a.poly_val), GMP_RNDN);
     }
 
     // 'init', 'init_set' functions
 
-    void init(elem &result) const { 
+    void init(ElementType &result) const { 
       mpfr_init2(&result, mPrecision); 
     }
 
-    void init_set(elem &result, elem a) const { 
+    void init_set(ElementType &result, const ElementType& a) const { 
       init(result);
       mpfr_set(&result, &a, GMP_RNDN);
     }
 
-    void set(elem &result, elem a) const { 
+    void set(ElementType &result, const ElementType& a) const { 
       mpfr_set(&result, &a, GMP_RNDN);
     }
 
-    void set_zero(elem &result) const { 
-      init(result);
+    void set_zero(ElementType &result) const { 
       mpfr_set_si(&result, 0, GMP_RNDN); 
     }
 
-    void clear(elem &result) const { 
+    void clear(ElementType &result) const { 
       mpfr_clear(&result); 
     }
 
-    void copy(elem &result, elem a) const { mpfr_set(&result, &a, GMP_RNDN); }
+    void copy(ElementType &result, const ElementType& a) const { mpfr_set(&result, &a, GMP_RNDN); }
 
-    void set_from_int(elem &result, int a) const {
+    void set_from_int(ElementType &result, int a) const {
       mpfr_set_si(&result, a, GMP_RNDN);
     }
 
-    void set_var(elem &result, int v) const { 
+    void set_var(ElementType &result, int v) const { 
       mpfr_set_si(&result, 1, GMP_RNDN); 
     }
 
-    void set_from_mpz(elem &result, mpz_ptr a) const {
+    void set_from_mpz(ElementType &result, mpz_ptr a) const {
       mpfr_set_z(&result, a, GMP_RNDN);
     }
 
-    void set_from_mpq(elem &result, mpq_ptr a) const {
+    void set_from_mpq(ElementType &result, mpq_ptr a) const {
       mpfr_set_q(&result, a, GMP_RNDN);
     }
 
-    bool set_from_BigReal(elem &result, gmp_RR a) const {
+    bool set_from_BigReal(ElementType &result, gmp_RR a) const {
       mpfr_set(&result, a, GMP_RNDN);
       return true;
     }
 
     // arithmetic
-    void negate(elem &result, elem a) const
+    void negate(ElementType &result, const ElementType& a) const
     {
       mpfr_neg(&result, &a, GMP_RNDN);
     }
 
-    void invert(elem &result, elem a) const
+    void invert(ElementType &result, const ElementType& a) const
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {
       mpfr_si_div(&result, 1, &a, GMP_RNDN);
     }
 
-    void add(elem &result, elem a, elem b) const
+    void add(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_add(&result, &a, &b, GMP_RNDN);
     }
 
-    void subtract(elem &result, elem a, elem b) const
+    void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_sub(&result, &a, &b, GMP_RNDN);
     }
 
-    void subtract_multiple(elem &result, elem a, elem b) const
+    void subtract_multiple(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       //TODO: write this
       // we assume: a, b are NONZERO!!
       // result -= a*b
     }
 
-    void mult(elem &result, elem a, elem b) const
+    void mult(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_mul(&result, &a, &b, GMP_RNDN);
     }
 
-    void divide(elem &result, elem a, elem b) const
+    void divide(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_div(&result, &a, &b, GMP_RNDN);
     }
 
-    void power(elem &result, elem a, int n) const
+    void power(ElementType &result, const ElementType& a, int n) const
     {
       mpfr_pow_si(&result, &a, n, GMP_RNDN);
     }
 
-    void power_mpz(elem &result, elem a, mpz_ptr n) const
+    void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
       mpfr_pow_z(&result, &a, n, GMP_RNDN);
     }
@@ -196,14 +194,14 @@ namespace M2 {
     }
 
     void elem_text_out(buffer &o,
-                       ElementType &a,
+                       ElementType &a, //const???
                        bool p_one,
                        bool p_plus,
                        bool p_parens) const;
       //TODO
 
-    void syzygy(ElementType a, ElementType b,
-                ElementType &x, ElementType &y) const
+    void syzygy(const ElementType& a, const ElementType& b,
+                ElementType &x, ElementType &y) const // remove?
     // returns x,y s.y. x*a + y*b == 0.
     // if possible, x is set to 1.
     // no need to consider the case a==0 or b==0.
@@ -211,12 +209,12 @@ namespace M2 {
       //TODO
     }
 
-    void random(ElementType &result) const
+    void random(ElementType &result) const // redo?
     {
       rawRandomMpfr(&result, mPrecision);
     }
 
-    void eval(const RingMap *map, elem &f, int first_var, ring_elem &result) const
+    void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
       map->get_ring()->from_BigReal(&f, result);
     }
@@ -226,7 +224,7 @@ namespace M2 {
       unsigned long mPrecision;
   };
 
-};
+}; // end namespace M2
 
 #endif
 
