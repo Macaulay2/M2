@@ -6,13 +6,13 @@
 #include <iostream>
 #include "mat.hpp"
 
-
 class CoefficientRingCCC;
 class Ring_RRR;
-template <typename RT> class DMat;
 namespace M2 {
   class ARingZZp;
 };
+
+#include "coeffrings.hpp"
 
 template<typename RT> class DMat;
 template<typename RT> class SMat;
@@ -20,19 +20,39 @@ template<typename MT> bool isDense(const MT& mat);
 template<typename RT> bool isDense(const DMat<RT>& mat) { return true; }
 template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
 
+template<typename RT> struct EigenTypes
+{
+  typedef RT EigenvalueType;
+  typedef RT EigenvectorType;
+  typedef RT HermitianEigenvalueType;
+  typedef RT HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<Ring_RRR>
+{
+  typedef CoefficientRingCCC EigenvalueType;
+  typedef CoefficientRingCCC EigenvectorType;
+  typedef Ring_RRR HermitianEigenvalueType;
+  typedef Ring_RRR HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<CoefficientRingCCC>
+{
+  typedef CoefficientRingCCC EigenvalueType;
+  typedef CoefficientRingCCC EigenvectorType;
+  typedef Ring_RRR HermitianEigenvalueType;
+  typedef CoefficientRingCCC HermitianEigenvectorType;
+};
+
+// The following include file is for creating a Matrix, in "toMatrix"
+#include "matrix-con.hpp"
+
 #include "dmat.hpp"
 #include "smat.hpp"
 #include "MatElementaryOps.hpp"
-#include "matrix-con.hpp"
-
 #include "mat-arith.hpp"
 #include "mat-linalg.hpp"
 
-//template<typename MatType> Matrix* toMatrix(const Ring* R, const MatType& A)
-//{
-//  std::cout << "called general to_matrix" << std::endl;
-//  return 0;
-//}
 template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
 {
   int nrows = static_cast<int>(A.numRows());
@@ -116,6 +136,12 @@ public:
   typedef typename CoeffRing::elem elem;
 
   typedef MatElementaryOps<Mat> MatOps;
+
+
+  typedef typename EigenTypes<CoeffRing>::EigenvalueType EigenvalueType;
+  typedef typename EigenTypes<CoeffRing>::EigenvectorType EigenvectorType;
+  typedef typename EigenTypes<CoeffRing>::HermitianEigenvalueType HermitianEigenvalueType;
+  typedef typename EigenTypes<CoeffRing>::HermitianEigenvectorType HermitianEigenvectorType;
 private:
   const Ring* mRing;
   Mat mat;
@@ -124,9 +150,6 @@ private:
   // Same operations as in MutableMatrix.  Almost nothing is
   // done except to call the Mat routines.
 
-  // Linear algebra routines: Default is to return 0.
-  // Caller must then make error message?
-  // Specific template instances must provide these functions
   MutableMat() {}
 
   MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
@@ -551,7 +574,7 @@ public:
   virtual MutableMat * add(const MutableMatrix *B) const
   // return this + B.  return NULL if sizes or types do not match.
   {
-    const Mat *B1 = B->coerce<Mat>();
+    const Mat *B1 = B->coerce_const<Mat>();
     if (B1 == NULL) 
       {
         ERROR("expected matrices with the same ring and sparsity");
@@ -583,7 +606,7 @@ public:
   virtual MutableMat * subtract(const MutableMatrix *B) const
   // return this - B.  return NULL of sizes or types do not match.
   {
-    const Mat *B1 = B->coerce<Mat>();
+    const Mat *B1 = B->coerce_const<Mat>();
     if (B1 == NULL) 
       {
         ERROR("expected matrices with the same ring and sparsity");
@@ -702,11 +725,6 @@ public:
   virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const;
 };
 
-
-
-
-
-
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
@@ -742,9 +760,14 @@ template <typename T>
 std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
                                                            bool right_side) const 
 { 
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  const T* B1 = B->coerce_const<T>();
+  if (B1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  if (B->get_ring() != get_ring())
+    throw exc::engine_error("expected same ring");
+  //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = MatrixOppies::solveLinear(mat, B1->mat, right_side, solns->mat, false);
+  bool retval = MatrixOppies::solveLinear(mat, *B1, right_side, solns->mat, false);
   return std::pair<bool, MutableMatrix*>(retval, solns);
 }
 
@@ -759,26 +782,22 @@ MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
 template <typename T>
 MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
 {
-  std::cout << "MutableMat::mult" << std::endl;
   // First, make sure B has the same ring/type as 'this'.
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  const T* B1 = B->coerce_const<T>();
   if (B1 == 0)
     {
       ERROR("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
       return 0;
     }
   // Second, make sure the sizes are correct.
-  if (mat.numColumns() != B1->n_rows())
+  if (mat.numColumns() != B1->numRows())
     {
       ERROR("matrix sizes do not match in matrix multiplication");
       return 0;
     }
   // create the result matrix
-  MutableMat<T>*  result = makeZeroMatrix(n_rows(), B->n_cols());
-
-  std::cout << "about to call MatrixOppies::mult" << std::endl;
-  // Call the resulting matrix routine.
-  MatrixOppies::mult(mat, B1->mat, result->mat);
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), B1->numColumns());
+  MatrixOppies::mult(mat, *B1, result->mat);
 
   return result;
 }
@@ -788,13 +807,13 @@ void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
                                   const MutableMatrix* B)
 {
   // First: make sure that A, B have the right ring/matrix type
-  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  const T* A1 = A->coerce_const<T>();
+  const T* B1 = B->coerce_const<T>();
   if (A1 == 0 or B1 == 0)
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
-  if (mat.numRows() != A1->n_rows() or mat.numColumns() != B1->n_cols())
+  if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  MatrixOppies::addMultipleTo(mat,A1->mat,B1->mat);
+  MatrixOppies::addMultipleTo(mat,*A1,*B1);
 }
 
 template <typename T>
@@ -802,13 +821,13 @@ void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
                                        const MutableMatrix* B)
 {
   // First: make sure that A, B have the right ring/matrix type
-  const MutableMat<T>* A1 = A->cast_to_MutableMat<T>();
-  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  const T* A1 = A->coerce_const<T>();
+  const T* B1 = B->coerce_const<T>();
   if (A1 == 0 or B1 == 0)
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
-  if (mat.numRows() != A1->n_rows() or mat.numColumns() != B1->n_cols())
+  if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  MatrixOppies::subtractMultipleTo(mat,A1->mat,B1->mat);
+  MatrixOppies::subtractMultipleTo(mat,*A1,*B1);
 }
 
 template <typename T>
@@ -817,60 +836,115 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
   return MatrixOppies::rankProfile(mat, row_profile);
 }
 
-#if 0
-// MES, 19 May 2013: Do we want to do it like this?
-template <typename T> 
-bool MutableMat<T>::SVD(MutableMatrix *Sigma,
-                        MutableMatrix *U,
-                        MutableMatrix *VT,
+// "solve" is similar to "solveLinear", except it doesn't create any new matrices.
+//TODO: we should only have one of these...
+template<typename T>
+bool MutableMat<T>::solve(const MutableMatrix* B, 
+                          MutableMatrix* X) const
+  // resets x, find a solution of Ax=b, return false if no such exists.
+{
+  const T* B1 = B->coerce_const<T>();
+  T* X1 = X->coerce<T>();
+  if (B1 == 0 or X1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  bool retval = MatrixOppies::solve(mat, *B1, *X1);
+  return retval;
+}
+
+template<typename T>
+bool MutableMat<T>::nullspaceU(MutableMatrix* X) const
+{
+  T* X1 = X->coerce<T>();
+  if (X1 == 0)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  return MatrixOppies::nullspaceU(mat,*X1);
+}
+
+template<typename T>
+M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L,
+                                    MutableMatrix* U) const
+{
+  T* L1 = L->coerce<T>();
+  T* U1 = U->coerce<T>();
+  if (L1 == 0 or U1 == 0)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  return MatrixOppies::LU(mat,*L1,*U1);
+}
+
+template<typename T>
+bool MutableMat<T>::eigenvalues(MutableMatrix* eigenvals, 
+                                bool is_symm_or_hermitian) const
+{
+  if (!is_dense())
+    throw exc::engine_error("'eigenvalues' is only implemented for dense matrices");
+  if (is_symm_or_hermitian)
+    {
+      auto E1 = eigenvals->coerce< DMat<HermitianEigenvalueType> >();
+      if (E1 == 0)
+        throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
+      return MatrixOppies::eigenvaluesHermitian(mat,*E1);
+    }
+  else
+    {
+      auto E1 = eigenvals->coerce< DMat<EigenvalueType> >();
+      if (E1 == 0)
+        throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
+      return MatrixOppies::eigenvalues(mat,*E1);
+    }
+}
+
+template<typename T>
+bool MutableMat<T>::eigenvectors(MutableMatrix* eigenvals,
+                                 MutableMatrix* eigenvecs,
+                                 bool is_symm_or_hermitian) const
+{
+  if (!is_dense())
+    throw exc::engine_error("'eigenvalues' is only implemented for dense matrices");
+  if (is_symm_or_hermitian)
+    {
+      DMat<HermitianEigenvalueType>* E1 = eigenvals->coerce< DMat<HermitianEigenvalueType> >();
+      DMat<HermitianEigenvectorType>* evecs1 = eigenvecs->coerce< DMat<HermitianEigenvectorType> >();
+      if (E1 == 0 or evecs1 == 0)
+        throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
+      return MatrixOppies::eigenvectorsHermitian(mat,*E1,*evecs1);
+    }
+  else
+    {
+      DMat<EigenvalueType>* E1 = eigenvals->coerce< DMat<EigenvalueType> >();
+      DMat<EigenvectorType>* evecs1 = eigenvecs->coerce< DMat<EigenvectorType> >();
+      if (E1 == 0 or evecs1 == 0)
+        throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
+      return MatrixOppies::eigenvectors(mat,*E1,*evecs1);
+    }
+}
+
+template<typename T>
+bool MutableMat<T>::least_squares(const MutableMatrix* B,
+                                  MutableMatrix* X,
+                                  bool assume_full_rank) const
+{
+  const T* B1 = B->coerce_const<T>();
+  T* X1 = X->coerce<T>();
+  if (B1 == 0 or X1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  bool retval = MatrixOppies::leastSquares(mat, *B1, *X1, assume_full_rank);
+  return retval;
+}
+
+template<typename T>
+bool MutableMat<T>::SVD(MutableMatrix* Sigma,
+                        MutableMatrix* U,
+                        MutableMatrix* Vt,
                         bool use_divide_and_conquer) const
 {
-  const MatType *A2 = get_Mat();
-  MatType *Sigma2 = Sigma->coerce<MatType>();
-  MatType *U2 = U->coerce<MatType>();
-  MatType *VT2 = VT->coerce<MatType>();
-  if (Sigma2 == 0 || U2 == 0 || VT2 == 0)
-    {
-      ERROR("requires dense mutable matrices over the same ring");
-      return false;
-    }
-
+  auto Sigma2 = Sigma->coerce< DMat<HermitianEigenvalueType> >();
+  T *U2 = U->coerce<T>();
+  T *Vt2 = Vt->coerce<T>();
+  if (Sigma2 == 0 || U2 == 0 || Vt2 == 0)
+    throw exc::engine_error("expected matrices of the same type");
   int strategy = (use_divide_and_conquer ? 1 : 0);
-  return DenseApproxLinAlg::SVD(A2,Sigma,U2,VT2,strategy);
+  return MatrixOppies::SVD(mat, *Sigma2, *U2, *Vt2, strategy);
 }
-#endif
-
-///////////////////////////////////////////////
-#if 0
-#include "dmat.hpp"
-template<typename MT>
-bool solve1(const MT &A, const MT &b, MT& x)
-{
-  std::cout << "calling base template for solve1" << std::endl;
-  ERROR("'solve' not implemented for this ring amd matrix type");
-  return false;
-}
-
-template<typename CoeffRing>
-bool solve1< DMat<CoeffRing> >(const DMat<CoeffRing> &A, const DMat<CoeffRing> &b, DMat<CoeffRing>& x)
-{
-  std::cout << "calling DMat template for solve1" << std::endl;
-  return DMatLU<typename MT::CoeffRing>::solve(&A, &b, &x);
-}
-
-bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x);
-//bool solve1(const DMat<M2::ARingZZp> &A, const DMat<M2::ARingZZp> &b, DMat<M2::ARingZZp> &x);
-#endif
-
-template<typename MT>
-bool eigenvalues1(const MT &A, typename MT::EigenvalueMatrixType &eigenvals)
-{
-  std::cout << "calling base template for eigenvalues1" << std::endl;
-  ERROR("'eigenvalues' not implemented for this ring amd matrix type");
-  return false;
-}
-
-bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<Ring_RRR> &eigenvalues);
 
 #endif
 

@@ -81,9 +81,19 @@ public:
     return dynamic_cast< const MutableMat<MatType> *>(this); 
   }
 
-  template<typename MatT> MatT * coerce();
+  template<typename MatT> 
+  MatT * coerce() {
+    MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+    if (P == 0) return 0;
+    return P->get_Mat();
+  }
 
-  template<typename MatT> const MatT * coerce() const;
+  template<typename MatT> 
+  const MatT * coerce_const() const {
+    const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
+    if (P == 0) return 0;
+    return P->get_Mat();
+  }
 
   ///////////////////////////////
   // Row and column operations //
@@ -261,49 +271,41 @@ public:
 
   /// Fast linear algebra routines (well, fast for some rings)
 
-  virtual size_t rank() const { return static_cast<size_t>(-1); }
+  virtual size_t rank() const = 0;
 
-  virtual const RingElement* determinant() const { return NULL; }
+  virtual const RingElement* determinant() const = 0;
 
   // Find the inverse matrix.  If the matrix is not square, or 
   // the ring is one in which th matrix cannot be inverted,
   // then NULL is returned, and an error message is set.
-  virtual MutableMatrix* invert() const { return 0; }
+  virtual MutableMatrix* invert() const = 0;
 
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
   // NULL is returned, and an error is set, if this function is not available
   // for the given choice of ring and dense/sparseness.
-  virtual M2_arrayintOrNull rankProfile(bool row_profile) const { return 0; }
+  virtual M2_arrayintOrNull rankProfile(bool row_profile) const = 0;
   
   // Find a spanning set for the null space.  If M = this,
   // and right_side is true, return a matrix whose rows span {x |  xM = 0},
   // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const { return 0; }
+  virtual MutableMatrix* nullSpace(bool right_side) const = 0;
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
   // if there is no solution.
   virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
-                                                      bool right_side) const { 
-    return std::pair<bool, MutableMatrix*>(0,static_cast<MutableMatrix*>(NULL)); 
-  }
+                                                      bool right_side) const = 0;
 
   virtual void  addMultipleTo(const MutableMatrix* A,
-                              const MutableMatrix* B)
-  {
-  }
+                              const MutableMatrix* B) = 0;
 
   virtual void  subtractMultipleTo(const MutableMatrix* A,
-                                   const MutableMatrix* B)
-  {
-  }
+                                   const MutableMatrix* B) = 0;
 
-  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const {
-    ERROR("not implemented for this ring/mutable matrix type");
-    return 0;
-  }
+  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const = 0;
+
   // return this * B.  
   // both matrices must be of the same type.
   // If not, or sizes don't match, NULL is returned.

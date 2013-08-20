@@ -289,36 +289,7 @@ namespace MatrixOppies
 
 #endif // HAVE_FFLAS_FFPACK
 
-//template<> 
-//size_t DMat<M2::ARingRRR>::rank() const
-//{
-//  return LUDecompositionRRR::rankRRR(*this);
-//}
-
-//template<>
-//void DMat<M2::ARingRRR>::determinant(ElementType &result) const
-//{
-//  LUDecompositionRRR::determinantRRR(*this, result);
-//}
-
-
 #include "mutablemat.hpp"
-
-template<typename MatT> 
-inline MatT * MutableMatrix::coerce()
-{
-  MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-template<typename MatT> 
-inline const MatT * MutableMatrix::coerce() const
-{
-  const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
 
 M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v)
 {
