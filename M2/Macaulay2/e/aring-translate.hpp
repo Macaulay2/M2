@@ -37,8 +37,13 @@ namespace M2 {
   // and an element fR of R, set result_fS to be the image of fR under this map.
   // Return true if this was done, else return false.
   template<typename RingR, typename RingS>
-  bool promote(const RingR& R, const RingS& S, const typename RingR::ElementType& fR, typename RingS::ElementType& result_fS)
-  {return false;}
+  bool mypromote(const RingR& R, 
+               const typename RingR::ElementType& fR, 
+               const RingS& S, 
+               typename RingS::ElementType& result_fS)
+  {
+    return false;
+  }
 
 
 }; // namespace M2
