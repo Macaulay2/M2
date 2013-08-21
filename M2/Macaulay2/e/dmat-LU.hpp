@@ -64,8 +64,8 @@ class DMatLU
 
 public:
   static M2_arrayint LU(const DMat<CoeffRing> *A,
-                 DMat<CoeffRing> *&L,
-                 DMat<CoeffRing> *&U
+                 DMat<CoeffRing> *L,
+                 DMat<CoeffRing> *U
                  );
 
   static bool solve(const DMat<CoeffRing> *A,

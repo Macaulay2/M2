@@ -28,39 +28,6 @@
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
 
-#if 0
-// Considering this kind of code
-template <typename MatType>
-inline MatType* coerceMatrix(MutableMatrix* A)
-{
-  MutableMat< MatType >* B = dynamic_cast< MutableMat< MatType > >(A);
-  if (B == 0) return 0;
-  return B->get_Mat();
-}
-
-template <typename MatType>
-inline const MatType* coerceMatrix(const MutableMatrix* A)
-{
-  const MutableMat< MatType >* B = dynamic_cast< const MutableMat< MatType > >(A);
-  if (B == 0) return 0;
-  return B->get_Mat();
-}
-
-
-
- MatType* coerceMatrix< MatType >(MutableMatrix* A);
-  MatType* coerceMatrixWithError< MatType >(MutableMatrix* A, std::string msg);
-
-#define COERCE_TO_MatT_or_ERROR(newName,MatT,A,ERRORMSG,retval) { \
-  MutableMat< MatT > *P = dynamic_cast< MutableMat< MatT >* >(A); \
-  if (P == 0) { \
-    ERROR(ERRORMSG); \
-    return retval; \
-  } \
-  MatT* newName = P->get_Mat(); \
-  } 
-#endif
-
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 						size_t nrows, 
 						size_t ncols, 

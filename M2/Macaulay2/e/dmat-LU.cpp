@@ -172,8 +172,8 @@ void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
 
 template <typename CoeffRing>
 M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
-                                  DMat<CoeffRing> *&L,
-                                  DMat<CoeffRing> *&U
+                                  DMat<CoeffRing> *L,
+                                  DMat<CoeffRing> *U
                                   )
 {
   size_t nrows = A->numRows();

@@ -11,6 +11,9 @@
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
+#include "aring-zzp.hpp"
+typedef DMat<M2::ARingZZp> DMatZZp;
+
 #ifdef HAVE_FFLAS_FFPACK
 #include "aring-zzp-ffpack.hpp"
 typedef M2::ARingZZpFFPACK ZZpFFPACK;
@@ -263,6 +266,30 @@ namespace MatrixOppies
            int strategy)
   {
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
+  }
+
+  ////////////////////////
+  // Functions for ZZ/p //
+  ////////////////////////
+  inline bool solve(const DMatZZp& A, 
+                    const DMatZZp& B, 
+                    DMatZZp& X)
+  {
+    return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
+  }
+
+  inline bool nullspaceU(const DMatZZp& A, 
+                         DMatZZp& X)
+  {
+    DMatLU<M2::ARingZZp>::nullspaceU(&A,&X);
+    return true;
+  }
+
+  inline M2_arrayintOrNull LU(const DMatZZp& A, 
+                              DMatZZp& L,
+                              DMatZZp& U)
+  {
+    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
   }
 
   
