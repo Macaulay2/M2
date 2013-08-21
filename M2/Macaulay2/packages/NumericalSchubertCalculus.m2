@@ -56,7 +56,8 @@ export {
    makePolynomials, -- temporary
    SolutionsSuperset, -- temporary
    checkIncidenceSolution, --temporary
-   moveFlags2Flags --temporary
+   moveFlags2Flags, --temporary
+   dist --temporary Aug,20,2013
    }
 
 -------------------------
@@ -100,7 +101,7 @@ ERROR'TOLERANCE := 0.001
 -- 2 = verify solutions against blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
 -- 4 = new experimental stuff kicks in
-DEBUG'LEVEL = 4
+DEBUG'LEVEL = 1
 
 
 solutionsHash := new MutableHashTable;
@@ -734,76 +735,90 @@ if not node.IsResolved then (
      else scan(node.Children, c->resolveNode(c,remaining'conditions'and'flags));
      
      if DEBUG'LEVEL >= 2 then (
-     	  -- temporary: creates a superset of solutions via a blackbox solver
-     	  all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
-     	  polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
-	  ---* this part is to time and keep track of what is the expensive part of the computation
-	  if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
-	  ---*
-	  Soluciones:=solveSystem flatten entries polynomials;
-	  ---*
-	  if DEBUG'LEVEL == 3 then (
-	      blckbxtime2 := cpuTime();
-	      <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
-	      );
-	  ---*
-     	  node.SolutionsSuperset = apply(
-	       select(
-	       	    --// After finish with the timing, remove the previous part and the next line
-	       	    --// and uncomment the following line (deleting the line after that)
-	       	    Soluciones,
-	       	    --time solveSystem flatten entries polynomials, 
-	       	    s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
-	       	    norm matrix s * 
-	       	    norm sub(last coefficients gens all'polynomials,FFF)
-	       	    ), 
-	       ss-> (map(FFF,ring coordX,matrix ss)) coordX
-	       );
-     	   );
-	   -- close if DEBUG'LEVEL>= 2 HERE
-      	  
-     	  if node.Children == {} then ( 
-	       lambda := output2partition(last node.Board);
-	      ------------------------
-	       -- THIS WAS PRECONDITIONED WITH DEBUG'LEVEL BUT NOW IT'S NOT
-	       --if DEBUG'LEVEL >= 4 then (
-	       print "calling solveSchubertProblem from resolveNode ";
-	       print(node.Board);
-	       print(lambda);
-	       print("remaning Conditions:");
-	       print(remaining'conditions'and'flags);
-	       print("---------");
-	       ---------------------------
-	       k:=#lambda;
-	       validpartition := true;
-	       scan(lambda, i-> if i>n-k then validpartition = false) ;
-	       
-	       if validpartition then(
-		   S := solveSchubertProblem(
-		       prepend(
-			   (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
-			   remaining'conditions'and'flags
-			   ),
-		       k,n);
-		   ---------------------
-		   -- April 12:
-		   ---------------------
-		   -- Had to clear zeroes in the matrix
-		   -- after transforming the matrix to be 
-		   -- with respect to the local coordinates
-		   node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
-
-		   print "And These are the solutions obtained:";
-		   print(node.Solutions);
-		   node.IsResolved = true;
-		   -- assert(???); --verify that the solutions fit the localization pattern 
-	       	   )else(   
-		   << "-- partition is not valid: " << lambda << endl;
-		   node.Solutions = {}; 
-		   );
-	           --)
---	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
-     	       ); 
+	 -- temporary: creates a superset of solutions via a blackbox solver
+	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
+	 polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
+	 ---* this part is to time and keep track of what is the expensive part of the computation
+	 if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
+	 ---*
+	 Soluciones:=solveSystem flatten entries polynomials;
+	 ---*
+	 if DEBUG'LEVEL == 3 then (
+	     blckbxtime2 := cpuTime();
+	     <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
+	     );
+	 ---*
+	 node.SolutionsSuperset = apply(
+	     select(
+		 --// After finish with the timing, remove the previous part and the next line
+		 --// and uncomment the following line (deleting the line after that)
+		 Soluciones,
+		 --time solveSystem flatten entries polynomials, 
+		 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
+		 norm matrix s * 
+		 norm sub(last coefficients gens all'polynomials,FFF)
+		 ), 
+	     ss-> (map(FFF,ring coordX,matrix ss)) coordX
+	     );
+	 ); -- close if DEBUG'LEVEL>= 2 HERE
+     if node.Children == {} then ( 
+	 lambda := output2partition(last node.Board);
+	 ------------------------
+	 -- THIS WAS PRECONDITIONED WITH DEBUG'LEVEL BUT NOW IT'S NOT
+	 --if DEBUG'LEVEL >= 4 then (
+	 print "calling solveSchubertProblem from resolveNode ";
+	 print(node.Board);
+	 print(lambda);
+	 print("remaning Conditions:");
+	 print(remaining'conditions'and'flags);
+	 print("---------");
+	 ---------------------------
+	 k:=#lambda;
+	 validpartition := true;
+	 scan(lambda, i-> if i>n-k then validpartition = false) ;
+	 if validpartition then(
+	     S := solveSchubertProblem(
+		 prepend(
+		     (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
+		     remaining'conditions'and'flags
+		     ),
+		 k,n);
+	     ---------------------
+	     -- April 12:
+	     ---------------------
+	     -- Had to clear zeroes in the matrix
+	     -- after transforming the matrix to be 
+	     -- with respect to the local coordinates
+	     node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
+	     -- need to make this better (need to clean only those small entries below the pivots of the chart)
+	     ---------------------------
+	     -- Newton iteration test!!
+	     ---------------------------
+	     --  Aug 20,2013
+	     ---------------------------
+	     --squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'and'flags);
+	     --polysquares := squareUpPolynomials(numgens ring coordX, ideal(squareSyst));
+	     --Sols:=  apply(node.Solutions, X->toRawSolutions(coordX,X));
+	     --NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
+	     --NewtonStep2 := refine(squareSyst, NewtonStep1, Software=>M2, Iterations=>1);
+	     print "And These are the solutions obtained:";
+	     print(node.Solutions);
+	     --print("The first Newton step:");
+	     --print(NewtonStep1);
+	     --print("distance between solutions and newton1");
+	     --print(dist(NewtonStep1,Sols));
+	     --print("distance between two newton steps:");
+	     --print(dist(NewtonStep2,NewtonStep1));
+	     --dist(NewtonStep2,Sols);
+	     node.IsResolved = true;
+	     -- assert(???); --verify that the solutions fit the localization pattern 
+	     )else(   
+	     << "-- partition is not valid: " << lambda << endl;
+	     node.Solutions = {}; 
+	     );
+	 --) -- closes if DEBUG'LEVEL == 4
+	 --else node.Solutions = node.SolutionsSuperset; -- should change!!! 
+	 ); 
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
      	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
@@ -818,7 +833,7 @@ if not node.IsResolved then (
 	  if not father.?FlagM then father.FlagM = M'' 
 	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
 	  
---	  if movetype=={2,2,0} and r == 1 then 1/0;
+	  --if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
 	  if node.Solutions == {} then {} -- means: not implemented
 	  else if movetype#1 == 2 then (-- case (_,2)
@@ -908,8 +923,8 @@ if not node.IsResolved then (
 	       	    M'X' = promote(M,Rt) * VwrtM;
 		    )
 	       -- implementing this case separately gives lower degree polynomials
---	       else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
---		    )
+	       --else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
+	       --    )
 	       else error "an unaccounted case";
 
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then timemakePolys1 := cpuTime();
@@ -1049,6 +1064,25 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
 		));
+	-----------------------------
+	-- August 20, 2013:
+	-----------------------------
+	-- AFter the transformation (GL*newDag.FlagM*newDag.Solutions)
+	-- the solutions obtained are ALMOST with respect to the local chart
+	-- corresponding to the Schubert Variety (l1, Id)... but we need
+	-- to clear the entries that are below the pivots first...
+		
+	-- doing cleanSolutions := apply(GL*newDag.FlagM*newDag.Solutions, s->clean(ERROR'TOLERANCE^2, s));
+	-- is not the right way to clean...need to clean zeroes below the pivots only, this is
+	-- just a hack
+	
+	----------------------------
+	-- IMPORTANT!
+	-----------------------------
+	-- We need to check if the solutions newDag.Solutions
+	-- after the change of coordinates and flags, are actual
+	-- solutions to our original problem... we need to do
+	-- another Newton step here!
 	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
@@ -1142,6 +1176,10 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    (conditions,flagsA,flagsB) := conds'A'B; 
    SchA := apply(#conditions, i->(conditions#i,flagsA#i));
    SchB := apply(#conditions, i->(conditions#i,flagsB#i));
+   -- August 20, 2013:
+   -------------------
+   -- commenting th checkIncidenceSolutions check as we discovered
+   -- this is a test that is numerical unstable!
    assert all(solutionsA, s->checkIncidenceSolution(s,SchA));
    s := first solutionsA;
    n := numrows s;
@@ -1150,11 +1188,21 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    R := FFF[x_(1,1)..x_(k,n-k)];
    MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
+   -- the following clean is a hack, instead, we need to do a newton step check
+   -- when we all changeFlags as there is a numerical check in there... 
+   -- the following is a hack
    ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
 
+---------------------------------
+-- DOCUMENT THIS FUNCTION!!!
+--
+-- This function is doing a parameter homotopy
+-- change one column at a time to move solutions
+-- w.r.t. flags A to solutions w.r.t. flags B
+----------------------------------
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    solutionsS := solutionsA;
@@ -1182,8 +1230,14 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
 	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, gamma=>exp(2*pi*ii*random RR));
       	       solutionsS = solutionsT/coordinates;
-      	       ));
+	       ));
        );
+   -- August 20,2013:
+   ---------------------------
+   -- Newton refinement here!!
+   --   SquareSyst := flatten entries squareUpPolynomials(nVars, makePolynomials(MX, apply(#conditionss,i->(conditions#i,FlagsB#i))));
+   --   print("Newton refinement");
+   --   print(refine(SquareSyst, solutionsS, Software=>M2, Iterations=>1));
    solutionsS
    )
 
@@ -1437,6 +1491,11 @@ makePolynomials(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
 	    ));
     eqs
     )
+
+-- Document the Following function
+---------------------------------
+-- squareUpPolynomials
+---------------------------------
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
@@ -1462,6 +1521,11 @@ trackHomotopy (Matrix,List) := (H,S) -> (
      track(first entries map't'0 H, first entries map't'1 H, S)
      )
 
+------------------------
+-- isRedCheckerInRegionE
+------------------------
+-- NEEDS to be documentted!
+----------------------------
 -- Input: 
 --     j = number of a red checker
 --     r = critical row
@@ -1477,6 +1541,12 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 
 ----------------------
 -- checkIncidenceSolution
+----------------------
+-- August 20,2013
+-- THIS FUNCTION NEEDS TO BE DELETED
+-- it was for testing solutions of Schubert varieties
+-- but this is not numerical stable... we replace this
+-- with a Newton step check
 ----------------------
 -- Function that given a proposed
 -- n by k matrix, it checks
@@ -1502,7 +1572,6 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
     scan(#b, r->( 
        c := b#r;
        rnk := k+c-(r+1)+1;
-       print("These are the residuals");
        if(rnk<= n) then(
          chooseCols:= subsets(k+c,rnk);
 	 chooseRows:= subsets(n,rnk);
@@ -1511,15 +1580,16 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 		   n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
 		   if n>ERROR'TOLERANCE then(
 	               verif=false;
-		       print(n);
-	        );
-	      ));
-         ));
-       );
-     ));
-   ));
-   verif
-   )
+		       print("These are the NONZERO residuals");
+ 		       print(n);
+	               );
+	      	   ));
+             ));
+         );
+      ));
+    ));
+  verif
+  )
 
 --
 -- TEST
@@ -1529,6 +1599,57 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 -- 
 -- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, random(FFF^4,FFF^4))}
 -- checkIncidenceSolution(H, SchbPrblm)
+
+
+----------------------
+-- checkNewtonIteration
+----------------------
+-- Function that given a proposed
+-- solution to a Schubert Problem 
+-- it creates a Newton step to compare
+-- the convergence of the approximated solution
+----------------------
+-- Input:
+--    M -- n by k matrix (representing an element of G(k,n))
+--    MX -- local coordinates for the solution
+-- Output:
+--    NewtonStep
+-----------------------
+-- This function NEEDS to be created!!
+
+------------------------
+-- dist
+------------------------
+-- function to measure the 
+-- euclidean distance between
+-- two points: (x1,...,xn) and (y1,...,yn)
+-- it computes:
+--    sqrt(sum( (xi-yi)^2 ))
+-- 
+-- Input: two Lists representing two set of solutions to a system
+-- Output: list of distances between the elements of the list
+--   
+--- Notice that solns1 could come from a numerical Newton step,
+-- so the function first check if the solution is of type List or 
+-- of type Point
+--
+--------- FOR DAN AND MIKE -------
+-- Notice we had to do this function because
+-- M2 function norm(2,_) does not give the 2-norm
+-- of the complex vector (x1,...,xn)
+----------------------- 
+dist = method()
+dist(List,List) := (solns1,solns2) -> (
+    apply(#solns1, i->(
+	    v1 := solns1#i;
+	    v2 := solns2#i;
+	    if instance(v1,Point) then v1 = coordinates(v1);
+	    if instance(v2,Point) then v2 = coordinates(v2);
+	    sqrt(sum(apply(v2-v1, i->i^2)))
+   ))
+)
+
+
 -----------------------------
 -- end Numerical LR-Homotopies
 -----------------------------
