@@ -17,6 +17,33 @@ namespace M2 {
     return result;
   }
 
+  template<typename RingType>
+  bool ConcreteRing<RingType>::newpromote(const Ring *R, 
+                                       const ring_elem fR, 
+                                       ring_elem &resultS) const
+  {
+    const Ring *S = this;
+    fprintf(stderr, "calling newpromote\n");
+    typedef RingPromoter RP;
+    if (R == globalZZ)
+      {
+        resultS = S->from_int(fR.get_mpz());
+        return true;
+      }
+    if (R == S)
+      {
+        resultS = copy(fR);
+        return true;
+      }
+    //    Promote<RingType>::promote(const Ring* R, const ring_elem fR, ring(), ElementType& result);
+    ElementType result;
+    ring().init(result);
+    bool retval = Promoter::NewPromoter::newpromote(R, fR, ring(), result);
+    ring().to_ring_elem(resultS, result);
+    ring().clear(result);
+    return retval;
+  }
+
   // Rings considered:
   // ZZ, ZZFLINT
   // QQ, QQFLINT
@@ -63,32 +90,6 @@ namespace M2 {
   //  12. ZZ[t] --> ZZtFLINT
   //
   //  13. ZZ <---> ZZFlint
-  template<typename RingType>
-  bool ConcreteRing<RingType>::newpromote(const Ring *R, 
-                                       const ring_elem fR, 
-                                       ring_elem &resultS) const
-  {
-    const Ring *S = this;
-    fprintf(stderr, "calling promote\n");
-    typedef RingPromoter RP;
-    if (R == globalZZ)
-      {
-        resultS = S->from_int(fR.get_mpz());
-        return true;
-      }
-    if (R == S)
-      {
-        resultS = copy(fR);
-        return true;
-      }
-    //    Promote<RingType>::promote(const Ring* R, const ring_elem fR, ring(), ElementType& result);
-    ElementType result;
-    ring().init(result);
-    bool retval = Promoter::NewPromoter::newpromote(R, fR, ring(), result);
-    ring().to_ring_elem(resultS, result);
-    ring().clear(result);
-    return retval;
-  }
 
   template<typename RingType>
   bool ConcreteRing<RingType>::promote(const Ring *R, 

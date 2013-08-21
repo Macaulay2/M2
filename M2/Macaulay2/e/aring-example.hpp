@@ -126,9 +126,13 @@ namespace M2 {
     bool set_from_mpq(ElementType& result,const mpq_ptr a) const;
 
     // set from an arbitrary precision gmp real number.
-    // return false if that is not applicable.
+    // LEAVE OUT if not needed
     bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
-    
+
+    // set from an arbitrary precision gmp complex number.
+    // LEAVE OUT if not needed
+    bool set_from_BigComplex(elem &result, gmp_CC a) const { return false; }    
+
     // If the ring has variables, set 'result' to that variable.
     // If not, false whould be returned.
     bool set_var(ElementType& result, int v) const {fmpz_set_si(result,1);;}

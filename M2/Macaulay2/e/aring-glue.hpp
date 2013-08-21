@@ -4,6 +4,8 @@
 #define _ring_glue_hh_
 
 #include "aring.hpp"
+#include "aring-translate.hpp"
+//#include "aring-promoter.hpp"
 #include "ring.hpp"
 
 static const bool displayArithmeticCalls = false;
@@ -102,8 +104,18 @@ namespace M2 {
     {
       ElementType a;
       R->init(a);
-      bool ret = R->set_from_BigReal(a,q);
-      R->to_ring_elem(result, a);
+      bool ret = get_from_BigReal(*R,a,q);
+      if (ret) R->to_ring_elem(result, a);
+      R->clear(a);
+      return ret;
+    }
+    virtual bool from_BigComplex(gmp_CC q, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      //      bool ret = R->set_from_BigComplex(a,q);
+      bool ret = get_from_BigComplex(*R,a,q);
+      if (ret) R->to_ring_elem(result, a);
       R->clear(a);
       return ret;
     }
@@ -420,9 +432,10 @@ namespace M2 {
       R->clear(a);
       return result;
     }
-  };
+  }; // class ConcreteRing<RingType>
 
-};
+
+}; // namespace M2
 
 #endif
 

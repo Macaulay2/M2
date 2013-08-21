@@ -374,6 +374,19 @@ namespace M2 {
     }
 
     // TODO: promote, lift.
+
+    gmp_CC toBigComplex(const ElementType& a) const
+    {
+      gmp_CC result = getmemstructtype(gmp_CC);
+      result->re = getmemstructtype(gmp_RR);
+      result->im = getmemstructtype(gmp_RR);
+      mpfr_init2(result->re,mPrecision);
+      mpfr_init2(result->im,mPrecision);
+      mpfr_set(result->re, &a.re, GMP_RNDN);
+      mpfr_set(result->im, &a.im, GMP_RNDN);
+      return result;
+    }
+
   private:
       unsigned long mPrecision;
   };

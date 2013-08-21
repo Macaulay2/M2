@@ -535,6 +535,7 @@ const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, gmp_CC z)
   ring_elem f;
   if (R->from_BigComplex(z,f))
     return RingElement::make_raw(R, f);
+  ERROR("cannot create element of this ring from an element of CC");
   return 0;
 }
 
@@ -543,6 +544,7 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z)
   ring_elem f;
   if (R->from_BigReal(z,f))
     return RingElement::make_raw(R, f);
+  ERROR("cannot create element of this ring from an element of RR");
   return 0;
 }
 
@@ -596,13 +598,24 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
 {
-  if (!a->get_ring()->is_CCC())
+  const Ring* R = a->get_ring();
+  auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC>*>(R);
+  if (RCC != 0)
     {
-      ERROR("expected an element of CCC");
-      return 0;
+      M2::ARingCCC::ElementType b;
+      RCC->ring().init(b);
+      RCC->ring().from_ring_elem(b, a->get_value());
+      gmp_CC result = RCC->ring().toBigComplex(b);
+      RCC->ring().clear(b);
+      return result;
     }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_CC>(f);
+  if (a->get_ring()->is_CCC())
+    {
+      void *f = a->get_value().poly_val;
+      return static_cast<gmp_CC>(f);
+    }
+  ERROR("expected an element of CCC");
+  return 0;
 }
 
 int rawDiscreteLog(const RingElement *h)
