@@ -9,76 +9,10 @@ help  "bertiniRefineSols"--check
 
 
 
----REMOVE FLAG
---This file demonstrates the progess we have made on the bertini package thus far.
--- Always load this file first so bertini.m2 is loaded from the correct place. 
-----This is unique to Jose's MacMath computer
-restart
-path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
-install
-loadPackage("Bertini")
-peek Bertini
-
-
----The variables of your ring consist of parameters, then unknowns.
-R=QQ[t,x,y]
---We have a system of two equations.
-aUserHomotopy={(t)^2*(x^2-1)+(1-t)^2*(x^2-9),y-1}
-Z--the start points for the homotopy are for t=1 and below:
-startPoints={point({{1,1}}),
-     point({{-1,1}})}
-
---the input for bertiniTrackHomotopy is 
----1) start system
----2) parameter
----3) start points
-
---the output for bertiniTrackHomotopy is a list of points. 
-targetPoints=bertiniTrackHomotopy(aUserHomotopy,t,startPoints)
-
-
-
-
-restart
-path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
-installPackage("Bertini")
---To solve a zero dimensional system use the bertiniZeroDimSolve command
--- the input is a list of equations 
--- the outpt is a list of zero dimensional solutions
-R=QQ[x,y,z]
-
---this input is a square system
-outputSquareSystem=bertiniZeroDimSolve({(z)^2*(x^2-9),y-2,z-1})
-
---the input system may be overdetermined
-outputOverdetermined=bertiniZeroDimSolve({(z)^2*(x^2-9),y-2,z-1,x-3})
-
---the input system CANNOT be underdetermined and return an output
-outputUnderdetermined=bertiniZeroDimSolve({(1-z)^2*(x^2-9),y-2})
-
---When we have solutions with multiplicity they are recorded twice in our list
-outputMultiplicity=bertiniZeroDimSolve({(z)^2*(x^2-9),y-2,(z-1)^2})
-peek oo_0
-
---You can compare the condition numbers of points to these solutions
-peek outputSquareSystem_0
-peek outputOverdetermined_0---whydoes this say solution number -1???
-peek outputMultiplicity_0
-
-
-
---restart
---Another example of a zero dimensional solve
-R=QQ[x,y]
-f1=(x-1)^4*(x+2)
-f2=(y-2)^3
-soks=bertiniZeroDimSolve({f1,f2})
-peek soks_0
-
 --
 restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
-installPackage("Bertini")
+loadPackage("Bertini")
 
 ---This is an example of bertiniPosDimSolve
 R=QQ[x,y]
@@ -111,16 +45,22 @@ keys o20
 o21_0
 peek oo
 
-----refined solutions
-R=QQ[x,y]
+----refined solutions--broken
+R=CC[x,y]
 f1=x^3-1
 f2=y^3-1
-L={f1, f2}
-pts=bertiniZeroDimSolve(L)
-rdf="/Users/MacMath/Desktop/tmp/M2-20172-0/5/raw_data" 
-bertiniRefineSols(L,RawData=>rdf,StartSolutions=>{{1,
--.5+.866025*ii}},digits=>100)
+F={f1, f2}
+pts=bertiniZeroDimSolve(F)
+pts_0
+rdf="/Users/MacMath/Desktop/tmp/M2-20172-0/25/" 
+bertiniRefineSols(F,pts,100)
+bertiniRefineSols(F,{{1,0},{1,0}},100)
+help bertiniRefineSols
 
+ R = CC[x,y]
+     F = {x^2-2,y^2-2}
+     sols = bertiniZeroDimSolve (F)
+     S = bertiniRefineSols (F,sols,100)
 
 
 
@@ -138,6 +78,9 @@ bertiniSample(
      {f1},dimen=>1,compnum=>1,numpts=>12,WitnessData=>wdf)
 
 
+
+
+help bertiniSample
 --parameter
 restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
@@ -159,5 +102,7 @@ bPH=bertiniParameterHomotopy({f1,f2},{u1,u2,u3},{
 	  })
 netList bPH
 
-
-
+R=QQ[x,y,z]
+bertiniPosDimSolve({x^2-1},FINALTOL=>1e-6)
+bertiniPosDimSolve({x^2-1},FINALTOL=>1e-10)
+bertiniPosDimSolve({x^2-1},FINALTOL=>1e-16)
