@@ -27,7 +27,7 @@ namespace M2 {
   class ARingQQFlint : public RingInterface
   {
   public:
-    static const RingID ringID = ring_ZZZ;
+    static const RingID ringID = ring_QQFlint;
     
     typedef fmpq ElementType;
     typedef ElementType elem;

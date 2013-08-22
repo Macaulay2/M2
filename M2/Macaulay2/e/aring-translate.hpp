@@ -9,6 +9,12 @@
 
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
+#include "aring-zzp.hpp"
+#include "aring-zzp-flint.hpp"
+#include "aring-zzp-ffpack.hpp"
+#include "aring-qq.hpp"
+#include "aring-m2-gf.hpp"
+#include "aring-gf-givaro.hpp"
 
 namespace M2 {
   template<typename RT> 
@@ -38,14 +44,80 @@ namespace M2 {
   // Return true if this was done, else return false.
   template<typename RingR, typename RingS>
   bool mypromote(const RingR& R, 
-               const typename RingR::ElementType& fR, 
                const RingS& S, 
+               const typename RingR::ElementType& fR, 
                typename RingS::ElementType& result_fS)
   {
     return false;
   }
 
+  inline bool mypromote(const ARingRRR& R,
+                        const ARingRRR& S,
+                        const ARingRRR::ElementType& fR,
+                        ARingRRR::ElementType& fS)
+  {
+    std::cout << "calling mypromote RRR RRR" << std::endl;
+    S.set(fS, fR);
+    return true;
+  }
 
+  inline bool mypromote(const ARingRRR& R,
+                        const ARingCCC& S,
+                        const ARingRRR::ElementType& fR,
+                        ARingCCC::ElementType& fS)
+  {
+    std::cout << "calling mypromote RRR CCC" << std::endl;
+    S.set_from_RRR(fS, fR);
+    return true;
+  }
+
+  inline bool mypromote(const ARingCCC& R,
+                        const ARingCCC& S,
+                        const ARingCCC::ElementType& fR,
+                        ARingCCC::ElementType& fS)
+  {
+    std::cout << "calling mypromote CCC CCC" << std::endl;
+    S.set(fS, fR);
+    return true;
+  }
+
+  // ZZ/p --> ZZ/p. 9 versions NONE OF THESE.
+  // instead:
+  //  (1) lift to ZZ (int version?)
+  //  (2) promote to the version of ZZ/p.
+  
+  // ZZ/p --> GF(p^n)
+
+  // GF(p^m) --> GF(p^n), where m|n, also switch GF type.
+
+  // The following are all essentially from_BigRational
+  // QQ --> RR
+  // QQ --> RRR
+  // QQ --> CC
+  // QQ --> CCC
+
+  // really, there are:
+  // RR --> RRR (from double)
+  // RR --> CC (imag part = 0)
+  // CC --> CCC (from doubles)
+  // RRR --> RRR  (change precision)
+  // RRR --> CCC  (imag part = 0)
+  // CCC --> CCC  (change precision)
+
+  // RRR --> RR  Use lift.
+  // CCC --> CC  Use lift.
+
+  // RRR --> RR (truncate)
+  // RR --> RRR (make new precison)
+  // RRR --> RRR (change precision)
+  // RR --> CC (imag part = 0)
+  // RRR --> CC (RRR --> RR, and imag part = 0)
+  // CCC --> CC (truncate)
+  // RR --> CCC
+  // RRR --> CCC
+  // CC --> CCC
+  // CCC --> CCC
+  
 }; // namespace M2
 
 #endif

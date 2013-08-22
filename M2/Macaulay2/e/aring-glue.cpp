@@ -3,20 +3,8 @@
 #include "aring-promoter.hpp"
 
 namespace M2 {  
-  template<class RingType>
-  ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
-  {
-    ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-    result->initialize_ring(static_cast<int>(R->characteristic()));
-    result->declare_field();
 
-    result->zeroV = result->from_int(0);
-    result->oneV = result->from_int(1);
-    result->minus_oneV = result->from_int(-1);
-
-    return result;
-  }
-
+#if 0
   template<typename RingType>
   bool ConcreteRing<RingType>::newpromote(const Ring *R, 
                                        const ring_elem fR, 
@@ -24,7 +12,6 @@ namespace M2 {
   {
     const Ring *S = this;
     fprintf(stderr, "calling newpromote\n");
-    typedef RingPromoter RP;
     if (R == globalZZ)
       {
         resultS = S->from_int(fR.get_mpz());
@@ -35,7 +22,6 @@ namespace M2 {
         resultS = copy(fR);
         return true;
       }
-    //    Promote<RingType>::promote(const Ring* R, const ring_elem fR, ring(), ElementType& result);
     ElementType result;
     ring().init(result);
     bool retval = Promoter::NewPromoter::newpromote(R, fR, ring(), result);
@@ -113,23 +99,23 @@ namespace M2 {
     case M2::ring_ZZp:
       switch (S->ringID()) {
       case M2::ring_ZZp: return false;
-      case M2::ring_GF: return RP::promoter<ARingZZp,ARingGFGivaro>(R,S,fR,resultS);
-      case M2::ring_FFPACK: return RP::promoter<ARingZZp,ARingZZpFFPACK>(R,S,fR,resultS);
+      case M2::ring_GFGivaro: return RP::promoter<ARingZZp,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingZZp,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
       break;
-    case M2::ring_GF:
+    case M2::ring_GFGivaro:
       switch (S->ringID()) {
       case M2::ring_ZZp: return RP::promoter<ARingGFGivaro,ARingZZp>(R,S,fR,resultS);
-      case M2::ring_GF: return RP::promoter<ARingGFGivaro,ARingGFGivaro>(R,S,fR,resultS);
-      case M2::ring_FFPACK: return RP::promoter<ARingGFGivaro,ARingZZpFFPACK>(R,S,fR,resultS);
+      case M2::ring_GFGivaro: return RP::promoter<ARingGFGivaro,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingGFGivaro,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
-    case M2::ring_FFPACK:
+    case M2::ring_ZZpFfpack:
       switch (S->ringID()) {
       case M2::ring_ZZp: return RP::promoter<ARingZZpFFPACK,ARingZZp>(R,S,fR,resultS);
-      case M2::ring_GF: return RP::promoter<ARingZZpFFPACK,ARingGFGivaro>(R,S,fR,resultS);
-      case M2::ring_FFPACK: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
+      case M2::ring_GFGivaro: return RP::promoter<ARingZZpFFPACK,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
     default:
@@ -191,6 +177,8 @@ namespace M2 {
     R->clear(a);
     return retval;
   }
+#endif
+  ///////////////////////////
 
   //explicit instantiation
   template class ConcreteRing< ARingZZp >;

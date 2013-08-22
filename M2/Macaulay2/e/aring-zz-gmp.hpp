@@ -20,7 +20,7 @@ namespace M2 {
   class ARingZZGMP : public RingInterface
   {
   public:
-    static const RingID ringID = ring_ZZZ;
+    static const RingID ringID = ring_ZZ;
     
     typedef __mpz_struct ElementType;
     typedef ElementType elem;

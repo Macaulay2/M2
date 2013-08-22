@@ -18,6 +18,7 @@
 #include "aring-zzp-flint.hpp"
 #endif
 
+#if 0
 namespace M2 {
   namespace Promoter {
     ////////////////////////////////////////////////////////////////////
@@ -77,8 +78,8 @@ namespace M2 {
                       const ARingZZp& S, ARingZZp::ElementType& resultS)
       {
         switch (R->ringID()) {
-        case M2::ring_GF: return newpromoter<ARingGFGivaro,ARingZZp>(R,fR,S,resultS);
-        case M2::ring_FFPACK: return newpromoter<ARingZZpFFPACK,ARingZZp>(R,fR,S,resultS);
+        case M2::ring_GFGivaro: return newpromoter<ARingGFGivaro,ARingZZp>(R,fR,S,resultS);
+        case M2::ring_ZZpFfpack: return newpromoter<ARingZZpFFPACK,ARingZZp>(R,fR,S,resultS);
         default: return false;
         }
       }
@@ -236,7 +237,7 @@ namespace M2 {
 //#endif
   };
 };
-
+#endif
 
 #endif
 

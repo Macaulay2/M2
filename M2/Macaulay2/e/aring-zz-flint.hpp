@@ -14,7 +14,7 @@ namespace M2 {
   class ARingZZ : public DummyRing
   {
   public:
-    static const RingID ringID = ring_ZZZ;
+    static const RingID ringID = ring_ZZFlint;
     typedef M2::ARingZZ ring_type ;
     
     ARingZZ() {};
@@ -34,7 +34,7 @@ namespace M2 {
   class ARingZZ : public RingInterface
   {
   public:
-    static const RingID ringID = ring_ZZZ;
+    static const RingID ringID = ring_ZZFlint;
     
     typedef fmpz ElementType;
     typedef ElementType elem;

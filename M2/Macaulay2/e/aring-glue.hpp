@@ -5,7 +5,6 @@
 
 #include "aring.hpp"
 #include "aring-translate.hpp"
-//#include "aring-promoter.hpp"
 #include "ring.hpp"
 
 static const bool displayArithmeticCalls = false;
@@ -150,9 +149,11 @@ namespace M2 {
 
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const;
 
+#if 0
     virtual bool newpromote(const Ring *R, 
                             const ring_elem fR, 
                             ring_elem &resultS) const;
+#endif
 
     //* If there is a "natural" map S --> R=this, where f is an element of
     // R, then result is set to an element f in S which maps to f, and true is returned.
@@ -434,6 +435,163 @@ namespace M2 {
     }
   }; // class ConcreteRing<RingType>
 
+
+  template<class RingType>
+  ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
+  {
+    ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
+    result->initialize_ring(static_cast<int>(R->characteristic()));
+    result->declare_field();
+
+    result->zeroV = result->from_int(0);
+    result->oneV = result->from_int(1);
+    result->minus_oneV = result->from_int(-1);
+
+    return result;
+  }
+
+  //////////////////////
+  // promote and lift //
+  //////////////////////
+  // This is the second level of dispatch, sending the request
+  // to the routines in the namespace ARingTranslate
+  //  namespace ARingTranslate;
+
+  namespace RingPromoter {
+  template<typename SourceRing, typename TargetRing>
+  bool promoter(const Ring *R, const Ring *S, const ring_elem fR, ring_elem &resultS)
+  {
+    M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
+    M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
+    const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
+    const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
+    
+    typename SourceRing::ElementType fR1;
+    typename TargetRing::ElementType gS1;
+    
+    R1.init(fR1);
+    S1.init(gS1);
+    R1.from_ring_elem(fR1, fR);
+    bool retval = mypromote(R1,S1,fR1,gS1);
+    if (retval)
+      S1.to_ring_elem(resultS, gS1);
+    R1.clear(fR1);
+    S1.clear(gS1);
+    return retval;
+  }
+  };
+
+  template<typename RingType>
+  bool ConcreteRing<RingType>::promote(const Ring *R, 
+                                       const ring_elem fR, 
+                                       ring_elem &resultS) const
+  {
+    const Ring *S = this;
+    fprintf(stderr, "calling promote\n");
+    namespace RP = RingPromoter;
+    if (R == globalZZ)
+      {
+        resultS = S->from_int(fR.get_mpz());
+        return true;
+      }
+    if (R == S)
+      {
+        resultS = copy(fR);
+        return true;
+      }
+    switch (R->ringID()) {
+    case M2::ring_ZZp:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return false;
+      case M2::ring_GFGivaro: return RP::promoter<ARingZZp,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingZZp,ARingZZpFFPACK>(R,S,fR,resultS);
+      default: return false;
+      }
+      break;
+    case M2::ring_GFGivaro:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return RP::promoter<ARingGFGivaro,ARingZZp>(R,S,fR,resultS);
+      case M2::ring_GFGivaro: return RP::promoter<ARingGFGivaro,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingGFGivaro,ARingZZpFFPACK>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_ZZpFfpack:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return RP::promoter<ARingZZpFFPACK,ARingZZp>(R,S,fR,resultS);
+      case M2::ring_GFGivaro: return RP::promoter<ARingZZpFFPACK,ARingGFGivaro>(R,S,fR,resultS);
+      case M2::ring_ZZpFfpack: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_RRR:
+      switch (S->ringID()) {
+      case M2::ring_RRR: return RP::promoter<ARingRRR,ARingRRR>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingRRR,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_CCC:
+      switch (S->ringID()) {
+      case M2::ring_CCC: return RP::promoter<ARingCCC,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
+    default:
+      break;
+    };
+    return false;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingGFM2>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+  {
+    // Rf = Z/p[x]/F(x) ---> GF(p,n)
+    // promotion: need to be able to know the value of 'x'.
+    // lift: need to compute (primite_element)^e
+
+    ElementType a;
+    bool retval = R->promote(Rf,f,a);
+    R->to_ring_elem(result, a);
+    return retval;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingGFM2>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    // Rf = Z/p[x]/F(x) ---> GF(p,n)
+    // promotion: need to be able to know the value of 'x'.
+    // lift: need to compute (primite_element)^e
+
+    ElementType a;
+    R->from_ring_elem(a, f);
+    bool retval = R->lift(Rg,a,result);
+    return retval;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingGFGivaro>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+  {
+    // Rf = Z/p[x]/F(x) ---> GF(p,n)
+    // promotion: need to be able to know the value of 'x'.
+    // lift: need to compute (primite_element)^e
+
+    ElementType a;
+    bool retval = R->promote(Rf,f,a);
+    R->to_ring_elem(result, a);
+    return retval;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingGFGivaro>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    // Rf = Z/p[x]/F(x) ---> GF(p,n)
+    // promotion: need to be able to know the value of 'x'.
+    // lift: need to compute (primite_element)^e
+
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+    bool retval = R->lift(Rg,a,result);
+    R->clear(a);
+    return retval;
+  }
 
 }; // namespace M2
 

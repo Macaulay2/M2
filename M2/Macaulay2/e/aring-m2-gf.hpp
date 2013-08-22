@@ -7,7 +7,7 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 
-#include "aring-glue.hpp"
+//#include "aring-glue.hpp"
 
 class GF;
 class PolynomialRing;
@@ -78,8 +78,8 @@ namespace M2 {
     
 
   public:
-    static const RingID ringID = ring_GFM2;
-    typedef ConcreteRing<ARingGFM2> ring_type;
+    static const RingID ringID = ring_GF;
+    //    typedef ConcreteRing<ARingGFM2> ring_type;
     typedef int ElementType;
     typedef int elem;
     

@@ -9,6 +9,8 @@
 #include "ringelem.hpp"
 #include "ringmap.hpp"
 
+#include "aring-RRR.hpp"
+
 class RingMap;
 
 namespace M2 {
@@ -385,6 +387,12 @@ namespace M2 {
       mpfr_set(result->re, &a.re, GMP_RNDN);
       mpfr_set(result->im, &a.im, GMP_RNDN);
       return result;
+    }
+
+    bool set_from_RRR(ElementType &result, const ARingRRR::ElementType& a) const {
+      mpfr_set(&result.re, &a, GMP_RNDN);
+      mpfr_set_si(&result.im, 0, GMP_RNDN);
+      return true;
     }
 
   private:

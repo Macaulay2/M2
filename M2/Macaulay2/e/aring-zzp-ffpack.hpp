@@ -48,7 +48,7 @@ namespace M2 {
     // Questions: why names are UTT, STT?
     // Also: whatever we call them, we want all aring classes to use them.
     // problem: givaro isn't necessarily defined here
-    static const RingID ringID = ring_FFPACK;
+    static const RingID ringID = ring_ZZpFfpack;
     
     //typedef FFPACK::ModularBalanced<double> FieldType;
     typedef FFPACK::Modular<double> FieldType;

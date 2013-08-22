@@ -29,7 +29,7 @@ namespace M2 {
    //class ARingGF : public ARingGFM2
    {
     public:
-        static const RingID ringID = ring_GF;
+        static const RingID ringID = ring_GFGivaro;
 
         typedef M2::ARingGFGivaro             ring_type ;
      
@@ -73,7 +73,7 @@ class ARingGFGivaro : public RingInterface
 {
 
   public:
-    static const RingID ringID = ring_GF;
+    static const RingID ringID = ring_GFGivaro;
 
     typedef Givaro::GFqDom<long>    FieldType;
     typedef FieldType::Element      ElementType;

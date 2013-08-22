@@ -478,6 +478,27 @@ testMutableMatrices = (R) -> (
      << "tests passed for " << raw R << endl;
      )
 
+testPromoteLift = () -> (
+    R := RR_100;
+    S := RR_200;
+    T := CC_100;
+    U := CC_200;
+    m := matrix{{1.234 _ R}};
+    mS := promote(m, S);
+    mT := promote(m, T);
+    mU := promote(m,U);
+    n := mS;
+    assert(m == promote(n, R));
+    assert(mS == promote(n, S));
+    assert(mT == promote(n, T));
+    assert(mU == promote(n,U));
+    )
+
+TEST ///
+ debug EngineTests
+ testPromoteLift()
+///
+
 TEST ///
   testMutableMatrices ZZ
 ///

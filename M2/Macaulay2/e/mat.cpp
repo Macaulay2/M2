@@ -50,7 +50,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
         return MutableMat< SMat<M2::ARingZZp> >
           ::zero_matrix(R,KZZp->get_ARing(),nrows,ncols);
     }
-  if (R->ringID() == M2::ring_FFPACK)
+  if (R->ringID() == M2::ring_ZZpFfpack)
     {
       std::cerr << "Should not get here" << std::endl;
       const M2::ConcreteRing<M2::ARingZZpFFPACK> *ffpackRing = 
@@ -64,17 +64,17 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
           ::zero_matrix(R,&ffpackRing->ring(),nrows,ncols);
     }
 #if 0
-  if (R->ringID() == M2::ring_GFM2)
+  if (R->ringID() == M2::ring_GF)
     {
       const M2::ConcreteRing<M2::ARingGFM2> *AGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFM2> *>(R);
       ASSERT(AGF != 0);
       if (dense)
-	{
-	  return MutableMat< DMat<M2::ARingGFM2> >
-	    ::zero_matrix(R,&AGF->ring(),nrows,ncols);
-	}
+        {
+          return MutableMat< DMat<M2::ARingGFM2> >
+            ::zero_matrix(R,&AGF->ring(),nrows,ncols);
+        }
       else
-	return MutableMat< SMat<M2::ARingGFM2> >
+        return MutableMat< SMat<M2::ARingGFM2> >
           ::zero_matrix(R,&AGF->ring(),nrows,ncols);
     }
 #endif
