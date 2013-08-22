@@ -9,6 +9,7 @@ help  "bertiniRefineSols"--check
 
 
 
+<<<<<<< HEAD
 --
 restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
@@ -44,6 +45,8 @@ oo#1
 keys o20
 o21_0
 peek oo
+=======
+>>>>>>> f6913c93582189b936de324a20911184ac79b04c
 
 ----refined solutions--broken
 R=CC[x,y]
@@ -64,6 +67,7 @@ help bertiniRefineSols
 
 
 
+<<<<<<< HEAD
 ---Get sample to work
 ---This is an example of bertiniSample
 --We do a pos run to get witness_data file found 
@@ -106,3 +110,5 @@ R=QQ[x,y,z]
 bertiniPosDimSolve({x^2-1},FINALTOL=>1e-6)
 bertiniPosDimSolve({x^2-1},FINALTOL=>1e-10)
 bertiniPosDimSolve({x^2-1},FINALTOL=>1e-16)
+=======
+>>>>>>> f6913c93582189b936de324a20911184ac79b04c
