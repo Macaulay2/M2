@@ -80,7 +80,23 @@ doc ///
     Options for bertini.m2 functions.
   Description  
     Text
-      To be added later. 
+      Every function of the package takes ALL optional arguments listed here.
+      The default value for EACH option is -1, which tells Bertini to use its internal default.
+    
+      There are two recommended ways of using the optional arguments.
+    
+      (1) Specify individual parameters in a function call:
+    Example
+      CC[x,y]; F = {x^2-1,y^2-1};
+      bertiniZeroDimSolve(F,RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100)
+    Text
+      (2) Store your frequently used favorites in an OptionTable 
+      and pass it as the last argument in each function call:
+    Example
+      opts = new OptionTable from {RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100}
+      bertiniZeroDimSolve(F,opts)
+      G = {x^2+y^2-1};
+      bertiniPosDimSolve(G,opts)
 ///;
 
 doc ///

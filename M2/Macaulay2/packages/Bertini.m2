@@ -20,7 +20,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -928,23 +928,22 @@ local R;
            coDims = append(coDims, value ("{"|replace (" ", ",", l_0)|"}"));
            l=drop(l,1)
         );
-       wSets := {}; --list of witness sets for each point
+       wSets := {}; --list of lists of witness sets for each point
+       l = drop(l,3);
        for i from 1 to #o.StartSolutions do (
-         l = drop(l,3);
          testVector := drop(value ("{"|replace (" ", ",", l_0)|"}"), -1); --getting row from incidence matrix and dropping extra space
+	 witSets'forOnePoint := {};
          for j from 0 to numCoDims-1 do(	  
            subTestVector := take(testVector, coDims_j_1);  
 	   compNums := positions(subTestVector, k->k==1); --get component numbers that with positive result
            possWitSets := NV#(numVars-coDims_j_0); --grabs witness sets in this component
 	   witSets := select(possWitSets, k->member(k.ComponentNumber, compNums)); --select witness sets with positive result
-	   if (#witSets>0) then (wSets = append(wSets, witSets)); --append to larger list that we will output      
+    	   witSets'forOnePoint = witSets'forOnePoint | witSets;
 	   testVector=drop(testVector, coDims_j_1);
-	   print testVector
-	);
-     
-     );
-   
-   return wSets    
+	   );
+ 	 wSets = append(wSets,witSets'forOnePoint); --append to larger list that we will output      
+       );
+       return wSets    
   )
 
 --  else if (o.runType == -1) then ( --if ZeroDim, we actually want to read raw_data, but this works until that is fully implemented. 
@@ -1002,8 +1001,28 @@ local R;
 --     )
 
 
+--##########################################################################--
+-- TESTS
+--##########################################################################--
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniZeroDimSolve.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniTrackHomotopy.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniPosDimSolve.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomotopy.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniSample-bertiniComponentMemberTest.tst.m2")
+/// 
 
 --##########################################################################--
 -- DOCUMENTATION
