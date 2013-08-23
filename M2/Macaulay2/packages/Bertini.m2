@@ -608,7 +608,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               if (o.runType==0 or o.runType==8) then (
 		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
 	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
@@ -668,7 +668,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               --print coords; --remove me
@@ -751,8 +751,8 @@ local R;
             l = drop(l,1);
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});  -- NOTE: we convert to maxPrec bits complex type
               l = drop(l,1);
               );
 
@@ -891,7 +891,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               --print coords; --remove me
@@ -1022,6 +1022,10 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomot
 
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bertiniSample-bertiniComponentMemberTest.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
 /// 
 
 --##########################################################################--

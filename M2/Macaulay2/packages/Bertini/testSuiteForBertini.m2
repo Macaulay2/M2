@@ -88,7 +88,7 @@ help bertiniSample
 --parameter
 restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
-installPackage("Bertini")
+loadPackage("Bertini")
 
 --To have a parameter homotopy you need to create a ring of unknowns and aparemters
 --the input is 
@@ -109,6 +109,5 @@ netList bPH
 R=QQ[x,y,z]
 bertiniPosDimSolve({x^2-1},FINALTOL=>1e-6)
 bertiniPosDimSolve({x^2-1},FINALTOL=>1e-10)
-bertiniPosDimSolve({x^2-1},FINALTOL=>1e-16)
-=======
->>>>>>> f6913c93582189b936de324a20911184ac79b04c
+NV = bertiniPosDimSolve({x^2-1},FINALTOL=>1e-16, PRECISION=>128, MPTYPE=>0)
+first first points NV#2#0
