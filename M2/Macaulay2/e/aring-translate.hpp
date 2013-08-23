@@ -50,13 +50,21 @@ namespace M2 {
   {
     return false;
   }
+  template<typename RingR, typename RingS>
+  bool mylift(const RingR& R, 
+              const RingS& S, 
+              typename RingR::ElementType& result_gR, 
+              const typename RingS::ElementType& gS)
+  {
+    return false;
+  }
+
 
   inline bool mypromote(const ARingRRR& R,
                         const ARingRRR& S,
                         const ARingRRR::ElementType& fR,
                         ARingRRR::ElementType& fS)
   {
-    std::cout << "calling mypromote RRR RRR" << std::endl;
     S.set(fS, fR);
     return true;
   }
@@ -66,7 +74,6 @@ namespace M2 {
                         const ARingRRR::ElementType& fR,
                         ARingCCC::ElementType& fS)
   {
-    std::cout << "calling mypromote RRR CCC" << std::endl;
     S.set_from_RRR(fS, fR);
     return true;
   }
@@ -76,8 +83,34 @@ namespace M2 {
                         const ARingCCC::ElementType& fR,
                         ARingCCC::ElementType& fS)
   {
-    std::cout << "calling mypromote CCC CCC" << std::endl;
     S.set(fS, fR);
+    return true;
+  }
+
+  inline bool mylift(const ARingRRR& R,
+                     const ARingRRR& S,
+                     ARingRRR::ElementType& result_gR,
+                     const ARingRRR::ElementType& gS)
+  {
+    R.set(result_gR, gS);
+    return true;
+  }
+
+  inline bool mylift(const ARingRRR& R,
+                     const ARingCCC& S,
+                     ARingRRR::ElementType& result_gR,
+                     const ARingCCC::ElementType& gS)
+  {
+    R.set(result_gR, S.realPartReference(gS));
+    return (R.is_zero(S.imaginaryPartReference(gS)));
+  }
+
+  inline bool mylift(const ARingCCC& R,
+                     const ARingCCC& S,
+                     ARingCCC::ElementType& result_gR,
+                     const ARingCCC::ElementType& gS)
+  {
+    R.set(result_gR, gS);
     return true;
   }
 

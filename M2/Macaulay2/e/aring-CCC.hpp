@@ -39,8 +39,9 @@ namespace M2 {
 
     unsigned long computeHashValue(const ElementType& a) const  
     { 
-      double d = mpfr_get_d(&a.re, GMP_RNDN); // redo???
-      return static_cast<unsigned long>(d);
+      double a1 = mpfr_get_d(&a.re, GMP_RNDN);
+      double b1 = mpfr_get_d(&a.im, GMP_RNDN);
+      return static_cast<unsigned long>(12347.*a1 + 865800. * b1);
     }
 
     /////////////////////////////////
@@ -393,6 +394,23 @@ namespace M2 {
       mpfr_set(&result.re, &a, GMP_RNDN);
       mpfr_set_si(&result.im, 0, GMP_RNDN);
       return true;
+    }
+
+    const ARingRRR::ElementType& realPartReference(const ElementType& a) const {
+      return a.re;
+    }
+    const ARingRRR::ElementType& imaginaryPartReference(const ElementType& a) const {
+      return a.im;
+    }
+    void set_real_part(ElementType& c, ARingRRR::ElementType& a) {
+      mpfr_set(&c.re, &a, GMP_RNDN);
+    }
+    void set_imaginary_part(ElementType& c, ARingRRR::ElementType& a) {
+      mpfr_set(&c.im, &a, GMP_RNDN);
+    }
+    void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) {
+      mpfr_set(&result.re, re, GMP_RNDN);
+      mpfr_set(&result.im, im, GMP_RNDN);
     }
 
   private:

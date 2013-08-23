@@ -149,12 +149,6 @@ namespace M2 {
 
     virtual bool promote(const Ring *S, const ring_elem f, ring_elem &result) const;
 
-#if 0
-    virtual bool newpromote(const Ring *R, 
-                            const ring_elem fR, 
-                            ring_elem &resultS) const;
-#endif
-
     //* If there is a "natural" map S --> R=this, where f is an element of
     // R, then result is set to an element f in S which maps to f, and true is returned.
     // Otherwise, false is returned.
@@ -164,12 +158,7 @@ namespace M2 {
     // Lifting elements of ZZ/p to QQ does not count, as there is no actual homomorphism
     // from QQ --> ZZ/p
 
-    virtual bool lift(const Ring *S, const ring_elem f, ring_elem &result) const
-    {
-      //TODO: implement
-      if (displayArithmeticCalls) fprintf(stderr, "calling lift\n");
-      return false;
-    }
+    virtual bool lift(const Ring *S, const ring_elem f, ring_elem &result) const;
 
     virtual bool is_unit(const ring_elem f) const
     {
@@ -458,27 +447,50 @@ namespace M2 {
   //  namespace ARingTranslate;
 
   namespace RingPromoter {
-  template<typename SourceRing, typename TargetRing>
-  bool promoter(const Ring *R, const Ring *S, const ring_elem fR, ring_elem &resultS)
-  {
-    M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
-    M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
-    const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
-    const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
+    template<typename SourceRing, typename TargetRing>
+    bool promoter(const Ring *R, const Ring *S, const ring_elem fR, ring_elem &resultS)
+    {
+      M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
+      M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
+      const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
+      const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
     
-    typename SourceRing::ElementType fR1;
-    typename TargetRing::ElementType gS1;
+      typename SourceRing::ElementType fR1;
+      typename TargetRing::ElementType gS1;
     
-    R1.init(fR1);
-    S1.init(gS1);
-    R1.from_ring_elem(fR1, fR);
-    bool retval = mypromote(R1,S1,fR1,gS1);
-    if (retval)
-      S1.to_ring_elem(resultS, gS1);
-    R1.clear(fR1);
-    S1.clear(gS1);
-    return retval;
-  }
+      R1.init(fR1);
+      S1.init(gS1);
+      R1.from_ring_elem(fR1, fR);
+      bool retval = mypromote(R1,S1,fR1,gS1);
+      if (retval)
+        S1.to_ring_elem(resultS, gS1);
+      R1.clear(fR1);
+      S1.clear(gS1);
+      return retval;
+    }
+
+    template<typename SourceRing, typename TargetRing>
+    bool lifter(const Ring *R, const Ring *S, ring_elem &result_gR, const ring_elem gS)
+    {
+      M2_ASSERT(dynamic_cast< const ConcreteRing<SourceRing> * >(R) != 0);
+      M2_ASSERT(dynamic_cast< const ConcreteRing<TargetRing> * >(S) != 0);
+      const SourceRing &R1 = dynamic_cast< const ConcreteRing<SourceRing> * >(R)->ring();
+      const TargetRing &S1 = dynamic_cast< const ConcreteRing<TargetRing> * >(S)->ring();
+    
+      typename SourceRing::ElementType fR1;
+      typename TargetRing::ElementType gS1;
+    
+      R1.init(fR1);
+      S1.init(gS1);
+      S1.from_ring_elem(gS1, gS);
+      bool retval = mylift(R1,S1,fR1,gS1); // sets fR1.
+      if (retval)
+        R1.to_ring_elem(result_gR, fR1);
+      R1.clear(fR1);
+      S1.clear(gS1);
+      return retval;
+    }
+
   };
 
   template<typename RingType>
@@ -531,6 +543,68 @@ namespace M2 {
     case M2::ring_CCC:
       switch (S->ringID()) {
       case M2::ring_CCC: return RP::promoter<ARingCCC,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
+    default:
+      break;
+    };
+    return false;
+  }
+
+  // given natural map : this = S --> R
+  // this sets result_gR with an element which maps to gS, if possible.
+  // true is returned iff this is possible.
+  template<typename RingType>
+  bool ConcreteRing<RingType>::lift(const Ring *R, 
+                                    const ring_elem gS,
+                                    ring_elem &result_gR) const
+  {
+    const Ring *S = this;
+    fprintf(stderr, "calling lift\n");
+    namespace RP = RingPromoter;
+    if (R == globalZZ)
+      {
+        // Need a method in S for lifting to an int...
+        //        resultS = S->from_int(fR.get_mpz());
+        return true;
+      }
+    if (R == S)
+      {
+        result_gR = gS;
+        return true;
+      }
+    switch (R->ringID()) {
+    case M2::ring_ZZp:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return false;
+      case M2::ring_GFGivaro: return RP::lifter<ARingZZp,ARingGFGivaro>(R,S,result_gR,gS);
+      case M2::ring_ZZpFfpack: return RP::lifter<ARingZZp,ARingZZpFFPACK>(R,S,result_gR,gS);
+      default: return false;
+      }
+      break;
+    case M2::ring_GFGivaro:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return RP::lifter<ARingGFGivaro,ARingZZp>(R,S,result_gR,gS);
+      case M2::ring_GFGivaro: return RP::lifter<ARingGFGivaro,ARingGFGivaro>(R,S,result_gR,gS);
+      case M2::ring_ZZpFfpack: return RP::lifter<ARingGFGivaro,ARingZZpFFPACK>(R,S,result_gR,gS);
+      default: return false;
+      }
+    case M2::ring_ZZpFfpack:
+      switch (S->ringID()) {
+      case M2::ring_ZZp: return RP::lifter<ARingZZpFFPACK,ARingZZp>(R,S,result_gR,gS);
+      case M2::ring_GFGivaro: return RP::lifter<ARingZZpFFPACK,ARingGFGivaro>(R,S,result_gR,gS);
+      case M2::ring_ZZpFfpack: return RP::lifter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,result_gR,gS);
+      default: return false;
+      }
+    case M2::ring_RRR:
+      switch (S->ringID()) {
+      case M2::ring_RRR: return RP::lifter<ARingRRR,ARingRRR>(R,S,result_gR,gS);
+      case M2::ring_CCC: return RP::lifter<ARingRRR,ARingCCC>(R,S,result_gR,gS);
+      default: return false;
+      }
+    case M2::ring_CCC:
+      switch (S->ringID()) {
+      case M2::ring_CCC: return RP::lifter<ARingCCC,ARingCCC>(R,S,result_gR,gS);
       default: return false;
       }
     default:

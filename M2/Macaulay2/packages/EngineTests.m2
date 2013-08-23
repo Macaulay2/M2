@@ -492,6 +492,10 @@ testPromoteLift = () -> (
     assert(mS == promote(n, S));
     assert(mT == promote(n, T));
     assert(mU == promote(n,U));
+    assert(m == lift(mS, R)); -- fails in 1.6
+    assert(m == lift(mT,R));
+    m1 := matrix{{1+ii}};
+    assert(try (lift(m1,RR_53); false) else true); -- should fail (as it does).
     )
 
 TEST ///
