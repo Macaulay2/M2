@@ -459,11 +459,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        f = openOut (dir|"/sharpen_script"); -- writing out file with query responses in case of a refine/sharpen run
        f << "5" << endl << o.digits << endl << "1" << endl;
        close f;
-       );
-  
-  if (o.runType==5) then (  --copies raw_data file to tmp directory
---       copyFile(o.RawData, dir|"/raw_data")
-     	 f =openOut(dir|"/raw_data");
+       
+       --create raw_data in tmp directory
+       f =openOut(dir|"/raw_data");
   	 f << toString(#v+1)<<endl;
 	 f << toString(0)<<endl;
 	 for i from 0 to #startS1-1 do(
@@ -488,11 +486,12 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 	 for i from 0 to #v-1 do(
 	      f<<"0 0"<<endl;
 	      );
-	 
-	 
 	 close f;
-     
-
+	 
+       --create midpath_data in tmp directory
+       f =openOut(dir|"/midpath_data");
+       f << "This file needs to be created by bertiniRefineSols because of a bug in Bertini" << endl;
+       close f;
        );
   
   if (o.runType==3) then (  --copies witness_data file to tmp directory
