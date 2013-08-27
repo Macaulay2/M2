@@ -1,7 +1,6 @@
 // Copyright 2013 Michael E. Stillman
 
 #include "aring-zzp.hpp"
-#include "aring-promoter.hpp"
 #include "ringmap.hpp"
 
 #ifdef HAVE_FLINT

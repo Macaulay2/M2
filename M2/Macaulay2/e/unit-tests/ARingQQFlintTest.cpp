@@ -8,7 +8,7 @@
 #include <gtest/gtest.h>
 #include <mpfr.h>
 
-#include "aring-QQ-flint.hpp"
+#include "aring-qq-flint.hpp"
 
 #ifdef HAVE_FLINT
 #include "ARingTest.hpp"

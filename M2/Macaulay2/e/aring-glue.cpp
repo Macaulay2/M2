@@ -1,8 +1,8 @@
 // Copyright 2011 Michael E. Stillman
 
-#include "aring-promoter.hpp"
-
+#include "aring-glue.hpp"
 namespace M2 {  
+
 
 #if 0
   template<typename RingType>

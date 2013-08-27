@@ -1,7 +1,6 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-zzp.hpp"
-#include "aring-promoter.hpp"
 #include "ringmap.hpp"
 
 namespace M2 {

@@ -9,12 +9,15 @@
 
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
+#include "aring-zz-gmp.hpp"
+#include "aring-zz-flint.hpp"
 #include "aring-zzp.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-qq.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-gf-givaro.hpp"
+#include "aring-tower.hpp"
 
 namespace M2 {
   template<typename RT> 
