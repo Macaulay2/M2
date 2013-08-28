@@ -310,17 +310,19 @@ TEST(ARingZZpFlint, arithmetic33500479) {
 
 TEST(ARingZZpFlint, arithmetic18446744073709551557) {
   // largest prime < 2^64
-  M2::ARingZZpFlint R(18446744073709551557UL);  
+  if (sizeof(unsigned long)>4) {   
+    M2::ARingZZpFlint R(18446744073709551557UL);  
 
-  testCoercions(R);
-  testNegate(R, ntrials);
-  testAdd(R, ntrials);
-  testSubtract(R, ntrials);
-  testMultiply(R, ntrials);
-  testDivide(R, ntrials);
-  testReciprocal(R, ntrials);
-  //  testPower(R, ntrials);  // this test fails: as it expects the characteristic to fit into an int.
-  testAxioms(R, ntrials);
+    testCoercions(R);
+    testNegate(R, ntrials);
+    testAdd(R, ntrials);
+    testSubtract(R, ntrials);
+    testMultiply(R, ntrials);
+    testDivide(R, ntrials);
+    testReciprocal(R, ntrials);
+    //  testPower(R, ntrials);  // this test fails: as it expects the characteristic to fit into an int.
+    testAxioms(R, ntrials);
+  }
 }
 
 #endif 
