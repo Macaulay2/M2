@@ -18,7 +18,7 @@ namespace M2 {
   class ARingZZpFFPACK : public DummyRing
   {
   public:
-    static const RingID ringID = ring_FFPACK;
+    static const RingID ringID = ring_ZZpFfpack;
     
     typedef M2::ARingZZpFFPACK   ring_type;
     

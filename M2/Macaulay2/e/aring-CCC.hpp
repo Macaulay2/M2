@@ -272,9 +272,9 @@ namespace M2 {
           mpfr_div(&result.re,&result.re,denom,GMP_RNDN);
 
           mpfr_mul(&result.im,p,&a.re,GMP_RNDN);
-          mpfr_neg(&result.im,&result.re,GMP_RNDN);
-          mpfr_add(&result.im,&result.re,&a.im,GMP_RNDN);
-          mpfr_div(&result.im,&result.re,denom,GMP_RNDN);
+          mpfr_neg(&result.im,&result.im,GMP_RNDN);
+          mpfr_add(&result.im,&result.im,&a.im,GMP_RNDN);
+          mpfr_div(&result.im,&result.im,denom,GMP_RNDN);
         }
       else
         {
@@ -292,8 +292,8 @@ namespace M2 {
           mpfr_div(&result.re,&result.re,denom,GMP_RNDN);
 
           mpfr_mul(&result.im,p,&a.im,GMP_RNDN);
-          mpfr_sub(&result.im,&result.re,&a.re,GMP_RNDN);
-          mpfr_div(&result.im,&result.re,denom,GMP_RNDN);
+          mpfr_sub(&result.im,&result.im,&a.re,GMP_RNDN);
+          mpfr_div(&result.im,&result.im,denom,GMP_RNDN);
         }
       mpfr_clear(p);
       mpfr_clear(denom);

@@ -186,7 +186,7 @@ TEST(RingRRR, syzygy)
       EXPECT_TRUE(almostEqual(R,98,v, a));
       R->syzygy(a,b,u,v);
       ring_elem result = R->add(R->mult(a,u), R->mult(b,v));
-      EXPECT_TRUE(almostEqual(R, 95, result, R->zero()));
+      EXPECT_TRUE(almostEqual(R, 94, result, R->zero()));
     }
 }
 

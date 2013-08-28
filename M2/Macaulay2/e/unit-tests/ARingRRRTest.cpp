@@ -208,7 +208,7 @@ TEST(ARingRRR, axioms)
   R.clear(a);
 }
 
-TEST(ARingRRR, power)
+TEST(ARingRRR, power_and_invert)
 {
   M2::ARingRRR R(100);
   ARingElementGenerator<M2::ARingRRR> gen(R);

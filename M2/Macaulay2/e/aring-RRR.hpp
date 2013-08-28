@@ -206,7 +206,13 @@ namespace M2 {
     // if possible, x is set to 1.
     // no need to consider the case a==0 or b==0.
     {
-      //TODO
+      set_var(x,0); //set x=1
+      if(!is_zero(b))
+        {
+          set(y,a);
+          negate(y,y);
+          divide(y,y,b);
+        }
     }
 
     void random(ElementType &result) const // redo?
