@@ -310,7 +310,10 @@ TEST(ARingZZpFlint, arithmetic33500479) {
 
 TEST(ARingZZpFlint, arithmetic18446744073709551557) {
   // largest prime < 2^64
-  if (sizeof(unsigned long)>4) {   
+  if (sizeof(unsigned long)<=4) 
+    std::cout << "seems to be a 32bit machine: skipping the test" << std::endl;
+  else
+    {   
     M2::ARingZZpFlint R(18446744073709551557UL);  
 
     testCoercions(R);

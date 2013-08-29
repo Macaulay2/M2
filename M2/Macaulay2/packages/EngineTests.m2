@@ -658,6 +658,21 @@ TEST ///
   
 ///
 
+TEST /// 
+  -- of clean
+  R = CC_100 
+  M = matrix{{0.0001_R+ii_R}}
+  M = mutableMatrix{{0.0001_R+ii_R}}
+  clean_0.001 M
+///
+
+TEST ///
+  -- eigenvalues
+  M = mutableMatrix(CC_100,3,3)
+  M = matrix fillMatrix M
+  eigenvalues M
+///
+
 TEST ///
 -- of rawDiscreteLog
 debug Core

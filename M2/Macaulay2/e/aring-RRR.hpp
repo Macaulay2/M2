@@ -5,7 +5,7 @@
 
 // Ring_RRR is the placeholder for ARingRRR; shall be replaced when CoefficientRingRRR is phased out completely
 
-#ifdef use_new_RRR
+#if 1
 #define Ring_RRR M2::ARingRRR
 #else 
 class CoefficientRingRRR;
@@ -31,14 +31,14 @@ namespace M2 {
 
   public:
     static const RingID ringID = ring_RRR;
-    const RRR *R; // ???
+    // const RRR *R; // ???
 
     typedef RRR ring_type;
     typedef __mpfr_struct elem;
     typedef elem ElementType;
 
     ARingRRR(unsigned long precision) : mPrecision(precision) {}
-    ARingRRR(const RRR *R0) : R(R0) {}
+    // ARingRRR(const RRR *R0) : R(R0) {}
 
     // ring informational
     size_t characteristic() const { return 0; }
@@ -225,7 +225,12 @@ namespace M2 {
       map->get_ring()->from_BigReal(&f, result);
     }
 
-    // TODO: promote, lift.
+    void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
+    {
+      if (mpfr_cmpabs(&a,epsilon) < 0)
+        set_zero(a);
+    }
+
   private:
       unsigned long mPrecision;
   };

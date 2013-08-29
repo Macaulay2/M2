@@ -45,7 +45,7 @@ public:
 
   virtual mpfr_ptr to_BigReal(ring_elem f) const;
 
-  bool is_real(const ring_elem f) const;  // see if |f| is purely real
+  bool is_real(const ring_elem f) const;  // delete???
   ring_elem absolute(const ring_elem f) const;  // norm |f| of f
 
   // The following are all the routines required by 'ring'

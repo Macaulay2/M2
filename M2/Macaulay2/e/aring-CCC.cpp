@@ -5,7 +5,7 @@ namespace M2 {
 
   void ARingCCC::text_out(buffer &o) const
   {
-    o << "ACCC_" << mPrecision;
+    o << "ACCC_" << get_precision();
   }
 
   void ARingCCC::elem_text_out(buffer &o,

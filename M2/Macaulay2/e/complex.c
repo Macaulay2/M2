@@ -132,6 +132,8 @@ void mpfc_div(gmp_CC result, const_gmp_CC u, const_gmp_CC v)
   mpfr_init2(p, mpfr_get_prec(u->re));
   mpfr_init2(denom, mpfr_get_prec(u->re));
 
+  printf("not expected to be used -- we have a bug here\n");
+  abort();
   if (mpfr_cmpabs(v->re, v->im) >= 0)
     {
       // for v = c + d*i,

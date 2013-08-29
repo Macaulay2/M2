@@ -15,6 +15,22 @@ double* make_lapack_array(const DMat<M2::ARingRRR>& mat)
   return result;
 }
 
+double* make_lapack_array(const DMat<M2::ARingCCC>& mat)
+{
+  size_t len = mat.numRows() * mat.numColumns();
+  double *result = newarray_atomic(double, 2*len);
+
+  const M2::ARingCCC::ElementType *a = mat.array();
+  double *p = result;
+  for (size_t i=0; i<len; i++)
+    {
+      *p++ = mpfr_get_d(&a->re, GMP_RNDN);
+      *p++ = mpfr_get_d(&a->im, GMP_RNDN);
+      a++;
+    }
+  return result;
+}
+
 double* make_lapack_array(const DMat<CoefficientRingRRR>& mat)
 {
   size_t len = mat.numRows() * mat.numColumns();
@@ -51,6 +67,20 @@ void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingRRR>& resu
   const double *p = lapack_array;
   for (size_t i=0; i<len; i++)
     mpfr_set_d(a++, *p++, GMP_RNDN);
+}
+
+void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& result)
+{
+  size_t len = result.numRows() * result.numColumns();
+
+  M2::ARingCCC::ElementType *a = result.array();
+  const double *p = lapack_array;
+  for (size_t i=0; i<len; i++)
+    {
+      mpfr_set_d(&a->re, *p++, GMP_RNDN);
+      mpfr_set_d(&a->im, *p++, GMP_RNDN);
+      a++;
+    }
 }
 
 void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingRRR>& result)
@@ -391,10 +421,10 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   else
     {
       eigvals->resize(size, 1);
-      gmp_CC_struct *elems = eigvals->array();
+      LMatrixCC::ElementType* elems = eigvals->array();
       for (int i = 0; i < size; i++) {
-        mpfr_set_d(elems[i].re, real[i], GMP_RNDN);
-        mpfr_set_d(elems[i].im, imag[i], GMP_RNDN);
+        mpfr_set_d(&elems[i].re, real[i], GMP_RNDN);
+        mpfr_set_d(&elems[i].im, imag[i], GMP_RNDN);
       }
     }
 
@@ -461,20 +491,20 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
       // Make the complex arrays of eigvals and eigvecs
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
-      gmp_CC_struct *elems = eigvecs->array();
+      LMatrixCC::ElementType* elems = eigvecs->array();
       for (int j = 0; j < size; j++) {
-        mpfr_set_d(eigvals->array()[j].re, real[j], GMP_RNDN);
-        mpfr_set_d(eigvals->array()[j].im, imag[j], GMP_RNDN);
+        mpfr_set_d(&eigvals->array()[j].re, real[j], GMP_RNDN);
+        mpfr_set_d(&eigvals->array()[j].im, imag[j], GMP_RNDN);
         int loc = j*size;
         if (imag[j] == 0) {
           for (int i = 0; i < size; i++)
-            mpfr_set_d(elems[loc+i].re, eigen[loc+i], GMP_RNDN);
+            mpfr_set_d(&elems[loc+i].re, eigen[loc+i], GMP_RNDN);
         } else if (imag[j] > 0) {
           for (int i = 0; i < size; i++) {
-            mpfr_set_d(elems[loc+i].re, eigen[loc+i], GMP_RNDN);
-            mpfr_set_d(elems[loc+i].im, eigen[loc+size+i], GMP_RNDN);
-            mpfr_set_d(elems[loc+size+i].re, eigen[loc+i], GMP_RNDN);
-            mpfr_set_d(elems[loc+size+i].im, -eigen[loc+size+i], GMP_RNDN);
+            mpfr_set_d(&elems[loc+i].re, eigen[loc+i], GMP_RNDN);
+            mpfr_set_d(&elems[loc+i].im, eigen[loc+size+i], GMP_RNDN);
+            mpfr_set_d(&elems[loc+size+i].re, eigen[loc+i], GMP_RNDN);
+            mpfr_set_d(&elems[loc+size+i].im, -eigen[loc+size+i], GMP_RNDN);
           }
         }
       }
@@ -961,37 +991,37 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
   else
     {
       // set L
-      gmp_CC_struct *elemsL = L->array();
+      LMatrixCC::ElementType* elemsL = L->array();
       int loc = 0;
       for (int j=0; j<min; j++) {
         for (int i=0; i<rows; i++) {
-          gmp_CC_struct *val = elemsL++;
+          LMatrixCC::ElementType* val = elemsL++;
           if (i > j) {
-            mpfr_set_d(val->re, copyA[loc], GMP_RNDN);
-            mpfr_set_d(val->im, copyA[loc+1], GMP_RNDN);
+            mpfr_set_d(&val->re, copyA[loc], GMP_RNDN);
+            mpfr_set_d(&val->im, copyA[loc+1], GMP_RNDN);
           } else if (i == j) {
-            mpfr_set_si(val->re, 1, GMP_RNDN);
-            mpfr_set_si(val->im, 0, GMP_RNDN);
+            mpfr_set_si(&val->re, 1, GMP_RNDN);
+            mpfr_set_si(&val->im, 0, GMP_RNDN);
           } else {
-            mpfr_set_si(val->re, 0, GMP_RNDN);
-            mpfr_set_si(val->im, 0, GMP_RNDN);
+            mpfr_set_si(&val->re, 0, GMP_RNDN);
+            mpfr_set_si(&val->im, 0, GMP_RNDN);
           }
           loc += 2;
         }
       }
 
       // set U
-      gmp_CC_struct *elemsU = U->array();
+      LMatrixCC::ElementType* elemsU = U->array();
       loc = 0;
       for (int j=0; j<cols; j++) {
         for (int i=0; i<min; i++) {
-          gmp_CC_struct *val = elemsU++;
+          LMatrixCC::ElementType* val = elemsU++;
           if (i > j) {
-            mpfr_set_si(val->re, 0, GMP_RNDN);
-            mpfr_set_si(val->im, 0, GMP_RNDN);
+            mpfr_set_si(&val->re, 0, GMP_RNDN);
+            mpfr_set_si(&val->im, 0, GMP_RNDN);
           } else {
-            mpfr_set_d(val->re, copyA[loc], GMP_RNDN);
-            mpfr_set_d(val->im, copyA[loc+1], GMP_RNDN);
+            mpfr_set_d(&val->re, copyA[loc], GMP_RNDN);
+            mpfr_set_d(&val->im, copyA[loc+1], GMP_RNDN);
           }
           loc += 2;
         }
@@ -1726,8 +1756,8 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
         for (int j = 0; j < bcols; j++) {
           copyloc = 2*j*rows;
           for (int i = 0; i < cols; i++) {
-            mpfr_set_d((x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
-            mpfr_set_d((x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+            mpfr_set_d(&(x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
+            mpfr_set_d(&(x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
           }
         }
       } else {
@@ -1813,8 +1843,8 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
         for (int j = 0; j < bcols; j++) {
           copyloc = 2*j*rows;
           for (int i = 0; i < cols; i++) {
-            mpfr_set_d((x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
-            mpfr_set_d((x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+            mpfr_set_d(&(x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
+            mpfr_set_d(&(x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
           }
         }
       } else {

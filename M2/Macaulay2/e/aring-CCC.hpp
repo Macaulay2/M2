@@ -26,15 +26,15 @@ namespace M2 {
 
     struct mpfc_struct {__mpfr_struct re; __mpfr_struct im;};
     typedef mpfc_struct* mpfc_ptr;
-    typedef mpfc_struct elem; // ???
+    typedef mpfc_struct elem; // ??? staighten this out!!!
     typedef elem ElementType;
 
-    ARingCCC(unsigned long precision) : mPrecision(precision) {}
-    ARingCCC(){} // ???
+    ARingCCC(unsigned long precision) : mRRR(precision) {}
+    ARingCCC() : mRRR(53) {} 
 
     // ring informational
     size_t characteristic() const { return 0; }
-    unsigned long get_precision() const { return mPrecision; }
+    unsigned long get_precision() const { return mRRR.get_precision(); }
     void text_out(buffer &o) const;
 
     unsigned long computeHashValue(const ElementType& a) const  
@@ -92,8 +92,8 @@ namespace M2 {
     // 'init', 'init_set' functions
 
     void init(ElementType &result) const { 
-      mpfr_init2(&result.re, mPrecision); 
-      mpfr_init2(&result.im, mPrecision); 
+      mpfr_init2(&result.re, get_precision()); 
+      mpfr_init2(&result.im, get_precision()); 
     }
 
     void init_set(ElementType &result, const ElementType& a) const { 
@@ -163,8 +163,8 @@ namespace M2 {
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {
       mpfr_t p, denom;
-      mpfr_init2(p, mPrecision);
-      mpfr_init2(denom, mPrecision);
+      mpfr_init2(p, get_precision());
+      mpfr_init2(denom, get_precision());
 
       if (mpfr_cmpabs(&a.re,&a.im) >= 0)
         {
@@ -224,7 +224,7 @@ namespace M2 {
       mpfr_t tmp;
       ElementType result;
       init(result);
-      mpfr_init2(tmp, mPrecision);
+      mpfr_init2(tmp, get_precision());
 
       // &result.re = &a.re*&b.re - &a.im*&b.im;
       mpfr_mul(tmp,&a.re,&b.re,GMP_RNDN);
@@ -246,8 +246,8 @@ namespace M2 {
     void divide(ElementType &res, const ElementType& a, const ElementType& b) const
     {
       mpfr_t p, denom;
-      mpfr_init2(p, mPrecision);
-      mpfr_init2(denom, mPrecision);
+      mpfr_init2(p, get_precision());
+      mpfr_init2(denom, get_precision());
       ElementType result;
       init(result);
 
@@ -364,8 +364,8 @@ namespace M2 {
 
     void random(ElementType &result) const // redo?
     {
-      rawRandomMpfr(&result.re, mPrecision);
-      rawRandomMpfr(&result.im, mPrecision);
+      rawRandomMpfr(&result.re, get_precision());
+      rawRandomMpfr(&result.im, get_precision());
     }
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
@@ -383,8 +383,8 @@ namespace M2 {
       gmp_CC result = getmemstructtype(gmp_CC);
       result->re = getmemstructtype(gmp_RR);
       result->im = getmemstructtype(gmp_RR);
-      mpfr_init2(result->re,mPrecision);
-      mpfr_init2(result->im,mPrecision);
+      mpfr_init2(result->re,get_precision());
+      mpfr_init2(result->im,get_precision());
       mpfr_set(result->re, &a.re, GMP_RNDN);
       mpfr_set(result->im, &a.im, GMP_RNDN);
       return result;
@@ -402,19 +402,28 @@ namespace M2 {
     const ARingRRR::ElementType& imaginaryPartReference(const ElementType& a) const {
       return a.im;
     }
-    void set_real_part(ElementType& c, ARingRRR::ElementType& a) {
+    void set_real_part(ElementType& c, ARingRRR::ElementType& a) const
+    {
       mpfr_set(&c.re, &a, GMP_RNDN);
     }
-    void set_imaginary_part(ElementType& c, ARingRRR::ElementType& a) {
+    void set_imaginary_part(ElementType& c, ARingRRR::ElementType& a) const
+    {
       mpfr_set(&c.im, &a, GMP_RNDN);
     }
-    void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) {
+    void set_from_BigReals(ElementType& result, gmp_RR re, gmp_RR im) const
+    {
       mpfr_set(&result.re, re, GMP_RNDN);
       mpfr_set(&result.im, im, GMP_RNDN);
     }
 
+    void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
+    {
+      mRRR.zeroize_tiny(epsilon,a.re);
+      mRRR.zeroize_tiny(epsilon,a.im);
+    }
+
   private:
-      unsigned long mPrecision;
+    const ARingRRR mRRR;
   };
 
 }; // end namespace M2

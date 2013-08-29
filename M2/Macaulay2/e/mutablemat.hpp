@@ -6,10 +6,12 @@
 #include <iostream>
 #include "mat.hpp"
 
-class CoefficientRingCCC;
-class Ring_RRR;
+//class CoefficientRingCCC;
+//class Ring_RRR;
 namespace M2 {
   class ARingZZp;
+  class ARingRRR;
+  class ARingCCC;
 };
 
 #include "coeffrings.hpp"
@@ -30,18 +32,18 @@ template<typename RT> struct EigenTypes
 
 template<> struct EigenTypes<Ring_RRR>
 {
-  typedef CoefficientRingCCC EigenvalueType;
-  typedef CoefficientRingCCC EigenvectorType;
+  typedef M2::ARingCCC EigenvalueType;
+  typedef M2::ARingCCC EigenvectorType;
   typedef Ring_RRR HermitianEigenvalueType;
   typedef Ring_RRR HermitianEigenvectorType;
 };
 
-template<> struct EigenTypes<CoefficientRingCCC>
+template<> struct EigenTypes<M2::ARingCCC>
 {
-  typedef CoefficientRingCCC EigenvalueType;
-  typedef CoefficientRingCCC EigenvectorType;
+  typedef M2::ARingCCC EigenvalueType;
+  typedef M2::ARingCCC EigenvectorType;
   typedef Ring_RRR HermitianEigenvalueType;
-  typedef CoefficientRingCCC HermitianEigenvectorType;
+  typedef M2::ARingCCC HermitianEigenvectorType;
 };
 
 // The following include file is for creating a Matrix, in "toMatrix"

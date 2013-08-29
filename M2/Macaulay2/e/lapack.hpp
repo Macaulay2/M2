@@ -3,6 +3,7 @@
 
 #include "RRR.hpp"
 #include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 #include "coeffrings.hpp"
 #include "dmat.hpp"
 #ifdef HAVE_MPACK
@@ -289,13 +290,14 @@ void cblas_zgemm(const int Order,   // how matrices are stored, by column or row
 
 class Lapack {
  public:
-#ifdef use_new_RRR
+#if 1
   typedef DMat<M2::ARingRRR> LMatrixRR; 
+  typedef DMat<M2::ARingCCC> LMatrixCC; 
 #else 
   typedef DMat<CoefficientRingRRR> LMatrixRR;
+  typedef DMat<CoefficientRingCCC> LMatrixCC;
 #endif
 
-  typedef DMat<CoefficientRingCCC> LMatrixCC;
 
   typedef LMatrixCC::elem CCelem;
   //typedef CoeffRing::elem CCelem;

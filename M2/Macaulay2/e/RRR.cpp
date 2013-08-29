@@ -28,7 +28,8 @@ bool RRR::initialize_RRR(unsigned long prec)
   oneV = from_int(1);
   minus_oneV = from_int(-1);
 
-  coeffR = new Ring_RRR(this);
+  //coeffR = new Ring_RRR(this);
+  coeffR = new Ring_RRR(precision);
   return true;
 }
 

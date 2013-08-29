@@ -11,6 +11,8 @@
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
+#include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 #include "aring-zzp.hpp"
 typedef DMat<M2::ARingZZp> DMatZZp;
 
@@ -28,14 +30,14 @@ typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 #endif
 
-#ifdef use_new_RRR
+#if 1
   typedef DMat<M2::ARingRRR> DMatRRR; 
+  typedef DMat<M2::ARingCCC> DMatCCC; 
 #else 
 #include "coeffrings.hpp"
   typedef DMat<CoefficientRingRRR> DMatRRR;
+  typedef DMat<CoefficientRingCCC> DMatCCC;
 #endif
-
-typedef DMat<CoefficientRingCCC> DMatCCC;
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"

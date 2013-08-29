@@ -422,6 +422,11 @@ namespace M2 {
       R->clear(a);
       return result;
     }
+
+    virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
+    
+    virtual unsigned long get_precision() const;  // if the ring is not over RRR/CCC returns 0
+
   }; // class ConcreteRing<RingType>
 
 
@@ -665,6 +670,56 @@ namespace M2 {
     bool retval = R->lift(Rg,a,result);
     R->clear(a);
     return retval;
+  }
+
+  template<typename RingType>
+  ring_elem ConcreteRing<RingType>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
+  {
+    return f;
+  }
+
+  template<>
+  inline ring_elem ConcreteRing<ARingRRR>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
+  {
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+    R->zeroize_tiny(epsilon,a);
+    ring_elem result;
+    R->to_ring_elem(result,a);
+    R->clear(a);
+    return result;
+  }
+
+  template<>
+  inline ring_elem ConcreteRing<ARingCCC>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
+  {
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+    R->zeroize_tiny(epsilon,a);
+    ring_elem result;
+    R->to_ring_elem(result,a);
+    R->clear(a);
+    return result;
+  }
+
+  template<typename RingType>
+  inline unsigned long ConcreteRing<RingType>::get_precision() const
+  {
+    return 0;
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingRRR>::get_precision() const
+  {
+    return R->get_precision();
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
+  {
+    return R->get_precision();
   }
 
 }; // namespace M2
