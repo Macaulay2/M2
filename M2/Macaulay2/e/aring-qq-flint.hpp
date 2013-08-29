@@ -87,13 +87,13 @@ namespace M2 {
     void set_from_int(ElementType& result, int a) const {fmpq_set_si(&result, a, 1);}
     
     void set_from_mpz(ElementType& result,const mpz_ptr a) const {
-      printf("ARingQQFlint::calling set_from_mpz\n");
+      // printf("ARingQQFlint::calling set_from_mpz\n");
       fmpz_set_mpz(fmpq_numref(&result), a);
       fmpz_one(fmpq_denref(&result));
     }
     
     void set_from_mpq(ElementType& result,const mpq_ptr a) const { 
-      printf("ARingQQFlint::calling set_from_mpq\n");
+      // printf("ARingQQFlint::calling set_from_mpq\n");
       fmpq_set_mpq(&result, a); 
     }
     
@@ -191,7 +191,7 @@ namespace M2 {
     /** @} */
     
     bool promote(const Ring *Rf, const ring_elem f, ElementType& result) const {
-      printf("ARingQQFlint::calling promote\n");
+      // printf("ARingQQFlint::calling promote\n");
       // Rf = ZZ ---> QQ
       if (Rf->is_ZZ())
         {
@@ -202,7 +202,7 @@ namespace M2 {
     }
     
     bool lift(const Ring *Rg, const ElementType& f, ring_elem &result) const {
-      printf("ARingQQFlint::calling lift\n");
+      // printf("ARingQQFlint::calling lift\n");
       return false;
     }
     
