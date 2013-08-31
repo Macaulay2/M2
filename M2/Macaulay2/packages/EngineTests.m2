@@ -398,6 +398,59 @@ testMultSimple = (R) -> (
     assert(matrix(m2*m1) == (matrix m2) * (matrix m1));
     )
 
+benchMult = (R,N) -> (
+    A := mutableMatrix(R,N,N);
+    B := mutableMatrix(R,N,N);
+    fillMatrix A;
+    fillMatrix B;
+    time A1 := matrix A;
+    time B1 := matrix B;
+    C := time A*B;
+    C1 := time A1*B1;
+    C1 = mutableMatrix C1;
+    if C != C1 then << "ERROR: matrix mult is WRONG" << endl;
+    (A,B,C,C1)
+    )
+///
+  benchMult(ZZ,3)
+  benchMult(ZZ,100);
+  benchMult(ZZ,300);
+
+  benchMult(ZZ/101,300);
+
+  debug Core
+  R = ZZp(101, "Choose"=>"FLINT")
+  benchMult(R,300); -- fails, due to row/col major encoding (I think).
+
+  debug Core
+  R = ZZp(101, "Choose"=>"FFPACK")
+  benchMult(R,10);
+  oo#2 == oo#3
+
+  benchMult(R,600);
+  benchMult(RR_100,100);  -- WRONG
+  (A,B,C,C1) = benchMult(RR_53,10);  -- some error.  Which is better?
+  clean(1.0*10^-13, C-C1)
+  clean(1.0*10^-13, matrix(C-C1))
+  (A,B,C,C1) = benchMult(RR_53,100);
+  flatten entries (C-C1);
+  oo/abs//max
+  (A,B,C,C1) = benchMult(RR_200,100);
+  flatten entries (C-C1);
+  oo/abs//max
+
+  (A,B,C,C1) = benchMult(RR_200,300);
+  flatten entries (C-C1);
+  oo/abs//max
+
+  (A,B,C,C1) = benchMult(RR_53,300);
+
+  debug Core
+  R2 = ZZp(33554393, "Choose"=>"FLINT");
+  benchMult(R2, 400); -- the multiply routine is the flint one: but it is multiplying the wrong order.
+    -- This is caused by row/column major order problem in my (MES) code.
+///
+
 testMultAddSub = (R1) -> (
     A := mutableMatrix(R1,3,6);
     B := mutableMatrix(R1,6,5);
@@ -671,6 +724,7 @@ TEST ///
   M = mutableMatrix(CC_100,3,3)
   M = matrix fillMatrix M
   eigenvalues M
+  LUdecomposition M
 ///
 
 TEST ///

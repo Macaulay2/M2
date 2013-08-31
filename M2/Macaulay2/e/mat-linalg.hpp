@@ -270,6 +270,47 @@ namespace MatrixOppies
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
   }
 
+  /////////////////////////////////
+  // Generic functions for DMat ///
+  /////////////////////////////////
+
+  template<typename RT>
+  void mult(const DMat<RT>& A, 
+            const DMat<RT>& B, 
+            DMat<RT>& result_product)
+  {
+    typedef typename RT::ElementType ElementType;
+    typedef typename DMat<RT>::ConstIterator ConstIterator;
+    
+    M2_ASSERT(A.numColumns() == B.numRows());
+    M2_ASSERT(A.numRows() == result_product.numRows());
+    M2_ASSERT(B.numColumns() == result_product.numColumns());
+
+    ElementType* result = result_product.array();
+
+    ElementType tmp;
+    A.ring().init(tmp);
+    // WARNING: this routine expects the result matrix to be in COLUMN MAJOR ORDER
+    for (size_t j = 0; j<B.numColumns(); j++)
+      for (size_t i = 0; i<A.numRows(); i++)
+        {
+          ConstIterator i1 = A.rowBegin(i);
+          ConstIterator iend = A.rowEnd(i);
+          ConstIterator j1 = B.columnBegin(j);
+          
+          do 
+            {
+              A.ring().mult(tmp, *i1, *j1);
+              A.ring().add(*result, *result, tmp);
+              ++i1;
+              ++j1;
+            }
+          while (i1 != iend);
+          result++;
+        }
+    A.ring().clear(tmp);
+  }
+
   ////////////////////////
   // Functions for ZZ/p //
   ////////////////////////
@@ -458,7 +499,7 @@ namespace MatrixOppies
     DMatZZpFlint& B = const_cast<DMatZZpFlint&>(A);
     return nmod_mat_inv(result_inv.nmod_mat(), B.nmod_mat());
   }
-  
+
   inline void mult(const DMatZZpFlint& A, 
                    const DMatZZpFlint& B, 
                    DMatZZpFlint& result_product) 
@@ -469,7 +510,7 @@ namespace MatrixOppies
     // is the transpose of what we have for DMat.
     nmod_mat_mul(result_product.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
   }
-  
+
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           DMatZZpFlint& result_nullspace) 
   {
