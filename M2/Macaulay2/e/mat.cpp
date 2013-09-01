@@ -11,6 +11,7 @@
 #include "matrix.hpp"
 
 #include "aring-RRR.hpp"
+#include "aring-RR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zz-gmp.hpp"
 #include "aring-zz-flint.hpp"
@@ -40,6 +41,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
     }
   MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
   if (result != 0) return result;
+  //  std::cout << "MutableMatrix::zero_matrix: R->makeMutableMatrix returned null" << std::endl;
   const Z_mod *KZZp = R->cast_to_Z_mod();
   if (KZZp != 0)
     {
@@ -688,6 +690,11 @@ template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingRRR>(const Ring* Rgen
                                                  bool dense);
 template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingCCC>(const Ring* Rgeneral,
                                                  const M2::ARingCCC* R,
+                                                 size_t nrows,
+                                                 size_t ncols,
+                                                 bool dense);
+template MutableMatrix* M2::makeMutableZeroMatrix<M2::ARingRR>(const Ring* Rgeneral,
+                                                 const M2::ARingRR* R,
                                                  size_t nrows,
                                                  size_t ncols,
                                                  bool dense);

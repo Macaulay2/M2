@@ -18,6 +18,7 @@ INTERFACE = \
 	aring-zz-flint \
 	aring-qq-flint \
 	aring-zzp-flint \
+	aring-RR \
 	aring-RRR \
 	aring-CCC \
 	aring-tower \

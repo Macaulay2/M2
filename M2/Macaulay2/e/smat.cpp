@@ -8,6 +8,7 @@
 
 #include "aring-zzp.hpp"
 #include "aring-RRR.hpp"
+#include "aring-RR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
@@ -1079,6 +1080,7 @@ template class SMat<CoefficientRingRRR>;
 template class SMat<CoefficientRingCCC>;
 template class SMat<CoefficientRingR>;
 template class SMat<M2::ARingRRR>;
+template class SMat<M2::ARingRR>;
 template class SMat<M2::ARingCCC>;
 
 
