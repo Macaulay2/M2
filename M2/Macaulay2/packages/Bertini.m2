@@ -287,7 +287,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   params:=o.Parameters;
   v := gens ring T#0; -- variables
   if o.runType==6  then (v=delete(t,v));  --special for runtype6
-  if (o.runType==7 or o.runType==8) then (v=toList(set v - set params));
+  if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));  
   dir := temporaryFileName(); -- build a directory to store temporary data 
   makeDirectory dir; 
   f := openOut (dir|"/input"); -- typical (but not only possible) name for Bertini's input file 

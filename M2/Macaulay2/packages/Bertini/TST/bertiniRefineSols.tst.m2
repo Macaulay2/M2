@@ -7,3 +7,8 @@ needsPackage"Bertini"
      S = bertiniRefineSols (F,sols,100)
      coords = coordinates S_0
      coords_0
+     
+     end
+     restart
+     load "Bertini/TST/bertiniRefineSols.tst.m2"
+     
