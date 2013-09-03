@@ -12,7 +12,6 @@ INTERFACE = \
 	reader \
 	matrix-stream \
 	cra \
-	DenseMatrixDef \
 	aring-zz-gmp \
 	aring-qq-gmp \
 	aring-zz-flint \
