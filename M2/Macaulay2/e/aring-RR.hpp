@@ -82,7 +82,7 @@ namespace M2 {
     // 'init', 'init_set' functions
 
     void init(ElementType &result) const { 
-      // do nothing
+      result = 0.0;
     }
 
     void init_set(ElementType &result, const ElementType& a) const { 
@@ -214,7 +214,7 @@ namespace M2 {
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
     {
-      if (mpfr_cmp_d(epsilon, abs(a)) > 0)
+      if (mpfr_cmp_d(epsilon, fabs(a)) > 0)
         set_zero(a);
     }
   };

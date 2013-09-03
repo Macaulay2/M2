@@ -51,7 +51,6 @@ INTERFACE = \
     fplll-interface \
 	mat \
 	dmat \
-	smat \
 	coeffrings \
 	Eschreyer \
 	gbweight \
