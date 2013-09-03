@@ -22,7 +22,6 @@ INTERFACE = \
 	aring-CCC \
 	aring-tower \
 	aring-m2-gf \
-	aring-glue \
 	aring-zzp \
 	aring-gf-givaro \
 	aring-zzp-ffpack \

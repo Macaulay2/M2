@@ -3,19 +3,7 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
-#include <utility>
-#include <algorithm>
-
 #include "engine-includes.hpp"
-
-#ifdef HAVE_FLINT
-#include <flint/arith.h>
-#include <flint/nmod_mat.h>
-#include <flint/fmpq_mat.h>
-#include "aring-zz-flint.hpp"
-#include "aring-qq.hpp"
-#include "aring-zzp-flint.hpp"
-#endif
 
 template<typename ACoeffRing> class DMat;
 
@@ -62,6 +50,11 @@ private:
   ElementType* mCurrent;
   size_t mStride;
 };
+
+// Special instantiations of DMat class
+#include "dmat-zz-flint.hpp"
+#include "dmat-qq-flint.hpp"
+#include "dmat-zzp-flint.hpp"
 
 template<typename ACoeffRing>
 class DMat
@@ -159,10 +152,6 @@ private:
   ElementType* mArray;
 };
 
-// Special instantiations of DMat class
-#include "dmat-zz-flint.hpp"
-#include "dmat-qq-flint.hpp"
-#include "dmat-zzp-flint.hpp"
 
 #endif
 

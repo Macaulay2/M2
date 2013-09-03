@@ -7,17 +7,21 @@
 #include "aring-translate.hpp"
 #include "ring.hpp"
 
+#include "mutablemat.hpp"
+
 static const bool displayArithmeticCalls = false;
 
 #define COERCE_RING(RingType,R) dynamic_cast<const RingType *>(R)
 
 namespace M2 {
+#if 0
   template<class RingType>
   MutableMatrix* makeMutableZeroMatrix(const Ring* Rgeneral,
                                        const RingType* R,
                                        size_t nrows,
                                        size_t ncols,
                                        bool dense);
+#endif
 /**
     @ingroup rings
 */

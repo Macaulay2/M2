@@ -948,6 +948,30 @@ bool MutableMat<T>::SVD(MutableMatrix* Sigma,
   return MatrixOppies::SVD(mat, *Sigma2, *U2, *Vt2, strategy);
 }
 
+template<typename Mat>
+engine_RawArrayIntPairOrNull MutableMat<Mat>::
+  LQUPFactorizationInPlace(bool transpose)
+{
+  throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
+}
+
+namespace M2 {
+  template<class RingType>
+  MutableMatrix* makeMutableZeroMatrix(const Ring* Rgeneral,
+                                       const RingType* R,
+                                       size_t nrows,
+                                       size_t ncols,
+                                       bool dense)
+  {
+    if (dense)
+      return MutableMat< DMat<RingType> >
+        ::zero_matrix(Rgeneral,R,nrows,ncols);
+    
+    return MutableMat< SMat<RingType> >
+      ::zero_matrix(Rgeneral,R,nrows,ncols);
+  }
+};
+
 #endif
 
 // Local Variables:
