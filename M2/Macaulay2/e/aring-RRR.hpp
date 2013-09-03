@@ -163,9 +163,12 @@ namespace M2 {
 
     void subtract_multiple(ElementType &result, const ElementType& a, const ElementType& b) const
     {
-      //TODO: write this
-      // we assume: a, b are NONZERO!!
-      // result -= a*b
+      // result -= a*b 
+      ElementType ab;
+      init(ab);
+      mult(ab,a,b);
+      subtract(result,result,ab);
+      clear(ab);
     }
 
     void mult(ElementType &result, const ElementType& a, const ElementType& b) const
