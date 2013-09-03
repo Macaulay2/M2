@@ -114,6 +114,9 @@ TEST(ARingCCC, subtract)
       C.subtract(c,a,b);
       C.add(e,c,b); // should be a
       EXPECT_TRUE(almostEqual(C,98,a,e));
+      C.mult(e,a,b);
+      C.subtract_multiple(e,a,b);
+      EXPECT_TRUE(C.is_zero(e));
     }
   C.clear(e);
   C.clear(c);
@@ -247,6 +250,8 @@ TEST(ARingCCC, power_and_invert)
   C.clear(b);
   C.clear(a);
 }
+
+// TODO: syzygy?
 
 
 // Local Variables:
