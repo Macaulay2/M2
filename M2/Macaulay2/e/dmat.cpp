@@ -25,7 +25,7 @@ namespace MatrixOppies
   void determinant(const DMatZZpFFPACK& mat, 
                    ZZpFFPACK::ElementType& result_det)
   {
-    std::cout << "Calling MatLinAlg::determinant" << std::endl;
+    std::cout << "Calling FFPACK::Det" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
     /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
     DMatZZpFFPACK N(mat);
