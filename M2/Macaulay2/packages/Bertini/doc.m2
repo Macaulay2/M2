@@ -217,7 +217,6 @@ doc ///
      coords = coordinates S_0
      coords_0
 ///;
-end
 doc ///
  Key 
    bertiniParameterHomotopy
@@ -247,12 +246,12 @@ doc ///
      finalParameters0={{1,0,0}}
      finalParameters1={{0,1+2*ii,0}}
      bPH=bertiniParameterHomotopy(
-     {f1,f2},--list of polynomials thathave zero dimensional solutions
+     {f1,f2},--list of polynomials that are a square system
      {u1,u2,u3},--your parameters
-     {finalParameters1  ,finalParameters2 })
+     {finalParameters0  ,finalParameters1 })
      bPH_0--the solutions to the system with finalParameters0
 ///;
-
+end
 doc ///
  Key 
    bertiniTrackHomotopy
