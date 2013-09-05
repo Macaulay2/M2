@@ -39,3 +39,38 @@ assert( (minimalPresentation Hom(f,M)) ===
 assert( (minimalPresentation Hom(f,f)) === 
      map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
 
+-- bug found by David Treumann:
+
+p = 1
+q = 1
+S = QQ[x,y, Degrees => {{1,0},{0,1}}]
+E = S^{{-1,0},{-2,0},{0,-1},{-1,-1},{-1,-1},{-2,-1},{0,-2},{-1,-2}}
+Xmatrix = transpose matrix{
+     {0_S,1,0,0,0,0,0,0},
+     {0,0,0,0,0,0,0,0},
+     {0,0,0,1,0,0,0,0},
+     {0,0,0,0,0,p,0,0},
+     {0,0,0,0,0,1,0,0},
+     {0,0,0,0,0,0,0,0},
+     {0,0,0,0,0,0,0,1},
+     {0,0,0,0,0,0,0,0}
+     }
+Ymatrix =transpose matrix{
+     {0_S,0,0,0,1,0,0,0},
+     {0,0,0,0,0,1,0,0},
+     {0,0,0,0,0,0,1,0},
+     {0,0,0,0,0,0,0,1},
+     {0,0,0,0,0,0,0,q},
+     {0,0,0,0,0,0,0,0},
+     {0,0,0,0,0,0,0,0},
+     {0,0,0,0,0,0,0,0}
+     }
+phi = map(E,E**S^{{-1,0}}++E**S^{{0,-1}},(x*id_E-Xmatrix) | (y*id_E-Ymatrix));
+isHomogeneous phi
+M = coker phi
+Ext^1(M,M)   -- mismatch here, because trimming of result is ignored
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test 4-b.out"
+-- End:
+
