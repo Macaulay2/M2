@@ -37,6 +37,8 @@ public:
 
   CoefficientRingZZp * get_CoeffRing() const { return coeffR; }
   M2::ARingZZp * get_ARing() const { return aringZZp; }
+
+  virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const;
   
   virtual int coerce_to_int(ring_elem a) const;
   int discrete_log(ring_elem a) const; // returns -1 if a is 0

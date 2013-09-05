@@ -48,6 +48,8 @@ public:
   M2::ARingZZGMP * get_CoeffRing() const { return coeffR; }
   M2::ARingZZGMP * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
 
+  virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const;
+  
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }
 

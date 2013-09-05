@@ -14,14 +14,6 @@ static const bool displayArithmeticCalls = false;
 #define COERCE_RING(RingType,R) dynamic_cast<const RingType *>(R)
 
 namespace M2 {
-#if 0
-  template<class RingType>
-  MutableMatrix* makeMutableZeroMatrix(const Ring* Rgeneral,
-                                       const RingType* R,
-                                       size_t nrows,
-                                       size_t ncols,
-                                       bool dense);
-#endif
 /**
     @ingroup rings
 */
@@ -43,8 +35,10 @@ namespace M2 {
     /// Create either a dense or sparse MutableMatrix of the given size
     virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const
     {
-      //return R->makeMutableMatrix(this, nrows, ncols, dense);
-      return makeMutableZeroMatrix(this, R, nrows, ncols, dense);
+      if (dense)
+        return new MutableMat< DMat<RingType> >(this, R, nrows, ncols);
+      else
+        return new MutableMat< SMat<RingType> >(this, R, nrows, ncols);
     }
 
     ////////////////////////////

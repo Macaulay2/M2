@@ -154,15 +154,17 @@ private:
 
   MutableMat() {}
 
-  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-    : mRing(R), mat(*coeffR,nrows,ncols) {}
 
   MutableMat(const Ring* R, const Mat &m) : mRing(R), mat(m) {}
 
 public:
+  // This constructor makes a zero matrix
+  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
+    : mRing(R), mat(*coeffR,nrows,ncols) {}
+
   // Make a zero matrix, using the same ring and density taken from 'mat'.
   MutableMat* makeZeroMatrix(size_t nrows, size_t ncols) const {
-    return zero_matrix(get_ring(), &mat.ring(), nrows, ncols);
+    return new MutableMat(get_ring(),&mat.ring(),nrows,ncols);
   }
 
   Mat * get_Mat() { return &mat; }
@@ -186,13 +188,6 @@ public:
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
 #endif
-  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-  {
-    return new MutableMat(R,coeffR,nrows,ncols);
-  }
-
-  //  static MutableMat *grab_Mat(const Mat *m);
-
 #if 0
   // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
@@ -954,23 +949,6 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
 {
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
 }
-
-namespace M2 {
-  template<class RingType>
-  MutableMatrix* makeMutableZeroMatrix(const Ring* Rgeneral,
-                                       const RingType* R,
-                                       size_t nrows,
-                                       size_t ncols,
-                                       bool dense)
-  {
-    if (dense)
-      return MutableMat< DMat<RingType> >
-        ::zero_matrix(Rgeneral,R,nrows,ncols);
-    
-    return MutableMat< SMat<RingType> >
-      ::zero_matrix(Rgeneral,R,nrows,ncols);
-  }
-};
 
 #endif
 

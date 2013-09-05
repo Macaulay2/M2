@@ -42,6 +42,7 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
   MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
   if (result != 0) return result;
   //  std::cout << "MutableMatrix::zero_matrix: R->makeMutableMatrix returned null" << std::endl;
+#if 0
   const Z_mod *KZZp = R->cast_to_Z_mod();
   if (KZZp != 0)
     {
@@ -52,34 +53,6 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
         return MutableMat< SMat<M2::ARingZZp> >
           ::zero_matrix(R,KZZp->get_ARing(),nrows,ncols);
     }
-  if (R->ringID() == M2::ring_ZZpFfpack)
-    {
-      std::cerr << "Should not get here" << std::endl;
-      const M2::ConcreteRing<M2::ARingZZpFFPACK> *ffpackRing = 
-        dynamic_cast< const M2::ConcreteRing<M2::ARingZZpFFPACK> * >(R);
-      ASSERT(ffpackRing != 0);
-      if (dense)
-        return MutableMat< DMat<M2::ARingZZpFFPACK> >
-          ::zero_matrix(R,&ffpackRing->ring(),nrows,ncols);
-      else
-        return MutableMat< SMat<M2::ARingZZpFFPACK> >
-          ::zero_matrix(R,&ffpackRing->ring(),nrows,ncols);
-    }
-#if 0
-  if (R->ringID() == M2::ring_GF)
-    {
-      const M2::ConcreteRing<M2::ARingGFM2> *AGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFM2> *>(R);
-      ASSERT(AGF != 0);
-      if (dense)
-        {
-          return MutableMat< DMat<M2::ARingGFM2> >
-            ::zero_matrix(R,&AGF->ring(),nrows,ncols);
-        }
-      else
-        return MutableMat< SMat<M2::ARingGFM2> >
-          ::zero_matrix(R,&AGF->ring(),nrows,ncols);
-    }
-#endif
   if (R == globalZZ)
     {
       if (dense)
@@ -155,16 +128,13 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 	return MutableMat< SMat<CoefficientRingCCC> >
 	  ::zero_matrix(R, ACCC->get_ARing(),nrows,ncols);
     }
+#endif
   // In this case, we just use ring elem arithmetic
   const CoefficientRingR *cR = R->getCoefficientRingR();
   if (dense)
-    return MutableMat< DMat<CoefficientRingR> >
-      ::zero_matrix(R,cR,nrows,ncols);
+    return new MutableMat< DMat<CoefficientRingR> >(R, cR, nrows, ncols);
   else
-    return MutableMat< SMat<CoefficientRingR> >
-      ::zero_matrix(R,cR,nrows,ncols);
-  ERROR("mutable matrices over this ring are not yet implemented");
-  return 0;
+    return new MutableMat< SMat<CoefficientRingR> >(R, cR, nrows, ncols);
 }
 
 MutableMatrix *MutableMatrix::identity(const Ring *R, size_t nrows, bool dense)

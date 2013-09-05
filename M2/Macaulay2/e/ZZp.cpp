@@ -11,6 +11,18 @@
 
 extern RingZZ *globalZZ;
 
+#include "mutablemat.hpp"
+
+MutableMatrix* Z_mod::makeMutableMatrix(size_t nrows, 
+                                        size_t ncols, 
+                                        bool dense) const
+{
+  if (dense)
+    return new MutableMat< DMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
+  else
+    return new MutableMat< SMat<M2::ARingZZp> >(this, get_ARing(), nrows, ncols);
+}
+
 bool Z_mod::initialize_Z_mod(int p)
 {
 
