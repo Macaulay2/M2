@@ -41,7 +41,6 @@ INTERFACE = \
 	imonorder \
 	sagbi \
 	monideal-minprimes \
-	dmat-LU \
 	lapack \
 	LLL \
 	fractionfreeLU \
