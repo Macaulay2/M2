@@ -150,6 +150,7 @@ class DummyRing : public RingInterface
 
   };
 
+#if 0
 
 /**
 \ingroup rings
@@ -189,8 +190,9 @@ class DummyRing : public RingInterface
     static bool converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
   };
 
-};
+#endif
 
+}; // namespace M2
 
 #endif
 

@@ -6,9 +6,39 @@
 #define _nag_
 
 #include "matrix.hpp"
-#include "CCC.hpp"
+// #include "CCC.hpp"
 #include "complex.h"
 #include "style.hpp"
+#include "aring-glue.hpp"
+
+// patching defs and functions: /////////////////////////////////////////
+// switching from CCC to ConcreteRing<ARingCCC> /////////////////////////
+#define CCC M2::ConcreteRing<M2::ARingCCC>
+inline const CCC* cast_to_CCC(const Ring* R) 
+{
+  return dynamic_cast<const CCC*>(R);
+}
+inline ring_elem from_BigReals(const CCC* C, gmp_RR re, gmp_RR im) 
+{
+  CCC::ElementType a;
+  C->ring().init(a);
+  C->ring().set_from_BigReals(a,re,im);
+  ring_elem result;
+  C->ring().to_ring_elem(result,a);
+  C->ring().clear(a);
+  return result;
+}
+inline gmp_CC toBigComplex(const CCC* C, ring_elem a) 
+{
+  CCC::ElementType b; 
+  C->ring().init(b);
+  C->ring().from_ring_elem(b,a);
+  gmp_CC result = C->ring().toBigComplex(b);
+  C->ring().clear(b);
+  return result;
+}   
+///////////////////////////////////////////////////////////////////////////
+
 
 // Simple complex number class
 class complex
@@ -484,6 +514,7 @@ class SLP : public object
 public:
   typedef typename Field::element_type element_type;
 private:
+  const CCC* C; // ConcreteRing<ARingCCC>*
   friend class PathTracker;
 
   static SLP<Field>* catalog[MAX_NUM_SLPs];
