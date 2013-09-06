@@ -66,16 +66,13 @@ namespace M2 {
     // Do not take the same element and store it as two different ring_elem's!!
     void to_ring_elem(ring_elem &result, const ElementType &a) const
     {
-      // TODO
-      double* res = getmemstructtype(double*);
+      double* res = new double;
       *res = a;
       result.poly_val = reinterpret_cast<Nterm*>(res);
-      //      result = DOUBLE_RINGELEM(res);
     }
 
     void from_ring_elem(ElementType &result, const ring_elem &a) const
     {
-      // TODO: check this
       result = * reinterpret_cast<double*>(a.poly_val);
     }
 
@@ -202,8 +199,11 @@ namespace M2 {
 
     void random(ElementType &result) const // redo?
     {
-      // TODO
-      // rawRandomMpfr(&result, mPrecision);
+      mpfr_t val;
+      mpfr_init2(val, 53);
+      rawRandomMpfr(val, 53);
+      result = mpfr_get_d(val, GMP_RNDN);
+      mpfr_clear(val);
     }
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const

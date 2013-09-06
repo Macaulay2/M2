@@ -583,6 +583,7 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
   return static_cast<gmp_QQ>(f);
 }
 
+#if 0
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
   if (!a->get_ring()->is_RRR())
@@ -597,6 +598,41 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
     }
   void *f = a->get_value().poly_val;
   return static_cast<gmp_RR>(f);
+}
+#endif
+
+gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
+{
+  const Ring* R = a->get_ring();
+  gmp_RR result;
+  void* b;
+  double* c;
+  const M2::ConcreteRing<M2::ARingRRR> *R1;
+
+  switch (R->ringID()) 
+    {
+    case M2::ring_RR:
+      result = getmemstructtype(gmp_RR);
+      mpfr_init2(result, 53);
+      b = static_cast<void*>(a->get_value().poly_val);
+      c = static_cast<double*>(b);
+      mpfr_set_d(result, *c, GMP_RNDN);
+      return result;
+    case M2::ring_RRR:
+      R1 = dynamic_cast< const M2::ConcreteRing<M2::ARingRRR> * >(a->get_ring());
+      result = getmemstructtype(gmp_RR);
+      mpfr_init2(result, R1->get_precision());
+      b = a->get_value().poly_val;
+      mpfr_set(result, static_cast<gmp_RR>(b), GMP_RNDN);
+      return result;
+    default:
+      if (!a->get_ring()->is_RRR())
+        {
+          ERROR("expected an element of RRR");
+          return 0;
+        }
+      return a->get_value().mpfr_val;
+    }
 }
 
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)

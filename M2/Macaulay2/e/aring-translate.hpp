@@ -7,6 +7,7 @@
 // Contains functions which are "ring translational" //
 ///////////////////////////////////////////////////////
 
+#include "aring-RR.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zz-gmp.hpp"
@@ -33,6 +34,9 @@ namespace M2 {
   }
 
   inline bool get_from_BigReal(const ARingRRR& R, ARingRRR::ElementType& a, gmp_RR b)
+  {return R.set_from_BigReal(a,b);}
+
+  inline bool get_from_BigReal(const ARingRR& R, ARingRR::ElementType& a, gmp_RR b)
   {return R.set_from_BigReal(a,b);}
 
   inline bool get_from_BigReal(const ARingCCC& R, ARingCCC::ElementType& a, gmp_RR b)
@@ -62,6 +66,15 @@ namespace M2 {
     return false;
   }
 
+
+  inline bool mypromote(const ARingRR& R,
+                        const ARingRRR& S,
+                        const ARingRR::ElementType& fR,
+                        ARingRRR::ElementType& fS)
+  {
+    S.set_from_double(fS, fR);
+    return true;
+  }
 
   inline bool mypromote(const ARingRRR& R,
                         const ARingRRR& S,
