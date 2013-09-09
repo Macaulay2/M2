@@ -307,8 +307,10 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],[regeneration,Software],Software,
-	  M2,M2engine,M2enginePrecookedSLPs},
+     Key => {Software,
+	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
+	 [regeneration,Software],[parameterHomotopy,Software],
+	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
      Possible values for internal software are:",  

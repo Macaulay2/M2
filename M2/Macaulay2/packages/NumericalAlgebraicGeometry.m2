@@ -22,7 +22,7 @@ newPackage select((
      if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"} | if BERTINI'M2'EXISTS then {"Bertini"} else {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -45,6 +45,7 @@ if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
+     "parameterHomotopy",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
@@ -902,6 +903,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       ))
      )
 
+-- "track" should eventually go through "trackHomotopy"
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
      	  -- step control
@@ -1105,7 +1107,15 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       )
 	   );
      apply(ret, s->point toList s)
-     )
+     ) -- trackHomotopy
+
+parameterHomotopy = method(TypicalValue => List, Options =>{
+	Software=>null
+	})
+parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
+    if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
+    else error "not implemented"
+    )
 
 refine = method(TypicalValue => List, Options =>{
 	  Software=>null, 
