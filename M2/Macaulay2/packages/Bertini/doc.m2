@@ -80,7 +80,23 @@ doc ///
     Options for bertini.m2 functions.
   Description  
     Text
-      To be added later. 
+      Every function of the package takes ALL optional arguments listed here.
+      The default value for EACH option is -1, which tells Bertini to use its internal default.
+    
+      There are two recommended ways of using the optional arguments.
+    
+      (1) Specify individual parameters in a function call:
+    Example
+      CC[x,y]; F = {x^2-1,y^2-1};
+      bertiniZeroDimSolve(F,RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100)
+    Text
+      (2) Store your frequently used favorites in an OptionTable 
+      and pass it as the last argument in each function call:
+    Example
+      opts = new OptionTable from {RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100}
+      bertiniZeroDimSolve(F,opts)
+      G = {x^2+y^2-1};
+      bertiniPosDimSolve(G,opts)
 ///;
 
 doc ///
@@ -201,13 +217,12 @@ doc ///
      coords = coordinates S_0
      coords_0
 ///;
-end
 doc ///
  Key 
    bertiniParameterHomotopy
    (bertiniParameterHomotopy,List,List,List)
  Headline
-   runs parameter homotopy in Bertini
+   Runs parameter homotopy in Bertini
  Usage
    S = bertiniParameterHomotopy(F,P,T)
  Inputs
@@ -225,8 +240,18 @@ doc ///
    Text
      Runs both stages of Bertini's parameter homotopy method.
    Example
+     R=CC[u1,u2,u3,x,y]
+     f1=u1*(y-1)+u2*(y-2)+u3*(y-3)
+     f2=(x-11)*(x-12)*(x-13)
+     finalParameters0={{1,0,0}}
+     finalParameters1={{0,1+2*ii,0}}
+     bPH=bertiniParameterHomotopy(
+     {f1,f2},--list of polynomials that are a square system
+     {u1,u2,u3},--your parameters
+     {finalParameters0  ,finalParameters1 })
+     bPH_0--the solutions to the system with finalParameters0
 ///;
-
+end
 doc ///
  Key 
    bertiniTrackHomotopy
