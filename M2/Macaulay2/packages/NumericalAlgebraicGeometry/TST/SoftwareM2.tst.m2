@@ -1,7 +1,7 @@
-needsPackage ("NumericalAlgebraicGeometry", FileName=>currentFileDirectory|"../../NumericalAlgebraicGeometry.m2");
-needs (currentFileDirectory|"../benchmarks.m2")
+needsPackage "NumericalAlgebraicGeometry"
+needs "NumericalAlgebraicGeometry/benchmarks.m2"
 
-NAGtrace 1
+NAGtrace 100
 for predictor in {RungeKutta4,
      --Multistep,
      Tangent,Euler,Secant} do (
