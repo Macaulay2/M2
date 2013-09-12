@@ -134,6 +134,10 @@ namespace M2 {
       mpfr_set_q(&result, a, GMP_RNDN);
     }
 
+    void set_from_double(ElementType &result, double a) const {
+      mpfr_set_d(&result, a, GMP_RNDN);
+    }
+
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
       mpfr_set(&result, a, GMP_RNDN);
       return true;
