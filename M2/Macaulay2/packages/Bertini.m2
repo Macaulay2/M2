@@ -8,7 +8,9 @@ newPackage(
      Email => "bates@math.colostate.edu",
      HomePage => "http://www.math.colostate.edu/~bates"}, 
     {Name => "Elizabeth Gross"},
-    {Name => "Jose Rodriguez"},
+    {Name => "Jose Israel Rodriguez III",
+     Email => "jo.ro@berkeley.edu",
+     HomePage => "http://math.berkeley.edu/~jrodrig/"},
     {Name => "Anton Leykin",
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
@@ -18,7 +20,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -66,7 +68,8 @@ export {
   "NewtonResidual",
   "CycleNumber",
   "Success",
-  "SolutionNumber"  
+  "SolutionNumber",
+  "stageTwoParameterRun"  
 --  "points"
 }
 
@@ -284,7 +287,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   params:=o.Parameters;
   v := gens ring T#0; -- variables
   if o.runType==6  then (v=delete(t,v));  --special for runtype6
-  if (o.runType==7 or o.runType==8) then (v=toList(set v - set params));
+  if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));  
   dir := temporaryFileName(); -- build a directory to store temporary data 
   makeDirectory dir; 
   f := openOut (dir|"/input"); -- typical (but not only possible) name for Bertini's input file 
@@ -456,11 +459,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        f = openOut (dir|"/sharpen_script"); -- writing out file with query responses in case of a refine/sharpen run
        f << "5" << endl << o.digits << endl << "1" << endl;
        close f;
-       );
-  
-  if (o.runType==5) then (  --copies raw_data file to tmp directory
---       copyFile(o.RawData, dir|"/raw_data")
-     	 f =openOut(dir|"/raw_data");
+       
+       --create raw_data in tmp directory
+       f =openOut(dir|"/raw_data");
   	 f << toString(#v+1)<<endl;
 	 f << toString(0)<<endl;
 	 for i from 0 to #startS1-1 do(
@@ -485,11 +486,12 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 	 for i from 0 to #v-1 do(
 	      f<<"0 0"<<endl;
 	      );
-	 
-	 
 	 close f;
-     
-
+	 
+       --create midpath_data in tmp directory
+       f =openOut(dir|"/midpath_data");
+       f << "This file needs to be created by bertiniRefineSols because of a bug in Bertini" << endl;
+       close f;
        );
   
   if (o.runType==3) then (  --copies witness_data file to tmp directory
@@ -605,7 +607,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               if (o.runType==0 or o.runType==8) then (
 		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
 	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
@@ -665,7 +667,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               --print coords; --remove me
@@ -748,8 +750,8 @@ local R;
             l = drop(l,1);
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});  -- NOTE: we convert to maxPrec bits complex type
               l = drop(l,1);
               );
 
@@ -888,7 +890,7 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               --print coords; --remove me
@@ -925,23 +927,22 @@ local R;
            coDims = append(coDims, value ("{"|replace (" ", ",", l_0)|"}"));
            l=drop(l,1)
         );
-       wSets := {}; --list of witness sets for each point
+       wSets := {}; --list of lists of witness sets for each point
+       l = drop(l,3);
        for i from 1 to #o.StartSolutions do (
-         l = drop(l,3);
          testVector := drop(value ("{"|replace (" ", ",", l_0)|"}"), -1); --getting row from incidence matrix and dropping extra space
+	 witSets'forOnePoint := {};
          for j from 0 to numCoDims-1 do(	  
            subTestVector := take(testVector, coDims_j_1);  
 	   compNums := positions(subTestVector, k->k==1); --get component numbers that with positive result
            possWitSets := NV#(numVars-coDims_j_0); --grabs witness sets in this component
 	   witSets := select(possWitSets, k->member(k.ComponentNumber, compNums)); --select witness sets with positive result
-	   if (#witSets>0) then (wSets = append(wSets, witSets)); --append to larger list that we will output      
+    	   witSets'forOnePoint = witSets'forOnePoint | witSets;
 	   testVector=drop(testVector, coDims_j_1);
-	   print testVector
-	);
-     
-     );
-   
-   return wSets    
+	   );
+ 	 wSets = append(wSets,witSets'forOnePoint); --append to larger list that we will output      
+       );
+       return wSets    
   )
 
 --  else if (o.runType == -1) then ( --if ZeroDim, we actually want to read raw_data, but this works until that is fully implemented. 
@@ -999,8 +1000,32 @@ local R;
 --     )
 
 
+--##########################################################################--
+-- TESTS
+--##########################################################################--
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniZeroDimSolve.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniTrackHomotopy.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniPosDimSolve.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomotopy.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniSample-bertiniComponentMemberTest.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
+/// 
 
 --##########################################################################--
 -- DOCUMENTATION

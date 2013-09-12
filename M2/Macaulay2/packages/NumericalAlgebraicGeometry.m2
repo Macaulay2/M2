@@ -22,7 +22,7 @@ newPackage select((
      if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"} | if BERTINI'M2'EXISTS then {"Bertini"} else {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -45,6 +45,7 @@ if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 export {
      "setDefault", "getDefault",
      "solveSystem", "track", "refine", "totalDegreeStartSystem",
+     "parameterHomotopy",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
@@ -57,7 +58,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", "toAffineChart",
+     "numericalRank", 
      "regeneration", 
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -902,6 +903,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       ))
      )
 
+-- "track" should eventually go through "trackHomotopy"
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
      	  -- step control
@@ -1105,7 +1107,15 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       )
 	   );
      apply(ret, s->point toList s)
-     )
+     ) -- trackHomotopy
+
+parameterHomotopy = method(TypicalValue => List, Options =>{
+	Software=>null
+	})
+parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
+    if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
+    else error "not implemented"
+    )
 
 refine = method(TypicalValue => List, Options =>{
 	  Software=>null, 
@@ -1136,7 +1146,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
      if #solsT == 0 then return solsT;
      
      ref'sols := null;
-     if not isProjective then (
+     if isProjective then (
      	  if o.Software === M2engine then ( -- engine refiner is primitive
 --      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
 --                if PT=!=null then (
@@ -1144,13 +1154,18 @@ refine (List,List) := List => o -> (T,solsT) -> (
 --  		    	      rawRefinePT(PT, raw matrix solsT, o.ErrorTolerance, o.Iterations)
 --  		    	      ), s->{s}); -- old format
 -- 		    );
--- 	       error "refine is not implemented in the engine yet";
+	       error "refine is not implemented in the engine yet";
 	       ) 
-	  else if o.Software === PHCPACK then (
-	       ref'sols = refinePHCpack(T,solsT,o)/point
-	       );
-	  );
-     -- M2 part 
+	   else error "refining projective solutions is not implemented yet";
+    	  );  
+    if o.Software === PHCPACK then  return refinePHCpack(T,solsT,o)/point;
+    if o.Software === BERTINI then (
+	-- bits to decimals 
+	-- decimals := ceiling(o.Bits * log 2 / log 10);
+	return bertiniRefineSols(T,solsT,o.Bits)
+	);
+
+     -- Software=>M2 (and Software=>M2engine for now)
      if ref'sols === null then (
      	  n'iterations := o.Iterations; 
      	  T = matrix {T};
@@ -1944,17 +1959,6 @@ numericalVariety Ideal := I -> (
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
-toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
-toAffineChart (ZZ,List) := List => (k,x) -> (
-     if k<0 or k>#x then error "chart number is out of range ";
-     if x#k == 0 then return infinity;
-     y := apply(x, c->c/x#k);
-     take(y,k) | drop(y,k+1)
-     ) 
-
-projectiveDistance = method()
-projectiveDistance (List,List) := (a,b) -> acos((abs sum(a,b,(x,y)->x*conjugate y)) / ((norm2 a) * (norm2 b)))
-projectiveDistance (Point,Point) := (a,b) -> projectiveDistance(coordinates a, coordinates b)
 
 selectUnique = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 selectUnique List := o -> sols ->(
@@ -1963,57 +1967,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-solutionDuplicates = method(TypicalValue=>MutableHashTable)
-solutionDuplicates List := sols -> ( 
--- find positions of duplicate solutions
--- IN: list of solutions
--- OUT: H = MutableHashTable with entries of the form i=>j (sols#i is a duplicate for sols#j);
---      connected components (which are cycles) in the graph stored in H correspond to clusters of "duplicates" 
---      i=>i indicates a nonduplicate
-     H := new MutableHashTable;
-     for j from 0 to #sols-1 do (
-	  H#j = j;
-	  i := j-1;
-	  while i>=0 do
-	  if areEqual(sols#i,sols#j) then (
-	       H#j = H#i;
-	       H#i = j;
-	       i = -1
-	       ) 
-	  else i = i - 1;
-	  );
-     H
-     )
-
-groupClusters = method()
-groupClusters MutableHashTable := H -> (
--- processes the output of solutionDuplicates to get a list of clusters of solutions
-     cs := {};
-     apply(keys H, a->if H#a=!=null then (
-	       c := {a};
-	       b := H#a; 
-	       H#a = null;
-	       while b != a do (
-	       	    c = c | {b};
-	       	    bb := H#b;
-		    H#b = null;
-		    b = bb;
-	       	    );
-	       cs = cs | {c};
-	       ));
-     cs
-     )
-
-solutionsWithMultiplicity = method()
-solutionsWithMultiplicity List := sols -> ( 
-     clusters := groupClusters solutionDuplicates sols;
-     apply(clusters, c->(
-	       s := new Point from sols#(first c);
-	       if (s.Multiplicity = #c)>1 and s.SolutionStatus === Regular then s.SolutionStatus = Singular;
-	       s
-	       ))
-     )
-
 singularSolutions = method() -- decide on the tolerance!!!
 singularSolutions(List,List) := (T,sols) -> (
 -- find positions of singular solutions in sols
