@@ -101,11 +101,11 @@ assert(time checkLU matrix A < 1e-15)
 
 kk = RR
 A = random(kk^100,kk^100);
-norm(A*A^-1-id_(kk^100))
+----norm(A*A^-1-id_(kk^100))
 
 kk = CC
 A = random(kk^100,kk^100);
-time A^-1;
+----time A^-1;
 
 ----------------
 -- Test solve --

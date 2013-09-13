@@ -344,6 +344,7 @@ testRankFailing = () -> (
      debug Core;
      R := ZZFlint;
      (N,M) := (100,70);
+     (N,M) := (500,372);
      m3 := mutableMatrix(R, N, M);
      m4 := mutableMatrix(R, M, N);
      fillMatrix m3;
