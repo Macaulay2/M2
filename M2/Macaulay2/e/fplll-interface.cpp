@@ -13,7 +13,7 @@
         ERROR("fplll is not available (configure M2 with fplll!)");
         return 0;
     #else
-        assert(U==null);
+        assert(U==NULL);
         double delta = 0.99;
         double eta = 0.51;
         LLLMethod method = LM_WRAPPER;
