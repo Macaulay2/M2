@@ -15,6 +15,9 @@
 #endif
 
 #if HAVE_STDINT_H
+#if !defined(__STDC_LIMIT_MACROS)
+#define __STDC_LIMIT_MACROS
+#endif
   #include <stdint.h>
 #elif HAVE_INTTYPES_H
   #include <inttypes.h>
