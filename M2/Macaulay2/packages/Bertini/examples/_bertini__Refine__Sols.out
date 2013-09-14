@@ -1,0 +1,68 @@
+-- -*- M2-comint -*- {* hash: 944036268 *}
+/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:635: warning: documentation already provided for 'NAGtypes :: generalEquations'
+/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:290: ... here is the (end of the) previous documentation
+--loading configuration for package "Bertini" from file /Users/MacMath/Library/Application Support/Macaulay2/init-Bertini.m2
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:395:10:(3):[10]: warning: local declaration of f shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:584:8:(3):[10]: warning: local declaration of l shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:592:8:(3):[10]: warning: local declaration of pts shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:595:13:(3):[10]: warning: local declaration of maxPrec shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:800:8:(3):[10]: warning: local declaration of l shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:809:8:(3):[10]: warning: local declaration of pts shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:814:13:(3):[10]: warning: local declaration of maxPrec shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:845:8:(3):[10]: warning: local declaration of numVars shields variable with same name
+/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:850:8:(3):[10]: warning: local declaration of l shields variable with same name
+
+i1 : R = CC[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = {x^2-2,y^2-2}
+
+       2       2
+o2 = {x  - 2, y  - 2}
+
+o2 : List
+
+i3 : sols = bertiniZeroDimSolve (F)
+Temporary directory for input and output files:/tmp/M2-16922-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = {{1.41421, 1.41421}, {1.41421, -1.41421}, {-1.41421, 1.41421},
+     ------------------------------------------------------------------------
+     {-1.41421, -1.41421}}
+
+o3 : List
+
+i4 : S = bertiniRefineSols (F,sols,100)
+Temporary directory for input and output files:/tmp/M2-16922-0/1
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o4 = {{1.41421, 1.41421}, {1.41421, -1.41421}, {-1.41421, 1.41421},
+     ------------------------------------------------------------------------
+     {-1.41421, -1.41421}}
+
+o4 : List
+
+i5 : coords = coordinates S_0
+
+o5 = {1.41421, 1.41421}
+
+o5 : List
+
+i6 : coords_0
+
+o6 = 1.4142135623730951454746218587388284504413604736328125+
+     1.3610015874110799252274537150868792436900612422019088402246269848315469
+     83984202032213530546263298085e-316*ii
+
+o6 : CC (of precision 333)
+
+i7 : 
