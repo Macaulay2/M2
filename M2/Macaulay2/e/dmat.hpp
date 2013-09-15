@@ -3,6 +3,9 @@
 #ifndef _dmat_hpp_
 #define _dmat_hpp_
 
+#include <algorithm>
+#include <utility>
+
 #include "engine-includes.hpp"
 
 template<typename ACoeffRing> class DMat;

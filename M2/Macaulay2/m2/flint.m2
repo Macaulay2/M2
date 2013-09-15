@@ -3,6 +3,8 @@ ZZFlintRing = new Type of EngineRing
 --toString ZZFlintRing := R -> toString R.RawRing
 
 makeZZFlint = () -> (
+     rawF := try rawARingZZFlint() else null;
+     if rawF === null then return null;
      F := new ZZFlintRing from rawARingZZFlint();
      F.baseRings = {};
      commonEngineRingInitializations F;
