@@ -619,7 +619,7 @@ setupfun("rawARingZZpFlint", rawARingZZpFlint);
 -- flint rings
 export rawARingZZFlint(e:Expr):Expr := (
      when e is s:Sequence do if length(s) == 0
-     then toExpr(Ccode(RawRing,"rawARingZZFlint()"))
+     then toExpr(Ccode(RawRingOrNull,"rawARingZZFlint()"))
      else WrongNumArgs(0)
      else WrongNumArgs(0)
      );

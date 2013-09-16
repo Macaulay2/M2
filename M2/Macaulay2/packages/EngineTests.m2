@@ -340,10 +340,25 @@ testRank = (R) -> (
      m1*m2 == mutableIdentity(QQ, 4);
      )
 
+///
+-- simpler bug
+     debug Core;
+     R := ZZFlint;
+     N = 100
+     N = 70
+     N = 50
+     N = 20
+     tally for i from 1 to 10000 list (
+       m = mutableMatrix(R, N, N);
+       fillMatrix m;
+       rank m
+       )
+///
 testRankFailing = () -> (
      debug Core;
      R := ZZFlint;
      (N,M) := (100,70);
+     (N,M) := (500,372);
      m3 := mutableMatrix(R, N, M);
      m4 := mutableMatrix(R, M, N);
      fillMatrix m3;
