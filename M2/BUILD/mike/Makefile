@@ -335,7 +335,6 @@ ubuntu64-linbox : always
 	mkdir -p opt64-linbox
 	cd opt64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \
@@ -343,6 +342,7 @@ ubuntu64-linbox : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+#		--enable-memtailor \
 
 ubuntu64-linbox-debug : always
 	mkdir -p debug64-linbox
@@ -351,6 +351,19 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-flint \
+		--enable-linbox \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+ubuntu64-linbox-profile : always
+	mkdir -p profile64-linbox
+	cd profile64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-profile \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \
