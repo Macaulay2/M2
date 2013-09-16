@@ -19,7 +19,7 @@ class DMat<M2::ARingZZ>
 public:
   typedef M2::ARingZZ ACoeffRing;
   typedef ACoeffRing CoeffRing;
-  typedef typename ACoeffRing::ElementType ElementType;
+  typedef ACoeffRing::ElementType ElementType;
   typedef ElementType elem;
 
   typedef DMatIterator<ACoeffRing> Iterator;

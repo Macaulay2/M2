@@ -205,8 +205,8 @@ namespace MatrixOppies
                                            const DMat<M2::ARingZZpFFPACK> &B,
                                            bool transposeA,
                                            bool transposeB,
-                                           const typename DMat<M2::ARingZZpFFPACK>::ElementType &a,
-                                           const typename DMat<M2::ARingZZpFFPACK>::ElementType &b)
+                                           const DMat<M2::ARingZZpFFPACK>::ElementType &a,
+                                           const DMat<M2::ARingZZpFFPACK>::ElementType &b)
   /* A,B,C should be mutable matrices over a finite prime field, and a,b
      elements of this field.
      C = b*C + a * op(A)*op(B),
