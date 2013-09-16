@@ -21,6 +21,8 @@ namespace M2 {
   {
     // complex numbers represented as pairs of MPFRs.
 
+  private:
+    const ARingRRR mRRR; // reals with the same precision
   public:
     static const RingID ringID = ring_CCC;
 
@@ -36,6 +38,8 @@ namespace M2 {
     size_t characteristic() const { return 0; }
     unsigned long get_precision() const { return mRRR.get_precision(); }
     void text_out(buffer &o) const;
+
+    const ARingRRR* get_real_ring() const { return &mRRR; }
 
     unsigned long computeHashValue(const ElementType& a) const  
     { 
@@ -304,6 +308,17 @@ namespace M2 {
       clear(result);
     }
 
+    void abs(ARingRRR::ElementType& result, const ElementType& a)
+    {
+      mRRR.mult(result,realPartReference(a),realPartReference(a));
+      ARingRRR::ElementType s;
+      mRRR.init(s);
+      mRRR.mult(s,imaginaryPartReference(a),imaginaryPartReference(a));
+      mRRR.add(result,result,s);
+      mpfr_sqrt(&result,&result,GMP_RNDN); // should we have ARingRRR::sqrt ???
+      mRRR.clear(s);
+    }
+
     void power(ElementType &result, const ElementType& a, int n) const
     {
       ElementType curr_pow;
@@ -428,9 +443,6 @@ namespace M2 {
       mRRR.zeroize_tiny(epsilon,a.re);
       mRRR.zeroize_tiny(epsilon,a.im);
     }
-
-  private:
-    const ARingRRR mRRR;
   };
 
 }; // end namespace M2
