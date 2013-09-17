@@ -421,8 +421,10 @@ namespace M2 {
       return result;
     }
 
+    //TODO: look again at the next two when ring_elem is phased out
     virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-    
+    virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const; 
+
     virtual unsigned long get_precision() const;  // if the ring is not over RRR/CCC returns 0
 
   }; // class ConcreteRing<RingType>
@@ -676,6 +678,12 @@ namespace M2 {
     return f;
   }
 
+  template<typename RingType>
+  void ConcreteRing<RingType>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    // do nothing by default
+  }
+
   template<>
   inline ring_elem ConcreteRing<ARingRRR>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   {
@@ -700,6 +708,22 @@ namespace M2 {
     R->to_ring_elem(result,a);
     R->clear(a);
     return result;
+  }
+
+  template<>
+  inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    const ARingRRR* realR = R->get_real_ring();
+    ARingRRR::ElementType a;
+    ElementType b;
+    realR->init(a);
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp(&a, norm)>0)
+      mpfr_set(norm, &a, GMP_RNDN);
+    R->clear(b);
+    realR->clear(a);
   }
 
   template<typename RingType>

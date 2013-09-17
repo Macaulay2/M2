@@ -419,23 +419,11 @@ ring_elem Ring::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
 {
   return f;
 }
+
 void Ring::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {
   // Default for rings not over RRR or CCC is to do nothing.
-#if 0
-  if(AR->getID() == ring_CCC) {
-    ARingRRR::ElementType a;
-    ARingCCC::ElementType b;
-    AR->get_real_ring()->init(a);
-    AR->from_ring_elem(b,f);
-    AR->abs(a,b);
-    if (mpfr_cmp(&a, norm)>0)
-      mpfr_set(norm, &a, GMP_RNDN);
-    AR->clear(b);
-    AR->get_real_ring()->clear(a);
-  } 
-#endif
 }
 
 ///////////////////////////////////

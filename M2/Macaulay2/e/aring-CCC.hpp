@@ -308,7 +308,7 @@ namespace M2 {
       clear(result);
     }
 
-    void abs(ARingRRR::ElementType& result, const ElementType& a)
+    void abs(ARingRRR::ElementType& result, const ElementType& a) const
     {
       mRRR.mult(result,realPartReference(a),realPartReference(a));
       ARingRRR::ElementType s;
