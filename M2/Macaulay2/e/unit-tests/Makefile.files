@@ -9,6 +9,7 @@ UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
     ARingZZTest \
     ARingQQFlintTest \
+    ARingRRTest \
     ARingRRRTest \
     ARingCCCTest \
     ARingZZpTest \
