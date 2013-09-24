@@ -2146,7 +2146,8 @@ setRandomSeed 0
 T = randomSd {2,3};
 (S,solsS) = goodInitialPair T
 M = track(S,T,solsS,Normalize=>true)
--- RM = refine(T,M)
+-- RM = refine(T,M,Software=>M2) -- projective refine is nom implemented!!!
+RM = M
 debug NumericalAlgebraicGeometry
 assert areEqual(norm2 matrix first M, 1_CC, Tolerance=>0.001)
 ///
