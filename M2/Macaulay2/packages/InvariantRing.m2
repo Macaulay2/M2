@@ -1929,6 +1929,7 @@ assert(secondaryInvariants(P,S3)=={sub(1,S)})
 ------------------------------------------------
 
 TEST ///
+setRandomSeed 0
 K=GF(101);
 S=K[x,y,z];
 r=matrix{{0,1,0},{0,0,1},{1,0,0}};
@@ -1990,6 +1991,7 @@ assert(
 ------------------------------------------------
 
 TEST ///
+setRandomSeed 0
 S=QQ[x,y];
 r=matrix{{0,-1},{1,0}};
 s=matrix{{0,1},{1,0}};
