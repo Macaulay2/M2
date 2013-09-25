@@ -49,7 +49,6 @@ doc ///
 
 doc ///
   Key
-    Bertini optional configuration settings
     MPTYPE
     PRECISION
     ODEPREDICTOR
@@ -82,35 +81,7 @@ doc ///
     Text
       Every function of the package takes ALL optional arguments listed here.
       The default value for EACH option is -1, which tells Bertini to use its internal default.
-      Refer to Appendix E of SIAM Bertini book for full details and list of options. 
-
-      MPTYPE: Type of precision (0=double, 1=fixed higher, 2=adaptive).
-      PRECISION: Precision, in bits, when used MPTYPE=1.
-      ODEPREDICTOR: Choice of predictor method (9 choices).
-      TRACKTOLBEFOREEG: Before endgame zone, Newton error must be less than this for success. 
-      TRACKTOLDURINGEG: Same as previous, but during endgame.
-      FINALTOL: Path is deemed successful if final two endpoint approximations agree to FINALTOL.
-      MAXNORM: If SECURITYLEVEL=0, path is truncated if two consecutive endpoint approximations exceed this value. 
-      MINSTEPSIZEBEFOREEG: Path is truncated if stepsize drops below this level before endgame.
-      MINSTEPSIZEDURINGEG: Same as previous, but during endgame.
-      IMAGTHRESHOLD: Endpoint deemed real if infinity norm is smaller than this. 
-      COEFFBOUND: Useful only if MPTYPE=2, bound on sum of coefficients of each polynomial. 
-      DEGREEBOUND: Useful only if MPTYPE=2, bound on degree of each polynomial.
-      CONDNUMTHRESHOLD: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this. 
-      RANDOMSEED: Useful to repeat runs with the same random numbers.
-      SINGVALZEROTOL: Singular value is considered 0 if less than this value, when using fixed precision.
-      ENDGAMENUM: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
-      USEREGENERATION: 1 to use regeneration for a zero-dimensional run.
-      SECURITYLEVEL: 1 to avoid truncation of possibly-infinite paths.
-      SCREENOUT: Level of output to the screen.
-      OUTPUTLEVEL: Level of output to files.
-      STEPSFORINCREASE: Number of consecutive Newton corrector successes before increase of stepsize.
-      MAXNEWTONITS: Newton corrector step deemed failed if no convergence prior to this number of iterations. 
-      MAXSTEPSIZE: Largest stepsize allowed. 
-      MAXNUMBERSTEPS: Max number of steps for entire path.  Path failure if number of steps exceeds this.
-      MAXCYCLENUM: Max cycle number considered during endgame.
-      REGENSTARTLEVEL: Level at which regeneration begins. 
-
+    
       There are two recommended ways of using the optional arguments.
     
       (1) Specify individual parameters in a function call:
@@ -286,12 +257,24 @@ doc ///
  Outputs
    L:List
      entries are lists of witness sets containing the test point
+ Consequences
+  Item
+    Writes the witness set information of NV and the test points to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with option {\tt TRACKTYPE: 3} 
+  Item
+    Stores output of {\tt Bertini} in temporary file
+  Item
+    Parses and outputs the solutions    
  Description
    Text
-     Tests whether pts lie on a given variety using Bertini.
+     This method checks whether the test points pts lie on NV using {\tt Bertini}.  The software {\tt Bertini}
+     performs this test by tracking the witness points stored in NV to the solutions of a new system
+     defined by the equations of NV and a linear space containing
+     one of the test points.
    Example
-     R = CC[x,y,z]
-     F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+     R = CC[x,y,z];
+     F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
      NV = bertiniPosDimSolve(F)
      pts = {{0,0,0}} --z-axis
      bertiniComponentMemberTest(NV,pts)
@@ -320,10 +303,10 @@ doc ///
      of solutions of type Point
  Description
    Text
-     We take the list l of solutions of F and sharpen them to d digits.
+     This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.
    Example
-     R = CC[x,y]
-     F = {x^2-2,y^2-2}
+     R = CC[x,y];
+     F = {x^2-2,y^2-2};
      sols = bertiniZeroDimSolve (F)
      S = bertiniRefineSols (F,sols,100)
      coords = coordinates S_0
