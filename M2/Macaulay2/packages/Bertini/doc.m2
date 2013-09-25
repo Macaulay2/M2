@@ -50,6 +50,7 @@ doc ///
 
 doc ///
   Key
+    Bertini optional configuration settings
     MPTYPE
     PRECISION
     ODEPREDICTOR
@@ -82,7 +83,35 @@ doc ///
     Text
       Every function of the package takes ALL optional arguments listed here.
       The default value for EACH option is -1, which tells Bertini to use its internal default.
-    
+      Refer to Appendix E of SIAM Bertini book for full details and list of options. 
+
+      MPTYPE: Type of precision (0=double, 1=fixed higher, 2=adaptive).
+      PRECISION: Precision, in bits, when used MPTYPE=1.
+      ODEPREDICTOR: Choice of predictor method (9 choices).
+      TRACKTOLBEFOREEG: Before endgame zone, Newton error must be less than this for success. 
+      TRACKTOLDURINGEG: Same as previous, but during endgame.
+      FINALTOL: Path is deemed successful if final two endpoint approximations agree to FINALTOL.
+      MAXNORM: If SECURITYLEVEL=0, path is truncated if two consecutive endpoint approximations exceed this value. 
+      MINSTEPSIZEBEFOREEG: Path is truncated if stepsize drops below this level before endgame.
+      MINSTEPSIZEDURINGEG: Same as previous, but during endgame.
+      IMAGTHRESHOLD: Endpoint deemed real if infinity norm is smaller than this. 
+      COEFFBOUND: Useful only if MPTYPE=2, bound on sum of coefficients of each polynomial. 
+      DEGREEBOUND: Useful only if MPTYPE=2, bound on degree of each polynomial.
+      CONDNUMTHRESHOLD: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this. 
+      RANDOMSEED: Useful to repeat runs with the same random numbers.
+      SINGVALZEROTOL: Singular value is considered 0 if less than this value, when using fixed precision.
+      ENDGAMENUM: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
+      USEREGENERATION: 1 to use regeneration for a zero-dimensional run.
+      SECURITYLEVEL: 1 to avoid truncation of possibly-infinite paths.
+      SCREENOUT: Level of output to the screen.
+      OUTPUTLEVEL: Level of output to files.
+      STEPSFORINCREASE: Number of consecutive Newton corrector successes before increase of stepsize.
+      MAXNEWTONITS: Newton corrector step deemed failed if no convergence prior to this number of iterations. 
+      MAXSTEPSIZE: Largest stepsize allowed. 
+      MAXNUMBERSTEPS: Max number of steps for entire path.  Path failure if number of steps exceeds this.
+      MAXCYCLENUM: Max cycle number considered during endgame.
+      REGENSTARTLEVEL: Level at which regeneration begins. 
+
       There are two recommended ways of using the optional arguments.
     
       (1) Specify individual parameters in a function call:
