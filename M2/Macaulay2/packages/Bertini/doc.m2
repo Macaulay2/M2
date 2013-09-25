@@ -47,7 +47,6 @@ doc ///
      S = bertiniZeroDimSolve F
 ///;
 
-
 doc ///
   Key
     Bertini optional configuration settings
@@ -361,6 +360,1340 @@ doc ///
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{finalParameters0 ,finalParameters1 })
      bPH_0--the solutions to the system with finalParameters0
 ///;
+
+
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniZeroDimSolve, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniPosDimSolve, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniPosDimSolve, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniPosDimSolve, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniComponentMemberTest, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniParameterHomotopy, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniRefineSols, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniRefineSols, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniSample, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniSample, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, COEFFBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, CONDNUMTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, DEGREEBOUND]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, ENDGAMENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, FINALTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, IMAGTHRESHOLD]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MAXCYCLENUM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MAXNEWTONITS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MAXNORM]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MAXNUMBERSTEPS]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MAXSTEPSIZE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MINSTEPSIZEBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MINSTEPSIZEDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, MPTYPE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, ODEPREDICTOR]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, OUTPUTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, PRECISION]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, RANDOMSEED]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, REGENSTARTLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, SCREENOUT]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, SECURITYLEVEL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, SINGVALZEROTOL]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, STEPSFORINCREASE]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, TRACKTOLBEFOREEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, TRACKTOLDURINGEG]
+  Headline
+    optional input 
+///;
+
+doc ///
+  Key
+    [bertiniTrackHomotopy, USEREGENERATION]
+  Headline
+    optional input 
+///;
+
 end
 doc ///
  Key

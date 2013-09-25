@@ -31,7 +31,6 @@ export {
   "bertiniPosDimSolve",
   "bertiniSample",
   "bertiniTrackHomotopy",
-  "bertiniSolve",
   "bertiniComponentMemberTest",
   "bertiniRefineSols",
   "StartSystem",  
@@ -68,8 +67,8 @@ export {
   "NewtonResidual",
   "CycleNumber",
   "Success",
-  "SolutionNumber",
-  "stageTwoParameterRun"  
+  "SolutionNumber"
+--  "stageTwoParameterRun"  
 --  "points"
 }
 
