@@ -235,7 +235,7 @@ TEST(ARingCCC, power_and_invert)
       C.power(c, a, e2);
       C.power(d, a, e1+e2);
       C.mult(c,b,c);
-      EXPECT_TRUE(almostEqual(C,91,c,d)); /* exponentiantion gives
+      EXPECT_TRUE(almostEqual(C,90,c,d)); /* exponentiantion gives
                                              relatively small number
                                              of correct digits */
 

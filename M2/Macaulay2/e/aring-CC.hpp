@@ -8,6 +8,8 @@
 #include "ringelem.hpp"
 #include "ringmap.hpp"
 
+#include "aring-RR.hpp"
+
 class RingMap;
 
 namespace M2 {
@@ -17,6 +19,10 @@ namespace M2 {
   class ARingCC : public RingInterface
   {
     // approximate real numbers, implemented as doubles.
+
+
+  private:
+    const ARingRR mRR; // reals with the same precision
   public:
     static const RingID ringID = ring_CC;
 
@@ -35,6 +41,8 @@ namespace M2 {
     size_t characteristic() const { return 0; }
     unsigned long get_precision() const { return 53; }
     void text_out(buffer &o) const;
+
+    const ARingRR* get_real_ring() const { return &mRR; }
 
     unsigned long computeHashValue(const elem& a) const 
     { 
@@ -153,9 +161,10 @@ namespace M2 {
       result.im = -a.im;
     }
 
-    void invert(ElementType &result, const ElementType& a) const
+    void invert(ElementType &res, const ElementType& a) const
       // we silently assume that a != 0.  If it is, result is set to a^0, i.e. 1
     {
+      ElementType result;
       if (fabs(a.re) >= fabs(a.im))
         {
           double p = a.im/a.re;
@@ -170,43 +179,106 @@ namespace M2 {
           result.re = p/denom;
           result.im = -1.0/denom;
         }
+      set(res,result);
     }
 
-    void add(ElementType &result, const ElementType& a, const ElementType& b) const
+    void add(ElementType &res, const ElementType& a, const ElementType& b) const
     {
+      ElementType result;
       result.re = a.re + b.re;
       result.im = a.im + b.im;
+      set(res,result);
     }
 
-    void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
+    void subtract(ElementType &res, const ElementType& a, const ElementType& b) const
     {
+      ElementType result;
       result.re = a.re - b.re;
       result.im = a.im - b.im;
+      set(res,result);
     }
 
     void subtract_multiple(ElementType &result, const ElementType& a, const ElementType& b) const
     {
-      result -= a*b;
+      // result -= a*b
+      ElementType ab;
+      mult(ab,a,b);
+      subtract(result,result,ab);
     }
 
-    void mult(ElementType &result, const ElementType& a, const ElementType& b) const
+    void mult(ElementType &res, const ElementType& a, const ElementType& b) const
     {
-      result = a*b;
+      ElementType result;
+      result.re = a.re*b.re - a.im*b.im;
+      result.im = a.re*b.im + a.im*b.re;
+      set(res,result);
     }
 
-    void divide(ElementType &result, const ElementType& a, const ElementType& b) const
+    void divide(ElementType &res, const ElementType& a, const ElementType& b) const
     {
-      result = a/b;
+      ARingRR::ElementType p, denom; // double
+
+      ElementType result;
+      if (fabs(b.re)>=fabs(b.im))
+        {
+          p = b.im/b.re;
+          denom = b.re + p * b.im;
+          result.re = (a.re + p*a.im)/denom;
+          result.im = (a.im - p*a.re)/denom;
+        }
+      else
+        {
+          p = b.re/b.im;
+          denom = b.im + p * b.re;
+          result.re = (a.im + p*a.re)/denom;
+          result.im = (p*a.im - a.re)/denom;
+        }
+      set(res,result);
+    }
+
+    void abs(ARingRR::ElementType& result, const ElementType& a) const
+    {
+      result = sqrt(a.re * a.re + a.im * a.im);
     }
 
     void power(ElementType &result, const ElementType& a, int n) const
     {
-      // TODO
+      ElementType curr_pow;
+      init(curr_pow);
+      set_from_int(result,1);
+      if (n == 0) {}
+      else if (n < 0)
+        {
+          n = -n;
+          invert(curr_pow, a);
+        }
+      else
+        {
+          set(curr_pow,a);
+        }
+      while (n > 0)
+        {
+          if (n%2) {
+            mult(result, result, curr_pow);
+          }
+          n = n/2;
+          mult(curr_pow, curr_pow, curr_pow);
+        }
+      clear(curr_pow);      
     }
 
     void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
-      // TODO
+      if (mpz_fits_slong_p(n)) 
+        {
+          int n1 = static_cast<int>(mpz_get_si(n));
+          power(result,a,n1);
+        } 
+      else  
+        {
+          ERROR("exponent too large");
+          set_from_int(result, 1);
+        }
     }
 
     void swap(ElementType &a, ElementType &b) const
@@ -241,7 +313,9 @@ namespace M2 {
       mpfr_t val;
       mpfr_init2(val, 53);
       rawRandomMpfr(val, 53);
-      result = mpfr_get_d(val, GMP_RNDN);
+      result.re = mpfr_get_d(val, GMP_RNDN);
+      rawRandomMpfr(val, 53);
+      result.im = mpfr_get_d(val, GMP_RNDN);
       mpfr_clear(val);
     }
 
@@ -253,8 +327,10 @@ namespace M2 {
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
     {
-      if (fabs(a.re) < epsilon) a.re = 0.0;
-      if (fabs(a.im) < epsilon) a.im = 0.0;
+      if (mpfr_cmp_d(epsilon, fabs(a.re)) > 0)
+        a.re = 0.0;
+      if (mpfr_cmp_d(epsilon, fabs(a.im)) > 0)
+        a.im = 0.0;
     }
   };
 

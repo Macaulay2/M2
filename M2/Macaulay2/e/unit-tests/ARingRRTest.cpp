@@ -16,9 +16,9 @@ bool almostEqual(const M2::ARingRR& R, int nbits, const M2::ARingRR::ElementType
   M2::ARingRR::ElementType epsilon = pow(2,-nbits);
   M2::ARingRR::ElementType c; 
   R.subtract(c,a,b);
-  std::cout << "a = " << a << ", b = " << b << ", c = " << c << ", a-b = " << a-b;
+  //std::cout << "a = " << a << ", b = " << b << ", c = " << c << ", a-b = " << a-b;
   R.abs(c,c);
-  std::cout << ", |c| = " << c << ", epsilon = " << epsilon  << std::endl;
+  //std::cout << ", |c| = " << c << ", epsilon = " << epsilon  << std::endl;
   return R.compare_elems(c,epsilon) < 0;
 }
 
@@ -115,8 +115,10 @@ TEST(ARingRR, subtract)
       R.add(e,c,b); // should be a
       EXPECT_TRUE(almostEqual(R,nbits-2,a,e));
       R.mult(e,a,b);
+      //std::cout << e-a*b << " " << e << " " << a << " " << b << std::endl;
       R.subtract_multiple(e,a,b);
-      EXPECT_TRUE(R.is_zero(e));
+      //EXPECT_TRUE(R.is_zero(e)); // this is not necessarily zero (it is with MPFR)
+      EXPECT_TRUE(almostEqual(R,nbits-2,e,0));     
     }
   R.clear(e);
   R.clear(c);
@@ -146,8 +148,8 @@ TEST(ARingRR, multDivide)
       else
         {
           R.divide(d,c,b);
-          std::cout << a << " " << b << " " << c << " " << d << " " << d-a << std::endl;
-          EXPECT_TRUE(almostEqual(R,nbits*2,d,a));
+          // std::cout << a << " " << b << " " << c << " " << d << " " << d-a << std::endl;
+          EXPECT_TRUE(almostEqual(R,nbits-2,d,a));
         }
     }
   R.clear(d);

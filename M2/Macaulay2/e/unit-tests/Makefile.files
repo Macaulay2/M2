@@ -10,6 +10,7 @@ UNITTEST_CCFILES := \
     ARingZZTest \
     ARingQQFlintTest \
     ARingRRTest \
+    ARingCCTest \
     ARingRRRTest \
     ARingCCCTest \
     ARingZZpTest \
