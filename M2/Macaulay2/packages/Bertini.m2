@@ -676,21 +676,28 @@ local R;
 
        pts={}; 
 
+       prec'value := (P,s) -> ( -- P:ZZ and s:String
+	   where'is'e := regex("e",s);
+	   if where'is'e===null then value(s|"p" | toString P)
+	   else (
+	       pos := first first where'is'e;
+	       value (substring((0,pos),s) | "p" | toString P | substring((pos,#s-pos),s))
+	       )
+	   );
        while solNum > -1 do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
-            maxPrec = value(first l);
-            l = drop(l,1);
-
-            coords = {};
-            for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+	   maxPrec = value(first l);
+	   l = drop(l,1);
+	   bitPrec := ceiling((log 10/log 2)*o.digits);
+	   coords = {};
+	   for j from 1 to numVars do ( -- grab each coordinate
+               coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
                if (o.runType==1 or o.runType==6) then (
 		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
-	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
-              l = drop(l,1);
-              --print coords; --remove me
-	      );
-	 
-
+	       else (coords = join(coords, 
+		       {toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}    
+		       ));
+               l = drop(l,1);
+	       );
  	    pt = new Point;
             pt.MaximumPrecision=maxPrec;
 	    pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
