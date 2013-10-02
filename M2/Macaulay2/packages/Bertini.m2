@@ -32,10 +32,9 @@ export {
   "bertiniSample",
   "bertiniTrackHomotopy",
   "bertiniComponentMemberTest",
-  "bertiniRefineSols",
-  "StartSystem",  
-  "StartSolutions",  
+  "bertiniRefineSols",    
   "gamma",
+  "OPTIONS",
   "MPTYPE",  
   "PRECISION",
   "ISPROJECTIVE",  
@@ -62,18 +61,13 @@ export {
   "MAXSTEPSIZE",  
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
-  "REGENSTARTLEVEL",
-  "MaximumPrecision",
-  "FunctionResidual",
-  "NewtonResidual",
-  "CycleNumber",
-  "Success",
-  "SolutionNumber"
---  "stageTwoParameterRun"  
---  "points"
+  "REGENSTARTLEVEL"
 }
-
-
+  
+  protect SolutionNumber
+  protect StartSystem
+  protect NewtonResidual
+  protect MaximumPrecision
   protect runType
   protect compnum
   protect dimen
@@ -87,6 +81,9 @@ export {
   protect PathVariable
   protect Parameters
   protect ParameterValues
+  protect CycleNumber
+  protect FunctionResidual
+  protect StartSolutions
   
 needsPackage "NAGtypes"
 
@@ -359,7 +356,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   if o.runType == 4 then --membership test -- need to create file from points (o.StartSolutions should be nonempty!)
     f << "TRACKTYPE: 3;\n";
   if o.runType == 5 then --refine solutions -- need to create file from points (o.StartSolutions,o.RawData should be nonempty, and digits should be specified by user)
-    f << "SHARPENONLY: 1;\n";
+    f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n"; --changing input to fix refineSolutions error
   if o.runType == 6 then --trackHomotopy
     f << "USERHOMOTOPY: 1;\n";
   if o.runType == 7 then --parameterHomotopy, stage 1
@@ -370,7 +367,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
   -- The following block is the input section of the input file
   f << "INPUT" << endl << endl;
-  if member(o.runType,{1,6}) then  -- if user-defined, declaration type of vars is "variable"
+  if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
     f << "variable "
   else (if o.ISPROJECTIVE==-1 then 
     f << "variable_group "
@@ -412,15 +409,23 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 --       L = replace("e", "E", L);
 --       L
 --       );
-  if (o.runType!=1) -- non-param runs: just write out the polynomials
+  if (o.runType!=1 and o.runType!=5) -- non-param runs: just write out the polynomials
     then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl) 
-  else (  -- param runs: write out polys AND other junk (see next several lines!)
+  else (if (o.runType==1) 
+    then (  -- param runs: write out polys AND other junk (see next several lines!)
        if #o.StartSystem != #T then error "expected equal number of equations in start and target systems";
        f << "pathvariable t;\n" 
          << "parameter s;\n"
          << "s = t;\n\n";  -- need to make gamma a random number here !!!???
        scan(#T, i -> f << "f" << i 
 	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
+	   );
+       )
+    else (  -- refine sols runs: write out polys AND other stuff (see next several lines!)
+       f << "pathvariable t;\n" 
+         << "parameter s;\n"
+         << "s = t;\n\n";  
+       scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl)
 	   );
        );
   f << endl << "END;" << endl << endl;
@@ -464,12 +469,12 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        
        --create raw_data in tmp directory
        f =openOut(dir|"/raw_data");
-  	 f << toString(#v+1)<<endl;
+  	 f << toString(#v)<<endl;
 	 f << toString(0)<<endl;
 	 for i from 0 to #startS1-1 do(
 	   f << toString(i)<<endl;
 	   f << toString(52)<<endl;
-	   f << "1 0" <<endl;	   
+	   --f << "1 0" <<endl;	   --working in affine space
 	   scan(startS1_i, 
 		c->f<<realPart(c) <<" "<<imaginaryPart(c)<<endl);
 		f << "1" <<endl;
@@ -482,12 +487,16 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 		f << "1" <<endl;);
 	 f << "-1"<<endl;
 	 f << endl;
-	 f << "2"<<endl;
-	 f<< "1 "|toString(#v+1)<<endl;
-     	 f<<"1 0"<<endl;
-	 for i from 0 to #v-1 do(
-	      f<<"0 0"<<endl;
-	      );
+	 f << "2 0"<<endl; -- precision type, not using equation by equation
+	 f << endl;
+	 f<< "0 "|toString(#v)<<endl; -- no patch, number of variables
+	 f << endl;
+     	 f << "-1"<<endl;
+	 f << "1 1"<<endl; -- gamma
+	 f << endl;
+	 f<< "0 0"<<endl;
+	 f << endl;
+	 f<<"0 0"<<endl;
 	 close f;
 	 
        --create midpath_data in tmp directory
@@ -572,7 +581,7 @@ local R;
   var's := gens ring F#0; -- variables
   --R = QQ[var's]; --setting the ring
 
-  if (member(o.runType,{0,5,8})) then ( --raw_data, for zeroDim 
+  if (member(o.runType,{0,8})) then ( --raw_data, for zeroDim 
 --raw_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  0  
@@ -610,9 +619,7 @@ local R;
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
               coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              if (o.runType==0 or o.runType==8) then (
-		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
-	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
+              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
               --print coords; --remove me
 	      );
@@ -658,7 +665,7 @@ local R;
          --nv = numericalVariety wList;
        )
 
-  else if (o.runType == 1 or o.runType==6) then ( 
+  else if (o.runType == 1 or o.runType==6 or o.runType==5) then ( 
               
        l = lines get (dir|"/raw_data"); -- grabs all lines of the file
        numVars = value(first l);
@@ -677,7 +684,9 @@ local R;
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
               coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+               if (o.runType==1 or o.runType==6) then (
+		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
               l = drop(l,1);
               --print coords; --remove me
 	      );
