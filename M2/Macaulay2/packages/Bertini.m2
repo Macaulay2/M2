@@ -635,7 +635,7 @@ local R;
               )
 	    else 
 	    for j from 0 to numVars-1 do (
-	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+	      dehomCoords = join(dehomCoords, {coords#j });
               );
 
 
@@ -790,7 +790,7 @@ local R;
               )
 	    else 
 	    for j from 0 to numVars-1 do (
-	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+	      dehomCoords = join(dehomCoords, {coords#j });
               );
 
 --print dehomCoords;
