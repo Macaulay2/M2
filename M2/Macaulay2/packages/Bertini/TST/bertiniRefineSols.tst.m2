@@ -5,23 +5,8 @@ F = {x^2-2,y^2-2}
 sols = bertiniZeroDimSolve (F)
 S = bertiniRefineSols (F,sols,100)
 coords = coordinates S_0
-coords_0
+assert( abs(coords_0 - 	1.4142135623730951454746218587388284504413604736328125-2.268335979018466695423919296454437811084814094189954684731358152003335574707066605160268179243772667e-317*ii)<1e-300)
 
-<<<<<<< HEAD
-     R = CC[x,y]
-     F = {x^2-2,y^2-2}
-     sols = bertiniZeroDimSolve (F)
-     S = bertiniRefineSols (F,sols,100)
-     coords = coordinates S_0
-     coords_0
-     
-     end
-     restart
-     load "Bertini/TST/bertiniRefineSols.tst.m2"
-     
-=======
 end
 
-restart
-load "Bertini/TST/bertiniRefineSols.tst.m2"
->>>>>>> fb1f8166c18d97872c79f9732bc4c1e6379b6156
+

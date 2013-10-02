@@ -34,7 +34,6 @@ export {
   "bertiniComponentMemberTest",
   "bertiniRefineSols",    
   "gamma",
-  "OPTIONS",
   "MPTYPE",  
   "PRECISION",
   "ISPROJECTIVE",  
