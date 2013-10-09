@@ -10,7 +10,7 @@ newPackage(
                   HomePage => "www.math.tamu.edu/~asanchez"}},
         Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
 	PackageImports => {"NumericalAlgebraicGeometry"},
-        DebuggingMode => false
+        DebuggingMode => true
         )
 
 export {   
@@ -56,7 +56,8 @@ export {
    makePolynomials, -- temporary
    SolutionsSuperset, -- temporary
    checkIncidenceSolution, --temporary
-   moveFlags2Flags --temporary
+   moveFlags2Flags, --temporary
+   dist --temporary Aug,20,2013
    }
 
 -------------------------
@@ -73,10 +74,11 @@ export {
 ------------------------------------
 -- Authors: Anton Leykin
 --          Abraham Martin del Campo
+--          Frank Sottile
 --
 -- Date: April 5, 2012
 --
--- Last Update: March 22, 2013
+-- Last Update: August 19, 2013
 ------------------------------------
 
 -- needsPackage "NumericalAlgebraicGeometry"
@@ -89,6 +91,7 @@ NC = infinity
 FFF = QQ
 FFF = RR
 FFF = CC
+FFF = CC_53
 ERROR'TOLERANCE := 0.001
 ------------------
 -- Debug Level --
@@ -98,7 +101,7 @@ ERROR'TOLERANCE := 0.001
 -- 2 = verify solutions against blackbox solver (no timing)
 -- 3 = time processes and blackbox solver 
 -- 4 = new experimental stuff kicks in
-DEBUG'LEVEL = 4
+DEBUG'LEVEL = 1
 
 
 solutionsHash := new MutableHashTable;
@@ -193,7 +196,7 @@ skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      l = verifyLength(l, k);
      m = verifyLength(m, k);
      d := (k*(n-k)-sum(l)-sum(m));
-     R := CC[vars(53..d+52)]; -- ring where the variables for the matrix lie
+     R := FFF[vars(53..d+52)]; -- ring where the variables for the matrix lie
      r := 0;
      matrix (
      	  for i from 1 to k list (
@@ -254,7 +257,7 @@ precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- d is the number of variables i.e. the codimension of the Schubert variety E_{l,m}
      ------------
      d := (k*(n-k)-sum(l)-sum(m));
-     S := CC[vars(53..d+52)];
+     S := FFF[vars(53..d+52)];
      T:= apply(#m, i->n-k+i-m#i);
      -- P is a list with the indeces where the special flag has ones
      P:=toList(set toList(0..n-1)-T);
@@ -276,7 +279,7 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
 	 l = verifyLength(l, k);
 	 m = verifyLength(m, k);
    d := k*(n-k)-sum(l)-sum(m);
-   apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)))
+   apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
    )
 
      
@@ -312,7 +315,7 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       S := apply(take(G,d-1), g->det( matrix E || sub(g, ring E),Strategy=>Cofactor)) | {det(precookPieriHomotopy(kn,l,m), Strategy=>Cofactor)};
       ---- Create the target system T ----
       T := apply(take(G,d), g->det( matrix E || sub(g, ring E), Strategy=>Cofactor)); 
-      newR := CC_53(monoid[gens ring first S]);
+      newR := FFF(monoid[gens ring first S]);
       S = S/(s->sub(s,newR));
       T = T/(t->sub(t,newR));
       ------------------------
@@ -732,75 +735,90 @@ if not node.IsResolved then (
      else scan(node.Children, c->resolveNode(c,remaining'conditions'and'flags));
      
      if DEBUG'LEVEL >= 2 then (
-     	  -- temporary: creates a superset of solutions via a blackbox solver
-     	  all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
-     	  polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
-     	  
-	  if DEBUG'LEVEL >= 2 then(
-	       ---* this part is to time and keep track of what is the expensive part of the computation
-     	       if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
-	       Soluciones:=solveSystem flatten entries polynomials;
-	       if DEBUG'LEVEL == 3 then (
-		    blckbxtime2 := cpuTime();
-		    <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
-		    );
-	       ---*
-	       );
-	  
-     	  node.SolutionsSuperset = apply(
-	       select(
-	       	    --// After finish with the timing, remove the previous part and the next line
-	       	    --// and uncomment the following line (deleting the line after that)
-	       	    Soluciones,
-	       	    --time solveSystem flatten entries polynomials, 
-	       	    s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
-	       	    norm matrix s * 
-	       	    norm sub(last coefficients gens all'polynomials,CC)
-	       	    ), 
-	       ss-> (map(CC,ring coordX,matrix ss)) coordX
-	       );      	  
-     	  if node.Children == {} then ( 
-	      ------------------------
-	       -- Precondition this with the DEBUG LeVEL
-	       if DEBUG'LEVEL >= 4 then (
-	       print "calling solveSchubertProblem from resolveNode ";
-	       print(node.Board);
-	       lambda := output2partition(last node.Board);
-	       print(lambda);
-	       print("remaning Conditions:");
-	       print(remaining'conditions'and'flags);
-	       print("---------");
-	       k:=#lambda;
-	       validpartition := true;
-	       scan(lambda, i-> if i>n-k then validpartition = false) ;
-	       
-	       if validpartition then(
-		   S := solveSchubertProblem(
-		       prepend(
-			   (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
-			   remaining'conditions'and'flags
-			   ),
-		       k,n);
-		   ---------------------
-		   -- April 12:
-		   ---------------------
-		   -- Had to clear zeroes in the matrix
-		   -- after transforming the matrix to be 
-		   -- with respect to the local coordinates
-		   node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
-
-		   print "And These are the solutions obtained:";
-		   print(node.Solutions);
-		   node.IsResolved = true;
-		   -- assert(???); --verify that the solutions fit the localization pattern 
-	       	   )else(   
-		   << "-- partition is not valid: " << lambda << endl;
-		   node.Solutions = {}; 
-		   );
-	           )
---	       	   else node.Solutions = node.SolutionsSuperset; -- should change!!! 
-     	       ); 
-     	  );
+	 -- temporary: creates a superset of solutions via a blackbox solver
+	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
+	 polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
+	 ---* this part is to time and keep track of what is the expensive part of the computation
+	 if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
+	 ---*
+	 Soluciones:=solveSystem flatten entries polynomials;
+	 ---*
+	 if DEBUG'LEVEL == 3 then (
+	     blckbxtime2 := cpuTime();
+	     <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
+	     );
+	 ---*
+	 node.SolutionsSuperset = apply(
+	     select(
+		 --// After finish with the timing, remove the previous part and the next line
+		 --// and uncomment the following line (deleting the line after that)
+		 Soluciones,
+		 --time solveSystem flatten entries polynomials, 
+		 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
+		 norm matrix s * 
+		 norm sub(last coefficients gens all'polynomials,FFF)
+		 ), 
+	     ss-> (map(FFF,ring coordX,matrix ss)) coordX
+	     );
+	 ); -- close if DEBUG'LEVEL>= 2 HERE
+     if node.Children == {} then ( 
+	 lambda := output2partition(last node.Board);
+	 ------------------------
+	 -- THIS WAS PRECONDITIONED WITH DEBUG'LEVEL BUT NOW IT'S NOT
+	 --if DEBUG'LEVEL >= 4 then (
+	 print "calling solveSchubertProblem from resolveNode ";
+	 print(node.Board);
+	 print(lambda);
+	 print("remaning Conditions:");
+	 print(remaining'conditions'and'flags);
+	 print("---------");
+	 ---------------------------
+	 k:=#lambda;
+	 validpartition := true;
+	 scan(lambda, i-> if i>n-k then validpartition = false) ;
+	 if validpartition then(
+	     S := solveSchubertProblem(
+		 prepend(
+		     (lambda,id_(FFF^n)), -- check that this is the correct flag!!! 
+		     remaining'conditions'and'flags
+		     ),
+		 k,n);
+	     ---------------------
+	     -- April 12:
+	     ---------------------
+	     -- Had to clear zeroes in the matrix
+	     -- after transforming the matrix to be 
+	     -- with respect to the local coordinates
+	     node.Solutions = apply(S,s->sub(coordX, clean(ERROR'TOLERANCE,matrix{solutionToChart(s,coordX)})));
+	     -- need to make this better (need to clean only those small entries below the pivots of the chart)
+	     ---------------------------
+	     -- Newton iteration test!!
+	     ---------------------------
+	     --  Aug 20,2013
+	     ---------------------------
+	     --squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'and'flags);
+	     --polysquares := squareUpPolynomials(numgens ring coordX, ideal(squareSyst));
+	     --Sols:=  apply(node.Solutions, X->toRawSolutions(coordX,X));
+	     --NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
+	     --NewtonStep2 := refine(squareSyst, NewtonStep1, Software=>M2, Iterations=>1);
+	     print "And These are the solutions obtained:";
+	     print(node.Solutions);
+	     --print("The first Newton step:");
+	     --print(NewtonStep1);
+	     --print("distance between solutions and newton1");
+	     --print(dist(NewtonStep1,Sols));
+	     --print("distance between two newton steps:");
+	     --print(dist(NewtonStep2,NewtonStep1));
+	     --dist(NewtonStep2,Sols);
+	     node.IsResolved = true;
+	     -- assert(???); --verify that the solutions fit the localization pattern 
+	     )else(   
+	     << "-- partition is not valid: " << lambda << endl;
+	     node.Solutions = {}; 
+	     );
+	 --) -- closes if DEBUG'LEVEL == 4
+	 --else node.Solutions = node.SolutionsSuperset; -- should change!!! 
+	 ); 
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
      	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
@@ -815,7 +833,7 @@ if not node.IsResolved then (
 	  if not father.?FlagM then father.FlagM = M'' 
 	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
 	  
---	  if movetype=={2,2,0} and r == 1 then 1/0;
+	  --if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
 	  if node.Solutions == {} then {} -- means: not implemented
 	  else if movetype#1 == 2 then (-- case (_,2)
@@ -905,8 +923,8 @@ if not node.IsResolved then (
 	       	    M'X' = promote(M,Rt) * VwrtM;
 		    )
 	       -- implementing this case separately gives lower degree polynomials
---	       else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
---		    )
+	       --else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
+	       --    )
 	       else error "an unaccounted case";
 
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then timemakePolys1 := cpuTime();
@@ -923,7 +941,7 @@ if not node.IsResolved then (
 	       scan(startSolutions,  
 		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
 			 norm matrix{s} * 
-			 norm sub(last coefficients polys,CC)));
+			 norm sub(last coefficients polys,FFF)));
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
 	       	    t1:= cpuTime();
 		    );
@@ -933,7 +951,7 @@ if not node.IsResolved then (
 	       	    << node.Board << " -- trackHomotopy time: " << (t2-t1) << endl;
 	       	    );
 	       apply(targetSolutions, sln->( 
-		    M''X'' := (map(CC,Rt,matrix{{1}}|matrix sln)) M'X';
+		    M''X'' := (map(FFF,Rt,matrix{{1}}|matrix sln)) M'X';
 		    X'' := inverse M'' * M''X'';
 		    if not member(movetype,{ {2,0,0},{2,1,0},{1,1,0} }) -- SWAP CASE
 		    then (
@@ -1046,6 +1064,25 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
 		));
+	-----------------------------
+	-- August 20, 2013:
+	-----------------------------
+	-- AFter the transformation (GL*newDag.FlagM*newDag.Solutions)
+	-- the solutions obtained are ALMOST with respect to the local chart
+	-- corresponding to the Schubert Variety (l1, Id)... but we need
+	-- to clear the entries that are below the pivots first...
+		
+	-- doing cleanSolutions := apply(GL*newDag.FlagM*newDag.Solutions, s->clean(ERROR'TOLERANCE^2, s));
+	-- is not the right way to clean...need to clean zeroes below the pivots only, this is
+	-- just a hack
+	
+	----------------------------
+	-- IMPORTANT!
+	-----------------------------
+	-- We need to check if the solutions newDag.Solutions
+	-- after the change of coordinates and flags, are actual
+	-- solutions to our original problem... we need to do
+	-- another Newton step here!
 	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
@@ -1078,8 +1115,8 @@ changeCoordsSolutions Matrix := MX ->(
     f:=flatten entries(matrix G*sub(s,R)-sub(MX,R));
     nk := n*k;
     numParameters := #Vars+#gens RMX;
-    A:= map(CC^nk, CC^numParameters, (i,j)-> (f#i)_(R_j));
-    b := map(CC^nk, CC^1, (i,j)-> -(f#i)_(1_R));
+    A:= map(FFF^nk, FFF^numParameters, (i,j)-> (f#i)_(R_j));
+    b := map(FFF^nk, FFF^1, (i,j)-> -(f#i)_(1_R));
     X := solve(A,b, ClosestFit=>true);
     Vals:=take(flatten entries X, #Vars); -- take a_(i,j) coordinates
     scan(#indx, i->G_(indx#i) = Vals#i);
@@ -1128,8 +1165,8 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
     nk := n*k;
     nParameters := k^2+#gens RMX; -- number of parameters in f
-    A := map(CC^nk,CC^nParameters,(i,j)->(f#i)_(R_j));
-    b := map(CC^nk,CC^1,(i,j)->-(f#i)_(1_R));
+    A := map(FFF^nk,FFF^nParameters,(i,j)->(f#i)_(R_j));
+    b := map(FFF^nk,FFF^1,(i,j)->-(f#i)_(1_R));
     X := solve(A,b, ClosestFit=>true);
     drop(flatten entries X, k*k) -- drop a_(i,j) coordinates      
     )
@@ -1139,19 +1176,33 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    (conditions,flagsA,flagsB) := conds'A'B; 
    SchA := apply(#conditions, i->(conditions#i,flagsA#i));
    SchB := apply(#conditions, i->(conditions#i,flagsB#i));
+   -- August 20, 2013:
+   -------------------
+   -- commenting th checkIncidenceSolutions check as we discovered
+   -- this is a test that is numerical unstable!
    assert all(solutionsA, s->checkIncidenceSolution(s,SchA));
    s := first solutionsA;
    n := numrows s;
    k := numcols s;
    x := symbol x;
-   R := CC[x_(1,1)..x_(k,n-k)];
-   MX := sub(random(CC^n,CC^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
+   R := FFF[x_(1,1)..x_(k,n-k)];
+   MX := sub(random(FFF^n,FFF^n),R)*(transpose genericMatrix(R,k,n-k)||id_(FFF^k)); -- random chart on G(k,n)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
-   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE,sub(MX, matrix{s})));
+   -- the following clean is a hack, instead, we need to do a newton step check
+   -- when we all changeFlags as there is a numerical check in there... 
+   -- the following is a hack
+   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
 
+---------------------------------
+-- DOCUMENT THIS FUNCTION!!!
+--
+-- This function is doing a parameter homotopy
+-- change one column at a time to move solutions
+-- w.r.t. flags A to solutions w.r.t. flags B
+----------------------------------
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 
    solutionsS := solutionsA;
@@ -1179,8 +1230,14 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
 	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, gamma=>exp(2*pi*ii*random RR));
       	       solutionsS = solutionsT/coordinates;
-      	       ));
+	       ));
        );
+   -- August 20,2013:
+   ---------------------------
+   -- Newton refinement here!!
+   --   SquareSyst := flatten entries squareUpPolynomials(nVars, makePolynomials(MX, apply(#conditionss,i->(conditions#i,FlagsB#i))));
+   --   print("Newton refinement");
+   --   print(refine(SquareSyst, solutionsS, Software=>M2, Iterations=>1));
    solutionsS
    )
 
@@ -1266,8 +1323,8 @@ moveFlags2Flags (List, List) := (F's, G's)->(
     p1:=flatten entries(A*F1-G1*T1);
     p2:=flatten entries(A*F2-G2*T2);
     Eqs:= p1|p2; 
-    A1 := map(CC^(2*n^2),CC^(2*n^2),(i,j)->(Eqs#i)_(R_j));
-    b1 := map(CC^(2*n^2),CC^1,(i,j)->-(Eqs#i)_(1_R));
+    A1 := map(FFF^(2*n^2),FFF^(2*n^2),(i,j)->(Eqs#i)_(R_j));
+    b1 := map(FFF^(2*n^2),FFF^1,(i,j)->-(Eqs#i)_(1_R));
     X := transpose solve(A1,b1);
     {sub(A, X), sub(T1, X), sub(T2, X)}    
     )
@@ -1434,6 +1491,11 @@ makePolynomials(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
 	    ));
     eqs
     )
+
+-- Document the Following function
+---------------------------------
+-- squareUpPolynomials
+---------------------------------
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
 squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
@@ -1459,6 +1521,11 @@ trackHomotopy (Matrix,List) := (H,S) -> (
      track(first entries map't'0 H, first entries map't'1 H, S)
      )
 
+------------------------
+-- isRedCheckerInRegionE
+------------------------
+-- NEEDS to be documentted!
+----------------------------
 -- Input: 
 --     j = number of a red checker
 --     r = critical row
@@ -1474,6 +1541,12 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 
 ----------------------
 -- checkIncidenceSolution
+----------------------
+-- August 20,2013
+-- THIS FUNCTION NEEDS TO BE DELETED
+-- it was for testing solutions of Schubert varieties
+-- but this is not numerical stable... we replace this
+-- with a Newton step check
 ----------------------
 -- Function that given a proposed
 -- n by k matrix, it checks
@@ -1504,18 +1577,19 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 	 chooseRows:= subsets(n,rnk);
 	 scan(chooseRows, rws->(
 	   scan(chooseCols, cls->(
-	      if(
-		  (n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
-		   n) >ERROR'TOLERANCE)then(
-	             verif=false;
-	        );
-	      ));
-         ));
-       );
-     ));
-   ));
-   verif
-   )
+		   n := norm det submatrix(HXF_{0..k+c-1},rws,cls);
+		   if n>ERROR'TOLERANCE then(
+	               verif=false;
+		       print("These are the NONZERO residuals");
+ 		       print(n);
+	               );
+	      	   ));
+             ));
+         );
+      ));
+    ));
+  verif
+  )
 
 --
 -- TEST
@@ -1525,6 +1599,57 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 -- 
 -- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, random(FFF^4,FFF^4))}
 -- checkIncidenceSolution(H, SchbPrblm)
+
+
+----------------------
+-- checkNewtonIteration
+----------------------
+-- Function that given a proposed
+-- solution to a Schubert Problem 
+-- it creates a Newton step to compare
+-- the convergence of the approximated solution
+----------------------
+-- Input:
+--    M -- n by k matrix (representing an element of G(k,n))
+--    MX -- local coordinates for the solution
+-- Output:
+--    NewtonStep
+-----------------------
+-- This function NEEDS to be created!!
+
+------------------------
+-- dist
+------------------------
+-- function to measure the 
+-- euclidean distance between
+-- two points: (x1,...,xn) and (y1,...,yn)
+-- it computes:
+--    sqrt(sum( (xi-yi)^2 ))
+-- 
+-- Input: two Lists representing two set of solutions to a system
+-- Output: list of distances between the elements of the list
+--   
+--- Notice that solns1 could come from a numerical Newton step,
+-- so the function first check if the solution is of type List or 
+-- of type Point
+--
+--------- FOR DAN AND MIKE -------
+-- Notice we had to do this function because
+-- M2 function norm(2,_) does not give the 2-norm
+-- of the complex vector (x1,...,xn)
+----------------------- 
+dist = method()
+dist(List,List) := (solns1,solns2) -> (
+    apply(#solns1, i->(
+	    v1 := solns1#i;
+	    v2 := solns2#i;
+	    if instance(v1,Point) then v1 = coordinates(v1);
+	    if instance(v2,Point) then v2 = coordinates(v2);
+	    sqrt(sum(apply(v2-v1, i->i^2)))
+   ))
+)
+
+
 -----------------------------
 -- end Numerical LR-Homotopies
 -----------------------------
@@ -1557,7 +1682,7 @@ findGaloisElement(Sequence, List, List) :=(prblm, flgs, solns) ->(
      -- We will work only from a short loop
      -- so we need only the first two rows
      -- of a random flag
-     F := matrix apply(2, i->apply(n,j->random CC));
+     F := matrix apply(2, i->apply(n,j->random FFF));
      swaps := {0,1,0,1};
      tmpMtrx := mutableMatrix(flgs#(d-1) || F);
      tempSlns := solns;
@@ -1758,7 +1883,7 @@ doc ///
        	 m = {1,1,0}
        	 ----  Generate random flags G----
        	 d = k*(n-k)-sum(l)-sum(m);
-       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
        	 ---------------------------------
        	 solveSimpleSchubert((k,n),l,m,G)
    SeeAlso
@@ -1795,8 +1920,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
    	  ---------------------------------
    	  trackSimpleSchubert((k,n),(l,m),G,F)
        Text
@@ -1808,8 +1933,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
    	  ---------------------------------
    	  Solns = solveSimpleSchubert((k,n),l,m,G);
           trackSimpleSchubert((k,n),(l,m),G,F, StartSolutions=>Solns)
@@ -1939,142 +2064,3 @@ doc ///
       This assumes that GAP runs when you type in the terminal {\tt gap} and that we already know that the Galois group is the full symmetric group, otherwise it will output {\tt false} after {\tt mx} repetitions.
 ///;
 
-TEST ///
-restart 
-debug needsPackage "NumericalSchubertCalculus"
-setRandomSeed 0
------------------------
--- 4 lines in P^3
-SchPblm = {({1},id_(FFF^4)), 
-    ({1},random(FFF^4,FFF^4)),
-    ({1},random(FFF^4,FFF^4)), 
-    ({1},random(FFF^4,FFF^4))};
-
-solveSchubertProblem(SchPblm,2,4)
-
-restart 
-debug needsPackage "NumericalSchubertCalculus"
--- setRandomSeed 2
-
-Pblm = {({1},id_(FFF^4)),
-    ({1},rsort id_(FFF^4)), 
-    ({1},transpose matrix {{1,1,1,1},{0,1,2,3},{0,0,2,6},{0,0,0,1}}),
-    ({1},transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}})}
-
-solveSchubertProblem(Pblm, 2,4)
--- we need to make a column reduction
--- to see if these solutions are real
-S = oo;
-Sreduced = apply(S, s->(
-	M1:= matrix{
-	    {s_(0,0)^(-1), -s_(0,1)*s_(0,0)^-1},
-	    {0, 1}};
-	s1 := clean_0.001 s*M1;
-	M2 := matrix{
-	    {1,0},
-	    {-s1_(3,0)*s1_(3,1)^-1 ,s1_(3,1)^-1 }
-	    };
-	s2 := clean(0.001, s1*M2);
-	s2
-	));
-Sreduced
-
-
--- Problem (2,1)^3=2 in G(3,6)
-SchPblm = {({2,1},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6)),({2,1},random(FFF^6,FFF^6))}
-solveSchubertProblem(SchPblm,3,6)
--- not a simple tree
-
--- Problem (2,1)*(2)^3 = 2 in G(3,6) 
--- This problem has a non-trivial tree (not like the problem of 4 lines)
-Pblm={({2},random(FFF^6,FFF^6)),
-    ({2}, random(FFF^6,FFF^6)),
-    ({2},random(FFF^6,FFF^6)), 
-    ({2,1},random(FFF^6,FFF^6))}
-solveSchubertProblem(Pblm,3,6)
-
--- Problem (1)*(2)*(2,1)^2 = 3 in G(3,6)
-Pblm={({1},random(FFF^6,FFF^6)),
-    ({2}, random(FFF^6,FFF^6)),
-    ({2,1},random(FFF^6,FFF^6))}
-solveSchubertProblem(Pblm,3,6)
--- code breaks here
-----------------------
-
-
-root = playCheckers({1},{1},2,4)
-resolveNode(root, {({1},random(FFF^4,FFF^4)), ({1},random(FFF^4,FFF^4))})
-assert(#root.Solutions==2)
-
-root = playCheckers({2,1,0},{2,1,0},3,6)
-time resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
-assert(#root.Solutions==2)
-peek root
--- test code and assertions here
--- may have as many TEST sections as needed
-
--- Problem (2,1)^2*(1)*(2) = 3 in G(3,6)
-root = playCheckers({2,1},{2,1},3,6)
-time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
-assert(#root.Solutions==3)
-peek root
-printTree root
--- Problem (2,1)*(2)^3 = 2 in G(3,6) 
--- This problem has a non-trivial tree (not like the problem of 4 lines)
-root = playCheckers({2},{2},3,6)
-time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6))})
-assert(#root.Solutions == 2)
-peek root
-printTree root
-///
-
-end
-check "NumericalSchubertCalculus"
-
--- EXAMPLES (see TEST section for more simple examples)
-restart
-setRandomSeed 0
---debug 
-needsPackage "NumericalSchubertCalculus";
-
-root = playCheckers({2,1},{2,1},3,6)
-time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
-peek root
-
-DEBUG'LEVEL = 1 --check that DebugLevel = 1 should do the black box solving only at the leaves
-n=7; K'n=FFF^n; -- takes about 10 minutes!
-root = playCheckers({2,1,0},{2,1,0},3,n)
-time resolveNode(root, {({2,1,0},random(K'n,K'n)),({2,1,0},random(K'n,K'n))})
-peek root
-printTree root
-
-root = playCheckers({2,1}, {2}, 3,6)
-time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2},random(FFF^6,FFF^6))})
-peek root
-printTree root
-
----- there is something wrong, this problem gives an error
-root = playCheckers({3,2,2},{2}, 3,6)
-peek root
-resolveNode(root, {})
-
-
-restart
-setRandomSeed 0
-debug needsPackage "LRcheckergame";
-
--- we test if the resolveNode function
--- can just solve the problem when 
--- the Schubert problem consist of two
--- complementary partitions only
-root = playCheckers({3,3,1},{2},3,6)
-resolveNode(root,{})
-peek root
-
--- this problem should give empty solutions as
--- the two partition are not complementary
-root = playCheckers({3,3,1}, {1,1}, 3,6)
-resolveNode(root, {({2,1,0},random(FFF^6,FFF^6))})
-
-
-------------------- WHAT IS THIS STUFF? CAN IT BE DELETED??? ---------------------------
