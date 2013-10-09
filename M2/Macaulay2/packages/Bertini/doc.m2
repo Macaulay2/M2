@@ -42,9 +42,13 @@ doc ///
      this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
      and returned as a list.
    Example
-     R = CC[x,y]
-     F = {x^2-1,y^2-1}
+     R = CC[x,y];
+     F = {x^2-1,y^2-1};
      S = bertiniZeroDimSolve F
+   Text
+     Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@. 
+   Example
+     peek S_0  
 ///;
 
 doc ///
@@ -391,9 +395,6 @@ doc ///
 ///;
 
 
--- bertiniSample(
-  -- {f1},dimen=>1,compnum=>1,numpts=>12,WitnessData=>wdf)
-
 
 doc ///
  Key
@@ -472,8 +473,8 @@ doc ///
    Example
      R = CC[x,t]; -- include the path variable in the ring     
      H = { (x^2-1)*t + (x^2-2)*(1-t)};
-     sol1 = point {{1,0}};
-     sol2 = point {{-1,0}};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
      S1= { sol1, sol2  };	  
      S0 = bertiniTrackHomotopy (H, t, S1) 
      peek S0_0
@@ -505,10 +506,7 @@ doc ///
     Parses and outputs the solutions    
  Description
    Text
-     This method checks whether the test points pts lie on NV using {\tt Bertini}.  The software {\tt Bertini}
-     performs this test by tracking the witness points stored in NV to the solutions of a new system
-     defined by the equations of NV and a linear space containing
-     one of the test points.
+     This method checks whether the test points pts lie on NV using {\tt Bertini}.  
    Example
      R = CC[x,y,z];
      F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
@@ -545,10 +543,33 @@ doc ///
      R = CC[x,y];
      F = {x^2-2,y^2-2};
      sols = bertiniZeroDimSolve (F)
-     --S = bertiniRefineSols (F,sols,100)
-     --coords = coordinates S_0
-     --coords_0
+     S = bertiniRefineSols (F,sols,100)
+     coords = coordinates S_0
+     coords_0
 ///;
+
+doc ///
+ Key
+   ISPROJECTIVE
+   [bertiniTrackHomotopy, ISPROJECTIVE]
+   [bertiniParameterHomotopy, ISPROJECTIVE]
+   [bertiniComponentMemberTest, ISPROJECTIVE]
+   [bertiniPosDimSolve, ISPROJECTIVE]
+   [bertiniRefineSols, ISPROJECTIVE]
+   [bertiniSample, ISPROJECTIVE]
+   [bertiniZeroDimSolve, ISPROJECTIVE]
+ Headline
+   optional argument to specify whether to use homogeneous coordinates
+ Description
+   Text
+     When set to 1, this option indicates that the input system is homogenized and
+     the output should be given in projective space.
+   Example
+     R = CC[x,y,z];
+     f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
+     NV = bertiniPosDimSolve(f,ISPROJECTIVE=>1)
+///;
+
 doc ///
  Key
    bertiniParameterHomotopy
@@ -568,44 +589,42 @@ doc ///
  Outputs
    S:List
      whose entries are lists of solutions for each target system
+ Consequences
+  Item
+    Writes systems to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with configuration keyword {\tt PARAMETERHOMOTOPY}.
+    First with {\tt PARAMETERHOMOTOPY} set to 1, then with {\tt PARAMETERHOMOTOPY} set to
+    2 for each set of parameter values.
+  Item
+    Stores output of {\tt Bertini} in temporary files
+  Item
+    Parses and outputs the solutions    
  Description
    Text
-     Runs both stages of Bertini's parameter homotopy method.
+     This method numerically solves several polynomial systems from
+     a parameterized family at once.  The list F is a system of polynomials
+     in ring variables and the parameters listed in P.  The list T is the
+     set of parameter values for which solutions to F are desired.  Both stages of
+     {\tt Bertini}'s parameter homotopy method are called with {\tt bertiniParameterHomotopy}. 
+     First, {\tt Bertini} assigns a random complex number to each parameter
+     and solves the resulting system, then, after this initial phase, {\tt Bertini} computes solutions
+     for every given choice of parameters using a number of paths equal to the exact root count in the
+     first stage.
    Example
-     R=CC[u1,u2,u3,x,y]
-     f1=u1*(y-1)+u2*(y-2)+u3*(y-3)
-     f2=(x-11)*(x-12)*(x-13)
-     finalParameters0={{1,0,0}}
-     finalParameters1={{0,1+2*ii,0}}
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{finalParameters0 ,finalParameters1 })
-     bPH_0--the solutions to the system with finalParameters0
+     R=CC[u1,u2,u3,x,y];
+     f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
+     f2=(x-11)*(x-12)*(x-13)-u1;
+     paramValues0={{1,0,0}};
+     paramValues1={{0,1+2*ii,0}};
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
+     bPH_0--the solutions to the system with parameters set equal to paramValues0
 ///;
 
 end
-doc ///
- Key
-   bertiniTrackHomotopy
-   (bertiniTrackHomotopy,List,RingElement,List)
- Headline
-   runs user-defined homotopy in Bertini
- Usage
-   S0 = bertiniTrackHomotopy(H,t,sols)
- Inputs
-   H:List
-     whose entries are polynomials depending on t (must be square)
-   t:RingElement
-     path variable
-   S1:List
-     start solutions (solutions of H when t=1)
- Outputs
-   S0:List
-     target solutions (solutions of H when t=0)
- Description
-   Text
-     Runs Bertini's user-defined homotopy.
-   Example
-///;
 
+
+-- to be added in another version
 doc ///
  Key
    bertiniSegmentHomotopy
