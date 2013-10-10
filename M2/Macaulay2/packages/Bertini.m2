@@ -947,6 +947,10 @@ TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
 /// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniISPROJECTIVE.tst.m2")
+///
+
 --##########################################################################--
 -- DOCUMENTATION
 --##########################################################################--
