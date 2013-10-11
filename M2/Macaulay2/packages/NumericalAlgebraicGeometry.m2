@@ -1167,8 +1167,8 @@ refine (List,List) := List => o -> (T,solsT) -> (
     if o.Software === PHCPACK then  return refinePHCpack(T,solsT,o)/point;
     if o.Software === BERTINI then (
 	-- bits to decimals 
-	-- decimals := ceiling(o.Bits * log 2 / log 10);
-	return bertiniRefineSols(T,solsT,o.Bits)
+	decimals := ceiling(o.Bits * log 2 / log 10);
+	return bertiniRefineSols(T,solsT,decimals)
 	);
 
      -- Software=>M2 (and Software=>M2engine for now)
@@ -1603,7 +1603,7 @@ solveSystem List := List => o -> F -> (
 	       );
 	  if o.PostProcess and not overdetermined 
 	  then (
-	       result = select(refine(F,result), s->residual(F,s)<DEFAULT.Tolerance);
+	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
 	       result = solutionsWithMultiplicity result;
 	       -- below is a hack!!!
 	       scan(result, s->if status s =!= Regular and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
