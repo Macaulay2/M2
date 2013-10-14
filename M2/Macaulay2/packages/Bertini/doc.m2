@@ -42,14 +42,18 @@ doc ///
      this input file. Solutions are pulled from machine readable file {\tt finitesolutions}
      and returned as a list.
    Example
-     R = CC[x,y]
-     F = {x^2-1,y^2-1}
+     R = CC[x,y];
+     F = {x^2-1,y^2-1};
      S = bertiniZeroDimSolve F
+   Text
+     Each solution is of type @TO Point@.  Additional information about the solution can be accessed by using @TO peek@. 
+   Example
+     peek S_0  
 ///;
-
 
 doc ///
   Key
+    "Bertini options"
     MPTYPE
     PRECISION
     ODEPREDICTOR
@@ -76,13 +80,248 @@ doc ///
     MAXNUMBERSTEPS
     MAXCYCLENUM
     REGENSTARTLEVEL
+    [bertiniZeroDimSolve, MPTYPE]
+    [bertiniZeroDimSolve, PRECISION]
+    [bertiniZeroDimSolve, ODEPREDICTOR]
+    [bertiniZeroDimSolve, TRACKTOLBEFOREEG]
+    [bertiniZeroDimSolve, TRACKTOLDURINGEG]
+    [bertiniZeroDimSolve, FINALTOL]
+    [bertiniZeroDimSolve, MAXNORM]
+    [bertiniZeroDimSolve, MINSTEPSIZEBEFOREEG]
+    [bertiniZeroDimSolve, MINSTEPSIZEDURINGEG]
+    [bertiniZeroDimSolve, IMAGTHRESHOLD]
+    [bertiniZeroDimSolve, COEFFBOUND]
+    [bertiniZeroDimSolve, DEGREEBOUND]
+    [bertiniZeroDimSolve, CONDNUMTHRESHOLD]
+    [bertiniZeroDimSolve, RANDOMSEED]
+    [bertiniZeroDimSolve, SINGVALZEROTOL]
+    [bertiniZeroDimSolve, ENDGAMENUM]
+    [bertiniZeroDimSolve, USEREGENERATION]
+    [bertiniZeroDimSolve, SECURITYLEVEL]
+    [bertiniZeroDimSolve, SCREENOUT]
+    [bertiniZeroDimSolve, OUTPUTLEVEL]
+    [bertiniZeroDimSolve, STEPSFORINCREASE]
+    [bertiniZeroDimSolve, MAXNEWTONITS]
+    [bertiniZeroDimSolve, MAXSTEPSIZE]
+    [bertiniZeroDimSolve, MAXNUMBERSTEPS]
+    [bertiniZeroDimSolve, MAXCYCLENUM]
+    [bertiniZeroDimSolve, REGENSTARTLEVEL]
+    [bertiniComponentMemberTest, MPTYPE]
+    [bertiniComponentMemberTest, PRECISION]
+    [bertiniComponentMemberTest, ODEPREDICTOR]
+    [bertiniComponentMemberTest, TRACKTOLBEFOREEG]
+    [bertiniComponentMemberTest, TRACKTOLDURINGEG]
+    [bertiniComponentMemberTest, FINALTOL]
+    [bertiniComponentMemberTest, MAXNORM]
+    [bertiniComponentMemberTest, MINSTEPSIZEBEFOREEG]
+    [bertiniComponentMemberTest, MINSTEPSIZEDURINGEG]
+    [bertiniComponentMemberTest, IMAGTHRESHOLD]
+    [bertiniComponentMemberTest, COEFFBOUND]
+    [bertiniComponentMemberTest, DEGREEBOUND]
+    [bertiniComponentMemberTest, CONDNUMTHRESHOLD]
+    [bertiniComponentMemberTest, RANDOMSEED]
+    [bertiniComponentMemberTest, SINGVALZEROTOL]
+    [bertiniComponentMemberTest, ENDGAMENUM]
+    [bertiniComponentMemberTest, USEREGENERATION]
+    [bertiniComponentMemberTest, SECURITYLEVEL]
+    [bertiniComponentMemberTest, SCREENOUT]
+    [bertiniComponentMemberTest, OUTPUTLEVEL]
+    [bertiniComponentMemberTest, STEPSFORINCREASE]
+    [bertiniComponentMemberTest, MAXNEWTONITS]
+    [bertiniComponentMemberTest, MAXSTEPSIZE]
+    [bertiniComponentMemberTest, MAXNUMBERSTEPS]
+    [bertiniComponentMemberTest, MAXCYCLENUM]
+    [bertiniComponentMemberTest, REGENSTARTLEVEL]
+    [bertiniParameterHomotopy, MPTYPE]
+    [bertiniParameterHomotopy, PRECISION]
+    [bertiniParameterHomotopy, ODEPREDICTOR]
+    [bertiniParameterHomotopy, TRACKTOLBEFOREEG]
+    [bertiniParameterHomotopy, TRACKTOLDURINGEG]
+    [bertiniParameterHomotopy, FINALTOL]
+    [bertiniParameterHomotopy, MAXNORM]
+    [bertiniParameterHomotopy, MINSTEPSIZEBEFOREEG]
+    [bertiniParameterHomotopy, MINSTEPSIZEDURINGEG]
+    [bertiniParameterHomotopy, IMAGTHRESHOLD]
+    [bertiniParameterHomotopy, COEFFBOUND]
+    [bertiniParameterHomotopy, DEGREEBOUND]
+    [bertiniParameterHomotopy, CONDNUMTHRESHOLD]
+    [bertiniParameterHomotopy, RANDOMSEED]
+    [bertiniParameterHomotopy, SINGVALZEROTOL]
+    [bertiniParameterHomotopy, ENDGAMENUM]
+    [bertiniParameterHomotopy, USEREGENERATION]
+    [bertiniParameterHomotopy, SECURITYLEVEL]
+    [bertiniParameterHomotopy, SCREENOUT]
+    [bertiniParameterHomotopy, OUTPUTLEVEL]
+    [bertiniParameterHomotopy, STEPSFORINCREASE]
+    [bertiniParameterHomotopy, MAXNEWTONITS]
+    [bertiniParameterHomotopy, MAXSTEPSIZE]
+    [bertiniParameterHomotopy, MAXNUMBERSTEPS]
+    [bertiniParameterHomotopy, MAXCYCLENUM]
+    [bertiniParameterHomotopy, REGENSTARTLEVEL]
+    [bertiniPosDimSolve, MPTYPE]
+    [bertiniPosDimSolve, PRECISION]
+    [bertiniPosDimSolve, ODEPREDICTOR]
+    [bertiniPosDimSolve, TRACKTOLBEFOREEG]
+    [bertiniPosDimSolve, TRACKTOLDURINGEG]
+    [bertiniPosDimSolve, FINALTOL]
+    [bertiniPosDimSolve, MAXNORM]
+    [bertiniPosDimSolve, MINSTEPSIZEBEFOREEG]
+    [bertiniPosDimSolve, MINSTEPSIZEDURINGEG]
+    [bertiniPosDimSolve, IMAGTHRESHOLD]
+    [bertiniPosDimSolve, COEFFBOUND]
+    [bertiniPosDimSolve, DEGREEBOUND]
+    [bertiniPosDimSolve, CONDNUMTHRESHOLD]
+    [bertiniPosDimSolve, RANDOMSEED]
+    [bertiniPosDimSolve, SINGVALZEROTOL]
+    [bertiniPosDimSolve, ENDGAMENUM]
+    [bertiniPosDimSolve, USEREGENERATION]
+    [bertiniPosDimSolve, SECURITYLEVEL]
+    [bertiniPosDimSolve, SCREENOUT]
+    [bertiniPosDimSolve, OUTPUTLEVEL]
+    [bertiniPosDimSolve, STEPSFORINCREASE]
+    [bertiniPosDimSolve, MAXNEWTONITS]
+    [bertiniPosDimSolve, MAXSTEPSIZE]
+    [bertiniPosDimSolve, MAXNUMBERSTEPS]
+    [bertiniPosDimSolve, MAXCYCLENUM]
+    [bertiniPosDimSolve, REGENSTARTLEVEL]
+    [bertiniRefineSols, MPTYPE]
+    [bertiniRefineSols, PRECISION]
+    [bertiniRefineSols, ODEPREDICTOR]
+    [bertiniRefineSols, TRACKTOLBEFOREEG]
+    [bertiniRefineSols, TRACKTOLDURINGEG]
+    [bertiniRefineSols, FINALTOL]
+    [bertiniRefineSols, MAXNORM]
+    [bertiniRefineSols, MINSTEPSIZEBEFOREEG]
+    [bertiniRefineSols, MINSTEPSIZEDURINGEG]
+    [bertiniRefineSols, IMAGTHRESHOLD]
+    [bertiniRefineSols, COEFFBOUND]
+    [bertiniRefineSols, DEGREEBOUND]
+    [bertiniRefineSols, CONDNUMTHRESHOLD]
+    [bertiniRefineSols, RANDOMSEED]
+    [bertiniRefineSols, SINGVALZEROTOL]
+    [bertiniRefineSols, ENDGAMENUM]
+    [bertiniRefineSols, USEREGENERATION]
+    [bertiniRefineSols, SECURITYLEVEL]
+    [bertiniRefineSols, SCREENOUT]
+    [bertiniRefineSols, OUTPUTLEVEL]
+    [bertiniRefineSols, STEPSFORINCREASE]
+    [bertiniRefineSols, MAXNEWTONITS]
+    [bertiniRefineSols, MAXSTEPSIZE]
+    [bertiniRefineSols, MAXNUMBERSTEPS]
+    [bertiniRefineSols, MAXCYCLENUM]
+    [bertiniRefineSols, REGENSTARTLEVEL]
+    [bertiniSample, MPTYPE]
+    [bertiniSample, PRECISION]
+    [bertiniSample, ODEPREDICTOR]
+    [bertiniSample, TRACKTOLBEFOREEG]
+    [bertiniSample, TRACKTOLDURINGEG]
+    [bertiniSample, FINALTOL]
+    [bertiniSample, MAXNORM]
+    [bertiniSample, MINSTEPSIZEBEFOREEG]
+    [bertiniSample, MINSTEPSIZEDURINGEG]
+    [bertiniSample, IMAGTHRESHOLD]
+    [bertiniSample, COEFFBOUND]
+    [bertiniSample, DEGREEBOUND]
+    [bertiniSample, CONDNUMTHRESHOLD]
+    [bertiniSample, RANDOMSEED]
+    [bertiniSample, SINGVALZEROTOL]
+    [bertiniSample, ENDGAMENUM]
+    [bertiniSample, USEREGENERATION]
+    [bertiniSample, SECURITYLEVEL]
+    [bertiniSample, SCREENOUT]
+    [bertiniSample, OUTPUTLEVEL]
+    [bertiniSample, STEPSFORINCREASE]
+    [bertiniSample, MAXNEWTONITS]
+    [bertiniSample, MAXSTEPSIZE]
+    [bertiniSample, MAXNUMBERSTEPS]
+    [bertiniSample, MAXCYCLENUM]
+    [bertiniSample, REGENSTARTLEVEL]
+    [bertiniTrackHomotopy, MPTYPE]
+    [bertiniTrackHomotopy, PRECISION]
+    [bertiniTrackHomotopy, ODEPREDICTOR]
+    [bertiniTrackHomotopy, TRACKTOLBEFOREEG]
+    [bertiniTrackHomotopy, TRACKTOLDURINGEG]
+    [bertiniTrackHomotopy, FINALTOL]
+    [bertiniTrackHomotopy, MAXNORM]
+    [bertiniTrackHomotopy, MINSTEPSIZEBEFOREEG]
+    [bertiniTrackHomotopy, MINSTEPSIZEDURINGEG]
+    [bertiniTrackHomotopy, IMAGTHRESHOLD]
+    [bertiniTrackHomotopy, COEFFBOUND]
+    [bertiniTrackHomotopy, DEGREEBOUND]
+    [bertiniTrackHomotopy, CONDNUMTHRESHOLD]
+    [bertiniTrackHomotopy, RANDOMSEED]
+    [bertiniTrackHomotopy, SINGVALZEROTOL]
+    [bertiniTrackHomotopy, ENDGAMENUM]
+    [bertiniTrackHomotopy, USEREGENERATION]
+    [bertiniTrackHomotopy, SECURITYLEVEL]
+    [bertiniTrackHomotopy, SCREENOUT]
+    [bertiniTrackHomotopy, OUTPUTLEVEL]
+    [bertiniTrackHomotopy, STEPSFORINCREASE]
+    [bertiniTrackHomotopy, MAXNEWTONITS]
+    [bertiniTrackHomotopy, MAXSTEPSIZE]
+    [bertiniTrackHomotopy, MAXNUMBERSTEPS]
+    [bertiniTrackHomotopy, MAXCYCLENUM]
+    [bertiniTrackHomotopy, REGENSTARTLEVEL]
   Headline
-    Options for bertini.m2 functions.
+    options for methods of Bertini package
   Description
     Text
       Every function of the package takes ALL optional arguments listed here.
       The default value for EACH option is -1, which tells Bertini to use its internal default.
-    
+      Refer to Appendix E of SIAM Bertini book for full details and list of options. 
+
+      MPTYPE: Type of precision (0=double, 1=fixed higher, 2=adaptive).
+
+      PRECISION: Precision, in bits, when used MPTYPE=1.
+
+      ODEPREDICTOR: Choice of predictor method (9 choices).
+
+      TRACKTOLBEFOREEG: Before endgame zone, Newton error must be less than this for success. 
+
+      TRACKTOLDURINGEG: Same as previous, but during endgame.
+
+      FINALTOL: Path is deemed successful if final two endpoint approximations agree to FINALTOL.
+
+      MAXNORM: If SECURITYLEVEL=0, path is truncated if two consecutive endpoint approximations exceed this value. 
+
+      MINSTEPSIZEBEFOREEG: Path is truncated if stepsize drops below this level before endgame.
+
+      MINSTEPSIZEDURINGEG: Same as previous, but during endgame.
+
+      IMAGTHRESHOLD: Endpoint deemed real if infinity norm is smaller than this. 
+
+      COEFFBOUND: Useful only if MPTYPE=2, bound on sum of coefficients of each polynomial. 
+
+      DEGREEBOUND: Useful only if MPTYPE=2, bound on degree of each polynomial.
+
+      CONDNUMTHRESHOLD: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this. 
+
+      RANDOMSEED: Useful to repeat runs with the same random numbers.
+
+      SINGVALZEROTOL: Singular value is considered 0 if less than this value, when using fixed precision.
+
+      ENDGAMENUM: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
+
+      USEREGENERATION: 1 to use regeneration for a zero-dimensional run.
+
+      SECURITYLEVEL: 1 to avoid truncation of possibly-infinite paths.
+
+      SCREENOUT: Level of output to the screen.
+
+      OUTPUTLEVEL: Level of output to files.
+
+      STEPSFORINCREASE: Number of consecutive Newton corrector successes before increase of stepsize.
+
+      MAXNEWTONITS: Newton corrector step deemed failed if no convergence prior to this number of iterations. 
+
+      MAXSTEPSIZE: Largest stepsize allowed. 
+
+      MAXNUMBERSTEPS: Max number of steps for entire path.  Path failure if number of steps exceeds this.
+
+      MAXCYCLENUM: Max cycle number considered during endgame.
+
+      REGENSTARTLEVEL: Level at which regeneration begins. 
+
       There are two recommended ways of using the optional arguments.
     
       (1) Specify individual parameters in a function call:
@@ -98,6 +337,7 @@ doc ///
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)
 ///;
+
 
 doc ///
  Key
@@ -154,9 +394,6 @@ doc ///
         
 ///;
 
-
--- bertiniSample(
-  -- {f1},dimen=>1,compnum=>1,numpts=>12,WitnessData=>wdf)
 
 
 doc ///
@@ -236,8 +473,8 @@ doc ///
    Example
      R = CC[x,t]; -- include the path variable in the ring     
      H = { (x^2-1)*t + (x^2-2)*(1-t)};
-     sol1 = point {{1,0}};
-     sol2 = point {{-1,0}};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
      S1= { sol1, sol2  };	  
      S0 = bertiniTrackHomotopy (H, t, S1) 
      peek S0_0
@@ -248,7 +485,7 @@ doc ///
    bertiniComponentMemberTest
    (bertiniComponentMemberTest, NumericalVariety, List)
  Headline
-   tests whether points lie on a given variety
+   test whether points lie on a given variety
  Usage
    L = bertiniComponentMemberTest (NV, pts)
  Inputs
@@ -258,12 +495,21 @@ doc ///
  Outputs
    L:List
      entries are lists of witness sets containing the test point
+ Consequences
+  Item
+    Writes the witness set information of NV and the test points to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with option {\tt TRACKTYPE: 3} 
+  Item
+    Stores output of {\tt Bertini} in temporary file
+  Item
+    Parses and outputs the solutions    
  Description
    Text
-     Tests whether pts lie on a given variety using Bertini.
+     This method checks whether the test points pts lie on NV using {\tt Bertini}.  
    Example
-     R = CC[x,y,z]
-     F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+     R = CC[x,y,z];
+     F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
      NV = bertiniPosDimSolve(F)
      pts = {{0,0,0}} --z-axis
      bertiniComponentMemberTest(NV,pts)
@@ -292,21 +538,44 @@ doc ///
      of solutions of type Point
  Description
    Text
-     We take the list l of solutions of F and sharpen them to d digits.
+     This method takes the list l of solutions of F and sharpens them to d digits using the sharpening module of {\tt Bertini}.
    Example
-     R = CC[x,y]
-     F = {x^2-2,y^2-2}
+     R = CC[x,y];
+     F = {x^2-2,y^2-2};
      sols = bertiniZeroDimSolve (F)
      S = bertiniRefineSols (F,sols,100)
      coords = coordinates S_0
      coords_0
 ///;
+
+doc ///
+ Key
+   ISPROJECTIVE
+   [bertiniTrackHomotopy, ISPROJECTIVE]
+   [bertiniParameterHomotopy, ISPROJECTIVE]
+   [bertiniComponentMemberTest, ISPROJECTIVE]
+   [bertiniPosDimSolve, ISPROJECTIVE]
+   [bertiniRefineSols, ISPROJECTIVE]
+   [bertiniSample, ISPROJECTIVE]
+   [bertiniZeroDimSolve, ISPROJECTIVE]
+ Headline
+   optional argument to specify whether to use homogeneous coordinates
+ Description
+   Text
+     When set to 1, this option indicates that the input system is homogenized and
+     the output should be given in projective space.
+   Example
+     R = CC[x,y,z];
+     f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
+     NV = bertiniPosDimSolve(f,ISPROJECTIVE=>1)
+///;
+
 doc ///
  Key
    bertiniParameterHomotopy
    (bertiniParameterHomotopy,List,List,List)
  Headline
-   Runs parameter homotopy in Bertini
+   run parameter homotopy in Bertini
  Usage
    S = bertiniParameterHomotopy(F,P,T)
  Inputs
@@ -320,43 +589,42 @@ doc ///
  Outputs
    S:List
      whose entries are lists of solutions for each target system
+ Consequences
+  Item
+    Writes systems to temporary files
+  Item
+    Invokes {\tt Bertini}'s solver with configuration keyword {\tt PARAMETERHOMOTOPY}.
+    First with {\tt PARAMETERHOMOTOPY} set to 1, then with {\tt PARAMETERHOMOTOPY} set to
+    2 for each set of parameter values.
+  Item
+    Stores output of {\tt Bertini} in temporary files
+  Item
+    Parses and outputs the solutions    
  Description
    Text
-     Runs both stages of Bertini's parameter homotopy method.
+     This method numerically solves several polynomial systems from
+     a parameterized family at once.  The list F is a system of polynomials
+     in ring variables and the parameters listed in P.  The list T is the
+     set of parameter values for which solutions to F are desired.  Both stages of
+     {\tt Bertini}'s parameter homotopy method are called with {\tt bertiniParameterHomotopy}. 
+     First, {\tt Bertini} assigns a random complex number to each parameter
+     and solves the resulting system, then, after this initial phase, {\tt Bertini} computes solutions
+     for every given choice of parameters using a number of paths equal to the exact root count in the
+     first stage.
    Example
-     R=CC[u1,u2,u3,x,y]
-     f1=u1*(y-1)+u2*(y-2)+u3*(y-3)
-     f2=(x-11)*(x-12)*(x-13)
-     finalParameters0={{1,0,0}}
-     finalParameters1={{0,1+2*ii,0}}
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{finalParameters0 ,finalParameters1 })
-     bPH_0--the solutions to the system with finalParameters0
-///;
-end
-doc ///
- Key
-   bertiniTrackHomotopy
-   (bertiniTrackHomotopy,List,RingElement,List)
- Headline
-   runs user-defined homotopy in Bertini
- Usage
-   S0 = bertiniTrackHomotopy(H,t,sols)
- Inputs
-   H:List
-     whose entries are polynomials depending on t (must be square)
-   t:RingElement
-     path variable
-   S1:List
-     start solutions (solutions of H when t=1)
- Outputs
-   S0:List
-     target solutions (solutions of H when t=0)
- Description
-   Text
-     Runs Bertini's user-defined homotopy.
-   Example
+     R=CC[u1,u2,u3,x,y];
+     f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
+     f2=(x-11)*(x-12)*(x-13)-u1;
+     paramValues0={{1,0,0}};
+     paramValues1={{0,1+2*ii,0}};
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
+     bPH_0--the solutions to the system with parameters set equal to paramValues0
 ///;
 
+end
+
+
+-- to be added in another version
 doc ///
  Key
    bertiniSegmentHomotopy

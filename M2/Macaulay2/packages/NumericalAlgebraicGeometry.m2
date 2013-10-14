@@ -22,7 +22,7 @@ newPackage select((
      if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"} | if BERTINI'M2'EXISTS then {"Bertini"} else {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true,
+     DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -60,6 +60,7 @@ export {
      "Attempts", "SingularConditionNumber", 
      "numericalRank", 
      "regeneration", 
+     "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
      }
@@ -85,9 +86,11 @@ debug Core; -- to enable engine routines
 --if PHC'EXISTS then 
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
 --else phcSolve = trackPaths = refineSolutions = null
-if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else trackBertini = solveBertini = cleanupOutput = bertiniPosDimSolve = null
+if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else toBertiniOptions = trackBertini = solveBertini = bertiniPosDimSolve = null
 
 -- GLOBAL VARIABLES ----------------------------------
+NAG = NumericalAlgebraicGeometry
+
 --PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
 HOM4PS2exe = NumericalAlgebraicGeometry#Options#Configuration#"HOM4PS2";
@@ -96,10 +99,12 @@ DBG = 0; -- debug level (10=keep temp files)
 SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries)
 lastPathTracker := null; -- path tracker object used last
 
+Package % Symbol := (p,s) -> value (toString p | "$" | toString s) -- get an option name from the correct dictionary
+
 DEFAULT = new MutableHashTable from {
      Software=>M2engine, NoOutput=>false, 
-     NumericalAlgebraicGeometry$gamma=>1, 
-     NumericalAlgebraicGeometry$tDegree=>1,
+     NAG%gamma=>1, 
+     NAG%tDegree=>1,
      -- step control
      tStep => 0.05, -- initial
      tStepMin => 1e-6,
@@ -136,8 +141,8 @@ DEFAULT = new MutableHashTable from {
 setDefault = method(Options => {
      Software=>null, 
      NoOutput=>null, 
-     NumericalAlgebraicGeometry$gamma=>null, 
-     NumericalAlgebraicGeometry$tDegree=>null,
+     NAG%gamma=>null, 
+     NAG%tDegree=>null,
      -- step control
      tStep=>null, -- initial
      tStepMin=>null,
@@ -291,8 +296,8 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 ------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
-	  NumericalAlgebraicGeometry$gamma=>null, 
-	  NumericalAlgebraicGeometry$tDegree=>null,
+	  NAG%gamma=>null, 
+	  NAG%tDegree=>null,
      	  -- step control
 	  tStep => null, -- initial
           tStepMin => null,
@@ -406,7 +411,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    else ( 
 		    	 matrix{apply(n, i->exp(random(0.,2*pi)*ii))} ) -- ... or random patch
 	       	    };
-	       patches = patches | { o.NumericalAlgebraicGeometry$gamma*patches#1 };
+	       patches = patches | { o#(NAG%gamma)*patches#1 };
      	       if DBG>1 then << "affine patch: " << toString patches#1 <<endl;
 	       T = T | {patchEquation patches#1};
 	       S = S | {patchEquation patches#2};
@@ -428,7 +433,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  nT = (o.NumericalAlgebraicGeometry$gamma/abs(o.NumericalAlgebraicGeometry$gamma))*nT;
+	  nT = (o#(NAG%gamma)/abs(o#(NAG%gamma)))*nT;
 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt sum degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
@@ -440,7 +445,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if DBG>4 then << "Re<S,T> = " << reBW'ST << ", bigT = " << bigT << endl; 
      	  )	  
      else (
-     	  H = matrix {apply(#S, i->o.NumericalAlgebraicGeometry$gamma*(1-t)^(o.NumericalAlgebraicGeometry$tDegree)*sub(nS#i,Rt)+t^(o.NumericalAlgebraicGeometry$tDegree)*sub(nT#i,Rt))};
+     	  H = matrix {apply(#S, i->o#(NAG%gamma)*(1-t)^(o#(NAG%tDegree))*sub(nS#i,Rt)+t^(o#(NAG%tDegree))*sub(nT#i,Rt))};
      	  JH := transpose jacobian H; 
      	  Hx = JH_(toList(0..n-1));
      	  Ht := JH_{n};
@@ -1113,6 +1118,7 @@ parameterHomotopy = method(TypicalValue => List, Options =>{
 	Software=>null
 	})
 parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
+    o = fillInDefaultOptions o;
     if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
     else error "not implemented"
     )
@@ -1161,8 +1167,8 @@ refine (List,List) := List => o -> (T,solsT) -> (
     if o.Software === PHCPACK then  return refinePHCpack(T,solsT,o)/point;
     if o.Software === BERTINI then (
 	-- bits to decimals 
-	-- decimals := ceiling(o.Bits * log 2 / log 10);
-	return bertiniRefineSols(T,solsT,o.Bits)
+	decimals := ceiling(o.Bits * log 2 / log 10);
+	return bertiniRefineSols(T,solsT,decimals)
 	);
 
      -- Software=>M2 (and Software=>M2engine for now)
@@ -1593,11 +1599,11 @@ solveSystem List := List => o -> F -> (
 --	  else 
 	       (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       track(S,T,solsS,NAG%gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );
 	  if o.PostProcess and not overdetermined 
 	  then (
-	       result = select(refine(F,result), s->residual(F,s)<DEFAULT.Tolerance);
+	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
 	       result = solutionsWithMultiplicity result;
 	       -- below is a hack!!!
 	       scan(result, s->if status s =!= Regular and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
@@ -1646,6 +1652,14 @@ makeHom4psInput (Ring, List) := (R, T) -> (
   -- assume names of vars are not substrings of each other
   p := sort apply(numgens R, i->(first first regex(toString R_i, s), i));
   ( filename, new HashTable from apply(#p, i->p#i#1=>i) )
+  )
+
+cleanupOutput = method(TypicalValue=>String)
+cleanupOutput String := s -> (
+-- cleanup output (Bertini and hom4ps2)
+  t := replace("E", "e", s);
+  t = replace("[(,)]","", t);
+  t = replace("e\\+","e",t)
   )
 
 readSolutionsHom4ps = method(TypicalValue=>List)
@@ -1729,7 +1743,7 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      success := false;
      while (not success and attempts > 0) do (
 	  attempts = attempts - 1;
-	  w' := track(E|S, E|S', w,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii)); 
+	  w' := track(E|S, E|S', w,NAG%gamma=>exp(random(0.,2*pi)*ii)); 
 	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
      if attempts == 0 and not success then error "some path is singular generically";  
@@ -1842,7 +1856,7 @@ regeneration List := List => o -> F -> (
 	       	    	 | {f}
 	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
-			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+			 NAG%gamma=>exp(random(0.,2*pi)*ii));
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);
@@ -1957,9 +1971,28 @@ numericalVariety Ideal := I -> (
      else numericalVarietyM2
      ) I
 
+isOn = method(Options=>{Tolerance=>null,Software=>null})
+isOn (Point,WitnessSet) := o -> (p, V) -> (
+    o = fillInDefaultOptions o;
+    --if o.Software === BERTINI then bertiniComponentMemberTest(numericalVariety {V},{p})
+    --else 
+    error "not implemented"    
+    )
+isOn (Point,NumericalVariety) := o -> (p, V) -> (
+    o = fillInDefaultOptions o;
+    if o.Software === BERTINI then #bertiniComponentMemberTest(V,{p})>0
+    else error "not implemented"    
+    )
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 
+fillInDefaultOptions = method()
+fillInDefaultOptions OptionTable := o -> (
+     o = new MutableHashTable from o;
+     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
+     new OptionTable from o
+     )
+ 
 selectUnique = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 selectUnique List := o -> sols ->(
      u := {};
@@ -2121,23 +2154,6 @@ beginDocumentation()
 load "./NumericalAlgebraicGeometry/doc.m2";
 
 TEST ///
---assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
---assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
---assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
-
--- numerical rank
-assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
-
--- random and good initial pairs
-setRandomSeed 0
-T = randomSd {2,3};
-(S,solsS) = goodInitialPair T
-M = track(S,T,solsS,Normalize=>true)
-RM = refine(T,M)
-debug NumericalAlgebraicGeometry
-assert areEqual(norm2 matrix first RM, 1_CC)
-///
-TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")
 ///
 TEST ///
@@ -2147,6 +2163,27 @@ TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2enginePrecookedSLPs.tst.m2")
 ///
 
+-- MISC. TESTS
+--------------
+
+--assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
+--assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
+--assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
+
+TEST ///-- numerical rank
+assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
+///
+
+TEST ///-- random and good initial pairs
+setRandomSeed 0
+T = randomSd {2,3};
+(S,solsS) = goodInitialPair T
+M = track(S,T,solsS,Normalize=>true)
+-- RM = refine(T,M,Software=>M2) -- projective refine is nom implemented!!!
+RM = M
+debug NumericalAlgebraicGeometry
+assert areEqual(norm2 matrix first M, 1_CC, Tolerance=>0.001)
+///
 
 end
 
