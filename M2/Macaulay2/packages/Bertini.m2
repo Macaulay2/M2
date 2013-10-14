@@ -1,8 +1,8 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "1.0", 
-  Date => "October 9, 2013",
+  Version => "1.6.0.1", 
+  Date => "October 14, 2013",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "eagross@ncsu.edu",
@@ -23,7 +23,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => true,
+  DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
