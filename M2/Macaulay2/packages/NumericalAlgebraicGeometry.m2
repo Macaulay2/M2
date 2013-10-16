@@ -1,16 +1,10 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 
-BERTINI'M2'EXISTS := fileExists(currentFileDirectory | "Bertini.m2") -- remove when Bertini is distributed
-if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
-if version#"VERSION" <= "1.4" then needsPackage "PHCpack"
-PHC'EXISTS := (version#"VERSION" > "1.4")
---if BERTINI'M2'EXISTS and version#"VERSION" <= "1.4" then needsPackage "Bertini"
-
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.5.0.1",
-     Date => "November, 2012",
+     Version => "1.6.0.1",
+     Date => "October, 2013",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -18,11 +12,11 @@ newPackage select((
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     if version#"VERSION" > "1.4" then PackageExports => {"NAGtypes"},
-     if version#"VERSION" > "1.4" then PackageImports => {"PHCpack"} | if BERTINI'M2'EXISTS then {"Bertini"} else {},
+     PackageExports => {"NAGtypes"},
+     PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -37,8 +31,6 @@ newPackage select((
 	  "volume URI" => "http://j-sag.org/Volume3/"
 	  }
      ), x -> x =!= null)
-
-if version#"VERSION" <= "1.4" then needsPackage "NAGtypes"
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
@@ -83,10 +75,8 @@ protect MaxNumberOfVariables
 debug Core; -- to enable engine routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
---if PHC'EXISTS then 
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
---else phcSolve = trackPaths = refineSolutions = null
-if BERTINI'M2'EXISTS then load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" else toBertiniOptions = trackBertini = solveBertini = bertiniPosDimSolve = null
+load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2" 
 
 -- GLOBAL VARIABLES ----------------------------------
 NAG = NumericalAlgebraicGeometry
