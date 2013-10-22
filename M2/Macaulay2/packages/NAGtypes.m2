@@ -357,7 +357,7 @@ net NumericalVariety := V -> (
   	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
   	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
   	);
-    out := ofClass class V | " of dimension " | net dim V |" with components in";
+    out := net ofClass class V | " of dimension " | net dim V |" with components in";
     scan(keys V, k->if class k === ZZ then (
 	    row := "dim "|net k|": ";
 	    scan(V#k, W->row = row|" "|net W);
@@ -375,11 +375,14 @@ degree NumericalVariety := V -> (
      )
 numericalVariety = method(TypicalValue=>NumericalVariety)
 numericalVariety List := Ws -> (
+     T := class first Ws;
+     if not ancestor(WitnessSet,T) then error "a list of WitnessSet-s expected";
      V := new NumericalVariety;
      scan(Ws, W->(
-	       d := dim W;
-	       if V#?d then V#d = V#d | {W} else V#d = {W};
-	       ));     
+	     if class W =!= T then error "a list of witness sets of same type expected";
+	     d := dim W;
+	     if V#?d then V#d = V#d | {W} else V#d = {W};
+	     ));     
      check V;
      V
      )

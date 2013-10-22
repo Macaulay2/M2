@@ -93,8 +93,8 @@ Package % Symbol := (p,s) -> value (toString p | "$" | toString s) -- get an opt
 
 DEFAULT = new MutableHashTable from {
      Software=>M2engine, NoOutput=>false, 
-     NAG%gamma=>1, 
-     NAG%tDegree=>1,
+     NumericalAlgebraicGeometry$gamma=>1, 
+     NumericalAlgebraicGeometry$tDegree=>1,
      -- step control
      tStep => 0.05, -- initial
      tStepMin => 1e-6,
@@ -131,8 +131,8 @@ DEFAULT = new MutableHashTable from {
 setDefault = method(Options => {
      Software=>null, 
      NoOutput=>null, 
-     NAG%gamma=>null, 
-     NAG%tDegree=>null,
+     NumericalAlgebraicGeometry$gamma=>null, 
+     NumericalAlgebraicGeometry$tDegree=>null,
      -- step control
      tStep=>null, -- initial
      tStepMin=>null,
@@ -284,10 +284,36 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  ))
 
 ------------------------------------------------------
+checkCCpolynomials = method()
+checkCCpolynomials List := F -> (    
+    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
+    coeffR := coefficientRing R; 
+    if not(
+	instance(ring 1_coeffR, ComplexField) 
+	or instance(ring 1_coeffR, RealField)
+	or coeffR===QQ or coeffR ===ZZ
+	) then error "expected coefficients that can be converted to complex numbers";  
+    if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
+    )
+checkCCpolynomials (List,List) := (S,T) -> (
+    n := #T;
+    if #S != n then error "expected same number of polynomials in start and target systems";
+    ST := checkCCpolynomials(S|T);
+    )
+
+toCCpolynomials = method()
+toCCpolynomials (List,ZZ) := (F,prec) -> (
+    checkCCpolynomials F;
+    R := CC_prec(monoid[gens ring first F]);
+    apply(F,f->sub(f,R)) 
+    )    
+
+------------------------------------------------------
 track = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
-	  NAG%gamma=>null, 
-	  NAG%tDegree=>null,
+	  NumericalAlgebraicGeometry$gamma=>null, 
+	  NumericalAlgebraicGeometry$tDegree=>null,
      	  -- step control
 	  tStep => null, -- initial
           tStepMin => null,
@@ -325,17 +351,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      n := #T; 
      K := CC_53; -- THE coefficient ring
      
-     if n > 0 then R := ring first T else error "expected nonempty target system";
-     if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
-     coeffR := coefficientRing R; 
-     if #S != n then error "expected same number of polynomials in start and target systems";
-     if not(
-	  instance(ring 1_coeffR, ComplexField) 
-	  or instance(ring 1_coeffR, RealField)
-	  or coeffR===QQ or coeffR ===ZZ
-	  ) then error "expected coefficients that can be converted to complex numbers";  
-     if any(S, f->ring f =!= R) or any(T, f->ring f =!= R)
-     then error "expected all polynomials in the same ring";
+     checkCCpolynomials(S,T);
+     R := ring first S; 
+     
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===false) and (o.SLPpredictor or o.SLPcorrector) 
      then error "SLPpredictor amd SLPcorrector can be used only with Projectivize=false and SLP=!=false"; 
@@ -371,7 +389,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.Projectivize then (
 	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
-	  R = K[gens R | {h}]; 
+	  R = K(monoid[gens R | {h}]); 
+	  h = last gens R;
 	  n = numgens R;
 	  T = apply(T, f->homogenize(sub(f,R), h)); 
 	  S = apply(S, f->homogenize(sub(f,R), h));
@@ -401,7 +420,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    else ( 
 		    	 matrix{apply(n, i->exp(random(0.,2*pi)*ii))} ) -- ... or random patch
 	       	    };
-	       patches = patches | { o#(NAG%gamma)*patches#1 };
+	       patches = patches | { o#(NumericalAlgebraicGeometry$gamma)*patches#1 };
      	       if DBG>1 then << "affine patch: " << toString patches#1 <<endl;
 	       T = T | {patchEquation patches#1};
 	       S = S | {patchEquation patches#2};
@@ -423,7 +442,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
-	  nT = (o#(NAG%gamma)/abs(o#(NAG%gamma)))*nT;
+	  nT = (o#(NumericalAlgebraicGeometry$gamma)/abs(o#(NumericalAlgebraicGeometry$gamma)))*nT;
 	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
 	  DMforPN := diagonalMatrix append(T/(f->1/sqrt sum degree f),1);
 	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
@@ -435,7 +454,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if DBG>4 then << "Re<S,T> = " << reBW'ST << ", bigT = " << bigT << endl; 
      	  )	  
      else (
-     	  H = matrix {apply(#S, i->o#(NAG%gamma)*(1-t)^(o#(NAG%tDegree))*sub(nS#i,Rt)+t^(o#(NAG%tDegree))*sub(nT#i,Rt))};
+     	  H = matrix {apply(#S, i->o#(NumericalAlgebraicGeometry$gamma)*(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nS#i,Rt)+t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nT#i,Rt))};
      	  JH := transpose jacobian H; 
      	  Hx = JH_(toList(0..n-1));
      	  Ht := JH_{n};
@@ -1571,6 +1590,7 @@ solveSystem List := List => o -> F -> (
      o = new MutableHashTable from o;
      scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
      local result;
+     F = toCCpolynomials(F,53);
      R := ring F#0;
      v := flatten entries vars R;
      if numgens R > #F then error "expected a 0-dimensional system";
@@ -1589,14 +1609,16 @@ solveSystem List := List => o -> F -> (
 --	  else 
 	       (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       track(S,T,solsS,NAG%gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );
 	  if o.PostProcess and not overdetermined 
 	  then (
 	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
 	       result = solutionsWithMultiplicity result;
 	       -- below is a hack!!!
-	       scan(result, s->if status s =!= Regular and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
+	       scan(result, s->if status s =!= Regular 
+		   and s.?ErrorBoundEstimate 
+		   and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
 			 if DBG>1 then print "path jump occured";
 			 s.Multiplicity = 1;
 			 s.SolutionStatus = Regular;
@@ -1733,7 +1755,7 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      success := false;
      while (not success and attempts > 0) do (
 	  attempts = attempts - 1;
-	  w' := track(E|S, E|S', w,NAG%gamma=>exp(random(0.,2*pi)*ii)); 
+	  w' := track(E|S, E|S', w,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii)); 
 	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
      if attempts == 0 and not success then error "some path is singular generically";  
@@ -1846,7 +1868,7 @@ regeneration List := List => o -> F -> (
 	       	    	 | {f}
 	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
-			 NAG%gamma=>exp(random(0.,2*pi)*ii));
+			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);

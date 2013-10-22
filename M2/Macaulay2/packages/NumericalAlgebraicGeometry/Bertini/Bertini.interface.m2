@@ -35,7 +35,7 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
     t := symbol t;
     Rt := K(monoid[gens R, t]);     
     t = last gens Rt;
-    H := apply(#S, i->o#(NAG%gamma)*t^(o#(NAG%tDegree))*sub(S#i,Rt)+(1-t)^(o#(NAG%tDegree))*sub(T#i,Rt));
+    H := apply(#S, i->o#(NumericalAlgebraicGeometry$gamma)*t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(S#i,Rt)+(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(T#i,Rt));
     bertiniTrackHomotopy(H,t,solS,toBertiniOptions o)
     )
 
