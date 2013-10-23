@@ -14,14 +14,18 @@ namespace M2 {
                               bool p_parens) const
   {
     gmp_CC_struct g;
-    mpfr_init(g.re);
-    mpfr_init(g.im);
+    g.re = getmemstructtype(gmp_RR);
+    g.im = getmemstructtype(gmp_RR);
+    mpfr_init2(g.re,53);
+    mpfr_init2(g.im,53);
     mpfr_set_d(g.re, ap.re, GMP_RNDN);
     mpfr_set_d(g.im, ap.im, GMP_RNDN);
     M2_string s = p_parens ? 
       (*gmp_tonetCCparenpointer)(&g) : (*gmp_tonetCCpointer)(&g);
     mpfr_clear(g.im);
     mpfr_clear(g.re);
+    delete g.re;
+    delete g.im;
 
     bool prepend_plus = p_plus && (s->array[0] != '-');
     bool strip_last = !p_one && (

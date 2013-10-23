@@ -4,33 +4,37 @@
 #include <iostream>
 
 double* make_lapack_array(const DMat<M2::ARingRRR>& mat)
+// changing to RR and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
   double *result = newarray_atomic(double, len);
-
-  const M2::ARingRRR::ElementType *a = mat.array();
   double *p = result;
-  for (size_t i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
+  for (size_t c=0; c<mat.numColumns(); c++) {
+    auto end = mat.columnEnd(c);
+    for (auto a=mat.columnBegin(c); a!=end; ++a)
+      *p++ = mpfr_get_d(&(*a), GMP_RNDN);
+  }
   return result;
 }
 
 double* make_lapack_array(const DMat<M2::ARingCCC>& mat)
+// changing to CC and column-major order
 {
   size_t len = mat.numRows() * mat.numColumns();
   double *result = newarray_atomic(double, 2*len);
-
-  const M2::ARingCCC::ElementType *a = mat.array();
   double *p = result;
-  for (size_t i=0; i<len; i++)
-    {
-      *p++ = mpfr_get_d(&a->re, GMP_RNDN);
-      *p++ = mpfr_get_d(&a->im, GMP_RNDN);
-      a++;
-    }
+  for (size_t c=0; c<mat.numColumns(); c++) {
+    auto end = mat.columnEnd(c);
+    for (auto a=mat.columnBegin(c); a!=end; ++a) 
+      {
+        *p++ = mpfr_get_d(&(*a).re, GMP_RNDN);
+        *p++ = mpfr_get_d(&(*a).im, GMP_RNDN);
+      }
+  }
   return result;
 }
 
+/*
 double* make_lapack_array(const DMat<CoefficientRingRRR>& mat)
 {
   size_t len = mat.numRows() * mat.numColumns();
@@ -58,31 +62,35 @@ double* make_lapack_array(const DMat<CoefficientRingCCC>& mat)
     }
   return result;
 }
+*/
 
 void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingRRR>& result)
+// from RR and column-major order
 {
-  size_t len = result.numRows() * result.numColumns();
-
-  M2::ARingRRR::ElementType *a = result.array();
   const double *p = lapack_array;
-  for (size_t i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
+  for (size_t c=0; c<result.numColumns(); c++) 
+    {
+      auto end = result.columnEnd(c);
+      for (auto a=result.columnBegin(c); a!=end; ++a)
+        result.ring().set_from_double(*a, *p++);
+    }
 }
 
 void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& result)
 {
-  size_t len = result.numRows() * result.numColumns();
-
-  M2::ARingCCC::ElementType *a = result.array();
   const double *p = lapack_array;
-  for (size_t i=0; i<len; i++)
+  for (size_t c=0; c<result.numColumns(); c++) 
     {
-      mpfr_set_d(&a->re, *p++, GMP_RNDN);
-      mpfr_set_d(&a->im, *p++, GMP_RNDN);
-      a++;
+      auto end = result.columnEnd(c);
+      for (auto a=result.columnBegin(c); a!=end; ++a)
+        {
+          result.ring().real_ring().set_from_double((*a).re, *p++);
+          result.ring().real_ring().set_from_double((*a).im, *p++);
+        }
     }
 }
 
+/*
 void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingRRR>& result)
 {
   size_t len = result.numRows() * result.numColumns();
@@ -106,6 +114,7 @@ void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingCCC>
       a++;
     }
 }
+*/
 
 //typedef DMat<CoefficientRingRR> LMatrixRR;
 

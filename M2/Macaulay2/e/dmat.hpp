@@ -123,21 +123,31 @@ public:
   size_t numRows() const { return mNumRows; }
   size_t numColumns() const { return mNumColumns; }
 
-  Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
-  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
-  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
+  // column-major order (old)
+  // Iterator rowBegin(size_t row) { return Iterator(array() + row, numRows()); }
+  // ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row, numRows()); }
+  // ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + row + numRows() * numColumns(), numRows()); }
 
-  Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
-  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
-  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
+  // Iterator columnBegin(size_t col) { return Iterator(array() + col * numRows(), 1); }
+  // ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col * numRows(), 1); }
+  // ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + (col+1) * numRows(), 1); }
 
+  // row-major order
+  Iterator rowBegin(size_t row) { return Iterator(array() + row*numColumns(), 1); }
+  ConstIterator rowBegin(size_t row) const { return ConstIterator(array() + row*numColumns(), 1); }
+  ConstIterator rowEnd(size_t row) const { return ConstIterator(array() + (row+1)*numColumns(), 1); }
 
-  // When we store in row major order, we can change to these values:
-  //  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
-  //  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
+  Iterator columnBegin(size_t col) { return Iterator(array() + col, numColumns()); }
+  ConstIterator columnBegin(size_t col) const { return ConstIterator(array() + col, numColumns()); }
+  ConstIterator columnEnd(size_t col) const { return ConstIterator(array() + col + numRows()*numColumns(), numColumns()); }
 
-  ElementType& entry(size_t row, size_t column) { return mArray[mNumRows * column + row]; }
-  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumRows * column + row]; }
+  // column-major order (old)
+  // ElementType& entry(size_t row, size_t column) { return mArray[mNumRows * column + row]; }
+  // const ElementType& entry(size_t row, size_t column) const { return mArray[mNumRows * column + row]; }
+
+  // row-major order
+  ElementType& entry(size_t row, size_t column) { return mArray[mNumColumns * row + column]; }
+  const ElementType& entry(size_t row, size_t column) const { return mArray[mNumColumns * row + column]; }
 
   void resize(size_t new_nrows, size_t new_ncols)
   {
@@ -147,6 +157,9 @@ public:
 
   const ElementType* array() const { return mArray; }
   ElementType*& array() { return mArray; }
+
+  const ElementType* rowMajorArray() const { return mArray; }
+  ElementType*& rowMajorArray() { return mArray; }
 
 private:
   const ACoeffRing* mRing;

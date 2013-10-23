@@ -18,7 +18,7 @@ bool almostEqual(const M2::ARingCC& C, int nbits, const M2::ARingCC::ElementType
   M2::ARingCC::ElementType c; 
   C.subtract(c,a,b);
   C.abs(d,c);
-  return C.get_real_ring()->compare_elems(d,epsilon) < 0;
+  return C.real_ring().compare_elems(d,epsilon) < 0;
 }
 
 template<>

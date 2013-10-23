@@ -713,17 +713,17 @@ namespace M2 {
   template<>
   inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   {
-    const ARingRRR* realR = R->get_real_ring();
+    const ARingRRR& realR = R->real_ring();
     ARingRRR::ElementType a;
     ElementType b;
-    realR->init(a);
+    realR.init(a);
     R->init(b);
     R->from_ring_elem(b,f);
     R->abs(a,b);
     if (mpfr_cmp(&a, norm)>0)
       mpfr_set(norm, &a, GMP_RNDN);
     R->clear(b);
-    realR->clear(a);
+    realR.clear(a);
   }
 
   template<typename RingType>

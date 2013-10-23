@@ -271,7 +271,7 @@ void DMatLU<CoeffRing>::set_pivot_info(const DMat<CoeffRing> *U,
                                      size_t ncols, // columns 0..ncols-1 are considered
                                      M2_arrayint &pivotcols,
                                      size_t &n_pivots)
-  // This allocates space for pivotcols
+  // This allocates space for pivotcols. TODO: use iterator for U
 {
   const CoeffRing& K = U->ring();
   int nrows = static_cast<int>(U->numRows());
@@ -324,6 +324,7 @@ M2_arrayint DMatLU<CoeffRing>::LU(const DMat<CoeffRing> *A,
 
 template <typename CoeffRing>
 size_t DMatLU<CoeffRing>::rank(DMat<CoeffRing> *U)
+// TODO: rewrite to handle row-major order
 {
   const CoeffRing& K = U->ring();
   size_t nrows = U->numRows();
@@ -348,7 +349,8 @@ template <typename CoeffRing>
 bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
                               const DMat<CoeffRing> *b,
                               DMat<CoeffRing> *x) // resulting solution set
-  // returns true iff every column of b has a solution
+// returns true iff every column of b has a solution
+// TODO: rewrite to handle row-major order 
 {
   // Create L,U,y.  (P is created for us), make sure x has correct shape.
   // For each column of b, solveF, then solveB 9result into same col of x
@@ -397,6 +399,7 @@ bool DMatLU<CoeffRing>::solve(const DMat<CoeffRing> *A,
 template <typename CoeffRing>
 void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
                                    DMat<CoeffRing> *x) // resulting kernel
+// TODO: rewrite to handle row-major order  
 {
   const CoeffRing& K = U->ring();
   size_t nrows = U->numRows();

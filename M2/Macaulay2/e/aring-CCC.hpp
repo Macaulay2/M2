@@ -39,7 +39,7 @@ namespace M2 {
     unsigned long get_precision() const { return mRRR.get_precision(); }
     void text_out(buffer &o) const;
 
-    const ARingRRR* get_real_ring() const { return &mRRR; }
+    const ARingRRR& real_ring() const { return mRRR; }
 
     unsigned long computeHashValue(const ElementType& a) const  
     { 
