@@ -408,7 +408,7 @@ public:
   }
 
   static void insert_columns(Mat& mat, size_t i, size_t n_to_add)
-  /* Insert n_to_add columns directly BEFORE column i. */
+  /* Insert n_to_add columns directly BEFORE column i. TODO: use iterators */
   {
     size_t new_ncols = mat.numColumns() + n_to_add;
     Mat newMatrix(mat.ring(), mat.numRows(), new_ncols);
@@ -424,7 +424,7 @@ public:
   }
 
   static void insert_rows(Mat& mat, size_t i, size_t n_to_add)
-  /* Insert n_to_add rows directly BEFORE row i. */
+  /* Insert n_to_add rows directly BEFORE row i. TODO: use iterators */
   {
     size_t new_nrows = mat.numRows() + n_to_add;
     Mat newMatrix(mat.ring(), new_nrows, mat.numColumns());
@@ -440,7 +440,7 @@ public:
   }
 
   static void delete_columns(Mat& mat, size_t i, size_t j)
-  /* Delete columns i .. j from M */
+  /* Delete columns i .. j from M. TODO: use iterators */
   {
     M2_ASSERT(i < mat.numColumns());
     M2_ASSERT(j < mat.numColumns());
@@ -460,7 +460,7 @@ public:
   }
 
   static void delete_rows(Mat& mat, size_t i, size_t j)
-  /* Delete rows i .. j from M */
+  /* Delete rows i .. j from M. TODO: use iterators */
   {
     M2_ASSERT(i < mat.numRows());
     M2_ASSERT(j < mat.numRows());
@@ -480,7 +480,7 @@ public:
   }
 
   static void setFromSubmatrix(const Mat& mat, M2_arrayint rows, M2_arrayint cols, Mat& result)
-  /* Set 'result' with the given submatrix of 'mat' */
+  /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
   {
     result.resize(rows->len, cols->len); // resets to a zero matrix
     for (size_t r = 0; r < rows->len; r++)
@@ -489,7 +489,7 @@ public:
   }
 
   static void setFromSubmatrix(const Mat& mat, M2_arrayint cols, Mat& result)
-  /* Set 'result' with the given submatrix of 'mat' */
+  /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
   {
     result.resize(mat.numRows(), cols->len); // resets to a zero matrix
     for (size_t r = 0; r < mat.numRows(); r++)

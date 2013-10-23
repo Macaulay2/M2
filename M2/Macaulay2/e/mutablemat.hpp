@@ -51,7 +51,7 @@ template<> struct EigenTypes<M2::ARingCCC>
 
 #include "dmat.hpp"
 #include "smat.hpp"
-#include "MatElementaryOps.hpp"
+#include "mat-elem-ops.hpp"
 #include "mat-arith.hpp"
 #include "mat-linalg.hpp"
 
