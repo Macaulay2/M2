@@ -437,6 +437,11 @@ namespace M2 {
       mpfr_set(&result.re, re, GMP_RNDN);
       mpfr_set(&result.im, im, GMP_RNDN);
     }
+    void set_from_doubles(ElementType& result, double re, double im) const
+    {
+      mRRR.set_from_double(result.re, re);
+      mRRR.set_from_double(result.im, im);
+    }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
     {

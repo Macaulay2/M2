@@ -90,6 +90,98 @@ void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingCCC>& resu
     }
 }
 
+void fill_lower_and_upper(double* lapack_numbers,  // column-major order
+                          DMat<M2::ARingRRR>& lower,
+                          DMat<M2::ARingRRR>& upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size
+// result: lower: size: nrows x min(nrows, ncols)
+// result: upper: size min x ncols
+//
+// lapack_numbers is in column major form
+// lower and upper are in row major form
+{
+  // At this point, lower and upper should be zero matrices.
+  M2_ASSERT(MatrixOppies::isZero(lower));
+  M2_ASSERT(MatrixOppies::isZero(upper));
+
+  auto L = lower.rowMajorArray();
+  auto U = upper.rowMajorArray();
+
+  for (size_t c=0; c<upper.numColumns(); c++)
+    {
+      auto U1 = U;
+      for (size_t r=0; r<=c; r++)
+        {
+          if (r >= upper.numRows()) break;
+          upper.ring().set_from_double(*U1, *lapack_numbers++);
+          U1 += upper.numColumns();
+        }
+      U++; // change to next column
+
+      if (c < lower.numColumns())
+        {
+          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          L += lower.numColumns(); // pointing to entry right below diagonal
+          auto L1 = L; // will increment by lower.numRows() each loop here
+          for (size_t r=c+1; r<lower.numRows(); r++)
+            {
+              lower.ring().set_from_double(*L1, *lapack_numbers++);
+              L1 += lower.numColumns(); // to place next entry.
+            }
+          L++; // change to next column
+        }
+    }
+}
+
+void fill_lower_and_upper(double* lapack_numbers,  // column-major order
+                          DMat<M2::ARingCCC>& lower,
+                          DMat<M2::ARingCCC>& upper)
+// original matrix has size nrows x ncols
+// lapack_numbers is an array of this size (*2)
+// result: lower: size: nrows x min(nrows, ncols)
+// result: upper: size min x ncols
+//
+// lapack_numbers is in column major form
+// lower and upper are in row major form
+{
+  // At this point, lower and upper should be zero matrices.
+  M2_ASSERT(MatrixOppies::isZero(lower));
+  M2_ASSERT(MatrixOppies::isZero(upper));
+
+  auto L = lower.rowMajorArray();
+  auto U = upper.rowMajorArray();
+
+  for (size_t c=0; c<upper.numColumns(); c++)
+    {
+      auto U1 = U;
+      for (size_t r=0; r<=c; r++)
+        {
+          if (r >= upper.numRows()) break;
+          double re = *lapack_numbers++;
+          double im = *lapack_numbers++;
+          upper.ring().set_from_doubles(*U1, re, im);
+          U1 += upper.numColumns();
+        }
+      U++; // change to next column
+
+      if (c < lower.numColumns())
+        {
+          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          L += lower.numColumns(); // pointing to entry right below diagonal
+          auto L1 = L; // will increment by lower.numRows() each loop here
+          for (size_t r=c+1; r<lower.numRows(); r++)
+            {
+              double re = *lapack_numbers++;
+              double im = *lapack_numbers++;
+              lower.ring().set_from_doubles(*L1, re, im);
+              L1 += lower.numColumns(); // to place next entry.
+            }
+          L++; // change to next column
+        }
+    }
+}
+
 /*
 void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingRRR>& result)
 {
@@ -179,39 +271,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
   dgetrf_(&rows, &cols, copyA,
           &rows, perm, &info);
 
-  /* set the lower triangular matrix L */
-  gmp_RR vals = L->array();
-  int loc = 0;
-  for (int j=0; j<min; j++) {
-    for (int i=0; i<rows; i++) {
-      assert(vals < L->array() + L->numRows() * L->numColumns());
-      if (i > j) {
-        mpfr_set_d(vals++,copyA[loc++], GMP_RNDN);
-      } else if (i == j) {
-        mpfr_set_si(vals++, 1, GMP_RNDN);
-        loc++;
-      } else {
-        mpfr_set_si(vals++, 0, GMP_RNDN);
-        loc++;
-      }
-    }
-  }
-
-  /* set the upper triangular matrix U */
-  vals = U->array();
-  loc = 0;
-  for (int j=0; j<cols; j++) {
-    for (int i=0; i<min; i++) {
-      assert(vals < U->array() + U->numRows() * U->numColumns());
-      if (i <= j) {
-        mpfr_set_d(vals++, copyA[loc++], GMP_RNDN);
-      } else {
-        mpfr_set_si(vals++, 0, GMP_RNDN);
-        loc ++;
-      }
-    }
-    loc += (rows-min);;
-  }
+  fill_lower_and_upper(copyA, *L, *U);
 
   for (int i=0; i<rows; i++) result->array[i] = i;
   for (int i=0; i<min; i++)
@@ -234,85 +294,6 @@ M2_arrayintOrNull Lapack::LU(const LMatrixRR *A,
   return result;
 #endif
 }
-
-#if 0
-M2_RRR Lapack::det(const LMatrixRR *A)
-{
-#if !LAPACK
-  ERROR("lapack not present");
-  return NULL;
-#else
-  int rows = static_cast<int>(A->numRows());
-  int cols = static_cast<int>(A->numColumns());
-  int info;
-  int min = (rows <= cols) ? rows : cols;
-  M2_arrayint result = M2_makearrayint(rows);
-  int *perm = newarray_atomic(int, min);
-
-  LapackDoubles copyA = make_lapack_array(*A);
-
-  L->resize(rows, min);
-  U->resize(min, cols);
-
-  dgetrf_(&rows, &cols, copyA,
-          &rows, perm, &info);
-
-  /* set the lower triangular matrix L */
-  gmp_RR vals = L->array();
-  int loc = 0;
-  for (int j=0; j<min; j++) {
-    for (int i=0; i<rows; i++) {
-      assert(vals < L->array() + L->numRows() * L->numColumns());
-      if (i > j) {
-        mpfr_set_d(vals++,copyA[loc++], GMP_RNDN);
-      } else if (i == j) {
-        mpfr_set_si(vals++, 1, GMP_RNDN);
-        loc++;
-      } else {
-        mpfr_set_si(vals++, 0, GMP_RNDN);
-        loc++;
-      }
-    }
-  }
-
-  /* set the upper triangular matrix U */
-  vals = U->array();
-  loc = 0;
-  for (int j=0; j<cols; j++) {
-    for (int i=0; i<min; i++) {
-      assert(vals < U->array() + U->numRows() * U->numColumns());
-      if (i <= j) {
-        mpfr_set_d(vals++, copyA[loc++], GMP_RNDN);
-      } else {
-        mpfr_set_si(vals++, 0, GMP_RNDN);
-        loc ++;
-      }
-    }
-    loc += (rows-min);;
-  }
-
-  for (int i=0; i<rows; i++) result->array[i] = i;
-  for (int i=0; i<min; i++)
-    {
-      int thisloc = perm[i]-1;
-      int tmp = result->array[thisloc];
-      result->array[thisloc] = result->array[i];
-      result->array[i] = tmp;
-    }
-
-  deletearray(copyA);
-  deletearray(perm);
-
-  if (info < 0)
-    {
-      ERROR("argument passed to dgetrf had an illegal value");
-      return 0;
-    }
-
-  return result;
-#endif
-}
-#endif
 
 bool Lapack::solve(const LMatrixRR *A, /* read only */
                    const LMatrixRR *b, /* read only */
@@ -360,11 +341,7 @@ bool Lapack::solve(const LMatrixRR *A, /* read only */
 
   // Now set x
   x->resize(size, bsize);
-  gmp_RR vals = x->array();
-  long len = size*bsize;
-  double *p = copyb;
-  for (long i=0; i<len; i++)
-    mpfr_set_d(vals++, *p++, GMP_RNDN);
+  fill_from_lapack_array(copyb, *x);
 
   if (info > 0)
     {
@@ -999,43 +976,7 @@ M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
     }
   else
     {
-      // set L
-      LMatrixCC::ElementType* elemsL = L->array();
-      int loc = 0;
-      for (int j=0; j<min; j++) {
-        for (int i=0; i<rows; i++) {
-          LMatrixCC::ElementType* val = elemsL++;
-          if (i > j) {
-            mpfr_set_d(&val->re, copyA[loc], GMP_RNDN);
-            mpfr_set_d(&val->im, copyA[loc+1], GMP_RNDN);
-          } else if (i == j) {
-            mpfr_set_si(&val->re, 1, GMP_RNDN);
-            mpfr_set_si(&val->im, 0, GMP_RNDN);
-          } else {
-            mpfr_set_si(&val->re, 0, GMP_RNDN);
-            mpfr_set_si(&val->im, 0, GMP_RNDN);
-          }
-          loc += 2;
-        }
-      }
-
-      // set U
-      LMatrixCC::ElementType* elemsU = U->array();
-      loc = 0;
-      for (int j=0; j<cols; j++) {
-        for (int i=0; i<min; i++) {
-          LMatrixCC::ElementType* val = elemsU++;
-          if (i > j) {
-            mpfr_set_si(&val->re, 0, GMP_RNDN);
-            mpfr_set_si(&val->im, 0, GMP_RNDN);
-          } else {
-            mpfr_set_d(&val->re, copyA[loc], GMP_RNDN);
-            mpfr_set_d(&val->im, copyA[loc+1], GMP_RNDN);
-          }
-          loc += 2;
-        }
-        loc += 2*(rows-min);
-      }
+      fill_lower_and_upper(copyA, *L, *U);
 
       for (int i=0; i<rows; i++) result->array[i] = i;
       for (int i=0; i<min; i++)
