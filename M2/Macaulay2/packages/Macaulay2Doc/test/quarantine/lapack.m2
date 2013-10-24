@@ -1,4 +1,4 @@
-printingAccuracy=1
+printingAccuracy=6
 diag = method()
 diag(ZZ,ZZ,List) := (a,b,L) -> (
      R := ring L#0;

@@ -407,11 +407,9 @@ bool Lapack::eigenvalues(const LMatrixRR *A, LMatrixCC *eigvals)
   else
     {
       eigvals->resize(size, 1);
-      LMatrixCC::ElementType* elems = eigvals->array();
-      for (int i = 0; i < size; i++) {
-        mpfr_set_d(&elems[i].re, real[i], GMP_RNDN);
-        mpfr_set_d(&elems[i].im, imag[i], GMP_RNDN);
-      }
+      LMatrixCC::ElementType* elems = eigvals->rowMajorArray();
+      for (int i = 0; i < size; i++) 
+        eigvals->ring().set_from_doubles(elems[i], real[i], imag[i]);
     }
 
   deletearray(copyA);
@@ -446,6 +444,7 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   char dont = 'N';
   char doit = 'V';
   int wsize = 4*size;
+
   double *workspace = newarray_atomic(double, wsize);
   int info;
 
@@ -454,7 +453,8 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
   double *imag = newarray_atomic(double,size); // imaginary components
   double *eigen = newarray_atomic(double,size*size); // eigvecs
 
-  dgeev_(&dont, &doit,
+  dgeev_(&dont, /* left e-vectors */
+         &doit, /* right e-vectors */
          &size, copyA, &size,
          real,
          imag,
@@ -477,20 +477,25 @@ bool Lapack::eigenvectors(const LMatrixRR *A,
       // Make the complex arrays of eigvals and eigvecs
       eigvals->resize(size, 1);
       eigvecs->resize(size, size);
-      LMatrixCC::ElementType* elems = eigvecs->array();
+      //      LMatrixCC::ElementType* elems = eigvecs->array();
+      LMatrixCC::ElementType* elems = eigvals->rowMajorArray();
       for (int j = 0; j < size; j++) {
-        mpfr_set_d(&eigvals->array()[j].re, real[j], GMP_RNDN);
-        mpfr_set_d(&eigvals->array()[j].im, imag[j], GMP_RNDN);
+        eigvals->ring().set_from_doubles(elems[j], real[j], imag[j]);
+        auto end = eigvecs->columnEnd(j);
+        
+          //mpfr_get_d(&(*a), GMP_RNDN);       
         int loc = j*size;
         if (imag[j] == 0) {
-          for (int i = 0; i < size; i++)
-            mpfr_set_d(&elems[loc+i].re, eigen[loc+i], GMP_RNDN);
+          auto a=eigvecs->columnBegin(j);
+          for (int i=0; a!=end; ++a,++i)
+            eigvecs->ring().real_ring().set_from_double((*a).re, eigen[loc+i]);
         } else if (imag[j] > 0) {
-          for (int i = 0; i < size; i++) {
-            mpfr_set_d(&elems[loc+i].re, eigen[loc+i], GMP_RNDN);
-            mpfr_set_d(&elems[loc+i].im, eigen[loc+size+i], GMP_RNDN);
-            mpfr_set_d(&elems[loc+size+i].re, eigen[loc+i], GMP_RNDN);
-            mpfr_set_d(&elems[loc+size+i].im, -eigen[loc+size+i], GMP_RNDN);
+          auto a=eigvecs->columnBegin(j);
+          auto b=eigvecs->columnBegin(j+1);
+          for (int i=0; a!=end; ++a,++b,++i)
+          {
+            eigvecs->ring().set_from_doubles(*a, eigen[loc+i], eigen[loc+size+i]);
+            eigvecs->ring().set_from_doubles(*b, eigen[loc+i], -eigen[loc+size+i]);
           }
         }
       }
