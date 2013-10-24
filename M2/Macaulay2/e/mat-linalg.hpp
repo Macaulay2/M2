@@ -290,9 +290,9 @@ namespace MatrixOppies
 
     ElementType tmp;
     A.ring().init(tmp);
-    // WARNING: this routine expects the result matrix to be in COLUMN MAJOR ORDER
-    for (size_t j = 0; j<B.numColumns(); j++)
-      for (size_t i = 0; i<A.numRows(); i++)
+    // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
+    for (size_t i = 0; i<A.numRows(); i++)
+      for (size_t j = 0; j<B.numColumns(); j++)
         {
           ConstIterator i1 = A.rowBegin(i);
           ConstIterator iend = A.rowEnd(i);
