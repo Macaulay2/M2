@@ -1,3 +1,13 @@
+*.m2 loaded by ../NumericalAlgebraicGeometry.m2 :
+
+     track					-- core homotopy tracking routines
+     refine 					-- refining/sharpening routines 
+     BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
+     0-dim-methods				-- routines for 0-dim solution sets 
+     decompoistion				-- numerical irreducible decomposition
+     witness-set				-- witness set manipulation routines 
+     positive-dim-methods			-- routines for positive-dimensional solution sets 
+     
 doc.m2		-- documentation
 
 SYSTEMS/	-- examples of systems of polynomials: 
