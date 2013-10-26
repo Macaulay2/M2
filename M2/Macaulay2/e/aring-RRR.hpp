@@ -238,6 +238,14 @@ namespace M2 {
         set_zero(a);
     }
 
+    void abs(ElementType& result, const ElementType& a) const
+    {
+      if (mpfr_cmp_si(&a, 0) < 0)
+        negate(result, a);
+      else
+        set(result, a);
+    }
+
   private:
       unsigned long mPrecision;
   };

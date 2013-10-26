@@ -504,7 +504,7 @@ namespace M2 {
                                        ring_elem &resultS) const
   {
     const Ring *S = this;
-    fprintf(stderr, "calling promote\n");
+    //    fprintf(stderr, "calling promote\n");
     namespace RP = RingPromoter;
     if (R == globalZZ)
       {
@@ -708,6 +708,21 @@ namespace M2 {
     R->to_ring_elem(result,a);
     R->clear(a);
     return result;
+  }
+
+  template<>
+  inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    ARingRRR::ElementType a;
+    ElementType b;
+    R->init(a); // will be the norm
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp(&a, norm)>0)
+      mpfr_set(norm, &a, GMP_RNDN);
+    R->clear(b);
+    R->clear(a);
   }
 
   template<>

@@ -3,6 +3,16 @@
 #include <M2/config.h>
 #include <iostream>
 
+// lapack arrays are all arrays of doubles, and are
+// placed in column-major order, as that is what lapack uses.
+// Lapack arrays of complex numbers are done in the same way, except
+// they hace twice the length, and 2 contiguous doubles are used to 
+// represent a complex value.
+// These arrays are grabbed via newarray_atomic, or newarray_atomic_clear
+// and should be freed via deletearray.
+
+typedef double *LapackDoubles;
+
 double* make_lapack_array(const DMat<M2::ARingRRR>& mat)
 // changing to RR and column-major order
 {
@@ -33,36 +43,6 @@ double* make_lapack_array(const DMat<M2::ARingCCC>& mat)
   }
   return result;
 }
-
-/*
-double* make_lapack_array(const DMat<CoefficientRingRRR>& mat)
-{
-  size_t len = mat.numRows() * mat.numColumns();
-  double *result = newarray_atomic(double, len);
-
-  const CoefficientRingRRR::ElementType *a = mat.array();
-  double *p = result;
-  for (size_t i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
-  return result;
-}
-
-double* make_lapack_array(const DMat<CoefficientRingCCC>& mat)
-{
-  size_t len = mat.numRows() * mat.numColumns();
-  double *result = newarray_atomic(double, 2*len);
-
-  const CoefficientRingCCC::ElementType *a = mat.array();
-  double *p = result;
-  for (size_t i=0; i<len; i++)
-    {
-      *p++ = mpfr_get_d(a->re, GMP_RNDN);
-      *p++ = mpfr_get_d(a->im, GMP_RNDN);
-      a++;
-    }
-  return result;
-}
-*/
 
 void fill_from_lapack_array(const double *lapack_array, DMat<M2::ARingRRR>& result)
 // from RR and column-major order
@@ -181,40 +161,6 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
         }
     }
 }
-
-/*
-void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingRRR>& result)
-{
-  size_t len = result.numRows() * result.numColumns();
-
-  CoefficientRingRRR::ElementType *a = result.array();
-  const double *p = lapack_array;
-  for (size_t i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
-}
-
-void fill_from_lapack_array(const double *lapack_array, DMat<CoefficientRingCCC>& result)
-{
-  size_t len = result.numRows() * result.numColumns();
-
-  CoefficientRingCCC::ElementType *a = result.array();
-  const double *p = lapack_array;
-  for (size_t i=0; i<len; i++)
-    {
-      mpfr_set_d(a->re, *p++, GMP_RNDN);
-      mpfr_set_d(a->im, *p++, GMP_RNDN);
-      a++;
-    }
-}
-*/
-
-//typedef DMat<CoefficientRingRR> LMatrixRR;
-
-// lapack arrays are all arrays of doubles.
-// these arrays are grabbed via newarray_atomic, or newarray_atomic_clear
-// and should be freed via deletearray.
-
-typedef double *LapackDoubles;
 
 /* void printmat(int N, int M, mpreal * A, int LDA)
 {
@@ -832,11 +778,11 @@ bool Lapack::least_squares(const LMatrixRR *A, const LMatrixRR *b, LMatrixRR *x)
       if (rows > cols) {
         // We conly need the first 'cols' rows of copyb
         int copyloc = 0;
-        int xloc = 0;
         for (int j = 0; j < bcols; j++) {
+          auto xj = x->columnBegin(j);
           copyloc = j*rows;
-          for (int i = 0; i < cols; i++) {
-            mpfr_set_d(&(x->array()[xloc++]), copyb[copyloc++], GMP_RNDN);
+          for (int i = 0; i < cols; i++, ++xj) {
+            x->ring().set_from_double(*xj, copyb[copyloc++]);
           }
         }
       } else {
@@ -918,11 +864,11 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
       x->resize(cols,bcols);
       if (rows > cols) {
         int copyloc = 0;
-        int xloc = 0;
         for (int j = 0; j < bcols; j++) {
+          auto xj = x->columnBegin(j);
           copyloc = j*rows;
-          for (int i = 0; i < cols; i++) {
-            mpfr_set_d(&(x->array()[xloc++]), copyb[copyloc++], GMP_RNDN);
+          for (int i = 0; i < cols; i++, ++xj) {
+            x->ring().set_from_double(*xj, copyb[copyloc++]);
           }
         }
       } else {
@@ -938,7 +884,6 @@ bool Lapack::least_squares_deficient(const LMatrixRR *A, const LMatrixRR *b, LMa
   return ret;
 #endif
 }
-
 
 M2_arrayintOrNull Lapack::LU(const LMatrixCC *A,
                               LMatrixCC *L,
@@ -1707,12 +1652,13 @@ bool Lapack::least_squares(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x)
       x->resize(cols,bcols);
       if (rows > cols) {
         int copyloc = 0;
-        int xloc = 0;
         for (int j = 0; j < bcols; j++) {
+          auto xj = x->columnBegin(j);
           copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++) {
-            mpfr_set_d(&(x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
-            mpfr_set_d(&(x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+          for (int i = 0; i < cols; i++, ++xj) {
+            double re = copyb[copyloc++];
+            double im = copyb[copyloc++];
+            x->ring().set_from_doubles(*xj, re, im);
           }
         }
       } else {
@@ -1796,10 +1742,12 @@ bool Lapack::least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMa
         int copyloc = 0;
         int xloc = 0;
         for (int j = 0; j < bcols; j++) {
+          auto xj = x->columnBegin(j);
           copyloc = 2*j*rows;
-          for (int i = 0; i < cols; i++) {
-            mpfr_set_d(&(x->array()[xloc]).re, copyb[copyloc++], GMP_RNDN);
-            mpfr_set_d(&(x->array()[xloc++]).im, copyb[copyloc++], GMP_RNDN);
+          for (int i = 0; i < cols; i++, ++xj) {
+            double re = copyb[copyloc++];
+            double im = copyb[copyloc++];
+            x->ring().set_from_doubles(*xj, re, im);
           }
         }
       } else {
