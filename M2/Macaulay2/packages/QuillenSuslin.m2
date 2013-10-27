@@ -30,7 +30,7 @@ newPackage(
 	     "acceptance date" => "2013-09-18",
 	     "published article URI" => "http://www.j-sag.org/Volume5/jsag-5-2013.pdf",
 	     "published code URI" => "http://www.j-sag.org/Volume5/QuillenSuslin.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
 	     "release at publication" => "8a3b2962b97153977eeaf6f92b5f48e246dd8e69",	    -- git commit number in hex
 	     "version at publication" => "1.7",
 	     "volume number" => "5",

@@ -28,7 +28,7 @@ newPackage(
 	     "acceptance date" => "2013-05-16",
 	     "published article URI" => "http://j-sag.org/Volume5/jsag-3-2013.pdf",
 	     "published code URI" => "http://j-sag.org/Volume5/InvariantRing.m2",
-	     "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/InvariantRing.m2",
 	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
 	     "version at publication" => "1.1.0",
 	     "volume number" => "5",
