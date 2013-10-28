@@ -253,7 +253,7 @@ inverse MutableMatrix := (A) -> (
 nullSpace = method()
 nullSpace(MutableMatrix) := (M) -> (
      R := ring M;
-     map(R, rawLinAlgNullSpace raw M)
+     map(R, rawLinAlgNullSpace(raw M, true))
      )
 
 MutableMatrix ^ ZZ := (A, r) -> (

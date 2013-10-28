@@ -279,6 +279,7 @@ namespace MatrixOppies
             const DMat<RT>& B, 
             DMat<RT>& result_product)
   {
+    printf("entering dmat mult\n");
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
@@ -504,29 +505,34 @@ namespace MatrixOppies
                    const DMatZZpFlint& B, 
                    DMatZZpFlint& result_product) 
   {
-    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
-    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
+    printf("entering DMatZZpFlint mult\n");
+    //    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
+    //    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
     // The A1 and B1 on the next line are switched because the memory layout expected
     // is the transpose of what we have for DMat.
-    nmod_mat_mul(result_product.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
+    nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
   }
 
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           DMatZZpFlint& result_nullspace) 
   {
-    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_solve doesn't declare params const
-    long rank = nmod_mat_nullspace(result_nullspace.nmod_mat(), A1.nmod_mat());
-    return (A.numColumns() - rank);
+    printf("entering DMatZZpFLINT nullSpace\n");
+    long rank = nmod_mat_rank(A.nmod_mat());
+    result_nullspace.resize(A.numColumns(), A.numColumns() - rank); // the largest the answer could be
+    long rank2 = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
+    M2_ASSERT(rank == rank2);
+    return (A.numColumns() - rank2);
   }
   
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           bool right_side, 
                           DMatZZpFlint& result_nullspace)
   {
+    printf("entering DMatZZpFLINT nullSpace(3 arg)\n");
     //TODO: WRITE ME
     if (not right_side)
       throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,true,result_nullspace);
+    return nullSpace(A,result_nullspace);
   }
   
   inline bool solveLinear(const DMatZZpFlint& A, 
