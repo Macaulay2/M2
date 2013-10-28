@@ -704,6 +704,19 @@ testMult = (R) -> (
   testMultAddSub R;
   )
 
+testInverse = (R) -> (
+    m1 := mutableMatrix(R,0,0);
+    assert(inverse m1 == 0);
+    m2 := mutableMatrix(R,1,1);
+    --inverse m2 -- gives an unknown engine error
+    for i from 1 to 20 do (
+        for j from 1 to 5 do (
+            (S,Sinv) := randomFullRank(R,i);
+            assert(S*Sinv == mutableIdentity(R,i));
+            assert(Sinv*S == mutableIdentity(R,i));
+        ))
+    )
+
 randomMatrixWithKernel = (R, ncols, rk) -> (
     -- returns a pair (M, X), such that M*X == 0, and the
     -- columns of X are a basis for ker M.
@@ -859,6 +872,7 @@ TEST ///
   testMult R
   testNullspace R;
   testRank R;
+  testInverse R;
 ///
 
 TEST ///
@@ -868,6 +882,7 @@ TEST ///
   testMult R
   testNullspace R;
   testRank R;
+  testInverse R;
 ///
 
 TEST ///
@@ -877,6 +892,7 @@ TEST ///
   testMult R
   testNullspace R;
   testRank R;
+  testInverse R;
 ///
 
 TEST ///
@@ -886,6 +902,7 @@ TEST ///
   testMult R
   testNullspace R;
   testRank R;
+  testInverse R;  
 ///
 
 
