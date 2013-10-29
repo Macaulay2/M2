@@ -325,6 +325,12 @@ namespace M2 {
       // map->get_ring()->from_BigReal(&f, result);
     }
 
+    void set_from_doubles(ElementType& result, double re, double im) const
+    {
+      result.re = re;
+      result.im = im;
+    }
+
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const
     {
       if (mpfr_cmp_d(epsilon, fabs(a.re)) > 0)

@@ -11,6 +11,8 @@
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
+#include "aring-RR.hpp"
+#include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zzp.hpp"
@@ -30,14 +32,10 @@ typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 #endif
 
-#if 1
-  typedef DMat<M2::ARingRRR> DMatRRR; 
-  typedef DMat<M2::ARingCCC> DMatCCC; 
-#else 
-#include "coeffrings.hpp"
-  typedef DMat<CoefficientRingRRR> DMatRRR;
-  typedef DMat<CoefficientRingCCC> DMatCCC;
-#endif
+typedef DMat<M2::ARingRRR> DMatRRR; 
+typedef DMat<M2::ARingCCC> DMatCCC; 
+typedef DMat<M2::ARingRR> DMatRR; 
+typedef DMat<M2::ARingCC> DMatCC; 
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
@@ -702,8 +700,154 @@ namespace MatrixOppies
   }
 #endif
 
+  ////////
+  // RR //
+  ////////
+
+  inline bool solve(const DMatRR& A, 
+                    const DMatRR& B, 
+                    DMatRR& X)
+  {
+    return Lapack::solve(&A, &B, &X);
+  }
+
+  inline bool nullspaceU(const DMatRR& A, 
+                         DMatRR& X)
+  {
+    DMatLU<M2::ARingRR>::nullspaceU(&A, &X);
+    return true;
+  }
+
+  inline M2_arrayintOrNull LU(const DMatRR& A, 
+                              DMatRR& L,
+                              DMatRR& U)
+  {
+    return Lapack::LU(&A, &L, &U);
+  }
+
+  inline bool eigenvaluesHermitian(const DMatRR& A, 
+                            DMatRR& eigenvals)
+  {
+    return Lapack::eigenvalues_symmetric(&A, &eigenvals);
+  }
+
+  inline bool eigenvalues(const DMatRR& A, 
+                          DMatCC& eigenvals)
+  {
+    return Lapack::eigenvalues(&A, &eigenvals);
+  }
+
+  inline bool eigenvectorsHermitian(const DMatRR& A, 
+                                    DMatRR& eigenvals,
+                                    DMatRR& eigenvecs)
+  {
+    return Lapack::eigenvectors_symmetric(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool eigenvectors(const DMatRR& A, 
+                           DMatCC& eigenvals,
+                           DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool leastSquares(const DMatRR& A, 
+                           const DMatRR& B, 
+                           DMatRR& X,
+                           bool assume_full_rank)
+  {
+    if (assume_full_rank)
+      return Lapack::least_squares(&A,&B,&X);
+    else
+      return Lapack::least_squares_deficient(&A,&B,&X);
+  }
+
+  inline bool SVD(const DMatRR& A, 
+           DMatRR& Sigma, 
+           DMatRR& U,
+           DMatRR& Vt,
+           int strategy)
+  {
+    if (strategy == 1)
+      return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+    return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  ////////
+  // CC //
+  ////////
+
+  inline bool solve(const DMatCC& A, 
+                    const DMatCC& B, 
+                    DMatCC& X)
+  {
+    return Lapack::solve(&A, &B, &X);
+  }
+
+  inline bool nullspaceU(const DMatCC& A, 
+                  DMatCC& X)
+  {
+    DMatLU<DMatCC::CoeffRing>::nullspaceU(&A, &X);
+    return true;
+  }
+
+  inline M2_arrayintOrNull LU(const DMatCC& A, 
+                              DMatCC& L,
+                              DMatCC& U)
+  {
+    return Lapack::LU(&A, &L, &U);
+  }
+
+  inline bool eigenvaluesHermitian(const DMatCC& A, 
+                            DMatRR& eigenvals)
+  {
+    return Lapack::eigenvalues_hermitian(&A, &eigenvals);
+  }
+
+  inline bool eigenvalues(const DMatCC& A, 
+                          DMatCC& eigenvals)
+  {
+    return Lapack::eigenvalues(&A, &eigenvals);
+  }
+
+  inline bool eigenvectorsHermitian(const DMatCC& A, 
+                                    DMatRR& eigenvals,
+                                    DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool eigenvectors(const DMatCC& A, 
+                           DMatCC& eigenvals,
+                           DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool leastSquares(const DMatCC& A, 
+                           const DMatCC& B, 
+                           DMatCC& X,
+                           bool assume_full_rank)
+  {
+    if (assume_full_rank)
+      return Lapack::least_squares(&A,&B,&X);
+    else
+      return Lapack::least_squares_deficient(&A,&B,&X);
+  }
+
+  inline bool SVD(const DMatCC& A, 
+           DMatRR& Sigma, 
+           DMatCC& U,
+           DMatCC& Vt,
+           int strategy)
+  {
+    if (strategy == 1)
+      return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+    return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
   /////////
-  // RRR //
+  // RRR // TODO: rewrite not using lapack
   /////////
 
   inline bool solve(const DMatRRR& A, 
@@ -792,7 +936,7 @@ namespace MatrixOppies
   }
 
   /////////
-  // CCC //
+  // CCC //  TODO: rewrite not using lapack
   /////////
 
   inline bool solve(const DMatCCC& A, 
