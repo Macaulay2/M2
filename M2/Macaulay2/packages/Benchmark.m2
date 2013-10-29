@@ -372,6 +372,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
     -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.54816 seconds
     -- gbB148: gb of Bayesian graph ideal #148: 19.8732 seconds
 
+-- beginning computation Mon Oct 28 13:29:27 EDT 2013
+-- Linux dublin.math.ias.edu 2.6.32-358.11.1.el6.x86_64 #1 SMP Wed Jun 12 03:01:25 EDT 2013 x86_64 x86_64 x86_64 GNU/Linux
+-- Intel(R) Xeon(R) CPU X5460 @ 3.16GHz  GenuineIntel  cpu MHz 3159.040  
+-- Macaulay2 1.6, compiled with gcc 4.4.7
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: .148295 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 2.50223 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 19.7324 seconds
+
 -- beginning computation Thu Jan  4 20:25:24 EST 2007
 -- Darwin bayer.math.columbia.edu 8.8.1 Darwin Kernel Version 8.8.1: Mon Sep 25 19:42:00 PDT 2006; root:xnu-792.13.8.obj~1/RELEASE_I386 i386 i386 iMac5,1 Darwin
 -- Macaulay 2 0.9.96, compiled with gcc 4.0.1
