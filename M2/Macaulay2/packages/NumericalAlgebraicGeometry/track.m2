@@ -22,6 +22,7 @@ track = method(TypicalValue => List, Options =>{
 	  -- end of path
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	  InfinityThreshold => null, -- used to tell if the path is diverging
+	  SingularConditionNumber=>null, -- threshold for the condition number of the jacobian
 	  -- projectivize and normalize
 	  Normalize => null, -- normalize in the Bombieri-Weyl norm
 	  Projectivize => null, 
@@ -600,13 +601,15 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  << "Computing time:" << currentTime() - compStartTime << endl; 
 	  );
      apply(ret, s->(
-	       p := point (
-	       	    if HISTORY then drop(toList s, -1)
-	       	    else toList s
-	       	    );
-	       if PT=!=null then p.Tracker=PT;
-	       p
-	       ))
+	     p := point (
+		 if HISTORY then drop(toList s, -1)
+		 else toList s
+		 );
+	     if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
+	     then p.SolutionStatus = Singular;
+	     if PT=!=null then p.Tracker=PT;
+	     p
+	     ))
      )
 
 -- "track" should eventually go through "trackHomotopy"

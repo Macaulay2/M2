@@ -65,7 +65,7 @@ regeneration List := List => o -> F -> (
 			 regPoints := select(targetPoints, p->p.SolutionStatus==Regular);
 			 --print (sing,reg);
 		    	 if o.Output == Regular then targetPoints = regPoints 
-		    	 else targetPoints = regPoints | targetPoints_sing;
+		    	 else targetPoints = regPoints | sing;
 			 );
 		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), 
 			 selectUnique(targetPoints, Tolerance=>1e-2));
@@ -84,7 +84,7 @@ regeneration List := List => o -> F -> (
 	  if f == first F then ( -- if the first equation is being processed 
 	       n := numgens R;
 	       S := randomSlice(n-1,n);
-     	       c1 = {witnessSet(ideal f, S, solveSystem( {f} | sliceEquations(S,R)))}; 
+     	       c1 = {witnessSet( ideal f, S, solveSystem({f}|sliceEquations(S,R),PostProcess=>false) )}; 
 	       );
 	  );
      DEFAULT.Software = saveDEFAULTsoftware;
@@ -108,7 +108,13 @@ decompose WitnessSet := (W) -> (
 	  cs#c = cs#c | cs#c';
 	  cs#c' = {};
 	  );	     	
-     findComponent := (pt) -> ( for i to #cs-1  do if any(cs#i, p->areEqual((points W)#p,pt)) then return i; return null );
+     findComponent := (pt) -> ( 
+	 for i to #cs-1  do (
+	     if any(cs#i, p->areEqual((points W)#p,pt)) 
+	     then return i; 
+	     );
+	 return null 
+	 );
      done := all(new List from cs, c->#c==0);
      n'misses := 0;
      while not done do (
