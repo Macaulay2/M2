@@ -958,7 +958,7 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
 template<typename T>
 void MutableMat<T>::clean(gmp_RR epsilon)
 {
-  MatrixOppies::clean(epsilon, *this);
+  MatrixOppies::clean(epsilon, mat);
 }
 
 template<typename T>

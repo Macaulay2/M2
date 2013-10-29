@@ -953,7 +953,27 @@ TEST ///
   testInverse R;  
 ///
 
-
+-----------------------------------
+-- tests over approximate fields --
+-----------------------------------
+testClean = (R) -> (
+    -- R should be an RR or CC
+    M := mutableMatrix(R, 10, 10);
+    fillMatrix M;
+    N := M^4 - M*M*M^2;
+    for i from 0 to numRows N - 1 do N_(i,i) = 1.0 + N_(i,i);
+    assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    )
+testNorm = (R) -> (
+    -- R should be an RR or CC
+    M := mutableMatrix(R, 10, 10);
+    fillMatrix M;
+    a := norm matrix M;
+    b := norm M;
+    ans := (flatten entries M)/abs//max;
+    assert(a == ans);
+    assert(b == ans);
+    )
 
 
 
