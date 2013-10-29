@@ -8,6 +8,7 @@
 ///////////////////////////////////////////////////////
 
 #include "aring-RR.hpp"
+#include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zz-gmp.hpp"
@@ -73,6 +74,24 @@ namespace M2 {
                         ARingRRR::ElementType& fS)
   {
     S.set_from_double(fS, fR);
+    return true;
+  }
+
+  inline bool mypromote(const ARingRR& R,
+                        const ARingCC& S,
+                        const ARingRR::ElementType& fR,
+                        ARingCC::ElementType& fS)
+  {
+    S.set_from_doubles(fS, fR, 0);
+    return true;
+  }
+
+  inline bool mypromote(const ARingRR& R,
+                        const ARingCCC& S,
+                        const ARingRR::ElementType& fR,
+                        ARingCCC::ElementType& fS)
+  {
+    S.set_from_doubles(fS, fR, 0);
     return true;
   }
 

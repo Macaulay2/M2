@@ -325,6 +325,18 @@ namespace M2 {
       // map->get_ring()->from_BigReal(&f, result);
     }
 
+    gmp_CC toBigComplex(const ElementType& a) const
+    {
+      gmp_CC result = getmemstructtype(gmp_CC);
+      result->re = getmemstructtype(gmp_RR);
+      result->im = getmemstructtype(gmp_RR);
+      mpfr_init2(result->re,get_precision());
+      mpfr_init2(result->im,get_precision());
+      mpfr_set_d(result->re, a.re, GMP_RNDN);
+      mpfr_set_d(result->im, a.im, GMP_RNDN);
+      return result;
+    }
+
     void set_from_doubles(ElementType& result, double re, double im) const
     {
       result.re = re;

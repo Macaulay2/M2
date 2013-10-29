@@ -96,15 +96,23 @@ checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
 ----------------
 -- Test LUdecomposition -----
 ----------------
-A = RR
-M = mutableMatrix random(A^4,A^2)
+R = RR_100
+M = matrix mutableMatrix random(R^4,R^2)
 
-M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
-assert(checkLU M == 0)
+--M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
+assert(checkLU M < 1e-15)
 M = transpose M
-assert(checkLU M == 0)
+assert(checkLU M < 1e-15)
 M = matrix{{1.5,2.0},{1.3,1.7}}
-assert(checkLU M == 0)
+assert(
+    checkLU M 
+    < 1e-15)
+
+A = mutableMatrix(RR,5,4, Dense=>true)
+fillMatrix (A,15);
+assert(
+    checkLU matrix A 
+    < 1e-15)
 
 A = mutableMatrix(CC,5,4, Dense=>true)
 fillMatrix(A,8);

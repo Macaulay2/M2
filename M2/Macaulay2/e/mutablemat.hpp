@@ -10,6 +10,8 @@
 //class Ring_RRR;
 namespace M2 {
   class ARingZZp;
+  class ARingRR;
+  class ARingCC;
   class ARingRRR;
   class ARingCCC;
 };
@@ -28,6 +30,22 @@ template<typename RT> struct EigenTypes
   typedef RT EigenvectorType;
   typedef RT HermitianEigenvalueType;
   typedef RT HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingRR>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingRR HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingCC>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingCC HermitianEigenvectorType;
 };
 
 template<> struct EigenTypes<Ring_RRR>

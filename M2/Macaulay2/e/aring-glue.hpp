@@ -539,6 +539,19 @@ namespace M2 {
       case M2::ring_ZZpFfpack: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
+    case M2::ring_RR:
+      switch (S->ringID()) {
+      case M2::ring_RR: return RP::promoter<ARingRR,ARingRR>(R,S,fR,resultS);
+      case M2::ring_RRR: return RP::promoter<ARingRR,ARingRRR>(R,S,fR,resultS);
+      case M2::ring_CC: return RP::promoter<ARingRR,ARingCC>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingRR,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_CC:
+      switch (S->ringID()) {
+      case M2::ring_CC: return RP::promoter<ARingCC,ARingCC>(R,S,fR,resultS);
+      default: return false;
+      }
     case M2::ring_RRR:
       switch (S->ringID()) {
       case M2::ring_RRR: return RP::promoter<ARingRRR,ARingRRR>(R,S,fR,resultS);
@@ -711,6 +724,37 @@ namespace M2 {
   }
 
   template<>
+  inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    ARingRR::ElementType a;
+    ElementType b;
+    R->init(a); // will be the norm
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp_d(norm,a)<0)
+      mpfr_set_d(norm, a, GMP_RNDN);
+    R->clear(b);
+    R->clear(a);
+  }
+
+  template<>
+  inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    const ARingRR& realR = R->real_ring();
+    ARingRR::ElementType a;
+    ElementType b;
+    realR.init(a);
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp_d(norm,a)<0)
+      mpfr_set_d(norm, a, GMP_RNDN);
+    R->clear(b);
+    realR.clear(a);
+  }
+
+  template<>
   inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   {
     ARingRRR::ElementType a;
@@ -745,6 +789,18 @@ namespace M2 {
   inline unsigned long ConcreteRing<RingType>::get_precision() const
   {
     return 0;
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingRR>::get_precision() const
+  {
+    return R->get_precision();
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingCC>::get_precision() const
+  {
+    return R->get_precision();
   }
 
   template<>

@@ -29,8 +29,9 @@
 
 #include "aring.hpp"
 #include "aring-glue.hpp"
-#include "aring-RRR.hpp"
 #include "aring-RR.hpp"
+#include "aring-CC.hpp"
+#include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 unsigned long IM2_Ring_hash(const Ring *R)
 {
@@ -86,16 +87,16 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-  // if (prec <= 53)
-  //   return M2::ConcreteRing<M2::ARingRR>::create(new M2::ARingRR());
+  if (prec <= 53)
+    return M2::ConcreteRing<M2::ARingRR>::create(new M2::ARingRR());
   return M2::ConcreteRing<M2::ARingRRR>::create(new M2::ARingRRR(prec));
-  //return RRR::create(prec);
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
 {
+  if (prec <= 53)
+    return M2::ConcreteRing<M2::ARingCC>::create(new M2::ARingCC());
   return M2::ConcreteRing<M2::ARingCCC>::create(new M2::ARingCCC(prec));
-  //return CCC::create(prec);
 }
 
 const Ring *IM2_Ring_trivial_polyring()
@@ -638,10 +639,20 @@ gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
 {
   const Ring* R = a->get_ring();
-  auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC>*>(R);
-  if (RCC != 0)
+  auto RCCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC>*>(R);
+  if (RCCC != 0)
     {
       M2::ARingCCC::ElementType b;
+      RCCC->ring().init(b);
+      RCCC->ring().from_ring_elem(b, a->get_value());
+      gmp_CC result = RCCC->ring().toBigComplex(b);
+      RCCC->ring().clear(b);
+      return result;
+    }
+  auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCC>*>(R);
+  if (RCC != 0)
+    {
+      M2::ARingCC::ElementType b;
       RCC->ring().init(b);
       RCC->ring().from_ring_elem(b, a->get_value());
       gmp_CC result = RCC->ring().toBigComplex(b);
