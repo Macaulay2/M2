@@ -46,6 +46,9 @@ namespace M2 {
   inline bool get_from_BigComplex(const ARingCCC& R, ARingCCC::ElementType& a, gmp_CC b)
   {return R.set_from_BigComplex(a,b); }
 
+  inline bool get_from_BigComplex(const ARingCC& R, ARingCC::ElementType& a, gmp_CC b)
+  {return R.set_from_BigComplex(a,b); }
+
   // Promote an element of one ring to another.
   // Given a "natural and canonical" map R --> S (depends on the context)
   // and an element fR of R, set result_fS to be the image of fR under this map.
