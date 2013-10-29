@@ -743,6 +743,7 @@ const RingElement* MutableMat<T>::determinant() const
 template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
+  M2_ASSERT(n_rows() == n_cols());
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
   bool val = MatrixOppies::inverse(mat, result->mat);
   if (!val)

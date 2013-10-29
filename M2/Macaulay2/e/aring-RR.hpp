@@ -174,7 +174,7 @@ namespace M2 {
     void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
       if(mpz_fits_sint_p(n)) {
-        int m = mpz_get_si(n); 
+        int m = static_cast<int>(mpz_get_si(n)); 
         power(result,a,m);
       } else throw exc::engine_error("expected small integer");
     }

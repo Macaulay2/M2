@@ -43,8 +43,6 @@ export {
    minimalPolynomial,
 --   nullSpace,
    invert,
-   rowRankProfile,
-   columnRankProfile,
    addMultipleTo,
    solveLinear,
    TransposeA,
@@ -138,11 +136,6 @@ isPrimeField Ring := (R) -> (
 --     result     
 --     )
 
-rowRankProfile = method()
-rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
-
-columnRankProfile = method()
-columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
 
 --nullSpace = method(Options => {RightSide=>true})
 --nullSpace(MutableMatrix) := opts -> (M) -> (
