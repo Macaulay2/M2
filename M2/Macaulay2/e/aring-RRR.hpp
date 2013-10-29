@@ -237,6 +237,14 @@ namespace M2 {
       if (mpfr_cmpabs(&a,epsilon) < 0)
         set_zero(a);
     }
+    void increase_norm(gmp_RR& norm, const ElementType& a) const
+    {
+      if (mpfr_cmpabs(&a, norm) > 0)
+        {
+          set(*norm, a);
+          abs(*norm,*norm);
+        }
+    }
 
     void abs(ElementType& result, const ElementType& a) const
     {

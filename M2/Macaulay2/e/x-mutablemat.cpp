@@ -974,8 +974,8 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon, MutableMatrix
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  //return M->clean(epsilon);
-  return NULL;
+  M->clean(epsilon);
+  return M;
 }
 
 static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
@@ -1012,6 +1012,7 @@ gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
+  return M->norm();
 #if 0
   gmp_RR nm = get_norm_start(p, M->get_ring());
   iterator *i = M->begin();

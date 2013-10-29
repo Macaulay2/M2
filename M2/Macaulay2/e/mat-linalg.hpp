@@ -270,6 +270,18 @@ namespace MatrixOppies
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
   }
 
+  template<typename T>
+  void clean(gmp_RR epsilon, T& mat)
+  {
+    throw exc::engine_error("'clean' not implemented for this kind of matrix over this ring");
+  }
+  
+  template<typename T>
+  void increase_norm(gmp_RR& nm, const T& mat)
+  {
+    throw exc::engine_error("'norm' not implemented for this kind of matrix over this ring");
+  }
+
   /////////////////////////////////
   // Generic functions for DMat ///
   /////////////////////////////////
@@ -763,6 +775,22 @@ namespace MatrixOppies
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
   }
 
+  inline void clean(gmp_RR epsilon, DMatRRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatRRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
+  }
+
   /////////
   // CCC //
   /////////
@@ -834,6 +862,22 @@ namespace MatrixOppies
     if (strategy == 1)
       return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  inline void clean(gmp_RR epsilon, DMatCCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatCCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
   }
 
 };

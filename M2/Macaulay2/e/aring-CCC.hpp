@@ -448,6 +448,15 @@ namespace M2 {
       mRRR.zeroize_tiny(epsilon,a.re);
       mRRR.zeroize_tiny(epsilon,a.im);
     }
+    void increase_norm(gmp_RR& norm, const ElementType& a) const
+    {
+      ARingRRR::ElementType n;
+      mRRR.init(n);
+      abs(n,a);
+      if (mpfr_cmp(&n, norm) > 0)
+        mRRR.set(*norm, n);
+      mRRR.clear(n);
+    }
   };
 
 }; // end namespace M2

@@ -720,6 +720,10 @@ public:
                                   const MutableMatrix* B);
 
   virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const;
+
+  // Special routines for approximate fields
+  virtual void clean(gmp_RR epsilon);  // modifies 'this'
+  virtual gmp_RRorNull norm() const;
 };
 
 template <typename T>
@@ -949,6 +953,26 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
   LQUPFactorizationInPlace(bool transpose)
 {
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
+}
+
+template<typename T>
+void MutableMat<T>::clean(gmp_RR epsilon)
+{
+  MatrixOppies::clean(epsilon, *this);
+}
+
+template<typename T>
+gmp_RRorNull MutableMat<T>::norm() const
+{
+  if (get_ring()->get_precision() == 0)
+    throw exc::engine_error("expected a matrix over RR or CC");
+
+  gmp_RR nm = getmemstructtype(gmp_RR);
+  mpfr_init2(nm, get_ring()->get_precision());
+  mpfr_set_si(nm, 0, GMP_RNDN);
+
+  MatrixOppies::increase_norm(nm, mat);
+  return nm;
 }
 
 #endif
