@@ -1,7 +1,7 @@
 needsPackage "NumericalAlgebraicGeometry"
 needs "NumericalAlgebraicGeometry/benchmarks.m2"
 
-NAGtrace 100
+--NAGtrace 100
 for predictor in {RungeKutta4,
      --Multistep,
      Tangent,Euler,Secant} do (
