@@ -10,7 +10,7 @@ template <class RingType>
 class DMatLUtemplate
 {
 public:
-  typedef RingType::ElementType ElementType;
+  typedef typename RingType::ElementType ElementType;
   typedef DMat<RingType> Mat;
 
 private:
@@ -54,7 +54,90 @@ public:
   ///                  where the rank increases
   ///         returns false iff there is an error 
   bool columnRankProfile(std::vector<size_t>& profile); 
+
+private:
+  // Private functions below this line
+
+  // compute the LU decomposition, if mIsDone is not set, and then set it.
+  // This sets mError if there is a problem.
+  void computeLU();
+
+  bool setUpperLower(Mat& lower, Mat& upper);
 };
+
+template <class RingType>
+DMatLUtemplate<RingType>::DMatLUtemplate(const Mat& A)
+  : mLU(A),  // copies A
+    mSign(true), // sign = 1
+    mIsDone(false),
+    mError(false)
+{
+  for (size_t i=0; i<A.numRows(); i++)
+    mPerm.push_back(i);
+}
+
+template <class RingType>
+void DMatLUtemplate<RingType>::computeLU()
+{
+  if (mIsDone) return;
+
+  //TODO: now do the rest of the decomposition
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::setUpperLower(Mat& lower, Mat& upper)
+{
+  // MAJOR ASSUMPTION: the matrices lower, upper, and mLU are stored in row major order!
+
+  M2_ASSERT(!mError);
+  M2_ASSERT(mIsDone);
+
+  // At this point, lower and upper should be zero matrices.
+  M2_ASSERT(MatrixOppies::isZero(lower));
+  M2_ASSERT(MatrixOppies::isZero(upper));
+
+  auto LU = mLU.rowMajorArray();
+  auto L = lower.rowMajorArray();
+  auto U = upper.rowMajorArray();
+
+  for (size_t c=0; c<upper.numColumns(); c++)
+    {
+      auto U1 = U;
+      for (size_t r=0; r<=c; r++)
+        {
+          if (r >= upper.numRows()) break;
+          upper.ring().set(*U1, *LU++);
+          U1 += upper.numColumns();
+        }
+      U++; // change to next column
+
+      if (c < lower.numColumns())
+        {
+          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          L += lower.numColumns(); // pointing to entry right below diagonal
+          auto L1 = L; // will increment by lower.numRows() each loop here
+          for (size_t r=c+1; r<lower.numRows(); r++)
+            {
+              lower.ring().set(*L1, *LU++);
+              L1 += lower.numColumns(); // to place next entry.
+            }
+          L++; // change to next column
+        }
+    }
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
+{
+  computeLU();
+  if (mError) return false;
+
+  //TODO: make L and U into the right shapes, make sure they are zero?
+  setUpperLower(L,U);
+  //TODO: copy mPerm into P.
+
+  return true;
+}
 
 #endif
 

@@ -39,6 +39,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
+#include "dmat-LU-template.hpp"
 
 namespace MatrixOppies
 {
