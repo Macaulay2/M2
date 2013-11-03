@@ -41,6 +41,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "lapack.hpp"
 #include "dmat-LU-template.hpp"
 
+extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
+
 namespace MatrixOppies
 {
   /// @brief the rank of a matrix
@@ -344,7 +346,11 @@ namespace MatrixOppies
                               DMatZZp& L,
                               DMatZZp& U)
   {
-    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    LUdecomp.MatrixPLU(perm, L, U);
+    return stdvector_to_M2_arrayint(perm);
+    //    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
   }
 
   
