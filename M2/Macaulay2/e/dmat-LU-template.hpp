@@ -77,18 +77,6 @@ private:
     buffer o;
     displayMat(o,mLU);
     std::cout << o.str() << std::endl;
-#if 0
-    for (size_t r1 = 0; r1 < mLU.numRows(); r1++)
-      {
-        for (size_t c1 = 0; c1 < mLU.numColumns(); c1++)
-          {
-            buffer o;
-            ring().elem_text_out(o, mLU.entry(r1,c1), true, false);
-            printf("%s\t", o.str());
-          }
-        printf("\n");
-      }
-#endif
   }
 
 };
@@ -140,6 +128,8 @@ size_t DMatLUtemplate<RingType>::findPivot(size_t row, size_t col)
 template <class RingType>
 void DMatLUtemplate<RingType>::computeLU()
 {
+  //TODO: this is likely all wrong, and needs testing
+
   if (mIsDone) return;
 
   ElementType tmp;
@@ -220,18 +210,6 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 
   while (col < ncols && row < nrows)
     {
-      // Step 1: Set the 'upper' values: (row,col)..(nrows-1,col)
-
-      // Step 2: Find a pivot among the elements in step 1.
-      //  If one: swap rows if needed
-      //  If none, increment 'col', and continue at start of loop
-      //
-      // Step 3A: Set the 'upper' elements in (row,col+1), ..., (row,ncols-1).
-      // Step 3B: Set the 'lower' elements in (row+1,row), ..., (nrows-1,row)
-      //  from (row+1,col), ..., (nrows-1,col)
-      // Step 3C: if row != col, then set these elements to 0:
-      //  (row+1,col), ..., (nrows-1,col)
-
       printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
       debug_out();
 
@@ -243,7 +221,6 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
               mLU.ring().mult(tmp, mLU.entry(r,i), mLU.entry(i,col));
               mLU.ring().subtract(mLU.entry(r,col), mLU.entry(r,col), tmp);
             }
-          // This is done at a different time          mLU.ring().divide(mLU.entry(r,col), mLU.entry(r,col), pivot);
         }
 
       printf("after step 1\n");
@@ -282,10 +259,13 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
       printf("after step 3A:\n");
       debug_out();
 
-      // Step 3B: Set the 'lower' elements in (row+1,col), ..., (nrows-1,col)
+      // Step 3B: Set the 'lower' elements in (row+1,row), ..., (nrows-1,row)
+      //  from (row+1,col), ..., (nrows-1,col)
       // This just means dividing then by the pivot
       // except, if we have skipped columns for pivots, we must set these elements
       // in column 'row', not 'col'...
+      // Step 3C: if row != col, then set these elements to 0:
+      //  (row+1,col), ..., (nrows-1,col)
       for (size_t r = row+1; r < nrows; r++)
         {
           mLU.ring().divide(mLU.entry(r,row), mLU.entry(r,col), pivot);
@@ -389,6 +369,51 @@ bool DMatLUtemplate<RingType>::MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
     P.push_back(mPerm[i]);
 
   return true;
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::determinant(ElementType& result)
+{
+  computeLUNAIVE();
+  if (mError) return false;
+  // This is just the product of the diagonal entries of mLU.
+  M2_ASSERT(mLU.numRows() == mLU.numColumns());
+  
+  ring().set_from_int(result, 1);
+  for (size_t i=0; i<mLU.numRows(); i++)
+    ring().mult(result, result, mLU.entry(i,i));
+
+  return true;
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::columnRankProfile(std::vector<size_t>& profile)
+{
+  computeLUNAIVE();
+  if (mError) return false;
+
+  size_t row = 0;
+  size_t col = 0;
+  while (row < mLU.numRows() && col < mLU.numColumns())
+    {
+      if (!ring().is_zero(mLU.entry(row,col)))
+        {
+          profile.push_back(col);
+          row++;
+        }
+      col++;
+    }
+}
+
+template <class RingType>
+size_t DMatLUtemplate<RingType>::rank()
+{
+  computeLUNAIVE();
+  if (mError) return static_cast<size_t>(-1);
+
+  std::vector<size_t> profile;
+  columnRankProfile(profile);
+  return profile.size();
 }
 
 #endif

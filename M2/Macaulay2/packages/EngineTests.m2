@@ -828,6 +828,21 @@ testSolve = (R) -> (
     time rawLinAlgSolve(raw M, raw B, true);
     )
 
+---------------------------------
+-- linear algebra: engine ZZ/p --
+---------------------------------
+TEST ///
+  debug Core
+  R = ZZ/101
+  testDeterminant R;
+  testMult R;
+  testRankProfile R;
+  {*
+  testInverse R; -- FAILS
+  testRank R;  -- FAILS
+  *}
+///
+
 --------------------------------
 -- ffpack linear algebra: ZZ/p -
 --------------------------------

@@ -39,6 +39,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
+#include "mat-arith.hpp"
 #include "dmat-LU-template.hpp"
 
 extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
@@ -348,12 +349,46 @@ namespace MatrixOppies
   {
     std::vector<size_t> perm;
     DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
-    LUdecomp.MatrixPLU(perm, L, U);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
     return stdvector_to_M2_arrayint(perm);
     //    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
   }
 
-  
+  inline size_t rank(const DMatZZp& A)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.rank();
+  }
+
+  inline void determinant(const DMatZZp& A,
+                          DMatZZp::ElementType& result)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    LUdecomp.determinant(result);
+  }
+
+  inline M2_arrayintOrNull rankProfile(const DMatZZp& A, 
+                                       bool row_profile)
+  {
+    std::vector<size_t> profile;
+    if (row_profile)
+      {
+        // First transpose A
+        DMatZZp B(A.ring(), A.numColumns(), A.numRows());
+        MatrixOppies::transpose(A,B);
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(B);
+        LUdecomp.columnRankProfile(profile);
+        return stdvector_to_M2_arrayint(profile);
+      }
+    else
+      {
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        LUdecomp.columnRankProfile(profile);
+        return stdvector_to_M2_arrayint(profile);
+      }
+  }
+
 #ifdef HAVE_FFLAS_FFPACK
   // Functions for DMatZZpFFPACK
 
