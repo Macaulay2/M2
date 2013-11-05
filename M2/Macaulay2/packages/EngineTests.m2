@@ -58,6 +58,17 @@ changeOfBasis(Ring, ZZ) := (R,n) -> (
     (S, Sinv)
     )
 
+checkLU = method()
+checkLU(List,Matrix,Matrix) := (P,L,U) -> (
+     R := ring L;
+     Q := id_(R^#P) _ P;
+     Q*L*U)
+checkLU(List,MutableMatrix,MutableMatrix) := (P,L,U) -> (
+     R := ring L;
+     Q := mutableMatrix(id_(R^#P) _ P);
+     Q*L*U)
+--checkLU Matrix := (M) -> norm (checkLU time LUdecomposition M - M)
+
 beginDocumentation()
 
 doc ///
@@ -920,6 +931,53 @@ testSolve = (R) -> (
     B := mutableMatrix(R, N, 5);
     fillMatrix B;
     time rawLinAlgSolve(raw M, raw B, true);
+    )
+
+testLUoverRRR = () -> (
+    R := RR_200;
+    M := mutableMatrix(R,10,10);
+    fillMatrix M;
+    (P,L,U) := LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-59);
+
+    M = mutableMatrix(R,100,100);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+
+    M = mutableMatrix(R,500,500);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+    )
+testLUoverCCC = () -> (
+    R := CC_200;
+    M := mutableMatrix(R,10,10);
+    fillMatrix M;
+    (P,L,U) := LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-59);
+    
+    M = mutableMatrix(R,100,100);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+
+    M = mutableMatrix(R,500,500);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+    time (L*U);
+    time (L1 := matrix L);
+    time (U1 := matrix U);
+    time (L1*U1);
+    )
+testSolveOverRRR = () -> (
+    R := RR_200;
+    M := mutableMatrix(R,10,10);
+    fillMatrix M;
+    B := mutableMatrix(R,10,1);
+    fillMatrix B;
+    time X := solve(M,B);
     )
 
 testLinearAlgebra = (R) -> (

@@ -121,6 +121,63 @@ size_t DMatLUtemplate<RingType>::findPivotNAIVE(size_t row, size_t col)
   return static_cast<size_t>(-1);
 }
 
+template <>
+inline size_t DMatLUtemplate<M2::ARingRRR>::findPivotNAIVE(size_t row, size_t col)
+{
+  // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
+  // Return the index r s.y. abs(A[r,col]) is maximum over all of these
+
+  ElementType largest;
+  ElementType abs;
+  size_t best_row_so_far = static_cast<size_t>(-1);
+
+  ring().init(largest);
+  ring().init(abs);
+  ring().set_zero(largest);
+  
+  for (size_t i=row; i<mLU.numRows(); i++)
+    {
+      ring().abs(abs, mLU.entry(i,col));
+      if (ring().compare_elems(abs, largest) > 0)
+        {
+          best_row_so_far = i;
+          ring().set(largest, abs);
+        }
+    }
+  ring().clear(abs);
+  ring().clear(largest);
+  return best_row_so_far;
+}
+
+template <>
+inline size_t DMatLUtemplate<M2::ARingCCC>::findPivotNAIVE(size_t row, size_t col)
+{
+  // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
+  // Return the index r s.y. abs(A[r,col]) is maximum over all of these
+
+  const M2::ARingRRR& RR = ring().real_ring();
+  M2::ARingRRR::ElementType largest;
+  M2::ARingRRR::ElementType abs;
+  size_t best_row_so_far = static_cast<size_t>(-1);
+
+  RR.init(largest);
+  RR.init(abs);
+  RR.set_zero(largest);
+  
+  for (size_t i=row; i<mLU.numRows(); i++)
+    {
+      ring().abs(abs, mLU.entry(i,col));
+      if (RR.compare_elems(abs, largest) > 0)
+        {
+          best_row_so_far = i;
+          RR.set(largest, abs);
+        }
+    }
+  RR.clear(abs);
+  RR.clear(largest);
+  return best_row_so_far;
+}
+
 template <class RingType>
 size_t DMatLUtemplate<RingType>::findPivot(size_t row, size_t col)
 {
@@ -473,6 +530,13 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
   ElementType* y = newarray(ElementType, rk);
   ElementType* x = newarray(ElementType, mLU.numColumns());
 
+  for (size_t i=0; i<mLU.numRows(); i++)
+    ring().init(b[i]);
+  for (size_t i=0; i<rk; i++)
+    ring().init(y[i]);
+  for (size_t i=0; i<mLU.numColumns(); i++)
+    ring().init(x[i]);
+
   X.resize(mLU.numColumns(), B.numColumns());
 
   for (size_t col = 0; col < B.numColumns(); col++)
@@ -556,6 +620,16 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
     }
   ring().clear(tmp);
   ring().clear(tmp2);
+
+  for (size_t i=0; i<mLU.numRows(); i++)
+    ring().clear(b[i]);
+  for (size_t i=0; i<rk; i++)
+    ring().clear(y[i]);
+  for (size_t i=0; i<mLU.numColumns(); i++)
+    ring().clear(x[i]);
+  deletearray(b);
+  deletearray(y);
+  deletearray(x);
   return true; // The system seems to have been consistent
 }
 

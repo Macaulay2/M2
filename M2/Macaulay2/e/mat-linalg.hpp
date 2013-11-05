@@ -933,12 +933,6 @@ namespace MatrixOppies
   // RRR // TODO: rewrite not using lapack
   /////////
 
-  inline bool solve(const DMatRRR& A, 
-                    const DMatRRR& B, 
-                    DMatRRR& X)
-  {
-    return Lapack::solve(&A, &B, &X);
-  }
 
   inline bool nullspaceU(const DMatRRR& A, 
                          DMatRRR& X)
@@ -951,7 +945,23 @@ namespace MatrixOppies
                               DMatRRR& L,
                               DMatRRR& U)
   {
-    return Lapack::LU(&A, &L, &U);
+    //return Lapack::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
+  }
+
+  inline bool solve(const DMatRRR& A, 
+                    const DMatRRR& B, 
+                    DMatRRR& X)
+  {
+    printf("in solve, before LUdecomp, for DMatRRR\n");
+    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
+    printf("before solve for DMatRRR\n");
+    return LUdecomp.solve(B,X);
+    //return Lapack::solve(&A, &B, &X);
   }
 
   inline bool eigenvaluesHermitian(const DMatRRR& A, 
@@ -1026,7 +1036,9 @@ namespace MatrixOppies
                     const DMatCCC& B, 
                     DMatCCC& X)
   {
-    return Lapack::solve(&A, &B, &X);
+    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+    //return Lapack::solve(&A, &B, &X);
   }
 
   inline bool nullspaceU(const DMatCCC& A, 
@@ -1040,7 +1052,12 @@ namespace MatrixOppies
                               DMatCCC& L,
                               DMatCCC& U)
   {
-    return Lapack::LU(&A, &L, &U);
+    //return Lapack::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
   }
 
   inline bool eigenvaluesHermitian(const DMatCCC& A, 
