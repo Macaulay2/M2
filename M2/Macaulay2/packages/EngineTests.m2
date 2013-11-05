@@ -978,6 +978,14 @@ testSolveOverRRR = () -> (
     B := mutableMatrix(R,10,1);
     fillMatrix B;
     time X := solve(M,B);
+    assert(norm(M*X-B) < 1e-59);
+    
+    M := mutableMatrix(R,100,100);
+    fillMatrix M;
+    B := mutableMatrix(R,100,1);
+    fillMatrix B;
+    time X := solve(M,B);
+    assert(norm(M*X-B) < 1e-57)
     )
 
 testLinearAlgebra = (R) -> (
