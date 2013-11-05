@@ -103,7 +103,6 @@ DMatLUtemplate<RingType>::DMatLUtemplate(const Mat& A)
     mIsDone(false),
     mError(false)
 {
-  printf("entering DMatLUtemplate\n");
   for (size_t i=0; i<A.numRows(); i++)
     mPerm.push_back(i);
 }
@@ -303,13 +302,15 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 template <class RingType>
 void DMatLUtemplate<RingType>::setUpperLower(Mat& lower, Mat& upper)
 {
+  // NOT TESTED YET!!
   // MAJOR ASSUMPTION: the matrices lower, upper, and mLU are stored in row major order!
 
   M2_ASSERT(!mError);
   M2_ASSERT(mIsDone);
 
-  lower.resize(mLU.numRows(), mLU.numRows());
-  upper.resize(mLU.numRows(), mLU.numColumns());
+  size_t min = std::min(mLU.numRows(), mLU.numColumns());
+  lower.resize(mLU.numRows(), min);
+  upper.resize(min, mLU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
   M2_ASSERT(MatrixOppies::isZero(lower));
@@ -353,8 +354,9 @@ void DMatLUtemplate<RingType>::setUpperLowerNAIVE(Mat& lower, Mat& upper)
   M2_ASSERT(!mError);
   M2_ASSERT(mIsDone);
 
-  lower.resize(mLU.numRows(), mLU.numRows());
-  upper.resize(mLU.numRows(), mLU.numColumns());
+  size_t min = std::min(mLU.numRows(), mLU.numColumns());
+  lower.resize(mLU.numRows(), min);
+  upper.resize(min, mLU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
   M2_ASSERT(MatrixOppies::isZero(lower));
@@ -362,7 +364,7 @@ void DMatLUtemplate<RingType>::setUpperLowerNAIVE(Mat& lower, Mat& upper)
 
   for (size_t c=0; c<mLU.numColumns(); c++)
     {
-      if (c < lower.numRows())
+      if (c < min)
         ring().set_from_int(lower.entry(c,c), 1);
       for (size_t r=0; r<mLU.numRows(); r++)
         {
@@ -606,7 +608,6 @@ bool DMatLUtemplate<RingType>::kernel(Mat& X)
       for (long p = nextpivotidx-1; p >= 0; p--)
         {
           // set X.entry(mPivotColumns[p], colX)
-          size_t thiscol = mPivotColumns[p];
           ring().set(tmp, mLU.entry(p, col));
           for (size_t i=nextpivotidx-1; i>=p+1; i--)
             {

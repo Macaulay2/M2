@@ -787,11 +787,105 @@ testRankProfile = (R) -> (
     rowRankProfile M1
     );
 
-testSolveBoundaryCases = (R) -> (
-    -- WRITE ME WRITE ME
-    -- test solve in cases: [3x0] X = [3x1]
-    -- cases where there is no solution
-    )
+testLUBoundaryCases = (kk) -> (
+    -- this should be in e/unit-tests too?
+    a0 := map(kk^0,kk^0,0);
+    a1 := map(kk^0,kk^5,0);
+    a2 := map(kk^5,kk^0,0);
+    b0 := mutableMatrix a0;
+    b1 := mutableMatrix a1;
+    b2 := mutableMatrix a2;
+    (P,L,U) := LUdecomposition a0;
+    assert(#P == 0 
+        and numrows L == 0 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 0);
+    (P,L,U) = LUdecomposition a1;
+    assert(#P == 0 
+        and numrows L == 0 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 5);
+    (P,L,U) = LUdecomposition a2;
+    assert(#P == 5 
+        and numrows L == 5 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 0);
+    -- same for mutable matrices
+    (P,L,U) = LUdecomposition b0;
+    assert(#P == 0 
+        and numrows L == 0 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 0);
+    (P,L,U) = LUdecomposition b1;
+    assert(#P == 0 
+        and numrows L == 0 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 5);
+    (P,L,U) = LUdecomposition b2;
+    assert(#P == 5 
+        and numrows L == 5 
+        and numcols L == 0 
+        and numrows U == 0 
+        and numcols U == 0);
+    -- now LU of zero matrices
+    -- Note that this is documented in 'viewHelp "LUdecomposition"'
+    z0 := mutableMatrix(kk,2,4);
+    (P,L,U) = LUdecomposition z0;
+    assert((numrows L, numcols L) == (2,2)); -- not yet
+    assert((numrows U, numcols U) == (2,4)); -- not yet
+    z1 := mutableMatrix(kk,4,2);
+    (P,L,U) = LUdecomposition z1;
+    assert((numrows L, numcols L) == (4,2)); -- not yet
+    assert((numrows U, numcols U) == (2,2)); -- not yet
+    -- Now test boundary cases for the derivative routines:
+    -- determinant:
+    assert(det a0 == 1_kk);
+    assert(det b0 == 1_kk);
+    -- rank:
+    assert(rank a0 == 0);
+    assert(rank a1 == 0);
+    assert(rank a2 == 0);
+    assert(rank b0 == 0);
+    assert(rank b1 == 0);
+    assert(rank b2 == 0);
+    -- transpose
+    assert(transpose a1 == a2);
+    assert(transpose a0 == a0);
+    assert(transpose b1 == b2);
+    assert(transpose b0 == b0);
+    -- rank profile
+    assert(rowRankProfile b0 == {});
+    assert(rowRankProfile b1 == {});
+    assert(rowRankProfile b2 == {});
+    assert(columnRankProfile b0 == {});
+    assert(columnRankProfile b1 == {});
+    assert(columnRankProfile b2 == {});
+    -- solve
+    s2 := solve(b2, mutableMatrix(kk,5,2));
+    assert(numrows s2 == 0);    
+    assert(numcols s2 == 2);
+    s2 = solve(b2, mutableMatrix(kk,5,0));
+    assert(s2 == b0);
+    -- inverse
+    assert(inverse b0 == b0);
+    -- nullSpace
+    n0 := nullSpace b0;
+    assert(n0 == b0);
+    n1 := nullSpace b1;
+    assert(rank n1 == 5);
+    n2 := nullSpace b2;
+    assert(n2 == b0);
+    -- multiplication
+    assert(a1 * a2 == a0);
+    assert(b1 * b2 == b0);
+    assert(b2 * b1 == mutableMatrix(kk,5,5));
+    )    
+
 testSolveSimple = (R) -> (
     M := mutableMatrix map(R^2, R^2, {{1, 4}, {2, 3}});
     B := mutableMatrix map(R^2, R^1, {{3}, {7}});
@@ -828,6 +922,18 @@ testSolve = (R) -> (
     time rawLinAlgSolve(raw M, raw B, true);
     )
 
+testLinearAlgebra = (R) -> (
+    -- ONLY TESTS DENSE MATRIX CASE
+    testLUBoundaryCases R;
+    testDeterminant R;
+    testMult R;
+    testInverse R;
+    testNullspace R;
+    testRank R;
+    testRankProfile R; -- NOT WRITTEN YET
+    testSolve R; -- NOT DONE
+    )
+    
 ---------------------------------
 -- linear algebra: engine ZZ/p --
 ---------------------------------
@@ -870,11 +976,7 @@ TEST ///
 TEST ///
   debug Core
   R = ZZ/101
-  testDeterminant R;
-  -- testMult R;
-  testRankProfile R;
-  testInverse R;
-  testRank R;
+  testLinearAlgebra R;
 ///
 
 --------------------------------

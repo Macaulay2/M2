@@ -313,14 +313,13 @@ namespace MatrixOppies
           ConstIterator iend = A.rowEnd(i);
           ConstIterator j1 = B.columnBegin(j);
           
-          do 
+          while (i1 != iend)
             {
               A.ring().mult(tmp, *i1, *j1);
               A.ring().add(*result, *result, tmp);
               ++i1;
               ++j1;
             }
-          while (i1 != iend);
           result++;
         }
     A.ring().clear(tmp);
