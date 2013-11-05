@@ -333,7 +333,9 @@ namespace MatrixOppies
                     const DMatZZp& B, 
                     DMatZZp& X)
   {
-    return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+    // return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
   }
 
   inline bool nullspaceU(const DMatZZp& A, 
@@ -387,6 +389,46 @@ namespace MatrixOppies
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
       }
+  }
+
+  inline bool inverse(const DMatZZp& A, 
+               DMatZZp& result_inv)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.inverse(result_inv);
+  }
+
+  inline size_t nullSpace(const DMatZZp& A, 
+                   bool right_side, 
+                   DMatZZp& result_nullspace)
+  {
+    if (right_side)
+      {
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        return LUdecomp.kernel(result_nullspace);
+      }
+    //TODO: do left-side
+    return 0;
+  }
+
+  inline bool solveLinear(const DMatZZp& A, 
+                   const DMatZZp& B, 
+                   DMatZZp& X)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+  }
+
+  inline bool solveLinear(const DMatZZp& A, 
+                          const DMatZZp& B, 
+                          bool right_side, 
+                          DMatZZp& X, 
+                          bool declare_A_is_invertible)
+  {
+    //TODO: write this routine in the cases which are not handled
+    if (not right_side)
+      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return solveLinear(A,B,X);
   }
 
 #ifdef HAVE_FFLAS_FFPACK

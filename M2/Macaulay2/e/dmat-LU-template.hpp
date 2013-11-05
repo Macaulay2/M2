@@ -22,6 +22,9 @@ private:
   bool mIsDone;
   bool mError;
 
+  // The following information is stored, but could be regenerated when needed
+  std::vector<size_t> mPivotColumns;
+
 public:
   /// Copies A into mLU and initializes all fields
   DMatLUtemplate(const Mat& A);
@@ -79,6 +82,18 @@ private:
     std::cout << o.str() << std::endl;
   }
 
+  void debug_out_list(ElementType* x, size_t len)
+  {
+    buffer o;
+    o << "[ ";
+    for (size_t i=0; i<len; i++)
+      {
+        ring().elem_text_out(o, x[i], true, false);
+        o << " ";
+      }
+    o << "]" << newline;
+    std::cout << o.str();
+  }
 };
 
 template <class RingType>
@@ -200,6 +215,7 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 {
   if (mIsDone) return;
 
+  std::cout << "computing LU decomposition NAIVE version" << std::endl;
   ElementType tmp;
   mLU.ring().init(tmp);
 
@@ -210,8 +226,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 
   while (col < ncols && row < nrows)
     {
-      printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
-      debug_out();
+      // printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
+      // debug_out();
 
       // Step 1: Set the 'upper' values: (row,col)..(nrows-1,col)
       for (size_t r = row; r < nrows; r++)
@@ -223,8 +239,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
             }
         }
 
-      printf("after step 1\n");
-      debug_out();
+      // printf("after step 1\n");
+      // debug_out();
 
       // Step 2: Find a pivot among the elements in step 1.
       //  If one: swap rows if needed
@@ -235,17 +251,18 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
           col = col+1;
           continue;
         }
-      printf("pivot is in row %ld\n", k);
+      // printf("pivot is in row %ld\n", k);
       std::swap(mPerm[row], mPerm[k]);
       if (k != row) 
         {
           MatElementaryOps<Mat>::interchange_rows(mLU, k, row);
           mSign = !mSign;
         }
+      mPivotColumns.push_back(col);
       const ElementType& pivot = mLU.entry(row,col);
 
-      printf("after step 2:\n");
-      debug_out();
+      // printf("after step 2:\n");
+      // debug_out();
 
       // Step 3A: Set the 'upper' elements in (row,col+1), ..., (row,ncols-1).
       for (size_t c = col+1; c < ncols; c++)
@@ -256,8 +273,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
               mLU.ring().subtract(mLU.entry(row,c), mLU.entry(row,c), tmp);
             }
         }
-      printf("after step 3A:\n");
-      debug_out();
+      // printf("after step 3A:\n");
+      // debug_out();
 
       // Step 3B: Set the 'lower' elements in (row+1,row), ..., (nrows-1,row)
       //  from (row+1,col), ..., (nrows-1,col)
@@ -272,13 +289,14 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
           if (row < col) ring().set_zero(mLU.entry(r,col)); 
         }
 
-      printf("after step 3B:\n");
-      debug_out();
+      // printf("after step 3B:\n");
+      // debug_out();
 
       row++;
       col++;
     }
 
+  mIsDone = true;
   mLU.ring().clear(tmp);
 }
 
@@ -378,8 +396,11 @@ bool DMatLUtemplate<RingType>::determinant(ElementType& result)
   if (mError) return false;
   // This is just the product of the diagonal entries of mLU.
   M2_ASSERT(mLU.numRows() == mLU.numColumns());
-  
-  ring().set_from_int(result, 1);
+
+  if (mSign)
+    ring().set_from_int(result, 1);
+  else
+    ring().set_from_int(result, -1);
   for (size_t i=0; i<mLU.numRows(); i++)
     ring().mult(result, result, mLU.entry(i,i));
 
@@ -392,6 +413,10 @@ bool DMatLUtemplate<RingType>::columnRankProfile(std::vector<size_t>& profile)
   computeLUNAIVE();
   if (mError) return false;
 
+  for (size_t i=0; i<mPivotColumns.size(); i++)
+    profile.push_back(mPivotColumns[i]);
+  return true;
+
   size_t row = 0;
   size_t col = 0;
   while (row < mLU.numRows() && col < mLU.numColumns())
@@ -403,6 +428,7 @@ bool DMatLUtemplate<RingType>::columnRankProfile(std::vector<size_t>& profile)
         }
       col++;
     }
+  return true;
 }
 
 template <class RingType>
@@ -411,9 +437,192 @@ size_t DMatLUtemplate<RingType>::rank()
   computeLUNAIVE();
   if (mError) return static_cast<size_t>(-1);
 
-  std::vector<size_t> profile;
-  columnRankProfile(profile);
-  return profile.size();
+  return mPivotColumns.size();
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
+{
+  computeLUNAIVE();
+  if (mError) return false;
+
+  // For each column of B, we solve it separately.
+
+  // Step 1: Take a column, and permute it via mPerm, into b.
+  // Step 2: Solve the lower triangular system Ly=b
+  //  If there is no solution, then return false.
+  // Step 3: Solve the upper triangular system Ux = y.
+
+  // Sizes of objects here:
+  //  A is m x n
+  //  L is m x r
+  //  U is r x n.  Here, r <= m, and A has rank r.
+  //  b is a vector 0..m-1
+  //  y is a vector 0..r-1
+  //  x is a vector 0..n-1
+
+  size_t rk = mPivotColumns.size();
+
+  ElementType tmp, tmp2;
+  ring().init(tmp);
+  ring().init(tmp2);
+
+  ElementType* b = newarray(ElementType, mLU.numRows());
+  ElementType* y = newarray(ElementType, rk);
+  ElementType* x = newarray(ElementType, mLU.numColumns());
+
+  X.resize(mLU.numColumns(), B.numColumns());
+
+  for (size_t col = 0; col < B.numColumns(); col++)
+    {
+      // Step 0: erase x (b will be set below, y is also set when needed).
+
+      for (size_t i=0; i<mLU.numColumns(); i++)
+        ring().set_zero(x[i]);
+
+      // Step 1: set b to be the permuted i-th column of B.
+      for (size_t r = 0; r<B.numRows(); r++)
+        ring().set(b[r], B.entry(mPerm[r],col));
+
+      /// printf("b:\n");
+      /// debug_out_list(b, mLU.numRows());
+
+      // Step 2: Solve Ly=b
+      for (size_t i=0; i<rk; i++)
+        {
+          ring().set(y[i], b[i]);
+          for (size_t j=0; j<i; j++)
+            {
+              ring().mult(tmp, mLU.entry(i,j), y[j]);
+              ring().subtract(y[i], y[i], tmp);
+            }
+        }
+
+      /// printf("y:\n");
+      /// debug_out_list(y, rk);
+
+      // Step 2B: see if the solution is consistent
+      for (size_t i=rk; i<mLU.numRows(); i++)
+        {
+          ring().set(tmp, b[i]);
+          for (size_t j=0; j<rk; j++)
+            {
+              ring().mult(tmp2, mLU.entry(i,j), y[j]);
+              ring().subtract(tmp, tmp, tmp2);
+            }
+          if (!ring().is_zero(tmp))
+            {
+              // Cleanup, and return false
+              deletearray(b);
+              deletearray(y);
+              deletearray(x);
+              ring().clear(tmp);
+              ring().clear(tmp2);
+              /// printf("returning false\n");
+              return false;
+            }
+        }
+
+      ///      printf("past test for consistency\n");
+
+      // Step 3: Solve Ux=y
+      // and place x back into X as col-th column
+      for (long i=rk-1; i>=0; --i)
+        {
+          ring().set(x[i], y[i]);
+          for (size_t j=i+1; j<=rk-1; j++)
+            {
+              ring().mult(tmp, mLU.entry(i,mPivotColumns[j]), x[j]);
+              ring().subtract(x[i], x[i], tmp);
+            }
+          ring().divide(x[i], x[i], mLU.entry(i,mPivotColumns[i]));
+          ring().set(X.entry(mPivotColumns[i], col), x[i]);
+
+          /// buffer o;
+          /// printf("after i=%ld\n", i);
+          /// displayMat(o, X);
+          /// printf("%s\n", o.str());
+        }
+      /// printf("x:\n");
+      /// debug_out_list(x, mLU.numColumns());
+
+
+      /// buffer o;
+      /// printf("after col=%ld\n", col);
+      /// displayMat(o, X);
+      /// printf("%s\n", o.str());
+    }
+  ring().clear(tmp);
+  ring().clear(tmp2);
+  return true; // The system seems to have been consistent
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::inverse(Mat& X)
+{
+  computeLUNAIVE();
+  if (mError) return false;
+
+  // Make the identity matrix
+  Mat id(ring(), mLU.numRows(), mLU.numRows());
+  for (size_t i=0; i<mLU.numRows(); i++)
+    ring().set_from_int(id.entry(i,i), 1);
+
+  solve(id, X);
+  return true;
+}
+
+template <class RingType>
+bool DMatLUtemplate<RingType>::kernel(Mat& X)
+{
+  // THIS SHOULD NOT BE SO PAINFUL!!
+
+  computeLUNAIVE();
+  if (mError) return false;
+
+  ElementType tmp, tmp2;
+  ring().init(tmp);
+  ring().init(tmp2);
+
+  // First, let's set X to be the correct size:
+  X.resize(mLU.numColumns(), mLU.numColumns() - mPivotColumns.size());
+
+  size_t col = 0;
+  size_t nextpivotidx = 0;
+  size_t nextpivotcol = (mPivotColumns.size()>0 ? mPivotColumns[0] : mLU.numColumns());
+  size_t colX = 0;
+  while (colX < X.numColumns())
+    {
+      if (col == nextpivotcol)
+        {
+          col++;
+          nextpivotidx++;
+          nextpivotcol = (nextpivotidx < mPivotColumns.size() ? mPivotColumns[nextpivotidx] : mLU.numColumns());
+          continue;
+        }
+      // At this point, we are ready to create a column of X.
+      ring().set_from_int(X.entry(col,colX), -1);
+      // Now we loop through and set the elements in the rows of X = pivot columns.
+      for (long p = nextpivotidx-1; p >= 0; p--)
+        {
+          // set X.entry(mPivotColumns[p], colX)
+          size_t thiscol = mPivotColumns[p];
+          ring().set(tmp, mLU.entry(p, col));
+          for (size_t i=nextpivotidx-1; i>=p+1; i--)
+            {
+              ring().mult(tmp2, mLU.entry(p,mPivotColumns[i]), X.entry(mPivotColumns[i],colX));
+              ring().subtract(tmp, tmp, tmp2);
+            }
+          ring().divide(tmp, tmp, mLU.entry(p, mPivotColumns[p]));
+          ring().set(X.entry(mPivotColumns[p],colX), tmp);
+        }
+      colX++;
+      col++;
+    }
+
+  ring().clear(tmp);
+  ring().clear(tmp2);
+  return true;
 }
 
 #endif
