@@ -373,15 +373,15 @@ doc ///
       
 ///;
 
-doc ///
-  Key
-    Verbose
-  Headline
-    request verbose feedback
-  Description
-    Text
-      Option to specify whether additional output is wanted.
-///;
+-- doc ///
+--   Key
+--     Verbose
+--   Headline
+--     request verbose feedback
+--   Description
+--     Text
+--       Option to specify whether additional output is wanted.
+-- ///;
 
 --options for isWitnessSetMember
 
