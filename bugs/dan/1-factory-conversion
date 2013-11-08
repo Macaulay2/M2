@@ -360,3 +360,27 @@ J = ideal(y^3*x^4+y^2*x^5+y^6+y^5*x+y^3*x^3+y*x^5+y^5+y^3*x^2+y*x^4+x^5+y^3*x+y*
        ^9+y^5*x^3+y^2*x^6+y^6*x+y^5*x^2+y^3*x^4+y^2*x^5+y^6+x^7+y^4*x^2+y*x^5+y^5+y^4*x);
 
 radical J
+
+-----------------------------------------------------------------------------
+
+update from K Schwede, who found this input produces the same problem:
+
+    R = ZZ/2[x,y,z]
+    f = x^4*y^3*z^3+1+y^5+z^5
+    I = ideal(singularLocus(ideal(f)))
+    ass I
+
+leading to this output
+
+    i4 : ass I
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    error: fatal fatal
+    fac_cantzass.cc:125: In function `CFFList distinctDegreeFactorFFGF(const CanonicalForm&, int)':
+    failed assertion `g.degree(x) == 0'
+    /bin/sh: line 1: 64252 Abort trap: 6           /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.debug/StagingArea/x86_64-MacOS-10.8/bin/M2 --no-readline --print-width 157
+
+    Process M2 exited abnormally with code 134
+
+-----------------------------------------------------------------------------
