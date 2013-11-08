@@ -361,6 +361,7 @@ J = ideal(y^3*x^4+y^2*x^5+y^6+y^5*x+y^3*x^3+y*x^5+y^5+y^3*x^2+y*x^4+x^5+y^3*x+y*
 
 radical J
 
+end
 -----------------------------------------------------------------------------
 
 update from K Schwede, who found this input produces the same problem:
