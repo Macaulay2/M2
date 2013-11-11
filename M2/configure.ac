@@ -139,6 +139,7 @@ case $OS-$REL in
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-12.*) REL=10.8 ; OS=MacOS ;;
+  Darwin-13.*) REL=10.9 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
   CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
@@ -165,6 +166,9 @@ then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's
      esac
      ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
+
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
+test "$ISSUE" || ISSUE=$REL
 
 AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
