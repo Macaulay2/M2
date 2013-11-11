@@ -11,7 +11,7 @@ newPackage(
 	  },
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false 
+     DebuggingMode => true 
      )
 
 export {
@@ -118,18 +118,8 @@ classifyPoint(Point) := o -> p -> if status p === null and p.?ConditionNumber th
      )  
 
 areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
-areEqual (List,List) := o -> (a,b) -> (
-     if class first a === List 
-     or class first a === Point 
-     then (
-	  #a == #b and all(#a, i->areEqual(a#i,b#i,o))
-	  ) else (
-     	  #a == #b and ( if o.Projective 
-	       then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
-	       else norm(2,(a-b)) < o.Tolerance * norm(2,a)
-	       )
-	  )
-     ) 
+areEqual (List,List) := o -> (a,b) -> #a == #b and all(#a, i->areEqual(a#i,b#i,o))
+areEqual (BasicList,BasicList) := o-> (a,b) -> areEqual(toList a, toList b, o)
 areEqual (Number,Number) := o -> (a,b) -> areEqual(toCC a, toCC b, o)
 areEqual (CC,CC) := o -> (a,b) -> (
      abs(a-b) < o.Tolerance
@@ -137,7 +127,15 @@ areEqual (CC,CC) := o -> (a,b) -> (
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
-areEqual (Point,Point) := o -> (a,b) -> areEqual(a.Coordinates, b.Coordinates, o) 
+areEqual (Point,Point) := o -> (a,b) -> (
+    a = a.Coordinates; 
+    b = b.Coordinates;
+    if o.Projective 
+    then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
+    else norm(2,(a-b)) < o.Tolerance * max(norm(2,a),norm(2,b))
+    )
+areEqual (Point,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
+areEqual (BasicList,Point) := o -> (a,b) -> areEqual(toList a, coordinates b)
 
 isGEQ = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
 isGEQ(List,List) := o->(t,s)-> (
@@ -158,7 +156,9 @@ sortSolutions List := o -> sols -> (
      if #sols == 0 then sols
      else (
 	  sorted := {0};
-	  get'coordinates := sol -> if class sol === Point then coordinates sol else sol;
+	  get'coordinates := sol -> if class sol === Point then coordinates sol 
+	                       else if ancestor(BasicList, class sol) then toList sol
+			       else error "expected Points or BasicLists";
 	  scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
@@ -357,7 +357,7 @@ net NumericalVariety := V -> (
   	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
   	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
   	);
-    out := ofClass class V | " of dimension " | net dim V |" with components in";
+    out := net ofClass class V | " of dimension " | net dim V |" with components in";
     scan(keys V, k->if class k === ZZ then (
 	    row := "dim "|net k|": ";
 	    scan(V#k, W->row = row|" "|net W);
@@ -375,11 +375,14 @@ degree NumericalVariety := V -> (
      )
 numericalVariety = method(TypicalValue=>NumericalVariety)
 numericalVariety List := Ws -> (
+     T := class first Ws;
+     if not ancestor(WitnessSet,T) then error "a list of WitnessSet-s expected";
      V := new NumericalVariety;
      scan(Ws, W->(
-	       d := dim W;
-	       if V#?d then V#d = V#d | {W} else V#d = {W};
-	       ));     
+	     if class W =!= T then error "a list of witness sets of same type expected";
+	     d := dim W;
+	     if V#?d then V#d = V#d | {W} else V#d = {W};
+	     ));     
      check V;
      V
      )

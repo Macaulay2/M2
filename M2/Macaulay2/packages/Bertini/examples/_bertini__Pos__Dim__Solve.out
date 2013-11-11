@@ -1,22 +1,13 @@
--- -*- M2-comint -*- {* hash: -454624394 *}
-/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:635: warning: documentation already provided for 'NAGtypes :: generalEquations'
-/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:290: ... here is the (end of the) previous documentation
---loading configuration for package "Bertini" from file /Users/MacMath/Library/Application Support/Macaulay2/init-Bertini.m2
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:524:8:(2):[10]: warning: local declaration of l shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:532:8:(2):[10]: warning: local declaration of pts shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:535:13:(2):[10]: warning: local declaration of maxPrec shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:736:8:(2):[10]: warning: local declaration of l shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:745:8:(2):[10]: warning: local declaration of pts shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:750:13:(2):[10]: warning: local declaration of maxPrec shields variable with same name
+-- -*- M2-comint -*- {* hash: 704393788 *}
+--loading configuration for package "Bertini" from file /Users/eagross/Library/Application Support/Macaulay2/init-Bertini.m2
 
-i1 : R = CC[x,y,z]
+i1 : R = QQ[x,y,z]
 
 o1 = R
 
 o1 : PolynomialRing
 
-i2 : F = {(y^2+x^2+z^2-1)*x,
-          (y^2+x^2+z^2-1)*y}
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
        3      2      2       2     3      2
 o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
@@ -24,16 +15,61 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : S = bertiniPosDimSolve F
-Temporary directory for input and output files:/tmp/M2-11963-0/0
+Temporary directory for input and output files:/var/folders/w_/9qmbvwrs7fv60n2mgvp5cq8h003b23/T/M2-63051-0/0
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o3 = A variety of dimension 2 with components in
-     dim 1:  [dim=1,deg=1]
-     dim 2:  [dim=2,deg=2]
+o3 = S
 
 o3 : NumericalVariety
 
-i4 : 
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+
+o4 = {{2.82101e-67+3.80522e-68*ii, 3.31626e-67+1.74528e-67*ii,
+     ------------------------------------------------------------------------
+     .188592+.199078*ii}}
+
+o4 : VerticalList
+
+i5 : S#1 --first specify dimension
+
+o5 = {[dim=1,deg=1]}
+
+o5 : List
+
+i6 : peek oo_0 --then list position
+
+o6 = WitnessSet{ComponentNumber => 0                                                                             }
+                IsIrreducible => null
+                Points => {{2.82101e-67+3.80522e-68*ii, 3.31626e-67+1.74528e-67*ii, .188592+.199078*ii}}
+                Slice => | .560422+.740681i .200165+.214092i .12802+1.33634i 1.9826+.414243i |
+                WitnessDataFileName => /var/folders/w_/9qmbvwrs7fv60n2mgvp5cq8h003b23/T/M2-63051-0/0/witness_data
+                                     3      2      2       2     3      2
+                Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
+
+i7 : PD=primaryDecomposition( ideal F)
+
+             2    2    2
+o7 = {ideal(x  + y  + z  - 1), ideal (y, x)}
+
+o7 : List
+
+i8 : dim PD_0
+
+o8 = 2
+
+i9 : degree PD_0
+
+o9 = 2
+
+i10 : dim PD_1
+
+o10 = 1
+
+i11 : degree PD_1
+
+o11 = 1
+
+i12 : 

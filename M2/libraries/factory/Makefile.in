@@ -38,7 +38,7 @@ ifeq (@OPTIMIZE@,yes)
 WARNFLAGS += -Wno-deprecated
 endif
 
-CXXFLAGS += --no-rtti --no-exceptions
+#CXXFLAGS += --no-rtti --no-exceptions
 
 BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)'
 
