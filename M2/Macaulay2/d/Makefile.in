@@ -106,7 +106,7 @@ endif
 DCFLAGS += -Wno-uninitialized -Wno-cast-qual
 M2_CFLAGS += -Wno-uninitialized -Wno-cast-qual
 ifeq "@__INTEL_COMPILER@" "no"
-DCFLAGS += -Wno-unused
+DCFLAGS += -Wno-unused -Wno-parentheses-equality
 CFLAGS += -Wno-unused
 M2_CFLAGS += -Wno-unused
 endif
