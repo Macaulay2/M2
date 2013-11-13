@@ -48,6 +48,32 @@ public:
     normal_form(result);
     return result;
   }
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const
+  {
+    bool ret = numerR_->from_BigReal(a,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const
+  {
+    bool ret = numerR_->from_BigComplex(z,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_double(double a, ring_elem& result) const
+  {
+    bool ret = numerR_->from_double(a,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_complex_double(double re, double im, ring_elem& result) const
+  {
+    bool ret = numerR_->from_complex_double(re,im,result);
+    normal_form(result);
+    return ret;
+  }
+
+
 
   virtual ring_elem var(int v) const {
     ring_elem result = numerR_->var(v);

@@ -33,11 +33,24 @@ namespace M2 {
   {
     return false;
   }
+  template<typename RT> 
+  bool get_from_double(const RT& R, typename RT::ElementType& a,double b)
+  {
+    return false;
+  }
+  template<typename RT> 
+  bool get_from_complex_double(const RT& R, typename RT::ElementType& a,double re, double im)
+  {
+    return false;
+  }
+
+  inline bool get_from_BigReal(const ARingRR& R, ARingRR::ElementType& a, gmp_RR b)
+  {return R.set_from_BigReal(a,b);}
 
   inline bool get_from_BigReal(const ARingRRR& R, ARingRRR::ElementType& a, gmp_RR b)
   {return R.set_from_BigReal(a,b);}
 
-  inline bool get_from_BigReal(const ARingRR& R, ARingRR::ElementType& a, gmp_RR b)
+  inline bool get_from_BigReal(const ARingCC& R, ARingCC::ElementType& a, gmp_RR b)
   {return R.set_from_BigReal(a,b);}
 
   inline bool get_from_BigReal(const ARingCCC& R, ARingCCC::ElementType& a, gmp_RR b)
@@ -48,6 +61,25 @@ namespace M2 {
 
   inline bool get_from_BigComplex(const ARingCC& R, ARingCC::ElementType& a, gmp_CC b)
   {return R.set_from_BigComplex(a,b); }
+
+  inline bool get_from_double(const ARingRRR& R, ARingRRR::ElementType& a, double b)
+  {return R.set_from_double(a,b);}
+
+  inline bool get_from_double(const ARingRR& R, ARingRR::ElementType& a, double b)
+  {return R.set_from_double(a,b);}
+
+  inline bool get_from_double(const ARingCCC& R, ARingCCC::ElementType& a, double b)
+  {return R.set_from_double(a,b);}
+
+  inline bool get_from_double(const ARingCC& R, ARingCC::ElementType& a, double b)
+  {return R.set_from_double(a,b);}
+
+  inline bool get_from_complex_double(const ARingCCC& R, ARingCCC::ElementType& a, double re, double im)
+  {return R.set_from_complex_double(a,re,im);}
+
+  inline bool get_from_complex_double(const ARingCC& R, ARingCC::ElementType& a, double re, double im)
+  {return R.set_from_complex_double(a,re,im);}
+
 
   // Promote an element of one ring to another.
   // Given a "natural and canonical" map R --> S (depends on the context)

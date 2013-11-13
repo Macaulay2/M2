@@ -209,6 +209,19 @@ ring_elem PolyRing::from_rational(mpq_ptr q) const
   return result;
 }
 
+ring_elem PolyRing::fromCoefficient(ring_elem& coeff) const
+{
+  Nterm* result;
+  if (K_->is_zero(coeff))
+    {
+      result = ZERO_RINGELEM;
+      return true;
+    }
+  result = new_term();
+  result->coeff = coeff;
+  M_->one(result->monom);
+  return result;
+}
 bool PolyRing::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
   ring_elem a;
@@ -217,16 +230,7 @@ bool PolyRing::from_BigComplex(gmp_CC z, ring_elem &result) const
       result = ZERO_RINGELEM;
       return false;
     }
-  if (K_->is_zero(a))
-    {
-      result = ZERO_RINGELEM;
-      return true;
-    }
-  Nterm *result1 = new_term();
-  result1->coeff = a;
-  M_->one(result1->monom);
-  result = result1;
-
+  result = fromCoefficient(a);
   return true;
 }
 
@@ -238,16 +242,29 @@ bool PolyRing::from_BigReal(gmp_RR z, ring_elem &result) const
       result = ZERO_RINGELEM;
       return false;
     }
-  if (K_->is_zero(a))
+  result = fromCoefficient(a);
+  return true;
+}
+bool PolyRing::from_double(double z, ring_elem &result) const
+{
+  ring_elem a;
+  if (!K_->from_double(z,a))
     {
       result = ZERO_RINGELEM;
-      return true;
+      return false;
     }
-  Nterm *result1 = new_term();
-  result1->coeff = a;
-  M_->one(result1->monom);
-  result = result1;
-
+  result = fromCoefficient(a);
+  return true;
+}
+bool PolyRing::from_complex_double(double re, double im, ring_elem &result) const
+{
+  ring_elem a;
+  if (!K_->from_complex_double(re, im, a))
+    {
+      result = ZERO_RINGELEM;
+      return false;
+    }
+  result = fromCoefficient(a);
   return true;
 }
 

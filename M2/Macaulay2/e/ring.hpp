@@ -230,10 +230,15 @@ public:
 
   virtual ring_elem from_rational(mpq_ptr q) const = 0;
   // The default version calls from_int(0). Change it?
+
+  // The default version calls from_int(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
   // The default version calls from_int(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
-  // The default version calls from_int(0) and returns false.
+  // Returns false if this ring cannot coerce a double to an element in this ring
+  virtual bool from_double(double a, ring_elem& result) const;
+  // Returns false if this ring cannot coerce a complex double (re+im*ii) to an element in this ring
+  virtual bool from_complex_double(double re, double im, ring_elem& result) const;
 
   virtual ring_elem var(int v) const;
 

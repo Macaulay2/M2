@@ -123,6 +123,11 @@ namespace M2 {
       result = mpfr_get_d(a, GMP_RNDN);
       return true;
     }
+    bool set_from_double(ElementType &result, double a) const {
+      result = a;
+      return true;
+    }
+
 
     // arithmetic
     void negate(ElementType &result, const ElementType& a) const
@@ -217,8 +222,7 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      // TODO
-      // map->get_ring()->from_BigReal(&f, result);
+      map->get_ring()->from_double(f, result);
     }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const

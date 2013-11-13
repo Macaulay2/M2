@@ -116,6 +116,24 @@ namespace M2 {
       R->clear(a);
       return ret;
     }
+    virtual bool from_double(double q, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      bool ret = get_from_double(*R,a,q);
+      if (ret) R->to_ring_elem(result, a);
+      R->clear(a);
+      return ret;
+    }
+    virtual bool from_complex_double(double re, double im, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      bool ret = get_from_complex_double(*R,a,re,im);
+      if (ret) R->to_ring_elem(result, a);
+      R->clear(a);
+      return ret;
+    }
 
     virtual ring_elem var(int v) const
     {

@@ -147,10 +147,19 @@ namespace M2 {
       result.im = 0.0;
       return true;
     }
-
     bool set_from_BigComplex(ElementType &result, gmp_CC a) const {
       result.re = mpfr_get_d(a->re, GMP_RNDN);
       result.im = mpfr_get_d(a->im, GMP_RNDN);
+      return true;
+    }
+    bool set_from_double(ElementType &result, double a) const {
+      result.re = a; 
+      result.im = 0;
+      return true;
+    }
+    bool set_from_complex_double(ElementType &result, double re, double im) const {
+      result.re = re;
+      result.im = im;
       return true;
     }
 
@@ -321,8 +330,7 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      // TODO
-      // map->get_ring()->from_BigReal(&f, result);
+      map->get_ring()->from_complex_double(f.re, f.im, result);
     }
 
     gmp_CC toBigComplex(const ElementType& a) const

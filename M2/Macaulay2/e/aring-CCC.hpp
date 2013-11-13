@@ -149,10 +149,19 @@ namespace M2 {
       mpfr_set_si(&result.im, 0, GMP_RNDN);
       return true;
     }
-
     bool set_from_BigComplex(ElementType &result, gmp_CC a) const { //???
       mpfr_set(&result.re, a->re, GMP_RNDN);
       mpfr_set(&result.im, a->im, GMP_RNDN);
+      return true;
+    }
+    bool set_from_double(ElementType &result, double a) const {
+      mpfr_set_d(&result.re, a, GMP_RNDN);
+      mpfr_set_si(&result.im, 0, GMP_RNDN);
+      return true;
+    }
+    bool set_from_complex_double(ElementType &result, double re, double im) const {
+      mpfr_set_d(&result.re, re, GMP_RNDN);
+      mpfr_set_d(&result.im, im, GMP_RNDN);
       return true;
     }
 

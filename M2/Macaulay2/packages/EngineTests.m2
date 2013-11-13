@@ -1243,6 +1243,26 @@ testPromoteLift = () -> (
     assert(m == lift(mT,R));
     m1 := matrix{{1+ii}};
     assert(try (lift(m1,RR_53); false) else true); -- should fail (as it does).
+    R53 := RR_53;
+    x := (5.2)_R53;
+    sub(x, R53); -- CRASH
+    phi := map(R53, R53, {});
+    phi (4.2); -- CRASH
+    -- these work over infinite precision
+    x = (5.2)_R;
+    sub(x, R); -- ok
+    phi = map(RR_300, RR_200, {});
+    phi (4.2p200); -- ok
+    -- try polynomial rings over these
+    A := RR_100[symbol x, symbol y];
+    f := map(A, RR_100, {});
+    f (1.2p100)
+    sub(ideal x_A, A)
+    -- try polynomial rings over  RR_53
+    A := RR_53[symbol x, symbol y];
+    f := map(A, RR_53, {});
+    f (1.2)
+    sub(ideal x_A, A)
     )
 
 TEST ///
