@@ -1,6 +1,6 @@
 diff -ur /Users/dan/src/M2/master/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpir/tmp/mpir-2.6.0/acinclude.m4 mpir-2.6.0/acinclude.m4
 --- /Users/dan/src/M2/master/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpir/tmp/mpir-2.6.0/acinclude.m4	2012-10-23 10:56:46.000000000 -0400
-+++ mpir-2.6.0/acinclude.m4	2013-11-13 12:04:36.000000000 -0500
++++ mpir-2.6.0/acinclude.m4	2013-11-13 12:59:36.000000000 -0500
 @@ -480,28 +480,28 @@
  # first see a simple "main()" works, then go on to other checks
  GMP_PROG_CC_WORKS_PART([$1], [])
@@ -52,6 +52,45 @@ diff -ur /Users/dan/src/M2/master/M2/BUILD/dan/builds.tmp/mac64.production/libra
  
  GMP_PROG_CC_WORKS_PART([$1], [function pointer return],
  [/* The following provokes an internal error from gcc 2.95.2 -mpowerpc64
+@@ -563,22 +563,22 @@
+ }
+ ])])
+ 
+-GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 1],
+-[/* The following provokes a segfault in the compiler on powerpc-apple-darwin.
+-   Extracted from tests/mpn/t-iord_u.c.  Causes Apple's gcc 3.3 build 1640 and
+-   1666 to segfault with e.g., -O2 -mpowerpc64.  */
+-
+-#ifdef __GNUC__
+-typedef unsigned long long t1;typedef t1*t2;
+-__inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
+-{t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
+-f(){static const struct{t1 n;t1 src[9];t1 want[9];}d[]={{1,{0},{1}},};t1 got[9];int i;
+-for(i=0;i<1;i++){if(e(got,got,9,d[i].n)==0)h();g(i,d[i].src,d[i].n,got,d[i].want,9);if(d[i].n)h();}}
+-h(){}g(){}
+-#else
+-int dummy;
+-#endif
+-])
++dnl GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 1],
++dnl [/* The following provokes a segfault in the compiler on powerpc-apple-darwin.
++dnl    Extracted from tests/mpn/t-iord_u.c.  Causes Apple's gcc 3.3 build 1640 and
++dnl    1666 to segfault with e.g., -O2 -mpowerpc64.  */
++dnl 
++dnl #ifdef __GNUC__
++dnl typedef unsigned long long t1;typedef t1*t2;
++dnl __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
++dnl {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
++dnl f(){static const struct{t1 n;t1 src[9];t1 want[9];}d[]={{1,{0},{1}},};t1 got[9];int i;
++dnl for(i=0;i<1;i++){if(e(got,got,9,d[i].n)==0)h();g(i,d[i].src,d[i].n,got,d[i].want,9);if(d[i].n)h();}}
++dnl h(){}g(){}
++dnl #else
++dnl int dummy;
++dnl #endif
++dnl ])
+ 
+ GMP_PROG_CC_WORKS_PART([$1], [long long reliability test 2],
+ [/* The following provokes an internal compiler error on powerpc-apple-darwin.
 diff -ur /Users/dan/src/M2/master/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpir/tmp/mpir-2.6.0/mpirxx.h mpir-2.6.0/mpirxx.h
 --- /Users/dan/src/M2/master/M2/BUILD/dan/builds.tmp/mac64.production/libraries/mpir/tmp/mpir-2.6.0/mpirxx.h	2012-10-13 07:34:22.000000000 -0400
 +++ mpir-2.6.0/mpirxx.h	2013-11-13 12:03:12.000000000 -0500
