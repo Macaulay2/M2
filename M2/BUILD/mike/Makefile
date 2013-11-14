@@ -38,11 +38,12 @@ opt64-clang : always
 	cd opt64-clang; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="clang -m64" CXX="clang++ -m64" \
-		CFLAGS="-fno-strict-aliasing" CXXFLAGS="-fno-strict-aliasing" \
 		--build=x86_64-apple-darwin \
 		--enable-dmg \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+#		CFLAGS="-fno-strict-aliasing" CXXFLAGS="-fno-strict-aliasing" \
 
 opt64-givaro : always
 	mkdir -p opt64-givaro
