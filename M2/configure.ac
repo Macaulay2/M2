@@ -157,6 +157,7 @@ case $OS-$REL in
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-12.*) REL=10.8 ; OS=MacOS ;;
+  Darwin-13.*) REL=10.9 ; OS=MacOS ;;
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
 esac
 
@@ -202,6 +203,7 @@ AC_PROG_AWK()
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(M2_CPPFLAGS,)
+AC_SUBST(M2_CFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
@@ -1492,19 +1494,38 @@ SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
-M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
+M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
-
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wfatal-errors"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    M2_CPPFLAGS="$M2_CPPFLAGS -Wfatal-errors"
+    M2_CFLAGS="$M2_CFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
     AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wno-mismatched-tags)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wno-mismatched-tags"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wno-parentheses-equality)
+AC_SUBST(HAVE_NO_PARENTHESES_EQUALITY,)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wno-parentheses-equality"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_NO_PARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
+    HAVE_NO_PARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
 IS_DECLARED(char **,sys_errlist, [
