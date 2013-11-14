@@ -27,18 +27,15 @@ namespace M2 {
 */
   class ARingRRR : public RingInterface
   {
-    // complex numbers represented as pairs of doubles.
+    // Higher precision real numbers
 
   public:
     static const RingID ringID = ring_RRR;
-    // const RRR *R; // ???
 
-    typedef RRR ring_type;
     typedef __mpfr_struct elem;
     typedef elem ElementType;
 
     ARingRRR(unsigned long precision) : mPrecision(precision) {}
-    // ARingRRR(const RRR *R0) : R(R0) {}
 
     // ring informational
     size_t characteristic() const { return 0; }
@@ -116,7 +113,9 @@ namespace M2 {
       mpfr_clear(&result); 
     }
 
-    void copy(ElementType &result, const ElementType& a) const { mpfr_set(&result, &a, GMP_RNDN); }
+    void copy(ElementType &result, const ElementType& a) const { 
+      mpfr_set(&result, &a, GMP_RNDN); 
+    }
 
     void set_from_int(ElementType &result, int a) const {
       mpfr_set_si(&result, a, GMP_RNDN);
@@ -205,7 +204,6 @@ namespace M2 {
                        bool p_one,
                        bool p_plus,
                        bool p_parens) const;
-      //TODO
 
     void syzygy(const ElementType& a, const ElementType& b,
                 ElementType &x, ElementType &y) const // remove?
