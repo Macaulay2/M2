@@ -659,11 +659,6 @@ gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
       RCC->ring().clear(b);
       return result;
     }
-  if (a->get_ring()->is_CCC())
-    {
-      void *f = a->get_value().poly_val;
-      return static_cast<gmp_CC>(f);
-    }
   ERROR("expected an element of CCC");
   return 0;
 }

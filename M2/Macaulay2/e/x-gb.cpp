@@ -22,11 +22,8 @@ bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
 void test_over_RR_or_CC(const Ring *R)
 {
-  const PolynomialRing *P = R->cast_to_PolynomialRing();
-  if (
-      (R->is_RRR() || R->is_CCC())
-      ||
-      (P != 0 && (P->getCoefficients()->is_RRR() || P->getCoefficients()->is_CCC())))
+  //const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if ( R->get_precision() > 0 )
     {
       if (!warning_given_for_gb_or_res_over_RR_or_CC)
         {
