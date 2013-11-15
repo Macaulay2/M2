@@ -798,9 +798,12 @@ Matrix *SLP<Field>::evaluate(const Matrix *values)
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++,c++) {
         //printf("%lf %lf \n", c->getreal(), c->getimaginary());
-        mpfr_set_d(re, c->getreal(), GMP_RNDN);
-        mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-        ring_elem e = from_BigReals(R,re,im);
+        
+        //mpfr_set_d(re, c->getreal(), GMP_RNDN);
+        //mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+        //ring_elem e = from_BigReals(R,re,im);
+        ring_elem e = from_doubles(R,c->getreal(),c->getimaginary());
+
         mat.set_entry(i,j,e);
       }
   } break;
@@ -808,9 +811,12 @@ Matrix *SLP<Field>::evaluate(const Matrix *values)
     for(i=0; i<rows_out; i++)
       for(int j=0; j<cols_out; j++) {
         element_type c = nodes[program->array[i*cols_out+j+out_entries_shift]];
-        mpfr_set_d(re, c.getreal(), GMP_RNDN);
-        mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
-        ring_elem e = from_BigReals(R,re,im);
+
+        //mpfr_set_d(re, c.getreal(), GMP_RNDN);
+        //mpfr_set_d(im, c.getimaginary(), GMP_RNDN);
+        //ring_elem e = from_BigReals(R,re,im);
+        ring_elem e = from_doubles(R,c.getreal(),c.getimaginary());
+
         mat.set_entry(i,j,e);
       }
     //end: interpretation
@@ -1443,8 +1449,9 @@ PathTracker /* or null */* PathTracker::make(const Matrix *S, const Matrix *T, g
     ERROR("polynomial ring expected");
     return NULL;
   }
-  const Ring* K = R->getCoefficients();
-  p->C = cast_to_CCC(K); // cast to ConcreteRing<ARingCCC> for now
+  p->C = cast_to_CCC(R->getCoefficients());
+  //const Ring* K = R->getCoefficients();
+  // p->C = cast_to_CCC(K); // cast to ConcreteRing<ARingCCC> for now
   if (!p->C)
     {
       ERROR("complex coefficients expected");
@@ -2277,9 +2284,12 @@ Matrix /* or null */* PathTracker::refine(const Matrix *sols, gmp_RR tolerance, 
   c = s_sols;
   for(i=0; i<n_sols; i++)
     for(j=0; j<n; j++,c++) {
-      mpfr_set_d(re, c->getreal(), GMP_RNDN);
-      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-      ring_elem e = from_BigReals(C,re,im);
+
+      //mpfr_set_d(re, c->getreal(), GMP_RNDN);
+      //mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      //ring_elem e = from_BigReals(C,re,im);
+      ring_elem e = from_doubles(C,c->getreal(),c->getimaginary());
+
       mat.set_entry(i,j,e);
     }
   mpfr_clear(re); mpfr_clear(im);
@@ -2305,9 +2315,12 @@ Matrix /* or null */* PathTracker::getSolution(int solN)
   Solution* s = raw_solutions+solN;
   complex* c = s->x;
   for(int j=0; j<n_coords; j++,c++) {
-    mpfr_set_d(re, c->getreal(), GMP_RNDN);
-    mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-    ring_elem e = from_BigReals(C,re,im);
+    
+    //mpfr_set_d(re, c->getreal(), GMP_RNDN);
+    //mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+    //ring_elem e = from_BigReals(C,re,im);
+    ring_elem e = from_doubles(C,c->getreal(),c->getimaginary());
+    
     mat.set_entry(0,j,e);
   }
   mpfr_clear(re); mpfr_clear(im);
@@ -2326,9 +2339,12 @@ Matrix /* or null */* PathTracker::getAllSolutions()
   for(int i=0; i<n_sols; i++,s++) {
     complex* c = s->x;
     for(int j=0; j<n_coords; j++,c++) {
-      mpfr_set_d(re, c->getreal(), GMP_RNDN);
-      mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
-      ring_elem e = from_BigReals(C,re,im);
+
+      //mpfr_set_d(re, c->getreal(), GMP_RNDN);
+      //mpfr_set_d(im, c->getimaginary(), GMP_RNDN);
+      //ring_elem e = from_BigReals(C,re,im);
+      ring_elem e = from_doubles(C,c->getreal(),c->getimaginary());
+
       mat.set_entry(i,j,e);
     }
   }
