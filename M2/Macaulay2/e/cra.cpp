@@ -396,16 +396,7 @@ bool ChineseRemainder::ratConversion(mpz_t c, mpz_t m, mpq_t result)
 
   }
   // clean up
-  // mpz_clears(a1,a2,u1,u2,q,h,mhalf,u2sqr,a2sqr,(void *)0);
-  mpz_clear(a1);
-  mpz_clear(a2);
-  mpz_clear(u1);
-  mpz_clear(u2);
-  mpz_clear(q);
-  mpz_clear(h);
-  mpz_clear(mhalf);
-  mpz_clear(u2sqr);
-  mpz_clear(a2sqr);
+  mpz_clears(a1,a2,u1,u2,q,h,mhalf,u2sqr,a2sqr,(void *)0);
   return retVal;
 }
 
