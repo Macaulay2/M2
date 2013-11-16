@@ -253,7 +253,7 @@ inverse MutableMatrix := (A) -> (
 nullSpace = method()
 nullSpace(MutableMatrix) := (M) -> (
      R := ring M;
-     map(R, rawLinAlgNullSpace raw M)
+     map(R, rawLinAlgNullSpace(raw M, true))
      )
 
 MutableMatrix ^ ZZ := (A, r) -> (
@@ -267,6 +267,12 @@ MutableMatrix ^ ZZ := (A, r) -> (
      if r > 1 then for i from 2 to r do result = result * A;
      result     
      )
+
+rowRankProfile = method()
+rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
+
+columnRankProfile = method()
+columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

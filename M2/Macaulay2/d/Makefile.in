@@ -103,6 +103,10 @@ endif
 .SUFFIXES: .d .sig .dep .res .test .m2
 .PHONY : clean all check tags
 
+ifeq "@HAVE_NO_PARENTHESES_EQUALITY@" "yes"
+DCFLAGS += -Wno-parentheses-equality
+endif
+
 DCFLAGS += -Wno-uninitialized -Wno-cast-qual
 M2_CFLAGS += -Wno-uninitialized -Wno-cast-qual
 ifeq "@__INTEL_COMPILER@" "no"

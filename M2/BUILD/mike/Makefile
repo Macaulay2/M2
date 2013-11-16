@@ -33,6 +33,18 @@ opt64 : always
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+opt64-clang : always
+	mkdir -p opt64-clang
+	cd opt64-clang; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+#		CFLAGS="-fno-strict-aliasing" CXXFLAGS="-fno-strict-aliasing" \
+
 opt64-givaro : always
 	mkdir -p opt64-givaro
 	cd opt64-givaro; ../../../configure \
@@ -325,7 +337,6 @@ ubuntu64-linbox : always
 	mkdir -p opt64-linbox
 	cd opt64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \
@@ -333,6 +344,7 @@ ubuntu64-linbox : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+#		--enable-memtailor \
 
 ubuntu64-linbox-debug : always
 	mkdir -p debug64-linbox
@@ -341,6 +353,19 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-flint \
+		--enable-linbox \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+ubuntu64-linbox-profile : always
+	mkdir -p profile64-linbox
+	cd profile64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-profile \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \

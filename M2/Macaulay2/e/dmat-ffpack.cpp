@@ -1,5 +1,7 @@
 // Copyright 2005-2012  Michael E. Stillman
 
+#if 0
+// This file is not in use.  These functions are now in dmat.cpp.
 #ifdef HAVE_FFLAS_FFPACK
 #if 0
     template<typename  CoeffRing >
@@ -451,6 +453,7 @@
   #endif
 #endif
 
+#endif
 
 
 

@@ -116,6 +116,24 @@ namespace M2 {
       R->clear(a);
       return ret;
     }
+    virtual bool from_double(double q, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      bool ret = get_from_double(*R,a,q);
+      if (ret) R->to_ring_elem(result, a);
+      R->clear(a);
+      return ret;
+    }
+    virtual bool from_complex_double(double re, double im, ring_elem &result) const
+    {
+      ElementType a;
+      R->init(a);
+      bool ret = get_from_complex_double(*R,a,re,im);
+      if (ret) R->to_ring_elem(result, a);
+      R->clear(a);
+      return ret;
+    }
 
     virtual ring_elem var(int v) const
     {
@@ -421,8 +439,10 @@ namespace M2 {
       return result;
     }
 
+    //TODO: look again at the next two when ring_elem is phased out
     virtual ring_elem zeroize_tiny(gmp_RR epsilon, const ring_elem f) const;
-    
+    virtual void increase_maxnorm(gmp_RR norm, const ring_elem f) const; 
+
     virtual unsigned long get_precision() const;  // if the ring is not over RRR/CCC returns 0
 
   }; // class ConcreteRing<RingType>
@@ -502,7 +522,7 @@ namespace M2 {
                                        ring_elem &resultS) const
   {
     const Ring *S = this;
-    fprintf(stderr, "calling promote\n");
+    //    fprintf(stderr, "calling promote\n");
     namespace RP = RingPromoter;
     if (R == globalZZ)
       {
@@ -535,6 +555,19 @@ namespace M2 {
       case M2::ring_ZZp: return RP::promoter<ARingZZpFFPACK,ARingZZp>(R,S,fR,resultS);
       case M2::ring_GFGivaro: return RP::promoter<ARingZZpFFPACK,ARingGFGivaro>(R,S,fR,resultS);
       case M2::ring_ZZpFfpack: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_RR:
+      switch (S->ringID()) {
+      case M2::ring_RR: return RP::promoter<ARingRR,ARingRR>(R,S,fR,resultS);
+      case M2::ring_RRR: return RP::promoter<ARingRR,ARingRRR>(R,S,fR,resultS);
+      case M2::ring_CC: return RP::promoter<ARingRR,ARingCC>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingRR,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
+    case M2::ring_CC:
+      switch (S->ringID()) {
+      case M2::ring_CC: return RP::promoter<ARingCC,ARingCC>(R,S,fR,resultS);
       default: return false;
       }
     case M2::ring_RRR:
@@ -676,6 +709,12 @@ namespace M2 {
     return f;
   }
 
+  template<typename RingType>
+  void ConcreteRing<RingType>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    // do nothing by default
+  }
+
   template<>
   inline ring_elem ConcreteRing<ARingRRR>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   {
@@ -702,10 +741,84 @@ namespace M2 {
     return result;
   }
 
+  template<>
+  inline void ConcreteRing<ARingRR>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    ARingRR::ElementType a;
+    ElementType b;
+    R->init(a); // will be the norm
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp_d(norm,a)<0)
+      mpfr_set_d(norm, a, GMP_RNDN);
+    R->clear(b);
+    R->clear(a);
+  }
+
+  template<>
+  inline void ConcreteRing<ARingCC>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    const ARingRR& realR = R->real_ring();
+    ARingRR::ElementType a;
+    ElementType b;
+    realR.init(a);
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp_d(norm,a)<0)
+      mpfr_set_d(norm, a, GMP_RNDN);
+    R->clear(b);
+    realR.clear(a);
+  }
+
+  template<>
+  inline void ConcreteRing<ARingRRR>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    ARingRRR::ElementType a;
+    ElementType b;
+    R->init(a); // will be the norm
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp(&a, norm)>0)
+      mpfr_set(norm, &a, GMP_RNDN);
+    R->clear(b);
+    R->clear(a);
+  }
+
+  template<>
+  inline void ConcreteRing<ARingCCC>::increase_maxnorm(gmp_RR norm, const ring_elem f) const
+  {
+    const ARingRRR& realR = R->real_ring();
+    ARingRRR::ElementType a;
+    ElementType b;
+    realR.init(a);
+    R->init(b);
+    R->from_ring_elem(b,f);
+    R->abs(a,b);
+    if (mpfr_cmp(&a, norm)>0)
+      mpfr_set(norm, &a, GMP_RNDN);
+    R->clear(b);
+    realR.clear(a);
+  }
+
   template<typename RingType>
   inline unsigned long ConcreteRing<RingType>::get_precision() const
   {
     return 0;
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingRR>::get_precision() const
+  {
+    return R->get_precision();
+  }
+
+  template<>
+  inline unsigned long ConcreteRing<ARingCC>::get_precision() const
+  {
+    return R->get_precision();
   }
 
   template<>

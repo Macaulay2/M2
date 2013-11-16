@@ -1,6 +1,8 @@
 // Copyright 1995 Michael E. Stillman
 
 #include "ring.hpp"
+#include "aring-RRR.hpp"
+#include "aring-CCC.hpp"
 #include "monoid.hpp"
 #include "monideal.hpp"
 #include "res-a1-poly.hpp"
@@ -259,6 +261,16 @@ bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
   result = from_int(0);
   return false;
 }
+bool Ring::from_double(double a, ring_elem &result) const
+{
+  result = from_int(0);
+  return false;
+}
+bool Ring::from_complex_double(double re, double im, ring_elem &result) const
+{
+  result = from_int(0);
+  return false;
+}
 
 ring_elem Ring::random() const
 {
@@ -417,6 +429,7 @@ ring_elem Ring::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
 {
   return f;
 }
+
 void Ring::increase_maxnorm(gmp_RR norm, const ring_elem f) const
   // If any real number appearing in f has larger absolute value than norm, replace norm.
 {

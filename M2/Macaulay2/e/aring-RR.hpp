@@ -3,6 +3,7 @@
 #ifndef _aring_RR_hpp_
 #define _aring_RR_hpp_
 
+#include "exceptions.hpp"
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
@@ -122,6 +123,11 @@ namespace M2 {
       result = mpfr_get_d(a, GMP_RNDN);
       return true;
     }
+    bool set_from_double(ElementType &result, double a) const {
+      result = a;
+      return true;
+    }
+
 
     // arithmetic
     void negate(ElementType &result, const ElementType& a) const
@@ -160,14 +166,22 @@ namespace M2 {
       result = a/b;
     }
 
+    void abs(ElementType& result, const ElementType& a) const
+    {
+      result = fabs(a);
+    }
+
     void power(ElementType &result, const ElementType& a, int n) const
     {
-      // TODO
+      result = pow(a,n);
     }
 
     void power_mpz(ElementType &result, const ElementType& a, mpz_ptr n) const
     {
-      // TODO
+      if(mpz_fits_sint_p(n)) {
+        int m = static_cast<int>(mpz_get_si(n)); 
+        power(result,a,m);
+      } else throw exc::engine_error("expected small integer");
     }
 
     void swap(ElementType &a, ElementType &b) const
@@ -208,8 +222,7 @@ namespace M2 {
 
     void eval(const RingMap *map, ElementType &f, int first_var, ring_elem &result) const
     {
-      // TODO
-      // map->get_ring()->from_BigReal(&f, result);
+      map->get_ring()->from_double(f, result);
     }
 
     void zeroize_tiny(gmp_RR epsilon, ElementType &a) const

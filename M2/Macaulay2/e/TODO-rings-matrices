@@ -123,7 +123,6 @@ NO x-mutablemat.cpp
 NO mat.cpp
 
 NO: dmat-LU.hpp dmat-LU.cpp  BUT: DMatLU called by MutableMat< DMat>...
-NO dmat-RRR.hpp
 
 NO lapack.hpp lapack.cpp
 NO mutablemat.hpp  BUT: has calls for lin alg of MutableMat<T>.  These should come from DMat, SMat

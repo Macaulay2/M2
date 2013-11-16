@@ -27,18 +27,15 @@ namespace M2 {
 */
   class ARingRRR : public RingInterface
   {
-    // complex numbers represented as pairs of doubles.
+    // Higher precision real numbers
 
   public:
     static const RingID ringID = ring_RRR;
-    // const RRR *R; // ???
 
-    typedef RRR ring_type;
     typedef __mpfr_struct elem;
     typedef elem ElementType;
 
     ARingRRR(unsigned long precision) : mPrecision(precision) {}
-    // ARingRRR(const RRR *R0) : R(R0) {}
 
     // ring informational
     size_t characteristic() const { return 0; }
@@ -116,7 +113,9 @@ namespace M2 {
       mpfr_clear(&result); 
     }
 
-    void copy(ElementType &result, const ElementType& a) const { mpfr_set(&result, &a, GMP_RNDN); }
+    void copy(ElementType &result, const ElementType& a) const { 
+      mpfr_set(&result, &a, GMP_RNDN); 
+    }
 
     void set_from_int(ElementType &result, int a) const {
       mpfr_set_si(&result, a, GMP_RNDN);
@@ -134,10 +133,10 @@ namespace M2 {
       mpfr_set_q(&result, a, GMP_RNDN);
     }
 
-    void set_from_double(ElementType &result, double a) const {
+    bool set_from_double(ElementType &result, double a) const {
       mpfr_set_d(&result, a, GMP_RNDN);
+      return true;
     }
-
     bool set_from_BigReal(ElementType &result, gmp_RR a) const {
       mpfr_set(&result, a, GMP_RNDN);
       return true;
@@ -205,7 +204,6 @@ namespace M2 {
                        bool p_one,
                        bool p_plus,
                        bool p_parens) const;
-      //TODO
 
     void syzygy(const ElementType& a, const ElementType& b,
                 ElementType &x, ElementType &y) const // remove?
@@ -236,6 +234,22 @@ namespace M2 {
     {
       if (mpfr_cmpabs(&a,epsilon) < 0)
         set_zero(a);
+    }
+    void increase_norm(gmp_RR& norm, const ElementType& a) const
+    {
+      if (mpfr_cmpabs(&a, norm) > 0)
+        {
+          set(*norm, a);
+          abs(*norm,*norm);
+        }
+    }
+
+    void abs(ElementType& result, const ElementType& a) const
+    {
+      if (mpfr_cmp_si(&a, 0) < 0)
+        negate(result, a);
+      else
+        set(result, a);
     }
 
   private:

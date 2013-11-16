@@ -10,6 +10,19 @@ newPackage(
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
     	Headline => "Monomial algebras",
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Decomposition of Monomial Algebras: Applications and Algorithms",
+	     "acceptance date" => "2013-04-07",
+	     "published article URI" => "http://j-sag.org/Volume5/jsag-2-2013.pdf",
+	     "published code URI" => "http://j-sag.org/Volume5/MonomialAlgebras.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MonomialAlgebras.m2",
+	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
+	     "version at publication" => "2.3",
+	     "volume number" => "5",
+	     "volume URI" => "http://j-sag.org/Volume5/"
+	     },
 	CacheExampleOutput => false,
 	AuxiliaryFiles => false,
     	DebuggingMode => false,

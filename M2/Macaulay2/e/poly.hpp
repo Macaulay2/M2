@@ -57,11 +57,16 @@ public:
   // Arithmetic ///////////
   /////////////////////////
 
+  ring_elem fromCoefficient(ring_elem& coeff) const;
+
   virtual ring_elem from_int(int n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
+
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   virtual bool from_BigReal(gmp_RR z, ring_elem &result) const;
+  virtual bool from_double(double a, ring_elem& result) const;
+  virtual bool from_complex_double(double re, double im, ring_elem& result) const;
 
   virtual ring_elem var(int v) const;
 

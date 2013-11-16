@@ -1143,14 +1143,16 @@ bool solve_via_lapack_without_transposition(
   copy_complex_array<ComplexField>(size,b,x);
   double *copyb = (double*) x; // result is stored in copyb
 
+  
   /*
   printf("-----------(solve)-----------------------------------\ncopyA:\n");
-  for (i=0; i<size*size; i++)
+  for (int i=0; i<size*size; i++)
     printf("(%lf %lf) ", *(copyA+2*i), *(copyA+2*i+1));
   printf("\nb:\n");
-  for (i=0; i<size; i++)
+  for (int i=0; i<size; i++)
     printf("(%lf %lf) ", *(copyb+2*i), *(copyb+2*i+1));
   */
+
   zgesv_(&size, &bsize,
          copyA,
          &size, permutation,

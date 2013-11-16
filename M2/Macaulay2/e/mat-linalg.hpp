@@ -11,6 +11,8 @@
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
+#include "aring-RR.hpp"
+#include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zzp.hpp"
@@ -30,17 +32,17 @@ typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 #endif
 
-#if 1
-  typedef DMat<M2::ARingRRR> DMatRRR; 
-  typedef DMat<M2::ARingCCC> DMatCCC; 
-#else 
-#include "coeffrings.hpp"
-  typedef DMat<CoefficientRingRRR> DMatRRR;
-  typedef DMat<CoefficientRingCCC> DMatCCC;
-#endif
+typedef DMat<M2::ARingRRR> DMatRRR; 
+typedef DMat<M2::ARingCCC> DMatCCC; 
+typedef DMat<M2::ARingRR> DMatRR; 
+typedef DMat<M2::ARingCC> DMatCC; 
 
 #include "dmat-LU.hpp"
 #include "lapack.hpp"
+#include "mat-arith.hpp"
+#include "dmat-LU-template.hpp"
+
+extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 
 namespace MatrixOppies
 {
@@ -270,6 +272,18 @@ namespace MatrixOppies
     throw exc::engine_error("'SVD' not implemented for this kind of matrix over this ring");
   }
 
+  template<typename T>
+  void clean(gmp_RR epsilon, T& mat)
+  {
+    throw exc::engine_error("'clean' not implemented for this kind of matrix over this ring");
+  }
+  
+  template<typename T>
+  void increase_norm(gmp_RR& nm, const T& mat)
+  {
+    throw exc::engine_error("'norm' not implemented for this kind of matrix over this ring");
+  }
+
   /////////////////////////////////
   // Generic functions for DMat ///
   /////////////////////////////////
@@ -279,6 +293,7 @@ namespace MatrixOppies
             const DMat<RT>& B, 
             DMat<RT>& result_product)
   {
+    printf("entering dmat mult\n");
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
@@ -290,22 +305,21 @@ namespace MatrixOppies
 
     ElementType tmp;
     A.ring().init(tmp);
-    // WARNING: this routine expects the result matrix to be in COLUMN MAJOR ORDER
-    for (size_t j = 0; j<B.numColumns(); j++)
-      for (size_t i = 0; i<A.numRows(); i++)
+    // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
+    for (size_t i = 0; i<A.numRows(); i++)
+      for (size_t j = 0; j<B.numColumns(); j++)
         {
           ConstIterator i1 = A.rowBegin(i);
           ConstIterator iend = A.rowEnd(i);
           ConstIterator j1 = B.columnBegin(j);
           
-          do 
+          while (i1 != iend)
             {
               A.ring().mult(tmp, *i1, *j1);
               A.ring().add(*result, *result, tmp);
               ++i1;
               ++j1;
             }
-          while (i1 != iend);
           result++;
         }
     A.ring().clear(tmp);
@@ -318,7 +332,9 @@ namespace MatrixOppies
                     const DMatZZp& B, 
                     DMatZZp& X)
   {
-    return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+    // return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
   }
 
   inline bool nullspaceU(const DMatZZp& A, 
@@ -332,10 +348,88 @@ namespace MatrixOppies
                               DMatZZp& L,
                               DMatZZp& U)
   {
-    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
+    //    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
   }
 
-  
+  inline size_t rank(const DMatZZp& A)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.rank();
+  }
+
+  inline void determinant(const DMatZZp& A,
+                          DMatZZp::ElementType& result)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    LUdecomp.determinant(result);
+  }
+
+  inline M2_arrayintOrNull rankProfile(const DMatZZp& A, 
+                                       bool row_profile)
+  {
+    std::vector<size_t> profile;
+    if (row_profile)
+      {
+        // First transpose A
+        DMatZZp B(A.ring(), A.numColumns(), A.numRows());
+        MatrixOppies::transpose(A,B);
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(B);
+        LUdecomp.columnRankProfile(profile);
+        return stdvector_to_M2_arrayint(profile);
+      }
+    else
+      {
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        LUdecomp.columnRankProfile(profile);
+        return stdvector_to_M2_arrayint(profile);
+      }
+  }
+
+  inline bool inverse(const DMatZZp& A, 
+               DMatZZp& result_inv)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.inverse(result_inv);
+  }
+
+  inline size_t nullSpace(const DMatZZp& A, 
+                   bool right_side, 
+                   DMatZZp& result_nullspace)
+  {
+    if (right_side)
+      {
+        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        return LUdecomp.kernel(result_nullspace);
+      }
+    //TODO: do left-side
+    return 0;
+  }
+
+  inline bool solveLinear(const DMatZZp& A, 
+                   const DMatZZp& B, 
+                   DMatZZp& X)
+  {
+    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+  }
+
+  inline bool solveLinear(const DMatZZp& A, 
+                          const DMatZZp& B, 
+                          bool right_side, 
+                          DMatZZp& X, 
+                          bool declare_A_is_invertible)
+  {
+    //TODO: write this routine in the cases which are not handled
+    if (not right_side)
+      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+    return solveLinear(A,B,X);
+  }
+
 #ifdef HAVE_FFLAS_FFPACK
   // Functions for DMatZZpFFPACK
 
@@ -504,29 +598,34 @@ namespace MatrixOppies
                    const DMatZZpFlint& B, 
                    DMatZZpFlint& result_product) 
   {
-    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
-    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
+    printf("entering DMatZZpFlint mult\n");
+    //    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
+    //    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
     // The A1 and B1 on the next line are switched because the memory layout expected
     // is the transpose of what we have for DMat.
-    nmod_mat_mul(result_product.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
+    nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
   }
 
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           DMatZZpFlint& result_nullspace) 
   {
-    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_solve doesn't declare params const
-    long rank = nmod_mat_nullspace(result_nullspace.nmod_mat(), A1.nmod_mat());
-    return (A.numColumns() - rank);
+    printf("entering DMatZZpFLINT nullSpace\n");
+    long rank = nmod_mat_rank(A.nmod_mat());
+    result_nullspace.resize(A.numColumns(), A.numColumns() - rank); // the largest the answer could be
+    long rank2 = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
+    M2_ASSERT(rank == rank2);
+    return (A.numColumns() - rank2);
   }
   
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           bool right_side, 
                           DMatZZpFlint& result_nullspace)
   {
+    printf("entering DMatZZpFLINT nullSpace(3 arg)\n");
     //TODO: WRITE ME
     if (not right_side)
       throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,true,result_nullspace);
+    return nullSpace(A,result_nullspace);
   }
   
   inline bool solveLinear(const DMatZZpFlint& A, 
@@ -684,16 +783,156 @@ namespace MatrixOppies
   }
 #endif
 
-  /////////
-  // RRR //
-  /////////
+  ////////
+  // RR //
+  ////////
 
-  inline bool solve(const DMatRRR& A, 
-                    const DMatRRR& B, 
-                    DMatRRR& X)
+  inline bool solve(const DMatRR& A, 
+                    const DMatRR& B, 
+                    DMatRR& X)
   {
     return Lapack::solve(&A, &B, &X);
   }
+
+  inline bool nullspaceU(const DMatRR& A, 
+                         DMatRR& X)
+  {
+    DMatLU<M2::ARingRR>::nullspaceU(&A, &X);
+    return true;
+  }
+
+  inline M2_arrayintOrNull LU(const DMatRR& A, 
+                              DMatRR& L,
+                              DMatRR& U)
+  {
+    return Lapack::LU(&A, &L, &U);
+  }
+
+  inline bool eigenvaluesHermitian(const DMatRR& A, 
+                            DMatRR& eigenvals)
+  {
+    return Lapack::eigenvalues_symmetric(&A, &eigenvals);
+  }
+
+  inline bool eigenvalues(const DMatRR& A, 
+                          DMatCC& eigenvals)
+  {
+    return Lapack::eigenvalues(&A, &eigenvals);
+  }
+
+  inline bool eigenvectorsHermitian(const DMatRR& A, 
+                                    DMatRR& eigenvals,
+                                    DMatRR& eigenvecs)
+  {
+    return Lapack::eigenvectors_symmetric(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool eigenvectors(const DMatRR& A, 
+                           DMatCC& eigenvals,
+                           DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool leastSquares(const DMatRR& A, 
+                           const DMatRR& B, 
+                           DMatRR& X,
+                           bool assume_full_rank)
+  {
+    if (assume_full_rank)
+      return Lapack::least_squares(&A,&B,&X);
+    else
+      return Lapack::least_squares_deficient(&A,&B,&X);
+  }
+
+  inline bool SVD(const DMatRR& A, 
+           DMatRR& Sigma, 
+           DMatRR& U,
+           DMatRR& Vt,
+           int strategy)
+  {
+    if (strategy == 1)
+      return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+    return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  ////////
+  // CC //
+  ////////
+
+  inline bool solve(const DMatCC& A, 
+                    const DMatCC& B, 
+                    DMatCC& X)
+  {
+    return Lapack::solve(&A, &B, &X);
+  }
+
+  inline bool nullspaceU(const DMatCC& A, 
+                  DMatCC& X)
+  {
+    DMatLU<DMatCC::CoeffRing>::nullspaceU(&A, &X);
+    return true;
+  }
+
+  inline M2_arrayintOrNull LU(const DMatCC& A, 
+                              DMatCC& L,
+                              DMatCC& U)
+  {
+    return Lapack::LU(&A, &L, &U);
+  }
+
+  inline bool eigenvaluesHermitian(const DMatCC& A, 
+                            DMatRR& eigenvals)
+  {
+    return Lapack::eigenvalues_hermitian(&A, &eigenvals);
+  }
+
+  inline bool eigenvalues(const DMatCC& A, 
+                          DMatCC& eigenvals)
+  {
+    return Lapack::eigenvalues(&A, &eigenvals);
+  }
+
+  inline bool eigenvectorsHermitian(const DMatCC& A, 
+                                    DMatRR& eigenvals,
+                                    DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors_hermitian(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool eigenvectors(const DMatCC& A, 
+                           DMatCC& eigenvals,
+                           DMatCC& eigenvecs)
+  {
+    return Lapack::eigenvectors(&A, &eigenvals, &eigenvecs);
+  }
+
+  inline bool leastSquares(const DMatCC& A, 
+                           const DMatCC& B, 
+                           DMatCC& X,
+                           bool assume_full_rank)
+  {
+    if (assume_full_rank)
+      return Lapack::least_squares(&A,&B,&X);
+    else
+      return Lapack::least_squares_deficient(&A,&B,&X);
+  }
+
+  inline bool SVD(const DMatCC& A, 
+           DMatRR& Sigma, 
+           DMatCC& U,
+           DMatCC& Vt,
+           int strategy)
+  {
+    if (strategy == 1)
+      return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
+    return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  /////////
+  // RRR // TODO: rewrite not using lapack
+  /////////
+
 
   inline bool nullspaceU(const DMatRRR& A, 
                          DMatRRR& X)
@@ -706,7 +945,23 @@ namespace MatrixOppies
                               DMatRRR& L,
                               DMatRRR& U)
   {
-    return Lapack::LU(&A, &L, &U);
+    //return Lapack::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
+  }
+
+  inline bool solve(const DMatRRR& A, 
+                    const DMatRRR& B, 
+                    DMatRRR& X)
+  {
+    printf("in solve, before LUdecomp, for DMatRRR\n");
+    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
+    printf("before solve for DMatRRR\n");
+    return LUdecomp.solve(B,X);
+    //return Lapack::solve(&A, &B, &X);
   }
 
   inline bool eigenvaluesHermitian(const DMatRRR& A, 
@@ -757,15 +1012,33 @@ namespace MatrixOppies
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
   }
 
+  inline void clean(gmp_RR epsilon, DMatRRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatRRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
+  }
+
   /////////
-  // CCC //
+  // CCC //  TODO: rewrite not using lapack
   /////////
 
   inline bool solve(const DMatCCC& A, 
                     const DMatCCC& B, 
                     DMatCCC& X)
   {
-    return Lapack::solve(&A, &B, &X);
+    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+    //return Lapack::solve(&A, &B, &X);
   }
 
   inline bool nullspaceU(const DMatCCC& A, 
@@ -779,7 +1052,12 @@ namespace MatrixOppies
                               DMatCCC& L,
                               DMatCCC& U)
   {
-    return Lapack::LU(&A, &L, &U);
+    //return Lapack::LU(&A, &L, &U);
+    std::vector<size_t> perm;
+    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
   }
 
   inline bool eigenvaluesHermitian(const DMatCCC& A, 
@@ -828,6 +1106,22 @@ namespace MatrixOppies
     if (strategy == 1)
       return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  inline void clean(gmp_RR epsilon, DMatCCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatCCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
   }
 
 };

@@ -1,4 +1,4 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005,2013  Michael E. Stillman
 
 #include "exceptions.hpp"
 #include "error.h"
@@ -16,9 +16,12 @@ namespace MatrixOppies
   size_t rank(const DMatZZpFFPACK& mat)
   {
     /// @note 1. matrix data (N) is modified by FFPACK
-    /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
     DMatZZpFFPACK N(mat); // copy of matrix mat.
-    size_t result = FFPACK::Rank(mat.ring().field(), mat.numColumns(), mat.numRows(), N.array(), mat.numRows());
+    size_t result = FFPACK::Rank(mat.ring().field(), 
+                                 mat.numRows(), 
+                                 mat.numColumns(), 
+                                 N.array(), 
+                                 mat.numColumns());
     return result;
   }
   
@@ -27,62 +30,38 @@ namespace MatrixOppies
   {
     std::cout << "Calling FFPACK::Det" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
-    /// @note 2. FFPACK expects row-wise stored matrices while dmat stores them column-wise => switch n_rows and n_cols -parameters!
     DMatZZpFFPACK N(mat);
-    result_det = FFPACK::Det(mat.ring().field(), mat.numColumns(), mat.numRows(),  N.array(),  mat.numRows());
+    result_det = FFPACK::Det(mat.ring().field(), 
+                             mat.numRows(), 
+                             mat.numColumns(),  
+                             N.array(),  
+                             mat.numColumns());
   }
   
   bool inverse(const DMatZZpFFPACK& mat, 
                DMatZZpFFPACK& result_inv)
   {
     M2_ASSERT(mat.numRows() == mat.numColumns());
+    M2_ASSERT(result_inv.numRows() == mat.numRows());
+    M2_ASSERT(result_inv.numColumns() == mat.numRows());
+
     DMatZZpFFPACK N(mat);
     size_t n = mat.numRows();
     int nullspacedim;
-    FFPACK::Invert2(mat.ring().field(), n, N.array(), n, result_inv.array(), n, nullspacedim);
+    FFPACK::Invert2(mat.ring().field(), 
+                    n, 
+                    N.array(), 
+                    n, 
+                    result_inv.array(), 
+                    n, 
+                    nullspacedim);
     return (nullspacedim == 0);
-  }
-  
-  void mult(const DMatZZpFFPACK& A, 
-            const DMatZZpFFPACK& B, 
-            DMatZZpFFPACK& C)
-  {
-    // This one is a bit harder, as we need to be careful about rows/columns, and the ffpack routine
-    // is so general.
-    // We assume that result_product has been just created
-    
-    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
-    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
-    
-    size_t m = B.numColumns();
-    size_t n = A.numRows();
-    
-    size_t k = A.numColumns();
-    //    size_t k2 = B.numRows();
-    
-    DMatZZpFFPACK::ElementType a;
-    C.ring().init(a);
-    C.ring().set_from_int(a, 1);
-    FFLAS::fgemm( C.ring().field(),
-                  tB, tA,
-                  m,n,k,
-                  a,
-                  B.array(),
-                  B.numRows(),
-                  A.array(),
-                  A.numRows(),
-                  a,
-                  C.array(),
-                  C.numRows()
-                  );
   }
   
   size_t nullSpace(const DMatZZpFFPACK& mat, 
                    bool right_side, 
                    DMatZZpFFPACK& nullspace)
   {
-    right_side = !right_side; // because FFPACK stores by rows, not by columns.
-    
     DMatZZpFFPACK N(mat); // copy of mat
     size_t nr = mat.numRows();
     size_t nc = mat.numColumns();
@@ -94,7 +73,13 @@ namespace MatrixOppies
     
     FFPACK::NullSpaceBasis(mat.ring().field(),
                            (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
-                           nc, nr, N.array(), nr, nullspaceFFPACK, nullspace_leading_dim, nullspace_dim);
+                           nr, 
+                           nc, 
+                           N.array(), 
+                           nc, 
+                           nullspaceFFPACK, 
+                           nullspace_leading_dim, 
+                           nullspace_dim);
     
     std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
     if (right_side && nullspace_dim != nullspace_leading_dim)
@@ -107,12 +92,11 @@ namespace MatrixOppies
       }
     
     if (right_side)
-      nullspace.resize(nullspace_dim,nr);
-    else
       nullspace.resize(nc,nullspace_dim);
+    else
+      nullspace.resize(nullspace_dim,nr);
     
     std::swap(nullspace.array(), nullspaceFFPACK);
-    //  mat.copy_elems(nullspace.n_rows() * nullspace.n_cols(), nullspace.get_array(), 1, nullspaceFFPACK, 1); 
     
     delete [] nullspaceFFPACK;
     return nullspace_dim;
@@ -122,7 +106,7 @@ namespace MatrixOppies
                    const DMatZZpFFPACK& B, 
                    bool right_side, 
                    DMatZZpFFPACK& X, 
-                   bool declare_A_is_invertible)
+                   bool declare_A_is_invertible) // this parameter is unused
   {
     std::cerr << "inside FFpackSolveLinear" << std::endl;
     
@@ -141,18 +125,21 @@ namespace MatrixOppies
     
     X.resize(x_rows, x_cols); // sets it to 0 too.
     
-    int info; // >0 if the system is inconsistent, ==0 means success
-    
+    int info = 0; // >0 if the system is inconsistent, ==0 means success
+
     FFPACK::fgesv(A.ring().field(),
-                  (!right_side ? FFLAS::FflasLeft : FFLAS::FflasRight),
-                  a_cols, a_rows, 
-                  (!right_side ? b_cols : b_rows),
+                  (right_side ? FFLAS::FflasLeft : FFLAS::FflasRight),
+                  a_rows, 
+                  a_cols, 
+                  (right_side ? b_cols : b_rows),
                   copyA.array(),
-                  a_rows, // leading dim of A
-                  X.array(), x_rows,
-                  copyB.array(), b_rows,
+                  a_cols, // leading dim of A
+                  X.array(), 
+                  x_cols,
+                  copyB.array(), 
+                  b_cols,
                   &info);
-    
+
     if (info > 0)
       {
         // the system is inconsistent
@@ -174,22 +161,23 @@ namespace MatrixOppies
                                 bool row_profile)
   
   {
-    // Note that FFPack stores matrices by row, not column, the opposite of what we do.
-    // So row_profile true means use ffpack column rank profile!
-    row_profile = not row_profile; // TODO: once matrices are stored row-major, this should be removed.
     DMatZZpFFPACK N(mat);
     
     size_t * prof; // this is where the result will be placed
     size_t rk;
     if (row_profile)
       rk = FFPACK::RowRankProfile(mat.ring().field(),
-                                  mat.numColumns(),mat.numRows(),
-                                  N.array(),mat.numRows(),
+                                  mat.numRows(),
+                                  mat.numColumns(),
+                                  N.array(),
+                                  mat.numColumns(),
                                   prof);
     else
       rk = FFPACK::ColumnRankProfile(mat.ring().field(),
-                                     mat.numColumns(),mat.numRows(),
-                                     N.array(),mat.numRows(),
+                                     mat.numRows(),
+                                     mat.numColumns(),
+                                     N.array(),
+                                     mat.numColumns(),
                                      prof);
     
     M2_arrayint profile = M2_makearrayint(static_cast<int>(rk));
@@ -200,91 +188,72 @@ namespace MatrixOppies
     return profile;
   }
   
-  static void ARingZZpFFPACKAddMultipleTo( DMat<M2::ARingZZpFFPACK> &C,
-                                           const DMat<M2::ARingZZpFFPACK> &A,
-                                           const DMat<M2::ARingZZpFFPACK> &B,
-                                           bool transposeA,
-                                           bool transposeB,
-                                           const typename DMat<M2::ARingZZpFFPACK>::ElementType &a,
-                                           const typename DMat<M2::ARingZZpFFPACK>::ElementType &b)
-  /* A,B,C should be mutable matrices over a finite prime field, and a,b
-     elements of this field.
-     C = b*C + a * op(A)*op(B),
-     where op(A) = A or transpose(A), depending on transposeA
-     where op(B) = B or transpose(B), depending on transposeB
-     connected to rawFFPackAddMultipleTo, MES
-  */
+  void addMultipleTo(DMatZZpFFPACK& C,
+                     const DMatZZpFFPACK::ElementType& a,
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B)
   {
-    typedef DMat<M2::ARingZZpFFPACK> Mat;
-    FFLAS::FFLAS_TRANSPOSE tA = (transposeA ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
-    FFLAS::FFLAS_TRANSPOSE tB = (transposeB ? FFLAS::FflasTrans : FFLAS::FflasNoTrans);
+    // Compute C := C + a*A*B
+    // Both DMat, and FFPACK store dense matrices in row major order.
+    // Note that the leading dimension in gemm arguments is #columns, 
+    // as the matrix is in row-major order
     
-    // determine m,n,k
-    size_t m = (transposeA ? A.numColumns() : A.numRows() );
-    size_t n = (transposeB ? B.numRows() : B.numColumns() );
-    size_t k = (transposeA ? A.numRows() : A.numColumns() );
-    size_t k2 = (transposeB ? B.numColumns() : B.numRows());
-    if (k != k2)
-      {
-        throw exc::engine_error("matrices have wrong shape to be multiplied");
-        return ;
-      }
+    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
+    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
+
+    size_t m = A.numRows();
+    size_t k = A.numColumns();
+    M2_ASSERT(A.numColumns() == B.numRows());
+    size_t n = B.numColumns();
     
-    Mat copyA(A);
-    Mat copyB(B);
-    
-    FFLAS::fgemm( A.ring().field(),
-                  tA, tB,
+    M2_ASSERT(C.numRows() == m);
+    M2_ASSERT(C.numColumns() == n);
+
+    DMatZZpFFPACK::ElementType b;
+    C.ring().init(b);
+    C.ring().set_from_int(b, 1);
+    FFLAS::fgemm( C.ring().field(),
+                  tB, tA,
                   m,n,k,
                   a,
-                  copyA.array(),
+                  A.array(),
                   A.numColumns(),
-                  copyB.array(),
+                  B.array(),
                   B.numColumns(),
                   b,
                   C.array(),
                   C.numColumns()
                   );
-    return  ;
   }
 
   void addMultipleTo(DMatZZpFFPACK& C, 
                      const DMatZZpFFPACK& A, 
                      const DMatZZpFFPACK& B)
   {
-    bool transposeA;
-    bool transposeB;
     DMatZZpFFPACK::ElementType one;
-    
     A.ring().set_from_int( one,1 );
-    
-    ARingZZpFFPACKAddMultipleTo( C, A, B,  
-                                 transposeA=false,
-                                 transposeB=false,  
-                                 one,  
-                                 one
-                                 );
+
+    addMultipleTo(C,one,A,B);
   }
   
   void subtractMultipleTo(DMatZZpFFPACK& C, 
                           const DMatZZpFFPACK& A, 
                           const DMatZZpFFPACK& B)
   {
-    bool transposeA;
-    bool transposeB;
-
-    DMatZZpFFPACK::ElementType a,b;
-    
-    A.ring().set_from_int( b,1 );
-    A.ring().invert( a, b );
-    
-    ARingZZpFFPACKAddMultipleTo( C, A, B,  
-                                 transposeA=false,
-                                 transposeB=false,  
-                                 a,  
-                                 b
-                                 );
+    DMatZZpFFPACK::ElementType minus_one;
+    A.ring().set_from_int( minus_one,-1 );
+    addMultipleTo(C,minus_one,A,B);
   }
+
+  void mult(const DMatZZpFFPACK& A, 
+            const DMatZZpFFPACK& B, 
+            DMatZZpFFPACK& C)
+  {
+    // We assume that C is set to the correct size, and is the zero matrix here.
+    addMultipleTo(C,A,B);
+  }
+  
+
 };                                                     
 
 #endif // HAVE_FFLAS_FFPACK

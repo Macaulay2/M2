@@ -10,6 +10,8 @@
 //class Ring_RRR;
 namespace M2 {
   class ARingZZp;
+  class ARingRR;
+  class ARingCC;
   class ARingRRR;
   class ARingCCC;
 };
@@ -28,6 +30,22 @@ template<typename RT> struct EigenTypes
   typedef RT EigenvectorType;
   typedef RT HermitianEigenvalueType;
   typedef RT HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingRR>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingRR HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingCC>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingCC HermitianEigenvectorType;
 };
 
 template<> struct EigenTypes<Ring_RRR>
@@ -51,7 +69,7 @@ template<> struct EigenTypes<M2::ARingCCC>
 
 #include "dmat.hpp"
 #include "smat.hpp"
-#include "MatElementaryOps.hpp"
+#include "mat-elem-ops.hpp"
 #include "mat-arith.hpp"
 #include "mat-linalg.hpp"
 
@@ -720,6 +738,10 @@ public:
                                   const MutableMatrix* B);
 
   virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const;
+
+  // Special routines for approximate fields
+  virtual void clean(gmp_RR epsilon);  // modifies 'this'
+  virtual gmp_RRorNull norm() const;
 };
 
 template <typename T>
@@ -743,6 +765,7 @@ const RingElement* MutableMat<T>::determinant() const
 template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
+  M2_ASSERT(n_rows() == n_cols());
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
   bool val = MatrixOppies::inverse(mat, result->mat);
   if (!val)
@@ -948,6 +971,26 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
   LQUPFactorizationInPlace(bool transpose)
 {
   throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
+}
+
+template<typename T>
+void MutableMat<T>::clean(gmp_RR epsilon)
+{
+  MatrixOppies::clean(epsilon, mat);
+}
+
+template<typename T>
+gmp_RRorNull MutableMat<T>::norm() const
+{
+  if (get_ring()->get_precision() == 0)
+    throw exc::engine_error("expected a matrix over RR or CC");
+
+  gmp_RR nm = getmemstructtype(gmp_RR);
+  mpfr_init2(nm, get_ring()->get_precision());
+  mpfr_set_si(nm, 0, GMP_RNDN);
+
+  MatrixOppies::increase_norm(nm, mat);
+  return nm;
 }
 
 #endif

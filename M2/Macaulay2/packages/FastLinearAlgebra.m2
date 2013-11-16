@@ -20,7 +20,6 @@ newPackage(
 -- also: rank, det, solve
 export {
    ARing,
-   ZZp,
    powerMod,
    
    	
@@ -44,8 +43,6 @@ export {
    minimalPolynomial,
 --   nullSpace,
    invert,
-   rowRankProfile,
-   columnRankProfile,
    addMultipleTo,
    solveLinear,
    TransposeA,
@@ -139,11 +136,6 @@ isPrimeField Ring := (R) -> (
 --     result     
 --     )
 
-rowRankProfile = method()
-rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
-
-columnRankProfile = method()
-columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
 
 --nullSpace = method(Options => {RightSide=>true})
 --nullSpace(MutableMatrix) := opts -> (M) -> (
@@ -584,10 +576,10 @@ NONTEST = (str) -> null
 TEST ///
 -- addMultipleTo
     debug Core
-    kk = ZZp 33500479
-    M1 = mutableMatrix random(kk^300, kk^500)
-    M2 = mutableMatrix random(kk^200, kk^300)
-    M3 = mutableMatrix random(kk^200, kk^500)
+    kk = ZZp(33500479, "Choose"=>"FLINT")
+    M1 = mutableMatrix random(kk^300, kk^500);
+    M2 = mutableMatrix random(kk^200, kk^300);
+    M3 = mutableMatrix random(kk^200, kk^500);
 
     testAddMultipleTo(M3,M2,M1)
 ///
@@ -595,7 +587,7 @@ TEST ///
 TEST ///
 -- addMultipleTo
     debug Core
-    kk = ZZp 67000993
+    kk = ZZp(67000993, "Choose"=>"FLINT")
     M1 = mutableMatrix random(kk^300, kk^100);
     M2 = mutableMatrix random(kk^200, kk^300);
     M3 = mutableMatrix random(kk^200, kk^100);
@@ -605,8 +597,10 @@ TEST ///
 ///
 
 TEST ///
+{*
 restart
 loadPackage "FastLinearAlgebra"
+*}
 debug Core
     kk = ZZp 101
 
@@ -665,9 +659,11 @@ debug Core
 
 TEST ///
     -- test of routines involving modules (subquotients especially) over ZZp
+{*
     restart
     loadPackage "FastLinearAlgebra"
-debug Core
+*}
+    debug Core
     R = ZZp 101
     N = 1000
     f = random(R^N, R^(N//2));
@@ -699,8 +695,10 @@ debug Core
 ///
 
 TEST ///
+{*
     restart
     loadPackage "FastLinearAlgebra"
+*}
     debug Core
     R = ZZp 101
     f = matrix{{1_R,2},{3,4}}
@@ -716,8 +714,10 @@ TEST ///
 ///
 
 TEST ///  -- CRASHING TEST 19 Dec 2012 Jakob+Mike    
+{*
     restart
     loadPackage "FastLinearAlgebra"
+*}
     debug Core
     R = ZZp 101
 

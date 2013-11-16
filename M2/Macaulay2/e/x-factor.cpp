@@ -232,6 +232,7 @@ void showcfl(CFList &t) { cout << t << endl; }
 void showcffl(CFFList &t) { cout << t << endl; }
 void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); cout << endl; }
 void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showlcfl(ListCFList &t) { cout << t << endl; }
 #endif
 
 static struct enter_factory foo2;
