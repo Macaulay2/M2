@@ -33,10 +33,10 @@
 +        for( size_t i = 0; i < G.size(); ++i )
 +        {
 +            if (i <  generatorPol.size() )
-+            {   Zp.init( G[i], generatorPol[i]); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl; }
-+            else
++            {   Zp.init( G[i], generatorPol[i]); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl;}
++            } else
 +            {    Zp.init( G[i], 0 ); //std::cerr << " generatorPol[" << i << "]" << generatorPol[i] << std::endl; }
-+        }
++        }}
 +
 +        //Pdom.give_prim_root(G,F);
 +        Pdom.assign(H,G);
