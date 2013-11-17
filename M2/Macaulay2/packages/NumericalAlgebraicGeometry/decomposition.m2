@@ -20,10 +20,7 @@ regeneration List := List => o -> F -> (
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
-     saveDEFAULTsoftware := DEFAULT.Software;     
-     DEFAULT.Software = o#Software;
+     o = fillInDefaultOptions o;
      
      checkCCpolynomials F;
      F = toCCpolynomials(F,53);
@@ -49,7 +46,7 @@ regeneration List := List => o -> F -> (
      	       	    RM := random(CC^(d-1),CC^(numcols s));
 		    dWS := {cOut} | apply(d-1, i->(
 			      newSlice := RM^{i} || submatrix'(s,{0},{}); -- replace the first row
-			      moveSlice(cOut,newSlice)
+			      moveSlice(cOut,newSlice,Software=>o.Software)
 			      ));
 	       	    S := ( equations comp
 	       	    	 | { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
@@ -58,7 +55,8 @@ regeneration List := List => o -> F -> (
 	       	    	 | {f}
 	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
-			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
+			 Software=>o.Software);
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
 		    if o.Software == M2engine then (
 			 sing := toList singularSolutions(T,targetPoints);
@@ -68,7 +66,7 @@ regeneration List := List => o -> F -> (
 		    	 else targetPoints = regPoints | sing;
 			 );
 		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), 
-			 selectUnique(targetPoints, Tolerance=>1e-2));
+			 selectUnique(targetPoints, Tolerance=>1e-2)); -- hack
 		    check newW;
 		    if DBG>2 then << "   new component " << peek newW << endl;
 		    if #targetPoints>0 
@@ -87,7 +85,6 @@ regeneration List := List => o -> F -> (
      	       c1 = {witnessSet( ideal f, S, solveSystem({f}|sliceEquations(S,R),PostProcess=>false) )}; 
 	       );
 	  );
-     DEFAULT.Software = saveDEFAULTsoftware;
      c1
      )
 
@@ -170,3 +167,15 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 	  );
      abs det matrix three'samples < DEFAULT.Tolerance  -- points are (approximately) on a line
      )  
+
+TEST ///
+R = CC[x,y]
+F = {x^2+y^2-1, x*y};
+result = regeneration F 
+assert(#result==1 and degree first result == 4 and dim first result == 0)
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
+result = regeneration I_*
+assert(#result==2 and degree first result == 7 and dim first result == 1)
+///

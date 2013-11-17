@@ -48,7 +48,7 @@ randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
 	  )
      )
 
-movePoints = method(Options=>{AllowSingular=>false})
+movePoints = method(Options=>{AllowSingular=>false, Software=>null})
 movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
 -- IN:  E = equations, 
 --      S = equations of the current slice,
@@ -56,6 +56,7 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
 --      w = points satisfying E and S (in the output format of track) 
 --      AllowSingular => false: S' is generic, several attempts are made to get regular points
 -- OUT: new witness points satisfying E and S'
+     o = fillInDefaultOptions o;
      attempts := DEFAULT.Attempts;
      success := false;
      while (not success and attempts > 0) do (
@@ -67,27 +68,29 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      w'
      )
 
-movePointsToSlice = method(TypicalValue=>List)
-movePointsToSlice (WitnessSet, List) := List => (W,S') -> (
+movePointsToSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
+movePointsToSlice (WitnessSet, List) := List => o -> (W,S') -> (
 -- IN:  W = witness set
 --      S' = equations of the new slice
 -- OUT: new witness points
+     o = fillInDefaultOptions o;
      if #S' < dim W
      then error "dimension of new slicing plane is too high";
      R := ring W;
      S := take(slice W,-#S'); -- take last #S equations
-     movePoints(equations W, S, S', points W, AllowSingular=>true)
+     movePoints(equations W, S, S', points W, AllowSingular=>true, Software=>o.Software)
      )
 
-moveSlice = method(TypicalValue=>WitnessSet)
-moveSlice (WitnessSet, Matrix) := WitnessSet => (W,S) -> (
+moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
+moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
 -- IN:  W = witness set
 --      S = matrix defining a new slicing plane (same dimensions as W#Slice)
 -- OUT: new witness set that uses S
+     o = fillInDefaultOptions o;
      if numgens target S != numgens target W#Slice 
      or numgens source S != numgens source W#Slice 
      then error "wrong dimension of new slicing plane";
-     witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W)))             	  
+     witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W),Software=>o.Software))             	  
      )
 ///
 restart
