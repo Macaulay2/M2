@@ -15,8 +15,7 @@ refine (List,List) := List => o -> (T,solsT) -> (
 -- IN:  T = list of polynomials in target system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      n := #T; 
      if n > 0 then R := ring ideal T else error "expected nonempty target system";
      isProjective := false;

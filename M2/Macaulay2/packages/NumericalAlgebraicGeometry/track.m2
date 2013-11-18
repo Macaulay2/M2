@@ -37,9 +37,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 --      solsS = list of solutions to S
 -- 	gamma => nonzero complex number
 -- OUT: solsT = list of target solutions corresponding to solsS
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
-     o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
      n := #T; 
      K := CC_53; -- THE coefficient ring
@@ -635,10 +633,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 -- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
 --          or an SLP representing one -- !!! at this point it is preSLP
 -- OUT: solsT = list of target solutions corresponding to solsS
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
-     o = new OptionTable from o;
-
+     o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
     

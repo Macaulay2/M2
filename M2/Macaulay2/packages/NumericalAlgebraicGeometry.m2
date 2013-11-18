@@ -320,7 +320,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
-
 isRegular = method()
 -- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
 isRegular Point := (s) ->  s.SolutionStatus === Regular
@@ -531,8 +530,7 @@ diffSolutions (List,List) := o -> (A,B) -> (
 
 numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
 numericalRank Matrix := o -> M -> (
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      if not member(class ring M, {RealField,ComplexField}) 
      then error "matrix with real or complex entries expected";
      S := first SVD M;

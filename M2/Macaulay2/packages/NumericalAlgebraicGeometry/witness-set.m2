@@ -112,8 +112,7 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 -- IN:  comp = a witness set
 --      f = a polynomial
 -- OUT: (w1,w2) = two witness sets   
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      w1 := {}; w2 := {};
      for x in w#Points do 
 	 if norm evalPoly(f,coordinates x) < o.Tolerance 
