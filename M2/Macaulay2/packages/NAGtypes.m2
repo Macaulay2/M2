@@ -33,18 +33,64 @@ export {
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure"
+     "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure",
+     -- polynomial systems
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
+     "polySystem"
      }
 
--- DEBUG CORE ----------------------------------------
-debug Core; -- to enable engine routines
+-- DEBUG Core ----------------------------------------
+debug Core -- to enable engine routines
 
+PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
 -- ProjectivePoint = new Type of Point -- do we really need this?
 WitnessSet = new Type of MutableHashTable 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
 ProjectiveNumericalVariety = new Type of NumericalVariety
+
+-----------------------------------------------------------------------
+-- POLYSYSTEM = {
+--   NumberOfVariables => ZZ,
+--   NumberOfPolys => ZZ,
+--   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients)
+--           or SLP;
+--   Jacobian => Matrix or SLP, the jacobian of PolyMap
+--   JacobianAndPolySystem => SLP, a circuit evaluating PolyMap and Jacobian (the two are not necessary then)
+--   }
+PolySystem.synonym = "polynomial system"
+net PolySystem := p -> (
+    if hasAnAttribute p then (
+	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
+  	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
+  	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
+  	);
+     if p.?PolyMap then net p.PolyMap
+     else if p.?NumberOfPolys and p.?NumberOfVariables 
+     then net "a system of " | net p.NumberOfPolys | " polynomials in " | net p.NumberOfVariables | " variables" 
+     else error "the polynomial system is corrupted"
+    ) 
+globalAssignment PolySystem
+
+polySystem = method()
+polySystem PolySystem := P -> new PolySystem from P
+polySystem List := L -> (
+    checkCCpolynomials L;
+    polySystem transpose matrix {L} 
+    )
+polySystem Matrix := M -> (
+    assert(numcols M == 1);
+    new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
+    )
+TEST ///
+CC[x,y]
+polySystem transpose matrix{{x,y^2+1,x+1}}
+QQ[x,y]
+polySystem {x,y^2+1,x+1}
+RR[x,y]
+polySystem {x,y^2+1,x+1}
+///
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -398,8 +444,23 @@ check NumericalVariety := o-> V -> (
 		    )));
      )
 
-generalEquations = method()
+---------------------------------------------
+-- AUXILIARY FUNCTIONS
+---------------------------------------------
+checkCCpolynomials = method()
+checkCCpolynomials List := F -> (    
+    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
+    coeffR := coefficientRing R; 
+    if not(
+	instance(ring 1_coeffR, ComplexField) 
+	or instance(ring 1_coeffR, RealField)
+	or coeffR===QQ or coeffR ===ZZ
+	) then error "expected coefficients that can be converted to complex numbers";  
+    if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
+    )
 
+generalEquations = method()
 -- make k random linear combinations of gens I
 generalEquations (ZZ,Ideal) := (k,I) -> (
      R := ring I;

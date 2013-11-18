@@ -71,8 +71,9 @@ protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
 protect MaxNumberOfVariables
 
--- DEBUG CORE ----------------------------------------
-debug Core; -- to enable engine routines
+-- DEBUG Core and NAGtypes ----------------------------------------
+debug Core -- to enable engine routines
+debug NAGtypes -- to enable private routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
@@ -283,18 +284,6 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  ))
 
 ------------------------------------------------------
-checkCCpolynomials = method()
-checkCCpolynomials List := F -> (    
-    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
-    if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
-    coeffR := coefficientRing R; 
-    if not(
-	instance(ring 1_coeffR, ComplexField) 
-	or instance(ring 1_coeffR, RealField)
-	or coeffR===QQ or coeffR ===ZZ
-	) then error "expected coefficients that can be converted to complex numbers";  
-    if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
-    )
 checkCCpolynomials (List,List) := (S,T) -> (
     n := #T;
     if #S != n then error "expected same number of polynomials in start and target systems";
