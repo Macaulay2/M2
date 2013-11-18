@@ -137,6 +137,23 @@ opt64-linbox : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+opt64-clang-linbox : always
+	mkdir -p opt64-clang-linbox
+	cd opt64-clang-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 debug64-linbox : always
 	mkdir -p debug64-linbox
 	cd debug64-linbox; ../../../configure \

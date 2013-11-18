@@ -1,3 +1,13 @@
+-----------------------------------------
+14 Nov 2013 
+Items to clean up
+- coeffrings.hpp: remove its use whenever possible
+- promote/eval/lift should be in aring-translate, not in specific classes
+-- Ring_RRR: remove this?
+
+------------------------------------------
+
+
 Roadmap of to do items, not in order of priority (yet)
 . random functions in aring classes should take an random object
      needs to be called from C++, includes gmp, givaro, flint generators.

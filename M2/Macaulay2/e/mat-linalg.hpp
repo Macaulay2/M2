@@ -509,8 +509,8 @@ namespace MatrixOppies
   inline size_t nullSpace(const DMatZZ& A, 
                           DMatZZ& result_nullspace) 
   {
-    long rank = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
-    return (A.numColumns() - rank);
+    long nullity = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
+    return nullity;
   }
 
   inline size_t nullSpace(const DMatZZ& A, 
@@ -612,9 +612,9 @@ namespace MatrixOppies
     printf("entering DMatZZpFLINT nullSpace\n");
     long rank = nmod_mat_rank(A.nmod_mat());
     result_nullspace.resize(A.numColumns(), A.numColumns() - rank); // the largest the answer could be
-    long rank2 = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
-    M2_ASSERT(rank == rank2);
-    return (A.numColumns() - rank2);
+    long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
+    M2_ASSERT(rank == A.numColumns() - nullity);
+    return nullity;
   }
   
   inline size_t nullSpace(const DMatZZpFlint& A, 
@@ -937,7 +937,7 @@ namespace MatrixOppies
   inline bool nullspaceU(const DMatRRR& A, 
                          DMatRRR& X)
   {
-    DMatLU<Ring_RRR>::nullspaceU(&A, &X);
+    DMatLU<M2::ARingRRR>::nullspaceU(&A, &X);
     return true;
   }
 

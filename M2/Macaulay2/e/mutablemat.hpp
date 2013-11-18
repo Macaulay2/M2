@@ -6,8 +6,6 @@
 #include <iostream>
 #include "mat.hpp"
 
-//class CoefficientRingCCC;
-//class Ring_RRR;
 namespace M2 {
   class ARingZZp;
   class ARingRR;
@@ -48,19 +46,19 @@ template<> struct EigenTypes<M2::ARingCC>
   typedef M2::ARingCC HermitianEigenvectorType;
 };
 
-template<> struct EigenTypes<Ring_RRR>
+template<> struct EigenTypes<M2::ARingRRR>
 {
   typedef M2::ARingCCC EigenvalueType;
   typedef M2::ARingCCC EigenvectorType;
-  typedef Ring_RRR HermitianEigenvalueType;
-  typedef Ring_RRR HermitianEigenvectorType;
+  typedef M2::ARingRRR HermitianEigenvalueType;
+  typedef M2::ARingRRR HermitianEigenvectorType;
 };
 
 template<> struct EigenTypes<M2::ARingCCC>
 {
   typedef M2::ARingCCC EigenvalueType;
   typedef M2::ARingCCC EigenvectorType;
-  typedef Ring_RRR HermitianEigenvalueType;
+  typedef M2::ARingRRR HermitianEigenvalueType;
   typedef M2::ARingCCC HermitianEigenvectorType;
 };
 
