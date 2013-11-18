@@ -625,6 +625,14 @@ export rawARingZZFlint(e:Expr):Expr := (
      );
 setupfun("rawARingZZFlint", rawARingZZFlint);
 
+export rawARingQQFlint(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 0
+     then toExpr(Ccode(RawRingOrNull,"rawARingQQFlint()"))
+     else WrongNumArgs(0)
+     else WrongNumArgs(0)
+     );
+setupfun("rawARingQQFlint", rawARingQQFlint);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))

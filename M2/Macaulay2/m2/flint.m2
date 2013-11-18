@@ -1,5 +1,5 @@
 ZZFlintRing = new Type of EngineRing
-
+QQFlintRing = new Type of EngineRing
 --toString ZZFlintRing := R -> toString R.RawRing
 
 makeZZFlint = () -> (
@@ -8,6 +8,7 @@ makeZZFlint = () -> (
      F := new ZZFlintRing from rawARingZZFlint();
      F.baseRings = {};
      commonEngineRingInitializations F;
+     F.isBasic = true;
      F.dim = 1;
      F.char = 0;
      F.degreeLength = 0;
@@ -37,6 +38,48 @@ makeZZFlint = () -> (
      F)
 
 ZZFlint = makeZZFlint()
+--toString ZZFlintRing := R -> toString R.RawRing
+
+makeQQFlint = () -> (
+     rawF := try rawARingQQFlint() else null;
+     if rawF === null then return null;
+     F := new ZZFlintRing from rawF;
+     F.baseRings = {ZZFlint};
+     R := ZZFlint;
+     R.frac = F;
+     commonEngineRingInitializations F;
+     F.isBasic = true;
+     F.dim = 0;
+     F.char = 0;
+     F.degreeLength = 0;
+     factor F := options -> f -> factor numerator f / factor denominator f;
+     toString F := x -> toString expression x;
+     net F := x -> net expression x;
+     --baseName F := (f) -> (
+	 -- if denominator f != 1 
+	 -- then error "expected a generator"
+	 -- else baseName numerator f);
+     expression F := (f) -> toString raw f;
+     numerator F := (f) -> new R from rawNumerator raw f;
+     denominator F := (f) -> new R from rawDenominator raw f;
+     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+     --F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
+     F.generators = {};
+     --if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+     --if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     --if R.?generatorExpressions then F.generatorExpressions = (
+	 -- R.generatorExpressions
+	 -- -- apply(R.generatorExpressions,F.generators,(e,x)->new Holder2 from {e#0,x})
+	 -- );
+     --if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
+     --if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+     initializeEngineLinearAlgebra F;
+     F)
+
+QQFlint = makeQQFlint();
+
+
 end
 restart
 debug Core

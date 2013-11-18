@@ -28,7 +28,8 @@ export { jordanForm,
     testNullspace,
     testRank,
     testRankProfile,
-    testSolve
+    testSolve,
+    testLinearAlgebra
     }
 
 maxFLINTPrime = 18446744073709551521
@@ -570,8 +571,8 @@ testRankBIG = (R) -> (
 testRankFailing = () -> (
      debug Core;
      R := ZZFlint;
-     --(N,M) := (100,70);
-     (N,M) := (500,372);
+     (N,M) := (100,70);
+     --(N,M) := (500,372);
      m3 := mutableMatrix(R, N, M);
      m4 := mutableMatrix(R, M, N);
      fillMatrix m3;
@@ -980,11 +981,11 @@ testSolveOverRRR = () -> (
     time X := solve(M,B);
     assert(norm(M*X-B) < 1e-59);
     
-    M := mutableMatrix(R,100,100);
+    M = mutableMatrix(R,100,100);
     fillMatrix M;
-    B := mutableMatrix(R,100,1);
+    B = mutableMatrix(R,100,1);
     fillMatrix B;
-    time X := solve(M,B);
+    time X = solve(M,B);
     assert(norm(M*X-B) < 1e-57)
     )
 
@@ -1160,6 +1161,31 @@ TEST ///
   testInverse R;
 ///
 
+
+
+TEST ///
+  -- largest prime < 2^62
+  debug Core
+  R = ZZp(4611686018427387847, "Choose" => "FLINT")
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+TEST ///
+  -- largest prime < 2^63
+  debug Core
+  R = ZZp(9223372036854775783, "Choose" => "FLINT")
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+
 TEST ///
   debug Core
   R = ZZp(maxFLINTPrime, "Choose" => "FLINT")
@@ -1170,6 +1196,18 @@ TEST ///
   testInverse R;  
 ///
 
+TEST ///
+  -- Most of this code is designed for fields...
+  debug Core
+  R = ZZFlint
+  testDeterminant R
+  testMult R
+///
+
+TEST ///
+  -- Flint QQ
+  
+///
 -----------------------------------
 -- tests over approximate fields --
 -----------------------------------
@@ -1254,15 +1292,15 @@ testPromoteLift = () -> (
     phi = map(RR_300, RR_200, {});
     phi (4.2p200); -- ok
     -- try polynomial rings over these
-    A := RR_100[symbol x, symbol y];
+    A := RR_100[getSymbol"x", getSymbol"y"];
     f := map(A, RR_100, {});
-    f (1.2p100)
-    sub(ideal x_A, A)
+    f (1.2p100);
+    sub(ideal x_A, A);
     -- try polynomial rings over  RR_53
-    A := RR_53[symbol x, symbol y];
-    f := map(A, RR_53, {});
-    f (1.2)
-    sub(ideal x_A, A)
+    A = RR_53[getSymbol"x", getSymbol"y"];
+    f = map(A, RR_53, {});
+    f (1.2);
+    sub(ideal x_A, A);
     )
 
 TEST ///

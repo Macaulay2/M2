@@ -30,6 +30,17 @@ const Ring* /* or null */ rawARingZZFlint()
 #endif
 }
 
+const Ring* /* or null */ rawARingQQFlint()
+{
+#if HAVE_FLINT
+  M2::ARingQQFlint *A = new M2::ARingQQFlint();
+  return M2::ConcreteRing<M2::ARingQQFlint>::create(A);
+#else
+  ERROR("M2 not configured with --enable-flint");
+  return 0;
+#endif
+}
+
 const Ring /* or null */ *rawARingZZp(unsigned long p)
 {
   std::cout << "Prime is " << p;
