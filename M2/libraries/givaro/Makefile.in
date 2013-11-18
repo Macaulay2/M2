@@ -3,9 +3,12 @@
 
 # our snapshot taken from:
 #  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
-VERSION = 3.4.3.491
-URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
-PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+#VERSION = 3.4.3.491
+VERSION = 3.7.0
+#URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
+URL = http://forge.imag.fr/frs/download.php/207/
+#URL = http://forge.imag.fr/frs/download.php/370/
+#PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
 

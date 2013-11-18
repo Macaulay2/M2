@@ -49,13 +49,14 @@ int dsyev_(char *n,      // whether to compute eigenvectors
            double *work, // workspace
            int *wsize,   // size of workspace
            int *info);   // error info
-
+#ifndef __FFLASFFPACK_config_blas_H
 int dgetrf_(int *rows, // rows
             int *cols, // columns
             double *A, // input matrix, on exit L & U from A=PLU.
             int *ld,   // rows
             int *ipiv, // becomes permutation indices of P
             int *info);// error info
+#endif
 
 int dgesvd_(char* jobU,    // amount of U to return
             char* jobV,    // amount of V to return
@@ -113,7 +114,7 @@ int dgelss_(int* rows,     // rows
             int *lwork,    // size of workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
+#ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
@@ -252,7 +253,7 @@ int zgelss_(int* rows,     // rows
             double *rwork,  // workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
+#ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
