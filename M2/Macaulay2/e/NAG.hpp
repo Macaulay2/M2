@@ -7,17 +7,30 @@
 
 #include "matrix.hpp"
 // #include "CCC.hpp"
+#include "aring-CC.hpp"
 #include "complex.h"
 #include "style.hpp"
 #include "aring-glue.hpp"
 
 // patching defs and functions: /////////////////////////////////////////
-// switching from CCC to ConcreteRing<ARingCCC> /////////////////////////
-#define CCC M2::ConcreteRing<M2::ARingCCC>
+// switching from CCC to ConcreteRing<ARingCC> /////////////////////////
+#define CCC M2::ConcreteRing<M2::ARingCC>
 inline const CCC* cast_to_CCC(const Ring* R) 
 {
   return dynamic_cast<const CCC*>(R);
 }
+
+inline ring_elem from_doubles(const CCC* C, double re, double im) 
+{
+  CCC::ElementType a;
+  C->ring().init(a);
+  C->ring().set_from_doubles(a,re,im);
+  ring_elem result;
+  C->ring().to_ring_elem(result,a);
+  C->ring().clear(a);
+  return result;
+}
+/*
 inline ring_elem from_BigReals(const CCC* C, gmp_RR re, gmp_RR im) 
 {
   CCC::ElementType a;
@@ -28,6 +41,7 @@ inline ring_elem from_BigReals(const CCC* C, gmp_RR re, gmp_RR im)
   C->ring().clear(a);
   return result;
 }
+*/
 inline gmp_CC toBigComplex(const CCC* C, ring_elem a) 
 {
   CCC::ElementType b; 
@@ -713,7 +727,7 @@ class PathTracker : public object
     } else slpHxH->evaluate(n+1,x0t0, HxH);
   }
 
-  const CCC *C; // coefficient field (complex numbers)
+  const CCC* C; // coefficient field (complex numbers)
   const PolyRing *homotopy_R; // polynomial ring where homotopy lives (does not include t if is_projective)
   int n_coords;
   int n_sols;

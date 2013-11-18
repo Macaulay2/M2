@@ -44,7 +44,7 @@ namespace M2 {
     
     char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
-    std::cout << "size = " << size << std::endl;
+    //std::cout << "size = " << size << std::endl;
     if (!is_neg && p_plus) o << '+';
     if (one)
       {
@@ -56,7 +56,7 @@ namespace M2 {
         str = fmpq_get_str(allocstr, 10, &a);
         o << str;
       }
-    std::cout << "output = " << o.str() << std::endl;
+    //std::cout << "output = " << o.str() << std::endl;
     if (size > 1000) deletearray(allocstr);
   }
 

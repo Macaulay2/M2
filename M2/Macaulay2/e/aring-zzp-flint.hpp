@@ -178,6 +178,7 @@ namespace M2 {
       fmpz_init(&a);
       fmpz_randm(&a, mRandomState, mFmpzCharac);
       result = fmpz_get_ui(&a);
+      fmpz_clear(&a);
     }
 
     void eval(const RingMap *map, const ElementType f, int first_var, ring_elem &result) const;

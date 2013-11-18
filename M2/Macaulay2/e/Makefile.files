@@ -9,6 +9,10 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	GF \
+	ZZ \
+	QQ \
+	ZZp \
 	reader \
 	matrix-stream \
 	cra \
@@ -74,11 +78,6 @@ INTERFACE = \
 	montable \
 	montableZZ \
 	schorder \
-	GF \
-	ZZ \
-	QQ \
-	RRR \
-	CCC \
 	assprime \
 	buffer \
 	comb \
@@ -116,8 +115,11 @@ INTERFACE = \
 	spair \
 	text-io \
 	varpower \
-	weylalg \
-	ZZp
+	weylalg
+
+#	RRR \
+#	CCC \
+#
 
 COMMANDS2 = \
 	x-monideal \

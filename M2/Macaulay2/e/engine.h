@@ -189,6 +189,8 @@ extern "C" {
   /**************************************************/
   const Ring* /* or null */ rawARingZZFlint(); /* connected */
 
+  const Ring* /* or null */ rawARingQQFlint(); /* connected */
+
   const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 2^64-1 */
 

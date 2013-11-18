@@ -2,8 +2,11 @@
 
 
 #include "RingTest.hpp"
-#include "RRR.hpp"
-#include "ZZp.hpp"
+#include "aring-glue.hpp"
+#include "aring-RRR.hpp"
+//#include "ZZp.hpp"
+
+typedef M2:ConcreteRing<M2::ARingRRR> RRR;
 
 bool almostEqual(const RRR* R, int nbits, ring_elem a, ring_elem b)
 {
