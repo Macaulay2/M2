@@ -42,7 +42,11 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "mat-arith.hpp"
 #include "dmat-LU-template.hpp"
 
-extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
+// We need to find a home for the following function.
+// It is defined in mat.cpp, but it is not declared in mat.hpp,
+// uugh (reason: mat.hpp doesn't need to be included in many places that
+// we want this function).
+M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 
 namespace MatrixOppies
 {
@@ -475,7 +479,6 @@ namespace MatrixOppies
   // Functions for DMatZZ
 
   inline size_t rank(const DMatZZ& A) { 
-    std::cout << "calling flint rankZZ code" << std::endl;
     return fmpz_mat_rank(A.fmpz_mat()); 
   }
 
@@ -577,7 +580,6 @@ namespace MatrixOppies
 
   inline size_t rank(const DMatZZpFlint& A) 
   { 
-    std::cout << "calling flint rank code" << std::endl;
     return nmod_mat_rank(A.nmod_mat()); 
   }
 
@@ -594,22 +596,9 @@ namespace MatrixOppies
     return nmod_mat_inv(result_inv.nmod_mat(), B.nmod_mat());
   }
 
-  inline void mult(const DMatZZpFlint& A, 
-                   const DMatZZpFlint& B, 
-                   DMatZZpFlint& result_product) 
-  {
-    printf("entering DMatZZpFlint mult\n");
-    //    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
-    //    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
-    // The A1 and B1 on the next line are switched because the memory layout expected
-    // is the transpose of what we have for DMat.
-    nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
-  }
-
   inline size_t nullSpace(const DMatZZpFlint& A, 
                           DMatZZpFlint& result_nullspace) 
   {
-    printf("entering DMatZZpFLINT nullSpace\n");
     long rank = nmod_mat_rank(A.nmod_mat());
     result_nullspace.resize(A.numColumns(), A.numColumns() - rank); // the largest the answer could be
     long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
@@ -621,7 +610,6 @@ namespace MatrixOppies
                           bool right_side, 
                           DMatZZpFlint& result_nullspace)
   {
-    printf("entering DMatZZpFLINT nullSpace(3 arg)\n");
     //TODO: WRITE ME
     if (not right_side)
       throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
@@ -673,24 +661,32 @@ namespace MatrixOppies
     nmod_mat_mul(D.nmod_mat(), A.nmod_mat(), B.nmod_mat());
     nmod_mat_sub(C.nmod_mat(), C.nmod_mat(), D.nmod_mat());
   }
+
+  inline void mult(const DMatZZpFlint& A, 
+                   const DMatZZpFlint& B, 
+                   DMatZZpFlint& result_product) 
+  {
+    //    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_mul doesn't declare params const
+    //    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
+    // The A1 and B1 on the next line are switched because the memory layout expected
+    // is the transpose of what we have for DMat.
+    nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+  }
+
 #endif
 
 #ifdef HAVE_FLINT
   // Functions for DMatQQFlint
 
   inline size_t rank(const DMatQQFlint& A) { 
-    std::cerr << "calling flint rank code" << std::endl;
     // fmpq_mat has no rank function.
     // So we clear denominators row-wise (or column-wise), and compute the rank of that matrix.
     fmpz_mat_t m1;
     fmpz_mat_init(m1, A.numRows(), A.numColumns());
     fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
-    fmpz_mat_print_pretty(m1);
-    std::cerr << "calling fmpz_mat_rank" << std::endl;
+    //fmpz_mat_print_pretty(m1);
     size_t rk = fmpz_mat_rank(m1);
-    std::cerr << "about to clear m1" << std::endl;
     fmpz_mat_clear(m1);
-    std::cerr << "returning " << rk << std::endl;
     return rk;
   }
 
@@ -704,16 +700,6 @@ namespace MatrixOppies
                       DMatQQFlint& result_inv) 
   {
     return fmpq_mat_inv(result_inv.fmpq_mat(), A.fmpq_mat());
-  }
-
-  inline void mult(const DMatQQFlint& A, 
-                   const DMatQQFlint& B, 
-                   DMatQQFlint& result_product) 
-  {
-    std::cout << "calling flintQQ matrix mult code" << std::endl;
-    // The A and B on the next line are switched because the memory layout expected
-    // is the transpose of what we have for DMat.
-    fmpq_mat_mul(result_product.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
   }
 
   inline size_t nullSpace(const DMatQQFlint& A, 
@@ -780,6 +766,15 @@ namespace MatrixOppies
     DMatQQFlint D(C.ring(), A.numRows(), B.numColumns());
     fmpq_mat_mul(D.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
     fmpq_mat_sub(C.fmpq_mat(), C.fmpq_mat(), D.fmpq_mat());
+  }
+
+  inline void mult(const DMatQQFlint& A, 
+                   const DMatQQFlint& B, 
+                   DMatQQFlint& result_product) 
+  {
+    // The A and B on the next line are switched because the memory layout expected
+    // is the transpose of what we have for DMat.
+    fmpq_mat_mul(result_product.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
   }
 #endif
 

@@ -3,7 +3,6 @@
 #include "exceptions.hpp"
 #include "error.h"
 
-#include "dmat.hpp"
 #include "mat-linalg.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
@@ -257,95 +256,6 @@ namespace MatrixOppies
 };                                                     
 
 #endif // HAVE_FFLAS_FFPACK
-
-#include "mutablemat.hpp"
-
-M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v)
-{
-  M2_arrayint result = M2_makearrayint(static_cast<int>(v.size()));
-  for (size_t i = 0; i < v.size(); i++)
-    result->array[i] = static_cast<int>(v[i]);
-  return result;
-}
-
-engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
-{
-#ifdef HAVE_FFLAS_FFPACK
-  // Suppose A is m x n
-  // P is n element permutation on columns
-  // Qt is m element permutation on rows (inverse permutation)
-  DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
-  if (mat == 0) 
-    {
-      throw exc::engine_error("LUDivine not defined for this ring");
-      //      ERROR("LUDivine not defined for this ring");
-      //      return 0;
-    }
-  size_t nelems = mat->numColumns();
-  if (mat->numRows() > mat->numColumns()) nelems = mat->numRows();
-
-  std::vector<size_t> P(nelems, -1);
-  std::vector<size_t> Qt(nelems, -1);
-
-  // ignore return value (rank) of:
-  LUdivine(mat->ring().field(),
-                       FFLAS::FflasNonUnit,
-                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
-                       mat->numColumns(),
-                       mat->numRows(),
-                       mat->array(),
-                       mat->numRows(),
-                       &P[0], 
-                       &Qt[0]);
-
-  engine_RawArrayIntPairOrNull result = new engine_RawArrayIntPair_struct;
-  result->a = stdvector_to_M2_arrayint(Qt);
-  result->b = stdvector_to_M2_arrayint(P);
-  return result;
-#endif
-  return 0;
-}
-
-
-#include "dmat-LU.hpp"
-#include "lapack.hpp"
-#include "aring-RRR.hpp"
-#include "aring-CCC.hpp"
-#include "aring-zz-flint.hpp"
-#include "aring-qq.hpp"
-#include "aring-zzp-flint.hpp"
-#include "aring-zzp.hpp"
-#include "aring-tower.hpp"
-#include "aring-m2-gf.hpp"
-#include "aring-gf-givaro.hpp"
-#include "aring-zz-gmp.hpp"
-#include "coeffrings.hpp"
-
-template class DMat<M2::ARingQQ>;
-template class DMat<M2::ARingZZGMP>;
-template class DMat<M2::ARingZZp>;
-template class DMat<M2::ARingTower>;
-
-template class DMat<CoefficientRingRRR>;
-template class DMat<CoefficientRingCCC>;
-template class DMat<CoefficientRingR>;
-
-template class DMat<M2::ARingGFM2>;
-template class DMat<M2::ARingZZpFFPACK>;
-
-#ifdef HAVE_FLINT
-template class DMat<M2::ARingZZpFlint>;
-template class DMat<M2::ARingZZ>;
-template class DMat<M2::ARingQQFlint>;
-#endif
-
-template class DMat<M2::ARingGFGivaro>;
-template class DMat<M2::ARingRRR>;
-template class DMat<M2::ARingCCC>;
-
-
-
-
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

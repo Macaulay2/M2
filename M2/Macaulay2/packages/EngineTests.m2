@@ -402,7 +402,7 @@ TEST ///
 
 testGF = (strategy) -> (
     R := null;
-    assert(strategy===null or strategy==="New" or strategy==="Givaro" or strategy==="CompleteGivaro");
+    assert(strategy===null or strategy==="Old" or strategy==="Givaro" or strategy==="CompleteGivaro");
     low := 1;
     hi := i -> 20;
     -- This upper bound for CompleteGivaro is made to match the default SizeLimit of 10000.
@@ -437,7 +437,7 @@ testGF = (strategy) -> (
 
 TEST ///
   testGF null
-  testGF "New"  
+  testGF "Old"  
   testGF "Givaro"
 --  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
     -- the size is too big
@@ -739,7 +739,8 @@ testInverse = (R) -> (
 randomMatrixWithKernel = (R, ncols, rk) -> (
     -- returns a pair (M, X), such that M*X == 0, and the
     -- columns of X are a basis for ker M.
-    L1 := for i from 0 to rk-1 list {(1 + random (char R - 1))_R, 1};
+    MAXN := if char R > 0 then char R - 1 else 50;
+    L1 := for i from 0 to rk-1 list {(1 + random MAXN)_R, 1};
     L2 := splice {(ncols-rk):{0,1}};
     L := join(L1,L2);
     A := mutableMatrix jordanForm(R, L);
@@ -1206,8 +1207,13 @@ TEST ///
 
 TEST ///
   -- Flint QQ
-  
+  debug Core
+  R = QQFlint
+  testDeterminant R
+  testMult R
+  testRank R
 ///
+
 -----------------------------------
 -- tests over approximate fields --
 -----------------------------------
@@ -1330,7 +1336,7 @@ TEST ///
   hasEngineLinearAlgebra(ZZ/101)
   hasEngineLinearAlgebra (GF(2^3, Strategy=>null))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
-  hasEngineLinearAlgebra (GF(2^3, Strategy=>"New"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"Old"))
 
   --hasLinAlgRank ZZ  -- NO
   --hasLinAlgRank QQ  -- NO
@@ -1452,7 +1458,7 @@ kk = ZZp 1073742851
 --kk = GF (1049599, 1, Strategy=>"CompleteGivaro")
 --testMutableMatrices kk
 
-kk = GF(2,4,Strategy=>"New")
+kk = GF(2,4,Strategy=>"Old")
 testMutableMatrices kk -- fails, since rank is not yet defined for this type of ring
 
 kk = GF(2,4,Strategy=>"Givaro")

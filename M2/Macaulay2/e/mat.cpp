@@ -29,6 +29,15 @@
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
 
+// Declared in mat-linalg.hpp for no good reason
+M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v)
+{
+  M2_arrayint result = M2_makearrayint(static_cast<int>(v.size()));
+  for (size_t i = 0; i < v.size(); i++)
+    result->array[i] = static_cast<int>(v[i]);
+  return result;
+}
+
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 						size_t nrows, 
 						size_t ncols, 
@@ -208,6 +217,43 @@ bool MutableMatrix::set_values(M2_arrayint rows,
   return true;
 }
 
+engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
+{
+#ifdef HAVE_FFLAS_FFPACK
+  // Suppose A is m x n
+  // P is n element permutation on columns
+  // Qt is m element permutation on rows (inverse permutation)
+  DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
+  if (mat == 0) 
+    {
+      throw exc::engine_error("LUDivine not defined for this ring");
+      //      ERROR("LUDivine not defined for this ring");
+      //      return 0;
+    }
+  size_t nelems = mat->numColumns();
+  if (mat->numRows() > mat->numColumns()) nelems = mat->numRows();
+
+  std::vector<size_t> P(nelems, -1);
+  std::vector<size_t> Qt(nelems, -1);
+
+  // ignore return value (rank) of:
+  LUdivine(mat->ring().field(),
+                       FFLAS::FflasNonUnit,
+                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
+                       mat->numColumns(),
+                       mat->numRows(),
+                       mat->array(),
+                       mat->numRows(),
+                       &P[0], 
+                       &Qt[0]);
+
+  engine_RawArrayIntPairOrNull result = new engine_RawArrayIntPair_struct;
+  result->a = stdvector_to_M2_arrayint(Qt);
+  result->b = stdvector_to_M2_arrayint(P);
+  return result;
+#endif
+  return 0;
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

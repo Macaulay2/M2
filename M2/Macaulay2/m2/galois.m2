@@ -184,13 +184,13 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      if d < opts.SizeLimit
      then (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
-	  rawF := if opts.Strategy === null then 
+	  rawF := if opts.Strategy === "Old" then 
 	              rawGaloisField raw primitiveElement
 		  else if opts.Strategy === "Givaro" then
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
 		  else if opts.Strategy === "CompleteGivaro" then 
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "New" then
+		  else if opts.Strategy === null then
 		      rawARingGaloisField1 raw primitiveElement;
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;

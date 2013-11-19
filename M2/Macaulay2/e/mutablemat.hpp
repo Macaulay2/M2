@@ -851,6 +851,8 @@ void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
+  //  LUComputation<T> C(mat);
+  //  return C.rankProfile(row_profile);
   return MatrixOppies::rankProfile(mat, row_profile);
 }
 
