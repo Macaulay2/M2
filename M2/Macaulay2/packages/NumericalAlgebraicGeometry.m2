@@ -468,6 +468,7 @@ load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 
+-- fills in options from DEFAULT option table
 fillInDefaultOptions = method()
 fillInDefaultOptions OptionTable := o -> (
      o = new MutableHashTable from o;

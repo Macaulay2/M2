@@ -83,6 +83,15 @@ polySystem Matrix := M -> (
     assert(numcols M == 1);
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
+ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
+isHomogeneous PolySystem := P -> all(flatten entries P.PolyMap, isHomogeneous) -- change this for SLP!!!
+XXXapply = method()
+XXXapply(PolySystem,Function) := (P,f) -> polySystem apply(XXXtoList P, f) -- does not work for SLPs
+substitute(PolySystem,Ring) := (P,R) -> polySystem sub(P.PolyMap, R) -- does not work for SLPs
+XXXtoList = method()
+XXXtoList PolySystem := P -> if P.?PolyMap then flatten entries P.PolyMap else error "polynomial system is not represented by a matrix"
+homogenize (PolySystem,Ring,RingElement) := (P,R,h) -> polySystem homogenize(sub(P.PolyMap,R),h)
+
 TEST ///
 CC[x,y]
 polySystem transpose matrix{{x,y^2+1,x+1}}
