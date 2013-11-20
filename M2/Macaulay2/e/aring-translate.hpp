@@ -102,7 +102,15 @@ namespace M2 {
     return false;
   }
 
-
+  /////////////////////////////////////////////////////
+  inline bool mypromote(const ARingRR& R,
+                        const ARingRR& S,
+                        const ARingRR::ElementType& fR,
+                        ARingRR::ElementType& fS)
+  {
+    S.set_from_double(fS, fR);
+    return true;
+  }
   inline bool mypromote(const ARingRR& R,
                         const ARingRRR& S,
                         const ARingRR::ElementType& fR,
@@ -111,7 +119,6 @@ namespace M2 {
     S.set_from_double(fS, fR);
     return true;
   }
-
   inline bool mypromote(const ARingRR& R,
                         const ARingCC& S,
                         const ARingRR::ElementType& fR,
@@ -120,7 +127,6 @@ namespace M2 {
     S.set_from_doubles(fS, fR, 0);
     return true;
   }
-
   inline bool mypromote(const ARingRR& R,
                         const ARingCCC& S,
                         const ARingRR::ElementType& fR,
@@ -129,13 +135,22 @@ namespace M2 {
     S.set_from_doubles(fS, fR, 0);
     return true;
   }
-
+  /////////////////////////////////////////////////////
   inline bool mypromote(const ARingRRR& R,
                         const ARingRRR& S,
                         const ARingRRR::ElementType& fR,
                         ARingRRR::ElementType& fS)
   {
     S.set(fS, fR);
+    return true;
+  }
+    inline bool mypromote(const ARingRRR& R,
+                        const ARingRR& S,
+                        const ARingRRR::ElementType& fR,
+                        ARingRR::ElementType& fS)
+  {
+    auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
+    S.set_from_BigReal(fS, &fR1);
     return true;
   }
 
@@ -147,7 +162,42 @@ namespace M2 {
     S.set_from_RRR(fS, fR);
     return true;
   }
-
+  inline bool mypromote(const ARingRRR& R,
+                        const ARingCC& S,
+                        const ARingRRR::ElementType& fR,
+                        ARingCC::ElementType& fS)
+  {
+    auto fR1 = const_cast<ARingRRR::ElementType&>(fR);
+    S.set_from_BigReal(fS, &fR1);
+    return true;
+  }
+  /////////////////////////////////////////////////////
+  inline bool mypromote(const ARingCC& R,
+                        const ARingCC& S,
+                        const ARingCC::ElementType& fR,
+                        ARingCC::ElementType& fS)
+  {
+    S.set(fS, fR);
+    return true;
+  }
+  inline bool mypromote(const ARingCC& R,
+                        const ARingCCC& S,
+                        const ARingCC::ElementType& fR,
+                        ARingCCC::ElementType& fS)
+  {
+    S.set_from_complex_double(fS, fR.re, fR.im);
+    return true;
+  }
+  /////////////////////////////////////////////////////
+  inline bool mypromote(const ARingCCC& R,
+                        const ARingCC& S,
+                        const ARingCCC::ElementType& fR,
+                        ARingCC::ElementType& fS)
+  {
+    auto fR1 = const_cast<ARingCCC::ElementType&>(fR);
+    S.set_from_BigReals(fS, &fR1.re, &fR1.im);
+    return true;
+  }
   inline bool mypromote(const ARingCCC& R,
                         const ARingCCC& S,
                         const ARingCCC::ElementType& fR,
@@ -156,6 +206,8 @@ namespace M2 {
     S.set(fS, fR);
     return true;
   }
+  /////////////////////////////////////////////////////
+
 
   inline bool mylift(const ARingRRR& R,
                      const ARingRRR& S,

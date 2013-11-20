@@ -565,20 +565,24 @@ namespace M2 {
       case M2::ring_CCC: return RP::promoter<ARingRR,ARingCCC>(R,S,fR,resultS);
       default: return false;
       }
+    case M2::ring_RRR:
+      switch (S->ringID()) {
+      case M2::ring_RR: return RP::promoter<ARingRRR,ARingRR>(R,S,fR,resultS);
+      case M2::ring_RRR: return RP::promoter<ARingRRR,ARingRRR>(R,S,fR,resultS);
+      case M2::ring_CC: return RP::promoter<ARingRRR,ARingCC>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingRRR,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
     case M2::ring_CC:
       switch (S->ringID()) {
       case M2::ring_CC: return RP::promoter<ARingCC,ARingCC>(R,S,fR,resultS);
-      default: return false;
-      }
-    case M2::ring_RRR:
-      switch (S->ringID()) {
-      case M2::ring_RRR: return RP::promoter<ARingRRR,ARingRRR>(R,S,fR,resultS);
-      case M2::ring_CCC: return RP::promoter<ARingRRR,ARingCCC>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingCC,ARingCCC>(R,S,fR,resultS);
       default: return false;
       }
     case M2::ring_CCC:
       switch (S->ringID()) {
       case M2::ring_CCC: return RP::promoter<ARingCCC,ARingCCC>(R,S,fR,resultS);
+      case M2::ring_CC: return RP::promoter<ARingCCC,ARingCC>(R,S,fR,resultS);
       default: return false;
       }
     default:

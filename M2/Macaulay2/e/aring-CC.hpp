@@ -147,6 +147,11 @@ namespace M2 {
       result.im = 0.0;
       return true;
     }
+    bool set_from_BigReals(ElementType &result, gmp_RR re, gmp_RR im) const {
+      result.re = mpfr_get_d(re, GMP_RNDN);
+      result.im = mpfr_get_d(im, GMP_RNDN);
+      return true;
+    }
     bool set_from_BigComplex(ElementType &result, gmp_CC a) const {
       result.re = mpfr_get_d(a->re, GMP_RNDN);
       result.im = mpfr_get_d(a->im, GMP_RNDN);
