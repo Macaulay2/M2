@@ -239,10 +239,7 @@ SVD Matrix := o -> A -> (
 
 rank MutableMatrix := (M) -> rawLinAlgRank raw M
 
-determinant MutableMatrix := opts -> (M) -> (
-     R := ring M;
-     new R from rawLinAlgDeterminant raw M
-     )
+determinant MutableMatrix := opts -> (M) -> promote(rawLinAlgDeterminant raw M, ring M)
 
 inverse MutableMatrix := (A) -> (
      R := ring A;

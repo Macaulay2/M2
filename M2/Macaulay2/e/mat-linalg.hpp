@@ -927,7 +927,12 @@ namespace MatrixOppies
   /////////
   // RRR // TODO: rewrite not using lapack
   /////////
-
+  inline void determinant(const DMatRRR& A, 
+                   typename M2::ARingRRR::ElementType& result_det)
+  {
+    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
+    LUdecomp.determinant(result_det);
+  }
 
   inline bool nullspaceU(const DMatRRR& A, 
                          DMatRRR& X)
@@ -1026,6 +1031,13 @@ namespace MatrixOppies
   /////////
   // CCC //  TODO: rewrite not using lapack
   /////////
+
+  inline void determinant(const DMatCCC& A, 
+                   typename M2::ARingCCC::ElementType& result_det)
+  {
+    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
+    LUdecomp.determinant(result_det);
+  }
 
   inline bool solve(const DMatCCC& A, 
                     const DMatCCC& B, 

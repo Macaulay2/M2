@@ -271,7 +271,7 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 {
   if (mIsDone) return;
 
-  std::cout << "computing LU decomposition NAIVE version" << std::endl;
+  //  std::cout << "computing LU decomposition NAIVE version" << std::endl;
   ElementType tmp;
   mLU.ring().init(tmp);
 
