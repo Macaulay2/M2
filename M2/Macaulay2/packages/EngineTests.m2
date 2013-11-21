@@ -1295,25 +1295,25 @@ testPromote = () -> (
     ---- Part1: promote from R1 ----
       m := matrix{{1.234 _ R1}};
       m1 := promote(m,C1);
-      --assert(lift(m1,R1) == m); -- NOT YET
+      assert(lift(m1,R1) == m); -- NOT YET
       m1 = promote(m,R);
       assert(promote(m1,R1) == m);
       m1 = promote(m,S);
       assert(promote(m1,R1) == m);
       m1 = promote(m,T);
-      --assert(lift(m1,R1) == m); -- NOT YET
+      assert(lift(m1,R1) == m); -- NOT YET
       m1 = promote(m,R1);
       assert(m1 == m);
     ---- Part 2: promote from R ----
       m = matrix{{1.234 _ R}};
       m1 = promote(m,C1);
-      --assert(lift(m1,R1) == m); -- NOT YET
+      assert(lift(m1,R) == m); -- NOT YET
       m1 = promote(m,R);
       assert(promote(m1,R) == m);
       m1 = promote(m,S);
       assert(promote(m1,R) == m);
       m1 = promote(m,T);
-      --assert(lift(m1,R) == m); -- NOT YET
+      assert(lift(m1,R) == m); -- NOT YET
       m1 = promote(m,R1);
       assert(promote(m1,R) == m);
     ---- Part 3: promote from T ----

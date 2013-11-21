@@ -207,8 +207,15 @@ namespace M2 {
     return true;
   }
   /////////////////////////////////////////////////////
-
-
+  /////////////////////////////////////////////////////
+  inline bool mylift(const ARingRRR& R,
+                     const ARingRR& S,
+                     ARingRRR::ElementType& result_gR,
+                     const ARingRR::ElementType& gS)
+  {
+    R.set_from_double(result_gR, gS);
+    return true;
+  }
   inline bool mylift(const ARingRRR& R,
                      const ARingRRR& S,
                      ARingRRR::ElementType& result_gR,
@@ -217,7 +224,6 @@ namespace M2 {
     R.set(result_gR, gS);
     return true;
   }
-
   inline bool mylift(const ARingRRR& R,
                      const ARingCCC& S,
                      ARingRRR::ElementType& result_gR,
@@ -226,11 +232,79 @@ namespace M2 {
     R.set(result_gR, S.realPartReference(gS));
     return (R.is_zero(S.imaginaryPartReference(gS)));
   }
-
+  inline bool mylift(const ARingRRR& R,
+                     const ARingCC& S,
+                     ARingRRR::ElementType& result_gR,
+                     const ARingCC::ElementType& gS)
+  {
+    R.set_from_double(result_gR, gS.re);
+    return gS.im == 0;
+  }
+  /////////////////////////////////////////////////////
+  inline bool mylift(const ARingRR& R,
+                     const ARingRR& S,
+                     ARingRR::ElementType& result_gR,
+                     const ARingRR::ElementType& gS)
+  {
+    R.set_from_double(result_gR, gS);
+    return true;
+  }
+  inline bool mylift(const ARingRR& R,
+                     const ARingRRR& S,
+                     ARingRR::ElementType& result_gR,
+                     const ARingRRR::ElementType& gS)
+  {
+    auto gS1 = const_cast<ARingRRR::ElementType&>(gS);
+    R.set_from_BigReal(result_gR, &gS1);
+    return true;
+  }
+  inline bool mylift(const ARingRR& R,
+                     const ARingCCC& S,
+                     ARingRR::ElementType& result_gR,
+                     const ARingCCC::ElementType& gS)
+  {
+    auto gS1 = const_cast<ARingRRR::ElementType&>(S.realPartReference(gS));
+    R.set_from_BigReal(result_gR, &gS1);
+    return (S.real_ring().is_zero(S.imaginaryPartReference(gS)));
+  }
+  inline bool mylift(const ARingRR& R,
+                     const ARingCC& S,
+                     ARingRR::ElementType& result_gR,
+                     const ARingCC::ElementType& gS)
+  {
+    R.set_from_double(result_gR, gS.re);
+    return gS.im == 0;
+  }
+  /////////////////////////////////////////////////////
   inline bool mylift(const ARingCCC& R,
                      const ARingCCC& S,
                      ARingCCC::ElementType& result_gR,
                      const ARingCCC::ElementType& gS)
+  {
+    R.set(result_gR, gS);
+    return true;
+  }
+  inline bool mylift(const ARingCCC& R,
+                     const ARingCC& S,
+                     ARingCCC::ElementType& result_gR,
+                     const ARingCC::ElementType& gS)
+  {
+    R.set_from_complex_double(result_gR, gS.re, gS.im);
+    return true;
+  }
+  inline bool mylift(const ARingCC& R,
+                     const ARingCCC& S,
+                     ARingCC::ElementType& result_gR,
+                     const ARingCCC::ElementType& gS)
+  {
+    auto gS1 = const_cast<ARingCCC::ElementType&>(gS);
+    R.set_from_BigReals(result_gR, &gS1.re, &gS1.im);
+    return true;
+  }
+  inline bool mylift(const ARingCC& R,
+                     const ARingCC& S,
+                     ARingCC::ElementType& result_gR,
+                     const ARingCC::ElementType& gS)
   {
     R.set(result_gR, gS);
     return true;

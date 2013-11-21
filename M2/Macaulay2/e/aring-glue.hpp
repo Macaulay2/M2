@@ -636,14 +636,31 @@ namespace M2 {
       case M2::ring_ZZpFfpack: return RP::lifter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,result_gR,gS);
       default: return false;
       }
+    case M2::ring_RR:
+      switch (S->ringID()) {
+      case M2::ring_RR: return RP::lifter<ARingRR,ARingRR>(R,S,result_gR,gS);
+      case M2::ring_RRR: return RP::lifter<ARingRR,ARingRRR>(R,S,result_gR,gS);
+      case M2::ring_CC: return RP::lifter<ARingRR,ARingCC>(R,S,result_gR,gS);
+      case M2::ring_CCC: return RP::lifter<ARingRR,ARingCCC>(R,S,result_gR,gS);
+      default: return false;
+      }
     case M2::ring_RRR:
       switch (S->ringID()) {
+      case M2::ring_RR: return RP::lifter<ARingRRR,ARingRR>(R,S,result_gR,gS);
       case M2::ring_RRR: return RP::lifter<ARingRRR,ARingRRR>(R,S,result_gR,gS);
+      case M2::ring_CC: return RP::lifter<ARingRRR,ARingCC>(R,S,result_gR,gS);
       case M2::ring_CCC: return RP::lifter<ARingRRR,ARingCCC>(R,S,result_gR,gS);
+      default: return false;
+      }
+    case M2::ring_CC:
+      switch (S->ringID()) {
+      case M2::ring_CC: return RP::lifter<ARingCC,ARingCC>(R,S,result_gR,gS);
+      case M2::ring_CCC: return RP::lifter<ARingCCC,ARingCC>(R,S,result_gR,gS);
       default: return false;
       }
     case M2::ring_CCC:
       switch (S->ringID()) {
+      case M2::ring_CC: return RP::lifter<ARingCC,ARingCCC>(R,S,result_gR,gS);
       case M2::ring_CCC: return RP::lifter<ARingCCC,ARingCCC>(R,S,result_gR,gS);
       default: return false;
       }
