@@ -30,11 +30,17 @@ export { jordanForm,
     testRankProfile,
     testSolve,
     testLinearAlgebra,
-    testPromote
+    testPromote,
+    hasFlint,
+    hasFFPACK
     }
 
 maxFLINTPrime = 18446744073709551521
 maxFFPACKPrime = 33554393
+
+debug Core
+hasFlint = try (ZZp(101, "Choose"=>"FLINT"); true) else false;
+hasFFPACK = try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
@@ -474,13 +480,11 @@ TEST ///
 
 TEST ///
   debug Core
-  hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
   if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
 ///
 
 TEST ///
   debug Core
-  hasFFPACK := try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
   if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))
 ///
 
@@ -1051,6 +1055,7 @@ TEST ///
 --------------------------------
 -- ffpack linear algebra: ZZ/p -
 --------------------------------
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(2, "Choose"=>"FFPACK");
@@ -1062,6 +1067,7 @@ TEST ///
   *}
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(3, "Choose"=>"FFPACK");
@@ -1072,6 +1078,7 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(5, "Choose"=>"FFPACK");
@@ -1083,6 +1090,7 @@ TEST ///
   testSolve R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(101, "Choose"=>"FFPACK");
@@ -1093,6 +1101,7 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(30000001, "Choose"=>"FFPACK");
@@ -1103,6 +1112,7 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
   R = ZZp(maxFFPACKPrime, "Choose" => "FFPACK")
@@ -1121,6 +1131,7 @@ TEST ///
   -- solveLinear: somehow the wrong one is being called
   -- rankProfile
   -- LUdecomposition
+if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(2, "Choose" => "FLINT")
@@ -1133,6 +1144,7 @@ TEST ///
 
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(3, "Choose" => "FLINT")
@@ -1143,6 +1155,7 @@ TEST ///
   testInverse R;
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(5, "Choose" => "FLINT")
@@ -1153,6 +1166,7 @@ TEST ///
   testInverse R;
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(101, "Choose" => "FLINT")
@@ -1163,8 +1177,7 @@ TEST ///
   testInverse R;
 ///
 
-
-
+if hasFlint then 
 TEST ///
   -- largest prime < 2^62
   debug Core
@@ -1176,6 +1189,7 @@ TEST ///
   testInverse R;  
 ///
 
+if hasFlint then 
 TEST ///
   -- largest prime < 2^63
   debug Core
@@ -1188,6 +1202,7 @@ TEST ///
 ///
 
 
+if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(maxFLINTPrime, "Choose" => "FLINT")
@@ -1208,6 +1223,7 @@ TEST ///
   testInverse R;  
 ///
 
+if hasFlint then 
 TEST ///
   -- Most of this code is designed for fields...
   debug Core
@@ -1216,6 +1232,7 @@ TEST ///
   testMult R
 ///
 
+if hasFlint then 
 TEST ///
   -- Flint QQ
   debug Core
@@ -1399,6 +1416,7 @@ TEST ///
 ///
 
 
+if hasFlint and hasFFPACK then 
 TEST ///
   -- Which rings have linear algebra routines defined?
   debug Core
@@ -1426,36 +1444,6 @@ TEST ///
 
   debug Core
   initializeEngineLinearAlgebra QQ
-///
-
-TEST ///
-  debug Core
-
-  hasLinAlg1 = (fcn, R) -> (
-      M = mutableMatrix(R, 4, 4);
-      fillMatrix M;
-      fcn raw M
-      );
-
-  hasLinAlg = (fcn, R) -> (
-      M = mutableMatrix(R, 4, 4);
-      fillMatrix M;
-      try (fcn raw M; true) else false
-      );
-
-  R = ZZp(101, "Choose"=>"FFPACK")
-  hasLinAlg1(rawLinAlgDeterminant, R)
-  assert hasLinAlg(rawLinAlgDeterminant, R)
-  assert hasLinAlg(rawLinAlgInverse, R)
-
-  R1 = ZZp(101, "Choose"=>"FLINT")
-  assert hasLinAlg(rawLinAlgDeterminant, R1)
-
-  --hasLinAlg(rawLinAlgDeterminant, ZZ/101)
-  --hasLinAlg(rawLinAlgDeterminant, QQ)
-  --hasLinAlg(rawLinAlgDeterminant, ZZ)
-  
-  
 ///
 
 TEST /// 

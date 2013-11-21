@@ -213,13 +213,6 @@ namespace MatrixOppies
   }
 
   template<typename Mat>
-  bool nullspaceU(const Mat& A, 
-                  Mat& X)
-  {
-    throw exc::engine_error("'nullspaceU' not implemented for this kind of matrix over this ring");
-  }
-
-  template<typename Mat>
   M2_arrayintOrNull LU(const Mat& A, 
                        Mat& L,
                        Mat& U)
@@ -339,13 +332,6 @@ namespace MatrixOppies
     DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
     return LUdecomp.solve(B,X);
     // return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
-  }
-
-  inline bool nullspaceU(const DMatZZp& A, 
-                         DMatZZp& X)
-  {
-    DMatLU<M2::ARingZZp>::nullspaceU(&A,&X);
-    return true;
   }
 
   inline M2_arrayintOrNull LU(const DMatZZp& A, 
@@ -789,13 +775,6 @@ namespace MatrixOppies
     return Lapack::solve(&A, &B, &X);
   }
 
-  inline bool nullspaceU(const DMatRR& A, 
-                         DMatRR& X)
-  {
-    DMatLU<M2::ARingRR>::nullspaceU(&A, &X);
-    return true;
-  }
-
   inline M2_arrayintOrNull LU(const DMatRR& A, 
                               DMatRR& L,
                               DMatRR& U)
@@ -862,13 +841,6 @@ namespace MatrixOppies
     return Lapack::solve(&A, &B, &X);
   }
 
-  inline bool nullspaceU(const DMatCC& A, 
-                  DMatCC& X)
-  {
-    DMatLU<DMatCC::CoeffRing>::nullspaceU(&A, &X);
-    return true;
-  }
-
   inline M2_arrayintOrNull LU(const DMatCC& A, 
                               DMatCC& L,
                               DMatCC& U)
@@ -925,20 +897,13 @@ namespace MatrixOppies
   }
 
   /////////
-  // RRR // TODO: rewrite not using lapack
+  // RRR // 
   /////////
   inline void determinant(const DMatRRR& A, 
                    typename M2::ARingRRR::ElementType& result_det)
   {
     DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
     LUdecomp.determinant(result_det);
-  }
-
-  inline bool nullspaceU(const DMatRRR& A, 
-                         DMatRRR& X)
-  {
-    DMatLU<M2::ARingRRR>::nullspaceU(&A, &X);
-    return true;
   }
 
   inline M2_arrayintOrNull LU(const DMatRRR& A, 
@@ -1046,13 +1011,6 @@ namespace MatrixOppies
     DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
     return LUdecomp.solve(B,X);
     //return Lapack::solve(&A, &B, &X);
-  }
-
-  inline bool nullspaceU(const DMatCCC& A, 
-                  DMatCCC& X)
-  {
-    DMatLU<DMatCCC::CoeffRing>::nullspaceU(&A, &X);
-    return true;
   }
 
   inline M2_arrayintOrNull LU(const DMatCCC& A, 
