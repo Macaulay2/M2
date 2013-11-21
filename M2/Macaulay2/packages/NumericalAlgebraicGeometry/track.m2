@@ -638,6 +638,7 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  maxCorrSteps => null,
+--!!!	  maxPrecision => null,
      	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
@@ -698,7 +699,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       endZone := false;
 	       CorrectorTolerance := ()->(if endZone then o.EndZoneFactor else 1)*o.CorrectorTolerance;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
-     	       tStep := o.tStep;
+     	       tStep := sub(o.tStep,K);
 	       predictorSuccesses := 0;
 	       x0 := s; 
 	       t0 := 0_K; 
@@ -710,7 +711,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			 endZone = true;
 			 -- to do: see if this path coinsides with any other path
 			 );
-		    if DBG > 4 then << "--- current t = " << t0 << endl;
+		    if DBG > 4 then << "--- current t = " << t0 << "; precision = " << precision ring x0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
 		    -- svd := sort first SVD Hx0;
@@ -722,7 +723,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
 		    -- default dt; Certified and Multistep modify dt
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
 		    if o.Predictor == Tangent then (
 			Hx0 := evalHx(x0,t0);
@@ -737,13 +738,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			)
 		    else if o.Predictor == RungeKutta4 then (
 			--k1 := evalMinusInverseHxHt(x0,t0);
-			--k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
-			--k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			--k2 := evalMinusInverseHxHt(x0+(1/2)*k1,t0+(1/2)*dt);
+			--k3 := evalMinusInverseHxHt(x0+(1/2)*k2,t0+(1/2)*dt);
 			--k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
 			--dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
 			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
-			dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
-			dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
+			dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
+			dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
 			dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
 			dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
 			)

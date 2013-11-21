@@ -172,7 +172,7 @@ refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
 			 if rs.SolutionStatus===Regular
 			 then done = true
 			 else if rs.SolutionStatus===Singular then (
-			      done = numgens ring first dT > DEFAULT.MaxNumberOfVariables;
+			      done = numgens ring first dT > DEFAULT.maxNumberOfVariables;
 			      if done then s.DeflationSequence = s.DeflationSequence|{infinity}; -- indicates that deflation failed  
 			      T = dT;
 			      )

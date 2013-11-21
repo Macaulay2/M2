@@ -42,7 +42,7 @@ export {
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
-     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
+     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", "maxPrecision",
      "Normalize", "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
@@ -69,7 +69,7 @@ protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
-protect MaxNumberOfVariables
+protect maxNumberOfVariables
 
 -- DEBUG Core and NAGtypes ----------------------------------------
 debug Core -- to enable engine routines
@@ -125,7 +125,8 @@ DEFAULT = new MutableHashTable from {
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e8,
-     MaxNumberOfVariables => 50
+     maxPrecision => 53,
+     maxNumberOfVariables => 50
      }
 
 setDefault = method(Options => {
