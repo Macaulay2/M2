@@ -251,7 +251,6 @@ namespace MatrixOppies
     // We assume that C is set to the correct size, and is the zero matrix here.
     addMultipleTo(C,A,B);
   }
-  
 
 };                                                     
 

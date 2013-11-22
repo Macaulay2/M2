@@ -35,6 +35,8 @@ makeZZFlint = () -> (
      --if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      --if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      initializeEngineLinearAlgebra F;
+     precision F := (f) -> infinity;
+     precision ZZFlintRing := F -> infinity;
      F)
 
 ZZFlint = makeZZFlint()

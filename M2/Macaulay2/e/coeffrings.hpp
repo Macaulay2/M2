@@ -585,6 +585,8 @@ public:
 
   void set(elem &result, elem a) const { result = a; }
 
+  void set_from_int(elem& result, int a) const { result = R->from_int(a); }
+
   bool is_zero(elem result) const { return R->is_zero(result); }
 
   bool is_equal(elem a, elem b ) const { return R->is_equal(a,b); }

@@ -16,7 +16,9 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 #include "aring-zzp.hpp"
+#include "aring-m2-gf.hpp"
 typedef DMat<M2::ARingZZp> DMatZZp;
+typedef DMat<M2::ARingGFM2> DMatGFM2;
 
 #ifdef HAVE_FFLAS_FFPACK
 #include "aring-zzp-ffpack.hpp"
@@ -322,104 +324,146 @@ namespace MatrixOppies
     A.ring().clear(tmp);
   }
 
-  ////////////////////////
-  // Functions for ZZ/p //
-  ////////////////////////
-  inline bool solve(const DMatZZp& A, 
-                    const DMatZZp& B, 
-                    DMatZZp& X)
+  template<typename RT>
+  void addMultipleTo(DMat<RT>& C, 
+                     const DMat<RT>& A, 
+                     const DMat<RT>& B)
+  // C = C + A*B
   {
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
-    return LUdecomp.solve(B,X);
-    // return DMatLU<M2::ARingZZp>::solve(&A,&B,&X);
+    mult(A,B,C);
   }
 
-  inline M2_arrayintOrNull LU(const DMatZZp& A, 
-                              DMatZZp& L,
-                              DMatZZp& U)
+  template<typename RT>
+  void subtractMultipleTo(DMat<RT>& C, 
+                          const DMat<RT>& A, 
+                          const DMat<RT>& B)
+  // C = C - A*B
   {
-    std::vector<size_t> perm;
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
-    if (!LUdecomp.MatrixPLU(perm, L, U))
-      return 0;
-    return stdvector_to_M2_arrayint(perm);
-    //    return DMatLU<M2::ARingZZp>::LU(&A, &L, &U);
+    typedef typename RT::ElementType ElementType;
+    typedef typename DMat<RT>::ConstIterator ConstIterator;
+    
+    M2_ASSERT(A.numColumns() == B.numRows());
+    M2_ASSERT(A.numRows() == result_product.numRows());
+    M2_ASSERT(B.numColumns() == result_product.numColumns());
+
+    ElementType* result = C.array();
+
+    ElementType tmp;
+    A.ring().init(tmp);
+    // WARNING: this routine expects the result matrix to be in ROW MAJOR ORDER
+    for (size_t i = 0; i<A.numRows(); i++)
+      for (size_t j = 0; j<B.numColumns(); j++)
+        {
+          ConstIterator i1 = A.rowBegin(i);
+          ConstIterator iend = A.rowEnd(i);
+          ConstIterator j1 = B.columnBegin(j);
+          
+          while (i1 != iend)
+            {
+              A.ring().mult(tmp, *i1, *j1);
+              A.ring().subtract(*result, *result, tmp);
+              ++i1;
+              ++j1;
+            }
+          result++;
+        }
+    A.ring().clear(tmp);
   }
 
-  inline size_t rank(const DMatZZp& A)
+  // Note: this default version only works for fields.  Any other rings
+  // MUST redefine these functions
+  template<typename RT>
+  inline void determinant(const DMat<RT>& A,
+                          typename RT::ElementType& result)
   {
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
-    return LUdecomp.rank();
-  }
-
-  inline void determinant(const DMatZZp& A,
-                          DMatZZp::ElementType& result)
-  {
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    DMatLUtemplate<RT> LUdecomp(A);
     LUdecomp.determinant(result);
   }
 
-  inline M2_arrayintOrNull rankProfile(const DMatZZp& A, 
+  template<typename RT>
+  inline bool solve(const DMat<RT>& A, 
+                    const DMat<RT>& B, 
+                    DMat<RT>& X)
+  {
+    DMatLUtemplate<RT> LUdecomp(A);
+    return LUdecomp.solve(B,X);
+  }
+
+  template<typename RT>
+  inline M2_arrayintOrNull LU(const DMat<RT>& A, 
+                              DMat<RT>& L,
+                              DMat<RT>& U)
+  {
+    std::vector<size_t> perm;
+    DMatLUtemplate<RT> LUdecomp(A);
+    if (!LUdecomp.MatrixPLU(perm, L, U))
+      return 0;
+    return stdvector_to_M2_arrayint(perm);
+  }
+
+  template<typename RT>
+  inline size_t rank(const DMat<RT>& A)
+  {
+    DMatLUtemplate<RT> LUdecomp(A);
+    return LUdecomp.rank();
+  }
+
+  template<typename RT>
+  inline M2_arrayintOrNull rankProfile(const DMat<RT>& A, 
                                        bool row_profile)
   {
     std::vector<size_t> profile;
     if (row_profile)
       {
         // First transpose A
-        DMatZZp B(A.ring(), A.numColumns(), A.numRows());
+        DMat<RT> B(A.ring(), A.numColumns(), A.numRows());
         MatrixOppies::transpose(A,B);
-        DMatLUtemplate<M2::ARingZZp> LUdecomp(B);
+        DMatLUtemplate<RT> LUdecomp(B);
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
       }
     else
       {
-        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        DMatLUtemplate<RT> LUdecomp(A);
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
       }
   }
 
-  inline bool inverse(const DMatZZp& A, 
-               DMatZZp& result_inv)
+  template<typename RT>
+  inline bool inverse(const DMat<RT>& A, 
+               DMat<RT>& result_inv)
   {
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    DMatLUtemplate<RT> LUdecomp(A);
     return LUdecomp.inverse(result_inv);
   }
 
-  inline size_t nullSpace(const DMatZZp& A, 
+  template<typename RT>
+  inline size_t nullSpace(const DMat<RT>& A, 
                    bool right_side, 
-                   DMatZZp& result_nullspace)
+                   DMat<RT>& result_nullspace)
   {
     if (right_side)
       {
-        DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+        DMatLUtemplate<RT> LUdecomp(A);
         return LUdecomp.kernel(result_nullspace);
       }
     //TODO: do left-side
     return 0;
   }
 
-  inline bool solveLinear(const DMatZZp& A, 
-                   const DMatZZp& B, 
-                   DMatZZp& X)
+  template<typename RT>
+  inline bool solveLinear(const DMat<RT>& A, 
+                   const DMat<RT>& B, 
+                   DMat<RT>& X)
   {
-    DMatLUtemplate<M2::ARingZZp> LUdecomp(A);
+    DMatLUtemplate<RT> LUdecomp(A);
     return LUdecomp.solve(B,X);
   }
 
-  inline bool solveLinear(const DMatZZp& A, 
-                          const DMatZZp& B, 
-                          bool right_side, 
-                          DMatZZp& X, 
-                          bool declare_A_is_invertible)
-  {
-    //TODO: write this routine in the cases which are not handled
-    if (not right_side)
-      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return solveLinear(A,B,X);
-  }
-
+  //////////////////////
+  // ZZpFFPACK /////////
+  //////////////////////
 #ifdef HAVE_FFLAS_FFPACK
   // Functions for DMatZZpFFPACK
 
@@ -461,6 +505,11 @@ namespace MatrixOppies
                           const DMatZZpFFPACK& B);
 #endif
 
+  //////////////////////
+  // ZZFlint ///////////
+  //////////////////////
+  // Warning: nullSpace is WRONG, and needs to be rewritten,
+  // using an algorithm that will compute kernel over ZZ.
 #ifdef HAVE_FLINT
   // Functions for DMatZZ
 
@@ -561,6 +610,9 @@ namespace MatrixOppies
   }
 #endif
 
+  //////////////////////
+  // ZZpFlint //////////
+  //////////////////////
 #ifdef HAVE_FLINT
 // Functions for DMatZZpFlint
 
@@ -661,6 +713,9 @@ namespace MatrixOppies
 
 #endif
 
+  //////////////////////
+  // QQFlint ///////////
+  //////////////////////
 #ifdef HAVE_FLINT
   // Functions for DMatQQFlint
 
@@ -899,35 +954,6 @@ namespace MatrixOppies
   /////////
   // RRR // 
   /////////
-  inline void determinant(const DMatRRR& A, 
-                   typename M2::ARingRRR::ElementType& result_det)
-  {
-    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
-    LUdecomp.determinant(result_det);
-  }
-
-  inline M2_arrayintOrNull LU(const DMatRRR& A, 
-                              DMatRRR& L,
-                              DMatRRR& U)
-  {
-    //return Lapack::LU(&A, &L, &U);
-    std::vector<size_t> perm;
-    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
-    if (!LUdecomp.MatrixPLU(perm, L, U))
-      return 0;
-    return stdvector_to_M2_arrayint(perm);
-  }
-
-  inline bool solve(const DMatRRR& A, 
-                    const DMatRRR& B, 
-                    DMatRRR& X)
-  {
-    printf("in solve, before LUdecomp, for DMatRRR\n");
-    DMatLUtemplate<M2::ARingRRR> LUdecomp(A);
-    printf("before solve for DMatRRR\n");
-    return LUdecomp.solve(B,X);
-    //return Lapack::solve(&A, &B, &X);
-  }
 
   inline bool eigenvaluesHermitian(const DMatRRR& A, 
                             DMatRRR& eigenvals)
@@ -997,34 +1023,6 @@ namespace MatrixOppies
   // CCC //  TODO: rewrite not using lapack
   /////////
 
-  inline void determinant(const DMatCCC& A, 
-                   typename M2::ARingCCC::ElementType& result_det)
-  {
-    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
-    LUdecomp.determinant(result_det);
-  }
-
-  inline bool solve(const DMatCCC& A, 
-                    const DMatCCC& B, 
-                    DMatCCC& X)
-  {
-    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
-    return LUdecomp.solve(B,X);
-    //return Lapack::solve(&A, &B, &X);
-  }
-
-  inline M2_arrayintOrNull LU(const DMatCCC& A, 
-                              DMatCCC& L,
-                              DMatCCC& U)
-  {
-    //return Lapack::LU(&A, &L, &U);
-    std::vector<size_t> perm;
-    DMatLUtemplate<M2::ARingCCC> LUdecomp(A);
-    if (!LUdecomp.MatrixPLU(perm, L, U))
-      return 0;
-    return stdvector_to_M2_arrayint(perm);
-  }
-
   inline bool eigenvaluesHermitian(const DMatCCC& A, 
                             DMatRRR& eigenvals)
   {
@@ -1090,6 +1088,7 @@ namespace MatrixOppies
   }
 
 };
+
 #endif
 
 // Local Variables:

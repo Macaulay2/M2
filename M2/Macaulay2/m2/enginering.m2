@@ -16,7 +16,7 @@ EngineRing.synonym = "engine ring"
 raw EngineRing := R -> R.RawRing
 raw Ring := R -> if R.?RawRing then R.RawRing else error "no raw engine ring associated with this ring"
 isField EngineRing := R -> rawIsField raw R
-hasEngineLinearAlgebra Ring := (R) -> R#?"EngineLinearAlgebra" -- used to decide which algorithm to use
+hasEngineLinearAlgebra Ring := (R) -> precision R =!= infinity or R#?"EngineLinearAlgebra" -- used to decide which algorithm to use
 -----------------------------------------------------------------------------
 -- rational promotion to any engine ring
 promote(QQ,RingElement) := (r,S) -> (

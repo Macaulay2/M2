@@ -668,9 +668,8 @@ dual(Matrix) := Matrix => {} >> o -> f -> (
 Matrix.InverseMethod =
 inverse Matrix := (cacheValue symbol inverse) (
      m -> (
-      if hasEngineLinearAlgebra ring m then (
-          << "calling ffpack version of InverseMethod" << endl;
-          (ring m).inverse m)
+      if hasEngineLinearAlgebra ring m then
+          basicInverse m
       else (
 	      (quo,rem) := quotientRemainder(id_(target m), m);
 	      if rem != 0 then error "matrix not invertible";

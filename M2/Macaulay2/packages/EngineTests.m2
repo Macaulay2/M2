@@ -1125,6 +1125,48 @@ TEST ///
 ///
 
 --------------------------------
+-- engine ZZ/p -----------------
+--------------------------------
+TEST ///
+  debug Core
+  R = ZZp(2)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 3
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 101
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 32749
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
+///
+
+--------------------------------
 -- flint linear algebra: ZZ/p --
 --------------------------------
   -- Not written yet: nullSpace for left side
@@ -1213,6 +1255,9 @@ TEST ///
   testInverse R;  
 ///
 
+--------------------------------
+-- Engine GF -------------------
+--------------------------------
 TEST ///
   debug Core
   R = GF(3,2)
@@ -1222,6 +1267,42 @@ TEST ///
   testRank R;
   testInverse R;  
 ///
+
+TEST ///
+  debug Core
+  R = GF(5,12)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+--------------------------------
+-- Givaro GF -------------------
+--------------------------------
+if hasFFPACK then
+TEST ///
+  debug Core
+  R = GF(3,2, Strategy=>"Givaro")
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+if hasFFPACK then
+TEST ///
+  debug Core
+  R = GF(5,12)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
 
 if hasFlint then 
 TEST ///
@@ -1240,6 +1321,7 @@ TEST ///
   testDeterminant R
   testMult R
   testRank R
+  testNullspace R;
 ///
 
 -----------------------------------
@@ -1415,6 +1497,35 @@ TEST ///
   testMutableMatrices ZZ
 ///
 
+TEST ///
+  R = RR_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+  inverse M
+  
+
+  R = CC_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  det(N*N) - (det N)^2
+  det(M*M) - (det M)^2
+  M*M - mutableMatrix(N*N)
+  
+  R = RR_53
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+///
 
 if hasFlint and hasFFPACK then 
 TEST ///
@@ -1436,11 +1547,11 @@ TEST ///
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Old"))
 
-  --hasLinAlgRank ZZ  -- NO
-  --hasLinAlgRank QQ  -- NO
+  hasLinAlgRank ZZ  -- NO
+  hasLinAlgRank QQ  -- NO
   hasLinAlgRank (ZZp(101, "Choose"=>"FLINT")) -- yes, this one works!
   hasLinAlgRank (ZZp(101, "Choose"=>"FFPACK")) -- yes, this one works!
-  --hasLinAlgRank (ZZp(101, "Choose"=>null)) -- NO
+  hasLinAlgRank (ZZp(101, "Choose"=>null)) -- NO
 
   debug Core
   initializeEngineLinearAlgebra QQ
