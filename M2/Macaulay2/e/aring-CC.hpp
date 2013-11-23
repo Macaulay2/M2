@@ -363,6 +363,14 @@ namespace M2 {
       if (mpfr_cmp_d(epsilon, fabs(a.im)) > 0)
         a.im = 0.0;
     }
+
+    void increase_norm(gmp_RR& norm, const ElementType& a) const
+    {
+      double d;
+      abs(d,a);
+      if (mpfr_cmp_d(norm, d) < 0)
+        mpfr_set_d(norm, d, GMP_RNDN);
+    }
   };
 
 }; // end namespace M2

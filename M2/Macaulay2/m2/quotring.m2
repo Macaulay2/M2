@@ -51,7 +51,7 @@ liftZZmodQQ := (r,S) -> (
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {"Choose" => null}) -- values allowed: "FLINT", "FFPACK", "ARING"
+ZZp = method(Options=> {Strategy => null}) -- values allowed: "FLINT", "FFPACK", "ARING", null
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
      gensI := generators I;
@@ -60,12 +60,12 @@ ZZp Ideal := opts -> (I) -> (
      if n < 0 then n = -n;
      if n === 0 then 
          ZZ
-     else if savedQuotients#?(opts#"Choose", n) then
-         savedQuotients#(opts#"Choose", n)
+     else if savedQuotients#?(opts#Strategy, n) then
+         savedQuotients#(opts#Strategy, n)
      else (
 	  if not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
-      typ := opts#"Choose";
+      typ := opts#Strategy;
 	  S := new QuotientRing from 
 	    if typ === "FFPACK" then rawARingGaloisField(n,1)  
         else if typ === "FLINT" then rawARingZZpFlint n
@@ -131,6 +131,7 @@ basicInverse Matrix := (f) -> (
     if numRows A =!= numColumns A then error "expected square matrix";
     matrix map(R,rawLinAlgInverse(raw A))
     )
+
 --------------------------------
 
 ZZquotient := (R,I) -> (
@@ -151,6 +152,7 @@ ZZquotient := (R,I) -> (
 	  S.ideal = I;
 	  S.baseRings = {R};
      	  commonEngineRingInitializations S;
+          initializeEngineLinearAlgebra S;
 	  S.relations = gensI;
 	  S.isCommutative = true;
 	  S.presentation = matrix{{n}};

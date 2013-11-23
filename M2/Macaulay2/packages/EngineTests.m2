@@ -39,8 +39,8 @@ maxFLINTPrime = 18446744073709551521
 maxFFPACKPrime = 33554393
 
 debug Core
-hasFlint = try (ZZp(101, "Choose"=>"FLINT"); true) else false;
-hasFFPACK = try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
+hasFlint = try (ZZp(101, Strategy=>"FLINT"); true) else false;
+hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
@@ -63,7 +63,7 @@ changeOfBasis(Ring, ZZ) := (R,n) -> (
     S := random(R^n, R^n);
     S1 := mutableMatrix S;
     Sinv := inverse S1;
-    (S, Sinv)
+    (S1, Sinv)
     )
 
 checkLU = method()
@@ -480,12 +480,12 @@ TEST ///
 
 TEST ///
   debug Core
-  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
+  if hasFlint then testMutableMatrices(ZZp(101, Strategy=>"FLINT"))
 ///
 
 TEST ///
   debug Core
-  if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))
+  if hasFFPACK then testMutableMatrices(ZZp(101, Strategy=>"FFPACK"))
 ///
 
 ///
@@ -521,7 +521,7 @@ randomJordanForm = (R, L) -> (
     )
 
 testLinAlgZZpFFPACK = () -> (
-    kk := ZZp(101, "Choose"=>"FFPACK");
+    kk := ZZp(101, Strategy=>"FFPACK");
     S := mutableMatrix(kk,3,3);
     fillMatrix S;
     D := mutableMatrix jordanForm(kk, splice{{1,3},4:{0,1},{2,3}});
@@ -616,11 +616,11 @@ benchMult = (R,N) -> (
   benchMult(ZZ/101,300);
 
   debug Core
-  R = ZZp(101, "Choose"=>"FLINT")
+  R = ZZp(101, Strategy=>"FLINT")
   benchMult(R,300); -- fails, due to row/col major encoding (I think).
 
   debug Core
-  R = ZZp(101, "Choose"=>"FFPACK")
+  R = ZZp(101, Strategy=>"FFPACK")
   benchMult(R,10);
   oo#2 == oo#3
 
@@ -643,7 +643,7 @@ benchMult = (R,N) -> (
   (A,B,C,C1) = benchMult(RR_53,300);
 
   debug Core
-  R2 = ZZp(33554393, "Choose"=>"FLINT");
+  R2 = ZZp(33554393, Strategy=>"FLINT");
   benchMult(R2, 400); -- the multiply routine is the flint one: but it is multiplying the wrong order.
     -- This is caused by row/column major order problem in my (MES) code.
 ///
@@ -931,13 +931,31 @@ testSolve = (R) -> (
     -- now for more complicated examples
     -- FAILING TEST: crashes
     debug Core;
-    R = ZZp(101, "Choose"=>"FFPACK");
+    R = ZZp(101, Strategy=>"FFPACK");
     N := 90;
     M := mutableMatrix(R, N, N);
     fillMatrix M;
     B := mutableMatrix(R, N, 5);
     fillMatrix B;
     time rawLinAlgSolve(raw M, raw B, true);
+    )
+
+testLUoverRR = () -> (
+    R := RR_53;
+    M := mutableMatrix(R,10,10);
+    fillMatrix M;
+    (P,L,U) := LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-59);
+
+    M = mutableMatrix(R,100,100);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+
+    M = mutableMatrix(R,500,500);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
     )
 
 testLUoverRRR = () -> (
@@ -1058,7 +1076,7 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(2, "Choose"=>"FFPACK");
+  R = ZZp(2, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   {*
@@ -1070,7 +1088,7 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(3, "Choose"=>"FFPACK");
+  R = ZZp(3, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1081,7 +1099,7 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(5, "Choose"=>"FFPACK");
+  R = ZZp(5, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1093,7 +1111,7 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(101, "Choose"=>"FFPACK");
+  R = ZZp(101, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1104,7 +1122,7 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(30000001, "Choose"=>"FFPACK");
+  R = ZZp(30000001, Strategy=>"FFPACK");
   testDeterminant R
   testMult R
   testInverse R;
@@ -1115,13 +1133,13 @@ TEST ///
 if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(maxFFPACKPrime, "Choose" => "FFPACK")
+  R = ZZp(maxFFPACKPrime, Strategy => "FFPACK")
   testDeterminant R
   testMult R
   testInverse R;
   testRank R;
   testNullspace R;
-  --R = ZZp(33554467, "Choose" => "FFPACK") -- this should not work
+  --R = ZZp(33554467, Strategy => "FFPACK") -- this should not work
 ///
 
 --------------------------------
@@ -1176,7 +1194,7 @@ TEST ///
 if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(2, "Choose" => "FLINT")
+  R = ZZp(2, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;   -- the fillMatrix is not working here...
@@ -1189,7 +1207,7 @@ TEST ///
 if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(3, "Choose" => "FLINT")
+  R = ZZp(3, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1200,7 +1218,7 @@ TEST ///
 if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(5, "Choose" => "FLINT")
+  R = ZZp(5, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1211,7 +1229,7 @@ TEST ///
 if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(101, "Choose" => "FLINT")
+  R = ZZp(101, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1223,7 +1241,7 @@ if hasFlint then
 TEST ///
   -- largest prime < 2^62
   debug Core
-  R = ZZp(4611686018427387847, "Choose" => "FLINT")
+  R = ZZp(4611686018427387847, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1235,7 +1253,7 @@ if hasFlint then
 TEST ///
   -- largest prime < 2^63
   debug Core
-  R = ZZp(9223372036854775783, "Choose" => "FLINT")
+  R = ZZp(9223372036854775783, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1247,7 +1265,7 @@ TEST ///
 if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(maxFLINTPrime, "Choose" => "FLINT")
+  R = ZZp(maxFLINTPrime, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1329,11 +1347,22 @@ TEST ///
 -----------------------------------
 testClean = (R) -> (
     -- R should be an RR or CC
+    -- this tests "clean" for: Matrix, MutableMatrix, poly ring.
     M := mutableMatrix(R, 10, 10);
     fillMatrix M;
     N := M^4 - M*M*M^2;
     for i from 0 to numRows N - 1 do N_(i,i) = 1.0 + N_(i,i);
-    assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    N2 := matrix N;
+    assert(norm clean(.00001, N - mutableIdentity(R, numRows N)) == 0);
+    assert(norm clean(.00001, N2 - matrix mutableIdentity(R, numRows N2)) == 0);
+    -- this next test is actually not correct: 
+    --   clean does NOT truncate values, only ones that are close to 0
+    --assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    P := R[getSymbol "x", getSymbol "y"];
+    x := P_0;
+    y := P_1;
+    f := 1.01*x^2+3.2*y^2-y;
+    assert(clean(.0001, f^4 - (f^2)^2) == 0)
     )
 testNorm = (R) -> (
     -- R should be an RR or CC
@@ -1346,7 +1375,27 @@ testNorm = (R) -> (
     assert(b == ans);
     )
 
+TEST ///
+  testClean(RR_53)
+  testClean(RR_100)
+  testClean(RR_200)
+  testClean(RR_54)
 
+  testNorm(RR_53)
+  testNorm(RR_100)
+  testNorm(RR_200)
+  testNorm(RR_54)
+
+  testClean(CC_53)
+  testClean(CC_100)
+  testClean(CC_200)
+  testClean(CC_54)
+
+  testNorm(CC_53)
+  testNorm(CC_100)
+  testNorm(CC_200)
+  testNorm(CC_54)
+///
 
 
 
@@ -1540,8 +1589,8 @@ TEST ///
   hasEngineLinearAlgebra(ZZ)
   assert hasEngineLinearAlgebra(ZZFlint)
   assert hasEngineLinearAlgebra(QQ)
-  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FLINT"))
-  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FFPACK"))
+  assert hasEngineLinearAlgebra(ZZp(101, Strategy=>"FLINT"))
+  assert hasEngineLinearAlgebra(ZZp(101, Strategy=>"FFPACK"))
   hasEngineLinearAlgebra(ZZ/101)
   hasEngineLinearAlgebra (GF(2^3, Strategy=>null))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
@@ -1549,9 +1598,9 @@ TEST ///
 
   hasLinAlgRank ZZ  -- NO
   hasLinAlgRank QQ  -- NO
-  hasLinAlgRank (ZZp(101, "Choose"=>"FLINT")) -- yes, this one works!
-  hasLinAlgRank (ZZp(101, "Choose"=>"FFPACK")) -- yes, this one works!
-  hasLinAlgRank (ZZp(101, "Choose"=>null)) -- NO
+  hasLinAlgRank (ZZp(101, Strategy=>"FLINT")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, Strategy=>"FFPACK")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, Strategy=>null)) -- NO
 
   debug Core
   initializeEngineLinearAlgebra QQ

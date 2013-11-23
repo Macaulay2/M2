@@ -737,6 +737,32 @@ namespace M2 {
   }
 
   template<>
+  inline ring_elem ConcreteRing<ARingRR>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
+  {
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+    R->zeroize_tiny(epsilon,a);
+    ring_elem result;
+    R->to_ring_elem(result,a);
+    R->clear(a);
+    return result;
+  }
+
+  template<>
+  inline ring_elem ConcreteRing<ARingCC>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
+  {
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+    R->zeroize_tiny(epsilon,a);
+    ring_elem result;
+    R->to_ring_elem(result,a);
+    R->clear(a);
+    return result;
+  }
+
+  template<>
   inline ring_elem ConcreteRing<ARingRRR>::zeroize_tiny(gmp_RR epsilon, const ring_elem f) const
   {
     ElementType a;

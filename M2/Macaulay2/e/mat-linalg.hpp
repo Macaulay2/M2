@@ -822,7 +822,7 @@ namespace MatrixOppies
   ////////
   // RR //
   ////////
-
+#if 0
   inline bool solve(const DMatRR& A, 
                     const DMatRR& B, 
                     DMatRR& X)
@@ -836,7 +836,7 @@ namespace MatrixOppies
   {
     return Lapack::LU(&A, &L, &U);
   }
-
+#endif
   inline bool eigenvaluesHermitian(const DMatRR& A, 
                             DMatRR& eigenvals)
   {
@@ -883,6 +883,22 @@ namespace MatrixOppies
     if (strategy == 1)
       return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  inline void clean(gmp_RR epsilon, DMatRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatRR& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
   }
 
   ////////
@@ -949,6 +965,22 @@ namespace MatrixOppies
     if (strategy == 1)
       return Lapack::SVD_divide_conquer(&A, &Sigma, &U, &Vt);
     return Lapack::SVD(&A, &Sigma, &U, &Vt);
+  }
+
+  inline void clean(gmp_RR epsilon, DMatCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().zeroize_tiny(epsilon, *p);
+  }
+  
+  inline void increase_norm(gmp_RR& norm, const DMatCC& mat)
+  {
+    auto p = mat.array(); 
+    size_t len = mat.numRows() * mat.numColumns();
+    for (size_t i = 0; i<len; i++, ++p)
+      mat.ring().increase_norm(norm, *p);
   }
 
   /////////
