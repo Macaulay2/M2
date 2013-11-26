@@ -1071,13 +1071,23 @@ MutableMatrix* rawLinAlgSolve(const MutableMatrix* A,
                          const MutableMatrix* B,
                          M2_bool right_side)
 {
-  std::cerr << "calling rawLinAlgSolve" << std::endl;
-  //TODO: return type doesn't distinguish between error, and no solution.
-  std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
-  if (result.first)
-    return result.second;
-  ERROR("got a zero -- why??");
-  return 0;
+  try {
+    std::cerr << "calling rawLinAlgSolve" << std::endl;
+    //TODO: return type doesn't distinguish between error, and no solution.
+    std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
+    if (result.first)
+      return result.second;
+    else
+      {
+        // system is inconsistent
+        ERROR("system is inconsistent");
+        return NULL;
+      }
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 M2_bool rawLinAlgAddMult(MutableMatrix* C,

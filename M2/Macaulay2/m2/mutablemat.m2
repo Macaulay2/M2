@@ -175,7 +175,7 @@ LUdecomposition Matrix := (A) -> (
 solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
-     if hasEngineLinearAlgebra R then (
+     if hasEngineLinearAlgebra R and not opts.ClosestFit then (
          return map(R,rawLinAlgSolve(raw A, raw b, true));
          );
      if (opts#Precision !=0) then (

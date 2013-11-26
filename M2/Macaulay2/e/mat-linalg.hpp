@@ -461,6 +461,23 @@ namespace MatrixOppies
     return LUdecomp.solve(B,X);
   }
 
+  template<typename RT>
+  bool solveLinear(const DMat<RT>& A, 
+                   const DMat<RT>& B, 
+                   bool right_side, 
+                   DMat<RT>& X, 
+                   bool declare_A_is_invertible)
+
+  {
+    if (right_side)
+      {
+        DMatLUtemplate<RT> LUdecomp(A);
+        return LUdecomp.solve(B,X);
+      }
+    else
+      throw exc::engine_error("solveLinear for XA=B not implemented for this ring/matrix type");
+  }
+
   //////////////////////
   // ZZpFFPACK /////////
   //////////////////////
@@ -904,7 +921,7 @@ namespace MatrixOppies
   ////////
   // CC //
   ////////
-
+#if 0
   inline bool solve(const DMatCC& A, 
                     const DMatCC& B, 
                     DMatCC& X)
@@ -918,7 +935,7 @@ namespace MatrixOppies
   {
     return Lapack::LU(&A, &L, &U);
   }
-
+#endif
   inline bool eigenvaluesHermitian(const DMatCC& A, 
                             DMatRR& eigenvals)
   {
