@@ -16,7 +16,7 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -36,7 +36,7 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "track", "refine", "totalDegreeStartSystem",
+     "solveSystem", "track", "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -605,6 +605,9 @@ load "./NumericalAlgebraicGeometry/SLP.m2"
 NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
+-- conjugate all entries of the matrix (should be a part of M2!!!)
+conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
+ 
 -- normalized condition number of F at x
 conditionNumber = method()
 conditionNumber Matrix := M -> (s := first SVD M; max s / min s)

@@ -36,7 +36,8 @@ export {
      "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure",
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
-     "polySystem"
+     "polySystem",
+     "evaluate"
      }
 
 -- DEBUG Core ----------------------------------------
@@ -91,6 +92,25 @@ substitute(PolySystem,Ring) := (P,R) -> polySystem sub(P.PolyMap, R) -- does not
 XXXtoList = method()
 XXXtoList PolySystem := P -> if P.?PolyMap then flatten entries P.PolyMap else error "polynomial system is not represented by a matrix"
 homogenize (PolySystem,Ring,RingElement) := (P,R,h) -> polySystem homogenize(sub(P.PolyMap,R),h)
+isSquare = method()
+isSquare PolySystem := P -> P.NumberOfPolys == P.NumberOfVariables
+evaluate = method()
+evaluate (PolySystem,Matrix) := (P,X) -> (
+    if class P.PolyMap === Matrix 
+    then evaluate(P.PolyMap,X)
+    else error "evaluation not implemented for this type of PolyMap"
+    )    
+evaluate (Matrix,Matrix) := (M,X) ->  (
+    if numColumns X == 1 then sub(M,transpose X)
+    else if numRows X == 1 then sub(M,X)
+    else error "expected a row or a column vector"
+    )
+evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
+
+jacobian PolySystem := P -> (
+    if P.?Jacobian then P.Jacobian
+    else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
+    )
 
 TEST ///
 CC[x,y]
@@ -133,6 +153,7 @@ globalAssignment Point
 point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
+point Matrix := M -> point {flatten entries M} 
 
 coordinates = method()
 coordinates Point := p -> p.Coordinates

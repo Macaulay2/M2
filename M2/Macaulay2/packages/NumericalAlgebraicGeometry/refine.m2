@@ -1,7 +1,72 @@
 ------------------------------------------------------
--- refining/sharpening routines 
+-- refining/sharpening routines, Newton step 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
+newton = method()
+-- assumes F has coefficients in field RR_prec or CC_prec 
+--         P has coordinates in that can be promoted to the above field 
+newton (PolySystem, Point) := (F,P) -> (
+    X := transpose matrix P;
+    X' := newton(F,X); 
+    P' := point X';
+    P'.ErrorBoundEstimate = norm(X'-X);
+    P'
+    )
+newton (PolySystem, Matrix) := (F,X) -> (
+    J := jacobian F;
+    dX := if isSquare F then solve(evaluate(J,X), evaluate(F,X))
+    else if F.NumberOfVariables < F.NumberOfPolys then solve(evaluate(J,X), evaluate(F,X), ClosestFit=>true)
+    else ( -- underdetermined
+	M := evaluate(J,X);
+	(S,U,Vt) := SVD M;
+	invJ := conjugate transpose Vt *
+	        diagonalMatrix(numColumns M, numRows M, apply(S, s->if s==0 then 0 else 1/s)) * 
+		conjugate transpose U; -- pseudo-inverse
+	invJ*evaluate(F,X) 
+	); 
+    X-dX
+    )
+
+TEST ///
+-- square 
+CC[x,y]
+F = polySystem {x^2+y^2-2,x+y-2}
+P = point {{1.2,1.2+0.2*ii}} 
+for i from 1 to 10 do (
+    P = newton(F,P);
+    print coordinates P;
+    )
+assert( norm evaluate(F,P) < 0.000001 ) 
+
+-- overdetermined
+CC[x,y]
+F = polySystem {x^3+y^3-2,x^2+y^2-2,x+y-2}
+P = point {{1.2,1.2+0.2*ii}} 
+for i from 1 to 10 do (
+    P = newton(F,P);
+    print coordinates P;
+    )
+assert( norm evaluate(F,P) < 0.000001 ) 
+
+-- underdetermined 
+CC[x,y]
+F = polySystem {x^2+y^2-2}
+P = point {{1.2,1.2+0.2*ii}} 
+for i from 1 to 10 do (
+    P = newton(F,P);
+    print coordinates P;
+    )
+assert( norm evaluate(F,P) < 0.000001 ) 
+CC[x,y,z]
+F = polySystem {x^2-y,x^3-z}
+P = point {{1.2,1.2+0.2*ii,0.9+ii}} 
+for i from 1 to 10 do (
+    P = newton(F,P);
+    print coordinates P;
+    )
+assert( norm evaluate(F,P) < 0.000001 ) 
+///
+
 refine = method(TypicalValue => List, Options =>{
 	  Software=>null, 
 	  ErrorTolerance =>null,
