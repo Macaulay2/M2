@@ -50,9 +50,10 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", 
+     "numericalRank", "isFullNumericalRank",
      "regeneration", 
      "isOn",
+     "deflate", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation",
      "Output", -- may rename/remove later
      "NAGtrace"
      }
@@ -501,105 +502,7 @@ evalPoly (RingElement, List) := (f,x) -> (
      sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
      )
 
-diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
--- in:  A, B (presumably sorted)
--- out: (a,b), where a and b are lists of indices where A and B differ
-diffSolutions (List,List) := o -> (A,B) -> (
-     i := 0; j := 0;
-     a := {}; b := {};
-     while i<#A and j<#B do 
-     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
-     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
-     else (a = append(a,i); i = i+1);	  
-     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
-     )
-
-
--------------------------------------------------------
--- DEFLATION ------------------------------------------
--------------------------------------------------------
-
-numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
-numericalRank Matrix := o -> M -> (
-     o = fillInDefaultOptions o;
-     if not member(class ring M, {RealField,ComplexField}) 
-     then error "matrix with real or complex entries expected";
-     S := first SVD M;
-     r := 0; last's := 1;
-     for i to #S+1 do (
-	  if o.Threshold*S#i < last's 
-	  then break
-	  else (r = r + 1; last's = S#i)
-	  );
-     r 
-     )  
-
-dMatrix = method()
-dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
-dMatrix (Ideal,ZZ) := (I, d) -> (
--- deflation matrix of order d     
-     R := ring I;
-     v := flatten entries vars R;
-     n := #v;
-     ind := toList((n:0)..(n:d)) / toList;
-     ind = select(ind, i->sum(i)<=d and sum(i)>0);
-     A := transpose diff(matrix apply(ind, j->{R_j}), gens I);
-     scan(select(ind, i->sum(i)<d and sum(i)>0), i->(
-	       A = A || transpose diff(matrix apply(ind, j->{R_j}), R_i*gens I);
-	       ));
-     A
-     )
-dIdeal = method()
-dIdeal (Ideal, ZZ) := (I, d) -> (
--- deflation ideal of order d     
-     R := ring I;
-     v := gens R;
-     n := #v;
-     ind := toList((n:0)..(n:d)) / toList;
-     ind = select(ind, i->sum(i)<=d and sum(i)>0);
-     A := dMatrix(I,d);
-     newvars := apply(ind, i->getSymbol("x"|concatenate(i/toString)));
-     S := (coefficientRing R)[newvars,v]; 
-     sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
-     )	   
-deflatedSystem = method()
-deflatedSystem(Ideal, Matrix, ZZ, ZZ) := memoize (
-(I, M, r, attempt) -> (
--- In: gens I = the original (square) system   
---     M = deflation matrix
---     r = numerical rank of M (at some point)
--- Out: (square system of n+r equations, the random matrix SM)
-     R := ring I;
-     n := numgens R;
-     SM := randomOrthonormalCols(numcols M, r+1);
-     d := local d;
-     S := (coefficientRing R)(monoid[gens R, d_0..d_(r-1)]);
-     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
-     --print DF;     
-     (
-	  flatten entries squareUpSystem ( sub(transpose gens I,S) || DF ),
-	  SM
-	  )
-     )
-) -- END memoize
-
-liftSolution = method(Options=>{Tolerance=>null}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
-liftSolution(List, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
-liftSolution(List, Matrix) := o->(c,dT)->(
-     R := ring dT;
-     n := #c;
-     N := numgens R;
-     if N<=n then error "the number of variables in the deflated system is expected to be larger"; 
-     newVars := (vars R)_{n..N-1};
-     specR := (coefficientRing R)(monoid[flatten entries newVars]);
-     dT0 := (map(specR, R, matrix{c}|vars specR)) dT;
-     ls := first solveSystem flatten entries squareUpSystem dT0; -- here a linear system is solved!!!     
-     if status ls =!= Regular then return null;
-     ret := c | coordinates ls;
-     -- if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
-     ret
-     ) 
-
+load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
 
 NAGtrace = method()

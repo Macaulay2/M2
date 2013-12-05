@@ -95,6 +95,8 @@ homogenize (PolySystem,Ring,RingElement) := (P,R,h) -> polySystem homogenize(sub
 isSquare = method()
 isSquare PolySystem := P -> P.NumberOfPolys == P.NumberOfVariables
 evaluate = method()
+evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
+evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
 evaluate (PolySystem,Matrix) := (P,X) -> (
     if class P.PolyMap === Matrix 
     then evaluate(P.PolyMap,X)
@@ -256,6 +258,19 @@ sortSolutions List := o -> sols -> (
 		    ));      
 	  );
      apply(sorted, i->sols#i)
+     )
+
+diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
+-- in:  A, B (presumably sorted)
+-- out: (a,b), where a and b are lists of indices where A and B differ
+diffSolutions (List,List) := o -> (A,B) -> (
+     i := 0; j := 0;
+     a := {}; b := {};
+     while i<#A and j<#B do 
+     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
+     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
+     else (a = append(a,i); i = i+1);	  
+     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
 
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart

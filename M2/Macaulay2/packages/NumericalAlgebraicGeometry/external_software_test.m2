@@ -1,4 +1,5 @@
 restart
+debug loadPackage "NAGtypes"
 debug loadPackage "NumericalAlgebraicGeometry"
 DBG = 2;
 ------------------------------------------------------
