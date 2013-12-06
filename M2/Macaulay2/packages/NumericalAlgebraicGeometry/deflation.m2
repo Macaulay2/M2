@@ -1,6 +1,7 @@
--------------------------------------------------------
--- DEFLATION ------------------------------------------
--------------------------------------------------------
+------------------------------------------------------
+-- deflation and numerical rank
+-- (loaded by  ../NumericalAlgebraicGeometry.m2)
+------------------------------------------------------
 
 numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
 numericalRank Matrix := o -> M -> (
@@ -25,6 +26,7 @@ isFullNumericalRank Matrix := o -> M -> (
 
 deflate = method()
 
+-- creates and stores (if not stored already) a deflated system and the corresponding random matrix 
 -- returns the deflation rank
 deflate (PolySystem, Point) := (F,P) -> (
     J := evaluate(jacobian F, P);
@@ -33,7 +35,8 @@ deflate (PolySystem, Point) := (F,P) -> (
     r
     )	
 
--- returns the deflation of rank r
+-- creates and stores (if not stored already) 
+-- returns a deflated system for rank r
 deflate (PolySystem, ZZ) := (F,r) -> (
     if not F.?Deflation then (
 	F.Deflation = new MutableHashTable;
@@ -69,9 +72,10 @@ liftPointToDeflation (Point,PolySystem,ZZ) := (P,F,r) -> (
     )
    
 TEST ///
-CC[x,y,z]
+C=CC_200
+C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z^2}
-P0 = point {{0.000001, 0.000001*ii,0.000001-0.000001*ii}}
+P0 = point sub(matrix{{0.000001, 0.000001*ii,0.000001-0.000001*ii}},C)
 assert not isFullNumericalRank evaluate(jacobian F,P0)
 r1 = deflate (F,P0)
 P1' = liftPointToDeflation(P0,F,r1) 
@@ -82,7 +86,14 @@ r2 = deflate (F1,P1)
 P2' = liftPointToDeflation(P1,F1,r2) 
 F2 = F1.Deflation#r2
 P2 = newton(F2,P2')
-isFullNumericalRank evaluate(jacobian F2,P2)
+assert isFullNumericalRank evaluate(jacobian F2,P2)
+P = point {take(coordinates P2, F.NumberOfVariables)}
+assert(residual(F,P) < 1e50)
+NP2 = newton(F2,P2)
+NNP2 = newton(F2,NP2)
+NP2.ErrorBoundEstimate
+NNP2.ErrorBoundEstimate
+assert(P2.ErrorBoundEstimate^2 > NP2.ErrorBoundEstimate)
 ///
 
 dMatrix = method()

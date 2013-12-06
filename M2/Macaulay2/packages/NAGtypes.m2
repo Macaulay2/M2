@@ -27,7 +27,7 @@ export {
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
      "Point", "point", "coordinates",
-     "isRealPoint", "realPoints", "plugIn", "residual", "relativeErrorEstimate", "classifyPoint",
+     "isRealPoint", "realPoints", "residual", "relativeErrorEstimate", "classifyPoint",
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
@@ -163,20 +163,18 @@ coordinates Point := p -> p.Coordinates
 status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
 
--- plug a point p into the system S (expects S to be a list of polynomials)
-plugIn = method()
-plugIn (List, List) := (S,p) -> flatten entries sub(matrix{S}, matrix{ p / toCC })
-plugIn (List, Point) := (S,p) -> plugIn(S,coordinates p)
-
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
+norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
      if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
      assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
      (sum(p, c->abs(c)^no))^(1/no)
      )
-
+ 
 residual = method(Options=>{Norm=>2})
-residual (List,Point) := o->(S,p)->norm(o.Norm,plugIn(S,p))
+residual (List,Point) := o->(S,p)-> residual(polySystem S,p)
+residual (PolySystem,Point) := o->(P,p)-> residual(P.PolyMap,matrix p)
+residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm,evaluate(S,p))
 
 relativeErrorEstimate = method(Options=>{Norm=>2})
 relativeErrorEstimate(Point) := o->p->p.ErrorBoundEstimate/norm(o.Norm,p) 
@@ -986,7 +984,7 @@ TEST /// -- miscellaneous tests
 CC[x,y]
 S = {x^2+y^2-6, 2*x^2-y}
 p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert ( (100*plugIn(S,p)/round) == {29, -30} )
+assert ( (100*evaluate(S,p)/round) == {29, -30} )
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
 classifyPoint p
