@@ -50,10 +50,8 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", "isFullNumericalRank",
      "regeneration", 
      "isOn",
-     "deflate", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation",
      "Output", -- may rename/remove later
      "NAGtrace"
      }

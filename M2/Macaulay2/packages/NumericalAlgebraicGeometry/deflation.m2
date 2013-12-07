@@ -3,6 +3,11 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
+export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
+    deflateInPlace, DeflationSequence, LiftedPoint, 
+    numericalRank, isFullNumericalRank
+    }
+
 numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
 numericalRank Matrix := o -> M -> (
      o = fillInDefaultOptions o;
@@ -66,7 +71,7 @@ liftPointToDeflation (Point,PolySystem,ZZ) := (P,F,r) -> (
     	last'column := numColumns A-1; 
     	point {
 	    coordinates P | 
-	    first entries solve(submatrix'(A,{last'column}),-submatrix(A,{last'column}),ClosestFit=>true)
+	    flatten entries solve(submatrix'(A,{last'column}),-submatrix(A,{last'column}),ClosestFit=>true)
 	    }
 	) 
     )
@@ -96,6 +101,66 @@ NNP2.ErrorBoundEstimate
 assert(P2.ErrorBoundEstimate^2 > NP2.ErrorBoundEstimate)
 ///
 
+deflateInPlace = method()
+deflateInPlace(Point,PolySystem) := (P,F) -> (
+    P0 := P;
+    F0 := F;
+    d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation 
+    while not isFullNumericalRank evaluate(jacobian F0,P0) do (
+	r := deflate (F0,P0);
+	d'seq = d'seq | {r};
+	P0' := liftPointToDeflation(P0,F0,r); 
+	F0 = F0.Deflation#r; 
+	P0 = newton(F0,P0');
+	);
+    P.Coordinates = take(coordinates P0, F.NumberOfVariables);
+    if #d'seq>0 then P.ErrorBoundEstimate = P0.ErrorBoundEstimate;
+    P.DeflationSequence = d'seq;
+    P.SolutionSystem = F;
+    P.Deflation = F0;
+    P.LiftedPoint = P0;
+    P.SolutionStatus = if #d'seq > 0 then Singular else Regular
+    )
+
+TEST ///
+C=CC_200
+C[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
+P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
+deflateInPlace(P,F)
+assert(P.DeflationSequence == {0,1})
+assert(P.ErrorBoundEstimate^2 > (newton(P.Deflation,P.LiftedPoint)).ErrorBoundEstimate)
+///
+
+partitionViaDeflationSequence = method()
+partitionViaDeflationSequence (List,PolySystem) := (pts,F) -> (
+    H := new MutableHashTable;
+    for p in pts do (
+	if not p.?DeflationSequence or p.SolutionSystem =!= F 
+	then deflateInPlace(p,F);
+	ds := p.DeflationSequence;
+	if H#?ds then H#ds = H#ds | {p}
+	else H#ds = {p}; 
+	);
+    values H
+    )
+
+TEST ///
+C=CC_200
+C[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
+pts = {
+    point sub(matrix{{0.0001, 0.0001*ii,0.0001-0.0001*ii}},C),
+    point sub(matrix{{0.0001, 0.0001*ii,1.0001-0.0001*ii}},C),
+    point sub(matrix{{0.0001, 0.0001*ii,-1.0001-0.0001*ii}},C)
+    }    
+debug NumericalAlgebraicGeometry
+partitionViaDeflationSequence(pts,F)
+///
+
+--------------------------------
+-- OLD deflation
+--------------------------------
 dMatrix = method()
 dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
 dMatrix (Ideal,ZZ) := (I, d) -> (

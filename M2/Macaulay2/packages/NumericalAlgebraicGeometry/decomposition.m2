@@ -58,19 +58,24 @@ regeneration List := List => o -> F -> (
 			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
 			 Software=>o.Software);
 		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
-		    if o.Software == M2engine then (
-			 sing := toList singularSolutions(T,targetPoints);
-			 regPoints := select(targetPoints, p->p.SolutionStatus==Regular);
-			 --print (sing,reg);
-		    	 if o.Output == Regular then targetPoints = regPoints 
-		    	 else targetPoints = regPoints | sing;
-			 );
-		    newW := witnessSet(cOut#Equations + ideal f, submatrix'(comp#Slice,{0},{}), 
-			 selectUnique(targetPoints, Tolerance=>1e-2)); -- hack
-		    check newW;
-		    if DBG>2 then << "   new component " << peek newW << endl;
+		    sing := toList singularSolutions(T,targetPoints);
+		    regPoints := select(targetPoints, p->p.SolutionStatus==Regular);
+		    --print (sing,reg);
+		    if o.Output == Regular then targetPoints = regPoints 
+		    else targetPoints = regPoints | solutionsWithMultiplicity sing;		    
 		    if #targetPoints>0 
-		    then insertComponent(newW,c2);
+		    then (
+			F' := polySystem( (cOut.Equations)_* | {f} );
+			scan(partitionViaDeflationSequence(targetPoints,F'),
+			    pts -> (
+				newW := witnessSet(F', submatrix'(comp#Slice,{0},{}), 
+			    	    selectUnique(pts, Tolerance=>1e-3));
+		    		if DBG>2 then << "   new component " << peek newW << endl;
+		    		check newW;    
+				insertComponent(newW,c2);
+				)
+			    )
+			)
 		    ); 
 	       );
 	  scan(rsort keys c2, d->scan(keys c2#d,i->(

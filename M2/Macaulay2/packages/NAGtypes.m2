@@ -85,7 +85,8 @@ polySystem Matrix := M -> (
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
-isHomogeneous PolySystem := P -> all(flatten entries P.PolyMap, isHomogeneous) -- change this for SLP!!!
+ideal PolySystem := P -> ideal flatten entries P.PolyMap -- change this for SLP!!!
+isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
 XXXapply(PolySystem,Function) := (P,f) -> polySystem apply(XXXtoList P, f) -- does not work for SLPs
 substitute(PolySystem,Ring) := (P,R) -> polySystem sub(P.PolyMap, R) -- does not work for SLPs
@@ -344,7 +345,7 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
---   Equations,            -- an ideal  
+--   Equations,            -- an ideal or a polynomial system 
 --   Slice,                -- a matrix of coefficients of linear equations 
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
@@ -375,19 +376,21 @@ dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice
 codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
-ideal WitnessSet := W -> W.Equations
+ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> 
   new WitnessSet from { Equations => I, Slice => sliceEquationsToMatrix S, Points => VerticalList P, IsIrreducible=>null }
 witnessSet (Ideal,Matrix,List) := (I,S,P) -> 
   new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+witnessSet (PolySystem,Matrix,List) := (F,S,P) -> 
+  new WitnessSet from { Equations => F, Slice => S, Points => VerticalList P, IsIrreducible=>null}
 
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)
 
 equations = method() -- returns list of equations
-equations WitnessSet := (W) -> (W.Equations)_*
+equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
 
 slice = method() -- returns linear equations for the slice (in both cases)   
 slice WitnessSet := (W) -> ( 
