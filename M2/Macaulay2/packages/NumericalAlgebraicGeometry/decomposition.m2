@@ -10,9 +10,24 @@ insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
      else H#d = new MutableHashTable from {0=>W};
      )
 
-regeneration = method(TypicalValue=>List, Options =>{Software=>null, Output=>Regular
-	  --AllButInfinity
-	  })
+splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
+splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
+-- splits the witness set into two parts: one contained in {f=0}, the other not
+-- IN:  comp = a witness set
+--      f = a polynomial
+-- OUT: (w1,w2) = two witness sets   
+     o = fillInDefaultOptions o;
+     w1 := {}; w2 := {};
+     for x in w#Points do 
+	 if norm residual(matrix {{f}}, matrix x) < o.Tolerance 
+	 then w1 = w1 | {x}
+	 else w2 = w2 | {x};   
+     ( if #w1===0 then null else witnessSet(w#Equations, w#Slice, w1), 
+       if #w2===0 then null else witnessSet(w#Equations, w#Slice, w2) 
+       )
+   )
+
+regeneration = method(TypicalValue=>List, Options =>{Software=>null, Output=>Singular})
 regeneration List := List => o -> F -> (
 -- solves a system of polynomial Equations via regeneration     
 -- IN:  F = list of polynomials
@@ -33,11 +48,11 @@ regeneration List := List => o -> F -> (
 	  for comp in c1 do (
 	       if DBG>2 then << "*** proccesing component " << peek comp << endl;
 	       (cIn,cOut) := splitWitness(comp,f); 
-	       if cIn =!= null 
-	       then insertComponent(
-		    witnessSet(cIn#Equations, cIn#Slice, cIn#Points), 
-		    c2
-		    ); 
+	       if cIn =!= null then (
+		   if DBG>2 then << "( regeneration: " << net cIn << " is contained in V(f) for" << endl <<  
+		                 << "  f = " << f << " )" << endl;
+		   insertComponent(cIn,c2)
+		   ); 
      	       if cOut =!= null 
 	       and dim cOut > 0 -- 0-dimensional components outside V(f) discarded
 	       then (
@@ -45,38 +60,37 @@ regeneration List := List => o -> F -> (
 		    -- RM := (randomUnitaryMatrix numcols s)^(toList(0..d-2)); -- pick d-1 random orthogonal row-vectors (this is wrong!!! is there a good way to pick d-1 random hyperplanes???)
      	       	    RM := random(CC^(d-1),CC^(numcols s));
 		    dWS := {cOut} | apply(d-1, i->(
-			      newSlice := RM^{i} || submatrix'(s,{0},{}); -- replace the first row
-			      moveSlice(cOut,newSlice,Software=>o.Software)
-			      ));
-	       	    S := ( equations comp
+			    newSlice := RM^{i} || submatrix'(s,{0},{}); -- replace the first row
+			    moveSlice(cOut,newSlice,Software=>o.Software)
+			    ));
+		    slice' := submatrix'(comp#Slice,{0},{});
+	       	    S := polySystem( equations comp
 	       	    	 | { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
-	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
-	       	    T := ( equations comp
+	       	    	 | sliceEquations(slice',R) );
+	       	    T := polySystem( equations comp
 	       	    	 | {f}
-	       	    	 | sliceEquations( submatrix'(comp#Slice,{0},{}), R ) );
+	       	    	 | sliceEquations(slice',R) );
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
 			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
 			 Software=>o.Software);
-		    --if o.Software == M2 then targetPoints = refine(T, targetPoints, Tolerance=>1e-10);
-		    sing := toList singularSolutions(T,targetPoints);
-		    regPoints := select(targetPoints, p->p.SolutionStatus==Regular);
-		    --print (sing,reg);
+		    refinedPoints := refine(T, targetPoints, ResidualTolerance=>1e-8);
+		    regPoints := select(refinedPoints, p->p.SolutionStatus===Regular);
+		    singPoints := select(refinedPoints, p->p.SolutionStatus===Singular);
 		    if o.Output == Regular then targetPoints = regPoints 
-		    else targetPoints = regPoints | solutionsWithMultiplicity sing;		    
-		    if #targetPoints>0 
-		    then (
-			F' := polySystem( (cOut.Equations)_* | {f} );
-			scan(partitionViaDeflationSequence(targetPoints,F'),
-			    pts -> (
-				newW := witnessSet(F', submatrix'(comp#Slice,{0},{}), 
-			    	    selectUnique(pts, Tolerance=>1e-3));
-		    		if DBG>2 then << "   new component " << peek newW << endl;
-		    		check newW;    
-				insertComponent(newW,c2);
-				)
+		    else targetPoints = regPoints | solutionsWithMultiplicity singPoints;
+		    if DBG>2 then << "( regeneration: " << net cOut << " meets V(f) at " << 
+		                  << #targetPoints << " points for" << endl <<
+				  << "  f = " << f << " )" << endl;
+		    f' := ideal (equations comp | {f});
+		    scan(partitionViaDeflationSequence(targetPoints,T),
+			pts -> (
+			    newW := witnessSet(f',slice',selectUnique(pts, Tolerance=>1e-3));
+			    if DBG>2 then << "   new component " << peek newW << endl;
+			    check newW;    
+			    insertComponent(newW,c2);
 			    )
 			)
-		    ); 
+		    ) 
 	       );
 	  scan(rsort keys c2, d->scan(keys c2#d,i->(
 			 W := c2#d#i;
@@ -178,9 +192,17 @@ R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 result = regeneration F 
 assert(#result==1 and degree first result == 4 and dim first result == 0)
+
+--example with a reduced scheme (no singular points)
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
 result = regeneration I_*
-assert(#result==2 and degree first result == 7 and dim first result == 1)
+assert(#result==2 and result/degree == {7,2} and result/dim == {1,2})
+
+--example with 4 double points (same deflation sequence)
+setRandomSeed 3 -- fails for 0,1,2 !!!
+I = ideal {sph*(x-1)*(y-x^2), sph*(z-x^3), (x+y+z-1)^2};
+result = regeneration I_*
+assert(#result==2 and result/degree == {4,2} and result/dim == {0,1})
 ///

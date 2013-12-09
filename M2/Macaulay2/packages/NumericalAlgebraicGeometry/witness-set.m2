@@ -106,20 +106,3 @@ W2 = moveSlice(W1, matrix "0,1,0,0;0,0,1,0")
 peek W2
 ///
 
-splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
-splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
--- splits the witness set into two parts: one contained in {f=0}, the other not
--- IN:  comp = a witness set
---      f = a polynomial
--- OUT: (w1,w2) = two witness sets   
-     o = fillInDefaultOptions o;
-     w1 := {}; w2 := {};
-     for x in w#Points do 
-	 if norm evalPoly(f,coordinates x) < o.Tolerance 
-	 then w1 = w1 | {x}
-	 else w2 = w2 | {x};   
-     ( if #w1===0 then null 
-	  else witnessSet(w#Equations, w#Slice, w1), 
-       if #w2===0 then null 
-          else witnessSet(w#Equations, w#Slice, w2) )
-     )

@@ -50,7 +50,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     "regeneration", 
+     "regeneration", isSolution,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -123,7 +123,7 @@ DEFAULT = new MutableHashTable from {
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
-     SingularConditionNumber => 1e8,
+     SingularConditionNumber => 1e6,
      maxPrecision => 53,
      maxNumberOfVariables => 50
      }
@@ -483,23 +483,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-singularSolutions = method() -- decide on the tolerance!!!
-singularSolutions(List,List) := (T,sols) -> (
--- find positions of singular solutions in sols
--- IN: number of solutions 
--- OUT: list of numbers of solutions considered to be singular 
---      (i.e., nearly satisfies target system, but Status!=REGULAR)    
-     select(0..#sols-1, i->(
-	       x := coordinates sols#i;
-	       not isRegular(sols,i) and all(T, f->(rs := evalPoly(f,x); abs(rs)/norm matrix{x} < 1000*DEFAULT.Tolerance))
-	       ))
-     )   
-
-evalPoly = method(TypicalValue=>CC)
-evalPoly (RingElement, List) := (f,x) -> (
-     sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
-     )
-
 load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
 
@@ -535,6 +518,14 @@ witnessSet (Ideal,ZZ) := (I,d) -> (
      PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
      witnessSet(ideal rand'I,SM,PP)
      )
+
+isSolution = method(Options=>{Tolerance=>null})
+isSolution(Point,PolySystem) := o -> (P,F) -> (
+    o = fillInDefaultOptions o;
+    -- P = newton(F,P); -- !!! change for non regular
+    -- P.ErrorBoundEstimate < o.Tolerance
+    residual(F,P) < o.Tolerance
+    )
 
 beginDocumentation()
 

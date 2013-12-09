@@ -75,17 +75,22 @@ refine = method(TypicalValue => List, Options =>{
 	  Bits => null,
 	  SingularConditionNumber=>null
 	  })
-refine (List,List) := List => o -> (T,solsT) -> (
+refine (List,List) := List => o -> (T,solsT) -> refine(polySystem T, solsT, o)
+refine (PolySystem,List) := List => o -> (F,solsT) -> (
 -- tracks solutions from start system to target system
--- IN:  T = list of polynomials in target system
+-- IN:  F = polynomial system
 --      solsT = list of solutions to T
 -- OUT: solsR = list of refined solutions 
      o = fillInDefaultOptions o;
-     n := #T; 
-     if n > 0 then R := ring ideal T else error "expected nonempty target system";
+     n := F.NumberOfVariables; 
+     if n > 0 then (
+	 R := ring F;
+	 C := coefficientRing R; 
+	 )
+     else error "expected nonempty target system";
      isProjective := false;
      if n != numgens R then (
-	  if numgens R == n+1 and all(T, isHomogeneous) 
+	  if numgens R == n+1 and isHomogeneous F 
 	  then ( 
 	       isProjective = true; 
 	       n = n+1;
@@ -107,83 +112,87 @@ refine (List,List) := List => o -> (T,solsT) -> (
 	       ) 
 	   else error "refining projective solutions is not implemented yet";
     	  );  
-    if o.Software === PHCPACK then  return refinePHCpack(T,solsT,o)/point;
+    if o.Software === PHCPACK then  return refinePHCpack(equations F,solsT,o)/point;
     if o.Software === BERTINI then (
 	-- bits to decimals 
 	decimals := ceiling(o.Bits * log 2 / log 10);
-	return bertiniRefineSols(T,solsT,decimals)
+	return bertiniRefineSols(equations F,solsT,decimals)
 	);
 
      -- Software=>M2 (and Software=>M2engine for now)
      if ref'sols === null then (
-     	  n'iterations := o.Iterations; 
-     	  T = matrix {T};
-     	  J := transpose jacobian T; 
-     	  evalT := x0 -> (
-	       ret := lift(sub(transpose T, transpose x0), CC); 
-	       if isProjective then ret || matrix{{0_CC}} else ret
+     	  n'iterations := o.Iterations;
+     	  J := jacobian F; 
+     	  evalF := x0 -> (
+	       ret := evaluate(F,x0); 
+	       if isProjective then ret || matrix{{0_C}} else ret
 	       );
 	  evalJ := x0 -> (
-	       ret := lift(sub(J, transpose x0), CC);
+	       ret := evaluate(J,x0);
 	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
 	       );
 	  ref'sols = apply(solsT, s->(
 	       if class s =!= Point then s = point {s} 
-	       else if s.SolutionStatus === Infinity or s.SolutionStatus === Singular then return s;
-	       x := sub(transpose matrix s, CC); -- convert to vector 
+	       else if s.SolutionStatus === Infinity 
+	       -- or s.SolutionStatus === Singular 
+	       then return s;
+	       x := transpose matrix s; -- convert to vector 
 	       if isProjective then x = normalize x;
 	       x1 := x; -- refined x
-	       error'bound := infinity;
+	       error'bound := if not s.?ErrorBoundEstimate or s.SolutionSystem =!= F 
+	                      then infinity
+			      else s.ErrorBoundEstimate;
 	       norm'dx := infinity; -- dx = + infinity
-	       norm'residual := infinity;
-	       newton'converges := true;
+	       norm'Fx := infinity;
+	       refinement'success := true;
 	       nCorrSteps := 0;
-	       while (norm'residual > o.ResidualTolerance 
+	       while (norm'Fx > o.ResidualTolerance 
 	       	    or norm'dx > o.ErrorTolerance * norm x1) 
 	       and nCorrSteps < n'iterations 
-	       and newton'converges
+	       and refinement'success
 	       --and cond < o.SingularConditionNumber 
 	       do ( 
-		    residual := evalT(x1);
-		    norm'residual = norm residual;
-		    J := evalJ(x1);
-		    --cond = conditionNumber J;
-		    dx := solve(J, -residual);
-		    norm'dx = norm dx;
-		    if DBG > 3 then << "x=" << toString x1 << " res=" <<  residual << " dx=" << dx << endl;
-		    if norm'dx < error'bound then (
-		    	 x1 = x1 + dx;
-		    	 if isProjective then x1 = normalize x1;
-		    	 nCorrSteps = nCorrSteps + 1;
-			 )
-		    else (
-			 error'bound = norm'dx;
-			 if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
-			 newton'converges = false;
-			 );
-		    error'bound = norm'dx; 
-		    );
-	       if DBG>2 then (
-		    if norm'residual > o.ResidualTolerance
-		    then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
-		    if norm'dx > o.ErrorTolerance * norm x1 
-		    then print "warning: Newton's method did not converge within given error bound in the given number of steps";
-		    --if cond > o.SingularConditionNumber  
-		    --then print "warning: condition number larger then SingularConditionNumber";
-		    );
-	       cond := conditionNumber evalJ(x1);
-	       st := if cond > o.SingularConditionNumber then Singular else Regular;
-     	       if s.?ErrorBoundEstimate and norm(x-x1) > s.ErrorBoundEstimate then (
-		    if DBG>2 then print "warning: refinement failed";
-		    s.ErrorBoundEstimate = infinity;
-		    s
-		    )
+		   Fx := evalF(x1);
+		   norm'Fx = norm Fx;
+		   J := evalJ(x1);
+		   --cond = conditionNumber J;
+		   dx := solve(J, -Fx);
+		   norm'dx = norm dx;
+		   if DBG > 3 then << "x=" << toString x1 << " res=" <<  Fx << " dx=" << dx << endl;
+		   if norm'dx < error'bound then (
+		       x1 = x1 + dx;
+		       if isProjective then x1 = normalize x1;
+		       nCorrSteps = nCorrSteps + 1;
+		       )
+		   else (
+		       if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+		       refinement'success = false;
+		       );
+		   error'bound = norm'dx; 
+		   );
+	       if norm'Fx > o.ResidualTolerance then (
+		   if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
+		   refinement'success = false;
+		   );
+	       if norm'dx > o.ErrorTolerance * norm x1 then (
+		   if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
+		   refinement'success = false;
+		   );  
+	       s' := point { flatten entries x1, 
+		   SolutionSystem => F, 
+		   ConditionNumber => conditionNumber evalJ(x1)
+		   };
+    	       if error'bound =!= infinity then s'.ErrorBoundEstimate = error'bound;
+	       s'.SolutionStatus = if refinement'success then (
+		   if s'.ConditionNumber > o.SingularConditionNumber 
+		   then Singular 
+		   else Regular
+		   )
 	       else (
-		    point ({flatten entries x1, 
-		    SolutionStatus=>st, 
-		    ConditionNumber=>if cond===null then conditionNumber evalJ(x1) else cond, 
-		    LastT=>1.} | (if norm'dx===infinity then {} else {ErrorBoundEstimate=>error'bound}))
-	       )     
+		   if DBG>2 then print "warning: refinement failed";
+		   RefinementFailure
+	       	   );
+	       s'     
 	       ));
      	   );
       	   ref'sols
@@ -249,5 +258,4 @@ refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
 	  ); 
      solutionsWithMultiplicity ref'solsT
      )
-
 

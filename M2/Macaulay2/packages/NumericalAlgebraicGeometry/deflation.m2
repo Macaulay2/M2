@@ -29,6 +29,18 @@ isFullNumericalRank Matrix := o -> M -> (
     r == numColumns M or r == numRows M 
     )
 
+TEST ///
+C=CC_200
+C[x,y,z]
+F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
+P0 = point{{0.0001,0.0001,ii*0.0001}}
+P1 = point{{0.0001,0.0001,1.00001+ii*0.0001}}
+P2 = point{{0.1,0.1,0.1_CC}}
+assert not isFullNumericalRank evaluate(F,P0)
+assert not isFullNumericalRank evaluate(F,P1)
+assert isFullNumericalRank evaluate(F,P2)
+///
+
 deflate = method()
 
 -- creates and stores (if not stored already) a deflated system and the corresponding random matrix 
@@ -51,7 +63,7 @@ deflate (PolySystem, ZZ) := (F,r) -> (
 	C := coefficientRing ring F;
 	B := random(C^(F.NumberOfVariables),C^(r+1));
 	ll := symbol ll;
-	R := C[gens ring F, ll_1..ll_r];
+	R := C (monoid [gens ring F, ll_1..ll_r]);
 	LL := transpose matrix{ take(gens R, -r) | {1_C} };
 	RFtoR := map(R, ring F);
     	F.Deflation#r = polySystem (RFtoR F.PolyMap || (RFtoR jacobian F)*B*LL);
@@ -105,7 +117,9 @@ deflateInPlace = method()
 deflateInPlace(Point,PolySystem) := (P,F) -> (
     P0 := P;
     F0 := F;
-    d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation 
+    d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation     
+    assert isSolution(P,F);
+    if (status P =!= Regular or (not P.?SolutionSystem) or P.SolutionSystem =!= F) then
     while not isFullNumericalRank evaluate(jacobian F0,P0) do (
 	r := deflate (F0,P0);
 	d'seq = d'seq | {r};
@@ -149,10 +163,11 @@ TEST ///
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
+e = 0.0000001
 pts = {
-    point sub(matrix{{0.0001, 0.0001*ii,0.0001-0.0001*ii}},C),
-    point sub(matrix{{0.0001, 0.0001*ii,1.0001-0.0001*ii}},C),
-    point sub(matrix{{0.0001, 0.0001*ii,-1.0001-0.0001*ii}},C)
+    point sub(matrix{{e, e*ii,e-e*ii}},C),
+    point sub(matrix{{e, e*ii,1+e-e*ii}},C),
+    point sub(matrix{{e, e*ii,-1-e-e*ii}},C)
     }    
 debug NumericalAlgebraicGeometry
 partitionViaDeflationSequence(pts,F)

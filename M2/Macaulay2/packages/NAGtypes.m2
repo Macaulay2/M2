@@ -33,7 +33,7 @@ export {
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure",
+     Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
      "polySystem",
@@ -85,7 +85,10 @@ polySystem Matrix := M -> (
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
-ideal PolySystem := P -> ideal flatten entries P.PolyMap -- change this for SLP!!!
+equations = method() -- returns list of equations
+equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
+ideal PolySystem := P -> ideal equations P.PolyMap -- change this for SLP!!!
+
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
 XXXapply(PolySystem,Function) := (P,f) -> polySystem apply(XXXtoList P, f) -- does not work for SLPs
@@ -389,7 +392,6 @@ witnessSet (PolySystem,Matrix,List) := (F,S,P) ->
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)
 
-equations = method() -- returns list of equations
 equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
 
 slice = method() -- returns linear equations for the slice (in both cases)   

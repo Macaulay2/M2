@@ -618,6 +618,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 		 if HISTORY then drop(toList s, -1)
 		 else toList s
 		 );
+	     p.SolutionSystem = T;
 	     if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
 	     then p.SolutionStatus = Singular;
 	     if PT=!=null then p.Tracker=PT;
