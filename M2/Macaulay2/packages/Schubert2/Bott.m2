@@ -10,7 +10,10 @@
 
 -- The following are the Macaulay2 routines to compute Gromov-Witten invariants.
 -- These invariants are related to the numbers of rational curves on a general
--- Calabi-Yau threfold in some projective space.
+-- Calabi-Yau threefold in some projective space.
+-- The key idea is based on the following paper:
+-- Kontsevich, Enumeration of rational curves via torus actions, 1995, available at
+-- http://arxiv.org/abs/hep--th/9405035
 
 rationalCurve = method()
 --return a Gromov-Witten invariant corresponding the number of rational
