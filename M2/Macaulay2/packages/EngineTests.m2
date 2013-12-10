@@ -31,6 +31,8 @@ export { jordanForm,
     testSolve,
     testLinearAlgebra,
     testPromote,
+    testClean,
+    testNorm,
     hasFlint,
     hasFFPACK
     }
@@ -445,7 +447,7 @@ testGF = (strategy) -> (
 TEST ///
   testGF null
   testGF "Old"  
-  testGF "Givaro"
+  if hasFFPACK then testGF "Givaro"
 --  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
     -- the size is too big
 ///
@@ -1541,6 +1543,26 @@ TEST ///
  debug EngineTests
  testPromoteLift()
 ///
+
+testRingMapEval = (R,C) -> (
+    x := getSymbol "x";
+    PC := C[x];
+    x = PC_0;
+    F := matrix{{x^3}};
+    P := matrix{{0.1_R}};
+    (map(C,PC,P)) F;
+    map(R,PC); -- works, but should not
+    (map(R,PC,P)) F -- crashes
+    )
+
+--TEST 
+///
+  debug EngineTests
+  R = RR; C = CC;
+  testRingMapEval(RR,CC)
+  testRingMapEval(RR_100,CC_100)
+///
+
 
 TEST ///
   testMutableMatrices ZZ
