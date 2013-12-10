@@ -615,6 +615,7 @@ AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal o
   MultiplierIdeals
   InvariantRing
   QuillenSuslin
+  EnumerationCurves
 ")
 
 # convert the newlines in the list above to spaces
