@@ -48,7 +48,7 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
+     Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
      "regeneration", isSolution,
      "isOn",
@@ -123,7 +123,7 @@ DEFAULT = new MutableHashTable from {
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
-     SingularConditionNumber => 1e6,
+     SingularConditionNumber => 1e5,
      maxPrecision => 53,
      maxNumberOfVariables => 50
      }

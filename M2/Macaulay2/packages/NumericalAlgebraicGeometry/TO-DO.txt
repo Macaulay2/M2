@@ -1,0 +1,7 @@
+points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
+
+isOn is another version of isContained
+
+numericalRank is hacked 
+
+deflation needs work

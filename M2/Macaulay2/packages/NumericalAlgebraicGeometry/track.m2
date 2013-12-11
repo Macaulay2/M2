@@ -164,8 +164,6 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
      	  (nS,nT) = (XXXtoList nS, XXXtoList nT); -- rolling back to the old (List) representation of PolySystem
 	  );
 
-     print(nS,nT,H);
-
      -- evaluation times
      etH := 0;
      etHx := 0; 

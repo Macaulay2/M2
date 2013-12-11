@@ -6,9 +6,13 @@
 insertComponent = method()
 insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
      d := dim W;
-     if H#?d then H#d#(#H) = W 
+     --if H#?d then H#d#(#H) = W -- ??? 
+     if H#?d then H#d#(#(H#d)) = W 
      else H#d = new MutableHashTable from {0=>W};
      )
+
+isPointOnAnyComponent = method()
+isPointOnAnyComponent(Point,HashTable) := (p,H) -> any(keys H, d -> any(keys H#d, k -> isOn(p,H#d#k)))
 
 splitWitness = method(TypicalValue=>Sequence, Options =>{Tolerance=>null})
 splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
@@ -73,18 +77,22 @@ regeneration List := List => o -> F -> (
 	       	    targetPoints := track(S,T,flatten apply(dWS,points), 
 			 NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
 			 Software=>o.Software);
-		    refinedPoints := refine(T, targetPoints, ResidualTolerance=>1e-8);
+--		    if #targetPoints==4 and dim comp == 2 and #(points comp)==2 then error ""; 
+		    LARGE := 100; ---!!!
+		    refinedPoints := refine(T, targetPoints, 
+			ErrorTolerance=>DEFAULT.ErrorTolerance*LARGE,
+			ResidualTolerance=>DEFAULT.ResidualTolerance*LARGE);
 		    regPoints := select(refinedPoints, p->p.SolutionStatus===Regular);
 		    singPoints := select(refinedPoints, p->p.SolutionStatus===Singular);
-		    if o.Output == Regular then targetPoints = regPoints 
-		    else targetPoints = regPoints | solutionsWithMultiplicity singPoints;
-		    if DBG>2 then << "( regeneration: " << net cOut << " meets V(f) at " << 
-		                  << #targetPoints << " points for" << endl <<
+		    targetPoints = if o.Output == Regular then regPoints else regPoints | solutionsWithMultiplicity singPoints;
+		    if DBG>2 then << "( regeneration: " << net cOut << " meets V(f) at " 
+		                  << #targetPoints << " points for" << endl 
 				  << "  f = " << f << " )" << endl;
 		    f' := ideal (equations comp | {f});
-		    scan(partitionViaDeflationSequence(targetPoints,T),
+	    	    nonJunkPoints := select(targetPoints, p-> not isPointOnAnyComponent(p,c2)); -- this is very slow		    
+		    scan(partitionViaDeflationSequence(nonJunkPoints,T),
 			pts -> (
-			    newW := witnessSet(f',slice',selectUnique(pts, Tolerance=>1e-3));
+			    newW := witnessSet(f',slice',selectUnique(pts, Tolerance=>1e-4));
 			    if DBG>2 then << "   new component " << peek newW << endl;
 			    check newW;    
 			    insertComponent(newW,c2);
@@ -92,11 +100,12 @@ regeneration List := List => o -> F -> (
 			)
 		    ) 
 	       );
-	  scan(rsort keys c2, d->scan(keys c2#d,i->(
-			 W := c2#d#i;
-			 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
-			 c2#d#i = W;
-			 )));
+	  ------ redundant if junk is cleared dynamically -----------
+	  -- scan(rsort keys c2, d->scan(keys c2#d,i->(
+	  -- 		 W := c2#d#i;
+	  -- 		 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
+	  -- 		 c2#d#i = W;
+	  --		 )));
 	  c1 = flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j));
 	  if f == first F then ( -- if the first equation is being processed 
 	       n := numgens R;
@@ -188,12 +197,14 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
      )  
 
 TEST ///
+setRandomSeed 0
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 result = regeneration F 
 assert(#result==1 and degree first result == 4 and dim first result == 0)
 
 --example with a reduced scheme (no singular points)
+setRandomSeed 0
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
@@ -201,8 +212,25 @@ result = regeneration I_*
 assert(#result==2 and result/degree == {7,2} and result/dim == {1,2})
 
 --example with 4 double points (same deflation sequence)
-setRandomSeed 3 -- fails for 0,1,2 !!!
-I = ideal {sph*(x-1)*(y-x^2), sph*(z-x^3), (x+y+z-1)^2};
-result = regeneration I_*
+NAGtrace 3
+R = CC[x,y,z];
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph*(x-1)*(y-x^2), sph*(z-x^3), (x+y+z-1)^2}; -- ^3 fails
+for i to 10 do (
+setRandomSeed i;
+result = regeneration I_*;
 assert(#result==2 and result/degree == {4,2} and result/dim == {0,1})
+)
+///
+
+///
+restart
+setRandomSeed 0 -- fails for 0,1,2 !!!
+NAGtrace 3
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph, (x+y+z-1)^2};
+result = regeneration I_* -- deflation sequences are supposed to be the same
+p = first (first result).Points
+numericalRank evaluate(jacobian p.SolutionSystem,p)
 ///
