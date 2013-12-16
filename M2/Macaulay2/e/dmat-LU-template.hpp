@@ -542,7 +542,7 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
-  printf("entering DMatLUtemplate::solve\n");
+  // printf("entering DMatLUtemplate::solve\n");
   size_t rk = mPivotColumns.size();
 
   ElementType tmp, tmp2;
@@ -733,7 +733,7 @@ inline void DMatLUtemplate<M2::ARingRR>::computeLUNAIVE()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+  //printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 
   int *perm = newarray_atomic(int, min);
 
@@ -795,7 +795,7 @@ inline void DMatLUtemplate<M2::ARingCC>::computeLUNAIVE()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+  //printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 
   int *perm = newarray_atomic(int, min);
 

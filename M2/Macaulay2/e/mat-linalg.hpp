@@ -292,7 +292,7 @@ namespace MatrixOppies
             const DMat<RT>& B, 
             DMat<RT>& result_product)
   {
-    printf("entering dmat mult\n");
+    //printf("entering dmat mult\n");
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     

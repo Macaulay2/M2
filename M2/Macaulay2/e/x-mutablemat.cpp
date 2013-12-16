@@ -1072,7 +1072,7 @@ MutableMatrix* rawLinAlgSolve(const MutableMatrix* A,
                          M2_bool right_side)
 {
   try {
-    std::cerr << "calling rawLinAlgSolve" << std::endl;
+    // std::cerr << "calling rawLinAlgSolve" << std::endl;
     //TODO: return type doesn't distinguish between error, and no solution.
     std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
     if (result.first)
