@@ -388,6 +388,13 @@ witnessSet (Ideal,Matrix,List) := (I,S,P) ->
   new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P, IsIrreducible=>null}
 witnessSet (PolySystem,Matrix,List) := (F,S,P) -> 
   new WitnessSet from { Equations => F, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+witnessSet (PolySystem,PolySystem,List) := (I,S,P) -> 
+  new WitnessSet from { 
+      Equations => ideal equations I, 
+      Slice => sliceEquationsToMatrix ideal equations S, 
+      Points => VerticalList P, 
+      IsIrreducible=>null 
+      }
 
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)

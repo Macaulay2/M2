@@ -8,23 +8,29 @@ export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToD
     numericalRank, isFullNumericalRank
     }
 
-numericalRank = method(Options=>{Threshold=>1e3}) -- looks for a gap between singular values 
+numericalRank = method(Options=>{Threshold=>1e3})
 numericalRank Matrix := o -> M -> (
      o = fillInDefaultOptions o;
      if not member(class ring M, {RealField,ComplexField}) 
      then error "matrix with real or complex entries expected";
-     -- nomalize "large" rows (a hack!!!)
-     N := matrix apply(entries M, row->(
-	     m := max(row/abs);
-	     if m<1 then row else apply(row,e->e/m)
-	     ));
+     t := o.Threshold; 
+     N := if t<=1 then M -- use t as an absolute cutoff for singular values, otherwise look for a "gap"  
+          else matrix apply(entries M, row->(      -- nomalize "large" rows (a hack!!!)
+	     	  m := max(row/abs);
+	     	  if m<1 then row else apply(row,e->e/m)
+	     	  ));
      S := first SVD N;
      r := 0; last's := 1;
      for i to #S-1 do (
-	  if o.Threshold*S#i < last's 
-	  then break
-	  else (r = r + 1; last's = S#i)
-	  );
+	 if t>1 then (if t*S#i < last's 
+	     then break
+	     else (r = r + 1; last's = S#i)
+	     )
+	 else (
+	     if S#i>t then r = r + 1
+	     else break 
+	     )
+	 );
      r 
      )  
 

@@ -179,9 +179,10 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 	       local r;
 	       w' := (
 		    if i == 0 then (
-     	       	    	 r = W.Slice_(dim W - 1, numgens ring W);
-			 w 
-		    	 )
+ 			-- !!! better to NOT use the existing slice
+			r = W.Slice_(dim W - 1, numgens ring W);
+			w 
+			)
 		    else (
 	       	    	 M := new MutableMatrix from W.Slice;
 		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column

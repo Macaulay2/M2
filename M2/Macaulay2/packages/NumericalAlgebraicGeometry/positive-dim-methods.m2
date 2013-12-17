@@ -4,14 +4,21 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-numericalVarietyM2 = I -> numericalVariety flatten (regeneration I_* / decompose)
-numericalVarietyBertini = I -> bertiniPosDimSolve I_*
-numericalVariety Ideal := I -> (
-     if DEFAULT.Software === BERTINI 
-     then numericalVarietyBertini 
-     else numericalVarietyM2
-     ) I
-
+numericalIrreducibleDecompositionM2 = I -> numericalVariety flatten (regeneration I_* / decompose)
+numericalIrreducibleDecompositionBertini = I -> bertiniPosDimSolve I_*
+numericalIrreducibleDecomposition = method(Options=>{Software=>null})
+numericalIrreducibleDecomposition Ideal := o -> I -> (
+    o = fillInDefaultOptions o;   
+    ( 
+	if o.Software === BERTINI 
+    	then numericalIrreducibleDecompositionBertini 
+    	else if o.Software === PHCPACK 
+    	then numericalIrreducibleDecompositionPHCpack 
+    	else if member(o.Software,{M2,M2engine})  
+	then numericalIrreducibleDecompositionM2
+    	else error "allowed values for Software: M2engine, M2, BERTINI, PHCPACK"
+    	) I
+    )
 isOn = method(Options=>{Tolerance=>null,Software=>null})
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
