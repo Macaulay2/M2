@@ -190,7 +190,7 @@ namespace M2 {
     }
 
     void elem_text_out(buffer &o,
-                       ElementType &a, //const???
+                       const ElementType &a,
                        bool p_one,
                        bool p_plus,
                        bool p_parens) const;

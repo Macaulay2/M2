@@ -173,6 +173,12 @@ public:
   virtual bool delete_rows(size_t i, size_t j) = 0;
   /* Delete rows i .. j from M */
 
+  virtual void reduce_by_pivots() = 0;
+  /* Finds units (starting with 1 and -1, then moving to other units)
+     in the matrix 'this', and performs row and column operations to 
+     create a matrix with isomorphic cokernel
+  */
+
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////

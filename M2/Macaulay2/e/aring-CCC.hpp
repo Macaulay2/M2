@@ -375,10 +375,10 @@ namespace M2 {
     }
 
     void elem_text_out(buffer &o,
-                       ElementType &a,
-                       bool p_one,
-                       bool p_plus,
-                       bool p_parens) const;
+                       const ElementType &a,
+                       bool p_one=true,
+                       bool p_plus=false,
+                       bool p_parens=false) const;
 
     void syzygy(const ElementType& a, const ElementType& b,
                 ElementType &x, ElementType &y) const // remove?

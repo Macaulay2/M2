@@ -78,6 +78,9 @@ public:
   virtual void syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const;
 
+  virtual int index_of_var(const ring_elem a) const;
+  virtual M2_arrayint support(const ring_elem a) const;
+
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
   ring_elem gcd_extended(const ring_elem f, const ring_elem g,
                          ring_elem &u, ring_elem &v) const;

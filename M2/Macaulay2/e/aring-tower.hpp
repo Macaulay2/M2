@@ -185,9 +185,9 @@ namespace M2 {
 
     void elem_text_out(buffer &o,
                        ElementType a,
-                       bool p_one,
-                       bool p_plus,
-                       bool p_parens) const { elem_text_out(o,mStartLevel,a,p_one,p_plus,p_parens); }
+                       bool p_one=true,
+                       bool p_plus=false,
+                       bool p_parens=false) const { elem_text_out(o,mStartLevel,a,p_one,p_plus,p_parens); }
 
     // returns x,y s.y. x*a + y*b == 0.
     // if possible, x is set to 1.

@@ -599,11 +599,13 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
       ERROR("concat: different base rings");
       return 0;
     }
-  const int *deg;
-  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
-    deg = degree_shift();
-  else
-    deg = 0;
+
+  // direct_sum ignores the degree shift of each summand.
+  ///const int *deg;
+  ///  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
+  ///    deg = degree_shift();
+  ///  else
+  ///    deg = 0;
 
   const FreeModule *F = rows()->direct_sum(m->rows());
   const FreeModule *G = cols()->direct_sum(m->cols());

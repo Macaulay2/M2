@@ -1,6 +1,8 @@
 -- Test of some of the tower ring cases
-
+{*
 restart
+*}
+
 debug Core
 loadPackage "TowerRings"
 
@@ -17,10 +19,14 @@ R1 = rawTowerRing(2, ("a","y"))
 a = R1_0
 y = R1_1
 R2 = rawTowerQuotientRing(R1, (a^3+a^2+1, 0_R1))
+rawExtensionDegree(-1,R2)
+rawExtensionDegree(0,R2) == -1 -- why!?
+rawExtensionDegree(1,R2) == 3
+assert(rawExtensionDegree(0,R2) == )
 a = R2_0
 y = R2_1
 F = y^4 + a * y^2 + (a+1)
-assert(rawDegree(1,rawLowerP F) <= 2) -- fails
+assert(rawDegree(1,rawLowerP F) <= 2)
 assert((rawLowerP F)^2 == F)
 rawLowerP F
 (a^2+a+1)^2
@@ -80,7 +86,7 @@ rawGCD(x3-x,F)
 rawGCD(x4-x,F)
 rawGCD(x5-x,F)
 
-loadPackage "TowerRings"
+needsPackage "TowerRings"
 time distinctDegreeFactorization F
 
 ord R1 -- 2
@@ -107,8 +113,10 @@ cantorZassenhaus(2,F)
 
 
 -- bug:
+{*
 restart
-loadPackage "TowerRings"
+*}
+needsPackage "TowerRings"
 debug Core
 R1 = rawTowerRing(17, 1:"x")
 x = R1_0

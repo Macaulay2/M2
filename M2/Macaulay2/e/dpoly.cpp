@@ -5,6 +5,7 @@
 #include <cassert>
 #include "ZZ.hpp"
 
+#include <vector>
 #define DEBUGGCDno
 
 long gcd_extended(long a,
@@ -1404,6 +1405,36 @@ poly DPoly::lowerP(int level, const poly f)
       mpz_clear(order);
     }
   return result;
+}
+
+int DPoly::index_of_var(int level, const poly f) const
+{
+  if (f == 0 or level < 0 or f->deg >= 2) return -1;
+  if (level == 0)
+    {
+      if (f->deg == 0) return -1;
+      // At this point, degree is 1.
+      if (f->arr.ints[0] == 0 and f->arr.ints[1] == 1)
+        return 0;
+      else
+        return -1;
+    }
+  else
+    {
+      if (f->arr.polys[0] == 0 and is_one(level-1, f->arr.polys[1]))
+        return level;
+      if (f->deg == 1) return -1;
+      return index_of_var(level-1, f->arr.polys[0]);
+    }
+}
+
+void DPoly::degrees_of_vars(int level, const poly f, std::vector<int>& result_maxdegs) const
+{
+  // Set the values of result_maxdegs at indices: 0..level
+  result_maxdegs[level] = std::max(result_maxdegs[level],f->deg);
+  if (level == 0) return;
+  for (int i=0; i<=f->deg; i++)
+    if (f->arr.polys[i] != 0) degrees_of_vars(level-1, f->arr.polys[i], result_maxdegs);
 }
 
 DRing::DRing(long charac, int nvars, const_poly *exts)
