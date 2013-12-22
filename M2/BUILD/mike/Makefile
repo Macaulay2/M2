@@ -135,6 +135,30 @@ debug64-clang-all : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+##################
+## linux #########
+##################
+linux-opt64 : always
+	mkdir -p builds.tmp/opt64
+	cd builds.tmp/opt64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# 		CC="gcc -m64" CXX="g++ -m64" \
+
+linux-debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 ######## below this line is older ######################
 sandboxed : always
 	mkdir -p sandbox64
