@@ -378,6 +378,12 @@ emacstempl := ///
      (setq VAR (cons "/PREFIX/DIR" VAR)))
 ///
 
+emacsenvtempl := ///
+;; add "/PREFIX/DIR" to VAR if it isn't there
+(if (not (string-match-p "/PREFIX/DIR" (getenv "VAR")))
+     (setenv "VAR" "/PREFIX/DIR:$VAR" t))
+///
+
 dotemacsFix0 = ///
 ;; this version will give an error if M2-init.el is not found:
 (load "M2-init")
@@ -429,9 +435,11 @@ shellfixes := {
      ("INFOPATH", currentLayout#"info",""),
      ("LD_LIBRARY_PATH", currentLayout#"lib","")}
 emacsfixes := {
-     ("load-path", currentLayout#"emacs"),
-     ("exec-path", currentLayout#"bin"),
-     ("Info-default-directory-list", currentLayout#"info")}
+     ("load-path", currentLayout#"emacs", emacstempl),
+     -- the exec-path fix is not needed, because we exec the shell and ask it to find M2
+     -- ("exec-path", currentLayout#"bin", emacstempl),
+     ("Info-default-directory-list", currentLayout#"info", emacstempl),
+     ("PATH", currentLayout#"bin", emacsenvtempl)}
 
 stripdir := dir -> if dir === "/" then dir else replace("/$","",dir)
 fix := (var,dir,rest,templ) -> replace_(":REST",rest) replace_("VAR",var) replace_("DIR",stripdir dir) templ
@@ -460,7 +468,7 @@ local dotemacsFix
 setupEmacs = method()
 setup = method()
 mungeEmacs = () -> (
-     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir) -> fix(var,dir,"",emacstempl)), dotemacsFix0);
+     dotemacsFix = concatenate(emacsHeader, apply(emacsfixes, (var,dir,templ) -> fix(var,dir,"",templ)), dotemacsFix0);
      supplantStringFile(dotemacsFix,"~/"|M2emacs,false);
      mungeFile("~/"|".emacs", ";; Macaulay 2 start", ";; Macaulay 2 end", M2emacsRead )
      )
