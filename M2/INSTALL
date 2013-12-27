@@ -50,13 +50,19 @@ Here are commands that will get you a good development environment under
 various modern operating systems:
 
   Ubuntu:
-    sudo apt-get install -y autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
+    sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
 	# note: libz-dev seems to have been replaced by zlib1g-dev
 	# note: libncurses-dev seems to have been replaced by libncurses5-dev
 	# note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
 
   Debian:
-    sudo apt-get install -y autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+    sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+
+  Raspbian:
+    sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time
+
+    The Raspberry Pi comes with 512MB of RAM and a swapfile /var/swap of size 100MB.  It's a good idea to
+    increase the swap size to 1000MB by editing /etc/dphys-swapfile .
 
   Fedora:
     sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
