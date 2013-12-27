@@ -227,7 +227,7 @@ runBenchmarks0 List := x -> (
 	  );
      if fileExists "/usr/sbin/system_profiler"
      then (
-	  r := get "!/usr/sbin/system_profiler SPHardwareDataType";
+	  r := get "! true | /usr/sbin/system_profiler SPHardwareDataType";
 	  << "-- ";
 	  scan({
 		    "Model Name: (.*)",
@@ -238,6 +238,10 @@ runBenchmarks0 List := x -> (
 		    },
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
+	  );
+     if fileExecutable "/usr/sbin/sysctl"
+     then (
+	  << "-- Processor: " << get "!/usr/sbin/sysctl -n machdep.cpu.brand_string"
 	  );
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
@@ -349,6 +353,15 @@ Here is another possible benchmark, but it doesn't work for us yet:
   -- res39: res of a generic 3 by 9 matrix over ZZ/101: .266 seconds
   -- resG25: res of the coordinate ring of Grassmannian(2,5): 4.01 seconds
   -- gbB148: gb of Bayesian graph ideal #148: 17.207 seconds
+
+  -- beginning computation Thu Dec 26 14:01:15 PST 2013
+  -- Darwin einsteinium.pololu.internal 13.0.2 Darwin Kernel Version 13.0.2: Sun Sep 29 19:38:57 PDT 2013; root:xnu-2422.75.4~1/RELEASE_X86_64 x86_64
+  -- MacBook Pro, Intel Core i7, Processor Speed: 2.6 GHz, Cores: 4, 
+  -- Processor: Intel(R) Core(TM) i7-4960HQ CPU @ 2.60GHz
+  -- Macaulay2 1.6.0.1, compiled with gcc 4.2.1
+  -- res39: res of a generic 3 by 9 matrix over ZZ/101: .10664 seconds
+  -- resG25: res of the coordinate ring of Grassmannian(2,5): 2.06104 seconds
+  -- gbB148: gb of Bayesian graph ideal #148: 21.5273 seconds
 
 ---- a MacBook Pro (core 2 duo 2.4 GHZ, 4 GB ram):
   --- Mac OS X side:
