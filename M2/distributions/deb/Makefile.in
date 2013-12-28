@@ -19,7 +19,11 @@ else
 ifeq (@ARCH@,armv7l)
 DEBARCH=armel
 else
+ifeq (@ARCH@+@ISSUE@,armv6l+RaspbianGNU-7)
+DEBARCH=armhf
+else
 $(error unrecognized architecture @ARCH@)
+endif
 endif
 endif
 endif

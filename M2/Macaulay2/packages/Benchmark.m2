@@ -216,7 +216,8 @@ runBenchmarks0 List := x -> (
 	  scan({
 		    ("model name[[:space:]]*: (.*)","\\1"),
 		    ("vendor_id[[:space:]]*: (.*)","\\1"),
-		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2")
+		    ("(cpu MHz)[[:space:]]*: (.*)","\\1 \\2"),
+		    ("(BogoMIPS)[[:space:]]*: (.*)","\\1 \\2")
 		    },
 	       (pattern,repl) -> ( 
 		    t := select(pattern,repl,cpuinfo);
@@ -677,6 +678,14 @@ Here is another possible benchmark, but it doesn't work for us yet:
 -- Macaulay 2 0.8.60, compiled with gcc 2.95
 -- res39: 2.7 seconds
 -- resG25: 37.77 seconds
+
+-- beginning computation Thu Dec 26 21:48:58 UTC 2013
+-- Linux pi-dan 3.10.24+ #614 PREEMPT Thu Dec 19 20:38:42 GMT 2013 armv6l GNU/Linux
+-- ARMv6-compatible processor rev 7 (v6l)  BogoMIPS 2.00  
+-- Macaulay2 1.6.0.1, compiled with gcc 4.6.3
+-- res39: res of a generic 3 by 9 matrix over ZZ/101: 3.45706 seconds
+-- resG25: res of the coordinate ring of Grassmannian(2,5): 49.9111 seconds
+-- gbB148: gb of Bayesian graph ideal #148: 404.365 seconds
 
 -- Linux geometry 2.3.18 #2 Thu Sep 16 17:50:47 CDT 1999 i586 unknown
 -- 3.46 seconds, Macaulay 2 0.8.55, compiled with gcc 2.95
