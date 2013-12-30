@@ -113,34 +113,6 @@ dnl then AC_MSG_RESULT(yes)
 dnl else AC_MSG_ERROR("$FIND: GNU find is required")
 dnl fi
 
-AC_SUBST(NODENAME,"`uname -n`")
-AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-
-AC_SUBST(ISSUE) # no initial value
-AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
-if test -f /etc/issue -a ! "$ISSUE"
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     case $ISSUE_FLAVOR in
-	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
-	 "") ISSUE_FLAVOR=unknown ;;
-     esac
-     case $ISSUE_RELEASE in
-	 "") ISSUE_RELEASE=unknown ;;
-     esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-fi
-
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
-AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 dnl interesting behavior: $A expansion happens after statement separation!
 dnl       $ A="echo hi 2>/dev/null "
 dnl       $ echo "`$A`"
@@ -150,6 +122,16 @@ dnl       hi 2>/dev/null
 dnl       $ eval $A
 dnl       hi
 
+AC_SUBST(NODENAME,"`uname -n`")
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+AC_SUBST(ISSUE) # no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
@@ -158,32 +140,37 @@ case $OS-$REL in
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-12.*) REL=10.8 ; OS=MacOS ;;
   Darwin-13.*) REL=10.9 ; OS=MacOS ;;
-  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
+  CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
 
-case $OS in
-  # Here we normalize the name of the OS for windows for startup.m2, which
-  # needs to know that C:/FOO/BAR is an absolute path.
-  CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
+if test -f /etc/issue -a ! "$ISSUE"
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     # translate the contents of /etc/issue to something sensible:
+     case $ISSUE_FLAVOR in
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
+	 "") AC_MSG_ERROR([issue not found in /etc/issue]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
+     esac
+     case $ISSUE_RELEASE in
+	 "") AC_MSG_NOTICE([release number not found in /etc/issue: `</etc/issue head -1`]) 
+	     ISSUE_RELEASE=unknown ;;
+     esac
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+fi
 
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
 test "$ISSUE" || ISSUE=$REL
 
 AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
-AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
-
-case $OS in
-  MacOS) 
-dnl 	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
-dnl because there might be a better way.  See the discussion in emacs info about -static-libgcc
-dnl and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
-dnl If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
-dnl binary ends up requiring a sharable library with a similar name. ***]])
-	# LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
-	;;
-esac
-
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
@@ -1607,6 +1594,12 @@ AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
 AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
+AC_MSG_NOTICE([with  ISSUE         = $ISSUE])
+AC_MSG_NOTICE([with  NODENAME      = $NODENAME])
+AC_MSG_NOTICE([with  OS REL        = $OS $REL])
+AC_MSG_NOTICE([with  ARCH          = $ARCH])
+AC_MSG_NOTICE([with  OPTIMIZE      = $OPTIMIZE])
+AC_MSG_NOTICE([with  DEBUG         = $DEBUG])
 
 function subset {
     # whether the words of $1 are among the words of $2

@@ -582,6 +582,7 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
+setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
