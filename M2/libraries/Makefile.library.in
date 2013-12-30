@@ -164,6 +164,7 @@ CHECKFETCHED = case "$(URL)" in									\
 	    then echo tried to fetch file, but HTML file returned instead >&2 ; exit 1 ;	\
 	    fi ;;										\
 	esac
+$(TARFILE_DIR)/$(TARFILE) :
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
