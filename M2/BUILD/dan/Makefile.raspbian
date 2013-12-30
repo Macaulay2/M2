@@ -5,5 +5,5 @@ include Makefile.include
 default: check
 arch-chk:; grep Raspbian /etc/issue; [ `uname -m` = armv6l ]
 # Local Variables:
-# compile-command: "time make -f Makefile.raspbian IgnoreExampleErrors=true "
+# compile-command: "time make -f Makefile.raspbian IgnoreExampleErrors=true SIGN=yes "
 # End:
