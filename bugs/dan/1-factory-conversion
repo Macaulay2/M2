@@ -478,3 +478,28 @@ more examples from Karl Schwede:
     Assertion failed: (algebraicElement_M2 != NULL), function convertToM2, file /Users/dan/src/M2/M2.git/M2/BUILD/dan/../../Macaulay2/e/x-factor.cpp, line 186.
 
 
+    + M2 --no-readline --print-width 144
+    Macaulay2, version 1.6
+    with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+	i1 : R = ZZ/3[x,y]
+
+	o1 = R
+
+	o1 : PolynomialRing
+
+	i2 : f = x^6*y^8+1+y^10
+
+	      6 8    10
+	o2 = x y  + y   + 1
+
+	o2 : R
+
+	i3 : ass ideal singularLocus ideal f
+	-- SIGSEGV
+	-- stack trace, pid 17779:
+	level 0 -- return addr: 0x10dd0a48f -- frame: 0x1144e9190
+	level 1 -- return addr: 0x00000000 -- frame: 0x1144e91b0
+	-- end stack trace
+
+	Process M2 exited abnormally with code 1

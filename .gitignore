@@ -13,8 +13,6 @@
 
 # /M2/BUILD/
 /M2/BUILD/CommonStagingArea
-/M2/BUILD/[a-z]*
-/M2/BUILD/Linux-*
 
 # /M2/BUILD/dan/
 /M2/BUILD/dan/builds.tmp

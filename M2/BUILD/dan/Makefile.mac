@@ -75,9 +75,10 @@ CXX += -m32
 export MPIR_CONFIGOPTIONS=ABI=32
 endif
 
-V = -mmacosx-version-min=10.6
-CC  += $V
-CXX += $V
+# the warning messages about this from clang have gotten noisy:
+# V = -mmacosx-version-min=10.6
+# CC  += $V
+# CXX += $V
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 
