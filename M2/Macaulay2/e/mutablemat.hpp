@@ -675,9 +675,6 @@ public:
   // resets x, find a basis of solutions for Ax=b
   // assumes that 'this' is full rank and a square matrix
 
-  virtual bool nullspaceU(MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ux=0, U upper triangular
-
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const;
 
@@ -851,6 +848,8 @@ void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
 template <typename T>
 M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
+  //  LUComputation<T> C(mat);
+  //  return C.rankProfile(row_profile);
   return MatrixOppies::rankProfile(mat, row_profile);
 }
 
@@ -867,15 +866,6 @@ bool MutableMat<T>::solve(const MutableMatrix* B,
     throw exc::engine_error("expected matrices of the same type");
   bool retval = MatrixOppies::solve(mat, *B1, *X1);
   return retval;
-}
-
-template<typename T>
-bool MutableMat<T>::nullspaceU(MutableMatrix* X) const
-{
-  T* X1 = X->coerce<T>();
-  if (X1 == 0)
-    throw exc::engine_error("expected matrices of the same ring/type");
-  return MatrixOppies::nullspaceU(mat,*X1);
 }
 
 template<typename T>

@@ -75,6 +75,8 @@ private:
   size_t findPivot(size_t row, size_t col);
   size_t findPivotNAIVE(size_t row, size_t col);
 
+  void computePivotColumns(); // Sets mPivotColumns, assumes LU has been computed
+
   void debug_out()
   {
     buffer o;
@@ -271,7 +273,7 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 {
   if (mIsDone) return;
 
-  std::cout << "computing LU decomposition NAIVE version" << std::endl;
+  //  std::cout << "computing LU decomposition NAIVE version" << std::endl;
   ElementType tmp;
   mLU.ring().init(tmp);
 
@@ -467,6 +469,26 @@ bool DMatLUtemplate<RingType>::determinant(ElementType& result)
 }
 
 template <class RingType>
+void DMatLUtemplate<RingType>::computePivotColumns()
+{
+  M2_ASSERT(mIsDone); // This should only be called once an LU decomposition is complete
+
+  mPivotColumns.clear();
+  size_t thiscol = 0;
+  size_t thisrow = 0;
+  while (thisrow < mLU.numRows() 
+         and thiscol < mLU.numColumns())
+    {
+      if (not ring().is_zero(mLU.entry(thisrow, thiscol)))
+        {
+          mPivotColumns.push_back(thiscol);
+          thisrow++;
+        }
+      thiscol++;
+    }
+}
+
+template <class RingType>
 bool DMatLUtemplate<RingType>::columnRankProfile(std::vector<size_t>& profile)
 {
   computeLUNAIVE();
@@ -520,6 +542,7 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
+  printf("entering DMatLUtemplate::solve\n");
   size_t rk = mPivotColumns.size();
 
   ElementType tmp, tmp2;
@@ -584,7 +607,7 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
               deletearray(x);
               ring().clear(tmp);
               ring().clear(tmp2);
-              /// printf("returning false\n");
+              printf("returning false\n");
               return false;
             }
         }
@@ -698,6 +721,136 @@ bool DMatLUtemplate<RingType>::kernel(Mat& X)
   ring().clear(tmp);
   ring().clear(tmp2);
   return true;
+}
+
+template <>
+inline void DMatLUtemplate<M2::ARingRR>::computeLUNAIVE()
+{
+  if (mIsDone) return;
+
+  int rows = static_cast<int>(mLU.numRows());
+  int cols = static_cast<int>(mLU.numColumns());
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+
+  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+
+  int *perm = newarray_atomic(int, min);
+
+  double* copyA = newarray_atomic(double, mLU.numRows() * mLU.numColumns());
+
+  // place all elements of mLU, but in column major order.
+  double* p = copyA;
+  for (size_t c=0; c<mLU.numColumns(); c++) 
+    {
+      auto end = mLU.columnEnd(c);
+      for (auto a=mLU.columnBegin(c); a!=end; ++a)
+        *p++ = *a;
+    }
+
+  dgetrf_(&rows, &cols, copyA,
+          &rows, perm, &info);
+
+  if (info < 0)
+    {
+      // First, clean up, then throw an exception
+      ERROR("argument passed to dgetrf had an illegal value");
+      mError = true;
+      return;
+    }
+
+  // Now copy back to row major order
+  p = copyA;
+  for (size_t c=0; c<mLU.numColumns(); c++) 
+    {
+      auto end = mLU.columnEnd(c);
+      for (auto a=mLU.columnBegin(c); a!=end; ++a)
+        *a = *p++;
+    }
+
+  // Now place the correct permutation into mPerm
+  for (int i=0; i<min; i++)
+    {
+      int thisloc = perm[i]-1;
+      size_t tmp = mPerm[thisloc];
+      mPerm[thisloc] = mPerm[i];
+      mPerm[i] = tmp;
+      mSign = not mSign;
+    }
+
+  mIsDone = true;
+  computePivotColumns();
+
+  deletearray(perm);
+  deletearray(copyA);
+}
+
+template <>
+inline void DMatLUtemplate<M2::ARingCC>::computeLUNAIVE()
+{
+  if (mIsDone) return;
+
+  int rows = static_cast<int>(mLU.numRows());
+  int cols = static_cast<int>(mLU.numColumns());
+  int info;
+  int min = (rows <= cols) ? rows : cols;
+
+  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+
+  int *perm = newarray_atomic(int, min);
+
+  double* copyA = newarray_atomic(double, 2 * mLU.numRows() * mLU.numColumns());
+
+  // place all elements of mLU, but in column major order.
+  double* p = copyA;
+  for (size_t c=0; c<mLU.numColumns(); c++) 
+    {
+      auto end = mLU.columnEnd(c);
+      for (auto a=mLU.columnBegin(c); a!=end; ++a)
+        {
+          *p++ = (*a).re;
+          *p++ = (*a).im;
+        }
+    }
+
+  zgetrf_(&rows, &cols, copyA,
+          &rows, perm, &info);
+
+  if (info < 0)
+    {
+      // First, clean up, then throw an exception
+      ERROR("argument passed to zgetrf had an illegal value");
+      mError = true;
+      return;
+    }
+
+  // Now copy back to row major order
+  p = copyA;
+  for (size_t c=0; c<mLU.numColumns(); c++) 
+    {
+      auto end = mLU.columnEnd(c);
+      for (auto a=mLU.columnBegin(c); a!=end; ++a)
+        {
+          (*a).re = *p++;
+          (*a).im = *p++;
+        }
+    }
+
+  // Now place the correct permutation into mPerm
+  for (int i=0; i<min; i++)
+    {
+      int thisloc = perm[i]-1;
+      size_t tmp = mPerm[thisloc];
+      mPerm[thisloc] = mPerm[i];
+      mPerm[i] = tmp;
+      mSign = not mSign;
+    }
+
+  mIsDone = true;
+  computePivotColumns();
+
+  deletearray(perm);
+  deletearray(copyA);
 }
 
 #endif

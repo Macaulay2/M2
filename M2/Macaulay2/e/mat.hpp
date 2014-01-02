@@ -208,11 +208,6 @@ public:
   virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const = 0;
   // resets x, find a solution for Ax=b.  Returns false if no such solution exists
 
-  virtual bool nullspaceU(MutableMatrix *x) const = 0;
-  // resets x, find a basis of solutions for Ux=0, where U is
-  // 'this', and is in upper triangular form from an LU decomp.  Returns true if
-  // this matrix type implements this algorith,
-
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const = 0;
 

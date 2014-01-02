@@ -820,30 +820,6 @@ void rawLUSplit(const MutableMatrix *LU,
 ////////////////////////////////////////////////
 
 
-
-
-M2_bool rawNullspaceU(MutableMatrix *U,
-                      MutableMatrix *x)
-  /* U should be a matrix in LU 'U' format.
-     x is set to the matrix whose columns form a basis of Ux=0,
-     which is the same as Ax=0. if A = PLU is the LU-decomp of A.
-  */
-{
-  try {
-    const Ring *R = U->get_ring();
-    if (R != x->get_ring())
-      {
-        ERROR("expected matrices with same base ring");
-        return false;
-      }
-    return U->nullspaceU(x);
-  }
-  catch (exc::engine_error e) {
-    ERROR(e.what());
-    return false;
-  }
-}
-
 M2_bool rawSolve(MutableMatrix *A,
                  MutableMatrix *b,
                  MutableMatrix *x)
@@ -1095,13 +1071,23 @@ MutableMatrix* rawLinAlgSolve(const MutableMatrix* A,
                          const MutableMatrix* B,
                          M2_bool right_side)
 {
-  std::cerr << "calling rawLinAlgSolve" << std::endl;
-  //TODO: return type doesn't distinguish between error, and no solution.
-  std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
-  if (result.first)
-    return result.second;
-  ERROR("got a zero -- why??");
-  return 0;
+  try {
+    std::cerr << "calling rawLinAlgSolve" << std::endl;
+    //TODO: return type doesn't distinguish between error, and no solution.
+    std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
+    if (result.first)
+      return result.second;
+    else
+      {
+        // system is inconsistent
+        ERROR("system is inconsistent");
+        return NULL;
+      }
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 M2_bool rawLinAlgAddMult(MutableMatrix* C,

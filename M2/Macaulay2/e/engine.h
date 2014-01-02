@@ -1389,12 +1389,6 @@ extern "C" {
                    MutableMatrix *b,
                    MutableMatrix *x); /* connected */
 
-  M2_bool rawNullspaceU(MutableMatrix *U,
-                     MutableMatrix *x); /* connected */
-  /* If U is a matrix in upper triangular echelon form (i.e.as
-     returned by LU decomp), then x is replaced with
-     a matrix whose columns form a basis for the null space of U. */
-
   M2_arrayintOrNull rawLU(const MutableMatrix *A,
                            MutableMatrix *L,
                            MutableMatrix *U); /* connected */

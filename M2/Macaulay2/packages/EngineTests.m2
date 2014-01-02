@@ -29,11 +29,18 @@ export { jordanForm,
     testRank,
     testRankProfile,
     testSolve,
-    testLinearAlgebra
+    testLinearAlgebra,
+    testPromote,
+    hasFlint,
+    hasFFPACK
     }
 
 maxFLINTPrime = 18446744073709551521
 maxFFPACKPrime = 33554393
+
+debug Core
+hasFlint = try (ZZp(101, Strategy=>"FLINT"); true) else false;
+hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
@@ -56,7 +63,7 @@ changeOfBasis(Ring, ZZ) := (R,n) -> (
     S := random(R^n, R^n);
     S1 := mutableMatrix S;
     Sinv := inverse S1;
-    (S, Sinv)
+    (S1, Sinv)
     )
 
 checkLU = method()
@@ -402,7 +409,7 @@ TEST ///
 
 testGF = (strategy) -> (
     R := null;
-    assert(strategy===null or strategy==="New" or strategy==="Givaro" or strategy==="CompleteGivaro");
+    assert(strategy===null or strategy==="Old" or strategy==="Givaro" or strategy==="CompleteGivaro");
     low := 1;
     hi := i -> 20;
     -- This upper bound for CompleteGivaro is made to match the default SizeLimit of 10000.
@@ -437,7 +444,7 @@ testGF = (strategy) -> (
 
 TEST ///
   testGF null
-  testGF "New"  
+  testGF "Old"  
   testGF "Givaro"
 --  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
     -- the size is too big
@@ -473,14 +480,12 @@ TEST ///
 
 TEST ///
   debug Core
-  hasFlint := try (ZZp(101, "Choose"=>"FLINT"); true) else false;
-  if hasFlint then testMutableMatrices(ZZp(101, "Choose"=>"FLINT"))
+  if hasFlint then testMutableMatrices(ZZp(101, Strategy=>"FLINT"))
 ///
 
 TEST ///
   debug Core
-  hasFFPACK := try (ZZp(101, "Choose"=>"FFPACK"); true) else false;
-  if hasFFPACK then testMutableMatrices(ZZp(101, "Choose"=>"FFPACK"))
+  if hasFFPACK then testMutableMatrices(ZZp(101, Strategy=>"FFPACK"))
 ///
 
 ///
@@ -516,7 +521,7 @@ randomJordanForm = (R, L) -> (
     )
 
 testLinAlgZZpFFPACK = () -> (
-    kk := ZZp(101, "Choose"=>"FFPACK");
+    kk := ZZp(101, Strategy=>"FFPACK");
     S := mutableMatrix(kk,3,3);
     fillMatrix S;
     D := mutableMatrix jordanForm(kk, splice{{1,3},4:{0,1},{2,3}});
@@ -611,11 +616,11 @@ benchMult = (R,N) -> (
   benchMult(ZZ/101,300);
 
   debug Core
-  R = ZZp(101, "Choose"=>"FLINT")
+  R = ZZp(101, Strategy=>"FLINT")
   benchMult(R,300); -- fails, due to row/col major encoding (I think).
 
   debug Core
-  R = ZZp(101, "Choose"=>"FFPACK")
+  R = ZZp(101, Strategy=>"FFPACK")
   benchMult(R,10);
   oo#2 == oo#3
 
@@ -638,7 +643,7 @@ benchMult = (R,N) -> (
   (A,B,C,C1) = benchMult(RR_53,300);
 
   debug Core
-  R2 = ZZp(33554393, "Choose"=>"FLINT");
+  R2 = ZZp(33554393, Strategy=>"FLINT");
   benchMult(R2, 400); -- the multiply routine is the flint one: but it is multiplying the wrong order.
     -- This is caused by row/column major order problem in my (MES) code.
 ///
@@ -739,7 +744,8 @@ testInverse = (R) -> (
 randomMatrixWithKernel = (R, ncols, rk) -> (
     -- returns a pair (M, X), such that M*X == 0, and the
     -- columns of X are a basis for ker M.
-    L1 := for i from 0 to rk-1 list {(1 + random (char R - 1))_R, 1};
+    MAXN := if char R > 0 then char R - 1 else 50;
+    L1 := for i from 0 to rk-1 list {(1 + random MAXN)_R, 1};
     L2 := splice {(ncols-rk):{0,1}};
     L := join(L1,L2);
     A := mutableMatrix jordanForm(R, L);
@@ -925,13 +931,31 @@ testSolve = (R) -> (
     -- now for more complicated examples
     -- FAILING TEST: crashes
     debug Core;
-    R = ZZp(101, "Choose"=>"FFPACK");
+    R = ZZp(101, Strategy=>"FFPACK");
     N := 90;
     M := mutableMatrix(R, N, N);
     fillMatrix M;
     B := mutableMatrix(R, N, 5);
     fillMatrix B;
     time rawLinAlgSolve(raw M, raw B, true);
+    )
+
+testLUoverRR = () -> (
+    R := RR_53;
+    M := mutableMatrix(R,10,10);
+    fillMatrix M;
+    (P,L,U) := LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-59);
+
+    M = mutableMatrix(R,100,100);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+
+    M = mutableMatrix(R,500,500);
+    fillMatrix M;
+    time (P,L,U) = LUdecomposition M;
+    assert(norm(M - checkLU(P,L,U)) < 1e-58);
     )
 
 testLUoverRRR = () -> (
@@ -1049,9 +1073,10 @@ TEST ///
 --------------------------------
 -- ffpack linear algebra: ZZ/p -
 --------------------------------
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(2, "Choose"=>"FFPACK");
+  R = ZZp(2, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   {*
@@ -1060,9 +1085,10 @@ TEST ///
   *}
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(3, "Choose"=>"FFPACK");
+  R = ZZp(3, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1070,9 +1096,10 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(5, "Choose"=>"FFPACK");
+  R = ZZp(5, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1081,9 +1108,10 @@ TEST ///
   testSolve R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(101, "Choose"=>"FFPACK");
+  R = ZZp(101, Strategy=>"FFPACK");
   testDeterminant R;
   testMult R;
   testInverse R;
@@ -1091,9 +1119,10 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(30000001, "Choose"=>"FFPACK");
+  R = ZZp(30000001, Strategy=>"FFPACK");
   testDeterminant R
   testMult R
   testInverse R;
@@ -1101,15 +1130,58 @@ TEST ///
   testNullspace R;
 ///
 
+if hasFFPACK then 
 TEST ///
   debug Core
-  R = ZZp(maxFFPACKPrime, "Choose" => "FFPACK")
+  R = ZZp(maxFFPACKPrime, Strategy => "FFPACK")
   testDeterminant R
   testMult R
   testInverse R;
   testRank R;
   testNullspace R;
-  --R = ZZp(33554467, "Choose" => "FFPACK") -- this should not work
+  --R = ZZp(33554467, Strategy => "FFPACK") -- this should not work
+///
+
+--------------------------------
+-- engine ZZ/p -----------------
+--------------------------------
+TEST ///
+  debug Core
+  R = ZZp(2)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 3
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 101
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
+///
+
+TEST ///
+  debug Core
+  R = ZZp 32749
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;
 ///
 
 --------------------------------
@@ -1119,9 +1191,10 @@ TEST ///
   -- solveLinear: somehow the wrong one is being called
   -- rankProfile
   -- LUdecomposition
+if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(2, "Choose" => "FLINT")
+  R = ZZp(2, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;   -- the fillMatrix is not working here...
@@ -1131,9 +1204,10 @@ TEST ///
 
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(3, "Choose" => "FLINT")
+  R = ZZp(3, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1141,9 +1215,10 @@ TEST ///
   testInverse R;
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(5, "Choose" => "FLINT")
+  R = ZZp(5, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1151,9 +1226,10 @@ TEST ///
   testInverse R;
 ///
 
+if hasFlint then 
 TEST ///
   debug Core
-  R = ZZp(101, "Choose" => "FLINT")
+  R = ZZp(101, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1161,12 +1237,11 @@ TEST ///
   testInverse R;
 ///
 
-
-
+if hasFlint then 
 TEST ///
   -- largest prime < 2^62
   debug Core
-  R = ZZp(4611686018427387847, "Choose" => "FLINT")
+  R = ZZp(4611686018427387847, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1174,10 +1249,11 @@ TEST ///
   testInverse R;  
 ///
 
+if hasFlint then 
 TEST ///
   -- largest prime < 2^63
   debug Core
-  R = ZZp(9223372036854775783, "Choose" => "FLINT")
+  R = ZZp(9223372036854775783, Strategy => "FLINT")
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1185,10 +1261,34 @@ TEST ///
   testInverse R;  
 ///
 
+
+if hasFlint then 
+TEST ///
+  debug Core
+  R = ZZp(maxFLINTPrime, Strategy => "FLINT")
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+--------------------------------
+-- Engine GF -------------------
+--------------------------------
+TEST ///
+  debug Core
+  R = GF(3,2)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
 
 TEST ///
   debug Core
-  R = ZZp(maxFLINTPrime, "Choose" => "FLINT")
+  R = GF(5,12)
   testDeterminant R
   testMult R
   testNullspace R;
@@ -1196,6 +1296,33 @@ TEST ///
   testInverse R;  
 ///
 
+--------------------------------
+-- Givaro GF -------------------
+--------------------------------
+if hasFFPACK then
+TEST ///
+  debug Core
+  R = GF(3,2, Strategy=>"Givaro")
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+if hasFFPACK then
+TEST ///
+  debug Core
+  R = GF(5,12)
+  testDeterminant R
+  testMult R
+  testNullspace R;
+  testRank R;
+  testInverse R;  
+///
+
+
+if hasFlint then 
 TEST ///
   -- Most of this code is designed for fields...
   debug Core
@@ -1204,20 +1331,38 @@ TEST ///
   testMult R
 ///
 
+if hasFlint then 
 TEST ///
   -- Flint QQ
-  
+  debug Core
+  R = QQFlint
+  testDeterminant R
+  testMult R
+  testRank R
+  testNullspace R;
 ///
+
 -----------------------------------
 -- tests over approximate fields --
 -----------------------------------
 testClean = (R) -> (
     -- R should be an RR or CC
+    -- this tests "clean" for: Matrix, MutableMatrix, poly ring.
     M := mutableMatrix(R, 10, 10);
     fillMatrix M;
     N := M^4 - M*M*M^2;
     for i from 0 to numRows N - 1 do N_(i,i) = 1.0 + N_(i,i);
-    assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    N2 := matrix N;
+    assert(norm clean(.00001, N - mutableIdentity(R, numRows N)) == 0);
+    assert(norm clean(.00001, N2 - matrix mutableIdentity(R, numRows N2)) == 0);
+    -- this next test is actually not correct: 
+    --   clean does NOT truncate values, only ones that are close to 0
+    --assert(norm(clean(.00001, N) - mutableIdentity(R, numRows N)) == 0)
+    P := R[getSymbol "x", getSymbol "y"];
+    x := P_0;
+    y := P_1;
+    f := 1.01*x^2+3.2*y^2-y;
+    assert(clean(.0001, f^4 - (f^2)^2) == 0)
     )
 testNorm = (R) -> (
     -- R should be an RR or CC
@@ -1230,7 +1375,27 @@ testNorm = (R) -> (
     assert(b == ans);
     )
 
+TEST ///
+  testClean(RR_53)
+  testClean(RR_100)
+  testClean(RR_200)
+  testClean(RR_54)
 
+  testNorm(RR_53)
+  testNorm(RR_100)
+  testNorm(RR_200)
+  testNorm(RR_54)
+
+  testClean(CC_53)
+  testClean(CC_100)
+  testClean(CC_200)
+  testClean(CC_54)
+
+  testNorm(CC_53)
+  testNorm(CC_100)
+  testNorm(CC_200)
+  testNorm(CC_54)
+///
 
 
 
@@ -1263,7 +1428,73 @@ testLinearAlgebraOverField = (R) -> (
     << "tests passed for " << raw R << endl;
     )
 
+testPromote = () -> (
+    -- test basic promote routines
+    -- Part1: source: RR_53
+    -- Part2: source: RR_100
+    -- Part3: source: CC_53
+    -- Part4: source: CC_100
+    R1 := RR_53;
+    C1 := CC_53;
+    R := RR_100;
+    S := RR_200;
+    T := CC_100;
+    U := CC_200;
+    ---- Part1: promote from R1 ----
+      m := matrix{{1.234 _ R1}};
+      m1 := promote(m,C1);
+      assert(lift(m1,R1) == m); -- NOT YET
+      m1 = promote(m,R);
+      assert(promote(m1,R1) == m);
+      m1 = promote(m,S);
+      assert(promote(m1,R1) == m);
+      m1 = promote(m,T);
+      assert(lift(m1,R1) == m); -- NOT YET
+      m1 = promote(m,R1);
+      assert(m1 == m);
+    ---- Part 2: promote from R ----
+      m = matrix{{1.234 _ R}};
+      m1 = promote(m,C1);
+      assert(lift(m1,R) == m); -- NOT YET
+      m1 = promote(m,R);
+      assert(promote(m1,R) == m);
+      m1 = promote(m,S);
+      assert(promote(m1,R) == m);
+      m1 = promote(m,T);
+      assert(lift(m1,R) == m); -- NOT YET
+      m1 = promote(m,R1);
+      assert(promote(m1,R) == m);
+    ---- Part 3: promote from T ----
+      m = matrix{{1.234 _ T}};
+      m1 = promote(m,C1);
+      assert(promote(m1,T) == m);
+      m1 = promote(m,T);
+      assert(m1 == m);
+      m1 = promote(m,U);
+      assert(promote(m1,T) == m);
+      assert(try (promote(m,R); false) else true);
+      assert(try (promote(m,S); false) else true);
+      assert(try (promote(m,R1); false) else true);
+    ---- Part 4: promote from C1 ----
+      m = matrix{{1.234 _ C1}};
+      m1 = promote(m,C1);
+      assert(promote(m1,C1) == m);
+      m1 = promote(m,T);
+      assert(promote(m1,C1) == m);
+      m1 = promote(m,U);
+      assert(promote(m1,C1) == m);
+      assert(try (promote(m,R); false) else true);
+      assert(try (promote(m,S); false) else true);
+      assert(try (promote(m,R1); false) else true);
+    )
+
+TEST ///
+    testPromote()
+///
+
 testPromoteLift = () -> (
+    R53 := RR_53;
+    C53 := CC_53;
     R := RR_100;
     S := RR_200;
     T := CC_100;
@@ -1272,16 +1503,19 @@ testPromoteLift = () -> (
     mS := promote(m, S);
     mT := promote(m, T);
     mU := promote(m,U);
+    mR53 := promote(m,R53);
+    mC53 := promote(m,C53);
     n := mS;
     assert(m == promote(n, R));
     assert(mS == promote(n, S));
     assert(mT == promote(n, T));
     assert(mU == promote(n,U));
+    assert(mR53 == promote(n,R53));
+    assert(mC53 == promote(n,C53));
     assert(m == lift(mS, R)); -- fails in 1.6
     assert(m == lift(mT,R));
     m1 := matrix{{1+ii}};
     assert(try (lift(m1,RR_53); false) else true); -- should fail (as it does).
-    R53 := RR_53;
     x := (5.2)_R53;
     sub(x, R53); -- CRASH
     phi := map(R53, R53, {});
@@ -1312,7 +1546,37 @@ TEST ///
   testMutableMatrices ZZ
 ///
 
+TEST ///
+  R = RR_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+  inverse M
+  
 
+  R = CC_100
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  det(N*N) - (det N)^2
+  det(M*M) - (det M)^2
+  M*M - mutableMatrix(N*N)
+  
+  R = RR_53
+  M = mutableMatrix(R,5,5)
+  fillMatrix M
+  N = matrix M
+  det N
+  det M
+  M*M - mutableMatrix(N*N)
+///
+
+if hasFlint and hasFFPACK then 
 TEST ///
   -- Which rings have linear algebra routines defined?
   debug Core
@@ -1325,51 +1589,21 @@ TEST ///
   hasEngineLinearAlgebra(ZZ)
   assert hasEngineLinearAlgebra(ZZFlint)
   assert hasEngineLinearAlgebra(QQ)
-  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FLINT"))
-  assert hasEngineLinearAlgebra(ZZp(101, "Choose"=>"FFPACK"))
+  assert hasEngineLinearAlgebra(ZZp(101, Strategy=>"FLINT"))
+  assert hasEngineLinearAlgebra(ZZp(101, Strategy=>"FFPACK"))
   hasEngineLinearAlgebra(ZZ/101)
   hasEngineLinearAlgebra (GF(2^3, Strategy=>null))
   hasEngineLinearAlgebra (GF(2^3, Strategy=>"Givaro"))
-  hasEngineLinearAlgebra (GF(2^3, Strategy=>"New"))
+  hasEngineLinearAlgebra (GF(2^3, Strategy=>"Old"))
 
-  --hasLinAlgRank ZZ  -- NO
-  --hasLinAlgRank QQ  -- NO
-  hasLinAlgRank (ZZp(101, "Choose"=>"FLINT")) -- yes, this one works!
-  hasLinAlgRank (ZZp(101, "Choose"=>"FFPACK")) -- yes, this one works!
-  --hasLinAlgRank (ZZp(101, "Choose"=>null)) -- NO
+  hasLinAlgRank ZZ  -- NO
+  hasLinAlgRank QQ  -- NO
+  hasLinAlgRank (ZZp(101, Strategy=>"FLINT")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, Strategy=>"FFPACK")) -- yes, this one works!
+  hasLinAlgRank (ZZp(101, Strategy=>null)) -- NO
 
   debug Core
   initializeEngineLinearAlgebra QQ
-///
-
-TEST ///
-  debug Core
-
-  hasLinAlg1 = (fcn, R) -> (
-      M = mutableMatrix(R, 4, 4);
-      fillMatrix M;
-      fcn raw M
-      );
-
-  hasLinAlg = (fcn, R) -> (
-      M = mutableMatrix(R, 4, 4);
-      fillMatrix M;
-      try (fcn raw M; true) else false
-      );
-
-  R = ZZp(101, "Choose"=>"FFPACK")
-  hasLinAlg1(rawLinAlgDeterminant, R)
-  assert hasLinAlg(rawLinAlgDeterminant, R)
-  assert hasLinAlg(rawLinAlgInverse, R)
-
-  R1 = ZZp(101, "Choose"=>"FLINT")
-  assert hasLinAlg(rawLinAlgDeterminant, R1)
-
-  --hasLinAlg(rawLinAlgDeterminant, ZZ/101)
-  --hasLinAlg(rawLinAlgDeterminant, QQ)
-  --hasLinAlg(rawLinAlgDeterminant, ZZ)
-  
-  
 ///
 
 TEST /// 
@@ -1452,7 +1686,7 @@ kk = ZZp 1073742851
 --kk = GF (1049599, 1, Strategy=>"CompleteGivaro")
 --testMutableMatrices kk
 
-kk = GF(2,4,Strategy=>"New")
+kk = GF(2,4,Strategy=>"Old")
 testMutableMatrices kk -- fails, since rank is not yet defined for this type of ring
 
 kk = GF(2,4,Strategy=>"Givaro")

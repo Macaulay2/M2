@@ -90,8 +90,8 @@ determinant Matrix := RingElement => options -> f -> (
      or not isFreeModule source f
      or not isFreeModule target f
      then error "expected a square matrix";
-     if hasEngineLinearAlgebra ring f then 
-       (ring f).determinant f
+     if hasEngineLinearAlgebra ring f then
+       basicDet f
      else 
        (exteriorPower(numgens source f, f, options))_(0,0))
 
