@@ -1,13 +1,15 @@
 HOMEPAGE = http://flintlib.org
-#URL = http://flintlib.org
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 2.3
-PATCHFILE = @abs_srcdir@/patch-2.3
+URL = http://flintlib.org
+#URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+#VERSION = 2.3b1
+#PATCHFILE = @abs_srcdir@/patch-2.3
+#VERSION = 2.4-alpha1
+VERSION = 2.4
 LICENSEFILES = flint.h gpl-2.0.txt
 ifeq (@DEBUG@,yes)
 CFLAGS += -O0 -fno-unroll-loops 
 endif
-CONFIGURECMD = ./configure --prefix='$(PREFIX)' --disable-shared CC='$(CC)' CFLAGS='$(CPPFLAGS) $(CFLAGS)'
+CONFIGURECMD = ./configure --with-gc --disable-tls --prefix='$(PREFIX)' --disable-shared CC='$(CC)' CFLAGS='$(CPPFLAGS) $(CFLAGS)'
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/flint/Makefile
 # Local Variables:
