@@ -80,6 +80,27 @@ void Tower::text_out(buffer &o) const
   D->extensions_text_out(o, names);
 }
 
+int Tower::index_of_var(const ring_elem a) const
+{
+  poly f1 = TOWER_VAL(a);
+  return D->index_of_var(f1);
+}
+
+M2_arrayint Tower::support(const ring_elem a) const
+{
+  poly f1 = TOWER_VAL(a);
+  std::vector<int> max_degs;
+  D->degrees_of_vars(f1, max_degs);
+  int nelems = 0;
+  for (size_t i =0; i<max_degs.size(); i++)
+    if (max_degs[i] > 0) nelems++;
+  M2_arrayint result = M2_makearrayint(nelems);
+  int next=0;
+  for (size_t i =0; i<max_degs.size(); i++)
+    if (max_degs[i] > 0) result->array[next++] = static_cast<int>(i);
+  return result;
+}
+
 ring_elem Tower::from_int(int n) const
 {
   poly f;

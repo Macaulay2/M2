@@ -7,6 +7,7 @@
 // mat-elem-ops, mat-arith, or mat-linalg
 
 #include "buffer.hpp"
+#include "text-io.hpp"
 
 template <typename Mat>
 void displayMat(buffer& o, const Mat& A)
@@ -30,7 +31,7 @@ void displayMat(buffer& o, const Mat& A)
         {
           const typename Mat::ElementType& a = A.entry(r,c);
           if (!A.ring().is_zero(a))
-            A.ring().elem_text_out(p[r], a);
+            A.ring().elem_text_out(p[r], a, true, false, false);
           else
             p[r] << ".";
           if (p[r].size() > maxcount)
@@ -47,6 +48,14 @@ void displayMat(buffer& o, const Mat& A)
       o << s << newline;
     }
   delete[] p;
+}
+
+template <typename Mat>
+void displayMat(const Mat& A)
+{
+  buffer o;
+  displayMat(o,A);
+  emit(o.str());
 }
 
 #endif

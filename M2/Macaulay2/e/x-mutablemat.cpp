@@ -667,7 +667,7 @@ void reduce_pivots(MutableMatrix *M)
 M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
 /* Using row and column operations, use unit pivots to reduce the matrix */
 {
-  reduce_pivots(M);
+  M->reduce_by_pivots();
   return true;
 }
 

@@ -8,14 +8,15 @@ namespace M2 {
   }
 
   void ARingRR::elem_text_out(buffer &o,
-                              ElementType &ap,
+                              const ElementType &ap,
                               bool p_one,
                               bool p_plus,
                               bool p_parens) const
   {
+    ElementType& ap1 = const_cast<ElementType&>(ap);
     mpfr_t a;
     mpfr_init(a);
-    mpfr_set_d(a, ap, GMP_RNDN);
+    mpfr_set_d(a, ap1, GMP_RNDN);
     M2_string s = (*gmp_tostringRRpointer)(a);
     mpfr_clear(a);
     bool prepend_plus = p_plus && (s->array[0] != '-');
@@ -31,5 +32,10 @@ namespace M2 {
       o.put(s->array, s->len);
     
   }
-  
-}
+
+}; // end namespace M2
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:

@@ -479,6 +479,136 @@ public:
     mat.swap(newMatrix);
   }
 
+  /////////////////////////////
+  // reduce_by_pivots /////////
+  /////////////////////////////
+private:
+  // An internal function for reduceby_pivots
+  static void perform_reduction(Mat& M,
+                                size_t r, size_t c,
+                                size_t nr, size_t nc,
+                                int pivot_type)
+  // Subroutine of reduce_pivots()
+  // pivot_type: 1 means pivot is 1, -1 means pivot is -1, 0 means pivot is unit
+  {
+    // Flip rows r, nr
+    // Flip cols c, nc
+    // Use (nr,nc) location to remove all terms in columns 0..nc-1
+    //   and in row nr.
+    // Replace column nc with all zeros, except 1 in nr row.
+
+    typename Mat::ElementType pivot, coef, f, zero, one;
+    M.ring().init(pivot);
+    M.ring().init(coef);
+    M.ring().init(zero);
+    M.ring().init(one);
+    M.ring().init(f);
+    M.ring().set_from_int(zero, 0);
+    M.ring().set_from_int(one, 1);
+
+    interchange_columns(M,c,nc);
+    interchange_rows(M,r,nr);
+    long pivotrow = lead_row(M, nc, pivot);
+    if (pivot_type == -1) // pivot is -1
+      scale_column(M,nc,pivot);
+    else if (pivot_type == 0)
+      divide_column(M,nc, pivot);
+    for (int i=0; i<nc; i++)
+      {
+        pivotrow = lead_row(M,i,coef);
+        if (pivotrow < 0) continue;
+        if (pivotrow == nr)
+          {
+            // Do the reduction
+            M.ring().negate(f, coef);
+            column_op(M, i, f, nc);
+          }
+      }
+
+    scale_column(M,nc, zero);
+    setEntry(M,nr,nc, one);
+
+    M.ring().clear(pivot);
+    M.ring().clear(coef);
+    M.ring().clear(zero);
+    M.ring().clear(one);
+    M.ring().clear(f);
+  }
+public:
+  static void reduce_by_pivots(Mat& M)
+  {
+    if (M.numRows() == 0 or M.numColumns() == 0) return;
+    size_t nr = M.numRows()-1;
+    size_t nc = M.numColumns()-1;
+
+    typename Mat::ElementType one, minus_one;
+    M.ring().init(one);
+    M.ring().init(minus_one);
+    M.ring().set_from_int(one, 1);
+    M.ring().set_from_int(minus_one, -1);
+
+    // After using the pivot element, it is moved to [nrows-1,ncols-1]
+    // and nrows and ncols are decremented.
+    
+    for (size_t i=0; i<=nc; i++)
+      {
+        auto p = M.columnBegin(i);
+        auto p_end = M.columnEnd(i);
+        for (size_t j=0; p != p_end; ++p, ++j)
+          {
+            if (M.ring().is_zero(*p)) continue;
+            int pivot_type = 0;
+            if (M.ring().is_equal(one, *p))
+              pivot_type = 1;
+            else if (M.ring().is_equal(minus_one, *p))
+              pivot_type = -1;
+            if (pivot_type != 0)
+              {
+                printf("before reduction: j=%lu i=%lu:\n",j,i);
+                displayMat(M);
+                perform_reduction(M, j, i, nr--, nc--, pivot_type);
+                printf("after reduction: j=%lu i=%lu:\n",j,i);
+                displayMat(M);
+                if (nr == static_cast<size_t>(-1) or nc == static_cast<size_t>(-1)) return;
+                // restart loop with the (new) column i
+                i = -1;
+                break;
+              }
+          }
+      }
+    
+    // Now search for other possible pivots
+    for (size_t i=0; i<=nc; i++)
+      {
+        auto p = M.columnBegin(i);
+        auto p_end = M.columnEnd(i);
+        for (size_t j = 0; p != p_end; ++p, ++j)
+          {
+            if (M.ring().is_zero(*p)) continue;
+            if (!M.ring().is_unit(*p)) continue;
+            int pivot_type = 0;
+            if (M.ring().is_equal(one, *p))
+              pivot_type = 1;
+            else if (M.ring().is_equal(minus_one, *p))
+              pivot_type = -1;
+            
+            printf("before general reduction: j=%lu i=%lu:\n",j,i);
+            displayMat(M);
+            perform_reduction(M, j, i, nr--, nc--, pivot_type);
+            printf("after general reduction: j=%lu i=%lu:\n",j,i);
+            displayMat(M);
+            if (nr == static_cast<size_t>(-1) or nc == static_cast<size_t>(-1)) return;
+            // restart loop with the (new) column i
+            i = -1;
+            break;
+          }
+      }
+
+    M.ring().clear(minus_one);
+    M.ring().clear(one);
+  }
+  //////////////////////////////////
+
   static void setFromSubmatrix(const Mat& mat, M2_arrayint rows, M2_arrayint cols, Mat& result)
   /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
   {
@@ -751,6 +881,12 @@ public:
   /* Delete rows i .. j from M */
   {
     mat.delete_rows(i,j);
+  }
+
+  static void reduce_by_pivots(Mat& M)
+  {
+    throw exc::engine_error("reduce_py_pivots not yet implemented for sparse mutable matrices");
+    //TODO: write this!!
   }
 
   static void setFromSubmatrix(const Mat& mat, M2_arrayint rows, M2_arrayint cols, Mat& result)

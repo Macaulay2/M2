@@ -12,6 +12,7 @@
 #include <sstream>
 #include "ringelem.hpp"
 #include "buffer.hpp"
+#include <vector>
 
 class Tower;
 class DPolyTraverser;
@@ -98,7 +99,6 @@ public:
   static poly copy(int level, const_poly f);
 
   static poly from_int(int level, long c);  // c should be reduced mod p
-  static bool is_one(int level, poly f);
 
   static bool is_zero(poly f) { return f == 0; }
 
@@ -154,6 +154,12 @@ public:
   poly diff(int level, int var, const poly f);
   poly power_mod(int level, const poly f, mpz_t n, const poly g);  // f^n mod g
   poly lowerP(int level, const poly f);
+
+  static bool is_one(int level, const poly f);
+  int index_of_var(int level, const poly f) const;
+  void degrees_of_vars(int level, 
+                       const poly f, 
+                       std::vector<int>& result_max_degs) const;
 
   // DPoly management
   ~DPoly() {}
@@ -322,6 +328,14 @@ public:
   int extension_degree(int firstvar); // returns -1 if infinite
   void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
+
+  int index_of_var(const poly f) const { return D.index_of_var(level, f); }
+  void degrees_of_vars(const poly f, std::vector<int>& result) const {
+    result.resize(level+1);
+    for (size_t i=0; i<=level; i++)
+      result[i] = 0;
+    D.degrees_of_vars(level, f, result); 
+  }
 };
 
 /**

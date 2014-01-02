@@ -558,6 +558,7 @@ document {
 	Outputs => { "Ws"=>{"contains irreducible witness sets ", TO2{WitnessSet,"witness sets"}, ", the union of which is ", TT "W"}},
      	"Monodromy driven decomposition is followed by the linear trace test. ",
 	EXAMPLE lines ///
+setRandomSeed 1
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 W = first regeneration F 
@@ -582,6 +583,7 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
+setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};

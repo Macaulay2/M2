@@ -591,6 +591,9 @@ public:
 
   bool is_equal(elem a, elem b ) const { return R->is_equal(a,b); }
 
+  bool is_unit(elem f) const {return R->is_unit(f); }
+
+
   void invert(elem &result, elem a) const
   {
     result = R->invert(a);
@@ -640,6 +643,12 @@ public:
     a = b;
     b = tmp;
   }
+
+  void elem_text_out(buffer &o,
+                     ElementType a,
+                     bool p_one=true,
+                     bool p_plus=false,
+                     bool p_parens=false) const;
 };
 
 

@@ -9,14 +9,14 @@ namespace M2 {
   }
 
   void ARingCCC::elem_text_out(buffer &o,
-			       ElementType &f,
+			       const ElementType &f,
 			       bool p_one,
 			       bool p_plus,
 			       bool p_parens) const
   {
     gmp_CC_struct g;
-    g.re = &f.re;
-    g.im = &f.im;
+    g.re = & const_cast<ElementType&>(f).re;
+    g.im = & const_cast<ElementType&>(f).im;
     M2_string s = p_parens ? 
       (*gmp_tonetCCparenpointer)(&g) : (*gmp_tonetCCpointer)(&g);
  
@@ -37,4 +37,9 @@ namespace M2 {
       o.put(s->array, s->len);
   }
   
-}
+}; // end namespace M2
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:

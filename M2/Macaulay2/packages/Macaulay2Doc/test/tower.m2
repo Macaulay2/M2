@@ -141,9 +141,9 @@ a = rawRingVar(R,0)
 F = a^2+2*a+1
 A = rawTowerQuotientRing(R, 1:F)
 a = rawRingVar(A,0)
+{*
 rawInverse (a+1) -- error not considered?
-
-end -- disabled by Dan: stdio:8:2:(3): error: element not invertible
+*}
 
 a^2 
 a^3

@@ -8,6 +8,7 @@
 
 #include "engine-includes.hpp"
 #include <algorithm>
+#include "mat-util.hpp"
 
 template<typename ACoeffRing> class DMat;
 

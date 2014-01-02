@@ -535,6 +535,11 @@ public:
     return true;
   }
 
+  virtual void reduce_by_pivots()
+  {
+    MatOps::reduce_by_pivots(mat);
+  }
+
   virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const
   {
     for (size_t r = 0; r<rows->len; r++)
@@ -752,6 +757,7 @@ const RingElement* MutableMat<T>::determinant() const
   elem a;
   mat.ring().init(a);
   MatrixOppies::determinant(mat, a);
+  //  MatrixOppies::BasicLinAlg<MatType>::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
   mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);

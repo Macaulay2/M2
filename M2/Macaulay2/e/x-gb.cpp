@@ -15,7 +15,6 @@
 #include "poly.hpp"
 #include <sstream>
 #include <iostream>
-#include "matrix-stream.hpp"
 #include "interrupted.hpp"
 
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
@@ -961,8 +960,7 @@ M2_string engineMemory()
 
 #if defined(HAVE_MATHICGB)
 #include "mathicgb.h"
-#endif
-
+#include "matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)
 {
   const Ring *R = inputMatrix->get_ring();
@@ -974,7 +972,7 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
     }
   int charac = P->charac();
   int nvars = P->n_vars();
-#if defined(HAVE_MATHICGB)
+
   mgb::GroebnerConfiguration configuration(charac, nvars);
   mgb::GroebnerInputIdealStream input(configuration);
 
@@ -986,10 +984,9 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
 
   std::cout << "result: " << std::endl;
   std::cout << computedStr.str() << std::endl;
-#endif
+
 }
 
-#if defined(HAVE_MATHICGB)
 class MGBCallback : public mgb::GroebnerConfiguration::Callback
 {
 protected:
@@ -1001,6 +998,7 @@ protected:
   }
 };
 #endif
+
 // The following (in x-monoid.cpp) needs to be put into a header file.
 extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
                                      std::vector<int>& mat,
@@ -1013,6 +1011,7 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
                       int nthreads,
                       M2_string logging)
 {
+#if defined(HAVE_MATHICGB)
   const Ring *R = inputMatrix->get_ring();
   const PolyRing *P = R->cast_to_PolyRing();
   if (P == 0) 
@@ -1027,7 +1026,6 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
     }
   int charac = P->charac();
   int nvars = P->n_vars();
-#if defined(HAVE_MATHICGB)
   MGBCallback callback;
   mgb::GroebnerConfiguration configuration(charac, nvars);
 
@@ -1077,7 +1075,8 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
   //  rawDisplayMatrixStream(result);
   return result;
 #endif
-  return inputMatrix;
+  ERROR("M2 not confiugred to compute using mathicgb, use --enable-mathicgb when configuring Macaulay2");
+  return 0;
 }
 
 // Local Variables:
