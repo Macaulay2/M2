@@ -22,7 +22,7 @@ R2 = rawTowerQuotientRing(R1, (a^3+a^2+1, 0_R1))
 rawExtensionDegree(-1,R2)
 rawExtensionDegree(0,R2) == -1 -- why!?
 rawExtensionDegree(1,R2) == 3
-assert(rawExtensionDegree(0,R2) == )
+assert(rawExtensionDegree(0,R2) == -1)
 a = R2_0
 y = R2_1
 F = y^4 + a * y^2 + (a+1)
