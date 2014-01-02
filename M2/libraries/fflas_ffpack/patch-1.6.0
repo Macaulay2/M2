@@ -1,3 +1,14 @@
+--- fflas-ffpack-1.6.0/macros/blasATLAS-check.m4	2013-11-18 18:03:42.000000000 +0100
++++ fflas-ffpack-1.6.0/macros/blasATLAS-check.m4	2013-11-18 18:04:29.000000000 +0100
+@@ -36,7 +36,7 @@ AC_DEFUN([FF_CHECK_CBLAS],
+ 				the directory which contains the library.  ])
+ 			])
+ 
+-		BLAS_HOME_PATH="$with_cblas ${DEFAULT_CHECKING_PATH}"
++		BLAS_HOME_PATH="$with_cblas ${DEFAULT_CHECKING_PATH} /usr/lib/atlas /usr/lib64/atlas "
+ 
+ 		dnl Check for existence
+ 
 --- fflas-ffpack-1.6.0/fflas-ffpack/utils/debug.h     2012-03-26 15:24:57.000000000 +0200
 +++ fflas-ffpack-1.6.0/fflas-ffpack/utils/debug.h 2013-11-16 18:12:31.883220767 +0100
 @@ -109,7 +109,8 @@ throw FFPACK::Failure (__func__, __FILE_
