@@ -12,7 +12,8 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c 
-CXXFLAGS += -O0 -std=gnu++0x #-coverage
+#CXXFLAGS += -O0 -std=gnu++0x #-coverage
+CXXFLAGS += -std=gnu++0x #-coverage
 LDFLAGS += #-coverage
 
 # removed from CPPFLAGS for tests:
