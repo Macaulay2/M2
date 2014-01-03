@@ -221,7 +221,6 @@ void DMatLUtemplate<RingType>::computeLU()
 
   for (size_t row = 0; row < nrows; row++)
     {
-      printf("in row %ld\n", row);
       // First, find a pivot, if any, in this column (from row row..nrows-1)
       // Find the element with largest absolute value:
 
@@ -542,7 +541,6 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
-  printf("entering DMatLUtemplate::solve\n");
   size_t rk = mPivotColumns.size();
 
   ElementType tmp, tmp2;
@@ -607,7 +605,7 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
               deletearray(x);
               ring().clear(tmp);
               ring().clear(tmp2);
-              printf("returning false\n");
+              //printf("returning false\n");
               return false;
             }
         }
@@ -733,7 +731,7 @@ inline void DMatLUtemplate<M2::ARingRR>::computeLUNAIVE()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+  //printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 
   int *perm = newarray_atomic(int, min);
 
@@ -795,7 +793,7 @@ inline void DMatLUtemplate<M2::ARingCC>::computeLUNAIVE()
   int info;
   int min = (rows <= cols) ? rows : cols;
 
-  printf("entering DMatLUtemplate::computeLUNaive for RR\n");
+  //printf("entering DMatLUtemplate::computeLUNaive for RR\n");
 
   int *perm = newarray_atomic(int, min);
 

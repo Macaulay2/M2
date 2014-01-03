@@ -564,11 +564,11 @@ public:
               pivot_type = -1;
             if (pivot_type != 0)
               {
-                printf("before reduction: j=%lu i=%lu:\n",j,i);
-                displayMat(M);
+                // printf("before reduction: j=%lu i=%lu:\n",j,i);
+                // displayMat(M);
                 perform_reduction(M, j, i, nr--, nc--, pivot_type);
-                printf("after reduction: j=%lu i=%lu:\n",j,i);
-                displayMat(M);
+                // printf("after reduction: j=%lu i=%lu:\n",j,i);
+                // displayMat(M);
                 if (nr == static_cast<size_t>(-1) or nc == static_cast<size_t>(-1)) return;
                 // restart loop with the (new) column i
                 i = -1;
@@ -592,11 +592,11 @@ public:
             else if (M.ring().is_equal(minus_one, *p))
               pivot_type = -1;
             
-            printf("before general reduction: j=%lu i=%lu:\n",j,i);
-            displayMat(M);
+            // printf("before general reduction: j=%lu i=%lu:\n",j,i);
+            // displayMat(M);
             perform_reduction(M, j, i, nr--, nc--, pivot_type);
-            printf("after general reduction: j=%lu i=%lu:\n",j,i);
-            displayMat(M);
+            // printf("after general reduction: j=%lu i=%lu:\n",j,i);
+            // displayMat(M);
             if (nr == static_cast<size_t>(-1) or nc == static_cast<size_t>(-1)) return;
             // restart loop with the (new) column i
             i = -1;
