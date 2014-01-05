@@ -973,11 +973,11 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
   int charac = P->charac();
   int nvars = P->n_vars();
 
-  mgb::GroebnerConfiguration configuration(charac, nvars);
+  mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());
   mgb::GroebnerInputIdealStream input(configuration);
 
   std::ostringstream computedStr;
-  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars, inputMatrix->n_rows());
   mgb::IdealStreamChecker<decltype(computed)> checked(computed);
 
   matrixToStream(inputMatrix, checked); 
@@ -1027,7 +1027,7 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
   int charac = P->charac();
   int nvars = P->n_vars();
   MGBCallback callback;
-  mgb::GroebnerConfiguration configuration(charac, nvars);
+  mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());
 
   const auto reducerType = reducer == 0 ?
     mgb::GroebnerConfiguration::ClassicReducer :
@@ -1064,11 +1064,11 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
   mgb::GroebnerInputIdealStream input(configuration);
 
   std::ostringstream computedStr;
-  mgb::IdealStreamLog<> computed(computedStr, charac, nvars);
+  mgb::IdealStreamLog<> computed(computedStr, charac, nvars, inputMatrix->n_rows());
   mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
 
   matrixToStream(inputMatrix, input); 
-  MatrixStream matStream(P);
+  MatrixStream matStream(inputMatrix->rows());
   //  mgb::computeGroebnerBasis(input, checked);
   mgb::computeGroebnerBasis(input, matStream);
   const Matrix* result = matStream.value();

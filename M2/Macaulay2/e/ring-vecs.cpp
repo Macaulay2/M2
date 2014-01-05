@@ -34,6 +34,21 @@ vec Ring::make_vec(int r, ring_elem a) const
   return result;
 }
 
+vec Ring::make_vec_from_array(int len, Nterm** array) const
+{
+  vec result = 0;
+  for (int i=0; i<len; i++)
+    {
+      if (array[i] != 0)
+        {
+          vec v = make_vec(i, array[i]);
+          v->next = result;
+          result = v;
+        }
+    }
+  return result;
+}
+
 vec Ring::e_sub_i(int i) const
 {
   ring_elem a = from_int(1);

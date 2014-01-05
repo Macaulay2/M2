@@ -380,6 +380,8 @@ public:
 
   vec e_sub_i(int r) const;
   vec make_vec(int r, ring_elem a) const;
+  vec make_vec_from_array(int len, Nterm** array) const; // takes ownership of the Nterm's!!
+
   vec copy_vec(const vecterm * v) const;
   void remove_vec(vec v) const;
 
