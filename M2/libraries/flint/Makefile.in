@@ -1,9 +1,7 @@
 HOMEPAGE = http://flintlib.org
-URL = http://flintlib.org
-#URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-#VERSION = 2.3b1
+#URL = http://flintlib.org
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #PATCHFILE = @abs_srcdir@/patch-2.3
-#VERSION = 2.4-alpha1
 VERSION = 2.4
 LICENSEFILES = flint.h gpl-2.0.txt
 ifeq (@DEBUG@,yes)
