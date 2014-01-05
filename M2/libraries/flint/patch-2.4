@@ -1,0 +1,12 @@
+diff -ur /Users/dan/src/M2/DanGrayson-M2/M2/BUILD/dan/builds.tmp/mike/libraries/flint/tmp/flint-2.4/longlong.h flint-2.4/longlong.h
+--- /Users/dan/src/M2/DanGrayson-M2/M2/BUILD/dan/builds.tmp/mike/libraries/flint/tmp/flint-2.4/longlong.h	2013-12-21 11:59:26.000000000 -0800
++++ flint-2.4/longlong.h	2014-01-05 14:16:39.000000000 -0800
+@@ -75,7 +75,7 @@
+     mp_limb_t __cbtmp;                                                \
+     FLINT_ASSERT ((x) != 0);                                          \
+     __asm__ ("bsrq %1,%0" : "=r" (__cbtmp) : "rm" ((mp_limb_t)(x)));  \
+-    (count) = __cbtmp ^ (mp_limb_t) 63;                               \
++    (count) = (int)(__cbtmp ^ (mp_limb_t) 63);			      \
+   } while (0)
+ 
+ /* bsfq destination must be a 64-bit register, "%q0" forces this in case
