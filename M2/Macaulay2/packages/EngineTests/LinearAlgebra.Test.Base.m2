@@ -397,8 +397,8 @@ testSolve = (R) -> (
     fillMatrix M;
     B := mutableMatrix(R, N, 5);
     fillMatrix B;
-    XRaw = time rawLinAlgSolve(raw M, raw B, true);
-    X= solve(M, B);
+    XRaw := time rawLinAlgSolve(raw M, raw B, true);
+    X := solve(M, B);
     assert( raw X == XRaw);
     assert(M*X-B == 0);
     )
