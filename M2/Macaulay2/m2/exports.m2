@@ -180,6 +180,7 @@ export {
 	symbol Engine,
 	symbol EngineRing,
 	symbol Equation,
+	symbol ExampleFiles,
 	symbol Exclude,
 	symbol Expression,
 	symbol Ext,

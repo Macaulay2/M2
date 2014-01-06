@@ -215,6 +215,7 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
+	  "example data files" => new MutableHashTable,
 	  "exported symbols" => {},
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,
