@@ -343,8 +343,8 @@ namespace MatrixOppies
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
     M2_ASSERT(A.numColumns() == B.numRows());
-    M2_ASSERT(A.numRows() == result_product.numRows());
-    M2_ASSERT(B.numColumns() == result_product.numColumns());
+    M2_ASSERT(A.numRows() == C.numRows());
+    M2_ASSERT(B.numColumns() == C.numColumns());
 
     ElementType* result = C.array();
 

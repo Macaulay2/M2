@@ -22,7 +22,8 @@ debug64 : always
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
-		CPPFLAGS="-DENGINE_DEBUG" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
@@ -52,7 +53,8 @@ debug64-all : always
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
-		CPPFLAGS="-DENGINE_DEBUG" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--disable-strip \
 		--enable-debug \
 		--disable-optimize \
