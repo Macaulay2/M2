@@ -34,6 +34,10 @@ FIX_UNWIND=no
 # CC=/usr/local/bin/gcc
 # CXX=/usr/local/bin/g++
 
+ifeq ($(MATHICGB),yes)
+CONFIGOPTIONS += --enable-mathicgb
+endif
+
 ifeq ($(FFPACK),yes)
 CONFIGOPTIONS += --enable-fflas-ffpack
 endif
@@ -60,8 +64,8 @@ unexport PROFILE
 CC := gcc
 CXX := g++
 
-CC := clang
-CXX := clang++
+# CC := clang
+# CXX := clang++
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
