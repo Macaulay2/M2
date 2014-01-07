@@ -9,6 +9,7 @@ document {
 	  TO "changes, 1.4",
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
+	  TO "changes, 1.7",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -61,6 +62,44 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
+document {
+     Key => "changes, 1.7",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "packages that have been published and certified:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  -- LI { "new packages:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "improved packages:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
+			 ", TO "document", ", which allows the package developer to specify that copies of certain
+			 auxiliary files should be visible in the current directory while example code is
+			 running."}
+	  	    },
+	       },
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  --      UL {
+	  --      	    }
+	  --      }
+     	  }
+     }
 
 document {
      Key => "changes, 1.6",
