@@ -87,8 +87,12 @@ document {
 		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
 			 ", TO "document", ", which allows the package developer to specify that copies of certain
 			 auxiliary files should be visible in the current directory while example code is
-			 running."}
-	  	    },
+			 running."},
+	       	    LI {
+			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
+			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
+			 }
+	  	    }
 	       },
 	  LI { "functionality changed:",
 	       UL {
