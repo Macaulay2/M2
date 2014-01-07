@@ -41,7 +41,8 @@ document {
 	       If ", TO "false", ", then do give the option.
 	       If ", TO "null", ", then propagate the option from the current ", TO "commandLine", ", if one occurs there." 
 	       },
-	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation" },
+	  DebuggingMode => Boolean => { "whether to enter ", TO "the debugger", " if an error occurs during installation; 
+	       however, if ", TO "debuggingMode", " is already ", TT "false", ", it will remain so." },
 	  RerunExamples => Boolean => "whether to rerun all the examples during installation",
 	  RunExamples => Boolean => "whether to run the examples during installation",
 	  IgnoreExampleErrors => Boolean => "whether to ignore errors that occur during the running of examples during installation",

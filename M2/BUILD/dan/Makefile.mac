@@ -67,6 +67,8 @@ CXX := g++
 # CC := clang
 # CXX := clang++
 
+BRANCH := $(shell git branch --contains | sed s/^..//)
+
 ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
@@ -78,6 +80,8 @@ CC  += -m32
 CXX += -m32
 export MPIR_CONFIGOPTIONS=ABI=32
 endif
+
+DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
 # the warning messages about this from clang have gotten noisy:
 # V = -mmacosx-version-min=10.6

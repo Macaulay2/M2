@@ -67,6 +67,10 @@ multiString = (key, textlines, keylinenum) -> (				    -- written by Andrew Hoef
      key => concatenate between(newline, getText \ textlines)
      )
 
+listOfStrings = (key, textlines, keylinenum) -> (
+     key => getText \ textlines
+     )
+
 reassemble = (indent,textlines) -> concatenate between(newline,
      for x in textlines list ( if getIndent x =!= infinity then getIndent x - indent : " ", getText x )
      )
@@ -161,7 +165,8 @@ KeyFunctions = new HashTable from {
      "Caveat" => (textlines, keylinenum) -> Caveat => {markup(textlines, keylinenum)},
      "Consequences" => (textlines, keylinenum) -> Consequences => applySplit(ConsequencesFuntions, textlines),
      "Inputs" => (textlines, keylinenum) -> Inputs => items(textlines, keylinenum),
-     "Outputs" => (textlines, keylinenum) -> Outputs => items(textlines, keylinenum)
+     "Outputs" => (textlines, keylinenum) -> Outputs => items(textlines, keylinenum),
+     "ExampleFiles" => (textlines, keylinenum) -> listOfStrings(ExampleFiles,textlines, keylinenum)
      }
 
 NodeFunctions = new HashTable from {

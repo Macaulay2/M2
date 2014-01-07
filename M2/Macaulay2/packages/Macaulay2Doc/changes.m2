@@ -9,6 +9,7 @@ document {
 	  TO "changes, 1.4",
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
+	  TO "changes, 1.7",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -61,6 +62,53 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
+document {
+     Key => "changes, 1.7",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "packages that have been published and certified:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  -- LI { "new packages:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "improved packages:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
+			 ", TO "document", ", which allows the package developer to specify that copies of certain
+			 auxiliary files should be visible in the current directory while example code is
+			 running."},
+	       	    LI {
+			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
+			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
+			 }
+	  	    }
+	       },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "If ", TO "debuggingMode", " is false when a package is loaded, it will remain
+			 false during the loading of the package, even if the ", TO "DebuggingMode", "
+			 option of ", TO "loadPackage", " or ", TO "newPackage", " is set to true.  This will help
+			 the user avoid entering the debugger while already in the debugger."
+			 }
+	       	    }
+	       },
+	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  --      UL {
+	  --      	    }
+	  --      }
+     	  }
+     }
 
 document {
      Key => "changes, 1.6",
