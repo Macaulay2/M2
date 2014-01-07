@@ -119,7 +119,7 @@ Node
 
     The valid keywords are: {\bf Key}, {\bf Headline}, {\bf Usage}, {\bf
     Inputs}, {\bf Outputs}, {\bf Consequences}, {\bf Description}, {\bf
-    SeeAlso}, {\bf Subnodes}, and {\bf Caveat}.
+    SeeAlso}, {\bf Subnodes}, {\bf Caveat}, and {\bf ExampleFiles}.
 
     The only keyword which is always required is {\bf Key}.
 
@@ -172,6 +172,12 @@ Node
     removed, is wrapped with parentheses and evaluated; the result is spliced
     into the list of documentation items at the appropriate point before
     passing the list to @TO document@.
+
+    Each line in the {\bf ExampleFiles} section should be the name of a file
+    in the auxiliary files directory of the package; the name of that directory
+    is the same as the name of the package.  Copies of the corresponding files 
+    will be made visible in the current directory while the example code is
+    running.     
 
     The lines in the {\bf Subnodes} section not beginning with a colon are keys
     giving links to the subnodes of the current documentation node.  The
