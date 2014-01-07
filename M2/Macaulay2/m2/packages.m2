@@ -200,6 +200,7 @@ newPackage(String) := opts -> (title) -> (
 	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
 	       );
 	  );
+     if opts.DebuggingMode and not debuggingMode then opts = merge(opts, new OptionTable from {DebuggingMode => false},last);
      newpkg := new Package from nonnull {
           "title" => title,
 	  symbol Options => opts,

@@ -90,10 +90,15 @@ document {
 			 running."}
 	  	    },
 	       },
-	  -- LI { "functionality changed:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "If ", TO "debuggingMode", " is false when a package is loaded, it will remain
+			 false during the loading of the package, even if the ", TO "DebuggingMode", "
+			 option of ", TO "loadPackage", " or ", TO "newPackage", " is set to true.  This will help
+			 the user avoid entering the debugger while already in the debugger."
+			 }
+	       	    }
+	       },
 	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
 	  --      UL {
 	  --      	    }
