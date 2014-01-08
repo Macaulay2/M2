@@ -500,114 +500,12 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
-"
-  Style
-  Macaulay2Doc
-  FirstPackage
-  Parsing
-  Classic
-  Browse
-  Benchmark
-  Text
-  SimpleDoc
-  PackageTemplate
-  PrimaryDecomposition
-  FourierMotzkin
-  Dmodules
-  Depth
-  Elimination
-  GenericInitialIdeal
-  IntegralClosure
-  HyperplaneArrangements
-  LexIdeals
-  Markov
-  NoetherNormalization
-  Points
-  ReesAlgebra
-  Regularity
-  SchurRings
-  SymmetricPolynomials
-  SchurFunctors
-  SimplicialComplexes
-  LLLBases
-  TangentCone
-  ChainComplexExtras
-  Schubert2
-  PushForward
-  LocalRings
-  BoijSoederberg
-  BGG
-  Bruns
-  InvolutiveBases
-  ConwayPolynomials
-  EdgeIdeals
-  FourTiTwo
-  StatePolytope
-  Polyhedra
-  Polymake
-  gfanInterface
-  PieriMaps
-  Normaliz
-  Posets
-  XML
-  OpenMath
-  SCSCP
-  RationalPoints
-  MapleInterface
-  ConvexInterface
-  SRdeformations
-  NumericalAlgebraicGeometry
-  BeginningMacaulay2
-  FormalGroupLaws
-  Graphics
-  WeylGroups
-  HodgeIntegrals
-  Cyclotomic
-  Binomials
-  Kronecker
-  Nauty
-  ToricVectorBundles
-  ModuleDeformations
-  PHCpack
-  SimplicialDecomposability
-  BooleanGB
-  AdjointIdeal
-  Parametrization
-  Serialization
-  NAGtypes
-  NormalToricVarieties
-  DGAlgebras
-  Graphs
-  GraphicalModels
-  BIBasis
-  KustinMiller
-  Units
-  NautyGraphs
-  VersalDeformations
-  CharacteristicClasses
-  RandomObjects
-  RandomPlaneCurves
-  RandomSpaceCurves
-  RandomGenus14Curves
-  RandomCanonicalCurves
-  RandomCurves
-  TensorComplexes
-  MonomialAlgebras
-  QthPower
-  EliminationMatrices
-  EllipticIntegrals
-  Triplets
-  CompleteIntersectionResolutions
-  MultiplierIdeals
-  InvariantRing
-  QuillenSuslin
-  EnumerationCurves
-")
 
-# convert the newlines in the list above to spaces
+
+AC_SUBST(PACKAGES,`cat config/packages`)
+[if [ $? != 0 ] ; then exit 1 ; fi]
+# convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
