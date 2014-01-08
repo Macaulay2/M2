@@ -9,7 +9,7 @@
 -- the changes.
 
 document {  
-     Key => {document,(document, List),[document,ExampleFiles],[document,SourceCode]},
+     Key => {document,(document, List),ExampleFiles,[document,ExampleFiles],[document,SourceCode]},
      Usage => "document { Key => key, ... }",
      Headline => "package item: documentation node",
      Inputs => {
