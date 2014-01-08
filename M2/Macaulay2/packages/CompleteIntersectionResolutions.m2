@@ -68,15 +68,16 @@ submoduleByDegrees(Module,ZZ):= (A,n)->(
      image (inducedMap(A,cover A)*F_L1)
      )
 
-submatrixByDegrees = method()
-submatrixByDegrees(Matrix, List, List) := (f,D,E)->(
-     --D,E are lists of degrees for rows and cols, respectively
-     Ltarget := flatten degrees target f;
-     Lsource := flatten degrees source f;
-     Lt:= toList select(toList(0..(rank target f)-1),i->member(Ltarget_i, D));
-     Ls:= toList select(toList(0..(rank source f)-1),i->member(Lsource_i, E));
-     map(target((target f)^Lt),source((source f)_Ls), f_Ls^Lt)
-     )
+-- submatrixByDegrees = method()
+-- submatrixByDegrees(Matrix, List, List) := (f,D,E)->(
+--      --D,E are lists of degrees for rows and cols, respectively
+--      Ltarget := flatten degrees target f;
+--      Lsource := flatten degrees source f;
+--      Lt:= toList select(toList(0..(rank target f)-1),i->member(Ltarget_i, D));
+--      Ls:= toList select(toList(0..(rank source f)-1),i->member(Lsource_i, E));
+--      map(target((target f)^Lt),source((source f)_Ls), f_Ls^Lt)
+--      )
+
 toArray = method()
 toArray List := L -> splice [toSequence L]
 toArray ZZ := n->[n]
