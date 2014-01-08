@@ -502,7 +502,7 @@ test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLA
 
 
 
-AC_SUBST(PACKAGES,`cat config/packages`)
+AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/-distributed-packages`)
 [if [ $? != 0 ] ; then exit 1 ; fi]
 # convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
