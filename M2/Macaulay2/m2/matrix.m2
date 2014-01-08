@@ -389,6 +389,42 @@ submatrix'(Matrix,VisibleList            ) := (m,cols     ) -> if #cols === 0 th
 submatrix'(Matrix,Nothing    ,VisibleList) := (m,null,cols) -> if #cols === 0 then m else submatrix'(m,cols)
 submatrix'(Matrix,VisibleList,Nothing    ) := (m,rows,null) -> if #rows === 0 then m else submatrix(m,compl(numgens target m,listZ toList splice rows),)
 
+submatrixByDegrees = method()
+submatrixByDegrees(Matrix, Sequence, Sequence) := (m, tarBox, srcBox) -> (
+    -- tarBox should be a sequence e.g. ({1},{4}), or ({1,2,3},{1,3,4}), or (, {1}) or ({1}, )
+    -- each null is same as {}, meaning either no lower bound, or no higher bound.
+    -- a list of length 1 is the same as an integer: e.g. ({1}, {4}) is same as (1,4).
+    -- first: check both source and target are free modules
+    -- check: length of lodegree (resp hidegree) is 0 or same as degree rank
+    (tarL, tarH) := tarBox;
+    (srcL, srcH) := srcBox;
+    if tarL === null then tarL = {};
+    if tarH === null then tarH = {};
+    if srcL === null then srcL = {};
+    if srcH === null then srcH = {};
+    if instance(tarL, ZZ) then tarL = {tarL};
+    if instance(tarH, ZZ) then tarH = {tarH};
+    if instance(srcL, ZZ) then srcL = {srcL};
+    if instance(srcH, ZZ) then srcH = {srcH};
+    ndegs := numgens degreesRing ring m;
+    if (#tarL > 0 and #tarL != ndegs)
+      or
+       (#tarH > 0 and #tarH != ndegs)
+      or 
+       (#srcL > 0 and #srcL != ndegs)
+      or
+       (#srcH > 0 and #srcH != ndegs)
+       then error ("expected degree vector of length "|ndegs);
+    tar := target m;
+    src := source m;
+    if not isFreeModule tar or not isFreeModule src then error "expected a matrix between free modules";
+    ptar := rawSelectByDegrees(raw tar, tarL, tarH);
+    psrc := rawSelectByDegrees(raw src, srcL, srcH);
+    submatrix(m, ptar, psrc)
+    )
+submatrixByDegrees(Matrix, ZZ, ZZ) := (m, lo, hi) -> submatrixByDegrees(m, ({lo},{lo}), ({hi},{hi}))
+submatrixByDegrees(Matrix, List, List) := (m, lo, hi) -> submatrixByDegrees(m, (lo,lo), (hi,hi))
+
 bothFree := (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"

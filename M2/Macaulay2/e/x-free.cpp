@@ -178,6 +178,19 @@ const FreeModule * IM2_FreeModule_submodule(const FreeModule *F,
      }
 }
 
+M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule* F,
+                                               M2_arrayint lo,
+                                               M2_arrayint hi)
+{
+  try {
+    return F->select_by_degrees(lo,hi);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
