@@ -917,6 +917,7 @@ gaussianVanishingIdeal Ring := Ideal => R -> (
        I = trim ideal(0_R);
        I = eliminate(elimvarlist,tempideal)
      )
+    else error "gaussianVanishingIdeal received an unknown type of ring"
 )
 
 ------------------------------------------------------------------

@@ -156,10 +156,11 @@ In either case, files will be installed in the following directories:
 	/foo/bar/lib/Macaulay2
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), replace the
-configuration command above with:
+with the program "epkg" (see http://www.encap.org/epkg/), add the option
 
-	./configure --enable-encap
+	--enable-encap
+
+to the "configure" command above.
 
 The effect is to insert one more component into the path names used at
 installation time, so that in response to 
@@ -247,8 +248,7 @@ Mark both shell scripts executable.
 MacOS X notes
 ----------------------
 
-    For specific scripts that we use to build the disk images, see
-    BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
-
-    The standard gcc under Mac OS X is based on LLVM and buggy, so we typically
-    compile the latest gcc.
+    The standard gcc under Mac OS X is actually "clang", is based on LLVM, and
+    has been buggy, so we typically compile the latest gcc, or we use "brew"
+    (available from http://brew.sh/) to install it.  Eventually we'll place the
+    list of libraries needed here.
