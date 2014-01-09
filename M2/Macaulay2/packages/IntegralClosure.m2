@@ -22,6 +22,7 @@ debug PrimaryDecomposition
    
 export{
      "integralClosure", 
+     "integralClosures", 
      "Verbosity",
      "Keep",
      "conductor", 
@@ -908,6 +909,21 @@ integralClosure(Ideal, ZZ) := opts -> (I,D) ->(
      )
 integralClosure(Ideal) := opts -> I -> integralClosure(I,1,opts)
 
+integralClosures = method (Options => options integralClosure)
+integralClosures(Ideal) := opts -> I -> (
+    -- input: ideal I in an affine ring A
+    -- output: 
+     S := ring I;
+     z := local z;
+     w := local w;
+     t := local t;
+     A := tensor(coefficientRing(S)[t],S,Join=>false);
+     IA := sub(I,A);
+     ReesI := (flattenRing reesAlgebra(IA,Variable =>z))_0;
+     fracs := icFractions ReesI;
+     phi := map(frac(A),frac(ReesI),gens(A_0*IA)|vars A);
+     delete((frac A)_0, fracs/phi)
+    )
 ----------------------------------------
 -- Canonical ideal, makeS2 --------
 ----------------------------------------
