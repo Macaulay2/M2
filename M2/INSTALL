@@ -250,5 +250,11 @@ MacOS X notes
 
     The standard gcc under Mac OS X is actually "clang", is based on LLVM, and
     has been buggy, so we typically compile the latest gcc, or we use "brew"
-    (available from http://brew.sh/) to install it.  Eventually we'll place the
-    list of libraries needed here.
+    (available from http://brew.sh/) to install it.
+
+    To build Macaulay, add the option
+
+	--build=x86_64-apple-darwin
+
+    to the appropriate configure command line above, for else it will try to
+    build a 32 bit version of Macaulay2.
