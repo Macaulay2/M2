@@ -10,8 +10,8 @@ char errfmt[] = "%s(%d) : column %d : %s";
 char errfmtnc[] = "%s(%d) : %s";
 #else
 char posfmt[] = "%s:%d:%d:(%d):";
-char errfmt[] = "%s:%d:%d: %s";
-char errfmtnc[] = "%s:%d: %s";
+char errfmt[] = "%s:%d:%d: error: %s";
+char errfmtnc[] = "%s:%d: error: %s";
 #endif
 
 
