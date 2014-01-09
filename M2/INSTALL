@@ -252,8 +252,8 @@ MacOS X notes
     has been buggy, so we typically compile the latest gcc, or we use "brew"
     (available from http://brew.sh/) to install it.
 
-    To build Macaulay, add the following option to the "configure" command above.
+    To build Macaulay, use this configure command:
 
-	--build=x86_64-apple-darwin
+	./configure --enable-download --build=x86_64-apple-darwin
 
     , for else it will try to build a 32 bit version of Macaulay2.
