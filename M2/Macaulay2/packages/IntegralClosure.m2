@@ -922,7 +922,11 @@ integralClosures(Ideal) := opts -> I -> (
      ReesI := (flattenRing reesAlgebra(IA,Variable =>z))_0;
      fracs := icFractions ReesI;
      phi := map(frac(A),frac(ReesI),gens(A_0*IA)|vars A);
-     delete((frac A)_0, fracs/phi)
+     newfracs := delete((frac A)_0, fracs/phi);
+     -- The following two lines remove powers of t, and returns a hashtable
+     L := partition(f -> degree(A_0, numerator f), newfracs);
+     toFracS := map(frac S, frac A, {0} | gens frac S);
+     hashTable apply(keys L, d -> d => apply(L#d, f -> toFracS(f // (A_0)^d)))
     )
 ----------------------------------------
 -- Canonical ideal, makeS2 --------
