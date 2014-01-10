@@ -4,7 +4,8 @@
 ------------------------------------------------------
 
 export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
-    deflateInPlace, DeflationSequence, LiftedPoint, 
+    deflateInPlace, DeflationSequence, DeflationSequenceMatrices,
+    LiftedPoint, LiftedSystem,
     numericalRank, isFullNumericalRank
     }
 
@@ -66,21 +67,35 @@ deflate (PolySystem, Point) := (F,P) -> (
 -- creates and stores (if not stored already) 
 -- returns a deflated system for rank r
 deflate (PolySystem, ZZ) := (F,r) -> (
+    if not F.Deflation#?r then (
+	C := coefficientRing ring F;
+	B := random(C^(F.NumberOfVariables),C^(r+1));
+    	deflate(F,B);
+	); 
+    F.Deflation#r
+    )
+
+-- deflate using a matrix 
+deflate(PolySystem, Matrix) := (F,B) -> (
     if not F.?Deflation then (
 	F.Deflation = new MutableHashTable;
 	F.DeflationRandomMatrix = new MutableHashTable;
 	);
-    if not F.Deflation#?r then (
-	C := coefficientRing ring F;
-	B := random(C^(F.NumberOfVariables),C^(r+1));
-	ll := symbol ll;
-	R := C (monoid [gens ring F, ll_1..ll_r]);
-	LL := transpose matrix{ take(gens R, -r) | {1_C} };
-	RFtoR := map(R, ring F);
-    	F.Deflation#r = polySystem (RFtoR F.PolyMap || (RFtoR jacobian F)*B*LL);
-	F.DeflationRandomMatrix#r = B; 
-	); 
+    r := numcols B - 1;
+    ll := symbol ll;
+    C := coefficientRing ring F;
+    R := C (monoid [gens ring F, ll_1..ll_r]);
+    LL := transpose matrix{ take(gens R, -r) | {1_C} };
+    RFtoR := map(R, ring F);
+    F.Deflation#r = polySystem (RFtoR F.PolyMap || (RFtoR jacobian F)*B*LL);
+    F.DeflationRandomMatrix#r = B; 
     F.Deflation#r
+    )
+
+-- deflate according to the sequence of matrices
+deflate(PolySystem, List) := (F, seq) -> (
+    scan(seq, B -> F = deflate(F,B));
+    F        
     )
 
 liftPointToDeflation = method() 
@@ -128,12 +143,14 @@ deflateInPlace = method()
 deflateInPlace(Point,PolySystem) := (P,F) -> (
     P0 := P;
     F0 := F;
-    d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation     
+    d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation
+    d'seq'mat := {}; -- ... corresponding matrices      
     assert isSolution(P,F);
     if (status P =!= Regular or (not P.?SolutionSystem) or P.SolutionSystem =!= F) then
     while not isFullNumericalRank evaluate(jacobian F0,P0) do (
 	r := deflate (F0,P0);
 	d'seq = d'seq | {r};
+	d'seq'mat = d'seq'mat | {F0.DeflationRandomMatrix#r};
 	P0' := liftPointToDeflation(P0,F0,r); 
 	F0 = F0.Deflation#r; 
 	P0 = newton(F0,P0');
@@ -141,8 +158,9 @@ deflateInPlace(Point,PolySystem) := (P,F) -> (
     P.Coordinates = take(coordinates P0, F.NumberOfVariables);
     if #d'seq>0 then P.ErrorBoundEstimate = P0.ErrorBoundEstimate;
     P.DeflationSequence = d'seq;
+    P.DeflationSequenceMatrices = d'seq'mat;
     P.SolutionSystem = F;
-    P.Deflation = F0;
+    P.LiftedSystem = F0;
     P.LiftedPoint = P0;
     P.SolutionStatus = if #d'seq > 0 then Singular else Regular
     )

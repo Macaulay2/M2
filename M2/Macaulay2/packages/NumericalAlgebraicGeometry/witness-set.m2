@@ -59,9 +59,29 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      o = fillInDefaultOptions o;
      attempts := DEFAULT.Attempts;
      success := false;
+     P := first w; -- all witness points are supposed to have the same "multiplicity structure"
+     if status P =!= Regular then (
+	 seq := P.DeflationSequenceMatrices;
+	 F := P.LiftedSystem; -- assumes P.System == E|S, in particular
+	 ES' := polySystem(E|S');
+	 F' := deflate(ES', seq);
+	 );
      while (not success and attempts > 0) do (
 	  attempts = attempts - 1;
-	  w' := track(E|S, E|S', w,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii)); 
+	  w' := if status P === Regular 
+	  then track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii))
+	  else (
+	      assert all(w, p->p.LiftedSystem===F);
+	      lifted'w' := track(F, F', w/(p->p.LiftedPoint), NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+    	      apply(lifted'w', p->(
+		      q := new Point from P;
+		      q.System = ES';
+		      q.LiftedSystem = F';
+		      q.LiftedPoint = p;
+		      q.Coordinates = take(coordinates p, ES'.NumberOfVariables);
+		      q
+		      ))
+	      );
 	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
      if attempts == 0 and not success then error "some path is singular generically";  
