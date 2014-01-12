@@ -130,9 +130,19 @@ testNorm = (R) -> (
     M := mutableMatrix(R, 10, 10);
     fillMatrix M;
     a := norm matrix M;
+    matrixM := matrix M;
+    assert(mutableMatrix matrixM == M);
+    
     b := norm M;
     ans := (flatten entries M)/abs//max;
+    if not (a == ans) then (
+      print(" a==b" | toExternalString (a==b) ); 
+      print(" a:=" | toExternalString a | "; ans:=" | toExternalString ans ); 
+     peek M ;
+      print(" M := " | toExternalString matrixM );
+    );
     assert(a == ans);
+    if not (b == ans) then ( print ("a="|toExternalString a|"; ans="|toExternalString ans););
     assert(b == ans);
     )
 
@@ -152,10 +162,10 @@ TEST ///
   testClean(CC_200)
   testClean(CC_54)
 
-  testNorm(CC_53)
-  testNorm(CC_100)
-  testNorm(CC_200)
-  testNorm(CC_54)
+  apply(15, i-> testNorm(CC_53) ) -- fails from time to time
+  apply(15, i->testNorm(CC_100) ) -- fails from time to time
+  apply(15, i->testNorm(CC_200) ) -- fails from time to time
+  apply(15, i-> testNorm(CC_54) ) -- fails from time to time
 ///
 
 
