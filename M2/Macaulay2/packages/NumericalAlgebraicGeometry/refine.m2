@@ -198,6 +198,8 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
       	   ref'sols
       )     
 
+
+/// -- OLD CODE
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
 refineViaDeflation(List, List) := o->(T,solsT) -> refineViaDeflation(transpose matrix{T},solsT,o)
 refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
@@ -258,4 +260,4 @@ refineViaDeflation(Matrix, List) := o->(sysT,solsT) -> (
 	  ); 
      solutionsWithMultiplicity ref'solsT
      )
-
+///

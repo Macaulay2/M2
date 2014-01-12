@@ -60,29 +60,34 @@ movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
      attempts := DEFAULT.Attempts;
      success := false;
      P := first w; -- all witness points are supposed to have the same "multiplicity structure"
-     if status P =!= Regular then (
+     local w';
+     if status P === Singular then (
 	 seq := P.DeflationSequenceMatrices;
-	 F := P.LiftedSystem; -- assumes P.System == E|S, in particular
+	 F := squareUp P.LiftedSystem; -- assumes P.System == E|S, in particular
 	 ES' := polySystem(E|S');
-	 F' := deflate(ES', seq);
+	 F' := squareUp(deflate(ES', seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
 	 );
      while (not success and attempts > 0) do (
 	  attempts = attempts - 1;
-	  w' := if status P === Regular 
-	  then track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii))
+	  if status P =!= Singular
+	  then (
+	      w' = track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	      success = all(w', p->status p === Regular);
+    	      )
 	  else (
-	      assert all(w, p->p.LiftedSystem===F);
+	      assert all(w, p->p.LiftedSystem===P.LiftedSystem);
+	      F'.PolyMap = (map(ring F, ring F', vars ring F)) F'.PolyMap; -- hack: rewrite with trackHomotopy
 	      lifted'w' := track(F, F', w/(p->p.LiftedPoint), NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
-    	      apply(lifted'w', p->(
+	      if success = all(lifted'w', p->status p === Regular) 
+	      then w' = apply(lifted'w', p->(
 		      q := new Point from P;
 		      q.System = ES';
 		      q.LiftedSystem = F';
 		      q.LiftedPoint = p;
 		      q.Coordinates = take(coordinates p, ES'.NumberOfVariables);
 		      q
-		      ))
+		      ));
 	      );
-	  success = o.AllowSingular or all(toList(0..#w'-1), p->isRegular(w',p));
 	  );
      if attempts == 0 and not success then error "some path is singular generically";  
      w'
@@ -98,7 +103,7 @@ movePointsToSlice (WitnessSet, List) := List => o -> (W,S') -> (
      then error "dimension of new slicing plane is too high";
      R := ring W;
      S := take(slice W,-#S'); -- take last #S equations
-     movePoints(equations W, S, S', points W, AllowSingular=>true, Software=>o.Software)
+     movePoints(equations W, S, S', W.Points, AllowSingular=>true, Software=>o.Software)
      )
 
 moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})

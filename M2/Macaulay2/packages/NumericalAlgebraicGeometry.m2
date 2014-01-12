@@ -51,7 +51,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
-     "regeneration", isSolution,
+     "regeneration", isSolution, SquaredUpSystem, SquareUpMatrix,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -124,7 +124,7 @@ DEFAULT = new MutableHashTable from {
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
-     SingularConditionNumber => 1e5,
+     SingularConditionNumber => 1e5, -- this may need to go away!!!
      maxPrecision => 53,
      maxNumberOfVariables => 50
      }
@@ -391,22 +391,26 @@ randomUnitaryMatrix ZZ := n -> (
      randomDiagonalUnitaryMatrix n * (last SVD M) 
      )
 
-randomOrthonormalRows = method() -- return a random n-by-r matrix with orthonormal columns
-randomOrthonormalRows(ZZ,ZZ) := (n,r) -> 
-if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..r-1))
+randomOrthonormalRows = method() -- return a random m-by-n matrix with orthonormal rows (m<=n)
+randomOrthonormalRows(ZZ,ZZ) := (m,n) -> 
+if n<m or m<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..m-1))
 
-randomOrthonormalCols = method() -- return a random r-by-n matrix with orthonormal rows
-randomOrthonormalCols(ZZ,ZZ) := (n,r) -> 
-if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)_(toList(0..r-1))
+randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonormal columns (m>=n)
+randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
+if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
-squareUpSystem = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUpSystem Matrix := M -> (
-     if numcols M != 1 then error "one-column matrix expected";
-     n := numgens ring M;
-     m := numrows M;
-     if m<=n then "overdetermined system expected";
-     sub(randomOrthonormalRows(m,n),ring M)*M
-     )
+squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
+squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
+    n := P.NumberOfVariables;
+    m := P.NumberOfPolys;
+    if m<=n then "overdetermined system expected";
+    M := sub(randomOrthonormalRows(n,m),coefficientRing ring P);
+    squareUp(P,M)
+    )
+squareUp(PolySystem,Matrix) := (P,M) -> (
+    P.SquareUpMatrix = M;
+    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!
+    )
 
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"

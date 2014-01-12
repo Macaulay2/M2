@@ -116,6 +116,17 @@ regeneration List := List => o -> F -> (
      c1
      )
 
+TEST /// -- example with a non-reduced component
+setRandomSeed 0
+R = CC[x,y,z]
+sph = (x^2+y^2+z^2-1); 
+I = ideal {sph, (x+y+z-1)^2};
+result = regeneration I_* -- deflation sequences are supposed to be the same
+assert(dim first result == 1 and degree first result == 2)
+p = first (first result).Points
+assert(numericalRank evaluate(jacobian p.SolutionSystem,p) == 2)
+///
+
 -----------------------------------------------------------------------
 -- DECOMPOSITION
 decompose WitnessSet := (W) -> (
@@ -150,7 +161,7 @@ decompose WitnessSet := (W) -> (
 	       pt' := track(S,eq|T,{coordinates (W.Points)#p}); 
 	       not isRegular(pt',0)) 
 	  do (); 
-	  pt := first movePoints(eq, T, slice W, pt'/coordinates);
+	  pt := first movePoints(eq, T, slice W, pt');
 	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
 	  else ( 
@@ -173,7 +184,7 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 --     c = list of integers (witness points subset)
 -- OUT: do (points W)_c represent an irreducible component?
      if dim W == 0 then return true;
-     w := (points W)_c;
+     w := (W.Points)_c;
      proj := random(CC^(numgens ring W), CC^1); 
      three'samples := apply(3, i->(
 	       local r;
@@ -186,9 +197,9 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 		    else (
 	       	    	 M := new MutableMatrix from W.Slice;
 		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column
-		    	 movePoints(equations W, slice W, sliceEquations(matrix M,ring W), w) / coordinates 
+		    	 movePoints(equations W, slice W, sliceEquations(matrix M,ring W), w) 
 	       	    	 ) );
-	       {1, r, sum flatten entries (matrix w' * proj)} 
+	       {1, r, sum flatten entries (matrix (w'/coordinates) * proj)} 
                ));
      if DBG>2 then (
 	  print matrix three'samples;
@@ -224,14 +235,29 @@ assert(#result==2 and result/degree == {4,2} and result/dim == {0,1})
 )
 ///
 
-///
-restart
-setRandomSeed 0 -- fails for 0,1,2 !!!
-NAGtrace 3
+
+numericalIrreducibleDecompositionM2 = I -> numericalVariety flatten (regeneration I_* / decompose)
+numericalIrreducibleDecompositionBertini = I -> bertiniPosDimSolve I_*
+numericalIrreducibleDecomposition = method(Options=>{Software=>null})
+numericalIrreducibleDecomposition Ideal := o -> I -> (
+    o = fillInDefaultOptions o;   
+    ( 
+	if o.Software === BERTINI 
+    	then numericalIrreducibleDecompositionBertini 
+    	else if o.Software === PHCPACK 
+    	then numericalIrreducibleDecompositionPHCpack 
+    	else if member(o.Software,{M2,M2engine})  
+	then numericalIrreducibleDecompositionM2
+    	else error "allowed values for Software: M2engine, M2, BERTINI, PHCPACK"
+    	) I
+    )
+
+TEST /// -- example with one nonreduced component
+setRandomSeed 0
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph, (x+y+z-1)^2};
-result = regeneration I_* -- deflation sequences are supposed to be the same
-p = first (first result).Points
-numericalRank evaluate(jacobian p.SolutionSystem,p)
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
+V = numericalIrreducibleDecomposition I 
+assert(#V#1==4 and sort(V#1/degree) == {1, 1, 1, 3} and #V#2==1 and degree first V#2 == 2)
 ///
+

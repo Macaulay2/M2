@@ -83,7 +83,10 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	  else error "expected a square system";
      	  );
     
-     solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
+     solsS = solsS / (s->sub(transpose matrix (
+		 if class s === Point then s
+	     	 else {toList s}
+	     	 ), CC)); -- convert to vectors
      if o.Projectivize then (
 	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
@@ -617,8 +620,8 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 		 else toList s
 		 );
 	     p.SolutionSystem = T;
-	     if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
-	     then p.SolutionStatus = Singular;
+	     --if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
+	     --then p.SolutionStatus = Singular;
 	     if PT=!=null then p.Tracker=PT;
 	     p
 	     ))

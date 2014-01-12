@@ -67,6 +67,10 @@ deflate (PolySystem, Point) := (F,P) -> (
 -- creates and stores (if not stored already) 
 -- returns a deflated system for rank r
 deflate (PolySystem, ZZ) := (F,r) -> (
+    if not F.?Deflation then (
+	F.Deflation = new MutableHashTable;
+	F.DeflationRandomMatrix = new MutableHashTable;
+	);
     if not F.Deflation#?r then (
 	C := coefficientRing ring F;
 	B := random(C^(F.NumberOfVariables),C^(r+1));
@@ -172,7 +176,7 @@ F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
 P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
 deflateInPlace(P,F)
 assert(P.DeflationSequence == {0,1})
-assert(P.ErrorBoundEstimate^2 > (newton(P.Deflation,P.LiftedPoint)).ErrorBoundEstimate)
+assert(P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
 ///
 
 partitionViaDeflationSequence = method()
@@ -205,6 +209,7 @@ partitionViaDeflationSequence(pts,F)
 --------------------------------
 -- OLD deflation
 --------------------------------
+///
 dMatrix = method()
 dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
 dMatrix (Ideal,ZZ) := (I, d) -> (
@@ -248,7 +253,7 @@ deflatedSystem(Ideal, Matrix, ZZ, ZZ) := memoize (
      DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
      --print DF;     
      (
-	  flatten entries squareUpSystem ( sub(transpose gens I,S) || DF ),
+	  flatten entries squareUp ( sub(transpose gens I,S) || DF ),
 	  SM
 	  )
      )
@@ -270,4 +275,4 @@ liftSolution(List, Matrix) := o->(c,dT)->(
      -- if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
      ret
      ) 
-
+///
