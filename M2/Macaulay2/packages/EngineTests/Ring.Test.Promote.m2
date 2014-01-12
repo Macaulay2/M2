@@ -1,5 +1,10 @@
 -- -*- coding: utf-8 -*-
 
+export  { 
+   testPromote,
+   testPromoteLift
+}
+
 testPromote = () -> (
     -- test basic promote routines
     -- Part1: source: RR_53
