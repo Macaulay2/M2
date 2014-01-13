@@ -135,6 +135,45 @@ debug64-clang-all : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+##################
+## linux #########
+##################
+linux-opt64 : always
+	mkdir -p builds.tmp/opt64
+	cd builds.tmp/opt64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# 		CC="gcc -m64" CXX="g++ -m64" \
+
+linux-debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+linux-opt64-all : always
+	mkdir -p builds.tmp/opt64-all
+	cd builds.tmp/opt64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 ######## below this line is older ######################
 sandboxed : always
 	mkdir -p sandbox64
@@ -165,7 +204,7 @@ opt64 : always
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-opt64-clang : always
+opt64-clang-old : always
 	mkdir -p opt64-clang
 	cd opt64-clang; ../../../configure \
 		--prefix="`pwd`/installed" \
@@ -351,7 +390,7 @@ debug64-givaro : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-debug64 : always
+debug64-old : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
