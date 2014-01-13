@@ -1859,6 +1859,26 @@ export rawSubmodule(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("rawSubmodule",rawSubmodule);
 
+export rawSelectByDegrees(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) == 3 then
+     when s.0 is M:RawFreeModuleCell do 
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else (
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else (
+	  lo := getSequenceOfSmallIntegers(s.1);
+	  hi := getSequenceOfSmallIntegers(s.2);
+	  toExpr(Ccode(RawArrayIntOrNull,
+		    "rawFreeModuleSelectByDegrees(",
+		    M.p, ",",
+		    lo, ",",
+		    hi,
+		    ")" ))))
+    else WrongArg(1, "a raw free module")
+    else WrongNumArgs(3)
+    else WrongNumArgs(3)
+    );
+setupfun("rawSelectByDegrees",rawSelectByDegrees);
+
 -----------------------------------------------------------------------------
 -- matrices
 
@@ -2496,6 +2516,7 @@ export rawSubmatrix(e:Expr):Expr := (
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("rawSubmatrix",rawSubmatrix);
+
 
 export rawReshape(e:Expr):Expr := (
      when e is s:Sequence do 

@@ -208,7 +208,8 @@ floz = fluidounce = 1/16 * pint
 bbl = barrel = 42 gallon
 bu = bushel = 2150.42 inch^3
 peck = 1/4 * bushel
-
+NM = nmi = nauticalMile = 1852m
+kn = knot = nauticalMile / hour
 
 Offset = new Type of BasicList
 Offset + Measurement := (o,m) -> new Offset from { o#0 + m, o#1 }
