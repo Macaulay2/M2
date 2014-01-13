@@ -165,7 +165,7 @@ opt64 : always
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-opt64-clang : always
+opt64-clang-old : always
 	mkdir -p opt64-clang
 	cd opt64-clang; ../../../configure \
 		--prefix="`pwd`/installed" \
@@ -351,7 +351,7 @@ debug64-givaro : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-debug64 : always
+debug64-old : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
