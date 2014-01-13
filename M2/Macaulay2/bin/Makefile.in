@@ -169,13 +169,22 @@ endif
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
-# note: the use of "execstack -c" in the following commands is an important security measure for
-#    many linux distributions, such as Fedora and gentoo.
-#    But we've had a report of it not working...
+# The use of "execstack -c" in the following commands is considered by some to be
+# and important security measure for some linux distributions, such as Fedora and gentoo.
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-	if [ -x /usr/bin/execstack ] ; then execstack -c "$@".tmp ; fi
+ifneq ("$(EXECSTACK)","no")
+	@ if [ -x /usr/bin/execstack ] ;\
+	  then if (set -x ; execstack -c "$@".tmp ) ; \
+	       then : ;\
+	       else echo "-- execstack command failed, please report" >&2 ;\
+		    echo "   selinux may interfere: try using a different file system," >&2 ;\
+		    echo "   or add EXECSTACK=no to command line to bypass" >&2 ;\
+		    exit 1 ;\
+	       fi ;\
+	  fi
+endif
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp
