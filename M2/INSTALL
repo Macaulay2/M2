@@ -77,6 +77,24 @@ various modern operating systems:
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
 
+  Mac OS X:
+    Optionally install a good version of emacs, such as the one available from 
+      http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
+      run it from the command line, create a shell script with this line in it:
+	exec /Applications/Emacs.app/Contents/MacOS/Emacs "$@"
+    Install "homebrew", available from http://brew.sh/.  (Experts who want to install
+      homebrew somewhere other than in /usr/local may prefer to point a browser
+      at https://github.com/Homebrew/homebrew/tarball/master, which will download
+      a tar file that can be untarred anywhere and renamed.)
+    Install the programs and libraries needed for building:
+	brew tap homebrew/versions homebrew/science
+	brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost glpk cddlib
+	brew link --force autoconf # just to ensure it got linked upon installation
+    Now remember to add 
+    	CC=gcc-4.8 CXX=g++-4.8
+    to the "configure" command line below, because those are the names of the
+    compilers in the package gcc48.
+
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
 	autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
@@ -100,9 +118,8 @@ To get the very latest source code (which may not always work):
 Compiling
 -----------------------
 
-Begin with these commands:
+Begin with this command, run in this directory:
 
-	cd M2
 	make
 
 The "make" command above runs the commands "autoconf" and "autoheader", which
@@ -185,21 +202,17 @@ our program, and how to initialize the dumped data file, if present:
 	/foo/bar/Macaulay2-*/postinstall
 	/foo/bar/Macaulay2-*/preremove
 
-To use a different prefix, say /mnt/local, for finding libraries and include
-files installed in a nonstandard location:
+To use a different prefix, say $HOME/local, for finding libraries and include
+files installed in a nonstandard location, add the following options to the
+"configure" command line:
 
-	../configure LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ...
+	LDFLAGS=-L$HOME/local/lib CPPFLAGS=-I$HOME/local/include
 
-where ... represents the remaining arguments, as above.  As an example, if
-you have compiled the libraries with fink, then you could use this line:
+To specify libraries to link against during configuration, use the LIBS
+environment variable, as described in documentation for autoconf.  For example,
+to link with libfoo, add the following option to the "configure" command line:
 
-        ../configure LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ...
-
-To specify libraries to link against during configuration, use the
-LIBS environment variable, as described in documentation for autoconf.
-Example:
-
-	../configure LIBS=-lfoo ...
+	LIBS=-lfoo
 
 To see descriptions of all the environment variables that influence
 configuration, run this command and look at the section of the output
@@ -249,12 +262,17 @@ MacOS X notes
 ----------------------
 
     The standard gcc under Mac OS X is actually "clang", is based on LLVM, and
-    has been buggy, so we typically compile the latest gcc, or we use "brew"
-    (available from http://brew.sh/) to install it.
+    has been buggy, so we compile the latest gcc or we use "brew" to install
+    it, as described above.
 
     To build Macaulay, add the option
-
 	--build=x86_64-apple-darwin
-
-    to the appropriate configure command line above, for else it will try to
+    to the appropriate "configure" command line above, for else it will try to
     build a 32 bit version of Macaulay2.
+
+    Recall that if you are using version 4.8 of gcc, as installed by homebrew,
+    you should add
+	CC=gcc-4.8 CXX=g++-4.8
+    to the "configure" command line.  To sum up, your command line, with all
+    those options, will look something like this:
+	../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
