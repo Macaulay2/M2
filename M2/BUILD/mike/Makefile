@@ -47,6 +47,8 @@ opt64-all : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+#		LDFLAGS="-L/usr/local/lib -ltbb" \
+
 debug64-all : always
 	mkdir -p builds.tmp/debug64-all
 	cd builds.tmp/debug64-all; ../../../../configure \
