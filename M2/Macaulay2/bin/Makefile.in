@@ -177,7 +177,14 @@ $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 ifneq ("$(EXECSTACK)","no")
-	@ if [ -x /usr/bin/execstack ] ; then (set -x ; execstack -c "$@".tmp ) ; fi
+	@ if [ -x /usr/bin/execstack ] ;\
+	  then if (set -x ; execstack -c "$@".tmp ) ; \
+	       then : ;\
+	       else echo "-- execstack command failed, please report" >&2 ;\
+		    echo "   add EXECSTACK=no to command line to bypass" >&2 ;\
+		    exit 1 ;\
+	       fi ;\
+	  fi
 endif
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
