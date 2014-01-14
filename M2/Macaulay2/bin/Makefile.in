@@ -40,6 +40,13 @@ check: $(EXEFILE)
 M2_LDFLAGS += -Wl,-rpath,@libdir@
 M2_LDFLAGS += -Wl,-rpath,@librariesdir@
 
+ifeq (@HAVE_WL_X_NOEXECSTACK@,yes)
+# Having a non-executable stack is considered by some to be and important
+# security measure for some linux distributions, such as Fedora and gentoo.
+M2_LDFLAGS += -Wl,-z,noexecstack
+# Just to make sure, we also run execstack below.
+endif
+
 ifeq (@OS@,MacOS)
 
 ## This option should increase the stack size to 16MB, but it makes M2 crash.
@@ -54,10 +61,16 @@ endif
 
 M2_LDFLAGS += $(LDFLAGS)
 
-ifeq (gcc,@CC@)
-ifeq (@ISSUE@,Cygwin)
+ifeq ($(MAPFILE)-@HAVE_WL_MAP@,yes-yes)
+## - use this to get a memory map listing from the gnu linker
+M2_LDFLAGS  += -Wl,-Map,mapfile
+endif
+mapfile.demangled: mapfile ; demangle <$< >$@
+clean::; rm -f mapfile.demangled
+
+ifeq (@HAVE_WL_ENABLE_AUTO_IMPORT@,yes)
 M2_LDFLAGS  += -Wl,--enable-auto-import
-    # we add this linker option to prevent these warning messages:
+    # we add this linker option to prevent these warning messages under Cygwin:
     # /usr/lib/gcc/i686-pc-cygwin/3.4.4/../../../../i686-pc-cygwin/bin/ld: warning: auto-importing has been activated without --enable-auto-import specified on the command line.
     # This should work unless it involves constant data structures referencing symbols from auto-imported DLLs.
     # Info: resolving _rl_attempted_completion_over by linking to __imp__rl_attempted_completion_over (auto-import)
@@ -68,15 +81,6 @@ M2_LDFLAGS  += -Wl,--enable-auto-import
     # Info: resolving _rl_readline_version by linking to __imp__rl_readline_version (auto-import)
     # Info: resolving _gdbm_errno by linking to __imp__gdbm_errno (auto-import)
 endif
-ifeq ($(MAPFILE),yes)
-ifeq (yes,$(shell if gcc -Wl,-v 2>&1 | grep -q 'GNU ld' ; then echo yes ; else echo no ; fi))
-## - use this to get a memory map listing from the gnu linker
-M2_LDFLAGS  += -Wl,-Map,mapfile
-endif
-endif
-endif
-mapfile.demangled: mapfile ; demangle <$< >$@
-clean::; rm -f mapfile.demangled
 
 ############################## macros
 
@@ -169,14 +173,12 @@ endif
 clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
-# The use of "execstack -c" in the following commands is considered by some to be
-# and important security measure for some linux distributions, such as Fedora and gentoo.
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
 ifneq ("$(EXECSTACK)","no")
 	@ if [ -x /usr/bin/execstack ] ;\
-	  then if (set -x ; execstack -c "$@".tmp ) ; \
+	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \
 	       then : ;\
 	       else echo "-- execstack command failed, please report" >&2 ;\
 		    echo "   selinux may interfere: try using a different file system," >&2 ;\
