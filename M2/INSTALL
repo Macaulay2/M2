@@ -221,7 +221,7 @@ To see descriptions of all the environment variables that influence
 configuration, run this command and look at the section of the output
 entitled "Some influential environment variables":
 
-	../configure --help
+	../../configure --help
 
 The only one of these variables with a nonempty default value is
 CFLAGS, and its default value is "-g -O2".  That will be supplanted if
@@ -238,13 +238,13 @@ well as to specify names for the compilers that include the additional options
 for the architecture to be used.  This will work with gmp, for example, as it
 knows how to produce the additional options to the compilers:
 
-   ../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
+   ../../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
 
 Another way to do it is to add the architecture option to CFLAGS and to
 CXXFLAGS.  The disadvantage of that approach is that the package might have its
 own idea about what values to use for those options and ignore these settings:
 
-   ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
+   ../../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
 
 Sometimes a library will get confused by values for CC and CXX with spaces in
 them, or will try to parse the options, and get confused by the "-m64" option.
