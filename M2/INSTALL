@@ -1,9 +1,9 @@
 
-			   Macaulay2
-	    by Daniel R. Grayson <dan@math.uiuc.edu>
-	 and Michael E. Stillman <mike@math.cornell.edu>
+				   Macaulay2
+		   by Daniel R. Grayson <dan@math.uiuc.edu>
+		and Michael E. Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+		     available from http://Macaulay2.com/
 
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay2.
@@ -117,17 +117,6 @@ unnecessary burden on your system administrator if you put the repository (or
 at least the build directories) on a locally mounted scratch drive, where the
 files are not backed up.  For your changes to Macaulay2 source code, github.com
 will serve as your backup.
-
-----------------------
-Getting the source code
-----------------------
-
-The best way to get the source code is to download a tar file from our web site
-that contains the source code corresponding to a major release.
-
-To get the very latest source code (which may not always work):
-
-	svn export svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
 
 -----------------------
 Compiling
