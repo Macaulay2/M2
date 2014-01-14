@@ -44,7 +44,11 @@ ifeq (@HAVE_WL_X_NOEXECSTACK@,yes)
 # Having a non-executable stack is considered by some to be and important
 # security measure for some linux distributions, such as Fedora and gentoo.
 M2_LDFLAGS += -Wl,-z,noexecstack
-# Just to make sure, we also run execstack below.
+# The execstack program could also be used, but it's more aggressive than the
+# linker, since it runs a system call that fails on NFS-mounted filesystems, as
+# the following output from strace shows:
+#   setxattr("a.out.#prelink#.cnMkMw", "security.selinux", "system_u:object_r:nfs_t:s0", 27, 0) = -1 EOPNOTSUPP (Operation not supported)
+# If necessary, we could reinstate its use, by moving the file to /tmp temporarily.
 endif
 
 ifeq (@OS@,MacOS)
@@ -176,17 +180,6 @@ clean::; rm -f $(EXEFILE) timestamp.o
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-ifneq ("$(EXECSTACK)","no")
-	@ if [ -x /usr/bin/execstack ] ;\
-	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \
-	       then : ;\
-	       else echo "-- execstack command failed, please report" >&2 ;\
-		    echo "   selinux may interfere: try using a different file system," >&2 ;\
-		    echo "   or add EXECSTACK=no to command line to bypass" >&2 ;\
-		    exit 1 ;\
-	       fi ;\
-	  fi
-endif
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp
