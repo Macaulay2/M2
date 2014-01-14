@@ -159,6 +159,21 @@ linux-debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
+linux-opt64-all : always
+	mkdir -p builds.tmp/opt64-all
+	cd builds.tmp/opt64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
 ######## below this line is older ######################
 sandboxed : always
 	mkdir -p sandbox64
