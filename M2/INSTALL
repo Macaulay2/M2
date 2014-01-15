@@ -89,10 +89,8 @@ various modern operating systems:
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
 	brew tap homebrew/versions homebrew/science
-	brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib
+	brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk
 	brew link --force autoconf # just to ensure it got linked upon installation
-    (Note: "brew" can install "glpk", but our "4ti2" is incompatible with the version
-      provided.)
     Now remember to add 
     	CC=gcc-4.8 CXX=g++-4.8
     to the "configure" command line below, because those are the names of the
@@ -274,15 +272,6 @@ MacOS X notes
 
     to the appropriate "configure" command line above, for else it will try to
     build a 32 bit version of Macaulay2.
- 
-    Also, in case you have installed too modern a version of "glpk", add the
-    option
-
-    	 --enable-build-libraries=glpk
-
-    to the "configure" command line.  (We compile "4ti2", and it depends on
-    obsolete symbols from glpk, such as LPX, which were removed between
-    versions 4.44 and 4.52.)
 
     Recall that if you are using version 4.8 of gcc, as installed by homebrew,
     you should add
@@ -292,4 +281,4 @@ MacOS X notes
     to the "configure" command line.  To sum up, your command line, with all
     those options, will look something like this:
 
-	../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8 --enable-build-libraries=glpk
+	../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
