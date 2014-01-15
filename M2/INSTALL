@@ -124,6 +124,34 @@ various modern operating systems:
     	emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
 
 ----------------------
+  Compiling the most recent GNU C compiler
+----------------------
+
+  To download and install the GNU C compiler, without having root access:
+
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
+       tar xjf gcc-4.8.2.tar.bz2
+       cd gcc-4.8.2
+       ./contrib/download_prerequisites
+       cd ..
+       mkdir gcc-4.8.2-build
+       cd gcc-4.8.2-build
+       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++ --disable-multilib
+       make
+       make install
+
+     The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
+     Add $HOME/local/bin to your PATH environment variable, for convenience.
+
+     Add "fortran" to the list of languages if you need to compile lapack and
+     blas.
+
+     Under Scientific Linux 6.4, if you run "sudo yum install glibc-devel.i686"
+     first, then you can omit --disable-multilib above and get a 32 bit
+     compiler, too.  To see quickly which glibc architectures are installed,
+     run "ls /usr/include/gnu/stubs-*.h".
+
+----------------------
 Choosing a place for the repository
 ----------------------
 
@@ -178,12 +206,7 @@ the configure script:
 
 	../../configure --enable-download --prefix=/foo/bar
 
-Or, to specify a different location temporarily you may add an option to the
-"make install" line:
-
-	make prefix=/foo/bar install
-
-In either case, files will be installed in the following directories:
+Files will then be installed in the following directories:
 
 	/foo/bar/bin
 	/foo/bar/share/Macaulay2
@@ -191,6 +214,47 @@ In either case, files will be installed in the following directories:
 	/foo/bar/share/man/man1
 	/foo/bar/share/emacs/site-lisp
 	/foo/bar/lib/Macaulay2
+
+instead of in
+
+	/usr/local/bin
+	/usr/local/share/Macaulay2
+	/usr/local/share/doc/Macaulay2
+	/usr/local/share/man/man1
+	/usr/local/share/emacs/site-lisp
+	/usr/local/lib/Macaulay2
+
+To use a different prefix, say $HOME/local, for finding libraries and include
+files installed in a nonstandard location, add the following options to the
+"configure" command line:
+
+	LDFLAGS=-L$HOME/local/lib CPPFLAGS=-I$HOME/local/include
+
+To use a different C compiler, such as gcc version 4.8.2 as compiled above, add
+something like the following to the "configure" command line:
+
+	CC=gcc-4.8.2 CXX=g++-4.8.2
+
+To specify libraries to link against during configuration, use the LIBS
+environment variable, as described in documentation for autoconf.  For example,
+to link with libfoo, add the following option to the "configure" command line:
+
+	LIBS=-lfoo
+
+To see descriptions of all the environment variables that influence
+configuration, run this command and look at the section of the output
+entitled "Some influential environment variables":
+
+	../../configure --help
+
+The only one of these variables with a nonempty default value is
+CFLAGS, and its default value is "-g -O2".  That will be supplanted if
+you override it.
+
+To specify a different installation location for the "make install" command you
+may add an option to the "make install" line, as follows:
+
+	make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
 with the program "epkg" (see http://www.encap.org/epkg/), add the option
@@ -221,28 +285,6 @@ our program, and how to initialize the dumped data file, if present:
 	/foo/bar/Macaulay2-*/encapinfo
 	/foo/bar/Macaulay2-*/postinstall
 	/foo/bar/Macaulay2-*/preremove
-
-To use a different prefix, say $HOME/local, for finding libraries and include
-files installed in a nonstandard location, add the following options to the
-"configure" command line:
-
-	LDFLAGS=-L$HOME/local/lib CPPFLAGS=-I$HOME/local/include
-
-To specify libraries to link against during configuration, use the LIBS
-environment variable, as described in documentation for autoconf.  For example,
-to link with libfoo, add the following option to the "configure" command line:
-
-	LIBS=-lfoo
-
-To see descriptions of all the environment variables that influence
-configuration, run this command and look at the section of the output
-entitled "Some influential environment variables":
-
-	../../configure --help
-
-The only one of these variables with a nonempty default value is
-CFLAGS, and its default value is "-g -O2".  That will be supplanted if
-you override it.
 
 -------------------------------------------
 Compiling on multiple machine architectures
