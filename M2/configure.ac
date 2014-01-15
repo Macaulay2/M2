@@ -1414,6 +1414,37 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     HAVE_NO_PARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
+AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
+AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_X_NOEXECSTACK=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_X_NOEXECSTACK=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_ENABLE_AUTO_IMPORT=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_ENABLE_AUTO_IMPORT=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
+AC_SUBST(HAVE_WL_MAP,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_MAP=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))
+rm -f conftest.mapfile
+LDFLAGS=$SAVE
+
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
       #include <errno.h>])
