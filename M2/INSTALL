@@ -49,28 +49,47 @@ version.
 Here are commands that will get you a good development environment under
 various modern operating systems:
 
+  Debian:
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+    On a 32-bit system, add
+    	--with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
+
   Ubuntu:
-    sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
 	# note: libz-dev seems to have been replaced by zlib1g-dev
 	# note: libncurses-dev seems to have been replaced by libncurses5-dev
 	# note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
-
-  Debian:
-    sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+    On a 32-bit system, add
+    	--with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
 
   Raspbian:
-    sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time
-
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time
+    On a 32-bit system, add
+    	--with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
     The Raspberry Pi comes with 512MB of RAM and a swapfile /var/swap of size 100MB.  It's a good idea to
-    increase the swap size to 1000MB by editing /etc/dphys-swapfile .
+     increase the swap size to 1000MB by editing /etc/dphys-swapfile .
 
   Fedora:
-    sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
-    some debugging aids:
+    Install packages with:
+      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
+    Some debugging aids:
        sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
   Scientific linux:
-    sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
+    Install packages with:
+      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
     For making an rpm file, install fakeroot manually, from:
     	 http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
