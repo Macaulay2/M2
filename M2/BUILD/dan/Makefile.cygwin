@@ -26,7 +26,8 @@ endif
 # to install packages use the setup program
 # see ../../INSTALL for the list of packages to install
 
-CONFIGOPTIONS += --build=i486-pc-cygwin
+CONFIGOPTIONS += --build=i686-pc-cygwin
+
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
 # INSTALLOPTIONS += prefix=/usr/local/encap
 INSTALLOPTIONS += prefix=/usr
