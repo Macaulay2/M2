@@ -111,7 +111,7 @@ various modern operating systems:
         brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk
         brew link --force autoconf # just to ensure it got linked upon installation
     Now remember to add 
-        CC=gcc-4.8 CXX=g++-4.8
+        CC=gcc-4.8 CXX=g++-4.8 FC=gfortran-4.8.2
     to the "configure" command line below, because those are the names of the
     compilers in the package gcc48.
 
@@ -136,7 +136,7 @@ various modern operating systems:
        cd ..
        mkdir gcc-4.8.2-build
        cd gcc-4.8.2-build
-       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++ --disable-multilib
+       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
 
@@ -149,11 +149,9 @@ various modern operating systems:
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
         export CC=gcc-4.8.2
         export CXX=g++-4.8.2
+        export FC=gfortran-4.8.2
 
      and then log out and log in again.
-
-     Add "fortran" to the list of languages if you need to compile lapack and
-     blas.
 
      Under Scientific Linux 6.4, if you run "sudo yum install glibc-devel.i686"
      first, then you can omit --disable-multilib above and get a 32 bit
@@ -244,9 +242,9 @@ files installed in a nonstandard location, add the following options to the
 That step is unnecessary if the compiler was compiled from sources and installed
 with that prefix.
 
-To use a different C compiler, such as gcc version 4.8.2 as compiled above, add
-something like the following to the "configure" command line:
-        CC=gcc-4.8.2 CXX=g++-4.8.2
+To use a different compiler suite, such as gcc version 4.8.2 as compiled above,
+add something like the following to the "configure" command line:
+        CC=gcc-4.8.2 CXX=g++-4.8.2 FC=gfortran-4.8.2
 That step is unnecessary if the environment variables CC and CXX are set as
 described above.
 
