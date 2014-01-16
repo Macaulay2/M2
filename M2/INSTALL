@@ -157,10 +157,12 @@ various modern operating systems:
 
      and then log out and log in again.
 
-     Under Scientific Linux 6.4, if you run "sudo yum install glibc-devel.i686"
+     Under Scientific Linux 6.4, if you run "sudo yum install -y glibc-devel.i686"
      first, then you can omit --disable-multilib above and get a 32 bit
      compiler, too.  To see quickly which glibc architectures are installed,
-     run "ls /usr/include/gnu/stubs-*.h".
+     run "ls /usr/include/gnu/stubs-*.h".  (Parenthetically, we observe that to
+     make /usr/bin/gcc successfully compile 32 bit binaries, one should also
+     run "yum install -y libgcc.i686".)
 
      Any other libraries you may want to use may also be installed with
      $HOME/local as the install prefix, as gcc-4.8.2 will automatically search
