@@ -89,7 +89,7 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
+      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack-devel libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
     For making an rpm file, install fakeroot manually, from:
          http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
@@ -139,6 +139,10 @@ various modern operating systems:
        ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++,fortran --disable-multilib
        make
        make install
+
+     Do not omit the language "fortran" from the list, even if the package
+     "lapack-devel" is installed, as "gfortran" is consulted for the locations
+     of its libraries, and it would be bad to have a mismatch.
 
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
      Now put the following lines in your file $HOME/.profile :
