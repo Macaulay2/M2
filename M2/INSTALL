@@ -144,6 +144,8 @@ various modern operating systems:
      Now put the following lines in your file $HOME/.profile :
 
         export PATH=$HOME/local/bin:$PATH
+        export MANPATH=$HOME/local/share/man:$MANPATH
+        export INFOPATH=$HOME/local/share/info:$INFOPATH
         export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
         export CC=gcc-4.8.2
         export CXX=g++-4.8.2
