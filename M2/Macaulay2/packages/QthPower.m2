@@ -1,7 +1,7 @@
 newPackage(
     "QthPower",
     Version => "1.02", 
-    Date => "January 10, 2014",
+    Date => "January 16, 2014",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
