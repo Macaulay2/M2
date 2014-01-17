@@ -98,7 +98,7 @@ various modern operating systems:
     (4.8.1) from the repository of the "Scientific Linux CERN 6" distribution,
     using the following commands.
 	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
-	yum install devtoolset-2-gcc devtoolset-2-g++ devtoolset-2-gfortran
+	yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran
     Then use
 	scl enable devtoolset-2 bash
     to start up bash running in an environment where the modern versions are on
