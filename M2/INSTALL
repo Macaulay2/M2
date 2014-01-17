@@ -93,6 +93,20 @@ various modern operating systems:
     For making an rpm file, install fakeroot manually, from:
          http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
+    Scientific Linux 6.4 has an old version (4.4.7) of gcc that may not work with a
+    future version of Macaulay2.  However, one can install newer compilers
+    (4.8.1) from the repository of the "Scientific Linux CERN 6" distribution,
+    using the following commands.
+	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	yum install devtoolset-2-gcc devtoolset-2-g++ devtoolset-2-gfortran
+    Then use
+	scl enable devtoolset-2 bash
+    to start up bash running in an environment where the modern versions are on
+    the path, or use
+        . /opt/rh/devtoolset-2/enable
+    to update the environment of your currently running shell.  The latter
+    command will work in your shell initialization file, ".profile".
+
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
 
