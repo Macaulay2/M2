@@ -13,7 +13,6 @@
 #include <mpack/mlapack_mpfr.h>
 #endif
 #include <mpfr.h>
-#include <fflas-ffpack/config-blas.h>
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
 extern "C" {
