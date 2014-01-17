@@ -13,6 +13,7 @@
 #include <mpack/mlapack_mpfr.h>
 #endif
 #include <mpfr.h>
+#include <fflas-ffpack/config-blas.h>
 /* Lapack routines */
 /* Compute solutions x to Ax = b for square matrix A and a matrix b */
 extern "C" {
@@ -49,7 +50,17 @@ int dsyev_(char *n,      // whether to compute eigenvectors
            double *work, // workspace
            int *wsize,   // size of workspace
            int *info);   // error info
-#ifndef __FFLASFFPACK_config_blas_H
+
+#ifndef __FFLASFFPACK_HAVE_LAPACK
+#define __defining_dgetrf_mandatory
+#endif
+
+#ifdef __FFLASFFPACK_HAVE_CLAPACK
+#define __defining_dgetrf_mandatory
+#endif
+
+#ifdef __defining_dgetrf_mandatory
+
 int dgetrf_(int *rows, // rows
             int *cols, // columns
             double *A, // input matrix, on exit L & U from A=PLU.
