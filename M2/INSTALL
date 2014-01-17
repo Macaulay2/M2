@@ -160,6 +160,10 @@ various modern operating systems:
      "lapack-devel" is installed, as "gfortran" is consulted for the locations
      of its libraries, and it would be bad to have a mismatch.
 
+     It might be possible to add --disable-libstdcxx to the "configure"
+     commandn line above, allowing the resulting binaries to depend on the
+     version of libstdc++ already installed on your system.
+
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
      Now put the following lines in your file $HOME/.profile :
 
