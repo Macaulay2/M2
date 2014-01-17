@@ -50,23 +50,12 @@ int dsyev_(char *n,      // whether to compute eigenvectors
            int *wsize,   // size of workspace
            int *info);   // error info
 
-#ifndef __FFLASFFPACK_HAVE_LAPACK
-#define __defining_dgetrf_mandatory
-#endif
-
-#ifdef __FFLASFFPACK_HAVE_CLAPACK
-#define __defining_dgetrf_mandatory
-#endif
-
-#ifdef __defining_dgetrf_mandatory
-
-int dgetrf_(int *rows, // rows
-            int *cols, // columns
-            double *A, // input matrix, on exit L & U from A=PLU.
-            int *ld,   // rows
-            int *ipiv, // becomes permutation indices of P
-            int *info);// error info
-#endif
+void dgetrf_(const int *rows, // rows
+             const int *cols, // columns
+             double *A,       // input matrix, on exit L & U from A=PLU.
+             const int *ld,   // rows
+             int *ipiv,  // becomes permutation indices of P
+             int *info); // error info
 
 int dgesvd_(char* jobU,    // amount of U to return
             char* jobV,    // amount of V to return
