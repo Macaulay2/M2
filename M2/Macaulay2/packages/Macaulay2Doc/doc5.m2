@@ -217,7 +217,7 @@ document {
      Usage => "benchmark s",
      "Produces an accurate timing for the code contained in the string ", TT "s", ".  The value returned is the number of seconds.",
      EXAMPLE {
-		///benchmark "sqrt 2p3000000"///
+		///benchmark "sqrt 2p100000"///
 		},
      "The snippet of code provided will be run enough times to register
      meaningfully on the clock, and the garbage collector will be called
