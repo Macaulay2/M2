@@ -1,6 +1,14 @@
 --- flint-2.4/configure	2014-01-17 17:50:39.000000000 +0100
 +++ flint-2.4/configure	2014-01-17 17:49:59.000000000 +0100
-@@ -76,8 +76,13 @@ while [ "$1" != "" ]; do
+@@ -68,6 +68,7 @@ usage()
+    echo "     ABI=[32|64]          Tell the compiler to use given ABI (default: empty)"
+ }
+ 
++MP="gmp"
+ while [ "$1" != "" ]; do
+    PARAM=`echo $1 | sed 's/=.*//'`
+    VALUE=`echo $1 | sed 's/[^=]*//; s/=//'`
+@@ -76,8 +77,13 @@ while [ "$1" != "" ]; do
           usage
           exit 0
           ;;
@@ -15,7 +23,17 @@
           ;;
        --with-mpfr)
           MPFR_DIR="$VALUE"
-@@ -201,7 +205,7 @@ else
+@@ -177,6 +177,9 @@ while [ "$1" != "" ]; do
+       CFLAGS)
+          CFLAGS="$VALUE"
+          ;;
++      LLIBS)
++         LLIBS="$VALUE"
++         ;;
+       ABI)
+          ABI="$VALUE"
+          ;;
+@@ -201,7 +207,7 @@ else
  fi
  LIB_DIRS="${LIB_DIRS} ${GMP_LIB_DIR}"
  INC_DIRS="${INC_DIRS} ${GMP_INC_DIR}"
@@ -24,6 +42,15 @@
  
  if [ -d "${MPFR_DIR}/lib" ]; then
     MPFR_LIB_DIR="${MPFR_DIR}/lib"
+@@ -560,7 +560,7 @@ done
+ 
+ #library paths
+ 
+-LLIBS="-L\$(CURDIR)"
++LLIBS="-L\$(CURDIR) ${LLIBS}"
+ for LIB_DIR in ${LIB_DIRS} ${EXTRA_LIB_DIRS}; do
+    LLIBS="${LLIBS} -L${LIB_DIR}"
+ done
 diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/longlong.h flint-2.4/longlong.h
 --- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/longlong.h	2013-12-21 14:59:26.000000000 -0500
 +++ flint-2.4/longlong.h	2014-01-06 00:51:03.000000000 -0500
