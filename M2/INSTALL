@@ -96,9 +96,11 @@ various modern operating systems:
     Scientific Linux 6.4 has an old version (4.4.7) of gcc that may not work with a
     future version of Macaulay2.  However, one can install newer compilers
     (4.8.1) from the repository of the "Scientific Linux CERN 6" distribution,
-    using the following commands.
+    (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
 	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
 	yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran
+    Or you can install the whole set with
+        yum install devtoolset-2
     Then use
 	scl enable devtoolset-2 bash
     to start up bash running in an environment where the modern versions are on
@@ -157,6 +159,10 @@ various modern operating systems:
      Do not omit the language "fortran" from the list, even if the package
      "lapack-devel" is installed, as "gfortran" is consulted for the locations
      of its libraries, and it would be bad to have a mismatch.
+
+     It might be possible to add --disable-libstdcxx to the "configure"
+     commandn line above, allowing the resulting binaries to depend on the
+     version of libstdc++ already installed on your system.
 
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
      Now put the following lines in your file $HOME/.profile :
