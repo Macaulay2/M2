@@ -8,10 +8,10 @@
 newPackage(
 	"CharacteristicClasses",
 	Version => "1.0", 
-    	Date => "January 7, 2014",
+    	Date => "January 17, 2014",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "jost@math.su.se", 
-		  HomePage => "http://www.math.su.se/~jost"}},
+		  HomePage => "http://people.su.se/~chjo9357/"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
     	DebuggingMode => false,
 	Configuration => { 
@@ -159,9 +159,9 @@ eulerChar  ProjectiveVariety := opts -> projectiveVar -> (
      )
 
  
--- There is no test for the above functions using Bertini as Bertini does not need to
+-- There is no test for the above functions using ResidualStrategy=>Bertini as Bertini does not need to
 -- be installed on every system that runs Macaulay2. However, the function bertiniCheck()
--- checks whether the commands segreClass, chernClass and CSMClass work when using Bertini
+-- checks whether the commands segreClass, chernClass, CSMClass and eulerChar work when using Bertini
 -- instead of symbolic computations.
 bertiniCheck = () -> (
     
@@ -184,7 +184,7 @@ bertiniCheck = () -> (
     eulerCharacteristic := eulerChar(J, ResidualStrategy=>Bertini);
     assert( eulerCharacteristic == 1 );
     
-    print "The option ResidualStrategy=>Bertini seems to work for the commands chernClass, segreClass, CSMClass and eulerChar.";
+    print "Test passed for the option ResidualStrategy=>Bertini for the commands chernClass, segreClass, CSMClass and eulerChar.";
     
     )  
 
@@ -256,7 +256,7 @@ internalSegre = {ResidualStrategy => Symbolic} >> opts -> I -> (
      
      -- take care of the special cases I = (0) and I = (1)
      if I == ideal(0_R) then (
-	  segreList := {};
+	  segreList := {1} | toList( ambientDim:0 );
 	  return (segreList,ambientDim);
 	  );
      if I == ideal(1_R) then (
@@ -416,7 +416,7 @@ internalChern = {ResidualStrategy => Symbolic} >> opts -> I -> (
 -- an ideal I, using an exclusion-inclusion principle and the function internalCSMhyp, which computes the
 -- Chern-Schwartz-MacPherson classes of a hypersurface.
 -- Input:  I, a homogeneous ideal in a polynomial ring over a field
--- Output: csmList, a list containing the degrees of the Chern-Schwartz-MacPhersn classes of Proj(R/I)
+-- Output: csmList, a list containing the degrees of the Chern-Schwartz-MacPherson classes of Proj(R/I)
 --         ambientDim, the dimension k of the ambient space Proj(R)=P^k 
 internalCSM = {ResidualStrategy => Symbolic} >> opts -> I -> (
      
@@ -560,19 +560,20 @@ doc ///
 	       The package CharacteristicClasses provides commands to compute the degrees of the Chern classes, Chern-Schwartz-MacPherson classes and Segre classes of closed subschemes of projective space. 
 	       Equivalently, it computes the pushforward of the respective classes to the Chow ring of projective space. The package can also compute the topological Euler characteristic of closed subvarieties and subschemes of projective space.
 	       
-	       Let X be an n-dimensional subscheme of projective space P^k. If X is smooth, then by definition the Chern classes of X are the Chern classes c_0(T_X), ..., c_n(T_X) 
+	       Let X be an n-dimensional subscheme of projective space \PP^k. If X is smooth, then by definition the Chern classes of X are the Chern classes c_0(T_X), ..., c_n(T_X) 
 	       of the tangent bundle T_X. The Chern classes are cycles in the Chow ring of X, i.e., linear combinations of subvarieties of X modulo rational equivalence. 
-	       For a subvariety V of X, the degree of the cycle [V] is defined as the degree of the variety V. This extends linearly to linear combinations of subvarieties. 
-	       Computing the degrees of the Chern classes of X is equivalent to computing the pushforward of the Chern classes to the Chow ring of P^k, which is the ring 
-	       ZZ[H]/(H^{k+1}), with H the hyperplane class. Also by definition, the Segre classes of the projective scheme X are the Segre classes s_0(X,P^k), ..., s_n(X,P^k) 
-	       of X in P^k. For definition of the concepts used so far, see for example W. Fulton "Intersection Theory". Chern-Schwartz-MacPherson classes are a generalization of Chern classes of smooth schemes to possibly singular schemes with nice functorial properties.
+	       For a subvariety V of X, the degree of the cycle [V] is defined as the degree of the variety V. This extends linearly to linear combinations of cycles. 
+	       Computing the degrees of the Chern classes of X is equivalent to computing the pushforward of the Chern classes to the Chow ring of \PP^k, which is the ring 
+	       \ZZ[H]/(H^{k+1}), with H the hyperplane class. Also by definition, the Segre classes of the projective scheme X are the Segre classes s_0(X,\PP^k), ..., s_n(X,\PP^k) 
+	       of X in \PP^k. For definition of the concepts used so far, see for example W. Fulton "Intersection Theory". Chern-Schwartz-MacPherson classes are a generalization of Chern classes of smooth schemes to possibly singular schemes with nice functorial properties.
 	       
-	       The functions computing characteristic classes in this package can have two different kinds of output. The functions chernClass, segreClass and CSMClass give back the pushforward of the total class 
-	       to the Chow ring of P^k, whereas chernClassList, segreClassList and CSMClass List give a list of the degrees of the Chern, Segre and Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
-	       given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
+	       -- The functions computing characteristic classes in this package can have two different kinds of output. The functions chernClass, segreClass and CSMClass give back the pushforward of the total class 
+	       -- to the Chow ring of P^k, whereas chernClassList, segreClassList and CSMClass List give a list of the degrees of the Chern, Segre and Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
+	       -- given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
 	       
-	       This implementation uses the algorithm given in the  articles "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
-	       (Sandra Di Rocco, David Eklund, Chris Peterson, Andrew J. Sommese) and "A method to compute Segre classes" (David Eklund, Christine Jost, Chris Peterson).
+	       This implementation uses the algorithms given in the  articles "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
+	       (S. Di Rocco, D. Eklund, C. Peterson, A.J. Sommese), "A method to compute Segre classes" (D. Eklund, C. Jost, C. Peterson) and
+	       "An algorithm for computing the topological Euler characteristic of complex projective varieties" (C. Jost).
 	       The main step in the algorithm is the computation of the residuals. This can be done symbolically, using
 	       Gr&ouml;bner bases, and numerically, using the regenerative cascade implemented in Bertini. The regenerative
 	       cascade is described in "Regenerative cascade homotopies for solving polynomial systems" by 
@@ -600,24 +601,23 @@ doc ///
 	  segreClass X
      Inputs
      	  I:Ideal
-	    a homogeneous ideal in a polynomial ring over a field, defining a closed subscheme X of P^k
+	    a homogeneous ideal in a polynomial ring over a field, defining a closed subscheme X of \PP^k
 	  X:ProjectiveVariety
-	    -- a projective variety
 	  ResidualStrategy => "Symbolic"
 	    the strategy to compute the degrees of the residuals
      Outputs
      	  :RingElement
-	   the pushforward of the total Segre class of the scheme X to the Chow ring ZZ[H]/(H^{k+1}) of projective space P^k.
+	   the pushforward of the total Segre class of the scheme X to the Chow ring \ZZ[H]/(H^{k+1}) of projective space \PP^k.
      Description
      	  Text
-	       For an n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Segre class s(X,P^k) of X in P^k to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Segre classes s_0(X,P^k),...,s_n(X,P^k) as coefficients.
+	       For an n-dimensional subscheme X of projective space \PP^k, this command computes the push-forward of the total Segre class s(X,\PP^k) of X in \PP^k to the Chow ring of \PP^k. The output is a polynomial in the hyperplane class, containing the degrees of the Segre classes s_0(X,\PP^k),...,s_n(X,\PP^k) as coefficients.
 	  Example
 	       setRandomSeed 72;
 	       R = QQ[x,y,z]
 	       segreClass ideal(x*y)
 	       segreClass ideal(x^2*y,x*y^2)	  
 	  Text
-     	       We consider two singular curves in P^2, C_1 defined by \{xy=0\} \  and C_2 defined by \{x^2y=xy^2=0\}. The degrees of their Segre classes are s_0(C_1,P^2) = 2, s_1(C_1,P^2)=-4, and s_0(C_2,P^2)=2, s_1(C_2,P^2)=-3. Observe that the two curves have the same underlying space but a different scheme structure, which is detected by the Segre classes. It is also possible to provide the symbol for the hyperplane class in the Chow ring of P^k:
+     	       We consider two singular curves in \PP^2, C_1 defined by \{xy=0\} \  and C_2 defined by \{x^2y=xy^2=0\}. The degrees of their Segre classes are s_0(C_1,\PP^2) = 2, s_1(C_1,\PP^2)=-4, and s_0(C_2, \PP^2)=2, s_1(C_2,\PP^2)=-3. Observe that the two curves have the same underlying space but a different scheme structure, which is detected by the Segre classes. It is also possible to provide the symbol for the hyperplane class in the Chow ring of \PP^k:
 	  Example
 	       segreClass( ideal(x*y), symbol t )
 	  Text
@@ -646,15 +646,14 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	    -- a projective variety
 	  ResidualStrategy => "Symbolic"
 	    the strategy to compute the degrees of the residuals
      Outputs
      	  :RingElement
-	   the pushforward of the total Chern class of the scheme X to the Chow ring ZZ[H]/(H^{k+1}) of projective space P^k.
+          the pushforward of the total Chern class of the scheme X to the Chow ring \ZZ[H]/(H^{k+1}) of projective space \PP^k.
      Description
      	  Text
-	       For a non-singular n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Chern class of X to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern classes c_0(T_X),...,c_n(T_X) as coefficients.
+	       For a non-singular n-dimensional subscheme X of projective space \PP^k, this command computes the push-forward of the total Chern class of X to the Chow ring of \PP^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern classes c_0(T_X),...,c_n(T_X) as coefficients.
 	  Example
 	       setRandomSeed 438;
 	       R = QQ[x,y,z,w]
@@ -662,7 +661,7 @@ doc ///
 	       chernClass minors(2,A)  	  
 	  Text
 	       The 2x2-minors of the matrix A form the ideal of the twisted cubic. It is well-known that its degree is 3 and its genus is 0. The calculations confirm that deg c_1 = 2-2g = 2 and deg  c_0 = 3. 
-	       It is also possible to provide the symbol for the hyperplane class in the Chow ring of P^k:
+	       It is also possible to provide the symbol for the hyperplane class in the Chow ring of \PP^k:
 	  Example
 	       chernClass( minors(2,A), symbol t ) 
 	  Text
@@ -670,7 +669,7 @@ doc ///
 	       option @TO ResidualStrategy@ to Bertini will do the main computations numerically, provided
 	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@ .  
 	       
-	       The command chernClass actually computes the push-forward of the total @EM {"Chern-Fulton class"}@ of the subscheme X of projective space P^k. The Chern-Fulton class is one of several generalizations of Chern classes to possibly singular subschemes of projective space. It is defined as c_{CF}(X) = c(T_{P^k}|_X) \cap s(X,P^k). For non-singular schemes, the Chern-Fulton class coincides with the Chern class of the tangent bundle. So for non-singular input, the command will compute just the usual Chern class.
+	       The command chernClass actually computes the push-forward of the total @EM {"Chern-Fulton class"}@ of the subscheme X of projective space \PP^k. The Chern-Fulton class is one of several generalizations of Chern classes to possibly singular subschemes of projective space. It is defined as c_{CF}(X) = c(T_{\PP^k}|_X) \cap s(X,\PP^k). For non-singular schemes, the Chern-Fulton class coincides with the Chern class of the tangent bundle. So for non-singular input, the command will compute just the usual Chern class.
 	       
 	       Observe that the algorithm is a probabilistic algorithm and may give a wrong answer with a small but nonzero probability. Read more under 
 	       @TO "probabilistic algorithm"@.
@@ -694,15 +693,14 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	    -- a projective variety
 	  ResidualStrategy => "Symbolic"
 	    the strategy to compute the degrees of the residuals
      Outputs
      	  :RingElement
-	   the pushforward of the total Chern-Schwartz-MacPherson class of the scheme X to the Chow ring ZZ[H]/(H^{k+1}) of projective space P^k.
+	   the pushforward of the total Chern-Schwartz-MacPherson class of the scheme X to the Chow ring \ZZ[H]/(H^{k+1}) of projective space \PP^k.
      Description
      	  Text
-	       For an n-dimensional subscheme X of projective space P^k, this command computes the push-forward of the total Chern-Schwartz-MacPherson class of X to the Chow ring of P^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern-Schwartz-MacPherson classes (c_{SM})_0(T_X),...,(c_{SM})_n(T_X) as coefficients.
+	       For an n-dimensional subscheme X of projective space \PP^k, this command computes the push-forward of the total Chern-Schwartz-MacPherson class of X to the Chow ring of \PP^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern-Schwartz-MacPherson classes (c_{SM})_0(T_X),...,(c_{SM})_n(T_X) as coefficients.
 	  Example
 	       setRandomSeed 365;
 	       R = QQ[x,y,z]
@@ -710,7 +708,7 @@ doc ///
 	       chernClass ideal(x^3 + x^2*z - y^2*z)	  
 	  Text
 	       We compute the Chern-Schwartz-MacPherson class of the singular cubic x^3 + x^2z = y^2z. Observe that it does not agree with the Chern-Fulton class computed by the command @TO chernClass@.
-	      It is also possible to provide the symbol for the hyperplane class in the Chow ring of P^k:
+	      It is also possible to provide the symbol for the hyperplane class in the Chow ring of \PP^k:
 	  Example
 	       CSMClass( ideal(x^3 + x^2*z - y^2*z), symbol t ) 
 	  Text
@@ -739,7 +737,6 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	    -- a projective variety
 	  ResidualStrategy => "Symbolic"
 	    the strategy to compute the degrees of the residuals
      Outputs
@@ -747,7 +744,7 @@ doc ///
 	    the topological Euler characteristic of the scheme X.
      Description
      	  Text
-	      This command computes the topological Euler characteristic of closed subschemes of P^k, even singular ones. We compute the topological Euler characteristic of the singular cubic x^3 + x^2z = y^2z. 
+	      This command computes the topological Euler characteristic of closed subschemes of \PP^k, even singular ones. We compute the topological Euler characteristic of the singular cubic x^3 + x^2z = y^2z. 
 	  Example
 	       setRandomSeed 4386;
 	       R = QQ[x,y,z]
@@ -766,8 +763,6 @@ doc ///
           ResidualStrategy
 	  Symbolic
 	  Bertini
-     	  --Headline
-          --ResidualStrategy,
      Description
      	  Text
 	       The option ResidualStrategy determines which strategy is used to compute the residuals, which
@@ -783,6 +778,28 @@ doc ///
 ///
 
 
+
+   
+doc ///
+     Key
+     	  "configuring Bertini"
+     Description
+     	  Text
+	       Using the numeric version of any command in the package CharacteristicClasses needs version 1.3 or higher of Bertini
+	       to be installed. Download and installation of Bertini are explained at the @HREF {"http://www.nd.edu/~sommese/bertini/","Bertini homepage"}@. 
+	       
+	       Bertini should be installed in a directory in the user's PATH. As an alternative you can tell
+	       the package how to find Bertini. Usually, when the package is installed, a file called {\tt init-CharacteristicClasses.m2} is created automatically in the user's
+	       @TO2 {"applicationDirectory", "application directory"}@. See also the option {\tt Configuration} under @TO "newPackage"@.
+	       In the file {\tt init-CharacteristicClasses.m2}, replace {\tt ""} in  the line {\tt "pathToBertini" => ""}
+	       by the path to Bertini in quotation marks, for example {\tt "pathToBertini" => "/usr/local/BertiniLinux64&#95;v1.3.1/"}. The / at the end is important.	
+	       Windows users should use the path relative to the cygwin directory, for example {\tt "/usr/local/BertiniWindows32&#95;v1.3.1/"} if Bertini is installed under 
+	       {\tt pathToTheCygwinDirectory&#92;cygwin&#92;usr&#92;local&#92;BertiniWindows32&#95;v1.3.1 }.
+	       
+	       To check whether Bertini is working properly with the functions in the package CharacteristicClasses, use @TO "bertiniCheck"@.
+
+///
+
 doc ///
     Key
     	bertiniCheck
@@ -797,27 +814,7 @@ doc ///
 		be installed on the user's system. The function bertiniCheck checks whether Bertini is properly installed and configured. See
 		also @TO "configuring Bertini"@.	    
 ///
-   
-   
-doc ///
-     Key
-     	  "configuring Bertini"
-     Description
-     	  Text
-	       Using the numeric version of any command in the package CharacteristicClasses needs version 1.3 or higher of Bertini
-	       to be installed. Download and installation of Bertini are explained at the @HREF {"http://www.nd.edu/~sommese/bertini/","Bertini homepage"}@. 
-	       
-	       Bertini should be installed in a directory in the user's PATH. As an alternative you can tell
-	       the package how to find Bertini. Usually, when the package is installed, a file called {\tt init-CharacteristicClasses.m2} is created automatically in the user's
-	       @TO2 {"applicationDirectory", "application directory"}@. See the option {\tt Configuration} under @TO "newPackage"@.
-	       In the file {\tt init-CharacteristicClasses.m2}, replace {\tt ""} in  the line {\tt "pathToBertini" => ""}
-	       by the path to Bertini in quotation marks, for example {\tt "pathToBertini" => "/usr/local/BertiniLinux64&#95;v1.3.1/"}. The / at the end is important.	
-	       Windows users should use the path relative to the cygwin directory, for example {\tt "/usr/local/BertiniWindows32&#95;v1.3.1/"} if Bertini is installed under 
-	       {\tt pathToTheCygwinDirectory&#92;cygwin&#92;usr&#92;local&#92;BertiniWindows32&#95;v1.3.1 }.
-	       
-	       To check whether Bertini is working properly with the functions in the package CharacteristicClasses, use @TO "bertiniCheck"@.
-
-///
+  
 
 
 doc ///
@@ -874,4 +871,4 @@ TEST ///
 -- [1] A method to compute Segre classes (David Eklund, Christine Jost, Chris Peterson), Journal of Algebra and Its Applications 12(2), 2013
 -- [2] Bertini: Software for Numerical Algebraic Geometry (Daniel J. Bates, Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), available at http://www.nd.edu/~sommese/bertini
 -- [3] Regenerative cascade homotopies for solving polynomial systems (Jonathan D. Hauenstein, Andrew J. Sommese, Charles W. Wampler), Applied Mathematics and Computation 218(4), 2011
--- [4] An algorithm for computing the topological Euler characteristic of complex projective varieties (Christine Jost), to be submitted, arXiv:1301.4128 [math.AG]
+-- [4] An algorithm for computing the topological Euler characteristic of complex projective varieties (Christine Jost), submitted, arXiv:1301.4128 [math.AG]
