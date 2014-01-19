@@ -1,18 +1,18 @@
 # -*- makefile-gmake -*-
-DIRECTORY = scientific
-CONFIGOPTIONS += --enable-rpm
-
-CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
-CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
-# ... or ...
-# CONFIGOPTIONS += --build=i386-pc-linux-gnu
-
-# just for testing, not for production:
-# CONFIGOPTIONS += --enable-fflas-ffpack
-
+M=64
+ifeq ($M,64)
+A=x86_64
+else
+ifeq ($M,32)
+A=i686
+else
+$(error "$M should be 32 or 64")
+endif
+endif
+CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M" --enable-rpm
+DIRECTORY = scientific-$M
 include Makefile.include
 default: check
-
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific "
+# compile-command: "time make -f Makefile.scientific M=64 "
 # End:
