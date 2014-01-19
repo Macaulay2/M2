@@ -181,7 +181,6 @@ $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
 	@ echo "compiling timestamp.c"
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-<<<<<<< HEAD
 ifneq ("$(EXECSTACK)","no")
 	@ if [ -x /usr/bin/execstack ] ;\
 	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \
@@ -193,8 +192,6 @@ ifneq ("$(EXECSTACK)","no")
 	       fi ;\
 	  fi
 endif
-=======
->>>>>>> m2/master
 	printenv LD_LIBRARY_PATH
 ifneq (@LDD@,)
 	- @LDD@ $@.tmp
