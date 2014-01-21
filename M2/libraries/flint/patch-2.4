@@ -1,48 +1,16 @@
---- flint-2.4/configure	2014-01-17 17:50:39.000000000 +0100
-+++ flint-2.4/configure	2014-01-17 17:49:59.000000000 +0100
-@@ -68,6 +68,7 @@ usage()
-    echo "     ABI=[32|64]          Tell the compiler to use given ABI (default: empty)"
- }
- 
-+MP="gmp"
- while [ "$1" != "" ]; do
-    PARAM=`echo $1 | sed 's/=.*//'`
-    VALUE=`echo $1 | sed 's/[^=]*//; s/=//'`
-@@ -76,8 +77,13 @@ while [ "$1" != "" ]; do
-          usage
-          exit 0
-          ;;
--      --with-mpir|--with-gmp)
-+      --with-gmp)
-          GMP_DIR="$VALUE"
-+        MP="gmp"
-+         ;;
-+      --with-mpir)
-+         GMP_DIR="$VALUE"
-+         MP="mpir"
-          ;;
-       --with-mpfr)
-          MPFR_DIR="$VALUE"
-@@ -177,6 +177,9 @@ while [ "$1" != "" ]; do
-       CFLAGS)
-          CFLAGS="$VALUE"
-          ;;
-+      LLIBS)
-+         LLIBS="$VALUE"
-+         ;;
-       ABI)
-          ABI="$VALUE"
-          ;;
-@@ -201,7 +207,7 @@ else
+--- flint-2.4/configure	2014-01-21 12:19:08.000000000 +0100
++++ flint-2.4/configure.orig	2014-01-21 12:19:34.000000000 +0100
+@@ -251,7 +251,7 @@ if [ "$WANT_BLAS" = "1" ]; then
+    fi
+    EXTRA_INC_DIRS="${EXTRA_INC_DIRS} ${BLAS_INC_DIR}"
+    EXTRA_LIB_DIRS="${EXTRA_LIB_DIRS} ${BLAS_LIB_DIR}"
+-   EXTRA_LIBS="${EXTRA_LIBS} openblas"
++   EXTRA_LIBS="${EXTRA_LIBS} blas"
  fi
- LIB_DIRS="${LIB_DIRS} ${GMP_LIB_DIR}"
- INC_DIRS="${INC_DIRS} ${GMP_INC_DIR}"
--LIBS="${LIBS} gmp"
-+LIBS="${LIBS} ${MP}"
+ CONFIG_BLAS="#define HAVE_BLAS ${WANT_BLAS}"
  
- if [ -d "${MPFR_DIR}/lib" ]; then
-    MPFR_LIB_DIR="${MPFR_DIR}/lib"
-@@ -547,7 +547,4 @@ fi
+@@ -537,9 +537,6 @@ fi
+ 
  CONFIG_PTHREAD="#define HAVE_PTHREAD ${PTHREAD}"
  
 -if [ "$PTHREAD" = "1" ]; then
@@ -50,15 +18,7 @@
 -fi
  
  #pocess external modules
-@@ -560,7 +560,7 @@ done
  
- #library paths
- 
--LLIBS="-L\$(CURDIR)"
-+LLIBS="-L\$(CURDIR) ${LLIBS}"
- for LIB_DIR in ${LIB_DIRS} ${EXTRA_LIB_DIRS}; do
-    LLIBS="${LLIBS} -L${LIB_DIR}"
- done
 @@ -569,6 +567,9 @@ for LIB_DIR in ${LIB_DIRS} ${EXTRA_LIB_D
  done
  
