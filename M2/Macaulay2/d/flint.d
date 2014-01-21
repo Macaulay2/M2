@@ -26,7 +26,7 @@ util_arrayZZ flint_factor(gmp_ZZ x) {
      mpz_set_si(result->array[0], factor->sign);
      for (i=0; i<len; i++) {
 	  fmpz_get_mpz(result->array[2*i+1],factor->p + i);
-	  fmpz_get_mpz(result->array[2*i+2],factor->exp + i);
+	  fmpz_get_mpz(result->array[2*i+2],(fmpz *)(factor->exp + i));
 	  }
      fmpz_factor_clear(factor);
      return result;
