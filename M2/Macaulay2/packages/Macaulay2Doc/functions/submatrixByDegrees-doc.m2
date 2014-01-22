@@ -58,6 +58,6 @@ TEST ///
   submatrixByDegrees(C.dd_2, ({4},{4}),({},{}))
   submatrixByDegrees(C.dd_2, ({3},{3}),({7},{7}))
   F = source C.dd_2
-  rawSelectByDegrees(raw F, {-4}, {-3})
-  rawSelectByDegrees(raw F, {}, {8})
+  -- rawSelectByDegrees(raw F, {-4}, {-3})
+  -- rawSelectByDegrees(raw F, {}, {8})
 ///
