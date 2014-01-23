@@ -1,5 +1,12 @@
 -- let's make sure the random number generator doesn't change
 
+-- starting in 1.6.0.1 tests (such as this one, as well as examples) are run
+-- with the random number seed initialized with "setRandomSeed 0".  Here we
+-- confirm that:
+assert ( ( for i to 20 list random 100 ) === {24, 65, 71, 72, 19, 19, 91, 72, 93, 79, 72, 77, 63, 85, 39, 21, 34, 19, 54, 62, 83} )
+setRandomSeed 0
+assert ( ( for i to 20 list random 100 ) === {24, 65, 71, 72, 19, 19, 91, 72, 93, 79, 72, 77, 63, 85, 39, 21, 34, 19, 54, 62, 83} )
+
 setRandomSeed()
 -- starting with 1.2.1, we initialize the random number seed "randomly", 
 -- and the way to get it the way it was before is with setRandomSeed()
