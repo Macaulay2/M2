@@ -1,7 +1,7 @@
 newPackage(
     "QthPower",
     Version => "1.02", 
-    Date => "January 16, 2014",
+    Date => "January 17, 2014",
     Authors => {{Name => "Douglas A. Leonard",
                  Email => "leonada@auburn.edu",
                  HomePage => "http://www.dms.auburn.edu/~leonada"}},
@@ -1306,7 +1306,7 @@ assert(ic3#3 == matrix{{3,2}})
       R0 = QQ[y,x,Weights=>entries weightGrevlex(wtR10)];
       GB = {y^9+y^8*(x+1)+y^5+y^4*x+y^3*x^2+y^2*x^3+y*x^8+x^9}
 time ic0 = rationalIntegralClosure(wtR10,R0,GB)
-assert(ic3#3==matrix{{4,4,4,4,3,2,2,1,1}})
+assert(ic0#3==matrix{{4,4,4,4,3,2,2,1,1}})
 -------------------------------------------------------------------------------
    wtR11 = matrix{{7,6}};
       Rq = ZZ/2[y,x,Weights => entries weightGrevlex(wtR11)];
