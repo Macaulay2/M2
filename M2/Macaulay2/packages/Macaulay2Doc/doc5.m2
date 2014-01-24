@@ -617,7 +617,9 @@ document {
      Consequences => {
 	  {"Initializes the random number generator to a fixed state, identical to the
 	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
-	       the random number seed is initially set to a number that depends on the current date, time (in seconds), and process id."}
+	       the random number seed is initially set to a number that depends on the current date, 
+	       time (in seconds), and process id, except for the running of examples and tests
+	       in packages, where it is always initialized to 0."}
 	  },
      EXAMPLE lines ///
      setRandomSeed()

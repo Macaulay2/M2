@@ -100,6 +100,11 @@ document {
 			 false during the loading of the package, even if the ", TO "DebuggingMode", "
 			 option of ", TO "loadPackage", " or ", TO "newPackage", " is set to true.  This will help
 			 the user avoid entering the debugger while already in the debugger."
+			 },
+		    LI {
+			 "The random number seed is now initialized to 0 with ", TO "setRandomSeed", "
+			 when running examples (with ", TO "installPackage", ") and when running tests
+			 (with ", TO "check", "), to ensure predictability and uniformity of results."
 			 }
 	       	    }
 	       },
