@@ -1,4 +1,5 @@
 restart
+debug loadPackage "NAGtypes"
 debug loadPackage "NumericalAlgebraicGeometry"
 DBG = 2;
 ------------------------------------------------------
@@ -8,8 +9,8 @@ I = katsuraBench 8;
 -- I = stewartGough40real();     -- 883     -- >>0     -- 31      --
 --I = example2();
 
-P = solveSystem (I_*,Software=>PHCpack);
-B = solveSystem (I_*,Software=>Bertini);
+P = solveSystem (I_*,Software=>PHCPACK);
+B = solveSystem (I_*,Software=>BERTINI);
 H = solveSystem (I_*,Software=>HOM4PS2); 
 
 -- check if P, B, and H are approx. same 

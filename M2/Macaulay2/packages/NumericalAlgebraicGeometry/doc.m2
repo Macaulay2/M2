@@ -482,12 +482,19 @@ document {
 	Outputs => {{ TT "r", ", an integer"}},
 	"This function finds an approximate rank of the matrix ", TT "M", ".",
 	PARA {
-	     "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". ",
-	     "To establish numerical rank we look for the first large gap between two consecutive singular values. ",
-	     "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
-	     " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO Threshold,
-	     "."
-	     },
+	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
+	    },
+	PARA {
+	    "If ", TO Threshold, " is >1, then to establish numerical rank we look 
+	    for the first large gap between two consecutive singular values. ",
+	    "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
+	    " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO Threshold,
+	    "."
+	    },
+	PARA {
+	    "If ", TO Threshold, " is <=1, then the rank equals 
+	    the number of singular values larger then ", TO Threshold, "." 
+	    },
 	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
 numericalRank matrix {{2,1},{0,0.001}}
@@ -574,18 +581,18 @@ regeneration I_* / decompose
 	}
 
 document {
-	Key => {(numericalVariety, Ideal)},
+	Key => {(numericalIrreducibleDecomposition, Ideal), numericalIrreducibleDecomposition},
 	Headline => "constructs a numerical variety defined by the given ideal",
-	Usage => "V = numericalVariety I",
+	Usage => "V = numericalIrreducibleDecomposition I",
 	Inputs => { "I"=>"contained in the ring of polynomials with complex coefficients" },
 	Outputs => { "V" },
-     	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
+     	"The ", TO2{WitnessSet,"witness sets"}, " of the ", TO2{NumericalVariety,"numerical variety"}, TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-V = numericalVariety I 
+V = numericalIrreducibleDecomposition I 
 peek V
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
