@@ -169,7 +169,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- because M2 automatically thinks "res"=resolution   	  
   sols := toList apply(value L, sol->new HashTable from toList sol);
   defaultPrecision = oldprec;
-  apply(sols, sol->point( {apply(gens R, v->sol#v)} | outputToPoint sol ))
+  apply(sols, sol->point( {apply(gens R, v->sol#(value toString v))} | outputToPoint sol ))
 )
 
 pointsToFile = method(TypicalValue => Nothing, Options => {Append => false})

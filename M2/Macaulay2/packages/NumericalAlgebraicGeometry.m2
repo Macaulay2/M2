@@ -16,7 +16,8 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false,
+     DebuggingMode => true,
+     -- DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -36,22 +37,21 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "track", "refine", "totalDegreeStartSystem",
-     "parameterHomotopy",
+     "solveSystem", "track", "refine", "totalDegreeStartSystem", "newton",
+     "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
-     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold",
+     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", "maxPrecision",
      "Normalize", "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
+     Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
-     "numericalRank", 
-     "regeneration", 
+     "regeneration", isSolution, SquaredUpSystem, SquareUpMatrix,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -69,10 +69,11 @@ protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
-protect MaxNumberOfVariables
+protect maxNumberOfVariables
 
--- DEBUG CORE ----------------------------------------
-debug Core; -- to enable engine routines
+-- DEBUG Core and NAGtypes ----------------------------------------
+debug Core -- to enable engine routines
+debug NAGtypes -- to enable private routines
 
 -- ./NumericalAlgebraicGeometry/ FILES -------------------------------------
 load "./NumericalAlgebraicGeometry/PHCpack/PHCpack.interface.m2" 
@@ -123,8 +124,9 @@ DEFAULT = new MutableHashTable from {
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
-     SingularConditionNumber => 1e8,
-     MaxNumberOfVariables => 50
+     SingularConditionNumber => 1e5, -- this may need to go away!!!
+     maxPrecision => 53,
+     maxNumberOfVariables => 50
      }
 
 setDefault = method(Options => {
@@ -283,18 +285,6 @@ BombieriWeylNormSquared RingElement := RR => f -> realPart sum(listForm f, a->(
 	  ))
 
 ------------------------------------------------------
-checkCCpolynomials = method()
-checkCCpolynomials List := F -> (    
-    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
-    if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
-    coeffR := coefficientRing R; 
-    if not(
-	instance(ring 1_coeffR, ComplexField) 
-	or instance(ring 1_coeffR, RealField)
-	or coeffR===QQ or coeffR ===ZZ
-	) then error "expected coefficients that can be converted to complex numbers";  
-    if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
-    )
 checkCCpolynomials (List,List) := (S,T) -> (
     n := #T;
     if #S != n then error "expected same number of polynomials in start and target systems";
@@ -319,7 +309,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
     else error "not implemented"
     )
-
 
 isRegular = method()
 -- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
@@ -402,22 +391,26 @@ randomUnitaryMatrix ZZ := n -> (
      randomDiagonalUnitaryMatrix n * (last SVD M) 
      )
 
-randomOrthonormalRows = method() -- return a random n-by-r matrix with orthonormal columns
-randomOrthonormalRows(ZZ,ZZ) := (n,r) -> 
-if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..r-1))
+randomOrthonormalRows = method() -- return a random m-by-n matrix with orthonormal rows (m<=n)
+randomOrthonormalRows(ZZ,ZZ) := (m,n) -> 
+if n<m or m<1 then error "wrong input" else (randomUnitaryMatrix n)^(toList(0..m-1))
 
-randomOrthonormalCols = method() -- return a random r-by-n matrix with orthonormal rows
-randomOrthonormalCols(ZZ,ZZ) := (n,r) -> 
-if n<r or r<1 then error "wrong input" else (randomUnitaryMatrix n)_(toList(0..r-1))
+randomOrthonormalCols = method() -- return a random m-by-n matrix with orthonormal columns (m>=n)
+randomOrthonormalCols(ZZ,ZZ) := (m,n) -> 
+if m<n or n<1 then error "wrong input" else (randomUnitaryMatrix m)_(toList(0..n-1))
 
-squareUpSystem = method() -- squares up a polynomial system (presented as a one-column matrix)
-squareUpSystem Matrix := M -> (
-     if numcols M != 1 then error "one-column matrix expected";
-     n := numgens ring M;
-     m := numrows M;
-     if m<=n then "overdetermined system expected";
-     sub(randomOrthonormalRows(m,n),ring M)*M
-     )
+squareUp = method() -- squares up a polynomial system (presented as a one-column matrix)
+squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
+    n := P.NumberOfVariables;
+    m := P.NumberOfPolys;
+    if m<=n then "overdetermined system expected";
+    M := sub(randomOrthonormalRows(n,m),coefficientRing ring P);
+    squareUp(P,M)
+    )
+squareUp(PolySystem,Matrix) := (P,M) -> (
+    P.SquareUpMatrix = M;
+    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!
+    )
 
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
@@ -480,6 +473,7 @@ load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
 
+-- fills in options from DEFAULT option table
 fillInDefaultOptions = method()
 fillInDefaultOptions OptionTable := o -> (
      o = new MutableHashTable from o;
@@ -494,128 +488,15 @@ selectUnique List := o -> sols ->(
      u
      )
  
-singularSolutions = method() -- decide on the tolerance!!!
-singularSolutions(List,List) := (T,sols) -> (
--- find positions of singular solutions in sols
--- IN: number of solutions 
--- OUT: list of numbers of solutions considered to be singular 
---      (i.e., nearly satisfies target system, but Status!=REGULAR)    
-     select(0..#sols-1, i->(
-	       x := coordinates sols#i;
-	       not isRegular(sols,i) and all(T, f->(rs := evalPoly(f,x); abs(rs)/norm matrix{x} < 1000*DEFAULT.Tolerance))
-	       ))
-     )   
-
-evalPoly = method(TypicalValue=>CC)
-evalPoly (RingElement, List) := (f,x) -> (
-     sub(sub(f, sub(matrix{x},ring f)), coefficientRing ring f)
-     )
-
-diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
--- in:  A, B (presumably sorted)
--- out: (a,b), where a and b are lists of indices where A and B differ
-diffSolutions (List,List) := o -> (A,B) -> (
-     i := 0; j := 0;
-     a := {}; b := {};
-     while i<#A and j<#B do 
-     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
-     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
-     else (a = append(a,i); i = i+1);	  
-     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
-     )
-
-
--------------------------------------------------------
--- DEFLATION ------------------------------------------
--------------------------------------------------------
-
-numericalRank = method(Options=>{Threshold=>1e2}) -- looks for a gap between singular values 
-numericalRank Matrix := o -> M -> (
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
-     if not member(class ring M, {RealField,ComplexField}) 
-     then error "matrix with real or complex entries expected";
-     S := first SVD M;
-     r := 0; last's := 1;
-     for i to #S+1 do (
-	  if o.Threshold*S#i < last's 
-	  then break
-	  else (r = r + 1; last's = S#i)
-	  );
-     r 
-     )  
-
-dMatrix = method()
-dMatrix (List,ZZ) := (F,d) -> dMatrix(ideal F, d)
-dMatrix (Ideal,ZZ) := (I, d) -> (
--- deflation matrix of order d     
-     R := ring I;
-     v := flatten entries vars R;
-     n := #v;
-     ind := toList((n:0)..(n:d)) / toList;
-     ind = select(ind, i->sum(i)<=d and sum(i)>0);
-     A := transpose diff(matrix apply(ind, j->{R_j}), gens I);
-     scan(select(ind, i->sum(i)<d and sum(i)>0), i->(
-	       A = A || transpose diff(matrix apply(ind, j->{R_j}), R_i*gens I);
-	       ));
-     A
-     )
-dIdeal = method()
-dIdeal (Ideal, ZZ) := (I, d) -> (
--- deflation ideal of order d     
-     R := ring I;
-     v := gens R;
-     n := #v;
-     ind := toList((n:0)..(n:d)) / toList;
-     ind = select(ind, i->sum(i)<=d and sum(i)>0);
-     A := dMatrix(I,d);
-     newvars := apply(ind, i->getSymbol("x"|concatenate(i/toString)));
-     S := (coefficientRing R)[newvars,v]; 
-     sub(I,S) + ideal(sub(A,S) * transpose (vars S)_{0..#ind-1})
-     )	   
-deflatedSystem = method()
-deflatedSystem(Ideal, Matrix, ZZ, ZZ) := memoize (
-(I, M, r, attempt) -> (
--- In: gens I = the original (square) system   
---     M = deflation matrix
---     r = numerical rank of M (at some point)
--- Out: (square system of n+r equations, the random matrix SM)
-     R := ring I;
-     n := numgens R;
-     SM := randomOrthonormalCols(numcols M, r+1);
-     d := local d;
-     S := (coefficientRing R)(monoid[gens R, d_0..d_(r-1)]);
-     DF := sub(M,S)*sub(SM,S)*transpose ((vars S)_{n..n+r-1}|matrix{{1_S}}); -- new equations
-     --print DF;     
-     (
-	  flatten entries squareUpSystem ( sub(transpose gens I,S) || DF ),
-	  SM
-	  )
-     )
-) -- END memoize
-
-liftSolution = method(Options=>{Tolerance=>null}) -- lifts a solution s to a solution of a deflated system dT (returns null if unsuccessful)
-liftSolution(List, List) := o->(s,dT)->liftSolution(s, transpose matrix{dT},o)
-liftSolution(List, Matrix) := o->(c,dT)->(
-     R := ring dT;
-     n := #c;
-     N := numgens R;
-     if N<=n then error "the number of variables in the deflated system is expected to be larger"; 
-     newVars := (vars R)_{n..N-1};
-     specR := (coefficientRing R)(monoid[flatten entries newVars]);
-     dT0 := (map(specR, R, matrix{c}|vars specR)) dT;
-     ls := first solveSystem flatten entries squareUpSystem dT0; -- here a linear system is solved!!!     
-     if status ls =!= Regular then return null;
-     ret := c | coordinates ls;
-     -- if norm sub(dT, matrix{ret}) < o.Tolerance * norm matrix{c} then ret else null
-     ret
-     ) 
-
+load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
 
 NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
+-- conjugate all entries of the matrix (should be a part of M2!!!)
+conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
+ 
 -- normalized condition number of F at x
 conditionNumber = method()
 conditionNumber Matrix := M -> (s := first SVD M; max s / min s)
@@ -642,6 +523,14 @@ witnessSet (Ideal,ZZ) := (I,d) -> (
      PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
      witnessSet(ideal rand'I,SM,PP)
      )
+
+isSolution = method(Options=>{Tolerance=>null})
+isSolution(Point,PolySystem) := o -> (P,F) -> (
+    o = fillInDefaultOptions o;
+    -- P = newton(F,P); -- !!! change for non regular
+    -- P.ErrorBoundEstimate < o.Tolerance
+    residual(F,P) < o.Tolerance
+    )
 
 beginDocumentation()
 

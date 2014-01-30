@@ -12,8 +12,7 @@ solveSystem List := List => o -> F -> (
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      local result;
      F = toCCpolynomials(F,53);
      R := ring F#0;

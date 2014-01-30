@@ -30,22 +30,27 @@ track = method(TypicalValue => List, Options =>{
 	  -- slp's 
 	  SLP => null -- possible values: false, HornerForm, CompiledHornerForm 	  
 	  } )
-track (List,List,List) := List => o -> (S,T,solsS) -> (
 -- tracks solutions from start system to target system
 -- IN:  S = list of polynomials in start system
 --      T = list of polynomials in target system
 --      solsS = list of solutions to S
--- 	gamma => nonzero complex number
 -- OUT: solsT = list of target solutions corresponding to solsS
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
-     o = new OptionTable from o;
+track (List,List,List) := List => o -> (S,T,solsS) -> (
+    checkCCpolynomials(S,T);
+    track(polySystem S, polySystem T,solsS,o)    
+    )
+-- tracks solutions from start system to target system
+-- IN:  S = start system
+--      T = target system
+--      solsS = list of solutions to S
+-- OUT: solsT = list of target solutions corresponding to solsS
+track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
+     o = fillInDefaultOptions o;
      HISTORY := DBG>1 or member(o.Predictor, {Multistep,Secant});
-     n := #T; 
+     n := T.NumberOfPolys; 
      K := CC_53; -- THE coefficient ring
      
-     checkCCpolynomials(S,T);
-     R := ring first S; 
+     R := ring S; 
      
      if o.tStep <= 0 then error "expected positive tStep";  
      if (o.Projectivize or o.SLP===false) and (o.SLPpredictor or o.SLPcorrector) 
@@ -70,7 +75,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      -- determine whether the problem is projective
      isProjective := false;
      if n != numgens R then (
-	  if numgens R == n+1 and all(S, isHomogeneous) and all(T, isHomogeneous) 
+	  if numgens R == n+1 and isHomogeneous S and isHomogeneous T 
 	  then ( 
 	       isProjective = true; 
 	       n = n+1;
@@ -78,15 +83,18 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  else error "expected a square system";
      	  );
     
-     solsS = solsS / (s->sub(transpose matrix {toList s}, CC)); -- convert to vectors
+     solsS = solsS / (s->sub(transpose matrix (
+		 if class s === Point then s
+	     	 else {toList s}
+	     	 ), CC)); -- convert to vectors
      if o.Projectivize then (
 	  if isProjective then error "the problem is already projective";
 	  h := symbol h;
 	  R = K(monoid[gens R | {h}]); 
 	  h = last gens R;
 	  n = numgens R;
-	  T = apply(T, f->homogenize(sub(f,R), h)); 
-	  S = apply(S, f->homogenize(sub(f,R), h));
+	  T = homogenize(T,R,h); 
+	  S = homogenize(S,R,h);
      	  solsS = solsS / (s->s||matrix{{1_K}});
 	  isProjective = true;
 	  );
@@ -115,8 +123,8 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	       	    };
 	       patches = patches | { o#(NumericalAlgebraicGeometry$gamma)*patches#1 };
      	       if DBG>1 then << "affine patch: " << toString patches#1 <<endl;
-	       T = T | {patchEquation patches#1};
-	       S = S | {patchEquation patches#2};
+	       T = polySystem(XXXtoList T | {patchEquation patches#1});
+	       S = polySystem(S | {patchEquation patches#2});
 	       solsS = solsS / (s->pointToPatch(s, patches#2));
 	       );
 	  ); 
@@ -129,17 +137,19 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      Rt := K(monoid[gens R, t]); 
      t = last gens Rt; 
      (nS,nT) := if shouldNormalize -- make Bomboeri-Weyl norm of the systems equal 1
-     then (apply(S, s->s/sqrt(#S * BombieriWeylNormSquared s)), apply(T, s->s/sqrt(#T * BombieriWeylNormSquared s)))
+     then (XXXapply(S, f->f/sqrt(S.NumberOfPolys * BombieriWeylNormSquared f)), 
+	 XXXapply(T, f->f/sqrt(T.NumberOfPolys * BombieriWeylNormSquared f)))
      else (S,T);
      
      if o.Predictor===Certified or (isProjective and o.Software===M2engine)
      -- in both cases a linear homotopy on the unit sphere is performed
      then (
+     	  (nS,nT) = (XXXtoList nS, XXXtoList nT); -- rolling back to the old (List) representation of PolySystem
 	  nT = (o#(NumericalAlgebraicGeometry$gamma)/abs(o#(NumericalAlgebraicGeometry$gamma)))*nT;
-	  H := {matrix{nS},matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
-	  DMforPN := diagonalMatrix append(T/(f->1/sqrt sum degree f),1);
-	  maxDegreeTo3halves := power(max(T/first@@degree),3/2);
-	  reBW'ST := realPart sum(#S, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
+	  H := {matrix{nS}, matrix{nT}}; -- a "linear" homotopy is cooked up at evaluation using nS and nT
+	  DMforPN := diagonalMatrix append(nT/(f->1/sqrt sum degree f),1);
+	  maxDegreeTo3halves := power(max(nT/first@@degree),3/2);
+	  reBW'ST := realPart sum(S.NumberOfPolys, i->BombieriWeylScalarProduct(nS#i,nT#i));-- real Bombieri-Weyl scalar product
 	  sqrt'one'minus'reBW'ST'2 :=  sqrt(1-reBW'ST^2);
 	  bigT := asin sqrt'one'minus'reBW'ST'2; -- the linear homotopy interval is [0,bigT]
 	  if reBW'ST < 0 then bigT = pi-bigT; -- want: sgn(cos)=sgn(reBW'ST) 
@@ -147,10 +157,14 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 	  if DBG>4 then << "Re<S,T> = " << reBW'ST << ", bigT = " << bigT << endl; 
      	  )	  
      else (
-     	  H = matrix {apply(#S, i->o#(NumericalAlgebraicGeometry$gamma)*(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nS#i,Rt)+t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nT#i,Rt))};
+     	  H = transpose (
+	      o#(NumericalAlgebraicGeometry$gamma)*(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nS.PolyMap,Rt)
+	      + t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(nT.PolyMap,Rt)
+	      ); -- row matrix
      	  JH := transpose jacobian H; 
      	  Hx = JH_(toList(0..n-1));
      	  Ht := JH_{n};
+     	  (nS,nT) = (XXXtoList nS, XXXtoList nT); -- rolling back to the old (List) representation of PolySystem
 	  );
 
      -- evaluation times
@@ -293,7 +307,7 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
      PT := null;     
      rawSols := if member(o.Software,{M2enginePrecookedSLPs, M2engine}) then (
 	  PT = if o.Software===M2engine then (
-	       if isProjective then rawPathTrackerProjective( raw matrix {nS}, raw matrix {nT}, 
+	       if isProjective then rawPathTrackerProjective( raw matrix {toList nS}, raw matrix {toList nT}, 
 		    reBW'ST ) -- pass normalized start/target and Re(B-W product)
 	       else rawPathTracker(raw H) 
 	       ) else rawPathTrackerPrecookedSLPs(slpHxt, slpHxH);
@@ -605,8 +619,9 @@ track (List,List,List) := List => o -> (S,T,solsS) -> (
 		 if HISTORY then drop(toList s, -1)
 		 else toList s
 		 );
-	     if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
-	     then p.SolutionStatus = Singular;
+	     p.SolutionSystem = T;
+	     --if p.ConditionNumber > o.SingularConditionNumber and p.SolutionStatus===Regular 
+	     --then p.SolutionStatus = Singular;
 	     if PT=!=null then p.Tracker=PT;
 	     p
 	     ))
@@ -625,6 +640,7 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  maxCorrSteps => null,
+--!!!	  maxPrecision => null,
      	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
@@ -635,10 +651,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 -- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
 --          or an SLP representing one -- !!! at this point it is preSLP
 -- OUT: solsT = list of target solutions corresponding to solsS
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); 
-     o = new OptionTable from o;
-
+     o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
     
@@ -688,7 +701,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       endZone := false;
 	       CorrectorTolerance := ()->(if endZone then o.EndZoneFactor else 1)*o.CorrectorTolerance;
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
-     	       tStep := o.tStep;
+     	       tStep := sub(o.tStep,K);
 	       predictorSuccesses := 0;
 	       x0 := s; 
 	       t0 := 0_K; 
@@ -700,7 +713,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			 endZone = true;
 			 -- to do: see if this path coinsides with any other path
 			 );
-		    if DBG > 4 then << "--- current t = " << t0 << endl;
+		    if DBG > 4 then << "--- current t = " << t0 << "; precision = " << precision ring x0 << endl;
                     -- monitor numerical stability: perhaps change patches if not stable ???
 		    -- Hx0 := evalHx(x0,t0);
 		    -- svd := sort first SVD Hx0;
@@ -712,7 +725,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
 		    -- default dt; Certified and Multistep modify dt
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
 		    if o.Predictor == Tangent then (
 			Hx0 := evalHx(x0,t0);
@@ -727,13 +740,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			)
 		    else if o.Predictor == RungeKutta4 then (
 			--k1 := evalMinusInverseHxHt(x0,t0);
-			--k2 := evalMinusInverseHxHt(x0+.5*k1,t0+.5*dt);
-			--k3 := evalMinusInverseHxHt(x0+.5*k2,t0+.5*dt);
+			--k2 := evalMinusInverseHxHt(x0+(1/2)*k1,t0+(1/2)*dt);
+			--k3 := evalMinusInverseHxHt(x0+(1/2)*k2,t0+(1/2)*dt);
 			--k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
 			--dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
 			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
-			dx2 := solveHxTimesDXequalsMinusHt(x0+.5*dx1*dt,t0+.5*dt);
-			dx3 := solveHxTimesDXequalsMinusHt(x0+.5*dx2*dt,t0+.5*dt);
+			dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
+			dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
 			dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
 			dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
 			)
