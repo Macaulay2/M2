@@ -1,5 +1,5 @@
 needsPackage "NumericalAlgebraicGeometry"
-needs "./../benchmarks.m2"
+needs "NumericalAlgebraicGeometry/benchmarks.m2"
 NAGtrace 1
 
 I = linearExample()

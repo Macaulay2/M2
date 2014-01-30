@@ -34,6 +34,10 @@ FIX_UNWIND=no
 # CC=/usr/local/bin/gcc
 # CXX=/usr/local/bin/g++
 
+ifeq ($(MATHICGB),yes)
+CONFIGOPTIONS += --enable-mathicgb
+endif
+
 ifeq ($(FFPACK),yes)
 CONFIGOPTIONS += --enable-fflas-ffpack
 endif
@@ -60,6 +64,11 @@ unexport PROFILE
 CC := gcc
 CXX := g++
 
+# CC := clang
+# CXX := clang++
+
+BRANCH := $(shell git branch --contains | sed s/^..//)
+
 ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
@@ -72,9 +81,12 @@ CXX += -m32
 export MPIR_CONFIGOPTIONS=ABI=32
 endif
 
-V = -mmacosx-version-min=10.6
-CC  += $V
-CXX += $V
+DIRECTORY := $(DIRECTORY)-$(BRANCH)
+
+# the warning messages about this from clang have gotten noisy:
+# V = -mmacosx-version-min=10.6
+# CC  += $V
+# CXX += $V
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 

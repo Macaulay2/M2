@@ -16,7 +16,15 @@ ifeq (@ARCH@,i686)
 # libgc needs to be compiled with i686 to get multiple threads
 DEBARCH=i386
 else
+ifeq (@ARCH@,armv7l)
+DEBARCH=armel
+else
+ifeq (@ARCH@,armv6l)
+DEBARCH=armhf
+else
 $(error unrecognized architecture @ARCH@)
+endif
+endif
 endif
 endif
 
@@ -84,7 +92,7 @@ macaulay2-common/control.tar.gz : macaulay2-common/control macaulay2-common/post
 
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
 prepare: .prepared
-.prepared: 
+tmp@bindir@/M2@EXE@ .prepared: 
 	: ensure change log is up to date...
 	fgrep 'macaulay2 (@PACKAGE_VERSION@) ' <@srcdir@/changelog
 	rm -rf tmp@prefix@ tmp-common@prefix@

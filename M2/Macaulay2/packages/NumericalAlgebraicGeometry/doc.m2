@@ -307,8 +307,10 @@ totalDegreeStartSystem T
 	}
 
 document {
-     Key => {[solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],[regeneration,Software],Software,
-	  M2,M2engine,M2enginePrecookedSLPs},
+     Key => {Software,
+	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
+	 [regeneration,Software],[parameterHomotopy,Software],
+	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
      Possible values for internal software are:",  
@@ -406,27 +408,6 @@ T = {x^2+y^2-1, x+y};
 NAGtrace 1
 track(S,T,{(1,1),(1,-1),(-1,1),(-1,-1)})
      	///
-	}
-
-document {
-	Key => {(toAffineChart, ZZ, List), toAffineChart},
-	Headline => "coordinates of a point in the projective space in an affine chart",
-	Usage => "y = toAffineChart(i,x)",
-	Inputs => {
-	     "i" => "the numebr of the standard chart",
-	     "x" => "projective coordinates of a point"
-	     },
-	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
-	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
-	EXAMPLE lines ///
-toAffineChart(2,{1,2,3,4,5,6}) 
-toAffineChart(2,{1,2,0,4,5,6}) 
-CC[x,y];
-s = track({x^2-y^2},{x*y},{{1,1}})
-toAffineChart(0, coordinates s#0)
-toAffineChart(1, coordinates s#0)
-     	///,
-	SeeAlso => {solveSystem, areEqual}
 	}
 
 document {
@@ -546,15 +527,24 @@ document {
 	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
 	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
 	EXAMPLE lines ///
-setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 regeneration F 
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
 cs = regeneration I_*
      	///,
+-- 	EXAMPLE lines /// -- nonreduced scheme
+-- setRandomSeed 7
+-- R = CC[x,y]
+-- F = {x^2+y^2-1, x*y};
+-- regeneration F 
+-- R = CC[x,y,z]
+-- sph = (x^2+y^2+z^2-1); 
+-- I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
+-- cs = regeneration I_*
+--      	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
 	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
 	     It specifies whether the algorithm attempts to keep singular points." },
@@ -568,14 +558,14 @@ document {
 	Outputs => { "Ws"=>{"contains irreducible witness sets ", TO2{WitnessSet,"witness sets"}, ", the union of which is ", TT "W"}},
      	"Monodromy driven decomposition is followed by the linear trace test. ",
 	EXAMPLE lines ///
-setRandomSeed 7
+setRandomSeed 1
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 W = first regeneration F 
 decompose W
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
 regeneration I_* / decompose
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
@@ -593,10 +583,10 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
+setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
-setRandomSeed 7
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
 V = numericalVariety I 
 peek V
     	///,

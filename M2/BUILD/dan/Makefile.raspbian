@@ -1,0 +1,9 @@
+# -*- makefile-gmake -*-
+CONFIGOPTIONS += --enable-deb
+DIRECTORY = raspbian
+include Makefile.include
+default: check
+arch-chk:; grep Raspbian /etc/issue; [ `uname -m` = armv6l ]
+# Local Variables:
+# compile-command: "time make -f Makefile.raspbian IgnoreExampleErrors=true "
+# End:
