@@ -51,7 +51,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
-     "regeneration", isSolution, SquaredUpSystem, SquareUpMatrix,
+     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, SquareUp,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -409,7 +409,7 @@ squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
     )
 squareUp(PolySystem,Matrix) := (P,M) -> (
     P.SquareUpMatrix = M;
-    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!
+    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
     )
 
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
