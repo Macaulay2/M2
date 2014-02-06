@@ -1395,6 +1395,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING(whether $CC accepts -Wno-mismatched-tags)
+# ignore certain spurious warnings from g++ about this command line option, see http://gcc.gnu.org/bugzilla/show_bug.cgi?id=60097
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wno-mismatched-tags"
