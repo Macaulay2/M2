@@ -3,10 +3,15 @@ VERSION = local
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
-CONFIGOPTIONS = --disable-shared --without-tbb
+
 include ../Makefile.library
-#CONFIGENV += TBB_CFLAGS="-I/usr/local/include" TBB_LIBS="-L/usr/local/lib -ltbb" PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)
+
+CONFIGOPTIONS = --disable-shared --without-tbb
 CONFIGENV += PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)
+
+#CONFIGOPTIONS = --disable-shared --with-tbb
+#CONFIGENV += TBB_CFLAGS="-I/usr/local/include" TBB_LIBS="-L/usr/local/lib -ltbb" PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/mathicgb/Makefile
 # Local Variables:
 # compile-command: "make -w -C $M2BUILDDIR/libraries/mathicgb "

@@ -382,6 +382,44 @@ FreeModule *FreeModule::symm(int n) const
   return result;
 }
 
+static bool degree_in_box(int len, int *deg, M2_arrayint lo, M2_arrayint hi)
+{
+  if (lo->len != 0)
+    for (int i=0; i<len; i++)
+      if (deg[i] < lo->array[i]) return false;
+  if (hi->len != 0)
+    for (int i=0; i<len; i++)
+      if (deg[i] > hi->array[i]) return false;
+  return true;
+}
+extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
+
+M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const
+{
+  const Ring *R = get_ring();
+  const Monoid *D = R->degree_monoid();
+  std::vector<size_t> result;
+  int ndegrees = D->n_vars();
+  int *exp = newarray_atomic(int,ndegrees);
+  for (int i=0; i<rank(); i++)
+    {
+      D->to_expvector(degree(i), exp);
+#if 0
+      for (int i=0; i<ndegrees; i++)
+        printf("%d ", exp[i]);
+      if (degree_in_box(ndegrees, exp, lo, hi))
+        printf("yes\n");
+      else
+        printf("no\n");
+#endif
+      if (degree_in_box(ndegrees, exp, lo, hi))
+        result.push_back(i);
+    }
+  M2_arrayint selection = stdvector_to_M2_arrayint(result);
+  deletearray(exp);
+  return selection;
+}
+
 int FreeModule::primary_degree(int i) const
 {
   int result = degree_monoid()->degree_weights(degree(i),get_ring()->get_heft_vector());

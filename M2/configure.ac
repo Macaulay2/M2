@@ -500,114 +500,12 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
-"
-  Style
-  Macaulay2Doc
-  FirstPackage
-  Parsing
-  Classic
-  Browse
-  Benchmark
-  Text
-  SimpleDoc
-  PackageTemplate
-  PrimaryDecomposition
-  FourierMotzkin
-  Dmodules
-  Depth
-  Elimination
-  GenericInitialIdeal
-  IntegralClosure
-  HyperplaneArrangements
-  LexIdeals
-  Markov
-  NoetherNormalization
-  Points
-  ReesAlgebra
-  Regularity
-  SchurRings
-  SymmetricPolynomials
-  SchurFunctors
-  SimplicialComplexes
-  LLLBases
-  TangentCone
-  ChainComplexExtras
-  Schubert2
-  PushForward
-  LocalRings
-  BoijSoederberg
-  BGG
-  Bruns
-  InvolutiveBases
-  ConwayPolynomials
-  EdgeIdeals
-  FourTiTwo
-  StatePolytope
-  Polyhedra
-  Polymake
-  gfanInterface
-  PieriMaps
-  Normaliz
-  Posets
-  XML
-  OpenMath
-  SCSCP
-  RationalPoints
-  MapleInterface
-  ConvexInterface
-  SRdeformations
-  NumericalAlgebraicGeometry
-  BeginningMacaulay2
-  FormalGroupLaws
-  Graphics
-  WeylGroups
-  HodgeIntegrals
-  Cyclotomic
-  Binomials
-  Kronecker
-  Nauty
-  ToricVectorBundles
-  ModuleDeformations
-  PHCpack
-  SimplicialDecomposability
-  BooleanGB
-  AdjointIdeal
-  Parametrization
-  Serialization
-  NAGtypes
-  NormalToricVarieties
-  DGAlgebras
-  Graphs
-  GraphicalModels
-  BIBasis
-  KustinMiller
-  Units
-  NautyGraphs
-  VersalDeformations
-  CharacteristicClasses
-  RandomObjects
-  RandomPlaneCurves
-  RandomSpaceCurves
-  RandomGenus14Curves
-  RandomCanonicalCurves
-  RandomCurves
-  TensorComplexes
-  MonomialAlgebras
-  QthPower
-  EliminationMatrices
-  EllipticIntegrals
-  Triplets
-  CompleteIntersectionResolutions
-  MultiplierIdeals
-  InvariantRing
-  QuillenSuslin
-  EnumerationCurves
-")
 
-# convert the newlines in the list above to spaces
+
+AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
+[if [ $? != 0 ] ; then exit 1 ; fi]
+# convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
@@ -1515,6 +1413,37 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     HAVE_NO_PARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
     HAVE_NO_PARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
 CFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
+AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_X_NOEXECSTACK=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_X_NOEXECSTACK=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_ENABLE_AUTO_IMPORT=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_ENABLE_AUTO_IMPORT=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
+AC_SUBST(HAVE_WL_MAP,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_MAP=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))
+rm -f conftest.mapfile
+LDFLAGS=$SAVE
 
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>

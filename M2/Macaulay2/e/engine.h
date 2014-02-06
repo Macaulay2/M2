@@ -724,6 +724,14 @@ extern "C" {
      * If F has a Schreyer order, the result has one as well.
      */
 
+  M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule* F,
+                                                 M2_arrayint lo,
+                                                 M2_arrayint hi); 
+  /* If F_i has multi-degree >= lo, AND <= hi, then add i to the result
+     IF: lo has length 0, then treat that as -infinity in each component.
+     Same with hi.
+  */
+
   /**************************************************/
   /**** Matrix routines *****************************/
   /**************************************************/
@@ -852,7 +860,6 @@ extern "C" {
 
   const Matrix /* or null */ * IM2_Matrix_submatrix1(const Matrix *M,
                                              M2_arrayint cols); /* drg: connected rawSubmatrix*/
-
 
   const Matrix /* or null */ * IM2_Matrix_koszul(int p, const Matrix *M); /* drg: connected rawKoszul*/
 

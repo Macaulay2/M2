@@ -543,7 +543,15 @@ RingElement + Ideal := Number + Ideal := ((r,I) -> ideal r + I) @@ tosamering
 degree Ideal := I -> degree cokernel generators I
 trim Ideal := Ideal => opts -> (cacheValue (symbol trim => opts)) ((I) -> ideal trim(module I, opts))
 Ideal _ ZZ := RingElement => (I,n) -> (generators I)_(0,n)
-Matrix % Ideal := Matrix => ((f,I) -> f % gb I) @@ samering
+Matrix % Ideal := Matrix => ((f,I) -> 
+     if numRows f === 1
+     then f % gb I
+     else (
+	  -- we should have an engine routine to reduce each entry of a matrix modulo an ideal, to make this faster
+	  R := ring I;
+	  S := R/I;
+	  lift(promote(f,S),R))
+     ) @@ samering
 numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)

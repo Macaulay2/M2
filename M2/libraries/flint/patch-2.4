@@ -1,6 +1,37 @@
-diff -ur /Users/dan/src/M2/DanGrayson-M2/M2/BUILD/dan/builds.tmp/mike/libraries/flint/tmp/flint-2.4/longlong.h flint-2.4/longlong.h
---- /Users/dan/src/M2/DanGrayson-M2/M2/BUILD/dan/builds.tmp/mike/libraries/flint/tmp/flint-2.4/longlong.h	2013-12-21 11:59:26.000000000 -0800
-+++ flint-2.4/longlong.h	2014-01-05 14:16:39.000000000 -0800
+--- flint-2.4/configure	2014-01-21 12:19:08.000000000 +0100
++++ flint-2.4/configure	2014-01-21 12:19:34.000000000 +0100
+@@ -251,7 +251,7 @@ if [ "$WANT_BLAS" = "1" ]; then
+    fi
+    EXTRA_INC_DIRS="${EXTRA_INC_DIRS} ${BLAS_INC_DIR}"
+    EXTRA_LIB_DIRS="${EXTRA_LIB_DIRS} ${BLAS_LIB_DIR}"
+-   EXTRA_LIBS="${EXTRA_LIBS} openblas"
++   EXTRA_LIBS="${EXTRA_LIBS} blas"
+ fi
+ CONFIG_BLAS="#define HAVE_BLAS ${WANT_BLAS}"
+ 
+@@ -537,9 +537,6 @@ fi
+ 
+ CONFIG_PTHREAD="#define HAVE_PTHREAD ${PTHREAD}"
+ 
+-if [ "$PTHREAD" = "1" ]; then
+-   LIBS="${LIBS} pthread"
+-fi
+ 
+ #pocess external modules
+ 
+@@ -569,6 +567,9 @@ for LIB_DIR in ${LIB_DIRS} ${EXTRA_LIB_D
+ done
+ 
+ #linker params
++if [ "$PTHREAD" = "1" ]; then
++   lLIBS2="-lpthread ${lLIBS2}"
++fi
+ 
+ for LIB in ${EXTRA_LIBS} ${LIBS}; do
+    lLIBS2="-l${LIB} ${lLIBS2}"
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/longlong.h flint-2.4/longlong.h
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/longlong.h	2013-12-21 14:59:26.000000000 -0500
++++ flint-2.4/longlong.h	2014-01-06 00:51:03.000000000 -0500
 @@ -75,7 +75,7 @@
      mp_limb_t __cbtmp;                                                \
      FLINT_ASSERT ((x) != 0);                                          \
@@ -10,3 +41,15 @@ diff -ur /Users/dan/src/M2/DanGrayson-M2/M2/BUILD/dan/builds.tmp/mike/libraries/
    } while (0)
  
  /* bsfq destination must be a 64-bit register, "%q0" forces this in case
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/nmod_poly.h flint-2.4/nmod_poly.h
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/flint/tmp/flint-2.4/nmod_poly.h	2013-12-21 14:59:26.000000000 -0500
++++ flint-2.4/nmod_poly.h	2014-01-06 01:00:48.000000000 -0500
+@@ -343,7 +343,7 @@
+     r = flint_printf("%wd %wu", a->length, a->mod.n);
+ 
+     if (a->length == 0)
+-        return r;
++      return (int) r;
+     else
+         if (r > 0)
+             r = flint_printf(" ");

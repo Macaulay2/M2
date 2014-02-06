@@ -1,0 +1,388 @@
+XXXXXXXXXXXXXX
+///
+-- TODO:
+--   top level M2 package (this file): calls the rawFFPack routines
+--   interface.dd:  glue functions to call engine functions
+--   engine.h: put in headers for new functions
+--   x-mutablemat.cpp: 2 options:  (1) as we do now, just copy to/from ffpack matrices to do computation
+--     (2) make a new MutableMatrix type in M2 engine
+--   for new MutableMatrix type:
+--      (a) subclass MutableMat<coeffRing, ...>
+--      (b) include in MutableMatrix: the functions we want.
+--      (c) write the matrix class.
+-- Also, want GF(q).  Current problem: givaro didn't even compile.
+
+-- invert2 DONE
+-- test that with solve DONE
+-- multiplication DONE
+-- rank profiles (column and row) MOSTLY DONE: need to fix ffpack, test it
+-- LU decomposition
+-- submatrix + stride
+-- row and col echelon forms
+-- incorporate givaro types for all of these operations
+
+-- after that:
+--  make a new mutable matrix data type
+--  
+
+-- HW:
+--  Mike:
+--    think about the interface for ffpack matrices, so we do not need to copy matrices each operation
+--  Jakob:
+--    check with ffpack people about: row rank profile.  DONE
+
+-- HW after 24 May 2011:
+--   FIXED givaro seems to crash M2 when linked in (Jakob and Mike will both look at this).  Still does! FIXED
+--   linbox: try to compile it in (maybe after givaro is working) FIXED: but need to patch M2
+--   need: how to use givaro in the same way as for fflas-ffpack. (Where is doc and test code for this?  Jakob will send to Mike?)
+--     converting elements?
+--     what exactly is the field?  ZZ/p[a]/(g(a)).  What is g?
+--   need: new snapshots of givaro and fflas-ffpack.  Dan does this? DONE
+--   need: ask them about license?  Check with Dan.  ffpack: LGPL license.  givaro: LGPL? DONE: seems OK
+--   ask Dan: look at the givaro license. DONE
+--   Mike: in my GF ring code, allow givaro to decide the polynomial, and/or tell givaro what the poly is.
+--    learn givaro myself before our next meeting.
+--    REALLY start thinking about design for placing these in as M2 types.
+--   Jakob: play with givaro
+--
+-- HW after 15 June 2011:
+--   Jakob needs to check valgrind on his givaro-mpir mix
+--   Jakob: will check to see if linbox has a "better" solution for small vs large GF fields
+--   Mike: will setup GF so that in the presence of givaro, the polynomial used
+--     is chosen by givaro.
+--     Questions/issues: 1. front end chooses the polynomial currently
+--        2. We need to consider two cases: when the poly rep is via exponents vs via polynomials.
+--         (see the wiki for how to check this)
+--        3. Change the GF class to setup a givaro field once and for all.
+--   
+-- Plan made 30 June 2011, before Mike goes to Budapest:
+--   A. class structure (rings and matrix types)
+--   B. make sure top level interface to lin algebra routines is what we want
+--   C. Connect ffpack, givaro, linbox to this interface (in B).
+--   D. Want possibly other functions from linbox, or elsewhere
+--   E. think about connecting Fgb of Faugere (but it is not open source)
+--   Milestones:
+--    1. Do (B): Top level interface and documentation for these functions.  For fast linear algebra functions
+--       what is needed: FastLinearAlgebra package: have to document the functions.
+--       thid package should also document: rank, det, ...  but it can't quite do that.  So we will need to change the
+--       doc in M2 itself.  Need examples and tests.  Do this in July (in particular: the week of July 18).
+--    2. Do (A). The current implementation of rings: each ring type will have a type from (A) as a member field
+--      5 days of work?  Jakob: look at e/ring-test.hpp before August. 
+--      Do this in August.  Finish this in August.  
+--      Also do (or start)  (3), (4) in August.
+--    3. Connect linear algebra over ZZ/p  (fflas-ffpack) (adding each ring type: should be easy code, but tests should be written, in FastLinearAlgebra)
+--    4. Connect linear algebra over GF(q)  (givaro, or maybe linbox)
+--    5. Connect linear algebra over ZZ or QQ (linbox).  This includes LLL, Smith normal form, and perhaps other normal forms.
+--      finish (5) in September?
+--    6. Want these linear algebra routines (det, solving, LU, ...) for approximate fields: RRR, CCC (i.e. arbitrary precision real and complex).
+--       Other possible approx fields: interval, ball arithmetic. (use mathemagix?  Date for this one is unspecified).
+--
+--   Field  <-- what we have been using
+--   FieldEnvelope <-- wrapper for Field for doing virtual function calls, also a template (takes a Field)
+--   FieldAbstract <-- base for all of the FieldEnvelope's
+--   FieldExample <-- example Field
+--   Mike's plan: create a similar class structure
+--    also: EngineTests package
+--   matrices:
+--     we are interested in the following routines:
+--       rank
+--       det
+--       LU decomposition
+--       solve AX=B, or XA = B
+--       A*B
+--         template<typename Ring, template Mat1, template Mat2> multiplyMatrices(const Mat1<Ring> &, const Mat2<Ring> &);
+--         (Mat1, Mat2 could be DenseMatrix or SparseMatrix).
+--       A += B*C
+--       Smith normal form
+--       maybe others
+--     dmat.hpp: implement dense matrices over coeff rings.  These are templates.
+--     matrix.hpp: use mutable matrices as the base. (these are immutable, graded matrices)
+--   overall:
+--    C++ organization of classes (like above)
+--    top level interface to these functions (the user writing m2 code)
+--      rank, det, A*B, solving interfaces should not need to change.
+--      a few functions need to be added.
+--
+-- TODO notes made 14 Oct 2011.
+--   - Jakob: doxygen: to do tags, make help, place documentation directory "elsewhere", handle options for generating class info DONE
+--   - Mike: recompile all stuff, and retest everything -- we recall some test not working. CONTINUAL
+--   - goal: have fast linear algebra over finite fields, and possibly other fields too.
+--      problem: connect this seamlessly into M2
+--   - we will add in calls that operate on mutables matrices.
+--   -- design#1: all these interface files will be in Mutable matrices, and in DMat<CR>, SMat<CR>, ...
+--   -- ring work:
+--      (a) ZZ/p: M2 version, and the ffpack version
+--      (b) GF: M2 version, givaro version
+--   -- after this: incorporate more rings for these operations: ZZ, QQ, ...
+--   -- Mike: add an include file to each cpp file: intent: ASSERT macro. TODO
+--   -- SO:
+--     (1) x-mutablemat.cpp: need the interface routines to front end (rank,det, ...)
+--     (2) also: add in the corresponding interface routines in the d directory
+--     (3) MutableMatrix, DMat, SMat: define class methods for these linear algebra routines
+--          note: implementation type of DMat, SMat will use ARing data structures, e.g. ARingGF::ElementType
+--          then: if entries are required, or other M2 matrices are required, these values will be translated to 
+--           "ringelem" types.  (Later: maybe the "ringelem" type will be exactly these ElementType's.)
+--          note: this will mean that we do not need to translate matrices before calling the appropriate functions
+--            in ffpack/lapack/givaro/etc.
+--     (4) write tests for these functions, as well as arithmetic, in the FastLinearAlgebra, EngineTests packages.
+--     (5) document exactly what is required for ring types (e.g. what classes/types/methods are required), in order
+--         to instantiate them with DMat, SMat.
+--
+-- TODO notes 19 Jan 2012
+--    a. get latest changes of Jakob working (Givaro problem Jakob DONE)
+--    b. merge in trunk changes (Mike DONE)
+--    c. DONE possibly: merge out changes back to the trunk, delete the branch, and create a new branch. (ask Dan for read/write privs for Jakob on new branch)
+--    d. put x-mutablemat routines (fast linear algebra) into dmat.  Organize dispatch in x-mutablemat.
+--    e. tests: for matrices/elements for all of our new ring types (ffpack ZZ/p, givaro GF, ...)
+--    f. have toplevel GF have an option to call new GF code, same with ZZ/p.
+--       issues: at least have a toplevel M2 function which makes new GF code "first class".
+--    g. make sure that new GF and ZZ/p code allow to change rings (ring map code, promote, lift)  (e.g. GF(p^2) --> GF(p^4))
+--    h. TODO: Mike: what is the global picture in the e directory, especially rings.
+--       Mike: document this.  Is it @brief?  Put this into ring.hpp (seems like a good spot).
+--         Ring
+--         CoefficientRing
+--         ARing
+--    i. we have ffpack/givaro/linbox field types.
+--       it would be nice:  ConcreteFromLinbox<FieldType> this will be usable in M2 as an ARing type.
+--                          ConcreteRing<ARingType> This is a "Ring" in M2.
+--                          ConcretePolynomialRing<APolyRingType>
+--                          ConcreteField<AFieldType>
+--
+-- TODO generated 26 Jan 2012
+--  Getting ZZ/p and GF ffpack and givaro and M2 routines all working at top level, and with dense/sparse matrices
+--    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE
+--    b. DONE GF givaro: routine to get the defining polynomial coeffs (see M2_makearrayint in monordering.c). JAKOB
+---   b1. DONE M2 GF in the same framework (as ConcreteRing). MIKE
+--    c. promote/lift/eval beween these rings MIKE (or both of us, after a,b,d,e are done).
+--    d. DONE top level M2 function to create GF from Givaro. (needs (b).  MIKE).
+--       this needs: the polynomial
+--       DONE another routine: create givaro GF ring using a specific poly (M2_arrayint as input) (JAKOB)
+--    e. make a function called primitiveGenerator(ZZ/p), or primitiveGenerator(GF). (BOTH: Jakob for givaro and ffpack, Mike for M2)
+--       top level: each finite field should have routines: char, order, vdim??, generator. (MIKE)
+--       char kk, kk.order (order), kk.degree (dimension over ZZ/p), kk_0 is the generator
+--    f. more testing! (JAKOB, mike too)
+--
+--
+-- TODO generated 9 Feb 2012  (for next meeting, 20 Feb 2012)  ALSO for meeting on 1 Mar 2012.
+--    a. Jakob:
+--        finish GF and ffpack ZZ/p code, and test it.
+--        make sure that primitive element in GF code is either the variable, or we can obtain it. ALMOST DONE
+--        test these!
+--    b. Mike:
+--        get mutable matrices so they work with these new ZZ/p and GF rings.
+--        test these!
+--        talk to Dan: make sure that creation of rings at top level is the way it should be done.
+--    this will put us into place to write the linear algebra routines for these fields.
+--
+-- TODO generated 20. Feb 2012
+--      Jakob: ask givaro authors if there is a reason for their choice of the generator
+--      can we set the primitive element ourself ? - yes
+--      inside of aring-gf code: check that promote, lift, and eval are "correct".
+--      Mike:
+--        Problem: suppose phi : K = GF(p^n) --> R, for some ring R.
+--                 phi.map(0) is the image of either (1) x = K_0, or (2) the generator of the multiplicative group.  Which is it?
+--                 in m2/ringmap.m2 it seems that the value we are given in phi.map(0) is the image of the 
+--                   primitive element, so the current code is correct, IF IF IF the primitive element that M2 has matches the
+--                   implementation primitive element.
+--                 SEEMS OK in ARingGFM2 code, but we need to make sure it is OK in ARingGF code.  Then: fix logic in m2/galois.m2.
+-- TODO made 1 Mar 2012
+--      Jakob: ask givaro authors if there is a reason for their choice of the generator
+--        can we set the primitive element ourself ? DONE, need to Check 
+--        (2)Does givaro, ffpack, linbox have initialized variables which occur before main()?
+--        (3) make sure all givaro, ffpack uses are enclosed by #ifdef... DONE (Jakob)
+--      Mike:
+--        get M2 on our branch compiled: gcc 4.2.1: with givaro,  and also without givaro.  Merge in the changes from the trunk
+--          same with gcc 4.6.2.
+--      Jakob:
+--        finish GF and ffpack ZZ/p code, and test it.
+--        make sure that primitive element in GF code is either the variable, or we can obtain it. ALMOST DONE
+--        test these!
+--      Mike:
+--        get mutable matrices so they work with these new ZZ/p and GF rings.
+--        test these!
+--         a. possibly make zero_matrix a member function for Ring.
+--         b. MutableMat functions do not create new matrices (except for zero_matrix), so we have
+--            functions like:  X += Y, X += Y*Z, submatrix of Y into X.
+--         c. MutableMat matrices have two ring pointers: one is a generic "const Ring*", the other depends on the template.
+--            I don't really like having two ring pointers in our objects, but it makes creation of new rings simpler.
+--            But maybe this is not necessary.  Need to think about it.
+--         d. (Jakob and Mike): finally get to write the linear algebra routines.
+--
+-- TODO 22 Mar 2012
+--     Jakob: why is the bound for modulus in ffpack about 67 million?  is it really? - yes. (<2^26)
+--            compute the generator in a faster manner, perhaps change interface to rawARing... to take a generator.
+--            debug GF determinant.  Seems not to be working. -  FFPACK calls for matrices over extension fields are illegal. 
+--            benchmarks should also appear as test and fail on specified hardware if the runtime increased significantly #
+--            random generator from givaro seems to be not that good - replace with a better one?
+--     Mike: write powerMod
+--     in FastLinearAlgebra.m2: add in benchmarks for rank, determinant, ...
+--     in EngineTests.m2: test rank, determinant, ...
+--     Mike: get rank, determinant working with other ring types
+--
+-- 29 Mar 2012
+--     interface.dd: rank needs to give an error if -1 is returned.
+--     solve: throw an error if error occurs.
+--     x-mutablemat: catch errors, somehow alert front end.
+--     invert: maybe have the DMat and SMat routines throw an error.
+--         possible errors: not invertible.
+--                          not implemented for this ring/matrix type
+--                          not a square matrix
+-- 12 April 2012
+--     todo:
+--       fix givaro matrix bug: it seems that det, rank are incorrect
+--         check with authors?  -  FFPACK calls for matrices over extension fields are illegal. 
+--       make a complete test suite for these functions, for ZZ/p and GF
+--       attach ffpack LU function
+--       attach minimal and char polynomials
+--       Mike: write these lin alg functions for other rings: e.g. RR, CC, ZZ, QQ.
+--       linbox: ZZ, QQ matrix ops?
+--       look at libraries used by sage.  Look at flint.
+--       connect all of these functions to actual M2 code:
+--         e.g.: det M should call these routines,
+--           same with:
+--               det M
+--               minors(r,M)
+--               M^-1, or inverse M
+--               M * N
+--               syz M, ker M -- get null space
+--               M // N -- should call solve
+--               M % N -- reduces each column of M by column space of N
+--       after this, remove code, including: FFLU, gauss.
+--       implement these functions for sparse large matrices
+--       matrix: implement using MutableMatrix (or DMat<>, SMat<>).
+-- 19 April 2012
+--    LQUP: place LQUPFactorizationInPlace in mat.hpp, mutablemat.hpp, dmat.cpp  (mike)
+--          understand the lengths of the output arrays P and Qt (jakob)
+--    linbox: get M2 to compile with it, or understand the problem DONE
+--            givaro version seems messed up or givaro is in the wrong place? FIXED
+--    CharPoly, MinPoly: learn the interface DONE
+--            what should our interface be? DONE
+--    (12 April 2012 todo list is still active too!)
+-- 3 May 2012
+--  Prioritize what we need to do
+--    1. hook up from ffpack the char poly and minimal poly functions DONE
+--         Mike: needs to make better conversion functions for arrays of ring elements
+--    2. Make the dense linear algebra over ZZ/p solid:
+--         tests
+--         incorporate top level M2 functions to use these fast routines (when available)
+--    3. Linear algebra routines, written more generically, but as fast as possible (dense arithmetic)
+--         hook up to GF
+--         hook up to other fields
+--         tests
+--    4. Linear algebra routines for sparse matrices
+--    5. Attach various normal forms of matrices from linbox to M2
+--         over ZZ: Hermite, Smith, LLL
+--         over fields: rational decomposition of a matrix, ...
+-- 17 May 2012
+--    1. JAKOB: find bugs in addMultipleToExt DONE
+--    2. JAKOB: read about sparse matrices in linbox, how to use them.  Then: implement SMat type matrix type using their type.
+--    3. MIKE: Place characteristicPolynomial, minimalPolynomial into DMat, SMat, ...
+--    4. MIKE: internal routines for +, scalar mult and transpose (and perhaps submatrices), in DMat, SMat, ...  and use these at top level.
+--    5. stuff from 3 May 2012.
+
+--  JAKOB: remove using namespace LinBox from everywhere in LinBox.
+--  optimal matrix transposing seem not be trivial - http://en.wikipedia.org/wiki/In-place_matrix_transposition 
+--
+-- 26 July 2012
+--   Mike: debug memory allocation for dense matrices.  Maybe change int values to size_t's
+--         get parens OK
+--         look into: factorization over ZZp.
+--   Jakob: minimal polynomial bug.
+--   Miletone #1:
+--     tests for dense linear algebra over ZZ/p, p <= ???
+--     top level access to these functions
+--     characteristic and minimal polynomial (implemented in same way as other functions)
+--     all dense linear algebra routines over ZZ/p complete (e.g. +, -, *, transpose, submatrix)
+--     fix bugs:
+--       1. minimalPolynomial appears probabilistic.  Is that true?
+--          if so, find a version that is correct!
+--     notes:
+--       syz and kernel should use nullSpace
+--     document:
+--       all linear algebra functions
+--   Milestone #2:
+--     Connect sparse matrix routines from linbox to M2 (over ZZ/p, other fields)
+--   Milestone #3:
+--     Write basic linear algebra functiions (more generic versions) for more general rings/fields
+--   Milestone #4:
+--     Connect normal form operations from linbox to M2 (Hermite, Smith, LLL, Frobenius, ...)
+--     Make sure that ZZ operations and QQ operations match linbox
+
+----------------------------------------------
+-- not discussed yet:
+--    a. bugs in ffpack ZZ/p: basis(2,R) fails (R = polyring over ZZ/p).  Fix this?  MIKE 
+--    b. i (Jakob) suggest we will use M4RI for char=2 ops: we (mostly Mike) did setup this itsy bitsy template interface to incorporate other field implementations
+--           and therefore we should also use it extensively ;-)
+--
+-- TODO: Jakob and Mike (9 Jan 2013)
+--   1. make sure 'not', 'and', 'or' work on gcc 4.5, and in std c++ - ok for gcc 4.5.3 and latest cygwin.
+--       (cygwin has gcc 4.5.3)
+--   2. need M2_ASSERT and maybe also an assert that will be run in production code.
+--   3. invert, divide: should these raise an exception, or return false if not invertible?
+--   4. power: rewrite this.  Maybe it is in ffpack now?
+--   5. computeGenerator: is this a reasonable implementation?  If not, find something better.
+--   6. for promote, lift, eval: can we place these out of the class?
+--   7. do we really need 'syzygy' here?
+--   8. Signed_Trait ?  remove dependence on givaro for ffpack DONE, but requires g++ -std=c++0x. 
+--      Problem: defining CXXFLAGS=-std=c++0x is not sufficient, since somewhere in the makefiles CXX is used without CXXFLAGS.
+--     DONE: Jakob,     but we need the new c++ standard. use -std=c++0x (DONE)
+--   9. use static_cast when possible.
+--   10. how to get gcc to shut up about uninitialized data in calls to R.init(a) ?
+--   11. find c++ formatting tool(s)
+--      some choices: astyle, bcpp, Uncrustify
+--      also: emacs modes.
+--        http://stackoverflow.com/questions/841075/best-c-code-formatter-beautifier, 
+--        http://www.suodenjoki.dk/us/archive/2010/cpp-checkstyle.htm
+--      how not to indent curly braces: 
+--        http://emacswiki.org/emacs/IndentingC
+--   12. add unit tests for all the aring-ffpack functions.  (e.g. compare_elems).
+--
+-- (23 Jan 2013)
+--   Added fplll support to M2
+--   1. inline routines in aring-ffpack.{hpp,cpp}
+--   2. power/inverse for aring-ffpack
+--   3. fplll interface
+--
+-- 29 Jan 2013
+--   shorter meeting
+--  mike todo:
+--   make fplll a standard install?
+--     make linear algebra code ready for 1.5.1?  or 1.6?
+--   latest scientifuc linux (version 6.3) uses gcc 4.4.6, too bad!
+--     check on std++0x and gcc 4.4.6, and what is available.
+--   make sure the linear algebra routines runwith the original ZZ/p.
+--     maybe only need to connect the top level routines:
+--       1. need to run initializeEngineLinearAlgebra for ZZ/p rings.
+--       2. det seems to be implemented this way
+--       3. * is not done in the engine yet?
+--       4. figure out which other ones need to be implemented for ZZ/p
+--       5. there is an "error message bumped" error that needs to be fixed.
+--       6. the ZZp routine should be placed into the M2 Core.
+--          and should have an option to choose FFPACK or M2.
+--          ZZ/23 -- doesn't allow options.  So no way to choose between ffpack and other implementations.
+--     we started this: moved ZZp code from FastLinearAlgebra to quotring.m2
+--     but we need to make sure that the templates for the linear algebra routines are all
+--         defined.
+--     change class templates to function templates for the linear algebra routines.
+--   keep adding in unit tests for aring functions and for dmat functions.
+--  jakob todo:
+--     too busy in February to do anything on this.
+--
+-- next meeting: 6 Mar 2013
+--   for milestone of finally getting this into the system:
+--     a. top level code to do the following:
+--        call ZZ/p  (initialize lin alg functions)
+--        make sure all of the lin alg routines can be called at top level
+--           (e.g. det, solveLinear, rank, ...) both for matrices and mutable matrices
+--     b. unit tests for this code
+--     c. get rid of all (or most) of the warning messages from the compiler
+--     d. make the 'linbox' configure option the default
+--     e. make sure that we are using correct implementation for each ZZ/p.
+--     f. clean up the template code for calling these function (in e dir)
+
+-- TODO from meeting on 24 July 2013
+--  a. rawLinAlgAddMult, rawLinAlgSubMult need to be implemented
+--  b. better tests in packages/EngineTests.m2 for lin alg routines
+--  c. solveLinear crashes on larger input, why?
+--  d. make sure entire lin alg interface is complete, extra code should be removed.
+--  e. rawLinAlgRank: isn't checking for errors.
