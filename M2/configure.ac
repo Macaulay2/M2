@@ -1373,16 +1373,16 @@ AC_LINK_IFELSE(
 	[  AC_MSG_RESULT(no) ])
 CFLAGS="$SAVE"
 
-TESTFLAG=-Wno-strict-aliasing
+TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
 M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
 CFLAGS=$SAVE
-AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
+AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -1394,24 +1394,28 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wno-mismatched-tags)
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl Always check for the option that turns the warning on, because gcc doesn't complain
+dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
+dnl It's a feature, not a bug!
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wno-mismatched-tags"
+CFLAGS="$CFLAGS -Wmismatched-tags"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    # we don't like seeing this warning, especially from the "clang" compiler
     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wno-parentheses-equality)
-AC_SUBST(HAVE_NO_PARENTHESES_EQUALITY,)
+AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wno-parentheses-equality"
+CFLAGS="$CFLAGS -Wparentheses-equality"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    HAVE_NO_PARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
-    HAVE_NO_PARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
+    HAVE_WPARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
+    HAVE_WPARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
