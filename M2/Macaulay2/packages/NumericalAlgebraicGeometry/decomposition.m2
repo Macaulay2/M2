@@ -224,15 +224,15 @@ result = regeneration I_*
 assert(#result==2 and result/degree == {7,2} and result/dim == {1,2})
 
 --example with 4 double points (same deflation sequence)
-NAGtrace 3
+-- NAGtrace 3
 R = CC[x,y,z];
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(z-x^3), (x+y+z-1)^2}; -- ^3 fails
+I = ideal {sph*(y-x^2), sph*(z-x^3), (x+y+z-1)^2}; -- ^3 fails
 for i to 10 do (
-setRandomSeed i;
-result = regeneration I_*;
-assert(#result==2 and result/degree == {4,2} and result/dim == {0,1})
-)
+    print setRandomSeed i;
+    result = regeneration I_*;
+    assert(#result==2 and result/degree == {3,2} and result/dim == {0,1})
+    )
 ///
 
 

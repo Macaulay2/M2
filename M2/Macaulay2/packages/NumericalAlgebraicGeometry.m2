@@ -51,7 +51,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
-     "regeneration", isSolution, SquaredUpSystem, SquareUpMatrix,
+     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, SquareUp,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -409,7 +409,7 @@ squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
     )
 squareUp(PolySystem,Matrix) := (P,M) -> (
     P.SquareUpMatrix = M;
-    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!
+    P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
     )
 
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
@@ -552,10 +552,6 @@ load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgeb
 --assert(multistepPredictor(2_QQ,{0,0,0}) === {-3/8, 37/24, -59/24, 55/24}) -- Wikipedia: Adams-Bashforth
 --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
 --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
-
-TEST ///-- numerical rank
-assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
-///
 
 TEST ///-- random and good initial pairs
 setRandomSeed 0
