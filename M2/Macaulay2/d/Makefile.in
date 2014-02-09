@@ -103,7 +103,7 @@ endif
 .SUFFIXES: .d .sig .dep .res .test .m2
 .PHONY : clean all check tags
 
-ifeq "@HAVE_NO_PARENTHESES_EQUALITY@" "yes"
+ifeq "@HAVE_WPARENTHESES_EQUALITY@" "yes"
 DCFLAGS += -Wno-parentheses-equality
 endif
 
