@@ -9,7 +9,7 @@ export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToD
     numericalRank, isFullNumericalRank
     }
 
-numericalRank = method(Options=>{Threshold=>1e3})
+numericalRank = method(Options=>{Threshold=>1e-4})
 numericalRank Matrix := o -> M -> (
      o = fillInDefaultOptions o;
      if not member(class ring M, {RealField,ComplexField}) 
@@ -35,7 +35,7 @@ numericalRank Matrix := o -> M -> (
      r 
      )  
 
-isFullNumericalRank = method(Options=>{Threshold=>1e3}) -- looks for a gap between singular values 
+isFullNumericalRank = method(Options=>{Threshold=>1e-4}) 
 isFullNumericalRank Matrix := o -> M -> (
     r := numericalRank(M,o);
     r == min(numColumns M, numRows M) 
@@ -45,8 +45,9 @@ TEST ///
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
-P0 = point{{0.0001,0.0001,ii*0.0001}}
-P1 = point{{0.0001,0.0001,1.00001+ii*0.0001}}
+e = 0.00001
+P0 = point{{e,e,ii*e}}
+P1 = point{{e,e,e+ii*e}}
 P2 = point{{0.1,0.1,0.1_CC}}
 assert not isFullNumericalRank evaluate(F,P0)
 assert not isFullNumericalRank evaluate(F,P1)

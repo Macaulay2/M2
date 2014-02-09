@@ -553,10 +553,6 @@ load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgeb
 --assert(multistepPredictor(2_QQ,{-1}) === {-1/8, 5/8}) -- computed by hand
 --assert(flatten entries (coefficients first multistepPredictorLooseEnd(2_QQ,{0,0,0}))#1=={1/120, 1/16, 11/72, 1/8})
 
-TEST ///-- numerical rank
-assert (numericalRank matrix {{2,1},{0,0.001}} == 1)
-///
-
 TEST ///-- random and good initial pairs
 setRandomSeed 0
 T = randomSd {2,3};
