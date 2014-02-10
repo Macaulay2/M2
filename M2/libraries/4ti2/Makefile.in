@@ -4,7 +4,7 @@
 VERSION = 1.6.2.20140114
 TARDIR = 4ti2-1.6.2
 
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoconf
 
 # URL = http://www.4ti2.de/version_$(VERSION)
