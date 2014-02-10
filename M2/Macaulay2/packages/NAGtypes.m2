@@ -11,7 +11,7 @@ newPackage(
 	  },
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => false 
+     DebuggingMode => true 
      )
 
 export {
@@ -37,7 +37,9 @@ export {
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
      "polySystem",
-     "evaluate"
+     "evaluate",
+     -- dual space
+     "DualBasis", "BasePoint", "dualSpace", "addition", "intersection"
      }
 
 -- DEBUG Core ----------------------------------------
@@ -538,6 +540,129 @@ generalEquations WitnessSet := (W) -> (
 	  neweqns := (generators ideal W) * random(R^ngens, R^(n-d));
 	  witnessSet(ideal neweqns, slice W, points W))
      )
+
+-------------------------------------------
+-- DualSpace 
+--   DualBasis: a row matrix of polynomials representing dual functionals
+--   BasePoint: a point of localization
+--   Tolerance: tolerance used to compute the DualSpace or associated to it; 0 in the exact setting
+-- (dualBasis is expected to be linearly independent and reduced w.r.t. the monomial order;
+--  the span should be closed under derivation) 
+DualSpace = new Type of MutableHashTable
+globalAssignment DualSpace
+dualSpace = method()
+dualSpace DualSpace := L -> new DualSpace from L
+dualSpace (Matrix, Point, Number) := (M,p,t)-> (
+    assert(numrows M == 1);
+    assert(numgens ring M == #coordinates p);
+    assert(t>=0);
+    new DualSpace from {DualBasis=>M,BasePoint=>p,Tolerance=>t}
+    )
+-- what other constructors would we have?
+
+gens DualSpace := o -> L -> L.DualBasis
+
+net DualSpace := L -> net gens L
+
+dim DualSpace := L -> numcols gens L
+
+hilbertFunction DualSpace := o -> L ->
+    tally(flatten entries L.DualBasis / first @@ degree)
+hilbertFunction (List,DualSpace) := o -> (LL,L) -> (
+    h := hilbertFunction L;
+    apply(LL, d->(if h#?d then h#d else 0))
+    )
+hilbertFunction (ZZ,DualSpace) := o -> (d,L) -> first hilbertFunction({d},L)
+
+check DualSpace :=  L -> error "not implemented"
+
+areEqual (DualSpace,DualSpace) := o -> (L,K) -> (
+    n := dim addition(L,K,Tolerance=>o.Tolerance);
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K and n == dim L
+    )
+isContained = method(TypicalValue => Boolean, Options => {Tolerance=>1e-6})
+isContained (DualSpace,DualSpace) := o -> (L,K) -> (
+    n := dim addition(L,K,Tolerance=>o.Tolerance);
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K
+    )
+DualSpace == DualSpace := (L,K) -> areEqual(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
+
+intersection = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+intersection (DualSpace,DualSpace) := o -> (L,K) -> (
+    (mons,coefs) := coefficients (gens L|gens K);
+    Lcoefs := submatrix(coefs,(0..dim L-1));
+    Kcoefs := submatrix'(coefs,(0..dim L-1));
+    Lorth := numericalKernel(transpose Lcoefs,o.Tolerance);
+    Korth := numericalKernel(transpose Kcoefs,o.Tolerance);
+    M := mons*numericalKernel(transpose (Lorth|Korth),o.Tolerance);
+    dualSpace(M,L.BasePoint,o.Tolerance)
+    )
+
+addition = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+addition (DualSpace,DualSpace) := o -> (L,K) -> (
+    (mons,C) := coefficients (gens L | gens K);
+    M := mons*numericalImage(C,o.Tolerance);
+    dualSpace(M,L.BasePoint,o.Tolerance)
+    )
+DualSpace + DualSpace := (L,K) -> addition(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
+
+quotient (DualSpace, RingElement) := o-> (L,g) -> (
+    (gmons,gcoefs) := coefficients g;
+    (Lmons,Lcoefs) := coefficients gens L;
+    M := matrix apply(flatten entries gmons, gm->(
+	    apply(flatten entries Lmons, Lm->(
+		    d := diff(gm,Lm);
+		    if d == 0 then d else leadMonomial d
+		    ))
+	    ));
+    M = (transpose gcoefs)*M*Lcoefs;
+    (Mmons,Mcoefs) := coefficients M;
+    M = Mmons*numericalImage(Mcoefs,L.Tolerance);
+    dualSpace(M,L.BasePoint,L.Tolerance)
+    )	    
+quotient (DualSpace, Ideal) := (L,J) -> error "not implemented"
+
+interpolatedIdeal = method()
+interpolatedIdeal DualSpace := L -> error "not implemented"
+interpolatedIdeal List := LL -> error "not implemented"
+
+
+numericalImage = (M, tol) -> (
+    R := ultimate(coefficientRing, ring M);
+    M = sub(M, R);
+    if numcols M == 0 then return M;
+    if numrows M == 0 then return map(R^0,R^0,0);
+    if precision 1_(ring M) < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix(U,,cols)
+	) else (
+	gens image M
+	)
+    )
+
+numericalKernel = (M, tol) -> (
+    M = sub(M, ultimate(coefficientRing, ring M));
+    if numrows M == 0 then return id_(source M);
+    if precision 1_(ring M) < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix'(adjointMatrix Vt,,cols)
+	) else (
+	gens kernel M
+	)
+    )
+
+-- produces the conjugate transpose
+adjointMatrix = M -> (
+    M' := mutableMatrix transpose M;
+    for i from 0 to (numrows M')-1 do (
+	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
+	);
+    matrix M'
+    )
+
+
 
 beginDocumentation()
 
