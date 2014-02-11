@@ -18,11 +18,7 @@ newPackage(
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
   Headline => "Interface to Bertini",
-  Configuration => { 
-    "path" => "",
-    "BERTINIexe"=>"bertini", 
-    "keep files" => true
-  },
+  Configuration => { "BERTINIexecutable"=>"bertini" },
   DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
@@ -93,8 +89,7 @@ needsPackage "NAGtypes"
 --##########################################################################--
 
 DBG = 0 -- debug level (10=keep temp files)
-path'BERTINI = (options Bertini).Configuration#"path"
-BERTINIexe=path'BERTINI|(options Bertini).Configuration#"BERTINIexe"
+BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
 
 needsPackage "SimpleDoc"
 

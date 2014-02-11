@@ -9,10 +9,12 @@ doc ///
       to solve polynomial systems and perform calculations in
       {\em numerical algebraic geometry}. The software is available at
       @HREF"http://www.nd.edu/~sommese/bertini/"@.
-      The site currently provides only executable versions named {\tt bertini} or {\tt bertini.exe} (for Cygwin).
-      The user must have the executable program {\tt bertini} available,
-      preferably in the executation path.
 
+      The user may place the executable program {\tt bertini} in the executation path. 
+      Alternatively, the path to the executable needs to be specified, for instance,
+    Example
+      needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})  
+    Text
       Below is a simple example using the most popular function,
       a basic zero-dimensional solve with no special options.
     Example
