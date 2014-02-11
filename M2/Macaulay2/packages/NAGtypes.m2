@@ -163,6 +163,8 @@ point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
 
+Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
+
 coordinates = method()
 coordinates Point := p -> p.Coordinates
 
@@ -214,7 +216,12 @@ areEqual (Point,Point) := o -> (a,b) -> (
     b = b.Coordinates;
     if o.Projective 
     then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
-    else norm(2,(a-b)) < o.Tolerance * max(norm(2,a),norm(2,b))
+    else (
+	na := norm(2,a); 
+	nb := norm(2,b);
+	if na > 1 or nb > 1 then norm(2,(a-b)) < o.Tolerance * max(na,nb)
+	else norm(2,a-b) < o.Tolerance -- in case both points are close to the origin, absolute error is looked at 
+	)
     )
 areEqual (Point,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
 areEqual (BasicList,Point) := o -> (a,b) -> areEqual(toList a, coordinates b)
@@ -263,6 +270,23 @@ sortSolutions List := o -> sols -> (
 	  );
      apply(sorted, i->sols#i)
      )
+
+TEST /// -- point comparison and sorting
+e = 0.0001
+assert areEqual(point{{0,e}},point{{0,0}},Tolerance=>2*e)
+assert areEqual(point{{0,e}},point{{e,0}},Tolerance=>2*e)
+assert areEqual(point{{10,e}},point{{10+5*e,0}},Tolerance=>e)
+assert not areEqual(point{{10,e}},point{{10+10*e,0}},Tolerance=>e)
+
+A = point{{1,0}}; B = point{{0,2}}; A' = point{{1+e,0}}; B' = point{{0,2+e}};
+assert( sortSolutions({A,A',B,B'}, Tolerance=>10*e) == sortSolutions({B',A,B,A'}, Tolerance=>10*e) )
+assert areEqual(
+    sortSolutions({A,B,B'},Tolerance=>2*e),
+    sortSolutions({B',B,A'},Tolerance=>2*e),
+    Tolerance=>2*e
+    )
+///
+
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)

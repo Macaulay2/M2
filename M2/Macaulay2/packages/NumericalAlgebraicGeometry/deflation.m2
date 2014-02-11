@@ -9,7 +9,7 @@ export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToD
     numericalRank, isFullNumericalRank
     }
 
-numericalRank = method(Options=>{Threshold=>1e3})
+numericalRank = method(Options=>{Threshold=>1e-4})
 numericalRank Matrix := o -> M -> (
      o = fillInDefaultOptions o;
      if not member(class ring M, {RealField,ComplexField}) 
@@ -35,7 +35,7 @@ numericalRank Matrix := o -> M -> (
      r 
      )  
 
-isFullNumericalRank = method(Options=>{Threshold=>1e3}) -- looks for a gap between singular values 
+isFullNumericalRank = method(Options=>{Threshold=>1e-4}) 
 isFullNumericalRank Matrix := o -> M -> (
     r := numericalRank(M,o);
     r == min(numColumns M, numRows M) 
@@ -45,8 +45,9 @@ TEST ///
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z^2-1)^2}
-P0 = point{{0.0001,0.0001,ii*0.0001}}
-P1 = point{{0.0001,0.0001,1.00001+ii*0.0001}}
+e = 0.00001
+P0 = point{{e,e,ii*e}}
+P1 = point{{e,e,e+ii*e}}
 P2 = point{{0.1,0.1,0.1_CC}}
 assert not isFullNumericalRank evaluate(F,P0)
 assert not isFullNumericalRank evaluate(F,P1)
@@ -96,14 +97,20 @@ deflate(PolySystem, Matrix) := (F,B) -> (
     F.Deflation#r
     )
 
--- deflate according to the sequence of matrices
+-- deflate using a pair of matrices: one for deflation, the other for squaring up 
+deflate(PolySystem, Sequence) := (F,BM) -> (
+    (B,M) := BM;
+    FD := deflate(F,B);
+    squareUp(FD,M)
+    )
+
+-- deflate according to the sequence of matrices (or pairs of matrices if squaring up)
 deflate(PolySystem, List) := (F, seq) -> (
-    scan(seq, B -> F = deflate(F,B));
-    F        
+    scan(seq, B -> F = deflate(F,B)); -- here B is either a Matrix or (Matrix,Matrix)
+    F
     )
 
 liftPointToDeflation = method() 
-
 -- approximates the coordinates corresponding to the augmented deflation variables
 -- for the deflation of F of rank r
 liftPointToDeflation (Point,PolySystem,ZZ) := (P,F,r) -> (
@@ -143,8 +150,8 @@ NNP2.ErrorBoundEstimate
 assert(P2.ErrorBoundEstimate^2 > NP2.ErrorBoundEstimate)
 ///
 
-deflateInPlace = method()
-deflateInPlace(Point,PolySystem) := (P,F) -> (
+deflateInPlace = method(Options=>{SquareUp=>true})
+deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
     P0 := P;
     F0 := F;
     d'seq := {}; -- deflation sequence: a sequence of matrices used for deflation
@@ -154,9 +161,15 @@ deflateInPlace(Point,PolySystem) := (P,F) -> (
     while not isFullNumericalRank evaluate(jacobian F0,P0) do (
 	r := deflate (F0,P0);
 	d'seq = d'seq | {r};
-	d'seq'mat = d'seq'mat | {F0.DeflationRandomMatrix#r};
+	new'mat'or'pair := F0.DeflationRandomMatrix#r;
 	P0' := liftPointToDeflation(P0,F0,r); 
 	F0 = F0.Deflation#r; 
+	if o.SquareUp then (
+	    F0' := squareUp F0;
+	    new'mat'or'pair = (new'mat'or'pair, F0.SquareUpMatrix);
+	    F0 = F0';
+	    );
+	d'seq'mat = d'seq'mat | {new'mat'or'pair}; 
 	P0 = newton(F0,P0');
 	);
     P.Coordinates = take(coordinates P0, F.NumberOfVariables);
@@ -170,13 +183,14 @@ deflateInPlace(Point,PolySystem) := (P,F) -> (
     )
 
 TEST ///
+setRandomSeed 0
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
 P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
 deflateInPlace(P,F)
 assert(P.DeflationSequence == {0,1})
-assert(P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
+assert(2*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
 ///
 
 partitionViaDeflationSequence = method()
