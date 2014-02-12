@@ -318,7 +318,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     f << "REGENSTARTLEVEL: " << o.REGENSTARTLEVEL << ";\n";
 
   -- now we handle the various runType options:
-  if o.runType == 1 then --param run 
+  if o.runType == 1 then --segment run 
     f << "USERHOMOTOPY: 1;\n";
   if o.runType == 2 then --pos dim run
     f << "TRACKTYPE: 1;\n";
@@ -339,7 +339,9 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   -- The following block is the input section of the input file
   f << "INPUT" << endl << endl;
   if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
-    f << "variable "
+    (if o.ISPROJECTIVE==1 then 
+    f << "hom_variable_group " else
+    f << "variable ")
   else (if o.ISPROJECTIVE==-1 then 
     f << "variable_group "
   else f << "hom_variable_group "); -- if not user-defined, dec type of vars if "variable_group"
