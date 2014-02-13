@@ -1,11 +1,11 @@
--- -*- coding: utf-8 -*-
+-- -*- coding: utf-8-unix -*-
 
 needsPackage "Graphs"
 
 newPackage(
      "GraphicalModels",
      Version => "1.0",
-     Date => "April 2013",
+     Date => "April, 2013",
      Authors => {
 	  {Name => "Luis Garcia-Puente",
 	   Email => "lgarcia@shsu.edu",
@@ -23,7 +23,20 @@ newPackage(
 	  -- Email=> "",
 	  -- HomePage=>""}      
 	  },
-     Headline => "A package for discrete and Gaussian graphical models"
+     Headline => "A package for discrete and Gaussian graphical models",
+     Certification => {
+     	  "journal name" => "The Journal of Software for Algebra and Geometry",
+     	  "journal URI" => "http://j-sag.org/",
+     	  "article title" => "Graphical Models",
+     	  "acceptance date" => "2013-03-05",
+     	  "published article URI" => "http://j-sag.org/Volume5/jsag-1-2013.pdf",
+     	  "published code URI" => "http://j-sag.org/Volume5/GraphicalModels.m2",
+     	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+     	  "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
+     	  "version at publication" => "1.0",
+     	  "volume number" => "5",
+     	  "volume URI" => "http://j-sag.org/Volume5/"
+     	  }
      --DebuggingMode => true
      )
 export {"bidirectedEdgesMatrix",
@@ -529,6 +542,11 @@ gaussianRing Graph := Ring => opts -> (g) -> (
     kL := join(apply(vv, i->k_(i,i)),delete(null, flatten apply(vv, x-> apply(toList bb#x, y->if pos(vv,x)>pos(vv,y) then null else k_(x,y)))));
     m := #kL; --eliminate the k's 
     R := kk(monoid [kL,sL,MonomialOrder => Eliminate m, MonomialSize=>16]); 
+    H := new MutableHashTable;
+    nextvar := 0;
+    for v in kL do (H#v = R_nextvar; nextvar = nextvar+1);
+    for v in sL do (H#v = R_nextvar; nextvar = nextvar+1);
+    R.gaussianVariables = new HashTable from H;
     R#numberOfEliminationVariables = m;
     R.gaussianRingData = {#vv,s,k};
     R.graph = g;
@@ -572,6 +590,13 @@ gaussianRing MixedGraph := Ring => opts -> (g) -> (
      pL := join(apply(vv, i->p_(i,i)),delete(null, flatten apply(vv, x-> apply(toList bb#x, y->if pos(vv,x)>pos(vv,y) then null else p_(x,y)))));
      m := #lL+#pL;
      R := kk(monoid [lL,pL,sL,MonomialOrder => Eliminate m, MonomialSize=>16]);
+     -- create gaussianVariables hash table: (symbol s)_(i,j) => ring var with the same name, same for l, p.
+     H := new MutableHashTable;
+     nextvar := 0;
+     for v in lL do (H#v = R_nextvar; nextvar = nextvar+1);
+     for v in pL do (H#v = R_nextvar; nextvar = nextvar+1);
+     for v in sL do (H#v = R_nextvar; nextvar = nextvar+1);
+     R.gaussianVariables = new HashTable from H;
      R#numberOfEliminationVariables = m;
      R.gaussianRingData = {#vv,s,l,p};
      R.mixedGraph = g;
@@ -598,10 +623,11 @@ undirectedEdgesMatrix Ring := Matrix =>  R -> (
      bb:= graph g;
      vv := sort vertices g;
      n := R.gaussianRingData#0; --number of vertices
-     p := value R.gaussianRingData#2;-- this p is actually k in this case (in name).
+     k := R.gaussianRingData#2; 
+     H := R.gaussianVariables;
      PM := mutableMatrix(R,n,n);
-     scan(vv,i->PM_(pos(vv,i),pos(vv,i))=p_(i,i));
-     scan(vv,i->scan(toList bb#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then p_(i,j) else p_(j,i)));
+     scan(vv,i->PM_(pos(vv,i),pos(vv,i))=H#(k_(i,i)));
+     scan(vv,i->scan(toList bb#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(k_(i,j)) else H#(k_(j,i))));
      matrix PM) 
 
 
@@ -618,9 +644,10 @@ directedEdgesMatrix Ring := Matrix => R -> (
      dd := graph G#Digraph;
      vv := sort vertices g;
      n := R.gaussianRingData#0;
-     l := value R.gaussianRingData#2;
+     l := R.gaussianRingData#2;
+     H := R.gaussianVariables;
      LM := mutableMatrix(R,n,n);
-     scan(vv,i->scan(toList dd#i, j->LM_(pos(vv,i),pos(vv,j))=l_(i,j)));
+     scan(vv,i->scan(toList dd#i, j->LM_(pos(vv,i),pos(vv,j))=H#(l_(i,j))));
      matrix LM) 
 
 
@@ -636,10 +663,11 @@ bidirectedEdgesMatrix Ring := Matrix => R -> (
      bb := graph G#Bigraph;
      vv := sort vertices g;
      n := R.gaussianRingData#0;
-     p := value R.gaussianRingData#3;
+     p := R.gaussianRingData#3;
+     H := R.gaussianVariables;
      PM := mutableMatrix(R,n,n);
-     scan(vv,i->PM_(pos(vv,i),pos(vv,i))=p_(i,i));
-     scan(vv,i->scan(toList bb#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then p_(i,j) else p_(j,i)));
+     scan(vv,i->PM_(pos(vv,i),pos(vv,i))=H#(p_(i,i)));
+     scan(vv,i->scan(toList bb#i, j->PM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(p_(i,j)) else H#(p_(j,i))));
      matrix PM) 
  
  
@@ -696,18 +724,20 @@ covarianceMatrix(Ring) := Matrix => (R) -> (
      	    g:=R.graph;
 	    vv := sort vertices g;
      	    n := R.gaussianRingData#0;
-     	    s := value R.gaussianRingData#1;
+     	    s := R.gaussianRingData#1;
+            H := R.gaussianVariables;
      	    SM := mutableMatrix(R,n,n);
-     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then s_(i,j) else s_(j,i)));
+     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(s_(i,j)) else H#(s_(j,i))));
      	    matrix SM	    
 	    ) 
        else if R.?mixedGraph then (  
      	    g = R.mixedGraph;
 	    vv = sort vertices g;
      	    n = R.gaussianRingData#0;
-     	    s = value R.gaussianRingData#1;
+     	    s = R.gaussianRingData#1;
+            H = R.gaussianVariables;
      	    SM = mutableMatrix(R,n,n);
-     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then s_(i,j) else s_(j,i)));
+     	    scan(vv,i->scan(vv, j->SM_(pos(vv,i),pos(vv,j))=if pos(vv,i)<pos(vv,j) then H#(s_(i,j)) else H#(s_(j,i))));
      	    matrix SM	    
 	    ) 
        else (
@@ -904,6 +934,7 @@ gaussianVanishingIdeal Ring := Ideal => R -> (
        I = trim ideal(0_R);
        I = eliminate(elimvarlist,tempideal)
      )
+ else error " gaussianVanishingIdeal expected a ring created with gaussianRing of a Graph or Digraph or MixedGraph"    
 )
 
 ------------------------------------------------------------------
@@ -3186,8 +3217,10 @@ restart
 installPackage ("GraphicalModels", RemakeAllDocumentation => true, UserMode=>true)
 viewHelp GraphicalModels
 installPackage("GraphicalModels",UserMode=>true,DebuggingMode => true)
-
-
+installPackage ("GraphicalModels", RemakeAllDocumentation => true, UserMode=>true)
+installPackage("GraphicalModels", RemakeAllDocumentation => true, UserMode=>true, DebuggingMode => true, FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels.m2")
+installPackage("GraphicalModels", RemakeAllDocumentation => true, UserMode=>true, DebuggingMode => true, FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels-Mike.m2")
+installPackage("GraphicalModels", RemakeAllDocumentation => true, UserMode=>true, DebuggingMode => true, FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels-old.m2")
 ----------------------
 -- Parameterization -- ????????????????????????????????????????????????????????????????????????
 ---------------------- 
@@ -3212,3 +3245,71 @@ installPackage("GraphicalModels",UserMode=>true,DebuggingMode => true)
 
 ---- isMonomial works well as long as m is actually a polynomial or monomial and not 
 ---- an element of ZZ, QQ, RR, etc.
+
+
+end;
+restart
+installPackage "GraphicalModels"
+check "GraphicalModels"
+
+restart
+printWidth=75;
+needsPackage "GraphicalModels";
+G = digraph{{a,d},{b,d},{c,{d,e}},{d,e}}; 
+R = gaussianRing G;
+gens R
+I = conditionalIndependenceIdeal(R,globalMarkov(G));
+J = gaussianVanishingIdeal(R);
+flatten degrees J
+isSubset(I,J), I == J, J == trekIdeal(R,G)
+
+d = (2,3,2); R = markovRing d;
+gens R
+S = {{{1},{2},{3}}, {{1},{3},{}}}; compactMatrixForm=false; markovMatrices(R,S)
+I = conditionalIndependenceIdeal(R,S); flatten degrees  I 
+G = graph{{1,2},{2,3},{3,4},{4,5},{1,5}}; netList pack (3,localMarkov G)
+
+G = digraph {{1,{2}}, {2,{3}},{3,{4}},{4,{}}}; R = markovRing (2,2,2,2);
+I = discreteVanishingIdeal (R,G); betti mingens I
+
+J = conditionalIndependenceIdeal (R, localMarkov G); I == J
+K = conditionalIndependenceIdeal (R, globalMarkov G); I == K
+
+G = mixedGraph(digraph {{1,{2,3}},{2,{3}},{3,{4}}},bigraph {{1,2},{2,4}});
+R = gaussianRing G; I = gaussianVanishingIdeal R;
+flatten degrees I 
+J = trekIdeal (R,G)
+
+H = identifyParameters R;
+H#(p_(2,4))_0
+
+///
+
+restart
+installPackage ("GraphicalModels",FileName=>"/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels.m2", RemakeAllDocumentation => true) 
+
+ restart
+ loadPackage("GraphicalModels", FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels.m2")
+ f = () -> (
+   R := gaussianRing G;
+   gaussianVanishingIdeal R)
+ G = graph({{a,b},{b,c},{c,d},{a,d}})
+ f()
+
+restart
+ loadPackage("GraphicalModels", FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels.m2")
+ f = () -> (
+   R := gaussianRing G;
+   gaussianVanishingIdeal R)
+ G = digraph {{1,{2}}, {2,{3}},{3,{4}},{4,{}}};
+ f()
+ 
+ restart
+ loadPackage("GraphicalModels", FileName => "/Users/lgp/Software/Macaulay2/Workshop-2014-Berkeley/GraphicalModels/GraphicalModels.m2")
+ f = () -> (
+     R := gaussianRing G;
+     gaussianVanishingIdeal R)
+ G = mixedGraph(digraph {{1,{2,3}},{2,{3}},{3,{4}}},bigraph {{1,2},{2,4}});
+ f()
+
+///
