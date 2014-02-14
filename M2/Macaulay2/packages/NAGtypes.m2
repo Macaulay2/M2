@@ -39,7 +39,8 @@ export {
      "polySystem",
      "evaluate",
      -- dual space
-     "DualBasis", "BasePoint", "dualSpace", "addition", "intersection"
+     "DualSpace", "DualBasis", "BasePoint", "dualSpace", "addition", "intersection", "reduceDual", "Reduced",
+     "numericalKernel", "numericalImage", "colReduce"
      }
 
 -- DEBUG Core ----------------------------------------
@@ -574,13 +575,13 @@ generalEquations WitnessSet := (W) -> (
 --  the span should be closed under derivation) 
 DualSpace = new Type of MutableHashTable
 globalAssignment DualSpace
-dualSpace = method()
+dualSpace = method(Options => {Reduced => false})
 dualSpace DualSpace := L -> new DualSpace from L
-dualSpace (Matrix, Point, Number) := (M,p,t)-> (
+dualSpace (Matrix, Point, Number) := o -> (M,p,t)-> (
     assert(numrows M == 1);
     assert(numgens ring M == #coordinates p);
     assert(t>=0);
-    new DualSpace from {DualBasis=>M,BasePoint=>p,Tolerance=>t}
+    new DualSpace from {DualBasis=>M,BasePoint=>p,Tolerance=>t,Reduced=>o.Reduced}
     )
 -- what other constructors would we have?
 
@@ -590,13 +591,15 @@ net DualSpace := L -> net gens L
 
 dim DualSpace := L -> numcols gens L
 
-hilbertFunction DualSpace := o -> L ->
+hilbertFunction DualSpace := L -> (
+    if not L.Reduced then L = reduceDual L;
     tally(flatten entries L.DualBasis / first @@ degree)
-hilbertFunction (List,DualSpace) := o -> (LL,L) -> (
+    )
+hilbertFunction (List,DualSpace) := (LL,L) -> (
     h := hilbertFunction L;
     apply(LL, d->(if h#?d then h#d else 0))
     )
-hilbertFunction (ZZ,DualSpace) := o -> (d,L) -> first hilbertFunction({d},L)
+hilbertFunction (ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
 
 check DualSpace :=  L -> error "not implemented"
 
@@ -630,6 +633,13 @@ addition (DualSpace,DualSpace) := o -> (L,K) -> (
     )
 DualSpace + DualSpace := (L,K) -> addition(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
 
+reduceDual = method(TypicalValue => DualSpace)
+reduceDual (DualSpace) := L -> (
+    (mons,coefs) := coefficients gens L;
+    M := mons*(colReduce(coefs, L.Tolerance));
+    dualSpace(M,L.BasePoint,L.Tolerance,Reduced=>true)
+    )
+
 quotient (DualSpace, RingElement) := o-> (L,g) -> (
     (gmons,gcoefs) := coefficients g;
     (Lmons,Lcoefs) := coefficients gens L;
@@ -643,15 +653,19 @@ quotient (DualSpace, RingElement) := o-> (L,g) -> (
     (Mmons,Mcoefs) := coefficients M;
     M = Mmons*numericalImage(Mcoefs,L.Tolerance);
     dualSpace(M,L.BasePoint,L.Tolerance)
-    )	    
+    )
 quotient (DualSpace, Ideal) := (L,J) -> error "not implemented"
 
 interpolatedIdeal = method()
 interpolatedIdeal DualSpace := L -> error "not implemented"
 interpolatedIdeal List := LL -> error "not implemented"
 
+---------------------------------------------
+-- AUXILIARY FUNCTIONS
+---------------------------------------------
 
-numericalImage = (M, tol) -> (
+numericalImage = method()
+numericalImage (Matrix, Number) := (M, tol) -> (
     R := ultimate(coefficientRing, ring M);
     M = sub(M, R);
     if numcols M == 0 then return M;
@@ -665,7 +679,8 @@ numericalImage = (M, tol) -> (
 	)
     )
 
-numericalKernel = (M, tol) -> (
+numericalKernel = method()
+numericalKernel (Matrix, Number) := (M, tol) -> (
     M = sub(M, ultimate(coefficientRing, ring M));
     if numrows M == 0 then return id_(source M);
     if precision 1_(ring M) < infinity then (
@@ -678,7 +693,8 @@ numericalKernel = (M, tol) -> (
     )
 
 -- produces the conjugate transpose
-adjointMatrix = M -> (
+adjointMatrix = method(TypicalValue => Matrix)
+adjointMatrix Matrix := M -> (
     M' := mutableMatrix transpose M;
     for i from 0 to (numrows M')-1 do (
 	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
@@ -686,7 +702,36 @@ adjointMatrix = M -> (
     matrix M'
     )
 
+--performs Gaussian reduction on M
+colReduce = method(TypicalValue => Matrix)
+colReduce (Matrix, RR) := (M, tol) -> (
+    M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
+    (m,n) := (numrows M, numcols M);
+    i := 0;
+    for j from 0 to n-1 do (
+	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
+	c := M_(a,j);
+	if abs c <= tol then continue;
+	rowSwap(M,a,i);
+	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
+	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
+	i = i+1;
+	);
+    M = transpose new Matrix from M;
+    if tol > 0 then clean(tol,M) else M
+    )
 
+TEST ///
+restart
+loadPackage "NAGtypes"
+p = point matrix{{1.,0.}}
+R = CC[x,y]
+L = dualSpace(matrix{{y^2+x,y^2}},p,0.0001)
+K = dualSpace(matrix{{x+.000000001}},p,0.0001)
+assert(areEqual(L+K,L))
+assert(areEqual(intersection(L,K),K))
+hilbertFunction({0,1,2,3},L)
+///
 
 beginDocumentation()
 
