@@ -477,9 +477,19 @@ doc ///
      H = { (x^2-1)*t + (x^2-2)*(1-t)};
      sol1 = point {{1}};
      sol2 = point {{-1}};
-     S1= { sol1, sol2  };	  
-     S0 = bertiniTrackHomotopy (H, t, S1) 
+     S1= { sol1, sol2  };--solutions to H when t=1	  
+     S0 = bertiniTrackHomotopy (H, t, S1) --solutions to H when t=0
      peek S0_0
+   Example     
+     R=CC[x,y,t]; -- include the path variable in the ring     
+     f1=(x^2-y^2);
+     f2=(2*x^2-3*x*y+5*y^2);
+     H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+     sol1=    point{{1,1}}--{{x,y}} coordinates
+     sol2=    point{{ -1,1}}
+     S1={sol1,sol2}--solutions to H when t=1
+     S0=bertiniTrackHomotopy(  H,t,S1,ISPROJECTIVE=>1) --solutions to H when t=0       
+
 ///;
 
 doc ///
@@ -570,6 +580,12 @@ doc ///
      R = CC[x,y,z];
      f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
      NV = bertiniPosDimSolve(f,ISPROJECTIVE=>1)
+   Example 
+     R=CC[x,y,z,u1,u2];--u1,u2 are parameters
+     f1=x^2+y^2-z^2;
+     f2=u1*x+u2*y;
+     finalParameters={{0,1}};
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },ISPROJECTIVE=>1)            
 ///;
 
 doc ///

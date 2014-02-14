@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "1.6.0.1", 
-  Date => "October 14, 2013",
+  Date => "February 13, 2014",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "eagross@ncsu.edu",
@@ -327,9 +327,13 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   if o.runType == 4 then --membership test 
     f << "TRACKTYPE: 3;\n";
   if o.runType == 5 then --refine solutions
-    f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n"; 
+    if o.ISPROJECTIVE==-1 then 
+    f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n" else
+    f << "SHARPENONLY: 1;\n UserHomotopy: 2; \n";
   if o.runType == 6 then --trackHomotopy
-    f << "USERHOMOTOPY: 1;\n";
+    if o.ISPROJECTIVE==-1 then 
+    f << "USERHOMOTOPY: 1;\n" else 
+    f << "USERHOMOTOPY: 2;\n";
   if o.runType == 7 then --parameterHomotopy, stage 1
     f << "PARAMETERHOMOTOPY: 1;\n";
   if o.runType == 8 then --parameterHomotopy, stage 2
@@ -338,14 +342,12 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
   -- The following block is the input section of the input file
   f << "INPUT" << endl << endl;
-  if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
-    (if o.ISPROJECTIVE==1 then 
-    f << "hom_variable_group " else
-    f << "variable ")
-  else (if o.ISPROJECTIVE==-1 then 
-    f << "variable_group "
-  else f << "hom_variable_group "); -- if not user-defined, dec type of vars if "variable_group"
-   scan(#v, i->  -- now we list the variables in a single list  
+  if o.ISPROJECTIVE==1 then 
+    f << "hom_variable_group " else(
+	if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
+	f << "variable " else
+    	f << "variable_group ");-- if not user-defined, dec type of vars if "variable_group"
+    scan(#v, i->  -- now we list the variables in a single list  
        if i<#v-1 
        then f << toString v#i << ", "
        else f << toString v#i << ";" << endl
