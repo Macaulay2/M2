@@ -4,7 +4,6 @@ deflation needs work
 
 points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
 
-isOn is another version of isContained
+"isOn" is another version of "member"
 
-numericalRank is hacked 
 

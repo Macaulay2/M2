@@ -5,22 +5,21 @@
 
 WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
-isContained = method()
-isContained (List,WitnessSet) := (point,W) -> (
+member (List,WitnessSet) := (point,W) -> (
      pts := movePointsToSlice(W, sliceEquations(randomSlice(dim W, numgens ring W, point),ring W)) / coordinates;
      any(pts, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
      )
-isContained (WitnessSet,WitnessSet) := (V,W) -> (
+member (WitnessSet,WitnessSet) := (V,W) -> (
      coD := dim W - dim V;
      coD >= 0
-     and all(points V, p->isContained(p,W))
+     and all(points V, p->member(p,W))
      )
 -- subtract = method()
 -- subtract (WitnessSet, WitnessSet) 
 WitnessSet - WitnessSet := (V,W) -> ( -- difference V/W, also used to remove junk points
      coD := dim W - dim V;
      if coD < 0 then V
-     else witnessSet(V.Equations, V.Slice, select(V.Points, p->not isContained(coordinates p,W)))
+     else witnessSet(V.Equations, V.Slice, select(V.Points, p->not member(coordinates p,W)))
      ) 
 ///
 restart
