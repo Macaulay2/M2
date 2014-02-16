@@ -340,7 +340,6 @@ doc ///
       bertiniPosDimSolve(G,opts)
 ///;
 
-
 doc ///
  Key
    bertiniPosDimSolve
@@ -543,8 +542,7 @@ doc ///
    l:List
      whose entries are points to be sharpened
    d:ZZ
-     number of digits
-   
+     number of digits   
  Outputs
    S:List
      of solutions of type Point
@@ -559,6 +557,86 @@ doc ///
      coords = coordinates S_0
      coords_0
 ///;
+
+doc ///
+ Key
+   importPoints   
+   (importPoints,String,ZZ)
+ Headline
+   importPoints reads solutions from a Bertini solution file to store as points in M2
+ Usage
+   A=importPoints(s,n) 
+ Inputs
+   s: String
+     A string giving the  locaton of a Bertini solution file.
+   n: ZZ
+     Number of coordinates for each solution.
+ Description
+   Text
+     The input is a string giving the location of the solution file,
+     and an integer giving the number of coordinates for a solution.
+     The output is a list of points.
+     The user can specify which solutions and which coordinates they want to read from the file.
+   Example
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     A=importPoints(locationOfSolutionFile,4)
+     --The output would be a list of points that have 4 coordinates.          
+   Example 
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     B=importPoints(locationOfSolutionFile,4,specifyPoints=>{0,2})
+     --The output would be the first and third solutions of the file. 
+   Example 
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     C=importPoints(locationOfSolutionFile,4,specifyCoordinates=>{0,1})
+     --The output would be the first and second coordinate of each solution of the file.  
+ Caveat
+   For importPoints to be successful, the Bertini solution file must have a particular format.
+
+   The first line is an integer, the number of solutions in the.
+   The next lines consist of a blank line followed by a line for each coordinate;
+   these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
+///;
+
+doc ///
+ Key
+   phPostProcess
+   (phPostProcess,String,String,List,ZZ)
+ Headline
+   Does post processing parameter homotopy.
+ Usage
+   S=phPostProcess(sIn,sOut,L,n) 
+ Inputs
+   sIn: String
+     A string giving the dicterory of the input files.
+   sOut: String
+     A string giving the directory where Bertini will output files
+   L: List
+     A list of parameters. 
+   n: ZZ
+     Number of coordinates in a solution.
+ Description
+   Text
+     The purpose of this function is to allow a person
+     to share their Bertini computations with a second user,
+     who can then analyze the data easily with the Bertini.M2 interface.   
+     
+     Instead of doing a parameter run by calling Bertini, 
+     the printNotes option prints a file titled "notes"  located in the input file's directory.
+     If the "notes" file does not exist it returns an error.   
+   Example
+     inputFileLocation="/Users/.../YourFolderA";
+     outputFileLocation="/Users/.../YourFolderB";
+     L={.8234+ii*8,9}--A list of two parameter values.
+     n=3--A solution has n coordinates.
+     phPostProcess(inputFileLocation,outputFileLocation,L,n)     --The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
+   Example
+     inputFileLocation="/Users/.../YourFolderA";
+     phPostProcess(inputFileLocation,"",{},0,printNotes=>1)
+ Caveat
+   Even if Bertini is called but does not run,  
+   an error may not be reported if previous solution files were already in the outputDirectory.
+///;
+
 
 doc ///
  Key
@@ -637,6 +715,14 @@ doc ///
      paramValues1={{0,1+2*ii,0}};
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
      bPH_0--the solutions to the system with parameters set equal to paramValues0
+   Example
+     R=CC[x,y,z,u1,u2]
+     f1=x^2+y^2-z^2
+     f2=u1*x+u2*y
+     finalParameters0={{0,1}}
+     finalParameters1={{1,0}}
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)            
+     bPH_0--The two solutions for finalParameters0
 ///;
 
 end

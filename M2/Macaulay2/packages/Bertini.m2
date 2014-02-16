@@ -31,7 +31,9 @@ export {
   "bertiniSample",
   "bertiniTrackHomotopy",
   "bertiniComponentMemberTest",
-  "bertiniRefineSols",    
+  "bertiniRefineSols",
+  "importPoints",
+  "phPostProcess",    
   "MPTYPE",  
   "PRECISION",
   "ISPROJECTIVE",  
@@ -58,7 +60,11 @@ export {
   "MAXSTEPSIZE",  
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
-  "REGENSTARTLEVEL"
+  "REGENSTARTLEVEL",
+  "specifyPoints",
+  "specifyCoordinates",
+  "printNotes",
+  "inputFilesName"
 }
   
   protect SolutionNumber
@@ -232,14 +238,88 @@ stageTwoParameterRun (String, List) := o -> (dir, F) -> (
        ));
        close f;
        
-     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
-  
+     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  
+
   solution :=readSolutionsBertini(dir, F, o);
   sols = append(sols, solution);
   moveFile(dir|"/nonsingular_solutions",dir|"/nonsingular_solutions"|toString(i));
   );
   return sols
 )
+
+
+
+----------------------------------
+--NEW FUNCTIONS FOR FEBRUARY 2014
+---------------------------------
+
+
+--IMPORT POINTS
+--importPoints gets the solutions from a bertini solutions file to store them as points in M2
+--the input is a string, giving the location of the file, and an integer giving the number of coordinates 
+--the output is a list of points
+importPoints = method(TypicalValue=>Nothing,Options=>{specifyPoints=>{},specifyCoordinates=>{} })
+importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
+    importedFileLines := lines get (importFrom); -- grabs all lines of the solution file
+    numberOfsolutionsInFile:=value(importedFileLines_0);--the first line of the solution file gives the number of solutions in the file
+    importedFileLines=drop(importedFileLines,1);--drop the first line
+    storeSolutions:={};---We will store the solutions we specified and return this in the end
+    for i to numberOfsolutionsInFile-1 do (
+	linesForOnePoint:=for indexLines to numberOfCoordinates+1-1 list importedFileLines_indexLines;--we read a blank line and the coordinates of one solution
+	importedFileLines=drop(importedFileLines,numberOfCoordinates+1);--we drop the lines we just read
+	if  member(i,o.specifyPoints) or #o.specifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
+	then(
+      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.specifyCoordinates);
+     	  storeSolutions= append(storeSolutions,cAS)));
+     return storeSolutions);
+
+--collectAPointIP is a subfunction for importPoints
+collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
+     collectedCoordinates:={};
+     linesToRead=drop(linesToRead,1);--drops an empty line
+     for j to numberOfCoordinates-1 do (
+	  if member(j,specifyCoordinates) or #specifyCoordinates==0 then (
+	       oneCoord:=select("[0-9.+-]+",first(linesToRead));
+	       collectedCoordinates=append(collectedCoordinates,value((oneCoord_0)|"p300")*10^(value(oneCoord_1))+ii*
+			      value((oneCoord_2)|"p300")*10^(value(oneCoord_3)));
+     	       linesToRead=drop(linesToRead,1)) else (
+	  linesToRead=drop(linesToRead,1)));--drops coordinates you don't care about
+     return  point {collectedCoordinates});
+
+
+--PARAMETERPOSTPROCESS
+--This function takes a directory as its input where a bertini run has already been made.
+--The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
+phPostProcess = method(TypicalValue=>Nothing,Options=>{
+	printNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+    	inputFilesName=>"input"	})
+phPostProcess(String,String,List,ZZ) := o -> (
+    inputLocation,outputLocation,postParameters,numberOfCoordinates)-> (
+    if o.printNotes==1 then print  get (inputLocation|"/notes")    
+    else(if outputLocation!=inputLocation then (
+	copyFile(inputLocation|"/start",outputLocation|"/start");
+	copyFile(inputLocation|"/start_parameters",outputLocation|"/start_parameters"));
+    writeParameters(outputLocation,postParameters);
+    callBertini(outputLocation,BERTINIexe,inputLocation,o.inputFilesName);---call Bertini 
+    importPoints(outputLocation|"/nonsingular_solutions",numberOfCoordinates)));
+    
+---writeParameters is a subfunction fo parameterPostProcess    
+writeParameters=(filesGoHere,listParameters)->(
+  --writing parameter values to file 
+     finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
+     finalParameterFile << #(listParameters) << endl << endl;
+     scan(listParameters, c-> finalParameterFile << realPart c << " " << imaginaryPart c << ";" << endl );
+       finalParameterFile << endl;      
+       close finalParameterFile);
+       
+callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
+    run("cd "|inDirectory|"; "|BERTINIexe|" "|inputLocation|"/"|inputFilesName|" >bertini_session.log"));  
+--     run("cd "|filesGoTo|"; "|BERTINIexe|" "|fileLocation|"/"|inputFilesName|" >bertini_session.log");  
+
+--exportPoints--This function should export the coordinates of the points
+--saveFolder--This function should copy a temporary directory to a location specified by the user
+--call bertini in a specified folder
+--write parameters
 
 -------------------
 -- makeBertiniInput
@@ -378,7 +458,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        L = replace("([0-9])e([0-9])", "\\1E\\2", L);
        L
        );
-
+--The next lines of code write the polynomials to the input file called f:
   if (o.runType!=1 and o.runType!=5) -- non-param runs: just write out the polynomials
     then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl) 
   else (if (o.runType==1) 
