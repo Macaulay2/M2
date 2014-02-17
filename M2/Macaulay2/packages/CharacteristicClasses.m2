@@ -631,7 +631,7 @@ doc ///
      
 
 doc ///
-    Key
+     Key
      	  chernClass
 	  [chernClass, ResidualStrategy]
 	  (chernClass, Ideal)
@@ -743,6 +743,7 @@ doc ///
      Outputs
      	  :ZZ
 	    the topological Euler characteristic of the scheme X.
+	    
      Description
      	  Text
 	      This command computes the topological Euler characteristic of closed subschemes of \PP^k, even singular ones. We compute the topological Euler characteristic of the singular cubic x^3 + x^2z = y^2z. 
