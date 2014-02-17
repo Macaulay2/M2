@@ -1,11 +1,14 @@
 restart
-loadPackage "NumericalHilbert"
-load "old-deflation.m2"
+needsPackage "NumericalHilbert"
+needsPackage "NumericalAlgebraicGeometry"
+needs "old-deflation.m2"
 
 
 -- CYCLIC4: all discovered components are embedded
 RQQ = QQ[x_1..x_4]
 M = matrix{{x_1 + x_2 + x_3 + x_4, x_1*x_2 + x_2*x_3 + x_3*x_4 + x_4*x_1, x_2*x_3*x_4 + x_1*x_3*x_4 + x_1*x_2*x_4 + x_1*x_2*x_3, x_1*x_2*x_3*x_4 - 1}}
+M = M_{0,1,2}
+M = M_{0,1}
 
 -- NPD2.8: pseudo-component at the origin
 RQQ = QQ[x_1..x_3]
@@ -15,13 +18,15 @@ M = matrix{{x_1^2,x_1*x_2*x_3}}
 RQQ = QQ[x_1..x_3]
 M = matrix{{x_1^2,x_1*x_2^2*x_3,x_1*x_2*x_3^3}}
 
--- orimary components
+-- primary components
 pri = primaryDecomposition ideal M
 pri/radical
 pri/dim  
+pri/degree
 
 -- visible components at d = 0
 decompose ideal M
+numericalIrreducibleDecomposition ideal M
 
 -- projection function
 project = I -> (
@@ -31,13 +36,22 @@ project = I -> (
 
 -- visible components at
 d = 1
-lifted1 = decompose dIdeal(ideal M, d)
+D1 = dIdeal(ideal M, d)
+lifted1 = decompose D1
+lifted1/dim
+lifted1/degree
+numericalIrreducibleDecomposition D1
 projected1 = lifted1/project
 projected1 / dim
 
+
 -- visible components at
 d = 2
-lifted2= decompose dIdeal(ideal M, d)
+D2 = dIdeal(ideal M, d)
+lifted2= decompose D2
+lifted2/dim
+lifted2/degree
+numericalIrreducibleDecomposition D2 -- does not work for NPD2.8
 projected2 = lifted2/project
 projected2 / dim
 

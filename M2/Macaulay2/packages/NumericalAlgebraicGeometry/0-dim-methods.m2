@@ -6,6 +6,10 @@
 
 solveSystem = method(TypicalValue => List, Options =>{Software=>null, PostProcess=>true})
 solveSystem List := List => o -> F -> (
+    checkCCpolynomials F;
+    solveSystem(polySystem F, o)
+    )
+solveSystem PolySystem := List => o -> P -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
 --      Software => {PHCPACK, BERTINI, hom4ps2}
@@ -14,7 +18,8 @@ solveSystem List := List => o -> F -> (
 --     	       m = list of corresponding multiplicities	 
      o = fillInDefaultOptions o;
      local result;
-     F = toCCpolynomials(F,53);
+     -- F = toCCpolynomials(F,53);
+     F := equations P; 
      R := ring F#0;
      v := flatten entries vars R;
      if numgens R > #F then error "expected a 0-dimensional system";
@@ -23,15 +28,7 @@ solveSystem List := List => o -> F -> (
 	  T := (if overdetermined 
 	       then generalEquations(numgens R, F)
 	       else F);  
-  	  result = 
--- 	  if all(F, f -> sum degree f <= 1)
---      	  then ( 
--- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
--- 	       b := matrix apply(F, f->{coefficient(1_R,f)});
--- 	       {{flatten entries solve(A,-b)}}
--- 	       )
---	  else 
-	       (
+  	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
 	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );
