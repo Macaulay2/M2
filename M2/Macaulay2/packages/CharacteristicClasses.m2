@@ -629,11 +629,12 @@ doc ///
 	       @TO "probabilistic algorithm"@.
 ///
      
+
 doc ///
-     Key
+    Key
      	  chernClass
 	  [chernClass, ResidualStrategy]
-	  (chernClass,Ideal)
+	  (chernClass, Ideal)
 	  (chernClass, ProjectiveVariety)
 	  (chernClass, Ideal, Symbol)
 	  (chernClass, ProjectiveVariety, Symbol)	  
@@ -650,8 +651,8 @@ doc ///
 	    the strategy to compute the degrees of the residuals
      Outputs
      	  :RingElement
-          the pushforward of the total Chern class of the scheme X to the Chow ring \ZZ[H]/(H^{k+1}) of projective space \PP^k.
-     Description
+           the pushforward of the total Chern class of the scheme X to the Chow ring \ZZ[H]/(H^{k+1}) of projective space \PP^k.
+Description
      	  Text
 	       For a non-singular n-dimensional subscheme X of projective space \PP^k, this command computes the push-forward of the total Chern class of X to the Chow ring of \PP^k. The output is a polynomial in the hyperplane class, containing the degrees of the Chern classes c_0(T_X),...,c_n(T_X) as coefficients.
 	  Example
