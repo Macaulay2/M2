@@ -106,12 +106,31 @@ regeneration List := List => o -> F -> (
 	  -- 		 scan(rsort keys c2,j->if j>d then (for k in keys c2#j do W = W - c2#j#k));
 	  -- 		 c2#d#i = W;
 	  --		 )));
+	  if f == first F then ( -- if the first equation is being processed; the code needs to be compactified!!!
+	      n := numgens R;
+	      S := randomSlice(n-1,n);
+	      T := polySystem({f}|sliceEquations(S,R));
+	      targetPoints := solveSystem(T, Software=>o.Software);
+	      LARGE := 100; ---!!!
+	      refinedPoints := refine(T, targetPoints, 
+		  ErrorTolerance=>DEFAULT.ErrorTolerance*LARGE,
+		  ResidualTolerance=>DEFAULT.ResidualTolerance*LARGE);
+	      regPoints := select(refinedPoints, p->p.SolutionStatus===Regular);
+	      singPoints := select(refinedPoints, p->p.SolutionStatus===Singular);
+	      targetPoints = if o.Output == Regular then regPoints else regPoints | solutionsWithMultiplicity singPoints;
+	      if DBG>2 then << "( regeneration: first step V(f) is witnessed by "
+	                    << #targetPoints << " points for" << endl 
+			    << "  f = " << f << " )" << endl;
+	      scan(partitionViaDeflationSequence(targetPoints,T),
+		  pts -> (
+		      newW := witnessSet(polySystem{f},S,selectUnique(pts, Tolerance=>1e-4)); --!!!
+		      if DBG>2 then << "   new component " << peek newW << endl;
+		      check newW;    
+		      insertComponent(newW,c2);
+		      )
+		  )
+	      );
 	  c1 = flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j));
-	  if f == first F then ( -- if the first equation is being processed 
-	       n := numgens R;
-	       S := randomSlice(n-1,n);
-     	       c1 = {witnessSet( ideal f, S, solveSystem({f}|sliceEquations(S,R),PostProcess=>false) )}; 
-	       );
 	  );
      c1
      )
