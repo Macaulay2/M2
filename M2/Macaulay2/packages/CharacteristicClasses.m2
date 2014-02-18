@@ -1,5 +1,5 @@
 -- -*- coding: utf-8 -*-
-
+    
 
 -----------------------------------------------------------------
 -- Preamble
@@ -8,9 +8,9 @@
 newPackage(
 	"CharacteristicClasses",
 	Version => "1.0", 
-    	Date => "January 17, 2014",
+    	Date => "February 18, 2014",
     	Authors => {{Name => "Christine Jost", 
-		  Email => "jost@math.su.se", 
+		  Email => "chjo9357@mbox.su.se", 
 		  HomePage => "http://people.su.se/~chjo9357/"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
     	DebuggingMode => false,
