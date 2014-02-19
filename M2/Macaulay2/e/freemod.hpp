@@ -63,6 +63,8 @@ public:
   FreeModule * exterior    (int p)                const;
   FreeModule * symm        (int p)                const;
 
+  M2_arrayintOrNull select_by_degrees(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const;
+
   void direct_sum_to(const FreeModule *G);
   int lowest_primary_degree() const;
   int highest_primary_degree() const;

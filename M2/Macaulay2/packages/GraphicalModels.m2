@@ -23,7 +23,20 @@ newPackage(
 	  -- Email=> "",
 	  -- HomePage=>""}      
 	  },
-     Headline => "A package for discrete and Gaussian graphical models"
+     Headline => "A package for discrete and Gaussian graphical models",
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Graphical Models",
+	  "acceptance date" => "2013-03-05",
+	  "published article URI" => "http://j-sag.org/Volume5/jsag-1-2013.pdf",
+	  "published code URI" => "http://j-sag.org/Volume5/GraphicalModels.m2",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/GraphicalModels.m2",
+	  "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
+	  "version at publication" => "1.0",
+	  "volume number" => "5",
+	  "volume URI" => "http://j-sag.org/Volume5/"
+	  }
      --DebuggingMode => true
      )
 export {"bidirectedEdgesMatrix",
@@ -904,6 +917,7 @@ gaussianVanishingIdeal Ring := Ideal => R -> (
        I = trim ideal(0_R);
        I = eliminate(elimvarlist,tempideal)
      )
+    else error "gaussianVanishingIdeal received an unknown type of ring"
 )
 
 ------------------------------------------------------------------
@@ -1866,7 +1880,22 @@ doc ///
       as input gives a {\tt gaussianRing} with extra indeterminates related to the parametrization
       of the graphical model associated to that graph. If a graph is used, 
       the indeterminates in the {\tt gaussianRing} are indexed by the vertices in the graph $G$.  
-
+      
+      The $s_(i,j)$ indeterminates in the {\tt gaussianRing} are the entries in the
+      covariance matrix of the jointly normal random variables.  The $k_{(i,j)}$
+      indeterminates  in the {\tt gaussianRing} are the nonzero entries in the concentration
+      matrix in the graphical model associatd to an undirected graph.
+      The $l_{(i,j)}$
+      indeterminates consist of regression coefficients associated to the directed
+      edges in the graph.
+      The $p_{(i,j)}$
+      indeterminates  in the {\tt gaussianRing} are the nonzero entries in the covariance matrix of the error terms
+      in the graphical model associatd to a mixed graph with bidirected edges. 
+      Those entries can be placed into an appropriate matrix format using the
+      functions @TO covarianceMatrix@, 
+      @TO undirectedEdgesMatrix@, @TO directedEdgesMatrix@, and  
+      @TO bidirectedEdgesMatrix@ respectively.
+      
     Example
       R = gaussianRing 5;
       gens R
@@ -2400,7 +2429,7 @@ doc ///
       a @TO Symbol@ or a @TO String@ 
   Description
     Text
-      The option {\tt gaussianRing(G,kVariableName=>t)} changes the symbol used for intedeterminates in the error covariance matrix 
+      The option {\tt gaussianRing(G,sVariableName=>t)} changes the symbol used for intedeterminates in the covariance matrix 
       in a polynomial ring created with @TO gaussianRing@.
       
     Example
@@ -2466,7 +2495,7 @@ doc ///
       a @TO Symbol@ or a @TO String@ 
   Description
     Text
-      The option {\tt gaussianRing(G,kVariableName=>q)} changes the symbol used for intedeterminates in the error covariance matrix 
+      The option {\tt gaussianRing(G,pVariableName=>q)} changes the symbol used for intedeterminates in the error covariance matrix 
       in a polynomial ring created with @TO gaussianRing@.
     
     Example
@@ -2544,8 +2573,18 @@ doc///
       for both discrete and Gaussian graphical models. In the case of discrete random variables, it computes the 2x2 minors
       of the matrices produced by @TO markovMatrices@. For Gaussian graphical models, it computes the minors 
       of the matrices produced by @TO gaussianMatrices@.
+      
+      A single conditional independence statement is a list consisting of three disjoint
+      lists of indices for random variables, e.g. $\{ \{1,2\},\{4\}, \{3\} \}$
+      which represents the conditional independence statement ``$(X_1, X_2)$
+      is conditionally independent of $X_4$ given $X_3$''.
+      In the input to {\tt conditionalIndependenceIdeal} a list of conditional
+      independence statements is used.
 
-      Below are two examples of independence ideals on discrete random variables. 
+      A common way that we arrive at collections of conditional independence statements
+      is through the Markov statements implied by a graph.
+      Below are two examples of independence ideals on discrete random variables,
+      using @TO globalMarkov@ statements and @TO localMarkov@ statements.
 
     Example
       G = graph {{1,2},{2,3},{3,4},{4,1}}
@@ -2811,7 +2850,7 @@ TEST ///
 G = graph({{a,b},{b,c},{c,d},{d,e},{e,a}})
 S = globalMarkov G
 S = sort apply(S,s -> {sort s#0, sort s#1, sort s#2}) 
-L={{{a}, {c, d}, {b, e}}, {{a, b}, {d}, {c, e}}, {{a, e}, {c}, {b, d}}, {{b}, {d, e}, {a,c}}, {{b, c}, {e}, {a, d}}}
+L= sort {{{a}, {c, d}, {b, e}}, {{a, b}, {d}, {c, e}}, {{a, e}, {c}, {b, d}}, {{b}, {d, e}, {a,c}}, {{b, c}, {e}, {a, d}}}
 assert(S === L)
 ///
 
@@ -2819,7 +2858,7 @@ TEST ///
 G = digraph { {2, {1}}, {3,{2}}, {4,{1,3}} }
 S = globalMarkov G
 S = sort apply(S,s -> {sort s#0, sort s#1, sort s#2}) 
-L = {{{1}, {3}, {2, 4}}, {{2}, {4}, {3}}}
+L = sort {{{1}, {3}, {2, 4}}, {{2}, {4}, {3}}}
 assert(S === L)
 ///
 
@@ -3187,3 +3226,40 @@ installPackage("GraphicalModels",UserMode=>true,DebuggingMode => true)
 
 ---- isMonomial works well as long as m is actually a polynomial or monomial and not 
 ---- an element of ZZ, QQ, RR, etc.
+
+
+end;
+restart
+installPackage "GraphicalModels"
+check "GraphicalModels"
+
+restart
+printWidth=75;
+needsPackage "GraphicalModels";
+G = digraph{{a,d},{b,d},{c,{d,e}},{d,e}}; 
+R = gaussianRing G;
+gens R
+I = conditionalIndependenceIdeal(R,globalMarkov(G));
+J = gaussianVanishingIdeal(R);
+flatten degrees J
+isSubset(I,J), I == J, J == trekIdeal(R,G)
+
+d = (2,3,2); R = markovRing d;
+gens R
+S = {{{1},{2},{3}}, {{1},{3},{}}}; compactMatrixForm=false; markovMatrices(R,S)
+I = conditionalIndependenceIdeal(R,S); flatten degrees  I 
+G = graph{{1,2},{2,3},{3,4},{4,5},{1,5}}; netList pack (3,localMarkov G)
+
+G = digraph {{1,{2}}, {2,{3}},{3,{4}},{4,{}}}; R = markovRing (2,2,2,2);
+I = discreteVanishingIdeal (R,G); betti mingens I
+
+J = conditionalIndependenceIdeal (R, localMarkov G); I == J
+K = conditionalIndependenceIdeal (R, globalMarkov G); I == K
+
+G = mixedGraph(digraph {{1,{2,3}},{2,{3}},{3,{4}}},bigraph {{1,2},{2,4}});
+R = gaussianRing G; I = gaussianVanishingIdeal R;
+flatten degrees I 
+J = trekIdeal (R,G)
+
+H = identifyParameters R;
+H#(p_(2,4))_0

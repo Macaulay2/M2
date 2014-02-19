@@ -354,7 +354,7 @@ multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      c := codim M;
-     if c === infinity then 1_A else part(c,onem numerator poincare M))
+     if c === infinity then 0_A else part(c,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
@@ -659,7 +659,7 @@ findHeftandVars = (R, varlist, ndegs) -> (
 	    if h =!= null then return (varlist, h);
 	    );
        zerodeg := toList(ndegs:0);
-       varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
+       varlist' := select(varlist, x -> R_x != 0 and take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
        heft := findHeft(degs, DegreeRank=>ndegs);
        if heft === null then 

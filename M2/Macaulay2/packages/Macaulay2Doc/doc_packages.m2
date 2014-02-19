@@ -57,7 +57,8 @@ document {
 	  LoadDocumentation => Boolean => {"whether to load the documentation of the package, too; see ", TO "beginDocumentation"},
 	  DebuggingMode => Boolean => {
 	       "the value of ", TO "debuggingMode", " during loading the package; specifying it here overrides the 
-	       value specified as an option to ", TO "newPackage", " by the package itself"
+	       value specified as an option to ", TO "newPackage", " by the package itself; however, if ", TO "debuggingMode", " 
+	       is already ", TT "false", ", it will remain so."
 	       },
 	  Configuration => List => {"a list of options ", TT "KEY => VALUE", ", overriding the defaults specified in 
 	       the source code of the package and the (possibly updated) values in the file in the user's application
@@ -226,7 +227,8 @@ document {
 	       ", TT "Name => x", ", ", TT "Email => x", ", or ", TT "HomePage => x", ", where ", TT "x", " is a string."
 	       },
 	  HomePage => String => "the URI pointing to the home page of the package, if any",
-	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading"},
+	  DebuggingMode => Boolean => {"whether ", TO "debuggingMode", " should be true during package loading.  However, if ", TO "debuggingMode", " 
+	       is already ", TT "false", ", it will remain so."},
           AuxiliaryFiles => Boolean => {"whether the package source to be distributed includes a directory for
 	       auxiliary files, with the same name as the package"},
 	  PackageExports => List => {"a list of names of other packages to load, both for the user and for the code of the new package"},

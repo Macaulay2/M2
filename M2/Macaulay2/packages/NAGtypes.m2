@@ -27,24 +27,107 @@ export {
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
      "Point", "point", "coordinates",
-     "isRealPoint", "realPoints", "plugIn", "residual", "relativeErrorEstimate", "classifyPoint",
+     "isRealPoint", "realPoints", "residual", "relativeErrorEstimate", "classifyPoint",
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     "Regular", "Singular", "Infinity", "MinStepFailure", "NumericalRankFailure"
+     Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
+     -- polynomial systems
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
+     "polySystem",
+     "evaluate",
+     -- dual space
+     "DualBasis", "BasePoint", "dualSpace", "addition", "intersection"
      }
 
--- DEBUG CORE ----------------------------------------
-debug Core; -- to enable engine routines
+-- DEBUG Core ----------------------------------------
+debug Core -- to enable engine routines
 
+PolySystem = new Type of MutableHashTable
 Point = new Type of MutableHashTable 
 -- ProjectivePoint = new Type of Point -- do we really need this?
 WitnessSet = new Type of MutableHashTable 
 ProjectiveWitnessSet = new Type of WitnessSet
 NumericalVariety = new Type of MutableHashTable 
 ProjectiveNumericalVariety = new Type of NumericalVariety
+
+-----------------------------------------------------------------------
+-- POLYSYSTEM = {
+--   NumberOfVariables => ZZ,
+--   NumberOfPolys => ZZ,
+--   PolyMap => Matrix, a column matrix over a polynomial ring (usually with complex coeffiecients)
+--           or SLP;
+--   Jacobian => Matrix or SLP, the jacobian of PolyMap
+--   JacobianAndPolySystem => SLP, a circuit evaluating PolyMap and Jacobian (the two are not necessary then)
+--   }
+PolySystem.synonym = "polynomial system"
+net PolySystem := p -> (
+    if hasAnAttribute p then (
+	if hasAttribute(p,PrintNet) then return getAttribute(p,PrintNet);
+  	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
+  	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
+  	);
+     if p.?PolyMap then net p.PolyMap
+     else if p.?NumberOfPolys and p.?NumberOfVariables 
+     then net "a system of " | net p.NumberOfPolys | " polynomials in " | net p.NumberOfVariables | " variables" 
+     else error "the polynomial system is corrupted"
+    ) 
+globalAssignment PolySystem
+
+polySystem = method()
+polySystem PolySystem := P -> new PolySystem from P
+polySystem List := L -> (
+    checkCCpolynomials L;
+    polySystem transpose matrix {L} 
+    )
+polySystem Matrix := M -> (
+    assert(numcols M == 1);
+    new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
+    )
+ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
+equations = method() -- returns list of equations
+equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
+ideal PolySystem := P -> ideal equations P.PolyMap -- change this for SLP!!!
+
+isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
+XXXapply = method()
+XXXapply(PolySystem,Function) := (P,f) -> polySystem apply(XXXtoList P, f) -- does not work for SLPs
+substitute(PolySystem,Ring) := (P,R) -> polySystem sub(P.PolyMap, R) -- does not work for SLPs
+XXXtoList = method()
+XXXtoList PolySystem := P -> if P.?PolyMap then flatten entries P.PolyMap else error "polynomial system is not represented by a matrix"
+homogenize (PolySystem,Ring,RingElement) := (P,R,h) -> polySystem homogenize(sub(P.PolyMap,R),h)
+isSquare = method()
+isSquare PolySystem := P -> P.NumberOfPolys == P.NumberOfVariables
+evaluate = method()
+evaluate (PolySystem,Point) := (P,p) -> evaluate(P, matrix p)
+evaluate (Matrix,Point) := (M,p) -> evaluate(M, matrix p)
+evaluate (PolySystem,Matrix) := (P,X) -> (
+    if class P.PolyMap === Matrix 
+    then evaluate(P.PolyMap,X)
+    else error "evaluation not implemented for this type of PolyMap"
+    )    
+evaluate (Matrix,Matrix) := (M,X) ->  (
+    if numColumns X == 1 then sub(M,transpose X)
+    else if numRows X == 1 then sub(M,X)
+    else error "expected a row or a column vector"
+    )
+evaluate (PolySystem,Point) := (P,p) -> evaluate(P,matrix p)
+
+jacobian PolySystem := P -> (
+    if P.?Jacobian then P.Jacobian
+    else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
+    )
+
+TEST ///
+CC[x,y]
+polySystem transpose matrix{{x,y^2+1,x+1}}
+QQ[x,y]
+polySystem {x,y^2+1,x+1}
+RR[x,y]
+polySystem {x,y^2+1,x+1}
+///
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -78,6 +161,9 @@ globalAssignment Point
 point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
+point Matrix := M -> point {flatten entries M} 
+
+Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 
 coordinates = method()
 coordinates Point := p -> p.Coordinates
@@ -85,20 +171,18 @@ coordinates Point := p -> p.Coordinates
 status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
 
--- plug a point p into the system S (expects S to be a list of polynomials)
-plugIn = method()
-plugIn (List, List) := (S,p) -> flatten entries sub(matrix{S}, matrix{ p / toCC })
-plugIn (List, Point) := (S,p) -> plugIn(S,coordinates p)
-
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
+norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
      if instance(no,InfiniteNumber) and no === infinity then return max(p/abs);
      assert((instance(no, ZZ) or instance(no, QQ) or instance(no, RR)) and no>0);
      (sum(p, c->abs(c)^no))^(1/no)
      )
-
+ 
 residual = method(Options=>{Norm=>2})
-residual (List,Point) := o->(S,p)->norm(o.Norm,plugIn(S,p))
+residual (List,Point) := o->(S,p)-> residual(polySystem S,p)
+residual (PolySystem,Point) := o->(P,p)-> residual(P.PolyMap,matrix p)
+residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm,evaluate(S,p))
 
 relativeErrorEstimate = method(Options=>{Norm=>2})
 relativeErrorEstimate(Point) := o->p->p.ErrorBoundEstimate/norm(o.Norm,p) 
@@ -132,7 +216,12 @@ areEqual (Point,Point) := o -> (a,b) -> (
     b = b.Coordinates;
     if o.Projective 
     then (1 - abs sum(a,b,(x,y)->x*conjugate y))/((norm(2,a)) * (norm(2,b))) < o.Tolerance  -- projective distance is too rough in practice
-    else norm(2,(a-b)) < o.Tolerance * max(norm(2,a),norm(2,b))
+    else (
+	na := norm(2,a); 
+	nb := norm(2,b);
+	if na > 1 or nb > 1 then norm(2,(a-b)) < o.Tolerance * max(na,nb)
+	else norm(2,a-b) < o.Tolerance -- in case both points are close to the origin, absolute error is looked at 
+	)
     )
 areEqual (Point,BasicList) := o -> (a,b) -> areEqual(coordinates a, toList b)
 areEqual (BasicList,Point) := o -> (a,b) -> areEqual(toList a, coordinates b)
@@ -180,6 +269,36 @@ sortSolutions List := o -> sols -> (
 		    ));      
 	  );
      apply(sorted, i->sols#i)
+     )
+
+TEST /// -- point comparison and sorting
+e = 0.0001
+assert areEqual(point{{0,e}},point{{0,0}},Tolerance=>2*e)
+assert areEqual(point{{0,e}},point{{e,0}},Tolerance=>2*e)
+assert areEqual(point{{10,e}},point{{10+5*e,0}},Tolerance=>e)
+assert not areEqual(point{{10,e}},point{{10+10*e,0}},Tolerance=>e)
+
+A = point{{1,0}}; B = point{{0,2}}; A' = point{{1+e,0}}; B' = point{{0,2+e}};
+assert( sortSolutions({A,A',B,B'}, Tolerance=>10*e) == sortSolutions({B',A,B,A'}, Tolerance=>10*e) )
+assert areEqual(
+    sortSolutions({A,B,B'},Tolerance=>2*e),
+    sortSolutions({B',B,A'},Tolerance=>2*e),
+    Tolerance=>2*e
+    )
+///
+
+
+diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
+-- in:  A, B (presumably sorted)
+-- out: (a,b), where a and b are lists of indices where A and B differ
+diffSolutions (List,List) := o -> (A,B) -> (
+     i := 0; j := 0;
+     a := {}; b := {};
+     while i<#A and j<#B do 
+     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
+     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
+     else (a = append(a,i); i = i+1);	  
+     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
 
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
@@ -255,7 +374,7 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
---   Equations,            -- an ideal  
+--   Equations,            -- an ideal or a polynomial system 
 --   Slice,                -- a matrix of coefficients of linear equations 
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
@@ -286,19 +405,27 @@ dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice
 codim WitnessSet := W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
-ideal WitnessSet := W -> W.Equations
+ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
 
 witnessSet = method(TypicalValue=>WitnessSet)
 witnessSet (Ideal,Ideal,List) := (I,S,P) -> 
   new WitnessSet from { Equations => I, Slice => sliceEquationsToMatrix S, Points => VerticalList P, IsIrreducible=>null }
 witnessSet (Ideal,Matrix,List) := (I,S,P) -> 
   new WitnessSet from { Equations => I, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+witnessSet (PolySystem,Matrix,List) := (F,S,P) -> 
+  new WitnessSet from { Equations => F, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+witnessSet (PolySystem,PolySystem,List) := (I,S,P) -> 
+  new WitnessSet from { 
+      Equations => ideal equations I, 
+      Slice => sliceEquationsToMatrix ideal equations S, 
+      Points => VerticalList P, 
+      IsIrreducible=>null 
+      }
 
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := (W) -> apply(W.Points, coordinates)
 
-equations = method() -- returns list of equations
-equations WitnessSet := (W) -> (W.Equations)_*
+equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
 
 slice = method() -- returns linear equations for the slice (in both cases)   
 slice WitnessSet := (W) -> ( 
@@ -357,7 +484,7 @@ net NumericalVariety := V -> (
   	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
   	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
   	);
-    out := ofClass class V | " of dimension " | net dim V |" with components in";
+    out := net ofClass class V | " of dimension " | net dim V |" with components in";
     scan(keys V, k->if class k === ZZ then (
 	    row := "dim "|net k|": ";
 	    scan(V#k, W->row = row|" "|net W);
@@ -375,11 +502,14 @@ degree NumericalVariety := V -> (
      )
 numericalVariety = method(TypicalValue=>NumericalVariety)
 numericalVariety List := Ws -> (
+     T := class first Ws;
+     if not ancestor(WitnessSet,T) then error "a list of WitnessSet-s expected";
      V := new NumericalVariety;
      scan(Ws, W->(
-	       d := dim W;
-	       if V#?d then V#d = V#d | {W} else V#d = {W};
-	       ));     
+	     if class W =!= T then error "a list of witness sets of same type expected";
+	     d := dim W;
+	     if V#?d then V#d = V#d | {W} else V#d = {W};
+	     ));     
      check V;
      V
      )
@@ -395,8 +525,23 @@ check NumericalVariety := o-> V -> (
 		    )));
      )
 
-generalEquations = method()
+---------------------------------------------
+-- AUXILIARY FUNCTIONS
+---------------------------------------------
+checkCCpolynomials = method()
+checkCCpolynomials List := F -> (    
+    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
+    coeffR := coefficientRing R; 
+    if not(
+	instance(ring 1_coeffR, ComplexField) 
+	or instance(ring 1_coeffR, RealField)
+	or coeffR===QQ or coeffR ===ZZ
+	) then error "expected coefficients that can be converted to complex numbers";  
+    if any(F, f->ring f =!= R) then error "expected all polynomials in the same ring";
+    )
 
+generalEquations = method()
 -- make k random linear combinations of gens I
 generalEquations (ZZ,Ideal) := (k,I) -> (
      R := ring I;
@@ -419,6 +564,129 @@ generalEquations WitnessSet := (W) -> (
 	  neweqns := (generators ideal W) * random(R^ngens, R^(n-d));
 	  witnessSet(ideal neweqns, slice W, points W))
      )
+
+-------------------------------------------
+-- DualSpace 
+--   DualBasis: a row matrix of polynomials representing dual functionals
+--   BasePoint: a point of localization
+--   Tolerance: tolerance used to compute the DualSpace or associated to it; 0 in the exact setting
+-- (dualBasis is expected to be linearly independent and reduced w.r.t. the monomial order;
+--  the span should be closed under derivation) 
+DualSpace = new Type of MutableHashTable
+globalAssignment DualSpace
+dualSpace = method()
+dualSpace DualSpace := L -> new DualSpace from L
+dualSpace (Matrix, Point, Number) := (M,p,t)-> (
+    assert(numrows M == 1);
+    assert(numgens ring M == #coordinates p);
+    assert(t>=0);
+    new DualSpace from {DualBasis=>M,BasePoint=>p,Tolerance=>t}
+    )
+-- what other constructors would we have?
+
+gens DualSpace := o -> L -> L.DualBasis
+
+net DualSpace := L -> net gens L
+
+dim DualSpace := L -> numcols gens L
+
+hilbertFunction DualSpace := o -> L ->
+    tally(flatten entries L.DualBasis / first @@ degree)
+hilbertFunction (List,DualSpace) := o -> (LL,L) -> (
+    h := hilbertFunction L;
+    apply(LL, d->(if h#?d then h#d else 0))
+    )
+hilbertFunction (ZZ,DualSpace) := o -> (d,L) -> first hilbertFunction({d},L)
+
+check DualSpace :=  L -> error "not implemented"
+
+areEqual (DualSpace,DualSpace) := o -> (L,K) -> (
+    n := dim addition(L,K,Tolerance=>o.Tolerance);
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K and n == dim L
+    )
+isContained = method(TypicalValue => Boolean, Options => {Tolerance=>1e-6})
+isContained (DualSpace,DualSpace) := o -> (L,K) -> (
+    n := dim addition(L,K,Tolerance=>o.Tolerance);
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K
+    )
+DualSpace == DualSpace := (L,K) -> areEqual(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
+
+intersection = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+intersection (DualSpace,DualSpace) := o -> (L,K) -> (
+    (mons,coefs) := coefficients (gens L|gens K);
+    Lcoefs := submatrix(coefs,(0..dim L-1));
+    Kcoefs := submatrix'(coefs,(0..dim L-1));
+    Lorth := numericalKernel(transpose Lcoefs,o.Tolerance);
+    Korth := numericalKernel(transpose Kcoefs,o.Tolerance);
+    M := mons*numericalKernel(transpose (Lorth|Korth),o.Tolerance);
+    dualSpace(M,L.BasePoint,o.Tolerance)
+    )
+
+addition = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+addition (DualSpace,DualSpace) := o -> (L,K) -> (
+    (mons,C) := coefficients (gens L | gens K);
+    M := mons*numericalImage(C,o.Tolerance);
+    dualSpace(M,L.BasePoint,o.Tolerance)
+    )
+DualSpace + DualSpace := (L,K) -> addition(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
+
+quotient (DualSpace, RingElement) := o-> (L,g) -> (
+    (gmons,gcoefs) := coefficients g;
+    (Lmons,Lcoefs) := coefficients gens L;
+    M := matrix apply(flatten entries gmons, gm->(
+	    apply(flatten entries Lmons, Lm->(
+		    d := diff(gm,Lm);
+		    if d == 0 then d else leadMonomial d
+		    ))
+	    ));
+    M = (transpose gcoefs)*M*Lcoefs;
+    (Mmons,Mcoefs) := coefficients M;
+    M = Mmons*numericalImage(Mcoefs,L.Tolerance);
+    dualSpace(M,L.BasePoint,L.Tolerance)
+    )	    
+quotient (DualSpace, Ideal) := (L,J) -> error "not implemented"
+
+interpolatedIdeal = method()
+interpolatedIdeal DualSpace := L -> error "not implemented"
+interpolatedIdeal List := LL -> error "not implemented"
+
+
+numericalImage = (M, tol) -> (
+    R := ultimate(coefficientRing, ring M);
+    M = sub(M, R);
+    if numcols M == 0 then return M;
+    if numrows M == 0 then return map(R^0,R^0,0);
+    if precision 1_(ring M) < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix(U,,cols)
+	) else (
+	gens image M
+	)
+    )
+
+numericalKernel = (M, tol) -> (
+    M = sub(M, ultimate(coefficientRing, ring M));
+    if numrows M == 0 then return id_(source M);
+    if precision 1_(ring M) < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix'(adjointMatrix Vt,,cols)
+	) else (
+	gens kernel M
+	)
+    )
+
+-- produces the conjugate transpose
+adjointMatrix = M -> (
+    M' := mutableMatrix transpose M;
+    for i from 0 to (numrows M')-1 do (
+	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
+	);
+    matrix M'
+    )
+
+
 
 beginDocumentation()
 
@@ -877,7 +1145,7 @@ TEST /// -- miscellaneous tests
 CC[x,y]
 S = {x^2+y^2-6, 2*x^2-y}
 p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert ( (100*plugIn(S,p)/round) == {29, -30} )
+assert ( (100*evaluate(S,p)/round) == {29, -30} )
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
 classifyPoint p

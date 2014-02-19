@@ -10,6 +10,19 @@ newPackage(
          {Name => "Max Nitsche", Email => "nitsche@mis.mpg.de", HomePage => ""}
          },
     	Headline => "Monomial algebras",
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Decomposition of Monomial Algebras: Applications and Algorithms",
+	     "acceptance date" => "2013-04-07",
+	     "published article URI" => "http://j-sag.org/Volume5/jsag-2-2013.pdf",
+	     "published code URI" => "http://j-sag.org/Volume5/MonomialAlgebras.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/MonomialAlgebras.m2",
+	     "release at publication" => "68f41d641fadb0a1054023432eb60177f1d7cbd9",
+	     "version at publication" => "2.3",
+	     "volume number" => "5",
+	     "volume URI" => "http://j-sag.org/Volume5/"
+	     },
 	CacheExampleOutput => false,
 	AuxiliaryFiles => false,
     	DebuggingMode => false,
@@ -2405,3 +2418,39 @@ installPackage("MonomialAlgebras");
 check MonomialAlgebras
 viewHelp MonomialAlgebras
 *}
+
+end
+restart
+installPackage "MonomialAlgebras"
+check "MonomialAlgebras"
+
+restart
+needsPackage "MonomialAlgebras";
+B = {{4,0,0},{2,2,0},{2,0,2},{0,2,2},{0,3,1},{3,1,0},{1,1,2}}; 
+K = ZZ/101;
+S = K[x_1..x_7, Degrees=>B];
+IB = binomialIdeal S;
+R = newRing(ring IB, Degrees => {7:1});
+betti res sub(IB,R)
+dc = decomposeMonomialAlgebra S
+
+KA = ring first first values dc;
+T = newRing(ring ideal KA, Degrees => {5:1});
+J = sub(ideal KA,T);
+betti res J
+
+I1 = first (values dc)#0
+g = matrix entries sub(gens I1, T);
+betti res image map(coker gens J, source g, g)
+
+regularityMA S
+
+degree J
+
+B = {{4,0,0},{0,4,0},{0,0,4},{1,0,3},{0,2,2},{3,0,1},{1,2,1}};
+S = K[x_1..x_7, Degrees => B];
+decomposeMonomialAlgebra S
+
+isSeminormalMA B
+
+isBuchsbaumMA B

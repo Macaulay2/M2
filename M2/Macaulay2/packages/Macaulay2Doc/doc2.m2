@@ -609,10 +609,10 @@ document {
      Headline => "comparison operator",
      Usage => "x ? y", 
      Inputs => { "x", "y" },
-     Outputs => { Boolean },
-     "Compares ", TT "x", " and ", TT "y", " (of the same type), returning ", TT "symbol <", ", ",
-     TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
-     PARA{},
+     Outputs => {
+	  "One of the symbols ", TT "symbol <", ", ", TT "symbol >", ", ", TT "symbol ==", ", or ", TT "incomparable", ",
+	  depending (respectively) on whether ", TT "x < y", ", ", TT "x > y", ", ", TT "x == y", ", or ", TT "x", " and ", TT "y", " are not comparable."	  
+	  },
      "Many types of objects may be compared.  Numbers are handled as one would expect,
      and strings, lists and sequences are generally compared lexicographically.",
      EXAMPLE lines ///
