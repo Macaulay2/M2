@@ -265,6 +265,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> (
+	       if (options RM).Inverses then error "expected a polynomial ring without inverses";
 	       c := 1;
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
      	       facs = apply(facs, p -> new RM from p);
