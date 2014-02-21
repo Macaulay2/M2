@@ -1584,11 +1584,18 @@ save_prefix=$prefix
 save_exec_prefix=$exec_prefix
 prefix=NONE
 exec_prefix=NOWHERE
-# here we normalize *everything*
-# put docdir and datarootdir at end, because we are changing the values of the variables, and
-# other variables depend on them
-for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
-         sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
+# Here we normalize almost everything.
+# We put docdir and datarootdir at end, because we are changing the values of the variables, and
+# other variables depend on them.
+# We don't normalize sysconfdir, sharedstatedir, and localstatedir, because Fedora
+# insists in /usr/share/config.site that they be /etc, /var, and /var, respectively.
+# We don't use those directories, anyway.  To ensure that, we set them to /nowhere.
+# (We could avoid config.site with the CONFIG_SITE environment variable.)
+sysconfdir=/nowhere
+sharedstatedir=/nowhere
+localstatedir=/nowhere
+for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
+         psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
