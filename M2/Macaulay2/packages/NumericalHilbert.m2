@@ -108,6 +108,18 @@ sCorners Matrix := gCorners -> (
     matrix{S}
     )
 
+TEST ///
+restart
+--loadPackage "NumericalHilbert"
+R = CC[x,y]
+G1 = matrix{{x^2,x*y^2,y^4}}
+assert(sCorners G1 == matrix {{x*y, y^3}})
+G2 = matrix{{x*y^2,x^2*y^2,y^4}}
+assert(sCorners G2 == matrix {{y^3}})
+G3 = matrix{{x*y^2,x^2*y^2}}
+assert(sCorners G3 == matrix {{}})
+///
+
 listLCM = L -> (
     R := ring L#0;
     L = apply(L, l -> (listForm l)#0#0);

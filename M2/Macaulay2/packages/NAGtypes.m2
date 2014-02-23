@@ -40,7 +40,7 @@ export {
      "evaluate",
      -- dual space
      "DualSpace", "DualBasis", "BasePoint", "dualSpace", "addition", "intersection", "reduceSpace",
-     "PolySpace", "polySpace", "Reduced", "colon", "Gens", "Space", "innerProduct",
+     "PolySpace", "polySpace", "Reduced", "colon", "Gens", "Space", "innerProduct", "isContained",
      "numericalKernel", "numericalImage", "colReduce"
      }
 
@@ -647,7 +647,7 @@ intersection (PolySpace,PolySpace) := o -> (S,T) -> (
 addition = method(TypicalValue => PolySpace, Options => {Tolerance=>1e-6})
 addition (PolySpace,PolySpace) := o -> (S,T) -> (
     (mons,C) := coefficients (gens S | gens T);
-    polySpace mons*numericalImage(C,o.Tolerance)
+    polySpace(mons*numericalImage(C,o.Tolerance))
     )
 
 reduceSpace = method(Options => {Tolerance=>1e-6})
@@ -685,7 +685,7 @@ innerProduct (PolySpace, PolySpace) := (S, T) -> (
     (transpose Svec)*Tvec
     )
 innerProduct (PolySpace, DualSpace) := (S, L) -> (
-    Sshift := polySpace sub(gens S, (gens ring L) + coordinates L.BasePoint);
+    Sshift := polySpace sub(gens S, matrix{(gens ring L) + coordinates L.BasePoint});
     innerProduct(Sshift, L.Space)
     )
 innerProduct (RingElement, DualSpace) := (f, L) -> innerProduct(polySpace matrix{{f}}, L)
@@ -742,11 +742,12 @@ adjointMatrix Matrix := M -> (
 
 --performs Gaussian reduction on M
 colReduce = method(TypicalValue => Matrix)
-colReduce (Matrix, RR) := (M, tol) -> (
+colReduce (Matrix, Number) := (M, tol) -> (
     M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
     (m,n) := (numrows M, numcols M);
     i := 0;
     for j from 0 to n-1 do (
+	if i == m then break;
 	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
 	c := M_(a,j);
 	if abs c <= tol then continue;
