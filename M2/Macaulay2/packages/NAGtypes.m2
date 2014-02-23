@@ -39,7 +39,9 @@ export {
      "polySystem",
      "evaluate",
      -- dual space
-     "DualBasis", "BasePoint", "dualSpace", "addition", "intersection"
+     "DualSpace", "DualBasis", "BasePoint", "dualSpace", "addition", "intersection", "reduceSpace",
+     "PolySpace", "polySpace", "Reduced", "colon", "Gens", "Space", "innerProduct", "isContained",
+     "numericalKernel", "numericalImage", "colReduce"
      }
 
 -- DEBUG Core ----------------------------------------
@@ -566,71 +568,98 @@ generalEquations WitnessSet := (W) -> (
      )
 
 -------------------------------------------
+-- PolySpace
+--   Basis: a row matrix of polynomials representing dual functionals
+-- (Basis is expected to be linearly independent and reduced w.r.t. the monomial order)
+PolySpace = new Type of MutableHashTable
+globalAssignment PolySpace
+polySpace = method(Options => {Reduced => false})
+polySpace PolySpace := S -> new PolySpace from S
+polySpace Matrix := o -> M -> (
+    assert(numrows M == 1);
+    new PolySpace from {Gens=>M,Reduced=>o.Reduced}
+    )
+
+-------------------------------------------
 -- DualSpace 
---   DualBasis: a row matrix of polynomials representing dual functionals
+--   Space: a PolySpace (closed under derivation) 
 --   BasePoint: a point of localization
 --   Tolerance: tolerance used to compute the DualSpace or associated to it; 0 in the exact setting
--- (dualBasis is expected to be linearly independent and reduced w.r.t. the monomial order;
---  the span should be closed under derivation) 
 DualSpace = new Type of MutableHashTable
 globalAssignment DualSpace
 dualSpace = method()
 dualSpace DualSpace := L -> new DualSpace from L
-dualSpace (Matrix, Point, Number) := (M,p,t)-> (
-    assert(numrows M == 1);
-    assert(numgens ring M == #coordinates p);
-    assert(t>=0);
-    new DualSpace from {DualBasis=>M,BasePoint=>p,Tolerance=>t}
+dualSpace (PolySpace, Point) := (S,p)-> (
+    assert(numgens ring S.Gens == #coordinates p);
+    new DualSpace from {Space=>S,BasePoint=>p}
     )
+dualSpace (Matrix, Point) := o -> (M,p)-> dualSpace(polySpace M,p)
 -- what other constructors would we have?
 
-gens DualSpace := o -> L -> L.DualBasis
+gens PolySpace := o -> S -> S.Gens
+gens DualSpace := o -> L -> gens L.Space
 
+net PolySpace := S -> net gens S
 net DualSpace := L -> net gens L
 
+dim PolySpace := S -> numcols gens S
 dim DualSpace := L -> numcols gens L
 
-hilbertFunction DualSpace := o -> L ->
-    tally(flatten entries L.DualBasis / first @@ degree)
-hilbertFunction (List,DualSpace) := o -> (LL,L) -> (
+ring PolySpace := S -> ring gens S
+ring DualSpace := L -> ring gens L
+
+hilbertFunction DualSpace := L -> (
+    if not L.Space.Reduced then L = reduceSpace L;
+    tally(flatten entries gens L / first @@ degree)
+    )
+hilbertFunction (List,DualSpace) := (LL,L) -> (
     h := hilbertFunction L;
     apply(LL, d->(if h#?d then h#d else 0))
     )
-hilbertFunction (ZZ,DualSpace) := o -> (d,L) -> first hilbertFunction({d},L)
+hilbertFunction (ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
 
 check DualSpace :=  L -> error "not implemented"
 
-areEqual (DualSpace,DualSpace) := o -> (L,K) -> (
-    n := dim addition(L,K,Tolerance=>o.Tolerance);
-    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K and n == dim L
+areEqual (PolySpace,PolySpace) := o -> (S,T) -> (
+    n := dim addition(S,T,Tolerance=>o.Tolerance);
+    n == dim S and n == dim T
     )
+areEqual (DualSpace,DualSpace) := o -> (L,K) ->
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and areEqual(L.Space,K.Space,Tolerance=>o.Tolerance)
+    
 isContained = method(TypicalValue => Boolean, Options => {Tolerance=>1e-6})
-isContained (DualSpace,DualSpace) := o -> (L,K) -> (
-    n := dim addition(L,K,Tolerance=>o.Tolerance);
-    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and n == dim K
-    )
-DualSpace == DualSpace := (L,K) -> areEqual(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
+isContained (PolySpace,PolySpace) := o -> (S,T) ->
+    dim addition(S,T,Tolerance=>o.Tolerance) == dim T
+isContained (DualSpace,DualSpace) := o -> (L,K) ->
+    areEqual(L.BasePoint,K.BasePoint,Tolerance=>o.Tolerance) and isContained(L.Space,K.Space,Tolerance=>o.Tolerance)
 
-intersection = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
-intersection (DualSpace,DualSpace) := o -> (L,K) -> (
-    (mons,coefs) := coefficients (gens L|gens K);
-    Lcoefs := submatrix(coefs,(0..dim L-1));
-    Kcoefs := submatrix'(coefs,(0..dim L-1));
-    Lorth := numericalKernel(transpose Lcoefs,o.Tolerance);
-    Korth := numericalKernel(transpose Kcoefs,o.Tolerance);
-    M := mons*numericalKernel(transpose (Lorth|Korth),o.Tolerance);
-    dualSpace(M,L.BasePoint,o.Tolerance)
+intersection = method(TypicalValue => PolySpace, Options => {Tolerance=>1e-6})
+intersection (PolySpace,PolySpace) := o -> (S,T) -> (
+    (mons,coefs) := coefficients (gens S|gens T);
+    Scoefs := submatrix(coefs,(0..dim S-1));
+    Tcoefs := submatrix'(coefs,(0..dim T-1));
+    Sorth := numericalKernel(transpose Scoefs,o.Tolerance);
+    Torth := numericalKernel(transpose Tcoefs,o.Tolerance);
+    M := mons*numericalKernel(transpose (Sorth|Torth),o.Tolerance);
+    polySpace M
     )
 
-addition = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
-addition (DualSpace,DualSpace) := o -> (L,K) -> (
-    (mons,C) := coefficients (gens L | gens K);
-    M := mons*numericalImage(C,o.Tolerance);
-    dualSpace(M,L.BasePoint,o.Tolerance)
+addition = method(TypicalValue => PolySpace, Options => {Tolerance=>1e-6})
+addition (PolySpace,PolySpace) := o -> (S,T) -> (
+    (mons,C) := coefficients (gens S | gens T);
+    polySpace(mons*numericalImage(C,o.Tolerance))
     )
-DualSpace + DualSpace := (L,K) -> addition(L,K,Tolerance=>max{L.Tolerance,K.Tolerance})
 
-quotient (DualSpace, RingElement) := o-> (L,g) -> (
+reduceSpace = method(Options => {Tolerance=>1e-6})
+reduceSpace PolySpace := o -> S -> (
+    (mons,coefs) := coefficients gens S;
+    M := mons*(colReduce(coefs,o.Tolerance));
+    polySpace(M,Reduced=>true)
+    )
+reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
+
+colon = method(TypicalValue => DualSpace, Options => {Tolerance=>1e-6})
+colon (DualSpace, RingElement) := o-> (L,g) -> (
     (gmons,gcoefs) := coefficients g;
     (Lmons,Lcoefs) := coefficients gens L;
     M := matrix apply(flatten entries gmons, gm->(
@@ -641,17 +670,40 @@ quotient (DualSpace, RingElement) := o-> (L,g) -> (
 	    ));
     M = (transpose gcoefs)*M*Lcoefs;
     (Mmons,Mcoefs) := coefficients M;
-    M = Mmons*numericalImage(Mcoefs,L.Tolerance);
-    dualSpace(M,L.BasePoint,L.Tolerance)
-    )	    
-quotient (DualSpace, Ideal) := (L,J) -> error "not implemented"
+    M = Mmons*numericalImage(Mcoefs,o.Tolerance);
+    dualSpace(polySpace M, L.BasePoint)
+    )
+colon (DualSpace, Ideal) := (L,J) -> error "not implemented"
+
+-- Matrix of inner products
+-- PolySpace generators as rows, DualSpace generators as columns
+innerProduct = method()
+innerProduct (PolySpace, PolySpace) := (S, T) -> (
+    M := last coefficients(gens S | gens T);
+    Svec := submatrix(M,0..dim S-1);
+    Tvec := submatrix'(M,0..dim S-1);
+    (transpose Svec)*Tvec
+    )
+innerProduct (PolySpace, DualSpace) := (S, L) -> (
+    Sshift := polySpace sub(gens S, matrix{(gens ring L) + coordinates L.BasePoint});
+    innerProduct(Sshift, L.Space)
+    )
+innerProduct (RingElement, DualSpace) := (f, L) -> innerProduct(polySpace matrix{{f}}, L)
+innerProduct (RingElement, RingElement) := (f, l) -> (
+    M := last coefficients(matrix{{f,l}});
+    ((transpose M_{0})*M_{1})_(0,0)
+    )
 
 interpolatedIdeal = method()
 interpolatedIdeal DualSpace := L -> error "not implemented"
 interpolatedIdeal List := LL -> error "not implemented"
 
+---------------------------------------------
+-- AUXILIARY FUNCTIONS
+---------------------------------------------
 
-numericalImage = (M, tol) -> (
+numericalImage = method()
+numericalImage (Matrix, Number) := (M, tol) -> (
     R := ultimate(coefficientRing, ring M);
     M = sub(M, R);
     if numcols M == 0 then return M;
@@ -665,7 +717,8 @@ numericalImage = (M, tol) -> (
 	)
     )
 
-numericalKernel = (M, tol) -> (
+numericalKernel = method()
+numericalKernel (Matrix, Number) := (M, tol) -> (
     M = sub(M, ultimate(coefficientRing, ring M));
     if numrows M == 0 then return id_(source M);
     if precision 1_(ring M) < infinity then (
@@ -678,7 +731,8 @@ numericalKernel = (M, tol) -> (
     )
 
 -- produces the conjugate transpose
-adjointMatrix = M -> (
+adjointMatrix = method(TypicalValue => Matrix)
+adjointMatrix Matrix := M -> (
     M' := mutableMatrix transpose M;
     for i from 0 to (numrows M')-1 do (
 	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
@@ -686,7 +740,37 @@ adjointMatrix = M -> (
     matrix M'
     )
 
+--performs Gaussian reduction on M
+colReduce = method(TypicalValue => Matrix)
+colReduce (Matrix, Number) := (M, tol) -> (
+    M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
+    (m,n) := (numrows M, numcols M);
+    i := 0;
+    for j from 0 to n-1 do (
+	if i == m then break;
+	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
+	c := M_(a,j);
+	if abs c <= tol then continue;
+	rowSwap(M,a,i);
+	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
+	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
+	i = i+1;
+	);
+    M = transpose new Matrix from M;
+    if tol > 0 then clean(tol,M) else M
+    )
 
+TEST ///
+restart
+loadPackage "NAGtypes"
+p = point matrix{{1.,0.}}
+R = CC[x,y]
+L = dualSpace(matrix{{y^2+x,y^2}},p,0.0001)
+K = dualSpace(matrix{{x+.000000001}},p,0.0001)
+assert(areEqual(L+K,L))
+assert(areEqual(intersection(L,K),K))
+hilbertFunction({0,1,2,3},L)
+///
 
 beginDocumentation()
 

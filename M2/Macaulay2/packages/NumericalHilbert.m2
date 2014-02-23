@@ -1,6 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalHilbert",
+     PackageExports => {"NAGtypes"},
      Version => "0.1", 
      Date => "May 11, 2012",
      Authors => {{Name => "Robert Krone", 
@@ -13,54 +14,22 @@ export {
      dualBasis,
      dualHilbert,
      standardBasis,
-     dualInfo,
-     Point,
-     Tolerance,
+     gCorners,
+     truncatedDual,
+     sCorners,
      DZ,
      ST,
      BM,
      GB,
-     dualSpace,
-     ProduceSB,
-     rowReduce,
-     eliminatingDual,
-     colonDual,
-     dualCompare
+     ProduceSB
      }
-
-DualSpace = new Type of MutableHashTable
-dualSpace = method()
-dualSpace Matrix := m -> (
-     m = matrix entries m;
-     --if not isHomogeneous m then error "expected homogeneous matrix";
-     R := ring m;
-     S := (coefficientRing R)[];
-     new DualSpace from {"generators" => map(R^1,, map(R,S), m)}
-     );
-
-gens DualSpace := o -> V -> V#"generators";
-
-net DualSpace := V -> net V#"generators";
-
-degree DualSpace := V -> max flatten degrees source V#"generators";
-
-hilbertSeries DualSpace := o -> V -> (
-     l := new MutableList from ((degree V + 1):0);
-     scan(flatten degrees source V#"generators", d->(l#d = l#d + 1));
-     new List from l
-     );
-
-isBasis = method()
-isBasis DualSpace := V -> kernel V#"generators" == 0;
-
-DualSpace == DualSpace := (V,W) -> image(W#"generators") == image(V#"generators");
 
 -----------------------------------------------------------------------------------------
 
---Default tolerance value for inexact fields (the default is 0 for exact fields)
-defaultT := () -> 0.0001;
+--Default tolerance value respectively for exact fields and inexact fields
+defaultT := (R) -> if precision 1_R == infinity then 0 else 0.0001;
 
-
+{*
 dualBasis = method(TypicalValue => DualSpace, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.})
 dualBasis (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate, Point=>o.Point, Strategy=>o.Strategy, Tolerance=>o.Tolerance))#0;
 
@@ -70,71 +39,95 @@ standardBasis (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate,
 dualHilbert = method(TypicalValue => List, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.})
 dualHilbert (Matrix) := o -> (igens) -> (dualInfo(igens, Truncate=>o.Truncate, Point=>o.Point, Strategy=>o.Strategy, Tolerance=>o.Tolerance))#4;
 
-dualInfo = method(TypicalValue => Sequence, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1., ProduceSB => false})
-dualInfo (Matrix) := o -> (igens) -> (
-     R := ring igens;
-     tol := o.Tolerance;
-     deg := o.Truncate;
-     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
-     if o.Point != {} then igens = sub(igens, matrix{gens R + apply(o.Point,p->sub(p,R))});
-     print transpose igens;
-     
-     --outputs
-     dbasis   := new Matrix;
-     gcorners := new List;
-     regul    := 0;
-     hseries  := new Sequence;
-     hpoly    := 0;
-     
-     --truncated strategies
-     if deg != -1 then (
-     	  --Macaulay matrix strategies (DZ, ST)
-     	  if o.Strategy == DZ or o.Strategy == ST then (
-	       M := new Matrix;
-     	       if o.Strategy == DZ then M = transpose DZmatrix(igens, deg, false);
-     	       if o.Strategy == ST then M = transpose STmatrix(igens, deg);
-	       
-     	       dmons := apply(deg+1, i->first entries basis(i,R)); --nested list of monomials up to order d
-     	       dbasis = parseKernel(findKernel(M, tol), dmons, tol);
-     	       
-	       n := numgens R;
-	       genDegs := (first entries igens)/lDegree;
-     	       cList := apply(deg+1, i->bin(i + n, n));
-     	       rList := apply(deg+1, i->sum(genDegs, j->bin(i-j+n,n)));
-     	       L := apply(deg+1, i->(
-	       		 subM := M_(toList (0..(cList#i)-1))^(toList (0..(rList#i)-1));
-	       		 numgens source findKernel(subM, tol)
-	       		 ));
-               L = {0}|L;
-     	       hseries = apply(deg+1, i->(L#(i+1)-L#i));
-	       );
-     	  
-     	  --Mourrain algorithm (BM)
-     	  if o.Strategy == BM then
-	       (dbasis,hseries) = dualBasisBM(igens, deg, tol);
-	       dbasis = flatten entries dbasis;
-     	  );
-     
-     --Sylvester array strategies
-     if deg == -1 then (
-	  sbasis := {};
-	  if o.Strategy == DZ or o.Strategy == BM then (
-	       d := 0;
-	       (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, tol, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
-	       gcorners = sbReduce gcorners;
-	       );
-	  if o.Strategy == GB then (
-	       sbasis = first entries gens gb igens;
-	       print sbasis;
-	       gcorners = sbasis/lLeadMonomial;
-	       );
-	  regul = first degree lcm monomialIdeal gcorners;
-	  hseries = apply(regul, i->hilbertC(gcorners, i));
-	  if o.ProduceSB then gcorners = sbasis;
-	  );
-     
-     (dbasis, gcorners, regul, hseries, hpoly)
-     );
+
+shiftDual = method(TypicalValue => DualSpace)
+shiftDual (DualSpace,Point,ZZ) := (L,p,d) -> (
+    q := coordinates p - coordinates L.BasePoint;
+    shiftSeqs := apply(gens ring L, q, (v,c)->sum(d+1,i->(c*v)^i));
+    subs := apply(gens ring L, shiftSeqs, (v,s)->(v => v*s));
+    newBasis := sub(gens L, subs);
+    newBasis = product(shiftSeqs)*newBasis;
+    (mons,coefs) := coefficients(newBasis, Monomials => basis(0,d,ring L));
+    newBasis = mons*coefs;
+    dualSpace(polySpace newBasis,p)
+    )
+*}
+
+truncatedDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => -1.})
+truncatedDual (Matrix,Point,ZZ) := o -> (igens,p,d) -> (
+    R := ring igens;
+    t := if o.Tolerance == -1. then defaultT(R) else o.Tolerance;
+    sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    dbasis := map(R^1,R^0,0);
+    if o.Strategy == DZ then (
+	dmons := sort basis(0,d,R);
+	M := transpose DZmatrix(igens,d,dmons,false);
+	dbasis = dmons*numericalKernel(M,t);
+	); 
+    if o.Strategy == BM then (
+     	N := E := B := map(R^1,R^0,0);
+     	for e from 0 to d do (
+	    (N,E,B) = BMmatrix(igens,N,E,B,t,false);
+	    dbasis = dbasis | E*B;
+	    if numcols B == 0 then break;
+  	    );
+    	);
+    dualSpace(polySpace(dbasis, Reduced=>false),p)
+    )
+
+gCorners = method(TypicalValue => Sequence, Options => {Strategy => BM, Tolerance => -1., ProduceSB => false})
+gCorners (Matrix,Point) := o -> (igens,p) -> (
+    R := ring igens;
+    t := if o.Tolerance == -1. then defaultT(R) else o.Tolerance;
+    sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    dbasis := new Matrix;
+    gcorners := new Matrix;
+    sbasis := new Matrix;
+    d := 0; hpoly := 0;
+    (gcorners,dbasis,d,sbasis,hpoly) = dualBasisSA(igens, t, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
+    gcorners = sbReduce gcorners;	
+    --regul = first degree lcm monomialIdeal gcorners;
+    --hseries = apply(regul, i->hilbertC(gcorners, i));
+    if o.ProduceSB then gcorners = sbasis;
+    (dualSpace(dbasis,p,t),gcorners)
+    --(dbasis, gcorners, regul, hseries, hpoly)
+    )
+
+-- computes s-corners from the g-corners
+-- i.e. the maximal monomials not in the ideal generated by the g-corners
+sCorners = method(TypicalValue => Matrix)
+sCorners Matrix := gCorners -> (
+    R := ring gCorners;
+    n := numgens R;
+    G := flatten entries gCorners;
+    candidates := subsets(G, n) / listLCM;
+    S := select(candidates, c -> (
+	    c != 0 and
+	    all(G, g -> not isDivisible(c,g)) and
+	    all(gens R, v -> any(G, g -> isDivisible(v*c,g)))));
+    matrix{S}
+    )
+
+TEST ///
+restart
+--loadPackage "NumericalHilbert"
+R = CC[x,y]
+G1 = matrix{{x^2,x*y^2,y^4}}
+assert(sCorners G1 == matrix {{x*y, y^3}})
+G2 = matrix{{x*y^2,x^2*y^2,y^4}}
+assert(sCorners G2 == matrix {{y^3}})
+G3 = matrix{{x*y^2,x^2*y^2}}
+assert(sCorners G3 == matrix {{}})
+///
+
+listLCM = L -> (
+    R := ring L#0;
+    L = apply(L, l -> (listForm l)#0#0);
+    LCMexp := apply(numgens R, i -> max(apply(L, l->l#i)));
+    LCMexp = LCMexp - toList ((numgens R):1);
+    if not all(LCMexp, a -> a >= 0) then return 0;
+    product(numgens R, i -> R_i^(LCMexp#i))
+    )    
 
 eliminatingDual = method(TypicalValue => List, Options => {Point => {}, Tolerance => -1.})
 eliminatingDual (Matrix, ZZ, List) := o -> (igens, r, varList) -> (
@@ -169,91 +162,6 @@ eliminatingDual (Matrix, ZZ, List) := o -> (igens, r, varList) -> (
      apply(eBasis, b->sub(b,R))
      );
 
-colonDual = method(TypicalValue => List)
-colonDual (List, List) := (dualSpace, L) -> (
-     R := ring first dualSpace;
-     for l in L do (
-	  (m,c) := coefficients matrix{dualSpace};
-     	  m = flatten entries m;
-	  M := matrix{toList(#m:0_R)};
-	  for term in terms l do (
-	       mdiff := apply(m, mon->(
-			 d := diff(term,mon);
-			 if d != 0 then d = leadMonomial d;
-			 d
-			 ));
-	       M = M + (leadCoefficient term)*(matrix{mdiff});
-	       );
-	  dualSpace = flatten entries (M*c);
-	  );
-     dualSpace
-     );
-
-dualCompare = method(TypicalValue => Boolean, Options => {Tolerance => -1.})
-dualCompare (List, List) := o -> (V,W) -> (
-     R := ring first V;
-     tol := o.Tolerance;
-     if tol == -1. then (if precision 1_R == infinity then tol = 0. else tol = defaultT());
-     c := (coefficients matrix{V|W})#1;
-     r := findRank(c,tol);
-     r == findRank(c_(toList(0..#V-1)),tol) and r == findRank(c_(toList(#V..#V+#W-1)),tol)
-     );
-     
-     
-
-{*
-initializeD = (igens, d, tol, strategy) -> (
-     ecart := max apply(first entries igens, g->(gDegree g - lDegree g));
-     tdeg := d;
-     if d == -1 then tdeg = max(apply(first entries igens, gDegree));
-     if d == -1 and strategy == BM then (
-	  0
-	  );
-     D := new MutableHashTable from {
-	  igens => igens,
-	  deg => -1,
-	  tol => tol;
-	  targetDegree => tdeg,
-	  ecart => ecart,
-	  Strategy => strategy, --DZ, BM or GB
-	  SA => (d == -1),
-	  M => null, --the main matrix
-	  kernelM => {}, --a reduced basis for the kernel of M
-	  dualBasis => {},
-	  colBasis => {}, --a list of the polynomials corresponding to the columns of M
-	  dmons => {}, --a nested list of all monomials at each degree
-	  hseries => {}, --the Hilbert series computed so far
-	  gcorners => {}, --the g-corners computed so far
-	  sbasis => {}, --the reduced standard basis elements computed so far
-	  }
-     );
-
-advanceD = (D) -> (
-     D.deg = D.deg+1;
-     if D.Strategy == DZ then D.M = DZmatrix(D.igens, D.deg, D.SA);
-   --if D.Strategy == ST then D.M = STmatrix(D.igens, D.deg);
-     --if D.Strategy == BM then (D.M, D.colBasis) = BMmatrix(D);
-     --(D.kernelM, D.dualBasis) = kern(D.M, D.colBasis, D.tol);
-     if not D.SA then (
-	  h' := if D.deg = 0 then 0 else D.hseries#(D.deg-1);
-	  h := #D.dualBasis - h';
-	  D.hseries = append(h, D.hseries);
-	  )
-     );
-*}
-
-findRank = (M, tol) -> (
-     R := ring M;
-     M = sub(M, coefficientRing R);
-     if numgens target M == 0 then return 0;
-     if precision 1_R < infinity then (
-	  svs := (SVD M)#0;
-	  #select(svs, s->(s > tol))
-	  ) else (
-	  rank M
-	  )
-     );
-
 --Finds kernel numerically with SVD or symbolically depending on the base field
 findKernel = (M, tol) -> (
      R := ring M;
@@ -278,75 +186,55 @@ parseKernel = (kern, dmons, tol) -> (
      (matrix {new List from flatten dmons})*sub(dualGens,R)
      );
 
---Implementation of algorithm from 1996 paper of Bernard Mourrain.
-dualBasisBM = method(TypicalValue => Matrix, Options => {Point => {}})
-dualBasisBM (Matrix, ZZ, RR) := o -> (igens, d, tol) -> (
-     R := ring igens;
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     hseries := new MutableList;
-     betas := {}; --all previously found generators
-     bpairs := {}; --most recently found generators
-     M := {}; --the main matrix
-     E := {}; --list of all dual basis integrals (including 1)
-     
-     for e from 0 to d do (
-	  (M,E,bpairs) = BMmatrix(igens,M,E,bpairs,tol,false);
-	  betas = betas | bpairs/last;
-	  hseries#e = #bpairs;
-	  if #bpairs == 0 then break;
-  	  );
-     
-     if #betas == 0 then return (map(R^1,R^0,0), new Sequence from hseries);
-     (mons,bmatrix) := coefficients matrix {betas};
-     bmatrix = sub(bmatrix,coefficientRing R);
-     (mons * transpose rowReduce(transpose bmatrix,tol), new Sequence from hseries)
-     );
-
-BMmatrix = (igens, M, E, bpairs, tol, homogeneous) -> (
-     --print(igens,M,E,bpairs);
-     R := ring igens;
-     n := numgens R;
-     m := numcols igens;
-     snew := #bpairs;
-     offset := if homogeneous then 0 else 1;
-     s := (#E - offset)//n;
-     npairs := subsets(n,2);
-     if snew == 0 then (M,E) = (transpose sub(igens,map(R^1,R^n,0)), {1_R}) else ( --degree 0
-     	  if not homogeneous then (
-     	       M = M || map(R^(m + s*(1+#npairs) - numrows M),R^(#E),0);
-     	       M = matrix(bpairs/first) || M;
-	       ) else (
-	       M = map(R^(m + s*#npairs),R^0,0);
-	       E = {};
-	       );
-     	  for bp in bpairs do (
-	       E' := apply(n, k->(
-	       	    	 subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
-		    	 (gens R)#k * sub(bp#1,subs)
-	       	    	 ));
-	       E = E | E';
-	       M' := matrix apply(m, j->apply(E',a->innerProduct(a,igens_(0,j))));
-	       if not homogeneous then M' = map(R^(s+snew),R^n,0) || M';
-	       for j from 0 to s-1 do (
-	       	    w := apply(n,k->((bp#0)#(offset + j*n + k)));
-	       	    v := mutableMatrix(R,#npairs,n);
-	       	    for i from 0 to #npairs-1 do (
-		    	 v_(i,npairs#i#0) =  w#(npairs#i#1);
-		    	 v_(i,npairs#i#1) = -w#(npairs#i#0);
-		    	 );
-	       	    M' = M' || new Matrix from v;
-	       	    );
-	       M = M | M';
-	       );
-	  );
-     bvectors := entries transpose findKernel(M, tol);
-     bpairs = apply(bvectors, bv->(bv, sum(#bv, i->(bv#i * E#i))));
-     (M, E, bpairs)
-     );
+-- Implementation of algorithm from 1996 paper of Bernard Mourrain.
+-- M is the main matrix
+-- E is the row matrix of all dual basis integrals (including 1)
+-- B contains the most recently found generators (as coefficients in terms of E)
+BMmatrix = (igens, M, E, B, tol, homogeneous) -> (
+    --print(igens,M,E,bpairs);
+    R := ring igens;
+    n := numgens R;
+    m := numcols igens;
+    snew := numcols B;
+    offset := if homogeneous then 0 else 1;
+    s := (numcols E - offset)//n; --number of dual space generators
+    npairs := subsets(n,2);
+    if snew == 0 then ( -- degree 0
+	M = transpose sub(igens,map(R^1,R^n,0));
+	return (M, matrix{{1_R}}, numericalKernel(M,tol));
+	);
+    newMEs := apply(snew, i -> (
+	    bcol := B_{i};
+	    bpoly := (E*bcol)_(0,0);
+	    E' := matrix {apply(n, k->(
+			subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
+			(gens R)#k * sub(bpoly,subs)))};
+	    M' := innerProduct(polySpace igens, polySpace E');
+	    if not homogeneous then M' = map(R^(s+snew),R^n,0) || M';
+	    for j from 0 to s-1 do (
+		w := apply(n,k->(bcol_(offset + j*n + k,0)));
+		v := mutableMatrix(R,#npairs,n);
+		for i from 0 to #npairs-1 do (
+		    v_(i,npairs#i#0) =  w#(npairs#i#1);
+		    v_(i,npairs#i#1) = -w#(npairs#i#0);
+		    );
+		M' = M' || new Matrix from v;
+		);
+	    (M',E')
+	    ));
+    
+    if not homogeneous then
+    M = transpose B || M || map(R^(m + s*(1+#npairs) - numrows M),R^(numcols E),0)
+    else M = map(R^(m + s*#npairs),R^0,0);
+    M = M | matrix{newMEs/first};
+    E = if homogeneous then matrix{newMEs/last} else E | matrix{newMEs/last};
+    B = numericalKernel(M, tol);
+    (M, E, B)
+    );
 
 --Dual basis algorithm with automatic stopping criterion.
 --DZ strategy uses Sylvester arrays.  BM strategy uses homogenization.
-dualBasisSA = method(TypicalValue => List, Options => {Point => {}, ProduceSB => false, Strategy => BM})
+dualBasisSA = method(TypicalValue => List, Options => {ProduceSB => false, Strategy => BM})
 dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      R := ring igens;
      n := numgens R;
@@ -354,7 +242,6 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      S := (coefficientRing R)[x_0..x_n, MonomialOrder => {Weights => (n+1):-1}, Global => false]; --projectivization of R
      homog := f -> homogenize((map(S,R,drop(gens S, 1))) f, x_0);
      dehomog := map(R,S,{1_R} | gens R);
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
      ecart := max apply(first entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
      topDegs := apply(first entries igens, gDegree);
      dmons := {}; --list of monomials up to degree d
@@ -406,7 +293,7 @@ dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
      --print SBasis;
      (
 	  monGens,
-	  select(oldBasis,i->(gDegree i < d-ecart)),
+	  matrix {select(oldBasis,i->(gDegree i < d-ecart))},
 	  d-ecart-1,
 	  sbReduce SBasis,
 	  hilbertPolynomial( ideal toList apply(monGens,g->g#0), Projective=>false)
@@ -438,53 +325,16 @@ newMonomialGens = (oldGens, newBasis, dmons, d) -> (
      );
 
 --Dayton-Zeng matrix to find the the dual space up to degree d.
-DZmatrix = method(TypicalValue => List, Options => {Point => {}})
-DZmatrix (Matrix, ZZ, Boolean) := o -> (igens, d, syl) -> (
+DZmatrix = method(TypicalValue => Matrix)
+DZmatrix (Matrix, ZZ, Matrix, Boolean) := (igens, d, dmons, syl) -> (
      R := ring igens;
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
      igens = first entries igens;
-     genDegs := apply(igens, if syl then gDegree else lDegree);
-     dmons := apply(d+1, i->first entries basis(i,R));
+     genDeg := if syl then gDegree else lDegree;
      p := map(R^1,R^0,0);
-     for j from 0 to d do (
-     	  for i from 0 to #igens-1 do (
-	       newp := if j >= genDegs#i then apply(dmons#(j-genDegs#i), m->(m*(igens#i))) else {};
-               if #newp > 0 then p = p|matrix {newp};
-	       );
-     	  );
-     (coefficients(p, Monomials => flatten dmons))#1
-     );
-
---Stetter-Thallinger algorithm to find the matrices corresponding to the dual space
---up to degree d.
-STmatrix = method(TypicalValue => List, Options => {Point => {}})
-STmatrix (Matrix, ZZ) := o -> (igens, d) -> (
-     R := ring igens;
-     if o.Point != {} then igens = sub(igens, matrix{gens R + o.Point});
-     dmons := apply(d+1, i->first entries basis(i,R));
-     Ms := new MutableList;
-     M := matrix {{}};
-     for i from 1 to d do (
-    	  mons := flatten take(dmons,{1,i});
-    	  N := (coefficients(igens, Monomials => mons))#1;
-    	  for v from 0 to #(gens R)-1 do (
-      	       Mshift := new MutableList; --"antiderivative" of M with respect to variable v
-      	       l := 0;
-      	       for p from 0 to #mons-1 do (
-		    if (listForm mons#p)#0#0#v >= 1 and first degree mons#p > 1 then (
-	  		 Mshift#p = (entries M)#l;
-	  		 l = l+1;
-			 )
-        	    else Mshift#p = apply(numgens source M, i->0);
-      		    );
-      	       --print (i,v,N,matrix new List from Mshift);
-      	       N = N | matrix new List from Mshift;
-    	       );
-    	  M = gens gb N;
-    	  Ms#(i-1) = M;
-  	  );
-     new List from Ms
-     );
+     for g in igens do
+	 p = p|(matrix{{g}}*basis(0, d - genDeg g, R));
+     last coefficients(p, Monomials => dmons)
+     )
 
 --checks each monomial of degree d and counts ones in the monomial basis of the quotient space
 hilbertB = method(TypicalValue => ZZ)
@@ -515,16 +365,15 @@ isDivisible = (a, b) -> (
      );
 
 --binomial coefficient 
-bin = (m,k) -> (
-     if m >= 0 then binomial(m,k) else 0
-     );
+bin = (m,k) -> if m >= 0 then binomial(m,k) else 0
 
 --lead monomial and lead monomial degree according to ordering associated with
 --the ring (local) and reverse ordering (global)
-lLeadMonomial = f -> leadMonomial first terms f;
-gLeadMonomial = f -> leadMonomial last terms f;
+lLeadMonomial = f -> leadMonomial last terms f;
+gLeadMonomial = f -> leadMonomial first terms f;
 lDegree = f -> first degree lLeadMonomial f;
 gDegree = f -> first degree gLeadMonomial f;
+
 
 --performs Gaussian reduction on M but starting from the bottom right
 rowReduce = method(TypicalValue => Matrix)
@@ -562,12 +411,6 @@ sbReduce = L -> (
      	  all(#L, j->(j == i or not isDivisible(L#i,L#j)))
 	  ));
      new List from apply(Lgood, i->L#i)
-     );
-
---evaluation of a dual element v on a polynomial w
-innerProduct = (v,w) -> (
-     c := entries (coefficients matrix{{v,w}})#1;
-     sum(#c,i->(c#i#0)*(c#i#1))
      );
 
 adjointMatrix = M -> (
@@ -664,14 +507,21 @@ end
 
 
 restart
-loadPackage "NumericalHilbert"
-R = CC[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
-R = QQ[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
-R = (ZZ/101)[x,y, MonomialOrder => {Weights=>{-1,-1}}, Global => false]
+--loadPackage "NumericalHilbert"
+R = CC[x,y]
 M = matrix {{x^2-x*y^2,x^3}}
-M = matrix {{x*y}}
-M = matrix {{x^9 - y}}
-dualInfo(M,Truncate=>8)
+--M = matrix {{x*y}}
+--M = matrix {{x^9 - y}}
+p = point matrix{{0_CC,0_CC}}
+q = point matrix{{1_CC,0_CC}}
+L = reduceSpace truncatedDual(M,p,6,Strategy=>DZ)
+L = reduceSpace truncatedDual(M,p,6,Strategy=>BM)
+--shiftDual(L,q,8)
+G = matrix{{x^2,x*y^2,y^4}}
+sCorners G
+
+hilbertFunction(toList(0..8),L)
+dualInfo(M,p,Truncate=>8)
 standardBasis(M)
 dualHilbert(M,Truncate=>25)
 dualBasis(M)
