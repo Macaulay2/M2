@@ -129,6 +129,12 @@ QQ[x,y]
 polySystem {x,y^2+1,x+1}
 RR[x,y]
 polySystem {x,y^2+1,x+1}
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point {{1.0_CC,2.3_CC}};
+assert (
+    clean_0.1 ( (100*evaluate(S,p)) - transpose matrix{{29, -30}} )==0
+    )
 ///
 
 -----------------------------------------------------------------------
@@ -1227,9 +1233,8 @@ toAffineChart(2,{1,2,0,4,5,6})
 
 TEST /// -- miscellaneous tests
 CC[x,y]
-S = {x^2+y^2-6, 2*x^2-y}
-p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert ( (100*evaluate(S,p)/round) == {29, -30} )
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
 classifyPoint p
