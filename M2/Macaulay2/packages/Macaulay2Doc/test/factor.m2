@@ -40,8 +40,12 @@ assert( t === ((raw (x^2-a), raw (x^2+a)), (1,1)))
 -- factoring a Laurent polynomial
 R=ZZ[x,MonomialOrder=>Lex,Inverses=>true];
 b=(x+1+x^(-1))*(2+x^(-2)+x^(-1));
-factor b
-assert (# factor b == 3 )
+r=factor b
+assert (# r == 3 )
+assert (r === new Product from 
+     {    new Power from {x^2+x+1,1},
+	  new Power from {2*x^2+x+1,1},
+	  new Power from {x^(-3),1}})
 
 -- isPrime
 
