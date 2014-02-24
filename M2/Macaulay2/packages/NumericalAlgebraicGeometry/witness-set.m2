@@ -5,8 +5,8 @@
 
 WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
-member (List,WitnessSet) := (point,W) -> (
-     pts := movePointsToSlice(W, sliceEquations(randomSlice(dim W, numgens ring W, point),ring W)) / coordinates;
+member (Point,WitnessSet) := (point,W) -> (
+     pts := movePointsToSlice(W, sliceEquations(randomSlice(dim W, numgens ring W, point),ring W));
      any(pts, p->areEqual(point,p,Tolerance=>WitnessSet.Tolerance))
      )
 member (WitnessSet,WitnessSet) := (V,W) -> (
@@ -38,13 +38,10 @@ slice W
 ///
 
 randomSlice = method()
-randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,{})
-randomSlice (ZZ,ZZ,List) := (d,n,point) -> (
+randomSlice (ZZ,ZZ) := (d,n) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(CC^d,CC^1)   
+randomSlice (ZZ,ZZ,Point) := (d,n,point) -> (
      SM := (randomUnitaryMatrix n)^(toList(0..d-1));
-     SM | (if #point==0
-	  then random(CC^d,CC^1)    
-	  else -SM * transpose matrix{point} -- slice goes thru point
-	  )
+     SM | (-SM * transpose matrix point)
      )
 
 movePoints = method(Options=>{AllowSingular=>false, Software=>null})
@@ -116,17 +113,27 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
      then error "wrong dimension of new slicing plane";
      witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W),Software=>o.Software))             	  
      )
-///
-restart
-debug loadPackage "NumericalAlgebraicGeometry"
+
+-- get a random Point(s) 
+random WitnessSet := o -> W -> (
+    W' := moveSlice(W, randomSlice(dim W, numgens ring W));
+    W'.Points # (random(#W'.Points)) 
+    )
+
+TEST ///
+restart 
+debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y,z]
 W1 = new WitnessSet from {
      Equations=>ideal {x^2+y^2+z^2-1},
      Slice=>matrix "1,0,0,0;0,1,0,0",
-     Points=>{{(0,0,1)},{(0,0,-1)}}/point
+     Points=>{{{0,0,1}},{{0,0,-1}}}/point
      } 
 sliceEquations (W1#Slice,R)
 W2 = moveSlice(W1, matrix "0,1,0,0;0,0,1,0")
-peek W2
+assert areEqual(sortSolutions points W2, {point{{ -1,0,0}},point{{1,0,0}}})
+for i to 5 do assert member(random W1,W1)
 ///
+
+
 
