@@ -4,7 +4,7 @@
      refine 					-- refining/sharpening routines 
      BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
      0-dim-methods				-- routines for 0-dim solution sets 
-     decompoistion				-- numerical irreducible decomposition
+     decomposition				-- numerical irreducible decomposition
      witness-set				-- witness set manipulation routines 
      positive-dim-methods			-- routines for positive-dimensional solution sets 
      
