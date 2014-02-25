@@ -265,15 +265,16 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> (
-	       c := 1; ff:=f;
+	       c := 1_R; ff:=f;
 	       if (options RM).Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
 	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
---     	       facs = apply(facs, p -> new RM from p);
-     	       facs = apply(facs, p -> (pp:=new RM from p; if leadCoefficient pp>0 then pp else (c=-c; -pp)));
+	       conv := x->substitute(x,QQ);
+	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
+     	       facs = apply(facs, p -> (pp:=new RM from p; if conv(leadCoefficient pp) > 0 then pp else (c=-c; -pp)));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
