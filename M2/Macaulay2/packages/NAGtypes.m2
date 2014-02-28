@@ -593,7 +593,7 @@ dualSpace (PolySpace, Point) := (S,p)-> (
     assert(numgens ring S.Gens == #coordinates p);
     new DualSpace from {Space=>S,BasePoint=>p}
     )
-dualSpace (Matrix, Point) := o -> (M,p)-> dualSpace(polySpace M,p)
+dualSpace (Matrix, Point) := (M,p)-> dualSpace(polySpace M,p)
 -- what other constructors would we have?
 
 gens PolySpace := o -> S -> S.Gens
