@@ -35,8 +35,9 @@ export {
      "MaxPrecision", "WindingNumber", "DeflationNumber",
      Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
      -- polynomial systems
-     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", "JacobianAndPolySystem",
-     "polySystem",
+     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, JacobianAndPolySystem, 
+     ContinuationParameter, SpecializationRing,
+     polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
      "evaluate",
      -- dual space
      "DualSpace", "DualBasis", "BasePoint", "dualSpace", "addition", "intersection", "reduceSpace",
@@ -122,6 +123,48 @@ jacobian PolySystem := P -> (
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
 
+segmentHomotopy = method()
+segmentHomotopy (PolySystem,PolySystem) := (S,T) -> (
+    R := ring S;
+    if R =!= ring T then error "systems over the same ring expected";
+    K := coefficientRing R;
+    t := symbol t;
+    Rt := K(monoid[gens R, t]);
+    toRt := map(Rt,R,drop(gens Rt,-1));
+    t = last gens Rt;       
+    H := polySystem((1-t)*toRt S.PolyMap + t*toRt T.PolyMap);
+    H.ContinuationParameter = t;
+    H.SpecializationRing = R;
+    H 
+    )
+
+substituteContinuationParameter = method()
+substituteContinuationParameter (PolySystem,RingElement) := (H,t') -> (
+    -- t' contains typically a linear expression in t=H.ContinuationParameter
+    -- but will work for any polynomial expression in ring H.
+    if not H.?ContinuationParameter then error "system has no continuation parameter";
+    R := ring H;
+    H' := polySystem (map(R,R,drop(gens R,-1)|{t'})) H.PolyMap;
+    H'.ContinuationParameter = H.ContinuationParameter;
+    H'.SpecializationRing = H.SpecializationRing;
+    H'	
+    )
+
+specializeContinuationParameter = method()
+specializeContinuationParameter (PolySystem, Number) := (H,t0) -> (
+    if not H.?ContinuationParameter then error "system has no continuation parameter";
+    Rt := ring H;
+    K := coefficientRing Rt;
+    i := position(gens Rt, x->x===H.ContinuationParameter);
+    R := H.SpecializationRing;
+    specializeTo't0 := map(R,Rt,apply(numgens Rt, j->
+	    if j<i then R_j 
+	    else if j>i then R_(j-1) 
+	    else t0
+	    ));
+    polySystem specializeTo't0 H.PolyMap
+    )
+
 TEST ///
 CC[x,y]
 polySystem transpose matrix{{x,y^2+1,x+1}}
@@ -129,6 +172,19 @@ QQ[x,y]
 polySystem {x,y^2+1,x+1}
 RR[x,y]
 polySystem {x,y^2+1,x+1}
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point {{1.0_CC,2.3_CC}};
+assert (
+    clean_0.1 ( (100*evaluate(S,p)) - transpose matrix{{29, -30}} )==0
+    )
+T = polySystem {x^2-1, y^2-1}
+H = segmentHomotopy(S,T)
+H' = substituteContinuationParameter(H,1-H.ContinuationParameter)
+S' = specializeContinuationParameter(H,0_CC) 
+assert(S'.PolyMap - S.PolyMap == 0)
+T' = specializeContinuationParameter(H',0_CC) 
+assert(T'.PolyMap - T.PolyMap == 0)
 ///
 
 -----------------------------------------------------------------------
@@ -1227,9 +1283,8 @@ toAffineChart(2,{1,2,0,4,5,6})
 
 TEST /// -- miscellaneous tests
 CC[x,y]
-S = {x^2+y^2-6, 2*x^2-y}
-p = point({{1.0,2.3}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert ( (100*evaluate(S,p)/round) == {29, -30} )
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
 classifyPoint p
