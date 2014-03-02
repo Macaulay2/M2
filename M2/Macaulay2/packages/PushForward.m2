@@ -6,7 +6,7 @@ newPackage(
                   Email => "claudiu@math.berkeley.edu", 
                   HomePage => "http://www.math.berkeley.edu/~claudiu"}},
         Headline => "push forwards of finite ring maps",
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {pushFwd}

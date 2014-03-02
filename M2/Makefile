@@ -27,9 +27,10 @@ ifeq ($(VERBOSE),yes)
 endif
 
 MAJOR = 2
-MINOR = 62
+MINOR = 68
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 # version 2.62 is required by the configure.ac in gc/libatomic_ops
+# version 2.68 is required by mpir 2.6.0
 AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 
 PATH := autoconf/final/bin:$(PATH)

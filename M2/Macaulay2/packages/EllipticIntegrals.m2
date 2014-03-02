@@ -7,7 +7,7 @@ newPackage(
 		  Email => "dan@math.uiuc.edu", 
 		  HomePage => "http://www.math.uiuc.edu/~dan/"}},
     	Headline => "uniformization of elliptic curves",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 {* The notation used here comes from my paper

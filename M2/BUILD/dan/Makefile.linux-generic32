@@ -1,7 +1,7 @@
 # -*- makefile-gmake -*-
 
 DIRECTORY ?= linux32.generic.production
-CONFIGOPTIONS += --build=i486-pc-linux-gnu
+CONFIGOPTIONS += --build=i686-pc-linux-gnu
 CONFIGOPTIONS += --enable-tarfile
 CONFIGOPTIONS += --enable-static
 CONFIGOPTIONS += --with-issue=Generic

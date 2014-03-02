@@ -1,13 +1,20 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "0.1", 
-  Date => "11 June 2012",
+  Version => "1.6.0.1", 
+  Date => "October 14, 2013",
   Authors => {
+    {Name => "Elizabeth Gross",
+     Email=> "eagross@ncsu.edu",
+     HomePage => "http://math.uic.edu/~lizgross"},
+    {Name => "Jose Israel Rodriguez",
+     Email => "jo.ro@berkeley.edu",
+     HomePage => "http://math.berkeley.edu/~jrodrig/"},
     {Name => "Dan Bates",
      Email => "bates@math.colostate.edu",
-     HomePage => "http://www.math.colostate.edu/~bates"},
-    {Name => "Contributing Author: Anton Leykin",
+     HomePage => "http://www.math.colostate.edu/~bates"}, 
+    {Name => "Anton Leykin",
+     Email => "leykin@math.gatech.edu",
      HomePage => "http://www.math.gatech.edu/~leykin"}
   },
   Headline => "Interface to Bertini",
@@ -16,7 +23,7 @@ newPackage(
     "BERTINIexe"=>"bertini", 
     "keep files" => true
   },
-  DebuggingMode => true,
+  DebuggingMode => false,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -27,14 +34,11 @@ export {
   "bertiniPosDimSolve",
   "bertiniSample",
   "bertiniTrackHomotopy",
-  "bertiniSolve",
   "bertiniComponentMemberTest",
-  "bertiniRefineSols",
-  "StartSystem",  
-  "StartSolutions",  
-  "gamma",
+  "bertiniRefineSols",    
   "MPTYPE",  
-  "PRECISION",  
+  "PRECISION",
+  "ISPROJECTIVE",  
   "ODEPREDICTOR",  
   "TRACKTOLBEFOREEG",  
   "TRACKTOLDURINGEG",
@@ -58,17 +62,13 @@ export {
   "MAXSTEPSIZE",  
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
-  "REGENSTARTLEVEL",
-  "MaximumPrecision",
-  "FunctionResidual",
-  "NewtonResidual",
-  "CycleNumber",
-  "Success",
-  "SolutionNumber"  
---  "points"
+  "REGENSTARTLEVEL"
 }
-
-
+  
+  protect SolutionNumber
+  protect StartSystem
+  protect NewtonResidual
+  protect MaximumPrecision
   protect runType
   protect compnum
   protect dimen
@@ -82,6 +82,9 @@ export {
   protect PathVariable
   protect Parameters
   protect ParameterValues
+  protect CycleNumber
+  protect FunctionResidual
+  protect StartSolutions
   
 needsPackage "NAGtypes"
 
@@ -89,22 +92,20 @@ needsPackage "NAGtypes"
 -- GLOBAL VARIABLES 
 --##########################################################################--
 
- DBG = 0; -- debug level (10=keep temp files)
- path'BERTINI = (options Bertini).Configuration#"path";
- BERTINIexe=path'BERTINI|(options Bertini).Configuration#"BERTINIexe"; 
-
--- QUESTION: do we need to prepend "rootPath" to all the file names to resolve issues with cygwin??? (question from PHCpack interface)
+DBG = 0 -- debug level (10=keep temp files)
+path'BERTINI = (options Bertini).Configuration#"path"
+BERTINIexe=path'BERTINI|(options Bertini).Configuration#"BERTINIexe"
 
 needsPackage "SimpleDoc"
 
--- Bertini interface for NAG4M2
+-- Bertini interface for M2
 -- used by ../NumericalAlgebraicGeometry.m2
 
--- The following six methods are just front ends for various Bertini functions.
--- Each just calls bertiniSolve() with the appropriate input data and toggle (corresp. to the type of run).
+-- The following seven exported methods are front ends for various Bertini functions.
+-- Each calls bertiniSolve() with the appropriate input data and toggle (corresp. to the type of run).
 -- bertiniSolve then does all the work of building the input file, calling bertini, and calling the appropriate output parser. 
 
-bertiniZeroDimSolve = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+bertiniZeroDimSolve = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniZeroDimSolve List := o -> F -> (  
 --F is the list of polynomials.
          L := {runType=>0};
@@ -112,24 +113,8 @@ bertiniZeroDimSolve List := o -> F -> (
          o3 := o ++ o2;
          bertiniSolve(F,o3)
          ) 
-
-
-bertiniSegmentHomotopy = method(TypicalValue => List, Options=>{--StartSystem=>{},-- StartSolutions=>{}
-	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
-bertiniSegmentHomotopy (List, List,List) := o -> (S,F,Sols) -> (
---F is the list of polynomials
---S is the start system
---Sols are the start solutions
-         L := {runType=>1};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-	 o4 := o3 ++ {StartSystem=>S};
-	 o5 := o4 ++ {StartSolutions=>Sols};
-         bertiniSolve(F,o5)
-         )
-
---  The following will NOT be funcitonal until we have (and include as output) a numerical irreducible decomposition data type. 
-bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+ 
+bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniPosDimSolve List := o -> F -> (  
 --F is the list of polynomials
          L := {runType=>2};
@@ -138,30 +123,32 @@ bertiniPosDimSolve List := o -> F -> (
          bertiniSolve(F,o3)
          ) 
 
-bertiniSample = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+bertiniSample = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniSample (WitnessSet,ZZ) := o -> (W, n) -> (  
---F is the list of polynomials
-         L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n, 	    WitnessData=>W.WitnessDataFileName};
+--W is a witness set
+-- n is the number of points to sample
+         L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n, WitnessData=>W.WitnessDataFileName};
 	 o2 := new OptionTable from L;
          o3 := o ++ o2 ;
          bertiniSolve(equations(W),o3)
          ) 
 
---  The following will NOT be functional until we have (and include in the arg list) a numerical irreducible decomposition data type.
-bertiniComponentMemberTest = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+
+bertiniComponentMemberTest = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniComponentMemberTest (NumericalVariety, List) := o -> (NV, pts) -> (  
---F is the list of polynomials.
+--NV, numerical variety
+--pts, list of pts to test 
 	 L := {runType=>4, StartSolutions=>pts, WitnessData=>NV.WitnessDataFileName, NVariety=>NV};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
          bertiniSolve(NV.Equations,o3)
          ) 
 
-bertiniRefineSols = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>1e-4,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,Points=>{}})
+bertiniRefineSols = method(TypicalValue => List, Options=>{MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>1e-4,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
 bertiniRefineSols (List,List,ZZ) := o -> (F,p,d) -> ( 
 --F is the list of polynomials.
---RawData is the file path for the appropriate raw_data file
---solutions to be refined should be entered in StartSolutions for now
+--p, list of points to sharpen
+--d, number of digits
          L := {runType=>5,StartSolutions=>p,digits=>d};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
@@ -170,8 +157,11 @@ bertiniRefineSols (List,List,ZZ) := o -> (F,p,d) -> (
 
 
 bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
-	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
+	  MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
 bertiniTrackHomotopy (List, RingElement,List) := o -> (H,t,S1) -> (
+--H, homotopy
+--t, path variable
+--S1, solutions to start system     
          L := {runType=>6,StartSolutions=>S1,PathVariable=>t};
          o2 := new OptionTable from L;
          o3 := o ++ o2;
@@ -179,7 +169,7 @@ bertiniTrackHomotopy (List, RingElement,List) := o -> (H,t,S1) -> (
          )
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
-	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
+	  MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
 bertiniParameterHomotopy (List, List, List) := o -> (F, P, T) -> (
          --F is the system of polynomials
 	 --P is list of parameters
@@ -194,32 +184,23 @@ bertiniParameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 -- bertiniSolve: This is the main control function:
 ---------------------------------------------------
 
-bertiniSolve = method(TypicalValue => List, Options=>{Parameters=>null,ParameterValues=>null, StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
-
+bertiniSolve = method(TypicalValue => List, Options=>{ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	  dir := makeBertiniInput(F,o);   -- creates the input file
           stdio << "The version of Bertini you have installed on your computer was used for this run. \nBertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.\n\n";
           if o.runType == 0 then ( -- ZeroDim 
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
-          if o.runType == 1 then ( -- param homotopy
+          if o.runType == 1 then ( -- segment homotopy, to be used in a later version
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
           if o.runType == 2 then ( -- PosDim 
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
            if o.runType == 3 then ( -- Sample 
-            --stdio << "Run terminated.  Sampling will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n\n"
-	    --copyFile("/Users/MacMath/Desktop/SampleExample/witness_data",dir|"/witness_data");
-	    --remove previous line after we have a way to write a
-	   --withess_data file
     	    run("cd "|dir|"; "|BERTINIexe|" < sample_script >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
-          if o.runType == 4 then ( -- Membership  
-            --stdio << "Run terminated.  Component membership will be available via this M2/Bertini interface once witness sets are handled correctly in the interface.\n"
-    	    --copyFile("/Users/MacMath/Desktop/SampleExample/witness_data",dir|"/witness_data");
-  	   --remove previous line after we have a way to write a
-	   --withess_data file
+          if o.runType == 4 then ( -- Membership 
 	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  -- runs Bertini, storing screen output to bertini_session.log
             );
           if o.runType == 5 then ( -- Refine/Sharpen 
@@ -241,7 +222,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
      )
 
 stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{Parameters=>null,ParameterValues=>null,StartSystem=>{},
-	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null, gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
 stageTwoParameterRun (String, List) := o -> (dir, F) -> (
   copyFile(dir|"/nonsingular_solutions",dir|"/start");
   moveFile(dir|"/nonsingular_solutions",dir|"/nonsingular_solutions_stage1");
@@ -264,25 +245,22 @@ stageTwoParameterRun (String, List) := o -> (dir, F) -> (
   );
   return sols
 )
--- ISSUES TO CONSIDER:
---   how to handle multiple variable groups (building input AND reading output)???
---   return homogeneous coords or nonhom -- probably need to determine what sort of input user has provided!!!???
-
 
 -------------------
 -- makeBertiniInput
 -------------------
 
 makeBertiniInput = method(TypicalValue=>Nothing,Options=>{Parameters=>null,ParameterValues=>null,StartSystem=>{},
-	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null, gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
 makeBertiniInput List := o -> T -> ( -- T=polynomials 
   startS1:=apply(o.StartSolutions,p->(if class(p)===Point then coordinates(p)
        else p));
   t:=o.PathVariable;
+  gamma:=random(CC);
   params:=o.Parameters;
   v := gens ring T#0; -- variables
   if o.runType==6  then (v=delete(t,v));  --special for runtype6
-  if (o.runType==7 or o.runType==8) then (v=toList(set v - set params));
+  if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));  
   dir := temporaryFileName(); -- build a directory to store temporary data 
   makeDirectory dir; 
   f := openOut (dir|"/input"); -- typical (but not only possible) name for Bertini's input file 
@@ -290,7 +268,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   -- The following block is the config section of the input file 
   f << "CONFIG\n\n"; -- starting the config section of the input file 
 
-  -- for each user-provided option, we write the appropriate config to the file IF it's not just the (meaningless) default:
+  -- for each user-provided option, we write the appropriate config to the file:
   if o.MPTYPE =!= -1 then
     f << "MPTYPE: " << o.MPTYPE << ";\n";
   if o.PRECISION =!= -1 then
@@ -345,16 +323,16 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     f << "REGENSTARTLEVEL: " << o.REGENSTARTLEVEL << ";\n";
 
   -- now we handle the various runType options:
-  if o.runType == 1 then --param run -- startSystem and startSolutions should be nonempty...add sanity check???
+  if o.runType == 1 then --param run 
     f << "USERHOMOTOPY: 1;\n";
   if o.runType == 2 then --pos dim run
     f << "TRACKTYPE: 1;\n";
-  if o.runType == 3 then --sample component -- need dim and compnum from user, along with witness_data file (in file or data type???), then need to create short script to handle interactive session 
+  if o.runType == 3 then --sample component 
     f << "TRACKTYPE: 2;\n";
-  if o.runType == 4 then --membership test -- need to create file from points (o.StartSolutions should be nonempty!)
+  if o.runType == 4 then --membership test 
     f << "TRACKTYPE: 3;\n";
-  if o.runType == 5 then --refine solutions -- need to create file from points (o.StartSolutions,o.RawData should be nonempty, and digits should be specified by user)
-    f << "SHARPENONLY: 1;\n";
+  if o.runType == 5 then --refine solutions
+    f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n"; 
   if o.runType == 6 then --trackHomotopy
     f << "USERHOMOTOPY: 1;\n";
   if o.runType == 7 then --parameterHomotopy, stage 1
@@ -365,10 +343,12 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
   -- The following block is the input section of the input file
   f << "INPUT" << endl << endl;
-  if member(o.runType,{1,6}) then  -- if user-defined, declaration type of vars is "variable"
+  if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
     f << "variable "
-  else f << "variable_group "; -- if not user-defined, dec type of vars if "variable_group"
-  scan(#v, i->  -- now we list the variables in a single list  ...  What about an mhom structure???
+  else (if o.ISPROJECTIVE==-1 then 
+    f << "variable_group "
+  else f << "hom_variable_group "); -- if not user-defined, dec type of vars if "variable_group"
+   scan(#v, i->  -- now we list the variables in a single list  
        if i<#v-1 
        then f << toString v#i << ", "
        else f << toString v#i << ";" << endl
@@ -384,7 +364,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
   f << toString(t)|"= daejT ;"<<endl;);
   if (member(o.runType, {7,8})) then (
        f << "parameter ";
-       scan(#params, i->  -- now we list the variables in a single list  ...  What about an mhom structure???
+       scan(#params, i->  -- now we list the variables in a single list 
        	    if i<#params-1 
        	    then f << toString params#i << ", "
        	    else f << toString params#i << ";" << endl
@@ -399,21 +379,24 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        L = replace("([0-9])e([0-9])", "\\1E\\2", L);
        L
        );
---  bertiniNumbers := p->( L := toString p; -- bertiniNumbers is a method that takes in "p" (list of polynomials) and returns them with ii replaced with I, e replaced with E (don't know why the latter)???
---       L = replace("ii", "I", L); 
---       L = replace("([0-9])e([0-9])", "\\1E\\2", L);
---       L = replace("e", "E", L);
---       L
---       );
-  if (o.runType!=1) -- non-param runs: just write out the polynomials
+
+  if (o.runType!=1 and o.runType!=5) -- non-param runs: just write out the polynomials
     then scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl) 
-  else (  -- param runs: write out polys AND other junk (see next several lines!)
+  else (if (o.runType==1) 
+    then (  -- param runs: write out polys and some other stuff
        if #o.StartSystem != #T then error "expected equal number of equations in start and target systems";
        f << "pathvariable t;\n" 
          << "parameter s;\n"
-         << "s = t;\n\n";  -- need to make gamma a random number here !!!???
+         << "s = t;\n\n";  
        scan(#T, i -> f << "f" << i 
-	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers o.gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
+	    << " = (" << bertiniNumbers T#i << ")*(1-s)+s*("<< bertiniNumbers gamma << ")*(" << bertiniNumbers o.StartSystem#i << ");" << endl 
+	   );
+       )
+    else (  -- refine sols runs: write out polys and some other stuff
+       f << "pathvariable t;\n" 
+         << "parameter s;\n"
+         << "s = t;\n\n";  
+       scan(#T, i -> f << "f" << i << " = " << bertiniNumbers T#i << ";" << endl)
 	   );
        );
   f << endl << "END;" << endl << endl;
@@ -441,30 +424,19 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
        );
 
 
-
   if (o.runType==5) then ( -- writing out file with points in the case of a refine run
---       f = openOut (dir|"/points"); -- the only name for Bertini's sharpening points file 
---       f << #startS1 << endl << endl;
---       scan(startS1, s->(
---		 scan(s, c-> f << realPart c << " " << imaginaryPart c << ";" << endl );
---		 f << endl;
---		 ));
---       close f;
-
        f = openOut (dir|"/sharpen_script"); -- writing out file with query responses in case of a refine/sharpen run
        f << "5" << endl << o.digits << endl << "1" << endl;
        close f;
-       );
-  
-  if (o.runType==5) then (  --copies raw_data file to tmp directory
---       copyFile(o.RawData, dir|"/raw_data")
-     	 f =openOut(dir|"/raw_data");
-  	 f << toString(#v+1)<<endl;
+       
+       --create raw_data in tmp directory
+       f =openOut(dir|"/raw_data");
+  	 f << toString(#v)<<endl;
 	 f << toString(0)<<endl;
 	 for i from 0 to #startS1-1 do(
 	   f << toString(i)<<endl;
 	   f << toString(52)<<endl;
-	   f << "1 0" <<endl;	   
+	   --f << "1 0" <<endl;	   --working in affine space, don't need this line
 	   scan(startS1_i, 
 		c->f<<realPart(c) <<" "<<imaginaryPart(c)<<endl);
 		f << "1" <<endl;
@@ -477,17 +449,22 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 		f << "1" <<endl;);
 	 f << "-1"<<endl;
 	 f << endl;
-	 f << "2"<<endl;
-	 f<< "1 "|toString(#v+1)<<endl;
-     	 f<<"1 0"<<endl;
-	 for i from 0 to #v-1 do(
-	      f<<"0 0"<<endl;
-	      );
-	 
-	 
+	 f << "2 0"<<endl; -- precision type, not using equation by equation
+	 f << endl;
+	 f<< "0 "|toString(#v)<<endl; -- no patch, number of variables
+	 f << endl;
+     	 f << "-1"<<endl;
+	 f << "1 1"<<endl; -- gamma
+	 f << endl;
+	 f<< "0 0"<<endl;
+	 f << endl;
+	 f<<"0 0"<<endl;
 	 close f;
-     
-
+	 
+       --create midpath_data in tmp directory
+       f =openOut(dir|"/midpath_data");
+       f << "This file needs to be created by bertiniRefineSols because of a bug in Bertini" << endl;
+       close f;
        );
   
   if (o.runType==3) then (  --copies witness_data file to tmp directory
@@ -500,7 +477,8 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
      
   if (o.runType==3) then ( -- writing out file with query responses in case of a sample run
        f = openOut(dir|"/sample_script");
-       f << o.dimen << endl << o.compnum << endl << o.numpts << endl << "0" << endl << "sample_points" << endl;  -- sampled points will be written file named sample_points
+       f << o.dimen << endl << o.compnum << endl << o.numpts << endl << "0" << endl << "sample_points" << endl;  
+       -- sampled points will be written file named sample_points
        close f;
        );
 
@@ -510,7 +488,6 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
 
 cleanupOutput = method(TypicalValue=>String)
 cleanupOutput String := s -> (
--- cleanup output (Bertini and hom4ps2)
   t := replace("E", "e", s);
   t = replace("[(,)]","", t);
   t = replace("e\\+","e",t)
@@ -522,7 +499,7 @@ cleanupOutput String := s -> (
 -----------------------
 
 
-readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,gamma=>1.0+ii,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 
 readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
 local pt;
@@ -564,9 +541,7 @@ local R;
 
   s := {};
   var's := gens ring F#0; -- variables
-  --R = QQ[var's]; --setting the ring
-
-  if (member(o.runType,{0,5,8})) then ( --raw_data, for zeroDim 
+  if (member(o.runType,{0,8})) then ( --raw_data, for zeroDim 
 --raw_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  0  
@@ -587,13 +562,11 @@ local R;
 --  junk at end is the matrix of patch coefficients -- MPTYPE on first line, then number or rows & columns on second, then the coeffs
 
        l := lines get (dir|"/raw_data"); -- grabs all lines of the file
-       --print l; --remove me
        numVars = value(first l);
        l = drop(l,2);
        solNum = value(first l);
        l = drop(l,1);
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
-       --stdio << "Solutions:" << endl << endl;
 
        wList := {}; --list of witness sets
        pts:={}; 
@@ -603,24 +576,24 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              if (o.runType==0 or o.runType==8) then (
-		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
-	      else (coords = join(coords, {toCC(ceiling((log 10/log 2)*o.digits), value(coord#0),value(coord#1))}));-- Change me to read from file?
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
-              --print coords; --remove me
 	      );
 	 
-	
-	 
-    
-            -- now we dehomogenize, assuming the first variable is the hom coord:
+            -- now we dehomogenize, assuming the first variable is the hom coord:   
             dehomCoords = {};
+	    if o.ISPROJECTIVE==-1 
+	    then
             for j from 1 to numVars-1 do (
 	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+              )
+	    else 
+	    for j from 0 to numVars-1 do (
+	      dehomCoords = join(dehomCoords, {coords#j });
               );
 
-            --print dehomCoords; --remove me
+
  	    pt = new Point;
             pt.MaximumPrecision=maxPrec;
 	    pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
@@ -636,16 +609,12 @@ local R;
 
            
             pt.Coordinates = dehomCoords; --we want to output these
-            --N = map(CC^0,CC^4,0);
-            --ws = witnessSet(ideal F, N, {pt});
-	    --wList = join(wList, {ws});
 	    pts=join(pts,{pt});
             );
        return pts
-         --nv = numericalVariety wList;
        )
 
-  else if (o.runType == 1 or o.runType==6) then ( 
+  else if (o.runType == 1 or o.runType==6 or o.runType==5) then ( 
               
        l = lines get (dir|"/raw_data"); -- grabs all lines of the file
        numVars = value(first l);
@@ -657,19 +626,28 @@ local R;
 
        pts={}; 
 
+       prec'value := (P,s) -> ( -- P:ZZ and s:String
+	   where'is'e := regex("e",s);
+	   if where'is'e===null then value(s|"p" | toString P)
+	   else (
+	       pos := first first where'is'e;
+	       value (substring((0,pos),s) | "p" | toString P | substring((pos,#s-pos),s))
+	       )
+	   );
        while solNum > -1 do ( -- -1 in solNum position (top of solution block) is key to end of solutions.
-            maxPrec = value(first l);
-            l = drop(l,1);
-
-            coords = {};
-            for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
-              l = drop(l,1);
-              --print coords; --remove me
-	      );
-	 
-
+	   maxPrec = value(first l);
+	   l = drop(l,1);
+	   bitPrec := ceiling((log 10/log 2)*o.digits);
+	   coords = {};
+	   for j from 1 to numVars do ( -- grab each coordinate
+               coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+               if (o.runType==1 or o.runType==6) then (
+		   coords = join(coords, {toCC(53, value(coord#0),value(coord#1))}))-- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+	       else (coords = join(coords, 
+		       {toCC(bitPrec, prec'value(bitPrec,coord#0), prec'value(bitPrec,coord#1))}    
+		       ));
+               l = drop(l,1);
+	       );
  	    pt = new Point;
             pt.MaximumPrecision=maxPrec;
 	    pt.FunctionResidual = value(cleanupOutput(first l)); l=drop(l,1);
@@ -684,21 +662,14 @@ local R;
             l = drop(l,1); 
            
             pt.Coordinates = coords; --we want to output these
-            --N = map(CC^0,CC^4,0);
-            --ws = witnessSet(ideal F, N, {pt});
-	    --wList = join(wList, {ws});
 	    pts=join(pts,{pt})
             );
        return pts
          
        )
 
-	    
-       
-              
 
-
-  else if (o.runType == 2) then ( --if PosDim, we read in the output from witness_data : -1 for now for development purposes!!!??? 
+  else if (o.runType == 2) then ( --if PosDim, we read in the output from witness_data
 --witness_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  #nonempty codims   
@@ -730,14 +701,9 @@ local R;
        listOfCodims = {};  --keeps track of codimension of each witness set; needed since we add slice data later.
 
        for codimNum from 1 to numCodims do (
-
-         -- WARNING!!!!!????? 
-         -- For now, this data is overwritten in each pass through the codimNum loop: need to store codim's worth of data at end of loop (later, when witness data type is stabilized/understood)
-
          pts := {};  --for each codim, we store all points and all codims (next line), then sort after gathering all points in the codim
          compNums := {};
          maxCompNum := 0;  --keeps track of max component number in this codim
-
          codimen = value(first l); l=drop(l,1);
          ptsInCodim = value(first l); l=drop(l,1);
 
@@ -746,8 +712,8 @@ local R;
             l = drop(l,1);
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
-              coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coords = join(coords, {toCC(maxPrec, value(coord#0),value(coord#1))});  -- NOTE: we convert to maxPrec bits complex type
               l = drop(l,1);
               );
 
@@ -755,33 +721,32 @@ local R;
 
             -- now we dehomogenize, assuming the first variable is the hom coord:
             dehomCoords = {};
+	    if o.ISPROJECTIVE==-1 
+	    then
             for j from 1 to numVars-1 do (
-              dehomCoords = join(dehomCoords, {coords#j / coords#0});
+	      dehomCoords = join(dehomCoords, {coords#j / coords#0});
+              )
+	    else 
+	    for j from 0 to numVars-1 do (
+	      dehomCoords = join(dehomCoords, {coords#j });
               );
-
---print dehomCoords;
-
-
-            
+       
 	    condNum = value(cleanupOutput(first l)); l=drop(l,4);
             ptType = value(first l); l=drop(l,1);
             ptMult = value(first l); l=drop(l,1);
             compNum = value(first l); l=drop(l,1);
             numDeflations = value(first l); l=drop(l,1);
---print(codimNum, ptNum, compNum);
 
             pt = new Point;
             pt.Coordinates = dehomCoords;
             pts = join(pts,{pt});
             compNums = join(compNums,{compNum});
---print compNums;
             if (compNum > maxCompNum) then maxCompNum=compNum; 
           ); 
 	 
 	  for j from 0 to maxCompNum do ( --loop through the component numbers in this codim to break them into witness sets
 	    ptsInWS := {}; --stores all points in the same witness set
             for k from 0 to #pts-1 do (
-	      --print (j,k); 
 	      if (compNums#k == j) then ptsInWS = join(ptsInWS,{pts#k}); --save the point if its in the current component (component j)
 	    );
             N = map(CC^0,CC^(numVars+1),0);
@@ -824,7 +789,6 @@ local R;
           rw = {};
         };
         M = matrix(mat);
-        --print M;
 
         -- Finally, we can cycle through the witness sets in nv and add the slice data.
         -- There are length listOfCodims witness sets, the first of which uses the full set of slices (all of M).
@@ -835,8 +799,6 @@ local R;
         {
           coeffList := {};  --We store the cols of M needed for this particular codimNum in coeffList, then turn it into a matrix and store it the witness set.
           colsToSkip = listOfCodims#codimNum - listOfCodims#0;  
-          -- print numgens target M; -- gives the number of rows
-          -- print numgens source M; -- gives the number of cols
           for i from colsToSkip to numgens source M - 1 do
           {
             coeffCol := {};
@@ -846,11 +808,10 @@ local R;
             }; 
             coeffList = join(coeffList, {coeffCol});
           };
---print coeffList;
           if (#coeffList > 0) then
             N = matrix(coeffList)
           else
-            N = map(CC^0,CC^(numVars+1),0); --change me, maybe? 
+            N = map(CC^0,CC^(numVars+1),0); 
           (wList#codimNum).Slice = N;
  	  
         };
@@ -871,9 +832,7 @@ local R;
        numberOfSolutions := value(first l);
        l = drop(l,1);
        --Now we go through all blocks of solutions (each block contains the coordinates of the solution and a bunch of other stuff.
-       --stdio << "Solutions:" << endl << endl;
        solNum = 1;
-       
        
        pts={}; 
        
@@ -886,17 +845,13 @@ local R;
 
             coords = {};
             for j from 1 to numVars do ( -- grab each coordinate
-              coord = select("[0-9.+-]+e[0-9+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
+              coord = select("[0-9.e+-]+", cleanupOutput(first l));  -- use regexp to get the two numbers from the string
               coords = join(coords, {toCC(53, value(coord#0),value(coord#1))});  -- NOTE: we convert to a 53 bit floating point complex type -- beware that we might be losing data here!!!???
               l = drop(l,1);
-              --print coords; --remove me
 	      );
 	 
             pt = new Point;
             pt.Coordinates = coords; --we want to output these
-            --N = map(CC^0,CC^4,0);
-            --ws = witnessSet(ideal F, N, {pt});
-	    --wList = join(wList, {ws});
 	    pts=join(pts,{pt})
             );
        solNum=1;
@@ -923,45 +878,25 @@ local R;
            coDims = append(coDims, value ("{"|replace (" ", ",", l_0)|"}"));
            l=drop(l,1)
         );
-       wSets := {}; --list of witness sets for each point
+       wSets := {}; --list of lists of witness sets for each point
+       l = drop(l,3);
        for i from 1 to #o.StartSolutions do (
-         l = drop(l,3);
          testVector := drop(value ("{"|replace (" ", ",", l_0)|"}"), -1); --getting row from incidence matrix and dropping extra space
+	 witSets'forOnePoint := {};
          for j from 0 to numCoDims-1 do(	  
            subTestVector := take(testVector, coDims_j_1);  
 	   compNums := positions(subTestVector, k->k==1); --get component numbers that with positive result
            possWitSets := NV#(numVars-coDims_j_0); --grabs witness sets in this component
 	   witSets := select(possWitSets, k->member(k.ComponentNumber, compNums)); --select witness sets with positive result
-	   if (#witSets>0) then (wSets = append(wSets, witSets)); --append to larger list that we will output      
+    	   witSets'forOnePoint = witSets'forOnePoint | witSets;
 	   testVector=drop(testVector, coDims_j_1);
-	   print testVector
-	);
-     
-     );
-   
-   return wSets    
+	   );
+ 	 wSets = append(wSets,witSets'forOnePoint); --append to larger list that we will output      
+       );
+       return wSets    
   )
 
---  else if (o.runType == -1) then ( --if ZeroDim, we actually want to read raw_data, but this works until that is fully implemented. 
---       l = lines get (dir|"/finite_solutions");
---       nsols := value first separate(" ", l#0);
---       l = drop(l,2);
---       while #s < nsols do (	 
---	    coords = {};
---	    while #(first l) > 2 do ( 
---	      	 coords = coords | {(
---		   	   a := separate(" ",  cleanupOutput(first l));	 
---		   	   (value a#0)+ii*(value a#1)
---	      	   	   )};
---    	      	 l = drop(l,1);
---	      	 );	
---	    l = drop(l,1);
---            if DBG>=10 then << coords << endl;
---	    s = s | {{coords}};
---	    );	
---       ) 
-
-  else if o.runType == 8 then ( --runType is never 8...this block reads in raw_solutions, which I think won't be so important (???).
+  else if o.runType == 8 then ( 
        l = lines get (dir|"/raw_solutions");
        while #l>0 and #separate(" ", l#0) < 2 do l = drop(l,1);
        while #l>0 do (
@@ -985,20 +920,36 @@ local R;
 
   )
 
---trackBertini = method(TypicalValue => List)
---trackBertini (List,List,List,MutableHashTable) := List => (S,T,solsS,o) -> (
-     -- tempdir := temporaryFileName() | "NumericalAlgebraicGeometry-bertini";
-     -- mkdir tempdir; 	  
---     dir := makeBertiniInput(T, StartSystem=>S, StartSolutions=>solsS, gamma=>o.gamma);
---     compStartTime := currentTime();      
---     run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");
---     if DBG>0 then << "Bertini's computation time: " << currentTime()-compStartTime << endl;
---     readSolutionsBertini(dir, "raw_solutions")
---     )
+--##########################################################################--
+-- TESTS
+--##########################################################################--
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniZeroDimSolve.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniTrackHomotopy.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniPosDimSolve.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomotopy.tst.m2")
+/// 
 
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniSample-bertiniComponentMemberTest.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
+/// 
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniISPROJECTIVE.tst.m2")
+///
 
 --##########################################################################--
 -- DOCUMENTATION
@@ -1006,288 +957,39 @@ local R;
 
 beginDocumentation()
 
-doc ///
-  Key
-    Bertini
-  Headline
-    software for numerical algebraic geometry
-  Description
-    Text
-      Interfaces the functionality of the software {\tt Bertini}
-      to solve polynomial systems and perform calculations in
-      {\em numerical algebraic geometry}.  The software is available at
-      @HREF"http://www.nd.edu/~sommese/bertini/"@.
-      The site currently provides only executable versions named {\tt bertini} or {\tt bertini.exe} (for Cygwin).
-      The user must have the executable program {\tt phc} available,
-      preferably in the executation path.
-
-      Below is a simple example using the most popular function,
-      a basic zero-dimensional solve with no special options.
-    Example
-      R = CC[x,y]
-      F = {x^2-1,y^2-1}
-      solns = bertiniZeroDimSolve(F)
-///;
-
-doc ///
- Key 
-   bertiniZeroDimSolve
-   (bertiniZeroDimSolve,List)
- Headline
-   solve zero-dimensional system of equations 
- Usage
-   S = bertiniZeroDimSolve F
- Inputs
-   F:List
-     whose entries are polynomials (system need not be square) 
- Outputs
-   S:List
-     of solutions of type Point
- Description
-   Text
-     Finds solutions to the zero-dimensional system F via numerical polynomial homotopy continuation.
-     This function builds a Bertini input file from the system F and calls Bertini on 
-     this input file.  Solutions are pulled from machine readable file finitesolutions
-     and returned as a list.
-   Example
-     R = CC[x,y]
-     F = {x^2-1,y^2-1}
-     S = bertiniZeroDimSolve F
-///;
-
-
-doc ///
-  Key
-    MPTYPE
-    PRECISION
-    ODEPREDICTOR
-    TRACKTOLBEFOREEG
-    TRACKTOLDURINGEG
-    FINALTOL
-    MAXNORM
-    MINSTEPSIZEBEFOREEG
-    MINSTEPSIZEDURINGEG
-    IMAGTHRESHOLD
-    COEFFBOUND
-    DEGREEBOUND
-    CONDNUMTHRESHOLD
-    RANDOMSEED
-    SINGVALZEROTOL
-    ENDGAMENUM
-    USEREGENERATION
-    SECURITYLEVEL
-    SCREENOUT
-    OUTPUTLEVEL
-    STEPSFORINCREASE
-    MAXNEWTONITS
-    MAXSTEPSIZE
-    MAXNUMBERSTEPS
-    MAXCYCLENUM
-    REGENSTARTLEVEL
-  Headline
-    Options for bertini.m2 functions.
-  Description  
-    Text
-      To be added later. 
-///;
-
-doc ///
- Key 
-   bertiniPosDimSolve
-   (bertiniPosDimSolve,List)
- Headline
-   solve positive-dimensional system of equations 
- Usage
-   V = bertiniPosDimSolve F
- Inputs
-   F:List
-     whose entries are polynomials (system need not be square) 
- Outputs
-   V:NumericalVariety 
-     a numerical description of irreducible components of the variety defined by F
- Description
-   Text
-     Finds solutions to the positive-dimensional system F via numerical polynomial homotopy continuation.
-     This function builds a Bertini input file from the system F and calls Bertini on 
-     this input file.  
-   Example
-     R = CC[x,y,z]
-     F = {(y^2+x^2+z^2-1)*x,
-	  (y^2+x^2+z^2-1)*y}
-     S = bertiniPosDimSolve F
-///;
-
-
--- bertiniSample(
-  --   {f1},dimen=>1,compnum=>1,numpts=>12,WitnessData=>wdf)
-
-
-doc ///
- Key 
-   bertiniSample
-   (bertiniSample,WitnessSet,ZZ)
- Headline
-   sample points from an irreducible component of a variety
- Usage
-   V = bertiniSample (W, n)
- Inputs
-   W:WitnessSet
-     irreducible
-   n:ZZ
-     number of desired sample points 	   
- Outputs
-   L:List 
-     sample points 
- Description
-   Text
-     Samples points from an irreducible component of a variety using Bertini.   
-   Example
-     R = CC[x,y,z]
-     F = {(y^2+x^2+z^2-1)*x,
-	  (y^2+x^2+z^2-1)*y}
-     NV = bertiniPosDimSolve(F)
-     W = NV#1_0 --z-axis
-     bertiniSample(W,12)
-///;
-
-doc ///
- Key 
-   bertiniComponentMemberTest
-   (bertiniComponentMemberTest, NumericalVariety, List)
- Headline
-   tests whether points lie on a given variety
- Usage
-   L = bertiniComponentMemberTest (NV, pts)
- Inputs
-   NV:NumericalVariety
-   pts:List
-     points to test 	   
- Outputs
-   L:List 
-     entries are lists of witness sets containing the test point 
- Description
-   Text
-     Tests whether pts lie on a given variety using Bertini.   
-   Example
-     R = CC[x,y,z]
-     F = {(y^2+x^2+z^2-1)*x,
-	  (y^2+x^2+z^2-1)*y}
-     NV = bertiniPosDimSolve(F)
-     pts = {{0,0,0}} --z-axis
-     bertiniComponentMemberTest(NV,pts)
- Caveat
-   In the current implementation, at most one witness set is listed for each test point although the point may lie on more than one component.  
-///;
-
-doc ///
- Key 
-   bertiniRefineSols
-   (bertiniRefineSols,List,List,ZZ)
- Headline
-   sharpen solutions to a prescribed number of digits
- Usage
-   S = bertiniRefineSols(F,l,d)
- Inputs
-   F:List
-     whose entries are polynomials (system need not be square) 
-   l:List
-     whose entries are points to be sharpened
-   d:ZZ
-     number of digits 
-   
- Outputs
-   S:List
-     of solutions of type Point
- Description
-   Text
-     We take the list l of solutions of F and sharpen them to d digits.
-   Example
-     R = CC[x,y]
-     F = {x^2-2,y^2-2}
-     sols = bertiniZeroDimSolve (F)
-     S = bertiniRefineSols (F,sols,100)
-     coords = coordinates S_0
-     coords_0
-///;
-end
-doc ///
- Key 
-   bertiniParameterHomotopy
-   (bertiniParameterHomotopy,List,List,List)
- Headline
-   runs parameter homotopy in Bertini
- Usage
-   S = bertiniParameterHomotopy(F,P,T)
- Inputs
-   F:List
-     whose entries are polynomials (system need not be square) 
-   P:List
-     parameter names
-   T:List
-     whose entries are lists of target parameter values
-   
- Outputs
-   S:List
-     whose entries are lists of solutions for each target system
- Description
-   Text
-     Runs both stages of Bertini's parameter homotopy method.
-   Example
-///;
-
-doc ///
- Key 
-   bertiniTrackHomotopy
-   (bertiniTrackHomotopy,List,RingElement,List)
- Headline
-   runs user-defined homotopy in Bertini
- Usage
-   S0 = bertiniTrackHomotopy(H,t,sols)
- Inputs
-   H:List
-     whose entries are polynomials depending on t (must be square) 
-   t:RingElement
-     path variable 
-   S1:List
-     start solutions (solutions of H when t=1)   
- Outputs
-   S0:List
-     target solutions (solutions of H when t=0)
- Description
-   Text
-     Runs Bertini's user-defined homotopy.
-   Example
-///;
-
-doc ///
- Key 
-   bertiniSegmentHomotopy
-   (bertiniSegmentHomotopy,List, List, List)
- Headline
-   constructs and tracks a straight-line homotopy
- Usage
-   S0 = bertiniSegmentHomotopy()
- Inputs
-   start:List
-     start system, list of polynomial equations 
-   tar:List
-     target system, list of polynomial equations 
-   S1:List
-     start solutions (solutions of start system when t=1)   
- Outputs
-   S0:List
-     target solutions (solutions of target system when t=0)
- Description
-   Text
-     Constructs and tracks a straight line homotopy from the start system to the target system.
-   Example
-     R=CC[x,y]
-     start={x^3-1, y^3-1}
-     tar={x^3+y^3-4,x^3+2*y-1}
-     --input start system, target system, list of start points
-     bertiniSegmentHomotopy(
-     start,tar,{{1,1},{-.5-0.86603*ii,1},{1,-0.5+0.86603*ii}})
-///;
+load "./Bertini/doc.m2";
 end
 
 
+
+
+
+
+
+
+
+
+
+
+
+--##############
+
+--To add next version:
+
+---------------------------
+-- bertiniSegmentHomotopy--
+---------------------------
+
+bertiniSegmentHomotopy = method(TypicalValue => List, Options=>{--StartSystem=>{},-- StartSolutions=>{}
+	  gamma=>1.0,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1})
+bertiniSegmentHomotopy (List, List,List) := o -> (S,F,Sols) -> (
+--F is the list of polynomials
+--S is the start system
+--Sols are the start solutions
+         L := {runType=>1};
+         o2 := new OptionTable from L;
+         o3 := o ++ o2;
+	 o4 := o3 ++ {StartSystem=>S};
+	 o5 := o4 ++ {StartSolutions=>Sols};
+         bertiniSolve(F,o5)
+         )

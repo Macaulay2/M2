@@ -14,11 +14,18 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 CHECKTARGET ?= check
 CHECKOPTIONS ?= 
-CHECKCMD ?= time $(MAKE) -C $(BUILDDIR) $(CHECKOPTIONS) $(CHECKTARGET)
+CHECKCMD ?= time $(MAKE) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
+
+ifeq (@OS@,MacOS)
+## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
+## the editing is done in distributions/dmg/Makefile
+LDFLAGS += -headerpad_max_install_names
+endif
+
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 CONFIGOPTIONS += --build=@build_alias@
@@ -32,7 +39,8 @@ COMPILEFLAGS  =					\
 	CXXFLAGS="$(CXXFLAGS)"			\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
-	FCFLAGS="$(FCFLAGS)"
+	FCFLAGS="$(FCFLAGS)"			\
+	TARGET_ARCH=$(TARGET_ARCH)
 ALLFLAGS = \
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\
@@ -47,7 +55,7 @@ CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
 STRIPFILES    ?= 
 ifeq ($(STRIPFILES),)
   STRIPCMD = true
@@ -157,7 +165,6 @@ CHECKFETCHED = case "$(URL)" in									\
 	    fi ;;										\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
-	$(MKDIR_P) $(TARFILE_DIR)
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
@@ -194,7 +201,7 @@ recheck:
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	$(LIMIT); $(CHECKCMD)
+	$(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles

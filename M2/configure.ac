@@ -1,6 +1,6 @@
 dnl This is the only place where the Macaulay2 version number appears:
 
-    AC_INIT(Macaulay 2, 1.5.0.1, Macaulay2@math.uiuc.edu, Macaulay2)
+    AC_INIT(Macaulay2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl When incrementing the version number, add an entry to distributions/deb/changelog, too.
 
@@ -79,6 +79,7 @@ AC_CHECK_PROGS(OBJCOPY,objcopy)
 AC_CHECK_PROGS(ETAGS,etags :)
 AC_CHECK_PROGS(LINTIAN,lintian)
 AC_CHECK_PROGS(LDD,ldd)
+AC_CHECK_PROGS(OTOOL,otool)
 AC_CHECK_PROGS(FAKEROOT,fakeroot)
 AC_CHECK_PROGS(RPMLINT,rpmlint)
 AC_CHECK_PROGS(TAR,gtar gnutar tar)
@@ -112,34 +113,6 @@ dnl then AC_MSG_RESULT(yes)
 dnl else AC_MSG_ERROR("$FIND: GNU find is required")
 dnl fi
 
-AC_SUBST(NODENAME,"`uname -n`")
-AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-
-AC_SUBST(ISSUE) # no initial value
-AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
-if test -f /etc/issue -a ! "$ISSUE"
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     case $ISSUE_FLAVOR in
-	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
-	 "") ISSUE_FLAVOR=unknown ;;
-     esac
-     case $ISSUE_RELEASE in
-	 "") ISSUE_RELEASE=unknown ;;
-     esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-fi
-
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
-AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 dnl interesting behavior: $A expansion happens after statement separation!
 dnl       $ A="echo hi 2>/dev/null "
 dnl       $ echo "`$A`"
@@ -149,6 +122,16 @@ dnl       hi 2>/dev/null
 dnl       $ eval $A
 dnl       hi
 
+AC_SUBST(NODENAME,"`uname -n`")
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+AC_SUBST(ISSUE) # no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
@@ -156,32 +139,38 @@ case $OS-$REL in
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-12.*) REL=10.8 ; OS=MacOS ;;
-  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+  Darwin-13.*) REL=10.9 ; OS=MacOS ;;
+  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
+  CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
 
-case $OS in
-  # Here we normalize the name of the OS for windows for startup.m2, which
-  # needs to know that C:/FOO/BAR is an absolute path.
-  CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
+if test -f /etc/issue -a ! "$ISSUE"
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     # translate the contents of /etc/issue to something sensible:
+     case $ISSUE_FLAVOR in
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
+	 "") AC_MSG_ERROR([issue not found in /etc/issue]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
+     esac
+     case $ISSUE_RELEASE in
+	 "") AC_MSG_NOTICE([release number not found in /etc/issue: `</etc/issue head -1`]) 
+	     ISSUE_RELEASE=unknown ;;
+     esac
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+fi
 
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
 test "$ISSUE" || ISSUE=$REL
 
 AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
-AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
-
-case $OS in
-  MacOS) 
-dnl 	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
-dnl because there might be a better way.  See the discussion in emacs info about -static-libgcc
-dnl and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
-dnl If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
-dnl binary ends up requiring a sharable library with a similar name. ***]])
-	# LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
-	;;
-esac
-
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
@@ -201,6 +190,7 @@ AC_PROG_AWK()
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 AC_SUBST(M2_CPPFLAGS,)
+AC_SUBST(M2_CFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
@@ -381,7 +371,7 @@ AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error socket backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
-AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror])
+AC_CHECK_FUNCS([gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync])
 AC_CHECK_DECLS([ADDR_NO_RANDOMIZE],,,[#include <linux/personality.h>])
 AC_CHECK_DECLS([gnu_get_libc_version])
 AC_CHECK_DECLS([sys_errlist,sys_nerr,herror],,,[
@@ -510,111 +500,12 @@ test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" STRIP=no
 
-AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
-"
-  Style
-  Macaulay2Doc
-  FirstPackage
-  Parsing
-  Classic
-  Browse
-  Benchmark
-  Text
-  SimpleDoc
-  PackageTemplate
-  PrimaryDecomposition
-  FourierMotzkin
-  Dmodules
-  Depth
-  Elimination
-  GenericInitialIdeal
-  IntegralClosure
-  HyperplaneArrangements
-  LexIdeals
-  Markov
-  NoetherNormalization
-  Points
-  ReesAlgebra
-  Regularity
-  SchurRings
-  SymmetricPolynomials
-  SchurFunctors
-  SimplicialComplexes
-  LLLBases
-  TangentCone
-  ChainComplexExtras
-  Schubert2
-  PushForward
-  LocalRings
-  BoijSoederberg
-  BGG
-  Bruns
-  InvolutiveBases
-  ConwayPolynomials
-  EdgeIdeals
-  FourTiTwo
-  StatePolytope
-  Polyhedra
-  Polymake
-  gfanInterface
-  PieriMaps
-  Normaliz
-  Posets
-  XML
-  OpenMath
-  SCSCP
-  RationalPoints
-  MapleInterface
-  ConvexInterface
-  SRdeformations
-  NumericalAlgebraicGeometry
-  BeginningMacaulay2
-  FormalGroupLaws
-  Graphics
-  WeylGroups
-  HodgeIntegrals
-  Cyclotomic
-  Binomials
-  Kronecker
-  Nauty
-  ToricVectorBundles
-  ModuleDeformations
-  PHCpack
-  SimplicialDecomposability
-  BooleanGB
-  AdjointIdeal
-  Parametrization
-  Serialization
-  NAGtypes
-  NormalToricVarieties
-  DGAlgebras
-  Graphs
-  GraphicalModels
-  BIBasis
-  KustinMiller
-  Units
-  MonomialMultiplierIdeals
-  NautyGraphs
-  VersalDeformations
-  CharacteristicClasses
-  RandomObjects
-  RandomPlaneCurves
-  RandomSpaceCurves
-  RandomGenus14Curves
-  RandomCanonicalCurves
-  RandomCurves
-  TensorComplexes
-  MonomialAlgebras
-  QthPower
-  EliminationMatrices
-  EllipticIntegrals
-  Triplets
-  CompleteIntersectionResolutions
-")
 
-# convert the newlines in the list above to spaces
+
+AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
+[if [ $? != 0 ] ; then exit 1 ; fi]
+# convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
@@ -717,12 +608,12 @@ fi
 
 AC_SUBST(DMG,no)
 AC_ARG_ENABLE(dmg,  AS_HELP_STRING(--enable-dmg,prepare a *.dmg package (for Mac OS)), DMG=$enableval)
-if test "$DPM" = yes 
+if test "$DMG" = yes 
 then if test "$OPTIMIZE" = no
-     then AC_MSG_ERROR([--disable-optimize and --enable-dpm both specified])
+     then AC_MSG_ERROR([--disable-optimize and --enable-dmg both specified])
      fi
      if test "$DEBUG" = yes
-     then AC_MSG_ERROR([--enable-debug and --enable-dpm both specified])
+     then AC_MSG_ERROR([--enable-debug and --enable-dmg both specified])
      fi
 fi
 
@@ -836,15 +727,24 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint is experimental, depends on mpir and mpfr
+#    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
+#	we always build it, and every program should link with it
+#	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
-BUILD_ALWAYS=" gtest "
+AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
+
+# a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
+# even if the option "--disable-building" is specified:
+BUILD_ALWAYS=" missing gtest "
+
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
 for i in $PROGLIST
 do eval BUILD_$i=yes
 done
+
+BUILD_missing=yes
 
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
@@ -916,7 +816,7 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
+AC_SEARCH_LIBS(tgoto,ncurses curses tinfo,,AC_MSG_ERROR([[libcurses, libncurses, and tinfo not found (containing symbol tgoto)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
@@ -1473,27 +1373,81 @@ AC_LINK_IFELSE(
 	[  AC_MSG_RESULT(no) ])
 CFLAGS="$SAVE"
 
-TESTFLAG=-Wno-strict-aliasing
+TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
-M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
+M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
 CFLAGS=$SAVE
-AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
-
+AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE=$CFLAGS
 CFLAGS="$CFLAGS -Wfatal-errors"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    M2_CPPFLAGS="$M2_CPPFLAGS -Wfatal-errors"
+    M2_CFLAGS="$M2_CFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl Always check for the option that turns the warning on, because gcc doesn't complain
+dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
+dnl It's a feature, not a bug!
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wmismatched-tags"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    # we don't like seeing this warning, especially from the "clang" compiler
+    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wparentheses-equality"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WPARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
+    HAVE_WPARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
+AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_X_NOEXECSTACK=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_X_NOEXECSTACK=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_ENABLE_AUTO_IMPORT=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_ENABLE_AUTO_IMPORT=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
+AC_SUBST(HAVE_WL_MAP,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_MAP=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))
+rm -f conftest.mapfile
+LDFLAGS=$SAVE
 
 IS_DECLARED(char **,sys_errlist, [
       #include <stdio.h>
@@ -1573,6 +1527,12 @@ AC_MSG_NOTICE([using CFLAGS        = $CFLAGS])
 AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
+AC_MSG_NOTICE([with  ISSUE         = $ISSUE])
+AC_MSG_NOTICE([with  NODENAME      = $NODENAME])
+AC_MSG_NOTICE([with  OS REL        = $OS $REL])
+AC_MSG_NOTICE([with  ARCH          = $ARCH])
+AC_MSG_NOTICE([with  OPTIMIZE      = $OPTIMIZE])
+AC_MSG_NOTICE([with  DEBUG         = $DEBUG])
 
 function subset {
     # whether the words of $1 are among the words of $2
@@ -1597,12 +1557,14 @@ fi
 # Here we insert autoconf's default values so we can compute the relative locations in the directory tree
 test "$prefix" || prefix=/usr/local
 
-# for some distributions, prefix should be /usr
-if test "$prefix" != /usr
-then test "$CYGWIN"  = yes && AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
-     test "$DEB"     = yes && AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
-     test "$RPM"     = yes && AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
-fi
+# for some distributions, we know what the prefix should be:
+test "$CYGWIN"  = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-cygwin specified and --prefix not set to /usr)
+test "$DEB"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
+test "$RPM"     = yes && test "$prefix" != /usr && 
+     AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
+
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
 fi
@@ -1622,11 +1584,18 @@ save_prefix=$prefix
 save_exec_prefix=$exec_prefix
 prefix=NONE
 exec_prefix=NOWHERE
-# here we normalize *everything*
-# put docdir and datarootdir at end, because we are changing the values of the variables, and
-# other variables depend on them
-for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
-         sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
+# Here we normalize almost everything.
+# We put docdir and datarootdir at end, because we are changing the values of the variables, and
+# other variables depend on them.
+# We don't normalize sysconfdir, sharedstatedir, and localstatedir, because Fedora
+# insists in /usr/share/config.site that they be /etc, /var, and /var, respectively.
+# We don't use those directories, anyway.  To ensure that, we set them to /nowhere.
+# (We could avoid config.site with the CONFIG_SITE environment variable.)
+sysconfdir=/nowhere
+sharedstatedir=/nowhere
+localstatedir=/nowhere
+for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
+         psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1720,6 +1689,9 @@ AC_SUBST(pre_prefix,$COMMONSTAGINGAREA/common) # as in layout.m2.in
 AC_SUBST(pre_exec_prefix,$LOCALSTAGINGAREA/$MACHINE) # as in layout.m2.in
 AC_MSG_NOTICE([staging area for common files: $pre_prefix])
 AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
+
+# Here we define the Macaulay2 layout, once and for all.
+# There is a hidden dependency: see M2/distributions/dmg/Makefile.in and adjust the number "../"s if the basic layout here is changed.
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2/$MACHINE)

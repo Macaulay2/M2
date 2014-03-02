@@ -7,7 +7,7 @@ newPackage(
                   HomePage => ""}},
         Headline => "Experimental package for mathicgb interface.  Not meant for general use",
         PackageExports => {"ExampleIdeals"},
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 debug Core
@@ -142,6 +142,64 @@ createExamples(String, String, String) := (outputPrefixDir, shellSuffix, inputEx
   close fil;
 
   -- make shell file to run examples in MGB
+  fil = openOut(outputPrefixDir|"/runMGB"|shellSuffix|".sh");
+  -- fil << "set -x" << endl;
+  for v in (values Hexamples)/first do (
+       fil << "echo doing example " << v << endl;
+       fil << "time mgb gb " << v << " " << endl;
+       );
+  close fil;
+
+  -- make shell file to run examples
+  fil = openOut(outputPrefixDir|"/runMAGMA"|shellSuffix|".sh");
+  -- fil << "set -x" << endl;
+  for v in (values Hexamples)/first do (
+       fil << "echo doing example " << v << endl;
+       fil << "time magma <" << v << ".magma" << endl;
+       );
+  close fil;
+  
+  fil = openOut(outputPrefixDir|"/runSINGULAR"|shellSuffix|".sh");
+  fil << "set -x" << endl;
+  for v in (values Hexamples)/first do (
+       fil << "echo doing example " << v << endl;
+       fil << "time Singular <" << v << ".sing" << endl;
+       );
+  close fil;
+);
+
+createExamples(String, String, String) := (outputPrefixDir, exampleSetName, inputExampleFile) -> (
+  -- example uses
+  -- outputPrefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples/foo"
+  -- exampleSetName = "grevlex-level1"
+  -- inputExampleFile = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/gb-examples.m2"
+
+  -- This creates, in the given directory, the following files:
+  -- exampleSetName-exampleName.magma
+  -- exampleSetName-exampleName.sing
+  -- exampleSetName-exampleName.mgb
+  -- exampleSetName-MAGMA.sh
+  -- exampleSetName-SING.sh
+  -- exampleSetName-MGB.sh
+  -- exampleSetName-MGBF4.sh
+  -- exampleSetName-RUN.sh
+  -- ./make-timings <exampleSetName>
+  
+  Hexamples := getExampleFile inputExampleFile;
+  makeExampleFiles(outputPrefixDir, values Hexamples);
+
+  -- make shell file to run examples in MGB, F4 reduction
+  fil := openOut(outputPrefixDir|"/"|exampleSetName|"-MGBF4.sh");
+  -- fil << "set -x" << endl;
+  for v in (values Hexamples)/first do (
+       eg := exampleSetName|"-"|v;
+       fil << "echo doing example " << v << endl;
+       fil << "time mgb gb " << v << " -red 26 -log F4" << endl;
+       );
+  close fil;
+  return;
+  -- make shell file to run examples in MGB
+  shellSuffix := "";
   fil = openOut(outputPrefixDir|"/runMGB"|shellSuffix|".sh");
   -- fil << "set -x" << endl;
   for v in (values Hexamples)/first do (
@@ -1108,6 +1166,18 @@ TEST ///
   inputDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/"
   prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples/foo"
   createExamples(prefixDir, "-grevlex-level1", inputDir|"/gb-grevlex-level1.m2")
+
+///
+
+
+///  -- Creation of test files 
+  -- file containing the examples
+  restart
+  needsPackage "MGBInterface"
+  
+  inputDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/"
+  prefixDir = "~/src/M2-git/M2/Macaulay2/packages/MGBInterface/examples/foo2"
+  createExamples(prefixDir, "grevlex-level1", inputDir|"/gb-grevlex-level1.m2")
 
 ///
 beginDocumentation()

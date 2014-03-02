@@ -1,4 +1,17 @@
-Advice to authors of Macaulay2 packages:
+To add your package to Macaulay2:
+
+Create an account on github.com and fork our repository
+https://github.com/Macaulay2/M2, clone your copy of M2, andadd your package
+file to this "packages" directory, along with its directory of auxiliary files,
+if any.  Also add a line to the end of the file =distributed-packages
+containing the name of your package.  Add those changes, commit them, and push
+them to your repository.  Then on the github page for your copy of M2, push the
+button called "Pull request".  That will notify us that you'd like your
+addition to become part of Macaulay2/M2.
+
+=============================================================================
+
+Advice to authors of Macaulay2 packages about licensing:
 
 Macaulay2 is an aggregate, with the packages in this "packages" directory being
 separate components, each with its own set of authors, copyright, and license.
@@ -6,16 +19,16 @@ Since your package will be distributed as part of Macaulay2, your software
 should be licensed in a way that allows us to do that.
 
 Macaulay2 is currently licensed under GNU General Public License (GPL) version
-2, and soon also under version 3.  Either of those licenses also allow those
-who receive Macaulay2 to modify it and to redistribute it, so your software
-should also be licensed in a way that allows them to do that.
+2 and also under version 3.  Either of those licenses also allow those who
+receive Macaulay2 to modify it and to redistribute it, so your software should
+also be licensed in a way that allows them to do that.
 
-One possibility is for the your software to be put into the public domain.  In
-that case, you may adapt a brief license statement from the following model,
-and insert it as a comment in your file.
+One possibility is for your software to be put into the public domain.  In that
+case, you may adapt a brief license statement from the following model, and
+insert it as a comment such as this in your file(s).
 
    {*
-   Copyright 2010, 2011 Joe Smith.
+   Written by Joe Smith, 2011.
 
    This file is in the public domain.
    *}

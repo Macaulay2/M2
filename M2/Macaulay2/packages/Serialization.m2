@@ -1,6 +1,6 @@
 newPackage (
      "Serialization",
-     DebuggingMode => true,
+     DebuggingMode => false,
      Authors => {
 	  {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"}
 	  },

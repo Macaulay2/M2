@@ -200,6 +200,7 @@ newPackage(String) := opts -> (title) -> (
 	       opts = merge(opts, new OptionTable from {DebuggingMode => loadOptions.DebuggingMode},last);
 	       );
 	  );
+     if opts.DebuggingMode and not debuggingMode then opts = merge(opts, new OptionTable from {DebuggingMode => false},last);
      newpkg := new Package from nonnull {
           "title" => title,
 	  symbol Options => opts,
@@ -215,6 +216,7 @@ newPackage(String) := opts -> (title) -> (
 	  "raw documentation" => new MutableHashTable,	    -- deposited here by 'document'
 	  "processed documentation" => new MutableHashTable,-- the output from 'documentation', look here first
 	  "example inputs" => new MutableHashTable,
+	  "example data files" => new MutableHashTable,
 	  "exported symbols" => {},
 	  "exported mutable symbols" => {},
 	  "example results" => new MutableHashTable,

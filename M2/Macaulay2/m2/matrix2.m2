@@ -451,6 +451,7 @@ listOfVars(Ring,Thing) := (R,x) -> error("expected 'Variables=>' argument to be 
 listOfVars(Ring,Nothing) := (R,x) -> toList(0 .. numgens R-1)
 listOfVars(Ring,List) := (R,x) -> (
      vrs := splice x;
+     if #vrs === 0 then return vrs;
      types := unique apply(vrs,class);
      if #types != 1 then error "expected a list or sequence of integers or variables in the same ring";
      if first types =!= ZZ then vrs = index \ vrs;

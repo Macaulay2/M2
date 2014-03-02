@@ -11,7 +11,7 @@ newPackage(
 		     HomePage => "http://www.crcg.de/wiki/User:Bothmer"}
                    },
     	Headline => "Construction of random smooth curves of genus 14",
-    	DebuggingMode => true
+    	DebuggingMode => false
         )
 
 if not version#"VERSION" >= "1.4" then error "this package requires Macaulay2 version 1.4 or newer"

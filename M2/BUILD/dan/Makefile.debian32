@@ -1,7 +1,6 @@
 # -*- makefile-gmake -*-
 
-CONFIGOPTIONS += --build=i386-pc-linux-gnu
-CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i486-pc-linux-gnu"
+CONFIGOPTIONS += --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
 CONFIGOPTIONS += --enable-deb
 DIRECTORY = debian32
 include Makefile.include

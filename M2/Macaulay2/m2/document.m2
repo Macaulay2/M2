@@ -655,7 +655,15 @@ fixupTable := new HashTable from {
 		    if class x === TO then x
 		    else if class x === TOH then TO {x#0}
 		    else if class x === String then x
-		    else error ("unrecognizable Subnode list item: ",x))))
+		    else error ("unrecognizable Subnode list item: ",x)))),
+     ExampleFiles => v -> (
+	  if not currentPackage.Options.AuxiliaryFiles then error "ExampleFiles option specified, but AuxiliaryFiles option is not set to 'true'";
+	  if not (instance(v,List) and all(v,fn->instance(fn,String))) then error "expected ExampleFiles option to be a list of strings";
+	  auxiliaryFilesDirectory := currentPackage#"source directory" | currentPackage#"title" | "/";
+	  v = apply(v, fn -> auxiliaryFilesDirectory | fn);
+	  for fn in v do if not fileExists fn then error ("example data file not found: ", fn);
+	  currentPackage#"example data files"#currentNodeName = v;
+	  "")
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
@@ -672,7 +680,8 @@ documentOptions := new OptionTable from {
      SeeAlso => null,
      SourceCode => null,
      Caveat => null,
-     Subnodes => null
+     Subnodes => null,
+     ExampleFiles => null
      }
 reservedNodeNames := set {"Top", "Table of Contents", "Symbol Index"}
 
@@ -1256,24 +1265,15 @@ documentationValue(Symbol,Package) := (s,pkg) -> if pkg =!= Core then (
 			 journal ",HREF{cert#"journal URI",cert#"journal name"}," on ",cert#"acceptance date",", in the 
 			 article ",HREF{cert#"published article URI",cert#"article title"},".  That version can be 
 			 obtained ", HREF{cert#"published code URI","from the journal"}, " or from the ", EM "Macaulay2", " source code
-			 repository, after installing ", HREF{"http://subversion.tigris.org/", "subversion"}, ",
-			 with the following shell command:"
-			 },
-		    PRE concatenate("   svn export -r ",toString(cert#"release at publication")," ",cert#"repository code URI"),
-		    PARA {
-			 "The following command will display the log messages accompanying any changes to the file in the repository since publication."
-			 },
-		    PRE concatenate("   svn log -r ",toString(cert#"release at publication"+1),":HEAD ",cert#"repository code URI"),
-		    PARA {
-			 "The following command will summarize the changes to the file in the repository since publication, in
-			 the format the program ", TT "diff", " uses: lines starting with ", TT "+", " have been added, and
-			 lines starting with ", TT "-", " have been removed.  (Changes to white space or end of line style will not
-			 be reported.)"
-			 },
-		    PRE concatenate("   svn diff -x \"-b --ignore-eol-style\" -r ",toString(cert#"release at publication"),":HEAD ",cert#"repository code URI"),
-		    PARA {
-			 "The differences between two releases in the repository mentioned in the log can be displayed by 
-			 replacing ",TT{toString(cert#"release at publication"),":HEAD"}," by the pair of release numbers separated by a colon."
+			 repository, ", 
+			 -- make a hot link if it's github, but not if it's svn:
+			 if match("github.com",cert#"repository code URI") 
+			 then HREF{cert#"repository code URI",cert#"repository code URI"}
+			 else TT cert#"repository code URI",
+			 ", ",
+			 -- github calls it a commit number, svn calls it a release number:
+			 if match("github.com",cert#"repository code URI") then "commit" else "release",
+			 " number ",toString cert#"release at publication","."
 			 }
 		    }
 	       ),

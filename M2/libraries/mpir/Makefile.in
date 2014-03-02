@@ -5,16 +5,24 @@ VERSION = 2.6.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
+# we had to patch acinclude.m4 to remove a bogus test preventing clang from compiling it:
+PRECONFIGURE = autoconf
+
 # URL = http://www.mpir.org
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 # increase the limit, because two of the tests run by mpir's "make check" will
 # not run in just 400000:
+TLIMIT = 250
 VLIMIT = 600000
 MLIMIT = 600000
 
-CONFIGOPTIONS += --enable-gmpcompat --enable-cxx
+CONFIGOPTIONS += --enable-gmpcompat --enable-cxx $(MPIR_CONFIGOPTIONS)
+
+# this is supposed to work under x86_64, but doesn't:
+# CONFIGOPTIONS +=  --enable-fat
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif

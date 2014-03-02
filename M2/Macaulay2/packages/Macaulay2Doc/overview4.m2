@@ -335,7 +335,7 @@ document {
 	  "M = coker random(R^4, R^{5:-3,6:-4});",
 ///(<< "-- computation started: " << endl;
  while true do try (
-     alarm 3;
+     alarm 1;
      time res M;
      alarm 0;
      << "-- computation complete" << endl;

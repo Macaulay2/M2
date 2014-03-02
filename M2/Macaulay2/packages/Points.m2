@@ -9,7 +9,7 @@ newPackage(
 	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no"}
 	     },
     	Headline => "computing with sets of points",
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {

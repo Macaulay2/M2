@@ -12,7 +12,7 @@ newPackage(
 	  {Name => "Nathaniel Stapleton", Email => "nstaple2@math.uiuc.edu"}
 	  },
      Headline => "place an ideal in Noether normal position",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 -- The algorithm given here is based on A. Logar's algorithm as given

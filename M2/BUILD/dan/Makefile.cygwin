@@ -13,15 +13,21 @@ DEBUG = no
 ifeq ($(PRODUCTION),yes)
 CONFIGOPTIONS += --disable-common-staging-area
 DIRECTORY = cygwin.production
+CONFIGOPTIONS += --enable-cygwin
 else
 DIRECTORY = cygwin
+endif
+
+ifeq ($(DEBUG),yes)
+INSTALLOPTIONS += prefix=/none
+CONFIGOPTIONS += --enable-debug
 endif
 
 # to install packages use the setup program
 # see ../../INSTALL for the list of packages to install
 
-CONFIGOPTIONS += --enable-cygwin
-CONFIGOPTIONS += --build=i486-pc-cygwin
+CONFIGOPTIONS += --build=i686-pc-cygwin
+
 # BUILDOPTIONS += RemakePackages=true RemakeAllDocumentation=true
 # INSTALLOPTIONS += prefix=/usr/local/encap
 INSTALLOPTIONS += prefix=/usr
