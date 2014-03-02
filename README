@@ -16,7 +16,7 @@ at
 
   http://github.com/Macaulay2/M2/.  
 
-This directory is the top level directory of the directory tree that contain
+This directory is the top level directory of the directory tree that contains
 the source code for Macaulay2, and is intended to be checked out by developers
 of Macaulay2 and of its packages.
 
