@@ -21,10 +21,9 @@ header "
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
-   #include <factor.h>
+   #include <factory/libfac/libfac.h>
    #undef Matrix
    extern char timestamp[];
-   #include <factor.h>
    #undef ASSERT
    #ifdef HAVE_FROBBY
      #include <stdinc.h>		// to get version number of frobby
@@ -58,6 +57,7 @@ header "
    extern unsigned int GC_version; /* in libgc.a */
    #include <gmp.h>
    #include <NTL/version.h>
+   #define HAVE_CONFIG_H
    #include <factory/factoryconf.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
