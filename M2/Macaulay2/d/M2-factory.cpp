@@ -10,7 +10,7 @@ void factory_setup_1() {
 }
 
 #define Matrix MaTrIx
-#include <factor.h>		// from Messollen's libfac
+#include <factory/libfac/libfac.h>		// from Messollen's libfac
 #undef Matrix
 
 // Local Variables:

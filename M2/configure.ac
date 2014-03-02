@@ -731,7 +731,7 @@ AC_SUBST(BUILTLIBS,)
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -747,7 +747,7 @@ done
 BUILD_missing=yes
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) 
@@ -1168,16 +1168,14 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes
 
-# the instantiations needed by an initialization in libcf are in libfac,
-# and libfac depends on libcf, so we mention libfac twice:
 if test "$DEBUG" = yes
-then SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
-else SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
+then SINGULARLIBS="-lfactory  "
+else SINGULARLIBS="-lfactory  "
 fi
-while test $BUILD_factory = no -o $BUILD_libfac = no
+while test $BUILD_factory = no 
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
-   AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes  ; break)
+   AC_CHECK_HEADER(factory/libfac/libfac.h,,BUILD_factory=yes ; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
@@ -1186,19 +1184,19 @@ do AC_LANG(C++)
 	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        [AC_MSG_RESULT(yes)],
-       [AC_MSG_RESULT([no, will build factory and libfac]) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break] )
+       [AC_MSG_RESULT([no, will build factory (includes libfac)]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
    AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
 	   #include <factory/factory.h>
-	   #include <factor.h>
+	   #include <factory/libfac/libfac.h>
 	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {3,1,0}, fOK;
-		static int  libfacV[3], lV[3] = {3,1,0}, lOK;
+		static int factoryV[3], fV[3] = {4,0,0}, fOK;
+		static int  libfacV[3], lV[3] = {4,0,0}, lOK;
 		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
 		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
 		fOK = factoryV[0] > fV[0] ||
@@ -1215,7 +1213,7 @@ do AC_LANG(C++)
 		}
 	   ]])],
 	[AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT([no, will build factory and libfac]); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS])
+	[AC_MSG_RESULT([no, will build factory ]); BUILD_factory=yes LIBS=$SAVELIBS])
    break
 done
 test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
