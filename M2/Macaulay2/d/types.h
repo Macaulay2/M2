@@ -22,7 +22,7 @@
 #define NEWLINE "\n"
 #endif
 
-extern char *libfac_version;
+//extern char *libfac_version;
 
 #include "../c/compat.h"
 

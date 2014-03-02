@@ -276,7 +276,7 @@ document {
 document {
      Key => "Singular-Libfac",
      "With the kind permission of the author, Michael Messollen, Macaulay2
-     incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
+     incorporates ", TT "Singular-Libfac", ",
      a free library of routines, depending on ", TO "Singular-Factory", ", that provides
      factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
      of ideals via characteristic sets.  It is distributed under the terms of the
