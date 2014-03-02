@@ -10,6 +10,7 @@ declarations "
       /* This prevents a problem with mpir.h and mpirxx.h, that arises when stdint.h is loaded
 	 after mpir.h is but before mpirxx.h is.  Solution: load it first.  We load it
 	 here, just before loading gmp.h, which, for us, is just a link to mpir.h. */
+      #define __STDC_LIMIT_MACROS
       #include <stdint.h>
     #endif
     #include <gmp.h>
