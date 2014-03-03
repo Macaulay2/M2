@@ -85,9 +85,11 @@ M = matrix {{x^2-x*y^2,x^3}}
 M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
 G = gCorners(M,p)
-q = point matrix{{1_CC,0_CC}}
+q = point matrix{{0_CC,1_CC}}
+gCorners(M,q)
 LDZ = reduceSpace truncatedDual(M,p,6,Strategy=>DZ)
 LBM = reduceSpace truncatedDual(M,p,6,Strategy=>BM)
+reduceSpace truncatedDual(M,q,6,Strategy=>BM)
 assert(areEqual(LDZ,LBM))
 ///
 
@@ -144,6 +146,10 @@ orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
     M := innerProduct(S,D);
     K := numericalKernel(transpose M,t);
     polySpace((gens S)*K)
+    )
+orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
+    T' := dualSpace(T, origin(ring S));
+    dualSpace(orthogonalInSubspace(T',S,t), origin(ring S))
     )
 
 {*

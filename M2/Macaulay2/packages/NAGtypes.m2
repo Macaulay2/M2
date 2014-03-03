@@ -519,7 +519,6 @@ projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) ->
 
 {**********************************************************************
 NumericalVariety = {
-     Equations => the defining equations
      0 => list of (irreducible) witness sets
      1 => list of (irreducible) witness sets
      ...
