@@ -231,16 +231,17 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       and coefficientRing R === coefficientRing F
 	       ) 
 	  then (
-	       local graph;
-	       if instance(F,QuotientRing) then
-	       (
-		   I:=graphIdeal(map(ambient F,F)*f,VariableBaseName=>null);
-		   graph=generators(I+substitute(ideal F,ring I));
+	       local graph; local SS;
+	       if instance(F,QuotientRing) then (
+		   I:=graphIdeal(map(ambient F,F)*f);
+		   SS = ring I;
+		   graph=generators(I+(map(SS,ambient F,(vars SS)_{0..n1-1}))(ideal F));
 		   )
-	       else
-	       graph = generators graphIdeal f;
+	       else (
+	       	   graph = generators graphIdeal f;
+	       	   SS = ring graph;
+	       );
 	       assert( not isHomogeneous f or isHomogeneous graph );
-	       SS := ring graph;
 	       chh := checkHilbertHint graph;
 	       if chh then (
 		   hf := poincare (target f)^1;
