@@ -11,11 +11,7 @@ TEST(DMatZZp, create)
   typedef DMat<M2::ARingZZp> MatZZp;
   
   RingZZp* R = new RingZZp(101);
-
-  //  M2::ConcreteRing<RingZZp>* R0 = M2::ConcreteRing<RingZZp>::create(R);
-  auto R0 = M2::ConcreteRing<RingZZp>::create(R);
-
-  MatZZp M(*R, 5, 5);  // Why does this need R0??
+  MatZZp M(*R, 5, 5);
 
   EXPECT_TRUE(& M.ring() == R);
 

@@ -144,7 +144,7 @@ namespace M2 {
     S.set(fS, fR);
     return true;
   }
-    inline bool mypromote(const ARingRRR& R,
+  inline bool mypromote(const ARingRRR& R,
                         const ARingRR& S,
                         const ARingRRR::ElementType& fR,
                         ARingRR::ElementType& fS)
