@@ -1213,7 +1213,7 @@ do AC_LANG(C++)
 		}
 	   ]])],
 	[AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT([no, will build factory and libfac]); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS])
+	[AC_MSG_RESULT([no, will build factory ]); BUILD_factory=yes LIBS=$SAVELIBS])
    break
 done
 test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
