@@ -239,7 +239,7 @@ runBenchmarks0 List := x -> (
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
 	  );
-     if fileExecutable "/usr/sbin/sysctl"
+     if not isDirectory "/proc/sys" and fileExecutable "/usr/sbin/sysctl"
      then (
 	  << "-- Processor: " << get "!/usr/sbin/sysctl -n machdep.cpu.brand_string"
 	  );

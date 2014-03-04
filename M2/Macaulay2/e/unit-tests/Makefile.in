@@ -14,15 +14,16 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 	 -I@srcdir@/../../c 
 #CXXFLAGS += -O0 -std=gnu++0x #-coverage
 CXXFLAGS += -std=gnu++0x #-coverage
-LDFLAGS += #-coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
-
 LOADLIBES += @BUILTLIBS@ @LIBS@ -lstdc++
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
+
+LDFLAGS += -L$(GTEST_DIR)/lib/.libs
+LOADLIBES += -lgtest
 
 .PHONY: place_into_lib runtests
 

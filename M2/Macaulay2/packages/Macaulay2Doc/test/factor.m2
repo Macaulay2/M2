@@ -35,3 +35,26 @@ ZZ/101[x,a]
 debug Core
 t = rawFactor ( raw(x^4 - 2), raw(a^2 - 2) )
 assert( t === ((raw (x^2-a), raw (x^2+a)), (1,1)))
+
+
+-- factoring a Laurent polynomial
+R=ZZ[x,MonomialOrder=>Lex,Inverses=>true];
+b=(x+1+x^(-1))*(2+x^(-2)+x^(-1));
+r=factor b
+assert (# r == 3 )
+assert (r === new Product from 
+     {    new Power from {x^2+x+1,1},
+	  new Power from {2*x^2+x+1,1},
+	  new Power from {x^(-3),1}})
+
+-- isPrime
+
+R=ZZ[x];
+
+assert(isPrime x);
+assert(isPrime (3_R));
+assert(not isPrime (3*x));
+
+R=QQ[x];
+assert(isPrime (3*x));
+assert(not isPrime (3_R));
