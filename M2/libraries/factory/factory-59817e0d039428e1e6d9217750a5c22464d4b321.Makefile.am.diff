@@ -1,0 +1,28 @@
+diff --git a/factory/Makefile.am b/factory/Makefile.am
+index 540d3bf..c4f7c38 100644
+--- a/factory/Makefile.am
++++ b/factory/Makefile.am
+@@ -1,13 +1,13 @@
+ ACLOCAL_AMFLAGS = -I ../m4
+ 
+-SUBDIRS=include/factory libfac
++SUBDIRS=include/factory libfac omalloc resources
+ 
+ AM_CPPFLAGS = -I${builddir}/include -I${srcdir}/include $(FLINT_CFLAGS) ${GMP_CFLAGS} ${NTL_CFLAGS} ${OMALLOC_CFLAGS} 
+ 
+ lib_LTLIBRARIES = libfactory.la
+ 
+ libfactory_la_LIBADD     = ${builddir}/libfac/libfac.la \
+-${builddir}/../omalloc/libomalloc.la ${builddir}/../resources/libresources.la \
++${builddir}/omalloc/libomalloc.la ${builddir}/resources/libresources.la \
+ $(FLINT_LIBS) ${GMP_LIBS} ${NTL_LIBS}
+ 
+ libfactory_la_LDFLAGS    = -release ${PACKAGE_VERSION}
+@@ -76,6 +76,7 @@ SOURCES = \
+ 		int_poly.cc \
+ 		int_pp.cc \
+ 		int_rat.cc \
++		initgmp.cc \
+ 		variable.cc \
+ 		NTLconvert.cc \
+ 		singext.cc \

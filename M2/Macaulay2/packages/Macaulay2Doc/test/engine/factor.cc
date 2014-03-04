@@ -6,7 +6,9 @@
 
 #include "config.h"
 #include <gc/gc.h>
-#include <factory.h>
+#define Matrix MaTrIx
+#include <factory.h>              
+#undef Matrix
 #include <templates/ftmpl_inst.cc>
 
 extern "C" void factory_setup() { On(SW_USE_NTL); }

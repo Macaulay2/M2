@@ -21,10 +21,8 @@ header "
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
-   #include <factor.h>
    #undef Matrix
    extern char timestamp[];
-   #include <factor.h>
    #undef ASSERT
    #ifdef HAVE_FROBBY
      #include <stdinc.h>		// to get version number of frobby
@@ -181,7 +179,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "libfac version" => Ccode(constcharstar,"libfac_version"),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
 	 #if HAVE_PARI
