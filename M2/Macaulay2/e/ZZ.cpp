@@ -108,7 +108,6 @@ void RingZZ::elem_text_out(buffer &o,
 {
   mpz_ptr a = ap.get_mpz();
 
-#warning "possible overflow in large int situations"
   char s[1000];
   char *str;
 
