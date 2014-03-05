@@ -1,0 +1,7 @@
+* truncatedDual: weirdness with different points
+* gCorners: make it work
+* randomPoint: select random points from a numerical variety (Anton)
+* random PolySpace: implement
+* isWitnessPolynomial: implement
+* Clarify paper around 6.9-6.10
+* eliminatingDual: what's going on?
