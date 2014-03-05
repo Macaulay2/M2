@@ -8,8 +8,6 @@
 #include "ZZp.hpp"
 #include "ZZ.hpp"
 #include "QQ.hpp"
-#include "RRR.hpp"
-#include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
@@ -107,13 +105,6 @@ const Ring *IM2_Ring_trivial_polyring()
 const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
      try {
-#if 0
-//   if (K == globalQQ)
-//     {
-//       const PolyRing *P = PolyRing::create(globalZZ,M);
-//       return PolyQQ::create(P);
-//     }
-#endif
        const PolyRing *result = PolyRing::create(K,M);
        intern_polyring(result);
        return result;
@@ -146,16 +137,6 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
                                          M2_arrayint skewvars)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const PolyRing *P = SkewPolynomialRing::create(globalZZ,
-//                                                   RQ->getMonoid(),
-//                                                   skewvars);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {
@@ -181,18 +162,6 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
                                         int homog_var)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
-//                                               RQ->getMonoid(),
-//                                               diff_vars,
-//                                               comm_vars,
-//                                               homog_var);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {

@@ -4,7 +4,6 @@
 #include "RingTest.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRR.hpp"
-//#include "ZZp.hpp"
 
 typedef M2:ConcreteRing<M2::ARingRRR> RRR;
 

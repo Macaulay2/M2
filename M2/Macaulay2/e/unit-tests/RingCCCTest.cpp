@@ -1,8 +1,8 @@
 // Copyright 2013 Michael E. Stillman
 #include "RingTest.hpp"
-
-#include "CCC.hpp"
 #include "ZZp.hpp"
+
+typedef M2:ConcreteRing<M2::ARingCCC> CCC;
 
 bool almostEqual(const CCC* R, int nbits, ring_elem a, ring_elem b)
 {

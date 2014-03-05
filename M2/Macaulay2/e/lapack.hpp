@@ -1,7 +1,6 @@
 #ifndef __lapack_h_
 #define __lapack_h_
 
-#include "RRR.hpp"
 #include "aring-RR.hpp"
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
