@@ -694,7 +694,8 @@ void rawFactorOverTower(const RingElement *g,
   // g is expected to be a polynomial in one variable over the polynomials in 'tower'.
   // tower should define a finite, irreducible ring extension, which is prime over the base field.
   // result: as in rawFactor, the factors and their powers are placed into result_factors and
-  // result_powers.
+  // result_powers. 
+   throw("not implemented yet! (newfactoras is buggy and needs replacement)" );
      try {
           const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
           *result_factors = 0;
@@ -712,7 +713,7 @@ void rawFactorOverTower(const RingElement *g,
           int success = 0;
           CanonicalForm h = convertToFactory(*g,false);
           CFList T = convertToCFList(*tower, false);
-          q = newfactoras(h, T, success);
+          // q = newfactoras(h, T, success); --buggy!
      
           int nfactors = q.length();
 
