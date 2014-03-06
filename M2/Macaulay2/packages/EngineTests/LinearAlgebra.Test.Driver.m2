@@ -7,7 +7,6 @@ load "EngineTests/LinearAlgebra.Test.FLINT.m2"
 load "EngineTests/LinearAlgebra.Test.ZZp.m2"
 load "EngineTests/LinearAlgebra.Test.EngineGF.m2"
 load "EngineTests/LinearAlgebra.Test.Givaro.m2"
-load "EngineTests/LinearAlgebra.Test.LU.Base.m2"
 
 
 
