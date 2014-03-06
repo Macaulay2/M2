@@ -40,3 +40,12 @@ TEST ///
   initializeEngineLinearAlgebra QQ
 ///
 
+
+TEST ///
+  -- eigenvalues
+  M = mutableMatrix(CC_100,3,3)
+  M = matrix fillMatrix M
+  eigenvalues M
+  LUdecomposition M
+///
+

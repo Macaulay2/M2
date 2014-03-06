@@ -2,7 +2,8 @@
 
 export  { 
    testPromote,
-   testPromoteLift
+   testPromoteLift,
+   testRingMapEval
 }
 
 testPromote = () -> (
@@ -118,3 +119,23 @@ TEST ///
  debug EngineTests
  testPromoteLift()
 ///
+
+testRingMapEval = (R,C) -> (
+    x := getSymbol "x";
+    PC := C[x];
+    x = PC_0;
+    F := matrix{{x^3}};
+    P := matrix{{0.1_R}};
+    (map(C,PC,P)) F;
+    map(R,PC); -- works, but should not
+    (map(R,PC,P)) F -- crashes
+    )
+
+--TEST 
+///
+  debug EngineTests
+  R = RR; C = CC;
+  testRingMapEval(RR,CC)
+  testRingMapEval(RR_100,CC_100)
+///
+
