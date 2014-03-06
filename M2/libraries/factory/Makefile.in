@@ -56,7 +56,7 @@ CPPFLAGS += -DMP_INT=__mpz_struct -DHAVE_CONFIG_H
 CPPFLAGS += -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q
 CFLAGS += -Wimplicit -Werror -DHAVE_CONFIG_H
 CXXFLAGS += -DHAVE_CONFIG_H
-CONFIGURECMD =  ./configure $(CONFIGOPTIONS) && cd omalloc && ./configure $(CONFIGOPTIONS) && cd ../resources && ./configure $(CONFIGOPTIONS)
+CONFIGURECMD =  ./configure $(CONFIGOPTIONS) 
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:
