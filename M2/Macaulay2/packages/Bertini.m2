@@ -64,7 +64,8 @@ export {
   "specifyPoints",
   "specifyCoordinates",
   "printNotes",
-  "inputFilesName"
+  "inputFilesName",
+  "solutionType"
 }
   
   protect SolutionNumber
@@ -292,7 +293,8 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
 --The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
 phPostProcess = method(TypicalValue=>Nothing,Options=>{
 	printNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
-    	inputFilesName=>"input"	})
+    	inputFilesName=>"input",
+      	solutionType=>"nonsingular_solutions"})
 phPostProcess(String,String,List,ZZ) := o -> (
     inputLocation,outputLocation,postParameters,numberOfCoordinates)-> (
     if o.printNotes==1 then print  get (inputLocation|"/notes")    
@@ -301,7 +303,7 @@ phPostProcess(String,String,List,ZZ) := o -> (
 	copyFile(inputLocation|"/start_parameters",outputLocation|"/start_parameters"));
     writeParameters(outputLocation,postParameters);
     callBertini(outputLocation,BERTINIexe,inputLocation,o.inputFilesName);---call Bertini 
-    importPoints(outputLocation|"/nonsingular_solutions",numberOfCoordinates)));
+    importPoints(outputLocation|"/"|o.solutionType,numberOfCoordinates)));
     
 ---writeParameters is a subfunction fo parameterPostProcess    
 writeParameters=(filesGoHere,listParameters)->(
@@ -392,7 +394,7 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     f << "MAXSTEPSIZE: " << o.MAXSTEPSIZE << ";\n";
   if o.MAXNUMBERSTEPS =!= -1 then
     f << "MAXNUMBERSTEPS: " << o.MAXNUMBERSTEPS << ";\n";
-  if o.MAXCYCLENUM =!= -1 then
+  if o.MAXCYCLENUM =!= -1 then 
     f << "MAXCYCLENUM: " << o.MAXCYCLENUM << ";\n";
   if o.REGENSTARTLEVEL =!= -1 then
     f << "REGENSTARTLEVEL: " << o.REGENSTARTLEVEL << ";\n";
