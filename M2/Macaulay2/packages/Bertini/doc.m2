@@ -762,6 +762,28 @@ doc///
      peek S0
 ///;
 
+doc///
+ Key
+   subFunctions
+   [bertiniTrackHomotopy, subFunctions]
+   [bertiniParameterHomotopy, subFunctions]
+--   [bertiniComponentMemberTest, ISPROJECTIVE]
+   [bertiniPosDimSolve, subFunctions]
+--   [bertiniRefineSols, ISPROJECTIVE]
+--   [bertiniSample, ISPROJECTIVE]
+   [bertiniZeroDimSolve, subFunctions]
+ Headline
+   optional argument to specify subfunctions that will be written to the Bertini input file.   
+ Description
+   Text
+     The option is a list of pairs that define a subfunction. 
+   Example
+     R = CC[x,y,z][s1,s2];
+     sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
+     f = {s1*s2, s1*(z+y),z-1};
+     sols = bertiniZeroDimSolve(f,allowStrings=>{x,y,z},subFunctions=>sF)
+///;
+
 end
 
 
