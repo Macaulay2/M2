@@ -725,6 +725,43 @@ doc ///
      bPH_0--The two solutions for finalParameters0
 ///;
 
+doc///
+ Key
+   allowStrings
+   [bertiniTrackHomotopy, allowStrings]
+   [bertiniParameterHomotopy, allowStrings]
+--   [bertiniComponentMemberTest, ISPROJECTIVE]
+   [bertiniPosDimSolve, allowStrings]
+--   [bertiniRefineSols, ISPROJECTIVE]
+--   [bertiniSample, ISPROJECTIVE]
+   [bertiniZeroDimSolve, allowStrings]
+ Headline
+   optional argument to specify whether one can input a system of polynomials as strings.   
+ Description
+   Text
+     When set to a list of variables one can input a polynomial system as a List of strings or polynomials 
+   Example
+     R = CC[x,y,z];
+     f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)),z-1};
+     sols = bertiniZeroDimSolve(f,allowStrings=>{x,y,z})
+   Example 
+     R=CC[x,y,z];--u1,u2 are parameters
+     f1=x^2+y^2-z^2;
+     f2="u1*x+u2*y";
+     f3=z-1;
+     finalParameters={{0,1}};
+     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },allowStrings=>{x,y,z})            
+   Example 
+     R=CC[x,t1];
+     f1="x^2+cos(1-t1)-2*exp(1-t1)";
+     H={f1};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
+     S1={sol1,sol2}--solutions to H when t=1                 
+     S0 = bertiniTrackHomotopy (H, t1, S1,allowStrings=>{x}) --solutions to H when t=0|
+     peek S0
+///;
+
 end
 
 
