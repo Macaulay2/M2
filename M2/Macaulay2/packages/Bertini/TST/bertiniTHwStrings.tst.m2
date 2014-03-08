@@ -14,5 +14,5 @@ startPoints={point({{1,1}}),
 ---3) start points
 
 --the output for bertiniTrackHomotopy is a list of points. 
-targetPoints=bertiniTrackHomotopy(aUserHomotopy,t0,startPoints,allowStrings=>{x,y})
+targetPoints=bertiniTrackHomotopy(aUserHomotopy,t0,startPoints,llowStrings=>{x,y})
 assert(areEqual(targetPoints, {point {{3, 1}}, point {{-3, 1}}}))

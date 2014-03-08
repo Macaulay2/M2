@@ -6,7 +6,7 @@ needsPackage "Bertini"
 R=QQ[x,y,z]
 
 --this input is a square system
-outputSquareSystem=bertiniZeroDimSolve({"(z)^2*(x^2-9)",y-2,z-1},allowStrings=>{x,y,z})
+outputSquareSystem=bertiniZeroDimSolve({"(z)^2*(x^2-9)",y-2,z-1},AllowStrings=>{x,y,z})
 assert(areEqual(outputSquareSystem, {point {{3, 2, 1}}, point {{-3, 2, 1}}}))
 
 --the input system may be overdetermined

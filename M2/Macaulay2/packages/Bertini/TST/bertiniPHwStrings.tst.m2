@@ -15,7 +15,7 @@ f2="(x-11)*(x-12)*(x-13)"
 bPH=bertiniParameterHomotopy(
      {f1,f2},--list of polynomials thathave zero dimensional solutions
      {u1,u2,u3},--your parameters
-     {	  {{1,0,0}},	  {{0,1,0}}	  },allowStrings=>{x,y})---list of {list of numbers})
+     {	  {{1,0,0}},	  {{0,1,0}}	  },AllowStrings=>{x,y})---list of {list of numbers})
 assert(areEqual(sortSolutions myPoints_0,   sortSolutions  bPH_0))
 assert(areEqual(sortSolutions myPoints_1,   sortSolutions  bPH_1))
 

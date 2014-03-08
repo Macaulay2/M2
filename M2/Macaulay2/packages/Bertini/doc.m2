@@ -727,14 +727,14 @@ doc ///
 
 doc///
  Key
-   allowStrings
-   [bertiniTrackHomotopy, allowStrings]
-   [bertiniParameterHomotopy, allowStrings]
+   AllowStrings
+   [bertiniTrackHomotopy, AllowStrings]
+   [bertiniParameterHomotopy, AllowStrings]
 --   [bertiniComponentMemberTest, ISPROJECTIVE]
-   [bertiniPosDimSolve, allowStrings]
+   [bertiniPosDimSolve, AllowStrings]
 --   [bertiniRefineSols, ISPROJECTIVE]
 --   [bertiniSample, ISPROJECTIVE]
-   [bertiniZeroDimSolve, allowStrings]
+   [bertiniZeroDimSolve, AllowStrings]
  Headline
    optional argument to specify whether one can input a system of polynomials as strings.   
  Description
@@ -743,14 +743,14 @@ doc///
    Example
      R = CC[x,y,z];
      f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)),z-1};
-     sols = bertiniZeroDimSolve(f,allowStrings=>{x,y,z})
+     sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z})
    Example 
      R=CC[x,y,z];--u1,u2 are parameters
      f1=x^2+y^2-z^2;
      f2="u1*x+u2*y";
      f3=z-1;
      finalParameters={{0,1}};
-     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },allowStrings=>{x,y,z})            
+     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },AllowStrings=>{x,y,z})            
    Example 
      R=CC[x,t1];
      f1="x^2+cos(1-t1)-2*exp(1-t1)";
@@ -758,20 +758,20 @@ doc///
      sol1 = point {{1}};
      sol2 = point {{-1}};
      S1={sol1,sol2}--solutions to H when t=1                 
-     S0 = bertiniTrackHomotopy (H, t1, S1,allowStrings=>{x}) --solutions to H when t=0|
+     S0 = bertiniTrackHomotopy (H, t1, S1,AllowStrings=>{x}) --solutions to H when t=0|
      peek S0
 ///;
 
 doc///
  Key
-   subFunctions
-   [bertiniTrackHomotopy, subFunctions]
-   [bertiniParameterHomotopy, subFunctions]
+   SubFunctions
+   [bertiniTrackHomotopy, SubFunctions]
+   [bertiniParameterHomotopy, SubFunctions]
 --   [bertiniComponentMemberTest, ISPROJECTIVE]
-   [bertiniPosDimSolve, subFunctions]
+   [bertiniPosDimSolve, SubFunctions]
 --   [bertiniRefineSols, ISPROJECTIVE]
 --   [bertiniSample, ISPROJECTIVE]
-   [bertiniZeroDimSolve, subFunctions]
+   [bertiniZeroDimSolve, SubFunctions]
  Headline
    optional argument to specify subfunctions that will be written to the Bertini input file.   
  Description
@@ -781,7 +781,7 @@ doc///
      R = CC[x,y,z][s1,s2];
      sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
      f = {s1*s2, s1*(z+y),z-1};
-     sols = bertiniZeroDimSolve(f,allowStrings=>{x,y,z},subFunctions=>sF)
+     sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z},SubFunctions=>sF)
 ///;
 
 end
