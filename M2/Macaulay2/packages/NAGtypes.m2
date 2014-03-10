@@ -707,6 +707,7 @@ addition (PolySpace,PolySpace) := o -> (S,T) -> (
 
 reduceSpace = method(Options => {Tolerance=>1e-6})
 reduceSpace PolySpace := o -> S -> (
+    if dim S == 0 then return polySpace(gens S,Reduced=>true);
     (mons,coefs) := coefficients gens S;
     M := mons*(colReduce(coefs,o.Tolerance));
     polySpace(M,Reduced=>true)
@@ -725,7 +726,7 @@ colon (DualSpace, RingElement) := o-> (L,g) -> (
 	    ));
     M = (transpose gcoefs)*M*Lcoefs;
     (Mmons,Mcoefs) := coefficients M;
-    M = Mmons*numericalImage(Mcoefs,o.Tolerance);
+    M = Mmons*sub(numericalImage(Mcoefs,o.Tolerance),ring Mmons);
     dualSpace(polySpace M, L.BasePoint)
     )
 colon (DualSpace, Ideal) := (L,J) -> error "not implemented"

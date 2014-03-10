@@ -16,8 +16,13 @@ export {
      standardBasis,
      gCorners,
      truncatedDual,
+     zerDimensionalDual,
      sCorners,
      orthogonalInSubspace,
+     initialTDParameters,
+     nextTD,
+     newGCorners,
+     origin,
      DZ,
      ST,
      BM,
@@ -28,9 +33,10 @@ export {
 -----------------------------------------------------------------------------------------
 
 -- Default tolerance value respectively for exact fields and inexact fields
-defaultT := R -> if precision 1_R == infinity then 0 else 0.0001;
+defaultT := R -> if precision 1_R == infinity then 0 else 1e-6;
 -- The origin in the coordinates of R
-origin := R -> point matrix{toList(numgens R:0_R)};
+origin = method(TypicalValue=>Point)
+origin Ring := R -> point matrix{toList(numgens R:0_R)};
 
 {*
 dualBasis = method(TypicalValue => DualSpace, Options => {Truncate => -1, Point => {}, Strategy => BM, Tolerance => -1.})
@@ -62,50 +68,63 @@ truncatedDual (Matrix,Point,ZZ) := o -> (igens,p,d) -> (
     R := ring igens;
     t := if o.Tolerance == -1. then defaultT(R) else o.Tolerance;
     igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
-    dBasis := map(R^1,R^0,0);
-    if o.Strategy == DZ then (
-	Rd := polySpace basis(0,d,R);
-	Id := DZspace(igens,d,false);
-	dBasis = orthogonalInSubspace(Id,Rd,t);
-	); 
-    if o.Strategy == BM then (
-     	M := E := B := map(R^1,R^0,0);
-     	for e from 0 to d do (
-	    (M,E,B) = BMmatrix(igens,M,E,B,t,false);
-	    dBasis = dBasis | E*B;
-	    if numcols B == 0 then break;
-  	    );
-	dBasis = polySpace(dBasis, Reduced=>false)
-    	);
+    parameters := initialTDParameters(igens,false,Strategy=>o.Strategy);
+    dBasis := polySpace map(R^1,R^0,0);
+    (dBasis, parameters) = nextTD(d,parameters,t);
     dualSpace(dBasis,p)
     )
 
-initialParameters = (igens,strategy) -> (
+zeroDimensionalDual = method()
+zeroDimensionalDual (Ideal,Point) := o -> (I,p) -> zeroDimensionalDual(gens I,p,o)
+zeroDimensionalDual (Matrix,Point) := o -> (igens,p) -> (
+    R := ring igens;
+    t := if o.Tolerance == -1. then defaultT(R) else o.Tolerance;
+    igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    parameters := initialTDParameters(igens,false,Strategy=>o.Strategy);
+    dBasis := polySpace map(R^1,R^0,0);
+    d := 0;
+    while true do (
+	dDim := dim dBasis;
+    	(dBasis, parameters) = nextTD(d,parameters,t);
+	if dim dBasis == dDim then break;
+	d = d+1;
+	);
+    dualSpace(dBasis,p)
+    )
+
+-- initialize iterated truncated dual values
+--  igens: ideal generators
+--  syl: boolean specifying whether to compute Sylvester dual, or normal dual space
+--  strategy: either BM or DZ
+initialTDParameters = method(Options => {Strategy => BM})
+initialTDParameters (Matrix,Boolean) := o -> (igens,syl) -> (
     R := ring igens;
     h := symbol h;
     S := (coefficientRing R)[{h}|gens R, MonomialOrder => {Weights => (numgens R+1):1, 1, (options R).MonomialOrder}]; --projectivization of R
     higens := homogenize(sub(igens,S), h);
-    (igens,higens,strategy,-1)|(3:map(S^1,S^0,0))
+    MEB := if syl then 3:map(S^1,S^0,0) else 3:map(R^1,R^0,0);
+    (igens,higens,syl,o.Strategy,-1,map(R^1,R^0,0))|MEB
     )
-nextTD = (d,parameters,t) -> (
-    (igens,higens,strategy,dStart,M,E,B) := parameters;
+-- advances the truncated dual computation from whatever was stored in parameters up to degree d
+nextTD = method()
+nextTD (ZZ,Sequence,Number) := (d,parameters,t) -> (
+    (igens,higens,syl,strategy,dStart,dBasis,M,E,B) := parameters;
     R := ring igens;
     S := ring higens;
-    dBasis := map(R^1,R^0,0);
     if strategy == DZ then (
 	Rd := polySpace basis(0,d,R);
-	Id := DZspace(igens,d,true);
+	Id := DZspace(igens,d,syl);
 	dBasis = gens orthogonalInSubspace(Id,Rd,t);
 	); 
     if strategy == BM then (
 	dehomog := map(R,S,{1_R} | gens R);
      	for e from dStart+1 to d do (
-	    (M,E,B) = BMmatrix(higens,M,E,B,t,true);
-	    dBasis = dehomog(E*B);
+	    (M,E,B) = BMmatrix(if syl then higens else igens,M,E,B,t,syl);
+	    dBasis = if syl then dehomog(E*B) else dBasis | E*B;
 	    if numcols B == 0 then break;
   	    );
     	);
-    (polySpace(dBasis,Reduced=>false), (igens,higens,strategy,d,M,E,B))
+    (polySpace(dBasis,Reduced=>false), (igens,higens,syl,strategy,d,dBasis,M,E,B))
     )
     
 
@@ -113,8 +132,9 @@ TEST ///
 restart
 R = CC[x,y]
 M = matrix {{x^2-x*y^2,x^3}}
-M = matrix {{x*y, y^2}}
+--M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
+G = gCorners(ideal M,p,ProduceSB=>true)
 G = gCorners(ideal M,p)
 q = point matrix{{0_CC,1_CC}}
 gCorners(M,q)
@@ -130,12 +150,32 @@ gCorners (Matrix,Point) := o -> (igens,p) -> (
     R := ring igens;
     t := if o.Tolerance == -1. then defaultT(R) else o.Tolerance;
     igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
-    (gcorners,dBasis,d) := dualBasisSA(igens, t, ProduceSB => o.ProduceSB, Strategy => o.Strategy);
-    gcorners = sbReduce gcorners;	
-    --regul = first degree lcm monomialIdeal gcorners;
-    --hseries = apply(regul, i->hilbertC(gcorners, i));
-    (dBasis,gcorners)
-    --(dbasis, gcorners, regul, hseries, hpoly)
+
+    ecart := max apply(flatten entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
+    GCs := {}; -- g-corners (as pairs: monomial, degree in homogenization)
+    SBs := {}; -- standard basis elements (if o.ProduceSB)
+    finalDegree := max(flatten entries igens / gDegree);
+    d := 0;
+    dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
+    parameters := initialTDParameters(igens,true,Strategy=>o.Strategy); -- initial parameters for computing truncated duals
+    while d <= finalDegree do (
+    	(dBasis,parameters) = nextTD(d,parameters,t);
+	dBasisReduced = reduceSpace(dBasis,Tolerance=>t);
+	-- Find new g-corners based on what monomials are missing from dBasis.
+	newGCs := newGCorners(dBasisReduced,GCs,d,ecart);
+	GCs = GCs|newGCs;
+	-- If o.ProduceSB then compute a standard basis element for each new g-corner.
+	if o.ProduceSB and #newGCs > 0 then SBs = SBs|newSBasis(dBasis,newGCs,d,t);
+	-- Update stopping degree if there were new g-corners found.
+	if #newGCs > 0 then (
+	    topLCMdegree := max apply(subsets(#GCs,2),s->homogenizedLCMdegree(GCs#(s#0), GCs#(s#1)));
+	    finalDegree = max(finalDegree,topLCMdegree);
+	    );
+	--print(d,(numrows M,numcols M), dim Rd, newGCs/first);
+	d = d+1;
+	);
+    GCs = if o.ProduceSB then SBs else GCs/first;
+    (dBasisReduced, sbReduce matrix {GCs})
     )
 
 -- computes s-corners from the g-corners
@@ -267,62 +307,29 @@ BMmatrix = (igens, M, E, B, tol, homogeneous) -> (
     (M, E, B)
     );
 
--- Dual basis algorithm with automatic stopping criterion.
--- DZ strategy uses Sylvester arrays.  BM strategy uses homogenization.
-dualBasisSA = method(TypicalValue => Sequence, Options => {ProduceSB => false, Strategy => BM})
-dualBasisSA (Matrix, RR) := o -> (igens, tol) -> (
-    R := ring igens;
-    ecart := max apply(flatten entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
-    GCs := {}; -- g-corners (as a pair: monomial, degree in homogenization)
-    SBs := {}; -- standard basis elements (if o.ProduceSB)
-    finalDegree := max(flatten entries igens / gDegree);
-    d := 0;
-    dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
-    parameters := initialParameters(igens,o.Strategy); -- initial parameters for computing truncated duals
-    while d <= finalDegree do (
-	-- Compute Sylvester truncated dual space, dBasis.
-    	(dBasis,parameters) = nextTD(d,parameters,tol);
-	dBasisReduced = reduceSpace(dBasis,Tolerance=>tol);
-	-- Find new g-corners based on what monomials are missing from dBasis.
-	mons := flatten entries sort basis(d-ecart,d,R);
-	dBasisMons := sort(flatten entries gens dBasisReduced / gLeadMonomial);
-	newGCs := {};
-	i := 0;
-	for m in mons do (
-	    while i < #dBasisMons and m > dBasisMons#i do i = i+1;
-	    if i < #dBasisMons and m == dBasisMons#i then (i = i+1; continue);
-	    if not any(GCs, g->(isDivisible(m,g#0) and gDegree m - gDegree(g#0) <= d - g#1)) then newGCs = append(newGCs, (m,d));
-	    );
-	GCs = GCs|newGCs;
-	--print(mons,dBasisMons,newGCs);
-	-- If o.ProduceSB then compute a standard basis element for each new g-corner.
-	if o.ProduceSB and #newGCs > 0 then (
-	    iBasis := orthogonalInSubspace(dBasis, polySpace basis(0,d,R), tol);
-	    iBasis = reduceSpace(iBasis, Tolerance=>tol);
-	    newSBs := new List from apply(newGCs, n->
-		first select(1,flatten entries gens iBasis, b->(leadMonomial b == n#0)),0);
-	    SBs = SBs|newSBs;
-	    );
-	-- Update stopping degree if there were new g-corners found.
-	if #newGCs > 0 then (
-	    topLCM := max apply(subsets(#GCs,2),s->(
-		    homogenizedLCMdegree(GCs#(s#0), GCs#(s#1))));
-	    finalDegree = max(finalDegree,topLCM);
-	    );
-	--print(d,(numrows M,numcols M), dim Rd, newGCs/first);
-	d = d+1;
+newGCorners = method()
+newGCorners (PolySpace,List,ZZ,ZZ) := (dBasis,GCs,d,ecart) -> (
+    R := ring dBasis;
+    mons := flatten entries sort basis(d-ecart,d,R);
+    dBasisMons := sort(flatten entries gens dBasis / gLeadMonomial);
+    newGCs := {};
+    i := 0;
+    for m in mons do (
+	while i < #dBasisMons and m > dBasisMons#i do i = i+1;
+	if i < #dBasisMons and m == dBasisMons#i then (i = i+1; continue);
+	if not any(GCs, g->(isDivisible(m,g#0) and gDegree m - gDegree(g#0) <= d - g#1)) then newGCs = append(newGCs, (m,d));
 	);
-    --print GCs;
-    --print SBasis;
-    GCs = if o.ProduceSB then SBs else GCs/first;
-    (
-	sbReduce matrix {GCs},
-	dBasisReduced,
-	d-ecart-1
-	--sbReduce SBasis,
-	--hilbertPolynomial( ideal toList apply(GCs,g->g#0), Projective=>false)
-	)
-    );
+    newGCs
+    )
+
+newSBasis = (dBasis,newGCs,d,t) -> (
+    R := ring dBasis;
+    Rd := rsort basis(0,d,R);
+    Id := orthogonalInSubspace(dBasis, polySpace Rd, t);
+    M := (coefficients(gens Id, Monomials=>Rd))#1;
+    iBasis := flatten entries (Rd*colReduce(M,t));
+    new List from apply(newGCs, n->first select(1,iBasis, b->(lLeadMonomial b == n#0)))
+    )
 
 homogenizedLCMdegree = (a,b) -> (
      alist := ((listForm(a#0))#0#0);
@@ -330,7 +337,7 @@ homogenizedLCMdegree = (a,b) -> (
      lcmlist := apply(alist,blist, (i,j)->max(i,j));
      tdegree := max(a#1 - sum alist, b#1 - sum blist);
      sum lcmlist + tdegree
-     );
+     )
 
 --Dayton-Zeng matrix to find the the dual space up to degree d.
 DZspace = method(TypicalValue => Matrix)
@@ -350,7 +357,7 @@ hilbertB (List, ZZ) := (sbElements, d) -> (
      R := ring first sbElements;
      G := sbElements / leadMonomial;
      #select(first entries basis(d,R), m->(#select(G, g->isDivisible(m,g)) == 0))
-     );
+     )
 
 --finds Hilbert series values combinatorially using inclusion-exclusion
 hilbertC = method(TypicalValue => ZZ)
@@ -364,32 +371,32 @@ hilbertC (List, ZZ) := (sbElements, d) -> (
      for s in subsets sbListForm do
 	  hsum = hsum + (coef s)*bin(d - sum listFormLcm s + n-1, n-1);
      hsum
-     );
+     )
 
 --returns if lead term of a is divisible by lead term of b
 isDivisible = (a, b) -> (
      dif := (listForm a)#0#0 - (listForm b)#0#0;
      all(dif, i->(i >= 0))
-     );
+     )
 
 --binomial coefficient 
 bin = (m,k) -> if m >= 0 then binomial(m,k) else 0
 
 --lead monomial and lead monomial degree according to ordering associated with
 --the ring (local) and reverse ordering (global)
-lLeadMonomial = f -> leadMonomial last terms f;
-gLeadMonomial = f -> leadMonomial first terms f;
-lDegree = f -> first degree lLeadMonomial f;
-gDegree = f -> first degree gLeadMonomial f;
+lLeadMonomial = f -> leadMonomial last terms f
+gLeadMonomial = f -> leadMonomial first terms f
+lDegree = f -> first degree lLeadMonomial f
+gDegree = f -> first degree gLeadMonomial f
 
 --remove non-minimal standard basis elements
 sbReduce = L -> (
     n:= numcols L;
     goodi := select(n, i->(
-     	    all(0..n-1, j->(j == i or not isDivisible(L_(0,i),L_(0,j))))
+     	    all(0..n-1, j->(j == i or not isDivisible(lLeadMonomial L_(0,i), lLeadMonomial L_(0,j))))
 	    ));
     L_goodi
-    );
+    )
 
 {*
 beginDocumentation()
