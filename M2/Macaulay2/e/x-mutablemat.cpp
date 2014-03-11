@@ -3,7 +3,6 @@
 #include "engine.h"
 #include "relem.hpp"
 #include "ring.hpp"
-#include "QQ.hpp"
 #include "GF.hpp"
 
 #include "coeffrings.hpp"

@@ -11,7 +11,6 @@
 ///// Ring Hierarchy ///////////////////////////////////
 
 class RingZZ;
-class QQ;
 class RRR;
 class CCC;
 class Z_mod;
@@ -164,8 +163,6 @@ public:
   ///////////////////////////////////
   virtual const RingZZ * cast_to_RingZZ() const         { return 0; }
   virtual       RingZZ * cast_to_RingZZ()               { return 0; }
-  virtual const QQ * cast_to_QQ() const         { return 0; }
-  virtual       QQ * cast_to_QQ()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
@@ -485,7 +482,7 @@ public:
 #include "ZZ.hpp"
 extern RingZZ* globalZZ;
 extern RingZZ* makeIntegerRing();
-extern QQ* globalQQ;
+
 #endif
 
 // Local Variables:

@@ -38,7 +38,8 @@ const bool notInExtension = false;
 enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeGF, modeUnknown };
 static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      const Ring *F = P->getCoefficientRing();
-     if (F->cast_to_QQ()) return modeQQ;
+     //if (F->cast_to_QQ()) return modeQQ;
+     if (F->is_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
      if (F->cast_to_Z_mod()) return modeZn;
      if (F->cast_to_GF()) return modeGF;

@@ -25,6 +25,10 @@ extern "C" {
   /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
   /* if height is the null pointer, use the default height */
 
+  void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height);
+  /* sets result = random a/b, where 1 <= b <= height, 1 <= a <= height */
+  /* if height is the null pointer, use the default height */
+
   gmp_RR rawRandomRR(unsigned long prec);
   /* returns a uniformly distributed random real with the given precision, in range [0.0,1.0] */
 

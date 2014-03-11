@@ -10,6 +10,7 @@
 #include "aring-m2-gf.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
+#include "aring-qq.hpp"
 
 #include "polyring.hpp"
 
@@ -18,6 +19,19 @@
 #include "mathic.h"
 memt::BufferPool testBuffer(16);
 #endif
+
+const QQ* globalQQ;
+
+void initializeRationalRing()
+{
+  M2::ARingQQ *A = new M2::ARingQQ();
+  globalQQ = QQ::create(A);
+}
+
+const QQ* rawARingQQ()
+{
+  return globalQQ;
+}
 
 const Ring* /* or null */ rawARingZZFlint()
 {

@@ -1,7 +1,6 @@
 #include "gbring.hpp"
 #include "text-io.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
 #include "ZZp.hpp"
 #include "freemod.hpp"
 #include "geovec.hpp"
@@ -12,6 +11,8 @@
 #include "solvable.hpp"
 #include "overflow.hpp"
 #include "ntuple.hpp"
+
+#include "aring-glue.hpp"
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 

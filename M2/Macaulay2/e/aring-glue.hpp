@@ -21,6 +21,7 @@ namespace M2 {
   class ConcreteRing : public Ring
   {
     const RingType *R;
+  protected:
     ConcreteRing(const RingType *R0) : R(R0) {}
     virtual ~ConcreteRing() {}
   public:
@@ -448,6 +449,53 @@ namespace M2 {
   }; // class ConcreteRing<RingType>
 
 
+  class QQ : public ConcreteRing<ARingQQ>
+  {
+  public:
+    QQ(const ARingQQ* R0) : ConcreteRing<ARingQQ>(R0) {}
+    virtual ~QQ() {}
+
+    bool is_QQ() const { return true; }
+    CoefficientType coefficient_type() const { return COEFF_QQ; }
+    
+    static QQ* create(const ARingQQ* R0)
+    {
+      QQ *result = new QQ(R0);
+      result->initialize_ring(static_cast<int>(R0->characteristic()));
+      result->declare_field();
+      
+      result->zeroV = result->from_int(0);
+      result->oneV = result->from_int(1);
+      result->minus_oneV = result->from_int(-1);
+      
+      return result;
+    }
+
+    ring_elem fraction(ring_elem top, ring_elem bottom) const
+    {
+      mpz_ptr numer = top.get_mpz();
+      mpz_ptr denom = bottom.get_mpz();
+      gmp_QQ b = getmemstructtype(gmp_QQ);
+      mpq_init(b);
+      mpz_set(mpq_numref(b),numer);
+      mpz_set(mpq_denref(b),denom);
+      mpq_canonicalize(b);
+      ring_elem result;
+      result.poly_val = reinterpret_cast<Nterm*>(b);
+      return result;
+    }
+    
+    ring_elem numerator(ring_elem q) const
+    {
+      return globalZZ->from_int(mpq_numref(MPQ_VAL(q)));
+    }
+    
+    ring_elem denominator(ring_elem q) const
+    {
+      return globalZZ->from_int(mpq_denref(MPQ_VAL(q)));
+    }
+  };
+
   template<class RingType>
   ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
   {
@@ -557,6 +605,14 @@ namespace M2 {
       case M2::ring_ZZpFfpack: return RP::promoter<ARingZZpFFPACK,ARingZZpFFPACK>(R,S,fR,resultS);
       default: return false;
       }
+    case M2::ring_QQ:
+      switch (S->ringID()) {
+      case M2::ring_RR: return RP::promoter<ARingQQ,ARingRR>(R,S,fR,resultS);
+      case M2::ring_RRR: return RP::promoter<ARingQQ,ARingRRR>(R,S,fR,resultS);
+      case M2::ring_CC: return RP::promoter<ARingQQ,ARingCC>(R,S,fR,resultS);
+      case M2::ring_CCC: return RP::promoter<ARingQQ,ARingCCC>(R,S,fR,resultS);
+      default: return false;
+      }
     case M2::ring_RR:
       switch (S->ringID()) {
       case M2::ring_RR: return RP::promoter<ARingRR,ARingRR>(R,S,fR,resultS);
@@ -591,8 +647,8 @@ namespace M2 {
     return false;
   }
 
-  // given natural map : this = S --> R
-  // this sets result_gR with an element which maps to gS, if possible.
+  // given a natural map: R --> S = this,
+  // 'lift' sets result_gR with an element which maps to gS, if possible.
   // true is returned iff this is possible.
   template<typename RingType>
   bool ConcreteRing<RingType>::lift(const Ring *R, 
@@ -601,16 +657,19 @@ namespace M2 {
   {
     const Ring *S = this;
     fprintf(stderr, "calling lift\n");
+    fprintf(stderr, "lift: R->ringID()=%d S->ringID()=%d\n",
+            R->ringID(), 
+            S->ringID());
+    
     namespace RP = RingPromoter;
-    if (R == globalZZ)
-      {
-        // Need a method in S for lifting to an int...
-        //        resultS = S->from_int(fR.get_mpz());
-        return true;
-      }
     if (R == S)
       {
         result_gR = gS;
+        return true;
+      }
+    if (R == globalZZ)
+      {
+        // MES:TODO!! WRITE ME
         return true;
       }
     switch (R->ringID()) {
@@ -665,6 +724,9 @@ namespace M2 {
       default: return false;
       }
     default:
+      fprintf(stderr, "oh no: rings not in list\n, R->ringID()=%d S->ringID()=%d\n",
+              R->ringID(), 
+              S->ringID());
       break;
     };
     return false;
@@ -720,6 +782,26 @@ namespace M2 {
     R->init(a);
     R->from_ring_elem(a, f);
     bool retval = R->lift(Rg,a,result);
+    R->clear(a);
+    return retval;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingQQ>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    mpz_t b;
+    mpz_init(b);
+
+    ElementType a;
+    R->init(a);
+    R->from_ring_elem(a, f);
+
+    bool retval = R->lift_to_mpz(b, a);
+    if (retval)
+      {
+        result = globalZZ->from_int(b);
+      }
+    mpz_clear(b);
     R->clear(a);
     return retval;
   }
@@ -882,6 +964,10 @@ namespace M2 {
 
 }; // namespace M2
 
+#include "aring-qq.hpp"
+typedef M2::QQ QQ;
+extern void initializeRationalRing();
+extern const QQ* globalQQ;
 #endif
 
 

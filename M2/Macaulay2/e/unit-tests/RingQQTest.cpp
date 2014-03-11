@@ -5,7 +5,7 @@
 static bool maxH_initialized = false;
 static mpz_t maxH;
 
-#include "QQ.hpp"
+#include "aring-glue.hpp"
 #include "ZZp.hpp"
 
 template <>
@@ -24,18 +24,18 @@ ring_elem getElement<QQ>(const QQ&  R, int index)
 ////////////////////////////////////////////////////////
 TEST(RingQQ, create)
 {
-  Ring *R = globalQQ;
+  const Ring *R = globalQQ;
   EXPECT_TRUE(R != 0);
 
   EXPECT_TRUE(dynamic_cast< const Z_mod * >(R) == 0);
   EXPECT_TRUE(dynamic_cast< const QQ * >(R) != 0);
   EXPECT_EQ(R->coefficient_type(), Ring::COEFF_QQ);
   EXPECT_FALSE(R->is_ZZ());
-  EXPECT_EQ(ringName(*R), "QQ");
+  EXPECT_EQ(ringName(*R), "QQGMP");
 }
 TEST(RingQQ, ones)
 {
-  Ring *R = globalQQ;
+  const Ring *R = globalQQ;
   EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
   EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
   EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));

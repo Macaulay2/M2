@@ -7,7 +7,6 @@
 #include "relem.hpp"
 #include "ZZp.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
@@ -724,6 +723,7 @@ const RingElement *IM2_RingElement_promote(const Ring *S,
 {
      try {
           const RingElement *result;
+
           if (f->promote(S,result))
             return result;
           ERROR("cannot promote given ring element");
@@ -740,6 +740,7 @@ const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const
 {
      try {
           const RingElement *result;
+
           if (f->lift(S,result)) {
             *success_return = 1;
             return result;

@@ -12,10 +12,10 @@
 #include "frac.hpp"
 #include "geopoly.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 
+#include "aring-glue.hpp" // for globalQQ
 #define POLY(q) ((q).poly_val)
 
 PolyRing *PolyRing::trivial_poly_ring = 0; // Will be ZZ[]
@@ -2407,7 +2407,7 @@ vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F,
     {
       Nterm *s = new_term();
       GR->gbvector_get_lead_monomial(F, t, s->monom);
-      s->coeff = globalQQ->QQ::fraction(t->coeff, denom);
+      s->coeff = globalQQ->fraction(t->coeff, denom);
       s->next = 0;
       int x = t->comp - firstcomp;
       if (!vec_comps[x])

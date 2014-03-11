@@ -24,8 +24,6 @@
 #include "aring-tower.hpp"
 #include "aring-qq.hpp"
 
-#include "QQ.hpp"
-
 #include "lapack.hpp"
 #include "dmat-LU.hpp"
 

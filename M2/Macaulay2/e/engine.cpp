@@ -3,8 +3,9 @@
 #include "style.hpp"
 #include "mem.hpp"
 #include "hash.hpp"
-#include "QQ.hpp"
 #include "poly.hpp"
+
+#include "aring-glue.hpp"
 
 extern void factory_setup_1(); // M2-factory.cpp
 
@@ -32,7 +33,7 @@ void IM2_initialize()
   // and makes sure their degree rings are interconnected.
   PolyRing::get_trivial_poly_ring();
 
-  globalQQ = QQ::create();
+  initializeRationalRing();
 
   rawRandomInitialize();
   factory_setup_1();

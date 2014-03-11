@@ -115,7 +115,7 @@ namespace M2 {
       result = mpz_get_d(a);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    void set_from_mpq(ElementType &result, const mpq_ptr a) const {
       result = mpq_get_d(a);
     }
 
