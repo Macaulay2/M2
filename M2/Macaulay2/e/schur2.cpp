@@ -595,8 +595,6 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
             ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
             ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
             resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
-#warning "Dan commented out a 'delete' call that was freeing a pointer twice; leaving for Mike to debug"
-            //      delete r;
             H.add(resultRE);
           }
       return H.value();
