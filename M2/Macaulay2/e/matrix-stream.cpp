@@ -47,7 +47,7 @@ void MatrixStream::appendTermDone(Coefficient coefficient)
   // Now we need to create an Nterm, and attach it at mCurrentComponent
   Nterm* t = ring().new_term();
   ring().getMonoid()->from_expvector(mCurrentExponents, t->monom);
-  t->coeff = ring().getCoefficients()->from_int(coefficient);
+  t->coeff = ring().getCoefficients()->from_long(coefficient);
   t->next = 0;
   if (mLastTerms[mCurrentComponent] == 0)
     {

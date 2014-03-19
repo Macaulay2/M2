@@ -62,7 +62,7 @@ namespace M2 {
                        ElementType& x, ElementType& y) const
   {
     M2_ASSERT(!is_zero(b));
-    set_from_int(x, 1);
+    set_from_long(x, 1);
     divide(y,a,b);
     negate(y,y);
   }

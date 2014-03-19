@@ -84,7 +84,7 @@ namespace M2 {
     
     void set_zero(ElementType& result) const {fmpq_zero(&result);}
     
-    void set_from_int(ElementType& result, int a) const {fmpq_set_si(&result, a, 1);}
+    void set_from_long(ElementType& result, long a) const {fmpq_set_si(&result, a, 1);}
     
     void set_from_mpz(ElementType& result,const mpz_ptr a) const {
       // printf("ARingQQFlint::calling set_from_mpz\n");

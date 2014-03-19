@@ -40,7 +40,7 @@ public:
 
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_double(double r) const;
   virtual ring_elem from_rational(mpq_ptr r) const;

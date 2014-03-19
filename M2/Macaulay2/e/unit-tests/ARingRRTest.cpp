@@ -25,13 +25,13 @@ bool almostEqual(const M2::ARingRR& R, unsigned long nbits, const M2::ARingRR::E
 template<>
 void getElement<M2::ARingRR>(const M2::ARingRR&  R, int index, M2::ARingRR::ElementType& result)
 {
-  if (index < 50) R.set_from_int(result, index-25);
+  if (index < 50) R.set_from_long(result, index-25);
   else R.random(result);
 }
 
 //void getElementRR(const M2::ARingRR&  R, int index, M2::ARingRR::ElementType& result)
 //{
-//  if (index < 50) R.set_from_int(result, index-25);
+//  if (index < 50) R.set_from_long(result, index-25);
 //  else R.random(result);
 //}
 

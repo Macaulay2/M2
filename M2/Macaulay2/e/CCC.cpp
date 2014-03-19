@@ -18,9 +18,9 @@ bool CCC::initialize_CCC(unsigned long prec)
   _elem_size = static_cast<int>(sizeofstructtype(gmp_CC));
   _zero_elem = new_elem();
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   coeffR = new CoefficientRingCCC(this);
   return true;
@@ -92,7 +92,7 @@ void CCC::elem_text_out(buffer &o,
     o.put(s->array, s->len);
 }
 
-ring_elem CCC::from_int(int n) const
+ring_elem CCC::from_long(long n) const
 {
   gmp_CC result = new_elem();
   mpfr_set_si(result->re, n, GMP_RNDN);
@@ -257,7 +257,7 @@ void CCC::remove(ring_elem &f) const
 // TO DO: MAKE IT SAME AS CC
 ring_elem CCC::preferred_associate(ring_elem f) const
 {
-  return from_int(1);
+  return from_long(1);
 }
 
 void CCC::internal_negate_to(ring_elem &f) const
@@ -320,7 +320,7 @@ ring_elem CCC::mult(const ring_elem f, const ring_elem g) const
 ring_elem CCC::power(const ring_elem f, int n) const
 {
   ring_elem curr_pow;
-  ring_elem result = from_int(1);
+  ring_elem result = from_long(1);
   if (n == 0)
     {
       return result;
@@ -352,7 +352,7 @@ ring_elem CCC::power(const ring_elem f, mpz_t n) const
   if (!RingZZ::get_si(n1, n))
     {
       ERROR("exponent too large");
-      return from_int(1);
+      return from_long(1);
     }
   return power(f, n1);
 }
@@ -360,7 +360,7 @@ ring_elem CCC::power(const ring_elem f, mpz_t n) const
 ring_elem CCC::invert(const ring_elem f) const
 {
   if (is_zero(f))
-    return from_int(0);
+    return from_long(0);
   else {
     gmp_CC result = new_elem();
     gmp_CC tmp = new_elem();
@@ -385,12 +385,12 @@ void CCC::syzygy(const ring_elem a, const ring_elem b,
 {
   if (is_zero(b))
     {
-      x = from_int(0);
-      y = from_int(1);
+      x = from_long(0);
+      y = from_long(1);
     }
   else
     {
-      x = from_int(1);
+      x = from_long(1);
       y = divide(negate(a),b);
     }
 }

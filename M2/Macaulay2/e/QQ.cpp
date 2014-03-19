@@ -15,12 +15,12 @@ bool QQ::initialize_QQ()
   _elem_size = static_cast<int>(sizeof(mpq_t));
   _zero_elem = new_elem();// this sets the element to 0.
 #if 0
-//   trans_one = globalZZ->from_int(1);
+//   trans_one = globalZZ->from_long(1);
 #endif
   declare_field();
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   mARing = new M2::ARingQQ;
 
@@ -121,7 +121,7 @@ ring_elem QQ::fraction(ring_elem top, ring_elem bottom) const
   return MPQ_RINGELEM(result);
 }
 
-ring_elem QQ::from_int(int n) const
+ring_elem QQ::from_long(long n) const
 {
   gmp_QQ result = QQ::new_elem();
   mpq_set_si(result, n, 1);
@@ -223,8 +223,8 @@ ring_elem QQ::preferred_associate(ring_elem f) const
 {
   gmp_QQ a = MPQ_VAL(f);
   if (mpq_sgn(a) >= 0)
-    return QQ::from_int(1);
-  return QQ::from_int(-1);
+    return QQ::from_long(1);
+  return QQ::from_long(-1);
 }
 
 bool QQ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
@@ -342,7 +342,7 @@ ring_elem QQ::power(const ring_elem f, mpz_t n) const
   if (!RingZZ::get_si(n1, n))
     {
       ERROR("exponent too large");
-      return QQ::from_int(1);
+      return QQ::from_long(1);
     }
   else
     return QQ::power(f,n1);
@@ -351,7 +351,7 @@ ring_elem QQ::power(const ring_elem f, mpz_t n) const
 ring_elem QQ::invert(const ring_elem f) const
 {
   if (is_zero(f))
-    return QQ::from_int(0);
+    return QQ::from_long(0);
   else
     {
       gmp_QQ result = QQ::new_elem();
@@ -371,7 +371,7 @@ void QQ::syzygy(const ring_elem a, const ring_elem b,
                ring_elem &x, ring_elem &y) const
 {
   ASSERT(!is_zero(b));
-  x = QQ::from_int(1);
+  x = QQ::from_long(1);
   y = QQ::divide(a,b);
   QQ::internal_negate_to(y);
 }
@@ -394,7 +394,7 @@ ring_elem QQ::eval(const RingMap *map, const ring_elem a, int) const
 //     {
 //       ERROR("division by zero!");
 //       S->remove(bottom);
-//       bottom = S->from_int(1);
+//       bottom = S->from_long(1);
 //     }
 //   ring_elem result = S->divide(top, bottom);
 //   S->remove(top);

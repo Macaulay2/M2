@@ -103,8 +103,8 @@ namespace M2 {
       set(result,a); 
     }
 
-    void set_from_int(ElementType &result, int a) const {
-      result = a;
+    void set_from_long(ElementType &result, long a) const {
+      result = static_cast<double>(a);
     }
 
     void set_var(ElementType &result, int v) const { 

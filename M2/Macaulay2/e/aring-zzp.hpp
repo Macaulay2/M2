@@ -111,7 +111,7 @@ namespace M2 {
 
     void set_zero(elem &result) const { result = 0; }
 
-    void set_from_int(elem &result, int a) const {
+    void set_from_long(elem &result, long a) const {
       a = a % p;
       if (a < 0) a += p;
       result = log_table[a];

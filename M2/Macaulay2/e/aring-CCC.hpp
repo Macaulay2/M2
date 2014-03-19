@@ -125,13 +125,13 @@ namespace M2 {
       set(result, a); 
     }
 
-    void set_from_int(ElementType &result, long a) const {
+    void set_from_long(ElementType &result, long a) const {
       mpfr_set_si(&result.re, a, GMP_RNDN);
       mpfr_set_si(&result.im, 0, GMP_RNDN);    
     }
 
     void set_var(ElementType &result, int v) const { 
-      set_from_int(result, 1); 
+      set_from_long(result, 1); 
     }
 
     void set_from_mpz(ElementType &result, mpz_ptr a) const {
@@ -332,7 +332,7 @@ namespace M2 {
     {
       ElementType curr_pow;
       init(curr_pow);
-      set_from_int(result,1);
+      set_from_long(result,1);
       if (n == 0) {}
       else if (n < 0)
         {
@@ -364,7 +364,7 @@ namespace M2 {
       else  
         {
           ERROR("exponent too large");
-          set_from_int(result, 1);
+          set_from_long(result, 1);
         }
     }
 

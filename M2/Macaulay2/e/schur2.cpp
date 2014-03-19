@@ -134,9 +134,9 @@ bool SchurRing2::initialize_SchurRing2()
 {
   initialize_ring(coefficientRing->charac());
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   SMinitialize(nvars,0);
   return true;
@@ -279,9 +279,9 @@ ring_elem SchurRing2::from_coeff(ring_elem a) const
   result.schur_poly_val = f;
   return result;
 }
-ring_elem SchurRing2::from_int(int n) const
+ring_elem SchurRing2::from_long(long n) const
 {
-  ring_elem a = coefficientRing->from_int(n);
+  ring_elem a = coefficientRing->from_long(n);
   return from_coeff(a);
 }
 ring_elem SchurRing2::from_int(mpz_ptr n) const

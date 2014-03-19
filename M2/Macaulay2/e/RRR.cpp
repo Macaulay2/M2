@@ -24,9 +24,9 @@ bool RRR::initialize_RRR(unsigned long prec)
   _elem_size = static_cast<int>(sizeof(mpfr_t));
   _zero_elem = new_elem();
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   //coeffR = new Ring_RRR(this);
   coeffR = new M2::ARingRRR(precision);
@@ -91,7 +91,7 @@ mpfr_ptr RRR::to_BigReal(ring_elem f) const
   return MPF_VAL(f);
 }
 
-ring_elem RRR::from_int(int n) const
+ring_elem RRR::from_long(long n) const
 {
   mpfr_ptr result = new_elem();
   mpfr_set_si(result, n, GMP_RNDN);
@@ -225,8 +225,8 @@ ring_elem RRR::preferred_associate(ring_elem f) const
 {
   mpfr_ptr a = MPF_VAL(f);
   if (mpfr_sgn(a) >= 0)
-    return from_int(1);
-  return from_int(-1);
+    return from_long(1);
+  return from_long(-1);
 }
 
 ring_elem RRR::negate(const ring_elem f) const
@@ -280,7 +280,7 @@ ring_elem RRR::sqrt(const ring_elem f) const
 ring_elem RRR::invert(const ring_elem f) const
 {
   if (is_zero(f))
-    return from_int(0);
+    return from_long(0);
   else {
     mpfr_ptr result = new_elem();
     mpfr_ui_div(result, 1, MPF_VAL(f), GMP_RNDN);
@@ -300,12 +300,12 @@ void RRR::syzygy(const ring_elem a, const ring_elem b,
 {
   if (is_zero(b))
     {
-      x = from_int(0);
-      y = from_int(1);
+      x = from_long(0);
+      y = from_long(1);
     }
   else
     {
-      x = from_int(1);
+      x = from_long(1);
       y = divide(negate(a),b);
     }
 }

@@ -54,8 +54,8 @@ class DummyRing : public RingInterface
   {
  public:
 
-        typedef int    FieldType;
-        typedef int      ElementType;
+        typedef long    FieldType;
+        typedef long    ElementType;
     
         typedef ElementType     elem;
 
@@ -99,7 +99,7 @@ class DummyRing : public RingInterface
 
         void set(elem &result, elem a) const { result = a; }
 
-        void set_from_int(elem &result, int a) const { result=a;}
+        void set_from_long(elem &result, long a) const { result=a;}
 
         void init(elem &result) const    { result = 0; }
 

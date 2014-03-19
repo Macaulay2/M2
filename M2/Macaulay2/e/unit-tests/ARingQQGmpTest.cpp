@@ -18,7 +18,7 @@ template<>
 void getElement<M2::ARingQQGMP>(const M2::ARingQQGMP& R, int index, M2::ARingQQGMP::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       R.random(result);

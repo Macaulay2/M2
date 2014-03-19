@@ -69,7 +69,7 @@ bool GF::initialize_GF(const RingElement *prim)
 
   // Get ready to create the 'one_table'
   array<ring_elem> polys;
-  polys.append(_originalR->from_int(0));
+  polys.append(_originalR->from_long(0));
   ring_elem primelem = prim->get_value();
   polys.append(_originalR->copy(primelem));
 
@@ -120,9 +120,9 @@ bool GF::initialize_GF(const RingElement *prim)
       a = _one_table[a];
     }
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   // M2::GaloisFieldTable G(*_originalR, primelem);
   //  G.display(std::cout);
@@ -217,9 +217,9 @@ ring_elem GF::eval(const RingMap *map, const ring_elem f, int first_var) const
   return map->get_ring()->power(map->elem(first_var), f.int_val);
 }
 
-ring_elem GF::from_int(int n) const
+ring_elem GF::from_long(long n) const
 {
-  int m = n % P;
+  int m = static_cast<int>(n % static_cast<long>(P));
   if (m < 0) m += P;
   m = _from_int_table[m];
   return ring_elem(m);
@@ -241,7 +241,7 @@ ring_elem GF::from_rational(mpq_ptr q) const
   // a should be an element of ZZ/p
   ring_elem a = _originalR->getCoefficients()->from_rational(q);
   int b = _originalR->getCoefficients()->coerce_to_int(a);
-  return GF::from_int(b);
+  return GF::from_long(b);
 }
 
 ring_elem GF::var(int v) const
@@ -258,11 +258,11 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 
   if (Rf != _originalR) return false;
 
-  result = from_int(0);
+  result = from_long(0);
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem coef = from_int(_originalR->getCoefficientRing()->coerce_to_int(t->coeff));
+      ring_elem coef = from_long(_originalR->getCoefficientRing()->coerce_to_int(t->coeff));
       _originalR->getMonoid()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
       // this degree is < n (where Q_ = P^n).
@@ -283,9 +283,9 @@ bool GF::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   int e = f.int_val;
   if (e == _ZERO)
-    result = _originalR->from_int(0);
+    result = _originalR->from_long(0);
   else if (e == _ONE)
-    result = _originalR->from_int(1);
+    result = _originalR->from_long(1);
   else
     result = _originalR->power(_primitive_element->get_value(), e);
 
@@ -435,7 +435,7 @@ ring_elem GF::divide(const ring_elem f, const ring_elem g) const
 void GF::syzygy(const ring_elem a, const ring_elem b,
                 ring_elem &x, ring_elem &y) const
 {
-  x = GF::from_int(1);
+  x = GF::from_long(1);
   y = GF::divide(a,b);
   GF::internal_negate_to(y);
 }

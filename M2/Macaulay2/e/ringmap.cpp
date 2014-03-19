@@ -22,7 +22,7 @@ RingMap::RingMap(const Matrix *m)
   nvars = m->n_cols();
   is_monomial = true;
 
-  ring_elem one = K->from_int(1);
+  ring_elem one = K->from_long(1);
 
   // Allocate space for the ring map elements
   _elem = new var[nvars];
@@ -137,7 +137,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
     {
       int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
-        return R->from_int(0);  // The result is zero.
+        return R->from_long(0);  // The result is zero.
     }
 
   // If K is a coeff ring of R, AND map is an identity on K,
@@ -148,7 +148,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 
   int *result_monom = NULL;
   int *temp_monom = NULL;
-  ring_elem result_coeff = K->from_int(1);
+  ring_elem result_coeff = K->from_long(1);
 
   if (P != 0)
     {

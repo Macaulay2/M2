@@ -19,7 +19,7 @@ template<>
 void getElement<M2::ARingQQFlint>(const M2::ARingQQFlint& R, int index, M2::ARingQQFlint::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       R.random(result);

@@ -103,7 +103,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
@@ -149,7 +149,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
@@ -1859,7 +1859,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
@@ -1905,7 +1905,7 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)

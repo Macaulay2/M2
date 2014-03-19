@@ -34,9 +34,9 @@ bool Tower::initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_ele
       delete [] exts;
     }
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   return true;
 }
@@ -101,10 +101,10 @@ M2_arrayint Tower::support(const ring_elem a) const
   return result;
 }
 
-ring_elem Tower::from_int(int n) const
+ring_elem Tower::from_long(long n) const
 {
   poly f;
-  D->set_from_int(f, n);
+  D->set_from_long(f, n);
   return TOWER_RINGELEM(f);
 }
 
@@ -280,7 +280,7 @@ class TowerEvaluator : public DPolyTraverser
     //  H->add, or target->add_to
     vp.shrink(0);
     varpower::from_ntuple(nvars, exp, vp);
-    ring_elem c = K->from_int(static_cast<int>(coeff));
+    ring_elem c = K->from_long(coeff);
     ring_elem a = map->eval_term(K, c, vp.raw(), first_var, nvars);
     H->add(a);
     return true;

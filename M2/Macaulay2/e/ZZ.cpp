@@ -40,9 +40,9 @@ bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   degree_ring = deg_ring;
   coeffR = new M2::ARingZZGMP;
@@ -132,7 +132,7 @@ void RingZZ::elem_text_out(buffer &o,
   if (size > 1000) deletearray(allocstr);
 }
 
-ring_elem RingZZ::from_int(int n) const
+ring_elem RingZZ::from_long(long n) const
 {
   mpz_ptr result = new_elem();
   mpz_set_si(result, n);
@@ -220,8 +220,8 @@ ring_elem RingZZ::preferred_associate(ring_elem f) const
 {
   mpz_ptr a = f.get_mpz();
   if (mpz_sgn(a) >= 0)
-    return from_int(1);
-  return from_int(-1);
+    return from_long(1);
+  return from_long(-1);
 }
 
 bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
@@ -324,7 +324,7 @@ ring_elem RingZZ::invert(const ring_elem f) const
   if (is_unit(f))
     return copy(f);
   else
-    return from_int(0);
+    return from_long(0);
 }
 
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
@@ -402,20 +402,20 @@ void RingZZ::syzygy(const ring_elem a, const ring_elem b,
   // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
   if (RingZZ::is_zero(a))
     {
-      x = RingZZ::from_int(1);
-      y = RingZZ::from_int(0);
+      x = RingZZ::from_long(1);
+      y = RingZZ::from_long(0);
       return;
     }
   mpz_ptr bb = b.get_mpz();
   if (mpz_cmp_ui(bb,1) == 0)
     {
-      x = RingZZ::from_int(1);
+      x = RingZZ::from_long(1);
       y = RingZZ::negate(a);
       return;
     }
   if (mask_mpz_cmp_si(bb,-1) == 0)
     {
-      x = RingZZ::from_int(1);
+      x = RingZZ::from_long(1);
       y = RingZZ::copy(a);
       return;
     }

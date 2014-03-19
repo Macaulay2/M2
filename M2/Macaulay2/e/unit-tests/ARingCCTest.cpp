@@ -25,7 +25,7 @@ bool almostEqual(const M2::ARingCC& C, unsigned long nbits, const M2::ARingCC::E
 template<>
 void getElement<M2::ARingCC>(const M2::ARingCC&  C, int index, M2::ARingCC::ElementType& result)
 {
-  if (index < 50) C.set_from_int(result, index-25);
+  if (index < 50) C.set_from_long(result, index-25);
   else C.random(result);
 }
 

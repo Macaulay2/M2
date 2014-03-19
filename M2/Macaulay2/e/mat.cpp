@@ -148,7 +148,7 @@ MutableMatrix *MutableMatrix::identity(const Ring *R, size_t nrows, bool dense)
 {
   MutableMatrix *result = MutableMatrix::zero_matrix(R,nrows,nrows,dense);
   for (size_t i=0; i<nrows; i++)
-    result->set_entry(i,i,R->from_int(1));
+    result->set_entry(i,i,R->from_long(1));
   return result;
 }
 

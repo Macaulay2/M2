@@ -1005,7 +1005,7 @@ void convolve(const PolyRing *R,
       // ASSUMPTION: input_relems[i] is either a variable or - of a variable
       ring_elem result = R->copy(input_relems[i]);
       if (convolve_type == 2)
-        R->mult_coeff_to(K->from_int(-i), result);
+        R->mult_coeff_to(K->from_long(-i), result);
       for (int j=i-1; j>=1; --j)
         {
           ring_elem hr;
@@ -1018,7 +1018,7 @@ void convolve(const PolyRing *R,
         }
       if (convolve_type == 1)
         {
-          invn = K->invert(K->from_int(i));
+          invn = K->invert(K->from_long(i));
           R->mult_coeff_to(invn,result);
         }
       output_relems[i] = result;

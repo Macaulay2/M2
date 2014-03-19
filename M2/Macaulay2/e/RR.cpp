@@ -22,9 +22,9 @@ bool RingRR::initialize_RR()
 
   declare_field();
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   coeffR = new CoefficientRingRR;
   return true;
@@ -42,7 +42,7 @@ void RingRR::text_out(buffer &o) const
   o << "RR_53";
 }
 
-ring_elem RingRR::from_int(int n) const
+ring_elem RingRR::from_long(long n) const
 {
   double a = n;
   return RingRR::from_double(a);

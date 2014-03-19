@@ -51,7 +51,7 @@ vec Ring::make_vec_from_array(int len, Nterm** array) const
 
 vec Ring::e_sub_i(int i) const
 {
-  ring_elem a = from_int(1);
+  ring_elem a = from_long(1);
   return make_vec(i,a);
 }
 
@@ -138,10 +138,10 @@ ring_elem Ring::get_entry(vec v, int r) const
   while (v != NULL)
     {
       if (v->comp == r) return v->coeff;
-      if (v->comp < r) return from_int(0);
+      if (v->comp < r) return from_long(0);
       v = v->next;
     }
-  return from_int(0);
+  return from_long(0);
 }
 
 int Ring::n_nonzero_terms(const vecterm * v) const
@@ -184,7 +184,7 @@ vec Ring::subtract_vec(vec v, vec w) const
 
 vec Ring::mult_vec(int n, vec v) const
 {
-  ring_elem f = from_int(n);
+  ring_elem f = from_long(n);
   vec result = mult_vec(f, v);
   return result;
 }
@@ -587,7 +587,7 @@ void Ring::add_vec_to(vec &v, vec &w) const
 
 ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const
 {
-  ring_elem result = this->from_int(0);
+  ring_elem result = this->from_long(0);
   while (true)
     {
       if (v == 0) return result;

@@ -19,7 +19,7 @@ template<>
 void getElement<M2::ARingZZ>(const M2::ARingZZ& R, int index, M2::ARingZZ::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       gmp_ZZ a = getRandomInteger();

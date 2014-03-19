@@ -228,8 +228,8 @@ ring_elem DetComputation::bareiss_det()
   int sign = 1;
   size_t pivot_col;
 
-  ring_elem pivot = R->from_int(0);
-  ring_elem lastpivot = R->from_int(0);
+  ring_elem pivot = R->from_long(0);
+  ring_elem lastpivot = R->from_long(0);
 
   for (size_t r=p-1; r>=1; --r)
     {
@@ -242,7 +242,7 @@ ring_elem DetComputation::bareiss_det()
             for (size_t j=0; j<=r; j++)
               R->remove(D[i][j]);
           R->remove(lastpivot);
-          return R->from_int(0);
+          return R->from_long(0);
         }
       for (size_t i=0; i<r; i++)
         gauss(D,i,r,pivot_col,lastpivot);
@@ -271,7 +271,7 @@ ring_elem DetComputation::calc_det(size_t *r, size_t *c, int p0)
      // and columns c[0]..c[p0-1].
 {
   if (p0 == 1) return M->elem(static_cast<int>(r[0]),static_cast<int>(c[0]));
-  ring_elem answer = R->from_int(0);
+  ring_elem answer = R->from_long(0);
 
   int negate = 1;
   for (int i=p0-1; i>=0; i--)

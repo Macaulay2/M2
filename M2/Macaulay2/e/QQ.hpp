@@ -49,7 +49,7 @@ public:
   ring_elem denominator(ring_elem q) const;
   ring_elem fraction(ring_elem top, ring_elem bottom) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
 
   virtual ring_elem from_rational(mpq_ptr q) const;

@@ -33,8 +33,8 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-  virtual ring_elem from_int(int n) const {
-    ring_elem result = numerR_->from_int(n);
+  virtual ring_elem from_long(long n) const {
+    ring_elem result = numerR_->from_long(n);
     normal_form(result);
     return result;
   }

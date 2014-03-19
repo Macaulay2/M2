@@ -454,10 +454,10 @@ int ARingGFGivaro::get_repr(const ElementType f) const
 
 
     /// @todo possible problem if type UTT is smaller than an int?
-    void ARingGFGivaro::set_from_int(ElementType &result, int a) const 
+    void ARingGFGivaro::set_from_long(ElementType &result, long a) const 
     {
 #warning "fix the casting spaghetti here!"
-      //std::cerr << "ARingGFGivaro::set_from_int" << std::endl;
+      //std::cerr << "ARingGFGivaro::set_from_long" << std::endl;
       ElementType p = static_cast<ElementType>(mCharac);
       ElementType a1 = (a >= 0 ? static_cast<ElementType>(a) : static_cast<ElementType>(a + p));
       a1 = a1 % p;
@@ -642,7 +642,7 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
       {
         elem a, b;
         int coeff = mOriginalRing->getCoefficientRing()->coerce_to_int(t->coeff);
-        set_from_int(a, coeff);
+        set_from_long(a, coeff);
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).
@@ -664,9 +664,9 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     
     
     if (f == givaroField.zero)
-      result = mOriginalRing->from_int(0);
+      result = mOriginalRing->from_long(0);
     else if (f == givaroField.one)
-      result = mOriginalRing->from_int(1);
+      result = mOriginalRing->from_long(1);
     else
       {
 #warning "This call to power might be incorrect.  Jakob: please look at it"

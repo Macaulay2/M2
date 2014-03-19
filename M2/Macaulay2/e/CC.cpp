@@ -14,9 +14,9 @@ bool CC::initialize_CC(double epsilon)
   declare_field();
   _epsilon = epsilon;
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   coeffR = new CoefficientRingCC;
   return true;
@@ -175,7 +175,7 @@ void CC::elem_text_out(buffer &o, const ring_elem ap) const
     }
 }
 
-ring_elem CC::from_int(int n) const
+ring_elem CC::from_long(long n) const
 {
   double a = n;
   return CC::from_double(a);

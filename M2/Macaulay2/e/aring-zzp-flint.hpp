@@ -74,8 +74,8 @@ namespace M2 {
 
     void set_zero(ElementType &result) const { result = 0; }
 
-    void set_from_int(ElementType &result, int a) const {
-      //printf("called deprecated and inefficient ARingZZpFlint::set_from_int\n");
+    void set_from_long(ElementType &result, long a) const {
+      //printf("called deprecated and inefficient ARingZZpFlint::set_from_long\n");
       fmpz_t b;
       fmpz_init(b);
       fmpz_set_si(b, a);

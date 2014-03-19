@@ -64,13 +64,13 @@ namespace M2 {
     // The following are all the routines required by 'ring'
     virtual void text_out(buffer &o) const { return R->text_out(o); }
 
-    virtual ring_elem from_int(int n) const
+    virtual ring_elem from_long(long n) const
     {
-      if (displayArithmeticCalls) fprintf(stderr, "calling from_int\n");
+      if (displayArithmeticCalls) fprintf(stderr, "calling from_long\n");
       ring_elem result;
       ElementType a;
       R->init(a);
-      R->set_from_int(a,n);
+      R->set_from_long(a,n);
       R->to_ring_elem(result, a);
       R->clear(a);
       return result;
@@ -464,9 +464,9 @@ namespace M2 {
       result->initialize_ring(static_cast<int>(R0->characteristic()));
       result->declare_field();
       
-      result->zeroV = result->from_int(0);
-      result->oneV = result->from_int(1);
-      result->minus_oneV = result->from_int(-1);
+      result->zeroV = result->from_long(0);
+      result->oneV = result->from_long(1);
+      result->minus_oneV = result->from_long(-1);
       
       return result;
     }
@@ -503,9 +503,9 @@ namespace M2 {
     result->initialize_ring(static_cast<int>(R->characteristic()));
     result->declare_field();
 
-    result->zeroV = result->from_int(0);
-    result->oneV = result->from_int(1);
-    result->minus_oneV = result->from_int(-1);
+    result->zeroV = result->from_long(0);
+    result->oneV = result->from_long(1);
+    result->minus_oneV = result->from_long(-1);
 
     return result;
   }

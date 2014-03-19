@@ -182,10 +182,10 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                mpq_clear(&z);
                return ret;
           }
-          else if (h.inFF()) return RingElement::make_raw(R, R->from_int(static_cast<int>(h.intval())));
+          else if (h.inFF()) return RingElement::make_raw(R, R->from_long(h.intval()));
           else if (h.inExtension()) {
                assert( algebraicElement_M2 != NULL );
-               ring_elem result = R->from_int(0);
+               ring_elem result = R->from_long(0);
                for (int j = h.taildegree(); j <= h.degree(); j++) {
                  const RingElement *r = convertToM2(R, h[j]);
                  if (error()) return RingElement::make_raw(R,R->one());
@@ -202,7 +202,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                return RingElement::make_raw(R,R->one());
           }
      }
-     ring_elem result = R->from_int(0);
+     ring_elem result = R->from_long(0);
      for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());

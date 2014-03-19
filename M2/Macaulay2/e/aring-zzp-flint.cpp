@@ -47,7 +47,7 @@ namespace M2 {
 
   void ARingZZpFlint::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
-    result = map->get_ring()->from_int(f);
+    result = map->get_ring()->from_long(f);
   }
 
 };

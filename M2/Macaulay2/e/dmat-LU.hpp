@@ -425,7 +425,7 @@ void DMatLU<CoeffRing>::nullspaceU(const DMat<CoeffRing> *U,
              U->array() + nrows*c,
              x->array() + x->numRows() * thiscol);
 
-      K.set_from_int(MAT(x,c,thiscol), -1);
+      K.set_from_long(MAT(x,c,thiscol), -1);
       //      K.from_ring_elem(MAT(x,c,thiscol), U->get_ring()->minus_one());
       thiscol++;
     }

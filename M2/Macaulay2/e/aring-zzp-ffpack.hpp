@@ -156,7 +156,7 @@ namespace M2 {
     
     void copy(ElementType &result,const ElementType a) const ;
     
-    void set_from_int(ElementType &result, int a) const ;
+    void set_from_long(ElementType &result, long a) const ;
     
     void set_from_mpz(ElementType &result,const mpz_ptr a) const ;
     

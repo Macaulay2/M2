@@ -64,7 +64,7 @@ TEST(RingTower, elems)
   buffer o;
   o << "a="; R->elem_text_out(o, a);
   o << " b="; R->elem_text_out(o, b);
-  ring_elem c = R->add(a,R->from_int(2));
+  ring_elem c = R->add(a,R->from_long(2));
   c = R->add(c,b);
   o << " c="; R->elem_text_out(o, c);
   ring_elem d = R->power(c,2);

@@ -222,15 +222,15 @@ public:
   ring_elem minus_one() const { return minus_oneV; }
   ring_elem zero() const { return zeroV; }
 
-  virtual ring_elem from_int(int n) const = 0;
+  virtual ring_elem from_long(long n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
 
   virtual ring_elem from_rational(mpq_ptr q) const = 0;
-  // The default version calls from_int(0). Change it?
+  // The default version calls from_long(0). Change it?
 
-  // The default version calls from_int(0) and returns false.
+  // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
-  // The default version calls from_int(0) and returns false.
+  // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
   // Returns false if this ring cannot coerce a double to an element in this ring
   virtual bool from_double(double a, ring_elem& result) const;

@@ -266,7 +266,7 @@ const Matrix /* or null */ * Matrix::make(const MonomialIdeal * mi)
   for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
     {
       M->from_varpower((*mi)[i]->monom().raw(), mon);
-      ring_elem f = P->make_flat_term(P->getCoefficientRing()->from_int(1), mon);
+      ring_elem f = P->make_flat_term(P->getCoefficientRing()->from_long(1), mon);
       mat.set_entry(0,next++,f);
     }
   M->remove(mon);
@@ -353,7 +353,7 @@ Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
 Matrix *Matrix::identity(const FreeModule *F)
 {
   const Ring *R = F->get_ring();
-  const ring_elem one = R->from_int(1);
+  const ring_elem one = R->from_long(1);
   MatrixConstructor mat(F,F,0);
   for (int i=0; i<F->rank(); i++)
     mat.set_entry(i,i,R->copy(one));
@@ -1214,7 +1214,7 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
               col++;
               continue;
             }
-          ring_elem r = F->get_ring()->from_int(sgn);
+          ring_elem r = F->get_ring()->from_long(sgn);
           int row = static_cast<int>(C.encode(c));
           mat.set_entry(row,col++,r);
         }
@@ -1519,7 +1519,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   // Now collect all of the monomials
   int *mon = M->make_one();
   int *exp = newarray_atomic(int,M->n_vars());
-  ring_elem one = K->from_int(1);
+  ring_elem one = K->from_long(1);
   exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the coefficient
 
   for (int c=0; c<n_cols(); c++)

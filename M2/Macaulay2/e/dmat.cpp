@@ -210,7 +210,7 @@ namespace MatrixOppies
 
     DMatZZpFFPACK::ElementType b;
     C.ring().init(b);
-    C.ring().set_from_int(b, 1);
+    C.ring().set_from_long(b, 1);
     FFLAS::fgemm( C.ring().field(),
                   tB, tA,
                   m,n,k,
@@ -230,7 +230,7 @@ namespace MatrixOppies
                      const DMatZZpFFPACK& B)
   {
     DMatZZpFFPACK::ElementType one;
-    A.ring().set_from_int( one,1 );
+    A.ring().set_from_long( one,1 );
 
     addMultipleTo(C,one,A,B);
   }
@@ -240,7 +240,7 @@ namespace MatrixOppies
                           const DMatZZpFFPACK& B)
   {
     DMatZZpFFPACK::ElementType minus_one;
-    A.ring().set_from_int( minus_one,-1 );
+    A.ring().set_from_long( minus_one,-1 );
     addMultipleTo(C,minus_one,A,B);
   }
 

@@ -317,7 +317,7 @@ public:
 
   void set(elem &result, elem a) const { result = a; }
 
-  void set_from_int(elem& result, int a) const { result = R->from_int(a); }
+  void set_from_long(elem& result, long a) const { result = R->from_long(a); }
 
   bool is_zero(elem result) const { return R->is_zero(result); }
 

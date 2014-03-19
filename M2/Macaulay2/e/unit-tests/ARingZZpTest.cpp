@@ -32,7 +32,7 @@ template<>
 void getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -115,7 +115,7 @@ template<>
 void getElement<M2::ARingZZpFFPACK>(const M2::ARingZZpFFPACK& R, int index, M2::ARingZZpFFPACK::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -133,9 +133,9 @@ TEST(ARingZZpFFPACK, create) {
 
   M2::ARingZZpFFPACK::ElementType a;
   R.init(a);
-  R.set_from_int(a, 99);
-  R.set_from_int(a, 101);
-  R.set_from_int(a, 103);
+  R.set_from_long(a, 99);
+  R.set_from_long(a, 101);
+  R.set_from_long(a, 103);
   R.clear(a);
 }
 
@@ -210,7 +210,7 @@ TEST(ARingZZp, read) {
   R.init(b);
   R.init(c);
   reader.read(i, b);
-  R.set_from_int(c, 3);
+  R.set_from_long(c, 3);
 
   EXPECT_TRUE(R.is_equal(b,c));
 }
@@ -225,7 +225,7 @@ template<>
 void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R, int index, M2::ARingZZpFlint::ElementType& result)
 {
   if (index < 50) 
-    R.set_from_int(result, index-25);
+    R.set_from_long(result, index-25);
   else
     {
       gmp_ZZ a = getRandomInteger();
@@ -241,9 +241,9 @@ TEST(ARingZZpFlint, create) {
 
   M2::ARingZZpFlint::ElementType a;
   R.init(a);
-  R.set_from_int(a, 99);
-  R.set_from_int(a, 101);
-  R.set_from_int(a, 103);
+  R.set_from_long(a, 99);
+  R.set_from_long(a, 101);
+  R.set_from_long(a, 103);
   R.clear(a);
 }
 
