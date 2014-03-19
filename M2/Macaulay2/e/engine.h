@@ -947,15 +947,6 @@ extern "C" {
   const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
                                            const Matrix *N); /* drg: connected rawMatrixContract*/
 
-  const Matrix /* or null */ * IM2_Matrix_contract0(
-                                            int n_top_variables,
-                                            const Matrix *M,
-                                            const Matrix *N); /* drg: connect*/
-  /* same shape of result as contract, except that the entries corresponding to M_(i,j), N_(k,l)
-     is the dot product of the polynomials, thought of as polynomials in the first n_top_variables
-     vars in the ring.  It is assumed that the monomial order is a product order, so that
-     all monomials with the same first n_top_variables vars are in order. */
-
   const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
                                              int var,
                                              M2_arrayint wts); /* drg: connected rawHomogenize*/

@@ -323,7 +323,6 @@ public:
 
   virtual void monomial_divisor(const ring_elem a, int *exp) const;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
@@ -425,7 +424,6 @@ public:
   /* Polynomial routines.  These all set an error if the ring is not
      a polynomial ring.  OR, they will be moved to polyring.hpp  */
   vec vec_diff(vec v, int rankFw, vec w, int use_coeff) const;
-  vec vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const;
   int vec_in_subring(int n, const vec v) const;
   void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec vec_divide_by_var(int n, int d, const vec v) const;

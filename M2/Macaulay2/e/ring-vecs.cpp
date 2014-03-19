@@ -702,29 +702,6 @@ vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
   return result;
 }
 
-vec Ring::vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const
-// rankFw is the rank of the free module corresponding to w.
-{
-  vec result = NULL;
-  for ( ; v != NULL; v = v->next)
-    for (vecterm *p = w; p != NULL; p = p->next)
-      {
-        ring_elem a = contract0(n_top_variables, v->coeff, p->coeff);
-        if (is_zero(a))
-          {
-            remove(a);
-            continue;
-          }
-        vecterm *t = new_vec();
-        t->comp = rankFw * v->comp + p->comp;
-        t->coeff = a;
-        t->next = result;
-        result = t;
-      }
-  vec_sort(result);
-  return result;
-}
-
 int Ring::vec_in_subring(int nslots, const vec v) const
 {
   const PolynomialRing *PR = cast_to_PolynomialRing();

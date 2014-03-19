@@ -128,10 +128,6 @@ public:
   Matrix /* or null */ *tensor(const Matrix *m) const;
   Matrix /* or null */ *diff(const Matrix *m, int use_coef) const;
 
-  Matrix /* or null */ *contract0(int n_top_variables, const Matrix *N) const;
-  // see doc for IM2_Matrix_contract0 to see what this does, and
-  // what assumptions there are.
-
   Matrix /* or null */ *symm(int n) const; // in symm.cpp
 
   Matrix /* or null */ *coeffs(const int *vars, Matrix * &result_monoms) const;

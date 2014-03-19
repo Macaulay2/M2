@@ -347,11 +347,6 @@ ring_elem Ring::diff(ring_elem a, ring_elem b, int use_coeff) const
   return mult(a,b);
 }
 
-ring_elem Ring::contract0(int n_top_variables, ring_elem a, ring_elem b) const
-{
-  return mult(a,b);
-}
-
 bool Ring::in_subring(int nslots, const ring_elem a) const
 {
   return true;

@@ -504,13 +504,6 @@ const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
   return M->diff(N,0);
 }
 
-const Matrix /* or null */ * IM2_Matrix_contract0(int n_top_variables,
-                                          const Matrix *M,
-                                          const Matrix *N)
-{
-  return M->contract0(n_top_variables, N);
-}
-
 const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
                                            int var,
                                            M2_arrayint wts)

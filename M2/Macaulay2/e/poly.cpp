@@ -1849,29 +1849,6 @@ ring_elem PolyRing::diff(ring_elem a, ring_elem b, int use_coeff) const
   return H.value();
 }
 
-ring_elem PolyRing::contract0(int n_top_variables, ring_elem a, ring_elem b) const
-{
-#warning "Mike needs to write PolyRing::contract0 !!"
-  polyheap H(this);
-  Nterm *d = new_term();
-  for (Nterm *s = a; s != 0; s = s->next)
-    {
-      for (Nterm *t = b; t != 0; t = t->next)
-        {
-          d->coeff = diff_term(s->monom, t->monom, d->monom, false);
-          if (!K_->is_zero(d->coeff))
-            {
-              K_->mult_to(d->coeff, s->coeff);
-              K_->mult_to(d->coeff, t->coeff);
-              d->next = 0;
-              H.add(d);
-              d = new_term();
-            }
-        }
-    }
-  return H.value();
-}
-
 ring_elem PolyRing::diff_term(const int *m, const int *n,
                                     int *resultmon,
                                     int use_coeff) const

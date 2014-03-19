@@ -783,37 +783,6 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   return mat.to_matrix();
 }
 
-Matrix *Matrix::contract0(int n_top_variables, const Matrix *m) const
-{
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  if (P != m->get_ring())
-    {
-      ERROR("matrix diff: different base rings");
-      return 0;
-    }
-  FreeModule *F1 = rows()->transpose();
-  const FreeModule *F = F1->tensor(m->rows());
-  FreeModule *G1 = cols()->transpose();
-  const FreeModule *G = G1->tensor(m->cols());
-  int *deg = degree_monoid()->make_one();
-  degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
-  deleteitem(F1);
-  deleteitem(G1);
-
-  MatrixConstructor mat(F,G,deg);
-  degree_monoid()->remove(deg);
-  int i, j, next=0;
-  for (i=0; i<n_cols(); i++)
-    for (j=0; j<m->n_cols(); j++)
-      mat.set_column(next++, P->vec_contract0(n_top_variables, elem(i), m->rows()->rank(), m->elem(j)));
-  return mat.to_matrix();
-}
-
 Matrix *Matrix::lead_term(int nparts) const
     // Select those monomials in each column
     // which are maximal in the order under
