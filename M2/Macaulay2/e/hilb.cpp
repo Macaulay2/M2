@@ -671,7 +671,6 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
       if (exp[0] < deg)
         {
           ERROR("incorrect Hilbert function given");
-#warning "this error message doesn't get printed out, because 0 is a valid return value for this function"
           result = 0;
           break;
         }

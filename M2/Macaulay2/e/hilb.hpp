@@ -108,6 +108,9 @@ public:
   void stats() const;
 
   // static routines
+
+  // If the coefficient in degree 'deg' is < 0, then
+  // set an error, and return 0.  The caller MUST check this.
   static int coeff_of(const RingElement *h, int deg);
 
 #if 0

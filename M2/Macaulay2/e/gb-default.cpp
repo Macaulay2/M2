@@ -2297,6 +2297,12 @@ void gbA::do_computation()
                 if (use_hilb)
                   {
                     hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
+                    if (error()) {
+                      // The previous line can give an error, which measn that the Hilbert
+                      // function declared was actually incorrect.
+                      set_status(COMP_ERROR);
+                      return;
+                    }
                     if (hilb_n_in_degree == 0) flush_pairs();
                   }
               }
