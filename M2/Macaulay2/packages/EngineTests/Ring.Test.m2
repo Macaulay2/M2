@@ -95,9 +95,9 @@ testPromoteLift = () -> (
     m1 := matrix{{1+ii}};
     assert(try (lift(m1,RR_53); false) else true); -- should fail (as it does).
     x := (5.2)_R53;
-    sub(x, R53); -- CRASH
+    sub(x, R53); 
     phi := map(R53, R53, {});
-    phi (4.2); -- CRASH
+    phi (4.2); 
     -- these work over infinite precision
     x = (5.2)_R;
     sub(x, R); -- ok
@@ -138,4 +138,100 @@ testRingMapEval = (R,C) -> (
   testRingMapEval(RR,CC)
   testRingMapEval(RR_100,CC_100)
 ///
+
+testPromoteLiftQQ = () -> (
+    -- promote/lift from ZZ to QQ
+    -- promote/lift from QQ to RR_*, CC_*
+    -- others should fail?
+    -- test these in matrices/mutable matrices, as engine code isn't called for QQ, RR_*, CC_* on elements
+    tab := {{1, -3, 0, 2387147821647821647812641278461782461}};
+    m := matrix(ZZ, tab);
+    assert(promote(m, QQ) == matrix(QQ, tab));
+    assert(lift(promote(m,QQ), ZZ) == m);
+    mRR53 := promote(m, RR_53);
+    mRR1000 := promote(m, RR_1000);
+    lift(mRR53, ZZ); -- CRASH!  (not implemented in lift)
+    lift(mRR1000, ZZ); -- CRASH!  (not implemented in lift)
+    lift(mRR53, QQ); -- WRONG: cannot lift given matrix (want to use method of continued fractions, I think, as in front end).
+    lift(mRR1000, QQ); -- WRONG: cannot lift given matrix
+    m1 := promote(mRR53, RR_100);
+    m2 := lift(mRR53, RR_100);
+    assert(m1 == m2); -- promote and lift are really the same thing between different RR's
+    assert(mRR53_(0,3) == 2387147821647821647812641278461782461.0p53);
+    assert(mRR1000_(0,3) == 2387147821647821647812641278461782461.0p1000);
+    m3 := promote(mRR53, CC_100);
+    assert(mRR53 == lift(m3, RR_53));
+    mQQ := matrix(QQ, {{1/2, 1124124/54698534, -12/214718971289741987}});
+    m1 = promote(mQQ, RR_53);
+    lift(m1, QQ); -- not yet
+    m2 = promote(m1, RR_100);
+    m3 = promote(mQQ, RR_100);
+    assert not(m2 == m3); -- m2 is lifted from lower number of bits, so we expect these to be different
+    m4 := promote(m3, RR_53);
+    assert (norm(m1 - m4) < 2e-16); -- I guess this is close enough, for 2^-53 = 1.11022302462516e-16
+    )
+
+TEST ///
+ debug EngineTests
+ testPromoteLift()
+///
+
+{*
+liftit = (r,s) -> (
+    if r == 0 then return 0/1;
+    r' := r;
+    p := precision r;
+    p2 := 2^p;
+    m := mutableIdentity(ZZ,2);
+    i := 0;
+    while i < s do (
+        << "-- top of loop --" << endl;
+        a := round r';
+        columnSwap(m,0,1);
+        << m << endl << endl;
+        columnAdd(m,0,a,1);
+        << m << endl << endl;
+        r' = r' - a;
+        n := m_(0,0);
+        d := m_(1,0);
+        q := n / d;
+        << "r' = " << r' << endl;
+        if r === numeric(p,q) then return q;
+        if r' == 0 or abs(n*d) > p2 then return promote(r,QQ);
+        r' = 1/r' ;
+        i = i+1;
+        );
+    )
+
+continuedFraction = (r, nsteps) -> (
+    r' := r;
+    p := precision r;
+    m := mutableIdentity(ZZ,2);
+    i := 0;
+    while i < nsteps list (
+        << "-- top of loop --" << endl;
+        a := floor r';
+        columnSwap(m,0,1);
+        << m << endl << endl;
+        columnAdd(m,0,a,1);
+        << m << endl << endl;
+        r' = r' - a;
+        n := m_(0,0);
+        d := m_(1,0);
+        q := n / d;
+        << "r' = " << r' << endl;
+        r' = 1/r' ;
+        i = i+1;
+        a
+        )
+    )
+a = pi * 1.0p100
+liftit(3.14159p53)
+sqrt(2p100)
+liftit(oo, 3)
+continuedFraction(sqrt(2p100), 100)
+continuedFraction(pi*1.0p100, 10)
+3 + 1/7
+3 + 1/(7 + 1/(15+1/(1+1/(292+1/1))))
+*}
 
