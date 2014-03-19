@@ -155,7 +155,8 @@ document {
      Key => "NTL library",
      PARA {
 	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay2, through the ", TO "Singular-Factory", " library,
-	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "."
+	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "
+	  and is licensed under the GNU Lesser General Public License, version 2 or later."
 	  }
      }
 
