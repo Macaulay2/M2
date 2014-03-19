@@ -261,7 +261,7 @@ document {
 	EXAMPLE lines ///
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
-sols = { {1.1_CC,0.1}, {-0.1,1.2} };
+sols = { {1.1_CC,0.1}, {-0.1_CC,1.2} };
 refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///,
 	PARA {},
