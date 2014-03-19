@@ -170,6 +170,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	  n2 := numgens R;
 	  F := target f;
 	  n1 := numgens F;
+	  if 0_F == 1_F then return ideal(1_R); -- the algorithm below doesn't like a 0 target ring
 	  if class F === FractionField then (
 	       C := last F.baseRings;
 	       if not (
@@ -231,17 +232,9 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	       and coefficientRing R === coefficientRing F
 	       ) 
 	  then (
-	       local graph; local SS;
-	       if instance(F,QuotientRing) then (
-		   I:=graphIdeal(map(ambient F,F)*f);
-		   SS = ring I;
-		   graph=generators(I+(map(SS,ambient F,(vars SS)_{0..n1-1}))(ideal F));
-		   )
-	       else (
-	       	   graph = generators graphIdeal f;
-	       	   SS = ring graph;
-	       );
+	       graph := generators graphIdeal f;
 	       assert( not isHomogeneous f or isHomogeneous graph );
+	       SS := ring graph;
 	       chh := checkHilbertHint graph;
 	       if chh then (
 		   hf := poincare (target f)^1;
