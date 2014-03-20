@@ -92,7 +92,7 @@ polySystem Matrix := M -> (
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
-ideal PolySystem := P -> ideal equations P.PolyMap -- change this for SLP!!!
+ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
 
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()

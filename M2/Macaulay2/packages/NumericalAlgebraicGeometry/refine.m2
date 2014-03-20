@@ -231,7 +231,7 @@ H = segmentHomotopy(polySystem S, polySystem ((1+ii)*T))
 t0 = 0.999
 solsT = trackSegment(H,0,t0,solsS)
 debug NumericalAlgebraicGeometry
-x0 := first solsT
+x0 := first select(solsT, p->norm matrix p < 15)
 endGame'Cauchy'polygon(H,1,t0,x0,3)
 endGame'Cauchy'polygon(H,1,t0,x0,8)
 endGame'Cauchy'polygon(H,1,t0,x0,16)
