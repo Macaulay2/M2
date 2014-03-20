@@ -519,7 +519,6 @@ projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) ->
 
 {**********************************************************************
 NumericalVariety = {
-     Equations => the defining equations
      0 => list of (irreducible) witness sets
      1 => list of (irreducible) witness sets
      ...
@@ -649,7 +648,7 @@ dualSpace (PolySpace, Point) := (S,p)-> (
     assert(numgens ring S.Gens == #coordinates p);
     new DualSpace from {Space=>S,BasePoint=>p}
     )
-dualSpace (Matrix, Point) := o -> (M,p)-> dualSpace(polySpace M,p)
+dualSpace (Matrix, Point) := (M,p)-> dualSpace(polySpace M,p)
 -- what other constructors would we have?
 
 gens PolySpace := o -> S -> S.Gens
@@ -708,6 +707,7 @@ addition (PolySpace,PolySpace) := o -> (S,T) -> (
 
 reduceSpace = method(Options => {Tolerance=>1e-6})
 reduceSpace PolySpace := o -> S -> (
+    if dim S == 0 then return polySpace(gens S,Reduced=>true);
     (mons,coefs) := coefficients gens S;
     M := mons*(colReduce(coefs,o.Tolerance));
     polySpace(M,Reduced=>true)
@@ -726,7 +726,7 @@ colon (DualSpace, RingElement) := o-> (L,g) -> (
 	    ));
     M = (transpose gcoefs)*M*Lcoefs;
     (Mmons,Mcoefs) := coefficients M;
-    M = Mmons*numericalImage(Mcoefs,o.Tolerance);
+    M = Mmons*sub(numericalImage(Mcoefs,o.Tolerance),ring Mmons);
     dualSpace(polySpace M, L.BasePoint)
     )
 colon (DualSpace, Ideal) := (L,J) -> error "not implemented"
