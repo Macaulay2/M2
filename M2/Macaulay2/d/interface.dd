@@ -1465,27 +1465,6 @@ export rawCharSeries(e:Expr):Expr := (
      );
 setupfun("rawCharSeries",rawCharSeries);
 
-export rawFactorOverTower(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is x:RawRingElementCell do
-     when s.1 is y:RawMatrixCell do (
-         resultFactors := RawRingElementArrayOrNull(NULL);
-         resultPowers  := RawArrayIntOrNull(NULL);
-	     Ccode( void, "rawFactorOverTower(", 
-	          x.p, ",",  -- polynomial to factor
-              y.p, ",",  -- matrix representing the tower over which to factor
-    	       "&",resultFactors, ",",
-    	       "&",resultPowers, ")" );
-         when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
-         when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExprSeq(p)))
-         )
-     else WrongArg(2,"a raw matrix")
-     else WrongArg(1,"a raw ring element")
-     else WrongNumArgs(2)
-     );
-setupfun("rawFactorOverTower",rawFactorOverTower);
-
 export rawIdealReorder(e:Expr):Expr := (
      when e
      is x:RawMatrixCell do toExpr( Ccode( RawArrayIntOrNull, "rawIdealReorder(", x.p, ")" ))
