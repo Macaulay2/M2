@@ -26,8 +26,9 @@ export {
      "NumericalVariety", "numericalVariety",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     "Point", "point", "coordinates",
-     "isRealPoint", "realPoints", "residual", "relativeErrorEstimate", "classifyPoint",
+     Point, point, coordinates,
+     project,
+     isRealPoint, realPoints, residual, relativeErrorEstimate, classifyPoint,
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
@@ -229,6 +230,10 @@ coordinates Point := p -> p.Coordinates
 status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
 
+project = method()
+-- project point to the first n coordinates
+project (Point,ZZ) := (p,n) -> point { take(coordinates p, n) }
+   
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
 norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
@@ -516,6 +521,20 @@ sliceEquationsToMatrix Ideal := I -> (
 projectiveWitnessSet = method(TypicalValue=>ProjectiveWitnessSet)
 projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) -> 
   new WitnessSet from { Equations => I, AffineChart => C, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+
+TEST /// --WitnessSet
+CC[x,y,z]
+I = ideal (x^2+y)
+S = ideal (x+y+2*z-1)
+P = {{ii_CC,1_CC},{ii_CC,1_CC}}
+I = ideal {z-x*y, x^2-y, y^2-z*x}
+W = witnessSet(I,S,P)
+W = witnessSet I
+W = witnessSet(I, sub(transpose last coefficients gens S,CC), P)
+points W
+equations W
+slice W
+///
 
 {**********************************************************************
 NumericalVariety = {

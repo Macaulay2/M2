@@ -170,9 +170,16 @@ installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#
 getDefault = method()
 getDefault Symbol := (s)->DEFAULT#s
 
+
+-- METHOD DECLARATIONS
+isOn = method(Options=>{Tolerance=>null,Software=>null})
+
 -- CONVENTIONS ---------------------------------------
 
+-- OLD FORMAT:
 -- Polynomial systems are represented as lists of polynomials.
+-- NEW FORMAT:
+-- PolySystem (defined in NAGtypes).
 
 -- OLD FORMAT:
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
