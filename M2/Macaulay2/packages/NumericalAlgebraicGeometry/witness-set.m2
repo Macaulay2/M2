@@ -140,7 +140,9 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
 -- get a random Point(s) 
 random WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W));
-    W'.Points # (random(#W'.Points)) 
+    p := W'.Points # (random(#W'.Points));
+    if W.?ProjectionDimension then project(p, W.ProjectionDimension)
+    else p 
     )
 
 TEST ///
@@ -156,7 +158,35 @@ sliceEquations (W1#Slice,R)
 W2 = moveSlice(W1, matrix "0,1,0,0;0,0,1,0")
 assert areEqual(sortSolutions points W2, {point{{ -1,0,0}},point{{1,0,0}}})
 for i to 5 do assert isOn(random W1,W1)
+
+W3 = new WitnessSet from {
+     Equations => ideal {x^2+y^2+z^2-1, z},
+     Slice => matrix "1,0,0,0",
+     Points => {{{0,1,0}},{{0,-1,0}}}/point,
+     ProjectionDimension => 2 -- project onto xy-plane
+     } 
+for i to 5 do assert isOn(random W3,W3,2)
 ///
 
+-- a constructor for witnessSet that depends on NAG
+witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
+witnessSet (Ideal,ZZ) := (I,d) -> (
+     n := numgens ring I;
+     R := ring I;
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
+     S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
+     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     RM = promote(RM,ring I);
+     rand'I := flatten entries (RM * transpose gens I);
+     P := solveSystem(rand'I | S_*);
+     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
+     witnessSet(ideal rand'I,SM,PP)
+     )
 
+TEST ///
+CC[x,y,z]
+I = ideal (x^2+y)
+W = witnessSet I
+assert(dim W == 2 and degree W == 2)
+///
 

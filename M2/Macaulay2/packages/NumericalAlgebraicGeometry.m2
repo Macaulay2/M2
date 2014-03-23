@@ -516,21 +516,6 @@ conditionNumber (List,List) := (F,x) -> (
      conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
      )
 
--- a constructor for witnessSet that depends on NAG
-witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
-witnessSet (Ideal,ZZ) := (I,d) -> (
-     n := numgens ring I;
-     R := ring I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
-     S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     rand'I := flatten entries (RM * transpose gens I);
-     P := solveSystem(rand'I | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
-     witnessSet(ideal rand'I,SM,PP)
-     )
-
 isSolution = method(Options=>{Tolerance=>null})
 isSolution(Point,PolySystem) := o -> (P,F) -> (
     o = fillInDefaultOptions o;

@@ -19,9 +19,10 @@ export {
      -- service functions
      generalEquations, 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", 
-     "Equations", "Slice", "Points", "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
-     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
+     WitnessSet, witnessSet, equations, slice, points, 
+     Equations, Slice, Points, ProjectionDimension, 
+     sliceEquations, projectiveSliceEquations, IsIrreducible, 
+     ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
      -- numerical variety
      "NumericalVariety", "numericalVariety",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
@@ -524,16 +525,19 @@ projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) ->
 
 TEST /// --WitnessSet
 CC[x,y,z]
-I = ideal (x^2+y)
-S = ideal (x+y+2*z-1)
-P = {{ii_CC,1_CC},{ii_CC,1_CC}}
-I = ideal {z-x*y, x^2-y, y^2-z*x}
+I = ideal {z-x*y, x^2-y}
+S = ideal (z-1)
+P = apply(3, i->(
+	x := exp(2*i*pi*ii/3);
+	point {{x,x^2,x^3}}
+	))
 W = witnessSet(I,S,P)
-W = witnessSet I
-W = witnessSet(I, sub(transpose last coefficients gens S,CC), P)
+M = matrix{{0,0,1,-1}}
+W = witnessSet(I,M,P)
 points W
 equations W
 slice W
+assert (dim W == 1 and degree W ==3)
 ///
 
 {**********************************************************************
