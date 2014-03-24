@@ -86,7 +86,7 @@ void printsymbol(node p){
 void pput(char *s){
      while (*s) {
 	  putchar(*s);
-	  if (*s == '\n') ;
+	  if (*s == '\n') { }
 	  s++;
 	  }
      }

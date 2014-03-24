@@ -659,7 +659,7 @@ findHeftandVars = (R, varlist, ndegs) -> (
 	    if h =!= null then return (varlist, h);
 	    );
        zerodeg := toList(ndegs:0);
-       varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
+       varlist' := select(varlist, x -> R_x != 0 and take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
        heft := findHeft(degs, DegreeRank=>ndegs);
        if heft === null then 

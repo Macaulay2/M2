@@ -8,7 +8,7 @@
  *****************************************************************************/
 
 #include <M2/config.h>
-#ifdef HAVE_STDDEF_H 1
+#ifdef HAVE_STDDEF_H
 #include <stddef.h>
 #endif
 #include "monomDRL.hpp"

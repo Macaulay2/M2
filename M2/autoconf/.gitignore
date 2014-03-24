@@ -1,0 +1,8 @@
+.compiled*
+.configured*
+.installed*
+.patched*
+.untarred*
+autoconf*
+final
+*~
