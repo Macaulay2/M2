@@ -705,10 +705,10 @@ addition (PolySpace,PolySpace) := o -> (S,T) -> (
     polySpace(mons*numericalImage(C,o.Tolerance))
     )
 
-reduceSpace = method(Options => {Tolerance=>1e-6})
+reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
 reduceSpace PolySpace := o -> S -> (
     if dim S == 0 then return polySpace(gens S,Reduced=>true);
-    (mons,coefs) := coefficients gens S;
+    (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
     M := mons*(colReduce(coefs,o.Tolerance));
     polySpace(M,Reduced=>true)
     )
@@ -750,6 +750,18 @@ innerProduct (RingElement, RingElement) := (f, l) -> (
     ((transpose M_{0})*M_{1})_(0,0)
     )
 
+random PolySpace := o -> S -> (
+    F := ultimate(coefficientRing, ring S);
+    ((gens S)*sub(random(F^(dim S),F^1), ring S))_(0,0)
+    )
+random (ZZ,PolySpace) := o -> (d,S) -> (
+    if not S.Reduced then S = reduceSpace S;
+    Sd := polySpace sub(matrix{select(flatten entries gens S, q -> first degree q <= d)}, ring S);
+    random Sd
+    )
+random DualSpace := o -> D -> random D.Space
+random (ZZ,DualSpace) := o -> (d,D) -> random(d,D.Space)
+
 interpolatedIdeal = method()
 interpolatedIdeal DualSpace := L -> error "not implemented"
 interpolatedIdeal List := LL -> error "not implemented"
@@ -775,9 +787,11 @@ numericalImage (Matrix, Number) := (M, tol) -> (
 
 numericalKernel = method()
 numericalKernel (Matrix, Number) := (M, tol) -> (
-    M = sub(M, ultimate(coefficientRing, ring M));
+    R := ring M;
+    M = sub(M, ultimate(coefficientRing, R));
     if numrows M == 0 then return id_(source M);
-    if precision 1_(ring M) < infinity then (
+    if numcols M == 0 then return map(R^0,R^0,0);
+    if precision 1_R < infinity then (
 	(svs, U, Vt) := SVD M;
 	cols := positions(svs, sv->(sv > tol));
 	submatrix'(adjointMatrix Vt,,cols)
@@ -801,7 +815,7 @@ colReduce = method(TypicalValue => Matrix)
 colReduce (Matrix, Number) := (M, tol) -> (
     M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
     (m,n) := (numrows M, numcols M);
-    i := 0;
+    i := 0; --row of pivot
     for j from 0 to n-1 do (
 	if i == m then break;
 	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
@@ -812,7 +826,7 @@ colReduce (Matrix, Number) := (M, tol) -> (
 	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
 	i = i+1;
 	);
-    M = transpose new Matrix from M;
+    M = (transpose new Matrix from M)_{0..i-1};
     if tol > 0 then clean(tol,M) else M
     )
 

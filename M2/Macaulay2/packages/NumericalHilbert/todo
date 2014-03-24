@@ -1,7 +1,9 @@
-* isWitnessPolynomial: implement
-* Clarify paper around 6.9-6.10
-* eliminatingDual: what's going on?
-* hilbertFunction from g-corners
+* Clarify paper around 6.9-6.10 (witness poly)
 * isPointEmbedded
-* "isComponentEmbedded"
+* isComponentEmbedded (for dim > 0)
+* paper: polish the proofs for slicing down to dim 0
 * isPointEmbeddedInCurve
+* straighten out appendix (Jon?)
+* isWitnessPolynomial cutoff. How should it interact with (d,d')?
+  (a) prove that for every d' there exist d such that the test succeeds for random(d',Jdd) with probability 1
+  (b) "remember" witness candidates for every (d',e) and check for each 
