@@ -19,15 +19,17 @@ export {
      -- service functions
      generalEquations, 
      -- witness set
-     "WitnessSet", "witnessSet", "equations", "slice", "points", 
-     "Equations", "Slice", "Points", "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
-     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
+     WitnessSet, witnessSet, equations, slice, points, 
+     Equations, Slice, Points, ProjectionDimension, 
+     sliceEquations, projectiveSliceEquations, IsIrreducible, 
+     ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
      -- numerical variety
      "NumericalVariety", "numericalVariety",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     "Point", "point", "coordinates",
-     "isRealPoint", "realPoints", "residual", "relativeErrorEstimate", "classifyPoint",
+     Point, point, coordinates,
+     project,
+     isRealPoint, realPoints, residual, relativeErrorEstimate, classifyPoint,
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
@@ -92,7 +94,7 @@ polySystem Matrix := M -> (
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
-ideal PolySystem := P -> ideal equations P.PolyMap -- change this for SLP!!!
+ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
 
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
@@ -229,6 +231,10 @@ coordinates Point := p -> p.Coordinates
 status Point := o -> p -> if p.?SolutionStatus then p.SolutionStatus else null
 matrix Point := o -> p -> matrix {coordinates p}
 
+project = method()
+-- project point to the first n coordinates
+project (Point,ZZ) := (p,n) -> point { take(coordinates p, n) }
+   
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
 norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
 norm (Thing, List) := (no,p) -> (
@@ -516,6 +522,23 @@ sliceEquationsToMatrix Ideal := I -> (
 projectiveWitnessSet = method(TypicalValue=>ProjectiveWitnessSet)
 projectiveWitnessSet (Ideal,Matrix,Matrix,List) := (I,C,S,P) -> 
   new WitnessSet from { Equations => I, AffineChart => C, Slice => S, Points => VerticalList P, IsIrreducible=>null}
+
+TEST /// --WitnessSet
+CC[x,y,z]
+I = ideal {z-x*y, x^2-y}
+S = ideal (z-1)
+P = apply(3, i->(
+	x := exp(2*i*pi*ii/3);
+	point {{x,x^2,x^3}}
+	))
+W = witnessSet(I,S,P)
+M = matrix{{0,0,1,-1}}
+W = witnessSet(I,M,P)
+points W
+equations W
+slice W
+assert (dim W == 1 and degree W ==3)
+///
 
 {**********************************************************************
 NumericalVariety = {

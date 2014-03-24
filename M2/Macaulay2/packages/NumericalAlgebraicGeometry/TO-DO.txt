@@ -6,6 +6,4 @@ deflation needs work
 
 points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
 
-"isOn" is another version of "member"
-
 decompose -- still not robust for nonreduced components 

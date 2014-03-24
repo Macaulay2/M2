@@ -229,6 +229,8 @@ listLCM = L -> (
 
 orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
+    if 1%(monomialIdeal leadTerm gens D) == 0 
+    then error "expected a non-trivial dual space D"; 
     M := innerProduct(S,D);
     K := numericalKernel(transpose M,t);
     polySpace((gens S)*K, Reduced=>false)
