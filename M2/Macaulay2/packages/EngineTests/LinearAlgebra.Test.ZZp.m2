@@ -5,44 +5,39 @@
 --------------------------------
 TEST ///
   debug Core
-  R = ZZp(2)
-  -- replace list with 'testLinearAlgebra R' ?
-  testDeterminant R
-  testMult R
-  testNullspace R;
-  testRank R;
+  R = ZZp 2
+  testLinearAlgebra R;
 ///
 
 TEST ///
   debug Core
   R = ZZp 3
-  testDeterminant R
-  testMult R
-  testNullspace R;
-  testRank R;
-  testInverse R;
+  testLinearAlgebra R;
 ///
 
 TEST ///
   debug Core
-  R = ZZp 101
-  testDeterminant R
-  testMult R
-  testNullspace R;
-  testRank R;
-  testInverse R;
+  R = ZZp 5
+  testLinearAlgebra R;
+///
+
+TEST ///
+  debug Core
+  R = ZZ/101
+  testLinearAlgebra R;
 ///
 
 TEST ///
   debug Core
   R = ZZp 32749
-  testDeterminant R
-  testMult R
-  testNullspace R;
-  testRank R;
-  testInverse R;
+  testLinearAlgebra R;
 ///
 
+TEST ///
+  debug Core
+  R = ZZp 32719
+  testLinearAlgebra R;
+///
 
 ---------------------------------
 -- linear algebra: engine ZZ/p --
@@ -82,11 +77,3 @@ TEST ///
   assert(M * inverse M == id3)
   assert((inverse M) * M == id3)
 ///
-
-TEST ///
-  debug Core
-  R = ZZ/101
-  testLinearAlgebra R;
-///
-
-

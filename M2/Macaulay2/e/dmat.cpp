@@ -27,7 +27,6 @@ namespace MatrixOppies
   void determinant(const DMatZZpFFPACK& mat, 
                    ZZpFFPACK::ElementType& result_det)
   {
-    std::cout << "Calling FFPACK::Det" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
     DMatZZpFFPACK N(mat);
     result_det = FFPACK::Det(mat.ring().field(), 
@@ -80,7 +79,7 @@ namespace MatrixOppies
                            nullspace_leading_dim, 
                            nullspace_dim);
     
-    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
+    //    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
     if (right_side && nullspace_dim != nullspace_leading_dim)
       {
         std::cerr << "error: this should not happen!" << std::endl;
@@ -107,7 +106,7 @@ namespace MatrixOppies
                    DMatZZpFFPACK& X, 
                    bool declare_A_is_invertible) // this parameter is unused
   {
-    std::cerr << "inside FFpackSolveLinear" << std::endl;
+    //    std::cerr << "inside FFpackSolveLinear" << std::endl;
     
     size_t a_rows = A.numRows();
     size_t a_cols = A.numColumns();
