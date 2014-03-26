@@ -2877,16 +2877,10 @@ export rawLinAlgRankProfile(e:Expr):Expr := (
 setupfun("rawLinAlgRankProfile", rawLinAlgRankProfile);
 
 export rawLinAlgNullSpace(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is M:RawMutableMatrixCell do
-     if !isBoolean(s.1) then WrongArgBoolean(1) else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawLinAlgNullSpace(", 
-	       M.p, ",", 
-	       toBoolean(s.1),
-	       ")"))
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(2));
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgNullSpace(", m.p, ")" ))
+     else WrongArgMutableMatrix());
 setupfun("rawLinAlgNullSpace", rawLinAlgNullSpace);
 
 export rawLinAlgSolve(e:Expr):Expr := (

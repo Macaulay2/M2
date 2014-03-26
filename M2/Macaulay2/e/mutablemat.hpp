@@ -721,9 +721,8 @@ public:
   virtual M2_arrayintOrNull rankProfile(bool row_profile) const;
   
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const;
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace() const;
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
@@ -793,10 +792,10 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
 }
 
 template <typename T>
-MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
+MutableMatrix* MutableMat<T>::nullSpace() const
 {
   MutableMat<T>* ker = makeZeroMatrix(0,0);
-  MatrixOppies::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
+  MatrixOppies::nullSpace(mat, ker->mat); // ignore return value of nullSpace...
   return ker;
 }
 

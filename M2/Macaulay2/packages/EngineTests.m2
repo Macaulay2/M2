@@ -135,16 +135,15 @@ testNorm = (R) -> (
     assert(mutableMatrix matrixM == M);
     
     b := norm M;
+    assert(a == b);
     ans := (flatten entries M)/abs//max;
-    if not (a == ans) then (
-      print(" a==b" | toExternalString (a==b) ); 
-      print(" a:=" | toExternalString a | "; ans:=" | toExternalString ans ); 
-     peek M ;
-      print(" M := " | toExternalString matrixM );
+    error := abs(b-ans);
+    if error > 2^(-precision R + 5) then (
+        print(" a==b" | toExternalString (a==b) ); 
+        print(" a:=" | toExternalString a | "; ans:=" | toExternalString ans ); 
+        peek M ;
+        print(" M := " | toExternalString matrixM );
     );
-    assert(a == ans);
-    if not (b == ans) then ( print ("a="|toExternalString a|"; ans="|toExternalString ans););
-    assert(b == ans);
     )
 
 TEST ///

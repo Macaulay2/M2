@@ -111,10 +111,7 @@ namespace MatrixOppies
 
   /// @brief the left or right null space of a matrix
   ///
-  /// if right_side is true then 
   ///   result_nullspace is set to the matrix whose columns form a basis for {x | Ax = 0}.
-  /// if right_side is false then
-  ///   result_nullspace is set to the matrix whose rows form a basis for {x | xA = 0}.
   /// Returns the dimension of the nullspace.
   ///
   /// result_nullspace should be a Mat, with the same ring/type as the input matrix A.
@@ -123,7 +120,6 @@ namespace MatrixOppies
   /// throws an engine_error for ring/matrix types where the function is not implemented.
   template<typename Mat>
   size_t nullSpace(const Mat& A, 
-                   bool right_side, 
                    Mat& result_nullspace) 
   {
     throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
@@ -440,16 +436,10 @@ namespace MatrixOppies
 
   template<typename RT>
   inline size_t nullSpace(const DMat<RT>& A, 
-                   bool right_side, 
                    DMat<RT>& result_nullspace)
   {
-    if (right_side)
-      {
-        DMatLUtemplate<RT> LUdecomp(A);
-        return LUdecomp.kernel(result_nullspace);
-      }
-    //TODO: do left-side
-    return 0;
+    DMatLUtemplate<RT> LUdecomp(A);
+    return LUdecomp.kernel(result_nullspace);
   }
 
   template<typename RT>
@@ -497,7 +487,6 @@ namespace MatrixOppies
             DMatZZpFFPACK& result_product);
 
   size_t nullSpace(const DMatZZpFFPACK& A, 
-                   bool right_side, 
                    DMatZZpFFPACK& result_nullspace);
 
   bool solveLinear(const DMatZZpFFPACK& A, 
@@ -566,15 +555,6 @@ namespace MatrixOppies
   {
     long nullity = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
     return nullity;
-  }
-
-  inline size_t nullSpace(const DMatZZ& A, 
-                          bool right_side, 
-                          DMatZZ& result_nullspace) 
-  {
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-    return nullSpace(A, result_nullspace);
   }
 
   inline bool solveLinear(const DMatZZ& A, 
@@ -659,16 +639,6 @@ namespace MatrixOppies
     long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
     M2_ASSERT(rank == A.numColumns() - nullity);
     return nullity;
-  }
-  
-  inline size_t nullSpace(const DMatZZpFlint& A, 
-                          bool right_side, 
-                          DMatZZpFlint& result_nullspace)
-  {
-    //TODO: WRITE ME
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,result_nullspace);
   }
   
   inline bool solveLinear(const DMatZZpFlint& A, 
@@ -768,15 +738,6 @@ namespace MatrixOppies
     //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
     //    return (A.numColumns() - rank);
     return 0;
-  }
-  inline size_t nullSpace(const DMatQQFlint& A, 
-                          bool right_side, 
-                          DMatQQFlint& result_nullspace) 
-  {
-    //TODO: write this routine in the cases which are not handled
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,true,result_nullspace);
   }
 
   inline bool solveLinear(const DMatQQFlint& A, 

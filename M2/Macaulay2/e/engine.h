@@ -1287,7 +1287,7 @@ extern "C" {
 
   M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
 
-  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side);
+  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);
 
   MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
                                 const MutableMatrix* B,

@@ -1055,10 +1055,10 @@ M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
   }
 }
 
-MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side)
+MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A)
 {
   try {
-    return A->nullSpace(right_side);
+    return A->nullSpace();
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

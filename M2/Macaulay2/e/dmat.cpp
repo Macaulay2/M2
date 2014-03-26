@@ -65,9 +65,11 @@ namespace MatrixOppies
   }
   
   size_t nullSpace(const DMatZZpFFPACK& mat, 
-                   bool right_side, 
                    DMatZZpFFPACK& nullspace)
   {
+    bool right_side = true;  // This function is written so that one could set right_side to false.
+    // (It used to be a parameter).
+
     DMatZZpFFPACK N(mat); // copy of mat
     size_t nr = mat.numRows();
     size_t nc = mat.numColumns();

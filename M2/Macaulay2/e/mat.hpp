@@ -289,9 +289,8 @@ public:
   virtual M2_arrayintOrNull rankProfile(bool row_profile) const = 0;
   
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const = 0;
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace() const = 0;
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
