@@ -51,6 +51,12 @@ namespace MatrixOppies
     M2_ASSERT(result_inv.numRows() == mat.numRows());
     M2_ASSERT(result_inv.numColumns() == mat.numRows());
 
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        return true;
+      }
+
     DMatZZpFFPACK N(mat);
     size_t n = mat.numRows();
     int nullspacedim;
