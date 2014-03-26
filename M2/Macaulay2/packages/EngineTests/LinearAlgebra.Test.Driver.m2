@@ -8,6 +8,7 @@ load "EngineTests/LinearAlgebra.Test.ZZp.m2"
 load "EngineTests/LinearAlgebra.Test.EngineGF.m2"
 load "EngineTests/LinearAlgebra.Test.Givaro.m2"
 
+load "EngineTests/LinearAlgebra.Test.all.m2"
 
 
 if hasFlint and hasFFPACK then 

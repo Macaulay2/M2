@@ -15,7 +15,8 @@ export { jordanForm,
     hasFlint,
     hasFFPACK,
     testLinearAlgebraSet,
-    testLUBoundaryCases
+    testLUBoundaryCases,
+    testHasEngineLinearAlgebra
     }
 
 
@@ -231,7 +232,7 @@ testDeterminant3x3 = (R) -> (
 testDeterminantViaMult = (R) -> (
     for i from 1 to 10 do (
         M := mutableMatrix jordanForm(R, splice{{i-1,3},{i+13,2},7:{i,1}});
-       assert((i-1)^3 * (i+13)^2 * i^7 == det M);
+        assert((i-1)^3 * (i+13)^2 * i^7 == det M);
         S := mutableMatrix(R, numRows M, numColumns M);
         fillMatrix(S, Density=>.3);
         assert(ring det S === R);

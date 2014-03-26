@@ -722,7 +722,11 @@ content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
 
 cover(Matrix) := Matrix => (f) -> matrix f
 
-rank Matrix := (f) -> rank image f
+rank Matrix := (f) -> (
+    if hasEngineLinearAlgebra ring f and isBasicMatrix f 
+    then basicRank f 
+    else rank image f
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

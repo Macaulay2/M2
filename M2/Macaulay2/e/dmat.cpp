@@ -28,12 +28,20 @@ namespace MatrixOppies
                    ZZpFFPACK::ElementType& result_det)
   {
     /// @note 1. matrix data (N) is modified by FFPACK
-    DMatZZpFFPACK N(mat);
-    result_det = FFPACK::Det(mat.ring().field(), 
-                             mat.numRows(), 
-                             mat.numColumns(),  
-                             N.array(),  
-                             mat.numColumns());
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        mat.ring().set_from_long(result_det, 1);
+      }
+    else
+      {
+        DMatZZpFFPACK N(mat);
+        result_det = FFPACK::Det(mat.ring().field(), 
+                                 mat.numRows(), 
+                                 mat.numColumns(),  
+                                 N.array(),  
+                                 mat.numColumns());
+      }
   }
   
   bool inverse(const DMatZZpFFPACK& mat, 
