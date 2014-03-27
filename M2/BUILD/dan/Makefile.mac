@@ -61,8 +61,9 @@ endif
 unexport DEBUG
 unexport PROFILE
 
-CC := gcc
-CXX := g++
+# use the latest version from homebrew, not clang:
+CC  := /usr/local/bin/gcc-4.8
+CXX := /usr/local/bin/g++-4.8
 
 # CC := clang
 # CXX := clang++
