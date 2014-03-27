@@ -109,7 +109,7 @@ namespace MatrixOppies
     throw exc::engine_error("'mult matrices' not implemented for this kind of matrix over this ring");
   }
 
-  /// @brief the left or right null space of a matrix
+  /// @brief the null space of a matrix
   ///
   ///   result_nullspace is set to the matrix whose columns form a basis for {x | Ax = 0}.
   /// Returns the dimension of the nullspace.
@@ -733,11 +733,21 @@ namespace MatrixOppies
   inline size_t nullSpace(const DMatQQFlint& A, 
                           DMatQQFlint& result_nullspace) 
   {
-    //TODO: WRITE ME
-    //DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
-    //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
-    //    return (A.numColumns() - rank);
-    return 0;
+    fmpz_mat_t m1;
+    fmpz_mat_t m2;
+    fmpz_mat_init(m1, A.numRows(), A.numColumns());
+    fmpz_mat_init(m2, A.numColumns(), A.numColumns());
+    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
+    //fmpz_mat_print_pretty(m1);
+    size_t nullity = fmpz_mat_nullspace(m2,m1);
+    // now copy the first 'nullity' columns into result_nullspace
+    result_nullspace.resize(A.numColumns(), nullity);
+    for (size_t c = 0; c < nullity; c++)
+      for (size_t r = 0; r < A.numColumns(); r++)
+        fmpz_set(fmpq_numref(& result_nullspace.entry(r,c)), fmpz_mat_entry(m2,r,c));
+    fmpz_mat_clear(m1);
+    fmpz_mat_clear(m2);
+    return nullity;
   }
 
   inline bool solveLinear(const DMatQQFlint& A, 
