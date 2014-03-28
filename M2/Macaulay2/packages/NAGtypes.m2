@@ -42,7 +42,7 @@ export {
      polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
      "evaluate",
      -- dual space
-     "DualSpace", "DualBasis", "BasePoint", "dualSpace", "addition", "intersection", "reduceSpace",
+     "DualSpace", "BasePoint", "dualSpace", "addition", "intersection", "reduceSpace",
      "PolySpace", "polySpace", "Reduced", "colon", "Gens", "Space", "innerProduct", "isContained",
      "numericalKernel", "numericalImage", "colReduce"
      }

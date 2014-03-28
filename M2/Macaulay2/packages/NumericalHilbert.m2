@@ -11,9 +11,6 @@ newPackage(
 )
 
 export {
-     dualBasis,
-     dualHilbert,
-     standardBasis,
      gCorners,
      truncatedDual,
      zeroDimensionalDual,
