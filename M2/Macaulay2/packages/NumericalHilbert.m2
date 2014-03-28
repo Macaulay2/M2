@@ -44,7 +44,7 @@ protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs
 defaultT := R -> if precision 1_R == infinity then 0 else 1e-6;
 -- The origin in the coordinates of R
 origin = method(TypicalValue=>Point)
-origin Ring := R -> point matrix{toList(numgens R:0_R)};
+origin Ring := R -> point matrix{toList(numgens R:0_(ultimate(coefficientRing, R)))};
 
 
 truncatedDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
@@ -88,7 +88,8 @@ truncDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.strategy = o.Strategy;
     H.deg = 0;
     h := symbol h;
-    S := (coefficientRing R)[{h}|gens R, MonomialOrder => {Weights => (numgens R+1):1, 1, (options R).MonomialOrder}]; --projectivization of R
+    S := (coefficientRing R)(monoid[{h}|gens R, MonomialOrder => {Weights => (numgens R+1):1, 1, (options R).MonomialOrder}]); --projectivization of R
+    h = S_0;
     H.hIgens = homogenize(sub(Igens,S), h); 
     T := if syl then S else R;
     H.Seeds = if o.Seeds === null then dualSpace(matrix{{1_T}},origin(T)) else o.Seeds;
@@ -146,18 +147,18 @@ assert(areEqual(LDZ,LBM))
 
 gCorners = method(TypicalValue => Sequence, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
 gCorners (Ideal,Point) := o -> (I,p) -> gCorners(gens I,p,o)
-gCorners (Matrix,Point) := o -> (igens,p) -> (
-    R := ring igens;
+gCorners (Matrix,Point) := o -> (Igens,p) -> (
+    R := ring Igens;
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
-    igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
 
-    ecart := max apply(flatten entries igens, g->(gDegree g - lDegree g)); --max ecart of generators
+    ecart := max apply(flatten entries Igens, g->(gDegree g - lDegree g)); --max ecart of generators
     GCs := {}; -- g-corners (as pairs: monomial, degree in homogenization)
     SBs := {}; -- standard basis elements (if o.ProduceSB)
-    finalDegree := max(flatten entries igens / gDegree);
+    finalDegree := max(flatten entries Igens / gDegree);
     d := 0;
     dBasis := dBasisReduced := polySpace map(R^1,R^0,0); -- Sylvester truncated dual space
-    TDD := truncDualData(igens,true,t,Strategy=>o.Strategy); -- initial parameters for computing truncated duals
+    TDD := truncDualData(Igens,true,t,Strategy=>o.Strategy); -- initial parameters for computing truncated duals
     while d <= finalDegree do (
     	TDD = nextTDD(d,TDD,t);
 	dBasis = polySpace TDD;
@@ -172,7 +173,7 @@ gCorners (Matrix,Point) := o -> (igens,p) -> (
 	    topLCMdegree := max apply(subsets(#GCs,2),s->homogenizedLCMdegree(GCs#(s#0), GCs#(s#1)));
 	    finalDegree = max(finalDegree,topLCMdegree);
 	    );
-	--print(d,(numrows M,numcols M), dim Rd, newGCs/first);
+	print(d, dim dBasisReduced, newGCs/first);
 	d = d+1;
 	);
     GCs = if o.ProduceSB then SBs else GCs/first;
@@ -197,10 +198,11 @@ sCorners Matrix := gCs -> (
 
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
-localHilbertRegularity (Ideal, Point) := o -> (I,p) -> localHilbertRegularity(gens I,p,o)
-localHilbertRegularity (Matrix, Point) := o -> (Igens,p) -> (
+localHilbertRegularity (Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
+localHilbertRegularity (Point, Matrix) := o -> (p,Igens) -> (
     n := numgens ring Igens;
     gCs := last gCorners(Igens,p,o);
+    print gCs;
     gCLists := apply(flatten entries gCs, l -> (listForm l)#0#0);
     LCMexp := apply(n, i -> max(apply(gCLists, l->l#i)));
     max{sum LCMexp - n + 1, 0}
@@ -229,8 +231,6 @@ listLCM = L -> (
 
 orthogonalInSubspace = method()
 orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
-    if 1%(monomialIdeal leadTerm gens D) == 0 
-    then error "expected a non-trivial dual space D"; 
     M := innerProduct(S,D);
     K := numericalKernel(transpose M,t);
     polySpace((gens S)*K, Reduced=>false)

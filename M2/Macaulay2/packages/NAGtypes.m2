@@ -725,7 +725,7 @@ intersection (PolySpace,PolySpace) := o -> (S,T) -> (
 addition = method(TypicalValue => PolySpace, Options => {Tolerance=>1e-6})
 addition (PolySpace,PolySpace) := o -> (S,T) -> (
     (mons,C) := coefficients (gens S | gens T);
-    polySpace(mons*numericalImage(C,o.Tolerance))
+    polySpace(mons*sub(numericalImage(C,o.Tolerance),ring S))
     )
 
 reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
@@ -747,6 +747,7 @@ colon (DualSpace, RingElement) := o-> (L,g) -> (
 		    if d == 0 then d else leadMonomial d
 		    ))
 	    ));
+    if numcols M == 0 then M = map((ring L)^1,(ring L)^0,0);
     M = (transpose gcoefs)*M*Lcoefs;
     (Mmons,Mcoefs) := coefficients M;
     M = Mmons*sub(numericalImage(Mcoefs,o.Tolerance),ring Mmons);

@@ -7,3 +7,4 @@
 * isWitnessPolynomial cutoff. How should it interact with (d,d')?
   (a) prove that for every d' there exist d such that the test succeeds for random(d',Jdd) with probability 1
   (b) "remember" witness candidates for every (d',e) and check for each 
+* keywords to allow options: "random", "isSubset", "quotient", "intersect", "add", "truncate"
