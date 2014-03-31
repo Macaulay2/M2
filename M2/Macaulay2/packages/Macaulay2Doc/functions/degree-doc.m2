@@ -147,8 +147,8 @@ document {
      Outputs => {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
-     "We assume that ", TT "M", " is a graded (homogeneous) module over a singly graded 
-     polynomal ring or a quotient of a polynomial ring with all degrees of variables equal to ", TT "{1}", "
+     "We assume that ", TT "M", " is a graded (homogeneous) module over a 
+     polynomal ring or a quotient of a polynomial ring with all degrees of variables equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
