@@ -163,7 +163,7 @@ document {
 	  degree minors_2 matrix {{t,x,y},{x,y,z}}
 	  ///,
      PARA {
-     	  "The algorithm computes the ", TO "poincare", " polynomial of ", TT "M", "
+     	  "The algorithm computes the ", TO "poincare", " polynomial of ", TT "M", ",
 	  divides it by ", TT "1-T", " 
 	  as often as possible, then evaluates it at ", TT "T=1", ".
 	  When the module has finite length,                                                           
