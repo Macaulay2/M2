@@ -125,7 +125,6 @@ basicDet Matrix := (f) -> (
     )
 basicInverse Matrix := (f) -> (
     if not isBasicMatrix f then error "expected a matrix with free source and target";    
-    << "calling basicInverse" << endl;
     A := mutableMatrix(f, Dense=>true);    
     R := ring A;
     if numRows A =!= numColumns A then error "expected square matrix";

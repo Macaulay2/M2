@@ -190,6 +190,7 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      else rawSolve(raw A,raw b,raw x);
      x)
 solve(Matrix,Matrix) := opts -> (A,b) -> (
+    if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))

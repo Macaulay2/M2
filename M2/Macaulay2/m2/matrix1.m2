@@ -676,7 +676,7 @@ dual(Matrix) := Matrix => {} >> o -> f -> (
 Matrix.InverseMethod =
 inverse Matrix := (cacheValue symbol inverse) (
      m -> (
-      if hasEngineLinearAlgebra ring m then
+      if hasEngineLinearAlgebra ring m and isBasicMatrix m then
           basicInverse m
       else (
 	      (quo,rem) := quotientRemainder(id_(target m), m);
