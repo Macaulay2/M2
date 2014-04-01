@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalHilbert",
-     PackageExports => {"NAGtypes"},
+     PackageExports => {"NAGtypes", "PolynomialSpace"},
      Version => "0.1", 
      Date => "May 11, 2012",
      Authors => {{Name => "Robert Krone", 
@@ -11,23 +11,21 @@ newPackage(
 )
 
 export {
-     gCorners,
      truncatedDual,
      zeroDimensionalDual,
+     gCorners,
      sCorners,
      localHilbertRegularity,
+     elminatingDual,
      orthogonalInSubspace,
      TruncDualData,
      truncDualData,
      nextTDD,
      homogPolySpace,
      newGCorners,
-     origin,
      Seeds,
      DZ,
-     ST,
      BM,
-     GB,
      ProduceSB
      }
 
@@ -39,14 +37,11 @@ protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs
 
 -- Default tolerance value respectively for exact fields and inexact fields
 defaultT := R -> if precision 1_R == infinity then 0 else 1e-6;
--- The origin in the coordinates of R
-origin = method(TypicalValue=>Point)
-origin Ring := R -> point matrix{toList(numgens R:0_(ultimate(coefficientRing, R)))};
 
 
 truncatedDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
-truncatedDual (Ideal,Point,ZZ) := o -> (I,p,d) -> truncatedDual(gens I,p,d,o)
-truncatedDual (Matrix,Point,ZZ) := o -> (igens,p,d) -> (
+truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> truncatedDual(p,gens I,d,o)
+truncatedDual (Point,Matrix,ZZ) := o -> (p,igens,d) -> (
     R := ring igens;
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
     igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
@@ -56,12 +51,12 @@ truncatedDual (Matrix,Point,ZZ) := o -> (igens,p,d) -> (
     )
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
-zeroDimensionalDual (Ideal,Point) := o -> (I,p) -> zeroDimensionalDual(gens I,p,o)
-zeroDimensionalDual (Matrix,Point) := o -> (igens,p) -> (
-    R := ring igens;
+zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> zeroDimensionalDual(p,gens I,o)
+zeroDimensionalDual (Point,Matrix) := o -> (p,Igens) -> (
+    R := ring Igens;
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
-    igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
-    TDD := truncDualData(igens,false,t,Strategy=>o.Strategy);
+    Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
+    TDD := truncDualData(Igens,false,t,Strategy=>o.Strategy);
     dBasis := polySpace map(R^1,R^0,0);
     d := 0;
     while true do (
@@ -133,18 +128,64 @@ R = CC[x,y]
 M = matrix {{x^2-x*y^2,x^3}}
 --M = matrix {{x*y, y^2}}
 p = point matrix{{0_CC,0_CC}}
-G = gCorners(ideal M,p,ProduceSB=>true)
-G = gCorners(ideal M,p)
+G = gCorners(p,ideal M,ProduceSB=>true)
+G = gCorners(p,ideal M)
 q = point matrix{{0_CC,1_CC}}
-gCorners(M,q)
-LDZ = reduceSpace truncatedDual(M,p,6,Strategy=>DZ)
-LBM = reduceSpace truncatedDual(M,p,6,Strategy=>BM)
+gCorners(q,M)
+LDZ = reduceSpace truncatedDual(p,M,6,Strategy=>DZ)
+LBM = reduceSpace truncatedDual(p,M,6,Strategy=>BM)
 assert(areEqual(LDZ,LBM))
 ///
 
+-- this version gets a piece of the eliminating DS from the "usual" truncated DS 
+eliminatingDual = method(Options => {Tolerance => null})
+eliminatingDual (Point,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,gens I,ind,d,o)
+eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
+    R := ring Igens;
+    t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
+    n := numgens R;
+    if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
+    then error ("expected a list of nonnegative integers in the range [0," | n | "] as 2nd parameter");
+    if not d>=0
+    then error "expected a nonnegative integer as 3rd parameter";
+    TDD := truncDualData(Igens,false,t);
+    RdBasis := dualSpace(TDD,p);
+    dBold := 0;
+    dBnew := dim RdBasis;
+    while dBold != dBnew do (
+	TDD = nextTDD(TDD,t);
+	RdBasis = truncate(dualSpace(TDD,p),ind,d);
+	dBold = dBnew;
+	dBnew = dim RdBasis;
+	);
+    RdBasis
+    )
+
+truncate (PolySpace, ZZ) := (L,d) -> (
+    R := ring L;
+    if not L.Reduced then L = reduceSpace L;
+    tGens := select(flatten entries gens L, q -> first degree q <= d);
+    if #tGens == 0 then polySpace map(R^1,R^0,0) else polySpace matrix{tGens}
+    )
+truncate (DualSpace, ZZ) := (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
+truncate (DualSpace, List, ZZ) := (L,ind,d) -> (
+    R := ring L;
+    n := numgens R;
+    indC := flatten entries submatrix'(matrix{{0..n-1}},ind);
+    T := newRing(R,MonomialOrder=>{#ind,#indC},Degrees=>{(#ind:{1,0})|(#indC:{0,1})});
+    TtoR := map(R,T, (vars R)_ind | (vars R)_indC);
+    varList := new MutableList from n:0;
+    scan(#ind, i->(varList#(ind#i) = T_i));
+    scan(#indC, i->(varList#(indC#i) = T_(#ind + i)));
+    RtoT := map(T,R, matrix{toList varList});
+    TL := reduceSpace polySpace RtoT gens L;
+    TL = truncate(TL,d);
+    dualSpace(TtoR gens TL, L.BasePoint)
+    )
+
 gCorners = method(TypicalValue => Sequence, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
-gCorners (Ideal,Point) := o -> (I,p) -> gCorners(gens I,p,o)
-gCorners (Matrix,Point) := o -> (Igens,p) -> (
+gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
+gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
     Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});

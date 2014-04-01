@@ -47,7 +47,7 @@ NPD file (name?)
 * isWitnessPolynomial (isPointEmbedded)
 * orthogonalInSubspace Ideal (isPointEmbedded)
 
-numerical LA and DualSpace functionality (where should this go?)
+numerical LA and DualSpace functionality (where should these go?)
 * numericalKernel (NAGtypes)
 * numericalImage (NAGtypes)
 * colReduce (NAGtypes)
