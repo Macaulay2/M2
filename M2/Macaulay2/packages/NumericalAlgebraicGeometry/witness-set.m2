@@ -3,6 +3,8 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
+export { sample }
+
 WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
 
@@ -137,13 +139,17 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
      witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W),Software=>o.Software))             	  
      )
 
--- get a random Point(s) 
-random WitnessSet := o -> W -> (
+-- get a random Point(s)
+
+sample = method(Options=>{Tolerance=>1e-6})
+sample WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W));
     p := W'.Points # (random(#W'.Points));
+    if not p.?ErrorBoundEstimate or p.ErrorBoundEstimate > o.Tolerance then p = refine(p,ErrorTolerance=>o.Tolerance); 
     if W.?ProjectionDimension then project(p, W.ProjectionDimension)
     else p 
     )
+random WitnessSet := o -> W -> sample W
 
 TEST ///
 restart 
@@ -166,6 +172,20 @@ W3 = new WitnessSet from {
      ProjectionDimension => 2 -- project onto xy-plane
      } 
 for i to 5 do assert isOn(random W3,W3,2)
+
+W4 = new WitnessSet from {
+     Equations => ideal {x^2+y^2+z^2-1, z^2},
+     Slice => matrix "1,0,0,0",
+     Points => {{{0,1,0_CC}},{{0,-1,0_CC}}}/point
+     } 
+F = polySystem(equations W4 | slice W4)
+scan(W4.Points, P->deflateInPlace(P,F))
+for i to 5 do assert isOn(random W4,W4)
+
+P = sample(W3, Tolerance=>1e-15)
+assert(P.ErrorBoundEstimate < 1e-15) 
+P = sample(W4, Tolerance=>1e-15)
+assert(P.ErrorBoundEstimate < 1e-15) 
 ///
 
 -- a constructor for witnessSet that depends on NAG

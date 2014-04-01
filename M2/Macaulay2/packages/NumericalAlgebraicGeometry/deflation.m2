@@ -185,7 +185,7 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
     P.DeflationSequence = d'seq;
     P.DeflationSequenceMatrices = d'seq'mat;
     P.SolutionSystem = F;
-    P.LiftedSystem = F0;
+    P.LiftedSystem = P0.SolutionSystem = F0;
     P.LiftedPoint = P0;
     P.SolutionStatus = if #d'seq > 0 then Singular else Regular
     )

@@ -76,6 +76,92 @@ refine = method(TypicalValue => List, Options =>{
 	  SingularConditionNumber=>null
 	  })
 refine (List,List) := List => o -> (T,solsT) -> refine(polySystem T, solsT, o)
+
+refine Point := o -> P -> if P.?SolutionSystem then (
+    ret := new Point from P;
+    if P.?LiftedSystem then (
+	P' := refine(P.LiftedSystem,P.LiftedPoint,o);
+    	ret.Coordinates = take(P'.Coordinates, P.SolutionSystem.NumberOfVariables);
+    	ret.SolutionStatus = P'.SolutionStatus;
+	if ret.SolutionStatus === Regular then ret.SolutionStatus = Singular
+	) 
+    else (
+	P' = refine(P.SolutionSystem,P,o);
+    	ret.Coordinates = P'.Coordinates;
+    	ret.SolutionStatus = P'.SolutionStatus;
+	);
+    ret.ErrorBoundEstimate = P'.ErrorBoundEstimate;
+    ret.ConditionNumber = P'.ConditionNumber;
+    ret
+    ) else error "there is no polynomial system associated with the point"
+
+-- this is the main function for M2
+refine (PolySystem,Point) := Point => o -> (F,s) -> 
+if member(o.Software,{BERTINI,PHCPACK}) then first refine(F,{s},o) else (
+    o = fillInDefaultOptions o;
+    n'iterations := o.Iterations;
+    x := transpose matrix s; -- convert to vector 
+    -- if isProjective then x = normalize x;
+    x1 := x; -- refined x
+    error'bound := --if not s.?ErrorBoundEstimate or s.SolutionSystem =!= F 
+                   --then 
+		   infinity
+		   --else s.ErrorBoundEstimate
+		   ;
+    norm'dx := infinity; -- dx = + infinity
+    norm'Fx := infinity;
+    refinement'success := true;
+    nCorrSteps := 0;
+    while (norm'Fx > o.ResidualTolerance 
+	or norm'dx > o.ErrorTolerance * norm x1) 
+    and nCorrSteps < n'iterations 
+    and refinement'success
+    --and cond < o.SingularConditionNumber 
+    do ( 
+	Fx := evaluate(F,x1);
+	norm'Fx = norm Fx;
+	J := evaluate(jacobian F, x1);
+	--cond = conditionNumber J;
+	dx := solve(J, -Fx);
+	norm'dx = norm dx;
+	if DBG > 3 then << "x=" << toString x1 << " res=" <<  Fx << " dx=" << dx << endl;
+	if norm'dx < error'bound then (
+	    x1 = x1 + dx;
+	    --if isProjective then x1 = normalize x1;
+	    nCorrSteps = nCorrSteps + 1;
+	    )
+	else (
+	    if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+	    refinement'success = false;
+	    );
+	error'bound = norm'dx; 
+	);
+    if norm'Fx > o.ResidualTolerance then (
+	if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
+	refinement'success = false;
+	);
+    if norm'dx > o.ErrorTolerance * norm x1 then (
+	if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
+	refinement'success = false;
+	);  
+    s' := point { flatten entries x1, 
+	SolutionSystem => F, 
+	ConditionNumber => conditionNumber evaluate(jacobian F, x1)
+	};
+    if error'bound =!= infinity then s'.ErrorBoundEstimate = error'bound;
+    s'.SolutionStatus = if refinement'success then (
+	if s'.ConditionNumber > o.SingularConditionNumber 
+	then Singular 
+	else Regular
+	)
+    else (
+	if DBG>2 then print "warning: refinement failed";
+	RefinementFailure
+	);
+    s'
+    )
+
+-- this is the main function for Bertini and PHCpack
 refine (PolySystem,List) := List => o -> (F,solsT) -> (
 -- refines solutions to solsT of the system F
      o = fillInDefaultOptions o;
@@ -96,7 +182,6 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
      	  );
      if #solsT == 0 then return solsT;
      
-     ref'sols := null;
      if isProjective then (
      	  if o.Software === M2engine then ( -- engine refiner is primitive
 --      	       PT := if class first solsT === Point and (first solsT).?Tracker then (first solsT).Tracker else null;
@@ -117,83 +202,25 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
 	);
 
      -- Software=>M2 (and Software=>M2engine for now)
-     if ref'sols === null then (
-     	  n'iterations := o.Iterations;
-     	  J := jacobian F; 
-     	  evalF := x0 -> (
-	       ret := evaluate(F,x0); 
-	       if isProjective then ret || matrix{{0_C}} else ret
-	       );
-	  evalJ := x0 -> (
-	       ret := evaluate(J,x0);
-	       if isProjective then ret || matrix{ flatten entries x0 / conjugate} else ret
-	       );
-	  ref'sols = apply(solsT, s->(
-	       if class s =!= Point then s = point {s} 
-	       else if s.SolutionStatus === Infinity 
-	       -- or s.SolutionStatus === Singular 
-	       then return s;
-	       x := transpose matrix s; -- convert to vector 
-	       if isProjective then x = normalize x;
-	       x1 := x; -- refined x
-	       error'bound := if not s.?ErrorBoundEstimate or s.SolutionSystem =!= F 
-	                      then infinity
-			      else s.ErrorBoundEstimate;
-	       norm'dx := infinity; -- dx = + infinity
-	       norm'Fx := infinity;
-	       refinement'success := true;
-	       nCorrSteps := 0;
-	       while (norm'Fx > o.ResidualTolerance 
-	       	    or norm'dx > o.ErrorTolerance * norm x1) 
-	       and nCorrSteps < n'iterations 
-	       and refinement'success
-	       --and cond < o.SingularConditionNumber 
-	       do ( 
-		   Fx := evalF(x1);
-		   norm'Fx = norm Fx;
-		   J := evalJ(x1);
-		   --cond = conditionNumber J;
-		   dx := solve(J, -Fx);
-		   norm'dx = norm dx;
-		   if DBG > 3 then << "x=" << toString x1 << " res=" <<  Fx << " dx=" << dx << endl;
-		   if norm'dx < error'bound then (
-		       x1 = x1 + dx;
-		       if isProjective then x1 = normalize x1;
-		       nCorrSteps = nCorrSteps + 1;
-		       )
-		   else (
-		       if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
-		       refinement'success = false;
-		       );
-		   error'bound = norm'dx; 
-		   );
-	       if norm'Fx > o.ResidualTolerance then (
-		   if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
-		   refinement'success = false;
-		   );
-	       if norm'dx > o.ErrorTolerance * norm x1 then (
-		   if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
-		   refinement'success = false;
-		   );  
-	       s' := point { flatten entries x1, 
-		   SolutionSystem => F, 
-		   ConditionNumber => conditionNumber evalJ(x1)
-		   };
-    	       if error'bound =!= infinity then s'.ErrorBoundEstimate = error'bound;
-	       s'.SolutionStatus = if refinement'success then (
-		   if s'.ConditionNumber > o.SingularConditionNumber 
-		   then Singular 
-		   else Regular
-		   )
-	       else (
-		   if DBG>2 then print "warning: refinement failed";
-		   RefinementFailure
-	       	   );
-	       s'     
-	       ));
-     	   );
-      	   ref'sols
-      )     
+     apply(solsT, s->refine(F,    		  
+	     if class s === Point then s else point {s/toCC},
+	     o 
+	     ))
+     )         
+TEST /// -- refine 
+R = CC[x,y];
+T = {x^2+y^2-1, x*y};
+sols = { {1.1_CC,0.1}, { -0.1,1.2} };
+rsols = refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
+assert areEqual(rsols, {{1,0},{0,1}})
+T = polySystem {x^2+y^2-1, (x-y)^2};
+P = point {{sqrt 2/2,sqrt 2/2}/toCC};
+P' = refine(T,P)
+assert(P'.ErrorBoundEstimate < 1e-6 and P'.ConditionNumber > 1e6 and status P' === Singular)
+deflateInPlace(P,T)
+P'' = refine P
+assert(P''.ErrorBoundEstimate < 1e-6 and P''.ConditionNumber < 100 and status P'' === Singular)
+///
 
 endGame'Cauchy'polygon = method(Dispatch=>Thing)
 endGame'Cauchy'polygon Sequence := parameters -> (

@@ -233,7 +233,11 @@ matrix Point := o -> p -> matrix {coordinates p}
 
 project = method()
 -- project point to the first n coordinates
-project (Point,ZZ) := (p,n) -> point { take(coordinates p, n) }
+project (Point,ZZ) := (p,n) -> (
+    p' := point { take(coordinates p, n) };
+    if p.?ErrorBoundEstimate then p'.ErrorBoundEstimate = p.ErrorBoundEstimate;
+    p'
+    )
    
 norm (Thing, Point) := (no,p) -> norm(no, coordinates p)
 norm (Thing, Matrix) := (no,M) -> norm(no, flatten entries M)
