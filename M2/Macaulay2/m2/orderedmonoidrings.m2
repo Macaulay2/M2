@@ -274,7 +274,10 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
-     	       facs = apply(facs, p -> (pp:=new RM from p; if conv(leadCoefficient pp) > 0 then pp else (c=-c; -pp)));
+     	       facs = apply(#facs, i -> (
+		       pp:=new RM from facs#i; 
+		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
+		       ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
