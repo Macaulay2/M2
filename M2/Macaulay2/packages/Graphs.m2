@@ -203,7 +203,7 @@ export {
     --
     -- Graph manipulations
     "addEdge",
-    "addEdges",
+    "addEdges'",
     "addVertex",
     "addVertices",
     "bipartiteColoring",
@@ -523,16 +523,16 @@ graphLibrary = method()
 graphLibrary String := Graph => s -> (
     s = toLower s;
     if s == "petersen" then return generalizedPetersenGraph(5,2);
-    if s == "bidiakis cube" then return addEdges(cycleGraph 12, {{0,6},{1,5},{7,11},{2,10},{3,9},{4,8}});
+    if s == "bidiakis cube" then return addEdges'(cycleGraph 12, {{0,6},{1,5},{7,11},{2,10},{3,9},{4,8}});
     if s == "desargues" then return generalizedPetersenGraph(10,3);
     if s == "dodecahedron" then return generalizedPetersenGraph(10,2);
     if s == "durer" then return generalizedPetersenGraph(6,2);
     if s == "claw" then return starGraph 4;
     if s == "cubical" then return circularLadder 4;
-    if s == "f26a" then return addEdges(cycleGraph 26, apply(select(toList(0..24),even), i -> {i,(i+7) % 26}));
-    if s == "franklin" then return addEdges(cycleGraph 12, apply(toList(0..5), i -> if even i then {i, i+7} else {i, i+5}));
-    if s == "chvatal" then return addEdges(cycleGraph 12, apply({0,1,2,5}, i -> {i,i+6}) | apply({0,1,2,6,7,8}, i -> {i,i+3}) | {{3,10},{4,9}});
-    if s == "heawood" then return addEdges(cycleGraph 14, apply(select(toList(0..12),even), i -> {i, i+5 % 14}));
+    if s == "f26a" then return addEdges'(cycleGraph 26, apply(select(toList(0..24),even), i -> {i,(i+7) % 26}));
+    if s == "franklin" then return addEdges'(cycleGraph 12, apply(toList(0..5), i -> if even i then {i, i+7} else {i, i+5}));
+    if s == "chvatal" then return addEdges'(cycleGraph 12, apply({0,1,2,5}, i -> {i,i+6}) | apply({0,1,2,6,7,8}, i -> {i,i+3}) | {{3,10},{4,9}});
+    if s == "heawood" then return addEdges'(cycleGraph 14, apply(select(toList(0..12),even), i -> {i, i+5 % 14}));
     if s == "paw" then return addEdge(starGraph 4, set {2,3});
     if s == "mobius" then return generalizedPetersenGraph (8,3);
     if s == "nauru" then return generalizedPetersenGraph (12,5);
@@ -540,7 +540,7 @@ graphLibrary String := Graph => s -> (
     if s == "house" then return addEdge(cycleGraph 5; set {1,3});
     if s == "bull" then return addEdge(pathGraph 5, set {1,3});
     if s == "bowtie" then return friendshipGraph 2;
-    if s == "dart" then return addEdges(addVertex(cycleGraph 4, 4),{{0,2},{2,4}});
+    if s == "dart" then return addEdges'(addVertex(cycleGraph 4, 4),{{0,2},{2,4}});
     )
 
 kneserGraph = method()
@@ -1321,10 +1321,10 @@ tensorProduct = directProduct
 --Graph Manipulations
 ---------------------------
 addEdge = method()
-addEdge (Digraph, Set) := Graph => (G, s) -> addEdges(G, {toList s})
+addEdge (Digraph, Set) := Graph => (G, s) -> addEdges'(G, {toList s})
 
-addEdges = method()
-addEdges (Graph, List) := Graph => (G, L) -> (
+addEdges' = method()
+addEdges' (Graph, List) := Graph => (G, L) -> (
     A := mutableMatrix adjacencyMatrix G;
     while L != {} do(
         l := first L;
@@ -1336,7 +1336,7 @@ addEdges (Graph, List) := Graph => (G, L) -> (
         );
     graph (vertexSet G, matrix A)
     )
-addEdges (Digraph, List) := Digraph => (G, L) -> (
+addEdges' (Digraph, List) := Digraph => (G, L) -> (
     A := mutableMatrix adjacencyMatrix G;
     while L != {} do(
         l := first L;
@@ -4674,17 +4674,17 @@ doc ///
 --Graph Manipulations
 ---------------------------
 
---addEdges
+--addEdges'
 doc ///
     Key
         addEdge
         (addEdge, Digraph, Set)
-        addEdges
-        (addEdges, Digraph, List)
+        addEdges'
+        (addEdges', Digraph, List)
     Headline
         A method for adding edges to a graph
     Usage
-        H = addEdges (G, L)
+        H = addEdges' (G, L)
         H = addEdge (G, S)
     Inputs
         G:Graph
@@ -4701,7 +4701,7 @@ doc ///
         Example
             H = cycleGraph 4;
             G = addEdge(H, set {0,2})
-            G = addEdges(H, {{0,2},{3,1}})
+            G = addEdges'(H, {{0,2},{3,1}})
     SeeAlso
         addVertices
 ///
@@ -4735,7 +4735,7 @@ doc ///
             H = addVertices(G, {3,4,5})
             --Notice that since 3 is already a vertex of G, it is ignored
     SeeAlso
-        addEdges
+        addEdges'
 ///
 
 --bipartiteColoring
