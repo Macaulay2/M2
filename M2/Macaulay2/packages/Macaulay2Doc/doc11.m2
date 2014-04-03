@@ -494,7 +494,7 @@ document {
 	  "The heft vector is used in the computation of degrees of modules over a polynomial ring ", TT "R", ", because it
 	  gives a homomorphism from the degrees ring of ", TT "R", " to the Laurent
 	  polynomial ring in one variable ", TT "T", " that sends monomials corresponding to the degrees of
-	  variables of ", TT "R", " to positive powers of ", TT "T", ".  See ", TO "degree", "."
+	  variables of ", TT "R", " to positive powers of ", TT "T", ".  See ", TO "degree(Module)", "."
 	  },
      EXAMPLE lines ///
      R = QQ[x,y,Heft=>{3}];
