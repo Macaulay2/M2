@@ -148,7 +148,7 @@ document {
 	  ZZ => {"the degree of ", TT "M"}
 	  },
      "We assume that ", TT "M", " is a graded (homogeneous) module over a 
-     polynomal ring or a quotient of a polynomial ring with all degrees of variables equal to ", TT "{1}", ",
+     polynomal ring or a quotient of a polynomial ring with all degrees of variables and heft vector equal to ", TT "{1}", ",
      over a field ", TT "k", ".",
      PARA{
 	  "If ", TT "M", " is finite dimensional over ", TT "k", ", the degree
@@ -175,7 +175,7 @@ document {
 	  "If the base ring is ", TO "ZZ", ",
 	  or the module is not homogeneous, it is likely that the answer is not what
 	  you would expect.  Similarly, if the degrees of the variables
-	  are not all ", TT "{1}", ", then the answer is harder to interpret.  See ", TO "heft vectors", " and
+	  are not all ", TT "{1}", ", or the heft vector isn't ",TT "{1}", ", then the answer is harder to interpret.  See ", TO "heft vectors", " and
 	  ", TO "multidegree", "."
 	  },
      SeeAlso => {hilbertPolynomial, isHomogeneous}
