@@ -24,7 +24,7 @@ export {
      sliceEquations, projectiveSliceEquations, IsIrreducible, 
      ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
      -- numerical variety
-     "NumericalVariety", "numericalVariety",
+     NumericalVariety, numericalVariety, numericalAffineSpace,
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
      Point, point, coordinates,
@@ -584,8 +584,10 @@ degree NumericalVariety := V -> (
      d := dim V;
      sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
      )
+components NumericalVariety := V -> flatten values V
+
 numericalVariety = method(TypicalValue=>NumericalVariety)
-numericalVariety List := Ws -> (
+numericalVariety List := Ws -> if #Ws==0 then new NumericalVariety else (
      T := class first Ws;
      if not ancestor(WitnessSet,T) then error "a list of WitnessSet-s expected";
      V := new NumericalVariety;
@@ -597,6 +599,14 @@ numericalVariety List := Ws -> (
      check V;
      V
      )
+numericalAffineSpace = method()
+numericalAffineSpace Ring := R -> (
+    n := numgens R;
+    C := coefficientRing R; 
+    A := random(C^n,C^n);
+    b := random(C^n,C^1);
+    numericalVariety {witnessSet(ideal R, A|(-b), {point entries transpose solve(A,b)})}
+    )
 projectiveNumericalVariety = method(TypicalValue=>ProjectiveNumericalVariety)
 projectiveNumericalVariety List := Ws -> new ProjectiveNumericalVariety from numericalVariety Ws
 

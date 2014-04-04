@@ -474,6 +474,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   )
 
 load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/intersection.m2"
 load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 
