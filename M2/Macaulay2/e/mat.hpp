@@ -281,6 +281,11 @@ public:
   // then NULL is returned, and an error message is set.
   virtual MutableMatrix* invert() const = 0;
 
+  // Find the row reduced echelon form of 'this'. If
+  // the ring is one in which the rref cannot be computed,
+  // then NULL is returned, and an error message is set.
+  virtual MutableMatrix* rowReducedEchelonForm() const = 0;
+
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).

@@ -1044,6 +1044,17 @@ MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
   }
 }
 
+MutableMatrix* rawLinAlgRREF(MutableMatrix* A)
+{
+  try {
+    return A->rowReducedEchelonForm();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
 {
   try {

@@ -713,6 +713,8 @@ public:
   // then NULL is returned, and an error message is set.
   virtual MutableMatrix* invert() const;
 
+  virtual MutableMatrix* rowReducedEchelonForm() const;
+
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
@@ -774,6 +776,21 @@ MutableMatrix* MutableMat<T>::invert() const
       return 0;
     }
   return result;
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  try {
+    // ignore returned value (the rank of mat):
+    MatrixOppies::rowReducedEchelonForm(mat, result->mat);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    delete result;
+    throw(e);
+  }
 }
 
 template <typename T>

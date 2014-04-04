@@ -1285,6 +1285,14 @@ extern "C" {
 
   MutableMatrix* rawLinAlgInverse(MutableMatrix* A);
 
+  /** compute the row reduced echelon form of the matrix A.
+      This is a matrix of the same shape as A.
+      NULL, and an error, is returned if the ring is not
+      equipped to compute this, or if it has not been
+      implemented for that ring type yet
+  */
+  MutableMatrix* rawLinAlgRREF(MutableMatrix* A);
+
   M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
 
   MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);

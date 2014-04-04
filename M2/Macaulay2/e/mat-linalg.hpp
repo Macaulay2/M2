@@ -92,6 +92,20 @@ namespace MatrixOppies
     throw exc::engine_error("'invert' not implemented for this kind of matrix over this ring");
   }
 
+  /// @brief the row reduced echelon form of a matrix over a field, or ZZ.
+  ///
+  /// result_rref should be a Mat, with the same ring/type as the input matrix A.
+  ///   result_rref does not need to be the same size as A, it will be resized if needed.
+  /// returns the rank of A.
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  template<typename Mat>
+  size_t rowReducedEchelonForm(const Mat& A, 
+                               Mat& result_rref)
+  {
+    throw exc::engine_error("'rowReducedEchelonForm' not implemented for this kind of matrix over this ring");
+  }
+
   /// @brief the product of two matrices
   ///
   /// result_product is set to the product A*B
@@ -728,6 +742,12 @@ namespace MatrixOppies
                       DMatQQFlint& result_inv) 
   {
     return fmpq_mat_inv(result_inv.fmpq_mat(), A.fmpq_mat());
+  }
+
+  inline size_t rowReducedEchelonForm(const DMatQQFlint& A, 
+                                      DMatQQFlint& result_rref) 
+  {
+    return fmpq_mat_rref(result_rref.fmpq_mat(), A.fmpq_mat());
   }
 
   inline size_t nullSpace(const DMatQQFlint& A, 

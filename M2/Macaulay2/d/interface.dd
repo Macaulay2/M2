@@ -2849,6 +2849,13 @@ export rawLinAlgInverse(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgInverse",rawLinAlgInverse);
 
+export rawLinAlgRREF(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgRREF(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawLinAlgRREF",rawLinAlgRREF);
+
 export rawLinAlgMult(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
