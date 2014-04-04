@@ -10,6 +10,7 @@ document {
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
+      TO "changes, 1.7 from linalg branch",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -63,6 +64,26 @@ document {
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
 
+document {
+     Key => "changes, 1.7 from linalg branch",
+     UL {
+          LI {"the Macaulay/e engine directory now compiles cleanly, with a few warning messages left."},
+          LI {"incorporated fast linear algebra for dense (mutable) matrices over finite prime fields, using ffpack and flint"},
+          LI {"linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
+              Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
+              Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
+          LI {"Prime finite fields can now be ZZ/p, where p is <= 9223372036854775783, i.e. the largest prime
+              less than 2^63."},
+          LI {///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: ZZp(p, Strategy=>"FLINT"),
+              ZZp(p, Strategy=>"FFPACK"), ZZp(p, Strategy=>"ENGINE").///},
+          LI {"Extensive changes to numerical algebraic geometry code in the engine"},
+          LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
+              it can be used, but is not done so automatically."},
+          LI {"the overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
+              that because of the high use of templates, compile times have generally increased."}
+     }
+ }
+ 
 document {
      Key => "changes, 1.7",
      UL {

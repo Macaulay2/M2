@@ -57,7 +57,6 @@ const Ring* /* or null */ rawARingQQFlint()
 
 const Ring /* or null */ *rawARingZZp(unsigned long p)
 {
-  std::cout << "Prime is " << p;
   if (p <= 1 || p >= 32750)
     {
       ERROR("ZZP: expected a prime number p in range 2 <= p <= 32749");
@@ -69,7 +68,6 @@ const Ring /* or null */ *rawARingZZp(unsigned long p)
 const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
 {
 #ifdef HAVE_FLINT
-  std::cout << "Prime is " << p;
   M2::ARingZZpFlint *A = new M2::ARingZZpFlint(p);
   return M2::ConcreteRing<M2::ARingZZpFlint>::create(A);
 #else
@@ -147,7 +145,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
         }*/
         if (dimension==1 && M2::ARingZZpFFPACK::getMaxModulus()> prime) 
         {
-          std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
+          // std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
           M2::ARingZZpFFPACK *A = new M2::ARingZZpFFPACK(prime);
           return M2::ConcreteRing<M2::ARingZZpFFPACK>::create(A);
         }

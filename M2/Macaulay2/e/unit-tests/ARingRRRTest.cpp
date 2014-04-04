@@ -147,7 +147,7 @@ TEST(ARingRRR, multDivide)
       else
         {
           R.divide(d,c,b);
-          EXPECT_TRUE(almostEqual(R,98,d,a));
+          EXPECT_TRUE(almostEqual(R,94,d,a));
         }
     }
   R.clear(d);
