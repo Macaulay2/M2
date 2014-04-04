@@ -65,7 +65,8 @@ changeOfBasis(Ring, ZZ) := (R,n) -> (
 -- The ring kk should be a field, for which det, rawLinAlgInverse are defined
 randomFullRank = (R,n) -> (
     S := mutableMatrix(R,n,n);
-    fillMatrix S;
+    for i from 0 to n-1 do for j from 0 to n-1 do S_(i,j) = random 100;
+    --fillMatrix S;
     while det S == 0 do (
         S = mutableMatrix(R,n,n);
         fillMatrix S;
