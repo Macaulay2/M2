@@ -50,16 +50,11 @@ bool fromStream<RingZZ>(std::istream &i, const RingZZ& R, ring_elem &result)
   char original_s[original_s_len];
   char *s_str = original_s;
   char *s = s_str;
-  int s_len = original_s_len;
-  int len = 0;
+  //  int s_len = original_s_len;
+  //  int len = 0;
   while (isdigit(i.peek()))
     {
-      *s++ = i.get();
-      len++;
-      if (len > s_len)
-        {
-          // NOT DONE BEING WRITTEN!!!!!!
-        }
+      // NOT DONE BEING WRITTEN!!!!!!
     }
   *s++ = '\0';
 
