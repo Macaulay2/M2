@@ -23,6 +23,25 @@ This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
 
+----------------------
+Getting the source code
+----------------------
+
+The current development version of the source code can be obtained with this
+command, assuming you have installed "git" on your machine:
+
+    git clone https://github.com/Macaulay2/M2
+
+A directory called M2, which you can move or rename, will be created, and this
+INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
+to the branch containing version 1.6 with the following command:
+
+    git checkout release-1.6
+
+The following command shows the list of release branches:
+
+    git branch -a | grep origin/release
+
 ---------
 Programs
 ---------
