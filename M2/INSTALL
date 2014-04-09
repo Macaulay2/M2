@@ -165,7 +165,13 @@ various modern operating systems:
   Compiling the most recent GNU C compiler
 ----------------------
 
-  To download and install the GNU C compiler, without having root access:
+  It may happen that you need a modern version of the GNU C compiler, but you
+  have no way to download a binary distribution of it, or you have no way to
+  use "brew" or "fink" to download and compile it for you.  In that case, you
+  may download, compile, and install the GNU C compiler (without necessariy
+  having root access) as follows.  Change "$HOME/local" below to the path to
+  the directory where you want to install the files; if it's a directory not
+  owned by you, prefix the "make install" command below with "sudo".
 
        wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
        tar xjf gcc-4.8.2.tar.bz2
@@ -183,7 +189,7 @@ various modern operating systems:
      of its libraries, and it would be bad to have a mismatch.
 
      It might be possible to add --disable-libstdcxx to the "configure"
-     commandn line above, allowing the resulting binaries to depend on the
+     command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
@@ -197,7 +203,8 @@ various modern operating systems:
         export CXX=g++-4.8.2
         export FC=gfortran-4.8.2
 
-     and then log out and log in again.
+     and then log out and log in again (or source the file into your
+     environment and continue in the same process or in daughter processes).
 
      Under Scientific Linux 6.4, if you run "sudo yum install -y glibc-devel.i686"
      first, then you can omit --disable-multilib above and get a 32 bit
@@ -209,6 +216,11 @@ various modern operating systems:
      Any other libraries you may want to use may also be installed with
      $HOME/local as the install prefix, as gcc-4.8.2 will automatically search
      in there for include files and libraries.
+
+     Installing multiple software in the same directory, such as in $HOME/local
+     (as described above), makes it hard to remove or upgrade packages.  To
+     solve that problem, use the program "epkg", available from
+     http://www.encap.org/epkg/.
 
 ----------------------
 Choosing a place for the repository
