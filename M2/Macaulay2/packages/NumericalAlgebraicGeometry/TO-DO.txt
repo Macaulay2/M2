@@ -1,9 +1,11 @@
+hypersurfaceSection does not remove junk
+
+numericalIrreducibleDecomposition fails on a singular point: e.g., ideal(x_1^2,x_2^2,x_3^3)
+
 movePoints should take a list of Points
 
 deflation needs work
 
 points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
-
-"isOn" is another version of "member"
 
 decompose -- still not robust for nonreduced components 

@@ -1,7 +1,64 @@
-* truncatedDual: weirdness with different points
-* gCorners: make it work
-* randomPoint: select random points from a numerical variety (Anton)
-* random PolySpace: implement
-* isWitnessPolynomial: implement
-* Clarify paper around 6.9-6.10
-* eliminatingDual: what's going on?
+* rewrite paper around isWitnessPolynomial (Sec 6)
+* Go through paper for notation/structure/clarity
+* paper: polish the proofs for slicing down to dim 0
+* straighten out appendix (Jon?)
+
+* make tolerances optional
+* how should the various functions be partitioned?
+* isComponentEmbedded (for dim > 0)
+* isWitnessPolynomial cutoff. How should it interact with (d,d')?
+  (a) prove that for every d' there exist d such that the test succeeds for random(d',Jdd) with probability 1
+  (b) "remember" witness candidates for every (d',e) and check for each 
+* keywords to allow options: "random", "isSubset", "quotient", "intersect", "add", "truncate"
+
+
+--------------------------------
+user-facing functions and types:
+NumericalHilbert.m2
+* truncatedDual
+* zeroDimensionalDual
+* gCorners
+* sCorners
+* localHilbertRegularity
+* eliminatingDualSpace (eliminatingDualSpace)
+* truncate (eliminatingDualSpace)
+
+* TruncDualData
+* truncDualData
+* nextTDD
+* homogPolySpace
+* newGCorners
+
+NAGtypes.m2
+* PolySpace
+* polySpace
+* DualSpace
+* dualSpace
+* gens
+* dim
+* ring
+* net
+* origin (NumericalHilbert)
+
+NPD file (name?)
+* isPointEmbedded (isPointEmbedded)
+* isPointEmbeddedInCurve (eliminatingDualSpace)
+* doubleTruncation (isPointEmbedded)
+* isWitnessPolynomial (isPointEmbedded)
+* orthogonalInSubspace Ideal (isPointEmbedded)
+
+numerical LA and DualSpace functionality (where should these go?)
+* numericalKernel (NAGtypes)
+* numericalImage (NAGtypes)
+* colReduce (NAGtypes)
+
+* addition (NAGtypes)
+* intersection (NAGtypes)
+* reduceSpace (NAGtypes)
+* isContained (NAGtypes)
+* areEqual (NAGtypes)
+* hilbertFunction (NAGtypes)
+* random (NAGtypes)
+* orthogonalInSubspace (NumericalHilbert)
+* innerProduct (NAGtypes)
+* colon (NAGtypes)
