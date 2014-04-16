@@ -69,7 +69,7 @@ export {
     "laplacianMatrix",
     "simpleGraph",
     "vertexSet",
-    "vertices",
+  --"vertices",
     --
     -- Display Methods
     displayGraph,
@@ -380,7 +380,7 @@ simpleGraph = underlyingGraph
 
 vertexSet = method()
 vertexSet Digraph := List => D -> D#(symbol vertexSet)
-vertices = vertexSet
+vertices Digraph := List => D -> D#(symbol vertexSet)
 
 -------------------------------------------
 -- Display Methods
@@ -1988,6 +1988,7 @@ doc ///
     Key
         vertexSet
         (vertexSet, Digraph)
+        (vertices, Digraph)
     Headline
         Returns the vertices of a graph or digraph
     Usage
