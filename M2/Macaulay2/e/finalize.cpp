@@ -8,9 +8,13 @@
 #include "comp-gb.hpp"
 #include "comp-res.hpp"
 #include "schorder.hpp"
+#include "mat.hpp"
 
 static volatile AO_t monideals_nfinalized = 0;
 static volatile AO_t monideals_nremoved = 0;
+
+static volatile AO_t mutablematrices_nfinalized = 0;
+static volatile AO_t mutablematrices_nremoved = 0;
 
 static volatile AO_t polyrings_nfinalized = 0;
 static volatile AO_t polyrings_nremoved = 0;
@@ -133,5 +137,24 @@ void intern_SchreyerOrder(SchreyerOrder *G)
   AO_t nfinalized = AO_fetch_and_add1(&schorder_nfinalized);
   if (M2_gbTrace>=3)
     fprintf(stderr, "\n   -- registering SchreyerOrder %zd at %p\n", nfinalized, (void *)G);
+}
+//////////////////////////////////////////////////////
+
+extern "C" void remove_MutableMatrix(void *p, void *cd)
+{
+  MutableMatrix *G = static_cast<MutableMatrix *>(p);
+  AO_t nremoved = AO_fetch_and_add1(&mutablematrices_nremoved);
+  if (M2_gbTrace>=3)
+    fprintf(stderr, "\n -- removing mutable matrix %zd at %p\n",nremoved, G);
+  G->~MutableMatrix();
+}
+MutableMatrix* internMutableMatrix(MutableMatrix *G)
+{
+  if (G == 0) return 0;
+  GC_REGISTER_FINALIZER(G,remove_MutableMatrix,0,0,0);
+  AO_t nfinalized = AO_fetch_and_add1(&mutablematrices_nfinalized);
+  if (M2_gbTrace>=3)
+    fprintf(stderr, "\n   -- registering mutable matrix %zd at %p\n", nfinalized, (void *)G);
+  return G;
 }
 //////////////////////////////////////////////////////

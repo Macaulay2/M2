@@ -21,8 +21,9 @@ class MutableMatrix : public mutable_object
 {
 protected:
   MutableMatrix() {}
-  virtual ~MutableMatrix() {}
 public:
+  virtual ~MutableMatrix() {}
+
 #if 0
   // MESXXX
   class iterator : public our_new_delete

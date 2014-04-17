@@ -17,6 +17,8 @@
 #include "aring-zzp-ffpack.hpp"
 #include "mutablemat.hpp"
 
+#include "finalize.hpp"
+
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
                                                  int n,
                                                  M2_bool is_dense)
@@ -27,7 +29,7 @@ MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
       return 0;
     }
   size_t nrows = static_cast<size_t>(n);
-  return MutableMatrix::identity(R, nrows, is_dense);
+  return internMutableMatrix(MutableMatrix::identity(R, nrows, is_dense));
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
@@ -40,12 +42,12 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
   //  return R->makeMutableMatrix(nr,nc,is_dense);
-  return MutableMatrix::zero_matrix(R,nr,nc,is_dense);
+  return internMutableMatrix(MutableMatrix::zero_matrix(R,nr,nc,is_dense));
 }
 
 MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
-  return MutableMatrix::from_matrix(M, is_dense);
+  return internMutableMatrix(MutableMatrix::from_matrix(M, is_dense));
 }
 
 const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
@@ -444,7 +446,7 @@ M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
 MutableMatrix /* or null */ * rawMutableMatrixTranspose(MutableMatrix* M)
 {
      try {
-          return M->transpose();
+          return internMutableMatrix(M->transpose());
      }
      catch (exc::engine_error e) {
           ERROR(e.what());
@@ -459,7 +461,7 @@ M2_bool rawMutableMatrixIsDense(const MutableMatrix *M)
 
 MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
 {
-  return M->copy(prefer_dense);
+  return internMutableMatrix(M->copy(prefer_dense));
 }
 
 M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
@@ -674,13 +676,13 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M
                                                   M2_arrayint rows,
                                                   M2_arrayint cols)
 {
-  return M->submatrix(rows,cols);
+  return internMutableMatrix(M->submatrix(rows,cols));
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
                                                    M2_arrayint cols)
 {
-  return M->submatrix(cols);
+  return internMutableMatrix(M->submatrix(cols));
 }
 
 /*******************************
@@ -1036,7 +1038,7 @@ const RingElement* rawLinAlgDeterminant(MutableMatrix* A)
 MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
 {
   try {
-    return A->invert();
+    return internMutableMatrix(A->invert());
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -1047,7 +1049,7 @@ MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
 MutableMatrix* rawLinAlgRREF(MutableMatrix* A)
 {
   try {
-    return A->rowReducedEchelonForm();
+    return internMutableMatrix(A->rowReducedEchelonForm());
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -1069,7 +1071,7 @@ M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
 MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A)
 {
   try {
-    return A->nullSpace();
+    return internMutableMatrix(A->nullSpace());
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -1086,7 +1088,7 @@ MutableMatrix* rawLinAlgSolve(const MutableMatrix* A,
     //TODO: return type doesn't distinguish between error, and no solution.
     std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
     if (result.first)
-      return result.second;
+      return internMutableMatrix(result.second);
     else
       {
         // system is inconsistent
@@ -1135,7 +1137,7 @@ MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
                                            const MutableMatrix* B)
 {
   try {
-    return A->mult(B);
+    return internMutableMatrix(A->mult(B));
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
