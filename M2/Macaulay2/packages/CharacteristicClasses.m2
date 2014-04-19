@@ -8,7 +8,7 @@
 newPackage(
 	"CharacteristicClasses",
 	Version => "1.1", 
-    	Date => "February 18, 2014",
+    	Date => "April 19, 2014",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "chjo9357@mbox.su.se", 
 		  HomePage => "http://people.su.se/~chjo9357/"},{Name => "Martin Helmer", 
@@ -697,7 +697,7 @@ doc ///
 	       cascade is described in "Regenerative cascade homotopies for solving polynomial systems" by  Jonathan Hauenstein, Andrew Sommese, 
                and Charles Wampler. Bertini is developed by Dan Bates, Jonathan Hauenstein, Andrew Sommese, and Charles Wampler.   
 
-               The second algorithm is refered to as ProjectiveDegree and given in the article "An Algorithm to Compute the Topological Euler 
+               The second algorithm is referred to as ProjectiveDegree and given in the article "An Algorithm to Compute the Topological Euler 
                Characteristic, Chern-Schwartz-MacPherson Class and Segre Class of Projective Varieties" (M. Helmer). 
                The main computational step of this algorithm is the computation of the projective degerees. This can be done symbolically, using 
                Gr&ouml;bner bases, or numerically using a package such as Bertini, however only the symbolic implementation is offered at present, 
@@ -896,10 +896,10 @@ doc ///
 	  Bertini
      Description
      	  Text
-	       The option Algorithm determines which strategy is used. The default option is called Default, when the feild is QQ (the rationals) the 		       ResidualSymbolic will be automaticlly chossen, for any other feild, i.e. ZZ/32749 or some other finite feild the  ProjectiveDegree 
-               option will be automatically chossen. When choosing the ProjectiveDegree option, Gr\"obner basis methods will be used 
+	       The option Algorithm determines which strategy is used. The default option is called Default, when the field is QQ (the rationals) the 		       ResidualSymbolic will be automatically chosen, for any other field, i.e. ZZ/32749 or some other finite field the  ProjectiveDegree 
+               option will be automatically chosen. When choosing the ProjectiveDegree option, Gr\"obner basis methods will be used 
                to compute the projective degree.  When choosing ResidualSymbolic Gr\"obner basis methods will be used to compute the residuals. 
-               Computing the projective degree or the degree of the residuals, respectivley, is the main step in the computation done by the commands 
+               Computing the projective degree or the degree of the residuals, respectively, is the main step in the computation done by the commands 
                in this package. The computations can also be done numerically using the regenerative cascade implemented in Bertini. This is done 
                by choosing the option Bertini and provided Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini may 
                provide a speed-up or prevent running out of memory.
@@ -908,7 +908,7 @@ doc ///
 	       R = QQ[x,y,z,w]
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), Algorithm=>ProjectiveDegree)  
 	  Text  
-               For many examples over a finite feild the ProjectiveDegree option will offer better preformence, when working over the rationals 
+               For many examples over a finite field the ProjectiveDegree option will offer better performence, when working over the rationals 
                the ResidualSymbolic algorithm is often faster. 
           Example
                R=ZZ/32749[x_0..x_5];
@@ -968,7 +968,7 @@ doc ///
      	  Text
 	       Both algorithms used for the computation of characteristic classes are probabilistic. The algorithm ProjectiveDegree calculates the 
                classes correctly in all cases for a general choice of certain polynomials, that is there is an open dense Zariski set for which 
-               the algorithm yeilds the correct class, i.e. the ProjectiveDegree algorithm calculates the correct class with probobility 1. This is 
+               the algorithm yields the correct class, i.e. the ProjectiveDegree algorithm calculates the correct class with probability 1. This is 
                true both for the implementation, and for the theoretical version of the algorithm. The ResidualSymbolic algorithm theoretically calculates 
                the classes correctly in all cases outside a lower-dimensional subset, i.e., with probability 1. However, in the implementation of the
                ResidualSymbolic algorithm the probability of not computing the correct class is strictly larger than zero, although small. 
