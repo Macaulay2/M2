@@ -24,3 +24,8 @@ assert( degree M == 27 )
 R = ZZ[x]
 M = subquotient( matrix {{x^3}}, matrix {{x^7}} )
 assert ( degrees M == {{3}} )
+
+R = QQ[x,y,Degrees=>{2,3}]
+I = ideal(y^2-x^3);
+assert(isHomogeneous I)
+assert(degree I == 6)
