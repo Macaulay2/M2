@@ -11,12 +11,11 @@ newPackage(
     	Date => "April 19, 2014",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "chjo9357@mbox.su.se", 
-		  HomePage => "http://people.su.se/~chjo9357/"},{Name => "Martin Helmer", 
-		  Email => "mhelmer2@uwo.ca", 
+		  HomePage => "http://people.su.se/~chjo9357/"},
+                  {Name => "Martin Helmer", Email => "mhelmer2@uwo.ca", 
 		  HomePage => "http://publish.uwo.ca/~mhelmer2/"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
     	DebuggingMode => false,
-Reload => true,
 	Configuration => { 
 	     "pathToBertini" => ""
 	      }
