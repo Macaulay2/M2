@@ -239,7 +239,13 @@ will serve as your backup.
 Compiling
 -----------------------
 
-Begin with this command, run in this directory:
+Now the directory to be in is the one containing this file in the source
+distribution -- it is called "M2", and is a subdirectory of the top level
+directory of the source tree.  If you are reading this file on the web, it may
+be more convenient to switch now to reading it in its location in the source
+tree.
+
+Begin with this command:
 
         make
 
