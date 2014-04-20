@@ -910,12 +910,12 @@ doc ///
                For many examples over a finite field the ProjectiveDegree option will offer better performence, when working over the rationals 
                the ResidualSymbolic algorithm is often faster. 
           Example
-               R=ZZ/32749[x_0..x_5];
-               I=ideal(4*x_3*x_2-x_0^2,x_5*(x_0*x_1*x_4-x_2^3));
+               R=ZZ/32749[v_0..v_5];
+               I=ideal(4*v_3*v_2-v_0^2,v_5*(v_0*v_1*v_4-v_2^3));
                time CSMClass(I,Algorithm=>ProjectiveDegree)
                time CSMClass(I,Algorithm=>ResidualSymbolic)
-               S=QQ[y_0..y_3];
-	       K=ideal(4*y_3*y_2-y_0^2,(y_0*y_1*y_3-y_2^3));
+               S=QQ[s_0..s_3];
+	       K=ideal(4*s_3*s_2-s_0^2,(s_0*s_1*s_3-s_2^3));
 	       time CSMClass(K,Algorithm=>ProjectiveDegree)
 	       time CSMClass(K,Algorithm=>ResidualSymbolic)
 ///
