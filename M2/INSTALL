@@ -145,7 +145,8 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-        brew tap homebrew/versions homebrew/science
+        brew tap homebrew/versions
+        brew tap homebrew/science
         brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk
         brew link --force autoconf # just to ensure it got linked upon installation
     Now remember to add 
@@ -238,7 +239,13 @@ will serve as your backup.
 Compiling
 -----------------------
 
-Begin with this command, run in this directory:
+Now the directory to be in is the one containing this file in the source
+distribution -- it is called "M2", and is a subdirectory of the top level
+directory of the source tree.  If you are reading this file on the web, it may
+be more convenient to switch now to reading it in its location in the source
+tree.
+
+Begin with this command:
 
         make
 

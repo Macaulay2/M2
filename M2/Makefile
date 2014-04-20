@@ -1,30 +1,10 @@
 # -*- makefile-gmake -*-
 
-.PHONY : all monitor
+.PHONY : all monitor check-make check-autoconf
 
 VERBOSE = yes
 
-all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp helpful
-helpful:
-ifeq ($(VERBOSE),yes)
-	@echo '--: The configure script in this directory has been prepared.'
-	@echo '--: To configure and build Macaulay2:'
-	@echo '--: '
-	@echo '     mkdir BUILD/normal'
-	@echo '     cd BUILD/normal'
-	@echo '     ../../configure --prefix=/usr/local'
-	@echo '     make install'
-	@echo '--: '
-	@echo '--: To reconfigure and try again:'
-	@echo '--: '
-	@echo '     cd BUILD/normal'
-	@echo '     make reconfigure install'
-	@echo '--: '
-	@echo '--: To see all the options to "configure":'
-	@echo '--: '
-	@echo '     ./configure --help'
-	@echo '--: '
-endif
+all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
 
 MAJOR = 2
 MINOR = 68
@@ -36,7 +16,11 @@ AUTOCONF_VERSION = $(MAJOR).$(MINOR)
 PATH := autoconf/final/bin:$(PATH)
 export PATH
 
-check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
+check-make:
+	@ echo checking GNU make version ... >&2
+	@ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
+	@ echo ... okay
+
 configure : configure.ac config/files # aclocal.m4
 	@ set -x ; autoconf
 
@@ -69,12 +53,16 @@ autoconf-msg :
 	@ false
 
 check-autoconf :
+	@ echo checking autoconf version ...
 	@ type autoconf >/dev/null || $(MAKE) -f Makefile autoconf-absent
-	@ test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt $(MAJOR) \
+	@ if test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt $(MAJOR) \
 	  || \
 	    test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  $(MAJOR) \
 	    && \
-	    test `autoconf -V | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge $(MINOR) || $(MAKE) -f Makefile autoconf-old
+	    test `autoconf -V | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge $(MINOR) ;\
+	  then echo ... okay ;\
+	  else $(MAKE) -f Makefile autoconf-old ;\
+	  fi
 
 # autoheader's job is to make include/config.h, but if there are no changes, it doesn't touch it, 
 # which means "make" will keep trying
