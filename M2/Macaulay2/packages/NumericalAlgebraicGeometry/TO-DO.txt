@@ -1,3 +1,7 @@
+NAGtrace: separate "progress update" from other "talk"
+
+NAGtrace: unhook gbTrace
+
 hypersurfaceSection does not remove junk
 
 numericalIrreducibleDecomposition fails on a singular point: e.g., ideal(x_1^2,x_2^2,x_3^3)

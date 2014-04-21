@@ -569,7 +569,7 @@ net NumericalVariety := V -> (
   	if hasAttribute(V,PrintNames) then return net getAttribute(V,PrintNames);
   	if hasAttribute(V,ReverseDictionary) then return toString getAttribute(V,ReverseDictionary);
   	);
-    out := net ofClass class V | " of dimension " | net dim V |" with components in";
+    out := net ofClass class V | " with components in";
     scan(keys V, k->if class k === ZZ then (
 	    row := "dim "|net k|": ";
 	    scan(V#k, W->row = row|" "|net W);

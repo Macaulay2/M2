@@ -3,7 +3,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export {hypersurfaceSection, diagonalHomotopy}
+export {hypersurfaceSection, numericalIntersection}
 
 insertComponent = method()
 insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
@@ -35,6 +35,9 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 
 hypersurfaceSection = method(Options =>{Software=>null, Output=>Singular})
 hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
+    if DBG>1 then << "-- hypersurfaceSection: "<< endl << 
+    "NumericalVariety: " << c1 << endl <<
+    "hypersurface: " << f << endl;
     d := sum degree f;
     R := ring f;
     c2 := new MutableHashTable; -- new components
@@ -92,10 +95,16 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
     	numericalVariety flatten apply(keys c2, i->apply(keys c2#i, j->c2#i#j))
     )
 
-diagonalHomotopy = method()
-diagonalHomotopy (WitnessSet,WitnessSet) := (W1,W2) -> (
+
+numericalIntersection = method()
+numericalIntersection (NumericalVariety, Ideal) := (V,I) -> (
+    W := new NumericalVariety from V;
+    for f in I_* do W = hypersurfaceSection(W,f);
+    W
+    )
+numericalIntersection (WitnessSet,WitnessSet) := (W1,W2) -> (
     R := ring W1;
-    if R === ring W2
+    if R =!= ring W2
     then error "expected witness sets in the same ambient space";
     y := symbol y;
     n := numgens R;
@@ -104,10 +113,18 @@ diagonalHomotopy (WitnessSet,WitnessSet) := (W1,W2) -> (
     y = take(gens S,-n);
     toSx := map(S,R,x);
     toSy := map(S,R,y);
-    W12 := witnessSet(toSx ideal equations W1, toSy ideal equations W2, 
+    W12 := witnessSet(toSx ideal equations W1 + toSy ideal equations W2, 
+	toSx ideal slice W1 + toSy ideal slice W2,
 	flatten apply(W1.Points, P1->apply(W2.Points, P2-> 
 		point {coordinates P1 | coordinates P2}
 		))
 	);
-    
+    numericalIntersection(numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12))}, ideal apply(n, i->x#i-y#i))
     )
+TEST ///
+CC[x,y,z]; 
+W1 = witnessSet ideal (x^2+y)
+W2 = witnessSet ideal (x^2+y^2-1)
+V = numericalIntersection(W1,W2)
+assert(dim V == 1 and degree V == 4)
+///
