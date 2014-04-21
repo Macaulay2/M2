@@ -11,8 +11,13 @@ See our web page
 
   http://www.macaulay2.com 
 
-for more details, and binary releases. Report bugs via the github issue tracker
-at
+for more details and for downloading binary releases.
+
+Instructions for downloading and compiling from source code are visible at
+
+  https://github.com/Macaulay2/M2/blob/master/M2/INSTALL
+
+Report bugs via the github issue tracker at
 
   http://github.com/Macaulay2/M2/.  
 
