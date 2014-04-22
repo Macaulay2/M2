@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "1.6.0.1", 
-  Date => "March 6, 2014",
+  Date => "April 22, 2014",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "eagross@ncsu.edu",
@@ -33,7 +33,8 @@ export {
   "bertiniComponentMemberTest",
   "bertiniRefineSols",
   "importPoints",
-  "phPostProcess",    
+  "phPostProcess",
+  "phMonodromy",    
   "MPTYPE",  
   "PRECISION",
   "ISPROJECTIVE",  
@@ -61,13 +62,17 @@ export {
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
   "REGENSTARTLEVEL",
-  "specifyPoints",
-  "specifyCoordinates",
-  "printNotes",
-  "inputFilesName",
-  "solutionType",
+  "SpecifyPoints",
+  "SpecifyCoordinates",
+  "PrintNotes",
+  "InputFilesName",
+  "SolutionType",
   "AllowStrings",
-  "SubFunctions"
+  "SubFunctions",
+  "OutputLocation",
+  "B'InputFile",
+  "B'StartFile",
+  "B'StartParameters"
 }
   
   protect SolutionNumber
@@ -261,7 +266,9 @@ stageTwoParameterRun (String, List) := o -> (dir, F) -> (
 --importPoints gets the solutions from a bertini solutions file to store them as points in M2
 --the input is a string, giving the location of the file, and an integer giving the number of coordinates 
 --the output is a list of points
-importPoints = method(TypicalValue=>Nothing,Options=>{specifyPoints=>{},specifyCoordinates=>{} })
+importPoints = method(TypicalValue=>Nothing,Options=>{
+	SpecifyPoints=>{},
+	SpecifyCoordinates=>{} })
 importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
     importedFileLines := lines get (importFrom); -- grabs all lines of the solution file
     numberOfsolutionsInFile:=value(importedFileLines_0);--the first line of the solution file gives the number of solutions in the file
@@ -270,9 +277,9 @@ importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
     for i to numberOfsolutionsInFile-1 do (
 	linesForOnePoint:=for indexLines to numberOfCoordinates+1-1 list importedFileLines_indexLines;--we read a blank line and the coordinates of one solution
 	importedFileLines=drop(importedFileLines,numberOfCoordinates+1);--we drop the lines we just read
-	if  member(i,o.specifyPoints) or #o.specifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
+	if  member(i,o.SpecifyPoints) or #o.SpecifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
 	then(
-      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.specifyCoordinates);
+      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.SpecifyCoordinates);
      	  storeSolutions= append(storeSolutions,cAS)));
      return storeSolutions);
 
@@ -290,31 +297,118 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
      return  point {collectedCoordinates});
 
 
---PARAMETERPOSTPROCESS
+--   INPUT of phMonodromy 
+--String should be a directory (no "/" at then end) that contains start files for bertini parameter homotopy
+----start files needed: input, start_parameters, start	
+--List is a a list of lists of numbers not of type QQ. 
+----Each entry of List are parameters for a parameter homotopy. 
+--ZZ equals the number of coordinates of the points.
+
+phMonodromy = method(TypicalValue=>Nothing,Options=>{
+	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+    	B'InputFile=>"input",
+    	B'StartFile=>"start",
+    	B'StartParameters=>"start_parameters",
+	OutputLocation=>-1,
+      	SolutionType=>"nonsingular_solutions",
+	SpecifyCoordinates=>{},
+	SpecifyPoints=>{}
+		})
+phMonodromy(String,List,ZZ) := o -> (
+    inputLocation,hyperplanes,numberOfCoordinates)-> (
+    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
+    else(
+	if o.OutputLocation=!=-1 
+	then OL:=o.OutputLocation --Set OL to be the location of files bertini will create
+	else OL=inputLocation;  --Default location is the same as the location of the input files
+	copyFile(inputLocation|"/"|o.B'StartFile, OL|"/start"); 
+	copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parameters");
+	copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/base_parametersDEAJ"); --save the base parameters of the monodromy so we can come back later
+	for anH in hyperplanes do (   
+	    writeParameters(OL,anH);
+       	    callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
+--    	    print"BERTINI called!";
+	    copyFile(OL|"/nonsingular_solutions", OL|"/start");
+	    copyFile(OL|"/final_parameters", OL|"/start_parameters")
+	    );
+	copyFile(inputLocation|"/base_parametersDEAJ",OL|"/final_parameters");  ---Go back to the base parameters
+        callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
+--    	print"BERTINI called!!";
+	return importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
+	    SpecifyCoordinates=>o.SpecifyCoordinates,
+	    SpecifyPoints=>o.SpecifyPoints)));
+
+
+
+--PARAMETERHOMOTOPYPOSTPROCESS
 --This function takes a directory as its input where a bertini run has alreaddy been made.
 --The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
 phPostProcess = method(TypicalValue=>Nothing,Options=>{
-	printNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
-    	inputFilesName=>"input",
-      	solutionType=>"nonsingular_solutions"})
-phPostProcess(String,String,List,ZZ) := o -> (
-    inputLocation,outputLocation,postParameters,numberOfCoordinates)-> (
-    if o.printNotes==1 then print  get (inputLocation|"/notes")    
-    else(if outputLocation!=inputLocation then (
-	copyFile(inputLocation|"/start",outputLocation|"/start");
-	copyFile(inputLocation|"/start_parameters",outputLocation|"/start_parameters"));
-    writeParameters(outputLocation,postParameters);
-    callBertini(outputLocation,BERTINIexe,inputLocation,o.inputFilesName);---call Bertini 
-    importPoints(outputLocation|"/"|o.solutionType,numberOfCoordinates)));
+	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+--    	InputFilesName=>"input",
+	OutputLocation=>-1,
+      	SolutionType=>"nonsingular_solutions",
+	B'InputFile=>"input",
+    	B'StartFile=>"start",
+    	B'StartParameters=>"start_parameters",
+	SpecifyCoordinates=>{},
+	SpecifyPoints=>{}
+	})
+phPostProcess(String,List,ZZ) := o -> (
+    inputLocation,postParameters,numberOfCoordinates)-> (
+    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
+    else(
+	if o.OutputLocation=!=-1 
+	then (OL:=o.OutputLocation; 
+	    copyFile(inputLocation|"/"|o.B'StartFile, OL|"/start");
+	    copyFile(inputLocation|"/"|o.B'StartParameters,
+		OL|"/start_parameters"))
+        else OL=inputLocation;
+	writeParameters(OL,postParameters);   
+    	callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini 
+    importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
+	SpecifyPoints=>o.SpecifyPoints,
+	SpecifyCoordinates=>o.SpecifyCoordinates)    ));
     
----writeParameters is a subfunction fo parameterPostProcess    
+---writeParameters is a subfunction for parameterHomotopyPostProcess    
 writeParameters=(filesGoHere,listParameters)->(
-  --writing parameter values to file 
      finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
-     finalParameterFile << #(listParameters) << endl << endl;
-     scan(listParameters, c-> finalParameterFile << realPart c << " " << imaginaryPart c << ";" << endl );
-       finalParameterFile << endl;      
-       close finalParameterFile);
+     finalParameterFile << (#listParameters) << endl << endl;
+     for c in listParameters do (
+	 cString:=bertiniComplexNumber(c);
+	 finalParameterFile <<cString_0 << " " <<cString_1 <<endl
+	 );
+     finalParameterFile << endl;      
+     close finalParameterFile);      
+
+
+--writeParameters=(filesGoHere,listParameters)->(
+  --writing parameter values to file 
+  --   finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
+    -- finalParameterFile << #(listParameters) << endl << endl;
+    -- scan(listParameters, c-> finalParameterFile << (separate("p",toExternalString (realPart c)))_0 << " " << (separate("p",toExternalString (imaginaryPart c)))_0 << " " << endl );
+     --  finalParameterFile << endl;      
+      -- close finalParameterFile);
+
+---helper functions for writeParameters
+bertiniRealNumber=(aNumber)->(
+    if class aNumber===QQ then error "final parameters cannot have type QQ" else
+    realPartSeparate:=separate("p",toExternalString ( aNumber));
+    realPartMantissa:=realPartSeparate_0;
+    if 1=!=#realPartSeparate 
+    then (separateExponent:=separate("e",realPartSeparate_1);
+    	if 1==#separateExponent
+    	then realPartExponent:="0"
+    	else realPartExponent=(separateExponent)_1;
+    	return(realPartMantissa|"e"|realPartExponent))
+    else return(realPartMantissa|"e0"));
+    
+bertiniComplexNumber=(aCNumber)->{bertiniRealNumber(realPart aCNumber),
+    bertiniRealNumber(imaginaryPart aCNumber)};
+
+
+
+
        
 callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
     run("cd "|inDirectory|"; "|BERTINIexe|" "|inputLocation|"/"|inputFilesName|" >bertini_session.log"));  
@@ -323,7 +417,7 @@ callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
 --exportPoints--This function should export the coordinates of the points
 --saveFolder--This function should copy a temporary directory to a location specified by the user
 --call bertini in a specified folder
---write parameters
+
 
 -------------------
 -- makeBertiniInput

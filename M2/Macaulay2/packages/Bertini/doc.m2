@@ -583,11 +583,11 @@ doc ///
      --The output would be a list of points that have 4 coordinates.          
    Example 
      locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     B=importPoints(locationOfSolutionFile,4,specifyPoints=>{0,2})
+     B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
      --The output would be the first and third solutions of the file. 
    Example 
      locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     C=importPoints(locationOfSolutionFile,4,specifyCoordinates=>{0,1})
+     C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
      --The output would be the first and second coordinate of each solution of the file.  
  Caveat
    For importPoints to be successful, the Bertini solution file must have a particular format.
@@ -600,16 +600,14 @@ doc ///
 doc ///
  Key
    phPostProcess
-   (phPostProcess,String,String,List,ZZ)
+   (phPostProcess,String,List,ZZ)
  Headline
    Does post processing parameter homotopy.
  Usage
-   S=phPostProcess(sIn,sOut,L,n) 
+   S=phPostProcess(sIn,L,n) 
  Inputs
    sIn: String
-     A string giving the dicterory of the input files.
-   sOut: String
-     A string giving the directory where Bertini will output files
+     A string giving the directory of the input files.
    L: List
      A list of parameters. 
    n: ZZ
@@ -621,21 +619,42 @@ doc ///
      who can then analyze the data easily with the Bertini.M2 interface.   
      
      Instead of doing a parameter run by calling Bertini, 
-     the printNotes option prints a file titled "notes"  located in the input file's directory.
+     the PrintNotes option prints a file titled "notes"  located in the input file's directory.
      If the "notes" file does not exist it returns an error.   
+     
+     The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
    Example
      inputFileLocation="/Users/.../YourFolderA";
-     outputFileLocation="/Users/.../YourFolderB";
      L={.8234+ii*8,9}--A list of two parameter values.
      n=3--A solution has n coordinates.
-     phPostProcess(inputFileLocation,outputFileLocation,L,n)     --The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
+     phPostProcess(inputFileLocation,L,n)     
    Example
      inputFileLocation="/Users/.../YourFolderA";
-     phPostProcess(inputFileLocation,"",{},0,printNotes=>1)
+     phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
  Caveat
    Even if Bertini is called but does not run,  
    an error may not be reported if previous solution files were already in the outputDirectory.
 ///;
+
+
+doc ///
+ Key
+   phMonodromy
+   (phMonodromy,String,List,ZZ)
+ Headline
+   Does a sequence of parameter homotopies.
+ Usage
+   S=phMonodromy(sIn,L,n) 
+ Inputs
+   sIn: String
+     A string giving the directory of start files: input, start, start_parameters
+   L: List
+     A list of lists of parameters. 
+   n: ZZ
+     Number of coordinates of a point.
+         
+///;
+
 
 
 doc ///
@@ -767,10 +786,7 @@ doc///
    SubFunctions
    [bertiniTrackHomotopy, SubFunctions]
    [bertiniParameterHomotopy, SubFunctions]
---   [bertiniComponentMemberTest, ISPROJECTIVE]
    [bertiniPosDimSolve, SubFunctions]
---   [bertiniRefineSols, ISPROJECTIVE]
---   [bertiniSample, ISPROJECTIVE]
    [bertiniZeroDimSolve, SubFunctions]
  Headline
    optional argument to specify subfunctions that will be written to the Bertini input file.   
