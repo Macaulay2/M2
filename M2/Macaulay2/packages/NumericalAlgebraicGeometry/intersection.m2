@@ -121,10 +121,16 @@ numericalIntersection (WitnessSet,WitnessSet) := (W1,W2) -> (
 	);
     numericalIntersection(numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12))}, ideal apply(n, i->x#i-y#i))
     )
+numericalIntersection (NumericalVariety,NumericalVariety) := (V1,V2) -> (
+    V := numericalVariety {};
+    for W1 in components V1 do
+    for W2 in components V2 do V = V | numericalIntersection(W1,W2);
+    V 
+    )
 TEST ///
 CC[x,y,z]; 
-W1 = witnessSet ideal (x^2+y)
-W2 = witnessSet ideal (x^2+y^2-1)
+W1 = witnessSet (ideal (x^2+y), 2)
+W2 = witnessSet (ideal (x^2+y^2-1), 2)
 V = numericalIntersection(W1,W2)
 assert(dim V == 1 and degree V == 4)
 ///

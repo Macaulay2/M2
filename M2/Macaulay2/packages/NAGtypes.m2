@@ -447,7 +447,8 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 --   Slice,                -- a matrix of coefficients of linear equations 
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
---   IsIrreducible         -- true, false, or null
+--   IsIrreducible,        -- true, false, or null
+--   ProjectionDimension   -- an integer n, the set describes a projection a variety to the first n coordinates
 --   }
 -- caveat: we assume that #Equations = dim(Slice)   
 --
@@ -586,7 +587,14 @@ degree NumericalVariety := V -> (
      sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
      )
 components NumericalVariety := V -> flatten values V
-
+components (NumericalVariety,ZZ) := (V,d) -> V#d
+components (NumericalVariety,ZZ,ZZ) := (V,a,b) -> (
+    a = max(0,a);
+    b = min(b,dim V);
+    flatten apply(select(keys V, d->a<=d and d<=b), d->V#d)  
+    )
+components (NumericalVariety,ZZ,InfiniteNumber) := (V,a,b) -> components(V,a,min(b,dim V))
+    
 numericalVariety = method(TypicalValue=>NumericalVariety)
 numericalVariety List := Ws -> if #Ws==0 then new NumericalVariety else (
      T := class first Ws;
@@ -739,12 +747,12 @@ document {
 R = CC[x,y]	
 I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
 w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
-origin = point {{0.,0.}}
-numericalVariety {witnessSet(I, ideal R, {origin}),w1}
+O = point {{0.,0.}}
+numericalVariety {witnessSet(I, ideal R, {O}),w1}
 V = oo
 peek V
 peek w1
-peek origin
+peek O
 ///
      }
 
