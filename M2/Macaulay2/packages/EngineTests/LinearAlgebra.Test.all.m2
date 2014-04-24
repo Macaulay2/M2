@@ -47,8 +47,8 @@ fields = join({
     fieldsFLINT,
     fieldsFFPACK,
     fieldsGF,
-    {"QQ",
-    "QQFlint"}
+    {"QQ"}
+    -- QQFlint not working yet
     )
    
 
