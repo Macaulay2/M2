@@ -494,8 +494,55 @@ namespace M2 {
     {
       return globalZZ->from_int(mpq_denref(MPQ_VAL(q)));
     }
-  };
 
+    ring_elem preferred_associate(ring_elem f) const
+    {
+      gmp_QQ a = MPQ_VAL(f);
+      if (mpq_sgn(a) >= 0)
+        return from_long(1);
+      return from_long(-1);
+    }
+    
+    bool lower_associate_divisor(ring_elem &f, const ring_elem g) const
+    {
+      gmp_QQ a = MPQ_VAL(f);
+      gmp_QQ b = MPQ_VAL(g);
+      int sa = mpq_sgn(a);
+      int sb = mpq_sgn(b);
+      int s = (sa == 0 ? sb : sa);
+      gmp_QQ result = getmemstructtype(gmp_QQ);
+      mpq_init(result);
+
+      mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
+      mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
+      if (s != mpq_sgn(result))
+        mpq_neg(result,result);
+      f = MPQ_RINGELEM(result);
+      return true; // the answer could become lower, if a newer g has a larger denom
+    }
+    
+    void lower_content(ring_elem &c, const ring_elem g) const
+    {
+      if (is_zero(c))
+        {
+          c = g;
+          return;
+        }
+      gmp_QQ a = MPQ_VAL(c);
+      gmp_QQ b = MPQ_VAL(g);
+      int sa = mpq_sgn(a);
+      gmp_QQ result = getmemstructtype(gmp_QQ);
+      mpq_init(result);
+
+      mpz_gcd(mpq_numref(result), mpq_numref(a), mpq_numref(b));
+      mpz_lcm(mpq_denref(result), mpq_denref(a), mpq_denref(b));
+      if (sa != mpq_sgn(result))
+        mpq_neg(result,result);
+      c = MPQ_RINGELEM(result);
+    }
+    
+  };
+  
   template<class RingType>
   ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
   {
