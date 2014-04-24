@@ -92,6 +92,20 @@ namespace MatrixOppies
     throw exc::engine_error("'invert' not implemented for this kind of matrix over this ring");
   }
 
+  /// @brief the row reduced echelon form of a matrix over a field, or ZZ.
+  ///
+  /// result_rref should be a Mat, with the same ring/type as the input matrix A.
+  ///   result_rref does not need to be the same size as A, it will be resized if needed.
+  /// returns the rank of A.
+  ///
+  /// throws an engine_error for ring/matrix types where the function is not implemented.
+  template<typename Mat>
+  size_t rowReducedEchelonForm(const Mat& A, 
+                               Mat& result_rref)
+  {
+    throw exc::engine_error("'rowReducedEchelonForm' not implemented for this kind of matrix over this ring");
+  }
+
   /// @brief the product of two matrices
   ///
   /// result_product is set to the product A*B
@@ -109,12 +123,9 @@ namespace MatrixOppies
     throw exc::engine_error("'mult matrices' not implemented for this kind of matrix over this ring");
   }
 
-  /// @brief the left or right null space of a matrix
+  /// @brief the null space of a matrix
   ///
-  /// if right_side is true then 
   ///   result_nullspace is set to the matrix whose columns form a basis for {x | Ax = 0}.
-  /// if right_side is false then
-  ///   result_nullspace is set to the matrix whose rows form a basis for {x | xA = 0}.
   /// Returns the dimension of the nullspace.
   ///
   /// result_nullspace should be a Mat, with the same ring/type as the input matrix A.
@@ -123,7 +134,6 @@ namespace MatrixOppies
   /// throws an engine_error for ring/matrix types where the function is not implemented.
   template<typename Mat>
   size_t nullSpace(const Mat& A, 
-                   bool right_side, 
                    Mat& result_nullspace) 
   {
     throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
@@ -292,7 +302,7 @@ namespace MatrixOppies
             const DMat<RT>& B, 
             DMat<RT>& result_product)
   {
-    printf("entering dmat mult\n");
+    //printf("entering dmat mult\n");
     typedef typename RT::ElementType ElementType;
     typedef typename DMat<RT>::ConstIterator ConstIterator;
     
@@ -440,16 +450,10 @@ namespace MatrixOppies
 
   template<typename RT>
   inline size_t nullSpace(const DMat<RT>& A, 
-                   bool right_side, 
                    DMat<RT>& result_nullspace)
   {
-    if (right_side)
-      {
-        DMatLUtemplate<RT> LUdecomp(A);
-        return LUdecomp.kernel(result_nullspace);
-      }
-    //TODO: do left-side
-    return 0;
+    DMatLUtemplate<RT> LUdecomp(A);
+    return LUdecomp.kernel(result_nullspace);
   }
 
   template<typename RT>
@@ -497,7 +501,6 @@ namespace MatrixOppies
             DMatZZpFFPACK& result_product);
 
   size_t nullSpace(const DMatZZpFFPACK& A, 
-                   bool right_side, 
                    DMatZZpFFPACK& result_nullspace);
 
   bool solveLinear(const DMatZZpFFPACK& A, 
@@ -566,15 +569,6 @@ namespace MatrixOppies
   {
     long nullity = fmpz_mat_nullspace(result_nullspace.fmpz_mat(), A.fmpz_mat());
     return nullity;
-  }
-
-  inline size_t nullSpace(const DMatZZ& A, 
-                          bool right_side, 
-                          DMatZZ& result_nullspace) 
-  {
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
-    return nullSpace(A, result_nullspace);
   }
 
   inline bool solveLinear(const DMatZZ& A, 
@@ -659,16 +653,6 @@ namespace MatrixOppies
     long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
     M2_ASSERT(rank == A.numColumns() - nullity);
     return nullity;
-  }
-  
-  inline size_t nullSpace(const DMatZZpFlint& A, 
-                          bool right_side, 
-                          DMatZZpFlint& result_nullspace)
-  {
-    //TODO: WRITE ME
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,result_nullspace);
   }
   
   inline bool solveLinear(const DMatZZpFlint& A, 
@@ -760,23 +744,30 @@ namespace MatrixOppies
     return fmpq_mat_inv(result_inv.fmpq_mat(), A.fmpq_mat());
   }
 
-  inline size_t nullSpace(const DMatQQFlint& A, 
-                          DMatQQFlint& result_nullspace) 
+  inline size_t rowReducedEchelonForm(const DMatQQFlint& A, 
+                                      DMatQQFlint& result_rref) 
   {
-    //TODO: WRITE ME
-    //DMatQQFlint& A1 = const_cast<DMatQQFlint&>(A); // needed because fmpq_mat_solve doesn't declare params const
-    //    long rank = fmpq_mat_nullspace(result_nullspace.fmpq_mat(), A1.fmpq_mat());
-    //    return (A.numColumns() - rank);
-    return 0;
+    return fmpq_mat_rref(result_rref.fmpq_mat(), A.fmpq_mat());
   }
+
   inline size_t nullSpace(const DMatQQFlint& A, 
-                          bool right_side, 
                           DMatQQFlint& result_nullspace) 
   {
-    //TODO: write this routine in the cases which are not handled
-    if (not right_side)
-      throw exc::engine_error("'nullSpace' for left-side not implemented for this kind of matrix over this ring");
-    return nullSpace(A,true,result_nullspace);
+    fmpz_mat_t m1;
+    fmpz_mat_t m2;
+    fmpz_mat_init(m1, A.numRows(), A.numColumns());
+    fmpz_mat_init(m2, A.numColumns(), A.numColumns());
+    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A.fmpq_mat());
+    //fmpz_mat_print_pretty(m1);
+    size_t nullity = fmpz_mat_nullspace(m2,m1);
+    // now copy the first 'nullity' columns into result_nullspace
+    result_nullspace.resize(A.numColumns(), nullity);
+    for (size_t c = 0; c < nullity; c++)
+      for (size_t r = 0; r < A.numColumns(); r++)
+        fmpz_set(fmpq_numref(& result_nullspace.entry(r,c)), fmpz_mat_entry(m2,r,c));
+    fmpz_mat_clear(m1);
+    fmpz_mat_clear(m2);
+    return nullity;
   }
 
   inline bool solveLinear(const DMatQQFlint& A, 

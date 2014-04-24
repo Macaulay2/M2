@@ -7,9 +7,6 @@
 #include "relem.hpp"
 #include "ZZp.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
-#include "RRR.hpp"
-#include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
@@ -107,13 +104,6 @@ const Ring *IM2_Ring_trivial_polyring()
 const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
      try {
-#if 0
-//   if (K == globalQQ)
-//     {
-//       const PolyRing *P = PolyRing::create(globalZZ,M);
-//       return PolyQQ::create(P);
-//     }
-#endif
        const PolyRing *result = PolyRing::create(K,M);
        intern_polyring(result);
        return result;
@@ -146,16 +136,6 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
                                          M2_arrayint skewvars)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const PolyRing *P = SkewPolynomialRing::create(globalZZ,
-//                                                   RQ->getMonoid(),
-//                                                   skewvars);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {
@@ -181,18 +161,6 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
                                         int homog_var)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
-//                                               RQ->getMonoid(),
-//                                               diff_vars,
-//                                               comm_vars,
-//                                               homog_var);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {
@@ -755,6 +723,7 @@ const RingElement *IM2_RingElement_promote(const Ring *S,
 {
      try {
           const RingElement *result;
+
           if (f->promote(S,result))
             return result;
           ERROR("cannot promote given ring element");
@@ -771,6 +740,7 @@ const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const
 {
      try {
           const RingElement *result;
+
           if (f->lift(S,result)) {
             *success_return = 1;
             return result;
@@ -1035,7 +1005,7 @@ void convolve(const PolyRing *R,
       // ASSUMPTION: input_relems[i] is either a variable or - of a variable
       ring_elem result = R->copy(input_relems[i]);
       if (convolve_type == 2)
-        R->mult_coeff_to(K->from_int(-i), result);
+        R->mult_coeff_to(K->from_long(-i), result);
       for (int j=i-1; j>=1; --j)
         {
           ring_elem hr;
@@ -1048,7 +1018,7 @@ void convolve(const PolyRing *R,
         }
       if (convolve_type == 1)
         {
-          invn = K->invert(K->from_int(i));
+          invn = K->invert(K->from_long(i));
           R->mult_coeff_to(invn,result);
         }
       output_relems[i] = result;

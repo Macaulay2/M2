@@ -42,7 +42,7 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
                              M2::ARingGFGivaro::ElementType& result)
 {
   if (index >= nelements) 
-    R.power(result, R.getGenerator(), rawRandomInt(R.cardinality()));
+    R.power(result, R.getGenerator(), rawRandomInt(static_cast<int32_t>(R.cardinality())));
   else 
     R.power(result, R.getGenerator(), randomVals[index]);
 }
@@ -69,7 +69,7 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
     R.init(a);
     for (int i=-5; i<R.characteristic(); i++)
       {
-        R.set_from_int(a, i);
+        R.set_from_long(a, i);
         M2_arrayint coeffs = R.fieldElementToM2Array(a);
         if (i >= 0) EXPECT_EQ(coeffs->array[0], i);
         EXPECT_EQ(coeffs->len, 3);

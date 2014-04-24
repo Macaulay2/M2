@@ -11,9 +11,9 @@
 #include "aring-RR.hpp"
 #include "ARingTest.hpp"
 
-bool almostEqual(const M2::ARingRR& R, int nbits, const M2::ARingRR::ElementType& a, const M2::ARingRR::ElementType& b)
+bool almostEqual(const M2::ARingRR& R, unsigned long nbits, const M2::ARingRR::ElementType& a, const M2::ARingRR::ElementType& b)
 {
-  M2::ARingRR::ElementType epsilon = pow(2,-nbits);
+  M2::ARingRR::ElementType epsilon = pow(2,static_cast<double>(-nbits));
   M2::ARingRR::ElementType c; 
   R.subtract(c,a,b);
   //std::cout << "a = " << a << ", b = " << b << ", c = " << c << ", a-b = " << a-b;
@@ -25,13 +25,13 @@ bool almostEqual(const M2::ARingRR& R, int nbits, const M2::ARingRR::ElementType
 template<>
 void getElement<M2::ARingRR>(const M2::ARingRR&  R, int index, M2::ARingRR::ElementType& result)
 {
-  if (index < 50) R.set_from_int(result, index-25);
+  if (index < 50) R.set_from_long(result, index-25);
   else R.random(result);
 }
 
 //void getElementRR(const M2::ARingRR&  R, int index, M2::ARingRR::ElementType& result)
 //{
-//  if (index < 50) R.set_from_int(result, index-25);
+//  if (index < 50) R.set_from_long(result, index-25);
 //  else R.random(result);
 //}
 
@@ -71,7 +71,6 @@ TEST(ARingRR, negate)
 TEST(ARingRR, add)
 {
   M2::ARingRR R;
-  const int nbits = R.get_precision();
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::ElementType a,b,c,d,e;  
   R.init(a);  
@@ -87,7 +86,7 @@ TEST(ARingRR, add)
       R.add(c,a,b);
       R.negate(d,b);
       R.add(e,c,d); // should be a
-      EXPECT_TRUE(almostEqual(R,nbits-2,a,e));
+      EXPECT_TRUE(almostEqual(R,R.get_precision()-2,a,e));
     }
   R.clear(e);
   R.clear(d);
@@ -99,7 +98,7 @@ TEST(ARingRR, add)
 TEST(ARingRR, subtract)
 {
   M2::ARingRR R;
-  const int nbits = R.get_precision();
+  auto nbits = R.get_precision();
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::ElementType a,b,c,e;  
   R.init(a);  
@@ -130,7 +129,7 @@ TEST(ARingRR, multDivide)
 {
   std::cout.precision(30);
   M2::ARingRR R;
-  const int nbits = R.get_precision();
+  auto nbits = R.get_precision();
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::ElementType a,b,c,d;  
   R.init(a);  
@@ -161,7 +160,7 @@ TEST(ARingRR, multDivide)
 TEST(ARingRR, axioms)
 {
   M2::ARingRR R;
-  const int nbits = R.get_precision();
+  auto nbits = R.get_precision();
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::ElementType a,b,c,d,e;  
   R.init(a);  
@@ -217,7 +216,7 @@ TEST(ARingRR, axioms)
 TEST(ARingRR, power_and_invert)
 {
   M2::ARingRR R;
-  const int nbits = R.get_precision();
+  auto nbits = R.get_precision();
   ARingElementGenerator<M2::ARingRR> gen(R);
   M2::ARingRR::ElementType a,b,c,d;  
   R.init(a);  

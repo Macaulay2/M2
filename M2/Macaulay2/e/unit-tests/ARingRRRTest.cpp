@@ -30,13 +30,13 @@ bool almostEqual(const M2::ARingRRR& R, int nbits, const M2::ARingRRR::ElementTy
 template<>
 void getElement<M2::ARingRRR>(const M2::ARingRRR&  R, int index, M2::ARingRRR::ElementType& result)
 {
-  if (index < 50) R.set_from_int(result, index-25);
+  if (index < 50) R.set_from_long(result, index-25);
   else R.random(result);
 }
 
 //void getElementRRR(const M2::ARingRRR&  R, int index, M2::ARingRRR::ElementType& result)
 //{
-//  if (index < 50) R.set_from_int(result, index-25);
+//  if (index < 50) R.set_from_long(result, index-25);
 //  else R.random(result);
 //}
 
@@ -147,7 +147,7 @@ TEST(ARingRRR, multDivide)
       else
         {
           R.divide(d,c,b);
-          EXPECT_TRUE(almostEqual(R,98,d,a));
+          EXPECT_TRUE(almostEqual(R,94,d,a));
         }
     }
   R.clear(d);

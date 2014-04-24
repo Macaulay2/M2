@@ -33,10 +33,10 @@ namespace M2 {
     
     // Get ready to create mOneTable.
     std::vector<ring_elem> polys;
-    polys.push_back(mOriginalRing.from_int(0));
+    polys.push_back(mOriginalRing.from_long(0));
     polys.push_back(mOriginalRing.copy(mPrimitiveElement));
     
-    ring_elem oneR = mOriginalRing.from_int(1);
+    ring_elem oneR = mOriginalRing.from_long(1);
     
     mGeneratorExponent = static_cast<GFElement>(-1);
     ring_elem x = mOriginalRing.var(0);
@@ -132,7 +132,7 @@ namespace M2 {
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;
-        set_from_int(a, mGF.ring().getCoefficientRing()->coerce_to_int(t->coeff));
+        set_from_long(a, mGF.ring().getCoefficientRing()->coerce_to_int(t->coeff));
         mGF.ring().getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).
@@ -154,9 +154,9 @@ namespace M2 {
     
     
     if (f == 0)
-      result = mGF.ring().from_int(0);
+      result = mGF.ring().from_long(0);
     else if (f == mGF.one())
-      result = mGF.ring().from_int(1);
+      result = mGF.ring().from_long(1);
     else
       result = mGF.ring().power(mGF.primitiveElement(), f);
     

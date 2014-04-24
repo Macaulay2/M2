@@ -4,7 +4,6 @@
 #include "RingTest.hpp"
 #include "aring-glue.hpp"
 #include "aring-RRR.hpp"
-//#include "ZZp.hpp"
 
 typedef M2:ConcreteRing<M2::ARingRRR> RRR;
 
@@ -24,7 +23,7 @@ bool almostEqual(const RRR* R, int nbits, ring_elem a, ring_elem b)
 template <>
 ring_elem getElement<RRR>(const RRR&  R, int index)
 {
-  if (index < 50) return R.from_int(index-25);
+  if (index < 50) return R.from_long(index-25);
   return R.random();
 }
 
@@ -42,10 +41,10 @@ TEST(RingRRR, create)
 TEST(RingRRR, ones)
 {
   Ring *R = RRR::create(100);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingRRR, negate)
 {

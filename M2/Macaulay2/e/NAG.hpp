@@ -6,7 +6,6 @@
 #define _nag_
 
 #include "matrix.hpp"
-// #include "CCC.hpp"
 #include "aring-CC.hpp"
 #include "complex.h"
 #include "style.hpp"

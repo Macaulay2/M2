@@ -27,14 +27,21 @@ namespace MatrixOppies
   void determinant(const DMatZZpFFPACK& mat, 
                    ZZpFFPACK::ElementType& result_det)
   {
-    std::cout << "Calling FFPACK::Det" << std::endl;
     /// @note 1. matrix data (N) is modified by FFPACK
-    DMatZZpFFPACK N(mat);
-    result_det = FFPACK::Det(mat.ring().field(), 
-                             mat.numRows(), 
-                             mat.numColumns(),  
-                             N.array(),  
-                             mat.numColumns());
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        mat.ring().set_from_long(result_det, 1);
+      }
+    else
+      {
+        DMatZZpFFPACK N(mat);
+        result_det = FFPACK::Det(mat.ring().field(), 
+                                 mat.numRows(), 
+                                 mat.numColumns(),  
+                                 N.array(),  
+                                 mat.numColumns());
+      }
   }
   
   bool inverse(const DMatZZpFFPACK& mat, 
@@ -43,6 +50,12 @@ namespace MatrixOppies
     M2_ASSERT(mat.numRows() == mat.numColumns());
     M2_ASSERT(result_inv.numRows() == mat.numRows());
     M2_ASSERT(result_inv.numColumns() == mat.numRows());
+
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        return true;
+      }
 
     DMatZZpFFPACK N(mat);
     size_t n = mat.numRows();
@@ -58,9 +71,11 @@ namespace MatrixOppies
   }
   
   size_t nullSpace(const DMatZZpFFPACK& mat, 
-                   bool right_side, 
                    DMatZZpFFPACK& nullspace)
   {
+    bool right_side = true;  // This function is written so that one could set right_side to false.
+    // (It used to be a parameter).
+
     DMatZZpFFPACK N(mat); // copy of mat
     size_t nr = mat.numRows();
     size_t nc = mat.numColumns();
@@ -80,7 +95,7 @@ namespace MatrixOppies
                            nullspace_leading_dim, 
                            nullspace_dim);
     
-    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
+    //    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
     if (right_side && nullspace_dim != nullspace_leading_dim)
       {
         std::cerr << "error: this should not happen!" << std::endl;
@@ -107,7 +122,7 @@ namespace MatrixOppies
                    DMatZZpFFPACK& X, 
                    bool declare_A_is_invertible) // this parameter is unused
   {
-    std::cerr << "inside FFpackSolveLinear" << std::endl;
+    //    std::cerr << "inside FFpackSolveLinear" << std::endl;
     
     size_t a_rows = A.numRows();
     size_t a_cols = A.numColumns();
@@ -210,7 +225,7 @@ namespace MatrixOppies
 
     DMatZZpFFPACK::ElementType b;
     C.ring().init(b);
-    C.ring().set_from_int(b, 1);
+    C.ring().set_from_long(b, 1);
     FFLAS::fgemm( C.ring().field(),
                   tB, tA,
                   m,n,k,
@@ -230,7 +245,7 @@ namespace MatrixOppies
                      const DMatZZpFFPACK& B)
   {
     DMatZZpFFPACK::ElementType one;
-    A.ring().set_from_int( one,1 );
+    A.ring().set_from_long( one,1 );
 
     addMultipleTo(C,one,A,B);
   }
@@ -240,7 +255,7 @@ namespace MatrixOppies
                           const DMatZZpFFPACK& B)
   {
     DMatZZpFFPACK::ElementType minus_one;
-    A.ring().set_from_int( minus_one,-1 );
+    A.ring().set_from_long( minus_one,-1 );
     addMultipleTo(C,minus_one,A,B);
   }
 

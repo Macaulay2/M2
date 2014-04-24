@@ -53,7 +53,7 @@ public:
 
   virtual unsigned long compute_hash_value(const ring_elem a) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr n) const;
   virtual ring_elem var(int v) const;

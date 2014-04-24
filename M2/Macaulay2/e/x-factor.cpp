@@ -38,7 +38,8 @@ const bool notInExtension = false;
 enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeGF, modeUnknown };
 static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      const Ring *F = P->getCoefficientRing();
-     if (F->cast_to_QQ()) return modeQQ;
+     //if (F->cast_to_QQ()) return modeQQ;
+     if (F->is_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
      if (F->cast_to_Z_mod()) return modeZn;
      if (F->cast_to_GF()) return modeGF;
@@ -181,10 +182,10 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                mpq_clear(&z);
                return ret;
           }
-          else if (h.inFF()) return RingElement::make_raw(R, R->from_int(static_cast<int>(h.intval())));
+          else if (h.inFF()) return RingElement::make_raw(R, R->from_long(h.intval()));
           else if (h.inExtension()) {
                assert( algebraicElement_M2 != NULL );
-               ring_elem result = R->from_int(0);
+               ring_elem result = R->from_long(0);
                for (int j = h.taildegree(); j <= h.degree(); j++) {
                  const RingElement *r = convertToM2(R, h[j]);
                  if (error()) return RingElement::make_raw(R,R->one());
@@ -201,7 +202,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                return RingElement::make_raw(R,R->one());
           }
      }
-     ring_elem result = R->from_int(0);
+     ring_elem result = R->from_long(0);
      for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());
@@ -688,54 +689,6 @@ CFList convertToCFList(const Matrix &M,
     }
   }
   return I;
-}
-
-void rawFactorOverTower(const RingElement *g,
-                        const Matrix *tower,
-                        engine_RawRingElementArrayOrNull *result_factors,
-                        M2_arrayintOrNull *result_powers)
-{
-  // g is expected to be a polynomial in one variable over the polynomials in 'tower'.
-  // tower should define a finite, irreducible ring extension, which is prime over the base field.
-  // result: as in rawFactor, the factors and their powers are placed into result_factors and
-  // result_powers.
-     try {
-          const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
-          *result_factors = 0;
-          *result_powers = 0;
-          if (P == 0) {
-               ERROR("expected polynomial ring");
-               return;
-          }
-          struct enter_factory foo(P);
-          if (foo.mode == modeError) return;
-
-          CFFList q;
-          init_seeds();
-
-          int success = 0;
-          CanonicalForm h = convertToFactory(*g,false);
-          CFList T = convertToCFList(*tower, false);
-          q = newfactoras(h, T, success);
-     
-          int nfactors = q.length();
-
-          *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
-          (*result_factors)->len = nfactors;
-
-          *result_powers = M2_makearrayint(nfactors);
-
-          int next = 0;
-          for (CFFListIterator i = q; i.hasItem(); i++) {
-            (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
-            (*result_powers)->array[next++] = i.getItem().exp();
-          }
-          if (error()) *result_factors = NULL, *result_powers = NULL;
-     }
-     catch (exc::engine_error e) {
-          ERROR(e.what());
-          return;
-     }
 }
 
 // Local Variables:

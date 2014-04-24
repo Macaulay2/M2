@@ -68,8 +68,8 @@ namespace M2 {
 
     void set_zero(ElementType& result) const { fmpz_poly_set_zero(&result); }
 
-    void set_from_int(ElementType& result, int a) const {
-      printf("called ARingZZxFlint::set_from_int\n");
+    void set_from_long(ElementType& result, long a) const {
+      printf("called ARingZZxFlint::set_from_long\n");
       M2_ASSERT(0);
     }
 

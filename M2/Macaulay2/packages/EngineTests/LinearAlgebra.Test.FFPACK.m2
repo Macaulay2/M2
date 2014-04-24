@@ -49,41 +49,41 @@ TEST ///
   testInverse R; -- FAILS
   testRank R;  -- FAILS
   *}
+  R = ZZpFFPACK ( 2 );
+  testLinearAlgebraSet R;
+
 ///
 
 if hasFFPACK then 
 TEST ///
-  debug Core --required, why? otherwiese testLinearAlgebraSet is not defined.
   R = ZZpFFPACK ( 3 );
   testLinearAlgebraSet R;
 ///
 
 if hasFFPACK then 
 TEST ///
-  debug Core
   R = ZZpFFPACK( 5 );
   testLinearAlgebraSet R;
 ///
 
 if hasFFPACK then 
 TEST ///
-  debug Core
   R = ZZpFFPACK( 101 );
   testLinearAlgebraSet  R;
 ///
 
 if hasFFPACK then 
 TEST ///
-  debug Core
   R = ZZpFFPACK( 30000001 );
   testLinearAlgebraSet R;
 ///
 
 if hasFFPACK then 
 TEST ///
-  debug Core
   R = ZZpFFPACK( maxFFPACKPrime )
   testLinearAlgebraSet R;
+
   --R = ZZp(33554467, Strategy => "FFPACK") -- this should not work
+  assert try (R = ZZp(33554467, Strategy => "FFPACK"); false) else true
 ///
 

@@ -503,8 +503,8 @@ private:
     M.ring().init(zero);
     M.ring().init(one);
     M.ring().init(f);
-    M.ring().set_from_int(zero, 0);
-    M.ring().set_from_int(one, 1);
+    M.ring().set_from_long(zero, 0);
+    M.ring().set_from_long(one, 1);
 
     interchange_columns(M,c,nc);
     interchange_rows(M,r,nr);
@@ -544,8 +544,8 @@ public:
     typename Mat::ElementType one, minus_one;
     M.ring().init(one);
     M.ring().init(minus_one);
-    M.ring().set_from_int(one, 1);
-    M.ring().set_from_int(minus_one, -1);
+    M.ring().set_from_long(one, 1);
+    M.ring().set_from_long(minus_one, -1);
 
     // After using the pivot element, it is moved to [nrows-1,ncols-1]
     // and nrows and ncols are decremented.

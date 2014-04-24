@@ -85,12 +85,14 @@ testLUBoundaryCases = (kk) -> (
     assert(transpose b1 == b2);
     assert(transpose b0 == b0);
     -- rank profile
+    {*
     assert(rowRankProfile b0 == {});
     assert(rowRankProfile b1 == {});
     assert(rowRankProfile b2 == {});
     assert(columnRankProfile b0 == {});
     assert(columnRankProfile b1 == {});
     assert(columnRankProfile b2 == {});
+    *}
     -- solve
     s2 := solve(b2, mutableMatrix(kk,5,2));
     assert(numrows s2 == 0);    
@@ -113,21 +115,22 @@ testLUBoundaryCases = (kk) -> (
     )    
 
 testLUTemplate = (rng ) -> (
+    epsilon := .5_rng ^ (-10 + precision rng);
     R := rng;
     M := mutableMatrix(R,10,10);
     fillMatrix M;
     (P,L,U) := LUdecomposition M;
-    assert(norm(M - checkLU(P,L,U)) < 1e-59);
+    assert(norm(M - checkLU(P,L,U)) < epsilon);
 
     M = mutableMatrix(R,100,100);
     fillMatrix M;
     time (P,L,U) = LUdecomposition M;
-    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+    assert(norm(M - checkLU(P,L,U)) < epsilon);
 
     M = mutableMatrix(R,500,500);
     fillMatrix M;
     time (P,L,U) = LUdecomposition M;
-    assert(norm(M - checkLU(P,L,U)) < 1e-58);
+    assert(norm(M - checkLU(P,L,U)) < epsilon);
     )
 
 testLUoverRR = () -> (

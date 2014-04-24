@@ -15,7 +15,8 @@ export { jordanForm,
     hasFlint,
     hasFFPACK,
     testLinearAlgebraSet,
-    testLUBoundaryCases
+    testLUBoundaryCases,
+    testHasEngineLinearAlgebra
     }
 
 
@@ -64,7 +65,8 @@ changeOfBasis(Ring, ZZ) := (R,n) -> (
 -- The ring kk should be a field, for which det, rawLinAlgInverse are defined
 randomFullRank = (R,n) -> (
     S := mutableMatrix(R,n,n);
-    fillMatrix S;
+    for i from 0 to n-1 do for j from 0 to n-1 do S_(i,j) = random 100;
+    --fillMatrix S;
     while det S == 0 do (
         S = mutableMatrix(R,n,n);
         fillMatrix S;
@@ -231,7 +233,7 @@ testDeterminant3x3 = (R) -> (
 testDeterminantViaMult = (R) -> (
     for i from 1 to 10 do (
         M := mutableMatrix jordanForm(R, splice{{i-1,3},{i+13,2},7:{i,1}});
-       assert((i-1)^3 * (i+13)^2 * i^7 == det M);
+        assert((i-1)^3 * (i+13)^2 * i^7 == det M);
         S := mutableMatrix(R, numRows M, numColumns M);
         fillMatrix(S, Density=>.3);
         assert(ring det S === R);
@@ -366,7 +368,9 @@ testRankProfile = (R) -> (
     );
 
 testSolveSimple = (R) -> (
-    M := mutableMatrix map(R^2, R^2, {{1, 4}, {2, 3}});
+    M := (if char R == 5 
+         then mutableMatrix map(R^2, R^2, {{1, 4}, {2, 2312}})
+         else mutableMatrix map(R^2, R^2, {{1, 4}, {2, 3}}));
     B := mutableMatrix map(R^2, R^1, {{3}, {7}});
     -- square M, B has one col
     X := solve(M,B);
@@ -403,24 +407,6 @@ testSolve = (R) -> (
     assert(M*X-B == 0);
     )
 
-
-testSolveOverRRR = () -> (
-    R := RR_200;
-    M := mutableMatrix(R,10,10);
-    fillMatrix M;
-    B := mutableMatrix(R,10,1);
-    fillMatrix B;
-    time X := solve(M,B);
-    assert(norm(M*X-B) < 1e-59);
-    
-    M = mutableMatrix(R,100,100);
-    fillMatrix M;
-    B = mutableMatrix(R,100,1);
-    fillMatrix B;
-    time X = solve(M,B);
-    assert(norm(M*X-B) < 1e-57)
-    )
-
 testLinearAlgebra = (R) -> (
     -- ONLY TESTS DENSE MATRIX CASE
     testLUBoundaryCases R;
@@ -443,3 +429,34 @@ testLinearAlgebraSet = (rng) -> (
   testSolve       rng;
 )
 
+testHasEngineLinearAlgebra = () -> (
+    -- Note: hasEngineLinearAlgebra is only used for matrices, not mutable matrices
+    -- EXCEPT currently: solve.
+    assert hasEngineLinearAlgebra RR_100;
+    assert hasEngineLinearAlgebra RR_53;
+    assert hasEngineLinearAlgebra CC_100;
+    assert hasEngineLinearAlgebra CC_53;
+    debug Core;
+    -- ZZ linear algebra needs to take into account that solutions are over ZZ
+    assert not hasEngineLinearAlgebra ZZ;
+    -- QQ should have linear algebra set
+    assert hasEngineLinearAlgebra QQ; -- when does this get set?
+    if hasFlint then (
+        assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FLINT"));
+        assert hasEngineLinearAlgebra ZZFlint;
+        assert hasEngineLinearAlgebra QQFlint;
+        );
+    if hasFFPACK then (
+        assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FFPACK"));
+        );
+    -- The following do NOT have engine linear algebra yet, but they should:
+      assert not hasEngineLinearAlgebra (GF(25));
+      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"New"));
+      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"CompleteGivaro"));
+      assert not hasEngineLinearAlgebra (GF(25, Strategy=>"Givaro"));
+      --hasEngineLinearAlgebra (GF(25, Strategy=>"FLINT")) -- this ring doesn't yet exist!
+    )
+
+TEST ///
+    testHasEngineLinearAlgebra()
+///

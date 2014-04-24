@@ -226,7 +226,7 @@ class ARingGFGivaro : public RingInterface
 
         void copy(elem &result,const elem a) const ;
 
-        void set_from_int(elem &result, int a) const ;
+        void set_from_long(elem &result, long a) const ;
 
         void set_from_mpz(elem &result,const mpz_ptr a) const ;
 

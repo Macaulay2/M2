@@ -47,7 +47,9 @@ namespace M2 {
     */
     
     bool is_pm_one(const ElementType& f) const {
-      return (mpz_cmp_si(mpq_denref(&f), 1) == 0 and (mpz_cmp_si(mpq_numref(&f), 1) or mpz_cmp_si(mpq_numref(&f), -1)));
+      return (mpz_cmp_si(mpq_denref(&f), 1) == 0 and 
+              (mpz_cmp_si(mpq_numref(&f), 1) == 0 or 
+               mpz_cmp_si(mpq_numref(&f), -1) == 0));
     }
     bool is_unit(const ElementType& f) const { return not is_zero(f); }
 
@@ -79,16 +81,23 @@ namespace M2 {
     
     void set_zero(ElementType& result) const {mpq_set_si(&result, 0, 1);}
     
-    void set_from_int(ElementType& result, int a) const {mpq_set_si(&result, a, 1);}
+    void set_from_long(ElementType& result, long a) const {mpq_set_si(&result, a, 1);}
     
     void set_from_mpz(ElementType& result,const mpz_ptr a) const {
-      printf("ARingQQGMP::calling set_from_mpz\n");
       mpz_set(mpq_numref(&result), a);
       mpz_set_ui(mpq_denref(&result), 1);
     }
-    
+
+    bool lift_to_mpz(mpz_ptr result, const ElementType& a) const {
+      if (mpz_cmp_si(mpq_denref(&a), 1) == 0)
+        {
+          mpz_set(result, mpq_numref(&a));
+          return true;
+        }
+      return false;
+    }
+
     void set_from_mpq(ElementType& result,const mpq_ptr a) const { 
-      printf("ARingQQGMP::calling set_from_mpq\n");
       mpq_set(&result, a); 
     }
     
@@ -157,11 +166,14 @@ namespace M2 {
     void swap(ElementType& a, ElementType& b) const {mpq_swap(&a,&b);}
     
     void random(ElementType& result) const {
+      rawSetRandomQQ(&result, 0);
+#if 0
       mpz_urandomb(mpq_numref(&result), mRandomState, mMaxHeight);
       mpz_urandomb(mpq_denref(&result), mRandomState, mMaxHeight);
       mpz_add_ui(mpq_numref(&result), mpq_numref(&result), 1);
       mpz_add_ui(mpq_denref(&result), mpq_denref(&result), 1);
       mpq_canonicalize(&result);
+#endif
     }
     /** @} */
 
@@ -197,7 +209,8 @@ namespace M2 {
     }
     
     /** @} */
-    
+
+#if 0    
     bool promote(const Ring *Rf, const ring_elem f, ElementType& result) const {
       printf("ARingQQGMP::calling promote\n");
       // Rf = ZZ ---> QQ
@@ -213,12 +226,13 @@ namespace M2 {
       printf("ARingQQGMP::calling lift\n");
       return false;
     }
+#endif
     
     // map : this --> target(map)
     //       primelem --> map->elem(first_var)
     // evaluate map(f)
     void eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const;
-    
+
   private:
     mutable gmp_randstate_t mRandomState;
     long int mMaxHeight;

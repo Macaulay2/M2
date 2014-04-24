@@ -129,7 +129,7 @@ ring_elem Ring::power(const ring_elem gg, mpz_t m) const
           return ff;
         }
     }
-  ring_elem prod = from_int(1);
+  ring_elem prod = from_long(1);
   ring_elem base = copy(ff);
   ring_elem tmp;
 
@@ -170,7 +170,7 @@ ring_elem Ring::power(const ring_elem gg, int n) const
     }
 
   // The exponent 'n' should be > 0 here.
-  ring_elem prod = from_int(1);
+  ring_elem prod = from_long(1);
   ring_elem base = copy(ff);
   ring_elem tmp;
 
@@ -252,23 +252,23 @@ int Ring::coerce_to_int(ring_elem) const
 
 bool Ring::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
-  result = from_int(0);
+  result = from_long(0);
   return false;
 }
 
 bool Ring::from_BigReal(gmp_RR z, ring_elem &result) const
 {
-  result = from_int(0);
+  result = from_long(0);
   return false;
 }
 bool Ring::from_double(double a, ring_elem &result) const
 {
-  result = from_int(0);
+  result = from_long(0);
   return false;
 }
 bool Ring::from_complex_double(double re, double im, ring_elem &result) const
 {
-  result = from_int(0);
+  result = from_long(0);
   return false;
 }
 
@@ -281,7 +281,7 @@ ring_elem Ring::random() const
 ring_elem Ring::preferred_associate(ring_elem f) const
 {
   // Here we assume that 'this' is a field:
-  if (is_zero(f)) return from_int(1);
+  if (is_zero(f)) return from_long(1);
   return invert(f);
 }
 
@@ -347,11 +347,6 @@ ring_elem Ring::diff(ring_elem a, ring_elem b, int use_coeff) const
   return mult(a,b);
 }
 
-ring_elem Ring::contract0(int n_top_variables, ring_elem a, ring_elem b) const
-{
-  return mult(a,b);
-}
-
 bool Ring::in_subring(int nslots, const ring_elem a) const
 {
   return true;
@@ -366,7 +361,7 @@ void Ring::degree_of_var(int n, const ring_elem a, int &lo, int &hi) const
 ring_elem Ring::divide_by_var(int n, int d, const ring_elem a) const
 {
   if (d == 0) return a;
-  return from_int(0);
+  return from_long(0);
 }
 
 ring_elem Ring::divide_by_expvector(const int *exp, const ring_elem a) const

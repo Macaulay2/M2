@@ -33,8 +33,8 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-  virtual ring_elem from_int(int n) const {
-    ring_elem result = numerR_->from_int(n);
+  virtual ring_elem from_long(long n) const {
+    ring_elem result = numerR_->from_long(n);
     normal_form(result);
     return result;
   }
@@ -297,10 +297,6 @@ public:
 #warning "diff for quotient rings: should do what?"
 #endif
     return numerR_->PolyRing::diff(a,b,use_coeff);
-  }
-
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const {
-    return numerR_->PolyRing::contract0(n_top_variables,a,b);
   }
 
   virtual bool in_subring(int nslots, const ring_elem a) const {

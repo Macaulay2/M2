@@ -59,19 +59,19 @@ namespace M2 {
     // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
     if (is_zero(a))
       {
-        set_from_int(x, 1);
+        set_from_long(x, 1);
         set_zero(y);
         return;
       }
     if (fmpz_cmp_ui(&b,1) == 0)
       {
-        set_from_int(x, 1);
+        set_from_long(x, 1);
         negate(y, a);
         return;
       }
     if (fmpz_cmp_si(&b,-1) == 0)
       {
-        set_from_int(x, 1);
+        set_from_long(x, 1);
         set(y, a);
         return;
       }

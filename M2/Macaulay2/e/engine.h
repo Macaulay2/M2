@@ -947,15 +947,6 @@ extern "C" {
   const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
                                            const Matrix *N); /* drg: connected rawMatrixContract*/
 
-  const Matrix /* or null */ * IM2_Matrix_contract0(
-                                            int n_top_variables,
-                                            const Matrix *M,
-                                            const Matrix *N); /* drg: connect*/
-  /* same shape of result as contract, except that the entries corresponding to M_(i,j), N_(k,l)
-     is the dot product of the polynomials, thought of as polynomials in the first n_top_variables
-     vars in the ring.  It is assumed that the monomial order is a product order, so that
-     all monomials with the same first n_top_variables vars are in order. */
-
   const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
                                              int var,
                                              M2_arrayint wts); /* drg: connected rawHomogenize*/
@@ -1294,9 +1285,17 @@ extern "C" {
 
   MutableMatrix* rawLinAlgInverse(MutableMatrix* A);
 
+  /** compute the row reduced echelon form of the matrix A.
+      This is a matrix of the same shape as A.
+      NULL, and an error, is returned if the ring is not
+      equipped to compute this, or if it has not been
+      implemented for that ring type yet
+  */
+  MutableMatrix* rawLinAlgRREF(MutableMatrix* A);
+
   M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
 
-  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side);
+  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);
 
   MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
                                 const MutableMatrix* B,
@@ -1885,11 +1884,6 @@ enum gbTraceValues
   void rawFactor2(const RingElement *f, const RingElement *minpoly,
                  engine_RawRingElementArrayOrNull *result_factors,
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
-  void rawFactorOverTower(const RingElement *f,
-                          const Matrix *M, /* the tower */
-                          engine_RawRingElementArrayOrNull *result_factors,
-                          M2_arrayintOrNull *result_powers); /* connected to rawFactorOverTower  */
-
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 

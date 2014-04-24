@@ -82,7 +82,7 @@ namespace M2 {
     
     void set_zero(ElementType& result) const {fmpz_set_si(&result, 0);}
     
-    void set_from_int(ElementType& result, int a) const {fmpz_set_si(&result, a);}
+    void set_from_long(ElementType& result, long a) const {fmpz_set_si(&result, a);}
     
     void set_from_mpz(ElementType& result,const mpz_ptr a) const {
       //printf("ARingZZ::calling set_from_mpz\n");

@@ -816,7 +816,7 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
+AC_SEARCH_LIBS(tgoto,ncurses curses tinfo,,AC_MSG_ERROR([[libcurses, libncurses, and tinfo not found (containing symbol tgoto)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
@@ -1373,16 +1373,16 @@ AC_LINK_IFELSE(
 	[  AC_MSG_RESULT(no) ])
 CFLAGS="$SAVE"
 
-TESTFLAG=-Wno-strict-aliasing
+TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
 M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
 CFLAGS=$SAVE
-AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
+AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
@@ -1394,24 +1394,28 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])],
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wno-mismatched-tags)
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl Always check for the option that turns the warning on, because gcc doesn't complain
+dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
+dnl It's a feature, not a bug!
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wno-mismatched-tags"
+CFLAGS="$CFLAGS -Wmismatched-tags"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    # we don't like seeing this warning, especially from the "clang" compiler
     AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
     AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
-AC_MSG_CHECKING(whether $CC accepts -Wno-parentheses-equality)
-AC_SUBST(HAVE_NO_PARENTHESES_EQUALITY,)
+AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wno-parentheses-equality"
+CFLAGS="$CFLAGS -Wparentheses-equality"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
-    HAVE_NO_PARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
-    HAVE_NO_PARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
+    HAVE_WPARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
+    HAVE_WPARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
 CFLAGS=$SAVE
 
 AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
@@ -1580,11 +1584,18 @@ save_prefix=$prefix
 save_exec_prefix=$exec_prefix
 prefix=NONE
 exec_prefix=NOWHERE
-# here we normalize *everything*
-# put docdir and datarootdir at end, because we are changing the values of the variables, and
-# other variables depend on them
-for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
-         sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
+# Here we normalize almost everything.
+# We put docdir and datarootdir at end, because we are changing the values of the variables, and
+# other variables depend on them.
+# We don't normalize sysconfdir, sharedstatedir, and localstatedir, because Fedora
+# insists in /usr/share/config.site that they be /etc, /var, and /var, respectively.
+# We don't use those directories, anyway.  To ensure that, we set them to /nowhere.
+# (We could avoid config.site with the CONFIG_SITE environment variable.)
+sysconfdir=/nowhere
+sharedstatedir=/nowhere
+localstatedir=/nowhere
+for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
+         psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)

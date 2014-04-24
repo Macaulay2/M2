@@ -391,7 +391,7 @@ void DMatLUtemplate<RingType>::setUpperLower(Mat& lower, Mat& upper)
 
       if (c < lower.numColumns())
         {
-          lower.ring().set_from_int(*L, 1); // diagonal entry of L should be 1
+          lower.ring().set_from_long(*L, 1); // diagonal entry of L should be 1
           L += lower.numColumns(); // pointing to entry right below diagonal
           auto L1 = L; // will increment by lower.numRows() each loop here
           for (size_t r=c+1; r<lower.numRows(); r++)
@@ -423,7 +423,7 @@ void DMatLUtemplate<RingType>::setUpperLowerNAIVE(Mat& lower, Mat& upper)
   for (size_t c=0; c<mLU.numColumns(); c++)
     {
       if (c < min)
-        ring().set_from_int(lower.entry(c,c), 1);
+        ring().set_from_long(lower.entry(c,c), 1);
       for (size_t r=0; r<mLU.numRows(); r++)
         {
           if (r <= c)
@@ -458,9 +458,9 @@ bool DMatLUtemplate<RingType>::determinant(ElementType& result)
   M2_ASSERT(mLU.numRows() == mLU.numColumns());
 
   if (mSign)
-    ring().set_from_int(result, 1);
+    ring().set_from_long(result, 1);
   else
-    ring().set_from_int(result, -1);
+    ring().set_from_long(result, -1);
   for (size_t i=0; i<mLU.numRows(); i++)
     ring().mult(result, result, mLU.entry(i,i));
 
@@ -541,6 +541,7 @@ bool DMatLUtemplate<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
+  // printf("entering DMatLUtemplate::solve\n");
   size_t rk = mPivotColumns.size();
 
   ElementType tmp, tmp2;
@@ -663,7 +664,7 @@ bool DMatLUtemplate<RingType>::inverse(Mat& X)
   // Make the identity matrix
   Mat id(ring(), mLU.numRows(), mLU.numRows());
   for (size_t i=0; i<mLU.numRows(); i++)
-    ring().set_from_int(id.entry(i,i), 1);
+    ring().set_from_long(id.entry(i,i), 1);
 
   solve(id, X);
   return true;
@@ -698,7 +699,7 @@ bool DMatLUtemplate<RingType>::kernel(Mat& X)
           continue;
         }
       // At this point, we are ready to create a column of X.
-      ring().set_from_int(X.entry(col,colX), -1);
+      ring().set_from_long(X.entry(col,colX), -1);
       // Now we loop through and set the elements in the rows of X = pivot columns.
       for (long p = nextpivotidx-1; p >= 0; p--)
         {

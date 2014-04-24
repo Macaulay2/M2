@@ -318,7 +318,7 @@ testGF = (strategy) -> (
 TEST ///
   testGF null
   testGF "Old"  
-  testGF "Givaro"
+  if hasFFPACK then testGF "Givaro"
 --  testGF "CompleteGivaro" -- this one fails, since it doesn't fall back to a different representation if
     -- the size is too big
 ///
@@ -359,6 +359,15 @@ TEST ///
 TEST ///
   debug Core
   if hasFFPACK then testMutableMatrices(ZZp(101, Strategy=>"FFPACK"))
+///
+
+
+TEST /// 
+  -- of clean
+  R = CC_100 
+  M = matrix{{0.0001_R+ii_R}}
+  M = mutableMatrix{{0.0001_R+ii_R}}
+  clean_0.001 M
 ///
 
 

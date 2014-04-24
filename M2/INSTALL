@@ -23,6 +23,25 @@ This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
 
+----------------------
+Getting the source code
+----------------------
+
+The current development version of the source code can be obtained with this
+command, assuming you have installed "git" on your machine:
+
+    git clone https://github.com/Macaulay2/M2
+
+A directory called M2, which you can move or rename, will be created, and this
+INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
+to the branch containing version 1.6 with the following command:
+
+    git checkout release-1.6
+
+The following command shows the list of release branches:
+
+    git branch -a | grep origin/release
+
 ---------
 Programs
 ---------
@@ -52,6 +71,9 @@ various modern operating systems:
   Debian:
     Install packages with:
       sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+    On all systems, add
+        --enable-build-libraries=ntl
+      to the "configure" command line below.
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -83,7 +105,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
+      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static
     Some debugging aids:
        sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
@@ -123,7 +145,8 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-        brew tap homebrew/versions homebrew/science
+        brew tap homebrew/versions
+        brew tap homebrew/science
         brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk
         brew link --force autoconf # just to ensure it got linked upon installation
     Now remember to add 
@@ -143,7 +166,13 @@ various modern operating systems:
   Compiling the most recent GNU C compiler
 ----------------------
 
-  To download and install the GNU C compiler, without having root access:
+  It may happen that you need a modern version of the GNU C compiler, but you
+  have no way to download a binary distribution of it, or you have no way to
+  use "brew" or "fink" to download and compile it for you.  In that case, you
+  may download, compile, and install the GNU C compiler (without necessariy
+  having root access) as follows.  Change "$HOME/local" below to the path to
+  the directory where you want to install the files; if it's a directory not
+  owned by you, prefix the "make install" command below with "sudo".
 
        wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
        tar xjf gcc-4.8.2.tar.bz2
@@ -161,7 +190,7 @@ various modern operating systems:
      of its libraries, and it would be bad to have a mismatch.
 
      It might be possible to add --disable-libstdcxx to the "configure"
-     commandn line above, allowing the resulting binaries to depend on the
+     command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
@@ -175,7 +204,8 @@ various modern operating systems:
         export CXX=g++-4.8.2
         export FC=gfortran-4.8.2
 
-     and then log out and log in again.
+     and then log out and log in again (or source the file into your
+     environment and continue in the same process or in daughter processes).
 
      Under Scientific Linux 6.4, if you run "sudo yum install -y glibc-devel.i686"
      first, then you can omit --disable-multilib above and get a 32 bit
@@ -187,6 +217,11 @@ various modern operating systems:
      Any other libraries you may want to use may also be installed with
      $HOME/local as the install prefix, as gcc-4.8.2 will automatically search
      in there for include files and libraries.
+
+     Installing multiple software in the same directory, such as in $HOME/local
+     (as described above), makes it hard to remove or upgrade packages.  To
+     solve that problem, use the program "epkg", available from
+     http://www.encap.org/epkg/.
 
 ----------------------
 Choosing a place for the repository
@@ -204,7 +239,13 @@ will serve as your backup.
 Compiling
 -----------------------
 
-Begin with this command, run in this directory:
+Now the directory to be in is the one containing this file in the source
+distribution -- it is called "M2", and is a subdirectory of the top level
+directory of the source tree.  If you are reading this file on the web, it may
+be more convenient to switch now to reading it in its location in the source
+tree.
+
+Begin with this command:
 
         make
 

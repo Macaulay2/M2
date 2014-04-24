@@ -114,7 +114,7 @@ namespace M2 {
     // The following functions coerce from other types.
     // mpz ints are used in the front end, so that is why
     // we use those type here.
-    void set_from_int(ElementType& result, int a) const {fmpz_set_si(result, a);}
+    void set_from_long(ElementType& result, long a) const {fmpz_set_si(result, a);}
     void set_from_mpz(ElementType& result,const mpz_ptr a) const {fmpz_set_mpz(result,a);}
 
     // Set from a rational number.

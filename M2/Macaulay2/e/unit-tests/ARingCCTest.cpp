@@ -12,9 +12,10 @@
 #include "aring-CC.hpp"
 #include "ARingTest.hpp"
 
-bool almostEqual(const M2::ARingCC& C, int nbits, const M2::ARingCC::ElementType& a, const M2::ARingCC::ElementType& b)
+bool almostEqual(const M2::ARingCC& C, unsigned long nbits, const M2::ARingCC::ElementType& a, const M2::ARingCC::ElementType& b)
 {
-  M2::ARingRR::ElementType d, epsilon = pow(2,-nbits);
+  M2::ARingRR::ElementType epsilon = pow(2,static_cast<double>(-nbits));
+  M2::ARingRR::ElementType d;
   M2::ARingCC::ElementType c; 
   C.subtract(c,a,b);
   C.abs(d,c);
@@ -24,7 +25,7 @@ bool almostEqual(const M2::ARingCC& C, int nbits, const M2::ARingCC::ElementType
 template<>
 void getElement<M2::ARingCC>(const M2::ARingCC&  C, int index, M2::ARingCC::ElementType& result)
 {
-  if (index < 50) C.set_from_int(result, index-25);
+  if (index < 50) C.set_from_long(result, index-25);
   else C.random(result);
 }
 
@@ -65,7 +66,7 @@ TEST(ARingCC, negate)
 TEST(ARingCC, add)
 {
   M2::ARingCC C;
-  const int nbits = C.get_precision();
+  auto nbits = C.get_precision();
   ARingElementGenerator<M2::ARingCC> gen(C);
   M2::ARingCC::ElementType a,b,c,d,e;  
   C.init(a);  
@@ -93,7 +94,7 @@ TEST(ARingCC, add)
 TEST(ARingCC, subtract)
 {
   M2::ARingCC C;
-  const int nbits = C.get_precision();
+  auto nbits = C.get_precision();
   ARingElementGenerator<M2::ARingCC> gen(C);
   M2::ARingCC::ElementType a,b,c,e;  
   C.init(a);  
@@ -122,7 +123,7 @@ TEST(ARingCC, subtract)
 TEST(ARingCC, multDivide)
 {
   M2::ARingCC C;
-  const int nbits = C.get_precision();
+  auto nbits = C.get_precision();
   ARingElementGenerator<M2::ARingCC> gen(C);
   M2::ARingCC::ElementType a,b,c,d;  
   C.init(a);  
@@ -153,7 +154,7 @@ TEST(ARingCC, multDivide)
 TEST(ARingCC, axioms)
 {
   M2::ARingCC C;
-  const int nbits = C.get_precision();
+  auto nbits = C.get_precision();
   ARingElementGenerator<M2::ARingCC> gen(C);
   M2::ARingCC::ElementType a,b,c,d,e;  
   C.init(a);  
@@ -209,7 +210,7 @@ TEST(ARingCC, axioms)
 TEST(ARingCC, power_and_invert)
 {
   M2::ARingCC C;
-  const int nbits = C.get_precision();
+  auto nbits = C.get_precision();
   ARingElementGenerator<M2::ARingCC> gen(C);
   M2::ARingCC::ElementType a,b,c,d;  
   C.init(a);  

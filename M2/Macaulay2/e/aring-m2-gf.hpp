@@ -154,10 +154,10 @@ namespace M2 {
     void set_zero(elem &result) const { result = 0; }
     void clear(elem &result) const { /* nothing */ }
     
-    void set_from_int(elem &result, int a) const {
-      a = a % characteristic();
-      if (a < 0) a += characteristic();
-      result = mGF.fromZZTable(a);
+    void set_from_long(elem &result, long a) const {
+      int a1 = static_cast<int>(a % characteristic());
+      if (a1 < 0) a1 += characteristic();
+      result = mGF.fromZZTable(a1);
     }
 
     void set_var(elem &result, int v) const { result = 1; }

@@ -98,7 +98,7 @@ public:
   static bool is_equal(int level, const poly f, const poly g);
   static poly copy(int level, const_poly f);
 
-  static poly from_int(int level, long c);  // c should be reduced mod p
+  static poly from_long(int level, long c);  // c should be reduced mod p
 
   static bool is_zero(poly f) { return f == 0; }
 
@@ -293,10 +293,10 @@ public:
     result = D.var(level,n);
   }
 
-  void set_from_int(poly &result, long r) {
+  void set_from_long(poly &result, long r) {
     r = r % P;
     if (r < 0) r += P;
-    result = D.from_int(level, r);
+    result = D.from_long(level, r);
   }
 
   void set_from_int(poly &result, mpz_ptr r); // written

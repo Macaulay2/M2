@@ -713,6 +713,8 @@ public:
   // then NULL is returned, and an error message is set.
   virtual MutableMatrix* invert() const;
 
+  virtual MutableMatrix* rowReducedEchelonForm() const;
+
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
@@ -721,9 +723,8 @@ public:
   virtual M2_arrayintOrNull rankProfile(bool row_profile) const;
   
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const;
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace() const;
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
@@ -778,6 +779,21 @@ MutableMatrix* MutableMat<T>::invert() const
 }
 
 template <typename T>
+MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  try {
+    // ignore returned value (the rank of mat):
+    MatrixOppies::rowReducedEchelonForm(mat, result->mat);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    delete result;
+    throw(e);
+  }
+}
+
+template <typename T>
 std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
                                                            bool right_side) const 
 { 
@@ -793,10 +809,10 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
 }
 
 template <typename T>
-MutableMatrix* MutableMat<T>::nullSpace(bool right_side) const
+MutableMatrix* MutableMat<T>::nullSpace() const
 {
   MutableMat<T>* ker = makeZeroMatrix(0,0);
-  MatrixOppies::nullSpace(mat, right_side, ker->mat); // ignore return value of nullSpace...
+  MatrixOppies::nullSpace(mat, ker->mat); // ignore return value of nullSpace...
   return ker;
 }
 

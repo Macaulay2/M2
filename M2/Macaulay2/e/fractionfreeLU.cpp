@@ -23,8 +23,8 @@ FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
       need_div[i] = false;
     }
 
-  pivot = R->from_int(1);
-  lastpivot = R->from_int(1);
+  pivot = R->from_long(1);
+  lastpivot = R->from_long(1);
 }
 
 FF_LUComputation::~FF_LUComputation()

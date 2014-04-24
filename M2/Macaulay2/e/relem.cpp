@@ -4,11 +4,11 @@
 #include "monoid.hpp"
 #include "monomial.hpp"
 #include "frac.hpp"
-#include "QQ.hpp"
 #include "polyring.hpp"
 
+#include "aring-glue.hpp"
+
 RingZZ *globalZZ;
-QQ *globalQQ;
 
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {
@@ -79,7 +79,7 @@ RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
 
 RingElement *RingElement::operator*(int n) const
 {
-  ring_elem nR = R->from_int(n);
+  ring_elem nR = R->from_long(n);
   if (is_zero() || (n == 0))
     return new RingElement(R, ZERO_RINGELEM);
   else

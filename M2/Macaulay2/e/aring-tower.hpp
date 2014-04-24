@@ -134,7 +134,7 @@ namespace M2 {
 
     void copy(elem &result, elem a) const { result = copy(mStartLevel, a); }
 
-    void set_from_int(elem &result, int a) const {       // TODO: write this
+    void set_from_long(elem &result, long a) const {       // TODO: write this
     }
 
     // v from 0..n_vars()-1, sets result to 0 if v is out of range
@@ -282,10 +282,10 @@ namespace M2 {
     void set_zero(ElementType &result) const { result = 0; }
     
     
-    void set_from_int(ElementType &result, long r) {
+    void set_from_long(ElementType &result, long r) {
       r = r % mCharacteristic;
       if (r < 0) r += P;
-      result = mRing.from_int(mStartLevel, r);
+      result = mRing.from_long(mStartLevel, r);
     }
     
     void set_from_int(ElementType &result, mpz_ptr r);
@@ -415,7 +415,7 @@ namespace M2 {
 
     poly copy(int level, const_poly f);
     poly var(int level, int v); // make the variable v (but at level 'level')
-    poly from_int(int level, long c);  // c should be reduced mod p
+    poly from_long(int level, long c);  // c should be reduced mod p
     
     /////////////////////////////////////
     // Private routines for arithmetic //

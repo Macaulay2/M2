@@ -134,9 +134,9 @@ bool SchurRing2::initialize_SchurRing2()
 {
   initialize_ring(coefficientRing->charac());
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   SMinitialize(nvars,0);
   return true;
@@ -279,9 +279,9 @@ ring_elem SchurRing2::from_coeff(ring_elem a) const
   result.schur_poly_val = f;
   return result;
 }
-ring_elem SchurRing2::from_int(int n) const
+ring_elem SchurRing2::from_long(long n) const
 {
-  ring_elem a = coefficientRing->from_int(n);
+  ring_elem a = coefficientRing->from_long(n);
   return from_coeff(a);
 }
 ring_elem SchurRing2::from_int(mpz_ptr n) const
@@ -595,8 +595,6 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
             ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
             ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
             resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
-#warning "Dan commented out a 'delete' call that was freeing a pointer twice; leaving for Mike to debug"
-            //      delete r;
             H.add(resultRE);
           }
       return H.value();

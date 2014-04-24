@@ -127,9 +127,9 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   result->gb_ring_ = R->get_gb_ring();
   result->setQuotientInfo(qrinfo); // Also sets graded-ness
 
-  result->zeroV = result->from_int(0);
-  result->oneV = result->from_int(1);
-  result->minus_oneV = result->from_int(-1);
+  result->zeroV = result->from_long(0);
+  result->oneV = result->from_long(1);
+  result->minus_oneV = result->from_long(-1);
 
   return result;
 }

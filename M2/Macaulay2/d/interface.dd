@@ -1489,27 +1489,6 @@ export rawCharSeries(e:Expr):Expr := (
      );
 setupfun("rawCharSeries",rawCharSeries);
 
-export rawFactorOverTower(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is x:RawRingElementCell do
-     when s.1 is y:RawMatrixCell do (
-         resultFactors := RawRingElementArrayOrNull(NULL);
-         resultPowers  := RawArrayIntOrNull(NULL);
-	     Ccode( void, "rawFactorOverTower(", 
-	          x.p, ",",  -- polynomial to factor
-              y.p, ",",  -- matrix representing the tower over which to factor
-    	       "&",resultFactors, ",",
-    	       "&",resultPowers, ")" );
-         when resultFactors is null do engineErrorMessage() is f:RawRingElementArray do
-         when resultPowers is null do engineErrorMessage() is p:RawArrayInt do Expr(Sequence(toExpr(f),toExprSeq(p)))
-         )
-     else WrongArg(2,"a raw matrix")
-     else WrongArg(1,"a raw ring element")
-     else WrongNumArgs(2)
-     );
-setupfun("rawFactorOverTower",rawFactorOverTower);
-
 export rawIdealReorder(e:Expr):Expr := (
      when e
      is x:RawMatrixCell do toExpr( Ccode( RawArrayIntOrNull, "rawIdealReorder(", x.p, ")" ))
@@ -2870,6 +2849,13 @@ export rawLinAlgInverse(e:Expr):Expr := (
      else WrongArgMutableMatrix());
 setupfun("rawLinAlgInverse",rawLinAlgInverse);
 
+export rawLinAlgRREF(e:Expr):Expr := (
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgRREF(", m.p, ")" ))
+     else WrongArgMutableMatrix());
+setupfun("rawLinAlgRREF",rawLinAlgRREF);
+
 export rawLinAlgMult(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
@@ -2898,16 +2884,10 @@ export rawLinAlgRankProfile(e:Expr):Expr := (
 setupfun("rawLinAlgRankProfile", rawLinAlgRankProfile);
 
 export rawLinAlgNullSpace(e:Expr):Expr := (
-     when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2) else
-     when s.0 is M:RawMutableMatrixCell do
-     if !isBoolean(s.1) then WrongArgBoolean(1) else toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawLinAlgNullSpace(", 
-	       M.p, ",", 
-	       toBoolean(s.1),
-	       ")"))
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(2));
+     when e
+     is m:RawMutableMatrixCell
+     do toExpr(Ccode(RawMutableMatrixOrNull, "rawLinAlgNullSpace(", m.p, ")" ))
+     else WrongArgMutableMatrix());
 setupfun("rawLinAlgNullSpace", rawLinAlgNullSpace);
 
 export rawLinAlgSolve(e:Expr):Expr := (

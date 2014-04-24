@@ -482,7 +482,7 @@ poly DPoly::copy(int level, const_poly f)
   return result;
 }
 
-poly DPoly::from_int(int level, long c)
+poly DPoly::from_long(int level, long c)
 {
   if (c == 0) return 0;
   poly result = alloc_poly_0(0);
@@ -1121,10 +1121,10 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   poly q = 0;
 
   v1 = 0;
-  v2 = from_int(level,1);
+  v2 = from_long(level,1);
   v3 = copy(level,g);
 
-  u1 = from_int(level,1);
+  u1 = from_long(level,1);
   u2 = 0;
   u3 = copy(level,f);
 
@@ -1331,7 +1331,7 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
   // We assume that m > 0. THIS IS NOT CHECKED!!
   mpz_t n;
   mpz_init_set(n, m);
-  poly prod = from_int(level,1);
+  poly prod = from_long(level,1);
   poly base = copy(level,f);
   poly tmp;
 
@@ -1457,7 +1457,7 @@ void DRing::set_from_int(poly &result, mpz_ptr r)
   long c = mpz_get_si(a);
   mpz_clear(a);
   if (c < 0) c += P;
-  result = D.from_int(level, c);
+  result = D.from_long(level, c);
 }
 
 bool DRing::set_from_rational(poly &result, mpq_ptr r)
@@ -1480,7 +1480,7 @@ bool DRing::set_from_rational(poly &result, mpq_ptr r)
   ZZp_INVERT(P, cbottom, cbottom);
   ZZp_MULT(P, ctop, cbottom);
 
-  result = D.from_int(level, ctop);
+  result = D.from_long(level, ctop);
   return true;
 }
 

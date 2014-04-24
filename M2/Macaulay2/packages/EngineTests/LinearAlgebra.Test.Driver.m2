@@ -8,6 +8,7 @@ load "EngineTests/LinearAlgebra.Test.ZZp.m2"
 load "EngineTests/LinearAlgebra.Test.EngineGF.m2"
 load "EngineTests/LinearAlgebra.Test.Givaro.m2"
 
+load "EngineTests/LinearAlgebra.Test.all.m2"
 
 
 if hasFlint and hasFFPACK then 
@@ -38,5 +39,14 @@ TEST ///
 
   debug Core
   initializeEngineLinearAlgebra QQ
+///
+
+
+TEST ///
+  -- eigenvalues
+  M = mutableMatrix(CC_100,3,3)
+  M = matrix fillMatrix M
+  eigenvalues M
+  LUdecomposition M
 ///
 

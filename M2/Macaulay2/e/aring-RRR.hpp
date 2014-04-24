@@ -107,7 +107,7 @@ namespace M2 {
       mpfr_set(&result, &a, GMP_RNDN); 
     }
 
-    void set_from_int(ElementType &result, int a) const {
+    void set_from_long(ElementType &result, long a) const {
       mpfr_set_si(&result, a, GMP_RNDN);
     }
 

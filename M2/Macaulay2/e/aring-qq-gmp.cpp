@@ -44,7 +44,6 @@ namespace M2 {
     
     char *allocstr = (size > 1000 ? newarray_atomic(char,size) : s);
 
-    std::cout << "size = " << size << std::endl;
     if (!is_neg && p_plus) o << '+';
     if (one)
       {
@@ -56,7 +55,6 @@ namespace M2 {
         str = mpq_get_str(allocstr, 10, &a);
         o << str;
       }
-    std::cout << "output = " << o.str() << std::endl;
     if (size > 1000) deletearray(allocstr);
   }
 
@@ -64,7 +62,7 @@ namespace M2 {
                        ElementType& x, ElementType& y) const
   {
     M2_ASSERT(!is_zero(b));
-    set_from_int(x, 1);
+    set_from_long(x, 1);
     divide(y,a,b);
     negate(y,y);
   }

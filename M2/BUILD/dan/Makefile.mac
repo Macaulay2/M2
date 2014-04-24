@@ -61,13 +61,14 @@ endif
 unexport DEBUG
 unexport PROFILE
 
-CC := gcc
-CXX := g++
+# use the latest version from homebrew, not clang:
+CC  := /usr/local/bin/gcc-4.8
+CXX := /usr/local/bin/g++-4.8
 
 # CC := clang
 # CXX := clang++
 
-BRANCH := $(shell git branch --contains | sed s/^..//)
+BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
@@ -118,6 +119,7 @@ ifeq ($(PROFILE),yes)
 endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+
 # Local Variables:
 # compile-command: "time make -w -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
 # End:

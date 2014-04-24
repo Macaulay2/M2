@@ -43,7 +43,7 @@ namespace M2 {
     for (UTT currIntElem=2; currIntElem < mCharac; currIntElem++)
       {
         ElementType currElem;
-        set_from_int(currElem, currIntElem);
+        set_from_long(currElem, currIntElem);
         bool found = true;
         ElementType tmpElem = currElem;
         for (UTT count=0;count < mCharac-2; count++)
@@ -112,9 +112,9 @@ namespace M2 {
   }
 
   /// @todo possible problem if type UTT is smaller than an int?
-  void ARingZZpFFPACK::set_from_int(ElementType &result, int a) const
+  void ARingZZpFFPACK::set_from_long(ElementType &result, long a) const
   {
-    mFfpackField.init(result, static_cast<long>(a));
+    mFfpackField.init(result, a);
   }
   
   void ARingZZpFFPACK::set_from_mpz(ElementType &result, const mpz_ptr a) const
@@ -201,7 +201,7 @@ namespace M2 {
         n = -n;
       }
     n = n % (mCharac-1);
-    set_from_int(result, 1);
+    set_from_long(result, 1);
     if (n == 0)
       return;
 
@@ -264,8 +264,8 @@ namespace M2 {
           ring_elem &result) const
   {
     // translate f to map->target()
-    int a = static_cast<int>(f);  
-    result = map->get_ring()->from_int(a);
+    long a = static_cast<long>(f);  
+    result = map->get_ring()->from_long(a);
   }
   
 };

@@ -103,8 +103,8 @@ namespace M2 {
       set(result,a); 
     }
 
-    void set_from_int(ElementType &result, int a) const {
-      result = a;
+    void set_from_long(ElementType &result, long a) const {
+      result = static_cast<double>(a);
     }
 
     void set_var(ElementType &result, int v) const { 
@@ -115,7 +115,7 @@ namespace M2 {
       result = mpz_get_d(a);
     }
 
-    void set_from_mpq(ElementType &result, mpq_ptr a) const {
+    void set_from_mpq(ElementType &result, const mpq_ptr a) const {
       result = mpq_get_d(a);
     }
 

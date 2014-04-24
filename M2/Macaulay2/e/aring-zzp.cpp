@@ -97,7 +97,7 @@ namespace M2 {
   {
     // translate f to 
     int a = exp_table[f];
-    result = map->get_ring()->from_int(a);
+    result = map->get_ring()->from_long(a);
   }
 
 };

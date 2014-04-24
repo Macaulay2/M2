@@ -21,8 +21,9 @@ class MutableMatrix : public mutable_object
 {
 protected:
   MutableMatrix() {}
-  virtual ~MutableMatrix() {}
 public:
+  virtual ~MutableMatrix() {}
+
 #if 0
   // MESXXX
   class iterator : public our_new_delete
@@ -281,6 +282,11 @@ public:
   // then NULL is returned, and an error message is set.
   virtual MutableMatrix* invert() const = 0;
 
+  // Find the row reduced echelon form of 'this'. If
+  // the ring is one in which the rref cannot be computed,
+  // then NULL is returned, and an error message is set.
+  virtual MutableMatrix* rowReducedEchelonForm() const = 0;
+
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
@@ -289,9 +295,8 @@ public:
   virtual M2_arrayintOrNull rankProfile(bool row_profile) const = 0;
   
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const = 0;
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace() const = 0;
 
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false

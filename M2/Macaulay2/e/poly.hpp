@@ -59,7 +59,7 @@ public:
 
   ring_elem fromCoefficient(ring_elem& coeff) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
 
@@ -213,7 +213,6 @@ public:
   virtual void monomial_divisor(const ring_elem a, int *exp) const;
 
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;

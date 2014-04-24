@@ -69,7 +69,7 @@ public:
 
   virtual int coerce_to_int(ring_elem a) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;

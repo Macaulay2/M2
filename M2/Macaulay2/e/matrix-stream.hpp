@@ -47,6 +47,7 @@ public:
 
   Coefficient modulus() const { return mPolyRing->charac(); }
   VarIndex varCount() const { return mPolyRing->n_vars(); }
+  Component comCount() const { return mFreeModule->rank(); }
   
   void idealBegin(size_t polyCount);
   void appendPolynomialBegin(size_t termCount);

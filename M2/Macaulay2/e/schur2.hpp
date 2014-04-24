@@ -135,7 +135,7 @@ public:
                              bool p_plus=false,
                              bool p_parens=false) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
 
