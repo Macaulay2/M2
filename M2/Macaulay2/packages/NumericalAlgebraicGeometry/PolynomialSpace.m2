@@ -1,4 +1,5 @@
 -- -*- coding: utf-8 -*-
+{*
 newPackage(
      "PolynomialSpace",
      PackageExports => {"NAGtypes"},
@@ -11,7 +12,7 @@ newPackage(
      Headline => "functionality for PolySpace and DualSpace types and numerical linear algebra",
      DebuggingMode => true
 )
-
+*}
 export {
      "addition", "intersection", "reduceSpace",
      "colon", "innerProduct", "isContained",

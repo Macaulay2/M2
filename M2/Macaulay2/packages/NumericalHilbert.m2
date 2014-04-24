@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "NumericalHilbert",
-     PackageExports => {"NAGtypes", "PolynomialSpace"},
+     PackageExports => {"NAGtypes"},
      Version => "0.1", 
      Date => "May 11, 2012",
      Authors => {{Name => "Robert Krone", 
@@ -16,7 +16,7 @@ export {
      gCorners,
      sCorners,
      localHilbertRegularity,
-     elminatingDual,
+     eliminatingDual,
      orthogonalInSubspace,
      TruncDualData,
      truncDualData,
@@ -32,6 +32,8 @@ export {
 --TruncDualData private keys
 protect Igens, protect syl, protect strategy, protect deg,
 protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs
+
+load "NumericalAlgebraicGeometry/PolynomialSpace.m2"
 
 -----------------------------------------------------------------------------------------
 

@@ -1,14 +1,13 @@
-* rewrite paper around isWitnessPolynomial (Sec 6)
+* Add sentence about J\I being large
+* Don't need to remember old witness polynomials in the algorithm
+* Distinguish how J_d != I_d is tested for truncation vs double truncation
+* "suspect component"
+* examples embedded (cyclic4 in sec 6.1, eliminating dual example in sec 4)
 * Go through paper for notation/structure/clarity
 * paper: polish the proofs for slicing down to dim 0
 * straighten out appendix (Jon?)
 
-* make tolerances optional
-* how should the various functions be partitioned?
 * isComponentEmbedded (for dim > 0)
-* isWitnessPolynomial cutoff. How should it interact with (d,d')?
-  (a) prove that for every d' there exist d such that the test succeeds for random(d',Jdd) with probability 1
-  (b) "remember" witness candidates for every (d',e) and check for each 
 * keywords to allow options: "random", "isSubset", "quotient", "intersect", "add", "truncate"
 
 
