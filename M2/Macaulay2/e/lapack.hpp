@@ -5,7 +5,6 @@
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
-#include "coeffrings.hpp"
 #include "dmat.hpp"
 #ifdef HAVE_MPACK
 #include <mpack/mblas_mpfr.h>

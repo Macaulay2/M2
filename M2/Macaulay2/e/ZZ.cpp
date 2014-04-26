@@ -7,7 +7,6 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 
-#include "coeffrings.hpp"
 #include "aring-zz-gmp.hpp"
 #if 0
 // #include "gmp.h"
