@@ -201,8 +201,6 @@ class ARingGFGivaro : public RingInterface
 
     /** @name get functions
         @{ */
-        int get_int(elem f) const ;
-        int get_repr(elem f) const ;
         M2_arrayint getModPolynomialCoeffs() const;
         M2_arrayint getGeneratorCoeffs() const;
 

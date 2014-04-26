@@ -66,8 +66,6 @@ class DummyRing : public RingInterface
           return static_cast<unsigned long>(a); 
         }
 
-        int get_int(elem f) const {return 0;}
-        int get_repr(elem f) const {return 0;}
         M2_arrayint getModPolynomialCoeffs() const {return 0;}
         M2_arrayint getGeneratorCoeffs() const {return 0;}
         

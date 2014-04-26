@@ -212,16 +212,6 @@ namespace M2 {
 
 };
 
-#if 0
-    // 'get' functions
-
-    ElementType get_int(ElementType f) const { return f; }
-
-    ElementType get_repr(ElementType f) const { return f; }
-
-    static int findPrimitiveRoot(int P); //do we need this?
-#endif
-
 #endif // HAVE_FLINT
 #endif
 

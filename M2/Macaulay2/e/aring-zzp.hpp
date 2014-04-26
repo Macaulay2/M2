@@ -97,12 +97,6 @@ namespace M2 {
 	result = a.int_val;
     }
 
-    // 'get' functions
-
-    int get_int(elem f) const { return exp_table[f]; }
-
-    int get_repr(elem f) const { return f; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = 0; }
