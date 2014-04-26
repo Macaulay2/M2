@@ -17,6 +17,7 @@
 #include <iostream>
 #include "interrupted.hpp"
 
+#include <limits>
 bool warning_given_for_gb_or_res_over_RR_or_CC = false;
 
 void test_over_RR_or_CC(const Ring *R)
@@ -970,7 +971,12 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
       ERROR("expected a polynomial ring");
       return;
     }
-  int charac = P->charac();
+  if (P->characteristic() > std::numeric_limits<int>::max())
+    {
+      ERROR("characteristic is too large for mathic gb computation");
+      return;
+    }
+  int charac = static_cast<int>(P->characteristic());
   int nvars = P->n_vars();
 
   mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());
@@ -1024,7 +1030,12 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
       ERROR("mgb: expected a non-negative number of threads");
       return 0;
     }
-  int charac = P->charac();
+  if (P->characteristic() > std::numeric_limits<int>::max())
+    {
+      ERROR("characteristic is too large for mathic gb computation");
+      return 0;
+    }
+  int charac = static_cast<int>(P->characteristic());
   int nvars = P->n_vars();
   MGBCallback callback;
   mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());

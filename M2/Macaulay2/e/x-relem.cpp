@@ -1270,7 +1270,7 @@ int rawExtensionDegree(int firstvar, const Ring *R1)
   const Tower *R = R1->cast_to_Tower();
   if (R == 0) return 0;
   if (firstvar < 0)
-    return R->charac();
+    return R->characteristic();
   return R->extension_degree(firstvar);
 }
 

@@ -98,7 +98,7 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
-  if (R->charac() == 0)
+  if (R->characteristic() == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
@@ -215,7 +215,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
-  if (R->charac() == 0)
+  if (R->characteristic() == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
@@ -237,7 +237,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
     return 0;
     
   try {
-    M2::ARingGFGivaro *A = new M2::ARingGFGivaro(R->charac(), modPoly, primitiveElementPoly, *R);
+    M2::ARingGFGivaro *A = new M2::ARingGFGivaro(R->characteristic(), modPoly, primitiveElementPoly, *R);
     return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
   }
   catch (exc::engine_error e) {

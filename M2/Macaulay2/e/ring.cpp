@@ -33,14 +33,14 @@ const CoefficientRingR* Ring::getCoefficientRingR() const
   return cR;
 }
 
-void Ring::initialize_ring(int P0,
+void Ring::initialize_ring(long P0,
                            const PolynomialRing *DR,
                            const M2_arrayint heft_vec)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
   // If this is a frac field, K = R, M = trivial monoid.
-  P = P0;
+  mCharacteristic = P0;
   if (DR == 0)
     degree_ring = PolyRing::get_trivial_poly_ring();
   else

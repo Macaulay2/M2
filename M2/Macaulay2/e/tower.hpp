@@ -21,7 +21,7 @@ class Tower : public Ring
 protected:
   Tower() {}
 
-  bool initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions);
+  bool initialize(long charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions);
 public:
   virtual ~Tower();
 

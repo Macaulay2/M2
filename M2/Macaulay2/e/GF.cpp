@@ -42,7 +42,7 @@ bool GF::initialize_GF(const RingElement *prim)
   // set the GF ring tables.  Returns false if there is an error.
   _primitive_element = prim;
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
-  initialize_ring(_originalR->charac(),
+  initialize_ring(_originalR->characteristic(),
                   PolyRing::get_trivial_poly_ring());
 
   declare_field();
@@ -58,14 +58,14 @@ bool GF::initialize_GF(const RingElement *prim)
   Nterm *t = f;
   int n = _originalR->getMonoid()->primary_degree(t->monom);
 
-  Q_ = P;
-  for (i=1; i<n; i++) Q_ *= P;
+  Q_ = static_cast<int>(characteristic());
+  for (i=1; i<n; i++) Q_ *= static_cast<int>(characteristic());
 
   Qexp_ = n;
   Q1_ = Q_-1;
   _ZERO = 0;
   _ONE = Q1_;
-  _MINUS_ONE = (P == 2 ? _ONE : Q1_/2);
+  _MINUS_ONE = (characteristic() == 2 ? _ONE : Q1_/2);
 
   // Get ready to create the 'one_table'
   array<ring_elem> polys;
@@ -111,10 +111,10 @@ bool GF::initialize_GF(const RingElement *prim)
     }
 
   // Create the Z/P ---> GF(Q) inclusion map
-  _from_int_table = newarray_atomic(int,P);
+  _from_int_table = newarray_atomic(int,characteristic());
   int a = _ONE;
   _from_int_table[0] = _ZERO;
-  for (i=1; i<P; i++)
+  for (i=1; i<characteristic(); i++)
     {
       _from_int_table[i] = a;
       a = _one_table[a];
@@ -219,8 +219,9 @@ ring_elem GF::eval(const RingMap *map, const ring_elem f, int first_var) const
 
 ring_elem GF::from_long(long n) const
 {
-  int m = static_cast<int>(n % static_cast<long>(P));
-  if (m < 0) m += P;
+  long m1 = n % characteristic();
+  if (m1 < 0) m1 += characteristic();
+  int m = static_cast<int>(m1);
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -229,9 +230,11 @@ ring_elem GF::from_int(mpz_ptr n) const
 {
   mpz_t result;
   mpz_init(result);
-  mpz_mod_ui(result, n, P);
-  int m = static_cast<int>(mpz_get_si(result));
-  if (m < 0) m += P;
+  mpz_mod_ui(result, n, characteristic());
+  long m1 = mpz_get_si(result);
+  mpz_clear(result);
+  if (m1 < 0) m1 += characteristic();
+  int m = static_cast<int>(m1);
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -357,7 +360,7 @@ void GF::internal_add_to(ring_elem &f, ring_elem &g) const
         }
       else
         {
-          if (P == 2)
+          if (characteristic() == 2)
             f = _ZERO;
           else
             f = modulus_add(a, _one_table[_ONE], Q1_);

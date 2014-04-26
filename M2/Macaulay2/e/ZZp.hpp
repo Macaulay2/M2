@@ -13,6 +13,7 @@ namespace M2 {
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
+  int P; // this class only allows char < 32767, so we stash characteristic here
   int _P1;      // = P-1
   int _ZERO;     // = p-1, log of zero...
 

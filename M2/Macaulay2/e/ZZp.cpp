@@ -27,7 +27,7 @@ bool Z_mod::initialize_Z_mod(int p)
 {
 
   initialize_ring(p);
-
+  P = p;
 
   declare_field();
   int i,j,q,n;

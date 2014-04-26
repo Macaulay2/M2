@@ -80,7 +80,7 @@ struct enter_factory {
 
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
-       newcharac(mode == modeZn || mode == modeGF ? P->charac() : 0),
+       newcharac(mode == modeZn || mode == modeGF ? static_cast<int>(P->characteristic()) : 0),
        Zn(mode == modeZn ? P->getCoefficientRing()->cast_to_Z_mod() : NULL),
        gf(mode == modeGF ? P->getCoefficientRing()->cast_to_GF(): NULL)
      { enter(); }

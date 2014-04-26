@@ -16,7 +16,7 @@ namespace M2 {
 
   GaloisFieldTable::GaloisFieldTable(const PolynomialRing& R,
                                      const ring_elem prim):
-    mCharac(R.charac()),
+    mCharac(static_cast<int>(R.characteristic())),
     mOriginalRing(R),
     mPrimitiveElement(prim)
   {

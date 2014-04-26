@@ -114,7 +114,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     break;
   }
 
-  result->initialize_ring(R->charac(),
+  result->initialize_ring(R->characteristic(),
                           R->get_degree_ring(),
                           R->get_heft_vector());
 

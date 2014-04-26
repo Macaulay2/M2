@@ -53,7 +53,8 @@ class Ring : public mutable_object
 {
 protected:
   const ARing * getARing() const { return AR; }
-  int P;
+  long mCharacteristic; // not all rings will have characteristic that fits in a long int
+  //int P;
   const PolynomialRing *degree_ring;
   M2_arrayint heft_vector;
   // This vector, if NULL, and if there are any variables in the ring imply that
@@ -75,7 +76,7 @@ protected:
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac,
+  void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
   Ring() : heft_vector(0) {}
@@ -88,7 +89,8 @@ public:
   // Ring informational //
   ////////////////////////
 
-  int charac() const { return P; }
+  long characteristic()  const { return mCharacteristic; }
+  //int charac() const { return P; }
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }

@@ -75,7 +75,7 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 // This version is to be called directly ONLY by initialize_poly_ring
 // and make_trivial_ZZ_poly_ring.
 {
-  initialize_ring(K->charac(),
+  initialize_ring(K->characteristic(),
                   deg_ring,
                   M->get_heft_vector());
 

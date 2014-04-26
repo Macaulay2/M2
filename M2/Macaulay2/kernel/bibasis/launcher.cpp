@@ -62,7 +62,7 @@ namespace BIBasis
             return false;
         }
   
-        if (matrixRing->charac() != 2)
+        if (matrixRing->characteristic() != 2)
         {
             ERROR("BIBasis::CheckMatrix(): input matrix ring is not ZZ/2.");
             return false;
