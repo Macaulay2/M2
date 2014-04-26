@@ -202,6 +202,8 @@ extern "C" {
 
   M2_string IM2_Ring_to_string(const Ring *M); /* drg: connected */
 
+  long rawRingCharacteristic(const Ring* R); /* connected: rawCharacteristic */
+
   const Ring *IM2_Ring_ZZ(void);  /* drg: connected rawZZ*/
     /* always returns the same object */
 

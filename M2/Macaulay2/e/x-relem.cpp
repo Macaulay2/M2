@@ -42,6 +42,11 @@ M2_string IM2_Ring_to_string(const Ring *R)
   return o.to_string();
 }
 
+long rawRingCharacteristic(const Ring* R)
+{
+  return R->characteristic();
+}
+
 ///////////////////
 // Ring creation //
 ///////////////////
@@ -531,7 +536,7 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
       void *f = a->get_value().poly_val;
       return static_cast<gmp_ZZ>(f);
     }
-  if (R->cast_to_Z_mod() != 0)
+  if (R->isFinitePrimeField())
     {
       gmp_ZZ result = newitem(__mpz_struct);
       mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
@@ -551,24 +556,6 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
   void *f = a->get_value().poly_val;
   return static_cast<gmp_QQ>(f);
 }
-
-#if 0
-gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
-{
-  if (!a->get_ring()->is_RRR())
-    {
-      const M2::ConcreteRing<M2::ARingRRR> *R = dynamic_cast< const M2::ConcreteRing<M2::ARingRRR> * >(a->get_ring());
-      if (R == 0)
-        {
-          ERROR("expected an element of RRR");
-          return 0;
-        }
-      return a->get_value().mpfr_val;
-    }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_RR>(f);
-}
-#endif
 
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
@@ -1269,8 +1256,10 @@ int rawExtensionDegree(int firstvar, const Ring *R1)
 {
   const Tower *R = R1->cast_to_Tower();
   if (R == 0) return 0;
-  if (firstvar < 0)
-    return R->characteristic();
+  if (firstvar < 0) {
+    ERROR("use rawCharacteristic to find the characteristic");
+    return -1;
+  }
   return R->extension_degree(firstvar);
 }
 

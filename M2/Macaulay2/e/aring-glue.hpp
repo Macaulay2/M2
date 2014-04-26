@@ -42,6 +42,12 @@ namespace M2 {
         return new MutableMat< SMat<RingType> >(this, R, nrows, ncols);
     }
 
+    bool isFinitePrimeField() const { 
+      return ringID() == ring_ZZp or 
+        ringID() == ring_ZZpFfpack or
+        ringID() == ring_ZZpFlint;
+    }
+
     ////////////////////////////
     // Functions on elements ///
     ////////////////////////////
@@ -461,7 +467,7 @@ namespace M2 {
     static QQ* create(const ARingQQ* R0)
     {
       QQ *result = new QQ(R0);
-      result->initialize_ring(static_cast<int>(R0->characteristic()));
+      result->initialize_ring(R0->characteristic());
       result->declare_field();
       
       result->zeroV = result->from_long(0);
@@ -547,7 +553,7 @@ namespace M2 {
   ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
   {
     ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-    result->initialize_ring(static_cast<int>(R->characteristic()));
+    result->initialize_ring(R->characteristic());
     result->declare_field();
 
     result->zeroV = result->from_long(0);

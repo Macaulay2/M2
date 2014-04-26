@@ -658,6 +658,13 @@ export rawIndices(e:Expr):Expr := (
      else WrongArg("a raw ring element or raw matrix"));
 setupfun("rawIndices",rawIndices);
 
+export rawCharacteristic(e:Expr):Expr := (
+     when e is R:RawRingCell do (
+	  toExpr(Ccode(long, "rawRingCharacteristic(", R.p, ")" ))
+      )
+     else WrongArg("a raw ring"));
+setupfun("rawCharacteristic",rawCharacteristic);
+
 export rawPolynomialRing(e:Expr):Expr := (
      when e is a:Sequence do 
      if length(a) == 0 then toExpr(Ccode( RawRing, "IM2_Ring_trivial_polyring()" ))

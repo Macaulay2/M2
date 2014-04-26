@@ -111,7 +111,7 @@ extern "C" const Matrix * rawGbBoolean(const Matrix *m)
       ERROR("expected coefficient ring ZZ/2");
       return 0;
     }
-  if (!P->getCoefficientRing()->cast_to_Z_mod())
+  if (not P->getCoefficientRing()->isFinitePrimeField())
     {
       ERROR("expected coefficient ring ZZ/2");
       return 0;

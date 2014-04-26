@@ -90,7 +90,6 @@ public:
   ////////////////////////
 
   long characteristic()  const { return mCharacteristic; }
-  //int charac() const { return P; }
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
@@ -100,6 +99,7 @@ public:
     return M2::ring_old; 
   }
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
+  virtual bool isFinitePrimeField() const { return false; }
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
