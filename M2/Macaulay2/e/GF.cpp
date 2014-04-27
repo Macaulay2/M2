@@ -172,12 +172,6 @@ int GF::discrete_log(ring_elem a) const
   return a.int_val;
 }
 
-inline int GF::to_int(int) const
-{
-  // MES.  what to do here?
-  return 1;
-}
-
 static inline int modulus_add(int a, int b, int p)
 {
   int t = a+b;

@@ -41,7 +41,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      //if (F->cast_to_QQ()) return modeQQ;
      if (F->is_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
-     if (F->cast_to_Z_mod()) return modeZn;
+     if (F->isFinitePrimeField()) return modeZn;
      if (F->cast_to_GF()) return modeGF;
      ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
      return modeError;
@@ -67,7 +67,7 @@ struct enter_factory {
   int newcharac;
   int oldRatlState;
   int newRatlState;
-  const Z_mod *Zn;
+  const Ring* Zn;
   const GF *gf;
   void enter();
   void exit();
@@ -81,7 +81,7 @@ struct enter_factory {
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
        newcharac(mode == modeZn || mode == modeGF ? static_cast<int>(P->characteristic()) : 0),
-       Zn(mode == modeZn ? P->getCoefficientRing()->cast_to_Z_mod() : NULL),
+       Zn(mode == modeZn ? P->getCoefficientRing() : NULL),
        gf(mode == modeGF ? P->getCoefficientRing()->cast_to_GF(): NULL)
      { enter(); }
 
@@ -271,13 +271,13 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
   intarray vp;
   const Monoid *M = A->getMonoid();
-  const Z_mod *Zn = k->originalR()->getCoefficientRing()->cast_to_Z_mod();
+  const Ring *Zn = k->originalR()->getCoefficientRing();
   CanonicalForm f = 0;
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
     vp.shrink(0);
     M->to_varpower(t->monom,vp);
 
-    std::pair<bool,long> res = k->originalR()->getCoefficientRing()->coerceToLongInteger(t->coeff);
+    std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);
     M2_ASSERT(res.first);
     int coef = static_cast<int>(res.second);
 

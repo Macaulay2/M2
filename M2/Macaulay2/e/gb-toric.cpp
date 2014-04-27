@@ -377,7 +377,10 @@ void binomial_ring::intvector_to_binomial(vec f, binomial &result) const
 
   for ( ; f != NULL; f = f->next)
     {
-      int e = globalZZ->coerce_to_int(f->coeff);
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(f->coeff);
+      M2_ASSERT(res.first);
+      int e = static_cast<int>(res.second);
+
       if (e > 0)
         result.lead[f->comp] = e;
       else if (e < 0)

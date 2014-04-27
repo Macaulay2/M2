@@ -220,8 +220,6 @@ public:
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
-  virtual int coerce_to_int(ring_elem a) const;
-
   ring_elem one() const { return oneV; }
   ring_elem minus_one() const { return minus_oneV; }
   ring_elem zero() const { return zeroV; }

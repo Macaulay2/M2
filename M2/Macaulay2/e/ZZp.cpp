@@ -97,11 +97,6 @@ std::pair<bool, long> Z_mod::coerceToLongInteger(ring_elem a) const
   return std::pair<bool, long>(true, to_int(a.int_val));
 }
 
-int Z_mod::coerce_to_int(ring_elem a) const
-{
-  return to_int(a.int_val);
-}
-
 int Z_mod::discrete_log(ring_elem a) const
 {
   if (a.int_val == _ZERO) return -1;

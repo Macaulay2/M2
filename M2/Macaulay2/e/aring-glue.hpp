@@ -66,12 +66,6 @@ namespace M2 {
       return std::pair<bool,long>(false,0);
     }
 
-    virtual int coerce_to_int(ring_elem a) const
-    {
-      //TODO: implement or remove
-      return 0;
-    }
-
     // The following are all the routines required by 'ring'
     virtual void text_out(buffer &o) const { return R->text_out(o); }
 

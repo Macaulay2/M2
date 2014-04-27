@@ -247,12 +247,20 @@ int LLLoperations::doLLL(MutableMatrix *A,
   buffer o;
 
   if (LLLstate->get_entry(0,n,a))
-    k = globalZZ->coerce_to_int(a);
+    {
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
+      M2_ASSERT(res.first);
+      k = static_cast<int>(res.second);
+    }
   else
     k = 0;
 
   if (LLLstate->get_entry(0,n+1,a))
-    kmax = globalZZ->coerce_to_int(a);
+    {
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
+      M2_ASSERT(res.first);
+      kmax = static_cast<int>(res.second);
+    }
   else
     kmax = 0;
 

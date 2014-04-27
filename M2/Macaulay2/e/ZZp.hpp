@@ -26,6 +26,8 @@ class Z_mod : public Ring
 
   CoefficientRingZZp *coeffR;
   M2::ARingZZp *aringZZp;
+
+  int to_int(int a) const;
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
@@ -45,10 +47,9 @@ public:
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
   
-  virtual int coerce_to_int(ring_elem a) const;
   int discrete_log(ring_elem a) const; // returns -1 if a is 0
 
-  int to_int(int a) const;
+
 
 // The following are all the routines required by 'ring'
 
