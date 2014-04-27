@@ -69,6 +69,8 @@ public:
 
   virtual int coerce_to_int(ring_elem a) const;
 
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
+
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;

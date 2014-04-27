@@ -276,7 +276,12 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
     vp.shrink(0);
     M->to_varpower(t->monom,vp);
-    CanonicalForm m = CanonicalForm(Zn->to_int(t->coeff));
+
+    std::pair<bool,long> res = k->originalR()->getCoefficientRing()->coerceToLongInteger(t->coeff);
+    M2_ASSERT(res.first);
+    int coef = static_cast<int>(res.second);
+
+    CanonicalForm m = CanonicalForm(coef);
     for (index_varpower l = vp.raw(); l.valid(); ++l)
       m *= power( algebraicElement_Fac, l.exponent() );
     f += m;
@@ -299,10 +304,17 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
      if (foo.mode == modeError) return 0;
      CanonicalForm f = 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
+       int coef = 0;
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
+       if (foo.mode == modeZn)
+         {
+           std::pair<bool,long> res = foo.Zn->coerceToLongInteger(t->coeff);
+           M2_ASSERT(res.first);
+           coef = static_cast<int>(res.second);
+         }
        CanonicalForm m = (
-                          foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
+                          foo.mode == modeZn ? CanonicalForm(coef) :
                           foo.mode == modeGF ? convertToFactory(t->coeff,foo.gf) :
                           foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
                           foo.mode == modeQQ ? (

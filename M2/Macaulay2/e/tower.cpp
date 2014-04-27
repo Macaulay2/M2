@@ -459,9 +459,12 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   exponents exp = new int[nvars];
   for (Nterm *t = fR; t != 0; t = t->next)
     {
-      ring_elem c;
       M->to_expvector(t->monom, exp);
-      int c1 = K->coerce_to_int(t->coeff);
+
+      std::pair<bool,long> res = K->coerceToLongInteger(t->coeff);
+      M2_ASSERT(res.first);
+      int c1 = static_cast<int>(res.second);
+
       D->add_term(result, c1, exp);
     }
   delete [] exp;

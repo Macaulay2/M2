@@ -616,8 +616,11 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;
-        int coeff = mOriginalRing->getCoefficientRing()->coerce_to_int(t->coeff);
-        set_from_long(a, coeff);
+
+        std::pair<bool,long> res = mOriginalRing->getCoefficientRing()->coerceToLongInteger(t->coeff);
+        M2_ASSERT(res.first);
+        set_from_long(a, res.second);
+
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).

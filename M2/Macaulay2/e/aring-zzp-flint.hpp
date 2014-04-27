@@ -46,6 +46,11 @@ namespace M2 {
       return static_cast<unsigned long>(a);
     }
 
+    long coerceToLongInteger(const elem& f) const
+    {
+      return f;
+    }
+
     void text_out(buffer &o) const;
 
     /////////////////////////////////

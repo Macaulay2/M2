@@ -184,7 +184,10 @@ const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
       {
-        int coef = R->getCoefficientRing()->coerce_to_int(t->coeff);
+        std::pair<bool,long> res = R->getCoefficientRing()->coerceToLongInteger(t->coeff);
+        M2_ASSERT(res.first);
+        int coef = static_cast<int>(res.second);
+
         R->getMonoid()->to_expvector(t->monom, exp);
         ASSERT(exp[0] >= 0);
         ASSERT(exp[0] <= deg);

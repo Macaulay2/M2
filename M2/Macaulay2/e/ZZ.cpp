@@ -89,6 +89,12 @@ unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
   return exp;
 }
 
+std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
+{
+  return std::pair<bool, long>(mpz_fits_slong_p(a.get_mpz()), 
+                               mpz_get_si(a.get_mpz()));
+}
+
 int RingZZ::coerce_to_int(ring_elem a) const
 {
   return static_cast<int>(mpz_get_si(a.get_mpz()));

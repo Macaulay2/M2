@@ -61,6 +61,11 @@ namespace M2 {
       return result;
     }
 
+    virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const
+    {
+      return std::pair<bool,long>(false,0);
+    }
+
     virtual int coerce_to_int(ring_elem a) const
     {
       //TODO: implement or remove
@@ -1013,6 +1018,41 @@ namespace M2 {
   inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
   {
     return R->get_precision();
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZp>::coerceToLongInteger(ring_elem a) const
+  {
+    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZpFlint>::coerceToLongInteger(ring_elem a) const
+  {
+    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZpFFPACK>::coerceToLongInteger(ring_elem a) const
+  {
+    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZGMP>::coerceToLongInteger(ring_elem a) const
+  {
+    long b;
+    bool succeed = ring().coerceToLongInteger(b, * a.get_mpz());
+    return std::pair<bool, long>(succeed, b);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZ>::coerceToLongInteger(ring_elem a) const
+  {
+    long b;
+    fmpz t = reinterpret_cast<fmpz>(const_cast<Nterm*>(a.poly_val));
+    bool succeed = ring().coerceToLongInteger(b, t);
+    return std::pair<bool, long>(succeed, b);
   }
 
 }; // namespace M2

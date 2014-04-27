@@ -110,7 +110,9 @@ void matrixToStream(const Matrix* M, T& stream)
               for (size_t j=0; j<nvars; j++)
                 if (exp[j] != 0)
                   stream.appendExponent(j,exp[j]);
-              int a = KK->coerce_to_int(s->coeff);
+              std::pair<bool,long> b = KK->coerceToLongInteger(s->coeff);
+              M2_ASSERT(b.first);
+              int a = static_cast<int>(b.second); // This will fit, as the charac fits into an int
               if (a < 0) a += charac;
               stream.appendTermDone(a);
             }

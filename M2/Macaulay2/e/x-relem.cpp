@@ -539,7 +539,11 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
   if (R->isFinitePrimeField())
     {
       gmp_ZZ result = newitem(__mpz_struct);
-      mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
+
+      std::pair<bool,long> res = R->coerceToLongInteger(a->get_value());
+      M2_ASSERT(res.first);
+
+      mpz_init_set_si(result, static_cast<int>(res.second));
       return result;
     }
   ERROR("Expected ZZ or ZZ/p as base ring");

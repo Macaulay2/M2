@@ -243,8 +243,9 @@ ring_elem GF::from_rational(mpq_ptr q) const
 {
   // a should be an element of ZZ/p
   ring_elem a = _originalR->getCoefficients()->from_rational(q);
-  int b = _originalR->getCoefficients()->coerce_to_int(a);
-  return GF::from_long(b);
+  std::pair<bool,long> b = _originalR->getCoefficients()->coerceToLongInteger(a);
+  M2_ASSERT(b.first);
+  return GF::from_long(b.second);
 }
 
 ring_elem GF::var(int v) const
@@ -265,7 +266,9 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem coef = from_long(_originalR->getCoefficientRing()->coerce_to_int(t->coeff));
+      std::pair<bool,long> b = _originalR->getCoefficients()->coerceToLongInteger(t->coeff);
+      M2_ASSERT(b.first);
+      ring_elem coef = from_long(b.second);
       _originalR->getMonoid()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
       // this degree is < n (where Q_ = P^n).

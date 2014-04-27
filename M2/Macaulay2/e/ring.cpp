@@ -244,6 +244,11 @@ ring_elem Ring::remainderAndQuotient(const ring_elem f, const ring_elem g,
   return zero();
 }
 
+std::pair<bool, long> Ring::coerceToLongInteger(ring_elem a) const
+{
+  return std::pair<bool,long>(false, 0); // the default is that it cannot be lifted.
+}
+
 int Ring::coerce_to_int(ring_elem) const
 {
   ERROR("cannot coerce given ring element to an integer");
