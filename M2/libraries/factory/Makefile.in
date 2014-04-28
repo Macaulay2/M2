@@ -6,11 +6,12 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 3.1.6
+VERSION = 59817e0d039428e1e6d9217750a5c22464d4b321_b
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-TARFILE = factory-$(VERSIONH).tar.gz
+#TARFILE = factory-$(VERSIONH).tar.gz
+TARFILE = factory-$(VERSION).tar.gz
 TARDIR = factory
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
@@ -18,9 +19,16 @@ LIBRARIES = ftmpl_inst.o
 LICENSEFILES = INSTALL COPYING
 
 # this doesn't work, because autoheader fails with factory
-# PRECONFIGURE = autoreconf -vi
-CONFIGOPTIONS += --enable-NTL
-CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'factory
+#PRECONFIGURE = autoreconf -vi
+PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+
+# works, but only for case flint is build in $(LIBRARIESDIR). better solution?
+CONFIGOPTIONS += --with-flint='$(LIBRARIESDIR)'
+
+CONFIGOPTIONS += --disable-omalloc --enable-streamio --with-ntl 
+CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'
+CONFIGOPTIONS += --disable-shared
+CONFIGOPTIONS += --without-Singular
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assertions
@@ -42,12 +50,15 @@ endif
 
 BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)'
 
-CPPFLAGS += -DMP_INT=__mpz_struct
+CPPFLAGS += -DMP_INT=__mpz_struct -DHAVE_CONFIG_H
 
 # These are old routines, long deprecated, missing in mpir 1.3.0
 # but mpfr 2.4.2 still uses them, try removing them with 2.4.3:
 CPPFLAGS += -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q
-CFLAGS += -Wimplicit -Werror
+CFLAGS += -Wimplicit -Werror -DHAVE_CONFIG_H
+CXXFLAGS += -DHAVE_CONFIG_H
+
+CONFIGURECMD =  ./autogen.sh && ./configure $(CONFIGOPTIONS) 
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:
@@ -57,9 +68,9 @@ Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/M
 #      #include <wchar.h>
 #    }
 
-.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/assert.h \
+.installed-$(VERSION) : $(LIBRARIESDIR)/include/factory/cf_assert.h \
 			$(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc
-$(LIBRARIESDIR)/include/factory/assert.h : $(BUILDDIR)/assert.h .compiled-$(VERSION) 
+$(LIBRARIESDIR)/include/factory/cf_assert.h : $(BUILDDIR)/cf_assert.h .compiled-$(VERSION) 
 	$(MKDIR_P) $(LIBRARIESDIR)/include/factory
 	@INSTALL_DATA@ $< $@
 $(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/ftmpl_list.cc .compiled-$(VERSION) 
@@ -69,14 +80,13 @@ $(LIBRARIESDIR)/include/factory/templates/ftmpl_list.cc : $(BUILDDIR)/templates/
 uninstall clean ::
 	if [ -d $(LIBRARIESDIR) ] ;\
 	then cd $(LIBRARIESDIR) && rm -rf \
-		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* include/factory \
-		lib/libcf.a lib/libcfmem.a ;\
+		include/factory.h include/factoryconf.h include/cf_gmp.h include/templates/ftmpl_* include/factory ; \
 	fi
 
-post-install: $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed
-$(LIBRARIESDIR)/lib/libcfmem-newdelete-removed : $(LIBRARIESDIR)/lib/libcfmem.a
-	ar -d "$^" newdelete.o
-	touch "$@"
+#post-install: $(LIBRARIESDIR)/lib/libcfmem-newdelete-removed
+#$(LIBRARIESDIR)/lib/libcfmem-newdelete-removed : $(LIBRARIESDIR)/lib/libcfmem.a
+#	ar -d "$^" newdelete.o
+#	touch "$@"
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/factory "

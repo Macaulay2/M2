@@ -21,10 +21,9 @@ header "
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
-   #include <factor.h>
+   #include <factory/libfac/libfac.h>
    #undef Matrix
    extern char timestamp[];
-   #include <factor.h>
    #undef ASSERT
    #ifdef HAVE_FROBBY
      #include <stdinc.h>		// to get version number of frobby
@@ -58,6 +57,7 @@ header "
    extern unsigned int GC_version; /* in libgc.a */
    #include <gmp.h>
    #include <NTL/version.h>
+   #define HAVE_CONFIG_H
    #include <factory/factoryconf.h>
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
@@ -78,6 +78,12 @@ gcversion():constcharstar := Ccode(returns,"
      if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
      else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
      return buf;
+     ");
+libfacVersion():constcharstar := Ccode(returns,"
+      #include <factory/libfac/libfac.h>
+	  static char buf[40];
+	  sprintf(buf,\"%s\", libfac_version);
+	  return buf;
      ");
 givaroVersion():constcharstar := Ccode(returns,"
      #ifdef HAVE_GIVARO
@@ -181,7 +187,8 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "libfac version" => Ccode(constcharstar,"libfac_version"),
+   --"libfac version" => Ccode(constcharstar,"libfac_version"),
+   "libfac version" =>libfacVersion(),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
 	 #if HAVE_PARI
