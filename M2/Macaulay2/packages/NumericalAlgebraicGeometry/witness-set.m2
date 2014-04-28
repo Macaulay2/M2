@@ -3,13 +3,18 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export { sample }
+export { 
+    sample, 
+    union, -- aka "|"
+    removeRedundantComponents 
+    }
 
 WitnessSet.Tolerance = 1e-6;
 check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
 
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
+    if # coordinates p != numgens ring W then error "numbers of coordinates mismatch";
     --if o.Software === BERTINI then bertiniComponentMemberTest(numericalWariety {W},{p})
     --else 
     (
@@ -34,12 +39,18 @@ isOn (Point,WitnessSet,ZZ) := o -> (p, W, m) -> (
     W' := moveSlice(W, M | -M*mp);
     any(W'.Points, p'->areEqual(project(p',m),p))
     )
-    
+
+-- ... hypersurface V(f)
+isOn (Point,RingElement) := o -> (p, f) ->  isOn (p, witnessSet(ideal f, numgens ring f - 1), o)
+
+-- ... V(I)
+isOn (Point,Ideal) := o -> (p, I) -> all(I_*, f->isOn(p,f,o))
+        
 isSubset (WitnessSet,WitnessSet) := (V,W) -> (
      coD := dim W - dim V;
-     coD >= 0
-     and all(points V, p->isOn(p,W))
+     coD >= 0 and all(V.Points, p->isOn(p,W))
      )
+WitnessSet == WitnessSet := (V,W)->isSubset(V,W) and isSubset(W,V)
 
 TEST /// -- isOn
 R = CC[x,y]	
@@ -189,24 +200,63 @@ assert(P.ErrorBoundEstimate < 1e-15)
 ///
 
 -- a constructor for witnessSet that depends on NAG
-witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
-witnessSet (Ideal,ZZ) := (I,d) -> (
-     n := numgens ring I;
+witnessSet (Ideal,ZZ) := (I,d) -> ( -- assume: dim I == d
      R := ring I;
+     n := numgens R;
+     F := if numgens I == n-d then I_* else (
+     	 RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
+     	 RM = promote(RM,ring I);
+     	 flatten entries (RM * transpose gens I) 
+	 );
      SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
      S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     rand'I := flatten entries (RM * transpose gens I);
-     P := solveSystem(rand'I | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
-     witnessSet(ideal rand'I,SM,PP)
+     P := solveSystem(F | S_*);
+     witnessSet(ideal F, SM, 
+	 if numgens I == n-d then P else select(P, p->isOn(p,I))
+	 )
      )
 
 TEST ///
 CC[x,y,z]
 I = ideal (x^2+y)
-W = witnessSet I
+W = witnessSet (I,2)
 assert(dim W == 2 and degree W == 2)
+I = ideal (x,y,z*(z-1))
+assert( degree witnessSet(I,0) == 2 )
 ///
 
+isSubset(WitnessSet,NumericalVariety) := (W,V) -> any(components V, W'->isSubset(W,W')) 
+isSubset(NumericalVariety,NumericalVariety) := (A,B) -> all(components A, W->isSubset(W,B)) 
+NumericalVariety == NumericalVariety := (A,B) -> isSubset(A,B) and isSubset(B,A)
+
+union = method()
+union (NumericalVariety, NumericalVariety) := (A,B) -> new NumericalVariety from 
+  merge(new HashTable from A, new HashTable from B,(a,b)->a|b)
+NumericalVariety | NumericalVariety := union
+
+removeRedundantComponents = method(Options=>{Tolerance=>null})
+removeRedundantComponents NumericalVariety := o -> V -> (
+    o = fillInDefaultOptions o;
+    scan(rsort keys V, d->(
+	Vd := V#d;
+	ind := select(#Vd, i->
+	    all(components(V,d+1,infinity), W->not isSubset(Vd#i,W))
+	    and 
+	    all(drop(Vd,i+1), W->not isSubset(Vd#i,W))
+	    );
+	V#d = Vd_ind;
+	))
+    )
+
+TEST ///
+CC[x,y,z]
+V2 = numericalVariety { witnessSet(ideal (x^2+y), 2) }
+V1 = numericalVariety { witnessSet(ideal (x^2-y,z), 1) }
+-- V0 = numericalVariety decompose witnessSet(ideal (x,y,z*(z-1)), 0) -- !!! problem with tracking to the origin
+V0 = numericalVariety decompose witnessSet(ideal ((x-1)*x,y-1,z), 0) 
+
+VV = V2 | V2 | V1 | V0
+removeRedundantComponents VV
+assert (#components VV ==3 and keys VV == {0,1,2})
+///
+ 
