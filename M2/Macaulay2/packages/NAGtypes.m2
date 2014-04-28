@@ -37,7 +37,7 @@ export {
      "MaxPrecision", "WindingNumber", "DeflationNumber",
      Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
      -- polynomial systems
-     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, JacobianAndPolySystem, 
+     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, -- JacobianAndPolySystem, 
      ContinuationParameter, SpecializationRing,
      polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
      "evaluate",
@@ -709,35 +709,28 @@ dim DualSpace := L -> numcols gens L
 ring PolySpace := S -> ring gens S
 ring DualSpace := L -> ring gens L
 
-------------------------------------------------------
+-- DOCUMENTATION ------------------------------------------------------
 
 beginDocumentation()
 
-undocumented {(generalEquations,WitnessSet)}
---warning: symbol has no documentation: NAGtypes :: Norm
---warning: symbol has no documentation: NAGtypes :: MaxConditionNumber
+--undocumented {(generalEquations,WitnessSet)}
 
 document {
      Key => NAGtypes,
      Headline => "Common types used in Numerical Algebraic Geometry",
      PARA{
      	  "The package defines types used by the package ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", 
-     	  " as well as other numerical algebraic geometry packages: e.g., an interface package ", 
-     	  TO "PHCpack::PHCpack", "."
+     	  " as well as other numerical algebraic geometry packages: e.g., interface packages ", 
+     	  TO "PHCpack::PHCpack", " and ", TO "Bertini::Bertini", "."
 	  },  
      PARA{"Main datatypes: "},
      UL{    
-	 {TO "Point", " -- numerical approximation of a point in a complex space (and related methods)"},
+	 {TO "Point", " -- a numerical approximation of a point in a complex space"},
+	 {TO "PolySystem", " -- a polynomial system (usually with complex coefficients)"},
 	 {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
 	 {TO "NumericalVariety", " -- a numerical description of a variety"}
 	 },
      PARA{"See the corresponding documentation nodes for description of provided service functions."},
-     PARA {"Other service functions: "},
-     UL{
-	 {TO "areEqual", " -- compare numbers, points, lists of points"},
-	 {TO "sortSolutions", " -- sort lists of points"},
-	 {TO "generalEquations", " -- "}
-	 },
      PARA {
      	 "We display the objects of all new types showing only partial data. 
      	 Moreover, if an object is assigned to a global variable, only the name of the variable is shown. Use ", TO peek, 
@@ -756,6 +749,7 @@ peek O
 ///
      }
 
+-- Point ---------------------------------------------------------------------------
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, (net, Point),
@@ -764,12 +758,13 @@ document {
 	  },
      Headline => "a type used to store a point in complex space",
      "This type is used to store a solution to a polynomial system obtained by such fuctions as ", 
-     TO "solveSystem", ", ", TO "track",". The following methods can be used to access a ", 
+     TO "NumericalAlgebraicGeometry::solveSystem", ", ", TO "NumericalAlgebraicGeometry::track",
+     ". The following methods can be used to access a ", 
      TO "Point", ":",
      UL{
 	  {"coordinates", " -- get the coordinates (returns a list)"},
-	  {"status", " -- get the type of solution (e.g., Regular)"},
-	  {"matrix", " -- get the coordinates (returns a matrix)"}
+	  {"matrix", " -- get the coordinates (returns a matrix)"},
+	  {"status", " -- get the type of solution (e.g., Regular)"}
 	  },
      "Possible types of Points (accessed by ", TO "status", "): ",
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
@@ -777,11 +772,10 @@ document {
 	  {"Infinity", " -- the solution path has been deemed divergent"},
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
 	  {"NumericalRankFailure", " -- it is likely that in a sequence of deflations numerical rank did not give the correct rank"},
-	  {null, " -- the point has not been classified"}
+	  {"null", " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
-     TO "peek", ".  Different algorithms attach different information describing the point. For example, the
-     solveSystem function with default options produces the following.",
+     TO "peek", ".  Different algorithms attach different information describing the point. For example, ", TO "NumericalAlgebraicGeometry::solveSystem", " produces the following.",
      PARA{},
      EXAMPLE lines ///
        loadPackage "NumericalAlgebraicGeometry";
@@ -806,7 +800,17 @@ document {
 	  {TO WindingNumber, " -- the winding numeber of a singular solution determined in the end-games"}, 
 	  {TO DeflationNumber, " -- number of first-order deflations in the regularization of a singular solution"},
 	  {TT "Tracker", " -- reserved for developers"}
-	  }
+	  },
+     PARA {"Other service functions: "},
+     UL{
+     	 TO areEqual,
+	 TO sortSolutions,
+	 TO isRealPoint,
+	 TO realPoints,
+	 TO solutionsWithMultiplicity,
+	 TO (norm,Thing,Point),
+	 TO toAffineChart
+	 }
      }
 
 document {
@@ -821,121 +825,6 @@ document {
         EXAMPLE lines ///
 p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
 peek p 
-     	///
-	}
-
-document {
-     Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
-	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
-     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
-     	  },
-     Headline => "a witness set",
-     "This type stores a witness set of an equidimensional solution component. ", 
-     "The following methods can be used to access a ", 
-     TT "WitnessSet", ":",
-     UL{
-     	  {"ideal", " -- get the defining ideal of the algebraic superset"},
-	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
-	  {"slice", " -- get linear functions defining the slicing plane"},
-	  {"points", " -- get the list of witness points (which are zeroes of all above)"}
-	  },
-     "Also one may determine",
-     UL {
-	  {"dim", " -- the dimension"},
-	  {"codim", " -- the codimension"},
-	  {"deg", " -- the degree (the number of witness points)"},
-	  {"ring", " -- the ring of the defining polynomials"}
-	  }, 
-     "Only dimension and degree are displayed (by ", TO "net", "); to see the data stored in a witness set use ", 
-     TO "peek", ".",
-     SUBSECTION "For developers:",
-     "Required entries in a ", TO WitnessSet, " are",
-     UL {
-	  {TT "Equations", " of type ", TO Ideal},
-	  {TT "Slice", " of type either ", TO List, " or ", TO Matrix},
-	  {TT "Points", ", a list of ", TO2(Point, "points")},
-	  {TT "IsIrreducible", " that takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
-	  },
-     SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
-     }
-
-document {
-	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
-	Headline => "construct a WitnessSet",
-	Usage => "w = witnessSet(E,S,P)",
-	Inputs => { 
-	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
-	     "S" => {ofClass Ideal, " generated by linear polynomials or ", ofClass Matrix, " with complex coefficients of these generators"},
-	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
-	     },
-	Outputs => {"w"=> WitnessSet},
-	PARA {"Used to construct a witness set of a component of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
-	     " and that ", TT "P", " is a subset of the intersection of ", TT "V(E)", " and ", TT "V(S)", "."},
-        EXAMPLE lines ///
-R = CC[x,y]	
-w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
-peek w
-///
-	}
-
-document {
-     Key => {ProjectiveWitnessSet, AffineChart},
-     Headline => "a projective witness set",
-     "This type stores a witness set of an equidimensional projective solution component. ", 
-     SeeAlso => {WitnessSet, projectiveWitnessSet}
-     }
-
--- !!! something strange is going on with EXAMPLE in this node:
--- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
-document {
-	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
-	Headline => "construct a ProjectiveWitnessSet",
-	Usage => "w = projectiveWitnessSet(E,C,S,P)",
-	Inputs => { 
-	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
-	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
-	     "S" => Matrix => {" complex coefficients of a linear system"},
-	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
-	     },
-	Outputs => {"w"=> ProjectiveWitnessSet},
-	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
-	    ". ", " An affine chart is specified by the matrix of the coefficients of the (normalized) linear equation defining the chart: e.g., ",
-	    TT "ax+by+cz=1", " is encoded as ", TT "[a,b,c]", "." }, 
-	PARA {"It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
-	    " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
-	,
-	EXAMPLE lines ///
-R = CC[x,y,z]	
-w = projectiveWitnessSet( ideal(x^2+y^2+2*z^2), matrix{{0,0,1}}, matrix{{1,-1,0}}, {point {{0.999999*ii,0.999999*ii,1.}}, point {{ -1.000001*ii,-1.000001*ii,1.}}} )
-peek w///
--- 	,
---         EXAMPLE lines ///
--- R = CC[x,y,z]
--- w = projectiveWitnessSet(
---     ideal(x^2+y^2+2*z^2),
---     matrix{{0,0,1}}, -- chart: Z=1
---     matrix{{1,-1,0}},
---     {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
---     )
--- peek w
--- ///
-}
-
-document {
-	Key => {(sliceEquations,Matrix,Ring),sliceEquations,
-	    (projectiveSliceEquations,Matrix,Ring),projectiveSliceEquations},
-	Headline => "slicing linear functions",
-	Usage => "S = sliceEquations(M,R), S = projectiveSliceEquations(M,R)",
-	Inputs => { 
-	     "M"=> Matrix => " contains the coefficients of the slicing linear polynomials",
-	     "R"=> Ring => " where the output polynomials belong"
-	     },
-	Outputs => {"S"=>List=>"contains linear polynomials"},
-        PARA {"A service function used  in ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", "."},
-	EXAMPLE lines ///
-R = CC[x,y]	
-sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
-projectiveSliceEquations(matrix{{1,2,3},{4,5,6*ii}}, CC[x,y,z])
      	///
 	}
 
@@ -1057,6 +946,203 @@ document {
      norm(2.5, last sols) 
      ///
      }
+
+document {
+     Key => {solutionsWithMultiplicity, (solutionsWithMultiplicity,List)},
+     Headline => "replaces clusters of approximately equal points by single points with multiplicity",
+     Usage => "M = solutionsWithMultiplicity S",
+     Inputs => {
+	     "S" => {TO2{Point,"points"}}
+	     },
+     Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
+     PARA{"Clusters the points and outputs a list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
+	 " equal to the size of the cluster. If the multiplicity is not 1, then ", TT "p.", TO SolutionStatus, " is set to ", TO Singular, 
+	 "; otherwise, it is inherited from one of the points in the cluster."},
+     PARA{"Whether two points are approximately equal is decided by the function ", TO areEqual, " that depends on ", TO Tolerance, "."},
+     EXAMPLE lines ///
+     a = point {{0,1}}
+     b = point {{0.000000001,1+0.00000000001*ii}}
+     c = point {{0.001*ii,1}}
+     M = solutionsWithMultiplicity {a,b,c}
+     peek M
+     ///,
+     Caveat => {"A point in a cluster may be farther than ", TO Tolerance, 
+	 " from another point in the cluster. (In that case there has to be another point in the cluster that is within the ", 
+	 TO Tolerance, ".)"}
+     }
+
+document {
+	Key => {(toAffineChart, ZZ, List), toAffineChart},
+	Headline => "coordinates of a point in the projective space in an affine chart",
+	Usage => "y = toAffineChart(i,x)",
+	Inputs => {
+	     "i" => "the number of the standard chart",
+	     "x" => "projective coordinates of a point"
+	     },
+	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
+	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
+	EXAMPLE lines ///
+toAffineChart(2,{1,2,3,4,5,6}) 
+toAffineChart(2,{1,2,0,4,5,6}) 
+     	///,
+	SeeAlso => {areEqual}
+	}
+
+-- PolySystem ------------------------------------------------------------------------------
+document {
+    Key => {PolySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem), 
+	(ideal,PolySystem), (isHomogeneous,PolySystem), (jacobian,PolySystem), (net,PolySystem),
+	(ring,PolySystem), (equations,PolySystem),
+	NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, ContinuationParameter, 
+	SpecializationRing
+	},
+    Headline => "a polynomial system",
+    "This type stores a polynomial system, ",
+    "the following methods can be used to access a ", 
+    TT "PolySystem", ":",
+    UL{
+	{"ideal", " -- the ideal generated by the system"},
+	{"equations", " -- the list of polynomials in the system"},	
+	{"ring", " -- the ring containing the polynomials"},
+	{"jacobian", " -- the jacobian of the polynomial map"}
+	},
+    "Only polynomials are displayed (by ", TO "net", "); ",
+    "to see the data stored in a witness set use ", TO "peek", ".",
+    SUBSECTION "For developers:",
+    "Required entries in a ", TO PolySystem, " are",
+     UL {
+	 {TT "NumberOfVariables", " of type ", TO ZZ},
+	 {TT "NumberOfPolys", " of type ", TO ZZ},
+	 {TT "PolyMap", " of type ", TO Matrix, ", a column matrix over a polynomial ring"},
+    	 {TT "Jacobian", " of type ", TO Matrix, ", the jacobian of ", TT "PolyMap"},
+	 },
+     "The method ", TO segmentHomotopy, ", creates a ", TO PolySystem, " with additional keys: ",
+     UL {
+	 {TT "ContinuationParameter", " -- stores one variable of the ring" },
+	 {TT "SpecializationRing", 
+	     " -- stores the subring generated my all variables except the additional parameter",
+	     " (e.g., used by ", TO specializeContinuationParameter, ")"}
+	 },
+     SeeAlso => {WitnessSet}
+     }
+
+-- WitnessSet ------------------------------------------------------------------------------
+document {
+     Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
+	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
+     	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
+     	  },
+     Headline => "a witness set",
+     "This type stores a witness set of an equidimensional solution component. ", 
+     "The following methods can be used to access a ", 
+     TT "WitnessSet", ":",
+     UL{
+     	  {"ideal", " -- get the defining ideal of the algebraic superset"},
+	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
+	  {"slice", " -- get linear functions defining the slicing plane"},
+	  {"points", " -- get the list of witness points (which are zeroes of all above)"}
+	  },
+     "Also one may determine",
+     UL {
+	  {"dim", " -- the dimension"},
+	  {"codim", " -- the codimension"},
+	  {"deg", " -- the degree (the number of witness points)"},
+	  {"ring", " -- the ring of the defining polynomials"}
+	  }, 
+     "Only dimension and degree are displayed (by ", TO "net", "); to see the data stored in a witness set use ", 
+     TO "peek", ".",
+     SUBSECTION "For developers:",
+     "Required entries in a ", TO WitnessSet, " are",
+     UL {
+	  {TT "Equations", " of type ", TO Ideal},
+	  {TT "Slice", " of type either ", TO List, " or ", TO Matrix},
+	  {TT "Points", ", a list of ", TO2(Point, "points")},
+	  {TT "IsIrreducible", " that takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
+	  },
+     SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
+     }
+
+document {
+	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
+	Headline => "construct a WitnessSet",
+	Usage => "w = witnessSet(E,S,P)",
+	Inputs => { 
+	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
+	     "S" => {ofClass Ideal, " generated by linear polynomials or ", ofClass Matrix, " with complex coefficients of these generators"},
+	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+	     },
+	Outputs => {"w"=> WitnessSet},
+	PARA {"Used to construct a witness set of a component of the variety ", TT "V(E)", ". It is expected that ", TT "codim E == dim S", 
+	     " and that ", TT "P", " is a subset of the intersection of ", TT "V(E)", " and ", TT "V(S)", "."},
+        EXAMPLE lines ///
+R = CC[x,y]	
+w = witnessSet( ideal(x^2+y^2+2), ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+peek w
+///
+	}
+
+document {
+     Key => {ProjectiveWitnessSet, AffineChart},
+     Headline => "a projective witness set",
+     "This type stores a witness set of an equidimensional projective solution component. ", 
+     SeeAlso => {WitnessSet, projectiveWitnessSet}
+     }
+
+-- !!! something strange is going on with EXAMPLE in this node:
+-- stdio:1:1:(3): error: example results terminate prematurely: projectiveWitnessSet
+document {
+	Key => {projectiveWitnessSet,(projectiveWitnessSet,Ideal,Matrix,Matrix,List)},
+	Headline => "construct a ProjectiveWitnessSet",
+	Usage => "w = projectiveWitnessSet(E,C,S,P)",
+	Inputs => { 
+	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
+	     "C" => Matrix => {"in a polynomial ring over ", TO CC },
+	     "S" => Matrix => {" complex coefficients of a linear system"},
+	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
+	     },
+	Outputs => {"w"=> ProjectiveWitnessSet},
+	PARA {"Used to construct a witness set for a component of the variety ", TT "V(E)", 
+	    ". ", " An affine chart is specified by the matrix of the coefficients of the (normalized) linear equation defining the chart: e.g., ",
+	    TT "ax+by+cz=1", " is encoded as ", TT "[a,b,c]", "." }, 
+	PARA {"It is expected that the, ", TT "V(E)", " and the plane ", TT "V(S)", " defined by ", TT "S", 
+	    " are of complementary dimensions and that ", TT "P", " is contained in the intersection of ", TT "V(E+C)", " and ", TT "V(S)", "."}
+	,
+	EXAMPLE lines ///
+R = CC[x,y,z]	
+w = projectiveWitnessSet( ideal(x^2+y^2+2*z^2), matrix{{0,0,1}}, matrix{{1,-1,0}}, {point {{0.999999*ii,0.999999*ii,1.}}, point {{ -1.000001*ii,-1.000001*ii,1.}}} )
+peek w///
+-- 	,
+--         EXAMPLE lines ///
+-- R = CC[x,y,z]
+-- w = projectiveWitnessSet(
+--     ideal(x^2+y^2+2*z^2),
+--     matrix{{0,0,1}}, -- chart: Z=1
+--     matrix{{1,-1,0}},
+--     {point {{1.000001*ii,0.999999*ii,1}}, point {{ -1.000001*ii,-1.000001*ii,1}}} 
+--     )
+-- peek w
+-- ///
+}
+
+document {
+	Key => {(sliceEquations,Matrix,Ring),sliceEquations,
+	    (projectiveSliceEquations,Matrix,Ring),projectiveSliceEquations},
+	Headline => "slicing linear functions",
+	Usage => "S = sliceEquations(M,R), S = projectiveSliceEquations(M,R)",
+	Inputs => { 
+	     "M"=> Matrix => " contains the coefficients of the slicing linear polynomials",
+	     "R"=> Ring => " where the output polynomials belong"
+	     },
+	Outputs => {"S"=>List=>"contains linear polynomials"},
+        PARA {"A service function used  in ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", "."},
+	EXAMPLE lines ///
+R = CC[x,y]	
+sliceEquations(matrix{{1,2,3},{4,5,6*ii}}, R)
+projectiveSliceEquations(matrix{{1,2,3},{4,5,6*ii}}, CC[x,y,z])
+     	///
+	}
+
+-- NumericalVariety --------------------------------------------------------------------
 document {
      Key => {NumericalVariety},
      Headline => "a numerical variety",
@@ -1122,47 +1208,6 @@ doc ///
       F = {x*y, x^2 - y, x*z};
       L = generalEquations(2,F)      
 ///
-
-document {
-     Key => {solutionsWithMultiplicity, (solutionsWithMultiplicity,List)},
-     Headline => "replaces clusters of approximately equal points by single points with multiplicity",
-     Usage => "M = solutionsWithMultiplicity S",
-     Inputs => {
-	     "S" => {TO2{Point,"points"}}
-	     },
-     Outputs => {"M"=>{TO2{Point,"points"}, " with a multiplicity field"}},  
-     PARA{"Clusters the points and outputs a list with one point ", TT "p", " per cluster with ", TT "p.", TO Multiplicity, 
-	 " equal to the size of the cluster. If the multiplicity is not 1, then ", TT "p.", TO SolutionStatus, " is set to ", TO Singular, 
-	 "; otherwise, it is inherited from one of the points in the cluster."},
-     PARA{"Whether two points are approximately equal is decided by the function ", TO areEqual, " that depends on ", TO Tolerance, "."},
-     EXAMPLE lines ///
-     a = point {{0,1}}
-     b = point {{0.000000001,1+0.00000000001*ii}}
-     c = point {{0.001*ii,1}}
-     M = solutionsWithMultiplicity {a,b,c}
-     peek M
-     ///,
-     Caveat => {"A point in a cluster may be farther than ", TO Tolerance, 
-	 " from another point in the cluster. (In that case there has to be another point in the cluster that is within the ", 
-	 TO Tolerance, ".)"}
-     }
-
-document {
-	Key => {(toAffineChart, ZZ, List), toAffineChart},
-	Headline => "coordinates of a point in the projective space in an affine chart",
-	Usage => "y = toAffineChart(i,x)",
-	Inputs => {
-	     "i" => "the number of the standard chart",
-	     "x" => "projective coordinates of a point"
-	     },
-	Outputs => {"y"=>{"coordinates of ", TT "x", " in the ", TT "i", "-th affine chart"}},
-	Caveat => {"Returns ", TT "infinity", " if the ", TT "i", "-th coordinate of ", TT "x", " is zero."},
-	EXAMPLE lines ///
-toAffineChart(2,{1,2,3,4,5,6}) 
-toAffineChart(2,{1,2,0,4,5,6}) 
-     	///,
-	SeeAlso => {areEqual}
-	}
 
 TEST /// -- miscellaneous tests
 CC[x,y]
