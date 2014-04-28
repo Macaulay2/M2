@@ -51,6 +51,7 @@ void testCoerceToLongInteger(const RT& R)
       R.init(a);
       R.set_from_long(a, i);
       long b = R.coerceToLongInteger(a);
+      if (b < 0) b += R.characteristic();
       EXPECT_EQ(b, i);
     }
   for (long i=bottom2; i < R.characteristic(); i++)
@@ -59,6 +60,7 @@ void testCoerceToLongInteger(const RT& R)
       R.init(a);
       R.set_from_long(a, i);
       long b = R.coerceToLongInteger(a);
+      if (b < 0) b += R.characteristic();
       EXPECT_EQ(b, i);
     }
 }
