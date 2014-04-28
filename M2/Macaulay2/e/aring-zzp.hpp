@@ -250,7 +250,14 @@ namespace M2 {
 
     long coerceToLongInteger(const elem& f) const
     {
-      return exp_table[f];
+      int n = exp_table[f];
+      if (n > p/2) n -= p;
+      return n;
+    }
+    long coerceToNonnegativeLongInteger(const elem& f) const
+    {
+      int n = exp_table[f];
+      return n;
     }
   private:
     void initialize_tables();

@@ -48,7 +48,9 @@ namespace M2 {
 
     long coerceToLongInteger(const elem& f) const
     {
-      return f;
+      long result = f;
+      if (result > characteristic()/2) result -= characteristic();
+      return result;
     }
 
     void text_out(buffer &o) const;

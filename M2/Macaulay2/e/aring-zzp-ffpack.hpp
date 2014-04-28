@@ -122,7 +122,9 @@ namespace M2 {
 
     long coerceToLongInteger(const elem& f) const
     {
-      return static_cast<long>(f);
+      long result = static_cast<long>(f);
+      if (result > characteristic()/2) result -= characteristic();
+      return result;
     }
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const

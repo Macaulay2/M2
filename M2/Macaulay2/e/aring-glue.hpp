@@ -1014,22 +1014,33 @@ namespace M2 {
     return R->get_precision();
   }
 
+  template<typename RT>
+  std::pair<bool,long> coerceToLongIntegerFcn(const RT& ring, ring_elem a)
+  {
+    typename RT::ElementType b;
+    ring.init(b);
+    ring.from_ring_elem(b, a);
+    long result = ring.coerceToLongInteger(b);
+    ring.clear(b);
+    return std::pair<bool, long>(true, result);
+  }
+
   template<>
   inline std::pair<bool, long> ConcreteRing<ARingZZp>::coerceToLongInteger(ring_elem a) const
   {
-    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+    return coerceToLongIntegerFcn(ring(), a);
   }
 
   template<>
   inline std::pair<bool, long> ConcreteRing<ARingZZpFlint>::coerceToLongInteger(ring_elem a) const
   {
-    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+    return coerceToLongIntegerFcn(ring(), a);
   }
 
   template<>
   inline std::pair<bool, long> ConcreteRing<ARingZZpFFPACK>::coerceToLongInteger(ring_elem a) const
   {
-    return std::pair<bool, long>(true, ring().coerceToLongInteger(a.int_val));
+    return coerceToLongIntegerFcn(ring(), a);
   }
 
   template<>

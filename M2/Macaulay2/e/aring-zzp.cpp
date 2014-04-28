@@ -82,7 +82,7 @@ namespace M2 {
                                bool p_plus,
                                bool p_parens) const
   {
-    int n = exp_table[a];
+    int n = coerceToLongInteger(a);
     if (n < 0) 
       {
         o << '-';
@@ -95,8 +95,7 @@ namespace M2 {
 
   void ARingZZp::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
-    // translate f to 
-    int a = exp_table[f];
+    int a = coerceToLongInteger(f);
     result = map->get_ring()->from_long(a);
   }
 
