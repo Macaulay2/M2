@@ -46,6 +46,13 @@ namespace M2 {
       return static_cast<unsigned long>(a);
     }
 
+    long coerceToLongInteger(const elem& f) const
+    {
+      long result = f;
+      if (result > characteristic()/2) result -= characteristic();
+      return result;
+    }
+
     void text_out(buffer &o) const;
 
     /////////////////////////////////
@@ -211,16 +218,6 @@ namespace M2 {
   };
 
 };
-
-#if 0
-    // 'get' functions
-
-    ElementType get_int(ElementType f) const { return f; }
-
-    ElementType get_repr(ElementType f) const { return f; }
-
-    static int findPrimitiveRoot(int P); //do we need this?
-#endif
 
 #endif // HAVE_FLINT
 #endif

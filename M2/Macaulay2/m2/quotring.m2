@@ -83,7 +83,7 @@ ZZp Ideal := opts -> (I) -> (
 	  S.presentation = matrix{{n}};
 	  S.order = S.char = n;
 	  S.dim = 0;					    -- n != 0 and n!= 1
-	  expression S := x -> expression raw x;
+	  expression S := x -> expression rawToInteger raw x;
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
       savedQuotients#(typ, n) = S;

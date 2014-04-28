@@ -184,6 +184,12 @@ namespace M2 {
     //       primelem --> map->elem(first_var)
     // evaluate map(f)
     void eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const;
+
+    bool coerceToLongInteger(long& result, const ElementType& n) const
+    {
+      result = fmpz_get_si(&n);
+      return fmpz_fits_si(&n);
+    }
     
   private:
     mutable flint_rand_t mRandomState;

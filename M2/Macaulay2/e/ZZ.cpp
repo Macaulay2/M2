@@ -7,7 +7,6 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 
-#include "coeffrings.hpp"
 #include "aring-zz-gmp.hpp"
 #if 0
 // #include "gmp.h"
@@ -90,9 +89,10 @@ unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
   return exp;
 }
 
-int RingZZ::coerce_to_int(ring_elem a) const
+std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
 {
-  return static_cast<int>(mpz_get_si(a.get_mpz()));
+  return std::pair<bool, long>(mpz_fits_slong_p(a.get_mpz()), 
+                               mpz_get_si(a.get_mpz()));
 }
 
 ring_elem RingZZ::random() const

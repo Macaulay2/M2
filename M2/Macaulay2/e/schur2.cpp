@@ -132,7 +132,7 @@ SchurRing2::SchurRing2(const Ring *A, int n)
 
 bool SchurRing2::initialize_SchurRing2()
 {
-  initialize_ring(coefficientRing->charac());
+  initialize_ring(coefficientRing->characteristic());
 
   zeroV = from_long(0);
   oneV = from_long(1);

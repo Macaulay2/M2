@@ -67,7 +67,7 @@ public:
 
   virtual unsigned long compute_hash_value(const ring_elem a) const;
 
-  virtual int coerce_to_int(ring_elem a) const;
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
   virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;

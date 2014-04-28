@@ -11,7 +11,7 @@ Tower::~Tower()
 {
 }
 
-bool Tower::initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions)
+bool Tower::initialize(long charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions)
 {
   initialize_ring(charac0);
   declare_field();
@@ -58,7 +58,7 @@ Tower * Tower::create(const Tower *R, M2_ArrayString new_names)
 Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
 {
   Tower *result = new Tower;
-  if (!result->initialize(R->charac(), R->names, extensions))
+  if (!result->initialize(R->characteristic(), R->names, extensions))
     return 0;
   return result;
 }
@@ -71,7 +71,7 @@ unsigned long Tower::compute_hash_value(const ring_elem a) const
 
 void Tower::text_out(buffer &o) const
 {
-  o << "Tower[ZZ/" << charac() << "[";
+  o << "Tower[ZZ/" << characteristic() << "[";
   for (int i=0; i<nvars-1; i++)
     o << names->array[i] << ",";
   if (nvars > 0)
@@ -459,9 +459,12 @@ ring_elem Tower::translate(const PolynomialRing *R, ring_elem fR) const
   exponents exp = new int[nvars];
   for (Nterm *t = fR; t != 0; t = t->next)
     {
-      ring_elem c;
       M->to_expvector(t->monom, exp);
-      int c1 = K->coerce_to_int(t->coeff);
+
+      std::pair<bool,long> res = K->coerceToLongInteger(t->coeff);
+      M2_ASSERT(res.first);
+      int c1 = static_cast<int>(res.second);
+
       D->add_term(result, c1, exp);
     }
   delete [] exp;
@@ -522,7 +525,7 @@ const RingElement *rawTowerTranslatePoly(const Ring *newRing, const RingElement 
           ERROR("expected rings with the same number of variables");
           return 0;
         }
-      if (P->charac() != T->charac())
+      if (P->characteristic() != T->characteristic())
         {
           ERROR("expected rings with the same characteristic");
           return 0;

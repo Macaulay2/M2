@@ -120,6 +120,13 @@ namespace M2 {
   /** @name translation functions
       @{ */
 
+    long coerceToLongInteger(const elem& f) const
+    {
+      long result = static_cast<long>(f);
+      if (result > characteristic()/2) result -= characteristic();
+      return result;
+    }
+
     void to_ring_elem(ring_elem &result, const ElementType &a) const
     {
       // Note that the max modulus is small enough (about 70 million in 2013)

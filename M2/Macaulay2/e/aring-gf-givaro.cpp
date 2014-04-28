@@ -417,31 +417,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     return 0;
 }
 
-
-///@todo how should this function behave? 
-///@todo also consider conversion problems depending on 'elem' type
-int ARingGFGivaro::get_int(const ElementType f) const 
-{
-#ifdef DEBUG_GF    
-    std::cerr << "ARingGFGivaro::get_int" << std::endl;
-#endif
-    assert(false);
-    return 0;
-}
-
-
-/// @todo where this function will be used? ; 
-/// @todo problems if type 'elem' is bigger than  int
-int ARingGFGivaro::get_repr(const ElementType f) const 
-{
-#ifdef DEBUG_GF
-    std::cerr << "get_repr" << std::endl;
-#endif
-    int result;
-    givaroField.convert(result,f);
-    return result; 
-}
-
     // 'init', 'init_set' functions
 
     void ARingGFGivaro::init(ElementType &result) const              { result = givaroField.zero;  }
@@ -641,8 +616,11 @@ extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, cons
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;
-        int coeff = mOriginalRing->getCoefficientRing()->coerce_to_int(t->coeff);
-        set_from_long(a, coeff);
+
+        std::pair<bool,long> res = mOriginalRing->getCoefficientRing()->coerceToLongInteger(t->coeff);
+        M2_ASSERT(res.first);
+        set_from_long(a, res.second);
+
         mOriginalRing->getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).

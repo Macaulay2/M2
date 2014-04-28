@@ -27,7 +27,7 @@ bool Z_mod::initialize_Z_mod(int p)
 {
 
   initialize_ring(p);
-
+  P = p;
 
   declare_field();
   int i,j,q,n;
@@ -92,9 +92,9 @@ int Z_mod::to_int(int f) const
   return n;
 }
 
-int Z_mod::coerce_to_int(ring_elem a) const
+std::pair<bool, long> Z_mod::coerceToLongInteger(ring_elem a) const
 {
-  return to_int(a.int_val);
+  return std::pair<bool, long>(true, to_int(a.int_val));
 }
 
 int Z_mod::discrete_log(ring_elem a) const
@@ -192,7 +192,7 @@ bool Z_mod::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   // Rg = Z ---> Z/p
   if (Rg == globalZZ)
     {
-      result = Rg->from_long(coerce_to_int(f));
+      result = Rg->from_long(to_int(f));
       return true;
     }
   return false;

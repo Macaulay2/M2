@@ -1,4 +1,4 @@
--- Test of some of the tower ring cases
+-- Test of the tower ring engine functions
 {*
 restart
 *}
@@ -7,7 +7,7 @@ debug Core
 
 -- example 1
 R1 = rawTowerRing(7, (1:"a"))
-assert(rawExtensionDegree(-1,R1) == 7)
+assert(rawCharacteristic R1 == 7)
 a = R1_0
 F = a^35+2*a^14+4*a^7+1
 assert(rawLowerP F == a^5 + 2*a^2 + 4*a + 1)
@@ -18,7 +18,7 @@ R1 = rawTowerRing(2, ("a","y"))
 a = R1_0
 y = R1_1
 R2 = rawTowerQuotientRing(R1, (a^3+a^2+1, 0_R1))
-rawExtensionDegree(-1,R2)
+assert(rawCharacteristic R2 == 2)
 rawExtensionDegree(0,R2) == -1 -- why!?
 rawExtensionDegree(1,R2) == 3
 assert(rawExtensionDegree(0,R2) == -1)

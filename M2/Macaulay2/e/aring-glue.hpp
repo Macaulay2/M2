@@ -42,6 +42,12 @@ namespace M2 {
         return new MutableMat< SMat<RingType> >(this, R, nrows, ncols);
     }
 
+    bool isFinitePrimeField() const { 
+      return ringID() == ring_ZZp or 
+        ringID() == ring_ZZpFfpack or
+        ringID() == ring_ZZpFlint;
+    }
+
     ////////////////////////////
     // Functions on elements ///
     ////////////////////////////
@@ -55,10 +61,9 @@ namespace M2 {
       return result;
     }
 
-    virtual int coerce_to_int(ring_elem a) const
+    virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const
     {
-      //TODO: implement or remove
-      return 0;
+      return std::pair<bool,long>(false,0);
     }
 
     // The following are all the routines required by 'ring'
@@ -461,7 +466,7 @@ namespace M2 {
     static QQ* create(const ARingQQ* R0)
     {
       QQ *result = new QQ(R0);
-      result->initialize_ring(static_cast<int>(R0->characteristic()));
+      result->initialize_ring(R0->characteristic());
       result->declare_field();
       
       result->zeroV = result->from_long(0);
@@ -547,7 +552,7 @@ namespace M2 {
   ConcreteRing<RingType> * ConcreteRing<RingType>::create(const RingType *R)
   {
     ConcreteRing<RingType> *result = new ConcreteRing<RingType>(R);
-    result->initialize_ring(static_cast<int>(R->characteristic()));
+    result->initialize_ring(R->characteristic());
     result->declare_field();
 
     result->zeroV = result->from_long(0);
@@ -1007,6 +1012,52 @@ namespace M2 {
   inline unsigned long ConcreteRing<ARingCCC>::get_precision() const
   {
     return R->get_precision();
+  }
+
+  template<typename RT>
+  std::pair<bool,long> coerceToLongIntegerFcn(const RT& ring, ring_elem a)
+  {
+    typename RT::ElementType b;
+    ring.init(b);
+    ring.from_ring_elem(b, a);
+    long result = ring.coerceToLongInteger(b);
+    ring.clear(b);
+    return std::pair<bool, long>(true, result);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZp>::coerceToLongInteger(ring_elem a) const
+  {
+    return coerceToLongIntegerFcn(ring(), a);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZpFlint>::coerceToLongInteger(ring_elem a) const
+  {
+    return coerceToLongIntegerFcn(ring(), a);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZpFFPACK>::coerceToLongInteger(ring_elem a) const
+  {
+    return coerceToLongIntegerFcn(ring(), a);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZGMP>::coerceToLongInteger(ring_elem a) const
+  {
+    long b;
+    bool succeed = ring().coerceToLongInteger(b, * a.get_mpz());
+    return std::pair<bool, long>(succeed, b);
+  }
+
+  template<>
+  inline std::pair<bool, long> ConcreteRing<ARingZZ>::coerceToLongInteger(ring_elem a) const
+  {
+    long b;
+    fmpz t = reinterpret_cast<fmpz>(const_cast<Nterm*>(a.poly_val));
+    bool succeed = ring().coerceToLongInteger(b, t);
+    return std::pair<bool, long>(succeed, b);
   }
 
 }; // namespace M2

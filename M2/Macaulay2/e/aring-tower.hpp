@@ -118,12 +118,6 @@ namespace M2 {
       result = reinterpret_cast<ElementType>(b);
     }
 
-    // 'get' functions
-
-    //needed?    int get_int(elem f) const { return 0; }
-
-    //needed?    int get_repr(elem f) const { return f; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = NULL; }

@@ -33,14 +33,14 @@ const CoefficientRingR* Ring::getCoefficientRingR() const
   return cR;
 }
 
-void Ring::initialize_ring(int P0,
+void Ring::initialize_ring(long P0,
                            const PolynomialRing *DR,
                            const M2_arrayint heft_vec)
 {
   // Remember: if this is a poly ring, the ring is K[M].
   // If this is a basic routine, K = this, M = trivial monoid.
   // If this is a frac field, K = R, M = trivial monoid.
-  P = P0;
+  mCharacteristic = P0;
   if (DR == 0)
     degree_ring = PolyRing::get_trivial_poly_ring();
   else
@@ -244,10 +244,9 @@ ring_elem Ring::remainderAndQuotient(const ring_elem f, const ring_elem g,
   return zero();
 }
 
-int Ring::coerce_to_int(ring_elem) const
+std::pair<bool, long> Ring::coerceToLongInteger(ring_elem a) const
 {
-  ERROR("cannot coerce given ring element to an integer");
-  return 0;
+  return std::pair<bool,long>(false, 0); // the default is that it cannot be lifted.
 }
 
 bool Ring::from_BigComplex(gmp_CC z, ring_elem &result) const

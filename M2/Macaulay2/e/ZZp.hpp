@@ -13,6 +13,7 @@ namespace M2 {
 class Z_mod : public Ring
 {
   //int P; // this is defined in class Ring
+  int P; // this class only allows char < 32767, so we stash characteristic here
   int _P1;      // = P-1
   int _ZERO;     // = p-1, log of zero...
 
@@ -25,6 +26,8 @@ class Z_mod : public Ring
 
   CoefficientRingZZp *coeffR;
   M2::ARingZZp *aringZZp;
+
+  int to_int(int a) const;
 protected:
   Z_mod() {}
   virtual ~Z_mod() {}
@@ -32,6 +35,8 @@ protected:
 public:
   static Z_mod * create(int p);
 
+  bool isFinitePrimeField() const { return true; }
+  
   Z_mod * cast_to_Z_mod() { return this; }
   const Z_mod * cast_to_Z_mod() const { return this; }
 
@@ -39,11 +44,12 @@ public:
   M2::ARingZZp * get_ARing() const { return aringZZp; }
 
   virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const;
+
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
   
-  virtual int coerce_to_int(ring_elem a) const;
   int discrete_log(ring_elem a) const; // returns -1 if a is 0
 
-  int to_int(int a) const;
+
 
 // The following are all the routines required by 'ring'
 

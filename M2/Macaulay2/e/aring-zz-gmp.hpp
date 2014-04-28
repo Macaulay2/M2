@@ -175,6 +175,14 @@ namespace M2 {
     //       primelem --> map->elem(first_var)
     // evaluate map(f)
     void eval(const RingMap *map, const ElementType&  f, int first_var, ring_elem &result) const;
+
+    bool coerceToLongInteger(long& result, const ElementType& n) const
+    {
+      result = mpz_get_si(&n);
+      return mpz_fits_slong_p(&n);
+    }
+
+
     };
 };
 

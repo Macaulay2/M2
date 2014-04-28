@@ -97,12 +97,6 @@ namespace M2 {
 	result = a.int_val;
     }
 
-    // 'get' functions
-
-    int get_int(elem f) const { return exp_table[f]; }
-
-    int get_repr(elem f) const { return f; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = 0; }
@@ -254,6 +248,17 @@ namespace M2 {
 
     void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
 
+    long coerceToLongInteger(const elem& f) const
+    {
+      int n = exp_table[f];
+      if (n > p/2) n -= p;
+      return n;
+    }
+    long coerceToNonnegativeLongInteger(const elem& f) const
+    {
+      int n = exp_table[f];
+      return n;
+    }
   private:
     void initialize_tables();
     

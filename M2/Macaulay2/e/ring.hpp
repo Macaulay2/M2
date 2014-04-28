@@ -53,7 +53,8 @@ class Ring : public mutable_object
 {
 protected:
   const ARing * getARing() const { return AR; }
-  int P;
+  long mCharacteristic; // not all rings will have characteristic that fits in a long int
+  //int P;
   const PolynomialRing *degree_ring;
   M2_arrayint heft_vector;
   // This vector, if NULL, and if there are any variables in the ring imply that
@@ -75,7 +76,7 @@ protected:
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac,
+  void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
   Ring() : heft_vector(0) {}
@@ -88,7 +89,7 @@ public:
   // Ring informational //
   ////////////////////////
 
-  int charac() const { return P; }
+  long characteristic()  const { return mCharacteristic; }
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
@@ -98,6 +99,7 @@ public:
     return M2::ring_old; 
   }
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
+  virtual bool isFinitePrimeField() const { return false; }
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
@@ -216,7 +218,7 @@ public:
   //////////////////////
   virtual unsigned long compute_hash_value(const ring_elem a) const = 0;
 
-  virtual int coerce_to_int(ring_elem a) const;
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
   ring_elem one() const { return oneV; }
   ring_elem minus_one() const { return minus_oneV; }

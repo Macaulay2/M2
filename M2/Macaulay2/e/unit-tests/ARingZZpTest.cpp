@@ -40,6 +40,28 @@ void getElement<M2::ARingZZp>(const M2::ARingZZp& R, int index, M2::ARingZZp::El
     }
 }
 
+template<typename RT>
+void testCoerceToLongInteger(const RT& R)
+{
+  long top1 = (R.characteristic() > 10000 ? 10000 : R.characteristic());
+  long bottom2 = (R.characteristic() >  10000 ? R.characteristic()-10000 : 0);
+  for (long i=0; i<top1; i++)
+    {
+      typename RT::ElementType a;
+      R.init(a);
+      R.set_from_long(a, i);
+      long b = R.coerceToLongInteger(a);
+      EXPECT_EQ(b, i);
+    }
+  for (long i=bottom2; i < R.characteristic(); i++)
+    {
+      typename RT::ElementType a;
+      R.init(a);
+      R.set_from_long(a, i);
+      long b = R.coerceToLongInteger(a);
+      EXPECT_EQ(b, i);
+    }
+}
 TEST(RingZZp, create) {
   const Z_mod *R = Z_mod::create(101);
   EXPECT_FALSE(R == 0);
@@ -75,16 +97,25 @@ TEST(ARingZZp, create) {
 TEST(ARingZZp, arithmetic101) {
   M2::ARingZZp R(101);
   testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
+}
+
+TEST(ARingZZp, arithmetic32749) {
+  M2::ARingZZp R(32749);
+  testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZp, arithmetic2) {
   M2::ARingZZp R(2);
   testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZp, arithmetic3) {
   M2::ARingZZp R(3);
   testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZp, fromStream)
@@ -149,15 +180,21 @@ TEST(ARingZZpFFPACK, arithmetic101) {
 TEST(ARingZZpFFPACK, arithmetic2) {
   M2::ARingZZpFFPACK R(2);
   testFiniteField(R,ntrials);
+
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZpFFPACK, arithmetic3) {
   M2::ARingZZpFFPACK R(3);
   testFiniteField(R, ntrials);
+
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZpFFPACK, arithmetic66000007) {
   M2::ARingZZpFFPACK R(66000007);
+
+  testCoerceToLongInteger(R);
 
   testCoercions(R);
   testNegate(R, ntrials);
@@ -175,6 +212,8 @@ TEST(ARingZZpFFPACK, arithmetic66000007) {
 TEST(ARingZZpFFPACK, arithmetic67108859) {
   M2::ARingZZpFFPACK R(67108859);  
 
+  testCoerceToLongInteger(R);
+
   testCoercions(R);
   testNegate(R, ntrials);
   testAdd(R, ntrials);
@@ -188,6 +227,8 @@ TEST(ARingZZpFFPACK, arithmetic67108859) {
 
 TEST(ARingZZpFFPACK, arithmetic33500479) {
   M2::ARingZZpFFPACK R(33500479);  
+
+  testCoerceToLongInteger(R);
 
   testCoercions(R);
   testNegate(R, ntrials);
@@ -250,22 +291,25 @@ TEST(ARingZZpFlint, create) {
 TEST(ARingZZpFlint, arithmetic101) {
   M2::ARingZZpFlint R(101);
   testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
 }
 
-//TODO: commented out because it appears wrong.  Perhaps p=2 isn't allowed here?
-// strange: does not fail on my thinkpad...
 TEST(ARingZZpFlint, arithmetic2) {
   M2::ARingZZpFlint R(2);
   testFiniteField(R,ntrials);
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZpFlint, arithmetic3) {
   M2::ARingZZpFlint R(3);
   testFiniteField(R, ntrials);
+  testCoerceToLongInteger(R);
 }
 
 TEST(ARingZZpFlint, arithmetic66000007) {
   M2::ARingZZpFlint R(66000007);
+
+  testCoerceToLongInteger(R);
 
   testCoercions(R);
   testNegate(R, ntrials);
@@ -278,10 +322,10 @@ TEST(ARingZZpFlint, arithmetic66000007) {
   testAxioms(R, ntrials);
 }
 
-//TODO: commented out because it takes too long:
-// Actually: now this characteristic seems too big?!
 TEST(ARingZZpFlint, arithmetic67108859) {
   M2::ARingZZpFlint R(67108859);  
+
+  testCoerceToLongInteger(R);
 
   testCoercions(R);
   testNegate(R, ntrials);
@@ -297,6 +341,8 @@ TEST(ARingZZpFlint, arithmetic67108859) {
 TEST(ARingZZpFlint, arithmetic33500479) {
   M2::ARingZZpFlint R(33500479);  
 
+  testCoerceToLongInteger(R);
+
   testCoercions(R);
   testNegate(R, ntrials);
   testAdd(R, ntrials);
@@ -308,6 +354,32 @@ TEST(ARingZZpFlint, arithmetic33500479) {
   testAxioms(R, ntrials);
 }
 
+TEST(ARingZZpFlint, arithmetic9223372036854775783) {
+  // largest prime < 2^63
+  if (sizeof(unsigned long)<=4) 
+    std::cout << "seems to be a 32bit machine: skipping the test" << std::endl;
+  else
+    {   
+    M2::ARingZZpFlint R(9223372036854775783L);
+
+    testCoerceToLongInteger(R);
+
+    testCoercions(R);
+    testNegate(R, ntrials);
+    testAdd(R, ntrials);
+    testSubtract(R, ntrials);
+    testMultiply(R, ntrials);
+    testDivide(R, ntrials);
+    testReciprocal(R, ntrials);
+    //  testPower(R, ntrials);  // this test fails: as it expects the characteristic to fit into an int.
+    testAxioms(R, ntrials);
+  }
+}
+
+
+// Even though flint handles primes up to 2^64-1, M2 assumes that the
+// characteristic is < 2^63.  If needed, we could change the type of
+// the characteristic to unsigned long, but that would have further complications.
 TEST(ARingZZpFlint, arithmetic18446744073709551557) {
   // largest prime < 2^64
   if (sizeof(unsigned long)<=4) 
@@ -315,6 +387,8 @@ TEST(ARingZZpFlint, arithmetic18446744073709551557) {
   else
     {   
     M2::ARingZZpFlint R(18446744073709551557UL);  
+
+    //    testCoerceToLongInteger(R); // this fails for charac > 2^63
 
     testCoercions(R);
     testNegate(R, ntrials);

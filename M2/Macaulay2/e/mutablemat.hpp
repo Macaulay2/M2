@@ -14,8 +14,6 @@ namespace M2 {
   class ARingCCC;
 };
 
-#include "coeffrings.hpp"
-
 template<typename RT> class DMat;
 template<typename RT> class SMat;
 template<typename MT> bool isDense(const MT& mat);

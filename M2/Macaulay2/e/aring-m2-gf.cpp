@@ -16,7 +16,7 @@ namespace M2 {
 
   GaloisFieldTable::GaloisFieldTable(const PolynomialRing& R,
                                      const ring_elem prim):
-    mCharac(R.charac()),
+    mCharac(static_cast<int>(R.characteristic())),
     mOriginalRing(R),
     mPrimitiveElement(prim)
   {
@@ -132,7 +132,11 @@ namespace M2 {
     for (Nterm *t = f; t != NULL; t = t->next)
       {
         elem a, b;
-        set_from_long(a, mGF.ring().getCoefficientRing()->coerce_to_int(t->coeff));
+
+        std::pair<bool,long> res = mGF.ring().getCoefficientRing()->coerceToLongInteger(t->coeff);
+        M2_ASSERT(res.first);
+        set_from_long(a, res.second);
+
         mGF.ring().getMonoid()->to_expvector(t->monom, exp);
         // exp[0] is the variable we want.  Notice that since the ring is a quotient,
         // this degree is < n (where Q_ = P^n).

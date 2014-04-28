@@ -676,7 +676,9 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
         }
       else if (exp[0] == deg)
         {
-          int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
+          std::pair<bool,long> res = P->getCoefficientRing()->coerceToLongInteger(f->coeff);
+          M2_ASSERT(res.first && abs(res.second) < std::numeric_limits<int>::max());
+          int n = static_cast<int>(res.second);
           result += n;
         }
 
