@@ -67,7 +67,7 @@ doc ///
 
      Example
        printingPrecision = 4;
-       N = 2000
+       N = 40
        A = mutableMatrix(CC_53, N, N); fillMatrix A;
        B = mutableMatrix(CC_53, N, 2); fillMatrix B;
        time X = solve(A,B);
