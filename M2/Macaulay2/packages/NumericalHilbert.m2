@@ -7,6 +7,7 @@ newPackage(
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
      Headline => "some local Hilbert series functions",
+     AuxiliaryFiles => true,
      DebuggingMode => true
 )
 
@@ -17,13 +18,6 @@ export {
      sCorners,
      localHilbertRegularity,
      eliminatingDual,
-     orthogonalInSubspace,
-     TruncDualData,
-     truncDualData,
-     nextTDD,
-     homogPolySpace,
-     newGCorners,
-     Seeds,
      DZ,
      BM,
      ProduceSB
@@ -31,7 +25,7 @@ export {
 
 --TruncDualData private keys
 protect Igens, protect syl, protect strategy, protect deg,
-protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs
+protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs, protect Seeds
 
 load "NumericalAlgebraicGeometry/PolynomialSpace.m2"
 
@@ -73,7 +67,7 @@ zeroDimensionalDual (Point,Matrix) := o -> (p,Igens) -> (
 
 --An object that stores the data for an ongoing iterative tuncated dual space computation
 TruncDualData = new Type of MutableHashTable
-truncDualData = method(Options => {Strategy => BM, Seeds => null})
+truncDualData = method(Options => {Strategy => BM})
 truncDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H := new MutableHashTable;
     R := ring Igens;
@@ -86,7 +80,7 @@ truncDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     h = S_0;
     H.hIgens = homogenize(sub(Igens,S), h); 
     T := if syl then S else R;
-    H.Seeds = if o.Seeds === null then dualSpace(matrix{{1_T}},origin(T)) else o.Seeds;
+    H.Seeds = dualSpace(matrix{{1_T}},origin(T));
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
     H.BMcoefs = numericalKernel(H.BMmatrix,t);
@@ -170,7 +164,7 @@ truncate (PolySpace, ZZ) := (L,d) -> (
     if #tGens == 0 then polySpace map(R^1,R^0,0) else polySpace matrix{tGens}
     )
 truncate (DualSpace, ZZ) := (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
-truncate (DualSpace, List, ZZ) := (L,ind,d) -> (
+truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     R := ring L;
     n := numgens R;
     indC := flatten entries submatrix'(matrix{{0..n-1}},ind);
@@ -182,8 +176,9 @@ truncate (DualSpace, List, ZZ) := (L,ind,d) -> (
     RtoT := map(T,R, matrix{toList varList});
     TL := reduceSpace polySpace RtoT gens L;
     TL = truncate(TL,d);
-    dualSpace(TtoR gens TL, L.BasePoint)
+    polySpace(TtoR gens TL)
     )
+truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
 gCorners = method(TypicalValue => Sequence, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
@@ -268,17 +263,6 @@ listLCM = L -> (
     if not all(LCMexp, a -> a >= 0) then return 0;
     product(numgens R, i -> R_i^(LCMexp#i))
     )    
-
-orthogonalInSubspace = method()
-orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
-    M := innerProduct(S,D);
-    K := numericalKernel(transpose M,t);
-    polySpace((gens S)*K, Reduced=>false)
-    )
-orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
-    T' := dualSpace(T, origin(ring S));
-    orthogonalInSubspace(T',S,t)
-    )
 
 -- Implementation of algorithm from 1996 paper of Bernard Mourrain.
 -- M is the main matrix
@@ -414,7 +398,7 @@ sbReduce = L -> (
     L_goodi
     )
 
-{*
+
 beginDocumentation()
 
 doc ///
@@ -427,74 +411,237 @@ doc ///
 	       @EM "NumericalHilbert"@ gets stuff done.
 ///
 
-doc ///
-     Key
-          DualSpace
-     Description
-          Text
-	        a Type.
-///
 
 doc ///
      Key
-          dualHilbert
+          truncatedDual
+	  (truncatedDual,Point,Ideal,ZZ)
+	  (truncatedDual,Point,Matrix,ZZ)
+	  [truncatedDual,Strategy]
+	  [truncatedDual,Tolerance]
      Headline
-          Calculate Hilbert series of the dual of a polynomial ideal
+          Compute basis of the truncated dual space of a polynomial ideal
      Usage
-          dualHilbert(gns, d)
+          S = truncatedDual(p, I, d)
+	  S = truncatedDual(p, gns, d)
      Inputs
+     	  p:Point
+	  I:Ideal
           gns:Matrix
 	       generators of an ideal in a one-row matrix
 	  d:ZZ
      Outputs
-          :List
+          S:DualSpace
      Description
           Text
-	       Calculates dimension of the dual space of an ideal at each degree from 0 to d inclusive.
-	  Example
-///
-
-doc ///
-     Key
-          dualBasis
-     Headline
-          Calculate basis of the dual space of a polynomial ideal
-     Usage
-          dualBasis(gns, d)
-     Inputs
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
-	  d:ZZ
-     Outputs
-          :dualSpace
-	       basis of the dual space in a one-row matrix
-     Description
-          Text
-	       Calculates a reduced basis of the truncated dual space of an ideal.  It's truncated at degree d.
+	       Computes a reduced basis of the truncated dual space of an ideal.  It's truncated at degree d.
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
-	  Example
 ///
 
 doc ///
      Key
-          standardBasis
+          zeroDimensionalDual
+	  (zeroDimensionalDual,Point,Ideal)
+	  (zeroDimensionalDual,Point,Matrix)
+	  [zeroDimensionalDual,Strategy]
+	  [zeroDimensionalDual,Tolerance]
      Headline
-          Calculate the standard basis of a polynomial ideal numerically
+          Compute basis of the dual space of a zero-dimensional polynomial ideal
      Usage
-          standardBasis(gns)
+          S = zeroDimensionalDual(p, I)
+	  S = zeroDimensionalDual(p, gns)
      Inputs
+     	  p:Point
+	  I:Ideal
           gns:Matrix
 	       generators of an ideal in a one-row matrix
-	  d:ZZ
      Outputs
-          :Matrix
+          S:DualSpace
      Description
           Text
-	       Finds a standard basis of the ideal using the dual basis calculation, which is numerically stable.
-	  Example
+	       Computes a reduced basis of the dual space of a zero-dimensional ideal.  It does not check if the ideal is
+	       zero-dimensional and if not then termination will fail.
+	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
+	       They are really elements of the dual ring.
 ///
-*}
+
+doc ///
+     Key 
+          gCorners
+	  (gCorners,Point,Ideal)
+	  (gCorners,Point,Matrix)
+	  [gCorners,Strategy]
+	  [gCorners,Tolerance]
+	  [gCorners,ProduceSB]
+     Headline
+          Compute the generators of the initial ideal of a polynomial ideal
+     Usage
+          G = gCorners(p, I)
+	  G = gCorners(p, gns)
+     Inputs
+     	  p:Point
+	  I:Ideal
+          gns:Matrix
+	       generators of an ideal in a one-row matrix
+     Outputs
+          G:Sequence
+	       generators of the initial ideal in a one-row matrix
+     Description
+          Text
+	       
+///
+
+doc ///
+     Key
+          sCorners
+          (sCorners,MonomialIdeal)
+	  (sCorners,Matrix)
+     Headline
+          Compute the socle corners of a monomial ideal
+     Usage
+          S = sCorners(I)
+	  S = sCorners(gns)
+     Inputs
+          I:MonomialIdeal
+	  gns:Matrix
+	       generators of an ideal in a one-row matrix
+     Outputs
+          G:Matrix
+	       socle corners in a one-row matrix
+     Description
+          Text
+	       
+///
+
+doc ///
+     Key
+          localHilbertRegularity
+	  (localHilbertRegularity,Point,Matrix)
+	  (localHilbertRegularity,Point,Ideal)
+	  [localHilbertRegularity,Tolerance]
+     Headline
+          Compute the regularity of the local Hilbert function of a polynomial ideal
+     Usage
+          d = localHilbertRegularity(p,I)
+	  d = localHilbertRegularity(p,gns)
+     Inputs
+          p:Point
+	  I:Ideal
+          gns:Matrix
+	       generators of an ideal in a one-row matrix
+     Outputs
+          d:ZZ
+     Description
+          Text
+	       
+///
+
+
+doc ///
+     Key
+          eliminatingDual
+	  (eliminatingDual,Point,Matrix,List,ZZ)
+	  (eliminatingDual,Point,Ideal,List,ZZ)
+	  [eliminatingDual,Tolerance]
+     Headline
+          Compute the eliminating dual space of a polynomial ideal
+     Usage
+          S = eliminatingDual(p, I, v, d)
+	  S = eliminatingDual(p, gns, v, d)
+     Inputs
+     	  p:Point
+	  I:Ideal
+          gns:Matrix
+	       generators of an ideal in a one-row matrix
+	  v:List
+	       a list of the integers designating which variables to bound
+	  d:ZZ
+	       the degree bound for the designated variables
+     Outputs
+          S:DualSpace
+     Description
+          Text
+	       
+///
+
+doc ///
+     Key
+          (truncate,DualSpace,ZZ)
+	  (truncate,PolySpace,ZZ)
+     Headline
+          truncate a polynomial space or dual space
+     Usage
+          S = truncate(T, d)
+     Inputs
+     	  T:DualSpace
+	       or @ofClass PolySpace@
+	  d:ZZ
+	       the degree bound for the designated variables
+     Outputs
+          S:DualSpace
+     Description
+          Text
+	       Truncates a dual space or polynomial space T so that the total degree of all terms does not exceed d.
+///
+
+doc ///
+     Key
+	  (truncate,DualSpace,List,ZZ)
+	  (truncate,PolySpace,List,ZZ)
+     Headline
+          truncate a polynomial space or dual space
+     Usage
+          S = truncate(T, v, d)
+     Inputs
+     	  T:DualSpace
+	       or @ofClass PolySpace@
+	  v:List
+	       a list of the integers designating which variables to bound
+	  d:ZZ
+	       the degree bound for the designated variables
+     Outputs
+          S:DualSpace
+     Description
+          Text
+	       Truncates a dual space or polynomial space T, so that the total degree of the specified variables is bounded by d.
+///
+
+doc ///
+     Key
+	  ProduceSB
+     Headline
+          optional argument for gCorners
+     Description
+          Text
+	       Takes a boolean value and defaults to false.  If ProduceSB is false, then @TO gCorners@ will produce the generators
+	       of the initial ideal of the ideal I in the localization at a point.  If it is true, then gCorners will instead
+	       return a standard basis for I.
+///
+
+doc ///
+     Key
+	  DZ
+     Headline
+          Dayton-Zeng algorithm for dual space computation
+     Description
+          Text
+	       The Dayton-Zeng algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
+	       A matrix is formed with a column for each monomial in the ring of I of degree at most d, and a row for each
+	       monomial multiple of a generator of I which has any terms of degree d or less, storing its coefficients.
+	       Any vector in the kernel of this matrix is the coeffeicient vector of an element of the dual space.
+///
+
+doc ///
+     Key
+	  BM
+     Headline
+          Mourrain algorithm for dual space computation
+     Description
+          Text
+	       The Mourrain algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
+///
+
 end
 
 

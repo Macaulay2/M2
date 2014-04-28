@@ -15,7 +15,7 @@ newPackage(
 *}
 export {
      "addition", "intersection", "reduceSpace",
-     "colon", "innerProduct", "isContained",
+     "colon", "innerProduct", "isContained", "orthogonalInSubspace",
      "numericalKernel", "numericalImage", "colReduce"
      }
 
@@ -121,6 +121,17 @@ random (ZZ,PolySpace) := o -> (d,S) -> (
 random DualSpace := o -> D -> random D.Space
 random (ZZ,DualSpace) := o -> (d,D) -> random(d,D.Space)
 
+orthogonalInSubspace = method()
+orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
+    M := innerProduct(S,D);
+    K := numericalKernel(transpose M,t);
+    polySpace((gens S)*K, Reduced=>false)
+    )
+orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
+    T' := dualSpace(T, origin(ring S));
+    orthogonalInSubspace(T',S,t)
+    )
+
 interpolatedIdeal = method()
 interpolatedIdeal DualSpace := L -> error "not implemented"
 interpolatedIdeal List := LL -> error "not implemented"
@@ -188,3 +199,28 @@ colReduce (Matrix, Number) := (M, tol) -> (
     M = (transpose new Matrix from M)_{0..i-1};
     if tol > 0 then clean(tol,M) else M
     )
+
+beginDocumentation()
+
+doc ///
+     Key
+          orthogonalInSubspace
+	  (orthogonalInSubspace,DualSpace,PolySpace,Number)
+	  (orthogonalInSubspace,PolySpace,PolySpace,Number)
+     Headline
+          Compute the eliminating dual space of a polynomial ideal
+     Usage
+          S = orthogonalInSubspace(D, T, tol)
+     Inputs
+	  D:DualSpace
+	       or @ofClass PolySpace@ a space of which to find the orthogonal
+	  T:PolySpace
+	       ambient space
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+///
