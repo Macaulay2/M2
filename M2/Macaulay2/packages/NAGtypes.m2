@@ -29,7 +29,7 @@ export {
      -- point (solution)
      Point, point, coordinates,
      project,
-     isRealPoint, realPoints, residual, relativeErrorEstimate, classifyPoint, origin,
+     isRealPoint, realPoints, residual, classifyPoint, origin,
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
@@ -246,12 +246,9 @@ norm (Thing, List) := (no,p) -> (
      )
  
 residual = method(Options=>{Norm=>2})
-residual (List,Point) := o->(S,p)-> residual(polySystem S,p)
-residual (PolySystem,Point) := o->(P,p)-> residual(P.PolyMap,matrix p)
-residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm,evaluate(S,p))
-
-relativeErrorEstimate = method(Options=>{Norm=>2})
-relativeErrorEstimate(Point) := o->p->p.ErrorBoundEstimate/norm(o.Norm,p) 
+residual (List,Point) := o->(S,p)-> residual(polySystem S,p,o)
+residual (PolySystem,Point) := o->(P,p)-> residual(P.PolyMap,matrix p,o)
+residual (Matrix,Matrix) := o->(S,p)->norm(o.Norm, point evaluate(S,p))
 
 isRealPoint = method(Options=>{Tolerance=>1e-6})
 isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Tolerance
@@ -751,8 +748,8 @@ peek O
 
 -- Point ---------------------------------------------------------------------------
 document {
-     Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), 
-	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, (net, Point),
+     Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), (net, Point),
+	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, Multiplicity,
 	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate,
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
@@ -797,11 +794,12 @@ document {
      	  {TO LastT, " -- the last value of the continuation parameter produced during tracking (equals 1 for a regular solution)"},
 	  {TO ErrorBoundEstimate, " -- an estimate of the distance from the approximation to the actual solution"},
 	  {TO MaxPrecision, " -- max precision used during the homotopy tracking"}, 
+	  {TO Multiplicity, " -- the multiplicity of an isolated solution"}, 
 	  {TO WindingNumber, " -- the winding numeber of a singular solution determined in the end-games"}, 
 	  {TO DeflationNumber, " -- number of first-order deflations in the regularization of a singular solution"},
 	  {TT "Tracker", " -- reserved for developers"}
 	  },
-     PARA {"Other service functions: "},
+     PARA {"Basic service functions: "},
      UL{
      	 TO areEqual,
 	 TO sortSolutions,
@@ -850,8 +848,22 @@ sortSolutions s
 	SeeAlso => {"solveSystem", "track", areEqual}
 	}
 
-document { Key => {Tolerance, [sortSolutions,Tolerance], [areEqual,Tolerance], [isGEQ,Tolerance], [isRealPoint,Tolerance], [realPoints,Tolerance]},
-     Headline => "specifies the tolerance of a numerical computation" 
+document { Key => {Tolerance, 
+	[sortSolutions,Tolerance], 
+	[areEqual,Tolerance], 
+	[isGEQ,Tolerance], 
+	[isRealPoint,Tolerance], 
+	[realPoints,Tolerance], 
+	[solutionsWithMultiplicity,Tolerance]
+	},
+     Headline => "the tolerance of a numerical computation" 
+     }
+
+document { Key => {Norm, 
+    	[residual,Norm]
+	},
+     Headline => "p in the p-norm",
+     "Specifies p-norm, where p is either ", ofClass ZZ, " or ", TO infinity
      }
 
 document {
@@ -872,8 +884,12 @@ isGEQ({1,1e-7},{1, 0})
 	SeeAlso => {"areEqual"}
 	}
 document {
-	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), (areEqual,List,List), (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
-	     [areEqual,Projective]},
+	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
+	    (areEqual,List,List), (areEqual,BasicList,BasicList),
+	    (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
+	    (symbol ==,Point,Point),
+	    [areEqual,Projective]},
 	Headline => "determine if solutions are equal",
 	Usage => "b = areEqual(x,y)",
 	Inputs => {
@@ -883,14 +899,31 @@ document {
 		  in the projective space"}
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " and ", TT "y", " are approximately equal"}},
-	PARA {"The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates)."},
-	"The function returns false if the distance between ", TT "x", " and ", TT "y", " exceeds ", TO Tolerance, " and true, otherwise.",
-	PARA {"If ", TT "Projective=>true", " then ", TEX "1-\\cos\\alpha", " is compared with the ", TO Tolerance, ", where ",
-	     TEX "\\alpha", " is the angle between ", TT "x", " and ", TT "y", "." },
+	PARA {
+	    "The inputs can be complex numbers, ", TO2{Point, "points"}, ", ", 
+	    " or lists of points (presented as ", TO2{Point, "points"}, " or lists of coordinates). ",
+	    "The function returns false if the distance between ", TT "x", " and ", TT "y", 
+	    " exceeds ", TO Tolerance, " and true, otherwise."
+	    },
+	PARA {
+	    "If ", TT "Projective=>true", " then ", 
+	    TEX "1-\\cos\\alpha", " is compared with the ", TO Tolerance, ", where ",
+	    TEX "\\alpha", " is the angle between ", TT "x", " and ", TT "y", "." 
+	    },
 	EXAMPLE lines ///
 areEqual({{-1,1e-7},{1e-7*ii,-1}}, {{-1, 0}, {0, -1}})
 areEqual({3*ii,2*ii,1+ii}, {-6,-4,-2+2*ii}, Projective=>true)  
      	///,
+	PARA {
+	    "For two ", TO2(Point, "points"), " ", TT "A", " and ", TT "B", 
+	    "calling ", TT "A == B", "is equivalent to ", TT "areEqual(A,B)", 
+	    ", however, there is no way to specify the optional parameter."
+	    },
+	EXAMPLE lines ///
+A = point {{-1,1e-7}, {1e-7*ii,-1}}
+B = point {{-1,0}, {0, -1}}
+A == B
+        ///,
 	SeeAlso => {"solveSystem", "track", sortSolutions}
 	}
 
@@ -990,7 +1023,7 @@ toAffineChart(2,{1,2,0,4,5,6})
 
 -- PolySystem ------------------------------------------------------------------------------
 document {
-    Key => {PolySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem), 
+    Key => {PolySystem, 
 	(ideal,PolySystem), (isHomogeneous,PolySystem), (jacobian,PolySystem), (net,PolySystem),
 	(ring,PolySystem), (equations,PolySystem),
 	NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, ContinuationParameter, 
@@ -1023,8 +1056,88 @@ document {
 	     " -- stores the subring generated my all variables except the additional parameter",
 	     " (e.g., used by ", TO specializeContinuationParameter, ")"}
 	 },
+     EXAMPLE lines ///
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point {{1.0+3*ii,2.3+ii}};
+evaluate(S,p)
+evaluate(jacobian S, p)
+     ///,
+     PARA {"Basic service functions: "},
+     UL{
+    	TO polySystem,
+	TO evaluate,
+	TO segmentHomotopy,
+	TO specializeContinuationParameter,
+	},     
      SeeAlso => {WitnessSet}
      }
+
+document {
+    Key => {evaluate, (evaluate,Matrix,Matrix), (evaluate,Matrix,Point), (evaluate,PolySystem,Matrix), (evaluate,PolySystem,Point)},
+    Headline => "evaluate a polynomial system or matrix at a point",
+    Usage => "y = evaluate(f,x)",
+    Inputs => { 
+	"f" => {ofClass PolySystem, " or ", ofClass Matrix},
+	"x" => {ofClass Point, " or ", ofClass Matrix},
+	},
+    Outputs => {"y"=> {"the value ", TT "f(x)"}},
+    PARA {"Evaluates a ", TO PolySystem, " or a matrix with polynomial entries at a point."},
+    EXAMPLE lines ///
+R = CC[x,y]; S = polySystem {x^2+y^2-6, 2*x^2-y};
+p = point {{1.0+3*ii,2.3+ii}};
+evaluate(S,p)
+evaluate(jacobian S, p)
+    ///,
+    SeeAlso => {PolySystem}
+    }
+
+document {
+    Key => {residual, 
+	(residual,List,Point),
+	(residual,Matrix,Matrix),
+	(residual,PolySystem,Point)
+	},
+    Headline => "residual of a polynomial function at a point",
+    Usage => "y = residual(f,x)",
+    Inputs => { 
+	"f" => {ofClass PolySystem, " or ", ofClass Matrix},
+	"x" => {ofClass Point, " or ", ofClass Matrix},
+	},
+    Outputs => {"y"=> {"the norm of ", TT "f(x)"}},
+    PARA {
+	"Evaluates a ", TO PolySystem, 
+	" or a matrix with polynomial entries at a point and returns the norm of the result."
+	},
+    EXAMPLE lines ///
+R = CC[x,y]; S = polySystem {x^2+y^2-5, 2*x^2-y};
+p = point {{1.001-0.0001*ii,2.+0.0001*ii}};
+evaluate(S,p)
+residual(S,p)
+residual(S,p,Norm=>3)
+residual(S,p,Norm=>infinity)
+    ///,
+    SeeAlso => {PolySystem}
+    }
+
+document {
+    Key => {polySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem)},
+    Headline => "construct a polynomial system",
+    Usage => "P = polysystem F",
+    Inputs => { 
+	"F" => {ofClass List, " or ", ofClass Matrix, 
+	    " (column matrix) with polynomial entries or ", ofClass PolySystem},
+	},
+    Outputs => {"P"=> PolySystem},
+    PARA {"Constructs a ", TO PolySystem, " from the given polynomials."},
+    EXAMPLE lines ///
+R = CC[x,y]; S := polySystem {x^2+y^2-6, 2*x^2-y}
+S = polySystem transpose matrix {{x^2+y^2-6, 2*x^2-y}}
+T = polySystem S
+    ///,
+    SeeAlso => {polySystem}
+    }
+
 
 -- WitnessSet ------------------------------------------------------------------------------
 document {
@@ -1035,7 +1148,7 @@ document {
      Headline => "a witness set",
      "This type stores a witness set of an equidimensional solution component. ", 
      "The following methods can be used to access a ", 
-     TT "WitnessSet", ":",
+     TO WitnessSet, ":",
      UL{
      	  {"ideal", " -- get the defining ideal of the algebraic superset"},
 	  {"equations", " -- get the list of defining polynomials of the algebraic superset"},
@@ -1144,17 +1257,37 @@ projectiveSliceEquations(matrix{{1,2,3},{4,5,6*ii}}, CC[x,y,z])
 
 -- NumericalVariety --------------------------------------------------------------------
 document {
-     Key => {NumericalVariety},
+     Key => {NumericalVariety, 
+	 (dim,NumericalVariety), (degree,NumericalVariety), 
+	 (net,NumericalVariety), (check,NumericalVariety)
+	 },
      Headline => "a numerical variety",
-     PARA {"This type stores a collection of witness sets representing a variety. "},
+     PARA {"This type stores a collection of witness sets representing a complex affine variety. "},
      "Note that",
      UL {     	  
-	  {"The ambient space is expected to be the same, i.e., ", TO "Equations", " of ", TO2(WitnessSet, "witness sets"),
-	       " are should come from the same ring."},
-	  "The witness sets need not come from the decomposition of the same variety.",
+	  {"The ambient space is expected to be the same, i.e., ", 
+	      TO2((dim,WitnessSet),"dimension"), " (or ", TO ProjectionDimension, ") of ", TO2(WitnessSet, "witness sets"),
+	      " should be the same."},
+	  -- "However, the witness sets need not come from the decomposition of the same variety.",
 	  {"The constructor ", TO (numericalVariety,List), " does not check the sensibility of the input; run ", 
 	  TO (check, NumericalVariety), " to verify the validity of a numerical variety."} 
 	  },
+     "Basic service routines:",
+     UL {
+	 {"dim", " -- the dimension"},
+	 {"codim", " -- the codimension"},
+	 {"deg", " -- the degree"},
+	 {TO (components,NumericalVariety)}
+	 },
+     EXAMPLE lines ///
+R = CC[x,y]; I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y*(y-1));
+w1 := witnessSet(I , ideal(x-y), {point {{0.999*ii,0.999*ii}}, point {{-1.001*ii,-1.001*ii}}} )
+w0 := witnessSet(I, ideal R, {point {{0.,0.}}})
+w0' := witnessSet(I, ideal R, {point {{0.,1.}}})
+V := numericalVariety {w0,w1,w0'}
+dim V
+degree V
+     ///,
      SeeAlso => {WitnessSet}
      }
 document {
@@ -1168,14 +1301,44 @@ document {
 	PARA {"Constructs a numerical (affine or projective) variety. It is NOT expected that every witness set ", TT "W", 
 	     " in the list ", TT "Ws", " has the same ", TT "W.Equations", "."},
         EXAMPLE lines ///
-R = CC[x,y]	
-I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+R = CC[x,y]; I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
 w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
 w0 = witnessSet(I, ideal R, {point {{0.,0.}}})
 V = numericalVariety {w0,w1}
      	///,
 	SeeAlso => {WitnessSet, ProjectiveWitnessSet}
 	}
+
+document {
+    Key => {
+	(components,NumericalVariety),
+	(components,NumericalVariety,ZZ),
+	(components,NumericalVariety,ZZ,InfiniteNumber),
+	(components,NumericalVariety,ZZ,ZZ)
+	},
+    Headline => "list components of a numerical variety",
+    Usage => "components(V)\ncomponents(V,a)\ncomponents(V,a,b)",
+    Inputs => { 
+	"V" => NumericalVariety,
+	},
+    Outputs => {{ofClass List, " of ", TO2(WitnessSet,"witness sets")}},
+    PARA {
+	"Returns a list of components of a numerical variety. ",
+	"If ", TT "a", " (", ofClass ZZ, ") and/or ", 
+	TT "b", " (", ofClass ZZ, " or ", TO infinity, 
+	") are specified, then components of dimension ", TT "a", 
+	" (respectively, components of dimension at least ", TT "a", 
+	" and at most ", TT "b", ") are returned."
+	},
+    EXAMPLE lines ///
+R = CC[x,y]; I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+w1 := witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.000001*ii,-1.000001*ii}}} )
+w0 := witnessSet(I, ideal R, {point {{0.,0.}}})
+V := numericalVariety {w0,w1}
+components V    
+    ///,
+    SeeAlso => {NumericalVariety}
+    }
 
 doc ///
   Key
