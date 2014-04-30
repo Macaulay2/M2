@@ -11,7 +11,7 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no
@@ -90,6 +90,10 @@ DIRECTORY := $(DIRECTORY)-$(BRANCH)
 # CXX += $V
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
+
+# for the linalg branch:
+CONFIGOPTIONS += --enable-fflas-ffpack --enable-givaro --enable-linbox --enable-flint --enable-mathic --enable-mathicgb --enable-memtailor
+CONFIGOPTIONS += --enable-build-libraries=pari
 
 default: all
 
