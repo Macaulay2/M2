@@ -15,7 +15,6 @@ newPackage(
      )
 
 export {
-     Norm, MaxConditionNumber, -- options
      -- service functions
      generalEquations, 
      -- witness set
@@ -29,13 +28,15 @@ export {
      -- point (solution)
      Point, point, coordinates,
      project,
-     isRealPoint, realPoints, residual, classifyPoint, origin,
+     isRealPoint, realPoints, residual, origin,
+     Norm, 
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
+     Regular, Singular, Infinity, 
+     MinStepFailure, NumericalRankFailure, RefinementFailure, 
      -- polynomial systems
      PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, -- JacobianAndPolySystem, 
      ContinuationParameter, SpecializationRing,
@@ -191,7 +192,7 @@ assert(T'.PolyMap - T.PolyMap == 0)
 -- POINT = {
 --   Coordinates => List of CC,
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, null}
+--   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure, null}
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)
@@ -212,6 +213,7 @@ net Point := p -> (
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === NumericalRankFailure then net "[N]"
+     else if p.SolutionStatus === RefinementFailure then net "[R]"
      else error "the point is corrupted"
     ) 
 globalAssignment Point
@@ -255,14 +257,6 @@ isRealPoint Point := o -> p -> norm (coordinates p / imaginaryPart) < o.Toleranc
 
 realPoints = method(Options=>{Tolerance=>1e-6})
 realPoints List := o -> pp -> select(pp, isRealPoint)
-
-classifyPoint = method(Options=>{MaxConditionNumber=>1e6})
-classifyPoint(Point) := o -> p -> if status p === null and p.?ConditionNumber then (
-     p.SolutionStatus = 
-     if p.ConditionNumber < o.MaxConditionNumber 
-     then Regular  
-     else Singular
-     )  
 
 areEqual = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6, Projective=>false})
 areEqual (List,List) := o -> (a,b) -> #a == #b and all(#a, i->areEqual(a#i,b#i,o))
@@ -606,7 +600,7 @@ numericalVariety List := Ws -> if #Ws==0 then new NumericalVariety else (
      V
      )
 numericalAffineSpace = method()
-numericalAffineSpace Ring := R -> (
+numericalAffineSpace PolynomialRing := R -> (
     n := numgens R;
     C := coefficientRing R; 
     A := random(C^n,C^n);
@@ -749,7 +743,8 @@ peek O
 -- Point ---------------------------------------------------------------------------
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), (net, Point),
-	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, Multiplicity,
+	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
+	  Multiplicity,
 	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate,
 	  MaxPrecision, WindingNumber, DeflationNumber
 	  },
@@ -769,6 +764,7 @@ document {
 	  {"Infinity", " -- the solution path has been deemed divergent"},
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
 	  {"NumericalRankFailure", " -- it is likely that in a sequence of deflations numerical rank did not give the correct rank"},
+	  {"RefinementFailure", " -- a solution refinement function failed"},
 	  {"null", " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
@@ -812,17 +808,19 @@ document {
      }
 
 document {
-	Key => {(point,List), point},
+	Key => {point, (point,List), (point,Matrix), (point,Point)},
 	Headline => "construct a Point",
 	Usage => "p = point c",
 	Inputs => { 
-	     "c"=> {"contains elements in the form {{list of complex coordinates}, other data}"}
+	     "c"=> {ofClass List, "containing  elements in the form {{list of complex coordinates}, other data} or ",
+		 ofClass Matrix, " (only coordinates) or ", ofClass Point}
 	     },
 	Outputs => {"p"=>Point},
 	PARA{"Used to construct a ", TO2{Point, "point"}, " from the old format of output."},
         EXAMPLE lines ///
-p = point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
+p := point {{1+0.2*ii, 0.5}, SolutionStatus=>Regular, LastT=>1., NumberOfSteps=>10, ConditionNumber=>2.3}
 peek p 
+q := point p
      	///
 	}
 
@@ -1004,6 +1002,26 @@ document {
 	 TO Tolerance, ".)"}
      }
 
+
+document {
+	Key => {(project,Point,ZZ), project},
+	Headline => "project a point",
+	Usage => "q = project(p,n)",
+	Inputs => {
+	     "p",
+	     "n"
+	     },
+	Outputs => {"q"=>{"projection of ", TT "p", " to the first ", TT "n", " coordinates"}},
+	PARA {
+	    "Projects a point to the subspace corresponding to the first ", TT "n", " coordinates. "
+	    },
+	EXAMPLE lines ///
+p = point({{1+ii,2.3,2*ii}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
+project(p,2)
+     	///,
+	SeeAlso => {WitnessSet,ProjectionDimension}
+	}
+
 document {
 	Key => {(toAffineChart, ZZ, List), toAffineChart},
 	Headline => "coordinates of a point in the projective space in an affine chart",
@@ -1049,7 +1067,7 @@ document {
 	 {TT "PolyMap", " of type ", TO Matrix, ", a column matrix over a polynomial ring"},
     	 {TT "Jacobian", " of type ", TO Matrix, ", the jacobian of ", TT "PolyMap"},
 	 },
-     "The method ", TO segmentHomotopy, ", creates a ", TO PolySystem, " with additional keys: ",
+     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
      UL {
 	 {TT "ContinuationParameter", " -- stores one variable of the ring" },
 	 {TT "SpecializationRing", 
@@ -1135,14 +1153,96 @@ R = CC[x,y]; S := polySystem {x^2+y^2-6, 2*x^2-y}
 S = polySystem transpose matrix {{x^2+y^2-6, 2*x^2-y}}
 T = polySystem S
     ///,
-    SeeAlso => {polySystem}
+    SeeAlso => {PolySystem}
     }
 
+document {
+    Key => {(substitute,PolySystem,Ring)},
+    Headline => "substitute a ring in a polynomial system",
+    Usage => "G = sub(F,R)",
+    Inputs => { 
+	"F" => PolySystem,
+	"R" => Ring
+	},
+    Outputs => {"G"=> PolySystem},
+    PARA {
+	"Constructs ", ofClass PolySystem, " by attempting to map polynomials of a given system to a given ring."
+	},
+    EXAMPLE lines ///
+R = QQ[x,y]; S := polySystem {x^2+y^2-6, 2*x^2-y}
+T := sub(S,CC[x,y])
+ring T
+    ///,
+    SeeAlso => {polySystem,PolySystem}
+    }
+
+document {
+    Key => {(homogenize,PolySystem,Ring,RingElement)},
+    Headline => "homogenize a polynomial system",
+    Usage => "G = sub(F,R,t)",
+    Inputs => { 
+	"F" => PolySystem,
+	"R" => Ring,
+	"t" => {ofClass RingElement, ", a variable in ", TT "R"} 
+	},
+    Outputs => {"G"=> PolySystem},
+    PARA {
+	"Constructs ", ofClass PolySystem, " that is a homogenization of the given system. "
+	},
+    EXAMPLE lines ///
+R = CC[x,y]; S := polySystem {x^2+y^2-6, 2*x^4-y}
+T := homogenize(S,CC[x,y,t],t)
+ring T
+    ///,
+    SeeAlso => {homogenize,PolySystem}
+    }
+
+document {
+    Key => {"polynomial homotopy", 
+	segmentHomotopy, (segmentHomotopy,PolySystem,PolySystem), 
+	substituteContinuationParameter, (substituteContinuationParameter,PolySystem,RingElement),
+	specializeContinuationParameter, (specializeContinuationParameter,PolySystem,Number)
+	},
+    Headline => "basic methods for manipulating polynomial homotopies",
+    Usage => "H = segmentHomotopy(S,T)\nH2=substituteContinuationParameter(H1,s)\nspecializeContinuationParameter(H,t0)",
+    Inputs => { 
+	"S" => PolySystem,
+	"T" => PolySystem,
+	"H1" => PolySystem
+	},
+    Outputs => {"H"=> PolySystem},
+    PARA {
+	"Construct ", ofClass PolySystem, " representing a segment homotopy ", 
+	TEX "H = (1-t) F + t G", " for ", TEX "t \\in [0,1]", "."
+	},
+    EXAMPLE lines ///
+R = CC[x,y]; 
+S = polySystem {x^2-1, y^2-1};
+T = polySystem {x^2+y^2-6, 2*x^2-y};
+H := segmentHomotopy(S,T)
+    ///,    
+    PARA {
+	"Specialize the continuation parameter:"
+	},
+    EXAMPLE lines ///
+specializeContinuationParameter(H,0)
+specializeContinuationParameter(H,1)
+specializeContinuationParameter(H,2+3*ii)
+    ///,    
+    PARA {
+	"Substitute ", TEX "1-t", " for the continuation parameter to swap the ends of the homotopy."
+	},
+    EXAMPLE lines ///
+t := H.ContinuationParameter
+H' := substituteContinuationParameter(H,1-t)
+    ///,    
+    SeeAlso => {ContinuationParameter,SpecializationRing}
+    }
 
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),
-	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,
+	  points,(points,WitnessSet),(ideal,WitnessSet),Equations,Slice,Points,IsIrreducible,ProjectionDimension,
      	  (codim,WitnessSet),(degree,WitnessSet),(dim,WitnessSet),(ring,WitnessSet),(net,WitnessSet) 
      	  },
      Headline => "a witness set",
@@ -1165,23 +1265,34 @@ document {
      "Only dimension and degree are displayed (by ", TO "net", "); to see the data stored in a witness set use ", 
      TO "peek", ".",
      SUBSECTION "For developers:",
-     "Required entries in a ", TO WitnessSet, " are",
+     "Required keys in a ", TO WitnessSet, " are",
      UL {
-	  {TT "Equations", " of type ", TO Ideal},
-	  {TT "Slice", " of type either ", TO List, " or ", TO Matrix},
-	  {TT "Points", ", a list of ", TO2(Point, "points")},
-	  {TT "IsIrreducible", " that takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
+	  {TT "Equations", " -- ", ofClass Ideal},
+	  {TT "Slice", " -- ", ofClass List, " or ", ofClass Matrix},
+	  {TT "Points", "--  a list of ", TO2(Point, "points")},
+	  {TT "IsIrreducible", " -- takes values ", TO "null", "(not determined), ", TO "true", ", or ", TO "false"}
 	  },
+     "Optional keys:",
+     UL {
+	  {TT "ProjectionDimension", " -- ", ofClass ZZ, 
+	      ", the witness set describes a lifted variety (its projection on the first ", 
+	      TT "ProjectionDimension", " coordinates is the variety the witness set represents)"},
+	  },     
      SeeAlso => {witnessSet, ProjectiveWitnessSet, NumericalVariety}
      }
 
 document {
-	Key => {witnessSet,(witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List)},
+	Key => {witnessSet,
+	    (witnessSet,Ideal,Ideal,List),(witnessSet,Ideal,Matrix,List),
+	    (witnessSet,PolySystem,Matrix,List),(witnessSet,PolySystem,PolySystem,List)
+	    },
 	Headline => "construct a WitnessSet",
 	Usage => "w = witnessSet(E,S,P)",
 	Inputs => { 
-	     "E" => Ideal => {"in a polynomial ring over ", TO CC },
-	     "S" => {ofClass Ideal, " generated by linear polynomials or ", ofClass Matrix, " with complex coefficients of these generators"},
+	     "E" => {ofClass Ideal, " or ", ofClass PolySystem},
+	     "S" => {ofClass Ideal, " generated by linear polynomials (or ", 
+		 ofClass PolySystem, " of the generators or ", 
+		 ofClass Matrix, " of their coefficients)"},
 	     "P" => List => {"contains witness points (of type ", TO "Point", ")"}
 	     },
 	Outputs => {"w"=> WitnessSet},
@@ -1241,7 +1352,7 @@ document {
 	Key => {(sliceEquations,Matrix,Ring),sliceEquations,
 	    (projectiveSliceEquations,Matrix,Ring),projectiveSliceEquations},
 	Headline => "slicing linear functions",
-	Usage => "S = sliceEquations(M,R), S = projectiveSliceEquations(M,R)",
+	Usage => "S = sliceEquations(M,R)\nS = projectiveSliceEquations(M,R)",
 	Inputs => { 
 	     "M"=> Matrix => " contains the coefficients of the slicing linear polynomials",
 	     "R"=> Ring => " where the output polynomials belong"
@@ -1306,7 +1417,7 @@ w1 = witnessSet(I , ideal(x-y), {point {{0.999999*ii,0.999999*ii}}, point {{-1.0
 w0 = witnessSet(I, ideal R, {point {{0.,0.}}})
 V = numericalVariety {w0,w1}
      	///,
-	SeeAlso => {WitnessSet, ProjectiveWitnessSet}
+	SeeAlso => {WitnessSet, ProjectiveWitnessSet, numericalAffineSpace}
 	}
 
 document {
@@ -1340,6 +1451,34 @@ components V
     SeeAlso => {NumericalVariety}
     }
 
+document {
+	Key => {numericalAffineSpace, (numericalAffineSpace,PolynomialRing)},
+	Headline => "affine space as a numerical variety",
+	Usage => "numericalAffineSpace R",
+	Inputs => { 
+	     "R"=> PolynomialRing
+	     },
+	Outputs => {NumericalVariety},
+        PARA {"Constructs a numerical variety representing the complex affine space corresponding to the given coordinate ring."},
+	EXAMPLE lines ///
+R = CC[x,y]	
+V := numericalAffineSpace R
+C := first components V
+equations C
+slice C
+points C
+     	///,
+	SeeAlso => {NumericalVariety}
+	}
+
+document {
+     Key => {ProjectiveNumericalVariety},
+     Headline => "a projective numerical variety",
+     "An object of this type stores a collection of ", TO2(projectiveWitnessSet, "projective witness sets"),
+     SeeAlso => {projectiveWitnessSet}
+     }
+
+-- legacy stuff ------------------------------------------------------------------------------
 doc ///
   Key
     generalEquations
@@ -1378,7 +1517,6 @@ S = polySystem {x^2+y^2-6, 2*x^2-y}
 p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
 assert (round (1000*norm(4.5,p)) == 2312)
 assert isRealPoint p
-classifyPoint p
 assert(round (10000*residual(S,p)) == 4173)
 p2 =  point {{1.001,2.3+ii}}
 p3 =  point {{.999,2.3+ii}}
