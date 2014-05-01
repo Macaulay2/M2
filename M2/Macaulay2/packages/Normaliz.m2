@@ -1474,7 +1474,7 @@ document {
       nmzFilename="example";
           sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
           writeNmzData(sgr,1)
-          assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","1"})
+          assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","normalization"})
      ///,
      }
 
