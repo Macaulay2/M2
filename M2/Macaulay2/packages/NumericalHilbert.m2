@@ -408,7 +408,38 @@ doc ///
      	  functions for numerically computing local dual space and Hilbert functions
      Description
      	  Text
-	       @EM "NumericalHilbert"@ gets stuff done.
+	       @EM "NumericalHilbert"@ is a package for numerically computing local dual spaces of polynomial ideals,
+	       over the complex numbers.  This data can be used to numerically find combinatorial information about 
+	       the ideal, such as the Hilbert regularity.
+	  Text
+	       Methods for computing local dual spaces:
+	       @UL {
+		   {TO "truncatedDual"},
+		   {TO "zeroDimensionalDual"},
+		   {TO "eliminatingDual"},
+		   {TO "localHilbertRegularity"},
+		   {TO "gCorners"},
+		   {TO "sCorners"}
+		   }@
+	  Text
+	       Methods for manipulating @TO PolySpace@s and @TO DualSpace@s, defined in @TO NAGtypes@:
+	       @UL {
+		   {TO "areEqual"},
+		   {TO "isContained"},
+		   {TO "addition"},
+		   {TO "intersection"},
+		   {TO "innerProduct"},
+		   {TO "colon"},
+                   {TO "reduceSpace"}
+		   }@
+	  Text
+	       Some numerical linear algebra methods:
+	       @UL {
+		   {TO "numericalKernel"},
+		   {TO "numericalImage"},
+		   {TO "colReduce"},
+		   {TO "adjointMatrix"}
+		   }@
 ///
 
 
@@ -418,17 +449,14 @@ doc ///
 	  (truncatedDual,Point,Ideal,ZZ)
 	  (truncatedDual,Point,Matrix,ZZ)
 	  [truncatedDual,Strategy]
-	  [truncatedDual,Tolerance]
      Headline
-          Compute basis of the truncated dual space of a polynomial ideal
+          truncated dual space of a polynomial ideal
      Usage
           S = truncatedDual(p, I, d)
-	  S = truncatedDual(p, gns, d)
      Inputs
      	  p:Point
 	  I:Ideal
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
+               or a one-row @TO Matrix@ of generators
 	  d:ZZ
      Outputs
           S:DualSpace
@@ -437,6 +465,10 @@ doc ///
 	       Computes a reduced basis of the truncated dual space of an ideal.  It's truncated at degree d.
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{x^2, y*x}
+	       S = truncatedDual(origin(R),I,3)
 ///
 
 doc ///
@@ -445,17 +477,15 @@ doc ///
 	  (zeroDimensionalDual,Point,Ideal)
 	  (zeroDimensionalDual,Point,Matrix)
 	  [zeroDimensionalDual,Strategy]
-	  [zeroDimensionalDual,Tolerance]
      Headline
-          Compute basis of the dual space of a zero-dimensional polynomial ideal
+          dual space of a zero-dimensional polynomial ideal
      Usage
           S = zeroDimensionalDual(p, I)
 	  S = zeroDimensionalDual(p, gns)
      Inputs
      	  p:Point
 	  I:Ideal
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
+              or a one-row @TO Matrix@ of generators
      Outputs
           S:DualSpace
      Description
@@ -472,10 +502,9 @@ doc ///
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
 	  [gCorners,Strategy]
-	  [gCorners,Tolerance]
 	  [gCorners,ProduceSB]
      Headline
-          Compute the generators of the initial ideal of a polynomial ideal
+          generators of the initial ideal of a polynomial ideal
      Usage
           G = gCorners(p, I)
 	  G = gCorners(p, gns)
@@ -498,7 +527,7 @@ doc ///
           (sCorners,MonomialIdeal)
 	  (sCorners,Matrix)
      Headline
-          Compute the socle corners of a monomial ideal
+          socle corners of a monomial ideal
      Usage
           S = sCorners(I)
 	  S = sCorners(gns)
@@ -519,9 +548,9 @@ doc ///
           localHilbertRegularity
 	  (localHilbertRegularity,Point,Matrix)
 	  (localHilbertRegularity,Point,Ideal)
-	  [localHilbertRegularity,Tolerance]
+	  
      Headline
-          Compute the regularity of the local Hilbert function of a polynomial ideal
+          regularity of the local Hilbert function of a polynomial ideal
      Usage
           d = localHilbertRegularity(p,I)
 	  d = localHilbertRegularity(p,gns)
@@ -543,9 +572,8 @@ doc ///
           eliminatingDual
 	  (eliminatingDual,Point,Matrix,List,ZZ)
 	  (eliminatingDual,Point,Ideal,List,ZZ)
-	  [eliminatingDual,Tolerance]
      Headline
-          Compute the eliminating dual space of a polynomial ideal
+          eliminating dual space of a polynomial ideal
      Usage
           S = eliminatingDual(p, I, v, d)
 	  S = eliminatingDual(p, gns, v, d)
@@ -605,6 +633,22 @@ doc ///
      Description
           Text
 	       Truncates a dual space or polynomial space T, so that the total degree of the specified variables is bounded by d.
+///
+
+doc ///
+     Key
+	  [localHilbertRegularity,Tolerance]
+	  [eliminatingDual,Tolerance]
+	  [gCorners,Tolerance]
+	  [zeroDimensionalDual,Tolerance]
+	  [truncatedDual,Tolerance]
+     Headline
+          optional argument for numerical tolernace
+     Description
+          Text
+	       Many of the numerical operations require a tolerance value, below which numbers are considered to be numerically zero.
+	       {\tt Tolerance} should be given a non-negative real number.
+	       Over exact fields the default value is zero, while for inexact fields the default is 1e-6.
 ///
 
 doc ///
