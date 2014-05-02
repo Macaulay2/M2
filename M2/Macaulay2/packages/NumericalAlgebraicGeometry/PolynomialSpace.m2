@@ -16,7 +16,7 @@ newPackage(
 export {
      "addition", "intersection", "reduceSpace",
      "colon", "innerProduct", "isContained", "orthogonalInSubspace",
-     "numericalKernel", "numericalImage", "colReduce"
+     "numericalKernel", "numericalImage", "colReduce", "adjointMatrix"
      }
 
 ------------------------------------------------
@@ -204,11 +204,101 @@ beginDocumentation()
 
 doc ///
      Key
+          addition
+	  (addition,PolySpace,PolySpace)
+	  [addition,Tolerance]
+     Headline
+          Union of polynomial spaces
+     Usage
+          S = addition(T, U)
+     Inputs
+	  T:PolySpace
+	  U:PolySpace
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Finds the union of two polynomial spaces.
+///
+
+doc ///
+     Key
+          intersection
+	  (intersection,PolySpace,PolySpace)
+	  [intersection,Tolerance]
+     Headline
+          Intersection of polynomial spaces
+     Usage
+          S = intersection(T, U)
+     Inputs
+	  T:PolySpace
+	  U:PolySpace
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Finds the intersection of two polynomial spaces.
+///
+
+doc ///
+     Key
+          isContained
+	  (isContained,PolySpace,PolySpace)
+	  (isContained,DualSpace,DualSpace)
+	  [isContained,Tolerance]
+     Headline
+          Is one space contained in the other
+     Usage
+          b = isContained(S, T)
+	  b = isContained(D, E)
+     Inputs
+	  S:PolySpace
+	  T:PolySpace
+	  D:DualSpace
+	  E:DualSpace
+     Outputs
+          b:Boolean
+	       whether S is contained in T (or D in E).
+     Description
+          Text
+	       Determines numerically whether the first polynomial space is contained in the second.
+///
+
+doc ///
+     Key
+          innerProduct
+	  (innerProduct,PolySpace,DualSpace)
+	  (innerProduct,PolySpace,PolySpace)
+	  (innerProduct,RingElement,DualSpace)
+	  (innerProduct,RingElement,RingElement)
+     Headline
+          Applies dual space functionals to polynomials
+     Usage
+          M = innerProduct(S, D)
+     Inputs
+	  S:PolySpace
+	  D:DualSpace
+     Outputs
+          M:Matrix
+	       containing the values of the generators of D applied to the generators of S
+     Description
+          Text
+	       The dual space represents functionals from the polynomial ring to the base field.
+	       Given a polySpace S with n generators f_1,...,f_n and a dualSpace D with m generators
+	       p_1,...,p_m, innerProduct returns a nxm matrix M over the base field whose entries are p_j(f_i).
+	       
+	       A dual functional is applied to a polynomial by taking the standard inner product of their coefficient
+	       vectors.  In other words, the functional represented by the monomial a acts on monomials in the
+	       polynomial ring as a(a) = 1 and a(b) = 0 for all other monomials b.
+///
+
+doc ///
+     Key
           orthogonalInSubspace
 	  (orthogonalInSubspace,DualSpace,PolySpace,Number)
 	  (orthogonalInSubspace,PolySpace,PolySpace,Number)
      Headline
-          Compute the eliminating dual space of a polynomial ideal
+          Orthogonal of a space
      Usage
           S = orthogonalInSubspace(D, T, tol)
      Inputs
@@ -223,4 +313,82 @@ doc ///
      Description
           Text
 	       Computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+///
+
+doc ///
+     Key
+          numericalImage
+	  (numericalImage,Matrix,Number)
+     Headline
+          Image of a matrix
+     Usage
+          V = numericalImage(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          V:Matrix
+     Description
+          Text
+	       Computes the image of a matrix M numerically using singular value decomposition.
+	       Singular values less than the tolerance are treated as zero.
+///
+
+doc ///
+     Key
+          numericalKernel
+	  (numericalKernel,Matrix,Number)
+     Headline
+          Kernel of a matrix
+     Usage
+          V = numericalKernel(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          V:Matrix
+     Description
+          Text
+	       Computes the kernel of a matrix M numerically using singular value decomposition.
+	       Singular values less than the tolerance are treated as zero.
+///
+
+doc ///
+     Key
+          colReduce
+	  (colReduce,Matrix,Number)
+     Headline
+          Column reduces a matrix
+     Usage
+          N = colReduce(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive value, the numerical tolerance
+     Outputs
+          N:Matrix
+	       in reduced column echelon form
+     Description
+          Text
+	       Performs Gaussian column reduction on a matrix M.
+	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
+///
+
+doc ///
+     Key
+          adjointMatrix
+	  (adjointMatrix,Matrix)
+     Headline
+          Conjugate transpose of a complex matrix
+     Usage
+          N = adjointMatrix M
+     Inputs
+	  M:Matrix
+     Outputs
+          N:Matrix
+     Description
+          Text
+	       Returns the conjugate transpose of a matrix with complex entries.
 ///

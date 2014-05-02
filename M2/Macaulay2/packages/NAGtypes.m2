@@ -700,6 +700,8 @@ dim DualSpace := L -> numcols gens L
 ring PolySpace := S -> ring gens S
 ring DualSpace := L -> ring gens L
 
+point DualSpace := L -> L.BasePoint
+
 -- DOCUMENTATION ------------------------------------------------------
 
 beginDocumentation()
@@ -1509,6 +1511,109 @@ doc ///
       R = CC[x,y,z]; 
       F = {x*y, x^2 - y, x*z};
       L = generalEquations(2,F)      
+///
+
+-- PolySpace ------------------------------------------------------------------------------
+doc ///
+  Key
+    PolySpace
+    (gens,PolySpace)
+    (dim,PolySpace)
+    (ring,PolySpace)
+    (net,PolySpace)
+  Headline
+    a polynomial vector subspace
+  Description
+    Text
+      This type stores a finite dimensional vector subspace of a polynomial ring, given by a spanning set. 
+      The spanning set is generally assumed to be a basis although this is not enforced.  
+      The following methods can be used to access a {\tt PolySpace}: 
+      @UL {
+	  {"gens -- a one-row matrix of the generators"},
+	  {"dim -- the number of generators"},
+	  {"ring -- the ring of the generators"}
+	  }@
+  SeeAlso
+    polySpace
+    DualSpace
+///
+
+doc ///
+  Key
+    polySpace
+    (polySpace,Matrix)
+    (polySpace,PolySpace)
+  Headline
+    construct a PolySpace
+  Usage
+    S = polySpace M
+  Inputs
+    M:Matrix
+      with one row of generators
+  Outputs
+    S:PolySpace
+  Description
+    Text
+      Used to construct a finite dimensional vector subspace of a polynomial ring.
+    Example
+      R = CC[x,y];	
+      M = matrix{{y^2,x^2+x*y}};
+      S = polySpace M
+///
+
+doc ///
+  Key
+    DualSpace
+    (gens,DualSpace)
+    (dim,DualSpace)
+    (ring,DualSpace)
+    (net,DualSpace)
+    (point,DualSpace) 
+  Headline
+    a dual functional vector subspace
+  Description
+    Text
+      This type stores a finite dimensional subspace of the local dual of a polynomial ring at a point.
+      In practice, the subspace is stored as a @TO PolySpace@ with functionals represented by the
+      corresponding polynomial, along with a @TO Point@. 
+      The following methods can be used to access a {\tt DualSpace}: 
+      @UL {
+	  {"gens -- a one-row matrix of the generators"},
+	  {"dim -- the number of generators"},
+	  {"ring -- the ring of the generators"},
+	  {"point -- the base point of the dual space"}
+	  }@
+  SeeAlso
+    dualSpace
+    PolySpace
+///
+
+doc ///
+  Key
+    dualSpace
+    (dualSpace,Matrix,Point)
+    (dualSpace,PolySpace,Point)
+    (dualSpace,DualSpace)
+  Headline
+    construct a DualSpace
+  Usage
+    D = dualSpace(M,p)
+    D = dualSpace(S,p)
+  Inputs 
+    M:Matrix
+      with one row of generators
+    S:PolySpace
+    p:Point
+  Outputs
+    D:DualSpace
+  Description
+    Text
+      Used to construct a finite dimensional subspace of the local dual space of polynomial ring at a point.
+    Example
+      R = CC[x,y];
+      M = matrix{{1,x,x^2-y}}
+      p = point matrix{{1,0}};
+      D = dualSpace(M,p)
 ///
 
 TEST /// -- miscellaneous tests
