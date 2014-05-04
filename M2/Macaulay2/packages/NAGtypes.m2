@@ -706,8 +706,6 @@ point DualSpace := L -> L.BasePoint
 
 beginDocumentation()
 
---undocumented {(generalEquations,WitnessSet)}
-
 document {
      Key => NAGtypes,
      Headline => "Common types used in Numerical Algebraic Geometry",
@@ -716,12 +714,14 @@ document {
      	  " as well as other numerical algebraic geometry packages: e.g., interface packages ", 
      	  TO "PHCpack::PHCpack", " and ", TO "Bertini::Bertini", "."
 	  },  
-     PARA{"Main datatypes: "},
+     PARA{"Datatypes: "},
      UL{    
-	 {TO "Point", " -- a numerical approximation of a point in a complex space"},
-	 {TO "PolySystem", " -- a polynomial system (usually with complex coefficients)"},
-	 {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
-	 {TO "NumericalVariety", " -- a numerical description of a variety"}
+	 {TO Point, " -- a numerical approximation of a point in a complex space"},
+	 {TO PolySystem, " -- a polynomial system (usually with complex coefficients)"},
+	 {TO WitnessSet, " -- a witness set representing (possibly positive-dimensional) solution components"},
+	 {TO NumericalVariety, " -- a numerical description of a variety"},
+	 TO PolySpace,
+	 TO DualSpace
 	 },
      PARA{"See the corresponding documentation nodes for description of provided service functions."},
      PARA {
