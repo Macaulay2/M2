@@ -10,8 +10,7 @@ newPackage(
 	Version => "1.1", 
     	Date => "April 19, 2014",
     	Authors => {{Name => "Christine Jost", 
-		  Email => "chjo9357@mbox.su.se", 
-		  HomePage => "http://people.su.se/~chjo9357/"},
+		  Email => "christine.e.jost@gmail.com"},
                   {Name => "Martin Helmer", Email => "mhelmer2@uwo.ca", 
 		  HomePage => "http://publish.uwo.ca/~mhelmer2/"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
@@ -681,12 +680,12 @@ doc ///
                classes are a generalization of Chern classes of smooth schemes to possibly singular schemes with nice functorial properties.
 	       
 	       -- The functions computing characteristic classes in this package can have two different kinds of output. The functions chernClass, 
-               segreClass and CSMClass give back the pushforward of the total class 
+               -- segreClass and CSMClass give back the pushforward of the total class 
 	       -- to the Chow ring of P^k, whereas chernClassList, segreClassList and CSMClass List give a list of the degrees of the Chern, Segre and 
-               Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
+               -- Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
 	       -- given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
 	       
-	       This implementation offers two different algorithms to compute charcteristic classes. The first algorithm is refered to as ResidualSymbolic 
+	       This implementation offers two different algorithms to compute characteristic classes. The first algorithm is refered to as ResidualSymbolic 
                for the symbolic implementation and Bertini for the numeric implementaion and is given in the  articles 
                "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
                (S. Di Rocco, D. Eklund, C. Peterson, A.J. Sommese),"A method to compute Segre classes" (D. Eklund, C. Jost, C. Peterson), 
@@ -702,9 +701,9 @@ doc ///
                Gr&ouml;bner bases, or numerically using a package such as Bertini, however only the symbolic implementation is offered at present, 
                since a numeric implementation is already provided for the residual degrees algorithm.
 
-	       Over the rationals the defult algorithm is ResidualSymbolic, over any finte feild the defult algorithm is ProjectiveDegree. 
+	       Over the rationals the default algorithm is ResidualSymbolic, over any finite field the default algorithm is ProjectiveDegree. 
 	       
-	       Observe that both algorithms are probabilistic algorithms. The algorithm ProjectiveDegree will give the correct answer with probobility 1. 
+	       Observe that both algorithms are probabilistic algorithms. The algorithm ProjectiveDegree will give the correct answer with probability 1. 
                The algorithm ResidualSymbolic may give a wrong answer with a small but nonzero probability. Read more under @TO "probabilistic algorithm"@.
 ///
 
@@ -727,7 +726,7 @@ doc ///
      	  I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a closed subscheme X of \PP^k
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to use
      Outputs
      	  :RingElement
@@ -771,7 +770,7 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to used to compute the Chern class
      Outputs
      	  :RingElement
@@ -818,7 +817,7 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to compute the Chern-Schwartz-MacPherson classes
      Outputs
      	  :RingElement
@@ -837,7 +836,7 @@ doc ///
 	  Example
 	       CSMClass( ideal(x^3 + x^2*z - y^2*z), symbol t ) 
 	  Text
-	       All the examples were done using symbolic computations with Gr\"obner bases. The defualt algorithm computes the projective degrees using 
+	       All the examples were done using symbolic computations with Gr\"obner bases. The default algorithm computes the projective degrees using 
                Gr\"obner bases. Changing the option @TO Algorithm@ to ResidualSymbolic will compute the residual degrees using Gr\"obner bases. 
                Changing the option @TO Algorithm@ to Bertini will do the main computations numerically, provided Bertini is 
                @TO2 {"configuring Bertini", "installed and configured"}@ .  
@@ -863,8 +862,8 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
-	    the algorithm used to compute the CSM class, from which we obtain the Euler charteristic 
+	  Algorithm => "Default"
+	    the algorithm used to compute the CSM class, from which we obtain the Euler characteristic 
      Outputs
      	  :ZZ
 	    the topological Euler characteristic of the scheme X.
@@ -877,7 +876,7 @@ doc ///
 	       R = ZZ/32749[x,y,z]
 	       eulerChar ideal(x^3 + x^2*z - y^2*z)     
 	  Text
-	       All the examples were done using symbolic computations with Gr\"obner bases. The defualt algorithm computes the projective degrees using 
+	       The example was done using symbolic computations with Gr\"obner bases. The default algorithm computes the projective degrees using 
                Gr\"obner bases. Changing the option @TO Algorithm@ to ResidualSymbolic will compute the residual degrees using Gr\"obner bases. 
                Changing the option @TO Algorithm@ to Bertini will do the main computations numerically, provided Bertini is 
                @TO2 {"configuring Bertini", "installed and configured"}@ .  
@@ -907,7 +906,7 @@ doc ///
 	       R = QQ[x,y,z,w]
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), Algorithm=>ProjectiveDegree)  
 	  Text  
-               For many examples over a finite field the ProjectiveDegree option will offer better performence, when working over the rationals 
+               For many examples over a finite field the ProjectiveDegree option will offer better performance, when working over the rationals 
                the ResidualSymbolic algorithm is often faster. 
           Example
                R=ZZ/32749[v_0..v_5];
