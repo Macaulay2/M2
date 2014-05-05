@@ -25,11 +25,12 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
      o = fillInDefaultOptions o;
      w1 := {}; w2 := {};
      for x in w#Points do 
-	 if norm residual(matrix {{f}}, matrix x) < o.Tolerance 
+	 if residual(matrix {{f}}, matrix x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
-     ( if #w1===0 then null else witnessSet(w#Equations, w#Slice, w1), 
-       if #w2===0 then null else witnessSet(w#Equations, w#Slice, w2) 
+     ( if #w1===0 then null else witnessSet(w.Equations -- + ideal f 
+	     , w.Slice, w1), 
+       if #w2===0 then null else witnessSet(w.Equations, w.Slice, w2) 
        )
    )
 

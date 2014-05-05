@@ -200,6 +200,9 @@ assert(T'.PolyMap - T.PolyMap == 0)
 --   MaxPrecision => max precision used during the homotopy tracking
 --   WindingNumber => used in the end-games
 --   DeflationNumber => number of first-order deflations 
+--   [SolutionSystem]        -- a square system that the point satisfies (used to compute the point)
+--   [LiftedSystem]          -- a regularization of SolutionSystem (in case the point is not regular)
+--   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
 Point.synonym = "point"
 net Point := p -> (
@@ -439,9 +442,11 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
 --   IsIrreducible,        -- true, false, or null
---   ProjectionDimension   -- an integer n, the set describes a projection a variety to the first n coordinates
+--   [ProjectionDimension]   -- an integer n, the set describes a projection a variety to the first n coordinates
+--   [SolutionSystem]        -- a square system built from Equations and Slice that Points satisfy
+--   [LiftedSystem]          -- a regularization of SolutionSystem (in case Points are not regular)
 --   }
--- caveat: we assume that #Equations = dim(Slice)   
+-- caveat: we do not assume that #Equations = dim(Slice) 
 --
 -- PROJECTIVE WITNESS SET = { ... same as WITNESS SET ..., 
 --     AffineChart         -- one-row matrix of coefficients of a the linear equation of the chart
@@ -484,7 +489,7 @@ witnessSet (PolySystem,PolySystem,List) := (I,S,P) ->
       }
 
 points = method() -- strips all info except coordinates, returns a doubly-nested list
-points WitnessSet := (W) -> apply(W.Points, coordinates)
+points WitnessSet := W -> apply(W.Points, coordinates)
 
 equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
 

@@ -9,8 +9,20 @@ export {
     removeRedundantComponents 
     }
 
-WitnessSet.Tolerance = 1e-6;
-check WitnessSet := o -> W -> for p in points W do if norm sub(matrix{equations W | slice W}, matrix {p})/norm p > 1000*DEFAULT.Tolerance then error "check failed" 
+polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else 
+    W.SolutionSystem = polySystem (equations W | slice W)  
+
+genericRegularSequence = method()
+genericRegularSequence WitnessSet := W->(
+    n := numgens W.Equations;
+    R := ring W;
+    m := codim R;
+    M := sub(randomOrthonormalRows(m,n),coefficientRing R);
+    first entries(sub(M,ring W) * transpose gens W.Equations)
+    )
+
+check WitnessSet := o -> W -> for p in W.Points do --!!!
+        if residual(polySystem W, p) > 1000*DEFAULT.Tolerance then error "check failed" 
 
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
@@ -135,7 +147,9 @@ movePointsToSlice (WitnessSet, List) := List => o -> (W,S') -> (
      then error "dimension of new slicing plane is too high";
      R := ring W;
      S := take(slice W,-#S'); -- take last #S equations
-     movePoints(equations W, S, S', W.Points, AllowSingular=>true, Software=>o.Software)
+     movePoints(
+	 --genericRegularSequence!!! 
+	 equations W, S, S', W.Points, AllowSingular=>true, Software=>o.Software)
      )
 
 moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
