@@ -10,19 +10,18 @@ export {
     }
 
 polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else 
-    W.SolutionSystem = polySystem (equations W | slice W)  
-
-genericRegularSequence = method()
-genericRegularSequence WitnessSet := W->(
-    n := numgens W.Equations;
-    R := ring W;
-    m := codim R;
-    M := sub(randomOrthonormalRows(m,n),coefficientRing R);
-    first entries(sub(M,ring W) * transpose gens W.Equations)
-    )
+    W.SolutionSystem = polySystem(
+    	n := numgens W.Equations;
+    	R := ring W;
+    	m := codim W;
+	if m == n then W.Equations else (
+    	    M := sub(randomOrthonormalRows(m,n),coefficientRing R);
+    	    (sub(M,ring W) * transpose gens W.Equations)
+	    )
+    	)
 
 check WitnessSet := o -> W -> for p in W.Points do --!!!
-        if residual(polySystem W, p) > 1000*DEFAULT.Tolerance then error "check failed" 
+if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" 
 
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
@@ -92,53 +91,58 @@ randomSlice (ZZ,ZZ,Point) := (d,n,point) -> (
      SM | (-SM * transpose matrix point)
      )
 
-movePoints = method(Options=>{AllowSingular=>false, Software=>null})
-movePoints (List, List, List, List) := List => o -> (E,S,S',w) -> (
--- IN:  E = equations, 
+
+movePoints = method(Options=>{Software=>null})
+movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
+-- IN:  W = a witness set  
 --      S = equations of the current slice,
 --      S' = equations of the new slice,
---      w = points satisfying E and S (in the output format of track) 
---      AllowSingular => false: S' is generic, several attempts are made to get regular points
--- OUT: new witness points satisfying E and S'
+--      w = a subset of the intersection of V(W) and V(S)
+-- OUT: new witness points in the intersection of V(W) and V(S')
      o = fillInDefaultOptions o;
+
      attempts := DEFAULT.Attempts;
      success := false;
      P := first w; -- all witness points are supposed to have the same "multiplicity structure"
      local w';
+     E := equations polySystem W;
      if status P === Singular then (
 	 seq := P.DeflationSequenceMatrices;
-	 F := squareUp P.LiftedSystem; -- assumes P.System == E|S, in particular
+	 F := squareUp P.LiftedSystem; -- assumes P.SolutionSystem == equations W.SolutionSystem | S
 	 ES' := polySystem(E|S');
 	 F' := squareUp(deflate(ES', seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
 	 );
      while (not success and attempts > 0) do (
-	  attempts = attempts - 1;
-	  if status P =!= Singular
-	  then (
-	      w' = track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
-	      success = all(w', p->status p === Regular);
-    	      )
-	  else (
-	      assert all(w, p->p.LiftedSystem===P.LiftedSystem);
-	      F'.PolyMap = (map(ring F, ring F', vars ring F)) F'.PolyMap; -- hack: rewrite with trackHomotopy
-	      lifted'w' := track(F, F', w/(p->p.LiftedPoint), NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
-	      if success = all(lifted'w', p->status p === Regular) 
-	      then w' = apply(lifted'w', p->(
-		      q := new Point from P;
-		      q.System = ES';
-		      q.LiftedSystem = F';
-		      q.LiftedPoint = p;
-		      q.Coordinates = take(coordinates p, ES'.NumberOfVariables);
-		      q
-		      ));
-	      );
-	  );
+	 attempts = attempts - 1;
+	 if status P =!= Singular
+	 then (
+	     w' = track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	     success = all(w', p->status p === Regular);
+	     )
+	 else (
+	     assert all(w, p->p.LiftedSystem===P.LiftedSystem); -- !!!
+	     F'.PolyMap = (map(ring F, ring F', vars ring F)) F'.PolyMap; -- hack!!!: rewrite with trackHomotopy
+	     lifted'w' := track(F, F', w/(p->p.LiftedPoint), NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	     if success = all(lifted'w', p->status p === Regular) 
+	     then w' = apply(lifted'w', p->(
+		     q := new Point from P;
+		     q.System = ES';
+		     q.LiftedSystem = F';
+		     q.LiftedPoint = p;
+		     q.Coordinates = take(coordinates p, ES'.NumberOfVariables);
+		     q
+		     ));
+	     );
+	 );
      if attempts == 0 and not success then error "some path is singular generically";  
+
      w'
      )
 
-movePointsToSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
-movePointsToSlice (WitnessSet, List) := List => o -> (W,S') -> (
+-- moveSlice = method(TypicalValue=>List, Options=>{Software=>null, Attempts=>null, AllowSingular=>false})
+
+moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
+moveSlice (WitnessSet, List) := List => o -> (W,S') -> (
 -- IN:  W = witness set
 --      S' = equations of the new slice
 -- OUT: new witness points
@@ -146,13 +150,15 @@ movePointsToSlice (WitnessSet, List) := List => o -> (W,S') -> (
      if #S' < dim W
      then error "dimension of new slicing plane is too high";
      R := ring W;
-     S := take(slice W,-#S'); -- take last #S equations
-     movePoints(
-	 --genericRegularSequence!!! 
-	 equations W, S, S', W.Points, AllowSingular=>true, Software=>o.Software)
+
+     w' := movePoints(W, slice W, S', W.Points);
+
+     W' := new WitnessSet from W;
+     W'.Slice = sliceEquationsToMatrix ideal S';
+     W'.Points = w';
+     W'
      )
 
-moveSlice = method(TypicalValue=>WitnessSet, Options=>{Software=>null})
 moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
 -- IN:  W = witness set
 --      S = matrix defining a new slicing plane (same dimensions as W#Slice)
@@ -161,11 +167,10 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
      if numgens target S != numgens target W#Slice 
      or numgens source S != numgens source W#Slice 
      then error "wrong dimension of new slicing plane";
-     witnessSet(W#Equations,S,movePointsToSlice(W,sliceEquations(S,ring W),Software=>o.Software))             	  
+     moveSlice(W,sliceEquations(S,ring W),o)             	  
      )
 
--- get a random Point(s)
-
+-- get a random Point
 sample = method(Options=>{Tolerance=>1e-6})
 sample WitnessSet := o -> W -> (
     W' := moveSlice(W, randomSlice(dim W, numgens ring W));

@@ -65,7 +65,6 @@ protect SolutionAttributes -- option of getSolution
 protect Tracker -- an internal key in Point 
 
 -- experimental:
-protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
@@ -316,11 +315,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
     else error "not implemented"
     )
-
-isRegular = method()
--- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
-isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (

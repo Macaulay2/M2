@@ -90,6 +90,8 @@ polySystem Matrix := M -> (
     assert(numcols M == 1);
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
+polySystem Ideal := I -> polySystem transpose gens I
+
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
@@ -468,7 +470,7 @@ globalAssignment WitnessSet
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 
      else error "ill-formed slice in WitnessSet" )
-codim WitnessSet := W -> numgens ring W - dim W
+codim WitnessSet := {} >> o -> W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
@@ -1146,11 +1148,11 @@ residual(S,p,Norm=>infinity)
     }
 
 document {
-    Key => {polySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem)},
+    Key => {polySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem), (polySystem,Ideal)},
     Headline => "construct a polynomial system",
     Usage => "P = polysystem F",
     Inputs => { 
-	"F" => {ofClass List, " or ", ofClass Matrix, 
+	"F" => {ofClass List, " or ", ofClass Ideal, " or ", ofClass Matrix, 
 	    " (column matrix) with polynomial entries or ", ofClass PolySystem},
 	},
     Outputs => {"P"=> PolySystem},
