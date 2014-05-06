@@ -28,8 +28,7 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
 	 if residual(matrix {{f}}, matrix x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
-     ( if #w1===0 then null else witnessSet(w.Equations -- + ideal f 
-	     , w.Slice, w1), 
+     ( if #w1===0 then null else witnessSet(w.Equations + ideal f, w.Slice, w1), 
        if #w2===0 then null else witnessSet(w.Equations, w.Slice, w2) 
        )
    )
@@ -61,10 +60,11 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		    moveSlice(cOut,newSlice,Software=>o.Software)
 		    ));
 	    slice' := submatrix'(comp#Slice,{0},{});
-	    S := polySystem( equations comp
+	    local'regular'seq := equations polySystem comp;
+	    S := polySystem( local'regular'seq
 		| { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
 		| sliceEquations(slice',R) );
-	    T := polySystem( equations comp
+	    T := polySystem( local'regular'seq
 		| {f}
 		| sliceEquations(slice',R) );
 	    targetPoints := track(S,T,flatten apply(dWS,points), 
