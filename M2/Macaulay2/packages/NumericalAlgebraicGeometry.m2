@@ -37,7 +37,7 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "track", "refine", "totalDegreeStartSystem", "newton",
+     "solveSystem", "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -65,7 +65,6 @@ protect SolutionAttributes -- option of getSolution
 protect Tracker -- an internal key in Point 
 
 -- experimental:
-protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
@@ -170,9 +169,16 @@ installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#
 getDefault = method()
 getDefault Symbol := (s)->DEFAULT#s
 
+
+-- METHOD DECLARATIONS
+isOn = method(Options=>{Tolerance=>null,Software=>null})
+
 -- CONVENTIONS ---------------------------------------
 
+-- OLD FORMAT:
 -- Polynomial systems are represented as lists of polynomials.
+-- NEW FORMAT:
+-- PolySystem (defined in NAGtypes).
 
 -- OLD FORMAT:
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
@@ -309,11 +315,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     if o.Software === BERTINI then bertiniParameterHomotopy(F,P,T)
     else error "not implemented"
     )
-
-isRegular = method()
--- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
-isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
@@ -467,6 +468,7 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   )
 
 load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/intersection.m2"
 load "./NumericalAlgebraicGeometry/decomposition.m2"
 load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 
@@ -507,21 +509,6 @@ conditionNumber (List,List) := (F,x) -> (
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      J = J || matrix{ flatten entries x0 / conjugate};
      conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
-     )
-
--- a constructor for witnessSet that depends on NAG
-witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
-witnessSet (Ideal,ZZ) := (I,d) -> (
-     n := numgens ring I;
-     R := ring I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
-     S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     rand'I := flatten entries (RM * transpose gens I);
-     P := solveSystem(rand'I | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
-     witnessSet(ideal rand'I,SM,PP)
      )
 
 isSolution = method(Options=>{Tolerance=>null})

@@ -539,8 +539,7 @@ F = {x^2+y^2-1, x*y};
 regeneration F 
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-cs = regeneration I_*
+regeneration {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)}
      	///,
 -- 	EXAMPLE lines /// -- nonreduced scheme
 -- setRandomSeed 7
@@ -565,15 +564,13 @@ document {
 	Outputs => { "Ws"=>{"contains irreducible witness sets ", TO2{WitnessSet,"witness sets"}, ", the union of which is ", TT "W"}},
      	"Monodromy driven decomposition is followed by the linear trace test. ",
 	EXAMPLE lines ///
-setRandomSeed 1
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
-W = first regeneration F 
+W = first components regeneration F 
 decompose W
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-regeneration I_* / decompose
+decompose \ components regeneration {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)}
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
 	     If monodromy breakup algorithm fails to classify some points, the unnclassified points appear 

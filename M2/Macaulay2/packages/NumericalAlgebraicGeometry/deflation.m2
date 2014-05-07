@@ -87,9 +87,9 @@ deflate(PolySystem, Matrix) := (F,B) -> (
 	F.DeflationRandomMatrix = new MutableHashTable;
 	);
     r := numcols B - 1;
-    ll := symbol ll;
+    L := symbol L;
     C := coefficientRing ring F;
-    R := C (monoid [gens ring F, ll_1..ll_r]);
+    R := C (monoid [gens ring F, L_1..L_r]);
     LL := transpose matrix{ take(gens R, -r) | {1_C} };
     RFtoR := map(R, ring F);
     F.Deflation#r = polySystem (RFtoR F.PolyMap || (RFtoR jacobian F)*B*LL);
@@ -108,6 +108,14 @@ deflate(PolySystem, Sequence) := (F,BM) -> (
 deflate(PolySystem, List) := (F, seq) -> (
     scan(seq, B -> F = deflate(F,B)); -- here B is either a Matrix or (Matrix,Matrix)
     F
+    )
+
+-- deflation ideal
+deflate Ideal := I -> (
+    C := coefficientRing ring I;
+    F := polySystem transpose gens I;
+    B := map C^(F.NumberOfVariables) | map(C^(F.NumberOfVariables),C^1,0);
+    ideal deflate(F,B)
     )
 
 liftPointToDeflation = method() 
@@ -177,7 +185,7 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
     P.DeflationSequence = d'seq;
     P.DeflationSequenceMatrices = d'seq'mat;
     P.SolutionSystem = F;
-    P.LiftedSystem = F0;
+    P.LiftedSystem = P0.SolutionSystem = F0;
     P.LiftedPoint = P0;
     P.SolutionStatus = if #d'seq > 0 then Singular else Regular
     )
