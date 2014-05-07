@@ -439,7 +439,7 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
---   Equations,            -- an ideal or a polynomial system 
+--   Equations,            -- an ideal or a polynomial system or a list
 --   Slice,                -- a matrix of coefficients of linear equations 
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
@@ -493,7 +493,9 @@ witnessSet (PolySystem,PolySystem,List) := (I,S,P) ->
 points = method() -- strips all info except coordinates, returns a doubly-nested list
 points WitnessSet := W -> apply(W.Points, coordinates)
 
-equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
+equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else 
+if class W.Equations === Ideal then (W.Equations)_* else 
+W.Equations
 
 slice = method() -- returns linear equations for the slice (in both cases)   
 slice WitnessSet := (W) -> ( 

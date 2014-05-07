@@ -19,7 +19,8 @@ newPackage(
   },
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
-  DebuggingMode => false,
+  -- DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
 )
@@ -139,7 +140,7 @@ bertiniSample (WitnessSet,ZZ) := o -> (W, n) -> (
          L := {runType=>3,dimen=>dim W, compnum=>W.ComponentNumber,numpts=>n, WitnessData=>W.WitnessDataFileName};
 	 o2 := new OptionTable from L;
          o3 := o ++ o2 ;
-         bertiniSolve(equations(W),o3)
+         bertiniSolve(equations W,o3)
          ) 
 
 
