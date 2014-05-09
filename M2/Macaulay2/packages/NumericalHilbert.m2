@@ -34,8 +34,6 @@ export {
 protect Igens, protect syl, protect strategy, protect deg,
 protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs, protect Seeds
 
---load "NumericalAlgebraicGeometry/PolynomialSpace.m2"
-
 -----------------------------------------------------------------------------------------
 
 -- Default tolerance value respectively for exact fields and inexact fields
