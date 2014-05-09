@@ -18,16 +18,23 @@ export {
      sCorners,
      localHilbertRegularity,
      eliminatingDual,
+     innerProduct,
+     reduceSpace,
+     orthogonalInSubspace,
      DZ,
      BM,
-     ProduceSB
+     ProduceSB,
+     numericalKernel,
+     numericalImage,
+     colReduce,
+     adjointMatrix
      }
 
 --TruncDualData private keys
 protect Igens, protect syl, protect strategy, protect deg,
 protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs, protect Seeds
 
-load "NumericalAlgebraicGeometry/PolynomialSpace.m2"
+--load "NumericalAlgebraicGeometry/PolynomialSpace.m2"
 
 -----------------------------------------------------------------------------------------
 
@@ -180,7 +187,7 @@ truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     )
 truncate (DualSpace, List, ZZ) := (L,ind,d) -> dualSpace(truncate(L.Space,ind,d),L.BasePoint)
 
-gCorners = method(TypicalValue => Sequence, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
+gCorners = method(TypicalValue => Matrix, Options => {Strategy => BM, Tolerance => null, ProduceSB => false})
 gCorners (Point,Ideal) := o -> (p,I) -> gCorners(p,gens I,o)
 gCorners (Point,Matrix) := o -> (p,Igens) -> (
     R := ring Igens;
@@ -212,7 +219,7 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	d = d+1;
 	);
     GCs = if o.ProduceSB then SBs else GCs/first;
-    (dBasisReduced, sbReduce matrix {GCs})
+    sbReduce matrix {GCs}
     )
 
 -- computes s-corners from the g-corners
@@ -231,16 +238,28 @@ sCorners Matrix := gCs -> (
     matrix{S}
     )
 
+hilbertFunction DualSpace := L -> (
+    if not L.Space.Reduced then L = reduceSpace L;
+    tally(flatten entries gens L / first @@ degree)
+    )
+hilbertFunction (List,DualSpace) := (LL,L) -> (
+    h := hilbertFunction L;
+    apply(LL, d->(if h#?d then h#d else 0))
+    )
+hilbertFunction (ZZ,DualSpace) := (d,L) -> first hilbertFunction({d},L)
 
 localHilbertRegularity = method(TypicalValue => ZZ, Options=>{Tolerance => null})
 localHilbertRegularity (Point, Ideal) := o -> (p,I) -> localHilbertRegularity(p,gens I,o)
 localHilbertRegularity (Point, Matrix) := o -> (p,Igens) -> (
     n := numgens ring Igens;
-    gCs := last gCorners(Igens,p,o);
-    print gCs;
+    gCs := gCorners(p,Igens,o);
     gCLists := apply(flatten entries gCs, l -> (listForm l)#0#0);
     LCMexp := apply(n, i -> max(apply(gCLists, l->l#i)));
-    max{sum LCMexp - n + 1, 0}
+    s := max{sum LCMexp - n + 1, 0}; -- an upperbound
+    J := ideal gCs;
+    HP := hilbertPolynomial(J, Projective=>false);
+    while hilbertFunction(s-1,J) == sub(HP,(ring HP)_0 => s-1) do s = s-1;
+    s
     )
     
 
@@ -398,6 +417,108 @@ sbReduce = L -> (
     L_goodi
     )
 
+-- Matrix of inner products
+-- PolySpace generators as rows, DualSpace generators as columns
+innerProduct = method()
+innerProduct (PolySpace, PolySpace) := (S, T) -> (
+    M := last coefficients(gens S | gens T);
+    Svec := submatrix(M,0..dim S-1);
+    Tvec := submatrix'(M,0..dim S-1);
+    (transpose Svec)*Tvec
+    )
+innerProduct (PolySpace, DualSpace) := (S, L) -> (
+    Sshift := polySpace sub(gens S, matrix{(gens ring L) + coordinates L.BasePoint});
+    innerProduct(Sshift, L.Space)
+    )
+innerProduct (RingElement, DualSpace) := (f, L) -> innerProduct(polySpace matrix{{f}}, L)
+innerProduct (RingElement, RingElement) := (f, l) -> (
+    M := last coefficients(matrix{{f,l}});
+    ((transpose M_{0})*M_{1})_(0,0)
+    )
+
+reduceSpace = method(Options => {Monomials => null,Tolerance=>1e-6})
+reduceSpace PolySpace := o -> S -> (
+    if dim S == 0 then return polySpace(gens S,Reduced=>true);
+    (mons,coefs) := coefficients(gens S, Monomials => o.Monomials);
+    M := mons*(colReduce(coefs,o.Tolerance));
+    polySpace(M,Reduced=>true)
+    )
+reduceSpace DualSpace := o -> L -> dualSpace(reduceSpace L.Space,L.BasePoint)
+
+orthogonalInSubspace = method()
+orthogonalInSubspace (DualSpace, PolySpace, Number) := (D,S,t) -> (
+    M := innerProduct(S,D);
+    K := numericalKernel(transpose M,t);
+    polySpace((gens S)*K, Reduced=>false)
+    )
+orthogonalInSubspace (PolySpace, PolySpace, Number) := (T,S,t) -> (
+    T' := dualSpace(T, origin(ring S));
+    orthogonalInSubspace(T',S,t)
+    )
+
+---------------------------------------------
+-- Numerical Linear Algebra
+---------------------------------------------
+
+numericalImage = method()
+numericalImage (Matrix, Number) := (M, tol) -> (
+    R := ultimate(coefficientRing, ring M);
+    M = sub(M, R);
+    if numcols M == 0 then return M;
+    if numrows M == 0 then return map(R^0,R^0,0);
+    if precision 1_(ring M) < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix(U,,cols)
+	) else (
+	gens image M
+	)
+    )
+
+numericalKernel = method()
+numericalKernel (Matrix, Number) := (M, tol) -> (
+    R := ring M;
+    M = sub(M, ultimate(coefficientRing, R));
+    if numrows M == 0 then return id_(source M);
+    if numcols M == 0 then return map(R^0,R^0,0);
+    if precision 1_R < infinity then (
+	(svs, U, Vt) := SVD M;
+	cols := positions(svs, sv->(sv > tol));
+	submatrix'(adjointMatrix Vt,,cols)
+	) else (
+	gens kernel M
+	)
+    )
+
+-- produces the conjugate transpose
+adjointMatrix = method(TypicalValue => Matrix)
+adjointMatrix Matrix := M -> (
+    M' := mutableMatrix transpose M;
+    for i from 0 to (numrows M')-1 do (
+	for j from 0 to (numcols M')-1 do M'_(i,j) = conjugate(M'_(i,j));
+	);
+    matrix M'
+    )
+
+--performs Gaussian reduction on M
+colReduce = method(TypicalValue => Matrix)
+colReduce (Matrix, Number) := (M, tol) -> (
+    M = new MutableMatrix from sub(transpose M, ultimate(coefficientRing, ring M));
+    (m,n) := (numrows M, numcols M);
+    i := 0; --row of pivot
+    for j from 0 to n-1 do (
+	if i == m then break;
+	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
+	c := M_(a,j);
+	if abs c <= tol then continue;
+	rowSwap(M,a,i);
+	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
+	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
+	i = i+1;
+	);
+    M = (transpose new Matrix from M)_{0..i-1};
+    if tol > 0 then clean(tol,M) else M
+    )
 
 beginDocumentation()
 
@@ -462,7 +583,7 @@ doc ///
           S:DualSpace
      Description
           Text
-	       Computes a reduced basis of the truncated dual space of an ideal.  It's truncated at degree d.
+	       Computes a basis for the dual space of an ideal truncated at degree d.
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
 	  Example
@@ -481,7 +602,6 @@ doc ///
           dual space of a zero-dimensional polynomial ideal
      Usage
           S = zeroDimensionalDual(p, I)
-	  S = zeroDimensionalDual(p, gns)
      Inputs
      	  p:Point
 	  I:Ideal
@@ -494,6 +614,10 @@ doc ///
 	       zero-dimensional and if not then termination will fail.
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{(y-1)^2,y-x^2}
+	       S = zeroDimensionalDual(point matrix{{1,1}}, I)
 ///
 
 doc ///
@@ -507,14 +631,12 @@ doc ///
           generators of the initial ideal of a polynomial ideal
      Usage
           G = gCorners(p, I)
-	  G = gCorners(p, gns)
      Inputs
      	  p:Point
 	  I:Ideal
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
+              or a one-row @TO Matrix@ of generators
      Outputs
-          G:Sequence
+          G:Matrix
 	       generators of the initial ideal in a one-row matrix
      Description
           Text
@@ -529,14 +651,14 @@ doc ///
      Headline
           socle corners of a monomial ideal
      Usage
-          S = sCorners(I)
-	  S = sCorners(gns)
+          S = sCorners I
+	  S = sCorners G
      Inputs
           I:MonomialIdeal
-	  gns:Matrix
-	       generators of an ideal in a one-row matrix
+	  G:Matrix
+	       one row of g-corners
      Outputs
-          G:Matrix
+          S:Matrix
 	       socle corners in a one-row matrix
      Description
           Text
@@ -553,12 +675,10 @@ doc ///
           regularity of the local Hilbert function of a polynomial ideal
      Usage
           d = localHilbertRegularity(p,I)
-	  d = localHilbertRegularity(p,gns)
      Inputs
           p:Point
 	  I:Ideal
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
+              or a one-row @TO Matrix@ of generators
      Outputs
           d:ZZ
      Description
@@ -576,12 +696,10 @@ doc ///
           eliminating dual space of a polynomial ideal
      Usage
           S = eliminatingDual(p, I, v, d)
-	  S = eliminatingDual(p, gns, v, d)
      Inputs
      	  p:Point
 	  I:Ideal
-          gns:Matrix
-	       generators of an ideal in a one-row matrix
+              or a one-row @TO Matrix@ of generators
 	  v:List
 	       a list of the integers designating which variables to bound
 	  d:ZZ
@@ -591,6 +709,79 @@ doc ///
      Description
           Text
 	       
+///
+
+doc ///
+     Key
+          innerProduct
+	  (innerProduct,PolySpace,DualSpace)
+	  (innerProduct,PolySpace,PolySpace)
+	  (innerProduct,RingElement,DualSpace)
+	  (innerProduct,RingElement,RingElement)
+     Headline
+          Applies dual space functionals to polynomials
+     Usage
+          M = innerProduct(S, D)
+     Inputs
+	  S:PolySpace
+	  D:DualSpace
+     Outputs
+          M:Matrix
+	       containing the values of the generators of D applied to the generators of S
+     Description
+          Text
+	       The dual space represents functionals from the polynomial ring to the base field.
+	       Given a polySpace S with n generators f_1,...,f_n and a dualSpace D with m generators
+	       p_1,...,p_m, innerProduct returns a nxm matrix M over the base field whose entries are p_j(f_i).
+	       
+	       A dual functional is applied to a polynomial by taking the standard inner product of their coefficient
+	       vectors.  In other words, the functional represented by the monomial a acts on monomials in the
+	       polynomial ring as a(a) = 1 and a(b) = 0 for all other monomials b.
+///
+
+doc ///
+     Key
+          orthogonalInSubspace
+	  (orthogonalInSubspace,DualSpace,PolySpace,Number)
+	  (orthogonalInSubspace,PolySpace,PolySpace,Number)
+     Headline
+          Orthogonal of a space
+     Usage
+          S = orthogonalInSubspace(D, T, tol)
+     Inputs
+	  D:DualSpace
+	       or @ofClass PolySpace@ a space of which to find the orthogonal
+	  T:PolySpace
+	       ambient space
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          S:PolySpace
+     Description
+          Text
+	       Computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+///
+
+doc ///
+     Key
+          reduceSpace
+	  (reduceSpace,DualSpace)
+	  (reduceSpace,PolySpace)
+	  [reduceSpace,Monomials]
+     Headline
+          reduce the generators of a space
+     Usage
+          S = reduceSpace T
+     Inputs
+     	  T:DualSpace
+	       or @ofClass PolySpace@
+     Outputs
+          S:DualSpace
+	       or @ofClass PolySpace@
+     Description
+          Text
+	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
+	       a distinct lead monomial.  This is achieved via Gaussian reduction.
 ///
 
 doc ///
@@ -642,6 +833,7 @@ doc ///
 	  [gCorners,Tolerance]
 	  [zeroDimensionalDual,Tolerance]
 	  [truncatedDual,Tolerance]
+	  [reduceSpace,Tolerance]
      Headline
           optional argument for numerical tolernace
      Description
@@ -684,6 +876,84 @@ doc ///
      Description
           Text
 	       The Mourrain algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
+///
+
+doc ///
+     Key
+          numericalImage
+	  (numericalImage,Matrix,Number)
+     Headline
+          Image of a matrix
+     Usage
+          V = numericalImage(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          V:Matrix
+     Description
+          Text
+	       Computes the image of a matrix M numerically using singular value decomposition.
+	       Singular values less than the tolerance are treated as zero.
+///
+
+doc ///
+     Key
+          numericalKernel
+	  (numericalKernel,Matrix,Number)
+     Headline
+          Kernel of a matrix
+     Usage
+          V = numericalKernel(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive number, the numerical tolerance
+     Outputs
+          V:Matrix
+     Description
+          Text
+	       Computes the kernel of a matrix M numerically using singular value decomposition.
+	       Singular values less than the tolerance are treated as zero.
+///
+
+doc ///
+     Key
+          colReduce
+	  (colReduce,Matrix,Number)
+     Headline
+          Column reduces a matrix
+     Usage
+          N = colReduce(M, tol)
+     Inputs
+	  M:Matrix
+	  tol:Number
+	       a positive value, the numerical tolerance
+     Outputs
+          N:Matrix
+	       in reduced column echelon form
+     Description
+          Text
+	       Performs Gaussian column reduction on a matrix M.
+	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
+///
+
+doc ///
+     Key
+          adjointMatrix
+	  (adjointMatrix,Matrix)
+     Headline
+          Conjugate transpose of a complex matrix
+     Usage
+          N = adjointMatrix M
+     Inputs
+	  M:Matrix
+     Outputs
+          N:Matrix
+     Description
+          Text
+	       Returns the conjugate transpose of a matrix with complex entries.
 ///
 
 end
