@@ -1,22 +1,8 @@
--- -*- coding: utf-8 -*-
-{*
-newPackage(
-     "PolynomialSpace",
-     PackageExports => {"NAGtypes"},
-     Version => "0.1", 
-     Date => "March 29, 2014",
-     Authors => {
-	 {Name => "Robert Krone", Email => "krone@math.gatech.edu"},
-	 {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
-	 },
-     Headline => "functionality for PolySpace and DualSpace types and numerical linear algebra",
-     DebuggingMode => true
-)
-*}
-export {
-     "addition", "intersection",
-     "colon", "isContained", "orthogonalInSubspace",
-     }
+------------------------------------------------------
+-- operations for PolySpace and DualSpace
+-- (loaded by  ../NumericalAlgebraicGeometry.m2)
+------------------------------------------------------
+export { addition, intersection, colon, isContained, orthogonalInSubspace }
 
 ------------------------------------------------
 

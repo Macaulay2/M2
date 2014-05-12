@@ -4,15 +4,16 @@
 newPackage select((
      "NumericalAlgebraicGeometry",
      Version => "1.6.0.1",
-     Date => "October, 2013",
+     Date => "May, 2014",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes"},
+     PackageExports => {"NAGtypes","NumericalHilbert"},
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -65,7 +66,6 @@ protect SolutionAttributes -- option of getSolution
 protect Tracker -- an internal key in Point 
 
 -- experimental:
-protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
@@ -317,11 +317,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
-isRegular = method()
--- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
-isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
-
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := ring first T;
@@ -421,7 +416,14 @@ squareUp(PolySystem,Matrix) := (P,M) -> (
 
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
-
+load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/intersection.m2"
+load "./NumericalAlgebraicGeometry/decomposition.m2"
+load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
+load "./NumericalAlgebraicGeometry/deflation.m2"
+load "./NumericalAlgebraicGeometry/SLP.m2"
+load "./NumericalAlgebraicGeometry/npd.m2"
+--load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 -- HOM4PS2 part -----------------------------------------------------------
 
 makeHom4psInput = method(TypicalValue=>Sequence)
@@ -473,10 +475,6 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   s
   )
 
-load "./NumericalAlgebraicGeometry/witness-set.m2"
-load "./NumericalAlgebraicGeometry/intersection.m2"
-load "./NumericalAlgebraicGeometry/decomposition.m2"
-load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
@@ -496,9 +494,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-load "./NumericalAlgebraicGeometry/deflation.m2"
-load "./NumericalAlgebraicGeometry/SLP.m2"
-
 NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 

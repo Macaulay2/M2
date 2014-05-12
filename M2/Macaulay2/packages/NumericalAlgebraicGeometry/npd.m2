@@ -1,7 +1,14 @@
+-------------------------------------------------------
+-- functions related to numerical primary decomposition
+-- (loaded by  ../NumericalAlgebraicGeometry.m2)
+-------------------------------------------------------
+export { isPointEmbedded, isPointEmbeddedInCurve, AllVisible, interpolate, colon }
+
 debug NumericalHilbert
 
 isPointEmbedded = method(Options=>{AllVisible=>false})
 isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witness sets for irreducible components
+    R := ring I;
     time gCs := gCorners(p,I); -- assume Robert's
 	       	              -- algorithm a DualSpace D,
 			      -- and g-corners
@@ -74,7 +81,7 @@ orthogonalInSubspace (Ideal,List,ZZ,PolySpace) := (I,C,e,S) -> (
 	    p := random V; 
 	    D := truncatedDual(p,I,e); -- D_p^e[I]
 	    S' := orthogonalInSubspace(D,S,t);
-	    nothing'new = (dim S' == dim S);
+	    nothing'new := (dim S' == dim S);
 	    S = S';
 	    nothing'new
 	    ));
@@ -151,7 +158,7 @@ isPointEmbeddedInCurve = method()
 isPointEmbeddedInCurve (Point,Ideal) := (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
-    p' = origin(R);
+    p' := origin(R);
     m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
     I' = (map(R,R,m)) I'; -- I with new coordinates
     r := 12;--localHilbertRegularity(p',I'); 

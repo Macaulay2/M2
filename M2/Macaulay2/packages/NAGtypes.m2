@@ -90,6 +90,8 @@ polySystem Matrix := M -> (
     assert(numcols M == 1);
     new PolySystem from {PolyMap=>M, NumberOfVariables=>numgens ring M, NumberOfPolys=>numrows M}
     )
+polySystem Ideal := I -> polySystem transpose gens I
+
 ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
@@ -200,6 +202,9 @@ assert(T'.PolyMap - T.PolyMap == 0)
 --   MaxPrecision => max precision used during the homotopy tracking
 --   WindingNumber => used in the end-games
 --   DeflationNumber => number of first-order deflations 
+--   [SolutionSystem]        -- a square system that the point satisfies (used to compute the point)
+--   [LiftedSystem]          -- a regularization of SolutionSystem (in case the point is not regular)
+--   [LiftedPoint]           -- the corresponding solution of the LiftedSystem
 --   }
 Point.synonym = "point"
 net Point := p -> (
@@ -434,14 +439,16 @@ assert (# solutionsWithMultiplicity {a,b,c} == 2)
 
 -----------------------------------------------------------------------
 -- WITNESS SET = {
---   Equations,            -- an ideal or a polynomial system 
+--   Equations,            -- an ideal or a polynomial system or a list
 --   Slice,                -- a matrix of coefficients of linear equations 
 --                            (e.g., row [1,2,3] corresponds to x+2y+3=0)
 --   Points,	           -- a list of points (in the format of the output of solveSystem/track) 
 --   IsIrreducible,        -- true, false, or null
---   ProjectionDimension   -- an integer n, the set describes a projection a variety to the first n coordinates
+--   [ProjectionDimension]   -- an integer n, the set describes a projection a variety to the first n coordinates
+--   [SolutionSystem]        -- a square system built from Equations and Slice that Points satisfy
+--   [LiftedSystem]          -- a regularization of SolutionSystem (in case Points are not regular)
 --   }
--- caveat: we assume that #Equations = dim(Slice)   
+-- caveat: we do not assume that #Equations = dim(Slice) 
 --
 -- PROJECTIVE WITNESS SET = { ... same as WITNESS SET ..., 
 --     AffineChart         -- one-row matrix of coefficients of a the linear equation of the chart
@@ -463,7 +470,7 @@ globalAssignment WitnessSet
 dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice 
      else if class W.Slice === Matrix then numrows W.Slice 
      else error "ill-formed slice in WitnessSet" )
-codim WitnessSet := W -> numgens ring W - dim W
+codim WitnessSet := {} >> o -> W -> numgens ring W - dim W
 ring WitnessSet := W -> ring W.Equations
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
@@ -484,9 +491,11 @@ witnessSet (PolySystem,PolySystem,List) := (I,S,P) ->
       }
 
 points = method() -- strips all info except coordinates, returns a doubly-nested list
-points WitnessSet := (W) -> apply(W.Points, coordinates)
+points WitnessSet := W -> apply(W.Points, coordinates)
 
-equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else (W.Equations)_*
+equations WitnessSet := (W) -> if class W.Equations === PolySystem then XXXtoList W.Equations else 
+if class W.Equations === Ideal then (W.Equations)_* else 
+W.Equations
 
 slice = method() -- returns linear equations for the slice (in both cases)   
 slice WitnessSet := (W) -> ( 
@@ -706,8 +715,6 @@ point DualSpace := L -> L.BasePoint
 
 beginDocumentation()
 
---undocumented {(generalEquations,WitnessSet)}
-
 document {
      Key => NAGtypes,
      Headline => "Common types used in Numerical Algebraic Geometry",
@@ -716,12 +723,14 @@ document {
      	  " as well as other numerical algebraic geometry packages: e.g., interface packages ", 
      	  TO "PHCpack::PHCpack", " and ", TO "Bertini::Bertini", "."
 	  },  
-     PARA{"Main datatypes: "},
+     PARA{"Datatypes: "},
      UL{    
-	 {TO "Point", " -- a numerical approximation of a point in a complex space"},
-	 {TO "PolySystem", " -- a polynomial system (usually with complex coefficients)"},
-	 {TO "WitnessSet", " -- a witness set representing (possibly positive-dimensional) solution components"},
-	 {TO "NumericalVariety", " -- a numerical description of a variety"}
+	 {TO Point, " -- a numerical approximation of a point in a complex space"},
+	 {TO PolySystem, " -- a polynomial system (usually with complex coefficients)"},
+	 {TO WitnessSet, " -- a witness set representing (possibly positive-dimensional) solution components"},
+	 {TO NumericalVariety, " -- a numerical description of a variety"},
+	 TO PolySpace,
+	 TO DualSpace
 	 },
      PARA{"See the corresponding documentation nodes for description of provided service functions."},
      PARA {
@@ -1141,11 +1150,11 @@ residual(S,p,Norm=>infinity)
     }
 
 document {
-    Key => {polySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem)},
+    Key => {polySystem, (polySystem,List), (polySystem,Matrix), (polySystem,PolySystem), (polySystem,Ideal)},
     Headline => "construct a polynomial system",
     Usage => "P = polysystem F",
     Inputs => { 
-	"F" => {ofClass List, " or ", ofClass Matrix, 
+	"F" => {ofClass List, " or ", ofClass Ideal, " or ", ofClass Matrix, 
 	    " (column matrix) with polynomial entries or ", ofClass PolySystem},
 	},
     Outputs => {"P"=> PolySystem},

@@ -61,11 +61,13 @@ decompose WitnessSet := (W) -> (
 	  while (c := random(#cs); #cs#c == 0) do (); -- vvv
 	  p := cs#c#(random(#(cs#c))); -- pick a component/point (rewrite!!!)
 	  S := eq | slice W;	  
-	  while (T := sliceEquations(randomSlice(k,n),R); 
-	       pt' := track(S,eq|T,{coordinates (W.Points)#p}); 
-	       not isRegular(pt',0)) 
+	  while (
+	      T := sliceEquations(randomSlice(k,n),R); 
+	      pt' := first movePoints(W, slice W, T, {(W.Points)#p});
+	      status pt' =!= Regular
+	      ) 
 	  do (); 
-	  pt := first movePoints(eq, T, slice W, pt');
+	  pt := first movePoints(W, T, slice W, {pt'});
 	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
 	  else ( 
@@ -101,7 +103,7 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 		    else (
 	       	    	 M := new MutableMatrix from W.Slice;
 		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column
-		    	 movePoints(equations W, slice W, sliceEquations(matrix M,ring W), w) 
+		    	 movePoints(W, slice W, sliceEquations(matrix M,ring W), w) 
 	       	    	 ) );
 	       {1, r, sum flatten entries (matrix (w'/coordinates) * proj)} 
                ));

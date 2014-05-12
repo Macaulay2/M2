@@ -23,8 +23,15 @@ assert(areEqual(sortSolutions solsT, sortSolutions sols))
 sols = track(S,T,solsS)
 assert(areEqual(sortSolutions solsT, sortSolutions sols))
 
+-- refine 
+R = CC[x,y];
+T = {x^2+y^2-1, x*y};
+sols = { {1.0001_CC,0.00001}, { -0.00001,1.0000002} };
+rsols = refine(T, sols, Software=>BERTINI, Bits=>1000)
+assert areEqual(rsols, {{1,0},{0,1}})
+
 -- numericalVariety
-V = numericalVariety ideal T
+V = numericalIrreducibleDecomposition ideal T
 assert(dim V == 0 and degree V == 4)
 
 -- parameterHomotopy
@@ -43,9 +50,10 @@ assert areEqual(sortSolutions first sols, sortSolutions {{11, 1}, {12, 1}, {13, 
 -- isOn
 R = CC[x,y,z];
 F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
-NV = numericalVariety ideal F
+NV = numericalIrreducibleDecomposition ideal F
 p = point{{0,0,0}} --z-axis
 assert isOn(p, NV)
+
 end
 
 restart
