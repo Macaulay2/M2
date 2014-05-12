@@ -828,6 +828,7 @@ doc ///
 
 doc ///
      Key
+          "Tolerance (NumericalHilbert)"
 	  [localHilbertRegularity,Tolerance]
 	  [eliminatingDual,Tolerance]
 	  [gCorners,Tolerance]
@@ -841,6 +842,10 @@ doc ///
 	       Many of the numerical operations require a tolerance value, below which numbers are considered to be numerically zero.
 	       {\tt Tolerance} should be given a non-negative real number.
 	       Over exact fields the default value is zero, while for inexact fields the default is 1e-6.
+	       
+	       
+	       
+	       See also @TO Tolerance@.
 ///
 
 doc ///
