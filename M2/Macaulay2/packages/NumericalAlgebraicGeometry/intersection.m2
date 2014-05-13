@@ -84,7 +84,6 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
 		Software=>o.Software)
     	    else (
-		1/0;
 	 	seq := P.DeflationSequenceMatrices;
 	 	S' := squareUp(deflate(S, seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
 		T' := squareUp(deflate(T, seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix

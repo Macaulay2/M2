@@ -423,7 +423,7 @@ load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/deflation.m2"
 load "./NumericalAlgebraicGeometry/SLP.m2"
 load "./NumericalAlgebraicGeometry/npd.m2"
---load "./NumericalAlgebraicGeometry/polynomial-space.m2"
+load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 -- HOM4PS2 part -----------------------------------------------------------
 
 makeHom4psInput = method(TypicalValue=>Sequence)
