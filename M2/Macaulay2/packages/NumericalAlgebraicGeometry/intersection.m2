@@ -47,7 +47,8 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 	if cIn =!= null then (
 	    if DBG>2 then << "( regeneration: " << net cIn << " is contained in V(f) for" << endl <<  
 	    << "  f = " << f << " )" << endl;
-	    scan(partitionViaDeflationSequence(cIn.Points, polySystem cIn),
+	    scan(
+		partitionViaDeflationSequence( cIn.Points, polySystem(equations polySystem cIn | slice cIn) ),
 		pts -> (
 		    oldW := witnessSet(cIn.Equations, cIn.Slice, pts);
 		    if DBG>2 then << "   old component " << peek oldW << endl;
