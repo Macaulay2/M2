@@ -179,6 +179,13 @@ public:
 
   virtual ring_elem lead_term(int nparts, const ring_elem f) const;
 
+public:
+  ///////////////////////////////////////
+  // Univariate polynomial translation //
+  ///////////////////////////////////////
+  ring_elem fromSmallIntegerCoefficients(const std::vector<long>& coeffs, int var) const;
+
+public:
   /////////////////////////
   // RRR and CCC support //
   /////////////////////////
@@ -283,6 +290,10 @@ public:
   // Translate v/denom to a vector in F.  denom does not need to be positive,
   // although it had better be non-zero.
 };
+
+// Returns a PolyRing iff R = ZZ/p[x], for some variable x, and some prime p.
+// Otherwise returns null.
+const PolyRing* /* or null */ isUnivariateOverPrimeField(const Ring* R);
 
 #endif
 

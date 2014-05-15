@@ -1,3 +1,4 @@
+#include "util.hpp"
 #include "polyring.hpp"
 #include "ring.hpp"
 #include "monoid.hpp"
@@ -206,6 +207,7 @@ unsigned long PolynomialRing::compute_hash_value(const ring_elem a) const
   //TODO: MES, write me.
   return 32129856;
 }
+
 
 #if 0
 // const RRing *PPolynomialRing::findCoefficientRing(const RRing *A) const

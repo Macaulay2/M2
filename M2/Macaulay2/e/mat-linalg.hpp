@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include "util.hpp"
 #include "exceptions.hpp"
 #include "dmat.hpp"
 
@@ -48,7 +49,6 @@ typedef DMat<M2::ARingCC> DMatCC;
 // It is defined in mat.cpp, but it is not declared in mat.hpp,
 // uugh (reason: mat.hpp doesn't need to be included in many places that
 // we want this function).
-M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 
 namespace MatrixOppies
 {

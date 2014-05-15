@@ -43,6 +43,7 @@ opt64-all : always
 		--enable-mathic \
 		--enable-mathicgb \
 		--enable-flint \
+		--enable-fplll \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"

@@ -30,6 +30,9 @@
 #include "aring-CC.hpp"
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
+
+#include <flint/fq_nmod.h>
+
 unsigned long IM2_Ring_hash(const Ring *R)
 {
   return R->get_hash_value();
@@ -1304,6 +1307,58 @@ const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, co
     }
   return RingElement::make_raw(R,  R->power_mod(f->get_value(), n, g->get_value()));
 }
+
+/////////////////////////////
+// GaloisField routines /////
+/////////////////////////////
+
+bool findConwayPolynomial(long charac, 
+                          long deg, 
+                          bool find_random_if_no_conway_poly_available,
+                          std::vector<long>& result_poly)
+{
+  // returns true if result_poly is actually set
+  int ret = 1;
+  fq_nmod_ctx_t ctx;
+  fmpz_t p;
+  fmpz_init(p);
+  fmpz_set_si(p, charac);
+  if (!find_random_if_no_conway_poly_available)
+    ret = _fq_nmod_ctx_init_conway(ctx,p,deg,"a");
+  else
+    fq_nmod_ctx_init(ctx,p,deg,"a");
+
+  if (ret == 0) return false;
+
+  result_poly.resize(deg+1);
+  for (long i=0; i<=deg; i++)
+    result_poly[i] = 0;
+  for (long i=0; i<ctx->len; i++)
+    {
+      if (ctx->j[i] < 0 or ctx->j[i] > deg)
+        printf("error: encountered bad degree\n");
+      // power is ctx->j[i]
+      // coeff is ctx->a[i]
+      result_poly[ctx->j[i]] = ctx->a[i];
+    }
+
+  //printf("flint GF information:\n");
+  //fq_nmod_ctx_print(ctx);
+
+  fq_nmod_ctx_clear(ctx);
+  return true;
+}
+
+M2_arrayint rawConwayPolynomial(
+    long charac, 
+    long deg, 
+    M2_bool find_random_if_no_conway_poly_available)
+{
+  std::vector<long> poly;
+  findConwayPolynomial(charac, deg, find_random_if_no_conway_poly_available, poly);
+  return stdvector_to_M2_arrayint(poly);
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

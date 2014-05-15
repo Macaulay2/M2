@@ -11,10 +11,9 @@ class RingElement : public immutable_object
 {
   const Ring *R;
   ring_elem val;
-
+public:
   RingElement(const Ring *R, ring_elem f);
 
-public:
   static RingElement * make_raw(const Ring *R, ring_elem f);
 
   ring_elem    get_value ()             const { return val; }
@@ -94,6 +93,15 @@ public:
   RingElement *numerator() const;
   RingElement *denominator() const;
   RingElement *fraction(const Ring *R, const RingElement *bottom) const;
+
+  // functions for univariate polynomials
+
+  // raises an exception if ring is not a univariate polynomial ring
+  // returns false if the polynomial coefficients cannot be coerced to long ints.
+  // otherwise: returns true, and sets result_coeffs.
+  // (Mainly useful for univariate poly rings over finite fields)
+  bool getSmallIntegerCoefficients(std::vector<long>& result_coeffs) const;
+  const M2_arrayintOrNull getSmallIntegerCoefficients() const;
 };
 
 inline RingElement::RingElement(const Ring *R0, ring_elem f) :

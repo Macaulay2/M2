@@ -194,6 +194,14 @@ extern "C" {
   const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 2^64-1 */
 
+  /* returns an array of non-negative integers, which represents the given Conway polynomial
+     If there is none, a list of length 0 is returned.
+     if the boolean argument is set to true, returns a random poly that flint finds 
+  */
+  M2_arrayintOrNull rawConwayPolynomial(long charac, 
+                                        long deg, 
+                                        M2_bool find_random_if_no_conway_poly_available);
+
   /**************************************************/
   /**** Ring routines *******************************/
   /**************************************************/

@@ -2054,7 +2054,39 @@ ring_elem PolyRing::divide_by_given_content(ring_elem f, ring_elem c) const
   return head.next;
 }
 
+////////////////////////////////////
+// Translation to/from arrays //////
+////////////////////////////////////
+const PolyRing* /* or null */ isUnivariateOverPrimeField(const Ring* R)
+{
+  const PolyRing* P = R->cast_to_PolyRing();
+  if (P == 0) return 0;
+  if (P->n_vars() != 1) return 0;
+  if (P->characteristic() == 0) return 0;
+  return P;
+}
 
+ring_elem PolyRing::fromSmallIntegerCoefficients(const std::vector<long>& coeffs, int var) const
+{
+  // create a poly
+  SumCollector* H = make_SumCollector();
+  exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(n_vars())); // deallocates automatically at end of block
+  ntuple::one(n_vars(), exp);
+  for (long i=0; i<coeffs.size(); i++)
+    {
+      exp[var] = static_cast<int>(i);
+      ring_elem c = K_->from_long(coeffs[i]);
+      if (K_->is_zero(c)) continue;
+      Nterm* t = new_term();
+      t->coeff = c;
+      t->next = NULL;
+      M_->from_expvector(exp, t->monom);
+      H->add(t);
+    }
+  ring_elem result = H->getValue();
+  delete H;
+  return result;
+}
 
 ///////////////////////////////////
 // vec routines for polynomials ///

@@ -600,8 +600,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         //result = givaroRandomIterator() %   givaroField.cardinality();
     }
 
-extern const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_elem f);
-
   bool ARingGFGivaro::promote(const Ring *Rf, const ring_elem f, ElementType &result) const
   {
     if (mOriginalRing != Rf) return false;

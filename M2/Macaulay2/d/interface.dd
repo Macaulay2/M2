@@ -633,6 +633,25 @@ export rawARingQQFlint(e:Expr):Expr := (
      );
 setupfun("rawARingQQFlint", rawARingQQFlint);
 
+export rawConwayPolynomial(e:Expr):Expr := (
+    when e is s:Sequence do 
+      if length(s) == 3 then (
+         when s.0 is charac:ZZcell do if !isInt(charac) then WrongArgSmallInteger(1) else
+         when s.1 is deg:ZZcell do if !isInt(deg) then WrongArgSmallInteger(2) else
+         if isBoolean(s.2) then (
+	         toExpr(Ccode(arrayint,
+		             "rawConwayPolynomial(",
+		             toInt(charac), ",", toInt(deg), ",", toBoolean(s.2), ")" ))
+             )
+         else WrongArgBoolean(3)
+         else WrongArgSmallInteger(2)
+         else WrongArgSmallInteger(1)
+         )
+      else WrongNumArgs(2)
+      else WrongNumArgs(2)
+    );
+setupfun("rawConwayPolynomial",rawConwayPolynomial);
+
 export rawRR(e:Expr):Expr := (
      when e is prec:ZZcell do if !isInt(prec) then WrongArgSmallInteger(1)
      else toExpr(Ccode(RawRingOrNull, "IM2_Ring_RRR(",toInt(prec),")" ))

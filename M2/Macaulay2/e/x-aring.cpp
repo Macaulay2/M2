@@ -167,35 +167,6 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
      }
 }
 
-const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_elem f)
-{
-  // Assumption: ring of f has one variable.
-  if (R == 0 || R->n_vars() > 1)
-    {
-      ERROR("expected polynomial ring in one variable");
-      return 0;
-    }
-
-  int lo, deg; // ignore lo, and deg == degree of the univariate polynomial f.
-  R->degree_of_var(0, f, lo, deg);
-  M2_arrayint polynomialCoeffs = M2_makearrayint(deg+1);
-  for (int i=0; i<=deg; i++)
-    polynomialCoeffs->array[i] = 0;
-  int exp[1];
-  for (Nterm *t = f; t != NULL; t = t->next)
-      {
-        std::pair<bool,long> res = R->getCoefficientRing()->coerceToLongInteger(t->coeff);
-        M2_ASSERT(res.first);
-        int coef = static_cast<int>(res.second);
-
-        R->getMonoid()->to_expvector(t->monom, exp);
-        ASSERT(exp[0] >= 0);
-        ASSERT(exp[0] <= deg);
-        polynomialCoeffs->array[exp[0]] = coef;
-      }
-  return polynomialCoeffs;
-}
-
 const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
 {
   // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
@@ -229,17 +200,19 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       ERROR("primitive element needs to be the generator of the ring, we think...!");
       return 0;
     }
-  
-  M2_arrayint modPoly = getPolynomialCoefficients(R, R->quotient_element(0));
-  if (modPoly == 0)
-    return 0;
 
-  // Now get the generator for the group of units (a 'primitive' element)
-  M2_arrayint primitiveElementPoly = getPolynomialCoefficients(R, a->get_value());
-  if (primitiveElementPoly == 0)
-    return 0;
-    
   try {
+    RingElement F(R,R->quotient_element(0));
+    M2_arrayint modPoly = F.getSmallIntegerCoefficients();
+    if (modPoly == 0)
+      {
+        ERROR("internal error: this should not happen");
+        return NULL;
+      }
+    M2_arrayint primitiveElementPoly = a->getSmallIntegerCoefficients();
+    if (primitiveElementPoly == 0)
+      return NULL;
+    
     M2::ARingGFGivaro *A = new M2::ARingGFGivaro(R->characteristic(), modPoly, primitiveElementPoly, *R);
     return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
   }
