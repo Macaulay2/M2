@@ -11,12 +11,12 @@ export {
 
 polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else 
     W.SolutionSystem = polySystem(
-    	n := numgens W.Equations;
+    	n := #equations W;
     	R := ring W;
     	m := codim W;
 	if m == n then W.Equations else (
     	    M := sub(randomOrthonormalRows(m,n),coefficientRing R);
-    	    (sub(M,ring W) * transpose gens W.Equations)
+    	    sub(M,ring W) * transpose matrix{equations W}
 	    )
     	)
 
