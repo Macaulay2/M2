@@ -32,7 +32,7 @@ export {
 
 --TruncDualData private keys
 protect Igens, protect syl, protect strategy, protect deg,
-protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs, protect Seeds
+protect dBasis, protect hIgens, protect BMintegrals, protect BMcoefs, protect BMbasis, protect Seeds
 
 -----------------------------------------------------------------------------------------
 
@@ -89,6 +89,8 @@ truncDualData (Matrix,Boolean,Number) := o -> (Igens,syl,t) -> (
     H.BMmatrix = innerProduct(polySpace if syl then H.hIgens else H.Igens, H.Seeds);
     H.BMintegrals = gens H.Seeds;
     H.BMcoefs = numericalKernel(H.BMmatrix,t);
+    H.BMbasis = H.BMcoefs;
+    --print(H.BMmatrix,H.BMcoefs);
     H.dBasis = H.BMintegrals * H.BMcoefs;
     if H.syl then H.dBasis = (map(R,S,{1_R} | gens R)) H.dBasis;
     new TruncDualData from H
@@ -110,8 +112,12 @@ nextTDD (ZZ,TruncDualData,Number) := (d,H,t) -> (
 	    (M,E) := BMmatrix H;
 	    H.BMmatrix = M; H.BMintegrals = E;
 	    H.BMcoefs = numericalKernel(M,t);
+	    --print(M,H.BMcoefs);
+	    I := basisIndices(last coefficients E*H.BMcoefs, t);
+	    H.BMbasis = submatrix(H.BMcoefs, I);
 	    H.dBasis = if H.syl then dehomog(E*H.BMcoefs) else H.dBasis | E*H.BMcoefs;
 	    if numcols H.BMcoefs == 0 then break;
+	    --print (e, numrows M, numcols M, numcols H.dBasis, dim reduceSpace polySpace H.dBasis);
   	    );
     	);
     H.deg = d;
@@ -213,7 +219,8 @@ gCorners (Point,Matrix) := o -> (p,Igens) -> (
 	    topLCMdegree := max apply(subsets(#GCs,2),s->homogenizedLCMdegree(GCs#(s#0), GCs#(s#1)));
 	    finalDegree = max(finalDegree,topLCMdegree);
 	    );
-	print(d, dim dBasisReduced, newGCs/first);
+	<< "-- at degree " << d << ": dim " << dim dBasisReduced << ", new corners " << newGCs/first << endl;
+	--print(d, finalDegree, dim dBasisReduced, newGCs/first);
 	d = d+1;
 	);
     GCs = if o.ProduceSB then SBs else GCs/first;
@@ -287,8 +294,8 @@ listLCM = L -> (
 -- B contains the most recently found generators (as coefficients in terms of E)
 BMmatrix = H -> (
     Igens := if H.syl then H.hIgens else H.Igens;
-    (M,E,B,homogeneous,Seeds) := (H.BMmatrix,H.BMintegrals,H.BMcoefs,H.syl,H.Seeds);
-    --print(Igens,M,E);
+    (M,E,B,Bfull,homogeneous,Seeds) := (H.BMmatrix,H.BMintegrals,H.BMbasis,H.BMcoefs,H.syl,H.Seeds);
+    --print(M,E,(numcols B, numrows B),(numcols Bfull, numrows Bfull));
     R := ring Igens;
     n := numgens R;
     m := numcols Igens;
@@ -303,7 +310,7 @@ BMmatrix = H -> (
 			subs := matrix{apply(n, l->(if l > k then 0_R else (gens R)#l))};
 			(gens R)#k * sub(bpoly,subs)))};
 	    M' := innerProduct(polySpace Igens, polySpace E');
-	    if not homogeneous then M' = map(R^(s+snew),R^n,0) || M';
+	    if not homogeneous then M' = map(R^(s+(numcols Bfull)),R^n,0) || M';
 	    for j from 0 to s-1 do (
 		w := apply(n,k->(bcol_(offset + j*n + k,0)));
 		v := mutableMatrix(R,#npairs,n);
@@ -317,7 +324,7 @@ BMmatrix = H -> (
 	    ));
     
     if not homogeneous then
-    M = transpose B || M || map(R^(m + s*(1+#npairs) - numrows M),R^(numcols E),0)
+    M = transpose Bfull || M || map(R^(m + s*(1+#npairs) - numrows M),R^(numcols E),0)
     else M = map(R^(m + s*#npairs),R^0,0);
     M = M | matrix{newMEs/first};
     E = if homogeneous then matrix{newMEs/last} else E | matrix{newMEs/last};
@@ -516,6 +523,26 @@ colReduce (Matrix, Number) := (M, tol) -> (
 	);
     M = (transpose new Matrix from M)_{0..i-1};
     if tol > 0 then clean(tol,M) else M
+    )
+
+--a list of column indices for a basis of the column space of M
+basisIndices = (M, tol) -> (
+    M = new MutableMatrix from sub(M, ultimate(coefficientRing, ring M));
+    (m,n) := (numrows M, numcols M);
+    i := 0; --row of pivot
+    I := new MutableList;
+    for j from 0 to n-1 do (
+	if i == m then break;
+	a := i + maxPosition apply(i..m-1, l->(abs M_(l,j)));
+	c := M_(a,j);
+	if abs c <= tol then continue;
+	I#(#I) = j;
+	rowSwap(M,a,i);
+	for l from 0 to n-1 do M_(i,l) = M_(i,l)/c; --rowMult(M,i,1/c); is bugged
+	for k from 0 to m-1 do rowAdd(M,k,-M_(k,j),i);
+	i = i+1;
+	);
+    new List from I
     )
 
 beginDocumentation()
