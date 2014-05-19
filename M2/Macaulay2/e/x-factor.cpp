@@ -68,21 +68,18 @@ struct enter_factory {
   int oldRatlState;
   int newRatlState;
   const Ring* Zn;
-  const GF *gf;
   void enter();
   void exit();
 
   enter_factory() :
        mode(modeUnknown),
-       Zn(NULL),
-       gf(NULL)
+       Zn(NULL)
      { enter(); }
 
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
        newcharac(mode == modeZn || mode == modeGF ? static_cast<int>(P->characteristic()) : 0),
-       Zn(mode == modeZn ? P->getCoefficientRing() : NULL),
-       gf(mode == modeGF ? P->getCoefficientRing()->cast_to_GF(): NULL)
+       Zn(mode == modeZn ? P->getCoefficientRing() : NULL)
      { enter(); }
 
   ~enter_factory() { exit(); }
@@ -266,6 +263,51 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 
 static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 
+
+////////////////////////////////////////////////////////////////////////
+// Code to convert GF elements to/from factory CanonicalForm elements //
+////////////////////////////////////////////////////////////////////////
+static Variable set_GF_minimal_poly(const PolynomialRing* P)
+{
+  const GF* kk = P->getCoefficientRing()->cast_to_GF();
+  M2_ASSERT(kk != 0);
+  RingElement F = RingElement(kk, kk->var(0));
+  F.promote(P, algebraicElement_M2); // sets algebraicElement_M2
+  Variable a = rootOf(convertToFactory(* kk->get_minimal_poly(),notInExtension),'a');
+  algebraicElement_Fac = a;
+  return a;
+}
+static void getGFRepresentation(const Ring* kk1, const ring_elem& a, std::vector<long>& result_rep)
+{
+  const GF* kk = kk1->cast_to_GF();
+  M2_ASSERT(kk != 0);
+  RingElement F(kk->originalR(), kk->get_rep(a));
+  F.getSmallIntegerCoefficients(result_rep);
+}
+static CanonicalForm convertGFToFactory(const std::vector<long>& repr)
+{
+  // Uses algebraicElement_Fac as the element
+  CanonicalForm f = 0;
+  for (int i=0; i<repr.size(); i++)
+    {
+      if (repr[i] == 0) continue;
+      CanonicalForm m = CanonicalForm(repr[i]);
+      m *= power(algebraicElement_Fac, i);
+      f += m;
+    }
+  return f;
+}
+static CanonicalForm convertGFToFactory(const ring_elem &q, const PolynomialRing *P) 
+  // use algebraicElement_Fac for converting this galois field element
+  //  SO: one needs to have called set_GF_minimal_poly first!
+{
+  std::vector<long> poly;
+  getGFRepresentation(P->getCoefficientRing(), q, poly);
+  return convertGFToFactory(poly);
+}
+///////////////////////////////////////////////////////////////////////
+
+#if 0
 static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use algebraicElement_Fac for converting this galois field element
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
@@ -288,6 +330,7 @@ static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use 
   }
   return f;
 }
+#endif
 
 static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
      const Ring *R = g.get_ring();
@@ -315,7 +358,7 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
          }
        CanonicalForm m = (
                           foo.mode == modeZn ? CanonicalForm(coef) :
-                          foo.mode == modeGF ? convertToFactory(t->coeff,foo.gf) :
+                          foo.mode == modeGF ? convertGFToFactory(t->coeff,P) :
                           foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
                           foo.mode == modeQQ ? (
                                                 convertToFactory(mpq_numref(MPQ_VAL(t->coeff)))
@@ -374,10 +417,7 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f, const R
     if (foo.mode == modeError) { algebraicElement_M2 = NULL; return 0; }
     if (foo.mode == modeGF) {
       assert( ! inExtension );
-      algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-      {
-        (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-      }
+      set_GF_minimal_poly(P);
     }
     if (inExtension) {
       CanonicalForm minp = convertToFactory(*mipo,false);
@@ -438,10 +478,7 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(const RingElement *f,
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   if (foo.mode == modeGF) {
-    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-    {
-      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-    }
+    set_GF_minimal_poly(P);
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
@@ -476,10 +513,7 @@ const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   if (foo.mode == modeGF) {
-    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-    {
-      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-    }
+    set_GF_minimal_poly(P);
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
@@ -513,12 +547,9 @@ void rawFactorBase(const RingElement *g,
 
           if (foo.mode == modeGF) {
             inExtension = true;
-            CanonicalForm mipocf = convertToFactory(*foo.gf->get_minimal_poly(),notInExtension);
-            Variable a = rootOf(mipocf,'a');
-            algebraicElement_Fac = a;
+            Variable a = set_GF_minimal_poly(P);
             CanonicalForm h = convertToFactory(*g,notInExtension);
             q = factorize(h,a);
-            (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,/* sets: */ algebraicElement_M2);
           }
           else if (mipo != NULL) {
             CanonicalForm mipocf = convertToFactory(*mipo,notInExtension);
