@@ -41,10 +41,14 @@ public:
   GF * cast_to_GF() { return this; }
   const GF * cast_to_GF() const { return this; }
 
-  const RingElement *get_minimal_poly() const;
+  virtual bool isGaloisField() const { return true; }
+
+  const RingElement* getMinimalPolynomial() const;
   // returns the polynomial f(t) mentioned in the def of _originalR above.
   // this is the minimal polynomial of the given generator of this ring
   // (which is not necessarily the primitive element)
+  virtual const RingElement* getGenerator() const;
+  virtual const RingElement* getRepresentation(const ring_elem& a) const;
 
   ring_elem get_rep(ring_elem f) const;
   // takes an element of this ring, and returns an element of _originalR->XXX()

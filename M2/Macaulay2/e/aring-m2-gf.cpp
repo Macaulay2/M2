@@ -22,6 +22,7 @@ namespace M2 {
   {
     ASSERT(mOriginalRing.n_quotients() == 1);
 
+    mGenerator = RingElement::make_raw(&R, R.copy(prim));
     ring_elem f = mOriginalRing.quotient_element(0);
     Nterm *t = f;
     mDimension = mOriginalRing.getMonoid()->primary_degree(t->monom);

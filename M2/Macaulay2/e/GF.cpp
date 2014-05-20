@@ -149,14 +149,21 @@ void GF::text_out(buffer &o) const
   o << "GF(" << Q_ << ")";
 }
 
-const RingElement *GF::get_minimal_poly() const
-// returns the polynomial f(t) mentioned in the def of _originalR above.
-// this is the minimal polynomial of the given generator of this ring
-// (which is not necessarily the primitive element)
+const RingElement *GF::getMinimalPolynomial() const
 {
   const Ring *R = _originalR->getAmbientRing();
   ring_elem f = R->copy(_originalR->quotient_element(0));
   return RingElement::make_raw(R, f);
+}
+
+const RingElement* GF::getGenerator() const
+{
+  return _primitive_element;
+}
+
+const RingElement* GF::getRepresentation(const ring_elem& a) const
+{
+  return RingElement::make_raw(_originalR, _originalR->power(_primitive_element->get_value(), a.int_val));
 }
 
 ring_elem GF::get_rep(ring_elem a) const

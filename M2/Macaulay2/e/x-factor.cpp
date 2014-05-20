@@ -23,7 +23,7 @@ using std::endl;
 #include "poly.hpp"
 
 #include "relem.hpp"
-#include "GF.hpp"
+//#include "GF.hpp"
 #include "text-io.hpp"
 #include "buffer.hpp"
 
@@ -42,7 +42,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      if (F->is_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
      if (F->isFinitePrimeField()) return modeZn;
-     if (F->cast_to_GF()) return modeGF;
+     if (F->isGaloisField()) return modeGF;
      ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
      return modeError;
 }
@@ -269,20 +269,23 @@ static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 ////////////////////////////////////////////////////////////////////////
 static Variable set_GF_minimal_poly(const PolynomialRing* P)
 {
-  const GF* kk = P->getCoefficientRing()->cast_to_GF();
+  M2_ASSERT(P->getCoefficientRing()->isGaloisField());
+  const Ring* kk = P->getCoefficientRing();
   M2_ASSERT(kk != 0);
   RingElement F = RingElement(kk, kk->var(0));
   F.promote(P, algebraicElement_M2); // sets algebraicElement_M2
-  Variable a = rootOf(convertToFactory(* kk->get_minimal_poly(),notInExtension),'a');
+  Variable a = rootOf(convertToFactory(* kk->getMinimalPolynomial(),notInExtension),'a');
   algebraicElement_Fac = a;
   return a;
 }
 static void getGFRepresentation(const Ring* kk1, const ring_elem& a, std::vector<long>& result_rep)
 {
-  const GF* kk = kk1->cast_to_GF();
-  M2_ASSERT(kk != 0);
-  RingElement F(kk->originalR(), kk->get_rep(a));
-  F.getSmallIntegerCoefficients(result_rep);
+  M2_ASSERT(kk1->isGaloisField());
+  //  const GF* kk = kk1->cast_to_GF();
+  //  M2_ASSERT(kk != 0);
+  const RingElement* F = kk1->getRepresentation(a);
+  //  RingElement F(kk->originalR(), kk->get_rep(a));
+  F->getSmallIntegerCoefficients(result_rep);
 }
 static CanonicalForm convertGFToFactory(const std::vector<long>& repr)
 {

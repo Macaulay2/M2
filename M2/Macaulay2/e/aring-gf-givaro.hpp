@@ -205,7 +205,7 @@ class ARingGFGivaro : public RingInterface
         M2_arrayint getGeneratorCoeffs() const;
 
         ring_elem   getGenerator() const;
-      
+        const PolynomialRing& originalRing() const { return * mOriginalRing; }
     /** @} */
 
 

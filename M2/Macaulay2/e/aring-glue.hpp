@@ -48,6 +48,21 @@ namespace M2 {
         ringID() == ring_ZZpFlint;
     }
 
+    bool isGaloisField() const { 
+      return ringID() == ring_GF or 
+        ringID() == ring_GFGivaro or
+        ringID() == ring_GFFlintBig or
+        ringID() == ring_GFFlintZech;
+    }
+
+    /////////////////////////////////////////
+    // Special functions for Galois Fields //
+    /////////////////////////////////////////
+    // These are declared below for Galois fields, and the definitions appear where?
+    const RingElement* getMinimalPolynomial() const { return 0; }
+    const RingElement* getGenerator() const { return 0; }
+    const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
+
     ////////////////////////////
     // Functions on elements ///
     ////////////////////////////
@@ -1060,6 +1075,48 @@ namespace M2 {
     return std::pair<bool, long>(succeed, b);
   }
 
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFM2>::getMinimalPolynomial()  const
+  {
+    const PolynomialRing& originalR = ring().originalRing();
+    const PolynomialRing *R = originalR.getAmbientRing();
+    ring_elem f = R->copy(originalR.quotient_element(0));
+    return RingElement::make_raw(R, f);
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFM2>::getGenerator()  const
+  {
+    return ring().getGenerator();
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFM2>::getRepresentation(const ring_elem& a) const
+  {
+    return getGenerator()->power(a.int_val);
+  }
+
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFGivaro>::getMinimalPolynomial()  const
+  {
+    const PolynomialRing& originalR = ring().originalRing();
+    const PolynomialRing *R = originalR.getAmbientRing();
+    ring_elem f = R->copy(originalR.quotient_element(0));
+    return RingElement::make_raw(R, f);
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFGivaro>::getGenerator()  const
+  {
+    return RingElement::make_raw(& ring().originalRing(), ring().originalRing().var(0)); // The primitive element is always the variable
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFGivaro>::getRepresentation(const ring_elem& a) const
+  {
+    return getGenerator()->power(a.int_val);
+  }
 }; // namespace M2
 
 #include "aring-qq.hpp"

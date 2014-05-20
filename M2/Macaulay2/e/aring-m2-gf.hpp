@@ -46,6 +46,7 @@ namespace M2 {
     
     const PolynomialRing& ring() const { return mOriginalRing; }
     const ring_elem primitiveElement() const { return mPrimitiveElement; }
+    const RingElement* getGenerator() const { return mGenerator; }
     GFElement generatorExponent() const { return mGeneratorExponent; }
   private:
     // CONSTANT usable fields. 
@@ -60,11 +61,11 @@ namespace M2 {
     GFElement* mFromIntTable;
     
     const PolynomialRing& mOriginalRing;
+    const RingElement* mGenerator;
     const ring_elem mPrimitiveElement; // is an element of mOriginalRing
     GFElement mGeneratorExponent;  
     // the given generator of mOriginalRing is 
     // mPrimitiveElement^mGeneratorExponent (in this ring).
-    
   };
 
 /**
@@ -100,6 +101,9 @@ namespace M2 {
 
     void text_out(buffer &o) const;
 
+    const PolynomialRing& originalRing() const { return mGF.ring(); }
+
+    const RingElement* getGenerator() const { return mGF.getGenerator(); }
   private:
     GaloisFieldTable mGF;
 

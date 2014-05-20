@@ -100,6 +100,7 @@ public:
   }
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
   virtual bool isFinitePrimeField() const { return false; }
+  virtual bool isGaloisField() const { return false; }
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
@@ -202,6 +203,11 @@ public:
   virtual const RRR * cast_to_RRR() const { return 0; }
   virtual CCC * cast_to_CCC() { return 0; }
   virtual const CCC * cast_to_CCC() const { return 0; }
+
+  // Galois Field routines
+  virtual const RingElement* getMinimalPolynomial() const { return 0; }
+  virtual const RingElement* getGenerator() const { return 0; }
+  virtual const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
 
   virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const { return 0; }
 
