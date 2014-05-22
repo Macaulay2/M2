@@ -20,7 +20,7 @@ namespace M2 {
     mOriginalRing(R),
     mPrimitiveElement(prim)
   {
-    ASSERT(mOriginalRing.n_quotients() == 1);
+    M2_ASSERT(mOriginalRing.n_quotients() == 1);
 
     mGenerator = RingElement::make_raw(&R, R.copy(prim));
     ring_elem f = mOriginalRing.quotient_element(0);
@@ -60,8 +60,8 @@ namespace M2 {
         std::cerr << "\n";
       }
 #endif
-    ASSERT(polys.size() == mOrder);
-    ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
+    M2_ASSERT(polys.size() == mOrder);
+    M2_ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
     
     // Set 'one_table'.
     mOneTable = newarray_atomic(GFElement,mOrder);
@@ -124,29 +124,29 @@ namespace M2 {
   {
   }
 
+  void ARingGFM2::fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const
+  {
+    result = 0;
+    ElementType a,b;
+    for (long i=0; i<poly.size(); i++)
+      if (poly[i] != 0)
+        {
+          set_from_long(a, poly[i]);
+          power(b, mGF.generatorExponent(), i);
+          mult(a,a,b);
+          add(result,result,a);
+        }
+  }
+
   bool ARingGFM2::promote(const Ring *Rf, const ring_elem f, elem &result) const
   {
     if (&mGF.ring() != Rf) return false;
 
-    result = 0;
-    int exp[1];
-    for (Nterm *t = f; t != NULL; t = t->next)
-      {
-        elem a, b;
-
-        std::pair<bool,long> res = mGF.ring().getCoefficientRing()->coerceToLongInteger(t->coeff);
-        M2_ASSERT(res.first);
-        set_from_long(a, res.second);
-
-        mGF.ring().getMonoid()->to_expvector(t->monom, exp);
-        // exp[0] is the variable we want.  Notice that since the ring is a quotient,
-        // this degree is < n (where Q_ = P^n).
-        power(b, mGF.generatorExponent(), exp[0]);
-        mult(a, a, b);
-        add(result, result, a);
-      }
+    std::vector<long> poly;
+    RingElement F(Rf,f);
+    F.getSmallIntegerCoefficients(poly);
+    fromSmallIntegerCoefficients(result, poly);
     return true;
-    
   }
 
   bool ARingGFM2::lift(const Ring *Rg, const elem f, ring_elem &result) const

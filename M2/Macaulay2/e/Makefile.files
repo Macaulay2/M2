@@ -26,6 +26,7 @@ INTERFACE = \
 	aring-RRR \
 	aring-CCC \
 	aring-tower \
+	aring-gf-flint-big \
 	aring-m2-gf \
 	aring-zzp \
 	aring-gf-givaro \

@@ -8,6 +8,7 @@
 #include "aring-zzp-flint.hpp"
 #include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
+#include "aring-gf-flint-big.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
 #include "aring-qq.hpp"
@@ -76,10 +77,9 @@ const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
 #endif
 }
 
-const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
+static const PolynomialRing* /* or null */ checkGaloisFieldInput(const RingElement* f)
 {
   // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
-  // Check that f has degree >= 2
   // Check that f is monic
   // If any of these fail, then return 0.
   const PolynomialRing *R = f->get_ring()->cast_to_PolynomialRing();
@@ -103,9 +103,28 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
+  return R;
+}
+const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
   try {
     M2::ARingGFM2 *A = new M2::ARingGFM2(*R,f->get_value());
     return M2::ConcreteRing<M2::ARingGFM2>::create(A);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
+  try {
+    M2::ARingGFFlintBig *A = new M2::ARingGFFlintBig(*R,f->get_value());
+    return M2::ConcreteRing<M2::ARingGFFlintBig>::create(A);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

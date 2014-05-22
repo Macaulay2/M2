@@ -826,6 +826,28 @@ namespace M2 {
   }
 
   template<>
+  inline bool ConcreteRing<ARingGFFlintBig>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
+  {
+    ElementType a;
+    ring().init(a);
+    bool retval = ring().promote(Rf,f,a);
+    ring().to_ring_elem(result, a);
+    ring().clear(a);
+    return retval;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingGFFlintBig>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    ElementType a;
+    ring().init(a);
+    ring().from_ring_elem(a, f);
+    bool retval = ring().lift(Rg,a,result);
+    ring().clear(a);
+    return retval;
+  }
+
+  template<>
   inline bool ConcreteRing<ARingGFGivaro>::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
   {
     // Rf = Z/p[x]/F(x) ---> GF(p,n)

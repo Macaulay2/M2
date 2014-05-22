@@ -160,6 +160,10 @@ extern "C" {
   const Ring /* or null */ *rawARingGaloisField1(const RingElement *prim); /* connected */
   /* same interface as rawGaloisField, but uses different internal code */
 
+  const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, but too big 
+     for lookup tables */
+
   const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *prim); /* connected */
   /* same interface as rawGaloisField, but uses Givaro */
 

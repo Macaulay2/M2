@@ -181,7 +181,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     if d < opts.SizeLimit
+     if d < opts.SizeLimit or opts.Strategy === "FlintBig"
      then (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
 	  rawF := if opts.Strategy === null or opts.Strategy === "Old" then 
@@ -191,7 +191,10 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 		  else if opts.Strategy === "CompleteGivaro" then 
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
 		  else if opts.Strategy === "New" then
-		      rawARingGaloisField1 raw primitiveElement;
+		      rawARingGaloisField1 raw primitiveElement
+                  else if opts.Strategy === "FlintBig" then
+                       rawARingGaloisFieldFlintBig raw primitiveElement
+                  else error ("unknown type of Galois Field requested: "|opts.Strategy);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;

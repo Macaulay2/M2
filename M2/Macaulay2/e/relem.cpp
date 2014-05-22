@@ -407,6 +407,11 @@ bool RingElement::getSmallIntegerCoefficients(std::vector<long>& result_coeffs) 
       return false; // Should not be needed
     }
 
+  if (is_zero())
+    {
+      result_coeffs.resize(0);
+      return true;
+    }
   int lo, deg; // ignore lo, and deg == degree of the univariate polynomial f.
   R->degree_of_var(0, get_value(), lo, deg);
   result_coeffs.resize(deg+1);

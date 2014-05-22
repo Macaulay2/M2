@@ -80,7 +80,6 @@ namespace M2 {
 
   public:
     static const RingID ringID = ring_GF;
-    //    typedef ConcreteRing<ARingGFM2> ring_type;
     typedef int ElementType;
     typedef int elem;
     
@@ -271,7 +270,7 @@ namespace M2 {
         result = 0;
     }
 
-    void power(elem &result, elem a, int n) const
+    void power(elem &result, elem a, long n) const
     {
       if (a != 0)
         {
@@ -284,7 +283,7 @@ namespace M2 {
 
     void power_mpz(elem &result, elem a, mpz_ptr n) const
     {
-      int n1 = static_cast<int>(mpz_fdiv_ui(n, mGF.orderMinusOne()));
+      long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
       power(result,a,n1);
     }
 
@@ -319,6 +318,7 @@ namespace M2 {
       result = rawRandomInt(static_cast<int32_t>(characteristic()));
     }
 
+    void fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const;
 
     bool promote(const Ring *Rf, const ring_elem f, elem &result) const;
 

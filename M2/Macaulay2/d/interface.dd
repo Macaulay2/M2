@@ -779,6 +779,11 @@ export rawARingGaloisField1(e:Expr):Expr := (
      else WrongArg("a raw ring element"));
 setupfun("rawARingGaloisField1", rawARingGaloisField1);
 
+export rawARingGaloisFieldFlintBig(e:Expr):Expr := (
+     when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawARingGaloisFieldFlintBig(", f.p, ")"))
+     else WrongArg("a raw ring element"));
+setupfun("rawARingGaloisFieldFlintBig", rawARingGaloisFieldFlintBig);
+
 export rawARingGaloisFieldFromQuotient(e:Expr):Expr := (
      when e is f:RawRingElementCell do toExpr(Ccode(RawRingOrNull,"rawARingGaloisFieldFromQuotient(", f.p, ")"))
      else WrongArg("a raw ring element"));
