@@ -1067,6 +1067,7 @@ then AC_LANG(C)
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (flint will be built from downloaded sources)]); BUILD_flint=yes ])
 fi
 test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
+AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict.
@@ -1129,6 +1130,7 @@ then AC_LANG(C++)
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
+AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
 AC_SUBST(ENABLE_GIVARO,no)
 AC_ARG_ENABLE(givaro,

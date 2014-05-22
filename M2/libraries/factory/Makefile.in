@@ -22,9 +22,13 @@ LICENSEFILES = INSTALL COPYING
 #PRECONFIGURE = autoreconf -vi
 PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 
-# Factory's configure script is annoying: why doesn't it look in the standard places?
-# It works, but only for case flint and ntl are built in $(LIBRARIESDIR). better solution?
-CONFIGOPTIONS += --with-flint='$(LIBRARIESDIR)' --with-ntl='$(LIBRARIESDIR)'
+# Factory's configure script is super annoying: why doesn't it find libraries using the standard autoconf macros?
+ifeq (@BUILD_ntl@,yes)
+CONFIGOPTIONS += --with-ntl='$(LIBRARIESDIR)'
+endif
+ifeq (@BUILD_flint@,yes)
+CONFIGOPTIONS += --with-flint='$(LIBRARIESDIR)'
+endif
 
 CONFIGOPTIONS += --disable-omalloc --enable-streamio
 CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'
