@@ -11,7 +11,7 @@ VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
 TARDIR = factory
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
@@ -22,10 +22,11 @@ LICENSEFILES = INSTALL COPYING
 #PRECONFIGURE = autoreconf -vi
 PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
 
-# works, but only for case flint is build in $(LIBRARIESDIR). better solution?
-CONFIGOPTIONS += --with-flint='$(LIBRARIESDIR)'
+# Factory's configure script is annoying: why doesn't it look in the standard places?
+# It works, but only for case flint and ntl are built in $(LIBRARIESDIR). better solution?
+CONFIGOPTIONS += --with-flint='$(LIBRARIESDIR)' --with-ntl='$(LIBRARIESDIR)'
 
-CONFIGOPTIONS += --disable-omalloc --enable-streamio --with-ntl 
+CONFIGOPTIONS += --disable-omalloc --enable-streamio
 CONFIGOPTIONS += --includedir='$(LIBRARIESDIR)/include/'
 CONFIGOPTIONS += --disable-shared
 CONFIGOPTIONS += --without-Singular

@@ -56,6 +56,7 @@ document {
 	  TO "LAPACK",
 	  TO "BLAS",
 	  TO "NTL library",
+	  TO "FLINT",
 	  TO "mpack",
 	  "programs and their libraries",
 	  TO "4ti2",
@@ -65,6 +66,18 @@ document {
 	  TO "cdd+",
 	  TO "lrslib"
      	  }
+     }
+
+document {
+     Key => "FLINT",
+     PARA {
+	  "The library ", TT "FLINT", " (Fast Library for Number Theory) is a
+	  library for computations in number theory, consisting mainly of routines for
+	  integer and polynomial arithmetic and linear algebra.  It was written
+	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
+	  and others, and is available at ", HREF "http://flintlib.org/", ".  It is 
+	  distributed under the terms of the GNU General Public License, version 2 or later."
+	  }
      }
 
 document {

@@ -1,3 +1,14 @@
+if factor 21! === new Product from {new Power from {2,1},new Power from {3,1},new Power from {5,1},new Power from {17,1},new Power from {4019,1},new Power from {11773017821,1},new Power from {118513134016454452008690386392661885516,1}} then error "pari/gmp integer conversion: 64-bit reversal"
+-- If this test fails, try adding
+-- 	--enable-build-libraries=pari
+-- to the configure script command line.  I think the problem is that you have a
+-- dynamically shared pari library (e.g., in Fedora), and somehow it was compiled
+-- differently, so that the 64 bit words constituting a big number are stored in
+-- the other order.
+-- Eventually the configure script will figure this out for itself.
+
+assert( (factor 21!) === new Product from {new Power from {2,18},new Power from {3,9},new Power from {5,4},new Power from {7,3},new Power from {11,1},new Power from {13,1},new Power from {17,1},new Power from {19,1}} )
+
 assert( factor 100! 
      ===
      new Product from {new Power from {2,97},new Power from {3,48},new Power from {5,24},new Power from {7,16},new Power from {11,9},new Power from

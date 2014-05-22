@@ -67,6 +67,9 @@ header "
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
    #endif
+   #ifdef HAVE_FLINT
+       #include <flint/flint.h>
+   #endif
    ";
 gcversion():constcharstar := Ccode(returns,"
      static char buf[40];
@@ -198,7 +201,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	 "),
    "flint version" => Ccode(constcharstar,"
 	 #if HAVE_FLINT
-	   \"2.2\" /* just a guess! */
+	   FLINT_VERSION
 	 #else
 	   \"not present\"
 	 #endif

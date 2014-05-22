@@ -172,6 +172,7 @@ if firstTime then (
 	       else ""
 	       )
 	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
+	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
 	  |    (
 	       if version#"gmp version" =!= "not present"
 	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
@@ -285,7 +286,7 @@ if firstTime then (
 	       "programs" => "@programsdir@/",
 	       "program licenses" => "@licensesdir@/",
 	       "package" => "@packagesdir@/PKG/",
-	       "factory gftables" =>  "@packagesdir@/Core/factory/",
+	       "factory gftables" =>  "@packagesdir@/Core/factory/gftables/",
 	       "packagedoc" => "@docdir@/PKG/",
 	       "packageimages" => "@docdir@/PKG/images/",
 	       "packagetests" => "@docdir@/PKG/tests/",
