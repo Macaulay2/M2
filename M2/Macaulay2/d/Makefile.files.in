@@ -96,7 +96,7 @@ else
 M2_SRCFILES += pari.d pari-c.h pari-c.c
 endif
 
-ifeq (@ENABLE_FLINT@,yes)
+ifeq (@ENABLE_flint@,yes)
 M2_DFILES += flint.d
 else
 M2_SRCFILES += flint.d
