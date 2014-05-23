@@ -41,8 +41,10 @@ isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witne
         --SECOND PART: returns false if deemed not embedded
 	print "colon(truncated dual)...";
 	time Sd := colon(truncatedDual(p,I,d), l);
-	if isSubset(flatten entries sCorners gCs, leadMonomial \ flatten entries gens reduceSpace Sd) 
-	then return false; 
+	sCs := flatten entries sCorners gCs;
+	colonLMs := leadMonomial \ flatten entries gens reduceSpace Sd;
+    	<< "s-corners: " << sCs << endl << "LM(colon ideal): " << colonLMs << endl;	
+	if isSubset(sCs, colonLMs) then return false; 
     	d = d+1;
 	)
     )

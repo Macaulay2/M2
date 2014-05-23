@@ -23,6 +23,16 @@ polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else
 check WitnessSet := o -> W -> for p in W.Points do --!!!
 if residual(polySystem(equations polySystem W | slice W), p) > 1000*DEFAULT.Tolerance then error "check failed" 
 
+
+randomSlice = method()
+randomSlice (ZZ,ZZ,Ring) := (d,n,C) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(C^d,C^1)   
+randomSlice (ZZ,ZZ,Ring,Point) := (d,n,C,point) -> (
+     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
+     SM | (-SM * transpose matrix point)
+     )
+randomSlice (ZZ,ZZ) := (d,n) -> randomSlice(d,n,CC_53)
+randomSlice (ZZ,ZZ,Point) := (d,n,point) -> randomSlice(d,n,CC_53,point)
+
 isOn (Point,WitnessSet) := o -> (p, W) -> (
     o = fillInDefaultOptions o;
     if # coordinates p != numgens ring W then error "numbers of coordinates mismatch";
@@ -31,8 +41,7 @@ isOn (Point,WitnessSet) := o -> (p, W) -> (
     (
 	R := ring W.Equations;
 	C := coefficientRing R;
-	M := random(C^(dim W), C^(numgens R));
-	W' := moveSlice(W, M | -M*transpose matrix p);
+	W' := moveSlice(W, randomSlice(dim W, numgens R, C, p));
 	any(W'.Points, p'->areEqual(p',p))
 	)
     )
@@ -84,14 +93,6 @@ WitnessSet - WitnessSet := (V,W) -> ( -- difference V/W, also used to remove jun
      else witnessSet(V.Equations, V.Slice, select(V.Points, p->not member(coordinates p,W)))
      ) 
 
-randomSlice = method()
-randomSlice (ZZ,ZZ) := (d,n) -> (randomUnitaryMatrix n)^(toList(0..d-1)) | random(CC^d,CC^1)   
-randomSlice (ZZ,ZZ,Point) := (d,n,point) -> (
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1));
-     SM | (-SM * transpose matrix point)
-     )
-
-
 movePoints = method(Options=>{Software=>null})
 movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 -- IN:  W = a witness set  
@@ -110,7 +111,7 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 	 seq := P.DeflationSequenceMatrices;
 	 F := squareUp P.LiftedSystem; -- assumes P.SolutionSystem == equations W.SolutionSystem | S
 	 ES' := polySystem(E|S');
-	 F' := squareUp(deflate(ES', seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
+	 F' := squareUp(deflate(ES', seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
 	 );
      while (not success and attempts > 0) do (
 	 attempts = attempts - 1;
@@ -173,7 +174,7 @@ moveSlice (WitnessSet, Matrix) := WitnessSet => o->(W,S) -> (
 -- get a random Point
 sample = method(Options=>{Tolerance=>1e-6})
 sample WitnessSet := o -> W -> (
-    W' := moveSlice(W, randomSlice(dim W, numgens ring W));
+    W' := moveSlice(W, randomSlice(dim W, numgens ring W, coefficientRing ring W));
     p := W'.Points # (random(#W'.Points));
     if not p.?ErrorBoundEstimate or p.ErrorBoundEstimate > o.Tolerance then p = refine(p,ErrorTolerance=>o.Tolerance); 
     if W.?ProjectionDimension then project(p, W.ProjectionDimension)

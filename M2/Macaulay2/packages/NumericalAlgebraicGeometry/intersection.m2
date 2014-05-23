@@ -86,8 +86,8 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		Software=>o.Software)
     	    else (
 	 	seq := P.DeflationSequenceMatrices;
-	 	S' := squareUp(deflate(S, seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
-		T' := squareUp(deflate(T, seq), P.LiftedSystem.SquareUpMatrix); -- square-up using the same matrix
+	 	S' := squareUp(deflate(S, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
+		T' := squareUp(deflate(T, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
 		S'sols := flatten apply(dWS,W->apply(W.Points,p->p.LiftedPoint));
 		
 	     	T'.PolyMap = (map(ring S', ring T', vars ring S')) T'.PolyMap; -- hack!!!: rewrite with trackHomotopy
@@ -150,7 +150,10 @@ numericalIntersection (WitnessSet,WitnessSet) := (W1,W2) -> (
 		point {coordinates P1 | coordinates P2}
 		))
 	);
-    numericalIntersection(numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12))}, ideal apply(n, i->x#i-y#i))
+    numericalIntersection(
+	numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12, coefficientRing ring W12))}, 
+	ideal apply(n, i->x#i-y#i)
+	)
     )
 numericalIntersection (NumericalVariety,NumericalVariety) := (V1,V2) -> (
     V := numericalVariety {};

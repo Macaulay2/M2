@@ -414,6 +414,13 @@ squareUp(PolySystem,Matrix) := (P,M) -> (
     P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
     )
 
+squareUpMatrix = method()
+squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
+    n := P.NumberOfVariables;
+    C := coefficientRing ring P;
+    map(C^n)
+    ) 
+
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
 load "./NumericalAlgebraicGeometry/witness-set.m2"

@@ -175,7 +175,7 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
 	F0 = F0.Deflation#r; 
 	if o.SquareUp then (
 	    F0' := squareUp F0;
-	    new'mat'or'pair = (new'mat'or'pair, F0.SquareUpMatrix);
+	    new'mat'or'pair = (new'mat'or'pair, squareUpMatrix F0);
 	    F0 = F0';
 	    );
 	d'seq'mat = d'seq'mat | {new'mat'or'pair}; 
