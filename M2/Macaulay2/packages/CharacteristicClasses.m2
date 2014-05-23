@@ -311,7 +311,7 @@ internalSegre = {Algorithm => ProjectiveDegree} >> opts -> I -> (
         d:=first max degrees I; 
         use(ChowRingPn);
        
-        g:=internalProjectiveDegree(I,minDegGen);
+        g:=internalProjectiveDegree(I);
         poly:=sum(0..n,s->g_s*h^s*(1+d*h)^(n-s));
         segreclass:=1 - poly * sum(0..n,i->binomial(n+i,i)*(-d*h)^i);
         for a in listForm segreclass do (segreList={a_1}|segreList );
@@ -506,7 +506,7 @@ internalCSM = {Algorithm => ProjectiveDegree} >> opts -> I -> (
 --    
 -- Output:
     -- A sequence of projective degrees (g_0,...,g_k)
- internalProjectiveDegree = (I,MinDegGen) -> (    
+ internalProjectiveDegree = (I) -> (    
      
 S:=ring I;
 m:=numgens I;
@@ -535,7 +535,7 @@ if k<val then (g#k=(d)^k) else (
              Xs=sum((n-k),jj->ideal sum(numgens S,i->random(kk)*Sgens_i));
              Affx=ideal( sum(numgens S,i->random(kk)*Sgens_i)-1);
             EqT=ideal( sum((numgens J),i->(1-t*random(kk)*J_i)));
-             --EqT=1-t*substitute(MinDegGen,R3);
+            
              Wt=Pol+Xs+Affx+EqT;
              
              tall= length (entries basis(R3/Wt))_0;
@@ -572,7 +572,7 @@ internalCSMhyp = {Algorithm => ProjectiveDegree} >> opts -> p -> (
      if(opts.Algorithm==ProjectiveDegree) then (
      gensI := flatten entries sort gens singP; 
      minDegGen := first gensI;
-     gs:=internalProjectiveDegree(singP,minDegGen);
+     gs:=internalProjectiveDegree(singP);
      g=toList gs;
      )
      --if residual Jost do this
@@ -646,7 +646,6 @@ output = (segreList,ambientDim,hyperplaneClass) -> (
      -- create the polynomial (deg s_0)*hyperplaneClass^ambientDim + ... + (deg s_n)*hyperplaneClass^(ambientDim - n)
      return  sum(0..dimension, i -> segreList_i * (outputRing_0)^(ambientDim - dimension + i))
      )
-
 
 
 
@@ -907,7 +906,10 @@ doc ///
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), Algorithm=>ProjectiveDegree)  
 	  Text  
                For many examples over a finite field the ProjectiveDegree option will offer better performance, when working over the rationals 
-               the ResidualSymbolic algorithm is often faster. 
+               the ResidualSymbolic algorithm is often faster. Note that this is only a general trend which has been observed in testing, and this may 
+               not necessarily true for any particular example, hence if one method is not working well the user may wish to try another. Also note 
+               that there are some specific examples where we may see the difference in performance change to favour one algorithm over the other 
+               when changing fields, however are such examples observed thus far are too time consuming to include here. 
           Example
                R=ZZ/32749[v_0..v_5];
                I=ideal(4*v_3*v_2-v_0^2,v_5*(v_0*v_1*v_4-v_2^3));
@@ -964,14 +966,14 @@ doc ///
      	  "probabilistic algorithm"
      Description
      	  Text
-	       Both algorithms used for the computation of characteristic classes are probabilistic. The algorithm ProjectiveDegree calculates the 
-               classes correctly in all cases for a general choice of certain polynomials, that is there is an open dense Zariski set for which 
-               the algorithm yields the correct class, i.e. the ProjectiveDegree algorithm calculates the correct class with probability 1. This is 
-               true both for the implementation, and for the theoretical version of the algorithm. The ResidualSymbolic algorithm theoretically calculates 
+	       Both algorithms used for the computation of characteristic classes are probabilistic. Theoretically the algorithm 
+               ProjectiveDegree calculates the classes correctly in all cases for a general choice of certain polynomials, that is there is an open 
+               dense Zariski set for which the algorithm yields the correct class, i.e., the correct class is calculated with probability 1. 
+               However since the implementation works over a discrete probability space there is a very small, but non-zero, probability of not 
+               computing the correct class. Similarly the ResidualSymbolic algorithm theoretically calculates 
                the classes correctly in all cases outside a lower-dimensional subset, i.e., with probability 1. However, in the implementation of the
                ResidualSymbolic algorithm the probability of not computing the correct class is strictly larger than zero, although small. 
-               Skeptical users should either use the ProjectiveDegree algorithm for all calculations or if using the ResidualSymbolic algorithm they 
-               should repeat calculations several times to increase the probability of computing the correct class.
+               Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
 	  Example
