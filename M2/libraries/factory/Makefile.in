@@ -6,11 +6,10 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 59817e0d039428e1e6d9217750a5c22464d4b321_c
+VERSION = 4.0.0+m4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
-TARDIR = factory
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
@@ -18,11 +17,16 @@ LIBRARIES = ftmpl_inst.o
 
 LICENSEFILES = INSTALL COPYING
 
-# this doesn't work, because autoheader fails with factory
-#PRECONFIGURE = autoreconf -vi
-PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+# Sometimes the official factory library tar file is incomplete, in that it leaves out
+# the m4 macros needed to rebuild the autoconf files, and the file configure.ac will
+# try to include ../m4, which is where the files were stored in the Singular source tree.
+# These files include various macros that start with AX_.  Solution: create a new tar file
+# with the files added to ./m4 and edit configure.ac.  Get compatible libtool macro files
+# with something like "cp /usr/local/Cellar/libtool/2.4.2/share/aclocal/* m4/.".  Then run
+# "aclocal; autoconf; automake --add-missing".
 
-# Factory's configure script is super annoying: why doesn't it find libraries using the standard autoconf macros?
+# Factory's configure script doesn't find libraries using the standard autoconf macros (sigh), so
+# it is necessary to examine the log (in the code below) to ensure that flint and ntl are both found.
 ifeq (@BUILD_ntl@,yes)
 CONFIGOPTIONS += --with-ntl='$(LIBRARIESDIR)'
 endif
@@ -41,6 +45,8 @@ endif
 CHECKCMD = true
 include ../Makefile.library
 
+CONFIGURECMD += && ( set -x ; grep '^.define HAVE_NTL 1' _config.h && grep '^.define HAVE_FLINT 1' _config.h )
+
 # add code to add these options only for gcc
 WARNFLAGS += -Wno-uninitialized -Wno-write-strings
 ## add code to add these options only for recent enough versions of gcc
@@ -53,7 +59,7 @@ endif
 
 #CXXFLAGS += --no-rtti --no-exceptions
 
-BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)'
+BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)' AM_DEFAULT_VERBOSITY=1
 
 CPPFLAGS += -DMP_INT=__mpz_struct -DHAVE_CONFIG_H
 
@@ -62,7 +68,6 @@ CPPFLAGS += -DMP_INT=__mpz_struct -DHAVE_CONFIG_H
 CPPFLAGS += -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q
 CFLAGS += -Wimplicit -Werror -DHAVE_CONFIG_H
 CXXFLAGS += -DHAVE_CONFIG_H
-CONFIGURECMD = ./autogen.sh && ./configure $(CONFIGOPTIONS) 
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:
