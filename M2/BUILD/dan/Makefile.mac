@@ -11,7 +11,7 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no

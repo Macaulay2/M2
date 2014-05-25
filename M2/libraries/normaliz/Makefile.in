@@ -1,13 +1,13 @@
 # license for normaliz: GPL v3
 
-VERSION = 2.9
+VERSION = 2.11.1
 # http://www.mathematik.uni-osnabrueck.de/normaliz/Normaliz2.9/Normaliz2.9.zip
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
 URL = http://www.math.uiuc.edu/Macaulay2/Extra
 # the name of the tar file changes each time:
 TARFILE = Normaliz$(VERSION).zip
 # this changes each time, too:
-TARDIR = Normaliz$(VERSION)/source
+TARDIR = Normaliz2.11/source
 FIXTARCMD = :
 
 # Mac OS X gcc has -fopenmp, but gives an internal compiler error if we try it:
