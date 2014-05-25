@@ -1015,15 +1015,17 @@ then AC_LANG(C)
 			  AC_MSG_CHECKING(whether libgc is recent enough)
 			  AC_RUN_IFELSE([AC_LANG_SOURCE([ 
 				  #include <stdio.h>
+				  #include <gc.h>
 				  main () {
-				      extern unsigned GC_version;
 				      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
-				      unsigned major, minor, alpha;
-				      major = GC_version >> 16;
-				      minor = (GC_version >> 8) & 0xff;
-				      alpha = GC_version & 0xff;
-				      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
-				      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
+				      unsigned
+				      	 major = GC_VERSION_MAJOR,
+					 minor = GC_VERSION_MINOR, 
+					 micro = GC_VERSION_MICRO;
+				      if (micro == 0xff) 
+				      	 fprintf(msg,"(version %d.%d.alpha found) ", major, minor);
+				      else
+				      	 fprintf(msg,"(version %d.%d.%d found) ", major, minor, micro);
 				      return !( major > 7 || major == 7 && minor >= 2); }])],
 			     [ AC_MSG_RESULT(yes) ],
 			     [ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
