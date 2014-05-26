@@ -509,7 +509,7 @@ conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
  
 -- normalized condition number of F at x
 conditionNumber = method()
-conditionNumber Matrix := M -> (s := first SVD M; max s / min s)
+conditionNumber Matrix := M -> (s := first SVD M; if min s == 0 then infinity else max s / min s)
 conditionNumber (List,List) := (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
