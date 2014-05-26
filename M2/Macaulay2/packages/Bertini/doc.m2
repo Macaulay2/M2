@@ -649,7 +649,7 @@ doc ///
    sIn: String
      A string giving the directory of start files: input, start, start_parameters
    L: List
-     A list of lists of parameters. 
+     L is a list of lists of parameters. 
    n: ZZ
      Number of coordinates of a point.
          
