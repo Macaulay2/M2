@@ -188,7 +188,7 @@ IA = toricIdeal A;
 Y = QQ[a..e, MonomialSize => 16,
             Degrees => transpose A, Weights => (w = {9,3,5,0,0})];
 IA = substitute(IA,Y);
-JM = localCoherentEquations(IA,w)
+JM = trim localCoherentEquations(IA,w)
 load "minPres.m2";
 G = removeRedundantVariables JM
 ideal gens gb(G JM)
@@ -206,7 +206,7 @@ Y = QQ[a..g, MonomialSize => 16,
            Degrees =>transpose A];
 IA = substitute(IA,Y);
 M = ideal leadTerm IA
-JM = localCoherentEquations(IA,w)
+JM = trim localCoherentEquations(IA,w)
 G = removeRedundantVariables JM;
 toString ideal gens gb(G JM)
 K = ideal(z_32*z_42*z_44-z_37^2,z_32^4*z_35-z_42,

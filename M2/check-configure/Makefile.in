@@ -6,9 +6,9 @@ check: clean-and-config
 clean:; rm -rf tmp
 clean-and-config: check-config
 check-config:
-	@ echo "make: *** [check-config] remark: the test is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
 	rm -rf tmp
 	mkdir tmp
+	@ echo "make: [check-config] remark: the test below is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
 	cd tmp && @top_srcdir@/configure \
 	    LDFLAGS="$(LDFLAGS)" \
 	    CPPFLAGS="$(CPPFLAGS)" \
