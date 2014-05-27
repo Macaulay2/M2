@@ -56,7 +56,7 @@ f = d*(x^5+x-1);
 g = d*(x^6-x-1);
 assert(gcd(f,g) == d)
 w = gcdCoefficients(f,g)
-assert( w#0 == 24*d)					    -- actually, we'd like w#0 == d.  I wonder why factory doesn't ensure that?
+assert( w#0 == d)   -- "factory" used to return 24*d here.  It's good that it returns d now
 assert( w#0 == f * w#1 + g * w#2 )
 
 R = GF 25[x]
