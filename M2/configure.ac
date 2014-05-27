@@ -1062,9 +1062,9 @@ then AC_LANG(C)
      AC_MSG_CHECKING([whether flint library is recent enough, using flint/flint.h])
      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <flint/flint.h>
-		  main () { return __FLINT_RELEASE >= 20300 /* 2.3.0 */ ? 0 : 1 ; } ]])],
+		  main () { return __FLINT_RELEASE >= 20403 /* 2.4.3 */ ? 0 : 1 ; } ]])],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (flint will be built from downloaded sources)]); BUILD_flint=yes ])
+	     [ AC_MSG_RESULT([no, version at least 2.4.3 is required (flint will be built from downloaded sources)]); BUILD_flint=yes ])
 fi
 test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
 AC_SUBST(BUILD_flint)		dnl factory needs to know
