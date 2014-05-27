@@ -10,7 +10,7 @@ VERSION = 4.0.0+m4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
@@ -23,7 +23,9 @@ LICENSEFILES = INSTALL COPYING
 # These files include various macros that start with AX_.  Solution: create a new tar file
 # with the files added to ./m4 and edit configure.ac.  Get compatible libtool macro files
 # with something like "cp /usr/local/Cellar/libtool/2.4.2/share/aclocal/* m4/.".  Then run
-# "aclocal; autoconf; automake --add-missing".
+# "autoreconf -v -f -i".  Include any patches to configure.ac, rather than
+# patching on the fly later with PATCHFILE here, as that will usually result
+# in an error about an incorrect installed version of aclocal.
 
 # Factory's configure script doesn't find libraries using the standard autoconf macros (sigh), so
 # it is necessary to examine the log (in the code below) to ensure that flint and ntl are both found.
