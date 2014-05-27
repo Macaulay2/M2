@@ -21,7 +21,7 @@ header "
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
-   #include <factory/libfac/libfac.h>
+   #include <factory/factory.h>
    #undef Matrix
    extern char timestamp[];
    #undef ASSERT
@@ -80,12 +80,6 @@ gcversion():constcharstar := Ccode(returns,"
      if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
      else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
      return buf;
-     ");
-libfacVersion():constcharstar := Ccode(returns,"
-      #include <factory/libfac/libfac.h>
-	  static char buf[40];
-	  sprintf(buf,\"%s\", libfac_version);
-	  return buf;
      ");
 givaroVersion():constcharstar := Ccode(returns,"
      #ifdef HAVE_GIVARO
@@ -189,8 +183,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   --"libfac version" => Ccode(constcharstar,"libfac_version"),
-   "libfac version" =>libfacVersion(),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
 	 #if HAVE_PARI

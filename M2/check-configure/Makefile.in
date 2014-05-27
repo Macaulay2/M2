@@ -4,10 +4,11 @@ CPPFLAGS =  -I$(BUILTLIBPATH)/include
 include ../include/config.Makefile
 check: clean-and-config
 clean:; rm -rf tmp
-clean-and-config: check-config clean
+clean-and-config: check-config
 check-config:
 	@ echo "make: *** [check-config] remark: the test is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
-	$(MKDIR_P) tmp
+	rm -rf tmp
+	mkdir tmp
 	cd tmp && @top_srcdir@/configure \
 	    LDFLAGS="$(LDFLAGS)" \
 	    CPPFLAGS="$(CPPFLAGS)" \

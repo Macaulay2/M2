@@ -697,7 +697,7 @@ AC_SUBST(BUILTLIBS,)
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
 #    factory needs gftables, flint, ntl and gmp
-#    libfac needs factory
+#    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
@@ -1180,8 +1180,7 @@ else SINGULARLIBS="-lfactory  "
 fi
 while test $BUILD_factory = no 
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes  ; break)
-   AC_CHECK_HEADER(factory/libfac/libfac.h,,BUILD_factory=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
@@ -1190,32 +1189,23 @@ do AC_LANG(C++)
 	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        [AC_MSG_RESULT(yes)],
-       [AC_MSG_RESULT([no, will build factory (includes libfac)]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
-   AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
+       [AC_MSG_RESULT([no, will build factory]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
+   AC_MSG_CHECKING([whether up-to-date factory libraries are installed])
    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
 	   #undef PACKAGE_VERSION /* so we can get PACKAGE_VERSION from factoryconf.h */
 	   #include <factory/factory.h>
-	   #include <factory/libfac/libfac.h>
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
 		static int factoryV[3], fV[3] = {4,0,0}, fOK;
-		static int  libfacV[3], lV[3] = {4,0,0}, lOK;
 		sscanf(PACKAGE_VERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
 		fOK = factoryV[0] > fV[0] ||
 		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
 		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		lOK = libfacV[0] > lV[0] ||
-		      libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
-		      libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
-		fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
-		    PACKAGE_VERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
-		    libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
-		    );
-		return !( lOK && fOK );
+		fprintf(msg,"(factory-%s %s %d.%d.%d) ", PACKAGE_VERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2]);
+		return fOK ? 0 : 1;
 		}
 	   ]])],
 	[AC_MSG_RESULT(yes)],

@@ -8,8 +8,8 @@
 #include <iostream>
 #include <cstdio>
 
-#define Matrix MaTrIx
-#include <factory/libfac/libfac.h>             // from Messollen's libfac
+#define Matrix FactoryMatrix
+#include <factory/factory.h>             // from Messollen's libfac
 #undef Matrix
 #undef ASSERT
 #include <NTL/ZZ.h>
@@ -643,7 +643,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
                   }
              }
 
-             List<CFList> t = IrrCharSeries(I);
+             List<CFList> t = irrCharSeries(I);
 
              engine_RawMatrixArray result = getmemarraytype(engine_RawMatrixArray,t.length());
              result->len = t.length();

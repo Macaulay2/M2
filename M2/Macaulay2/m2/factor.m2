@@ -139,6 +139,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      --	       scan(iniCS, a -> CS = saturate(CS, a));
 		    --<< "result is " << CS << endl;
 		    CS));
+	  Psi = select(Psi, I -> I != 1);
 	  Psi = new MutableList from Psi;
 	  p := #Psi;
 	  scan(0 .. p-1, i -> if Psi#i =!= null then 

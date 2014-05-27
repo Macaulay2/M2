@@ -6,12 +6,7 @@
 // }
 
 void factory_setup_1() {
-  On(SW_USE_NTL);		/* tell factory to use NTL */
 }
-
-#define Matrix MaTrIx
-#include <factory/libfac/libfac.h>		// from Messollen's libfac
-#undef Matrix
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

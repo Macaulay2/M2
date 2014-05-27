@@ -23,7 +23,7 @@ factor f
 collectGarbage ()					    -- GC_check_heap_block: found smashed heap objects:
 
 -- an example in the Dmodules package depends on this:
-ZZ[s]
+ZZ[symbol s]
 g = (s - 2)*(2*s - 3)*(4*s - 9)*(4*s - 7)*(6*s - 13)*(6*s - 11)*(12*s - 25)*(12*s - 23)*(12*s - 19)*(12*s - 17)*2^80*3^28
 assert( g == 
      660651230990549037211189767170547549147758592*s^10-12222047773325157188407010692655129659233533952*s^9+101506308928235398946510927768391420311764992000

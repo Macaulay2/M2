@@ -47,7 +47,6 @@ document {
      Subnodes => {
 	  "libraries",
 	  TO "Singular-Factory",
-	  TO "Singular-Libfac",
 	  TO "frobby",
 	  TO "pari",
 	  TO "MPIR",
@@ -288,27 +287,6 @@ document {
      }
 
 document {
-     Key => "Singular-Libfac",
-     "With the kind permission of the author, Michael Messollen, Macaulay2
-     incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
-     a free library of routines, depending on ", TO "Singular-Factory", ", that provides
-     factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
-     of ideals via characteristic sets.  It is distributed under the terms of the
-     GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ") or version 3 (see ", TO "COPYING-GPL-3", ")), and is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
-     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
-     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
-     PARA{},
-     "The following important routines call upon it:",
-     UL {
-	  TOH "factor",
-	  TOH "gcd",
-	  TOH "minimalPrimes",
-	  TOH "irreducibleCharacteristicSeries"
-	  }
-     }
-
-document {
      Key => "MPIR",
      "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
@@ -337,8 +315,7 @@ document {
      Key => "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
-     incorporation of their library ", TO "Singular-Factory", ", Michael Messollen for
-     the incorporation of his library ", TO "Singular-Libfac", ",
+     incorporation of their library ", TO "Singular-Factory", ",
      and David Eisenbud, Wolfram Decker and Sorin Popescu for
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,
