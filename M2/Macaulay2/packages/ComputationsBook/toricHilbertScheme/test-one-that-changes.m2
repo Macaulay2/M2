@@ -83,6 +83,24 @@ testIt2 = (IA,w) -> (
      gbTrace=3;
      syz M;
      )
+testIt3 = (IA,w) -> (
+     -- IA is the toric ideal of A living in a ring equipped
+     -- with weight order w, if we are computing the local 
+     -- equations about the initial ideal of IA w.r.t. w.
+     R := ring IA;
+     M := ideal leadTerm IA;
+     T = (coefficientRing R)[generators R, 
+                             Weights => w,
+                             MonomialSize=>16];
+     M = substitute(generators M,T);
+     Z = syz M;
+     for i from 0 to numColumns Z - 1 do (
+         m := Z_{i};
+         L := flatten entries m;
+         p := positions(L, f -> f != 0);
+         << p << "  " << toString ideal compress transpose m << endl;
+         )
+     )
 
 
 end
@@ -97,7 +115,7 @@ Y = QQ[a..g, MonomialSize => 16,
            Weights => (w = {0,0,276,220,0,0,215}),
            Degrees =>transpose A];
 IA = substitute(IA,Y);
-testIt2(IA,w)
+testIt3(IA,w)
 
 M = ideal leadTerm IA
 testIt(IA,w)
