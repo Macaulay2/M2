@@ -483,9 +483,13 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R)
   return P->getDenominatorRing();
 }
 /*********************************************************************/
+//static long nhash = 0;
+
 unsigned long IM2_RingElement_hash(const RingElement *a)
 {
-  return a->get_hash_value();
+  unsigned long result = a->get_hash_value();
+  //printf("calling to get ring element hash value of %p: %ld %lu\n", a, nhash++, result);
+  return result;
 }
 
 const Ring * IM2_RingElement_ring(const RingElement *a)

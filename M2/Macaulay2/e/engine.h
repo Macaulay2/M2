@@ -397,7 +397,7 @@ extern "C" {
 
   M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
 
-  unsigned long IM2_RingElement_hash(const RingElement *a);/* TODO */
+  unsigned long IM2_RingElement_hash(const RingElement *a);/* connected */
 
   const Ring * IM2_RingElement_ring(const RingElement *a); /* drg: connected rawRing*/
 

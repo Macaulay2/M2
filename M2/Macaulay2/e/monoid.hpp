@@ -116,6 +116,9 @@ public:
   int n_slots(int nparts) const;
   int num_parts() const;
 
+  unsigned long compute_hash_value(const_monomial m) const;
+
+
   /////////////////////////
   // Monomial arithmetic //
   /////////////////////////
