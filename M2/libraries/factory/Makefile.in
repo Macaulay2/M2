@@ -10,7 +10,9 @@ VERSION = 4.0.0+m4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+TARDIR ?= $(LIBNAME)-$(VERSION)/factory-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = autoreconf -i
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
