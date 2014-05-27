@@ -272,7 +272,7 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
+AC_MSG_CHECKING([whether compiling with $CXX and then linking $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
