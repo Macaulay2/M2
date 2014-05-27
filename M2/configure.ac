@@ -754,7 +754,7 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
 	    	;;
-	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
+	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
        esac
     done])
 
