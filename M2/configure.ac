@@ -696,8 +696,8 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
-#    factory needs gftables, ntl and gmp
-#    libfac needs factory
+#    factory needs gftables, flint, ntl and gmp
+#    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
@@ -726,12 +726,12 @@ AC_SUBST(BUILTLIBS,)
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
-#    flint is experimental, depends on mpir and mpfr
+#    flint depends on mpir and mpfr
 #    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -747,7 +747,7 @@ done
 BUILD_missing=yes
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) 
@@ -1057,6 +1057,20 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+if test $BUILD_flint = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
+     AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
+     AC_MSG_CHECKING([whether flint library is recent enough, using flint/flint.h])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		  #include <flint/flint.h>
+		  main () { return __FLINT_RELEASE >= 20300 /* 2.3.0 */ ? 0 : 1 ; } ]])],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (flint will be built from downloaded sources)]); BUILD_flint=yes ])
+fi
+test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
+AC_SUBST(BUILD_flint)		dnl factory needs to know
+
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict.
 
@@ -1118,15 +1132,7 @@ then AC_LANG(C++)
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
-
-AC_SUBST(ENABLE_FLINT,no)
-AC_ARG_ENABLE(flint,
-    [AS_HELP_STRING(--enable-flint,[enable building the flint library, linking with it, and compiling the experimental code that uses it])],
-    AC_DEFINE(HAVE_FLINT,1,[whether we are linking with the flint library])
-    BUILD_flint=yes
-    BUILTLIBS="-lflint $BUILTLIBS"
-    ENABLE_FLINT=yes
-    )
+AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
 AC_SUBST(ENABLE_GIVARO,no)
 AC_ARG_ENABLE(givaro,
@@ -1170,16 +1176,13 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes
 
-# the instantiations needed by an initialization in libcf are in libfac,
-# and libfac depends on libcf, so we mention libfac twice:
 if test "$DEBUG" = yes
-then SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
-else SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
+then SINGULARLIBS="-lfactory  "
+else SINGULARLIBS="-lfactory  "
 fi
-while test $BUILD_factory = no -o $BUILD_libfac = no
+while test $BUILD_factory = no 
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
-   AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
@@ -1188,36 +1191,27 @@ do AC_LANG(C++)
 	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        [AC_MSG_RESULT(yes)],
-       [AC_MSG_RESULT([no, will build factory and libfac]) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break] )
-   AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
+       [AC_MSG_RESULT([no, will build factory]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
+   AC_MSG_CHECKING([whether up-to-date factory libraries are installed])
    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
+	   #undef PACKAGE_VERSION /* so we can get PACKAGE_VERSION from factoryconf.h */
 	   #include <factory/factory.h>
-	   #include <factor.h>
-	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {3,1,0}, fOK;
-		static int  libfacV[3], lV[3] = {3,1,0}, lOK;
-		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
+		static int factoryV[3], fV[3] = {4,0,0}, fOK;
+		sscanf(PACKAGE_VERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
 		fOK = factoryV[0] > fV[0] ||
 		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
 		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		lOK = libfacV[0] > lV[0] ||
-		      libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
-		      libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
-		fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
-		    FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
-		    libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
-		    );
-		return !( lOK && fOK );
+		fprintf(msg,"(factory-%s %s %d.%d.%d) ", PACKAGE_VERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2]);
+		return fOK ? 0 : 1;
 		}
 	   ]])],
 	[AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT([no, will build factory and libfac]); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS])
+	[AC_MSG_RESULT([no, will build factory ]); BUILD_factory=yes LIBS=$SAVELIBS])
    break
 done
 test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"

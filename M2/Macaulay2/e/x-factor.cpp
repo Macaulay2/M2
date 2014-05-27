@@ -6,12 +6,10 @@
 #include <M2/config.h>
 #include <assert.h>
 #include <iostream>
-using std::cout;
-using std::endl;
 #include <cstdio>
 
-#define Matrix MaTrIx
-#include <factor.h>             // from Messollen's libfac
+#define Matrix FactoryMatrix
+#include <factory/factory.h>             // from Messollen's libfac
 #undef Matrix
 #undef ASSERT
 #include <NTL/ZZ.h>
@@ -29,7 +27,6 @@ using std::endl;
 
 #include "tower.hpp"
 
-using namespace NTL;
 
 const bool notInExtension = false;
 
@@ -53,7 +50,7 @@ int debugging
     ;
 
 static void init_seeds() {
-     SetSeed(ZZ::zero());       // NTL
+     NTL::SetSeed(NTL::ZZ::zero());       // NTL
      factoryseed(0);            // factory (which uses NTL, as we've compiled it)
 }
 
@@ -226,12 +223,12 @@ static struct enter_factory foo1;
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
 #if 1
-void showvar(Variable &t) { cout << t << endl; }
-void showcf(CanonicalForm &t) { cout << t << endl; }
-void showcfl(CFList &t) { cout << t << endl; }
-void showcffl(CFFList &t) { cout << t << endl; }
-void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); cout << endl; }
-void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showvar(Variable &t) { std::cout << t << std::endl; }
+void showcf(CanonicalForm &t) { std::cout << t << std::endl; }
+void showcfl(CFList &t) { std::cout << t << std::endl; }
+void showcffl(CFFList &t) { std::cout << t << std::endl; }
+void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); std::cout << std::endl; }
+void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); std::cout << std::endl; }
 #endif
 
 static struct enter_factory foo2;
@@ -646,7 +643,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
                   }
              }
 
-             List<CFList> t = IrrCharSeries(I);
+             List<CFList> t = irrCharSeries(I);
 
              engine_RawMatrixArray result = getmemarraytype(engine_RawMatrixArray,t.length());
              result->len = t.length();
