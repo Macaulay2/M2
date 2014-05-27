@@ -59,13 +59,29 @@ testIt = (IA,w) -> (
                              Weights => flatten splice{w, n:0},
                              MonomialSize=>16];
      M = substitute(generators M,T);
-     Z = syz M;
+     Z = syz M; -- this is what changes from machine to machine.
      for i from 0 to numColumns Z - 1 do (
          m := Z_{i};
          L := flatten entries m;
          p := positions(L, f -> f != 0);
          << p << "  " << toString ideal compress transpose m << endl;
          )
+     )
+testIt2 = (IA,w) -> (
+     -- IA is the toric ideal of A living in a ring equipped
+     -- with weight order w, if we are computing the local 
+     -- equations about the initial ideal of IA w.r.t. w.
+     R := ring IA;
+     M := ideal leadTerm IA;
+     S := first entries ((gens M) % IA);
+     -- Make the universal family J in a new ring.
+     n := numgens M;
+     T = (coefficientRing R)[generators R, z_1 .. z_n, 
+                             Weights => flatten splice{w, n:0},
+                             MonomialSize=>16];
+     M = substitute(generators M,T);
+     gbTrace=3;
+     syz M;
      )
 
 
@@ -81,8 +97,11 @@ Y = QQ[a..g, MonomialSize => 16,
            Weights => (w = {0,0,276,220,0,0,215}),
            Degrees =>transpose A];
 IA = substitute(IA,Y);
+testIt2(IA,w)
+
 M = ideal leadTerm IA
 testIt(IA,w)
+
 Z = syz gens M;
 for i from 0 to numColumns Z - 1 do (
     m := Z_{i};
