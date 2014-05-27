@@ -18,6 +18,10 @@ localCoherentEquations = (IA,w) -> (
      R := ring IA;
      M := ideal leadTerm IA;
      S := first entries ((gens M) % IA);
+     << "ideal M" << endl;
+     for f in M_* do print toString f;
+     << "ideal S" << endl;
+     for f in (ideal S)_* do print toString f;
      -- Make the universal family J in a new ring.
      nv := numgens R; n := numgens M;
      T = (coefficientRing R)[generators R, z_1 .. z_n, 
@@ -27,14 +31,42 @@ localCoherentEquations = (IA,w) -> (
      S = apply(S, s -> substitute(s,T));
      J = ideal apply(n, i -> 
                M_(0,i) - T_(nv + i) * S_i);
+     << "ideal J" << endl;
+     for f in J_* do print toString f;
      -- Find the ideal Ihilb of local equations about M:
      spairs := (gens J) * (syz M);
+     globM = M;
+     globSP = spairs;
+     << "ideal spairs" << endl;
+     for f in (ideal spairs)_* do print toString f;
      g := forceGB gens J;
      B = (coefficientRing R)[z_1 .. z_n,MonomialSize=>16];
      Fones := map(B,T, matrix(B,{splice {nv:1}}) | vars B);
      Ihilb := ideal Fones (spairs % g);
      Ihilb
      );
+
+testIt = (IA,w) -> (
+     -- IA is the toric ideal of A living in a ring equipped
+     -- with weight order w, if we are computing the local 
+     -- equations about the initial ideal of IA w.r.t. w.
+     R := ring IA;
+     M := ideal leadTerm IA;
+     S := first entries ((gens M) % IA);
+     -- Make the universal family J in a new ring.
+     n := numgens M;
+     T = (coefficientRing R)[generators R, z_1 .. z_n, 
+                             Weights => flatten splice{w, n:0},
+                             MonomialSize=>16];
+     M = substitute(generators M,T);
+     Z = syz M;
+     for i from 0 to numColumns Z - 1 do (
+         m := Z_{i};
+         L := flatten entries m;
+         p := positions(L, f -> f != 0);
+         << p << "  " << toString ideal compress transpose m << endl;
+         )
+     )
 
 
 end
@@ -50,4 +82,18 @@ Y = QQ[a..g, MonomialSize => 16,
            Degrees =>transpose A];
 IA = substitute(IA,Y);
 M = ideal leadTerm IA
+testIt(IA,w)
+Z = syz gens M;
+for i from 0 to numColumns Z - 1 do (
+    m := Z_{i};
+    L := flatten entries m;
+    p := positions(L, f -> f != 0);
+    << p << "  " << toString ideal compress transpose m << endl;
+    )
+
 JM = localCoherentEquations(IA,w)
+position(JM_*, f -> f == z_4*z_6-z_12)
+position(JM_*, f -> f == z_3*z_5-z_12)
+
+for f in (ideal globSP)_* do print toString f
+
