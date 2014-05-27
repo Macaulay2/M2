@@ -10,7 +10,7 @@ VERSION = 4.0.0+m4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
-TARDIR ?= $(LIBNAME)-$(VERSION)/factory-$(VERSION)
+TARDIR ?= $(LIBNAME)-$(VERSION)/factory-4.0.0
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 
