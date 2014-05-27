@@ -18,9 +18,19 @@ namespace M2 {
 
     std::vector<long> poly;
     RingElement F(&R,minpoly);
-    F.getSmallIntegerCoefficients(poly);
+    F.getSmallIntegerCoefficients(poly); 
+
+    // warning: flint expects unsigned longs, so we must make 
+    // all of these coeffs non-negative.
+    for (long i=poly.size()-1; i>=0; i--)
+      {
+        long a = poly[i];
+        if (a == 0) continue;
+        if (a < 0) poly[i] += characteristic();
+      }
 
     mDimension = poly.size() - 1;
+
 #if 0
     printf("minpoly: ");
     for (long i=0; i<poly.size(); i++)
@@ -45,6 +55,8 @@ namespace M2 {
     mPPowers[0] = 1;
     for (long i=1; i<=mDimension; i++)
       mPPowers[i] = mPPowers[i-1] * static_cast<ulong>(mCharacteristic);
+
+    flint_randinit(mRandomState);
   }
 
   ARingGFFlintBig::~ARingGFFlintBig()
@@ -52,6 +64,7 @@ namespace M2 {
     fq_nmod_ctx_clear(mContext);
     mPrimitiveElement = 0;
     deletearray(mPPowers);
+    flint_randclear(mRandomState);
   }
 
   void ARingGFFlintBig::getSmallIntegerCoefficients(const ElementType& a, std::vector<long>& poly) const
@@ -114,6 +127,8 @@ namespace M2 {
   {
     // TODO
     // result = map->get_ring()->power(map->elem(first_var), f);
+    // We would like to call Horner's evaluation method on the poly corresponding to f, with eval point 'map->elem(first_var)'
+    
   }
   
   
@@ -128,7 +143,6 @@ namespace M2 {
                                 bool p_plus,
                                 bool p_parens) const
   {
-    printf("entering ARingGFFlintBig::elem_text_out\n");
     if (is_zero(a))
       {
         o << "0";
@@ -141,9 +155,21 @@ namespace M2 {
 
   int ARingGFFlintBig::compare_elems(const ElementType& f, const ElementType& g) const
   {
-    // TODO
-    // compare polynomial coeff by coeff
-    return 0;
+    long degF = nmod_poly_degree(&f);
+    long degG = nmod_poly_degree(&g);
+    if (degF > degG)
+      return GT;
+    else if (degF < degG)
+      return LT;
+    // now degF == degG
+    for (long i=degF; i>=0; i--)
+      {
+        long coeffF = nmod_poly_get_coeff_ui(&f,i);
+        long coeffG = nmod_poly_get_coeff_ui(&g,i);
+        if (coeffF > coeffG) return GT;
+        if (coeffG > coeffF) return LT;
+      }
+    return EQ;
   }
 };
 

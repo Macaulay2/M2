@@ -28,7 +28,6 @@ namespace M2 {
 
     ARingGFFlintBig(const PolynomialRing &R,
                     const ring_elem a);
-      // NOT CORRECT
 
     ~ARingGFFlintBig();
 
@@ -48,6 +47,7 @@ namespace M2 {
     ulong* mPPowers; // array 0..mDimension of powers of mCharacteristic (mod 2^64)
     long mCharacteristic;
     long mDimension;
+    mutable flint_rand_t mRandomState;
 
     ////////////////////////////////
     /// Arithmetic functions ///////
@@ -149,20 +149,25 @@ namespace M2 {
 
     void divide(ElementType& result, const ElementType& a, const ElementType& b) const 
     { 
+#if 0
       printf("entering divide\n");
       printf("  a = ");
       fq_nmod_print_pretty(&a, mContext);
       printf("\n  b = ");
       fq_nmod_print_pretty(&b, mContext);
-
+#endif
       M2_ASSERT(not is_zero(b));
       invert(result,b); 
+#if 0
       printf("\n  1/b = ");
       fq_nmod_print_pretty(&result, mContext);
+#endif
       mult(result,result,a); 
+#if 0
       printf("\n  a/b = ");
       fq_nmod_print_pretty(&result, mContext);
       printf("\n");
+#endif
     }
 
     void power(ElementType& result, const ElementType& a, int n) const
@@ -226,7 +231,8 @@ namespace M2 {
 
     void random(ElementType &result) const
     {
-      // TODO
+      //      printf("calling ARingGFFlintBig::random\n");
+      fq_nmod_randtest(&result, mRandomState, mContext);
     }
 
     void fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const;
@@ -241,7 +247,7 @@ namespace M2 {
     //       primelem --> map->elem(first_var)
     // evaluate map(f)
     void eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const;
-      // TODO
+
   };
 
 };
