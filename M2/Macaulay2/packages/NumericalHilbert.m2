@@ -150,6 +150,7 @@ eliminatingDual (Point,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,
 eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     R := ring Igens;
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
+    Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     n := numgens R;
     if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
     then error ("expected a list of nonnegative integers in the range [0," | n | "] as 2nd parameter");
@@ -162,6 +163,7 @@ eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     while dBold != dBnew do (
 	TDD = nextTDD(TDD,t);
 	RdBasis = truncate(dualSpace(TDD,p),ind,d);
+	--print(dualSpace(TDD,p),RdBasis);
 	dBold = dBnew;
 	dBnew = dim RdBasis;
 	);
@@ -326,8 +328,10 @@ BMmatrix = H -> (
     if not homogeneous then
     M = transpose Bfull || M || map(R^(m + s*(1+#npairs) - numrows M),R^(numcols E),0)
     else M = map(R^(m + s*#npairs),R^0,0);
-    M = M | matrix{newMEs/first};
-    E = if homogeneous then matrix{newMEs/last} else E | matrix{newMEs/last};
+    (Mnew, Enew) := (matrix{newMEs/first}, matrix{newMEs/last});
+    if #newMEs == 0 then (Mnew, Enew) = (map(R^(numrows M),R^0,0),map(R^(numrows E),R^0,0));
+    M = M | Mnew;
+    E = if homogeneous then Enew else E | Enew;
     (M,E)
     );
 
