@@ -204,7 +204,7 @@ export dummySymbol := Symbol(
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
      false,
-     nextHash()
+     0
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);

@@ -1,11 +1,11 @@
 -- we want some hash codes to stay the same forever, so cached example output gets the same hashcodes
 -- if the assertions here fail, it means some new types were created too early in the file Macaulay2/d/tokens.d
 assert = x -> if not x then error "assertion failed "
-assert ( hash {("a","bcd"),("bcd","a")} == -2128549206 )
+assert ( hash {("a","bcd"),("bcd","a")} == -845451094 )
 
 -- it would also be nice to keep the following hash codes the same
 assert( (hash 123) === 123 )
-assert( (hash "asdf") === 3003444 )
+assert( (hash "asdf") === 155088180 )
 assert( (hash {1,2,3}) === 1669655998 )
 assert( (hash (1,2,3)) === 1305590783 )
 assert( (hash [1,2,3]) === 2125831184 )

@@ -39,7 +39,7 @@ export (s:string) > (t:string) : bool := t<s;
 export (s:string) <= (t:string) : bool := !(t<s);
 export hash(s:string):int := (
      h := 0;
-     foreach c in s do h = 287*h + int(c);
+     foreach c in s do h = 31*h + int(c);
      h & 0x7fffffff
      );
 
