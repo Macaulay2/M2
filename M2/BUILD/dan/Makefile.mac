@@ -20,6 +20,7 @@ M64=yes
 FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
+CONFIGOPTIONS += --disable-ntl-wizard
 
 
 # We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
