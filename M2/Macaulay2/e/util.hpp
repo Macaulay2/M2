@@ -8,6 +8,7 @@
 
 M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 M2_arrayint stdvector_to_M2_arrayint(std::vector<long> &v);
+void M2_ArrayString_to_stdvector(M2_ArrayString strs, std::vector<std::string> &result);
 
 
 #endif

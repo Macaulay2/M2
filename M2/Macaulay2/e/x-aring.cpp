@@ -297,15 +297,6 @@ M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 #endif
 }
 
-void M2_ArrayString_to_stdvector(M2_ArrayString strs, std::vector<std::string> &result)
-{
-  for (size_t i = 0; i< strs->len; i++)
-    {
-      M2_string a = strs->array[i];
-      std::string b(a->array, a->len);
-      result.push_back(b);
-    }
-}
 
 const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
 {
