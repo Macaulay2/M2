@@ -395,7 +395,7 @@ document {
      Headline => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA{},
-     "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents
+     "If ", TT "x", " is a hash table, list, dictionary, or database, then it is mutable if its contents
      can be destructively altered.",
      PARA{},
      "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
@@ -403,10 +403,23 @@ document {
      PARA{},
      "If ", TT "x", " is anything else, then it isn't mutable.",
      PARA{},
-     "The contents of a mutable hash table do not participate in strong comparison
+     "The (changeable) contents of a mutable hash table or list do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
      SeeAlso => {"MutableList", "MutableHashTable"}
      }
+
+document {
+     Key => serialNumber,
+     Headline => "serial number of a dictionary, a symbol, or a mutable hash table or list, ",
+     Usage => "serialNumber x",
+     Inputs => {"x"},
+     Outputs => { ZZ => { "the serial number of ", TT "x" } },
+     EXAMPLE lines ///
+     	  serialNumber asdf
+	  serialNumber foo
+	  serialNumber ZZ
+     ///
+     }     
 
 document {
      Key => setEcho,

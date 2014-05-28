@@ -3,19 +3,17 @@
 #ifndef _dmat_qq_flint_hpp_
 #define _dmat_qq_flint_hpp_
 
-#ifdef HAVE_FLINT
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>
 #include "aring-qq-flint.hpp"
-#endif
 
 template<typename ACoeffRing> class DMat;
 
 ////////////////////////////////////////////////////
 // Dense matrices for Flint type M2::ARingQQFlint //
 ////////////////////////////////////////////////////
-#ifdef HAVE_FLINT
+
 template<>
 class DMat<M2::ARingQQFlint>
 {
@@ -95,7 +93,6 @@ private:
   const ACoeffRing* mRing;
   fmpq_mat_t mArray;
 };
-#endif
 
 #endif
 

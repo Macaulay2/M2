@@ -36,24 +36,14 @@ const QQ* rawARingQQ()
 
 const Ring* /* or null */ rawARingZZFlint()
 {
-#if HAVE_FLINT
   M2::ARingZZ *A = new M2::ARingZZ();
   return M2::ConcreteRing<M2::ARingZZ>::create(A);
-#else
-  ERROR("M2 not configured with --enable-flint");
-  return 0;
-#endif
 }
 
 const Ring* /* or null */ rawARingQQFlint()
 {
-#if HAVE_FLINT
   M2::ARingQQFlint *A = new M2::ARingQQFlint();
   return M2::ConcreteRing<M2::ARingQQFlint>::create(A);
-#else
-  ERROR("M2 not configured with --enable-flint");
-  return 0;
-#endif
 }
 
 const Ring /* or null */ *rawARingZZp(unsigned long p)
@@ -68,13 +58,8 @@ const Ring /* or null */ *rawARingZZp(unsigned long p)
 }
 const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
 {
-#ifdef HAVE_FLINT
   M2::ARingZZpFlint *A = new M2::ARingZZpFlint(p);
   return M2::ConcreteRing<M2::ARingZZpFlint>::create(A);
-#else
-  ERROR("M2 not configured with --enable-flint");
-  return 0;
-#endif
 }
 
 static const PolynomialRing* /* or null */ checkGaloisFieldInput(const RingElement* f)

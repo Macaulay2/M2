@@ -9,19 +9,6 @@
 #include <iosfwd>
 #include "exceptions.hpp"
 
-#if not defined(HAVE_FLINT)  
-namespace M2 {
-  class ARingZZ : public DummyRing
-  {
-  public:
-    static const RingID ringID = ring_ZZFlint;
-    typedef M2::ARingZZ ring_type ;
-    
-    ARingZZ() {};
-  };
-};
-#else
-
 #include <flint/arith.h>
 
 namespace M2 {
@@ -197,8 +184,6 @@ namespace M2 {
   };
 };
 
-
-#endif
 #endif
 
 // Local Variables:

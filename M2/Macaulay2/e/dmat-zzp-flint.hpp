@@ -3,19 +3,17 @@
 #ifndef _dmat_zzp_flint_hpp_
 #define _dmat_zzp_flint_hpp_
 
-#ifdef HAVE_FLINT
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>
 #include "aring-zzp-flint.hpp"
-#endif
 
 template<typename ACoeffRing> class DMat;
 
 //////////////////////////////////////////////////////////////
 // Flint: use nmod_mat for implementation of dense matrices //
 //////////////////////////////////////////////////////////////
-#ifdef HAVE_FLINT
+
 template<>
 class DMat<M2::ARingZZpFlint>
 {
@@ -87,7 +85,6 @@ private:
   const ACoeffRing* mRing;
   nmod_mat_t mArray;
 };
-#endif
 
 #endif
 

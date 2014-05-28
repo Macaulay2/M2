@@ -11,7 +11,7 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no
@@ -20,6 +20,7 @@ M64=yes
 FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
+CONFIGOPTIONS += --disable-ntl-wizard
 
 
 # We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .

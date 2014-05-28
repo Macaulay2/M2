@@ -3,7 +3,6 @@
 #include "aring-zz-flint.hpp"
 #include "ringmap.hpp"
 
-#if defined(HAVE_FLINT)
 namespace M2 {
 
   ARingZZ::ARingZZ()
@@ -88,7 +87,6 @@ namespace M2 {
   }
 
 };
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

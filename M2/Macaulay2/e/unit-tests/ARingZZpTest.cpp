@@ -262,7 +262,6 @@ TEST(ARingZZp, read) {
 ////////////////////////////
 // Flint ZZ/p arithmetic ///
 ////////////////////////////
-#if defined(HAVE_FLINT)
 #include "../aring-zzp-flint.hpp"
 template<>
 void getElement<M2::ARingZZpFlint>(const M2::ARingZZpFlint& R, int index, M2::ARingZZpFlint::ElementType& result)
@@ -403,8 +402,6 @@ TEST(ARingZZpFlint, arithmetic18446744073709551557) {
     testAxioms(R, ntrials);
   }
 }
-
-#endif 
 
 
 // Local Variables:

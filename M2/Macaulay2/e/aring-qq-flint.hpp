@@ -9,14 +9,11 @@
 #include <iosfwd>
 #include "exceptions.hpp"
 
-#if defined(HAVE_FLINT)
 //#include <flint/arith.h>
 #include <flint/fmpq.h>
-#endif
 // promote needs ring.hpp.  After moving promote out, remove it here!
 #include "ring.hpp"
 
-#if defined(HAVE_FLINT)
 namespace M2 {
   /**
      @ingroup rings
@@ -216,7 +213,6 @@ namespace M2 {
     long int mMaxHeight;
   };
 };
-#endif
 
 #endif
 

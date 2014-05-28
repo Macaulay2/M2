@@ -1039,6 +1039,7 @@ export {
 	symbol separate,
 	symbol separateRegexp,
 	symbol sequence,
+        symbol serialNumber,
 	symbol set,
 	symbol setEcho,
 	symbol setGroupID,

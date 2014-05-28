@@ -27,7 +27,6 @@ typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #define DMatZZpFFPACK DMat<ZZpFFPACK> 
 #endif
 
-#ifdef HAVE_FLINT
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-gf-flint-big.hpp"
@@ -35,7 +34,6 @@ typedef DMat<M2::ARingZZ> DMatZZ;
 typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
-#endif
 
 typedef DMat<M2::ARingRRR> DMatRRR; 
 typedef DMat<M2::ARingCCC> DMatCCC; 
@@ -532,7 +530,7 @@ namespace MatrixOppies
   //////////////////////
   // Warning: nullSpace is WRONG, and needs to be rewritten,
   // using an algorithm that will compute kernel over ZZ.
-#ifdef HAVE_FLINT
+
   // Functions for DMatZZ
 
   inline size_t rank(const DMatZZ& A) { 
@@ -621,12 +619,11 @@ namespace MatrixOppies
     fmpz_mat_mul(D.fmpz_mat(), A.fmpz_mat(), B.fmpz_mat());
     fmpz_mat_sub(C.fmpz_mat(), C.fmpz_mat(), D.fmpz_mat());
   }
-#endif
 
   //////////////////////
   // ZZpFlint //////////
   //////////////////////
-#ifdef HAVE_FLINT
+
 // Functions for DMatZZpFlint
 
   inline size_t rank(const DMatZZpFlint& A) 
@@ -714,12 +711,10 @@ namespace MatrixOppies
     nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
   }
 
-#endif
-
   ////////////////////////
   // GFFlintBig //////////
   ////////////////////////
-#ifdef HAVE_FLINT
+
 // Functions for DMatGFFlintBig, linear algebra is sent out to LU
 
   inline void addMultipleTo(DMatGFFlintBig& C, 
@@ -751,12 +746,10 @@ namespace MatrixOppies
     fq_nmod_mat_mul(result_product.fq_nmod_mat(), A.fq_nmod_mat(), B.fq_nmod_mat(), A.ring().flintContext());
   }
 
-#endif
-
   //////////////////////
   // QQFlint ///////////
   //////////////////////
-#ifdef HAVE_FLINT
+
   // Functions for DMatQQFlint
 
   inline size_t rank(const DMatQQFlint& A) { 
@@ -864,7 +857,6 @@ namespace MatrixOppies
     // is the transpose of what we have for DMat.
     fmpq_mat_mul(result_product.fmpq_mat(), A.fmpq_mat(), B.fmpq_mat());
   }
-#endif
 
   ////////
   // RR //

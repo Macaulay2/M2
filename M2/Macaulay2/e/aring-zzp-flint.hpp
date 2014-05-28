@@ -10,7 +10,6 @@
 
 class RingMap;
 
-#ifdef HAVE_FLINT
 #include "flint/arith.h"
 #include "flint/nmod_vec.h"
 
@@ -219,7 +218,6 @@ namespace M2 {
 
 };
 
-#endif // HAVE_FLINT
 #endif
 
 // Local Variables:

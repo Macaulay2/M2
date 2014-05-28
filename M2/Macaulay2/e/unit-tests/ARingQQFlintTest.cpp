@@ -10,7 +10,6 @@
 
 #include "aring-qq-flint.hpp"
 
-#ifdef HAVE_FLINT
 #include "ARingTest.hpp"
 
 extern gmp_ZZ getRandomInteger();
@@ -77,7 +76,6 @@ TEST(ARingQQFlint, arithmetic) {
   //  testPower(R, ntrials);  // this test can't work, as it expects a finite field
   testAxioms(R, ntrials);
 }
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "

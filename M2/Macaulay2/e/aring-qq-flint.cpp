@@ -4,7 +4,6 @@
 #include "ringmap.hpp"
 
 #include <iostream>
-#if defined(HAVE_FLINT)
 namespace M2 {
 
   ARingQQFlint::ARingQQFlint()
@@ -70,7 +69,6 @@ namespace M2 {
   }
 
 };
-#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

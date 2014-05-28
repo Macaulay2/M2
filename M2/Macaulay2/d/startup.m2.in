@@ -160,7 +160,6 @@ if firstTime then (
      	  | "Compiled with the following libraries:" | newline
 	  | "  GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "  Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
-	  | "  Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
 	  |    ( 
 	       if version#"frobby version" =!= "not present" 
 	       then ("  frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
@@ -172,6 +171,7 @@ if firstTime then (
 	       else ""
 	       )
 	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
+	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
 	  |    (
 	       if version#"gmp version" =!= "not present"
 	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
@@ -185,10 +185,6 @@ if firstTime then (
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
 	  );
-
-     scan(
-	  { ("factory version", "3.0.2"), ("libfac version", "3.0.1") },
-	  (k,v) -> if version#k < v then stderr << "--warning: old " << k << " " << version#k << " < " << v << endl);
 
      use = x -> x;				  -- temporary, until methods.m2
 

@@ -3,16 +3,13 @@
 #ifndef _dmat_zz_flint_hpp_
 #define _dmat_zz_flint_hpp_
 
-#ifdef HAVE_FLINT
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>
 #include "aring-zz-flint.hpp"
-#endif
 
 template<typename ACoeffRing> class DMat;
 
-#ifdef HAVE_FLINT
 template<>
 class DMat<M2::ARingZZ>
 {
@@ -92,8 +89,6 @@ private:
   const ACoeffRing* mRing;
   fmpz_mat_t mArray;
 };
-#endif
-
 
 #endif
 

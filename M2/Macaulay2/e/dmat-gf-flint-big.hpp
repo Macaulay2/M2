@@ -3,20 +3,17 @@
 #ifndef _dmat_gf_flint_big_hpp_
 #define _dmat_gf_flint_big_hpp_
 
-#ifdef HAVE_FLINT
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>
 #include <flint/fq_nmod_mat.h>
 #include "aring-gf-flint-big.hpp"
-#endif
 
 template<typename ACoeffRing> class DMat;
 
 /////////////////////////////////////////////////////////////////
 // Flint: use fq_nmod_mat for implementation of dense matrices //
 /////////////////////////////////////////////////////////////////
-#ifdef HAVE_FLINT
 template<>
 class DMat<M2::ARingGFFlintBig>
 {
@@ -88,7 +85,6 @@ private:
   const ACoeffRing* mRing;
   fq_nmod_mat_t mArray;
 };
-#endif
 
 #endif
 

@@ -4,7 +4,12 @@
 #include "gmp_init.h"
 #include "M2inits.h"
 
-extern int initializeGMP();
+//extern int initializeGMP();
+
+ int initializeGMP()
+{
+   return 1;
+}
 
 #if 0
 // we could override factory's routine so it doesn't install any gmp memory allocation functions
