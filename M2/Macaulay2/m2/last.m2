@@ -91,7 +91,7 @@ Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) then removeAttribute(x,ReverseDictionary);
      )
-waterMark = hash symbol waterMark
+waterMark = serialNumber symbol waterMark      -- used by Serialization package
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
 scan(Core#"pre-installed packages",	-- initialized in the file installedpackages.m2, which is made from the file installedpackages
      needsPackage)

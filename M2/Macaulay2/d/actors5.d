@@ -2056,6 +2056,15 @@ setFactoryGFtableDirectory(e:Expr):Expr := (
      else WrongArgString());
 setupfun("setFactoryGFtableDirectory",setFactoryGFtableDirectory);
 
+serialNumber(e:Expr):Expr := (
+     when e 
+     is s:SymbolClosure do toExpr(s.symbol.serialNumber)
+     is o:HashTable do if o.Mutable then toExpr(o.hash) else WrongArg("hash table to be mutable")
+     is o:List do if o.Mutable then toExpr(o.hash) else WrongArg("list to be mutable")
+     is o:DictionaryClosure do toExpr(o.dictionary.hash)
+     else WrongArg("a symbol or a mutable hash table or list"));
+setupfun("serialNumber",serialNumber);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "
 -- End:
