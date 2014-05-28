@@ -9,7 +9,7 @@ check-config:
 	rm -rf tmp
 	mkdir tmp
 	@ echo "make: [check-config] remark: the test below is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
-	cd tmp && @top_srcdir@/configure \
+	cd tmp && @abs_top_srcdir@/configure \
 	    LDFLAGS="$(LDFLAGS)" \
 	    CPPFLAGS="$(CPPFLAGS)" \
 	    CC="$(CC)" \
