@@ -274,7 +274,8 @@ namespace M2 {
     {
       if (a != 0)
         {
-          result = (a*n) % mGF.orderMinusOne();
+          long order1 = static_cast<long>(mGF.orderMinusOne());
+          result = static_cast<elem>((a*n) % order1);
           if (result <= 0) result += mGF.orderMinusOne();
         }
       else

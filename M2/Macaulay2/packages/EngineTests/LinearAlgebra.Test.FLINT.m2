@@ -105,4 +105,26 @@ TEST ///
   -- testNullspace R; --FAILS
 ///
 
-
+if hasFlint then
+TEST ///
+{*
+  restart
+  debug loadPackage "EngineTests"
+*}
+  R = GF(9, Strategy=>"FlintBig")
+  M = mutableMatrix(R,2,2)
+  fillMatrix M
+  N = mutableMatrix(R,2,3)
+  fillMatrix N;
+  (M, N, M*N)
+  det M
+  det matrix M
+  (S,S1) = randomFullRank(R,4) -- fails
+  S*S1
+  randomMatrixWithKernel(R,4,2)
+  rank first oo -- wrong...!
+  testMult R -- passes
+  testInverse R -- fails
+  testRank R -- fails
+  testLinearAlgebra$FLINT R
+///

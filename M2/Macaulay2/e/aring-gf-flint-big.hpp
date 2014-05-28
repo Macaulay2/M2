@@ -31,6 +31,7 @@ namespace M2 {
 
     ~ARingGFFlintBig();
 
+    const fq_nmod_ctx_struct* flintContext() const { return mContext; }
     long characteristic() const { return mCharacteristic; }
     long dimension() const { return mDimension; }
 

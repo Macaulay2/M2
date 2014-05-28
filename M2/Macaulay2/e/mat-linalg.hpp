@@ -30,9 +30,11 @@ typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #ifdef HAVE_FLINT
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
+#include "aring-gf-flint-big.hpp"
 typedef DMat<M2::ARingZZ> DMatZZ;
 typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
+typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
 #endif
 
 typedef DMat<M2::ARingRRR> DMatRRR; 
@@ -710,6 +712,43 @@ namespace MatrixOppies
     // The A1 and B1 on the next line are switched because the memory layout expected
     // is the transpose of what we have for DMat.
     nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
+  }
+
+#endif
+
+  ////////////////////////
+  // GFFlintBig //////////
+  ////////////////////////
+#ifdef HAVE_FLINT
+// Functions for DMatGFFlintBig, linear algebra is sent out to LU
+
+  inline void addMultipleTo(DMatGFFlintBig& C, 
+                            const DMatGFFlintBig& A, 
+                            const DMatGFFlintBig& B)
+  {
+    DMatGFFlintBig D(C.ring(), A.numRows(), B.numColumns());
+    fq_nmod_mat_mul(D.fq_nmod_mat(), A.fq_nmod_mat(), B.fq_nmod_mat(), A.ring().flintContext());
+    fq_nmod_mat_add(C.fq_nmod_mat(), C.fq_nmod_mat(), D.fq_nmod_mat(), A.ring().flintContext());
+  }
+
+  inline void subtractMultipleTo(DMatGFFlintBig& C, 
+                                 const DMatGFFlintBig& A, 
+                                 const DMatGFFlintBig& B)
+  {
+    DMatGFFlintBig D(C.ring(), A.numRows(), B.numColumns());
+    fq_nmod_mat_mul(D.fq_nmod_mat(), A.fq_nmod_mat(), B.fq_nmod_mat(), A.ring().flintContext());
+    fq_nmod_mat_sub(C.fq_nmod_mat(), C.fq_nmod_mat(), D.fq_nmod_mat(), A.ring().flintContext());
+  }
+
+  inline void mult(const DMatGFFlintBig& A, 
+                   const DMatGFFlintBig& B, 
+                   DMatGFFlintBig& result_product) 
+  {
+    //    DMatGFFlintBig& A1 = const_cast<DMatGFFlintBig&>(A); // needed because nmod_mat_mul doesn't declare params const
+    //    DMatGFFlintBig& B1 = const_cast<DMatGFFlintBig&>(B);
+    // The A1 and B1 on the next line are switched because the memory layout expected
+    // is the transpose of what we have for DMat.
+    fq_nmod_mat_mul(result_product.fq_nmod_mat(), A.fq_nmod_mat(), B.fq_nmod_mat(), A.ring().flintContext());
   }
 
 #endif
