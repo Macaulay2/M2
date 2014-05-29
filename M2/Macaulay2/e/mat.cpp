@@ -26,7 +26,6 @@
 #include "aring-qq.hpp"
 
 #include "lapack.hpp"
-#include "dmat-LU.hpp"
 
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 						size_t nrows, 

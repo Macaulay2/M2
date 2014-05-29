@@ -10,7 +10,6 @@
 #include "mat.hpp"
 #include "fractionfreeLU.hpp"
 #include "LLL.hpp"
-#include "dmat-LU.hpp"
 #include "exceptions.hpp"
 
 #include "matrix.hpp"

@@ -40,7 +40,6 @@ typedef DMat<M2::ARingCCC> DMatCCC;
 typedef DMat<M2::ARingRR> DMatRR; 
 typedef DMat<M2::ARingCC> DMatCC; 
 
-#include "dmat-LU.hpp"
 #include "lapack.hpp"
 #include "mat-arith.hpp"
 #include "dmat-LU-template.hpp"
