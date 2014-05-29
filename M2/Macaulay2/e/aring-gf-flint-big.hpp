@@ -125,7 +125,6 @@ namespace M2 {
     void negate(ElementType& result, const ElementType& a) const { fq_nmod_neg(&result, &a, mContext); }
 
     void invert(ElementType& result, const ElementType& a) const { 
-      printf("\n  entering invert\n");
       M2_ASSERT(not is_zero(a)); 
       fq_nmod_inv(&result, &a, mContext); 
     }
@@ -149,7 +148,11 @@ namespace M2 {
     }
 
     void divide(ElementType& result, const ElementType& a, const ElementType& b) const 
-    { 
+    {
+      // We need to handle the case when result is a, or b.
+      // This is why we use the temporary value 'c'.
+      ElementType c;
+      init(c);
 #if 0
       printf("entering divide\n");
       printf("  a = ");
@@ -158,17 +161,18 @@ namespace M2 {
       fq_nmod_print_pretty(&b, mContext);
 #endif
       M2_ASSERT(not is_zero(b));
-      invert(result,b); 
+      invert(c,b); 
 #if 0
       printf("\n  1/b = ");
-      fq_nmod_print_pretty(&result, mContext);
+      fq_nmod_print_pretty(&c, mContext);
 #endif
-      mult(result,result,a); 
+      mult(result,c,a); 
 #if 0
       printf("\n  a/b = ");
       fq_nmod_print_pretty(&result, mContext);
       printf("\n");
 #endif
+      clear(c);
     }
 
     void power(ElementType& result, const ElementType& a, int n) const
