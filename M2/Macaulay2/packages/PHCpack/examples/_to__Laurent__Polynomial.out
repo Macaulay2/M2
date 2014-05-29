@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 1886230761 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : QQ[x,y,z];
 
