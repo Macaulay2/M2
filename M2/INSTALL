@@ -441,4 +441,8 @@ we briefly summarize them and the software they depend on:
     PHCpack needs PHCpack, download the binary:
 	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
 
-    AdjointIdeal, ConvexInterface, MapleInterface, and Parametrization need Maple.
+    AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
+
+    ConvexInterface also needs the maple package "convex" installed.  See the 
+    package documentation for hints about installing it.
+    	    http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m
