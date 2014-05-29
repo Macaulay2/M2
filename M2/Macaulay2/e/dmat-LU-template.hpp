@@ -8,6 +8,218 @@
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"
 
+//#include "dmat-LU-inplace.hpp"
+
+template <typename RT>
+class DMatLUInPlace
+{
+public:
+  typedef RT RingType;
+  typedef DMat<RingType> Mat;
+public:
+  DMatLUInPlace(const Mat& A);
+
+  const RingType& ring() const { return mLU.ring(); }
+
+  const Mat& LU() { computeLU(); return mLU; } // raises an exception if there is an error
+  // Can be called repeatedly: the result is remembered once done.
+  // Returns a constant ref to the internal "in palce" LU.
+
+  bool permutation(std::vector<size_t>& result_perm); // returns sign: true for 1, false for -1.
+  const std::vector<size_t>& pivotColumns() { computeLU(); return mPivotColumns; }
+private:
+  typedef typename RingType::ElementType ElementType;
+  void computeLU();
+  size_t findPivot(size_t row, size_t col);
+
+private:
+  Mat mLU;
+  std::vector<size_t> mPerm;
+  bool mSign;
+  bool mIsDone;
+  std::vector<size_t> mPivotColumns;
+};
+
+template <class RingType>
+DMatLUInPlace<RingType>::DMatLUInPlace(const Mat& A)
+  : mLU(A),  // copies A
+    mSign(true), // sign = 1
+    mIsDone(false)
+{
+  for (size_t i=0; i<A.numRows(); i++)
+    mPerm.push_back(i);
+}
+
+template <class RingType>
+bool DMatLUInPlace<RingType>::permutation(std::vector<size_t>& result_perm)
+{
+  computeLU();
+  result_perm = mPivotColumns;
+  return mSign;
+}
+
+template <class RingType>
+size_t DMatLUInPlace<RingType>::findPivot(size_t row, size_t col)
+{
+  // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
+  // Return the index r s.y. abs(A[r,col]) is maximum over all of these
+
+  for (size_t i=row; i<mLU.numRows(); i++)
+    {
+      if (!ring().is_zero(mLU.entry(i,col)))
+          return i;
+    }
+  return static_cast<size_t>(-1);
+}
+
+template <>
+inline size_t DMatLUInPlace<M2::ARingRRR>::findPivot(size_t row, size_t col)
+{
+  // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
+  // Return the index r s.y. abs(A[r,col]) is maximum over all of these
+
+  ElementType largest;
+  ElementType abs;
+  size_t best_row_so_far = static_cast<size_t>(-1);
+
+  ring().init(largest);
+  ring().init(abs);
+  ring().set_zero(largest);
+  
+  for (size_t i=row; i<mLU.numRows(); i++)
+    {
+      ring().abs(abs, mLU.entry(i,col));
+      if (ring().compare_elems(abs, largest) > 0)
+        {
+          best_row_so_far = i;
+          ring().set(largest, abs);
+        }
+    }
+  ring().clear(abs);
+  ring().clear(largest);
+  return best_row_so_far;
+}
+
+template <>
+inline size_t DMatLUInPlace<M2::ARingCCC>::findPivot(size_t row, size_t col)
+{
+  // Look at elements A[row,col], A[row+1,col], ..., A[nrows-1, col]
+  // Return the index r s.y. abs(A[r,col]) is maximum over all of these
+
+  const M2::ARingRRR& RR = ring().real_ring();
+  M2::ARingRRR::ElementType largest;
+  M2::ARingRRR::ElementType abs;
+  size_t best_row_so_far = static_cast<size_t>(-1);
+
+  RR.init(largest);
+  RR.init(abs);
+  RR.set_zero(largest);
+  
+  for (size_t i=row; i<mLU.numRows(); i++)
+    {
+      ring().abs(abs, mLU.entry(i,col));
+      if (RR.compare_elems(abs, largest) > 0)
+        {
+          best_row_so_far = i;
+          RR.set(largest, abs);
+        }
+    }
+  RR.clear(abs);
+  RR.clear(largest);
+  return best_row_so_far;
+}
+
+template <class RingType>
+void DMatLUInPlace<RingType>::computeLU()
+{
+  if (mIsDone) return;
+
+  //  std::cout << "computing LU decomposition NAIVE version" << std::endl;
+  ElementType tmp;
+  mLU.ring().init(tmp);
+
+  size_t col = 0; // current column we are working on
+  size_t row = 0; // current row we are working on
+  size_t nrows = mLU.numRows();
+  size_t ncols = mLU.numColumns();
+
+  while (col < ncols && row < nrows)
+    {
+      //printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
+      //debug_out();
+
+      // Step 1: Set the 'upper' values: (row,col)..(nrows-1,col)
+      for (size_t r = row; r < nrows; r++)
+        {
+          for (size_t i = 0; i<row; i++)
+            {
+              mLU.ring().mult(tmp, mLU.entry(r,i), mLU.entry(i,col));
+              mLU.ring().subtract(mLU.entry(r,col), mLU.entry(r,col), tmp);
+            }
+        }
+
+      //printf("after step 1\n");
+      //debug_out();
+
+      // Step 2: Find a pivot among the elements in step 1.
+      //  If one: swap rows if needed
+      //  If none, increment 'col', and continue at start of loop
+      size_t k = findPivot(row,col);
+      if (k == static_cast<size_t>(-1))
+        {
+          col = col+1;
+          continue;
+        }
+      // printf("pivot is in row %ld\n", k);
+      std::swap(mPerm[row], mPerm[k]);
+      if (k != row) 
+        {
+          MatElementaryOps<Mat>::interchange_rows(mLU, k, row);
+          mSign = !mSign;
+        }
+      mPivotColumns.push_back(col);
+      const ElementType& pivot = mLU.entry(row,col);
+
+      //printf("after step 2:\n");
+      //debug_out();
+
+      // Step 3A: Set the 'upper' elements in (row,col+1), ..., (row,ncols-1).
+      for (size_t c = col+1; c < ncols; c++)
+        {
+          for (size_t i = 0; i<row; i++)
+            {
+              mLU.ring().mult(tmp, mLU.entry(row,i), mLU.entry(i,c));
+              mLU.ring().subtract(mLU.entry(row,c), mLU.entry(row,c), tmp);
+            }
+        }
+      //printf("after step 3A:\n");
+      //debug_out();
+
+      // Step 3B: Set the 'lower' elements in (row+1,row), ..., (nrows-1,row)
+      //  from (row+1,col), ..., (nrows-1,col)
+      // This just means dividing then by the pivot
+      // except, if we have skipped columns for pivots, we must set these elements
+      // in column 'row', not 'col'...
+      // Step 3C: if row != col, then set these elements to 0:
+      //  (row+1,col), ..., (nrows-1,col)
+      for (size_t r = row+1; r < nrows; r++)
+        {
+          mLU.ring().divide(mLU.entry(r,row), mLU.entry(r,col), pivot);
+          if (row < col) ring().set_zero(mLU.entry(r,col)); 
+        }
+
+      //printf("after step 3B:\n");
+      //debug_out();
+
+      row++;
+      col++;
+    }
+
+  mIsDone = true;
+  mLU.ring().clear(tmp);
+}
+
+///////////////////////////////////////////////////////////
 template <class RingType>
 class DMatLUtemplate
 {
@@ -16,6 +228,7 @@ public:
   typedef DMat<RingType> Mat;
 
 private:
+  DMatLUInPlace<RingType> mLUObject;
   Mat mLU;
   std::vector<size_t> mPerm;
   bool mSign;
@@ -100,7 +313,8 @@ private:
 
 template <class RingType>
 DMatLUtemplate<RingType>::DMatLUtemplate(const Mat& A)
-  : mLU(A),  // copies A
+  : mLUObject(A),
+    mLU(A),  // copies A
     mSign(true), // sign = 1
     mIsDone(false),
     mError(false)
@@ -283,8 +497,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
 
   while (col < ncols && row < nrows)
     {
-      // printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
-      // debug_out();
+      //printf("*** in naive row,col = (%ld, %ld) ***\n", row, col);
+      //debug_out();
 
       // Step 1: Set the 'upper' values: (row,col)..(nrows-1,col)
       for (size_t r = row; r < nrows; r++)
@@ -296,8 +510,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
             }
         }
 
-      // printf("after step 1\n");
-      // debug_out();
+      //printf("after step 1\n");
+      //debug_out();
 
       // Step 2: Find a pivot among the elements in step 1.
       //  If one: swap rows if needed
@@ -318,8 +532,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
       mPivotColumns.push_back(col);
       const ElementType& pivot = mLU.entry(row,col);
 
-      // printf("after step 2:\n");
-      // debug_out();
+      //printf("after step 2:\n");
+      //debug_out();
 
       // Step 3A: Set the 'upper' elements in (row,col+1), ..., (row,ncols-1).
       for (size_t c = col+1; c < ncols; c++)
@@ -330,8 +544,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
               mLU.ring().subtract(mLU.entry(row,c), mLU.entry(row,c), tmp);
             }
         }
-      // printf("after step 3A:\n");
-      // debug_out();
+      //printf("after step 3A:\n");
+      //debug_out();
 
       // Step 3B: Set the 'lower' elements in (row+1,row), ..., (nrows-1,row)
       //  from (row+1,col), ..., (nrows-1,col)
@@ -346,8 +560,8 @@ void DMatLUtemplate<RingType>::computeLUNAIVE()
           if (row < col) ring().set_zero(mLU.entry(r,col)); 
         }
 
-      // printf("after step 3B:\n");
-      // debug_out();
+      //printf("after step 3B:\n");
+      //debug_out();
 
       row++;
       col++;
@@ -439,6 +653,7 @@ void DMatLUtemplate<RingType>::setUpperLowerNAIVE(Mat& lower, Mat& upper)
 template <class RingType>
 bool DMatLUtemplate<RingType>::MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
 {
+  printf("calling MatrixPLU\n");
   computeLUNAIVE();
   if (mError) return false;
 
