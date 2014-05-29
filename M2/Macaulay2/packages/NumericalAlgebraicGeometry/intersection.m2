@@ -25,11 +25,11 @@ splitWitness (WitnessSet,RingElement) := Sequence => o -> (w,f) -> (
      o = fillInDefaultOptions o;
      w1 := {}; w2 := {};
      for x in w#Points do 
-	 if norm residual(matrix {{f}}, matrix x) < o.Tolerance 
+	 if residual(matrix {{f}}, matrix x) < o.Tolerance 
 	 then w1 = w1 | {x}
 	 else w2 = w2 | {x};   
-     ( if #w1===0 then null else witnessSet(w#Equations, w#Slice, w1), 
-       if #w2===0 then null else witnessSet(w#Equations, w#Slice, w2) 
+     ( if #w1===0 then null else witnessSet(w.Equations + ideal f, w.Slice, w1), 
+       if #w2===0 then null else witnessSet(w.Equations, w.Slice, w2) 
        )
    )
 
@@ -47,7 +47,16 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 	if cIn =!= null then (
 	    if DBG>2 then << "( regeneration: " << net cIn << " is contained in V(f) for" << endl <<  
 	    << "  f = " << f << " )" << endl;
-	    insertComponent(cIn,c2)
+	    scan(
+		partitionViaDeflationSequence( cIn.Points, polySystem(equations polySystem cIn | slice cIn) ),
+		pts -> (
+		    oldW := witnessSet(cIn.Equations, cIn.Slice, pts);
+		    if DBG>2 then << "   old component " << peek oldW << endl;
+		    check oldW;    
+		    insertComponent(oldW,c2);
+		    )
+		);
+--	    insertComponent(cIn,c2)
 	    ); 
 	if cOut =!= null 
 	and dim cOut > 0 -- 0-dimensional components outside V(f) discarded
@@ -60,16 +69,38 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		    moveSlice(cOut,newSlice,Software=>o.Software)
 		    ));
 	    slice' := submatrix'(comp#Slice,{0},{});
-	    S := polySystem( equations comp
+	    local'regular'seq := equations polySystem comp;
+	    
+
+	    S := polySystem( local'regular'seq
 		| { product flatten apply( dWS, w->sliceEquations(w.Slice^{0},R) ) } -- product of linear factors
 		| sliceEquations(slice',R) );
-	    T := polySystem( equations comp
+	    T := polySystem( local'regular'seq
 		| {f}
 		| sliceEquations(slice',R) );
-	    targetPoints := track(S,T,flatten apply(dWS,points), 
+	    
+	    -- deflate if singular
+	    P := first comp.Points;
+	    if status P =!= Singular then targetPoints := track(S,T,flatten apply(dWS,points), 
 		NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),
-		Software=>o.Software);
-	    --		        if #targetPoints==4 and dim comp == 2 and #(points comp)==2 then error ""; 
+		Software=>o.Software)
+    	    else (
+	 	seq := P.DeflationSequenceMatrices;
+	 	S' := squareUp(deflate(S, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
+		T' := squareUp(deflate(T, seq), squareUpMatrix P.LiftedSystem); -- square-up using the same matrix
+		S'sols := flatten apply(dWS,W->apply(W.Points,p->p.LiftedPoint));
+		
+	     	T'.PolyMap = (map(ring S', ring T', vars ring S')) T'.PolyMap; -- hack!!!: rewrite with trackHomotopy
+	     	lifted'w' := track(S',T',S'sols, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	     	targetPoints = apply(lifted'w', p->(
+		     	q := project(p,T.NumberOfVariables);
+		     	q.System = T;
+		     	q.LiftedSystem = T';
+		     	q.LiftedPoint = p;
+		     	q.SolutionStatus = Singular;
+		     	q
+		     	));
+	 	);
 	    LARGE := 100; ---!!!
 	    refinedPoints := refine(T, targetPoints, 
 		ErrorTolerance=>DEFAULT.ErrorTolerance*LARGE,
@@ -119,7 +150,10 @@ numericalIntersection (WitnessSet,WitnessSet) := (W1,W2) -> (
 		point {coordinates P1 | coordinates P2}
 		))
 	);
-    numericalIntersection(numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12))}, ideal apply(n, i->x#i-y#i))
+    numericalIntersection(
+	numericalVariety {moveSlice(W12,randomSlice(dim W12, numgens ring W12, coefficientRing ring W12))}, 
+	ideal apply(n, i->x#i-y#i)
+	)
     )
 numericalIntersection (NumericalVariety,NumericalVariety) := (V1,V2) -> (
     V := numericalVariety {};

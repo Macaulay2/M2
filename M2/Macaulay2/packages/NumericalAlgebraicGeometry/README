@@ -7,6 +7,8 @@
      decomposition				-- numerical irreducible decomposition
      witness-set				-- witness set manipulation routines 
      positive-dim-methods			-- routines for positive-dimensional solution sets 
+     npd					-- numerical primary decomposition
+     polynomial-space 				-- PolySpace and DualSpace operations
      
 doc.m2		-- documentation
 

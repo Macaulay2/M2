@@ -122,33 +122,39 @@ if member(o.Software,{BERTINI,PHCPACK}) then first refine(F,{s},o) else (
 	norm'Fx = norm Fx;
 	J := evaluate(jacobian F, x1);
 	--cond = conditionNumber J;
-	dx := solve(J, -Fx);
-	norm'dx = norm dx;
-	if DBG > 3 then << "x=" << toString x1 << " res=" <<  Fx << " dx=" << dx << endl;
-	if norm'dx < error'bound then (
-	    x1 = x1 + dx;
-	    --if isProjective then x1 = normalize x1;
-	    nCorrSteps = nCorrSteps + 1;
+	try (
+	    dx := solve(J, -Fx);
+	    norm'dx = norm dx;
+	    if DBG > 3 then << "x=" << toString x1 << " res=" <<  Fx << " dx=" << dx << endl;
+	    if norm'dx < error'bound then (
+	    	x1 = x1 + dx;
+	    	--if isProjective then x1 = normalize x1;
+	    	nCorrSteps = nCorrSteps + 1;
+	    	)
+	    else (
+	    	if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+	    	refinement'success = false;
+	    	);
+	    error'bound = norm'dx; 
+	    ) else (
+	    refinement'success = false;
 	    )
-	else (
-	    if DBG>2 then print "warning: Newton's method correction exceeded the error bound obtained in the previous step"; 
+	);
+    if refinement'success then (
+    	if norm'Fx > o.ResidualTolerance then (
+	    if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
 	    refinement'success = false;
 	    );
-	error'bound = norm'dx; 
-	);
-    if norm'Fx > o.ResidualTolerance then (
-	if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
-	refinement'success = false;
-	);
-    if norm'dx > o.ErrorTolerance * norm x1 then (
-	if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
-	refinement'success = false;
+    	if norm'dx > o.ErrorTolerance * norm x1 then (
+	    if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
+	    refinement'success = false;
+	    );
 	);  
     s' := point { flatten entries x1, 
 	SolutionSystem => F, 
 	ConditionNumber => conditionNumber evaluate(jacobian F, x1)
 	};
-    if error'bound =!= infinity then s'.ErrorBoundEstimate = error'bound;
+    s'.ErrorBoundEstimate = error'bound;
     s'.SolutionStatus = if refinement'success then (
 	if s'.ConditionNumber > o.SingularConditionNumber 
 	then Singular 
@@ -214,7 +220,8 @@ sols = { {1.1_CC,0.1}, { -0.1,1.2} };
 rsols = refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 assert areEqual(rsols, {{1,0},{0,1}})
 T = polySystem {x^2+y^2-1, (x-y)^2};
-P = point {{sqrt 2/2,sqrt 2/2}/toCC};
+e = 1e-9; 
+P = point {{sqrt 2/2 + e*ii,sqrt 2/2 - e*ii}};
 P' = refine(T,P)
 assert(P'.ErrorBoundEstimate < 1e-6 and P'.ConditionNumber > 1e6 and status P' === Singular)
 deflateInPlace(P,T)
