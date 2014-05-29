@@ -1,12 +1,11 @@
 -- -*- M2-comint -*- {* hash: -1927059554 *}
---loading configuration for package "Bertini" from file /home/anton/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y];
 
 i2 : F = {x^2-2,y^2-2};
 
 i3 : sols = bertiniZeroDimSolve (F)
-Temporary directory for input and output files:/tmp/M2-17461-0/0
+Temporary directory for input and output files:/tmp/M2-14890-0/0
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
@@ -19,7 +18,7 @@ o3 = {{1.41421, 1.41421}, {1.41421, -1.41421}, {-1.41421, 1.41421},
 o3 : List
 
 i4 : S = bertiniRefineSols (F,sols,100)
-Temporary directory for input and output files:/tmp/M2-17461-0/1
+Temporary directory for input and output files:/tmp/M2-14890-0/1
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
@@ -40,7 +39,7 @@ o5 : List
 i6 : coords_0
 
 o6 = 1.4142135623730950488016887242096980785696718753769480731766797379907324
-     78462107038850387534327641573+
+     78462107038850387534327641573-
      4.5366719580369329377886375882173660799835459650202032427473840195921243
      99768810548688267741637528721e-317*ii
 
