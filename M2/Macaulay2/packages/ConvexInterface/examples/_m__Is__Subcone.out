@@ -1,6 +1,6 @@
 -- -*- M2-comint -*- {* hash: 1070301369 *}
---loading configuration for package "ConvexInterface" from file /home/janko/.Macaulay2/init-ConvexInterface.m2
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
+--loading configuration for package "ConvexInterface" from file /home/member/dgrayson/.Macaulay2/init-ConvexInterface.m2
+--loading configuration for package "MapleInterface" from file /home/member/dgrayson/.Macaulay2/init-MapleInterface.m2
 
 i1 : L1={{1,0},{0,1}};
 
