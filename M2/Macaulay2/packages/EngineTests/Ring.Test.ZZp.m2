@@ -344,28 +344,26 @@ TEST ///
 TEST ///
   -- test of lift/promote for all galois fields which use tables
   -- testGFpromote enumerates all elements, so only use on smaller size...
-  for i from 1 to 13 do (<< i << " "; testGFpromote(2,i,"New"))
-  for i from 1 to 13 do (<< i << " "; testGFpromote(2,i,null))
-  for i from 1 to 13 do (<< i << " "; testGFpromote(2,i,"Givaro"))
-  for i from 1 to 13 do (<< i << " "; testGFpromote(2,i,"FlintBig"))  
+  topval = 10;  -- 13, although better, makes this too long
+  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"New"))
+  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,null))
+  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Givaro"))
+  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"FlintBig"))  
 
-  time testGFpromote(2,13,"New");
-  time testGFpromote(2,13,null);
-  time testGFpromote(2,13,"Givaro");
-  time testGFpromote(2,13,"FlintBig");
-  time for i from 1 to 8 do (<< i << " "; testGFpromote(3,i,"New"))
-  time for i from 1 to 8 do (<< i << " " << flush; testGFpromote(3,i,null))  
-  time for i from 1 to 8 do (<< i << " " << flush; testGFpromote(3,i,"Givaro"))  
-  time for i from 1 to 8 do (<< i << " " << flush; testGFpromote(3,i,"FlintBig"))  
+  topval = 6 -- 8 would be better
+  time for i from 1 to topval do (<< i << " "; testGFpromote(3,i,"New"))
+  time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,null))  
+  time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Givaro"))  
+  time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"FlintBig"))  
 
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"New"))
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,null))  
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"Givaro"))  
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"FlintBig"))  
   
-  time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"New"))
-  time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,null))  
-  time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"Givaro"))  
+  --time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"New"))
+  --time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,null))  
+  --time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"Givaro"))  
   time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"FlintBig"))  
   
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"New"))
@@ -373,22 +371,22 @@ TEST ///
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"Givaro"))  
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"FlintBig"))  
   
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"New"))
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,null))  
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"Givaro"))  
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"New"))
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,null))  
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"Givaro"))  
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"FlintBig"))  
-  
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,"New"))
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,null))  
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,"Givaro"))  
+
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,"New"))
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,null))  
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,"Givaro"))  
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(17,i,"FlintBig"))  
   
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,"New"))
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,null))  
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,"Givaro"))  
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,"New"))
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,null))  
+  --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,"Givaro"))  
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(19,i,"FlintBig"))  
   
-  for p from 23 to 100 do if isPrime p then (
+  for p from 80 to 100 do if isPrime p then (
       << "doing " << p << endl;
       time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,"New"));
       time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,null))  ;
