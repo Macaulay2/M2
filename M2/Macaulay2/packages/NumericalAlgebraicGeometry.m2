@@ -4,15 +4,16 @@
 newPackage select((
      "NumericalAlgebraicGeometry",
      Version => "1.6.0.1",
-     Date => "October, 2013",
+     Date => "May, 2014",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
      Authors => {
-	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"},
+	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes"},
+     PackageExports => {"NAGtypes","NumericalHilbert"},
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -37,7 +38,7 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "track", "refine", "totalDegreeStartSystem", "newton",
+     "solveSystem", "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -65,7 +66,6 @@ protect SolutionAttributes -- option of getSolution
 protect Tracker -- an internal key in Point 
 
 -- experimental:
-protect AllowSingular -- in movePoints, regeneration
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
 protect DeflationSequence, protect DeflationRandomMatrix
@@ -170,9 +170,16 @@ installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#
 getDefault = method()
 getDefault Symbol := (s)->DEFAULT#s
 
+
+-- METHOD DECLARATIONS
+isOn = method(Options=>{Tolerance=>null,Software=>null})
+
 -- CONVENTIONS ---------------------------------------
 
+-- OLD FORMAT:
 -- Polynomial systems are represented as lists of polynomials.
+-- NEW FORMAT:
+-- PolySystem (defined in NAGtypes).
 
 -- OLD FORMAT:
 -- Solutions are lists {s, a, b, c, ...} where s is list of coordinates (in CC)
@@ -310,11 +317,6 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
     else error "not implemented"
     )
 
-isRegular = method()
--- isRegular ZZ := (s) -> getSolution(s,SolutionAttributes=>SolutionStatus) == Regular  
-isRegular Point := (s) ->  s.SolutionStatus === Regular
-isRegular (List, ZZ) := (sols, s) -> isRegular sols#s
-
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
      R := ring first T;
@@ -412,9 +414,23 @@ squareUp(PolySystem,Matrix) := (P,M) -> (
     P.SquaredUpSystem = polySystem (sub(M,ring P)*P.PolyMap) -- should work without sub!!!
     )
 
+squareUpMatrix = method()
+squareUpMatrix PolySystem := P -> if P.?SquareUpMatrix then P.SquareUpMatrix else (
+    n := P.NumberOfVariables;
+    C := coefficientRing ring P;
+    map(C^n)
+    ) 
+
 load "./NumericalAlgebraicGeometry/BSS-certified.m2"
 load "./NumericalAlgebraicGeometry/0-dim-methods.m2"
-
+load "./NumericalAlgebraicGeometry/witness-set.m2"
+load "./NumericalAlgebraicGeometry/intersection.m2"
+load "./NumericalAlgebraicGeometry/decomposition.m2"
+load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
+load "./NumericalAlgebraicGeometry/deflation.m2"
+load "./NumericalAlgebraicGeometry/SLP.m2"
+load "./NumericalAlgebraicGeometry/npd.m2"
+load "./NumericalAlgebraicGeometry/polynomial-space.m2"
 -- HOM4PS2 part -----------------------------------------------------------
 
 makeHom4psInput = method(TypicalValue=>Sequence)
@@ -466,9 +482,6 @@ readSolutionsHom4ps (String, HashTable) := (f,p) -> (
   s
   )
 
-load "./NumericalAlgebraicGeometry/witness-set.m2"
-load "./NumericalAlgebraicGeometry/decomposition.m2"
-load "./NumericalAlgebraicGeometry/positive-dim-methods.m2"
 
 -----------------------------------------------------------------------
 -- AUXILIARY FUNCTIONS
@@ -488,9 +501,6 @@ selectUnique List := o -> sols ->(
      u
      )
  
-load "./NumericalAlgebraicGeometry/deflation.m2"
-load "./NumericalAlgebraicGeometry/SLP.m2"
-
 NAGtrace = method()
 NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
@@ -499,7 +509,7 @@ conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
  
 -- normalized condition number of F at x
 conditionNumber = method()
-conditionNumber Matrix := M -> (s := first SVD M; max s / min s)
+conditionNumber Matrix := M -> (s := first SVD M; if min s == 0 then infinity else max s / min s)
 conditionNumber (List,List) := (F,x) -> (
      nF := apply(F, f->f/sqrt(#F * BombieriWeylNormSquared f)); -- normalize F
      x0 := normalize transpose matrix{x}; -- column unit vector
@@ -507,21 +517,6 @@ conditionNumber (List,List) := (F,x) -> (
      J := sub(transpose jacobian matrix{nF}, transpose sub(x0,CC)); -- Jacobian of F at x
      J = J || matrix{ flatten entries x0 / conjugate};
      conditionNumber(DMforPN*J) --  norm( Moore-Penrose pseudoinverse(J) * diagonalMatrix(sqrts of degrees) )     
-     )
-
--- a constructor for witnessSet that depends on NAG
-witnessSet Ideal := I -> witnessSet(I,dim I) -- caveat: uses GB driven dim
-witnessSet (Ideal,ZZ) := (I,d) -> (
-     n := numgens ring I;
-     R := ring I;
-     SM := (randomUnitaryMatrix n)^(toList(0..d-1))|random(CC^d,CC^1);
-     S := ideal(promote(SM,R) * ((transpose vars R)||matrix{{1_R}}));
-     RM := (randomUnitaryMatrix numgens I)^(toList(0..n-d-1));
-     RM = promote(RM,ring I);
-     rand'I := flatten entries (RM * transpose gens I);
-     P := solveSystem(rand'I | S_*);
-     PP := select(P, p->norm sub(gens I, matrix p)  < 1e-3 * norm matrix p);
-     witnessSet(ideal rand'I,SM,PP)
      )
 
 isSolution = method(Options=>{Tolerance=>null})

@@ -2,6 +2,8 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
+export { track, trackSegment }
+
 track = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
@@ -855,3 +857,10 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
 	  );
      if class p === Sequence then ret else first ret
      )
+
+trackSegment = method() -- a better implementation needed!!!
+trackSegment (PolySystem,Number,Number,List) := (H,a,b,pts) -> (
+    S := specializeContinuationParameter(H,a);
+    T := specializeContinuationParameter(H,b);
+    track(S,T,pts) 
+    )

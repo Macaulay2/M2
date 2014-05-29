@@ -38,4 +38,4 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
     H := apply(#S, i->o#(NumericalAlgebraicGeometry$gamma)*t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(S#i,Rt)+(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(T#i,Rt));
     bertiniTrackHomotopy(H,t,solS,toBertiniOptions o)
     )
-
+trackBertini (PolySystem,PolySystem,List,OptionTable) := List => (S,T,solS,o) -> trackBertini (equations S, equations T, solS, o)

@@ -1,9 +1,25 @@
+movePoints: fails if the new points are not regular -- there should be a blackbox combining endgame/refine before this is fixed
+
+isSolution?
+
+numericalIntersection: need to handle witness sets with ProjectionDimension key
+
+engine track: problem with the origin (change handling relative error tolerance, wee witness-set examples)
+
+isOn: merge two versions?
+
+NAGtrace: separate "progress update" from other "talk"
+
+NAGtrace: unhook gbTrace
+
+hypersurfaceSection does not remove junk
+
+numericalIrreducibleDecomposition fails on a singular point: e.g., ideal(x_1^2,x_2^2,x_3^3)
+
 movePoints should take a list of Points
 
 deflation needs work
 
 points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
-
-"isOn" is another version of "member"
 
 decompose -- still not robust for nonreduced components 
