@@ -215,7 +215,7 @@ ring_elem PolyRing::fromCoefficient(ring_elem& coeff) const
   if (K_->is_zero(coeff))
     {
       result = ZERO_RINGELEM;
-      return true;
+      return result;
     }
   result = new_term();
   result->coeff = coeff;
