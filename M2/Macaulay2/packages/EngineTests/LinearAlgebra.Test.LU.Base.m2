@@ -12,7 +12,7 @@ checkLU(List,MutableMatrix,MutableMatrix) := (P,L,U) -> (
      Q*L*U)
 --checkLU Matrix := (M) -> norm (checkLU time LUdecomposition M - M)
 
-permutationMatrix = (p) -> id_(ZZ^#p)^p
+permutationMatrix = (p) -> id_(ZZ^#p) _ p
 checkLU Matrix := (M) -> (
     (P,L,U) := LUdecomposition M;
     P = permutationMatrix P;
@@ -68,12 +68,12 @@ testLUBoundaryCases = (kk) -> (
     -- Note that this is documented in 'viewHelp "LUdecomposition"'
     z0 := mutableMatrix(kk,2,4);
     (P,L,U) = LUdecomposition z0;
-    assert((numrows L, numcols L) == (2,2)); -- not yet
-    assert((numrows U, numcols U) == (2,4)); -- not yet
+    assert((numrows L, numcols L) == (2,2));
+    assert((numrows U, numcols U) == (2,4));
     z1 := mutableMatrix(kk,4,2);
     (P,L,U) = LUdecomposition z1;
-    assert((numrows L, numcols L) == (4,2)); -- not yet
-    assert((numrows U, numcols U) == (2,2)); -- not yet
+    assert((numrows L, numcols L) == (4,2));
+    assert((numrows U, numcols U) == (2,2));
     -- Now test boundary cases for the derivative routines:
     -- determinant:
     assert(det a0 == 1_kk);

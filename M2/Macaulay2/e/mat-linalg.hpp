@@ -385,7 +385,7 @@ namespace MatrixOppies
   inline void determinant(const DMat<RT>& A,
                           typename RT::ElementType& result)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     LUdecomp.determinant(result);
   }
 
@@ -394,7 +394,7 @@ namespace MatrixOppies
                     const DMat<RT>& B, 
                     DMat<RT>& X)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.solve(B,X);
   }
 
@@ -404,16 +404,15 @@ namespace MatrixOppies
                               DMat<RT>& U)
   {
     std::vector<size_t> perm;
-    DMatLUtemplate<RT> LUdecomp(A);
-    if (!LUdecomp.MatrixPLU(perm, L, U))
-      return 0;
+    DMatLinAlg<RT> LUdecomp(A);
+    LUdecomp.MatrixPLU(perm, L, U);
     return stdvector_to_M2_arrayint(perm);
   }
 
   template<typename RT>
   inline size_t rank(const DMat<RT>& A)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.rank();
   }
 
@@ -427,13 +426,13 @@ namespace MatrixOppies
         // First transpose A
         DMat<RT> B(A.ring(), A.numColumns(), A.numRows());
         MatrixOppies::transpose(A,B);
-        DMatLUtemplate<RT> LUdecomp(B);
+        DMatLinAlg<RT> LUdecomp(B);
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
       }
     else
       {
-        DMatLUtemplate<RT> LUdecomp(A);
+        DMatLinAlg<RT> LUdecomp(A);
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
       }
@@ -443,7 +442,7 @@ namespace MatrixOppies
   inline bool inverse(const DMat<RT>& A, 
                DMat<RT>& result_inv)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.inverse(result_inv);
   }
 
@@ -451,7 +450,7 @@ namespace MatrixOppies
   inline size_t nullSpace(const DMat<RT>& A, 
                    DMat<RT>& result_nullspace)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.kernel(result_nullspace);
   }
 
@@ -460,7 +459,7 @@ namespace MatrixOppies
                    const DMat<RT>& B, 
                    DMat<RT>& X)
   {
-    DMatLUtemplate<RT> LUdecomp(A);
+    DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.solve(B,X);
   }
 
@@ -474,7 +473,7 @@ namespace MatrixOppies
   {
     if (right_side)
       {
-        DMatLUtemplate<RT> LUdecomp(A);
+        DMatLinAlg<RT> LUdecomp(A);
         return LUdecomp.solve(B,X);
       }
     else
