@@ -419,3 +419,26 @@ MacOS X notes
     look something like this:
 
         ../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
+
+----------------------
+Rerunning the package examples
+----------------------
+
+Some packages cache their example output in the source code tree, since they
+depend on the presence of external programs not included with Macaulay2.  Here
+we briefly summarize them and the software they depend on:
+
+    gfanInterface StatePolytope need polymake, builds OK
+	    http://polymake.org/lib/exe/fetch.php/download/polymake-2.13-1.tar.bz2
+	    (Make 3.81 has a problem with their makefile, so use 4.0)
+
+    Bertini needs bertini:
+	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	which needs gmp and mpfr:
+	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
+	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+
+    PHCpack needs PHCpack, download the binary:
+	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+
+    AdjointIdeal, ConvexInterface, MapleInterface, and Parametrization need Maple.
