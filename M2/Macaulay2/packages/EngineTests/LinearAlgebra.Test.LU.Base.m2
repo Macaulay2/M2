@@ -12,6 +12,12 @@ checkLU(List,MutableMatrix,MutableMatrix) := (P,L,U) -> (
      Q*L*U)
 --checkLU Matrix := (M) -> norm (checkLU time LUdecomposition M - M)
 
+permutationMatrix = (p) -> id_(ZZ^#p)^p
+checkLU Matrix := (M) -> (
+    (P,L,U) := LUdecomposition M;
+    P = permutationMatrix P;
+    assert(M == P*L*U);
+    )
 
 testLUBoundaryCases = (kk) -> (
     -- this should be in e/unit-tests too?

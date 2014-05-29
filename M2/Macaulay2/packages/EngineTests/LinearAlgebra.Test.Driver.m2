@@ -11,7 +11,7 @@ load "EngineTests/LinearAlgebra.Test.Givaro.m2"
 load "EngineTests/LinearAlgebra.Test.all.m2"
 
 
-if hasFlint and hasFFPACK then 
+if hasFFPACK then 
 TEST ///
   -- Which rings have linear algebra routines defined?
   debug Core

@@ -29,8 +29,6 @@ maxFLINTPrime = 18446744073709551521
 maxFFPACKPrime = 33554393
 
 hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
-hasFlint = try (ZZp(101, Strategy=>"FLINT"); true) else false;
-
 
 needsPackage "FastLinearAlgebra"
 debug FastLinearAlgebra
@@ -295,12 +293,11 @@ testInverse = (R) -> (
     --assert(inverse m1 == 0);
     m2 := mutableMatrix(R,1,1);
     --inverse m2 -- gives an unknown engine error
-    for i from 2 to 20 do (
-        for j from 1 to 5 do (
-            (S,Sinv) := randomFullRank(R,i);
-            assert(S*Sinv == mutableIdentity(R,i));
-            assert(Sinv*S == mutableIdentity(R,i));
-        ))
+    for i from 1 to 20 do (
+        (S,Sinv) := randomFullRank(R,i);
+        assert(S*Sinv == mutableIdentity(R,i));
+        assert(Sinv*S == mutableIdentity(R,i));
+        )
     )
 
 randomMatrixWithKernel = (R, ncols, rk) -> (
@@ -339,8 +336,9 @@ testNullspace = (R) -> (
     testNullspace1 R;
         
     -- Now: create matrices with known null space, and check them
-    for j from 1 to 15 do (
-    for i from 0 to j do (
+    L := {1,2,4,7,12, 18};
+    for j in L do (
+    for i in L do if i <= j then (
       (M,X1) := randomMatrixWithKernel(R, j, i);
       X2 := nullSpace M;
       Xall := mutableMatrix((matrix X1) | (matrix X2));
@@ -354,12 +352,12 @@ testRank = (R) -> (
     -- make a random square matrix, with known rank.  Compute rank.
     M := mutableMatrix(R,0,0);
     assert(rank M == 0);
-    for i from 1 to 20 do (
-        for j from 0 to i do (
+    L := {1,2,4,8,15,20};
+    for i in L do
+        for j in L do if j <= i then (
             (M,X) := randomMatrixWithKernel(R, i, j);
             assert(rank M == j);
         ))
-    )
 
 testRankProfile = (R) -> (
     -- WRITE ME WRITE ME
@@ -409,14 +407,14 @@ testSolve = (R) -> (
 
 testLinearAlgebra = (R) -> (
     -- ONLY TESTS DENSE MATRIX CASE
-    testLUBoundaryCases R;
-    testDeterminant R;
-    testMult R;
-    testInverse R;
-    testNullspace R;
-    testRank R;
-    testRankProfile R; -- NOT WRITTEN YET
-    testSolve R; -- NOT DONE
+    time testLUBoundaryCases R;
+    time testDeterminant R;
+    time testMult R;
+    time testInverse R;
+    time testNullspace R;
+    time testRank R;
+    time testRankProfile R; -- NOT WRITTEN YET
+    time testSolve R; -- NOT DONE
     )
     
 testLinearAlgebraSet = (rng) -> (
@@ -441,11 +439,11 @@ testHasEngineLinearAlgebra = () -> (
     assert not hasEngineLinearAlgebra ZZ;
     -- QQ should have linear algebra set
     assert hasEngineLinearAlgebra QQ; -- when does this get set?
-    if hasFlint then (
-        assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FLINT"));
-        assert hasEngineLinearAlgebra ZZFlint;
-        assert hasEngineLinearAlgebra QQFlint;
-        );
+
+    assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FLINT"));
+    assert hasEngineLinearAlgebra ZZFlint;
+    assert hasEngineLinearAlgebra QQFlint;
+
     if hasFFPACK then (
         assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FFPACK"));
         );

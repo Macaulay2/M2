@@ -32,7 +32,6 @@ testLinearAlgebra$FLINT = (rng)->
   -- solveLinear: somehow the wrong one is being called
   -- rankProfile
   -- LUdecomposition
-if hasFlint then 
 TEST ///
   debug Core
   R = ZZp(2, Strategy => "FLINT")
@@ -45,32 +44,78 @@ TEST ///
 
 ///
 
-if hasFlint then 
 TEST ///
   R = ZZpFlint( 3 )
   testLinearAlgebra$FLINT R
 ///
 
-if hasFlint then 
 TEST ///
   R = ZZpFlint( 5 )
   testLinearAlgebra$FLINT R
+  
+  M = mutableMatrix(R,10,20); fillMatrix M
+  LUdecomposition M
+  
+  debug EngineTests
+  checkLU matrix M
 ///
 
-if hasFlint then 
+TEST ///
+  debug Core
+  for i from 32500 to 32767 do (
+      if isPrime i then (
+          R = ZZp(i, Strategy=>"FLINT");
+          time testLinearAlgebra$FLINT R
+          );
+      )
+///
+
+TEST ///
+  for i from 2 to 10 do (
+      R = GF(2,i,Strategy=>"FlintBig");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 10 do (
+      R = GF(3,i,Strategy=>"FlintBig");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 10 do (
+      R = GF(5,i,Strategy=>"FlintBig");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 10 do (
+      R = GF(7,i,Strategy=>"FlintBig");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 10 do (
+      R = GF(11,i,Strategy=>"FlintBig");
+      time testLinearAlgebra R
+      )
+///
+
 TEST ///
   R = ZZpFlint( 101 )
   testLinearAlgebra$FLINT R
 ///
 
-if hasFlint then 
 TEST ///
   -- largest prime < 2^62
   R = ZZpFlint( 4611686018427387847 ) 
   testLinearAlgebra$FLINT R
 ///
 
-if hasFlint then 
 TEST ///
   -- largest prime < 2^63
   R = ZZpFlint(9223372036854775783 )
@@ -78,13 +123,11 @@ TEST ///
 ///
 
 
-if hasFlint then 
 TEST ///
   R = ZZpFlint(maxFLINTPrime)
   testLinearAlgebra$FLINT R
 ///
 
-if hasFlint then 
 TEST ///
   debug Core
   -- Most of this code is designed for fields...
@@ -93,7 +136,6 @@ TEST ///
   testMult R
 ///
 
-if hasFlint then 
 TEST ///
   -- this ring is still experimental
   debug Core
@@ -105,26 +147,7 @@ TEST ///
   -- testNullspace R; --FAILS
 ///
 
-if hasFlint then
 TEST ///
-{*
-  restart
-  debug loadPackage "EngineTests"
-*}
-  R = GF(9, Strategy=>"FlintBig")
-  M = mutableMatrix(R,2,2)
-  fillMatrix M
-  N = mutableMatrix(R,2,3)
-  fillMatrix N;
-  (M, N, M*N)
-  det M
-  det matrix M
-  (S,S1) = randomFullRank(R,4) -- fails
-  S*S1
-  randomMatrixWithKernel(R,4,2)
-  rank first oo -- wrong...!
-  testMult R -- passes
-  testInverse R -- fails
-  testRank R -- fails
-  testLinearAlgebra$FLINT R
+  debug Core
 ///
+

@@ -353,7 +353,7 @@ TEST ///
 
 TEST ///
   debug Core
-  if hasFlint then testMutableMatrices(ZZp(101, Strategy=>"FLINT"))
+  testMutableMatrices(ZZp(101, Strategy=>"FLINT"))
 ///
 
 TEST ///
