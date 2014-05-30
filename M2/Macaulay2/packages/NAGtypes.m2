@@ -471,7 +471,7 @@ dim WitnessSet := W -> ( if class W.Slice === List then #W.Slice
      else if class W.Slice === Matrix then numrows W.Slice 
      else error "ill-formed slice in WitnessSet" )
 codim WitnessSet := {} >> o -> W -> numgens ring W - dim W
-ring WitnessSet := W -> ring W.Equations
+ring WitnessSet := W -> if class W.Equations === Ideal then ring W.Equations else ring ideal equations W
 degree WitnessSet := W -> #W.Points
 ideal WitnessSet := W -> if class W.Equations === PolySystem then ideal W.Equations else W.Equations
 
@@ -586,7 +586,7 @@ degree NumericalVariety := V -> (
      d := dim V;
      sum(keys V, k->if k =!= d then 0 else sum(V#k,degree))
      )
-components NumericalVariety := V -> flatten values V
+components NumericalVariety := V -> flatten apply(select(keys V, i->class i === ZZ), i->V#i)
 components (NumericalVariety,ZZ) := (V,d) -> V#d
 components (NumericalVariety,ZZ,ZZ) := (V,a,b) -> (
     a = max(0,a);

@@ -3,7 +3,8 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export { deflate, SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
+export { deflate, 
+    SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
     deflateInPlace, DeflationSequence, DeflationSequenceMatrices,
     LiftedPoint, LiftedSystem,
     numericalRank, isFullNumericalRank
@@ -54,20 +55,20 @@ assert not isFullNumericalRank evaluate(F,P1)
 assert isFullNumericalRank evaluate(F,P2)
 ///
 
-deflate = method()
+deflate = method(Options=>{Variable=>null})
 
 -- creates and stores (if not stored already) a deflated system and the corresponding random matrix 
 -- returns the deflation rank
-deflate (PolySystem, Point) := (F,P) -> (
+deflate (PolySystem, Point) := o -> (F,P) -> (
     J := evaluate(jacobian F, P);
     r := numericalRank J;
-    deflate(F,r);
+    deflate(F,r,o);
     r
     )	
 
 -- creates and stores (if not stored already) 
 -- returns a deflated system for rank r
-deflate (PolySystem, ZZ) := (F,r) -> (
+deflate (PolySystem, ZZ) := o -> (F,r) -> (
     if not F.?Deflation then (
 	F.Deflation = new MutableHashTable;
 	F.DeflationRandomMatrix = new MutableHashTable;
@@ -75,19 +76,19 @@ deflate (PolySystem, ZZ) := (F,r) -> (
     if not F.Deflation#?r then (
 	C := coefficientRing ring F;
 	B := random(C^(F.NumberOfVariables),C^(r+1));
-    	deflate(F,B);
+    	deflate(F,B,o);
 	); 
     F.Deflation#r
     )
 
 -- deflate using a matrix 
-deflate(PolySystem, Matrix) := (F,B) -> (
+deflate(PolySystem, Matrix) := o -> (F,B) -> (
     if not F.?Deflation then (
 	F.Deflation = new MutableHashTable;
 	F.DeflationRandomMatrix = new MutableHashTable;
 	);
     r := numcols B - 1;
-    L := symbol L;
+    L := if o.Variable === null then symbol L else o.Variable;
     C := coefficientRing ring F;
     R := C (monoid [gens ring F, L_1..L_r]);
     LL := transpose matrix{ take(gens R, -r) | {1_C} };
@@ -98,24 +99,24 @@ deflate(PolySystem, Matrix) := (F,B) -> (
     )
 
 -- deflate using a pair of matrices: one for deflation, the other for squaring up 
-deflate(PolySystem, Sequence) := (F,BM) -> (
+deflate(PolySystem, Sequence) := o -> (F,BM) -> (
     (B,M) := BM;
-    FD := deflate(F,B);
+    FD := deflate(F,B,o); -- passing non-null option may not work!!!
     squareUp(FD,M)
     )
 
 -- deflate according to the sequence of matrices (or pairs of matrices if squaring up)
-deflate(PolySystem, List) := (F, seq) -> (
-    scan(seq, B -> F = deflate(F,B)); -- here B is either a Matrix or (Matrix,Matrix)
+deflate(PolySystem, List) := o -> (F, seq) -> (
+    scan(seq, B -> F = deflate(F,B,o)); -- here B is either a Matrix or (Matrix,Matrix)
     F
     )
 
 -- deflation ideal
-deflate Ideal := I -> (
+deflate Ideal := o -> I -> (
     C := coefficientRing ring I;
     F := polySystem transpose gens I;
     B := map C^(F.NumberOfVariables) | map(C^(F.NumberOfVariables),C^1,0);
-    ideal deflate(F,B)
+    ideal deflate(F,B,o)
     )
 
 liftPointToDeflation = method() 
@@ -174,7 +175,7 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
 	F0 = F0.Deflation#r; 
 	if o.SquareUp then (
 	    F0' := squareUp F0;
-	    new'mat'or'pair = (new'mat'or'pair, F0.SquareUpMatrix);
+	    new'mat'or'pair = (new'mat'or'pair, squareUpMatrix F0);
 	    F0 = F0';
 	    );
 	d'seq'mat = d'seq'mat | {new'mat'or'pair}; 

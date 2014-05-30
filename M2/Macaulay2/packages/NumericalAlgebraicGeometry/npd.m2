@@ -1,8 +1,15 @@
+-------------------------------------------------------
+-- functions related to numerical primary decomposition
+-- (loaded by  ../NumericalAlgebraicGeometry.m2)
+-------------------------------------------------------
+export { isPointEmbedded, isPointEmbeddedInCurve, AllVisible, interpolate }
+
 debug NumericalHilbert
 
 isPointEmbedded = method(Options=>{AllVisible=>false})
 isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witness sets for irreducible components
-    time (D,gCs) := gCorners(p,I); -- assume Robert's
+    R := ring I;
+    time gCs := gCorners(p,I); -- assume Robert's
 	       	              -- algorithm a DualSpace D,
 			      -- and g-corners
     d := 0;
@@ -18,24 +25,26 @@ isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witne
 	    if dim R_d - dim Jd != hilbertFunction(d, monomialIdeal gCs) then return true; -- is there a better way?
 	    )
 	else (
-	    print "double truncation...";
+	    if DBG>0 then print "-- double truncation...";
 	    time Jdd := doubleTruncation(I,C,d,d);
-	    print (d,dim Jdd);
+	    if DBG>0 then print (d,dim Jdd);
 	    for d' from 1 to d do (
 		g := random(d', Jdd);
-		<< "witness poly: (d',d) = " << (d',d) << endl;
+		if DBG>0 then << "-- witness poly: (d',d) = " << (d',d) << endl;
 		time if isWitnessPolynomial(p,I,g,d)     
 		then (
-		    print toString g;
+		    if DBG>0 then print toString g;
 		    return true;
 		    )
 		)
 	    );
         --SECOND PART: returns false if deemed not embedded
-	print "colon(truncated dual)...";
+	if DBG>0 then print "-- colon(truncated dual)...";
 	time Sd := colon(truncatedDual(p,I,d), l);
-	if isSubset(flatten entries sCorners gCs, leadMonomial \ flatten entries gens reduceSpace Sd) 
-	then return false; 
+	sCs := flatten entries sCorners gCs;
+	colonLMs := leadMonomial \ flatten entries gens reduceSpace Sd;
+    	if DBG>0 then << "-- s-corners: " << sCs << endl << "-- LM(dual of colon ideal): " << colonLMs << endl;	
+	if isSubset(sCs, colonLMs) then return false; 
     	d = d+1;
 	)
     )
@@ -74,7 +83,7 @@ orthogonalInSubspace (Ideal,List,ZZ,PolySpace) := (I,C,e,S) -> (
 	    p := random V; 
 	    D := truncatedDual(p,I,e); -- D_p^e[I]
 	    S' := orthogonalInSubspace(D,S,t);
-	    nothing'new = (dim S' == dim S);
+	    nothing'new := (dim S' == dim S);
 	    S = S';
 	    nothing'new
 	    ));
@@ -151,7 +160,7 @@ isPointEmbeddedInCurve = method()
 isPointEmbeddedInCurve (Point,Ideal) := (p,I) -> (
     R := ring I;
     I' := ideal sub(gens I, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
-    p' = origin(R);
+    p' := origin(R);
     m := matrix{apply(gens R, v->random(1,R))}; -- matrix for random linear change of coordinates
     I' = (map(R,R,m)) I'; -- I with new coordinates
     r := 12;--localHilbertRegularity(p',I'); 
