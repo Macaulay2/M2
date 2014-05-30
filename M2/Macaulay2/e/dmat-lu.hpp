@@ -397,8 +397,8 @@ public:
   bool MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U); 
 
   /// Output: X, a matrix, columns form a basis of Ax=0
-  ///         returns false iff A is (near)singular
-  bool kernel(Mat& X); 
+  ///         returns dim of nullspace
+  size_t kernel(Mat& X); 
 
   /// Output: returns the approximate rank of A (-1 if fails)
   size_t rank(); 
@@ -797,7 +797,7 @@ bool DMatLinAlg<RingType>::inverse(Mat& X)
 }
 
 template <class RingType>
-bool DMatLinAlg<RingType>::kernel(Mat& X)
+size_t DMatLinAlg<RingType>::kernel(Mat& X)
 {
   const Mat& LU = mLUObject.LUinPlace();
   const std::vector<size_t>& pivotColumns = mLUObject.pivotColumns();
@@ -844,8 +844,10 @@ bool DMatLinAlg<RingType>::kernel(Mat& X)
 
   ring().clear(tmp);
   ring().clear(tmp2);
-  return true;
+  return X.numColumns();
 }
+
+#include "dmat-lu-zzp-ffpack.hpp"
 
 #endif
 

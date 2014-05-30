@@ -42,12 +42,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 #include "lapack.hpp"
 #include "mat-arith.hpp"
-#include "dmat-LU-template.hpp"
-
-// We need to find a home for the following function.
-// It is defined in mat.cpp, but it is not declared in mat.hpp,
-// uugh (reason: mat.hpp doesn't need to be included in many places that
-// we want this function).
+#include "dmat-lu.hpp"
 
 namespace MatrixOppies
 {
@@ -480,48 +475,6 @@ namespace MatrixOppies
       throw exc::engine_error("solveLinear for XA=B not implemented for this ring/matrix type");
   }
 
-  //////////////////////
-  // ZZpFFPACK /////////
-  //////////////////////
-#ifdef HAVE_FFLAS_FFPACK
-  // Functions for DMatZZpFFPACK
-
-  size_t rank(const DMatZZpFFPACK& A);
-
-  void determinant(const DMatZZpFFPACK& A, 
-                   ZZpFFPACK::ElementType& result_det);
-
-  bool inverse(const DMatZZpFFPACK& A, 
-               DMatZZpFFPACK& result_inv);
-
-  void mult(const DMatZZpFFPACK& A, 
-            const DMatZZpFFPACK& B, 
-            DMatZZpFFPACK& result_product);
-
-  size_t nullSpace(const DMatZZpFFPACK& A, 
-                   DMatZZpFFPACK& result_nullspace);
-
-  bool solveLinear(const DMatZZpFFPACK& A, 
-                   const DMatZZpFFPACK& B, 
-                   DMatZZpFFPACK& X);
-
-  bool solveLinear(const DMatZZpFFPACK& A, 
-                   const DMatZZpFFPACK& B, 
-                   bool right_side, 
-                   DMatZZpFFPACK& X, 
-                   bool declare_A_is_invertible);
-
-  M2_arrayintOrNull rankProfile(const DMatZZpFFPACK& A, 
-                                bool row_profile);
-
-  void addMultipleTo(DMatZZpFFPACK& C, 
-                     const DMatZZpFFPACK& A, 
-                     const DMatZZpFFPACK& B);
-
-  void subtractMultipleTo(DMatZZpFFPACK& C, 
-                          const DMatZZpFFPACK& A, 
-                          const DMatZZpFFPACK& B);
-#endif
 
   //////////////////////
   // ZZFlint ///////////

@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_FFLAS_FFPACK
-namespace MatrixOppies
+namespace ffpackInterface 
 {
   size_t rank(const DMatZZpFFPACK& mat)
   {
@@ -201,6 +201,37 @@ namespace MatrixOppies
     delete [] prof;
     return profile;
   }
+
+  void rankProfile(const DMatZZpFFPACK& mat, 
+                   bool row_profile,
+                   std::vector<size_t>& result_profile)
+  
+  {
+    DMatZZpFFPACK N(mat);
+    
+    size_t * prof; // this is where the result will be placed
+    size_t rk;
+    if (row_profile)
+      rk = FFPACK::RowRankProfile(mat.ring().field(),
+                                  mat.numRows(),
+                                  mat.numColumns(),
+                                  N.array(),
+                                  mat.numColumns(),
+                                  prof);
+    else
+      rk = FFPACK::ColumnRankProfile(mat.ring().field(),
+                                     mat.numRows(),
+                                     mat.numColumns(),
+                                     N.array(),
+                                     mat.numColumns(),
+                                     prof);
+    
+    result_profile.resize(0);
+    for (size_t i=0; i<rk; i++)
+      result_profile.push_back(prof[i]);
+    
+    delete [] prof;
+  }
   
   void addMultipleTo(DMatZZpFFPACK& C,
                      const DMatZZpFFPACK::ElementType& a,
@@ -266,8 +297,7 @@ namespace MatrixOppies
     // We assume that C is set to the correct size, and is the zero matrix here.
     addMultipleTo(C,A,B);
   }
-
-};                                                     
+}; // namespace ffpackInterface
 
 #endif // HAVE_FFLAS_FFPACK
 
