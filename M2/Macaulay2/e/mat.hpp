@@ -298,11 +298,10 @@ public:
   // return a matrix whose columns span {x | Mx = 0}
   virtual MutableMatrix* nullSpace() const = 0;
 
-  // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
-  // or xA = B (right_side=false).  The first argument returned is false
+  // Return a matrix whose columns solve Ax = B
+  // The first argument returned is false
   // if there is no solution.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
-                                                      bool right_side) const = 0;
+  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B) const = 0;
 
   virtual void  addMultipleTo(const MutableMatrix* A,
                               const MutableMatrix* B) = 0;

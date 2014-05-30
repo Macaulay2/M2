@@ -106,13 +106,13 @@ initializeEngineLinearAlgebra Ring := (R) -> (
         if numRows A =!= numColumns A then error "expected square matrix";
         matrix map(R,rawLinAlgInverse(raw A))
         );
-    R#"solveLinear" = (f,g, rightside) -> (
-        -- solve f*X = g, or (if rightside is false), X*f = g
+    R#"solveLinear" = (f,g) -> (
+        -- solve f*X = g
         if ring f =!= ring g then error "expected same base rings";
         A := mutableMatrix(f, Dense=>true);
         B := mutableMatrix(g, Dense=>true);
         R := ring A;
-        result := map(R,rawLinAlgSolve(raw A,raw B,rightside));
+        result := map(R,rawLinAlgSolve(raw A,raw B));
         matrix result
         );
     )

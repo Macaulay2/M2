@@ -133,36 +133,13 @@ namespace MatrixOppies
     throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
   }
 
-  /// @brief solve a linear equation AX=B or XA=B
-  ///
-  /// if right_side is true then 
-  ///   X is set to a matrix which solves AX=B.
-  /// if right_side is false then
-  ///   X is set to a matrix which solves XA=B.
-  ///
-  /// true is returned iff this equation has a solution.
-  ///
-  /// declare_A_is_invertible is a hint: if true, then A is assumed to be a square invertible matrix.
-  ///   If A is not invertible, and declare_A_is_invertible is true, then the routine may either fail or crash.
-  /// if declare_A_is_invertible is false, then no such assumption is made.
-  template<typename Mat>
-  bool solveLinear(const Mat& A, 
-                   const Mat& B, 
-                   bool right_side, 
-                   Mat& X, 
-                   bool declare_A_is_invertible)
-  {
-    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return false;
-  }
-
   /// @brief solve AX=B, return true if the system has a solution.
   template<typename Mat>
   bool solveLinear(const Mat& A, 
                    const Mat& B, 
                    Mat& X)
   {
-    return solveLinear(A,B,true,X,false);
+    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
   }
 
   /// @brief Returns either the row or column rank profile of A
@@ -400,7 +377,7 @@ namespace MatrixOppies
   {
     std::vector<size_t> perm;
     DMatLinAlg<RT> LUdecomp(A);
-    LUdecomp.MatrixPLU(perm, L, U);
+    LUdecomp.matrixPLU(perm, L, U);
     return stdvector_to_M2_arrayint(perm);
   }
 
@@ -457,24 +434,6 @@ namespace MatrixOppies
     DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.solve(B,X);
   }
-
-  template<typename RT>
-  bool solveLinear(const DMat<RT>& A, 
-                   const DMat<RT>& B, 
-                   bool right_side, 
-                   DMat<RT>& X, 
-                   bool declare_A_is_invertible)
-
-  {
-    if (right_side)
-      {
-        DMatLinAlg<RT> LUdecomp(A);
-        return LUdecomp.solve(B,X);
-      }
-    else
-      throw exc::engine_error("solveLinear for XA=B not implemented for this ring/matrix type");
-  }
-
 
   //////////////////////
   // ZZFlint ///////////
@@ -535,18 +494,6 @@ namespace MatrixOppies
     return result;
   }
   
-  inline bool solveLinear(const DMatZZ& A, 
-                          const DMatZZ& B, 
-                          bool right_side, 
-                          DMatZZ& X, 
-                          bool declare_A_is_invertible)
-  {
-    //TODO: write this routine in the cases which are not handled
-    if (not right_side or not declare_A_is_invertible)
-      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return solveLinear(A,B,X);
-  }
-
   inline M2_arrayintOrNull rankProfile(const DMatZZ& A, 
                                        bool row_profile)
   {
@@ -612,18 +559,6 @@ namespace MatrixOppies
     DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_solve doesn't declare params const
     DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
     return nmod_mat_solve(X.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
-  }
-
-  inline bool solveLinear(const DMatZZpFlint& A, 
-                          const DMatZZpFlint& B, 
-                          bool right_side, 
-                          DMatZZpFlint& X, 
-                          bool declare_A_is_invertible)
-  {
-    //TODO: WRITE ME
-    if (not right_side or not declare_A_is_invertible)
-      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return solveLinear(A,B,X);
   }
 
   inline M2_arrayintOrNull rankProfile(const DMatZZpFlint& A, 
@@ -762,17 +697,6 @@ namespace MatrixOppies
     //DMatQQFlint& B1 = const_cast<DMatQQFlint&>(B);
     //    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
     return false;
-  }
-  inline bool solveLinear(const DMatQQFlint& A, 
-                          const DMatQQFlint& B, 
-                          bool right_side, 
-                          DMatQQFlint& X, 
-                          bool declare_A_is_invertible)
-  {
-    //TODO: write this routine in the cases which are not handled
-    if (not right_side or not declare_A_is_invertible)
-      throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
-    return solveLinear(A,B,X);
   }
 
   inline M2_arrayintOrNull rankProfile(const DMatQQFlint& A, 

@@ -1312,8 +1312,7 @@ extern "C" {
   MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);
 
   MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
-                                const MutableMatrix* B,
-                                M2_bool right_side);
+                                const MutableMatrix* B);
 
   /** A,B,C should be mutable matrices over the same ring, and a,b
      elements of this ring.

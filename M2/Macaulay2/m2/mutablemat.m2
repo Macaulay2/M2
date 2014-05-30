@@ -176,7 +176,7 @@ solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
      if hasEngineLinearAlgebra R and not opts.ClosestFit then (
-         return map(R,rawLinAlgSolve(raw A, raw b, true));
+         return map(R,rawLinAlgSolve(raw A, raw b));
          );
      if (opts#Precision !=0) then (
 		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));

@@ -12,10 +12,6 @@ namespace ffpackInterface {
   bool inverse(const DMatZZpFFPACK& A, 
                DMatZZpFFPACK& result_inv);
 
-  void mult(const DMatZZpFFPACK& A, 
-            const DMatZZpFFPACK& B, 
-            DMatZZpFFPACK& result_product);
-
   size_t nullSpace(const DMatZZpFFPACK& A, 
                    DMatZZpFFPACK& result_nullspace);
 
@@ -23,18 +19,16 @@ namespace ffpackInterface {
                    const DMatZZpFFPACK& B, 
                    DMatZZpFFPACK& X);
 
-  bool solveLinear(const DMatZZpFFPACK& A, 
-                   const DMatZZpFFPACK& B, 
-                   bool right_side, 
-                   DMatZZpFFPACK& X, 
-                   bool declare_A_is_invertible);
-
   M2_arrayintOrNull rankProfile(const DMatZZpFFPACK& A, 
                                 bool row_profile);
 
   void rankProfile(const DMatZZpFFPACK& A, 
                    bool row_profile,
                    std::vector<size_t>& result_profile);
+
+  void mult(const DMatZZpFFPACK& A, 
+            const DMatZZpFFPACK& B, 
+            DMatZZpFFPACK& result_product);
 
   void addMultipleTo(DMatZZpFFPACK& C, 
                      const DMatZZpFFPACK& A, 
@@ -62,8 +56,14 @@ public:
 
   void determinant(ElementType& result) { ffpackInterface::determinant(mLU, result); }
 
-  void MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
+  void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
+    DMatLUinPlace<RingType> C(mLU);
+    
+    const Mat& LU = C.LUinPlace();
+    
+    LUUtil<RingType>::setUpperLower(LU, L,U);
+    P = C.permutation();
   }
 
   size_t kernel(Mat& X) { return ffpackInterface::nullSpace(mLU, X); }

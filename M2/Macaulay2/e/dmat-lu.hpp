@@ -43,7 +43,7 @@ public:
   /// Output: P = mPerm,
   ///         L,U; the corresponding parts mLU
   ///         returns false iff there is an error 
-  bool MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U); 
+  bool matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U); 
 
   /// Output: X, a matrix, columns form a basis of Ax=0
   ///         returns dim of nullspace
@@ -252,7 +252,7 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
 }
 
 template <class RingType>
-bool DMatLinAlg<RingType>::MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
+bool DMatLinAlg<RingType>::matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
 {
   const Mat& LU = mLUObject.LUinPlace();
 
@@ -262,7 +262,7 @@ bool DMatLinAlg<RingType>::MatrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
 }
 
 template <class RingType>
-bool DMatLinAlg<RingType>::determinant(ElementType& result)
+void DMatLinAlg<RingType>::determinant(ElementType& result)
 {
   const Mat& LU = mLUObject.LUinPlace();
 
@@ -275,8 +275,6 @@ bool DMatLinAlg<RingType>::determinant(ElementType& result)
     ring().set_from_long(result, -1);
   for (size_t i=0; i<LU.numRows(); i++)
     ring().mult(result, result, LU.entry(i,i));
-
-  return true;
 }
 
 template <class RingType>

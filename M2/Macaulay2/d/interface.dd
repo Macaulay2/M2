@@ -2923,18 +2923,17 @@ setupfun("rawLinAlgNullSpace", rawLinAlgNullSpace);
 
 export rawLinAlgSolve(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
+     if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawMutableMatrixCell do
      when s.1 is N:RawMutableMatrixCell do
-     if !isBoolean(s.2) then WrongArgBoolean(2) else toExpr(
+      toExpr(
 	  Ccode(RawMutableMatrixOrNull, "rawLinAlgSolve(", 
 	       M.p, ",", 
-	       N.p, ",", 
-	       toBoolean(s.2),
+	       N.p,
 	       ")"))
-     else WrongArgMutableMatrix(1)
      else WrongArgMutableMatrix(2)
-     else WrongNumArgs(3));
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
 setupfun("rawLinAlgSolve", rawLinAlgSolve);
 
 export rawLinAlgAddMult(e:Expr):Expr := (

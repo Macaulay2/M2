@@ -727,8 +727,7 @@ public:
   // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
   // or xA = B (right_side=false).  The first argument returned is false
   // in this case.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
-                                              bool right_side) const;
+  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B) const;
 
   virtual void addMultipleTo(const MutableMatrix* A,
                              const MutableMatrix* B);
@@ -792,8 +791,7 @@ MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
 }
 
 template <typename T>
-std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B, 
-                                                           bool right_side) const 
+std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B) const
 { 
   const T* B1 = B->coerce_const<T>();
   if (B1 == 0)
@@ -802,7 +800,7 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
     throw exc::engine_error("expected same ring");
   //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = MatrixOppies::solveLinear(mat, *B1, right_side, solns->mat, false);
+  bool retval = MatrixOppies::solveLinear(mat, *B1, solns->mat);
   return std::pair<bool, MutableMatrix*>(retval, solns);
 }
 
