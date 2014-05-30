@@ -9,16 +9,6 @@ namespace ffpackInterface {
   void determinant(const DMatZZpFFPACK& A, 
                    ZZpFFPACK::ElementType& result_det);
 
-  bool inverse(const DMatZZpFFPACK& A, 
-               DMatZZpFFPACK& result_inv);
-
-  size_t nullSpace(const DMatZZpFFPACK& A, 
-                   DMatZZpFFPACK& result_nullspace);
-
-  bool solveLinear(const DMatZZpFFPACK& A, 
-                   const DMatZZpFFPACK& B, 
-                   DMatZZpFFPACK& X);
-
   M2_arrayintOrNull rankProfile(const DMatZZpFFPACK& A, 
                                 bool row_profile);
 
@@ -26,17 +16,16 @@ namespace ffpackInterface {
                    bool row_profile,
                    std::vector<size_t>& result_profile);
 
-  void mult(const DMatZZpFFPACK& A, 
-            const DMatZZpFFPACK& B, 
-            DMatZZpFFPACK& result_product);
+  bool solveLinear(const DMatZZpFFPACK& A, 
+                   const DMatZZpFFPACK& B, 
+                   DMatZZpFFPACK& X);
 
-  void addMultipleTo(DMatZZpFFPACK& C, 
-                     const DMatZZpFFPACK& A, 
-                     const DMatZZpFFPACK& B);
+  bool inverse(const DMatZZpFFPACK& A, 
+               DMatZZpFFPACK& result_inv);
 
-  void subtractMultipleTo(DMatZZpFFPACK& C, 
-                          const DMatZZpFFPACK& A, 
-                          const DMatZZpFFPACK& B);
+  size_t nullSpace(const DMatZZpFFPACK& A, 
+                   DMatZZpFFPACK& result_nullspace);
+
 }; // namespace ffpackInterface
 
 template<>
@@ -50,11 +39,11 @@ public:
 public:
   DMatLinAlg(const Mat& A) : mLU(A) {}
 
-  bool solve(const Mat& B, Mat& X) { return ffpackInterface::solveLinear(mLU, B, X); }
-
-  bool inverse(Mat& X) { return ffpackInterface::inverse(mLU, X); }
+  size_t rank() { return ffpackInterface::rank(mLU); }
 
   void determinant(ElementType& result) { ffpackInterface::determinant(mLU, result); }
+
+  void columnRankProfile(std::vector<size_t>& profile) { ffpackInterface::rankProfile(mLU, false, profile); }
 
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
@@ -66,11 +55,11 @@ public:
     P = C.permutation();
   }
 
+  bool solve(const Mat& B, Mat& X) { return ffpackInterface::solveLinear(mLU, B, X); }
+
+  bool inverse(Mat& X) { return ffpackInterface::inverse(mLU, X); }
+
   size_t kernel(Mat& X) { return ffpackInterface::nullSpace(mLU, X); }
-
-  size_t rank() { return ffpackInterface::rank(mLU); }
-
-  void columnRankProfile(std::vector<size_t>& profile) { ffpackInterface::rankProfile(mLU, false, profile); }
 
 private:
   const Mat& mLU; // reference to the original matrix

@@ -435,6 +435,25 @@ namespace MatrixOppies
     return LUdecomp.solve(B,X);
   }
 
+
+  ////////////////////////
+  // ZZpFFPACK ///////////
+  ////////////////////////
+
+  // namespace MatrixOppies
+  void mult(const DMatZZpFFPACK& A, 
+            const DMatZZpFFPACK& B, 
+            DMatZZpFFPACK& result_product);
+
+  void addMultipleTo(DMatZZpFFPACK& C, 
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B);
+
+  void subtractMultipleTo(DMatZZpFFPACK& C, 
+                          const DMatZZpFFPACK& A, 
+                          const DMatZZpFFPACK& B);
+
+
   //////////////////////
   // ZZFlint ///////////
   //////////////////////
@@ -523,50 +542,6 @@ namespace MatrixOppies
   //////////////////////
 
 // Functions for DMatZZpFlint
-
-  inline size_t rank(const DMatZZpFlint& A) 
-  { 
-    return nmod_mat_rank(A.nmod_mat()); 
-  }
-
-  inline void determinant(const DMatZZpFlint& A, 
-                          DMatZZpFlint::ElementType& result_det) 
-  {
-    result_det = nmod_mat_det(A.nmod_mat());
-  }
-
-  inline bool inverse(const DMatZZpFlint& A, 
-                      DMatZZpFlint& result_inv) 
-  {
-    DMatZZpFlint& B = const_cast<DMatZZpFlint&>(A);
-    return nmod_mat_inv(result_inv.nmod_mat(), B.nmod_mat());
-  }
-
-  inline size_t nullSpace(const DMatZZpFlint& A, 
-                          DMatZZpFlint& result_nullspace) 
-  {
-    long rank = nmod_mat_rank(A.nmod_mat());
-    result_nullspace.resize(A.numColumns(), A.numColumns() - rank); // the largest the answer could be
-    long nullity = nmod_mat_nullspace(result_nullspace.nmod_mat(), A.nmod_mat());
-    M2_ASSERT(rank == A.numColumns() - nullity);
-    return nullity;
-  }
-  
-  inline bool solveLinear(const DMatZZpFlint& A, 
-                          const DMatZZpFlint& B, 
-                          DMatZZpFlint& X) 
-  {
-    DMatZZpFlint& A1 = const_cast<DMatZZpFlint&>(A); // needed because nmod_mat_solve doesn't declare params const
-    DMatZZpFlint& B1 = const_cast<DMatZZpFlint&>(B);
-    return nmod_mat_solve(X.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
-  }
-
-  inline M2_arrayintOrNull rankProfile(const DMatZZpFlint& A, 
-                                       bool row_profile)
-  {
-    //TODO: WRITE ME
-    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
-  }
 
   inline void addMultipleTo(DMatZZpFlint& C, 
                             const DMatZZpFlint& A, 

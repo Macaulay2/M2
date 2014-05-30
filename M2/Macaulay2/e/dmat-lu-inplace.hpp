@@ -16,8 +16,9 @@ public:
   typedef DMat<RingType> Mat;
 
   static void setUpperLower(const Mat& LU, Mat& lower, Mat& upper);
-  static void computePivotColumns(const Mat& LU, std::vector<long>& result_columns);
-  static bool computeSign(const std::vector<long>& perm);  // true: 1, false: -1
+  static void computePivotColumns(const Mat& LU, std::vector<size_t>& result_columns);
+  // not written yet:
+  // static bool computeSign(const std::vector<size_t>& perm);  // true: 1, false: -1
 
   void debug_out(const Mat& M)
   {
@@ -410,7 +411,7 @@ void LUUtil<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
 }
 
 template <class RingType>
-void LUUtil<RingType>::computePivotColumns(const Mat& LU, std::vector<long>& result_columns)
+void LUUtil<RingType>::computePivotColumns(const Mat& LU, std::vector<size_t>& result_columns)
 {
   result_columns.clear();
   size_t thiscol = 0;

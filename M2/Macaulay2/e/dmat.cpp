@@ -10,6 +10,73 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_FFLAS_FFPACK
+namespace MatrixOppies {
+  void addMultipleTo(DMatZZpFFPACK& C,
+                     const DMatZZpFFPACK::ElementType& a,
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B)
+  {
+    // Compute C := C + a*A*B
+    // Both DMat, and FFPACK store dense matrices in row major order.
+    // Note that the leading dimension in gemm arguments is #columns, 
+    // as the matrix is in row-major order
+    
+    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
+    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
+
+    size_t m = A.numRows();
+    size_t k = A.numColumns();
+    M2_ASSERT(A.numColumns() == B.numRows());
+    size_t n = B.numColumns();
+    
+    M2_ASSERT(C.numRows() == m);
+    M2_ASSERT(C.numColumns() == n);
+
+    DMatZZpFFPACK::ElementType b;
+    C.ring().init(b);
+    C.ring().set_from_long(b, 1);
+    FFLAS::fgemm( C.ring().field(),
+                  tB, tA,
+                  m,n,k,
+                  a,
+                  A.array(),
+                  A.numColumns(),
+                  B.array(),
+                  B.numColumns(),
+                  b,
+                  C.array(),
+                  C.numColumns()
+                  );
+  }
+
+  void addMultipleTo(DMatZZpFFPACK& C, 
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B)
+  {
+    DMatZZpFFPACK::ElementType one;
+    A.ring().set_from_long( one,1 );
+
+    addMultipleTo(C,one,A,B);
+  }
+  
+  void subtractMultipleTo(DMatZZpFFPACK& C, 
+                          const DMatZZpFFPACK& A, 
+                          const DMatZZpFFPACK& B)
+  {
+    DMatZZpFFPACK::ElementType minus_one;
+    A.ring().set_from_long( minus_one,-1 );
+    addMultipleTo(C,minus_one,A,B);
+  }
+
+  void mult(const DMatZZpFFPACK& A, 
+            const DMatZZpFFPACK& B, 
+            DMatZZpFFPACK& C)
+  {
+    // We assume that C is set to the correct size, and is the zero matrix here.
+    addMultipleTo(C,A,B);
+  }
+}; // namespace MatrixOppies
+
 namespace ffpackInterface 
 {
   size_t rank(const DMatZZpFFPACK& mat)
@@ -233,70 +300,6 @@ namespace ffpackInterface
     delete [] prof;
   }
   
-  void addMultipleTo(DMatZZpFFPACK& C,
-                     const DMatZZpFFPACK::ElementType& a,
-                     const DMatZZpFFPACK& A, 
-                     const DMatZZpFFPACK& B)
-  {
-    // Compute C := C + a*A*B
-    // Both DMat, and FFPACK store dense matrices in row major order.
-    // Note that the leading dimension in gemm arguments is #columns, 
-    // as the matrix is in row-major order
-    
-    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
-    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
-
-    size_t m = A.numRows();
-    size_t k = A.numColumns();
-    M2_ASSERT(A.numColumns() == B.numRows());
-    size_t n = B.numColumns();
-    
-    M2_ASSERT(C.numRows() == m);
-    M2_ASSERT(C.numColumns() == n);
-
-    DMatZZpFFPACK::ElementType b;
-    C.ring().init(b);
-    C.ring().set_from_long(b, 1);
-    FFLAS::fgemm( C.ring().field(),
-                  tB, tA,
-                  m,n,k,
-                  a,
-                  A.array(),
-                  A.numColumns(),
-                  B.array(),
-                  B.numColumns(),
-                  b,
-                  C.array(),
-                  C.numColumns()
-                  );
-  }
-
-  void addMultipleTo(DMatZZpFFPACK& C, 
-                     const DMatZZpFFPACK& A, 
-                     const DMatZZpFFPACK& B)
-  {
-    DMatZZpFFPACK::ElementType one;
-    A.ring().set_from_long( one,1 );
-
-    addMultipleTo(C,one,A,B);
-  }
-  
-  void subtractMultipleTo(DMatZZpFFPACK& C, 
-                          const DMatZZpFFPACK& A, 
-                          const DMatZZpFFPACK& B)
-  {
-    DMatZZpFFPACK::ElementType minus_one;
-    A.ring().set_from_long( minus_one,-1 );
-    addMultipleTo(C,minus_one,A,B);
-  }
-
-  void mult(const DMatZZpFFPACK& A, 
-            const DMatZZpFFPACK& B, 
-            DMatZZpFFPACK& C)
-  {
-    // We assume that C is set to the correct size, and is the zero matrix here.
-    addMultipleTo(C,A,B);
-  }
 }; // namespace ffpackInterface
 
 #endif // HAVE_FFLAS_FFPACK
