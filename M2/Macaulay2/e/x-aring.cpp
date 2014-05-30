@@ -9,6 +9,7 @@
 #include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
 #include "aring-gf-flint-big.hpp"
+#include "aring-gf-flint.hpp"
 #include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
 #include "aring-qq.hpp"
@@ -110,6 +111,20 @@ const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
   try {
     M2::ARingGFFlintBig *A = new M2::ARingGFFlintBig(*R,f->get_value());
     return M2::ConcreteRing<M2::ARingGFFlintBig>::create(A);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
+  try {
+    M2::ARingGFFlint *A = new M2::ARingGFFlint(*R,f->get_value());
+    return M2::ConcreteRing<M2::ARingGFFlint>::create(A);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());

@@ -164,6 +164,10 @@ extern "C" {
   /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, but too big 
      for lookup tables */
 
+  const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, 
+     and uses lookup tables */
+
   const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *prim); /* connected */
   /* same interface as rawGaloisField, but uses Givaro */
 
