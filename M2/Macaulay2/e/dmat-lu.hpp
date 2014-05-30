@@ -192,8 +192,8 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   upper.resize(min, LU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   auto LUraw = LU.rowMajorArray();
   auto L = lower.rowMajorArray();
@@ -233,8 +233,8 @@ void DMatLinAlg<RingType>::setUpperLower(const Mat& LU, Mat& lower, Mat& upper)
   upper.resize(min, LU.numColumns());
 
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   for (size_t c=0; c<LU.numColumns(); c++)
     {

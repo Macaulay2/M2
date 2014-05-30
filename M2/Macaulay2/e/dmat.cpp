@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #ifdef HAVE_FFLAS_FFPACK
-namespace MatrixOppies {
+namespace MatrixOps {
   void addMultipleTo(DMatZZpFFPACK& C,
                      const DMatZZpFFPACK::ElementType& a,
                      const DMatZZpFFPACK& A, 
@@ -75,7 +75,7 @@ namespace MatrixOppies {
     // We assume that C is set to the correct size, and is the zero matrix here.
     addMultipleTo(C,A,B);
   }
-}; // namespace MatrixOppies
+}; // namespace MatrixOps
 
 namespace ffpackInterface 
 {

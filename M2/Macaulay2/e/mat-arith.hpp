@@ -8,7 +8,7 @@ template <typename MT> class MatElementaryOps;
 #include "dmat.hpp"
 #include "smat.hpp"
 
-namespace MatrixOppies
+namespace MatrixOps
 {
   template <typename RT>
   bool isZero(const DMat<RT>& A)

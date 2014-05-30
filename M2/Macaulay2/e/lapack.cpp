@@ -84,8 +84,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -128,8 +128,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -1840,8 +1840,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();
@@ -1884,8 +1884,8 @@ void fill_lower_and_upper(double* lapack_numbers,  // column-major order
 // lower and upper are in row major form
 {
   // At this point, lower and upper should be zero matrices.
-  M2_ASSERT(MatrixOppies::isZero(lower));
-  M2_ASSERT(MatrixOppies::isZero(upper));
+  M2_ASSERT(MatrixOps::isZero(lower));
+  M2_ASSERT(MatrixOps::isZero(upper));
 
   auto L = lower.rowMajorArray();
   auto U = upper.rowMajorArray();

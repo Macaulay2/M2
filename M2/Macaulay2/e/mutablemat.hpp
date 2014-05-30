@@ -576,7 +576,7 @@ public:
 
   virtual bool is_zero() const
   {
-    return MatrixOppies::isZero(getMat());
+    return MatrixOps::isZero(getMat());
   }
 
   virtual bool is_equal(const MutableMatrix *B) const
@@ -584,7 +584,7 @@ public:
     const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
     if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
       return false;
-    return MatrixOppies::isEqual(getMat(), B1->getMat());
+    return MatrixOps::isEqual(getMat(), B1->getMat());
   }
 
   virtual MutableMat * add(const MutableMatrix *B) const
@@ -608,14 +608,14 @@ public:
       }
 
     MutableMat* result = clone();
-    MatrixOppies::addInPlace(result->getMat(), *B1);
+    MatrixOps::addInPlace(result->getMat(), *B1);
     return result;
   }
 
   virtual MutableMatrix * negate() const
   {
     MutableMat *result = clone();
-    MatrixOppies::negateInPlace(result->getMat());
+    MatrixOps::negateInPlace(result->getMat());
     return result;
   }
 
@@ -640,7 +640,7 @@ public:
       }
 
     MutableMat* result = clone();
-    MatrixOppies::subtractInPlace(result->getMat(), *B1);
+    MatrixOps::subtractInPlace(result->getMat(), *B1);
     return result;
   }
 
@@ -657,7 +657,7 @@ public:
     mat.ring().from_ring_elem(a, f->get_value());
 
     MutableMat *result = clone();
-    MatrixOppies::scalarMultInPlace(result->mat, a);
+    MatrixOps::scalarMultInPlace(result->mat, a);
 
     mat.ring().clear(a);
     return result;
@@ -666,7 +666,7 @@ public:
   virtual MutableMat /* or null */ * transpose() const
   {
     MutableMat *result = makeZeroMatrix(n_cols(), n_rows());
-    MatrixOppies::transpose(getMat(), result->getMat());
+    MatrixOps::transpose(getMat(), result->getMat());
     return result;
   }
 
@@ -745,7 +745,7 @@ public:
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
-  return MatrixOppies::rank(mat);
+  return MatrixOps::rank(mat);
 }
 
 template <typename T>
@@ -754,8 +754,8 @@ const RingElement* MutableMat<T>::determinant() const
   ring_elem det;
   elem a;
   mat.ring().init(a);
-  MatrixOppies::determinant(mat, a);
-  //  MatrixOppies::BasicLinAlg<MatType>::determinant(mat, a);
+  MatrixOps::determinant(mat, a);
+  //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
   mat.ring().to_ring_elem(det, a);
   mat.ring().clear(a);
   return RingElement::make_raw(get_ring(), det);
@@ -766,7 +766,7 @@ MutableMatrix* MutableMat<T>::invert() const
 {
   M2_ASSERT(n_rows() == n_cols());
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
-  bool val = MatrixOppies::inverse(mat, result->mat);
+  bool val = MatrixOps::inverse(mat, result->mat);
   if (!val)
     {
       delete result;
@@ -781,7 +781,7 @@ MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
   try {
     // ignore returned value (the rank of mat):
-    MatrixOppies::rowReducedEchelonForm(mat, result->mat);
+    MatrixOps::rowReducedEchelonForm(mat, result->mat);
     return result;
   }
   catch (exc::engine_error e) {
@@ -800,7 +800,7 @@ std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* 
     throw exc::engine_error("expected same ring");
   //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = MatrixOppies::solveLinear(mat, *B1, solns->mat);
+  bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
   return std::pair<bool, MutableMatrix*>(retval, solns);
 }
 
@@ -808,7 +808,7 @@ template <typename T>
 MutableMatrix* MutableMat<T>::nullSpace() const
 {
   MutableMat<T>* ker = makeZeroMatrix(0,0);
-  MatrixOppies::nullSpace(mat, ker->mat); // ignore return value of nullSpace...
+  MatrixOps::nullSpace(mat, ker->mat); // ignore return value of nullSpace...
   return ker;
 }
 
@@ -830,7 +830,7 @@ MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
     }
   // create the result matrix
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), B1->numColumns());
-  MatrixOppies::mult(mat, *B1, result->mat);
+  MatrixOps::mult(mat, *B1, result->mat);
 
   return result;
 }
@@ -846,7 +846,7 @@ void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
   if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  MatrixOppies::addMultipleTo(mat,*A1,*B1);
+  MatrixOps::addMultipleTo(mat,*A1,*B1);
 }
 
 template <typename T>
@@ -860,7 +860,7 @@ void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
     throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
   if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
     throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
-  MatrixOppies::subtractMultipleTo(mat,*A1,*B1);
+  MatrixOps::subtractMultipleTo(mat,*A1,*B1);
 }
 
 template <typename T>
@@ -868,7 +868,7 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
   //  LUComputation<T> C(mat);
   //  return C.rankProfile(row_profile);
-  return MatrixOppies::rankProfile(mat, row_profile);
+  return MatrixOps::rankProfile(mat, row_profile);
 }
 
 // "solve" is similar to "solveLinear", except it doesn't create any new matrices.
@@ -882,7 +882,7 @@ bool MutableMat<T>::solve(const MutableMatrix* B,
   T* X1 = X->coerce<T>();
   if (B1 == 0 or X1 == 0)
     throw exc::engine_error("expected matrices of the same type");
-  bool retval = MatrixOppies::solve(mat, *B1, *X1);
+  bool retval = MatrixOps::solve(mat, *B1, *X1);
   return retval;
 }
 
@@ -894,7 +894,7 @@ M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L,
   T* U1 = U->coerce<T>();
   if (L1 == 0 or U1 == 0)
     throw exc::engine_error("expected matrices of the same ring/type");
-  return MatrixOppies::LU(mat,*L1,*U1);
+  return MatrixOps::LU(mat,*L1,*U1);
 }
 
 template<typename T>
@@ -908,14 +908,14 @@ bool MutableMat<T>::eigenvalues(MutableMatrix* eigenvals,
       auto E1 = eigenvals->coerce< DMat<HermitianEigenvalueType> >();
       if (E1 == 0)
         throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
-      return MatrixOppies::eigenvaluesHermitian(mat,*E1);
+      return MatrixOps::eigenvaluesHermitian(mat,*E1);
     }
   else
     {
       auto E1 = eigenvals->coerce< DMat<EigenvalueType> >();
       if (E1 == 0)
         throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
-      return MatrixOppies::eigenvalues(mat,*E1);
+      return MatrixOps::eigenvalues(mat,*E1);
     }
 }
 
@@ -932,7 +932,7 @@ bool MutableMat<T>::eigenvectors(MutableMatrix* eigenvals,
       DMat<HermitianEigenvectorType>* evecs1 = eigenvecs->coerce< DMat<HermitianEigenvectorType> >();
       if (E1 == 0 or evecs1 == 0)
         throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
-      return MatrixOppies::eigenvectorsHermitian(mat,*E1,*evecs1);
+      return MatrixOps::eigenvectorsHermitian(mat,*E1,*evecs1);
     }
   else
     {
@@ -940,7 +940,7 @@ bool MutableMat<T>::eigenvectors(MutableMatrix* eigenvals,
       DMat<EigenvectorType>* evecs1 = eigenvecs->coerce< DMat<EigenvectorType> >();
       if (E1 == 0 or evecs1 == 0)
         throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
-      return MatrixOppies::eigenvectors(mat,*E1,*evecs1);
+      return MatrixOps::eigenvectors(mat,*E1,*evecs1);
     }
 }
 
@@ -953,7 +953,7 @@ bool MutableMat<T>::least_squares(const MutableMatrix* B,
   T* X1 = X->coerce<T>();
   if (B1 == 0 or X1 == 0)
     throw exc::engine_error("expected matrices of the same type");
-  bool retval = MatrixOppies::leastSquares(mat, *B1, *X1, assume_full_rank);
+  bool retval = MatrixOps::leastSquares(mat, *B1, *X1, assume_full_rank);
   return retval;
 }
 
@@ -969,7 +969,7 @@ bool MutableMat<T>::SVD(MutableMatrix* Sigma,
   if (Sigma2 == 0 || U2 == 0 || Vt2 == 0)
     throw exc::engine_error("expected matrices of the same type");
   int strategy = (use_divide_and_conquer ? 1 : 0);
-  return MatrixOppies::SVD(mat, *Sigma2, *U2, *Vt2, strategy);
+  return MatrixOps::SVD(mat, *Sigma2, *U2, *Vt2, strategy);
 }
 
 template<typename Mat>
@@ -982,7 +982,7 @@ engine_RawArrayIntPairOrNull MutableMat<Mat>::
 template<typename T>
 void MutableMat<T>::clean(gmp_RR epsilon)
 {
-  MatrixOppies::clean(epsilon, mat);
+  MatrixOps::clean(epsilon, mat);
 }
 
 template<typename T>
@@ -995,7 +995,7 @@ gmp_RRorNull MutableMat<T>::norm() const
   mpfr_init2(nm, get_ring()->get_precision());
   mpfr_set_si(nm, 0, GMP_RNDN);
 
-  MatrixOppies::increase_norm(nm, mat);
+  MatrixOps::increase_norm(nm, mat);
   return nm;
 }
 

@@ -44,7 +44,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "mat-arith.hpp"
 #include "dmat-lu.hpp"
 
-namespace MatrixOppies
+namespace MatrixOps
 {
   /// @brief the rank of a matrix
   ///
@@ -397,7 +397,7 @@ namespace MatrixOppies
       {
         // First transpose A
         DMat<RT> B(A.ring(), A.numColumns(), A.numRows());
-        MatrixOppies::transpose(A,B);
+        MatrixOps::transpose(A,B);
         DMatLinAlg<RT> LUdecomp(B);
         LUdecomp.columnRankProfile(profile);
         return stdvector_to_M2_arrayint(profile);
@@ -440,7 +440,7 @@ namespace MatrixOppies
   // ZZpFFPACK ///////////
   ////////////////////////
 
-  // namespace MatrixOppies
+  // namespace MatrixOps
   void mult(const DMatZZpFFPACK& A, 
             const DMatZZpFFPACK& B, 
             DMatZZpFFPACK& result_product);
