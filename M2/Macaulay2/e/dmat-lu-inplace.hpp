@@ -8,6 +8,8 @@
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"
 
+#include <flint/perm.h>
+
 template <typename RT>
 class LUUtil
 {
@@ -28,6 +30,9 @@ public:
   }
 };
 
+template <typename RT> class DMatLUinPlace;
+
+//#include "dmat-lu-inplace-gf-flint-big.hpp"
 
 template <typename RT>
 class DMatLUinPlace
@@ -52,7 +57,6 @@ private:
   typedef typename RingType::ElementType ElementType;
 
   void computeLU();
-  void computePivotColumns(); // helper function for specializations that don't compute this automatically
   size_t findPivot(size_t row, size_t col);
 
 private:
@@ -63,6 +67,26 @@ private:
   std::vector<size_t> mPivotColumns;
 };
 
+template<>
+inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
+{
+  if (mIsDone) return;
+
+  long *perm = newarray_atomic(long, mLU.numRows());
+  fq_nmod_mat_lu(perm, mLU.fq_nmod_mat(), false, ring().flintContext());
+  // Now we set mPerm:
+  mPerm.clear();
+  for (long i=0; i<mLU.numRows(); i++)
+    mPerm.push_back(perm[i]);
+  mSign = (_perm_parity(perm, mLU.numRows()) == 0);
+  deletearray(perm);
+
+  // Now we set mPivotColumns
+  LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
+
+  mIsDone = true;
+}
+
 template <class RingType>
 DMatLUinPlace<RingType>::DMatLUinPlace(const Mat& A)
   : mLU(A),  // copies A
@@ -71,26 +95,6 @@ DMatLUinPlace<RingType>::DMatLUinPlace(const Mat& A)
 {
   for (size_t i=0; i<A.numRows(); i++)
     mPerm.push_back(i);
-}
-
-template <class RingType>
-void DMatLUinPlace<RingType>::computePivotColumns()
-{
-  computeLU();
-
-  mPivotColumns.clear();
-  size_t thiscol = 0;
-  size_t thisrow = 0;
-  while (thisrow < mLU.numRows() 
-         and thiscol < mLU.numColumns())
-    {
-      if (not ring().is_zero(mLU.entry(thisrow, thiscol)))
-        {
-          mPivotColumns.push_back(thiscol);
-          thisrow++;
-        }
-      thiscol++;
-    }
 }
 
 template <class RingType>
@@ -308,8 +312,9 @@ inline void DMatLUinPlace<M2::ARingRR>::computeLU()
       mSign = not mSign;
     }
 
+
+  LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
-  computePivotColumns();
 
   deletearray(perm);
   deletearray(copyA);
@@ -375,8 +380,8 @@ inline void DMatLUinPlace<M2::ARingCC>::computeLU()
       mSign = not mSign;
     }
 
+  LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
   mIsDone = true;
-  computePivotColumns();
 
   deletearray(perm);
   deletearray(copyA);

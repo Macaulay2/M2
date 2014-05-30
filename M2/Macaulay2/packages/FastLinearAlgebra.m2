@@ -133,7 +133,7 @@ solveLinear(MutableMatrix, MutableMatrix) := opts -> (A,B) -> (
      -- solve A*X = B, or solve X*A = B
      R := ring A;
      if ring A =!= ring B then error "expected same base rings";
-     map(R,rawLinAlgSolve(raw A,raw B,opts.RightSide))
+     map(R,rawLinAlgSolve(raw A,raw B))
      )
 
 

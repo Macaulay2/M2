@@ -50,7 +50,41 @@ TEST ///
 ///
 
 TEST ///
+  R = ZZ/5
+  R = GF(5^2, Strategy=>"FlintBig")
+  R = GF(5^2, Strategy=>"Givaro")
+  R = GF(5^2, Strategy=>"New")
+  R = GF(5^2)
+
+  
+  m = mutableMatrix matrix(R, {{0,1},{1,0}})
+  id2 = mutableMatrix matrix(R, {{1,0},{0,1}})
+  inverse m
+  solve(m, id2)
+  solveLinear(m, id2)
+///
+TEST ///
   R = ZZpFlint( 5 )
+  testLinearAlgebra$FLINT R
+  
+  M = mutableMatrix matrix(R,  {
+      {0, 0, -1, 2, 1, 2, 2, -2, -1, -1, 1, 1, 0, -1, 0, 1, 0, -1, -1, -2}, 
+      {-2, 0, 1, 2, 2, 1, -2, 2, -1, 2, 0, -1, -2, -1, -1, 1, 0, -2, 0, 1}, 
+      {0, 0, 0, 2, 0, 0, -1, 2, 1, 0, -2, -1, 2, 1, 0, 1, 2, 1, 0, -1}, 
+      {0, -2, -2, 2, 0, -1, 0, -2, 0, 0, 2, 2, 2, -1, 0, 0, 2, 0, 1, 2}, 
+      {2, -2, 1, 2, -1, 1, -1, 2, 2, 2, 1, 0, 2, 1, 1, -2, 2, -2, 1, -1}, 
+      {-1, -1, -2, 2, -2, 1, 2, -2, 1, -2, -1, -2, 2, 0, -2, -1, 1, 2, -1, 0}, 
+      {0, 1, -2, 0, 2, 0, 2, 2, 2, -1, 0, -1, 1, 1, -1, 1, 0, 1, 2, -1}, 
+      {-1, 1, 1, 2, 2, -1, -2, 2, -1, 1, 0, 1, 2, 2, 2, 0, -1, 0, 0, 0}, 
+      {1, 1, 2, 2, 2, 0, 2, 1, -1, -2, -2, -2, 1, -2, 1, 2, 2, -2, 0, 2}, 
+      {-1, 1, 1, 1, -2, 1, -1, -2, 2, -1, 0, 0, 1, 2, -1, 2, -2, 2, -1, -1}}  )
+  LUdecomposition M
+  debug EngineTests
+  checkLU matrix M
+///
+
+TEST ///
+  R = GF(2^7, Strategy=>"FlintBig")
   testLinearAlgebra$FLINT R
   
   M = mutableMatrix matrix(R,  {
