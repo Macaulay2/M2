@@ -159,6 +159,8 @@ fields = join({
     fieldsFLINT,
     fieldsFFPACK,
     fieldsGF,
+    fieldsGFFlint,
+    fieldsGFFlintBig,
     {"QQ"}
     -- QQFlint not working yet
     )
@@ -195,7 +197,8 @@ tests = {
     "testMult",
     "testRank",
     "testNullspace",
-    "testLUBoundaryCases"
+    "testLUBoundaryCases",
+    "testMutableMatrices"
     --"testRankProfile"
     --"testSolve"
     --"testLU"
