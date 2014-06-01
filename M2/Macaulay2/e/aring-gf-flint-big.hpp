@@ -195,7 +195,7 @@ namespace M2 {
           return;
         }
       bool neg = false;
-      if (n < 0)
+      if (mpz_sgn(n) < 0)
         {
           neg = true;
           mpz_neg(n,n);

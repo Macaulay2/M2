@@ -85,6 +85,26 @@ inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
   mIsDone = true;
 }
 
+template<>
+inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
+{
+  if (mIsDone) return;
+
+  long *perm = newarray_atomic(long, mLU.numRows());
+  fq_zech_mat_lu(perm, mLU.fq_zech_mat(), false, ring().flintContext());
+  // Now we set mPerm:
+  mPerm.clear();
+  for (long i=0; i<mLU.numRows(); i++)
+    mPerm.push_back(perm[i]);
+  mSign = (_perm_parity(perm, mLU.numRows()) == 0);
+  deletearray(perm);
+
+  // Now we set mPivotColumns
+  LUUtil<RingType>::computePivotColumns(mLU, mPivotColumns);
+
+  mIsDone = true;
+}
+
 template <class RingType>
 DMatLUinPlace<RingType>::DMatLUinPlace(const Mat& A)
   : mLU(A),  // copies A

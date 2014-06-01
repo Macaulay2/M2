@@ -61,6 +61,7 @@ private:
 #include "dmat-qq-flint.hpp"
 #include "dmat-zzp-flint.hpp"
 #include "dmat-gf-flint-big.hpp"
+#include "dmat-gf-flint.hpp"
 
 template<typename ACoeffRing>
 class DMat

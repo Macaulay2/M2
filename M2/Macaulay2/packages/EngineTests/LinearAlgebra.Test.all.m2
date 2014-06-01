@@ -38,6 +38,118 @@ fieldsGF = {
     ///GF(2,7, Strategy=>"CompleteGivaro")///
     }
 
+fieldsGFFlintBig = {
+    ///GF(2,1, Strategy=>"FlintBig")///,
+    ///GF(2,2, Strategy=>"FlintBig")///,
+    ///GF(2,3, Strategy=>"FlintBig")///,
+    ///GF(2,4, Strategy=>"FlintBig")///,
+    ///GF(2,5, Strategy=>"FlintBig")///,
+    ///GF(2,6, Strategy=>"FlintBig")///,
+    ///GF(2,7, Strategy=>"FlintBig")///,
+    ///GF(2,8, Strategy=>"FlintBig")///,
+    ///GF(2,9, Strategy=>"FlintBig")///,
+    ///GF(2,10, Strategy=>"FlintBig")///,
+    ///GF(2,11, Strategy=>"FlintBig")///,
+    ///GF(2,12, Strategy=>"FlintBig")///,
+    ///GF(2,13, Strategy=>"FlintBig")///,
+    ///GF(2,20, Strategy=>"FlintBig")///,
+    ///GF(2,30, Strategy=>"FlintBig")///,
+    
+    ///GF(3,1, Strategy=>"FlintBig")///,
+    ///GF(3,2, Strategy=>"FlintBig")///,
+    ///GF(3,3, Strategy=>"FlintBig")///,
+    ///GF(3,4, Strategy=>"FlintBig")///,
+    ///GF(3,5, Strategy=>"FlintBig")///,
+    ///GF(3,6, Strategy=>"FlintBig")///,
+    ///GF(3,7, Strategy=>"FlintBig")///,
+    ///GF(3,8, Strategy=>"FlintBig")///,
+    ///GF(3,13, Strategy=>"FlintBig")///,
+    ///GF(3,20, Strategy=>"FlintBig")///,
+
+    ///GF(5,1, Strategy=>"FlintBig")///,
+    ///GF(5,2, Strategy=>"FlintBig")///,
+    ///GF(5,3, Strategy=>"FlintBig")///,
+    ///GF(5,4, Strategy=>"FlintBig")///,
+    ///GF(5,5, Strategy=>"FlintBig")///,
+
+    ///GF(7,1, Strategy=>"FlintBig")///,
+    ///GF(7,2, Strategy=>"FlintBig")///,
+    ///GF(7,3, Strategy=>"FlintBig")///,
+    ///GF(7,4, Strategy=>"FlintBig")///,
+
+    ///GF(11,1, Strategy=>"FlintBig")///,
+    ///GF(11,2, Strategy=>"FlintBig")///,
+    ///GF(11,3, Strategy=>"FlintBig")///,
+
+    ///GF(13,1, Strategy=>"FlintBig")///,
+    ///GF(13,2, Strategy=>"FlintBig")///,
+    ///GF(13,30, Strategy=>"FlintBig")///,
+
+    ///GF(17,1, Strategy=>"FlintBig")///,
+    ///GF(17,2, Strategy=>"FlintBig")///,
+    ///GF(17,30, Strategy=>"FlintBig")///,
+
+    ///GF(19,1, Strategy=>"FlintBig")///,
+    ///GF(19,2, Strategy=>"FlintBig")///,
+    ///GF(19,10, Strategy=>"FlintBig")///,
+
+    ///GF(23,7, Strategy=>"FlintBig")///
+    }
+
+fieldsGFFlint = {
+    ///GF(2,1, Strategy=>"Flint")///,
+    ///GF(2,2, Strategy=>"Flint")///,
+    ///GF(2,3, Strategy=>"Flint")///,
+    ///GF(2,4, Strategy=>"Flint")///,
+    ///GF(2,5, Strategy=>"Flint")///,
+    ///GF(2,6, Strategy=>"Flint")///,
+    ///GF(2,7, Strategy=>"Flint")///,
+    ///GF(2,8, Strategy=>"Flint")///,
+    ///GF(2,9, Strategy=>"Flint")///,
+    ///GF(2,10, Strategy=>"Flint")///,
+    ///GF(2,11, Strategy=>"Flint")///,
+    ///GF(2,12, Strategy=>"Flint")///,
+    ///GF(2,13, Strategy=>"Flint")///,
+    
+    ///GF(3,1, Strategy=>"Flint")///,
+    ///GF(3,2, Strategy=>"Flint")///,
+    ///GF(3,3, Strategy=>"Flint")///,
+    ///GF(3,4, Strategy=>"Flint")///,
+    ///GF(3,5, Strategy=>"Flint")///,
+    ///GF(3,6, Strategy=>"Flint")///,
+    ///GF(3,7, Strategy=>"Flint")///,
+    ///GF(3,8, Strategy=>"Flint")///,
+
+    ///GF(5,1, Strategy=>"Flint")///,
+    ///GF(5,2, Strategy=>"Flint")///,
+    ///GF(5,3, Strategy=>"Flint")///,
+    ///GF(5,4, Strategy=>"Flint")///,
+    ///GF(5,5, Strategy=>"Flint")///,
+
+    ///GF(7,1, Strategy=>"Flint")///,
+    ///GF(7,2, Strategy=>"Flint")///,
+    ///GF(7,3, Strategy=>"Flint")///,
+    ///GF(7,4, Strategy=>"Flint")///,
+
+    ///GF(11,1, Strategy=>"Flint")///,
+    ///GF(11,2, Strategy=>"Flint")///,
+    ///GF(11,3, Strategy=>"Flint")///,
+
+    ///GF(13,1, Strategy=>"Flint")///,
+    ///GF(13,2, Strategy=>"Flint")///,
+    ///GF(13,3, Strategy=>"Flint")///,
+
+    ///GF(17,1, Strategy=>"Flint")///,
+    ///GF(17,2, Strategy=>"Flint")///,
+    ///GF(17,3, Strategy=>"Flint")///,
+
+    ///GF(19,1, Strategy=>"Flint")///,
+    ///GF(19,2, Strategy=>"Flint")///,
+    ///GF(19,3, Strategy=>"Flint")///,
+
+    ///GF(23,2, Strategy=>"Flint")///
+    }
+
 fields = join({
     "ZZp 2", 
     "ZZp 3",

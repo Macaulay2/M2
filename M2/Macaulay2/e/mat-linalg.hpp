@@ -30,10 +30,13 @@ typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-gf-flint-big.hpp"
+#include "aring-gf-flint.hpp"
+
 typedef DMat<M2::ARingZZ> DMatZZ;
 typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
+typedef DMat<M2::ARingGFFlint> DMatGFFlint;
 
 typedef DMat<M2::ARingRRR> DMatRRR; 
 typedef DMat<M2::ARingCCC> DMatCCC; 

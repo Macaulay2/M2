@@ -349,13 +349,15 @@ TEST ///
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,null))
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Givaro"))
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"FlintBig"))  
+  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Flint"))  
 
   topval = 6 -- 8 would be better
   time for i from 1 to topval do (<< i << " "; testGFpromote(3,i,"New"))
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,null))  
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Givaro"))  
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"FlintBig"))  
-
+  time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Flint"))  
+  
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"New"))
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,null))  
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"Givaro"))  
