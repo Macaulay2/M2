@@ -204,9 +204,20 @@ public:
   virtual CCC * cast_to_CCC() { return 0; }
   virtual const CCC * cast_to_CCC() const { return 0; }
 
-  // Galois Field routines
+  // Galois Field routines.  These three routines only return non-NULL values
+  // if this was created as a Galois field, isom to A = kk[b]/(f(b)), kk = prime field of char p.
+
+  // Returns NULL if not a GF.  Returns f(b) in the ring kk[b].  (Variable name might be different)
   virtual const RingElement* getMinimalPolynomial() const { return 0; }
+
+  // Returns NULL if not a GF.  Returns an element of 'this', whose powers give all non-zero elements
+  // of the field.
   virtual const RingElement* getGenerator() const { return 0; }
+
+  // Returns the element in the polynomial ring A corresponding to the element a.
+  // Returns NULL if not a GF field.
+  // Essentially the same as 'lift', except that more information, not readily available, is needed
+  // for that call.
   virtual const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
 
   virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const { return 0; }

@@ -204,7 +204,7 @@ class ARingGFGivaro : public RingInterface
         M2_arrayint getModPolynomialCoeffs() const;
         M2_arrayint getGeneratorCoeffs() const;
 
-        ring_elem   getGenerator() const;
+        void getGenerator(ElementType& result_gen) const; // returns the generator in this ring.
         const PolynomialRing& originalRing() const { return * mOriginalRing; }
     /** @} */
 
@@ -274,6 +274,9 @@ class ARingGFGivaro : public RingInterface
     /** @} */
 
     bool promote(const Ring *Rf, const ring_elem f, ElementType &result) const;
+
+    void lift_to_original_ring(ring_elem& result, const ElementType& f) const;
+    // GF specific routine, used in getRepresentation
 
     bool lift(const Ring *Rg, const ElementType f, ring_elem &result) const;
 

@@ -158,7 +158,10 @@ const RingElement *GF::getMinimalPolynomial() const
 
 const RingElement* GF::getGenerator() const
 {
-  return _primitive_element;
+  ring_elem a;
+  a.int_val = 1; // this is the primitive generator
+  
+  return RingElement::make_raw(this, a);
 }
 
 const RingElement* GF::getRepresentation(const ring_elem& a) const

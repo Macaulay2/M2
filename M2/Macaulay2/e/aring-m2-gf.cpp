@@ -149,6 +149,16 @@ namespace M2 {
     return true;
   }
 
+  void ARingGFM2::lift_to_original_ring(ring_elem& result, const ElementType& f) const
+  {
+    if (f == 0)
+      result = mGF.ring().from_long(0);
+    else if (f == mGF.one())
+      result = mGF.ring().from_long(1);
+    else
+      result = mGF.ring().power(mGF.primitiveElement(), f);
+  }
+
   bool ARingGFM2::lift(const Ring *Rg, const elem f, ring_elem &result) const
   {
     // Rg = Z/p[x]/F(x) ---> GF(p,n)
@@ -156,15 +166,8 @@ namespace M2 {
     // lift: need to compute (primite_element)^e
 
     if (&mGF.ring() != Rg) return false;
-    
-    
-    if (f == 0)
-      result = mGF.ring().from_long(0);
-    else if (f == mGF.one())
-      result = mGF.ring().from_long(1);
-    else
-      result = mGF.ring().power(mGF.primitiveElement(), f);
-    
+
+    lift_to_original_ring(result, f);
     return true;
   }
 

@@ -368,6 +368,8 @@ M2_arrayint ARingGFGivaro::getGeneratorCoeffs() const
     return elementRepresentationToM2Array( packedGenPolynomial ) ;    
 }
 
+#if 0
+  // Commented out, MES 1 June 2014, as interface to this function has changed substantially.
 ring_elem  ARingGFGivaro::getGenerator() const
 {
 #ifdef DEBUG_GF
@@ -393,6 +395,13 @@ ring_elem  ARingGFGivaro::getGenerator() const
     to_ring_elem(result, genRep);
     //std::cerr << " result " << *result << std::endl;
     return result;
+}
+#endif
+
+void ARingGFGivaro::getGenerator(ElementType& result_gen) const
+{
+    ElementType packedGenPolynomial = givaroField.generator();  
+    givaroField.generator(result_gen);
 }
 
 bool ARingGFGivaro::is_unit(const ElementType f) const 	
@@ -630,15 +639,8 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
     
   }
 
-  bool ARingGFGivaro::lift(const Ring *Rg, const ElementType f, ring_elem &result) const
+  void ARingGFGivaro::lift_to_original_ring(ring_elem& result, const ElementType& f) const
   {
-    // Rg = Z/p[x]/F(x) ---> GF(p,n)
-    // promotion: need to be able to know the value of 'x'.
-    // lift: need to compute (primite_element)^e
-
-    if (mOriginalRing != Rg) return false;
-    
-    
     if (f == givaroField.zero)
       result = mOriginalRing->from_long(0);
     else if (f == givaroField.one)
@@ -655,7 +657,16 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
         // TODO: add tests and M2_ASSERT's for all of these conditions
         result = mOriginalRing->power(mPrimitiveElement, static_cast<int>(f));
       }
-    
+  }
+
+  bool ARingGFGivaro::lift(const Ring *Rg, const ElementType f, ring_elem &result) const
+  {
+    // Rg = Z/p[x]/F(x) ---> GF(p,n)
+    // promotion: need to be able to know the value of 'x'.
+    // lift: need to compute (primite_element)^e
+
+    if (mOriginalRing != Rg) return false;
+    lift_to_original_ring(result, f);
     return true;
   }
 

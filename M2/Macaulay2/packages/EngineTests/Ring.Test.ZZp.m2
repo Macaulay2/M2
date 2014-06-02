@@ -44,8 +44,10 @@ allElements = (p,d,A) -> (
 
 testGF1 = (p,d,kk) -> (
    A := ambient kk;
+   gen := rawARingGFGenerator raw kk;
+   facs := (p^d-1)//factor//toList/toList/first;
+   for a in facs do assert(gen^((p^d-1)//a) != 1);
    --rawARingGFPolynomial raw kk;
-   --rawARingGFGenerator raw kk;
    --rawARingGFCoefficients raw (kk_0^5);
    time elems := allElements(p,d-1,A); -- creating them over the finite field would be faster...
    << "fraction of unique hash vals: " << ((elems/(f -> hash raw f)//unique//length) / (#elems * 1.0)) << endl;

@@ -102,7 +102,6 @@ namespace M2 {
 
     const PolynomialRing& originalRing() const { return mGF.ring(); }
 
-    const RingElement* getGenerator() const { return mGF.getGenerator(); }
   private:
     GaloisFieldTable mGF;
 
@@ -127,6 +126,8 @@ namespace M2 {
     { 
       return static_cast<unsigned long>(a);
     }
+
+    void getGenerator(elem& result_gen) const { result_gen = 1; }
 
     int get_repr(elem f) const { /*TODO: WRITE WRITE ;*/ assert(false); return 0; }
 
@@ -322,6 +323,9 @@ namespace M2 {
     void fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const;
 
     bool promote(const Ring *Rf, const ring_elem f, elem &result) const;
+
+    void lift_to_original_ring(ring_elem& result, const ElementType& f) const;
+    // GF specific routine, used in getRepresentation
 
     bool lift(const Ring *Rg, const elem f, ring_elem &result) const;
 

@@ -262,6 +262,8 @@ M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 
 const RingElement* rawARingGFGenerator(const Ring *R)
 {
+  return R->getGenerator();
+#if 0
 #if defined(HAVE_GIVARO)
  const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
@@ -274,6 +276,7 @@ const RingElement* rawARingGFGenerator(const Ring *R)
 #else
   ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
   return 0;
+#endif
 #endif
 }
 

@@ -59,8 +59,11 @@ namespace M2 {
     // Special functions for Galois Fields //
     /////////////////////////////////////////
     // These are declared below for Galois fields, and the definitions appear where?
+
     const RingElement* getMinimalPolynomial() const { return 0; }
+
     const RingElement* getGenerator() const { return 0; }
+
     const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
 
     ////////////////////////////
@@ -1119,48 +1122,107 @@ namespace M2 {
     return std::pair<bool, long>(succeed, b);
   }
 
-  template<>
-  inline const RingElement* ConcreteRing<ARingGFM2>::getMinimalPolynomial()  const
+  inline const RingElement* findMinimalPolynomial(const PolynomialRing& originalR)
   {
-    const PolynomialRing& originalR = ring().originalRing();
     const PolynomialRing *R = originalR.getAmbientRing();
     ring_elem f = R->copy(originalR.quotient_element(0));
     return RingElement::make_raw(R, f);
   }
 
   template<>
-  inline const RingElement* ConcreteRing<ARingGFM2>::getGenerator()  const
+  inline const RingElement* ConcreteRing<ARingGFM2>::getMinimalPolynomial()  const
   {
-    return ring().getGenerator();
+    return findMinimalPolynomial(ring().originalRing());
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFGivaro>::getMinimalPolynomial()  const
+  {
+    return findMinimalPolynomial(ring().originalRing());
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlintBig>::getMinimalPolynomial()  const
+  {
+    return findMinimalPolynomial(ring().originalRing());
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlint>::getMinimalPolynomial()  const
+  {
+    return findMinimalPolynomial(ring().originalRing());
+  }
+
+  template<typename RT>
+  inline const RingElement* getLiftedRepresentation(const RT& R, const ring_elem& a)
+  // R should be a Galois Field
+  {
+    ring_elem c; // in originalRing()
+    typename RT::ElementType b; // in ring()
+    R.init(b);
+    R.from_ring_elem(b, a);
+    R.lift_to_original_ring(c, b);
+    R.clear(b);
+    return RingElement::make_raw(& R.originalRing(), c);
   }
 
   template<>
   inline const RingElement* ConcreteRing<ARingGFM2>::getRepresentation(const ring_elem& a) const
   {
-    return getGenerator()->power(a.int_val);
-  }
-
-
-  template<>
-  inline const RingElement* ConcreteRing<ARingGFGivaro>::getMinimalPolynomial()  const
-  {
-    const PolynomialRing& originalR = ring().originalRing();
-    const PolynomialRing *R = originalR.getAmbientRing();
-    ring_elem f = R->copy(originalR.quotient_element(0));
-    return RingElement::make_raw(R, f);
-  }
-
-  template<>
-  inline const RingElement* ConcreteRing<ARingGFGivaro>::getGenerator()  const
-  {
-    return RingElement::make_raw(& ring().originalRing(), ring().originalRing().var(0)); // The primitive element is always the variable
+    return getLiftedRepresentation<ARingGFM2>(ring(), a);
   }
 
   template<>
   inline const RingElement* ConcreteRing<ARingGFGivaro>::getRepresentation(const ring_elem& a) const
   {
-    return getGenerator()->power(a.int_val);
+    return getLiftedRepresentation<ARingGFGivaro>(ring(), a);
   }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlintBig>::getRepresentation(const ring_elem& a) const
+  {
+    return getLiftedRepresentation<ARingGFFlintBig>(ring(), a);
+  }
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlint>::getRepresentation(const ring_elem& a) const
+  {
+    return getLiftedRepresentation<ARingGFFlint>(ring(), a);
+  }
+
+  template<typename ConcreteRT>
+  inline const RingElement* getGen(const ConcreteRT& R)
+  // R should be a Galois Field
+  {
+    typename ConcreteRT::ElementType a;
+    ring_elem b;
+    R.ring().init(a);
+    R.ring().getGenerator(a);
+    R.ring().to_ring_elem(b,a);
+    R.ring().clear(a);
+    return RingElement::make_raw(&R, b);
+  }
+
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFM2>::getGenerator()  const
+  {
+    return getGen< ConcreteRing<ARingGFM2> >(*this);
+  }
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFGivaro>::getGenerator()  const
+  {
+    return getGen< ConcreteRing<ARingGFGivaro> >(*this);
+  }
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlint>::getGenerator()  const
+  {
+    return getGen< ConcreteRing<ARingGFFlint> >(*this);
+  }
+  template<>
+  inline const RingElement* ConcreteRing<ARingGFFlintBig>::getGenerator()  const
+  {
+    return getGen< ConcreteRing<ARingGFFlintBig> >(*this);
+  }
+
 }; // namespace M2
 
 #include "aring-qq.hpp"

@@ -1,13 +1,13 @@
 // Copyright 2014 Michael E. Stillman
 
-#include "aring-gf-flint-big.hpp"
+#include "aring-gf-flint.hpp"
 #include "relem.hpp"
 #include "poly.hpp"
 #include "ringmap.hpp"
 
 namespace M2 {
 
-  ARingGFFlintBig::ARingGFFlintBig(const PolynomialRing &R,
+  ARingGFFlint::ARingGFFlint(const PolynomialRing &R,
                                    const ring_elem a):
     mOriginalRing(R),
     mCharacteristic(R.characteristic()),
@@ -45,9 +45,10 @@ namespace M2 {
       if (poly[i] != 0)
         nmod_poly_set_coeff_ui(mMinPoly, i, poly[i]);
 
-    fq_nmod_ctx_init_modulus(mContext,mMinPoly,"a");
+    fq_zech_ctx_init_modulus(mContext,mMinPoly,"a");
+    fq_nmod_ctx_init_modulus(mBigContext,mMinPoly,"a");
 #if 0
-    fq_nmod_ctx_print(mContext);
+    fq_zech_ctx_print(mContext);
 #endif
     nmod_poly_clear(mMinPoly);
 
@@ -60,27 +61,37 @@ namespace M2 {
     flint_randinit(mRandomState);
   }
 
-  ARingGFFlintBig::~ARingGFFlintBig()
+  ARingGFFlint::~ARingGFFlint()
   {
-    fq_nmod_ctx_clear(mContext);
+    fq_zech_ctx_clear(mContext);
+    fq_nmod_ctx_clear(mBigContext);
     mPrimitiveElement = 0;
     deletearray(mPPowers);
     flint_randclear(mRandomState);
 
     if (mGeneratorComputed)
-      fq_nmod_clear(&mCachedGenerator, mContext);
+      fq_zech_clear(&mCachedGenerator, mContext);
   }
 
-  void ARingGFFlintBig::getSmallIntegerCoefficients(const ElementType& a, std::vector<long>& poly) const
+  void ARingGFFlint::getSmallIntegerCoefficients(const ElementType& a, std::vector<long>& poly) const
   {
-    long deg = nmod_poly_degree(&a);
+    fq_nmod_t f;
+
+    fq_nmod_init(f, mBigContext);
+    fq_zech_get_fq_nmod(f, &a, mContext);
+    long deg = nmod_poly_degree(f);
     poly.resize(deg+1);
     for (long i=deg; i>=0; i--)
-      poly[i] = nmod_poly_get_coeff_ui(&a,i);
+      poly[i] = nmod_poly_get_coeff_ui(f,i);
+    fq_nmod_clear(f, mBigContext);
   }
   
-  void ARingGFFlintBig::fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const
+  void ARingGFFlint::fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const
   {
+    fq_nmod_t f;
+
+    fq_nmod_init(f, mBigContext);
+
 #if 0
     printf("input = ");
     for (long i=0; i<poly.size(); i++)
@@ -92,33 +103,35 @@ namespace M2 {
         long a = poly[i];
         if (a == 0) continue;
         if (a < 0) a += characteristic();
-        nmod_poly_set_coeff_ui(&result, i, a);
+        nmod_poly_set_coeff_ui(f, i, a);
       }
 #if 0
     printf("  result before reduction = ");
-    fq_nmod_print_pretty(&result, mContext);
+    fq_nmod_print_pretty(f, mBigContext);
     printf("\n");
 #endif
-    fq_nmod_reduce(&result, mContext);
+    fq_nmod_reduce(f, mBigContext);
 #if 0
     printf("  result = ");
-    fq_nmod_print_pretty(&result, mContext);
+    fq_nmod_print_pretty(f, mBigContext);
     printf("\n");
 #endif
+    fq_zech_set_fq_nmod(&result, f, mContext);
+    fq_nmod_clear(f, mBigContext);
   }
 
-  void ARingGFFlintBig::getGenerator(ElementType& result_gen) const
+  void ARingGFFlint::getGenerator(ElementType& result_gen) const
   {
     if (not mGeneratorComputed)
       {
-        fq_nmod_init(&mCachedGenerator, mContext);
-        fq_nmod_gen(&mCachedGenerator, mContext);
+        fq_zech_init(&mCachedGenerator, mContext);
+        fq_zech_gen(&mCachedGenerator, mContext);
         mGeneratorComputed = true;
       }
     copy(result_gen, mCachedGenerator);
   }
 
-  bool ARingGFFlintBig::promote(const Ring *Rf, const ring_elem f, ElementType& result) const
+  bool ARingGFFlint::promote(const Ring *Rf, const ring_elem f, ElementType& result) const
   {
     if (&originalRing() != Rf) return false;
     std::vector<long> poly;
@@ -128,14 +141,14 @@ namespace M2 {
     return true;
   }
 
-  void ARingGFFlintBig::lift_to_original_ring(ring_elem& result, const ElementType& f) const
+  void ARingGFFlint::lift_to_original_ring(ring_elem& result, const ElementType& f) const
   {
     std::vector<long> poly;
     getSmallIntegerCoefficients(f, poly);
     result = originalRing().getNumeratorRing()->fromSmallIntegerCoefficients(poly, 0);
   }
 
-  bool ARingGFFlintBig::lift(const Ring *Rg, const ElementType& f, ring_elem &result) const
+  bool ARingGFFlint::lift(const Ring *Rg, const ElementType& f, ring_elem &result) const
   {
     // Rg = ZZ/p[x]/F(x) ---> GF(p,n)
     if (&originalRing() != Rg) return false;
@@ -143,34 +156,18 @@ namespace M2 {
     return true;
   }
 
-  void ARingGFFlintBig::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
+  void ARingGFFlint::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
   {
-    const Ring* R = map->get_ring();  // the target ring
-    result = R->from_long(0);
-    if (is_zero(f)) return;
-
-    ring_elem a = map->elem(first_var);
-    std::vector<long> poly;
-    getSmallIntegerCoefficients(f, poly);
-    for (long i = poly.size()-1; i >= 0; i--)
-      {
-        if (!R->is_zero(result))
-          result = R->mult(a, result);
-        if (poly[i] != 0)
-          {
-            ring_elem c = R->from_long(poly[i]);
-            result = R->add(result, c);
-          }
-      }
+    // f is represented by: f.value, the power of the generator
+    result = map->get_ring()->power(map->elem(first_var), f.value);    
   }
   
-  
-  void ARingGFFlintBig::text_out(buffer &o) const
+  void ARingGFFlint::text_out(buffer &o) const
   {
-    o << "GF(" << characteristic() << "^" << dimension() << ",FlintBig)";
+    o << "GF(" << characteristic() << "^" << dimension() << ",Flint)";
   }
 
-  void ARingGFFlintBig::elem_text_out(buffer &o,
+  void ARingGFFlint::elem_text_out(buffer &o,
                                 const ElementType& a,
                                 bool p_one,
                                 bool p_plus,
@@ -186,22 +183,10 @@ namespace M2 {
     originalRing().elem_text_out(o,b,p_one,p_plus,p_parens);
   }
 
-  int ARingGFFlintBig::compare_elems(const ElementType& f, const ElementType& g) const
+  int ARingGFFlint::compare_elems(const ElementType& f, const ElementType& g) const
   {
-    long degF = nmod_poly_degree(&f);
-    long degG = nmod_poly_degree(&g);
-    if (degF > degG)
-      return GT;
-    else if (degF < degG)
-      return LT;
-    // now degF == degG
-    for (long i=degF; i>=0; i--)
-      {
-        long coeffF = nmod_poly_get_coeff_ui(&f,i);
-        long coeffG = nmod_poly_get_coeff_ui(&g,i);
-        if (coeffF > coeffG) return GT;
-        if (coeffG > coeffF) return LT;
-      }
+    if (f.value > g.value) return GT;
+    if (f.value < g.value) return LT;
     return EQ;
   }
 };

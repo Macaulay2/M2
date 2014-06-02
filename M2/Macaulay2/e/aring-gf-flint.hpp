@@ -1,9 +1,9 @@
 // Copyright 2014 Michael E. Stillman
 
-#ifndef _aring_gf_flint_big_hpp_
-#define _aring_gf_flint_big_hpp_
+#ifndef _aring_gf_flint_hpp_
+#define _aring_gf_flint_hpp_
 
-#include <flint/fq_nmod.h>
+#include <flint/fq_zech.h>
 #include <flint/flint.h>
 #include "aring.hpp"
 #include "buffer.hpp"
@@ -19,19 +19,19 @@ namespace M2 {
 \ingroup rings
 */
 
-  class ARingGFFlintBig : public RingInterface
+  class ARingGFFlint : public RingInterface
   {
   public:
-    static const RingID ringID = ring_GFFlintBig;
-    typedef nmod_poly_struct ElementType;
+    static const RingID ringID = ring_GFFlintZech;
+    typedef fq_zech_struct ElementType;
     typedef ElementType elem;
 
-    ARingGFFlintBig(const PolynomialRing &R,
+    ARingGFFlint(const PolynomialRing &R,
                     const ring_elem a);
 
-    ~ARingGFFlintBig();
+    ~ARingGFFlint();
 
-    const fq_nmod_ctx_struct* flintContext() const { return mContext; }
+    const fq_zech_ctx_struct* flintContext() const { return mContext; }
     long characteristic() const { return mCharacteristic; }
     long dimension() const { return mDimension; }
 
@@ -42,7 +42,9 @@ namespace M2 {
     void text_out(buffer &o) const;
 
   private:
-    fq_nmod_ctx_t mContext;
+    fq_zech_ctx_t mContext;
+    fq_nmod_ctx_t mBigContext;
+
     const PolynomialRing& mOriginalRing; // This is a quotient ring k[a]/f(a).
     const RingElement* mPrimitiveElement; // element in the original ring
     ulong* mPPowers; // array 0..mDimension of powers of mCharacteristic (mod 2^64)
@@ -60,12 +62,7 @@ namespace M2 {
   public:
     unsigned long computeHashValue(const elem& a) const 
     { 
-      unsigned long hash = 0;
-      long deg = nmod_poly_degree(&a);
-      for (long i=0; i<=deg; i++)
-        hash += nmod_poly_get_coeff_ui(&a,i) * mPPowers[i];
-      //printf("computing hash value: %ld\n", hash);
-      return hash;
+      return a.value;
     }
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const
@@ -83,22 +80,22 @@ namespace M2 {
     }
 
     bool is_unit(const ElementType& f) const { return not is_zero(f); }
-    bool is_zero(const ElementType& f) const { return fq_nmod_is_zero(&f, mContext); }
-    bool is_equal(const ElementType& f, const ElementType& g) const { return fq_nmod_equal(&f, &g, mContext); }
+    bool is_zero(const ElementType& f) const { return fq_zech_is_zero(&f, mContext); }
+    bool is_equal(const ElementType& f, const ElementType& g) const { return fq_zech_equal(&f, &g, mContext); }
 
     int compare_elems(const ElementType& f, const ElementType& g) const;
 
-    void copy(ElementType& result, const ElementType& a) const { fq_nmod_set(&result, &a, mContext); }
-    void init(ElementType& result) const { fq_nmod_init2(&result, mContext); }
+    void copy(ElementType& result, const ElementType& a) const { fq_zech_set(&result, &a, mContext); }
+    void init(ElementType& result) const { fq_zech_init2(&result, mContext); }
     void init_set(ElementType& result, const ElementType& a) const { init(result); copy(result, a); }
     void set(ElementType& result, const ElementType& a) const { copy(result, a); }
-    void set_zero(ElementType& result) const { fq_nmod_zero(&result, mContext); }
-    void clear(ElementType& result) const { fq_nmod_clear(&result, mContext); }
+    void set_zero(ElementType& result) const { fq_zech_zero(&result, mContext); }
+    void clear(ElementType& result) const { fq_zech_clear(&result, mContext); }
     
     void set_from_long(ElementType& result, long a) const {
       long a1 = a % characteristic();
       if (a1 < 0) a1 += characteristic();
-      fq_nmod_set_ui(&result, a1, mContext);
+      fq_zech_set_ui(&result, a1, mContext);
     }
 
     void set_var(ElementType& result, int v) const 
@@ -125,16 +122,16 @@ namespace M2 {
 
     bool set_from_BigReal(ElementType& result, gmp_RR a) const { return false; }
     
-    void negate(ElementType& result, const ElementType& a) const { fq_nmod_neg(&result, &a, mContext); }
+    void negate(ElementType& result, const ElementType& a) const { fq_zech_neg(&result, &a, mContext); }
 
     void invert(ElementType& result, const ElementType& a) const { 
       M2_ASSERT(not is_zero(a)); 
-      fq_nmod_inv(&result, &a, mContext); 
+      fq_zech_inv(&result, &a, mContext); 
     }
 
-    void add(ElementType& result, const ElementType& a, const ElementType& b) const { fq_nmod_add(&result, &a, &b, mContext); }
+    void add(ElementType& result, const ElementType& a, const ElementType& b) const { fq_zech_add(&result, &a, &b, mContext); }
 
-    void subtract(ElementType& result, const ElementType& a, const ElementType& b) const { fq_nmod_sub(&result, &a, &b, mContext); }
+    void subtract(ElementType& result, const ElementType& a, const ElementType& b) const { fq_zech_sub(&result, &a, &b, mContext); }
 
     void subtract_multiple(ElementType& result, const ElementType& a, const ElementType& b) const
     {
@@ -147,7 +144,7 @@ namespace M2 {
 
     void mult(ElementType& result, const ElementType& a, const ElementType& b) const 
     { 
-      fq_nmod_mul(&result, &a, &b, mContext); 
+      fq_zech_mul(&result, &a, &b, mContext); 
     }
 
     void divide(ElementType& result, const ElementType& a, const ElementType& b) const 
@@ -159,20 +156,20 @@ namespace M2 {
 #if 0
       printf("entering divide\n");
       printf("  a = ");
-      fq_nmod_print_pretty(&a, mContext);
+      fq_zech_print_pretty(&a, mContext);
       printf("\n  b = ");
-      fq_nmod_print_pretty(&b, mContext);
+      fq_zech_print_pretty(&b, mContext);
 #endif
       M2_ASSERT(not is_zero(b));
       invert(c,b); 
 #if 0
       printf("\n  1/b = ");
-      fq_nmod_print_pretty(&c, mContext);
+      fq_zech_print_pretty(&c, mContext);
 #endif
       mult(result,c,a); 
 #if 0
       printf("\n  a/b = ");
-      fq_nmod_print_pretty(&result, mContext);
+      fq_zech_print_pretty(&result, mContext);
       printf("\n");
 #endif
       clear(c);
@@ -184,10 +181,10 @@ namespace M2 {
       else if (n < 0)
         {
           invert(result, a);
-          fq_nmod_pow_ui(&result, &result, -n, mContext);
+          fq_zech_pow_ui(&result, &result, -n, mContext);
         }
       else
-        fq_nmod_pow_ui(&result, &a, n, mContext);
+        fq_zech_pow_ui(&result, &a, n, mContext);
     }
 
     void power_mpz(ElementType& result, const ElementType& a, mpz_ptr n) const
@@ -208,14 +205,14 @@ namespace M2 {
 
       fmpz_t fn;
       fmpz_init_set_readonly(fn, n);
-      fq_nmod_pow(&result, &result, fn, mContext);
+      fq_zech_pow(&result, &result, fn, mContext);
       fmpz_clear_readonly(fn);
       if (neg) mpz_neg(n,n);
     }
 
     void swap(ElementType &a, ElementType &b) const
     {
-      fq_nmod_swap(&a, &b, mContext);
+      fq_zech_swap(&a, &b, mContext);
     }
 
     void elem_text_out(buffer &o,
@@ -239,8 +236,8 @@ namespace M2 {
 
     void random(ElementType &result) const
     {
-      //      printf("calling ARingGFFlintBig::random\n");
-      fq_nmod_randtest(&result, mRandomState, mContext);
+      //      printf("calling ARingGFFlint::random\n");
+      fq_zech_randtest(&result, mRandomState, mContext);
     }
 
     void fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const;
@@ -251,7 +248,7 @@ namespace M2 {
 
     void lift_to_original_ring(ring_elem& result, const ElementType& f) const;
     // GF specific routine, used in getRepresentation
-    
+
     bool lift(const Ring *Rg, const ElementType& f, ring_elem &result) const;
 
     // map : this --> target(map)
