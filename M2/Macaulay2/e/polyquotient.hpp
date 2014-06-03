@@ -160,7 +160,7 @@ public:
                              bool p_one=true,
                              bool p_plus=false,
                              bool p_parens=false) const {
-    numerR_->PolyRing::elem_text_out(o,f);
+    numerR_->PolyRing::elem_text_out(o,f,p_one,p_plus,p_parens);
   }
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
