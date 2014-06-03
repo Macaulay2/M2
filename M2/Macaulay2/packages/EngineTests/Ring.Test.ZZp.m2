@@ -400,6 +400,56 @@ TEST ///
 ///
 
 TEST ///
+ -- maps GF(p^2)[x,y] --> GF(p^4)[x,y]
+ restart
+ R4 = GF(2,4, Strategy=>"Flint")
+ R2 = GF(2,2, Strategy=>"Flint")
+ A4 = ambient R4
+ A2 = ambient R2
+ ideal A4
+ ideal A2
+ B = ZZ/2[x]
+ f = x^2+x+1
+ sub(f, x=>x^2)
+ C4 = R4[x,y]
+ C2 = R2[x,y]
+ use C4
+ phi = map(C4,C2,{x,y,R4_0^2})
+ use C2
+ G = a*x + (a-1)*y^3 + x^2 + a^3
+ use C4
+ use coefficientRing C4
+ assert(phi G == (a+1)*y^3 + x^2 + a^2*x+1)
+///
+
+TEST ///
+ -- maps GF(p^2)[x,y] --> GF(p^4)[x,y]
+ restart
+ R4 = GF(2,4, Strategy=>"FlintBig", Variable=>b)
+ R2 = GF(2,2, Strategy=>"FlintBig", Variable=>a)
+ A4 = ambient R4
+ A2 = ambient R2
+ ideal A4
+ ideal A2
+ B = ZZ/2[x]
+ f = x^2+x+1
+ sub(f, x=>x^5)
+ C4 = R4[x,y]
+ C2 = R2[x,y]
+ use C4
+ phi = map(C4,C2,{x,y,R4_0^5})
+ phi2 = map(C4,C2,{x,y,R4_0^2 + R4_0})
+ use C2
+ G = a*x + (a-1)*y^3 + x^2 + a^3
+ use C4
+ use coefficientRing C4
+ assert(phi G == b^5*x + (b^5-1)*y^3 + x^2 + b^15)
+ assert(phi2 G == b^5*x + (b^5-1)*y^3 + x^2 + b^15)
+ mutableMatrix{{G}}
+ -- phi oo -- not defined yet!!
+///
+
+TEST ///
   debug Core
   kk = GF(9, Strategy=>"Givaro")
   A = kk[x]

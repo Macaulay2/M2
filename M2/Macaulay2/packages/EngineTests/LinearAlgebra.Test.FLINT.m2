@@ -52,6 +52,7 @@ TEST ///
 TEST ///
   R = ZZ/5
   R = GF(5^2, Strategy=>"FlintBig")
+  R = GF(5^2, Strategy=>"Flint")  
   R = GF(5^2, Strategy=>"Givaro")
   R = GF(5^2, Strategy=>"New")
   R = GF(5^2)
@@ -147,6 +148,45 @@ TEST ///
       time testLinearAlgebra R
       )
 ///
+
+
+TEST ///
+  for i from 2 to 13 do (
+      R = GF(2,i,Strategy=>"Flint");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 13 do (
+      R = GF(3,i,Strategy=>"Flint");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 13 do (
+      R = GF(5,i,Strategy=>"Flint");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 13 do (
+      R = GF(7,i,Strategy=>"Flint");
+      time testLinearAlgebra R
+      )
+///
+
+TEST ///
+  for i from 2 to 13 do (
+      R = GF(11,i,Strategy=>"Flint");
+      time testLinearAlgebra R
+      )
+///
+
+
+
 
 TEST ///
   R = ZZpFlint( 101 )

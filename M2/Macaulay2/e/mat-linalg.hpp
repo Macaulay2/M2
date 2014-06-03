@@ -27,11 +27,13 @@ typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #define DMatZZpFFPACK DMat<ZZpFFPACK> 
 #endif
 
+#include "aring-zz-gmp.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
 
+typedef DMat<M2::ARingZZGMP> DMatZZGMP;
 typedef DMat<M2::ARingZZ> DMatZZ;
 typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
@@ -46,6 +48,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "lapack.hpp"
 #include "mat-arith.hpp"
 #include "dmat-lu.hpp"
+
+#include <flint/fmpz_mat.h>
 
 namespace MatrixOps
 {
@@ -456,6 +460,122 @@ namespace MatrixOps
                           const DMatZZpFFPACK& A, 
                           const DMatZZpFFPACK& B);
 
+
+  //////////////////////
+  // ZZ (ARingZZGMP) ///
+  //////////////////////
+
+  class FlintZZMat {
+  public:
+    FlintZZMat(const DMatZZGMP& mat) {
+      fmpz_mat_init(mMatrix, mat.numRows(), mat.numColumns());
+      to_fmpz_mat(mat, mMatrix);
+    }
+    FlintZZMat(long numrows, long numcolumns)
+    {
+      fmpz_mat_init(mMatrix, numrows, numcolumns);
+    }
+
+    ~FlintZZMat() 
+    { 
+      fmpz_mat_clear(mMatrix); 
+    }
+
+    fmpz_mat_struct* value() { return mMatrix; }
+    void toDMat(DMatZZGMP& result) { 
+      result.resize(fmpz_mat_nrows(mMatrix), fmpz_mat_ncols(mMatrix));
+      from_fmpz_mat(mMatrix, result); 
+    }
+  private:
+    fmpz_mat_t mMatrix;
+    static void to_fmpz_mat(const DMatZZGMP& mat1, fmpz_mat_t result_mat)
+    {
+      DMatZZGMP& mat = const_cast<DMatZZGMP&>(mat1);
+      for (long r=0; r<mat.numRows(); r++)
+        {
+          auto end = mat.rowEnd(r);
+          long c = 0;
+          for (auto it = mat.rowBegin(r); it != end; ++it, ++c)
+            fmpz_set_mpz(fmpz_mat_entry(result_mat, r, c), &(*it));
+        }
+    }
+    static void from_fmpz_mat(fmpz_mat_t mat, DMatZZGMP& result_mat)
+    {
+      for (long r=0; r<result_mat.numRows(); r++)
+        {
+          auto end = result_mat.rowEnd(r);
+          long c = 0;
+          for (auto it = result_mat.rowBegin(r); it != end; ++it, ++c)
+            fmpz_get_mpz(&(*it), fmpz_mat_entry(mat, r, c));
+        }
+    }
+    
+  };
+
+  inline void mult(const DMatZZGMP& A, 
+                   const DMatZZGMP& B, 
+                   DMatZZGMP& result_product) 
+  {
+    printf("in DMatZZGMP mult\n");
+    FlintZZMat A1(A);
+    FlintZZMat B1(B);
+    FlintZZMat result1(A.numRows(), B.numColumns());
+
+    fmpz_mat_mul(result1.value(), A1.value(), B1.value());
+
+    result1.toDMat(result_product);
+  }
+
+  inline void addMultipleTo(DMatZZGMP& C, 
+                            const DMatZZGMP& A, 
+                            const DMatZZGMP& B)
+  {
+    FlintZZMat A1(A);
+    FlintZZMat B1(B);
+    FlintZZMat C1(C);
+    FlintZZMat result1(A.numRows(), B.numColumns());
+
+    FlintZZMat D1(A.numRows(), B.numColumns());
+    fmpz_mat_mul(D1.value(), A1.value(), B1.value());
+    fmpz_mat_add(C1.value(), C1.value(), D1.value());
+
+    C1.toDMat(C);
+  }
+
+  inline void subtractMultipleTo(DMatZZGMP& C, 
+                            const DMatZZGMP& A, 
+                            const DMatZZGMP& B)
+  {
+    FlintZZMat A1(A);
+    FlintZZMat B1(B);
+    FlintZZMat C1(C);
+    FlintZZMat result1(A.numRows(), B.numColumns());
+
+    FlintZZMat D1(A.numRows(), B.numColumns());
+    fmpz_mat_mul(D1.value(), A1.value(), B1.value());
+    fmpz_mat_sub(C1.value(), C1.value(), D1.value());
+
+    C1.toDMat(C);
+  }
+
+  inline size_t rank(const DMatZZGMP& A) {
+    printf("calling DMatZZGMP rank\n");
+    FlintZZMat A1(A);
+    return fmpz_mat_rank(A1.value()); 
+  }
+
+
+  inline void determinant(const DMatZZGMP& A, 
+                          M2::ARingZZGMP::ElementType& result_det) 
+  {
+    printf("calling DMatZZGMP determinant\n");
+    FlintZZMat A1(A);
+    fmpz_t det;
+    fmpz_init(det);
+    fmpz_mat_det(det, A1.value());
+    fmpz_get_mpz(&result_det, det);
+    fmpz_clear(det);
+  }
 
   //////////////////////
   // ZZFlint ///////////
