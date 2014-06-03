@@ -640,21 +640,21 @@ doc ///
 doc ///
  Key
    phMonodromy
-   (phMonodromy,String,List,ZZ)
+   (phMonodromy,String,ZZ,ZZ)
  Headline
    Does a sequence of parameter homotopies.
  Usage
-   S=phMonodromy(sIn,L,n) 
+   S=phMonodromy(sIn,p,n) 
  Inputs
    sIn: String
      A string giving the directory of start files: input, start, start_parameters
-   L: List
-     L is a list of lists of parameters. 
+   p: ZZ
+     Number of parameters.
    n: ZZ
      Number of coordinates of a point.
          
 ///;
-
+--ref{} need to add about the option ParameterValues
 
 
 doc ///
