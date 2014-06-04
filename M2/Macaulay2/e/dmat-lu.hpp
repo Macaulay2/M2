@@ -14,6 +14,7 @@ template <class RingType> class DMatLinAlg;
 
 #include "dmat-lu-zzp-ffpack.hpp"
 #include "dmat-lu-zzp-flint.hpp"
+#include "dmat-lu-qq.hpp"
 
 template <class RingType>
 class DMatLinAlg

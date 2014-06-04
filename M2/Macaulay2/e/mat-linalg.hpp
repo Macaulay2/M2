@@ -28,13 +28,15 @@ typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #endif
 
 #include "aring-zz-gmp.hpp"
+#include "aring-qq.hpp"
 #include "aring-zz-flint.hpp"
 #include "aring-zzp-flint.hpp"
 #include "aring-gf-flint-big.hpp"
 #include "aring-gf-flint.hpp"
 
 typedef DMat<M2::ARingZZGMP> DMatZZGMP;
-typedef DMat<M2::ARingZZ> DMatZZ;
+typedef DMat<M2::ARingZZ> DMatZZ; // flint
+typedef DMat<M2::ARingQQ> DMatQQ;
 typedef DMat<M2::ARingQQFlint> DMatQQFlint;
 typedef DMat<M2::ARingZZpFlint> DMatZZpFlint;
 typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
@@ -48,6 +50,7 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "lapack.hpp"
 #include "mat-arith.hpp"
 #include "dmat-lu.hpp"
+#include "dmat-qq-interface-flint.hpp"
 
 #include <flint/fmpz_mat.h>
 
@@ -765,6 +768,86 @@ namespace MatrixOps
     fq_zech_mat_mul(result_product.fq_zech_mat(), A.fq_zech_mat(), B.fq_zech_mat(), A.ring().flintContext());
   }
 
+  //////////////////////
+  // QQ ////////////////
+  //////////////////////
+
+
+
+  inline void mult(const DMatQQ& A, 
+                   const DMatQQ& B, 
+                   DMatQQ& result_product) 
+  {
+    printf("in DMatQQ mult\n");
+    FlintQQMat A1(A);
+    FlintQQMat B1(B);
+    FlintQQMat result1(A.numRows(), B.numColumns());
+
+    fmpq_mat_mul(result1.value(), A1.value(), B1.value());
+
+    result1.toDMat(result_product);
+  }
+
+  inline void addMultipleTo(DMatQQ& C, 
+                            const DMatQQ& A, 
+                            const DMatQQ& B)
+  {
+    FlintQQMat A1(A);
+    FlintQQMat B1(B);
+    FlintQQMat C1(C);
+    FlintQQMat result1(A.numRows(), B.numColumns());
+
+    FlintQQMat D1(A.numRows(), B.numColumns());
+    fmpq_mat_mul(D1.value(), A1.value(), B1.value());
+    fmpq_mat_add(C1.value(), C1.value(), D1.value());
+
+    C1.toDMat(C);
+  }
+
+  inline void subtractMultipleTo(DMatQQ& C, 
+                            const DMatQQ& A, 
+                            const DMatQQ& B)
+  {
+    FlintQQMat A1(A);
+    FlintQQMat B1(B);
+    FlintQQMat C1(C);
+    FlintQQMat result1(A.numRows(), B.numColumns());
+
+    FlintQQMat D1(A.numRows(), B.numColumns());
+    fmpq_mat_mul(D1.value(), A1.value(), B1.value());
+    fmpq_mat_sub(C1.value(), C1.value(), D1.value());
+
+    C1.toDMat(C);
+  }
+
+#if 0
+  inline size_t rank(const DMatQQ& A) {
+    printf("calling DMatQQ rank\n");
+    FlintQQMat A1(A);
+
+    // fmpq_mat has no rank function.
+    // So we clear denominators row-wise (or column-wise), and compute the rank of that matrix.
+    fmpz_mat_t m1;
+    fmpz_mat_init(m1, A.numRows(), A.numColumns());
+    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A1.value());
+    size_t rk = fmpz_mat_rank(m1);
+    fmpz_mat_clear(m1);
+    return rk;
+  }
+
+
+  inline void determinant(const DMatQQ& A, 
+                          M2::ARingQQ::ElementType& result_det) 
+  {
+    printf("calling DMatQQ determinant\n");
+    FlintQQMat A1(A);
+    fmpq_t det;
+    fmpq_init(det);
+    fmpq_mat_det(det, A1.value());
+    fmpq_get_mpq(&result_det, det);
+    fmpq_clear(det);
+  }
+#endif
   //////////////////////
   // QQFlint ///////////
   //////////////////////
