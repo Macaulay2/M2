@@ -468,58 +468,10 @@ namespace MatrixOps
   // ZZ (ARingZZGMP) ///
   //////////////////////
 
-  class FlintZZMat {
-  public:
-    FlintZZMat(const DMatZZGMP& mat) {
-      fmpz_mat_init(mMatrix, mat.numRows(), mat.numColumns());
-      to_fmpz_mat(mat, mMatrix);
-    }
-    FlintZZMat(long numrows, long numcolumns)
-    {
-      fmpz_mat_init(mMatrix, numrows, numcolumns);
-    }
-
-    ~FlintZZMat() 
-    { 
-      fmpz_mat_clear(mMatrix); 
-    }
-
-    fmpz_mat_struct* value() { return mMatrix; }
-    void toDMat(DMatZZGMP& result) { 
-      result.resize(fmpz_mat_nrows(mMatrix), fmpz_mat_ncols(mMatrix));
-      from_fmpz_mat(mMatrix, result); 
-    }
-  private:
-    fmpz_mat_t mMatrix;
-    static void to_fmpz_mat(const DMatZZGMP& mat1, fmpz_mat_t result_mat)
-    {
-      DMatZZGMP& mat = const_cast<DMatZZGMP&>(mat1);
-      for (long r=0; r<mat.numRows(); r++)
-        {
-          auto end = mat.rowEnd(r);
-          long c = 0;
-          for (auto it = mat.rowBegin(r); it != end; ++it, ++c)
-            fmpz_set_mpz(fmpz_mat_entry(result_mat, r, c), &(*it));
-        }
-    }
-    static void from_fmpz_mat(fmpz_mat_t mat, DMatZZGMP& result_mat)
-    {
-      for (long r=0; r<result_mat.numRows(); r++)
-        {
-          auto end = result_mat.rowEnd(r);
-          long c = 0;
-          for (auto it = result_mat.rowBegin(r); it != end; ++it, ++c)
-            fmpz_get_mpz(&(*it), fmpz_mat_entry(mat, r, c));
-        }
-    }
-    
-  };
-
   inline void mult(const DMatZZGMP& A, 
                    const DMatZZGMP& B, 
                    DMatZZGMP& result_product) 
   {
-    printf("in DMatZZGMP mult\n");
     FlintZZMat A1(A);
     FlintZZMat B1(B);
     FlintZZMat result1(A.numRows(), B.numColumns());
@@ -562,7 +514,6 @@ namespace MatrixOps
   }
 
   inline size_t rank(const DMatZZGMP& A) {
-    printf("calling DMatZZGMP rank\n");
     FlintZZMat A1(A);
     return fmpz_mat_rank(A1.value()); 
   }
@@ -571,7 +522,6 @@ namespace MatrixOps
   inline void determinant(const DMatZZGMP& A, 
                           M2::ARingZZGMP::ElementType& result_det) 
   {
-    printf("calling DMatZZGMP determinant\n");
     FlintZZMat A1(A);
     fmpz_t det;
     fmpz_init(det);
@@ -778,7 +728,6 @@ namespace MatrixOps
                    const DMatQQ& B, 
                    DMatQQ& result_product) 
   {
-    printf("in DMatQQ mult\n");
     FlintQQMat A1(A);
     FlintQQMat B1(B);
     FlintQQMat result1(A.numRows(), B.numColumns());
@@ -820,34 +769,6 @@ namespace MatrixOps
     C1.toDMat(C);
   }
 
-#if 0
-  inline size_t rank(const DMatQQ& A) {
-    printf("calling DMatQQ rank\n");
-    FlintQQMat A1(A);
-
-    // fmpq_mat has no rank function.
-    // So we clear denominators row-wise (or column-wise), and compute the rank of that matrix.
-    fmpz_mat_t m1;
-    fmpz_mat_init(m1, A.numRows(), A.numColumns());
-    fmpq_mat_get_fmpz_mat_rowwise(m1, NULL, A1.value());
-    size_t rk = fmpz_mat_rank(m1);
-    fmpz_mat_clear(m1);
-    return rk;
-  }
-
-
-  inline void determinant(const DMatQQ& A, 
-                          M2::ARingQQ::ElementType& result_det) 
-  {
-    printf("calling DMatQQ determinant\n");
-    FlintQQMat A1(A);
-    fmpq_t det;
-    fmpq_init(det);
-    fmpq_mat_det(det, A1.value());
-    fmpq_get_mpq(&result_det, det);
-    fmpq_clear(det);
-  }
-#endif
   //////////////////////
   // QQFlint ///////////
   //////////////////////
@@ -952,21 +873,6 @@ namespace MatrixOps
   ////////
   // RR //
   ////////
-#if 0
-  inline bool solve(const DMatRR& A, 
-                    const DMatRR& B, 
-                    DMatRR& X)
-  {
-    return Lapack::solve(&A, &B, &X);
-  }
-
-  inline M2_arrayintOrNull LU(const DMatRR& A, 
-                              DMatRR& L,
-                              DMatRR& U)
-  {
-    return Lapack::LU(&A, &L, &U);
-  }
-#endif
   inline bool eigenvaluesHermitian(const DMatRR& A, 
                             DMatRR& eigenvals)
   {
@@ -1034,21 +940,6 @@ namespace MatrixOps
   ////////
   // CC //
   ////////
-#if 0
-  inline bool solve(const DMatCC& A, 
-                    const DMatCC& B, 
-                    DMatCC& X)
-  {
-    return Lapack::solve(&A, &B, &X);
-  }
-
-  inline M2_arrayintOrNull LU(const DMatCC& A, 
-                              DMatCC& L,
-                              DMatCC& U)
-  {
-    return Lapack::LU(&A, &L, &U);
-  }
-#endif
   inline bool eigenvaluesHermitian(const DMatCC& A, 
                             DMatRR& eigenvals)
   {

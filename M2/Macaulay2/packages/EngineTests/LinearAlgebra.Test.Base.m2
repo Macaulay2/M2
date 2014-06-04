@@ -359,10 +359,49 @@ testRank = (R) -> (
             assert(rank M == j);
         ))
 
+makeMatrixWithColumnRankProfile = (R, nrows, ncols, profile) -> (
+    -- profile is a list of column indices (so each entry should be in range [0,ncols-1])
+    A := first randomFullRank(R, nrows);
+    B := mutableMatrix(R, nrows, ncols);
+    -- now set B with random values
+    for p from 0 to #profile-1 do B_(p,profile#p) = 1_R;
+    rk := 1;
+    profile = append(profile, ncols);
+    for i from 1 to #profile - 1 do (
+        -- set all entries in rows 0..rk in columns profile#(i-1) to profile#i-1 to random values
+        for r from 0 to rk-1 do for c from profile#(i-1)+1 to profile#i - 1 do B_(r,c) = random R;
+        rk = rk+1;
+        );
+    A*B
+    --(A,B)
+    )
+
 testRankProfile = (R) -> (
-    -- WRITE ME WRITE ME
-    M1 := mutableMatrix matrix(R, {{2, 16, 29}, {-18, 24, 12}, {-41, 7, -31}});
-    rowRankProfile M1
+    -- base cases:
+    A := makeMatrixWithColumnRankProfile(R, 3, 7, {});
+    assert(columnRankProfile A == {});
+    assert(rowRankProfile A == {});
+    A = makeMatrixWithColumnRankProfile(R, 0, 0, {});
+    assert(columnRankProfile A == {});
+    assert(rowRankProfile A == {});
+    A = makeMatrixWithColumnRankProfile(R, 0, 4, {});
+    assert(columnRankProfile A == {});
+    assert(rowRankProfile A == {}); 
+    A = makeMatrixWithColumnRankProfile(R, 4, 0, {});
+    assert(columnRankProfile A == {});
+    assert(rowRankProfile A == {});
+    -- 3 x 7 matrices of rank 2
+    for p in subsets(7,2) do (
+        A = makeMatrixWithColumnRankProfile(R, 3, 7, p);
+        assert(columnRankProfile A == p);
+        );
+    -- 3 x 7 matrices of rank 3
+    for p in subsets(7,3) do (
+        A = makeMatrixWithColumnRankProfile(R, 3, 7, p);
+        assert(columnRankProfile A == p);
+        B := transpose A;
+        assert(rowRankProfile B == p);
+        );
     );
 
 testSolveSimple = (R) -> (
