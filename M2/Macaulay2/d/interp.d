@@ -416,7 +416,7 @@ stringTokenFile(name:string,contents:string):TokenFile := (
 	       contents,		  -- inbuffer
 	       0,			  -- inindex
 	       length(contents),	  -- insize
-	       true,			  -- eof
+	       false,			  -- eof
 	       false,	  		  -- promptq
 	       noprompt,		  -- prompt
 	       noprompt,		  -- reward
