@@ -19,7 +19,7 @@ export {
      generalEquations, 
      -- witness set
      WitnessSet, witnessSet, equations, slice, points, 
-     Equations, Slice, Points, ProjectionDimension, 
+     Equations, Slice, "Points", ProjectionDimension, 
      sliceEquations, projectiveSliceEquations, IsIrreducible, 
      ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
      -- numerical variety
