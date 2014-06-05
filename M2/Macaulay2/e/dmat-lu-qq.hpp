@@ -121,30 +121,6 @@ public:
     fmpq_clear(b);
     fmpz_clear(den);
     fmpz_clear(den2);
-#if 0
-    // order of events:
-    // take input matrix, make it over ZZ (element wise, or column wise?)
-    // do lu in that case.  get a denom.
-    // grab P, L directly, but for U, mult it by corresponding value...
-    fmpq_mat_lu(perm, A.value(), false);
-    P.resize(0);
-    for (long i=0; i<LU.numRows(); i++)
-      P.push_back(perm[i]);
-    deletearray(perm);
-    Mat LU;
-    A.toDMat(LU);
-    LUUtil<RingType>::setUpperLower(LU, L, U);
-
-    // TODO
-    Mat LU(mMatrix); // copy
-    long* perm = newarray_atomic(long, LU.numRows());
-    fmpq_mat_lu(perm, LU.fmpq_mat(), false);
-    P.resize(0);
-    for (long i=0; i<LU.numRows(); i++)
-      P.push_back(perm[i]);
-    deletearray(perm);
-    LUUtil<RingType>::setUpperLower(LU, L, U);
-#endif
   }
 
   bool solve(const Mat& B, Mat& X) 

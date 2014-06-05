@@ -436,6 +436,15 @@ testSolveSimple = (R) -> (
     assert(M*X-B == 0);
     )
 
+testSolveNotFullRank = (R) -> (
+    --m := first randomMatrixWithKernel(R,7,3);
+    m := makeMatrixWithColumnRankProfile(R, 7, 13, {1,4,6,7,9});
+    x := mutableMatrix(R,numColumns m,2); fillMatrix x;
+    b := m*x;
+    X := solve(m,b);
+    assert(m*X-b == 0);
+    )
+
 testSolve = (R) -> (
     --testSolveSimple R;
     for i in {3,4,5,6,7,8,9,10} do (
@@ -445,6 +454,7 @@ testSolve = (R) -> (
         assert(X =!= null);
         assert(A*X-B == 0);
         );
+    for i from 0 to 100 do testSolveNotFullRank R;    
     )
 
 testSolveInvertible0 = (R) -> (

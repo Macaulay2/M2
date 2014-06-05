@@ -16,6 +16,8 @@ template <class RingType> class DMatLinAlg;
 #include "dmat-lu-zzp-flint.hpp"
 #include "dmat-lu-qq.hpp"
 
+typedef DMat<M2::ARingGFFlintBig> DMatGFFlintBig;
+
 template <class RingType>
 class DMatLinAlg
 {
@@ -304,8 +306,9 @@ size_t DMatLinAlg<RingType>::rank()
 template <class RingType>
 bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 {
-  //printf("in dmat-lu: solve\n");
+  printf("in dmat-lu: solve\n");
   const Mat& LU = mLUObject.LUinPlace();
+  printf("in dmat-lu: after LU solve\n");
 
   // For each column of B, we solve it separately.
 
@@ -438,6 +441,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   return true; // The system seems to have been consistent
 }
 
+#if 0
 template <class RingType>
 bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 {
@@ -448,6 +452,78 @@ bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
   if (rank() < mLUObject.numRows()) return false;
   solve(B,X);
   return true;
+}
+#endif
+
+template <class Mat>
+void permuteRows(const Mat& B, const std::vector<size_t> permutation, Mat& result)
+{
+  // Better would be if the Mat type allows easy swapping of rows...
+  result.resize(B.numRows(), B.numColumns()); // leaves B alone if correct size already...
+  for (long r=0; r<B.numRows(); r++)
+    for (long c=0; c<B.numColumns(); c++)
+      B.ring().set(result.entry(r,c), B.entry(permutation[r], c));
+}
+
+template <class Mat>
+void solveLowerTriangular(const Mat& LU, const Mat& B, Mat& X)
+{
+}
+
+template<>
+inline void solveLowerTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU, const DMatGFFlintBig& B, DMatGFFlintBig& X)
+{
+  fq_nmod_mat_solve_tril(X.fq_nmod_mat(), LU.fq_nmod_mat(), B.fq_nmod_mat(), 1, LU.ring().flintContext());
+}
+
+template<>
+inline void solveLowerTriangular<DMatGFFlint>(const DMatGFFlint& LU, const DMatGFFlint& B, DMatGFFlint& X)
+{
+  fq_zech_mat_solve_tril(X.fq_zech_mat(), LU.fq_zech_mat(), B.fq_zech_mat(), 1, LU.ring().flintContext());
+}
+
+template <class Mat>
+void solveUpperTriangular(const Mat& LU, const Mat& B, Mat& X)
+{
+}
+
+template<>
+inline void solveUpperTriangular<DMatGFFlint>(const DMatGFFlint& LU, const DMatGFFlint& B, DMatGFFlint& X)
+{
+  fq_zech_mat_solve_triu(X.fq_zech_mat(), LU.fq_zech_mat(), B.fq_zech_mat(), 0, LU.ring().flintContext());
+}
+template<>
+inline void solveUpperTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU, const DMatGFFlintBig& B, DMatGFFlintBig& X)
+{
+  fq_nmod_mat_solve_triu(X.fq_nmod_mat(), LU.fq_nmod_mat(), B.fq_nmod_mat(), 0, LU.ring().flintContext());
+}
+
+template <class RingType>
+bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
+{
+  printf("in dmat-lu solveInvertible\n");
+  // possible TODO: incorporate a faster method if we know matrix is invertible...
+  M2_ASSERT(mLUObject.numRows() == mLUObject.numColumns());
+  M2_ASSERT(mLUObject.numRows() == B.numRows());
+
+  X.resize(mLUObject.numColumns(), B.numColumns());
+  const Mat& LU = mLUObject.LUinPlace();
+  if (rank() < mLUObject.numRows()) return false;
+  solve(B,X);
+  return true;
+#if 0
+  // The following code doesn't really seem to be any faster than the naive code we have
+  // at least for sizes less than a few thousand rows/columns.
+  Mat B1(ring(), LU.numRows(), LU.numRows()); // square matrix
+  printf("in dmat-lu solveInvertible step 3\n");
+  permuteRows<Mat>(B, mLUObject.permutation(), B1);
+  printf("in dmat-lu solveInvertible step 4\n");
+  solveLowerTriangular(LU, B, X);
+  printf("in dmat-lu solveInvertible step 5\n");
+  solveUpperTriangular(LU, X, X);
+  printf("in dmat-lu solveInvertible step 6\n");
+  return true;
+#endif
 }
 
 template <class RingType>

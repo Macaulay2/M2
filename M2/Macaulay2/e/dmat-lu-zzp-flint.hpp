@@ -59,7 +59,9 @@ public:
   }
 
   bool inverse(Mat& result_inv) { 
+    M2_ASSERT(mMatrix.numRows() == mMatrix.numColumns());
     Mat& A = const_cast<Mat&>(mMatrix);
+    result_inv.resize(mMatrix.numRows(), mMatrix.numColumns());
     return nmod_mat_inv(result_inv.nmod_mat(), A.nmod_mat());
   }
 

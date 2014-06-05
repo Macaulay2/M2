@@ -115,6 +115,8 @@ namespace ffpackInterface
                DMatZZpFFPACK& result_inv)
   {
     M2_ASSERT(mat.numRows() == mat.numColumns());
+    result_inv.resize(mat.numRows(), mat.numRows());
+
     M2_ASSERT(result_inv.numRows() == mat.numRows());
     M2_ASSERT(result_inv.numColumns() == mat.numRows());
 
@@ -224,7 +226,6 @@ namespace ffpackInterface
     if (info > 0)
       {
         // the system is inconsistent
-        ERROR("the system is inconsistent");
         return false;
       }
     
