@@ -309,6 +309,8 @@ bumpPrecedence();
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
      export timeS := special("time",unaryop,precSpace,wide);
      export timingS := special("timing",unaryop,precSpace,wide);
+     export wallTimeS := special("wallTime",unaryop,precSpace,wide);
+     export wallTimingS := special("wallTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);

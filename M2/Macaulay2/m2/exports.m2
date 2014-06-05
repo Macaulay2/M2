@@ -1158,6 +1158,8 @@ export {
 	symbol version,
 	symbol viewHelp,
 	symbol wait,
+        symbol wallTime,
+        symbol wallTiming,
 	symbol wedgeProduct,
 	symbol weightRange,
 	symbol when,
