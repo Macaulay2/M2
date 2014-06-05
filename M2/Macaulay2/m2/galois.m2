@@ -194,6 +194,8 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 		      rawARingGaloisField1 raw primitiveElement
                   else if opts.Strategy === "FlintBig" then
                        rawARingGaloisFieldFlintBig raw primitiveElement
+                  else if opts.Strategy === "Flint" then
+                       rawARingGaloisFieldFlintZech raw primitiveElement
                   else error ("unknown type of Galois Field requested: "|opts.Strategy);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
