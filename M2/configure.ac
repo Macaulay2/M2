@@ -906,10 +906,10 @@ fi
 if test "$PARI" = yes
 then if test $BUILD_pari = no
      then AC_LANG(C)
-	  AC_SEARCH_LIBS(pari_init,pari,,BUILD_pari=yes,-lm)
+	  AC_SEARCH_LIBS(pari_init,pari-gmp,,BUILD_pari=yes,-lm)
 	  AC_CHECK_HEADER(pari/pari.h,,BUILD_pari=yes)
      fi
-     test $BUILD_pari = yes && BUILTLIBS="-lpari $BUILTLIBS"
+     test $BUILD_pari = yes && BUILTLIBS="-lpari-gmp $BUILTLIBS"
 fi
 
 if test "$PYTHON" = yes
