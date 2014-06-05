@@ -298,6 +298,7 @@ size_t DMatLinAlg<RingType>::rank()
 template <class RingType>
 bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 {
+  //printf("in dmat-lu: solve\n");
   const Mat& LU = mLUObject.LUinPlace();
 
   // For each column of B, we solve it separately.
@@ -315,7 +316,7 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   //  y is a vector 0..r-1
   //  x is a vector 0..n-1
 
-  // printf("entering DMatLinAlg::solve\n");
+  //printf("entering DMatLinAlg::solve\n");
   const std::vector<size_t>& pivotColumns = mLUObject.pivotColumns();
   const std::vector<size_t>& perm = mLUObject.permutation();
   size_t rk = pivotColumns.size();
@@ -437,6 +438,8 @@ bool DMatLinAlg<RingType>::inverse(Mat& X)
   const Mat& LU = mLUObject.LUinPlace();
 
   // Make the identity matrix
+  // printf("in DMatLinAlg<RingType>::inverse\n");
+
   Mat id(ring(), LU.numRows(), LU.numRows());
   for (size_t i=0; i<LU.numRows(); i++)
     ring().set_from_long(id.entry(i,i), 1);

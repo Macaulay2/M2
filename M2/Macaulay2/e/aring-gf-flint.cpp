@@ -159,7 +159,7 @@ namespace M2 {
   void ARingGFFlint::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
   {
     // f is represented by: f.value, the power of the generator
-    result = map->get_ring()->power(map->elem(first_var), f.value);    
+    result = map->get_ring()->power(map->elem(first_var), static_cast<int>(f.value));    
   }
   
   void ARingGFFlint::text_out(buffer &o) const

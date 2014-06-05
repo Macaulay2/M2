@@ -400,7 +400,7 @@ ring_elem  ARingGFGivaro::getGenerator() const
 
 void ARingGFGivaro::getGenerator(ElementType& result_gen) const
 {
-    ElementType packedGenPolynomial = givaroField.generator();  
+  //ElementType packedGenPolynomial = givaroField.generator();  
     givaroField.generator(result_gen);
 }
 

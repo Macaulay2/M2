@@ -2927,19 +2927,42 @@ export rawLinAlgNullSpace(e:Expr):Expr := (
 setupfun("rawLinAlgNullSpace", rawLinAlgNullSpace);
 
 export rawLinAlgSolve(e:Expr):Expr := (
+     success := 0;
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2) else
      when s.0 is M:RawMutableMatrixCell do
-     when s.1 is N:RawMutableMatrixCell do
-      toExpr(
-	  Ccode(RawMutableMatrixOrNull, "rawLinAlgSolve(", 
-	       M.p, ",", 
-	       N.p,
-	       ")"))
+     when s.1 is N:RawMutableMatrixCell do (
+ 	  m := Ccode(RawMutableMatrixOrNull, "rawLinAlgSolve(", 
+                 M.p, ",", 
+                 N.p, ",",
+                 "&", success,
+	       ")");
+       if success == 0 then engineErrorMessage()
+       else when m is m1:RawMutableMatrix do toExpr(m1) else nullE
+      )
      else WrongArgMutableMatrix(2)
      else WrongArgMutableMatrix(1)
      else WrongNumArgs(2));
 setupfun("rawLinAlgSolve", rawLinAlgSolve);
+
+export rawLinAlgSolveInvertible(e:Expr):Expr := (
+     success := 0;
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2) else
+     when s.0 is M:RawMutableMatrixCell do
+     when s.1 is N:RawMutableMatrixCell do (
+ 	  m := Ccode(RawMutableMatrixOrNull, "rawLinAlgSolveInvertible(", 
+                 M.p, ",", 
+                 N.p, ",",
+                 "&", success,
+	       ")");
+       if success == 0 then engineErrorMessage()
+       else when m is m1:RawMutableMatrix do toExpr(m1) else nullE
+      )
+     else WrongArgMutableMatrix(2)
+     else WrongArgMutableMatrix(1)
+     else WrongNumArgs(2));
+setupfun("rawLinAlgSolveInvertible", rawLinAlgSolveInvertible);
 
 export rawLinAlgAddMult(e:Expr):Expr := (
      when e is s:Sequence do
@@ -3714,23 +3737,6 @@ export rawGBBetti(e:Expr):Expr := (
      else WrongNumArgs(2)
      else WrongNumArgs(2));
 setupfun("rawGBBetti", rawGBBetti);
-
-
-export rawSolve(e:Expr):Expr := (
-     -- rawSolve(A, b, x)
-     when e is s:Sequence do
-     if length(s) != 3 then WrongNumArgs(3) else
-     when s.0 is A:RawMutableMatrixCell do 
-     when s.1 is b:RawMutableMatrixCell do
-     when s.2 is x:RawMutableMatrixCell do ( 
-	  if Ccode(bool, "rawSolve(", A.p, ",", b.p, ",", x.p, ")")
-	  then nullE
-	  else buildErrorPacket(EngineError("error calling lapack solve routine")))
-     else WrongArgMutableMatrix(3)
-     else WrongArgMutableMatrix(2)
-     else WrongArgMutableMatrix(1)
-     else WrongNumArgs(3));
-setupfun("rawSolve", rawSolve);
 
 -----------------------------------------------------------------------------
 -- LU

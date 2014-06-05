@@ -648,6 +648,15 @@ namespace MatrixOps
     nmod_mat_mul(result_product.nmod_mat(), A.nmod_mat(), B.nmod_mat());
   }
 
+  inline size_t rowReducedEchelonForm(const DMatZZpFlint& A,
+                                      DMatZZpFlint& result_rref) 
+  {
+    DMatZZpFlint A1(A);
+    long rank = nmod_mat_rref(A1.nmod_mat());
+    result_rref.swap(A1);
+    return rank;
+  }
+
   ////////////////////////
   // GFFlintBig //////////
   ////////////////////////
@@ -683,6 +692,15 @@ namespace MatrixOps
     fq_nmod_mat_mul(result_product.fq_nmod_mat(), A.fq_nmod_mat(), B.fq_nmod_mat(), A.ring().flintContext());
   }
 
+  inline size_t rowReducedEchelonForm(const DMatGFFlintBig& A,
+                                      DMatGFFlintBig& result_rref) 
+  {
+    DMatGFFlintBig A1(A);
+    long rank = fq_nmod_mat_rref(A1.fq_nmod_mat(), A.ring().flintContext());
+    result_rref.swap(A1);
+    return rank;
+  }
+
   ////////////////////////
   // GFFlint /////////////
   ////////////////////////
@@ -716,6 +734,15 @@ namespace MatrixOps
     // The A1 and B1 on the next line are switched because the memory layout expected
     // is the transpose of what we have for DMat.
     fq_zech_mat_mul(result_product.fq_zech_mat(), A.fq_zech_mat(), B.fq_zech_mat(), A.ring().flintContext());
+  }
+
+  inline size_t rowReducedEchelonForm(const DMatGFFlint& A,
+                                      DMatGFFlint& result_rref) 
+  {
+    DMatGFFlint A1(A);
+    long rank = fq_zech_mat_rref(A1.fq_zech_mat(), A.ring().flintContext());
+    result_rref.swap(A1);
+    return rank;
   }
 
   //////////////////////
@@ -767,6 +794,15 @@ namespace MatrixOps
     fmpq_mat_sub(C1.value(), C1.value(), D1.value());
 
     C1.toDMat(C);
+  }
+
+  inline size_t rowReducedEchelonForm(const DMatQQ& A,
+                                      DMatQQ& result_rref) 
+  {
+    FlintQQMat A1(A);
+    long rank = fmpq_mat_rref(A1.value(), A1.value());
+    A1.toDMat(result_rref);
+    return rank;
   }
 
   //////////////////////

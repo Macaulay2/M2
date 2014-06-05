@@ -198,9 +198,9 @@ tests = {
     "testRank",
     "testNullspace",
     "testLUBoundaryCases",
-    "testMutableMatrices"
-    --"testRankProfile"
-    --"testSolve"
+    "testMutableMatrices",
+    "testRankProfile",
+    "testSolve"
     --"testLU"
     --"testRREF"
     }
@@ -223,13 +223,13 @@ runTests = (rings, tests, exceptions) -> (
 TEST ///
   debug Core
   time runTests(fields, tests, set {
-          ("QQFlint", "testNullspace"),
           ("ZZpFlint 2","testLUBoundaryCases"),
           ("ZZpFlint 5","testLUBoundaryCases"),
           ("ZZpFlint 101","testLUBoundaryCases"),
           ("ZZpFlint 4611686018427387847","testLUBoundaryCases"),
           ("ZZpFlint 9223372036854775783", "testLUBoundaryCases"),
-          ("QQFlint", "testLUBoundaryCases")
+          ("QQ", "testLUBoundaryCases"),
+          ("QQ", "testSolve")
           })
 ///
 
@@ -347,4 +347,11 @@ time det M3;
   -- c. det class should use this version of det if possible?
   -- difficulties: sparse vs dense matrices.
   
-  
+runTests(fields, {"testLUBoundaryCases"}, set{
+        ("ZZpFlint 2", "testLUBoundaryCases"),
+        ("ZZpFlint 5", "testLUBoundaryCases"),
+        ("ZZpFlint 101", "testLUBoundaryCases"),
+        ("ZZpFlint 4611686018427387847", "testLUBoundaryCases"),
+        ("ZZpFlint 9223372036854775783", "testLUBoundaryCases"),
+        ("QQ", "testLUBoundaryCases")
+        })  

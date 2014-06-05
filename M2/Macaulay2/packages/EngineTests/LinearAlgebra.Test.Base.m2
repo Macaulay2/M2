@@ -404,6 +404,14 @@ testRankProfile = (R) -> (
         );
     );
 
+testRREF = (R) -> (
+    -- create a matrix, take RREF
+    -- check that it is in rref form
+    -- now check that ranks are the same
+    -- and check that by combining rows, rref, then taking non-zero elements, 
+    -- we get the same as the non-zero elements of the rref.
+    )
+
 testSolveSimple = (R) -> (
     M := (if char R == 5 
          then mutableMatrix map(R^2, R^2, {{1, 4}, {2, 2312}})
@@ -427,21 +435,38 @@ testSolveSimple = (R) -> (
     X = solve(M,B);
     assert(M*X-B == 0);
     )
+
 testSolve = (R) -> (
-    testSolveSimple R;
-    return;
-    -- now for more complicated examples
-    -- FAILING TEST: crashes
-    debug Core;
-    N := 90;
-    M := mutableMatrix(R, N, N);
-    fillMatrix M;
-    B := mutableMatrix(R, N, 5);
-    fillMatrix B;
-    XRaw := time rawLinAlgSolve(raw M, raw B);
-    X := solve(M, B);
-    assert( raw X == XRaw);
-    assert(M*X-B == 0);
+    --testSolveSimple R;
+    for i in {3,4,5,6,7,8,9,10} do (
+        A := first randomFullRank(R, i);
+        B := mutableMatrix(R, i, 3); fillMatrix B;
+        X := solve(A,B);
+        assert(X =!= null);
+        assert(A*X-B == 0);
+        );
+    )
+
+testSolveInvertible0 = (R) -> (
+    -- first we need to see if the 3 types of output can happen:
+    m := mutableMatrix(R,2,2);
+    b := mutableMatrix(R,2,1);
+    m_(0,1) = 4_R;
+    b_(1,0) = 2_R;
+    assert(rawLinAlgSolveInvertible(raw m, raw b) === null);
+    b = mutableMatrix(R,3,1);
+    assert(try (rawLinAlgSolveInvertible(raw m, raw b); false) else true);
+    m_(1,0) = 2_R;
+    b = mutableMatrix(R,2,1);
+    b_(0,0) = 5_R;
+    answer := mutableMatrix(R,2,1);
+    answer_(1,0) = -24_R;
+    assert(rawLinAlgSolveInvertible(raw m, raw b) == raw answer);
+    )
+
+testSolveInvertible = (R) -> (
+    testSolveInvertible0 R;
+    -- TODO: write some more serious tests
     )
 
 testLinearAlgebra = (R) -> (
@@ -452,8 +477,9 @@ testLinearAlgebra = (R) -> (
     time testInverse R;
     time testNullspace R;
     time testRank R;
-    time testRankProfile R; -- NOT WRITTEN YET
+    time testRankProfile R;
     time testSolve R; -- NOT DONE
+    time testSolveInvertible R; -- NOT DONE
     )
     
 testLinearAlgebraSet = (rng) -> (

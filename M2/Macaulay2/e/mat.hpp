@@ -212,8 +212,6 @@ public:
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////
-  virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const = 0;
-  // resets x, find a solution for Ax=b.  Returns false if no such solution exists
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const = 0;
@@ -259,18 +257,6 @@ public:
     throw exc::engine_error("not implemented for this ring or matrix type");
   }
 
-  // Return a permutation P of 0..nrows-1 and place into LU
-  // the encoded L and U matrices, such that this = A = PLU
-  virtual M2_arrayintOrNull LU1(MutableMatrix *LU) const { return 0; }
-
-  // If X = this, and A = PLU, then replace X with a solution to AX=B
-  // If the sizes don't match, return null, otherwise return 'this'
-  // ASSUMPTION: (LU, row_permutation) is the result of an LU
-  // decomposition of A.  (LU is encoded as in LU1).
-  virtual MutableMatrix *LUSolve(const MutableMatrix *LU,
-                                 const M2_arrayint row_permutation,
-                                 const MutableMatrix *B) const { return 0; }
-
   /// Fast linear algebra routines (well, fast for some rings)
 
   virtual size_t rank() const = 0;
@@ -298,10 +284,15 @@ public:
   // return a matrix whose columns span {x | Mx = 0}
   virtual MutableMatrix* nullSpace() const = 0;
 
-  // Return a matrix whose columns solve Ax = B
-  // The first argument returned is false
-  // if there is no solution.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B) const = 0;
+  // Returns X, if (this=A) AX=B has a solution.
+  // Returns NULL, if not.
+  // Throws an exception if any other usage issues arise (bad rings, sizes, not implemented...)
+  virtual MutableMatrix* solveLinear(const MutableMatrix* B) const = 0;
+
+  // Returns X, if this=A is invertible, and AX=B. (so X is uniquely determined)
+  // Returns NULL, if A is not invertible.
+  // Throws an exception if any other usage issues arise.
+  virtual MutableMatrix* solveInvertible(const MutableMatrix* B) const = 0;
 
   virtual void  addMultipleTo(const MutableMatrix* A,
                               const MutableMatrix* B) = 0;

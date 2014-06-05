@@ -44,7 +44,8 @@ public:
   { 
     Mat& A1 = const_cast<Mat&>(mMatrix); // needed because nmod_mat_solve doesn't declare params const
     Mat& B1 = const_cast<Mat&>(B);
-    return nmod_mat_solve(X.nmod_mat(), B1.nmod_mat(), A1.nmod_mat());
+    X.resize(mMatrix.numColumns(), B.numColumns());
+    return nmod_mat_solve(X.nmod_mat(), A1.nmod_mat(), B1.nmod_mat());
   }
 
   bool inverse(Mat& result_inv) { 

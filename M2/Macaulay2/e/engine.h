@@ -1315,8 +1315,27 @@ extern "C" {
 
   MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);
 
+  /** Returns X s.t. AX = B.  Assumptions: 
+      A has the same number of rows as B. A doesn't have to be invertible or square.
+      If a usage error occurs, NULL is returned and 'success' is set to 0.
+      In all other cases, 'success' is set to 1.
+      If AX=B has no solutions, then NULL is returned,
+      otherwise a matrix X solving AX=B is returned.
+  */
   MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
-                                const MutableMatrix* B);
+                                const MutableMatrix* B,
+                                int* success);
+
+  /** Returns X s.t. AX = B.  Assumptions: 
+      A is a square matrix, with the same number of rows as B.
+      If a usage error occurs, NULL is returned and 'success' is set to 0.
+      In all other cases, 'success' is set to 1.
+      If A turns out to be not invertible, NULL is returned,
+      otherwise the unique matrix X solving AX=B is returned.
+  */
+  MutableMatrix* rawLinAlgSolveInvertible(const MutableMatrix* A, 
+                                          const MutableMatrix* B,
+                                          int* success);
 
   /** A,B,C should be mutable matrices over the same ring, and a,b
      elements of this ring.
@@ -1407,10 +1426,6 @@ extern "C" {
   /* Each of the following routines accepts honest MutableMatrix arguments,
      and returns false if there is an error.  The return values are placed into
      some of the (already existing) parameters of the routine */
-
-  M2_bool rawSolve(MutableMatrix *A,
-                   MutableMatrix *b,
-                   MutableMatrix *x); /* connected */
 
   M2_arrayintOrNull rawLU(const MutableMatrix *A,
                            MutableMatrix *L,

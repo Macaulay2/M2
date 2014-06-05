@@ -674,10 +674,6 @@ public:
   // Linear algebra /////////////
   ///////////////////////////////
 
-  virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ax=b
-  // assumes that 'this' is full rank and a square matrix
-
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const;
 
@@ -724,9 +720,15 @@ public:
   // return a matrix whose columns span {x | Mx = 0}
   virtual MutableMatrix* nullSpace() const;
 
-  // Return a matrix X solving AX = B.
-  // The first argument returned is false if there is no solution.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B) const;
+  // Returns X, if (this=A) AX=B has a solution.
+  // Returns NULL, if not.
+  // Throws an exception if any other usage issues arise (bad rings, sizes, not implemented...)
+  virtual MutableMatrix* solveLinear(const MutableMatrix* B) const;
+
+  // Returns X, if this=A is invertible, and AX=B. (so X is uniquely determined)
+  // Returns NULL, if A is not invertible.
+  // Throws an exception if any other usage issues arise.
+  virtual MutableMatrix* solveInvertible(const MutableMatrix* B) const;
 
   virtual void addMultipleTo(const MutableMatrix* A,
                              const MutableMatrix* B);
@@ -790,17 +792,41 @@ MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
 }
 
 template <typename T>
-std::pair<bool, MutableMatrix*> MutableMat<T>::solveLinear(const MutableMatrix* B) const
+MutableMatrix* MutableMat<T>::solveLinear(const MutableMatrix* B) const
 { 
   const T* B1 = B->coerce_const<T>();
   if (B1 == 0)
     throw exc::engine_error("expected matrices of the same type");
   if (B->get_ring() != get_ring())
     throw exc::engine_error("expected same ring");
+  if (B->n_rows() != n_cols())
+    throw exc::engine_error("expected matrices with same number of columns");
   //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
   MutableMat<T>* solns = makeZeroMatrix(0,0);
   bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
-  return std::pair<bool, MutableMatrix*>(retval, solns);
+  if (retval)
+    return solns;
+  delete solns;
+  return NULL;
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::solveInvertible(const MutableMatrix* B) const
+{ 
+  const T* B1 = B->coerce_const<T>();
+  if (B1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  if (B->get_ring() != get_ring())
+    throw exc::engine_error("expected same ring");
+  if (B->n_rows() != n_cols())
+    throw exc::engine_error("expected matrices with same number of columns");
+  //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  MutableMat<T>* solns = makeZeroMatrix(0,0);
+  bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
+  if (retval)
+    return solns;
+  delete solns;
+  return NULL;
 }
 
 template <typename T>
@@ -868,21 +894,6 @@ M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
   //  LUComputation<T> C(mat);
   //  return C.rankProfile(row_profile);
   return MatrixOps::rankProfile(mat, row_profile);
-}
-
-// "solve" is similar to "solveLinear", except it doesn't create any new matrices.
-//TODO: we should only have one of these...
-template<typename T>
-bool MutableMat<T>::solve(const MutableMatrix* B, 
-                          MutableMatrix* X) const
-  // resets x, find a solution of Ax=b, return false if no such exists.
-{
-  const T* B1 = B->coerce_const<T>();
-  T* X1 = X->coerce<T>();
-  if (B1 == 0 or X1 == 0)
-    throw exc::engine_error("expected matrices of the same type");
-  bool retval = MatrixOps::solve(mat, *B1, *X1);
-  return retval;
 }
 
 template<typename T>

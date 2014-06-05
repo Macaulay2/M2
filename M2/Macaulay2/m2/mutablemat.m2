@@ -175,7 +175,7 @@ LUdecomposition Matrix := (A) -> (
 solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
-     if hasEngineLinearAlgebra R and not opts.ClosestFit then (
+     if not opts.ClosestFit then (
          return map(R,rawLinAlgSolve(raw A, raw b));
          );
      if (opts#Precision !=0) then (
@@ -185,9 +185,7 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
 --     if (precision A > precision b) then b=promote(b, ring A);
 --     if (precision b > precision A) then A=promote(A, ring b);
      x := mutableMatrix(ring A,0,0,Dense=>true);
-     if opts.ClosestFit
-     then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
-     else rawSolve(raw A,raw b,raw x);
+     rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
      x)
 solve(Matrix,Matrix) := opts -> (A,b) -> (
     if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";

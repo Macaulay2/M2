@@ -772,54 +772,9 @@ engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A)
 #endif
 }
 
-///////////////////////////////////////////////
-// with Anton:
-//   add in Jon's code from LUdecomp.c (at least for mpf)
-//   RR_53, CC_53: should use doubles as their rep
-//   RR_n, CC_n, n > 53 should use either mpf or mpfr (which?)
-// warning: avoid default precision if possible
-//   1. make ring types (use with aring...) for these 4 rings
-//   2. make DMat routines for these functions
-//   
-
-M2_arrayintOrNull rawLU1(const MutableMatrix *A,
-                         MutableMatrix *LU)
-{
-  // A = input, which is r x c.
-  // factors A as A = PLU
-  // P = r x r perm matrix
-  // L = r x r unit lower triangular (ones on diagonal)
-  // U = r x c upper triangular matrix
-
-  // LU are placed in the same LU matrix
-  //TODO: MES write this.
-  //  return A->LU(LU);
-  ERROR("not implemented yet");
-  return NULL;
-}
-
-MutableMatrix* rawLUSolve(MutableMatrix* resultX, 
-                          const MutableMatrix* LU, 
-                          const M2_arrayint row_permutation, 
-                          const MutableMatrix* B)
-{
-  //TODO: MES write this.
-  //  resultX->LUSolve(LU,row_permutation,B);
-  return resultX;
-}
-
-void rawLUSplit(const MutableMatrix *LU, 
-                MutableMatrix *L,
-                MutableMatrix *U)
-{
-  //TODO: MES write this.
-  // make sure that L, U and LU have the same type?
-  // resize L, U if necessary.
-  // loop through LU, and set the corresponding entries of L and U
-}
 ////////////////////////////////////////////////
 
-
+#if 0
 M2_bool rawSolve(MutableMatrix *A,
                  MutableMatrix *b,
                  MutableMatrix *x)
@@ -849,6 +804,7 @@ M2_bool rawSolve(MutableMatrix *A,
     return false;
   }
 }
+#endif
 
 M2_bool rawEigenvalues(MutableMatrix *A,
                        MutableMatrix *eigenvalues,
@@ -1079,22 +1035,46 @@ MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A)
 }
 
 MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
-                              const MutableMatrix* B)
+                              const MutableMatrix* B,
+                              int* success)
 {
   try {
-    // std::cerr << "calling rawLinAlgSolve" << std::endl;
-    //TODO: return type doesn't distinguish between error, and no solution.
-    std::pair<bool, MutableMatrix*> result = A->solveLinear(B);
-    if (result.first)
-      return internMutableMatrix(result.second);
+    *success = 1;
+    MutableMatrix* result = A->solveLinear(B);
+    if (result != NULL)
+      {
+        return internMutableMatrix(result);
+      }
     else
       {
-        // system is inconsistent
-        ERROR("system is inconsistent");
         return NULL;
       }
   }
   catch (exc::engine_error e) {
+    *success = 0;
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+MutableMatrix* rawLinAlgSolveInvertible(const MutableMatrix* A, 
+                                        const MutableMatrix* B,
+                                        int* success)
+{
+  try {
+    *success = 1;
+    MutableMatrix* result = A->solveInvertible(B);
+    if (result != NULL)
+      {
+        return internMutableMatrix(result);
+      }
+    else
+      {
+        return NULL;
+      }
+  }
+  catch (exc::engine_error e) {
+    *success = 0;
     ERROR(e.what());
     return NULL;
   }
