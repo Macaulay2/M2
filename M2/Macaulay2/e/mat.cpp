@@ -27,6 +27,18 @@
 
 #include "lapack.hpp"
 
+#include "mutablemat.hpp"
+
+MutableMatrix* RingZZ::makeMutableMatrix(size_t nrows, 
+                                         size_t ncols, 
+                                         bool dense) const
+{
+  if (dense)
+    return new MutableMat< DMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
+  else
+    return new MutableMat< SMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
+}
+
 MutableMatrix *MutableMatrix::zero_matrix(const Ring *R, 
 						size_t nrows, 
 						size_t ncols, 

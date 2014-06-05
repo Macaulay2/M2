@@ -172,11 +172,10 @@ LUdecomposition Matrix := (A) -> (
      (p,L,U) := LUdecomposition mutableMatrix A;
      (p, matrix L,matrix U))
 
-solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
+solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0, Invertible=>false })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
      if not opts.ClosestFit then (
-         return map(R,rawLinAlgSolve(raw A, raw b));
          );
      if (opts#Precision !=0) then (
 		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
@@ -187,6 +186,26 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      x := mutableMatrix(ring A,0,0,Dense=>true);
      rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
      x)
+
+solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
+     R := ring A;
+     if opts.ClosestFit then (
+         if (opts#Precision !=0) then (
+		     A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
+		     b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
+	         );
+         x := mutableMatrix(ring A,0,0,Dense=>true);
+         rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
+         x)
+     else (
+         ans := if opts.Invertible then
+                    rawLinAlgSolveInvertible(raw A, raw b)
+                else
+                    rawLinAlgSolve(raw A, raw b);
+         if ans === null then null else map(R, ans)
+         )
+     )
+
 solve(Matrix,Matrix) := opts -> (A,b) -> (
     if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
      matrix solve(mutableMatrix(A,Dense=>true),

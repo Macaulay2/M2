@@ -799,9 +799,8 @@ MutableMatrix* MutableMat<T>::solveLinear(const MutableMatrix* B) const
     throw exc::engine_error("expected matrices of the same type");
   if (B->get_ring() != get_ring())
     throw exc::engine_error("expected same ring");
-  if (B->n_rows() != n_cols())
-    throw exc::engine_error("expected matrices with same number of columns");
-  //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  if (B->n_rows() != n_rows())
+    throw exc::engine_error("expected matrices with same number of rows");
   MutableMat<T>* solns = makeZeroMatrix(0,0);
   bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
   if (retval)
@@ -818,11 +817,12 @@ MutableMatrix* MutableMat<T>::solveInvertible(const MutableMatrix* B) const
     throw exc::engine_error("expected matrices of the same type");
   if (B->get_ring() != get_ring())
     throw exc::engine_error("expected same ring");
-  if (B->n_rows() != n_cols())
-    throw exc::engine_error("expected matrices with same number of columns");
-  //  const MutableMat<T>* B1 = B->cast_to_MutableMat<T>();
+  if (n_rows() != n_cols())
+    throw exc::engine_error("expected a square matrix");
+  if (B->n_rows() != n_rows())
+    throw exc::engine_error("expected matrices with same number of rows");
   MutableMat<T>* solns = makeZeroMatrix(0,0);
-  bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
+  bool retval = MatrixOps::solveInvertible(mat, *B1, solns->mat);
   if (retval)
     return solns;
   delete solns;

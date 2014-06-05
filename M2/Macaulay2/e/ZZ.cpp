@@ -14,19 +14,6 @@
 // #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
-#include "mutablemat.hpp"
-
-MutableMatrix* RingZZ::makeMutableMatrix(size_t nrows, 
-                                         size_t ncols, 
-                                         bool dense) const
-{
-  if (dense)
-    return new MutableMat< DMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
-  else
-    return new MutableMat< SMat<M2::ARingZZGMP> >(this, get_ARing(), nrows, ncols);
-}
-
-
 unsigned long compute_hash_value_mpz(mpz_ptr a)
 {
   return static_cast<unsigned long>(mpz_get_si(a));

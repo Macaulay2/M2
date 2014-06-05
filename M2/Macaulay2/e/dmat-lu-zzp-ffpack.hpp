@@ -57,6 +57,8 @@ public:
 
   bool solve(const Mat& B, Mat& X) { return ffpackInterface::solveLinear(mLU, B, X); }
 
+  bool solveInvertible(const Mat& B, Mat& X) { return ffpackInterface::solveLinear(mLU, B, X); }
+
   bool inverse(Mat& X) { return ffpackInterface::inverse(mLU, X); }
 
   size_t kernel(Mat& X) { return ffpackInterface::nullSpace(mLU, X); }

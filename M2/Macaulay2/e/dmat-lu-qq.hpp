@@ -158,6 +158,17 @@ public:
     return false;
   }
 
+  bool solveInvertible(const Mat& B, Mat& X) 
+  { 
+    // TODO
+#if 0
+    Mat& A1 = const_cast<Mat&>(mMatrix); // needed because fmpq_mat_solve doesn't declare params const
+    Mat& B1 = const_cast<Mat&>(B);
+    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
+#endif
+    return false;
+  }
+
   bool inverse(Mat& result_inv) 
   { 
     FlintQQMat A(mInputMatrix);

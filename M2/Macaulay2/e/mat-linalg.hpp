@@ -152,6 +152,18 @@ namespace MatrixOps
     throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
   }
 
+  /// @brief solve AX=B, where A is a square (invertible) matrix.  
+  /// 
+  /// return true if A is invertible, and in this case, sets X.  If false is returned, X's value is
+  /// undefined.
+  template<typename Mat>
+  bool solveInvertible(const Mat& A, 
+                   const Mat& B, 
+                   Mat& X)
+  {
+    throw exc::engine_error("'solveInvertible' not implemented for this kind of matrix over this ring");
+  }
+
   /// @brief Returns either the row or column rank profile of A
   ///
   /// if row_profile is true, then row profile is computed, otherwise
@@ -195,14 +207,6 @@ namespace MatrixOps
   // C = C - A*B
   {
     throw exc::engine_error("'subtractMultipleTo' not implemented for this kind of matrix over this ring");
-  }
-
-  template<typename Mat>
-  bool solve(const Mat& A, 
-             const Mat& B, 
-             Mat& X)
-  {
-    throw exc::engine_error("'solve' not implemented for this kind of matrix over this ring");
   }
 
   template<typename Mat>
@@ -372,15 +376,6 @@ namespace MatrixOps
   }
 
   template<typename RT>
-  inline bool solve(const DMat<RT>& A, 
-                    const DMat<RT>& B, 
-                    DMat<RT>& X)
-  {
-    DMatLinAlg<RT> LUdecomp(A);
-    return LUdecomp.solve(B,X);
-  }
-
-  template<typename RT>
   inline M2_arrayintOrNull LU(const DMat<RT>& A, 
                               DMat<RT>& L,
                               DMat<RT>& U)
@@ -443,6 +438,15 @@ namespace MatrixOps
   {
     DMatLinAlg<RT> LUdecomp(A);
     return LUdecomp.solve(B,X);
+  }
+
+  template<typename RT>
+  inline bool solveInvertible(const DMat<RT>& A, 
+                   const DMat<RT>& B, 
+                   DMat<RT>& X)
+  {
+    DMatLinAlg<RT> LUdecomp(A);
+    return LUdecomp.solveInvertible(B,X);
   }
 
 

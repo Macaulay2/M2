@@ -43,6 +43,9 @@ public:
 
   const RingType& ring() const { return mLU.ring(); }
 
+  long numRows() const { return mLU.numRows(); }
+  long numColumns() const { return mLU.numColumns(); }
+
   const Mat& LUinPlace() { computeLU(); return mLU; } // raises an exception if there is an error
   // Can be called repeatedly: the result is remembered once done.
   // Returns a constant ref to the internal "in palce" LU.

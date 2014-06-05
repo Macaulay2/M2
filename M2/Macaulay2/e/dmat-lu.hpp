@@ -35,6 +35,12 @@ public:
   ///         returns false iff inconsistent
   bool solve(const Mat& B, Mat& X); 
 
+  /// Input: B, a matrix, the right hand side of AX=B
+  ///        A, a square matrix (presumed to be invertible)
+  /// Output: X, a matrix, solution to the above, if A is invertible
+  ///         returns false iff A is not invertible
+  bool solveInvertible(const Mat& B, Mat& X); 
+
   /// Output: X, a matrix, the inverse of A
   ///         returns false iff A is (near)singular
   bool inverse(Mat& X); 
@@ -430,6 +436,18 @@ bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
   deletearray(y);
   deletearray(x);
   return true; // The system seems to have been consistent
+}
+
+template <class RingType>
+bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
+{
+  // possible TODO: incorporate a faster method if we know matrix is invertible...
+  M2_ASSERT(mLUObject.numRows() == mLUObject.numColumns());
+  M2_ASSERT(mLUObject.numRows() == B.numRows());
+
+  if (rank() < mLUObject.numRows()) return false;
+  solve(B,X);
+  return true;
 }
 
 template <class RingType>

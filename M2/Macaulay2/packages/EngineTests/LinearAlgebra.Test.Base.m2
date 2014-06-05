@@ -453,15 +453,18 @@ testSolveInvertible0 = (R) -> (
     b := mutableMatrix(R,2,1);
     m_(0,1) = 4_R;
     b_(1,0) = 2_R;
-    assert(rawLinAlgSolveInvertible(raw m, raw b) === null);
+    if rank m != numRows m then 
+        assert(solve(m,b, Invertible=>true) === null); -- should return null if m not invertible
     b = mutableMatrix(R,3,1);
     assert(try (rawLinAlgSolveInvertible(raw m, raw b); false) else true);
+    assert(try (solve(m, b, Invertible=>true); false) else true); -- should raise an error since sizes don't match
     m_(1,0) = 2_R;
     b = mutableMatrix(R,2,1);
     b_(0,0) = 5_R;
-    answer := mutableMatrix(R,2,1);
-    answer_(1,0) = -24_R;
-    assert(rawLinAlgSolveInvertible(raw m, raw b) == raw answer);
+    if rank m == numRows m then (
+        minv := inverse m;
+        assert(solve(m, b, Invertible=>true) == minv*b);
+        );
     )
 
 testSolveInvertible = (R) -> (

@@ -40,6 +40,16 @@ public:
     LUUtil<RingType>::setUpperLower(LU, L, U);
   }
 
+  bool solveInvertible(const Mat& B, Mat& X) 
+  { 
+    printf("called mat-linalg zzp flint solveInvertible\n");
+    M2_ASSERT(A.numRows() == A.numColumns());
+    M2_ASSERT(A.numRows() == B.numRows());
+    X.resize(mMatrix.numColumns(), B.numColumns());
+    int isinvertible = nmod_mat_solve(X.nmod_mat(), mMatrix.nmod_mat(), B.nmod_mat());
+    return (isinvertible != 0);
+  }
+
   bool solve(const Mat& B, Mat& X) 
   { 
     Mat& A1 = const_cast<Mat&>(mMatrix); // needed because nmod_mat_solve doesn't declare params const
