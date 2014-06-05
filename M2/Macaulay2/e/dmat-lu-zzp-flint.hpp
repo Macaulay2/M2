@@ -43,8 +43,8 @@ public:
   bool solveInvertible(const Mat& B, Mat& X) 
   { 
     printf("called mat-linalg zzp flint solveInvertible\n");
-    M2_ASSERT(A.numRows() == A.numColumns());
-    M2_ASSERT(A.numRows() == B.numRows());
+    M2_ASSERT(mMatrix.numRows() == mMatrix.numColumns());
+    M2_ASSERT(mMatrix.numRows() == B.numRows());
     X.resize(mMatrix.numColumns(), B.numColumns());
     int isinvertible = nmod_mat_solve(X.nmod_mat(), mMatrix.nmod_mat(), B.nmod_mat());
     return (isinvertible != 0);

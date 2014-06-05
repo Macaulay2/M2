@@ -197,10 +197,10 @@ tests = {
     "testMult",
     "testRank",
     "testNullspace",
-    "testLUBoundaryCases",
-    "testMutableMatrices",
+    "testSolve",
     "testRankProfile",
-    "testSolve"
+    "testLUBoundaryCases",
+    "testMutableMatrices"
     --"testLU"
     --"testRREF"
     }
@@ -223,6 +223,11 @@ runTests = (rings, tests, exceptions) -> (
 TEST ///
   debug Core
   time runTests(fields, tests, set {
+          ("ZZpFlint 2", "testSolve"),
+          ("ZZpFlint 5", "testSolve"),
+          ("ZZpFlint 101", "testSolve"),
+          ("ZZpFlint 4611686018427387847", "testSolve"),
+          ("ZZpFlint 9223372036854775783", "testSolve"),          
           ("ZZpFlint 2","testLUBoundaryCases"),
           ("ZZpFlint 5","testLUBoundaryCases"),
           ("ZZpFlint 101","testLUBoundaryCases"),
@@ -231,6 +236,23 @@ TEST ///
           ("QQ", "testLUBoundaryCases"),
           ("QQ", "testSolve")
           })
+
+  debug Core
+  time runTests(fields, tests, set {
+          ("QQ", "testLUBoundaryCases"),
+          ("QQ", "testSolve")
+          })
+
+  time runTests(fields, {"testSolve"}, set {
+          ("ZZpFlint 2", "testSolve"),
+          ("ZZpFlint 5", "testSolve"),
+          ("ZZpFlint 101", "testSolve"),
+          ("ZZpFlint 4611686018427387847", "testSolve"),
+          ("ZZpFlint 9223372036854775783", "testSolve"),          
+          ("QQ", "testLUBoundaryCases"),
+          ("QQ", "testSolve")
+          })
+
 ///
 
 
