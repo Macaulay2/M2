@@ -27,6 +27,7 @@ file_preparation: always
 #     @executable_path : relative to the path to the executable
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
+# Read about all that with "man dyld".
 library_preparation: file_preparation
 
 	$(MKDIR_P) files/@package@/@tail_libdir@
