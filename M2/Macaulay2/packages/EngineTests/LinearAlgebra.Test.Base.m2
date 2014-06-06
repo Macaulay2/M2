@@ -437,13 +437,24 @@ testSolveSimple = (R) -> (
     )
 
 testSolveNotFullRank = (R) -> (
-    --m := first randomMatrixWithKernel(R,7,3);
-    m := makeMatrixWithColumnRankProfile(R, 7, 13, {1,4,6,7,9});
-    x := mutableMatrix(R,numColumns m,2); fillMatrix x;
-    b := m*x;
-    X := solve(m,b);
-    assert(m*X-b == 0);
-    )
+    L := {{2, 3, 10, 11, 12}, {0, 6, 8, 9, 11}, {4, 5, 9, 10, 12}, 
+        {0, 1, 2, 3, 9}, {0, 1, 5, 10, 11}, {0, 2, 6, 8, 12}, 
+        {4, 5, 8, 10, 12}, {2, 3, 5, 6, 12}, {0, 1, 4, 6, 10}, 
+        {1, 4, 6, 8, 9}};
+    for i from 5 to 8 do
+        for p in L do (
+            m := makeMatrixWithColumnRankProfile(R, i, 13, p);
+            x := mutableMatrix(R,numColumns m,2); fillMatrix x;
+            b := m*x;
+            X := solve(m,b);
+            assert(m*X-b == 0);
+            -- check one that isn't in there either
+            c := mutableMatrix(R,numRows m,1); fillMatrix c;
+            X = solve(m,c);
+            if X =!= null then assert(m*X == c); -- really, we expect it to be null
+            )
+     )
+
 
 testSolve = (R) -> (
     --testSolveSimple R;
@@ -451,10 +462,10 @@ testSolve = (R) -> (
         A := first randomFullRank(R, i);
         B := mutableMatrix(R, i, 3); fillMatrix B;
         X := solve(A,B);
-        assert(X =!= null);
+        assert(X =!= null or rank A < i);
         assert(A*X-B == 0);
         );
-    for i from 0 to 100 do testSolveNotFullRank R;    
+    testSolveNotFullRank R;    
     )
 
 testSolveInvertible0 = (R) -> (

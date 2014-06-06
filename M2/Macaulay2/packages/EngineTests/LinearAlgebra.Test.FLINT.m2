@@ -211,7 +211,7 @@ TEST ///
   testLinearAlgebra$FLINT R
 ///
 
-TEST ///
+///
   debug Core
   -- Most of this code is designed for fields...
   R = ZZFlint
@@ -219,7 +219,7 @@ TEST ///
   testMult R
 ///
 
-TEST ///
+///
   -- this ring is still experimental
   debug Core
   -- Flint QQ
@@ -232,11 +232,7 @@ TEST ///
 
 TEST ///
   debug Core
-///
-
-TEST ///
-  debug Core
-  N = 2000
+  N = 100
   R = ZZp(101, Strategy=>"FLINT")
   R = GF(2^20, Strategy=>"FlintBig")
   R = GF(3^5, Strategy=>"Flint")
