@@ -42,7 +42,7 @@ public:
 
   bool solveInvertible(const Mat& B, Mat& X) 
   { 
-    printf("called mat-linalg zzp flint solveInvertible\n");
+    //printf("called mat-linalg zzp flint solveInvertible\n");
     M2_ASSERT(mMatrix.numRows() == mMatrix.numColumns());
     M2_ASSERT(mMatrix.numRows() == B.numRows());
     X.resize(mMatrix.numColumns(), B.numColumns());
@@ -52,10 +52,27 @@ public:
 
   bool solve(const Mat& B, Mat& X) 
   { 
-    Mat& A1 = const_cast<Mat&>(mMatrix); // needed because nmod_mat_solve doesn't declare params const
-    Mat& B1 = const_cast<Mat&>(B);
-    X.resize(mMatrix.numColumns(), B.numColumns());
-    return nmod_mat_solve(X.nmod_mat(), A1.nmod_mat(), B1.nmod_mat());
+    //printf("in dmat lu zzp flint solve\n");
+    long nrows = mMatrix.numRows();
+    long ncols = mMatrix.numColumns();
+    std::vector<size_t> profile;
+    Mat AB(mMatrix.ring(), nrows, ncols + B.numColumns());
+    concatenateMatrices<Mat>(mMatrix, B, AB);
+    nmod_mat_rref(AB.nmod_mat());
+    LUUtil<RingType>::computePivotColumns(AB, profile);
+    if (profile.size() >= 1 and profile[profile.size()-1] >= ncols)
+      return false; // system is inconsistent
+    // At this point, we know the solutions.  Should we go through FlintQQMat, or go directly to Mat?
+    X.resize(ncols, B.numColumns());
+    for (long c=0; c < B.numColumns(); c++)
+      {
+        // Fill in this column
+        for (long r=0; r<profile.size();  r++)
+          {
+            mMatrix.ring().set(X.entry(profile[r],c), AB.entry(r,ncols+c));
+          }
+      }
+    return true;
   }
 
   bool inverse(Mat& result_inv) { 

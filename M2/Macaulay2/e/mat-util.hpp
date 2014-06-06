@@ -58,6 +58,20 @@ void displayMat(const Mat& A)
   emit(o.str());
 }
 
+template<typename Mat>
+static void concatenateMatrices(const Mat& A, const Mat&B, Mat& C)
+{
+  M2_ASSERT(A.numRows() == B.numRows());
+  C.resize(A.numRows(), A.numColumns() + B.numColumns());
+  for (long r=0; r<A.numRows(); r++)
+    for (long c=0; c<A.numColumns(); c++)
+      A.ring().set(C.entry(r,c), A.entry(r,c));
+  for (long r=0; r<A.numRows(); r++)
+    for (long c=0; c<B.numColumns(); c++)
+      A.ring().set(C.entry(r,c+A.numColumns()), B.entry(r,c));
+}
+
+
 #endif
 
 // Local Variables:

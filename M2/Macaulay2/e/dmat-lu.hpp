@@ -306,9 +306,9 @@ size_t DMatLinAlg<RingType>::rank()
 template <class RingType>
 bool DMatLinAlg<RingType>::solve(const Mat& B, Mat& X)
 {
-  printf("in dmat-lu: solve\n");
+  //printf("in dmat-lu: solve\n");
   const Mat& LU = mLUObject.LUinPlace();
-  printf("in dmat-lu: after LU solve\n");
+  //printf("in dmat-lu: after LU solve\n");
 
   // For each column of B, we solve it separately.
 
@@ -501,7 +501,7 @@ inline void solveUpperTriangular<DMatGFFlintBig>(const DMatGFFlintBig& LU, const
 template <class RingType>
 bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
 {
-  printf("in dmat-lu solveInvertible\n");
+  //printf("in dmat-lu solveInvertible\n");
   // possible TODO: incorporate a faster method if we know matrix is invertible...
   M2_ASSERT(mLUObject.numRows() == mLUObject.numColumns());
   M2_ASSERT(mLUObject.numRows() == B.numRows());
