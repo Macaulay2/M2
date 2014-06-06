@@ -170,6 +170,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	  n2 := numgens R;
 	  F := target f;
 	  n1 := numgens F;
+	  if 0_F == 1_F then return ideal(1_R);
 	  if class F === FractionField then (
 	       C := last F.baseRings;
 	       if not (
