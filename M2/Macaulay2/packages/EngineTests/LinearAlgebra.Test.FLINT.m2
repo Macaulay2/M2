@@ -234,3 +234,15 @@ TEST ///
   debug Core
 ///
 
+TEST ///
+  debug Core
+  N = 2000
+  R = ZZp(101, Strategy=>"FLINT")
+  R = GF(2^20, Strategy=>"FlintBig")
+  R = GF(3^5, Strategy=>"Flint")
+  m = mutableMatrix(R,N,N); fillMatrix m;
+  b = mutableMatrix(R,N,1); fillMatrix b;
+  time X = solve(m,b,Invertible=>true);
+  time X = solve(m,b,Invertible=>false);
+  assert(m*X - b == 0)
+///

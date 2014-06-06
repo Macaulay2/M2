@@ -599,7 +599,7 @@ A = mutableMatrix random(kk^10, kk^15)
 B = mutableMatrix random(kk^10, kk^1)
 x = mutableMatrix(kk, 15, 1)
 debug Core
-rawSolve(raw A, raw B, raw x)
+rawLinAlgSolve(raw A, raw B)
 x1 = matrix x
 (matrix A)*x1 == matrix B
 
