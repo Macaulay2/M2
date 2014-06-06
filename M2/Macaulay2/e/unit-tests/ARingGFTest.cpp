@@ -41,10 +41,14 @@ void getElement<M2::ARingGFGivaro>(const M2::ARingGFGivaro& R,
                              int index, 
                              M2::ARingGFGivaro::ElementType& result)
 {
+  M2::ARingGFGivaro::ElementType gen;
+  R.init(gen);
+  R.getGenerator(gen);
   if (index >= nelements) 
-    R.power(result, R.getGenerator(), rawRandomInt(static_cast<int32_t>(R.cardinality())));
+    R.power(result, gen, rawRandomInt(static_cast<int32_t>(R.cardinality())));
   else 
-    R.power(result, R.getGenerator(), randomVals[index]);
+    R.power(result, gen, randomVals[index]);
+  R.clear(gen);
 }
 
   TEST(ARingGFGivaroGivaro, create) {
