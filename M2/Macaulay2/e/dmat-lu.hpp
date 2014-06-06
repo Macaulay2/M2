@@ -507,7 +507,7 @@ bool DMatLinAlg<RingType>::solveInvertible(const Mat& B, Mat& X)
   M2_ASSERT(mLUObject.numRows() == B.numRows());
 
   X.resize(mLUObject.numColumns(), B.numColumns());
-  const Mat& LU = mLUObject.LUinPlace();
+  mLUObject.LUinPlace();
   if (rank() < mLUObject.numRows()) return false;
   solve(B,X);
   return true;

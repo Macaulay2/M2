@@ -38,25 +38,31 @@ public:
     fmpq_clear(det);
   }
 
-  void columnRankProfile(std::vector<size_t>& profile) 
-  { 
-    FlintQQMat A(mInputMatrix);
-    FlintQQMat B(A.numRows(), A.numColumns());
-    fmpq_mat_rref(B.value(), A.value());
-
+  static void findColumnRankProfileFromLU(const fmpq_mat_t B, std::vector<size_t>& profile)
+  {
     profile.clear();
-    size_t thiscol = 0;
-    size_t thisrow = 0;
-    while (thisrow < B.numRows() 
-           and thiscol < B.numColumns())
+    long nrows = fmpq_mat_nrows(B);
+    long ncols = fmpq_mat_ncols(B);
+    long thiscol = 0;
+    long thisrow = 0;
+    while (thisrow < nrows
+           and thiscol < ncols)
       {
-        if (not fmpq_is_zero(fmpq_mat_entry(B.value(),thisrow,thiscol)))
+        if (not fmpq_is_zero(fmpq_mat_entry(B,thisrow,thiscol)))
           {
             profile.push_back(thiscol);
             thisrow++;
           }
         thiscol++;
       }
+  }
+  void columnRankProfile(std::vector<size_t>& profile) 
+  { 
+    FlintQQMat A(mInputMatrix);
+    FlintQQMat B(A.numRows(), A.numColumns());
+    fmpq_mat_rref(B.value(), A.value());
+
+    findColumnRankProfileFromLU(B.value(), profile);
   }
   
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
@@ -123,26 +129,73 @@ public:
     fmpz_clear(den2);
   }
 
-  bool solve(const Mat& B, Mat& X) 
-  { 
-    // TODO
-#if 0
-    Mat& A1 = const_cast<Mat&>(mMatrix); // needed because fmpq_mat_solve doesn't declare params const
-    Mat& B1 = const_cast<Mat&>(B);
-    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
-#endif
-    return false;
+  template<typename Mat>
+  static void concatenateMatrices(const Mat& A, const Mat&B, Mat& C)
+  {
+    M2_ASSERT(A.numRows() == B.numRows());
+    C.resize(A.numRows(), A.numColumns() + B.numColumns());
+    for (long r=0; r<A.numRows(); r++)
+      for (long c=0; c<A.numColumns(); c++)
+        A.ring().set(C.entry(r,c), A.entry(r,c));
+    for (long r=0; r<A.numRows(); r++)
+      for (long c=0; c<B.numColumns(); c++)
+        A.ring().set(C.entry(r,c+A.numColumns()), B.entry(r,c));
   }
 
-  bool solveInvertible(const Mat& B, Mat& X) 
+  bool solve(const Mat& B1, Mat& X1) 
   { 
+    // This is the version where A = this isn't nec square or full rank...
+    // Plan for now (we will see how efficient this version is): put A|B into a single matrix.
+    // rref
+    // get column rank profile
+    // from that, either return false (inconsistent), or copy the correct values into X
+    
+    // Too bad flint doesn't do this automatically...
+    // 1. copy A, B to flint objects
+    // 2. concatenate them
+    // 3. rref
+    // 4. pivot columns
+    // 5. if pivot column is in B columns, return false.
+    // 6. otherwise: 
+    //   resize X
+    //   populate X with the solution (only non-zero entries are in pivot columns
+    // 6. copy 
     // TODO
-#if 0
-    Mat& A1 = const_cast<Mat&>(mMatrix); // needed because fmpq_mat_solve doesn't declare params const
-    Mat& B1 = const_cast<Mat&>(B);
-    return fmpq_mat_solve(X.fmpq_mat(), B1.fmpq_mat(), A1.fmpq_mat());
-#endif
-    return false;
+
+    long nrows = mInputMatrix.numRows();
+    long ncols = mInputMatrix.numColumns();
+    std::vector<size_t> profile;
+    Mat AB1(mInputMatrix.ring(), nrows, ncols + B1.numColumns());
+    concatenateMatrices<Mat>(mInputMatrix, B1, AB1);
+    FlintQQMat AB(AB1);
+    fmpq_mat_rref(AB.value(), AB.value());
+    findColumnRankProfileFromLU(AB.value(), profile);
+    if (profile[profile.size()-1] >= ncols)
+      return false; // system is inconsistent
+    // At this point, we know the solutions.  Should we go through FlintQQMat, or go directly to Mat?
+    FlintQQMat X(ncols, B1.numColumns());
+    for (long c=0; c < B1.numColumns(); c++)
+      {
+        // Fill in this column
+        for (long r=0; r<profile.size();  r++)
+          {
+            fmpq_set(fmpq_mat_entry(X.value(),profile[r], c), fmpq_mat_entry(AB.value(), r, ncols+c));
+          }
+      }
+    X.toDMat(X1);
+    return true;
+  }
+
+  bool solveInvertible(const Mat& B1, Mat& X1) 
+  { 
+    FlintQQMat A(mInputMatrix);
+    FlintQQMat B(B1);
+    FlintQQMat X(mInputMatrix.numColumns(), B1.numColumns());
+    //    int isfullrank = fmpq_mat_solve_fraction_free(X.value(), A.value(), B.value());
+    int isfullrank = fmpq_mat_solve_dixon(X.value(), A.value(), B.value());
+    if (isfullrank == 0) return false;
+    X.toDMat(X1);
+    return true;
   }
 
   bool inverse(Mat& result_inv) 
