@@ -26,20 +26,10 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #		configuration (gp-sta only), so you will not be able to use this feature.
 #		Otherwise you can safely ignore the above warning.
 
-# "make check" won't work under Scientific Linux without getting an error message
-# when it tries to build the target gp-dyn, but we don't want to build anything involving
-# shared libraries, so make a check target that does nothing
-CHECKTARGET = .
-
-BUILDTARGET = lib-sta
-INSTALLTARGET = install-lib-sta install-include
-PACKAGE-DISTCLEAN-TARGET = .
-
-ifeq (@SHARED@,yes)
+# we build only the shared library, because that's the version that is gmp compatible
+INSTALLTARGET += install-include
 BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
-endif
-
 CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
 
 ifeq (@PROFILING@,yes)

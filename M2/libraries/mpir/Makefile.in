@@ -23,9 +23,13 @@ CONFIGOPTIONS += --enable-gmpcompat --enable-cxx $(MPIR_CONFIGOPTIONS)
 # this is supposed to work under x86_64, but doesn't:
 # CONFIGOPTIONS +=  --enable-fat
 
-ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
-endif
+# We enable the shared library because we want to use the version of libpari
+# that uses libgmp, and the pari makefile refuses to make libpari.a, the
+# static library.
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
 include ../Makefile.library
 
 ifeq (@DEBUG@ @GCC@,yes yes)
