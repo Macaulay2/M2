@@ -1,5 +1,5 @@
 #include "fplll-interface.h"
-
+#include "mutablemat.hpp"
 
 #ifdef HAVE_FPLLL
      #include <gmp.h>
