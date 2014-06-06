@@ -15,7 +15,8 @@ VERSION = 2.5.3
 # URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 
-# leave out these tests:
+# We (used to) leave out these tests, now we don't test at all
+#   (test-all would run them all) :
 #   test-ellglobalred - requires data files that we don't download
 #   test-ellsea - requires data files "seadata"
 #   test-galois - requires galois data files "galdata"
@@ -25,6 +26,7 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #		NOTE: the problem noted in 'program' is that install() does not work in your
 #		configuration (gp-sta only), so you will not be able to use this feature.
 #		Otherwise you can safely ignore the above warning.
+CHECKTARGET = .
 
 # we build only the shared library, because that's the version that is gmp compatible
 INSTALLTARGET += install-include
