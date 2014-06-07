@@ -1035,6 +1035,15 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
       ERROR("characteristic is too large for mathic gb computation");
       return 0;
     }
+  if (P->characteristic() == 0)
+    {
+      ERROR("characteristic for mathic gb computation must be a prime number");
+      return 0;
+    }
+  if (not P->getCoefficientRing()->isFinitePrimeField())
+    {
+      ERROR("coefficients for mathic gb computation must be a prime field");
+    }
   int charac = static_cast<int>(P->characteristic());
   int nvars = P->n_vars();
   MGBCallback callback;
