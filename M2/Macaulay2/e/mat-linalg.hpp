@@ -453,7 +453,7 @@ namespace MatrixOps
   ////////////////////////
   // ZZpFFPACK ///////////
   ////////////////////////
-
+#ifdef HAVE_FFLAS_FFPACK
   // namespace MatrixOps
   void mult(const DMatZZpFFPACK& A, 
             const DMatZZpFFPACK& B, 
@@ -466,7 +466,7 @@ namespace MatrixOps
   void subtractMultipleTo(DMatZZpFFPACK& C, 
                           const DMatZZpFFPACK& A, 
                           const DMatZZpFFPACK& B);
-
+#endif
 
   //////////////////////
   // ZZ (ARingZZGMP) ///

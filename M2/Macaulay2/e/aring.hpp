@@ -12,7 +12,7 @@
 #define constRELEM(T,a) static_cast<const RElementWrap<T> &>(a).val_
 #endif
 
-
+class PolynomialRing;
 class RingMap;
 
 
@@ -53,10 +53,12 @@ namespace M2 {
 */
   class RingInterface {}; ///< inherit from this if the class is to be used as a template parameter for ConcreteRing
 
+
+
 class DummyRing : public RingInterface
   {
  public:
-
+    const PolynomialRing* mOriginalRing;
         typedef long    FieldType;
         typedef long    ElementType;
     
@@ -72,8 +74,13 @@ class DummyRing : public RingInterface
         M2_arrayint getModPolynomialCoeffs() const {return 0;}
         M2_arrayint getGeneratorCoeffs() const {return 0;}
         
-        ring_elem   getGenerator() const {return 0;}
+        void getGenerator(elem& result) const {result=0;}
     
+        const PolynomialRing& originalRing() const { return *mOriginalRing; }
+
+        long coerceToLongInteger(ElementType a) const { return a; }
+ 
+        void lift_to_original_ring(ring_elem& result, const ElementType& f) const { }
     
         M2_arrayint fieldElementToM2Array(ElementType el) const {return 0; }
     

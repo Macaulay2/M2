@@ -3,6 +3,7 @@
 #include "hilb.hpp"
 #include "relem.hpp"
 #include "interrupted.hpp"
+#include <limits>
 
 int partition_table::representative(int x)
 {
