@@ -1,2 +1,4 @@
 In this directory we link the object files compiled in the other directories to
-make the executable, "M2".
+make the executable, "M2-binary".  We also make and install the shell script wrapper,
+"M2", whose function is to set LD_LIBRARY_PATH appropriately.
+

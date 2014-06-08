@@ -1,0 +1,9 @@
+#! /bin/sh
+
+# We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname "$0"`/../@tail_librariesdir@
+exec `dirname "$0"`/M2@EXE@ "$@"
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin "
+# End:
