@@ -53,7 +53,7 @@ TEST ///
   R = ZZ/5
   R = GF(5^2, Strategy=>"FlintBig")
   R = GF(5^2, Strategy=>"Flint")  
-  R = GF(5^2, Strategy=>"Givaro")
+  if hasFFPACK then R = GF(5^2, Strategy=>"Givaro")
   R = GF(5^2, Strategy=>"New")
   R = GF(5^2)
 
