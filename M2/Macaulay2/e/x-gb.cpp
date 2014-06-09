@@ -995,21 +995,38 @@ void rawDisplayMatrixStream(const Matrix *inputMatrix)
 
 class MGBCallback : public mgb::GroebnerConfiguration::Callback
 {
+public:
+  MGBCallback() : mCallCount(0), mInterrupted(false) {}
+  
+  size_t callCount() const { return mCallCount; }
+
+  bool wasInterrupted() const { return mInterrupted; }
 protected:
   virtual Action call()
   {
+    //printf("called callback\n");
+    mCallCount++;
     if (system_interrupted()) 
-      return StopWithNoOutputAction;
+      {
+        mInterrupted = true;
+        return StopWithNoOutputAction;
+      }
     return ContinueAction;
   }
+private:
+  size_t mCallCount;
+  bool mInterrupted;
 };
 #endif
 
 // The following (in x-monoid.cpp) needs to be put into a header file.
 extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
                                      std::vector<int>& mat,
-                                     bool& base_is_revlex);
-
+                                     bool& base_is_revlex,
+                                     int& component_direction, // -1 is Down, +1 is Up, 0 is not present
+                                     int& component_is_before_row // -1 means: at the end. 0 means before the order.
+                                     // and r means considered before row 'r' of the matrix.
+                                     );
 
 const Matrix * rawMGB(const Matrix *inputMatrix, 
                       int reducer,
@@ -1018,85 +1035,110 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
                       M2_string logging)
 {
 #if defined(HAVE_MATHICGB)
-  const Ring *R = inputMatrix->get_ring();
-  const PolyRing *P = R->cast_to_PolyRing();
-  if (P == 0) 
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  if (nthreads < 0)
-    {
-      ERROR("mgb: expected a non-negative number of threads");
-      return 0;
-    }
-  if (P->characteristic() > std::numeric_limits<int>::max())
-    {
-      ERROR("characteristic is too large for mathic gb computation");
-      return 0;
-    }
-  if (P->characteristic() == 0)
-    {
-      ERROR("characteristic for mathic gb computation must be a prime number");
-      return 0;
-    }
-  if (not P->getCoefficientRing()->isFinitePrimeField())
-    {
-      ERROR("coefficients for mathic gb computation must be a prime field");
-    }
-  int charac = static_cast<int>(P->characteristic());
-  int nvars = P->n_vars();
-  MGBCallback callback;
-  mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());
+  try {
 
-  const auto reducerType = reducer == 0 ?
-    mgb::GroebnerConfiguration::ClassicReducer :
-    mgb::GroebnerConfiguration::MatrixReducer;
-  configuration.setReducer(reducerType);
-  configuration.setMaxSPairGroupSize(spairGroupSize);
-  configuration.setMaxThreadCount(nthreads);
-  std::string log(logging->array, logging->len);
-  configuration.setLogging(log.c_str());
-  configuration.setCallback(&callback);
-  
-  std::vector<int> mat;
-  bool base_is_revlex = true;
-  // Now set the monomial ordering info
-  if (!monomialOrderingToMatrix(* P->getMonoid()->getMonomialOrdering(), mat, base_is_revlex))
-    {
-      ERROR("monomial ordering is not appropriate for Groebner basis computation");
-      return 0;
-    }
-  configuration.setMonomialOrder((base_is_revlex ? 
-                                  //mgb::GroebnerConfiguration::BaseOrder::ReverseLexicographicBaseOrder 
+    const Ring *R = inputMatrix->get_ring();
+    const PolyRing *P = R->cast_to_PolyRing();
+    if (P == 0) 
+      {
+        ERROR("expected a polynomial ring");
+        return 0;
+      }
+    if (nthreads < 0)
+      {
+        ERROR("mgb: expected a non-negative number of threads");
+        return 0;
+      }
+    if (P->characteristic() > std::numeric_limits<int>::max())
+      {
+        ERROR("characteristic is too large for mathic gb computation");
+        return 0;
+      }
+    if (P->characteristic() == 0)
+      {
+        ERROR("characteristic for mathic gb computation must be a prime number");
+        return 0;
+      }
+    if (not P->getCoefficientRing()->isFinitePrimeField())
+      {
+        ERROR("coefficients for mathic gb computation must be a prime field");
+      }
+    int charac = static_cast<int>(P->characteristic());
+    int nvars = P->n_vars();
+    MGBCallback callback;
+    mgb::GroebnerConfiguration configuration(charac, nvars, inputMatrix->n_rows());
+    
+    const auto reducerType = reducer == 0 ?
+      mgb::GroebnerConfiguration::ClassicReducer :
+      mgb::GroebnerConfiguration::MatrixReducer;
+    configuration.setReducer(reducerType);
+    configuration.setMaxSPairGroupSize(spairGroupSize);
+    configuration.setMaxThreadCount(nthreads);
+    std::string log(logging->array, logging->len);
+    configuration.setLogging(log.c_str());
+    configuration.setCallback(&callback);
+
+    // Now set the monomial ordering info
+    std::vector<int> mat;
+    bool base_is_revlex = true;
+    int component_direction = 1;
+    int component_is_before_row = -1;
+    if (!monomialOrderingToMatrix(* P->getMonoid()->getMonomialOrdering(), 
+                                  mat, 
+                                  base_is_revlex, 
+                                  component_direction, 
+                                  component_is_before_row))
+      {
+        ERROR("monomial ordering is not appropriate for Groebner basis computation");
+        return 0;
+      }
+    if (!configuration.setMonomialOrder((base_is_revlex ? 
+                                    //mgb::GroebnerConfiguration::BaseOrder::ReverseLexicographicBaseOrder 
                                     mgb::GroebnerConfiguration::BaseOrder::RevLexDescendingBaseOrder 
-                                  : mgb::GroebnerConfiguration::BaseOrder::LexDescendingBaseOrder),
-                                 mat);
+                                    : mgb::GroebnerConfiguration::BaseOrder::LexDescendingBaseOrder),
+                                        mat))
+      {
+        throw exc::engine_error("expected global monomial ordering");
+      }
 
+    if (component_is_before_row >= 0)
+      configuration.setComponentBefore(component_is_before_row);
+    configuration.setComponentsAscending(component_direction == 1);
+      
 #if 0
-  // Debug information
-  printf("Setting monomial order:");
-  for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
-  printf("\n");
-  printf("  Base=%d\n", base_is_revlex);
+    // Debug information
+    printf("Setting monomial order:");
+    for (size_t i=0; i<mat.size(); i++) printf("%d ", mat[i]);
+    printf("\n");
+    printf("  Base=%d\n", base_is_revlex);
 #endif
-
-  mgb::GroebnerInputIdealStream input(configuration);
-
-  std::ostringstream computedStr;
-  mgb::IdealStreamLog<> computed(computedStr, charac, nvars, inputMatrix->n_rows());
-  mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
-
-  matrixToStream(inputMatrix, input); 
-  MatrixStream matStream(inputMatrix->rows());
-  //  mgb::computeGroebnerBasis(input, checked);
-  mgb::computeGroebnerBasis(input, matStream);
-  const Matrix* result = matStream.value();
-  //  rawDisplayMatrixStream(result);
-  return result;
+    
+    mgb::GroebnerInputIdealStream input(configuration);
+    
+    std::ostringstream computedStr;
+    mgb::IdealStreamLog<> computed(computedStr, charac, nvars, inputMatrix->n_rows());
+    mgb::IdealStreamChecker<decltype(computed)> checkedOut(computed);
+    
+    matrixToStream(inputMatrix, input); 
+    MatrixStream matStream(inputMatrix->rows());
+    //  mgb::computeGroebnerBasis(input, checked);
+    mgb::computeGroebnerBasis(input, matStream);
+    if (callback.wasInterrupted())
+      {
+        ERROR("computation was interrupted");
+        return 0;
+      }
+    const Matrix* result = matStream.value();
+    // printf("number of callbacks = %lu  result = %lu\n", callback.callCount(), result);
+    //  rawDisplayMatrixStream(result);
+    return result;
+  } catch (std::runtime_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 #endif
-  ERROR("M2 not confiugred to compute using mathicgb, use --enable-mathicgb when configuring Macaulay2");
-  return 0;
+    ERROR("M2 not confiugred to compute using mathicgb, use --enable-mathicgb when configuring Macaulay2");
+    return 0;
 }
 
 // Local Variables:

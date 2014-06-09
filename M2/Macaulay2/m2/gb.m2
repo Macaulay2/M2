@@ -89,10 +89,10 @@ gbGetSuitable := (f,type) -> (
      else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then getComputation(f,gbWithSyzygy)
      )
 
-MGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
+engineMGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
   -- possible values for Reducer: "Classic", "F4",  (0,1)
   -- see 'mgb help logs' for format of the Logs argument.
-MGB Matrix := opts -> (M) -> (
+engineMGB Matrix := opts -> (M) -> (
      reducer := if opts#"Reducer" === null then 0
                 else if instance(opts#"Reducer", ZZ) then opts#"Reducer"
                 else if opts#"Reducer" === "F4" then 1
@@ -108,8 +108,8 @@ MGB Matrix := opts -> (M) -> (
      map(ring M, rawgb)
      )
      
-MGBF4 = method(Options => options MGB)
-MGBF4 Ideal := opts -> (I) -> MGB(I, opts, "Reducer"=>"F4")
+engineMGBF4 = method(Options => options engineMGB)
+engineMGBF4 Ideal := opts -> (I) -> engineMGB(I, opts, "Reducer"=>"F4")
 
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
 
@@ -126,7 +126,7 @@ groebnerBasis Matrix := opts -> x -> (
         else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
         -- use rawMGB
         mgbopts = new OptionTable from mgbopts;
-        g := MGB(x, new OptionTable from mgbopts);
+        g := engineMGB(x, new OptionTable from mgbopts);
         generators forceGB g
         )
     else

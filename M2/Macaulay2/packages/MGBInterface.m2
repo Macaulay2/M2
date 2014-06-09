@@ -25,8 +25,8 @@ export {write,
      createExamples,
      helpMGB,
      mgbStr,
-     MGB,
-     MGBF4,
+     "MGB",
+     "MGBF4",
      runMGB,
      doMGB,
      testRawMGB,
@@ -45,7 +45,7 @@ write Ring  := (R) -> (
 write Ring  := (R) -> (
      -- R should be a polynomial ring
      debug Core;
-     (mo, tiebreak) := monomialOrderMatrix R;
+     (mo, tiebreak, positionUpDown, componentLocation) := monomialOrderMatrix R;
      wts := entries mo;
      s1 := char R | " " | numgens R;
      s1a := if tiebreak === Lex then " lex " else " revlex ";

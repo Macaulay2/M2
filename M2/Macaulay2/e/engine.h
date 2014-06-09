@@ -123,10 +123,15 @@ extern "C" {
 
   M2_arrayintOrNull rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo);
   /* return a (flattened) matrix corresponding to the monomial ordering 'mo'.
-     If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, one further value of "0" is added.
+     Appended to this sequence of integers is 3 further numbers:
+     (1) If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, 
+     one further value of "0" is added.
+     (2) If the module order is Position=>Up, then 0 else 1 in the next spot.
+     (3) If the modules part of the order is considered right before the ith row of this matrix
+         then "i" is in the next spot. (i=#rows, f the module component is considered last).
      The returned value represents a matrix with #vars columns, and #gradings weights, in row-major order
-     (each row is contiguous in memory), plus the one extra entry.
-     NULL is returned if 'mo' has Inverses=>true, or corresponds to a non-commutative monoid.
+     (each row is contiguous in memory), plus the three extra entries.
+     NULL is returned if 'mo' corresponds to a non-commutative monoid, or has "Inverses=>true" set.
   */
 
   /**************************************************/
