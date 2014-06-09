@@ -21,7 +21,15 @@ export {
    testNorm,
    testClean,
    hasFFPACK,
-   hasMGB
+   hasMGB,
+   fields,
+    fieldsFFPACK,
+    fieldsFLINT,
+    fieldsGivaro,
+    fieldsGF,
+    ringsPID,
+    ringsRR,
+    ringsCC
    }
 
 debug Core
@@ -33,6 +41,189 @@ hasMGB = (
     R := ZZ/101[a,b];
     try (groebnerBasis(ideal vars R, Strategy=>"MGB"); true) else false
     );
+
+fieldsFLINT = {
+    "ZZpFlint 2",
+    "ZZpFlint 5",
+    "ZZpFlint 101",
+    "ZZpFlint 4611686018427387847",
+    "ZZpFlint 9223372036854775783"
+    }
+
+fieldsFFPACK = if hasFFPACK then{
+    "ZZpFFPACK 2",
+    "ZZpFFPACK 3",
+    "ZZpFFPACK 5",
+    "ZZpFFPACK 101",
+    "ZZpFFPACK 30000001",
+    "ZZpFFPACK maxFFPACKPrime"
+    } else {}
+fieldsGivaro = if hasFFPACK then {
+    ///GF(3,2, Strategy=>"Givaro")///,
+    ///GF(2,7, Strategy=>"Givaro")///,
+    ///GF(3,2, Strategy=>"CompleteGivaro")///,
+    ///GF(2,7, Strategy=>"CompleteGivaro")///
+    } else {}
+fieldsGF = {
+    "GF(3,2)",
+    "GF(5,12)",
+    ///GF(3,2, Strategy=>"New")///,
+    ///GF(2,7, Strategy=>"New")///
+    }
+
+fieldsGFFlintBig = {
+    ///GF(2,1, Strategy=>"FlintBig")///,
+    ///GF(2,2, Strategy=>"FlintBig")///,
+    ///GF(2,3, Strategy=>"FlintBig")///,
+    ///GF(2,4, Strategy=>"FlintBig")///,
+    ///GF(2,5, Strategy=>"FlintBig")///,
+    ///GF(2,6, Strategy=>"FlintBig")///,
+    ///GF(2,7, Strategy=>"FlintBig")///,
+    ///GF(2,8, Strategy=>"FlintBig")///,
+    ///GF(2,9, Strategy=>"FlintBig")///,
+    ///GF(2,10, Strategy=>"FlintBig")///,
+    ///GF(2,11, Strategy=>"FlintBig")///,
+    ///GF(2,12, Strategy=>"FlintBig")///,
+    ///GF(2,13, Strategy=>"FlintBig")///,
+    ///GF(2,20, Strategy=>"FlintBig")///,
+    ///GF(2,30, Strategy=>"FlintBig")///,
+    
+    ///GF(3,1, Strategy=>"FlintBig")///,
+    ///GF(3,2, Strategy=>"FlintBig")///,
+    ///GF(3,3, Strategy=>"FlintBig")///,
+    ///GF(3,4, Strategy=>"FlintBig")///,
+    ///GF(3,5, Strategy=>"FlintBig")///,
+    ///GF(3,6, Strategy=>"FlintBig")///,
+    ///GF(3,7, Strategy=>"FlintBig")///,
+    ///GF(3,8, Strategy=>"FlintBig")///,
+    ///GF(3,13, Strategy=>"FlintBig")///,
+    ///GF(3,20, Strategy=>"FlintBig")///,
+
+    ///GF(5,1, Strategy=>"FlintBig")///,
+    ///GF(5,2, Strategy=>"FlintBig")///,
+    ///GF(5,3, Strategy=>"FlintBig")///,
+    ///GF(5,4, Strategy=>"FlintBig")///,
+    ///GF(5,5, Strategy=>"FlintBig")///,
+
+    ///GF(7,1, Strategy=>"FlintBig")///,
+    ///GF(7,2, Strategy=>"FlintBig")///,
+    ///GF(7,3, Strategy=>"FlintBig")///,
+    ///GF(7,4, Strategy=>"FlintBig")///,
+
+    ///GF(11,1, Strategy=>"FlintBig")///,
+    ///GF(11,2, Strategy=>"FlintBig")///,
+    ///GF(11,3, Strategy=>"FlintBig")///,
+
+    ///GF(13,1, Strategy=>"FlintBig")///,
+    ///GF(13,2, Strategy=>"FlintBig")///,
+    ///GF(13,30, Strategy=>"FlintBig")///,
+
+    ///GF(17,1, Strategy=>"FlintBig")///,
+    ///GF(17,2, Strategy=>"FlintBig")///,
+    ///GF(17,30, Strategy=>"FlintBig")///,
+
+    ///GF(19,1, Strategy=>"FlintBig")///,
+    ///GF(19,2, Strategy=>"FlintBig")///,
+    ///GF(19,10, Strategy=>"FlintBig")///,
+
+    ///GF(23,7, Strategy=>"FlintBig")///
+    }
+
+fieldsGFFlint = {
+    ///GF(2,1, Strategy=>"Flint")///,
+    ///GF(2,2, Strategy=>"Flint")///,
+    ///GF(2,3, Strategy=>"Flint")///,
+    ///GF(2,4, Strategy=>"Flint")///,
+    ///GF(2,5, Strategy=>"Flint")///,
+    ///GF(2,6, Strategy=>"Flint")///,
+    ///GF(2,7, Strategy=>"Flint")///,
+    ///GF(2,8, Strategy=>"Flint")///,
+    ///GF(2,9, Strategy=>"Flint")///,
+    ///GF(2,10, Strategy=>"Flint")///,
+    ///GF(2,11, Strategy=>"Flint")///,
+    ///GF(2,12, Strategy=>"Flint")///,
+    ///GF(2,13, Strategy=>"Flint")///,
+    
+    ///GF(3,1, Strategy=>"Flint")///,
+    ///GF(3,2, Strategy=>"Flint")///,
+    ///GF(3,3, Strategy=>"Flint")///,
+    ///GF(3,4, Strategy=>"Flint")///,
+    ///GF(3,5, Strategy=>"Flint")///,
+    ///GF(3,6, Strategy=>"Flint")///,
+    ///GF(3,7, Strategy=>"Flint")///,
+    ///GF(3,8, Strategy=>"Flint")///,
+
+    ///GF(5,1, Strategy=>"Flint")///,
+    ///GF(5,2, Strategy=>"Flint")///,
+    ///GF(5,3, Strategy=>"Flint")///,
+    ///GF(5,4, Strategy=>"Flint")///,
+    ///GF(5,5, Strategy=>"Flint")///,
+
+    ///GF(7,1, Strategy=>"Flint")///,
+    ///GF(7,2, Strategy=>"Flint")///,
+    ///GF(7,3, Strategy=>"Flint")///,
+    ///GF(7,4, Strategy=>"Flint")///,
+
+    ///GF(11,1, Strategy=>"Flint")///,
+    ///GF(11,2, Strategy=>"Flint")///,
+    ///GF(11,3, Strategy=>"Flint")///,
+
+    ///GF(13,1, Strategy=>"Flint")///,
+    ///GF(13,2, Strategy=>"Flint")///,
+    ///GF(13,3, Strategy=>"Flint")///,
+
+    ///GF(17,1, Strategy=>"Flint")///,
+    ///GF(17,2, Strategy=>"Flint")///,
+    ///GF(17,3, Strategy=>"Flint")///,
+
+    ///GF(19,1, Strategy=>"Flint")///,
+    ///GF(19,2, Strategy=>"Flint")///,
+    ///GF(19,3, Strategy=>"Flint")///,
+
+    ///GF(23,2, Strategy=>"Flint")///
+    }
+
+fields = join({
+    "ZZp 2", 
+    "ZZp 3",
+    "ZZp 5", 
+    "ZZp 101", 
+    "ZZp 32719"},
+    fieldsFLINT,
+    fieldsFFPACK,
+    fieldsGivaro,
+    fieldsGF,
+    fieldsGFFlint,
+    fieldsGFFlintBig,
+    {"QQ"}
+    -- QQFlint not working yet
+    )
+
+ringsPID = {
+    "ZZ"
+    --"ZZFlint"
+    }
+
+ringsRR = {
+    "RR_53",
+    "RR_54",
+    "RR_100",
+    "RR_134",
+    "RR_200",
+    "RR_256",
+    "RR_1000",
+    "RR_10000"
+    }
+ringsCC = {
+    "CC_53",
+    "CC_54",
+    "CC_100",
+    "CC_134",
+    "CC_200",
+    "CC_256",
+    "CC_1000",
+    "CC_10000"
+    }
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")

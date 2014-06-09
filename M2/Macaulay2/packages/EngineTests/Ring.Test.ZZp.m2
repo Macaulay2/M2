@@ -4,32 +4,6 @@ export {
 
 debug Core
 
-fieldsFLINT = {
-    "ZZpFlint 2",
-    "ZZpFlint 5",
-    "ZZpFlint 101",
-    "ZZpFlint 4611686018427387847",
-    "ZZpFlint 9223372036854775783"
-    }
-fieldsFFPACK = {
-    "ZZpFFPACK 2",
-    "ZZpFFPACK 3",
-    "ZZpFFPACK 5",
-    "ZZpFFPACK 101",
-    "ZZpFFPACK 30000001",
-    "ZZpFFPACK maxFFPACKPrime"
-    }
-fieldsGF = {
-    "GF(3,2)",
-    "GF(5,12)",
-    ///GF(3,2, Strategy=>"New")///,
-    ///GF(2,7, Strategy=>"New")///,
-    ///GF(3,2, Strategy=>"Givaro")///,
-    ///GF(2,7, Strategy=>"Givaro")///,
-    ///GF(3,2, Strategy=>"CompleteGivaro")///,
-    ///GF(2,7, Strategy=>"CompleteGivaro")///
-    }
-
 testFiniteField = (R, charac) -> (
     assert(rawCharacteristic R === charac)
     )
@@ -82,6 +56,8 @@ testGF2 = (p,d,kk) -> (
     << rawARingGFCoefficients raw (kk_0^5) << endl; -- an array
     << netList(for i from 0 to p^d-1 list {kk_0^i, rawARingGFCoefficients raw (kk_0^i)}) << endl;
     )
+
+if hasFFPACK then
 TEST ///
     debug Core
     kk = GF(9, Strategy=>"Givaro")
@@ -94,6 +70,7 @@ TEST ///
             {2, 0}, {0, 2}, {2, 2}, {2, 1}, {1, 0}})
 ///
 
+if hasFFPACK then
 TEST ///
     debug Core
     kk = GF(32, Strategy=>"Givaro")
@@ -155,10 +132,12 @@ TEST ///
   F = (x-3)^3*(x^2+x+1)
   factor F  
 
-  R = ZZp(101, Strategy=>"FFPACK")
-  S = R[x]
-  F = (x-3)^3*(x^2+x+1)
-  factor F  
+  if hasFFPACK then (
+      R = ZZp(101, Strategy=>"FFPACK");
+      S = R[x];
+      F = (x-3)^3*(x^2+x+1);
+      factor F
+      );
 
   R = ZZp(65537, Strategy=>"FLINT")
   S = R[x]
@@ -170,22 +149,28 @@ TEST ///
   F = (x-3)^3*(x^2+x+1)
   factor F  
 
-  R = ZZp(33554393, Strategy=>"FFPACK") -- max prime that ffpack can handle is 2^25 - 39
-  S = R[x]
-  F = (x-3)^3*(x^2+x+1)
-  factor F  
+  if hasFFPACK then (
+      R = ZZp(33554393, Strategy=>"FFPACK"); -- max prime that ffpack can handle is 2^25 - 39
+      S = R[x];
+      F = (x-3)^3*(x^2+x+1);
+      factor F  
+      )
 ///
 
 TEST ///
   -- Switch between these rings.
   debug Core -- for ZZp
   R1 = ZZ/101
+  M1 = matrix(R1, {{0..103}})
   R2 = ZZp(101, Strategy=>"ARING")
   R3 = ZZp(101)  
   R4 = ZZp(101, Strategy=>"FLINT")
-  R5 = ZZp(101, Strategy=>"FFPACK")
-  M1 = matrix(R1, {{0..103}})
-  Rs = {R1,R2,R3,R4,R5}
+  Rs = {R1,R2,R3,R4}
+  if hasFFPACK then (
+      R5 = ZZp(101, Strategy=>"FFPACK");
+      Rs = append(Rs, R5);
+      );
+      
   fs = apply(subsets(Rs,2), rs -> {map(rs#0, rs#1), map(rs#1, rs#0)})
   for rs in fs do (
       f := rs#0;
@@ -201,13 +186,15 @@ TEST ///
       )
   -- now try it for some larger sizes
   P = 2^25-39 -- largest ffpack prime
-  S1 = ZZp(P, Strategy=>"FLINT")
-  S2 = ZZp(P, Strategy=>"FFPACK")
-  (f,g) = (map(S1,S2), map(S2,S1))
-  M1 = matrix(S1, {{-100..100, 2^25..2^25 + 10000}});
-  M2 = matrix(S2, {{-100..100, 2^25..2^25 + 10000}});
-  assert(f M2 == M1)
-  assert(f M2 == M1)
+  if hasFFPACK then (
+      S1 = ZZp(P, Strategy=>"FLINT");
+      S2 = ZZp(P, Strategy=>"FFPACK");
+      (f,g) = (map(S1,S2), map(S2,S1));
+      M1 = matrix(S1, {{-100..100, 2^25..2^25 + 10000}});
+      M2 = matrix(S2, {{-100..100, 2^25..2^25 + 10000}});
+      assert(f M2 == M1);
+      assert(f M2 == M1);
+      );
 ///
 
 ///
@@ -349,20 +336,20 @@ TEST ///
   topval = 10;  -- 13, although better, makes this too long
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"New"))
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,null))
-  for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Givaro"))
+  if hasFFPACK then for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Givaro"))
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"FlintBig"))  
   for i from 1 to topval do (<< i << " "; testGFpromote(2,i,"Flint"))  
 
   topval = 6 -- 8 would be better
   time for i from 1 to topval do (<< i << " "; testGFpromote(3,i,"New"))
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,null))  
-  time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Givaro"))  
+  if hasFFPACK then time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Givaro"))  
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"FlintBig"))  
   time for i from 1 to topval do (<< i << " " << flush; testGFpromote(3,i,"Flint"))  
   
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"New"))
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,null))  
-  time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"Givaro"))  
+  if hasFFPACK then time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"Givaro"))  
   time for i from 1 to 5 do (<< i << " " << flush; testGFpromote(5,i,"FlintBig"))  
   
   --time for i from 1 to 4 do (<< i << " " << flush; testGFpromote(7,i,"New"))
@@ -372,7 +359,7 @@ TEST ///
   
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"New"))
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,null))  
-  time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"Givaro"))  
+  if hasFFPACK then time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"Givaro"))  
   time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(11,i,"FlintBig"))  
   
   --time for i from 1 to 3 do (<< i << " " << flush; testGFpromote(13,i,"New"))
@@ -394,7 +381,7 @@ TEST ///
       << "doing " << p << endl;
       time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,"New"));
       time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,null))  ;
-      time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,"Givaro"));
+      if hasFFPACK then time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,"Givaro"));
       time for i from 1 to 2 do (<< i << " " << flush; testGFpromote(p,i,"FlintBig"));
       )
 ///
@@ -449,6 +436,7 @@ TEST ///
  -- phi oo -- not defined yet!!
 ///
 
+if hasFFPACK then
 TEST ///
   debug Core
   kk = GF(9, Strategy=>"Givaro")
@@ -504,6 +492,7 @@ TEST ///
   new R from rawGCD(raw F1,raw F2,raw F)
 ///
 
+if hasFFPACK then
 ///
   restart
   kk = GF(101,5)
@@ -543,6 +532,7 @@ TEST ///
   kk = GF(A, Strategy=>"Givaro") -- this gives an error, but it is not a good one.
 ///
 
+if hasFFPACK then
 ///
   kk = GF(9, Strategy=>"New")
   kk = GF(9, Strategy=>"Givaro")
@@ -552,7 +542,7 @@ TEST ///
 ///  
   restart
   debug loadPackage "EngineTests"
-  kk = GF(9, Strategy=>"FlintBig") -- crashes
+  kk = GF(9, Strategy=>"FlintBig")
   testGF1(3,2,kk)
 ///
 
