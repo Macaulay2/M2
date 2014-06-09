@@ -19,23 +19,26 @@ fieldsFLINT = {
     "ZZpFlint 4611686018427387847",
     "ZZpFlint 9223372036854775783"
     }
-fieldsFFPACK = {
+
+fieldsFFPACK = if hasFFPACK then{
     "ZZpFFPACK 2",
     "ZZpFFPACK 3",
     "ZZpFFPACK 5",
     "ZZpFFPACK 101",
     "ZZpFFPACK 30000001",
     "ZZpFFPACK maxFFPACKPrime"
-    }
-fieldsGF = {
-    "GF(3,2)",
-    "GF(5,12)",
-    ///GF(3,2, Strategy=>"New")///,
-    ///GF(2,7, Strategy=>"New")///,
+    } else {}
+fieldsGivaro = if hasFFPACK then {
     ///GF(3,2, Strategy=>"Givaro")///,
     ///GF(2,7, Strategy=>"Givaro")///,
     ///GF(3,2, Strategy=>"CompleteGivaro")///,
     ///GF(2,7, Strategy=>"CompleteGivaro")///
+    } else {}
+fieldsGF = {
+    "GF(3,2)",
+    "GF(5,12)",
+    ///GF(3,2, Strategy=>"New")///,
+    ///GF(2,7, Strategy=>"New")///
     }
 
 fieldsGFFlintBig = {
@@ -158,6 +161,7 @@ fields = join({
     "ZZp 32719"},
     fieldsFLINT,
     fieldsFFPACK,
+    fieldsGivaro,
     fieldsGF,
     fieldsGFFlint,
     fieldsGFFlintBig,

@@ -19,14 +19,20 @@ newPackage(
 
 export { 
    testNorm,
-   testClean
-
-    }
-
-
+   testClean,
+   hasFFPACK,
+   hasMGB
+   }
 
 debug Core
 
+hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
+hasMGB = (
+    a := local a;
+    b := local b;
+    R := ZZ/101[a,b];
+    try (groebnerBasis(ideal vars R, Strategy=>"MGB"); true) else false
+    );
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")
@@ -34,6 +40,7 @@ debug Core
 load "EngineTests/LinearAlgebra.Test.Driver.m2"
 load "EngineTests/MutableMatrix.Test.Driver.m2"
 load "EngineTests/Ring.Test.Driver.m2"
+load "EngineTests/GB.Test.Mathic.m2"
 
 --check  EngineTests
 

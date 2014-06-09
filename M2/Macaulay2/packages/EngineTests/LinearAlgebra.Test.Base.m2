@@ -12,8 +12,6 @@ export { jordanForm,
     testRankProfile,
     testSolve,
     testLinearAlgebra,
-    hasFlint,
-    hasFFPACK,
     testLinearAlgebraSet,
     testLUBoundaryCases,
     testHasEngineLinearAlgebra
@@ -27,8 +25,6 @@ debug Core;
 -----------------------------------------------------------------
 maxFLINTPrime = 18446744073709551521
 maxFFPACKPrime = 33554393
-
-hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
 
 needsPackage "FastLinearAlgebra"
 debug FastLinearAlgebra
