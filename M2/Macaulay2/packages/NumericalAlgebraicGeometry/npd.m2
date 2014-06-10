@@ -25,25 +25,25 @@ isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witne
 	    if dim R_d - dim Jd != hilbertFunction(d, monomialIdeal gCs) then return true; -- is there a better way?
 	    )
 	else (
-	    if DBG>1 then print "-- double truncation...";
+	    if DBG>0 then print "-- double truncation...";
 	    time Jdd := doubleTruncation(I,C,d,d);
-	    if DBG>1 then print (d,dim Jdd);
+	    if DBG>0 then print (d,dim Jdd);
 	    for d' from 1 to d do (
 		g := random(d', Jdd);
-		if DBG>1 then << "-- witness poly: (d',d) = " << (d',d) << endl;
+		if DBG>0 then << "-- witness poly: (d',d) = " << (d',d) << endl;
 		time if isWitnessPolynomial(p,I,g,d)     
 		then (
-		    if DBG>1 then print toString g;
+		    if DBG>0 then print toString g;
 		    return true;
 		    )
 		)
 	    );
         --SECOND PART: returns false if deemed not embedded
-	if DBG>1 then print "-- colon(truncated dual)...";
+	if DBG>0 then print "-- colon(truncated dual)...";
 	time Sd := colon(truncatedDual(p,I,d), l);
 	sCs := flatten entries sCorners gCs;
 	colonLMs := leadMonomial \ flatten entries gens reduceSpace Sd;
-    	if DBG>1 then << "-- s-corners: " << sCs << endl << "LM(dual of colon ideal): " << colonLMs << endl;	
+    	if DBG>0 then << "-- s-corners: " << sCs << endl << "-- LM(dual of colon ideal): " << colonLMs << endl;	
 	if isSubset(sCs, colonLMs) then return false; 
     	d = d+1;
 	)
