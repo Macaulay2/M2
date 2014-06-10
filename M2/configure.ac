@@ -496,7 +496,7 @@ test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether expe
 
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
-AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
+AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no

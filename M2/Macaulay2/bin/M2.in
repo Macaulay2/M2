@@ -1,7 +1,10 @@
 #! /bin/sh
 
 # We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname "$0"`/../@tail_librariesdir@
+# This one is for Mac OS:
+export DYLD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$DYLD_LIBRARY_PATH
+# This one is for Unix:
+export LD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$LD_LIBRARY_PATH
 exec `dirname "$0"`/M2@EXE@ "$@"
 
 # Local Variables:
