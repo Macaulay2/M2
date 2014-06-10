@@ -1497,7 +1497,10 @@ do case $i in
 	#   ncurses: has a database which we aren't providing and whose location we don't know
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
-	-lncurses | -lsocket  | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	#      pari: it's only the dynamic form that is gmp compatible, and it needs mpir to be dynamic
+	#      mpir: pari needs mpir to be dynamic
+	-lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
+		LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
 	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
 	# and later we'll figure out a run-time test for whether pari is based on gmp
 	# # we must link statically with some libraries:

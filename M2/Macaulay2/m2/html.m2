@@ -460,7 +460,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
      setseed := " -e 'setRandomSeed 0'";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
      args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;

@@ -1,11 +1,10 @@
 -- -*- M2-comint -*- {* hash: 781960899 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
 
 i1 : A=random(QQ^3,QQ^3)
 
-o1 = | 1/7 3   2 |
-     | 3/4 5/3 4 |
-     | 2   3/7 1 |
+o1 = | 9/2 1/2 3/2 |
+     | 1/2 1   3/4 |
+     | 9/4 3/4 7/4 |
 
               3        3
 o1 : Matrix QQ  <--- QQ
@@ -14,36 +13,36 @@ i2 : (perm,LR)=LRdecomposition(A,j->-j);
 
 i3 : LR
 
-o3 = | 2    3/7       1        |
-     | 1/14 291/98    27/14    |
-     | 3/8  1771/3492 1027/388 |
+o3 = | 9/2 1/2   3/2   |
+     | 1/9 17/18 7/12  |
+     | 1/2 9/17  47/68 |
 
               3        3
 o3 : Matrix QQ  <--- QQ
 
 i4 : P=transpose (id_(QQ^3))_perm
 
-o4 = | 0 0 1 |
-     | 1 0 0 |
+o4 = | 1 0 0 |
      | 0 1 0 |
+     | 0 0 1 |
 
               3        3
 o4 : Matrix QQ  <--- QQ
 
 i5 : R=extractRightUpper(LR)
 
-o5 = | 2 3/7    1        |
-     | 0 291/98 27/14    |
-     | 0 0      1027/388 |
+o5 = | 9/2 1/2   3/2   |
+     | 0   17/18 7/12  |
+     | 0   0     47/68 |
 
               3        3
 o5 : Matrix QQ  <--- QQ
 
 i6 : L=extractLeftLower(LR)
 
-o6 = | 1    0         0 |
-     | 1/14 1         0 |
-     | 3/8  1771/3492 1 |
+o6 = | 1   0    0 |
+     | 1/9 1    0 |
+     | 1/2 9/17 1 |
 
               3        3
 o6 : Matrix QQ  <--- QQ
@@ -59,18 +58,18 @@ o8 : Matrix QQ  <--- QQ
 
 i9 : y=forwardSubstitution(LR,P*b)
 
-o9 = | 9/2       |
-     | 5/28      |
-     | -971/3492 |
+o9 = | 7/9      |
+     | 497/810  |
+     | -109/510 |
 
               3        1
 o9 : Matrix QQ  <--- QQ
 
 i10 : x=backwardSubstitution(LR,y)
 
-o10 = | 21028/9243 |
-      | 791/6162   |
-      | -971/9243  |
+o10 = | 386/2115  |
+      | 1778/2115 |
+      | -218/705  |
 
                3        1
 o10 : Matrix QQ  <--- QQ

@@ -1,12 +1,11 @@
--- -*- M2-comint -*- {* hash: 423743090 *}
---loading configuration for package "Bertini" from file /Users/elizabethgross/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- {* hash: 1473056969 *}
 
 i1 : R = CC[x,y,z];
 
 i2 : f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
 
 i3 : NV = bertiniPosDimSolve(f,ISPROJECTIVE=>1)
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18975-0/0
+Temporary directory for input and output files:/tmp/M2-14693-0/0
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
@@ -16,25 +15,4 @@ o3 = NV
 
 o3 : NumericalVariety
 
-i4 : R=CC[x,y,z,u1,u2];--u1,u2 are parameters
-
-i5 : f1=x^2+y^2-z^2;
-
-i6 : f2=u1*x+u2*y;
-
-i7 : finalParameters={{0,1}};
-
-i8 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },ISPROJECTIVE=>1)
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18975-0/1
-
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o8 = {{{.437998-.275188*ii, -3.76489e-17+2.11657e-17*ii, .437998-.275188*ii},
-     ------------------------------------------------------------------------
-     {.332085+1.36118*ii, -1.00283e-15-2.9474e-16*ii, -.332085-1.36118*ii}}}
-
-o8 : List
-
-i9 : 
+i4 : 
