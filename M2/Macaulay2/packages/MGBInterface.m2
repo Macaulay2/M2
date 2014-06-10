@@ -7,6 +7,8 @@ newPackage(
                   HomePage => ""}},
         Headline => "Experimental package for mathicgb interface.  Not meant for general use",
         PackageExports => {"ExampleIdeals"},
+        Configuration => { "path" => ""
+	        },
         DebuggingMode => false
         )
 
@@ -33,6 +35,11 @@ export {write,
      testMGB
      }
 
+-- NOTE: the absolute path where 'mgb' lives should be put into the .init file for MGBInterface
+--  inside the .Macaulay2 directory (or, on the mac: the ~/Library/Application Support/Macaulay2/ folder)
+path'mgb = (options MGBInterface).Configuration#"path"
+if path'mgb === "" then path'mgb = prefixDirectory | currentLayout#"programs"
+
 write = method()
 write Ring  := (R) -> (
      -- R should be a polynomial ring
@@ -45,6 +52,20 @@ write Ring  := (R) -> (
 write Ring  := (R) -> (
      -- R should be a polynomial ring
      debug Core;
+     (mo, tiebreak, positionUpDown, componentLocation) := monomialOrderMatrix R;
+     wts := entries mo;
+     s1 := char R | " " | numgens R;
+     s1a := if tiebreak === Lex then " lex " else " revlex ";
+     s1b := toString(#wts) | "\n";
+     s2 := concatenate for wtvec in wts list (
+          "   " | (concatenate between(" ", wtvec/toString)) | "\n"
+          );
+     s1 | s1a | s1b | s2
+     )
+
+write Ring  := (R) -> (
+     -- R should be a polynomial ring
+     debug Core; -- for monomialOrderMatrix.
      (mo, tiebreak, positionUpDown, componentLocation) := monomialOrderMatrix R;
      wts := entries mo;
      s1 := char R | " " | numgens R;
@@ -232,9 +253,11 @@ mgbOptions = hashTable {
      "AutoTopReduce" => {"on", "-autoTopReduce "},
      "BreakAfter" => {0, "-breakAfter "},
      "DivisorLookup" => {2, "-divisorLookup"},
-     "Log" => {"", "-log"},
+     "Log" => {"", "-log "},
      "MemoryQuantumForReducer" => {1048576, "-memoryQuantumForReducer "},
+     "Module" => {"off", "-module"},
      "MonomialTable" => {2, "-monomialTable "},
+     "Output" => {"off", "-outputResult "},
      "PreferSparseReducers" => {"on", "-preferSparseReducers "},
      "PrintInterval" => {0, "-printInterval"},
      "Reducer" => {4, "-reducer "},
@@ -248,18 +271,19 @@ mgbOptions = hashTable {
 optionsMGB = join(
      apply(keys mgbOptions, k -> k => null),
      {
-          "Executable" => "~/src/github/mathicgb/rel/mgb",
-          "Algorithm" => null -- default is "gb", other option is "sig"
+          "Algorithm" => null, -- default is "gb", other option is "sig"
+          "ProjectName" => null -- default is to choose a temporary file name (w/o the ".ideal" on the end)
           }
      )
 runMGB = method(Options => optionsMGB)
 
-helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
+--helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
+helpMGB = () -> get ("!"|path'mgb|"mgb help gb");
 
 mgbStr = method(Options => options runMGB)
 mgbStr String := opts -> (projectName) -> (
      alg := if opts#"Algorithm" === "sig" then " sig " else " gb ";
-     execString := "time "| opts#"Executable" | alg |projectName|" ";
+     execString := "time "| path'mgb | "mgb " | alg |projectName|" ";
      -- now add in the options
      for k in keys opts do (
           if mgbOptions#?k and opts#k =!= null then (
@@ -271,7 +295,7 @@ mgbStr String := opts -> (projectName) -> (
 
 runMGB Ideal := opts -> (J) -> (
      R := ring J;
-     projectName := temporaryFileName();
+     projectName := if opts#"ProjectName" === null then temporaryFileName() else opts#"ProjectName";
      (projectName |  ".ideal") << displayit toABC J << endl << close;
      runMGB(projectName, opts)
      )
