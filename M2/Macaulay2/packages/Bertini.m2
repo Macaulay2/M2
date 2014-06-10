@@ -530,7 +530,7 @@ callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
 
 checkConditionNumber=(listOfPoints)->(
     for i in listOfPoints do 
-      if i.ConditionNumber>10^10 then i.SolutionsStatus=Singular)
+      if i.ConditionNumber>10^10 then i.SolutionStatus=Singular)
 
 
 

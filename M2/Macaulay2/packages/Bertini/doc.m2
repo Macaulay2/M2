@@ -579,15 +579,15 @@ doc ///
      The user can specify which solutions and which coordinates they want to read from the file.
    Example
      locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     A=importPoints(locationOfSolutionFile,4)
+     --A=importPoints(locationOfSolutionFile,4)
      --The output would be a list of points that have 4 coordinates.          
    Example 
      locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
+     --B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
      --The output would be the first and third solutions of the file. 
    Example 
      locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
+     --C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
      --The output would be the first and second coordinate of each solution of the file.  
  Caveat
    For importPoints to be successful, the Bertini solution file must have a particular format.
@@ -627,10 +627,10 @@ doc ///
      inputFileLocation="/Users/.../YourFolderA";
      L={.8234+ii*8,9}--A list of two parameter values.
      n=3--A solution has n coordinates.
-     phPostProcess(inputFileLocation,L,n)     
+     --phPostProcess(inputFileLocation,L,n)     
    Example
      inputFileLocation="/Users/.../YourFolderA";
-     phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
+     --phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
  Caveat
    Even if Bertini is called but does not run,  
    an error may not be reported if previous solution files were already in the outputDirectory.
