@@ -38,7 +38,6 @@ opt64-all : always
 		--build=x86_64-apple-darwin \
 		--enable-fflas-ffpack \
 		--enable-givaro \
-		--enable-linbox \
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
@@ -46,6 +45,8 @@ opt64-all : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
+
+#		--enable-linbox \
 
 # for adding tbb in for mathicgb:
 #		LDFLAGS="-L/usr/local/lib -ltbb" \
