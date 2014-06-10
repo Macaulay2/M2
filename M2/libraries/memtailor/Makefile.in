@@ -1,5 +1,6 @@
 VPATH = @srcdir@
 VERSION = local
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
