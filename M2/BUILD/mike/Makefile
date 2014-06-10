@@ -63,13 +63,13 @@ debug64-all : always
 		--disable-optimize \
 		--enable-fflas-ffpack \
 		--enable-givaro \
-		--enable-linbox \
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+
+#		--enable-linbox \
 
 ####################
 ## clang versions ##
@@ -110,7 +110,6 @@ opt64-clang-all : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -131,7 +130,6 @@ debug64-clang-all : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
@@ -169,7 +167,6 @@ linux-opt64-all : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -188,7 +185,6 @@ linux-debug64-all : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -326,7 +322,6 @@ opt64-clang-linbox : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -346,7 +341,6 @@ debug64-linbox : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -360,7 +354,6 @@ opt64-fplll : always
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
-		--enable-flint \
 		--enable-fplll \
 		--disable-strip \
 		--enable-download \
@@ -374,7 +367,6 @@ opt64-flint : always
 		--build=x86_64-apple-darwin \
 		--enable-memtailor \
 		--enable-mathic \
-		--enable-flint \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -533,7 +525,6 @@ ubuntu64-linbox : always
 		--prefix="`pwd`/installed" \
 		--enable-fflas-ffpack \
 		--enable-givaro \
-		--enable-flint \
 		--enable-linbox \
 		--disable-strip \
 		--enable-download \
@@ -549,7 +540,6 @@ ubuntu64-linbox-debug : always
 		--disable-optimize \
 		--enable-fflas-ffpack \
 		--enable-givaro \
-		--enable-flint \
 		--enable-linbox \
 		--disable-strip \
 		--enable-download \
@@ -562,7 +552,6 @@ ubuntu64-linbox-profile : always
 		--enable-profile \
 		--enable-fflas-ffpack \
 		--enable-givaro \
-		--enable-flint \
 		--enable-linbox \
 		--disable-strip \
 		--enable-download \
