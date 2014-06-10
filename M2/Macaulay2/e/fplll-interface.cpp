@@ -21,13 +21,13 @@
         int precision = 0;
         int flags = LLL_DEFAULT;
     
-    int ncols = M->n_rows();
-    int nrows = M->n_cols();
+        int ncols = static_cast<int>(M->n_rows());
+        int nrows = static_cast<int>(M->n_cols());
     
     ZZ_mat<mpz_t> mat (nrows,ncols);
     
-    for (size_t i=0; i<nrows; i++)
-        for (size_t j=0; j<ncols; j++)
+    for (int i=0; i<nrows; i++)
+        for (int j=0; j<ncols; j++)
         {
             ring_elem a;
             if (M->get_entry(j,i,a))
@@ -59,8 +59,8 @@
     mpz_t a;
     mpz_init(a);
     
-    for (size_t j=0; j<ncols; j++)
-        for (size_t i=0; i<nrows; i++)
+    for (int j=0; j<ncols; j++)
+        for (int i=0; i<nrows; i++)
         {
             mpz_set(a, mat[i][j].getData());
             ring_elem b = globalZZ->from_int(a);
@@ -69,3 +69,8 @@
     return true;
 #endif
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:
