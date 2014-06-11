@@ -459,7 +459,8 @@ testSolve = (R) -> (
         B := mutableMatrix(R, i, 3); fillMatrix B;
         X := solve(A,B);
         assert(X =!= null or rank A < i);
-        assert(A*X-B == 0);
+        if X =!= null then
+            assert(A*X-B == 0);
         );
     testSolveNotFullRank R;    
     )

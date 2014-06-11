@@ -42,6 +42,15 @@ TEST ///
 ///
 
 TEST ///
+  -- This is a crashing strange memory type bug
+  debug loadPackage "EngineTests"
+  R = ZZpFFPACK 2
+  for i from 1 to 100 do
+  (<< "i="<< i<<endl; testRankProfile R; debug Core)
+
+///
+
+TEST ///
 -- linear algebra over ZZ is not functional, really.  Partly because the
 -- tests assume the base ring is a field...
   debug Core
