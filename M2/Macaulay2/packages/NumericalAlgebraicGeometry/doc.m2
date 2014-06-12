@@ -1,5 +1,6 @@
-refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", arXiv:0911.1783" 
-refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", arXiv:1105.5992" 
+refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
+refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
+refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
 refIntroToNAG := "A.J. Sommese, J. Verschelde, and C.W. Wampler, \"Introduction to numerical algebraic geometry\", 
                   in \"Solving polynomial equations\" (2005), 301--338" 
 refSWbook := "A.J. Sommese and C.W. Wampler, \"The numerical solution of systems of polynomials\",
@@ -16,35 +17,49 @@ document {
      EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
      ", implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
-     "The current version focuses on solving square systems with a finite number of solutions. ",
      
-     PARA {"Basic types ", TO Point, " and ", TO "WitnessSet", " are defined in the package ", TO NAGtypes, "."},
+     PARA {"Basic types (such as ", TO Point, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
      
      HEADER3 "Basic functions:",
      UL{
 	  TO track,
 	  TO solveSystem,
 	  TO refine,
-	  TO totalDegreeStartSystem
+	  TO totalDegreeStartSystem,
+	  TO numericalIrreducibleDecomposition
 	  },
+     "Some of the basic computations can be outsourced to ", TO "Bertini", " and ", TO "PHCpack", 
+     " (look for ", TO Software, " option).",
+     
      HEADER3 "Service functions:",
      UL{
-	  TO setDefault,
-	  TO getDefault,
-	  TO areEqual,
-	  TO sortSolutions,
-	  TO toAffineChart,
-	  TO NAGtrace
-	  },
+	 {  
+	     "Many service functions (such as ", 
+	     TO areEqual," and ",TO sortSolutions,") are defined in the package ", TO NAGtypes, "."
+	 },
+     TO setDefault,
+     TO getDefault,
+     TO NAGtrace,
+     --     TO toAffineChart,     
+     TO newton,
+     TO union,
+     TO removeRedundantComponents,
+     TO sample,
+     },
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
      HEADER3 "Other functions:",
-     UL { TO numericalRank },
+     UL { 
+	 TO numericalRank,
+	 TO isOn,
+	 },
+
      HEADER3 {"References:"},
      UL{
        refIntroToNAG,
        refSWbook,
-       refBeltranLeykin
+       refBeltranLeykin,
+       refKroneLeykin
        }
      }
 
@@ -234,6 +249,7 @@ document {
 document {
 	Key => {
 	     (refine, List, List), refine, 
+	     (refine,Point), (refine,PolySystem,List), (refine,PolySystem,Point),
 	     [refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
 	     [refine,ErrorTolerance], [setDefault,ErrorTolerance], 
 	     [refine, ResidualTolerance], [setDefault,ResidualTolerance],
@@ -242,8 +258,8 @@ document {
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
-	     "T" => {"contains the polynomials of the system"},
-	     "sols" => {"contains solutions (presented as lists of coordinates or ", TO2{Point,"points"}, ")"},
+	     "T" => {"contains the polynomials of the system (may be of type ", TO PolySystem, ")"},
+	     "sols" => {"contains (a) solution(s) (", TO2{Point,"points"}," or lists of coordinates or ", TO2{Point,"points"}, ")"},
 	     Iterations => {" (meaning Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
 	     Bits => {" (meaning Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
 	     ErrorTolerance => {" (meaning ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
@@ -309,7 +325,7 @@ totalDegreeStartSystem T
 document {
      Key => {Software,
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
-	 [regeneration,Software],[parameterHomotopy,Software],
+	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -597,3 +613,87 @@ peek V
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
 	}
+
+
+document {
+    Key => {isOn, (isOn,Point,Ideal), (isOn,Point,NumericalVariety), 
+	(isOn,Point,RingElement), (isOn,Point,WitnessSet), (isOn,Point,WitnessSet,ZZ),
+	[isOn,Tolerance]
+	},
+    Headline => "determines if a point belongs to a variety",
+    Usage => "B = isOn(P,V)",
+    Inputs => { 
+	"P"=>Point,  
+	"V"=>{ofClass NumericalVariety, ofClass WitnessSet, ofClass Ideal, ofClass RingElement}
+	},
+    Outputs => { "B"=>Boolean },
+    "Determines whether the given point is (approximately) on the given variety, 
+    which is either represented numerically or defines by polynomials.", 
+    EXAMPLE lines ///
+R = CC[x,y]
+I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+e = 0.0000001
+W = witnessSet(ideal I_0 , ideal(x-y), {point {{ (1-e)*ii,(1-e)*ii}},point {{ -(1+e)*ii,-(1+e)*ii}}})	
+isOn(point {{sqrt 5*ii,sqrt 3}},W)
+///,
+    SeeAlso=>{Point,NumericalVariety}
+    }
+
+document {
+    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,Point)},
+    Headline => "Newton-Raphson method",
+    "Performs one step of the Newton-Raphson method.",
+    Caveat=>{"Works for a regular square or overdetermined system."}
+    }
+
+document {
+    Key => {(union,NumericalVariety,NumericalVariety), union},
+    Headline => "union of numerical varieties",
+    Usage => "VW=union(V,W)",
+    Inputs => { "V","W" },
+    Outputs => { "VW"=>NumericalVariety },
+    "Constructs the union of numerical varieties", 
+    Caveat => {"The rusulting numerical variety may have redundant components."},
+    SeeAlso=>{removeRedundantComponents}
+    }
+
+document {
+    Key => {(removeRedundantComponents,NumericalVariety),removeRedundantComponents},
+    Headline => "remove redundant components",
+    Usage => "removeRedundantComponents V",
+    Inputs => { "V"},
+--    Outputs => { "" },
+    "Removes components contained in other components of the variety. (This is done \"in place\".)", 
+    SeeAlso=>{(isSubset,WitnessSet,WitnessSet)}
+    }
+document {
+    Key => {(sample,WitnessSet),sample},
+    Headline => "sample a point on a component",
+    Usage => "P = sample W",
+    Inputs => { "W" },
+    Outputs => { "P"=>Point },
+    "Gets a random point on a component represented numerically.", 
+    EXAMPLE lines ///
+R = CC[x,y,z]
+W = new WitnessSet from { Equations => ideal {x^2+y^2+z^2-1, z^2}, Slice => matrix "1,0,0,0", Points => {{{0,1,0_CC}},{{0,-1,0_CC}}}/point } 
+P := sample(W, Tolerance=>1e-15)   
+isOn(P,W)
+    ///,
+    Caveat => {"not yet working for singular components"},
+    SeeAlso=>{WitnessSet, isOn}
+    }
+
+{*-------- TEMPLATE ------------------
+document {
+    Key => {,},
+    Headline => "",
+    Usage => "",
+    Inputs => { ""=>"" },
+    Outputs => { "" },
+    "", 
+    EXAMPLE lines ///
+    ///,
+    Caveat => {"" },
+    SeeAlso=>{()}
+    }
+*}
