@@ -41,12 +41,16 @@ TEST ///
           })
 ///
 
-TEST ///
+///
   -- This is a crashing strange memory type bug
   debug loadPackage "EngineTests"
   R = ZZpFFPACK 2
   for i from 1 to 100 do
   (<< "i="<< i<<endl; testRankProfile R; debug Core)
+
+
+  M = mutableMatrix matrix(R, {{0, 28, 16, -43, 21, 39, -49}, {0, 42, 24, -7, 7, 45, -8}, {0, -30, -46, -48, -16, -19, -27}})
+  columnRankProfile M
 
 ///
 

@@ -50,7 +50,7 @@ fieldsFLINT = {
     "ZZpFlint 9223372036854775783"
     }
 
-fieldsFFPACK = if hasFFPACK then{
+fieldsFFPACK = if hasFFPACK and false then{
     "ZZpFFPACK 2",
     "ZZpFFPACK 3",
     "ZZpFFPACK 5",
