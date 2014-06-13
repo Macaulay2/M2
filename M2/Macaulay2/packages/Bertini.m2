@@ -241,7 +241,7 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
           
      )
 
-stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
+stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6, ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
 stageTwoParameterRun (String, List) := o -> (dir, F) -> (
   copyFile(dir|"/nonsingular_solutions",dir|"/start");
@@ -907,7 +907,7 @@ local R;
             pt.NewtonResidual = value(cleanupOutput(first l)); l=drop(l,1);
             pt.LastT = value(cleanupOutput(first l)); l=drop(l,3);
             pt.CycleNumber = value(first l); l=drop(l,1);
-            if(value(first l)=!=1) then pt.SolutionStatus=FailedPath;       
+            if(value(first l)=!=1) then pt.SolutionStatus=FailedPath else pt.SolutionStatus=null;       
 	    l=drop(l,1);
             pt.SolutionNumber = value(first l);
      	    solNum=pt.SolutionNumber;
