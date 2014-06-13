@@ -534,14 +534,9 @@ callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
 
 checkConditionNumber=(listOfPoints, tolerance)->(
     for i in listOfPoints do 
-<<<<<<< HEAD
       if i.ConditionNumber>tolerance and i.SolutionStatus=!=FailedPath 
         and i.SolutionStatus=!=RefinementFailure
       then i.SolutionStatus=Singular)
-=======
-      if i.ConditionNumber>10^10 then i.SolutionStatus=Singular)
-
->>>>>>> FETCH_HEAD
 
 checkMultiplicity=(listOfPoints)->(
     for i in listOfPoints do
