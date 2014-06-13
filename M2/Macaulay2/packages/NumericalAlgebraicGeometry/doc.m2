@@ -22,12 +22,14 @@ document {
      
      HEADER3 "Basic functions:",
      UL{
-	  TO track,
-	  TO solveSystem,
-	  TO refine,
-	  TO totalDegreeStartSystem,
-	  TO numericalIrreducibleDecomposition
-	  },
+	 TO track,
+	 TO solveSystem,
+	 TO refine,
+	 TO totalDegreeStartSystem,
+	 TO numericalIrreducibleDecomposition,
+     	 TO sample,
+     	 TO (isSubset,NumericalVariety,NumericalVariety),
+	 },
      "Some of the basic computations can be outsourced to ", TO "Bertini", " and ", TO "PHCpack", 
      " (look for ", TO Software, " option).",
      
@@ -42,17 +44,22 @@ document {
      TO NAGtrace,
      --     TO toAffineChart,     
      TO newton,
+     TO numericalRank,
+     TO isOn,
      TO union,
      TO removeRedundantComponents,
-     TO sample,
+--     TO ("==",NumericalVariety,NumericalVariety)
      },
+
+     HEADER3 {"Functions related to scheme analysis:"},
+     UL{
+	 TO isPointEmbedded,
+	 TO isPointEmbeddedInCurve,
+	 TO colon,
+	 },
+
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
-     HEADER3 "Other functions:",
-     UL { 
-	 TO numericalRank,
-	 TO isOn,
-	 },
 
      HEADER3 {"References:"},
      UL{
@@ -65,7 +72,8 @@ document {
 
 document {
 	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
-	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
+	     SingularConditionNumber, [setDefault, SingularConditionNumber], 
+	     [refine, SingularConditionNumber],  [track,SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
@@ -97,7 +105,7 @@ document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatch
      	} 
 
 document {
-	Key => {(solveSystem, List),solveSystem},
+	Key => {(solveSystem, List),solveSystem,(solveSystem,PolySystem)},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
@@ -120,7 +128,7 @@ solveSystem F
 
 
 document {
-	Key => { (track, List, List, List), track, 
+	Key => { (track, List, List, List), track, (track,PolySystem,PolySystem,List),
 	     [track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
 	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
 	     NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
@@ -326,6 +334,7 @@ document {
      Key => {Software,
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
 	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
+	 [numericalIrreducibleDecomposition,Software], [hypersurfaceSection,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -489,14 +498,23 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	}
 								
 document {
-	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold]},
+	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold],
+	    isFullNumericalRank, (isFullNumericalRank,Matrix)},
 	Headline => "numerical rank of a matrix",
-	Usage => "r = numericalRank M",
+	Usage => "r = numericalRank M\nB = isFullNumericalRank M",
 	Inputs => { 
-	     {TT "M", ", a matrix with real or complex entries"}
+	    "M"=>Matrix=>"a matrix with real or complex entries"
 	     },
-	Outputs => {{ TT "r", ", an integer"}},
-	"This function finds an approximate rank of the matrix ", TT "M", ".",
+	Outputs => {
+	    "r"=>ZZ, 
+	    "B"=>Boolean
+	    },
+	PARA {
+	    TO numericalRank, " finds an approximate rank of the matrix ", TT "M", "."
+	    },
+	PARA {
+	    TO isFullNumericalRank, " = ", TT "M", " is _not_ rank-deficient."
+	    },
 	PARA {
 	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
 	    },
@@ -515,7 +533,7 @@ document {
         EXAMPLE lines ///
 numericalRank matrix {{2,1},{0,0.001}}
      	///,
-     	SeeAlso => {SVD}	
+     	SeeAlso => {SVD}
 	}
 
 document {
@@ -658,7 +676,7 @@ document {
     }
 
 document {
-    Key => {(removeRedundantComponents,NumericalVariety),removeRedundantComponents},
+    Key => {(removeRedundantComponents,NumericalVariety), removeRedundantComponents, [removeRedundantComponents,Tolerance]},
     Headline => "remove redundant components",
     Usage => "removeRedundantComponents V",
     Inputs => { "V"},
@@ -667,7 +685,7 @@ document {
     SeeAlso=>{(isSubset,WitnessSet,WitnessSet)}
     }
 document {
-    Key => {(sample,WitnessSet),sample},
+    Key => {(sample,WitnessSet), sample, [sample,Tolerance]},
     Headline => "sample a point on a component",
     Usage => "P = sample W",
     Inputs => { "W" },
@@ -681,6 +699,132 @@ isOn(P,W)
     ///,
     Caveat => {"not yet working for singular components"},
     SeeAlso=>{WitnessSet, isOn}
+    }
+
+document {
+    Key => {deflate,(deflate,Ideal),(deflate,PolySystem,List),(deflate,PolySystem,Matrix),
+	(deflate,PolySystem,Point),(deflate,PolySystem,Sequence),(deflate,PolySystem,ZZ),
+	Deflation, DeflationSequence, DeflationRandomMatrix, -- attached to a PolySystem
+	liftPointToDeflation,(liftPointToDeflation,Point,PolySystem,ZZ),
+	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
+	deflateInPlace, (deflateInPlace,Point,PolySystem), 
+	SquareUp, [deflateInPlace,SquareUp], -- whether to square up at each step
+	},
+    Headline => "first-order deflation",
+    "Deflate a polynomial system to restore quadratic convergence of Newton's method", 
+    Caveat => {"Needs more documentation!!!"},
+    SeeAlso=>{PolySystem,newton}
+    }
+
+document {
+    Key => {(isSubset,NumericalVariety,NumericalVariety), (isSubset,WitnessSet,WitnessSet)},
+    Headline => "check containment",
+    Usage => "B = isSubset(V,W)",
+    Inputs => { 
+	"V"=>{" or ", ofClass WitnessSet}, 
+	"W"=>{" or ", ofClass WitnessSet} 
+	},
+    Outputs => { "B"=>Boolean },
+    "Checks containment of one variety represented numerically in the other.", 
+    Caveat => {"Does not work for singular components."},
+    SeeAlso=>{WitnessSet,isOn}
+    }
+
+document {
+    Key => {
+	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
+	AllVisible, [isPointEmbedded,AllVisible],
+	},
+    Headline => "determine if the point is an embedded component of the scheme",
+    Usage => "B = isPointEmbedded(P,I,C)",
+    Inputs => { 
+	"P", 
+	"I",
+	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
+
+document {
+    Key => {
+	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
+	},
+    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
+    Usage => "B = isPointEmbeddedInCurve(P,I)",
+    Inputs => { 
+	"P", 
+	"I"
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
+
+document {
+    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal)},
+    Headline => "colon of a (truncated) dual space",
+    Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
+    Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
+    Outputs => { "Dg, DJ"=>DualSpace },
+    "Computes (a part of) the dual space of the dual. See",
+    PARA { refKroneLeykin },
+    "for a description."
+    }
+
+document {
+    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem, Matrix), 
+	SquaredUpSystem, SquareUpMatrix
+	},
+    Headline => "square up a polynomial system",
+    Usage => "G = squareUp F\nG = squareUp(F,M)",
+    Inputs => { 
+	"F"=>PolySystem,
+	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"}  
+	},
+    Outputs => { "G"=>PolySystem },
+    "Squares up an overdetermined polynomial system. Attaches keys ", 
+    TO SquareUpMatrix, " and ", TO SquaredUpSystem,
+    " to ", TT "F", ".", 
+    EXAMPLE lines ///
+    CC[x,y]; F = polySystem {x^2+y^2,x^3+y^3,x^4+y^4}
+    G := squareUp F
+    peek F
+    ///,
+    SeeAlso=>{PolySystem}
+    }
+
+document {
+    Key => {
+	numericalIntersection, (numericalIntersection,NumericalVariety,Ideal), 
+	(numericalIntersection,NumericalVariety,NumericalVariety), (numericalIntersection,WitnessSet,WitnessSet),
+	hypersurfaceSection, (hypersurfaceSection,NumericalVariety,RingElement)
+	},
+    Headline => "intersection of numerical varieties",
+    Caveat => {"Under construction!!!"}
+    }
+
+document {
+    Key => {(isSolution,Point,PolySystem), isSolution},
+    Headline => "check if a point satisfies a polynomial system approximately",
+    Caveat => {"Either rewrite or phase out!!!"}
+    }
+
+document {
+    Key => {(parameterHomotopy,List,List,List),parameterHomotopy},
+    Headline => "solve a parametric system of equations",
+    "Solves a parameteric polynomial system for several values of parameters.", 
+    Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
+    }
+
+document {
+    Key => {(trackSegment,PolySystem,Number,Number,List), trackSegment},
+    Headline => "track the one-parametric homotopy",
+    "Tracks a homotopy on a linear segment in complex plane..",
+    Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
     }
 
 {*-------- TEMPLATE ------------------

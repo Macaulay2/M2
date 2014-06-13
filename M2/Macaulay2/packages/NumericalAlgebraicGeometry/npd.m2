@@ -2,7 +2,7 @@
 -- functions related to numerical primary decomposition
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 -------------------------------------------------------
-export { isPointEmbedded, isPointEmbeddedInCurve, AllVisible, interpolate }
+export { isPointEmbedded, isPointEmbeddedInCurve, AllVisible }
 
 debug NumericalHilbert
 
@@ -21,7 +21,6 @@ isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witne
 	    -- a list of polynomials forming a basis of J_d (vector
 	    -- space), where J is the "part" of the decomposition of I
 	    -- corresponding to the components given in C.
-	    -- Use doubleTruncation?
 	    if dim R_d - dim Jd != hilbertFunction(d, monomialIdeal gCs) then return true; -- is there a better way?
 	    )
 	else (
@@ -49,6 +48,8 @@ isPointEmbedded(Point, Ideal, List) := o -> (p,I,C) -> ( -- C is a list of witne
 	)
     )
 
+interpolate = method()
+interpolate (Point,Ideal,List,ZZ) := (p,I,C,d) -> error "not implemented"
 
 TEST ///
 restart
