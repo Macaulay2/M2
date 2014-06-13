@@ -562,7 +562,7 @@ doc ///
 	       over the complex numbers.  This data can be used to numerically find combinatorial information about 
 	       the ideal, such as the Hilbert regularity.
 	  Text
-	       Methods for computing local dual spaces:
+	       Methods for computing and manipulating local dual spaces:
 	       @UL {
 		   {TO "truncatedDual"},
 		   {TO "zeroDimensionalDual"},
@@ -570,20 +570,11 @@ doc ///
 		   {TO "localHilbertRegularity"},
 		   {TO "gCorners"},
 		   {TO "sCorners"}
-		   }@
-	  Text
-	       Methods for manipulating @TO PolySpace@s and @TO DualSpace@s, defined in @TO NAGtypes@:
-	       @UL {
-		   {TO "areEqual"},
-		   {TO "isContained"},
-		   {TO "addition"},
-		   {TO "intersection"},
 		   {TO "innerProduct"},
-		   {TO "colon"},
                    {TO "reduceSpace"}
 		   }@
 	  Text
-	       Some numerical linear algebra methods:
+	       Ancillary numerical linear algebra methods:
 	       @UL {
 		   {TO "numericalKernel"},
 		   {TO "numericalImage"},
@@ -646,7 +637,10 @@ doc ///
 	  Example
 	       R = CC[x,y];
 	       I = ideal{(y-1)^2,y-x^2}
-	       S = zeroDimensionalDual(point matrix{{1,1}}, I)
+	       p = point matrix{{1,1}};
+	       S = zeroDimensionalDual(p, I)
+	  Caveat
+	       The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
 doc ///
@@ -655,7 +649,6 @@ doc ///
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
 	  [gCorners,Strategy]
-	  [gCorners,ProduceSB]
      Headline
           generators of the initial ideal of a polynomial ideal
      Usage
@@ -669,6 +662,18 @@ doc ///
 	       generators of the initial ideal in a one-row matrix
      Description
           Text
+	       Computes the generators of the initial ideal of an ideal, with respect to a local order.  The ring of the
+	       ideal should be given a (global) monomial order and the local order will be taken to be the reverse order.
+	       The point p is moved to the origin, so the monomial generators represent terms of the Taylor expansion at p.
+	  Text
+	       If the optional argument @TT ProduceSB@ is set to true, the output is instead a matrix of elements of the ideal
+	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{x^2-y^2}
+	       p = point matrix{{1,1}};
+	       G = gCorners(p, I)
+	       S = gCorners(p, I, ProduceSB=>true)
 	       
 ///
 
@@ -691,7 +696,12 @@ doc ///
 	       socle corners in a one-row matrix
      Description
           Text
-	       
+	       Computes the maximal monomials which are not in the monomial ideal, i.e. the "socle-corners".
+	  Example
+	       R = CC[x,y,z];
+	       I = monomialIdeal{x^2,y^2,z^2}
+	       S = sCorners I
+	       S = sCorners I^2
 ///
 
 doc ///
@@ -712,7 +722,17 @@ doc ///
           d:ZZ
      Description
           Text
-	       
+	       The gCorners of the ideal are computed in order to find the Hilbert polynomial, which is
+	       compared to the Hilbert function to find the degree of regularity, which is the degree at
+	       which the two become equal.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{x^2,x*y}
+	       d = localHilbertRegularity(origin R, I)
+	       D = truncatedDual(origin R, I, 3)
+	       L = hilbertFunction({0,1,2,3}, D)
+	  Text
+	       See also @TO gCorners@.
 ///
 
 
@@ -737,7 +757,22 @@ doc ///
           S:DualSpace
      Description
           Text
-	       
+	       Given a list of variable indices, compute the a basis for all dual elements
+	       orthogonal to I which have total degree in the variables on the list bounded by d.
+	       This function generalizes @TO truncatedDual@ in that if v includes all the variables
+	       in the ring, then its behavior is the same.
+	  Caveat
+	       The space of dual elements satisying the conditions is not in general of finite dimension.
+	       If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
+	       termination, the local dimension of I at p should not exceed the length of v, and certain genericity
+	       constraints on the coordinates must be met.
+	  Example
+	       R = CC[x,y];
+	       I = ideal{x^2-y^3}
+	       eliminatingDual(origin R, I, {0}, 2)
+	       eliminatingDual(origin R, I, {0,1}, 2)
+	  Text
+	       See also @TO truncatedDual@.
 ///
 
 doc ///
@@ -880,6 +915,7 @@ doc ///
 doc ///
      Key
 	  ProduceSB
+	  [gCorners,ProduceSB]
      Headline
           optional argument for gCorners
      Description
