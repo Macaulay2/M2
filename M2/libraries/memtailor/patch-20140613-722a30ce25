@@ -10,67 +10,6 @@ diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/li
  
  # tell Libtool what the name of the library is.
  lib_LTLIBRARIES = libmemtailor.la
-diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/configure.ac memtailor-20140613-722a30ce25/configure.ac
---- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/configure.ac	2013-08-09 10:00:19.000000000 -0500
-+++ memtailor-20140613-722a30ce25/configure.ac	2014-06-14 16:14:54.000000000 -0500
-@@ -10,6 +10,8 @@
- dnl  contain this file then it knows that the directory is wrong.
- AC_CONFIG_SRCDIR([src/memtailor.h])
- 
-+AM_PROG_AR
-+
- dnl ----- The gtest dependency
- 
- AC_ARG_WITH([gtest], AS_HELP_STRING(
-@@ -19,18 +21,18 @@
-       of the gtest documentation, gtest is compiled with the tests, so an
-       installed gtest is not usable - you need the gtest source. GTEST_PATH
-       indicates where to look for gtest and it is also where gtest
--      will be downloaded to if not found. The default path is srcdir/libs so
-+      will be downloaded to if not found. The default path is srcdir/libs/gtest/ so
-       that gtest needs to be at srcdir/libs/gtest/ where srcdir is the
-       base of the directory being configured from.]
- ))
- 
- AC_MSG_CHECKING([for gtest])
--AS_IF([test "x$GTEST_PATH" == "x"], [GTEST_PATH="$srcdir/libs"])
-+AS_IF([test "x$GTEST_PATH" == "x"], [GTEST_PATH="$srcdir/libs/gtest"])
- AS_IF([test "x$GTEST_VERSION" == "x"], [GTEST_VERSION="1.6.0"])
- AS_IF([test "x$with_gtest" == "x"], [with_gtest="download"])
- 
- AS_IF([test "x$with_gtest" == "xdownload"],
--  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
-+  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
-     mkdir -p "$GTEST_PATH";
-     (
-       cd $GTEST_PATH;
-@@ -41,7 +43,7 @@
-       rm -rf gtest/
-       mv gtest-$GTEST_VERSION/ gtest/
-     );
--    if test ! -e "$GTEST_PATH/gtest/src/gtest-all.cc"; then
-+    if test ! -e "$GTEST_PATH/src/gtest-all.cc"; then
-       AC_MSG_WARN([Failed to download or extract gtest.]);
-       with_gtest="no";
-     else
-@@ -49,7 +51,7 @@
-     fi
-   ])],
-   [test "x$with_gtest" == "xyes"], [
--    AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
-+    AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
-       AC_MSG_ERROR([could not find gtest source at path $GTEST_PATH.])
-     ])
-   ],
-@@ -57,7 +59,7 @@
-   [AC_MSG_ERROR([invalid value $with_gtest for with_gtest.])]
- )
- AS_IF([test "x$with_gtest" == "xyes"],
--  [GTEST_CFLAGS="-I`cd $GTEST_PATH/gtest/include; echo $PWD` -I`cd $GTEST_PATH/gtest/; echo $PWD`"]);
-+  [GTEST_CFLAGS="-I$GTEST_PATH/include -I$GTEST_PATH"]);
- AM_CONDITIONAL(with_gtest, test "x$with_gtest" == "xyes")
- 
- DEPS_CFLAGS="$GTEST_CFLAGS"
 diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/src/memtailor/stdinc.h memtailor-20140613-722a30ce25/src/memtailor/stdinc.h
 --- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/src/memtailor/stdinc.h	2013-08-09 10:00:19.000000000 -0500
 +++ memtailor-20140613-722a30ce25/src/memtailor/stdinc.h	2014-06-14 15:40:31.000000000 -0500
@@ -94,3 +33,65 @@ diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/li
 -// enter the src directory.
 -#include <../src/gtest-all.cc>
 +#include "src/gtest-all.cc"
+diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/configure.ac memtailor-20140613-722a30ce25/configure.ac
+--- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/configure.ac	2013-08-09 10:00:19.000000000 -0500
++++ memtailor-20140613-722a30ce25/configure.ac	2014-06-14 18:01:51.000000000 -0500
+@@ -10,6 +10,8 @@
+ dnl  contain this file then it knows that the directory is wrong.
+ AC_CONFIG_SRCDIR([src/memtailor.h])
+ 
++AM_PROG_AR
++
+ dnl ----- The gtest dependency
+ 
+ AC_ARG_WITH([gtest], AS_HELP_STRING(
+@@ -19,18 +21,19 @@
+       of the gtest documentation, gtest is compiled with the tests, so an
+       installed gtest is not usable - you need the gtest source. GTEST_PATH
+       indicates where to look for gtest and it is also where gtest
+-      will be downloaded to if not found. The default path is srcdir/libs so
++      will be downloaded to if not found. The default path is srcdir/libs/gtest/ so
+       that gtest needs to be at srcdir/libs/gtest/ where srcdir is the
+       base of the directory being configured from.]
+ ))
+ 
+ AC_MSG_CHECKING([for gtest])
+-AS_IF([test "x$GTEST_PATH" == "x"], [GTEST_PATH="$srcdir/libs"])
++AS_IF([test "x$GTEST_PATH" == "x"], [GTEST_PATH="$srcdir/libs/gtest"])
+ AS_IF([test "x$GTEST_VERSION" == "x"], [GTEST_VERSION="1.6.0"])
+ AS_IF([test "x$with_gtest" == "x"], [with_gtest="download"])
+ 
+ AS_IF([test "x$with_gtest" == "xdownload"],
+-  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
++  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
++    echo "downloading of gtest disabled" >&2; exit 1
+     mkdir -p "$GTEST_PATH";
+     (
+       cd $GTEST_PATH;
+@@ -41,7 +44,7 @@
+       rm -rf gtest/
+       mv gtest-$GTEST_VERSION/ gtest/
+     );
+-    if test ! -e "$GTEST_PATH/gtest/src/gtest-all.cc"; then
++    if test ! -e "$GTEST_PATH/src/gtest-all.cc"; then
+       AC_MSG_WARN([Failed to download or extract gtest.]);
+       with_gtest="no";
+     else
+@@ -49,7 +52,7 @@
+     fi
+   ])],
+   [test "x$with_gtest" == "xyes"], [
+-    AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
++    AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
+       AC_MSG_ERROR([could not find gtest source at path $GTEST_PATH.])
+     ])
+   ],
+@@ -57,7 +60,7 @@
+   [AC_MSG_ERROR([invalid value $with_gtest for with_gtest.])]
+ )
+ AS_IF([test "x$with_gtest" == "xyes"],
+-  [GTEST_CFLAGS="-I`cd $GTEST_PATH/gtest/include; echo $PWD` -I`cd $GTEST_PATH/gtest/; echo $PWD`"]);
++  [GTEST_CFLAGS="-I$GTEST_PATH/include -I$GTEST_PATH"]);
+ AM_CONDITIONAL(with_gtest, test "x$with_gtest" == "xyes")
+ 
+ DEPS_CFLAGS="$GTEST_CFLAGS"
