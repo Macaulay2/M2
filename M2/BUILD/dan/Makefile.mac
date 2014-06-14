@@ -92,6 +92,10 @@ DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 
+# for the linalg branch:
+CONFIGOPTIONS += --enable-fflas-ffpack --enable-givaro --enable-linbox --enable-flint --enable-mathic --enable-mathicgb --enable-memtailor
+CONFIGOPTIONS += --enable-build-libraries=pari
+
 default: all
 
 ifeq ($(PRODUCTION),yes)
