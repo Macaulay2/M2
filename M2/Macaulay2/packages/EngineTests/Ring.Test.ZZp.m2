@@ -19,6 +19,34 @@ testGFGenerator = (R) -> (
         << "no generator for " << describe R << endl;
     )
 
+minpoly = (f) -> (
+    -- under construction
+    R := ring f;
+    A := ambient R;
+    d := R.degree;
+    L := matrix{for i from 0 to d list lift(f^i, A)};
+    last coefficients L
+    )
+
+isGen = (f) -> (
+    R := ring f;
+    nelems := R.order;
+    facs := (nelems-1)//factor//toList/toList/first;
+    for s in facs do if f^((nelems-1)//s) == 1 then return false;
+    true
+    )
+
+debug Core
+testGeneratorNotPrimitive = () -> (
+    -- let's make a GF whose primitive element is not the generator
+    -- under construction...
+    a := local a;
+    R := ZZ/5[a];
+    rawConwayPolynomial(5,4,false);
+    kk := GF(5,4);
+    isGen (a^2);
+    )
+
 fieldsGFFlintBig1 = {
     ///GF(2,2, Strategy=>"FlintBig")///,
     ///GF(2,3, Strategy=>"FlintBig")///,
@@ -40,6 +68,7 @@ fieldsGFFlintBig1 = {
     }
 
 TEST ///
+    debug EngineTests
     debug Core
     runTests(finitefields, {"testGFGenerator"}, set{})
     runTests(fieldsGFFlint, {"testGFGenerator"}, set{})
@@ -240,6 +269,26 @@ TEST ///
       );
 ///
 
+TEST ///
+  debug Core
+  rawConwayPolynomial(5,2,false) == {2,4,1}
+  rawConwayPolynomial(5,7,false) == {3, 3, 0, 0, 0, 0, 0, 1}
+  rawConwayPolynomial(5,11,false) == {3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
+  rawConwayPolynomial(5,34,false) == {}
+
+  char5s = {{2, {2, 4, 1}}, 
+      {3, {3, 3, 0, 1}}, 
+      {4, {2, 4, 4, 0, 1}}, 
+      {5, {3, 4, 0, 0, 0, 1}}, 
+      {6, {2, 0, 1, 4, 1, 0, 1}}, 
+      {7, {3, 3, 0, 0, 0, 0, 0, 1}}, 
+      {8, {2, 4, 3, 0, 1, 0, 0, 0, 1}}, 
+      {9, {3, 1, 0, 2, 0, 0, 0, 0, 0, 1}}, 
+      {10, {2, 1, 4, 2, 3, 3, 0, 0, 0, 0, 1}}}  
+  ans := for i from 2 to 10 list {i, rawConwayPolynomial(5,i,false)};
+  assert(ans == char5s);
+///
+
 ///
   -- This is more of a benchmark code, than a test...
   debug Core
@@ -303,24 +352,6 @@ TEST ///
   time LUdecomposition Ma5;
 ///
 
-///
-  restart
-  debug Core
-  R = ZZ/5[a]
-  new R from rawFindConwayPolynomial(5,2,raw R,false)
-  new R from rawFindConwayPolynomial(5,3,raw R,false)
-  new R from rawFindConwayPolynomial(5,30,raw R,false)
-  rawFindConwayPolynomial(5,20,raw R,true)
-  rawFindConwayPolynomial(5,32,raw R,false)
-    rawFindConwayPolynomial(5,32,raw R,true)
-  ambient GF 125
-  for i from 2 to 40 list new R from rawFindConwayPolynomial(5,i,raw R,true) -- crashes!
-  for i from 2 to 40 list {i, new R from rawFindConwayPolynomial(5,i,raw R,true)}
-  
-  for i from 2 to 10 list {i, new R from rawFindConwayPolynomial(5,i,raw R,false)}
-  
-  for i from 2 to 10 list {i, rawConwayPolynomial(5,i,false)}  
-///
 
 TEST ///
   kk = GF 9

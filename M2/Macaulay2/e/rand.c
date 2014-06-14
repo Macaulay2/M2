@@ -38,6 +38,11 @@ void rawSetRandomMax(gmp_ZZ newHeight)
   mpz_set(maxHeight, newHeight);
 }
 
+unsigned long rawRandomULong(unsigned long max)
+{
+  return gmp_urandomm_ui(state, max);
+}
+
 int32_t rawRandomInt(int32_t max)
 /* generate a random number in the range 0..max-1 */
 {

@@ -184,13 +184,17 @@ namespace M2 {
 
     void random(ElementType &result) const
     {
+      result = rawRandomULong(mCharac);
+    }
+#if 0 
+    {     
       fmpz a;
       fmpz_init(&a);
       fmpz_randm(&a, mRandomState, mFmpzCharac);
       result = fmpz_get_ui(&a);
       fmpz_clear(&a);
     }
-
+#endif
     void eval(const RingMap *map, const ElementType f, int first_var, ring_elem &result) const;
 
     ////////////////////////////
