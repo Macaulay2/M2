@@ -735,18 +735,17 @@ AC_SUBST(BUILTLIBS,)
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
 
-# a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
+# A library is listed in BUILD_ALWAYS if we *always* build it, 
 # even if the option "--disable-building" is specified:
-BUILD_ALWAYS=" missing gtest "
+BUILD_ALWAYS=" missing gtest flint"
+# We need to build flint ourselves so our "CPimport" patch can be installed, and so we can configure it with the --with-gc option.
 
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
-for i in $PROGLIST
+for i in $PROGLIST $BUILD_ALWAYS
 do eval BUILD_$i=yes
 done
-
-BUILD_missing=yes
 
 LIBLIST=" $LIBLIST "
 AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
@@ -754,7 +753,6 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
     do case $LIBLIST in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
-		BUILD_ALWAYS="$BUILD_ALWAYS $i"
 	    	;;
 	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
        esac
@@ -769,8 +767,6 @@ AC_ARG_ENABLE(fflas-ffpack,
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
     )
-
-BUILD_gtest=yes
 
 AC_SUBST(ENABLE_MEMTAILOR,no)
 AC_ARG_ENABLE(memtailor,
