@@ -817,11 +817,11 @@ export rawARingGFPolynomial(e:Expr):Expr := (
      else WrongArg("a raw ring"));
 setupfun("rawARingGFPolynomial",rawARingGFPolynomial);
 
-export rawARingGFGenerator(e:Expr):Expr := (
+export rawMultiplicativeGenerator(e:Expr):Expr := (
      when e
-     is R:RawRingCell do toExpr( Ccode(RawRingElementOrNull, "rawARingGFGenerator(", R.p, ")" ) )
+     is R:RawRingCell do toExpr( Ccode(RawRingElementOrNull, "rawMultiplicativeGenerator(", R.p, ")" ) )
      else WrongArg("a raw ring"));
-setupfun("rawARingGFGenerator",rawARingGFGenerator);
+setupfun("rawMultiplicativeGenerator",rawMultiplicativeGenerator);
 
 
 export rawARingGFCoefficients(e:Expr):Expr := (

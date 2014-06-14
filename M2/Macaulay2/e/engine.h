@@ -193,7 +193,7 @@ extern "C" {
      ring over ZZ/p.  This function returns {f0, f1, ..., f_(d-1)},
      where each entry is an integer */
 
-  const RingElement*  rawARingGFGenerator(const Ring *R);
+  const RingElement*  rawMultiplicativeGenerator(const Ring *R);
   /* given an ARingGF, return the  the generator of the multiplicative group.
     */
 
@@ -576,7 +576,7 @@ extern "C" {
   const RingElement /* or null */ *rawSchurSnTensorMult(const RingElement *f, const RingElement *g);
   /* the tensor multiplication function in SchurSnRing */
 
-  int rawDiscreteLog(const RingElement *h); /* drg: connected */
+  long rawDiscreteLog(const RingElement *h); /* drg: connected */
   /* returns -1 if h is 0, or if elements of the ring of h
      are not represented as powers of a primitive element.
      Otherwise returns an integer in the range 0..q-1 */

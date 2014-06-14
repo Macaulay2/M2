@@ -52,6 +52,10 @@ namespace M2 {
       return result;
     }
 
+    void getGenerator(elem& gen) const { gen = mGenerator; }
+
+    long discreteLog(const elem& a) const; // returns -1 if a is 0
+
     void text_out(buffer &o) const;
 
     /////////////////////////////////
@@ -214,6 +218,7 @@ namespace M2 {
     size_t mCharac;  // not needed, as it is in mModulus
     mutable flint_rand_t mRandomState;
     fmpz_t mFmpzCharac;
+    mp_limb_t mGenerator; // do we need to compute this eagerly?
   };
 
 };

@@ -629,10 +629,11 @@ gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
   return 0;
 }
 
+#if 0
 int rawDiscreteLog(const RingElement *h)
 {
   const Ring *R = h->get_ring();
-
+  
   const Z_mod *RP = R->cast_to_Z_mod();
   if (RP != 0)
     return RP->discrete_log(h->get_value());
@@ -643,6 +644,25 @@ int rawDiscreteLog(const RingElement *h)
 
   // Returns -1 if either h is zero, or the ring of h doesn't have a discrete log algorithm
   return -1;
+}
+#endif
+
+long rawDiscreteLog(const RingElement *h)
+{
+  try
+    {
+      const Ring *R = h->get_ring();
+      return R->discreteLog(h->get_value());
+    }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return -1;
+  }
+}
+
+const RingElement* rawMultiplicativeGenerator(const Ring *R)
+{
+  return R->getGenerator();
 }
 
 const RingElement /* or null */ *IM2_RingElement_make_var(const Ring *R, int v)

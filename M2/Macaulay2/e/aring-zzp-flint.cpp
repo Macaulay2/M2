@@ -14,6 +14,8 @@ namespace M2 {
     flint_randinit(mRandomState);
     fmpz_init(mFmpzCharac);
     fmpz_set_ui(mFmpzCharac, mCharac);
+    mGenerator = n_primitive_root_prime(mCharac);
+    printf("generator is %lu\n", mGenerator);
   }
 
   ARingZZpFlint::~ARingZZpFlint()
@@ -47,6 +49,13 @@ namespace M2 {
   void ARingZZpFlint::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
     result = map->get_ring()->from_long(f);
+  }
+
+  long ARingZZpFlint::discreteLog(const elem& a) const
+  {
+    if (is_zero(a)) return -1;
+    long result = n_discrete_log_bsgs(a, mGenerator, mCharac);
+    return result;
   }
 
 };

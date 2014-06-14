@@ -260,27 +260,6 @@ M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 }
 
 
-const RingElement* rawARingGFGenerator(const Ring *R)
-{
-  return R->getGenerator();
-#if 0
-#if defined(HAVE_GIVARO)
- const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
-  if (RGF == 0)
-    {
-      ERROR("expected a GaloisField");
-      return 0;
-    }
-  const M2::ARingGFGivaro &A = RGF->ring();
-  return RingElement::make_raw( R, A.getGenerator() );
-#else
-  ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
-  return 0;
-#endif
-#endif
-}
-
-
 M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 {
 #if defined(HAVE_GIVARO)

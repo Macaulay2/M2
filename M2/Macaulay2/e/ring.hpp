@@ -7,7 +7,7 @@
 #include "ringelem.hpp"
 #include "monoid.hpp"
 #include "aring.hpp"
-
+#include "exceptions.hpp"
 ///// Ring Hierarchy ///////////////////////////////////
 
 class RingZZ;
@@ -212,7 +212,14 @@ public:
 
   // Returns NULL if not a GF.  Returns an element of 'this', whose powers give all non-zero elements
   // of the field.
-  virtual const RingElement* getGenerator() const { return 0; }
+  virtual const RingElement* getGenerator() const { ERROR("not implemented for this ring"); return 0; }
+
+  // For some finite fields, if a = (getGenerator())^r, return r.
+  // If it is not implemented for this ring, an exception is thrown
+  // If a is zero, then r is set to -1.
+  virtual long discreteLog(const ring_elem& a) const { 
+    throw exc::engine_error("cannot compute discrete logarithm in this ring");
+  }
 
   // Returns the element in the polynomial ring A corresponding to the element a.
   // Returns NULL if not a GF field.

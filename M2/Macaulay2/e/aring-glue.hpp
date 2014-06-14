@@ -66,6 +66,10 @@ namespace M2 {
 
     const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
 
+    virtual long discreteLog(const ring_elem& a) const { 
+      throw exc::engine_error("cannot compute discrete logarithm in this ring");
+    }
+
     ////////////////////////////
     // Functions on elements ///
     ////////////////////////////
@@ -585,7 +589,6 @@ namespace M2 {
   //////////////////////
   // This is the second level of dispatch, sending the request
   // to the routines in the namespace ARingTranslate
-  //  namespace ARingTranslate;
 
   namespace RingPromoter {
     template<typename SourceRing, typename TargetRing>
@@ -739,6 +742,7 @@ namespace M2 {
       }
     if (R == globalZZ)
       {
+        printf("error!! lift called with no ZZ lifting method\n");
         // MES:TODO!! WRITE ME
         return true;
       }
@@ -800,6 +804,40 @@ namespace M2 {
       break;
     };
     return false;
+  }
+
+  // Note: the only promotion to 'this' allowed is ZZ --> this, which is covered above this code.
+  // So there is no need to provide a separate 'promote' function
+
+  template<typename RingType> 
+  bool liftToInt(const RingType& R, const Ring *Rg, const ring_elem f, ring_elem &result)
+  {
+    if (Rg == globalZZ)
+      {
+        typename RingType::ElementType a;
+        R.init(a);
+        R.from_ring_elem(a, f);
+        result = Rg->from_long(R.coerceToLongInteger(a));
+        R.clear(a);
+        return true;
+      }
+    return false;
+  }
+
+  template<>
+  inline bool ConcreteRing<ARingZZpFlint>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    return liftToInt(ring(), Rg, f, result);
+  }
+  template<>
+  inline bool ConcreteRing<ARingZZp>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    return liftToInt(ring(), Rg, f, result);
+  }
+  template<>
+  inline bool ConcreteRing<ARingZZpFFPACK>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
+  {
+    return liftToInt(ring(), Rg, f, result);
   }
 
   template<>
@@ -903,21 +941,25 @@ namespace M2 {
   template<>
   inline bool ConcreteRing<ARingQQ>::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   {
-    mpz_t b;
-    mpz_init(b);
-
-    ElementType a;
-    R->init(a);
-    R->from_ring_elem(a, f);
-
-    bool retval = R->lift_to_mpz(b, a);
-    if (retval)
+    if (Rg == globalZZ)
       {
-        result = globalZZ->from_int(b);
+        mpz_t b;
+        mpz_init(b);
+        
+        ElementType a;
+        R->init(a);
+        R->from_ring_elem(a, f);
+        
+        bool retval = R->lift_to_mpz(b, a);
+        if (retval)
+          {
+            result = globalZZ->from_int(b);
+          }
+        mpz_clear(b);
+        R->clear(a);
+        return retval;
       }
-    mpz_clear(b);
-    R->clear(a);
-    return retval;
+    return false;
   }
 
   template<typename RingType>
@@ -1203,6 +1245,11 @@ namespace M2 {
   }
 
   template<>
+  inline const RingElement* ConcreteRing<ARingZZpFlint>::getGenerator()  const
+  {
+    return getGen< ConcreteRing<ARingZZpFlint> >(*this);
+  }
+  template<>
   inline const RingElement* ConcreteRing<ARingGFM2>::getGenerator()  const
   {
     return getGen< ConcreteRing<ARingGFM2> >(*this);
@@ -1221,6 +1268,17 @@ namespace M2 {
   inline const RingElement* ConcreteRing<ARingGFFlintBig>::getGenerator()  const
   {
     return getGen< ConcreteRing<ARingGFFlintBig> >(*this);
+  }
+
+  template<>
+  inline long ConcreteRing<ARingZZpFlint>::discreteLog(const ring_elem& a1)  const
+  {
+    ElementType a;
+    ring().init(a);
+    ring().from_ring_elem(a, a1);
+    long result = ring().discreteLog(a);
+    ring().clear(a);
+    return result;
   }
 
 }; // namespace M2

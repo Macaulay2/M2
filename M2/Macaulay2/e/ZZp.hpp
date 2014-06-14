@@ -47,9 +47,7 @@ public:
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
   
-  int discrete_log(ring_elem a) const; // returns -1 if a is 0
-
-
+  long discreteLog(const ring_elem& a) const; // returns -1 if a is 0
 
 // The following are all the routines required by 'ring'
 
