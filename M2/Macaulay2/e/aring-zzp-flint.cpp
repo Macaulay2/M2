@@ -15,7 +15,6 @@ namespace M2 {
     fmpz_init(mFmpzCharac);
     fmpz_set_ui(mFmpzCharac, mCharac);
     mGenerator = n_primitive_root_prime(mCharac);
-    printf("generator is %lu\n", mGenerator);
   }
 
   ARingZZpFlint::~ARingZZpFlint()

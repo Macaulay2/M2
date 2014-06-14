@@ -1,5 +1,5 @@
 VPATH = @srcdir@
-VERSION = local
+VERSION = 20140613-0d994fb0fa
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i

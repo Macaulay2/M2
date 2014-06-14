@@ -29,6 +29,24 @@ debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
+# the following has all optional libs desired for linalg merge
+opt64-linalg : always
+	mkdir -p builds.tmp/opt64-linalg
+	cd builds.tmp/opt64-linalg; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--disable-ntl-wizard \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-fplll \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
+
 # the following has all optional libs of worth
 opt64-all : always
 	mkdir -p builds.tmp/opt64-all

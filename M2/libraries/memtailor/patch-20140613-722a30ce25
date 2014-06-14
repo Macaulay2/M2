@@ -1,0 +1,12 @@
+diff -ur /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/src/memtailor/stdinc.h memtailor-local/src/memtailor/stdinc.h
+--- /Users/mike/src/M2-git-linalg/M2/BUILD/mike/builds.tmp/opt64-all/libraries/memtailor/tmp/memtailor-20140613-722a30ce25/src/memtailor/stdinc.h	2014-01-03 20:41:47.000000000 -0500
++++ memtailor-20140613-722a30ce25/src/memtailor/stdinc.h	2014-06-10 11:10:39.000000000 -0400
+@@ -98,7 +98,7 @@
+   /// The alignment that memory allocators must ensure. In other words
+   /// allocators must return pointer addresses that are divisible by
+   /// MemoryAlignment. MemoryAlignment must be a power of 2.
+-  static const unsigned int MemoryAlignment = sizeof(void*);
++  static const unsigned int MemoryAlignment = static_cast<unsigned int>(sizeof(void*));
+ 
+   static const unsigned int BitsPerByte = 8;
+ }

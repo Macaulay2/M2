@@ -1,5 +1,5 @@
 VPATH = @srcdir@
-VERSION = local
+VERSION = 20140613-66b5d74f84
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
