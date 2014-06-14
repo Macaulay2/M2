@@ -61,9 +61,33 @@ M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
   return o.to_string();
 }
 
+
 unsigned long IM2_MutableMatrix_hash(const MutableMatrix *M)
 {
   return M->get_hash_value();
+}
+
+MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S, 
+                                                     const MutableMatrix *f)
+{
+  // Given a natural map i : R --> S
+  // f is a matrix over R.
+  // returns a matrix over S.
+  auto result = MutableMatrix::zero_matrix(S, f->n_rows(), f->n_cols(), f->is_dense());
+  return result;
+}
+
+MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, 
+                                                  const Ring* R, 
+                                                  const MutableMatrix *f)
+{
+  // Given a natural map i : R --> S
+  // f is a matrix over S.
+  // returns a matrix over R.
+
+  auto result = MutableMatrix::zero_matrix(R, f->n_rows(), f->n_cols(), f->is_dense());
+  *success_return = 1;
+  return result;
 }
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)

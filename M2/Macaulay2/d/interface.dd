@@ -1290,7 +1290,12 @@ export rawPromote(e:Expr):Expr := (
 		    "IM2_RingElement_promote(",
 		    R.p,
 		    ",", x.p, ")" ))
-	  else WrongArg(2,"a raw ring element"))
+     	  is x:RawMutableMatrixCell do toExpr( 
+	       Ccode(RawMutableMatrixOrNull,
+		    "rawMutableMatrixPromote(",
+		    R.p,
+		    ",", x.p, ")" ))
+	  else WrongArg(2,"a raw ring element or raw mutable matrix"))
      is M:RawFreeModuleCell do (				    -- M is the new target free module
 	  when a.1 is f:RawMatrixCell do toExpr(
 	       Ccode(RawMatrixOrNull, 
@@ -1309,13 +1314,20 @@ export rawLift(e:Expr):Expr := (
      if length(a) == 2 then 
      when a.0 is R:RawRingCell do (
      	  when a.1 is x:RawRingElementCell do (
-	       r := Ccode(RawRingElementOrNull, 
-		    "IM2_RingElement_lift(",
-		    "&", success, ",",
-		    R.p,
-		    ",", x.p, ")" );
-	       if success == 0 then nullE else toExpr(r))
-	  else WrongArg(2,"a raw ring element"))
+	           r := Ccode(RawRingElementOrNull, 
+		             "IM2_RingElement_lift(",
+		             "&", success, ",",
+		             R.p,
+		             ",", x.p, ")" );
+	           if success == 0 then nullE else toExpr(r))
+          is x:RawMutableMatrixCell do (
+	           m := Ccode(RawMutableMatrixOrNull,
+		             "rawMutableMatrixLift(",
+		             "&", success, ",",
+		             R.p,
+		             ",", x.p, ")" );
+	           if success == 0 then nullE else toExpr(m))
+	  else WrongArg(2,"a raw ring element or rae mutable matrix"))
      is M:RawFreeModuleCell do (				    -- M is the new target free module
 	  when a.1 is f:RawMatrixCell do (
 	       m := Ccode(RawMatrixOrNull, 
@@ -3179,7 +3191,17 @@ export rawRingMapEval(e:Expr):Expr := (
 		    )
 	       )
 	  )
-     else WrongArg(2,"a raw ring element")
+      is a:RawMutableMatrixCell do (
+	  toExpr(Ccode(RawMutableMatrixOrNull,
+		    
+		    "rawRingMapEvalMutableMatrix(",
+		    F.p, ",",
+		    a.p,
+		    ")"
+		    )
+	       )
+	  )
+     else WrongArg(2,"a raw ring element or raw mutable matrix")
      else WrongArg(1,"a raw ring map")
      else if length(s) == 3 then
      when s.0 is F:RawRingMapCell do 
