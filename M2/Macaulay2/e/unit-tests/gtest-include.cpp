@@ -5,9 +5,7 @@
 // the compiler flags are the same, which is the whole point of the                                                                   
 // recommendation to build gtest for each program.                                                                                    
 
-// the .. goes back from the include/ directory of gtest so we can                                                                    
-// enter the src directory.                                                                                                           
-#include <../src/gtest-all.cc>
+#include "src/gtest-all.cc"
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
