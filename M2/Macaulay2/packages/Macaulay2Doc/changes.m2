@@ -81,7 +81,13 @@ document {
               it can be used, but is not done so automatically."},
           LI {"the Macaulay/e engine directory now compiles cleanly, with a few warning messages left."},
           LI {"the overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
-              that because of the high use of templates, compile times have generally increased."}
+              that because of the high use of templates, compile times have generally increased."},
+          LI {"random number generation for finite fields has changed, so programs expecting a specific
+              set of random numbers will change."},
+          LI {"If ", TT "kk", " is a finite field, e.g. ", TT "Z/5[c]/(c^2+c+1)", " it was possible
+              (and still is) to write ", TT "map(ZZ[a], kk)", ".  It was never clear what this
+              should return, as it is not a well-defined ring map.  However, it now has different, 
+              still undefined, behavior."}
      }
  }
  

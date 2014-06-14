@@ -34,8 +34,8 @@ namespace M2 {
                                bool p_plus,
                                bool p_parens) const
   {
-    ElementType n = a;
-    if (n < 0) // can't happen.  TODO: make sure printing is done balanced.
+    long n = coerceToLongInteger(a);
+    if (n < 0)
       {
         o << '-';
         n = -n;
@@ -47,7 +47,8 @@ namespace M2 {
 
   void ARingZZpFlint::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
-    result = map->get_ring()->from_long(f);
+    long a = coerceToLongInteger(f);
+    result = map->get_ring()->from_long(a);
   }
 
   long ARingZZpFlint::discreteLog(const elem& a) const

@@ -15,6 +15,9 @@ extern "C" {
 
   void rawSetRandomMax(gmp_ZZ);
 
+  unsigned long rawRandomULong(unsigned long max);
+  /* generate a random number in the range 0..max-1 */
+
   int32_t rawRandomInt(int32_t max);
   /* generate a random number in the range 0..max-1 */
 
