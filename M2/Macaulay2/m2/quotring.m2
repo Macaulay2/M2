@@ -51,27 +51,28 @@ liftZZmodQQ := (r,S) -> (
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {Strategy => null}) -- values allowed: "FLINT", "FFPACK", "ARING", null
+ZZp = method(Options=> {Strategy => null}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
+      typ := opts#Strategy;
+      if typ === null then typ = "Flint";
      gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
      n := gcd flatten entries gensI;
      if n < 0 then n = -n;
      if n === 0 then 
          ZZ
-     else if savedQuotients#?(opts#Strategy, n) then
-         savedQuotients#(opts#Strategy, n)
+     else if savedQuotients#?(typ, n) then
+         savedQuotients#(typ, n)
      else (
 	  if not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
-      typ := opts#Strategy;
 	  S := new QuotientRing from 
-	    if typ === "FFPACK" then rawARingGaloisField(n,1)  
-        else if typ === "FLINT" then rawARingZZpFlint n
-        else if typ === "ARING" then rawARingZZp n
-        else if typ === null then rawZZp n
-        else error("unknown implementation choice: "|typ);
+	    if typ === "Ffpack" then rawARingGaloisField(n,1)  
+        else if typ === "Flint" then rawARingZZpFlint n
+        else if typ === "Aring" then rawARingZZp n
+        else if typ === "Old" then rawZZp n
+        else error("unknown implementation choice: "|typ|///. Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
 	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;
@@ -170,13 +171,11 @@ ZZquotient := (R,I) -> (
 	  lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
-ZZquotientNEW := (R,I) -> ZZp(R,I,"ARing"=>false)
-
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
-     if R === ZZ then return ZZquotient(R,I);
+     if R === ZZ then return ZZp(I);
      error "can't form quotient of this ring";
      )
 

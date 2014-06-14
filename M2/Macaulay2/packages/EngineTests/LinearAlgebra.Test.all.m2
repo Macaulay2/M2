@@ -1,6 +1,5 @@
 export {
-    tests,
-    runTests
+    tests
     }
     
 debug Core -- for ZZp
@@ -19,20 +18,6 @@ tests = {
     --"testRREF"
     }
 
-runTests = (rings, tests, exceptions) -> (
-    R := rings/(r -> (r,value r));
-    T := tests/(t -> (t,value t));
-    for t in T do for r in R do  (
-        if member((r#0,t#0), exceptions) then (
-            << "xcep " << t#0 << " ring " << r#0 << endl;
-            )
-        else (
-            << "test " << t#0 << " ring " << r#0 << " time ";
-            tim := timing (t#1(r#1));
-            << tim#0 << endl;
-            )
-        )
-    )
 
 TEST ///
   debug Core

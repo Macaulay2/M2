@@ -353,12 +353,12 @@ TEST ///
 
 TEST ///
   debug Core
-  testMutableMatrices(ZZp(101, Strategy=>"FLINT"))
+  testMutableMatrices(ZZp(101, Strategy=>"Flint"))
 ///
 
 TEST ///
   debug Core
-  if hasFFPACK then testMutableMatrices(ZZp(101, Strategy=>"FFPACK"))
+  if hasFFPACK then testMutableMatrices(ZZp(101, Strategy=>"Ffpack"))
 ///
 
 

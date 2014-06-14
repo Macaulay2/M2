@@ -17,7 +17,7 @@ ZZpFFPACK
 ZZpFFPACK  = ( modPrime )->
 (
   assert(isPrime modPrime);
-  ZZp( modPrime, Strategy=>"FFPACK")
+  ZZp( modPrime, Strategy=>"Ffpack")
 )
 
 testSolve$FFPACK = (R) -> (
@@ -26,7 +26,7 @@ testSolve$FFPACK = (R) -> (
     -- now for more complicated examples
     -- FAILING TEST: crashes
     debug Core;
-    R = ZZp(101, Strategy=>"FFPACK");
+    R = ZZp(101, Strategy=>"Ffpack");
     N := 90;
     M := mutableMatrix(R, N, N);
     fillMatrix M;
@@ -83,7 +83,7 @@ TEST ///
   R = ZZpFFPACK( maxFFPACKPrime )
   testLinearAlgebraSet R;
 
-  --R = ZZp(33554467, Strategy => "FFPACK") -- this should not work
-  assert try (R = ZZp(33554467, Strategy => "FFPACK"); false) else true
+  --R = ZZp(33554467, Strategy => "Ffpack") -- this should not work
+  assert try (R = ZZp(33554467, Strategy => "Ffpack"); false) else true
 ///
 

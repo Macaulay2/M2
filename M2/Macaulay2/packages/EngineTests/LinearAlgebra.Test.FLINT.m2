@@ -11,7 +11,7 @@ export {
 
 ZZpFlint = (char) ->
 (
-   ZZp(char, Strategy => "FLINT")
+   ZZp(char, Strategy => "Flint")
 )
 
 
@@ -34,7 +34,7 @@ testLinearAlgebra$FLINT = (rng)->
   -- LUdecomposition
 TEST ///
   debug Core
-  R = ZZp(2, Strategy => "FLINT")
+  R = ZZp(2, Strategy => "Flint")
   testDeterminant R
   testMult R
   testNullspace R;   -- the fillMatrix is not working here...
@@ -108,7 +108,7 @@ TEST ///
   debug Core
   for i from 32500 to 32767 do (
       if isPrime i then (
-          R = ZZp(i, Strategy=>"FLINT");
+          R = ZZp(i, Strategy=>"Flint");
           time testLinearAlgebra$FLINT R
           );
       )
@@ -233,7 +233,7 @@ TEST ///
 TEST ///
   debug Core
   N = 100
-  R = ZZp(101, Strategy=>"FLINT")
+  R = ZZp(101, Strategy=>"Flint")
   R = GF(2^20, Strategy=>"FlintBig")
   R = GF(3^5, Strategy=>"Flint")
   m = mutableMatrix(R,N,N); fillMatrix m;

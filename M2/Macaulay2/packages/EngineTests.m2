@@ -18,11 +18,13 @@ newPackage(
         )
 
 export { 
+   runTests,
    testNorm,
    testClean,
    hasFFPACK,
    hasMGB,
    fields,
+    finitefields,
     fieldsFFPACK,
     fieldsFLINT,
     fieldsGivaro,
@@ -46,8 +48,9 @@ fieldsFLINT = {
     "ZZpFlint 2",
     "ZZpFlint 5",
     "ZZpFlint 101",
-    "ZZpFlint 4611686018427387847",
-    "ZZpFlint 9223372036854775783"
+    "ZZpFlint 8589934669"
+--    "ZZpFlint 4611686018427387847",
+--    "ZZpFlint 9223372036854775783"
     }
 
 fieldsFFPACK = if hasFFPACK and false then{
@@ -72,7 +75,7 @@ fieldsGF = {
     }
 
 fieldsGFFlintBig = {
-    ///GF(2,1, Strategy=>"FlintBig")///,
+--    ///GF(2,1, Strategy=>"FlintBig")///,
     ///GF(2,2, Strategy=>"FlintBig")///,
     ///GF(2,3, Strategy=>"FlintBig")///,
     ///GF(2,4, Strategy=>"FlintBig")///,
@@ -183,6 +186,20 @@ fieldsGFFlint = {
     ///GF(23,2, Strategy=>"Flint")///
     }
 
+finitefields = join({
+    "ZZp 2", 
+    "ZZp 3",
+    "ZZp 5", 
+    "ZZp 101", 
+    "ZZp 32719"},
+    fieldsFLINT,
+    fieldsFFPACK,
+    fieldsGivaro,
+    fieldsGF,
+    fieldsGFFlint,
+    fieldsGFFlintBig
+    )
+
 fields = join({
     "ZZp 2", 
     "ZZp 3",
@@ -224,6 +241,21 @@ ringsCC = {
     "CC_1000",
     "CC_10000"
     }
+
+runTests = (rings, tests, exceptions) -> (
+    R := rings/(r -> (r,value r));
+    T := tests/(t -> (t,value t));
+    for t in T do for r in R do  (
+        if member((r#0,t#0), exceptions) then (
+            << "xcep " << t#0 << " ring " << r#0 << endl;
+            )
+        else (
+            << "test " << t#0 << " ring " << r#0 << " time ";
+            tim := timing (t#1(r#1));
+            << tim#0 << endl;
+            )
+        )
+    )
 
 --load (EngineTests#"source directory"|"EngineTests/test-gbZZ.m2")
 --load (EngineTests#"source directory"|"EngineTests/test-linalg.m2")

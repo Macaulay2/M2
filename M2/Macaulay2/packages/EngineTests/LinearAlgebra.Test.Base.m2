@@ -77,7 +77,7 @@ randomJordanForm = (R, L) -> (
     )
 
 testLinAlgZZpFFPACK = () -> (
-    kk := ZZp(101, Strategy=>"FFPACK");
+    kk := ZZp(101, Strategy=>"Ffpack");
     S := mutableMatrix(kk,3,3);
     fillMatrix S;
     D := mutableMatrix jordanForm(kk, splice{{1,3},4:{0,1},{2,3}});
@@ -172,11 +172,11 @@ benchMult = (R,N) -> (
   benchMult(ZZ/101,300);
 
   debug Core
-  R = ZZp(101, Strategy=>"FLINT")
+  R = ZZp(101, Strategy=>"Flint")
   benchMult(R,300); -- fails, due to row/col major encoding (I think).
 
   debug Core
-  R = ZZp(101, Strategy=>"FFPACK")
+  R = ZZp(101, Strategy=>"Ffpack")
   benchMult(R,10);
   oo#2 == oo#3
 
@@ -199,7 +199,7 @@ benchMult = (R,N) -> (
   (A,B,C,C1) = benchMult(RR_53,300);
 
   debug Core
-  R2 = ZZp(33554393, Strategy=>"FLINT");
+  R2 = ZZp(33554393, Strategy=>"Flint");
   benchMult(R2, 400); -- the multiply routine is the flint one: but it is multiplying the wrong order.
     -- This is caused by row/column major order problem in my (MES) code.
 ///
@@ -526,12 +526,12 @@ testHasEngineLinearAlgebra = () -> (
     -- QQ should have linear algebra set
     assert hasEngineLinearAlgebra QQ; -- when does this get set?
 
-    assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FLINT"));
+    assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"Flint"));
     assert hasEngineLinearAlgebra ZZFlint;
     assert hasEngineLinearAlgebra QQFlint;
 
     if hasFFPACK then (
-        assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"FFPACK"));
+        assert hasEngineLinearAlgebra (ZZp(101, Strategy=>"Ffpack"));
         );
     -- The following do NOT have engine linear algebra yet, but they should:
       assert not hasEngineLinearAlgebra (GF(25));

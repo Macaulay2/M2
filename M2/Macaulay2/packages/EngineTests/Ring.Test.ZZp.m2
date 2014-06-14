@@ -1,8 +1,51 @@
 export {
-    testGFpromote
+    testGFpromote,
+    testGFGenerator
     }
 
 debug Core
+testGFGenerator = (R) -> (
+    -- R should be ZZ/p or a GF.
+    gen := try(
+            new R from rawMultiplicativeGenerator raw R
+            ) else null;
+    if gen =!= null then (
+        nelems := R.order;
+        facs := (nelems-1)//factor//toList/toList/first;
+        for s in facs do (assert(gen^((nelems-1)//s) != 1));
+        assert(gen^(nelems-1) == 1);
+        )
+    else
+        << "no generator for " << describe R << endl;
+    )
+
+fieldsGFFlintBig1 = {
+    ///GF(2,2, Strategy=>"FlintBig")///,
+    ///GF(2,3, Strategy=>"FlintBig")///,
+    ///GF(2,11, Strategy=>"FlintBig")///,
+    ///GF(2,12, Strategy=>"FlintBig")///,
+    ///GF(2,13, Strategy=>"FlintBig")///,
+    ///GF(2,20, Strategy=>"FlintBig")///,
+    ///GF(2,30, Strategy=>"FlintBig")///,
+    ///GF(3,2, Strategy=>"FlintBig")///,
+    ///GF(3,3, Strategy=>"FlintBig")///,
+    ///GF(3,4, Strategy=>"FlintBig")///,
+    ///GF(3,5, Strategy=>"FlintBig")///,
+    ///GF(3,6, Strategy=>"FlintBig")///,
+    ///GF(3,7, Strategy=>"FlintBig")///,
+    ///GF(3,8, Strategy=>"FlintBig")///,
+    ///GF(3,13, Strategy=>"FlintBig")///,
+    ///GF(3,20, Strategy=>"FlintBig")///,
+    ///GF(23,7, Strategy=>"FlintBig")///
+    }
+
+TEST ///
+    debug Core
+    runTests(finitefields, {"testGFGenerator"}, set{})
+    runTests(fieldsGFFlint, {"testGFGenerator"}, set{})
+    runTests(fieldsGFFlintBig1, {"testGFGenerator"}, set{})
+
+///
 
 testFiniteField = (R, charac) -> (
     assert(rawCharacteristic R === charac)
@@ -18,7 +61,7 @@ allElements = (p,d,A) -> (
 
 testGF1 = (p,d,kk) -> (
    A := ambient kk;
-   gen := rawARingGFGenerator raw kk;
+   gen := rawMultiplicativeGenerator raw kk;
    facs := (p^d-1)//factor//toList/toList/first;
    for a in facs do assert(gen^((p^d-1)//a) != 1);
    --rawARingGFPolynomial raw kk;
@@ -46,13 +89,13 @@ TEST ///
   assert try (ZZpFlint 1; false) else true
   assert try (ZZpFFPACK 1; false) else true
   assert try (ZZp(1, Strategy=>null); false) else true
-  assert try (ZZp(1, Strategy=>"ARing"); false) else true
+  assert try (ZZp(1, Strategy=>"Aring"); false) else true
 ///
 
 debug Core
 testGF2 = (p,d,kk) -> (
     << rawARingGFPolynomial raw kk << endl; -- an array
-    << rawARingGFGenerator raw kk << endl; -- in kk
+    << rawMultiplicativeGenerator raw kk << endl; -- in kk
     << rawARingGFCoefficients raw (kk_0^5) << endl; -- an array
     << netList(for i from 0 to p^d-1 list {kk_0^i, rawARingGFCoefficients raw (kk_0^i)}) << endl;
     )
@@ -63,7 +106,7 @@ TEST ///
     kk = GF(9, Strategy=>"Givaro")
     --testGF2(3,2,kk)
     assert(rawARingGFPolynomial raw kk == {2,2,1})
-    assert((new kk from rawARingGFGenerator raw kk) == kk_0)
+    assert((new kk from rawMultiplicativeGenerator raw kk) == kk_0)
     (p,d) = (3,2)
     reps = for i from 0 to 8 list rawARingGFCoefficients raw (kk_0^i)
     assert(reps == {{1, 0}, {0, 1}, {1, 1}, {1, 2}, 
@@ -76,7 +119,7 @@ TEST ///
     kk = GF(32, Strategy=>"Givaro")
     --testGF2(2,5,kk)
     assert(rawARingGFPolynomial raw kk == {1, 0, 1, 0, 0, 1})
-    assert((new kk from rawARingGFGenerator raw kk) == kk_0)
+    assert((new kk from rawMultiplicativeGenerator raw kk) == kk_0)
     (p,d) = (2,5)
     reps = for i from 0 to 31 list rawARingGFCoefficients raw (kk_0^i)
     assert(reps == 
@@ -112,7 +155,7 @@ TEST ///
 TEST ///
   -- Factorization over these finite fields
   debug Core
-  R = ZZp(101, Strategy=>"ARING")
+  R = ZZp(101, Strategy=>"Aring")
   S = R[x]
   F = (x-3)^3*(x^2+x+1)
   factor F 
@@ -127,30 +170,30 @@ TEST ///
   F = (x-3)^3*(x^2+x+1)
   factor F
 
-  R = ZZp(101, Strategy=>"FLINT")
+  R = ZZp(101, Strategy=>"Flint")
   S = R[x]
   F = (x-3)^3*(x^2+x+1)
   factor F  
 
   if hasFFPACK then (
-      R = ZZp(101, Strategy=>"FFPACK");
+      R = ZZp(101, Strategy=>"Ffpack");
       S = R[x];
       F = (x-3)^3*(x^2+x+1);
       factor F
       );
 
-  R = ZZp(65537, Strategy=>"FLINT")
+  R = ZZp(65537, Strategy=>"Flint")
   S = R[x]
   F = (x-3)^3*(x^2+x+1)
   factor F  
 
-  R = ZZp(536870909, Strategy=>"FLINT")  -- max prime that factory can handle is 2^29-3.
+  R = ZZp(536870909, Strategy=>"Flint")  -- max prime that factory can handle is 2^29-3.
   S = R[x]
   F = (x-3)^3*(x^2+x+1)
   factor F  
 
   if hasFFPACK then (
-      R = ZZp(33554393, Strategy=>"FFPACK"); -- max prime that ffpack can handle is 2^25 - 39
+      R = ZZp(33554393, Strategy=>"Ffpack"); -- max prime that ffpack can handle is 2^25 - 39
       S = R[x];
       F = (x-3)^3*(x^2+x+1);
       factor F  
@@ -162,12 +205,12 @@ TEST ///
   debug Core -- for ZZp
   R1 = ZZ/101
   M1 = matrix(R1, {{0..103}})
-  R2 = ZZp(101, Strategy=>"ARING")
+  R2 = ZZp(101, Strategy=>"Aring")
   R3 = ZZp(101)  
-  R4 = ZZp(101, Strategy=>"FLINT")
+  R4 = ZZp(101, Strategy=>"Flint")
   Rs = {R1,R2,R3,R4}
   if hasFFPACK then (
-      R5 = ZZp(101, Strategy=>"FFPACK");
+      R5 = ZZp(101, Strategy=>"Ffpack");
       Rs = append(Rs, R5);
       );
       
@@ -187,8 +230,8 @@ TEST ///
   -- now try it for some larger sizes
   P = 2^25-39 -- largest ffpack prime
   if hasFFPACK then (
-      S1 = ZZp(P, Strategy=>"FLINT");
-      S2 = ZZp(P, Strategy=>"FFPACK");
+      S1 = ZZp(P, Strategy=>"Flint");
+      S2 = ZZp(P, Strategy=>"Ffpack");
       (f,g) = (map(S1,S2), map(S2,S1));
       M1 = matrix(S1, {{-100..100, 2^25..2^25 + 10000}});
       M2 = matrix(S2, {{-100..100, 2^25..2^25 + 10000}});
@@ -201,10 +244,10 @@ TEST ///
   -- This is more of a benchmark code, than a test...
   debug Core
   R1 = ZZ/101
-  R2 = ZZp(101, Strategy=>"ARING")
+  R2 = ZZp(101, Strategy=>"Aring")
   R3 = ZZp(101)  
-  R4 = ZZp(101, Strategy=>"FLINT")
-  R5 = ZZp(101, Strategy=>"FFPACK")
+  R4 = ZZp(101, Strategy=>"Flint")
+  R5 = ZZp(101, Strategy=>"Ffpack")
 
   S1 = R1[vars(0..4)]  
   S2 = R2 (monoid S1)
