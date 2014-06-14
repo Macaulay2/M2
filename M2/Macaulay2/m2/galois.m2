@@ -181,26 +181,30 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     if d < opts.SizeLimit or opts.Strategy === "FlintBig"
-     then (
+     typ := opts.Strategy;
+     if d >= opts.SizeLimit then typ = "FlintBig"
+     else if typ === null then typ = "Flint";
+     --if d < opts.SizeLimit or opts.Strategy === "FlintBig"
+     --then (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
-	  rawF := if opts.Strategy === null or opts.Strategy === "Old" then 
+	  rawF := if typ === "Old" then 
                        rawGaloisField raw primitiveElement
-		  else if opts.Strategy === "Givaro" then
+		  else if typ === "Givaro" then
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "CompleteGivaro" then 
+		  else if typ === "CompleteGivaro" then 
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "New" then
+		  else if typ === "New" then
 		      rawARingGaloisField1 raw primitiveElement
-                  else if opts.Strategy === "FlintBig" then
+                  else if typ === "FlintBig" then
                        rawARingGaloisFieldFlintBig raw primitiveElement
-                  else if opts.Strategy === "Flint" then
+                  else if typ === "Flint" then
                        rawARingGaloisFieldFlintZech raw primitiveElement
-                  else error ("unknown type of Galois Field requested: "|opts.Strategy);
+                  else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Givaro", "Old", "New"///);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
-	  )
+	--  )
+{*      
      else (
 	  -- S' := S;
 	  T := toField(S);
@@ -208,6 +212,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
+*}
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;
