@@ -67,6 +67,23 @@ MutableMatrix _ Sequence = (M,ij,val) -> (
      val)
 
 transpose MutableMatrix := (f) -> map(ring f, rawDual raw f)
+
+lift(MutableMatrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(MutableMatrix,InexactNumber') :=
+lift(MutableMatrix,RingElement) := 
+lift(MutableMatrix,Number) := Matrix => opts -> (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     lift(f, R, S, opts))     
+
+promote(MutableMatrix,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(MutableMatrix,InexactNumber') :=
+promote(MutableMatrix,RingElement) := 
+promote(MutableMatrix,Number) := Matrix => (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     promote(f, R, S))
+
 --------------------------------
 -- submatrices -----------------
 --------------------------------

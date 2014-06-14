@@ -2,6 +2,7 @@
 #include "ringmap.hpp"
 #include "exceptions.hpp"
 #include "matrix.hpp"
+#include "mutablemat.hpp"
 
 const Ring * IM2_RingMap_target(const RingMap *F)
 {
@@ -61,6 +62,19 @@ IM2_RingMap_eval_matrix(const RingMap *F,
        }
      try {
           return F->eval(newTarget,M);
+     }
+     catch (exc::engine_error e) {
+          ERROR(e.what());
+          return NULL;
+     }
+}
+
+MutableMatrix /* or null */ * rawRingMapEvalMutableMatrix(const RingMap* F,
+                                                          const MutableMatrix* M)
+{
+     try {
+       return MutableMatrix::zero_matrix(F->get_ring(), M->n_rows(), M->n_cols(), M->is_dense());
+       // TODO: now map it!
      }
      catch (exc::engine_error e) {
           ERROR(e.what());

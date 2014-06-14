@@ -1110,6 +1110,10 @@ extern "C" {
                                                const FreeModule *newTarget,
                                                const Matrix *M); /* drg: connected rawRingMapEval*/
 
+  MutableMatrix /* or null */ * rawRingMapEvalMutableMatrix(const RingMap* F,
+                                                            const MutableMatrix* M);
+  /* drg: connected rawRingMapEval*/
+
   const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f); /* drg: connected rawPromote*/
 
   const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const Ring *S, const RingElement *f); /* drg: connected rawLift*/
@@ -1165,6 +1169,11 @@ extern "C" {
 
   void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems);
   /* drg: connected rawMutableMatrixFillRandom */
+
+  MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *R, const MutableMatrix *f); /* connected to rawPromote*/
+
+  MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, const Ring* R, const MutableMatrix *f); /* connected to rawLift */
+  // returns null if lifting not possible
 
   const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatrix *M,
                                                         int r, int c); /* drg: connected rawMatrixEntry, OK*/
