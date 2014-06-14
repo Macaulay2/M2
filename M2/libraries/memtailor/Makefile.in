@@ -5,7 +5,7 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PRECONFIGURE = autoreconf -i
 CONFIGOPTIONS = --disable-shared
 include ../Makefile.library
-CONFIGENV += PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)
+CONFIGENV += PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)/include/gtest-src
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/memtailor/Makefile
 # Local Variables:
 # compile-command: "make -w -C $M2BUILDDIR/libraries/memtailor "
