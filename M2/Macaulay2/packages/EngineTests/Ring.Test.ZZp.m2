@@ -40,6 +40,7 @@ fieldsGFFlintBig1 = {
     }
 
 TEST ///
+    debug EngineTests
     debug Core
     runTests(finitefields, {"testGFGenerator"}, set{})
     runTests(fieldsGFFlint, {"testGFGenerator"}, set{})
