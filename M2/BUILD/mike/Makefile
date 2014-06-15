@@ -176,6 +176,19 @@ linux-debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
+linux-opt64-linalg : always
+	mkdir -p builds.tmp/opt64-linalg
+	cd builds.tmp/opt64-linalg; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download
+
 linux-opt64-all : always
 	mkdir -p builds.tmp/opt64-all
 	cd builds.tmp/opt64-all; ../../../../configure \
