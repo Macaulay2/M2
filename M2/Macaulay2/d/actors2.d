@@ -716,7 +716,7 @@ spin(e:Expr):Expr := (
      when e is x:ZZcell do (
 	  if isInt(x.v) then (
 	       n := toInt(x.v);
-	       for i from 1 to n do for j from 1 to 290000 do nothing;
+	       for i from 1 to n do for j from 1 to 290000 do Ccode(void,"{extern void do_nothing(); do_nothing();}");
 	       nullE)
 	  else WrongArgSmallInteger())
      else WrongArgZZ());
