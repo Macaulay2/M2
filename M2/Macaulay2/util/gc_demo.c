@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "config.h"
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 struct x { 
      struct x *p[20];

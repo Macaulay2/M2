@@ -91,6 +91,9 @@ document {
 	       	    LI {
 			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
 			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
+			 },
+		    LI {
+			 "A task now has a serial number, see ", TO serialNumber, "."
 			 }
 	  	    }
 	       },

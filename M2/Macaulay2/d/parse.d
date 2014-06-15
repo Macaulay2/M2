@@ -356,6 +356,7 @@ export pythonObjectCell := {+v:pythonObject};
 
 export TaskCellBody := {+
      hash:int,
+     serialNumber:int,
      task:taskPointer, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };

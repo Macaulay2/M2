@@ -25,17 +25,17 @@ startup(tb:TaskCellBody):null := (
      --warning wrong return type
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
-     if notify then stderr << "--thread " << " started" << endl;
+     if notify then stderr << "--task " << tb.serialNumber << " started" << endl;
      --add thread to supervisor
 
      r := applyEE(f,x);
      when r is err:Error do (
 	  printError(err);
-	  if notify then stderr << "--thread " << " ended, after an error" << endl;
+	  if notify then stderr << "--task " << tb.serialNumber << " ended, after an error" << endl;
 	  )
      else (
      	  tb.returnValue = r;
-     	  if notify then stderr << "--thread " << " ready, result available " << endl;
+     	  if notify then stderr << "--task " << tb.serialNumber << " ready, result available " << endl;
 	  );
      compilerBarrier();
      null());
@@ -49,9 +49,8 @@ isFunction(e:Expr):bool := (
      else false);
 
 cancelTask(tb:TaskCellBody):Expr := (
-     if tb.resultRetrieved then return buildErrorPacket("thread result already retrieved");
-     if taskDone(tb.task) then (
-	  if notify then stderr << "task done, cancellation not needed" << endl;
+     if tb.resultRetrieved || taskDone(tb.task) then (
+	  if notify then stderr << "--task " << tb.serialNumber << " done, cancellation not needed" << endl;
 	  return nullE;
 	  );
      taskInterrupt(tb.task);
@@ -67,14 +66,20 @@ taskCellFinalizer(tc:TaskCell,p:null):void := (
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
      -- initialized.
      if taskDone(tc.body.task) then return;
-     if notify then stderr << "--cancelling inaccessible thread " << endl;
+     if notify then stderr << "--cancelling inaccessible task " << tc.body.serialNumber << endl;
      when cancelTask(tc.body) is err:Error do (printError(err);) else nothing);
 
 header "#include <signal.h>";
 
+taskSerialNumber := 0;
+nextTaskSerialNumber():int := (
+     r := taskSerialNumber;
+     taskSerialNumber = taskSerialNumber+1;		    -- race condition here, solve later
+     taskSerialNumber);
+
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreate(startup,tc.body);
@@ -145,7 +150,7 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
      Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreatePush(startup,tc.body);

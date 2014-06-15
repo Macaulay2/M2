@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 extern "C"  void IM2_initialize(void);
 
 extern "C" int breakOnMe () { return 0; }

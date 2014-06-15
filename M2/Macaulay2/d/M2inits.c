@@ -6,14 +6,10 @@
 #include <gmp.h>
 
 #include <M2/config.h>
-
-#ifdef NDEBUG
-#define GC_IGNORE_WARN
-#endif
+/* these two macros affect GC_INIT below */
 #define GC_FREE_SPACE_DIVISOR 12
 #define GC_INITIAL_HEAP_SIZE 70000000
-#include <gc/gc.h>
-
+#include <M2/gc-include.h>
 #include <string.h>
 #include "M2inits.h"
 #include "M2mem.h"

@@ -204,6 +204,7 @@ export {
 	symbol FunctionBody,
 	symbol FunctionClosure,
 	symbol GBDegrees,
+	symbol GCstats,
 	symbol GF,
 	symbol GLex,
 	symbol GRevLex,

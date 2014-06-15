@@ -23,7 +23,7 @@
 #endif
 
 #ifndef __cplusplus  /* These are coming from newdelete.hpp, in C++ */
-  #include <gc/gc.h>
+  #include <M2/gc-include.h>
   #include "../d/M2mem.h"
   #include "../d/debug.h"
 #endif
