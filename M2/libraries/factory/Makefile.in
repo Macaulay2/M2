@@ -65,13 +65,10 @@ endif
 
 BUILDOPTIONS += WARNFLAGS='$(WARNFLAGS)' AM_DEFAULT_VERBOSITY=1
 
-CPPFLAGS += -DMP_INT=__mpz_struct -DHAVE_CONFIG_H
-
 # These are old routines, long deprecated, missing in mpir 1.3.0
 # but mpfr 2.4.2 still uses them, try removing them with 2.4.3:
 CPPFLAGS += -Dmpz_div_2exp=mpz_fdiv_q_2exp -Dmpz_div_ui=mpz_fdiv_q_ui -Dmpz_div=mpz_fdiv_q
-CFLAGS += -Wimplicit -Werror -DHAVE_CONFIG_H
-CXXFLAGS += -DHAVE_CONFIG_H
+CFLAGS += -Wimplicit -Werror
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/factory/Makefile
 # HINT:
