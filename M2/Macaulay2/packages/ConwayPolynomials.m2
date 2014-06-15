@@ -26,7 +26,7 @@ conwayPolynomial ZZ := q -> (
      conwayPolynomial(factors#0#0,factors#0#1))
 addHook(GaloisField,FindOne,(p,n,a) -> (
      cp := getCP(p,n);
-     if cp != {} then fix(p,n,cp,a)))
+     if cp != {} then break fix(p,n,cp,a)))
 isConway := (F) -> (gens ideal ambient F)_(0,0) == sub(conwayPolynomial(F.char,F.degree),ambient ambient F)
 map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
      p := char F;
