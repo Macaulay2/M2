@@ -571,6 +571,14 @@ public:
   }
 
   ///////////////////////////////
+  // promote, lift, eval ////////
+  ///////////////////////////////
+
+  virtual MutableMatrix* promote(const Ring* S) const { return 0; }
+  virtual MutableMatrix* lift(const Ring* R) const { return 0; }
+  virtual MutableMatrix* eval(const RingMap* F) const { return 0; }
+  
+  ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
 

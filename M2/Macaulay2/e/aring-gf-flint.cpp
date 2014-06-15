@@ -117,6 +117,10 @@ namespace M2 {
     printf("\n");
 #endif
     fq_zech_set_fq_nmod(&result, f, mContext);
+#if 0
+    printf("  zech result = %lu", result.value);
+    printf("\n");
+#endif
     fq_nmod_clear(f, mBigContext);
   }
 
@@ -164,7 +168,10 @@ namespace M2 {
   void ARingGFFlint::eval(const RingMap *map, const ElementType& f, int first_var, ring_elem &result) const
   {
     // f is represented by: f.value, the power of the generator
-    result = map->get_ring()->power(map->elem(first_var), static_cast<int>(f.value));    
+    if (is_zero(f))
+      result = map->get_ring()->zero();
+    else
+      result = map->get_ring()->power(map->elem(first_var), static_cast<int>(f.value));    
   }
   
   void ARingGFFlint::text_out(buffer &o) const

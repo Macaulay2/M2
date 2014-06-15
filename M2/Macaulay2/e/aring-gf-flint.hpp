@@ -67,16 +67,14 @@ namespace M2 {
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const
     {
-      ElementType* b = getmemstructtype(ElementType*);
-      init(*b);
-      copy(*b, a);
-      result.poly_val = reinterpret_cast<Nterm*>(b);
+      // we only use this data type for GF's smaller than 32 bits, since
+      // this class creates lookup tables that are way too big otherwise.
+      result.int_val = static_cast<int>(a.value); 
     }
 
     void from_ring_elem(ElementType &result, const ring_elem &a) const
     {
-      ElementType* b = reinterpret_cast<ElementType*>(a.poly_val);
-      copy(result, *b);
+      result.value = a.int_val;
     }
 
     bool is_unit(const ElementType& f) const { return not is_zero(f); }
@@ -103,6 +101,7 @@ namespace M2 {
       if (v != 0) set_from_long(result, 1);
       std::vector<long> poly = {0,1};
       fromSmallIntegerCoefficients(result, poly);
+      //printf("variable is %lu\n", result.value);
     }
 
     void set_from_mpz(ElementType& result, mpz_ptr a) const {
@@ -129,7 +128,10 @@ namespace M2 {
       fq_zech_inv(&result, &a, mContext); 
     }
 
-    void add(ElementType& result, const ElementType& a, const ElementType& b) const { fq_zech_add(&result, &a, &b, mContext); }
+    void add(ElementType& result, const ElementType& a, const ElementType& b) const { 
+      fq_zech_add(&result, &a, &b, mContext); 
+      //printf("zech add %lu + %lu = %lu\n", a.value, b.value, result.value);
+    }
 
     void subtract(ElementType& result, const ElementType& a, const ElementType& b) const { fq_zech_sub(&result, &a, &b, mContext); }
 

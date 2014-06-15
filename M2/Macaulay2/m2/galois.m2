@@ -182,7 +182,14 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  );
      d := p^n-1;
      typ := opts.Strategy;
-     if d >= opts.SizeLimit then typ = "FlintBig"
+     if d >= opts.SizeLimit or primitiveElement != S_0 then (
+         typ = "FlintBig";
+         primitiveElement = S_0; -- Possibly NOT the primitive element in this case!!  We don't need it, and we don't want to compute it yet.
+           -- Note: we used to have Galois fields always encoded by powers of the primitive element.  Ring maps would use this
+           -- (in ringmap.m2) to help tell the engine where the primitive element goes.
+           -- But: for FlintBig, this isn't being used.  We should perhaps consider changing the code in ringmap.m2.
+           -- For now, setting primitiveElement will do.
+         )
      else if typ === null then typ = "Flint";
      --if d < opts.SizeLimit or opts.Strategy === "FlintBig"
      --then (
@@ -196,7 +203,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 		  else if typ === "New" then
 		      rawARingGaloisField1 raw primitiveElement
                   else if typ === "FlintBig" then
-                       rawARingGaloisFieldFlintBig raw primitiveElement
+                       rawARingGaloisFieldFlintBig raw S_0 -- we do not pass a primitive element in this case
                   else if typ === "Flint" then
                        rawARingGaloisFieldFlintZech raw primitiveElement
                   else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Givaro", "Old", "New"///);

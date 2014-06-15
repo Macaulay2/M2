@@ -25,7 +25,8 @@ minpoly = (f) -> (
     A := ambient R;
     d := R.degree;
     L := matrix{for i from 0 to d list lift(f^i, A)};
-    last coefficients L
+    (monoms, cfs) := coefficients L;
+    (monoms, cfs)
     )
 
 isGen = (f) -> (
@@ -40,12 +41,17 @@ debug Core
 testGeneratorNotPrimitive = () -> (
     -- let's make a GF whose primitive element is not the generator
     -- under construction...
-    a := local a;
-    R := ZZ/5[a];
-    rawConwayPolynomial(5,4,false);
-    kk := GF(5,4);
-    isGen (a^2);
     )
+TEST ///
+    debug needsPackage "EngineTests"
+    debug Core
+    R = ZZ/5[a];
+    rawConwayPolynomial(5,4,false)
+    kk = GF(5,4);
+    isGen (a^2);
+    minpoly(a^2)
+    for i from 1 to 5^4-1 list if not isGen(a^i) then i else continue
+///
 
 fieldsGFFlintBig1 = {
     ///GF(2,2, Strategy=>"FlintBig")///,
