@@ -104,7 +104,6 @@ export {
   protect CycleNumber
   protect FunctionResidual
   protect StartSolutions
-  protect RefinementFailure
   protect FailedPath
   
 needsPackage "NAGtypes"
