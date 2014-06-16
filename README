@@ -11,9 +11,12 @@ code.  See our web page
 
 for more details and for downloading binary releases.
 
-The source code is available at https://github.com/Macaulay2/M2; one uses
-the program "git" to access it.  For brief instructions about how to use git,
-see 
+The source code is available at
+
+   https://github.com/Macaulay2/M2.
+
+One uses the program "git" to access it.  For brief instructions about how to
+use git, see
 
   https://github.com/Macaulay2/M2/wiki/GitHowTo.
 
