@@ -48,8 +48,10 @@ isFunction(e:Expr):bool := (
      is s:SpecialExpr do isFunction(s.e)
      else false);
 
+taskDone(tb:TaskCellBody):bool := tb.resultRetrieved || taskDone(tb.task);
+
 cancelTask(tb:TaskCellBody):Expr := (
-     if tb.resultRetrieved || taskDone(tb.task) then (
+     if taskDone(tb) then (
 	  if notify then stderr << "--task " << tb.serialNumber << " done, cancellation not needed" << endl;
 	  return nullE;
 	  );
@@ -65,8 +67,8 @@ taskCellFinalizer(tc:TaskCell,p:null):void := (
      -- because this finalizer may be called early, before all initialization is done.
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
      -- initialized.
-     if taskDone(tc.body.task) then return;
-     if notify then stderr << "--cancelling inaccessible task " << tc.body.serialNumber << endl;
+     if taskDone(tc.body) then return;
+     if notify then stderr << "--cancelling inaccessible task " << tc.body.serialNumber << " still running" << endl;
      when cancelTask(tc.body) is err:Error do (printError(err);) else nothing);
 
 header "#include <signal.h>";
