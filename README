@@ -13,19 +13,16 @@ See our web page
 
 for more details and for downloading binary releases.
 
-Instructions for downloading and compiling from source code are visible at
-
-  https://github.com/Macaulay2/M2/blob/master/M2/INSTALL
+The source code is available at https://github.com/Macaulay2/M2; one uses
+the program "git" to access it.  For brief instructions about how to use git,
+see https://github.com/Macaulay2/M2/wiki/GitHowTo.
 
 Report bugs via the github issue tracker at
 
   http://github.com/Macaulay2/M2/.  
 
-This directory is the top level directory of the directory tree that contains
-the source code for Macaulay2, and is intended to be checked out by developers
-of Macaulay2 and of its packages.
-
-Subdirectories:
+The directory containing this file is the top level directory of the directory
+tree that contains the following subdirectories:
 
     M2	     The subdirectory "M2" contains everything needed by a user to
 	     build Macaulay2, and the file "M2/INSTALL" gives instructions for
