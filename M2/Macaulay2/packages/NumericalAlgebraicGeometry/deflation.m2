@@ -6,7 +6,7 @@
 export { deflate, 
     SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
     deflateInPlace, DeflationSequence, DeflationSequenceMatrices,
-    LiftedPoint, LiftedSystem,
+    LiftedPoint, LiftedSystem, SquareUp,
     numericalRank, isFullNumericalRank
     }
 

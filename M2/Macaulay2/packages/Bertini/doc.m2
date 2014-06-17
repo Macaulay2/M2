@@ -565,36 +565,48 @@ doc ///
  Headline
    importPoints reads solutions from a Bertini solution file to store as points in M2
  Usage
-   A=importPoints(s,n) 
+   S=importPoints(l,n) 
  Inputs
-   s: String
+   l: String
      A string giving the  locaton of a Bertini solution file.
    n: ZZ
      Number of coordinates for each solution.
+ Outputs
+   S: List
+     of solutions of type Point
  Description
    Text
-     The input is a string giving the location of the solution file,
-     and an integer giving the number of coordinates for a solution.
-     The output is a list of points.
-     The user can specify which solutions and which coordinates they want to read from the file.
-   Example
-     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     --A=importPoints(locationOfSolutionFile,4)
+     This method imports points from a solution file that Bertini created while solving 
+     a zero-dimensional system.
+     The string l is a path which gives the location of the solution file and n is
+     an integer stating the desired number of coordinates for each solution. 
+     When solving a zero-dimensional
+     system, Bertini creates several solution files; @TO importPoints@ works 
+     with the following Bertini solution files: "finite_solutions", "nonsingluar-solutions",
+     "real_finite_solutions", "singluar_solutions". 
+--     The output is a list of points.
+     The user can specify which solutions to read from the file using the @TO SpecifyPoints@ option
+     or which coordinates to select using the @TO SpecifyCoordinates@ option.
+     
+--   Example
+     --locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     A=importPoints(locationOfSolutionFile,4)
      --The output would be a list of points that have 4 coordinates.          
-   Example 
-     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     --B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
+--   Example 
+--     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
      --The output would be the first and third solutions of the file. 
-   Example 
-     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
-     --C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
+--   Example 
+--     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
      --The output would be the first and second coordinate of each solution of the file.  
- Caveat
-   For importPoints to be successful, the Bertini solution file must have a particular format.
+ --Caveat
+   --The method importPoints will not
+   --For importPoints to be successful, the Bertini solution file must have a particular format.
 
-   The first line is an integer, the number of solutions in the.
-   The next lines consist of a blank line followed by a line for each coordinate;
-   these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
+   --The first line is an integer, the number of solutions in the.
+   --The next lines consist of a blank line followed by a line for each coordinate;
+   --these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
 ///;
 
 doc ///
@@ -623,14 +635,14 @@ doc ///
      If the "notes" file does not exist it returns an error.   
      
      The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
-   Example
-     inputFileLocation="/Users/.../YourFolderA";
-     L={.8234+ii*8,9}--A list of two parameter values.
-     n=3--A solution has n coordinates.
-     --phPostProcess(inputFileLocation,L,n)     
-   Example
-     inputFileLocation="/Users/.../YourFolderA";
-     --phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
+--   Example
+--     inputFileLocation="/Users/.../YourFolderA";
+--     L={.8234+ii*8,9}--A list of two parameter values.
+--     n=3--A solution has n coordinates.
+--     phPostProcess(inputFileLocation,L,n)     
+--   Example
+--     inputFileLocation="/Users/.../YourFolderA";
+--     phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
  Caveat
    Even if Bertini is called but does not run,  
    an error may not be reported if previous solution files were already in the outputDirectory.
@@ -655,6 +667,18 @@ doc ///
          
 ///;
 --ref{} need to add about the option ParameterValues
+
+doc ///
+ Key
+   SpecifyPoints
+   [importPoints, SpecifyPoints]
+ Headline
+   optional argument to specify which solutions to import
+ Usage
+    importPoints(...,SpecifyPoints=>List)
+              
+///;
+
 
 
 doc ///

@@ -9,6 +9,7 @@ solvePHCpack (List,HashTable) := List => (F,o) -> (
      )
 
 trackPHCpack = method(TypicalValue => List)
+trackPHCpack (PolySystem, PolySystem, List, HashTable) := List => (S,T,sols,o) -> trackPHCpack(equations S, equations T, sols, o)
 trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      -- Anton: options are not used at the moment
      --trackPaths(S,T,sols,PHCpack$gamma=>o.NAG$gamma,PHCpack$tDegree=>o.NAG$tDegree)     
@@ -17,12 +18,7 @@ trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
 
 refinePHCpack = method(TypicalValue => List)
 refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> (
-     -- Anton: options are not used at the moment
-     refineSolutions(T,sols,
-	  ResidualTolerance => o.ResidualTolerance, 
-	  ErrorTolerance => o.ErrorTolerance,
-	  Iterations => o.Iterations,
-	  Bits => o.Bits)
+     refineSolutions(T, sols, ceiling(log(10,2)*o.Bits))
      )
 
 numericalIrreducibleDecompositionPHCpack = I -> PHCpack$numericalIrreducibleDecomposition I_*
