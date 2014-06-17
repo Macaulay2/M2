@@ -34,6 +34,7 @@ $(foreach t,all check clean distclean,					\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 all: M2
 M2: GNUmakefile
+	rm -f M2
 	( echo 'export LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH' ; \
 	  echo 'exec @pre_bindir@/M2 "$$@"' \
 	  ) >M2
