@@ -2006,7 +2006,6 @@ GCstats(e:Expr):Expr := (
 		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
 		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
 		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
-		    "all interior pointers" => toExpr(Ccode(bool,"GC_get_all_interior_pointers()")),
 		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
 		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
 		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
