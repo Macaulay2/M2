@@ -86,7 +86,7 @@ ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
 endif
 
-check:
+clean check::
 	$(MAKE) -C unit-tests $@
 
 # this requires gnu sort and gnu uniq commands
