@@ -653,21 +653,21 @@ showtimefun(a:Code):Expr := (
      stdIO << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
-wallTimefun(a:Code):Expr := (
+elapsedTimefun(a:Code):Expr := (
      v := double(currentTime());
      ret := eval(a);
      x := double(currentTime());
      when ret
      is Error do ret
      else list(timeClass,Sequence(toExpr(x-v),ret)));
-setupop(wallTimingS,wallTimefun);
-showWallTimefun(a:Code):Expr := (
+setupop(elapsedTimingS,elapsedTimefun);
+showElapsedTimefun(a:Code):Expr := (
      v := double(currentTime());
      ret := eval(a);
      x := double(currentTime());
      stdIO << "     -- used " << x-v << " seconds wall time" << endl;
      ret);
-setupop(wallTimeS,showWallTimefun);
+setupop(elapsedTimeS,showElapsedTimefun);
 
 exponent(e:Expr):Expr := (
      when e
