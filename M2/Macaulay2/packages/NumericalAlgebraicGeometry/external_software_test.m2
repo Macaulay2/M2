@@ -1,10 +1,10 @@
 restart
 debug loadPackage "NAGtypes"
-debug loadPackage "NumericalAlgebraicGeometry"
+NAG = loadPackage "NumericalAlgebraicGeometry"
 DBG = 2;
 ------------------------------------------------------
 -- COMPARISON OF              -- PHCpack -- Bertini -- hom4ps2 --
-load "benchmarks.m2";
+load (NAG#"auxiliary files"|"benchmarks.m2");
 I = katsuraBench 8;	    	
 -- I = stewartGough40real();     -- 883     -- >>0     -- 31      --
 --I = example2();
