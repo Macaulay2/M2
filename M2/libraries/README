@@ -4,6 +4,15 @@ programs used by Macaulay2.  A library is code linked into the Macaulay2 binary
 linked into a program and does not get linked into M2.  The programs are
 distributed with their own licenses.
 
+Some of the libraries are sharable, so the various other makefiles takes care
+of adding the appropriate directories to the value of the environment variables
+LD_LIBRARY_PATH (for unix) and DYLD_LIBRARY_PATH (for Mac OS), and there are
+two shell scripts, both called M2, each of which adds one directory to the
+path.  The one at the top level of the build directory adds
+libraries/final/lib, where the dynamic libraries are deposited after being
+built, and the one in StagingArea/$ARCH/bin/ adds the directory
+StagingArea/$ARCH/lib/, where they are eventually copied.
+
 To add a new program:
 
      - add a directory here with the same name as the library, together with an
