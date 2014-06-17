@@ -555,12 +555,14 @@ doc ///
      Key
      	  NumericalHilbert
      Headline
-     	  functions for numerically computing local dual space and Hilbert functions
+     	  numerically compute local dual space and Hilbert functions
      Description
      	  Text
-	       @EM "NumericalHilbert"@ is a package for numerically computing local dual spaces of polynomial ideals,
-	       over the complex numbers.  This data can be used to numerically find combinatorial information about 
-	       the ideal, such as the Hilbert regularity.
+	       The @EM "NumericalHilbert"@ package includes algorithms for computing local dual 
+	       spaces of polynomial ideals, and related local combinatorial data about its scheme structure.  These 
+	       techniques are numerically stable, and can be used with floating point arithmetic over the complex numbers.  
+	       They provide a viable alternative in this setting to purely symbolic methods such as standard bases.  
+	       In particular, these methods can be used to compute initial ideals, local Hilbert functions and Hilbert regularity.
 	  Text
 	       Methods for computing and manipulating local dual spaces:
 	       @UL {
@@ -569,18 +571,23 @@ doc ///
 		   {TO "eliminatingDual"},
 		   {TO "localHilbertRegularity"},
 		   {TO "gCorners"},
-		   {TO "sCorners"}
+		   {TO "sCorners"},
 		   {TO "innerProduct"},
                    {TO "reduceSpace"}
 		   }@
 	  Text
-	       Ancillary numerical linear algebra methods:
+	       Auxiliary numerical linear algebra methods:
 	       @UL {
 		   {TO "numericalKernel"},
 		   {TO "numericalImage"},
 		   {TO "colReduce"},
 		   {TO "adjointMatrix"}
 		   }@
+	   Text
+	       The algorithm used for computing truncated dual spaces is that of B. Mourrain ("Isolated points, duality and residues." 
+	       J. Pure Appl. Algebra, 117/118:469–493, 1997).  To compute the initial ideal and Hilbert regularity of positive dimensional
+	       ideals we use the algorithm of R. Krone ("Numerical algorithms for dual bases of positive-dimensional ideals." Journal of
+               Algebra and Its Applications, 12(06):1350018, 2013.).  This package depends on the package @TO NAGtypes@.
 ///
 
 
@@ -639,8 +646,8 @@ doc ///
 	       I = ideal{(y-1)^2,y-x^2}
 	       p = point matrix{{1,1}};
 	       S = zeroDimensionalDual(p, I)
-	  Caveat
-	       The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
+     Caveat
+	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
 doc ///
@@ -649,6 +656,7 @@ doc ///
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
 	  [gCorners,Strategy]
+	  [gCorners,ProduceSB]
      Headline
           generators of the initial ideal of a polynomial ideal
      Usage
@@ -666,7 +674,7 @@ doc ///
 	       ideal should be given a (global) monomial order and the local order will be taken to be the reverse order.
 	       The point p is moved to the origin, so the monomial generators represent terms of the Taylor expansion at p.
 	  Text
-	       If the optional argument @TT ProduceSB@ is set to true, the output is instead a matrix of elements of the ideal
+	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
 	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
 	  Example
 	       R = CC[x,y];
@@ -761,18 +769,21 @@ doc ///
 	       orthogonal to I which have total degree in the variables on the list bounded by d.
 	       This function generalizes @TO truncatedDual@ in that if v includes all the variables
 	       in the ring, then its behavior is the same.
-	  Caveat
-	       The space of dual elements satisying the conditions is not in general of finite dimension.
-	       If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
-	       termination, the local dimension of I at p should not exceed the length of v, and certain genericity
-	       constraints on the coordinates must be met.
+	  
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2-y^3}
+	       --bound the x degree to 2
 	       eliminatingDual(origin R, I, {0}, 2)
+	       --bound the total degree to 2
 	       eliminatingDual(origin R, I, {0,1}, 2)
 	  Text
 	       See also @TO truncatedDual@.
+     Caveat
+	  The space of dual elements satisying the conditions is not in general of finite dimension.
+	  If the dimension is infinite, this function will not terminate.  This is not checked.  To ensure
+	  termination, the local dimension of I at p should not exceed the length of v, and certain genericity
+	  constraints on the coordinates must be met.
 ///
 
 doc ///
@@ -797,10 +808,15 @@ doc ///
 	       The dual space represents functionals from the polynomial ring to the base field.
 	       Given a polySpace S with n generators f_1,...,f_n and a dualSpace D with m generators
 	       p_1,...,p_m, innerProduct returns a nxm matrix M over the base field whose entries are p_j(f_i).
-	       
+	  Text
 	       A dual functional is applied to a polynomial by taking the standard inner product of their coefficient
 	       vectors.  In other words, the functional represented by the monomial a acts on monomials in the
 	       polynomial ring as a(a) = 1 and a(b) = 0 for all other monomials b.
+	  Example
+	       R = CC[x,y];
+	       S = polySpace matrix{{x+y,2*x+y^2}};
+	       D = dualSpace(matrix{{1,x,y}}, origin R);
+	       M = innerProduct(S, D)
 ///
 
 doc ///
@@ -824,6 +840,11 @@ doc ///
      Description
           Text
 	       Computes the subspace of polynomial space T which is orthogonal to the dual space (or polynomial space) D.
+	  Example
+	       R = CC[x,y];
+	       T = polySpace matrix{{1,x,y}};
+	       D = dualSpace(matrix{{x-y}}, origin R);
+	       S = orthogonalInSubspace(D, T, 1e-6)
 ///
 
 doc ///
@@ -846,6 +867,11 @@ doc ///
           Text
 	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
 	       a distinct lead monomial.  This is achieved via Gaussian reduction.
+	  Example
+	       R = CC[x,y];
+	       T = polySpace matrix{{x,y,x-y+1e-10}}
+	       S = reduceSpace T
+	       S = reduceSpace(T, Tolerance=>1e-12)
 ///
 
 doc ///
@@ -866,6 +892,11 @@ doc ///
      Description
           Text
 	       Truncates a dual space or polynomial space T so that the total degree of all terms does not exceed d.
+	  Example
+	       R = CC[x,y];
+	       I = ideal {x-y};
+	       D = truncatedDual(origin R, I, 5)
+	       truncate(D, 3)
 ///
 
 doc ///
@@ -888,6 +919,12 @@ doc ///
      Description
           Text
 	       Truncates a dual space or polynomial space T, so that the total degree of the specified variables is bounded by d.
+	  Example
+	       R = CC[x,y];
+	       I = ideal {x,y};
+	       D = zeroDimensionalDual(origin R, I^3)
+	       --truncate the x degree to 1
+	       truncate(D, {0}, 1)
 ///
 
 doc ///
@@ -910,19 +947,6 @@ doc ///
 	       
 	       
 	       See also @TO Tolerance@.
-///
-
-doc ///
-     Key
-	  ProduceSB
-	  [gCorners,ProduceSB]
-     Headline
-          optional argument for gCorners
-     Description
-          Text
-	       Takes a boolean value and defaults to false.  If ProduceSB is false, then @TO gCorners@ will produce the generators
-	       of the initial ideal of the ideal I in the localization at a point.  If it is true, then gCorners will instead
-	       return a standard basis for I.
 ///
 
 doc ///
