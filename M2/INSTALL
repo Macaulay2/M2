@@ -82,7 +82,7 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -144,7 +144,7 @@ various modern operating systems:
     Install the programs and libraries needed for building:
         brew tap homebrew/versions
         brew tap homebrew/science
-        brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+        brew install pkg-config gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
         brew link --force autoconf # just to ensure it got linked upon installation
     Now remember to add 
         CC=gcc-4.8 CXX=g++-4.8 FC=gfortran-4.8.2
@@ -154,7 +154,7 @@ various modern operating systems:
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
         autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
-        libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
+        libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel pkg-config
         libxml2-devel make mpfr-devel patchutils readline subversion time wget libtool
      you may also want these:
         emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
