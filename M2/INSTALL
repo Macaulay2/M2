@@ -144,10 +144,11 @@ various modern operating systems:
     Install the programs and libraries needed for building:
         brew tap homebrew/versions
         brew tap homebrew/science
-        brew install pkg-config gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
-        brew link --force autoconf # just to ensure it got linked upon installation
+        brew install pkg-config gcc48 autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+	brew link autoconf gcc48
+	# if necessary, add --force to the command above to force the link to occur
     Now remember to add 
-        CC=gcc-4.8 CXX=g++-4.8 FC=gfortran-4.8.2
+        CC=gcc-4.8 CXX=g++-4.8
     to the "configure" command line below, because those are the names of the
     compilers in the package gcc48.
 
@@ -233,7 +234,7 @@ files are not backed up.  For your changes to Macaulay2 source code, github.com
 will serve as your backup.
 
 -----------------------
-Compiling
+Compiling Macaulay2
 -----------------------
 
 Now the directory to be in is the one containing this file in the source
