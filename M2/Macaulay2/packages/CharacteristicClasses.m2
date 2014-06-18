@@ -8,7 +8,7 @@
 newPackage(
 	"CharacteristicClasses",
 	Version => "1.1", 
-    	Date => "April 19, 2014",
+    	Date => "June 18, 2014",
     	Authors => {{Name => "Christine Jost", 
 		  Email => "christine.e.jost@gmail.com"},
                   {Name => "Martin Helmer", Email => "mhelmer2@uwo.ca", 
@@ -685,7 +685,7 @@ doc ///
 	       -- given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
 	       
 	       This implementation offers two different algorithms to compute characteristic classes. The first algorithm is refered to as ResidualSymbolic 
-               for the symbolic implementation and Bertini for the numeric implementaion and is given in the  articles 
+               for the symbolic implementation and Bertini for the numeric implementation and is given in the  articles 
                "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
                (S. Di Rocco, D. Eklund, C. Peterson, A.J. Sommese),"A method to compute Segre classes" (D. Eklund, C. Jost, C. Peterson), 
                "An algorithm for computing the topological Euler characteristic of complex projective varieties" (C. Jost). 
@@ -696,7 +696,7 @@ doc ///
 
                The second algorithm is referred to as ProjectiveDegree and given in the article "An Algorithm to Compute the Topological Euler 
                Characteristic, Chern-Schwartz-MacPherson Class and Segre Class of Projective Varieties" (M. Helmer). 
-               The main computational step of this algorithm is the computation of the projective degerees. This can be done symbolically, using 
+               The main computational step of this algorithm is the computation of the projective degrees. This can be done symbolically, using 
                Gr&ouml;bner bases, or numerically using a package such as Bertini, however only the symbolic implementation is offered at present, 
                since a numeric implementation is already provided for the residual degrees algorithm.
 
@@ -893,23 +893,24 @@ doc ///
 	  Bertini
      Description
      	  Text
-	       The option Algorithm determines which strategy is used. The default option is called Default, when the field is QQ (the rationals) the 		       ResidualSymbolic will be automatically chosen, for any other field, i.e. ZZ/32749 or some other finite field the  ProjectiveDegree 
-               option will be automatically chosen. When choosing the ProjectiveDegree option, Gr\"obner basis methods will be used 
-               to compute the projective degree.  When choosing ResidualSymbolic Gr\"obner basis methods will be used to compute the residuals. 
-               Computing the projective degree or the degree of the residuals, respectively, is the main step in the computation done by the commands 
-               in this package. The computations can also be done numerically using the regenerative cascade implemented in Bertini. This is done 
-               by choosing the option Bertini and provided Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini may 
-               provide a speed-up or prevent running out of memory.
+	       The option Algorithm determines which algorithm is used to compute the results. The default option is called Default, it attempts to 
+	       automatically choose the fastest algorithm according to a simple rule. However, the algorithm may also be chosen manually. 
 	  Example
 	       setRandomSeed 367;
-	       R = QQ[x,y,z,w]
+	       R = QQ[x,y,z,w];
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), Algorithm=>ProjectiveDegree)  
 	  Text  
-               For many examples over a finite field the ProjectiveDegree option will offer better performance, when working over the rationals 
-               the ResidualSymbolic algorithm is often faster. Note that this is only a general trend which has been observed in testing, and this may 
-               not necessarily true for any particular example, hence if one method is not working well the user may wish to try another. Also note 
-               that there are some specific examples where we may see the difference in performance change to favour one algorithm over the other 
-               when changing fields, however are such examples observed thus far are too time consuming to include here. 
+	       There are three algorithms which can be used, ProjectiveDegree, ResidualSymbolic, and Bertini. When choosing the ProjectiveDegree 
+	       option, the main step is the computation of projective degrees, for which Gr\"obner basis methods will be used. When choosing 
+	       ResidualSymbolic, Gr\"obner basis methods will be used to compute so-called residuals. These computations can also be done 
+	       numerically using the regenerative cascade implemented in Bertini. This is done by choosing the option Bertini and provided
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. 
+	       
+               For many examples over a finite field the ProjectiveDegree option will offer better performance. When working over the rationals 
+               the ResidualSymbolic algorithm is often faster. Hence when the field is QQ (the rationals), the option
+	       ResidualSymbolic will be automatically chosen, and for any other field, i.e., ZZ/32749 or some other finite field, the  ProjectiveDegree 
+               option will be automatically chosen. Note that this is only a general trend which has been observed in testing, and this may 
+               not necessarily true for any particular example, hence if one method is not working well the user may wish to try another. 	      
           Example
                R=ZZ/32749[v_0..v_5];
                I=ideal(4*v_3*v_2-v_0^2,v_5*(v_0*v_1*v_4-v_2^3));
@@ -919,6 +920,9 @@ doc ///
 	       K=ideal(4*s_3*s_2-s_0^2,(s_0*s_1*s_3-s_2^3));
 	       time CSMClass(K,Algorithm=>ProjectiveDegree)
 	       time CSMClass(K,Algorithm=>ResidualSymbolic)
+	  Text
+	       Note that there are some specific examples where we may see the difference in performance change to favour one algorithm over the other 
+               when changing fields, however such examples observed thus far are too time consuming to include here. 
 ///
 
 
@@ -966,13 +970,11 @@ doc ///
      	  "probabilistic algorithm"
      Description
      	  Text
-	       Both algorithms used for the computation of characteristic classes are probabilistic. Theoretically the algorithm 
-               ProjectiveDegree calculates the classes correctly in all cases for a general choice of certain polynomials, that is there is an open 
+	       The algorithms used for the computation of characteristic classes are probabilistic. Theoretically, they calculate the classes 
+	       correctly for a general choice of certain polynomials. That is, there is an open 
                dense Zariski set for which the algorithm yields the correct class, i.e., the correct class is calculated with probability 1. 
-               However since the implementation works over a discrete probability space there is a very small, but non-zero, probability of not 
-               computing the correct class. Similarly the ResidualSymbolic algorithm theoretically calculates 
-               the classes correctly in all cases outside a lower-dimensional subset, i.e., with probability 1. However, in the implementation of the
-               ResidualSymbolic algorithm the probability of not computing the correct class is strictly larger than zero, although small. 
+               However, since the implementation works over a discrete probability space there is a very small, but non-zero, probability of not 
+               computing the correct class. 
                Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
