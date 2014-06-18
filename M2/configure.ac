@@ -76,6 +76,8 @@ done
 test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
 
 AC_CHECK_PROGS(MAKE,gmake make)
+AC_CHECK_PROGS(PKG_CONFIG,pkg-config,no)
+if test $PKG_CONFIG = no; then AC_MSG_ERROR("pkg-config is required"); fi
 AC_CHECK_PROGS(WGET,wget)
 AC_CHECK_PROGS(CURL,curl)
 AC_CHECK_PROGS(OBJDUMP,objdump)
