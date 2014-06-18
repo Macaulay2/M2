@@ -84,9 +84,13 @@ gcversion():constcharstar := Ccode(returns,"
      ");
 
 atomicopsversion():constcharstar := Ccode(returns,"
+#ifdef AO_VERSION_MICRO
      static char buf[40];
      sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
      return buf;
+#else
+     return \"version number not available\"
+#endif
      ");
 
 givaroVersion():constcharstar := Ccode(returns,"
