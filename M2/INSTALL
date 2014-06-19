@@ -142,15 +142,16 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-        brew tap homebrew/versions
-        brew tap homebrew/science
-        brew install pkg-config gcc48 autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+	brew tap homebrew/versions
+	brew tap homebrew/science
+	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+	brew install gcc48
+	     # Alternatively, to install fortran for optionally building lapack: brew install --enable-fortran gcc48
 	brew link autoconf gcc48
-	# if necessary, add --force to the command above to force the link to occur
+	     # If necessary, add --force to the command above to force the link to occur.
     Now remember to add 
-        CC=gcc-4.8 CXX=g++-4.8
-    to the "configure" command line below, because those are the names of the
-    compilers in the package gcc48.
+        CC="gcc-4.8 -m64" CXX="g++-4.8 -m64" FC="gfortran-4.8 -m64" --build=x86_64-apple-darwin
+    to the "configure" command line below in the section on compiling Macaulay2.
 
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
@@ -259,6 +260,9 @@ Now continute building the program this way:
         make
         make check                      # optional
         make install
+
+Remember to add any options specified above, in the section for your particular
+operating system, to the "configure" command line.
 
 On some systems, especially if you are building a binary distribution of Macaulay2,
 additional arguments should be given to the "./configure" command, and are explained
