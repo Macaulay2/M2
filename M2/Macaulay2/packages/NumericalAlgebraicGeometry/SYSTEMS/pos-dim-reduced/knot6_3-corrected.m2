@@ -17,8 +17,14 @@ I = ideal(w2-w4,w1-w3,z5+w5-1,z4+w4-1,z3+w3-1,z2+w4-1,z1+w3-1,z0+w0-1,2*w4^3-w0*
 F = I_*;
 end
 
--- M2: irreducible of degree 18
--- NAG: ok, takes one second
+restart
+load "knot6_3-corrected.m2"
+needsPackage "NumericalAlgebraicGeometry"
+numericalIrreducibleDecomposition
+numericalIrreducibleDecomposition (I,Software=>BERTINI)
+-- numericalIrreducibleDecomposition (I,Software=>PHCPACK) -- can't do overdetermined 
+
+-- NAG4M2: irreducible of degree 18 (not robust)
 -- Bertini: ok, takes more than 1 hour
 
 -- this is the 1-dim component of 

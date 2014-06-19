@@ -11,8 +11,11 @@ I = ideal (w2-w4,w1-w3,z5+w5-1,z4+w4-1,z3+w3-1,z2+w4-1,z1+w3-1,z0+w0-1,2*w4^3-w0
 F = I_*;
 end
 
--- M2: irreducible of degree 20
--- NAG: 
+load "knot6_3-erroneous.m2"
+needsPackage "NumericalAlgebraicGeometry"
+numericalIrreducibleDecomposition I
+numericalIrreducibleDecomposition (I,Software=>BERTINI)
+-- NAG4M2: irreducible of degree 20
 -- Bertini: finds 19 points, "can't classify"
 
 -- this is the 1-dim component of 
