@@ -2,11 +2,11 @@
 newPackage(
      "NumericalHilbert",
      PackageExports => {"NAGtypes"},
-     Version => "0.1", 
-     Date => "May 11, 2012",
+     Version => "0.2", 
+     Date => "June 16, 2014",
      Authors => {{Name => "Robert Krone", 
     	       Email => "krone@math.gatech.edu"}},
-     Headline => "some local Hilbert series functions",
+     Headline => "numerically compute local dual space and Hilbert functions",
      AuxiliaryFiles => true,
      DebuggingMode => true
 )
@@ -44,12 +44,14 @@ truncatedDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, To
 truncatedDual (Point,Ideal,ZZ) := o -> (p,I,d) -> truncatedDual(p,gens I,d,o)
 truncatedDual (Point,Matrix,ZZ) := o -> (p,igens,d) -> (
     R := ring igens;
+    if d < 0 then return dualSpace(map(R^1,R^0,0),p);
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
     igens = sub(igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     TDD := truncDualData(igens,false,t,Strategy=>o.Strategy);
     TDD = nextTDD(d,TDD,t);
     dualSpace(TDD,p)
     )
+
 
 zeroDimensionalDual = method(TypicalValue => DualSpace, Options => {Strategy => BM, Tolerance => null})
 zeroDimensionalDual (Point,Ideal) := o -> (p,I) -> zeroDimensionalDual(p,gens I,o)
@@ -129,33 +131,18 @@ dualSpace (TruncDualData,Point) := (H,p) -> dualSpace(polySpace H,p)
 homogPolySpace = method()
 homogPolySpace TruncDualData := H -> polySpace(H.BMintegrals*H.BMcoefs) 
 
-TEST ///
-restart
-R = CC[x,y]
-M = matrix {{x^2-x*y^2,x^3}}
---M = matrix {{x*y, y^2}}
-p = point matrix{{0_CC,0_CC}}
-G = gCorners(p,ideal M,ProduceSB=>true)
-G = gCorners(p,ideal M)
-q = point matrix{{0_CC,1_CC}}
-gCorners(q,M)
-LDZ = reduceSpace truncatedDual(p,M,6,Strategy=>DZ)
-LBM = reduceSpace truncatedDual(p,M,6,Strategy=>BM)
-assert(areEqual(LDZ,LBM))
-///
 
 -- this version gets a piece of the eliminating DS from the "usual" truncated DS 
 eliminatingDual = method(Options => {Tolerance => null})
 eliminatingDual (Point,Ideal,List,ZZ) := o -> (p,I,ind,d) -> eliminatingDual (p,gens I,ind,d,o)
 eliminatingDual (Point,Matrix,List,ZZ) := o -> (p,Igens,ind,d) -> (
     R := ring Igens;
+    if d < 0 then return dualSpace(map(R^1,R^0,0),p);
     t := if o.Tolerance === null then defaultT(R) else o.Tolerance;
     Igens = sub(Igens, matrix{gens R + apply(p.Coordinates,c->sub(c,R))});
     n := numgens R;
     if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
     then error ("expected a list of nonnegative integers in the range [0," | n | "] as 2nd parameter");
-    if not d>=0
-    then error "expected a nonnegative integer as 3rd parameter";
     TDD := truncDualData(Igens,false,t);
     RdBasis := dualSpace(TDD,p);
     dBold := 0;
@@ -180,6 +167,8 @@ truncate (DualSpace, ZZ) := (L,d) -> dualSpace(truncate(L.Space,d),L.BasePoint)
 truncate (PolySpace, List, ZZ) := (L,ind,d) -> (
     R := ring L;
     n := numgens R;
+    if not all(ind, i->class i === ZZ) or not all(ind, i -> i>=0 and i<n)
+    then error ("expected a list of nonnegative integers in the range [0," | n | "] as 2nd parameter");
     indC := flatten entries submatrix'(matrix{{0..n-1}},ind);
     T := newRing(R,MonomialOrder=>{#ind,#indC},Degrees=>{(#ind:{1,0})|(#indC:{0,1})});
     TtoR := map(R,T, (vars R)_ind | (vars R)_indC);
@@ -269,17 +258,6 @@ localHilbertRegularity (Point, Matrix) := o -> (p,Igens) -> (
     s
     )
     
-
-TEST ///
-restart
-R = CC[x,y]
-G1 = matrix{{x^2,x*y^2,y^4}}
-assert(sCorners G1 == matrix {{x*y, y^3}})
-G2 = matrix{{x*y^2,x^2*y^2,y^4}}
-assert(sCorners G2 == matrix {{y^3}})
-G3 = matrix{{x*y^2,x^2*y^2}}
-assert(sCorners G3 == matrix {{}})
-///
 
 listLCM = L -> (
     R := ring L#0;
@@ -650,6 +628,18 @@ doc ///
 	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
 
+TEST ///
+R = CC[x,y]
+I1 = ideal{x^2,x*y}
+D1 = truncatedDual(origin R, I1, 4)
+assert(hilbertFunction({0,1,2,3,4}, D1) == {1,2,1,1,1})
+I2 = ideal{x^2,y^2}
+D2 = zeroDimensionalDual(origin R, I2)
+assert(hilbertFunction({0,1,2,3,4}, D2) == {1,2,1,0,0})
+D2' = zeroDimensionalDual(point matrix{{1,1}}, I2)
+assert(dim D2' == 0)
+///
+
 doc ///
      Key 
           gCorners
@@ -657,6 +647,7 @@ doc ///
 	  (gCorners,Point,Matrix)
 	  [gCorners,Strategy]
 	  [gCorners,ProduceSB]
+	  ProduceSB
      Headline
           generators of the initial ideal of a polynomial ideal
      Usage
@@ -685,6 +676,19 @@ doc ///
 	       
 ///
 
+TEST ///
+R = CC[x,y]
+M = matrix {{x^2-x*y^2,x^3}}
+--M = matrix {{x*y, y^2}}
+p = point matrix{{0_CC,0_CC}}
+q = point matrix{{0_CC,1_CC}}
+assert(numcols gCorners(p,M) == 2)
+assert(numcols gCorners(q,M) == 1)
+LDZ = reduceSpace truncatedDual(p,M,5,Strategy=>DZ)
+LBM = reduceSpace truncatedDual(p,M,5,Strategy=>BM)
+assert(areEqual(LDZ,LBM))
+///
+
 doc ///
      Key
           sCorners
@@ -710,6 +714,16 @@ doc ///
 	       I = monomialIdeal{x^2,y^2,z^2}
 	       S = sCorners I
 	       S = sCorners I^2
+///
+
+TEST ///
+R = CC[x,y]
+G1 = matrix{{x^2,x*y^2,y^4}}
+assert(sCorners G1 == matrix {{x*y, y^3}})
+G2 = matrix{{x*y^2,x^2*y^2,y^4}}
+assert(sCorners G2 == matrix {{y^3}})
+G3 = matrix{{x*y^2,x^2*y^2}}
+assert(sCorners G3 == matrix {{}})
 ///
 
 doc ///
