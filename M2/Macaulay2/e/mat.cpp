@@ -146,8 +146,15 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
 {
 #ifdef HAVE_FFLAS_FFPACK
   // Suppose A is m x n
-  // P is n element permutation on columns
+  // then we get A = LQUP = LSP, see e.g. http://www.ens-lyon.fr/LIP/Pub/Rapports/RR/RR2006/RR2006-28.pdf
+  // P and Q are permutation info using LAPACK's convention:, see
+  // http://www.netlib.org/lapack/explore-html/d0/d39/_v_a_r_i_a_n_t_s_2lu_2_r_e_c_2dgetrf_8f.html
+  // P is n element permutation on column: size(P)=min(m,n); 
+  // for 1 <= i <= min(m,n), col i of the  matrix was interchanged with col P(i).
   // Qt is m element permutation on rows (inverse permutation)
+  // for 1 <= i <= min(m,n), col i of the  matrix was interchanged with col P(i).
+  A->transpose();
+
   DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
   if (mat == 0) 
     {
@@ -156,15 +163,16 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
       //      return 0;
     }
   size_t nelems = mat->numColumns();
-  if (mat->numRows() > mat->numColumns()) nelems = mat->numRows();
+  if (mat->numRows() < mat->numColumns()) nelems = mat->numRows();
+ 
 
   std::vector<size_t> P(nelems, -1);
   std::vector<size_t> Qt(nelems, -1);
-
+  
   // ignore return value (rank) of:
   LUdivine(mat->ring().field(),
                        FFLAS::FflasNonUnit,
-                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
+                       (transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
                        mat->numColumns(),
                        mat->numRows(),
                        mat->array(),
@@ -175,6 +183,7 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   engine_RawArrayIntPairOrNull result = new engine_RawArrayIntPair_struct;
   result->a = stdvector_to_M2_arrayint(Qt);
   result->b = stdvector_to_M2_arrayint(P);
+
   return result;
 #endif
   return 0;
