@@ -173,10 +173,10 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   LUdivine(mat->ring().field(),
                        FFLAS::FflasNonUnit,
                        (transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
+                       mat->numRows(),
                        mat->numColumns(),
-                       mat->numRows(),
                        mat->array(),
-                       mat->numRows(),
+                       mat->numColumns(),
                        &P[0], 
                        &Qt[0]);
 
