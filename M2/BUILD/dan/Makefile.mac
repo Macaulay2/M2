@@ -65,6 +65,7 @@ unexport PROFILE
 # use the latest version from homebrew, not clang:
 CC  := /usr/local/bin/gcc-4.8
 CXX := /usr/local/bin/g++-4.8
+FC  := /usr/local/bin/gfortran-4.8
 
 # CC := clang
 # CXX := clang++
@@ -75,12 +76,12 @@ ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
 CXX += -m64
-export MPIR_CONFIGOPTIONS=ABI=64
+# export MPIR_CONFIGOPTIONS=ABI=64
 else
 DIRECTORY := mac32
 CC  += -m32
 CXX += -m32
-export MPIR_CONFIGOPTIONS=ABI=32
+# export MPIR_CONFIGOPTIONS=ABI=32
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
@@ -109,7 +110,7 @@ ifeq ($(PRODUCTION),yes)
 endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
-   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
    DIRECTORY := $(DIRECTORY).debug
 endif
 

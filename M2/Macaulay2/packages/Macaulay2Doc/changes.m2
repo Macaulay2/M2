@@ -94,6 +94,10 @@ document {
 			 },
 		    LI {
 			 "A task now has a serial number, see ", TO serialNumber, "."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-randomize", ", prevents the random number seed from
+			 being set to a value that depends on the time of day."
 			 }
 	  	    }
 	       },
