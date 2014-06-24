@@ -7,6 +7,9 @@
 
 VERSION = 3.1.2
 
+# Debugging note: the INSTALL file of mpfr recommends getting the latest patches 
+# from a file such as http://www.mpfr.org/mpfr-3.1.2/allpatches and applying them.
+
 #############################################################################
 
 # warning: version 3.1.2 breaks 'check loadPackage "EllipticIntegrals"'!  But it might be gc related.  Here's debug output:
