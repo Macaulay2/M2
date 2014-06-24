@@ -407,6 +407,7 @@ usage := arg -> (
      << "    --no-randomize     don't set the random number seed based on the date" << newline
      << "    --no-readline      don't use readline" << newline;
      << "    --no-setup         don't try to load setup.m2 or to loaddata" << newline
+     << "    --no-time          arrange for the current time to be always 0" << newline;
      << "    --no-tty           do not treat stdin and stdout as tty's" << newline
      << "    --no-tvalues       do not load tvalues.m2" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
@@ -468,6 +469,7 @@ action := hashTable {
      "--no-debug" => arg -> debuggingMode = false,
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
      "--no-randomize" => arg -> arg,
+     "--no-time" => arg -> arg,
      "--no-personality" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d

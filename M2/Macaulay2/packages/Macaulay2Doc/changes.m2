@@ -97,7 +97,11 @@ document {
 			 },
 		    LI {
 			 "A new command line option, ", TT "--no-randomize", ", prevents the random number seed from
-			 being set to a value that depends on the time of day."
+			 being set to a value that depends on the time of day and process ID."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-time", ", arranges for the function ", TO "currentTime", "
+			 to return 0 always, for reproducility of results, as an aid in debugging."
 			 }
 	  	    }
 	       },

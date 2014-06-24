@@ -16,7 +16,7 @@ b ERROR
 b outofmem
 b abort
 b GC_err_puts
-set args -q --no-randomize
+set args -q --no-randomize --no-time
 handle SIGPWR nostop noprint
 handle SIGXCPU nostop noprint
 # source .gdb-run-it

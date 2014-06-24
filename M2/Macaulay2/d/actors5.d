@@ -1356,9 +1356,14 @@ fileTime(e:Expr):Expr := (
      else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
 
+haveNoTimeInitialized := false;
+haveNoTime := false;
 currentTime(e:Expr):Expr := (
+     if !haveNoTimeInitialized then (
+	  haveNoTimeInitialized = true;
+	  foreach s in argv do if s === "--no-time" then haveNoTime = true);
      when e is a:Sequence do
-     if length(a) == 0 then toExpr(currentTime())
+     if length(a) == 0 then toExpr(if haveNoTime then 0 else currentTime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentTime",currentTime);
