@@ -63,9 +63,9 @@ unexport DEBUG
 unexport PROFILE
 
 # use the latest version from homebrew, not clang:
-CC  := /usr/local/bin/gcc-4.8
-CXX := /usr/local/bin/g++-4.8
-FC  := /usr/local/bin/gfortran-4.8
+CC  := /usr/local/bin/gcc-4.9
+CXX := /usr/local/bin/g++-4.9
+# FC  := /usr/local/bin/gfortran-4.8
 
 # CC := clang
 # CXX := clang++
