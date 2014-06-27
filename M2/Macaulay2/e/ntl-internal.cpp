@@ -6,6 +6,7 @@
 
 #include <M2/config.h>
 #include <M2/gc-include.h>
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 #include "ntl-interface.hpp"

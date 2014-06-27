@@ -5,6 +5,7 @@
 #include <memory>
 #include <algorithm>
 #include <stdio.h>
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 

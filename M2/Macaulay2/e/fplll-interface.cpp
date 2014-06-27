@@ -2,6 +2,7 @@
 
 
 #ifdef HAVE_FPLLL
+     #include <stddef.h>
      #include <gmp.h>
      #include <fplll.h>
 #endif
