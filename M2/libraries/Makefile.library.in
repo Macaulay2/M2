@@ -22,6 +22,12 @@ PRECONFIGURE  ?= :
 
 export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
+ifeq ($(OPTIMIZE),no)
+CXXFLAGS += -O0
+CFLAGS += -O0
+FCFLAGS += -O0
+endif
+
 ifeq (@OS@,MacOS)
 ## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
 ## the editing is done in distributions/dmg/Makefile

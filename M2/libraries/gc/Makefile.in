@@ -54,7 +54,6 @@ CONFIGOPTIONS += --enable-cplusplus
 VPATH = @srcdir@
 
 CONFIGOPTIONS += --enable-threads=posix
-CONFIGOPTIONS += --enable-parallel-mark
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
@@ -64,13 +63,16 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-gc-debug
 CPPFLAGS += -DDBG_HDRS_ALL=1 -DGC_ABORT_ON_LEAK=1
 
-# --enable-gc-assertions causes all the tests to fail on 64 bit mac os x
+#   "--enable-gc-assertions" causes all the tests to fail on 64 bit mac os x
 #   because addresses of roots are added that are not a multiple of 8.
 #   One such address is "start", the linker defined symbol, which can be a
 #   non-multiple of 8 under gcc 4.6.2
 CONFIGOPTIONS += --enable-gc-assertions
 
+# disable parallel mark when debugging, to ensure determinism:
+CONFIGOPTIONS += --disable-parallel-mark
 else
+CONFIGOPTIONS +=  --enable-parallel-mark
 # INSTALLTARGET = install-strip
 endif
 
