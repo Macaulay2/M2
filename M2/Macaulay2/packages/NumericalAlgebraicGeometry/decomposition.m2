@@ -63,11 +63,11 @@ decompose WitnessSet := (W) -> (
 	  S := eq | slice W;	  
 	  while (
 	      T := sliceEquations(randomSlice(k,n),R); 
-	      pt' := first movePoints(W, slice W, T, {(W.Points)#p});
+	      pt' := first movePoints(W, slice W, T, {(W.Points)#p}, Software=>M2engine);
 	      status pt' =!= Regular
 	      ) 
 	  do (); 
-	  pt := first movePoints(W, T, slice W, {pt'});
+	  pt := first movePoints(W, T, slice W, {pt'}, Software=>M2engine);
 	  if (c' :=  findComponent coordinates pt) === null then error "point outside of any current component";
 	  if c' == c then n'misses = n'misses + 1
 	  else ( 
@@ -81,7 +81,13 @@ decompose WitnessSet := (W) -> (
      irred := apply(i'cs, c->new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_c});
      scan(irred, c->c.IsIrreducible = true);
      irred | if #incomplete == 0 then {} 
-             else {new WitnessSet from {Equations=>W.Equations, Slice=>W.Slice, Points=>(W.Points)_(flatten(incomplete))}}
+             else {
+		 new WitnessSet from {
+		     Equations=>W.Equations, 
+		     Slice=>W.Slice, 
+		     Points=>(W.Points)_(flatten(incomplete))
+		     }
+		 }
      ) 
 
 linearTraceTest = method() -- check linearity of trace to see if component is irreducible
@@ -103,7 +109,7 @@ linearTraceTest (WitnessSet, List) := (W,c) -> (
 		    else (
 	       	    	 M := new MutableMatrix from W.Slice;
 		    	 M_(dim W - 1, numgens ring W) = r = random CC; -- replace last column
-		    	 movePoints(W, slice W, sliceEquations(matrix M,ring W), w) 
+		    	 movePoints(W, slice W, sliceEquations(matrix M,ring W), w, Software=>M2engine) 
 	       	    	 ) );
 	       {1, r, sum flatten entries (matrix (w'/coordinates) * proj)} 
                ));
@@ -142,7 +148,7 @@ for i to 5 do (
 ///
 
 
-numericalIrreducibleDecompositionM2 = I -> numericalVariety flatten (components regeneration I_* / decompose)
+numericalIrreducibleDecompositionM2 = I -> numericalVariety flatten (components regeneration (I_*,Software=>M2engine) / decompose)
 numericalIrreducibleDecompositionBertini = I -> bertiniPosDimSolve I_*
 numericalIrreducibleDecomposition = method(Options=>{Software=>null})
 numericalIrreducibleDecomposition Ideal := o -> I -> (

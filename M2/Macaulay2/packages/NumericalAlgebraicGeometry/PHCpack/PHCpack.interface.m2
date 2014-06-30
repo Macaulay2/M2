@@ -13,7 +13,7 @@ trackPHCpack (PolySystem, PolySystem, List, HashTable) := List => (S,T,sols,o) -
 trackPHCpack (List,List,List,HashTable) := List => (S,T,sols,o) -> (
      -- Anton: options are not used at the moment
      --trackPaths(S,T,sols,PHCpack$gamma=>o.NAG$gamma,PHCpack$tDegree=>o.NAG$tDegree)     
-     trackPaths(S,T,sols,gamma=>o.NumericalAlgebraicGeometry$gamma,tDegree=>o.NumericalAlgebraicGeometry$tDegree)
+     trackPaths(T,S,sols,gamma=>o.NumericalAlgebraicGeometry$gamma,tDegree=>o.NumericalAlgebraicGeometry$tDegree)
      )
 
 refinePHCpack = method(TypicalValue => List)

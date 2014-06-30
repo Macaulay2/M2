@@ -120,7 +120,8 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 	 if status P =!= Singular
 	 then (
 	     w' = --refine(E|S', 
-		 track(E|S, E|S', w, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii))
+		 track(E|S, E|S', w, 
+		     NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software)
 		 --)
 	     ;
 	     success = all(w', p->member(status p, {Regular{*,Singular*}}));
@@ -129,7 +130,8 @@ movePoints (WitnessSet, List, List, List) := List => o -> (W,S,S',w) -> (
 	     assert all(w, p->p.LiftedSystem===P.LiftedSystem); -- !!!
 	     F'.PolyMap = (map(ring F, ring F', vars ring F)) F'.PolyMap; -- hack!!!: rewrite with trackHomotopy
 	     lifted'w' := --refine(F',
-	     	 track(F, F', w/(p->p.LiftedPoint), NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii))
+	     	 track(F, F', w/(p->p.LiftedPoint), 
+		     NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software)
 		 --)
 		 ;
 	     if success = all(lifted'w', p->member(status p, {Regular{*,Singular*}})) 
@@ -158,7 +160,7 @@ moveSlice (WitnessSet, List) := List => o -> (W,S') -> (
      then error "dimension of new slicing plane is too high";
      R := ring W;
 
-     w' := movePoints(W, slice W, S', W.Points);
+     w' := movePoints(W, slice W, S', W.Points, o);
 
      W' := new WitnessSet from W;
      W'.Slice = sliceEquationsToMatrix ideal S';

@@ -292,6 +292,7 @@ origin = method(TypicalValue=>Point)
 origin Ring := R -> point matrix{toList(numgens R:0_(ultimate(coefficientRing, R)))};
 
 isGEQ = method(TypicalValue=>Boolean, Options=>{Tolerance=>1e-6})
+isGEQ(Point,Point) := o->(t,s)-> isGEQ(coordinates t, coordinates s, o)
 isGEQ(List,List) := o->(t,s)-> (
      n := #t;
      for i from 0 to n-1 do ( 
@@ -876,12 +877,12 @@ document { Key => {Norm,
      }
 
 document {
-	Key => {isGEQ, (isGEQ,List,List)},
+	Key => {isGEQ, (isGEQ,List,List),(isGEQ,Point,Point)},
 	Headline => "compare two points",
 	Usage => "b = isGEQ(x,y)",
 	Inputs => {
-	     "x" => "complex (floating point) numbers",
-	     "y" => "complex (floating point) numbers"
+	     "x" => {ofClass Point, "or a list of complex (floating point) numbers"},
+	     "y" => {ofClass Point, "or a list of complex (floating point) numbers"}
 	     },
 	Outputs => {"b"=>{"tells if ", TT "x", " is (approximately) greater or equal than ", TT "y"}},
 	PARA {"The inputs are lists of complex numbers, the order is (approximately) lexicographic: regard each complex n-vector as real 2n-vector, 
