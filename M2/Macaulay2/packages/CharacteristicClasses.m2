@@ -8,10 +8,9 @@
 newPackage(
 	"CharacteristicClasses",
 	Version => "1.1", 
-    	Date => "April 19, 2014",
+    	Date => "June 18, 2014",
     	Authors => {{Name => "Christine Jost", 
-		  Email => "chjo9357@mbox.su.se", 
-		  HomePage => "http://people.su.se/~chjo9357/"},
+		  Email => "christine.e.jost@gmail.com"},
                   {Name => "Martin Helmer", Email => "mhelmer2@uwo.ca", 
 		  HomePage => "http://publish.uwo.ca/~mhelmer2/"}},
     	Headline => "Degrees of Chern classes and other characteristic classes",
@@ -312,7 +311,7 @@ internalSegre = {Algorithm => ProjectiveDegree} >> opts -> I -> (
         d:=first max degrees I; 
         use(ChowRingPn);
        
-        g:=internalProjectiveDegree(I,minDegGen);
+        g:=internalProjectiveDegree(I);
         poly:=sum(0..n,s->g_s*h^s*(1+d*h)^(n-s));
         segreclass:=1 - poly * sum(0..n,i->binomial(n+i,i)*(-d*h)^i);
         for a in listForm segreclass do (segreList={a_1}|segreList );
@@ -507,7 +506,7 @@ internalCSM = {Algorithm => ProjectiveDegree} >> opts -> I -> (
 --    
 -- Output:
     -- A sequence of projective degrees (g_0,...,g_k)
- internalProjectiveDegree = (I,MinDegGen) -> (    
+ internalProjectiveDegree = (I) -> (    
      
 S:=ring I;
 m:=numgens I;
@@ -536,7 +535,7 @@ if k<val then (g#k=(d)^k) else (
              Xs=sum((n-k),jj->ideal sum(numgens S,i->random(kk)*Sgens_i));
              Affx=ideal( sum(numgens S,i->random(kk)*Sgens_i)-1);
             EqT=ideal( sum((numgens J),i->(1-t*random(kk)*J_i)));
-             --EqT=1-t*substitute(MinDegGen,R3);
+            
              Wt=Pol+Xs+Affx+EqT;
              
              tall= length (entries basis(R3/Wt))_0;
@@ -573,7 +572,7 @@ internalCSMhyp = {Algorithm => ProjectiveDegree} >> opts -> p -> (
      if(opts.Algorithm==ProjectiveDegree) then (
      gensI := flatten entries sort gens singP; 
      minDegGen := first gensI;
-     gs:=internalProjectiveDegree(singP,minDegGen);
+     gs:=internalProjectiveDegree(singP);
      g=toList gs;
      )
      --if residual Jost do this
@@ -652,7 +651,6 @@ output = (segreList,ambientDim,hyperplaneClass) -> (
 
 
 
-
 ----------------------------------------------
 -- Documentation
 ---------------------------------------------
@@ -681,13 +679,13 @@ doc ///
                classes are a generalization of Chern classes of smooth schemes to possibly singular schemes with nice functorial properties.
 	       
 	       -- The functions computing characteristic classes in this package can have two different kinds of output. The functions chernClass, 
-               segreClass and CSMClass give back the pushforward of the total class 
+               -- segreClass and CSMClass give back the pushforward of the total class 
 	       -- to the Chow ring of P^k, whereas chernClassList, segreClassList and CSMClass List give a list of the degrees of the Chern, Segre and 
-               Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
+               -- Chern-Schwartz-MacPherson classes, respectively. The scheme X can be 
 	       -- given as either a homogeneous ideal in a polynomial ring over a field, or as projective variety. 
 	       
-	       This implementation offers two different algorithms to compute charcteristic classes. The first algorithm is refered to as ResidualSymbolic 
-               for the symbolic implementation and Bertini for the numeric implementaion and is given in the  articles 
+	       This implementation offers two different algorithms to compute characteristic classes. The first algorithm is refered to as ResidualSymbolic 
+               for the symbolic implementation and Bertini for the numeric implementation and is given in the  articles 
                "Chern Numbers of Smooth Varieties via Homotopy Continuation and Intersection Theory" 
                (S. Di Rocco, D. Eklund, C. Peterson, A.J. Sommese),"A method to compute Segre classes" (D. Eklund, C. Jost, C. Peterson), 
                "An algorithm for computing the topological Euler characteristic of complex projective varieties" (C. Jost). 
@@ -698,13 +696,13 @@ doc ///
 
                The second algorithm is referred to as ProjectiveDegree and given in the article "An Algorithm to Compute the Topological Euler 
                Characteristic, Chern-Schwartz-MacPherson Class and Segre Class of Projective Varieties" (M. Helmer). 
-               The main computational step of this algorithm is the computation of the projective degerees. This can be done symbolically, using 
+               The main computational step of this algorithm is the computation of the projective degrees. This can be done symbolically, using 
                Gr&ouml;bner bases, or numerically using a package such as Bertini, however only the symbolic implementation is offered at present, 
                since a numeric implementation is already provided for the residual degrees algorithm.
 
-	       Over the rationals the defult algorithm is ResidualSymbolic, over any finte feild the defult algorithm is ProjectiveDegree. 
+	       Over the rationals the default algorithm is ResidualSymbolic, over any finite field the default algorithm is ProjectiveDegree. 
 	       
-	       Observe that both algorithms are probabilistic algorithms. The algorithm ProjectiveDegree will give the correct answer with probobility 1. 
+	       Observe that both algorithms are probabilistic algorithms. The algorithm ProjectiveDegree will give the correct answer with probability 1. 
                The algorithm ResidualSymbolic may give a wrong answer with a small but nonzero probability. Read more under @TO "probabilistic algorithm"@.
 ///
 
@@ -727,7 +725,7 @@ doc ///
      	  I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a closed subscheme X of \PP^k
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to use
      Outputs
      	  :RingElement
@@ -771,7 +769,7 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to used to compute the Chern class
      Outputs
      	  :RingElement
@@ -818,7 +816,7 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
+	  Algorithm => "Default"
 	    the algorithm to compute the Chern-Schwartz-MacPherson classes
      Outputs
      	  :RingElement
@@ -837,7 +835,7 @@ doc ///
 	  Example
 	       CSMClass( ideal(x^3 + x^2*z - y^2*z), symbol t ) 
 	  Text
-	       All the examples were done using symbolic computations with Gr\"obner bases. The defualt algorithm computes the projective degrees using 
+	       All the examples were done using symbolic computations with Gr\"obner bases. The default algorithm computes the projective degrees using 
                Gr\"obner bases. Changing the option @TO Algorithm@ to ResidualSymbolic will compute the residual degrees using Gr\"obner bases. 
                Changing the option @TO Algorithm@ to Bertini will do the main computations numerically, provided Bertini is 
                @TO2 {"configuring Bertini", "installed and configured"}@ .  
@@ -863,8 +861,8 @@ doc ///
           I:Ideal
 	    a homogeneous ideal in a polynomial ring over a field, defining a projective scheme X
 	  X:ProjectiveVariety
-	  Algorithm => "ProjectiveDegree"
-	    the algorithm used to compute the CSM class, from which we obtain the Euler charteristic 
+	  Algorithm => "Default"
+	    the algorithm used to compute the CSM class, from which we obtain the Euler characteristic 
      Outputs
      	  :ZZ
 	    the topological Euler characteristic of the scheme X.
@@ -877,7 +875,7 @@ doc ///
 	       R = ZZ/32749[x,y,z]
 	       eulerChar ideal(x^3 + x^2*z - y^2*z)     
 	  Text
-	       All the examples were done using symbolic computations with Gr\"obner bases. The defualt algorithm computes the projective degrees using 
+	       The example was done using symbolic computations with Gr\"obner bases. The default algorithm computes the projective degrees using 
                Gr\"obner bases. Changing the option @TO Algorithm@ to ResidualSymbolic will compute the residual degrees using Gr\"obner bases. 
                Changing the option @TO Algorithm@ to Bertini will do the main computations numerically, provided Bertini is 
                @TO2 {"configuring Bertini", "installed and configured"}@ .  
@@ -895,20 +893,24 @@ doc ///
 	  Bertini
      Description
      	  Text
-	       The option Algorithm determines which strategy is used. The default option is called Default, when the field is QQ (the rationals) the 		       ResidualSymbolic will be automatically chosen, for any other field, i.e. ZZ/32749 or some other finite field the  ProjectiveDegree 
-               option will be automatically chosen. When choosing the ProjectiveDegree option, Gr\"obner basis methods will be used 
-               to compute the projective degree.  When choosing ResidualSymbolic Gr\"obner basis methods will be used to compute the residuals. 
-               Computing the projective degree or the degree of the residuals, respectively, is the main step in the computation done by the commands 
-               in this package. The computations can also be done numerically using the regenerative cascade implemented in Bertini. This is done 
-               by choosing the option Bertini and provided Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. Using Bertini may 
-               provide a speed-up or prevent running out of memory.
+	       The option Algorithm determines which algorithm is used to compute the results. The default option is called Default, it attempts to 
+	       automatically choose the fastest algorithm according to a simple rule. However, the algorithm may also be chosen manually. 
 	  Example
 	       setRandomSeed 367;
-	       R = QQ[x,y,z,w]
+	       R = QQ[x,y,z,w];
 	       chernClass( minors(2,matrix{{x,y,z},{y,z,w}}), Algorithm=>ProjectiveDegree)  
 	  Text  
-               For many examples over a finite field the ProjectiveDegree option will offer better performence, when working over the rationals 
-               the ResidualSymbolic algorithm is often faster. 
+	       There are three algorithms which can be used, ProjectiveDegree, ResidualSymbolic, and Bertini. When choosing the ProjectiveDegree 
+	       option, the main step is the computation of projective degrees, for which Gr\"obner basis methods will be used. When choosing 
+	       ResidualSymbolic, Gr\"obner basis methods will be used to compute so-called residuals. These computations can also be done 
+	       numerically using the regenerative cascade implemented in Bertini. This is done by choosing the option Bertini and provided
+	       Bertini is @TO2 {"configuring Bertini", "installed and configured"}@. 
+	       
+               For many examples over a finite field the ProjectiveDegree option will offer better performance. When working over the rationals 
+               the ResidualSymbolic algorithm is often faster. Hence when the field is QQ (the rationals), the option
+	       ResidualSymbolic will be automatically chosen, and for any other field, i.e., ZZ/32749 or some other finite field, the  ProjectiveDegree 
+               option will be automatically chosen. Note that this is only a general trend which has been observed in testing, and this may 
+               not necessarily true for any particular example, hence if one method is not working well the user may wish to try another. 	      
           Example
                R=ZZ/32749[v_0..v_5];
                I=ideal(4*v_3*v_2-v_0^2,v_5*(v_0*v_1*v_4-v_2^3));
@@ -918,6 +920,9 @@ doc ///
 	       K=ideal(4*s_3*s_2-s_0^2,(s_0*s_1*s_3-s_2^3));
 	       time CSMClass(K,Algorithm=>ProjectiveDegree)
 	       time CSMClass(K,Algorithm=>ResidualSymbolic)
+	  Text
+	       Note that there are some specific examples where we may see the difference in performance change to favour one algorithm over the other 
+               when changing fields, however such examples observed thus far are too time consuming to include here. 
 ///
 
 
@@ -965,14 +970,12 @@ doc ///
      	  "probabilistic algorithm"
      Description
      	  Text
-	       Both algorithms used for the computation of characteristic classes are probabilistic. The algorithm ProjectiveDegree calculates the 
-               classes correctly in all cases for a general choice of certain polynomials, that is there is an open dense Zariski set for which 
-               the algorithm yields the correct class, i.e. the ProjectiveDegree algorithm calculates the correct class with probability 1. This is 
-               true both for the implementation, and for the theoretical version of the algorithm. The ResidualSymbolic algorithm theoretically calculates 
-               the classes correctly in all cases outside a lower-dimensional subset, i.e., with probability 1. However, in the implementation of the
-               ResidualSymbolic algorithm the probability of not computing the correct class is strictly larger than zero, although small. 
-               Skeptical users should either use the ProjectiveDegree algorithm for all calculations or if using the ResidualSymbolic algorithm they 
-               should repeat calculations several times to increase the probability of computing the correct class.
+	       The algorithms used for the computation of characteristic classes are probabilistic. Theoretically, they calculate the classes 
+	       correctly for a general choice of certain polynomials. That is, there is an open 
+               dense Zariski set for which the algorithm yields the correct class, i.e., the correct class is calculated with probability 1. 
+               However, since the implementation works over a discrete probability space there is a very small, but non-zero, probability of not 
+               computing the correct class. 
+               Skeptical users should repeat calculations several times to increase the probability of computing the correct class.
 	       
 	       We illustrate the probabilistic behaviour with an example where the chosen random seed leads to a wrong result in the first calculation. 
 	  Example
