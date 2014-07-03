@@ -7,10 +7,12 @@
 
 #include "aring-glue.hpp"
 
+unsigned int MutableEngineObject::mNextMutableHashValue = 13;
+
 extern void factory_setup_1(); // M2-factory.cpp
 
-unsigned long mutable_object::next_hash_sequence_number = 1000;
-long object::next_hash_sequence_number = -7;
+//unsigned long mutable_object::next_hash_sequence_number = 1000;
+//long object::next_hash_sequence_number = -7;
 
 const int heap_size[GEOHEAP_SIZE] = {4, 16, 64, 256, 1024, 4096,
                                16384, 65536, 262144, 1048576, 4194304,

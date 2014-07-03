@@ -49,7 +49,7 @@ class CoefficientRingR;
     xxx
     xxx
 */
-class Ring : public mutable_object
+class Ring : public MutableEngineObject
 {
 protected:
   const ARing * getARing() const { return AR; }
@@ -240,7 +240,7 @@ public:
   //////////////////////
   // Ring arithmetic ///
   //////////////////////
-  virtual unsigned long compute_hash_value(const ring_elem a) const = 0;
+  virtual unsigned int computeHashValue(const ring_elem a) const = 0;
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 

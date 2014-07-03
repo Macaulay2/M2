@@ -7,10 +7,12 @@
 #include "ring.hpp"
 class Monomial;
 
-class RingElement : public immutable_object
+class RingElement : public EngineObject
 {
   const Ring *R;
   ring_elem val;
+protected:
+  virtual unsigned int computeHashValue() const;
 public:
   RingElement(const Ring *R, ring_elem f);
 
@@ -104,8 +106,8 @@ public:
   const M2_arrayintOrNull getSmallIntegerCoefficients() const;
 };
 
-inline RingElement::RingElement(const Ring *R0, ring_elem f) :
-  immutable_object(R0->compute_hash_value(f)), R(R0), val(f)
+inline RingElement::RingElement(const Ring *R0, ring_elem f) 
+  : R(R0), val(f)
 {
 }
 

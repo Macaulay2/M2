@@ -52,10 +52,10 @@ namespace M2 {
     nmod_poly_clear(mMinPoly);
 
     // powers of p, as ulongs's
-    mPPowers = newarray_atomic(unsigned long, mDimension+1);
+    mPPowers = newarray_atomic(unsigned int, mDimension+1);
     mPPowers[0] = 1;
     for (long i=1; i<=mDimension; i++)
-      mPPowers[i] = mPPowers[i-1] * static_cast<ulong>(mCharacteristic);
+      mPPowers[i] = mPPowers[i-1] * static_cast<unsigned int>(mCharacteristic);
 
     flint_randinit(mRandomState);
   }

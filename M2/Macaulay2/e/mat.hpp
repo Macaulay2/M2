@@ -17,7 +17,7 @@ template<class T> class MutableMat;
  * \ingroup matrices
  */
 
-class MutableMatrix : public mutable_object
+class MutableMatrix : public MutableEngineObject
 {
 protected:
   MutableMatrix() {}

@@ -47,7 +47,7 @@ namespace M2 {
     // Hash values are used in the front end of M2 to implement keys for hash tables.
     // It is worthwhile to have this be a meaningful hash function
     // (But doesn't need to be cryptographic!)
-    unsigned long computeHashValue(const ElementType& a) const { return a; }
+    unsigned int computeHashValue(const ElementType& a) const { return a; }
     
     /** @name properties
         @{     

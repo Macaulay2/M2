@@ -56,9 +56,9 @@ public:
   int discrete_log(ring_elem a) const;
 
 // The following are all the routines required by 'ring'
-  unsigned long compute_hash_value(const ring_elem a) const 
+  unsigned int computeHashValue(const ring_elem a) const 
   { 
-    return static_cast<unsigned long>(a.int_val);
+    return a.int_val;
   }
 
   virtual void text_out(buffer &o) const;

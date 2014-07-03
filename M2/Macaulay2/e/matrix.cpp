@@ -28,10 +28,23 @@ Matrix::Matrix(const FreeModule *rows0,
   _degree_shift = const_cast<int *>(degree_shift0);
   for (int i=0; i<cols0->rank(); i++)
     _entries.append(entries0[i]);
+}
 
-  long z = 234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols());
-  if (z < 0) z = -z;
-  make_immutable(z);
+unsigned int Matrix::computeHashValue() const
+{
+  unsigned int hashval = 234123 + (7 * n_rows() + 157 * n_cols());
+
+  iterator i(this);
+  for (int c=0; c<n_cols(); c++)
+    {
+      int count = 0;  // only use first 2 non-zero entries in each column
+      for (i.set(c); i.valid(); i.next())
+        {
+          hashval = 34224*hashval + get_ring()->computeHashValue(i.entry());
+          if (++count > 2) break;
+        }
+    }
+  return hashval;
 }
 
 const Matrix /* or null */ * Matrix::make(const FreeModule *target,
@@ -283,9 +296,8 @@ ring_elem Matrix::elem(int i, int j) const
 bool Matrix::is_equal(const Matrix &m) const
 {
   if (this == &m) return true;
-  if (get_hash_value() != m.get_hash_value())
-    return false; // Note that if one is immutable,
-                  // and the other is mutable, false will be returned.
+  if (hash() != m.hash())
+    return false;
   if (get_ring() != m.get_ring())
     return false;
   if (n_rows() != m.n_rows())

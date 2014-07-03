@@ -25,9 +25,9 @@ engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
   return Monoid::create(mo,names,P,degs,hefts);
 }
 
-unsigned long IM2_Monoid_hash(const Monoid *M)
+unsigned int rawMonoidHash(const Monoid *M)
 {
-  return M->get_hash_value();
+  return M->hash();
 }
 
 M2_string IM2_Monoid_to_string(const Monoid *M)

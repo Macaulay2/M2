@@ -403,7 +403,7 @@ M2_string rawEngineComputationToString(EngineComputation *C)
 
 unsigned long rawEngineComputationHash(const Computation *C)
 {
-  return C->get_hash_value();
+  return C->hash();
 }
 
 ////////////////////////////////////
@@ -922,9 +922,9 @@ IM2_GB_to_string(Computation *C)
      }
 }
 
-unsigned long IM2_GB_hash(const Computation *C)
+unsigned int rawComputationHash(const Computation *C)
 {
-  return C->get_hash_value();
+  return C->hash();
 }
 
 Matrix /* or null */ * rawSubduction(const Matrix *M,

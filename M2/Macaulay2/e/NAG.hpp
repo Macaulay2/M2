@@ -521,7 +521,7 @@ public:
 // };
 
 template <class Field>
-class SLP : public object
+class SLP : public MutableEngineObject
 {
   Field F; // F->add(a,b,c)
 public:
@@ -654,7 +654,7 @@ struct Solution
   void release() { deletearray(x); deletearray(start_x); }
 };
 
-class PathTracker : public object
+class PathTracker : public MutableEngineObject
 {
   static PathTracker* catalog[MAX_NUM_PATH_TRACKERS];
   static int num_path_trackers;

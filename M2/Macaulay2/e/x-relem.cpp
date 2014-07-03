@@ -33,9 +33,9 @@
 
 #include <flint/fq_nmod.h>
 
-unsigned long IM2_Ring_hash(const Ring *R)
+unsigned int rawRingHash(const Ring *R)
 {
-  return R->get_hash_value();
+  return R->hash();
 }
 
 M2_string IM2_Ring_to_string(const Ring *R)
@@ -483,13 +483,10 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R)
   return P->getDenominatorRing();
 }
 /*********************************************************************/
-//static long nhash = 0;
 
-unsigned long IM2_RingElement_hash(const RingElement *a)
+unsigned int rawRingElementHash(const RingElement *a)
 {
-  unsigned long result = a->get_hash_value();
-  //printf("calling to get ring element hash value of %p: %ld %lu\n", a, nhash++, result);
-  return result;
+  return a->hash();
 }
 
 const Ring * IM2_RingElement_ring(const RingElement *a)

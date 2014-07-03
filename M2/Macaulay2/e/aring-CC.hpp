@@ -44,10 +44,10 @@ namespace M2 {
 
     const ARingRR& real_ring() const { return mRR; }
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
       double v = 12347. * a.re + 865800. * a.im;
-      return static_cast<unsigned long>(v);
+      return static_cast<unsigned int>(v);
     }
 
     /////////////////////////////////

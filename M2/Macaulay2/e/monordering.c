@@ -25,7 +25,7 @@ static struct mon_part_rec_ *mo_make(enum MonomialOrdering_type type, int nvars,
 
 static MonomialOrdering *make_mon_order(int n)
 {
-  static unsigned long next_hash = 2300230023U;
+  static unsigned int next_hash = 23023421;
   MonomialOrdering *z = getmemarraytype(MonomialOrdering *,n);
   z->len = n;
   z->_hash = next_hash++;
@@ -442,7 +442,7 @@ M2_string ones_to_string(int len)
   return result;
 }
 
-unsigned long IM2_MonomialOrdering_hash(const MonomialOrdering *mo)
+unsigned int rawMonomialOrderingHash(const MonomialOrdering *mo)
 {
   return mo->_hash;
 }

@@ -112,7 +112,7 @@ extern "C" {
 
   M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo); /* drg: connected */
 
-  unsigned long IM2_MonomialOrdering_hash(const MonomialOrdering *mo); /* drg: connected hash */
+  unsigned int rawMonomialOrderingHash(const MonomialOrdering *mo); /* drg: connected hash */
     /* Assigned sequentially */
 
   int moIsGRevLex(const struct MonomialOrdering *mo);
@@ -149,7 +149,7 @@ extern "C" {
        currently, if the first components for each degree are not all
        positive, or under various other "internal" error conditions */
 
-  unsigned long IM2_Monoid_hash(const Monoid *M);  /* drg: connected hash */
+  unsigned int rawMonoidHash(const Monoid *M);  /* drg: connected hash */
     /* Assigned sequentially */
 
   M2_string IM2_Monoid_to_string(const Monoid *M);  /* drg: connected */
@@ -218,7 +218,7 @@ extern "C" {
   /**************************************************/
   /**** Ring routines *******************************/
   /**************************************************/
-  unsigned long IM2_Ring_hash(const Ring *R);  /* drg: connected hash */
+  unsigned int rawRingHash(const Ring *R);  /* drg: connected hash */
     /* assigned sequentially */
 
   M2_string IM2_Ring_to_string(const Ring *M); /* drg: connected */
@@ -406,7 +406,7 @@ extern "C" {
 
   M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
 
-  unsigned long IM2_RingElement_hash(const RingElement *a);/* connected */
+  unsigned int rawRingElementHash(const RingElement *a);/* connected */
 
   const Ring * IM2_RingElement_ring(const RingElement *a); /* drg: connected rawRing*/
 
@@ -632,9 +632,9 @@ extern "C" {
   IM2_FreeModule_to_string(
           const FreeModule *F); /* drg: connected */
 
-  unsigned long int
-  IM2_FreeModule_hash(
-          const FreeModule *F); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned int
+  rawFreeModuleHash(
+          const FreeModule *F); /* not quite connected */
 
   const FreeModule /* or null */ *
   IM2_FreeModule_make(
@@ -771,7 +771,7 @@ extern "C" {
 
   M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
 
-  unsigned long IM2_Matrix_hash(const Matrix *M); /* drg: connected to "hash", but it always returns 0, sigh */
+  unsigned int rawMatrixHash(const Matrix *M); /* drg: connected to "hash"  */
 
   const RingElement /* or null */ * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
@@ -1094,7 +1094,7 @@ extern "C" {
 
   M2_string IM2_RingMap_to_string(const RingMap *F); /* drg: connected */
 
-  unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned int rawRingMapHash(const RingMap *F); /* TODO */ 
 
   M2_bool IM2_RingMap_is_equal(const RingMap*, const RingMap*); /* drg: connected === */
 
@@ -1157,7 +1157,7 @@ extern "C" {
 
   M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected toString, OK */
 
-  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* drg: connected to "hash" */
+  unsigned int  rawMutableMatrixHash(const MutableMatrix *M); /* drg: connected to "hash" */
 
   int IM2_MutableMatrix_n_rows(const MutableMatrix *M); /* drg: connected rawNumberOfRows, OK */
 
@@ -1501,7 +1501,8 @@ extern "C" {
 
   M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I); /* TODO */
 
-  unsigned long IM2_MonomialIdeal_hash(const MonomialIdeal *I);/* TODO */
+  unsigned int rawMonomialIdealHash(const MonomialIdeal *I); 
+  /* connected to 'hash', sequential, as it is mutable */
 
   int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1,
                                      const MonomialIdeal *I2); /* drg: connected === */
@@ -1639,7 +1640,7 @@ enum gbTraceValues
 
   M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
 
-  unsigned long IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
+  unsigned int rawComputationHash(const Computation *C); /* drg: connected, in basic.d */
 
   void rawShowComputation(const Computation *C); /* Dan: connected to rawShowComputation */
 
@@ -1961,7 +1962,7 @@ enum gbTraceValues
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
   M2_string rawStraightLineProgramToString(StraightLineProgram *); /* connected */
-  unsigned long rawStraightLineProgramHash(StraightLineProgram *); /* connected */
+  unsigned int rawStraightLineProgramHash(StraightLineProgram *); /* connected */
   const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols ,
                                     M2_bool is_projective,
                                     gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt,
@@ -1973,7 +1974,7 @@ enum gbTraceValues
   PathTracker /* or null */ *rawPathTracker(const Matrix *);
   PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *, const Matrix *, gmp_RR);
   M2_string rawPathTrackerToString(PathTracker *); /* connected */
-  unsigned long rawPathTrackerHash(PathTracker *); /* connected */
+  unsigned int rawPathTrackerHash(PathTracker *); /* connected */
   void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
                           gmp_RR init_dt, gmp_RR min_dt,
                           gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,

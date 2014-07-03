@@ -40,9 +40,9 @@ namespace M2 {
 
     size_t cardinality() const { return mCharac; }
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return static_cast<unsigned long>(a);
+      return static_cast<unsigned int>(a);
     }
 
     long coerceToLongInteger(const elem& f) const

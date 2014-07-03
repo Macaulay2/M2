@@ -60,9 +60,9 @@ namespace M2 {
     ////////////////////////////////
 
   public:
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return a.value;
+      return static_cast<unsigned int>(a.value);
     }
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const

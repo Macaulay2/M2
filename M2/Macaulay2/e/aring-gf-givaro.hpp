@@ -155,9 +155,9 @@ class ARingGFGivaro : public RingInterface
 
    UTT   cardinality() const { return mCardinality; }
 
-  unsigned long computeHashValue(const elem& a) const 
+  unsigned int computeHashValue(const elem& a) const 
   { 
-    return static_cast<unsigned long>(a);
+    return static_cast<unsigned int>(a);
   }
 
     /** @name IO

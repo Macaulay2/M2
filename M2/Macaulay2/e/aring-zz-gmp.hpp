@@ -33,9 +33,9 @@ namespace M2 {
     
     size_t cardinality() const { return static_cast<size_t>(-1); }
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return mpz_get_ui(&a);
+      return static_cast<unsigned int>(mpz_get_ui(&a));
     }
     
     /** @name properties

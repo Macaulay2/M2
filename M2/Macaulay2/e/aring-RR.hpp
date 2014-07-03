@@ -31,9 +31,9 @@ namespace M2 {
     unsigned long get_precision() const { return 53; }
     void text_out(buffer &o) const;
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return static_cast<unsigned long>(a);
+      return static_cast<unsigned int>(a);
     }
 
     /////////////////////////////////

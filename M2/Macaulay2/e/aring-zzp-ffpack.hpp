@@ -87,9 +87,9 @@ namespace M2 {
 
     // @TODO: Jakob: what are the implications of using /// instead of /**.
 
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return static_cast<unsigned long>(a); 
+      return static_cast<unsigned int>(a); 
     }
 
   /** @name IO

@@ -9,7 +9,7 @@
 class Matrix;
 class GBMatrix;
 
-class FreeModule : public immutable_object
+class FreeModule : public EngineObject
 {
   friend class Ring;
   FreeModule(const Ring *R, int n, bool has_schreyer_order);
@@ -21,6 +21,8 @@ protected:
   const Ring *R;
 
 protected:
+  virtual unsigned int computeHashValue() const;
+  
   void initialize(const Ring *RR);
 
   virtual FreeModule *new_free() const;

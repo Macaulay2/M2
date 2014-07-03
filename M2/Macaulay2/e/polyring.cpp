@@ -202,15 +202,15 @@ SumCollector *PolynomialRing::make_SumCollector() const
   return new SumCollectorPolyHeap(this);
 }
 
-unsigned long PolynomialRing::compute_hash_value(const ring_elem a) const
+unsigned int PolynomialRing::computeHashValue(const ring_elem a) const
 {
-  unsigned long hash = 0;
-  unsigned long seed1 = 103;
-  unsigned long seed2 = 347654;
+  unsigned int hash = 0;
+  unsigned int seed1 = 103;
+  unsigned int seed2 = 347654;
   for (const Nterm* t = a.poly_val; t!=0; t=t->next)
     {
-      unsigned long hash1 = getCoefficientRing()->compute_hash_value(t->coeff);
-      unsigned long hash2 = getMonoid()->compute_hash_value(t->monom); 
+      unsigned int hash1 = getCoefficientRing()->computeHashValue(t->coeff);
+      unsigned int hash2 = getMonoid()->computeHashValue(t->monom); 
       hash += seed1 * hash1 + seed2 * hash2;
       seed1 += 463633;
       seed2 += 7858565;

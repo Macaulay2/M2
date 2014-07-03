@@ -79,10 +79,10 @@ ring_elem FractionField::denominator(ring_elem f) const
   return R_->copy(g->denom);
 }
 
-unsigned long FractionField::compute_hash_value(const ring_elem f) const
+unsigned int FractionField::computeHashValue(const ring_elem f) const
 {
   frac_elem *g = FRAC_VAL(f);
-  return(16473 * R_->compute_hash_value(g->numer) + 7698908 * R_->compute_hash_value(g->denom));
+  return(16473 * R_->computeHashValue(g->numer) + 7698908 * R_->computeHashValue(g->denom));
 }
 
 frac_elem *FractionField::new_frac_elem() const

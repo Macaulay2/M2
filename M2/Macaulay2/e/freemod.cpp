@@ -18,9 +18,18 @@ void FreeModule::initialize(const Ring *RR)
   schreyer = 0;
 }
 
+unsigned int FreeModule::computeHashValue() const
+{
+  unsigned int hashval = 13;
+  if (degree_monoid()->n_vars() == 0)
+    hashval += rank();
+  else
+    for (int i=0; i<rank(); i++)
+      hashval = 14535*hashval + degree(i)[0];
+  return hashval;
+}
 FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
-: immutable_object(0)
-     // Create R^n, with all gradings zero.
+// Create R^n, with all gradings zero.
 {
   initialize(RR);
 

@@ -73,12 +73,12 @@ namespace M2 {
     ////////////////////////////
     // Functions on elements ///
     ////////////////////////////
-    virtual unsigned long compute_hash_value(ring_elem a) const
+    virtual unsigned int computeHashValue(ring_elem a) const
     {
       ElementType b;
       ring().init(b);
       ring().from_ring_elem(b, a);
-      unsigned long result = ring().computeHashValue(b);
+      unsigned int result = ring().computeHashValue(b);
       ring().clear(b);
       return result;
     }

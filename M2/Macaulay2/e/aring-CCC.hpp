@@ -41,11 +41,11 @@ namespace M2 {
 
     const ARingRRR& real_ring() const { return mRRR; }
 
-    unsigned long computeHashValue(const ElementType& a) const  
+    unsigned int computeHashValue(const ElementType& a) const  
     { 
       double a1 = mpfr_get_d(&a.re, GMP_RNDN);
       double b1 = mpfr_get_d(&a.im, GMP_RNDN);
-      return static_cast<unsigned long>(12347.*a1 + 865800. * b1);
+      return static_cast<unsigned int>(12347.*a1 + 865800. * b1);
     }
 
     /////////////////////////////////

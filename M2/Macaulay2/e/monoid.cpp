@@ -292,14 +292,14 @@ void Monoid::text_out(buffer &o) const
   o << newline << "  ]";
 }
 
-unsigned long Monoid::compute_hash_value(const_monomial m) const
+unsigned int Monoid::computeHashValue(const_monomial m) const
 {
-  unsigned long seed = 0x312425235;
-  unsigned long hash = 0x43435728397;
+  unsigned int seed = 0x3124252;
+  unsigned int hash = 0x43435728;
   int len = monomial_size();
   for (int i=0; i<len; i++)
     {
-      unsigned long val = *m++;
+      unsigned int val = *m++;
       hash += seed * val;
       seed = seed + 1342234;
     }

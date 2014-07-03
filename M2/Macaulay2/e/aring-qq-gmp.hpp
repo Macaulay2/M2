@@ -35,11 +35,11 @@ namespace M2 {
     
     size_t cardinality() const { return static_cast<size_t>(-1); }
 
-    unsigned long computeHashValue(const ElementType& a) const 
+    unsigned int computeHashValue(const ElementType& a) const 
     { 
       unsigned long numhash = mpz_get_ui(mpq_numref(&a));
       unsigned long denhash = mpz_get_ui(mpq_denref(&a));
-      return 13253 * numhash + 7647 * denhash;
+      return static_cast<unsigned int>(13253 * numhash + 7647 * denhash);
     }
     
     /** @name properties

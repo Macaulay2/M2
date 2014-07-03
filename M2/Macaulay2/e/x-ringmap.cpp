@@ -22,7 +22,10 @@ M2_string IM2_RingMap_to_string(const RingMap *F)
      }
 }
 
-unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */
+unsigned int rawRingMapHash(const RingMap *F)
+{
+  return F->hash();
+}
 
 M2_bool IM2_RingMap_is_equal(const RingMap *f, const RingMap *g)
 {

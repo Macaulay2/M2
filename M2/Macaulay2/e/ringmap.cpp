@@ -7,7 +7,7 @@
 #include "relem.hpp"
 
 RingMap::RingMap(const Matrix *m)
-: immutable_object(0), R(m->get_ring())
+  : R(m->get_ring())
 {
   M = 0;
   P = R->cast_to_PolynomialRing();
@@ -96,6 +96,15 @@ RingMap::~RingMap()
   M = NULL;
 }
 
+unsigned int RingMap::computeHashValue() const
+{
+  unsigned int hashval = 4565 * get_ring()->hash();
+  for (int i=0; i<nvars; i++)
+    {
+      hashval = 46343 * hashval + get_ring()->computeHashValue(_elem[i].bigelem);
+    }
+  return hashval;
+}
 bool RingMap::is_equal(const RingMap *phi) const
 {
   // Two ringmap's are identical if their 'bigelem's are the same
@@ -112,7 +121,6 @@ bool RingMap::is_equal(const RingMap *phi) const
 const RingMap *RingMap::make(const Matrix *m)
 {
   RingMap *result = new RingMap(m);
-  // MES: set hash value
   return result;
 }
 

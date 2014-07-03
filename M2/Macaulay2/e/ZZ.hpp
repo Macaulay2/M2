@@ -65,7 +65,7 @@ public:
   // To get a bignum from a RingElement a, use: a.get_value().get_mpz()
   // To get a bignum from an ring_elem  a, use: a.get_mpz()
 
-  virtual unsigned long compute_hash_value(const ring_elem a) const;
+  virtual unsigned int computeHashValue(const ring_elem a) const;
 
   virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
@@ -129,7 +129,7 @@ public:
 
 };
 
-unsigned long compute_hash_value_mpz(mpz_ptr a);
+unsigned int computeHashValue_mpz(mpz_ptr a);
 #endif
 
 // Local Variables:

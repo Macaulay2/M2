@@ -30,7 +30,7 @@ typedef const int * const_varpower;
 #define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
 #define MONOMIAL_BYTE_SIZE(mon_size) static_cast<int>((sizeof(int) * (mon_size)))
 
-class Monoid : public mutable_object
+class Monoid : public MutableEngineObject
 {
   int nvars_;
   M2_ArrayString varnames_;
@@ -116,7 +116,7 @@ public:
   int n_slots(int nparts) const;
   int num_parts() const;
 
-  unsigned long compute_hash_value(const_monomial m) const;
+  unsigned int computeHashValue(const_monomial m) const;
 
 
   /////////////////////////

@@ -62,9 +62,9 @@ M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
 }
 
 
-unsigned long IM2_MutableMatrix_hash(const MutableMatrix *M)
+unsigned int rawMutableMatrixHash(const MutableMatrix *M)
 {
-  return M->get_hash_value();
+  return M->hash();
 }
 
 MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S, 

@@ -122,9 +122,9 @@ namespace M2 {
     }
 
   public:
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      return static_cast<unsigned long>(a);
+      return a;
     }
 
     void getGenerator(elem& result_gen) const { result_gen = 1; }

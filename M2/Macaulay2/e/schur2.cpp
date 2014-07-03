@@ -83,9 +83,9 @@ void tableau2::display() const
 }
 
 //////////////////////////////////////////
-unsigned long SchurRing2::compute_hash_value(const ring_elem a) const
+unsigned int SchurRing2::computeHashValue(const ring_elem a) const
 {
-  //TODO: MES, write me.
+  // TODO HASH
   return 95864398;
 }
 

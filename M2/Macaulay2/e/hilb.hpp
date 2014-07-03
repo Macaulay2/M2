@@ -54,7 +54,7 @@ struct hilb_step : public our_new_delete
 
     @brief Computation of Hilbert functions
 */
-class hilb_comp : public mutable_object
+class hilb_comp : public MutableEngineObject
 {
   const PolynomialRing *S;              // This is the base ring of the monomial ideal
   const PolynomialRing *R;              // This is the output degree ring.

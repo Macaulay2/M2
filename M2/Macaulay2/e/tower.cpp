@@ -63,9 +63,9 @@ Tower * Tower::create(const Tower *R, VECTOR(ring_elem) &extensions)
   return result;
 }
 
-unsigned long Tower::compute_hash_value(const ring_elem a) const
+unsigned int Tower::computeHashValue(const ring_elem a) const
 {
-  //TODO: MES, write me.
+  // TODO HASH
   return 3212415;
 }
 

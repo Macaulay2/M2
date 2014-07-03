@@ -10,6 +10,11 @@
 
 RingZZ *globalZZ;
 
+unsigned int RingElement::computeHashValue() const
+{
+  return get_ring()->computeHashValue(get_value());
+}
+
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {
   return new RingElement(R,f);

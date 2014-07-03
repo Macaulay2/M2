@@ -66,9 +66,9 @@ class DummyRing : public RingInterface
 
         int characteristic()  const  {return 0; }
 
-        unsigned long computeHashValue(const elem& a) const 
+        unsigned int computeHashValue(const elem& a) const 
         { 
-          return static_cast<unsigned long>(a); 
+          return static_cast<unsigned int>(a); 
         }
 
         M2_arrayint getModPolynomialCoeffs() const {return 0;}

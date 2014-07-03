@@ -45,7 +45,7 @@ namespace M2 {
     fq_nmod_ctx_t mContext;
     const PolynomialRing& mOriginalRing; // This is a quotient ring k[a]/f(a).
     const RingElement* mPrimitiveElement; // element in the original ring
-    ulong* mPPowers; // array 0..mDimension of powers of mCharacteristic (mod 2^64)
+    unsigned int* mPPowers; // array 0..mDimension of powers of mCharacteristic (mod 2^32)
     long mCharacteristic;
     long mDimension;
     mutable flint_rand_t mRandomState;
@@ -58,12 +58,12 @@ namespace M2 {
     ////////////////////////////////
 
   public:
-    unsigned long computeHashValue(const elem& a) const 
+    unsigned int computeHashValue(const elem& a) const 
     { 
-      unsigned long hash = 0;
+      unsigned int hash = 0;
       long deg = nmod_poly_degree(&a);
       for (long i=0; i<=deg; i++)
-        hash += nmod_poly_get_coeff_ui(&a,i) * mPPowers[i];
+        hash += static_cast<unsigned int>(nmod_poly_get_coeff_ui(&a,i)) * mPPowers[i];
       //printf("computing hash value: %ld\n", hash);
       return hash;
     }

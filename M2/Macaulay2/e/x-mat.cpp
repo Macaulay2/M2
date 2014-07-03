@@ -47,9 +47,9 @@ M2_string IM2_Matrix_to_string(const Matrix *M)
      }
 }
 
-unsigned long IM2_Matrix_hash(const Matrix *M)
+unsigned int rawMatrixHash(const Matrix *M)
 {
-  return M->get_hash_value();
+  return M->hash();
 }
 
 const RingElement /* or null */ * IM2_Matrix_get_entry(const Matrix *M, int r, int c)
@@ -720,8 +720,8 @@ M2_string rawStraightLineProgramToString(StraightLineProgram *slp) {
   return o.to_string();
 }
 
-unsigned long rawStraightLineProgramHash(StraightLineProgram *slp) {
-  return slp->get_hash_value();
+unsigned int rawStraightLineProgramHash(StraightLineProgram *slp) {
+  return slp->hash();
 }
 
 /// PathTracker /////////////////////////////////////////////////////
@@ -747,8 +747,8 @@ M2_string rawPathTrackerToString(PathTracker *p) {
   return o.to_string();
 }
 
-unsigned long rawPathTrackerHash(PathTracker *p) {
-  return p->get_hash_value();
+unsigned int rawPathTrackerHash(PathTracker *p) {
+  return p->hash();
 }
 
 

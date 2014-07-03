@@ -13,7 +13,7 @@ class MatrixConstructor;
 /**
  * \ingroup matrices
  */
-class Matrix : public object
+class Matrix : public EngineObject
 {
   FreeModule *_rows;
   FreeModule *_cols;
@@ -42,7 +42,8 @@ private:
   vec strip_vector(vec &f, const int *vars,
                        const FreeModule *F, vec &vmonom) const;
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
-
+protected:
+  virtual unsigned int computeHashValue() const;
 public:
   static const Matrix /* or null */ * make(const FreeModule *target,
                                    int ncols,

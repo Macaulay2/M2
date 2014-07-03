@@ -35,7 +35,6 @@ opt64-linalg : always
 	cd builds.tmp/opt64-linalg; ../../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
-		--build=x86_64-apple-darwin \
 		--disable-ntl-wizard \
 		--enable-fflas-ffpack \
 		--enable-givaro \
@@ -45,7 +44,10 @@ opt64-linalg : always
 		--enable-fplll \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
+		--enable-dmg
+
+#		--build=x86_64-apple-darwin \
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
 
 # the following has all optional libs of worth
 opt64-all : always
