@@ -252,6 +252,25 @@ linux-debug64-all : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
+linux-debug64-linalg : always
+	mkdir -p builds.tmp/debug64-linalg
+	cd builds.tmp/debug64-linalg; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-ntl-wizard \
+		--enable-debug \
+		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--disable-strip \
+		--enable-download
+
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+
 ######## below this line is older ######################
 sandboxed : always
 	mkdir -p sandbox64
