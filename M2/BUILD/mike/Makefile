@@ -92,6 +92,26 @@ debug64-all : always
 
 #		--enable-linbox \
 
+debug64-linalg : always
+	mkdir -p builds.tmp/debug64-linalg
+	cd builds.tmp/debug64-linalg; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-strip \
+		--enable-debug \
+		--disable-optimize \
+		--disable-ntl-wizard \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-fplll \
+		--enable-download
+
+
 ####################
 ## clang versions ##
 ####################
