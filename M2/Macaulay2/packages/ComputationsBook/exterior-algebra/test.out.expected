@@ -436,7 +436,7 @@ i74 : -- presentation FHM has the basis elements in the reverse order now
       -- sect =  map(S^1,S^15,0) | random(S^1, S^4);
       sect =  random(S^1, S^4) | map(S^1,S^15,0)
 
-o74 = | 1573 12829 12697 200 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
+o74 = | 5576 4983 5586 -2697 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 |
 
               1       19
 o74 : Matrix S  <--- S
