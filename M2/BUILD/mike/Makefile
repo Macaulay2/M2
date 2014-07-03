@@ -11,6 +11,7 @@ darwin64 : always
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
+		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
@@ -24,6 +25,7 @@ debug64 : always
 		--build=x86_64-apple-darwin \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-ntl-wizard \
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
@@ -56,6 +58,7 @@ opt64-all : always
 		--prefix="`pwd`/installed" \
 		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
+		--disable-ntl-wizard \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-memtailor \
@@ -79,6 +82,7 @@ debug64-all : always
 		--build=x86_64-apple-darwin \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-debug \
 		--disable-optimize \
@@ -181,6 +185,7 @@ linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -194,6 +199,7 @@ linux-debug64 : always
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
+		--disable-ntl-wizard \
 		--disable-optimize \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
@@ -202,6 +208,7 @@ linux-opt64-linalg : always
 	mkdir -p builds.tmp/opt64-linalg
 	cd builds.tmp/opt64-linalg; ../../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
@@ -215,6 +222,7 @@ linux-opt64-all : always
 	mkdir -p builds.tmp/opt64-all
 	cd builds.tmp/opt64-all; ../../../../configure \
 		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
@@ -231,6 +239,7 @@ linux-debug64-all : always
 		--prefix="`pwd`/installed" \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-ntl-wizard \
 		--enable-debug \
 		--disable-optimize \
 		--enable-fflas-ffpack \
