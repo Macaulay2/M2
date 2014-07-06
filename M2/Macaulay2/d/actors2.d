@@ -665,7 +665,7 @@ showElapsedTimefun(a:Code):Expr := (
      v := double(currentTime());
      ret := eval(a);
      x := double(currentTime());
-     stdIO << "     -- used " << x-v << " seconds wall time" << endl;
+     stdIO << "     -- " << x-v << " seconds elapsed" << endl;
      ret);
 setupop(elapsedTimeS,showElapsedTimefun);
 
