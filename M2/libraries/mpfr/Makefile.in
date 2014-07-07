@@ -45,6 +45,10 @@ ifeq (@CC_THREAD_SUPPORT@,yes)
 # CONFIGOPTIONS += --enable-thread-safe
 endif
 
+ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
+endif
+
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
