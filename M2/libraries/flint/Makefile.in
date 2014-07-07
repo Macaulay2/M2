@@ -10,6 +10,7 @@ CHECKTARGET = .
 
 LICENSEFILES = flint.h gpl-2.0.txt
 ifeq (@DEBUG@,yes)
+CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
 endif
 CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls --prefix='$(PREFIX)' --disable-shared CC='$(CC)' CFLAGS='$(CPPFLAGS) $(CFLAGS)' 
