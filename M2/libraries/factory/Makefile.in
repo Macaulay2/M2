@@ -44,7 +44,7 @@ CONFIGOPTIONS += --disable-shared
 CONFIGOPTIONS += --without-Singular
 
 ifeq (@DEBUG@,yes)
-CONFIGOPTIONS += --enable-assertions --enable-debug
+CONFIGOPTIONS += --enable-assertions 
 endif
 CHECKCMD = true
 include ../Makefile.library
