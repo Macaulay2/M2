@@ -473,7 +473,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
 	  );
      tmpf << "-- -*- M2-comint -*- {* hash: " << inputhash << " *}" << endl << close;
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; GC_FREE_SPACE_DIVISOR=12 " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
+     cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
      makeDirectory rundir;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);

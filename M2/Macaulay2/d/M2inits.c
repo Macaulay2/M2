@@ -7,8 +7,8 @@
 
 #include <M2/config.h>
 /* these two macros affect GC_INIT below */
-/* #define GC_FREE_SPACE_DIVISOR 12 */
-/* #define GC_INITIAL_HEAP_SIZE 70000000 */
+#define GC_FREE_SPACE_DIVISOR 12
+#define GC_INITIAL_HEAP_SIZE 70000000
 #include <M2/gc-include.h>
 #include <string.h>
 #include "M2inits.h"
