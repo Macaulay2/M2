@@ -21,6 +21,7 @@ ifeq ($(PRODUCTION),yes)
     CONFIGOPTIONS += --enable-deb
     CONFIGOPTIONS += --disable-common-staging-area
 ifeq ($(PROFILE),yes)
+    CONFIGOPTIONS += --enable-profile
 export CC = gcc -pg
 export CXX = g++ -pg
 export FC = gfortran -pg
