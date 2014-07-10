@@ -48,8 +48,11 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
+-- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
+-- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
+-- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
 gfdir = prefixDirectory | currentLayout#"factory gftables"
-gftestfile = gfdir | "gftable.31.2"
+gftestfile = gfdir | "gftables/961" -- 961==31^2
 if not fileExists gftestfile
 then stderr << "warning: sample Factory finite field addition table file missing, factorization may fail: " << gftestfile << endl
 setFactoryGFtableDirectory gfdir
@@ -136,6 +139,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      --	       scan(iniCS, a -> CS = saturate(CS, a));
 		    --<< "result is " << CS << endl;
 		    CS));
+	  Psi = select(Psi, I -> I != 1);
 	  Psi = new MutableList from Psi;
 	  p := #Psi;
 	  scan(0 .. p-1, i -> if Psi#i =!= null then 

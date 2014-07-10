@@ -2,7 +2,7 @@
 
 #include "atomic_ops.h"
 #include "finalize.hpp"
-#include "gc.h"
+#include <M2/gc-include.h>"
 
 #include "monideal.hpp"
 #include "comp-gb.hpp"

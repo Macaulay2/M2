@@ -91,6 +91,17 @@ document {
 	       	    LI {
 			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
 			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
+			 },
+		    LI {
+			 "A task now has a serial number, see ", TO serialNumber, "."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-randomize", ", prevents the random number seed from
+			 being set to a value that depends on the time of day and process ID."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-time", ", arranges for the function ", TO "currentTime", "
+			 to return 0 always, for reproducility of results, as an aid in debugging."
 			 }
 	  	    }
 	       },

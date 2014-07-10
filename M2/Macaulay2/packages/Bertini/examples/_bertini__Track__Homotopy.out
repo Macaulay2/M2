@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 831724385 *}
---loading configuration for package "Bertini" from file /home/anton/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,t]; -- include the path variable in the ring
 
@@ -12,7 +11,7 @@ i4 : sol2 = point {{-1}};
 i5 : S1= { sol1, sol2  };
 
 i6 : S0 = bertiniTrackHomotopy (H, t, S1)
-Temporary directory for input and output files:/tmp/M2-17438-0/0
+Temporary directory for input and output files:/tmp/M2-14749-0/0
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.

@@ -11,7 +11,7 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no
@@ -20,6 +20,7 @@ M64=yes
 FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
+CONFIGOPTIONS += --disable-ntl-wizard
 
 
 # We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
@@ -61,24 +62,26 @@ endif
 unexport DEBUG
 unexport PROFILE
 
-CC := gcc
-CXX := g++
+# use the latest version from homebrew, not clang:
+CC  := /usr/local/bin/gcc-4.9
+CXX := /usr/local/bin/g++-4.9
+# FC  := /usr/local/bin/gfortran-4.8
 
 # CC := clang
 # CXX := clang++
 
-BRANCH := $(shell git branch --contains | sed s/^..//)
+BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
 CXX += -m64
-export MPIR_CONFIGOPTIONS=ABI=64
+# export MPIR_CONFIGOPTIONS=ABI=64
 else
 DIRECTORY := mac32
 CC  += -m32
 CXX += -m32
-export MPIR_CONFIGOPTIONS=ABI=32
+# export MPIR_CONFIGOPTIONS=ABI=32
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
@@ -107,7 +110,7 @@ ifeq ($(PRODUCTION),yes)
 endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
-   CONFIGOPTIONS += --enable-debug --disable-optimize
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
    DIRECTORY := $(DIRECTORY).debug
 endif
 
@@ -118,6 +121,7 @@ ifeq ($(PROFILE),yes)
 endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+
 # Local Variables:
 # compile-command: "time make -w -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
 # End:

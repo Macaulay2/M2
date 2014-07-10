@@ -1,24 +1,13 @@
 -- -*- M2-comint -*- {* hash: 522064869 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 
 i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 
 i3 : V=numericalIrreducibleDecomposition(system)
-writing output to file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/1PHCoutput
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/4PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/1PHCoutput
-... constructing witness sets ... 
-preparing input file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/6PHCinput
-preparing batch file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/8PHCbatch
-... calling monodromy breakup ...
-session information of phc -f is in /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/9PHCsession
-output of phc -f is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44743-0/7PHCoutput
 found 3 irreducible factors 
 
-o3 = A variety of dimension 5 with components in
-     dim 5:  (dim=5,deg=4) (dim=5,deg=2) (dim=5,deg=2)
+o3 = V
 
 o3 : NumericalVariety
 
@@ -38,9 +27,9 @@ i9 : PD=primaryDecomposition(ideal(system))
 
 o9 = {ideal (x23*x14 - x13*x24, x21*x14 - x11*x24, x22*x14 - x12*x24, x12*x23
      ------------------------------------------------------------------------
-     - x22*x13, x11*x23 - x21*x13, x11*x22 - x21*x12), ideal (x13, x23,
+     - x22*x13, x11*x23 - x21*x13, x11*x22 - x21*x12), ideal (x12, x22,
      ------------------------------------------------------------------------
-     x11*x22 - x21*x12), ideal (x12, x22, x23*x14 - x13*x24)}
+     x23*x14 - x13*x24), ideal (x13, x23, x11*x22 - x21*x12)}
 
 o9 : List
 

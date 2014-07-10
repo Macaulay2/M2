@@ -1,6 +1,6 @@
 /* Copyright 1998 by Daniel R. Grayson */
 
-#include <gc.h>
+#include <M2/gc-include.h>
 #include "html-check-links.h"
 #include "grammar.h"
 #include "getmem.h"

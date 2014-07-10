@@ -5,7 +5,7 @@ newPackage(
         Version => "0.1",
         Date => "December 10, 2013",
         Authors => {{Name => "Hiep Dang",
-                    Email => "hiep@mathematik.uni-kl.de"}},
+                    Email => "hiepdt_tt@dlu.edu.vn"}},
         Headline => "Enumeration of rational curves via torus actions",
         DebuggingMode => false
         )

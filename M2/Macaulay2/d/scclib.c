@@ -1148,6 +1148,8 @@ bool gotArg(const char *arg, const char **argv) {
   return FALSE;
 }
 
+void do_nothing () { }
+
 /*
 // Local Variables:
 // compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d "

@@ -701,7 +701,7 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
   if o.Verbose then
     stdio << "writing test point to file " << PHCtestpointFile << endl;
   pointsToFile(L,R,PHCtestpointFile);
-  s := concatenate("1\n",PHCwitnessFile);
+  s := concatenate("1\n0\n",PHCwitnessFile);
   s = concatenate(s,"\n",PHCtestpointFile);
   s = concatenate(s,"\n",PHCoutputFile);
   s = concatenate(s,"\n0\n");

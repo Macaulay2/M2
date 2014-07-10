@@ -70,7 +70,9 @@ needsPackage = method(
 	  Configuration => {}
 	  })
 needsPackage String := opts -> pkg -> (
-     if PackageDictionary#?pkg and instance(value PackageDictionary#pkg, Package) then (
+     if PackageDictionary#?pkg and instance(p := value PackageDictionary#pkg, Package)
+     and (opts.FileName === null or opts.FileName == p#"source file")
+     then (
 	  pkg = value PackageDictionary#pkg;
 	  use pkg;
 	  pkg)

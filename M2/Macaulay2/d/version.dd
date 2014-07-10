@@ -17,14 +17,14 @@ declarations "
    ";
 
 header "
+   #include <atomic_ops.h>
    #include <mpfr.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
-   #include <factor.h>
+   #include <factory/factory.h>
    #undef Matrix
    extern char timestamp[];
-   #include <factor.h>
    #undef ASSERT
    #ifdef HAVE_FROBBY
      #include <stdinc.h>		// to get version number of frobby
@@ -68,17 +68,31 @@ header "
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
    #endif
+   #ifdef HAVE_FLINT
+       #include <flint/flint.h>
+   #endif
    ";
 gcversion():constcharstar := Ccode(returns,"
      static char buf[40];
      unsigned x = GC_get_version();
      unsigned major = x >> 16;
      unsigned minor = (x >> 8) & 0xff;
-     unsigned alpha = x & 0xff;
-     if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
-     else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
+     unsigned micro = x & 0xff;
+     if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
+     else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
      return buf;
      ");
+
+atomicopsversion():constcharstar := Ccode(returns,"
+#ifdef AO_VERSION_MICRO
+     static char buf[40];
+     sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
+     return buf;
+#else
+     return \"version number not available\"
+#endif
+     ");
+
 givaroVersion():constcharstar := Ccode(returns,"
      #ifdef HAVE_GIVARO
 	  static char buf[40];
@@ -143,6 +157,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	       0
 	  #endif
 	  "),
+   "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if USE_MYSQL
@@ -181,7 +196,6 @@ setupconst("version", Expr(toHashTable(Sequence(
 	#endif
 	"),
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
-   "libfac version" => Ccode(constcharstar,"libfac_version"),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
 	 #if HAVE_PARI
@@ -192,7 +206,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	 "),
    "flint version" => Ccode(constcharstar,"
 	 #if HAVE_FLINT
-	   \"2.2\" /* just a guess! */
+	   FLINT_VERSION
 	 #else
 	   \"not present\"
 	 #endif

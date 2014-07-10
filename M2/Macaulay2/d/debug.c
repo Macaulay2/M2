@@ -1,4 +1,4 @@
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
