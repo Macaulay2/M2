@@ -106,10 +106,15 @@ document {
 	  --      UL {
 	  -- 	    }
 	  --      },
-	  -- LI { "improved packages:",
-	  --      UL {
-	  --      	    }
-	  --      },
+
+	  LI { "improved packages:",
+	        UL {
+		    { TO "SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
+                The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
+                that requires you to use the old version, please email Mike Stillman."
+			 }
+	        }},
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
