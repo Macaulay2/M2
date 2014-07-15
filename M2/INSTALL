@@ -82,7 +82,7 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -91,7 +91,8 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
-    (To upgrade to a new release of Ubuntu, run "update-manager".)
+    (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
+    "do-release-upgrade" for a command line interface.)
 
   Raspbian:
     Install packages with:
@@ -141,22 +142,25 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-        brew tap homebrew/versions
-        brew tap homebrew/science
-        brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
-        brew link --force autoconf # just to ensure it got linked upon installation
+	brew tap homebrew/versions
+	brew tap homebrew/science
+	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+	brew install gcc48
+	     # Alternatively, to install fortran for optionally building lapack: brew install --enable-fortran gcc48
+	brew link autoconf gcc48
+	     # If necessary, add --force to the command above to force the link to occur.
     Now remember to add 
-        CC=gcc-4.8 CXX=g++-4.8 FC=gfortran-4.8.2
-    to the "configure" command line below, because those are the names of the
-    compilers in the package gcc48.
+        CC="gcc-4.8 -m64" CXX="g++-4.8 -m64" FC="gfortran-4.8 -m64" --build=x86_64-apple-darwin
+    to the "configure" command line below in the section on compiling Macaulay2.
 
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
-        autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
-        libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
-        libxml2-devel make mpfr-devel patchutils readline subversion time wget libtool
+        autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
+        gcc-g++ gdb git libgc-devel libgdbm-devel libglpk-devel liblapack-devel
+        libstdc++6-devel libtool libxml2-devel make mpfr patchutils pkg-config
+        time wget
      you may also want these:
-        emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
+        emacs-el gvim libxml2-doc openssh psmisc unzip vim xauth xconsole xkill xterm
 
 ----------------------
   Compiling the most recent GNU C compiler
@@ -232,7 +236,7 @@ files are not backed up.  For your changes to Macaulay2 source code, github.com
 will serve as your backup.
 
 -----------------------
-Compiling
+Compiling Macaulay2
 -----------------------
 
 Now the directory to be in is the one containing this file in the source
@@ -257,6 +261,9 @@ Now continute building the program this way:
         make
         make check                      # optional
         make install
+
+Remember to add any options specified above, in the section for your particular
+operating system, to the "configure" command line.
 
 On some systems, especially if you are building a binary distribution of Macaulay2,
 additional arguments should be given to the "./configure" command, and are explained

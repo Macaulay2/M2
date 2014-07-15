@@ -9,12 +9,14 @@ darwin64 : always
 	mkdir -p builds.tmp/darwin64
 	cd builds.tmp/darwin64; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-dmg \
 		--enable-download
+
+# make sure that CC and CXX are set in environment variables
+#		CC="gcc -m64" CXX="g++ -m64" \
 
 #		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
 

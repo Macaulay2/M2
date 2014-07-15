@@ -410,7 +410,7 @@ document {
 
 document {
      Key => serialNumber,
-     Headline => "serial number of a dictionary, a symbol, or a mutable hash table or list, ",
+     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list, ",
      Usage => "serialNumber x",
      Inputs => {"x"},
      Outputs => { ZZ => { "the serial number of ", TT "x" } },

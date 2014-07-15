@@ -52,6 +52,8 @@ typedef DMat<M2::ARingCC> DMatCC;
 #include "dmat-lu.hpp"
 #include "dmat-qq-interface-flint.hpp"
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include <flint/fmpz_mat.h>
 
 namespace MatrixOps

@@ -124,7 +124,7 @@ namespace BIBasis
                 return false;
         }
         
-        GetSettingsManager().SetNumberOfVariables(static_cast<Monom::Integer>(polynomialRing->n_vars()));
+        GetSettingsManager().SetNumberOfVariables(static_cast<BIBasis::Monom::Integer>(polynomialRing->n_vars()));
         
         return true;
     }

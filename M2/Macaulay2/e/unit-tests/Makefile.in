@@ -84,7 +84,7 @@ COMPILE.cc += $(MORE_OPTIONS)
 
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/unit-tests/Makefile
-clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE
+clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE testMain
 distclean: clean; rm -f Makefile
 
 ifeq "$(DEPENDS)" "yes"

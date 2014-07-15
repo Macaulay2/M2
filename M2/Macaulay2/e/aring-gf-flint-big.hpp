@@ -3,12 +3,17 @@
 #ifndef _aring_gf_flint_big_hpp_
 #define _aring_gf_flint_big_hpp_
 
+#include <vector>
+
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include <flint/fq_nmod.h>
 #include <flint/flint.h>
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <vector>
+
 
 class PolynomialRing;
 class RingElement;

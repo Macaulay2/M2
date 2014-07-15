@@ -3,6 +3,8 @@
 #ifndef _dmat_qq_flint_hpp_
 #define _dmat_qq_flint_hpp_
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include <flint/arith.h>
 #include <flint/nmod_mat.h>
 #include <flint/fmpq_mat.h>

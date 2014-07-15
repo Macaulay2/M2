@@ -8,7 +8,7 @@
 #include "../d/M2mem.h"
 #include "../d/debug.h"
 
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 // these replace all uses of the construction "new T[n]" (unless constructors have to be run!):
 #define newarray(T,len) reinterpret_cast<T*>(getmem((len) * sizeof(T)))

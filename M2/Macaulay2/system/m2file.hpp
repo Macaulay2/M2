@@ -4,14 +4,7 @@
 
 #include "mutexclass.hpp"
 
-    /* gc doc tells us to include pthread.h before gc.h */
-    #ifndef _REENTRANT
-      #define _REENTRANT
-    #endif
-    #include <pthread.h>
-    #define GC_THREADS
-    #include <gc/gc.h>
-
+#include <M2/gc-include.h>
 #include <gc/gc_cpp.h>
 
 #include <map>

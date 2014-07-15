@@ -13,7 +13,7 @@ document {
 	  "timing 3^30",
       	  "peek oo",
 	  },
-     SeeAlso => {"Time", "time", "cpuTime"}
+     SeeAlso => {"Time", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 
 document {
@@ -23,7 +23,33 @@ document {
      TT "time e", " evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
      EXAMPLE "time 3^30",
-     SeeAlso => {"timing", "cpuTime"}
+     SeeAlso => {"timing", "cpuTime", "elapsedTiming", "elapsedTime"}
+     }
+
+document {
+     Key => "elapsedTiming",
+     Headline => "time a computation using time elapsed",
+     TT "elapsedTiming e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
+     of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
+     of time elapsed, and ", TT "v", " is the value of the the expression.",
+     PARA{},
+     "The default method for printing such timing results is to display the
+     timing separately in a comment below the computed value.",
+     EXAMPLE {
+	  "elapsedTiming sleep 1",
+      	  "peek oo",
+	  },
+     SeeAlso => {"Time", "elapsedTime", "cpuTime", "timing", "time"}
+     }
+
+document {
+     Key => "elapsedTime",
+     Headline => "time a computation using time elapsed",
+	Usage => "elapsedTime e",
+     TT "elapsedTime e", " evaluates ", TT "e", ", prints the amount of time
+     elapsed, and returns the value of ", TT "e", ".",
+     EXAMPLE "elapsedTime sleep 1",
+     SeeAlso => {"elapsedTiming", "cpuTime"}
      }
 
 document {
@@ -33,7 +59,7 @@ document {
      is ", ofClass BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
      of the the expression.",
-     SeeAlso => {"timing", "time", "cpuTime"}
+     SeeAlso => {"timing", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 
 document {

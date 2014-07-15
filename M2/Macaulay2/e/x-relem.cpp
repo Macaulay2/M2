@@ -31,6 +31,8 @@
 #include "aring-RRR.hpp"
 #include "aring-CCC.hpp"
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include <flint/fq_nmod.h>
 
 unsigned int rawRingHash(const Ring *R)

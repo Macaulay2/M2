@@ -3,14 +3,19 @@
 #ifndef _aring_QQ_flint_hpp_
 #define _aring_QQ_flint_hpp_
 
+#include <iosfwd>
+
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
+//#include <flint/arith.h>
+#include <flint/fmpq.h>
+
 #include "aring.hpp"
 #include "buffer.hpp"
 #include "ringelem.hpp"
-#include <iosfwd>
+
 #include "exceptions.hpp"
 
-//#include <flint/arith.h>
-#include <flint/fmpq.h>
 // promote needs ring.hpp.  After moving promote out, remove it here!
 #include "ring.hpp"
 

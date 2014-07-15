@@ -17,6 +17,7 @@ declarations "
    ";
 
 header "
+   #include <atomic_ops.h>
    #include <mpfr.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
@@ -76,11 +77,22 @@ gcversion():constcharstar := Ccode(returns,"
      unsigned x = GC_get_version();
      unsigned major = x >> 16;
      unsigned minor = (x >> 8) & 0xff;
-     unsigned alpha = x & 0xff;
-     if (alpha == 0xff) sprintf(buf,\"%d.%d\", major, minor);
-     else sprintf(buf,\"%d.%d alpha %d\", major, minor, alpha);
+     unsigned micro = x & 0xff;
+     if (micro == 0xff) sprintf(buf,\"%d.%d\", major, minor);
+     else sprintf(buf,\"%d.%d.%d\", major, minor, micro);
      return buf;
      ");
+
+atomicopsversion():constcharstar := Ccode(returns,"
+#ifdef AO_VERSION_MICRO
+     static char buf[40];
+     sprintf(buf,\"%d.%d.%d\",AO_VERSION_MAJOR, AO_VERSION_MINOR, AO_VERSION_MICRO);
+     return buf;
+#else
+     return \"version number not available\"
+#endif
+     ");
+
 givaroVersion():constcharstar := Ccode(returns,"
      #ifdef HAVE_GIVARO
 	  static char buf[40];
@@ -145,6 +157,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	       0
 	  #endif
 	  "),
+   "atomic_ops version" => atomicopsversion(),
    "gc version" => gcversion(),
    "mysql version" => Ccode(constcharstar,"
 	  #if USE_MYSQL

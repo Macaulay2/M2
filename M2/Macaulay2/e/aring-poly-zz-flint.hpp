@@ -7,6 +7,9 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include "rand.h"
+
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include "flint/arith.h"
 
 class RingMap;

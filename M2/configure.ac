@@ -1,15 +1,19 @@
-dnl This is the only place where the Macaulay2 version number appears:
+dnl =============================================================================
+dnl This is the only place in the code where the Macaulay2 version number
+dnl appears as a literal value.
 
-    AC_INIT(Macaulay2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+dnl Things to do when incrementing the version number:
+dnl    - make a git tag of the form Macaulay2-X-Y or Macaulay2-X-Y-Z or Macaulay2-X-Y-Z-W
+dnl    - add an entry to distributions/deb/changelog
 
-dnl When incrementing the version number, add an entry to distributions/deb/changelog, too.
+AC_INIT(Macaulay2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3     : a relatively major release, such as occurs every six months
-dnl   1.3.1   : a minor update, such as might occur a week after a major release
+dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
+dnl   1.3.1   : a minor update, with changes people might want, stable, suitable for binary distributions or updates to binary distributions on certain architectures
 dnl   1.3.1.1 : a development version, with no binary distributions
-dnl   1.3.9   : almost ready for a major release
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
+dnl =============================================================================
 
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -72,6 +76,8 @@ done
 test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
 
 AC_CHECK_PROGS(MAKE,gmake make)
+AC_CHECK_PROGS(PKG_CONFIG,pkg-config,no)
+if test $PKG_CONFIG = no; then AC_MSG_ERROR("pkg-config is required"); fi
 AC_CHECK_PROGS(WGET,wget)
 AC_CHECK_PROGS(CURL,curl)
 AC_CHECK_PROGS(OBJDUMP,objdump)
@@ -496,7 +502,7 @@ test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether expe
 
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
-AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
+AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && STRIP=no
@@ -698,6 +704,7 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
+#    gc needs atomic_ops (and sometimes includes it)
 #    factory needs gftables, flint, ntl and gmp
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
@@ -733,7 +740,7 @@ AC_SUBST(BUILTLIBS,)
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
 
 # A library is listed in BUILD_ALWAYS if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -986,17 +993,17 @@ then AC_LANG(C)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes,[#include <gmp.h>])
      if test $BUILD_mpfr = no
      then AC_MSG_CHECKING([whether mpfr library is recent enough, using mpfr.h])
-	  AC_RUN_IFELSE([AC_LANG_SOURCE([
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <stdio.h>
 		  #include <mpfr.h>
 		  main () {
-		      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+		      FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
 		      unsigned major, minor, patch_level;
 		      major = MPFR_VERSION_MAJOR;
 		      minor = MPFR_VERSION_MINOR;
 		      patch_level = MPFR_VERSION_PATCHLEVEL;
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, patch_level);
-		      return !( major > 2 || major == 2 && minor >= 3 ); }])],
+		      return !( major > 2 || major == 2 && minor >= 3 ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
@@ -1004,48 +1011,46 @@ then AC_LANG(C)
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
+if test $BUILD_atomic_ops = no
+then AC_CHECK_HEADER(atomic_ops.h,
+       AC_SEARCH_LIBS(AO_pause,atomic_ops,,
+         BUILD_atomic_ops=yes),
+       BUILD_atomic_ops=yes)
+fi
+
 if test $BUILD_gc = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(GC_free,gc,
      	[AC_CHECK_HEADER(gc/gc.h,
-		[AC_CHECK_HEADER(atomic_ops.h,
-			[
-			  AC_MSG_CHECKING(whether libgc is recent enough)
-			  AC_RUN_IFELSE([AC_LANG_SOURCE([ 
-				  #include <stdio.h>
-				  #include <gc.h>
-				  main () {
-				      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
-				      unsigned
-				      	 major = GC_VERSION_MAJOR,
-					 minor = GC_VERSION_MINOR, 
-					 micro = GC_VERSION_MICRO;
-				      if (micro == 0xff) 
-				      	 fprintf(msg,"(version %d.%d.alpha found) ", major, minor);
-				      else
-				      	 fprintf(msg,"(version %d.%d.%d found) ", major, minor, micro);
-				      return !( major > 7 || major == 7 && minor >= 2); }])],
-			     [ AC_MSG_RESULT(yes) ],
-			     [ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
-			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-			],
-			[
-			AC_MSG_RESULT([atomic_ops.h not found, gc will be built from downloaded sources])
-			BUILD_gc=yes
-			]
-			)],
-		BUILD_gc=yes)],
-	BUILD_gc=yes)
+	    [
+		AC_MSG_CHECKING(whether libgc is recent enough)
+		AC_RUN_IFELSE([AC_LANG_SOURCE([ 
+		    #include <stdio.h>
+		    #include <gc.h>
+		    main () {
+		        FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+#		      ifndef GC_VERSION_MICRO
+			if (GC_ALPHA_VERSION==GC_NOT_ALPHA)
+			fprintf(msg,"(version %d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
+			else
+			fprintf(msg,"(version %d.%d.alpha found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
+#		      else
+		        fprintf(msg,"(version %d.%d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_VERSION_MICRO);
+#		      endif
+		        return !( GC_VERSION_MAJOR > 7 || GC_VERSION_MAJOR == 7 && GC_VERSION_MINOR >= 2); }])],
+		[ AC_MSG_RESULT(yes) ],
+		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+		[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+	    ],
+ 	    BUILD_gc=yes)],
+ 	BUILD_gc=yes)
 fi
 AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
 then 
-     dnl if test $PTHREADS = yes
-     dnl then # libpthread isn't really built by us, but gc will need to link against it
-	  BUILTLIBS="-lpthread $BUILTLIBS"
-	  GC_LIBS="$GC_LIBS -lpthread"
-     dnl fi
-     BUILTLIBS="-lgc $BUILTLIBS"
+     # libpthread isn't really built by us, but gc will need to link against it
+     BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     GC_LIBS="$GC_LIBS -lpthread"
 fi
 
 if test $BUILD_gdbm = no
@@ -1058,13 +1063,21 @@ test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 if test $BUILD_flint = no
 then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
-     AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
-     AC_MSG_CHECKING([whether flint library is recent enough, using flint/flint.h])
-     AC_RUN_IFELSE([AC_LANG_SOURCE([[
+     if test $BUILD_flint = no
+     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
+     fi
+     if test $BUILD_flint = no
+     then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
+          AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <flint/flint.h>
-		  main () { return __FLINT_RELEASE >= 20403 /* 2.4.3 */ ? 0 : 1 ; } ]])],
+		  main () { 
+ 		    FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+ 		    fprintf(msg,"(version %d.%d.%d found) ", __FLINT_RELEASE / 10000, __FLINT_RELEASE/100%100, __FLINT_RELEASE%100);
+		    return __FLINT_RELEASE >= 20403 /* 2.4.3 */ ? 0 : 1 ; 
+		    } ]])],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, version at least 2.4.3 is required (flint will be built from downloaded sources)]); BUILD_flint=yes ])
+	     [ AC_MSG_RESULT(no); BUILD_flint=yes ])
+     fi
 fi
 test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
 AC_SUBST(BUILD_flint)		dnl factory needs to know
@@ -1097,7 +1110,7 @@ then AC_LANG(C++)
      fi 
 
      if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
+     then AC_MSG_CHECKING([whether ntl library is version at least 5.4.1])
 	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <stdio.h>
 		  #include <NTL/version.h>
@@ -1110,7 +1123,7 @@ then AC_LANG(C++)
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
 		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+	     [ AC_MSG_RESULT(no); BUILD_ntl=yes ])
      fi
 
      if test $BUILD_ntl = no
@@ -1466,7 +1479,10 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
+
+# The suffix "-binary" distinguishes the binary program M2-binary from the shell script M2.
+# The purpose of the shell script M2 is to set LD_LIBRARY_PATH appropriately.
+AC_SUBST(EXE,-binary$M2SUFFIX$EXEEXT)
 
 AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
@@ -1611,7 +1627,7 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
-AC_SUBST(pre_bindir)
+AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
 AC_SUBST(pre_infodir)

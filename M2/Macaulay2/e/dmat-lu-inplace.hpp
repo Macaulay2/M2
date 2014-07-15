@@ -8,6 +8,8 @@
 #include "mat-elem-ops.hpp"
 #include "mat-util.hpp"
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include <flint/perm.h>
 
 template <typename RT>

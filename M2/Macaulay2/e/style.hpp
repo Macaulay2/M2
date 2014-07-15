@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <string.h>
 #include <algorithm>
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 #endif

@@ -10,6 +10,8 @@
 
 class RingMap;
 
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
 #include "flint/arith.h"
 #include "flint/nmod_vec.h"
 
