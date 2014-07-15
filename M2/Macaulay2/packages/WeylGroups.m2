@@ -2620,7 +2620,7 @@ doc ///
 ///
 
 TEST ///
-	assert(apply(listWeylGroupElements(rootSystemG2,4),reducedDecomposition)=={{1,2,1,2},{2,1,2,1}})
+	assert(set apply(listWeylGroupElements(rootSystemG2,4),reducedDecomposition)===set {{1,2,1,2},{2,1,2,1}})
 ///
 
 doc ///
@@ -4388,7 +4388,17 @@ TEST ///
 	w1 = reduce(R,{2});
 	w2 = reduce(R,{1,2,1,3,2});
 	myInterval=intervalBruhat(P % w1,P % w2);
-	assert(hasseDiagramToGraph(myInterval)===new HasseGraph from {{{"", {{"", 0}, {"", 1}}}}, {{"", {{"", 1}, {"", 2}}}, {"", {{"", 0}, {"", 1}, {"", 2}}}}, {{"", {{"", 1}, {"", 2}}}, {"", {{"", 0}, {"", 2}}}, {"", {{"", 0}, {"", 1}}}}, {{"", {{"", 0}}}, {"", {{"", 0}}}, {"", {{"", 0}}}}, {{"", {}}}})
+	assert(hasseDiagramToGraph(myInterval)===new HasseGraph from {
+            {{"", {{"", 0}, {"", 1}}}}, 
+            {{"", {{"", 1}, {"", 2}}}, 
+                {"", {{"", 0}, {"", 1}, {"", 2}}}}, 
+            {
+                {"", {{"", 0}, {"", 2}}},
+                {"", {{"", 0}, {"", 1}}},
+                {"", {{"", 1}, {"", 2}}}
+                }, 
+            {{"", {{"", 0}}}, {"", {{"", 0}}}, {"", {{"", 0}}}}, {{"", {}}}
+            })
 ///
 
 doc ///
