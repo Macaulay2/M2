@@ -846,7 +846,19 @@ local vars;
 local R;
 
   s := {};
-  if (member(o.runType,{0,8})) then ( --raw_data, for zeroDim 
+  if (member(o.runType,{0,8})) then ( 
+    b:= lines get (dir|"/bertini_session.log"); -- get contents of session log and check for rank error
+    
+    scan(b, i->if i=="The system has no zero dimensional solutions based on its rank!" then 
+	error  "The system has no zero dimensional solutions based on its rank!");
+    
+    b:= lines get (dir|"/failed_paths"); -- get contents of failed paths file and check if non-empty
+    
+    if b=!={""} then stdio << "Warning: Some paths failed, the set of solutions may be incomplete" <<endl<<endl ;
+      
+--      (stdio << "The system has no zero dimensional solutions based on its rank"<< endl<< endl));
+        
+--raw_data, for zeroDim 
 --raw_data output file structure:
 --  #var's (incl. homog. var.!!)
 --  0  
@@ -930,6 +942,12 @@ local R;
        )
 
   else if (o.runType == 1 or o.runType==6 or o.runType==5) then ( 
+       
+       b:= lines get (dir|"/bertini_session.log"); -- get contents of session log and check errors
+    
+       scan(b, i->if i=="ERROR: The matrix has more columns than rows in QLP_L_mp!!" then 
+	 error  "The matrix has more columns than rows in QLP_L_mp!"
+	 );
               
        l = lines get (dir|"/raw_data"); -- grabs all lines of the file
        numVars = value(first l);
