@@ -558,126 +558,6 @@ doc ///
      coords_0
 ///;
 
-doc ///
- Key
-   importPoints   
-   (importPoints,String,ZZ)
- Headline
-   importPoints reads solutions from a Bertini solution file to store as points in M2
- Usage
-   S=importPoints(l,n) 
- Inputs
-   l: String
-     A string giving the  locaton of a Bertini solution file.
-   n: ZZ
-     Number of coordinates for each solution.
- Outputs
-   S: List
-     of solutions of type Point
- Description
-   Text
-     This method imports points from a solution file that Bertini created while solving 
-     a zero-dimensional system.
-     The string l is a path which gives the location of the solution file and n is
-     an integer stating the desired number of coordinates for each solution. 
-     When solving a zero-dimensional
-     system, Bertini creates several solution files; @TO importPoints@ works 
-     with the following Bertini solution files: "finite_solutions", "nonsingluar-solutions",
-     "real_finite_solutions", "singluar_solutions". 
---     The output is a list of points.
-     The user can specify which solutions to read from the file using the @TO SpecifyPoints@ option
-     or which coordinates to select using the @TO SpecifyCoordinates@ option.
-     
---   Example
-     --locationOfSolutionFile="/Users/.../YourFolder/solution_file";
---     A=importPoints(locationOfSolutionFile,4)
-     --The output would be a list of points that have 4 coordinates.          
---   Example 
---     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
---     B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
-     --The output would be the first and third solutions of the file. 
---   Example 
---     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
---     C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
-     --The output would be the first and second coordinate of each solution of the file.  
- --Caveat
-   --The method importPoints will not
-   --For importPoints to be successful, the Bertini solution file must have a particular format.
-
-   --The first line is an integer, the number of solutions in the.
-   --The next lines consist of a blank line followed by a line for each coordinate;
-   --these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
-///;
-
-doc ///
- Key
-   phPostProcess
-   (phPostProcess,String,List,ZZ)
- Headline
-   Does post processing parameter homotopy.
- Usage
-   S=phPostProcess(sIn,L,n) 
- Inputs
-   sIn: String
-     A string giving the directory of the input files.
-   L: List
-     A list of parameters. 
-   n: ZZ
-     Number of coordinates in a solution.
- Description
-   Text
-     The purpose of this function is to allow a person
-     to share their Bertini computations with a second user,
-     who can then analyze the data easily with the Bertini.M2 interface.   
-     
-     Instead of doing a parameter run by calling Bertini, 
-     the PrintNotes option prints a file titled "notes"  located in the input file's directory.
-     If the "notes" file does not exist it returns an error.   
-     
-     The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
---   Example
---     inputFileLocation="/Users/.../YourFolderA";
---     L={.8234+ii*8,9}--A list of two parameter values.
---     n=3--A solution has n coordinates.
---     phPostProcess(inputFileLocation,L,n)     
---   Example
---     inputFileLocation="/Users/.../YourFolderA";
---     phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
- Caveat
-   Even if Bertini is called but does not run,  
-   an error may not be reported if previous solution files were already in the outputDirectory.
-///;
-
-
-doc ///
- Key
-   phMonodromy
-   (phMonodromy,String,ZZ,ZZ)
- Headline
-   Does a sequence of parameter homotopies.
- Usage
-   S=phMonodromy(sIn,p,n) 
- Inputs
-   sIn: String
-     A string giving the directory of start files: input, start, start_parameters
-   p: ZZ
-     Number of parameters.
-   n: ZZ
-     Number of coordinates of a point.
-         
-///;
---ref{} need to add about the option ParameterValues
-
-doc ///
- Key
-   SpecifyPoints
-   [importPoints, SpecifyPoints]
- Headline
-   optional argument to specify which solutions to import
- Usage
-    importPoints(...,SpecifyPoints=>List)
-              
-///;
 
 
 
@@ -824,6 +704,32 @@ doc///
      sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z},SubFunctions=>sF)
 ///;
 
+doc///
+ Key
+   MultiplicityTol
+   [bertiniZeroDimSolve, MultiplicityTol]
+ Headline
+   numerical tolerance for grouping solutions   
+ Description
+   Text
+     After completing a zero-dimensional run in {\tt Bertini} solutions are grouped using
+     @TO solutionsWithMultiplicity@ from the package @TO NAGtypes@; the option @TO MultiplicityTol@
+     is passed to @TO solutionsWithMultiplicity@ ad @TO Tolerance@. 
+///;
+
+doc///
+ Key
+   ConditionNumTol
+   [bertiniZeroDimSolve, ConditionNumTol]
+ Headline
+   numerical tolerance for determining singular status   
+ Description
+   Text
+     Endpoint is flagged as singular if multiple paths lead to it or condition number exceeds 
+     @TO ConditionNumTol@. 
+///;
+
+
 end
 
 
@@ -858,3 +764,123 @@ doc ///
      start,tar,{{1,1},{-.5-0.86603*ii,1},{1,-0.5+0.86603*ii}})
 ///;
 
+doc ///
+ Key
+   importPoints   
+   (importPoints,String,ZZ)
+ Headline
+   importPoints reads solutions from a Bertini solution file to store as points in M2
+ Usage
+   S=importPoints(l,n) 
+ Inputs
+   l: String
+     A string giving the  locaton of a Bertini solution file.
+   n: ZZ
+     Number of coordinates for each solution.
+ Outputs
+   S: List
+     of solutions of type Point
+ Description
+   Text
+     This method imports points from a solution file that Bertini created while solving 
+     a zero-dimensional system.
+     The string l is a path which gives the location of the solution file and n is
+     an integer stating the desired number of coordinates for each solution. 
+     When solving a zero-dimensional
+     system, Bertini creates several solution files; @TO importPoints@ works 
+     with the following Bertini solution files: "finite_solutions", "nonsingluar-solutions",
+     "real_finite_solutions", "singluar_solutions". 
+--     The output is a list of points.
+     The user can specify which solutions to read from the file using the @TO SpecifyPoints@ option
+     or which coordinates to select using the @TO SpecifyCoordinates@ option.
+     
+--   Example
+     --locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     A=importPoints(locationOfSolutionFile,4)
+     --The output would be a list of points that have 4 coordinates.          
+--   Example 
+--     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
+     --The output would be the first and third solutions of the file. 
+--   Example 
+--     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+--     C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
+     --The output would be the first and second coordinate of each solution of the file.  
+ --Caveat
+   --The method importPoints will not
+   --For importPoints to be successful, the Bertini solution file must have a particular format.
+
+   --The first line is an integer, the number of solutions in the.
+   --The next lines consist of a blank line followed by a line for each coordinate;
+   --these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
+///;
+
+doc ///
+ Key
+   phPostProcess
+   (phPostProcess,String,List,ZZ)
+ Headline
+   Does post processing parameter homotopy.
+ Usage
+   S=phPostProcess(sIn,L,n) 
+ Inputs
+   sIn: String
+     A string giving the directory of the input files.
+   L: List
+     A list of parameters. 
+   n: ZZ
+     Number of coordinates in a solution.
+ Description
+   Text
+     The purpose of this function is to allow a person
+     to share their Bertini computations with a second user,
+     who can then analyze the data easily with the Bertini.M2 interface.   
+     
+     Instead of doing a parameter run by calling Bertini, 
+     the PrintNotes option prints a file titled "notes"  located in the input file's directory.
+     If the "notes" file does not exist it returns an error.   
+     
+     The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
+--   Example
+--     inputFileLocation="/Users/.../YourFolderA";
+--     L={.8234+ii*8,9}--A list of two parameter values.
+--     n=3--A solution has n coordinates.
+--     phPostProcess(inputFileLocation,L,n)     
+--   Example
+--     inputFileLocation="/Users/.../YourFolderA";
+--     phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
+ Caveat
+   Even if Bertini is called but does not run,  
+   an error may not be reported if previous solution files were already in the outputDirectory.
+///;
+
+
+doc ///
+ Key
+   phMonodromy
+   (phMonodromy,String,ZZ,ZZ)
+ Headline
+   Does a sequence of parameter homotopies.
+ Usage
+   S=phMonodromy(sIn,p,n) 
+ Inputs
+   sIn: String
+     A string giving the directory of start files: input, start, start_parameters
+   p: ZZ
+     Number of parameters.
+   n: ZZ
+     Number of coordinates of a point.
+         
+///;
+--ref{} need to add about the option ParameterValues
+
+doc ///
+ Key
+   SpecifyPoints
+   [importPoints, SpecifyPoints]
+ Headline
+   optional argument to specify which solutions to import
+ Usage
+    importPoints(...,SpecifyPoints=>List)
+              
+///;
