@@ -36,7 +36,35 @@ TEST ///
 
   M = mutableMatrix matrix(R, {{0, 28, 16, -43, 21, 39, -49}, {0, 42, 24, -7, 7, 45, -8}, {0, -30, -46, -48, -16, -19, -27}})
   columnRankProfile M
+  rowRankProfile M -- ok
 
+  A = mutableMatrix matrix(R, {{0, 0, 0}, {1, 0, 1}, {0, 1, 1}, {0, 0, 0}, {0, 0, 0}, {1, 1, 0}, {1, 0, 1}})
+  rowRankProfile A
+  
+  N = mutableMatrix matrix(R, {{0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 1, 1, 1}, {0, 0, 0, 1, 1, 1, 0}, {0, 0, 0, 0, 0, 1, 1}})
+  rowRankProfile A
+  
+  A = mutableMatrix matrix(R, {{0,0,0},{0,1,0}})
+  columnRankProfile A
+  rowRankProfile A
+
+  A = mutableMatrix matrix(R, {{0,1,2,3},{0,3,4,5}})
+///
+
+///
+  debug Core
+  R = ZZp(101, Strategy=>"Ffpack")
+  A = mutableMatrix matrix(R, {{0,0,0},{0,1,0}})
+  columnRankProfile A
+  rowRankProfile A
+
+  debug Core
+  R = ZZp(101, Strategy=>"Ffpack")
+  B = mutableMatrix(R,2,3);
+  B_(1,1) = 1_R
+  B
+  columnRankProfile B
+  
 ///
 
 TEST ///

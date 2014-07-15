@@ -87,3 +87,11 @@ TEST ///
   assert try (R = ZZp(33554467, Strategy => "Ffpack"); false) else true
 ///
 
+if hasFFPACK then
+///
+  debug Core
+  R =  ZZp(101,Strategy=>"Ffpack")
+  m = mutableMatrix matrix{{0_R,6_R},{0_R,0_R},{0_R,4_R}}
+   LUdecomposition m
+   (P,Q) = rawLQUPFactorization(raw m)
+///

@@ -14,8 +14,9 @@ darwin64 : always
 		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-dmg \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
+		--enable-download
+
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory frobby pari"
 
 debug64 : always
 	mkdir -p builds.tmp/debug64
@@ -28,8 +29,9 @@ debug64 : always
 		--disable-ntl-wizard \
 		--enable-debug \
 		--disable-optimize \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+		--enable-download
+
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
 # the following has all optional libs desired for linalg merge
 opt64-linalg : always
