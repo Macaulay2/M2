@@ -24,7 +24,6 @@ debug64 : always
 	mkdir -p builds.tmp/debug64
 	cd builds.tmp/debug64; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
 		--build=x86_64-apple-darwin \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
@@ -33,6 +32,7 @@ debug64 : always
 		--disable-optimize \
 		--enable-download
 
+#		CC="gcc -m64" CXX="g++ -m64" \
 #		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
 # the following has all optional libs desired for linalg merge
