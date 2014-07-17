@@ -7,6 +7,8 @@ VERSION = 7.4.2
 TARFILE = libatomic_ops-$(VERSION).tar.gz
 TARDIR = libatomic_ops-$(VERSION)
 LICENSEFILES = COPYING doc/LICENSING.txt
+# tests/test_malloc requires at least 1.6GB memory, sometimes, which we are not willing to give it:
+CHECKTARGET = .
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/atomic_ops/Makefile
 # Local Variables:
