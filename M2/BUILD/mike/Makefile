@@ -191,9 +191,9 @@ linux-opt64 : always
 		--prefix="`pwd`/installed" \
 		--disable-ntl-wizard \
 		--disable-strip \
-		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+		--enable-download
 
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 # 		CC="gcc -m64" CXX="g++ -m64" \
 
 linux-debug64 : always
@@ -219,6 +219,7 @@ linux-opt64-linalg : always
 		--enable-memtailor \
 		--enable-mathic \
 		--enable-mathicgb \
+		--enable-fplll \
 		--disable-strip \
 		--enable-download
 
