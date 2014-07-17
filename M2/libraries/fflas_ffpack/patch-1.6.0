@@ -68,6 +68,18 @@
  		while( it!=factor_list.end() ){
  			mulpoly (F,charp, P, *it);
  			P = charp;
-
+--- fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h		2014-07-17 11:18:18.728996952 +0200
++++ fflas-ffpack-1.6.0/fflas-ffpack/ffpack/ffpack.h		2014-07-17 11:18:32.187105278 +0200
+@@ -812,8 +812,8 @@ else { // Left NullSpace
+ 					 typename Field::Element* A, const size_t lda,
+ 					 size_t* &rkprofile)
+ 	{
+-		size_t *P = new size_t[N];
+-		size_t *Q = new size_t[M];
++		size_t *P = new size_t[M];
++		size_t *Q = new size_t[N];
+ 		size_t R;
+ 
+ 		R = LUdivine (F, FFLAS::FflasNonUnit, FFLAS::FflasTrans, M, N, A, lda, P, Q);
  
 
