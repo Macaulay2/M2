@@ -157,8 +157,8 @@ various modern operating systems:
     use setup to install these packages:
         autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
         gcc-g++ gdb git libgc-devel libgdbm-devel libglpk-devel liblapack-devel
-        libstdc++6-devel libtool libxml2-devel make mpfr patchutils pkg-config
-        time wget
+        libncurses-devel libstdc++6-devel libtool libxml2-devel make mpfr
+        patchutils pkg-config time wget
      you may also want these:
         emacs-el gvim libxml2-doc openssh psmisc unzip vim xauth xconsole xkill xterm
 
