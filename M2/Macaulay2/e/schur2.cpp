@@ -157,22 +157,29 @@ bool SchurRing2::is_valid_partition(M2_arrayint part, bool set_error) const
           ERROR("expected a non-increasing sequence of integers");
         return false;
       }
-  if (part->len > 0 && part->array[part->len-1] <= 0)
+  if (part->len > 0 && part->array[part->len-1] < 0)
     {
       if (set_error)
-        ERROR("expected positive integers only");
+        ERROR("expected nonnegative integers only");
       return false;
     }
   return true;
 }
 
+static int last_nonzero(M2_arrayint part)
+{
+  for (int i=part->len-1; i >= 0; i--)
+    if (part->array[i] != 0) return i;
+  return -1;
+}
 ring_elem SchurRing2::from_partition(M2_arrayint part) const
 {
   ring_elem result;
   schur_poly *f = new schur_poly;
   f->coeffs.push_back(coefficientRing->one());
-  f->monoms.push_back(part->len + 1);
-  for (int i=0; i<part->len; i++)
+  int len = last_nonzero(part) + 1;
+  f->monoms.push_back(len + 1);
+  for (int i=0; i<len; i++)
     f->monoms.push_back(part->array[i]);
   result.schur_poly_val = f;
   return result;
