@@ -33,12 +33,12 @@ namespace M2 {
 
         typedef M2::ARingGFGivaro             ring_type ;
      
-        ARingGFGivaro( int charac_,   int dimension_)  {};
-        ARingGFGivaro( int charac_,  
+        ARingGFGivaro( long charac_,   int dimension_)  {};
+        ARingGFGivaro( long charac_,  
            const M2_arrayint & modPolynomial, 
            const PolynomialRing &originalR
            )  {}
-        ARingGFGivaro( int charac_,  
+        ARingGFGivaro( long charac_,  
            const M2_arrayint & modPolynomial, 
            const M2_arrayint & primitiveElement, 
            const PolynomialRing &originalR
