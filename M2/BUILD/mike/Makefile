@@ -104,7 +104,6 @@ debug64-linalg : always
 	mkdir -p builds.tmp/debug64-linalg
 	cd builds.tmp/debug64-linalg; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--disable-strip \
@@ -118,6 +117,8 @@ debug64-linalg : always
 		--enable-mathicgb \
 		--enable-fplll \
 		--enable-download
+
+#		CC="gcc -m64" CXX="g++ -m64" \
 
 
 ####################
