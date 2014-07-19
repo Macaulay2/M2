@@ -23,7 +23,6 @@ needsPackage "Bertini"
      	 --bertiniComponentMemberTest(NV,sample2) -- a problem with precision of bertiniSample ???
 	 )
      assert( 
-	 set flatten bertiniComponentMemberTest(NV,{(0,0,1)}) 
-	 === set {W3,W1}
+	 set flatten bertiniComponentMemberTest(NV,{(0,0,1)}) 	 === set {W3,W1}
 	 )
 

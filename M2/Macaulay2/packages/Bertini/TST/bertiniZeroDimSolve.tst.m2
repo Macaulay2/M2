@@ -18,11 +18,13 @@ assert(areEqual(outputOverdetermined, {point {{3,2,1}}}))
 outputUnderdetermined=bertiniZeroDimSolve({(1-z)^2*(x^2-9),y-2})
 ///
 
---When we have solutions with multiplicity they are recorded twice in our list
-outputMultiplicity=solutionsWithMultiplicity bertiniZeroDimSolve({(z)^2*(x^2-9),y-2,(z-1)^2})
-assert((outputMultiplicity#0).Multiplicity==2 and (outputMultiplicity#1).Multiplicity==2)
+--When we have solutions with multiplicity they are recorded twice in our list (no longer need this test)
+--outputMultiplicity=solutionsWithMultiplicity bertiniZeroDimSolve({(z)^2*(x^2-9),y-2,(z-1)^2})
+--assert((outputMultiplicity#0).Multiplicity==2 and (outputMultiplicity#1).Multiplicity==2)
 
 R=QQ[x,y]
 f1=(x-1)^4*(x+2)
 f2=(y-2)^3
 soks=bertiniZeroDimSolve({f1,f2})
+
+
