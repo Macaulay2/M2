@@ -68,7 +68,7 @@ export {
  -- "InputFilesName",
  -- "SolutionType",
   "AllowStrings",
-    "SubFunctions"
+  "SubFunctions",
  -- "OutputLocation",
  -- "B'InputFile",
  -- "B'StartFile",
@@ -76,7 +76,11 @@ export {
  --"ParameterValues",
   --"MonodromyStart",
   --"NumberOfLoops",
-  --"MonodromyTolerance"  
+  --"MonodromyTolerance",
+  "NumberOfWrites",
+  "MonodromyUpperBound",
+  "WriteOnly",
+  "SpecifyDirectory"   
 }
   
   protect SolutionNumber
@@ -233,6 +237,7 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
          )
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
+	  SpecifyDirectory=>{},WriteOnly=>-1,
 	  SubFunctions=>-1,AllowStrings=>-1,MPTYPE=>-1,PRECISION=>-1,
 	  ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,
 	  TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,
@@ -257,6 +262,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 ---------------------------------------------------
 
 bertiniSolve = method(TypicalValue => List, Options=>{SubFunctions=>-1,
+	SpecifyDirectory=>{},WriteOnly=>-1,
 	AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,
 	ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,
@@ -275,6 +281,8 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	    was used for this run. \nBertini is under ongoing development by 
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.\n\n";
           
+	  if o.WriteOnly=!=-1 then break "Write Only";
+	  
 	  if o.runType == 0 then ( -- ZeroDim 
     	    run("cd "|dir|"; "|BERTINIexe|" >bertini_session.log");  
 	    -- runs Bertini, storing screen output to bertini_session.log
@@ -319,15 +327,18 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
 	    dir2:=makeBertiniInput(F,o2);
 	    copyFile(dir2|"/input",dir|"/input");
 	    stageTwoParameterRun(dir,F,o2) ) 
+	
          else readSolutionsBertini(dir,F,o) -- o contains runType, 
 	 --so we can switch inside readSolutionsBertini
          )
+
 
 -------------------
 -- makeBertiniInput
 -------------------
 
 makeBertiniInput = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,
+	SpecifyDirectory=>{},WriteOnly=>-1,
 	AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10, 
 	Parameters=>null,ParameterValues=>null,StartSystem=>{}, 
 	StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,
@@ -340,180 +351,133 @@ makeBertiniInput = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,
 	MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,
 	dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
 makeBertiniInput List := o -> T -> ( -- T=polynomials 
-        startS1 := apply (o.StartSolutions, p->(
-		if class(p)===Point then coordinates(p) else p));
-        t := o.PathVariable;
-        gamma := random (CC);
-        params:= o.Parameters;
-        
-	if o.AllowStrings===-1 then v := gens ring T#0 else v = o.AllowStrings;
-	-- v are variables
-	
-        if o.runType==6  then (v=delete(t,v));  --special for runtype6
-	
-        if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));  
-        
-	dir := temporaryFileName(); -- build a directory to store temporary data 
-        makeDirectory dir; 
-        f := openOut (dir|"/input"); -- typical (but not only possible) 
-	--name for Bertini's input file 
+  startS1:=apply(o.StartSolutions,p->(if class(p)===Point then coordinates(p)
+       else p));
+  t:=o.PathVariable;
+  gamma:=random(CC);
+  params:=o.Parameters;
+  if o.AllowStrings===-1 
+  then   v := gens ring T#0 -- variables
+  else v = o.AllowStrings;
+  if o.runType==6  then (v=delete(t,v));  --special for runtype6
+  if (o.runType==7 or o.runType==8) then (for i in params do v=delete(i,v));  
+  if o.SpecifyDirectory=!={} then(      dir:=o.SpecifyDirectory) 
+  else(
+    dir = temporaryFileName(); -- build a directory to store temporary data 
+    makeDirectory dir); 
+  f := openOut (dir|"/input"); -- typical (but not only possible) name for Bertini's input file 
 
-        -- The following block is the config section of the input file 
-        f << "CONFIG\n\n"; 
+  -- The following block is the config section of the input file 
+  f << "CONFIG\n\n"; -- starting the config section of the input file 
 
-        -- for each user-provided option, we write the appropriate config to the file:
-        if o.MPTYPE =!= -1 then 
-	    f << "MPTYPE: " << o.MPTYPE << ";\n";
-        
-	if o.PRECISION =!= -1 then
-	    f << "PRECISION: " << o.PRECISION << ";\n";
-  
-        if o.ODEPREDICTOR =!= -1 then
-	    f << "ODEPREDICTOR: " << o.ODEPREDICTOR << ";\n";
-        
-	if o.TRACKTOLBEFOREEG =!= -1 then
-            f << "TRACKTOLBEFOREEG: " << o.TRACKTOLBEFOREEG << ";\n";
-        
-	if o.TRACKTOLDURINGEG =!= -1 then
-            f << "TRACKTOLDURINGEG: " << o.TRACKTOLDURINGEG << ";\n";
-        
-	if o.FINALTOL =!= -1 then
-            f << "FINALTOL: " << o.FINALTOL << ";\n";
-  
-        if o.MAXNORM =!= -1 then
-            f << "MAXNORM: " << o.MAXNORM << ";\n";
-  
-        if o.MINSTEPSIZEBEFOREEG =!= -1 then
-            f << "MINSTEPSIZEBEFOREEG: " << o.MINSTEPSIZEBEFOREEG << ";\n";
-	    
-        if o.MINSTEPSIZEDURINGEG =!= -1 then
-            f << "MINSTEPSIZEDURINGEG: " << o.MINSTEPSIZEDURINGEG << ";\n";
-  
-        if o.IMAGTHRESHOLD =!= -1 then
-            f << "IMAGTHRESHOLD: " << o.IMAGTHRESHOLD << ";\n";
-        
-	if o.COEFFBOUND =!= -1 then
-            f << "COEFFBOUND: " << o.COEFFBOUND << ";\n";
-  
-        if o.DEGREEBOUND =!= -1 then
-            f << "DEGREEBOUND: " << o.DEGREEBOUND << ";\n";
-  
-        if o.CONDNUMTHRESHOLD =!= -1 then
-            f << "CONDNUMTHRESHOLD: " << o.CONDNUMTHRESHOLD << ";\n";
-  
-        if o.RANDOMSEED =!= -1 then
-            f << "RANDOMSEED: " << o.RANDOMSEED << ";\n";
-  
-        if o.SINGVALZEROTOL =!= -1 then
-            f << "SINGVALZEROTOL: " << o.SINGVALZEROTOL << ";\n";
-  
-        if o.ENDGAMENUM =!= -1 then
-            f << "ENDGAMENUM: " << o.ENDGAMENUM << ";\n";
-  
-        if o.USEREGENERATION =!= -1 then
-            f << "USEREGENERATION: " << o.USEREGENERATION << ";\n";
-  
-        if o.SECURITYLEVEL =!= -1 then
-            f << "SECURITYLEVEL: " << o.SECURITYLEVEL << ";\n";
-        
-	if o.SCREENOUT =!= -1 then
-            f << "SCREENOUT: " << o.SCREENOUT << ";\n";
-  
-        if o.OUTPUTLEVEL =!= -1 then
-            f << "OUTPUTLEVEL: " << o.OUTPUTLEVEL << ";\n";
-  
-        if o.STEPSFORINCREASE =!= -1 then
-            f << "STEPSFORINCREASE: " << o.STEPSFORINCREASE << ";\n";
-  
-        if o.MAXNEWTONITS =!= -1 then
-            f << "MAXNEWTONITS: " << o.MAXNEWTONITS << ";\n";
-  
-        if o.MAXSTEPSIZE =!= -1 then
-            f << "MAXSTEPSIZE: " << o.MAXSTEPSIZE << ";\n";
-  
-        if o.MAXNUMBERSTEPS =!= -1 then
-            f << "MAXNUMBERSTEPS: " << o.MAXNUMBERSTEPS << ";\n";
-  
-        if o.MAXCYCLENUM =!= -1 then 
-            f << "MAXCYCLENUM: " << o.MAXCYCLENUM << ";\n";
-  
-        if o.REGENSTARTLEVEL =!= -1 then
-            f << "REGENSTARTLEVEL: " << o.REGENSTARTLEVEL << ";\n";
+  -- for each user-provided option, we write the appropriate config to the file:
+  if o.MPTYPE==0 or o.MPTYPE==1 or o.MPTYPE==2 then
+    f << "MPTYPE: " << o.MPTYPE << ";\n" 
+  else (if o.MPTYPE=!=-1 then error "MPTYPE has an invalid option;");
+  if o.PRECISION =!= -1 then
+    f << "PRECISION: " << o.PRECISION << ";\n";
+  if o.ODEPREDICTOR =!= -1 then
+    f << "ODEPREDICTOR: " << o.ODEPREDICTOR << ";\n";
+  if o.TRACKTOLBEFOREEG =!= -1 then
+    f << "TRACKTOLBEFOREEG: " << o.TRACKTOLBEFOREEG << ";\n";
+  if o.TRACKTOLDURINGEG =!= -1 then
+    f << "TRACKTOLDURINGEG: " << o.TRACKTOLDURINGEG << ";\n";
+  if o.FINALTOL =!= -1 then
+    f << "FINALTOL: " << o.FINALTOL << ";\n";
+  if o.MAXNORM =!= -1 then
+    f << "MAXNORM: " << o.MAXNORM << ";\n";
+  if o.MINSTEPSIZEBEFOREEG =!= -1 then
+    f << "MINSTEPSIZEBEFOREEG: " << o.MINSTEPSIZEBEFOREEG << ";\n";
+  if o.MINSTEPSIZEDURINGEG =!= -1 then
+    f << "MINSTEPSIZEDURINGEG: " << o.MINSTEPSIZEDURINGEG << ";\n";
+  if o.IMAGTHRESHOLD =!= -1 then
+    f << "IMAGTHRESHOLD: " << o.IMAGTHRESHOLD << ";\n";
+  if o.COEFFBOUND =!= -1 then
+    f << "COEFFBOUND: " << o.COEFFBOUND << ";\n";
+  if o.DEGREEBOUND =!= -1 then
+    f << "DEGREEBOUND: " << o.DEGREEBOUND << ";\n";
+  if o.CONDNUMTHRESHOLD =!= -1 then
+    f << "CONDNUMTHRESHOLD: " << o.CONDNUMTHRESHOLD << ";\n";
+  if o.RANDOMSEED =!= -1 then
+    f << "RANDOMSEED: " << o.RANDOMSEED << ";\n";
+  if o.SINGVALZEROTOL =!= -1 then
+    f << "SINGVALZEROTOL: " << o.SINGVALZEROTOL << ";\n";
+  if o.ENDGAMENUM =!= -1 then
+    f << "ENDGAMENUM: " << o.ENDGAMENUM << ";\n";
+  if o.USEREGENERATION == 1 then
+    f << "USEREGENERATION: " << o.USEREGENERATION << ";\n"
+  else (  if o.USEREGENERATION =!= -1 then error "USEREGENERATION has an invalid option");
+  if o.SECURITYLEVEL =!= -1 then
+    f << "SECURITYLEVEL: " << o.SECURITYLEVEL << ";\n";
+  if o.SCREENOUT =!= -1 then
+    f << "SCREENOUT: " << o.SCREENOUT << ";\n";
+  if o.OUTPUTLEVEL =!= -1 then
+    f << "OUTPUTLEVEL: " << o.OUTPUTLEVEL << ";\n";
+  if o.STEPSFORINCREASE =!= -1 then
+    f << "STEPSFORINCREASE: " << o.STEPSFORINCREASE << ";\n";
+  if o.MAXNEWTONITS =!= -1 then
+    f << "MAXNEWTONITS: " << o.MAXNEWTONITS << ";\n";
+  if o.MAXSTEPSIZE =!= -1 then
+    f << "MAXSTEPSIZE: " << o.MAXSTEPSIZE << ";\n";
+  if o.MAXNUMBERSTEPS =!= -1 then
+    f << "MAXNUMBERSTEPS: " << o.MAXNUMBERSTEPS << ";\n";
+  if o.MAXCYCLENUM =!= -1 then 
+    f << "MAXCYCLENUM: " << o.MAXCYCLENUM << ";\n";
+  if o.REGENSTARTLEVEL =!= -1 then
+    f << "REGENSTARTLEVEL: " << o.REGENSTARTLEVEL << ";\n";
 
-        -- now we handle the various runType options:
-        if o.runType == 1 then --segment run 
-           f << "USERHOMOTOPY: 1;\n";
-      
-        if o.runType == 2 then --pos dim run
-           f << "TRACKTYPE: 1;\n";
-  
-        if o.runType == 3 then --sample component 
-           f << "TRACKTYPE: 2;\n";
-  
-        if o.runType == 4 then --membership test 
-           f << "TRACKTYPE: 3;\n";
-  
-        if o.runType == 5 then ( --refine solutions
-	    if o.ISPROJECTIVE==-1 then (
-		f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n"
-		) 
-	    else f << "SHARPENONLY: 1;\n UserHomotopy: 2; \n"		    
-	    );
-  
-        if o.runType == 6 then (--trackHomotopy
-	    if o.ISPROJECTIVE==-1 then (
-		f << "USERHOMOTOPY: 1;\n" 
-		)
-	    else f << "USERHOMOTOPY: 2;\n"	
-            );
-  
-        if o.runType == 7 then --parameterHomotopy, stage 1
-            f << "PARAMETERHOMOTOPY: 1;\n";
-  
-        if o.runType == 8 then --parameterHomotopy, stage 2
-            f << "PARAMETERHOMOTOPY: 2;\n";    
-  
-        f << endl << "END;\n\n";  -- end of config section
+  -- now we handle the various runType options:
+  if o.runType == 1 then --segment run 
+    f << "USERHOMOTOPY: 1;\n";
+  if o.runType == 2 then --pos dim run
+    f << "TRACKTYPE: 1;\n";
+  if o.runType == 3 then --sample component 
+    f << "TRACKTYPE: 2;\n";
+  if o.runType == 4 then --membership test 
+    f << "TRACKTYPE: 3;\n";
+  if o.runType == 5 then --refine solutions
+    if o.ISPROJECTIVE==-1 then 
+    f << "SHARPENONLY: 1;\n UserHomotopy: 1; \n" else
+    f << "SHARPENONLY: 1;\n UserHomotopy: 2; \n";
+  if o.runType == 6 then --trackHomotopy
+    if o.ISPROJECTIVE==-1 then 
+    f << "USERHOMOTOPY: 1;\n" else 
+    f << "USERHOMOTOPY: 2;\n";
+  if o.runType == 7 and o.WriteOnly===-1 then --parameterHomotopy, stage 1
+    f << "PARAMETERHOMOTOPY: 1;\n"
+  else ( if o.runType == 7 and o.WriteOnly=!=-1 then  f << "PARAMETERHOMOTOPY: 2;\n");
+  if o.runType == 8 then --parameterHomotopy, stage 2
+    f << "PARAMETERHOMOTOPY: 2;\n";    
+  f << endl << "END;\n\n";  -- end of config section
 
-        -- The following block is the input section of the input file
-        
-	f << "INPUT" << endl << endl;
-  
-        if o.ISPROJECTIVE==1 then (
-            f << "hom_variable_group "
-	    ) 
-	else (if member(o.runType,{1,5,6}) then (
-	    f << "variable " 
-	    ) -- if user-defined, declaration type of vars is "variable"
-    	    else  f << "variable_group " -- if not user-defined, dec type of vars if "variable_group"
-	    );
-    
-       scan(#v, i->  -- now we list the variables in a single list  
-	   if i<#v-1 then f << toString v#i << ", "
-           else f << toString v#i << ";" << endl
-           );
-       f << "function "; -- "function" section
-       scan(#T, i-> -- here are the function names
-	   if i<#T-1 then f << "f" << i << ", "
-           else f << "f" << i << ";" << endl << endl
-           );
-  
-      if (o.runType==6) then (
-	  f << "pathvariable "<<" daejT; " <<endl; 
-	  --we chose daejT because we needed a name no one would choose 
-	  --so we chose our initials and T
-          f << "parameter "<<toString(t)|" ;" <<endl;
-          f << toString(t)|"= daejT ;"<<endl
-	  );
-      
-      if (member(o.runType, {7,8})) then (
-	  f << "parameter ";
-          scan(#params, i-> ( -- now we list the variables in a single list 
+  -- The following block is the input section of the input file
+  f << "INPUT" << endl << endl;
+  if o.ISPROJECTIVE==1 then 
+    f << "hom_variable_group " else(
+	if member(o.runType,{1,5,6}) then  -- if user-defined, declaration type of vars is "variable"
+	f << "variable " else
+    	f << "variable_group ");-- if not user-defined, dec type of vars if "variable_group"
+    scan(#v, i->  -- now we list the variables in a single list  
+       if i<#v-1 
+       then f << toString v#i << ", "
+       else f << toString v#i << ";" << endl
+       );
+  f << "function "; -- "function" section
+  scan(#T, i-> -- here are the function names
+       if i<#T-1
+       then f << "f" << i << ", "
+       else f << "f" << i << ";" << endl << endl
+      );
+  if (o.runType==6) then (f << "pathvariable "<<" daejT; " <<endl; --we chose daejT because we needed a name no one would choose so we chose our initials and T
+  f << "parameter "<<toString(t)|" ;" <<endl;
+  f << toString(t)|"= daejT ;"<<endl;);
+  if (member(o.runType, {7,8})) then (
+       f << "parameter ";
+       scan(#params, i->  -- now we list the variables in a single list 
        	    if i<#params-1 
        	    then f << toString params#i << ", "
        	    else f << toString params#i << ";" << endl
-	    ));
-          );   
+	    ));   
 
       bertiniNumbers := p->if class p === CC then (
 	  toString realPart p | "+" | toString imaginaryPart p | "*I"
@@ -656,7 +620,8 @@ cleanupOutput String := s -> (
 -----------------------
 
 
-readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{SpecifyDirectory=>{},WriteOnly=>-1, SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 
 readSolutionsBertini (String,List) := o -> (dir,F) -> (  -- dir=directory holding the output files, options are same as bertiniSolve
 local pt;
@@ -1116,7 +1081,7 @@ local R;
 ---and readBertiniSolutions----------------------------
 -------------------------------------------------------
 
-stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6, ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
+stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SpecifyDirectory=>{},WriteOnly=>-1, SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6, ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
 stageTwoParameterRun (String, List) := o -> (dir, F) -> (
   copyFile(dir|"/nonsingular_solutions",dir|"/start");
@@ -1417,3 +1382,299 @@ callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
 --saveFolder--This function should copy a temporary directory to a location specified by the user
 --call bertini in a specified folder     
      
+----------------------------------------------------
+--NEW FUNCTIONS FOR FEBRUARY 2014 -- FROM JULY 2014 --
+--MAY HAVE DIFFERENT THINGS THAN ABOVE
+----------------------------------------------------
+
+
+--IMPORT POINTS
+--importPoints gets the solutions from a bertini solutions file to store them as points in M2
+--the input is a string, giving the location of the file, and an integer giving the number of coordinates 
+--the output is a list of points
+importPoints = method(TypicalValue=>Nothing,Options=>{
+	SpecifyPoints=>{},
+	SpecifyCoordinates=>{} })
+importPoints(String,ZZ) := o -> (importFrom,numberOfCoordinates)-> (
+    importedFileLines := lines     get (importFrom); -- grabs all lines of the solution file
+    numberOfsolutionsInFile:=value(importedFileLines_0);--the first line of the solution file gives the number of solutions in the file
+    importedFileLines=drop(importedFileLines,1);--drop the first line
+    storeSolutions:={};---We will store the solutions we specified and return this in the end
+    for i to numberOfsolutionsInFile-1 do (
+	linesForOnePoint:=for indexLines to numberOfCoordinates+1-1 list importedFileLines_indexLines;--we read a blank line and the coordinates of one solution
+	importedFileLines=drop(importedFileLines,numberOfCoordinates+1);--we drop the lines we just read
+	if  member(i,o.SpecifyPoints) or #o.SpecifyPoints==0 -- We proceed to turn the text file into a point to be stored in M2 if it is a specified solution
+	then(
+      	  cAS:=collectAPointIP(linesForOnePoint,numberOfCoordinates,o.SpecifyCoordinates);
+     	  storeSolutions= append(storeSolutions,cAS)));
+     return storeSolutions);
+
+--collectAPointIP is a subfunction for importPoints
+collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
+     collectedCoordinates:={};
+     linesToRead=drop(linesToRead,1);--drops an empty line
+     for j to numberOfCoordinates-1 do (
+	  if member(j,specifyCoordinates) or #specifyCoordinates==0 then (
+	       oneCoord:=select("[0-9.+-]+",first(linesToRead));
+	       collectedCoordinates=append(collectedCoordinates,value((oneCoord_0)|"p300")*10^(value(oneCoord_1))+ii*
+			      value((oneCoord_2)|"p300")*10^(value(oneCoord_3)));
+     	       linesToRead=drop(linesToRead,1)) else (
+	  linesToRead=drop(linesToRead,1)));--drops coordinates you don't care about
+     return  point {collectedCoordinates});
+
+
+--   INPUT of phMonodromy 
+--String should be a directory (no "/" at then end) that contains start files for bertini parameter homotopy
+----start files needed: input, start_parameters, start	
+--ZZ equals number of parameters 
+--ZZ equals the number of coordinates of the points.
+----Each entry of List are parameters for a parameter homotopy. 
+
+monPre=30;
+phMonodromy = method(TypicalValue=>Nothing,Options=>{
+	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+    	B'InputFile=>"input",
+    	B'StartFile=>"nonsingular_solutions",
+    	B'StartParameters=>"start_parameters",
+	OutputLocation=>-1,
+      	SolutionType=>"nonsingular_solutions",
+	SpecifyCoordinates=>{},
+	SpecifyPoints=>{},
+	ParameterValues=>{}
+		})
+phMonodromy(String,ZZ,ZZ) := o -> (--parameterValues is a list of list of complex numbers OR an empty list
+    inputLocation,numberOfParameters,numberOfCoordinates)-> (
+    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
+    else(
+	--Set OL to be the location of files bertini will create
+	--Default location is the same as the location of the input files
+	if o.OutputLocation=!=-1 then OL:=o.OutputLocation else OL=inputLocation;  
+	if fileExists(inputLocation|"/"|o.B'StartFile) then (
+	    if o.B'StartFile=!="nonsingular_solutions" then copyFile(inputLocation|"/"|o.B'StartFile, OL|"/nonsingular_solutions"))
+	else (print o.B'StartFile; error "B'StartFile does not exist."); 
+	if fileExists(inputLocation|"/"|o.B'InputFile) then (	
+	    if o.B'InputFile=!="input" then copyFile(inputLocation|"/"|o.B'InputFile, OL|"/input"))
+	else error "B'InputFile does not exist."; 
+	if fileExists(inputLocation|"/"|o.B'StartParameters) then (
+	    if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parameters"))
+	else error "B'StartParameters does not exist.";
+	copyFile(inputLocation|"/"|"start_parameters",OL|"/base_parametersADEJ"); --save the base parameters of the monodromy so we can come back later
+    	if o.ParameterValues=!={} then PV:=o.ParameterValues else PV=for i to 2-1 list for j to numberOfParameters-1 list 2*random(RR_monPre)-1+ii*(2*random(RR_monPre)-1);
+	for anH in PV do (   
+	    writeParameters(OL,anH);
+	    if fileExists(OL|"/nonsingular_solutions") then copyFile( OL|"/nonsingular_solutions",OL|"/start")
+	    else (print "should break loop now";return {};print "fail");
+       	    callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
+--    	    print"BERTINI called!";
+	    copyFile(OL|"/final_parameters", OL|"/start_parameters")
+	    );
+	copyFile(inputLocation|"/base_parametersADEJ",OL|"/final_parameters");  ---Go back to the base parameters
+	if fileExists(OL|"/nonsingular_solutions") then copyFile( OL|"/nonsingular_solutions",OL|"/start")
+	else (print "should break loop now2";return {};print "fail");
+        callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini
+	copyFile(OL|"/base_parametersADEJ", OL|"/start_parameters");	
+--    	print"BERTINI called!!";
+    	if not fileExists(OL|"/"|o.SolutionType) then (print "Warning: no solutions found. FS";return{});
+    	print "Successful Loop!";
+	return importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
+	    SpecifyCoordinates=>o.SpecifyCoordinates,
+	    SpecifyPoints=>o.SpecifyPoints)));
+
+phMonodromySolve = method(TypicalValue=>Nothing,Options=>{
+	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+    	B'InputFile=>"input",
+    	B'StartFile=>"nonsingular_solutions",
+    	B'StartParameters=>"start_parameters",
+	OutputLocation=>-1,
+      	SolutionType=>"nonsingular_solutions",
+--	SpecifyCoordinates=>{},
+--	SpecifyPoints=>{},
+	ParameterValues=>{},
+	MonodromyStart=>{},
+	NumberOfLoops=>1,
+	MonodromyTolerance=>1e-6,
+	NumberOfWrites=>1,
+	MonodromyUpperBound=>0	
+		})
+phMonodromySolve(String,ZZ,ZZ) := o -> (
+    inputLocation,numberOfParameters,numberOfCoordinates)->(
+    theTolerances:=o.MonodromyTolerance;
+    setS:=o.MonodromyStart;
+    if o.OutputLocation=!=-1 
+    then OL:=o.OutputLocation --Set OL to be the location of files bertini will create
+    else OL=inputLocation;  --Default location is the same as the location of the input files
+    if not fileExists(inputLocation|"/"|o.B'StartFile) then  error "B'StartFile does not exist. solve."; 
+    if not fileExists(inputLocation|"/"|o.B'InputFile) then  error "B'InputFile does not exist. solve."; 
+    if not fileExists(inputLocation|"/"|o.B'StartParameters)  then error "B'StartParameters does not exist. solve.";
+    if o.B'StartFile=!="nonsingular_solutions" then copyFile(inputLocation|"/"|o.B'StartFile, OL|"/nonsingular_solutions"); 
+    escapeLoops:=false;
+    for rounds to o.NumberOfWrites-1 do if not escapeLoops then (
+    	copyFile(OL|"/nonsingular_solutions",OL|"/nonsingular_solutionsADEJ"); 
+    	if o.B'InputFile=!="input" then copyFile(inputLocation|"/"|o.B'InputFile, OL|"/input"); 
+    	if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parameters");
+    	if o.B'StartParameters=!="start_parameters" then  copyFile(inputLocation|"/"|o.B'StartParameters,OL|"/start_parametersADEJ");
+    	setS=sortSolutions2 (setS,theTolerances);
+	--    print "1";
+	for i to o.NumberOfLoops-1 do if not escapeLoops then (
+	    --	print "2";
+            for bPoint in phMonodromy(OL,numberOfParameters,numberOfCoordinates) do (
+	    	setS=insertInList(setS,bPoint,theTolerances));
+	    if (o.MonodromyUpperBound=!=0 and #setS>=o.MonodromyUpperBound) then (	    
+    	    	escapeLoops=true;
+--		print setS;
+	    	writePoints(OL,"nonsingular_solutions",setS);
+	    	print ("MonodromyUpperBound on the number of solutions has been reached."));
+--	    print "fail?";
+	    if not fileExists(OL|"/nonsingular_solutions") then (
+	    	print "Warning: A phMonodromy run did not find any solutions.";
+	    	copyFile(OL|"/nonsingular_solutionsADEJ",OL|"/nonsingular_solutions");
+	    	copyFile(OL|"/start_parametersADEJ",OL|"/start_parameters")));
+    	print (toString(#setS)|" points found!");
+    	writePoints(OL,"nonsingular_solutions",setS));
+    return setS) 
+
+sortSolutions2=(solutionSet,tolerance)->(
+    print "sort.";
+    S:={};
+    for i in solutionSet do S=insertInList(S,i,tolerance);
+    print "sort!";
+    return S)
+
+isSameSolution=(aPoint,bPoint,tolerance)->(
+    if (class tolerance)=!=List  then tolerance=for i to #(coordinates aPoint) list  tolerance;
+    aPoint=coordinates aPoint;
+    bPoint=coordinates bPoint;
+    for i to #aPoint-1 list if abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i or
+    abs (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>tolerance_i then 
+    if   abs (realPart aPoint_i-realPart bPoint_i)>tolerance_i then 
+    	if (realPart aPoint_i-realPart bPoint_i)>0 then return 1 else return -1
+    else if (imaginaryPart aPoint_i-imaginaryPart bPoint_i)>0 then return 1 else return -1;    
+    return true)
+   
+insertInList=(setS,aPoint,theTolerances)->(
+    if #setS==0 then (
+--	print 0;
+	 return {aPoint}) else
+    lowerBound:=0;
+    upperBound:=#setS-1;
+    if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
+--	print "A";
+	return setS);
+    if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
+--	print "B";
+	return setS); 
+    if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
+--	print 1;
+	return prepend(aPoint,setS));
+    if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
+--	print 2;
+	return append(setS,aPoint));    
+    while lowerBound<=upperBound do (
+	if isSameSolution(setS_lowerBound,aPoint,theTolerances)===true then (
+--	    print "A1";
+	    return setS);
+        if isSameSolution(setS_upperBound,aPoint,theTolerances)===true then (
+--	    print "A2";
+	    return setS);
+	if isSameSolution(setS_lowerBound,aPoint,theTolerances)==-1 then (
+--	    print "B1";
+	    return insert(lowerBound,aPoint,setS));
+    	if isSameSolution(setS_upperBound,aPoint,theTolerances)==1 then (
+--	    print "B2";
+	    return insert(upperBound+1,aPoint,setS));    
+        midpoint:=floor((upperBound+lowerBound)/2);
+	if isSameSolution(setS_midpoint,aPoint,theTolerances)===true then (
+--	    print "C";
+	    return setS) else
+    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==1 then (
+--	    print (midpoint,midpoint+1);
+	    lowerBound=midpoint+1);
+    	if isSameSolution(setS_midpoint,aPoint,theTolerances)==-1 then (
+--	    print (midpoint,midpoint-1);
+	    upperBound=midpoint-1)   )  ;
+--    	print isSameSolution(setS_midpoint,aPoint,theTolerances);
+--    	print (lowerBound,upperBound,midpoint);
+--	print "whileLoop");
+    print "fail";
+    return insert(lowerBound,aPoint,setS))
+	  
+  
+
+--PARAMETERHOMOTOPYPOSTPROCESS
+--This function takes a directory as its input where a bertini run has alreaddy been made.
+--The purpose is so that Alice can email a folder to Bob, and Bob can easily manipulate the data with the Bertini.m2 interface
+phPostProcess = method(TypicalValue=>Nothing,Options=>{
+	PrintNotes=>-1,--if printNotes is not -1 then  "notes" from Alice is printed for Bob instead of Bertini being called
+--    	InputFilesName=>"input",
+	OutputLocation=>-1,
+      	SolutionType=>"nonsingular_solutions",
+	B'InputFile=>"input",
+    	B'StartFile=>"start",
+    	B'StartParameters=>"start_parameters",
+	SpecifyCoordinates=>{},
+	SpecifyPoints=>{}
+	})
+phPostProcess(String,List,ZZ) := o -> (
+    inputLocation,postParameters,numberOfCoordinates)-> (
+    if o.PrintNotes==1 then print  get (inputLocation|"/notes")    
+    else(
+	if o.OutputLocation=!=-1 
+	then (OL:=o.OutputLocation; 
+	    copyFile(inputLocation|"/"|o.B'StartFile, OL|"/start");
+	    copyFile(inputLocation|"/"|o.B'StartParameters,
+		OL|"/start_parameters"))
+        else OL=inputLocation;
+	writeParameters(OL,postParameters);   
+    	callBertini(OL,BERTINIexe,inputLocation,o.B'InputFile);---call Bertini 
+    importPoints(OL|"/"|o.SolutionType,numberOfCoordinates,
+	SpecifyPoints=>o.SpecifyPoints,
+	SpecifyCoordinates=>o.SpecifyCoordinates)    ));
+    
+---writeParameters is a subfunction for parameterHomotopyPostProcess    
+writeParameters=(filesGoHere,listParameters)->(
+     finalParameterFile:= openOut(filesGoHere|"/final_parameters"); -- the only name for Bertini's final parameters file 
+     finalParameterFile << toString(length listParameters) << endl << endl;
+     for c in listParameters do (
+	 cString:=bertiniComplexNumber(c);
+	 finalParameterFile <<cString_0 << " " <<cString_1 <<endl
+	 );
+     finalParameterFile << endl;      
+     close finalParameterFile);      
+
+
+---writeParameters is a subfunction for parameterHomotopyPostProcess    
+writePoints=(filesGoHere,nameOfFile,listPoints)->(
+     startPointsFile:= openOut(filesGoHere|"/"|nameOfFile); 
+     startPointsFile << toString(length listPoints) << endl << endl;
+     for aPoint in listPoints do (
+	 for c in coordinates aPoint do (
+	     cString:=bertiniComplexNumber(c);
+	     startPointsFile <<cString_0 << " " <<cString_1 <<endl
+	     );
+	 startPointsFile << " "<<endl);     	 
+     startPointsFile << endl;      
+     close startPointsFile);      
+
+---helper functions for writeParameters
+bertiniRealNumber=(aNumber)->(
+    if class aNumber===QQ then error "final parameters cannot have type QQ" else
+    realPartSeparate:=separate("p",toExternalString ( aNumber));
+    realPartMantissa:=realPartSeparate_0;
+    if 1=!=#realPartSeparate 
+    then (separateExponent:=separate("e",realPartSeparate_1);
+    	if 1==#separateExponent
+    	then realPartExponent:="0"
+    	else realPartExponent=(separateExponent)_1;
+    	return(realPartMantissa|"e"|realPartExponent))
+    else return(realPartMantissa|"e0"));
+    
+bertiniComplexNumber=(aCNumber)->{bertiniRealNumber(realPart aCNumber),
+    bertiniRealNumber(imaginaryPart aCNumber)};
+
+
+
+
+       
+callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
+    run("cd "|inDirectory|"; "|BERTINIexe|" "|inputLocation|"/"|inputFilesName|" >bertini_session.log"));  
+--     run("cd "|filesGoTo|"; "|BERTINIexe|" "|fileLocation|"/"|inputFilesName|" >bertini_session.log"); 
