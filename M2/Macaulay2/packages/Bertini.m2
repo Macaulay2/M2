@@ -69,6 +69,7 @@ export {
  -- "SolutionType",
   "AllowStrings",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "SubFunctions",
   "OutputLocation",
   "B'InputFile",
@@ -84,6 +85,8 @@ export {
   "WriteOnly",
   "SpecifyDirectory"  
 =======
+=======
+>>>>>>> FETCH_HEAD
     "SubFunctions"
  -- "OutputLocation",
  -- "B'InputFile",
@@ -93,6 +96,9 @@ export {
   --"MonodromyStart",
   --"NumberOfLoops",
   --"MonodromyTolerance"  
+<<<<<<< HEAD
+>>>>>>> FETCH_HEAD
+=======
 >>>>>>> FETCH_HEAD
 }
   
@@ -201,7 +207,11 @@ bertiniTrackHomotopy (List, RingElement,List) := o -> (H,t,S1) -> (
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
 <<<<<<< HEAD
+<<<<<<< HEAD
 	  SpecifyDirectory=>{},WriteOnly=>-1,SubFunctions=>-1,AllowStrings=>-1,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
+=======
+	  SubFunctions=>-1,AllowStrings=>-1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
+>>>>>>> FETCH_HEAD
 =======
 	  SubFunctions=>-1,AllowStrings=>-1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1}     )
 >>>>>>> FETCH_HEAD
@@ -220,7 +230,11 @@ bertiniParameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 ---------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 bertiniSolve = method(TypicalValue => List, Options=>{SpecifyDirectory=>{},WriteOnly=>-1,SubFunctions=>-1,AllowStrings=>-1,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+=======
+bertiniSolve = method(TypicalValue => List, Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+>>>>>>> FETCH_HEAD
 =======
 bertiniSolve = method(TypicalValue => List, Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 >>>>>>> FETCH_HEAD
@@ -262,8 +276,13 @@ bertiniSolve List := o -> F -> (  -- F is the list of polynomials
      )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SpecifyDirectory=>{},WriteOnly=>-1,SubFunctions=>-1,AllowStrings=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+=======
+stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6, ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
+	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+>>>>>>> FETCH_HEAD
 =======
 stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6, ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
@@ -293,6 +312,7 @@ stageTwoParameterRun (String, List) := o -> (dir, F) -> (
 
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ----------------------------------
 --NEW FUNCTIONS FOR FEBRUARY 2014
@@ -591,6 +611,8 @@ callBertini=(inDirectory,BERTINIexe,inputLocation,inputFilesName)->(
 --     run("cd "|filesGoTo|"; "|BERTINIexe|" "|fileLocation|"/"|inputFilesName|" >bertini_session.log");  
 =======
 >>>>>>> FETCH_HEAD
+=======
+>>>>>>> FETCH_HEAD
 
 
 checkConditionNumber=(listOfPoints, tolerance)->(
@@ -610,8 +632,13 @@ checkMultiplicity=(listOfPoints)->(
 -------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 makeBertiniInput = method(TypicalValue=>Nothing,Options=>{SpecifyDirectory=>{},WriteOnly=>-1,SubFunctions=>-1,AllowStrings=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+=======
+makeBertiniInput = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
+	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
+>>>>>>> FETCH_HEAD
 =======
 makeBertiniInput = method(TypicalValue=>Nothing,Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	  StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,MPTYPE=>-1,PRECISION=>-1,ISPROJECTIVE=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})  
@@ -878,7 +905,11 @@ cleanupOutput String := s -> (
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{SpecifyDirectory=>{},WriteOnly=>-1,SubFunctions=>-1,AllowStrings=>-1,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,CheckConditionNum=>1,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+=======
+readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
+>>>>>>> FETCH_HEAD
 =======
 readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{SubFunctions=>-1,AllowStrings=>-1,MultiplicityTol=>1e-6,ConditionNumTol=>1e10,ISPROJECTIVE=>-1,Parameters=>null,ParameterValues=>null, StartSystem=>{},NVariety=>null, StartSolutions=>{},RawData=>null,WitnessData=>null,MPTYPE=>-1,PRECISION=>-1,ODEPREDICTOR=>-1,TRACKTOLBEFOREEG=>-1,TRACKTOLDURINGEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MINSTEPSIZEBEFOREEG=>-1,MINSTEPSIZEDURINGEG=>-1,IMAGTHRESHOLD=>-1,COEFFBOUND=>-1,DEGREEBOUND=>-1,CONDNUMTHRESHOLD=>-1,RANDOMSEED=>-1,SINGVALZEROTOL=>-1,ENDGAMENUM=>-1,USEREGENERATION=>-1,SECURITYLEVEL=>-1,SCREENOUT=>-1,OUTPUTLEVEL=>-1,STEPSFORINCREASE=>-1,MAXNEWTONITS=>-1,MAXSTEPSIZE=>-1,MAXNUMBERSTEPS=>-1,MAXCYCLENUM=>-1,REGENSTARTLEVEL=>-1,dimen=>-1,compnum=>-1,numpts=>-1,Points=>{},digits=>-1,runType=>0,PathVariable=>null})
 >>>>>>> FETCH_HEAD
@@ -1005,9 +1036,12 @@ local R;
 	    pts=join(pts,{pt});
             );
 <<<<<<< HEAD
+<<<<<<< HEAD
        if o.USEREGENERATION==1 then return pts 
        else ( checkConditionNumber(pts);
 =======
+=======
+>>>>>>> FETCH_HEAD
 	
 	pts=solutionsWithMultiplicity(pts,Tolerance=>o.MultiplicityTol); 
 	
@@ -1018,6 +1052,9 @@ local R;
 	   for i in pts do if (i.SolutionStatus=!=Singular 
 	       and i.SolutionStatus=!=FailedPath and i.SolutionStatus=!=RefinementFailure) 
 	   then i.SolutionStatus=Regular;
+<<<<<<< HEAD
+>>>>>>> FETCH_HEAD
+=======
 >>>>>>> FETCH_HEAD
 	   return pts)
        )
