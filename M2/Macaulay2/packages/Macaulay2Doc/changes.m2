@@ -102,7 +102,13 @@ document {
 		    LI {
 			 "A new command line option, ", TT "--no-time", ", arranges for the function ", TO "currentTime", "
 			 to return 0 always, for reproducility of results, as an aid in debugging."
-			 }
+			 },
+            LI {
+                "A new command ", TO "antipode", " has been added.  This function implements
+                the anti-isomorphism between left and right modules in skew commuting poly rings.  
+                It is used when transposing a matrix over a ring with skew commuting variables, basically,
+                so that the transpose of a complex of matrices will still be a complex of matrices."
+			    }
 	  	    }
 	       },
 	  LI { "functionality changed:",

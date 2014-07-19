@@ -739,6 +739,18 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
      }
 }
 
+const RingElement* /* or null */ rawRingElementAntipode(const RingElement* f)
+{
+  try {
+    const Ring* R = f->get_ring();
+    return RingElement::make_raw(R, R->antipode(f->get_value()));
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts,
                                        const RingElement *a)
   /* The first component of the degree is used, unless the degree monoid is trivial,
