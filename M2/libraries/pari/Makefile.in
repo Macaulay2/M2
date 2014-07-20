@@ -59,10 +59,10 @@ include ../Makefile.library
 #   Using GNU MP, version 4.2.1
 config-chk: .config-checked-$(VERSION)
 clean::; rm -f .config-checked-*
-.config-checked-$(VERSION) : $(BUILDDIR)/O*/pari.cfg
+.config-checked-$(VERSION):
 	: test whether pari successfully found gmp library during configuration :
 	echo 'configfile(s) : '$(BUILDDIR)/O*/pari.cfg
-	source $(BUILDDIR)/O*/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
+	. $(BUILDDIR)/O*/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
 	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
