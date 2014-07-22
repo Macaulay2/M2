@@ -1404,6 +1404,15 @@ export rawHomogenize(e:Expr):Expr := (
      else buildErrorPacket("expected 3 or 4 arguments"));
 setupfun("rawHomogenize",rawHomogenize);
 
+export rawAntipode(e:Expr):Expr := (
+     when e
+     is x:RawRingElementCell do toExpr( 
+	  Ccode( RawRingElementOrNull, 
+	       "rawRingElementAntipode(",
+	       x.p, ")" ))
+     else WrongArg("a raw ring element"));
+setupfun("rawAntipode",rawAntipode);
+
 export rawTerm(e:Expr):Expr := (
      when e is s:Sequence do 
      if length(s) == 3 then 

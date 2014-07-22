@@ -549,6 +549,7 @@ Matrix *Matrix::transpose() const
 {
   const FreeModule *F = cols()->transpose();
   const FreeModule *G = rows()->transpose();
+  const Ring *R = F->get_ring();
 
   MatrixConstructor mat(F,G,degree_shift());
 
@@ -558,7 +559,10 @@ Matrix *Matrix::transpose() const
   for (int c=0; c<n_cols(); c++)
     {
       for (i.set(c); i.valid(); i.next())
-        mat.set_entry(c, i.row(), i.entry());
+        {
+          ring_elem f = i.entry();
+          mat.set_entry(c, i.row(), R->antipode(f));
+        }
     }
   return mat.to_matrix();
 }

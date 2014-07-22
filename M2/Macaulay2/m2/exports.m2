@@ -5,6 +5,7 @@ export {
         symbol rowRankProfile,
         symbol columnRankProfile,
         symbol nullSpace,
+        symbol antipode,
         symbol chi,
         symbol submatrixByDegrees,
 --	symbol setAttribute,				    -- experimental

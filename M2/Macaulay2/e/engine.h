@@ -425,6 +425,12 @@ extern "C" {
        then (0,0) is returned.
     */
 
+  const RingElement* /* or null */ rawRingElementAntipode(const RingElement* f);
+  /* If the ring is not a skew commuting poly ring, this is the identity map.  Otherwise
+     this returns a poly, with the signs of the coefficients possibly changed, 
+     this implements the (anti-)isomorphism of the ring and its opposite ring.
+  */
+
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
             int v,

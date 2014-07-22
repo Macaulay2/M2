@@ -366,6 +366,11 @@ public:
     // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, int &lo, int &hi) const;
 
+  // antipode: for non skew commuting poly rings, this is the identity.
+  // Otherwise, this changes the signs of the monomials, implementing the (anti)-isomorphism
+  // of the ring with its opposite ring.
+  virtual ring_elem antipode(ring_elem f) const { return f; }
+
   //////////////////////////////////////////
   // Cleaning real and complex numbers /////
   //////////////////////////////////////////
