@@ -1,0 +1,74 @@
+-- -*- M2-comint -*- {* hash: 704393788 *}
+
+i1 : R = QQ[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+
+       3      2      2       2     3      2
+o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
+
+o2 : List
+
+i3 : S = bertiniPosDimSolve F
+Temporary directory for input and output files:/tmp/M2-14805-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = S
+
+o3 : NumericalVariety
+
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+
+o4 = {{1.31165e-60+1.68487e-60*ii, -1.5376e-60-1.48332e-60*ii,
+     ------------------------------------------------------------------------
+     .499782-.256389*ii}}
+
+o4 : VerticalList
+
+i5 : S#1 --first specify dimension
+
+o5 = {[dim=1,deg=1]}
+
+o5 : List
+
+i6 : peek oo_0 --then list position
+
+o6 = WitnessSet{ComponentNumber => 0                                                                    }
+                IsIrreducible => null
+                Points => {{1.31165e-60+1.68487e-60*ii, -1.5376e-60-1.48332e-60*ii, .499782-.256389*ii}}
+                Slice => | .056846+.724565i .516568+.153937i 1.49808+.948033i 2.80355+1.09854i |
+                WitnessDataFileName => /tmp/M2-14805-0/0/witness_data
+                                     3      2      2       2     3      2
+                Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
+
+i7 : PD=primaryDecomposition( ideal F)
+
+             2    2    2
+o7 = {ideal(x  + y  + z  - 1), ideal (y, x)}
+
+o7 : List
+
+i8 : dim PD_0
+
+o8 = 2
+
+i9 : degree PD_0
+
+o9 = 2
+
+i10 : dim PD_1
+
+o10 = 1
+
+i11 : degree PD_1
+
+o11 = 1
+
+i12 : 

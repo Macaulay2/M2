@@ -1,0 +1,27 @@
+-- -*- M2-comint -*- {* hash: 1914703595 *}
+
+i1 : R = CC[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = {x^2-1,y^2-1}
+
+       2       2
+o2 = {x  - 1, y  - 1}
+
+o2 : List
+
+i3 : solns = bertiniZeroDimSolve(F)
+Temporary directory for input and output files:/tmp/M2-14944-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
+
+o3 : List
+
+i4 : 

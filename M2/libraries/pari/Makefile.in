@@ -19,7 +19,8 @@ endif
 # URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 
-# leave out these tests:
+# We (used to) leave out these tests, now we don't test at all
+#   (test-all would run them all) :
 #   test-ellglobalred - requires data files that we don't download
 #   test-ellsea - requires data files "seadata"
 #   test-galois - requires galois data files "galdata"
@@ -29,37 +30,36 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 #		NOTE: the problem noted in 'program' is that install() does not work in your
 #		configuration (gp-sta only), so you will not be able to use this feature.
 #		Otherwise you can safely ignore the above warning.
+CHECKTARGET = .
 
-CHECKTARGET =										\
-    test-addprimes test-analyz test-apply test-aurifeuille test-bezout			\
-    test-bnfisintnorm test-bnr test-charpoly test-combinat test-compat			\
-    test-contfrac test-cxtrigo test-debugger test-det test-diffop test-ell		\
-    test-elliptic test-ellweilpairing test-err						\
-    test-exact0 test-extract test-ff test-ffisom					\
-    test-graph test-ideal test-idealappr test-idealramgroups test-intformal		\
-    test-intnum test-ispower test-krasner test-linear test-list test-lll test-mat	\
-    test-matsnf test-member test-minim test-modpr test-multivar-mul test-nf		\
-    test-nffactor test-nfhilbert test-nfields test-nfrootsof1 test-number		\
-    test-objets test-polchebyshev test-polmod test-polred				\
-    test-polyser test-printf test-qf test-qfbsolve test-quad				\
-    test-quadclassunit test-quadray test-random test-resultant test-rfrac test-rnf	\
-    test-rnfkummer test-round4 test-select test-stark test-subcyclo			\
-    test-subst test-sumiter test-thue test-trans test-zetak test-zn
-
-BUILDTARGET = lib-sta
-INSTALLTARGET = install-lib-sta install-include
-PACKAGE-DISTCLEAN-TARGET = .
-
-ifeq (@SHARED@,yes)
+# we build only the shared library, because that's the version that is gmp compatible
+INSTALLTARGET += install-include
 BUILDTARGET += lib-dyn
 INSTALLTARGET += install-lib-dyn
-endif
-
 HOST_OS = @host_os@
 HOST_CPU = @host_cpu@
-
 ifeq ($(HOST_OS),mingw32)
 HOST_OS = mingw
+endif
+
+CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
+
+ifeq (@PROFILING@,yes)
+CONFIGURECMD += -pg
+INSTALLOPTIONS = -C `config/objdir`.prf
+BUILDOPTIONS = -C `config/objdir`.prf
+CHECKOPTIONS = -C `config/objdir`.prf
+else
+ifeq (@DEBUG@,yes)
+CONFIGURECMD += -g
+INSTALLOPTIONS = -C `config/objdir`.dbg
+BUILDOPTIONS = -C `config/objdir`.dbg
+CHECKOPTIONS = -C `config/objdir`.dbg
+else
+INSTALLOPTIONS = -C `config/objdir`
+BUILDOPTIONS = -C `config/objdir`
+CHECKOPTIONS = -C `config/objdir`
+endif
 endif
 
 INSTALLOPTIONS = -C O$(HOST_OS)-$(HOST_CPU)

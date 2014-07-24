@@ -1,15 +1,19 @@
-dnl This is the only place where the Macaulay2 version number appears:
+dnl =============================================================================
+dnl This is the only place in the code where the Macaulay2 version number
+dnl appears as a literal value.
 
-    AC_INIT(Macaulay 2, 1.6, Macaulay2@math.uiuc.edu, Macaulay2)
+dnl Things to do when incrementing the version number:
+dnl    - make a git tag of the form Macaulay2-X-Y or Macaulay2-X-Y-Z or Macaulay2-X-Y-Z-W
+dnl    - add an entry to distributions/deb/changelog
 
-dnl When incrementing the version number, add an entry to distributions/deb/changelog, too.
+AC_INIT(Macaulay2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
-dnl   1.3     : a relatively major release, such as occurs every six months
-dnl   1.3.1   : a minor update, such as might occur a week after a major release
+dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
+dnl   1.3.1   : a minor update, with changes people might want, stable, suitable for binary distributions or updates to binary distributions on certain architectures
 dnl   1.3.1.1 : a development version, with no binary distributions
-dnl   1.3.9   : almost ready for a major release
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
+dnl =============================================================================
 
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -64,6 +68,8 @@ done
 test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
 
 AC_CHECK_PROGS(MAKE,gmake make,false)
+AC_CHECK_PROGS(PKG_CONFIG,pkg-config,no)
+if test $PKG_CONFIG = no; then AC_MSG_ERROR("pkg-config is required"); fi
 AC_CHECK_PROGS(WGET,wget,false)
 AC_CHECK_PROGS(CURL,curl,false)
 AC_CHECK_PROGS(ETAGS,etags,false)
@@ -73,6 +79,26 @@ AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
 AC_CHECK_PROGS(RPMLINT,rpmlint,false)
 AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
 AC_CHECK_PROGS(FIND,gfind find,false)
+AC_CHECK_PROGS(STRIPCMD,strip)
+AC_CHECK_PROGS(OBJDUMP,objdump,false)
+AC_CHECK_PROGS(OBJCOPY,objcopy,false)
+AC_CHECK_PROGS(LDD,ldd,false)
+
+AC_CHECK_TOOL(AR,gar ar,false)
+AC_CHECK_TOOL(AS,as,false)
+AC_CHECK_TOOL(DLLTOOL,gdlltool dlltool,false)
+AC_CHECK_TOOL(LD,ld,false)
+AC_CHECK_TOOL(STRIP,gstrip strip,false)
+
+if test "$STRIPCMD" != ""
+then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
+     if strip --help 2>&1 | grep remove-section >/dev/null
+     then val=yes
+     else val=no
+     fi
+     AC_MSG_RESULT($val)
+     AC_SUBST(STRIP_REMOVE_SECTION,$val)
+fi
 
 AC_MSG_CHECKING(whether $MAKE is GNU make)
 if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
@@ -92,34 +118,6 @@ dnl then AC_MSG_RESULT(yes)
 dnl else AC_MSG_ERROR("$FIND: GNU find is required")
 dnl fi
 
-AC_SUBST(NODENAME,"`uname -n`")
-AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-
-AC_SUBST(ISSUE) # no initial value
-AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
-if test -f /etc/issue -a ! "$ISSUE"
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     case $ISSUE_FLAVOR in
-	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;  # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
-	 "") ISSUE_FLAVOR=unknown ;;
-     esac
-     case $ISSUE_RELEASE in
-	 "") ISSUE_RELEASE=unknown ;;
-     esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-fi
-
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
-AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 dnl interesting behavior: $A expansion happens after statement separation!
 dnl       $ A="echo hi 2>/dev/null "
 dnl       $ echo "`$A`"
@@ -129,6 +127,16 @@ dnl       hi 2>/dev/null
 dnl       $ eval $A
 dnl       hi
 
+AC_SUBST(NODENAME,"`uname -n`")
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+AC_SUBST(ISSUE) # no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
@@ -136,7 +144,9 @@ case $OS-$REL in
   Darwin-10.*) REL=10.6 ; OS=MacOS ;;
   Darwin-11.*) REL=10.7 ; OS=MacOS ;;
   Darwin-12.*) REL=10.8 ; OS=MacOS ;;
-  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1
+  Darwin-13.*) REL=10.9 ; OS=MacOS ;;
+  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
+  CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
 
 case $OS in
@@ -145,23 +155,33 @@ case $OS in
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
 esac
 
+if test -f /etc/issue -a ! "$ISSUE"
+then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     # translate the contents of /etc/issue to something sensible:
+     case $ISSUE_FLAVOR in
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
+	 "") AC_MSG_ERROR([issue not found in /etc/issue]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
+     esac
+     case $ISSUE_RELEASE in
+	 "") AC_MSG_NOTICE([release number not found in /etc/issue: `</etc/issue head -1`]) 
+	     ISSUE_RELEASE=unknown ;;
+     esac
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+fi
+
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
 test "$ISSUE" || ISSUE=$REL
 
 AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-AC_MSG_NOTICE([operating system to be used in distribution file names: $OS])
-AC_MSG_NOTICE([issue to be used in distribution file names: $ISSUE])
-
-case $OS in
-  MacOS) 
-dnl 	AC_MSG_NOTICE([[*** This is MacOS, but we are not adding -lgcc_s.10.5 to LIBS for you, 
-dnl because there might be a better way.  See the discussion in emacs info about -static-libgcc
-dnl and -shared-libgcc, try both of those in LDFLAGS, and also try -lgcc and -lgcc_eh in LIBS.
-dnl If all else fails, add "LIBS=-lgcc_s.10.5" to the configure command line.  Check whether the 
-dnl binary ends up requiring a sharable library with a similar name. ***]])
-	# LIBS="$LIBS -lgcc_s.10.5" # what kind of crock is this??
-	;;
-esac
-
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
 
@@ -187,7 +207,10 @@ fi
 
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
+AC_SUBST(NTL_WIZARD,yes) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--disable-ntl-wizard,disable running the NTL wizard), NTL_WIZARD=$enableval)
+
 AC_SUBST(M2_CPPFLAGS,)
+AC_SUBST(M2_CFLAGS,)
 
 AC_PROG_CC() 			# set CFLAGS before this
 AC_SUBST(GCC)			# gets set to yes or no by AC_PROG_CC
@@ -199,15 +222,6 @@ AC_PROG_YACC()
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
-
-AC_CHECK_TOOL(AR,ar,false)
-AC_CHECK_TOOL(AS,as,false)
-AC_CHECK_TOOL(DLLTOOL,dlltool,false)
-AC_CHECK_TOOL(LD,ld,false)
-AC_CHECK_TOOL(OBJDUMP,objdump,false)
-AC_CHECK_TOOL(OBJCOPY,objcopy,false)
-AC_CHECK_TOOL(STRIP,strip,false)
-AC_CHECK_TOOL(LDD,ldd,false)
 
 AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
@@ -289,7 +303,7 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_MSG_CHECKING([whether linking C++ programs with C compiler $CC works])
+AC_MSG_CHECKING([whether compiling with $CXX and then linking $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
@@ -379,7 +393,7 @@ EOF
     fi
 
 AC_HEADER_TIME()
-AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h stdlib.h syscall.h sys/types.h execinfo.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
+AC_CHECK_HEADERS(sys/ioctl.h termios.h sys/mman.h sys/socket.h netdb.h netinet/in.h arpa/inet.h sys/time.h time.h sys/wait.h sys/resource.h io.h linux/personality.h stddef.h stdint.h inttypes.h bits/wordsize.h endian.h elf.h execinfo.h stdlib.h syscall.h sys/types.h sys/stat.h execinfo.h unistd.h math.h pthread.h assert.h alloca.h malloc.h dlfcn.h)
 AC_CHECK_HEADERS(winsock2.h) dnl used with ws2_32.dll under mingw64
 dnl winsock2.h should be included before including windows.h
 dnl  pthread.h includes windows.h
@@ -528,117 +542,18 @@ test "$EXPERIMENT" = no; val=$?; AC_DEFINE_UNQUOTED(EXPERIMENT,$val,whether expe
 
 AC_SUBST(M2TARFILE,no) AC_ARG_ENABLE(tarfile, AS_HELP_STRING(--enable-tarfile,prepare binary and source packages as compressed tar files), M2TARFILE=$enableval)
 AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,include symbolic links to needed shared libraries for tar), TARLIBS=$enableval)
-AC_SUBST(SHARED,no)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--enable-shared,enable building of shared libraries), SHARED=$enableval)
+AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$DEBUG" = "yes" && ENABLE_STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
 
-AC_SUBST(PACKAGES, dnl first Style, then Macaulay2Doc, then the other internal ones, then other ones, starting with the oldest
-"
-  Style
-  Macaulay2Doc
-  FirstPackage
-  Parsing
-  Classic
-  Browse
-  Benchmark
-  Text
-  SimpleDoc
-  PackageTemplate
-  PrimaryDecomposition
-  FourierMotzkin
-  Dmodules
-  Depth
-  Elimination
-  GenericInitialIdeal
-  IntegralClosure
-  HyperplaneArrangements
-  LexIdeals
-  Markov
-  NoetherNormalization
-  Points
-  ReesAlgebra
-  Regularity
-  SchurRings
-  SymmetricPolynomials
-  SchurFunctors
-  SimplicialComplexes
-  LLLBases
-  TangentCone
-  ChainComplexExtras
-  Schubert2
-  PushForward
-  LocalRings
-  BoijSoederberg
-  BGG
-  Bruns
-  InvolutiveBases
-  ConwayPolynomials
-  EdgeIdeals
-  FourTiTwo
-  StatePolytope
-  Polyhedra
-  Polymake
-  gfanInterface
-  PieriMaps
-  Normaliz
-  Posets
-  XML
-  OpenMath
-  SCSCP
-  RationalPoints
-  MapleInterface
-  ConvexInterface
-  SRdeformations
-  NumericalAlgebraicGeometry
-  BeginningMacaulay2
-  FormalGroupLaws
-  Graphics
-  WeylGroups
-  HodgeIntegrals
-  Cyclotomic
-  Binomials
-  Kronecker
-  Nauty
-  ToricVectorBundles
-  ModuleDeformations
-  PHCpack
-  SimplicialDecomposability
-  BooleanGB
-  AdjointIdeal
-  Parametrization
-  Serialization
-  NAGtypes
-  NormalToricVarieties
-  DGAlgebras
-  Graphs
-  GraphicalModels
-  BIBasis
-  KustinMiller
-  Units
-  MonomialMultiplierIdeals
-  NautyGraphs
-  VersalDeformations
-  CharacteristicClasses
-  RandomObjects
-  RandomPlaneCurves
-  RandomSpaceCurves
-  RandomGenus14Curves
-  RandomCanonicalCurves
-  RandomCurves
-  TensorComplexes
-  MonomialAlgebras
-  QthPower
-  EliminationMatrices
-  EllipticIntegrals
-  Triplets
-  CompleteIntersectionResolutions
-")
 
-# convert the newlines in the list above to spaces
+
+AC_SUBST(PACKAGES,`cat $srcdir/Macaulay2/packages/=distributed-packages`)
+[if [ $? != 0 ] ; then exit 1 ; fi]
+# convert the newlines to spaces
 PACKAGES=`echo $PACKAGES`
-
 AC_DEFINE_UNQUOTED(PACKAGES,"$PACKAGES",the list of packages included with the release of Macaulay 2)
 
 AC_DEFINE_UNQUOTED(buildsystemtype,"$build",the type of system on which the package was built)
@@ -829,8 +744,9 @@ AC_SUBST(BUILTLIBS,)
 #     initially, we offer no option for not compiling some of them
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
-#    factory needs gftables, ntl and gmp
-#    libfac needs factory
+#    gc needs atomic_ops (and sometimes includes it)
+#    factory needs gftables, flint, ntl and gmp
+#    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
@@ -859,12 +775,12 @@ AC_SUBST(BUILTLIBS,)
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
-#    flint is experimental, depends on mpir and mpfr
+#    flint depends on mpir and mpfr
 #    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing gc gdbm mpir mpfr pari readline ntl factory libfac lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack flint gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -884,14 +800,14 @@ BUILD_lrslib=no
 BUILD_cddplus=no
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory libfac lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
 	    	;;
-	    *) AC_MSG_ERROR(unrecognized library name: $i) ;;
+	    *) AC_MSG_ERROR(--enable-build-libraries option: unrecognized library name: $i) ;;
        esac
     done])
 
@@ -953,7 +869,7 @@ AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downlo
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
-AC_SEARCH_LIBS(tgoto,ncurses curses,,AC_MSG_ERROR(libcurses and libncurses not found))
+AC_SEARCH_LIBS(tgoto,ncurses curses tinfo,,AC_MSG_ERROR([[libcurses, libncurses, and tinfo not found (containing symbol tgoto)]]))
 if test $BUILD_readline = no
 then AC_CHECK_HEADER(readline/readline.h,,BUILD_readline=yes)
 fi
@@ -1125,17 +1041,17 @@ then AC_LANG(C)
      AC_CHECK_HEADER(mpfr.h,,BUILD_mpfr=yes,[#include <gmp.h>])
      if test $BUILD_mpfr = no
      then AC_MSG_CHECKING([whether mpfr library is recent enough, using mpfr.h])
-	  AC_RUN_IFELSE([AC_LANG_SOURCE([
+	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <stdio.h>
 		  #include <mpfr.h>
 		  main () {
-		      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+		      FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
 		      unsigned major, minor, patch_level;
 		      major = MPFR_VERSION_MAJOR;
 		      minor = MPFR_VERSION_MINOR;
 		      patch_level = MPFR_VERSION_PATCHLEVEL;
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, patch_level);
-		      return !( major > 2 || major == 2 && minor >= 3 ); }])],
+		      return !( major > 2 || major == 2 && minor >= 3 ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
 	     [ AC_MSG_RESULT([no, version at least 2.3.0 is required (mpfr will be built from downloaded sources)]); BUILD_mpfr=yes ],
 	     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
@@ -1143,46 +1059,46 @@ then AC_LANG(C)
 fi
 test $BUILD_mpfr = yes && BUILTLIBS="-lmpfr $BUILTLIBS"
 
+if test $BUILD_atomic_ops = no
+then AC_CHECK_HEADER(atomic_ops.h,
+       AC_SEARCH_LIBS(AO_pause,atomic_ops,,
+         BUILD_atomic_ops=yes),
+       BUILD_atomic_ops=yes)
+fi
+
 if test $BUILD_gc = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(GC_free,gc,
      	[AC_CHECK_HEADER(gc/gc.h,
-		[AC_CHECK_HEADER(atomic_ops.h,
-			[
-			  AC_MSG_CHECKING(whether libgc is recent enough)
-			  AC_RUN_IFELSE([AC_LANG_SOURCE([ 
-				  #include <stdio.h>
-				  main () {
-				      extern unsigned GC_version;
-				      FILE *msg = fdopen(AS_MESSAGE_FD,"w");
-				      unsigned major, minor, alpha;
-				      major = GC_version >> 16;
-				      minor = (GC_version >> 8) & 0xff;
-				      alpha = GC_version & 0xff;
-				      if (alpha == 0xff) fprintf(msg,"(version %d.%d found) ", major, minor);
-				      else fprintf(msg,"(version %d.%d alpha %d found) ", major, minor, alpha);
-				      return !( major > 7 || major == 7 && minor >= 2); }])],
-			     [ AC_MSG_RESULT(yes) ],
-			     [ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
-			     [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
-			],
-			[
-			AC_MSG_RESULT([atomic_ops.h not found, gc will be built from downloaded sources])
-			BUILD_gc=yes
-			]
-			)],
-		BUILD_gc=yes)],
-	BUILD_gc=yes)
+	    [
+		AC_MSG_CHECKING(whether libgc is recent enough)
+		AC_RUN_IFELSE([AC_LANG_SOURCE([ 
+		    #include <stdio.h>
+		    #include <gc.h>
+		    main () {
+		        FILE *msg = fdopen(AS_MESSAGE_FD,"w");
+#		      ifndef GC_VERSION_MICRO
+			if (GC_ALPHA_VERSION==GC_NOT_ALPHA)
+			fprintf(msg,"(version %d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
+			else
+			fprintf(msg,"(version %d.%d.alpha found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR);
+#		      else
+		        fprintf(msg,"(version %d.%d.%d found) ", GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_VERSION_MICRO);
+#		      endif
+		        return !( GC_VERSION_MAJOR > 7 || GC_VERSION_MAJOR == 7 && GC_VERSION_MINOR >= 2); }])],
+		[ AC_MSG_RESULT(yes) ],
+		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+		[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
+	    ],
+ 	    BUILD_gc=yes)],
+ 	BUILD_gc=yes)
 fi
 AC_SUBST(GC_LIBS,-lgc)
 if test $BUILD_gc = yes
 then 
-     dnl if test $PTHREADS = yes
-     dnl then # libpthread isn't really built by us, but gc will need to link against it
-	  BUILTLIBS="-lpthread $BUILTLIBS"
-	  GC_LIBS="$GC_LIBS -lpthread"
-     dnl fi
-     BUILTLIBS="-lgc $BUILTLIBS"
+     # libpthread isn't really built by us, but gc will need to link against it
+     BUILTLIBS="-lgc -lpthread $BUILTLIBS"
+     GC_LIBS="$GC_LIBS -lpthread"
 fi
 
 if test $BUILD_gdbm = no
@@ -1191,6 +1107,28 @@ then AC_LANG(C)
      AC_CHECK_HEADER(gdbm.h,,BUILD_gdbm=yes)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
+
+if test $BUILD_flint = no
+then AC_LANG(C)
+     AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
+     if test $BUILD_flint = no
+     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
+     fi
+     if test $BUILD_flint = no
+     then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
+          AC_RUN_IFELSE([AC_LANG_SOURCE([[
+		  #include <flint/flint.h>
+		  main () { 
+ 		    FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
+ 		    fprintf(msg,"(version %d.%d.%d found) ", __FLINT_RELEASE / 10000, __FLINT_RELEASE/100%100, __FLINT_RELEASE%100);
+		    return __FLINT_RELEASE >= 20403 /* 2.4.3 */ ? 0 : 1 ; 
+		    } ]])],
+	     [ AC_MSG_RESULT(yes) ],
+	     [ AC_MSG_RESULT(no); BUILD_flint=yes ])
+     fi
+fi
+test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
+AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict.
@@ -1220,7 +1158,7 @@ then AC_LANG(C++)
      fi 
 
      if test $BUILD_ntl = no
-     then AC_MSG_CHECKING([whether ntl library is recent enough, using NTL/version.h])
+     then AC_MSG_CHECKING([whether ntl library is version at least 5.4.1])
 	  AC_RUN_IFELSE([AC_LANG_SOURCE([[
 		  #include <stdio.h>
 		  #include <NTL/version.h>
@@ -1233,7 +1171,7 @@ then AC_LANG(C++)
 		      fprintf(msg,"(version %d.%d.%d found) ", major, minor, revision);
 		      return !( major > 5 || major == 5 && minor > 4 || major == 5 && minor == 4 && revision >= 1 ); }]])],
 	     [ AC_MSG_RESULT(yes) ],
-	     [ AC_MSG_RESULT([no, version at least 5.4.1 is required (ntl will be built from downloaded sources)]); BUILD_ntl=yes ])
+	     [ AC_MSG_RESULT(no); BUILD_ntl=yes ])
      fi
 
      if test $BUILD_ntl = no
@@ -1253,15 +1191,7 @@ then AC_LANG(C++)
      fi
 fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
-
-AC_SUBST(ENABLE_FLINT,no)
-AC_ARG_ENABLE(flint,
-    [AS_HELP_STRING(--enable-flint,[enable building the flint library, linking with it, and compiling the experimental code that uses it])],
-    AC_DEFINE(HAVE_FLINT,1,[whether we are linking with the flint library])
-    BUILD_flint=yes
-    BUILTLIBS="-lflint $BUILTLIBS"
-    ENABLE_FLINT=yes
-    )
+AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
 AC_SUBST(ENABLE_GIVARO,no)
 AC_ARG_ENABLE(givaro,
@@ -1305,16 +1235,13 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes
 
-# the instantiations needed by an initialization in libcf are in libfac,
-# and libfac depends on libcf, so we mention libfac twice:
 if test "$DEBUG" = yes
-then SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
-else SINGULARLIBS="-lfac -lcf -lfac -lcfmem"
+then SINGULARLIBS="-lfactory  "
+else SINGULARLIBS="-lfactory  "
 fi
-while test $BUILD_factory = no -o $BUILD_libfac = no
+while test $BUILD_factory = no 
 do AC_LANG(C++)
-   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
-   AC_CHECK_HEADER(factor.h,,BUILD_factory=yes BUILD_libfac=yes ; break)
+   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes; break)
    SAVELIBS=$LIBS
    LIBS="$SINGULARLIBS $LIBS"
    AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
@@ -1323,36 +1250,27 @@ do AC_LANG(C++)
 	              #include <factory/factory.h>
 		      int main () { return 0 ; } ]])],
        [AC_MSG_RESULT(yes)],
-       [AC_MSG_RESULT([no, will build factory and libfac]) ; BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS ; break] )
-   AC_MSG_CHECKING([whether up-to-date libfac and factory libraries are installed])
+       [AC_MSG_RESULT([no, will build factory]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
+   AC_MSG_CHECKING([whether up-to-date factory libraries are installed])
    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	   #include <stdio.h>
 	   #include <string.h>
            #undef NOSTREAMIO
+	   #undef PACKAGE_VERSION /* so we can get PACKAGE_VERSION from factoryconf.h */
 	   #include <factory/factory.h>
-	   #include <factor.h>
-	   extern const char * libfac_version;
 	   int main () {
 		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {3,1,0}, fOK;
-		static int  libfacV[3], lV[3] = {3,1,0}, lOK;
-		sscanf(FACTORYVERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		sscanf(libfac_version,"%d.%d.%d", &libfacV[0], &libfacV[1], &libfacV[2]);
+		static int factoryV[3], fV[3] = {4,0,0}, fOK;
+		sscanf(PACKAGE_VERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
 		fOK = factoryV[0] > fV[0] ||
 		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
 		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		lOK = libfacV[0] > lV[0] ||
-		      libfacV[0] == lV[0] && libfacV[1] > lV[1] ||
-		      libfacV[0] == lV[0] && libfacV[1] == lV[1] && libfacV[2] >= lV[2];
-		fprintf(msg,"(factory-%s %s %d.%d.%d, libfac-%s %s %d.%d.%d) ",
-		    FACTORYVERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2],
-		    libfac_version, lOK ? ">=" : "<", lV[0], lV[1], lV[2]
-		    );
-		return !( lOK && fOK );
+		fprintf(msg,"(factory-%s %s %d.%d.%d) ", PACKAGE_VERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2]);
+		return fOK ? 0 : 1;
 		}
 	   ]])],
 	[AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT([no, will build factory and libfac]); BUILD_factory=yes BUILD_libfac=yes LIBS=$SAVELIBS])
+	[AC_MSG_RESULT([no, will build factory ]); BUILD_factory=yes LIBS=$SAVELIBS])
    break
 done
 test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
@@ -1519,16 +1437,81 @@ AC_LINK_IFELSE(
 	[  AC_MSG_RESULT(no) ])
 CFLAGS="$SAVE"
 
-TESTFLAG=-Wno-strict-aliasing
+TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
-AC_SUBST(HAVE_NO_STRICT_ALIASING,)
+AC_SUBST(HAVE_WSTRICT_ALIASING,)
 SAVE=$CFLAGS
 CFLAGS="$TESTFLAG $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_NO_STRICT_ALIASING=yes, HAVE_NO_STRICT_ALIASING=no)
-M2_CPPFLAGS="$M2_CPPFLAGS $TESTFLAG"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
+M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
 CFLAGS=$SAVE
-AC_MSG_RESULT($HAVE_NO_STRICT_ALIASING)
+AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
+
+AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wfatal-errors"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    M2_CFLAGS="$M2_CFLAGS -Wfatal-errors"
+    AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
+    AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wmismatched-tags)
+dnl Always check for the option that turns the warning on, because gcc doesn't complain
+dnl about invalid options that turn off warnings, if there are no warnings to be issued anyway.
+dnl It's a feature, not a bug!
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wmismatched-tags"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
+    # we don't like seeing this warning, especially from the "clang" compiler
+    AC_MSG_RESULT(yes, adding -Wno-mismatched-tags to flags),
+    AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
+AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
+AC_LANG(C)
+SAVE=$CFLAGS
+CFLAGS="$CFLAGS -Wparentheses-equality"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WPARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
+    HAVE_WPARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
+CFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
+AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_X_NOEXECSTACK=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_X_NOEXECSTACK=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
+AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_ENABLE_AUTO_IMPORT=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_ENABLE_AUTO_IMPORT=no ;  AC_MSG_RESULT(no))
+LDFLAGS=$SAVE
+
+AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
+AC_SUBST(HAVE_WL_MAP,)
+AC_LANG(C)
+SAVE=$LDFLAGS
+LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile"
+AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
+    HAVE_WL_MAP=yes;  AC_MSG_RESULT(yes),
+    HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))
+rm -f conftest.mapfile
+LDFLAGS=$SAVE
 
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
@@ -1546,7 +1529,10 @@ then
 fi
 
 AC_SUBST(package,Macaulay2-$PACKAGE_VERSION)
-AC_SUBST(EXE,$M2SUFFIX$EXEEXT)
+
+# The suffix "-binary" distinguishes the binary program M2-binary from the shell script M2.
+# The purpose of the shell script M2 is to set LD_LIBRARY_PATH appropriately.
+AC_SUBST(EXE,-binary$M2SUFFIX$EXEEXT)
 
 AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # we used to use @ ARCH @ instead of @ host_cpu @ here, but for DEC alphas,
@@ -1573,7 +1559,10 @@ do case $i in
 	#   ncurses: has a database which we aren't providing and whose location we don't know
 	#    socket: dynamic loading of libraries is used to determine the current way to look up an IP number
 	#  libgcc_s: comes only in dynamic form
-	-lncurses | -lsocket | -lgcc_s* ) LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
+	#      pari: it's only the dynamic form that is gmp compatible, and it needs mpir to be dynamic
+	#      mpir: pari needs mpir to be dynamic
+	-lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
+		LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
 	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
 	# and later we'll figure out a run-time test for whether pari is based on gmp
 	# # we must link statically with some libraries:
@@ -1603,6 +1592,12 @@ AC_MSG_NOTICE([using CXX           = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS      = $CXXFLAGS])
 AC_MSG_NOTICE([using LDFLAGS       = $LDFLAGS])
 AC_MSG_NOTICE([using CC_FOR_BUILD  = $CC_FOR_BUILD])
+AC_MSG_NOTICE([with  ISSUE         = $ISSUE])
+AC_MSG_NOTICE([with  NODENAME      = $NODENAME])
+AC_MSG_NOTICE([with  OS REL        = $OS $REL])
+AC_MSG_NOTICE([with  ARCH          = $ARCH])
+AC_MSG_NOTICE([with  OPTIMIZE      = $OPTIMIZE])
+AC_MSG_NOTICE([with  DEBUG         = $DEBUG])
 
 function subset {
     # whether the words of $1 are among the words of $2
@@ -1634,8 +1629,6 @@ test "$DEB"     = yes && test "$prefix" != /usr &&
      AC_MSG_ERROR(--enable-deb specified and --prefix not set to /usr)
 test "$RPM"     = yes && test "$prefix" != /usr && 
      AC_MSG_ERROR(--enable-rpm specified and --prefix not set to /usr)
-test "$DMG"     = yes && test "$prefix" != /Applications/Macaulay2-$PACKAGE_VERSION && 
-     AC_MSG_ERROR(--enable-dmg specified and --prefix not set to /Applications/Macaulay2-$PACKAGE_VERSION)
 
 if test "$prefix" != /usr/local
 then test "$FREEBSD" = yes && AC_MSG_ERROR(--enable-freebsd specified and --prefix not set to /usr/local)
@@ -1656,11 +1649,18 @@ save_prefix=$prefix
 save_exec_prefix=$exec_prefix
 prefix=NONE
 exec_prefix=NOWHERE
-# here we normalize *everything*
-# put docdir and datarootdir at end, because we are changing the values of the variables, and
-# other variables depend on them
-for i in bindir datadir includedir infodir libdir libexecdir localstatedir mandir sbindir \
-         sharedstatedir sysconfdir psdir pdfdir dvidir htmldir localedir docdir datarootdir
+# Here we normalize almost everything.
+# We put docdir and datarootdir at end, because we are changing the values of the variables, and
+# other variables depend on them.
+# We don't normalize sysconfdir, sharedstatedir, and localstatedir, because Fedora
+# insists in /usr/share/config.site that they be /etc, /var, and /var, respectively.
+# We don't use those directories, anyway.  To ensure that, we set them to /nowhere.
+# (We could avoid config.site with the CONFIG_SITE environment variable.)
+sysconfdir=/nowhere
+sharedstatedir=/nowhere
+localstatedir=/nowhere
+for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
+         psdir pdfdir dvidir htmldir localedir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1679,7 +1679,7 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
-AC_SUBST(pre_bindir)
+AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
 AC_SUBST(pre_infodir)

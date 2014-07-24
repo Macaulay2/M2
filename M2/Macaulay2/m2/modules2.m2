@@ -333,28 +333,21 @@ degree Module := (
 		    );
 	       hft := heft M;
 	       if hft === null then error "degree: no heft vector defined";
-	       hs := hilbertSeries M;
-	       hn := numerator hs;
-	       hd := value denominator hs;
-	       if hn == 0 then return 0;
+	       hn := poincare M;
 	       n := degreeLength M;
 	       if n === 0 then return lift(hn,ZZ);		    -- assert( hd == 1 );
 	       to1 := map(ZZ1,ring hn,apply(hft,i->T^i));	    -- this assigns a privileged role to the heft vector, which we need to investigate
 	       hn = to1 hn;
 	       if hn == 0 then return 0;
-	       hd = to1 hd;
 	       while hn % h == 0 do hn = hn // h;
-	       while hd % h == 0 do hd = hd // h;
 	       if ev === null then ev = map(ZZ,ZZ1,{1}); -- ring maps are defined only later
-	       x := ev hn/ev hd;
-	       if liftable(x,ZZ) then x = lift(x,ZZ);
-	       x)))()
+	       ev hn)))()
 
 multidegree Module := M -> (
      A := degreesRing M;
      onem := map(A,A,apply(generators A, t -> 1-t));
      c := codim M;
-     if c === infinity then 1_A else part(c,onem numerator poincare M))
+     if c === infinity then 0_A else part(c,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
 multidegree Ideal := I -> multidegree cokernel generators I
 
@@ -659,7 +652,7 @@ findHeftandVars = (R, varlist, ndegs) -> (
 	    if h =!= null then return (varlist, h);
 	    );
        zerodeg := toList(ndegs:0);
-       varlist' := select(varlist, x -> take(degree R_x, ndegs) != zerodeg);
+       varlist' := select(varlist, x -> R_x != 0 and take(degree R_x, ndegs) != zerodeg);
        degs := apply(varlist', x -> take(degree R_x, ndegs));
        heft := findHeft(degs, DegreeRank=>ndegs);
        if heft === null then 

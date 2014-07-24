@@ -1117,7 +1117,7 @@ i155 : supportVarietyPairIdeal = (M,N) -> ann ext(M,N);
 i156 : time supportVarietyPairIdeal(M,N)
      -- used 0.048518 seconds
 
-o156 = ideal(X )
+o156 = ideal X 
               1
 
 o156 : Ideal of K[X , X , X ]

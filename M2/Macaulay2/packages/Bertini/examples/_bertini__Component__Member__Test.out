@@ -1,0 +1,35 @@
+-- -*- M2-comint -*- {* hash: 1079317156 *}
+
+i1 : R = CC[x,y,z];
+
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
+
+i3 : NV = bertiniPosDimSolve(F)
+Temporary directory for input and output files:/tmp/M2-14776-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = NV
+
+o3 : NumericalVariety
+
+i4 : pts = {{0,0,0}} --z-axis
+
+o4 = {{0, 0, 0}}
+
+o4 : List
+
+i5 : bertiniComponentMemberTest(NV,pts)
+Temporary directory for input and output files:/tmp/M2-14776-0/1
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o5 = {{[dim=1,deg=1]}}
+
+o5 : List
+
+i6 : 

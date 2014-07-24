@@ -1,20 +1,10 @@
 -- -*- M2-comint -*- {* hash: 1951696658 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x11,x22,x21,x12,x23,x13];
 
 i2 : system = {x11*x22-x21*x12,x12*x23-x22*x13};
 
 i3 : V = numericalIrreducibleDecomposition (system);
-writing output to file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/1PHCoutput
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/4PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/1PHCoutput
-... constructing witness sets ... 
-preparing input file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/6PHCinput
-preparing batch file to /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/8PHCbatch
-... calling monodromy breakup ...
-session information of phc -f is in /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/9PHCsession
-output of phc -f is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44669-0/7PHCoutput
 found 2 irreducible factors 
 
 i4 : W = first V#4;

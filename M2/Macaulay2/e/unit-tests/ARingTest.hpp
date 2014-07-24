@@ -2,6 +2,7 @@
 #define __ring_test_hpp__
 
 const int ntrials = 1000;
+//const int ntrials = 1000000; // not good for the ssd - system swaps memory....
 
 template <typename RingType>
 void getElement(const RingType& R, int index, typename RingType::ElementType &result);

@@ -1,9 +1,10 @@
 # from http://googletest.googlecode.com/files/gtest-1.6.0.zip
-URL = http://macaulay2.com/Extra
+URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
 MLIMIT = 1400000
 VLIMIT = 1400000
 TLIMIT = 400
-VERSION = 1.6.0
+
+VERSION = 1.7.0
 
 ifeq ($(VERSION) @host@,1.6.0 x86_64-w64-mingw32)
 PATCHFILE += @abs_srcdir@/patch-1.6.0-mingw64

@@ -53,10 +53,12 @@ static void putstderr(const char *m) {
 
 static void ignore(int x) { }
 
+/*
 void WerrorS(const char *m) {
   putstderr(m);
   exit(1);
 }
+*/
 
 void WarnS(const char *m) {
   putstderr(m);

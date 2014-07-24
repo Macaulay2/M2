@@ -1,16 +1,15 @@
-needsPackage "NAGtypes"
 
 newPackage(
   "PHCpack",
-  Version => "1.5", 
-  Date => "7 September 2012",
+  Version => "1.6", 
+  Date => "6 May 2013",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
      HomePage => "http://www.math.uic.edu/~lizgross"},
     {Name => "Sonja Petrovic", 
-     Email => "sonja@psu.edu",
-     HomePage => "http://www.personal.psu.edu/sxp61"},
+     Email => "Sonja.Petrovic@iit.edu",
+     HomePage => "http://mypages.iit.edu/~spetrov1/"},
     {Name => "Jan Verschelde", 
      Email => "jan@math.uic.edu",
      HomePage => "http://www.math.uic.edu/~jan"},
@@ -23,12 +22,30 @@ newPackage(
     "PHCexe"=>"phc", 
     "keep files" => true
   },
+  Certification => {
+	"journal name" => "The Journal of Software for Algebra and Geometry",
+	"journal URI" => "http://j-sag.org/",
+	"article title" => "Interfacing with PHCpack",
+	"acceptance date" => "2013-07-11",
+	"published article URI" => "http://www.j-sag.org/Volume5/jsag-4-2013.pdf",
+	"published code URI" => "http://www.j-sag.org/Volume5/PHCpack.m2",
+	"repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/PHCpack.m2",
+	"release at publication" => "48d32ceffeeb807b23eee20a5c9c243ce085b3ef",
+	"version at publication" => "1.6",
+	"volume number" => "5",
+	"volume URI" => "http://j-sag.org/Volume5/"
+	},
   DebuggingMode => false,
   AuxiliaryFiles => true,
-  CacheExampleOutput => true
+  CacheExampleOutput => true,
+  PackageImports => {"SimpleDoc"},
+  PackageExports => {"NAGtypes"}
 )
 
-needsPackage "NAGtypes"
+--Copyright 2013 Elizabeth Gross, Sonja Petrovic, Jan Verschelde.
+--  You may redistribute this file under the terms of the GNU General
+--  Public License as published by the Free Software Foundation,
+--  either version 2 of the License, or any later version.
 
 export { 
   "cascade",
@@ -50,7 +67,6 @@ export {
   "toLaurentPolynomial",
   "topWitnessSet",
   "trackPaths",
-  "Verbose", 
   "zeroFilter"
 }
 
@@ -68,8 +84,6 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe";
 -- this is the executable string that make sures that calls to PHCpack run:
 -- NOTE: the absolute path should be put into the init-PHCpack.m2 file 
 
-needsPackage "SimpleDoc"
-needsPackage "NAGtypes"
 
 --##########################################################################--
 -- INTERNAL METHODS
@@ -149,9 +163,9 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   L = replace("E", "e", L);
   L = replace("time", "\"time\"", L);
   L = replace("rco", "\"rco\"", L);
-  L = replace("multiplicity", "\"mult\"", L);
-  L = replace("res", "\"residual\"", L);
-  L = replace("resolution", "\"residual\"", L);
+  L = replace("multiplicity", "\"mult\"", L); 
+  L = replace("\\bres\\b", "\"residual\"", L);
+  L = replace("\\bresolution\\b", "\"residual\"", L);
   -- because M2 automatically thinks "res"=resolution   	  
   sols := toList apply(value L, sol->new HashTable from toList sol);
   defaultPrecision = oldprec;
@@ -445,7 +459,7 @@ witnessSuperSetsFilter (MutableList,List) := (witsets,pts) -> (
 -----------------------------------------------
 ------------  CASCADE  ------------------------
 -----------------------------------------------
-cascade = method(TypicalValue => NumericalVariety, Options => {StartDimension => -1})
+cascade = method(TypicalValue => NumericalVariety, Options => {StartDimension => -1,Verbose => false})
 cascade (List) := o -> (system) -> (
   -- IN: system, a polynomial system;
   --     dimension, top dimension of the solution set.
@@ -468,12 +482,11 @@ cascade (List) := o -> (system) -> (
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsolsFile := temporaryFileName() | "PHCsols";
   PHCsessionFile := temporaryFileName() | "PHCsession";
-  {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsolsFile, PHCsessionFile} / (f->if fileExists f 
-       then removeFile f);
+  for f in {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsolsFile, PHCsessionFile} do if fileExists f then removeFile f;
   toList (0..startdim) / (i->if fileExists (PHCoutputFile | "_sw" | i) 
        then removeFile (PHCoutputFile | "_sw" | i) );
-  
-  stdio << "writing output to file " << PHCoutputFile << endl;
+  if o.Verbose then
+    stdio << "writing output to file " << PHCoutputFile << endl;
   
   systemToFile(system,PHCinputFile);
   s := concatenate("0\ny\n",PHCinputFile);
@@ -484,11 +497,15 @@ cascade (List) := o -> (system) -> (
   bat := openOut PHCbatchFile;
   bat << s;
   close bat;
-  stdio << "calling phc -c < " << PHCbatchFile;
-  stdio << " > " << PHCsessionFile << endl;
-  run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
-  stdio << "output of phc -c is in file " << PHCoutputFile << endl;
-  stdio << "... constructing witness sets ... " << endl;
+  if o.Verbose then
+    ( stdio << "calling phc -c < " << PHCbatchFile;
+    stdio << " > " << PHCsessionFile << endl
+    );
+    run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
+  if o.Verbose then
+    ( stdio << "output of phc -c is in file " << PHCoutputFile << endl;
+    stdio << "... constructing witness sets ... " << endl
+    );
   
   local slackvars;
   local RwithSlack;
@@ -539,8 +556,8 @@ cascade (List) := o -> (system) -> (
 -------- CONSTRUCT EMBEDDING ------------------
 -----------------------------------------------
  
-constructEmbedding = method(TypicalValue => List)
-constructEmbedding (List, ZZ) := (system, dimension) -> (
+constructEmbedding = method(TypicalValue => List,Options => {Verbose => false})
+constructEmbedding (List, ZZ) := o->  (system, dimension) -> (
   -- IN: system, a polynomial system with complex coefficients;
   --     dimension, expected dimension of the solution set.
   -- OUT: system with as many random hyperplanes at the end
@@ -553,8 +570,7 @@ constructEmbedding (List, ZZ) := (system, dimension) -> (
   PHCoutputFile := temporaryFileName() | "PHCoutput";
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsessionFile := temporaryFileName() | "PHCsession";
-  {PHCinputFile, PHCoutputFile, PHCbatchFile, 
-       PHCsessionFile} / (f->if fileExists f then removeFile f);
+  for f in {PHCinputFile, PHCoutputFile, PHCbatchFile, PHCsessionFile} do if fileExists f then removeFile f;
   
   systemToFile(system,PHCinputFile);
   s := concatenate("1\ny\n",PHCinputFile);
@@ -565,10 +581,13 @@ constructEmbedding (List, ZZ) := (system, dimension) -> (
   bat := openOut PHCbatchFile;
   bat << s;
   close bat;
-  stdio << "calling phc -c < " << PHCbatchFile;
-  stdio << " > " << PHCsessionFile << endl;
+  if o.Verbose then
+  (  stdio << "calling phc -c < " << PHCbatchFile;
+     stdio << " > " << PHCsessionFile << endl
+     );
   run(PHCexe|" -c < " | PHCbatchFile | " > " | PHCsessionFile);
-  stdio << "output of phc -c is in file " << PHCoutputFile << endl;
+  if o.Verbose then
+    stdio << "output of phc -c is in file " << PHCoutputFile << endl;
   
   -- extending the ring with slack variables 
   slackvars := apply(dimension, i->getSymbol("zz"|toString(i+1)));
@@ -593,8 +612,8 @@ constructEmbedding (List, ZZ) := (system, dimension) -> (
 -----------  FACTOR WITNESS SET --------------
 ---------------------------------------------
 
-factorWitnessSet = method(TypicalValue=>List)
-factorWitnessSet (WitnessSet ) := w -> (
+factorWitnessSet = method(TypicalValue=>List, Options => {Verbose => false})
+factorWitnessSet (WitnessSet ) := o->  w -> (
   -- IN: a witness set properly embedded with slack variables.
   -- OUT: a list of witness sets, every element is irreducible.
   
@@ -602,14 +621,16 @@ factorWitnessSet (WitnessSet ) := w -> (
   PHCoutputFile := temporaryFileName() | "PHCoutput";
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsessionFile := temporaryFileName() | "PHCsession";
-  stdio << "preparing input file to " << PHCinputFile << endl;
+  if o.Verbose then
+    stdio << "preparing input file to " << PHCinputFile << endl;
   system := equations(w) | slice(w); 
   systemToFile(system,PHCinputFile);
   R := ring first system;
   use R;
   L := toList(points(w));
   pointsToFile(L,R,PHCinputFile,Append=>true);
-  stdio << "preparing batch file to " << PHCbatchFile << endl;
+  if o.Verbose then
+    stdio << "preparing batch file to " << PHCbatchFile << endl;
   s := concatenate("2\n",PHCinputFile); -- option 2 of phc -f
   s = concatenate(s,"\n",PHCoutputFile);
   s = concatenate(s,"\n1\n"); -- use monodromy to factor
@@ -617,10 +638,13 @@ factorWitnessSet (WitnessSet ) := w -> (
   bat := openOut PHCbatchFile;
   bat << s;
   close bat;
-  stdio << "... calling monodromy breakup ..." << endl;
+  if o.Verbose then
+    stdio << "... calling monodromy breakup ..." << endl;
   run(PHCexe|" -f < " | PHCbatchFile | " > " | PHCsessionFile);
-  stdio << "session information of phc -f is in " << PHCsessionFile << endl;
-  stdio << "output of phc -f is in file " << PHCoutputFile << endl;
+  if o.Verbose then
+    (stdio << "session information of phc -f is in " << PHCsessionFile << endl;
+    stdio << "output of phc -f is in file " << PHCoutputFile << endl
+    );
  
   -- counting the number of factors
   count := 0;
@@ -677,7 +701,7 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
   if o.Verbose then
     stdio << "writing test point to file " << PHCtestpointFile << endl;
   pointsToFile(L,R,PHCtestpointFile);
-  s := concatenate("1\n",PHCwitnessFile);
+  s := concatenate("1\n0\n",PHCwitnessFile);
   s = concatenate(s,"\n",PHCtestpointFile);
   s = concatenate(s,"\n",PHCoutputFile);
   s = concatenate(s,"\n0\n");
@@ -703,7 +727,7 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
 -------- MIXED VOLUME -------------
 -----------------------------------
 
-mixedVolume = method(Options => {StableMixedVolume => false, StartSystem => false})
+mixedVolume = method(Options => {StableMixedVolume => false, StartSystem => false, Verbose => false})
 mixedVolume  List := Sequence => opt -> system -> (
   -- IN:  system = list of polynomials in the system 
   -- OUT: mixed volume of the system. if optional inputs specified, then output is
@@ -724,7 +748,8 @@ mixedVolume  List := Sequence => opt -> system -> (
     error "coefficient ring is not complex";
   
   filename := getFilename();
-  << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
+  if opt.Verbose then
+    stdio   << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
   infile := filename|"PHCinput";
   outfile := filename|"PHCoutput";
   cmdfile := filename|"PHCcommands";
@@ -822,8 +847,8 @@ numericalVariety(flatten witsets)
 ----- REFINING SOLUTIONS ----------
 -----------------------------------
 
-refineSolutions = method(TypicalValue=>List)
-refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
+refineSolutions = method(TypicalValue=>List, Options => {Verbose => false})
+refineSolutions (List,List,ZZ) := o-> (f,sols,dp) -> (
   -- IN: f, a polynomial system with complex coefficients;
   --     sols, list of points, initial approximations for the solutions of f;
   --     dp, number of decimal places in the working precision.
@@ -837,12 +862,15 @@ refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
   PHCbatchFile := temporaryFileName() | "PHCbatch";
   PHCsessionFile := temporaryFileName() | "PHCsession";
   PHCsolutions := temporaryFileName() | "PHCsolutions";
-  stdio << "writing input system to " << PHCinputFile << endl;
+  if o.Verbose then
+    stdio << "writing input system to " << PHCinputFile << endl;
   systemToFile(f,PHCinputFile);
-  stdio << "appending solutions to " << PHCinputFile << endl;
+  if o.Verbose then
+    stdio << "appending solutions to " << PHCinputFile << endl;
   R := ring first f;
   solutionsToFile(sols, R, PHCinputFile, Append=>true);
-  stdio << "preparing input data for phc -v in " << PHCbatchFile << endl;
+  if o.Verbose then
+    stdio << "preparing input data for phc -v in " << PHCbatchFile << endl;
   s := concatenate("3\n",PHCinputFile);
   s = concatenate(s,"\n");
   s = concatenate(s,PHCoutputFile);
@@ -861,9 +889,11 @@ refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
   close bat;
   -- stdio << "running phc -v, writing output to " << PHCsessionFile << endl;
   run(PHCexe|" -v < " | PHCbatchFile | " > " | PHCsessionFile);
-  stdio << "using temporary file " << PHCoutputFile;
-  stdio << " for storing refined solutions " << endl;
-  stdio << "solutions in Maple format in " << PHCsolutions << endl;
+  if o.Verbose then
+    (  stdio << "using temporary file " << PHCoutputFile;
+    stdio << " for storing refined solutions " << endl;
+    stdio << "solutions in Maple format in " << PHCsolutions << endl
+    );
   run(PHCexe|" -z " | PHCoutputFile | " " | PHCsolutions);
   b := ceiling(log_2(10^dp));
   result := parseSolutions(PHCsolutions,R,Bits=>b);
@@ -874,8 +904,8 @@ refineSolutions (List,List,ZZ) := (f,sols,dp) -> (
 ------ SOLVE SYSTEM --------------
 ----------------------------------
 
-solveSystem = method(TypicalValue => List)
-solveSystem  List := List => system -> (
+solveSystem = method(TypicalValue => List, Options => {Verbose => false})
+solveSystem  List := List =>  o->system -> (
   -- IN:  system = list of polynomials with complex coeffiecients, 
   -- i.e. the system to solved 
   -- OUT: solutions to the system, a list of Points
@@ -887,7 +917,8 @@ solveSystem  List := List => system -> (
     error "coefficient ring is not complex";
     
   filename := getFilename();
-  << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
+  if o.Verbose then
+    stdio  << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
   infile := filename|"PHCinput";
   outfile := filename|"PHCoutput";
   solnsfile := filename|"PHCsolns";
@@ -928,8 +959,8 @@ solveSystem  List := List => system -> (
 ------SOLVE RATIONAL SYSTEM--------
 -----------------------------------
 
-solveRationalSystem = method(TypicalValue => List)
-solveRationalSystem  List := system -> (
+solveRationalSystem = method(TypicalValue => List, Options => {Verbose => false})
+solveRationalSystem  List :=  o-> system -> (
   -- IN:  system = list of rational equations with complex coeffiecients, 
   -- i.e. the system to solved
   -- OUT: solutions to the system, a list of Points
@@ -941,7 +972,8 @@ solveRationalSystem  List := system -> (
       then system = toLaurentPolynomial(system, getSymbol "LLLL");
     
   filename := getFilename();
-  << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
+  if o.Verbose then
+    stdio  << "using temporary files " << filename|"PHCinput" << " and " << filename|"PHCoutput" << endl;
   infile := filename|"PHCinput";
   outfile := filename|"PHCoutput";
   solnsfile := filename|"PHCsolns";
@@ -999,12 +1031,11 @@ toLaurentPolynomial (List, Symbol) := (system, var) -> (
   scan(system, f-> (
     if instance(class f, FractionField) then
      --if f is already polynomial, do not do anything!
-
-       if liftable(f,P) then
+     --  if liftable(f,P) then --*
      --if it can be lifted to P, then do so and update the system
-
-	 system = system-set{f} | {lift(f,P)}
-       else (  
+     --	 system = system-set{f} | {lift(f,P)} --*
+     --  else --*
+     (  
      -- add one new variable "var_counter", and define the 
      -- appropriate Laurent polynomial ring: 
           P = (coefficientRing P) monoid(flatten entries vars P | {var_counter},
@@ -1029,20 +1060,23 @@ toLaurentPolynomial (List, Symbol) := (system, var) -> (
 ------------  TOP WITNESS SET  ----------------
 -----------------------------------------------
  
-topWitnessSet = method()
-topWitnessSet (List,ZZ) := (system,dimension) -> (
+topWitnessSet = method( Options => {Verbose => false})
+topWitnessSet (List,ZZ) := o->(system,dimension) -> (
   -- IN: system, a polynomial system;
   --      dimension, top dimension of the solution set.
   -- OUT: a witness set for the top dimensional component,
   --      a list of nonsolutions
   
-  stdio << "... calling constructEmbedding ..." << endl;
+  if o.Verbose then
+    stdio << "... calling constructEmbedding ..." << endl;
   e := constructEmbedding(system,dimension);
-  stdio << "... calling solveSystem ..." << endl;
+  if o.Verbose then
+    stdio << "... calling solveSystem ..." << endl;
   s := solveSystem(e);
   g := zeroFilter(s,#e-1,1.0e-10);
   ns := nonZeroFilter(s,#e-1,1.0e-10);
-  stdio << "... constructing a witness set ... " << endl;
+  if o.Verbose then
+    stdio << "... constructing a witness set ... " << endl;
   w := witnessSet(ideal(take(e,{0,#e-dimension-1})),
                   ideal(take(e,{#e-dimension,#e-1})),g);
   return (w,ns);
@@ -1055,7 +1089,7 @@ topWitnessSet (List,ZZ) := (system,dimension) -> (
 --------  TRACK PATHS  -----------
 ----------------------------------
 
-trackPaths = method(TypicalValue => List, Options=>{gamma=>0, tDegree=>2})
+trackPaths = method(TypicalValue => List, Options=>{gamma=>0, tDegree=>2,Verbose => false})
 trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- IN: T, target system to be solved;
   --     S, start system with solutions in Ssols;
@@ -1078,7 +1112,8 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   Ssolsfile := temporaryFileName() | "PHCstartsols";
   Tsolsfile := temporaryFileName() | "PHCtargetsols";
   batchfile := temporaryFileName() | "PHCbat";
-  << "using temporary files " << outfile << " and " << Tsolsfile << endl;
+  if o.Verbose then
+    stdio   << "using temporary files " << outfile << " and " << Tsolsfile << endl;
   
   if n < numgens R then error "the system is underdetermined";
   
@@ -1359,6 +1394,7 @@ end   -- terminate reading ...
 restart
 installPackage("PHCpack",RemakeAllDocumentation=>true)
 installPackage ("PHCpack",RerunExamples=>true)
+check "PHCpack"
 viewHelp PHCpack
 --many errors seem to be due to the fact some things are not exported:
 --error: mutable unexported unset symbol(s) in package PHCpack: 'generalEquations', 'NumericalVariety', 'numericalVariety', 'IsIrreducible'
@@ -1366,3 +1402,69 @@ viewHelp PHCpack
 /Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:401:34-401:50: here is the first use of 'NumericalVariety'
 /Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:488:3-488:19: here is the first use of 'numericalVariety'
 /Users/sxp61/m2svn/trunk/M2/Macaulay2/packages/PHCpack.m2:588:26-588:39: here is the first use of 'IsIrreducible'
+
+restart
+needsPackage "PHCpack";
+var0 = {x_11,x_12,x_16,x_22,x_23,x_33,x_34,x_44,x_45,x_55,x_56,x_66,y_13,y_14,y_15,
+  y_24,y_25,y_26,y_35,y_36,y_46}; 
+QQ[var0];
+rationalSystem = {
+  (22/3)*x_11+(8/7)*x_12+2*x_16-1,            x_23*y_13+(22/3)*x_12+(8/7)*x_22, 	
+  x_33*y_13+x_34*y_14+(8/7)*x_23,             x_34*y_13+x_44*y_14+x_45*y_15, 
+  x_45*y_14+x_55*y_15+2*x_56,                 x_56*y_15+(22/3)*x_16+2*x_66,
+  (8/7)*x_12+(14/11)*x_22+(12/5)*x_23-1,      x_34*y_24+(14/11)*x_23+(12/5)*x_33, 
+  x_44*y_24+x_45*y_25+(12/5)*x_34,            x_45*y_24+x_55*y_25+x_56*y_26, 
+  (12/5)*x_23+(28/51)*x_33+(102/144)*x_34-1,  x_56*y_25+x_66*y_26+(8/7)*x_16,        
+  x_45*y_35+(28/51)*x_34+(102/144)*x_44,      x_55*y_35+x_56*y_36+(102/144)*x_45,
+  (102/144)*x_34+(205/162)*x_44+(3/2)*x_45-1, x_16*y_13+x_56*y_35+x_66*y_36,         
+  x_56*y_46+(205/162)*x_45+(3/2)*x_55,        x_16*y_14+x_66*y_46+(3/2)*x_56,
+  (3/2)*x_45+(517/784)*x_55+(8/3)*x_56-1,     x_16*y_15+(517/784)*x_56+(8/3)*x_66,
+  2*x_16+(8/3)*x_56+(29/196)*x_66-1};
+system = (sub(ideal rationalSystem, CC[var0]))_*
+solutions = solveSystem system; 
+# solutions
+solutions_0 
+
+newSystem = {
+  (22531/300)*x_11+(821/70)*x_12+(4507/210)*x_16-1, 
+  x_23*y_13+(22531/300)*x_12+(821/70)*x_22,
+  x_33*y_13+x_34*y_14+(821/70)*x_23, x_34*y_13+x_44*y_14+x_45*y_15,
+  x_45*y_14+x_55*y_15+(4507/210)*x_56,
+  x_56*y_15+(22531/300)*x_16+(4507/210)*x_66,
+  (821/70)*x_12+(140953/11025)*x_22+(12325/504)*x_23-1,
+  x_34*y_24+(140953/11025)*x_23+(12325/504)*x_33,
+  x_44*y_24+x_45*y_25+(12325/504)*x_34, 
+  x_45*y_24+x_55*y_25+x_56*y_26,
+  x_56*y_25+x_66*y_26+(821/70)*x_16,
+  (12325/504)*x_23+(282013/5184)*x_33+(10231/1440)*x_34-1,
+  x_45*y_35+(282013/5184)*x_34+(10231/1440)*x_44,
+  x_55*y_35+x_56*y_36+(10231/1440)*x_45, 
+  x_16*y_13+x_56*y_35+x_66*y_36,
+  (10231/1440)*x_34+(205697/16200)*x_44+(30529/2520)*x_45-1,
+  x_56*y_46+(205697/16200)*x_45+(30529/2520)*x_55,
+  x_16*y_14+x_66*y_46+(30529/2520)*x_56,
+  (30529/2520)*x_45+(5175321/78400)*x_55+(897/35)*x_56-1,
+  x_16*y_15+(5175321/78400)*x_56+(897/35)*x_66,
+  (4507/210)*x_16+(897/35)*x_56+(293581/19600)*x_66-1};
+newSolutions = solveSystem newSystem;
+# newSolutions
+smallSolution = zeroFilter(newSolutions, 11, 1.0e-18)
+smallerSolution = refineSolutions(newSystem, smallSolution, 64)
+
+mixedVolume system
+time degree ideal rationalSystem
+
+var1 = {x11, x22, x21, x12, x23, x13, x14, x24};
+R = QQ[var1];
+rationalSystem = { x11*x22-x21*x12, x12*x23-x22*x13, x13*x24-x23*x14};
+system = (sub(ideal rationalSystem, CC[var1]))_*
+V = numericalIrreducibleDecomposition system
+WitSets = V#5;
+w = first WitSets
+w#IsIrreducible
+
+R = ring rationalSystem_0
+PD = primaryDecomposition ideal rationalSystem
+for I in PD list << "(dim=" << dim I << ", deg=" << degree I << ") " 
+
+

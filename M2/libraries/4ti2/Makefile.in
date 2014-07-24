@@ -1,8 +1,14 @@
 # license for 4ti2: GPL v2
-VERSION = 1.3.2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+
+# temporary beta testing version
+VERSION = 1.6.2.20140114
+TARDIR = 4ti2-1.6.2
+
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = autoconf
+
 # URL = http://www.4ti2.de/version_$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 STRIPFILES = src/groebner/4ti2int32@EXEEXT@ src/groebner/4ti2int64@EXEEXT@
 LICENSEFILES = README
 include ../Makefile.library

@@ -2,16 +2,17 @@
 ---------------------------------------------------------------------------
 -- PURPOSE: Calculating versal deformations and local Hilbert schemes
 -- PROGRAMMER : Nathan Ilten
--- UPDATE HISTORY : April 2012
+-- UPDATE HISTORY : June 2013
 ---------------------------------------------------------------------------
 newPackage("VersalDeformations",
     Headline => "A package for calculating versal deformations and local Hilbert schemes",
-    Version => "1.1",
-    Date => "August 8, 2012",
+    Version => "1.2",
+    Date => "June 6, 2013",
     Authors => {
         {Name => "Nathan Owen Ilten",
-	  HomePage => "http://people.cs.uchicago.edu/~nilten/",
-	  Email => "nilten@cs.uchicago.edu"}},
+	  HomePage => "http://math.berkeley.edu/~nilten/",
+	  Email => "nilten@math.berkeley.edu"}},
+    Configuration => {"DefaultDefParam"=>"t"},
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -24,14 +25,13 @@ newPackage("VersalDeformations",
 	 "version at publication" => "1.0",
 	 "volume number" => "4",
 	 "volume URI" => "http://j-sag.org/Volume4/"
-	 },
-    Configuration => {"DefaultDefParam"=>"t"}
+	 }    
     )
 
 ---------------------------------------------------------------------------
 -- COPYRIGHT NOTICE:
 --
--- Copyright 2012 Nathan Owen Ilten
+-- Copyright 2013 Nathan Owen Ilten
 --
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -120,22 +120,22 @@ cotangentCohomology2Mod:=F->(
      A:=ring F/image F;
      R:=gens ker F;
      kos:=koszul(2,F);
-     (Hom((image R/image kos),A)/(image substitute(transpose R,A)))
-     )
+     (Hom((image R/image kos),A)/(image substitute(transpose R,A))))
+
 
 cotangentCohomology2 Matrix:=opts->F->lift(ambient basis(cotangentCohomology2Mod F,opts),ring F)
-cotangentCohomology2 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
-cotangentCohomology2 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts), ring F)
+cotangentCohomology2 (ZZ,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (List,Matrix):=opts->(deg,F)->lift(ambient basis(deg,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (ZZ,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (InfiniteNumber,ZZ,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
+cotangentCohomology2 (ZZ,InfiniteNumber,Matrix):=opts->(lo,hi,F)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(F),opts),ring F)
 
 cotangentCohomology2 Ideal:=opts->I->lift(ambient basis(cotangentCohomology2Mod gens I,opts),ring I)
-cotangentCohomology2 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
-cotangentCohomology2 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts), ring I)
+cotangentCohomology2 (ZZ,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (List,Ideal):=opts->(deg,I)->lift(ambient basis(deg,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
+cotangentCohomology2 (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,cotangentCohomology2Mod(gens I),opts),ring I)
 
 normalMatrix=method(TypicalValue=>Matrix,Options=>{SourceRing=>null})
 normalMatrix Matrix:=opts->F->lift(ambient basis(Hom(ideal F, ring F/ideal F),opts), ring F)
@@ -152,6 +152,9 @@ normalMatrix (ZZ,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, rin
 normalMatrix (InfiniteNumber,ZZ,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi,Hom(I, ring I/I),opts), ring I)
 normalMatrix (ZZ,InfiniteNumber,Ideal):=opts->(lo,hi,I)->lift(ambient basis(lo,hi.Hom(I, ring I/I),opts), ring I)
      
+     
+
+     
 ----------------------------------------------------------------------------
 -- Stuff to lift deformation equation solutions
 ----------------------------------------------------------------------------
@@ -162,6 +165,9 @@ lowestOrderTerms:=(F,G,C,n,d)->(
      else (lowDeg=apply(toList(0..(d-1)),i->min ({n-2}|positions(G,g->g^{i}!=0)));
     	  lowG=matrix(apply(toList(0..(d-1)),i->{(G_(lowDeg_i))^{i}})));
      (lowDeg,lowG))
+
+--interchanges coefficients with variables
+varSwap:=R->((coefficientRing coefficientRing R)[gens R][gens coefficientRing R])
 
 liftDeformation=method (Options=>{SanityCheck=>true,Verbose=>0})
 
@@ -179,23 +185,19 @@ liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      fterms:=sum(apply(toList(1..n),i->F_i*R_(n+1-i))); --order n+1 terms
      eterms:=sum(apply(toList(1..(n-2)),i->C_i*G_(n-1-i))); -- terms from base equations
      rem:=substitute(((transpose fterms)+eterms),A); --reduce modulo our ideal
-     if opts#Verbose >3 then print "Lifting Family and Equations";
-     lfameq:=rem//(substitute((transpose R_0)|C_0,A));
-     FO:=F|{-transpose lift(lfameq^(toList(0..(numgens target R_0)-1)),T)}; --lift the family
-     NG:=-lift(lfameq^(toList((numgens target R_0)..(numgens target R_0)+(numgens source C_0)-1)),T); --lift equations
-     --now we remove total space variables from the obstruction equations
-     if d==0 then (CNG:=NG; COC:=C_0)
-     else (
-          ltv:=apply(toList(0..(d-1)),i->(
-	       	    if not all(apply(G,g->g^{i}),h->h==0) then return 1;
-	       	    if NG_(i,0)==0 then return 1;
-	       	    leadCoefficient NG_(i,0))); --find correction factors
-     	  CNG=matrix apply(toList(0..(d-1)),i->{NG^{i}//ltv_i});  --correct equations
-     	  COC=matrix {apply(toList(0..(d-1)),i->ltv_i*(C_0)_{i})}; --correct coefficients
-     	  );
-     GO:=G|{CNG};
+     if opts#Verbose >3 then print "Lifting Family";
+     lfam:=rem//(substitute((transpose R_0),A));     
+     FO:=F|{-transpose lift(lfam,T)}; --lift the family
+     if opts#Verbose >3 then print "Calculating Obstruction Equations";
+     obstructions:=rem-((sub(transpose R_0,A))*lfam);
+     B:=varSwap T;
+     clist:=coefficients(sub(C_0,B));
+     coeff:=(coefficients(sub(obstructions,B),Monomials=>clist_0))_1;
+     NG:=-sub(coeff//clist_1,T);     
+     COC:=C_0;
+     GO:=G|{NG};
      if opts#Verbose >3 then print "Lifting Relations and Coefficients";
-     lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+COC*CNG))//(F_0|transpose lowG);
+     lrelco:=((fterms+FO_(n+1)*R_0)+transpose(eterms+COC*NG))//(F_0|transpose lowG);
      RO:=R|{-lift(lrelco^(toList(0..(numgens target R_0)-1)),T)}; --lift relations
      NC:=-transpose lift(lrelco^(toList((numgens target R_0)..(numgens target R_0)+d-1)),T);
      if n==1 then CO:={COC} else (
@@ -211,6 +213,7 @@ liftDeformation(List,List,List,List):= opts->(F,R,G,C)->(
      if opts#SanityCheck then if not 
 		(transpose(sum(apply(toList(0..(n+1)),i->FO_i*RO_(n+1-i))))+sum(apply(toList(0..(n-1)),i->CO_i*GO_(n-1-i))))==0 then error "Something is wrong"; 
      (FO,RO,GO,CO))
+
 
 --auxiliary function to find the action of  T1 on liftings     
 correctionMatrix=method()
@@ -276,7 +279,7 @@ firstOrderDeformations(Matrix,Matrix,Matrix):=  opts -> (F,R,T1)->(
 ----------------------------------------------------------------------------
 -- Iterated lifting methods
 ----------------------------------------------------------------------------
-versalopts:={HighestOrder=>20,Verbose=>0,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto",DefParam=>"t",CacheName=>null}
+versalopts:={HighestOrder=>20,Verbose=>0,SanityCheck=>true, PolynomialCheck=>true,SmartLift=>true,CorrectionMatrix=>"auto",DefParam=>defaultdefparam,CacheName=>null}
 versalDeformation=method(Options=>versalopts) 
 localHilbertScheme=method(Options=>versalopts)
 
@@ -284,6 +287,9 @@ localHilbertScheme=method(Options=>versalopts)
 versalDeformation (List,List,List,List):= opts ->(f,r,g,c)->(
      cachename:=opts#CacheName;
      if cachename===null then cachename=(f_0).cache; 
+     if not class coefficientRing ring f_0===PolynomialRing then (
+	  print "No deformation parameters!";
+	  return (f,r,g,c));
      ord:=-1+opts#HighestOrder;
      (F,R,G,C):=(f,r,g,c);
      if opts#SmartLift then (
@@ -319,7 +325,10 @@ versalDeformation (Matrix,Matrix,Matrix):= opts ->(F0,T1,T2)->(
      ord:=-1+opts#HighestOrder;
      if opts#Verbose >1 then print "Calculating first order relations";
      (F,R):=firstOrderDeformations(F0,gens ker F0,T1,SanityCheck=>opts#SanityCheck,DefParam=>opts#DefParam);
-     C:={substitute(T2,ring F_0)};
+     if opts#Verbose >1 then print "Calculating standard expressions for obstructions";
+     A:=(ring F_0)/(image F_0);
+     NT2:=lift(sub(T2,A)%sub(transpose R_0,A),ring F_0);
+     C:={NT2};
      G:={};
      versalDeformation(F,R,G,C,HighestOrder=>opts#HighestOrder,Verbose=>opts#Verbose,
 	  SanityCheck=>opts#SanityCheck, PolynomialCheck=>opts#PolynomialCheck,SmartLift=>opts#SmartLift,
@@ -738,8 +747,10 @@ document {
 	  },
      PARA {"We now lift the first order deformations to second order:"},
      EXAMPLE{
+      "A:=(ring f_0)/(image f_0);",  
       "T2=cotangentCohomology2(F0);",
-      "c={substitute(T2,ring f_0)};",
+      "NT2:=lift(sub(T2,A)%sub(transpose r_0,A),ring f_0);",
+      "c={NT2};",
       "g={};",
       "(F,R,G,C)=liftDeformation(f,r,g,c);",
       "T=ring first F;",
@@ -1042,7 +1053,7 @@ TEST ///
 S = QQ[a,b,c,d]
 J = minors(2,matrix{{a,b,c,d^2},{b,c,d,a^3}})
 (F,R,G,C)=versalDeformation(gens J,HighestOrder=>2,SmartLift=>false)
-assert(sum G==map(target G_0,source G_0,matrix {{t_1*t_12+a^2*t_4*t_12+a*t_7*t_12-d*t_12*t_14-d^2*t_4*t_15-a*d*t_12*t_15-d^2*t_7*t_16-a^2*d*t_12*t_16-a^2*t_1*t_17-a*t_1*t_18-a^2*t_7*t_18+a*d*t_5*t_19+d*t_8*t_19+d^2*t_18*t_19+a*d^2*t_5*t_20+d^2*t_8*t_20+d^3*t_18*t_20+t_2*t_21+a*t_3*t_21+a*d*t_6*t_21+d*t_9*t_21+2*a^2*t_19*t_21+2*a^2*d*t_20*t_21+a^2*d*t_12*t_22+d^3*t_18*t_23+a^2*d*t_21*t_23}, {t_10*t_12+d*t_11*t_12-a^2*t_10*t_17-a*t_10*t_18-t_12*t_21+a^2*t_17*t_21+a*t_18*t_21+t_2*t_22+a*t_3*t_22+2*a^2*t_19*t_22+2*a^2*d*t_20*t_22-a^2*t_4*t_23-a*t_7*t_23}, {t_10*t_21+d*t_11*t_21-t_21^2-t_1*t_22}, {t_12*t_21-t_13*t_21+t_1*t_23}, {t_12^2-t_12*t_13-a^2*t_12*t_17+a^2*t_13*t_17-a*t_12*t_18+a*t_13*t_18+a*t_15*t_21+a^2*t_16*t_21-t_2*t_23-a*t_3*t_23-a^2*t_19*t_23}, {t_12*t_22-t_13*t_22+t_10*t_23-t_21*t_23}}))
+assert (sum G==map(target G_0,source G_0,sub(matrix {{-t_1*t_12-t_2*t_21}, {-t_10*t_12+t_12*t_21-t_2*t_22}, {t_10*t_21-t_21^2-t_1*t_22}, {t_12*t_21-t_13*t_21+t_1*t_23}, {t_12^2-t_12*t_13-t_2*t_23}, {t_12*t_22-t_13*t_22+t_10*t_23-t_21*t_23}},ring G_0)))
 ///
 
 TEST ///
@@ -1064,11 +1075,11 @@ F0=gens I
 assert (sum F1==map(target F1_0,source F1_0,matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, x_0*t_4-x_1*x_2+x_0*x_3, -x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, x_2*t_3-x_1*x_3+x_0*x_4, -x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}}))
 assert (sum R1==map(target R1_0,source R1_0,matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}}))
 (F,R,G,C)=versalDeformation(F0)
-assert (sum F==map(target F_0,source F_0,( matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, x_0*t_4-x_1*x_2+x_0*x_3, -t_1*t_4-x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, t_2*t_3-t_3^2+x_2*t_3-x_1*x_3+x_0*x_4, t_3*t_4-x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}})))
-assert (sum R==map(target R_0, source R_0,matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}}))
-assert (sum G== map(target G_0,source G_0,(matrix {{t_2*t_3-t_3^2}, {t_1*t_3}, {t_3*t_4}})))
-assert (sum C==map(target C_0,source C_0,matrix {{0, 0, 0}, {0, 0, 0}, {x_3, -x_4, t_2-t_3}, {t_2+x_2, -x_3, -t_1}, {-t_1+x_1, -x_2, 0}, {-x_4, 0, t_4+x_3}, {0, -x_4, t_2+x_2}, {t_3, -x_3, -t_1+x_1}}))
-(F2,R2,G2,C2)=liftDeformation(F1,R1,{},{sub(CT^2(gens I),ring F1_0)}) 
+assert (sum F==map(target F_0,source F_0,sub(matrix {{x_1*t_1+x_0*t_2-x_1^2+x_0*x_2, -t_1*t_3+x_0*t_4-x_1*x_2+x_0*x_3, -t_2*t_3+t_3^2-t_1*t_4-x_3*t_1-x_2*t_2+x_1*t_4-x_2^2+x_1*x_3, t_2*t_3-t_3^2+x_2*t_3-x_1*x_3+x_0*x_4, -x_4*t_1-x_3*t_2+x_3*t_3-x_2*x_3+x_1*x_4, x_4*t_3-x_3*t_4-x_3^2+x_2*x_4}},ring F_0)))
+assert (sum R==map(target R_0,source R_0,sub(matrix {{t_4+x_3, x_2, 0, x_4, x_3, 0, 0, 0}, {-t_2-x_2, t_1-x_1, x_4, 0, -t_3, 0, x_4, x_3}, {x_1, x_0, -x_3, -t_3, 0, x_4, 0, -t_3}, {0, 0, -t_4-x_3, -t_2-x_2, t_1-x_1, 0, -t_4-x_3, -t_3-x_2}, {0, 0, x_2, x_1, x_0, -t_4-x_3, -t_3, 0}, {0, 0, t_1, 0, 0, t_2-t_3+x_2, x_1, x_0}},ring F_0)))
+assert (sum G== map(target G_0,source G_0,sub(matrix {{t_2*t_3-t_3^2}, {-t_1*t_3}, {t_3*t_4}},ring F_0)))
+assert (sum C==map(target C_0,source C_0,sub(matrix {{-t_1+x_1, t_3+x_2, 0}, {x_0, -t_1+x_1, 0}, {0, 0, t_2-t_3+x_2}, {t_2-t_3+x_2, x_3, -t_1+x_1}, {-t_1+x_1, t_3+x_2, x_0}, {0, 0, 0}, {0, 0, t_2-t_3+x_2}, {0, 0, -t_1+x_1}},ring F_0)))
+(F2,R2,G2,C2)=liftDeformation(F1,R1,{},{sub(C_0,ring F1_0)},Verbose=>4) 
 assert(F_2==sub(F2_2,ring F_0))
 assert(R_2==sub(R2_2,ring F_0))
 assert(G_0==sub(G2_0,ring F_0))
@@ -1078,15 +1089,15 @@ TEST ///
 S=QQ[x,y,z,w]
 F0=matrix {{x*z,y*z,z^2,x^3}}
 (F,R,G,C)=localHilbertScheme(F0)
-assert (sum F==map(target F_0,source F_0,matrix {{w^2*t_5*t_10^2*t_16+2*w^2*t_7*t_10*t_11*t_16+2*w^2*t_2*t_11^2*t_16+w^2*t_10^2*t_12+w^2*t_10*t_11*t_13+x*w*t_5*t_10*t_16+y*w*t_7*t_10*t_16-(1/2)*w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16-w^2*t_3*t_11*t_16+x*w*t_7*t_11*t_16+2*x*w*t_10*t_12+y*w*t_10*t_13+x*w*t_11*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16-(1/2)*x*w*t_8*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -w^2*t_5*t_10*t_11*t_16+w^2*t_10*t_11*t_12+w^2*t_11^2*t_13+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+y*w*t_7*t_11*t_16+(1/2)*w^2*t_8*t_11*t_16+y*w*t_10*t_12+x*w*t_11*t_12+2*y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+(1/2)*y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, -w^2*t_5^2*t_10^2*t_16^2-2*w^2*t_5*t_10^2*t_12*t_16-4*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+2*w^2*t_5*t_10*t_11*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+w^2*t_5*t_8*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*w^2*t_10*t_11*t_12*t_13-w^2*t_11^2*t_13^2-2*x*w*t_5*t_10*t_12*t_16-2*y*w*t_7*t_10*t_12*t_16+w^2*t_8*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16-2*x*w*t_7*t_11*t_12*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*y*w*t_7*t_11*t_13*t_16-w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-(1/4)*w^2*t_8^2*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2-2*x*w*t_10*t_12^2-2*y*w*t_10*t_12*t_13-2*x*w*t_11*t_12*t_13-2*y*w*t_11*t_13^2-2*w^2*t_10*t_12*t_14-2*w^2*t_11*t_13*t_14+w^2*t_10*t_12*t_15+w^2*t_11*t_13*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16+x*w*t_8*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, -2*w^3*t_5*t_10^2*t_11-2*w^3*t_7*t_10*t_11^2-2*w^3*t_2*t_11^3-y*w^2*t_5*t_10^2+w^3*t_6*t_10^2-2*w^3*t_10^3-2*x*w^2*t_5*t_10*t_11-2*y*w^2*t_7*t_10*t_11+w^3*t_8*t_10*t_11-3*y*w^2*t_2*t_11^2+w^3*t_3*t_11^2-x*w^2*t_7*t_11^2+2*x*w^2*t_6*t_10+y*w^2*t_8*t_10+w^3*t_9*t_10-3*x*w^2*t_10^2+2*y*w^2*t_3*t_11+w^3*t_4*t_11+x*w^2*t_8*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}}))
-assert (sum R==map(target R_0, source R_0,matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, w*t_5*t_10*t_16+w*t_7*t_11*t_16+w*t_10*t_12+w*t_11*t_13-(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, -w^2*t_5*t_10*t_11-w^2*t_7*t_11^2+w^2*t_1*t_5*t_16+w^2*t_6*t_10-2*w^2*t_10^2-x*w*t_5*t_11+w^2*t_8*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, w*t_10*t_12+w*t_11*t_13+x*t_5*t_16+y*t_7*t_16+(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, -w^2*t_5*t_10^2-w^2*t_7*t_10*t_11-2*w^2*t_2*t_11^2-y*w*t_7*t_10-y*w*t_2*t_11+w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, -w*t_7*t_11*t_16-w*t_10*t_12-w*t_11*t_13-x*t_5*t_16+(1/2)*w*t_8*t_16-x*t_12-y*t_13-w*t_14-z}}))
-assert (sum G== map(target G_0,source G_0,matrix {{t_1*t_16}, {t_9*t_16}, {t_4*t_16}, {t_14*t_16-(1/2)*t_15*t_16}}))
-assert (sum C==map(target C_0,source C_0,matrix {{(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, -w^3*t_1}, {(1/2)*w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, 2*w^3*t_11*t_12+y*w^2*t_5*t_16+w^3*t_6*t_16-2*w^3*t_10*t_16+2*y*w^2*t_12+x*w^2*t_16, 2*w^3*t_5*t_10*t_11-w^3*t_1*t_5*t_16-2*w^3*t_6*t_10+4*w^3*t_10^2-2*y*w^2*t_7*t_11-w^3*t_8*t_11-2*w^3*t_1*t_12-2*x*y*w*t_5-2*x*w^2*t_6-2*y^2*w*t_7-y*w^2*t_8+2*x*w^2*t_10-2*x^2*w}, {-(1/2)*w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, w^3*t_5*t_10*t_16+w^3*t_10*t_12-w^3*t_11*t_13-y*w^2*t_7*t_16-(1/2)*w^3*t_8*t_16+x*w^2*t_12-y*w^2*t_13-(1/2)*w^3*t_15-z*w^2, -2*w^3*t_5*t_10^2-4*w^3*t_7*t_10*t_11-4*w^3*t_2*t_11^2+w^3*t_1*t_7*t_16-2*x*w^2*t_5*t_10-2*y*w^2*t_7*t_10+w^3*t_8*t_10-2*y*w^2*t_2*t_11+2*w^3*t_3*t_11-2*x*w^2*t_7*t_11+2*w^3*t_1*t_13+2*y^2*w*t_2+2*y*w^2*t_3+w^3*t_4+x*w^2*t_8}, {-2*w^4*t_5*t_7*t_10*t_11*t_16-2*w^4*t_2*t_5*t_11^2*t_16+2*w^4*t_7*t_10*t_11*t_12+2*w^4*t_2*t_11^2*t_12-2*w^4*t_5*t_10*t_11*t_13-x*w^3*t_5^2*t_10*t_16-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-(1/2)*w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16+w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16-x*w^3*t_5*t_7*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16-x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-(1/2)*w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-w^4*t_3*t_11*t_12+x*w^3*t_7*t_11*t_12-y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13-x*w^3*t_5*t_11*t_13+y*w^3*t_7*t_11*t_13+(1/2)*w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_14-w^4*t_7*t_11*t_14+w^4*t_7*t_11*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+(1/2)*x*w^3*t_5*t_8*t_16+y*w^3*t_7*t_8*t_16+(1/4)*w^4*t_8^2*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-z*w^3*t_5*t_10+z*w^3*t_7*t_11-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12-(1/2)*x*w^3*t_8*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+(1/2)*y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+(1/2)*w^4*t_8*t_14+x*w^3*t_5*t_15-(1/2)*w^4*t_8*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16-(1/2)*z*w^3*t_8+x^2*w^2*t_13, -w^4*t_5*t_10^2-w^4*t_7*t_10*t_11-2*w^4*t_2*t_11^2-y*w^3*t_7*t_10-y*w^3*t_2*t_11+w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}}))
+assert (sum F==map(target F_0,source F_0,sub(matrix {{w^2*t_5*t_10^2*t_16+2*w^2*t_7*t_10*t_11*t_16+2*w^2*t_2*t_11^2*t_16+w^2*t_10^2*t_12+w^2*t_10*t_11*t_13+x*w*t_5*t_10*t_16+y*w*t_7*t_10*t_16-(1/2)*w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16-w^2*t_3*t_11*t_16+x*w*t_7*t_11*t_16+2*x*w*t_10*t_12+y*w*t_10*t_13+x*w*t_11*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16-(1/2)*x*w*t_8*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -w^2*t_5*t_10*t_11*t_16+w^2*t_10*t_11*t_12+w^2*t_11^2*t_13+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+y*w*t_7*t_11*t_16+(1/2)*w^2*t_8*t_11*t_16+y*w*t_10*t_12+x*w*t_11*t_12+2*y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+(1/2)*y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, -w^2*t_5^2*t_10^2*t_16^2-2*w^2*t_5*t_10^2*t_12*t_16-4*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+2*w^2*t_5*t_10*t_11*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+w^2*t_5*t_8*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*w^2*t_10*t_11*t_12*t_13-w^2*t_11^2*t_13^2-2*x*w*t_5*t_10*t_12*t_16-2*y*w*t_7*t_10*t_12*t_16+w^2*t_8*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16-2*x*w*t_7*t_11*t_12*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*y*w*t_7*t_11*t_13*t_16-w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-(1/4)*w^2*t_8^2*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2-2*x*w*t_10*t_12^2-2*y*w*t_10*t_12*t_13-2*x*w*t_11*t_12*t_13-2*y*w*t_11*t_13^2-2*w^2*t_10*t_12*t_14-2*w^2*t_11*t_13*t_14+w^2*t_10*t_12*t_15+w^2*t_11*t_13*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16+x*w*t_8*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, -2*w^3*t_5*t_10^2*t_11-2*w^3*t_7*t_10*t_11^2-2*w^3*t_2*t_11^3-y*w^2*t_5*t_10^2+w^3*t_6*t_10^2-2*w^3*t_10^3-2*x*w^2*t_5*t_10*t_11-2*y*w^2*t_7*t_10*t_11+w^3*t_8*t_10*t_11-3*y*w^2*t_2*t_11^2+w^3*t_3*t_11^2-x*w^2*t_7*t_11^2+2*x*w^2*t_6*t_10+y*w^2*t_8*t_10+w^3*t_9*t_10-3*x*w^2*t_10^2+2*y*w^2*t_3*t_11+w^3*t_4*t_11+x*w^2*t_8*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}},ring F_0)))
+assert (sum R==map(target R_0, source R_0,sub(matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, w*t_5*t_10*t_16+w*t_7*t_11*t_16+w*t_10*t_12+w*t_11*t_13-(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, -w^2*t_5*t_10*t_11-w^2*t_7*t_11^2+w^2*t_1*t_5*t_16+w^2*t_6*t_10-2*w^2*t_10^2-x*w*t_5*t_11+w^2*t_8*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, w*t_10*t_12+w*t_11*t_13+x*t_5*t_16+y*t_7*t_16+(1/2)*w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, -w^2*t_5*t_10^2-w^2*t_7*t_10*t_11-2*w^2*t_2*t_11^2-y*w*t_7*t_10-y*w*t_2*t_11+w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, -w*t_7*t_11*t_16-w*t_10*t_12-w*t_11*t_13-x*t_5*t_16+(1/2)*w*t_8*t_16-x*t_12-y*t_13-w*t_14-z}},ring F_0)))
+assert (sum G== map(target G_0,source G_0,sub(matrix {{t_1*t_16}, {t_9*t_16}, {-t_4*t_16}, {-2*t_14*t_16+t_15*t_16}},ring F_0)))
+assert (sum C==map(target C_0,source C_0,sub(matrix {{(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, (1/2)*w^3*t_1}, {(1/2)*w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, -2*w^3*t_11*t_12-y*w^2*t_5*t_16-w^3*t_6*t_16+2*w^3*t_10*t_16-2*y*w^2*t_12-x*w^2*t_16, -w^3*t_5*t_10*t_11+(1/2)*w^3*t_1*t_5*t_16+w^3*t_6*t_10-2*w^3*t_10^2+y*w^2*t_7*t_11+(1/2)*w^3*t_8*t_11+w^3*t_1*t_12+x*y*w*t_5+x*w^2*t_6+y^2*w*t_7+(1/2)*y*w^2*t_8-x*w^2*t_10+x^2*w}, {-(1/2)*w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, -w^3*t_5*t_10*t_16-w^3*t_10*t_12+w^3*t_11*t_13+y*w^2*t_7*t_16+(1/2)*w^3*t_8*t_16-x*w^2*t_12+y*w^2*t_13+(1/2)*w^3*t_15+z*w^2, w^3*t_5*t_10^2+2*w^3*t_7*t_10*t_11+2*w^3*t_2*t_11^2-(1/2)*w^3*t_1*t_7*t_16+x*w^2*t_5*t_10+y*w^2*t_7*t_10-(1/2)*w^3*t_8*t_10+y*w^2*t_2*t_11-w^3*t_3*t_11+x*w^2*t_7*t_11-w^3*t_1*t_13-y^2*w*t_2-y*w^2*t_3-(1/2)*w^3*t_4-(1/2)*x*w^2*t_8}, {-2*w^4*t_5*t_7*t_10*t_11*t_16-2*w^4*t_2*t_5*t_11^2*t_16+2*w^4*t_7*t_10*t_11*t_12+2*w^4*t_2*t_11^2*t_12-2*w^4*t_5*t_10*t_11*t_13-x*w^3*t_5^2*t_10*t_16-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-(1/2)*w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16+w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16-x*w^3*t_5*t_7*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16-x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-(1/2)*w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-w^4*t_3*t_11*t_12+x*w^3*t_7*t_11*t_12-y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13-x*w^3*t_5*t_11*t_13+y*w^3*t_7*t_11*t_13+(1/2)*w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_14-w^4*t_7*t_11*t_14+w^4*t_7*t_11*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+(1/2)*x*w^3*t_5*t_8*t_16+y*w^3*t_7*t_8*t_16+(1/4)*w^4*t_8^2*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-z*w^3*t_5*t_10+z*w^3*t_7*t_11-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12-(1/2)*x*w^3*t_8*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+(1/2)*y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+(1/2)*w^4*t_8*t_14+x*w^3*t_5*t_15-(1/2)*w^4*t_8*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16-(1/2)*z*w^3*t_8+x^2*w^2*t_13, -w^4*t_5*t_10^2-w^4*t_7*t_10*t_11-2*w^4*t_2*t_11^2-y*w^3*t_7*t_10-y*w^3*t_2*t_11+w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}},ring F_0)))
 (F1,R1,G1,C1)=localHilbertScheme(F0,SmartLift=>false)
-assert (sum F1==map(target F1_0,source F1_0,matrix {{-w^2*t_5*t_10^2*t_16-w^2*t_7*t_10*t_11*t_16-w^2*t_2*t_11^2*t_16-w^2*t_10^2*t_12+y*w*t_7*t_10*t_16+w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16+w^2*t_3*t_11*t_16+y*w*t_10*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -2*w^2*t_5*t_10*t_11*t_16-w^2*t_7*t_11^2*t_16-w^2*t_10*t_11*t_12-y*w*t_5*t_10*t_16+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+w^2*t_8*t_11*t_16-y*w*t_10*t_12+x*w*t_11*t_12+y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, 2*w^2*t_5*t_7*t_10*t_11*t_16^2+w^2*t_7^2*t_11^2*t_16^2-2*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+4*w^2*t_5*t_10*t_11*t_13*t_16+2*w^2*t_7*t_11^2*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2-w^2*t_7*t_8*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*y*w*t_7*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16+2*y*w*t_5*t_10*t_13*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2+2*x*w*t_10*t_12^2+2*y*w*t_10*t_12*t_13+2*w^2*t_10*t_12*t_14-w^2*t_10*t_12*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-2*y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, w^3*t_5*t_10^2*t_11+w^3*t_7*t_10*t_11^2+w^3*t_2*t_11^3-w^3*t_6*t_10^2+w^3*t_10^3-w^3*t_8*t_10*t_11-w^3*t_3*t_11^2+2*w^3*t_1*t_10*t_12+w^3*t_1*t_11*t_13+w^3*t_9*t_10+w^3*t_4*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}}))
-assert (sum R1==map(target R1_0, source R1_0,matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, -w*t_10*t_12+x*t_12+y*t_13+w*t_14-w*t_15-z, w^2*t_5*t_10*t_11+w^2*t_1*t_5*t_16-w^2*t_6*t_10+w^2*t_10^2-x*w*t_5*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, -w*t_5*t_10*t_16-w*t_7*t_11*t_16-w*t_10*t_12+x*t_5*t_16+y*t_7*t_16+w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, w^2*t_7*t_10*t_11+w^2*t_2*t_11^2-y*w*t_7*t_10-w^2*t_8*t_10-y*w*t_2*t_11-w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, w*t_5*t_10*t_16+w*t_10*t_12-x*t_5*t_16-x*t_12-y*t_13-w*t_14-z}}))
-assert (sum G1== map(target G1_0,source G1_0,matrix {{t_1*t_16}, {2*t_5*t_10*t_11*t_16+t_7*t_11^2*t_16-2*t_6*t_10*t_16+3*t_10^2*t_16-t_8*t_11*t_16+t_9*t_16}, {t_5*t_10^2*t_16+2*t_7*t_10*t_11*t_16+3*t_2*t_11^2*t_16-t_8*t_10*t_16-2*t_3*t_11*t_16+t_4*t_16}, {-t_5*t_10*t_16^2-t_7*t_11*t_16^2-2*t_10*t_12*t_16-t_11*t_13*t_16+(1/2)*t_8*t_16^2+t_14*t_16-(1/2)*t_15*t_16}}))
-assert (sum C1==map(target C1_0,source C1_0,matrix {{-w^3*t_5*t_10*t_16-w^3*t_7*t_11*t_16+(1/2)*w^3*t_8*t_16+(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, -w^3*t_1}, {-2*w^3*t_7*t_11*t_12*t_16+w^3*t_5*t_11*t_13*t_16+w^3*t_8*t_12*t_16-w^3*t_5*t_14*t_16+w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, 2*w^3*t_11*t_12+y*w^2*t_5*t_16+w^3*t_6*t_16-2*w^3*t_10*t_16+2*y*w^2*t_12+x*w^2*t_16, 4*w^3*t_5*t_10*t_11+2*w^3*t_7*t_11^2+2*y*w^2*t_5*t_10-2*w^3*t_6*t_10+4*w^3*t_10^2-2*w^3*t_8*t_11-2*w^3*t_1*t_12-2*x*y*w*t_5-2*x*w^2*t_6-2*y^2*w*t_7-2*y*w^2*t_8+2*x*w^2*t_10-2*x^2*w}, {-2*w^3*t_7*t_10*t_12*t_16+2*w^3*t_5*t_10*t_13*t_16+w^3*t_7*t_11*t_13*t_16-w^3*t_8*t_13*t_16+w^3*t_7*t_14*t_16-w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, w^3*t_5*t_10*t_16+w^3*t_10*t_12-w^3*t_11*t_13-y*w^2*t_7*t_16-(1/2)*w^3*t_8*t_16+x*w^2*t_12-y*w^2*t_13-(1/2)*w^3*t_15-z*w^2, w^3*t_5*t_10^2-w^3*t_2*t_11^2-2*y*w^2*t_7*t_10-w^3*t_8*t_10-2*y*w^2*t_2*t_11+2*w^3*t_1*t_13+2*y^2*w*t_2+2*y*w^2*t_3+w^3*t_4}, {w^4*t_5^2*t_10^2*t_16-w^4*t_5*t_7*t_10*t_11*t_16+w^4*t_2*t_5*t_11^2*t_16-w^4*t_7^2*t_11^2*t_16+3*w^4*t_7*t_10*t_11*t_12+5*w^4*t_2*t_11^2*t_12-3*w^4*t_5*t_10*t_11*t_13-w^4*t_7*t_11^2*t_13-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16-w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16+w^4*t_7*t_8*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16+2*x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-3*w^4*t_3*t_11*t_12-2*y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13+x*w^3*t_5*t_11*t_13+w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+y*w^3*t_7*t_8*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-2*z*w^3*t_5*t_10-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+x*w^3*t_5*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16+x^2*w^2*t_13, w^4*t_7*t_10*t_11+w^4*t_2*t_11^2-y*w^3*t_7*t_10-w^4*t_8*t_10-y*w^3*t_2*t_11-w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}}))
+assert (sum F1==map(target F1_0,source F1_0,sub(matrix {{-w^2*t_5*t_10^2*t_16-w^2*t_7*t_10*t_11*t_16-w^2*t_2*t_11^2*t_16-w^2*t_10^2*t_12+y*w*t_7*t_10*t_16+w^2*t_8*t_10*t_16+y*w*t_2*t_11*t_16+w^2*t_3*t_11*t_16+y*w*t_10*t_13+w^2*t_10*t_14-y^2*t_2*t_16-y*w*t_3*t_16-w^2*t_4*t_16+z*w*t_10+x^2*t_12+x*y*t_13+x*w*t_14+x*z, -2*w^2*t_5*t_10*t_11*t_16-w^2*t_7*t_11^2*t_16-w^2*t_10*t_11*t_12-y*w*t_5*t_10*t_16+w^2*t_6*t_10*t_16-2*w^2*t_10^2*t_16+w^2*t_8*t_11*t_16-y*w*t_10*t_12+x*w*t_11*t_12+y*w*t_11*t_13+w^2*t_11*t_14+x*y*t_5*t_16+x*w*t_6*t_16+y^2*t_7*t_16+y*w*t_8*t_16-x*w*t_10*t_16+z*w*t_11+x*y*t_12+y^2*t_13+y*w*t_14+x^2*t_16+y*z, 2*w^2*t_5*t_7*t_10*t_11*t_16^2+w^2*t_7^2*t_11^2*t_16^2-2*w^2*t_7*t_10*t_11*t_12*t_16-4*w^2*t_2*t_11^2*t_12*t_16+4*w^2*t_5*t_10*t_11*t_13*t_16+2*w^2*t_7*t_11^2*t_13*t_16-2*w^2*t_6*t_7*t_10*t_16^2+4*w^2*t_7*t_10^2*t_16^2-2*y*w*t_2*t_5*t_11*t_16^2-2*w^2*t_2*t_6*t_11*t_16^2-w^2*t_7*t_8*t_11*t_16^2+4*w^2*t_2*t_10*t_11*t_16^2-w^2*t_10^2*t_12^2-2*y*w*t_7*t_10*t_12*t_16-2*y*w*t_2*t_11*t_12*t_16+2*w^2*t_3*t_11*t_12*t_16+2*y*w*t_5*t_10*t_13*t_16-2*w^2*t_6*t_10*t_13*t_16+4*w^2*t_10^2*t_13*t_16-2*w^2*t_8*t_11*t_13*t_16+y^2*t_2*t_5*t_16^2+y*w*t_3*t_5*t_16^2+y*w*t_2*t_6*t_16^2+w^2*t_3*t_6*t_16^2-x*y*t_5*t_7*t_16^2-x*w*t_6*t_7*t_16^2-y^2*t_7^2*t_16^2-y*w*t_7*t_8*t_16^2-2*y*w*t_2*t_10*t_16^2-2*w^2*t_3*t_10*t_16^2-2*x*w*t_2*t_11*t_16^2+2*x*w*t_10*t_12^2+2*y*w*t_10*t_12*t_13+2*w^2*t_10*t_12*t_14-w^2*t_10*t_12*t_15+2*y^2*t_2*t_12*t_16+2*y*w*t_3*t_12*t_16-2*x*y*t_5*t_13*t_16-2*x*w*t_6*t_13*t_16-2*y^2*t_7*t_13*t_16-2*y*w*t_8*t_13*t_16+2*x*w*t_10*t_13*t_16+x*y*t_2*t_16^2+x*w*t_3*t_16^2-x^2*t_7*t_16^2-x^2*t_12^2-2*x*y*t_12*t_13-y^2*t_13^2-2*x*w*t_12*t_14-2*y*w*t_13*t_14-w^2*t_14^2+x*w*t_12*t_15+y*w*t_13*t_15+w^2*t_14*t_15-2*x^2*t_13*t_16+z*w*t_15+z^2, w^3*t_5*t_10^2*t_11+w^3*t_7*t_10*t_11^2+w^3*t_2*t_11^3-w^3*t_6*t_10^2+w^3*t_10^3-w^3*t_8*t_10*t_11-w^3*t_3*t_11^2+2*w^3*t_1*t_10*t_12+w^3*t_1*t_11*t_13+w^3*t_9*t_10+w^3*t_4*t_11-w^3*t_1*t_14+w^3*t_1*t_15+z*w^2*t_1+y^3*t_2+y^2*w*t_3+y*w^2*t_4+x^2*y*t_5+x^2*w*t_6+x*y^2*t_7+x*y*w*t_8+x*w^2*t_9+x^3}},ring F1_0)))
+assert (sum R1==map(target R1_0, source R1_0,sub(matrix {{-w*t_11-y, -w*t_5*t_11*t_16+w*t_6*t_16-2*w*t_10*t_16+x*t_16, -w*t_10*t_12+x*t_12+y*t_13+w*t_14-w*t_15-z, w^2*t_5*t_10*t_11+w^2*t_1*t_5*t_16-w^2*t_6*t_10+w^2*t_10^2-x*w*t_5*t_11+w^2*t_1*t_12+x*w*t_6+y^2*t_7+y*w*t_8+w^2*t_9-x*w*t_10+x^2}, {w*t_10+x, -w*t_5*t_10*t_16-w*t_7*t_11*t_16-w*t_10*t_12+x*t_5*t_16+y*t_7*t_16+w*t_8*t_16+x*t_12+y*t_13+w*t_14-w*t_15-z, w*t_7*t_10*t_16+2*w*t_2*t_11*t_16-y*t_2*t_16-w*t_3*t_16, w^2*t_7*t_10*t_11+w^2*t_2*t_11^2-y*w*t_7*t_10-w^2*t_8*t_10-y*w*t_2*t_11-w^2*t_3*t_11+w^2*t_1*t_13+y^2*t_2+y*w*t_3+w^2*t_4+x^2*t_5}, {0, w*t_11+y, w*t_10+x, w^2*t_1}, {-t_16, -t_5*t_16^2-2*t_12*t_16, t_7*t_16^2+2*t_13*t_16, w*t_5*t_10*t_16+w*t_10*t_12-x*t_5*t_16-x*t_12-y*t_13-w*t_14-z}},ring F1_0)))
+assert (sum G1== map(target G1_0,source G1_0,sub(matrix {{t_1*t_16}, {2*t_5*t_10*t_11*t_16+t_7*t_11^2*t_16-2*t_6*t_10*t_16+3*t_10^2*t_16-t_8*t_11*t_16+t_9*t_16}, {-t_5*t_10^2*t_16-2*t_7*t_10*t_11*t_16-3*t_2*t_11^2*t_16+t_8*t_10*t_16+2*t_3*t_11*t_16-t_4*t_16}, {2*t_5*t_10*t_16^2+2*t_7*t_11*t_16^2+4*t_10*t_12*t_16+2*t_11*t_13*t_16-t_8*t_16^2-2*t_14*t_16+t_15*t_16}},ring F1_0)))
+assert (sum C1==map(target C1_0,source C1_0,sub(matrix {{-w^3*t_5*t_10*t_16-w^3*t_7*t_11*t_16+(1/2)*w^3*t_8*t_16+(1/2)*w^3*t_15+z*w^2, w^3*t_10+x*w^2, 0, (1/2)*w^3*t_1}, {-2*w^3*t_7*t_11*t_12*t_16+w^3*t_5*t_11*t_13*t_16+w^3*t_8*t_12*t_16-w^3*t_5*t_14*t_16+w^3*t_5*t_15*t_16+w^3*t_12*t_15+z*w^2*t_5*t_16+2*z*w^2*t_12, w^3*t_5*t_10*t_16+2*w^3*t_10*t_12+x*w^2*t_5*t_16+2*x*w^2*t_12, -2*w^3*t_11*t_12-y*w^2*t_5*t_16-w^3*t_6*t_16+2*w^3*t_10*t_16-2*y*w^2*t_12-x*w^2*t_16, -2*w^3*t_5*t_10*t_11-w^3*t_7*t_11^2-y*w^2*t_5*t_10+w^3*t_6*t_10-2*w^3*t_10^2+w^3*t_8*t_11+w^3*t_1*t_12+x*y*w*t_5+x*w^2*t_6+y^2*w*t_7+y*w^2*t_8-x*w^2*t_10+x^2*w}, {-2*w^3*t_7*t_10*t_12*t_16+2*w^3*t_5*t_10*t_13*t_16+w^3*t_7*t_11*t_13*t_16-w^3*t_8*t_13*t_16+w^3*t_7*t_14*t_16-w^3*t_7*t_15*t_16-w^3*t_13*t_15-z*w^2*t_7*t_16-2*z*w^2*t_13, -w^3*t_7*t_10*t_16-2*w^3*t_10*t_13-x*w^2*t_7*t_16-2*x*w^2*t_13, -w^3*t_5*t_10*t_16-w^3*t_10*t_12+w^3*t_11*t_13+y*w^2*t_7*t_16+(1/2)*w^3*t_8*t_16-x*w^2*t_12+y*w^2*t_13+(1/2)*w^3*t_15+z*w^2, -(1/2)*w^3*t_5*t_10^2+(1/2)*w^3*t_2*t_11^2+y*w^2*t_7*t_10+(1/2)*w^3*t_8*t_10+y*w^2*t_2*t_11-w^3*t_1*t_13-y^2*w*t_2-y*w^2*t_3-(1/2)*w^3*t_4}, {w^4*t_5^2*t_10^2*t_16-w^4*t_5*t_7*t_10*t_11*t_16+w^4*t_2*t_5*t_11^2*t_16-w^4*t_7^2*t_11^2*t_16+3*w^4*t_7*t_10*t_11*t_12+5*w^4*t_2*t_11^2*t_12-3*w^4*t_5*t_10*t_11*t_13-w^4*t_7*t_11^2*t_13-y*w^3*t_5*t_7*t_10*t_16+2*w^4*t_6*t_7*t_10*t_16-w^4*t_5*t_8*t_10*t_16-4*w^4*t_7*t_10^2*t_16+y*w^3*t_2*t_5*t_11*t_16-w^4*t_3*t_5*t_11*t_16+2*w^4*t_2*t_6*t_11*t_16+w^4*t_7*t_8*t_11*t_16-4*w^4*t_2*t_10*t_11*t_16+2*x*w^3*t_5*t_10*t_12+y*w^3*t_7*t_10*t_12-w^4*t_8*t_10*t_12+y*w^3*t_2*t_11*t_12-3*w^4*t_3*t_11*t_12-2*y*w^3*t_5*t_10*t_13+w^4*t_6*t_10*t_13-2*w^4*t_10^2*t_13+x*w^3*t_5*t_11*t_13+w^4*t_8*t_11*t_13-w^4*t_5*t_10*t_15+w^4*t_4*t_5*t_16-y*w^3*t_2*t_6*t_16-w^4*t_3*t_6*t_16+x*y*w^2*t_5*t_7*t_16+x*w^3*t_6*t_7*t_16+y^2*w^2*t_7^2*t_16+y*w^3*t_7*t_8*t_16+2*y*w^3*t_2*t_10*t_16+2*w^4*t_3*t_10*t_16+2*x*w^3*t_2*t_11*t_16-2*z*w^3*t_5*t_10-y^2*w^2*t_2*t_12-y*w^3*t_3*t_12+w^4*t_4*t_12-x^2*w^2*t_5*t_12+x*w^3*t_6*t_13+y^2*w^2*t_7*t_13+y*w^3*t_8*t_13-x*w^3*t_10*t_13-2*x*w^3*t_5*t_14+x*w^3*t_5*t_15-x*y*w^2*t_2*t_16-x*w^3*t_3*t_16+x^2*w^2*t_7*t_16+x^2*w^2*t_13, w^4*t_7*t_10*t_11+w^4*t_2*t_11^2-y*w^3*t_7*t_10-w^4*t_8*t_10-y*w^3*t_2*t_11-w^4*t_3*t_11+y^2*w^2*t_2+y*w^3*t_3+w^4*t_4+x^2*w^2*t_5, 0, 0}},ring F1_0)))
 FC=(correctDeformation(F1_{0,1,2},R1_{0,1,2},G1_{0},C1_{0}))_0
 assert (sub(sum FC,ring F_0)==sum F_{0,1,2})
 ///

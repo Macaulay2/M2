@@ -1,9 +1,9 @@
 
-			   Macaulay2
-	    by Daniel R. Grayson <dan@math.uiuc.edu>
-	 and Michael E. Stillman <mike@math.cornell.edu>
+                                   Macaulay2
+                   by Daniel R. Grayson <dan@math.uiuc.edu>
+                and Michael E. Stillman <mike@math.cornell.edu>
 
-	available from http://www.math.uiuc.edu/Macaulay2/
+                     available from http://Macaulay2.com/
 
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay2.
@@ -22,6 +22,25 @@ fitness for a particular purpose.
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
+
+----------------------
+Getting the source code
+----------------------
+
+The current development version of the source code can be obtained with this
+command, assuming you have installed "git" on your machine:
+
+    git clone https://github.com/Macaulay2/M2
+
+A directory called M2, which you can move or rename, will be created, and this
+INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
+to the branch containing version 1.6 with the following command:
+
+    git checkout release-1.6
+
+The following command shows the list of release branches:
+
+    git branch -a | grep origin/release
 
 ---------
 Programs
@@ -49,55 +68,186 @@ version.
 Here are commands that will get you a good development environment under
 various modern operating systems:
 
-  Ubuntu:
-    sudo apt-get install -y autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
-	# note: libz-dev seems to have been replaced by zlib1g-dev
-	# note: libncurses-dev seems to have been replaced by libncurses5-dev
-	# note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
-
   Debian:
-    sudo apt-get install -y autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients libtool
+    On all systems, add
+        --enable-build-libraries=ntl
+      to the "configure" command line below.
+    On a 32-bit system, add
+        --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
+
+  Ubuntu:
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
+        # note: libz-dev seems to have been replaced by zlib1g-dev
+        # note: libncurses-dev seems to have been replaced by libncurses5-dev
+        # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
+    On a 32-bit system, add
+        --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
+    (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
+    "do-release-upgrade" for a command line interface.)
+
+  Raspbian:
+    Install packages with:
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool
+    On a 32-bit system, add
+        --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
+      to the "configure" command line below.  (The --build option is necessary
+      only to enable distribution of the resulting binaries to users of other
+      hardware.) 
+    The Raspberry Pi comes with 512MB of RAM and a swapfile /var/swap of size 100MB.  It's a good idea to
+     increase the swap size to 1000MB by editing /etc/dphys-swapfile .
 
   Fedora:
-    sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
-    some debugging aids:
+    Install packages with:
+      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static libtool
+    Some debugging aids:
        sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
   Scientific linux:
-    sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
+    Install packages with:
+      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack-devel libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel libtool
     For making an rpm file, install fakeroot manually, from:
-    	 http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
+         http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
+
+    Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
+    future version of Macaulay2.  However, one can install newer compilers
+    (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
+    (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
+	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
+    Then use
+        . /opt/rh/devtoolset-2/enable
+    to update the environment of your currently running shell.  The latter
+    command will also work in your shell initialization file, ".profile".
 
   Suse64:
-    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
+    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
+
+  Mac OS X:
+    Optionally install a good version of emacs, such as the one available from 
+      http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
+      run it from the command line, create an executable shell script called 
+      "emacs" with this line in it:
+        exec /Applications/Emacs.app/Contents/MacOS/Emacs "$@"
+    Install "homebrew", available from http://brew.sh/.  (Experts who want to install
+      homebrew somewhere other than in /usr/local may prefer to point a browser
+      at https://github.com/Homebrew/homebrew/tarball/master, which will download
+      a tar file that can be untarred anywhere and renamed.)
+    Install the programs and libraries needed for building:
+	brew tap homebrew/versions
+	brew tap homebrew/science
+	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool
+	brew install gcc48
+	     # Alternatively, to install fortran for optionally building lapack: brew install --enable-fortran gcc48
+	brew link autoconf gcc48
+	     # If necessary, add --force to the command above to force the link to occur.
+    Now remember to add 
+        CC="gcc-4.8 -m64" CXX="g++-4.8 -m64" FC="gfortran-4.8 -m64" --build=x86_64-apple-darwin
+    to the "configure" command line below in the section on compiling Macaulay2.
 
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
-	autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
-	libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
-	libxml2-devel make mpfr-devel patchutils readline subversion time wget
+        autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
+        gcc-g++ gdb git libgc-devel libgdbm-devel libglpk-devel liblapack-devel
+        libstdc++6-devel libtool libxml2-devel make mpfr patchutils pkg-config
+        time wget
      you may also want these:
-    	emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
+        emacs-el gvim libxml2-doc openssh psmisc unzip vim xauth xconsole xkill xterm
 
 ----------------------
-Getting the source code
+  Compiling the most recent GNU C compiler
 ----------------------
 
-The best way to get the source code is to download a tar file from our web site
-that contains the source code corresponding to a major release.
+  It may happen that you need a modern version of the GNU C compiler, but you
+  have no way to download a binary distribution of it, or you have no way to
+  use "brew" or "fink" to download and compile it for you.  In that case, you
+  may download, compile, and install the GNU C compiler (without necessariy
+  having root access) as follows.  Change "$HOME/local" below to the path to
+  the directory where you want to install the files; if it's a directory not
+  owned by you, prefix the "make install" command below with "sudo".
 
-To get the very latest source code (which may not always work):
+       wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
+       tar xjf gcc-4.8.2.tar.bz2
+       cd gcc-4.8.2
+       ./contrib/download_prerequisites
+       cd ..
+       mkdir gcc-4.8.2-build
+       cd gcc-4.8.2-build
+       ../gcc-4.8.2/configure --prefix=$HOME/local --program-suffix=-4.8.2 --enable-languages=c,c++,fortran --disable-multilib
+       make
+       make install
 
-	svn export svn://macaulay2.math.uiuc.edu/Macaulay2/trunk/M2
+     Do not omit the language "fortran" from the list, even if the package
+     "lapack-devel" is installed, as "gfortran" is consulted for the locations
+     of its libraries, and it would be bad to have a mismatch.
+
+     It might be possible to add --disable-libstdcxx to the "configure"
+     command line above, allowing the resulting binaries to depend on the
+     version of libstdc++ already installed on your system.
+
+     The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
+     Now put the following lines in your file $HOME/.profile :
+
+        export PATH=$HOME/local/bin:$PATH
+        export MANPATH=$HOME/local/share/man:$MANPATH
+        export INFOPATH=$HOME/local/share/info:$INFOPATH
+        export LD_LIBRARY_PATH=$HOME/local/lib:$HOME/local/lib64:$LD_LIBRARY_PATH
+        export CC=gcc-4.8.2
+        export CXX=g++-4.8.2
+        export FC=gfortran-4.8.2
+
+     and then log out and log in again (or source the file into your
+     environment and continue in the same process or in daughter processes).
+
+     Under Scientific Linux 6.4, if you run "sudo yum install -y glibc-devel.i686"
+     first, then you can omit --disable-multilib above and get a 32 bit
+     compiler, too.  To see quickly which glibc architectures are installed,
+     run "ls /usr/include/gnu/stubs-*.h".  (Parenthetically, we observe that to
+     make /usr/bin/gcc successfully compile 32 bit binaries, one should also
+     run "yum install -y libgcc.i686".)
+
+     Any other libraries you may want to use may also be installed with
+     $HOME/local as the install prefix, as gcc-4.8.2 will automatically search
+     in there for include files and libraries.
+
+     Installing multiple software in the same directory, such as in $HOME/local
+     (as described above), makes it hard to remove or upgrade packages.  To
+     solve that problem, use the program "epkg", available from
+     http://www.encap.org/epkg/.
+
+----------------------
+Choosing a place for the repository
+----------------------
+
+A typical Macaulay2 build directory can use up 1.5GB of disk space, and in an
+institutional environment your home directory is probably backed up to tape.
+(You may do something similar on your own computers.)  Thus you can avoid an
+unnecessary burden on your system administrator if you put the repository (or
+at least the build directories) on a locally mounted scratch drive, where the
+files are not backed up.  For your changes to Macaulay2 source code, github.com
+will serve as your backup.
 
 -----------------------
-Compiling
+Compiling Macaulay2
 -----------------------
 
-Begin with these commands:
+Now the directory to be in is the one containing this file in the source
+distribution -- it is called "M2", and is a subdirectory of the top level
+directory of the source tree.  If you are reading this file on the web, it may
+be more convenient to switch now to reading it in its location in the source
+tree.
 
-	cd M2
-	make
+Begin with this command:
+
+        make
 
 The "make" command above runs the commands "autoconf" and "autoheader", which
 create the "configure" script and the "include/config.h.in" file, needed in the
@@ -107,10 +257,13 @@ make.
 
 Now continute building the program this way:
 
-	./configure --enable-download
-	make
-	make check			# optional
-	make install
+        ./configure --enable-download
+        make
+        make check                      # optional
+        make install
+
+Remember to add any options specified above, in the section for your particular
+operating system, to the "configure" command line.
 
 On some systems, especially if you are building a binary distribution of Macaulay2,
 additional arguments should be given to the "./configure" command, and are explained
@@ -122,87 +275,99 @@ will really work, you can make a separate "build directory" somewhere else and
 compile it there, for example, in a subdirectory of the subdirectory BUILD,
 provided for that purpose:
 
-	mkdir BUILD/normal
-	cd BUILD/normal
-	../../configure --enable-download
-	make
-	make check			# optional
-	make install
+        cd BUILD/build
+        ../../configure --enable-download
+        make
+        make check                      # optional
+        make install
 
 By default, the files are installed in appropriate subdirectories of
 /usr/local.  To specify a different location (prefix) you may use an option to
 the configure script:
 
-	../../configure --enable-download --prefix=/foo/bar
+        ../../configure --enable-download --prefix=/foo/bar
 
-Or, to specify a different location temporarily you may add an option to the
-"make install" line:
+Files will then be installed in the following directories:
 
-	make prefix=/foo/bar install
+        /foo/bar/bin
+        /foo/bar/share/Macaulay2
+        /foo/bar/share/doc/Macaulay2
+        /foo/bar/share/man/man1
+        /foo/bar/share/emacs/site-lisp
+        /foo/bar/lib/Macaulay2
 
-In either case, files will be installed in the following directories:
+instead of in
 
-	/foo/bar/bin
-	/foo/bar/share/Macaulay2
-	/foo/bar/share/doc/Macaulay2
-	/foo/bar/share/man/man1
-	/foo/bar/share/emacs/site-lisp
-	/foo/bar/lib/Macaulay2
+        /usr/local/bin
+        /usr/local/share/Macaulay2
+        /usr/local/share/doc/Macaulay2
+        /usr/local/share/man/man1
+        /usr/local/share/emacs/site-lisp
+        /usr/local/lib/Macaulay2
+
+To use a different prefix, say $HOME/local, for finding libraries and include
+files installed in a nonstandard location, add the following options to the
+"configure" command line:
+        LDFLAGS=-L$HOME/local/lib CPPFLAGS=-I$HOME/local/include
+That step is unnecessary if the compiler was compiled from sources and installed
+with that prefix.
+
+To use a different compiler suite, such as gcc version 4.8.2 as compiled above,
+add something like the following to the "configure" command line:
+        CC=gcc-4.8.2 CXX=g++-4.8.2 FC=gfortran-4.8.2
+That step is unnecessary if the environment variables CC and CXX are set as
+described above.
+
+To specify libraries to link against during configuration, use the LIBS
+environment variable, as described in documentation for autoconf.  For example,
+to link with libfoo, add the following option to the "configure" command line:
+
+        LIBS=-lfoo
+
+To see descriptions of all the environment variables that influence
+configuration, run this command and look at the section of the output
+entitled "Some influential environment variables":
+
+        ../../configure --help
+
+The only one of these variables with a nonempty default value is
+CFLAGS, and its default value is "-g -O2".  That will be supplanted if
+you override it.
+
+To specify a different installation location for the "make install" command you
+may add an option to the "make install" line, as follows:
+
+        make install prefix=/foo/bar
 
 To make an encapsulated directory tree or distribution tarball suitable for use
-with the program "epkg" (see http://www.encap.org/epkg/), replace the
-configuration command above with:
+with the program "epkg" (see http://www.encap.org/epkg/), add the option
 
-	./configure --enable-encap
+        --enable-encap
+
+to the "configure" command above.
 
 The effect is to insert one more component into the path names used at
 installation time, so that in response to 
 
-	make prefix=/foo/bar install
+        make prefix=/foo/bar install
 
 files will be installed in the following directories:
 
-	/foo/bar/Macaulay2-*/bin
-	/foo/bar/Macaulay2-*/share/Macaulay2
-	/foo/bar/Macaulay2-*/share/doc/Macaulay2
-	/foo/bar/Macaulay2-*/share/man/man1
-	/foo/bar/Macaulay2-*/share/emacs/site-lisp
-	/foo/bar/Macaulay2-*/lib/Macaulay2
+        /foo/bar/Macaulay2-*/bin
+        /foo/bar/Macaulay2-*/share/Macaulay2
+        /foo/bar/Macaulay2-*/share/doc/Macaulay2
+        /foo/bar/Macaulay2-*/share/man/man1
+        /foo/bar/Macaulay2-*/share/emacs/site-lisp
+        /foo/bar/Macaulay2-*/lib/Macaulay2
 
 Each * above is replaced by the current version number.  There will
 also be a few extra files placed in the directory /foo/bar/Macaulay2-*
 which instruct epkg how to make appropriate symbolic links to install
 our program, and how to initialize the dumped data file, if present:
 
-	/foo/bar/Macaulay2-*/encapinfo
-	/foo/bar/Macaulay2-*/postinstall
-	/foo/bar/Macaulay2-*/preremove
-
-To use a different prefix, say /mnt/local, for finding libraries and include
-files installed in a nonstandard location:
-
-	../configure LDFLAGS=-L/mnt/local/lib CPPFLAGS=-I/mnt/local/include ...
-
-where ... represents the remaining arguments, as above.  As an example, if
-you have compiled the libraries with fink, then you could use this line:
-
-        ../configure LDFLAGS=-L/sw/lib CPPFLAGS=-I/sw/include ...
-
-To specify libraries to link against during configuration, use the
-LIBS environment variable, as described in documentation for autoconf.
-Example:
-
-	../configure LIBS=-lfoo ...
-
-To see descriptions of all the environment variables that influence
-configuration, run this command and look at the section of the output
-entitled "Some influential environment variables":
-
-	../configure --help
-
-The only one of these variables with a nonempty default value is
-CFLAGS, and its default value is "-g -O2".  That will be supplanted if
-you override it.
+        /foo/bar/Macaulay2-*/encapinfo
+        /foo/bar/Macaulay2-*/postinstall
+        /foo/bar/Macaulay2-*/preremove
 
 -------------------------------------------
 Compiling on multiple machine architectures
@@ -215,13 +380,13 @@ well as to specify names for the compilers that include the additional options
 for the architecture to be used.  This will work with gmp, for example, as it
 knows how to produce the additional options to the compilers:
 
-   ../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
+   ../../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
 
 Another way to do it is to add the architecture option to CFLAGS and to
 CXXFLAGS.  The disadvantage of that approach is that the package might have its
 own idea about what values to use for those options and ignore these settings:
 
-   ../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
+   ../../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
 
 Sometimes a library will get confused by values for CC and CXX with spaces in
 them, or will try to parse the options, and get confused by the "-m64" option.
@@ -241,8 +406,51 @@ Mark both shell scripts executable.
 MacOS X notes
 ----------------------
 
-    For specific scripts that we use to build the disk images, see
-    BUILD/mike/Makefile and BUILD/mike/darwin64/Makefile.
+    The standard gcc under Mac OS X is actually "clang", is based on LLVM, and
+    has been buggy, so we compile the latest gcc or we use "brew" to install
+    it, as described above.
 
-    The standard gcc under Mac OS X is based on LLVM and buggy, so we typically
-    compile the latest gcc.
+    To build Macaulay, add the option
+
+        --build=x86_64-apple-darwin
+
+    to the appropriate "configure" command line above, for else it will try to
+    build a 32 bit version of Macaulay2.
+
+    Recall that if you are using version 4.8 of gcc, as installed by homebrew,
+    you should add
+
+        CC=gcc-4.8 CXX=g++-4.8
+
+    to the "configure" command line (or, better, to your environment setting in
+    your .profile).  To sum up, your command line, with all those options, will
+    look something like this:
+
+        ../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
+
+----------------------
+Rerunning the package examples
+----------------------
+
+Some packages cache their example output in the source code tree, since they
+depend on the presence of external programs not included with Macaulay2.  Here
+we briefly summarize them and the software they depend on:
+
+    gfanInterface StatePolytope need polymake, builds OK
+	    http://polymake.org/lib/exe/fetch.php/download/polymake-2.13-1.tar.bz2
+	    (Make 3.81 has a problem with their makefile, so use 4.0)
+
+    Bertini needs bertini:
+	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	which needs gmp and mpfr:
+	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
+	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+
+    PHCpack needs PHCpack, download the binary:
+	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+
+    AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
+
+    ConvexInterface also needs the maple package "convex" installed.  See the 
+    package documentation for hints about installing it.
+    	    http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m

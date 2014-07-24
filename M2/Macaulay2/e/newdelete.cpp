@@ -1,6 +1,6 @@
 #include "../d/M2mem.h"
 #include "../d/debug.h"
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 #include <new>
 
 /* Here we redefine operator new and delete, so 3rd party libraries using them that also call gmp, which in turn calls libgc, will

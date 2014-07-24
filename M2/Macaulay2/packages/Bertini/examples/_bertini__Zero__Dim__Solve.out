@@ -1,0 +1,29 @@
+-- -*- M2-comint -*- {* hash: 300992849 *}
+
+i1 : R = CC[x,y];
+
+i2 : F = {x^2-1,y^2-1};
+
+i3 : S = bertiniZeroDimSolve F
+Temporary directory for input and output files:/tmp/M2-14863-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
+
+o3 : List
+
+i4 : peek S_0
+
+o4 = Point{ConditionNumber => 1.87793     }
+           Coordinates => {1, 1}
+           CycleNumber => 1
+           FunctionResidual => 2.28878e-16
+           LastT => .0015625
+           MaximumPrecision => 52
+           NewtonResidual => 5.81262e-17
+           SolutionNumber => 1
+
+i5 : 

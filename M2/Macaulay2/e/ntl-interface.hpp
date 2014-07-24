@@ -1,6 +1,7 @@
 #ifndef _ntl_interface_hpp_
 #define _ntl_interface_hpp_
 
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 #include <NTL/ZZ.h>

@@ -15,14 +15,7 @@
   #define store_Field(x,val) AO_store(&(x).field,val)
 #endif
 #include "mutexclass.hpp"
-    /* gc doc tells us to include pthread.h before gc.h */
-    #ifndef _REENTRANT
-      #define _REENTRANT
-    #endif
-    #include <pthread.h>
-    #define GC_THREADS
-    #include <gc/gc.h>
-
+#include <M2/gc-include.h>
 #include <set>
 #include <map> 
 #include <list>

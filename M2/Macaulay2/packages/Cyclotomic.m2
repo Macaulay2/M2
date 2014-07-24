@@ -91,7 +91,7 @@ joinCyclotomic = li -> (
 	       )
 	  else (
 	       -- Was cyclotomic: need to find image of ww in new ring!
-	       f = map (S, ring li#i , (gens S) |{ww^(leastcm/lc#i)});
+	       f = map (S, ring li#i , (gens S) |{ww^(leastcm//lc#i)});
 	       li2 = li2 | { f li#i };
 	       );
 	  );

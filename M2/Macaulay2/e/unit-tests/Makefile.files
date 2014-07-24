@@ -1,8 +1,12 @@
-UNITTEST_CCFILES := \
-    testMain \
+SHARED_UNITTEST_CCFILES := \
+  testMain \
     M2-cpp-replacement \
     M2mem-replacement \
     basics-test \
+    fromStream
+
+UNITTEST_CCFILES := \
+    $(SHARED_UNITTEST_CCFILES) \
     ARingRRRTest \
     ARingZZpTest \
     ARingGFTest \
@@ -13,11 +17,14 @@ UNITTEST_CCFILES := \
     RingCCCTest \
     RingTowerTest \
     DMatZZpTest \
-    SubsetTest \
-    fromStream
+    SubsetTest  
+     
+
+SHARED_UNITTEST_CFILES += \
+    M2-replacement
 
 UNITTEST_CFILES += \
-    M2-replacement
+    $(SHARED_UNITTEST_CFILES)
 
 UNITTEST_TARGET := testMain
 
@@ -28,7 +35,12 @@ F4_FILES := $(addprefix ../f4/, $(F4_CCFILES))
 E_OBJECT_FILES := $(addsuffix .o, $(E_FILES) $(F4_FILES))
 
 UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
+UNITTEST_SHARED_FILES := $(SHARED_UNITTEST_CCFILES) $(SHARED_UNITTEST_CFILES)
+
 UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
+UNITTEST_SHARED_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_SHARED_FILES))
+
+
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"

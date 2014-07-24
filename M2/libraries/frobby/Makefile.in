@@ -1,6 +1,4 @@
-
-#					frobby
-
+# frobby
 # license for frobby: GPL v2 or later
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>

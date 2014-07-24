@@ -13,15 +13,17 @@ CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
 	 -I@srcdir@/../../c 
 CXXFLAGS += -std=gnu++0x #-coverage
-LDFLAGS += #-coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
-
 LOADLIBES += @BUILTLIBS@ @LIBS@ -lstdc++
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
+
+# do not link with gtest -- it's supposed to get compiled in via #include:
+# LDFLAGS += -L$(GTEST_DIR)/lib/.libs
+# LOADLIBES += -lgtest
 
 .PHONY: place_into_lib runtests
 
@@ -31,11 +33,45 @@ all: $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 
 check: runtests
 
+fullCheck: $(UNITTEST_TARGET)
+	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
+
 $(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES) $(E_OBJECT_FILES)
 	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
 	time ./$(UNITTEST_TARGET)
+
+ARingRRRTest :  gtest-include.o ARingRRRTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+ARingGFTest :  gtest-include.o ARingGFTest.o $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+ARingRRRZZpTest :  gtest-include.o  \
+    ARingZZpTest.o  \
+    ARingRRRTest.o \
+    ARingZZpTest.o \
+    RingZZTest.o \
+    RingZZpTest.o \
+    RingQQTest.o \
+    RingRRRTest.o \
+    RingCCCTest.o \
+    $(UNITTEST_SHARED_OBJECT_FILES) $(E_OBJECT_FILES)
+	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
+
+ 
+checkRingRRR: ARingRRRTest
+	time ./ARingRRRTest
+
+#fails for whatever reasins
+checkRingRRRZZp: ARingRRRZZpTest
+	time ./ARingRRRZZpTest
+
+
+# fails on my 32-bit fedora 14 , gcc is 4.5.1. 
+failing: checkRingRRRZZp
+
 
 %.s : %.c; $(COMPILE.cc) -S $< $(OUTPUT_OPTION)
 
@@ -45,7 +81,7 @@ COMPILE.cc += $(MORE_OPTIONS)
 
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/unit-tests/Makefile
-clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE
+clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE testMain
 distclean: clean; rm -f Makefile
 
 ifeq "$(DEPENDS)" "yes"

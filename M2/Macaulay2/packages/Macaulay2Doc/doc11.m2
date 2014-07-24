@@ -494,12 +494,11 @@ document {
 	  "The heft vector is used in the computation of degrees of modules over a polynomial ring ", TT "R", ", because it
 	  gives a homomorphism from the degrees ring of ", TT "R", " to the Laurent
 	  polynomial ring in one variable ", TT "T", " that sends monomials corresponding to the degrees of
-	  variables of ", TT "R", " to positive powers of ", TT "T", ".  The degree is then defined to be the coefficient
-	  of the lead term in the expansion of the Hilbert series in powers of ", TT "1-T", "."
+	  variables of ", TT "R", " to positive powers of ", TT "T", ".  See ", TO "degree(Module)", "."
 	  },
      EXAMPLE lines ///
      R = QQ[x,y,Heft=>{3}];
-     degree R
+     degree ideal(x)
      ///,
      SeeAlso => {heft, [monoid,Heft], degreesRing, multidegree}
      }
@@ -512,7 +511,7 @@ document {
      Outputs => { {"the multidegree of ", TT "M", ".  If ", TT "M", " is an ideal, the corresponding quotient ring is used."} },
      PARA {
 	  "The multidegree is defined on page 165 of ", EM "Combinatorial Commutative Algebra", ", by
-	  Miller and Sturmfels, on page 165.  It is an element of the degrees ring of ", TT "M", ".  Our
+	  Miller and Sturmfels.  It is an element of the degrees ring of ", TT "M", ".  Our
 	  implementation agrees with their definition provided the heft vector of the ring has every entry equal to 1.
 	  See also ", EM "Gröbner geometry of Schubert polynomials", ", by Allen Knutson and Ezra Miller."
 	  },

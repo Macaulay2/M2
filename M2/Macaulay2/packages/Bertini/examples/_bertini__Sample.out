@@ -1,0 +1,54 @@
+-- -*- M2-comint -*- {* hash: -977269506 *}
+
+i1 : R = CC[x,y,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+
+       3      2      2       2     3      2
+o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
+
+o2 : List
+
+i3 : NV = bertiniPosDimSolve(F)
+Temporary directory for input and output files:/tmp/M2-14720-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o3 = NV
+
+o3 : NumericalVariety
+
+i4 : W = NV#1_0 --z-axis
+
+o4 = W
+
+o4 : WitnessSet
+
+i5 : bertiniSample(W,4)
+Temporary directory for input and output files:/tmp/M2-14720-0/1
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o5 = {{-3.0732e-22-8.10308e-21*ii, -6.72798e-317-2.35498e-316*ii,
+     ------------------------------------------------------------------------
+     .0174218+.195017*ii}, {-2.04592e-20+5.00923e-21*ii,
+     ------------------------------------------------------------------------
+     6.13538e-314+3.99775e-314*ii, -.0885689+.176819*ii},
+     ------------------------------------------------------------------------
+     {8.85606e-21+1.0922e-21*ii, 0, .0787684+.306805*ii},
+     ------------------------------------------------------------------------
+     {5.5206e-20-4.57027e-20*ii, 6.65019e-270+1.55629e-269*ii,
+     ------------------------------------------------------------------------
+     -.187045+.272173*ii}}
+
+o5 : List
+
+i6 : 

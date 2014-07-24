@@ -1,6 +1,7 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
+        symbol submatrixByDegrees,
         symbol chi,
 --	symbol setAttribute,				    -- experimental
 --	symbol hasAnAttribute,				    -- experimental
@@ -180,6 +181,7 @@ export {
 	symbol Engine,
 	symbol EngineRing,
 	symbol Equation,
+	symbol ExampleFiles,
 	symbol Exclude,
 	symbol Expression,
 	symbol Ext,
@@ -202,6 +204,7 @@ export {
 	symbol FunctionBody,
 	symbol FunctionClosure,
 	symbol GBDegrees,
+	symbol GCstats,
 	symbol GF,
 	symbol GLex,
 	symbol GRevLex,
@@ -1034,6 +1037,7 @@ export {
 	symbol separate,
 	symbol separateRegexp,
 	symbol sequence,
+        symbol serialNumber,
 	symbol set,
 	symbol setEcho,
 	symbol setGroupID,
@@ -1155,6 +1159,8 @@ export {
 	symbol version,
 	symbol viewHelp,
 	symbol wait,
+        symbol elapsedTime,
+        symbol elapsedTiming,
 	symbol wedgeProduct,
 	symbol weightRange,
 	symbol when,

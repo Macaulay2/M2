@@ -35,7 +35,7 @@ include ../Makefile.library
 CPPFLAGS := -I$(LIBRARIESDIR)/include/factory $(CPPFLAGS)
 
 ifeq (@OPTIMIZE@,yes)
-CXXFLAGS += -Wno-deprecated --no-rtti --no-exceptions
+CXXFLAGS += -Wno-deprecated #--no-rtti --no-exceptions
 endif
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/libfac/Makefile

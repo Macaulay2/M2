@@ -1,27 +1,7 @@
 use M2;
 declarations "
-
-    /* gc doc tells us to include pthread.h before gc.h */
-    #ifdef GC_MALLOC
-      #error \"gc.h already included\"
-    #endif
-    #ifndef _REENTRANT
-      #define _REENTRANT
-    #endif
-    #ifdef HAVE_WINSOCK2_H
-     #include <winsock2.h>
-       /* under mingw64 winsock2.h should be included before including windows.h
-	   and pthread.h and gc.h include windows.h
-	    therefore winsock2.h should be included before pthread.h and gc.h */
-     #undef ERROR
-    #endif
-    #ifdef HAVE_PTHREAD_H
-     #include <pthread.h>
-    #endif
-    #define GC_THREADS
-    #include <gc/gc.h>
+    #include <M2/gc-include.h>
     #include <../system/mutex.h>
-
 ";
 export voidPointer := Pointer "void *";
 export nullPointer() ::= Ccode(voidPointer,"((void *)0)");

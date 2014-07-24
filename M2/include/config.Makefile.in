@@ -15,7 +15,7 @@ CC = @CC@
 CXX = @CXX@
 FC = @FC@
 CFLAGS = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
@@ -116,12 +116,18 @@ ifeq "@OPTIMIZE@" "yes"
 # M2_BOTH += -Werror=uninitialized
 M2_BOTH += -Wuninitialized
 endif
+
+M2_CFLAGS   += $(M2_BOTH) -Wwrite-strings
+M2_CXXFLAGS += $(M2_BOTH) -Wconversion
+
+M2_CFLAGS += @M2_CFLAGS@
+
 # M2_CFLAGS   += -Werror=implicit-function-declaration -Werror=write-strings $(M2_BOTH)
 ifeq "@__INTEL_COMPILER@" "no"
 M2_CFLAGS   += -Wimplicit-function-declaration
 endif
-M2_CFLAGS   += -Wwrite-strings $(M2_BOTH)
-M2_CXXFLAGS += -Wconversion $(M2_BOTH)
+
+
 # -Werror-implicit-function-declaration is important, because if we include the wrong include file and a function that
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 endif

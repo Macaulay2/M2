@@ -5,7 +5,7 @@ header "
 #ifdef HAVE_SYS_TYPES_H
  #include <sys/types.h>
 #endif
-#ifdef HAVE_STAT_H
+#ifdef HAVE_SYS_STAT_H
  #include <sys/stat.h>
 #endif
 #ifdef HAVE_TIME_H

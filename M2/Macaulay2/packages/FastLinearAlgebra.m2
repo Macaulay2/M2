@@ -498,11 +498,8 @@ testAddMultipleTo(MutableMatrix, MutableMatrix, MutableMatrix) := (M3,M1,M2) -> 
      addMultipleTo(A, transpose M1, transpose M2, TransposeA=>true, TransposeB=>true);
      assert(A == M3 + M1*M2);
 
-     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
-     a := 2_kk;
-     b := 3_kk;
-     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
-     assert(A == b*M3 + a*M1*M2);
+     a := 0_kk;
+     b := 0_kk;
 
      A = mutableMatrix matrix M3;  -- 'copy' should work here!!
      a = 0_kk;
@@ -515,6 +512,54 @@ testAddMultipleTo(MutableMatrix, MutableMatrix, MutableMatrix) := (M3,M1,M2) -> 
      b = 0_kk;
      addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
      assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 2_kk;
+     b = 0_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 1_kk;
+     b = 1_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 2_kk;
+     b = 1_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 2_kk;
+     b = 2_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     assert(A == b*M3 + a*M1*M2);
+
+
+     A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = 2_kk;
+     b = 3_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     if not (A == b*M3 + a*M1*M2) then
+     (
+         --print "A != b*M3 + a*M1*M2";
+         --print (A-b*M3 + a*M1*M2);
+     );
+     assert(A == b*M3 + a*M1*M2);
+
+   A = mutableMatrix matrix M3;  -- 'copy' should work here!!
+     a = (char ring M3 -1)_kk;
+     b = 1_kk;
+     addMultipleTo(A, M1, M2, Alpha=>a, Beta=>b);
+     if not (A == b*M3 + a*M1*M2) then
+     (
+         --print "A != b*M3 + a*M1*M2";
+         --print (A-b*M3 + a*M1*M2);
+     );
+     assert(A == b*M3 + a*M1*M2);
+
      )
 
 
@@ -530,7 +575,32 @@ NONTEST = (str) -> null
 -- Linear algebra tests -----------
 -----------------------------------
 TEST ///
+-- addMultipleTo
+    debug Core
+    kk = ZZp 33500479
+    M1 = mutableMatrix random(kk^300, kk^500)
+    M2 = mutableMatrix random(kk^200, kk^300)
+    M3 = mutableMatrix random(kk^200, kk^500)
+
+    testAddMultipleTo(M3,M2,M1)
+///
+
+TEST ///
+-- addMultipleTo
+    debug Core
+    kk = ZZp 67000993
+    M1 = mutableMatrix random(kk^300, kk^100);
+    M2 = mutableMatrix random(kk^200, kk^300);
+    M3 = mutableMatrix random(kk^200, kk^100);
+
+    testAddMultipleTo(M3,M2,M1)
+    time addMultipleTo(M3, M2, M1);
+///
+
+TEST ///
+restart
 loadPackage "FastLinearAlgebra"
+debug Core
     kk = ZZp 101
 
     M3 = mutableMatrix(kk, 200, 200)
@@ -590,6 +660,7 @@ TEST ///
     -- test of routines involving modules (subquotients especially) over ZZp
     restart
     loadPackage "FastLinearAlgebra"
+debug Core
     R = ZZp 101
     N = 1000
     f = random(R^N, R^(N//2));
@@ -623,6 +694,7 @@ TEST ///
 TEST ///
     restart
     loadPackage "FastLinearAlgebra"
+    debug Core
     R = ZZp 101
     f = matrix{{1_R,2},{3,4}}
     g = matrix{{1_R},{1_R}}
@@ -639,6 +711,7 @@ TEST ///
 TEST ///  -- CRASHING TEST 19 Dec 2012 Jakob+Mike    
     restart
     loadPackage "FastLinearAlgebra"
+    debug Core
     R = ZZp 101
 
     N = 700
@@ -649,7 +722,7 @@ TEST ///  -- CRASHING TEST 19 Dec 2012 Jakob+Mike
 ///
 
 TEST ///
-
+    debug Core
     kk = ZZp 101
     R = kk[t]
     M1 = mutableMatrix matrix(kk, {{2, 16, 29}, {-18, 24, 12}, {-41, 7, -31}})
@@ -701,6 +774,7 @@ TEST ///
 
 TEST ///
 -- addMultipleTo
+    debug Core
     kk = ZZp 101
     M1 = mutableMatrix random(kk^3, kk^5)
     M2 = mutableMatrix random(kk^2, kk^3)
@@ -709,8 +783,11 @@ TEST ///
     testAddMultipleTo(M3,M2,M1)
 ///
 
+
+
 TEST ///
 -- addMultipleTo
+    debug Core
     kk = ZZp 67000993
     M1 = mutableMatrix random(kk^3, kk^5)
     M2 = mutableMatrix random(kk^2, kk^3)
@@ -721,6 +798,7 @@ TEST ///
 
 TEST ///
 -- addMultipleTo
+    debug Core
     kk = ZZp 101
     M1 = mutableMatrix random(kk^300, kk^500);
     M2 = mutableMatrix random(kk^200, kk^300);
@@ -732,6 +810,7 @@ TEST ///
 
 TEST ///
 -- addMultipleTo
+    debug Core
     kk = ZZp 67000993
     M1 = mutableMatrix random(kk^300, kk^500);
     M2 = mutableMatrix random(kk^200, kk^300);
@@ -742,6 +821,7 @@ TEST ///
 ///
 
 TEST ///
+    debug Core
     kk = ZZp 101;
     A = mutableMatrix matrix(kk, {{23, -35, -29, 33}, {22, 7, -25, 11}})
     B = mutableMatrix matrix(kk, {{-36, -40}, {-15, -43}, {-16, -43}, {15, 32}, {6, -14}})
@@ -755,6 +835,7 @@ TEST ///
 ///
 
 TEST ///
+    debug Core
     N = 10
     kk = ZZp 101
     time A = mutableMatrix(kk, N, N, Dense=>true);
@@ -768,6 +849,7 @@ TEST ///
 ///
 
 TEST ///
+  debug Core
   R = ZZp 5
   Rt = R[t]
   jordanBlock = (R, diag, n) -> (
@@ -824,6 +906,7 @@ TEST ///
 ///
 
 TEST ///
+  debug Core
   kk = ZZp 67108859
   M = mutableMatrix(kk, 10, 10, Dense=>true)
   fillMatrix M
@@ -878,6 +961,7 @@ TEST ///
 ///
 
 TEST ///
+    debug Core
     kk = ZZp 101
     M = mutableMatrix(kk,5000,5000);
     N = mutableMatrix(kk,5000,5000);
@@ -1978,7 +2062,7 @@ XXXXXXXXXXXXXX
 --           and therefore we should also use it extensively ;-)
 --
 -- TODO: Jakob and Mike (9 Jan 2013)
---   1. make sure 'not', 'and', 'or' work on gcc 4.5, and in std c++ (OK: Jakob)
+--   1. make sure 'not', 'and', 'or' work on gcc 4.5, and in std c++ - ok for gcc 4.5.3 and latest cygwin.
 --       (cygwin has gcc 4.5.3)
 --   2. need M2_ASSERT and maybe also an assert that will be run in production code.
 --   3. invert, divide: should these raise an exception, or return false if not invertible?
@@ -1986,8 +2070,9 @@ XXXXXXXXXXXXXX
 --   5. computeGenerator: is this a reasonable implementation?  If not, find something better.
 --   6. for promote, lift, eval: can we place these out of the class?
 --   7. do we really need 'syzygy' here?
---   8. Signed_Trait ?  remove dependence on givaro for ffpack (DONE: Jakob)
---        but we need the new c++ standard. use -std=c++0x (DONE)
+--   8. Signed_Trait ?  remove dependence on givaro for ffpack DONE, but requires g++ -std=c++0x. 
+--      Problem: defining CXXFLAGS=-std=c++0x is not sufficient, since somewhere in the makefiles CXX is used without CXXFLAGS.
+--     DONE: Jakob,     but we need the new c++ standard. use -std=c++0x (DONE)
 --   9. use static_cast when possible.
 --   10. how to get gcc to shut up about uninitialized data in calls to R.init(a) ?
 --   11. find c++ formatting tool(s)

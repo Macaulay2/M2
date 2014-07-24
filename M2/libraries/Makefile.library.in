@@ -20,6 +20,14 @@ BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
 PRECONFIGURE  ?= :
 
+export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+ifeq ($(OPTIMIZE),no)
+CXXFLAGS += -O0
+CFLAGS += -O0
+FCFLAGS += -O0
+endif
+
 ifeq (@OS@,MacOS)
 ## this option gives space in the binary so 'install_name_tool' can edit it and tell it where to find its dynamic libraries
 ## the editing is done in distributions/dmg/Makefile
@@ -63,7 +71,7 @@ CONFIGURECMD  ?= $(PRECONFIGURE) && ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
+INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
 STRIPFILES    ?= 
 ifeq ($(STRIPFILES),)
   STRIPCMD = :
@@ -126,7 +134,7 @@ ifneq ($(INCLUDEFILES),)
 	cd $(BUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
 endif
 ifeq ($(LICENSEFILES),)
-	@ echo warning: no license files to be installed
+	@ echo "warning: *** no license files to be installed"
 else
 	$(MKDIR_P) $(LICENSE_DIR)
 	cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
@@ -179,7 +187,6 @@ CHECKFETCHED = case "$(URL)" in									\
 	    fi ;;										\
 	esac
 $(TARFILE_DIR)/$(TARFILE) :
-	$(MKDIR_P) $(TARFILE_DIR)
 ifeq (@DOWNLOAD@,yes)
 	(cd $(TARFILE_DIR) && $(FETCHER) $(URL)/$(TARFILE) $(FETCHOPTS) && $(CHECKFETCHED))
 else
@@ -211,12 +218,24 @@ endif
 ifeq (@ULIMIT_S@,yes)
 LIMIT += ; ulimit -s $(SLIMIT)
 endif
+ifeq (@ULIMIT_T@,yes)
+LIMIT += ; ulimit -t
+endif
+ifeq (@ULIMIT_M@,yes)
+LIMIT += ; ulimit -m
+endif
+ifeq (@ULIMIT_V@,yes)
+LIMIT += ; ulimit -v
+endif
+ifeq (@ULIMIT_S@,yes)
+LIMIT += ; ulimit -s
+endif
 recheck:
 	rm -f .checked-$(VERSION)
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	$(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
+	set -x; $(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles

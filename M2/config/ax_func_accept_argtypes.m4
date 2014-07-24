@@ -76,7 +76,7 @@ AC_DEFUN([AX_FUNC_ACCEPT_ARGTYPES],
  #include <winsock2.h>
  #endif
  extern $ac_cv_func_accept_return accept ($ac_cv_func_accept_arg1, $ac_cv_func_accept_arg2, $ac_cv_func_accept_arg3);],,dnl
-	 [ac_not_found=no ; break 3], ac_not_found=yes)
+	 [ac_not_found=no ; break 4], ac_not_found=yes)
         done
        done
       done
