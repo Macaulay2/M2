@@ -288,7 +288,8 @@ doc ///
      coords = coordinates S_0
      coords_0
  Caveat
-   @TO bertiniRefineSols@ will only refine non-singular solutions.  
+   @TO bertiniRefineSols@ will only refine non-singular solutions and does not
+   currently work for homogeneous systems.  
 ///;
 
 doc ///
