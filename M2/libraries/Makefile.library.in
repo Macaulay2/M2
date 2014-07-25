@@ -123,7 +123,9 @@ INCLUDEFILES ?=
 	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s --strip-program=@STRIP@ $$p $(BIN_DIR)) ; done
+#	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
+#	Stop stripping, anyway, so users can debug.
+	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib
