@@ -55,6 +55,19 @@ static int sort_sign(int a, int *v1, int b, int *v2)
     }
 }
 
+int SkewMultiplication::skew_degree(const int *exp) const
+// Returns the number of skew commuting variables appearing in 'exp'.n
+{
+  int deg = 0;
+  for (int i=0; i<_n_skew; i++)
+    {
+      int v = _skew_list[i];
+      if (exp[v] > 0)
+        deg++;
+    }
+  return deg;
+}
+
 int SkewMultiplication::skew_vars(const int *exp, int *result) const
     // The number s of skew variables in 'exp' is returned, and their
     // indices are placed in result[0], ..., result[s-1].

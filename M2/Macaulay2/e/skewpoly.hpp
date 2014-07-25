@@ -30,6 +30,10 @@ public:
   virtual ring_elem power(const ring_elem f, mpz_t n) const;
   virtual ring_elem power(const ring_elem f, int n) const;
 
+  // antipode: implements the isomorphism of R and the opposite of R
+  // this is done by multiplying every monomial of f which has degree
+  // d (in the skew commuting variables) by (-1)^(d choose 2).
+  ring_elem antipode(const ring_elem f) const;
 protected:
   virtual ring_elem mult_by_term(const ring_elem f,
                                      const ring_elem c,

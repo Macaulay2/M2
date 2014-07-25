@@ -79,12 +79,13 @@ CONFIGENV += PATH="/usr/@host@/bin:$(PATH)"
 # we have to detect which of these two answers it gives:
 #   ### Building without GNU MP support
 #   Using GNU MP, version 4.2.1
-# config-chk: .config-checked-$(VERSION)
-# clean::; rm -f .config-checked-*
-# .config-checked-$(VERSION) : $(BUILDDIR)/pari-config.log
-# 	: test whether pari successfully found gmp library during configuration :
-# 	grep 'Using GNU MP' $^
-# 	touch $@
+config-chk: .config-checked-$(VERSION)
+clean::; rm -f .config-checked-*
+.config-checked-$(VERSION):
+	: test whether pari successfully found gmp library during configuration :
+	echo 'configfile(s) : '$(BUILDDIR)/O*/pari.cfg
+	. $(BUILDDIR)/O*/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
+	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
 run-example: example; ./example
