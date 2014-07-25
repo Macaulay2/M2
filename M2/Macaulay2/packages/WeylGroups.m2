@@ -2438,12 +2438,13 @@ TEST ///
 	R=rootSystemA(2);
 	L=toList(positiveRoots(R));
 	v=weight(R,{1,2});
-	assert(eval(R,v,L#0)==2);
-	assert(eval(R,v,L#1)==3);
-	assert(eval(R,v,L#2)==1);
-	assert(eval(R,1,L#0)==0);
-	assert(eval(R,1,L#1)==1);
-	assert(eval(R,1,L#2)==1)
+    assert(L/(ell -> (eval(R,v,ell), eval(R,1,ell)))//sort == sort {(2,0),(3,1),(1,1)})
+	--assert(eval(R,v,L#0)==2);
+	--assert(eval(R,v,L#1)==3);
+	--assert(eval(R,v,L#2)==1);
+	--assert(eval(R,1,L#0)==0);
+	--assert(eval(R,1,L#1)==1);
+	--assert(eval(R,1,L#2)==1)
 ///
 
 doc ///
