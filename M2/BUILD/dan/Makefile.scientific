@@ -1,28 +1,23 @@
 # -*- makefile-gmake -*-
 
 M=64
-ifeq ($M,64)
-A=x86_64
-else
-ifeq ($M,32)
-A=i686
-else
-$(error "$M should be 32 or 64")
-endif
-endif
-CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M"
 
-# CONFIGOPTIONS += --enable-rpm
+# ifeq ($M,64)
+# A=x86_64
+# else
+# ifeq ($M,32)
+# A=i686
+# else
+# $(error "$M should be 32 or 64")
+# endif
+# endif
+# CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M"
+
+CONFIGOPTIONS += --enable-rpm
 CONFIGOPTIONS += --disable-ntl-wizard
-
-BUILDOPTIONS += RerunExamples=true
-
-CONFIGOPTIONS += CC=gcc-4.8.2 CXX=g++-4.8.2 FC=gfortran-4.8.2
-CONFIGOPTIONS += --prefix=$(HOME)/dublin-scratch/local/encap/Macaulay2-1.6.0.1
-
 DIRECTORY = scientific-$M
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific M=64 "
+# compile-command: "time make -f Makefile.scientific "
 # End:
