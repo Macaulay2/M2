@@ -38,13 +38,15 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "refine", "totalDegreeStartSystem", "newton",
+     "solveSystem", 
+     solveGenericSystemInTorus, -- works with PHCpack only
+     "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
-     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", "maxPrecision",
+     "EndZoneFactor", "maxCorrSteps", "InfinityThreshold", 
      "Normalize", "Projectivize",
      "AffinePatches", "DynamicPatch",
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
@@ -52,7 +54,7 @@ export {
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
      Bits, Iterations, ErrorTolerance, ResidualTolerance,
      "Attempts", "SingularConditionNumber", 
-     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, SquareUp,
+     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, squareUp,
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -68,8 +70,8 @@ protect Tracker -- an internal key in Point
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
 protect LanguageC, protect Linux, protect Language
-protect DeflationSequence, protect DeflationRandomMatrix
 protect maxNumberOfVariables
+protect maxPrecision
 
 -- DEBUG Core and NAGtypes ----------------------------------------
 debug Core -- to enable engine routines

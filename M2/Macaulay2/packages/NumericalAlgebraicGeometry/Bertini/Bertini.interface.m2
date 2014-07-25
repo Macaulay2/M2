@@ -14,13 +14,8 @@ solveBertini (List,OptionTable) := List => (F,o) -> (
 	or instance(ring 1_coeffR, RealField)
 	or coeffR===QQ or coeffR ===ZZ
 	) then error "expected coefficients that can be converted to complex numbers";  
-    -- R    ' := CC[gens R];
-    V := bertiniPosDimSolve(F,toBertiniOptions o); --apply(F, f ->sub(f,R'));
-    if dim V != 0 then error "input system is not 0-dimensional (infinite number of solutions)";
-    apply(V#0, p->(
-	    if #p.Points != 1 then error "expected one point per component";
-	    first p.Points
-	    ))
+    sols := bertiniZeroDimSolve(F,toBertiniOptions o); 
+    sols    
     )
 
 trackHomotopyBertini = method(TypicalValue => List)

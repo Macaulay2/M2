@@ -91,7 +91,8 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 		S'sols := flatten apply(dWS,W->apply(W.Points,p->p.LiftedPoint));
 		
 	     	T'.PolyMap = (map(ring S', ring T', vars ring S')) T'.PolyMap; -- hack!!!: rewrite with trackHomotopy
-	     	lifted'w' := track(S',T',S'sols, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	     	lifted'w' := track(S',T',S'sols, 
+		    NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii), Software=>o.Software);
 	     	targetPoints = apply(lifted'w', p->(
 		     	q := project(p,T.NumberOfVariables);
 		     	q.System = T;
@@ -104,7 +105,8 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
 	    LARGE := 100; ---!!!
 	    refinedPoints := refine(T, targetPoints, 
 		ErrorTolerance=>DEFAULT.ErrorTolerance*LARGE,
-		ResidualTolerance=>DEFAULT.ResidualTolerance*LARGE);
+		ResidualTolerance=>DEFAULT.ResidualTolerance*LARGE,
+		Software=>o.Software);
 	    regPoints := select(refinedPoints, p->p.SolutionStatus===Regular);
 	    singPoints := select(refinedPoints, p->p.SolutionStatus===Singular);
 	    targetPoints = if o.Output == Regular then regPoints else regPoints | solutionsWithMultiplicity singPoints;
