@@ -1647,6 +1647,15 @@ Description
   Example
     s_{3,2,1} * s_{1,1}
     q_{2,1} * q_{2,1}
+
+  Text
+  
+    To extract data in an element in a SchurRing, use @TO "listForm"@:
+  
+  Example
+    listForm (s_{3})^2
+    q_{2,1} * q_{2,1}
+    listForm oo
     
 SeeAlso
   schurRing
