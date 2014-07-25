@@ -42,31 +42,29 @@ ifeq ($(HOST_OS),mingw32)
 HOST_OS = mingw
 endif
 
-CONFIGURECMD = $(CONFIGENV) ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR)
+CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
+
+# Pari's configure script is needlessly confusing, since it's almost impossible to figure out what directory is chosen as the build directory.
+# We've opted to search for the directory containing the file pari.cfg, hoping it's unique.
+
+GETODIR  = `cd $(BUILDDIR) && find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
+GETODIR2 = `find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 
 ifeq (@PROFILING@,yes)
-CONFIGURECMD += -pg
-INSTALLOPTIONS = -C `config/objdir`.prf
-BUILDOPTIONS = -C `config/objdir`.prf
-CHECKOPTIONS = -C `config/objdir`.prf
+INSTALLOPTIONS = -C $(GETODIR2).prf
+BUILDOPTIONS = -C $(GETODIR2).prf
+CHECKOPTIONS = -C $(GETODIR2).prf
 else
 ifeq (@DEBUG@,yes)
-CONFIGURECMD += -g
-INSTALLOPTIONS = -C `config/objdir`.dbg
-BUILDOPTIONS = -C `config/objdir`.dbg
-CHECKOPTIONS = -C `config/objdir`.dbg
+INSTALLOPTIONS = -C $(GETODIR2).dbg
+BUILDOPTIONS = -C $(GETODIR2).dbg
+CHECKOPTIONS = -C $(GETODIR2).dbg
 else
-INSTALLOPTIONS = -C `config/objdir`
-BUILDOPTIONS = -C `config/objdir`
-CHECKOPTIONS = -C `config/objdir`
+INSTALLOPTIONS = -C $(GETODIR2)
+BUILDOPTIONS = -C $(GETODIR2)
+CHECKOPTIONS = -C $(GETODIR2)
 endif
 endif
-
-INSTALLOPTIONS = -C O$(HOST_OS)-$(HOST_CPU)
-BUILDOPTIONS   = -C O$(HOST_OS)-$(HOST_CPU)
-CHECKOPTIONS   = -C O$(HOST_OS)-$(HOST_CPU)
-
-CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib  ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
 
 CONFIGURECMD += | tee pari-config.log
 
@@ -83,8 +81,8 @@ config-chk: .config-checked-$(VERSION)
 clean::; rm -f .config-checked-*
 .config-checked-$(VERSION):
 	: test whether pari successfully found gmp library during configuration :
-	echo 'configfile(s) : '$(BUILDDIR)/O*/pari.cfg
-	. $(BUILDDIR)/O*/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
+	echo 'configfile(s) : '` find . -name pari.cfg `
+	. $(GETODIR2)/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
 	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile
