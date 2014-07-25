@@ -68,8 +68,6 @@ CHECKOPTIONS   = -C O$(HOST_OS)-$(HOST_CPU)
 
 CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib  ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
 
-CONFIGURECMD += | tee pari-config.log
-
 include ../Makefile.library
 
 # get the right binary utilities by putting them on the path, since no
