@@ -84,11 +84,11 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 
-AC_CHECK_TOOL(AR,gar ar,false)
+AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
-AC_CHECK_TOOL(DLLTOOL,gdlltool dlltool,false)
+AC_CHECK_TOOL(DLLTOOL,dlltool,false)
 AC_CHECK_TOOL(LD,ld,false)
-AC_CHECK_TOOL(STRIP,gstrip strip,false)
+AC_CHECK_TOOL(STRIP,strip,false)
 
 if test "$STRIPCMD" != ""
 then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
