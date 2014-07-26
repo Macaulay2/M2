@@ -3,7 +3,12 @@
 
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
-    new OptionTable from {} -- TODO: write all options
+    opt := {
+	TRACKTOLBEFOREEG=>o.CorrectorTolerance,
+	TRACKTOLDURINGEG=>o.CorrectorTolerance*o.EndZoneFactor,
+	FINALTOL=>o.CorrectorTolerance*o.EndZoneFactor	
+	};
+    new OptionTable from opt -- TODO: write all options
     )
 solveBertini = method(TypicalValue => List)
 solveBertini (List,OptionTable) := List => (F,o) -> (
