@@ -13,9 +13,17 @@ M=64
 # endif
 # CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M"
 
-CONFIGOPTIONS += --enable-rpm
-CONFIGOPTIONS += --disable-ntl-wizard
 DIRECTORY = scientific-$M
+
+ifeq ($(DEBUG),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
+   DIRECTORY := $(DIRECTORY).debug
+   CONFIGOPTIONS += --disable-ntl-wizard
+else
+   CONFIGOPTIONS += --enable-rpm
+endif
+
 include Makefile.include
 default: check
 # Local Variables:
