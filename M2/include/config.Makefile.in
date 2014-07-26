@@ -19,6 +19,7 @@ CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
+LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 
 # here we set the variables that "configure" uses
 # this is the only way to add libraries to the linking done by "gdbm", since it doesn't use LDLIBS or LOADLIBES
