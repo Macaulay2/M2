@@ -4,7 +4,13 @@
 
 #include "NAG.hpp"
 #include "matrix-con.hpp"
-#include <dlfcn.h>
+#ifdef HAVE_DLFCN_H
+ #include <dlfcn.h>
+#else
+ #define dlopen(x,y) NULL
+ #define dlsym(x,y) NULL
+ #define dlclose(x) (-1)
+#endif
 #include <time.h>
 #include <exception>
 #include "lapack.hpp"

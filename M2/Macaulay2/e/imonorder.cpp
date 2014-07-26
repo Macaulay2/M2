@@ -2,7 +2,11 @@
 
 #include "imonorder.hpp"
 #include "overflow.hpp"
-#include <alloca.h>
+#ifdef HAVE_ALLOCA_H
+ #include <alloca.h>
+#else
+ #include <malloc.h>
+#endif
 
 /* TODO:
    -- negative exponent versions need to be included (at least for MO_LEX)

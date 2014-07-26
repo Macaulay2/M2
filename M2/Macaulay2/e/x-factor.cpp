@@ -10,6 +10,7 @@
 
 #define Matrix FactoryMatrix
 #include <factory/factory.h>             // from Messollen's libfac
+#undef INT64
 #undef Matrix
 #undef ASSERT
 #include <NTL/ZZ.h>

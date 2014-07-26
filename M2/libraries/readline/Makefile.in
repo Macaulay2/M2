@@ -23,7 +23,14 @@ endif
 # warning: we have to set PATCHFILE first, so the dependencies work out, but $(TARFILE_DIR) isn't defined yet, so we use its value here:
 PATCHFILE = $(addprefix @abs_top_srcdir@/BUILD/tarfiles/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
 
+ifeq ($(VERSION) @host@,6.2 x86_64-w64-mingw32)
+PATCHFILE += @abs_srcdir@/patch-6.2-mingw64
+endif
+
 include ../Makefile.library
+
+CFLAGS += -Wfatal-errors
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
 PATCHCMD = cd $(BUILDDIR) && for i in $(PATCHFILE) ; do echo patching with $$i ; patch -p0 < $$i ; done

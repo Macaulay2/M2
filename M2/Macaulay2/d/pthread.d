@@ -1,3 +1,4 @@
+use M2;
 use evaluate;
 use expr;
 
@@ -73,6 +74,23 @@ taskCellFinalizer(tc:TaskCell,p:null):void := (
 
 header "#include <signal.h>";
 
+blockingSIGINT() ::= -- this macro and the next one are a matched pair: observe the braces within
+     Ccode(void, "{ 
+     	  #ifdef HAVE_SIGPROCMASK
+	   sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)
+          #else
+     	   void (*old)(int) = signal(SIGINT,SIG_IGN);
+	  #endif
+	  ");
+endBlockingSIGINT() ::=
+     Ccode(void, "
+     	  #ifdef HAVE_SIGPROCMASK
+	   sigprocmask(SIG_SETMASK,&old,NULL); 
+          #else
+     	   signal(SIGINT,old);
+	  #endif
+	  }");
+
 taskSerialNumber := 0;
 nextTaskSerialNumber():int := (
      r := taskSerialNumber;
@@ -82,10 +100,10 @@ nextTaskSerialNumber():int := (
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
-     Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
+     blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreate(startup,tc.body);
-     Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
+     endBlockingSIGINT();
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",taskCellFinalizer,",0,0,0)");
      Expr(tc));
 
@@ -153,10 +171,10 @@ setupfun("addCancelTask",addCancelTaskM2);
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
      tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
-     Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
+     blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreatePush(startup,tc.body);
-     Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
+     endBlockingSIGINT();
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",taskCellFinalizer,",0,0,0)");
      Expr(tc));
 

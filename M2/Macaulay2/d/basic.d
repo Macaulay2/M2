@@ -4,7 +4,6 @@ use expr;
 
 header "
   #include \"../e/engine.h\"
-  #include <M2/config.h>
   #ifdef HAVE_PYTHON
     #include <python2.5/Python.h>
   #else

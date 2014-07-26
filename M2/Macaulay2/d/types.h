@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#if HAVE_STDLIB_H
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
 
@@ -30,19 +30,19 @@ extern char *libfac_version;
 #include <unistd.h>
 #endif
 
-#if HAVE_SYS_TYPES_H
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
-#if HAVE_SYS_STAT_H
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 
-#if HAVE_INTTYPES_H
+#ifdef HAVE_INTTYPES_H
 #include <inttypes.h>
 #endif
 
-#if HAVE_MEMORY_H
+#ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
 
@@ -57,11 +57,11 @@ extern char *libfac_version;
 # endif
 #endif
 
-#if HAVE_SYS_WAIT_H
+#ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
 
-#if HAVE_SYS_RESOURCE_H
+#ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
 
@@ -71,41 +71,41 @@ extern char *libfac_version;
 #include <utime.h>
 #include <errno.h>
 
-#if HAVE_STRING_H
+#ifdef HAVE_STRING_H
 #include <string.h>
 #endif
 
-#if HAVE_STRINGS_H
+#ifdef HAVE_STRINGS_H
 #include <strings.h>
 #endif
 
 #include <math.h>
 
-#if HAVE_ALLOCA_H
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
 
 #include <setjmp.h>
 
-#if HAVE_SYS_IOCTL_H
+#ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>		/* just for window width */
 #endif
-#if HAVE_TERMIOS_H
+#ifdef HAVE_TERMIOS_H
 #include <termios.h>		/* just for window width */
 #endif
-#if HAVE_SYS_MMAN_H
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>		/* needed for mmap() */
 #endif
-#if HAVE_SYS_SOCKET_H
+#ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>		/* needed for args to socket(), bind() */
 #endif
-#if HAVE_NETDB_H
+#ifdef HAVE_NETDB_H
 #include <netdb.h>     	    	/* needed for gethostbyname() */
 #endif
-#if HAVE_NETINET_IN_H
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>	    	/* needed for struct sockaddr_in */
 #endif
-#if HAVE_ARPA_INET_H
+#ifdef HAVE_ARPA_INET_H
 #include <arpa/inet.h>	   	/* needed for inet_addr() */
 #endif
 
@@ -153,7 +153,12 @@ extern char *gnu_get_libc_version();
 
 #include "../dumpdata/dumpdata.h"
 
-extern sigjmp_buf interrupt_jump; /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
+ /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */
+ #ifdef HAVE_SIGLONGJMP
+  extern sigjmp_buf interrupt_jump;
+ #else
+  extern jmp_buf interrupt_jump;
+ #endif
 extern bool interrupt_jump_set;
 extern int reading_from_readline;
 

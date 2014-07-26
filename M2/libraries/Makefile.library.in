@@ -43,32 +43,44 @@ ifneq (@host_alias@,)
 CONFIGOPTIONS += --host=@host_alias@
 endif
 CONFIGOPTIONS += --cache-file=/dev/null
+TOOLNAMES =					\
+	AR=@AR@					\
+	AS=@AS@					\
+	DLLTOOL=@DLLTOOL@			\
+	OBJDUMP=@OBJDUMP@			\
+	STRIP=@STRIP@
 COMPILEFLAGS  =					\
 	CXXFLAGS="$(CXXFLAGS)"			\
 	CFLAGS="$(CFLAGS)"			\
 	FFLAGS="$(FCFLAGS)"			\
 	FCFLAGS="$(FCFLAGS)"			\
 	TARGET_ARCH=$(TARGET_ARCH)
-ALLFLAGS = \
+ALLFLAGS =					\
+	$(TOOLNAMES)				\
 	$(COMPILEFLAGS)				\
 	CPPFLAGS="$(CPPFLAGS)"			\
 	CC="$(CC)"				\
 	CXX="$(CXX)"				\
 	LDFLAGS="$(LDFLAGS)"			\
 	LOADLIBES="$(LOADLIBES)"		\
+	LIBS="$(LIBS)"				\
 	LDLIBS="$(LDLIBS)"
 CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure
-CONFIGURECMD  ?= $(PRECONFIGURE) && $(CONFIGENV) ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
+CONFIGURECMD  ?= $(PRECONFIGURE) && ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(ALLFLAGS) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
 BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
 STRIPFILES    ?= 
 ifeq ($(STRIPFILES),)
-  STRIPCMD = true
+  STRIPCMD = :
 else
-  STRIPCMD = strip $(STRIPFILES)
+ ifeq (@ENABLE_STRIP@,yes)
+  STRIPCMD = @STRIP@ $(STRIPFILES)
+ else
+  STRIPCMD = :
+ endif
 endif
 BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
@@ -82,7 +94,9 @@ show-flags:; $(CONFIGENV) :
 install: .installed-$(VERSION) config-chk
 unconfigure:; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
 reconfigure: unconfigure configure
-uncompile:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile: uncompile-basic uncompile-extra
+uncompile-basic:; rm -f .compiled-$(VERSION) .installed-$(VERSION)
+uncompile-extra:
 recompile: uncompile compile
 uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
@@ -109,7 +123,9 @@ INCLUDEFILES ?=
 	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ -s $$p $(BIN_DIR)) ; done
+#	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
+#	Stop stripping, anyway, so users can debug.
+	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib
@@ -123,7 +139,7 @@ ifeq ($(LICENSEFILES),)
 	@ echo "warning: *** no license files to be installed"
 else
 	$(MKDIR_P) $(LICENSE_DIR)
-	cd $(BUILDDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
+	cd $(UNTARDIR)/$(TARDIR) && for p in $(LICENSEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LICENSE_DIR)) ; done
 endif
 	touch $@
 

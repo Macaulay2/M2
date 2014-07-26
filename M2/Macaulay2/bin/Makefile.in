@@ -120,7 +120,7 @@ else
 ifeq (@OS@,MacOS)
 # we know about it
 else
-$(warning no static linking method configured for this OS or linker)
+$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE))
 endif
 endif
 endif
@@ -171,7 +171,10 @@ endif
 ifeq (@XML@,yes)
 M2_LIBRARIES += -lxml2
 endif
-M2_LIBRARIES += -lm -lc
+M2_LIBRARIES += -lm
+ifneq (@host_os@,mingw32)
+M2_LIBRARIES += -lc
+endif
 ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
 M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else
@@ -203,30 +206,34 @@ ifneq ("$(EXECSTACK)","no")
 	  fi
 endif
 	printenv LD_LIBRARY_PATH
-ifneq (@LDD@,)
+ifneq (@LDD@,false)
 	- @LDD@ $@.tmp
 endif
 ifneq (@OTOOL@,)
 	- @OTOOL@ -L $@.tmp
 endif
-ifneq "@OBJCOPY@" ""
+
+ifneq "@DEBUG@" "yes"
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
-ifeq "$(STRIP)" "yes"
-ifneq "@STRIPCMD@" ""
+ifeq "$(ENGINE_STRIP)" "yes"
+ifneq "@STRIP@" "false"
 ifeq (@STRIP_REMOVE_SECTION@,yes)
-	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+	@STRIP@ --remove-section=.comment --remove-section=.note "$@".tmp
 else
-	@STRIPCMD@ "$@".tmp
-ifneq "@OBJCOPY@" ""
+	@STRIP@ "$@".tmp
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif
 endif
 endif
 endif
+endif
+
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
-ifneq (@OBJDUMP@,)
+ifneq (@OBJDUMP@,false)
 	@OBJDUMP@ -x "$@".tmp | egrep RPATH || [ $$? -lt 2 ]
 	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
 else

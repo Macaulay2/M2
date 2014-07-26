@@ -9,6 +9,9 @@
 class Matrix;
 class GBMatrix;
 
+// an include file under mingw32 defines a macro with the name FreeModule:
+#undef FreeModule
+
 class FreeModule : public EngineObject
 {
   friend class Ring;

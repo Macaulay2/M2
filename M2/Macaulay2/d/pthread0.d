@@ -1,7 +1,7 @@
+use M2;
 declarations "
     #include <M2/gc-include.h>
     #include <../system/mutex.h>
-
 ";
 export voidPointer := Pointer "void *";
 export nullPointer() ::= Ccode(voidPointer,"((void *)0)");
