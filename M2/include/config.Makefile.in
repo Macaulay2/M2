@@ -69,6 +69,7 @@ endif
 
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
+LDFLAGS_FOR_BUILD := -L$(BUILTLIBPATH)/lib $(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
@@ -103,6 +104,7 @@ ifeq "@DEBUG@" "yes"
 CFLAGS += -debug
 CXXFLAGS += -debug
 LDFLAGS += -debug
+LDFLAGS_FOR_BUILD += -debug
 endif
 else
 M2_BOTH += -Wno-parentheses
@@ -136,6 +138,7 @@ STRIP = @STRIP@
 ifeq "$(ENABLE_STRIP)" "yes"
 ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
+LDFLAGS_FOR_BUILD  += -s
 endif
 endif
 MKDIR_P = @INSTALL@ -d
