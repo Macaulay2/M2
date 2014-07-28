@@ -1915,11 +1915,12 @@ assert(
 ------------------------------------------------
 
 TEST ///
+setRandomSeed 2
 S=QQ[x,y,z];
 r=matrix{{0,1,0},{0,0,1},{1,0,0}};
 s=matrix{{0,1,0},{1,0,0},{0,0,1}};
-S3=generateGroup({r,s},QQ);
-P=primaryInvariants(S,S3);
+S3=generateGroup({r,s},QQ)
+P=primaryInvariants(S,S3)
 assert(
      P=={x+y+z,x*y+x*z+y*z,x^3+y^3+z^3}
      )

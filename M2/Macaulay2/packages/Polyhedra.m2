@@ -8875,10 +8875,10 @@ assert(volume P == 4/3)
 -- Checking incompCones
 TEST ///
 L = {posHull matrix{{1,0},{1,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{-1,0},{0,1}},posHull matrix{{1,1},{0,1}},posHull matrix {{1,2},{2,1}}};
-assert(incompCones L == {(L#0,L#4),(L#3,L#4)})
+assert(set incompCones L === set {(L#0,L#4),(L#3,L#4)})
 L = L_{0..3}|{hirzebruch 3};
 assert(incompCones L == {(L#0,L#4),(L#2,L#4),(L#3,L#4)})
-assert(incompCones(L#2,L#4) == {(L#2,posHull matrix {{0,-1},{1,3}}),(L#2,posHull matrix {{0,-1},{-1,3}})})
+assert(set incompCones(L#2,L#4) === set {(L#2,posHull matrix {{0,-1},{1,3}}),(L#2,posHull matrix {{0,-1},{-1,3}})})
 L = {posHull matrix {{-1,0},{0,1}},posHull matrix {{-1,0},{0,-1}},posHull matrix {{0,-1},{-1,3}},posHull matrix {{0,-1},{1,3}}};
 L = {(L#0,L#2),(L#0,L#3),(L#1,L#2)};
 assert(set incompCones(normalFan hypercube 2,hirzebruch 3) === set L)
