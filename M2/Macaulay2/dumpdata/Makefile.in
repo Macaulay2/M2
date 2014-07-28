@@ -40,7 +40,7 @@ check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
-ifeq "@HAVE_PERSONALITY@" "1"
+ifeq "@HAVE_PERSONALITY@" "yes"
 all: personality
 clean::; rm -f personality
 all: personality @pre_bindir@  ; @INSTALL_PROGRAM@ $< @pre_bindir@/personality

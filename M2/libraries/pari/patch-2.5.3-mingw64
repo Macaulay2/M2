@@ -1,0 +1,17 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/pari/tmp/pari-2.5.3/src/language/init.c pari-2.5.3/src/language/init.c
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/pari/tmp/pari-2.5.3/src/language/init.c	2012-09-21 14:36:59.000000000 -0500
++++ pari-2.5.3/src/language/init.c	2013-05-08 00:15:46.895825400 -0500
+@@ -53,10 +53,10 @@
+   evalsigne(-1) | evallgefint(3),
+   2,
+ };
+-static const ulong readonly_ghalf[] = {
++static const unsigned long long readonly_ghalf[] = {
+   evaltyp(t_FRAC) | _evallg(3), /* ghalf */
+-  (ulong)(readonly_constants+4),
+-  (ulong)(readonly_constants+7)
++  (unsigned long long)(readonly_constants+4),
++  (unsigned long long)(readonly_constants+7)
+ };
+ THREAD GEN    bernzone;
+ GEN     primetab; /* private primetable */

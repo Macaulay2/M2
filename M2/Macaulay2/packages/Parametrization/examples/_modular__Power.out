@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 235497576 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
 
 i1 : modularPower(8,10003,101)
 

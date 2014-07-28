@@ -9,6 +9,9 @@
 class Matrix;
 class GBMatrix;
 
+// an include file under mingw32 defines a macro with the name FreeModule:
+#undef FreeModule
+
 class FreeModule : public immutable_object
 {
   friend class Ring;
@@ -62,6 +65,8 @@ public:
   FreeModule * schur       (const int *m)         const;
   FreeModule * exterior    (int p)                const;
   FreeModule * symm        (int p)                const;
+
+  M2_arrayintOrNull select_by_degrees(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const;
 
   void direct_sum_to(const FreeModule *G);
   int lowest_primary_degree() const;

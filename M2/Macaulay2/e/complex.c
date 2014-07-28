@@ -4,7 +4,7 @@
 #include "engine-includes.hpp"
 
 #if 0
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 // get declarations of outofmem and getmem
 #include "../d/M2mem.h"
 #include "../d/debug.h"

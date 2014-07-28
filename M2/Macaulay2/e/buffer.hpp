@@ -50,6 +50,7 @@ public:
   void put(unsigned int n);             // Format the integer, place into buffer
   void put(unsigned int n, int width);  // Format the integer, with given width field.
   void put(unsigned long n);            // Format the integer, place into buffer
+  void put(unsigned long long n);            // Format the integer, place into buffer
   void put(unsigned long n, int width); // Format the integer, with given width field.
   void put(std::string s) { put(s.data(), s.size()); }
 
@@ -69,6 +70,7 @@ public:
   buffer &operator<<(long n) { put(n); return *this; }
   buffer &operator<<(unsigned int n) { put(n); return *this; }
   buffer &operator<<(unsigned long n) { put(n); return *this; }
+  buffer &operator<<(unsigned long long n) { put(n); return *this; }
   buffer &operator<<(unsigned short n) { put(static_cast<unsigned int>(n)); return *this; }
   buffer &operator<<(int n) { put(n); return *this; }
   buffer &operator<<(char c) { put(c); return *this; }

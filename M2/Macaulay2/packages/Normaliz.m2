@@ -99,10 +99,10 @@ ring MonomialSubalgebra:=R->R.ring;
 
 ----------------------------------------------------------------------
 nmzDataPath="";
-nmzFilename="";
+nmzFilename="";    -- Set by the user, if empty, then we use a temporary file
 nmzNumberThreads=1;
-nmzUserCalled=true;  -- whether the user calls a method
-nmzFile="";
+--nmzUserCalled=true;  -- whether the user calls a method
+nmzFile="";        -- Internal name of the data files
 nmzVersion="";     -- normaliz
 nmzExecVersion=""; -- needs to be at least nmzMinExecVersion
 nmzMinExecVersion="2.8"; -- minimal normaliz version
@@ -137,17 +137,20 @@ nmzOptions= new MutableList from {
 -- sets the file for the exchange of data
 setNmzFile=()->
 (
-    if(nmzFilename!="")
-    then(
-        nmzFile=nmzDataPath|nmzFilename;
-    )
+    if nmzFilename!="" then
+        nmzFile=nmzDataPath|nmzFilename
     else
-    (
-     nmzFile=temporaryFileName();
-    );
-    return(nmzFile);
+        nmzFile=temporaryFileName();
 );
 
+-- checks if the user specified a new filename
+checkNmzFile=(errorMsg)->
+(
+    if nmzFilename!="" then  -- if the user specified a filename, we use it.
+        nmzFile = nmzDataPath|nmzFilename
+    else if nmzFile == "" then  --otherwise, there should be a temporary one.
+        error(errorMsg | ": No filename specified.");
+);
 
 
 -- get the normaliz executable with full path
@@ -173,13 +176,14 @@ getNmzExec=()->
 rmNmzFiles=()->
 (
     suffixes:={"in","gen","out","sup","egn","esp","inv","tri","typ","ht1","ext","cst","tgn"};
-    if(nmzFilename=="" and nmzUserCalled) then error("rmNmzFiles: no filename specified");
-    if(nmzFilename!="") then nmzFile=setNmzFile();
-    for i from 0 to #suffixes-1
-    do(
-      if(fileExists( nmzFile|"."|suffixes#i))
-      then removeFile(nmzFile|"."|suffixes#i);
+
+    checkNmzFile("rmNmzFiles");
+
+    for s in suffixes do (
+        if fileExists(nmzFile|"."|s) then 
+            removeFile(nmzFile|"."|s)
     );
+    
     nmzFilename="";
 );
 
@@ -246,18 +250,23 @@ changeColumns=(M,f,s)->
 
 -- writes the given data in a normaliz input file
 doWriteNmzData=method()
-doWriteNmzData(Matrix, ZZ, ZZ):=(sgr, numCols, nMode)->
-(
-  doWriteNmzData({(sgr,nMode)});
-);
 
 --writes several matrices in a normaliz input file
 doWriteNmzData(List):=(matrices)->
 (
-  if(nmzFilename=="" and nmzUserCalled)
-  then error("doWriteNmzData: no filename specified");
+  nmzModes := new HashTable from {
+      0 => "integral_closure",
+      1 => "normalization",
+      2 => "polytope",
+      3 => "rees_algebra",
+      4 => "hyperplanes",
+      5 => "equations",
+      6 => "congruences",
+      10 => "lattice_ideal",
+      20 => "grading"
+  };
 
-  if(nmzUserCalled) then nmzFile=setNmzFile();
+  checkNmzFile("doWriteNmzData");
 
   outf:=nmzFile|".in" << "";
 
@@ -277,8 +286,8 @@ doWriteNmzData(List):=(matrices)->
         );
         outf << s << endl;
      );
-     if (nmzMode==20) then
-        outf << "grading" << endl
+     if nmzModes#?nmzMode then
+        outf << nmzModes#nmzMode << endl
      else
         outf << nmzMode << endl;
   );
@@ -289,7 +298,8 @@ doWriteNmzData(List):=(matrices)->
 writeNmzData=method()
 writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
 (
-    doWriteNmzData(sgr,numColumns(sgr), nmzMode);
+    --doWriteNmzData(sgr,numColumns(sgr), nmzMode);
+    doWriteNmzData({(sgr,nmzMode)});
 );
 
 writeNmzData(List):= matrices->
@@ -302,22 +312,19 @@ writeNmzData(List):= matrices->
 readNmzData=method(TypicalValue=>Matrix)
 readNmzData(String):=(nmzSuffix)->
 (
-    if(any({"inv", "in", "out", "cst"},x->x==nmzSuffix))
-    then error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
+    if member(nmzSuffix, {"inv", "in", "out", "cst"}) then
+        error("readNmzData: To read .inv use getNumInvs(), to read .cst use readMultipleNmzData, to read .out or .in there is no function provided");
 
-    if(nmzFilename=="" and nmzUserCalled) then error("readNmzData: no filename specified");
-
-    if(nmzSuffix=="sup") -- for backward compatibility, should only appear if nmzUserCalled
-    then(
+    if(nmzSuffix=="sup") then ( -- for backward compatibility, should only appear if nmzUserCalled
           L:=readMultipleNmzData "cst";
-          return L#0;);
-
-    if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
-
-    if(not fileExists(nmzFile|"."|nmzSuffix))
-    then(
-        error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
+          return L#0;
     );
+
+    checkNmzFile("readNmzData");
+
+    if not fileExists(nmzFile|"."|nmzSuffix) then
+        error("readNmzData: No file "|nmzFile|"."|nmzSuffix|" found. Perhaps you need to activate another option.");
+
 
     if debugLevel > 0 then << "--reading " << nmzFile << "." << nmzSuffix << endl;
     inf:=get(nmzFile|"."|nmzSuffix);
@@ -342,9 +349,7 @@ readNmzData(String):=(nmzSuffix)->
 readMultipleNmzData=method()
 readMultipleNmzData String:=nmzSuffix->
 (
-     if(nmzFilename=="" and nmzUserCalled) then error("readMultipleNmzData: no filename specified");
-
-    if(nmzFilename!="" and nmzUserCalled) then nmzFile=setNmzFile();
+    checkNmzFile("readMultipleNmzData");
 
     if(not fileExists(nmzFile|"."|nmzSuffix))
     then(
@@ -396,9 +401,7 @@ getNumInvs=()->
     key:="";
     inv:=0;
 
-    if(nmzFilename=="" and nmzUserCalled) then error("getNumInvs: no filename specified");
-
-    if(nmzUserCalled) then nmzFile=nmzDataPath|nmzFilename;
+    checkNmzFile("getNumInvs");
 
     if(not fileExists(nmzFile|".inv"))
     then error("getNumInvs: No file "|nmzFile|".inv"|" found.");
@@ -531,8 +534,7 @@ runNormaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
 
 runNormaliz(List):=opts>>o->(s)->
 (
-    nmzFile=setNmzFile();
-    nmzUserCalled=false;
+    setNmzFile();
 
     checkNmzExecVersion();
 
@@ -562,11 +564,8 @@ runNormaliz(List):=opts>>o->(s)->
 
     if(not nmzGen)  -- return nothing if .gen is not
     then(            -- generated
-         if(nmzFilename=="")
-         then(
-             rmNmzFiles();
-         );
-         nmzUserCalled=true;  -- back to default
+         if nmzFilename=="" then rmNmzFiles();
+         --nmzUserCalled=true;  -- back to default
          return;
        );
 
@@ -575,6 +574,9 @@ runNormaliz(List):=opts>>o->(s)->
      nmzData:=readNmzData "gen";
      rc:=new RationalCone from {"gen"=> nmzData, "inv" =>getNumInvs()};
      if(nmzFilename=="") then rmNmzFiles();
+------
+--         nmzUserCalled=true;  -- back to default
+------
      return rc;
     );
 
@@ -596,7 +598,7 @@ runNormaliz(List):=opts>>o->(s)->
     cone:= new RationalCone from files;
 
     if(nmzFilename=="") then rmNmzFiles();
-    nmzUserCalled=true;  -- back to default
+--    nmzUserCalled=true;  -- back to default
     return cone;
 );
 
@@ -1472,7 +1474,7 @@ document {
       nmzFilename="example";
           sgr=matrix({{1,2,3},{4,5,6},{7,8,10}})
           writeNmzData(sgr,1)
-          assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","1"})
+          assert (lines get (nmzDataPath|nmzFilename|".in")=={"3","3","1 2 3 ","4 5 6 ","7 8 10 ","normalization"})
      ///,
      }
 

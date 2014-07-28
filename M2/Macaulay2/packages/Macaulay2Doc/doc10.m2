@@ -442,7 +442,7 @@ document {
      PARA {
 	  "For multivariate polynomials the
 	  factorization is done with code of Michael Messollen (see 
-	  ", TO "Singular-Libfac", ").  For univariate
+	  ", TO "Singular-Factory", ").  For univariate
 	  polynomials the factorization is in turn done with code of 
 	  Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
 	  },

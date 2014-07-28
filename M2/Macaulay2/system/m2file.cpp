@@ -1,4 +1,6 @@
 #include "m2file.hpp"
+#include "pthread-methods.hpp"
+
 #include <iostream>
 extern "C"
 {
@@ -6,9 +8,9 @@ extern stdio0_fileOutputSyncState stdio0_newDefaultFileOutputSyncState();
 };
 
 M2File::M2File(stdio0_fileOutputSyncState fileUnsyncState):
-  currentThreadMode(0),unsyncState(fileUnsyncState),exclusiveOwner(0),recurseCount(0),exclusiveRecurseCount(0)
+  currentThreadMode(0),unsyncState(fileUnsyncState),recurseCount(0),exclusiveRecurseCount(0)
 {
-
+  clearThread(exclusiveOwner);
 }
 M2File::~M2File()
 {
@@ -38,7 +40,7 @@ void M2File::waitExclusiveThread(size_t recurseCounter)
 	    //this is to cover the case where we switch from 2 to 1 and need to set no exclusive owner upon exclusive finish
 	    if(currentThreadMode!=2)
 	      {
-		exclusiveOwner=0;
+		clearThread(exclusiveOwner);
 	      }
 	    }
 	  m_MapMutex.unlock();
@@ -108,7 +110,7 @@ void M2File::releaseExclusiveThreadCount(size_t recurseCounter)
   recurseCount-=recurseCounter;
   if(!recurseCount)
     {
-      exclusiveOwner=0;
+      clearThread(exclusiveOwner);
       pthread_cond_broadcast(&exclusiveChangeCondition);
     }
   else
@@ -131,7 +133,7 @@ extern "C"
 	if(threadMode!=2)
 	  {
 	    if(file->exclusiveRecurseCount==0)
-	      file->exclusiveOwner=0;
+	      clearThread(file->exclusiveOwner);
 	    pthread_cond_broadcast(&file->exclusiveChangeCondition);
 	  }
       }

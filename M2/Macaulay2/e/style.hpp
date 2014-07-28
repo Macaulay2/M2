@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <string.h>
 #include <algorithm>
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 #endif
@@ -23,16 +24,6 @@
 #include "error.h"
 #include "buffer.hpp"
 #include "mem.hpp"
-
-#if defined(_WIN32)
-template <class T>
-inline void swap(T &t1, T &t2)
-{
-  T tmp = t1;
-  t1 = t2;
-  t2 = tmp;
-}
-#endif
 
 const int LT = -1;
 const int EQ = 0;

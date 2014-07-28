@@ -1,6 +1,6 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
-BUILT_TARGETS = untar fetch all check unconfigure 
+BUILT_TARGETS = untar fetch all check unconfigure reinstall
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 all:fetch
 $(ALL_TARGETS): Makefile.library
@@ -35,16 +35,21 @@ install-licenses:
 	fi
 
 ifeq (@SHARED@,yes)
-all:install-shared
-install-shared:
-	: installing sharable library files in @pre_librariesdir@/lib
-	if [ -d final/lib ] ; \
-	then rm -rf @pre_librariesdir@/lib ;\
-	     @INSTALL@ -d @pre_librariesdir@/lib ; \
-	     @TAR@ cf - --exclude="*.a" --exclude="*.la" --exclude="*.pc" --exclude="*.old" -C final/lib . \
-	     | @TAR@ xfv - -C @pre_librariesdir@/lib ; \
-	fi
+all: copy-dynamic-libraries
+copy-dynamic-libraries: copy-dynamic-libraries-announce
+copy-dynamic-libraries-announce:always ;: installing sharable library files in @pre_librariesdir@/lib
+copy-dynamic-libraries: @pre_librariesdir@
+@pre_librariesdir@:; $(MKDIR_P) $@
+define copy-lib-file
+    copy-dynamic-libraries: $2
+    $2:$1; @TAR@ cf - -C `dirname "$1"` `basename "$1"` | @TAR@ xf - -C `dirname "$2"`
+endef
+$(foreach libfile,												\
+    $(wildcard $(BUILTLIBPATH)/lib/*.so.*) $(wildcard $(BUILTLIBPATH)/lib/*.dylib),				\
+    $(eval $(call copy-lib-file,$(libfile),$(subst $(BUILTLIBPATH)/lib,@pre_librariesdir@,$(libfile))))	\
+    )
 endif
+
 $(foreach f,Makefile Makefile.library,					\
 	$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
 show-licenses:; grep -wnH license @srcdir@/*/Makefile.in

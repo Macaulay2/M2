@@ -1,3 +1,4 @@
+use M2;
 use evaluate;
 use expr;
 
@@ -25,17 +26,17 @@ startup(tb:TaskCellBody):null := (
      --warning wrong return type
      f := tb.fun; tb.fun = nullE;
      x := tb.arg; tb.arg = nullE;
-     if notify then stderr << "--thread " << " started" << endl;
+     if notify then stderr << "--task " << tb.serialNumber << " started" << endl;
      --add thread to supervisor
 
      r := applyEE(f,x);
      when r is err:Error do (
 	  printError(err);
-	  if notify then stderr << "--thread " << " ended, after an error" << endl;
+	  if notify then stderr << "--task " << tb.serialNumber << " ended, after an error" << endl;
 	  )
      else (
      	  tb.returnValue = r;
-     	  if notify then stderr << "--thread " << " ready, result available " << endl;
+     	  if notify then stderr << "--task " << tb.serialNumber << " ready, result available " << endl;
 	  );
      compilerBarrier();
      null());
@@ -48,10 +49,11 @@ isFunction(e:Expr):bool := (
      is s:SpecialExpr do isFunction(s.e)
      else false);
 
+taskDone(tb:TaskCellBody):bool := tb.resultRetrieved || taskDone(tb.task);
+
 cancelTask(tb:TaskCellBody):Expr := (
-     if tb.resultRetrieved then return buildErrorPacket("thread result already retrieved");
-     if taskDone(tb.task) then (
-	  if notify then stderr << "task done, cancellation not needed" << endl;
+     if taskDone(tb) then (
+	  if notify then stderr << "--task " << tb.serialNumber << " done, cancellation not needed" << endl;
 	  return nullE;
 	  );
      taskInterrupt(tb.task);
@@ -66,19 +68,42 @@ taskCellFinalizer(tc:TaskCell,p:null):void := (
      -- because this finalizer may be called early, before all initialization is done.
      -- It is safe to write to stderr, because we've made output to it not depend on global variables being
      -- initialized.
-     if taskDone(tc.body.task) then return;
-     if notify then stderr << "--cancelling inaccessible thread " << endl;
+     if taskDone(tc.body) then return;
+     if notify then stderr << "--cancelling inaccessible task " << tc.body.serialNumber << " still running" << endl;
      when cancelTask(tc.body) is err:Error do (printError(err);) else nothing);
 
 header "#include <signal.h>";
 
+blockingSIGINT() ::= -- this macro and the next one are a matched pair: observe the braces within
+     Ccode(void, "{ 
+     	  #ifdef HAVE_SIGPROCMASK
+	   sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)
+          #else
+     	   void (*old)(int) = signal(SIGINT,SIG_IGN);
+	  #endif
+	  ");
+endBlockingSIGINT() ::=
+     Ccode(void, "
+     	  #ifdef HAVE_SIGPROCMASK
+	   sigprocmask(SIG_SETMASK,&old,NULL); 
+          #else
+     	   signal(SIGINT,old);
+	  #endif
+	  }");
+
+taskSerialNumber := 0;
+nextTaskSerialNumber():int := (
+     r := taskSerialNumber;
+     taskSerialNumber = taskSerialNumber+1;		    -- race condition here, solve later
+     taskSerialNumber);
+
 createTask2(fun:Expr,arg:Expr):Expr :=(
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
-     Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
+     tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreate(startup,tc.body);
-     Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
+     endBlockingSIGINT();
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",taskCellFinalizer,",0,0,0)");
      Expr(tc));
 
@@ -145,11 +170,11 @@ setupfun("addCancelTask",addCancelTaskM2);
 
 schedule2(fun:Expr,arg:Expr):Expr := (
      if !isFunction(fun) then return WrongArg(1,"a function");
-     tc := TaskCell(TaskCellBody(nextHash(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
-     Ccode(void, "{ sigset_t s, old; sigemptyset(&s); sigaddset(&s,SIGINT); sigprocmask(SIG_BLOCK,&s,&old)");
+     tc := TaskCell(TaskCellBody(nextHash(),nextTaskSerialNumber(),Ccode(taskPointer,"((void *)0)"), false, fun, arg, nullE ));
+     blockingSIGINT();
      -- we are careful not to give the new thread the pointer tc, which we finalize:
      tc.body.task=taskCreatePush(startup,tc.body);
-     Ccode(void, "sigprocmask(SIG_SETMASK,&old,NULL); }");
+     endBlockingSIGINT();
      Ccode(void, "GC_REGISTER_FINALIZER(",tc,",(GC_finalization_proc)",taskCellFinalizer,",0,0,0)");
      Expr(tc));
 

@@ -12,7 +12,7 @@
 #include "types.h"
 #include "debug.h"
 
-#if HAVE_ALLOCA_H
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
 #else
 #ifdef __GNUC__
@@ -27,17 +27,17 @@
 #error PROFILING not defined
 #endif
 
-#if HAVE_LINUX_PERSONALITY_H
+#ifdef HAVE_LINUX_PERSONALITY_H
 #include <linux/personality.h>
 #undef personality
 #endif
 
-#if HAVE_DECL_ADDR_NO_RANDOMIZE
+#ifdef HAVE_DECL_ADDR_NO_RANDOMIZE
 #else
 #define ADDR_NO_RANDOMIZE 0x0040000
 #endif
 
-#if HAVE_PERSONALITY
+#ifdef HAVE_PERSONALITY
 extern long personality(unsigned long persona);
 #endif
 
@@ -53,10 +53,12 @@ static void putstderr(const char *m) {
 
 static void ignore(int x) { }
 
+/*
 void WerrorS(const char *m) {
   putstderr(m);
   exit(1);
 }
+*/
 
 void WarnS(const char *m) {
   putstderr(m);
@@ -64,12 +66,16 @@ void WarnS(const char *m) {
 
 static void alarm_handler(int sig), interrupt_handler(int sig);
 static void oursignal(int sig, void (*handler)(int)) {
+ #ifdef HAVE_SIGACTION
   struct sigaction act;
   act.sa_flags = 0;	/* no SA_RESTART */
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
   sigfillset(&act.sa_mask);
-  sigaction(sig,&act,NULL); /* old way: signal(sig,interrupt_handler); */
+  sigaction(sig,&act,NULL);
+ #else 
+  signal(sig,handler);
+ #endif
 }
 
 static int have_arg_no_int;
@@ -82,10 +88,14 @@ void system_handleInterruptsSetup(M2_bool handleInterrupts) {
      }
 
 static void unblock(int sig) {
+ #ifdef HAVE_SIGPROCMASK
   sigset_t s;
   sigemptyset(&s);
   sigaddset(&s,sig);
   sigprocmask(SIG_UNBLOCK,&s,NULL);
+ #else
+  signal(sig,SIG_DFL);
+ #endif
 }
 
 static void alarm_handler(int sig) {
@@ -118,19 +128,33 @@ void stack_trace() {
 
 #elif __GNUC__
 
-static sigjmp_buf stack_trace_jump;
+#ifdef HAVE_SIGLONGJMP
+ static sigjmp_buf stack_trace_jump;
+#else
+ static jmp_buf stack_trace_jump;
+#endif
 
 void segv_handler2(int sig) {
      // fprintf(stderr,"--SIGSEGV during stack trace\n");
-     siglongjmp(stack_trace_jump,1);
+     #ifdef HAVE_SIGLONGJMP
+      siglongjmp(stack_trace_jump,1);
+     #else
+      longjmp(stack_trace_jump,1);
+     #endif
 }
 
 void stack_trace() {
      void (*old)(int) = signal(SIGSEGV,segv_handler2); /* in case traversing the stack below causes a segmentation fault */
      unblock(SIGSEGV);
      fprintf(stderr,"-- stack trace, pid %ld:\n", (long)getpid());
-     if (0 == sigsetjmp(stack_trace_jump,TRUE)) {
-#	  define D fprintf(stderr,"level %d -- return addr: 0x%08lx -- frame: 0x%08lx\n",i,(long)__builtin_return_address(i),(long)__builtin_frame_address(i))
+     if (0 == 
+         #ifdef HAVE_SIGLONGJMP
+	  sigsetjmp(stack_trace_jump,TRUE)
+	 #else
+	  setjmp(stack_trace_jump)
+	 #endif
+	 ) {
+#	  define D fprintf(stderr,"level %d -- return addr: 0x%p -- frame: 0x%p\n",i,__builtin_return_address(i),__builtin_frame_address(i))
 #	  define i 0
 	  D;
 #	  undef i
@@ -280,12 +304,21 @@ void segv_handler(int sig) {
 }
 
 #if DUMPDATA
-static sigjmp_buf loaddata_jump;
+#ifdef HAVE_SIGLONGJMP
+ static sigjmp_buf loaddata_jump;
+#else
+ static jmp_buf loaddata_jump;
+#endif
 #endif
 
-static sigjmp_buf abort_jump;
+#ifdef HAVE_SIGLONGJMP
+ static sigjmp_buf abort_jump;
+ sigjmp_buf interrupt_jump;
+#else
+ static jmp_buf abort_jump;
+ jmp_buf interrupt_jump;
+#endif
 
-sigjmp_buf interrupt_jump;
 bool interrupt_jump_set = FALSE;
 
 #undef ABORT
@@ -329,7 +362,11 @@ static void interrupt_handler(int sig) {
 				   interrupts_interruptShield = FALSE;
 				   evaluate_clearAlarmedFlag();
 				   evaluate_determineExceptionFlag();
-				   siglongjmp(abort_jump,1); 
+                                   #ifdef HAVE_SIGLONGJMP
+				    siglongjmp(abort_jump,1); 
+				   #else
+                                    longjmp(abort_jump,1); 
+				   #endif
 				   }
 			      else {
 				   #                   endif
@@ -364,7 +401,12 @@ static void interrupt_handler(int sig) {
 		    /* readline doesn't cancel the partially typed line, for some reason, and this doesn't help: */
 		    if (reading_from_readline) rl_free_line_state();
 		    #endif
-		    if (interrupt_jump_set) siglongjmp(interrupt_jump,1);
+		    if (interrupt_jump_set) 
+			 #ifdef HAVE_SIGLONGJMP
+			 siglongjmp(interrupt_jump,1);
+			 #else
+		         longjmp(interrupt_jump,1);
+			 #endif
 		    }
 	       }
           }
@@ -487,7 +529,9 @@ extern char *GC_stackbottom;
 extern void arginits(int, const char **);
 extern bool gotArg(const char *arg, const char ** argv);
 
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
+#endif
 
 static void call_shared_library() {
 #if 0
@@ -511,7 +555,7 @@ static void call_shared_library() {
 
 void* testFunc(void* q )
 {
-  printf("testfunc %lu\n",(unsigned long)q);
+  printf("testfunc %p\n",q);
   return NULL;
 }
 
@@ -546,7 +590,11 @@ void* interpFunc(void* vargs2)
      M2_argv = M2_tostrings(argc,(char **)saveargv);
      M2_args = M2_tostrings(argc == 0 ? 0 : argc - 1, (char **)saveargv + 1);
      interp_setupargv();
-     sigsetjmp(abort_jump,TRUE);
+     #ifdef HAVE_SIGLONGJMP
+      sigsetjmp(abort_jump,TRUE);
+     #else
+      setjmp(abort_jump);
+     #endif
      abort_jump_set = TRUE;
 
 #if __GNUC__
@@ -597,7 +645,7 @@ char **argv;
      Py_Initialize();
 #endif
 
-#if HAVE_PERSONALITY && !PROFILING
+#if defined HAVE_PERSONALITY && !PROFILING
      if (!gotArg("--no-personality", (const char **)argv)) {
 	  /* this avoids mmap() calls resulting in address randomization */
 	  int oldpersonality = personality(-1);
@@ -632,7 +680,8 @@ char **argv;
 
 #ifdef HAVE__SETMODE
      {
-     extern void _setmode(int, int);
+	  /* extern void _setmode(int, int); */
+	  /* extern int  _setmode(int, int); */
      _setmode(STDIN ,_O_BINARY);
      _setmode(STDOUT,_O_BINARY);
      _setmode(STDERR,_O_BINARY);
@@ -662,7 +711,13 @@ char **argv;
 #endif
 
 #if DUMPDATA
-     if (0 != sigsetjmp(loaddata_jump,TRUE)) {
+     if (0 != 
+	 #ifdef HAVE_SIGLONGJMP
+	 sigsetjmp(loaddata_jump,TRUE)
+	 #else
+	 setjmp(loaddata_jump)
+         #endif
+	  ) {
 	  if (gotArg("--notify", saveargv)) putstderr("--loaded cached memory data");
 	  struct GC_stack_base sb;
 	  GC_get_stack_base(&sb);
@@ -764,7 +819,11 @@ int system_loaddata(int notify, M2_string datafilename){
 #else
      char *datafilename_s = tocharstar(datafilename);
      volatile int fence0 = FENCE;
+     #ifdef HAVE_SIGLONGJMP
      sigjmp_buf save_loaddata_jump;
+     #else
+     jmp_buf save_loaddata_jump;
+     #endif
      volatile int fence1 = FENCE;
      /* int loadDepth = system_loadDepth; */
      memcpy(save_loaddata_jump,loaddata_jump,sizeof(loaddata_jump));
@@ -776,7 +835,11 @@ int system_loaddata(int notify, M2_string datafilename){
        abort();
      }
      if (M2_notify) putstderr("--loaddata: data loaded, ready for longjmp");
-     siglongjmp(loaddata_jump,1);
+     #ifdef HAVE_SIGLONGJMP
+      siglongjmp(loaddata_jump,1);
+     #else
+      longjmp(loaddata_jump,1);
+     #endif
 #endif
      }
 

@@ -6,7 +6,7 @@
 #include <gmp.h>
 
 #include "config.h"
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 extern void outofmem();
 extern void IM2_initialize();

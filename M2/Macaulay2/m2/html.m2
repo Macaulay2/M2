@@ -454,15 +454,16 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
-runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- return false if error
+runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'loadPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
+     setseed := " --no-randomize";
+     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", FileName => \"",pkg#"source file","\")'") else "";
      src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
      -- we specify --no-readline because the readline library catches SIGINT:
-     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | ldpkg;
+     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
      cmdname := commandLine#0;
      -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
      -- running the examples:
@@ -475,6 +476,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode) -> ( -- re
      cmd := ulimit | "cd " | rundir | "; " | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
      stderr << cmd << endl;
      makeDirectory rundir;
+     for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
 	  scan(reverse findFiles rundir, f -> if isDirectory f then (
@@ -524,7 +526,7 @@ runString := (x,pkg,usermode) -> (
      rm := fn -> if fileExists fn then removeFile fn;
      rmall := () -> rm \ {inf, tmpf, outf};
      inf << x << endl << close;
-     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,usermode);
+     ret := runFile(inf,hash x,outf,tmpf,"test results",pkg,t->t,usermode,{});
      if ret then (rm inf; rm outf;);
      ret)
 
@@ -676,14 +678,14 @@ installPackage Package := opts -> pkg -> (
      	  
 	  -- copy package source subdirectory
 	  srcDirectory := replace("PKG",pkg#"title",installationLayout#"package");
-	  dn := realpath currentSourceDir | buildPackage;
-	  if isDirectory dn
+	  auxiliaryFilesDirectory := realpath currentSourceDir | buildPackage;
+	  if isDirectory auxiliaryFilesDirectory
 	  then (
 	       if not (options pkg).AuxiliaryFiles
-	       then error ("package ",toString pkg," has auxiliary files in \"",dn,"\", but newPackage wasn't given AuxiliaryFiles=>true");
-	       if verbose then stderr << "--copying auxiliary source files from " << dn << endl;
+	       then error ("package ",toString pkg," has auxiliary files in \"",auxiliaryFilesDirectory,"\", but newPackage wasn't given AuxiliaryFiles=>true");
+	       if verbose then stderr << "--copying auxiliary source files from " << auxiliaryFilesDirectory << endl;
 	       makeDirectory (buildPrefix|srcDirectory);
-	       copyDirectory(dn, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
+	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
 	       )
 	  else (
 	       if (options pkg).AuxiliaryFiles
@@ -777,6 +779,7 @@ installPackage Package := opts -> pkg -> (
 	  hadExampleError = false;
 	  numExampleErrors = 0;
 	  scan(pairs pkg#"example inputs", (fkey,inputs) -> (
+		    examplefiles := if pkg#"example data files"#?fkey then pkg#"example data files"#fkey else {};
 		    -- args:
 		    inf := infn fkey;
 		    outf := outfn fkey;
@@ -808,7 +811,7 @@ installPackage Package := opts -> pkg -> (
 			 )
 		    else (
 			 inf << concatenate apply(inputs, s -> s|"\n") << close;
-			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,if opts.UserMode === null then not noinitfile else opts.UserMode)
+			 if runFile(inf,inputhash,outf,tmpf,desc,pkg,changefun,if opts.UserMode === null then not noinitfile else opts.UserMode,examplefiles)
 			 then (
 			      removeFile inf;
 			      possiblyCache();

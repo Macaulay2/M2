@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: 774052082 *}
---loading configuration for package "MapleInterface" from file /home/janko/.Macaulay2/init-MapleInterface.m2
 
 i1 : chineseRemainder({1,2,3},{3,5,7})
 

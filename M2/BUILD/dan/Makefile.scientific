@@ -1,18 +1,37 @@
 # -*- makefile-gmake -*-
 
-DIRECTORY = scientific
+M=64
+
+# ifeq ($M,64)
+# A=x86_64
+# else
+# ifeq ($M,32)
+# A=i686
+# else
+# $(error "$M should be 32 or 64")
+# endif
+# endif
+# CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M"
+
+DIRECTORY = scientific-$M
+
+ifeq ($(DEBUG),yes)
+   INSTALLOPTIONS += prefix=/none
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
+   DIRECTORY := $(DIRECTORY).debug
+   CONFIGOPTIONS += --disable-ntl-wizard
+else
+   CONFIGOPTIONS += --enable-rpm
+endif
 
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
-CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
 # CONFIGOPTIONS += --build=i386-pc-linux-gnu
 
 # just for testing, not for production:
 # CONFIGOPTIONS += --enable-fflas-ffpack
 
-CONFIGOPTIONS += --enable-rpm
 include Makefile.include
 default: check
-
 # Local Variables:
 # compile-command: "time make -f Makefile.scientific "
 # End:

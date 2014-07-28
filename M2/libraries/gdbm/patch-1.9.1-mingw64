@@ -1,0 +1,22 @@
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gdbm/tmp/gdbm-1.9.1/src/flatfile.c gdbm-1.9.1/src/flatfile.c
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gdbm/tmp/gdbm-1.9.1/src/flatfile.c	2011-08-12 15:22:44.000000000 -0500
++++ gdbm-1.9.1/src/flatfile.c	2013-05-08 15:57:18.929985000 -0500
+@@ -20,7 +20,6 @@
+ 
+ /* Include system configuration before all else. */
+ #include "autoconf.h"
+-#include <arpa/inet.h>
+ 
+ #include "gdbmdefs.h"
+ #include "gdbm.h"
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gdbm/tmp/gdbm-1.9.1/src/testgdbm.c gdbm-1.9.1/src/testgdbm.c
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/gdbm/tmp/gdbm-1.9.1/src/testgdbm.c	2011-08-12 15:23:08.000000000 -0500
++++ gdbm-1.9.1/src/testgdbm.c	2013-05-08 16:26:30.570173000 -0500
+@@ -27,7 +27,6 @@
+ #include <errno.h>
+ #include <ctype.h>
+ #include <signal.h>
+-#include <sys/ioctl.h>
+ #ifdef HAVE_SYS_TERMIOS_H
+ #include <sys/termios.h>
+ #endif

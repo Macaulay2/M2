@@ -655,7 +655,15 @@ fixupTable := new HashTable from {
 		    if class x === TO then x
 		    else if class x === TOH then TO {x#0}
 		    else if class x === String then x
-		    else error ("unrecognizable Subnode list item: ",x))))
+		    else error ("unrecognizable Subnode list item: ",x)))),
+     ExampleFiles => v -> (
+	  if not currentPackage.Options.AuxiliaryFiles then error "ExampleFiles option specified, but AuxiliaryFiles option is not set to 'true'";
+	  if not (instance(v,List) and all(v,fn->instance(fn,String))) then error "expected ExampleFiles option to be a list of strings";
+	  auxiliaryFilesDirectory := currentPackage#"source directory" | currentPackage#"title" | "/";
+	  v = apply(v, fn -> auxiliaryFilesDirectory | fn);
+	  for fn in v do if not fileExists fn then error ("example data file not found: ", fn);
+	  currentPackage#"example data files"#currentNodeName = v;
+	  "")
      }
 caveat := key -> getOption(key,Caveat)
 seealso := key -> getOption(key,SeeAlso)
@@ -672,7 +680,8 @@ documentOptions := new OptionTable from {
      SeeAlso => null,
      SourceCode => null,
      Caveat => null,
-     Subnodes => null
+     Subnodes => null,
+     ExampleFiles => null
      }
 reservedNodeNames := set {"Top", "Table of Contents", "Symbol Index"}
 

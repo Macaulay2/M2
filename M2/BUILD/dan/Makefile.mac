@@ -11,7 +11,7 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no
@@ -20,19 +20,16 @@ M64=yes
 FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
-
+CONFIGOPTIONS += --disable-ntl-wizard
 
 # We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-# CC=gcc-4.2
-# CXX=g++-4.2
 
-# now I've installed gcc 4.6.2
-# but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:
-# CC=/usr/local/bin/gcc
-# CXX=/usr/local/bin/g++
+ifeq ($(MATHICGB),yes)
+CONFIGOPTIONS += --enable-mathicgb
+endif
 
 ifeq ($(FFPACK),yes)
 CONFIGOPTIONS += --enable-fflas-ffpack
@@ -57,27 +54,31 @@ endif
 unexport DEBUG
 unexport PROFILE
 
-CC := gcc
-CXX := g++
+# use the latest version from homebrew, not clang:
+CC  := gcc-4.9
+CXX := g++-4.9
+FC  := gfortran-4.9
 
-CC := clang
-CXX := clang++
+BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
 CXX += -m64
-export MPIR_CONFIGOPTIONS=ABI=64
+# export MPIR_CONFIGOPTIONS=ABI=64
 else
 DIRECTORY := mac32
 CC  += -m32
 CXX += -m32
-export MPIR_CONFIGOPTIONS=ABI=32
+# export MPIR_CONFIGOPTIONS=ABI=32
 endif
 
-V = -mmacosx-version-min=10.6
-CC  += $V
-CXX += $V
+DIRECTORY := $(DIRECTORY)-$(BRANCH)
+
+# the warning messages about this from clang have gotten noisy:
+# V = -mmacosx-version-min=10.6
+# CC  += $V
+# CXX += $V
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
 
@@ -98,7 +99,7 @@ ifeq ($(PRODUCTION),yes)
 endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
-   CONFIGOPTIONS += --enable-debug --disable-optimize
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
    DIRECTORY := $(DIRECTORY).debug
 endif
 
@@ -109,6 +110,7 @@ ifeq ($(PROFILE),yes)
 endif
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+
 # Local Variables:
 # compile-command: "time make -w -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
 # End:

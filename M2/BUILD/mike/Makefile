@@ -1,16 +1,187 @@
-# checking out the source code:
-#
-#      svn co svn://Macaulay2.math.uiuc.edu/Macaulay2/trunk/M2 M2
-
 .PHONY: always
 
 always:
 
+################
+## mac os x ####
+################
+darwin64 : always
+	mkdir -p builds.tmp/darwin64
+	cd builds.tmp/darwin64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# the following has all optional libs of worth
+opt64-all : always
+	mkdir -p builds.tmp/opt64-all
+	cd builds.tmp/opt64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# for adding tbb in for mathicgb:
+#		LDFLAGS="-L/usr/local/lib -ltbb" \
+
+debug64-all : always
+	mkdir -p builds.tmp/debug64-all
+	cd builds.tmp/debug64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--disable-strip \
+		--enable-debug \
+		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+####################
+## clang versions ##
+####################
+opt64-clang : always
+	mkdir -p builds.tmp/opt64-clang
+	cd builds.tmp/opt64-clang; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+debug64-clang : always
+	mkdir -p builds.tmp/debug64-clang
+	cd builds.tmp/debug64-clang; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# the following has all optional libs of worth
+opt64-clang-all : always
+	mkdir -p builds.tmp/opt64-all
+	cd builds.tmp/opt64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+debug64-clang-all : always
+	mkdir -p builds.tmp/debug64-all
+	cd builds.tmp/debug64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="clang -m64" CXX="clang++ -m64" \
+		--build=x86_64-apple-darwin \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--disable-strip \
+		--enable-debug \
+		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+##################
+## linux #########
+##################
+linux-opt64 : always
+	mkdir -p builds.tmp/opt64
+	cd builds.tmp/opt64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+# 		CC="gcc -m64" CXX="g++ -m64" \
+
+linux-debug64 : always
+	mkdir -p builds.tmp/debug64
+	cd builds.tmp/debug64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		CPPFLAGS="-DENGINE_DEBUG_" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+linux-opt64-all : always
+	mkdir -p builds.tmp/opt64-all
+	cd builds.tmp/opt64-all; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+######## below this line is older ######################
 sandboxed : always
 	mkdir -p sandbox64
 	cd sandbox64; ../../../configure \
 		--prefix="`pwd`/sandbox" \
 		--enable-download
+
+
 
 dan-ubuntu64: always
 	mkdir -p dan-ubuntu64
@@ -33,15 +204,18 @@ opt64 : always
 		--enable-dmg \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-opt64-clang : always
+opt64-clang-old : always
 	mkdir -p opt64-clang
 	cd opt64-clang; ../../../configure \
 		--prefix="`pwd`/installed" \
 		CC="clang -m64" CXX="clang++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-dmg \
+		--disable-frobby \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac pari"
+
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
 #		CFLAGS="-fno-strict-aliasing" CXXFLAGS="-fno-strict-aliasing" \
 
@@ -120,17 +294,39 @@ linux-debug64-mathic : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-opt64-linbox : always
-	mkdir -p opt64-linbox
-	cd opt64-linbox; ../../../configure \
+
+opt64-clang-linbox : always
+	mkdir -p opt64-clang-linbox
+	cd opt64-clang-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
+		CC="clang -m64" CXX="clang++ -m64" \
 		--build=x86_64-apple-darwin \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-linbox \
 		--enable-memtailor \
 		--enable-mathic \
+		--enable-mathicgb \
+		--enable-flint \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+debug64-linbox : always
+	mkdir -p debug64-linbox
+	cd debug64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		CC="gcc -m64" CXX="g++ -m64" \
+		--build=x86_64-apple-darwin \
+		--enable-debug \
+		--disable-optimize \
+		CPPFLAGS="-DENGINE_DEBUG" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-linbox \
+		--enable-memtailor \
+		--enable-mathic \
+		--enable-mathicgb \
 		--enable-flint \
 		--disable-strip \
 		--enable-download \
@@ -166,7 +362,7 @@ opt64-flint : always
 
 #		CC="gcc-4.2 -m64" CXX="g++-4.2 -m64" 
 
-debug64-linbox : always
+debug64-linbox-only : always
 	mkdir -p debug64-linbox
 	cd debug64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
@@ -194,7 +390,7 @@ debug64-givaro : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
 
-debug64 : always
+debug64-old : always
 	mkdir -p debug64
 	cd debug64; ../../../configure \
 		--prefix="`pwd`/installed" \
@@ -316,7 +512,6 @@ ubuntu64-linbox : always
 	mkdir -p opt64-linbox
 	cd opt64-linbox; ../../../configure \
 		--prefix="`pwd`/installed" \
-		--enable-memtailor \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \
@@ -324,6 +519,7 @@ ubuntu64-linbox : always
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+#		--enable-memtailor \
 
 ubuntu64-linbox-debug : always
 	mkdir -p debug64-linbox
@@ -332,6 +528,19 @@ ubuntu64-linbox-debug : always
 		CPPFLAGS="-DENGINE_DEBUG" \
 		--enable-debug \
 		--disable-optimize \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--enable-flint \
+		--enable-linbox \
+		--disable-strip \
+		--enable-download \
+		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory libfac frobby pari"
+
+ubuntu64-linbox-profile : always
+	mkdir -p profile64-linbox
+	cd profile64-linbox; ../../../configure \
+		--prefix="`pwd`/installed" \
+		--enable-profile \
 		--enable-fflas-ffpack \
 		--enable-givaro \
 		--enable-flint \

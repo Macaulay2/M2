@@ -392,6 +392,12 @@ extern "C" {
        then (0,0) is returned.
     */
 
+  const RingElement* /* or null */ rawRingElementAntipode(const RingElement* f);
+  /* If the ring is not a skew commuting poly ring, this is the identity map.  Otherwise
+     this returns a poly, with the signs of the coefficients possibly changed, 
+     this implements the (anti-)isomorphism of the ring and its opposite ring.
+  */
+
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
             int v,
@@ -714,6 +720,14 @@ extern "C" {
      * If F has a Schreyer order, the result has one as well.
      */
 
+  M2_arrayintOrNull rawFreeModuleSelectByDegrees(const FreeModule* F,
+                                                 M2_arrayint lo,
+                                                 M2_arrayint hi); 
+  /* If F_i has multi-degree >= lo, AND <= hi, then add i to the result
+     IF: lo has length 0, then treat that as -infinity in each component.
+     Same with hi.
+  */
+
   /**************************************************/
   /**** Matrix routines *****************************/
   /**************************************************/
@@ -842,7 +856,6 @@ extern "C" {
 
   const Matrix /* or null */ * IM2_Matrix_submatrix1(const Matrix *M,
                                              M2_arrayint cols); /* drg: connected rawSubmatrix*/
-
 
   const Matrix /* or null */ * IM2_Matrix_koszul(int p, const Matrix *M); /* drg: connected rawKoszul*/
 
@@ -1853,11 +1866,6 @@ enum gbTraceValues
   void rawFactor2(const RingElement *f, const RingElement *minpoly,
                  engine_RawRingElementArrayOrNull *result_factors,
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
-  void rawFactorOverTower(const RingElement *f,
-                          const Matrix *M, /* the tower */
-                          engine_RawRingElementArrayOrNull *result_factors,
-                          M2_arrayintOrNull *result_powers); /* connected to rawFactorOverTower  */
-
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 

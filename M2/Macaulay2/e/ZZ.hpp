@@ -4,6 +4,7 @@
 #define _ZZ_hh_
 
 #include "ring.hpp"
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 class CoefficientRingZZ_NTL;

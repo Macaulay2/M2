@@ -31,7 +31,7 @@ include ./Makefile.files
 VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
-STRIP = @STRIP@
+ENABLE_STRIP = @ENABLE_STRIP@
 ############################## main targets
 echo = $(shell echo "echo: $1" >&2) $1
 
@@ -79,7 +79,8 @@ M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow
+pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
+version-tmp.cc: pari-c.h
 ifeq "@__INTEL_COMPILER@" "no"
 pari-c.o: CFLAGS += -Wno-unused
 endif
@@ -103,7 +104,7 @@ endif
 .SUFFIXES: .d .sig .dep .res .test .m2
 .PHONY : clean all check tags
 
-ifeq "@HAVE_NO_PARENTHESES_EQUALITY@" "yes"
+ifeq "@HAVE_WPARENTHESES_EQUALITY@" "yes"
 DCFLAGS += -Wno-parentheses-equality
 endif
 
@@ -146,10 +147,14 @@ M2INCLUDES += -I@srcdir@/../regex
 
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
+
+CPPFLAGS += -Wno-fatal-errors
+
 CFLAGS += $(M2_CFLAGS) -Werror
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wno-unused-label
 endif
+
 # # C standards
 # ## CFLAGS += -std=c89
 # # c99 allows declarations and statements to be mingled:
@@ -172,7 +177,9 @@ M2.o : ../../include/M2/config.h
 
 all: M2inits1.o
 all: libM2inits2.a
-libM2inits2.a: M2inits2.o ; ar ru $@ $^
+libM2inits2.a: M2inits2.o
+	:; @AR@ ru $@ $^
+	:; @RANLIB@ $@
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'

@@ -1,6 +1,8 @@
 VPATH = @srcdir@
 
 # license for mpir: GNU LGPL v2.1 or later
+LICENSEFILES = README COPYING COPYING.LIB
+
 VERSION = 2.6.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
@@ -23,10 +25,19 @@ CONFIGOPTIONS += --enable-gmpcompat --enable-cxx $(MPIR_CONFIGOPTIONS)
 # this is supposed to work under x86_64, but doesn't:
 # CONFIGOPTIONS +=  --enable-fat
 
-ifeq (@SHARED@,no)
-CONFIGOPTIONS += --disable-shared
-endif
+# We enable the shared library because we want to use the version of libpari
+# that uses libgmp, and the pari makefile refuses to make libpari.a, the
+# static library.
+# ifeq (@SHARED@,no)
+# CONFIGOPTIONS += --disable-shared
+# endif
+
 include ../Makefile.library
+
+ifeq (@host@,x86_64-w64-mingw32)
+# to work around a bug, where yasm puts no global symbols in the *.o files
+CONFIGOPTIONS += --host=none_64-w64-mingw32 RANLIB=@RANLIB@ AS=@AS@ STRIP=@STRIP@ AR=@AR@ DLLTOOL=@DLLTOOL@ OBJDUMP=@OBJDUMP@
+endif
 
 ifeq (@DEBUG@ @GCC@,yes yes)
 CC := $(CC) -g

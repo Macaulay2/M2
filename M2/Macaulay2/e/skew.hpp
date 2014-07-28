@@ -21,6 +21,9 @@ public:
   bool is_skew_var(int i) const { return _skew_exp[i]; }
   int skew_variable(int i) const { return _skew_list[i]; }
 
+  // number of variables occuring in 'exp' which are skew variables
+  int skew_degree(const int *exp) const;
+
   int skew_vars(const int *exp, int *result) const;
   // The number s of skew variables in 'exp' is returned, and their
   // indices are placed in result[0], ..., result[s-1].

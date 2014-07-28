@@ -10,7 +10,8 @@
 #include "engine-includes.hpp"
 #if 0
 #include <M2/config.h>
-#include <gc/gc.h>
+#include <M2/gc-include.h>
+
 #include "../d/M2mem.h"
 #endif
 #define ALLOC getmem

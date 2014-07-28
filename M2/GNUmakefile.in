@@ -6,8 +6,13 @@ VPATH = @srcdir@
 all install: \
 	check-make configured check-for-undefined-configure-variables\
 	srcdir protect-configs configfiles check-machine \
-	all-in-subdirs report-M2-location
-
+	M2 all-in-subdirs report-M2-location
+M2: GNUmakefile
+	rm -f M2
+	( echo 'export LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH' ; \
+	  echo 'exec @pre_bindir@/M2 "$$@"' \
+	  ) >M2
+	chmod a+x M2
 define package
 all install-$1: all-$1
 install: install-$1
@@ -26,13 +31,14 @@ distclean:clean distclean-in-subdirs distclean-this-dir
 distclean-this-dir:
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args
 	rm -f include/M2/synchronization.h
+	find . -type d -empty -delete
 $(foreach t,all check clean distclean,					\
 	$(foreach d,libraries Macaulay2 distributions check-configure,	\
 	   $(eval .PHONY: $t-in-subdirs)				\
 	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)			\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 clean:
-	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
+	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
 	rm -f pre-install.sh post-install.sh normal-install.sh
 install: configured normal; $(MAKE) -C distributions $@
@@ -86,11 +92,11 @@ CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/con
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
 protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
-	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
+	: "checking for strings that look like undefined configure variables in all *.in files..."
 	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
-relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
+relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ENABLE_STRIP=no @pre_exec_prefix@/bin/M2@EXE@
 unmark-packages:; $(MAKE) -C Macaulay2/packages $@
 reconfigure: reconfigure-top-only unconfigure-libs 
 unconfigure-libs:; $(MAKE) -C libraries unconfigure
