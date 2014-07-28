@@ -21,7 +21,7 @@ check-make:
 	@ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
 	@ echo ... okay
 
-configure : configure.ac config/files # aclocal.m4
+configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
 get-autoconf :

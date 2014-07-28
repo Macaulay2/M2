@@ -8,7 +8,7 @@ PRE.cc   = $(COMPILE.cc) -E
 
 include @srcdir@/Makefile.files
 include Makefile.common
-CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c
+CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
 CXXFLAGS += -std=c++0x
 
 # to exclude files in documentation itself from processing it is neccesary to divide the path into 2 parts.

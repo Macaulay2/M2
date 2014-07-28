@@ -574,7 +574,6 @@ Exit(err:Error):void := exit(
      else errorExit
      );
 
-header "#include <unistd.h>";
 header "#include \"startup-header.h\"";
 export cachedFile := { filename:string, contents:string };
 export startupFile := cachedFile(

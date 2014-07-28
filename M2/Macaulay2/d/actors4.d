@@ -8,9 +8,7 @@ use struct;
 use pthread;
 
 header "
-
-  #include <engine.h>
-
+#include <engine.h>
 ";
 
 internalName(s:string):string := (

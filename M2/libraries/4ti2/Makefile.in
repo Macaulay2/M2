@@ -8,7 +8,8 @@ TARDIR = 4ti2-1.6.2
 PRECONFIGURE = autoconf
 
 # URL = http://www.4ti2.de/version_$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+STRIPFILES = src/groebner/4ti2int32@EXEEXT@ src/groebner/4ti2int64@EXEEXT@
 LICENSEFILES = README
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/4ti2/Makefile

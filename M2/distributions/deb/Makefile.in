@@ -43,13 +43,14 @@ no-sign:; @ echo 'You may have wanted to sign the *.deb files with the command  
 %.sig:
 %.sig: %; gpg --local-user Macaulay2 --detach-sign $^
 
-chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
+chk-opts: check-DEBARCH check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled 
 # Debian prefers stripped binaries, but we don't:
 # chk-opts: check-strip-enabled
+check-DEBARCH:; if [ "$(DEBARCH)" = none ] ; then echo "error: unrecognized *.deb architecture: @ARCH@"; exit 1; fi
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
 	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
@@ -179,7 +180,7 @@ macaulay2-common/control : macaulay2-common/control.prelim macaulay2-common/data
 	) >$@
 clean::; rm -f macaulay2-common/control
 distclean: clean; rm -f Makefile control macaulay2/control.prelim macaulay2-common/control.prelim
-% : %.in; cd ../..; ./config.status distributions/deb/$@
+Makefile : Makefile.in; cd ../..; ./config.status distributions/deb/$@
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/deb "

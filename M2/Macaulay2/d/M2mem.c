@@ -81,7 +81,7 @@ char *getmem_clear(size_t n)
      note: GC_MALLOC clears memory before returning.
      If you switch to another memory allocator, you must clear it explicitly with this:
   */
-  bzero(p,n);
+  memset(p,0,n);
   #endif
   #ifdef DEBUG
   trapchk(p);
@@ -124,7 +124,7 @@ char *getmem_atomic_clear(size_t n)
   enter_getmem();
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem2(n);
-  bzero(p,n);
+  memset(p,0,n);
 #ifdef DEBUG
   trapchk(p);
 #endif
