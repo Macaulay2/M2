@@ -64,9 +64,7 @@ various modern operating systems:
        sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
   Scientific linux:
-    sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
-    For making an rpm file, install fakeroot manually, from:
-    	 http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
+    sudo yum install -y autoconf bison emacs fakeroot flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack libtool libxml2-devel ncurses-devel readline-devel rpm-build zlib-devel
 
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
