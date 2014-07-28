@@ -22,18 +22,10 @@ FIX_UNWIND=no
 # CONFIGOPTIONS += --disable-strip
 CONFIGOPTIONS += --disable-ntl-wizard
 
-
 # We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-# CC=gcc-4.2
-# CXX=g++-4.2
-
-# now I've installed gcc 4.6.2
-# but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:
-# CC=/usr/local/bin/gcc
-# CXX=/usr/local/bin/g++
 
 ifeq ($(MATHICGB),yes)
 CONFIGOPTIONS += --enable-mathicgb
@@ -63,9 +55,9 @@ unexport DEBUG
 unexport PROFILE
 
 # use the latest version from homebrew, not clang:
-CC  := /usr/local/bin/gcc-4.9
-CXX := /usr/local/bin/g++-4.9
-FC  := /usr/local/bin/gfortran-4.9
+CC  := gcc-4.9
+CXX := g++-4.9
+FC  := gfortran-4.9
 
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 

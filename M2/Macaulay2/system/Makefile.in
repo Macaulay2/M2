@@ -8,9 +8,11 @@ include ../../include/config.Makefile
 	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
 	@ echo " ** creating $@ from $<"
 	@       @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+ifneq ($(DEPENDS),no)
 include supervisor.dep
 include m2file.dep
 include tests.dep
+endif
 CPPFLAGS := -I@srcdir@ -I../d -I@srcdir@/../e $(CPPFLAGS) -I@srcdir@/../d -I@srcdir@/../c
 .PHONY: tags
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
