@@ -68,8 +68,6 @@ CHECKOPTIONS = -C $(GETODIR2)
 endif
 endif
 
-CONFIGURECMD += | tee pari-config.log
-
 include ../Makefile.library
 
 # get the right binary utilities by putting them on the path, since no

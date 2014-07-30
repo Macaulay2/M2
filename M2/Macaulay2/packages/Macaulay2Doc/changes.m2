@@ -70,14 +70,30 @@ document {
 	  --      UL {
 	  -- 	    }
 	  --      },
-	  -- LI { "packages that have been published and certified:",
-	  --      UL {
-	  --      	    }
-	  --      },
-	  -- LI { "new packages:",
-	  --      UL {
-	  -- 	    }
-	  --      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "QuillenSuslin::QuillenSuslin", ", a package by Brett Barwick and Branden Stone for 
+			 computing a basis of a projective module over a polynomial ring, has been published." },
+		    LI { star, " ", TO "GraphicalModels::GraphicalModels", ", a package by Luis Garcia-Puente,
+			 Sonja Petrovic, Mike Stillman, and Seth Sullivant, for discrete and Gaussian graphical models, has been published." },
+		    LI { star, " ", TO "InvariantRing::InvariantRing", ", a package by Thomas Hawes
+			 for constructing the invariant ring of a finite group, has been published." },
+		    LI { star, " ", TO "MonomialAlgebras::MonomialAlgebras", ", a package by David Eisenbud,
+			 Janko Boehm, and Max Nitsche for decomposing a monomial algebra as a module over a subalgebra, has been published." }
+	       	    }
+	       },
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ... has been added." },
+		    LI { TO "Book3264Examples::Book3264Examples", ", a package by Charley Crissman containing
+			 Schubert2 code for some of the examples and exercises in 
+			 the book '3264 and all that', by Eisenbud and Harris,
+			 has been added." 
+			 },
+		    LI { TO "EnumerationCurves::EnumerationCurves", ", a package by Hiep Dang for enumeration of rational curves via torus actions, has been added." }
+	  	    }
+	       },
 	  -- LI { "improved packages:",
 	  --      UL {
 	  --      	    }
@@ -87,7 +103,8 @@ document {
 		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
 			 ", TO "document", ", which allows the package developer to specify that copies of certain
 			 auxiliary files should be visible in the current directory while example code is
-			 running."},
+			 running."
+			 },
 	       	    LI {
 			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
 			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
@@ -103,12 +120,20 @@ document {
 			 "A new command line option, ", TT "--no-time", ", arranges for the function ", TO "currentTime", "
 			 to return 0 always, for reproducility of results, as an aid in debugging."
 			 },
-            LI {
-                "A new command ", TO "antipode", " has been added.  This function implements
-                the anti-isomorphism between left and right modules in skew commuting poly rings.  
-                It is used when transposing a matrix over a ring with skew commuting variables, basically,
-                so that the transpose of a complex of matrices will still be a complex of matrices."
-			    }
+		    LI {
+			 "A new function, ", TO "submatrixByDegrees", ", allows the user to select a submatrix of
+			 a matrix by specifying intervals of acceptable column degrees or row degrees."
+			 },
+		    LI {
+			 "New functions ", TO "elapsedTime", " and ", TO "elapsedTiming", ", analogous to ", TO "time", " and ", TO "timing", ",
+			 measure elapsed time instead of CPU time."
+			 },
+            	    LI {
+                	 "A new command ", TO "antipode", " has been added.  This function implements
+                	 the anti-isomorphism between left and right modules in skew commuting poly rings.  
+                	 It is used when transposing a matrix over a ring with skew commuting variables, basically,
+                	 so that the transpose of a complex of matrices will still be a complex of matrices."
+			 }
 	  	    }
 	       },
 	  LI { "functionality changed:",
@@ -151,7 +176,7 @@ document {
 	       },
 	  LI { "new packages:",
 	       UL {
-		    LI { TO "PushForward::PushForward", ", a package for for computing the push-forward functor for finite ring maps,
+		    LI { TO "PushForward::PushForward", ", a package for computing the push-forward functor for finite ring maps,
 			 has been added.  (It should have been added to the previous distribution.)" 
 			 },
 		    LI { TO "EliminationMatrices::EliminationMatrices", ", a package for computing resultants,
