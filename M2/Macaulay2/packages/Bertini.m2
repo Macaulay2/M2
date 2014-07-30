@@ -19,7 +19,7 @@ newPackage(
   },
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
-  -- DebuggingMode => false,
+ -- DebuggingMode => true,
   DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
@@ -1063,7 +1063,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     --plus line containing integer (before), then blank line, and one more line
     
     --finally, we have the number of linears and the number of coefficients per linear
-    linCoeffDims = select("[0-9]+", first l);
+    linCoeffDims = select("[0-9-]+", first l);
     l = drop(l,1);
 
     --now we just read in the matrix
@@ -1073,7 +1073,7 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
     
     for i from 1 to value(linCoeffDims#1) do ( 
 	for j from 1 to value(linCoeffDims#0) do (
-            coefParts = select("[0-9]+/[0-9]+", first l);
+            coefParts = select("[0-9-]+/[0-9-]+", first l);
             rw = join(rw, {toCC(53,value(coefParts#0)) + 
 		    ii*toCC(53,value(coefParts#1))});  
 	    -- definitely losing data here, going from rational number to float!
@@ -1115,7 +1115,13 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
           
 	  if (#coeffList > 0) then N = matrix(coeffList) 
 	      else N = map(CC^0,CC^(numVars+1),0); 
-          
+	  
+	   -- rearrange columns so slice from NAGtypes
+	  --returns the correct linear functional
+	  
+	  firstCol:=N_{0};
+	  N=(submatrix'(N, ,{0})|firstCol);   
+	   
 	  (wList#codimNum).Slice = N;
  	  
           );
