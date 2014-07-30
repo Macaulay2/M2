@@ -1,25 +1,25 @@
 -- -*- coding: utf-8 -*-
---------------------------------------------------------------------------------
--- Copyright 2009, 2010, 2011, 2012  Gregory G. Smith
+------------------------------------------------------------------------------
+-- Copyright 2009, 2010, 2011, 2012, 2013, 2014  Gregory G. Smith
 --
--- This program is free software: you can redistribute it and/or modify it under
--- the terms of the GNU General Public License as published by the Free Software
--- Foundation, either version 3 of the License, or (at your option) any later
--- version.
+-- This program is free software: you can redistribute it and/or modify it
+-- under the terms of the GNU General Public License as published by the Free
+-- Software Foundation, either version 3 of the License, or (at your option)
+-- any later version.
 --
 -- This program is distributed in the hope that it will be useful, but WITHOUT
--- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
--- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
--- details.
+-- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-- FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+-- more details.
 --
--- You should have received a copy of the GNU General Public License along with
--- this program.  If not, see <http://www.gnu.org/licenses/>.
---------------------------------------------------------------------------------
+-- You should have received a copy of the GNU General Public License along
+-- with this program.  If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------------
 newPackage(
   "NormalToricVarieties",
   AuxiliaryFiles => true,
-  Version => "1.2",
-  Date => "3 May 2012",
+  Version => "1.3",
+  Date => "3 July 2014",
   Authors => {{
       Name => "Gregory G. Smith", 
       Email => "ggsmith@mast.queensu.ca", 
@@ -67,9 +67,10 @@ export {
   "makeSmooth"
   }
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- CODE
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+KK := QQ  -- global base ring
 -- constructing normal toric varieties
 NormalToricVariety = new Type of Variety
 NormalToricVariety.synonym = "normal toric variety"
@@ -81,7 +82,7 @@ expression NormalToricVariety := X -> new FunctionApplication from {
 normalToricVariety = method(
   TypicalValue => NormalToricVariety, 
   Options => {
-    CoefficientRing => QQ,
+    CoefficientRing => KK,
     MinimalGenerators => false,
     Variable => getSymbol "x",	  
     WeilToClass => null})
@@ -130,12 +131,14 @@ isWellDefined NormalToricVariety := Boolean => X -> (
     f := F#i;
     -- check whether the rays in the cone have the same length
     try C := transpose matrix apply(f, i -> V#i) else (
-      if debugLevel > 0 then << "-- not all rays have the same length" << endl;
+      if debugLevel > 0 then (
+	<< "-- not all rays have the same length" << endl);
       flag = false; 
       break);
     -- check whether the rays are lists of integers
     if ZZ =!= ring C then (
-      if debugLevel > 0 then << "-- not all rays are lists of integers" << endl;
+      if debugLevel > 0 then (
+	<< "-- not all rays are lists of integers" << endl);
       flag = false; 
       break);
     H := fourierMotzkin C;
@@ -167,21 +170,28 @@ isWellDefined NormalToricVariety := Boolean => X -> (
     if flag === false then break);
   return flag)
 
-affineSpace = method()
-affineSpace ZZ := NormalToricVariety => d -> (
+affineSpace = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+affineSpace ZZ := NormalToricVariety => opts -> d -> (
   if d < 1 then error "-- expected a positive integer";
-  return normalToricVariety(entries id_(ZZ^d), {toList(0..d-1)}))
+  return normalToricVariety(entries id_(ZZ^d), {toList(0..d-1)}, 
+    CoefficientRing => opts.CoefficientRing, Variable => opts.Variable))
 
-projectiveSpace = method()
-projectiveSpace ZZ := NormalToricVariety => d -> (
+projectiveSpace = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+projectiveSpace ZZ := NormalToricVariety => opts -> d -> (
   if d < 1 then error "-- expected a positive integer";
   V := {toList(d:-1)} | entries id_(ZZ^d);
   F := subsets(d+1,d);
-  X := normalToricVariety(V,F);
-  return X)
+  return normalToricVariety(V,F,
+    CoefficientRing => opts.CoefficientRing, Variable => opts.Variable))
 
-weightedProjectiveSpace = method()
-weightedProjectiveSpace List := NormalToricVariety => q -> (
+weightedProjectiveSpace = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+weightedProjectiveSpace List := NormalToricVariety => opts -> q -> (
   if #q < 2 then error "-- expected a list with at least two elements";
   if not all(q, i -> i > 0) then error "-- expected positive integers";
   d := #q-1;
@@ -189,16 +199,20 @@ weightedProjectiveSpace List := NormalToricVariety => q -> (
     error ("--  the " | toString d | "-elements have a common factor"));
   V := entries kernelLLL matrix {q};
   F := subsets(d+1,d);
-  X := normalToricVariety(V,F);
-  return X)
+  return normalToricVariety(V,F,
+    CoefficientRing => opts.CoefficientRing, Variable => opts.Variable))
 
-hirzebruchSurface = method()
-hirzebruchSurface ZZ := NormalToricVariety => a -> (
+hirzebruchSurface = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+hirzebruchSurface ZZ := NormalToricVariety => opts -> a -> (
   V := {{1,0},{0,1},{-1,a},{0,-1}};
   F := {{0,1},{1,2},{2,3},{0,3}};
   W := matrix{{1,-a,1,0},{0,1,0,1}};
-  X := normalToricVariety(V,F, WeilToClass => W);
-  return X)
+  return normalToricVariety(V,F, 
+    CoefficientRing => opts.CoefficientRing, 
+    Variable => opts.Variable,
+    WeilToClass => W))
 
 NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
   V1 := transpose matrix rays X;
@@ -209,11 +223,21 @@ NormalToricVariety ** NormalToricVariety := NormalToricVariety => (X,Y) -> (
   n := #rays X;
   F2 = apply(F2, s -> apply(s, i -> i+n));
   F := flatten table(F1,F2, (s,t) -> s|t);
-  XY := normalToricVariety(V,F);
-  return XY)
+  W1 := fromWDivToCl X;
+  W2 := fromWDivToCl Y;
+  return normalToricVariety(V,F, 
+    CoefficientRing => coefficientRing ring X,
+    WeilToClass => W1 ++ W2))
 
-kleinschmidt = method()
-kleinschmidt (ZZ,List) := NormalToricVariety => (d,a) -> (
+NormalToricVariety ^** ZZ := NormalToricVariety => (X,n) -> (
+  if n <= 0 then error "expected a positive integer";
+  if n == 1 then return X
+  else return X ** (X ^** (n-1)))
+
+kleinschmidt = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+kleinschmidt (ZZ,List) := NormalToricVariety => opts -> (d,a) -> (
   if d < 0 then error "-- expected a nonnegative integer";
   r := #a;
   s := d-r+1;
@@ -226,8 +250,10 @@ kleinschmidt (ZZ,List) := NormalToricVariety => (d,a) -> (
   F := flatten table(toList(0..r),toList(r+1..r+s), 
     (i,j) -> select(L, k -> i =!= k and j =!= k));
   deg := {{0,1}} | apply(r, i -> {-a#i,1}) | apply(s, j -> {1,0});
-  X := normalToricVariety(V,F, WeilToClass => transpose matrix deg);
-  return X)
+  return normalToricVariety(V,F, 
+    CoefficientRing => opts.CoefficientRing, 
+    Variable => opts.Variable,
+    WeilToClass => transpose matrix deg))
 
 -- This function is not exported.
 --
@@ -246,8 +272,10 @@ getFano := memoize( d -> (
 	x = value x;
 	((x#0,x#1),drop(x,2))))))
 
-smoothFanoToricVariety = method()
-smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
+smoothFanoToricVariety = method(Options => {
+    CoefficientRing => KK,
+    Variable => getSymbol "x"})
+smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => opts -> (d,i) -> (
   local s;
   local X;
   if d < 1 or i < 0 then (
@@ -269,16 +297,18 @@ smoothFanoToricVariety (ZZ,ZZ) := NormalToricVariety => (d,i) -> (
   else if i === 0 then return projectiveSpace d
   else if d === 5 then (
     s = (getFano(d))#(d,i);
-    X = normalToricVariety(s#0,s#1);
-    return X) 
+    return normalToricVariety(s#0,s#1,
+      CoefficientRing => opts.CoefficientRing, Variable => opts.Variable)) 
   else if d === 6 then (
     s = (getFano(d))#(d,i);
-    X = normalToricVariety(s#0,s#1);
-    return X)    
+    return normalToricVariety(s#0,s#1,
+      CoefficientRing => opts.CoefficientRing, Variable => opts.Variable))
   else (
     s = (getFano(4))#(d,i);
-    X = normalToricVariety(s#0,s#1, WeilToClass => transpose matrix s#2);
-    return X))
+    return normalToricVariety(s#0,s#1, 
+      CoefficientRing => opts.CoefficientRing, 
+      Variable => opts.Variable,
+      WeilToClass => transpose matrix s#2)))
 
 -- this function interfaces with the Polyhedra package
 normalToricVariety Fan := opts -> FF -> (
@@ -297,8 +327,7 @@ normalToricVariety Fan := opts -> FF -> (
 normalToricVariety Polyhedron := opts -> P -> normalToricVariety normalFan P
 
 
-
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- basic properties and invariants
 
 -- The method 'rays' is defined in 'Polyhedra'
@@ -323,6 +352,7 @@ isSmooth NormalToricVariety := Boolean => (cacheValue symbol isSmooth)(X -> (
 
 isComplete NormalToricVariety := Boolean => (cacheValue symbol isComplete)(X -> (
     flag := true;
+    if orbits(X,1) == {} then flag = false;
     -- there is only one complete normal toric variety of dimension one
     if dim X === 1 then (
       return set rays X === set {{-1},{1}})
@@ -363,8 +393,8 @@ fan NormalToricVariety := X -> (
 
 -- This method is not exported
 facesOfCone = method(TypicalValue => HashTable)
--- Given a matrix 'R' whose columns are the rays of a strongly convex cone and a
--- list 's' whose entries label the rays, the method makes a HashTable whose
+-- Given a matrix 'R' whose columns are the rays of a strongly convex cone and
+-- a list 's' whose entries label the rays, the method makes a HashTable whose
 -- keys label the faces and values give the codimension.
 facesOfCone (Matrix,List) := (R,s) -> (
   H := fourierMotzkin R;
@@ -389,10 +419,10 @@ facesOfCone (Matrix,List) := (R,s) -> (
 	Q = Q | {k})));
   d = numRows R - d;
   return new HashTable from apply(keys faceTable, f -> {f,d+faceTable#f}))
--- Given a list 'L' whose entries label rays in a simplicial cone and an integer
--- 'i' which is the codimension of the cone, this method makes a HashTable whose
--- keys label the faces and values give the codimension, In the simplicial case,
--- we don't actually need the rays of the cone.
+-- Given a list 'L' whose entries label rays in a simplicial cone and an
+-- integer 'i' which is the codimension of the cone, this method makes a
+-- HashTable whose keys label the faces and values give the codimension, In
+-- the simplicial case, we don't actually need the rays of the cone.
 facesOfCone (List,ZZ) := (L,i) -> (
   new HashTable from apply(drop(subsets(L),1), s -> {s,#L-#s+i}))
 
@@ -413,7 +443,7 @@ orbits (NormalToricVariety, ZZ) := List => (X,i) -> (
   O := orbits X;
   O#i)
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- divisor, class, and Picard groups
 cl = method()
 cl NormalToricVariety := Module => (cacheValue symbol cl)(X -> (
@@ -447,7 +477,8 @@ cDiv NormalToricVariety := (cacheValue symbol cDiv)(X -> (
       F := max X;
       d := dim X;
       n := #rays X;
-      H1 := new HashTable from apply(F, s -> {s, coker (fourierMotzkin V_s)#1});
+      H1 := new HashTable from apply(F, 
+	s -> {s, coker (fourierMotzkin V_s)#1});
       H2 := new HashTable from (
 	flatten apply(toList(0..#F-1),  i -> apply(toList(i+1..#F-1), j -> (
 	      s := select(F#i, k -> member(k,F#j));
@@ -527,7 +558,7 @@ nef NormalToricVariety := List => X -> (
     return transpose ((fourierMotzkin outer)#0)^{0..(n-dim X-1)}))
 
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- toric divisors
 ToricDivisor = new Type of HashTable
 ToricDivisor.synonym = "toric divisor"
@@ -562,7 +593,7 @@ expression ToricDivisor := D -> (
       E = E + E');
     return E))
 net ToricDivisor := D -> net expression D
-ToricDivisor#{Standard,AfterPrint} = ToricDivisor#{Standard,AfterNoPrint} =D ->(
+ToricDivisor#{Standard,AfterPrint} = ToricDivisor#{Standard,AfterNoPrint} = D ->(
   << endl;				  -- double space
   << concatenate(interpreterDepth:"o") << lineNumber << " : ToricDivisor on ";
   << variety D << endl;)
@@ -628,8 +659,8 @@ isQQCartier ToricDivisor := D -> (
 
 -- This method is not exported.
 --
--- Given a toric divisor which is assumed to be Cartier, this method characters
--- on each maximal cone which determine the Cartier divisor.
+-- Given a toric divisor which is assumed to be Cartier, this method
+-- characters on each maximal cone which determine the Cartier divisor.
 cartierCoefficients = method()
 cartierCoefficients ToricDivisor := List => D -> (
   X := variety D;
@@ -672,8 +703,8 @@ isAmple ToricDivisor := D -> (
     return sum entries vector D > 0
     )
   -- the "toric Kleiman criterion" states that a torus-invariant divisor is
-  -- ample if and only if the interesection with every torus-invariant curve is
-  -- positive
+  -- ample if and only if the interesection with every torus-invariant curve
+  -- is positive
   else (
     m := cartierCoefficients D;
     F := max X;
@@ -731,7 +762,7 @@ latticePoints ToricDivisor := Matrix => D -> (
 polytope ToricDivisor := Polyhedron => (cacheValue symbol polytope)(
   D -> intersection(-matrix rays variety D, matrix vector D))
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- Total coordinate rings
 ring NormalToricVariety := PolynomialRing => (cacheValue symbol ring)(X -> (
     if isDegenerate X then (
@@ -927,19 +958,18 @@ euler CoherentSheaf := F -> (
   else error "expected a sheaf on a ProjectiveVariety or NormalToricVariety")
 
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- resolution of singularities
-
 
 -- This method is not exported.
 --
--- Given a normal toric variety 'X', a maximal cone indexed by the list 's', and
--- a weight vector encoded by the integer list 'w', this method makes a new
--- normal toric variety in which the maximal cone corresponding to 's' has been
--- replace by the regular subdivison associated to the weight vector 'w'.  In
--- particular, the entries in 'w' are used as heights to lift the maximal cone
--- corresponding to 's' into the next dimension.  The lower faces (those for
--- which the normal vector has negative last coordinate) form a polyhedral
+-- Given a normal toric variety 'X', a maximal cone indexed by the list 's',
+-- and a weight vector encoded by the integer list 'w', this method makes a
+-- new normal toric variety in which the maximal cone corresponding to 's' has
+-- been replace by the regular subdivison associated to the weight vector 'w'.
+-- In particular, the entries in 'w' are used as heights to lift the maximal
+-- cone corresponding to 's' into the next dimension.  The lower faces (those
+-- for which the normal vector has negative last coordinate) form a polyhedral
 -- complex and the regular subdivision is the image of this complex.  For a
 -- generic weight vector, this subdivision will be a triangulation.
 regularSubdivision = method(TypicalValue => NormalToricVariety)
@@ -953,8 +983,12 @@ regularSubdivision (NormalToricVariety, List, List) := (X,s,w) -> (
       w' := f / wtg;
       if all(w', i -> i === 1) then continue;
       C := V_f || matrix{w'};
-      H := fourierMotzkin C;
-      H = matrix select(entries transpose H#0, r -> last r < 0);
+      C' := fourierMotzkin C;
+      H := matrix select(entries transpose C'#0, r -> last r < 0);
+      if C'#1 !=0 then (  
+  	H' := select(entries transpose C'#1, r -> last r != 0);
+  	if #H' > 0 then H = H || matrix apply(H', 
+	  r -> if last r > 0 then -r else r));
       inc := H * C;
       F' := apply(apply(numRows inc, i -> select(numColumns inc,
 	    j -> inc_(i,j) === 0)), t -> f_t);
@@ -1040,8 +1074,10 @@ blowup (List, NormalToricVariety) := NormalToricVariety => (s,X) -> (
   v := makePrimitive sum ((rays X)_s);
   return blowup(s,X,v))
 
-makeSmooth = method()
-makeSmooth NormalToricVariety := NormalToricVariety => X -> (
+makeSmooth = method(
+  TypicalValue => NormalToricVariety,
+  Options => {Strategy => 0})
+makeSmooth NormalToricVariety := opts -> X -> (
   Y := X;
   while true do (
     F := max Y;
@@ -1055,11 +1091,11 @@ makeSmooth NormalToricVariety := NormalToricVariety => X -> (
       Vt := V_tau;
       H := entries transpose hilbertBasis Vt;
       w := select(H, h -> not member(h, (rays Y)_sigma));
-      if w === {} then Y = makeSimplicial Y
+      if w === {} then Y = makeSimplicial(Y, Strategy => opts.Strategy)
       else Y = blowup(tau,Y, first w)));
   return Y)
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- THINGS TO IMPLEMENT?
 --   homology,NormalToricVariety
 --   operational Chow rings
@@ -1071,40 +1107,43 @@ makeSmooth NormalToricVariety := NormalToricVariety => X -> (
 --     birational map with makeSimplicial & makeSmooth
 --
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- DOCUMENTATION
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 beginDocumentation()
     
 document { 
   Key => NormalToricVarieties,
   Headline => "normal toric varieties",
   "A toric variety is an integral scheme such that an algebraic torus forms a
-  Zariski open subscheme and the natural action this torus on itself extends to
-  an action on the entire scheme.  Normal toric varieties correspond to
-  combinatorial objects, namely strongly convex rational polyhedral fans.  This
-  makes the theory of normal toric varieties very explicit and computable.",
+  Zariski open subscheme and the natural action this torus on itself extends 
+  to an action on the entire scheme.  Normal toric varieties correspond to
+  combinatorial objects, namely strongly convex rational polyhedral fans.  
+  This makes the theory of normal toric varieties very explicit and 
+  computable.",
   PARA{},     
   "This ", EM "Macaulay2", " package is designed to manipulate normal toric
   varieties and related geometric objects.  An introduction to the theory of
   normal toric varieties can be found in the following textbooks:",
   UL { 
     {"David A. Cox, John B. Little, Hal Schenck, ", 
-      HREF("http://www.cs.amherst.edu/~dac/toric.html", EM "Toric varieties"), 
+      HREF("http://www.cs.amherst.edu/~dac/toric.html", EM "Toric varieties"),
       ", Graduate Studies in Mathematics 124. American Mathematical Society, 
       Providence RI, 2011.  ISBN: 978-0-8218-4817-7"},
     {"Günter Ewald, ", EM "Combinatorial convexity and algebraic geometry", ",
-      Graduate Texts in Mathematics 168.  Springer-Verlag, New York, 1996. ISBN:
-      0-387-94755-8" },      
+      Graduate Texts in Mathematics 168.  Springer-Verlag, New York, 1996. 
+      ISBN: 0-387-94755-8" },      
     {"William Fulton, ", EM "Introduction to toric varieties", ", Annals of
       Mathematics Studies 131, Princeton University Press, Princeton, NJ,
       1993. ISBN: 0-691-00049-2" },	
-    {"Tadao Oda, ", EM "Convex bodies and algebraic geometry, an introduction to
-     the theory of toric varieties", ", Ergebnisse der Mathematik und ihrer
-     Grenzgebiete (3) 15, Springer-Verlag, Berlin, 1988. ISBN: 3-540-17600-4" },
+    {"Tadao Oda, ", EM "Convex bodies and algebraic geometry, an introduction 
+      to the theory of toric varieties", ", Ergebnisse der Mathematik und 
+      ihrer Grenzgebiete (3) 15, Springer-Verlag, Berlin, 1988. ISBN: 
+      3-540-17600-4" },
      },
   SUBSECTION "Contributors",
-  "The following people have generously contributed code or worked on our code.",
+  "The following people have generously contributed code or worked on our 
+  code.",
   UL {
     {HREF("http://www.math.duke.edu/~psa/","Paul Aspinwall")},
     {HREF("http://www2.math.su.se/~cberkesc/","Christine Berkesch")},
@@ -1144,6 +1183,7 @@ document {
     TO (hirzebruchSurface,ZZ),
     TO (kleinschmidt,ZZ,List),
     TO (symbol **, NormalToricVariety, NormalToricVariety),
+    TO (symbol ^**, NormalToricVariety, ZZ),
     TO (smoothFanoToricVariety,ZZ,ZZ),
     TO (normalToricVariety, Fan),
     TO (normalToricVariety, Polyhedron)},
@@ -1195,25 +1235,27 @@ document {
     Variable => Symbol => "the base symbol for the indexed variables in the
                           total coordinate ring",
     WeilToClass => Matrix => {"allows one to specify the map from the group of
-                              torus-invariant Weil divisors to the class group"},
+                              torus-invariant Weil divisors to the class 
+			      group"},
     },
-  Outputs => {NormalToricVariety => "the normal toric variety determined by the
-                                    fan" },
+  Outputs => {NormalToricVariety => "the normal toric variety determined by 
+                                     the fan" },
   "This is the general method for constructing a normal toric variety.",
   PARA{},				    
   "A normal toric variety corresponds to a strongly convex rational polyhedral
   fan in affine space.  In this package, the fan associated to a normal ", 
-  TEX ///$d$///, "-dimensional toric variety lies in the rational vector space ",
-  TEX ///$\QQ^d$///, " with underlying lattice ", TEX ///$N = \ZZ^d$///, ".  The
-  fan is encoded by the minimal nonzero lattice points on its rays and the set
-  of rays defining the maximal cones (meaning cones that are not proper subsets
-  of another cone in the fan).  More precisely, ", TT "Rho", " lists the minimal
-  nonzero lattice points on each ray (a.k.a. one-dimensional cone) in the fan.
-  Each lattice point is a ", TO2(List,"list"), " of ", TO2(ZZ,"integers"), ".
-  The rays are ordered and indexed by nonnegative integers: ", TEX ///$0,\dots,
-  n$///, ".  Using this indexing, a maximal cone in the fan corresponds to a
-  sublist of ", TEX ///$\{0,\dots,n\}$///, ".  All maximal cones are listed in
-  ", TT "Sigma", ".",
+  TEX ///$d$///, "-dimensional toric variety lies in the rational vector 
+  space ", TEX ///$\QQ^d$///, " with underlying lattice ", 
+  TEX ///$N = \ZZ^d$///, ".  The fan is encoded by the minimal nonzero lattice
+   points on its rays and the set of rays defining the maximal cones (meaning 
+  cones that are not proper subsets of another cone in the fan).  More 
+  precisely, ", TT "Rho", " lists the minimal nonzero lattice points on each 
+  ray (a.k.a. one-dimensional cone) in the fan. Each lattice point is a ", 
+  TO2(List,"list"), " of ", TO2(ZZ,"integers"), ". The rays are ordered and 
+  indexed by nonnegative integers: ", TEX ///$0,\dots,n$///, ".  Using this 
+  indexing, a maximal cone in the fan corresponds to a sublist of ", 
+  TEX ///$\{0,\dots,n\}$///, ".  All maximal cones are listed in ", 
+  TT "Sigma", ".",
   PARA{},
   "The first example is projective ", TEX ///$2$///, "-space blown up at two
   points.",
@@ -1225,24 +1267,24 @@ document {
     max X
     dim X
     ///,	 
-  "The second example illustrates the data defining projective ", TEX ///$4$///,
-  "-space.",
+  "The second example illustrates the data defining projective ", 
+  TEX ///$4$///, "-space.",
   EXAMPLE lines ///	  
     PP4 = projectiveSpace 4;
     rays PP4
     max PP4
     dim PP4
     ring PP4
-    PP4' = normalToricVariety(rays PP4, max PP4, CoefficientRing => ZZ)
+    PP4' = normalToricVariety(rays PP4, max PP4, CoefficientRing => ZZ/32003, Variable => y)
     ring PP4'
     ///,   
   PARA{},
-  "The optional argument ", TO WeilToClass, " allows one to specify the map from
-  the group of torus-invariant Weil divisors to the class group.  In particular,
-  this allows the user to choose her favourite basis for the class group.  This
-  map also determines the grading on the total coordinate ring of the toric
-  variety.  For example, we can choose the opposite generator for the class
-  group of projective space as follows.",
+  "The optional argument ", TO WeilToClass, " allows one to specify the map 
+  from the group of torus-invariant Weil divisors to the class group.  In 
+  particular, this allows the user to choose her favourite basis for the 
+  class group.  This map also determines the grading on the total coordinate 
+  ring of the toric variety.  For example, we can choose the opposite 
+  generator for the class group of projective space as follows.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     A = fromWDivToCl PP2
@@ -1260,8 +1302,8 @@ document {
   "The integer matrix ", TT "A", " should span the kernel of the matrix whose
   columns are the minimal nonzero lattice points on the rays of the fan.",
   PARA{},	  
-  "We can also choose a basis for the class group of a blow-up of the projective
-  plane such that the nef cone is the positive quadrant.",
+  "We can also choose a basis for the class group of a blow-up of the 
+  projective plane such that the nef cone is the positive quadrant.",
   EXAMPLE lines ///
     Rho = {{1,0},{0,1},{-1,1},{-1,0},{0,-1}};
     Sigma = {{0,1},{1,2},{2,3},{3,4},{0,4}};
@@ -1297,7 +1339,8 @@ document {
     Variable => Symbol => "the base symbol for the indexed variables in the
                           total coordinate ring",
     WeilToClass => Matrix => "allows one to specify the map from the group of
-                             torus-invariant Weil divisors to the class group",
+                             torus-invariant Weil divisors to the class 
+			     group",
     },
   Outputs => {NormalToricVariety},
   "This method makes a ", TO NormalToricVariety, " from the polytope with
@@ -1321,8 +1364,8 @@ document {
     transpose matrix rays X, max X
     ///,
   "The optional argument ", TT "MinimalGenerators", " specifics whether to
-  compute the vertices of the polytope defined as the convex hull of the columns
-  of the matrix ",  TT "A", ".",
+  compute the vertices of the polytope defined as the convex hull of the 
+  columns of the matrix ",  TT "A", ".",
   EXAMPLE lines ///
     FF1 = normalToricVariety matrix {{0,1,0,2},{0,0,1,1}};
     rays FF1
@@ -1357,16 +1400,16 @@ document {
   "A pair of lists ", TT "(Rho,Sigma)", " correspond to a well-defined normal
   toric variety if the following conditions hold:",
   UL {
-    {"the union of the elements of ", TT "Sigma", " equals the set of indices of
-     elements of ", TT "Rho"},
-    {"no element of ", TT "Sigma", " is properly contained in another element of
-    ", TT "Sigma"},     
+    {"the union of the elements of ", TT "Sigma", " equals the set of indices 
+      of elements of ", TT "Rho"},
+    {"no element of ", TT "Sigma", " is properly contained in another element 
+      of ", TT "Sigma"},     
     {"all elements of ", TT "Rho", " have the same length"},
     {"all elements of ", TT "Rho", " are lists of integers"},
     {"the rays indexed by an element of ", TT "Sigma", " generate a strongly
      convex cone"},
-    {"the rays indexed by an element of ", TT "Sigma", " are the unique minimal
-     lattice points for the cone they generate"},
+    {"the rays indexed by an element of ", TT "Sigma", " are the unique 
+      minimal lattice points for the cone they generate"},
      {"the intersection of the cones associated to two elements of ", 
       TT "Sigma", " is a face of each cone."}},
   PARA{},
@@ -1375,8 +1418,8 @@ document {
   EXAMPLE lines ///
     for d from 1 to 6 list isWellDefined projectiveSpace d
     ///,     	  
-   "The second examples show that a randomly selected Kleinschmidt toric variety
-   and a weighted projective space are also well-defined.",
+   "The second examples show that a randomly selected Kleinschmidt toric 
+   variety and a weighted projective space are also well-defined.",
    EXAMPLE lines ///
      setRandomSeed(currentTime());
      a = sort apply(3, i -> random(7))
@@ -1390,9 +1433,9 @@ document {
      "isWellDefined weightedProjectiveSpace q"
      },
    "The next eight examples illustrate various ways that two lists can fail to
-   define a normal toric variety.  By making the current debugging level greater
-   than one, one gets some addition information about the nature of the
-   failure.",
+   define a normal toric variety.  By making the current debugging level 
+   greater than one, one gets some addition information about the nature of 
+   the failure.",
    EXAMPLE lines ///
      Sigma = max projectiveSpace 2;
      X1 = normalToricVariety({{-1,-1},{1,0},{0,1},{-1,0}},Sigma);
@@ -1435,15 +1478,22 @@ document {
 
 document { 
   Key => {affineSpace, 
-    (affineSpace,ZZ)},
+    (affineSpace,ZZ),
+    [affineSpace,CoefficientRing],
+    [affineSpace,Variable]
+    },
   Headline => "make an affine space",
   Usage => "affineSpace d",
-  Inputs => {"d" => "a positive integer",},
+  Inputs => {"d" => "a positive integer",
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => {"affine ", TT "d", "-space"}},
-  "Affine ", TEX ///$d$///, "-space is a smooth normal toric variety.  The rays
-  are generated by the standard basis ", TEX ///$e_1,\dots,e_d$///, " of ", 
-  TEX ///$\ZZ^d$///, " and the maximal cone in the fan correspond to the ", 
-  TEX ///$d$///, "-element subset of ", TEX ///$\{0,...,d-1\}$///, ".",
+  "Affine ", TEX ///$d$///, "-space is a smooth normal toric variety.  The 
+  rays are generated by the standard basis ", TEX ///$e_1,\dots,e_d$///, 
+  " of ", TEX ///$\ZZ^d$///, " and the maximal cone in the fan correspond to 
+  the ", TEX ///$d$///, "-element subset of ", TEX ///$\{0,...,d-1\}$///, ".",
   PARA{},
   "The examples illustrate the affine line and projective ", TEX ///$3$///, 
   "-space.",
@@ -1456,10 +1506,11 @@ document {
     isSmooth AA1    
     ///,
   EXAMPLE lines ///
-    AA3 = affineSpace 3;
+    AA3 = affineSpace(3, CoefficientRing => ZZ/32003, Variable => y);
     rays AA3
     max AA3
     dim AA3
+    ring AA3
     isComplete AA3    
     isSmooth AA3    
     ///,	  
@@ -1471,19 +1522,25 @@ document {
 
 document { 
   Key => {projectiveSpace, 
-    (projectiveSpace,ZZ)},
+    (projectiveSpace,ZZ),
+    [projectiveSpace,CoefficientRing],
+    [projectiveSpace,Variable]},
   Headline => "make a projective space",
   Usage => "projectiveSpace d",
-  Inputs => {"d" => "a positive integer",},
+  Inputs => {"d" => "a positive integer",
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => {"projective ", TT "d", "-space"}},
   "Projective ", TEX ///$d$///, "-space is a smooth complete normal toric
   variety.  The rays are generated by the standard basis ", 
   TEX ///$e_1,\dots,e_d$///, " of ", TEX ///$\ZZ^d$///, " together with ", 
-  TEX ///$-e_1-\dots-e_d$///, ".  The maximal cones in the fan correspond to the
-  ", TEX ///$d$///, "-element subsets of ", TEX ///$\{0,...,d\}$///, ".",
+  TEX ///$-e_1-\dots-e_d$///, ".  The maximal cones in the fan correspond to 
+  the ", TEX ///$d$///, "-element subsets of ", TEX ///$\{0,...,d\}$///, ".",
   PARA{},
-  "The examples illustrate the projective line and projective ", TEX ///$3$///, 
-  "-space.",
+  "The examples illustrate the projective line and projective ", 
+  TEX ///$3$///, "-space.",
   EXAMPLE lines ///
     PP1 = projectiveSpace 1;
     rays PP1
@@ -1495,7 +1552,7 @@ document {
     ideal PP1
     ///,
   EXAMPLE lines ///
-    PP3 = projectiveSpace 3;
+    PP3 = projectiveSpace(3, CoefficientRing => ZZ/32003, Variable => y);
     rays PP3
     max PP3
     dim PP3
@@ -1513,16 +1570,22 @@ document {
 
 document { 
   Key => {hirzebruchSurface, 
-    (hirzebruchSurface,ZZ)},
+    (hirzebruchSurface,ZZ),
+    [hirzebruchSurface,CoefficientRing],
+    [hirzebruchSurface,Variable]},
   Headline => "make a Hirzebruch surface",
   Usage => "hirzebruchSurface a",
-  Inputs => {"a" => ZZ},
+  Inputs => {"a" => ZZ,
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => "a Hirzebruch surface"},    
   "The ", TEX ///$a^{th}$///, " Hirzebruch surface is a complete normal toric
   variety.  It can be defined as the ", TEX ///$\PP^1$///, "-bundle over ", 
-  TEX ///$X = \PP^1$///, " associated to the sheaf ", TEX ///${\mathcal O}_X(0)
-  \oplus {\mathcal O}_X(a)$///, ".  It is also the quotient of affine ", 
-  TEX ///$4$///, "-space by a rank two torus.",
+  TEX ///$X = \PP^1$///, " associated to the sheaf ", 
+  TEX ///${\mathcal O}_X(0) \oplus {\mathcal O}_X(a)$///, ".  It is also the 
+  quotient of affine ", TEX ///$4$///, "-space by a rank two torus.",
   EXAMPLE lines ///
     FF3 = hirzebruchSurface 3;
     rays FF3
@@ -1532,9 +1595,10 @@ document {
     degrees ring FF3
     ideal FF3
     ///,
-  "When ", TEX ///a = 0///, ", we obtain ", TEX ///$\PP^1 \times \PP^1$///, ".",
+  "When ", TEX ///a = 0///, ", we obtain ", TEX ///$\PP^1 \times \PP^1$///, 
+  ".",
   EXAMPLE lines ///
-    FF0 = hirzebruchSurface 0;
+    FF0 = hirzebruchSurface(0, CoefficientRing => ZZ/32003, Variable => y);
     rays FF0
     max FF0
     dim FF0
@@ -1551,23 +1615,29 @@ document {
 
 document { 
   Key => {weightedProjectiveSpace, 
-    (weightedProjectiveSpace,List)},
+    (weightedProjectiveSpace,List),
+    [weightedProjectiveSpace,CoefficientRing],
+    [weightedProjectiveSpace,Variable]},
   Headline => "make a weighted projective space",
   Usage => "weightedProjectiveSpace q",
   Inputs => { "q" => {" a ", TO2(List,"list"), " of relatively prime positive
-              integers"}},
+              integers"},
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => "a weighted projective space"},
   "The weighted projective space associated to a list ", TEX ///$\{q_0,\dots,
   q_d \}$///, ", where no ", TEX ///$d$///, "-element subset of ", 
   TEX ///$q_0,\dots, q_d$///, " has a nontrivial common factor, is a normal
   toric variety built from a fan in ", TEX ///$N =
-  \ZZ^{d+1}/\ZZ(q_0,\dots,q_d)$///, ".  The rays are generated by the images of
-  the standard basis for ", TEX ///$\ZZ^{d+1}$///, " and the maximal cones in
-  the fan correspond to the ", TEX ///$d$///, "-element subsets of ", 
+  \ZZ^{d+1}/\ZZ(q_0,\dots,q_d)$///, ".  The rays are generated by the images 
+  of the standard basis for ", TEX ///$\ZZ^{d+1}$///, " and the maximal cones 
+  in the fan correspond to the ", TEX ///$d$///, "-element subsets of ", 
   TEX ///$\{0,...,d\}$///, ".",
   PARA{},
-  "The first examples illustrate the defining data for three different weighted
-  projective spaces.",
+  "The first examples illustrate the defining data for three different 
+  weighted projective spaces.",
   EXAMPLE lines ///
     PP4 = weightedProjectiveSpace {1,1,1,1};
     rays PP4
@@ -1577,10 +1647,12 @@ document {
     rays X
     max X
     dim X
-    Y = weightedProjectiveSpace {1,2,2,3,4};
+    ring X
+    Y = weightedProjectiveSpace({1,2,2,3,4}, CoefficientRing => ZZ/32003, Variable => y);
     rays Y
     max Y
     dim Y
+    ring Y
     ///,
   "The grading of the total coordinate ring for weighted projective space is
   determined by the weights.  In particular, the class group is ", 
@@ -1617,10 +1689,10 @@ document {
   Usage => "X ** Y",
   Inputs => {"X", "Y" => NormalToricVariety },
   Outputs => {{"the product of ", TT "X", " and ", TT "Y"}},     
-  "The cartesian product of two varieties ", TEX ///$X$///, " and ", 
-  TEX ///$Y$///, ", both defined over the same ground field ", TEX ///$k$///, ",
-  is the fiber product ", TEX ///$X \times_k Y$///, ".  For normal toric
-  varieties, the fan of the product is given by the cartesian product of each
+  "The Cartesian product of two varieties ", TEX ///$X$///, " and ", 
+  TEX ///$Y$///, ", both defined over the same ground field ", TEX ///$k$///, 
+  ", is the fiber product ", TEX ///$X \times_k Y$///, ".  For normal toric
+  varieties, the fan of the product is given by the Cartesian product of each
   pair of cones in the fans of the factors.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
@@ -1632,25 +1704,73 @@ document {
     primaryDecomposition ideal X
     flatten (primaryDecomposition \ {ideal FF2,ideal PP2})
     ///,
+  "The map from the torus-invariant Weil divisors to the class group is the 
+  direct sum of the maps for the factors",
+  EXAMPLE lines ///
+    fromWDivToCl FF2 ++ fromWDivToCl PP2
+    fromWDivToCl X
+  ///,
   SeeAlso => {
-    "Making normal toric varieties",    
+    "Making normal toric varieties", 
+    (symbol ^**, NormalToricVariety, ZZ),   
+    normalToricVariety}}  
+
+document { 
+  Key => {(symbol ^**,NormalToricVariety,ZZ)},
+  Headline => "Cartesian power",
+  Usage => "X ^** i",
+  Inputs => {
+    "X" => NormalToricVariety,
+    "i" => ZZ, },
+  Outputs => {{"the ", TT "i", "-ary Cartesian product of ", TT "X", " with 
+      itself "}},     
+  "The ", TT "i", "-ary Cartesian product of the variety ", TEX ///$X$///, 
+  ", defined over the ground field ", TEX ///$k$///, ", is the ", 
+  TEX ///$i$///, "-ary fiber product of ", TEX ///$X$///, " with itself 
+  over ", TEX ///$k$///, ".  For a normal toric variety, the fan of the ",
+  TEX ///$i$///, "-ary Cartesian product is given by the ",  TEX ///$i$///, 
+  "-ary Cartesian product of the cones.",
+  EXAMPLE lines ///
+    PP2 = projectiveSpace 2;
+    X = PP2 ^** 4;
+    degrees ring X
+    fromWDivToCl X
+    FF2 = hirzebruchSurface(2) ;
+    Y = FF2 ^** 3;
+    degrees ring Y
+    fromWDivToCl Y
+    X' = PP2 ** PP2;
+    X'' = PP2 ^** 2;
+    rays X' == rays X''
+    max X' == max X''  
+    ///,
+  SeeAlso => {
+    "Making normal toric varieties", 
+    (symbol **, NormalToricVariety, NormalToricVariety),          
     normalToricVariety}}  
 
 document { 
   Key => {kleinschmidt, 
-    (kleinschmidt,ZZ,List)},
+    (kleinschmidt,ZZ,List),
+    [kleinschmidt,CoefficientRing],
+    [kleinschmidt,Variable]},
   Headline => "make a smooth toric variety with Picard rank two",
   Usage => "kleinschmidt(d,a)",
   Inputs => {
     "d" => ZZ => " dimension of toric variety",
-    "a" => {" an increasing list of at most ", TT "d-1", "nonnegative integers"},
-    },
+    "a" => {" an increasing list of at most ", TT "d-1", "nonnegative 
+      integers"},
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => "a smooth toric variety with Picard rank
                                     two"},
   "Peter Kleinschmidt constructs (up to isomorphism) all smooth normal toric
   varieties with dimension ", TEX ///$d$///, " and ", TEX ///$d+2$///, " rays;
-  see P. Kleinschmidt, A classification of toric varieties with few generators,
-  ", EM "Aequationes Mathematicae ", STRONG "35", " (1998) 254-266.", 
+  see P. Kleinschmidt, A classification of toric varieties with few 
+  generators, ", EM "Aequationes Mathematicae ", STRONG "35", " (1998) 
+  254-266.", 
   PARA{},
   "When ", TEX ///$d=2$///, ", we obtain a variety isomorphic to a Hirzebruch
   surface.",
@@ -1669,8 +1789,10 @@ document {
     isFano X1
     X2 = kleinschmidt(4,{0,0});	  
     isFano X2
-    X3 = kleinschmidt(9,{1,2,3});
+    ring X2
+    X3 = kleinschmidt(9,{1,2,3}, CoefficientRing => ZZ/32003, Variable => y);
     isFano X3
+    ring X3
     ///,
   SeeAlso => {
     "Making normal toric varieties",
@@ -1678,12 +1800,19 @@ document {
 
 document { 
   Key => {smoothFanoToricVariety, 
-    (smoothFanoToricVariety,ZZ,ZZ)},
+    (smoothFanoToricVariety,ZZ,ZZ),
+    [smoothFanoToricVariety,CoefficientRing],
+    [smoothFanoToricVariety,Variable]
+    },
   Headline => "get a smooth Fano toric variety from database",
   Usage => "smoothFanoToricVariety(d,i)",
   Inputs => {
     "d" => ZZ => " dimension of toric variety",
-    "i" => ZZ => " index of toric variety in database",},
+    "i" => ZZ => " index of toric variety in database",
+    CoefficientRing => Ring => "the coefficient ring of the total coordinate 
+                               ring",
+    Variable => Symbol => "the base symbol for the indexed variables in the
+                          total coordinate ring",},
   Outputs => {NormalToricVariety => " a smooth Fano toric variety"},
   "This function accesses a database of all smooth Fano toric varieties of
   dimension at most 6.  The enumeration of the toric varieties follows ",
@@ -1698,7 +1827,8 @@ document {
   for dimensions 5 and 6.  There is a unique smooth Fano toric curve, five
   smooth Fano toric surfaces, eighteen smooth Fano toric threefolds, ", 
   TEX ///$124$///, " smooth Fano toric fourfolds, ", TEX ///$866$///, " smooth
-  Fano toric fivefolds, and ", TEX ///$7622$///, " smooth Fano toric sixfolds.",
+  Fano toric fivefolds, and ", TEX ///$7622$///, " smooth Fano toric 
+  sixfolds.",
   PARA{},
   "For all ", TEX ///$d$///, ", ", TT "smoothFanoToricVariety(d,0)", " yields
   projective ", TEX ///$d$///, "-space.",
@@ -1706,9 +1836,11 @@ document {
     PP1 = smoothFanoToricVariety(1,0);
     rays PP1	  
     max PP1
-    PP4 = smoothFanoToricVariety(4,0);
+    ring PP1
+    PP4 = smoothFanoToricVariety(4,0, CoefficientRing => ZZ/32003, Variable => y);
     rays PP4
     max PP4
+    ring PP4
     ///,
   "The following example was missing from Batyrev's table.",
   EXAMPLE lines ///
@@ -1721,8 +1853,8 @@ document {
   and ",
   HREF("http://magma.maths.usyd.edu.au/users/kasprzyk/index.html","Alexander
   Kasprzyk"), " for their help extracting the data for the smooth Fano toric
-  five and sixfolds from their ", HREF("http://grdb.lboro.ac.uk/", "Graded Rings
-  Database"), ".",
+  five and sixfolds from their ", HREF("http://grdb.lboro.ac.uk/", "Graded 
+  Rings Database"), ".",
   SeeAlso => {
     "Making normal toric varieties",
     normalToricVariety,
@@ -1741,7 +1873,8 @@ document {
     Variable => Symbol => "the base symbol for the indexed variables in the
                           total coordinate ring",
     WeilToClass => Matrix => "allows one to specify the map from the group of
-                             torus-invariant Weil divisors to the class group",
+                             torus-invariant Weil divisors to the class 
+			     group",
     },
   Outputs => {"X" => NormalToricVariety},
   "This method makes a ", TO NormalToricVariety, " from a ", 
@@ -1754,12 +1887,12 @@ document {
     max X
     ///,  
   SUBSECTION "Remark",
-  "The recommended method for creating a ", TO NormalToricVariety, " from a fan
-  is ", TO (normalToricVariety,List,List), ".  In fact, this package avoids
-  using objects from the ", TO "Polyhedra::Polyhedra", " whenever possible
-  because their significant overhead.  For example, creating a ", 
-  TO "Polyhedra::Fan", " requires computing the polar dual (twice) for each cone
-  in the fan.  Here is a trivial example, namely projective 2-space,
+  "The recommended method for creating a ", TO NormalToricVariety, " from a 
+  fan is ", TO (normalToricVariety,List,List), ".  In fact, this package 
+  avoids using objects from the ", TO "Polyhedra::Polyhedra", " whenever 
+  possible because their significant overhead.  For example, creating a ", 
+  TO "Polyhedra::Fan", " requires computing the polar dual (twice) for each 
+  cone in the fan.  Here is a trivial example, namely projective 2-space,
   illustrating the substantial increase in time resulting from the use of a ",
   TO "Polyhedra::Polyhedra", " fan.",
   EXAMPLE {
@@ -1789,7 +1922,8 @@ document {
     Variable => Symbol => "the base symbol for the indexed variables in the
                           total coordinate ring",
     WeilToClass => Matrix => "allows one to specify the map from the group of
-                             torus-invariant Weil divisors to the class group",
+                             torus-invariant Weil divisors to the class 
+			     group",
     },
   Outputs => {"X" => NormalToricVariety},
   "This method makes a ", TO NormalToricVariety, " from a ", 
@@ -1822,8 +1956,7 @@ document {
 
 
 
-
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- basic properties and invariants
 
 document { 
@@ -1861,15 +1994,15 @@ document {
   "A normal toric variety corresponds to a strongly convex rational polyhedral
   fan in affine space.  ", "In this package, the fan associated to a normal ",
   TEX ///$d$///, "-dimensional toric variety lies in the rational vector space
-  ", TEX ///$\QQ^d$///, " with underlying lattice ", TEX ///$N = {\ZZ}^d$///, ".
-  As a result, each ray in the fan is determined by the minimal nonzero lattice
-  point it contains.  Each such lattice point is given as a ", TO2(List,"list"),
-  " of ", TEX ///$d$///, " ", TO2(ZZ,"integers"), ".",
+  ", TEX ///$\QQ^d$///, " with underlying lattice ", TEX ///$N = {\ZZ}^d$///, 
+  ".  As a result, each ray in the fan is determined by the minimal nonzero 
+  lattice point it contains.  Each such lattice point is given as a ", 
+  TO2(List,"list"), " of ", TEX ///$d$///, " ", TO2(ZZ,"integers"), ".",
   PARA{},
   "The examples show the rays for the projective plane, projective ", 
   TEX ///$3$///, "-space, a Hirzebruch surface, and a weighted projective
-  space.  Observe that there is a bijection between the rays and torus-invariant Weil divisor on the
-  toric variety.",
+  space.  Observe that there is a bijection between the rays and 
+  torus-invariant Weil divisor on the toric variety.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     rays PP2
@@ -1912,8 +2045,8 @@ document {
   Headline => "get the maximal cones in the associated fan",
   Usage => "max X",
   Inputs => {"X" => NormalToricVariety},
-  Outputs => {List => " of lists of nonnegative integers; each entry indexes the
-                      rays which generate a maximal cone in the fan"},	  
+  Outputs => {List => " of lists of nonnegative integers; each entry indexes 
+                       the rays which generate a maximal cone in the fan"},  
   "A normal toric variety corresponds to a strongly convex rational polyhedral
   fan in affine space.  ", "In this package, the fan associated to a normal ",
   TEX ///$d$///, "-dimensional toric variety lies in the rational vector space
@@ -1921,8 +2054,8 @@ document {
   The fan is encoded by the minimal nonzero lattice points on its rays and the
   set of rays defining the maximal cones (i.e. a maximal cone is not properly
   contained in another cone in the fan).  ", "The rays are ordered and indexed
-  by nonnegative integers: ", TEX ///$0,\dots, n$///, ".  Using this indexing, a
-  maximal cone in the fan corresponds to a sublist of ", 
+  by nonnegative integers: ", TEX ///$0,\dots, n$///, ".  Using this indexing,
+   a maximal cone in the fan corresponds to a sublist of ", 
   TEX ///$\{0,\dots,n\}$///, "; the entries index the rays that generate the 
   cone.",
   PARA{},    
@@ -1948,8 +2081,8 @@ document {
     #rays X
     max X
   ///,   
-  "A list corresponding to the maximal cones in the fan is part of the defining
-  data of a toric variety.",
+  "A list corresponding to the maximal cones in the fan is part of the 
+  defining data of a toric variety.",
   SeeAlso => {
     "Making normal toric varieties",
     "Basic invariants and properties of normal toric varieties",
@@ -2022,19 +2155,19 @@ document {
   Outputs => {HashTable => "whose keys are the dimensions of the proper torus
                            orbits and whose values are lists of lists of
                            integers indexing the proper torus orbits"},
-  "A normal toric variety is a disjoint union of its orbits under the action of
-  its algebraic torus.  These orbits are in bijection with the cones in the
+  "A normal toric variety is a disjoint union of its orbits under the action 
+  of its algebraic torus.  These orbits are in bijection with the cones in the
   associated fan.  Each cone is determined by the rays it contains.  In this
   package, the rays are ordered and indexed by nonnegative integers: ", 
-  TEX ///$0,\dots,n$///, ". Using this indexing, an orbit or cone corresponds to
-  a sublist of ", TEX ///$\{0,\dots,n\}$///, "; the entries index the rays that
-  generate the cone.",
+  TEX ///$0,\dots,n$///, ". Using this indexing, an orbit or cone corresponds 
+  to a sublist of ", TEX ///$\{0,\dots,n\}$///, "; the entries index the rays 
+  that generate the cone.",
   PARA{},
   "Projective 2-space has three fixed points and three fixed curves (under the
-  action of its torus), and projective 3-space has four fixed points, six fixed
-  curves, and four divisors.  More generally, the orbits of projective ", 
-  TT "(n-1)", "-space are enumerated by the ", TT "n", "-th row of Pascal's
-  triangle.",
+  action of its torus), and projective 3-space has four fixed points, six 
+  fixed curves, and four divisors.  More generally, the orbits of 
+  projective ", TT "(n-1)", "-space are enumerated by the ", TT "n", "-th row 
+  of Pascal's triangle.",
   EXAMPLE lines ///
     O2 = orbits projectiveSpace 2
     #O2#0
@@ -2068,18 +2201,19 @@ document {
   Inputs => {
     "X" => NormalToricVariety,
     "i" => ZZ => "giving the dimension of the orbits"},
-  Outputs => {List => "of lists of integers indexing the proper torus orbits"},
-  "A normal toric variety is a disjoint union of its orbits under the action of
-  its algebraic torus.  These orbits are in bijection with the cones in the
+  Outputs => {List => "of lists of integers indexing the proper torus 
+                       orbits"},
+  "A normal toric variety is a disjoint union of its orbits under the action 
+  of its algebraic torus.  These orbits are in bijection with the cones in the
   associated fan.  Each cone is determined by the rays it contains.  In this
   package, the rays are ordered and indexed by nonnegative integers: ", 
-  TEX ///$0,\dots,n$///, ". Using this indexing, an orbit or cone corresponds to
-  a sublist of ", TEX ///$\{0,\dots,n\}$///, "; the entries index the rays that
-  generate the cone.",
+  TEX ///$0,\dots,n$///, ". Using this indexing, an orbit or cone corresponds 
+  to a sublist of ", TEX ///$\{0,\dots,n\}$///, "; the entries index the rays 
+  that generate the cone.",
   PARA{},
   "Projective 2-space has three fixed points and three fixed curves (under the
-  action of its torus), and projective 3-space has four fixed points, six fixed
-  curves, and four divisors.",
+  action of its torus), and projective 3-space has four fixed points, six 
+  fixed curves, and four divisors.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     orbits(PP2,0)
@@ -2122,8 +2256,8 @@ document {
 	      in a proper subspace of its ambient space, and ", TO "false", "
 	      otherwise" }},
   "A ", TEX ///$d$///, "-dimensional normal toric variety is degenerate if its
-  rays do not span ", TEX ///$\QQ^d$///, ".  For example, projective spaces and
-  Hirzebruch surfaces are not degenerate.",
+  rays do not span ", TEX ///$\QQ^d$///, ".  For example, projective spaces 
+  and Hirzebruch surfaces are not degenerate.",
   EXAMPLE lines ///
     isDegenerate projectiveSpace 3
     isDegenerate hirzebruchSurface 7
@@ -2143,9 +2277,10 @@ document {
   Headline => "whether a toric variety is simplicial",
   Usage => "isSimplicial X",
   Inputs => {"X" => NormalToricVariety},
-  Outputs => {Boolean => {TO "true", " if the minimal nonzero lattice points on
-	      the rays in each maximal cone in the associated fan of form part
-	      of a ", TEX ///$\QQ$///, "-basis, and ", TO "false", " otherwise"
+  Outputs => {Boolean => {TO "true", " if the minimal nonzero lattice points 
+              on the rays in each maximal cone in the associated fan of form 
+	      part of a ", TEX ///$\QQ$///, "-basis, and ", TO "false", 
+	      " otherwise"
 	      }},
   "A normal toric variety is simplical if every cone in its fan is simplicial
   and a cone is simplicial if its minimal generators are linearly independent
@@ -2153,8 +2288,8 @@ document {
   toric variety ", TEX ///$X$///, " are equivalent:",
   UL{
     {TEX ///$X$///, " is simplicial;"},
-    {"every Weil divisor on ", TEX ///$X$///, " has a positive integer multiple
-     that is Cartier;"},
+    {"every Weil divisor on ", TEX ///$X$///, " has a positive integer 
+      multiple that is Cartier;"},
     {TEX ///$X$///, " is ", TEX ///$\QQ$///, "-Cartier;"},
     {"the Picard group of ", TEX ///$X$///, " has finite index in the class
      group of ", TEX ///$X$///, ";"},
@@ -2188,9 +2323,10 @@ document {
   Headline => "whether a toric variety is smooth",
   Usage => "isSmooth X",
   Inputs => {"X" => NormalToricVariety},
-  Outputs => {Boolean => {TO "true", " if the minimal nonzero lattice points on
-	      the rays in each maximal cone in the associated fan of form part
-	      of a ", TEX ///$\ZZ$///, "-basis, and ", TO "false", " otherwise"}},
+  Outputs => {Boolean => {TO "true", " if the minimal nonzero lattice points 
+              on the rays in each maximal cone in the associated fan of form 
+	      part of a ", TEX ///$\ZZ$///, "-basis, and ", TO "false", 
+	      " otherwise"}},
   "A normal toric variety is smooth if every cone in its fan is smooth and a
   cone is smooth if its minimal generators are linearly independent over ", 
   TEX ///$\ZZ$///, ".  In fact, the following conditions on a normal toric
@@ -2230,8 +2366,8 @@ document {
   Headline => "whether a normal toric variety is Fano",
   Usage => "isFano X",
   Inputs => {"X" => NormalToricVariety},
-  Outputs => {Boolean => {"true", " if the normal toric variety is Fano, and ", 
-              TO "false", " otherwise"}},
+  Outputs => {Boolean => {"true", " if the normal toric variety is Fano, 
+              and ", TO "false", " otherwise"}},
   "A normal toric variety is Fano if its anticanonical divisor, namely the sum
   of all the torus-invariant prime divisors, is ample.  This is equivalent to
   saying that the polyhedron associated to the anticanonical divisor is
@@ -2279,13 +2415,13 @@ document {
   UL {
     {"the associated complex variety is compact in its classical topology;"},
     {"the constant map from the normal toric variety to space consisting of a
-    single point is proper;"}, 
+      single point is proper;"}, 
     {"every one-parameter subgroup of the torus has a limit in the toric
-    variety;"},
-    {"the union of all the cones in the associated fan equals the entire vector
-    space containing it;"},
+      variety;"},
+    {"the union of all the cones in the associated fan equals the entire 
+      vector space containing it;"},
     {"every torus-invariant curve lying in the normal toric variety is
-    projective."}},
+      projective."}},
   PARA{},
   "Affine varieties are not complete.",
   EXAMPLE lines ///
@@ -2341,9 +2477,9 @@ document {
   Inputs => {"X" => NormalToricVariety},
   Outputs => {{TO2(true,"true"), " if ", TT "X", " is a projective variety,
                and ", TO2(false, "false"), " otherwise"}},
-  "A variety is projective if it can be realized as a closed subvariety of some
-  projective space.  For an normal toric variety, this is equivalent to saying
-  that the associated fan is the normal fan of a polytope.",  
+  "A variety is projective if it can be realized as a closed subvariety of 
+  some projective space.  For an normal toric variety, this is equivalent to 
+  saying that the associated fan is the normal fan of a polytope.",  
   PARA{},     
   "Nontrivial affine varieties are not projective.",
   EXAMPLE lines ///
@@ -2406,7 +2542,7 @@ document {
    
    
    
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- working with divisors
    
 document { 
@@ -2724,16 +2860,17 @@ document {
   Inputs => {"X" => NormalToricVariety },
   Outputs => {Matrix => " the surjective map from the group of torus-invariant
                         Cartier divisors to the Picard group" },
-  "The Picard group of a variety is the group of Cartier divisors divided by the
-  subgroup of principal divisors.  For a normal toric variety , the Picard group
-  has a presentation defined by the map from the group of torus-characters to
-  the group of torus-invariant Cartier divisors.  Hence, there is a surjective
-  map from the group of torus-invariant Cartier divisors to the Picard group.
-  This function returns a matrix representing this map.",
+  "The Picard group of a variety is the group of Cartier divisors divided by 
+  the subgroup of principal divisors.  For a normal toric variety , the 
+  Picard group has a presentation defined by the map from the group of 
+  torus-characters to the group of torus-invariant Cartier divisors.  Hence, 
+  there is a surjective map from the group of torus-invariant Cartier 
+  divisors to the Picard group.  This function returns a matrix representing 
+  this map.",
   PARA{},	  
   "On a smooth normal toric variety, the map from the torus-invariant Cartier
-  divisors to the Picard group is the same as the map from the Weil divisors to
-  the class group.",
+  divisors to the Picard group is the same as the map from the Weil divisors 
+  to the class group.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     eta = fromCDivToPic PP2
@@ -2744,8 +2881,8 @@ document {
     xi = fromCDivToPic FF1
     xi == fromWDivToCl FF1
     ///,
-  "In general, there is a commutative diagram relating the map from the group of
-  torus-invariant Cartier divisors to the Picard group and the map from the
+  "In general, there is a commutative diagram relating the map from the group 
+  of torus-invariant Cartier divisors to the Picard group and the map from the
   group of torus-invariant Weil divisors to the class group.",
   EXAMPLE lines ///
     C = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
@@ -2778,10 +2915,10 @@ document {
   Usage => "pic X",
   Inputs => {"X" => NormalToricVariety},
   Outputs => {Module => " a finitely generated abelian group"},
-  "The Picard group of a variety is the group of Cartier divisors divided by the
-  subgroup of principal divisors.  For a normal toric variety, the Picard group
-  has a presentation defined by the map from the group of torus-characters to
-  the group of torus-invariant Cartier divisors.",
+  "The Picard group of a variety is the group of Cartier divisors divided by 
+  the subgroup of principal divisors.  For a normal toric variety, the Picard 
+  group has a presentation defined by the map from the group of 
+  torus-characters to the group of torus-invariant Cartier divisors.",
   PARA {},
   "When toric variety is smooth, the Picard group is isomorphic to the class
   group.",
@@ -2805,8 +2942,8 @@ document {
     pic U'
     cl U'
     ///,
-  "If the fan associated to ", TEX ///$X$///, " contains a cone of dimension ",
-  TEX ///$dim(X)$///, " then the Picard group is free.",
+  "If the fan associated to ", TEX ///$X$///, " contains a cone of 
+  dimension ", TEX ///$dim(X)$///, " then the Picard group is free.",
   EXAMPLE lines ///
     C = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
     pic C
@@ -2835,8 +2972,8 @@ document {
   "The Picard group of a normal toric variety is a subgroup of the class
   group.",
   PARA{},
-  "On a smooth normal toric variety, the Picard group is isomorphic to the class
-  group, so the inclusion map is the identity.",
+  "On a smooth normal toric variety, the Picard group is isomorphic to the 
+  class group, so the inclusion map is the identity.",
   EXAMPLE lines ///
     PP3 = projectiveSpace 3;
     pic PP3
@@ -2888,9 +3025,9 @@ document {
   Key => ToricDivisor,
   Headline => "the class of all torus-invariant Weil divisors",
   "A torus-invariant Weil divisor on a normal toric variety is an integral
-  linear combination of the torus-invariant prime divisors.  The torus-invariant
-  prime divisors correspond to the rays.  In this package, the rays are ordered
-  and indexed by the nonnegative integers.",
+  linear combination of the torus-invariant prime divisors.  The 
+  torus-invariant prime divisors correspond to the rays.  In this package, 
+  the rays are ordered and indexed by the nonnegative integers.",
   PARA{},
   "The first examples illustrates some torus-invariant Weil divisors on
   projective 2-space",
@@ -2902,7 +3039,8 @@ document {
     D1-D2
     K = toricDivisor PP2  
     ///,
-  "One can easily extract individual coefficients or the vector of coefficients",
+  "One can easily extract individual coefficients or the vector of 
+  coefficients",
   EXAMPLE lines ///
     D1#0
     D1#1
@@ -2932,8 +3070,9 @@ document {
   format for printing.",
   PARA{},
   "In this package, ", TEX ///$i$///, "-th torus-invariant prime Weil divisors
-  are displayed as ", TEX ///D_i///, ".  Hence, an arbitrary torus-invariant Weil
-  divisor is displayed as an integral linear combination of these expressions.",
+  are displayed as ", TEX ///D_i///, ".  Hence, an arbitrary torus-invariant 
+  Weil divisor is displayed as an integral linear combination of these 
+  expressions.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     toricDivisor({2,-7,3},PP2)
@@ -2953,11 +3092,11 @@ document {
   Usage => "vector D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {Vector => "of integer coefficients"},
-  "This method returns the vector whose ", TT "i", "-th entry is the coefficient
-  of ", TT "i", "-th torus-invariant prime divisor.  The indexing of the
-  torus-invariant prime divisors is inherited from the indexing of the rays in
-  the associated fan.  This vector can be viewed as an element of the group of
-  torus-invariant Weil divisors.",
+  "This method returns the vector whose ", TT "i", "-th entry is the 
+  coefficient of ", TT "i", "-th torus-invariant prime divisor.  The indexing 
+  of the torus-invariant prime divisors is inherited from the indexing of the 
+  rays in the associated fan.  This vector can be viewed as an element of the 
+  group of torus-invariant Weil divisors.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     D = 2*PP2_0 - 7*PP2_1 + 3*PP2_2    
@@ -2981,14 +3120,14 @@ document {
   Headline => "make the list of prime divisors with nonzero coefficients",
   Usage => "support D",
   Inputs => {"D" => ToricDivisor},
-  Outputs => {List => {"indexing the torus-invariant prime divisors with nonzero
-                       coefficients"}},
+  Outputs => {List => {"indexing the torus-invariant prime divisors with 
+                        nonzero coefficients"}},
   "The support of a torus-invariant Weil divisor is the set of torus-invariant
-  prime divisors which appear with nonzero coefficients in the unique expression
-  for this divisor.  In this package, we encode this information by indexing the
-  torus-invariant prime divisors with appear with a nonzero coefficient.  The
-  indexing of the torus-invariant prime divisors is inherited from the indexing
-  of the rays in the associated fan.",
+  prime divisors which appear with nonzero coefficients in the unique 
+  expression for this divisor.  In this package, we encode this information 
+  by indexing the torus-invariant prime divisors with appear with a nonzero 
+  coefficient.  The indexing of the torus-invariant prime divisors is 
+  inherited from the indexing of the rays in the associated fan.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     D = 2*PP2_0 - 7*PP2_1 + 3*PP2_2    
@@ -3009,8 +3148,8 @@ document {
   Usage => "variety D or normalToricVariety D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {NormalToricVariety => "the underlying variety"},
-  "This method allows one to easily access the normal toric variety on which the
-  torus-invariant Weil divisor is defined.",
+  "This method allows one to easily access the normal toric variety on which 
+  the torus-invariant Weil divisor is defined.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     D = 2*PP2_0 - 7*PP2_1 + 3*PP2_2
@@ -3035,21 +3174,21 @@ document {
     "L" => List => "of integers",
     "X" => NormalToricVariety},
   Outputs => {ToricDivisor},
-  "Given a list of integers and a normal toric variety, this method returns the
-  torus-invariant Weil divisor such the coefficient of the ", TT "i", "-th
-  torus-invariant prime divisor is the ", TT "i", "-th entry in the list.  The
-  indexing of the torus-invariant prime divisors is inherited from the indexing
-  of the rays in the associated fan.  In this package, the rays are ordered and
-  indexed by the nonnegative integers.",
+  "Given a list of integers and a normal toric variety, this method returns 
+  the torus-invariant Weil divisor such the coefficient of the ", TT "i", 
+  "-th torus-invariant prime divisor is the ", TT "i", "-th entry in the 
+  list.  The indexing of the torus-invariant prime divisors is inherited from 
+  the indexing of the rays in the associated fan.  In this package, the rays 
+  are ordered and indexed by the nonnegative integers.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     D = toricDivisor({2,-7,3},PP2)
     D === 2* PP2_0 - 7*PP2_1 + 3*PP2_2
     vector D
     ///,     
-  "Although this is a general method for making a torus-invariant Weil divisor,
-  it is typically more convenient to simple enter the appropriate linear
-  combination of torus-invariant Weil divisors.",
+  "Although this is a general method for making a torus-invariant Weil 
+  divisor, it is typically more convenient to simple enter the appropriate 
+  linear combination of torus-invariant Weil divisors.",
   SeeAlso => { 
     "Working with divisors and their associated groups",
     (toricDivisor,NormalToricVariety),
@@ -3062,11 +3201,12 @@ document {
   Inputs => {"X" => NormalToricVariety},
   Outputs => {ToricDivisor => " minus the sum of all the torus-invariant prime
                                divisors"},
-  "On a smooth normal toric variety, the canonical divisor equals minus the sum
-  of all the torus-invariant prime divisors.  For a singular toric variety, this
-  divisor may not be Cartier or even ", TT "QQ", "-Cartier.  Nevertheless, the
-  associated coherent sheaf, whose local sections are rational functions with at
-  least simple zeros along the prime divisors, is the dualizing sheaf.",
+  "On a smooth normal toric variety, the canonical divisor equals minus the 
+  sum of all the torus-invariant prime divisors.  For a singular toric 
+  variety, this divisor may not be Cartier or even ", TT "QQ", "-Cartier.  
+  Nevertheless, the associated coherent sheaf, whose local sections are 
+  rational functions with at least simple zeros along the prime divisors, is 
+  the dualizing sheaf.",
   PARA{},
   "The first example illustrates the canonical divisor on projective space",
   EXAMPLE lines ///
@@ -3104,14 +3244,14 @@ document {
   Inputs => {
     "X" => NormalToricVariety,
     "i" => ZZ},
-  Outputs => {ToricDivisor => {" the torus-invariant prime divisor associated to
-                               the ", TT "i", "-th ray"}},
+  Outputs => {ToricDivisor => {" the torus-invariant prime divisor associated 
+                                to the ", TT "i", "-th ray"}},
   "The torus-invariant prime divisors on a normal toric variety correspond to
   the rays in the associated fan.  In this package, the rays are ordered and
   indexed by the nonnegative integers.  Given a normal toric variety and
   nonnegative integer, this method returns the corresponding torus-invariant
-  prime divisor.  The most convenient way to make a general torus-invariant Weil
-  divisor is to simply write the appropriate linear combination of these
+  prime divisor.  The most convenient way to make a general torus-invariant 
+  Weil divisor is to simply write the appropriate linear combination of these
   torus-invariant Weil divisors.",
   PARA{},  
   "There are three torus-invariant prime divisors in the projective plane.",
@@ -3176,11 +3316,12 @@ document {
   Usage => "OO D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {CoherentSheaf => " the associated rank-one reflexive sheaf"},
-  "For a Weil divisor ", TEX ///$D$///, " on a normal variety ", TEX ///$X$///,
-  " the associated sheaf ", TEX ///${\cal O}_X(D)$///, " is defined by ",
-  TEX ///$H^0(U, {\cal O}_X(D)) = \{ f \in {\mathbb C}(X)^* | (div(f)+D)|_U \geq 0 \}
-  \cup \{0\}$///, ".  The sheaf associated to a Weil divisor is reflexive; it is
-  equal to its bidual.  A divisor is Cartier if and only if the associated sheaf is
+  "For a Weil divisor ", TEX ///$D$///, " on a normal variety ", 
+  TEX ///$X$///, " the associated sheaf ", TEX ///${\cal O}_X(D)$///, 
+  " is defined by ", TEX ///$H^0(U, {\cal O}_X(D)) = 
+  \{ f \in {\mathbb C}(X)^* | (div(f)+D)|_U \geq 0 \} \cup \{0\}$///, ".  The 
+  sheaf associated to a Weil divisor is reflexive; it is equal to its 
+  bidual.  A divisor is Cartier if and only if the associated sheaf is
   a line bundle.",
   PARA{},
   "The first examples show that the associated sheaves are reflexive.",
@@ -3212,8 +3353,8 @@ document {
     ///,     
   "Two Weil divisors ", TEX ///$D$///, " and ", TEX ///$E$///, " are linearly
   equivalent if ", TEX ///$D = E + div(f)$///, " for some ", 
-  TEX ///$f \in {\mathbb C}(X)^*$///, ".  Linearly equivalent divisors produce isomorphic
-  sheaves.",
+  TEX ///$f \in {\mathbb C}(X)^*$///, ".  Linearly equivalent divisors 
+  produce isomorphic sheaves.",
   EXAMPLE lines ///
     PP3 = projectiveSpace 3;
     D1 = PP3_0
@@ -3234,8 +3375,8 @@ document {
   Usage => "isEffective D",
   Inputs => {"D" => ToricDivisor},
   Outputs => {Boolean => {TO "true", " if all the coefficients of the
-                          torus-invariant prime divisors are nonnegative, and ",
-                          TO "false", " otherwise"}},
+                          torus-invariant prime divisors are nonnegative, 
+			  and ", TO "false", " otherwise"}},
   "A torus-invariant Weil divisor is effective if all the coefficients of the
   torus-invariant prime divisors are nonnegative.",
   PARA{},
@@ -3246,7 +3387,8 @@ document {
     isEffective K
     isEffective(-K)
     ///,
-  "The torus-invariant prime divisors generate the cone of effective divisors.",
+  "The torus-invariant prime divisors generate the cone of effective 
+  divisors.",
   SeeAlso => { 
     "Working with divisors and their associated groups"}}   
 
@@ -3257,11 +3399,11 @@ document {
   Inputs => {"D" => ToricDivisor},
   Outputs => {Boolean => {TO "true", " if the divisor is Cartier, and ", 
 	      TO "false", " otherwise" }},
-  "A torus-invariant Weil divisor ", TEX ///$D$///, " on a normal toric variety
-  ", TEX ///$X$///, " is Cartier if it is locally principal, meaning that ", 
-  TEX ///$X$///, " has an open cover ", TEX ///$\{U_i\}$///, " such that ",
-  TEX ///$D|_{U_i}$///, " is principal in ", TEX ///$U_i$///, " for every ",
-  TEX ///$i$///, ".",
+  "A torus-invariant Weil divisor ", TEX ///$D$///, " on a normal toric 
+  variety ", TEX ///$X$///, " is Cartier if it is locally principal, meaning 
+  that ", TEX ///$X$///, " has an open cover ", TEX ///$\{U_i\}$///, " such 
+  that ", TEX ///$D|_{U_i}$///, " is principal in ", TEX ///$U_i$///, " for 
+  every ", TEX ///$i$///, ".",
   PARA{},
   "On a smooth variety, every Weil divisor is Cartier.",
   EXAMPLE lines ///
@@ -3278,7 +3420,8 @@ document {
     isQQCartier W_0
     isCartier (35*W_0)      
     ///,
-  "In general, the Cartier divisors are only a subgroup of the Weil divisors.",
+  "In general, the Cartier divisors are only a subgroup of the Weil 
+  divisors.",
   EXAMPLE lines ///
     X = normalToricVariety(id_(ZZ^3) | -id_(ZZ^3));
     isCartier X_0
@@ -3311,8 +3454,8 @@ document {
     isQQCartier W_0
     isCartier (35*W_0)      
     ///,
-  "In general, the ", TEX ///$\QQ$///, "-Cartier divisors form a proper subgroup
-  of the Weil divisors.",
+  "In general, the ", TEX ///$\QQ$///, "-Cartier divisors form a proper 
+  subgroup of the Weil divisors.",
   EXAMPLE lines ///
     X = normalToricVariety(id_(ZZ^3) | -id_(ZZ^3));
     isCartier X_0
@@ -3334,23 +3477,24 @@ document {
   Outputs => {Boolean => {TO "true", " if the divisor is nef, and ",
                           TO "false", " otherwise"}},
   "A ", TEX ///$\QQ$///, "-Cartier divisor is nef (short for \"numerically
-  effective\" or \"numerically eventually free\") if the intersection product of
-  the divisor with every complete irreducible curve is nonnegative.  The
+  effective\" or \"numerically eventually free\") if the intersection product 
+  of the divisor with every complete irreducible curve is nonnegative.  The
   definition depends only on the numerical equivalence class of the divisor.
-  For a torus-invariant", TEX ///$\QQ$///, "-Cartier divisor ", TEX ///$D$///, "
-  on a complete normal toric variety, the following are equivalent:",
+  For a torus-invariant", TEX ///$\QQ$///, "-Cartier divisor ", 
+  TEX ///$D$///, " on a complete normal toric variety, the following are 
+  equivalent:",
   UL { 
     {TEX ///$D$///, " is nef;"},
     {"some positive integer multiply of ", TEX ///$D$///, " is Cartier and
     basepoint free;"},
-    {"the real piecewise linear support function associated to ", TEX ///$D$///,
-    " is convex."}},
-  "A torus-invariant Cartier divisor is nef if and only if it is basepoint free;
-  in other words, the associated line bundle is generated by its global
+    {"the real piecewise linear support function associated to ", 
+      TEX ///$D$///, " is convex."}},
+  "A torus-invariant Cartier divisor is nef if and only if it is basepoint 
+  free; in other words, the associated line bundle is generated by its global
   sections.",
   PARA{},
-  "On a Hirzebruch surface, three of the four torus-invariant prime divisors are
-  nef.",
+  "On a Hirzebruch surface, three of the four torus-invariant prime divisors 
+  are nef.",
   EXAMPLE lines ///
     X1 = hirzebruchSurface 2;
     isNef X1_0
@@ -3411,20 +3555,20 @@ document {
   Inputs => {"D" => ToricDivisor},
   Outputs => {Boolean => {TO "true", " if the divisor is ample, and ",
                           TO "false", " otherwise"}},
-  "A Cartier divisor is very ample when it is basepoint free and the map arising
-  from its complete linear series is a closed embedding.  A Cartier divisor is
-  ample when some positive integer multiple is very ample.  For a
-  torus-invariant Cartier divisor ", TEX ///$D$///, " on a complete normal toric
-  variety, the following conditions are equivalent: ",
+  "A Cartier divisor is very ample when it is basepoint free and the map 
+  arising from its complete linear series is a closed embedding.  A Cartier 
+  divisor is ample when some positive integer multiple is very ample.  For a
+  torus-invariant Cartier divisor ", TEX ///$D$///, " on a complete normal 
+  toric variety, the following conditions are equivalent: ",
   UL {
     {TEX ///$D$///, " is ample;"},
-    {"the real piecewise linear support function associated to ", TEX ///$D$///,
-    " is strictly convex;"},
+    {"the real piecewise linear support function associated to ", 
+      TEX ///$D$///, " is strictly convex;"},
     {"the lattice polytope corresponding to ", TEX ///$D$///, " is
     full-dimensional and its normal fan equals the fan associated to the
     underlying toric variety;"},
-    {"the intersection product of ", TEX ///$D$///, " with every torus-invariant
-   irreducible curve is positive."}},
+    {"the intersection product of ", TEX ///$D$///, " with every 
+      torus-invariant irreducible curve is positive."}},
   PARA{},
   "On projective space, every torus-invariant prime divisor is ample.",
   EXAMPLE lines ///
@@ -3464,9 +3608,9 @@ document {
   Inputs => {"D" => ToricDivisor},
   Outputs => {Boolean => {TO "true", " if the divisor is very ample, and ", 
 	                  TO "false", " otherwise" }},
-  "A Cartier divisor is very ample when it is basepoint free and the map arising
-  from its complete linear series is a closed embedding.  On a normal toric
-  variety, the following are equivalent:",
+  "A Cartier divisor is very ample when it is basepoint free and the map 
+  arising from its complete linear series is a closed embedding.  On a normal 
+  toric variety, the following are equivalent:",
   UL {
     {TEX ///$D$///, " is a very ample divisor;"},
     {"for the associated lattice polytope ", TEX ///$P$///, " and every vertex
@@ -3515,8 +3659,8 @@ document {
   divisor is ample, the normal fan the corresponding polytope equals the fan
   associated to the normal toric variety.",
   PARA {},
-  "On the projective plane, the associate polytope is either empty, a point, or
-  a triangle.",
+  "On the projective plane, the associate polytope is either empty, a point, 
+  or a triangle.",
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     vertices (-PP2_0)
@@ -3562,16 +3706,16 @@ document {
   Headline => "computes the lattice points in the associated polytope",
   Usage => "latticePoints D",
   Inputs => {"D" => ToricDivisor},
-  Outputs => {Matrix => " whose columns are the lattice points in the associated
-              polytope"},
+  Outputs => {Matrix => " whose columns are the lattice points in the 
+              associated polytope"},
   "On a complete normal toric variety, the polyhedron associated to a Cartier
   divisor is a lattice polytope.  Given a torus-invariant Cartier divisor on a
   normal toric variety, this method returns an integer matrix whose columns
-  correspond to the lattices points contained in the associated polytope.  For a
-  non-effective Cartier divisor, this method returns ", TO null, ".",
+  correspond to the lattices points contained in the associated polytope.  
+  For a non-effective Cartier divisor, this method returns ", TO null, ".",
   PARA {},
-  "On the projective plane, the associate polytope is either empty, a point, or
-  a triangle.",  
+  "On the projective plane, the associate polytope is either empty, a point,
+   or a triangle.",  
   EXAMPLE lines ///
     PP2 = projectiveSpace 2;
     vertices (-PP2_0)
@@ -3588,9 +3732,9 @@ document {
     rays X2 === rays X1
     max X2 === max X1    
     ///,    
-  "In this singular example, we see that all the lattice points in the polytope
-  arising from a divisor ", TEX ///$2D$///, " do not come from the lattice
-  points in the polytope arising from ", TEX ///$D$///, ".",
+  "In this singular example, we see that all the lattice points in the 
+  polytope arising from a divisor ", TEX ///$2D$///, " do not come from the 
+  lattice points in the polytope arising from ", TEX ///$D$///, ".",
   EXAMPLE lines ///
     Y = normalToricVariety matrix {{0,1,0,0,1},{0,0,1,0,1},{0,0,0,1,1},{0,0,0,0,3}};
     D = 3*Y_0;
@@ -3609,8 +3753,8 @@ document {
   Inputs => {"D" => ToricDivisor},
   Outputs => {Polyhedron},
   
-  "For a torus-invariant Weil divisors ", TEX ///$D = \sum_i a_i D_i$///, " the
-  associated polyhedron is ", 
+  "For a torus-invariant Weil divisors ", TEX ///$D = \sum_i a_i D_i$///, 
+  " the associated polyhedron is ", 
   TEX ///$\{ m \in M : (m, v_i) \geq -a_i \forall i \}$///,
   ".  Given a torus-invariant Weil divisor, this methods makes the associated
   polyhedra as an object in ", TO Polyhedra, ".",
@@ -3655,19 +3799,20 @@ document {
   Key => "Total coordinate rings and coherent sheaves",
   HREF("http://www3.amherst.edu/~dacox/", "David A. Cox"), " introduced the
   total coordinate ring ", TEX ///$S$///, " of a normal toric variety ", 
-  TEX ///$X$///, " and the irrelevant ideal ", TEX ///$B$///, ".  The polynomial
-  ring ", TEX ///$S$///, " has one variable for each ray in the associated fan
-  and a natural grading by the class group.  The monomial ideal ", 
-  TEX ///$B$///, " encodes the maximal cones.  The following results of Cox
-  indicate the significance of the pair ", TEX ///$(S,B)$///, ".",
+  TEX ///$X$///, " and the irrelevant ideal ", TEX ///$B$///, ".  The 
+  polynomial ring ", TEX ///$S$///, " has one variable for each ray in the 
+  associated fan and a natural grading by the class group.  The monomial 
+  ideal ", TEX ///$B$///, " encodes the maximal cones.  The following results 
+  of Cox indicate the significance of the pair ", TEX ///$(S,B)$///, ".",
   UL {
     {"The variety ", TEX ///$X$///, " is a good categorial quotient of ", 
     TEX ///${\rm Spec}(S) - {\rm V}(B)$///, " by a suitable group action."},
     {"The category of coherent sheaves on ", TEX ///$X$///, " is equivalent to
-    the quotient of the category of finitely generated graded ", TEX ///$S$///,
-    "-modules by the full subcategory of ", TEX ///$B$///, "-torsion modules."}},
-  "In particular, we may represent any coherent sheaf on ", TEX ///$X$///, " by
-  giving a finitely generated graded ", TEX ///$S$///, "-module.",
+    the quotient of the category of finitely generated graded ", 
+    TEX ///$S$///, "-modules by the full subcategory of ", TEX ///$B$///, 
+    "-torsion modules."}},
+  "In particular, we may represent any coherent sheaf on ", TEX ///$X$///, 
+  " by giving a finitely generated graded ", TEX ///$S$///, "-module.",
   PARA{},
   "The following methods allow one to make and manipulate coherent sheaves on
   normal toric varieties.",
@@ -3692,10 +3837,10 @@ document {
   Usage => "ring X",
   Inputs => {"X" => NormalToricVariety},
   Outputs => {PolynomialRing => "the total coordinate ring"},
-  "The total coordinate ring (a.k.a. the Cox ring) of a normal toric variety is
-  a polynomial ring in which the variables correspond to the rays in the fan.
-  The map from the group of torus-invarient Weil divisors to the class group
-  endows this ring with a grading by the ", TO2(cl,"class group"), ".",
+  "The total coordinate ring (a.k.a. the Cox ring) of a normal toric variety 
+  is a polynomial ring in which the variables correspond to the rays in the 
+  fan.  The map from the group of torus-invarient Weil divisors to the class 
+  group endows this ring with a grading by the ", TO2(cl,"class group"), ".",
   PARA{},
   "The total coordinate ring for projective space is the standard graded
   polynomial ring.",
@@ -3769,10 +3914,10 @@ document {
   Usage => "ideal X",
   Inputs => {"X" => NormalToricVariety},
   Outputs => {Ideal => {"in the total coordinate ring of ", TT "X", "."}},
-  "The irrelevant ideal is a reduced monomial ideal in the total coordinate ring
-  which encodes the combinatorics of the fan.  For each maximal cone in the fan,
-  it has a minimal generator, namely the product of the variables not indexed by
-  elements of the list corresponding to the maximal cone.",
+  "The irrelevant ideal is a reduced monomial ideal in the total coordinate 
+  ring which encodes the combinatorics of the fan.  For each maximal cone in 
+  the fan, it has a minimal generator, namely the product of the variables 
+  not indexed by elements of the list corresponding to the maximal cone.",
   PARA{},
   "For projective space, the irrelevant ideal is generated by the variables.",
   EXAMPLE lines ///
@@ -3785,8 +3930,8 @@ document {
     C = normalToricVariety({{1,0,0},{0,1,0},{0,0,1},{1,1,-1}},{{0,1,2,3}});
     ideal C
     ///,	  
-  "The irrelevant ideal for a product of toric varieties is intersection of the
-  irrelevant ideal of the factors.",
+  "The irrelevant ideal for a product of toric varieties is intersection of 
+  the irrelevant ideal of the factors.",
   EXAMPLE lines ///
     X = projectiveSpace(3) ** projectiveSpace(4);
     S = ring X;
@@ -3821,11 +3966,11 @@ document {
   Outputs => {CoherentSheaf => {"the coherent sheaf on ", TT "X", "
 	                        corresponding to ", TT "M"}},
   "The category of coherent sheaves on a normal toric variety is equivalent to
-  the quotient category of finitely generated modules over the total coordinate
-  ring by the full subcategory of torsion modules with respect to the irrelevant
-  ideal.  In particular, each finitely generated module over the total
-  coordinate ring corresponds to coherent sheaf on the normal toric variety and
-  every coherent sheaf arises in this manner.",
+  the quotient category of finitely generated modules over the total 
+  coordinate ring by the full subcategory of torsion modules with respect to 
+  the irrelevant ideal.  In particular, each finitely generated module over 
+  the total coordinate ring corresponds to coherent sheaf on the normal toric 
+  variety and every coherent sheaf arises in this manner.",
   PARA {},
   "Free modules correspond to reflexive sheaves.",
   EXAMPLE lines ///
@@ -3853,10 +3998,10 @@ document {
     "S" => {"the total coordinate ring of ", TT "X"}},
   Outputs => {SheafOfRings => {"the structure sheaf on ", TT "X"}},
   "The category of coherent sheaves on a normal toric variety is equivalent to
-  the quotient category of finitely generated modules over the total coordinate
-  ring by the full subcategory of torsion modules with respect to the irrelevant
-  ideal.  In particular, the total coordinate ring corresponds to the structure
-  sheaf.",
+  the quotient category of finitely generated modules over the total 
+  coordinate ring by the full subcategory of torsion modules with respect to 
+  the irrelevant ideal.  In particular, the total coordinate ring corresponds 
+  to the structure sheaf.",
   PARA{},
   "On projective space, we can make the structure sheaf in a few ways.",
   EXAMPLE lines ///
@@ -3882,17 +4027,18 @@ document {
                             the result before returning it"}},
   Outputs => {CoherentSheaf => {" the sheaf of Zariski 1-forms on ", TT "X"}},
   "For a normal variety, the sheaf of Zariski 1-forms is defined to be the
-  double dual of the cotangent bundle or equivalently the extension of the sheaf
-  of 1-forms on the smooth locus to the entire variety (the complement of the
-  smooth locus has codimension at least two because the variety is normal).  By
-  construction, this sheaf is reflexive with rank equal to the dimension of the
-  variety.  When the underlying variety is smooth, this is simple the sheaf of
-  1-forms or the cotangent bundle.",
+  double dual of the cotangent bundle or equivalently the extension of the 
+  sheaf of 1-forms on the smooth locus to the entire variety (the complement 
+  of the smooth locus has codimension at least two because the variety is 
+  normal).  By construction, this sheaf is reflexive with rank equal to the 
+  dimension of the variety.  When the underlying variety is smooth, this is 
+  simple the sheaf of 1-forms or the cotangent bundle.",
   PARA{},
   "On a non-degenerate normal toric variety, the sheaf of Zariski 1-forms is
-  associated to the kernel of a map from the character lattice tensor the total
-  coordinate ring to the direct sum over the rays of the quotient of the total
-  coordinate ring by the ideal generated by the corresponding variable.",
+  associated to the kernel of a map from the character lattice tensor the 
+  total coordinate ring to the direct sum over the rays of the quotient of 
+  the total coordinate ring by the ideal generated by the corresponding 
+  variable.",
   EXAMPLE lines ///
     PP3 = projectiveSpace 3;
     OmegaPP3 = cotangentSheaf PP3
@@ -3931,8 +4077,8 @@ document {
     "F" => CoherentSheaf => {" on ", TT "X"}},
   Outputs => {{"the ", TT "i", "-th cohomology group of ", TT "F"}},
   "The cohomology functor ", TT "HH", TT SUP "i", TT "(X,-)", " from the
-  category of sheaves of abelian groups to the category of abelian groups is the
-  right derived functor of the global sections functor.",
+  category of sheaves of abelian groups to the category of abelian groups is 
+  the right derived functor of the global sections functor.",
   PARA {},
   "As a simple example, we compute the dimensions of the cohomology groups for
   some line bundles on the projective plane.",
@@ -3951,8 +4097,8 @@ document {
   "Compare this table with the first example in ", TO "BGG::cohomologyTable",
   ".",
   PARA{},
-  "For a second example, we compute the dimensions of the cohomology groups for
-  some line bundles on a Hirzebruch surface",
+  "For a second example, we compute the dimensions of the cohomology groups 
+  for some line bundles on a Hirzebruch surface",
   EXAMPLE {
     "cohomologyTable(ZZ,CoherentSheaf,List,List):=(k,F,lo,hi)->(
       new CohomologyTally from select(flatten apply(toList(lo#0..hi#0),
@@ -4073,23 +4219,25 @@ document {
     "X" => NormalToricVariety,
     "v" => List => {" of integers giving a vector in the relative interior of
                     the cone corresponding to ", TT "s", " (optional)"}},
-  Outputs => {NormalToricVariety => {" obtained by blowing up ", TT "X", " along
-                                     the torus orbit indexed by ", TT "s"}},
+  Outputs => {NormalToricVariety => {" obtained by blowing up ", TT "X", 
+                                     " along the torus orbit indexed by ", 
+				      TT "s"}},
   "Roughly speaking, the blowup replaces a subspace of a given space with all
-  the directions pointing out of that subspace.  The metaphor is inflation of a
-  balloon rather than an explosion.  A blowup is the universal way to turn a
+  the directions pointing out of that subspace.  The metaphor is inflation of 
+  a balloon rather than an explosion.  A blowup is the universal way to turn a
   subvariety into a Cartier divisor.",  
   PARA{},
   "The blowup of a normal toric variety along a torus orbit closure is also a
-  normal toric variety.  The fan associated to the blowup is star subdivision or
-  stellar subdivision of the fan of the original toric variety.  More precisely,
-  we throw out the star of the cone corresponding to ", TT "s", " and join a
-  vector ", TT "v", " lying the relative interior to the boundary of the star.
-  When the vector ", TT "v", " is not specified, the ray corresponding to the
-  sum of all rays in the cone corresponding to ", TT "s", " is used.",
+  normal toric variety.  The fan associated to the blowup is star subdivision 
+  or stellar subdivision of the fan of the original toric variety.  More
+  precisely, we throw out the star of the cone corresponding to ", TT "s", 
+  " and join a vector ", TT "v", " lying the relative interior to the 
+  boundary of the star.  When the vector ", TT "v", " is not specified, the 
+  ray corresponding to the sum of all rays in the cone corresponding to ", 
+  TT "s", " is used.",
   PARA{},
-  "The simplest example is blowup of the origin in the affine plane.  Note that
-  the new ray has the largest index.",
+  "The simplest example is blowup of the origin in the affine plane.  Note 
+  that the new ray has the largest index.",
   EXAMPLE lines ///
     AA2 = affineSpace 2;
     rays AA2
@@ -4116,8 +4264,8 @@ document {
     rays Bl4
     max Bl4
     ///,  
-  "The third collection of examples illustrate some blowups of a non-simplicial
-  projective toric variety.",
+  "The third collection of examples illustrate some blowups of a 
+  non-simplicial projective toric variety.",
   EXAMPLE lines ///
     X = normalToricVariety (id_(ZZ^3) | (-id_(ZZ^3)));
     rays X
@@ -4139,11 +4287,11 @@ document {
     isProjective Bl9
     ///,  
   Caveat => {"The method assumes that the list ", TT "v", " corresponds to a
-  primitive vector.  In other words, the greatest common divisor of its entries
-  is one.  The method also assumes that ", TT "v", " lies in the relative
-  interior of the cone corresponding to ", TT "s", ".  If either of these
-  conditions fail, then the output will not necessarily be a well-defined 
-  normal toric variety."},
+  primitive vector.  In other words, the greatest common divisor of its 
+  entries is one.  The method also assumes that ", TT "v", " lies in the 
+  relative interior of the cone corresponding to ", TT "s", ".  If either of 
+  these conditions fail, then the output will not necessarily be a 
+  well-defined normal toric variety."},
   SeeAlso => {
     "Resolution of singularities",
     (orbits,NormalToricVariety),
@@ -4152,18 +4300,23 @@ document {
 
 document { 
   Key => {makeSmooth, 
-    (makeSmooth,NormalToricVariety)},
+    (makeSmooth,NormalToricVariety),
+    [makeSmooth,Strategy]},
   Headline => "make a birational smooth toric variety ",
   Usage => "makeSmooth X",
-  Inputs => {"X" => NormalToricVariety},
+  Inputs => {
+    "X" => NormalToricVariety,
+    Strategy => {"either ", TT "0", " or ", TT "1"}
+    },
   Outputs => {NormalToricVariety => " which is smooth"},
-  "Every normal toric variety has a resolution of singularities given by another
-  normal toric variety.  Given a normal toric variety ", TEX ///$X$///, ", this
-  method makes a new smooth toric variety ", TEX ///$Y$///, " which has a proper
-  birational map to ", TEX ///$X$///, ".  The normal toric variety ", 
-  TEX ///$Y$///, " is obtained from ", TEX ///$X$///, " by repeatedly blowing up
-  appropriate torus orbit closures (if necessary the ", TO makeSimplicial, "
-  method is also used).  A minimal number of blow-ups are used.",
+  "Every normal toric variety has a resolution of singularities given by 
+  another normal toric variety.  Given a normal toric variety ", 
+  TEX ///$X$///, ", this method makes a new smooth toric variety ", 
+  TEX ///$Y$///, " which has a proper birational map to ", TEX ///$X$///, 
+  ".  The normal toric variety ", TEX ///$Y$///, " is obtained from ", 
+  TEX ///$X$///, " by repeatedly blowing up appropriate torus orbit closures 
+  (if necessary the ", TO makeSimplicial, " method is also used with the 
+  specified strategy).  A minimal number of blow-ups are used.",
   PARA{},  
   "As a simple example, we can resolve a simplicial affine singularity.",
   EXAMPLE lines ///
@@ -4188,7 +4341,8 @@ document {
     R = set rays W' - set rays W
     #R
     ///,  
-  "If the initial toric variety is smooth, then this method simply returns it.",
+  "If the initial toric variety is smooth, then this method simply returns 
+  it.",
   EXAMPLE lines ///
     AA1 = affineSpace 1;
     AA1 === makeSmooth AA1    
@@ -4228,17 +4382,17 @@ document {
     Y' = makeSmooth Y;
     isSmooth Y'
     ///,
-  Caveat => {"A singular normal toric variety almost never has a unique minimal
-             resolution.  This method returns only of one of the many minimal
-             resolutions."},
+  Caveat => {"A singular normal toric variety almost never has a unique 
+              minimal esolution.  This method returns only of one of the many 
+	      minimal resolutions."},
   SeeAlso => {
     "Resolution of singularities",
     (isSmooth,NormalToricVariety),
     (makeSimplicial,NormalToricVariety)}}
 
--------------------------------------------------------------------------------- 
+------------------------------------------------------------------------------
 -- TEST
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 -- test 0
 TEST ///
@@ -4588,11 +4742,22 @@ assert(isProjective Bl7 === true)
 assert(isWellDefined Bl7 === true)
 ///
 
+-- test 12
+TEST ///
+Rho = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1},{0,1,1,1},{1,0,1,-1},
+  {1,-1,0,1},{1,1,-1,0},{0,0,0,-1},{-1,0,-1,1},{0,-1,0,0},{-1,1,0,-1},
+  {0,0,-1,0},{-1,-1,1,0}};
+Sigma = {{0,5},{0,6},{0,7},{1,4},{1,7},{1,11},{2,4},{2,5},{2,13},{3,4},{3,6},
+  {3,9},{5,8},{6,10},{7,12},{8,9},{10,11},{12,13}};
+X = normalToricVariety(Rho,Sigma);
+assert(isComplete X == false)
+///
+
 end     
 
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- SCRATCH SPACE
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 
 restart
 uninstallPackage "NormalToricVarieties"
@@ -4649,4 +4814,6 @@ assert(isSimplicial Y === true)
 assert(isProjective Y === true)
 
 ///
+
+
 
