@@ -848,10 +848,9 @@ readSolutionsBertini (String,List) := o -> (dir,F) -> (
   else if (o.runType == 1 or o.runType==6 or o.runType==5) then ( 
     -- get contents of session log and check errors
     sessionLog = lines get (dir|"/bertini_session.log"); 
-    scan(sessionLog, i->if i=="ERROR: The matrix has more columns than 
-	rows in QLP_L_mp!!" then 
-	error  "The matrix has more columns than rows in QLP_L_mp!"
-	);
+    scan(sessionLog, i->if i=="ERROR: The matrix has more columns than rows in QLP_L_mp!!" then 
+	  error  "The matrix has more columns than rows in QLP_L_mp!"
+	  );
               
     l = lines get (dir|"/raw_data"); -- grabs all lines of the file
     numVars = value(first l);
