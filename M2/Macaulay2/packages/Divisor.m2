@@ -1,5 +1,5 @@
 newPackage( "Divisor",
-Version => "0.1m", Date => "August 1st, 2014", Authors => {
+Version => "0.1k", Date => "July 27th, 2014", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -187,7 +187,7 @@ divisor(BasicList, BasicList) := o ->(l1, l2) ->
 		M := #idealList;
 		if (N != M) then
 		(
-			error "lists should have the same length";
+			error "divisor: lists should have the same length";
 			flag = false
 		);
 		
@@ -505,7 +505,7 @@ toWDiv( RDiv ) := ( D ) ->
 	coeffList := new List from {};
 	if ( isWDiv( D ) != true ) then
 	(
-		error "this is not a Weil divisor"
+		error "toWDiv: this is not a Weil divisor"
 	)
 	else
 	(
@@ -560,7 +560,7 @@ BasicDiv + BasicDiv := (D, E) ->
 		
 	if ( flag == false ) then 
 	(
-		error "two divisors should have the same ambient ring"
+		error "(BasicDiv + BasicDiv): the two divisors should have the same ambient ring"
 	)
 	else
 	(
@@ -671,7 +671,7 @@ idealToDivisor = method();
 
 idealToDivisor( Ideal ) := (I1) ->
 (
-	assert ( not (I1 == 0*I1) );
+	if  (I1 == 0*I1) then (error "idealToDivisor: cannot form divisor from the zero ideal";);
 	I2 := reflexifyIdeal(I1);
 	L2 := minimalPrimes(I2);
 	L0 := {}; --list of coefficients/integers
@@ -737,7 +737,7 @@ divPullBack = method();
 
 divPullBack(RingMap, RDiv) := (f, D) ->
 (		
-	if (isDivAmbient(D, source f) == false) then error "Expected the Divisor and the source of the map to have the same ambient ring.";
+	if (isDivAmbient(D, source f) == false) then error "divPullBack: Expected the Divisor and the source of the map to have the same ambient ring.";
 	E := divisor({}, {}, AmbRing => (target f));
 	L := getCoeffList D;
 	PL := getPrimeList D;
@@ -772,7 +772,7 @@ findElementOfDegree(ZZ, Ring) := (n1, R1) ->  (
 	varList := first entries vars R1;
 	degList := flatten (degrees R1); --apply(varList, q -> (degree(q))#0);
 	myGCD := gcd(degList);
-	if (not (n1%(myGCD) == 0)) then error "No element of the specified degree can be obtained";
+	if (not (n1%(myGCD) == 0)) then error "findElementOfDegree: No element of the specified degree can be obtained";
 	bezoutList := floor(n1/myGCD)*bezoutNumbers(degList);
 	bezoutPositive := apply(bezoutList, z->max(0, z));
 	bezoutNegative := (-1)*apply(bezoutList, z->min(0, z));
@@ -783,12 +783,12 @@ findElementOfDegree(ZZ, Ring) := (n1, R1) ->  (
 findElementOfDegree(BasicList, Ring) := (l1, R1) ->  ( --this needs to be made faster using Hermite matrices and the usual stuff
 	if (not (all(l1, z->instance(z, ZZ)) ) ) then error "Expected a list with integer entries";
 	
-	if (#l1 == 0) then (error "Expected a list of positive length";)
+	if (#l1 == 0) then (error "findElementOfDegree: Expected a list of positive length";)
 	else if (#l1 > 1) then (
 		print "Warning, the function findElementOfDegree  may never terminate if there is no element of the specified degree, but if it does terminate, it will print out before it terminates (get ready to hit ctrl-c).";
 		varList := first entries vars R1;
 		degList := degrees R1;
-		if ( not (#l1 == #(degList#0)) ) then error "Vector the wrong length";
+		if ( not (#l1 == #(degList#0)) ) then error "findElementOfDegree: Vector is the wrong length";
 		sumDeg := sum(degList);
 		zeroV := apply(l1, z->0);
 		neg := sub(1, R1);
@@ -797,7 +797,7 @@ findElementOfDegree(BasicList, Ring) := (l1, R1) ->  ( --this needs to be made f
 		myVect := zeroV;
 		myBasis := {};
 		if ( not all(degList, z->(z > zeroV))) then (
-			error "findElementOfDegree can only handle variables with positive degree.";
+			error "findElementOfDegree: can only handle variables with positive degree.";
 		)
 		else (
 			i := -1;
@@ -934,7 +934,7 @@ isCartier( WDiv ) := o -> (D) ->
 		flag = (myProduct == reflexifyIdeal(myProduct))
 	)
 	else (
-		if (isDivGraded(D) == false) then error "Expected argument to be homogeneous if the IsGraded option is set to true.";
+		if (isDivGraded(D) == false) then error "isCartier: Expected argument to be homogeneous if the IsGraded option is set to true.";
 		myMax := ideal(first entries vars R);
 		J1 := nonCartierLocus(D);
 		L := saturate(J1, myMax);
@@ -956,7 +956,7 @@ nonCartierLocus( WDiv ) := o -> (D) ->
 	I := OD*ODminus;
 	J := annihilator ((reflexifyIdeal(I)*R^1) / (I*R^1));
 	if (o.IsGraded == true) then (
-		if (isDivGraded(D) == false) then error "Expected argument to be homogeneous if the IsGraded option is set to true.";		
+		if (isDivGraded(D) == false) then error "nonCartierLocus: Expected argument to be homogeneous if the IsGraded option is set to true.";		
 		J = saturate(J, ideal(first entries vars R))
 	);
 	J
@@ -977,7 +977,7 @@ isQLinearEquivalent = method(Options => {IsGraded => false});
 
 isQLinearEquivalent( QDiv, QDiv ):= o->(D1, D2) ->
 (
-	if (sameDivAmbient(D1, D2) == false) then error "Expected the two divisors to have the same ambient ring";
+	if (sameDivAmbient(D1, D2) == false) then error "isQLinearEquivalent: Expected the two divisors to have the same ambient ring";
 	D1 = toQDiv(D1);
 	D2 = toQDiv(D2);
 	La := getCoeffList(D1);
@@ -997,7 +997,7 @@ isQLinearEquivalent( QDiv, QDiv ):= o->(D1, D2) ->
 isQCartier = method(Options => {IsGraded => false});
 
 isQCartier( ZZ, WDiv ):=o->(n1, D1) -> (
-	if (n1 < 1) then error "Expected the first argument to be a positive integer";
+	if (n1 < 1) then error "isQCartier: Expected the first argument to be a positive integer";
 	M1 := divisorToIdeal(D1);
 	curModule := M1;
 	S1 := ring M1;
@@ -1018,7 +1018,7 @@ isQCartier( ZZ, WDiv ):=o->(n1, D1) -> (
 		if (flag == false) then i = 0;
 	)
 	else (
-		if (isDivGraded(D1) == false) then error "Expected second argument to be homogeneous if the IsGraded option is set to true.";
+		if (isDivGraded(D1) == false) then error "isQCartier: Expected second argument to be homogeneous if the IsGraded option is set to true.";
 		myMax := ideal(first entries vars S1);
 		J = nonCartierLocus(D1);
 		L := saturate(J, myMax);
@@ -1070,7 +1070,7 @@ isSNC(BasicDiv) := o->(D1) -> (
 			if (flag == true) then flag = isRegular(toModOutBy#j);
 		)
 		else (	
-			if (isHomogeneous(toModOutBy#j) == false) then error "Expected a homogeneous ideal";
+			if (isHomogeneous(toModOutBy#j) == false) then error "isSNC: Expected a homogeneous ideal";
 			flag = ((d1 - #(nonemptySubsets#j) == dim(R1/toModOutBy#j)) or (dim(R1/toModOutBy#j) <= 0) );
 			if (flag == true) then flag = isRegular(toModOutBy#j, IsGraded=>o.IsGraded);
 		);
@@ -1228,7 +1228,7 @@ module2Ideal(Ring, Module) := o ->(R1, M1) ->
 	while ((i < #s2) and (flag == false)) do (
 		t = s2#i;
 		h = map(R1^1, M2**R1, {t});
-		if (isWellDefined(h) == false) then error "Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "module2Ideal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = ideal(t);
@@ -1240,13 +1240,13 @@ module2Ideal(Ring, Module) := o ->(R1, M1) ->
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
 		h = map(R1^1, M2**R1, {d});
-		if (isWellDefined(h) == false) then error "Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "module2Ideal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = ideal(d);
 		);
 	);
-	if (flag == false) then error "No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
+	if (flag == false) then error "module2Ideal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	trim (sub(answer, R1))
 );
 
@@ -1270,7 +1270,7 @@ isRegular(Ideal) := o->J1 -> (
 	--empty schemes are smooth (which is why we are first check whether ideals are the whole ring or contain the irrelevant ideal
 	flag := false;
 	if (o.IsGraded == true) then (
-		if (isHomogeneous(J1) == false) then (error "Expected a homogeneous ideal");
+		if (isHomogeneous(J1) == false) then (error "isRegular: Expected a homogeneous ideal");
 		myMax := ideal first entries vars ring J1;
 		if (isSubset(myMax, J1)) then (flag = true) else (flag = (dim singularLocus J1 <= 0));
 	)
@@ -3195,8 +3195,6 @@ doc ///
 	  D = zeroDivisor( R )
 ///
 
-end
-
 TEST ///
 ---check constructors and verify equality of them. this also checks some comparison
 R = QQ[x,y,z]/ideal(x^2-y*z);
@@ -3367,6 +3365,8 @@ F = divisor(x*y*z*(x+y+z));
 G = divisor(x*y-z^2);
 assert( (isSNC(D) == true) and (isSNC(E) == true) and (isSNC(F) == false) and (isSNC(G) == false) )
 ///
+
+end
 
 
 ----FUTURE PLANS------
