@@ -1,6 +1,7 @@
 #ifndef _reader_hpp_
 #define _reader_hpp_
 
+#include <stddef.h>
 #include <gmp.h>
 #include "aring-zzp.hpp"  
 
