@@ -673,7 +673,8 @@ idealToDivisor( Ideal ) := (I1) ->
 (
 	if  (I1 == 0*I1) then (error "idealToDivisor: cannot form divisor from the zero ideal";);
 	I2 := reflexifyIdeal(I1);
-	L2 := minimalPrimes(I2);
+	L2 := {};
+	if ( isSubset(ideal sub(1, ring I1), I1) == false ) then (L2 = minimalPrimes(I2););
 	L0 := {}; --list of coefficients/integers
 	top1 := 1;
 	bottom1 := 0;
@@ -709,7 +710,7 @@ moduleToDivisor( Ring, Module ) := o -> (R, M) ->
 	I := 0;
 	
 	if (o.IsGraded == false) then ( 
-		I = module2Ideal(R, M);
+		I = module2Ideal(R, M);	
 		idealToDivisor( I )
 	)
 	else(
