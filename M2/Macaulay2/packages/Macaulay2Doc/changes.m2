@@ -85,13 +85,14 @@ document {
 	       },
 	  LI { "new packages:",
 	       UL {
-		    -- LI { TO "::", ", a package by ... for ... has been added." },
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "Book3264Examples::Book3264Examples", ", a package by Charley Crissman containing
 			 Schubert2 code for some of the examples and exercises in 
 			 the book '3264 and all that', by Eisenbud and Harris,
 			 has been added." 
 			 },
-		    LI { TO "EnumerationCurves::EnumerationCurves", ", a package by Hiep Dang for enumeration of rational curves via torus actions, has been added." }
+		    LI { TO "EnumerationCurves::EnumerationCurves", ", a package by Hiep Dang for enumeration of rational curves via torus actions, has been added." },
+		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." }
 	  	    }
 	       },
 	  -- LI { "improved packages:",
