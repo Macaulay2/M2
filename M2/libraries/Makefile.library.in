@@ -119,21 +119,24 @@ PROGRAMS ?=
 LICENSEFILES ?=
 LIBRARIES ?=
 INCLUDEFILES ?=
+
+CDBUILDDIR = set +x && cd $(BUILDDIR) && echo make: Entering directory \'`pwd`\' && set -x
+
 .installed-$(VERSION)  : .compiled-$(VERSION)
-	( cd $(BUILDDIR) && set -x ; $(INSTALLCMD)  )
+	( $(CDBUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
 #	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
 #	Stop stripping, anyway, so users can debug.
-	cd $(BUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
+	$(CDBUILDDIR) && for p in $(PROGRAMS) ; do (set -x ; @INSTALL@ $$p $(BIN_DIR)) ; done
 endif
 ifneq ($(LIBRARIES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/lib
-	cd $(BUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
+	$(CDBUILDDIR) && for p in $(LIBRARIES) ; do (set -x ; @INSTALL@ $$p $(LIBRARIESDIR)/lib) ; done
 endif
 ifneq ($(INCLUDEFILES),)
 	$(MKDIR_P) $(LIBRARIESDIR)/include
-	cd $(BUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
+	$(CDBUILDDIR) && for p in $(INCLUDEFILES) ; do (set -x ; @INSTALL_DATA@ $$p $(LIBRARIESDIR)/include) ; done
 endif
 ifeq ($(LICENSEFILES),)
 	@ echo "warning: *** no license files to be installed"
@@ -144,9 +147,9 @@ endif
 	touch $@
 
 .compiled-$(VERSION)   : .configured-$(VERSION)
-	@ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
+	@ set -x ; ( $(CDBUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)
-	@ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
@@ -237,7 +240,7 @@ recheck:
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	set -x; $(LIMIT); cd $(BUILDDIR) && $(CHECKCMD)
+	set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles

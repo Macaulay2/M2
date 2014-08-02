@@ -149,3 +149,14 @@ diff -ur /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.production/libra
      return q.get_d();
    }
  }
+diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests frobby_v0.9.0/test/internal/runtests
+--- /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/frobby/tmp/frobby_v0.9.0/test/internal/runtests	2011-09-23 13:09:12.000000000 -0700
++++ frobby_v0.9.0/test/internal/runtests	2014-07-30 10:46:31.033944047 -0700
+@@ -7,6 +7,6 @@
+ fi
+ 
+ $frobby test 2> /dev/null > /dev/null
+-if [ $? == 0 ]; then exit 0; fi
++if [ $? = 0 ]; then exit 0; fi
+ echo "*** Internal test failed, rerunning tests with output ***"
+ $frobby test
