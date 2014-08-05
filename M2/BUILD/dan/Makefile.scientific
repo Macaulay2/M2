@@ -24,6 +24,12 @@ else
    CONFIGOPTIONS += --enable-rpm
 endif
 
+CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
+# CONFIGOPTIONS += --build=i386-pc-linux-gnu
+
+# just for testing, not for production:
+# CONFIGOPTIONS += --enable-fflas-ffpack
+
 include Makefile.include
 default: check
 # Local Variables:
