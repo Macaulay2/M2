@@ -10,7 +10,6 @@ document {
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
-      TO "changes, 1.7 from linalg branch",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -63,33 +62,6 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
-
-document {
-     Key => "changes, 1.7 from linalg branch",
-     UL {
-          LI {"The default arithmetic for computing in finite fields ZZ/p nows uses the flint library (see ...).
-              The modulus p can now be p <= 9223372036854775783, i.e. the largest prime less than 2^63.
-              HOWEVER: factorization of polynomials over such rings can only be done for primes p < 2^31. TODO: CHECK THIS VALUE"},
-          LI {"incorporated fast linear algebra for dense (mutable) matrices over finite prime fields, using ffpack and flint"},
-          LI {"linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
-              Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
-              Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
-          LI {///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: ZZp(p, Strategy=>"Flint"),
-              ZZp(p, Strategy=>"Ffpack"), ZZp(p, Strategy=>"Engine").///},
-          LI {"Extensive changes to numerical algebraic geometry code in the engine"},
-          LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
-              it can be used, but is not done so automatically."},
-          LI {"the Macaulay/e engine directory now compiles cleanly, with a few warning messages left."},
-          LI {"the overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
-              that because of the high use of templates, compile times have generally increased."},
-          LI {"random number generation for finite fields has changed, so programs expecting a specific
-              set of random numbers will change."},
-          LI {"If ", TT "kk", " is a finite field, e.g. ", TT "Z/5[c]/(c^2+c+1)", " it was possible
-              (and still is) to write ", TT "map(ZZ[a], kk)", ".  It was never clear what this
-              should return, as it is not a well-defined ring map.  However, it now has different, 
-              still undefined, behavior."}
-     }
- }
  
 document {
      Key => "changes, 1.7",
@@ -167,7 +139,29 @@ document {
                 	 the anti-isomorphism between left and right modules in skew commuting poly rings.  
                 	 It is used when transposing a matrix over a ring with skew commuting variables, basically,
                 	 so that the transpose of a complex of matrices will still be a complex of matrices."
-			 }
+			 },
+     	       	    -- the following changes are from the "linalg" branch of Mike's:
+		    LI {"The default arithmetic for computing in finite fields ZZ/p nows uses the FLINT library (see ...).
+			The modulus p can now be p <= 9223372036854775783, i.e. the largest prime less than 2^63.
+			HOWEVER: factorization of polynomials over such rings can only be done for primes p < 2^31. TODO: CHECK THIS VALUE"},
+		    LI {"Incorporated fast linear algebra for dense (mutable) matrices over finite prime fields, using ffpack and flint"},
+		    LI {"Linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
+			Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
+			Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
+		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
+			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
+		    LI {"Extensive changes to numerical algebraic geometry code in the engine"},
+		    -- LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
+		    -- 	it can be used, but is not done so automatically."},
+		    LI {"The {\tt Macaulay2/e} engine directory now compiles cleanly, with a few warning messages left."},
+		    LI {"The overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
+			that because of the high use of templates, compile times have generally increased."},
+		    LI {"Random number generation for finite fields has changed, so programs expecting a specific
+			set of random numbers will change."},
+		    LI {"If ", TT "kk", " is a finite field, e.g., ", TT "ZZ/5[c]/(c^2+c+1)", " it was possible
+			(and still is) to write ", TT "map(ZZ[a], kk)", ".  It was never clear what this
+			should return, as it is not a well-defined ring map.  However, it now has different, 
+			still undefined, behavior."}
 	  	    }
 	       },
 	  LI { "functionality changed:",
