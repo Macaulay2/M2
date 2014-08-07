@@ -17,34 +17,26 @@
 ------------------------------------------
 ------------------------------------------
 
-if version#"VERSION" <= "1.4" then (
-    needsPackage "SimplicialComplexes";
-    )
-
 newPackage select((
     "Graphs",
-        Version => "0.3",
-        Date => "20. March 2014",
+        Version => "0.3.1",
+        Date => "07. August 2014",
         Authors => {
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
-            {Name => "David Cook II", Email => "dcook8@nd.edu", HomePage => "http://www.nd.edu/~dcook8/"},
+            {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
-            {Name => "Contributers of note: Alex Diaz, Shaowei Lin, Sonja Mapes, Augustine O'Keefe, Amelia Taylor, Doug Torrance"}
+            {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Augustine O'Keefe, Mike Stillman, Amelia Taylor, Doug Torrance"}
         },
         Headline => "Package for processing graphs and directed graphs (digraphs)",
         Configuration => {
             "DotBinary" => "dot",
             "JpgViewer" => "display"
             },
-        if version#"VERSION" > "1.4" then PackageExports => {
+        PackageExports => {
             "SimplicialComplexes"
             },
-        DebuggingMode => false,
+        DebuggingMode => true,
         ), x -> x =!= null)
-
-if version#"VERSION" <= "1.4" then (
-    needsPackage "SimplicialComplexes";
-    )
 
 -- Load configurations
 graphs'DotBinary = if instance((options Graphs).Configuration#"DotBinary", String) then (options Graphs).Configuration#"DotBinary" else "dot";
@@ -80,8 +72,6 @@ export {
     "barycenter",
     "complementGraph",
     "digraphTranspose",
-    "topSort",
-        "SortedDigraph",
     "underlyingGraph",
     --
     -- Enumerators
@@ -218,6 +208,9 @@ export {
     "vertexMultiplication",
     -- 
     -- Things that probably should not be in this package.
+    "topSort",
+        "newDigraph",
+        "SortedDigraph",
     "Bigraph",
     "bigraph",
     "LabeledGraph",
@@ -433,29 +426,6 @@ complementGraph Graph := Graph => G -> graph(vertexSet G, subsets(vertexSet G, 2
 
 digraphTranspose = method()
 digraphTranspose Digraph := Digraph => D -> digraph(vertexSet D, reverse \ edges D, EntryMode => "edges")
-
-SortedDigraph = new Type of HashTable;
--- Keys:
---      digraph: the original digraph
---      newDigraph: the digraph with vertices labeld as integers obtained from sorting
---      map: the map giving the sorted order
-
-newDigraph = "newDigraph";
-topSort = method()
-topSort Digraph := SortedDigraph => D -> (
-    if instance(D, Graph) or isCyclic D then error "Topological sorting is only defined for acyclic directed graphs.";
-    L := reverse apply(sort apply(pairs ((DFS D)#finishingTime),reverse),p->p_1);
-    g := graph D;
-    new SortedDigraph from {
-	    digraph => D,
-	    "newDigraph" => digraph hashTable apply(#L, i -> i + 1 => apply(toList g#(L_i), j -> position(L, k -> k == j) + 1)),
-        -- We have a Chicken and Egg Problem:  
-        -- Older versions (<=0.1) of Graphs used a String for the newDigraph key.
-        -- The recently published GraphicalModels complains about this, but uses this key.
-        -- In order to not break GraphicalModels, newer versions (>0.1) of Graphs must therefore use a String as well.
-        map => hashTable apply(#L, i -> L_i => i + 1)
-	    }
-    )
 
 underlyingGraph = method()
 underlyingGraph Digraph := Graph => D -> graph(vertexSet D, edges D, EntryMode => "edges")
@@ -699,7 +669,7 @@ center = method()
 center Graph := List => G -> select(vertexSet G, i -> eccentricity(G, i) == radius G)
 
 children = method()
-children (Digraph, Thing) := Set => (G,v) -> (
+children (Digraph, Thing) := Set => (G, v) -> (
     i := position(vertexSet G, u -> u == v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(first entries (adjacencyMatrix G)^{i}, j -> j != 0))
@@ -1056,7 +1026,7 @@ numberOfTriangles = method()
 numberOfTriangles Graph := ZZ => G -> number(ass (coverIdeal G)^2, i -> codim i == 3)
 
 parents = method()
-parents (Digraph, Thing) := Set => (G,v) -> (
+parents (Digraph, Thing) := Set => (G, v) -> (
     i := position(vertexSet G, u -> u == v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(flatten entries (adjacencyMatrix G)_{i}, j -> j != 0))
@@ -1113,7 +1083,7 @@ topologicalSort (Digraph, String) := List => (D,s) -> (
     while S != {} do (
         v = S_0;
         L = append(L, v);
-        S = processor join(drop(S, 1), select(children (D, v), c -> isSubset(parents(D,c), L)));
+        S = processor join(drop(S, 1), select(toList children (D, v), c -> isSubset(parents(D, c), L)));
         );
     L
     )
@@ -1581,6 +1551,23 @@ vertexMultiplication (Graph, Thing, Thing) := Graph => (G,v,u) -> (
 -- All of these things are used exclusively by GraphicalModels.
 -- They probably should be there, not here.  Otherwise they should
 -- probably be in their own package as they are highly specialized.
+
+SortedDigraph = new Type of HashTable;
+
+-- Keys:
+--      digraph: the original digraph
+--      NewDigraph: the digraph with vertices labeld as integers obtained from sorting
+--      map: the map giving the sorted order
+topSort = method()
+topSort Digraph := SortedDigraph => D -> (
+    L := topologicalSort D;
+    g := graph D;
+    new SortedDigraph from {
+	    digraph => D,
+	    newDigraph => digraph hashTable apply(#L, i -> i + 1 => apply(toList g#(L_i), j -> position(L, k -> k == j) + 1)),
+        map => hashTable apply(#L, i -> L_i => i + 1)
+	    }
+    )
 
 Bigraph = new Type of Graph
 
