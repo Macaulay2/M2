@@ -954,7 +954,7 @@ discreteVanishingIdeal (Ring, Digraph)  := Ideal => (R, G) -> (
      R1 = markovRing dshuff;
      p := j -> R1.markovVariables#j;
      I := trim ideal(0_R1);
-     SortedG := H#"newDigraph"; --Note: "" is there because Graphs.m2 is silly and this key is an unexported string!~Sonja
+     SortedG := H#newDigraph;
      a := local a;
      S := local S;
      apply(2..n, i -> (
