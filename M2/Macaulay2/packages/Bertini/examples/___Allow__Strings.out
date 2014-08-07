@@ -1,24 +1,26 @@
--- -*- M2-comint -*- {* hash: 2104268545 *}
+-- -*- M2-comint -*- {* hash: 618027489 *}
 --loading configuration for package "Bertini" from file /Users/elizabethgross/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y,z];
 
-i2 : f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)),z-1};
+i2 : f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)), z-1};
 
-i3 : sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z})
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18999-0/0
+i3 : sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z})
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-20678-0/0
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+Warning: Some paths failed, the set of solutions may be incomplete
 
 
-o3 = {(1, 1.72379e-14+1.43187e-13*ii, 1), {1, -1, 1}, (1,
+o3 = {(1, 7.16934e-14-4.33228e-14*ii, 1), {1, -1, 1}, (-1.41964+.606291*ii,
      ------------------------------------------------------------------------
-     1.44796e-14+1.67172e-13*ii, 1), (-1.41964+.606291*ii,
+     .771845+1.11514*ii, 1), (-1, -2.15531e-16+1.89458e-16*ii, 1),
      ------------------------------------------------------------------------
-     .771845+1.11514*ii, 1), (.839287, -.543689, 1), (-1.41964-.606291*ii,
-     ------------------------------------------------------------------------
-     .771845-1.11514*ii, 1), (-1, -2.16393e-16-1.68211e-15*ii, 1)}
+     (-1.41964-.606291*ii, .771845-1.11514*ii, 1), (.839287, -.543689, 1)}
 
 o3 : List
 
@@ -33,13 +35,15 @@ i7 : f3=z-1;
 i8 : finalParameters={{0,1}};
 
 i9 : bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },AllowStrings=>{x,y,z})
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18999-0/1
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-20678-0/1
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o9 = {{{1, -1.39102e-17+1.75205e-17*ii, 1}, {-1, -1.52579e-17-2.8759e-17*ii,
+o9 = {{{-1, -7.40518e-19+1.38607e-19*ii, 1}, {1, 1.67231e-16-3.96121e-16*ii,
      ------------------------------------------------------------------------
      1}}}
 
@@ -61,11 +65,13 @@ o15 = {sol1, sol2}
 
 o15 : List
 
-i16 : S0 = bertiniTrackHomotopy (H, t1, S1,AllowStrings=>{x}) --solutions to H when t=0|
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18999-0/3
+i16 : S0 = bertiniTrackHomotopy (t1, H, S1,AllowStrings=>{x}) --solutions to H when t=0|
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-20678-0/3
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
 o16 = {{2.21275}, {-2.21275}}
