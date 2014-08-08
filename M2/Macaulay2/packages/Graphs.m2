@@ -1,3 +1,10 @@
+ {*
+Copyright 2010 Amelia Taylor and Augustine O'Keefe.
+You may redistribute this file under the terms of the GNU General Public
+License as published by the Free Software Foundation, either version 2 of
+the License, or any later version.
+*}
+
 -- Copyright 2014: Jack Burkart, David Cook II, Caroline Jansen
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
@@ -25,7 +32,9 @@ newPackage select((
             {Name => "Jack Burkart", Email => "jburkar1@nd.edu"},
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
-            {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Augustine O'Keefe, Mike Stillman, Amelia Taylor, Doug Torrance"}
+            	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
+            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
+            {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
         },
         Headline => "Package for processing graphs and directed graphs (digraphs)",
         Configuration => {
