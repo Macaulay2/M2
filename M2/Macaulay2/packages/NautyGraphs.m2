@@ -1,6 +1,12 @@
 -------------------
 -- Package Header
 -------------------
+-- Forked from Nauty:
+-- Copyright 2010, 2011 David W. Cook II
+-- You may redistribute this file under the terms of the GNU General Public
+-- License as published by the Free Software Foundation, either version 2
+-- of the License, or any later version.
+
 -- Copyright 2011, 2013 David W. Cook II
 -- You may redistribute this file under the terms of the GNU General Public
 -- License as published by the Free Software Foundation, either version 2
