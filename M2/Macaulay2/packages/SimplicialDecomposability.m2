@@ -6,14 +6,13 @@
 -- License as published by the Free Software Foundation, either version 2
 -- of the License, or any later version.
 
-if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
 newPackage select((
    "SimplicialDecomposability",
    Version => "1.0.6",
    Date => "20. June 2011",
    Authors => {{Name => "David Cook II",
-                Email => "dcook8@nd.edu",
-                HomePage => "http://www.nd.edu/~dcook8"}},
+                Email => "dwcook@eiu.edu",
+                HomePage => "http://ux1.eiu.edu/~dwcook/"}},
    Headline => "various decomposability routines for simplicial complexes",
    DebuggingMode => false,
    Certification => {
@@ -29,9 +28,8 @@ newPackage select((
 	"volume number" => "2",
 	"volume URI" => "http://www.j-sag.org/volume2.html"
 	},
-    if version#"VERSION" > "1.4" then PackageExports => {"SimplicialComplexes"}
+    PackageExports => {"SimplicialComplexes"}
 ), x -> x =!= null)
-if version#"VERSION" <= "1.4" then needsPackage "SimplicialComplexes"
 
 -------------------
 -- Exports
