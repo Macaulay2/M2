@@ -33,7 +33,7 @@ newPackage select((
             {Name => "David Cook II", Email => "dwcook@eiu.edu", HomePage => "http://ux1.eiu.edu/~dwcook/"},
             {Name => "Caroline Jansen", Email => "cjansen@nd.edu"},
             	{Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"},
-            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"}
+            {Name => "Augustine O'Keefe", Email => "aokeefe@tulane.edu"},
             {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
         },
         Headline => "Package for processing graphs and directed graphs (digraphs)",
