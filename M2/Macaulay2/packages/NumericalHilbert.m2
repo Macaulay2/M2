@@ -231,6 +231,7 @@ sCorners Matrix := gCs -> (
 	    c != 0 and
 	    all(G, g -> not isDivisible(c,g)) and
 	    all(gens R, v -> any(G, g -> isDivisible(v*c,g)))));
+    S = unique S;
     matrix{S}
     )
 
@@ -574,7 +575,6 @@ doc ///
           truncatedDual
 	  (truncatedDual,Point,Ideal,ZZ)
 	  (truncatedDual,Point,Matrix,ZZ)
-	  [truncatedDual,Strategy]
      Headline
           truncated dual space of a polynomial ideal
      Usage
@@ -588,13 +588,27 @@ doc ///
           S:DualSpace
      Description
           Text
-	       Computes a basis for the dual space of an ideal truncated at degree d.
+	       Computes a basis for the local dual space of a polynomial ideal localized at point p, truncated at degree d.
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2, y*x}
-	       S = truncatedDual(origin(R),I,3)
+	       truncatedDual(origin(R),I,3)
+	  Text
+	       The functionals in the dual at a point p are expressed in coordinates centered at p.
+	  Example
+	       p = point matrix{{0., 1}}
+	       truncatedDual(p,I,3)
+	  Text
+	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
+	       The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
+	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
+	  Example
+	       q = point matrix{{0. + 1e-10, 1}}
+	       truncatedDual(p,I,3, Tolerance => 1e-6)
+	  Text
+	       See also @TO zeroDimensionalDual@.
 ///
 
 doc ///
@@ -602,7 +616,6 @@ doc ///
           zeroDimensionalDual
 	  (zeroDimensionalDual,Point,Ideal)
 	  (zeroDimensionalDual,Point,Matrix)
-	  [zeroDimensionalDual,Strategy]
      Headline
           dual space of a zero-dimensional polynomial ideal
      Usage
@@ -624,6 +637,8 @@ doc ///
 	       I = ideal{(y-1)^2,y-x^2}
 	       p = point matrix{{1,1}};
 	       S = zeroDimensionalDual(p, I)
+	  Text
+	       See also @TO truncatedDual@.
      Caveat
 	  The computation will not terminate if I is not locally zero-dimensional at the chosen point.  This is not checked.
 ///
@@ -645,7 +660,6 @@ doc ///
           gCorners
 	  (gCorners,Point,Ideal)
 	  (gCorners,Point,Matrix)
-	  [gCorners,Strategy]
 	  [gCorners,ProduceSB]
 	  ProduceSB
      Headline
@@ -664,16 +678,17 @@ doc ///
 	       Computes the generators of the initial ideal of an ideal, with respect to a local order.  The ring of the
 	       ideal should be given a (global) monomial order and the local order will be taken to be the reverse order.
 	       The point p is moved to the origin, so the monomial generators represent terms of the Taylor expansion at p.
-	  Text
-	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
-	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2-y^2}
 	       p = point matrix{{1,1}};
-	       G = gCorners(p, I)
-	       S = gCorners(p, I, ProduceSB=>true)
-	       
+	       gCorners(p, I)
+	  Text
+	       If the optional argument @TT "ProduceSB"@ is set to true, the output is instead a matrix of elements of the ideal
+	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
+	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
+	  Example
+	       S = gCorners(p, I, ProduceSB=>true)	       
 ///
 
 TEST ///
@@ -686,7 +701,7 @@ assert(numcols gCorners(p,M) == 2)
 assert(numcols gCorners(q,M) == 1)
 LDZ = reduceSpace truncatedDual(p,M,5,Strategy=>DZ)
 LBM = reduceSpace truncatedDual(p,M,5,Strategy=>BM)
-assert(areEqual(LDZ,LBM))
+assert(dim LDZ == dim LBM)
 ///
 
 doc ///
@@ -712,8 +727,8 @@ doc ///
 	  Example
 	       R = CC[x,y,z];
 	       I = monomialIdeal{x^2,y^2,z^2}
-	       S = sCorners I
-	       S = sCorners I^2
+	       sCorners I
+	       sCorners I^2
 ///
 
 TEST ///
@@ -781,15 +796,15 @@ doc ///
           Text
 	       Given a list of variable indices, compute the a basis for all dual elements
 	       orthogonal to I which have total degree in the variables on the list bounded by d.
-	       This function generalizes @TO truncatedDual@ in that if v includes all the variables
-	       in the ring, then its behavior is the same.
-	  
 	  Example
 	       R = CC[x,y];
 	       I = ideal{x^2-y^3}
 	       --bound the x degree to 2
 	       eliminatingDual(origin R, I, {0}, 2)
-	       --bound the total degree to 2
+	  Text
+	       This function generalizes @TO truncatedDual@ in that if v includes all the variables
+	       in the ring, then its behavior is the same.
+	  Example
 	       eliminatingDual(origin R, I, {0,1}, 2)
 	  Text
 	       See also @TO truncatedDual@.
@@ -965,15 +980,40 @@ doc ///
 
 doc ///
      Key
-	  DZ
+          "Strategy (NumericalHilbert)"
+	  [gCorners,Strategy]
+	  [truncatedDual,Strategy]
+	  [zeroDimensionalDual,Strategy]
      Headline
-          Dayton-Zeng algorithm for dual space computation
+          optional argument for dual space algorithm
      Description
           Text
-	       The Dayton-Zeng algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
+	       The two available algorithm choices are
+	       @UL {
+		   {TOH "BM"},
+		   {TOH "DZ"}
+		   }@
+	  Text
+	       Both should produce roughly 
+	       the same output, but there may be differences in performance.  Generally @TT "BM"@ should be more efficient and is the default, 
+	       but @TT "DZ"@ is left as an option to the user.
+
+///
+
+doc ///
+     Key
+	  DZ
+     Headline
+          Macaulay matrix algorithm for dual space computation
+     Description
+          Text
+	       This algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
 	       A matrix is formed with a column for each monomial in the ring of I of degree at most d, and a row for each
 	       monomial multiple of a generator of I which has any terms of degree d or less, storing its coefficients.
 	       Any vector in the kernel of this matrix is the coeffeicient vector of an element of the dual space.
+	  
+	       See: B.H. Dayton and Z. Zeng. Computing the multiplicity structure in solving polynomial systems. In M. Kauers,
+	       editor, @EM "Proceedings of the 2005 International Symposium on Symbolic and Algebraic Computation"@, pages 116-123. ACM, 2005.
 ///
 
 doc ///
@@ -984,6 +1024,9 @@ doc ///
      Description
           Text
 	       The Mourrain algorithm is a strategy for computing the truncated dual space of an ideal I at degree d.
+	  
+	       See: B. Mourrain. Isolated points, duality and residues. @EM "J. Pure Appl. Algebra"@, 117/118:469-493, 1997. 
+	       Algorithms for algebra (Eindhoven, 1996).
 ///
 
 doc ///
@@ -1003,7 +1046,14 @@ doc ///
      Description
           Text
 	       Computes the image of a matrix M numerically using singular value decomposition.
+	  Example
+	       M = matrix {{1., 0, 1}, {0, 1, 1}, {1, 0, 1}}
+	       numericalImage(M, 0.01)
+	  Text
 	       Singular values less than the tolerance are treated as zero.
+	  Example
+	       M = matrix {{0.999, 2}, {1, 2}}
+	       numericalImage(M, 0.01)
 ///
 
 doc ///
@@ -1023,7 +1073,14 @@ doc ///
      Description
           Text
 	       Computes the kernel of a matrix M numerically using singular value decomposition.
+	  Example
+	       M = matrix {{1., 1, 1}}
+	       numericalKernel(M, 0.01)
+	  Text
 	       Singular values less than the tolerance are treated as zero.
+	  Example
+	       M = matrix {{1., 1}, {1.001, 1}}
+	       numericalKernel(M, 0.01)
 ///
 
 doc ///
@@ -1043,8 +1100,15 @@ doc ///
 	       in reduced column echelon form
      Description
           Text
-	       Performs Gaussian column reduction on a matrix M.
+	       Performs Gaussian column reduction on a matrix M, retaining only the linearly independent columns.
+	  Example
+	       M = matrix {{1., 2, 3}, {2, 4, 0}}
+	       colReduce(M, 0.01) 
+	  Text
 	       Entries with absolute value below the tolerance are treated as zero and not used as pivots.
+	  Example
+	       N = matrix {{0.001, 0, 0}, {1, 1, 3}, {2, 2, 5.999}}
+	       colReduce(N, 0.01)
 ///
 
 doc ///
@@ -1062,6 +1126,9 @@ doc ///
      Description
           Text
 	       Returns the conjugate transpose of a matrix with complex entries.
+	  Example
+	       M = matrix {{1+ii,2*ii},{0,1}}
+	       adjointMatrix M
 ///
 
 end
