@@ -604,9 +604,14 @@ doc ///
 	       Over inexact fields, the computation accounts for the possibility of small numerical error in the point p.
 	       The optional argument @TO "Tolerance (NumericalHilbert)"@ can be set to adjust the tolerance of the numerical computations.
 	       Higher degree dual computations generally require higher accuracy in the input and larger tolerance value to complete correctly.
+	       
+	       In this example, the point q is slightly away from the variety of I, but an appropriate @TT "Tolerance"@ value can overcome the error. 
 	  Example
 	       q = point matrix{{0. + 1e-10, 1}}
-	       truncatedDual(p,I,3, Tolerance => 1e-6)
+	       tol = 1e-6;
+	       S = truncatedDual(q,I,3, Tolerance => tol)
+	       (m,c) = coefficients gens S;
+	       m*clean(tol, c)
 	  Text
 	       See also @TO zeroDimensionalDual@.
 ///
