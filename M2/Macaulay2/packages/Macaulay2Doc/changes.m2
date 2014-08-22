@@ -97,10 +97,15 @@ document {
 	       },
 	  LI { "improved packages:",
 	        UL {
-		    LI { TO "SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
+		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
                 	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
                 	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
                 	 that requires you to use the old version, please email Mike Stillman."
+			 },
+		    LI { "The packages ", TO "Polyhedra::Polyhedra", " and ", TO "ToricVectorBundles::ToricVectorBundles", " now implement a canonical
+			 ordering for the rays in a fan.  Formerly the rays came out in an unpredictable (but deterministic) order.  Various tests in the
+			 latter package have been updated to take into account the new ordering.  Users may find that their code will have to 
+			 be modified slightly, by permuting lists of parameters (such as weights) corresponding to the rays."
 			 }
 	            }
 	       },
