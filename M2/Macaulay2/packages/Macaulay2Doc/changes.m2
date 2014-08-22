@@ -140,7 +140,12 @@ document {
                 	 It is used when transposing a matrix over a ring with skew commuting variables, basically,
                 	 so that the transpose of a complex of matrices will still be a complex of matrices."
 			 },
-     	       	    -- the following changes are from the "linalg" branch of Mike's:
+     	       	    LI {
+			 "Hash codes of matrices have been improved - they are now computed using the first two nonzero entries
+			 in each column, whereas before the entries were not examined, and thus they do a better job of distinguishing matrices
+			 that are different.  A side effect is that hash tables whose keys involve matrices will
+			 be stored, printed, and converted to lists in a different order, which may affect some code."
+			 },
 		    LI {"The default arithmetic for computing in finite fields ZZ/p nows uses the FLINT library (see ...).
 			The modulus p can now be p <= 9223372036854775783, i.e. the largest prime less than 2^63.
 			HOWEVER: factorization of polynomials over such rings can only be done for primes p < 2^31. TODO: CHECK THIS VALUE"},
