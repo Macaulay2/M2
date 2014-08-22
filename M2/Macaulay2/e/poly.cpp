@@ -275,9 +275,9 @@ ring_elem PolyRing::var(int v) const
   if (v >= 0 && v < nvars_) EXP1[v] = 1;
   else
     {
-#ifndef NDEBUG
       std::cerr << "internal error: PolyRing::var(int v) with v = " << v << "  nvars = " << nvars_ << std::endl;
-#endif
+      std::cerr << "aborting" << std::endl;
+      abort();
       return ZERO_RINGELEM;
     }
   Nterm *result = new_term();

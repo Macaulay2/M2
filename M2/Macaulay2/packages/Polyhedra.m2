@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.2",
-    Date => "March 30, 2011",
+    Version => "1.3",
+    Date => "August 21, 2014",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -153,6 +153,19 @@ export {"PolyhedralObject",
 	"saveSession"}
 
 needsPackage "FourierMotzkin"
+
+
+---------------------------------------------------------------
+-- Sorting rays
+---------------------------------------------------------------
+
+-- A ray is a matrix ZZ^n <-- ZZ^1, so rays can be sorted by assembling them
+-- into a matrix and calling "sortColumns".  We sort the rays, so that changes to 
+-- the algorithm for computing the hash code of matrices doesn't affect what we do.
+
+raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
+
+---------------------------------------------------------------
 
 -- WISHLIST
 --  -Symmetry group for polytopes
@@ -846,7 +859,7 @@ addCone (Cone,Fan) := (C,F) -> (
      else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     rayList := toList F#"rays";
+     rayList := raySort toList F#"rays";
      if inserted then (
 	  -- The rays of 'C' have to be added
 	  rm := rays C;
@@ -1037,7 +1050,7 @@ rays Cone := C -> C#"rays"
 
 
 --   INPUT : 'F'  a Fan
-rays Fan := F -> toList F#"rays"
+rays Fan := F -> raySort toList F#"rays"
 
 
    
