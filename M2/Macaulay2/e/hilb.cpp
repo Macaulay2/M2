@@ -672,6 +672,8 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
         {
           ERROR("incorrect Hilbert function given");
 #warning "this error message doesn't get printed out, because 0 is a valid return value for this function"
+          fprintf(stderr, "internal error: incorrect Hilbert function given, aborting\n");
+          abort();
           result = 0;
           break;
         }
