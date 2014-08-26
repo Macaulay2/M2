@@ -676,9 +676,8 @@ dual(Matrix) := Matrix => {} >> o -> f -> (
 Matrix.InverseMethod =
 inverse Matrix := (cacheValue symbol inverse) (
      m -> (
-      if hasEngineLinearAlgebra ring m then (
-          << "calling ffpack version of InverseMethod" << endl;
-          (ring m).inverse m)
+      if hasEngineLinearAlgebra ring m and isBasicMatrix m then
+          basicInverse m
       else (
 	      (quo,rem) := quotientRemainder(id_(target m), m);
 	      if rem != 0 then error "matrix not invertible";
@@ -723,7 +722,11 @@ content(RingElement) := Ideal => (f) -> ideal \\ last \ listForm f
 
 cover(Matrix) := Matrix => (f) -> matrix f
 
-rank Matrix := (f) -> rank image f
+rank Matrix := (f) -> (
+    if hasEngineLinearAlgebra ring f and isBasicMatrix f 
+    then basicRank f 
+    else rank image f
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

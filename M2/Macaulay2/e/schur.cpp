@@ -186,7 +186,7 @@ void SchurRing::SM()
     {
       // partition is to be output
       Nterm *f = new_term();
-      f->coeff = K_->from_int(1);
+      f->coeff = K_->from_long(1);
       //      fprintf(stderr, "partition: ");
       //      for (int i=1; i <= nvars_; i++)
       //        fprintf(stderr, " %d", _SMtab.p[i]);
@@ -296,20 +296,20 @@ ring_elem SchurRing::power(const ring_elem f, mpz_t n) const
   if (mpz_sgn(n) < 0)
     {
       ERROR("element not invertible");
-      return from_int(1);
+      return from_long(1);
     }
   unsigned int n1;
   if (!RingZZ::get_ui(n1, n))
     {
       ERROR("exponent too large");
-      return from_int(1);
+      return from_long(1);
     }
   return power(f,n1);
 }
 
 ring_elem SchurRing::power(const ring_elem f, int n) const
 {
-  ring_elem result = from_int(1);
+  ring_elem result = from_long(1);
   if (n < 0)
     {
       ERROR("element not invertible");
@@ -347,7 +347,7 @@ void SchurRing::dimension(const int *exp, mpz_t result) const
 ring_elem SchurRing::dimension(const ring_elem f) const
 {
   exponents EXP = ALLOCATE_EXPONENTS(sizeof(int) * (nvars_ + 1));
-  ring_elem result = K_->from_int(0);
+  ring_elem result = K_->from_long(0);
   mpz_t dim;
   mpz_init(dim);
   for (Nterm *t = f; t != NULL; t = t->next)

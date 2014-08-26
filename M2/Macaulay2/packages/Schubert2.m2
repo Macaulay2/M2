@@ -1647,13 +1647,14 @@ schur(List, AbstractSheaf) := (p,E) -> (
      n := sum p;
      wedges := computeWedges(n,ch E,dim variety E);
      if schurVersion < 0.5 then (
-     	  R = symmRing n;
-     	  J = jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
-     	  F = map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
-	                         apply(splice{n..2*n-1}, i -> R_i => 0)));
+          error "need SchurRings, version > 0.5";
+     	  --R = symmRing n;
+     	  --J = jacobiTrudi(q,R); -- so the result will be a poly in the wedge powers
+     	  --F = map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
+	      --                   apply(splice{n..2*n-1}, i -> R_i => 0)));
 	  )
      else (
-     	  R = symmRing(QQ, n);
+     	  R = symmetricRing(QQ, n);
      	  J = jacobiTrudi(q,R, EorH => "E"); -- so the result will be a poly in the wedge powers
      	  F = map(ring ch E, R, join(apply(splice{0..n-1}, i -> R_i => wedges#(i+1)), 
 	                         apply(splice{n..3*n-1}, i -> R_i => 0)));

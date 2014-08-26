@@ -1,9 +1,10 @@
 #ifndef __lapack_h_
 #define __lapack_h_
 
-#include "RRR.hpp"
+#include "aring-RR.hpp"
+#include "aring-CC.hpp"
 #include "aring-RRR.hpp"
-#include "coeffrings.hpp"
+#include "aring-CCC.hpp"
 #include "dmat.hpp"
 #ifdef HAVE_MPACK
 #include <mpack/mblas_mpfr.h>
@@ -47,12 +48,12 @@ int dsyev_(char *n,      // whether to compute eigenvectors
            int *wsize,   // size of workspace
            int *info);   // error info
 
-int dgetrf_(int *rows, // rows
-            int *cols, // columns
-            double *A, // input matrix, on exit L & U from A=PLU.
-            int *ld,   // rows
-            int *ipiv, // becomes permutation indices of P
-            int *info);// error info
+void dgetrf_(const int *rows, // rows
+             const int *cols, // columns
+             double *A,       // input matrix, on exit L & U from A=PLU.
+             const int *ld,   // rows
+             int *ipiv,  // becomes permutation indices of P
+             int *info); // error info
 
 int dgesvd_(char* jobU,    // amount of U to return
             char* jobV,    // amount of V to return
@@ -110,7 +111,7 @@ int dgelss_(int* rows,     // rows
             int *lwork,    // size of workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
+#ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
@@ -249,7 +250,7 @@ int zgelss_(int* rows,     // rows
             double *rwork,  // workspace
             int *info);    // error info
 
-#ifndef __FFLAFLAS_config_blas_H
+#ifndef __FFLASFFPACK_config_blas_H
 /* cblas routines */
 // computes "ax + y"
 void cblas_daxpy(const int n,     // length of vectors
@@ -289,16 +290,84 @@ void cblas_zgemm(const int Order,   // how matrices are stored, by column or row
 
 class Lapack {
  public:
-#ifdef use_new_RRR
-  typedef DMat<M2::ARingRRR> LMatrixRR; 
-#else 
-  typedef DMat<CoefficientRingRRR> LMatrixRR;
-#endif
+  typedef DMat<M2::ARingRRR> LMatrixRRR; 
+  typedef DMat<M2::ARingCCC> LMatrixCCC; 
 
-  typedef DMat<CoefficientRingCCC> LMatrixCC;
-
-  typedef LMatrixCC::elem CCelem;
+  typedef LMatrixCCC::elem CCelem;
   //typedef CoeffRing::elem CCelem;
+
+  ///////////////////////////////////////////
+  // Translation to/from RR/CC and RRR/CCC //
+  ///////////////////////////////////////////
+
+  ////////////////////////////////
+  // Input matrices are real /////
+  ////////////////////////////////
+
+  static M2_arrayintOrNull LU(const LMatrixRRR *A,
+                               LMatrixRRR *L,
+                               LMatrixRRR *U);
+
+  static bool solve(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
+  // A and b are not modifed.  The result is placed into x.
+  // Returns x s.t. Ax = b
+  // A should be non-singular.
+
+  static bool eigenvalues(const LMatrixRRR *A, LMatrixCCC *eigenvals);
+  // Find the eigenvalues of A.  A is not modified.
+  // Result is placed into eigenvals.
+
+  static bool eigenvectors(const LMatrixRRR *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs);
+
+  static bool eigenvalues_symmetric(const LMatrixRRR *A, LMatrixRRR *eigenvals);
+
+  static bool eigenvectors_symmetric(const LMatrixRRR *A, LMatrixRRR *eigenvals, LMatrixRRR *eigenvecs);
+
+  static bool SVD(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT);
+
+  static bool SVD_divide_conquer(const LMatrixRRR *A, LMatrixRRR *Sigma, LMatrixRRR *U, LMatrixRRR *VT);
+
+  static bool least_squares(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
+
+  static bool least_squares_deficient(const LMatrixRRR *A, const LMatrixRRR *b, LMatrixRRR *x);
+
+  ////////////////////////////////
+  // Input matrices are complex //
+  ////////////////////////////////
+
+  static M2_arrayintOrNull LU(const LMatrixCCC *A,
+                               LMatrixCCC *L,
+                               LMatrixCCC *U
+                               );
+
+  static bool solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x);
+
+  //static bool solve(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x, const unsigned long precision);
+  // A and b are not modifed.  The result is placed into x.
+  // Returns x s.t. Ax = b
+  // A should be non-singular.
+
+  static bool eigenvalues(const LMatrixCCC *A, LMatrixCCC *eigenvals);
+
+  static bool eigenvectors(const LMatrixCCC *A, LMatrixCCC *eigenvals, LMatrixCCC *eigenvecs);
+
+  static bool eigenvalues_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals);
+
+  static bool eigenvectors_hermitian(const LMatrixCCC *A, LMatrixRRR *eigenvals, LMatrixCCC *eigenvecs);
+
+  static bool SVD(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT);
+
+  static bool SVD_divide_conquer(const LMatrixCCC *A, LMatrixRRR *Sigma, LMatrixCCC *U, LMatrixCCC *VT);
+
+  static bool least_squares(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x);
+
+  static bool least_squares_deficient(const LMatrixCCC *A, const LMatrixCCC *b, LMatrixCCC *x);
+
+  ///xxx////////////////////////////// same for RR/CC //////////////////////////////////////////////
+
+ public:
+  typedef DMat<M2::ARingRR> LMatrixRR; 
+  typedef DMat<M2::ARingCC> LMatrixCC; 
 
   ///////////////////////////////////////////
   // Translation to/from RR/CC and RRR/CCC //
@@ -367,6 +436,8 @@ class Lapack {
 
   static bool least_squares_deficient(const LMatrixCC *A, const LMatrixCC *b, LMatrixCC *x);
 
+
+  // should we dump the following.... ?
 #ifdef HAVE_MPACK
   static void delete_mpack_array(__mpfr_struct* a, int len);
   static void fill_from_mpack_array(CCelem *elemarray, mpreal *mparray, int cols, int rows);

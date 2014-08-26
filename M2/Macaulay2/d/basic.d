@@ -46,24 +46,18 @@ export hash(e:Expr):int := (
 	       + 1299791 * (int(x.position.line) + 
 		    1299811 * int(x.position.column))))
      is x:RawMonomialCell do int(hash(x.p))
-     is x:RawMonomialOrderingCell do int(Ccode(ulong, "IM2_MonomialOrdering_hash(",x.p,")" ))
-     is x:RawMonoidCell do int(Ccode(ulong, "IM2_Monoid_hash(",x.p,")" ))
-     is x:RawMatrixCell do int(Ccode(int, "IM2_Matrix_hash(",x.p,")" ))
-     is x:RawMutableMatrixCell do int(Ccode(int, "IM2_MutableMatrix_hash(",x.p,")" ))
-     is x:RawStraightLineProgramCell do int(Ccode(int, "rawStraightLineProgramHash(",x.p,")" ))
-     is x:RawPathTrackerCell do int(Ccode(int, "rawPathTrackerHash(",x.p,")" ))
-     is x:RawRingCell do int(Ccode(ulong, "IM2_Ring_hash(",x.p,")" ))
-     is x:RawComputationCell do int(Ccode(ulong, "IM2_GB_hash(",x.p,")" ))
-     is x:RawFreeModuleCell do (
-	  0
-	  -- int(Ccode(ulong, "IM2_FreeModule_hash(",x.p,")" ))
-	  )
-     is x:RawRingMapCell do (
-	  0
-	  -- int(Ccode(ulong, "IM2_RingMap_hash(",x.p,")" ))
-	  )
-     is x:RawRingElementCell do 12345
-     is x:RawMonomialIdealCell do 12346
+     is x:RawMonomialOrderingCell do int(Ccode(uint, "rawMonomialOrderingHash(",x.p,")" ))
+     is x:RawMonoidCell do int(Ccode(uint, "rawMonoidHash(",x.p,")" ))
+     is x:RawMatrixCell do int(Ccode(uint, "rawMatrixHash(",x.p,")" ))
+     is x:RawMutableMatrixCell do int(Ccode(uint, "rawMutableMatrixHash(",x.p,")" ))
+     is x:RawStraightLineProgramCell do int(Ccode(uint, "rawStraightLineProgramHash(",x.p,")" ))
+     is x:RawPathTrackerCell do int(Ccode(uint, "rawPathTrackerHash(",x.p,")" ))
+     is x:RawRingCell do int(Ccode(uint, "rawRingHash(",x.p,")" ))
+     is x:RawComputationCell do int(Ccode(uint, "rawComputationHash(",x.p,")" ))
+     is x:RawFreeModuleCell do int(Ccode(uint, "rawFreeModuleHash(",x.p,")" ))
+     is x:RawRingMapCell do int(Ccode(uint, "rawRingMapHash(",x.p,")" ))
+     is x:RawRingElementCell do int(Ccode(uint, "rawRingElementHash(",x.p,")" ))
+     is x:RawMonomialIdealCell do int(Ccode(uint, "rawMonomialIdealHash(",x.p,")" ))
      is s:SpecialExpr do s.Class.hash + 221 * hash(s.e)
      is x:CompiledFunction do x.hash
      is x:CompiledFunctionClosure do x.hash

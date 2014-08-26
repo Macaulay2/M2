@@ -7,7 +7,7 @@ VPATH = @srcdir@
 PACKAGES = @PACKAGES@
 
 # packages under development that should be checked but not installed:
-DEVEL = 
+DEVEL = EngineTests
 
 RemakeAllDocumentation ?= false
 IgnoreExampleErrors ?= false

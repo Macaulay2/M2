@@ -4,11 +4,16 @@
 #include "monoid.hpp"
 #include "monomial.hpp"
 #include "frac.hpp"
-#include "QQ.hpp"
 #include "polyring.hpp"
 
+#include "aring-glue.hpp"
+
 RingZZ *globalZZ;
-QQ *globalQQ;
+
+unsigned int RingElement::computeHashValue() const
+{
+  return get_ring()->computeHashValue(get_value());
+}
 
 RingElement * RingElement::make_raw(const Ring *R, ring_elem f)
 {
@@ -79,7 +84,7 @@ RingElement /* or null */ *RingElement::operator*(const RingElement &b) const
 
 RingElement *RingElement::operator*(int n) const
 {
-  ring_elem nR = R->from_int(n);
+  ring_elem nR = R->from_long(n);
   if (is_zero() || (n == 0))
     return new RingElement(R, ZERO_RINGELEM);
   else
@@ -396,6 +401,53 @@ RingElement *RingElement::fraction(const Ring *K, const RingElement *bottom) con
       return 0;
     }
   return new RingElement(K1,K1->fraction(val, bottom->get_value()));
+}
+
+bool RingElement::getSmallIntegerCoefficients(std::vector<long>& result_coeffs) const
+{
+  const PolynomialRing* R = get_ring()->cast_to_PolynomialRing();
+  if (R == 0 || R->n_vars() != 1)
+    {
+      throw exc::engine_error("Expected a polynomial in a univariate polynomial ring");
+      return false; // Should not be needed
+    }
+
+  if (is_zero())
+    {
+      result_coeffs.resize(0);
+      return true;
+    }
+  int lo, deg; // ignore lo, and deg == degree of the univariate polynomial f.
+  R->degree_of_var(0, get_value(), lo, deg);
+  result_coeffs.resize(deg+1);
+  for (int i=0; i<=deg; i++)
+    result_coeffs[i] = 0;
+  int exp[1];
+  for (Nterm *t = get_value(); t != NULL; t = t->next)
+      {
+        std::pair<bool,long> res = R->getCoefficientRing()->coerceToLongInteger(t->coeff);
+        if (not res.first)
+          {
+            // At this point, the answer is meaningless
+            result_coeffs.resize(0);
+            return false;
+          }
+        long coeff = res.second;
+
+        R->getMonoid()->to_expvector(t->monom, exp);
+        M2_ASSERT(exp[0] >= 0);
+        M2_ASSERT(exp[0] <= deg);
+        result_coeffs[exp[0]] = coeff;
+      }
+  return true;
+}
+
+const M2_arrayintOrNull RingElement::getSmallIntegerCoefficients() const
+{
+  std::vector<long> coeffs;
+  if (!getSmallIntegerCoefficients(coeffs))
+    return 0;
+  return stdvector_to_M2_arrayint(coeffs);
 }
 
 // Local Variables:

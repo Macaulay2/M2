@@ -292,6 +292,20 @@ void Monoid::text_out(buffer &o) const
   o << newline << "  ]";
 }
 
+unsigned int Monoid::computeHashValue(const_monomial m) const
+{
+  unsigned int seed = 0x3124252;
+  unsigned int hash = 0x43435728;
+  int len = monomial_size();
+  for (int i=0; i<len; i++)
+    {
+      unsigned int val = *m++;
+      hash += seed * val;
+      seed = seed + 1342234;
+    }
+  return hash;
+}
+
 void Monoid::from_expvector(const_exponents exp, monomial result) const
 {
   monomialOrderEncodeFromActualExponents(monorder_, exp, result);

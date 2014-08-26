@@ -28,10 +28,23 @@ Matrix::Matrix(const FreeModule *rows0,
   _degree_shift = const_cast<int *>(degree_shift0);
   for (int i=0; i<cols0->rank(); i++)
     _entries.append(entries0[i]);
+}
 
-  long z = 234123 + get_ring()->get_hash_value() * (7 * n_rows() + 157 * n_cols());
-  if (z < 0) z = -z;
-  make_immutable(z);
+unsigned int Matrix::computeHashValue() const
+{
+  unsigned int hashval = 234123 + (7 * n_rows() + 157 * n_cols());
+
+  iterator i(this);
+  for (int c=0; c<n_cols(); c++)
+    {
+      int count = 0;  // only use first 2 non-zero entries in each column
+      for (i.set(c); i.valid(); i.next())
+        {
+          hashval = 34224*hashval + get_ring()->computeHashValue(i.entry());
+          if (++count > 2) break;
+        }
+    }
+  return hashval;
 }
 
 const Matrix /* or null */ * Matrix::make(const FreeModule *target,
@@ -266,7 +279,7 @@ const Matrix /* or null */ * Matrix::make(const MonomialIdeal * mi)
   for (Index<MonomialIdeal> i = mi->last(); i.valid(); i--)
     {
       M->from_varpower((*mi)[i]->monom().raw(), mon);
-      ring_elem f = P->make_flat_term(P->getCoefficientRing()->from_int(1), mon);
+      ring_elem f = P->make_flat_term(P->getCoefficientRing()->from_long(1), mon);
       mat.set_entry(0,next++,f);
     }
   M->remove(mon);
@@ -283,9 +296,8 @@ ring_elem Matrix::elem(int i, int j) const
 bool Matrix::is_equal(const Matrix &m) const
 {
   if (this == &m) return true;
-  if (get_hash_value() != m.get_hash_value())
-    return false; // Note that if one is immutable,
-                  // and the other is mutable, false will be returned.
+  if (hash() != m.hash())
+    return false;
   if (get_ring() != m.get_ring())
     return false;
   if (n_rows() != m.n_rows())
@@ -353,7 +365,7 @@ Matrix *Matrix::zero(const FreeModule *F, const FreeModule *G)
 Matrix *Matrix::identity(const FreeModule *F)
 {
   const Ring *R = F->get_ring();
-  const ring_elem one = R->from_int(1);
+  const ring_elem one = R->from_long(1);
   MatrixConstructor mat(F,F,0);
   for (int i=0; i<F->rank(); i++)
     mat.set_entry(i,i,R->copy(one));
@@ -603,11 +615,13 @@ Matrix *Matrix::direct_sum(const Matrix *m) const
       ERROR("concat: different base rings");
       return 0;
     }
-  const int *deg;
-  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
-    deg = degree_shift();
-  else
-    deg = 0;
+
+  // direct_sum ignores the degree shift of each summand.
+  ///const int *deg;
+  ///  if (EQ == degree_monoid()->compare(degree_shift(), m->degree_shift()))
+  ///    deg = degree_shift();
+  ///  else
+  ///    deg = 0;
 
   const FreeModule *F = rows()->direct_sum(m->rows());
   const FreeModule *G = cols()->direct_sum(m->cols());
@@ -782,37 +796,6 @@ Matrix *Matrix::diff(const Matrix *m, int use_coef) const
   for (i=0; i<n_cols(); i++)
     for (j=0; j<m->n_cols(); j++)
       mat.set_column(next++, P->vec_diff(elem(i), m->rows()->rank(), m->elem(j), use_coef));
-  return mat.to_matrix();
-}
-
-Matrix *Matrix::contract0(int n_top_variables, const Matrix *m) const
-{
-  const PolynomialRing *P = get_ring()->cast_to_PolynomialRing();
-  if (P == 0)
-    {
-      ERROR("expected a polynomial ring");
-      return 0;
-    }
-  if (P != m->get_ring())
-    {
-      ERROR("matrix diff: different base rings");
-      return 0;
-    }
-  FreeModule *F1 = rows()->transpose();
-  const FreeModule *F = F1->tensor(m->rows());
-  FreeModule *G1 = cols()->transpose();
-  const FreeModule *G = G1->tensor(m->cols());
-  int *deg = degree_monoid()->make_one();
-  degree_monoid()->divide(m->degree_shift(), degree_shift(), deg);
-  deleteitem(F1);
-  deleteitem(G1);
-
-  MatrixConstructor mat(F,G,deg);
-  degree_monoid()->remove(deg);
-  int i, j, next=0;
-  for (i=0; i<n_cols(); i++)
-    for (j=0; j<m->n_cols(); j++)
-      mat.set_column(next++, P->vec_contract0(n_top_variables, elem(i), m->rows()->rank(), m->elem(j)));
   return mat.to_matrix();
 }
 
@@ -1048,11 +1031,11 @@ Matrix /* or null */ *Matrix::koszul(int p) const
         {
           negate = !negate;
           size_t x = C.encodeBoundary(r, a);
-          ring_elem f = elem(0, a[r]);
+          ring_elem f = elem(0, static_cast<int>(a[r]));
           if (negate)
             R->negate_to(f);
 
-          mat.set_entry(x,c,f);
+          mat.set_entry(static_cast<int>(x),c,f);
         }
     }
   return mat.to_matrix();
@@ -1247,8 +1230,8 @@ Matrix *Matrix::wedge_product(int p, int q, const FreeModule *F)
               col++;
               continue;
             }
-          ring_elem r = F->get_ring()->from_int(sgn);
-          size_t row = C.encode(c);
+          ring_elem r = F->get_ring()->from_long(sgn);
+          int row = static_cast<int>(C.encode(c));
           mat.set_entry(row,col++,r);
         }
     }
@@ -1552,7 +1535,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   // Now collect all of the monomials
   int *mon = M->make_one();
   int *exp = newarray_atomic(int,M->n_vars());
-  ring_elem one = K->from_int(1);
+  ring_elem one = K->from_long(1);
   exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the coefficient
 
   for (int c=0; c<n_cols(); c++)
@@ -1643,7 +1626,7 @@ static vec coeffs_of_vec(exponent_table *E, M2_arrayint vars,
         {
           M->to_expvector(h->monom, exp);
           get_part_of_expvector(vars, exp, g->comp, scratch_exp);
-          int val = exponent_table_get(E, scratch_exp);
+          int val = static_cast<int>(exponent_table_get(E, scratch_exp));
           if (val > 0)
             {
               M->from_expvector(exp, mon);

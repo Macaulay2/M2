@@ -237,6 +237,8 @@ public:
   ////////////////////////
   // Arithmetic //////////
   ////////////////////////
+  virtual unsigned int computeHashValue(const ring_elem a) const;
+
   virtual ring_elem var(int v) const = 0;
 
   /////////////////////////
@@ -296,7 +298,6 @@ public:
 
   virtual void monomial_divisor(const ring_elem a, int *exp) const = 0;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const = 0;
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const = 0;
   virtual bool in_subring(int nslots, const ring_elem a) const = 0;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const = 0;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const = 0;

@@ -9,10 +9,12 @@ doc ///
       to solve polynomial systems and perform calculations in
       {\em numerical algebraic geometry}. The software is available at
       @HREF"http://www.nd.edu/~sommese/bertini/"@.
-      The site currently provides only executable versions named {\tt bertini} or {\tt bertini.exe} (for Cygwin).
-      The user must have the executable program {\tt bertini} available,
-      preferably in the executation path.
 
+      The user may place the executable program {\tt bertini} in the executation path. 
+      Alternatively, the path to the executable needs to be specified, for instance,
+    Example
+      needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})  
+    Text
       Below is a simple example using the most popular function,
       a basic zero-dimensional solve with no special options.
     Example
@@ -338,7 +340,6 @@ doc ///
       bertiniPosDimSolve(G,opts)
 ///;
 
-
 doc ///
  Key
    bertiniPosDimSolve
@@ -475,9 +476,19 @@ doc ///
      H = { (x^2-1)*t + (x^2-2)*(1-t)};
      sol1 = point {{1}};
      sol2 = point {{-1}};
-     S1= { sol1, sol2  };	  
-     S0 = bertiniTrackHomotopy (H, t, S1) 
+     S1= { sol1, sol2  };--solutions to H when t=1	  
+     S0 = bertiniTrackHomotopy (H, t, S1) --solutions to H when t=0
      peek S0_0
+   Example     
+     R=CC[x,y,t]; -- include the path variable in the ring     
+     f1=(x^2-y^2);
+     f2=(2*x^2-3*x*y+5*y^2);
+     H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+     sol1=    point{{1,1}}--{{x,y}} coordinates
+     sol2=    point{{ -1,1}}
+     S1={sol1,sol2}--solutions to H when t=1
+     S0=bertiniTrackHomotopy(  H,t,S1,ISPROJECTIVE=>1) --solutions to H when t=0       
+
 ///;
 
 doc ///
@@ -531,8 +542,7 @@ doc ///
    l:List
      whose entries are points to be sharpened
    d:ZZ
-     number of digits
-   
+     number of digits   
  Outputs
    S:List
      of solutions of type Point
@@ -547,6 +557,105 @@ doc ///
      coords = coordinates S_0
      coords_0
 ///;
+
+doc ///
+ Key
+   importPoints   
+   (importPoints,String,ZZ)
+ Headline
+   importPoints reads solutions from a Bertini solution file to store as points in M2
+ Usage
+   A=importPoints(s,n) 
+ Inputs
+   s: String
+     A string giving the  locaton of a Bertini solution file.
+   n: ZZ
+     Number of coordinates for each solution.
+ Description
+   Text
+     The input is a string giving the location of the solution file,
+     and an integer giving the number of coordinates for a solution.
+     The output is a list of points.
+     The user can specify which solutions and which coordinates they want to read from the file.
+   Example
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     --A=importPoints(locationOfSolutionFile,4)
+     --The output would be a list of points that have 4 coordinates.          
+   Example 
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     --B=importPoints(locationOfSolutionFile,4,SpecifyPoints=>{0,2})
+     --The output would be the first and third solutions of the file. 
+   Example 
+     locationOfSolutionFile="/Users/.../YourFolder/solution_file";
+     --C=importPoints(locationOfSolutionFile,4,SpecifyCoordinates=>{0,1})
+     --The output would be the first and second coordinate of each solution of the file.  
+ Caveat
+   For importPoints to be successful, the Bertini solution file must have a particular format.
+
+   The first line is an integer, the number of solutions in the.
+   The next lines consist of a blank line followed by a line for each coordinate;
+   these lines consist of: RR|"e"|ZZ" "RR|"e"|ZZ for scientific notation of the real and imaginary parts of the coordinate.
+///;
+
+doc ///
+ Key
+   phPostProcess
+   (phPostProcess,String,List,ZZ)
+ Headline
+   Does post processing parameter homotopy.
+ Usage
+   S=phPostProcess(sIn,L,n) 
+ Inputs
+   sIn: String
+     A string giving the directory of the input files.
+   L: List
+     A list of parameters. 
+   n: ZZ
+     Number of coordinates in a solution.
+ Description
+   Text
+     The purpose of this function is to allow a person
+     to share their Bertini computations with a second user,
+     who can then analyze the data easily with the Bertini.M2 interface.   
+     
+     Instead of doing a parameter run by calling Bertini, 
+     the PrintNotes option prints a file titled "notes"  located in the input file's directory.
+     If the "notes" file does not exist it returns an error.   
+     
+     The output will be a list of points that have 3 coordinates, that are solutions to a parameterized system of equations evaluated at L, found by doing a parameter homotopy. 
+   Example
+     inputFileLocation="/Users/.../YourFolderA";
+     L={.8234+ii*8,9}--A list of two parameter values.
+     n=3--A solution has n coordinates.
+     --phPostProcess(inputFileLocation,L,n)     
+   Example
+     inputFileLocation="/Users/.../YourFolderA";
+     --phPostProcess(inputFileLocation,"",{},0,PrintNotes=>1)
+ Caveat
+   Even if Bertini is called but does not run,  
+   an error may not be reported if previous solution files were already in the outputDirectory.
+///;
+
+
+doc ///
+ Key
+   phMonodromy
+   (phMonodromy,String,ZZ,ZZ)
+ Headline
+   Does a sequence of parameter homotopies.
+ Usage
+   S=phMonodromy(sIn,p,n) 
+ Inputs
+   sIn: String
+     A string giving the directory of start files: input, start, start_parameters
+   p: ZZ
+     Number of parameters.
+   n: ZZ
+     Number of coordinates of a point.
+         
+///;
+--ref{} need to add about the option ParameterValues
+
 
 doc ///
  Key
@@ -568,6 +677,12 @@ doc ///
      R = CC[x,y,z];
      f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
      NV = bertiniPosDimSolve(f,ISPROJECTIVE=>1)
+   Example 
+     R=CC[x,y,z,u1,u2];--u1,u2 are parameters
+     f1=x^2+y^2-z^2;
+     f2=u1*x+u2*y;
+     finalParameters={{0,1}};
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },ISPROJECTIVE=>1)            
 ///;
 
 doc ///
@@ -619,6 +734,70 @@ doc ///
      paramValues1={{0,1+2*ii,0}};
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
      bPH_0--the solutions to the system with parameters set equal to paramValues0
+   Example
+     R=CC[x,y,z,u1,u2]
+     f1=x^2+y^2-z^2
+     f2=u1*x+u2*y
+     finalParameters0={{0,1}}
+     finalParameters1={{1,0}}
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)            
+     bPH_0--The two solutions for finalParameters0
+///;
+
+doc///
+ Key
+   AllowStrings
+   [bertiniTrackHomotopy, AllowStrings]
+   [bertiniParameterHomotopy, AllowStrings]
+--   [bertiniComponentMemberTest, ISPROJECTIVE]
+   [bertiniPosDimSolve, AllowStrings]
+--   [bertiniRefineSols, ISPROJECTIVE]
+--   [bertiniSample, ISPROJECTIVE]
+   [bertiniZeroDimSolve, AllowStrings]
+ Headline
+   optional argument to specify whether one can input a system of polynomials as strings.   
+ Description
+   Text
+     When set to a list of variables one can input a polynomial system as a List of strings or polynomials 
+   Example
+     R = CC[x,y,z];
+     f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)),z-1};
+     sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z})
+   Example 
+     R=CC[x,y,z];--u1,u2 are parameters
+     f1=x^2+y^2-z^2;
+     f2="u1*x+u2*y";
+     f3=z-1;
+     finalParameters={{0,1}};
+     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },AllowStrings=>{x,y,z})            
+   Example 
+     R=CC[x,t1];
+     f1="x^2+cos(1-t1)-2*exp(1-t1)";
+     H={f1};
+     sol1 = point {{1}};
+     sol2 = point {{-1}};
+     S1={sol1,sol2}--solutions to H when t=1                 
+     S0 = bertiniTrackHomotopy (H, t1, S1,AllowStrings=>{x}) --solutions to H when t=0|
+     peek S0
+///;
+
+doc///
+ Key
+   SubFunctions
+   [bertiniTrackHomotopy, SubFunctions]
+   [bertiniParameterHomotopy, SubFunctions]
+   [bertiniPosDimSolve, SubFunctions]
+   [bertiniZeroDimSolve, SubFunctions]
+ Headline
+   optional argument to specify subfunctions that will be written to the Bertini input file.   
+ Description
+   Text
+     The option is a list of pairs that define a subfunction. 
+   Example
+     R = CC[x,y,z][s1,s2];
+     sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
+     f = {s1*s2, s1*(z+y),z-1};
+     sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z},SubFunctions=>sF)
 ///;
 
 end

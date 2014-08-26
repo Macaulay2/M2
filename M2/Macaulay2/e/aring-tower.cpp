@@ -64,7 +64,7 @@ const ARingTower* ARingTower::create(const ARingTower &R, const std::vector<Elem
 // Allocation /////
 ///////////////////
 // TODO: what is the contract here???!!
-poly ARingTower::alloc_poly_n(long deg) const
+poly ARingTower::alloc_poly_n(int deg) const
 // if elems == 0, then set all coeffs to 0.
 {
   poly result = new poly_struct;
@@ -76,7 +76,7 @@ poly ARingTower::alloc_poly_n(long deg) const
   return result;
 }
 
-poly ARingTower::alloc_poly_0(long deg) const
+poly ARingTower::alloc_poly_0(int deg) const
 {
   poly result = new poly_struct;
   result->coeffs = new ARingZZpFFPACK::ElementType[deg+1];
@@ -119,8 +119,8 @@ void ARingTower::clear(int level, poly &f) const
 void ARingTower::reset_degree(poly &f) const
 {
   if (f == 0) return;
-  size_t fdeg = f->deg;
-  for (size_t j = fdeg; j>=0; --j)
+  int fdeg = f->deg;
+  for (int j = fdeg; j>=0; --j)
     if (f->polys[j] != 0) {
       f->deg = j;
       return;
@@ -366,7 +366,6 @@ void ARingTower::negate_in_place(int level, poly &f) const
     }
   else
     {
-      poly *p = f->polys;
       for (int i=0; i<=deg; i++)
         if (f->polys[i] != 0) negate_in_place(level-1, f->polys[i]);
     }

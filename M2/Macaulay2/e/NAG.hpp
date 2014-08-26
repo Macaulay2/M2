@@ -6,9 +6,52 @@
 #define _nag_
 
 #include "matrix.hpp"
-#include "CCC.hpp"
+#include "aring-CC.hpp"
 #include "complex.h"
 #include "style.hpp"
+#include "aring-glue.hpp"
+
+// patching defs and functions: /////////////////////////////////////////
+// switching from CCC to ConcreteRing<ARingCC> /////////////////////////
+#define CCC M2::ConcreteRing<M2::ARingCC>
+inline const CCC* cast_to_CCC(const Ring* R) 
+{
+  return dynamic_cast<const CCC*>(R);
+}
+
+inline ring_elem from_doubles(const CCC* C, double re, double im) 
+{
+  CCC::ElementType a;
+  C->ring().init(a);
+  C->ring().set_from_doubles(a,re,im);
+  ring_elem result;
+  C->ring().to_ring_elem(result,a);
+  C->ring().clear(a);
+  return result;
+}
+/*
+inline ring_elem from_BigReals(const CCC* C, gmp_RR re, gmp_RR im) 
+{
+  CCC::ElementType a;
+  C->ring().init(a);
+  C->ring().set_from_BigReals(a,re,im);
+  ring_elem result;
+  C->ring().to_ring_elem(result,a);
+  C->ring().clear(a);
+  return result;
+}
+*/
+inline gmp_CC toBigComplex(const CCC* C, ring_elem a) 
+{
+  CCC::ElementType b; 
+  C->ring().init(b);
+  C->ring().from_ring_elem(b,a);
+  gmp_CC result = C->ring().toBigComplex(b);
+  C->ring().clear(b);
+  return result;
+}   
+///////////////////////////////////////////////////////////////////////////
+
 
 // Simple complex number class
 class complex
@@ -478,12 +521,13 @@ public:
 // };
 
 template <class Field>
-class SLP : public object
+class SLP : public MutableEngineObject
 {
   Field F; // F->add(a,b,c)
 public:
   typedef typename Field::element_type element_type;
 private:
+  const CCC* C; // ConcreteRing<ARingCCC>*
   friend class PathTracker;
 
   static SLP<Field>* catalog[MAX_NUM_SLPs];
@@ -610,7 +654,7 @@ struct Solution
   void release() { deletearray(x); deletearray(start_x); }
 };
 
-class PathTracker : public object
+class PathTracker : public MutableEngineObject
 {
   static PathTracker* catalog[MAX_NUM_PATH_TRACKERS];
   static int num_path_trackers;
@@ -682,7 +726,7 @@ class PathTracker : public object
     } else slpHxH->evaluate(n+1,x0t0, HxH);
   }
 
-  const CCC *C; // coefficient field (complex numbers)
+  const CCC* C; // coefficient field (complex numbers)
   const PolyRing *homotopy_R; // polynomial ring where homotopy lives (does not include t if is_projective)
   int n_coords;
   int n_sols;

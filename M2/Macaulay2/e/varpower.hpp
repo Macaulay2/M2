@@ -26,6 +26,8 @@ public:
   varpower() {}
   ~varpower() {}
 
+  static unsigned int computeHashValue(const int *vp);
+
   static void elem_text_out(buffer &o, const int *a, bool p_one=true);
   static void elem_text_out(buffer &o, const int *a,
                             M2_ArrayString varnames, bool p_one=true);

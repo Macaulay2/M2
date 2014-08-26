@@ -36,11 +36,18 @@ assert( # factor g == 11 )
 
 -- factoring over finite fields
 GF 4[x]
+--assert ( factor (x^9-1) === 
+--     new Product from {new Power from {x+a,1},new Power from {x+a+1,1},new
+--        Power from {x+1,1},new Power from {x^3+a,1},new Power from {x^3+a+1,1}}
+--   	)
 assert ( factor (x^9-1) === 
-     new Product from {new Power from {x+a,1},new Power from {x+a+1,1},new
-        Power from {x+1,1},new Power from {x^3+a,1},new Power from {x^3+a+1,1}}
-   	)
-
+        new Product from {
+            new Power from {x+1,1},
+            new Power from {x+a,1},
+            new Power from {x+a+1,1},
+            new Power from {x^3+a,1},
+            new Power from {x^3+a+1,1}}
+     )
 -- factoring over extension fields
 R=ZZ/101[x,a]
 debug Core

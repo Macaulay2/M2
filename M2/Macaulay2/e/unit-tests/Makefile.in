@@ -11,7 +11,10 @@ include @srcdir@/Makefile.files
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
-	 -I@srcdir@/../../c 
+	 -I@srcdir@/../../c \
+	-Wno-unused-local-typedefs # ffpack has some of these.
+
+#CXXFLAGS += -O0 -std=gnu++0x #-coverage
 CXXFLAGS += -std=gnu++0x #-coverage
 
 # removed from CPPFLAGS for tests:

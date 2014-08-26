@@ -45,33 +45,34 @@ Ring / Module := QuotientRing => (R,I) -> (
 
 savedQuotients := new MutableHashTable
 
-savedZZpQuotients := new MutableHashTable
-
 liftZZmodQQ := (r,S) -> (
      needsPackage "LLLBases";
      v := (value getGlobalSymbol "LLL") syz matrix {{-1,lift(r,ZZ),char ring r}};
      v_(0,0) / v_(1,0))
 
 --------------------------------
-ZZp = method(Options=> {"ARing" => true})
+ZZp = method(Options=> {Strategy => null}) -- values allowed: "Flint", "Ffpack", "Aring", "Old".
 ZZp ZZ := opts -> (n) -> ZZp(ideal n, opts)
 ZZp Ideal := opts -> (I) -> (
+      typ := opts#Strategy;
+      if typ === null then typ = "Flint";
      gensI := generators I;
      if ring gensI =!= ZZ then error "expected an ideal of ZZ";
      n := gcd flatten entries gensI;
      if n < 0 then n = -n;
      if n === 0 then 
          ZZ
-     else if opts#"ARing" and savedZZpQuotients#?n then
-         savedZZpQuotients#n
-     else if not opts#"ARing" and savedQuotients#?n then
-         savedQuotients#n
+     else if savedQuotients#?(typ, n) then
+         savedQuotients#(typ, n)
      else (
-	  --if n > 32767 then error "large characteristics not implemented yet";
-	  if n > 1 and not isPrime n
+	  if not isPrime n
 	  then error "ZZ/n not implemented yet for composite n";
 	  S := new QuotientRing from 
-	    if opts#"ARing" then rawARingGaloisField(n,1)  else rawZZp n;  -- rawARingZZp n
+	    if typ === "Ffpack" then rawARingGaloisField(n,1)  
+        else if typ === "Flint" then rawARingZZpFlint n
+        else if typ === "Aring" then rawARingZZp n
+        else if typ === "Old" then rawZZp n
+        else error("unknown implementation choice: "|typ|///. Choices are "Flint" (default), "Ffpack", "Aring", "Old"///);
 	  S.cache = new CacheTable;
 	  S.isBasic = true;
 	  S.ideal = I;
@@ -83,13 +84,10 @@ ZZp Ideal := opts -> (I) -> (
 	  S.presentation = matrix{{n}};
 	  S.order = S.char = n;
 	  S.dim = 0;					    -- n != 0 and n!= 1
-	  expression S := x -> expression raw x;
+	  expression S := x -> expression rawToInteger raw x;
 	  fraction(S,S) := S / S := (x,y) -> x//y;
 	  S.frac = S;		  -- ZZ/n with n PRIME!
-      if opts#"ARing" then
-  	    savedZZpQuotients#n = S
-      else
-  	    savedQuotients#n = S;
+      savedQuotients#(typ, n) = S;
       lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
@@ -107,18 +105,39 @@ initializeEngineLinearAlgebra Ring := (R) -> (
         A := mutableMatrix(f, Dense=>true);
         R := ring A;
         if numRows A =!= numColumns A then error "expected square matrix";
-        matrix map(R,rawLinAlgInvert(raw A))
+        matrix map(R,rawLinAlgInverse(raw A))
         );
-    R#"solveLinear" = (f,g, rightside) -> (
-        -- solve f*X = g, or (if rightside is false), X*f = g
+    R#"solveLinear" = (f,g) -> (
+        -- solve f*X = g
         if ring f =!= ring g then error "expected same base rings";
         A := mutableMatrix(f, Dense=>true);
         B := mutableMatrix(g, Dense=>true);
         R := ring A;
-        result := map(R,rawLinAlgSolve(raw A,raw B,rightside));
+        result := map(R,rawLinAlgSolve(raw A,raw B));
         matrix result
         );
     )
+
+isBasicMatrix Matrix := (f) -> isFreeModule source f and isFreeModule target f
+basicDet Matrix := (f) -> (
+    if not isBasicMatrix f then error "expected a matrix with free source and target";
+    m := mutableMatrix(f, Dense=>true);
+    promote(rawLinAlgDeterminant raw m, ring f) -- use promote to work with real and complex fields
+    )
+basicInverse Matrix := (f) -> (
+    if not isBasicMatrix f then error "expected a matrix with free source and target";    
+    A := mutableMatrix(f, Dense=>true);    
+    R := ring A;
+    if numRows A =!= numColumns A then error "expected square matrix";
+    matrix map(R,rawLinAlgInverse(raw A))
+    )
+basicRank Matrix := (f) -> (
+    if not isBasicMatrix f then error "expected a matrix with free source and target";
+    m := mutableMatrix(f, Dense=>true);
+    rawLinAlgRank(raw m)
+    )
+
+initializeEngineLinearAlgebra QQ
 --------------------------------
 
 ZZquotient := (R,I) -> (
@@ -139,6 +158,7 @@ ZZquotient := (R,I) -> (
 	  S.ideal = I;
 	  S.baseRings = {R};
      	  commonEngineRingInitializations S;
+          initializeEngineLinearAlgebra S;
 	  S.relations = gensI;
 	  S.isCommutative = true;
 	  S.presentation = matrix{{n}};
@@ -151,13 +171,11 @@ ZZquotient := (R,I) -> (
 	  lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
-ZZquotientNEW := (R,I) -> ZZp(R,I,"ARing"=>false)
-
 Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
-     if R === ZZ then return ZZquotient(R,I);
+     if R === ZZ then return ZZp(I);
      error "can't form quotient of this ring";
      )
 

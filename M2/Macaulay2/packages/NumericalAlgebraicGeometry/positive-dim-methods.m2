@@ -4,23 +4,18 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-numericalVarietyM2 = I -> numericalVariety flatten (regeneration I_* / decompose)
-numericalVarietyBertini = I -> bertiniPosDimSolve I_*
-numericalVariety Ideal := I -> (
-     if DEFAULT.Software === BERTINI 
-     then numericalVarietyBertini 
-     else numericalVarietyM2
-     ) I
-
-isOn = method(Options=>{Tolerance=>null,Software=>null})
-isOn (Point,WitnessSet) := o -> (p, V) -> (
-    o = fillInDefaultOptions o;
-    --if o.Software === BERTINI then bertiniComponentMemberTest(numericalVariety {V},{p})
-    --else 
-    error "not implemented"    
-    )
 isOn (Point,NumericalVariety) := o -> (p, V) -> (
     o = fillInDefaultOptions o;
     if o.Software === BERTINI then #bertiniComponentMemberTest(V,{p})>0
-    else error "not implemented"    
+    else any(keys V, d->any(V#d, C->isOn(p,C,o)))  
     )
+
+TEST ///
+R = CC[x,y]	
+e = 0.0000001
+V = numericalIrreducibleDecomposition ideal (x*(x-1), x*(y-1))
+assert isOn( point{{e,random CC}}, V ) 
+assert isOn( point{{1-e,1+e}}, V ) 
+assert not isOn( point{{1,0}}, V ) 
+///
+

@@ -33,8 +33,8 @@ public:
   // Arithmetic //////////
   ////////////////////////
 
-  virtual ring_elem from_int(int n) const {
-    ring_elem result = numerR_->from_int(n);
+  virtual ring_elem from_long(long n) const {
+    ring_elem result = numerR_->from_long(n);
     normal_form(result);
     return result;
   }
@@ -48,6 +48,32 @@ public:
     normal_form(result);
     return result;
   }
+  virtual bool from_BigReal(gmp_RR a, ring_elem &result) const
+  {
+    bool ret = numerR_->from_BigReal(a,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const
+  {
+    bool ret = numerR_->from_BigComplex(z,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_double(double a, ring_elem& result) const
+  {
+    bool ret = numerR_->from_double(a,result);
+    normal_form(result);
+    return ret;
+  }
+  virtual bool from_complex_double(double re, double im, ring_elem& result) const
+  {
+    bool ret = numerR_->from_complex_double(re,im,result);
+    normal_form(result);
+    return ret;
+  }
+
+
 
   virtual ring_elem var(int v) const {
     ring_elem result = numerR_->var(v);
@@ -134,7 +160,7 @@ public:
                              bool p_one=true,
                              bool p_plus=false,
                              bool p_parens=false) const {
-    numerR_->PolyRing::elem_text_out(o,f);
+    numerR_->PolyRing::elem_text_out(o,f,p_one,p_plus,p_parens);
   }
 
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
@@ -271,10 +297,6 @@ public:
 #warning "diff for quotient rings: should do what?"
 #endif
     return numerR_->PolyRing::diff(a,b,use_coeff);
-  }
-
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const {
-    return numerR_->PolyRing::contract0(n_top_variables,a,b);
   }
 
   virtual bool in_subring(int nslots, const ring_elem a) const {
