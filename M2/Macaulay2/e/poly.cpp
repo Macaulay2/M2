@@ -2190,9 +2190,11 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
 }
 
 vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
-// find the smallest variable x which occurs in v, and also find e s.t. x^e is
+// find the smallest index variable x which occurs in v, and also find e s.t. x^e is
 // the largest power of x occuring in v.  Set x and e accordingly.
-// Return the coefficient of x^e,
+// Return the coefficient of x^e.
+// IF v has no variables occuring in it, then set x to be #vars, e to be 0 and return v.
+// If v is 0, then set x to -1, e to 0, and v to 0.
 {
   x = n_vars();
   e = 0;
@@ -2215,7 +2217,7 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
                 break;
               }
           }
-        if (exp[x] > e)
+        if (x < n_vars() && exp[x] > e)
           e = exp[x];
       }
 

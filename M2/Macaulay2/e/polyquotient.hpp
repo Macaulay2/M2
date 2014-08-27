@@ -326,10 +326,7 @@ public:
   }
 
   virtual vec vec_top_coefficient(const vec v, int &x, int &e) const {
-#ifdef DEVELOPMENT
-#warning "vec_top_coefficient not implemented for quotient rings"
-#endif
-    return 0;
+    return numerR_->vec_top_coefficient(v, x, e);
   }
 
 

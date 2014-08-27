@@ -932,8 +932,16 @@ Matrix *Matrix::top_coefficients(Matrix *&monoms) const
         cons_monoms.append(v);
       else
         {
-          ring_elem a = R->var(var);
-          ring_elem b = R->power(a,exp);
+          ring_elem b;
+          if (var < R->n_vars())
+            {
+              ring_elem a = R->var(var);
+              b = R->power(a,exp);
+            }
+          else
+            {
+              b = R->from_long(1);
+            }
           vec w = R->make_vec(0,b);
           cons_monoms.append(w);
         }
