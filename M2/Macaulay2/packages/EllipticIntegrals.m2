@@ -16,21 +16,21 @@ newPackage(
 *}
 
 export { 
-     symbol EllipticCurve, 
-     symbol Period, 
-     symbol Period', 
-     symbol periodCoordinates, 
-     symbol checkEquation,
-     symbol distance,
-     symbol PointClass,
-     symbol EllipticCurvePoint,
-     symbol test					    -- remove later
+     "EllipticCurve", 
+     "Period", 
+     "Period'", 
+     "periodCoordinates", 
+     "checkEquation",
+     "distance",
+     "PointClass",
+     "EllipticCurvePoint",
+     "test"					    -- remove later
      }
 
 exportMutable {
-     symbol b,
-     symbol c,
-     symbol modPeriods
+     "b",						    -- is this a good idea?
+     "c",
+     "modPeriods"
      }
 
 see := (label,x) -> (stderr << "--" << label << " = " << x << endl; x)

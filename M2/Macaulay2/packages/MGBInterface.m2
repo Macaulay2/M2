@@ -19,20 +19,20 @@ debug Core
 -- It also has the routines from there which involve writing example
 -- files for other computer algebra systems.
 
-export {write,
-     toClassic,
-     displayit,
-     toABC,
-     makeExampleFiles,
-     createExamples,
-     helpMGB,
-     mgbStr,
+export {"write",
+     "toClassic",
+     "displayit",
+     "toABC",
+     "makeExampleFiles",
+     "createExamples",
+     "helpMGB",
+     "mgbStr",
      "MGB",
      "MGBF4",
-     runMGB,
-     doMGB,
-     testRawMGB,
-     testMGB
+     "runMGB",
+     "doMGB",
+     "testRawMGB",
+     "testMGB"
      }
 
 -- NOTE: the absolute path where 'mgb' lives should be put into the .init file for MGBInterface

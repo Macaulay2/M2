@@ -18,20 +18,20 @@ newPackage(
         )
 
 export { 
-   runTests,
-   testNorm,
-   testClean,
-   hasFFPACK,
-   hasMGB,
-   fields,
-    finitefields,
-    fieldsFFPACK,
-    fieldsFLINT,
-    fieldsGivaro,
-    fieldsGF,
-    ringsPID,
-    ringsRR,
-    ringsCC
+   "runTests",
+   "testNorm",
+   "testClean",
+   "hasFFPACK",
+   "hasMGB",
+   "fields",
+   "finitefields",
+   "fieldsFFPACK",
+   "fieldsFLINT",
+   "fieldsGivaro",
+   "fieldsGF",
+   "ringsPID",
+   "ringsRR",
+   "ringsCC"
    }
 
 debug Core

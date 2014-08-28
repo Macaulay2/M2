@@ -48,58 +48,58 @@ newPackage(
    
 export {
      -- 'Official' functions
-     binomialPrimaryDecomposition,
-     binomialCellularDecomposition,
-     binomialUnmixedDecomposition,
-     binomialRadical,
-     binomialMinimalPrimes,
-     binomialAssociatedPrimes,
-     binomialSolve,
+     "binomialPrimaryDecomposition",
+     "binomialCellularDecomposition",
+     "binomialUnmixedDecomposition",
+     "binomialRadical",
+     "binomialMinimalPrimes",
+     "binomialAssociatedPrimes",
+     "binomialSolve",
      -- tests
-     binomialIsPrime,
-     binomialIsPrimary,
-     cellularBinomialIsPrimary,
-     isCellular,
-     isBinomial,
-     isUnital,
+     "binomialIsPrime",
+     "binomialIsPrimary",
+     "cellularBinomialIsPrimary",
+     "isCellular",
+     "isBinomial",
+     "isUnital",
      -- input related
-     makeBinomial,
-     latticeBasisIdeal,
+     "makeBinomial",
+     "latticeBasisIdeal",
      -- cellular stuff:
-     cellularBinomialAssociatedPrimes,
-     cellularBinomialUnmixedDecomposition,
-     -- cellularAssociatedLattices,
-     cellularBinomialPrimaryDecomposition,
-     cellularBinomialRadical,
+     "cellularBinomialAssociatedPrimes",
+     "cellularBinomialUnmixedDecomposition",
+     -- "cellularAssociatedLattices",
+     "cellularBinomialPrimaryDecomposition",
+     "cellularBinomialRadical",
      -- simple wrappers:
-     BPD,
-     BCD,
-     BUD,
+     "BPD",
+     "BCD",
+     "BUD",
      -- auxillary functions:
-     partialCharacter,
-     idealFromCharacter,  -- should be renamed to ideal once M2 supports this
-     randomBinomialIdeal,
-     removeRedundant,
+     "partialCharacter",
+     "idealFromCharacter",  -- should be renamed to ideal once M2 supports this
+     "randomBinomialIdeal",
+     "removeRedundant",
      -- Not in the interface:
---     axisSaturate,
---     cellVars,
---     cellularEmbeddedLatticeWitnesses,
---     Lsat,
---     saturatePChar,
---     satIdeals,
---     nonCellstdm,
---     maxNonCellstdm,
---     minimalPrimaryComponent,
---     binomialFrobeniusPower,
+--     "axisSaturate",
+--     "cellVars",
+--     "cellularEmbeddedLatticeWitnesses",
+--     "Lsat",
+--     "saturatePChar",
+--     "satIdeals",
+--     "nonCellstdm",
+--     "maxNonCellstdm",
+--     "minimalPrimaryComponent",
+--     "binomialFrobeniusPower",
 
      -- Options
-     CellVariables, -- for partialCharacter
-     ReturnPrimes, -- for cellularBinomialIsPrimary 
-     ReturnPChars, -- for cellularBinomialIsPrimary
-     ReturnCellVars, -- for binomialCellularDecomposition
+     "CellVariables", -- for partialCharacter
+     "ReturnPrimes", -- for cellularBinomialIsPrimary 
+     "ReturnPChars", -- for cellularBinomialIsPrimary
+     "ReturnCellVars", -- for binomialCellularDecomposition
      
      --Types
-     PartialCharacter--HashTable
+     "PartialCharacter"--HashTable
      }
 
 needsPackage "FourTiTwo";

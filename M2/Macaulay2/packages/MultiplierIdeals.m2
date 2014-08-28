@@ -82,11 +82,11 @@ newPackage(
 --------------------------------------------------------------------------------
 
 export {
-  multiplierIdeal,
-  logCanonicalThreshold,
-  jumpingNumbers,
-  Interval,
-  IntervalType
+  "multiplierIdeal",
+  "logCanonicalThreshold",
+  "jumpingNumbers",
+  "Interval",
+  "IntervalType"
 }
 
 -- exportMutable {}

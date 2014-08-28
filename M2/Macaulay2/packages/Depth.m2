@@ -19,7 +19,7 @@ newPackage(
 
 --=========================================================================--
      
-export{regularSequenceCheck,isRegularSequence,regularSequence,isCM,Sparseness,Bound,Attempts,Maximal} 
+export{"regularSequenceCheck","isRegularSequence","regularSequence","isCM","Sparseness","Bound","Attempts","Maximal"} 
         
 --=========================================================================--
 

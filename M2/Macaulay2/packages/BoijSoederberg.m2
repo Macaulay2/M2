@@ -12,30 +12,30 @@ newPackage(
     	)
 
 export {
-     mat2betti, -- documented
-     lowestDegrees, -- documented
-     highestDegrees, -- documented
-     isPure, -- documented
-     pureBetti, -- documented
-     pureBettiDiagram, -- documented
+     "mat2betti", -- documented
+     "lowestDegrees", -- documented
+     "highestDegrees", -- documented
+     "isPure", -- documented
+     "pureBetti", -- documented
+     "pureBettiDiagram", -- documented
 
-     pureCharFree,
-     pureTwoInvariant,
-     pureWeyman,
-     pureAll,
+     "pureCharFree",
+     "pureTwoInvariant",
+     "pureWeyman",
+     "pureAll",
      
-     randomSocleModule, -- documented
-     randomModule, -- documented
+     "randomSocleModule", -- documented
+     "randomModule", -- documented
      
-     pureCohomologyTable, -- documented
-     facetEquation, -- documented
-     dotProduct,
-     supportFunctional, -- not written
+     "pureCohomologyTable", -- documented
+     "facetEquation", -- documented
+     "dotProduct",
+     "supportFunctional", -- not written
      
-     bott, -- documented
+     "bott", -- documented
      
-     CohomologyTally,
-     mat2cohom
+     "CohomologyTally",
+     "mat2cohom"
      }
 -- Also defined here:
 -- pdim BettiTally

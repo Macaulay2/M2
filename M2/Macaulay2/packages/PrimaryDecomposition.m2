@@ -9,23 +9,23 @@ newPackage(
      )
 
 export {
-     primaryDecomposition,
-     irreducibleDecomposition,
-     isPrimary,
-     EisenbudHunekeVasconcelos,					    -- cryptic
-     Hybrid,
-     Increment,
-     GTZ,
-     ShimoyamaYokoyama,
---     binomialCD,
---     extract,
---     findNonMember,
---     flattener,
-     localize,
---     minSat,
-     primaryComponent
---     quotMin,
---     radicalContainment
+     "primaryDecomposition",
+     "irreducibleDecomposition",
+     "isPrimary",
+     "EisenbudHunekeVasconcelos",					    -- cryptic
+     "Hybrid",
+     "Increment",
+     "GTZ",
+     "ShimoyamaYokoyama",
+--     "binomialCD",
+--     "extract",
+--     "findNonMember",
+--     "flattener",
+     "localize",
+--     "minSat",
+     "primaryComponent"
+--     "quotMin",
+--     "radicalContainment"
      }
 
 -- private symbols used as keys:

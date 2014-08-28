@@ -11,15 +11,15 @@ newPackage(
      DebuggingMode => false
      )
 
-export(isExact)
-export(isChainComplex)
-export(isChainComplexMap)
-export(isQuism)
-export(koszulComplex)
-export(taylor)
-export(taylorResolution)
-export(chainComplexMap)
-export(InitialDegree)
+export "isExact"
+export "isChainComplex"
+export "isChainComplexMap"
+export "isQuism"
+export "koszulComplex"
+export "taylor"
+export "taylorResolution"
+export "chainComplexMap"
+export "InitialDegree"
 
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes

@@ -16,31 +16,31 @@ newPackage(
 
 export {
      -- service functions
-     generalEquations, 
+     "generalEquations", 
      -- witness set
-     WitnessSet, witnessSet, equations, slice, points, 
-     Equations, Slice, "Points", ProjectionDimension, 
-     sliceEquations, projectiveSliceEquations, IsIrreducible, 
-     ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
+     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "Equations", "Slice", "Points", "ProjectionDimension", 
+     "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
+     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
      -- numerical variety
-     NumericalVariety, numericalVariety, numericalAffineSpace,
+     "NumericalVariety", "numericalVariety", "numericalAffineSpace",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     Point, point, coordinates,
-     project,
-     isRealPoint, realPoints, residual, origin,
-     Norm, 
+     "Point", "point", "coordinates",
+     "project",
+     "isRealPoint", "realPoints", "residual", "origin",
+     "Norm", 
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     Regular, Singular, Infinity, 
-     MinStepFailure, NumericalRankFailure, RefinementFailure, 
+     "Regular", "Singular", "Infinity", 
+     "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
      -- polynomial systems
-     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, -- JacobianAndPolySystem, 
-     ContinuationParameter, SpecializationRing,
-     polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
+     "ContinuationParameter", "SpecializationRing",
+     "polySystem", "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
      "evaluate",
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"

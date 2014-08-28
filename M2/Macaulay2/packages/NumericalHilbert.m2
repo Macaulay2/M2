@@ -12,22 +12,22 @@ newPackage(
 )
 
 export {
-     truncatedDual,
-     zeroDimensionalDual,
-     gCorners,
-     sCorners,
-     localHilbertRegularity,
-     eliminatingDual,
-     innerProduct,
-     reduceSpace,
-     orthogonalInSubspace,
-     DZ,
-     BM,
-     ProduceSB,
-     numericalKernel,
-     numericalImage,
-     colReduce,
-     adjointMatrix
+     "truncatedDual",
+     "zeroDimensionalDual",
+     "gCorners",
+     "sCorners",
+     "localHilbertRegularity",
+     "eliminatingDual",
+     "innerProduct",
+     "reduceSpace",
+     "orthogonalInSubspace",
+     "DZ",
+     "BM",
+     "ProduceSB",
+     "numericalKernel",
+     "numericalImage",
+     "colReduce",
+     "adjointMatrix"
      }
 
 --TruncDualData private keys

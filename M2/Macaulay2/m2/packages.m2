@@ -304,25 +304,20 @@ export List := v -> (
      syms := new MutableHashTable;
      scan(v, sym -> (
 	       local nam;
+     	       if instance(sym,Symbol) then error("'export' no longer accepts symbols (such as ",toString sym,"); enclose the name in quotation marks");
 	       if instance(sym, Option) then (
 		    nam = sym#0;			    -- synonym
      	       	    if class nam =!= String then error("expected a string: ", nam);
 		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, "\n", symbolLocation pd#nam, ": it was used here");
-		    sym = sym#1;
+     	       	    if class sym#1 =!= String then error("expected a string: ", nam);
+		    sym = getGlobalSymbol(pd,sym#1);
 		    )
 	       else if instance(sym, String) then (
 		    nam = sym;
 		    sym = getGlobalSymbol(pd,nam);
 		    )
-	       else (
-		    nam = toString sym;
-		    );
-	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
-	       if not pd#?(toString sym) or pd#(toString sym) =!= sym 
-	       then (
-		    error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
-		    sym = getGlobalSymbol(pd,nam);	    -- replace sym by one in the current package's private dictionary
-		    );
+	       else error ("'export' expected a string or an option but was given ", sym, ", of class ", class sym);
+	       if not (pd#(toString sym) === sym) then stderr << "-- warning: symbol " << sym << " confused" << endl;
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       syms#sym = true;

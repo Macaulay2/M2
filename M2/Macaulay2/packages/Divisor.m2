@@ -22,89 +22,89 @@ Version => "0.1m", Date => "August 27th, 2014", Authors => {
 Headline => "A package for working with Weil divisors.", DebuggingMode => true, Reload=>true)
 export{
     --objects
-	BasicDiv,
-	WDiv,
-	QDiv,
-	RDiv,
+	"BasicDiv",
+	"WDiv",
+	"QDiv",
+	"RDiv",
     --methods for defining divisors and related options
-	divisor,
-	rationalDivisor,
-	realDivisor,
-	zeroDivisor,
+	"divisor",
+	"rationalDivisor",
+	"realDivisor",
+	"zeroDivisor",
     --accessing data
-	getPrimeList,
-	getPrimeCount,
-	getGBList,
-	getCoeffList,
-	simplifyDiv,
-	coeff,
-	getAmbientRing,
-	isDivAmbient, 
-	sameDivAmbient, 
-	getPrimeDivisors,
+	"getPrimeList",
+	"getPrimeCount",
+	"getGBList",
+	"getCoeffList",
+	"simplifyDiv",
+	"coeff",
+	"getAmbientRing",
+	"isDivAmbient", 
+	"sameDivAmbient", 
+	"getPrimeDivisors",
      --simple operations
-	floorDiv,
-	ceilingDiv,
-	divPlus,
-	divMinus,
+	"floorDiv",
+	"ceilingDiv",
+	"divPlus",
+	"divMinus",
     --conversion
-	toWDiv,
-	toQDiv,
-	toRDiv,
+	"toWDiv",
+	"toQDiv",
+	"toRDiv",
     --divisors to modules and functorial properties
-	divisorToModule,
-	divisorToIdeal,
-	idealToDivisor,
-	idealWithSectionToDivisor,
-	moduleToDivisor,
-	moduleWithSectionToDivisor,
-	divPullBack,
-	findElementOfDegree, 
-	getLinearDiophantineSolution,		--has Unsafe option
-	canonicalDivisor, --has IsGraded option
+	"divisorToModule",
+	"divisorToIdeal",
+	"idealToDivisor",
+	"idealWithSectionToDivisor",
+	"moduleToDivisor",
+	"moduleWithSectionToDivisor",
+	"divPullBack",
+	"findElementOfDegree", 
+	"getLinearDiophantineSolution",		--has Unsafe option
+	"canonicalDivisor", --has IsGraded option
     --tests and related constructions
-    	isWDiv,
-	isEffective,
-	isDivPrime,
-	isDivPrincipal, --has IsGraded option
-    	isDivReduced,
-    	isCartier, --has IsGraded option
-    	isLinearEquivalent, --has IsGraded option
-    	isQCartier, --has IsGraded option
-    	isQLinearEquivalent, --has IsGraded option
-    	isDivGraded,
-    	nonCartierLocus, --has IsGraded option
-    	isSNC, --has IsGraded option
-    	isZeroDivisor,
+    	"isWDiv",
+	"isEffective",
+	"isDivPrime",
+	"isDivPrincipal", --has IsGraded option
+    	"isDivReduced",
+    	"isCartier", --has IsGraded option
+    	"isLinearEquivalent", --has IsGraded option
+    	"isQCartier", --has IsGraded option
+    	"isQLinearEquivalent", --has IsGraded option
+    	"isDivGraded",
+    	"nonCartierLocus", --has IsGraded option
+    	"isSNC", --has IsGraded option
+    	"isZeroDivisor",
     --functions for getting maps to projective space from divisors (graded only)
-	--isVeryAmple,
-	--isAmple,
-	--isBasePointFree,
-	baseLocus,
-	mapToProjectiveSpace,  
+	--"isVeryAmple",
+	--"isAmple",
+	--"isBasePointFree",
+	"baseLocus",
+	"mapToProjectiveSpace",  
     --general useful functions not directly related to divisors
-        idealPower,
-        reflexifyIdeal,
-	reflexifyModule, 
-	reflexifyModuleWithMap,
-	isReflexive,
-	reflexivePower,
-	torsionSubmodule,
-	dualizeIdeal,
-	module2Ideal, --has IsGraded option
-	moduleWithSection2Ideal,
-	isDomain,
-	isRegular, --has IsGraded option
+        "idealPower",
+        "reflexifyIdeal",
+	"reflexifyModule", 
+	"reflexifyModuleWithMap",
+	"isReflexive",
+	"reflexivePower",
+	"torsionSubmodule",
+	"dualizeIdeal",
+	"module2Ideal", --has IsGraded option
+	"moduleWithSection2Ideal",
+	"isDomain",
+	"isRegular", --has IsGraded option
     --options
-    	Unsafe, --an option, if set true then the above commands avoid doing any checks
-	CoeffType, --an option, one can set the coefficient type
-	AmbRing, --an option, one can specify the ambient ring during divisor construction
-    	MTries, --an option, used to try to embed a module into a ring as an ideal in a random way
-	KnownNormal, --an option, used to specify that the ring is known to be normal
-	KnownCartier, --an option, used to specify that the divisor is known to be Cartier
-	IsGraded, --an option, if you specify it in several arguments it assumes we are working on a projective variety
-	Primes, --a potential value for the divPullBack Strategy option
-	Sheaves --a potential value for the divPullBack Strategy option
+    	"Unsafe", --an option, if set true then the above commands avoid doing any checks
+	"CoeffType", --an option, one can set the coefficient type
+	"AmbRing", --an option, one can specify the ambient ring during divisor construction
+    	"MTries", --an option, used to try to embed a module into a ring as an ideal in a random way
+	"KnownNormal", --an option, used to specify that the ring is known to be normal
+	"KnownCartier", --an option, used to specify that the divisor is known to be Cartier
+	"IsGraded", --an option, if you specify it in several arguments it assumes we are working on a projective variety
+	"Primes", --a potential value for the divPullBack Strategy option
+	"Sheaves" --a potential value for the divPullBack Strategy option
 }
 
 ----------------------------------------------------------------

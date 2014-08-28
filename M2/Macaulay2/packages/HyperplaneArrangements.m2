@@ -45,12 +45,12 @@ newPackage(
      DebuggingMode => false
      )
 
-export {Arrangement, arrangement, arrangementLibrary, CentralArrangement,
-     deCone, deletion, orlikSolomon, orlikTerao, HypAtInfinity,
-     NaiveAlgorithm, typeA, typeB, typeD, graphic, Flat, flat, flats,
-     circuits, tolist, closure, meet, vee, subArrangement, changeRing,
-     restriction, arrangementSum, EPY, der, HS, isDecomposable, isCentral, 
-     multIdeal, lct, randomArrangement}
+export {"Arrangement", "arrangement", "arrangementLibrary", "CentralArrangement",
+     "deCone", "deletion", "orlikSolomon", "orlikTerao", "HypAtInfinity",
+     "NaiveAlgorithm", "typeA", "typeB", "typeD", "graphic", "Flat", "flat", "flats",
+     "circuits", "tolist", "closure", "meet", "vee", "subArrangement", "changeRing",
+     "restriction", "arrangementSum", "EPY", "der", "HS", "isDecomposable", "isCentral", 
+     "multIdeal", "lct", "randomArrangement"}
 
 -- these are already defined: compress, trim, coefficients,
 -- euler, poincare, cone, rank, ring, matrix
