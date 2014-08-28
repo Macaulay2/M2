@@ -768,7 +768,7 @@ AC_SUBST(BUILTLIBS,)
 #    linbox needs fflas-ffpack and givaro
 #    fflas-ffpack needs givaro and lapack
 #    mpir is used by givaro
-#    mpir and mpfr is used by fplll
+#    mpir and mpfr are used by fplll
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
@@ -784,6 +784,12 @@ AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=" missing gtest "
+
+BUILD_mpfr=yes
+# We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
+# memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
+# specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
+# frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
 
 for i in $LIBLIST
 do eval BUILD_$i=no
