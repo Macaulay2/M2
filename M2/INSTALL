@@ -261,6 +261,11 @@ Now continue building the program this way:
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.
 
+To take advantage of parallelism when running "make", append an option of
+the form "-jN" to the command line, where "N" is replaced by the number of
+processors you wish to devote to the task.  (Our makefiles are just begining to
+take advantage of this.)
+
 To skip the running of the NTL "wizard", which conducts time consuming
 experiments to optimize the speed of its code, before compiling it, add the
 option --disable-ntl-wizard to the "configure" command line above.
