@@ -25,21 +25,21 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {SimplicialComplex,
-     simplicialComplex,
-     boundary,fVector,isPure,label,
-     faces,facets,link,
-     simplicialChainComplex,
-     buchbergerComplex,
-     lyubeznikComplex,
-     superficialComplex,
-     faceIdeal,
-     Face,
-     vertices,
-     face,
-     useFaceClass,
-     isSubface,
-     isFaceOf}
+export {"SimplicialComplex",
+     "simplicialComplex",
+     "boundary","fVector","isPure","label",
+     "faces","facets","link",
+     "simplicialChainComplex",
+     "buchbergerComplex",
+     "lyubeznikComplex",
+     "superficialComplex",
+     "faceIdeal",
+     "Face",
+     "vertices",
+     "face",
+     "useFaceClass",
+     "isSubface",
+     "isFaceOf"}
 
 complement := local complement
 complement = (m) -> (

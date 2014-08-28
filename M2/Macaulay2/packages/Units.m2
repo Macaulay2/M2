@@ -289,7 +289,7 @@ twocolon RR := x -> toString floor x | ":" | twodigits onecolon (60 * (x - floor
 twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
 twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
 
-export values Units#"private dictionary"
+export keys Units#"private dictionary"
 
 beginDocumentation()
 

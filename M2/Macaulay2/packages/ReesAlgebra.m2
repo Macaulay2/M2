@@ -35,25 +35,24 @@ newPackage(
     	)
 
 export{
-  
-  analyticSpread, 
-  associatedGradedRing, 
-  distinguished,
-  distinguishedAndMult,
-  isLinearType, 
-  minimalReduction,
-  isReduction,
-  multiplicity,
-  normalCone, 
-  reductionNumber,
-  reesIdeal,
-  reesAlgebra,
-  specialFiberIdeal,
-  specialFiber,
-  symmetricKernel, 
-  universalEmbedding,
-  whichGm,
-  Tries
+  "analyticSpread", 
+  "associatedGradedRing", 
+  "distinguished",
+  "distinguishedAndMult",
+  "isLinearType", 
+  "minimalReduction",
+  "isReduction",
+  "multiplicity",
+  "normalCone", 
+  "reductionNumber",
+  "reesIdeal",
+  "reesAlgebra",
+  "specialFiberIdeal",
+  "specialFiber",
+  "symmetricKernel", 
+  "universalEmbedding",
+  "whichGm",
+  "Tries"
   }
 
 -- Comment : The definition of Rees algebra used in this package is 

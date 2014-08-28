@@ -20,8 +20,8 @@ newPackage(
     	)
 
 export {
-     gfan, weightVector, initialIdeal, groebnerCone, groebnerFan, universalGroebnerBasis, 
-     renderStaircase, render, Symmetries
+     "gfan", "weightVector", "initialIdeal", "groebnerCone", "groebnerFan", "universalGroebnerBasis", 
+     "renderStaircase", "render", "Symmetries"
      }
 
 gfan'path = gfanInterface#Options#Configuration#"path"

@@ -293,7 +293,7 @@ newPackage(String) := opts -> (title) -> (
 
 export = method(Dispatch => Thing)
 exportFrom = method()
-exportFrom(Package,List) := (P,x) -> export \\ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
+exportFrom(Package,List) := (P,x) -> export \\ toString \ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
 export Symbol := x -> export {x}
 export String := x -> export {x}
 export List := v -> (
@@ -317,7 +317,8 @@ export List := v -> (
 		    sym = getGlobalSymbol(pd,nam);
 		    )
 	       else error ("'export' expected a string or an option but was given ", sym, ", of class ", class sym);
-	       if not (pd#(toString sym) === sym) then stderr << "-- warning: symbol " << sym << " confused" << endl;
+	       -- we use "symbolBody" here, because a few symbols are threadlocal, and a symbol is really a symbol closure, which include the frame
+	       assert(symbolBody pd#(toString sym) === symbolBody sym);
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       syms#sym = true;
@@ -390,9 +391,9 @@ endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
-     ws := set pkg#"exported mutable symbols";
+     ws := set apply(pkg#"exported mutable symbols",symbolBody);
      exportDict := pkg.Dictionary;
-     scan(sortByHash values exportDict, s -> if not ws#?s then (
+     scan(sortByHash values exportDict, s -> if not ws#?(symbolBody s) then (
 	       protect s;
 	       ---if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)
 	       ));
