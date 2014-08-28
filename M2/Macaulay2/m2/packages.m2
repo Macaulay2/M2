@@ -314,11 +314,11 @@ export List := v -> (
 		    )
 	       else if instance(sym, String) then (
 		    nam = sym;
-		    sym = getGlobalSymbol(pd,nam);
+		    sym = if pd#?nam then pd#nam else getGlobalSymbol(pd,nam);
 		    )
 	       else error ("'export' expected a string or an option but was given ", sym, ", of class ", class sym);
 	       -- we use "symbolBody" here, because a few symbols are threadlocal, and a symbol is really a symbol closure, which include the frame
-	       assert(symbolBody pd#(toString sym) === symbolBody sym);
+	       assert(pd#(toString sym) === sym);
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       syms#sym = true;
