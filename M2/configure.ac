@@ -3,9 +3,8 @@ dnl This is the only place in the code where the Macaulay2 version number
 dnl appears as a literal value.
 
 dnl Things to do when incrementing the version number:
-dnl    - make a git tag of the form Macaulay2-X-Y or Macaulay2-X-Y-Z or Macaulay2-X-Y-Z-W
+dnl    - make a git tag of the form version-X.Y.Z, if it's stable
 dnl    - add an entry to distributions/deb/changelog
-
 AC_INIT(Macaulay2, 1.6.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
