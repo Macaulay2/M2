@@ -41,13 +41,7 @@ clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
 	rm -f pre-install.sh post-install.sh normal-install.sh
-install: configured normal; $(MAKE) -C distributions $@
-normal:; $(NORMAL_INSTALL) 
-scripts: pre-install.sh post-install.sh
-MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
-pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
-post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
-normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
+install: configured; $(MAKE) -C distributions $@
 GNUmakefile: GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
