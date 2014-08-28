@@ -433,7 +433,7 @@ minimalPresentation GradedModuleMap := prune GradedModuleMap := GradedModuleMap 
       k -> minimalPresentation f_k,
       Degree => f.degree)
 
-complete GradedModule := (M) -> null
+complete GradedModule := (M) -> M
 rank GradedModule := (M) -> sum(spots M, i -> (-1)^i * rank M#i)
 
 map(GradedModule,GradedModule,Function) := GradedModuleMap => options -> (C,D,f) -> (

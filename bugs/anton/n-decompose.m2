@@ -13,7 +13,7 @@ I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
 reg = regeneration I_* 
 decompose reg#0
 
--- nonreduced (causes an error)
+-- non-reduced (one component with multiplicity)
 R = QQ[x,y,z]
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
@@ -27,5 +27,5 @@ R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
 I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
 setRandomSeed 7
-V = numericalVariety I 
+V = numericalIrreducibleDecomposition I 
 peek V

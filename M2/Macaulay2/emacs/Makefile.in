@@ -25,3 +25,4 @@ distclean::; rm -rf M2-init.el
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/emacs "
 # End:
+.NOTPARALLEL:

@@ -7,7 +7,7 @@
 #include "varpower.hpp"
 #include "hash.hpp"
 
-class Monomial : public immutable_object
+class Monomial : public EngineObject
 {
   intarray val;
 
@@ -17,7 +17,8 @@ class Monomial : public immutable_object
   Monomial(M2_arrayint a);
 
   int * ints() { return val.raw(); }
-  void set_hash_code();
+protected:
+  virtual unsigned int computeHashValue() const;
 public:
   static Monomial *make(int v, int e);
   static Monomial *make(M2_arrayint m);

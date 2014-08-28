@@ -12,8 +12,8 @@ NTL::mat_ZZ *mutableMatrix_to_NTL_mat_ZZ(const MutableMatrix *M)
   //  const SparseMutableMatrix *A = M->cast_to_SparseMutableMatrix();
   const MutableMatrix *A = M;
 
-  int ncols = A->n_rows();
-  int nrows = A->n_cols();
+  int ncols = static_cast<int>(A->n_rows());
+  int nrows = static_cast<int>(A->n_cols());
 
   NTL::mat_ZZ *X = makeNTLMatrixZZ(nrows,ncols);
   for (int i=0; i<ncols; i++)
@@ -68,8 +68,8 @@ static const int useRR = 5*16;
 
 bool ntl_LLL(MutableMatrix *M, MutableMatrix *U, long numer, long denom, int strategy)
 {
-  int nrows = M->n_rows();
-  int ncols = M->n_cols();
+  int nrows = static_cast<int>(M->n_rows());
+  int ncols = static_cast<int>(M->n_cols());
 
   NTL::ZZ d;
   // Note that the LLL routines all return the rank, but we ignore this return value.

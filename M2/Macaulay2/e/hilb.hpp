@@ -54,7 +54,7 @@ struct hilb_step : public our_new_delete
 
     @brief Computation of Hilbert functions
 */
-class hilb_comp : public mutable_object
+class hilb_comp : public MutableEngineObject
 {
   const PolynomialRing *S;              // This is the base ring of the monomial ideal
   const PolynomialRing *R;              // This is the output degree ring.
@@ -108,6 +108,9 @@ public:
   void stats() const;
 
   // static routines
+
+  // If the coefficient in degree 'deg' is < 0, then
+  // set an error, and return 0.  The caller MUST check this.
   static int coeff_of(const RingElement *h, int deg);
 
 #if 0

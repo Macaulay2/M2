@@ -6,7 +6,6 @@
 #define _points_hpp_
 
 #include "engine.h"
-#include "dmat-LU.hpp"
 class Matrix;
 class PolynomialRing;
 

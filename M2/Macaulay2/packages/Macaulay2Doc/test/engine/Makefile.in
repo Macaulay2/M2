@@ -56,3 +56,4 @@ distclean::clean; rm -f Makefile
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/engine "
 # End:
+.NOTPARALLEL:

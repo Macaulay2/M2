@@ -59,6 +59,7 @@ header "
        #include <linbox/linbox-config.h>
    #endif
    #ifdef HAVE_FLINT
+       #include <M2/gc-include.h>
        #include <flint/flint.h>
    #endif
    ";

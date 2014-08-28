@@ -9,7 +9,7 @@ PRE.cc   = $(COMPILE.cc) -E
 include @srcdir@/Makefile.files
 include Makefile.common
 CPPFLAGS := -I. -I@srcdir@ -I../e-includes $(CPPFLAGS) -I../d -I@srcdir@/../c -Wno-fatal-errors
-CXXFLAGS += -std=c++0x
+CXXFLAGS += -std=c++0x #-Wno-unused-local-typedefs
 
 # to exclude files in documentation itself from processing it is neccesary to divide the path into 2 parts.
 # M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX should be unique in the sense that the pattern *$(M2_E_DOXYGEN_OUTPUT_DIR_POSTFIX)* does not match for any of the source file directories.
@@ -33,7 +33,8 @@ tags:: @srcdir@/TAGS
 		 @srcdir@/f4/*.hpp @srcdir@/f4/*.cpp \
 		 @srcdir@/unit-tests/*.cpp \
 		 @srcdir@/../e-includes/statuscodes
-	cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
+	@ echo " ** making etags file"
+	@ cd @srcdir@ && @ETAGS@ -o TAGS $(patsubst @srcdir@/%, %, $^)
 
 # overflows
 LDLIBS = @GC_LIBS@
@@ -242,3 +243,4 @@ help:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "
 # End:
 
+.NOTPARALLEL:

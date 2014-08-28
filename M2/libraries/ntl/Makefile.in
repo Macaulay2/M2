@@ -4,7 +4,7 @@ LICENSEFILES = doc/copying.txt
 # http://www.shoup.net
 # a library for doing number theory
 VERSION = 6.1.0
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz

@@ -13,18 +13,18 @@
 // After this. s.value() returns the Matrix with these elements as columns.
     s.idealBegin(2);
       s.appendPolynomialBegin(2); // x^2 - y
-        s.appendTermBegin();
+        s.appendTermBegin(0);
           s.appendExponent(0,2);
         s.appendTermDone(1);
-        s.appendTermBegin();
+        s.appendTermBegin(0);
           s.appendExponent(1,1);
         s.appendTermDone(s.modulus() - 1);
       s.appendPolynomialDone();
       s.appendPolynomialBegin(2); // x^3-z
-        s.appendTermBegin();
+        s.appendTermBegin(0);
           s.appendExponent(0,3);
         s.appendTermDone(1);
-        s.appendTermBegin();
+        s.appendTermBegin(0);
           s.appendExponent(2,1);
         s.appendTermDone(s.modulus() - 1);
       s.appendPolynomialDone();
@@ -33,7 +33,7 @@
 
 class MatrixStream {
 public:
-  MatrixStream(const PolyRing* R);
+  MatrixStream(const FreeModule* F);
   ~MatrixStream();
 
   const PolyRing& ring() const { return *mPolyRing; }
@@ -41,15 +41,18 @@ public:
 
   // Fields required for the general stream interface (see mathicgb::mathicgb.h)
   typedef int Coefficient;
+  //typedef long Coefficient;
   typedef size_t VarIndex;
   typedef int Exponent;
-  
-  Coefficient modulus() const { return mPolyRing->charac(); }
+  typedef unsigned int Component;
+
+  Coefficient modulus() const { return static_cast<int>(mPolyRing->characteristic()); }
   VarIndex varCount() const { return mPolyRing->n_vars(); }
+  Component comCount() const { return mFreeModule->rank(); }
   
   void idealBegin(size_t polyCount);
   void appendPolynomialBegin(size_t termCount);
-  void appendTermBegin();
+  void appendTermBegin(Component com);
   
   void appendExponent(VarIndex index, Exponent exponent);
   void appendTermDone(Coefficient coefficient);
@@ -58,12 +61,15 @@ public:
   
 private:
   const PolyRing* mPolyRing;
+  const FreeModule* mFreeModule;
+
   MatrixConstructor mMatrixConstructor;
   const Matrix* mValue;
-  Nterm* mCurrentPoly;
-  Nterm* mLastTerm;
-  Exponent* const mCurrentExponents;
+  Exponent* mCurrentExponents;
+  Component mCurrentComponent;
 
+  Nterm** mCurrentColumn; // array 0..numcomps-1
+  Nterm** mLastTerms;
 };
 
 template<typename T>
@@ -74,34 +80,46 @@ void matrixToStream(const Matrix* M, T& stream)
   M2_ASSERT(P != 0);
   const Ring *KK = P->getCoefficientRing();
   size_t nvars = P->n_vars();
-  size_t npolys = M->n_cols();
-  size_t charac = P->charac();
+  size_t ncols = M->n_cols();
+  int charac = static_cast<int>(P->characteristic());
   M2_ASSERT(charac > 0);
   exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(nvars)); // allocated on stack
-  stream.idealBegin(npolys);
-  for (size_t i=0; i<npolys; i++)
+  stream.idealBegin(ncols);
+  Matrix::iterator i(M);
+  for (int c=0; c<ncols; c++)
     {
-      Nterm *t = M->elem(0,i);
-
+      i.set(c);
+      // We need the length of this column, in number of monomials
       size_t nterms = 0;
-      for (Nterm *s = t; s != 0; s=s->next) nterms++;
+      for ( ; i.valid(); i.next())
+        {
+          Nterm* t = i.entry();
+          for (Nterm *s = t; s != 0; s=s->next) nterms++;
+        }
       stream.appendPolynomialBegin(nterms);
 
-      for (Nterm *s = t; s != 0; s=s->next)
+      i.set(c);
+      // Now we process each column, sending it to the stream
+      for ( ; i.valid(); i.next())
         {
-          P->getMonoid()->to_expvector(s->monom, exp);
-          stream.appendTermBegin();
-          for (size_t i=0; i<nvars; i++)
-            if (exp[i] != 0)
-              stream.appendExponent(i,exp[i]);
-          int c = KK->coerce_to_int(s->coeff);
-          if (c < 0) c += charac;
-          stream.appendTermDone(c);
+          Nterm* t = i.entry();
+          for (Nterm *s = t; s != 0; s=s->next)
+            {
+              P->getMonoid()->to_expvector(s->monom, exp);
+              stream.appendTermBegin(i.row());
+              for (size_t j=0; j<nvars; j++)
+                if (exp[j] != 0)
+                  stream.appendExponent(j,exp[j]);
+              std::pair<bool,long> b = KK->coerceToLongInteger(s->coeff);
+              M2_ASSERT(b.first);
+              int a = static_cast<int>(b.second); // This will fit, as the charac fits into an int
+              if (a < 0) a += charac;
+              stream.appendTermDone(a);
+            }
         }
       stream.appendPolynomialDone();
     }
   stream.idealDone();
-  return;
 }
 
 #endif

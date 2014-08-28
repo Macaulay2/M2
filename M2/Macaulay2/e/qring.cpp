@@ -5,9 +5,9 @@
 #include "montable.hpp"
 #include "montableZZ.hpp"
 #include "gbring.hpp"
-#include "QQ.hpp"
 #include "poly.hpp"
 
+#include "aring-glue.hpp"  // for globalQQ??
 void QRingInfo::appendQuotientElement(Nterm *f, gbvector *g)
 {
   quotient_ideal.push_back(f);

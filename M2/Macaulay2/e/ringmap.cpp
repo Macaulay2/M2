@@ -7,7 +7,7 @@
 #include "relem.hpp"
 
 RingMap::RingMap(const Matrix *m)
-: immutable_object(0), R(m->get_ring())
+  : R(m->get_ring())
 {
   M = 0;
   P = R->cast_to_PolynomialRing();
@@ -22,7 +22,7 @@ RingMap::RingMap(const Matrix *m)
   nvars = m->n_cols();
   is_monomial = true;
 
-  ring_elem one = K->from_int(1);
+  ring_elem one = K->from_long(1);
 
   // Allocate space for the ring map elements
   _elem = new var[nvars];
@@ -96,6 +96,15 @@ RingMap::~RingMap()
   M = NULL;
 }
 
+unsigned int RingMap::computeHashValue() const
+{
+  unsigned int hashval = 4565 * get_ring()->hash();
+  for (int i=0; i<nvars; i++)
+    {
+      hashval = 46343 * hashval + get_ring()->computeHashValue(_elem[i].bigelem);
+    }
+  return hashval;
+}
 bool RingMap::is_equal(const RingMap *phi) const
 {
   // Two ringmap's are identical if their 'bigelem's are the same
@@ -112,7 +121,6 @@ bool RingMap::is_equal(const RingMap *phi) const
 const RingMap *RingMap::make(const Matrix *m)
 {
   RingMap *result = new RingMap(m);
-  // MES: set hash value
   return result;
 }
 
@@ -137,7 +145,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
     {
       int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
-        return R->from_int(0);  // The result is zero.
+        return R->from_long(0);  // The result is zero.
     }
 
   // If K is a coeff ring of R, AND map is an identity on K,
@@ -148,7 +156,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,
 
   int *result_monom = NULL;
   int *temp_monom = NULL;
-  ring_elem result_coeff = K->from_int(1);
+  ring_elem result_coeff = K->from_long(1);
 
   if (P != 0)
     {

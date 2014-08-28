@@ -107,7 +107,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static libtool
+      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static libtool rpm-sign
     Some debugging aids:
        sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
 
@@ -260,6 +260,11 @@ Now continue building the program this way:
 
 Remember to add any options specified above, in the section for your particular
 operating system, to the "configure" command line.
+
+To take advantage of parallelism when running "make", append an option of
+the form "-jN" to the command line, where "N" is replaced by the number of
+processors you wish to devote to the task.  (Our makefiles are just begining to
+take advantage of this.)
 
 To skip the running of the NTL "wizard", which conducts time consuming
 experiments to optimize the speed of its code, before compiling it, add the
@@ -438,3 +443,17 @@ we briefly summarize them and the software they depend on:
     ConvexInterface also needs the maple package "convex" installed.  See the 
     package documentation for hints about installing it.
     	    http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m
+
+----------------------
+Warning messages
+----------------------
+
+	-  warning: -jN forced in submake: disabling jobserver mode
+
+	   This message can be ignored, if the previous recursive make command
+	   had -j1 as an option, as -j1 implies the use of just one processor,
+	   anyway.  (We use -j1 as an option when compiling third party libraries
+	   whose makefiles are not known to support parallelism.)
+
+
+

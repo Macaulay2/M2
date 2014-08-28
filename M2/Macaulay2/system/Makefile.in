@@ -43,3 +43,4 @@ distclean::; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/system "
 # End:
+.NOTPARALLEL:

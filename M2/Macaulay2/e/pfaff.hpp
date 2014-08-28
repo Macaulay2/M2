@@ -43,13 +43,6 @@ public:
   Matrix *pfaffians() { return pfaffs.to_matrix(); }
 
   const Ring * get_ring () const { return R; }
-
-#if 0
-private:
-  int mSize; // size of pfaffians to be computed
-  bool mIsDone; // is the computation completed?
-  MatrixConstructor mPfaffians; // the result 1xN matrix of all mSize x mSize pfaffians
-#endif
 };
 
 #endif

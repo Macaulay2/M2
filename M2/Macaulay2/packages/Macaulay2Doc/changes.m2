@@ -62,7 +62,7 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
-
+ 
 document {
      Key => "changes, 1.7",
      UL {
@@ -95,10 +95,20 @@ document {
 		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." }
 	  	    }
 	       },
-	  -- LI { "improved packages:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "improved packages:",
+	        UL {
+		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
+                	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
+                	 that requires you to use the old version, please email Mike Stillman."
+			 },
+		    LI { "The packages ", TO "Polyhedra::Polyhedra", " and ", TO "ToricVectorBundles::ToricVectorBundles", " now implement a canonical
+			 ordering for the rays in a fan.  Formerly the rays came out in an unpredictable (but deterministic) order.  Various tests in the
+			 latter package have been updated to take into account the new ordering.  Users may find that their code will have to 
+			 be modified slightly, by permuting lists of parameters (such as weights) corresponding to the rays."
+			 }
+	            }
+	       },
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
@@ -134,7 +144,34 @@ document {
                 	 the anti-isomorphism between left and right modules in skew commuting poly rings.  
                 	 It is used when transposing a matrix over a ring with skew commuting variables, basically,
                 	 so that the transpose of a complex of matrices will still be a complex of matrices."
-			 }
+			 },
+     	       	    LI {
+			 "Hash codes of matrices have been improved - they are now computed using the first two nonzero entries
+			 in each column, whereas before the entries were not examined, and thus they do a better job of distinguishing matrices
+			 that are different.  A side effect is that hash tables whose keys involve matrices will
+			 be stored, printed, and converted to lists in a different order, which may affect some code."
+			 },
+		    LI {"The default arithmetic for computing in finite fields ZZ/p nows uses the FLINT library (see ...).
+			The modulus p can now be p <= 9223372036854775783, i.e. the largest prime less than 2^63.
+			HOWEVER: factorization of polynomials over such rings can only be done for primes p < 2^31. TODO: CHECK THIS VALUE"},
+		    LI {"Incorporated fast linear algebra for dense (mutable) matrices over finite prime fields, using ffpack and flint"},
+		    LI {"Linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
+			Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
+			Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
+		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
+			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
+		    LI {"Extensive changes to numerical algebraic geometry code in the engine"},
+		    -- LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
+		    -- 	it can be used, but is not done so automatically."},
+		    LI {"The {\tt Macaulay2/e} engine directory now compiles cleanly, with a few warning messages left."},
+		    LI {"The overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
+			that because of the high use of templates, compile times have generally increased."},
+		    LI {"Random number generation for finite fields has changed, so programs expecting a specific
+			set of random numbers will change."},
+		    LI {"If ", TT "kk", " is a finite field, e.g., ", TT "ZZ/5[c]/(c^2+c+1)", " it was possible
+			(and still is) to write ", TT "map(ZZ[a], kk)", ".  It was never clear what this
+			should return, as it is not a well-defined ring map.  However, it now has different, 
+			still undefined, behavior."}
 	  	    }
 	       },
 	  LI { "functionality changed:",

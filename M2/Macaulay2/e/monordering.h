@@ -28,7 +28,7 @@ typedef struct mon_part_rec_
 } *mon_part;
 
 struct MonomialOrdering {
-  unsigned long _hash;
+  unsigned int _hash;
   unsigned int len;
   mon_part array[1];
 };

@@ -122,3 +122,4 @@ Macaulay2.README: Macaulay2.README.in; cd ../..; ./config.status distributions/c
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/cygwin TIDY=no "
 # End:
+.NOTPARALLEL:

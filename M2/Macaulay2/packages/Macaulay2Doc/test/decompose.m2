@@ -2,6 +2,7 @@ R = ZZ/101[a..d]
 I = ideal 0_R
 assert ( minimalPrimes I == {I} )
 assert ( minimalPrimes ideal 1_R == {} )
+
 S = R / ((a+b)*(a^2+b))
 I = ideal 0_S
 assert (
@@ -9,6 +10,7 @@ assert (
      or
      minimalPrimes I == {ideal(a+b), ideal(a^2+b)} 
      )
+assert( minimalPrimes ideal 1_S == {})
 
 A = ZZ/101[a,b,c]
 I = ideal (b^2 - 4*a*c)

@@ -25,6 +25,11 @@ engine_RawMonomialIdealOrNull IM2_MonomialIdeal_make(const Matrix *m, int n)
      }
 }
 
+unsigned int rawMonomialIdealHash(const MonomialIdeal *F)
+{
+  return F->hash();
+}
+
 const Matrix /* or null */ *IM2_MonomialIdeal_to_matrix(const MonomialIdeal *I)
 {
      try {

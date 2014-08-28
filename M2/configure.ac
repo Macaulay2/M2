@@ -3,10 +3,9 @@ dnl This is the only place in the code where the Macaulay2 version number
 dnl appears as a literal value.
 
 dnl Things to do when incrementing the version number:
-dnl    - make a git tag of the form Macaulay2-X-Y or Macaulay2-X-Y-Z or Macaulay2-X-Y-Z-W
+dnl    - make a git tag of the form version-X.Y.Z, if it's stable
 dnl    - add an entry to distributions/deb/changelog
-
-AC_INIT(Macaulay2, 1.6.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.6.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -769,7 +768,7 @@ AC_SUBST(BUILTLIBS,)
 #    linbox needs fflas-ffpack and givaro
 #    fflas-ffpack needs givaro and lapack
 #    mpir is used by givaro
-#    mpir and mpfr is used by fplll
+#    mpir and mpfr are used by fplll
 #    fflas-ffpack is provided as an option for experimentation
 #	 warning: it is licensed only under GPL 2
 #        it needs lapack
@@ -785,6 +784,12 @@ AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=" missing gtest "
+
+BUILD_mpfr=yes
+# We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
+# memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
+# specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
+# frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
 
 for i in $LIBLIST
 do eval BUILD_$i=no

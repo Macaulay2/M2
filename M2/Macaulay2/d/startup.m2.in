@@ -306,8 +306,8 @@ initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
      currentLayout = (
-	  if issuffix(Layout#2#"bin",bindir) then Layout#2 else
-	  if issuffix(Layout#1#"bin",bindir) then Layout#1
+	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
+	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
 	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;

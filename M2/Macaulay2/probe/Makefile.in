@@ -49,3 +49,4 @@ clean::; rm -f addresses probe probe.o probe.out
 distclean: clean ; rm -f Makefile
 check:
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/probe/Makefile
+.NOTPARALLEL:

@@ -1,0 +1,67 @@
+diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathicgb/tmp/mathicgb-20140613-0d994fb0fa/src/test/gtestInclude.cpp mathicgb-20140613-0d994fb0fa/src/test/gtestInclude.cpp
+--- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathicgb/tmp/mathicgb-20140613-0d994fb0fa/src/test/gtestInclude.cpp	2014-03-16 18:39:57.000000000 -0500
++++ mathicgb-20140613-0d994fb0fa/src/test/gtestInclude.cpp	2014-06-14 17:30:50.000000000 -0500
+@@ -12,6 +12,4 @@
+ namespace mgb {}
+ using namespace mgb;
+ 
+-// the .. goes back from the include/ directory of gtest so we can
+-// enter the src directory.
+-#include <../src/gtest-all.cc>
++#include "src/gtest-all.cc"
+diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathicgb/tmp/mathicgb-20140613-0d994fb0fa/configure.ac mathicgb-20140613-0d994fb0fa/configure.ac
+--- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathicgb/tmp/mathicgb-20140613-0d994fb0fa/configure.ac	2014-03-16 18:39:57.000000000 -0500
++++ mathicgb-20140613-0d994fb0fa/configure.ac	2014-06-14 18:01:03.000000000 -0500
+@@ -12,13 +12,13 @@
+ # Require C++11 support
+ AX_CXX_COMPILE_STDCXX_11(, [mandatory])
+ 
++AM_PROG_AR
+ 
+ dnl ----- The gtest dependency
+ 
+ AC_ARG_WITH([gtest], AS_HELP_STRING(
+     [--with-gtest], [use gtest, which is required for running the unit tests
+-      with make check. The value download, which is the default, downloads
+-      gtest if a gtest source directory cannot be found. Per the recommendation
++      with make check. Per the recommendation
+       of the gtest documentation, gtest is compiled with the tests, so an
+       installed gtest is not usable - you need the gtest source. GTEST_PATH
+       indicates where to look for gtest and it is also where gtest
+@@ -33,7 +33,8 @@
+ AS_IF([test "x$with_gtest" == "x"], [with_gtest="download"])
+ 
+ AS_IF([test "x$with_gtest" == "xdownload"],
+-  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
++  [with_gtest="yes"; AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
++    echo "downloading of gtest disabled" >&2; exit 1
+     mkdir -p "$GTEST_PATH";
+     (
+       cd $GTEST_PATH;
+@@ -44,7 +45,7 @@
+       rm -rf gtest/
+       mv gtest-$GTEST_VERSION/ gtest/
+     );
+-    if test ! -e "$GTEST_PATH/gtest/src/gtest-all.cc"; then
++    if test ! -e "$GTEST_PATH/src/gtest-all.cc"; then
+       AC_MSG_WARN([Failed to download or extract gtest.]);
+       with_gtest="no";
+     else
+@@ -52,7 +53,7 @@
+     fi
+   ])],
+   [test "x$with_gtest" == "xyes"], [
+-    AC_CHECK_FILE([$GTEST_PATH/gtest/src/gtest-all.cc], [], [
++    AC_CHECK_FILE([$GTEST_PATH/src/gtest-all.cc], [], [
+       AC_MSG_ERROR([could not find gtest source at path $GTEST_PATH.])
+     ])
+   ],
+@@ -60,7 +61,7 @@
+   [AC_MSG_ERROR([invalid value $with_gtest for with_gtest.])]
+ )
+ AS_IF([test "x$with_gtest" == "xyes"],
+-  [GTEST_CFLAGS="-I`cd $GTEST_PATH/gtest/include; echo $PWD` -I`cd $GTEST_PATH/gtest/; echo $PWD`"]);
++  [GTEST_CFLAGS="-I$GTEST_PATH/include -I$GTEST_PATH"]);
+ AM_CONDITIONAL(with_gtest, test "x$with_gtest" == "xyes")
+ 
+ dnl ----- The TBB dependency

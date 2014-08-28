@@ -1,4 +1,5 @@
 # @configure_input@
+.NOTPARALLEL:
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
@@ -41,18 +42,12 @@ clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_*
 	rm -f pre-install.sh post-install.sh normal-install.sh
-install: configured normal; $(MAKE) -C distributions $@
-normal:; $(NORMAL_INSTALL) 
-scripts: pre-install.sh post-install.sh
-MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
-pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
-post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
-normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
+install: configured; $(MAKE) -C distributions $@
 GNUmakefile: GNUmakefile.in; ./config.status GNUmakefile
 include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
 include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
-recheck config.status: @srcdir@/configure
+recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
 	./config.status --recheck
 	./config.status
 status: @srcdir@/configure
@@ -90,7 +85,8 @@ show: config.status
 	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
-protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
+protect-configs:
+	 @ chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
 	: "checking for strings that look like undefined configure variables in all *.in files..."
 	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]

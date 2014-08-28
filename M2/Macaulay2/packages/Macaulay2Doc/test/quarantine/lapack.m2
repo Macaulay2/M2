@@ -1,4 +1,4 @@
-printingAccuracy=1
+printingAccuracy=6
 diag = method()
 diag(ZZ,ZZ,List) := (a,b,L) -> (
      R := ring L#0;
@@ -21,6 +21,11 @@ checkLU(List,Matrix,Matrix) := (P,L,U) -> (
      Q*L*U)
 checkLU Matrix := (M) -> norm (checkLU time LUdecomposition M - M)
 
+conjugate Matrix := (M) -> (
+    L := entries M;
+    map(target M, source M, L/(L1 -> L1/conjugate))
+    )
+
 checkSVD = method()
 checkSVD(Matrix) := (M) -> (
      -- Compute the SVD, check assertions
@@ -28,11 +33,11 @@ checkSVD(Matrix) := (M) -> (
      (S,U,Vt) = SVD M;
      (S1,U1,Vt1) = SVD(M, DivideConquer=>true);
      nm1 := norm(M - U * diag(numgens target M, numgens source M, S) * Vt);
-     nm2 := norm(M - U1 * diag(numgens target M, numgens source M, S1) * Vt1);     
-     nm3 := norm(transpose U - U^-1);
-     nm4 := norm(transpose Vt - Vt^-1);
-     nm5 := norm(transpose U1 - U1^-1);
-     nm6 := norm(transpose Vt1 - Vt1^-1);
+     nm2 := norm(M - U1 * diag(numgens target M, numgens source M, S1) * Vt1);
+     nm3 := norm((conjugate transpose U) * U - 1);
+     nm4 := norm((conjugate transpose Vt) * Vt - 1);
+     nm5 := norm((conjugate transpose U1) * U1 - 1);
+     nm6 := norm((conjugate transpose Vt1) * Vt1 - 1);
      nm0 := norm(S-S1);
      (nm0,nm1,nm2,max(nm3,nm4,nm5,nm6))
      )
@@ -45,10 +50,28 @@ checkSolve(Matrix,Matrix) := (M,b) -> (
 checkClosestFit = method()
 checkClosestFit(Matrix,Matrix) := (M,b) -> (
      x := solve(M,b,ClosestFit=>true,MaximalRank=>true);
-     norm (M*x-b))
+     if numRows M >= numColumns M then (
+         MtM := (conjugate transpose M) * M;
+         Mtb := (conjugate transpose M) * b;
+         y := solve(MtM, Mtb);
+         norm(x-y)
+         )
+     else (
+         norm(M*x-b)
+         )
+     )
 checkClosestFit(Matrix,Matrix,Symbol) := (M,b,deficient) -> (
      x := solve(M,b,ClosestFit=>true);
-     norm (M*x-b))
+     if numRows M >= numColumns M then (
+         MtM := (conjugate transpose M) * M;
+         Mtb := (conjugate transpose M) * b;
+         y := solve(MtM, Mtb);
+         norm(x-y)
+         )
+     else (
+         norm(M*x-b)
+         )
+     )
 
 checkEigenvectors = method()
 checkEigenvectors Matrix := (M) -> (
@@ -70,18 +93,27 @@ checkEigenvectors(Matrix,Symbol) := (M,Hermit) -> (
      norm(M*V - V * diagonalMatrix E)
      )
 
+setRandomSeed 0
 ----------------
 -- Test LUdecomposition -----
 ----------------
-A = RR
-M = mutableMatrix random(A^4,A^2)
+R = RR_100
+M = matrix mutableMatrix random(R^4,R^2)
 
-M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
-assert(checkLU M == 0)
+--M = matrix{{1.5,2.0},{1.3,1.7},{1.6,.5}}
+assert(checkLU M < 1e-15)
 M = transpose M
-assert(checkLU M == 0)
+assert(checkLU M < 1e-15)
 M = matrix{{1.5,2.0},{1.3,1.7}}
-assert(checkLU M == 0)
+assert(
+    checkLU M 
+    < 1e-15)
+
+A = mutableMatrix(RR,5,4, Dense=>true)
+fillMatrix (A,15);
+assert(
+    checkLU matrix A 
+    < 1e-15)
 
 A = mutableMatrix(CC,5,4, Dense=>true)
 fillMatrix(A,8);
@@ -93,19 +125,19 @@ assert(time checkLU matrix A < 1e-15)
 
 A = mutableMatrix(CC,100,40, Dense=>true)
 fillMatrix(A,300);
-assert(time checkLU matrix A < 1e-15)
+assert(time checkLU matrix A < 1e-14)
 
 A = mutableMatrix(CC,40,100, Dense=>true)
 fillMatrix(A,300);
-assert(time checkLU matrix A < 1e-15)
+assert(time checkLU matrix A < 1e-14)
 
 kk = RR
 A = random(kk^100,kk^100);
-norm(A*A^-1-id_(kk^100))
+----norm(A*A^-1-id_(kk^100))
 
 kk = CC
 A = random(kk^100,kk^100);
-time A^-1;
+----time A^-1;
 
 ----------------
 -- Test solve --
@@ -117,7 +149,7 @@ checkSolve(matrix{{3.4}},matrix{{1.2, 71.457348957438573}})
 M1 = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.}}
 b1 = transpose matrix{{1.,2.,3.}}
 
-assert (checkSolve(M1,b1) < 1e-15)
+assert (checkSolve(M1,b1) < 1e-14)
 assert (checkSolve(M1^4,b1) < 1e-10)
 assert (checkSolve(M1^3,b1) < 1e-10)
 
@@ -126,26 +158,35 @@ M = random(A^4,A^4,Density=>.8)
 b = random(A^4,A^3)
 assert(checkSolve(M,b) < 1e-14)
 
+A = RR_53
+time M = random(A^100,A^100,Density=>.2);
+b = random(A^100,A^3);
+assert(checkSolve(M,b) < 1e-10)
+
+
 A = CC_53
-time M = random(A^100,A^100,Density=>.1);
+time M = random(A^100,A^100,Density=>.2);
 b = random(A^100,A^3);
 assert(checkSolve(M,b) < 1e-10)
 
 ---------------------------------------
 -- Test eigenvalues and eigenvectors --
 ---------------------------------------
-M = random(RR^3,RR^3)
-assert(checkEigenvectors M < 1e-15)
+for i from 1 to 100 do (
+    M = random(RR^3,RR^3);
+    assert(checkEigenvectors M < 1e-13);
+    )
 
-M = random(RR^20,RR^20)
-assert(checkEigenvectors M < 1e-14)
+for i from 1 to 100 do (
+    M = random(RR^20,RR^20);
+    time assert(checkEigenvectors M < 1e-13);
+    )
 
 M = random(CC^20,CC^20)
-assert(checkEigenvectors M < 1e-14)
+assert(checkEigenvectors M < 1e-13)
 
 M = random(CC^100,CC^100);
-eigenvalues M
-
+assert(checkEigenvectors M < 1e-13)
 --------------------------------------
 -- Eigenvalues and eigenvectrs of   --
 -- Symmetric and Hermitian matrices --
@@ -166,23 +207,23 @@ checkEigenvectors(M, Her)
 -- Test SVD --
 --------------
 M = matrix{{1.,2.,3.4},{.5,9.87,3.},{-3.,-5.5,-7.},{.00000001,1e13,1e-13}}
-checkSVD(M)
+assert(max checkSVD(M) < .01) -- error is much higher
 
-checkSVD random(RR^4,RR^8)
-checkSVD random(RR^8,RR^4)
-checkSVD random(RR^8,RR^8)
+assert(max checkSVD random(RR^4,RR^8) < 1e-13)
+assert(max checkSVD random(RR^8,RR^4) < 1e-13)
+assert(max checkSVD random(RR^8,RR^8) < 1e-13)
 
-checkSVD random(CC^4,CC^8)
-checkSVD random(CC^8,CC^4)
-checkSVD random(CC^8,CC^8)
+assert(max checkSVD random(CC^4,CC^8) < 1e-13)
+assert(max checkSVD random(CC^8,CC^4) < 1e-13)
+assert(max checkSVD random(CC^8,CC^8) < 1e-13)
 
 M = map(RR_53^10, RR_53^10, (i,j) -> 1.0/(i+j+1))
-checkSVD M
+assert(max checkSVD M < 1e-13)
 M = map(RR_200^10, RR_200^10, (i,j) -> 1.0p200/(i+j+1))
-checkSVD M
+assert(max checkSVD M < 1e-13)
 
 M = matrix{{1+ii,2},{1,3}}
-checkSVD M
+assert(max checkSVD M < 1e-13)
 
 --------------------------
 -- check least squares ---
@@ -190,57 +231,78 @@ checkSVD M
 A = matrix{{1,2},{1,5}} ** RR
 b = transpose matrix{{1,1}} ** RR
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
-checkClosestFit(A,b)
+assert(checkClosestFit(A,b) < 1e-12)
 
 A = matrix"1,2,3,4,5;1,4,8,10,13" ** RR
 b = matrix"-1;3" ** RR
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
-checkClosestFit(A,b)
+assert(checkClosestFit(A,b) < 1e-12)
 
 A = transpose matrix"1,2,3,4,5;1,4,8,10,13" ** RR
 b = matrix"-1;3;1;2;6" ** RR
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
-checkClosestFit(A,b)
+assert(checkClosestFit(A,b) < 1e-12)
 
 A = matrix{{1,2},{1,5},{1,7}} ** RR
 b = .3*A_{0}+.5*A_{1}+.1*matrix{{.1},{.2},{.1}}
 x0 = matrix{{.3},{.5}}
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
-norm(A*x-b)
-norm(A*x0-b)
-checkClosestFit(A,b)
+x = solve(A,b,ClosestFit=>true,MaximalRank=>false)
+assert(checkClosestFit(A,b) < 1e-12)
+assert(checkClosestFit(A,b,Ker) < 1e-12)
 
 M = random(RR^4,RR^2)
 b = random(RR^4,RR^10)
-checkClosestFit(M,b)
+assert(checkClosestFit(M,b) < 1e-12)
 
 A = CC_53
 M = random(A^4,A^2)
 b = random(A^4,A^10)
-checkClosestFit(M,b)
+assert(checkClosestFit(M,b) < 1e-12)
+assert(checkClosestFit(M,b, Ker) < 1e-12)
 
 A = RR_53
 M = random(A^4,A^5)
 b = random(A^4,A^1)
-checkClosestFit(M,b)
+assert(checkClosestFit(M,b) < 1e-12)
+assert(checkClosestFit(M,b,Ker) < 1e-12)
+
+-- underdetermined
+A = RR_53
+M = matrix{{1,1,1.0},{2,2,3}}
+b = random(A^2,A^1)
+assert(checkClosestFit(M,b) < 1e-12)
+assert(checkClosestFit(M,b,Ker) < 1e-12)
+
+-- underdetermined and inconsistent
+A = RR_53
+M = matrix{{1,1,1.0},{2,2,2}}
+b = random(A^2,A^1)
+checkClosestFit(M,b) < 1e-12 -- FAILS: M is not full rank
+checkClosestFit(M,b,Ker) < 1e-12
 
 A = matrix{{1,2},{1,5},{+ii,2}}
 b = transpose matrix{{1+ii,1-2*ii,1}}
 x1 = solve(A,b,ClosestFit=>true, MaximalRank=>true)
-checkClosestFit(A,b)
+assert(checkClosestFit(A,b) < 1e-12)
 
+///--------------------------------------------
+-- checkClosestFit doesn't work if the matrix doesn't have full rank
+-- should we make it work?
 A2 = matrix{{1,2},{1,5},{+ii,2}} | matrix {{.5}, {1.1}, {.4+.1*ii}}
 b = transpose matrix{{1+ii,1-2*ii,1}}
 x2 = solve(A2,b,ClosestFit=>true)
-checkClosestFit(A2,b,Def)
+A2*x2-b
+--checkClosestFit(A2,b,Def)
 
 apply(flatten entries (A*x1-b), abs)
 apply(flatten entries (A2*x2-b), abs)
+///-----------------------------------------------
 
 A = matrix"1,2,3,4,5;1,4,8,10,13" ** CC
 b = matrix{{-ii},{1+ii}}
 x = solve(A,b,ClosestFit=>true,MaximalRank=>true)
-checkClosestFit(A,b)
+assert(checkClosestFit(A,b) < 1e-14)
 
 v = solve(matrix {{1.0, 2.01}, {3., 4.}, {5., 8.}},
      matrix {{13.01}, {29.01}, {55.01}},
@@ -286,7 +348,7 @@ a2 = map(kk^5,kk^0,0)
 a0 = map(kk^0,kk^0,0)
 (P,L,U) = LUdecomposition a1
 assert(#P == 0 and numrows L == 0 and numcols L == 0 and numrows U == 0 and numcols U == 5)
-(P,L,U) = LUdecomposition a2
+(P,L,U) = LUdecomposition  a2
 --status: Mike said he will fix this in the engine
 --status: it's the extreme case where LUdecomposition gets an empty matrix
 assert(#P == 5 and numrows L == 5 and numcols L == 0 and numrows U == 0 and numcols U == 0) -- failed
@@ -375,5 +437,6 @@ A = map(kk^0,kk^0,0)
 B = map(kk^0,kk^0,0)
 M = solve(A,B)
 assert(numrows M == numcols A and numcols M == numcols B)
+
 
 
