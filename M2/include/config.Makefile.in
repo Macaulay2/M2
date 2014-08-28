@@ -8,6 +8,18 @@ all:
 
 SHELL = /bin/sh
 
+NPROCS:=1
+OS:=$(shell uname -s)
+
+ifeq ($(OS),Linux)
+  NPROCS:=$(shell grep -c ^processor /proc/cpuinfo)
+endif
+ifeq ($(OS),Darwin) # Assume Mac Os X
+  NPROCS:=$(shell system_profiler | awk '/Number Of CPUs/{print $4}{next;}'}
+endif
+
+
+
 .DELETE_ON_ERROR:
 
 # here we set the variables that "make" uses
