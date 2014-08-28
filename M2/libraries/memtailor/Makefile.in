@@ -3,9 +3,8 @@ VERSION = 20140613-722a30ce25
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 PRECONFIGURE = autoreconf -i
-CONFIGOPTIONS = --disable-shared
+CONFIGOPTIONS = --disable-shared PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)/gtest
 include ../Makefile.library
-CONFIGENV += PKG_CONFIG_PATH=$(LIBRARIESDIR)/lib/pkgconfig GTEST_PATH=$(LIBRARIESDIR)/include/gtest-src
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/memtailor/Makefile
 # Local Variables:
 # compile-command: "make -w -C $M2BUILDDIR/libraries/memtailor "
