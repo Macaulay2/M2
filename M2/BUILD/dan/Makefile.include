@@ -2,6 +2,7 @@
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
 .PHONY : $(TARGETS)
+.NOTPARALLEL:
 $(TARGETS): banner
 banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none

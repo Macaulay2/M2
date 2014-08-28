@@ -438,3 +438,17 @@ we briefly summarize them and the software they depend on:
     ConvexInterface also needs the maple package "convex" installed.  See the 
     package documentation for hints about installing it.
     	    http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m
+
+----------------------
+Warning messages
+----------------------
+
+	-  warning: -jN forced in submake: disabling jobserver mode
+
+	   This message can be ignored, if the previous recursive make command
+	   had -j1 as an option, as -j1 implies the use of just one processor,
+	   anyway.  (We use -j1 as an option when compiling third party libraries
+	   whose makefiles are not known to support parallelism.)
+
+
+

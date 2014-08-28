@@ -223,3 +223,4 @@ LOADLIBES = -lgc
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 # End:
+.NOTPARALLEL:

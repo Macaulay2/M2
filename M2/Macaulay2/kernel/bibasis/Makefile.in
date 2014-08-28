@@ -16,3 +16,4 @@ Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/kernel/bibasis/Ma
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/kernel/bibasis "
 # End:
+.NOTPARALLEL:

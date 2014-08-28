@@ -1,4 +1,5 @@
 # @configure_input@
+.NOTPARALLEL:
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status

@@ -45,3 +45,4 @@ Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/packages/Images/Ma
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/images "
 # End:
+.NOTPARALLEL:

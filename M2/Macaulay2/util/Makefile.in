@@ -37,3 +37,4 @@ gc_tested: gc_test; ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:
+.NOTPARALLEL:

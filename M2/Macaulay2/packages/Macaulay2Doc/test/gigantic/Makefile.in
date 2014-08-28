@@ -31,3 +31,4 @@ Makefile: Makefile.in; cd $(DOTS)/..; ./config.status Macaulay2/packages/Macaula
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test/gigantic "
 # End:
 
+.NOTPARALLEL:

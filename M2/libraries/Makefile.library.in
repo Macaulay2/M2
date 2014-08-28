@@ -7,6 +7,10 @@ TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
 # between compile time and install time is to prepend a string
 PREFIX = $(BUILTLIBPATH)
+.NOTPARALLEL:
+ifneq ($(PARALLEL),yes)
+NOTPARALLEL = -j1
+endif
 LIBNAME ?= $(shell basename `pwd`)
 UNTARDIR = build
 OLDUNTARDIR = build-old
@@ -14,7 +18,7 @@ TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
 CHECKTARGET ?= check
 CHECKOPTIONS ?= 
-CHECKCMD ?= time $(MAKE) $(CHECKOPTIONS) $(CHECKTARGET)
+CHECKCMD ?= time $(MAKE) $(NOTPARALLEL) $(CHECKOPTIONS) $(CHECKTARGET)
 LIBRARIESDIR := $(PREFIX)
 BIN_DIR := $(LIBRARIESDIR)/bin
 LICENSE_DIR := $(LIBRARIESDIR)/licenses/$(LIBNAME)
@@ -69,9 +73,9 @@ CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure
 CONFIGURECMD  ?= $(PRECONFIGURE) && ./$(CONFIGURESCRIPT) --prefix=$(LIBRARIESDIR) $(ALLFLAGS) $(CONFIGOPTIONS)
 BUILDTARGET   ?= 
-BUILDCMD      ?= $(MAKE) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
+BUILDCMD      ?= $(MAKE) $(NOTPARALLEL) prefix=$(LIBRARIESDIR) $(BUILDOPTIONS) $(BUILDTARGET)
 INSTALLTARGET ?= install
-INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
+INSTALLCMD    ?= $(MAKE) $(NOTPARALLEL) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET) && rm -f $(LIBRARIESDIR)/lib/*.la
 STRIPFILES    ?= 
 ifeq ($(STRIPFILES),)
   STRIPCMD = :
@@ -104,9 +108,9 @@ always:
 diffs: .untarred2-$(VERSION) always
 	D=`pwd`; cd $(UNTARDIR) && diff -ur $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
-package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) clean ; fi
+package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
-package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
+package-distclean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) $(PACKAGE-DISTCLEAN-TARGET) ; fi
 fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
 license-dir: $(LICENSE_DIR)
@@ -123,7 +127,7 @@ INCLUDEFILES ?=
 CDBUILDDIR = set +x && cd $(BUILDDIR) && echo make: Entering directory \'`pwd`\' && set -x
 
 .installed-$(VERSION)  : .compiled-$(VERSION)
-	( $(CDBUILDDIR) && set -x ; $(INSTALLCMD)  )
+	+ ( $(CDBUILDDIR) && set -x ; $(INSTALLCMD)  )
 ifneq ($(PROGRAMS),)
 	$(MKDIR_P) $(BIN_DIR)
 #	Note: /usr/bin/install on Mac OS X is not gnu install, and doesn't know about --strip-program
@@ -147,7 +151,7 @@ endif
 	touch $@
 
 .compiled-$(VERSION)   : .configured-$(VERSION)
-	@ set -x ; ( $(CDBUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
+	@+ set -x ; ( $(CDBUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)
 	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
@@ -240,7 +244,7 @@ recheck:
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
-	set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
+	+ set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 
 ls:; ls -la . tarfiles

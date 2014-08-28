@@ -23,3 +23,4 @@ Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/check-configure -f Makefile -k check "
 # End:
+.NOTPARALLEL:

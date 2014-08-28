@@ -2,6 +2,8 @@
 
 .PHONY : all monitor check-make check-autoconf
 
+.NOTPARALLEL:
+
 VERBOSE = yes
 
 all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp

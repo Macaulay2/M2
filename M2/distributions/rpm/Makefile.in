@@ -146,3 +146,4 @@ Macaulay2-common-body.spec: Macaulay2-common-body.spec.in; cd ../..; ./config.st
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/rpm "
 # End:
+.NOTPARALLEL:

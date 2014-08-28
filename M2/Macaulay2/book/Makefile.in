@@ -57,3 +57,4 @@ clean:; rm -rf Macaulay2-*-book.*
 
 distclean: clean
 	rm -f Makefile
+.NOTPARALLEL:

@@ -243,3 +243,4 @@ help:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e DEPENDS=no initialize && make -C $M2BUILDDIR/Macaulay2/e "
 # End:
 
+.NOTPARALLEL:

@@ -95,3 +95,4 @@ distclean:clean
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:
 
+.NOTPARALLEL:
