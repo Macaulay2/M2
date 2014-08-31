@@ -32,13 +32,13 @@ ARGS := $(ARGS), $(IARGS)
 endif
 
 STOP = --stop --silent
-$(foreach i,\
-	$(sort $(PACKAGES) $(DEVEL)),\
-	$(eval check::check-$i)\
-	$(eval check-$i:; \
-		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
-		fi ))
+#$(foreach i,\
+#	$(sort $(PACKAGES) $(DEVEL)),\
+#	$(eval check::check-$i)\
+#	$(eval check-$i:; \
+#		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
+#		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
+#		fi ))
 info-dir: @pre_infodir@ @pre_infodir@/dir
 @pre_infodir@:; $(MKDIR_P) $@
 @pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
@@ -88,6 +88,11 @@ Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/packages/Makefile
 distclean:clean
 	$(MAKE) -C ComputationsBook $@
 	rm -f Makefile
+
+checkPackages:
+	echo $(PACKAGES) $(DEVEL) | xargs -n 1 | sort |xargs -I {} echo {}| parallel --verbose --gnu --halt 1  'if  grep --quiet "CacheExampleOutput => true" ../../../../Macaulay2/packages/{}.m2; then echo "cache"; else @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"{}\",LoadDocumentation=>true,DebuggingMode=>true); check({},UserMode=>false); exit 0 ";  fi '
+
+check::checkPackages
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
