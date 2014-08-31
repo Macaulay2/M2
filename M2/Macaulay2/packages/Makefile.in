@@ -45,8 +45,8 @@ info-dir: @pre_infodir@ @pre_infodir@/dir
 define bld
 all install-$1: all-$1
 install: install-$1
-clean-packages: clean-package-$1
-clean-package-$1:
+uninstall-packages: uninstall-package-$1
+uninstall-package-$1:
 	rm -rf @pre_libm2dir@/$1
 	rm -rf @pre_infodir@/$1.info @pre_infodir@/$1.info.errors
 	rm -rf @pre_packagesdir@/$1
