@@ -168,10 +168,10 @@ PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
 	touch $@
 .untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
 ifeq ($(FETCHER),)
-ifneq (@WGET@,)
+ifneq (@WGET@,false)
 FETCHER = @WGET@
 else
-ifneq (@CURL@,)
+ifneq (@CURL@,false)
 FETCHER = @CURL@
 else
 ifeq (@DOWNLOAD@,yes)
