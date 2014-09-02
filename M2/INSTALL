@@ -144,7 +144,7 @@ various modern operating systems:
     Install the programs and libraries needed for building:
 	brew tap homebrew/versions
 	brew tap homebrew/science
-	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
+	brew install wget pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
     Now remember to add 
         CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
     to the "configure" command line below in the section on compiling Macaulay2.
