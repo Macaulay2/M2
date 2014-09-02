@@ -51,10 +51,10 @@ uninstall-package-$1:
 	rm -rf @pre_infodir@/$1.info @pre_infodir@/$1.info.errors
 	rm -rf @pre_packagesdir@/$1
 	rm -rf @pre_docdir@/$1
-all-$1: info-dir @pre_libm2dir@/$1/.installed
+all-$1: @pre_libm2dir@/$1/.installed
 unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*)
+@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) info-dir
 	: installing package $1
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
