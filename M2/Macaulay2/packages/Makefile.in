@@ -39,9 +39,8 @@ $(foreach i,\
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
 		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
 		fi ))
-info-dir: @pre_infodir@ @pre_infodir@/dir
-@pre_infodir@:; $(MKDIR_P) $@
-@pre_infodir@/dir:; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+info-dir: @pre_infodir@/dir
+@pre_infodir@/dir:@pre_infodir@; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 define bld
 all install-$1: all-$1
 install: install-$1
