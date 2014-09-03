@@ -41,6 +41,7 @@ $(foreach i,\
 		fi ))
 info-dir: @pre_infodir@/dir
 @pre_infodir@/dir:@pre_infodir@; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+@pre_infodir@:; $(MKDIR_P) $@
 define bld
 all install-$1: all-$1
 install: install-$1
