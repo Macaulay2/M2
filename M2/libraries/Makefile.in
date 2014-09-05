@@ -35,17 +35,17 @@ install-licenses:
 	fi
 
 ifeq (@SHARED@,yes)
-all: copy-dynamic-libraries
-copy-dynamic-libraries: copy-dynamic-libraries-announce
-copy-dynamic-libraries-announce:always ;: installing sharable library files in @pre_librariesdir@/lib
-copy-dynamic-libraries: @pre_librariesdir@
+all: install-dynamic-libraries
+install-dynamic-libraries: install-dynamic-libraries-announce
+install-dynamic-libraries-announce:always ;: installing sharable library files in @pre_librariesdir@/lib
+install-dynamic-libraries: @pre_librariesdir@
 @pre_librariesdir@:; $(MKDIR_P) $@
 define copy-lib-file
-    copy-dynamic-libraries: $2
+    install-dynamic-libraries: $2
     $2:$1; @TAR@ cf - -C `dirname "$1"` `basename "$1"` | @TAR@ xf - -C `dirname "$2"`
 endef
-$(foreach libfile,												\
-    $(wildcard $(BUILTLIBPATH)/lib/*.so.*) $(wildcard $(BUILTLIBPATH)/lib/*.dylib),				\
+$(foreach libfile,											\
+    $(wildcard $(BUILTLIBPATH)/lib/*.so.*) $(wildcard $(BUILTLIBPATH)/lib/*[0-9].dylib),		\
     $(eval $(call copy-lib-file,$(libfile),$(subst $(BUILTLIBPATH)/lib,@pre_librariesdir@,$(libfile))))	\
     )
 endif
