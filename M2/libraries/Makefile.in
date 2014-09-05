@@ -33,21 +33,18 @@ install-licenses:
 	     @INSTALL@ -d @pre_licensesdir@ ; \
 	     @TAR@ cf - -C final/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
 	fi
-
+install-dynamic-libraries:
+	: installing sharable library files in @pre_librariesdir@/lib
+	rm -rf @pre_librariesdir@
+	@INSTALL@ -d @pre_librariesdir@
+	cd final/lib &&							\
+	   for i in *.so.* *[0-9].dylib ;				\
+	   do if [ -e $$i ] ;						\
+	      then @TAR@ cf - $$i | @TAR@ xf - -C @pre_librariesdir@ ;	\
+	      fi ;							\
+	   done
 ifeq (@SHARED@,yes)
 all: install-dynamic-libraries
-install-dynamic-libraries: install-dynamic-libraries-announce
-install-dynamic-libraries-announce:always ;: installing sharable library files in @pre_librariesdir@/lib
-install-dynamic-libraries: @pre_librariesdir@
-@pre_librariesdir@:; $(MKDIR_P) $@
-define copy-lib-file
-    install-dynamic-libraries: $2
-    $2:$1; @TAR@ cf - -C `dirname "$1"` `basename "$1"` | @TAR@ xf - -C `dirname "$2"`
-endef
-$(foreach libfile,											\
-    $(wildcard $(BUILTLIBPATH)/lib/*.so.*) $(wildcard $(BUILTLIBPATH)/lib/*[0-9].dylib),		\
-    $(eval $(call copy-lib-file,$(libfile),$(subst $(BUILTLIBPATH)/lib,@pre_librariesdir@,$(libfile))))	\
-    )
 endif
 
 $(foreach f,Makefile Makefile.library,					\
