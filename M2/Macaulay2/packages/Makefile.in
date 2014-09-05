@@ -77,6 +77,9 @@ check-info::@pre_infodir@/$1.info.errors
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
+# make package Style get installed before any other:
+$(foreach i, $(patsubst Style,,$(PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
+
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
 
