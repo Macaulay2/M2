@@ -147,7 +147,11 @@ various modern operating systems:
 	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
     Now remember to add 
         CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
-    to the "configure" command line below in the section on compiling Macaulay2.
+      to the "configure" command line below in the section on compiling Macaulay2.
+    Note: old software installed by "fink" can interfere with the Macaulay2 build process.  To test, for example, whether
+      the correct version of "automake" is available, run the shell command
+        type automake
+      and expect to see /usr/local/bin/automake, as opposed to /sw/bin/automake.
 
   Cygwin 1.7 under Microsoft Windows:
     use setup to install these packages:
