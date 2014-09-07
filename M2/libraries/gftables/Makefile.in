@@ -11,10 +11,12 @@ BUILDCMD = :
 CHECKTARGET = .
 # same as in m2/factor.m2
 GFTABLEDIR = @pre_packagesdir@/Core/factory/gftables
-INSTALLCMD = $(MKDIR_P) $(GFTABLEDIR) && cp -v * $(GFTABLEDIR)/.
+INSTALLCMD = :
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gftables/Makefile
+$(foreach f,$(patsubst $(BUILDDIR)/%,%,$(wildcard $(BUILDDIR)/*)),$(eval .installed-$(VERSION):$(GFTABLEDIR)/$f) $(eval $(GFTABLEDIR)/$f:$(BUILDDIR)/$f|$(GFTABLEDIR); cp -v $$^ $$@))
+$(GFTABLEDIR):; $(MKDIR_P) $(GFTABLEDIR)
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gftables "

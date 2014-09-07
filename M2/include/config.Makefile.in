@@ -74,8 +74,6 @@ LDFLAGS_FOR_BUILD := -L$(BUILTLIBPATH)/lib $(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
 export PATH := @abs_top_srcdir@/bin:${PATH}
 
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))

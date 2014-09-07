@@ -37,7 +37,7 @@ relink:
 	$(MAKE)
 
 check: $(EXEFILE)
-	$< --check 1 --stop -E "exit 0"
+	LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH $< --check 1 --stop -E "exit 0"
 
 ifeq (@OS@,MacOS)
 # We specify the search path for finding shareable libraries, in case there are any,
