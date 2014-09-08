@@ -37,10 +37,11 @@ $(foreach i,\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
-		then @pre_bindir@/M2@EXE@ -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
+		then @pre_bindir@/M2 -q $(STOP) -e "needsPackage(\"$i\",LoadDocumentation=>true,DebuggingMode=>true); check($i,UserMode=>false); exit 0" ;\
 		fi ))
 info-dir: @pre_infodir@/dir
-@pre_infodir@/dir:@pre_infodir@; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+@pre_infodir@/dir:|@pre_infodir@
+	@INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
 @pre_infodir@:; $(MKDIR_P) $@
 define bld
 all install-$1: all-$1
@@ -54,11 +55,11 @@ uninstall-package-$1:
 all-$1: @pre_libm2dir@/$1/.installed
 unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
-@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) info-dir
+@pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
 	: installing package $1
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
-	cd $1-temporary && @pre_bindir@/M2@EXE@ $(M2DIRS) \
+	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
 	    -q $(STOP) \
 	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
@@ -77,8 +78,9 @@ check-info::@pre_infodir@/$1.info.errors
 endef
 $(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
 
-# make package Style get installed before any other:
+# make packages Style and Macaulay2Doc get installed before the others:
 $(foreach i, $(patsubst Style,,$(PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info

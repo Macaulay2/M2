@@ -22,7 +22,7 @@ endif
 
 %.okay : %.m2
 	@ echo testing $<
-	@ ../../bin/M2@EXE@ $(ARGS) $< -e 'exit(0)'
+	@ ../../bin/M2 $(ARGS) $< -e 'exit(0)'
 	@ touch $@
 
 TESTFILES := $(wildcard *.m2)
