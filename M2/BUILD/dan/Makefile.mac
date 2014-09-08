@@ -59,7 +59,8 @@ CC  := gcc-4.9
 CXX := g++-4.9
 FC  := gfortran-4.9
 
-BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
 
 ifeq ($(M64),yes)
 DIRECTORY := mac64
@@ -111,5 +112,5 @@ include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no "
 # End:
