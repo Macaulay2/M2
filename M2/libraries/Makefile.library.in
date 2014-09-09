@@ -151,12 +151,15 @@ endif
 	touch $@
 
 .compiled-$(VERSION)   : .configured-$(VERSION)
+	$(WHY)
 	@+ set -x ; ( $(CDBUILDDIR) && $(BUILDCMD) && $(STRIPCMD) ) && touch $@
 .configured-$(VERSION) : .patched-$(VERSION)
+	$(WHY)
 	@ set -x ; ( $(CDBUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE) $(TARFILE_DIR)/$(TARFILE)
+	$(WHY)
 	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \
@@ -166,7 +169,9 @@ PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do patch -p0 < $$i ; done
 	cd $(UNTARDIR) && $(UNTARCMD)
 	$(PATCHCMD)
 	touch $@
-.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE) ; mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
+.untarred2-$(VERSION) : $(TARFILE_DIR)/$(TARFILE)
+	$(WHY)
+	mkdir tmp ; (cd tmp && $(UNTARCMD)) && touch $@
 ifeq ($(FETCHER),)
 ifneq (@WGET@,false)
 FETCHER = @WGET@
@@ -244,6 +249,7 @@ recheck:
 	$(MAKE) check
 check: .checked-$(VERSION)
 .checked-$(VERSION) : .compiled-$(VERSION)
+	$(WHY)
 	+ set -x; $(LIMIT); $(CDBUILDDIR) && $(CHECKCMD)
 	touch $@
 

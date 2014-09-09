@@ -194,6 +194,9 @@ endif
 # libgc
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
 
+# status info
+WHY = : remaking $@ because of $?
+
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR include/config.Makefile DEPENDS=no "
 # End:
