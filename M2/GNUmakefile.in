@@ -129,7 +129,7 @@ help:
 	@ echo "configuration display:"
 	@ echo "  status                    show options used with 'configure'"
 	@ echo "  configure-help            show help for 'configure'"
-	@ echo "  reconfigure               re-run configure, set libraries for later reconfiguration"
+	@ echo "  reconfigure               re-run configure, set libraries for later reconfiguration and thus recompilation"
 	@ echo "  reconfigure-top-only      re-run configure"
 	@ echo "  unconfigure-libs          set libraries for later reconfiguration"
 	@ echo "  subst                     re-run config.status, remaking the makefiles"
