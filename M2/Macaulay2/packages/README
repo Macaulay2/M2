@@ -1,7 +1,7 @@
 To add your package to Macaulay2:
 
 Create an account on github.com and fork our repository
-https://github.com/Macaulay2/M2, clone your copy of M2, andadd your package
+https://github.com/Macaulay2/M2, clone your copy of M2, and add your package
 file to this "packages" directory, along with its directory of auxiliary files,
 if any.  Also add a line to the end of the file =distributed-packages
 containing the name of your package.  Add those changes, commit them, and push
