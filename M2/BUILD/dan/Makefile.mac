@@ -59,6 +59,11 @@ CC  := gcc-4.9
 CXX := g++-4.9
 FC  := gfortran-4.9
 
+# use clang:
+# CC  := /usr/bin/gcc
+# CXX := /usr/bin/g++
+# FC  := false
+
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 
