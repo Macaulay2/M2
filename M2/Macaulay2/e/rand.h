@@ -1,7 +1,7 @@
 // Copyright 2008 by Michael Stillman
 
 #ifndef _rand_h_
-#define _rand_h
+#define _rand_h_
 
 #include "engine-includes.hpp"
 
