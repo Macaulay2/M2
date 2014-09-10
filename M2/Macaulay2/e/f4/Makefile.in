@@ -5,6 +5,7 @@ DEPENDS = yes
 include ../Makefile.common
 
 CPPFLAGS := -I. -I@srcdir@/.. -I../../e-includes $(CPPFLAGS) -I../../d -I@srcdir@/../../c
+CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs
 
 .PHONY: place_into_lib
 

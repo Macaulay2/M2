@@ -69,7 +69,6 @@ class gb_emitter : public gb_node
   int this_degree;
   int n_left;
   int n_i;
-  int n_in_degree;
   int n_gens;
   int *these;
 
@@ -131,7 +130,6 @@ private:
   intarray total_pairs;
 
   array<gb_elem *> gb;
-  Matrix *gbmatrix;
   array<monideal_pair *> monideals; // baggage for each is 'gb_elem *'
 
   // Syzygies collected
@@ -157,7 +155,6 @@ private:
   int orig_syz;                 // >=0 means how many components to keep.
                                 // < 0 means compute syz's on minimal gens.
 
-  char is_ideal;
   int strategy_flags;           // STRATEGY_LONGPOLYNOMIALS, USE_SORT are the current flags used
 
   // Hilbert function information
@@ -168,9 +165,6 @@ private:
   int hf_numgens_F;             // The HF was computed using this size of F.
   int n_gb_syz;
 
-  const RingElement *hf_orig;
-  int n_in_degree;              // The number of new elements that we expect to find
-                                // in this degree. <0 means we don't know how many.
 private:
   void setup(FreeModule *Fsyz,
              stash *mi_stash,

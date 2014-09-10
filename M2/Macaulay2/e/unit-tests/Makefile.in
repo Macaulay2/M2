@@ -12,11 +12,10 @@ export LD_LIBRARY_PATH = $(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
-	 -I@srcdir@/../../c \
-	-Wno-unused-local-typedefs # ffpack has some of these.
+	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
 
 #CXXFLAGS += -O0 -std=gnu++0x #-coverage
-CXXFLAGS += -std=gnu++0x #-coverage
+CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \

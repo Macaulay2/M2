@@ -366,13 +366,13 @@ ring_elem Tower::gcd_extended(const ring_elem f, const ring_elem g,
   return TOWER_RINGELEM(h);
 }
 
-int Tower::degree(int whichvar, const ring_elem f) const
+int Tower::degreeInVariable(int whichvar, const ring_elem f) const
 {
   poly f1 = TOWER_VAL(f);
   return D->degree(whichvar,f1);
 }
 
-ring_elem Tower::diff(int whichvar, const ring_elem f) const
+ring_elem Tower::differentiate(int whichvar, const ring_elem f) const
 {
   poly f1 = TOWER_VAL(f);
   poly h = 0;

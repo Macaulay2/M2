@@ -97,7 +97,7 @@ extern "C" void remove_res(void *p, void *cd)
 void intern_res(ResolutionComputation *G)
 {
   GC_REGISTER_FINALIZER(G,remove_res,0,0,0);
-  AO_t nfinalized = AO_fetch_and_add1(&gbs_nfinalized);
+  AO_t nfinalized = AO_fetch_and_add1(&res_nfinalized);
   if (M2_gbTrace>=3)
     fprintf(stderr, "\n   -- registering res %zd at %p\n", nfinalized, (void *)G);
 }
