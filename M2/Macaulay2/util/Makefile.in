@@ -33,7 +33,7 @@ gc_test : gc_test.c
 # .LIBPATTERNS = lib%.a
 gc_test:
 
-gc_tested: gc_test; ./$< && touch $@
+gc_tested: gc_test; LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH) ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:
