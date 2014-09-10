@@ -28,7 +28,7 @@ CONFIGOPTIONS += --disable-thread-safe
 
 RELAX = yes
 # URL = http://www.mpfr.org/mpfr-$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert

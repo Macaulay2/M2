@@ -1,13 +1,13 @@
 # readline is licensed under GPL v3
 LICENSEFILES = COPYING
 
-VERSION = 6.2
-PATCHES = 001 002 003 004
+VERSION = 6.3
+PATCHES = 001 002 003 004 005 006 007 008
 
 RELAX = yes
 # URL = ftp://ftp.gnu.org/gnu/readline
 # PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples

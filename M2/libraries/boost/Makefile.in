@@ -1,13 +1,13 @@
 VPATH = @srcdir@
 
 # http://www.boost.org/
-VERSION = 1.46.1
+VERSION = 1.56.0
 UVERSION = $(subst .,_,$(VERSION))
 TARDIR = boost_$(UVERSION)
 TARFILE = boost_$(UVERSION).tar.gz
 LICENSEFILES = LICENSE_1_0.txt
 # URL = http://downloads.sourceforge.net/project/boost/boost/$(VERSION)
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 CHECKTARGET = .
 CONFIGURECMD = :
 BUILDCMD = :

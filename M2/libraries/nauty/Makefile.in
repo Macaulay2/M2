@@ -1,7 +1,7 @@
 # URL = http://cs.anu.edu.au/~bdm/nauty
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 25r2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+VERSION = 25r9
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoconf
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)

@@ -17,7 +17,7 @@ INCLUDEFILES = factor.h
 
 TARFILE := libfac-$(shell echo $(VERSION) | sed 's/\./-/g').tar.gz
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --with-debug
 endif

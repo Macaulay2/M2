@@ -6,18 +6,17 @@ LICENSEFILES = README COPYING
 HOMEPAGE = http://pari.math.u-bordeaux.fr/
 VPATH = @srcdir@
 
-# # pari maintainers have been known to break URL's, so we copy their software to another server:
-# # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
+# pari maintainers have been known to break URL's, so we copy their software to another server:
+# URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.5.3
+VERSION = 2.7.1
 
 ifeq ($(VERSION) @host@,2.5.3 x86_64-w64-mingw32)
 PATCHFILE = @abs_srcdir@/patch-2.5.3-mingw64
 endif
 
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-# URL = http://macaulay2.com/Downloads/OtherSourceCode/trunk
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
 # We (used to) leave out these tests, now we don't test at all
 #   (test-all would run them all) :
