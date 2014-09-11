@@ -1,15 +1,6 @@
-diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp
---- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp	2013-08-27 10:09:52.000000000 -0500
-+++ mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp	2014-06-14 17:26:31.000000000 -0500
-@@ -7,4 +7,4 @@
- 
- // the .. goes back from the include/ directory of gtest so we can
- // enter the src directory.
--#include <../src/gtest-all.cc>
-+#include "src/gtest-all.cc"
-diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathic/tmp/mathic-20140613-66b5d74f84/configure.ac mathic-20140613-66b5d74f84/configure.ac
---- /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/libraries/mathic/tmp/mathic-20140613-66b5d74f84/configure.ac	2013-08-27 10:09:52.000000000 -0500
-+++ mathic-20140613-66b5d74f84/configure.ac	2014-06-14 18:01:30.000000000 -0500
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/configure.ac mathic-20140613-66b5d74f84/configure.ac
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/configure.ac	2013-08-27 11:09:52.000000000 -0400
++++ mathic-20140613-66b5d74f84/configure.ac	2014-09-10 20:32:17.000000000 -0400
 @@ -4,6 +4,8 @@
  # Check that memtailor is installed and locate it
  PKG_CHECK_MODULES([MEMTAILOR], [memtailor])
@@ -56,3 +47,86 @@ diff -ur /Users/dan/src/M2/M2-MikeStillman/M2/BUILD/mike/builds.tmp/opt64-all/li
  AM_CONDITIONAL(with_gtest, test "x$with_gtest" == "xyes")
  
  DEPS_CFLAGS="$MEMTAILOR_CFLAGS $GTEST_CFLAGS"
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/mathic/DivList.h mathic-20140613-66b5d74f84/src/mathic/DivList.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/mathic/DivList.h	2013-08-27 11:09:52.000000000 -0400
++++ mathic-20140613-66b5d74f84/src/mathic/DivList.h	2014-09-10 20:36:27.000000000 -0400
+@@ -159,6 +159,34 @@
+   };
+ 
+   template<class C>
++    class DivList<C>::iterator :
++  public std::iterator<std::bidirectional_iterator_tag, Entry> {
++  public:
++    friend class DivList<C>;
++    explicit iterator(ListIter it): _it(it) {}
++    operator const_iterator() const {return const_iterator(_it);}
++
++    bool operator==(iterator it) {return _it == it._it;}
++    bool operator!=(iterator it) {return _it != it._it;}
++    bool operator==(const_iterator it); // {return it == const_iterator(*this);}
++    bool operator!=(const_iterator it); // {return it != const_iterator(*this);}
++
++    iterator& operator++() {++_it; return *this;}
++    iterator operator++(int) {iterator tmp = *this; operator++(); return tmp;}
++    iterator& operator--() {--_it; return *this;}
++    iterator operator--(int) {iterator tmp = *this; operator--(); return tmp;}
++
++    Entry& operator*() const {return _it->get();}
++    Entry* operator->() const {return &_it->get();}
++
++  protected:
++    ListIter getInternal() {return _it;}
++
++  private:
++    ListIter _it;
++  };
++
++  template<class C>
+     class DivList<C>::const_iterator :
+   public std::iterator<std::bidirectional_iterator_tag, const Entry> {
+   public:
+@@ -193,32 +221,9 @@
+   };
+ 
+   template<class C>
+-    class DivList<C>::iterator :
+-  public std::iterator<std::bidirectional_iterator_tag, Entry> {
+-  public:
+-    friend class DivList<C>;
+-    explicit iterator(ListIter it): _it(it) {}
+-    operator const_iterator() const {return const_iterator(_it);}
+-
+-    bool operator==(iterator it) {return _it == it._it;}
+-    bool operator!=(iterator it) {return _it != it._it;}
+-    bool operator==(const_iterator it) {return it == const_iterator(*this);}
+-    bool operator!=(const_iterator it) {return it != const_iterator(*this);}
+-
+-    iterator& operator++() {++_it; return *this;}
+-    iterator operator++(int) {iterator tmp = *this; operator++(); return tmp;}
+-    iterator& operator--() {--_it; return *this;}
+-    iterator operator--(int) {iterator tmp = *this; operator--(); return tmp;}
+-
+-    Entry& operator*() const {return _it->get();}
+-    Entry* operator->() const {return &_it->get();}
+-
+-  protected:
+-    ListIter getInternal() {return _it;}
+-
+-  private:
+-    ListIter _it;
+-  };
++    bool DivList<C>::iterator::operator==(const_iterator it) {return it == const_iterator(*this);}
++  template<class C>
++    bool DivList<C>::iterator::operator!=(const_iterator it) {return it != const_iterator(*this);}
+ 
+   namespace DivListHelper {
+     template<class C, class E, class M, class MO>
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-mathic/libraries/mathic/tmp/mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp	2013-08-27 11:09:52.000000000 -0400
++++ mathic-20140613-66b5d74f84/src/test/gtestInclude.cpp	2014-09-10 20:32:17.000000000 -0400
+@@ -7,4 +7,4 @@
+ 
+ // the .. goes back from the include/ directory of gtest so we can
+ // enter the src directory.
+-#include <../src/gtest-all.cc>
++#include "src/gtest-all.cc"
