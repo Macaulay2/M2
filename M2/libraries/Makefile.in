@@ -39,9 +39,9 @@ install-dynamic-libraries:
 	rm -rf @pre_librariesdir@
 	@INSTALL@ -d @pre_librariesdir@
 	cd final/lib &&							\
-	   for i in *.so.* *[0-9].dylib ;				\
+	   for i in *.dll *.so.* *[0-9].dylib ;				\
 	   do if [ -e $$i ] ;						\
-	      then @TAR@ cf - $$i | @TAR@ xf - -C @pre_librariesdir@ ;	\
+	      then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ;	\
 	      fi ;							\
 	   done
 ifeq (@SHARED@,yes)
