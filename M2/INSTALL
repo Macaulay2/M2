@@ -161,13 +161,16 @@ various modern operating systems:
         sudo rm -rf /sw
 
   Cygwin 1.7 under Microsoft Windows:
-    use setup to install these packages:
+    Use setup to install these packages:
 	autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
-	gcc-g++ git libgc-devel libgdbm-devel libglpk-devel liblapack-devel
-	libmpfr-devel libncurses-devel libstdc++6-devel libtool libxml2-devel
-	make mpfr patchutils pkg-config time unzip wget
-     you may also want these:
-        emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole xkill xterm
+	gcc-g++ git libatomic_ops-devel libboost-devel libgc-devel
+	libgdbm-devel libglpk-devel liblapack-devel libmpfr-devel
+	libncurses-devel libreadline-devel libstdc++6-devel libtool
+	libxml2-devel make patchutils pkg-config time unzip wget
+    You may also want these:
+        ctags emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole
+        xinit xkill xterm
+    After installing xinit, the program "startxwin" can be used to start X Windows.
 
 ----------------------
   Compiling the most recent GNU C compiler

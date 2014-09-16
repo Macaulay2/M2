@@ -39,7 +39,7 @@ DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include regex.dep
 endif
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 tags:: @srcdir@/TAGS

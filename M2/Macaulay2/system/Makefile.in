@@ -32,7 +32,7 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 
 # @srcdir@/TAGS: $(HFILES) $(CCFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CCFILES)
 # DEPENDS = yes
-# ifneq (@ETAGS@,)
+# ifneq (@ETAGS@,false)
 # all: tags
 # endif
 # tags:: @srcdir@/TAGS

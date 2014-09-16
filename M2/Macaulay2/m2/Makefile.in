@@ -119,7 +119,7 @@ phase1:: .Macaulay2-made
 clean::; rm -f .Macaulay2-made
 all: .gdbinit .gdb-files .gdb-run-it
 gdb: .gdbinit .gdb-files
-	LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH) gdb @pre_exec_prefix@/bin/M2@EXE@
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 all: .gdb-directories
 clean::; rm -f .gdb-directories
@@ -148,7 +148,7 @@ clean::; rm -f .gdb-files
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean::; rm -f .gdb-run-it
-profile: gmon.out; LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH) gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
+profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
