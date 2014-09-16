@@ -50,6 +50,7 @@ document {
 	  TO "frobby",
 	  TO "pari",
 	  TO "MPIR",
+	  TO "GNU MP",
 	  TO "MPFR",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
@@ -291,9 +292,9 @@ document {
      "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It is available at ", HREF "http://www.mpir.org/", "."
+     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with GMP), examine the variable ", TO "version", "."
      }
-
 
 document {
      Key => "4ti2",
@@ -302,14 +303,15 @@ document {
      It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
--- document {
---      Key => "GNU MP",
---      "The GNU MP library, gmp, version ", version#"gmp version", " provides
---      routines for arbitrary precision integer and floating point arithmetic,
---      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
---      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
---      ", HREF "http://gmplib.org/", "."
---      }
+document {
+     Key => "GNU MP",
+     "The GNU MP library (GMP) provides
+     routines for arbitrary precision integer and floating point arithmetic,
+     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 3,
+     and also under the GNU General Public License (GPL), version 2.
+     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with MPIR), examine the variable ", TO "version", "."
+     }
 
 document {
      Key => "Acknowledgements",

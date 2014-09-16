@@ -749,7 +749,7 @@ AC_SUBST(BUILTLIBS,)
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
 #    mpfr needs gmp
-#    mpir is a plug-in replacement for gmp
+#    mpir is a plug-in replacement for gmp and can provide libgmp and libgmpxx, too
 #    4ti2 needs glpk
 #    gfan needs cddlib
 #    polymake cannot be included in Macaulay2 because its compile/build/install procedure is flawed:
@@ -757,8 +757,7 @@ AC_SUBST(BUILTLIBS,)
 #       it offers no way to provide a directory tree containing a readline library we've compiled
 #	it writes a file into the user's home directory called ".polymake"
 #	it asks questions
-#    normaliz needs mpir providing libgmp and libgmpxx, but we provide that, anyway
-#    normaliz needs boost
+#    normaliz needs libgmp, libgmpxx, boost
 #    Greg Smith requested cddplus and lrslib for future use
 #    nauty is used by the package Nauty
 #    normaliz is used by the package Normaliz
@@ -955,13 +954,28 @@ dnl fi
 
 if test $BUILD_mpir = no
 then AC_LANG(C)
-     AC_SEARCH_LIBS(__mpir_version,mpir,,BUILD_mpir=yes)
-     AC_CHECK_HEADER(mpir.h,,BUILD_mpir=yes)
+     AC_SEARCH_LIBS(__gmp_version,gmp,,BUILD_mpir=yes)
+     AC_CHECK_HEADER(gmp.h,,BUILD_mpir=yes)
 fi
-dnl frobby uses mpirxx
 if test $BUILD_mpir = yes
-then BUILTLIBS="-lmpirxx -lmpir $BUILTLIBS"
-else LIBS="-lmpirxx $LIBS"
+then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
+else LIBS="-lgmpxx $LIBS"
+fi
+if test $BUILD_mpir = no
+then AC_MSG_CHECKING(for gmp ostream compatibility)
+     dnl This detects the case where we are trying to build with gcc on Mac OS X, but where libgmp has
+     dnl been compiled with clang by homebrew.  The compilers have different binary interfaces for
+     dnl the C++ type "ostream".
+     AC_LANG(C++)
+     AC_LINK_IFELSE([AC_LANG_SOURCE([
+#	  include <gmpxx.h>
+#	  include <ostream>
+	  void f(std::ostream o, mpq_ptr x) { o << x; }
+	  int main () {}
+	])],
+	[AC_MSG_RESULT(yes)],
+	[BUILD_mpir=yes
+         AC_MSG_RESULT([no, will build mpir])])
 fi
 
 if test "$PARI" = yes

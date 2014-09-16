@@ -16,7 +16,6 @@
 PRODUCTION=yes
 DEBUG=no
 PROFILE=no
-M64=yes
 FIX_UNWIND=no
 
 # CONFIGOPTIONS += --disable-strip
@@ -59,24 +58,19 @@ CC  := gcc-4.9
 CXX := g++-4.9
 FC  := gfortran-4.9
 
-# use clang:
-# CC  := /usr/bin/gcc
-# CXX := /usr/bin/g++
-# FC  := false
-
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 
-ifeq ($(M64),yes)
 DIRECTORY := mac64
 CC  += -m64
 CXX += -m64
-# export MPIR_CONFIGOPTIONS=ABI=64
-else
-DIRECTORY := mac32
-CC  += -m32
-CXX += -m32
-# export MPIR_CONFIGOPTIONS=ABI=32
+
+ifeq ($(CLANG),yes)
+DIRECTORY := $(DIRECTORY)-clang
+CC  := /usr/bin/gcc
+CXX := /usr/bin/g++
+FC  := false
+CONFIGOPTIONS += --disable-frobby  --disable-gfan
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)

@@ -67,7 +67,6 @@ ALLFLAGS =					\
 	CXX="$(CXX)"				\
 	LDFLAGS="$(LDFLAGS)"			\
 	LOADLIBES="$(LOADLIBES)"		\
-	LIBS="$(LIBS)"				\
 	LDLIBS="$(LDLIBS)"
 CONFIGENV     = env $(ALLFLAGS)
 CONFIGURESCRIPT ?= configure

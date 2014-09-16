@@ -148,6 +148,9 @@ various modern operating systems:
     Now remember to add 
         CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
       to the "configure" command line below in the section on compiling Macaulay2.
+    Note: homebrew uses /usr/bin/gcc to compile its libraries.  If compiling
+      with clang instead of gcc, then run this first:
+        brew install gmp mpfr
     Note: software installed by "fink", if not kept up to date, can interfere
       with the Macaulay2 build process.  To test, for example, whether the
       correct version of "automake" is available, run the shell command
