@@ -73,7 +73,7 @@ public:
     fmpz_t den, den2;
     fmpz_init(den);
     fmpz_init(den2);
-    long* perm = newarray_atomic(long, LU.numRows());
+    mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
     for (long i=0; i<LU.numRows(); i++)
       perm[i] = i;
     fmpq_mat_get_fmpz_mat_matwise(LU.value(), den, A.value());
