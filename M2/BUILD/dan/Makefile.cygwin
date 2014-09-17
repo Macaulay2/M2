@@ -1,14 +1,13 @@
 # -*- makefile-gmake -*-
 
-# things to install with cygwin setup:
-#   unzip
-
 PRODUCTION = yes
 DEBUG = no
 
 # CC  = gcc -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
 # CXX = g++ -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
 # FC  = gfortran -B/usr/lib/gcc/i686-pc-cygwin/3.4.4
+
+CONFIGOPTIONS += --disable-ntl-wizard
 
 ifeq ($(PRODUCTION),yes)
 CONFIGOPTIONS += --disable-common-staging-area

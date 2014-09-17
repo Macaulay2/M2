@@ -25,7 +25,7 @@ DOXYGEN_CONF_DIR :=$(SRCDIR)/doxygen-settings
 ## Targets ##
 #############
 
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 tags:: @srcdir@/TAGS

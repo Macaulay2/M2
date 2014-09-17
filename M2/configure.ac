@@ -40,38 +40,38 @@ test "$DISTRIBUTION" || DISTRIBUTION=1
 
 for i in $CFLAGS
 do case $i in
-   -I*) AC_MSG_ERROR("preprocessor flag $i found in CFLAGS instead of in CPPFLAGS") ;;
-   -L*) AC_MSG_ERROR("link flag $i found in CFLAGS instead of in LDFLAGS");;
+   -I*) AC_MSG_ERROR(preprocessor flag $i found in CFLAGS instead of in CPPFLAGS) ;;
+   -L*) AC_MSG_ERROR(link flag $i found in CFLAGS instead of in LDFLAGS);;
    esac
 done
 
 for i in $CXXFLAGS
 do case $i in
-   -I*) AC_MSG_ERROR("preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS");;
-   -L*) AC_MSG_ERROR("link flag $i found in CXXFLAGS instead of in LDFLAGS");;
+   -I*) AC_MSG_ERROR(preprocessor flag $i found in CXXFLAGS instead of in CPPFLAGS);;
+   -L*) AC_MSG_ERROR(link flag $i found in CXXFLAGS instead of in LDFLAGS);;
    esac
 done
 
 for i in $CPPFLAGS
 do case $i in
-   -L*) AC_MSG_ERROR("link flag $i found in CPPFLAGS instead of in LDFLAGS");;
+   -L*) AC_MSG_ERROR(link flag $i found in CPPFLAGS instead of in LDFLAGS);;
    esac
 done
 
 for i in $LDFLAGS
 do case $i in
-   -I*) AC_MSG_ERROR("preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS");;
+   -I*) AC_MSG_ERROR(preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS);;
    esac
 done
 
-test "$CXX" = gcc && AC_MSG_ERROR("oops, CXX=gcc, should use CXX=g++")
-
 AC_CHECK_PROGS(MAKE,gmake make,false)
-AC_CHECK_PROGS(PKG_CONFIG,pkg-config,no)
-if test $PKG_CONFIG = no; then AC_MSG_ERROR("pkg-config is required"); fi
+AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
+if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
 AC_CHECK_PROGS(WGET,wget,false)
 AC_CHECK_PROGS(CURL,curl,false)
-AC_CHECK_PROGS(ETAGS,etags,false)
+if test "$WGET" = false -a "$CURL" = false; then AC_MSG_ERROR(wget or curl is required); fi
+AC_CHECK_PROGS(ETAGS,etags ctags,false)
+if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
 AC_CHECK_PROGS(OTOOL,otool,false)
 AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
@@ -102,19 +102,19 @@ fi
 AC_MSG_CHECKING(whether $MAKE is GNU make)
 if "$MAKE" -n --version nothing | head -1 | grep GNU >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR("$MAKE: GNU make is required")
+else AC_MSG_ERROR($MAKE: GNU make is required)
 fi
 
 AC_MSG_CHECKING(whether $TAR is GNU tar)
 if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
-else AC_MSG_ERROR("$TAR: GNU tar is required")
+else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
 
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_ERROR("$FIND: GNU find is required")
+dnl else AC_MSG_ERROR($FIND: GNU find is required")
 dnl fi
 
 dnl interesting behavior: $A expansion happens after statement separation!

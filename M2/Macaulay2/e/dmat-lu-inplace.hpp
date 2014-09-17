@@ -75,7 +75,7 @@ inline void DMatLUinPlace<M2::ARingGFFlintBig>::computeLU()
 {
   if (mIsDone) return;
 
-  long *perm = newarray_atomic(long, mLU.numRows());
+  mp_limb_signed_t *perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_nmod_mat_lu(perm, mLU.fq_nmod_mat(), false, ring().flintContext());
   // Now we set mPerm:
   mPerm.clear();
@@ -95,7 +95,7 @@ inline void DMatLUinPlace<M2::ARingGFFlint>::computeLU()
 {
   if (mIsDone) return;
 
-  long *perm = newarray_atomic(long, mLU.numRows());
+  mp_limb_signed_t *perm = newarray_atomic(mp_limb_signed_t, mLU.numRows());
   fq_zech_mat_lu(perm, mLU.fq_zech_mat(), false, ring().flintContext());
   // Now we set mPerm:
   mPerm.clear();
