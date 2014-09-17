@@ -10,9 +10,7 @@ all install: \
 	M2 all-in-subdirs report-M2-location
 M2: GNUmakefile
 	rm -f M2
-	( echo 'export LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH' ; \
-	  echo 'exec @pre_bindir@/M2 "$$@"' \
-	  ) >M2
+	echo 'exec @pre_bindir@/M2 "$$@"' >M2
 	chmod a+x M2
 define package
 all install-$1: all-$1
