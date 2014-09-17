@@ -956,6 +956,28 @@ if test $BUILD_mpir = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(__gmp_version,gmp,,BUILD_mpir=yes)
      AC_CHECK_HEADER(gmp.h,,BUILD_mpir=yes)
+     AC_MSG_CHECKING([whether gmp library is recent enough])
+     AC_RUN_IFELSE([AC_LANG_SOURCE([
+      	  #include <gmp.h>
+      	  #include <stdio.h>
+      	  int main() {
+	    int A=5, B=0;	/* target version */
+      	    int a=0, b=0, c=0;  /* library version */
+	    int r=sscanf(__gmp_version,"%d.%d.%d",&a,&b,&c), t = a>A || a==A && b>=B;
+      	    if (r < 2) {
+      	      fprintf(stderr,"failed to parse gmp version number: %s\n", __gmp_version);
+      	      return 1;
+      	    }
+	    if (a != __GNU_MP_VERSION || b != __GNU_MP_VERSION_MINOR || c != __GNU_MP_VERSION_PATCHLEVEL) {
+      	      printf("(gmp library version %s != include file version %d.%d.%d) ", __gmp_version, __GNU_MP_VERSION, __GNU_MP_VERSION_MINOR, __GNU_MP_VERSION_PATCHLEVEL);
+	      return 1;
+	    }
+      	    printf("(gmp version %s %s %d.%d) ",__gmp_version, t ? ">=" : "<", A, B);
+      	    return !t;
+      	    }])],
+      	  [ AC_MSG_RESULT(yes) ],
+      	  [ AC_MSG_RESULT([no, will build mpir]); BUILD_mpir=yes ],
+      	  [ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 fi
 if test $BUILD_mpir = yes
 then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
@@ -1111,7 +1133,7 @@ then AC_LANG(C)
 #		      endif
 		        return !( GC_VERSION_MAJOR > 7 || GC_VERSION_MAJOR == 7 && GC_VERSION_MINOR >= 2); }])],
 		[ AC_MSG_RESULT(yes) ],
-		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ],
 		[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 	    ],
  	    BUILD_gc=yes)],
