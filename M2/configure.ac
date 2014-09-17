@@ -1133,7 +1133,7 @@ then AC_LANG(C)
 #		      endif
 		        return !( GC_VERSION_MAJOR > 7 || GC_VERSION_MAJOR == 7 && GC_VERSION_MINOR >= 2); }])],
 		[ AC_MSG_RESULT(yes) ],
-		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc will be built from downloaded sources)]); BUILD_gc=yes ],
+		[ AC_MSG_RESULT([no, version at least 7.2 is required (gc and atomic_ops will be built from downloaded sources)]); BUILD_atomic_ops=yes ; BUILD_gc=yes ],
 		[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 	    ],
  	    BUILD_gc=yes)],
