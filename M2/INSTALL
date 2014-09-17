@@ -113,7 +113,7 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack-devel libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel libtool
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
     For making an rpm file, install fakeroot manually, from:
          http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
