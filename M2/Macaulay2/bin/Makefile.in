@@ -120,7 +120,7 @@ else
 ifeq (@OS@,MacOS)
 # we know about it
 else
-$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE))
+$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE@))
 endif
 endif
 endif
@@ -163,7 +163,7 @@ M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
 M2_LIBRARIES += -lstdc++
 
 M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
