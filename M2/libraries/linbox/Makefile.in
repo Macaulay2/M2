@@ -2,7 +2,7 @@
 VERSION = 1.3.2
 URL = http://www.linalg.org
 #URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-PRECONFIGURE = autoconf
+PRECONFIGURE = autoreconf -i
 
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 # linking linbox as a shared library is bad, because then under Mac OS X its static constructors
