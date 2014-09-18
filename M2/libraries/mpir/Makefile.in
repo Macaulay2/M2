@@ -8,6 +8,7 @@ TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
 
 # we had to patch acinclude.m4 to remove a bogus test preventing clang from compiling it:
+# I tried "autoreconf -i" once, but it didn't work, resulting in a recursive definition MKDIR_P = $(MKDIR_P) in a Makefile
 PRECONFIGURE = autoconf
 
 # URL = http://www.mpir.org

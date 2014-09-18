@@ -2,7 +2,7 @@
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 25r9
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = autoconf
+PRECONFIGURE = autoreconf -i
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
