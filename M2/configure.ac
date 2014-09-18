@@ -784,12 +784,6 @@ AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=" missing gtest "
 
-BUILD_mpfr=yes
-# We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
-# memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
-# specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
-# frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
-
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
@@ -802,6 +796,20 @@ done
 dnl make some programs optional:
 BUILD_lrslib=no
 BUILD_cddplus=no
+
+BUILD_mpir=yes
+# We always build mpir so we can patch the routine mp_set_memory_functions() in it so
+# it does nothing; that prevents libraries such as pari from telling it what memory
+# allocation functions to use.  But we should instead patch pari, so we can use the
+# gmp library that comes with many linux distributions.
+
+BUILD_mpfr=yes
+# We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
+# memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
+# specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
+# frees them, causing strange errors.  See libraries/mpfr/Makefile for more information.
+# Another possible problem can arise if mpfr comes dynamically linked to libgmp, but we want
+# to use mpir instead.
 
 AC_ARG_ENABLE(gfan, AS_HELP_STRING(--disable-gfan,[do not build gfan program]), GFAN=$enableval)
 if test "$GFAN" = no

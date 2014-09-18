@@ -10,7 +10,7 @@ ifeq ($(DEBUG),yes)
 
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
+CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY = ubuntu64.debug
 
 else
