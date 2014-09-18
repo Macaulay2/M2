@@ -107,13 +107,15 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static libtool rpm-sign
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
     Some debugging aids:
-       sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
+      sudo debuginfo-install strace
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel
+    Some debugging aids:
+      sudo yum install -y strace
     For making an rpm file, install fakeroot manually, from:
          http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
