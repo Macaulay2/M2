@@ -1,0 +1,5 @@
+*.tgz
+*.zip
+*.tar.gz
+*.tar.bz2
+readline*-*

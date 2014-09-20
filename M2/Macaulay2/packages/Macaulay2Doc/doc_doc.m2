@@ -9,7 +9,7 @@
 -- the changes.
 
 document {  
-     Key => {document,(document, List),[document,SourceCode]},
+     Key => {document,(document, List),ExampleFiles,[document,ExampleFiles],[document,SourceCode]},
      Usage => "document { Key => key, ... }",
      Headline => "package item: documentation node",
      Inputs => {
@@ -41,6 +41,10 @@ document {
      Outputs => {
           outputs
 	  },
+     "A list of strings containings names of files in the auxiliary 
+     directory of the package can go here; the files will be visible
+     in the current directory while example code is run.",
+     ExampleFiles => {"datafile1", "datafile2"},
      "There can be explanatory prose here in the form of a hypertext list.",
      EXAMPLE lines \/\/\/
 		m2code

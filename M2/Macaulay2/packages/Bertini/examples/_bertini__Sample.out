@@ -1,13 +1,5 @@
--- -*- M2-comint -*- {* hash: -467012635 *}
-/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:635: warning: documentation already provided for 'NAGtypes :: generalEquations'
-/Users/MacMath/Library/Application Support/Macaulay2/local/share/Macaulay2/NAGtypes.m2:290: ... here is the (end of the) previous documentation
---loading configuration for package "Bertini" from file /Users/MacMath/Library/Application Support/Macaulay2/init-Bertini.m2
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:526:8:(2):[10]: warning: local declaration of l shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:534:8:(2):[10]: warning: local declaration of pts shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:537:13:(2):[10]: warning: local declaration of maxPrec shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:740:8:(2):[10]: warning: local declaration of l shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:749:8:(2):[10]: warning: local declaration of pts shields variable with same name
-/Users/MacMath/Desktop/M2PackagesExist/packages/Bertini.m2:754:13:(2):[10]: warning: local declaration of maxPrec shields variable with same name
+-- -*- M2-comint -*- {* hash: -1057685552 *}
+--loading configuration for package "Bertini" from file /Users/elizabethgross/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y,z]
 
@@ -15,8 +7,7 @@ o1 = R
 
 o1 : PolynomialRing
 
-i2 : F = {(y^2+x^2+z^2-1)*x,
-          (y^2+x^2+z^2-1)*y}
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
        3      2      2       2     3      2
 o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
@@ -24,44 +15,44 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : NV = bertiniPosDimSolve(F)
-Temporary directory for input and output files:/tmp/M2-12247-0/0
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-20688-0/0
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o3 = A variety of dimension 2 with components in
-     dim 1:  [dim=1,deg=1]
-     dim 2:  [dim=2,deg=2]
+o3 = NV
 
 o3 : NumericalVariety
 
 i4 : W = NV#1_0 --z-axis
 
-o4 = [dim=1,deg=1]
+o4 = W
 
 o4 : WitnessSet
 
-i5 : bertiniSample(W,12)
-Temporary directory for input and output files:/tmp/M2-12247-0/1
+i5 : bertiniSample(4, W)
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-20688-0/1
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o5 = {{0, 0, -.182669-.301461*ii}, {0, 0, .234422-.265022*ii},
+o5 = {{2.31925e-172+3.51561e-172*ii, 2.39151e-316+6.85114e-317*ii,
      ------------------------------------------------------------------------
-     {-4.94066e-324, 0, .306805+.384892*ii}, {0, 0, .0759693-.331034*ii}, {0,
+     .726982-.439408*ii}, {-3.10576e-84+1.70353e-84*ii,
      ------------------------------------------------------------------------
-     0, .171051-.300562*ii}, {0, -4.94066e-324*ii, -.386133-.111485*ii}, {0,
+     -4.3043e-320+1.82444e-319*ii, .208301-.241778*ii},
      ------------------------------------------------------------------------
-     0, .341908-.160607*ii}, {-1.35047e-307+1.48066e-306*ii, 0,
+     {3.21355e-115+1.12254e-115*ii, 3.50787e-322-1.00295e-321*ii,
      ------------------------------------------------------------------------
-     .328829-.177818*ii}, {0, 0, .136076-.31464*ii}, {0, 0,
+     .119913-.0155619*ii}, {8.98497e-114-4.14782e-114*ii,
      ------------------------------------------------------------------------
-     .315298-.1939*ii}, {0, 0, .134206-.315294*ii}, {0, 0,
-     ------------------------------------------------------------------------
-     .208027-.281551*ii}}
+     -2.7094e-314-5.86907e-314*ii, .247863-.290613*ii}}
 
 o5 : List
 

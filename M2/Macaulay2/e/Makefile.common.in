@@ -1,9 +1,9 @@
 # -*- Makefile -*-
 
 # these are from include/config.Makefile
-CPPFLAGS += $(M2_CPPFLAGS)
-CFLAGS   += $(M2_CFLAGS)
-CXXFLAGS += $(M2_CXXFLAGS)
+CPPFLAGS := $(M2_CPPFLAGS) $(CPPFLAGS)
+CFLAGS   := $(M2_CFLAGS)   $(CFLAGS)
+CXXFLAGS := $(M2_CXXFLAGS) $(CXXFLAGS)
 
 ifeq "$(SHARED)" "yes"
 CXXFLAGS += -fPIC

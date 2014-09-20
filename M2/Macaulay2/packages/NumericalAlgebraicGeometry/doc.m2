@@ -1,5 +1,6 @@
-refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", arXiv:0911.1783" 
-refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", arXiv:1105.5992" 
+refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
+refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
+refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
 refIntroToNAG := "A.J. Sommese, J. Verschelde, and C.W. Wampler, \"Introduction to numerical algebraic geometry\", 
                   in \"Solving polynomial equations\" (2005), 301--338" 
 refSWbook := "A.J. Sommese and C.W. Wampler, \"The numerical solution of systems of polynomials\",
@@ -16,41 +17,63 @@ document {
      EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
      ", implements methods of polynomial homotopy continuation                                                                                                  
      to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
-     "The current version focuses on solving square systems with a finite number of solutions. ",
      
-     PARA {"Basic types ", TO Point, " and ", TO "WitnessSet", " are defined in the package ", TO NAGtypes, "."},
+     PARA {"Basic types (such as ", TO Point, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
      
      HEADER3 "Basic functions:",
      UL{
-	  TO track,
-	  TO solveSystem,
-	  TO refine,
-	  TO totalDegreeStartSystem
-	  },
+	 TO track,
+	 TO solveSystem,
+	 TO refine,
+	 TO totalDegreeStartSystem,
+	 TO numericalIrreducibleDecomposition,
+     	 TO sample,
+     	 TO (isSubset,NumericalVariety,NumericalVariety),
+	 },
+     "Some of the basic computations can be outsourced to ", TO "Bertini", " and ", TO "PHCpack", 
+     " (look for ", TO Software, " option).",
+     
      HEADER3 "Service functions:",
      UL{
-	  TO setDefault,
-	  TO getDefault,
-	  TO areEqual,
-	  TO sortSolutions,
-	  TO toAffineChart,
-	  TO NAGtrace
-	  },
+	 {  
+	     "Many service functions (such as ", 
+	     TO areEqual," and ",TO sortSolutions,") are defined in the package ", TO NAGtypes, "."
+	 },
+     TO setDefault,
+     TO getDefault,
+     TO NAGtrace,
+     --     TO toAffineChart,     
+     TO newton,
+     TO numericalRank,
+     TO isOn,
+     TO union,
+     TO removeRedundantComponents,
+--     TO ("==",NumericalVariety,NumericalVariety)
+     },
+
+     HEADER3 {"Functions related to scheme analysis:"},
+     UL{
+	 TO isPointEmbedded,
+	 TO isPointEmbeddedInCurve,
+	 TO colon,
+	 },
+
      HEADER3 {"Functions related to ", TO "Certified", " tracking:"},
      certifiedTrackingFunctions,
-     HEADER3 "Other functions:",
-     UL { TO numericalRank },
+
      HEADER3 {"References:"},
      UL{
        refIntroToNAG,
        refSWbook,
-       refBeltranLeykin
+       refBeltranLeykin,
+       refKroneLeykin
        }
      }
 
 document {
 	Key => {setDefault, 1:(setDefault), Attempts, [setDefault, Attempts], 
-	     SingularConditionNumber, [setDefault, SingularConditionNumber], [refine, SingularConditionNumber],
+	     SingularConditionNumber, [setDefault, SingularConditionNumber], 
+	     [refine, SingularConditionNumber],  [track,SingularConditionNumber],
 	     getDefault, (getDefault,Symbol)},
 	Headline => "set/get the default parameters for continuation algorithms",
 	Usage => "setDefault(p1=>v1, p2=>v2, ...), v = getDefault p",
@@ -82,7 +105,7 @@ document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatch
      	} 
 
 document {
-	Key => {(solveSystem, List),solveSystem},
+	Key => {(solveSystem, List),solveSystem,(solveSystem,PolySystem)},
 	Headline => "solve a square system of polynomial equations",
 	Usage => "s = solveSystem F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
@@ -105,7 +128,7 @@ solveSystem F
 
 
 document {
-	Key => { (track, List, List, List), track, 
+	Key => { (track, List, List, List), track, (track,PolySystem,PolySystem,List),
 	     [track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
 	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
 	     NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
@@ -234,6 +257,7 @@ document {
 document {
 	Key => {
 	     (refine, List, List), refine, 
+	     (refine,Point), (refine,PolySystem,List), (refine,PolySystem,Point),
 	     [refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
 	     [refine,ErrorTolerance], [setDefault,ErrorTolerance], 
 	     [refine, ResidualTolerance], [setDefault,ResidualTolerance],
@@ -242,8 +266,8 @@ document {
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
-	     "T" => {"contains the polynomials of the system"},
-	     "sols" => {"contains solutions (presented as lists of coordinates or ", TO2{Point,"points"}, ")"},
+	     "T" => {"contains the polynomials of the system (may be of type ", TO PolySystem, ")"},
+	     "sols" => {"contains (a) solution(s) (", TO2{Point,"points"}," or lists of coordinates or ", TO2{Point,"points"}, ")"},
 	     Iterations => {" (meaning Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
 	     Bits => {" (meaning Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
 	     ErrorTolerance => {" (meaning ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
@@ -309,7 +333,8 @@ totalDegreeStartSystem T
 document {
      Key => {Software,
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
-	 [regeneration,Software],[parameterHomotopy,Software],
+	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
+	 [numericalIrreducibleDecomposition,Software], [hypersurfaceSection,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -473,26 +498,42 @@ M = track(S,T,solsS,gamma=>0.6+0.8*ii,Software=>M2)
 	}
 								
 document {
-	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold]},
+	Key => {numericalRank, (numericalRank, Matrix), [numericalRank, Threshold],
+	    isFullNumericalRank, (isFullNumericalRank,Matrix)},
 	Headline => "numerical rank of a matrix",
-	Usage => "r = numericalRank M",
+	Usage => "r = numericalRank M\nB = isFullNumericalRank M",
 	Inputs => { 
-	     {TT "M", ", a matrix with real or complex entries"}
+	    "M"=>Matrix=>"a matrix with real or complex entries"
 	     },
-	Outputs => {{ TT "r", ", an integer"}},
-	"This function finds an approximate rank of the matrix ", TT "M", ".",
+	Outputs => {
+	    "r"=>ZZ, 
+	    "B"=>Boolean
+	    },
 	PARA {
-	     "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". ",
-	     "To establish numerical rank we look for the first large gap between two consecutive singular values. ",
-	     "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
-	     " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO Threshold,
-	     "."
-	     },
+	    TO numericalRank, " finds an approximate rank of the matrix ", TT "M", "."
+	    },
+	PARA {
+	    TO isFullNumericalRank, " = ", TT "M", " is _not_ rank-deficient."
+	    },
+	PARA {
+	    "Let ", TEX "\\sigma_1,...,\\sigma_n", " be the singular values of ", TT "M", ". "
+	    },
+	PARA {
+	    "If ", TO Threshold, " is >1, then to establish numerical rank we look 
+	    for the first large gap between two consecutive singular values. ",
+	    "The gap between ", TEX "\\sigma_i", " and ", TEX "\\sigma_{i+1}", 
+	    " is large if ", TEX "\\sigma_i/\\sigma_{i+1} > ", TO Threshold,
+	    "."
+	    },
+	PARA {
+	    "If ", TO Threshold, " is <=1, then the rank equals 
+	    the number of singular values larger then ", TO Threshold, "." 
+	    },
 	Caveat => {"We assume ", TEX "\\sigma_0=1", " above."},
         EXAMPLE lines ///
 numericalRank matrix {{2,1},{0,0.001}}
      	///,
-     	SeeAlso => {SVD}	
+     	SeeAlso => {SVD}
 	}
 
 document {
@@ -527,15 +568,23 @@ document {
 	"Note that ", TT "Ws", " are not necessarily irreducible witness sets; use ", 
 	TO (decompose, WitnessSet), " to decompose into irreducibles. ",
 	EXAMPLE lines ///
-setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
 regeneration F 
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
-cs = regeneration I_*
+regeneration {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)}
      	///,
+-- 	EXAMPLE lines /// -- nonreduced scheme
+-- setRandomSeed 7
+-- R = CC[x,y]
+-- F = {x^2+y^2-1, x*y};
+-- regeneration F 
+-- R = CC[x,y,z]
+-- sph = (x^2+y^2+z^2-1); 
+-- I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
+-- cs = regeneration I_*
+--      	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme.",
 	     "The (temporary) option ", TO Output, " can take two values: ", TO Regular, " (default) and ", TO Singular, ". 
 	     It specifies whether the algorithm attempts to keep singular points." },
@@ -549,15 +598,13 @@ document {
 	Outputs => { "Ws"=>{"contains irreducible witness sets ", TO2{WitnessSet,"witness sets"}, ", the union of which is ", TT "W"}},
      	"Monodromy driven decomposition is followed by the linear trace test. ",
 	EXAMPLE lines ///
-setRandomSeed 7
 R = CC[x,y]
 F = {x^2+y^2-1, x*y};
-W = first regeneration F 
+W = first components regeneration F 
 decompose W
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
-regeneration I_* / decompose
+decompose \ components regeneration {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)}
      	///,
 	Caveat => {"This function is under development. It can not decompose nonreduced components at the moment. 
 	     If monodromy breakup algorithm fails to classify some points, the unnclassified points appear 
@@ -566,21 +613,231 @@ regeneration I_* / decompose
 	}
 
 document {
-	Key => {(numericalVariety, Ideal)},
+	Key => {(numericalIrreducibleDecomposition, Ideal), numericalIrreducibleDecomposition},
 	Headline => "constructs a numerical variety defined by the given ideal",
-	Usage => "V = numericalVariety I",
+	Usage => "V = numericalIrreducibleDecomposition I",
 	Inputs => { "I"=>"contained in the ring of polynomials with complex coefficients" },
 	Outputs => { "V" },
-     	"The ", TO2{WitnessSet,"witness sets"}, " of ", TT "V",
+     	"The ", TO2{WitnessSet,"witness sets"}, " of the ", TO2{NumericalVariety,"numerical variety"}, TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
+setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-1)*(z-x^3)};
-setRandomSeed 7
-V = numericalVariety I 
+I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
+V = numericalIrreducibleDecomposition I 
 peek V
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
 	}
+
+
+document {
+    Key => {isOn, (isOn,Point,Ideal), (isOn,Point,NumericalVariety), 
+	(isOn,Point,RingElement), (isOn,Point,WitnessSet), (isOn,Point,WitnessSet,ZZ),
+	[isOn,Tolerance]
+	},
+    Headline => "determines if a point belongs to a variety",
+    Usage => "B = isOn(P,V)",
+    Inputs => { 
+	"P"=>Point,  
+	"V"=>{ofClass NumericalVariety, ofClass WitnessSet, ofClass Ideal, ofClass RingElement}
+	},
+    Outputs => { "B"=>Boolean },
+    "Determines whether the given point is (approximately) on the given variety, 
+    which is either represented numerically or defines by polynomials.", 
+    EXAMPLE lines ///
+R = CC[x,y]
+I = ideal((x^2+y^2+2)*x,(x^2+y^2+2)*y);
+e = 0.0000001
+W = witnessSet(ideal I_0 , ideal(x-y), {point {{ (1-e)*ii,(1-e)*ii}},point {{ -(1+e)*ii,-(1+e)*ii}}})	
+isOn(point {{sqrt 5*ii,sqrt 3}},W)
+///,
+    SeeAlso=>{Point,NumericalVariety}
+    }
+
+document {
+    Key => {newton, (newton,PolySystem,Matrix), (newton,PolySystem,Point)},
+    Headline => "Newton-Raphson method",
+    "Performs one step of the Newton-Raphson method.",
+    Caveat=>{"Works for a regular square or overdetermined system."}
+    }
+
+document {
+    Key => {(union,NumericalVariety,NumericalVariety), union},
+    Headline => "union of numerical varieties",
+    Usage => "VW=union(V,W)",
+    Inputs => { "V","W" },
+    Outputs => { "VW"=>NumericalVariety },
+    "Constructs the union of numerical varieties", 
+    Caveat => {"The rusulting numerical variety may have redundant components."},
+    SeeAlso=>{removeRedundantComponents}
+    }
+
+document {
+    Key => {(removeRedundantComponents,NumericalVariety), removeRedundantComponents, [removeRedundantComponents,Tolerance]},
+    Headline => "remove redundant components",
+    Usage => "removeRedundantComponents V",
+    Inputs => { "V"},
+--    Outputs => { "" },
+    "Removes components contained in other components of the variety. (This is done \"in place\".)", 
+    SeeAlso=>{(isSubset,WitnessSet,WitnessSet)}
+    }
+document {
+    Key => {(sample,WitnessSet), sample, [sample,Tolerance]},
+    Headline => "sample a point on a component",
+    Usage => "P = sample W",
+    Inputs => { "W" },
+    Outputs => { "P"=>Point },
+    "Gets a random point on a component represented numerically.", 
+    EXAMPLE lines ///
+R = CC[x,y,z]
+W = new WitnessSet from { Equations => ideal {x^2+y^2+z^2-1, z^2}, Slice => matrix "1,0,0,0", Points => {{{0,1,0_CC}},{{0,-1,0_CC}}}/point } 
+P := sample(W, Tolerance=>1e-15)   
+isOn(P,W)
+    ///,
+    Caveat => {"not yet working for singular components"},
+    SeeAlso=>{WitnessSet, isOn}
+    }
+
+document {
+    Key => {deflate,(deflate,Ideal),(deflate,PolySystem,List),(deflate,PolySystem,Matrix),
+	(deflate,PolySystem,Point),(deflate,PolySystem,Sequence),(deflate,PolySystem,ZZ),
+	Deflation, DeflationSequence, DeflationRandomMatrix, -- attached to a PolySystem
+	liftPointToDeflation,(liftPointToDeflation,Point,PolySystem,ZZ),
+	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
+	deflateInPlace, (deflateInPlace,Point,PolySystem), 
+	SquareUp, [deflateInPlace,SquareUp], -- whether to square up at each step
+	},
+    Headline => "first-order deflation",
+    "Deflate a polynomial system to restore quadratic convergence of Newton's method", 
+    Caveat => {"Needs more documentation!!!"},
+    SeeAlso=>{PolySystem,newton}
+    }
+
+document {
+    Key => {(isSubset,NumericalVariety,NumericalVariety), (isSubset,WitnessSet,WitnessSet)},
+    Headline => "check containment",
+    Usage => "B = isSubset(V,W)",
+    Inputs => { 
+	"V"=>{" or ", ofClass WitnessSet}, 
+	"W"=>{" or ", ofClass WitnessSet} 
+	},
+    Outputs => { "B"=>Boolean },
+    "Checks containment of one variety represented numerically in the other.", 
+    Caveat => {"Does not work for singular components."},
+    SeeAlso=>{WitnessSet,isOn}
+    }
+
+document {
+    Key => {
+	(isPointEmbedded,Point,Ideal,List), isPointEmbedded,
+	AllVisible, [isPointEmbedded,AllVisible],
+	},
+    Headline => "determine if the point is an embedded component of the scheme",
+    Usage => "B = isPointEmbedded(P,I,C)",
+    Inputs => { 
+	"P", 
+	"I",
+	"C"=>{" witness sets representing components of ", TT "Spec(I)", " containing ", TT "P"} 
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
+
+document {
+    Key => {
+	(isPointEmbeddedInCurve,Point,Ideal), isPointEmbeddedInCurve
+	},
+    Headline => "determine if the point is an embedded component of a 1-dimensional scheme",
+    Usage => "B = isPointEmbeddedInCurve(P,I)",
+    Inputs => { 
+	"P", 
+	"I"
+	},
+    Outputs => { "B"=>Boolean },
+    PARA {"Runs an embedded component test described in "},
+    refKroneLeykin,
+    SeeAlso=>{isPointEmbeddedInCurve}
+    }
+
+document {
+    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal)},
+    Headline => "colon of a (truncated) dual space",
+    Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
+    Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
+    Outputs => { "Dg, DJ"=>DualSpace },
+    "Computes (a part of) the dual space of the dual. See",
+    PARA { refKroneLeykin },
+    "for a description."
+    }
+
+document {
+    Key => {squareUp, (squareUp,PolySystem), (squareUp,PolySystem, Matrix), 
+	SquaredUpSystem, SquareUpMatrix
+	},
+    Headline => "square up a polynomial system",
+    Usage => "G = squareUp F\nG = squareUp(F,M)",
+    Inputs => { 
+	"F"=>PolySystem,
+	"M"=>Matrix=>{" the matrix used to square up the system (by default a random matrix is picked)"}  
+	},
+    Outputs => { "G"=>PolySystem },
+    "Squares up an overdetermined polynomial system. Attaches keys ", 
+    TO SquareUpMatrix, " and ", TO SquaredUpSystem,
+    " to ", TT "F", ".", 
+    EXAMPLE lines ///
+    CC[x,y]; F = polySystem {x^2+y^2,x^3+y^3,x^4+y^4}
+    G := squareUp F
+    peek F
+    ///,
+    SeeAlso=>{PolySystem}
+    }
+
+document {
+    Key => {
+	numericalIntersection, (numericalIntersection,NumericalVariety,Ideal), 
+	(numericalIntersection,NumericalVariety,NumericalVariety), (numericalIntersection,WitnessSet,WitnessSet),
+	hypersurfaceSection, (hypersurfaceSection,NumericalVariety,RingElement)
+	},
+    Headline => "intersection of numerical varieties",
+    Caveat => {"Under construction!!!"}
+    }
+
+document {
+    Key => {(isSolution,Point,PolySystem), isSolution},
+    Headline => "check if a point satisfies a polynomial system approximately",
+    Caveat => {"Either rewrite or phase out!!!"}
+    }
+
+document {
+    Key => {(parameterHomotopy,List,List,List),parameterHomotopy},
+    Headline => "solve a parametric system of equations",
+    "Solves a parameteric polynomial system for several values of parameters.", 
+    Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
+    }
+
+document {
+    Key => {(trackSegment,PolySystem,Number,Number,List), trackSegment},
+    Headline => "track the one-parametric homotopy",
+    "Tracks a homotopy on a linear segment in complex plane..",
+    Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
+    }
+
+{*-------- TEMPLATE ------------------
+document {
+    Key => {,},
+    Headline => "",
+    Usage => "",
+    Inputs => { ""=>"" },
+    Outputs => { "" },
+    "", 
+    EXAMPLE lines ///
+    ///,
+    Caveat => {"" },
+    SeeAlso=>{()}
+    }
+*}

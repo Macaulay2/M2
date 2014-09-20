@@ -360,3 +360,146 @@ J = ideal(y^3*x^4+y^2*x^5+y^6+y^5*x+y^3*x^3+y*x^5+y^5+y^3*x^2+y*x^4+x^5+y^3*x+y*
        ^9+y^5*x^3+y^2*x^6+y^6*x+y^5*x^2+y^3*x^4+y^2*x^5+y^6+x^7+y^4*x^2+y*x^5+y^5+y^4*x);
 
 radical J
+
+end
+-----------------------------------------------------------------------------
+
+update from K Schwede, who found this input produces the same problem:
+
+    R = ZZ/2[x,y,z]
+    f = x^4*y^3*z^3+1+y^5+z^5
+    I = ideal(singularLocus(ideal(f)))
+    ass I
+
+leading to this output
+
+    i4 : ass I
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    error: fatal fatal
+    fac_cantzass.cc:125: In function `CFFList distinctDegreeFactorFFGF(const CanonicalForm&, int)':
+    failed assertion `g.degree(x) == 0'
+    /bin/sh: line 1: 64252 Abort trap: 6           /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.debug/StagingArea/x86_64-MacOS-10.8/bin/M2 --no-readline --print-width 157
+
+    Process M2 exited abnormally with code 134
+
+-----------------------------------------------------------------------------
+more examples from Karl Schwede:
+
+    i4 : ZZ/2[x,y,z]
+
+	 ZZ
+    o4 = --[x, y, z]
+	  2
+
+    o4 : PolynomialRing
+
+    i5 : ass ideal singularLocus ideal (x^2*y^3*z^3+1+y^7+z^7)
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    error: fatal fatal
+    fac_cantzass.cc:125: In function `CFFList distinctDegreeFactorFFGF(const CanonicalForm&, int)':
+    failed assertion `g.degree(x) == 0'
+    /bin/sh: line 1: 74560 Abort trap: 6           /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.debug/StagingArea/x86_64-MacOS-10.8/bin/M2 --no-readline --print-width 157
+
+    Process M2 exited abnormally with code 134
+
+    + /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.debug/StagingArea/x86_64-MacOS-10.8/bin/M2 --no-readline --print-width 157
+    Macaulay2, version 1.6.0.1
+    with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+    i1 : ZZ/2[x,y,z]
+
+	 ZZ
+    o1 = --[x, y, z]
+	  2
+
+    o1 : PolynomialRing
+
+    i2 : ass ideal singularLocus ideal (x^3*y^3*z^3+1+y^6+z^6)
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+
+		     3    3                                    2                                        2                                              2      
+    o2 = {ideal (x, y  + z  + 1), ideal (z + 1, y), ideal (y, z  + z + 1), ideal (z, y + 1), ideal (z, y  + y + 1), ideal (z, y + 1, x), ideal (z, x, y  + y +
+	 --------------------------------------------------------------------------------------------------------------------------------------------------------
+						2
+	 1), ideal (z + 1, y, x), ideal (y, x, z  + z + 1)}
+
+    o2 : List
+
+    i3 : ZZ/2[x,y,z]
+
+	 ZZ
+    o3 = --[x, y, z]
+	  2
+
+    o3 : PolynomialRing
+
+    i4 : ass ideal singularLocus ideal (x^4*y^3*z^3+1+y^7+z^7)
+    --changing factory characteristic from 0 to 2
+    --changing factory characteristic back from 2 to 0
+    --changing factory characteristic from 0 to 2
+    error: fatal fatal
+    fac_cantzass.cc:125: In function `CFFList distinctDegreeFactorFFGF(const CanonicalForm&, int)':
+    failed assertion `g.degree(x) == 0'
+    /bin/sh: line 1: 74626 Abort trap: 6           /Users/dan/src/M2/M2.git/M2/BUILD/dan/builds.tmp/mac64.debug/StagingArea/x86_64-MacOS-10.8/bin/M2 --no-readline --print-width 157
+
+    Process M2 exited abnormally with code 134
+
+
+     ---
+
+    i1 : R = ZZ/3[x,y]
+
+    o1 = R
+
+    o1 : PolynomialRing
+
+    i2 : f = x^6*y^8+1+y^10
+
+	  6 8    10
+    o2 = x y  + y   + 1
+
+    o2 : R
+
+    i3 : ass ideal singularLocus ideal f
+    --changing factory characteristic from 0 to 3
+    --changing factory characteristic back from 3 to 0
+    --changing factory characteristic from 0 to 3
+    Assertion failed: (algebraicElement_M2 != NULL), function convertToM2, file /Users/dan/src/M2/M2.git/M2/BUILD/dan/../../Macaulay2/e/x-factor.cpp, line 186.
+
+
+    + M2 --no-readline --print-width 144
+    Macaulay2, version 1.6
+    with packages: ConwayPolynomials, Elimination, IntegralClosure, LLLBases, PrimaryDecomposition, ReesAlgebra, TangentCone
+
+	i1 : R = ZZ/3[x,y]
+
+	o1 = R
+
+	o1 : PolynomialRing
+
+	i2 : f = x^6*y^8+1+y^10
+
+	      6 8    10
+	o2 = x y  + y   + 1
+
+	o2 : R
+
+	i3 : ass ideal singularLocus ideal f
+	-- SIGSEGV
+	-- stack trace, pid 17779:
+	level 0 -- return addr: 0x10dd0a48f -- frame: 0x1144e9190
+	level 1 -- return addr: 0x00000000 -- frame: 0x1144e91b0
+	-- end stack trace
+
+	Process M2 exited abnormally with code 1
