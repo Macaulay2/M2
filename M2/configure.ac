@@ -798,12 +798,14 @@ BUILD_lrslib=no
 BUILD_cddplus=no
 
 BUILD_mpir=yes
+BUILD_ALWAYS="mpir $BUILD_ALWAYS"
 # We always build mpir so we can patch the routine mp_set_memory_functions() in it so
 # it does nothing; that prevents libraries such as pari from telling it what memory
 # allocation functions to use.  But we should instead patch pari, so we can use the
 # gmp library that comes with many linux distributions.
 
 BUILD_mpfr=yes
+BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 # We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
 # memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
@@ -1030,8 +1032,9 @@ if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
      then AC_MSG_CHECKING(for frobby library)
 	  AC_LANG(C++)
+	  # We can't use AC_SEARCH_LIBS, because the C++ routine names in frobby are mangled
           SAVELIBS=$LIBS
-	  LIBS="-lfrobby $LIBS"
+	  LIBS="-lfrobby -lgmpxx -lgmp $LIBS"
 	  AC_LINK_IFELSE([AC_LANG_SOURCE([
 	  	#include <frobby.h>
 		int main () {
@@ -1166,7 +1169,7 @@ if test $BUILD_flint = no
 then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
      if test $BUILD_flint = no
-     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
+     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes,-lmpfr -lgmp)
      fi
      if test $BUILD_flint = no
      then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
