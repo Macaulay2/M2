@@ -777,6 +777,7 @@ AC_SUBST(BUILTLIBS,)
 #    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
+#    mathicgb needs mathic, and they both need memtailor
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
 
@@ -841,37 +842,6 @@ AC_ARG_ENABLE(fflas-ffpack,
     )
 
 BUILD_gtest=yes
-
-AC_SUBST(ENABLE_MEMTAILOR,no)
-AC_ARG_ENABLE(memtailor,
-    [AS_HELP_STRING(--enable-memtailor,enable building the memtailor library and linking with it)],
-    AC_DEFINE(HAVE_MEMTAILOR,1,[whether we are linking with the memtailor library])
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
-AC_SUBST(ENABLE_MATHIC,no)
-AC_ARG_ENABLE(mathic,
-    [AS_HELP_STRING(--enable-mathic,enable building the mathic library and linking with it)],
-    AC_DEFINE(HAVE_MATHIC,1,[whether we are linking with the mathic library])
-    BUILD_mathic=yes
-    ENABLE_MATHIC=yes
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
-AC_SUBST(ENABLE_MATHICGB,no)
-AC_ARG_ENABLE(mathicgb,
-    [AS_HELP_STRING(--enable-mathicgb,enable building the mathicgb library and linking with it)],
-    AC_DEFINE(HAVE_MATHICGB,1,[whether we are linking with the mathicgb library])
-    BUILD_mathicgb=yes
-    ENABLE_MATHICGB=yes
-    BUILD_mathic=yes
-    ENABLE_MATHIC=yes
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
 
 PROGLIST=" $PROGLIST "
 AC_ARG_WITH(unbuilt-programs, 
@@ -1062,6 +1032,8 @@ if test $BUILD_boost = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
 fi
+
+
 
 if test $BUILD_cddlib = no
 then AC_LANG(C)
@@ -1373,17 +1345,13 @@ then # test whether the fortran compiler can handle lapack, which, starting with
 	AC_MSG_RESULT(yes))
 fi
 
-if test $BUILD_memtailor = yes
-then BUILTLIBS="-lmemtailor $BUILTLIBS"
-fi
-
-if test $BUILD_mathic = yes
-then BUILTLIBS="-lmathic $BUILTLIBS"
-fi
-
-if test $BUILD_mathicgb = yes
-then BUILTLIBS="-lmathicgb $BUILTLIBS"
-fi
+AC_LANG(C++)
+    SAVE_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="$CXXFLAGS -std=c++0x"
+	AC_CHECK_HEADER(memtailor.h,LIBS="-lmemtailor $LIBS",BUILD_memtailor=yes; BUILTLIBS="-lmemtailor $BUILTLIBS")
+	AC_CHECK_HEADER(mathic.h,LIBS="-lmathic $LIBS",BUILD_mathic=yes; BUILTLIBS="-lmathic $BUILTLIBS")
+	AC_CHECK_HEADER(mathicgb.h,LIBS="-lmathicgb $LIBS",BUILD_mathicgb=yes; BUILTLIBS="-lmathicgb $BUILTLIBS")
+    CXXFLAGS=$SAVE_CXXFLAGS
 
 test "$USE_FCLIBS" = no && FCLIBS=
 test "$FORTRANUSED" = no && FCLIBS=

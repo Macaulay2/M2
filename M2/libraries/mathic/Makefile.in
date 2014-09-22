@@ -1,3 +1,4 @@
+HOMEPAGE = https://github.com/broune/mathic
 VPATH = @srcdir@
 VERSION = 20140613-66b5d74f84
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode

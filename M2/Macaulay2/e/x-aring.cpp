@@ -16,11 +16,9 @@
 
 #include "polyring.hpp"
 
-#ifdef HAVE_MEMTAILOR
 #include "memtailor.h"
 #include "mathic.h"
 memt::BufferPool testBuffer(16);
-#endif
 
 const QQ* globalQQ;
 

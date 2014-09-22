@@ -959,7 +959,6 @@ M2_string engineMemory()
      }
 }
 
-#if defined(HAVE_MATHICGB)
 #include "mathicgb.h"
 #include "matrix-stream.hpp"
 void rawDisplayMatrixStream(const Matrix *inputMatrix)
@@ -1017,7 +1016,6 @@ private:
   size_t mCallCount;
   bool mInterrupted;
 };
-#endif
 
 // The following (in x-monoid.cpp) needs to be put into a header file.
 extern bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
@@ -1034,7 +1032,6 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
                       int nthreads,
                       M2_string logging)
 {
-#if defined(HAVE_MATHICGB)
   try {
 
     const Ring *R = inputMatrix->get_ring();
@@ -1136,9 +1133,6 @@ const Matrix * rawMGB(const Matrix *inputMatrix,
     ERROR(e.what());
     return NULL;
   }
-#endif
-    ERROR("M2 not confiugred to compute using mathicgb, use --enable-mathicgb when configuring Macaulay2");
-    return 0;
 }
 
 // Local Variables:
