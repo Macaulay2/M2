@@ -1709,26 +1709,28 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 ---------------------------
 -- solveInternalProblem
 ---------------------------
--- Function that solve a Schubert Problem
--- with respect to controled flags
--- not the flags defined by the user
+-- Function that solves a given Schubert Problem given by a list of partitions takes
+--  input data for the Grassmannian, two partitions, and m-2 other partitions together
+--  with m-2 corresponding flags, given by matrices.  Assumed to be in general position.
+-- The output consists of a list S of solutions to the same Schubert problem 
+--
 --------------------------
 -- Input:
 --    kn -- sequence with the numbers k,n for Gr(k,n)
 --    l1,l2, -- two partitions
 --    remaining'conditions'flags'transf -- list a list with the rest of the data
---    	      each consisting of a sequence (li,Fi,Ti)
+--    	      each consisting of a triple (li,Fi,Ti)
 --    	      where li is a partition
 --    	      Fi is a flag
---    	      Ti is an upper triangular matrix such that Fi*T3..*Ti=FlagM
---    	      	      	  where FlagM is the moving flag
+--    	 X     Ti is an upper triangular matrix such that Fi*T3..*Ti=FlagM
+--    	 X     	      	  where FlagM is the moving flag
 --
 -- Output:
 --    S -- List of solutions to the problem
---    Fs -- list of flags (F_2, F_3,..., F_m) 
---                   S are solns wrt (Id, F_2,... ,F_m)
---    Ts -- list of transformations
---    	  T_i was used to produce F_i.
+--    Fs -- list of flags (F'_2, F'_3,..., F'_m) 
+--                   S are solutions to the Schubert problem wrt (Id, F'_2,... ,F'_m)
+--    Ts -- list of transformations (T_2,...,T_m)
+--    	  T_i is used to produce F'_i in that F'_i = .
 --------------------------
 solveInternalProblem=method(TypicalValue=>List)
 solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'flags'transf) ->(
@@ -1737,19 +1739,19 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
     l2=verifyLength(l2,k);
     ------------------
     -- The intersection of Schubert varieties given by l1 and l2 is empty
-    -- unless CheckPoincareDual is a nonnegative list
-    checkPoincareDual := (l1+reverse l2)/(i->n-k-i);
-    if min(checkPoincareDual) >=0 then(
-	MM := MovingFlag'at'Root n;
-	Minv := solve(MM,id_(FFF^n));
+    -- if partitionOverlap not nonnegative
+    -- if partitionOverlap is 0 then the partitions are dual (thus, there is
+    -- one solution)
+    partitionOverlap := (l1+reverse l2)/(i->n-k-i);
+    if min(partitionOverlap) >=0 then(
 	<<endl<<"###########"<<endl;
 	<<"We play the game "<< toString(l1)<<" vs "<<toString(l2)<<endl;
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag,remaining'conditions'flags'transf);
 	<<"and this is the output of resolveNode at the the root of that tree:"<< toString(l1)<<" vs "<<toString(l2)<<endl;
-	<<"This is the poincare check "<<checkPoincareDual<<endl;
+	<<"This is the poincare check "<<partitionOverlap<<endl;
 	<<newDag.Solutions<<endl<<"#############"<<endl;
-	if max(checkPoincareDual)==0  then(
+	if max(partitionOverlap)==0  then(
 	    --MM*newDag.Solutions
 	    newDag.Solutions
 	--    redChkrs := redChkrPos(partition2bracket(l1,k,n),partition2bracket(l2,k,n),k,n);
@@ -1762,6 +1764,8 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
 	--     	{rsort id_(FFF^n)},--return the flags
 	--     	{id_(FFF^n)}}
 	    )else(
+	    MM := MovingFlag'at'Root n;
+	    Minv := solve(MM,id_(FFF^n));
     	    --newDag := playCheckers(l1,l2,k,n);
 	    --resolveNode(newDag,remaining'conditions'flags'transf);
 	    print("tests Incidence");
