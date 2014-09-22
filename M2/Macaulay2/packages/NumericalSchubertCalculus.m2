@@ -1,19 +1,19 @@
 newPackage(
         "NumericalSchubertCalculus",
-        Version => "0.3",
+        Version => "0.3", 
         Date => "October 29, 2009",
-        Authors => {{Name => "Anton Leykin",
-                  Email => "leykin@math.gatech.edu",
+        Authors => {{Name => "Anton Leykin", 
+                  Email => "leykin@math.gatech.edu", 
                   HomePage => "http://people.math.gatech.edu/~aleykin3"},
-	          {Name => "Abraham Martin del Campo",
-                  Email => "asanchez@math.tamu.edu",
+	          {Name => "Abraham Martin del Campo", 
+                  Email => "asanchez@math.tamu.edu", 
                   HomePage => "www.math.tamu.edu/~asanchez"}},
         Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
 	PackageImports => {"NumericalAlgebraicGeometry"},
         DebuggingMode => true
         )
 
-export {
+export {   
    StartSolutions,
    skewSchubertVariety,
    createRandomFlagsForSimpleSchubert,
@@ -108,7 +108,7 @@ NEWTON'TOLERANCE := 10^-10
 -- 0 = no debug mode
 -- 1 = timing main processes
 -- 2 = verify solutions against blackbox solver (no timing)
--- 3 = time processes and blackbox solver
+-- 3 = time processes and blackbox solver 
 -- 4 = new experimental stuff kicks in
 DEBUG'LEVEL = 1
 
@@ -121,7 +121,7 @@ solutionsHash := new MutableHashTable;
 -- makes sure a partition l
 -- that is supposed to impose
 -- conditions on Gr(k,n)
--- is in fact a partition
+-- is in fact a partition 
 -- of length k (add 0s if not)
 --
 verifyLength = method(TypicalValue => List)
@@ -170,7 +170,7 @@ output2bracket = method(TypicalValue=>List)
 output2bracket List := outp -> (
      br := select(outp, x-> x!=NC);
      apply(br, x-> x=x+1)
-)
+) 
 
 -- the next function is not completely right:
 -- it gives two partitions but only one is correct
@@ -179,7 +179,7 @@ output2bracket List := outp -> (
 ----         that redchecker board
 redcheckers2partitions= method(TypicalValue=>List)
 redcheckers2partitions List := redchckrs ->(
-     br := sort select(redchckrs, x-> x!=NC);
+     br := sort select(redchckrs, x-> x!=NC);     
      part1:=apply(#br, i-> br#i-i);
      br2:=select(#redchckrs, i-> redchckrs#i != NC);
      part2 := apply(#br2, i-> br2#i-i);
@@ -190,7 +190,7 @@ redcheckers2partitions List := redchckrs ->(
 bracket2partition = method(TypicalValue => List)
 bracket2partition(List,ZZ) := (l, n) -> (
 --     l = reverse sort l;
-     partitn := for i to #l-1 list (n-#l)+(i+1)-l#i
+     partitn := for i to #l-1 list (n-#l)+(i+1)-l#i 
 )
 
 --------------------------------
@@ -215,20 +215,20 @@ skewSchubertVariety(Sequence,List,List) := (kn,l,m)->(
      	  for i from 1 to k list (
                for j from 1 to n list (
                	    if j==i+l_(k-i) then 1
-		    else if j>i+l_(k-i) and j<=(n-k+i-m_(i-1)) then (
-		     	          r=r+1;
-		     	          R_(r-1)
+		    else if j>i+l_(k-i) and j<=(n-k+i-m_(i-1)) then ( 
+		     	          r=r+1; 
+		     	          R_(r-1) 
 		     	         )
             	    else 0
-         	     )
+         	     ) 
       	       )
       	  )
      )
 
 ---------------------
--- Generate partitions for
--- Children problems of a
--- partition 'm'
+-- Generate partitions for 
+-- Children problems of a 
+-- partition 'm' 
 ---------------------
 generateChildren = method(TypicalValue=>List)
 generateChildren(Sequence, List, List) := (kn, l, m) -> (
@@ -245,7 +245,7 @@ positionVariableChildren = method(TypicalValue=>ZZ)
 positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
    -- kn is a sequence (k,n)
    -- l, m are partitions
-   -- v is a children partition of m
+   -- v is a children partition of m 
    (k,n) := kn;
    i := maxPosition(v-m);
    t := apply(i+1, j->plus(n-k-m_(j)-l_(k-j-1)));
@@ -257,7 +257,7 @@ positionVariableChildren(Sequence,List,List,List):=(kn,l,m,v)->(
 --
 -- creates a special matrix G_\mu
 -- and attach it to E_{\mu\lambda}
------------------------
+----------------------- 
 precookPieriHomotopy = method(TypicalValue=>List)
 precookPieriHomotopy(Sequence,List,List) := (kn,l,m)->(
      -- k and n are the integers defining the Grassmanian G(k,n)
@@ -295,7 +295,7 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
    apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
    )
 
-
+     
 solveSimpleSchubert = method(TypicalValue=>List)
 solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
    -- l and m are partitions of n
@@ -315,9 +315,9 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
    else(
       -- generate the children problems
       L:=generateChildren(kn, l,m);
-
+      
       -- once the children problems are solved
-      -- store solutions in "start"
+      -- store solutions in "start" 
       start := flatten(apply(L, p->(
          C := solveSimpleSchubert(kn,l,p,G);
          i := positionVariableChildren((k,n),l,m,p);
@@ -327,7 +327,7 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       ---- Create the start system S  ----
       S := apply(take(G,d-1), g->det( matrix E || sub(g, ring E),Strategy=>Cofactor)) | {det(precookPieriHomotopy(kn,l,m), Strategy=>Cofactor)};
       ---- Create the target system T ----
-      T := apply(take(G,d), g->det( matrix E || sub(g, ring E), Strategy=>Cofactor));
+      T := apply(take(G,d), g->det( matrix E || sub(g, ring E), Strategy=>Cofactor)); 
       newR := FFF(monoid[gens ring first S]);
       S = S/(s->sub(s,newR));
       T = T/(t->sub(t,newR));
@@ -364,11 +364,11 @@ solveEasy(RingElement) := (p)->(
 --- trackSimpleSchubert
 --------------------------------------
 ---
---- A function to find solution from a specific instance
---- of a Schubert problem using homotopy
+--- A function to find solution from a specific instance 
+--- of a Schubert problem using homotopy 
 --- continuation starting from solving
 --- another instance (hopefully easier) of
---- the Schubert problem, but with respect
+--- the Schubert problem, but with respect 
 --- to a different flag
 --------------------------------------
 
@@ -384,7 +384,7 @@ trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
    Start:=apply(G, g->det( matrix E || sub(g, ring E),Strategy=>Cofactor));
    Target:=apply(F,f->det( matrix E || sub(f, ring E),Strategy=>Cofactor));
    Ret:=track(Start,Target,Sols,gamma=>exp(2*pi*ii*random RR)) / coordinates;
-   if o.Memoize then solutionsHash#{l,m,F} = Ret;
+   if o.Memoize then solutionsHash#{l,m,F} = Ret;  
    return Ret;
 )
 
@@ -397,7 +397,7 @@ trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
 --			entered as brackets
 --		  the Grassmannian G(k,n)
 --
--- Output: checkboard coordinates for the
+-- Output: checkboard coordinates for the 
 --         red checkers
 ---------------------
 -- example: for {2,1}*{2} in G(3,6)
@@ -418,9 +418,9 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
      toList redPos
 )
 ------- TEST -----
--- first, given the partitions
+-- first, given the partitions 
 -- {2,1}*{2} in G(3,6)
--- we test if the positions of the
+-- we test if the positions of the 
 -- redcheckers is {NC,5,NC,4,NC,1}
 ------------------
 -- partition2bracket({2,1},3,6)
@@ -440,7 +440,7 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
 --       redpos - Updated list (of lists) of red checker positions
 --       typeofmove - {row,column,split}
 --                    a tuple which tells the type of the move we had to perform from
---                    the 3x3 table of moves. This is given as a
+--                    the 3x3 table of moves. This is given as a 
 --                    tuple {row,column,split} where split says
 --                    if you moved or not the red checkers
 --                    (by 0 and 1 respectively) when there was a split
@@ -455,7 +455,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     split:=0;
     critrow := 0;
     critdiag := 0;
-    g:=2; -- These are two flags to indicate in which situation we are
+    g:=2; -- These are two flags to indicate in which situation we are 
     r:=2;
     indx := new List;
     redpos := new MutableList from redposition;
@@ -465,8 +465,8 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 	    if redpos#j === blackdown#1 then (
 	       	critrow = j;
 	       	if j == blackdown#0 then g=0 else g=1;
-	  	)
-     	    ));
+	  	) 	
+     	    ));    
     -- find the "critical diagonal"
     indx= for i to blackdown#0-1 list i;
     indx = reverse indx;
@@ -530,12 +530,12 @@ moveCheckers Array := blackred -> (
      copies:=0;
      -- determine the columns of the descending and ascending black checkers
      -- blackdown1 is the column to the right of the column of the lowest black checker
-	 -- blackup1 is the column of the checker that is one row lower than the checker
-	 --        in blackdown1
+	 -- blackup1 is the column of the checker that is one row lower than the checker 
+	 --        in blackdown1 
      blackdown1 := position(blackposition, x->x == n-1) + 1;
      if blackdown1 == n then return ({},"leaf");
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
-     -- The column of the right black checker to be sorted goes from desccol
+     -- The column of the right black checker to be sorted goes from desccol 
      -- to the end of the board.
      -- Determine the rows of the next pair of black checkers to be sorted.
 	 blackup2 := n-blackdown1+blackup1;
@@ -545,10 +545,10 @@ moveCheckers Array := blackred -> (
 	 blackposition#blackup1 = blackposition#blackup1 - 1;
 	 blackposition#blackdown1 = blackposition#blackdown1 + 1;
 	 (
-	      apply(listofredpositions, r-> [toList blackposition,
+	      apply(listofredpositions, r-> [toList blackposition, 
 		   	first r, -- new redposition
 		   	last r -- new type of move
-		   	]),
+		   	]), 
 	      blackdown2 --return also the critical row
 	      )
 )
@@ -580,10 +580,10 @@ moveCheckers Array := blackred -> (
 playCheckers = method(TypicalValue => MutableHashTable)
 playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      all'nodes := new MutableHashTable;
-     redChkrs :=
+     redChkrs := 
       if partn1 > partn2 then
      	  redChkrPos(partition2bracket(partn2,k,n),partition2bracket(partn1,k,n),k,n)
-      else
+      else 
           redChkrPos(partition2bracket(partn1,k,n),partition2bracket(partn2,k,n),k,n)
      ;
      blackChkrs := reverse toList (0..(n-1)); --initial black positions
@@ -594,7 +594,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
      -- ////////////////////////////
      --if select(#redChkrs, i-> (redChkrs)_i < #redChkrs - i -1)!={} then(
 	--  self := new MutableHashTable from{
-	--  Board => [blackChkrs, redChkrs],
+	--  Board => [blackChkrs, redChkrs], 
 	--  Fathers => {},
 	--  Children => {},
 	--  Solutions => {},
@@ -614,8 +614,8 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
 ------------------------
 -- PlayCheckers will also play the next checkerboard game
 -- in the Tournament.
--- Input:
---       board
+-- Input: 
+--       board 
 --       father (the checkergame this game came from)
 --       typeofmove?
 --       all'nodes - the list of games played already
@@ -631,10 +631,10 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
     -- Abr started the documentation of this function on Feb 6, 2013
     --------------------------------------------
      node'exists := all'nodes#?board; -- check if we already played this game
-     self := if node'exists
+     self := if node'exists  
      then all'nodes#board  -- if so, then glue solutions, otherwise, start a new hashtable
      else new MutableHashTable from {
-	  Board => board,
+	  Board => board, 
 	  IsResolved => false,
 	  Fathers => {}
 	  };
@@ -642,7 +642,7 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
      if not node'exists then ( --add the ultimate node part here...
 --<< "this is node'exists "<< node'exists<<endl;
 	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
-     	 if numgens ring coordX > 0 then (
+     	 if numgens ring coordX > 0 then ( 
      	     (children,c) := moveCheckers board;
      	     self.CriticalRow = c;
      	     self.Children = apply(children, b -> playCheckers (take(b,2),self,last b,all'nodes));
@@ -680,7 +680,7 @@ printTree MutableHashTable := node ->(
 -----------------
 --- makeLocalCoordinates
 --
--- This procedure will translate a checker
+-- This procedure will translate a checker 
 -- board configuration into a matrix with
 -- 0's, 1's and variables
 -----------------
@@ -728,9 +728,9 @@ makeLocalCoordinates Array := blackred ->(
 -- into a generalized flag for the parent
 ------------------
 resolveNode = method()
-resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags'transf) ->
+resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags'transf) ->  
 -- changed here 08.22.13
---resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->
+--resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->  
 if not node.IsResolved then (
    n := #node.Board#0;
    coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
@@ -748,10 +748,10 @@ if not node.IsResolved then (
    else ( -- coordX has variables
      black := first node.Board;
      remaining'conditions'and'flags:= apply(remaining'conditions'flags'transf, C->toSequence(drop(C,-1)));
-
+          
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n) --change here
      else scan(node.Children, c->resolveNode(c,remaining'conditions'flags'transf));
-
+     
      if DEBUG'LEVEL >= 2 then (
  	 -- temporary: creates a superset of solutions via a blackbox solver
 	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
@@ -771,15 +771,15 @@ if not node.IsResolved then (
 		 --// After finish with the timing, remove the previous part and the next line
 		 --// and uncomment the following line (deleting the line after that)
 		 Soluciones,
-		 --time solveSystem flatten entries polynomials,
-		 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE *
-		 norm matrix s *
+		 --time solveSystem flatten entries polynomials, 
+		 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
+		 norm matrix s * 
 		 norm sub(last coefficients gens all'polynomials,FFF)
-		 ),
+		 ), 
 	     ss-> (map(FFF,ring coordX,matrix ss)) coordX
 	     );
 	 ); -- close if DEBUG'LEVEL>= 2 HERE
-     if node.Children == {} then (
+     if node.Children == {} then ( 
 	 lambda := output2partition(last node.Board);
 	 ------------------------
 	 ---------------------------
@@ -826,9 +826,9 @@ if not node.IsResolved then (
 		-- June 15,2014
 		-- solved? in Sept. 19, 2014
 		node.Solutions = apply(S,s->(
-			columnReduce(S3*Minv*s,brack)
+			clean(ERROR'TOLERANCE, columnReduce(S3*Minv*s,brack))
 			    ));
-		    1/0;
+		    --1/0;
 	        --node.Solutions = apply(S, s->clean(ERROR'TOLERANCE,S3*Minv*s));
 	     	--node.Solutions = apply(first S,s->columnReduce(S3*MM*s,lambda,n));
 		--------------------------------------------------------------------
@@ -842,16 +842,16 @@ if not node.IsResolved then (
 	     --1/0;
 	     ---------------------------
 	     node.IsResolved = true;
-	     -- assert(???); --verify that the solutions fit the localization pattern
-	     )else(
+	     -- assert(???); --verify that the solutions fit the localization pattern 
+	     )else(   
 	     << "-- partition is not valid: " << lambda << endl;
-	     node.Solutions = {};
+	     node.Solutions = {}; 
 	     );
 	 --) -- closes if DEBUG'LEVEL == 4
-	 --else node.Solutions = node.SolutionsSuperset; -- should change!!!
-	 );
+	 --else node.Solutions = node.SolutionsSuperset; -- should change!!! 
+	 ); 
      scan(node.Fathers, father'movetype->(
-     	  (father,movetype) := father'movetype;
+     	  (father,movetype) := father'movetype; 
      	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
      	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
      	       tparents1:=cpuTime();
@@ -860,13 +860,13 @@ if not node.IsResolved then (
 	       << "starting with this solution "<< node.Solutions<<endl<<endl;
      	       );
      	  r := father.CriticalRow; -- critical row: rows r and r+1 are the most important ones
-          red := last father.Board;
+          red := last father.Board;     
      	  red'sorted := sort delete(NC, red);
 	  M := node.FlagM;
 	  M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
-	  if not father.?FlagM then father.FlagM = M''
+	  if not father.?FlagM then father.FlagM = M'' 
 	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
-
+	  
 	  --if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
 	  if node.Solutions == {} then {} -- means: not implemented
@@ -878,14 +878,14 @@ if not node.IsResolved then (
 			 else X''
 	       	    	 ))
 	       )
-	  else ( -- cases STAY and SWAP require homotopy
+	  else ( -- cases STAY and SWAP require homotopy 
 	       R := ring coordX;
 	       t := symbol t;
 	       Rt := (coefficientRing R)[t,gens R]; -- homotopy ring
 	       mapRtoRt := map(Rt,R,drop(gens Rt,1));
-	       Xt := mapRtoRt coordX; --  "homotopy" X
+	       Xt := mapRtoRt coordX; --  "homotopy" X 
 	       local M'X'; -- homotopy in global coordinates (produced by each case)
-
+	       
 	       -- these are used only in SWAP cases
 	       s := position(red'sorted, i->i==r); -- number of the first moving red checker
 	       VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
@@ -895,31 +895,31 @@ if not node.IsResolved then (
 		    scan(#red'sorted, j-> VwrtM = VwrtM |
 		    	 if isRedCheckerInRegionE(
 			      position(red,i->i==red'sorted#j), -- column of the j-th red checker on the board
-			      father)
+			      father) 
 			 then (
-		    	      --submatrix(Xt,{0..r-1},{j})
+		    	      --submatrix(Xt,{0..r-1},{j}) 
 		    	      --|| submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
-		    	      submatrix(Xt,{0..r},{j})
+		    	      submatrix(Xt,{0..r},{j}) 
 		    	      || matrix{{0_FFF}}
 		    	      || submatrix(Xt, {r+2..n-1}, {j})
 			      ) else (
-		    	      submatrix(Xt,{0..r},{j})
+		    	      submatrix(Xt,{0..r},{j}) 
 		    	      || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-		    	      || submatrix(Xt, {r+2..n-1}, {j})
+		    	      || submatrix(Xt, {r+2..n-1}, {j})	    
 			      )
 		    	 );
 	       	    M'X' = promote(M,Rt) * VwrtM;
-		    )
-	       else if member(movetype,{{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then (-- case SWAP(middle row)
+		    ) 
+	       else if member(movetype,{{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then (-- case SWAP(middle row)		    
 	       	    bigR := red'sorted#(s+1); -- row of the second moving red checker
 		    rightmost'col'B := position(black, j->j==r);
 		    leftmost'col'A := position(black, j->j==r+1)+1;
-
+ 		    
 		    -- check if the black checker in the i'th row is in region A
-		    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
+		    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;	     
 		    -- check if the black checker in the i'th row is in region B
 		    isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
-
+		    	       	    
 		    -- V(t) = M'(t) X'(t) .......... we write everything in terms of M
 		    scan(#red'sorted, j-> VwrtM = VwrtM |
 		    	 if j == s then ( -- note: this part can be optimized for speed
@@ -942,22 +942,22 @@ if not node.IsResolved then (
 			 else if isRedCheckerInRegionE(
 			      position(red,i->i==red'sorted#j), -- column of the j-th red checker on the board
 			      father
-			      )
+			      ) 
 			 then (
-		    	      submatrix(Xt,{0..r-1},{j})
+		    	      submatrix(Xt,{0..r-1},{j}) 
 		    	      || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
 		    	      || matrix{{0_FFF}}
 		    	      || submatrix(Xt, {r+2..n-1}, {j})
 			      ) else (
-		    	      submatrix(Xt,{0..r},{j})
+		    	      submatrix(Xt,{0..r},{j}) 
 		    	      || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-		    	      || submatrix(Xt, {r+2..n-1}, {j})
+		    	      || submatrix(Xt, {r+2..n-1}, {j})	    
 			      )
 		    	 );
 	       	    M'X' = promote(M,Rt) * VwrtM;
 		    )
 	       -- implementing this case separately gives lower degree polynomials
-	       --else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)
+	       --else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
 	       --    )
 	       else error "an unaccounted case";
 
@@ -967,16 +967,16 @@ if not node.IsResolved then (
 		    timemakePolys2 := cpuTime();
 		    << "-- time to make equations:  "<< (timemakePolys2-timemakePolys1)<<endl;
 		    );
-
+    
 	       polys := squareUpPolynomials(numgens R, all'polys);
 	       startSolutions := apply(node.Solutions, X->toRawSolutions(coordX,X));
-
+	       
 	       -- track homotopy and plug in the solution together with t=1 into Xt
-	       scan(startSolutions,
-		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE *
-			 norm matrix{s} *
+	       scan(startSolutions,  
+		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
+			 norm matrix{s} * 
 			 norm sub(last coefficients polys,FFF)));
-	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
 	       	    t1:= cpuTime();
 		    );
 	       targetSolutions := trackHomotopy(polys,startSolutions);
@@ -984,7 +984,7 @@ if not node.IsResolved then (
 	       	    t2:= cpuTime();
 	       	    << node.Board << " -- trackHomotopy time: " << (t2-t1) << endl;
 	       	    );
-	       apply(targetSolutions, sln->(
+	       apply(targetSolutions, sln->( 
 		    M''X'' := (map(FFF,Rt,matrix{{1}}|matrix sln)) M'X';
 		    X'' := inverse M'' * M''X'';
 		    if not member(movetype,{ {2,0,0},{2,1,0},{1,1,0} }) -- SWAP CASE
@@ -992,7 +992,7 @@ if not node.IsResolved then (
      			 k := numgens source X'';
 			 X'' = X''_{0..s}| X''_{s}+X''_{s+1}| X''_{s+2..k-1}; -- we substitute the s+1 column for the vector w_{s+1}
 		    	 redCheckersColumnReduce2(normalizeColumn(X'',r,s),father)
-			 )
+			 ) 
 		    else --redCheckersColumnReduce2(
 		    normalizeColumn(X'',r,s)
 		    --,father) -- !!!
@@ -1003,7 +1003,7 @@ if not node.IsResolved then (
 	       -- verify solutions
 	       parentX := makeLocalCoordinates father.Board;
 	       parentXlist := flatten entries parentX;
-	       scan(parent'solutions, X'''->(
+	       scan(parent'solutions, X'''->( 
 			 -- check that solutions fit the parent's pattern
 		    	 a := flatten entries X''';
 		    	 scan(#a, i->assert(
@@ -1013,9 +1013,9 @@ if not node.IsResolved then (
 			      	   ));
 		    	 ));
 	       );
-	  if not father.?Solutions then father.Solutions = {};
+	  if not father.?Solutions then father.Solutions = {};  
 	  father.Solutions = father.Solutions | parent'solutions;
-
+     	  
 	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
      	       tparents2:=cpuTime();
      	       << "time of computing one edge: "<< (tparents2 - tparents1) << endl;
@@ -1024,7 +1024,7 @@ if not node.IsResolved then (
      if DEBUG'LEVEL >= 2 then(
      	  -- check against the blackbox solutions
      	  scan(node.Solutions, X->
-	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null));
+	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
      	  );
      ); -- END coordX has variables
      node.IsResolved = true;
@@ -1040,7 +1040,7 @@ if not node.IsResolved then (
 ----------------
 -- Function that solves a Schubert problem
 -- by first taking two of the conditions,
--- then create a tree (with nodes) by playing a
+-- then create a tree (with nodes) by playing a 
 -- checker game, then resolve the node numerically
 -- using homotopies, and gluing the solutions to each
 -- node
@@ -1062,10 +1062,10 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     l2:=verifyLength(first last twoconds,k);
     F1:=promote(last first twoconds,FFF);
     F2:=promote(last last twoconds,FFF);
-
+    
     Slns:={};
     checkOrthogonal := l1+reverse l2;
-    if sum(checkOrthogonal) == k*(n-k) and #(unique checkOrthogonal)>1 then
+    if sum(checkOrthogonal) == k*(n-k) and #(unique checkOrthogonal)>1 then 
        Slns
     else(
 	newDag := playCheckers(l1,l2,k,n);
@@ -1079,7 +1079,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- and we obtain a solution of the Sch. problem
 	-- {l1,...,lm} with respect to
 	-- {FlagM, Id, F3,...,Fm}
-	--
+	-- 
 	-- we need to make a change of flags
 	-- to send (FlagM,Id)-->(Id,F2)
 	-------------------------------
@@ -1095,7 +1095,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	--          A*Id = F2*T2 (representing the same flag as F2)
 	GL := first Transf;
 	T1:=Transf#1; --T1 is not used (20.aug.2013)
-	Flags1 := {id_(FFF^n),F2};
+	Flags1 := {id_(FFF^n),F2}; 
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'and'flags, c-> (
 		conds = append(conds, first c);
@@ -1114,11 +1114,11 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- the solutions obtained are ALMOST with respect to the local chart
 	-- corresponding to the Schubert Variety (FlagM, Id)... but we need
 	-- to clear the entries that are below the pivots first...
-
+		
 	-- doing cleanSolutions := apply(GL*newDag.FlagM*newDag.Solutions, s->clean(ERROR'TOLERANCE^2, s));
 	-- is not the right way to clean...need to clean zeroes below the pivots only, this is
 	-- just a hack
-
+	
 	----------------------------
 	-- IMPORTANT!
 	-----------------------------
@@ -1158,7 +1158,7 @@ changeCoordsSolutions Matrix := MX ->(
     s := transpose matrix apply(zeroes, i->(
 	    cl:=for j from 0 to i list 1;
 	    cl2:=for j from i to n-1 list 0;
-	    cl|drop(cl2,1)
+	    cl|drop(cl2,1)	    
 	    ));
     f:=flatten entries(matrix G*sub(s,R)-sub(MX,R));
     nk := n*k;
@@ -1175,12 +1175,12 @@ changeCoordsSolutions Matrix := MX ->(
 -- created a linear homotopy
 -- from one set of flags to another
 -- by changing column by column
--- for each of the flags
+-- for each of the flags 
 --
 -- Later, we can speed up a little
 -- by just creating the homotopy
 -- between the flags, by changing
--- only the relevant parts of the
+-- only the relevant parts of the 
 -- flag...
 --------------------------
 ---------------------------------
@@ -1192,10 +1192,10 @@ changeCoordsSolutions Matrix := MX ->(
 -- to solutions written w.r.t flagsB
 --
 -- Input:
---    MX -- X -> A localization pattern, M -> flag (Information about the
+--    MX -- X -> A localization pattern, M -> flag (Information about the 
 --    	      first two flags determines the localization pattern X)
 --    solutionsA -> solutions to the problem specialized to flagsA
---    conds'A'B -> sequence with conditions and flags as follows:
+--    conds'A'B -> sequence with conditions and flags as follows: 
 --    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
 --    	  flagsA = (A3,...,Am)
 --    	  flagsB = (B3,...,Bm)
@@ -1210,7 +1210,7 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
     RMX := ring MX;
     R := (coefficientRing RMX)[a_(1,1)..a_(k,k),gens RMX];
     G := genericMatrix(R,k,k);
-    f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars
+    f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
     nk := n*k;
     nParameters := k^2+#gens RMX; -- number of parameters in f
     A := map(FFF^nk,FFF^nParameters,(i,j)->(f#i)_(R_j));
@@ -1221,7 +1221,7 @@ solutionToChart(Matrix, Matrix) := (s,MX) -> (
 changeFlags = method()
 changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
    if #solutionsA == 0 then return {};
-   (conditions,flagsA,flagsB) := conds'A'B;
+   (conditions,flagsA,flagsB) := conds'A'B; 
    SchA := apply(#conditions, i->(conditions#i,flagsA#i));
    SchB := apply(#conditions, i->(conditions#i,flagsB#i));
    -- August 20, 2013:
@@ -1238,7 +1238,7 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
    -- the following clean is a hack, instead, we need to do a newton step check
-   -- when we all changeFlags as there is a numerical check in there...
+   -- when we all changeFlags as there is a numerical check in there... 
    -- the following is a hack
    ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    --assert all(ret, s->checkIncidenceSolution(s,SchB));
@@ -1253,7 +1253,7 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
 -- w.r.t. flags A to solutions w.r.t. flags B
 ----------------------------------
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
-   (conditions,flagsA,flagsB) := conds'A'B;
+   (conditions,flagsA,flagsB) := conds'A'B; 
    solutionsS := solutionsA;
    if solutionsA!={} then(
        t:= symbol t;
@@ -1371,11 +1371,11 @@ moveFlags2Flags (List, List) := (F's, G's)->(
     T2 = matrix T2;
     p1:=flatten entries(A*F1-G1*T1);
     p2:=flatten entries(A*F2-G2*T2);
-    Eqs:= p1|p2;
+    Eqs:= p1|p2; 
     A1 := map(FFF^(2*n^2),FFF^(2*n^2),(i,j)->(Eqs#i)_(R_j));
     b1 := map(FFF^(2*n^2),FFF^1,(i,j)->-(Eqs#i)_(1_R));
     X := transpose solve(A1,b1);
-    {sub(A, X), sub(T1, X), sub(T2, X)}
+    {sub(A, X), sub(T1, X), sub(T2, X)}    
     )
 
 
@@ -1403,12 +1403,12 @@ toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
 --     j - the column to be normalized
 -----------------
 normalizeColumn = method(TypicalValue => Matrix)
-normalizeColumn(Matrix,ZZ,ZZ) := (X,r,j) -> (
+normalizeColumn(Matrix,ZZ,ZZ) := (X,r,j) -> (  
      k := numgens source X;
      if j=!=null then(
-	  X = X_{0..j-1} | (1/X_(r,j))*X_{j}  | X_{j+1..k-1};
+	  X = X_{0..j-1} | (1/X_(r,j))*X_{j}  | X_{j+1..k-1}; 
 	  --X''_(r,j) =-1/(1+X_(r,j)); -- error in Ravi's notes: should be -X_(r+1,j)/(1+X_(r,j))
-	  --X''_(r+1,j) = 1; -- this is correct, but is also already taken care of
+	  --X''_(r+1,j) = 1; -- this is correct, but is also already taken care of 
 	  );
      matrix X
      )
@@ -1430,10 +1430,10 @@ redCheckersColumnReduce(Matrix, MutableHashTable) := (X'', father) -> (
      if j=!=null then(
      	  X''  = mutableMatrix X'';
 	  crit'col := position(red, i->i==r+1);
-     	  for jj from j+1 to k-1 do
+     	  for jj from j+1 to k-1 do 
 	  -- reduce the columns for red checkers that have higher number and "see" the red checker in the row r+1
-     	  if position(red, i->red#jj == i) > crit'col then (
-	       c := X''_(r+1,jj)/X''_(r+1,j);
+     	  if position(red, i->red#jj == i) > crit'col then ( 
+	       c := X''_(r+1,jj)/X''_(r+1,j); 
 	       scan(n, i->X''_(i,jj) = X''_(i,jj) - c*X''_(i,j))
 	       )
 	  );
@@ -1468,15 +1468,15 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
      X''  = mutableMatrix X'';
      red := delete(NC,last father.Board);
      redSorted := sort red; -- numbers of the rows where red checkers are
-     apply(#redSorted, r->( -- column r is to be reduced
+     apply(#redSorted, r->( -- column r is to be reduced 
 --	 -- find the redcheckers bellow that can see the current redChecker
 --	 witnessReds:=select(drop(red,r), i->i>red#r);
 --	 j:={};
 --         scan(witnessReds, i-> j=append(j,position(redSorted, l-> l==i)));
-     	 col'of'r'on'board := position(last father.Board, i->i==redSorted#r);
-	 reducers := select(0..r-1,
+     	 col'of'r'on'board := position(last father.Board, i->i==redSorted#r); 
+	 reducers := select(0..r-1, 
 	      j->position(last father.Board, i->i==redSorted#j)<col'of'r'on'board
-	      );
+	      );  
 	 scan(reducers, j->(
 	      		-- reduce the columns for red checkers that have higher number and "see" the red checker in the row r+1
 			scan(n, i-> (
@@ -1520,17 +1520,17 @@ columnReduce(Matrix,List) := (S,b)->(
 		    a2 := S_(r,j);
 		    N=N|(-a2*N_{col}+M_{j});
 		    ));
-	   M = N;
+	   M = N; 
 	    ));
     return M
     )
-
+    
 ---- TEST
---Sol =  matrix {{1, -1.53233-.29742*ii, -1.12082+.412858*ii},
---    {0, -.196-.730927*ii, .317728-.541963*ii},
---    {0, 1, .363823-.122118*ii},
---    {0, 0, -.783282-.362287*ii},
---    {0, 0, 1},
+--Sol =  matrix {{1, -1.53233-.29742*ii, -1.12082+.412858*ii}, 
+--    {0, -.196-.730927*ii, .317728-.541963*ii}, 
+--    {0, 1, .363823-.122118*ii}, 
+--    {0, 0, -.783282-.362287*ii}, 
+--    {0, 0, 1}, 
 --    {0, 0, 0}};
 -- the bracket that we has the pivots is:
 -- redchcks = {0, infinity, 2, infinity, 4, infinity};
@@ -1573,12 +1573,12 @@ makePolynomials(Matrix, List) := (MX, conds) ->(
 	       ----------------
 	       MXF:=MX|sub(F,R);
 	       b := partition2bracket(l,k,n);
-	       sum(#b, r->(
+	       sum(#b, r->( 
 			 c := b#r;
 			 minors(k+c-(r+1)+1, MXF_{0..k+c-1})
 			 ))
      	       ));
-     eqs
+     eqs 
 )
 makePolynomials(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
     R := ring MX;
@@ -1601,7 +1601,7 @@ makePolynomials(Matrix, List, List) := (MX, conds, flagsHomotopy)->(
 ---------------------------------
 -- m random linear combinations of generators of the ideal
 squareUpPolynomials = method()
-squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)
+squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs), FFF^m)  
 --squareUpPolynomials(ZZ,Ideal,Ideal) := (m,eqs1,eqs2) ->  (
 --    G := random(FFF^(numgens eqs1), FFF^m);
 --    (gens eqs1 * G, gens eqs2 * G)
@@ -1610,10 +1610,10 @@ squareUpPolynomials(ZZ,Ideal) := (m,eqs) ->  gens eqs * random(FFF^(numgens eqs)
 -----------------------------
 -- Tracks a homotopy
 -----------------------------
--- Input:
+-- Input: 
 --    H -- a list of polynomials in k[xx,t];
 --    S = {{...},...,{...}} -- a list of solutions to H at t=0
--- Output:
+-- Output: 
 --    T - a list of Points that are solutions to H at t=1
 trackHomotopy = method(TypicalValue=>List)
 trackHomotopy (Matrix,List) := (H,S) -> (
@@ -1629,7 +1629,7 @@ trackHomotopy (Matrix,List) := (H,S) -> (
 ------------------------
 -- NEEDS to be documentted!
 ----------------------------
--- Input:
+-- Input: 
 --     j = number of a red checker
 --     r = critical row
 --     black = black checkers on the board
@@ -1673,7 +1673,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
     (l,F) := T;
     b:=partition2bracket(l,k,n);
     HXF:=promote(H|F,ring H);
-    scan(#b, r->(
+    scan(#b, r->( 
        c := b#r;
        rnk := k+c-(r+1)+1;
        if(rnk<= n) then(
@@ -1700,7 +1700,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 -- H = promote(matrix{{1,0},{0,0},{0,1},{0,0}},FFF)
 -- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, rsort id_(FFF^4))}
 -- checkIncidenceSolution(H, SchbPrblm)
---
+-- 
 -- SchbPrblm = {({2,1},id_(FFF^4)),({1,0}, random(FFF^4,FFF^4))}
 -- checkIncidenceSolution(H, SchbPrblm)
 
@@ -1725,7 +1725,7 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 --
 -- Output:
 --    S -- List of solutions to the problem
---    Fs -- list of flags (F_2, F_3,..., F_m)
+--    Fs -- list of flags (F_2, F_3,..., F_m) 
 --                   S are solns wrt (Id, F_2,... ,F_m)
 --    Ts -- list of transformations
 --    	  T_i was used to produce F_i.
@@ -1757,7 +1757,7 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
 	--    print"great success: we hit the SOLVED THE ULTIMATE LEAF: ";
 	--    print(concatenate(toString l1," vs ",toString l2));
 	--    coordX:=makeLocalCoordinates [blackChkrs,redChkrs];
-	    -- We need to check that there are not remaining conditions
+	    -- We need to check that there are not remaining conditions 
 	--    {{lift(coordX,FFF)},--return the local coordinates
 	--     	{rsort id_(FFF^n)},--return the flags
 	--     	{id_(FFF^n)}}
@@ -1775,10 +1775,10 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
 		--));
 	)
     )else {}
-)
+) 
 
 -------------------------
--- MovingFlag'at'Root
+-- MovingFlag'at'Root 
 -------------------------
 -- function to create the moving flag node.FlagM
 -- that will be the same for every checkerboard Tree
@@ -1800,7 +1800,7 @@ MovingFlag'at'Root ZZ := n -> (
 -- checkNewtonIteration
 ----------------------
 -- Function that given a proposed
--- solution to a Schubert Problem
+-- solution to a Schubert Problem 
 -- it creates a Newton step to compare
 -- the convergence of the approximated solution
 ----------------------
@@ -1844,24 +1844,24 @@ checkNewtonIteration(List,Ideal) := (Solns, System)->(
 ------------------------
 -- dist
 ------------------------
--- function to measure the
+-- function to measure the 
 -- euclidean distance between
 -- two points: (x1,...,xn) and (y1,...,yn)
 -- it computes:
 --    sqrt(sum( (xi-yi)^2 ))
---
+-- 
 -- Input: two Lists representing two set of solutions to a system
 -- Output: list of distances between the elements of the list
---
+--   
 --- Notice that solns1 could come from a numerical Newton step,
--- so the function first check if the solution is of type List or
+-- so the function first check if the solution is of type List or 
 -- of type Point
 --
 --------- FOR DAN AND MIKE -------
 -- Notice we had to do this function because
 -- M2 function norm(2,_) does not give the 2-norm
 -- of the complex vector (x1,...,xn)
------------------------
+----------------------- 
 dist = method()
 dist(List,List) := (solns1,solns2) -> (
     apply(#solns1, i->(
@@ -1916,10 +1916,10 @@ solsToFavCoords List := Solutions ->(
 findGaloisElement = method(TypicalValue => List)
 findGaloisElement(Sequence, List, List) :=(prblm, flgs, solns) ->(
     ---------------------------------
-     -- prblm
-     -- is a List that contains partitions
-     -- l and m, and integers k,n
-     -- that define the simple
+     -- prblm 
+     -- is a List that contains partitions 
+     -- l and m, and integers k,n 
+     -- that define the simple 
      -- Schubert problem in Gr(k,n)
      (l,m,k,n):=prblm;
      l = verifyLength(l, k);
@@ -1951,7 +1951,7 @@ findGaloisElement(Sequence, List, List) :=(prblm, flgs, solns) ->(
 -- generates the full symmetric group
 --
 -- CAVIAT: it assumes that GAP runs
--- 	   when you type "gap" in a
+-- 	   when you type "gap" in a 
 --	   terminal
 ------------------
 
@@ -1961,7 +1961,7 @@ getFileName = () -> (
 	filename
 	)
 
---GAPexe ="/Applications/gap4r4/bin/./gap.sh";
+--GAPexe ="/Applications/gap4r4/bin/./gap.sh";	
 --GAPexe := "gap";
 -- With GAP's workspace (ultrafast)
 GAPexe := "gap -L /Applications/gap4r4/bin/wsgap4";
@@ -1979,12 +1979,12 @@ isFullSymmetric(List) := (perms)->(
 		(
 			p := perms#i;
 			file << "PermList([" ;
-			scan(p, j->(
-				file << j+1;
+			scan(p, j->( 
+				file << j+1; 
 				if j=!= last p then file << ", " ;
 			));
 			file <<"])";
-			if i=!=#perms-1 then file << ", "<<endl;
+			if i=!=#perms-1 then file << ", "<<endl; 
 		)
 	);
 	file <<endl << ");"<<endl;
@@ -2000,7 +2000,7 @@ isFullSymmetric(List) := (perms)->(
 	--------------
 	run(GAPexe|" -q "|toString(file));
 	if fileExists toString(file) then (
-		removeFile toString(file);
+		removeFile toString(file); 
 		return false;
 	)else(
 		return true;
@@ -2034,7 +2034,7 @@ isGaloisFullSymmetric(Sequence, List, List, ZZ) := (prblm, flgs, solns, mx) ->(
 	     tempOut = isFullSymmetric(permuts);
 	);
 	if tempOut then (
-		(tempOut, cntr)
+		(tempOut, cntr) 
 	)else (
 		(tempOut, permuts)
 	)
@@ -2119,8 +2119,8 @@ doc ///
          solutions of the simple Schubert Problem defined by l and m with respect to the flags G_1,...,G_d
    Description
       Text
-         Given partitions $l$ and $m$ in the Grassmannian $Gr(k,n)$, and a set of fixed flags $G_1,...,G_d$, where $d=k*(k-n) - |l| - |m|$. The function solves the system taking the first $d-1$ flags, and replacing the last one for a simpler one $G_m$. Then it uses homotopy continuation to track the solutions of this simpler system to solutions of the original system.
-    	 This function is used to solve Simple Schubert Problems, as described in the paper:
+         Given partitions $l$ and $m$ in the Grassmannian $Gr(k,n)$, and a set of fixed flags $G_1,...,G_d$, where $d=k*(k-n) - |l| - |m|$. The function solves the system taking the first $d-1$ flags, and replacing the last one for a simpler one $G_m$. Then it uses homotopy continuation to track the solutions of this simpler system to solutions of the original system.         
+    	 This function is used to solve Simple Schubert Problems, as described in the paper:          
     	 Leykin and Sottile, "Galois groups of Schubert problems via homotopy continuation", Mathematics of Computation, 78 (2009) 1749--1765.
       Example
          ---- Simple Schubert Problem
@@ -2134,7 +2134,7 @@ doc ///
        	 ---------------------------------
        	 solveSimpleSchubert((k,n),l,m,G)
    SeeAlso
-         createRandomFlagsForSimpleSchubert
+         createRandomFlagsForSimpleSchubert 
          skewSchubertVariety
 ///;
 
@@ -2159,7 +2159,7 @@ doc ///
           solutions of the Schubert problem defined by l and m with respect to the flags F_1,...,F_d
     Description
        Text
-          Given partitions $l$ and $m$ in the Grassmannian $Gr(k,n)$, and two sets of fixed flags $G_1,...,G_d$, and $F_1,...,F_d$; where $d=k*(k-n) - |l| - |m|$. The function tracks the solutions of the system defined by $G_1,...,G_d$ (if the solutions are not given, it computes them using {\tt solveSimpleSchubert}) to find solutions for the system defined by $F_1,...,F_d$.
+          Given partitions $l$ and $m$ in the Grassmannian $Gr(k,n)$, and two sets of fixed flags $G_1,...,G_d$, and $F_1,...,F_d$; where $d=k*(k-n) - |l| - |m|$. The function tracks the solutions of the system defined by $G_1,...,G_d$ (if the solutions are not given, it computes them using {\tt solveSimpleSchubert}) to find solutions for the system defined by $F_1,...,F_d$. 
        Example
           ---- Simple Schubert Problem
    	  (k,n) = (3,7)
@@ -2209,21 +2209,21 @@ doc ///
          a permutation that lie in the Galois group
    Description
       Text
-         Given a simple Schubert problem $(l,m)$ in $Gr(k,n)$. Fix a
+         Given a simple Schubert problem $(l,m)$ in $Gr(k,n)$. Fix a 
 	 set of flags $F_1,...,F_d$ and let $S$ be the set of solutions of
 	 the intance of the Schubert problem given by the flags $\{F_i\}$.
 	 We compute a loop in the problem space based on the solution $S$
-	 by deforming one of the flags $F_i$ using Homotopy continuation.
-	 This  generates a loop in the problem space, which corresponds to
+	 by deforming one of the flags $F_i$ using Homotopy continuation. 
+	 This  generates a loop in the problem space, which corresponds to 
 	 a permutation in the Galois group.
       Example
          l={1,1}
 	 m={2,1}
 	 (k,n) = (3,7)
       Text
-	 Generate a random set of flags to compute an instance of the problem
+	 Generate a random set of flags to compute an instance of the problem	 
       Example
-	 G = createRandomFlagsForSimpleSchubert((k,n),l,m)
+	 G = createRandomFlagsForSimpleSchubert((k,n),l,m)	 
       Text
          Solve the problem
       Example
@@ -2238,7 +2238,7 @@ doc ///
 	 findGaloisElement((l,m,k,n), G, S)
    SeeAlso
       isFullSymmetric
-      isGaloisFullSymmetric
+      isGaloisFullSymmetric 
       solveSimpleSchubert
       createRandomFlagsForSimpleSchubert
 ///;
@@ -2259,7 +2259,7 @@ doc ///
       Text
          Takes a list of permutations of {1,...,n} and uses GAP to check if those generate the symmetric group $S_n$.
    Caveat
-      It assumes that GAP runs when you type {\tt gap} in a terminal
+      It assumes that GAP runs when you type {\tt gap} in a terminal      
 ///;
 
 doc ///
@@ -2289,9 +2289,9 @@ doc ///
          m={2,1}
          (k,n) = (3,7)
       Text
-         Generate a random set of flags to compute an instance of the problem
+         Generate a random set of flags to compute an instance of the problem	 
       Example
-         G = createRandomFlagsForSimpleSchubert((k,n),l,m)
+         G = createRandomFlagsForSimpleSchubert((k,n),l,m)	 
       Text
          Solve the Schubert problem
       Example
@@ -2300,7 +2300,7 @@ doc ///
          Check if the Galois group is the symmetric group
       Example
          isGaloisFullSymmetric((l,m,k,n), G, S, 5)
-      Text
+      Text 
           one permutation is not enough
       Example
           isGaloisFullSymmetric((l,m,k,n), G, S, 1)
@@ -2312,24 +2312,24 @@ doc ///
 ///;
 
 TEST ///
-restart
+restart 
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 0
 -----------------------
 -- 4 lines in P^3
-SchPblm = {({1},id_(FFF^4)),
+SchPblm = {({1},id_(FFF^4)), 
     ({1},random(FFF^4,FFF^4)),
-    ({1},random(FFF^4,FFF^4)),
+    ({1},random(FFF^4,FFF^4)), 
     ({1},random(FFF^4,FFF^4))};
 
 solveSchubertProblem(SchPblm,2,4)
 
-restart
+restart 
 debug needsPackage "NumericalSchubertCalculus"
 -- setRandomSeed 2
 
 Pblm = {({1},id_(FFF^4)),
-    ({1},rsort id_(FFF^4)),
+    ({1},rsort id_(FFF^4)), 
     ({1},transpose matrix {{1,1,1,1},{0,1,2,3},{0,0,2,6},{0,0,0,1}}),
     ({1},transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}})}
 
@@ -2357,11 +2357,11 @@ SchPblm = {({2,1},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6)),({2,1},rando
 solveSchubertProblem(SchPblm,3,6)
 -- not a simple tree
 
--- Problem (2,1)*(2)^3 = 2 in G(3,6)
+-- Problem (2,1)*(2)^3 = 2 in G(3,6) 
 -- This problem has a non-trivial tree (not like the problem of 4 lines)
 Pblm={({2},random(FFF^6,FFF^6)),
     ({2}, random(FFF^6,FFF^6)),
-    ({2},random(FFF^6,FFF^6)),
+    ({2},random(FFF^6,FFF^6)), 
     ({2,1},random(FFF^6,FFF^6))}
 solveSchubertProblem(Pblm,3,6)
 
@@ -2391,7 +2391,7 @@ time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({1},random(FFF^6,FFF^6))})
 assert(#root.Solutions==3)
 peek root
 printTree root
--- Problem (2,1)*(2)^3 = 2 in G(3,6)
+-- Problem (2,1)*(2)^3 = 2 in G(3,6) 
 -- This problem has a non-trivial tree (not like the problem of 4 lines)
 root = playCheckers({2},{2},3,6)
 time resolveNode(root, {({2},random(FFF^6,FFF^6)), ({2,1},random(FFF^6,FFF^6))})
@@ -2406,7 +2406,7 @@ check "NumericalSchubertCalculus"
 -- EXAMPLES (see TEST section for more simple examples)
 restart
 setRandomSeed 0
---debug
+--debug 
 needsPackage "NumericalSchubertCalculus";
 
 root = playCheckers({2,1},{2,1},3,6)
@@ -2436,7 +2436,7 @@ setRandomSeed 0
 debug needsPackage "LRcheckergame";
 
 -- we test if the resolveNode function
--- can just solve the problem when
+-- can just solve the problem when 
 -- the Schubert problem consist of two
 -- complementary partitions only
 root = playCheckers({3,3,1},{2},3,6)
