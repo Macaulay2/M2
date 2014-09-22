@@ -1348,9 +1348,18 @@ fi
 AC_LANG(C++)
     SAVE_CXXFLAGS=$CXXFLAGS
     CXXFLAGS="$CXXFLAGS -std=c++0x"
-	AC_CHECK_HEADER(memtailor.h,LIBS="-lmemtailor $LIBS",BUILD_memtailor=yes; BUILTLIBS="-lmemtailor $BUILTLIBS")
-	AC_CHECK_HEADER(mathic.h,LIBS="-lmathic $LIBS",BUILD_mathic=yes; BUILTLIBS="-lmathic $BUILTLIBS")
-	AC_CHECK_HEADER(mathicgb.h,LIBS="-lmathicgb $LIBS",BUILD_mathicgb=yes; BUILTLIBS="-lmathicgb $BUILTLIBS")
+        if test $BUILD_memtailor = no
+	then AC_CHECK_HEADER(memtailor.h,LIBS="-lmemtailor $LIBS",BUILD_memtailor=yes; BUILTLIBS="-lmemtailor $BUILTLIBS")
+	else BUILTLIBS="-lmemtailor $BUILTLIBS"
+	fi
+        if test $BUILD_mathic = no
+	then AC_CHECK_HEADER(mathic.h,LIBS="-lmathic $LIBS",BUILD_mathic=yes; BUILTLIBS="-lmathic $BUILTLIBS")
+	else BUILTLIBS="-lmathic $BUILTLIBS"
+	fi
+        if test $BUILD_mathicgb = no
+	then AC_CHECK_HEADER(mathicgb.h,LIBS="-lmathicgb $LIBS",BUILD_mathicgb=yes; BUILTLIBS="-lmathicgb $BUILTLIBS")
+	else BUILTLIBS="-lmathicgb $BUILTLIBS"
+	fi
     CXXFLAGS=$SAVE_CXXFLAGS
 
 test "$USE_FCLIBS" = no && FCLIBS=
