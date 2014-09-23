@@ -15,8 +15,8 @@ s1 = first S
 s1
 s2 = last S
 
-checkIncidenceSolution(s1,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
-checkIncidenceSolution(s2,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
+assert checkIncidenceSolution(s1,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
+assert checkIncidenceSolution(s2,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
 
 end
 
