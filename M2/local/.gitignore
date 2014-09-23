@@ -1,0 +1,12 @@
+/bin
+/include
+/share
+/libtool*
+/automake*
+/autoconf*
+/lib
+/.untarred-*
+/.patched-*
+/.installed-*
+/.configured-*
+/.compiled-*

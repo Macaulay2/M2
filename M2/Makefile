@@ -6,29 +6,37 @@
 
 VERBOSE = yes
 
-all: check-make check-autoconf configure monitor include/M2/config.h.in.stamp
+all: check-make make-configure monitor include/M2/config.h.in.stamp check-automake
 
-MAJOR = 2
-MINOR = 68
+AUTOCONF_MAJOR = 2
+AUTOCONF_MINOR = 68
 # version 2.60 was the first one with the macro AC_PROG_MKDIR_P
 # version 2.62 is required by the configure.ac in gc/libatomic_ops
 # version 2.68 is required by mpir 2.6.0
-AUTOCONF_VERSION = $(MAJOR).$(MINOR)
+AUTOCONF_VERSION = $(AUTOCONF_MAJOR).$(AUTOCONF_MINOR)
 
-PATH := autoconf/final/bin:$(PATH)
-export PATH
+AUTOMAKE_MAJOR = 1
+AUTOMAKE_MINOR = 12
+# version 1.12 was the first one with the macro AM_PROG_AR, used by memtailor
+AUTOMAKE_VERSION = $(AUTOMAKE_MAJOR).$(AUTOMAKE_MINOR)
+
+export PATH := $(shell pwd)/local/bin:$(PATH)
 
 check-make:
-	@ echo checking GNU make version ... >&2
 	@ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
-	@ echo ... okay
+	@ echo GNU make version okay
 
+make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
-get-autoconf :
-	$(MAKE) -f Makefile -C autoconf
-	$(MAKE) -f Makefile
+get-autoconf:
+	$(MAKE) -C local -f Makefile.local LIBNAME=autoconf VERSION=2.69
+get-automake:
+	$(MAKE) -C local -f Makefile.local LIBNAME=automake VERSION=1.14.1
+get-libtool:
+	$(MAKE) -C local -f Makefile.local LIBNAME=libtool VERSION=2.4.2
+get-tools: get-autoconf get-automake get-libtool
 
 rm-autoconf :; $(MAKE) -f Makefile -C autoconf clean
 
@@ -44,26 +52,60 @@ autoconf-old-msg :
 
 autoconf-msg :
 	@ echo "" >&2
-	@ echo "Please install or update autoconf: the version (`autoconf -V | sed -e '1s/.*\([1-9][0-9]*\..*\)/\1/' -e '2,$$d'`) should be at least $(AUTOCONF_VERSION)." >&2
+	@ echo "Please install or update autoconf: the version (`autoconf --version | sed -e '1s/.*\([1-9][0-9]*\..*\)/\1/' -e '2,$$d'`) should be at least $(AUTOCONF_VERSION)." >&2
 	@ echo "" >&2
 	@ echo "Alternatively, type" >&2
 	@ echo "" >&2
-	@ echo "    make get-autoconf" >&2
+	@ echo "    make get-tools" >&2
 	@ echo "" >&2
-	@ echo "for a recent version to be downloaded and compiled automatically." >&2
+	@ echo "for recent versions of autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
 	@ echo "=============================================================================" >&2
 	@ false
 
 check-autoconf :
-	@ echo checking autoconf version ...
 	@ type autoconf >/dev/null || $(MAKE) -f Makefile autoconf-absent
-	@ if test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt $(MAJOR) \
+	@ if test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOCONF_MAJOR)" \
 	  || \
-	    test `autoconf -V | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  $(MAJOR) \
+	    test `autoconf --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  = "$(AUTOCONF_MAJOR)" \
 	    && \
-	    test `autoconf -V | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge $(MINOR) ;\
-	  then echo ... okay ;\
+	    test `autoconf --version | sed -e '1s/.*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`   -ge "$(AUTOCONF_MINOR)" ;\
+	  then echo GNU autoconf version okay ;\
 	  else $(MAKE) -f Makefile autoconf-old ;\
+	  fi
+
+rm-automake :; $(MAKE) -f Makefile -C automake clean
+
+automake-absent : automake-absent-msg automake-msg 
+automake-absent-msg :
+	@ echo "=============================================================================" >&2
+	@ echo "Error: the automake program is not installed on your system." >&2
+
+automake-old : automake-old-msg automake-msg 
+automake-old-msg :
+	@ echo "=============================================================================" >&2
+	@ echo "error: the automake program installed on your system (`type automake`) is too old." >&2
+
+automake-msg :
+	@ echo "" >&2
+	@ echo "Please install or update automake: the version (`automake --version | sed -e '1s/.* \(.*\)/\1/' -e '2,$$d'`) should be at least $(AUTOMAKE_VERSION)." >&2
+	@ echo "" >&2
+	@ echo "Alternatively, type" >&2
+	@ echo "" >&2
+	@ echo "    make get-tools" >&2
+	@ echo "" >&2
+	@ echo "for recent versions of autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
+	@ echo "=============================================================================" >&2
+	@ false
+
+check-automake :
+	@ type automake >/dev/null || $(MAKE) -f Makefile automake-absent
+	@ if test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'` -gt "$(AUTOMAKE_MAJOR)" \
+	  || \
+	    test `automake --version | sed -e '1s/.* \([1-9][0-9]*\)\..*/\1/' -e '2,$$d'`  =  "$(AUTOMAKE_MAJOR)" \
+	    && \
+	    test `automake --version | sed -e '1s/.* [1-9][0-9]*\.\([1-9][0-9]*\).*/\1/' -e '2,$$d'`  -ge "$(AUTOMAKE_MINOR)" ;\
+	  then echo GNU automake version okay ;\
+	  else $(MAKE) -f Makefile automake-old ;\
 	  fi
 
 # autoheader's job is to make include/config.h, but if there are no changes, it doesn't touch it, 

@@ -1,37 +1,16 @@
 # -*- makefile-gmake -*-
-
-M=64
-
-# ifeq ($M,64)
-# A=x86_64
-# else
-# ifeq ($M,32)
-# A=i686
-# else
-# $(error "$M should be 32 or 64")
-# endif
-# endif
-# CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M"
-
-DIRECTORY = scientific-$M
-
+DIRECTORY = production
 ifeq ($(DEBUG),yes)
-   INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
-   DIRECTORY := $(DIRECTORY).debug
-   CONFIGOPTIONS += --disable-ntl-wizard
+   DIRECTORY := debug
 else
    CONFIGOPTIONS += --enable-rpm
 endif
-
-CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
-# CONFIGOPTIONS += --build=i386-pc-linux-gnu
-
-# just for testing, not for production:
-# CONFIGOPTIONS += --enable-fflas-ffpack
-
+ifeq ($(NTL_WIZARD),no)
+   CONFIGOPTIONS=--disable-ntl-wizard 
+endif
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific "
+# compile-command: "time make -f Makefile.scientific NTL_WIZARD=no "
 # End:
