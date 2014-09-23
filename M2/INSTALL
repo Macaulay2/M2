@@ -30,7 +30,7 @@ Getting the source code
 The current development version of the source code can be obtained with this
 command, assuming you have installed "git" on your machine:
 
-    git clone https://github.com/Macaulay2/M2
+    git clone --recursive https://github.com/Macaulay2/M2
 
 A directory called M2, which you can move or rename, will be created, and this
 INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch

@@ -33,23 +33,29 @@ endef
 
 ## submodules
 SUBMODULES = memtailor mathic mathicgb
+SUBTARGETS = check all clean distclean
+GITSUBTARGETS = git-clean git-update git-status git-describe
 all-in-mathicgb:all-in-mathic all-in-memtailor
 all-in-mathic:all-in-memtailor
-define setup-submodule
-$(foreach t,git-update git-status all clean distclean,$(eval $t-in-submodules:$t-in-$1))
-all-in-$1: configure-in-$1
-git-update-in-$1:; cd @srcdir@/submodules/$s && git checkout master && git pull
-git-status-in-$1:; cd @srcdir@/submodules/$s && git status
-configure-in-$1: submodules/$1/Makefile
+$(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
+define submodule-rules
+$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
+all-in-$1: configure-in-$1; $(MAKE) -C submodules/$s all install
+check-in-$1: configure-in-$1; $(MAKE) -C submodules/$s check
 clean-in-$1:; $(MAKE) -C submodules/$1 clean
 distclean-in-$1:; $(MAKE) -C submodules/$1 distclean
+git-update-in-$1:; cd @srcdir@/submodules/$s && git checkout master && git pull
+git-status-in-$1:; cd @srcdir@/submodules/$s && git status
+git-clean-in-$1:; cd @srcdir@/submodules/$s && git clean -Xdf
+git-describe-in-$1:; cd @srcdir@/submodules/$s && git describe --dirty --long --always --abbrev=40 --all
+configure-in-$1: submodules/$1/Makefile
 submodules/$1/Makefile:@srcdir@/submodules/$1/configure
 	$(MKDIR_P) submodules/$1
 	$(call cdw,submodules/$1) && @srcdir@/submodules/$1/configure --prefix=$(BUILTLIBPATH) --with-gtest=yes GTEST_PATH=$(BUILTLIBPATH)/include/gtest
 @srcdir@/submodules/$1/configure.ac:; cd @srcdir@ && git submodule update --init submodules/$s
 @srcdir@/submodules/$1/configure:@srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am; cd @srcdir@/submodules/$1 && ./autogen.sh
 endef
-$(foreach s,$(SUBMODULES),$(eval $(call setup-submodule,$s)))
+$(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir
