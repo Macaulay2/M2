@@ -728,33 +728,34 @@ makeLocalCoordinates Array := blackred ->(
 -- into a generalized flag for the parent
 ------------------
 resolveNode = method()
-resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags'transf) ->  
+resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) ->  
 -- changed here 08.22.13
---resolveNode(MutableHashTable,List) := (node,remaining'conditions'and'flags) ->  
+--resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) ->  
 if not node.IsResolved then (
-   n := #node.Board#0;
-   coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
-   if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
-    -- THIS WILL BE CHANGED 08.22.13
-	     print "great success: we hit the ULTIMATE LEAF\n";
-	     print "We Hit the leaf from resolve node...";
-	     node.Solutions = {lift(coordX,FFF)};
+    n := #node.Board#0;
+    coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
+    if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
+    	assert(#remaining'conditions'flags==0);
+	print "great success: we hit the ULTIMATE LEAF\n";
+	print "We Hit the leaf from resolve node...";
+	node.Solutions = {lift(coordX,FFF)};
+	node.IsResolved = true;
+	node.FlagM= rsort id_(FFF^n);
+	) 
+    else if #remaining'conditions'flags==0 then (
+	     node.Solutions = {};
 	     node.IsResolved = true;
-	     node.FlagM= rsort id_(FFF^n);
---	  if #remaining'conditions'and'flags > 0
---	  then error "invalid Schubert problem"
---	  else node.Solutions = {lift(coordX,FFF)};
-	  )
-   else ( -- coordX has variables
+	     node.FlagM = rsort id_(FFF^n);
+	     )
+     else ( -- coordX has variables
      black := first node.Board;
-     remaining'conditions'and'flags:= apply(remaining'conditions'flags'transf, C->toSequence(drop(C,-1)));
-          
+
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n) --change here
-     else scan(node.Children, c->resolveNode(c,remaining'conditions'flags'transf));
+     else scan(node.Children, c->resolveNode(c,remaining'conditions'flags));
      
      if DEBUG'LEVEL >= 2 then (
  	 -- temporary: creates a superset of solutions via a blackbox solver
-	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'and'flags);
+	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'flags);
 	 polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
 	 ---* this part is to time and keep track of what is the expensive part of the computation
 	 if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
@@ -790,56 +791,50 @@ if not node.IsResolved then (
 	     -- This is changed! 08.22.2013:
     	     --------------------------------
 	     -- we take the next flag at the bottom of the checkerboard tree
-	     (l3,F3,T3) := first remaining'conditions'flags'transf;
-	     MM := MovingFlag'at'Root n;
-	     Minv := solve(MM, id_(FFF^n));
-	     newRemainingFlags := drop(remaining'conditions'flags'transf,1);
-	     newRemainingFlags = apply(newRemainingFlags, CFT->(
-		     (first CFT, lift(MM,FFF)*lift(T3,FFF)*CFT#1, last CFT)
+	     (l3,F3) := first remaining'conditions'flags;
+	     MM := lift(MovingFlag'at'Root n,FFF);
+	     ID := id_(FFF^n);
+	     (A,T1,T2) := moveFlags2Flags({MM,ID},{ID,F3});
+	     T1inv := solve(T1,ID);
+	     newRemainingFlags := drop(remaining'conditions'flags,1);
+	     newRemainingFlags = apply(newRemainingFlags, CF->(
+		     (C,F) := CF;
+		     (C, T1inv*F)
 		     ));
 	     ---------------------------------------
---	     remaining'conditions'and'flags := apply(newRemainingFlags, C->toSequence(drop(C,-1)));
---	     remaining'conditions'and'flags = prepend((l3,F3),remaining'conditions'and'flags);
+--	     remaining'conditions'flags := apply(newRemainingFlags, C->toSequence(drop(C,-1)));
+--	     remaining'conditions'flags = prepend((l3,F3),remaining'conditions'flags);
 	     ---------------------------------------
-	     S3 := solve(T3,id_(FFF^n));
 	     print "calling solveInternalProblem from resolveNode ";
 	     print(node.Board);
 	     print(lambda);
 	     print("remaning Conditions:");
-	     print(remaining'conditions'and'flags);
+	     print(remaining'conditions'flags);
 	     print("---------");
-	     --if()
-	     S:= solveInternalProblem((k,n),lambda,l3,newRemainingFlags);
-	     print("This is what solveInternatl gives at the root of the tree:");
-	     print(S);
-	     -- Sept 19, 2014: implemented the columnReduction
+	     -- *************** main recursive call ********************************************
+	     -- MS := solveInternalProblem((k,n),lambda,l3,newRemainingFlags);
+	     new'l := output2partition last node.Board;
+	     newDag := playCheckers(new'l,l3,k,n);
+	     resolveNode(newDag,newRemainingFlags);
+	     S := newDag.Solutions; 
+	     << "The previous level gets solution: " << S << endl;
+	     
 	     brack:=output2bracket last node.Board; --compute the bracket afecting the standard flag
 	     -- we use the bracket for column reduction of the solutions;
 	     print "here is the bracket";
 	     print (brack);
-	     if #newRemainingFlags ==0 then(
-		 node.Solutions = apply(S, s->clean(ERROR'TOLERANCE,columnReduce(S3*s,brack)));
-		 )else(
-		 -----------------------------------------
-		--!!!! NEED TO DO COLUMN REDUCTION HERE!!!
-		--notice that the local patch and the global patch does not fit
-		-- June 15,2014
-		-- solved? in Sept. 19, 2014
-		node.Solutions = apply(S,s->(
-			clean(ERROR'TOLERANCE, columnReduce(S3*Minv*s,brack))
-			    ));
-		    --1/0;
-	        --node.Solutions = apply(S, s->clean(ERROR'TOLERANCE,S3*Minv*s));
-	     	--node.Solutions = apply(first S,s->columnReduce(S3*MM*s,lambda,n));
-		--------------------------------------------------------------------
-	     );-- !!need to clean the zeroes below the diagonal
-	     --node.Solutions = apply(first S,s->columnReduce(S3*MM*s,lambda,n));
+	     node.Solutions = if #newRemainingFlags > 0 then (
+		 assert(MM==newDag.FlagM);
+		 apply(S, s->columnReduce(A*MM*s,brack)) -- A is roughly M^{-1} ??? 
+	         ) 
+	     else (
+		 MM = newDag.FlagM;
+		 (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
+		 apply(S, s->columnReduce(A*MM*s,brack))
+		 );
 	     print "And These are the solutions obtained:";
 	     print(node.Solutions);
-	     print("This is the flag that is solving");
-	     --print(T3);
-	     print(F3);
-	     --1/0;
+	     --if #newRemainingFlags == 0 and #S>0 then 1/0; 
 	     ---------------------------
 	     node.IsResolved = true;
 	     -- assert(???); --verify that the solutions fit the localization pattern 
@@ -962,7 +957,7 @@ if not node.IsResolved then (
 	       else error "an unaccounted case";
 
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then timemakePolys1 := cpuTime();
-	       all'polys := makePolynomials(M'X',remaining'conditions'and'flags);
+	       all'polys := makePolynomials(M'X',remaining'conditions'flags);
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
 		    timemakePolys2 := cpuTime();
 		    << "-- time to make equations:  "<< (timemakePolys2-timemakePolys1)<<endl;
@@ -971,7 +966,7 @@ if not node.IsResolved then (
 	       polys := squareUpPolynomials(numgens R, all'polys);
 	       startSolutions := apply(node.Solutions, X->toRawSolutions(coordX,X));
 	       
-	       -- track homotopy and plug in the solution together with t=1 into Xt
+	       -- check at t=0
 	       scan(startSolutions,  
 		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
 			 norm matrix{s} * 
@@ -979,6 +974,7 @@ if not node.IsResolved then (
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
 	       	    t1:= cpuTime();
 		    );
+	       -- track homotopy and plug in the solution together with t=1 into Xt
 	       targetSolutions := trackHomotopy(polys,startSolutions);
 	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
 	       	    t2:= cpuTime();
@@ -1056,7 +1052,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     -- SchPblm is a list of sequences with two entries
     -- a partition and a flag
     twoconds := take(SchPblm,2);
-    remaining'conditions'and'flags := drop(SchPblm,2);
+    remaining'conditions'flags := drop(SchPblm,2);
     -- take the first two conditions
     l1:=verifyLength(first first twoconds,k);
     l2:=verifyLength(first last twoconds,k);
@@ -1069,7 +1065,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
        Slns
     else(
 	newDag := playCheckers(l1,l2,k,n);
-	resolveNode(newDag, remaining'conditions'and'flags);
+	resolveNode(newDag, remaining'conditions'flags);
 	conds := {l1,l2};
 	--Changed here March 22:
 	--
@@ -1097,7 +1093,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	T1:=Transf#1; --T1 is not used (20.aug.2013)
 	Flags1 := {id_(FFF^n),F2}; 
 	Flags2:= {F1,F2};
-	scan(remaining'conditions'and'flags, c-> (
+	scan(remaining'conditions'flags, c-> (
 		conds = append(conds, first c);
 		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
@@ -1342,7 +1338,7 @@ assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually 
 --    {F1,F2} - list of two start flags
 --    {G1,G2} - list of two target flags
 -- Output:
---    {A,T1,T2} - list of three matrices
+--    (A,T1,T2) - sequence of three matrices
 --         A - invertible nxn matrix
 --         T1 - upper triangular matrix with 1's in
 --              with 1's in the diagonal
@@ -1375,7 +1371,7 @@ moveFlags2Flags (List, List) := (F's, G's)->(
     A1 := map(FFF^(2*n^2),FFF^(2*n^2),(i,j)->(Eqs#i)_(R_j));
     b1 := map(FFF^(2*n^2),FFF^1,(i,j)->-(Eqs#i)_(1_R));
     X := transpose solve(A1,b1);
-    {sub(A, X), sub(T1, X), sub(T2, X)}    
+    (sub(A, X), sub(T1, X), sub(T2, X))
     )
 
 
@@ -1718,22 +1714,15 @@ checkIncidenceSolution(Matrix, List) := (H, SchbPrblm) ->(
 -- Input:
 --    kn -- sequence with the numbers k,n for Gr(k,n)
 --    l1,l2, -- two partitions
---    remaining'conditions'flags'transf -- list a list with the rest of the data
---    	      each consisting of a triple (li,Fi,Ti)
+--    remaining'conditions'flags -- list a list with the rest of the data
+--    	      each consisting of (li,Fi)
 --    	      where li is a partition
 --    	      Fi is a flag
---    	 X     Ti is an upper triangular matrix such that Fi*T3..*Ti=FlagM
---    	 X     	      	  where FlagM is the moving flag
---
 -- Output:
---    S -- List of solutions to the problem
---    Fs -- list of flags (F'_2, F'_3,..., F'_m) 
---                   S are solutions to the Schubert problem wrt (Id, F'_2,... ,F'_m)
---    Ts -- list of transformations (T_2,...,T_m)
---    	  T_i is used to produce F'_i in that F'_i = .
+--    S -- List of solutions to the problem wrt (M,ID,F3,...Fm)
 --------------------------
 solveInternalProblem=method(TypicalValue=>List)
-solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'flags'transf) ->(
+solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'flags) ->(
     (k,n):=kn;
     l1=verifyLength(l1,k);
     l2=verifyLength(l2,k);
@@ -1747,14 +1736,18 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
 	<<endl<<"###########"<<endl;
 	<<"We play the game "<< toString(l1)<<" vs "<<toString(l2)<<endl;
 	newDag := playCheckers(l1,l2,k,n);
-	resolveNode(newDag,remaining'conditions'flags'transf);
+	resolveNode(newDag,remaining'conditions'flags);
 	<<"and this is the output of resolveNode at the the root of that tree:"<< toString(l1)<<" vs "<<toString(l2)<<endl;
 	<<"This is the poincare check "<<partitionOverlap<<endl;
 	<<newDag.Solutions<<endl<<"#############"<<endl;
+	MM := MovingFlag'at'Root n;
+	ID := id_(FFF^n);
+	rID := rsort(ID);
 	if max(partitionOverlap)==0  then(
 	    --MM*newDag.Solutions
-	    newDag.Solutions
-	--    redChkrs := redChkrPos(partition2bracket(l1,k,n),partition2bracket(l2,k,n),k,n);
+	    brack := output2bracket last newDag.Board;
+    	    apply(newDag.Solutions, s->columnReduce(MM*s,brack))
+	--    Redchkrs := redChkrPos(partition2bracket(l1,k,n),partition2bracket(l2,k,n),k,n);
      	--    blackChkrs := reverse toList (0..(n-1)); --initial black positions
 	--    print"great success: we hit the SOLVED THE ULTIMATE LEAF: ";
 	--    print(concatenate(toString l1," vs ",toString l2));
@@ -1764,15 +1757,14 @@ solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'
 	--     	{rsort id_(FFF^n)},--return the flags
 	--     	{id_(FFF^n)}}
 	    )else(
-	    MM := MovingFlag'at'Root n;
-	    Minv := solve(MM,id_(FFF^n));
+	    Minv := solve(MM,ID);
     	    --newDag := playCheckers(l1,l2,k,n);
-	    --resolveNode(newDag,remaining'conditions'flags'transf);
+	    --resolveNode(newDag,remaining'conditions'flags);
 	    print("tests Incidence");
 	    print(checkIncidenceSolution(first(MM*newDag.Solutions), {(l1,MM),(l2,id_(FFF^n))}));
 	    MM*newDag.Solutions
 	    --MM*newDag.Solutions
-	    --scan(remaining'conditions'flags'transf, c-> (
+	    --scan(remaining'conditions'flags, c-> (
 		--conds = append(conds, first c);
 		--Flags1 = append(Flags1, GL*(last c));
 		--Flags2 = append(Flags2, last c);
@@ -1828,15 +1820,15 @@ checkNewtonIteration(List,Ideal) := (Solns, System)->(
 --------------------------------------------------------------------
 --        These is the info necessary to create a system of eqns
 --------------------------------------------------------------------
---checkNewtonIteration(List,Matrix,List) := (Solns,coordX,remaining'conditions'and'flags) -> (
---    polySyst := makePolynomials(coordX,remaining'conditions'and'flags);
+--checkNewtonIteration(List,Matrix,List) := (Solns,coordX,remaining'conditions'flags) -> (
+--    polySyst := makePolynomials(coordX,remaining'conditions'flags);
 --    solutions := apply(Solns, X-> toRawSolutions(coordX,X));
 --    NewtStep:=checkNewtonIteration(solutions,polySyst);
 --    apply(NewtStep, n-> map(FFF,ring coordX, matrix{n}) coordX)
 --    )
 
 
---squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'and'flags);
+--squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'flags);
 --polysquares := squareUpPolynomials(numgens ring coordX, ideal(squareSyst));
 --Sols:=  apply(node.Solutions, X->toRawSolutions(coordX,X));
 --NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
