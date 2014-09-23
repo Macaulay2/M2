@@ -15,4 +15,4 @@ assert all(S, s-> checkIncidenceSolution(s,Pblm))
 end
 
 restart
-load "21x2e3-G36.m2
+load "21x2e3-G36.m2"

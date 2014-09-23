@@ -5,9 +5,10 @@ setRandomSeed 4
 Pblm = {({1},id_(FFF^4)),
     ({1},rsort id_(FFF^4)), 
     ({1},sub(transpose matrix {{1,1,1,1},{0,1,2,3},{0,0,2,6},{0,0,0,1}},FFF)),
-    ({1},sub(transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}},FFF))}
+    ({1},sub(transpose matrix {{1,2,4,8}, {0,1,4,12}, {0,0,1,6}, {0,0,0,1}},FFF))};
 
 S = solveSchubertProblem(Pblm, 2,4)
+
 -- we need to make a column reduction
 -- to see if these solutions are real
 Sreduced = apply(S, s->(
@@ -21,7 +22,8 @@ Sreduced = apply(S, s->(
 	    };
 	s2 := clean(0.001, s1*M2);
 	s2
-	));
+	))
+
 assert all(flatten flatten (Sreduced/entries), isReal)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 

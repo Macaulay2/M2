@@ -10,6 +10,8 @@ Pblm={
     }
 S = solveSchubertProblem(Pblm,2,6)
 
+assert all(S, s-> checkIncidenceSolution(s,Pblm))
+
 end
 
 restart
