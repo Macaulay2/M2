@@ -23,6 +23,7 @@ Sreduced = apply(S, s->(
 	s2
 	));
 Sreduced
+assert all(S,s->checkIncidenceSolution(s,Pblm))
 
 end
 

@@ -1267,8 +1267,16 @@ load "NumericalSchubertCalculus/doc.m2"
 -- Tests         --
 -------------------
 TEST ///
+load "NumericalSchubertCalculus/TST/4lines.m2"
+///
+TEST ///
+load "NumericalSchubertCalculus/TST/4lines_osculating.m2"
+///
+TEST ///
 load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 ///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
+restart
+check "NumericalSchubertCalculus"
