@@ -45,7 +45,7 @@ endif
 UNTARCMD ?= tar xzf $(TARFILE)
 .untarred-$(LIBNAME)-$(VERSION) : $(TARFILE) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : $(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
-$(TARFILE) : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)"
+$(TARFILE) : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)" || wget $(URL)/$(TARFILE)
 clean ::; rm -rf .patched* $(TARDIR) .fetched .untarred* $(LIBNAME)-*.tar.gz .compiled* .configured* .installed* diffs tmp
 distclean :: clean ; rm -rf Makefile
 check ::
