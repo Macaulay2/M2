@@ -355,8 +355,7 @@ if not node.IsResolved then (
     coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
     	assert(#remaining'conditions'flags==0);
-	print "great success: we hit the ULTIMATE LEAF\n";
-	print "We Hit the leaf from resolve node...";
+	print "-- great success: we hit the ULTIMATE LEAF\n";
 	node.Solutions = {lift(coordX,FFF)};
 	node.IsResolved = true;
 	node.FlagM= rsort id_(FFF^n);
@@ -415,33 +414,32 @@ if not node.IsResolved then (
 	     ID := id_(FFF^n);
 	     (A,T1,T2) := moveFlags2Flags({MM,ID},{ID,F3});
 	     T1inv := solve(T1,ID);
+	     Ainv := solve(A,ID);
 	     newRemainingFlags := drop(remaining'conditions'flags,1);
 	     newRemainingFlags = apply(newRemainingFlags, CF->(
 		     (C,F) := CF;
-		     (C, T1inv*F)
+		     (C, Ainv*F)
 		     ));
 	     ---------------------------------------
 --	     remaining'conditions'flags := apply(newRemainingFlags, C->toSequence(drop(C,-1)));
 --	     remaining'conditions'flags = prepend((l3,F3),remaining'conditions'flags);
 	     ---------------------------------------
-	     print "calling solveInternalProblem from resolveNode ";
+	     print "-- making a recursive call to resolveNode ";
 	     print(node.Board);
 	     print(lambda);
-	     print("remaning Conditions:");
+	     print("remaining conditions:");
 	     print(remaining'conditions'flags);
 	     print("---------");
 	     -- *************** main recursive call ********************************************
-	     -- MS := solveInternalProblem((k,n),lambda,l3,newRemainingFlags);
 	     new'l := output2partition last node.Board;
 	     newDag := playCheckers(new'l,l3,k,n);
 	     resolveNode(newDag,newRemainingFlags);
 	     S := newDag.Solutions; 
-	     << "The previous level gets solution: " << S << endl;
+	     << "the previous level gets solution: " << S << endl;
 	     
 	     brack:=output2bracket last node.Board; --compute the bracket afecting the standard flag
 	     -- we use the bracket for column reduction of the solutions;
-	     print "here is the bracket";
-	     print (brack);
+	     << "here is the bracket" << brack << endl;
 	     node.Solutions = if #newRemainingFlags > 0 then (
 		 assert(MM==newDag.FlagM);
 		 apply(S, s->columnReduce(A*MM*s,brack)) -- A is roughly M^{-1} ??? 
@@ -451,7 +449,7 @@ if not node.IsResolved then (
 		 (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
 		 apply(S, s->columnReduce(A*MM*s,brack))
 		 );
-	     print "And These are the solutions obtained:";
+	     print "... and the transformed solutions are:";
 	     print(node.Solutions);
 	     --if #newRemainingFlags == 0 and #S>0 then 1/0; 
 	     ---------------------------
@@ -466,13 +464,6 @@ if not node.IsResolved then (
 	 ); 
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
-     	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
-     	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
-     	       tparents1:=cpuTime();
-	       << "-- i.e. from "<< makeLocalCoordinates(node.Board)<<" TO  "<< makeLocalCoordinates(father.Board)<<endl;
-	       << "-- using this move: " << movetype<<endl;
-	       << "starting with this solution "<< node.Solutions<<endl<<endl;
-     	       );
      	  r := father.CriticalRow; -- critical row: rows r and r+1 are the most important ones
           red := last father.Board;     
      	  red'sorted := sort delete(NC, red);
@@ -480,6 +471,14 @@ if not node.IsResolved then (
 	  M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
 	  if not father.?FlagM then father.FlagM = M'' 
 	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
+     	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
+     	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+     	       tparents1:=cpuTime();
+	       << "-- i.e. from "<< node.FlagM * makeLocalCoordinates(node.Board)
+	       << " TO  "<< father.FlagM * makeLocalCoordinates(father.Board) << endl;
+	       << "-- using this move: " << movetype<<endl;
+	       << "starting with this solution "<< node.Solutions<<endl<<endl;
+     	       );
 	  
 	  --if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
