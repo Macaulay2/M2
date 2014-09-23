@@ -10,13 +10,7 @@ ifeq ($(VERSION) @host@,1.6.0 x86_64-w64-mingw32)
 PATCHFILE += @abs_srcdir@/patch-1.6.0-mingw64
 endif
 
-INSTALLCMD = rm -f $(BUILTLIBPATH)/gtest && ln -s ../gtest/$(BUILDDIR) $(BUILTLIBPATH)/gtest
-
-#INSTALLCMD = \
-#	rm -f $(BUILTLIBPATH)/include/gtest* && \
-#	ln -s ../../gtest/$(BUILDDIR)/include/gtest $(BUILTLIBPATH)/include/gtest && \
-#	ln -s ../../gtest/$(BUILDDIR) $(BUILTLIBPATH)/include/gtest-src \
-#	rm -f $(BUILTLIBPATH)/gtest && ln -s ../gtest/$(BUILDDIR) $(BUILTLIBPATH)/gtest
+INSTALLCMD = rm -f $(BUILTLIBPATH)/include/gtest && ln -s ../../libraries/gtest/$(BUILDDIR) $(BUILTLIBPATH)/include/gtest
 
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gtest/Makefile

@@ -26,6 +26,32 @@ include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
+
+define cdw
+set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
+endef
+
+## submodules
+SUBMODULES = memtailor mathic mathicgb
+all-in-mathicgb:all-in-mathic all-in-memtailor
+all-in-mathic:all-in-memtailor
+define setup-submodule
+$(foreach t,git-update git-status all clean distclean,$(eval $t-in-submodules:$t-in-$1))
+all-in-$1: configure-in-$1
+git-update-in-$1:; cd @srcdir@/submodules/$s && git checkout master && git pull
+git-status-in-$1:; cd @srcdir@/submodules/$s && git status
+configure-in-$1: submodules/$1/Makefile
+clean-in-$1:; $(MAKE) -C submodules/$1 clean
+distclean-in-$1:; $(MAKE) -C submodules/$1 distclean
+submodules/$1/Makefile:@srcdir@/submodules/$1/configure
+	$(MKDIR_P) submodules/$1
+	$(call cdw,submodules/$1) && @srcdir@/submodules/$1/configure --prefix=$(BUILTLIBPATH) --with-gtest=yes GTEST_PATH=$(BUILTLIBPATH)/include/gtest
+@srcdir@/submodules/$1/configure.ac:; cd @srcdir@ && git submodule update --init submodules/$s
+@srcdir@/submodules/$1/configure:@srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am; cd @srcdir@/submodules/$1 && ./autogen.sh
+endef
+$(foreach s,$(SUBMODULES),$(eval $(call setup-submodule,$s)))
+
+## 
 distclean:clean distclean-in-subdirs distclean-this-dir
 distclean-this-dir:
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args

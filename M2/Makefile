@@ -134,7 +134,6 @@ check-vardirs:
 check-pre-vardirs:
 	egrep -nH '@pre_(bin|data|include|info|lib|libexec|localstate|man|sbin|sharedstate|sysconf|ps|pdf|dvi|html|locale|doc|dataroot|packages|libm2|emacs|libraries|packagecachecore)dir@' $(shell cat ./config/files | sed 's/$$/.in/')
 
-
 # Local Variables:
 # mode: Makefile
 # compile-command: "make -f Makefile "
