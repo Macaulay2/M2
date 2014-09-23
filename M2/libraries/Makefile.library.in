@@ -89,7 +89,7 @@ BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
-export PATH := @abs_top_srcdir@/autoconf/final/bin:$(PATH)
+export PATH := @abs_top_srcdir@/local/bin:$(PATH)
 all:prereq install post-install
 prereq:
 post-install:
@@ -269,6 +269,13 @@ help:;
 	@ echo "  check                       check whether library compiled correctly"
 	@ echo "  recheck                     check, even if we've checked before"
 	@ echo ""
+autotool-versions:
+	whereis autoconf
+	autoconf --version | head -1
+	whereis aclocal
+	aclocal --version | head -1
+	whereis automake
+	automake --version | head -1
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries Makefile.library"

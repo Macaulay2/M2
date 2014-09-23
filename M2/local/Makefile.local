@@ -1,7 +1,10 @@
 # -*- Makefile -*-
 
-LIBNAME = $(shell basename `pwd`)
-PREFIX = $(shell pwd)/final
+LIBNAME ?= 
+VERSION ?=
+URL ?= ftp://ftp.gnu.org/gnu/$(LIBNAME)
+
+PREFIX = $(shell pwd)
 
 TARDIR ?= $(LIBNAME)-$(VERSION)
 TARFILE ?= $(LIBNAME)-$(VERSION).tar.gz
@@ -11,13 +14,13 @@ FINALLIBRARIESDIR = $(PREFIX)
 
 export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS LOADLIBES FCFLAGS
 
-all install :: .installed-$(VERSION)
-unconfigure : ; rm -f .configured-$(VERSION) .compiled-$(VERSION) .installed-$(VERSION)
-reconfigure : unconfigure .configured-$(VERSION)
-uninstall   : ; rm -f .installed-$(VERSION)
-reinstall   : uninstall .installed-$(VERSION)
-diffs : .untarred-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
-unmark : ; rm -f .configured-$(VERSION) .compiled-$(VERSION)
+all install :: .installed-$(LIBNAME)-$(VERSION)
+unconfigure : ; rm -f .configured-$(LIBNAME)-$(VERSION) .compiled-$(LIBNAME)-$(VERSION) .installed-$(LIBNAME)-$(VERSION)
+reconfigure : unconfigure .configured-$(LIBNAME)-$(VERSION)
+uninstall   : ; rm -f .installed-$(LIBNAME)-$(VERSION)
+reinstall   : uninstall .installed-$(LIBNAME)-$(VERSION)
+diffs : .untarred-$(LIBNAME)-$(VERSION) .untarred2-$(VERSION) ; diff -ur --exclude=configure tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$@ || echo diffs: `pwd`/$@
+unmark : ; rm -f .configured-$(LIBNAME)-$(VERSION) .compiled-$(LIBNAME)-$(VERSION)
 package-clean : unmark ; $(MAKE) -C $(BUILDDIR) clean
 package-distclean : unmark ; $(MAKE) -C $(BUILDDIR) distclean
 
@@ -29,18 +32,18 @@ INSTALLTARGET ?= install
 INSTALLCMD    ?= $(MAKE) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 
 BUILDDIR      ?= $(TARDIR)
-.installed-$(VERSION)  : .compiled-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
-.compiled-$(VERSION)   : .configured-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
-.configured-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
+.installed-$(LIBNAME)-$(VERSION)  : .compiled-$(LIBNAME)-$(VERSION)   ; @ set -x ; ( cd $(BUILDDIR) && $(INSTALLCMD)   ) && touch $@
+.compiled-$(LIBNAME)-$(VERSION)   : .configured-$(LIBNAME)-$(VERSION) ; @ set -x ; ( cd $(BUILDDIR) && $(BUILDCMD)     ) && touch $@
+.configured-$(LIBNAME)-$(VERSION) : .patched-$(VERSION)    ; @ set -x ; ( cd $(BUILDDIR) && $(CONFIGURECMD) ) && touch $@
 
 ifneq ($(PATCHFILE),)
-.patched-$(VERSION) : $(PATCHFILE) .untarred-$(VERSION) ; patch -p0 <$< && touch $@
+.patched-$(VERSION) : $(PATCHFILE) .untarred-$(LIBNAME)-$(VERSION) ; patch -p0 <$< && touch $@
 else
-.patched-$(VERSION) : .untarred-$(VERSION) ; touch $@
+.patched-$(VERSION) : .untarred-$(LIBNAME)-$(VERSION) ; touch $@
 endif
 
 UNTARCMD ?= tar xzf $(TARFILE)
-.untarred-$(VERSION) : $(TARFILE) ; $(UNTARCMD) && touch $@
+.untarred-$(LIBNAME)-$(VERSION) : $(TARFILE) ; $(UNTARCMD) && touch $@
 .untarred2-$(VERSION) : $(TARFILE) ; mkdir tmp ; $(UNTARCMD) -C tmp && touch $@
 $(TARFILE) : ; curl $(URL)/$(TARFILE) -o "$(TARFILE)"
 clean ::; rm -rf .patched* $(TARDIR) .fetched .untarred* $(LIBNAME)-*.tar.gz .compiled* .configured* .installed* diffs tmp
