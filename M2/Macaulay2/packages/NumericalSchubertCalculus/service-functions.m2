@@ -1,7 +1,7 @@
 export {
    dist, --temporary 08,20,2013
-   checkIncidenceSolution, --temporary
-   moveFlags2Flags, --temporary
+   checkIncidenceSolution, 
+   moveFlags2Flags, 
    solsToFavCoords, --temporary 08.20.13
     partition2bracket,
     bracket2input,
