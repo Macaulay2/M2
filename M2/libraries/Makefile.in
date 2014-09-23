@@ -18,27 +18,27 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
 
-uninstall:; rm -rf */.installed* final
+uninstall:; rm -rf */.installed*
 all:install-programs install-licenses
 install-programs:
 	: installing programs in @pre_programsdir@
-	if [ -d final/bin/. ] ; \
+	if [ -d $(BUILTLIBPATH)/bin/. ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
-	     @TAR@ cf - -C final/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
+	     @TAR@ cf - -C $(BUILTLIBPATH)/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
 	fi
 install-licenses:
 	: installing program licenses in @pre_licensesdir@
-	if [ -d final/licenses/. ] ; \
+	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
 	then rm -rf @pre_licensesdir@ ; \
 	     @INSTALL@ -d @pre_licensesdir@ ; \
-	     @TAR@ cf - -C final/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
+	     @TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
 	fi
 install-dynamic-libraries:
 	: installing sharable library files in @pre_librariesdir@/lib
 	rm -rf @pre_librariesdir@
 	@INSTALL@ -d @pre_librariesdir@
-	cd final/lib &&							\
+	cd $(BUILTLIBPATH)/lib &&							\
 	   for i in *.dll *.so.* *[0-9].dylib ;				\
 	   do if [ -e $$i ] ;						\
 	      then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ;	\
@@ -51,7 +51,7 @@ endif
 $(foreach f,Makefile Makefile.library,					\
 	$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
 show-licenses:; grep -wnH license @srcdir@/*/Makefile.in
-clean:; rm -rf final
+uninstall clean:; rm -rf final
 distclean:clean ; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries "
