@@ -42,6 +42,11 @@ The following command shows the list of release branches:
 
     git branch -a | grep origin/release
 
+The following commands will download the latest changes to the source code:
+
+    git pull
+    git submodule update
+
 ---------
 Programs
 ---------
