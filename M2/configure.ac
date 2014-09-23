@@ -777,9 +777,8 @@ AC_SUBST(BUILTLIBS,)
 #    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
-#    mathicgb needs mathic, and they both need memtailor
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -1344,23 +1343,6 @@ then # test whether the fortran compiler can handle lapack, which, starting with
 	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
 	AC_MSG_RESULT(yes))
 fi
-
-AC_LANG(C++)
-    SAVE_CXXFLAGS=$CXXFLAGS
-    CXXFLAGS="$CXXFLAGS -std=c++0x"
-        if test $BUILD_memtailor = no
-	then AC_CHECK_HEADER(memtailor.h,LIBS="-lmemtailor $LIBS",BUILD_memtailor=yes; BUILTLIBS="-lmemtailor $BUILTLIBS")
-	else BUILTLIBS="-lmemtailor $BUILTLIBS"
-	fi
-        if test $BUILD_mathic = no
-	then AC_CHECK_HEADER(mathic.h,LIBS="-lmathic $LIBS",BUILD_mathic=yes; BUILTLIBS="-lmathic $BUILTLIBS")
-	else BUILTLIBS="-lmathic $BUILTLIBS"
-	fi
-        if test $BUILD_mathicgb = no
-	then AC_CHECK_HEADER(mathicgb.h,LIBS="-lmathicgb $LIBS",BUILD_mathicgb=yes; BUILTLIBS="-lmathicgb $BUILTLIBS")
-	else BUILTLIBS="-lmathicgb $BUILTLIBS"
-	fi
-    CXXFLAGS=$SAVE_CXXFLAGS
 
 test "$USE_FCLIBS" = no && FCLIBS=
 test "$FORTRANUSED" = no && FCLIBS=

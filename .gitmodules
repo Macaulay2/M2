@@ -1,0 +1,9 @@
+[submodule "M2/submodules/memtailor"]
+	path = M2/submodules/memtailor
+	url = https://github.com/Macaulay2/memtailor
+[submodule "M2/submodules/mathic"]
+	path = M2/submodules/mathic
+	url = https://github.com/Macaulay2/mathic
+[submodule "M2/submodules/mathicgb"]
+	path = M2/submodules/mathicgb
+	url = https://github.com/Macaulay2/mathicgb
