@@ -68,6 +68,7 @@ endif
 @srcdir@/submodules/$1/configure:@srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am; cd @srcdir@/submodules/$1 && ./autogen.sh
 endef
 $(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
+$(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules)$(eval $t-in-submodules:$t-in-libraries))
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir
@@ -75,10 +76,10 @@ distclean-this-dir:
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args
 	rm -f include/M2/synchronization.h
 	find . -type d -empty -delete
-$(foreach t,all check clean distclean,							\
-	$(foreach d,libraries submodules Macaulay2 distributions check-configure,	\
-	   $(eval .PHONY: $t-in-subdirs)						\
-	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)					\
+$(foreach t,all check clean distclean,					\
+	$(foreach d,libraries Macaulay2 distributions check-configure,	\
+	   $(eval .PHONY: $t-in-subdirs)				\
+	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)			\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 clean:
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
