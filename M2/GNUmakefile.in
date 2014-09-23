@@ -42,7 +42,7 @@ $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: configure-in-$1; $(MAKE) -C submodules/$s all install
-check-in-$1: configure-in-$1; $(MAKE) -C submodules/$s check
+check-in-$1: configure-in-$1; ulimit -v 1000000 && $(MAKE) -C submodules/$s check
 $(foreach c,clean distclean,$(eval $c-in-$1:; if [ -d submodules/$1 ]; then $(MAKE) -C submodules/$1 $c; fi))
 git-update-in-$1:; cd @srcdir@/submodules/$s && git checkout master && git pull
 git-status-in-$1:; cd @srcdir@/submodules/$s && git status
