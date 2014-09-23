@@ -22,7 +22,7 @@ Sreduced = apply(S, s->(
 	s2 := clean(0.001, s1*M2);
 	s2
 	));
-Sreduced
+assert all(flatten flatten (Sreduced/entries), isReal)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 
 end
