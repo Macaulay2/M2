@@ -21,7 +21,7 @@ CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs -coverag
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
-LOADLIBES += @BUILTLIBS@ @LIBS@ -lmemtailor -lmathic -lmathicgb -lstdc++
+LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor -lstdc++
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
 
 # do not link with gtest -- it's supposed to get compiled in via #include:
