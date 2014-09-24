@@ -30,15 +30,15 @@ make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
-get-m4:
+get-tools: local/aclocal-dir get-tools-make get-tools-pkg
+local/aclocal-dir:; aclocal --print-ac-dir >$@
+get-tools-make:
 	$(MAKE) -C local -f Makefile.local LIBNAME=m4 VERSION=1.4.17
-get-autoconf:
 	$(MAKE) -C local -f Makefile.local LIBNAME=autoconf VERSION=2.69
-get-automake:
 	$(MAKE) -C local -f Makefile.local LIBNAME=automake VERSION=1.14.1
-get-libtool:
 	$(MAKE) -C local -f Makefile.local LIBNAME=libtool VERSION=2.4.2
-get-tools: get-m4 get-autoconf get-automake get-libtool
+get-tools-pkg: local/share/aclocal/pkg.m4
+local/share/aclocal/pkg.m4: local/pkg.m4; cp $^ $@
 
 rm-autoconf :; $(MAKE) -f Makefile -C autoconf clean
 

@@ -11,3 +11,4 @@
 /.installed-*
 /.configured-*
 /.compiled-*
+/aclocal-dir
