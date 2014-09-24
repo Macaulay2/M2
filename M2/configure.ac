@@ -408,6 +408,14 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
+AC_SUBST(HAVE_LIBTBB,no)
+AC_SUBST(LIBTBB,)
+   AC_LANG(C++)
+   AC_CHECK_HEADER(tbb/tbb.h,
+      [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
+	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
+	 HAVE_LIBTBB=yes)])
+   AC_LANG(C)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
@@ -1159,8 +1167,9 @@ test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # We are using mpir.  If ntl is present, and sharable, then it depends
-# explicitly on gmp instead of mpir, which can cause a conflict.
-
+# explicitly on gmp instead of mpir, which can cause a conflict, so we build
+# it, just in case.
+if test $BUILD_mpir = yes; then BUILD_ntl=yes; fi
 if test $BUILD_ntl = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)

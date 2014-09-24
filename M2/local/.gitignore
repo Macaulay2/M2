@@ -1,14 +1,11 @@
 /bin
 /include
 /share
-/m4*
-/libtool*
-/automake*
-/autoconf*
+/src
 /lib
 /.untarred-*
 /.patched-*
 /.installed-*
 /.configured-*
 /.compiled-*
-/aclocal-dir
+/aclocal-path
