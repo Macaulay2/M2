@@ -33,6 +33,7 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 ## submodules
+-include @abs_top_srcdir@/local/aclocal-path
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
@@ -55,9 +56,9 @@ define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
-copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -uv @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
-build-in-$1:; $(MAKE) -C submodules/$1 all install
-check-in-$1: configure-in-$1; ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
+build-in-$1:; + $(MAKE) -C submodules/$1 all install
+check-in-$1: configure-in-$1; + ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 $(foreach c,clean distclean,$(eval $c-in-$1:; if [ -d submodules/$1 ]; then $(MAKE) -C submodules/$1 $c; fi))
 git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
 git-status-in-$1:; cd @srcdir@/submodules/$1 && git status

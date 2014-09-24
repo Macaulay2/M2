@@ -30,17 +30,19 @@ make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
-get-tools: local/aclocal-dir get-tools-make get-tools-pkg
-local/aclocal-dir:; aclocal --print-ac-dir >$@
+get-tools: local/aclocal-path get-tools-make
+local/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 get-tools-make:
 	$(MAKE) -C local -f Makefile.local LIBNAME=m4 VERSION=1.4.17
 	$(MAKE) -C local -f Makefile.local LIBNAME=autoconf VERSION=2.69
 	$(MAKE) -C local -f Makefile.local LIBNAME=automake VERSION=1.14.1
+get-libtool:
 	$(MAKE) -C local -f Makefile.local LIBNAME=libtool VERSION=2.4.2
-get-tools-pkg: local/share/aclocal/pkg.m4
-local/share/aclocal/pkg.m4: local/pkg.m4; cp $^ $@
-
-rm-autoconf :; $(MAKE) -f Makefile -C autoconf clean
+get-pkg: local/share/aclocal/pkg.m4
+local/share/aclocal/pkg.m4: local/pkg.m4
+	if [ ! -d local/share ] ; then mkdir local/share ; fi
+	if [ ! -d local/share/aclocal ] ; then mkdir local/share/aclocal ; fi
+	cp $^ $@
 
 autoconf-absent : autoconf-absent-msg autoconf-msg 
 autoconf-absent-msg :
@@ -74,8 +76,6 @@ check-autoconf :
 	  then echo GNU autoconf version okay ;\
 	  else $(MAKE) -f Makefile autoconf-old ;\
 	  fi
-
-rm-automake :; $(MAKE) -f Makefile -C automake clean
 
 automake-absent : automake-absent-msg automake-msg 
 automake-absent-msg :
