@@ -46,7 +46,7 @@ SUBMODULES = memtailor mathic mathicgb
 copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
 copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
 copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
-submodules/mathicgb/Makefile: CONFIGOPTIONS += --without-tbb
+submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
 SUBTARGETS = check all clean distclean configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
 all-in-mathicgb:all-in-mathic all-in-memtailor
