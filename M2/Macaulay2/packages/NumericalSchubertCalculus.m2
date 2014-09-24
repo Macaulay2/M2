@@ -41,10 +41,6 @@ export {
    makePolynomials, -- temporary
    SolutionsSuperset, -- temporary
    solutionToChart,--temporary 06.04.14
-   -------------------------------------
-   -- new! 08.22.2013
-   -------------------------------------
-   solveInternalProblem,
    MovingFlag'at'Root,
    columnReduce
    }
@@ -63,12 +59,12 @@ NEWTON'TOLERANCE = 10^-10
 -- Debug Level --
 ------------------
 -- 0 = no debug mode
--- 1 = timing main processes
--- 2 = verify solutions against blackbox solver (no timing)
--- 3 = time processes and blackbox solver 
--- 4 = new experimental stuff kicks in
-DEBUG'LEVEL = 1
-
+-- 1 = print progress info and time main processes
+-- 2 = ... + checkerboard steps info
+-- >2 = new experimental stuff kicks in
+DBG = 0
+VERIFY'SOLUTIONS = true
+BLACKBOX = false
 
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
@@ -244,10 +240,12 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
       else 
           redChkrPos(partition2bracket(partn1,k,n),partition2bracket(partn2,k,n),k,n);
      blackChkrs := reverse toList (0..(n-1)); --initial black positions
-     print "this is the root";
-     print([blackChkrs, redChkrs]);
-     root := playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree
-     if DEBUG'LEVEL>1 then print VerticalList keys all'nodes;
+     if DBG>0 then print "-- playCheckers";
+     if DBG>1 then print([blackChkrs, redChkrs]);
+     if DBG>0 then cpu0 := cpuTime();
+     root :=playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree
+     if DBG>0 then << "-- cpu time = " << cpuTime()-cpu0 << endl;
+     if DBG>1 then print VerticalList keys all'nodes;
      root
 )
 
@@ -355,12 +353,12 @@ if not node.IsResolved then (
     coordX := makeLocalCoordinates node.Board; -- local coordinates X = (x_(i,j))
     if numgens ring coordX == 0 then ( -- We need to move this block to playcheckers
     	assert(#remaining'conditions'flags==0);
-	print "-- great success: we hit the ULTIMATE LEAF\n";
+	if DBG>0 then print "-- resolveNode: reached the node with NO REMAINING CONDITIONS";
 	node.Solutions = {lift(coordX,FFF)};
 	node.IsResolved = true;
 	node.FlagM= rsort id_(FFF^n);
 	) 
-    else if #remaining'conditions'flags==0 then (
+    else if #remaining'conditions'flags==0 then ( -- should we check for consistency???
 	     node.Solutions = {};
 	     node.IsResolved = true;
 	     node.FlagM = rsort id_(FFF^n);
@@ -371,37 +369,30 @@ if not node.IsResolved then (
      if node.Children == {} then node.FlagM = matrix mutableIdentity(FFF,n) --change here
      else scan(node.Children, c->resolveNode(c,remaining'conditions'flags));
      
-     if DEBUG'LEVEL >= 2 then (
+     if VERIFY'SOLUTIONS and BLACKBOX then (
  	 -- temporary: creates a superset of solutions via a blackbox solver
 	 all'polynomials := makePolynomials(node.FlagM * coordX, remaining'conditions'flags);
 	 polynomials := squareUpPolynomials(numgens ring coordX, all'polynomials);
 	 ---* this part is to time and keep track of what is the expensive part of the computation
-	 if DEBUG'LEVEL == 3 then blckbxtime1 := cpuTime();
-	 ---*
+	 blckbxtime1 := cpuTime();
 	 Soluciones:=solveSystem flatten entries polynomials;
-	 ---*
-	 if DEBUG'LEVEL == 3 then (
-	     blckbxtime2 := cpuTime();
-	     <<"Blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
-	     );
-	 ---*
-	 node.SolutionsSuperset = apply(
+	 blckbxtime2 := cpuTime();
+	 <<"-- blackbox solving cpuTime:"<<(blckbxtime2 - blckbxtime1)<<endl;
+     	 node.SolutionsSuperset = apply(
 	     select(
-		 --// After finish with the timing, remove the previous part and the next line
-		 --// and uncomment the following line (deleting the line after that)
-		 Soluciones,
-		 --time solveSystem flatten entries polynomials, 
-		 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
-		 norm matrix s * 
-		 norm sub(last coefficients gens all'polynomials,FFF)
-		 ), 
+	     	 --// After finish with the timing, remove the previous part and the next line
+	     	 --// and uncomment the following line (deleting the line after that)
+	     	 Soluciones,
+	     	 --time solveSystem flatten entries polynomials, 
+	     	 s-> norm sub(gens all'polynomials,matrix s) <= ERROR'TOLERANCE * 
+	     	 norm matrix s * 
+	     	 norm sub(last coefficients gens all'polynomials,FFF)
+	     	 ), 
 	     ss-> (map(FFF,ring coordX,matrix ss)) coordX
 	     );
-	 ); -- close if DEBUG'LEVEL>= 2 HERE
+     	 ); -- end of VERIFY'SOLUTIONS and BLACKBOX
      if node.Children == {} then ( 
 	 lambda := output2partition(last node.Board);
-	 ------------------------
-	 ---------------------------
 	 k:=#lambda;
 	 validpartition := true;
 	 scan(lambda, i-> if i>n-k then validpartition = false) ;
@@ -420,26 +411,23 @@ if not node.IsResolved then (
 		     (C,F) := CF;
 		     (C, Ainv*F)
 		     ));
-	     ---------------------------------------
---	     remaining'conditions'flags := apply(newRemainingFlags, C->toSequence(drop(C,-1)));
---	     remaining'conditions'flags = prepend((l3,F3),remaining'conditions'flags);
-	     ---------------------------------------
-	     print "-- making a recursive call to resolveNode ";
-	     print(node.Board);
-	     print(lambda);
-	     print("remaining conditions:");
-	     print(remaining'conditions'flags);
-	     print("---------");
+	     if DBG>0 then print "-- making a recursive call to resolveNode";
+	     if DBG>1 then (
+		 print(node.Board);
+	     	 print(lambda);
+	     	 print("remaining conditions:");
+	     	 print(remaining'conditions'flags);
+		 );
 	     -- *************** main recursive call ********************************************
 	     new'l := output2partition last node.Board;
 	     newDag := playCheckers(new'l,l3,k,n);
 	     resolveNode(newDag,newRemainingFlags);
 	     S := newDag.Solutions; 
-	     << "the previous level gets solution: " << S << endl;
+	     if DBG>1 then << "the previous level gets solution: " << S << endl;
 	     
 	     brack:=output2bracket last node.Board; --compute the bracket afecting the standard flag
 	     -- we use the bracket for column reduction of the solutions;
-	     << "here is the bracket" << brack << endl;
+	     if DBG>1 then << "the bracket" << brack << endl;
 	     node.Solutions = if #newRemainingFlags > 0 then (
 		 assert(MM==newDag.FlagM);
 		 apply(S, s->columnReduce(A*MM*s,brack)) -- A is roughly M^{-1} ??? 
@@ -449,18 +437,14 @@ if not node.IsResolved then (
 		 (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
 		 apply(S, s->columnReduce(A*MM*s,brack))
 		 );
-	     print "... and the transformed solutions are:";
-	     print(node.Solutions);
-	     --if #newRemainingFlags == 0 and #S>0 then 1/0; 
-	     ---------------------------
+	     if DBG>1 then print "... and the transformed solutions are:";
+	     if DBG>1 then print(node.Solutions);
+	     if DBG>1 then print "-- end (recursive call to resolveNode)";	     
 	     node.IsResolved = true;
-	     -- assert(???); --verify that the solutions fit the localization pattern 
-	     )else(   
-	     << "-- partition is not valid: " << lambda << endl;
-	     node.Solutions = {}; 
+	     ) else (   
+	     << lambda << endl;
+	     error( "partition above is not valid"); 
 	     );
-	 --) -- closes if DEBUG'LEVEL == 4
-	 --else node.Solutions = node.SolutionsSuperset; -- should change!!! 
 	 ); 
      scan(node.Fathers, father'movetype->(
      	  (father,movetype) := father'movetype; 
@@ -469,18 +453,17 @@ if not node.IsResolved then (
      	  red'sorted := sort delete(NC, red);
 	  M := node.FlagM;
 	  M'':= M_{0..(r-1)} | M_{r} - M_{r+1} | M_{r}| M_{(r+2)..(n-1)};
-	  if not father.?FlagM then father.FlagM = M'' 
-	  else if DEBUG'LEVEL>0 then assert (father.FlagM == M'');
-     	  if DEBUG'LEVEL > 0 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
-     	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
-     	       tparents1:=cpuTime();
-	       << "-- i.e. from "<< node.FlagM * makeLocalCoordinates(node.Board)
-	       << " TO  "<< father.FlagM * makeLocalCoordinates(father.Board) << endl;
-	       << "-- using this move: " << movetype<<endl;
-	       << "starting with this solution "<< node.Solutions<<endl<<endl;
+	  if not father.?FlagM then father.FlagM = M''; 
+	  assert (father.FlagM == M'');
+     	  if DBG>1 then << "-- FROM " << node.Board << " TO " << father.Board << endl;
+	  if DBG>1 then (
+	       << "using this move: " << movetype<<endl;
+	       << "from "<< node.FlagM * makeLocalCoordinates(node.Board)
+	       << " to  "<< father.FlagM * makeLocalCoordinates(father.Board) << endl; 
+	       << "starting with these solutions: "<< node.Solutions<<endl<<endl;
      	       );
+     	  if DBG>0 then tparents1:=cpuTime();
 	  
-	  --if movetype=={2,2,0} and r == 1 then 1/0;
 	  parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
 	  if node.Solutions == {} then {} -- means: not implemented
 	  else if movetype#1 == 2 then (-- case (_,2)
@@ -573,10 +556,14 @@ if not node.IsResolved then (
 	       --else if member(movetype,{{0,0,0},{0,1,0}}) then (-- case SWAP(top row)		    
 	       --    )
 	       else error "an unaccounted case";
-
-	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then timemakePolys1 := cpuTime();
+    	    	
+	       if DBG>1 then (
+	       	   << "via M*" << VwrtM << " = " << M'X' 
+	       	   << " where M = " << promote(M,Rt) << endl;
+    		   );
+	       if DBG>0 then timemakePolys1 := cpuTime();
 	       all'polys := makePolynomials(M'X',remaining'conditions'flags);
-	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+	       if DBG>0 then (
 		    timemakePolys2 := cpuTime();
 		    << "-- time to make equations:  "<< (timemakePolys2-timemakePolys1)<<endl;
 		    );
@@ -589,14 +576,12 @@ if not node.IsResolved then (
 		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
 			 norm matrix{s} * 
 			 norm sub(last coefficients polys,FFF)));
-	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then( 
-	       	    t1:= cpuTime();
-		    );
+	       if DBG>0 then t1:= cpuTime();
 	       -- track homotopy and plug in the solution together with t=1 into Xt
 	       targetSolutions := trackHomotopy(polys,startSolutions);
-	       if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+	       if DBG>0 then (
 	       	    t2:= cpuTime();
-	       	    << node.Board << " -- trackHomotopy time: " << (t2-t1) << endl;
+	       	    << " -- trackHomotopy time = " << (t2-t1) << " for " << node.Board << endl;
 	       	    );
 	       apply(targetSolutions, sln->( 
 		    M''X'' := (map(FFF,Rt,matrix{{1}}|matrix sln)) M'X';
@@ -607,13 +592,11 @@ if not node.IsResolved then (
 			 X'' = X''_{0..s}| X''_{s}+X''_{s+1}| X''_{s+2..k-1}; -- we substitute the s+1 column for the vector w_{s+1}
 		    	 redCheckersColumnReduce2(normalizeColumn(X'',r,s),father)
 			 ) 
-		    else --redCheckersColumnReduce2(
-		    normalizeColumn(X'',r,s)
-		    --,father) -- !!!
+		    else normalizeColumn(X'',r,s)
 		    ))
 	       );
-     	  -- else {}; -- means: not implemented
-	  if DEBUG'LEVEL >= 2 then (
+	   
+	  if VERIFY'SOLUTIONS then (
 	       -- verify solutions
 	       parentX := makeLocalCoordinates father.Board;
 	       parentXlist := flatten entries parentX;
@@ -630,12 +613,12 @@ if not node.IsResolved then (
 	  if not father.?Solutions then father.Solutions = {};  
 	  father.Solutions = father.Solutions | parent'solutions;
      	  
-	  if DEBUG'LEVEL == 1 or DEBUG'LEVEL == 3 then(
+	  if DBG>0 then (
      	       tparents2:=cpuTime();
-     	       << "time of computing one edge: "<< (tparents2 - tparents1) << endl;
+     	       << "-- time of performing one checker move: "<< (tparents2 - tparents1) << endl;
      	       );
      	  ));
-     if DEBUG'LEVEL >= 2 then(
+     if VERIFY'SOLUTIONS and node.?SolutionsSuperset then(
      	  -- check against the blackbox solutions
      	  scan(node.Solutions, X->
 	       assert(position(node.SolutionsSuperset, Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)); 
@@ -681,8 +664,6 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, remaining'conditions'flags);
 	conds := {l1,l2};
-	--Changed here March 22:
-	--
 	-- resolveNode gives a solution in local coords
 	-- of {l1}*{l2} w.r.t {FlagM, Id}
 	-- we multiply the solution S by FlagM
@@ -712,11 +693,10 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 		Flags1 = append(Flags1, GL*(last c));
 		Flags2 = append(Flags2, last c);
 		));
-
-	-- solution obtained at the root of the node
-    	print"this is the solution obtained at the root of a node";
-	print(newDag.Solutions);
-
+    	if DBG>1 then (
+	    print "solutions obtained at the root of a node";
+	    print newDag.Solutions;
+    	    );
 	-----------------------------
 	-- August 20, 2013:
 	-----------------------------
@@ -736,12 +716,13 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- after the change of coordinates and flags, are actual
 	-- solutions to our original problem... we need to do
 	-- another Newton step here!
-	print"this are the transformations that we apply";
-	print" before calling changeFlags:";
-	print(GL);
-	print(newDag.FlagM);
-	print(GL*newDag.FlagM*newDag.Solutions);
-	print "---------";
+	if DBG>1 then (
+	    print "this are the transformations that we apply";
+	    print "before calling changeFlags:";
+	    print(GL);
+	    print(newDag.FlagM);
+	    print(GL*newDag.FlagM*newDag.Solutions);
+	    );
 	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    (conds, Flags1, Flags2))
 	)
@@ -891,12 +872,6 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
       	       solutionsS = solutionsT/coordinates;
 	       ));
        );
-   -- August 20,2013:
-   ---------------------------
-   -- Newton refinement here!!
-   --   SquareSyst := flatten entries squareUpPolynomials(nVars, makePolynomials(MX, apply(#conditionss,i->(conditions#i,FlagsB#i))));
-   --   print("Newton refinement");
-   --   print(refine(SquareSyst, solutionsS, Software=>M2, Iterations=>1));
    solutionsS
    )
 
@@ -1179,80 +1154,6 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
      i < e1 and i >= e0
      )
 
---------------------------
--- May 15, 2014
----------------------------
--- solveInternalProblem
----------------------------
--- Function that solves a given Schubert Problem given by a list of partitions takes
---  input data for the Grassmannian, two partitions, and m-2 other partitions together
---  with m-2 corresponding flags, given by matrices.  Assumed to be in general position.
--- The output consists of a list S of solutions to the same Schubert problem 
---
---------------------------
--- Input:
---    kn -- sequence with the numbers k,n for Gr(k,n)
---    l1,l2, -- two partitions
---    remaining'conditions'flags -- list a list with the rest of the data
---    	      each consisting of (li,Fi)
---    	      where li is a partition
---    	      Fi is a flag
--- Output:
---    S -- List of solutions to the problem wrt (M,ID,F3,...Fm)
---------------------------
-solveInternalProblem=method(TypicalValue=>List)
-solveInternalProblem(Sequence,List,List,List) := (kn,l1,l2,remaining'conditions'flags) ->(
-    (k,n):=kn;
-    l1=verifyLength(l1,k);
-    l2=verifyLength(l2,k);
-    ------------------
-    -- The intersection of Schubert varieties given by l1 and l2 is empty
-    -- if partitionOverlap not nonnegative
-    -- if partitionOverlap is 0 then the partitions are dual (thus, there is
-    -- one solution)
-    partitionOverlap := (l1+reverse l2)/(i->n-k-i);
-    if min(partitionOverlap) >=0 then(
-	<<endl<<"###########"<<endl;
-	<<"We play the game "<< toString(l1)<<" vs "<<toString(l2)<<endl;
-	newDag := playCheckers(l1,l2,k,n);
-	resolveNode(newDag,remaining'conditions'flags);
-	<<"and this is the output of resolveNode at the the root of that tree:"<< toString(l1)<<" vs "<<toString(l2)<<endl;
-	<<"This is the poincare check "<<partitionOverlap<<endl;
-	<<newDag.Solutions<<endl<<"#############"<<endl;
-	MM := MovingFlag'at'Root n;
-	ID := id_(FFF^n);
-	rID := rsort(ID);
-	if max(partitionOverlap)==0  then(
-	    --MM*newDag.Solutions
-	    brack := output2bracket last newDag.Board;
-    	    apply(newDag.Solutions, s->columnReduce(MM*s,brack))
-	--    Redchkrs := redChkrPos(partition2bracket(l1,k,n),partition2bracket(l2,k,n),k,n);
-     	--    blackChkrs := reverse toList (0..(n-1)); --initial black positions
-	--    print"great success: we hit the SOLVED THE ULTIMATE LEAF: ";
-	--    print(concatenate(toString l1," vs ",toString l2));
-	--    coordX:=makeLocalCoordinates [blackChkrs,redChkrs];
-	    -- We need to check that there are not remaining conditions 
-	--    {{lift(coordX,FFF)},--return the local coordinates
-	--     	{rsort id_(FFF^n)},--return the flags
-	--     	{id_(FFF^n)}}
-	    )else(
-	    Minv := solve(MM,ID);
-    	    --newDag := playCheckers(l1,l2,k,n);
-	    --resolveNode(newDag,remaining'conditions'flags);
-	    print("tests Incidence");
-	    print(checkIncidenceSolution(first(MM*newDag.Solutions), {(l1,MM),(l2,id_(FFF^n))}));
-	    MM*newDag.Solutions
-	    --MM*newDag.Solutions
-	    --scan(remaining'conditions'flags, c-> (
-		--conds = append(conds, first c);
-		--Flags1 = append(Flags1, GL*(last c));
-		--Flags2 = append(Flags2, last c);
-		--));
-	)
-    )else {}
-) 
-
-
 -----------------------------
 -- end Numerical LR-Homotopies
 -----------------------------
@@ -1267,8 +1168,16 @@ load "NumericalSchubertCalculus/doc.m2"
 -- Tests         --
 -------------------
 TEST ///
-load "NumericalSchubertCalculus/TST/21e3-G36.m2"
+load "NumericalSchubertCalculus/TST/4lines.m2"
+///
+TEST ///
+load "NumericalSchubertCalculus/TST/4lines_osculating.m2"
+///
+TEST ///
+-- load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 ///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
 ---------------------------------------------------------------------------
+restart
+check "NumericalSchubertCalculus"
