@@ -659,6 +659,9 @@ scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
+
+copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
+
 path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if prefixDirectory =!= null then (
 	       if topBuilddir =!= null then (

@@ -32,6 +32,10 @@ define cdw
 set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
+# completion of certain make targets
+.completed:; $(MKDIR_P) $@
+clean:; rm -rf .completed
+
 ## submodules
 -include @abs_top_srcdir@/local/aclocal-path
 ifneq (@build_alias@,)
@@ -49,12 +53,14 @@ copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
 SUBTARGETS = check all clean distclean configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
+all-in-submodules:all-in-libraries
 all-in-mathicgb:all-in-mathic all-in-memtailor
 all-in-mathic:all-in-memtailor
 $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
-all-in-$1: configure-in-$1 build-in-$1 copy-license-files-from-$1
+all-in-$1: .completed/all-in-$1
+.completed/all-in-$1: configure-in-$1 build-in-$1 copy-license-files-from-$1 | .completed; touch $$@
 copy-license-files-from-submodules: copy-license-files-from-$1
 copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
 build-in-$1:; + $(MAKE) -C submodules/$1 all install
@@ -107,7 +113,16 @@ endif
 endef
 $(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
 $(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules))
-all-in-submodules:all-in-libraries
+
+# installation into StagingArea
+all-in-Macaulay2:install-licenses
+install-licenses:all-in-submodules
+	: installing library and submodule licenses in @pre_licensesdir@
+	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
+	then rm -rf @pre_licensesdir@ ; \
+	     @INSTALL@ -d @pre_licensesdir@ ; \
+	     @TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
+	fi
 
 ## 
 distclean:clean distclean-in-subdirs distclean-this-dir

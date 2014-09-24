@@ -19,20 +19,13 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval .PHONY: $t $t-in-$d)))
 
 uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
-all:install-programs install-licenses
+all:install-programs
 install-programs:
 	: installing programs in @pre_programsdir@
 	if [ -d $(BUILTLIBPATH)/bin/. ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
 	     @TAR@ cf - -C $(BUILTLIBPATH)/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
-	fi
-install-licenses:
-	: installing program licenses in @pre_licensesdir@
-	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
-	then rm -rf @pre_licensesdir@ ; \
-	     @INSTALL@ -d @pre_licensesdir@ ; \
-	     @TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
 	fi
 install-dynamic-libraries:
 	: installing sharable library files in @pre_librariesdir@/lib
