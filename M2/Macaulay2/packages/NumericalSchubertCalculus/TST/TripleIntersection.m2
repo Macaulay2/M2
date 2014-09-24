@@ -1,44 +1,55 @@
--- problems in Gr(3,6)
-n=6
-M = MovingFlag'at'Root n
-T1 = id_(FFF^n)+random(FFF^n,FFF^n,UpperTriangular=>true)
-S1 = solve(T1, id_(FFF^n))
-Idop = rsort id_(FFF^n)
-F1 = S1*Idop
+needsPackage "NumericalSchubertCalculus"
+setRandomSeed 2
 
--- Problem 1: {3,2,1} {1,1} {1}
-S = solveInternalProblem((3,6),{3,2,1},{1,1},{({1,0},F1, T1)})
-s = first S
-s
-checkIncidenceSolution(s, {({3,2,1},M), ({1,1},rsort(id_(FFF^n))), ({1,0},F1)})
+-- Problem 1: {3,2,1} {1,1} {1} in Gr(3,6)
+SchPblem = {
+    ({3,2,1}, random(FFF^6,FFF^6)),
+    ({1,1}, random(FFF^6,FFF^6)),
+    ({1}, random(FFF^6,FFF^6))
+    }
 
--- Problem 2: {2,1} {2,1} {2,1}
+Solutions = solveSchubertProblem(SchPblem, 3,6)
+assert all(Solutions, s-> checkIncidenceSolution(s, SchPblem))
+
+-- Problem 2: {2,1} {2,1} {2,1} in Gr(3,6)
 -- a problem with 2 solutions
+SchPblm = {
+    ({2,1}, random(FFF^6,FFF^6)),
+    ({2,1}, random(FFF^6,FFF^6)),
+    ({2,1}, random(FFF^6,FFF^6))    
+    }
 
-S = solveInternalProblem((3,6),{2,1},{2,1},{({2,1},F1, T1)})
-s1 = first S
-s1
-s2 = last S
+S = solveSchubertProblem(SchPblm, 3,6);
 
-checkIncidenceSolution(s1,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
-checkIncidenceSolution(s2,{({2,1},M),({2,1},(id_(FFF^n))), ({2,1},F1)})
+assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
--- Problem with 3 solutions in Gr(3,9)
--- Problem {4,2} {4,2} {4,2}
-n=9
-M = MovingFlag'at'Root n
-Minv = solve(M, id_(FFF^n))
-T1 = id_(FFF^n)+random(FFF^n,FFF^n,UpperTriangular=>true)
-S1 = solve(T1, id_(FFF^n))
-Idop = rsort id_(FFF^n)
-F1 = S1*Idop
+-- Problem with 3 solutions
+-- Problem {4,2} {4,2} {4,2} in Gr(3,9)
+SchPblm = {
+    ({4,2}, random(FFF^9,FFF^9)),
+    ({4,2}, random(FFF^9,FFF^9)),
+    ({4,2}, random(FFF^9,FFF^9))    
+    }
 
-S = solveInternalProblem((3,9),{4,2},{4,2},{({4,2},F1,T1)})
-s1 = first S
-s2 = S_1
-s3 = last S
+S = solveSchubertProblem(SchPblm, 3,9);
 
-checkIncidenceSolution(s1,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
-checkIncidenceSolution(s2,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
-checkIncidenceSolution(s3,{({4,2},M),({4,2},(id_(FFF^n))), ({4,2},F1)})
+assert all(S,s->checkIncidenceSolution(s, SchPblm))
+
+-- Problem with 5 solutions
+-- {5,3,1}*{4,2,1}*{4,3,1} in G(4,10)
+SchPblm = {
+    ({5,3,1}, random(FFF^10,FFF^10)),
+    ({4,2,1}, random(FFF^10,FFF^10)),
+    ({4,3,1}, random(FFF^10,FFF^10))    
+    }
+
+S = solveSchubertProblem(SchPblm, 4,10);
+
+assert all(S,s->checkIncidenceSolution(s, SchPblm))
+
+
+end
+
+restart
+load "TripleIntersection.m2"
 
