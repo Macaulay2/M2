@@ -33,7 +33,6 @@ $(D)$(EJ) : always ; $(TJ) -C @pre_exec_prefix@ $(A) .
 $(D)$(EG) : always ; $(TG) -C @pre_exec_prefix@ $(A) .
 Makefile: @srcdir@/Makefile.in; cd ../..; ./config.status distributions/tar/Makefile
 distclean:; rm -rf Makefile
-srcfiles:; cd @top_srcdir@ ; svn-ls
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/tar "
 # End:

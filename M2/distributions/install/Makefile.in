@@ -35,7 +35,7 @@ ifeq (@DUMPDATA@,yes)
 endif
 
 install::@infodir@/dir
-@infodir@/dir :; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+@infodir@/dir :; @INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
 
 define ii
 install::
