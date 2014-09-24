@@ -66,7 +66,7 @@ configure-in-$1: submodules/$1/Makefile
 submodules/$1/Makefile:@srcdir@/submodules/$1/configure
 	$(MKDIR_P) submodules/$1
 	$(call cdw,submodules/$1) &&							\
-	 @srcdir@/submodules/$1/configure						\
+	 @abs_srcdir@/submodules/$1/configure						\
 		--prefix=$(BUILTLIBPATH)						\
 		--with-gtest=yes							\
 		PKG_CONFIG_PATH="$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)"	\
