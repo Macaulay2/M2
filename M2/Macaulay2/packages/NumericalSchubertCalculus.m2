@@ -572,10 +572,10 @@ if not node.IsResolved then (
 	       startSolutions := apply(node.Solutions, X->toRawSolutions(coordX,X));
 	       
 	       -- check at t=0
-	       scan(startSolutions,  
-		    s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
-			 norm matrix{s} * 
-			 norm sub(last coefficients polys,FFF)));
+	       if VERIFY'SOLUTIONS then scan(startSolutions,  
+		   s->assert(norm sub(polys,matrix{{0_FFF}|s}) < ERROR'TOLERANCE * 
+		       norm matrix{s} * 
+		       norm sub(last coefficients polys,FFF)));
 	       if DBG>0 then t1:= cpuTime();
 	       -- track homotopy and plug in the solution together with t=1 into Xt
 	       targetSolutions := trackHomotopy(polys,startSolutions);
