@@ -30,13 +30,15 @@ make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
+get-m4:
+	$(MAKE) -C local -f Makefile.local LIBNAME=m4 VERSION=1.4.17
 get-autoconf:
 	$(MAKE) -C local -f Makefile.local LIBNAME=autoconf VERSION=2.69
 get-automake:
 	$(MAKE) -C local -f Makefile.local LIBNAME=automake VERSION=1.14.1
 get-libtool:
 	$(MAKE) -C local -f Makefile.local LIBNAME=libtool VERSION=2.4.2
-get-tools: get-autoconf get-automake get-libtool
+get-tools: get-m4 get-autoconf get-automake get-libtool
 
 rm-autoconf :; $(MAKE) -f Makefile -C autoconf clean
 
@@ -58,7 +60,7 @@ autoconf-msg :
 	@ echo "" >&2
 	@ echo "    make get-tools" >&2
 	@ echo "" >&2
-	@ echo "for recent versions of autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
+	@ echo "for recent versions of m4, autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
 	@ echo "=============================================================================" >&2
 	@ false
 
@@ -93,7 +95,7 @@ automake-msg :
 	@ echo "" >&2
 	@ echo "    make get-tools" >&2
 	@ echo "" >&2
-	@ echo "for recent versions of autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
+	@ echo "for recent versions of m4, autoconf, automake, and libtool to be downloaded and compiled automatically." >&2
 	@ echo "=============================================================================" >&2
 	@ false
 
