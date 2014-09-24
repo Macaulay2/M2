@@ -18,7 +18,7 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
 
-uninstall:; rm -rf */.installed*
+uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
 all:install-programs install-licenses
 install-programs:
 	: installing programs in @pre_programsdir@
@@ -51,7 +51,7 @@ endif
 $(foreach f,Makefile Makefile.library,					\
 	$(eval $f: $f.in; cd .. && ./config.status libraries/$f))
 show-licenses:; grep -wnH license @srcdir@/*/Makefile.in
-uninstall clean:; rm -rf final
+clean:; rm -rf final
 distclean:clean ; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries "
