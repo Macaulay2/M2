@@ -26,6 +26,9 @@ declarations "
 header "
    #include <atomic_ops.h>
    #include <mpfr.h>
+   #include <memtailor.h>
+   #include <mathic.h>
+   #include <mathicgb.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
@@ -209,6 +212,9 @@ setupconst("version", Expr(toHashTable(Sequence(
 	   \"not present\"
 	 #endif
 	 "),
+   "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
+   "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
+   "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"mpfr_version"),

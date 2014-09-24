@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2012 Daniel R. Grayson and Michael E. Stillman:" | newline
+	  | "Copyright 2014 Daniel R. Grayson and Michael E. Stillman:" | newline
      	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
      	  | "  this binary code licensed under the GNU General Public License version 3." | newline
      	  -- our binary code is linked with :
@@ -183,7 +183,10 @@ if firstTime then (
 	       else ""
 	       )
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
+	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
+          | "  MEMTAILOR " | version#"memtailor version" | ", by B. Roune" | newline
+          | "  MATHIC " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
+          | "  MATHICGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
 	  );
 
      use = x -> x;				  -- temporary, until methods.m2
