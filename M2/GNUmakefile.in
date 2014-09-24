@@ -33,8 +33,16 @@ set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
 ## submodules
+ifneq (@build_alias@,)
+# it was ../configure --build=@build_alias@
+SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
+endif
+ifneq (@host_alias@,)
+# it was ../configure --build=@host_alias@ (for cross compiling)
+SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
+endif
 SUBMODULES = memtailor mathic mathicgb
-SUBTARGETS = check all clean distclean
+SUBTARGETS = check all clean distclean configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
 all-in-mathicgb:all-in-mathic all-in-memtailor
 all-in-mathic:all-in-memtailor
@@ -56,7 +64,24 @@ submodules/$1/Makefile:@srcdir@/submodules/$1/configure
 		--prefix=$(BUILTLIBPATH)						\
 		--with-gtest=yes							\
 		PKG_CONFIG_PATH="$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)"	\
-		GTEST_PATH=$(BUILTLIBPATH)/include/gtest
+		GTEST_PATH=$(BUILTLIBPATH)/include/gtest				\
+		AR=@AR@									\
+		AS=@AS@									\
+		DLLTOOL=@DLLTOOL@							\
+		OBJDUMP=@OBJDUMP@							\
+		STRIP=@STRIP@								\
+		CXXFLAGS="$(CXXFLAGS)"							\
+		CFLAGS="$(CFLAGS)"							\
+		FFLAGS="$(FCFLAGS)"							\
+		FCFLAGS="$(FCFLAGS)"							\
+		TARGET_ARCH=$(TARGET_ARCH)						\
+		CPPFLAGS="$(CPPFLAGS)"							\
+		CC="$(CC)"								\
+		CXX="$(CXX)"								\
+		LDFLAGS="$(LDFLAGS)"							\
+		LOADLIBES="$(LOADLIBES)"						\
+		LDLIBS="$(LDLIBS)"							\
+		$(SUBMODULE_CONFIGOPTIONS)
 @srcdir@/submodules/$1/configure.ac:
 ifeq (@DOWNLOAD@,yes)
 	cd @srcdir@/.. && git submodule update --init M2/submodules/$1
