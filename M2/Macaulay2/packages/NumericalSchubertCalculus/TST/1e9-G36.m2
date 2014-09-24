@@ -14,6 +14,7 @@ Pblm={
     ({1}, random(FFF^6,FFF^6)),
     ({1}, random(FFF^6,FFF^6))
     }
+
 S = solveSchubertProblem(Pblm,3,6)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 end

@@ -657,8 +657,8 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     F2:=promote(last last twoconds,FFF);
     
     Slns:={};
-    checkOrthogonal := l1+reverse l2;
-    if sum(checkOrthogonal) == k*(n-k) and #(unique checkOrthogonal)>1 then 
+    checkPartitionsOverlap := (l1+reverse l2)/(i->n-k-i);
+    if min(checkPartitionsOverlap) < 0 then
        Slns
     else(
 	newDag := playCheckers(l1,l2,k,n);
