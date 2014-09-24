@@ -42,6 +42,9 @@ ifneq (@host_alias@,)
 SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
 endif
 SUBMODULES = memtailor mathic mathicgb
+copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
+copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
+copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 SUBTARGETS = check all clean distclean configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
 all-in-mathicgb:all-in-mathic all-in-memtailor
@@ -49,13 +52,16 @@ all-in-mathic:all-in-memtailor
 $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
-all-in-$1: configure-in-$1; $(MAKE) -C submodules/$s all install
-check-in-$1: configure-in-$1; ulimit -v 1000000 && $(MAKE) -C submodules/$s check
+all-in-$1: configure-in-$1 build-in-$1 copy-license-files-from-$1
+copy-license-files-from-submodules: copy-license-files-from-$1
+copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -uv @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
+build-in-$1:; $(MAKE) -C submodules/$1 all install
+check-in-$1: configure-in-$1; ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 $(foreach c,clean distclean,$(eval $c-in-$1:; if [ -d submodules/$1 ]; then $(MAKE) -C submodules/$1 $c; fi))
-git-update-in-$1:; cd @srcdir@/submodules/$s && git checkout master && git pull
-git-status-in-$1:; cd @srcdir@/submodules/$s && git status
-git-clean-in-$1:; cd @srcdir@/submodules/$s && git clean -Xdf
-git-describe-in-$1:; cd @srcdir@/submodules/$s && git describe --dirty --long --always --abbrev=40 --all
+git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
+git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
+git-clean-in-$1:; cd @srcdir@/submodules/$1 && git clean -Xdf
+git-describe-in-$1:; cd @srcdir@/submodules/$1 && git describe --dirty --long --always --abbrev=40 --all
 configure-in-$1: submodules/$1/Makefile
 submodules/$1/Makefile:@srcdir@/submodules/$1/configure
 	$(MKDIR_P) submodules/$1
