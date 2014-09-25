@@ -145,3 +145,7 @@
 /usr-host
 /.completed
 LOGFILE
+/Macaulay2/e/unit-tests/testMain
+/check-configure/tmp/
+/libraries/ntl/check-once
+/Macaulay2/packages/ComputationsBook/programming/foo
