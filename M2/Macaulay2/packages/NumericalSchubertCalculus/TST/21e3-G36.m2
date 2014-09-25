@@ -1,4 +1,4 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 2
 
 -- Problem (2,1)^3 = 2 in Gr(3,6)

@@ -1,4 +1,4 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 4
 
 -- problem of 4 lines w.r.t. id, idop, 2 osculating flags

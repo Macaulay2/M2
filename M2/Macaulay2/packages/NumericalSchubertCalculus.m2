@@ -8,7 +8,7 @@ newPackage(
 	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "asanchez@math.tamu.edu", 
-	    HomePage => "www.math.tamu.edu/~asanchez"},
+	    HomePage => "http://www.math.tamu.edu/~asanchez"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
@@ -31,8 +31,6 @@ export {
    moveRed,
    moveCheckers,
    playCheckers,
-   NC,
-   FFF,
    Board,
    IsResolved,
    Fathers,
@@ -73,6 +71,7 @@ NEWTON'TOLERANCE = 10^-10
 DBG = 0
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
+
 
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
@@ -1197,3 +1196,4 @@ end ---------------------------------------------------------------------
 restart
 check "NumericalSchubertCalculus"
 installPackage "NumericalSchubertCalculus"
+
