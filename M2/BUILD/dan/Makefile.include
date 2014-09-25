@@ -64,6 +64,9 @@ CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+ifeq ($(NTL_WIZARD),no)
+   CONFIGOPTIONS=--disable-ntl-wizard 
+endif
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

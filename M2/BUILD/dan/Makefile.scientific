@@ -6,9 +6,6 @@ ifeq ($(DEBUG),yes)
 else
    CONFIGOPTIONS += --enable-rpm
 endif
-ifeq ($(NTL_WIZARD),no)
-   CONFIGOPTIONS=--disable-ntl-wizard 
-endif
 include Makefile.include
 default: check
 # Local Variables:
