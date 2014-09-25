@@ -14,18 +14,16 @@ newPackage(
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
-    PackageImports => {"PHCpack", "NumericalAlgebraicGeometry"},
+    PackageImports => {
+	"PHCpack",
+	"NumericalAlgebraicGeometry"
+	},
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
-load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
-
 export {   
------------------------
--- The following are functions for
--- LR-Homotopies
------------------------
+   NSC'DBG, NSC'VERIFY'SOLUTIONS, NSC'BLACKBOX, setFlags,
    trackHomotopy,
    redChkrPos,
    moveRed,
@@ -71,6 +69,15 @@ DBG = 0
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
 
+setFlags = method(Options=>{NSC'DBG=>null,NSC'VERIFY'SOLUTIONS=>null,NSC'BLACKBOX=>null})
+installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
+	if k === NSC'DBG then DBG = o#k
+	else if k === NSC'VERIFY'SOLUTIONS then VERIFY'SOLUTIONS = o#k
+	else if k === NSC'BLACKBOX then BLACKBOX = o#k
+	))
+
+ 
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
@@ -381,6 +388,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     if min(checkPartitionsOverlap) < 0 then
        Slns
     else(
+	if DBG>1 then print "solveSchubertProblem: transforming flags to (M,Id,...)";
 	-- we first make a transformation to put
 	-- the first flag in the coordinates of ID
 	ID := id_(FFF^n);

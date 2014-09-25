@@ -1,6 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
-DBG = 2
+setFlags(NSC'DBG=>1,NSC'VERIFY'SOLUTIONS=>false)
 
 -- Problem (1)^9 = 42 in G(3,6)
 Pblm={
