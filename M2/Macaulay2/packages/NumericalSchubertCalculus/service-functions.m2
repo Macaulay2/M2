@@ -3,6 +3,7 @@ export {
    checkIncidenceSolution, 
    moveFlags2Flags, 
    solsToFavCoords, --temporary 08.20.13
+   checkNewtonIteration,
     partition2bracket,
     bracket2input,
     output2partition,
@@ -99,32 +100,39 @@ bracket2partition(List,ZZ) := (l, n) -> (
 -- it creates a Newton step to compare
 -- the convergence of the approximated solution
 ----------------------
--- Input:
---    Solns - List of solutions
---    System - Ideal of polynomials
-----------------------
+-- Input: 
+--    Solns - list of solutions 
+--    Pblm - list of (li,Fi) representing the SchubertProblem
+--    (k,n) - sequence with (k,n) that indicate the Grassmannian G(k,n)
 -- Output:
---    NewtonStep  -- a point representing the Newton step (output from "refine")
------------------------
-checkNewtonIteration = method()
-checkNewtonIteration(List,Ideal) := (Solns, System)->(
-    squareSyst:=first entries squareUpPolynomials(numgens ring System, System);
-    refine(squareSyst, Solns, Software=>M2, Iterations=>1)/coordinates
-    )
-
--- Input:
---    Solns -- list of nxk matrices (representing solutions of G(k,n))
---    coordX -- local coordinates for the solution
---    rem'conds'flags -- the list of remaining conditions and flags
+--    Newt - List where each entry is the l_1 norm of (s-NewtStep(s)) for s\in Solns
 --------------------------------------------------------------------
 --        These is the info necessary to create a system of eqns
 --------------------------------------------------------------------
+checkNewtonIteration = method()
+checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
+    (k,n):= kn;
+    RX:=FFF[X_{0,0}..X_{n-1,k-1}];
+    coordX := matrix pack(first entries vars RX,k);
+    polySyst := makePolynomials(coordX,Pblm);
+    solutions := apply(Solns, X-> toRawSolutions(coordX,X));
+    squareSyst:=first entries squareUpPolynomials(numgens ring polySyst, polySyst);
+    -- we use NAG's Newton Iteration function:
+    NewtStep :=refine(squareSyst, Solns, Software=>M2, Iterations=>1)/coordinates
+    apply(NewtStep, n-> map(FFF,ring coordX, matrix{n}) coordX)    
+    --NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
+    --NewtonStep2 := refine(squareSyst, NewtonStep1, Software=>M2, Iterations=>1);
+    --print(dist(NewtonStep1,Sols));
+    --print("distance between two newton steps:");
+    --print(dist(NewtonStep2,NewtonStep1));
+    )
 --checkNewtonIteration(List,Matrix,List) := (Solns,coordX,remaining'conditions'flags) -> (
 --    polySyst := makePolynomials(coordX,remaining'conditions'flags);
 --    solutions := apply(Solns, X-> toRawSolutions(coordX,X));
 --    NewtStep:=checkNewtonIteration(solutions,polySyst);
 --    apply(NewtStep, n-> map(FFF,ring coordX, matrix{n}) coordX)
 --    )
+
 
 
 --squareSyst := flatten entries gens makePolynomials(coordX, remaining'conditions'flags);

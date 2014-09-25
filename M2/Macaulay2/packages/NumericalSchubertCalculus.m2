@@ -678,7 +678,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	    newDag.FlagM,
 	    id_(FFF^n)
 	    };
-	localFlags1:= {id_(FFF^n),F2}; --
+	localFlags1:= {id_(FFF^n),F2}; -- right now we are discarding F1 from the user and using ID instead
 	Transf := moveFlags2Flags(localFlags,localFlags1);
 	-- Transf gives three matrices
 	-- A,T1,T2, such that
@@ -831,7 +831,7 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    -- the following clean is a hack, instead, we need to do a newton step check
    -- when we all changeFlags as there is a numerical check in there... 
    -- the following is a hack
-   ret := apply(solutionsB, s->clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
+   ret := apply(solutionsB, s-> clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
    --assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
