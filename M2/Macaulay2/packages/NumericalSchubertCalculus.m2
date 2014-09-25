@@ -407,7 +407,7 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	    newDag.FlagM,
 	    ID
 	    };
-	localFlags1:= {F1,F2}; -- right now we are discarding F1 from the user and using ID instead
+	localFlags1:= {ID,F1inv*F2}; -- right now we are discarding F1 from the user and using ID instead
 	Transf := moveFlags2Flags(localFlags,localFlags1);
 	-- Transf gives three matrices
 	-- A,T1,T2, such that

@@ -22,3 +22,13 @@ end
 restart
 load "1e9-G36.m2"
 
+TSt := apply(Pblm, P-> all(S,s->checkIncidenceSolution(s,{P})))
+
+TST := apply()
+
+S:=newDag.Solutions
+all(S,s-> checkIncidenceSolution(newDag.FlagM*s, {(l1,newDag.FlagM)}))
+all(S,s-> checkIncidenceSolution(newDag.FlagM*s, {(l2,ID)}))
+
+all(S,s->checkIncidenceSolution(newDag.FlagM*s, new'remaining'conditions'flags))
+#new'remaining'conditions'flags
