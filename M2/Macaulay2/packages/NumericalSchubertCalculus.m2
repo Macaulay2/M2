@@ -17,7 +17,7 @@ newPackage(
     DebuggingMode => true
     )
 
-load "NumericalSchubertCalculus/LRhomotopies.m2"
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
 
 export {   
 -----------------------
@@ -874,7 +874,7 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R2),conditions,flagsHomot));
 	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
-	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, gamma=>exp(2*pi*ii*random RR));
+	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR));
       	       solutionsS = solutionsT/coordinates;
 	       ));
        );

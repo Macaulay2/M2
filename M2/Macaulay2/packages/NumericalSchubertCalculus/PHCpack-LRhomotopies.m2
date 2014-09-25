@@ -363,4 +363,4 @@ LRcheater(ZZ,Matrix,String) := (n,m,w) -> (
    result
 );
 
-load "PHCpack-LRhomotopies-doc.m2"
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"

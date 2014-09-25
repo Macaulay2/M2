@@ -2,7 +2,7 @@ beginDocumentation()
 
 doc ///
   Key
-    PHCpackLRhomotopies
+    "PHCpack LR-homotopies"
   Headline
     interface to Littlewood-Richardson homotopies in PHCpack
   Description
