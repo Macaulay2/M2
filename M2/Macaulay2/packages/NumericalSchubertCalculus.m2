@@ -14,6 +14,7 @@ newPackage(
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
     PackageImports => {"PHCpack", "NumericalAlgebraicGeometry"},
+    AuxiliaryFiles => true,
     DebuggingMode => true
     )
 
@@ -1168,7 +1169,8 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- Documentation --
 -------------------
 beginDocumentation()
-load "NumericalSchubertCalculus/doc.m2"
+load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
+--load "NumericalSchubertCalculus/doc.m2"
 
 -------------------
 -- Tests         --
