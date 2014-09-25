@@ -89,7 +89,7 @@ BUILDDIR      ?= $(UNTARDIR)/$(TARDIR)
 TAROPTIONS    ?= --gzip
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
-export PATH := @abs_top_srcdir@/local/bin:$(PATH)
+export PATH := @abs_top_srcdir@/usr-build/bin:$(PATH)
 all:prereq install post-install
 prereq:
 post-install:

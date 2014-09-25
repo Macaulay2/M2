@@ -14,6 +14,7 @@ dnl   1.3.1.1 : a development version, with no binary distributions
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
 dnl =============================================================================
 
+AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -1740,15 +1741,15 @@ AC_SUBST(tail_datarootdir)
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
 
-AC_SUBST(COMMONSTAGINGAREA,StagingArea) # staging area for common files
-AC_SUBST(LOCALSTAGINGAREA,StagingArea) # staging area for arch. dep. files
+AC_SUBST(COMMONSTAGINGAREA,usr-dist) # staging area for common files
+AC_SUBST(LOCALSTAGINGAREA,usr-dist) # staging area for arch. dep. files
 AC_ARG_WITH(staging-area,
-    AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),
+    AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (usr-dist)),
     COMMONSTAGINGAREA=$withval)
 AC_ARG_ENABLE(common-staging-area,
     AS_HELP_STRING(--enable-common-staging-area,use the common staging area),
     if test "$enableval" = yes
-    then if test "$COMMONSTAGINGAREA" != StagingArea
+    then if test "$COMMONSTAGINGAREA" != usr-dist
 	 then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
 	 fi
 	 COMMONSTAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea # this depends on config.Makefile.in setting abs_top_srcdir

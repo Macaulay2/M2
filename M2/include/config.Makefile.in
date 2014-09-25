@@ -53,7 +53,7 @@ INSTALL = @INSTALL@
 # by older include files in a directory specified by the user with CPPFLAGS=-I/foo/bar, causing
 # version skew (gcc preprocessor searches -I directories first, then -isystem directories)
 
-BUILTLIBPATH = @abs_top_builddir@/global
+BUILTLIBPATH = @abs_top_builddir@/usr-host
 
 # this will be a symbolic link installed by libraries/gtest/Makefile
 GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
@@ -74,8 +74,8 @@ LDFLAGS_FOR_BUILD := -L$(BUILTLIBPATH)/lib $(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
-export PATH := @abs_top_srcdir@/local/bin:${PATH}
--include @abs_top_srcdir@/local/aclocal-path
+export PATH := @abs_top_srcdir@/usr-build/bin:${PATH}
+-include @abs_top_srcdir@/usr-build/aclocal-path
 export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))

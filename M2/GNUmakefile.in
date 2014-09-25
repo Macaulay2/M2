@@ -4,11 +4,12 @@ include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
-export PATH := $(shell pwd)/local/bin:$(PATH)
 all install: \
-	check-make configured check-for-undefined-configure-variables\
-	srcdir protect-configs configfiles check-machine \
+	check-make config.status configured check-for-undefined-configure-variables\
+	srcdir protect-configs configured-files check-machine \
 	M2 all-in-subdirs report-M2-location
+configured-files: @CONFIGURED_FILES@
+$(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
 	rm -f M2
 	echo 'exec @pre_bindir@/M2 "$$@"' >M2
@@ -20,10 +21,11 @@ install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $@
 endef
 $(foreach i, $(PACKAGES), $(eval $(call package,$i)))
 
-configfiles:; $(MAKE) -f Makefile.configfiles
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
+which-tools:
+	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
+	printenv ACLOCAL_PATH
 configured:include/configuration
-include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
@@ -32,11 +34,15 @@ define cdw
 set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
 endef
 
+# terminology:
+#   usr-build  -- install tools needed for compilation here
+#   usr-host   -- install the results of compilation here, for the target machine
+#   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
+
 # completion of certain make targets
 .completed:; $(MKDIR_P) $@
 
 ## submodules
--include @abs_top_srcdir@/local/aclocal-path
 ifneq (@build_alias@,)
 # it was ../configure --build=@build_alias@
 SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
@@ -113,7 +119,7 @@ endef
 $(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
 $(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules))
 
-# installation into StagingArea
+# installation into usr-dist
 all-in-Macaulay2:install-licenses
 install-licenses:all-in-submodules
 	: installing library and submodule licenses in @pre_licensesdir@
@@ -137,12 +143,9 @@ $(foreach t,all check clean distclean,					\
 clean:
 	rm -rf .completed
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
-	rm -rf StagingArea conf_* local
+	rm -rf usr-dist conf_* usr-build
 	rm -f pre-install.sh post-install.sh normal-install.sh
 install: configured; $(MAKE) -C distributions $@
-GNUmakefile: GNUmakefile.in; ./config.status GNUmakefile
-include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
-include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
 	./config.status --recheck
@@ -162,16 +165,16 @@ srcdir: GNUmakefile
 	: creating or removing symbolic link to common staging area, if necessary,
 	: based on comparision of these directories:
 	:                      pre_prefix : @pre_prefix@
-	: abs_builddir/StagingArea/common : @abs_builddir@/StagingArea/common
-	@ if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
+	: abs_builddir/usr-dist/common : @abs_builddir@/usr-dist/common
+	@ if [ "@abs_builddir@"/usr-dist/common != "@pre_prefix@" ] ;\
 	then (set -x ;\
-	     rm -rf StagingArea/common ;\
-	     $(MKDIR_P) StagingArea ;\
-	     ln -s "@pre_prefix@" StagingArea/common) ;\
+	     rm -rf usr-dist/common ;\
+	     $(MKDIR_P) usr-dist ;\
+	     ln -s "@pre_prefix@" usr-dist/common) ;\
 	else \
-	     if [ -L "@abs_builddir@"/StagingArea/common ] ;\
+	     if [ -L "@abs_builddir@"/usr-dist/common ] ;\
 	     then (set -x ;\
-		   rm StagingArea/common ;\
+		   rm usr-dist/common ;\
 		  ) ;\
 	     fi ;\
 	fi

@@ -330,11 +330,11 @@ initcurrentlayout := () -> (
 	  prefixDirectory = prefixDirectory2;
 	  currentLayout = currentLayout2;
 	  );
-     stA := "StagingArea/";
+     usrDist := "usr-dist/";
      topBuilddir = (
-	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+	  if issuffix(usrDist,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#usrDist)
 	  else
-	  if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA));
+	  if issuffix(usrDist,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#usrDist));
      if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");

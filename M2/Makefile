@@ -20,7 +20,7 @@ AUTOMAKE_MINOR = 12
 # version 1.12 was the first one with the macro AM_PROG_AR, used by memtailor
 AUTOMAKE_VERSION = $(AUTOMAKE_MAJOR).$(AUTOMAKE_MINOR)
 
-export PATH := $(shell pwd)/local/bin:$(PATH)
+export PATH := $(shell pwd)/usr-build/bin:$(PATH)
 
 check-make:
 	@ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
@@ -30,18 +30,23 @@ make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
-get-tools: local/aclocal-path get-tools-make
-local/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
-get-tools-make:
-	$(MAKE) -C local -f Makefile.local LIBNAME=m4 VERSION=1.4.17
-	$(MAKE) -C local -f Makefile.local LIBNAME=autoconf VERSION=2.69
-	$(MAKE) -C local -f Makefile.local LIBNAME=automake VERSION=1.14.1
-get-libtool:
-	$(MAKE) -C local -f Makefile.local LIBNAME=libtool VERSION=2.4.2
-get-pkg: local/share/aclocal/pkg.m4
-local/share/aclocal/pkg.m4: local/pkg.m4
-	if [ ! -d local/share ] ; then mkdir local/share ; fi
-	if [ ! -d local/share/aclocal ] ; then mkdir local/share/aclocal ; fi
+get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool which-tools
+which-tools:
+	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
+	cat usr-build/aclocal-path
+usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
+get-m4:
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.17
+get-autoconf:get-m4
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=autoconf VERSION=2.69
+get-automake:get-autoconf
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=automake VERSION=1.14.1
+get-libtool:get-automake
+	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.2
+get-pkg: usr-build/share/aclocal/pkg.m4
+usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
+	if [ ! -d usr-build/share ] ; then mkdir usr-build/share ; fi
+	if [ ! -d usr-build/share/aclocal ] ; then mkdir usr-build/share/aclocal ; fi
 	cp $^ $@
 
 autoconf-absent : autoconf-absent-msg autoconf-msg 
