@@ -419,6 +419,7 @@ innerProduct (PolySpace, DualSpace) := (S, L) -> (
     innerProduct(Sshift, L.Space)
     )
 innerProduct (RingElement, DualSpace) := (f, L) -> innerProduct(polySpace matrix{{f}}, L)
+innerProduct (PolySpace, RingElement) := (S, l) -> innerProduct(S, polySpace matrix{{l}})
 innerProduct (RingElement, RingElement) := (f, l) -> (
     M := last coefficients(matrix{{f,l}});
     ((transpose M_{0})*M_{1})_(0,0)
@@ -638,10 +639,18 @@ doc ///
 	       Elements are expressed as elements of the polynomial ring of the ideal although this is an abuse of notation.
 	       They are really elements of the dual ring.
 	  Example
-	       R = CC[x,y];
-	       I = ideal{(y-1)^2,y-x^2}
-	       p = point matrix{{1,1}};
-	       S = zeroDimensionalDual(p, I)
+	       R = QQ[a,b];
+	       I = ideal{a^3,b^3}
+	       D = zeroDimensionalDual(origin(R), I)
+	       dim D
+	  Text
+	       The dimension of the dual space at p is the multiplicity of the solution at p.
+	  Example
+	       S = CC[x,y];
+	       J = ideal{(y-2)^2,y-x^2}
+	       p = point matrix{{1.4142136,2}};
+	       D = zeroDimensionalDual(p, J)
+	       dim D
 	  Text
 	       See also @TO truncatedDual@.
      Caveat
@@ -693,7 +702,13 @@ doc ///
 	       with the p translated to the origin such that the lead terms generate the inital ideal, i.e. a standard basis.
 	       Note that the coordinates of the standard basis elements are translated to be centered at the point p.
 	  Example
-	       S = gCorners(p, I, ProduceSB=>true)	       
+	       S = gCorners(p, I, ProduceSB=>true)
+	  Example
+	       R = CC[x,y,z];
+	       J = ideal{z*(x*y-4), x-y}
+	       q = point matrix{{1.4142136, 1.4142136, 0}};
+	       gCorners(q, J, Tolerance=>1e-5)
+	       gCorners(q, J, ProduceSB=>true)
 ///
 
 TEST ///
@@ -734,6 +749,8 @@ doc ///
 	       I = monomialIdeal{x^2,y^2,z^2}
 	       sCorners I
 	       sCorners I^2
+	       G = vars R
+	       sCorners G
 ///
 
 TEST ///
@@ -826,6 +843,7 @@ doc ///
 	  (innerProduct,PolySpace,DualSpace)
 	  (innerProduct,PolySpace,PolySpace)
 	  (innerProduct,RingElement,DualSpace)
+	  (innerProduct,PolySpace,RingElement)
 	  (innerProduct,RingElement,RingElement)
      Headline
           Applies dual space functionals to polynomials
@@ -851,6 +869,13 @@ doc ///
 	       S = polySpace matrix{{x+y,2*x+y^2}};
 	       D = dualSpace(matrix{{1,x,y}}, origin R);
 	       M = innerProduct(S, D)
+	  Text
+	       @TT "innerProduct"@ can also be called with one or both inputs @ofClass RingElement@.  If both arguments
+	       are single elements, the output is also a ring element rather than a matrix.
+	  Example
+	       innerProduct(S, 1+x)
+	       innerProduct(x, D)
+	       innerProduct(x, 1+x)
 ///
 
 doc ///
@@ -900,7 +925,7 @@ doc ///
      Description
           Text
 	       Reduces the generators of a DualSpace or PolySpace so that the new generators are linearly independent, and each has
-	       a distinct lead monomial.  This is achieved via Gaussian reduction.
+	       a distinct lead monomial.  This is achieved by Gaussian reduction.
 	  Example
 	       R = CC[x,y];
 	       T = polySpace matrix{{x,y,x-y+1e-10}}
