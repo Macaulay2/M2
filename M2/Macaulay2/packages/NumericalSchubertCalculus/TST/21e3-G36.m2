@@ -5,7 +5,7 @@ setRandomSeed 2
 -- a problem with 2 solutions
 
 SchPblm = {
-    ({2,1}, id_(FFF^6)),
+    ({2,1}, random(FFF^6,FFF^6)),
     ({2,1}, random(FFF^6,FFF^6)),
     ({2,1}, random(FFF^6,FFF^6))    
     }

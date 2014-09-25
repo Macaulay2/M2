@@ -366,7 +366,7 @@ load "NumericalSchubertCalculus/LR-resolveNode.m2"
 -- node
 ---------------
 -- input:
---    SchPblm := list of Schubert conditions with flags
+--    SchPblm := list of Schubert conditions with general flags
 --    k,n := the Grassmannian G(k,n)
 -- output:
 --    list of solutions
@@ -389,14 +389,35 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
        Slns
     else(
 	if DBG>1 then print "solveSchubertProblem: transforming flags to (M,Id,...)";
-	-- we first make a transformation to put
-	-- the first flag in the coordinates of ID
+	-- resolveNode expects flags to be the following list:
+	--  flagM, Id, F3'....  
+	--
+	-- we make compute the linear transformations s.t.
+	-- A*F1 = FlagM*T1
+	-- A*F2 = ID * T2
 	ID := id_(FFF^n);
-	F1inv := solve(F1,ID);
+	-- 
+	-- There is a fundamental difference between the case
+	-- with two or more than two partitions
+	--
+	LocalFlags1 := {F1,F2};
+	flgM := matrix;
+	LocalFlags2 := List;
+	if #remaining'conditions'flags == 0 then (
+	    flgM = ID;
+	    LocalFlags2 = {flgM, rsort ID};
+	) else (
+	    flgM = MovingFlag'at'Root n;
+	    LocalFlags2 = {flgM, ID};
+	    );
+	At1t2 := moveFlags2Flags(LocalFlags1,LocalFlags2);
+	A := first At1t2;	    
+	-- we update the given flags F3 ... Fm
+	-- to F3' .. Fm' where Fi' = A*Fi
 	new'remaining'conditions'flags := apply(
 	    remaining'conditions'flags, CF->(
 		(C,F):=CF;
-		(C,F1inv*F)
+		(C,A*F)
 	    ));
 	newDag := playCheckers(l1,l2,k,n);
 	resolveNode(newDag, new'remaining'conditions'flags);
@@ -406,61 +427,48 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-- we multiply the solution S by FlagM
 	-- and we obtain a solution of the Sch. problem
 	-- {l1,...,lm} with respect to
-	-- {FlagM, Id, F3,...,Fm}
-	-- 
-	-- we need to make a change of flags
-	-- to send (FlagM,Id)-->(Id,F2)
+	-- {FlagM, Id, F3',...,Fm'}
+	--
+	--  we need to make a change of coordinates back to the user-defined flags
+	-- that is, send (FlagM,Id)-->(F1,F2), which is done by A^(-1)	
 	-------------------------------
-	localFlags := {
-	    newDag.FlagM,
-	    ID
-	    };
-	localFlags1:= {ID,F1inv*F2}; -- right now we are discarding F1 from the user and using ID instead
-	Transf := moveFlags2Flags(localFlags,localFlags1);
-	-- Transf gives three matrices
-	-- A,T1,T2, such that
-	--          A*FlagM = F1*T1 (representing the same flag as F1)
-	--          A*Id = F2*T2 (representing the same flag as F2)
-	GL := first Transf;
-	Flags1 := {F1,F2}; 
-	Flags2:= {F1,F2};
-	scan(remaining'conditions'flags, c-> (
-		conds = append(conds, first c);
-		Flags1 = append(Flags1, GL*F1inv*(last c));
-		Flags2 = append(Flags2, last c);
-		));
-    	if DBG>1 then (
-	    print "solutions obtained at the root of a node";
-	    print newDag.Solutions;
-    	    );
-	-----------------------------
-	-- August 20, 2013:
-	-----------------------------
-	-- AFter the transformation (GL*newDag.FlagM*newDag.Solutions)
-	-- the solutions obtained are ALMOST with respect to the local chart
-	-- corresponding to the Schubert Variety (FlagM, Id)... but we need
-	-- to clear the entries that are below the pivots first...
-		
-	-- doing cleanSolutions := apply(GL*newDag.FlagM*newDag.Solutions, s->clean(ERROR'TOLERANCE^2, s));
-	-- is not the right way to clean...need to clean zeroes below the pivots only, this is
-	-- just a hack
-	
-	----------------------------
-	-- IMPORTANT!
-	-----------------------------
-	-- We need to check if the solutions newDag.Solutions
-	-- after the change of coordinates and flags, are actual
-	-- solutions to our original problem... we need to do
-	-- another Newton step here!
-	if DBG>1 then (
-	    print "this are the transformations that we apply";
-	    print "before calling changeFlags:";
-	    print(GL);
-	    print(newDag.FlagM);
-	    print(GL*newDag.FlagM*newDag.Solutions);
-	    );
-	changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
-	    (conds, Flags1, Flags2))
+	Ainv := solve(A,ID);
+	--############ Fork to decide if you want to do
+	-- change of flags via homotopy or via Linear Algebra
+	-- ########################################
+	LinAlg:=1; -- this is a flag for transforming solutions to user coordinates via Linear Algebra
+	if LinAlg == 1 then(
+	    Ainv*flgM*newDag.Solutions
+	    )else(
+	    -- #### NOW THIS IS BROKEN!! because is was based on wrong math
+	    1/0;
+	    -- we need to use homotopy to transform the solutions to the
+	    -- user defined flags.
+	    --
+	    -- Transf gives three matrices
+	    -- A,T1,T2, such that
+	    --          A*FlagM = F1*T1 (representing the same flag as F1)
+	    --          A*Id = F2*T2 (representing the same flag as F2)
+	    --GL := first Transf;
+	    --Flags1 := {F1,F2}; 
+	    --Flags2:= {F1,F2};
+	    --scan(remaining'conditions'flags, c-> (
+		--    conds = append(conds, first c);
+		--    Flags1 = append(Flags1, GL*Ainv*(last c));
+		--    Flags2 = append(Flags2, last c);
+		--    ));
+    	    --if DBG>1 then (
+	    --	print "solutions obtained at the root of a node";
+	    --	print newDag.Solutions;    	    	
+	    --	print "this are the transformations that we apply";
+	    --	print "before calling changeFlags:";
+	    --	print(GL);
+	    --print(newDag.FlagM);
+	    --print(GL*newDag.FlagM*newDag.Solutions);
+	    --);
+	    --changeFlags(GL*newDag.FlagM*newDag.Solutions, -- these are matrices in absolute coordinates
+	    --(conds, Flags1, Flags2))
+	    )
 	)
     )-- end of solveSchubertProblem
 

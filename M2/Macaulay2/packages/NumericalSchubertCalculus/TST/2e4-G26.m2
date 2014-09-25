@@ -1,6 +1,6 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 0
-
+DBG = 2
 -- Problem (2)^4 = 3 in G(2,6)
 Pblm={
     ({2}, id_(FFF^6)),

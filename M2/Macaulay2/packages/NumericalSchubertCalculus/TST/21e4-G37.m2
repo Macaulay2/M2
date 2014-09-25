@@ -1,6 +1,6 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 2
-
+DBG = 2
 -- Problem (2,1)^4 = 8 in Gr(3,7)
 -- a problem with 8 solutions
 
