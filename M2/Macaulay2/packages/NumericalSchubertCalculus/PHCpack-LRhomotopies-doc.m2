@@ -1,5 +1,3 @@
-end
-
 doc ///
   Key
     "PHCpack LR-homotopies"

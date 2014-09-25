@@ -1204,4 +1204,5 @@ end ---------------------------------------------------------------------
 restart
 check "NumericalSchubertCalculus"
 installPackage "NumericalSchubertCalculus"
+installPackage ("NumericalSchubertCalculus", RerunExamples=>true)
 
