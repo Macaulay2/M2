@@ -79,7 +79,7 @@ protect Append
 -- GLOBAL VARIABLES 
 --##########################################################################--
 
-DBG = 0; -- debug level (10=keep temp files)
+PHCDBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
 PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; 
 -- this is the executable string that make sures that calls to PHCpack run:
@@ -1165,7 +1165,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
       s-> 
       max(s#0/abs)<10000 -- path failed and/or diverged
     );
-    if DBG>0 and #result < totalN 
+    if PHCDBG>0 and #result < totalN 
     then  -- error "discarded!" 
     << "track[PHCpack]: discarded "<< 
     totalN-#result << " out of " << totalN << " solutions" << endl;
