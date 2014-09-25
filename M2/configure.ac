@@ -1172,7 +1172,7 @@ AC_SUBST(BUILD_flint)		dnl factory needs to know
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict, so we build
 # it, just in case.
-if test $BUILD_mpir = yes; then BUILD_ntl=yes; fi
+if test $BUILD_mpir = yes; then BUILD_ntl=yes; BUILD_ALWAYS="ntl $BUILD_ALWAYS"; fi
 if test $BUILD_ntl = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
