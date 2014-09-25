@@ -112,19 +112,31 @@ bracket2partition(List,ZZ) := (l, n) -> (
 checkNewtonIteration = method()
 checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     (k,n):= kn;
-    RX:=FFF[X_{0,0}..X_{n-1,k-1}];
-    coordX := matrix pack(first entries vars RX,k);
-    polySyst := makePolynomials(coordX,Pblm);
-    solutions := apply(Solns, X-> toRawSolutions(coordX,X));
+    -- we create a random change of coordinates:
+    A:= random(FFF^n,FFF^n);
+    SolTransformed := Solns/(i->A*i);
+    PblmTransf := apply(Pblm, CF->(
+	    (c,f):=CF;
+	    (c,A*f)
+	    ));
+    -- we choose coordinates for the Grassmannian
+    X := symbol X;
+    RX:=FFF[X_{0,0}..X_{(n-k)-1,k-1}];
+    Vs := first entries vars RX;
+    coordX := matrix pack(first entries vars RX,k)||id_(FFF^k);
+    polySyst := makePolynomials(coordX,PblmTransf);
+    solsInCoordsX := solsToFavCoords SolTransformed;
+    solutions := apply(solsInCoordsX, X-> toRawSolutions(coordX,X));
     squareSyst:=first entries squareUpPolynomials(numgens ring polySyst, polySyst);
-    -- we use NAG's Newton Iteration function:
-    NewtStep :=refine(squareSyst, Solns, Software=>M2, Iterations=>1)/coordinates
-    apply(NewtStep, n-> map(FFF,ring coordX, matrix{n}) coordX)    
-    --NewtonStep1 := refine(squareSyst, Sols, Software=>M2, Iterations=>1);
-    --NewtonStep2 := refine(squareSyst, NewtonStep1, Software=>M2, Iterations=>1);
-    --print(dist(NewtonStep1,Sols));
-    --print("distance between two newton steps:");
-    --print(dist(NewtonStep2,NewtonStep1));
+    -- we compute the Jacobian of the system
+    JacSystem := for i in squareSyst list for j in Vs list diff(j,i);
+    ID:=id_(FFF^(#Vs));
+    apply(solutions, newt->(
+	    Mp := (map(FFF,RX,matrix{newt}));
+    	    JacEval := Mp matrix JacSystem;
+	    Jinv := solve(JacEval, ID);
+	    Jinv*transpose(Mp matrix{squareSyst})
+	    ))
     )
 --checkNewtonIteration(List,Matrix,List) := (Solns,coordX,remaining'conditions'flags) -> (
 --    polySyst := makePolynomials(coordX,remaining'conditions'flags);
@@ -183,7 +195,7 @@ dist(List,List) := (solns1,solns2) -> (
 -- writting the solutions in global coords
 -- as a set of solutions in terms of my
 -- favorite coordinate chart:
--- s = [id || **] the identity on top
+-- s = [**||id] the identity on top
 -------------------------
 -- Caveat!!!
 -------------------------
@@ -195,10 +207,11 @@ solsToFavCoords = method()
 solsToFavCoords List := Solutions ->(
     apply(Solutions, s->(
 	    k:=numColumns(s);
-    	    b:= id_(CC^k);
-    	    T:= solve(submatrix(s,0..k-1,0..k-1),b);
+	    n:=numRows(s);
+    	    b:= id_(FFF^k);
+    	    T:= solve(submatrix(s,n-k..n-1,0..k-1),b);
 	    clean(0.001,s*T)
-	    ));
+	    ))
     )
 
 
