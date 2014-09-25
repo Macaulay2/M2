@@ -1,6 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
-setFlags(NSC'DBG=>1,NSC'VERIFY'SOLUTIONS=>false)
+setFlags(NSC'DBG=>0,NSC'VERIFY'SOLUTIONS=>false)
 
 -- Problem (1)^9 = 42 in G(3,6)
 Pblm={
@@ -16,6 +16,7 @@ Pblm={
     }
 
 S = solveSchubertProblem(Pblm,3,6)
+#S
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 end
 

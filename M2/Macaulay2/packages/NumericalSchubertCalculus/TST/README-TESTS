@@ -1,2 +1,24 @@
 M2 scripts testing the functions/methods should go here.
 They should be engaged via TEST commands from the main file of the package.
+
+Files                    Remarks (Timings on Frank's Mac)
+
+1e6-G25.m2                   Finds five solutions in 5.075s
+1e621-G36.m2                 Finds sixteen solutions in 29.524s
+1e9-G36.m2                   Finds 42 solutions in  1m25.799s
+21e3-G36.m2                  Finds both solutions in 6.416s
+21e3-G36_PHC.m2           !! Does nothing, yet.
+21e4-G37.m2                  Finds eight solutions in 1m39.481s
+21e5-G38.m2               !!     Fails at the end at 10m33.490s
+21x2e3-G36.m2                Finds two solutions after 8.383s
+2e4-G26.m2                   Finds three solutions after 5.490s
+4LinesOsculating_changeFlags.m2   ??????
+4lines.m2                    Finds two solutions after 1.654s
+4lines_osculating.m2     !!  Fails.  Perhaps flags are too special?
+4lines_real_test.m2          Works
+TestSept21.m2
+TripleIntersection.m2
+TripleIntersection_PHC.m2
+big-chunk-2.m2
+big-chunk-TEST.m2
+columnReduce.m2
