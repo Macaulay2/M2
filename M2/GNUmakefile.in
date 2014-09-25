@@ -34,7 +34,6 @@ endef
 
 # completion of certain make targets
 .completed:; $(MKDIR_P) $@
-clean:; rm -rf .completed
 
 ## submodules
 -include @abs_top_srcdir@/local/aclocal-path
@@ -136,6 +135,7 @@ $(foreach t,all check clean distclean,					\
 	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)			\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 clean:
+	rm -rf .completed
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf StagingArea conf_* local
 	rm -f pre-install.sh post-install.sh normal-install.sh
