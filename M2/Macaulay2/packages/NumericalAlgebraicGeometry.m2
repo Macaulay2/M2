@@ -38,7 +38,9 @@ newPackage select((
 -- must be placed in one of the following two lists
 export {
      "setDefault", "getDefault",
-     "solveSystem", "refine", "totalDegreeStartSystem", "newton",
+     "solveSystem", 
+     solveGenericSystemInTorus, -- works with PHCpack only
+     "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
