@@ -1,8 +1,8 @@
 
 newPackage(
   "PHCpack",
-  Version => "1.6", 
-  Date => "6 May 2013",
+  Version => "1.6.1", 
+  Date => "23 September 2014",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
@@ -57,6 +57,7 @@ export {
   "mixedVolume",
   "nonZeroFilter",
   "numericalIrreducibleDecomposition",
+  "parseSolutions",
   "refineSolutions",
   "solveRationalSystem",
   "solveSystem",
@@ -169,7 +170,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- because M2 automatically thinks "res"=resolution   	  
   sols := toList apply(value L, sol->new HashTable from toList sol);
   defaultPrecision = oldprec;
-  apply(sols, sol->point( {apply(gens R, v->sol#(value toString v))} | outputToPoint sol ))
+  apply(sols, sol->point( {apply(gens R, v->sol#v)} | outputToPoint sol ))
 )
 
 pointsToFile = method(TypicalValue => Nothing, Options => {Append => false})
@@ -236,6 +237,7 @@ startSystemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
+  s = replace("e\\+00","",s);
   L := lines(s);
   n := value L_0;
   result := {};
@@ -274,9 +276,10 @@ systemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
-  --s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
+  s = replace("e\\+","e",s);   -- M2 does not like 3.0e+00 as constant
   L := lines(s);
-  n := value L_0;
+  dimL0 := separate(" ", L_0); -- deal with case of nonsquare systems
+  n := value dimL0_0;          -- first is always number of equations
   result := {};
   i := 0; j := 1;
   local stop;
@@ -288,8 +291,7 @@ systemFromFile (String) := (name) -> (
       if #L_j != 0 then (
         if (L_j_(#L_j-1) != ";") then (
           -- we have to bite off the first "+" sign of the term
-          term = 
-	  value substring(1,#L_j-1,L_j);
+          term = value substring(1,#L_j-1,L_j);
           if (L_j_0 == "+") then p = p + term else p = p - term;
         ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
           term = value substring(1,#L_j-2,L_j);
@@ -701,7 +703,7 @@ isWitnessSetMember (WitnessSet,Point) := o-> (witset,testpoint) -> (
   if o.Verbose then
     stdio << "writing test point to file " << PHCtestpointFile << endl;
   pointsToFile(L,R,PHCtestpointFile);
-  s := concatenate("1\n",PHCwitnessFile);
+  s := concatenate("1\n0\n",PHCwitnessFile);
   s = concatenate(s,"\n",PHCtestpointFile);
   s = concatenate(s,"\n",PHCoutputFile);
   s = concatenate(s,"\n0\n");
