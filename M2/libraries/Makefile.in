@@ -28,7 +28,7 @@ install-programs:
 	     @TAR@ cf - -C $(BUILTLIBPATH)/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
 	fi
 install-dynamic-libraries:
-	: installing sharable library files in @pre_librariesdir@/lib
+	: installing sharable library files in @pre_librariesdir@
 	rm -rf @pre_librariesdir@
 	@INSTALL@ -d @pre_librariesdir@
 	cd $(BUILTLIBPATH)/lib &&							\

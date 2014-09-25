@@ -137,6 +137,8 @@ AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
 AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 
+# Here we translate OS and REL into something the user can understand, because the names of the binary
+# distribution tar files on the web site contain those strings.
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
@@ -1170,7 +1172,7 @@ AC_SUBST(BUILD_flint)		dnl factory needs to know
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict, so we build
 # it, just in case.
-if test $BUILD_mpir = yes; then BUILD_ntl=yes; fi
+if test $BUILD_mpir = yes; then BUILD_ntl=yes; BUILD_ALWAYS="ntl $BUILD_ALWAYS"; fi
 if test $BUILD_ntl = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
