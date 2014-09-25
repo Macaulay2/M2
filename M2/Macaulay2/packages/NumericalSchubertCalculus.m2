@@ -668,8 +668,17 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
     if min(checkPartitionsOverlap) < 0 then
        Slns
     else(
+	-- we first make a transformation to put
+	-- the first flag in the coordinates of ID
+	ID := id_(FFF^n);
+	F1inv := solve(F1,ID);
+	new'remaining'conditions'flags := apply(
+	    remaining'conditions'flags, CF->(
+		(C,F):=CF;
+		(C,F1inv*F)
+	    ));
 	newDag := playCheckers(l1,l2,k,n);
-	resolveNode(newDag, remaining'conditions'flags);
+	resolveNode(newDag, new'remaining'conditions'flags);
 	conds := {l1,l2};
 	-- resolveNode gives a solution in local coords
 	-- of {l1}*{l2} w.r.t {FlagM, Id}
@@ -683,21 +692,20 @@ solveSchubertProblem(List,ZZ,ZZ) := (SchPblm,k,n) ->(
 	-------------------------------
 	localFlags := {
 	    newDag.FlagM,
-	    id_(FFF^n)
+	    ID
 	    };
-	localFlags1:= {id_(FFF^n),F2}; -- right now we are discarding F1 from the user and using ID instead
+	localFlags1:= {F1,F2}; -- right now we are discarding F1 from the user and using ID instead
 	Transf := moveFlags2Flags(localFlags,localFlags1);
 	-- Transf gives three matrices
 	-- A,T1,T2, such that
-	--          A*FlagM = Id*T1 (representing the standard flag)
+	--          A*FlagM = F1*T1 (representing the same flag as F1)
 	--          A*Id = F2*T2 (representing the same flag as F2)
 	GL := first Transf;
-	T1:=Transf#1; --T1 is not used (20.aug.2013)
-	Flags1 := {id_(FFF^n),F2}; 
+	Flags1 := {F1,F2}; 
 	Flags2:= {F1,F2};
 	scan(remaining'conditions'flags, c-> (
 		conds = append(conds, first c);
-		Flags1 = append(Flags1, GL*(last c));
+		Flags1 = append(Flags1, GL*F1inv*(last c));
 		Flags2 = append(Flags2, last c);
 		));
     	if DBG>1 then (
