@@ -1,17 +1,23 @@
 newPackage(
-        "NumericalSchubertCalculus",
-        Version => "0.3", 
-        Date => "October 29, 2009",
-        Authors => {{Name => "Anton Leykin", 
-                  Email => "leykin@math.gatech.edu", 
-                  HomePage => "http://people.math.gatech.edu/~aleykin3"},
-	          {Name => "Abraham Martin del Campo", 
-                  Email => "asanchez@math.tamu.edu", 
-                  HomePage => "www.math.tamu.edu/~asanchez"}},
-        Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
-	PackageImports => {"NumericalAlgebraicGeometry"},
-        DebuggingMode => true
-        )
+    "NumericalSchubertCalculus",
+    Version => "0.4", 
+    Date => "September 29, 2014",
+    Authors => {{Name => "Anton Leykin", 
+	    Email => "leykin@math.gatech.edu", 
+	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
+	{Name => "Abraham Martin del Campo", 
+	    Email => "asanchez@math.tamu.edu", 
+	    HomePage => "www.math.tamu.edu/~asanchez"},
+	{{Name => "Jan Verschelde",
+		Email => "jan@math.uic.edu",
+		HomePage => "http://www.math.uic.edu/~jan/"}},
+	},
+    Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
+    PackageImports => {"PHCpack", "NumericalAlgebraicGeometry"},
+    DebuggingMode => true
+    )
+
+load "NumericalSchubertCalculus/LRhomotopies.m2"
 
 export {   
 -----------------------
