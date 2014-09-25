@@ -3,7 +3,6 @@
 
 export{"LRrule", "LRtriple", "parseTriplet", "wrapTriplet", "LRcheater"}
 
-needsPackage "SimpleDoc"
 debug needsPackage "PHCpack"
 
 LRruleIn = method();

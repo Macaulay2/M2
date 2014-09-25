@@ -1,4 +1,4 @@
-beginDocumentation()
+end
 
 doc ///
   Key
@@ -26,6 +26,7 @@ doc ///
     and requires still parsing and independent verification
     with proper Macaulay 2 arithmetic.
 ///;
+
 
 doc ///
   Key

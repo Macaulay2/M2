@@ -11,7 +11,7 @@ newPackage(
 	    HomePage => "www.math.tamu.edu/~asanchez"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
-		HomePage => "http://www.math.uic.edu/~jan/"},
+		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
     PackageImports => {"PHCpack", "NumericalAlgebraicGeometry"},
@@ -1170,6 +1170,12 @@ isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
 -- Documentation --
 -------------------
 beginDocumentation()
+doc ///
+   Key
+      NumericalSchubertCalculus
+   Headline
+      Numerical Schubert Calculus
+///
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 --load "NumericalSchubertCalculus/doc.m2"
 
@@ -1190,3 +1196,4 @@ end ---------------------------------------------------------------------
 ---------------------------------------------------------------------------
 restart
 check "NumericalSchubertCalculus"
+installPackage "NumericalSchubertCalculus"
