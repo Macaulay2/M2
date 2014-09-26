@@ -39,6 +39,25 @@ blackBoxSolve(MutableHashTable,List,Matrix) := (node,
    ); -- end of apply
 );
 
+verifyStart = method();
+verifyStart(List,List) := (polys, startSolutions) -> (
+--
+-- DESCRIPTION :
+--   Verifies the solutions at the start of the homotopy,
+--   defined by a list of polynomials.
+--
+-- IN :
+--   polys : list of polynomials;
+--   startSolutions : solutions that should vanish as polys.
+--
+   scan(startSolutions, s->assert (
+      norm sub(polys,matrix{{0_FFF}|s})
+      < ERROR'TOLERANCE * norm matrix{s}
+      * norm sub(last coefficients polys,FFF)
+      ) -- end assert
+   ) -- end scan startSolutions
+);
+
 caseSwapStay = method();
 caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    remaining'conditions'flags,coordX,
@@ -105,11 +124,9 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
          rightmost'col'B := position(black, j->j==r);
          leftmost'col'A := position(black, j->j==r+1)+1;
          -- check if the black checker in the i'th row is in region A
-         isRegionA := i -> position(black, i'->i'==i)
-            >= leftmost'col'A;	     
+         isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
          -- check if the black checker in the i'th row is in region B
-         isRegionB := i -> position(black, i'->i'==i)
-            <= rightmost'col'B;
+         isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
          -- V(t) = M'(t) X'(t) ... we write everything in terms of M
          scan(#red'sorted, j-> VwrtM = VwrtM |
             if j == s then (
