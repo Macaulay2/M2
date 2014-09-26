@@ -15,7 +15,9 @@ S = solveSchubertProblem(SchPblm, 3,7);
 
 assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
-#S
+S = solveSchubertProblem(SchPblm, 3,7);
+
+assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
 end
 

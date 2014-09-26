@@ -8,10 +8,11 @@ Pblm={
     ({2},random(FFF^6,FFF^6)),
     ({2},random(FFF^6,FFF^6))
     }
-S = solveSchubertProblem(Pblm,2,6)
+S1 = solveSchubertProblem(Pblm,2,6,LinearAlgebra=>true)
+S2 = solveSchubertProblem(Pblm,2,6,LinearAlgebra=>false) --takes a lot of time
 
-assert all(S, s-> checkIncidenceSolution(s,Pblm))
-
+assert all(S1, s-> checkIncidenceSolution(s,Pblm))
+assert all(S2, s-> checkIncidenceSolution(s,Pblm))
 end
 
 restart
