@@ -64,6 +64,11 @@ getB (ZZ,ZZ) := memoize(
     )
 
 -- #1:  
+getA = method()
+getA (ZZ,ZZ,List) := memoize(
+    -- bracket are 1-based... subtracting 1 from everything
+    (k,n,lambda)->apply(notAboveLambda(lambda,k,n),a->apply(a,b->b-1))
+    ) 
 
 -- #2: called once per level
 makeG = method()
@@ -74,29 +79,30 @@ makeG (ZZ,ZZ,List, Matrix) := (k,n,lambda,F) -> (
     ) 
 
 -- #3: called once per level
--- IN: d = dim of the problem
---     k,n = Grassmannian size
+-- IN: k,n = Grassmannian size
 --     schubertProblem = list of pairs (partition,flag)
 -- OUT: "squared up" matrix RG 
-makeRG = method()
-makeRG (ZZ,ZZ,ZZ, Matrix) := (d,k,n,schubertProblem) -> (
+makeGG = method()
+makeGG (ZZ,ZZ,Matrix) := (k,n,schubertProblem) -> (
     B := getB(k,n);
-    G := matrix(FFF^0,FFF^(#B)); 
+    GG := matrix(FFF^0,FFF^(#B)); 
     scan(schubertProblem, lambdaF->(
 	    lambdaF := (lambda, F);
-	    G || makeG(k,n,lambda,F);
+	    c := sum lambda;
+    	    G := makeG(k,n,lambda,F);
+    	    R := random(FFF^c,FFF^(numRows G));
+	    GG || G
 	    ));
-    R = random(FFF^d,FFF^(numRows G));
-    R*G
+    GG
     ) 
 
 -- #4: called once per checker move
 makeSquareSystem = method()
-makeSquareSystem (Matrix, Matrix) := (RG,MX) -> (
+makeSquareSystem (Matrix, Matrix) := (GG,MX) -> (
     k := numColumns MX; 
     n := numRows MX; 
     B := getB(k,n);
     plueckerCoords := transpose matrix apply(B,b->MX^b);
-    RG*plueckerCoords  
+    GG*plueckerCoords  
     ) 
 
