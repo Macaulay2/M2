@@ -1,4 +1,3 @@
-# license for ntl: GPL v2 or later, see ntl-5.5.2/doc/copying.txt
 LICENSEFILES = doc/copying.txt
 # @configure_input@
 # http://www.shoup.net

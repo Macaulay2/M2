@@ -1,0 +1,5 @@
+This directory contains submodules for libraries and programs used by
+Macaulay2.  We hope to have submodules for all of our libraries eventually.
+
+For instructions about adding a new submodule, follow the same instructions as
+presented in the file ../libraries/README.
