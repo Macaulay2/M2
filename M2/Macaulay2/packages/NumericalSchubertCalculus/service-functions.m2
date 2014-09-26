@@ -1,5 +1,5 @@
 export {
-   dist, --temporary 08,20,2013
+   --dist, --temporary 08,20,2013
    checkIncidenceSolution, 
    moveFlags2Flags, 
    solsToFavCoords, --temporary 08.20.13
