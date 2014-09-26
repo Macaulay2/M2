@@ -19,3 +19,6 @@
 [submodule "M2/submodules/flint2"]
 	path = M2/submodules/flint2
 	url = https://github.com/Macaulay2/flint2.git
+[submodule "M2/submodules/googletest"]
+	path = M2/submodules/googletest
+	url = https://github.com/Macaulay2/googletest.git
