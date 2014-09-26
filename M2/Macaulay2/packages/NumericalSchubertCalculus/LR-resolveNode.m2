@@ -92,6 +92,76 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
       )
    );
    result := promote(M,Rt) * VwrtM;
+   if DBG>1 then (
+      << "via M*" << VwrtM << " = " << result
+      << " where M = " << promote(M,Rt) << endl;
+   );
+   result
+);
+
+globalSwapCoords = method();
+globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
+   rings,checkers,rsnM) -> (
+--
+-- DESCRIPTION :
+--    Returns the global coordinates for the homotopy in the swap case.
+--
+-- IN :
+--    father : the current father to the node,
+--    rings : the homotopy ring Rt, the Xt, and the symbol t,
+--    checkers : the checkers black, red and red'sorted,
+--    rsnM : the critical row r, the index s, the dimension n, and flag M.
+--
+-- OUT :
+--    returns the M'X as needed in the swap honotopy.
+--
+   (Rt, Xt, t) := rings;
+   (black, red, red'sorted) := checkers;
+   (r, s, n, M) := rsnM;
+   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+   bigR := red'sorted#(s+1); -- row of the second moving red checker
+   rightmost'col'B := position(black, j->j==r);
+   leftmost'col'A := position(black, j->j==r+1)+1;
+   -- check if the black checker in the i'th row is in region A
+   isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
+   -- check if the black checker in the i'th row is in region B
+   isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
+   scan(#red'sorted, j -> VwrtM = VwrtM |
+      if j == s then 
+      (
+      -- note: this part can be optimized for speed
+         transpose matrix { apply(n, i -> (
+            if i==r then Xt_(r+1,s+1)
+            else if i==r+1 then -t*Xt_(r+1,s+1)
+            else if isRegionA i then -t*Xt_(i,s+1)
+            else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
+            else 0)) }
+      ) else if j == s+1 then (
+         transpose matrix { apply(n, i -> (
+            if i==bigR then 1
+            else if i==r+1 then Xt_(r+1,s+1)
+            else if i==r then 0
+            else Xt_(i,s+1))) }
+      ) else if isRedCheckerInRegionE(
+         position(red,i->i==red'sorted#j), father)
+         -- column of the j-th red checker on the board
+         then (
+            submatrix(Xt,{0..r-1},{j}) 
+            || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
+            || matrix{{0_FFF}}
+            || submatrix(Xt, {r+2..n-1}, {j})
+      ) else (
+         submatrix(Xt,{0..r},{j}) 
+            || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
+            || submatrix(Xt, {r+2..n-1}, {j})	    
+      )
+   ); -- end scan red'sorted
+   result := promote(M,Rt) * VwrtM;
+   if DBG>1 then (
+      << "via M*" << VwrtM << " = " << result
+      << " where M = " << promote(M,Rt) << endl;
+   );
    result
 );
 
@@ -140,46 +210,8 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    else
       if member(movetype, {{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then
       ( -- case SWAP(middle row)
-         VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
-         bigR := red'sorted#(s+1);
-         -- row of the second moving red checker
-         rightmost'col'B := position(black, j->j==r);
-         leftmost'col'A := position(black, j->j==r+1)+1;
-         -- check if the black checker in the i'th row is in region A
-         isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
-         -- check if the black checker in the i'th row is in region B
-         isRegionB := i -> position(black, i'->i'==i) <= rightmost'col'B;
-         -- V(t) = M'(t) X'(t) ... we write everything in terms of M
-         scan(#red'sorted, j-> VwrtM = VwrtM |
-            if j == s then (
-            -- note: this part can be optimized for speed
-               transpose matrix { apply(n, i-> (
-                  if i==r then Xt_(r+1,s+1)
-                  else if i==r+1 then -t*Xt_(r+1,s+1)
-                  else if isRegionA i then -t*Xt_(i,s+1)
-                  else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
-                  else 0)) }
-               ) else if j == s+1 then (
-                  transpose matrix { apply(n, i-> (
-                     if i==bigR then 1
-                     else if i==r+1 then Xt_(r+1,s+1)
-                     else if i==r then 0
-                     else Xt_(i,s+1))) }
-               ) else if isRedCheckerInRegionE(
-                    position(red,i->i==red'sorted#j), father)
-                    -- column of the j-th red checker on the board
-                  then (
-                     submatrix(Xt,{0..r-1},{j}) 
-                     || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
-                     || matrix{{0_FFF}}
-                     || submatrix(Xt, {r+2..n-1}, {j})
-               ) else (
-                   submatrix(Xt,{0..r},{j}) 
-                     || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-                     || submatrix(Xt, {r+2..n-1}, {j})	    
-               )
-         ); -- end scan red'sorted
-         M'X' = promote(M,Rt) * VwrtM;
+         M'X' = globalSwapCoords(father,(Rt,Xt,t),(black,red,red'sorted),
+                   (r,s,n,M))
       ) -- end case SWAP(middle row)
       -- implementing this case separately 
       -- gives lower degree polynomials
@@ -188,10 +220,6 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       -- )
       else
          error "an unaccounted case";
-   if DBG>1 then (
-      << "via M*" << VwrtM << " = " << M'X' 
-      << " where M = " << promote(M,Rt) << endl;
-   );
    if DBG>0 then timemakePolys1 := cpuTime();
    all'polys := makePolynomials(M'X', remaining'conditions'flags);
    if DBG>0 then (
