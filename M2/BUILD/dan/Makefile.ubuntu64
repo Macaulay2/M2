@@ -6,6 +6,9 @@ ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif
 
+default:
+tools:;: $(CC) $(CXX) $(FC)
+
 ifeq ($(DEBUG),yes)
 
 default: arch-chk all

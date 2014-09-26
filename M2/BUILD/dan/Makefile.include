@@ -1,6 +1,9 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
+CC ?= gcc
+CXX ?= g++
+FC ?= gfortran
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
@@ -61,11 +64,12 @@ find-M2:
 	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+CONFIGOPTIONS += CC=$(CC) CXX=$(CXX) FC=$(FC)
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
 ifeq ($(NTL_WIZARD),no)
-   CONFIGOPTIONS=--disable-ntl-wizard 
+   CONFIGOPTIONS += --disable-ntl-wizard 
 endif
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
