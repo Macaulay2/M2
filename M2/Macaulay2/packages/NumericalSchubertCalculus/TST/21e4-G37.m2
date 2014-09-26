@@ -12,12 +12,10 @@ SchPblm = {
     }
 
 S = solveSchubertProblem(SchPblm, 3,7);
-
 assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
-S = solveSchubertProblem(SchPblm, 3,7);
-
-assert all(S,s->checkIncidenceSolution(s, SchPblm))
+S2 = solveSchubertProblem(SchPblm, 3,7,LinearAlgebra=>false);--takes a lot of time!
+assert all(S2,s->checkIncidenceSolution(s, SchPblm))
 
 end
 

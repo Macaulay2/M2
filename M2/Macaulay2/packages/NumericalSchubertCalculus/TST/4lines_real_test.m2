@@ -32,6 +32,23 @@ Sreduced = apply(S, s->(
 assert all(flatten flatten (Sreduced/entries), isReal)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 
+S2 = solveSchubertProblem(Pblm, 2,4, LinearAlgebra=>false)
+assert all(S2,s->checkIncidenceSolution(s,Pblm))
+
+Sreduced = apply(S2, s->(
+	M1:= matrix{
+	    {s_(0,0)^(-1), -s_(0,1)*s_(0,0)^-1},
+	    {0, 1}};
+	s1 := clean_0.001 s*M1;
+	M2 := matrix{
+	    {1,0},
+	    {-s1_(3,0)*s1_(3,1)^-1 ,s1_(3,1)^-1 }
+	    };
+	s2 := clean(0.001, s1*M2);
+	s2
+	))
+assert all(flatten flatten (Sreduced/entries), isReal)
+
 end
 
 restart
