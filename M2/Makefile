@@ -35,7 +35,6 @@ which-tools:
 	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
 	cat usr-build/aclocal-path
 	cat usr-build/aclocal-path2
-=======
 	aclocal --print
 usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
