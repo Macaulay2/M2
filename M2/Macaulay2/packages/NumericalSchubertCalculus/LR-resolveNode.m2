@@ -158,7 +158,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    all'polys := makePolynomials(M'X', remaining'conditions'flags);
    if DBG>0 then (
       timemakePolys2 := cpuTime();
-      << "-- time to make equations:  "
+      << "-- time to make equations: "
       << (timemakePolys2-timemakePolys1)<<endl;
    );
    polys := squareUpPolynomials(numgens R, all'polys);
@@ -254,12 +254,11 @@ solveCases(MutableHashTable,List,Matrix) := (node,
          << "-- FROM " << node.Board << " TO " << father.Board << endl;
          << "using this move: " << movetype<<endl;
          << "from "<< node.FlagM * makeLocalCoordinates(node.Board)
-         << " to  "<< father.FlagM * makeLocalCoordinates(father.Board)
-         << endl; 
-         << "starting with these solutions: " << node.Solutions << endl <<endl;
+         << " to  "<< father.FlagM * makeLocalCoordinates(father.Board) << endl;
+         << "starting with these solutions: " << node.Solutions << endl << endl;
       );
       if DBG>0 then tparents1:=cpuTime();
-      parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
+      parent'solutions :=  -- this is where the main action happens
          if node.Solutions == {} then
             {} -- means: not implemented
          else if movetype#1 == 2 then ( -- case (_,2)
@@ -269,8 +268,7 @@ solveCases(MutableHashTable,List,Matrix) := (node,
                j := position(red'sorted, i-> i == r+1);
                -- the column we need to normalize
                if j =!= null then
-                  redCheckersColumnReduce2(normalizeColumn(X'',r+1,j),
-                     father)
+                  redCheckersColumnReduce2(normalizeColumn(X'',r+1,j), father)
                else X'' )
             ) -- end apply to node.Solutions
          ) -- end case (_,2)
@@ -325,14 +323,14 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
       coordX := makeLocalCoordinates node.Board;
       -- local coordinates X = (x_(i,j))
       if numgens ring coordX == 0 then ( -- need to move this to playcheckers
-         assert(#remaining'conditions'flags==0);
+         assert(#remaining'conditions'flags == 0);
          if DBG>0 then 
             print "resolveNode reached node of no remaining conditions";
          node.Solutions = {lift(coordX,FFF)};
          node.IsResolved = true;
          node.FlagM= rsort id_(FFF^n);
       ) -- end if numgens ring coordX == 0
-      else if #remaining'conditions'flags==0 then ( -- check for consistency???
+      else if #remaining'conditions'flags == 0 then ( -- check consistency???
          node.Solutions = {};
          node.IsResolved = true;
          node.FlagM = rsort id_(FFF^n);
@@ -340,11 +338,9 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
       else ( -- coordX has variables
          black := first node.Board;
          if node.Children == {} then
-            node.FlagM = matrix mutableIdentity(FFF,n) --change here
+            node.FlagM = matrix mutableIdentity(FFF,n) -- change here
          else
             scan(node.Children, c->resolveNode(c,remaining'conditions'flags));
-         if VERIFY'SOLUTIONS and BLACKBOX then
-            blackBoxSolve(node,remaining'conditions'flags,coordX);
          if node.Children == {} then ( 
             lambda := output2partition(last node.Board);
             k := #lambda;
@@ -359,7 +355,6 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
                MM := lift(MovingFlag'at'Root n,FFF);
                ID := id_(FFF^n);
                (A,T1,T2) := moveFlags2Flags({MM,ID},{ID,F3});
-               T1inv := solve(T1,ID);
                Ainv := solve(A,ID);
                newRemainingFlags := drop(remaining'conditions'flags,1);
                newRemainingFlags = apply(newRemainingFlags,
@@ -375,10 +370,9 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
                   print("remaining conditions:");
                   print(remaining'conditions'flags);
                );
-               -- *************** main recursive call ************
                new'l := output2partition last node.Board;
                newDag := playCheckers(new'l,l3,k,n);
-               resolveNode(newDag,newRemainingFlags);
+               resolveNode(newDag,newRemainingFlags); -- recursive call
                S := newDag.Solutions; 
                if DBG>1 then
                   << "the previous level gets solution: " << S << endl;
@@ -387,20 +381,24 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
                -- we use the bracket for column reduction of the solutions;
                if DBG>1 then << "the bracket" << brack << endl;
                   node.Solutions = if #newRemainingFlags > 0 then (
-                  assert(MM==newDag.FlagM);
+                  assert(MM == newDag.FlagM);
                   apply(S, s->columnReduce(A*MM*s,brack)) -- A is M^{-1} ??? 
                ) else (
                   MM = newDag.FlagM;
                   (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
                   apply(S, s->columnReduce(A*MM*s,brack))
                );
-               if DBG>1 then print "... and the transformed solutions are:";
-               if DBG>1 then print(node.Solutions);
-               if DBG>1 then print "-- end (recursive call to resolveNode)";
+               if DBG>1 then (
+                  print "... and the transformed solutions are:";
+                  print(node.Solutions);
+                  print "-- end (recursive call to resolveNode)"
+               );
                node.IsResolved = true
             ); -- end else of the if not validpartition
-         ); -- end else coordX has variables
+         ); -- end if node.children == {}
          solveCases(node,remaining'conditions'flags,coordX);
+         if VERIFY'SOLUTIONS and BLACKBOX then
+            blackBoxSolve(node,remaining'conditions'flags,coordX);
          if VERIFY'SOLUTIONS and node.?SolutionsSuperset then (
             -- check against the blackbox solutions
             scan(node.Solutions, X->
