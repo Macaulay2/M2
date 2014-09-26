@@ -34,6 +34,7 @@ get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-l
 which-tools:
 	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
 	cat usr-build/aclocal-path
+	aclocal --print
 usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.17
