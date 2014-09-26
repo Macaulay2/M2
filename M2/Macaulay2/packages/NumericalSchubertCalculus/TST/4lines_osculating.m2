@@ -1,6 +1,7 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 4
-
+setFlags(NSC'DBG=>2)
+ 
 -- problem of 4 lines w.r.t. id, idop, 2 osculating flags
 Pblm = {({1},id_(FFF^4)),
    ({1},rsort id_(FFF^4)), 

@@ -1,5 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 4
+DBG = 2
 
 -- problem of 4 lines w.r.t. id, idop, real flags
 Pblm = {({1},id_(FFF^4)),

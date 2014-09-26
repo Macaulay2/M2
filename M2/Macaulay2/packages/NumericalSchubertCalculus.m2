@@ -14,6 +14,9 @@ newPackage(
 		HomePage => "http://www.math.uic.edu/~jan/"}
 	},
     Headline => "a Macaulay2 package for using numerical methods in Schubert Calculus",
+--    PackageExports => {
+--	"NAGtypes"
+--	},
     PackageImports => {
 	"PHCpack",
 	"NumericalAlgebraicGeometry"
@@ -612,7 +615,8 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R2),conditions,flagsHomot));
 	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
-	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR));
+	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, 
+		   NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR));
       	       solutionsS = solutionsT/coordinates;
 	       ));
        );
@@ -877,7 +881,11 @@ trackHomotopy (Matrix,List) := (H,S) -> (
      R := (coefficientRing Rt)[drop(gens Rt,1)];
      map't'0 := map(R, Rt, matrix{{0_FFF}}|vars R);
      map't'1 := map(R, Rt, matrix{{1_FFF}}|vars R);
-     track(first entries map't'0 H, first entries map't'1 H, S)
+     sols := track(first entries map't'0 H, first entries map't'1 H, S
+	 , NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
+	 );
+     if any(sols/status, s->s=!=Regular) then error "trackHomotopy: singularity encountered";
+     sols 
      )
 
 ------------------------
@@ -922,7 +930,7 @@ TEST ///
 load "NumericalSchubertCalculus/TST/4lines.m2"
 ///
 TEST ///
-load "NumericalSchubertCalculus/TST/4lines_osculating.m2"
+load "NumericalSchubertCalculus/TST/2e4-G26.m2"
 ///
 TEST ///
 load "NumericalSchubertCalculus/TST/21e3-G36.m2"
