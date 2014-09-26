@@ -207,7 +207,7 @@ all: $(M2_LIBDEPS) M2inits.o
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
-clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp
+clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
 distclean: clean; rm -f Makefile startup.m2 @srcdir@/TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 Makefile.files: Makefile.files.in; cd ../..; ./config.status Macaulay2/d/Makefile.files
