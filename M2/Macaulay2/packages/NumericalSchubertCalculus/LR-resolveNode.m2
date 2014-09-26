@@ -67,16 +67,32 @@ globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
 --
 -- IN :
 --    father : the current father to the node,
---    rings : the homotopy ring Rt and Xt,
+--    rings : the homotopy ring Rt, the Xt, and the symbol t,
 --    redchk : the checkers red and red'sorted,
 --    rnM : the critical row r, the dimension n, and flag M.
 --
 -- OUT :
 --    returns the M'X as needed in the stay honotopy.
 --
-   (Rt, Xt) := rings;
+   (Rt, Xt, t) := rings;
    (red, red'sorted) := redchk;
    (r, n, M) := rnM;
+   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
+   -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+   scan(#red'sorted, j-> VwrtM = VwrtM |
+      if isRedCheckerInRegionE(position(red, i->i==red'sorted#j),father)
+         -- column of the j-th red checker on the board
+      then (
+         submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
+         || submatrix(Xt, {r+2..n-1}, {j})
+      ) else (
+         submatrix(Xt,{0..r},{j}) 
+         || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
+         || submatrix(Xt, {r+2..n-1}, {j})	    
+      )
+   );
+   result := promote(M,Rt) * VwrtM;
+   result
 );
 
 caseSwapStay = method();
@@ -114,31 +130,17 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    Rt := (coefficientRing R)[t,gens R]; -- homotopy ring
    mapRtoRt := map(Rt,R,drop(gens Rt,1));
    Xt := mapRtoRt coordX; --  "homotopy" X 
-   local M'X'; -- homotopy in global coordinates
-   -- (produced by each case) these are used only in SWAP cases
    s := position(red'sorted, i->i==r);
    -- number of the first moving red checker
-   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
+   local M'X'; -- homotopy in global coordinates
+   -- (produced by each case) these are used only in SWAP cases
    if member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- case "STAY"
-      -- V(t) = M'(t) X'(t) ... we write everything in terms of M
-      scan(#red'sorted, j-> VwrtM = VwrtM |
-         if isRedCheckerInRegionE(
-            position(red, i->i==red'sorted#j),father)
-            -- column of the j-th red checker on the board
-         then (
-            submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
-            || submatrix(Xt, {r+2..n-1}, {j})
-         ) else (
-            submatrix(Xt,{0..r},{j}) 
-            || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
-            || submatrix(Xt, {r+2..n-1}, {j})	    
-         )
-      );
-      M'X' = promote(M,Rt) * VwrtM;
+      M'X' = globalStayCoords(father,(Rt,Xt,t),(red,red'sorted),(r,n,M))
    ) -- end case "STAY" 
    else
       if member(movetype, {{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then
       ( -- case SWAP(middle row)
+         VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
          bigR := red'sorted#(s+1);
          -- row of the second moving red checker
          rightmost'col'B := position(black, j->j==r);
