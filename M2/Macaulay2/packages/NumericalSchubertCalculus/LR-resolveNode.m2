@@ -192,6 +192,36 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    ) -- end apply targetSolutions
 );
 
+verifyParent = method();
+verifyParent(MutableHashTable,List) := (father, parent'solutions) -> (
+--
+-- DESCRIPTION :
+--   Verifies the solutions computed at the parent node.
+--   This verification is called when the flag VERIFY'SOLUTIONS
+--   is on when solveCases is running.
+--
+-- IN :
+--   father : parent node of the current node in solveCases,
+--   parent'solutions : solutions computed by solveCases.
+--
+-- OUT :
+--   asserts that all solutions fits the pattern of the parent.
+--
+   parentX := makeLocalCoordinates father.Board;
+   parentXlist := flatten entries parentX;
+   scan(parent'solutions, X'''-> ( 
+      -- check that solutions fit the parent's pattern
+      a := flatten entries X''';
+      scan(#a, i -> assert(
+            (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
+            or (abs(a#i-1) < ERROR'TOLERANCE and parentXlist#i == 1)
+            or (parentXlist#i != 0 and parentXlist#i != 1)
+         ) -- end assert
+      ); -- end scan on #a
+      ) -- end of second argument of scan
+   ) -- end scan parent'solutions
+);
+
 solveCases = method();
 solveCases(MutableHashTable,List,Matrix) := (node,
    remaining'conditions'flags,coordX) -> (
@@ -247,22 +277,8 @@ solveCases(MutableHashTable,List,Matrix) := (node,
          else -- cases swap and stay require a homotopy
             caseSwapStay(node, remaining'conditions'flags, coordX,
                (r, M'',father, movetype, black, red, red'sorted));
-         if VERIFY'SOLUTIONS then (
-            parentX := makeLocalCoordinates father.Board;
-            parentXlist := flatten entries parentX;
-            scan(parent'solutions, X'''-> ( 
-               -- check that solutions fit the parent's pattern
-               a := flatten entries X''';
-               scan(#a, i->assert (
-                  (abs a#i < ERROR'TOLERANCE and parentXlist#i == 0)
-                   or (abs(a#i-1) < ERROR'TOLERANCE
-                       and parentXlist#i == 1)
-                   or (parentXlist#i != 0 and parentXlist#i != 1)
-                  ) -- end assert
-               ); -- end scan on #a
-               ) -- end of second argument of scan
-            ); -- end scan parent'solutions
-         ); -- end if VERIFY'SOLUTIONS
+         if VERIFY'SOLUTIONS then
+            verifyParent(father, parent'solutions);
          if not father.?Solutions then father.Solutions = {};  
          father.Solutions = father.Solutions | parent'solutions;
          if DBG>0 then (
