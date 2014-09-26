@@ -1,5 +1,5 @@
 blackBoxSolve = method();
-blackBoxSolve(MutableHashTable,List,MutableMatrix) := (node,
+blackBoxSolve(MutableHashTable,List,Matrix) := (node,
    remaining'conditions'flags,coordX) -> (
 --
 -- DESCRIPTION :
@@ -39,6 +39,159 @@ blackBoxSolve(MutableHashTable,List,MutableMatrix) := (node,
    ); -- end of apply
 );
 
+caseSwapStay = method();
+caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
+   remaining'conditions'flags,coordX,
+   r'Mdprime'father'movetype'black'red'red'sorted) -> (
+--
+-- DESCRIPTION :
+--   Applies a homotopy in the cases of swap or stay.
+--
+-- IN :
+--    node : see the resolveNode documentation for all items
+--    remaining'conditions'flags : pairs of conditions and flags
+--    coordX : local coordinates
+--    movetype'red'red'sorted is a sequence that contains
+--     (0) r : index of the CriticalRow
+--     (1) Mdprime : M'' in the solveCases below
+--     (2) father : the current father node
+--     (3) movetype : to decide which case aplies
+--     (4) black : black checkers
+--     (5) red : the red checkers
+--     (6) red'sorted : sorted red checkers
+--    stored into a sequence to bypass the annoying limitation that
+--    Macaulay2 methods can have no more than 4 arguments.
+--
+-- OUT :
+--    node : the Solutions are computed.
+--
+   (r, M'', father, movetype, black, red, red'sorted)
+      := r'Mdprime'father'movetype'black'red'red'sorted;
+   n := #node.Board#0;
+   M := node.FlagM;
+   R := ring coordX;
+   t := symbol t;
+   Rt := (coefficientRing R)[t,gens R]; -- homotopy ring
+   mapRtoRt := map(Rt,R,drop(gens Rt,1));
+   Xt := mapRtoRt coordX; --  "homotopy" X 
+   local M'X'; -- homotopy in global coordinates
+   -- (produced by each case) these are used only in SWAP cases
+   s := position(red'sorted, i->i==r);
+   -- number of the first moving red checker
+   VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
+   if member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- case "STAY"
+      -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+      scan(#red'sorted, j-> VwrtM = VwrtM |
+         if isRedCheckerInRegionE(
+            position(red, i->i==red'sorted#j),
+            -- column of the j-th red checker on the board
+            father)
+         then (
+            submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
+            || submatrix(Xt, {r+2..n-1}, {j})
+         ) else (
+            submatrix(Xt,{0..r},{j}) 
+            || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
+            || submatrix(Xt, {r+2..n-1}, {j})	    
+         )
+      );
+      M'X' = promote(M,Rt) * VwrtM;
+   ) -- end case "STAY" 
+   else
+      if member(movetype, {{1,0,0},{1,1,1},{0,0,0},{0,1,0}}) then
+      ( -- case SWAP(middle row)
+         bigR := red'sorted#(s+1);
+         -- row of the second moving red checker
+         rightmost'col'B := position(black, j->j==r);
+         leftmost'col'A := position(black, j->j==r+1)+1;
+         -- check if the black checker in the i'th row is in region A
+         isRegionA := i -> position(black, i'->i'==i)
+            >= leftmost'col'A;	     
+         -- check if the black checker in the i'th row is in region B
+         isRegionB := i -> position(black, i'->i'==i)
+            <= rightmost'col'B;
+         -- V(t) = M'(t) X'(t) ... we write everything in terms of M
+         scan(#red'sorted, j-> VwrtM = VwrtM |
+            if j == s then (
+            -- note: this part can be optimized for speed
+               transpose matrix { apply(n, i-> (
+                  if i==r then Xt_(r+1,s+1)
+                  else if i==r+1 then -t*Xt_(r+1,s+1)
+                  else if isRegionA i then -t*Xt_(i,s+1)
+                  else if isRegionB i then Xt_(r+1,s+1)*Xt_(i,s)
+                  else 0)) }
+               ) else if j == s+1 then (
+                  transpose matrix { apply(n, i-> (
+                     if i==bigR then 1
+                     else if i==r+1 then Xt_(r+1,s+1)
+                     else if i==r then 0
+                     else Xt_(i,s+1))) }
+               ) else if isRedCheckerInRegionE(
+                    position(red,i->i==red'sorted#j),
+                    -- column of the j-th red checker on the board
+                    father) 
+                  then (
+                     submatrix(Xt,{0..r-1},{j}) 
+                     || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
+                     || matrix{{0_FFF}}
+                     || submatrix(Xt, {r+2..n-1}, {j})
+               ) else (
+                   submatrix(Xt,{0..r},{j}) 
+                     || submatrix(Xt,{r+1},{j})-t*submatrix(Xt,{r},{j})
+                     || submatrix(Xt, {r+2..n-1}, {j})	    
+               )
+         ); -- end scan red'sorted
+         M'X' = promote(M,Rt) * VwrtM;
+      ) -- end case SWAP(middle row)
+      -- implementing this case separately 
+      -- gives lower degree polynomials
+      -- else if member(movetype,{{0,0,0},{0,1,0}}) 
+      -- then (-- case SWAP(top row)		    
+      -- )
+      else
+         error "an unaccounted case";
+   if DBG>1 then (
+      << "via M*" << VwrtM << " = " << M'X' 
+      << " where M = " << promote(M,Rt) << endl;
+   );
+   if DBG>0 then timemakePolys1 := cpuTime();
+   all'polys := makePolynomials(M'X', remaining'conditions'flags);
+   if DBG>0 then (
+      timemakePolys2 := cpuTime();
+      << "-- time to make equations:  "
+      << (timemakePolys2-timemakePolys1)<<endl;
+   );
+   polys := squareUpPolynomials(numgens R, all'polys);
+   startSolutions := apply(node.Solutions, X->toRawSolutions(coordX,X));
+   -- check at t=0
+   if VERIFY'SOLUTIONS then
+      scan(startSolutions, s->assert(norm sub(polys,matrix{{0_FFF}|s})
+         < ERROR'TOLERANCE * norm matrix{s} * 
+         norm sub(last coefficients polys,FFF))
+      ); -- end scan startSolutions
+   if DBG>0 then t1:= cpuTime();
+   -- track homotopy and plug in the solution together with t=1 into Xt
+   targetSolutions := trackHomotopy(polys,startSolutions);
+   if DBG>0 then (
+      t2 := cpuTime();
+      << " -- trackHomotopy time = " << (t2-t1)
+      << " for " << node.Board << endl;
+   );
+   apply(targetSolutions, sln -> (
+      M''X'' := (map(FFF,Rt,matrix{{1}}|matrix sln)) M'X';
+      X'' := inverse M'' * M''X'';
+      if not member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- SWAP CASE
+         k := numgens source X'';
+         X'' = X''_{0..s}| X''_{s}+X''_{s+1}| X''_{s+2..k-1};
+         -- we substitute the s+1 column for the vector w_{s+1}
+         redCheckersColumnReduce2(normalizeColumn(X'',r,s),father)
+      ) 
+      else
+         normalizeColumn(X'',r,s)
+      ) -- end second argument of apply
+   ) -- end apply targetSolutions
+);
+
 solveCases = method();
 solveCases(MutableHashTable,List,Matrix) := (node,
    remaining'conditions'flags,coordX) -> (
@@ -47,12 +200,12 @@ solveCases(MutableHashTable,List,Matrix) := (node,
 --   Solves the nine cases in the Littlewood-Richardson homotopies. 
 --
 -- IN :
---    node :
---    remaining'conditions'flags :
---    coordX :
+--    node : see the resolveNode documentation for all items
+--    remaining'conditions'flags : pairs of conditions and flags
+--    coordX : local coordinates
 --
 -- OUT :
---    node : 
+--    node : the Solutions are computed.
 --
    n := #node.Board#0;
    black := first node.Board;
@@ -263,7 +416,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
 --    This method resolves a node in the Littlewood-Richardson homotopy.
 --
 -- IN :
---    node : the node contains eight items
+--    node : the node contains nine items
 --       (1) Board represents a checkerboard, stored as two vectors,
 --           defining the location of the black and white checkers;
 --       (2) CriticalRow is either a number or "leaf" if at the leaf,
@@ -273,7 +426,8 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
 --       (5) Solutions is a list of solutions in local coordinates;
 --       (6) Children points to the children of the  node;
 --       (7) Fathers contains the ancestors of the node;
---       (8) SolutionsSuperSet is made when the BLACKBOX option is on.
+--       (8) movetype is a list to connect the node to its fathers
+--       (9) SolutionsSuperSet is made when the BLACKBOX option is on.
 --    remaining'conditions'flags : the remaining pairs of conditions
 --       and flags.
 --
@@ -368,11 +522,11 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
          solveCases(node,remaining'conditions'flags,coordX);
          if VERIFY'SOLUTIONS and node.?SolutionsSuperset then (
             -- check against the blackbox solutions
-           scan(node.Solutions, X->
-              assert(position(node.SolutionsSuperset,
+            scan(node.Solutions, X->
+               assert(position(node.SolutionsSuperset,
                Y->norm(Y-X)<ERROR'TOLERANCE) =!= null)
-             ); -- end scan node.Solutions
-          );
+            ); -- end scan node.Solutions
+         );
       ); -- end coordX has variables
       node.IsResolved = true;
    ); -- end if not node.IsResolve
