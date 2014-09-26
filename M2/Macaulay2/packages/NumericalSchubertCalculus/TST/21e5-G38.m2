@@ -1,7 +1,7 @@
 needsPackage "NumericalSchubertCalculus"
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
-setFlags(NSC'DBG=>0,NSC'VERIFY'SOLUTIONS=>false)
+setFlags(NSC'DBG=>1,NSC'VERIFY'SOLUTIONS=>false)
 
 -- Problem (2,1)^5 = ? in Gr(3,8)
 -- a problem with ? solutions
@@ -18,12 +18,12 @@ SchPblm = {
 
 S = solveSchubertProblem(SchPblm, 3,8);
 
-assert all(S,s->checkIncidenceSolution(s, SchPblm))
+-- time assert all(S,s->checkIncidenceSolution(s, SchPblm))
 
-#S
+print(#S)
 
 end
 
 restart
-load "21e5-G38.m2"
+time load "21e5-G38.m2"
 

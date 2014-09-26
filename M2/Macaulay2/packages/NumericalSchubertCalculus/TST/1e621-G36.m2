@@ -1,4 +1,4 @@
-needsPackage "NumericalSchubertCalculus"
+debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
 
 -- Problem (1)^6*(21) = 16 in G(3,6)
@@ -16,5 +16,5 @@ S = solveSchubertProblem(Pblm,3,6)
 end
 
 restart
-load "1e621-G36.m2"
+time load "1e621-G36.m2"
 
