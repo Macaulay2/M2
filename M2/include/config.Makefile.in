@@ -76,6 +76,7 @@ vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
 export PATH := @abs_top_srcdir@/usr-build/bin:${PATH}
 -include @abs_top_srcdir@/usr-build/aclocal-path
+-include @abs_top_srcdir@/usr-build/aclocal-path2
 export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))

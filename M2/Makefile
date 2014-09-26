@@ -30,11 +30,13 @@ make-configure : check-autoconf configure
 configure : configure.ac config/files config/ax_func_accept_argtypes.m4 config/ax_prog_cc_for_build.m4 # aclocal.m4
 	@ set -x ; autoconf
 
-get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool which-tools
+get-tools: usr-build/aclocal-path get-m4 get-pkg get-autoconf get-automake get-libtool usr-build/aclocal-path2 which-tools
 which-tools:
 	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
 	cat usr-build/aclocal-path
+	cat usr-build/aclocal-path2
 usr-build/aclocal-path:; echo export ACLOCAL_PATH:="`aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
+usr-build/aclocal-path2:; echo export ACLOCAL_PATH:="`usr-build/bin/aclocal --print-ac-dir`":'$$(ACLOCAL_PATH)' >$@
 get-m4:
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=m4 VERSION=1.4.17
 get-autoconf:get-m4
@@ -44,6 +46,7 @@ get-automake:get-autoconf
 get-libtool:get-automake
 	$(MAKE) -C usr-build -f Makefile.pkg LIBNAME=libtool VERSION=2.4.2
 get-pkg: usr-build/share/aclocal/pkg.m4
+usr-build/aclocal-path2:get-automake
 usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
 	if [ ! -d usr-build/share ] ; then mkdir usr-build/share ; fi
 	if [ ! -d usr-build/share/aclocal ] ; then mkdir usr-build/share/aclocal ; fi
