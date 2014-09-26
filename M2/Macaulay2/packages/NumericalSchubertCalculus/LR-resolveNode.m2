@@ -181,11 +181,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    polys := squareUpPolynomials(numgens R, all'polys);
    startSolutions := apply(node.Solutions, X->toRawSolutions(coordX,X));
    -- check at t=0
-   if VERIFY'SOLUTIONS then
-      scan(startSolutions, s->assert(norm sub(polys,matrix{{0_FFF}|s})
-         < ERROR'TOLERANCE * norm matrix{s} * 
-         norm sub(last coefficients polys,FFF))
-      ); -- end scan startSolutions
+   if VERIFY'SOLUTIONS then verifyStart(polys, startSolutions);
    if DBG>0 then t1:= cpuTime();
    -- track homotopy and plug in the solution together with t=1 into Xt
    targetSolutions := trackHomotopy(polys,startSolutions);
