@@ -63,7 +63,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
 --    Macaulay2 methods can have no more than 4 arguments.
 --
 -- OUT :
---    node : the Solutions are computed.
+--    returns solutions for assignment to father'Solutions.
 --
    (r, M'', father, movetype, black, red, red'sorted)
       := r'Mdprime'father'movetype'black'red'red'sorted;
@@ -226,8 +226,7 @@ solveCases(MutableHashTable,List,Matrix) := (node,
          << "from "<< node.FlagM * makeLocalCoordinates(node.Board)
          << " to  "<< father.FlagM * makeLocalCoordinates(father.Board)
          << endl; 
-            << "starting with these solutions: " << node.Solutions
-            << endl <<endl;
+         << "starting with these solutions: " << node.Solutions << endl <<endl;
       );
       if DBG>0 then tparents1:=cpuTime();
       parent'solutions :=  -- THIS IS WHERE THE MAIN ACTION HAPPENS
