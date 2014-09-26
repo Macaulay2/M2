@@ -9,7 +9,7 @@ Files                    Remarks (Timings on Frank's Mac)
 21e3-G36.m2                  Finds both solutions in 6.416s
 21e3-G36_PHC.m2           !! Does nothing, yet.
 21e4-G37.m2                  Finds eight solutions in 1m39.481s
-21e5-G38.m2               !!     Fails at the end at 10m33.490s
+21e5-G38.m2                  Finds 32 solutions in 35m8.817s   wall 18m29.654s
 21x2e3-G36.m2                Finds two solutions after 8.383s
 2e4-G26.m2                   Finds three solutions after 5.490s
 4LinesOsculating_changeFlags.m2   ??????
