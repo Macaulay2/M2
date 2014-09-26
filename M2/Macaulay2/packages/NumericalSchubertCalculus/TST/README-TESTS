@@ -1,7 +1,7 @@
 M2 scripts testing the functions/methods should go here.
 They should be engaged via TEST commands from the main file of the package.
 
-Files                    Remarks (Timings on Frank's Mac)
+Files                    Remarks (Timings on Frank's Mac) 25 Sept
 
 1e6-G25.m2                   Finds five solutions in 5.075s
 1e621-G36.m2                 Finds sixteen solutions in 29.524s
