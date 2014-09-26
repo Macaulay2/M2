@@ -56,11 +56,6 @@ MutableMatrix *MutableMatrix::zero_matrix(const Ring *R,
 						size_t ncols, 
 						bool dense)
 {
-  if (nrows < 0 | ncols < 0)
-    {
-      ERROR("expected non-negative number of rows or columns");
-      return 0;
-    }
   MutableMatrix *result = R->makeMutableMatrix(nrows, ncols, dense);
   if (result != 0) return result;
   // In this case, we just use ring elem arithmetic

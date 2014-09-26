@@ -22,7 +22,7 @@ public:
   void columnRankProfile(std::vector<size_t>& profile) 
   { 
     Mat LU(mMatrix); // copy
-    long* perm = newarray_atomic(long, LU.numRows());
+    mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows());
     nmod_mat_lu(perm, LU.nmod_mat(), false);
     deletearray(perm);
     LUUtil<RingType>::computePivotColumns(LU, profile);
@@ -31,8 +31,8 @@ public:
   void matrixPLU(std::vector<size_t>& P, Mat& L, Mat& U)
   {
     Mat LU(mMatrix); // copy
-    long* perm = newarray_atomic(long, LU.numRows());
-    nmod_mat_lu(perm, LU.nmod_mat(), false);
+    mp_limb_signed_t* perm = newarray_atomic(mp_limb_signed_t, LU.numRows()); 
+   nmod_mat_lu(perm, LU.nmod_mat(), false);
     P.resize(0);
     for (long i=0; i<LU.numRows(); i++)
       P.push_back(perm[i]);

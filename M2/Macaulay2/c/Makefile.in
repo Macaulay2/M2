@@ -1,6 +1,6 @@
 # @configure_input@
 ############################## main targets
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 all: scc1 scc-core.o

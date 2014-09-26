@@ -51,12 +51,10 @@ class EngineObject : public our_new_delete
 private:
   mutable unsigned int mHashValue;
   mutable bool mHasHash;
-  mutable bool mIsInterned;
 public:
   EngineObject() 
     : mHashValue(0),
-      mHasHash(false),
-      mIsInterned(false)
+      mHasHash(false)
   {}
 
   virtual ~EngineObject() {} // do we need to do anything here?

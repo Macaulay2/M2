@@ -508,7 +508,8 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
      if # findFiles rundir == 1
      then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
-     stderr << "M2: *** [check] Error " << r//256 << endl;
+     stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
+     if r == 2 then error "interrupted";
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
      return false;
@@ -681,7 +682,7 @@ installPackage Package := opts -> pkg -> (
 	       then error ("package ",toString pkg," has auxiliary files in \"",auxiliaryFilesDirectory,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       if verbose then stderr << "--copying auxiliary source files from " << auxiliaryFilesDirectory << endl;
 	       makeDirectory (buildPrefix|srcDirectory);
-	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
+	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => verbose, excludes);
 	       )
 	  else (
 	       if (options pkg).AuxiliaryFiles

@@ -394,7 +394,7 @@ static void interrupt_handler(int sig) {
 		    if (THREADLOCAL(tokens_stopIfError,bool)) {
 			 int interruptExit = 2;	/* see also interp.d */
 			 fprintf(stderr,"interrupted, stopping\n");
-			 exit(interruptExit);
+			 _Exit(interruptExit);
 			 }
 		    interrupts_setInterruptFlag();
 		    # if 0

@@ -42,6 +42,11 @@ The following command shows the list of release branches:
 
     git branch -a | grep origin/release
 
+The following commands will download the latest changes to the source code:
+
+    git pull
+    git submodule update
+
 ---------
 Programs
 ---------
@@ -107,13 +112,15 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion git factory-devel libfac-devel libgfortran-static libtool rpm-sign
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
     Some debugging aids:
-       sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
+      sudo debuginfo-install strace
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack-devel libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel libtool
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel
+    Some debugging aids:
+      sudo yum install -y strace
     For making an rpm file, install fakeroot manually, from:
          http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
 
@@ -147,16 +154,30 @@ various modern operating systems:
 	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
     Now remember to add 
         CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
-    to the "configure" command line below in the section on compiling Macaulay2.
+      to the "configure" command line below in the section on compiling Macaulay2.
+    Note: homebrew uses /usr/bin/gcc to compile its libraries.  If compiling
+      with clang instead of gcc, then run this first:
+        brew install gmp mpfr
+    Note: software installed by "fink", if not kept up to date, can interfere
+      with the Macaulay2 build process.  To test, for example, whether the
+      correct version of "automake" is available, run the shell command
+        type automake
+      and expect to see /usr/local/bin/automake, as opposed to
+      /sw/bin/automake.  Since homebrew suffices for most purposes, it's
+      probably best to just remove fink entirely, with the command
+        sudo rm -rf /sw
 
   Cygwin 1.7 under Microsoft Windows:
-    use setup to install these packages:
-        autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
-        gcc-g++ gdb git libgc-devel libgdbm-devel libglpk-devel liblapack-devel
-        libncurses-devel libstdc++6-devel libtool libxml2-devel make mpfr
-        patchutils pkg-config time wget
-     you may also want these:
-        emacs-el gvim libxml2-doc openssh psmisc unzip vim xauth xconsole xkill xterm
+    Use setup to install these packages:
+	autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
+	gcc-g++ git libatomic_ops-devel libboost-devel libgc-devel
+	libgdbm-devel libglpk-devel liblapack-devel libmpfr-devel
+	libncurses-devel libreadline-devel libstdc++6-devel libtool
+	libxml2-devel make patchutils pkg-config time unzip wget
+    You may also want these:
+        ctags emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole
+        xinit xkill xterm
+    After installing xinit, the program "startxwin" can be used to start X Windows.
 
 ----------------------
   Compiling the most recent GNU C compiler

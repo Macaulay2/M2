@@ -8,8 +8,6 @@
 #include "../freemod.hpp"
 #include "interrupted.hpp"
 
-#include <tr1/unordered_map>
-
 F4GB::F4GB(const Gausser *KK0,
            F4Mem *Mem0,
            const MonomialInfo *M0,

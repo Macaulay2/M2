@@ -2,7 +2,7 @@
 # http://linalg.org/projects/fflas-ffpack
 
 # VERSION = 1.4.2.169
-# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 1.6.0
 URL = http://linalg.org/
 

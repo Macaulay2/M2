@@ -187,10 +187,9 @@ Matrix * PolynomialRing::getPresentation() const
 }
 
 class SumCollectorPolyHeap : public SumCollector {
-  const PolynomialRing *R;
   polyheap H;
 public:
-  SumCollectorPolyHeap(const PolynomialRing *R0) : R(R0), H(R0) {}
+  SumCollectorPolyHeap(const PolynomialRing *R0) : H(R0) {}
   ~SumCollectorPolyHeap() {}
 
   virtual void add(ring_elem f) { H.add(f); }

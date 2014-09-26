@@ -1,7 +1,7 @@
 # license for 4ti2: GPL v2
 
 # temporary beta testing version
-VERSION = 1.6.2.20140114
+VERSION = 1.6.2
 TARDIR = 4ti2-1.6.2
 
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)

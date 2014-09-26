@@ -252,7 +252,7 @@ public:
     mat.ring().set_zero(b);
 
     size_t ret = MatOps::lead_row(mat, col, b);
-    if (ret >= 0)
+    if (ret != static_cast<size_t>(-1))
       mat.ring().to_ring_elem(result, b);
 
     mat.ring().clear(b);

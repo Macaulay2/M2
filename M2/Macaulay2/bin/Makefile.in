@@ -37,7 +37,7 @@ relink:
 	$(MAKE)
 
 check: $(EXEFILE)
-	$< --check 1 --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
 
 ifeq (@OS@,MacOS)
 # We specify the search path for finding shareable libraries, in case there are any,
@@ -120,7 +120,7 @@ else
 ifeq (@OS@,MacOS)
 # we know about it
 else
-$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE))
+$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE@))
 endif
 endif
 endif
@@ -155,7 +155,6 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
@@ -163,7 +162,10 @@ M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
 M2_LIBRARIES += -lstdc++
 
 M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+
+# it's an error that mathicgb doesn't get -ltbb into its pkg-config file:
+M2_LIBRARIES += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs mathicgb) @LIBTBB@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
@@ -180,7 +182,7 @@ M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
-M2_LIBDEPS += ../d/libM2inits2.a
+M2_LIBDEPS += ../d/libM2inits2.a $(BUILTLIBPATH)/lib/libmemtailor.a $(BUILTLIBPATH)/lib/libmathic.a $(BUILTLIBPATH)/lib/libmathicgb.a
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else
@@ -205,12 +207,12 @@ ifneq ("$(EXECSTACK)","no")
 	       fi ;\
 	  fi
 endif
-	printenv LD_LIBRARY_PATH
+	- printenv LD_LIBRARY_PATH
 ifneq (@LDD@,false)
-	- @LDD@ $@.tmp
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
-ifneq (@OTOOL@,)
-	- @OTOOL@ -L $@.tmp
+ifneq (@OTOOL@,false)
+	@OTOOL@ -L $@.tmp
 endif
 
 ifneq "@DEBUG@" "yes"

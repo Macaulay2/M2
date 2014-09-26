@@ -1290,7 +1290,7 @@ int rawDegree(int v, const RingElement *f)
 {
   const Tower *R = f->get_ring()->cast_to_Tower();
   if (R == 0) return -1;
-  return R->degree(v, f->get_value());
+  return R->degreeInVariable(v, f->get_value());
 }
 
 int rawExtensionDegree(int firstvar, const Ring *R1)
@@ -1313,7 +1313,7 @@ const RingElement /* or null */ *rawDiff(int v, const RingElement *f)
       ERROR("not implemented for this ring");
       return 0;
     }
-  return RingElement::make_raw(R,  R->diff(v, f->get_value()));
+  return RingElement::make_raw(R,  R->differentiate(v, f->get_value()));
 }
 
 const RingElement /* or null */ *rawLowerP(const RingElement *f)

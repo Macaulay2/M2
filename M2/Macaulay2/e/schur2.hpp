@@ -64,7 +64,7 @@ class schur_poly_iterator {
   friend class schur_poly;
 
   schur_poly_iterator(const schur_poly &f) : ic(f.coeffs.begin()), im(f.monoms.begin()) {}
-  schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()), im(0) {}
+  schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()) {}
 public:
   void operator++() { ++ic; im += *im;  }
   ring_elem getCoefficient() { return *ic; }

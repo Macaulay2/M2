@@ -1,7 +1,7 @@
 // Copyright 2014  Michael E. Stillman
 
 #ifndef _dmat_gf_flint__hpp_
-#define _dmat_gf_flint_hpp_
+#define _dmat_gf_flint__hpp_
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>

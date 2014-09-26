@@ -35,7 +35,7 @@ ENABLE_STRIP = @ENABLE_STRIP@
 ############################## main targets
 echo = $(shell echo "echo: $1" >&2) $1
 
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 all: .gdbinit
@@ -140,10 +140,6 @@ M2INCLUDES += -I@srcdir@/../c
 
 # we use this to override the regex library in the system
 M2INCLUDES += -I@srcdir@/../regex
-
-# ifeq (@XML@,yes)
-# M2INCLUDES += -I/usr/include/libxml2
-# endif
 
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)

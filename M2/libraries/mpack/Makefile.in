@@ -5,7 +5,7 @@ PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 LICENSEFILES = mlapack/library/CRrscl.cpp include/dd_complex.h
 
 # it seems to be impossible to recreate a functioning configure script after patching configure.in
-# PRECONFIGURE = autoconf
+# PRECONFIGURE = autoreconf -i
 
 # old: SUBDIRS = external mpfrc++ mblas mlapack examples
 # BUILDOPTIONS = SUBDIRS='mpfrc++ mblas mlapack'

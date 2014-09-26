@@ -738,11 +738,6 @@ const char *hstrerror(int herrno) {
 }
 #endif
 
-#ifndef HAVE_SIGLONGJMP
-#define sigsetjmp(env,save) setjmp(env)
-#define siglongjmp(env,val) longjmp(env,val)
-#endif
-
 #if !(defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS)
 int host_address(name)
 char *name;

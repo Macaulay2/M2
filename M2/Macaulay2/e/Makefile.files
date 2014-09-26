@@ -44,7 +44,6 @@ INTERFACE = \
 	NAG \
 	overflow \
 	memory-status \
-	exceptions \
 	imonorder \
 	sagbi \
 	monideal-minprimes \

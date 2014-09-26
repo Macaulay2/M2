@@ -673,7 +673,7 @@ void binomial_s_pair_set::stats() const
 ///////////////////////
 binomialGB::binomialGB(const binomial_ring *R0, bool bigcell,bool homogprime)
   : R(R0), first(NULL), _max_degree(0),
-    use_bigcell(bigcell),
+    //use_bigcell(bigcell),
     is_homogeneous_prime(homogprime)
 {
 }

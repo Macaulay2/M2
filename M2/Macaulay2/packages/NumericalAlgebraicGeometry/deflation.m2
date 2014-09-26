@@ -192,7 +192,7 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
     )
 
 TEST ///
-setRandomSeed 0
+setRandomSeed 1
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
