@@ -158,14 +158,15 @@ endif
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
+
+# it's an error that mathicgb doesn't get -ltbb into its pkg-config file:
+M2_LIBRARIES += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs mathicgb) @LIBTBB@
+
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 
 M2_LDFLAGS += @FCLIBS_FLAGS@
 M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
-
-# it's an error that mathicgb doesn't get -ltbb into its pkg-config file:
-M2_LIBRARIES += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs mathicgb) @LIBTBB@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
