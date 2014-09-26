@@ -869,6 +869,9 @@ load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
 -- Tests         --
 -------------------
 TEST ///
+load "NumericalSchubertCalculus/TST/poincare-G36.m2"
+///
+TEST ///
 load "NumericalSchubertCalculus/TST/4lines.m2"
 ///
 TEST ///

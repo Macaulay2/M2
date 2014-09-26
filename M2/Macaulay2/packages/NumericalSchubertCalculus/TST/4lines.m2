@@ -1,6 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 0
-DBG = 2
+-- DBG = 2
 VERIFY'SOLUTIONS = true 
 -- 4 lines in P^3 wrt standard and 3 random flags
 
