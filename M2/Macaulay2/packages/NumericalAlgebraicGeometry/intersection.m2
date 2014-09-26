@@ -3,7 +3,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export {hypersurfaceSection, numericalIntersection}
+export {"hypersurfaceSection", "numericalIntersection"}
 
 insertComponent = method()
 insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (

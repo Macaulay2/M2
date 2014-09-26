@@ -3,11 +3,11 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export { deflate, 
-    SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
-    deflateInPlace, DeflationSequence, DeflationSequenceMatrices,
-    LiftedPoint, LiftedSystem,
-    numericalRank, isFullNumericalRank
+export { "deflate", 
+    "SolutionSystem", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation", 
+    "deflateInPlace", "DeflationSequence", "DeflationSequenceMatrices",
+    "LiftedPoint", "LiftedSystem",
+    "numericalRank", "isFullNumericalRank"
     }
 
 numericalRank = method(Options=>{Threshold=>1e-4})

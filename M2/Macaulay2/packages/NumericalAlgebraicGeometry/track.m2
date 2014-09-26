@@ -2,7 +2,7 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { track, trackSegment }
+export { "track", "trackSegment" }
 
 track = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
