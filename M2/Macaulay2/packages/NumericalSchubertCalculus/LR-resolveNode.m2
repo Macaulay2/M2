@@ -40,7 +40,7 @@ blackBoxSolve(MutableHashTable,List,Matrix) := (node,
 );
 
 verifyStart = method();
-verifyStart(List,List) := (polys, startSolutions) -> (
+verifyStart(Matrix,List) := (polys, startSolutions) -> (
 --
 -- DESCRIPTION :
 --   Verifies the solutions at the start of the homotopy,
@@ -56,6 +56,27 @@ verifyStart(List,List) := (polys, startSolutions) -> (
       * norm sub(last coefficients polys,FFF)
       ) -- end assert
    ) -- end scan startSolutions
+);
+
+globalStayCoords = method();
+globalStayCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
+   rings,redchk,rnM) -> (
+--
+-- DESCRIPTION :
+--    Returns the global coordinates for the homotopy in the stay case.
+--
+-- IN :
+--    father : the current father to the node,
+--    rings : the homotopy ring Rt and Xt,
+--    redchk : the checkers red and red'sorted,
+--    rnM : the critical row r, the dimension n, and flag M.
+--
+-- OUT :
+--    returns the M'X as needed in the stay honotopy.
+--
+   (Rt, Xt) := rings;
+   (red, red'sorted) := redchk;
+   (r, n, M) := rnM;
 );
 
 caseSwapStay = method();
@@ -102,9 +123,8 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       -- V(t) = M'(t) X'(t) ... we write everything in terms of M
       scan(#red'sorted, j-> VwrtM = VwrtM |
          if isRedCheckerInRegionE(
-            position(red, i->i==red'sorted#j),
+            position(red, i->i==red'sorted#j),father)
             -- column of the j-th red checker on the board
-            father)
          then (
             submatrix(Xt,{0..r},{j}) || matrix{{0_FFF}}
             || submatrix(Xt, {r+2..n-1}, {j})
@@ -144,9 +164,8 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
                      else if i==r then 0
                      else Xt_(i,s+1))) }
                ) else if isRedCheckerInRegionE(
-                    position(red,i->i==red'sorted#j),
+                    position(red,i->i==red'sorted#j), father)
                     -- column of the j-th red checker on the board
-                    father) 
                   then (
                      submatrix(Xt,{0..r-1},{j}) 
                      || submatrix(Xt,{r},{j}) + submatrix(Xt,{r+1},{j})
