@@ -79,7 +79,6 @@ DIRECTORY := $(DIRECTORY)-$(BRANCH)
 # CC  += $V
 # CXX += $V
 
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all
 
 ifeq ($(PRODUCTION),yes)
