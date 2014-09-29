@@ -11,7 +11,6 @@ assert( f*f == s_{2} + s_{1,1} )
 
 g = f^3
 expression g
-terms g -- want the representations
 listForm g
 g1 = sum apply(listForm g, a -> a#1 * s_(a#0))
 assert(g == g1)
@@ -21,18 +20,15 @@ debug SchurRings
 debug Core
 B = schurRing(s, 7)
 f = s_{3,3,2,1,0}
-s1 = rawmonom2schur rawLeadMonomialR f
-m1 = schur2monom(s1, monoid B)
-assert(f == 1_ZZ * m1)
 g = f^3
 expression g
 exponents g;
 oo/print;
 size g
-(dim f)^3 == dim g
+assert((dim f)^3 == dim g)
 f = s_{2,1} + s_{1}
 g = f^2
-listForm g
+assert(listForm g == {({4, 2}, 1), ({4, 1, 1}, 1), ({3, 3}, 1), ({3, 2, 1}, 2), ({3, 1, 1, 1}, 1), ({3, 1}, 2), ({2, 2, 2}, 1), ({2, 2, 1, 1}, 1), ({2, 2}, 2), ({2, 1, 1}, 2), ({2}, 1), ({1, 1}, 1)})
 g1 = sum apply(listForm g, a -> a#1 * s_(a#0))
 assert(g1 == g)
 g1-g
@@ -40,13 +36,16 @@ assert(dim (g1-g) == 0)
 assert(dim g == (dim f)^2)
 exponents f
 3*f
-leadTerm (3*f)
-terms f^2
-coefficients f
+-- The following do not work, as the ring is not considered as a polynomial ring
+assert try leadTerm (3*f) else true
+assert try terms f^2 else true
+assert try coefficients f else true
+assert try someTerms(f^2,2,3) else true
 h = s_{231223123,4534324,21312}
-dim h
+-- The following is too large for the current algorithm
+-- dim h
 assert(s_(first exponents h) == h)
-someTerms(f^2,2,3)
+
 
 end
 -- Local Variables:

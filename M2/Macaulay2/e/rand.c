@@ -38,6 +38,11 @@ void rawSetRandomMax(gmp_ZZ newHeight)
   mpz_set(maxHeight, newHeight);
 }
 
+unsigned long rawRandomULong(unsigned long max)
+{
+  return gmp_urandomm_ui(state, max);
+}
+
 int32_t rawRandomInt(int32_t max)
 /* generate a random number in the range 0..max-1 */
 {
@@ -77,6 +82,18 @@ gmp_QQ rawRandomQQ(gmp_ZZ height)
   mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
   mpq_canonicalize(result);
   return result;
+}
+
+void rawSetRandomQQ(mpq_ptr result, gmp_ZZ height)
+  /* returns random a/b, where 1 <= b <= height, 1 <= a <= height */
+/* if height is the null pointer, use the default height */
+{
+  if (height == 0) height = maxHeight;
+  mpz_urandomm(mpq_numref(result), state, height);
+  mpz_urandomm(mpq_denref(result), state, height);
+  mpz_add_ui(mpq_numref(result), mpq_numref(result), 1);
+  mpz_add_ui(mpq_denref(result), mpq_denref(result), 1);
+  mpq_canonicalize(result);
 }
 
 gmp_RR rawRandomRR(unsigned long precision)

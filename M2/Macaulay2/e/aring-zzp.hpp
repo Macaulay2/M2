@@ -50,6 +50,8 @@ namespace M2 {
     // Routines to help in switch from coeffrings to aring //
     // these will be renamed or go away (hopefully) /////////
     /////////////////////////////////////////////////////////
+    unsigned int computeHashValue(const elem& a) const { return a; }
+
     void init_set(elem &result, elem a) const { result = a; }
     void set(elem &result, elem a) const { result = a; }
 
@@ -95,12 +97,6 @@ namespace M2 {
 	result = a.int_val;
     }
 
-    // 'get' functions
-
-    int get_int(elem f) const { return exp_table[f]; }
-
-    int get_repr(elem f) const { return f; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = 0; }
@@ -109,9 +105,7 @@ namespace M2 {
 
     void set_zero(elem &result) const { result = 0; }
 
-    void copy(elem &result, elem a) const { result = a; }
-
-    void set_from_int(elem &result, int a) const {
+    void set_from_long(elem &result, long a) const {
       a = a % p;
       if (a < 0) a += p;
       result = log_table[a];
@@ -253,6 +247,18 @@ namespace M2 {
     }
 
     void eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const;
+
+    long coerceToLongInteger(const elem& f) const
+    {
+      int n = exp_table[f];
+      if (n > p/2) n -= p;
+      return n;
+    }
+    long coerceToNonnegativeLongInteger(const elem& f) const
+    {
+      int n = exp_table[f];
+      return n;
+    }
   private:
     void initialize_tables();
     

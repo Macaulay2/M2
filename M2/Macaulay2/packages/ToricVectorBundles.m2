@@ -7,8 +7,8 @@
 ---------------------------------------------------------------------------
 newPackage("ToricVectorBundles",
     Headline => "A package for computations with vector bundles on toric varieties",
-    Version => "1.0",
-    Date => "April 30, 2010",
+    Version => "1.1",
+    Date => "August 21, 2014",
     Authors => {
          {Name => "René Birkner",
 	  HomePage => "http://page.mi.fu-berlin.de/rbirkner/indexen.htm",
@@ -143,6 +143,17 @@ net ToricVectorBundleKlyachko := tvb -> ( horizontalJoin flatten (
 
 
 ---------------------------------------------------------------
+-- Sorting rays
+---------------------------------------------------------------
+
+-- A ray is a matrix ZZ^n <-- ZZ^1, so rays can be sorted by assembling them
+-- into a matrix and calling "sortColumns".  We sort the rays as in the package
+-- Polyhedra, so that changes to the algorithm for computing the hash code of
+-- matrices doesn't affect what we do.
+
+raySort = value Polyhedra#"private dictionary"#"raySort"
+
+---------------------------------------------------------------
 -- FUNCTIONS TO CONSTRUCT VECTOR BUNDLES AND MODIFY THEM
 ---------------------------------------------------------------
 
@@ -177,7 +188,7 @@ addBase (ToricVectorBundleKlyachko,List) := (tvb,L) -> (
      -- Extracting data out of tvb
      k := tvb#"rank of the vector bundle";
      n := tvb#"number of rays";
-     R := toList tvb#"ToricVariety"#"rays";
+     R := raySort toList tvb#"ToricVariety"#"rays";
      -- Checking for input errors
      if n != #L then error("Expected number of matrices to match number of rays of the fan.");
      if any(L, l -> not instance(l,Matrix)) then error("Expected the bases to be given as matrices.");
@@ -1189,7 +1200,7 @@ rank ToricVectorBundle := T -> T#"rank of the vector bundle"
 -- PURPOSE : Giving the rays of the underlying Fan of a toric vector bundle
 --   INPUT : 'tvb',  a TorcVectorBundle
 --  OUTPUT : 'L',  a List containing the rays of the Fan underlying the bundle
-rays ToricVectorBundle := tvb -> toList tvb#"ToricVariety"#"rays"
+rays ToricVectorBundle := tvb -> raySort toList tvb#"ToricVariety"#"rays"
 
 
 -- PURPOSE : Computing the 'l'-th symmetric power of a Toric Vector Bundle
@@ -1350,7 +1361,7 @@ twist (ToricVectorBundleKlyachko,List) := (T,d) -> (
 --     	     an error is returned
 cartierIndex = method(TypicalValue => ZZ)
 cartierIndex (List,Fan) := (L,F) -> (
-     rl := toList F#"rays";
+     rl := raySort toList F#"rays";
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1384,7 +1395,7 @@ weilToCartier = method(Options => {"Type" => "Klyachko"})
 --  OUTPUT : 'tvb',  a ToricVectorBundle
 -- COMMENT : If no option is given the function will return a ToricVectorBundleKlyachko, if "Type" => "Kaneyama" is given it returns a ToricVectorBundleKaneyama
 weilToCartier (List,Fan) := opts -> (L,F) -> (
-     rl := toList F#"rays";
+     rl := raySort toList F#"rays";
      -- Checking for input errors
      if #L != #rl then error("The number of weights has to equal the number of rays.");
      n := ambDim F;
@@ -1876,7 +1887,7 @@ makeVBKlyachko (ZZ,Fan) := (k,F) -> (
      if k < 0 then error("The vector bundle must have a positive rank.");
      if not isPointed F then error("The Fan has to be pointed");
      -- Writing the table of rays
-     rT := toList F#"rays";
+     rT := raySort toList F#"rays";
      rT = hashTable apply(#rT, i -> rT#i => i);
      -- Writing the table of identity matrices for the vector bundle bases
      bT := hashTable apply(keys rT, i -> i => map(QQ^k,QQ^k,1));
@@ -4024,12 +4035,12 @@ assert(cohomology(3,T) == (ring T)^0)
 -- Test 13
 -- Checking weilToCartier
 TEST ///
-T = weilToCartier({1,2,3,4},projectiveSpaceFan 3,"Type" => "Kaneyama")
+T = weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable {(0,1) => map(QQ^1,QQ^1,1),(0,2) => map(QQ^1,QQ^1,1),(0,3) => map(QQ^1,QQ^1,1),(1,2) => map(QQ^1,QQ^1,1),(1,3) => map(QQ^1,QQ^1,1),(2,3) => map(QQ^1,QQ^1,1)})
 assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{-2},{-3},{6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{8},{-3},{-4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{-2},{7},{-4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-2},{-3},{-4}}})
 assert(rank T == 1)
 assert(T#"dimension of the variety" == 3)
-T = weilToCartier({1,2,3,4},projectiveSpaceFan 3)
+T = weilToCartier({1,4,3,2},projectiveSpaceFan 3)
 assert(T#"ring" === QQ)
 assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{-1}},matrix{{0},{0},{1}} => matrix{{-4}},matrix{{0},{1},{0}} => matrix{{-3}}, matrix{{1},{0},{0}} => matrix{{-2}}})
 assert(T#"baseTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1_QQ}},matrix{{0},{0},{1}} => matrix{{1_QQ}},matrix{{0},{1},{0}} => matrix{{1_QQ}}, matrix{{1},{0},{0}} => matrix{{1_QQ}}})
@@ -4041,7 +4052,7 @@ assert(T#"dimension of the variety" == 3)
 -- Checking directSum for Kaneyama
 TEST ///
 T1 = tangentBundle(projectiveSpaceFan 3,"Type" => "Kaneyama")
-T2 = weilToCartier({1,3,5,7},projectiveSpaceFan 3,"Type" => "Kaneyama")
+T2 = weilToCartier({1,7,5,3},projectiveSpaceFan 3,"Type" => "Kaneyama")
 T = T1 ++ T2
 assert(T#"baseChangeTable" === hashTable {(0,1) => matrix{{1_QQ,-1,0,0},{0,-1,0,0},{0,-1,1,0},{0,0,0,1}}, (0,2) => matrix{{-1_QQ,0,0,0},{-1,1,0,0},{-1,0,1,0},{0,0,0,1}}, (1,2) => matrix{{-1_QQ,1,0,0},{-1,0,0,0},{-1,0,1,0},{0,0,0,1}}, (0,3) => matrix{{1_QQ,0,-1,0},{0,0,-1,0},{0,1,-1,0},{0,0,0,1}}, (1,3) => matrix{{1_QQ,0,-1,0},{0,1,-1,0},{0,0,-1,0},{0,0,0,1}}, (2,3) => matrix{{0_QQ,0,-1,0},{1,0,-1,0},{0,1,-1,0},{0,0,0,1}}})
 assert(T#"degreeTable" === hashTable {posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{0,-1,0,-3},{0,0,-1,-5},{1,1,1,9}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{1,1,1,13},{0,-1,0,-5},{0,0,-1,-7}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{0,-1,0,-3},{1,1,1,11},{0,0,-1,-7}},posHull map(ZZ^3,ZZ^3,1) => matrix{{-1,0,0,-3},{0,-1,0,-5},{0,0,-1,-7}}})
@@ -4061,7 +4072,7 @@ assert(T#"dimension of the variety" == 2)
 -- Checking directSum for Klyachko
 TEST ///
 T1 = tangentBundle projectiveSpaceFan 3
-T2 = weilToCartier({1,3,5,7},projectiveSpaceFan 3)
+T2 = weilToCartier({1,7,5,3},projectiveSpaceFan 3)
 T = T1 ++ T2
 assert(T#"ring" === QQ)
 assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{-1,0,0,-1}},matrix{{0},{0},{1}} => matrix{{-1,0,0,-7}},matrix{{0},{1},{0}} => matrix{{-1,0,0,-5}}, matrix{{1},{0},{0}} => matrix{{-1,0,0,-3}}})
@@ -4082,7 +4093,7 @@ assert(T#"dimension of the variety" == 2)
 -- Test 16
 -- Checking dual for Kaneyama
 TEST ///
-T = dual weilToCartier({1,2,3,4},projectiveSpaceFan 3,"Type" => "Kaneyama")
+T = dual weilToCartier({1,4,3,2},projectiveSpaceFan 3,"Type" => "Kaneyama")
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ}},(0,2) => matrix{{1_QQ}}, (0,3) => matrix{{1_QQ}}, (1,2) => matrix{{1_QQ}},(1,3) => matrix{{1_QQ}},(2,3) => matrix{{1_QQ}}})
 assert(T#"degreeTable" === hashTable{posHull matrix {{1,0,-1},{0,1,-1},{0,0,-1}} => matrix{{2},{3},{-6}},posHull matrix {{0,-1,0},{1,-1,0},{0,-1,1}} => matrix{{-8},{3},{4}},posHull matrix {{1,-1,0},{0,-1,0},{0,-1,1}} => matrix{{2},{-7},{4}},posHull map(ZZ^3,ZZ^3,1) => matrix{{2},{3},{4}}})
 assert(rank T == 1)
@@ -4098,7 +4109,7 @@ assert(T#"dimension of the variety" == 3)
 -- Test 17
 -- Checking dual for Klyachko
 TEST ///
-T = dual weilToCartier({1,2,3,4},projectiveSpaceFan 3)
+T = dual weilToCartier({1,4,3,2},projectiveSpaceFan 3)
 assert(T#"ring" === QQ)
 assert(T#"filtrationMatricesTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1}},matrix{{0},{0},{1}} => matrix{{4}},matrix{{0},{1},{0}} => matrix{{3}}, matrix{{1},{0},{0}} => matrix{{2}}})
 assert(T#"baseTable" === hashTable {matrix{{-1},{-1},{-1}} => matrix{{1_QQ}},matrix{{0},{0},{1}} => matrix{{1_QQ}},matrix{{0},{1},{0}} => matrix{{1_QQ}}, matrix{{1},{0},{0}} => matrix{{1_QQ}}})
@@ -4124,7 +4135,7 @@ assert(T#"degreeTable" === hashTable{posHull matrix {{-1,0},{0,1}} => matrix{{0,
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 T1 = tangentBundle(hirzebruchFan 2,"Type" => "Kaneyama")
-T2 = weilToCartier({1,5,3,7},hirzebruchFan 2,"Type" => "Kaneyama")
+T2 = weilToCartier({5,1,7,3},hirzebruchFan 2,"Type" => "Kaneyama")
 T2 = T2 ++ T2
 T = T1 ** T2
 assert(T#"baseChangeTable" === hashTable{(0,1) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}},(0,2) => matrix{{-1_QQ,0,0,0},{2,1,0,0},{0,0,-1,0},{0,0,2,1}}, (1,3) => matrix{{-1_QQ,0,0,0},{-2,1,0,0},{0,0,-1,0},{0,0,-2,1}}, (2,3) => matrix{{1_QQ,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,-1}}})
@@ -4145,7 +4156,7 @@ assert(T#"baseTable" === hashTable {matrix{{-1},{0}} => matrix{{1_QQ,0,0,0},{0,-
 assert(rank T == 4)
 assert(T#"dimension of the variety" == 2)
 T1 = tangentBundle hirzebruchFan 2
-T2 = weilToCartier({1,5,3,7},hirzebruchFan 2)
+T2 = weilToCartier({5,1,7,3},hirzebruchFan 2)
 T2 = T2 ++ T2
 T = T1 ** T2
 assert(T#"ring" === QQ)
@@ -4281,7 +4292,7 @@ assert(T1#"dimension of the variety" == 2)
 -- Checking twist
 TEST ///
 T = tangentBundle projectiveSpaceFan 3
-L = {1,-2,3,-4}
+L = {1,-4,3,-2}
 T = twist(T,L)
 assert(T#"ring" === QQ)
 assert(T#"baseTable" === hashTable {matrix{{0},{0},{1}} => matrix{{0_QQ,1,0},{0,0,1},{1,0,0}}, matrix{{-1},{-1},{-1}} => matrix{{-1_QQ,0,0},{-1,1,0},{-1,0,1}}, matrix{{1},{0},{0}} => matrix{{1_QQ,0,0},{0,1,0},{0,0,1}},matrix{{0},{1},{0}} => matrix{{0_QQ,1,0},{1,0,0},{0,0,1}}})

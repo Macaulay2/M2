@@ -27,7 +27,7 @@ endif
 
 
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
-M2CMD := time nice -18 @pre_exec_prefix@/bin/M2@EXE@ --stop -q -e $(PATHJOIN) --print-width 0
+M2CMD := time nice -18 @pre_exec_prefix@/bin/M2 --stop -q -e $(PATHJOIN) --print-width 0
 EXIT := -e "exit 0"
 INPUT = -e 'input "$<"'
 

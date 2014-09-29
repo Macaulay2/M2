@@ -161,7 +161,12 @@ methods Thing := F -> (
      -- sort -- too slow
      new VerticalList from sortByName keys found)
 
-debuggerUsageMessage = ///--debugging control:
+debuggerUsageMessage = ///--debugger activation depth control:
+    errorDepth=3   	-- activate at positions in user code (default)
+    errorDepth=2   	-- activate also at positions in packages
+    errorDepth=1   	-- activate also at positions in Core
+    errorDepth=0   	-- activate also at positions in the loader
+--debugging control:
     return              -- bypass current expression, return null, stop
     return x            -- bypass current expression, return x, stop
     step                -- step 1 line

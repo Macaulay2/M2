@@ -1,7 +1,6 @@
 // Copyright 2011 Michael E. Stillman
 
 #include "aring-zzp.hpp"
-#include "aring-promoter.hpp"
 #include "ringmap.hpp"
 
 namespace M2 {
@@ -83,7 +82,7 @@ namespace M2 {
                                bool p_plus,
                                bool p_parens) const
   {
-    int n = exp_table[a];
+    long n = coerceToLongInteger(a);
     if (n < 0) 
       {
         o << '-';
@@ -96,9 +95,8 @@ namespace M2 {
 
   void ARingZZp::eval(const RingMap *map, const elem f, int first_var, ring_elem &result) const
   {
-    // translate f to 
-    int a = exp_table[f];
-    result = map->get_ring()->from_int(a);
+    long a = coerceToLongInteger(f);
+    result = map->get_ring()->from_long(a);
   }
 
 };

@@ -1,4 +1,3 @@
-/StagingArea
 /M2
 /config.args
 /config.log
@@ -6,7 +5,6 @@
 /include/M2/config.h
 /srcdir
 /GNUmakefile
-/Makefile.configfiles
 /check-configure/Makefile
 /include/config.Makefile
 /include/configuration
@@ -45,6 +43,10 @@
 /libraries/missing/Makefile
 /libraries/missing/src/Makefile
 /libraries/Makefile.library
+/Macaulay2/bin/M2
+/Macaulay2/c/.gdbinit
+/Macaulay2/m2/.gdbinit
+/libraries/atomic_ops/Makefile
 /libraries/M2/Makefile
 /libraries/gc/Makefile
 /libraries/gdbm/Makefile
@@ -138,3 +140,12 @@
 /Macaulay2/util/Makefile
 /Macaulay2/kernel/Makefile
 /Macaulay2/kernel/bibasis/Makefile
+/usr-dist
+/usr-build
+/usr-host
+/.completed
+LOGFILE
+/Macaulay2/e/unit-tests/testMain
+/check-configure/tmp/
+/libraries/ntl/check-once
+/Macaulay2/packages/ComputationsBook/programming/foo

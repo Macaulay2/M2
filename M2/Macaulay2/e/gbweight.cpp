@@ -59,12 +59,12 @@ GBWeight::GBWeight(const FreeModule *F, M2_arrayint wts0)
 
 int GBWeight::exponents_weight(const int *e, int comp) const
 {
-  int sum = 0;
+  long sum = 0;
   for (int i=0; i<nvars_; i++)
     sum += e[i] * wts_->array[i];
   if (use_component_degrees_ && comp > 0)
     sum += Fdegs_[comp];
-  return sum;
+  return static_cast<int>(sum);
 }
 
 int GBWeight::gbvector_term_weight(const gbvector *f) const

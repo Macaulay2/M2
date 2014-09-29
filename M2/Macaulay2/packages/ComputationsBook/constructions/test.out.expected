@@ -1,5 +1,5 @@
 
-i1 : setRandomSeed();
+i1 : setRandomSeed 1;
 
 i2 : randomPlanePoints = (delta,R) -> (
           k:=ceiling((-3+sqrt(9.0+8*delta))/2);
@@ -308,7 +308,7 @@ i30 : K=ZZ/13;
 i31 : R=K[x_0..x_6];
 
 i32 : time b=randomModule2ForDeg17CY(8,R);
-     -- Trial n. 188, k=8
+     -- Trial n. 759, k=8
      -- used 12.3878 seconds
 
               3       16

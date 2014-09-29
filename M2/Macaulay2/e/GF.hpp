@@ -38,15 +38,17 @@ public:
 
   int extension_degree() const { return Qexp_; }
 
-  int to_int(int a) const;
-
   GF * cast_to_GF() { return this; }
   const GF * cast_to_GF() const { return this; }
 
-  const RingElement *get_minimal_poly() const;
+  virtual bool isGaloisField() const { return true; }
+
+  const RingElement* getMinimalPolynomial() const;
   // returns the polynomial f(t) mentioned in the def of _originalR above.
   // this is the minimal polynomial of the given generator of this ring
   // (which is not necessarily the primitive element)
+  virtual const RingElement* getGenerator() const;
+  virtual const RingElement* getRepresentation(const ring_elem& a) const;
 
   ring_elem get_rep(ring_elem f) const;
   // takes an element of this ring, and returns an element of _originalR->XXX()
@@ -54,10 +56,14 @@ public:
   int discrete_log(ring_elem a) const;
 
 // The following are all the routines required by 'ring'
+  unsigned int computeHashValue(const ring_elem a) const 
+  { 
+    return a.int_val;
+  }
 
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem var(int v) const;
   virtual ring_elem from_rational(mpq_ptr q) const;

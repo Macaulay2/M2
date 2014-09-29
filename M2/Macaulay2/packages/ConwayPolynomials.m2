@@ -1,7 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
 	"ConwayPolynomials",
-	AuxiliaryFiles => true,
     	Version => "1.0", 
     	Date => "October 23, 2008",
     	Authors => {
@@ -10,28 +9,24 @@ newPackage(
     	HomePage => "http://www.math.uiuc.edu/~dan/",
     	Headline => "a database of Conway polynomials"
     	)
--- the data comes from http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/
--- the data file is http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/CPimport.txt
--- or http://www.math.rwth-aachen.de:8001/~Frank.Luebeck/data/ConwayPol/CPimport.txt.gz
-export conwayPolynomial
-fn  := currentFileDirectory | "ConwayPolynomials/ConwayPolynomials.txt"
-getCP := memoize(
-     () -> (
-	  if notify then stderr << "--loading file " << fn << endl;
-	  hashTable apply( lines get fn,
-	       x -> (
-	       	    x = value x;
-	       	    ((x#0,x#1),drop(x,2))))))
+-- the data comes libflint
+export "conwayPolynomial"
+rawConwayPolynomial := value Core#"private dictionary"#"rawConwayPolynomial"
+getCP := (p,n) -> rawConwayPolynomial (p,n,false)
 Ap := memoize(p -> (ZZ/p)(monoid [getSymbol "a"]))
-fix := (p,n,co,a) -> a^n + sum(#co, i -> co#i * a^i)
+fix := (p,n,co,a) -> sum(#co, i -> co#i * a^i)
 conwayPolynomial = method()
-conwayPolynomial(ZZ,ZZ) := (p,n) -> if (getCP())#?(p,n) then fix(p,n,(getCP())#(p,n),(Ap p)_0)
+conwayPolynomial(ZZ,ZZ) := (p,n) -> (
+     cp := getCP(p,n);
+     if cp != {} then fix(p,n,cp,(Ap p)_0))
 conwayPolynomial ZZ := q -> (
      factors := factor q;
      if #factors =!= 1 or factors#0#0 === -1
      then error "expected a power of a prime";
      conwayPolynomial(factors#0#0,factors#0#1))
-addHook(GaloisField,FindOne,(p,n,a) -> if (getCP())#?(p,n) then break fix(p,n,(getCP())#(p,n),a))
+addHook(GaloisField,FindOne,(p,n,a) -> (
+     cp := getCP(p,n);
+     if cp != {} then break fix(p,n,cp,a)))
 isConway := (F) -> (gens ideal ambient F)_(0,0) == sub(conwayPolynomial(F.char,F.degree),ambient ambient F)
 map(GaloisField,GaloisField) := RingMap => o -> (K,F) -> (
      p := char F;

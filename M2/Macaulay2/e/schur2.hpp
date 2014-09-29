@@ -64,7 +64,7 @@ class schur_poly_iterator {
   friend class schur_poly;
 
   schur_poly_iterator(const schur_poly &f) : ic(f.coeffs.begin()), im(f.monoms.begin()) {}
-  schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()), im(0) {}
+  schur_poly_iterator(const schur_poly &f, int) : ic(f.coeffs.end()) {}
 public:
   void operator++() { ++ic; im += *im;  }
   ring_elem getCoefficient() { return *ic; }
@@ -126,6 +126,8 @@ public:
 
 
   ////// from Ring //////////////////////////////////////////
+  virtual unsigned int computeHashValue(const ring_elem a) const;
+
   virtual void text_out(buffer &o) const;
   virtual void elem_text_out(buffer &o,
                              const ring_elem f,
@@ -133,7 +135,7 @@ public:
                              bool p_plus=false,
                              bool p_parens=false) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
 

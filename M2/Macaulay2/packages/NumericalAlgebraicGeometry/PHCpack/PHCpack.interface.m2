@@ -25,4 +25,6 @@ refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> (
 	  Bits => o.Bits)
      )
 
+numericalIrreducibleDecompositionPHCpack = I -> PHCpack$numericalIrreducibleDecomposition I_*
+
 dismiss PHCpack

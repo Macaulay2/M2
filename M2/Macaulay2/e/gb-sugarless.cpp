@@ -13,10 +13,6 @@
 //  2 not mingen, but is a minimal gb element
 //  3 mingen and minimal gb elem
 
-static const int GBELEM_NONGEN_NONGB = 0;
-static const int GBELEM_MINGEN_NONGB = 1;
-static const int GBELEM_NONGEN_MINGB = 2;
-static const int GBELEM_MINGEN_MINGB = 3;
 static const int MINGEN_MASK = 0x1;
 static const int MINGB_MASK = 0x2;
 

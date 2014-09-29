@@ -12,7 +12,7 @@
 #define constRELEM(T,a) static_cast<const RElementWrap<T> &>(a).val_
 #endif
 
-
+class PolynomialRing;
 class RingMap;
 
 
@@ -27,19 +27,25 @@ namespace M2 {
 */
   enum RingID {
     ring_example = 0,
-    ring_ZZZ,
+    ring_ZZ,
+    ring_ZZFlint,
+    ring_QQ,
+    ring_QQFlint,
     ring_ZZp,
-    ring_logZZp,
+    ring_ZZpFfpack,
+    ring_ZZpFlint,
     ring_GF,
     ring_GFM2,
-    ring_FFPACK,
+    ring_GFGivaro,
+    ring_GFFlintBig,
+    ring_GFFlintZech,
     ring_RR,
     ring_CC,
     ring_RRR,
     ring_CCC,
     ring_tower_ZZp,
     ring_old,  ///< refers to all rings which are not ConcreteRing's.
-    ring_top = 8 ///< used to determine the number of ring types
+    ring_top = 16 ///< used to determine the number of ring types
   };
 
 /**
@@ -47,25 +53,34 @@ namespace M2 {
 */
   class RingInterface {}; ///< inherit from this if the class is to be used as a template parameter for ConcreteRing
 
+
+
 class DummyRing : public RingInterface
   {
  public:
-
-        typedef int    FieldType;
-        typedef int      ElementType;
+    const PolynomialRing* mOriginalRing;
+        typedef long    FieldType;
+        typedef long    ElementType;
     
         typedef ElementType     elem;
 
         int characteristic()  const  {return 0; }
 
+        unsigned int computeHashValue(const elem& a) const 
+        { 
+          return static_cast<unsigned int>(a); 
+        }
 
-        int get_int(elem f) const {return 0;}
-        int get_repr(elem f) const {return 0;}
         M2_arrayint getModPolynomialCoeffs() const {return 0;}
         M2_arrayint getGeneratorCoeffs() const {return 0;}
         
-        ring_elem   getGenerator() const {return 0;}
+        void getGenerator(elem& result) const {result=0;}
     
+        const PolynomialRing& originalRing() const { return *mOriginalRing; }
+
+        long coerceToLongInteger(ElementType a) const { return a; }
+ 
+        void lift_to_original_ring(ring_elem& result, const ElementType& f) const { }
     
         M2_arrayint fieldElementToM2Array(ElementType el) const {return 0; }
     
@@ -92,7 +107,7 @@ class DummyRing : public RingInterface
 
         void set(elem &result, elem a) const { result = a; }
 
-        void set_from_int(elem &result, int a) const { result=a;}
+        void set_from_long(elem &result, long a) const { result=a;}
 
         void init(elem &result) const    { result = 0; }
 
@@ -143,6 +158,7 @@ class DummyRing : public RingInterface
 
   };
 
+#if 0
 
 /**
 \ingroup rings
@@ -182,8 +198,9 @@ class DummyRing : public RingInterface
     static bool converter(const ARing *sourceR, const ARing *targetR, const RElement &a, RElement &b);
   };
 
-};
+#endif
 
+}; // namespace M2
 
 #endif
 

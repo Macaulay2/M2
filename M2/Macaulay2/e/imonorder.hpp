@@ -8,7 +8,14 @@
 
 #include "engine-includes.hpp"
 #include "rand.h"
-#include <alloca.h>
+#ifdef HAVE_ALLOCA_H
+ #include <alloca.h>
+#else
+ #ifdef HAVE_MALLOC_H
+  // under minggw32, alloca is declared in malloc.h
+  #include <malloc.h>
+ #endif
+#endif
 #include "monordering.h"
 
 typedef int * exponents;

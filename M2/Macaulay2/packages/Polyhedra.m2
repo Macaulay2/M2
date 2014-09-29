@@ -8,8 +8,8 @@
 ---------------------------------------------------------------------------
 newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
-    Version => "1.2",
-    Date => "March 30, 2011",
+    Version => "1.3",
+    Date => "August 21, 2014",
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",
@@ -153,6 +153,19 @@ export {"PolyhedralObject",
 	"saveSession"}
 
 needsPackage "FourierMotzkin"
+
+
+---------------------------------------------------------------
+-- Sorting rays
+---------------------------------------------------------------
+
+-- A ray is a matrix ZZ^n <-- ZZ^1, so rays can be sorted by assembling them
+-- into a matrix and calling "sortColumns".  We sort the rays, so that changes to 
+-- the algorithm for computing the hash code of matrices doesn't affect what we do.
+
+raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
+
+---------------------------------------------------------------
 
 -- WISHLIST
 --  -Symmetry group for polytopes
@@ -846,7 +859,7 @@ addCone (Cone,Fan) := (C,F) -> (
      else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     rayList := toList F#"rays";
+     rayList := raySort toList F#"rays";
      if inserted then (
 	  -- The rays of 'C' have to be added
 	  rm := rays C;
@@ -1037,7 +1050,7 @@ rays Cone := C -> C#"rays"
 
 
 --   INPUT : 'F'  a Fan
-rays Fan := F -> toList F#"rays"
+rays Fan := F -> raySort toList F#"rays"
 
 
    
@@ -8875,10 +8888,10 @@ assert(volume P == 4/3)
 -- Checking incompCones
 TEST ///
 L = {posHull matrix{{1,0},{1,1}},posHull matrix{{1,0},{0,-1}},posHull matrix{{-1,0},{0,1}},posHull matrix{{1,1},{0,1}},posHull matrix {{1,2},{2,1}}};
-assert(incompCones L == {(L#0,L#4),(L#3,L#4)})
+assert(set incompCones L === set {(L#0,L#4),(L#3,L#4)})
 L = L_{0..3}|{hirzebruch 3};
 assert(incompCones L == {(L#0,L#4),(L#2,L#4),(L#3,L#4)})
-assert(incompCones(L#2,L#4) == {(L#2,posHull matrix {{0,-1},{1,3}}),(L#2,posHull matrix {{0,-1},{-1,3}})})
+assert(set incompCones(L#2,L#4) === set {(L#2,posHull matrix {{0,-1},{1,3}}),(L#2,posHull matrix {{0,-1},{-1,3}})})
 L = {posHull matrix {{-1,0},{0,1}},posHull matrix {{-1,0},{0,-1}},posHull matrix {{0,-1},{-1,3}},posHull matrix {{0,-1},{1,3}}};
 L = {(L#0,L#2),(L#0,L#3),(L#1,L#2)};
 assert(set incompCones(normalFan hypercube 2,hirzebruch 3) === set L)

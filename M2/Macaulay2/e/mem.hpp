@@ -13,7 +13,7 @@ const int NDOUBLES = 25;
 const int slab_size = 2032;
 //const int slab_size = 262134;
 const char bad_pattern = '\245';
-const int word_size = sizeof(void *);
+const int word_size = static_cast<int>(sizeof(void *)); // g++-4.8.0 complains without the cast.
 
 extern size_t engine_allocated;
 extern size_t engine_highwater;

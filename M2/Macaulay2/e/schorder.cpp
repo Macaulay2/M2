@@ -243,7 +243,7 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
     {
       M->one(base);
       for (size_t r=0; r<p; r++)
-        M->mult(base, base_monom(a[r]), base);
+        M->mult(base, base_monom(static_cast<int>(a[r])), base);
 
       result->append(next++, base);
     }

@@ -52,8 +52,8 @@ class Pair {
         lcm = F.find(j) ->second.LT();
         good = true; //BRP::isDivisibleBy(lcm, BRP( 1 << n-(-i) ) );
       } else {
-        unsigned int a = F.find(i) ->second.LT();
-        unsigned int b = F.find(j) ->second.LT();
+        unsigned long a = F.find(i) ->second.LT();
+        unsigned long b = F.find(j) ->second.LT();
         lcm = a | b;
         good = !BRP::isRelativelyPrime( a,b );
       }
@@ -314,7 +314,7 @@ void interreduction(IntermediateBasis &F) {
 
 // complete algorithm to compute a Groebner basis F
 void gb( IntermediateBasis &F, int n) {
-  int nextIndex = F.size();
+  int nextIndex = static_cast<int>(F.size());
   rearrangeBasis(F, -1);
   interreduction(F);
   Pairs B = makeList(F, n);

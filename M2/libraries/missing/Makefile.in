@@ -10,8 +10,7 @@ uninstall ::
 	if [ -d $(LIBRARIESDIR) ] ; \
 	then cd $(LIBRARIESDIR) && rm -rf lib/libmissing.* ;\
 	fi
-clean ::
-	cd src && rm -f *.o *.a
+clean ::; make -C src $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/missing "
 # End:

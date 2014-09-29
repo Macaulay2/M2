@@ -36,9 +36,9 @@ void testSomeMore(const T& R)
   R.init(c);
   R.init(d);
 
-  R.set_from_int(a, 27);
-  R.set_from_int(b, static_cast<int>(R.characteristic()) - 11);
-  R.set_from_int(c, 16);
+  R.set_from_long(a, 27);
+  R.set_from_long(b, static_cast<int>(R.characteristic()) - 11);
+  R.set_from_long(c, 16);
   R.add(d,a,b);
 
   buffer o;
@@ -104,9 +104,9 @@ void testCoercions(const T& R)
       mpz_set_si(m, i);
       mpz_add(m, m, base); // m = base + i
       R.set_from_mpz(a,m); // a = (base + i) mod charac
-      R.set_from_int(b,i);
+      R.set_from_long(b,i);
       R.add(b,c,b); // b = (base mod charac) + (i mod charac)
-      EXPECT_EQ(a,b); // a, b should be equal
+      EXPECT_TRUE(R.is_equal(a,b)); // a, b should be equal
     }
 
   // set_from_mpq
@@ -117,14 +117,14 @@ void testCoercions(const T& R)
 
       // check that (43999 mod charac)/(i mod charac) == n1 mod charac
       // if (i mod charac) is not zero.
-      if (i % (R.characteristic()) == 0) continue;
+      if (R.characteristic() == 0 or (i % R.characteristic()) == 0) continue;
       R.set_from_mpq(a, n1);
-      R.set_from_int(b, 43999);
-      R.set_from_int(c, i);
+      R.set_from_long(b, 43999);
+      R.set_from_long(c, i);
       if (!R.is_zero(c))
         {
           R.divide(c,b,c);
-          EXPECT_EQ(a, c);
+          EXPECT_TRUE(R.is_equal(a,c));
         }
     }
 
@@ -272,7 +272,7 @@ void testMultiply(const T& R, int ntrials)
   R.init(c);
   R.init(d);
   R.init(zero);
-  R.set_from_int(zero, 0);
+  R.set_from_long(zero, 0);
   for (int i=0; i<ntrials; i++)
     {
       gen.nextElement(a);
@@ -300,7 +300,7 @@ void testDivide(const T& R, int ntrials)
   R.init(c);
   R.init(d);
   R.init(zero);
-  R.set_from_int(zero, 0);
+  R.set_from_long(zero, 0);
   for (int i=0; i<ntrials; i++)
     {
       // c = a*b
@@ -330,7 +330,7 @@ void testReciprocal(const T& R, int ntrials)
   R.init(b);
   R.init(c);
   R.init(one);
-  R.set_from_int(one, 1);
+  R.set_from_long(one, 1);
   for (int i=0; i<ntrials; i++)
     {
       // c = 1/a
@@ -369,7 +369,7 @@ void testPower(const T& R, int ntrials)
   R.init(b);
   R.init(c);
   R.init(d);
-  R.set_from_int(one, 1);
+  R.set_from_long(one, 1);
   for (int i=0; i<ntrials; i++)
     {
       gen.nextElement(a);
@@ -415,6 +415,16 @@ void testFiniteField(const T& R, int ntrials)
   //TODO: test promote, lift, syzygy(?), (ringmaps)
   // test random number generation?
   // get generator
+}
+
+template <typename T>
+void testARingInterface(const T& R)
+{
+  // this test makes sure that all of the interface functions required 
+  // actually exist.
+
+  const M2::RingID rid = R.ringID;
+  std::cout << "ring ID: " << rid << std::endl;
 }
 
 #endif

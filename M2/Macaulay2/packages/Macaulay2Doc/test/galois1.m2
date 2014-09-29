@@ -45,17 +45,20 @@ S = ZZ[a]
 p = map(S,k)
 use k
 p c
-assert(p c == (-2_S)^e )
+--assert(p c == (-2_S)^e ) -- this behavior has changed (15 June 2014):
+assert(p c == 0)
 
 -- 5.  target is not a k-algebra, but we specify where c goes
 
 S = ZZ[t]
 p = map(S,k,{t})
-assert( p c == (-t-2)^e )
+--assert( p c == (-t-2)^e )  -- this behavior has changed (15 June 2014):
+assert(p c == t)
 
 S = ZZ[t,q,r]
 p = map(S,R,{q*r,q^2,r^2,t})
-assert( p (c*x) == (-t-2)^e * q*r )
+--assert( p (c*x) == (-t-2)^e * q*r ) -- this behavior has changed (15 June 2014):
+assert( p (c*x) == t*q*r)
 
 -- # Local Variables:
 -- # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test galois1.out "

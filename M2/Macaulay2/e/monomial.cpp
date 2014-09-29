@@ -3,27 +3,23 @@
 #include "monomial.hpp"
 #include "monoid.hpp"
 
-Monomial::Monomial() :
-  immutable_object(0)
+Monomial::Monomial()
 {
   // This routine is private because it leaves the object in
   // an incorrect state... to be filled in by varpower routines.
 }
 
-Monomial::Monomial(int v, int e) :
-  immutable_object(0)
+Monomial::Monomial(int v, int e)
 {
   varpower::var(v, e, val);
 }
 
-Monomial::Monomial(const int *vp) :
-  immutable_object(0)
+Monomial::Monomial(const int *vp)
 {
   varpower::copy(vp, val);
 }
 
-Monomial::Monomial(M2_arrayint m) :
-  immutable_object(0)
+Monomial::Monomial(M2_arrayint m)
 {
   varpower::from_arrayint(m, val);
 }
@@ -32,7 +28,6 @@ Monomial *Monomial::make(int v, int e)
 {
   Monomial *result = new Monomial(v,e);
   if (error()) return 0;
-  result->set_hash_code();
   return result;
 }
 
@@ -51,7 +46,6 @@ Monomial *Monomial::make(M2_arrayint m)
       }
   Monomial *result = new Monomial(m);
   if (error()) return 0;
-  result->set_hash_code();
   return result;
 }
 
@@ -59,19 +53,18 @@ Monomial *Monomial::make(const int * vp)
 {
   Monomial *result = new Monomial(vp);
   if (error()) return 0;
-  result->set_hash_code();
   return result;
 }
 
-void Monomial::set_hash_code()
+unsigned int Monomial::computeHashValue() const
 {
-  unsigned long hashval = 0;
+  unsigned int hashval = 0;
   const int *vp = val.raw();
   for (int i=1; i<=*vp; i++)
     {
       hashval += i*(*++vp);
     }
-  _hashval = hashval;
+  return hashval;
 }
 
 bool Monomial::is_one() const
@@ -118,7 +111,6 @@ Monomial *Monomial::lcm(const Monomial &b) const
 {
   Monomial *result = new Monomial;
   varpower::lcm(ints(), b.ints(), result->val);
-  result->set_hash_code();
   return result;
 }
 
@@ -126,7 +118,6 @@ Monomial *Monomial::gcd(const Monomial &b) const
 {
   Monomial *result = new Monomial;
   varpower::gcd(ints(), b.ints(), result->val);
-  result->set_hash_code();
   return result;
 }
 
@@ -136,8 +127,6 @@ void Monomial::monsyz(const Monomial &b, Monomial *&sa, Monomial *&sb) const
   sb = new Monomial;
   varpower::monsyz(ints(), b.ints(),
                     sa->val, sb->val);
-  sa->set_hash_code();
-  sb->set_hash_code();
 }
 
 Monomial *Monomial::operator*(const Monomial &b) const
@@ -145,7 +134,6 @@ Monomial *Monomial::operator*(const Monomial &b) const
   Monomial *result = new Monomial;
   varpower::mult(ints(), b.ints(), result->val);
   if (error()) return 0;
-  result->set_hash_code();
   return result;
 }
 
@@ -153,7 +141,6 @@ Monomial *Monomial::operator/(const Monomial &b) const
 {
   Monomial *result = new Monomial;
   varpower::quotient(ints(), b.ints(), result->val);
-  result->set_hash_code();
   return result;
 }
 
@@ -161,7 +148,6 @@ Monomial *Monomial::erase(const Monomial &b) const
 {
   Monomial *result = new Monomial;
   varpower::erase(ints(), b.ints(), result->val);
-  result->set_hash_code();
   return result;
 }
 
@@ -170,7 +156,6 @@ Monomial *Monomial::power(int n) const
   Monomial *result = new Monomial;
   varpower::power(ints(), n, result->val);
   if (error()) return 0;
-  result->set_hash_code();
   return result;
 }
 
@@ -178,7 +163,6 @@ Monomial *Monomial::radical() const
 {
   Monomial *result = new Monomial;
   varpower::radical(ints(), result->val);
-  result->set_hash_code();
   return result;
 }
 

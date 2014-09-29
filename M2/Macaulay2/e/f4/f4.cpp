@@ -8,8 +8,6 @@
 #include "../freemod.hpp"
 #include "interrupted.hpp"
 
-#include <tr1/unordered_map>
-
 F4GB::F4GB(const Gausser *KK0,
            F4Mem *Mem0,
            const MonomialInfo *M0,
@@ -922,7 +920,10 @@ enum ComputationStatusCode F4GB::start_computation(StopConditions &stop_)
         {
           if (!hilbert->setDegree(this_degree))
             {
-              is_done = COMP_INTERRUPTED;
+              if (error())
+                is_done = COMP_ERROR;
+              else
+                is_done = COMP_INTERRUPTED;
               break;
             }
         }

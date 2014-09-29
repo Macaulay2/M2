@@ -454,6 +454,11 @@ aftermatch := (pat,str) -> (
      m := regex(pat,str);
      if m === null then "" else substring(m#0#0,str))
 
+describeReturnCode = r -> (
+     if r % 256 == 0 then "exited with status code " | toString (r // 256)
+     else "killed by signal " | toString (r % 128) | if r & 128 =!= 0 then " (core dumped)" else ""
+     )
+
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
      stderr << "--making " << desc << " in file " << outf << endl;
@@ -496,23 +501,15 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
-     stderr << tmpf << ":0:1: (output file) error: Macaulay2 exited with return code " << r << endl;
+     stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0:1: (input file)" << endl;
      scan(statusLines get inf, x -> stderr << x << endl);
      if # findFiles rundir == 1
      then removeDirectory rundir
      else stderr << rundir << ": error: files remain in temporary run directory after program exits abnormally" << endl;
-     if r == 2 then (
-	  removeFile tmpf;
-	  error "subprocess interrupted";
-	  );
-     if r == 131 then (
-	  removeFile tmpf;
-	  error "subprocess terminated abnormally";
-	  );
-     if debugLevel == 124 then stderr << "-- r = " << r << endl;
-     stderr << "M2: *** [check] Error " << r//256 << endl;
+     stderr << "M2: *** Error " << (if r<256 then r else r//256) << endl;
+     if r == 2 then error "interrupted";
      hadExampleError = true;
      numExampleErrors = numExampleErrors + 1;
      return false;
@@ -685,7 +682,7 @@ installPackage Package := opts -> pkg -> (
 	       then error ("package ",toString pkg," has auxiliary files in \"",auxiliaryFilesDirectory,"\", but newPackage wasn't given AuxiliaryFiles=>true");
 	       if verbose then stderr << "--copying auxiliary source files from " << auxiliaryFilesDirectory << endl;
 	       makeDirectory (buildPrefix|srcDirectory);
-	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => debugLevel > 0, excludes);
+	       copyDirectory(auxiliaryFilesDirectory, buildPrefix|srcDirectory, UpdateOnly => true, Verbose => verbose, excludes);
 	       )
 	  else (
 	       if (options pkg).AuxiliaryFiles

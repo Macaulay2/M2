@@ -5,12 +5,12 @@
 # svn co http://www.singular.uni-kl.de/svn/trunk
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 4.0.0+m4
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
 #TARFILE = factory-$(VERSIONH).tar.gz
 TARFILE = factory-$(VERSION).tar.gz
-TARDIR ?= $(LIBNAME)-$(VERSION)/factory-4.0.0
+TARDIR = $(LIBNAME)-$(VERSION)/factory-4.0.0
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 

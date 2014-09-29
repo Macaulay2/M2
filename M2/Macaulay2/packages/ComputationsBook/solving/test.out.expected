@@ -53,7 +53,7 @@ o12 : Ideal of R
 
 i13 : factor(J_1)
 
-o13 = (x)(x + 1)(x + 2)(x - 2)
+o13 = (x)(x - 2)(x + 2)(x + 1)
 
 o13 : Expression of class Product
 
@@ -398,7 +398,7 @@ i65 : testTransverse(ZZ/2);
 Failed for the prime 2 with 5 iterations
 
 i66 : (random 10;for i to 7 do random 2;testTransverse(GF 4);)
-Succeeded for the prime 2 in 2 iteration(s)
+Succeeded for the prime 2 in 4 iteration(s)
 
 i67 : testTransverse(ZZ/7);
 Succeeded for the prime 7 in 1 iteration(s)

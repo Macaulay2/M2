@@ -339,7 +339,7 @@ namespace BIBasis
             }
         }
 
-        unsigned tmpPolySetSize = tmpPolySet.size();
+        unsigned tmpPolySetSize = static_cast<unsigned int>(tmpPolySet.size());
         for (register unsigned i = 0; i < tmpPolySetSize; ++i)
         {
             Polynom<MonomType>* currentPolynom = tmpPolySet.front();

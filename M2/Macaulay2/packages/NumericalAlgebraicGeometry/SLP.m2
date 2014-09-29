@@ -231,7 +231,8 @@ transposePreSLP(List,List,Matrix) := (C,slp,M) -> (C, slp, transpose M)
 
 jacobianPreSLP = method() -- finds jacobian of S with respect to inputs listed in L
 jacobianPreSLP (Sequence, List) := (S,L) -> (  
-     constants := S#0 | {0_CC,1_CC};
+--     constants := S#0 | {0_CC,1_CC};
+     constants := S#0 | {0,1};
      slp := S#1;
      outMatrix := S#2;
      -- create "zero node"

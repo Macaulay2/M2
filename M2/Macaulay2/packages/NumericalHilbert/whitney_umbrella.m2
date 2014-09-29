@@ -1,8 +1,9 @@
 restart
 loadPackage "NumericalHilbert"
 
-R = CC[x,y,z, MonomialOrder => {Weights=>3:-1}, Global => false]
-ideal jacobian M
+K = QQ 
+K = CC
+R = K[x,y,z, MonomialOrder => {Weights=>3:-1}, Global => false]
 noise = eps -> random(-eps,eps)+ii*random(-eps,eps)
 eps = 1e-16
 
@@ -14,6 +15,7 @@ dualInfo(M, Point=>P)
 E3 = eliminatingDual(M,3,{R_0},Point=>P)
 E2 = eliminatingDual(M,2,{R_0},Point=>P)
 dualCompare(E2, colonDual(E3,{R_0}))
+
 
 P = {0,0,1}
 P = {0,0,0}

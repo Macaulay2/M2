@@ -1635,7 +1635,10 @@ void gbB::do_computation()
                   {
                     if (!hilbert->setDegree(this_degree))
                       {
-                        set_status(COMP_INTERRUPTED);
+                        if (error())
+                          set_status(COMP_ERROR);
+                        else
+                          set_status(COMP_INTERRUPTED);
                         return;
                       }
                   }

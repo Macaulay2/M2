@@ -585,8 +585,12 @@ monomialOrderMatrix RawMonomialOrdering := (mo) -> (
      mat := rawMonomialOrderingToMatrix mo;
      -- the last entry of 'mat' determines whether the tie breaker is Lex or RevLex.
      -- there may be no other elements of mat, so the next line needs to handle that case.
-     ordermat := if #mat === 1 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-1),nvars);
-     (ordermat, if last mat == 0 then Lex else RevLex)
+     ordermat := if #mat === 3 then map(ZZ^0, ZZ^nvars, 0) else matrix pack(drop(mat,-3),nvars);
+     (ordermat, 
+         if mat#-3 == 0 then Lex else RevLex,
+         if mat#-2 == -1 then Position=>Down else if mat#-2 == 1 then Position=>Up else Position=>mat#-2,
+         "ComponentBefore" => mat#-1
+         )
      )
 monomialOrderMatrix Monoid := (M) -> monomialOrderMatrix M.RawMonomialOrdering
 monomialOrderMatrix Ring := (R) -> monomialOrderMatrix monoid R

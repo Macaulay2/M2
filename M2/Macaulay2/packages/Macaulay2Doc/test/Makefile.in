@@ -48,3 +48,4 @@ mike-tests: $(MIKE_RESULTS) ; grep sys $^
 # Local Variables:
 # compile-command: "make -k -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test "
 # End:
+.NOTPARALLEL:

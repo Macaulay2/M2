@@ -1,0 +1,32 @@
+-- -*- M2-comint -*- {* hash: -1762270290 *}
+--loading configuration for package "Bertini" from file /Users/elizabethgross/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : R = CC[x,y,z][s1,s2];
+
+i2 : sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
+
+            2    2    2
+o2 = {{s1, x  + y  - z }, {s2, - x + z}}
+
+o2 : List
+
+i3 : f = {s1*s2, s1*(z+y),z-1};
+
+i4 : sols = bertiniZeroDimSolve(f,AllowStrings=>{x,y,z},SubFunctions=>sF)
+Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-19015-0/0
+
+The version of Bertini you have installed on your computer was used for this run. 
+Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+o4 = {(1, -6.87761e-14+4.49265e-14*ii, 1), (1, -7.33823e-14+5.91531e-14*ii,
+     ------------------------------------------------------------------------
+     1), {1, -1, 1}, (-1.41964+.606291*ii, .771845+1.11514*ii, 1), (-1,
+     ------------------------------------------------------------------------
+     1.07845e-16-5.64009e-16*ii, 1), (-1.41964-.606291*ii,
+     ------------------------------------------------------------------------
+     .771845-1.11514*ii, 1), (.839287, -.543689, 1)}
+
+o4 : List
+
+i5 : 

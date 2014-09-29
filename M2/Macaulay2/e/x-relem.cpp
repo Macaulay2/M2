@@ -7,9 +7,6 @@
 #include "relem.hpp"
 #include "ZZp.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
-#include "RRR.hpp"
-#include "CCC.hpp"
 #include "GF.hpp"
 #include "polyring.hpp"
 #include "schur.hpp"
@@ -29,10 +26,18 @@
 
 #include "aring.hpp"
 #include "aring-glue.hpp"
+#include "aring-RR.hpp"
+#include "aring-CC.hpp"
 #include "aring-RRR.hpp"
-unsigned long IM2_Ring_hash(const Ring *R)
+#include "aring-CCC.hpp"
+
+// The following needs to be included before any flint files are included.
+#include <M2/gc-include.h>
+#include <flint/fq_nmod.h>
+
+unsigned int rawRingHash(const Ring *R)
 {
-  return R->get_hash_value();
+  return R->hash();
 }
 
 M2_string IM2_Ring_to_string(const Ring *R)
@@ -40,6 +45,11 @@ M2_string IM2_Ring_to_string(const Ring *R)
   buffer o;
   R->text_out(o);
   return o.to_string();
+}
+
+long rawRingCharacteristic(const Ring* R)
+{
+  return R->characteristic();
 }
 
 ///////////////////
@@ -84,16 +94,16 @@ const Ring /* or null */ *rawGaloisField(const RingElement *f)
 
 const Ring /* or null */ *IM2_Ring_RRR(unsigned long prec)
 {
-#ifdef use_new_RRR
+  if (prec <= 53)
+    return M2::ConcreteRing<M2::ARingRR>::create(new M2::ARingRR());
   return M2::ConcreteRing<M2::ARingRRR>::create(new M2::ARingRRR(prec));
-#else
-  return RRR::create(prec);
-#endif
 }
 
 const Ring /* or null */ *IM2_Ring_CCC(unsigned long prec)
 {
-  return CCC::create(prec);
+  if (prec <= 53)
+    return M2::ConcreteRing<M2::ARingCC>::create(new M2::ARingCC());
+  return M2::ConcreteRing<M2::ARingCCC>::create(new M2::ARingCCC(prec));
 }
 
 const Ring *IM2_Ring_trivial_polyring()
@@ -104,13 +114,6 @@ const Ring *IM2_Ring_trivial_polyring()
 const Ring /* or null */ *IM2_Ring_polyring(const Ring *K, const Monoid *M)
 {
      try {
-#if 0
-//   if (K == globalQQ)
-//     {
-//       const PolyRing *P = PolyRing::create(globalZZ,M);
-//       return PolyQQ::create(P);
-//     }
-#endif
        const PolyRing *result = PolyRing::create(K,M);
        intern_polyring(result);
        return result;
@@ -143,16 +146,6 @@ const Ring /* or null */ *IM2_Ring_skew_polyring(const Ring *R,
                                          M2_arrayint skewvars)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const PolyRing *P = SkewPolynomialRing::create(globalZZ,
-//                                                   RQ->getMonoid(),
-//                                                   skewvars);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {
@@ -178,18 +171,6 @@ const Ring /* or null */ *IM2_Ring_weyl_algebra(const Ring *R,
                                         int homog_var)
 {
      try {
-#if 0
-//   const PolyQQ *RQ = R->cast_to_PolyQQ();
-//   if (RQ != 0)
-//     {
-//       const WeylAlgebra *P = WeylAlgebra::create(globalZZ,
-//                                               RQ->getMonoid(),
-//                                               diff_vars,
-//                                               comm_vars,
-//                                               homog_var);
-//       return PolyQQ::create(P);
-//     }
-#endif
           const PolynomialRing *P = R->cast_to_PolynomialRing();
           if (P == 0)
             {
@@ -403,7 +384,7 @@ const Ring *rawSchurSnRing(const Ring *A, int n)
 
 const Ring /* or null */ *rawTowerRing1(long charac, M2_ArrayString names)
 {
-  return Tower::create(charac, names);
+  return Tower::create(static_cast<int>(charac), names);
 }
 
 const Ring /* or null */ *rawTowerRing2(const Ring *R1, M2_ArrayString new_names)
@@ -505,6 +486,11 @@ const Ring /* or null */ *rawDenominatorRing(const Ring *R)
 }
 /*********************************************************************/
 
+unsigned int rawRingElementHash(const RingElement *a)
+{
+  return a->hash();
+}
+
 const Ring * IM2_RingElement_ring(const RingElement *a)
 {
   return a->get_ring();
@@ -532,6 +518,7 @@ const RingElement *IM2_RingElement_from_BigComplex(const Ring *R, gmp_CC z)
   ring_elem f;
   if (R->from_BigComplex(z,f))
     return RingElement::make_raw(R, f);
+  ERROR("cannot create element of this ring from an element of CC");
   return 0;
 }
 
@@ -540,6 +527,7 @@ const RingElement *IM2_RingElement_from_BigReal(const Ring *R, gmp_RR z)
   ring_elem f;
   if (R->from_BigReal(z,f))
     return RingElement::make_raw(R, f);
+  ERROR("cannot create element of this ring from an element of RR");
   return 0;
 }
 
@@ -554,10 +542,14 @@ gmp_ZZorNull IM2_RingElement_to_Integer(const RingElement *a)
       void *f = a->get_value().poly_val;
       return static_cast<gmp_ZZ>(f);
     }
-  if (R->cast_to_Z_mod() != 0)
+  if (R->isFinitePrimeField())
     {
       gmp_ZZ result = newitem(__mpz_struct);
-      mpz_init_set_si(result, R->coerce_to_int(a->get_value()));
+
+      std::pair<bool,long> res = R->coerceToLongInteger(a->get_value());
+      M2_ASSERT(res.first);
+
+      mpz_init_set_si(result, static_cast<int>(res.second));
       return result;
     }
   ERROR("Expected ZZ or ZZ/p as base ring");
@@ -577,35 +569,70 @@ gmp_QQorNull IM2_RingElement_to_rational(const RingElement *a)
 
 gmp_RRorNull IM2_RingElement_to_BigReal(const RingElement *a)
 {
-  if (!a->get_ring()->is_RRR())
+  const Ring* R = a->get_ring();
+  gmp_RR result;
+  void* b;
+  double* c;
+  const M2::ConcreteRing<M2::ARingRRR> *R1;
+
+  switch (R->ringID()) 
     {
-      const M2::ConcreteRing<M2::ARingRRR> *R = dynamic_cast< const M2::ConcreteRing<M2::ARingRRR> * >(a->get_ring());
-      if (R == 0)
+    case M2::ring_RR:
+      result = getmemstructtype(gmp_RR);
+      mpfr_init2(result, 53);
+      b = static_cast<void*>(a->get_value().poly_val);
+      c = static_cast<double*>(b);
+      mpfr_set_d(result, *c, GMP_RNDN);
+      return result;
+    case M2::ring_RRR:
+      R1 = dynamic_cast< const M2::ConcreteRing<M2::ARingRRR> * >(a->get_ring());
+      result = getmemstructtype(gmp_RR);
+      mpfr_init2(result, R1->get_precision());
+      b = a->get_value().poly_val;
+      mpfr_set(result, static_cast<gmp_RR>(b), GMP_RNDN);
+      return result;
+    default:
+      if (!a->get_ring()->is_RRR())
         {
           ERROR("expected an element of RRR");
           return 0;
         }
       return a->get_value().mpfr_val;
     }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_RR>(f);
 }
 
 gmp_CCorNull IM2_RingElement_to_BigComplex(const RingElement *a)
 {
-  if (!a->get_ring()->is_CCC())
+  const Ring* R = a->get_ring();
+  auto RCCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCCC>*>(R);
+  if (RCCC != 0)
     {
-      ERROR("expected an element of CCC");
-      return 0;
+      M2::ARingCCC::ElementType b;
+      RCCC->ring().init(b);
+      RCCC->ring().from_ring_elem(b, a->get_value());
+      gmp_CC result = RCCC->ring().toBigComplex(b);
+      RCCC->ring().clear(b);
+      return result;
     }
-  void *f = a->get_value().poly_val;
-  return static_cast<gmp_CC>(f);
+  auto RCC = dynamic_cast<const M2::ConcreteRing<M2::ARingCC>*>(R);
+  if (RCC != 0)
+    {
+      M2::ARingCC::ElementType b;
+      RCC->ring().init(b);
+      RCC->ring().from_ring_elem(b, a->get_value());
+      gmp_CC result = RCC->ring().toBigComplex(b);
+      RCC->ring().clear(b);
+      return result;
+    }
+  ERROR("expected an element of CCC");
+  return 0;
 }
 
+#if 0
 int rawDiscreteLog(const RingElement *h)
 {
   const Ring *R = h->get_ring();
-
+  
   const Z_mod *RP = R->cast_to_Z_mod();
   if (RP != 0)
     return RP->discrete_log(h->get_value());
@@ -616,6 +643,25 @@ int rawDiscreteLog(const RingElement *h)
 
   // Returns -1 if either h is zero, or the ring of h doesn't have a discrete log algorithm
   return -1;
+}
+#endif
+
+long rawDiscreteLog(const RingElement *h)
+{
+  try
+    {
+      const Ring *R = h->get_ring();
+      return R->discreteLog(h->get_value());
+    }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return -1;
+  }
+}
+
+const RingElement* rawMultiplicativeGenerator(const Ring *R)
+{
+  return R->getGenerator();
 }
 
 const RingElement /* or null */ *IM2_RingElement_make_var(const Ring *R, int v)
@@ -694,6 +740,7 @@ const RingElement *IM2_RingElement_promote(const Ring *S,
 {
      try {
           const RingElement *result;
+
           if (f->promote(S,result))
             return result;
           ERROR("cannot promote given ring element");
@@ -710,6 +757,7 @@ const RingElement /* or null */ *IM2_RingElement_lift(int *success_return, const
 {
      try {
           const RingElement *result;
+
           if (f->lift(S,result)) {
             *success_return = 1;
             return result;
@@ -737,6 +785,18 @@ M2_arrayint IM2_RingElement_multidegree(const RingElement *a)
           ERROR(e.what());
           return NULL;
      }
+}
+
+const RingElement* /* or null */ rawRingElementAntipode(const RingElement* f)
+{
+  try {
+    const Ring* R = f->get_ring();
+    return RingElement::make_raw(R, R->antipode(f->get_value()));
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 gmp_ZZpairOrNull rawWeightRange(M2_arrayint wts,
@@ -974,7 +1034,7 @@ void convolve(const PolyRing *R,
       // ASSUMPTION: input_relems[i] is either a variable or - of a variable
       ring_elem result = R->copy(input_relems[i]);
       if (convolve_type == 2)
-        R->mult_coeff_to(K->from_int(-i), result);
+        R->mult_coeff_to(K->from_long(-i), result);
       for (int j=i-1; j>=1; --j)
         {
           ring_elem hr;
@@ -987,7 +1047,7 @@ void convolve(const PolyRing *R,
         }
       if (convolve_type == 1)
         {
-          invn = K->invert(K->from_int(i));
+          invn = K->invert(K->from_long(i));
           R->mult_coeff_to(invn,result);
         }
       output_relems[i] = result;
@@ -1230,7 +1290,7 @@ int rawDegree(int v, const RingElement *f)
 {
   const Tower *R = f->get_ring()->cast_to_Tower();
   if (R == 0) return -1;
-  return R->degree(v, f->get_value());
+  return R->degreeInVariable(v, f->get_value());
 }
 
 int rawExtensionDegree(int firstvar, const Ring *R1)
@@ -1238,8 +1298,10 @@ int rawExtensionDegree(int firstvar, const Ring *R1)
 {
   const Tower *R = R1->cast_to_Tower();
   if (R == 0) return 0;
-  if (firstvar < 0)
-    return R->charac();
+  if (firstvar < 0) {
+    ERROR("use rawCharacteristic to find the characteristic");
+    return -1;
+  }
   return R->extension_degree(firstvar);
 }
 
@@ -1251,7 +1313,7 @@ const RingElement /* or null */ *rawDiff(int v, const RingElement *f)
       ERROR("not implemented for this ring");
       return 0;
     }
-  return RingElement::make_raw(R,  R->diff(v, f->get_value()));
+  return RingElement::make_raw(R,  R->differentiate(v, f->get_value()));
 }
 
 const RingElement /* or null */ *rawLowerP(const RingElement *f)
@@ -1280,6 +1342,58 @@ const RingElement /* or null */ *rawPowerMod(const RingElement *f, mpz_ptr n, co
     }
   return RingElement::make_raw(R,  R->power_mod(f->get_value(), n, g->get_value()));
 }
+
+/////////////////////////////
+// GaloisField routines /////
+/////////////////////////////
+
+bool findConwayPolynomial(long charac, 
+                          long deg, 
+                          bool find_random_if_no_conway_poly_available,
+                          std::vector<long>& result_poly)
+{
+  // returns true if result_poly is actually set
+  int ret = 1;
+  fq_nmod_ctx_t ctx;
+  fmpz_t p;
+  fmpz_init(p);
+  fmpz_set_si(p, charac);
+  if (!find_random_if_no_conway_poly_available)
+    ret = _fq_nmod_ctx_init_conway(ctx,p,deg,"a");
+  else
+    fq_nmod_ctx_init(ctx,p,deg,"a");
+
+  if (ret == 0) return false;
+
+  result_poly.resize(deg+1);
+  for (long i=0; i<=deg; i++)
+    result_poly[i] = 0;
+  for (long i=0; i<ctx->len; i++)
+    {
+      if (ctx->j[i] < 0 or ctx->j[i] > deg)
+        printf("error: encountered bad degree\n");
+      // power is ctx->j[i]
+      // coeff is ctx->a[i]
+      result_poly[ctx->j[i]] = ctx->a[i];
+    }
+
+  //printf("flint GF information:\n");
+  //fq_nmod_ctx_print(ctx);
+
+  fq_nmod_ctx_clear(ctx);
+  return true;
+}
+
+M2_arrayint rawConwayPolynomial(
+    long charac, 
+    long deg, 
+    M2_bool find_random_if_no_conway_poly_available)
+{
+  std::vector<long> poly;
+  findConwayPolynomial(charac, deg, find_random_if_no_conway_poly_available, poly);
+  return stdvector_to_M2_arrayint(poly);
+}
+
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "

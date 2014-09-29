@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2012 Daniel R. Grayson and Michael E. Stillman:" | newline
+	  | "Copyright 2014 Daniel R. Grayson and Michael E. Stillman:" | newline
      	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
      	  | "  this binary code licensed under the GNU General Public License version 3." | newline
      	  -- our binary code is linked with :
@@ -183,7 +183,10 @@ if firstTime then (
 	       else ""
 	       )
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
+	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
+          | "  MEMTAILOR " | version#"memtailor version" | ", by B. Roune" | newline
+          | "  MATHIC " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
+          | "  MATHICGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
 	  );
 
      use = x -> x;				  -- temporary, until methods.m2
@@ -306,8 +309,8 @@ initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
      currentLayout = (
-	  if issuffix(Layout#2#"bin",bindir) then Layout#2 else
-	  if issuffix(Layout#1#"bin",bindir) then Layout#1
+	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
+	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
 	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
@@ -327,11 +330,11 @@ initcurrentlayout := () -> (
 	  prefixDirectory = prefixDirectory2;
 	  currentLayout = currentLayout2;
 	  );
-     stA := "StagingArea/";
+     usrDist := "usr-dist/";
      topBuilddir = (
-	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+	  if issuffix(usrDist,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#usrDist)
 	  else
-	  if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA));
+	  if issuffix(usrDist,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#usrDist));
      if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");
@@ -656,6 +659,9 @@ scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
+
+copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
+
 path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if prefixDirectory =!= null then (
 	       if topBuilddir =!= null then (

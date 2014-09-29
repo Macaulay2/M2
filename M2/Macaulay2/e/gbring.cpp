@@ -1,7 +1,6 @@
 #include "gbring.hpp"
 #include "text-io.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
 #include "ZZp.hpp"
 #include "freemod.hpp"
 #include "geovec.hpp"
@@ -12,6 +11,8 @@
 #include "solvable.hpp"
 #include "overflow.hpp"
 #include "ntuple.hpp"
+
+#include "aring-glue.hpp"
 
 #define sizeofgbvector(s,len) (sizeof(*s) - sizeof(s->monom) + (len)*sizeof(s->monom[0]))
 
@@ -81,7 +82,7 @@ GBRing::GBRing(const Ring *K0, const Monoid *M0)
     weyl(0),
     is_solvable(false),
     solvable(0),
-    _one(K->from_int(1))
+    _one(K->from_long(1))
 {
   exp_size = EXPONENT_BYTE_SIZE(_nvars+2);
   monom_size = MONOMIAL_BYTE_SIZE(M->monomial_size());
