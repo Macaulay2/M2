@@ -192,7 +192,7 @@ TEST(ARingCCC, axioms)
       C.mult(d,a,e); // a*(b*c)
       C.mult(e,a,b);
       C.mult(e,e,c); // (a*b)*c
-      EXPECT_TRUE(almostEqual(C,94,d,e));
+      EXPECT_TRUE(almostEqual(C,93,d,e)); // MES: I'm not sure how equal these should be.
 
       // Test distributivity
       // test: a*(b+c) == a*b + a*c
@@ -201,7 +201,7 @@ TEST(ARingCCC, axioms)
       C.mult(b,a,b);
       C.mult(c,a,c);
       C.add(e,b,c); // a*b + a*c
-      EXPECT_TRUE(almostEqual(C,94,d,e));
+      EXPECT_TRUE(almostEqual(C,93,d,e));
     }
   C.clear(e);
   C.clear(d);
