@@ -13,7 +13,7 @@ easyFactor RingElement := f -> (
 	       d := first first p;
 	       c := gcd d;
 	       if c > 1 then (
-		    d' := d / (i -> i / c);
+		    d' := d / (i -> i // c);
 		    if even c
 		    then (
 			 q := f//((1-R_d')*(1+R_d'));

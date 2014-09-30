@@ -13,7 +13,7 @@ FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
     col_perm(0),
     need_div(0)
 {
-  int ncols = M->n_cols();
+  int ncols = static_cast<int>(M->n_cols());
   col_perm = newarray_atomic(int,ncols);
   need_div = newarray_atomic(bool,ncols);
   pivot_col = ncols;  // Will be decremented before use
@@ -23,8 +23,8 @@ FF_LUComputation::FF_LUComputation(MutableMatrix *M0)
       need_div[i] = false;
     }
 
-  pivot = R->from_int(1);
-  lastpivot = R->from_int(1);
+  pivot = R->from_long(1);
+  lastpivot = R->from_long(1);
 }
 
 FF_LUComputation::~FF_LUComputation()
@@ -41,7 +41,7 @@ bool FF_LUComputation::choose_pivot_column(int lo, int hi, int &result)
   int c = -1;
   for (int i=lo; i<=hi; i++)
     {
-      int r1 = M->lead_row(i);
+      int r1 = static_cast<int>(M->lead_row(i));
       if (r1 > r)
         {
           r = r1;
@@ -59,12 +59,12 @@ void FF_LUComputation::do_pivots(int lo, int hi, int pivotCol)
   // Here we clear out row r in columns lo..hi, using the pivot.
   R->remove(lastpivot);
   lastpivot = pivot;
-  int pivot_row = M->lead_row(pivotCol, pivot); // pivot is the element at (pivot_row, pivotCol)
+  size_t pivot_row = M->lead_row(pivotCol, pivot); // pivot is the element at (pivot_row, pivotCol)
 
   for (int i=lo; i<=hi; i++)
     {
       ring_elem a;
-      int r = M->lead_row(i, a);
+      size_t r = M->lead_row(i, a);
       if (r == pivot_row)
         {
           // Need to modify column i:
@@ -111,7 +111,7 @@ bool FF_LUComputation::calc()
 
 M2_arrayint FF_LUComputation::get_column_permutation()
 {
-  int ncols = M->n_cols();
+  int ncols = static_cast<int>(M->n_cols());
   M2_arrayint result = M2_makearrayint(ncols);
   for (int i=0; i<ncols; i++)
     result->array[i] = col_perm[i];

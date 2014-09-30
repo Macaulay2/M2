@@ -8,6 +8,19 @@
 #define MIN_EXP -2147483647
 #define MAX_EXP 2147483647
 
+unsigned int varpower::computeHashValue(const int *vp)
+{
+  unsigned int hashval = *vp;
+  index_varpower i = vp;
+  for ( ; i.valid(); ++i)
+    {
+      int v = i.var();
+      int e = i.exponent();
+      hashval = 4624296 * hashval + 2341 * v + e;
+    }
+  return hashval;
+}
+
 static bool check_var(int v, int e)
 {
   if (v < 0 || v > MAX_VAR)

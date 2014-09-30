@@ -159,6 +159,13 @@ RingMap Matrix := Matrix => (p,m) -> (
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
 
+RingMap MutableMatrix := MutableMatrix => (p,m) -> (
+     R := source p;
+     S := target p;
+     if R =!= ring m 
+     then error "expected source of ring map to be the same as ring of matrix";
+     map(S,rawRingMapEval(raw p, raw m)))
+
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)
@@ -170,6 +177,7 @@ kernel RingMap := Ideal => opts -> (cacheValue (symbol kernel => opts)) (
 	  n2 := numgens R;
 	  F := target f;
 	  n1 := numgens F;
+	  if 0_F == 1_F then return ideal(1_R);
 	  if class F === FractionField then (
 	       C := last F.baseRings;
 	       if not (

@@ -7,7 +7,7 @@ static mpz_t maxH;
 template <>
 ring_elem getElement<RingZZ>(const RingZZ&  R, int index)
 {
-  if (index < 50) return R.from_int(index-25);
+  if (index < 50) return R.from_long(index-25);
   if (!maxH_initialized)
     {
       maxH_initialized = true;
@@ -30,10 +30,10 @@ TEST(RingZZ, create)
 }
 TEST(RingZZ, ones)
 {
-  EXPECT_TRUE(globalZZ->is_equal(globalZZ->one(), globalZZ->from_int(1)));
-  EXPECT_TRUE(globalZZ->is_equal(globalZZ->minus_one(), globalZZ->from_int(-1)));
-  EXPECT_TRUE(globalZZ->is_equal(globalZZ->zero(), globalZZ->from_int(0)));
-  EXPECT_TRUE(globalZZ->is_zero(globalZZ->from_int(0)));
+  EXPECT_TRUE(globalZZ->is_equal(globalZZ->one(), globalZZ->from_long(1)));
+  EXPECT_TRUE(globalZZ->is_equal(globalZZ->minus_one(), globalZZ->from_long(-1)));
+  EXPECT_TRUE(globalZZ->is_equal(globalZZ->zero(), globalZZ->from_long(0)));
+  EXPECT_TRUE(globalZZ->is_zero(globalZZ->from_long(0)));
 }
 TEST(RingZZ, random)
 {
@@ -74,10 +74,10 @@ TEST(RingZZ, multDivide)
   testRingDivide(globalZZ, ntrials);
 
   // I would prefer for 'divide' to be exact division, with a return value of false, if not exactly divisible
-  ring_elem a = globalZZ->from_int(5);
-  ring_elem b = globalZZ->from_int(2);
+  ring_elem a = globalZZ->from_long(5);
+  ring_elem b = globalZZ->from_long(2);
   ring_elem c = globalZZ->divide(a,b);
-  EXPECT_TRUE(globalZZ->is_equal(c, globalZZ->from_int(2)));
+  EXPECT_TRUE(globalZZ->is_equal(c, globalZZ->from_long(2)));
 }
 TEST(RingZZ, axioms)
 {
@@ -125,13 +125,13 @@ TEST(RingZZ, syzygy)
 TEST(RingZZ, content)
 {
   buffer o;
-  ring_elem a = globalZZ->from_int(-10);
-  ring_elem b = globalZZ->from_int(-15);
-  ring_elem c = globalZZ->from_int(-5);
-  ring_elem d = globalZZ->from_int(5);
+  ring_elem a = globalZZ->from_long(-10);
+  ring_elem b = globalZZ->from_long(-15);
+  ring_elem c = globalZZ->from_long(-5);
+  ring_elem d = globalZZ->from_long(5);
   globalZZ->is_equal(d, globalZZ->preferred_associate(c));
 
-  ring_elem e = globalZZ->from_int(0);
+  ring_elem e = globalZZ->from_long(0);
   bool ret1 = globalZZ->lower_associate_divisor(e, a);
   o << "ret1=" << (ret1 ? "true" : "false") << " e=";
   globalZZ->elem_text_out(o, e);

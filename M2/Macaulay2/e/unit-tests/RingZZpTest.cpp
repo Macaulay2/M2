@@ -37,10 +37,10 @@ TEST(RingZZmod101, create)
 TEST(RingZZmod101, ones)
 {
   Z_mod* R = Z_mod::create(101);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingZZmod101, negate)
 {
@@ -91,10 +91,10 @@ TEST(RingZZmod2, create)
 TEST(RingZZmod2, ones)
 {
   Z_mod* R = Z_mod::create(2);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingZZmod2, negate)
 {

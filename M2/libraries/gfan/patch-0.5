@@ -1,6 +1,6 @@
-diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp gfan0.5/app_minkowski.cpp
---- /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac64.production/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp	2011-01-25 09:33:15.000000000 -0600
-+++ gfan0.5/app_minkowski.cpp	2013-04-24 14:15:03.000000000 -0500
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp gfan0.5/app_minkowski.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/app_minkowski.cpp	2011-01-25 09:33:15.000000000 -0600
++++ gfan0.5/app_minkowski.cpp	2013-05-11 00:11:37.016925200 -0500
 @@ -160,7 +160,7 @@
  	    //log0 fprintf(Stderr,"4");
  	    f.insert(c);
@@ -10,3 +10,24 @@ diff -ur /Users/dan/src/M2/github/Macaulay2-M2-clone/M2/BUILD/dan/builds.tmp/mac
  	    //log0 fprintf(Stderr,"inserted:%i\n",++i);
  	  }
  	log1 fprintf(Stderr,"Resolving symmetries.\n");
+diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/application.cpp gfan0.5/application.cpp
+--- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw.debug/libraries/gfan/tmp/gfan0.5/application.cpp	2011-01-25 09:33:16.000000000 -0600
++++ gfan0.5/application.cpp	2013-05-11 00:32:32.435731000 -0500
+@@ -20,14 +20,9 @@
+ {
+   // extracts filename from argv[0]
+   int l=strlen(p);
+-  assert(l>0);
+-  do
+-    {
+-      l--;
+-    }
+-  while(p[l]!=0 && p[l]!='/');
+-
+-  return p+l+1;
++  if (l>4 && 0 == strcmp(p+l-4,".exe")) p[l-=4] = 0; // chop off any trailing ".exe", present under mingw64
++  while (l>0 && p[l-1]!='/' && p[l-1]!='\\') l--;
++  return p+l;
+ }
+ 
+ static char* tail(char *p)

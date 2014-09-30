@@ -1,5 +1,4 @@
--- -*- M2-comint -*- {* hash: -1868039377 *}
---loading configuration for package "Bertini" from file /Users/elizabethgross/Library/Application Support/Macaulay2/init-Bertini.m2
+-- -*- M2-comint -*- {* hash: 795564554 *}
 
 i1 : R=CC[u1,u2,u3,x,y];
 
@@ -12,80 +11,22 @@ i4 : paramValues0={{1,0,0}};
 i5 : paramValues1={{0,1+2*ii,0}};
 
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18985-0/0
+Temporary directory for input and output files:/tmp/M2-14662-0/0
 
 The version of Bertini you have installed on your computer was used for this run. 
 Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o6 = {{{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}, {{12,
+o6 = {{{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}, {{11,
      ------------------------------------------------------------------------
-     2}, {11, 2}, {13, 2}}}
+     2}, {13, 2}, {12, 2}}}
 
 o6 : List
 
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
-o7 = {{11.3376-.56228*ii, 1}, {11.3376+.56228*ii, 1}, {13.3247, 1}}
+o7 = {{11.3376+.56228*ii, 1}, {13.3247, 1}, {11.3376-.56228*ii, 1}}
 
 o7 : List
 
-i8 : R=CC[x,y,z,u1,u2]
-
-o8 = R
-
-o8 : PolynomialRing
-
-i9 : f1=x^2+y^2-z^2
-
-      2    2    2
-o9 = x  + y  - z
-
-o9 : R
-
-i10 : f2=u1*x+u2*y
-
-o10 = x*u1 + y*u2
-
-o10 : R
-
-i11 : finalParameters0={{0,1}}
-
-o11 = {{0, 1}}
-
-o11 : List
-
-i12 : finalParameters1={{1,0}}
-
-o12 = {{1, 0}}
-
-o12 : List
-
-i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)
-Temporary directory for input and output files:/var/folders/kq/sl97ymz57zd0w0hwh4drs33c0000gn/T/M2-18985-0/2
-
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o13 = {{{.414371-.475671*ii, 1.69949e-17-3.40507e-18*ii,
-      -----------------------------------------------------------------------
-      -.414371+.475671*ii}, {.183229-1.92618*ii, -1.19696e-16+1.67563e-16*ii,
-      -----------------------------------------------------------------------
-      .183229-1.92618*ii}}, {{5.87638e-17-4.49673e-17*ii,
-      -----------------------------------------------------------------------
-      -.429144+1.03742*ii, -.429144+1.03742*ii}, {5.9089e-18-4.4886e-17*ii,
-      -----------------------------------------------------------------------
-      1.46438+.319781*ii, -1.46438-.319781*ii}}}
-
-o13 : List
-
-i14 : bPH_0--The two solutions for finalParameters0
-
-o14 = {{.414371-.475671*ii, 1.69949e-17-3.40507e-18*ii, -.414371+.475671*ii},
-      -----------------------------------------------------------------------
-      {.183229-1.92618*ii, -1.19696e-16+1.67563e-16*ii, .183229-1.92618*ii}}
-
-o14 : List
-
-i15 : 
+i8 : 

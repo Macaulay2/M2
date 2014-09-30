@@ -34,9 +34,24 @@ vec Ring::make_vec(int r, ring_elem a) const
   return result;
 }
 
+vec Ring::make_vec_from_array(int len, Nterm** array) const
+{
+  vec result = 0;
+  for (int i=0; i<len; i++)
+    {
+      if (array[i] != 0)
+        {
+          vec v = make_vec(i, array[i]);
+          v->next = result;
+          result = v;
+        }
+    }
+  return result;
+}
+
 vec Ring::e_sub_i(int i) const
 {
-  ring_elem a = from_int(1);
+  ring_elem a = from_long(1);
   return make_vec(i,a);
 }
 
@@ -123,10 +138,10 @@ ring_elem Ring::get_entry(vec v, int r) const
   while (v != NULL)
     {
       if (v->comp == r) return v->coeff;
-      if (v->comp < r) return from_int(0);
+      if (v->comp < r) return from_long(0);
       v = v->next;
     }
-  return from_int(0);
+  return from_long(0);
 }
 
 int Ring::n_nonzero_terms(const vecterm * v) const
@@ -169,7 +184,7 @@ vec Ring::subtract_vec(vec v, vec w) const
 
 vec Ring::mult_vec(int n, vec v) const
 {
-  ring_elem f = from_int(n);
+  ring_elem f = from_long(n);
   vec result = mult_vec(f, v);
   return result;
 }
@@ -572,7 +587,7 @@ void Ring::add_vec_to(vec &v, vec &w) const
 
 ring_elem Ring::dot_product(const vecterm *v, const vecterm *w) const
 {
-  ring_elem result = this->from_int(0);
+  ring_elem result = this->from_long(0);
   while (true)
     {
       if (v == 0) return result;
@@ -672,29 +687,6 @@ vec Ring::vec_diff(vec v, int rankFw, vec w, int use_coeff) const
     for (vecterm *p = w; p != NULL; p = p->next)
       {
         ring_elem a = diff(v->coeff, p->coeff, use_coeff);
-        if (is_zero(a))
-          {
-            remove(a);
-            continue;
-          }
-        vecterm *t = new_vec();
-        t->comp = rankFw * v->comp + p->comp;
-        t->coeff = a;
-        t->next = result;
-        result = t;
-      }
-  vec_sort(result);
-  return result;
-}
-
-vec Ring::vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const
-// rankFw is the rank of the free module corresponding to w.
-{
-  vec result = NULL;
-  for ( ; v != NULL; v = v->next)
-    for (vecterm *p = w; p != NULL; p = p->next)
-      {
-        ring_elem a = contract0(n_top_variables, v->coeff, p->coeff);
         if (is_zero(a))
           {
             remove(a);

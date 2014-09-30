@@ -13,7 +13,7 @@ class MatrixConstructor;
 /**
  * \ingroup matrices
  */
-class Matrix : public object
+class Matrix : public EngineObject
 {
   FreeModule *_rows;
   FreeModule *_cols;
@@ -42,7 +42,8 @@ private:
   vec strip_vector(vec &f, const int *vars,
                        const FreeModule *F, vec &vmonom) const;
   int moneq(const int *exp, int *m, const int *vars, int *exp2) const;
-
+protected:
+  virtual unsigned int computeHashValue() const;
 public:
   static const Matrix /* or null */ * make(const FreeModule *target,
                                    int ncols,
@@ -127,10 +128,6 @@ public:
   Matrix /* or null */ *module_tensor(const Matrix *m) const;
   Matrix /* or null */ *tensor(const Matrix *m) const;
   Matrix /* or null */ *diff(const Matrix *m, int use_coef) const;
-
-  Matrix /* or null */ *contract0(int n_top_variables, const Matrix *N) const;
-  // see doc for IM2_Matrix_contract0 to see what this does, and
-  // what assumptions there are.
 
   Matrix /* or null */ *symm(int n) const; // in symm.cpp
 

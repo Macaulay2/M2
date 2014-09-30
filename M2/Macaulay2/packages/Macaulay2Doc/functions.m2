@@ -1,6 +1,7 @@
 load "./functions/sublists-doc.m2"
 load "./monomorderings.m2"
 load "./groebner.m2"
+load "./functions/antipode-doc.m2"
 load "./functions/symbol-percent-doc.m2"
 load "./functions/symbol-underscore-doc.m2"
 load "./functions/LU-doc.m2"

@@ -1,5 +1,4 @@
 GNUmakefile
-Makefile.configfiles
 check-configure/Makefile
 include/config.Makefile
 include/configuration
@@ -35,6 +34,7 @@ distributions/deb/macaulay2/postinst
 distributions/deb/macaulay2/prerm
 distributions/deb/macaulay2/preinst
 libraries/Makefile
+libraries/atomic_ops/Makefile
 libraries/missing/Makefile
 libraries/missing/src/Makefile
 libraries/Makefile.library
@@ -47,9 +47,6 @@ libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/boost/Makefile
 libraries/mpack/Makefile
-libraries/memtailor/Makefile
-libraries/mathic/Makefile
-libraries/mathicgb/Makefile
 libraries/gtest/Makefile
 libraries/qd/Makefile
 libraries/mpc/Makefile
@@ -72,7 +69,6 @@ libraries/ntl/Makefile
 libraries/libtool/Makefile
 libraries/gftables/Makefile
 libraries/factory/Makefile
-libraries/libfac/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
 libraries/blas/Makefile
@@ -87,6 +83,7 @@ Macaulay2/d/Makefile.files
 Macaulay2/d/startup.m2
 Macaulay2/dumpdata/Makefile
 Macaulay2/bin/Makefile
+Macaulay2/bin/M2
 Macaulay2/e-includes/Makefile
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common

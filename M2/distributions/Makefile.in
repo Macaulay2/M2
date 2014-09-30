@@ -43,3 +43,4 @@ Makefile: Makefile.in; cd ..; ./config.status distributions/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions "
 # End:
+.NOTPARALLEL:

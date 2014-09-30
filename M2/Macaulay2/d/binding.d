@@ -108,7 +108,7 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
      insert(
 	  Symbol(
 	       word, 
-	       nextHash(), 
+	       word.hash + 9898989, 
 	       position,
 	       dummyUnaryFun,dummyPostfixFun,dummyBinaryFun,
 	       dictionary.frameID, 
@@ -116,7 +116,8 @@ export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,l
 	       1,				-- first lookup is now
 	       false,				      -- not protected
 	       false,
-	       thread
+	       thread,
+	       nextHash()
 	       ),
 	  dictionary.symboltable));
 export makeEntry(word:Word,position:Position,dictionary:Dictionary):Symbol := (
@@ -308,6 +309,8 @@ bumpPrecedence();
      parseWORD.precedence = prec; parseWORD.binaryStrength = nopr; parseWORD.unaryStrength = nopr;
      export timeS := special("time",unaryop,precSpace,wide);
      export timingS := special("timing",unaryop,precSpace,wide);
+     export elapsedTimeS := special("elapsedTime",unaryop,precSpace,wide);
+     export elapsedTimingS := special("elapsedTiming",unaryop,precSpace,wide);
      export shieldS := special("shield",unaryop,precSpace,wide);
      export throwS := special("throw",nunaryop,precSpace,wide);
      export returnS := special("return",nunaryop,precSpace,wide);

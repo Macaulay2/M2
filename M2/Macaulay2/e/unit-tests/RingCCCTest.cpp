@@ -1,8 +1,8 @@
 // Copyright 2013 Michael E. Stillman
 #include "RingTest.hpp"
-
-#include "CCC.hpp"
 #include "ZZp.hpp"
+
+typedef M2:ConcreteRing<M2::ARingCCC> CCC;
 
 bool almostEqual(const CCC* R, int nbits, ring_elem a, ring_elem b)
 {
@@ -24,7 +24,7 @@ bool almostEqual(const CCC* R, int nbits, ring_elem a, ring_elem b)
 template <>
 ring_elem getElement<CCC>(const CCC&  R, int index)
 {
-  if (index < 50) return R.from_int(index-25);
+  if (index < 50) return R.from_long(index-25);
   return R.random();
 }
 
@@ -43,10 +43,10 @@ TEST(RingCCC, create)
 TEST(RingCCC, ones)
 {
   Ring *R = CCC::create(100);
-  EXPECT_TRUE(R->is_equal(R->one(), R->from_int(1)));
-  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_int(-1)));
-  EXPECT_TRUE(R->is_equal(R->zero(), R->from_int(0)));
-  EXPECT_TRUE(R->is_zero(R->from_int(0)));
+  EXPECT_TRUE(R->is_equal(R->one(), R->from_long(1)));
+  EXPECT_TRUE(R->is_equal(R->minus_one(), R->from_long(-1)));
+  EXPECT_TRUE(R->is_equal(R->zero(), R->from_long(0)));
+  EXPECT_TRUE(R->is_zero(R->from_long(0)));
 }
 TEST(RingCCC, negate)
 {

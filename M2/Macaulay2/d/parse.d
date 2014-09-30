@@ -74,7 +74,7 @@ export Word := {		-- a word, one for each name made by makeUniqueWord()
      };
 export Symbol := {		    -- symbol table entry for a symbol
      word:Word,			    --   the word
-     hash:int,			    --   just a counter, unique, unchanging
+     hash:int,			    --   based on the hash code of word, unchanging
      position:Position,	    	    --   the position where the definition was made
      unary:unop,
      postfix:unop,
@@ -85,7 +85,8 @@ export Symbol := {		    -- symbol table entry for a symbol
      lookupCount:int,		    -- number of times looked up
      Protected:bool,	            -- whether protected against assignment by the user
      flagLookup:bool,		    -- whether to warn when symbol is used
-     thread:bool		    -- whether to use threadFrame instead of globalFrame
+     thread:bool,		    -- whether to use threadFrame instead of globalFrame
+     serialNumber:int		    -- a counter, used to tell the age for the Serialization package
      };
 export SymbolListCell := {word:Word, entry:Symbol, next:SymbolList};
 export SymbolList := null or SymbolListCell;
@@ -355,6 +356,7 @@ export pythonObjectCell := {+v:pythonObject};
 
 export TaskCellBody := {+
      hash:int,
+     serialNumber:int,
      task:taskPointer, resultRetrieved:bool,
      fun:Expr, arg:Expr, returnValue:Expr  };
 export TaskCell := {+ body:TaskCellBody };

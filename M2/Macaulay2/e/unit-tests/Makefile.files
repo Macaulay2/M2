@@ -7,17 +7,24 @@ SHARED_UNITTEST_CCFILES := \
 
 UNITTEST_CCFILES := \
     $(SHARED_UNITTEST_CCFILES) \
+    ARingZZTest \
+    ARingQQFlintTest \
+    ARingQQGmpTest \
+    ARingRRTest \
+    ARingCCTest \
     ARingRRRTest \
+    ARingCCCTest \
     ARingZZpTest \
     ARingGFTest \
     RingZZTest \
     RingZZpTest \
     RingQQTest \
-    RingRRRTest \
-    RingCCCTest \
     RingTowerTest \
     DMatZZpTest \
     SubsetTest  
+
+#    RingRRRTest \
+#    RingCCCTest \
      
 
 SHARED_UNITTEST_CFILES += \
@@ -28,7 +35,7 @@ UNITTEST_CFILES += \
 
 UNITTEST_TARGET := testMain
 
-GTEST_DIR := ../../../libraries/final/gtest/
+GTEST_DIR := $(BUILTLIBPATH)/include/gtest
 
 E_FILES := $(addprefix ../, $(INTERFACE) $(COMMANDS) $(C_FILES))
 F4_FILES := $(addprefix ../f4/, $(F4_CCFILES))

@@ -62,7 +62,7 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
-
+ 
 document {
      Key => "changes, 1.7",
      UL {
@@ -70,28 +70,108 @@ document {
 	  --      UL {
 	  -- 	    }
 	  --      },
-	  -- LI { "packages that have been published and certified:",
-	  --      UL {
-	  --      	    }
-	  --      },
-	  -- LI { "new packages:",
-	  --      UL {
-	  -- 	    }
-	  --      },
-	  -- LI { "improved packages:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+		    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "QuillenSuslin::QuillenSuslin", ", a package by Brett Barwick and Branden Stone for 
+			 computing a basis of a projective module over a polynomial ring, has been published." },
+		    LI { star, " ", TO "GraphicalModels::GraphicalModels", ", a package by Luis Garcia-Puente,
+			 Sonja Petrovic, Mike Stillman, and Seth Sullivant, for discrete and Gaussian graphical models, has been published." },
+		    LI { star, " ", TO "InvariantRing::InvariantRing", ", a package by Thomas Hawes
+			 for constructing the invariant ring of a finite group, has been published." },
+		    LI { star, " ", TO "MonomialAlgebras::MonomialAlgebras", ", a package by David Eisenbud,
+			 Janko Boehm, and Max Nitsche for decomposing a monomial algebra as a module over a subalgebra, has been published." }
+	       	    }
+	       },
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "Book3264Examples::Book3264Examples", ", a package by Charley Crissman containing
+			 Schubert2 code for some of the examples and exercises in 
+			 the book '3264 and all that', by Eisenbud and Harris,
+			 has been added." 
+			 },
+		    LI { TO "EnumerationCurves::EnumerationCurves", ", a package by Hiep Dang for enumeration of rational curves via torus actions, has been added." },
+		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." }
+	  	    }
+	       },
+	  LI { "improved packages:",
+	        UL {
+		    LI { TO "SchurRings::SchurRings", ", has been updated, with support for several groups of variables,  documentation, working plethysm, and more.
+                	 The old version is being kept as ", TO "OldSchurRings", " as there are incompatible changes.  Specifically, symmRing is now called
+                	 symmetricRing, and has more variables (three sets, h, e, p) than the old version.  Please use the new version, and if there is a problem
+                	 that requires you to use the old version, please email Mike Stillman."
+			 },
+		    LI { "The packages ", TO "Polyhedra::Polyhedra", " and ", TO "ToricVectorBundles::ToricVectorBundles", " now implement a canonical
+			 ordering for the rays in a fan.  Formerly the rays came out in an unpredictable (but deterministic) order.  Various tests in the
+			 latter package have been updated to take into account the new ordering.  Users may find that their code will have to 
+			 be modified slightly, by permuting lists of parameters (such as weights) corresponding to the rays."
+			 }
+	            }
+	       },
 	  LI { "functionality added or improved:",
 	       UL {
 		    LI { "A new option,  ", TO "ExampleFiles", ", has been added to the documentation function
 			 ", TO "document", ", which allows the package developer to specify that copies of certain
 			 auxiliary files should be visible in the current directory while example code is
-			 running."},
+			 running."
+			 },
 	       	    LI {
 			 "It is now possible to reduce each entry of a matrix ", TT "f", " modulo an ideal ", TT "I", "
 			 by writing ", TT "f % I", ".  See ", TO (symbol %, Matrix, Ideal), "."
-			 }
+			 },
+		    LI {
+			 "A task now has a serial number, see ", TO serialNumber, "."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-randomize", ", prevents the random number seed from
+			 being set to a value that depends on the time of day and process ID."
+			 },
+		    LI {
+			 "A new command line option, ", TT "--no-time", ", arranges for the function ", TO "currentTime", "
+			 to return 0 always, for reproducility of results, as an aid in debugging."
+			 },
+		    LI {
+			 "A new function, ", TO "submatrixByDegrees", ", allows the user to select a submatrix of
+			 a matrix by specifying intervals of acceptable column degrees or row degrees."
+			 },
+		    LI {
+			 "New functions ", TO "elapsedTime", " and ", TO "elapsedTiming", ", analogous to ", TO "time", " and ", TO "timing", ",
+			 measure elapsed time instead of CPU time."
+			 },
+            	    LI {
+                	 "A new command ", TO "antipode", " has been added.  This function implements
+                	 the anti-isomorphism between left and right modules in skew commuting poly rings.  
+                	 It is used when transposing a matrix over a ring with skew commuting variables, basically,
+                	 so that the transpose of a complex of matrices will still be a complex of matrices."
+			 },
+     	       	    LI {
+			 "Hash codes of matrices have been improved - they are now computed using the first two nonzero entries
+			 in each column, whereas before the entries were not examined, and thus they do a better job of distinguishing matrices
+			 that are different.  A side effect is that hash tables whose keys involve matrices will
+			 be stored, printed, and converted to lists in a different order, which may affect some code."
+			 },
+		    LI {"The default arithmetic for computing in finite fields ZZ/p nows uses the FLINT library (see ...).
+			The modulus p can now be p <= 9223372036854775783, i.e. the largest prime less than 2^63.
+			HOWEVER: factorization of polynomials over such rings can only be done for primes p < 2^31. TODO: CHECK THIS VALUE"},
+		    LI {"Incorporated fast linear algebra for dense (mutable) matrices over finite prime fields, using ffpack and flint"},
+		    LI {"Linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
+			Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
+			Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
+		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
+			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
+		    LI {"Extensive changes to numerical algebraic geometry code in the engine"},
+		    -- LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
+		    -- 	it can be used, but is not done so automatically."},
+		    LI {"The {\tt Macaulay2/e} engine directory now compiles cleanly, with a few warning messages left."},
+		    LI {"The overall structure of base rings in Macaulay2 has been revamped, to allow faster code.  The downside is
+			that because of the high use of templates, compile times have generally increased."},
+		    LI {"Random number generation for finite fields has changed, so programs expecting a specific
+			set of random numbers will change."},
+		    LI {"If ", TT "kk", " is a finite field, e.g., ", TT "ZZ/5[c]/(c^2+c+1)", " it was possible
+			(and still is) to write ", TT "map(ZZ[a], kk)", ".  It was never clear what this
+			should return, as it is not a well-defined ring map.  However, it now has different, 
+			still undefined, behavior."}
 	  	    }
 	       },
 	  LI { "functionality changed:",
@@ -134,7 +214,7 @@ document {
 	       },
 	  LI { "new packages:",
 	       UL {
-		    LI { TO "PushForward::PushForward", ", a package for for computing the push-forward functor for finite ring maps,
+		    LI { TO "PushForward::PushForward", ", a package for computing the push-forward functor for finite ring maps,
 			 has been added.  (It should have been added to the previous distribution.)" 
 			 },
 		    LI { TO "EliminationMatrices::EliminationMatrices", ", a package for computing resultants,

@@ -7,7 +7,7 @@
 class RingElement;
 class Matrix;
 
-class RingMap : public immutable_object
+class RingMap : public EngineObject
 {
   struct var : public our_new_delete {
     bool is_zero;               // Does this variable map to 0?
@@ -38,7 +38,8 @@ class RingMap : public immutable_object
   var *_elem;                   // elem[i] is the structure representing the image of
                                 // the i th variable.
   RingMap(const Matrix *m);
-
+protected:
+  virtual unsigned int computeHashValue() const;
 public:
   ~RingMap();
 

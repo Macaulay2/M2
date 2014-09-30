@@ -151,4 +151,11 @@ things to do manually before release
 		   C-c C-c
 		   currentString:1:16:(3):[15]: error: before eval: --backtrace update-- 
 
- 
+ 	Occasionally test all the packages that cache their example output.
+	This can be done on a machine where you have installed all the
+	prerequisite external programs for those packages (see
+	../../M2/INSTALL, "Rerunning the package examples"), with a fresh build
+	tree, by adding the command line option RerunExamples=true to the
+	"make" command.  If you forgot to do that the first time around, you
+	can first clean the packages with "make clean-packages" in the
+	M2/Macaulay2/packages directory of the build tree.

@@ -107,24 +107,19 @@ KBasis::KBasis(const Matrix *bottom,
   M = P->getMonoid();
   D = P->get_degree_ring()->getMonoid();
 
-  const char *typ_str;
   if (lo_degree == 0 && hi_degree == 0)
     {
       computation_type = KB_FULL;
-      typ_str = "full";
     }
   else if (heft_vector->len == 1)
     {
       computation_type = KB_SINGLE;
-      typ_str = "single";
     }
   else
     {
       computation_type = KB_MULTI;
-      typ_str = "multi";
     }
 
-  //  fprintf(stderr, "computation type is %s\n", typ_str);
   // Compute the (positive) weights of each of the variables in 'vars'.
 
   var_wts = newarray_atomic(int, vars->len);

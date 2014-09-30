@@ -25,12 +25,12 @@ typedef const int * const_monomial;
 typedef const int * const_varpower;
 
 #define ALLOCATE_EXPONENTS(byte_len) static_cast<exponents>(alloca(byte_len))
-#define EXPONENT_BYTE_SIZE(nvars) (sizeof(int) * (nvars))
+#define EXPONENT_BYTE_SIZE(nvars) static_cast<int>((sizeof(int) * (nvars)))
 
 #define ALLOCATE_MONOMIAL(byte_len) static_cast<monomial>(alloca(byte_len))
-#define MONOMIAL_BYTE_SIZE(mon_size) (sizeof(int) * (mon_size))
+#define MONOMIAL_BYTE_SIZE(mon_size) static_cast<int>((sizeof(int) * (mon_size)))
 
-class Monoid : public mutable_object
+class Monoid : public MutableEngineObject
 {
   int nvars_;
   M2_ArrayString varnames_;
@@ -115,6 +115,9 @@ public:
 
   int n_slots(int nparts) const;
   int num_parts() const;
+
+  unsigned int computeHashValue(const_monomial m) const;
+
 
   /////////////////////////
   // Monomial arithmetic //

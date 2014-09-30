@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
+
+if   [ "@host_os@" = cygwin ]
+then export PATH=`dirname "$0"`/../@tail_librariesdir@:$PATH
+elif [ "@host_os@" = darwin ]
+then # Mac OS X:
+     export DYLD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$DYLD_LIBRARY_PATH
+else # linux, unix, ...
+     export LD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$LD_LIBRARY_PATH
+fi
+
+exec `dirname "$0"`/M2@EXE@ "$@"
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin M2 "
+# End:

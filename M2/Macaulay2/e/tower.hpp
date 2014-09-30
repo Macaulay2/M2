@@ -21,7 +21,7 @@ class Tower : public Ring
 protected:
   Tower() {}
 
-  bool initialize(int charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions);
+  bool initialize(long charac0, M2_ArrayString names0, const VECTOR(ring_elem) &extensions);
 public:
   virtual ~Tower();
 
@@ -35,10 +35,11 @@ public:
   static Tower * create(const Tower *R, VECTOR(ring_elem) &extensions);
 
 // The following are all the routines required by 'ring'
+  virtual unsigned int computeHashValue(const ring_elem a) const;
 
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem var(int v) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
@@ -77,13 +78,16 @@ public:
   virtual void syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const;
 
+  virtual int index_of_var(const ring_elem a) const;
+  virtual M2_arrayint support(const ring_elem a) const;
+
   ring_elem gcd(const ring_elem f, const ring_elem g) const;
   ring_elem gcd_extended(const ring_elem f, const ring_elem g,
                          ring_elem &u, ring_elem &v) const;
 
   // These routines are here so we can write higher level operations in M2 to test the (eventual) engine routines
-  int degree(int var, const ring_elem f) const;
-  ring_elem diff(int var, const ring_elem f) const;
+  int degreeInVariable(int var, const ring_elem f) const;
+  ring_elem differentiate(int var, const ring_elem f) const;
   int extension_degree(int nvars) const; // returns -1 if infinite
   ring_elem power_mod(const ring_elem f, mpz_t n, const ring_elem g) const;  // f^n mod g
   ring_elem lowerP(const ring_elem f) const;

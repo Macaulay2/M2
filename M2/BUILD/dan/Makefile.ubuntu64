@@ -1,19 +1,19 @@
 # -*- makefile-gmake -*-
 
-export CC =
-export CXX = 
-
 PRODUCTION = yes
 
 ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif
 
+default:
+tools:;: $(CC) $(CXX) $(FC)
+
 ifeq ($(DEBUG),yes)
 
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
-CONFIGOPTIONS += --enable-debug
+CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
 DIRECTORY = ubuntu64.debug
 
 else
@@ -23,7 +23,15 @@ ifeq ($(PRODUCTION),yes)
     SIGN = yes
     CONFIGOPTIONS += --enable-deb
     CONFIGOPTIONS += --disable-common-staging-area
+ifeq ($(PROFILE),yes)
+    CONFIGOPTIONS += --enable-profile
+export CC = gcc -pg
+export CXX = g++ -pg
+export FC = gfortran -pg
+    DIRECTORY = ubuntu64.profile
+else
     DIRECTORY = ubuntu64.production
+endif
 else
     SIGN = no
     INSTALLOPTIONS += prefix=$(HOME)/local/encap
@@ -37,5 +45,5 @@ pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = x86_64 ]
 
 # Local Variables:
-# compile-command: "time make -f Makefile.ubuntu64 "
+# compile-command: "time make -f Makefile.ubuntu64 NTL_WIZARD=no "
 # End:

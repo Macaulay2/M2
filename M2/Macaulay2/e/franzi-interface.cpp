@@ -106,12 +106,12 @@ extern "C" const Matrix * rawGbBoolean(const Matrix *m)
       ERROR("expected a polynomial ring");
       return 0;
     }
-  if (P->charac() != 2)
+  if (P->characteristic() != 2)
     {
       ERROR("expected coefficient ring ZZ/2");
       return 0;
     }
-  if (!P->getCoefficientRing()->cast_to_Z_mod())
+  if (not P->getCoefficientRing()->isFinitePrimeField())
     {
       ERROR("expected coefficient ring ZZ/2");
       return 0;

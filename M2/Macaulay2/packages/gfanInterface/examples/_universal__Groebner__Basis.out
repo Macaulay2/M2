@@ -13,6 +13,10 @@ o2 = ideal (x + y, y + z)
 o2 : Ideal of R
 
 i3 : universalGroebnerBasis(I)
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
 
 o3 = {x + y, x - z, y + z}

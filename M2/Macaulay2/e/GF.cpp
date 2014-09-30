@@ -42,7 +42,7 @@ bool GF::initialize_GF(const RingElement *prim)
   // set the GF ring tables.  Returns false if there is an error.
   _primitive_element = prim;
   _originalR = prim->get_ring()->cast_to_PolynomialRing();
-  initialize_ring(_originalR->charac(),
+  initialize_ring(_originalR->characteristic(),
                   PolyRing::get_trivial_poly_ring());
 
   declare_field();
@@ -58,18 +58,18 @@ bool GF::initialize_GF(const RingElement *prim)
   Nterm *t = f;
   int n = _originalR->getMonoid()->primary_degree(t->monom);
 
-  Q_ = P;
-  for (i=1; i<n; i++) Q_ *= P;
+  Q_ = static_cast<int>(characteristic());
+  for (i=1; i<n; i++) Q_ *= static_cast<int>(characteristic());
 
   Qexp_ = n;
   Q1_ = Q_-1;
   _ZERO = 0;
   _ONE = Q1_;
-  _MINUS_ONE = (P == 2 ? _ONE : Q1_/2);
+  _MINUS_ONE = (characteristic() == 2 ? _ONE : Q1_/2);
 
   // Get ready to create the 'one_table'
   array<ring_elem> polys;
-  polys.append(_originalR->from_int(0));
+  polys.append(_originalR->from_long(0));
   ring_elem primelem = prim->get_value();
   polys.append(_originalR->copy(primelem));
 
@@ -111,18 +111,18 @@ bool GF::initialize_GF(const RingElement *prim)
     }
 
   // Create the Z/P ---> GF(Q) inclusion map
-  _from_int_table = newarray_atomic(int,P);
+  _from_int_table = newarray_atomic(int,characteristic());
   int a = _ONE;
   _from_int_table[0] = _ZERO;
-  for (i=1; i<P; i++)
+  for (i=1; i<characteristic(); i++)
     {
       _from_int_table[i] = a;
       a = _one_table[a];
     }
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   // M2::GaloisFieldTable G(*_originalR, primelem);
   //  G.display(std::cout);
@@ -149,14 +149,24 @@ void GF::text_out(buffer &o) const
   o << "GF(" << Q_ << ")";
 }
 
-const RingElement *GF::get_minimal_poly() const
-// returns the polynomial f(t) mentioned in the def of _originalR above.
-// this is the minimal polynomial of the given generator of this ring
-// (which is not necessarily the primitive element)
+const RingElement *GF::getMinimalPolynomial() const
 {
   const Ring *R = _originalR->getAmbientRing();
   ring_elem f = R->copy(_originalR->quotient_element(0));
   return RingElement::make_raw(R, f);
+}
+
+const RingElement* GF::getGenerator() const
+{
+  ring_elem a;
+  a.int_val = 1; // this is the primitive generator
+  
+  return RingElement::make_raw(this, a);
+}
+
+const RingElement* GF::getRepresentation(const ring_elem& a) const
+{
+  return RingElement::make_raw(_originalR, _originalR->power(_primitive_element->get_value(), a.int_val));
 }
 
 ring_elem GF::get_rep(ring_elem a) const
@@ -170,12 +180,6 @@ int GF::discrete_log(ring_elem a) const
   if (a.int_val == _ZERO) return -1;
   if (a.int_val == Q1_) return 0;
   return a.int_val;
-}
-
-inline int GF::to_int(int) const
-{
-  // MES.  what to do here?
-  return 1;
 }
 
 static inline int modulus_add(int a, int b, int p)
@@ -217,10 +221,11 @@ ring_elem GF::eval(const RingMap *map, const ring_elem f, int first_var) const
   return map->get_ring()->power(map->elem(first_var), f.int_val);
 }
 
-ring_elem GF::from_int(int n) const
+ring_elem GF::from_long(long n) const
 {
-  int m = n % P;
-  if (m < 0) m += P;
+  long m1 = n % characteristic();
+  if (m1 < 0) m1 += characteristic();
+  int m = static_cast<int>(m1);
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -229,9 +234,11 @@ ring_elem GF::from_int(mpz_ptr n) const
 {
   mpz_t result;
   mpz_init(result);
-  mpz_mod_ui(result, n, P);
-  int m = static_cast<int>(mpz_get_si(result));
-  if (m < 0) m += P;
+  mpz_mod_ui(result, n, characteristic());
+  long m1 = mpz_get_si(result);
+  mpz_clear(result);
+  if (m1 < 0) m1 += characteristic();
+  int m = static_cast<int>(m1);
   m = _from_int_table[m];
   return ring_elem(m);
 }
@@ -240,8 +247,9 @@ ring_elem GF::from_rational(mpq_ptr q) const
 {
   // a should be an element of ZZ/p
   ring_elem a = _originalR->getCoefficients()->from_rational(q);
-  int b = _originalR->getCoefficients()->coerce_to_int(a);
-  return GF::from_int(b);
+  std::pair<bool,long> b = _originalR->getCoefficients()->coerceToLongInteger(a);
+  M2_ASSERT(b.first);
+  return GF::from_long(b.second);
 }
 
 ring_elem GF::var(int v) const
@@ -258,11 +266,13 @@ bool GF::promote(const Ring *Rf, const ring_elem f, ring_elem &result) const
 
   if (Rf != _originalR) return false;
 
-  result = from_int(0);
+  result = from_long(0);
   int exp[1];
   for (Nterm *t = f; t != NULL; t = t->next)
     {
-      ring_elem coef = from_int(_originalR->getCoefficientRing()->coerce_to_int(t->coeff));
+      std::pair<bool,long> b = _originalR->getCoefficients()->coerceToLongInteger(t->coeff);
+      M2_ASSERT(b.first);
+      ring_elem coef = from_long(b.second);
       _originalR->getMonoid()->to_expvector(t->monom, exp);
       // exp[0] is the variable we want.  Notice that since the ring is a quotient,
       // this degree is < n (where Q_ = P^n).
@@ -283,9 +293,9 @@ bool GF::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 
   int e = f.int_val;
   if (e == _ZERO)
-    result = _originalR->from_int(0);
+    result = _originalR->from_long(0);
   else if (e == _ONE)
-    result = _originalR->from_int(1);
+    result = _originalR->from_long(1);
   else
     result = _originalR->power(_primitive_element->get_value(), e);
 
@@ -357,7 +367,7 @@ void GF::internal_add_to(ring_elem &f, ring_elem &g) const
         }
       else
         {
-          if (P == 2)
+          if (characteristic() == 2)
             f = _ZERO;
           else
             f = modulus_add(a, _one_table[_ONE], Q1_);
@@ -435,7 +445,7 @@ ring_elem GF::divide(const ring_elem f, const ring_elem g) const
 void GF::syzygy(const ring_elem a, const ring_elem b,
                 ring_elem &x, ring_elem &y) const
 {
-  x = GF::from_int(1);
+  x = GF::from_long(1);
   y = GF::divide(a,b);
   GF::internal_negate_to(y);
 }

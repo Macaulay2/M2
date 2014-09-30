@@ -35,6 +35,7 @@ public:
   const FractionField * cast_to_FractionField() const { return this; }
 
   const Ring *get_ring() const { return R_; }
+  unsigned long get_precision() const { return R_->get_precision(); }
 
   ring_elem numerator(ring_elem f) const;
   ring_elem denominator(ring_elem f) const;
@@ -50,7 +51,9 @@ public:
 
   virtual void text_out(buffer &o) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual unsigned int computeHashValue(const ring_elem a) const;
+
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr n) const;
   virtual ring_elem var(int v) const;

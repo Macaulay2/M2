@@ -7,6 +7,7 @@ DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include $(BIBASIS_DEPFILES)
 endif
+CXXFLAGS += -Wno-cast-qual -Wno-conversion
 all: $(BIBASIS_OFILES)
 clean:; rm -f $(BIBASIS_OFILES) $(BIBASIS_DEPFILES) LOGFILE
 check:
@@ -15,3 +16,4 @@ Makefile : Makefile.in; cd ../../..; ./config.status Macaulay2/kernel/bibasis/Ma
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/kernel/bibasis "
 # End:
+.NOTPARALLEL:

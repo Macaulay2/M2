@@ -174,13 +174,12 @@ document {
      a small integer, returning the old value.",
      PARA{
 	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  Typically, the
-	  error depth is set so that messages from code pre-interpreted and
-	  reloaded with ", TO "loaddata", " will not appear in the backtrace.",
-	  },
-     PARA{
-     	  "To increase the size of the stack trace for debugging, reduce the ", TT "errorDepth", ".",
+	  code is displayed and the debugger is entered only if the load depth was at least as large at the
+	  time the code was parsed as the error depth is now.
+	  The default value is 3, which shows only positions in the user's code and positions
+	  inside loaded packages whose debugging mode is true.  Set it to 2 to also debug statements
+	  inside loaded packages, except for the package ", TO "Core", ".  Set it to 1 to also
+	  debug statements in the core, and set it to 0 to debug statements in the bootstrap code."
 	  },
      SeeAlso => { "loadDepth" }
      }
@@ -192,15 +191,17 @@ document {
      a small integer, returning the old value.",
      PARA{
 	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  The load depth 
+	  code is displayed only if the load depth at the
+	  time the code was parsed is at least as large as the error depth is now.  The load depth 
 	  is set to 0 initially, is set to 1 when the files of the ", TO "Core::Core", "
 	  package are being loaded, is set to 2 while loading a package with the ", TO "debuggingMode", " option
-	  set to ", TO "false", ", and is set to 3 for user input."
+	  set to ", TO "false", ", and is set to 3 while loading a package with the ", TO "debuggingMode", " option
+	  set to ", TO "true", " and for user input."
 	  },
      PARA {
 	  "The value of ", TO "loadDepth", " active when code is parsed is referred to later when
-	  error messages are being handled: see ", TO "errorDepth", "."
+	  error messages are being handled: see ", TO "errorDepth", ", and it is also displayed, in parentheses,
+	  when the error message is printed."
 	  },
      Caveat => { "The user should not attempt to adjust the value of ", TO "loadDepth", "." },
      }

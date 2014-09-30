@@ -1,4 +1,4 @@
-setRandomSeed();
+setRandomSeed 1;
 randomPlanePoints = (delta,R) -> (
      k:=ceiling((-3+sqrt(9.0+8*delta))/2);
      eps:=delta-binomial(k+1,2);

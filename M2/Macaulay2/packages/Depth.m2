@@ -3,7 +3,7 @@
 --=========================================================================--
 --=========================================================================--
 {*
-Copyright 2010, 2011 Bart Snapp.
+Author: Bart Snapp.
 This file is in the public domain.
 *} 
 newPackage(
@@ -196,7 +196,7 @@ A = ZZ/5051[x, y, z];
 I = ideal (x, x*y, y*z);
 -- the success of this test depends on the random number generator:
 setRandomSeed()
-assert(regularSequence(I,A,Attempts=>1,Bound=>100,Sparseness=>.9) - matrix{{82*x, 95*y*z}}==0)
+assert(regularSequence(I,A,Bound=>100,Sparseness=>.9) - matrix {{90*y*z-2*x, -71*y*z+38*x}}==0)
 ///
 
 -----------------------------------------------------------------------------

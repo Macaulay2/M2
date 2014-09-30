@@ -1,4 +1,5 @@
 -- Taken from M2-dev/mike/sig-gb/test-code/m2/f5ex.m2, 12 April 2013.
+if instance(toABC, Symbol) then
 toABC = (I) -> (
      R := ring I;
      S := (coefficientRing R)[vars(0..numgens R-1), MonomialOrder=>(monoid ring I).Options.MonomialOrder];

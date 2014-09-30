@@ -43,7 +43,7 @@ DUMPEDM2FILES += tvalues.m2
 TVFILES := $(wildcard @srcdir@/../d/*.d)
 all: tvalues.m2
 tvalues.m2: @srcdir@/tvalues-make.m2 $(TVFILES)
-	@pre_exec_prefix@/bin/M2@EXE@ $(ARGS) --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
+	@pre_exec_prefix@/bin/M2 $(ARGS) --no-tvalues $< -e 'make "@srcdir@/../d/"; exit 0'
 clean::;rm -f tvalues.m2
 ############################## installedpackages.m2
 # an obsolete file
@@ -108,7 +108,7 @@ phase1:: @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
 @pre_libm2dir@/Core/cache/@DUMPDATAFILE@ redump : $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_bindir@/M2@EXE@ $(OTHERDUMPEDM2FILES)
 	rm -f @pre_libm2dir@/Core/cache/@DUMPDATAFILE@
 	$(MKDIR_P) @pre_libm2dir@/Core/cache
-	@pre_exec_prefix@/bin/M2@EXE@ -q --stop -e 'errorDepth = 0' --dumpdata
+	@pre_exec_prefix@/bin/M2 -q --stop -e 'errorDepth = 0' --dumpdata
 	printenv LD_LIBRARY_PATH
 endif
 
@@ -118,7 +118,8 @@ phase1:: .Macaulay2-made
 	touch $@
 clean::; rm -f .Macaulay2-made
 all: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files; gdb @pre_exec_prefix@/bin/M2@EXE@
+gdb: .gdbinit .gdb-files
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
 all: .gdb-directories
 clean::; rm -f .gdb-directories
@@ -139,6 +140,7 @@ clean::; rm -f .gdbinit.$(USER)
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
+	echo 'set environment LD_LIBRARY_PATH $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)' >>$@
 	echo 'file @pre_exec_prefix@/bin/M2@EXE@' >>$@
 clean::; rm -f .gdb-files
 .gdb-run-it: Makefile
@@ -146,7 +148,7 @@ clean::; rm -f .gdb-files
 	echo 'echo \n' >>$@
 	echo 'run -q --no-loaddata --no-readline --no-personality' >>$@
 clean::; rm -f .gdb-run-it
-profile: gmon.out; gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
+profile: gmon.out; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gprof @pre_exec_prefix@/bin/M2@EXE@ >profile
 clean::; rm -f profile
 @pre_packagesdir@ :; @INSTALL@ -d $@
 @pre_packagesdir@/Core  : ; @INSTALL@ -d $@
@@ -158,3 +160,4 @@ distclean: clean; rm -f Makefile version.m2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 # End:
+.NOTPARALLEL:

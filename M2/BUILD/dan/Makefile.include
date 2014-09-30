@@ -1,14 +1,18 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
+CC ?= gcc
+CXX ?= g++
+FC ?= gfortran
 .PHONY : $(TARGETS)
+.NOTPARALLEL:
 $(TARGETS): banner
 banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
 # include builds.tmp/$(DIRECTORY)/include/configuration
-all:builds.tmp/$(DIRECTORY)/include/configuration
+all: banner make-configure builds.tmp/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
 endif
@@ -19,7 +23,7 @@ everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true 
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
 check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
 big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
-configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
+configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
 	D=`pwd` ;\
 	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
@@ -49,20 +53,24 @@ rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
 rebuild-world1: arch-chk distclean-or-rm-rf
 distclean-or-rm-rf:
 	$(MAKE) -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
-rebuild-world2:; $(MAKE) -C ../..
+rebuild-world2:make-configure
+make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
-../../configure :; $(MAKE) -C ../..
 rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+CONFIGOPTIONS += CC=$(CC) CXX=$(CXX) FC=$(FC)
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+ifeq ($(NTL_WIZARD),no)
+   CONFIGOPTIONS += --disable-ntl-wizard 
+endif
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

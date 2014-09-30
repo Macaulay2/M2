@@ -5,7 +5,7 @@ debug Core
 reduceCompress = method()
 reduceCompress Matrix := (m) -> (
      R := ring m;
-     msparse := rawMutableMatrix(raw m);
+     msparse := rawMutableMatrix(raw m, true); -- true: make this a dense matrix...
      rawReduceByPivots msparse;
      mout := compress map(R,rawMatrix msparse);
      colCounter := numgens source mout - 1;

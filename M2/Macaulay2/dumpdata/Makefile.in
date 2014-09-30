@@ -12,7 +12,7 @@ checkit.o: dumpdata.h std.h
 file.o: std.h
 warning.o: warning.h std.h
 gdb: checkit; gdb checkit
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 tags: @srcdir@/TAGS
@@ -40,7 +40,7 @@ check:: testprintmaps; ./$<
 testprintmaps:libdump.a
 clean::; rm -f testprintmaps
 
-ifeq "@HAVE_PERSONALITY@" "1"
+ifeq "@HAVE_PERSONALITY@" "yes"
 all: personality
 clean::; rm -f personality
 all: personality @pre_bindir@  ; @INSTALL_PROGRAM@ $< @pre_bindir@/personality
@@ -53,3 +53,4 @@ endif
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/dumpdata "
 # End:
+.NOTPARALLEL:

@@ -36,8 +36,8 @@ class DetComputation : public our_new_delete
                                 // 1: use cofactor method.
   size_t * row_set;
   size_t * col_set;
-  size_t this_row;
-  size_t this_col;
+  int this_row;
+  int this_col;
 
   ring_elem **D;                // size p by p, dense representation.
 
@@ -45,7 +45,7 @@ class DetComputation : public our_new_delete
   // Sets D[0..p-1,0..p-1] with the given minor of M.
 
   // Used in Bareiss:
-  bool get_pivot(ring_elem **D, int p, ring_elem &pivot, size_t &pivot_col);
+  bool get_pivot(ring_elem **D, size_t p, ring_elem &pivot, size_t &pivot_col);
   ring_elem detmult(ring_elem f1, ring_elem g1,
                     ring_elem f2, ring_elem g2,
                     ring_elem d);

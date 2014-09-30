@@ -3,6 +3,16 @@ VPATH = @srcdir@
 
 all: supervisor.o m2file.o tests.o
 include ../../include/config.Makefile
+
+%.dep: %.cpp
+	@ echo "@CXX@ -MM -MP $(CPPFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep" >> LOGFILE
+	@ echo " ** creating $@ from $<"
+	@       @CXX@ -MM -MP $(CPPFLAGS) $(CXXFLAGS) -DDEPENDS=1 $< >$*-tmp.dep && <$*-tmp.dep sed 's/\($*\)\.o[ :]*/\1.o $@ : /' >$@ && rm $*-tmp.dep
+ifneq ($(DEPENDS),no)
+include supervisor.dep
+include m2file.dep
+include tests.dep
+endif
 CPPFLAGS := -I@srcdir@ -I../d -I@srcdir@/../e $(CPPFLAGS) -I@srcdir@/../d -I@srcdir@/../c
 .PHONY: tags
 scCMD = $(COMPILE.c) -S $(OUTPUT_OPTION) $<
@@ -22,7 +32,7 @@ EcCMD = $(COMPILE.c) -E $(OUTPUT_OPTION) $<
 
 # @srcdir@/TAGS: $(HFILES) $(CCFILES); cd @srcdir@ && @ETAGS@ $(HFILES) $(CCFILES)
 # DEPENDS = yes
-# ifneq (@ETAGS@,)
+# ifneq (@ETAGS@,false)
 # all: tags
 # endif
 # tags:: @srcdir@/TAGS
@@ -33,3 +43,4 @@ distclean::; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/system "
 # End:
+.NOTPARALLEL:

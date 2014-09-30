@@ -1,6 +1,6 @@
 // Copyright 1999  Michael E. Stillman
 #ifndef _Eschreyer_hpp_
-#define _Eschreyer_hpp
+#define _Eschreyer_hpp_
 
 #include "polyring.hpp"
 #include "gbring.hpp"

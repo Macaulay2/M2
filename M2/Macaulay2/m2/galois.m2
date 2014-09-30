@@ -181,21 +181,37 @@ GF(Ring) := GaloisField => opts -> (S) -> (
 	  var = S.generatorSymbols#0;
 	  );
      d := p^n-1;
-     if d < opts.SizeLimit
-     then (
+     typ := opts.Strategy;
+     if d >= opts.SizeLimit or primitiveElement != S_0 then (
+         typ = "FlintBig";
+         primitiveElement = S_0; -- Possibly NOT the primitive element in this case!!  We don't need it, and we don't want to compute it yet.
+           -- Note: we used to have Galois fields always encoded by powers of the primitive element.  Ring maps would use this
+           -- (in ringmap.m2) to help tell the engine where the primitive element goes.
+           -- But: for FlintBig, this isn't being used.  We should perhaps consider changing the code in ringmap.m2.
+           -- For now, setting primitiveElement will do.
+         )
+     else if typ === null then typ = "Flint";
+     --if d < opts.SizeLimit or opts.Strategy === "FlintBig"
+     --then (
 	  -- three cases: call rawGaloisField, rawARingGaloisField, rawARingGaloisField1
-	  rawF := if opts.Strategy === null then 
-	              rawGaloisField raw primitiveElement
-		  else if opts.Strategy === "Givaro" then
+	  rawF := if typ === "Old" then 
+                       rawGaloisField raw primitiveElement
+		  else if typ === "Givaro" then
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "CompleteGivaro" then 
+		  else if typ === "CompleteGivaro" then 
 		       rawARingGaloisFieldFromQuotient raw primitiveElement
-		  else if opts.Strategy === "New" then
-		      rawARingGaloisField1 raw primitiveElement;
+		  else if typ === "New" then
+		      rawARingGaloisField1 raw primitiveElement
+                  else if typ === "FlintBig" then
+                       rawARingGaloisFieldFlintBig raw S_0 -- we do not pass a primitive element in this case
+                  else if typ === "Flint" then
+                       rawARingGaloisFieldFlintZech raw primitiveElement
+                  else error(///unknown type of Galois Field requested:///|opts.Strategy|///Possible values include "Flint", "FlintBig", "Givaro", "Old", "New"///);
 	  F := new GaloisField from rawF;
      	  F.degreeLength = 0;
 	  F.rawGaloisField = true;
-	  )
+	--  )
+{*      
      else (
 	  -- S' := S;
 	  T := toField(S);
@@ -203,6 +219,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      	  F.toField = true;
 	  F.rawGaloisField = false;
 	  );
+*}
      F.degreeLength = 0;
      F.PrimitiveElement = primitiveElement;		    -- notice the primitive element is not in F
      F.isBasic = true;

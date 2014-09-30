@@ -5,6 +5,7 @@ extern "C" {
 extern void M2inits(void) __attribute__ ((constructor));
 extern void M2inits1(), M2inits2();
 extern void enterM2();
+extern void check_M2init();
 extern int M2inits_run, M2inits_firsttime;
 
 /* get size_t */

@@ -1,4 +1,8 @@
 #include <M2/config.h>
+#ifdef HAVE_STDDEF_H
+  /* this prevents a problem in Mac OS X, where 'cstddef' is loaded before 'stddef.h', and it causes a problem */
+  #include <stddef.h>
+#endif
 #include <factory/factory.h>		// to get definition of factoryseed()
 
 // extern "C" void actors5_setFactorySeed(int s) { 
@@ -6,12 +10,7 @@
 // }
 
 void factory_setup_1() {
-  On(SW_USE_NTL);		/* tell factory to use NTL */
 }
-
-#define Matrix MaTrIx
-#include <factor.h>		// from Messollen's libfac
-#undef Matrix
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/d "

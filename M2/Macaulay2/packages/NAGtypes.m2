@@ -19,7 +19,7 @@ export {
      generalEquations, 
      -- witness set
      WitnessSet, witnessSet, equations, slice, points, 
-     Equations, Slice, Points, ProjectionDimension, 
+     Equations, Slice, "Points", ProjectionDimension, 
      sliceEquations, projectiveSliceEquations, IsIrreducible, 
      ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
      -- numerical variety
@@ -722,7 +722,7 @@ document {
      PARA{
      	  "The package defines types used by the package ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", 
      	  " as well as other numerical algebraic geometry packages: e.g., interface packages ", 
-     	  TO "PHCpack::PHCpack", " and ", TO "Bertini::Bertini", "."
+     	  TO "PHCpack::PHCpack", " and ", TT "Bertini::Bertini", "."
 	  },  
      PARA{"Datatypes: "},
      UL{    

@@ -16,12 +16,13 @@ namespace M2 {
 
   GaloisFieldTable::GaloisFieldTable(const PolynomialRing& R,
                                      const ring_elem prim):
-    mCharac(R.charac()),
+    mCharac(static_cast<int>(R.characteristic())),
     mOriginalRing(R),
     mPrimitiveElement(prim)
   {
-    ASSERT(mOriginalRing.n_quotients() == 1);
+    M2_ASSERT(mOriginalRing.n_quotients() == 1);
 
+    mGenerator = RingElement::make_raw(&R, R.copy(prim));
     ring_elem f = mOriginalRing.quotient_element(0);
     Nterm *t = f;
     mDimension = mOriginalRing.getMonoid()->primary_degree(t->monom);
@@ -33,10 +34,10 @@ namespace M2 {
     
     // Get ready to create mOneTable.
     std::vector<ring_elem> polys;
-    polys.push_back(mOriginalRing.from_int(0));
+    polys.push_back(mOriginalRing.from_long(0));
     polys.push_back(mOriginalRing.copy(mPrimitiveElement));
     
-    ring_elem oneR = mOriginalRing.from_int(1);
+    ring_elem oneR = mOriginalRing.from_long(1);
     
     mGeneratorExponent = static_cast<GFElement>(-1);
     ring_elem x = mOriginalRing.var(0);
@@ -59,8 +60,8 @@ namespace M2 {
         std::cerr << "\n";
       }
 #endif
-    ASSERT(polys.size() == mOrder);
-    ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
+    M2_ASSERT(polys.size() == mOrder);
+    M2_ASSERT(mGeneratorExponent != static_cast<GFElement>(-1));
     
     // Set 'one_table'.
     mOneTable = newarray_atomic(GFElement,mOrder);
@@ -123,25 +124,39 @@ namespace M2 {
   {
   }
 
+  void ARingGFM2::fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const
+  {
+    result = 0;
+    ElementType a,b;
+    for (long i=0; i<poly.size(); i++)
+      if (poly[i] != 0)
+        {
+          set_from_long(a, poly[i]);
+          power(b, mGF.generatorExponent(), i);
+          mult(a,a,b);
+          add(result,result,a);
+        }
+  }
+
   bool ARingGFM2::promote(const Ring *Rf, const ring_elem f, elem &result) const
   {
     if (&mGF.ring() != Rf) return false;
 
-    result = 0;
-    int exp[1];
-    for (Nterm *t = f; t != NULL; t = t->next)
-      {
-        elem a, b;
-        set_from_int(a, mGF.ring().getCoefficientRing()->coerce_to_int(t->coeff));
-        mGF.ring().getMonoid()->to_expvector(t->monom, exp);
-        // exp[0] is the variable we want.  Notice that since the ring is a quotient,
-        // this degree is < n (where Q_ = P^n).
-        power(b, mGF.generatorExponent(), exp[0]);
-        mult(a, a, b);
-        add(result, result, a);
-      }
+    std::vector<long> poly;
+    RingElement F(Rf,f);
+    F.getSmallIntegerCoefficients(poly);
+    fromSmallIntegerCoefficients(result, poly);
     return true;
-    
+  }
+
+  void ARingGFM2::lift_to_original_ring(ring_elem& result, const ElementType& f) const
+  {
+    if (f == 0)
+      result = mGF.ring().from_long(0);
+    else if (f == mGF.one())
+      result = mGF.ring().from_long(1);
+    else
+      result = mGF.ring().power(mGF.primitiveElement(), f);
   }
 
   bool ARingGFM2::lift(const Ring *Rg, const elem f, ring_elem &result) const
@@ -151,15 +166,8 @@ namespace M2 {
     // lift: need to compute (primite_element)^e
 
     if (&mGF.ring() != Rg) return false;
-    
-    
-    if (f == 0)
-      result = mGF.ring().from_int(0);
-    else if (f == mGF.one())
-      result = mGF.ring().from_int(1);
-    else
-      result = mGF.ring().power(mGF.primitiveElement(), f);
-    
+
+    lift_to_original_ring(result, f);
     return true;
   }
 

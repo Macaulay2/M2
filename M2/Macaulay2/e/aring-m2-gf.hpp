@@ -7,7 +7,7 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 
-#include "aring-glue.hpp"
+//#include "aring-glue.hpp"
 
 class GF;
 class PolynomialRing;
@@ -46,6 +46,7 @@ namespace M2 {
     
     const PolynomialRing& ring() const { return mOriginalRing; }
     const ring_elem primitiveElement() const { return mPrimitiveElement; }
+    const RingElement* getGenerator() const { return mGenerator; }
     GFElement generatorExponent() const { return mGeneratorExponent; }
   private:
     // CONSTANT usable fields. 
@@ -60,11 +61,11 @@ namespace M2 {
     GFElement* mFromIntTable;
     
     const PolynomialRing& mOriginalRing;
+    const RingElement* mGenerator;
     const ring_elem mPrimitiveElement; // is an element of mOriginalRing
     GFElement mGeneratorExponent;  
     // the given generator of mOriginalRing is 
     // mPrimitiveElement^mGeneratorExponent (in this ring).
-    
   };
 
 /**
@@ -78,8 +79,7 @@ namespace M2 {
     
 
   public:
-    static const RingID ringID = ring_GFM2;
-    typedef ConcreteRing<ARingGFM2> ring_type;
+    static const RingID ringID = ring_GF;
     typedef int ElementType;
     typedef int elem;
     
@@ -99,6 +99,8 @@ namespace M2 {
     GFElement characteristic() const { return mGF.characteristic(); }
 
     void text_out(buffer &o) const;
+
+    const PolynomialRing& originalRing() const { return mGF.ring(); }
 
   private:
     GaloisFieldTable mGF;
@@ -120,6 +122,13 @@ namespace M2 {
     }
 
   public:
+    unsigned int computeHashValue(const elem& a) const 
+    { 
+      return a;
+    }
+
+    void getGenerator(elem& result_gen) const { result_gen = 1; }
+
     int get_repr(elem f) const { /*TODO: WRITE WRITE ;*/ assert(false); return 0; }
 
     void to_ring_elem(ring_elem &result, const ElementType &a) const
@@ -149,10 +158,10 @@ namespace M2 {
     void set_zero(elem &result) const { result = 0; }
     void clear(elem &result) const { /* nothing */ }
     
-    void set_from_int(elem &result, int a) const {
-      a = a % characteristic();
-      if (a < 0) a += characteristic();
-      result = mGF.fromZZTable(a);
+    void set_from_long(elem &result, long a) const {
+      int a1 = static_cast<int>(a % characteristic());
+      if (a1 < 0) a1 += characteristic();
+      result = mGF.fromZZTable(a1);
     }
 
     void set_var(elem &result, int v) const { result = 1; }
@@ -262,11 +271,12 @@ namespace M2 {
         result = 0;
     }
 
-    void power(elem &result, elem a, int n) const
+    void power(elem &result, elem a, long n) const
     {
       if (a != 0)
         {
-          result = (a*n) % mGF.orderMinusOne();
+          long order1 = static_cast<long>(mGF.orderMinusOne());
+          result = static_cast<elem>((a*n) % order1);
           if (result <= 0) result += mGF.orderMinusOne();
         }
       else
@@ -275,7 +285,7 @@ namespace M2 {
 
     void power_mpz(elem &result, elem a, mpz_ptr n) const
     {
-      int n1 = static_cast<int>(mpz_fdiv_ui(n, mGF.orderMinusOne()));
+      long n1 = mpz_fdiv_ui(n, mGF.orderMinusOne());
       power(result,a,n1);
     }
 
@@ -288,9 +298,9 @@ namespace M2 {
 
     void elem_text_out(buffer &o,
                        ElementType a,
-                       bool p_one,
-                       bool p_plus,
-                       bool p_parens) const;
+                       bool p_one=true,
+                       bool p_plus=false,
+                       bool p_parens=false) const;
 
     void syzygy(ElementType a, ElementType b,
                 ElementType &x, ElementType &y) const
@@ -310,8 +320,12 @@ namespace M2 {
       result = rawRandomInt(static_cast<int32_t>(characteristic()));
     }
 
+    void fromSmallIntegerCoefficients(ElementType& result, const std::vector<long>& poly) const;
 
     bool promote(const Ring *Rf, const ring_elem f, elem &result) const;
+
+    void lift_to_original_ring(ring_elem& result, const ElementType& f) const;
+    // GF specific routine, used in getRepresentation
 
     bool lift(const Ring *Rg, const elem f, ring_elem &result) const;
 

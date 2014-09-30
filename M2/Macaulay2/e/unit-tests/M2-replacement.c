@@ -1,7 +1,7 @@
 #include "engine-exports.h"
 #include "M2mem-replacement.h"
 #include <memory.h>
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 
 typedef struct RingElementrec *RingElement;
 

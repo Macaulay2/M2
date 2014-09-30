@@ -53,7 +53,9 @@ protected:
     }
 };
 
-class MonomialIdeal : public mutable_object
+class MonomialIdeal : public EngineObject
+// these objects are immutable once they are sent to the front end (i.e.
+// once their hash code has been set...
 {
 
   const PolynomialRing *R;
@@ -79,6 +81,8 @@ private:
   void do_node(Nmi_node *p, int indent, int disp) const;
   void do_tree(Nmi_node *p, int depth, int indent, int disp) const;
   int debug_check(Nmi_node *p, const Nmi_node *up) const;
+protected:
+  virtual unsigned int computeHashValue() const;
 
 public:
   MonomialIdeal(const PolynomialRing *RR, stash *mi_stash=0);

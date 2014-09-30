@@ -25,9 +25,9 @@ engine_RawMonoidOrNull IM2_Monoid_make(const MonomialOrdering *mo,
   return Monoid::create(mo,names,P,degs,hefts);
 }
 
-unsigned long IM2_Monoid_hash(const Monoid *M)
+unsigned int rawMonoidHash(const Monoid *M)
 {
-  return M->get_hash_value();
+  return M->hash();
 }
 
 M2_string IM2_Monoid_to_string(const Monoid *M)
@@ -65,14 +65,22 @@ static void write_weights(std::vector<int>& grading, int nvars, int firstvar, in
 
 bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
                               std::vector<int>& mat,
-                              bool& base_is_revlex)
+                              bool& base_is_revlex,
+                              int& component_direction, // -1 is Down, +1 is Up, 0 is not present
+                              int& component_is_before_row // -1 means: at the end. 0 means before the order.
+                                   // and r means considered before row 'r' of the matrix.
+                              )
 {
   // a false return value means an error has occurred.
   int nvars = rawNumberOfVariables(&mo);
   base_is_revlex = true;
   enum LastBlock {LEX, REVLEX, WEIGHTS, NONE};
   LastBlock last = NONE;
+  int nwts = 0; // local var used in MO_WEIGHTS section
+  int nrows = 0;
   int firstvar = 0;
+  component_direction = 0;
+  component_is_before_row = -2; // what should the default value be?  Probably: -1.
   size_t last_element = 0; // The vector 'mat' will be resized back to this value if the last part of the order is lex or revlex.
   for (int i=0; i<mo.len; i++)
     {
@@ -89,6 +97,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
           }
         last = LEX;
         firstvar += p->nvars;
+        nrows += p->nvars;
         break;
       case MO_GREVLEX:
       case MO_GREVLEX2:
@@ -102,6 +111,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
           }
         last = REVLEX;
         firstvar += p->nvars;
+        nrows += p->nvars;
         break;
       case MO_GREVLEX_WTS:
       case MO_GREVLEX2_WTS:
@@ -115,6 +125,7 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
           }
         last = REVLEX;
         firstvar += p->nvars;
+        nrows += p->nvars;
         break;
       case MO_REVLEX:
         //printf("revlex %d\n", p->nvars);
@@ -125,10 +136,13 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
           }
         last = REVLEX;
         firstvar += p->nvars;
+        nrows += p->nvars;
         break;
       case MO_WEIGHTS:
-        //printf("weights %d\n", p->nvars);
-        write_weights(mat, nvars, 0, p->wts, p->nvars);
+        //printf("matsize= %d weights %d p->wts=%lu\n", mat.size(), p->nvars, p->wts);
+        nwts = (p->nvars > nvars ? nvars : p->nvars);
+        write_weights(mat, nvars, 0, p->wts, nwts);
+        nrows++;
         last_element = mat.size();
         last = WEIGHTS;
         break;
@@ -138,7 +152,13 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
         return false;
         break;
       case MO_POSITION_UP:
+        component_direction = 1;
+        component_is_before_row = nrows;
+        break;
       case MO_POSITION_DOWN:
+        component_direction = -1;
+        component_is_before_row = nrows;
+        break;
       default:
         // DO nothing
         break;
@@ -148,11 +168,13 @@ bool monomialOrderingToMatrix(const struct MonomialOrdering& mo,
     {
       // last block was lex, so use lex tie-breaker
       mat.resize(last_element);
+      if (nrows == component_is_before_row) component_is_before_row = -1;
       base_is_revlex = false;
     }
   else if (last == REVLEX)
     {
       // last block was revlex, so use revlex tie-breaker
+      if (nrows == component_is_before_row) component_is_before_row = -1;
       mat.resize(last_element);
     }
   else
@@ -169,13 +191,17 @@ M2_arrayint rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo)
   bool base;
   std::vector<int> mat;
   M2_arrayint result = 0;
-
-  if (monomialOrderingToMatrix(*mo, mat, base))
+  int component_is_before_row = 0;
+  int component_direction = 0;
+  if (monomialOrderingToMatrix(*mo, mat, base, component_direction, component_is_before_row))
     {
-      result = M2_makearrayint(mat.size()+1);
-      for (size_t i=0; i<mat.size(); i++)
+      int top = static_cast<int>(mat.size());
+      result = M2_makearrayint(top+3);
+      for (int i=0; i<top; i++)
         result->array[i] = mat[i];
-      result->array[mat.size()] = (base ? 1 : 0);
+      result->array[top] = (base ? 1 : 0);
+      result->array[top+1] = component_direction;
+      result->array[top+2] = component_is_before_row;
     }
   return result;
 }
