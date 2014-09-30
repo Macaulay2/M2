@@ -17,7 +17,7 @@ assert all(S,s->checkIncidenceSolution(s, SchPblm))
 end
 
 restart
-load "21e3-G36.m2"
+load "NumericalSchubertCalculus/TST/21e3-G36.m2"
 
 S2 = solveSchubertProblem(SchPblm, 3,6, LinearAlgebra=>false); --takes a lot of time
 assert all(S,s->checkIncidenceSolution(s, SchPblm))

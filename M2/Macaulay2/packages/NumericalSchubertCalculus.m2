@@ -7,8 +7,8 @@ newPackage(
 	    Email => "leykin@math.gatech.edu", 
 	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
 	{Name => "Abraham Martin del Campo", 
-	    Email => "asanchez@math.tamu.edu", 
-	    HomePage => "http://www.math.tamu.edu/~asanchez"},
+	    Email => "abraham.mc@ist.ac.at", 
+	    HomePage => "http:/pub.ist.ac.at/~adelcampo"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
@@ -27,28 +27,20 @@ newPackage(
 
 export {   
    NSC'DBG, NSC'VERIFY'SOLUTIONS, NSC'BLACKBOX, setFlags,
-   trackHomotopy,
-   redChkrPos,
-   moveRed,
-   moveCheckers,
-   playCheckers,
+   solveSchubertProblem,
+   changeFlags, -- better name?
+   makePolynomials, -- maybe?
+   -- the next functions should not be exported:
+   --------------
+   -- We need to initialize these variables of the node
    Board,
    IsResolved,
    Fathers,
    Children,
-   printTree,
-   makeLocalCoordinates,
    FlagM,
    CriticalRow,
-   Polynomials,
    Solutions,
-   solveSchubertProblem,
-   changeFlags, -- temporary
-   makePolynomials, -- temporary
-   SolutionsSuperset, -- temporary
-   solutionToChart,--temporary 06.04.14
-   MovingFlag'at'Root,
-   columnReduce
+   SolutionsSuperset -- temporary
    }
 
 -- NC means no checker in that column
@@ -71,6 +63,10 @@ NEWTON'TOLERANCE = 10^-10
 DBG = 0
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
+
+--INITIALIZING THE KEYS OF NODE
+--Board= symbol Board
+
 
 setFlags = method(Options=>{NSC'DBG=>null,NSC'VERIFY'SOLUTIONS=>null,NSC'BLACKBOX=>null})
 installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
@@ -306,11 +302,6 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
      self
 )
 
-printTree = method()
-printTree MutableHashTable := node ->(
-	print peek node;
-	scan(node.Children, c-> printTree c);
-)
 
 -----------------
 --- makeLocalCoordinates

@@ -92,6 +92,19 @@ bracket2partition(List,ZZ) := (l, n) -> (
 
 ---------
 
+-------------------------
+-- printTree
+-------------------------
+-- print Tree is a recursive call of peek 
+-- to print all the children of a node
+printTree = method()
+printTree MutableHashTable := node ->(
+	print peek node;
+	scan(node.Children, c-> printTree c);
+)
+
+
+
 ----------------------
 -- checkNewtonIteration
 ----------------------
