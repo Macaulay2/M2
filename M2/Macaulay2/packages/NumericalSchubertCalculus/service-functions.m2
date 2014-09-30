@@ -1,25 +1,30 @@
 export {
-   --dist, --temporary 08,20,2013
-   checkIncidenceSolution, 
-   moveFlags2Flags, 
-   solsToFavCoords, --temporary 08.20.13
-   checkNewtonIteration,
+    checkIncidenceSolution, --this is only for our tests... shouldn't be used by the user
+    moveFlags2Flags, 
+    solsToFavCoords, --choose better name
+    checkNewtonIteration, -- this is for testing only should be removed from the final version
     partition2bracket,
-    bracket2input,
-    output2partition,
-    output2bracket,
-    bracket2partition,
-    redcheckers2partitions
+    bracket2partition
     }
+----------------
+--Functions contained here but not exported:
+----------------
+-- verifyLength(List, ZZ)
+-- output2partition(List) --input redcheckers
+-- output2bracket(List)
+-- printTree(MutableHashTable)--input node
+-- dist(List,List) -- computes euclidean distance of 2 vectors
+-- moveFlags2Flags (List, List) --input two list of flags (F's, G's)
+-- MovingFlag'at'Root ZZ
+-- notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
+
 
 ---------------------
---	verifyLength	--
---								--
--- makes sure a partition l
--- that is supposed to impose
--- conditions on Gr(k,n)
--- is in fact a partition 
--- of length k (add 0s if not)
+--   verifyLength  --
+--
+-- makes sure a partition l of k parts
+-- has length k and it add zeroes at the
+-- end if not
 --
 verifyLength = method(TypicalValue => List)
 verifyLength(VisibleList, ZZ) := (l,k) ->(
@@ -38,6 +43,7 @@ partition2bracket(List,ZZ,ZZ) := (l, k, n) -> (
      l = verifyLength(l, k);
      brackt := for i to #l-1 list (n-k)+(i+1)-l#i
 )
+
 
 output2partition = method(TypicalValue => List)
 output2partition(List) := redpos ->(
@@ -60,29 +66,18 @@ bracket2input(List,ZZ) := (br,n) ->(
      toList inp
 )
 
--- not using this function either
--- we might use this in the column reduce
+-- not using this function in general, but when debugging,
+-- we might use this function with the columnReduce sometimes
 --
+-- input: redcheckers
+-- output: the bracket condition (read from redCheckers)
+--     	   that affects the ID flag
 output2bracket = method(TypicalValue=>List)
 output2bracket List := outp -> (
      br := select(outp, x-> x!=NC);
      apply(br, x-> x=x+1)
 ) 
 
--- the next function is not completely right:
--- it gives two partitions but only one is correct
----- input: redcheckers
----- output: list with the two partitions that generate
-----         that redchecker board
-redcheckers2partitions= method(TypicalValue=>List)
-redcheckers2partitions List := redchckrs ->(
-     br := sort select(redchckrs, x-> x!=NC);     
-     part1:=apply(#br, i-> br#i-i);
-     br2:=select(#redchckrs, i-> redchckrs#i != NC);
-     part2 := apply(#br2, i-> br2#i-i);
-     {rsort part1, rsort part2}
-     )
-----
 
 bracket2partition = method(TypicalValue => List)
 bracket2partition(List,ZZ) := (l, n) -> (
@@ -93,7 +88,7 @@ bracket2partition(List,ZZ) := (l, n) -> (
 ---------
 
 -------------------------
--- printTree
+-- printTree (useful when debugging)
 -------------------------
 -- print Tree is a recursive call of peek 
 -- to print all the children of a node
@@ -215,6 +210,10 @@ dist(List,List) := (solns1,solns2) -> (
 -- THIS MAY FAIL if the solutions are
 -- not in general position (if they cannot fit this local coords)
 -- i.e. when T cannot be computed
+--
+-- One way to avoid this is taking a random linear 
+-- transformation of the solutions (and flags) before calling
+-- this function
 --------------------------------------------------
 solsToFavCoords = method()
 solsToFavCoords List := Solutions ->(
