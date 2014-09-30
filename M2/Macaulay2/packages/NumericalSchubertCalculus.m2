@@ -8,7 +8,7 @@ newPackage(
 	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@ist.ac.at", 
-	    HomePage => "http:/pub.ist.ac.at/~adelcampo"},
+	    HomePage => "http://pub.ist.ac.at/~adelcampo"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
@@ -28,20 +28,16 @@ newPackage(
 export {   
    NSC'DBG, NSC'VERIFY'SOLUTIONS, NSC'BLACKBOX, setFlags,
    solveSchubertProblem,
-   changeFlags, -- better name?
-   makePolynomials, -- maybe?
-   -- the next functions should not be exported:
-   --------------
-   -- We need to initialize these variables of the node
-   Board,
-   IsResolved,
-   Fathers,
-   Children,
-   FlagM,
-   CriticalRow,
-   Solutions,
-   SolutionsSuperset -- temporary
+   changeFlags  -- better name?
    }
+protect Board
+protect IsResolved
+protect Fathers
+protect Children
+protect FlagM
+protect CriticalRow
+protect Solutions
+protect SolutionsSuperset -- temporary
 
 -- NC means no checker in that column
 NC = infinity
@@ -649,7 +645,9 @@ assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually 
 --------------------------
 -- toRawSolutions
 --
--- Need to document this function
+-- Function that takes solutions as nxk matrices
+-- and writes them into a list of values cooresponding to
+-- the variables in the local oordinates coordX of the checkerboard variety 
 -------------------------
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
@@ -661,8 +659,9 @@ toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
 ------------------
 -- normalizeColumn
 ------------------
---  this function divide a specific column of a matrix
---  by a specific value
+--  this function multiplies a column C of 
+--  a matrix by the multiplicative inverse of 
+--  the element C_r at row r.
 ------------------
 -- Input:
 --     X'' - the matrix to be normalized
@@ -758,7 +757,7 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 -------------------
 -- columnReduce
 -------------------
--- given a matrix coordX from partitions (lambda1,lambda2)
+-- given a matrix of solutions in checkerboard coordinates (w.r.t lambda1,lambda2)
 -- we do column row reduction to the solutions
 -------------------
 -- input:     S -- matrix of solutions
@@ -824,7 +823,7 @@ trackHomotopy (Matrix,List) := (H,S) -> (
 ------------------------
 -- isRedCheckerInRegionE
 ------------------------
--- NEEDS to be documentted!
+-- NEEDS to be documented!
 ----------------------------
 -- Input: 
 --     j = number of a red checker
@@ -853,8 +852,8 @@ doc ///
    Headline
       Numerical Schubert Calculus
 ///
-load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
---load "NumericalSchubertCalculus/doc.m2"
+--load "NumericalSchubertCalculus/PHCpack-LRhomotopies-doc.m2"
+load "NumericalSchubertCalculus/doc.m2"
 
 -------------------
 -- Tests         --

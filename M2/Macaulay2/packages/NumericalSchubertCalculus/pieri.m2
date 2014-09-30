@@ -177,7 +177,7 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       -- of the Starting system S
       ------------------------
       assert all(start, s->norm sub(matrix{S},matrix{s}) < 1e-3);
-      solutionsHash#{l,m,G} = track(S,T,start,gamma=>exp(2*pi*ii*random RR)) / coordinates;
+      solutionsHash#{l,m,G} = track(S,T,start,NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)) / coordinates;
       ---------------------
       ---- make sure that you got solutions of the Target System --
       ---------------------
@@ -224,7 +224,7 @@ trackSimpleSchubert(Sequence, Sequence, List, List) := o->(kn,cond,G,F) ->(
    E := skewSchubertVariety(kn,l,m);
    Start:=apply(G, g->det( matrix E || sub(g, ring E),Strategy=>Cofactor));
    Target:=apply(F,f->det( matrix E || sub(f, ring E),Strategy=>Cofactor));
-   Ret:=track(Start,Target,Sols,gamma=>exp(2*pi*ii*random RR)) / coordinates;
+   Ret:=track(Start,Target,Sols,NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)) / coordinates;
    if o.Memoize then solutionsHash#{l,m,F} = Ret;  
    return Ret;
 )

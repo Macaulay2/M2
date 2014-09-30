@@ -1,6 +1,49 @@
+-- Documentation Littlewood-Richardson
+--------------
+doc ///
+   Key
+      solveSchubertProblem
+   Headline
+      Uses homotopies of geometric Littlewood-Richardson rule to solve Schubert problems on Grassmannians
+   Usage
+      solveSchubertProblem
+   Inputs
+      kn:Sequence
+         two integers denoting the Grassmannian Gr(k,n)
+      l:List
+      m:List
+         partitions of n
+      G:List
+         of fixed Flags G_1,...,G_d
+   Outputs
+      :List
+         solutions of the simple Schubert Problem defined by l and m with respect to the flags G_1,...,G_d
+   Description
+      Text
+         Given partitions $l$ and $m$ in the Grassmannian $Gr(k,n)$, and a set of fixed flags $G_1,...,G_d$, where $d=k*(k-n) - |l| - |m|$. The function solves the system taking the first $d-1$ flags, and replacing the last one for a simpler one $G_m$. Then it uses homotopy continuation to track the solutions of this simpler system to solutions of the original system.         
+    	 This function is used to solve Simple Schubert Problems, as described in the paper:          
+    	 Leykin and Sottile, "Galois groups of Schubert problems via homotopy continuation", Mathematics of Computation, 78 (2009) 1749--1765.
+      Example
+         ---- Simple Schubert Problem
+       	 k = 3
+	 n = 7
+       	 l = {2,1,0}
+       	 m = {1,1,0}
+       	 ----  Generate random flags G----
+       	 d = k*(n-k)-sum(l)-sum(m);
+       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+       	 ---------------------------------
+       	 solveSimpleSchubert((k,n),l,m,G)
+   SeeAlso
+         createRandomFlagsForSimpleSchubert 
+         skewSchubertVariety
+///;
+-------------------
+-- Documentation Pieri Homotopy
 doc ///
    Key
       skewSchubertVariety
+      (skewSchubertVariety,Sequence,List,List)
    Headline
       skew Schubert variety (or Richardson variety) from partitions $l$ and $m$
    Usage
@@ -82,7 +125,7 @@ doc ///
        	 m = {1,1,0}
        	 ----  Generate random flags G----
        	 d = k*(n-k)-sum(l)-sum(m);
-       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+       	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
        	 ---------------------------------
        	 solveSimpleSchubert((k,n),l,m,G)
    SeeAlso
@@ -119,8 +162,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
    	  ---------------------------------
    	  trackSimpleSchubert((k,n),(l,m),G,F)
        Text
@@ -132,8 +175,8 @@ doc ///
    	  m = {1,1,0}
    	  ----  Generate random flags G and F----
    	  d = k*(n-k)-sum(l)-sum(m);
-   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
-   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)));
+   	  G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
+   	  F = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
    	  ---------------------------------
    	  Solns = solveSimpleSchubert((k,n),l,m,G);
           trackSimpleSchubert((k,n),(l,m),G,F, StartSolutions=>Solns)
