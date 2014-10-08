@@ -2088,6 +2088,12 @@ serialNumber(e:Expr):Expr := (
      else WrongArg("a symbol or a mutable hash table or list"));
 setupfun("serialNumber",serialNumber);
 
+header "extern void TS_Test();";
+threadTest(e:Expr):Expr := (
+     Ccode(void, "TS_Test()");
+     nullE);
+setupfun("threadTest",threadTest);
+
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "
 -- End:
