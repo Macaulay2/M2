@@ -7,7 +7,7 @@ include ../Makefile.common
 include @srcdir@/../Makefile.files
 include @srcdir@/../f4/Makefile.files
 include @srcdir@/Makefile.files
-export LD_LIBRARY_PATH = $(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
      -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
