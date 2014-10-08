@@ -37,6 +37,24 @@ BENCHMARK = (str) -> TEST str
 -- These are the tests that are too slow to run on a regular basis
 TOODAMNSLOW = (str) -> null
 
+-------------------------------
+-- simple tests of minprimes --
+-------------------------------
+TEST ///
+  needsPackage "MinimalPrimes"
+  R = ZZ/101[a..d]
+  assert(minprimes ideal(0_R) == {ideal(0_R)})
+  assert(minprimes ideal(1_R) == {})
+  assert(minprimes ideal(a^2-2*a*b+b^2) == {ideal(a-b)})
+  I = ideal(a^2-b^2, c*d)
+  C = minprimes I
+  A = R/I
+  assert( # minprimes ideal(0_A) == 4)
+  assert( all(minprimes ideal(0_A), I -> ring I === A))
+  assert(minprimes ideal(1_A) == {})
+///
+
+
 -- radicalContainment
 TEST ///
     needsPackage "MinimalPrimes"
@@ -381,7 +399,7 @@ TEST ///
 
 BENCHMARK ///
   debug needsPackage "MinimalPrimes"
-  debug needsPackage "UnitTestsPD"
+  --debug needsPackage "UnitTestsPD"
   Q = ZZ/32003[a,b,c,d]
   -- 3 random cubics in R
   I = ideal(-840*a^3-7687*a^2*b+9625*a*b^2-3820*b^3-10392*a^2*c-13100*a*b*c-11362*b^2*c-7463*a*c^2-11288*b*c^2+1417*c^3-14802*a^2*d-7804*a*b*d+5834*b^2*d-10186*a*c*d-11900*b*c*
@@ -400,7 +418,6 @@ BENCHMARK ///
 
 SIMPLETEST ///
   needsPackage "MinimalPrimes"
-  needsPackage "UnitTestsPD"
   R = ZZ/32003[a,b,c,h]
   I = ideal(a+b+c,a*b+b*c+a*c,a*b*c-h^3)
   C = minprimes I;

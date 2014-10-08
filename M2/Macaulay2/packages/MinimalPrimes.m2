@@ -23,6 +23,7 @@ USEMGB = false;
 if USEMGB then needsPackage "MGBInterface";
 
 export {
+    installMinprimes,
     -- Support routines
     -- The following functions are used in UnitTestsPD.  They should
     -- removed from the export list upon release
@@ -64,6 +65,11 @@ export {
 raw  = value Core#"private dictionary"#"raw"
 rawGBContains = value Core#"private dictionary"#"rawGBContains"
 rawCharSeries = value Core#"private dictionary"#"rawCharSeries"
+
+installMinprimes = () -> (
+    minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
+     (I) -> minprimes(I, Verbosity=>2)
+    ))
 
 needs "./MinimalPrimes/factorTower.m2"
 
