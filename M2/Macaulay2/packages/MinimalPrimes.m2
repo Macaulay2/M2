@@ -18,6 +18,14 @@ newPackage(
         DebuggingMode => true
         )
 
+<< "warning!  This package is experimental.  The interface will change, and although" << endl;
+<< "  it passes its tests, it has not been fully debugged yet!" << endl;
+<< "  In particular, in small characteristic, it *sometimes* might miss a component" << endl;
+
+
+
+
+
 USEMGB = false;
 --USEMGB = true;
 if USEMGB then needsPackage "MGBInterface";
