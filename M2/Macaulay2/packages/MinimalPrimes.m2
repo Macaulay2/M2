@@ -476,7 +476,8 @@ splitFunction#Linear = (I, opts) -> (
     if I.?Linear then return {I};
     J := I.Ideal;
     linears := for x in gens ring J list (
-        k := position(J_*, f -> first degree contract(x,f) == 0);
+        -- find a position k such that x appears linearly, with constant coeff in J_k
+        k := position(J_*, f -> f != 0 and degree(x,f) == 1 and support contract(x,f) === {});
         if k === null then continue;
         m := makeLinearElement(x, J_k);
         J = replaceVariable(J,m);
