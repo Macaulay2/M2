@@ -1,8 +1,8 @@
 newPackage(
         "MinimalPrimes",
         Headline => "minimal primes of an ideal",
-        Version => "0.8", 
-        Date => "Oct 7, 2014",
+        Version => "0.8+", 
+        Date => "Oct 9, 2014",
         Authors => {
             {Name => "Frank Moore",
 	            HomePage => "http://users.wfu.edu/moorewf/",
@@ -22,16 +22,36 @@ newPackage(
 << "  it passes its tests, it has not been fully debugged yet!" << endl;
 << "  In particular, in small characteristic, it *sometimes* might miss a component" << endl;
 
-
-
-
-
-USEMGB = false;
 --USEMGB = true;
-if USEMGB then needsPackage "MGBInterface";
+USEMGB = false;
+--if USEMGB then needsPackage "MGBInterface";
 
 export {
+    -- Main functions
     installMinprimes,
+    minprimes,
+    newIsPrime
+    }
+
+protect symbol IndependentSet
+protect symbol Trim
+protect symbol Birational
+protect symbol Linears
+protect symbol DecomposeMonomials
+protect symbol Factorization
+protect symbol SplitTower
+protect symbol CharacteristicSets
+
+protect symbol Inverted
+protect symbol LexGBOverBase
+protect symbol NonzeroDivisors
+protect symbol LexGBSplit
+protect symbol Squarefree  -- MES todo: this is never being set but is being tested.
+
+protect symbol toAmbientField
+protect symbol fromAmbientField
+{*
+    --
     -- Support routines
     -- The following functions are used in UnitTestsPD.  They should
     -- removed from the export list upon release
@@ -43,9 +63,7 @@ export {
     toAmbientField, 
     fromAmbientField,  
     -- Main functions
-    minprimes,
     minprimesWithStrategy,
-    newIsPrime,
     splitIdeal,
     splitIdeals,
     --- annotated ideal keys
@@ -68,7 +86,7 @@ export {
     CharacteristicSets,
     Minprimes,
     Squarefree
-}
+*}
 
 raw  = value Core#"private dictionary"#"raw"
 rawGBContains = value Core#"private dictionary"#"rawGBContains"
@@ -76,20 +94,21 @@ rawCharSeries = value Core#"private dictionary"#"rawCharSeries"
 
 installMinprimes = () -> (
     minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
-     (I) -> minprimes(I, Verbosity=>2)
-    ))
+     (I) -> minprimes(I, Verbosity=>2));
+    isPrime Ideal := (I) -> newIsPrime I;
+    << "minimalPrimes Ideal, decompose Ideal, and isPrime Ideal have been re-installed" << endl;
+    )
 
 needs "./MinimalPrimes/factorTower.m2"
 
 if USEMGB then (
   myGB = (I) -> (
-      L := MGB I;
-      L2 := flatten entries gens gb I;
-      J := ideal matrix{L};
+      L := groebnerBasis(I, Strategy=>"MGB");
+      J := ideal L;
       forceGB gens J;
-      if L2 != flatten entries gens gb J then << "OOPS: GB is different!\n" else "GBs are equal\n";
       J
-      )
+      );
+  MGB = (I) -> flatten entries gens myGB I;
 ) else (
   MGB = (I) -> flatten entries gens gb I;
   myGB = (I) -> ideal gens gb I;
@@ -128,10 +147,24 @@ strat0 = ({Linear,DecomposeMonomials},infinity)
 strat1 = ({Linear,DecomposeMonomials,(Factorization,3)},infinity)
 BirationalStrat = ({strat1, (Birational,infinity)},infinity)
 NoBirationalStrat = strat1
+stratEnd = {(IndependentSet,infinity),SplitTower, CharacteristicSets}
+
+getMinPrimesStrategy = strat -> (
+    -- input: string: String
+    -- output: is a strategy list/sequence, etc for use with minprimes
+    -- MES
+    if not instance(strat, String) then return strat;
+    if strat === "NoBirational" then
+        NoBirationalStrat
+    else if strat === "Birational" then
+        BirationalStrat
+    else
+        error ("unknown strategy: "|strat)
+    )
 
 minprimes = method(Options => {
         Verbosity => 0,
-        Strategy => BirationalStrat,  -- if null, calls older minprimesWorker code
+        Strategy => "Birational",  -- if null, calls older minprimesWorker code
         "SquarefreeFactorSize" => 1,
         "CodimensionLimit" => null, -- only find minimal primes of codim <= this bound
         "IdealSoFar" => null,  -- used in inductive setting
@@ -187,7 +220,8 @@ AnnotatedIdeal = new Type of MutableHashTable
 --- General AnnotatedIdeal commands ---------
 ---------------------------------------------
 
--- this function returns a list of the unique factors occurring in polyList, made monic
+-- this function returns a list of the unique factors (of positive degree)
+--  occurring in polyList, made monic.
 monicUniqueFactors = polyList -> (
     polyList1 := polyList/factors//flatten;
     polyList2 := select(polyList1, g -> #g > 0);
@@ -219,7 +253,7 @@ annotatedIdeal(Ideal, List, List, List) := (I, linears, nzds, inverted) -> (
         }
     )
 
-gb AnnotatedIdeal := opts -> (I) -> I.Ideal = ideal gens gb(I.Ideal, opts)
+gb AnnotatedIdeal := opts -> (I) -> I.Ideal = ideal gens time gb(I.Ideal, opts)
 
 -- getGB is used for finding a lower bound on the codim of the ideal I
 -- The idea is that sometimes the GB computation is too huge, and we
@@ -1002,8 +1036,6 @@ splitIdeal(AnnotatedIdeal) := opts -> (I) -> (
     splitIdeals({I}, opts.Strategy, opts)
     )
 
-stratEnd = {(IndependentSet,infinity),SplitTower, CharacteristicSets}
---stratEnd = {(IndependentSet,infinity),CharacteristicSets}
 
 --------------------------------
 --- PDState commands -----------
@@ -1115,6 +1147,7 @@ doSplitIdeal(Ideal) := opts -> (I) -> (
     M := splitIdeals({annotatedIdeal(I,{},{},{})}, opts.Strategy, opts);
     numRawPrimes := numPrimesInPDState pdState;
     {getPrimesInPDState pdState, M}
+    --{pdState, M}
     )
 
 
@@ -1122,6 +1155,7 @@ doSplitIdeal(Ideal) := opts -> (I) -> (
 -- Minimal primes -----
 -----------------------
 minprimes Ideal := opts -> (I) -> (
+    strategy := getMinPrimesStrategy opts#Strategy;
     -- returns a list of ideals, the minimal primes of I
     A := ring I;
     (I',F) := flattenRing I; -- F is not needed
@@ -1141,7 +1175,7 @@ minprimes Ideal := opts -> (I) -> (
     -- note: at this point, R is the ring of I, and R is a polynomial ring over a prime field
     C := minprimesWithStrategy(I,
                        "CodimensionLimit" => opts#"CodimensionLimit",
-                       Strategy=>opts#Strategy,
+                       Strategy=>strategy,
                        "SquarefreeFactorSize"=>opts#"SquarefreeFactorSize",
                        Verbosity=>opts#Verbosity);
     C / backToOriginalRing
@@ -1447,12 +1481,41 @@ time minprimes(I1, "CodimensionLimit"=>6, Verbosity=>2);
 --        funny gradings
 --        quotient rings
 --
--- minprimes: installs itself into decompose.
---   minprimes should stash its answer
---             should work for quotients
---             should give errors for general situations
+-- minprimes: installs itself into decompose. DONE
+--   minprimes should stash its answer DONE
+--             should work for quotients DONE
+--             should give errors for general situations DONE?
 --             what about over ZZ?
 --             absolute case?
 --             factorization over towers?
 --  a better inductive system?
---  min primes of modules?
+--
+-- Mike and Frank talking 10/9/2014
+-- to do:
+-- .  The function 'factors' needs documentation and tests.  In fact, it is failing in some cases (e.g.
+--    when 'factor' returns a factor not in the polynomial ring.
+-- .  Document minprimes, something about the strategies
+-- .  Export only the symbols we want
+-- .  
+restart
+needsPackage "MinimalPrimes"
+check oo
+
+R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
+I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
+-- C = doSplitIdeal(I1, Verbosity=>2)
+time minprimes(I1, "CodimensionLimit"=>6, Verbosity=>2)
+C = time minprimes I1
+C = time minprimes(I1, Strategy=>"NoBirational", Verbosity=>2)
+C = time minprimes(I1, Strategy=>"NoBirationa", Verbosity=>2)
+
+R1 = QQ[a,b,c]
+I1 = ideal(a^2-3, b^2-3)
+C = doSplitIdeal(I1, Verbosity=>2)
+minprimes(I1, Verbosity=>2)
+
+kk = ZZ/7
+R = kk[x,y,t]
+I = ideal {x^7-t^2,y^7-t^2}
+minprimes I
+C = doSplitIdeal(I, Verbosity=>2)
