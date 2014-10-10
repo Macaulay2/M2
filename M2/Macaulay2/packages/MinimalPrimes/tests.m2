@@ -54,10 +54,20 @@ TEST ///
   assert(minprimes ideal(1_A) == {})
 ///
 
+TEST ///
+  needsPackage "MinimalPrimes"
+  R = QQ[x,r,v,u,b, MonomialOrder=>{Lex=>5}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  time minprimes(I, Verbosity=>2)
+  
+  R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
+  I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
+  time minprimes(I, Verbosity=>2) -- error right off BUG
+///
 
 -- radicalContainment
 TEST ///
-    needsPackage "MinimalPrimes"
+    debug needsPackage "MinimalPrimes"
     R = ZZ/32003[a..f]
     F = map(R,R,symmetricPower(2,matrix{{a,b,c}}))
     I = ker F
@@ -69,7 +79,7 @@ TEST ///
 ///
 
 TEST ///
-    needsPackage "MinimalPrimes"
+    debug needsPackage "MinimalPrimes"
     R = (frac(QQ[a,b]))[x,y,z]
     F = 15 * a * (a*x-y-1/a)^2 * (1/b * x * z - a * y)^2
     assert(set factors F === set {(2, a^2*x-a*y-1), (2, x*z - a*b*y)})
@@ -80,7 +90,7 @@ TEST ///
 ///
 
 TEST ///
-    needsPackage "MinimalPrimes"
+    debug needsPackage "MinimalPrimes"
     R = QQ[a,b,x,y,z]
     F = 15 * a * (a*x-y-a^2)^2 * (b^2 * x * z - a * y)^2
     assert(set factors F === set {(1,a), (2, -a*x+y+a^2), (2, b^2*x*z - a*y)})
@@ -88,7 +98,7 @@ TEST ///
 ///
 
 TEST ///
-    needsPackage "MinimalPrimes"
+    debug needsPackage "MinimalPrimes"
     R = QQ[a,b]
     assert (factors 0_R == {(1,0_R)})
     assert (factors 1_R == {})
@@ -861,6 +871,12 @@ TOODAMNSLOW ///
 	 a*b*c*d*e+b*c*d*e*f+c*d*e*f*a+d*e*f*a*b+e*f*a*b*c+f*a*b*c*d,
 	 a*b*c*d*e*f-h^6)
 
+  time minprimes(I, Verbosity=>2); -- gives an error:
+    -- Strategy: IndependentSet    ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44:(3):[27]: error: no coefficient ring present
+    -- ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44:(3):[27]: --entering debugger (type help to see debugger commands)
+    -- ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44-1279:67: --source code:
+    -- facs = apply(#facs, i -> (facs#i#1, (1/leadCoefficient facs#i#0) * facs#i#0 ));
+
   strat1 = ({Linear,DecomposeMonomials,(Factorization,3)},infinity)
   stratD = {strat1, (Birational,infinity)}
   time C = minprimesWithStrategy(I, Strategy=>stratD, Verbosity=>2);
@@ -868,7 +884,7 @@ TOODAMNSLOW ///
 ///
 
 BENCHMARK ///
-  needsPackage "MinimalPrimes"
+  debug needsPackage "MinimalPrimes"
   R = ZZ/32003[a,b,c,d,e,f,g,h,j,k,l]
   I = ideal(h*j*l-2*e*g+16001*c*j+16001*a*l,h*j*k-2*e*f+16001*b*j+16001*a*k,h*j^2+2*e^2+16001*a*j,d*j^2+2*a*e,g*h*j+e*h*l+8001*d*j*l+16001*c*e+16001*a*g,f*h*j+e*h*k+8001*d*j*k+16001*b*e+16001*a*f
           ,e*g*j+8001*c*j^2+e^2*l,d*g*j+d*e*l+16001*a*c,e*f*j+8001*b*j^2+e^2*k,d*f*j+d*e*k+16001*a*b,d*e*j-a*h*j-16001*a^2,d*e^2-a*e*h-8001*a*d*j,d*g*k*l-c*h*k*l-d*f*l^2+b*h*l^2-2*c*f*g+2*b*g^2-16001
