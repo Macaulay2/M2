@@ -1,11 +1,9 @@
 export {   
-   StartSolutions,
-   skewSchubertVariety,
    createRandomFlagsForSimpleSchubert,
-   solveSimpleSchubert,
-   trackSimpleSchubert,
-   Memoize
+   solveSimpleSchubert
    }
+protect StartSolutions
+protect Memoize
 
 solutionsHash := new MutableHashTable;
 

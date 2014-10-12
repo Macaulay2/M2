@@ -1,8 +1,7 @@
 export {
     checkIncidenceSolution, --this is only for our tests... shouldn't be used by the user
-    moveFlags2Flags, 
-    solsToFavCoords, --choose better name
     checkNewtonIteration, -- this is for testing only should be removed from the final version
+    solutionsToAffineCoords,
     partition2bracket,
     bracket2partition
     }
@@ -133,7 +132,7 @@ checkNewtonIteration (List,List,Sequence) := (Solns, Pblm, kn)->(
     Vs := first entries vars RX;
     coordX := matrix pack(first entries vars RX,k)||id_(FFF^k);
     polySyst := makePolynomials(coordX,PblmTransf);
-    solsInCoordsX := solsToFavCoords SolTransformed;
+    solsInCoordsX := solutionsToAffineCoords SolTransformed;
     solutions := apply(solsInCoordsX, X-> toRawSolutions(coordX,X));
     squareSyst:=first entries squareUpPolynomials(numgens ring polySyst, polySyst);
     -- we compute the Jacobian of the system
@@ -198,12 +197,12 @@ dist(List,List) := (solns1,solns2) -> (
 
 
 ------------------------
--- solsToFavCoords
+-- solutionsToAffineCoords
 ------------------------
 -- writting the solutions in global coords
 -- as a set of solutions in terms of my
 -- favorite coordinate chart:
--- s = [**||id] the identity on top
+-- s = [**||id] the identity on bottom
 -------------------------
 -- Caveat!!!
 -------------------------
@@ -215,8 +214,8 @@ dist(List,List) := (solns1,solns2) -> (
 -- transformation of the solutions (and flags) before calling
 -- this function
 --------------------------------------------------
-solsToFavCoords = method()
-solsToFavCoords List := Solutions ->(
+solutionsToAffineCoords = method()
+solutionsToAffineCoords List := Solutions ->(
     apply(Solutions, s->(
 	    k:=numColumns(s);
 	    n:=numRows(s);
