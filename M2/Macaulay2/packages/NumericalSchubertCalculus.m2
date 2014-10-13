@@ -27,8 +27,8 @@ newPackage(
 
 export {   
    NSC'DBG, NSC'VERIFY'SOLUTIONS, NSC'BLACKBOX, setFlags,
-   solveSchubertProblem,
-   changeFlags  -- better name?
+   solveSchubertProblem
+   --   changeFlags  -- better name?
    }
 protect Board
 protect IsResolved
