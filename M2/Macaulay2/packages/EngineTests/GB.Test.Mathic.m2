@@ -70,9 +70,12 @@ TEST ///
   assert(g1 == g2)
 
   -- the following cases are not covered by MGB
+  -- But: it quietly changes to the default algorithm.
   R = QQ[a..d]
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
-  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); false) else true)
+  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); true) else false)
+  
+  -- This one still gives an error.
   R = ZZ/101[a..d]/(a^2+b^2)
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
   assert try (g1 = groebnerBasis(I, Strategy=>"MGB"); false) else true

@@ -120,7 +120,11 @@ groebnerBasis = method( TypicalValue => Matrix, Options => new OptionTable from 
 
 groebnerBasis Ideal := opts -> x -> groebnerBasis(generators x, opts)
 groebnerBasis Matrix := opts -> x -> (
-    if opts.Strategy =!= null then (
+    R := ring x;
+    if opts.Strategy =!= null 
+      and char R > 0 -- MGB only works over prime finite fields
+      and char R === (coefficientRing R).order -- needs currently to be a prime field
+      then (
         mgbopts := opts#"MGBOptions";
         if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
         else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
