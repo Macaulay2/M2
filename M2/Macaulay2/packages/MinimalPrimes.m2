@@ -94,7 +94,7 @@ rawCharSeries = value Core#"private dictionary"#"rawCharSeries"
 
 installMinprimes = () -> (
     minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
-     (I) -> minprimes(I, Verbosity=>2));
+     (I) -> minprimes(I, Verbosity=>0));
     isPrime Ideal := (I) -> newIsPrime I;
     << "minimalPrimes Ideal, decompose Ideal, and isPrime Ideal have been re-installed" << endl;
     )
@@ -253,7 +253,7 @@ annotatedIdeal(Ideal, List, List, List) := (I, linears, nzds, inverted) -> (
         }
     )
 
-gb AnnotatedIdeal := opts -> (I) -> I.Ideal = ideal gens time gb(I.Ideal, opts)
+gb AnnotatedIdeal := opts -> (I) -> I.Ideal = ideal gens gb(I.Ideal, opts)
 
 -- getGB is used for finding a lower bound on the codim of the ideal I
 -- The idea is that sometimes the GB computation is too huge, and we

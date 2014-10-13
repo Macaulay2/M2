@@ -34,13 +34,13 @@ idealToFactorList Ideal := I -> flatten (I_* / factors / (l -> l / toList))
 --     reason: after change of coordinates, the minimal polynomial has too small of degree
 --     to prove that we have completely factored the ideal.
 
-exportMutable globalTowerList
-globalTowerList = {}
+----exportMutable globalTowerList
+----globalTowerList = {}
 
 factorTower = method(Options => {Verbosity => 0})
 factorTower List := opts -> polyList -> (
-    << "factorTower: " << netList polyList << endl;
-    globalTowerList = append(globalTowerList, polyList);    
+    ----<< "factorTower: " << netList polyList << endl;
+    ----globalTowerList = append(globalTowerList, polyList);    
     -- partition the generators into linear and nonlinear terms
     E := partition(p -> hasLinearLeadTerm(p // leadCoefficient p), polyList);
     -- nothing to do, since all generators are linear

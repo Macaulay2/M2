@@ -186,6 +186,7 @@ TEST ///
   debug needsPackage "MinimalPrimes"
   R = QQ[a,b,c,d,e,h]
   J = ideal(d+3*e+c,b-e,a-e,e*h+3*e*c-h^2+h*c+c^2,e^2+3*e*c+c^2)
+  minprimes J
   assert( independentSets J == {h}) 
   Je = extendIdeal J
   use ring Je
@@ -1071,12 +1072,6 @@ TOODAMNSLOW ///
   --checkMinimalPrimes(I, C, "Answer" => decompose) -- decompose is TOO slow here
   -- TODO: need to be able to check this answer
   assert false
-
-
-{*
-    BUGGY!! This goes into an infinite loop 22 Jan 2013
-  C = time minprimes(I,Strategy=>{Linear,Birational,Factorization,DecomposeMonomials,Linear,Factorization});    -- 1.25 sec
-*}
 ///
 
 TEST ///
@@ -1196,12 +1191,8 @@ TOODAMNSLOW ///
     -a+2x,
     -b2-c2+2bx+2cy,
     -d2-f2-g2+2dx+2fy+2gz"
-  -- too much time being spent in equidimSplitOneStep again, 'gens gb IS' line
-  time C = minprimes(I,Verbosity=>2) -- takes a while  NEEDS WORK TOO DAMN SLOW
-  -- this works with the new splitIdeal code using the Birational split.
-  {*
-  C = time minprimes(I,Strategy=>{Linear,Birational});
-  *}
+
+  time C = minprimes(I,Verbosity=>2)
   time decompose I -- .74 sec
   checkMinimalPrimes(I, C, "Answer" => decompose) 
 ///
@@ -1430,6 +1421,7 @@ end
 restart
 needsPackage "MinimalPrimes"
 kk = GF(7)
+kk = ZZ/7
 R = kk[x,y,t]
 I = ideal {x^7-t^2,y^7-t^2}
 I' = sub(I, {x => (random kk)*y + (random kk)*x, y => (random kk)*x + (random kk)*y})
