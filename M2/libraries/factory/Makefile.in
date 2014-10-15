@@ -6,13 +6,12 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 4.0.0+m4
+LIBNAME = factory+m4
+VERSION = 4.0.1
 VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-#TARFILE = factory-$(VERSIONH).tar.gz
-TARFILE = factory-$(VERSION).tar.gz
-TARDIR = $(LIBNAME)-$(VERSION)/factory-4.0.0
+TARDIR = $(LIBNAME)-$(VERSION)/factory
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-PRECONFIGURE = autoreconf -i
+PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
