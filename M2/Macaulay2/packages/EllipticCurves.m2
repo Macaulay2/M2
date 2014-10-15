@@ -12,20 +12,20 @@ newPackage(
     	)
 
 export {
-    "EllipticCurve"
-    "EllipticCurveW"
-    "EllPoint"
-    "EllPointW"
-    "ellCurve"
-    "ellPoint"
-    "isElliptic"
-    "isOnEllCurve"
-    "Discriminant"
-    "jInvariant"
-    "toShortWForm"
-    "ellCurveFromjInv"
-    "toWeierstrass"
-    "bruteForceRationalPoints"
+    "EllipticCurve",
+    "EllipticCurveW",
+    "EllPoint",
+    "EllPointW",
+    "ellCurve",
+    "ellPoint",
+    "isElliptic",
+    "isOnEllCurve",
+    "Discriminant",
+    "jInvariant",
+    "toShortWForm",
+    "ellCurveFromjInv",
+    "toWeierstrass",
+    "bruteForceRationalPoints",
     "bruteForceGroupOrder"
     }
 protect curve
