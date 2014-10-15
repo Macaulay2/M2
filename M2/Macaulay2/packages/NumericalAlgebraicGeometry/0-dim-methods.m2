@@ -3,8 +3,30 @@
 -- not included in other files
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-
-solveSystem = method(TypicalValue => List, Options =>{Software=>null, PostProcess=>true})
+solveSystem = method(TypicalValue => List, Options =>{
+	PostProcess=>true, 
+	-- *** below are the relevant options of track ***
+	Software=>null, 
+	NumericalAlgebraicGeometry$gamma=>null, 
+	NumericalAlgebraicGeometry$tDegree=>null,
+	-- step control
+	tStep => null, -- initial
+	tStepMin => null,
+	stepIncreaseFactor => null,
+	numberSuccessesBeforeIncrease => null,
+	-- predictor 
+	Predictor=>null, 
+	-- corrector 
+	maxCorrSteps => null,
+	CorrectorTolerance => null, -- tracking tolerance
+	-- end of path
+	EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	InfinityThreshold => null, -- used to tell if the path is diverging
+	SingularConditionNumber=>null, -- threshold for the condition number of the jacobian
+	-- projectivize and normalize
+	Normalize => null, -- normalize in the Bombieri-Weyl norm
+	Projectivize => null
+	})
 solveSystem List := List => o -> F -> (
     checkCCpolynomials F;
     solveSystem(polySystem F, o)
