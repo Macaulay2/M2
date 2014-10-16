@@ -137,6 +137,8 @@ findGalois(ZZ,ZZ) := RingElement => opts -> (p,n) -> (
 GF(ZZ,ZZ) := GaloisField => opts -> (p,n) -> (
      if not isPrime p then error "expected a prime number as base";
      if n <= 0 then error "expected positive exponent";
+     if n == 1 and member(opts.Strategy, {"Flint", "Old", "Aring", "Ffpack"})
+       then return ZZp(p, Strategy => opts.Strategy);
      x := opts.Variable;
      primelem := findGalois(p,n,opts);
      GF(ring primelem, PrimitiveElement=>primelem, Strategy=>opts.Strategy, SizeLimit=>opts.SizeLimit, Variable=>opts.Variable)
