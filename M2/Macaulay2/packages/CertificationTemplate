@@ -6,6 +6,7 @@
 		"article title" => "...",
 		"acceptance date" => "...",
 		"published article URI" => "http://j-sag.org/Volume.../....pdf",
+         	"published article DOI" => "http://dx.doi.org/...",
 		"published code URI" => "http://j-sag.org/Volume.../....m2",
      	        "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/....m2",
 		"release at publication" => "...",	    -- git commit number in hex
