@@ -74,10 +74,10 @@ TEST ///
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
   assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); true) else false)
   
-  -- This one still gives an error.
+  -- This one quietly uses the default algorithm too
   R = ZZ/101[a..d]/(a^2+b^2)
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
-  assert try (g1 = groebnerBasis(I, Strategy=>"MGB"); false) else true
+  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); true) else false)
 ///
 
 TEST ///
