@@ -114,7 +114,7 @@ engineMGBF4 Ideal := opts -> (I) -> engineMGB(I, opts, "Reducer"=>"F4")
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
 
 groebnerBasis = method( TypicalValue => Matrix, Options => new OptionTable from {
-        Strategy => null, -- possible values: "mathic"
+        Strategy => null, -- possible values: "MGB", "F4"
         "MGBOptions" => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""}
         })
 
@@ -123,7 +123,9 @@ groebnerBasis Matrix := opts -> x -> (
     R := ring x;
     if opts.Strategy =!= null 
       and char R > 0 -- MGB only works over prime finite fields
-      and char R === (coefficientRing R).order -- needs currently to be a prime field
+      and isPolynomialRing R
+      and isCommutative R
+      and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
       then (
         mgbopts := opts#"MGBOptions";
         if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
