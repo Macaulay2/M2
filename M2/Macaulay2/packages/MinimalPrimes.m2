@@ -1,7 +1,7 @@
 newPackage(
         "MinimalPrimes",
         Headline => "minimal primes of an ideal",
-        Version => "0.8+", 
+        Version => "0.9", 
         Date => "Oct 9, 2014",
         Authors => {
             {Name => "Frank Moore",
