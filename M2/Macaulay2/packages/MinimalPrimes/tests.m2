@@ -62,7 +62,7 @@ TEST ///
   
   R = QQ[b][u][x,r,v, MonomialOrder=>{Lex=>3}]
   I = ideal(b^3-7*b^2+14*b-7,r^2-u*r+(-2*b^2+9*b-5)*u^2+b^2-4*b,x^2+(b-2)*x*r+r^2+b^2-4*b)
-  time minprimes(I, Verbosity=>2) -- error right off BUG
+  time minprimes(I, Verbosity=>2)
 ///
 
 -- radicalContainment
@@ -872,15 +872,7 @@ TOODAMNSLOW ///
 	 a*b*c*d*e+b*c*d*e*f+c*d*e*f*a+d*e*f*a*b+e*f*a*b*c+f*a*b*c*d,
 	 a*b*c*d*e*f-h^6)
 
-  time minprimes(I, Verbosity=>2); -- gives an error:
-    -- Strategy: IndependentSet    ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44:(3):[27]: error: no coefficient ring present
-    -- ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44:(3):[27]: --entering debugger (type help to see debugger commands)
-    -- ../../../../Macaulay2/packages/MinimalPrimes.m2:1279:44-1279:67: --source code:
-    -- facs = apply(#facs, i -> (facs#i#1, (1/leadCoefficient facs#i#0) * facs#i#0 ));
-
-  strat1 = ({Linear,DecomposeMonomials,(Factorization,3)},infinity)
-  stratD = {strat1, (Birational,infinity)}
-  time C = minprimesWithStrategy(I, Strategy=>stratD, Verbosity=>2);
+  time minprimes(I, Verbosity=>2);
   checkMinimalPrimes(I,C)
 ///
 
@@ -1069,6 +1061,7 @@ TOODAMNSLOW ///
   c2 + 2bd + 2ae + f2 + e,
   2cd + 2be + 2af + f"
   time C = minprimes(I,Verbosity=>2)
+  time checkMinimalPrimes(I,C);
   --checkMinimalPrimes(I, C, "Answer" => decompose) -- decompose is TOO slow here
   -- TODO: need to be able to check this answer
   assert false
@@ -1175,7 +1168,7 @@ TEST ///
   checkMinimalPrimes(I, C, "Answer" => decompose) -- immediate
 ///
 
-TOODAMNSLOW ///
+TEST ///
   needsPackage "MinimalPrimes"
   -- DGP Wang
   R = QQ[a,b,c,d,f,g,h,k,l,s,t,u,v,w,x,y,z]
@@ -1193,7 +1186,6 @@ TOODAMNSLOW ///
     -d2-f2-g2+2dx+2fy+2gz"
 
   time C = minprimes(I,Verbosity=>2)
-  time decompose I -- .74 sec
   checkMinimalPrimes(I, C, "Answer" => decompose) 
 ///
 
@@ -1337,12 +1329,11 @@ TEST ///
 TOODAMNSLOW ///
   -- Comes from newGTZ/siphon-eg.m2
   -- Large Naive Franzi example
-  restart
   debug needsPackage "MinimalPrimes"
-  needsPackage "UnitTestsPD"
   R1 = QQ[a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,M,MonomialSize => 8]
   I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, k*z-z^2, m*w-w^2, j^2-j*t, d*f-f^2, p*y*M-p^2, k*w*M-w^2, j*r*M-j*t, I*J*L-J^2, B*H*L-H^2, A*E*L-E^2, b*C*L-C^2, b*B*L-b^2, t*x*L-x^2, a*u*L-a^2, m*q*L-q^2, d*g*L-g^2, o*J*K-J^2, k*s*K-K^2, i*B*H-H^2, l*F*G-G^2, v*D*F-D^2, e*z*F-z^2, r*y*F-r^2, f*s*F-f^2, j*p*F-j*t, o*D*E-E^2, r*s*D-D^2, b*i*C-C^2, s*v*y-v^2, i*j*x-x^2, i*q*w-q^2, a*o*u-a^2, i*k*r-r^2, f*g*o-g^2, h*i*n-h^2, e*i*l-l^2, c*h*i-h^2, y^2*M^2-p^2, r^2*M^2-j*t, k^2*M^2-w^2, I^2*L^2-J^2, B^2*L^2-b^2, A^2*L^2-E^2, t^2*L^2-x^2, m^2*L^2-q^2, d^2*L^2-g^2, y^2*F^2-r^2, v^2*F^2-D^2, s^2*F^2-f^2, p^2*F^2-j*t, l^2*F^2-G^2, e^2*F^2-z^2, i^2*B^2-H^2, s^2*y^2-v^2, o^2*u^2-a^2, r^2*s^2-D^2, k^2*s^2-K^2, i^2*k^2-r^2, e^2*i^2-l^2, c^2*i^2-h^2, b^2*i^2-C^2)
 
+  time C = minprimes(I1, Verbosity=>2);
   -- This took 2 mins on Frank's machine on 12/4/2012'
   time p1 = factorizationSplit(I1, "UseColon"=>false)
   -- TODO: Play with factorization depth in this example?

@@ -356,8 +356,12 @@ ideal AnnotatedIdeal := (I) -> (
        for linear in reverse I.Linears do (
            I2 = I2 + ideal last linear;
            if linear#1 == 1 then continue;
-           F := (factors linear#1)/last//product;
-           I2 = trim mySat(I2, F);
+           facs := factors linear#1;
+           if #facs != 0 then (
+               F := facs/last//product;
+               I2 = mySat(I2, F);
+               );
+           I2 = trim I2;
            );
        I2
     );
@@ -1290,12 +1294,13 @@ factors RingElement := (F) -> (
     if F == 0 then return {(1,F)};
     facs := if R.?toAmbientField then (
         F = R.toAmbientField F;
+        RU := ring numerator F;
         numerator factor F
         )
     else if isPolynomialRing R and instance(coefficientRing R, FractionField) then (
         KK := coefficientRing R;
         A := last KK.baseRings;
-        RU := (coefficientRing A) (monoid[generators R, generators KK, MonomialOrder=>Lex]);
+        RU = (coefficientRing A) (monoid[generators R, generators KK, MonomialOrder=>Lex]);
         setAmbientField(R, RU);
         F = R.toAmbientField F;
         numerator factor F
@@ -1305,7 +1310,12 @@ factors RingElement := (F) -> (
         -- WORKING ON THIS MES
         error "still need to handle FractionField case";
         )
-    else factor F;
+    else (
+        RU = ring F;
+        factor F
+        );
+    facs = facs//toList/toList; -- elements of facs: {factor, multiplicity}
+    facs = select(facs, z -> ring first z === RU);
     facs = apply(#facs, i -> (facs#i#1, (1/leadCoefficient facs#i#0) * facs#i#0 ));
     facs = select(facs, (n,f) -> # support f =!= 0);
     if R.?toAmbientField then apply(facs, (r,g) -> (r, R.fromAmbientField g)) else facs
