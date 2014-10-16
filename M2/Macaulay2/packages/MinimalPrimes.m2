@@ -11,7 +11,8 @@ newPackage(
             {Name => "Mike Stillman", 
                 Email => "mike@math.cornell.edu", 
                 HomePage => "http://www.math.cornell.edu/~mike"
-                }
+                },
+            {Name => "Franziska Hinkelmann"}
             },
         AuxiliaryFiles=>true,
         --PackageImports => {"MGBInterface"},
@@ -95,11 +96,12 @@ rawCharSeries = value Core#"private dictionary"#"rawCharSeries"
 installMinprimes = () -> (
     minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> minprimes(I, Verbosity=>0));
-    isPrime Ideal := (I) -> newIsPrime I;
-    << "minimalPrimes Ideal, decompose Ideal, and isPrime Ideal have been re-installed" << endl;
+    --isPrime Ideal := (I) -> newIsPrime I;
+    << "minimalPrimes Ideal, decompose Ideal, and isPrime Ideal have been " << endl;
+    << "re-installed to use experimental code" << endl;
     )
 
-needs "./MinimalPrimes/factorTower.m2"
+load "./MinimalPrimes/factorTower.m2"
 
 if USEMGB then (
   myGB = (I) -> (
@@ -166,7 +168,7 @@ minprimes = method(Options => {
         Verbosity => 0,
         Strategy => "Birational",  -- if null, calls older minprimesWorker code
         "SquarefreeFactorSize" => 1,
-        "CodimensionLimit" => null, -- only find minimal primes of codim <= this bound
+        CodimensionLimit => null, -- only find minimal primes of codim <= this bound
         "IdealSoFar" => null,  -- used in inductive setting
         "RadicalSoFar" => null, -- used in inductive setting
         "CheckPrimeOnly" => false
@@ -436,7 +438,7 @@ trim AnnotatedIdeal := opts -> I -> (
 splitIdeal = method(Options => {Strategy=>BirationalStrat,
                                 Verbosity=>0,
                                 "PDState"=>null,
-                                "CodimensionLimit" => null,
+                                CodimensionLimit => null,
                                 "SquarefreeFactorSize" => 1,
                                 "CheckPrimeOnly" => false})
   -- possible Strategy values:
@@ -995,8 +997,8 @@ splitIdeals(List, Symbol) := opts -> (L, strat) -> (
         tim := timing splitFunction#strat(f, opts);
         ans := tim#1;
         numOrig := #ans;
-        if opts#"CodimensionLimit" =!= null then 
-            ans = select(ans, i -> codimLowerBound i <= opts#"CodimensionLimit");
+        if opts.CodimensionLimit =!= null then 
+            ans = select(ans, i -> codimLowerBound i <= opts.CodimensionLimit);
         (primes,others) := separatePrime(ans);
         updatePDState(pdState,primes,numOrig - #ans);
         if opts.Verbosity >= 2 then << pad("(time " | toString (tim#0) | ") ", 16);
@@ -1115,8 +1117,8 @@ flagPrimality (PDState,Boolean) := (pdState,primality) -> (
 minprimesWithStrategy = method(Options => (options splitIdeals))
 minprimesWithStrategy(Ideal) := opts -> (I) -> (
     newstrat := {opts.Strategy, stratEnd};
-    if opts#"CodimensionLimit" === null then 
-      opts = opts ++ {"CodimensionLimit" => numgens I};
+    if opts.CodimensionLimit === null then 
+      opts = opts ++ {CodimensionLimit => numgens I};
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
     M := splitIdeals({annotatedIdeal(I,{},{},{})}, newstrat, opts);
@@ -1145,8 +1147,8 @@ minprimesWithStrategy(Ideal) := opts -> (I) -> (
 
 doSplitIdeal = method(Options => (options splitIdeals))
 doSplitIdeal(Ideal) := opts -> (I) -> (
-    if opts#"CodimensionLimit" === null then 
-      opts = opts ++ {"CodimensionLimit" => numgens I};
+    if opts.CodimensionLimit === null then 
+      opts = opts ++ {CodimensionLimit => numgens I};
     pdState := createPDState(I);
     opts = opts ++ {"PDState" => pdState};
     M := splitIdeals({annotatedIdeal(I,{},{},{})}, opts.Strategy, opts);
@@ -1179,7 +1181,7 @@ minprimes Ideal := opts -> (I) -> (
     if I == 0 then return {if A === R then I else ideal map(A^1,A^0,0)};
     -- note: at this point, R is the ring of I, and R is a polynomial ring over a prime field
     C := minprimesWithStrategy(I,
-                       "CodimensionLimit" => opts#"CodimensionLimit",
+                       CodimensionLimit => opts.CodimensionLimit,
                        Strategy=>strategy,
                        "SquarefreeFactorSize"=>opts#"SquarefreeFactorSize",
                        Verbosity=>opts#Verbosity);
@@ -1198,16 +1200,23 @@ assert(#(minprimes I1) == 22)
 newIsPrime = method(Options => {
                 Verbosity => 0,
                 Strategy => BirationalStrat,
-                "SquarefreeFactorSize" => 1})
+                "SquarefreeFactorSize" => 1
+                })
 
 newIsPrime Ideal := opts -> I -> (
-   minprimesWithStrategy(I,
-                         "CodimensionLimit" => opts#"CodimensionLimit",
-                         Strategy=>opts#Strategy,
-                         "SquarefreeFactorSize"=>opts#"SquarefreeFactorSize",
-                         Verbosity=>opts#Verbosity,
-                         "CheckPrimeOnly"=>true);
-)
+    C := minprimes(I, opts);
+    #C === 1 and C#0 == I
+    )
+
+-- This should work, but no time to debug it before version 1.7 (MES)
+-- Once it is working, check the logic of newIsPrime replacing isPrime
+--newIsPrime Ideal := opts -> I -> (
+--   minprimesWithStrategy(I,
+--                         Strategy=>opts#Strategy,
+--                         "SquarefreeFactorSize"=>opts#"SquarefreeFactorSize",
+--                         Verbosity=>opts#Verbosity,
+--                         "CheckPrimeOnly"=>true);
+--)
 ------------------------------
 -- Radical containment -------
 ------------------------------
@@ -1436,22 +1445,93 @@ doc ///
 Key
   MinimalPrimes
 Headline
-  minimal primes of an ideal
+  experimental package: minimal primes of an ideal
 Description
   Text
-    Find the minial primes of an ideal in a polynomial ring over a field,
+    Find the minial primes of an ideal in a polynomial ring over a prime field,
     or a quotient ring of that.  These are the geometric components
     of the corresponding algebraic set.
     
     The main routine is @TO "minprimes"@, although in a future 
     release this will be renamed to {\tt minimalPrimes}.
-  Example
     
+    Use @TO "installMinprimes"@ to replace the system versions of 'decompose Ideal', 
+    'minimalPrimes Ideal' and 'isPrime Ideal'.  Warning!  Although this code passes
+    many tests, it has not been used any where near as often as the 'decompose'
+    function in Macaulay2.  However, in many cases the new function is {\it much} faster.
 Caveat
   Only works for ideals in (commutative)polynomial rings or quotients of 
-    polynomial rings over a field
+    polynomial rings over a prime field, might have bugs in small characteristic and larger degree 
+    (although, many of these cases are caught correctly).
 SeeAlso
+  decompose
   minimalPrimes
+  isPrime
+///
+
+doc ///
+   Key
+     minprimes
+   Headline
+     minimal primes in a polynomial ring over a field
+   Usage
+     C = minprimes I
+   Inputs
+     I:Ideal
+     Verbosity => ZZ
+       A larger number will cause more output during the computation
+     Strategy => String
+       The default is fine for most things.  If it is slow, try "NoBirational".
+         The strategies might change, so is it best to stick with these two
+         for now (there are other undocumented strategies)
+     CodimensionLimit => ZZ
+       Only find components of codimension less than or equal to this value
+   Outputs
+     C:List
+       a list of the minimal primes of I
+   Description
+    Text
+      Given an ideal in a polynomial ring, or a quotient of a polynomial ring
+      whose base ring is either {\tt QQ} or {\tt ZZ/p}, return a list
+      of minimal primes of the ideal.
+    Example
+      R = ZZ/32003[a..e]
+      I = ideal"a2b-c3,abd-c2e,ade-ce2"
+      C = minprimes I;
+      netList C
+    Example
+      C2 = minprimes(I, Strategy=>"NoBirational", Verbosity=>2)
+      C1 = minprimes(I, Strategy=>"Birational", Verbosity=>2)
+   Caveat
+     This will eventually be made to work over GF(q), and over other fields too.
+   SeeAlso
+///
+
+doc ///
+   Key
+     installMinprimes
+   Headline
+     install experimental functions into Macaulay2
+   Usage
+     installMinprimes()
+   Consequences
+     Item
+       Changes the methods @TO (decompose,Ideal)@, @TO (minimalPrimes, Ideal)@, and 
+         @TO (isPrime,Ideal)@
+   Description
+    Example
+      installMinprimes()
+      R = ZZ/32003[a..e]
+      I = ideal"a2b-c3,abd-c2e,ade-ce2"
+      C = minprimes I;
+      C1 = minimalPrimes I;
+      C == C1
+      netList C
+      C/isPrime
+   Caveat
+     This function will eventually go away, once this is no longer experimental code
+   SeeAlso
+     minprimes
 ///
 
 load "./MinimalPrimes/tests.m2"
@@ -1477,11 +1557,11 @@ restart
 debug needsPackage "MinimalPrimes"
 R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
 I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
-time minprimes(I1, "CodimensionLimit"=>6, Verbosity=>2)
+time minprimes(I1, CodimensionLimit=>6, Verbosity=>2)
 #(minprimes I1)
 #(oldMinPrimes I1)
-time minprimes(I1, "CodimensionLimit"=>7, Verbosity=>2)
-time minprimes(I1, "CodimensionLimit"=>6, Verbosity=>2);
+time minprimes(I1, CodimensionLimit=>7, Verbosity=>2)
+time minprimes(I1, CodimensionLimit=>6, Verbosity=>2);
 
 
 -- TODO to get this into the system:
@@ -1515,7 +1595,7 @@ check oo
 R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
 I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
 -- C = doSplitIdeal(I1, Verbosity=>2)
-time minprimes(I1, "CodimensionLimit"=>6, Verbosity=>2)
+time minprimes(I1, CodimensionLimit=>6, Verbosity=>2)
 C = time minprimes I1
 C = time minprimes(I1, Strategy=>"NoBirational", Verbosity=>2)
 C = time minprimes(I1, Strategy=>"NoBirationa", Verbosity=>2)

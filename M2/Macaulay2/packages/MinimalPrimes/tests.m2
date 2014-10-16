@@ -1,7 +1,4 @@
-export {checkMinimalPrimes, wallTime, wallTiming}
-
---debug needsPackage "MinimalPrimes"
-
+-- This function is not exported.  "debug MinimalPrimes" if you need it.
 checkMinimalPrimes = method(Options => {"Answer" => null, "CheckPrimality" => false})
 checkMinimalPrimes(Ideal, List) := opts -> (I, C1) -> (
     -- check that the intersection of the components in C1
@@ -19,6 +16,7 @@ checkMinimalPrimes(Ideal, List) := opts -> (I, C1) -> (
         );
     )
 
+-- These have been superceded by "elapsedTime"
 wallTime = Command (() -> value get "!date +%s")
 wallTiming = f -> (
     a := wallTime(); 
@@ -35,6 +33,7 @@ SIMPLETEST = (str) -> TEST str
 BENCHMARK = (str) -> TEST str
 
 -- These are the tests that are too slow to run on a regular basis
+-- Some are no longer so slow, and so need to have their heading changed.
 TOODAMNSLOW = (str) -> null
 
 -------------------------------
@@ -432,6 +431,7 @@ SIMPLETEST ///
   R = ZZ/32003[a,b,c,h]
   I = ideal(a+b+c,a*b+b*c+a*c,a*b*c-h^3)
   C = minprimes I;
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
   -- TODO: Change the below tests to work with the new
   -- strategies.  Need one test for each of the built-in
@@ -447,10 +447,12 @@ SIMPLETEST ///
 ///
 
 SIMPLETEST ///
-  debug needsPackage "MinimalPrimes"
+  needsPackage "MinimalPrimes"
   R = ZZ/32003[a,b,c,d,h]
   I = ideal(a+b+c+d,a*b+b*c+c*d+d*a,a*b*c+b*c*d+c*d*a+d*a*b,a*b*c*d-h^4)
   C = minprimes I
+    
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -459,6 +461,8 @@ SIMPLETEST ///
   R = QQ[a,b,c,d,h]
   I = ideal(a+b+c+d,a*b+b*c+c*d+d*a,a*b*c+b*c*d+c*d*a+d*a*b,a*b*c*d-h^4)
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -467,6 +471,8 @@ SIMPLETEST ///
   R = QQ[a,b,c,d]
   I = ideal(a^2-b^2,a*b*c-d^3,b*d^2-a*c^2)
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -475,6 +481,8 @@ SIMPLETEST ///
   R = ZZ/32003[a,b,c,d]
   I = ideal(a^2-b^2,a*b*c-d^3,b*d^2-a*c^2)
   C = minprimes I
+  
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -485,6 +493,8 @@ SIMPLETEST ///
   q = z^4+2
   I = ideal(p^2*q^3, (y-z^3)^3, (x-y*z+z^4)^4)
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -494,6 +504,8 @@ SIMPLETEST ///
   R = QQ[b,s,t,u,v,w,x,y,z];
   I = ideal"su - bv, tv - sw, vx - uy, wy - vz"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -502,6 +514,8 @@ SIMPLETEST ///
   R = QQ[vars(0..8)];
   I = ideal(b*d+a*e,c*d+a*f,c*e+b*f,b*g+a*h,c*g+a*i,c*h+b*i,e*g+d*h,f*g+d*i,f*h+e*i)
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -510,6 +524,8 @@ SIMPLETEST ///
   R = QQ[vars(0..8),MonomialOrder=>Lex];
   I = ideal(b*d+a*e,c*d+a*f,c*e+b*f,b*g+a*h,c*g+a*i,c*h+b*i,e*g+d*h,f*g+d*i,f*h+e*i)
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -521,6 +537,8 @@ SIMPLETEST ///
     x2y2z + xy2z2 + x2yz + xyz + yz + x + z,
     x2y2z2 + x2y2z + xy2z + xyz + xz + z + 1";
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -555,6 +573,8 @@ SIMPLETEST ///
     a + b + c + f + g - 1,
     3ad + 3bd + 2cd + df + dg - a - 2b - c - g"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -574,6 +594,8 @@ SIMPLETEST ///
             4ac3d - 3bc3e - 2cd2e2 + c4f, 8b2c2d - 4ad4 - 3bd3e - cd3f, 4b3cd + 3bd3f,                            4ab3d + 3b4e - b3cf - 6bd2f2,
             4a4d + 3a3be + a3cf - 8ae2f2"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -584,6 +606,8 @@ SIMPLETEST ///
   R = kk[vars(0..8)]
   I = ideal (genericMatrix(R,3,3))^2
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -604,6 +628,8 @@ SIMPLETEST ///
     (l-k)^2*(l-h),
     (l-k)*(l-j))
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -623,6 +649,8 @@ SIMPLETEST ///
     -pu2v2 + pu2w + qtx,
     tx2y - uv2z + uwz"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -645,6 +673,8 @@ SIMPLETEST ///
     x5z + x4z2 + x4z + 2x3z2 - x3z + x2z2 - x2z,
     x6y + 3x5y + 3x4y + x3y"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -657,6 +687,8 @@ SIMPLETEST ///
   I = ideal "o+1,k4+k,hk,h4+h,gk,gh,g3+h3+k3+1,fk,f4+f,eh,ef,f3h3+e3k3+e3+f3+h3+k3+1,e3g+f3g+g,e4+e,dh3+dk3+d,dg,df,de,
              d3+e3+f3+1,e2g2+d2h2+c,f2g2+d2k2+b,f2h2+e2k2+a"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -679,6 +711,8 @@ SIMPLETEST ///
   a3c3 - a3bd2,
   a4c2 - a3b2d"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -693,6 +727,8 @@ SIMPLETEST ///
     -x3y2+xy2z+xyz3-2xy+y4,
     -2x2y+xy4+yz4-3"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -708,6 +744,8 @@ SIMPLETEST ///
     2yzt+xt2-x-2z,
     -xz3+4yz2t+4xzt2+2yt3+4xz+4z2-10yt-10t2+2"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -728,6 +766,8 @@ SIMPLETEST ///
       + 40d2e2 + 1008ce - 1008de + 5184,
     -4b2c2 + 4b2cd - 3b2d2 + 22ce - 22de + 261"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -746,6 +786,8 @@ SIMPLETEST ///
     abc + abd + acd + bcd,
     bcdu + acdv + abdw + abcx"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -761,6 +803,8 @@ SIMPLETEST ///
   xz + yz + xt + zt - ac - ad - cd,
   xzt - acd"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -777,6 +821,8 @@ SIMPLETEST ///
     -c2l-cdl-cel-cfl-cgl-dgl-egl-fgl+c2+2cd+d2+cg+dg+ch+dh,
     -b + c + e + g + j"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -791,6 +837,8 @@ SIMPLETEST ///
   xy + z2 - 1,
   xyz - x2 - y2 - z + 1"
   C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -807,7 +855,9 @@ SIMPLETEST ///
 	 b*c*d*e+a*c*d*e+a*b*d*e+a*b*c*e+a*b*c*d,
 	 a*b*c*d*e-h^5)
    time C = minprimes I
-   checkMinimalPrimes(I, C, "Answer" => decompose)
+
+  debug MinimalPrimes
+  checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
 SIMPLETEST ///
@@ -825,8 +875,8 @@ SIMPLETEST ///
    --time C = splitIdeal(I, Strategy=> {defaultStrat,stratEnd}, Verbosity=>2);
    --select(C, c -> (gens I) % (ideal c) != 0)
    
-   checkMinimalPrimes(I, C, "Answer" => decompose)
-   
+  debug MinimalPrimes
+  checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
 TOODAMNSLOW ///
@@ -857,6 +907,8 @@ SIMPLETEST ///
      2*y*z*t+x*t^2-x-2*z,
      -x*z^3+4*y*z^2*t+4*x*z*t^2+2*y*t^3+4*x*z+4*z^2-10*y*t-10*t^2+2)
   time C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -873,6 +925,8 @@ TOODAMNSLOW ///
 	 a*b*c*d*e*f-h^6)
 
   time minprimes(I, Verbosity=>2);
+  
+  debug MinimalPrimes
   checkMinimalPrimes(I,C)
 ///
 
@@ -918,8 +972,9 @@ BENCHMARK ///
     8bdfg + 8eh3 - 8h4 + 4eh2 - 12h3 + 4eh - 14h2 - 3h - 1,
     12bdg2 + 12eh3 - 12h4 + 12eh2 - 18h3 + 8eh - 14h2 - h - 1,
     -24eh3 + 24h4 - 24eh2 + 36h3 - 8eh + 26h2 + 7h + 1"
-  time C = minprimes I -- 4 seconds -- why so slow?
-  time C1 = decompose I -- .12 sec
+  time C = minprimes I 
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) -- decompose is much faster on this one
 ///
 
@@ -952,6 +1007,8 @@ BENCHMARK  ///
     "
   time C = minprimes I -- 1.14 sec
   time C1 = decompose I -- .14 sec
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
   
   -- it does simplifyIdeal before the work of minprimes now.
@@ -974,6 +1031,8 @@ SIMPLETEST ///
     -d2 - 2ce - ah - 2bh
     "
   time C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) 
 ///
 
@@ -992,6 +1051,8 @@ TOODAMNSLOW ///
     -2dfj - 2dek + ab,
     -2dgj - 2del + ac"
   time C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) -- DECOMPOSE TOO SLOW HERE??  but it does work eventually
 
   C = time minprimes(I,Strategy=>{Linear,Birational,Factorization,DecomposeMonomials,Linear,Factorization});    -- 1.25 sec
@@ -1021,6 +1082,8 @@ SIMPLETEST ///
     4t2w - 6uwx + 12vwx - 6w2x + 2twy - 2wy2 - 2twz + wyz,
     8twx + 8wxy - 4wxz"
   time C = minprimes I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -1043,6 +1106,8 @@ SIMPLETEST ///
   -54acf - 54adf + a + d,
   adfg + a + d"
   time C = minprimes I -- slower than decompose
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -1061,6 +1126,9 @@ TOODAMNSLOW ///
   c2 + 2bd + 2ae + f2 + e,
   2cd + 2be + 2af + f"
   time C = minprimes(I,Verbosity=>2)
+
+
+  debug MinimalPrimes
   time checkMinimalPrimes(I,C);
   --checkMinimalPrimes(I, C, "Answer" => decompose) -- decompose is TOO slow here
   -- TODO: need to be able to check this answer
@@ -1080,13 +1148,13 @@ TEST ///
   u5 - s3tx + s2t2x + s2t2y - st3y"
   time C = minprimes I
   time decompose I
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
 TEST ///
-  restart
   needsPackage "MinimalPrimes"
-  needsPackage "UnitTestsPD"
   --from ExampleIdeals/DGP.m2
   kk = ZZ/101
   --wang1 (DGP)
@@ -1107,6 +1175,8 @@ TEST ///
   -e2f2g2hk2-ef2g2h2k2-e2f2g2k2l-2ef2g2hk2l-f2g2h2k2l-ef2g2k2l2
     - f2g2hk2l2 + a2"
   time C = minprimes(I,Verbosity=>2)
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -1122,6 +1192,8 @@ TEST ///
   twy2 + ty2z + y2z2,
   t2wx + t2wz + t2z2"
   time C = minprimes(I, Verbosity => 2)
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose)
 ///
 
@@ -1148,6 +1220,7 @@ TEST ///
                                           -- we throw in the birational elements.
   --time C = minprimes(I,Strategy=>null); -- Note this is the old minprimes call, same
                                           -- time as NoBirationalStrat above.
+
   checkMinimalPrimes(I,C)
   --checkMinimalPrimes(I, C, "Answer" => decompose) -- decompose is TOO long here.
   --TODO: need to get an answer for this one to check against
@@ -1164,7 +1237,9 @@ TEST ///
   y27,
   u27,
   u5-xy(x-y)(sx-ty)"
-  time C = minprimes I -- 16 seconds!!
+  time C = minprimes I 
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) -- immediate
 ///
 
@@ -1186,6 +1261,8 @@ TEST ///
     -d2-f2-g2+2dx+2fy+2gz"
 
   time C = minprimes(I,Verbosity=>2)
+
+  debug MinimalPrimes
   checkMinimalPrimes(I, C, "Answer" => decompose) 
 ///
 
@@ -1195,10 +1272,7 @@ TEST ///
   debug needsPackage "MinimalPrimes"
   R = QQ[e_1, e_2, e_3, e_4, g_1, g_2, g_3, g_4, r]
   I = trim ideal(0_R)
-  minprimes I
-  
-  --minprimesWorker I
-  --equidimSplitOneStep I -- still gives a ring in R
+  minprimes I == {I}
 ///
 
 TEST ///
@@ -1214,8 +1288,7 @@ TEST ///
 ///
 
 TEST ///
-  restart
-  debug loadPackage "MinimalPrimes"
+  needsPackage "MinimalPrimes"
 
   -- this example is one step from the stewart-gough example  
   R = QQ[e_1, e_2, e_3, e_4, g_1, g_2, g_3, g_4, r]
@@ -1265,7 +1338,6 @@ TEST ///
 ///
 
 TEST ///
--- These tests are in place until we write 
   needsPackage "MinimalPrimes"
   R1 = ZZ/101[a..d]/a^2
   assert(minprimes ideal(a*d) === {ideal(a)})
@@ -1283,21 +1355,18 @@ TEST ///
 ///
 
 TEST ///
-needsPackage "MinimalPrimes"
--- what about over GF?
+  needsPackage "MinimalPrimes"
+  -- what about over GF?
   kk = GF(9, Variable=>a)
   R = kk[x,y,z,w]
   I = ideal(x^2-x-a)
-  --minprimes I -- NOT FUNCTIONAL IN 1.5??  But it is in 1.5.0.1...
-  --factor I_0
+  minprimes I
 ///
 
 -- factorizationSplit test
-TEST ///
+///
   -- TODO : Turn this into a test.
-  restart
   debug needsPackage "MinimalPrimes"
-  needsPackage "UnitTestsPD"
   R1 = QQ[d, f, j, k, m, r, t, A, D, G, I, K];
   I1 = ideal ( I*K-K^2, r*G-G^2, A*D-D^2, j^2-j*t, d*f-f^2, d*f*j*k - m*r, A*D - G*I*K);
   facGB0(I1, set {})
