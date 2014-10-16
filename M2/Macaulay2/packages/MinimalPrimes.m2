@@ -1439,6 +1439,7 @@ findElementThatFactors List := L -> (
     )
 
 -------------------------------------------------------------
+load "./MinimalPrimes/tests.m2"
 beginDocumentation()
 
 doc ///
@@ -1448,7 +1449,7 @@ Headline
   experimental package: minimal primes of an ideal
 Description
   Text
-    Find the minial primes of an ideal in a polynomial ring over a prime field,
+    Find the minimal primes of an ideal in a polynomial ring over a prime field,
     or a quotient ring of that.  These are the geometric components
     of the corresponding algebraic set.
     
@@ -1534,7 +1535,6 @@ doc ///
      minprimes
 ///
 
-load "./MinimalPrimes/tests.m2"
 end
 
 doc ///
