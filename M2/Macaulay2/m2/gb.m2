@@ -126,6 +126,7 @@ groebnerBasis Matrix := opts -> x -> (
       and char R === (coefficientRing R).order -- needs currently to be a prime field
       then (
         mgbopts := opts#"MGBOptions";
+        if gbTrace > 0 then << "-- computing mgb " << mgbopts << endl;
         if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
         else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
         -- use rawMGB
