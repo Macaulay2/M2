@@ -22,7 +22,6 @@ export {
    testNorm,
    testClean,
    hasFFPACK,
-   hasMGB,
    fields,
     finitefields,
     fieldsFFPACK,
@@ -37,12 +36,6 @@ export {
 debug Core
 
 hasFFPACK = try (ZZp(101, Strategy=>"FFPACK"); true) else false;
-hasMGB = (
-    a := local a;
-    b := local b;
-    R := ZZ/101[a,b];
-    try (groebnerBasis(ideal vars R, Strategy=>"MGB"); true) else false
-    );
 
 fieldsFLINT = {
     "ZZpFlint 2",
