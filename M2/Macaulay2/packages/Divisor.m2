@@ -4033,7 +4033,7 @@ end
 ------added applyToCoefficients
 ------fixed some typos in documentation
 ------renamed module2Ideal to moduleToIdeal for consistency
-------added additional testing
+------added additional testing (in particular checking things for the zero divisor)
 
 
 --changes 0.1m
