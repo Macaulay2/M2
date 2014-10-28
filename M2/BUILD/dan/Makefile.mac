@@ -15,69 +15,33 @@
 
 PRODUCTION=yes
 DEBUG=no
+unexport DEBUG
 PROFILE=no
-FIX_UNWIND=no
+unexport PROFILE
 
-# CONFIGOPTIONS += --disable-strip
+# see the INSTALL file:
+export MACOSX_DEPLOYMENT_TARGET=10.9
 
-# We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
+ifeq ($(CLANG),yes)
+# The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-
-ifeq ($(MATHICGB),yes)
-CONFIGOPTIONS += --enable-mathicgb
-endif
-
-ifeq ($(FFPACK),yes)
-CONFIGOPTIONS += --enable-fflas-ffpack
-endif
-
-ifeq ($(LINBOX),yes)
-CONFIGOPTIONS += --enable-linbox
-endif
-
-ifeq ($(FLINT),yes)
-CONFIGOPTIONS += --enable-flint
-endif
-
-ifeq ($(GIVARO),yes)
-CONFIGOPTIONS += --enable-givaro
-endif
-
-# The standard gcc under Mac OS X is buggy, so we typically compile the latest one. 
-# We tried linking statically with its libraries, but it makes c++ exceptions not work:
-# CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
-
-unexport DEBUG
-unexport PROFILE
-
-# use the latest version from homebrew, not clang:
-CC  := gcc-4.9
-CXX := g++-4.9
-FC  := gfortran-4.9
-
-# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
-BRANCH := master
-
-DIRECTORY := mac64
-CC  += -m64
-CXX += -m64
-
-ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 CC  := /usr/bin/gcc
 CXX := /usr/bin/g++
 FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
+else
+CC  := gcc-4.9 -m64
+CXX := g++-4.9 -m64
+FC  := gfortran-4.9
+# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
+DIRECTORY := mac64
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
-
-# the warning messages about this from clang have gotten noisy:
-# V = -mmacosx-version-min=10.6
-# CC  += $V
-# CXX += $V
 
 CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all

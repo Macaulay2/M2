@@ -143,11 +143,12 @@ AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
-  Darwin-9.*) REL=10.5 ; OS=MacOS ;;
-  Darwin-10.*) REL=10.6 ; OS=MacOS ;;
-  Darwin-11.*) REL=10.7 ; OS=MacOS ;;
-  Darwin-12.*) REL=10.8 ; OS=MacOS ;;
-  Darwin-13.*) REL=10.9 ; OS=MacOS ;;
+  Darwin-9.*) REL=10.5 ; OS=MacOS ;; # Leopard
+  Darwin-10.*) REL=10.6 ; OS=MacOS ;; # Snow Leopard
+  Darwin-11.*) REL=10.7 ; OS=MacOS ;; # Lion
+  Darwin-12.*) REL=10.8 ; OS=MacOS ;; # Mountain Lion
+  Darwin-13.*) REL=10.9 ; OS=MacOS ;; # Mavericks
+  Darwin-14.*) REL=10.10 ; OS=MacOS ;; # Yosemite
   Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
   CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
 esac
@@ -306,7 +307,7 @@ dnl 	  esac
 dnl      fi
 dnl fi
 
-AC_MSG_CHECKING([whether compiling with $CXX and then linking $CC works])
+AC_MSG_CHECKING([whether compiling with $CXX and then linking with $CC works])
 cat >unwindtest-main.cpp <<EOF
 #include "unwindtest-monomials.hpp"
 int main(int argc, char **argv) { Monomials *M = new Monomials(); return 1; }
@@ -1267,8 +1268,6 @@ test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
-AC_ARG_WITH(veclib, AS_HELP_STRING(--with-veclib,[use "-framework vecLib" for lapack]), LIBS="-framework vecLib $LIBS" )
-
 AC_SUBST(LAPACK,yes)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
 test "$LAPACK" = no; val=$?
@@ -1322,8 +1321,8 @@ test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
 # needlessly causes the library to be linked against.)
 FORTRANUSED=no
 if test "$LAPACK" = yes
-then AC_MSG_CHECKING([whether the vecLib framework is available])
-     SAVELIBS=$LIBS LIBS="-framework vecLib $LIBS"
+then AC_MSG_CHECKING([whether the Accelerate framework is available])
+     SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
