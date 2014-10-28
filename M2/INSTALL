@@ -155,6 +155,14 @@ various modern operating systems:
     Now remember to add 
         CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
       to the "configure" command line below in the section on compiling Macaulay2.
+    Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
+      g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
+        MACOSX_DEPLOYMENT_TARGET=10.9
+      to the environment (e.g., with the "sh" command
+        export MACOSX_DEPLOYMENT_TARGET=10.9
+      ) may help.  Apparently the tools have trouble determining that 10.10 is a
+      newer version number than 10.9.  Linking alternatively with libgcc_eh
+      seems to break C++ exception handling.
     Note: homebrew uses /usr/bin/gcc to compile its libraries.  If compiling
       with clang instead of gcc, then run this first:
         brew install gmp mpfr
