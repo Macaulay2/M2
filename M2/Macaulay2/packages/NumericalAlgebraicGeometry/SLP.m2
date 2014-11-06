@@ -782,15 +782,76 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
-
--- Expressions to preSLPs
+---------------------------------------------------------------
+-- EXPRESSIONS (think: gates of curcuits used for evaluation)
+-- 
+-- Already exist:
+--    Sum: {E1,E2,...,En}
+--    Product: {E1,E2,...,En}
+--    Power: {E1,E2}
+--    MatrixExpression: 
+--
+-- New:
+--    PolyExpression: {f} where f is a RingElement
+--    DetExpression: {M} where M is a MatrixExpression
+--
+---------------------------------------------------------------
 PolyExpression = new Type of Expression
 polyExpression = method()
 polyExpression RingElement := f -> new PolyExpression from {f}
 
-DetExpression = new Type of Expression
+submatrix (MatrixExpression,BasicList,BasicList) := (M,rows,cols) -> 
+    MatrixExpression apply((toList M)_(toList rows), r->r_(toList cols))
+submatrix (MatrixExpression,BasicList,Nothing) := (M,rows,cols) -> 
+    submatrix(M,rows,0..<numcols M) 
+submatrix (MatrixExpression,Nothing,BasicList) := (M,rows,cols) -> 
+    submatrix(M,0..<numrows M,cols) 
+numrows MatrixExpression := M -> #M
+numcols MatrixExpression := M -> if numrows M > 0 then #(M#0) else 0
+
+MatrixExpression | MatrixExpression := (A,B) -> (
+    if #A == 0 then B
+    else if #B == 0 then A
+    else if numrows A != numrows B
+    then error "numbers of rows should match"
+    else (
+	a := toList A;
+	b := toList B;
+	MatrixExpression apply(#a, r->a#r|b#r)
+       	)
+    )
+MatrixExpression || MatrixExpression :=  (A,B) -> (
+    if #A == 0 then B
+    else if #B == 0 then A
+    else if numcols A != numcols B 
+    then error "numbers of columns should match"
+    else MatrixExpression(toList A | toList B)
+    )
+    
+DetExpression = new Type of MatrixExpression
 det MatrixExpression := o -> M -> new DetExpression from M
-value DetExpression := e -> det value e#0 
+value DetExpression := e -> det value e 
+
+diff'Thing'Expression = (x,e) -> (
+    if class e === Sum then Sum apply(toList e, t->diff(x,t))
+    else if class e === MatrixExpression then 
+        MatrixExpression apply(toList e, row -> apply(row, a->diff(x,a)))
+    else if class e === DetExpression then (
+	m := numrows e;
+	sum(m, r-> det(
+		submatrix(e,0..r-1,) || 
+		diff(x,submatrix(e,{r},)) || 
+		submatrix(e,r+1..<m,)
+		))
+	)  
+    else if class e === PolyExpression then polyExpression diff(x,e#0)
+    else (
+	<< "for " << e << endl; 
+	<< " of type " << class e <<endl;
+	error "diff is not emplemented"
+	)
+    )
+diff (Thing,Expression) := memoize diff'Thing'Expression
 
 expression2preSLP = method()
 expression2preSLP Expression := e -> (
@@ -807,13 +868,24 @@ expression2preSLP Expression := e -> (
     )
 
 end 
+
 restart
 debug needsPackage "NumericalAlgebraicGeometry"
-R = CC[x]
-f = new PolyExpression from {(x^2)}
-e = f + det( MatrixExpression{
-	{Sum(polyExpression (x^2+1), polyExpression x^5), polyExpression 1_R},
-	{polyExpression 2_R, polyExpression 3_R}
-	} )
+R = CC[x,y]
+f = new PolyExpression from {x^2 + x*y^3 + 1}
+a = diff(x,f)
+M = MatrixExpression{
+    {Sum(polyExpression (x^2+1), polyExpression x^5), f},
+    {polyExpression 2_R, polyExpression 3_R}
+    }
+submatrix(M,{1},{0,1})    	
+diff(x,M)
+e = det M
+diff(x,det M)
+
+value matrix {{Sum(x,y)}} -- why an error?
+
+e = det M
 value e 
+diff(x,e)
 expression2preSLP e
