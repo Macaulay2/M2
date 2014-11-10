@@ -6,7 +6,9 @@
 #include "res-a0.hpp"
 #include "res-a2.hpp"
 #include "finalize.hpp"
+#include "f4/res-f4-computation.hpp"
 
+#include <iostream>
 //////////////////////////////////////////////
 // EngineResolutionComputation ///////////////
 //////////////////////////////////////////////
@@ -68,6 +70,8 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
                                                          int strategy
                                                          )
 {
+  std::cout << "comp_res.cpp: algorithm = " << algorithm << std::endl;
+
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
@@ -131,8 +135,21 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>3");
     C = new gbres_comp(m, max_level+1, origsyz, strategy | STRATEGY_USE_HILB);
     break;
+ case 4:
+    if (!resolve_cokernel)
+      {
+        ERROR("resolution Strategy=>4 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
+        return 0;
+      }
+    if (!R->is_commutative_ring())
+      {
+        ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
+        return 0;
+      }
+    if (M2_gbTrace > 0) emit_line("resolution Strategy=>4 (res-f4)");
+    C = createF4Res(m, max_level, strategy);
+   break;
   }
-
   if (C == 0)
     {
       ERROR("unknown resolution algorithm");

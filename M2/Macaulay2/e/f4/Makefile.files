@@ -1,4 +1,7 @@
 F4_CCFILES := \
+  res-f4 \
+  res-f4-computation \
+  res-gausser \
   f4 \
   f4-syz \
   f4-mem \
