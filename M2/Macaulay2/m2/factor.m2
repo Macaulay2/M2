@@ -130,7 +130,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 		    chk := topCoefficients CS;
 		    chk = chk#1;  -- just keep the coefficients
 		    chk = first entries chk;
-		    iniCS := select(chk, i -> degree i =!= {0});
+		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
 		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
 		    CS = ideal CS;
 		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
