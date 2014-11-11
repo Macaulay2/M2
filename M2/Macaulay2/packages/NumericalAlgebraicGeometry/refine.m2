@@ -96,24 +96,29 @@ refine Point := o -> P -> if P.?SolutionSystem then (
     ) else error "there is no polynomial system associated with the point"
 
 -- this is the main function for M2
-refine (PolySystem,Point) := Point => o -> (F,s) -> 
-if member(o.Software,{BERTINI,PHCPACK}) then first refine(F,{s},o) else (
+refine (PolySystem,Point) := Point => o -> (F',s) -> 
+if member(o.Software,{BERTINI,PHCPACK}) then first refine(F',{s},o) else (
     o = fillInDefaultOptions o;
+    errorTolerance := o.ErrorTolerance;
+    if o.Bits =!= infinity then errorTolerance = min(errorTolerance, 2.^(-o.Bits));
+    bits := max(53,
+	( if o.Bits =!= infinity then o.Bits
+	    else -round(log_2 errorTolerance) )
+	+ 2); -- two safety bits
+    K := CC_bits; -- new field
+    R := K(monoid[gens ring F']); -- new ring
+    F := polySystem (map(R, ring F', gens R)) F'.PolyMap;
     n'iterations := o.Iterations;
     x := transpose matrix s; -- convert to vector 
     -- if isProjective then x = normalize x;
-    x1 := x; -- refined x
-    error'bound := --if not s.?ErrorBoundEstimate or s.SolutionSystem =!= F 
-                   --then 
-		   infinity
-		   --else s.ErrorBoundEstimate
-		   ;
-    norm'dx := infinity; -- dx = + infinity
+    x1 := promote(x,K); -- refined x
+    error'bound := infinity;
+    norm'dx := infinity;
     norm'Fx := infinity;
     refinement'success := true;
     nCorrSteps := 0;
     while (norm'Fx > o.ResidualTolerance 
-	or norm'dx > o.ErrorTolerance * norm x1) 
+	or norm'dx > errorTolerance * norm x1) 
     and nCorrSteps < n'iterations 
     and refinement'success
     --and cond < o.SingularConditionNumber 
@@ -145,7 +150,7 @@ if member(o.Software,{BERTINI,PHCPACK}) then first refine(F,{s},o) else (
 	    if DBG>2 then print "warning: Newton's method did not converge within given residual bound in the given number of steps";
 	    refinement'success = false;
 	    );
-    	if norm'dx > o.ErrorTolerance * norm x1 then (
+    	if norm'dx > errorTolerance * norm x1 then (
 	    if DBG>2 then print "warning: Newton's method did not converge within given error bound in the given number of steps";
 	    refinement'success = false;
 	    );
@@ -203,8 +208,8 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
     if o.Software === PHCPACK then  return refinePHCpack(equations F,solsT,o)/point;
     if o.Software === BERTINI then (
 	-- bits to decimals 
-	decimals := ceiling(o.Bits * log 2 / log 10);
-	return bertiniRefineSols(equations F,solsT,decimals)
+	decimals := if o.Bits =!= infinity then ceiling(o.Bits * log 2 / log 10) else log_10 o.ErrorTolerance;
+	return bertiniRefineSols(decimals,equations F,solsT)
 	);
 
      -- Software=>M2 (and Software=>M2engine for now)
@@ -214,11 +219,20 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
 	     ))
      )         
 TEST /// -- refine 
+sqrt2 = point {{sqrt(2p1000)}}
+R = CC[x]
+sqrt2' = refine(polySystem{x^2-2}, point {{1.5}}, Bits=>500)
+areEqual(sqrt2',sqrt2, Tolerance=>2^-498)
+
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
 sols = { {1.1_CC,0.1}, { -0.1,1.2} };
 rsols = refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 assert areEqual(rsols, {{1,0},{0,1}})
+r1000sols = refine(T, rsols, Software=>M2, Bits=>1000)
+assert areEqual(r1000sols, {{1,0},{0,1}}, Tolerance=>2^-997)
+
+
 T = polySystem {x^2+y^2-1, (x-y)^2};
 e = 1e-9; 
 P = point {{sqrt 2/2 + e*ii,sqrt 2/2 - e*ii}};

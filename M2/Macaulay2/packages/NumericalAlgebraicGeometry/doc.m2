@@ -285,18 +285,22 @@ document {
 	     },
 	Outputs => {"solsR" => {"contains refined solutions (as ", TO2{Point, "points"}, ")" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
-	has its estimated relative error bounded by ", TO "ErrorTolerance", 
-	". The number of iterations made is at most ", TO "Iterations", ".",
+	has its estimated relative error bounded by min(", TO "ErrorTolerance", ",2^(-", TO "Bits", ")). ",
+	"The number of iterations made is at most ", TO "Iterations", ".",
 -- 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
 -- 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
 -- 	     took place with the same option and was given the same target system. 
 -- 	     Any other value of this option would launch an M2-language procedure."},
         PARA {},
 	EXAMPLE lines ///
-R = CC[x,y];
-T = {x^2+y^2-1, x*y};
-sols = { {1.1_CC,0.1}, {-0.1_CC,1.2} };
-refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
+     	R = CC[x];
+     	F = polySystem {x^2-2};
+	P := refine(F, point{{1.5}}, Bits=>1000)
+	first coordinates P
+	R = CC[x,y];
+	T = {x^2+y^2-1, x*y};
+	sols = { {1.1,-0.1}, {0.1,1.2} };
+	refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///,
 	PARA {},
 	"In case of a singular (multiplicity>1) solution, while ", TO solveSystem, " and ", TO track, 
@@ -313,6 +317,20 @@ refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 	refSols = refine(T, solsT)
 	refSols / status
      	///,
+	PARA {},
+    	"The failure to complete the refinement procedure is indicated 
+	by warning messages and the resulting point is displayed as ", TT "[R]", ".",
+	PARA {},
+	EXAMPLE lines ///
+     	R = CC[x];
+     	F = polySystem {x^2-2};
+	Q := refine(F, point{{1.5}}, Bits=>1000, Iterations=>2)
+	peek Q
+     	///,
+	PARA {},	
+	Caveat => {"There are 2 'safety' bits in the computation. 
+	    If the condition of the system at the refined point is poor 
+	    the number of correct bits may be much smaller than requested."},
 	SeeAlso => {solveSystem, track}
 	}
 
@@ -652,7 +670,7 @@ document {
     Usage => "B = isOn(P,V)",
     Inputs => { 
 	"P"=>Point,  
-	"V"=>{ofClass NumericalVariety, ofClass WitnessSet, ofClass Ideal, ofClass RingElement}
+	"V"=>{ofClass NumericalVariety, ", ", ofClass WitnessSet, ", ", ofClass Ideal, ", or ", ofClass RingElement}
 	},
     Outputs => { "B"=>Boolean },
     "Determines whether the given point is (approximately) on the given variety, 
