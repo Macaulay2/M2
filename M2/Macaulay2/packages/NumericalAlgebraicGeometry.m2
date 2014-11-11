@@ -17,8 +17,8 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     --DebuggingMode => true,
-     DebuggingMode => false,
+     DebuggingMode => true,
+     --DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -120,9 +120,9 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => 1e-8,
+     ResidualTolerance => infinity,
      Iterations => 30, 
-     Bits => 300,
+     Bits => infinity,
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
