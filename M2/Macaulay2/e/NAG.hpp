@@ -495,7 +495,7 @@ public:
 // SLP
 class SLProgram 
 {
-  enum GATE_TYPE {Copy, Sum, Product, MSum, MProduct, Det};
+  enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
   std::vector<GATE_TYPE> mNodes;
@@ -503,8 +503,21 @@ class SLProgram
   std::vector<GATE_POSITION> mInputPositions; // nonnegative = node position, negative = var or const
   std::vector<GATE_POSITION> mOutputPositions; // nonnegative = node position, negative = var or const
 public:
-  
+  SLProgram();
+  SLProgram& addCopy(GATE_POSITION p);
+  SLProgram& addMCopy(GATE_POSITION p, GATE_SIZE s);
+  SLProgram& addSum(GATE_POSITION a, GATE_POSITION b);
+  SLProgram& addProduct(GATE_POSITION a, GATE_POSITION b);
+  SLProgram& addMSum(const std::vector<GATE_POSITION>& p);
+  SLProgram& addMProduct(const std::vector<GATE_POSITION>& p);
+  SLProgram& addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
+  std::string toString();
 };
+
+template <typename R> 
+void evaluateSLP(const SLProgram& slp,
+                 std::vector<typename R::ElementType>& values); 
+                 
 
 // expression types:
 //   "input gate" (variable or constant) -- has no inputs
