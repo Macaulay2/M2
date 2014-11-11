@@ -828,7 +828,7 @@ MatrixExpression || MatrixExpression :=  (A,B) -> (
     else MatrixExpression(toList A | toList B)
     )
     
-DetExpression = new Type of MatrixExpression
+DetExpression = new Type of Expression
 det MatrixExpression := o -> M -> new DetExpression from M
 value DetExpression := e -> det value e 
 
@@ -837,11 +837,12 @@ diff'Thing'Expression = (x,e) -> (
     else if class e === MatrixExpression then 
         MatrixExpression apply(toList e, row -> apply(row, a->diff(x,a)))
     else if class e === DetExpression then (
-	m := numrows e;
+	M := MatrixExpression toList e;
+	m := numrows M;
 	sum(m, r-> det(
-		submatrix(e,0..r-1,) || 
-		diff(x,submatrix(e,{r},)) || 
-		submatrix(e,r+1..<m,)
+		submatrix(M,0..r-1,) || 
+		diff(x,submatrix(M,{r},)) || 
+		submatrix(M,r+1..<m,)
 		))
 	)  
     else if class e === PolyExpression then polyExpression diff(x,e#0)
@@ -851,8 +852,12 @@ diff'Thing'Expression = (x,e) -> (
 	error "diff is not emplemented"
 	)
     )
-diff (Thing,Expression) := memoize diff'Thing'Expression
+diff (RingElement,Expression) := memoize diff'Thing'Expression
 
+jacobian (List,MatrixExpression) := (xx,F) -> 
+    MatrixExpression apply(flatten toList F, f->apply(xx,x->diff(x,f)))
+
+-- oldish...
 expression2preSLP = method()
 expression2preSLP Expression := e -> (
     if class e === Sum then addPreSLPs apply(toList e,expression2preSLP)
@@ -880,10 +885,11 @@ M = MatrixExpression{
     }
 submatrix(M,{1},{0,1})    	
 diff(x,M)
+jacobian ({x,y},M)
 e = det M
 diff(x,det M)
 
-value matrix {{Sum(x,y)}} -- why an error?
+value (MatrixExpression {{Sum(x,y)}} + MatrixExpression {{Sum(x,y)}})
 
 e = det M
 value e 

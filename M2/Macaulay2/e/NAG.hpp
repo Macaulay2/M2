@@ -492,33 +492,27 @@ public:
 };
 
 
-/********* deprecated *********************************/
-// class StraightLineProgram : public mutable_object {
-// public:
-//   StraightLineProgram(const Ring *R) : R_(R) {}
+// SLP
+class SLProgram 
+{
+  enum GATE_TYPE {Copy, Sum, Product, MSum, MProduct, Det};
+  typedef int GATE_SIZE;
+  typedef int GATE_POSITION; // gate position is ABSOLUTE
+  std::vector<GATE_TYPE> mNodes;
+  std::vector<GATE_SIZE> mNumInputs;
+  std::vector<GATE_POSITION> mInputPositions; // nonnegative = node position, negative = var or const
+  std::vector<GATE_POSITION> mOutputPositions; // nonnegative = node position, negative = var or const
+public:
+  
+};
 
-//   static StraightLineProgram /* or null */ *make(const PolyRing* R, ring_elem e);
-//   static StraightLineProgram /* or null */ *make(const Matrix *consts, M2_arrayint program);
-
-//   virtual StraightLineProgram /* or null */ *concatenate(const StraightLineProgram* slp) = 0;
-
-//   virtual StraightLineProgram /* or null */ *jacobian(bool makeHxH,
-//                                                    StraightLineProgram *&slpHxH,
-//                                                    bool makeHxtH,
-//                                                    StraightLineProgram *&slpHxtH) = 0;
-
-//   virtual StraightLineProgram /* or null */ *copy() = 0;
-
-//   virtual void text_out(buffer& o) const = 0;
-
-//   //void stats_out(buffer& o) const;
-
-//   virtual void evaluate(int n, const element_type* values, element_type* out) = 0;
-
-//   virtual Matrix* evaluate(const Matrix *vals) = 0;
-// protected:
-//   const Ring *R_;
-// };
+// expression types:
+//   "input gate" (variable or constant) -- has no inputs
+//   sequence
+class Expression 
+{
+  
+};
 
 template <class Field>
 class SLP : public MutableEngineObject
@@ -530,11 +524,11 @@ private:
   const CCC* C; // ConcreteRing<ARingCCC>*
   friend class PathTracker;
 
-  static SLP<Field>* catalog[MAX_NUM_SLPs];
+  static SLP<Field>* catalog[MAX_NUM_SLPs]; // get rid of... !!!
   static int num_slps;
 
   bool is_relative_position; // can use relative or absolute addressing
-  M2_arrayint program;
+  M2_arrayint program; // std::vector???
   element_type* nodes; // array of CCs
   intarray node_index; // points to position in program (rel. to start) of operation correspoding to a node
   int num_consts, num_inputs, num_operations, rows_out, cols_out;
