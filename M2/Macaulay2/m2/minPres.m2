@@ -312,7 +312,7 @@ reduceLinears(Ideal,Set) := o -> (I,excludes) -> (
 --       << "reducing using " << g#0 << endl << endl;
 --       << "  sending it to " << g#1 << endl << endl;
 --       ));
-     (if L=={} then ideal R else ideal L, M)
+     (ideal matrix(R,{L}), M) -- same as (ideal L,M) except if L=={}
      )
 
 backSubstitute = (M) -> (
