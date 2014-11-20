@@ -80,7 +80,6 @@ AC_CHECK_PROGS(FAKEROOT,fakeroot,false)
 AC_CHECK_PROGS(RPMLINT,rpmlint,false)
 AC_CHECK_PROGS(TAR,gtar gnutar tar,false)
 AC_CHECK_PROGS(FIND,gfind find,false)
-AC_CHECK_PROGS(STRIPCMD,strip)
 AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
@@ -91,9 +90,9 @@ AC_CHECK_TOOL(DLLTOOL,dlltool,false)
 AC_CHECK_TOOL(LD,ld,false)
 AC_CHECK_TOOL(STRIP,strip,false)
 
-if test "$STRIPCMD" != ""
-then AC_MSG_CHECKING(whether $STRIPCMD accepts the remove-section option)
-     if strip --help 2>&1 | grep remove-section >/dev/null
+if test "$STRIP" != "false"
+then AC_MSG_CHECKING(whether $STRIP accepts the remove-section option)
+     if "$STRIP" --help 2>&1 | grep remove-section >/dev/null
      then val=yes
      else val=no
      fi
@@ -198,16 +197,6 @@ AC_DEFINE_UNQUOTED(ARCH,"$ARCH",[machine hardware type])
 AC_VALIDATE_CACHED_SYSTEM_TUPLE()
 dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
-
-if test "$STRIP" != "false"
-then AC_MSG_CHECKING(whether the strip command $STRIP accepts the remove-section option)
-     if $STRIP --help 2>&1 | grep remove-section >/dev/null
-     then val=yes
-     else val=no
-     fi
-     AC_MSG_RESULT($val)
-     AC_SUBST(STRIP_REMOVE_SECTION,$val)
-fi
 
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
 AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)

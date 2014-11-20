@@ -75,7 +75,7 @@ various modern operating systems:
 
   Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients libtool
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
     On all systems, add
         --enable-build-libraries=ntl
       to the "configure" command line below.
@@ -118,12 +118,9 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot
     Some debugging aids:
       sudo yum install -y strace
-    For making an rpm file, install fakeroot manually, from:
-         http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
-
     Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
     future version of Macaulay2.  However, one can install newer compilers
     (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
