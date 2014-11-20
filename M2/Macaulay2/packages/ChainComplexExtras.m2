@@ -701,8 +701,17 @@ assert(isChainComplex F==true)
 assert(rank F_1 == rank C_1)
 ///
 
+isMinimalChainComplex = C -> (
+    S := ring C;
+    red := map(S,S,toList(numgens S:0_S));
+    T :=true;
+    scan(toList(1+min C..max C),
+	i-> if 0 != red(C.dd_i) then T = false);
+    T
+    )
+
 minimize = method (
-    Options => {Check => true}
+    Options => {Check => false}
     )
 minimize ChainComplex := o -> E ->(
     C:= E[min E]; -- now min C == 0.
@@ -716,22 +725,21 @@ minimize ChainComplex := o -> E ->(
     --image g#i, Note that rho#0 = 0.
     rho := hashTable for i from 0 to M+1 list 
 	{i,id_(C_i) - g#i*(id_(target g#i)//g#i)};
-    minC := prune coker map(C, C++C[1], i-> rho#i | C.dd_(i+1)*rho#(i+1));
---    if Check==true then
+    minC := coker map(C, C++C[1], i-> rho#i | C.dd_(i+1)*rho#(i+1));
+    pmC := prune minC;
+    if o.Check==true then
       if not isChainComplex minC then error"didn't produce a chain complex";
-    minC[-min E]
-    )
-
-isMinimalChainComplex = C -> (
-    S := ring C;
-    red := map(S,S,toList(numgens S:0_S));
-    T :=true;
-    scan(toList(1+min C..max C),
-	i-> if 0 != red(C.dd_i) then T = false);
-    T
+    m := map(pmC, C, i-> (pmC_i.cache.pruningMap)^(-1) * inducedMap(minC_i, C_i));
+    E' := pmC[-min E];
+    E'.cache.pruningMap = m[-min E];
+    E'
     )
 
 TEST///
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
 S = ZZ/32003[a,b,c]
 red = map(S,S,toList(numgens S:0_S))
 C = koszul gens (ideal vars S)^2
@@ -751,14 +759,16 @@ Q = apply(len, i-> random(target difs0_i, target difs0_i))|
        {random(source difs0_(len-1), source difs0_(len-1))};
 difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
 E = chainComplex difs1
-isChainComplex E
 assert(isMinimalChainComplex E == false)
 E' = minimize (E[1])
 assert (isChainComplex E'==true)
 assert(isMinimalChainComplex E' == true)
+betti E
+betti E'
 ///    	    
 end--
 restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 
+loadPackage ("ChainComplexExtras", Reload=>true)
