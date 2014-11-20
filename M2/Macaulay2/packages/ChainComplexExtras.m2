@@ -1,11 +1,13 @@
 -- -*- coding: utf-8 -*-
 newPackage(
      "ChainComplexExtras",
-     Version => "0.5",
-     Date => "December 10, 2006",
+     Version => "0.9",
+     Date => "November 20, 2014",
      Authors => {
+	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
 	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
+
 	  },
      Headline => "Some additional ChainComplex Functions.",
      DebuggingMode =>true
@@ -840,9 +842,9 @@ GG
 minimize FF
 minimize GG
 isChainComplex FF
-phi = (resC C)_1
+phi = (resC C)_1;
 isQuism phi
-
+isQuism((minimize FF).cache.pruningMap)
 D = C[-2]
 FF = resC D
 ///
