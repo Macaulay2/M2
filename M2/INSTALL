@@ -152,7 +152,7 @@ various modern operating systems:
 	brew tap homebrew/science
 	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
     Now remember to add 
-        CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
+        CPPFLAGS=-I"/usr/local/include" LDFLAGS="-L/usr/local/lib" CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
       to the "configure" command line below in the section on compiling Macaulay2.
     Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
       g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
