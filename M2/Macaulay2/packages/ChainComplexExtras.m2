@@ -24,6 +24,7 @@ export(sourceMi)
 export(midMi)
 export(Check)
 export(minimize)
+export(isMinimalChainComplex)
 export(trivialSubcomplex)
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
@@ -704,37 +705,36 @@ minimize = method (
     Options => {Check => true}
     )
 minimize ChainComplex := o -> E ->(
-    C:= E[min E];
+    C:= E[min E]; -- now min C == 0.
     M := max C;
     S := ring C;
     red := map(S,S,toList(numgens S:0_S));
-    dbar := for i from 1 to M list red C.dd_i;
-    --Note: dbar_i: C_(i+1) \to C_i
-    --make maps g_i: ker dbar_i -> C_(i+1)
-    g := for i from 0 to M-1 list syz dbar_i;
-    --Choose complements G_i to the image of g_i, and write them
-    --as image g'_i:C_(i+1) \to C_(i+1)
-    g':=for i from 0 to M-1 list 
-	id_(C_(i+1)) - g_i*(id_(target g_i)//g_i);
-    --and the map G_i -> C_i
-    h := for i from 0 to M-1 list C.dd_(i+1)*g'_i;
-    --the image of h_i: C_(i+1) \to C_i is the image of 
-    --G_i under C.dd_(i+1)
-    k := for i from 0 to M-2 list 
-	h_(i+1)|g'_(i); 
-    k =  {h_0} | k | {g'_(M-1)};
-    coker map(C, C[1]++C[2], i-> k_i)
+    --make maps g_i: ker(red C.dd_i) -> C_i
+    g := hashTable for i from 0 to M+1 list {i,syz red C.dd_i};
+    --For each i choose an idempotent rho#i:C_i\to C_i
+    --whose image is the complement
+    --image g#i, Note that rho#0 = 0.
+    rho := hashTable for i from 0 to M+1 list 
+	{i,id_(C_i) - g#i*(id_(target g#i)//g#i)};
+    minC := prune coker map(C, C++C[1], i-> rho#i | C.dd_(i+1)*rho#(i+1));
+--    if Check==true then
+      if not isChainComplex minC then error"didn't produce a chain complex";
+    minC[-min E]
     )
-    
-    
-TEST///
-restart
-uninstallPackage "ChainComplexExtras"
-installPackage "ChainComplexExtras"
 
+isMinimalChainComplex = C -> (
+    S := ring C;
+    red := map(S,S,toList(numgens S:0_S));
+    T :=true;
+    scan(toList(1+min C..max C),
+	i-> if 0 != red(C.dd_i) then T = false);
+    T
+    )
+
+TEST///
 S = ZZ/32003[a,b,c]
 red = map(S,S,toList(numgens S:0_S))
-C = koszul gens (ideal vars S)
+C = koszul gens (ideal vars S)^2
 G = S^{0,-1,-2,-3,-4,-5,-6}
 D = apply(length C+1, i-> C_i++G++G)
 zG = map(G,G,0)
@@ -751,51 +751,14 @@ Q = apply(len, i-> random(target difs0_i, target difs0_i))|
        {random(source difs0_(len-1), source difs0_(len-1))};
 difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
 E = chainComplex difs1
-
-E' = prune minimize E;
+isChainComplex E
+assert(isMinimalChainComplex E == false)
+E' = minimize (E[1])
+assert (isChainComplex E'==true)
+assert(isMinimalChainComplex E' == true)
 ///    	    
 end--
 restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 
-S = ZZ/101[a,b,c]
-red = map(S,S,toList(numgens S:0_S));
-C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
-G = S^{1:-3,2:-1}
-H = S^{2:-3,2:-4}
---H = S^0
-D = chainComplex(
-map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
-map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}}))
-isChainComplex D
-0==D.dd_2%(syz red D.dd_1)
-
-A = random(source D.dd_1,source D.dd_1)
-phi = random(target D.dd_1, target D.dd_1)*D.dd_1*A
-psi = A^(-1)*D.dd_2*random(source D.dd_2,source D.dd_2)
-E = chainComplex(map(S^0, target phi,0),phi,psi,map(source psi,S^0,0))
-
-E' = chainComplex({E.dd_1,E.dd_2}|sourceMi(E.dd_3,E.dd_4))
-E'' = chainComplex({E'.dd_1}|sourceMi(E'.dd_2,E'.dd_3)|{E'.dd_4})
-E''.dd_1 ==0
-E'''= chainComplex(sourceMi(E''.dd_1,E''.dd_2)|{E''.dd_3,E''.dd_4})
-L = (reverse sourceMi(transpose E''.dd_2,transpose E''.dd_1))/transpose
-E''' = chainComplex(L|{E''.dd_3,E''.dd_4})
-E''.dd
-E'.dd_2
-E'
-(Y,phi'') = sourceMi(E.dd_0,phi')
-F = chainComplex(Y,phi'',psi'',X)
-isChainComplex F
-
-red = map(S,S,toList(numgens S:0_S))
-phibar = red phi
-sp = syz phibar
-psi' = psi//sp
-phi' = phi*sp
-F = chainComplex(phi',psi')
-isChainComplex F
-
-
--------
