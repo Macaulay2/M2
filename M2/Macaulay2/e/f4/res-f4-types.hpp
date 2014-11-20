@@ -44,9 +44,9 @@ struct RowElement {
   ComponentIndex mColumn;  // This row represents mMultiplier * g[mColumn]
     // where mColumn indexes into a Level
 
-  unsigned int len;
-  F4CoefficientArray coeffs;
-  ComponentIndex* comps; // points into a memory block
+  unsigned int mRowLength; // length of both of the following arrays
+  F4CoefficientArray mCoefficients; 
+  ComponentIndex* mComponentIndices; // points into a memory block
 };
 
 struct ColumnElement {
