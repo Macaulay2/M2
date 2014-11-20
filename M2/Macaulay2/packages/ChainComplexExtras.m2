@@ -20,12 +20,14 @@ export(taylor)
 export(taylorResolution)
 export(chainComplexMap)
 export(InitialDegree)
-export(sourceMi)
-export(midMi)
+--export(sourceMi)
+--export(midMi)
 export(Check)
 export(minimize)
 export(isMinimalChainComplex)
-export(trivialSubcomplex)
+--export(trivialSubcomplex)
+export(extendFromMiddle)
+export(resC)
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
    chainComplex(apply((min C + 1..max C), i -> substitute(C.dd_i, newRing)))
@@ -766,6 +768,120 @@ assert(isMinimalChainComplex E' == true)
 betti E
 betti E'
 ///    	    
+
+resC = method()
+resC ChainComplex := C -> (
+    -- computes a (generally non-minimal) resolution of a complex by the method
+    -- of iterated mapping cones: if 
+    -- C: 0 -> Cn ->...->Cm ->0
+    -- is a chain complex, and Gi is a resolution of
+    -- Ci, and [G -> F] denotes the mapping cone of a map of complexes G \to F,
+    -- then the resolution of C is Gm if n=m; is [Gn->Gm] if n = m+1
+    -- and otherwise is defined inductively  as
+    -- Fi = [Gi -> F(i-1)]
+    -- where the map Gi -> F(i-1)
+    -- is induced by lifing Gi_0 --> G(i-1)_0 to the kernel of the (i-1)-st differential of
+    -- F(i-1).
+    --The map from F to C is returned as a second element of a list
+
+    len:= length C; -- =maxC-minC
+    minC := min C;
+    maxC := max C;
+    ind := toList(minC..maxC);
+    reslist := apply(ind, i-> res C_i);
+    mats := apply(ind, i-> matrix C.dd_i);
+    --mats_i is the map from the free cover of C_i to 
+    --the free cover of C_(i-1).
+    F := reslist_0;
+    comp :={id_(F_0)};
+    if len == 0 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
+--    if len == 0 then return F[-minC];
+    G := reslist_1;
+    F = cone extend(F,G, mats_1);
+    comp = comp | {F_1^[1]};
+--    print comp;
+    if len == 1 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
+--    if len == 1 then return F[-minC];
+    k := null;
+    phi := null;
+
+    for i from 2 to maxC-minC do(
+	G = reslist_i;
+	k = syz F.dd_(i-1);
+	phi := (mats_i)//(F_(i-1)^[1]*k);
+	--note: F_(i-1)^[1] is the projection to the free cover of C_(i-1)
+	--so phi is the lifting of mats_i, to the source of k,
+	--and k*phi is the induced map to F_(i-1).
+	F = cone extendFromMiddle(F,G,k*phi,i-1);
+	comp = comp |{F_i^[1]};
+	);
+    {F[-minC], map(C, F[-minC], i->comp_(i-minC))}
+    )
+///
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
+kk= ZZ/101
+S = kk[a,b,c,d]
+
+M0  = coker matrix"a4, b4,ab"
+M1 = S^{ -1}**M0; M2 = S^{ -1}**M1
+phi1 = map(M0,M1,matrix"a"); phi2 = map(M1,M2,matrix"b")
+C = chainComplex{phi1,phi2}
+
+C = koszul gens (ideal vars S)^2
+time FF = (resC C)_0
+time GG = source res C
+betti FF
+betti GG
+FF
+GG
+minimize FF
+minimize GG
+isChainComplex FF
+phi = (resC C)_1
+isQuism phi
+
+D = C[-2]
+FF = resC D
+///
+
+extendFromMiddle = method()
+extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
+    --f is a map to F1_i from F2_0. Output is a ChainComplexMap to F1 from F2e,
+    --where F2e is a chain complex obtained from F2 by prepending zeros.
+    --CAVEAT the process of making a new ChainComplex seems to destroy
+    --the direct sum information in the source and target modules!
+    S:= ring F1;
+    ind := toList(min F1.. max F1);
+    F1List := apply (ind, i->F1.dd_i);
+    F1i := chainComplex F1List_{i+1..max F1};
+    fi := extend(F1i,F2,f);
+    F2e := chainComplex(
+	apply(ind, j-> 
+	    if j<i-1 then map (S^0,S^0,0) else
+	    if j == i-1 then map(S^0, F2_0,0) else 
+	    F2.dd_(j-i+1))
+	);
+    map(F1, F2e, j->
+	    if j< i then map(F1_j, F2e_j,0) else fi_(j-i))
+    )
+///
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
+kk= ZZ/101
+S = kk[a,b,c,d]
+F1 = koszul matrix"a,b,c"
+F2 = (res module ideal"a,b,c")
+F1_1
+F2_0
+f = map(F1_1, F2_0,id_(F2_0))
+cone extendFromMiddle(F1,F2,f, 1)
+///
+
 end--
 restart
 uninstallPackage "ChainComplexExtras"
