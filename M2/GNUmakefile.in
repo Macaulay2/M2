@@ -44,7 +44,7 @@ endef
 
 check-stripped:
 	@ echo "-- checking for unstripped binaries"
-	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped") | sed 's/:.*//'
+	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
 
 ## submodules
 ifneq (@build_alias@,)
