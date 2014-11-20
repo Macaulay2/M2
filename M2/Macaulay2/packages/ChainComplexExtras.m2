@@ -8,7 +8,7 @@ newPackage(
 	  {Name => "Greg Smith", Email => "ggsmith@mast.queensu.ca", HomePage => "http://www.mast.queensu.ca/~ggsmith"}
 	  },
      Headline => "Some additional ChainComplex Functions.",
-     DebuggingMode => false
+     DebuggingMode =>true
      )
 
 export(isExact)
@@ -20,7 +20,11 @@ export(taylor)
 export(taylorResolution)
 export(chainComplexMap)
 export(InitialDegree)
-
+export(sourceMi)
+export(midMi)
+export(Check)
+export(minimize)
+export(trivialSubcomplex)
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
    chainComplex(apply((min C + 1..max C), i -> substitute(C.dd_i, newRing)))
@@ -515,5 +519,283 @@ document {
 	     }
      }
 
-end
+nonzeroMin = method()
+nonzeroMin(ChainComplex) := C -> (
+    --assert( not C==0);
+    if C==0 then return min C; 
+    m:= min C;
+    while C_m==0 do (m=m+1);
+    m)
 
+
+nonzeroMax = method()
+nonzeroMax(ChainComplex) := C -> (
+    --assert( not C==0);
+    if C==0 then return max C; 
+    m:= max C;
+    while C_m==0 do (m=m-1);
+    m)
+///
+symbol tt
+R=ZZ[tt]
+C=chainComplex {matrix{{R_0}}}
+C1=appendZeroMap prependZeroMap C
+nonzeroMax C1,max C1
+nonzeroMin C1, min C1
+///
+
+midMi = method(
+Options => {Check => true}
+)
+midMi(List) := o -> L -> (
+    -- L = {X,Y,Z}, where
+    -- X,Y,Z form a chain complex over a standard graded ring,
+    -- the script returns {{X',Y',Z'}{x,y}}, such that:
+    -- X',Y',Z' is a chain complex, 
+    -- Y' reduced to 0 mod the maximal ideal, and	   
+    -- x: source X -->source X' is a split surjection
+    -- y: source Y' --> source X is a split injection
+    -- and x,y define a quasi-isomorphism.
+    X := L_0; Y:= L_1; Z :=L_2; S := ring X;
+    red := map(S,S,toList(numgens S:0_S));
+    Ybar := red Y;
+    y := syz Ybar;
+    pY:= transpose(id_(target transpose y)//(transpose y));
+    x' := syz transpose Ybar;
+    x := transpose x';
+    iX := id_(target x)//x;
+--    X' := X*iX + transpose( 
+--	transpose(X*(id_(target Y)-iX*x)*Y)//(transpose (x*Y)));
+X' := X*iX;
+    Y' := x*Y*y;
+    Z' := pY*Z + (Y*(id_(source Y)-y*pY)*Z)//(Y*y);
+    if o.Check == true then
+         if Y'*Z' != 0 or X'*Y' !=0 then error "failure!";
+    {X',Y',Z'} --,{x,y}}
+    )
+minimize1 = method (
+    Options => {Check => true}
+    )
+minimize1 ChainComplex := o -> C ->(
+    S := ring C;
+    nmin := nonzeroMin C;
+    nmax := nonzeroMax C;
+    len := nmax-nmin; -- number of nozero differentials
+    diffs := for i from nmin+1  to nmax list C.dd_i;
+    diffs = {map(S^0, target diffs_0, 0)}|
+                diffs |
+		   {map(source diffs_(len-1), S^0, 0)};
+-- error();
+    scan(len,i ->
+	diffs = diffs_{0..len -2-i}|
+	      midMi diffs_{len-1-i..len+1-i}|
+	          diffs_{len+2-i..len+1}
+		  );
+     diffs
+    )
+
+TEST///
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
+S = ZZ/32003[a,b,c]
+red = map(S,S,toList(numgens S:0_S))
+C = koszul gens (ideal vars S)^2
+G = S^{0,-1,-2,-3,-4,-5,-6}
+
+D = apply(length C+1, i-> C_i++G++G)
+zG = map(G,G,0)
+difs0 = apply(length C, 
+    i-> 
+    map(D_i, D_(i+1), matrix{
+	    {C.dd_(i+1),map(C_i,G,0), map(C_i,G,0)},
+	    {map(G,C_(i+1),0),zG,zG},
+	    {map(G,C_(i+1),0),id_G,zG}}
+	)
+)
+len = #difs0
+Q = apply(len, i-> random(target difs0_i, target difs0_i))|
+       {random(source difs0_(len-1), source difs0_(len-1))};
+difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
+
+E = chainComplex difs1
+E1 = minimize E
+E1 = chainComplex minimize E
+(S^1/(ideal vars S))**E1
+
+C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
+minimize C
+G = S^{1:-3,2:-1}
+H = S^{2:-3,2:-4}
+--H = S^0
+A0 = map(S^0, C_0++G, 0)
+B0 = map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
+C0 = map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}})
+D0 = map (C_2++H, S^0, 0)
+
+g = random(target B0, target B0)
+h = random(target C0, target C0)
+k = random(target D0, target D0)
+
+A = A0*g^(-1)
+B = g*B0*h^(-1)
+C = h*C0*k^(-1)
+D = k*D0
+E = chainComplex(A,B,C,D)
+isChainComplex E
+E1 = chainComplex minimize E
+
+midMi{B0,C0,D0}
+M = midMi{B,C,D}
+
+midMi{A0,B0,C0}
+M = midMi{A,B,C}
+M_0
+M_1
+M_2
+
+midMi{E.dd_2,E.dd_3,E.dd_4}
+E' = chainComplex({E.dd_1}|midMi{E.dd_2,E.dd_3,E.dd_4})
+isChainComplex E'
+E'' = chainComplex(midMi{E'.dd_1,E'.dd_2,E'.dd_3}|{E'.dd_4})
+isChainComplex E''
+F = chainComplex(map(S^0,F0_0,0), F0.dd_1, F0.dd_2, map(F0_2, S^0,0))
+E'' == F
+
+minimize E
+chainComplex minimize E
+///
+
+sourceMi = method()
+sourceMi(Matrix,Matrix):= (phi,psi) ->(
+    --Assuming phi*psi = 0 and psi is minimal, the
+    --routine returns phi',psi' with phi'*psi'= 0 and
+    --source phi' is the minimized source phi.
+    S:= ring phi;
+    red := map(S,S,toList(numgens S:0_S));
+    if red psi != 0 then error"second matrix must be minimal";
+    phibar := red phi;
+    sp := syz phibar;
+    {phi*sp,psi//sp}
+)
+
+TEST///
+needsPackage "ChainComplexExtras"
+S = ZZ/101[a,b,c]
+C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
+G = S^{1:-3,2:-1}
+H = S^{2:-3,2:-4}
+H = S^0
+D = chainComplex(
+map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
+map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}}))
+isChainComplex D
+
+A = random(source D.dd_1,source D.dd_1)
+phi = random(target D.dd_1, target D.dd_1)*D.dd_1*A
+psi = A^(-1)*D.dd_2*random(source D.dd_2,source D.dd_2)
+F = chainComplex sourceMi(phi,psi)
+assert(isChainComplex F==true)
+assert(rank F_1 == rank C_1)
+///
+
+minimize = method (
+    Options => {Check => true}
+    )
+minimize ChainComplex := o -> E ->(
+    C:= E[min E];
+    M := max C;
+    S := ring C;
+    red := map(S,S,toList(numgens S:0_S));
+    dbar := for i from 1 to M list red C.dd_i;
+    --Note: dbar_i: C_(i+1) \to C_i
+    --make maps g_i: ker dbar_i -> C_(i+1)
+    g := for i from 0 to M-1 list syz dbar_i;
+    --Choose complements G_i to the image of g_i, and write them
+    --as image g'_i:C_(i+1) \to C_(i+1)
+    g':=for i from 0 to M-1 list 
+	id_(C_(i+1)) - g_i*(id_(target g_i)//g_i);
+    --and the map G_i -> C_i
+    h := for i from 0 to M-1 list C.dd_(i+1)*g'_i;
+    --the image of h_i: C_(i+1) \to C_i is the image of 
+    --G_i under C.dd_(i+1)
+    k := for i from 0 to M-2 list 
+	h_(i+1)|g'_(i); 
+    k =  {h_0} | k | {g'_(M-1)};
+    coker map(C, C[1]++C[2], i-> k_i)
+    )
+    
+    
+TEST///
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
+S = ZZ/32003[a,b,c]
+red = map(S,S,toList(numgens S:0_S))
+C = koszul gens (ideal vars S)
+G = S^{0,-1,-2,-3,-4,-5,-6}
+D = apply(length C+1, i-> C_i++G++G)
+zG = map(G,G,0)
+difs0 = apply(length C, 
+    i-> 
+    map(D_i, D_(i+1), matrix{
+	    {C.dd_(i+1),map(C_i,G,0), map(C_i,G,0)},
+	    {map(G,C_(i+1),0),zG,zG},
+	    {map(G,C_(i+1),0),id_G,zG}}
+	)
+);
+len = #difs0
+Q = apply(len, i-> random(target difs0_i, target difs0_i))|
+       {random(source difs0_(len-1), source difs0_(len-1))};
+difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
+E = chainComplex difs1
+
+E' = prune minimize E;
+///    	    
+end--
+restart
+uninstallPackage "ChainComplexExtras"
+installPackage "ChainComplexExtras"
+
+S = ZZ/101[a,b,c]
+red = map(S,S,toList(numgens S:0_S));
+C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
+G = S^{1:-3,2:-1}
+H = S^{2:-3,2:-4}
+--H = S^0
+D = chainComplex(
+map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
+map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}}))
+isChainComplex D
+0==D.dd_2%(syz red D.dd_1)
+
+A = random(source D.dd_1,source D.dd_1)
+phi = random(target D.dd_1, target D.dd_1)*D.dd_1*A
+psi = A^(-1)*D.dd_2*random(source D.dd_2,source D.dd_2)
+E = chainComplex(map(S^0, target phi,0),phi,psi,map(source psi,S^0,0))
+
+E' = chainComplex({E.dd_1,E.dd_2}|sourceMi(E.dd_3,E.dd_4))
+E'' = chainComplex({E'.dd_1}|sourceMi(E'.dd_2,E'.dd_3)|{E'.dd_4})
+E''.dd_1 ==0
+E'''= chainComplex(sourceMi(E''.dd_1,E''.dd_2)|{E''.dd_3,E''.dd_4})
+L = (reverse sourceMi(transpose E''.dd_2,transpose E''.dd_1))/transpose
+E''' = chainComplex(L|{E''.dd_3,E''.dd_4})
+E''.dd
+E'.dd_2
+E'
+(Y,phi'') = sourceMi(E.dd_0,phi')
+F = chainComplex(Y,phi'',psi'',X)
+isChainComplex F
+
+red = map(S,S,toList(numgens S:0_S))
+phibar = red phi
+sp = syz phibar
+psi' = psi//sp
+phi' = phi*sp
+F = chainComplex(phi',psi')
+isChainComplex F
+
+
+-------
