@@ -27,6 +27,9 @@ which-tools:
 	printenv ACLOCAL_PATH
 configured:include/configuration
 check:configured check-in-Macaulay2
+ifeq "@ENABLE_STRIP@" "yes"
+check: check-stripped
+endif
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
 
@@ -38,6 +41,10 @@ endef
 #   usr-build  -- install tools needed for compilation here
 #   usr-host   -- install the results of compilation here, for the target machine
 #   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
+
+check-stripped:
+	@ echo "-- checking for unstripped binaries"
+	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped") | sed 's/:.*//'
 
 ## submodules
 ifneq (@build_alias@,)
