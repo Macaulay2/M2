@@ -308,9 +308,12 @@ isGEQ(List,List) := o->(t,s)-> (
 sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
-     if #sols == 0 then sols
+     if #sols == 0 then (
+	 sorted := {};
+	 sols
+	 )
      else (
-	  sorted := {0};
+	  sorted = {0};
 	  get'coordinates := sol -> if class sol === Point then coordinates sol 
 	                       else if ancestor(BasicList, class sol) then toList sol
 			       else error "expected Points or BasicLists";
@@ -423,6 +426,23 @@ groupClusters MutableHashTable := H -> (
 
 solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 solutionsWithMultiplicity List := o-> sols -> ( 
+    sorted := sortSolutions(sols,o);
+    i := 0; 
+    while i<#sorted list (
+	si := sorted#i;
+	si.Multiplicity = 1;
+	j := i + 1;
+	while j < #sorted and areEqual(sorted#j,si,o) do (
+	    si.Multiplicity = si.Multiplicity + 1;
+	    j = j + 1;
+	    );
+	i = j;
+	si
+	) 
+    )
+
+{*
+solutionsWithMultiplicity List := o-> sols -> ( 
      clusters := groupClusters solutionDuplicates(sols,o);
      apply(clusters, c->(
 	       s := new Point from sols#(first c);
@@ -430,6 +450,7 @@ solutionsWithMultiplicity List := o-> sols -> (
 	       s
 	       ))
      )
+*}
 
 TEST ///
 a = point {{0,1}}
