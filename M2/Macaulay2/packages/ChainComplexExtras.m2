@@ -549,6 +549,7 @@ nonzeroMax C1,max C1
 nonzeroMin C1, min C1
 ///
 
+{*
 midMi = method(
 Options => {Check => true}
 )
@@ -704,7 +705,7 @@ F = chainComplex sourceMi(phi,psi)
 assert(isChainComplex F==true)
 assert(rank F_1 == rank C_1)
 ///
-
+*}
 isMinimalChainComplex = C -> (
     S := ring C;
     red := map(S,S,toList(numgens S:0_S));
@@ -732,8 +733,12 @@ minimize ChainComplex := o -> E ->(
     minC := coker map(C, C++C[1], i-> rho#i | C.dd_(i+1)*rho#(i+1));
     pmC := prune minC;
     if o.Check==true then
-      if not isChainComplex minC then error"didn't produce a chain complex";
+      if not isChainComplex minC then 
+           error"didn't produce a chain complex";
     m := map(pmC, C, i-> (pmC_i.cache.pruningMap)^(-1) * inducedMap(minC_i, C_i));
+    if o.Check==true then
+      if not isQuism m then 
+           error"didn't produce a quasi-isomorphic complex";
     E' := pmC[-min E];
     E'.cache.pruningMap = m[-min E];
     E'
@@ -797,13 +802,10 @@ resC ChainComplex := C -> (
     F := reslist_0;
     comp :={id_(F_0)};
     if len == 0 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
---    if len == 0 then return F[-minC];
     G := reslist_1;
     F = cone extend(F,G, mats_1);
     comp = comp | {F_1^[1]};
---    print comp;
     if len == 1 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
---    if len == 1 then return F[-minC];
     k := null;
     phi := null;
 
