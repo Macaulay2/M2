@@ -566,43 +566,6 @@ nonzeroMax = (cacheValue symbol nonzeroMax)(C -> (
    complete C;
    max for i from min C to max C list if C_i == 0 then continue else i))
 
-minimize1 = method();
-minimize1 ChainComplex := ChainComplex => C -> (
- complete C;
- lower := nonzeroMin C;
- upper := nonzeroMax C;
- if not all(lower..upper, i -> isFreeModule C_i)
- then error "expected a chain complex of free modules";
- rows := new MutableHashTable; -- row indices in each differential to keep  
- D := new MutableHashTable;    -- differentials 
- E := new MutableHashTable;    -- free modules 
- for i from lower to upper do (
-   rows#i = set(0.. rank C_i - 1);
-   D#i = mutableMatrix C.dd_i;
-   E#i = {});
- for i from lower + 1 to upper do (
-   k := 0;  -- column index in i-th differential
-   while k < rank C_i do (
-     j := 0;  -- row index in i-th differential
-     for j in toList rows#(i-1) do (
-	a := (D#i)_(j,k);
-	if isUnit a then (
-	  rows#(i-1) = rows#(i-1) - set{j};
-	  rows#i = rows#i - set{k};
-	  for ell in toList rows#(i-1) do (
-	    b := (D#i)_(ell,k);
-	    D#i = rowAdd(D#i, ell, -b*a^(-1), j);
-	    D#(i-1) = columnAdd(D#(i-1), j, b*a^(-1), ell));
-	  break));
-     k = k+1));
- for i from lower to upper do rows#i = toList rows#i;
- E#lower = target submatrix(C.dd_(lower+1), rows#lower, rows#(lower+1));
- for i from lower+1 to upper do (
-   E#i = source submatrix(C.dd_i, rows#(i-1), rows#i));
- (chainComplex for i from lower + 1 to upper list (
-   (-1)^lower * map(E#(i-1), E#i, submatrix(matrix D#i, rows#(i-1), 
-	rows#i))))[-lower])
-
 minimize = method (
     Options => {Check => false}
     )
