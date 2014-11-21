@@ -22,12 +22,10 @@ export(taylor)
 export(taylorResolution)
 export(chainComplexMap)
 export(InitialDegree)
---export(sourceMi)
---export(midMi)
 export(Check)
 export(minimize)
+export(minimize1)
 export(isMinimalChainComplex)
---export(trivialSubcomplex)
 export(extendFromMiddle)
 export(resC)
 substitute(ChainComplex,Ring):=(C,newRing)->(
@@ -549,163 +547,6 @@ nonzeroMax C1,max C1
 nonzeroMin C1, min C1
 ///
 
-{*
-midMi = method(
-Options => {Check => true}
-)
-midMi(List) := o -> L -> (
-    -- L = {X,Y,Z}, where
-    -- X,Y,Z form a chain complex over a standard graded ring,
-    -- the script returns {{X',Y',Z'}{x,y}}, such that:
-    -- X',Y',Z' is a chain complex, 
-    -- Y' reduced to 0 mod the maximal ideal, and	   
-    -- x: source X -->source X' is a split surjection
-    -- y: source Y' --> source X is a split injection
-    -- and x,y define a quasi-isomorphism.
-    X := L_0; Y:= L_1; Z :=L_2; S := ring X;
-    red := map(S,S,toList(numgens S:0_S));
-    Ybar := red Y;
-    y := syz Ybar;
-    pY:= transpose(id_(target transpose y)//(transpose y));
-    x' := syz transpose Ybar;
-    x := transpose x';
-    iX := id_(target x)//x;
---    X' := X*iX + transpose( 
---	transpose(X*(id_(target Y)-iX*x)*Y)//(transpose (x*Y)));
-X' := X*iX;
-    Y' := x*Y*y;
-    Z' := pY*Z + (Y*(id_(source Y)-y*pY)*Z)//(Y*y);
-    if o.Check == true then
-         if Y'*Z' != 0 or X'*Y' !=0 then error "failure!";
-    {X',Y',Z'} --,{x,y}}
-    )
-minimize1 = method (
-    Options => {Check => true}
-    )
-minimize1 ChainComplex := o -> C ->(
-    S := ring C;
-    nmin := nonzeroMin C;
-    nmax := nonzeroMax C;
-    len := nmax-nmin; -- number of nozero differentials
-    diffs := for i from nmin+1  to nmax list C.dd_i;
-    diffs = {map(S^0, target diffs_0, 0)}|
-                diffs |
-		   {map(source diffs_(len-1), S^0, 0)};
--- error();
-    scan(len,i ->
-	diffs = diffs_{0..len -2-i}|
-	      midMi diffs_{len-1-i..len+1-i}|
-	          diffs_{len+2-i..len+1}
-		  );
-     diffs
-    )
-
-TEST///
-restart
-uninstallPackage "ChainComplexExtras"
-installPackage "ChainComplexExtras"
-
-S = ZZ/32003[a,b,c]
-red = map(S,S,toList(numgens S:0_S))
-C = koszul gens (ideal vars S)^2
-G = S^{0,-1,-2,-3,-4,-5,-6}
-
-D = apply(length C+1, i-> C_i++G++G)
-zG = map(G,G,0)
-difs0 = apply(length C, 
-    i-> 
-    map(D_i, D_(i+1), matrix{
-	    {C.dd_(i+1),map(C_i,G,0), map(C_i,G,0)},
-	    {map(G,C_(i+1),0),zG,zG},
-	    {map(G,C_(i+1),0),id_G,zG}}
-	)
-)
-len = #difs0
-Q = apply(len, i-> random(target difs0_i, target difs0_i))|
-       {random(source difs0_(len-1), source difs0_(len-1))};
-difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
-
-E = chainComplex difs1
-E1 = minimize E
-E1 = chainComplex minimize E
-(S^1/(ideal vars S))**E1
-
-C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
-minimize C
-G = S^{1:-3,2:-1}
-H = S^{2:-3,2:-4}
---H = S^0
-A0 = map(S^0, C_0++G, 0)
-B0 = map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
-C0 = map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}})
-D0 = map (C_2++H, S^0, 0)
-
-g = random(target B0, target B0)
-h = random(target C0, target C0)
-k = random(target D0, target D0)
-
-A = A0*g^(-1)
-B = g*B0*h^(-1)
-C = h*C0*k^(-1)
-D = k*D0
-E = chainComplex(A,B,C,D)
-isChainComplex E
-E1 = chainComplex minimize E
-
-midMi{B0,C0,D0}
-M = midMi{B,C,D}
-
-midMi{A0,B0,C0}
-M = midMi{A,B,C}
-M_0
-M_1
-M_2
-
-midMi{E.dd_2,E.dd_3,E.dd_4}
-E' = chainComplex({E.dd_1}|midMi{E.dd_2,E.dd_3,E.dd_4})
-isChainComplex E'
-E'' = chainComplex(midMi{E'.dd_1,E'.dd_2,E'.dd_3}|{E'.dd_4})
-isChainComplex E''
-F = chainComplex(map(S^0,F0_0,0), F0.dd_1, F0.dd_2, map(F0_2, S^0,0))
-E'' == F
-
-minimize E
-chainComplex minimize E
-///
-
-sourceMi = method()
-sourceMi(Matrix,Matrix):= (phi,psi) ->(
-    --Assuming phi*psi = 0 and psi is minimal, the
-    --routine returns phi',psi' with phi'*psi'= 0 and
-    --source phi' is the minimized source phi.
-    S:= ring phi;
-    red := map(S,S,toList(numgens S:0_S));
-    if red psi != 0 then error"second matrix must be minimal";
-    phibar := red phi;
-    sp := syz phibar;
-    {phi*sp,psi//sp}
-)
-
-TEST///
-needsPackage "ChainComplexExtras"
-S = ZZ/101[a,b,c]
-C=chainComplex(map(S^1, S^{-1,-1}, {{a,b}}), map(S^{-1,-1}, S^{-3},{{a*b},{-a^2}}))
-G = S^{1:-3,2:-1}
-H = S^{2:-3,2:-4}
-H = S^0
-D = chainComplex(
-map(C_0++G,C_1++G++H, (C.dd_1++id_G)|map(C_0++G,H,0)),
-map(C_1++G++H, C_2++H, matrix{{C.dd_2,0},{map(G,C_2,0),0},{0,id_H}}))
-isChainComplex D
-
-A = random(source D.dd_1,source D.dd_1)
-phi = random(target D.dd_1, target D.dd_1)*D.dd_1*A
-psi = A^(-1)*D.dd_2*random(source D.dd_2,source D.dd_2)
-F = chainComplex sourceMi(phi,psi)
-assert(isChainComplex F==true)
-assert(rank F_1 == rank C_1)
-///
-*}
 isMinimalChainComplex = C -> (
     S := ring C;
     red := map(S,S,toList(numgens S:0_S));
@@ -715,10 +556,58 @@ isMinimalChainComplex = C -> (
     T
     )
 
+
+-- local functions for finding the extremal homological degrees of the
+-- nonzero modules in a graded module
+nonzeroMin = (cacheValue symbol nonzeroMin)(C -> (
+   complete C;
+   min for i from min C to max C list if C_i == 0 then continue else i))
+nonzeroMax = (cacheValue symbol nonzeroMax)(C -> (
+   complete C;
+   max for i from min C to max C list if C_i == 0 then continue else i))
+
+minimize1 = method();
+minimize1 ChainComplex := ChainComplex => C -> (
+ complete C;
+ lower := nonzeroMin C;
+ upper := nonzeroMax C;
+ if not all(lower..upper, i -> isFreeModule C_i)
+ then error "expected a chain complex of free modules";
+ rows := new MutableHashTable; -- row indices in each differential to keep  
+ D := new MutableHashTable;    -- differentials 
+ E := new MutableHashTable;    -- free modules 
+ for i from lower to upper do (
+   rows#i = set(0.. rank C_i - 1);
+   D#i = mutableMatrix C.dd_i;
+   E#i = {});
+ for i from lower + 1 to upper do (
+   k := 0;  -- column index in i-th differential
+   while k < rank C_i do (
+     j := 0;  -- row index in i-th differential
+     for j in toList rows#(i-1) do (
+	a := (D#i)_(j,k);
+	if isUnit a then (
+	  rows#(i-1) = rows#(i-1) - set{j};
+	  rows#i = rows#i - set{k};
+	  for ell in toList rows#(i-1) do (
+	    b := (D#i)_(ell,k);
+	    D#i = rowAdd(D#i, ell, -b*a^(-1), j);
+	    D#(i-1) = columnAdd(D#(i-1), j, b*a^(-1), ell));
+	  break));
+     k = k+1));
+ for i from lower to upper do rows#i = toList rows#i;
+ E#lower = target submatrix(C.dd_(lower+1), rows#lower, rows#(lower+1));
+ for i from lower+1 to upper do (
+   E#i = source submatrix(C.dd_i, rows#(i-1), rows#i));
+ (chainComplex for i from lower + 1 to upper list (
+   (-1)^lower * map(E#(i-1), E#i, submatrix(matrix D#i, rows#(i-1), 
+	rows#i))))[-lower])
+
 minimize = method (
     Options => {Check => false}
     )
 minimize ChainComplex := o -> E ->(
+    complete E;
     C:= E[min E]; -- now min C == 0.
     M := max C;
     S := ring C;
@@ -769,11 +658,17 @@ Q = apply(len, i-> random(target difs0_i, target difs0_i))|
 difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
 E = chainComplex difs1
 assert(isMinimalChainComplex E == false)
-E' = minimize (E[1])
+time E' = minimize (E[1])
 assert (isChainComplex E'==true)
 assert(isMinimalChainComplex E' == true)
 betti E
 betti E'
+
+
+R = S/ideal(a^2+b^3+c^5)
+betti res (R^1/(ideal vars R), LengthLimit =>10)
+betti (FF = res ideal ((a+1)*b, c+1))
+betti minimize FF
 ///    	    
 
 resC = method()
@@ -842,7 +737,7 @@ betti GG
 FF
 GG
 minimize FF
-minimize GG
+time minimize GG
 isChainComplex FF
 phi = (resC C)_1;
 isQuism phi
@@ -875,6 +770,7 @@ extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
 restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
+check "ChainComplexExtras"
 
 kk= ZZ/101
 S = kk[a,b,c,d]
