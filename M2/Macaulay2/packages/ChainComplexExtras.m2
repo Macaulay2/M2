@@ -23,11 +23,12 @@ export(taylorResolution)
 export(chainComplexMap)
 export(InitialDegree)
 export(Check)
+export(comparisonMap)
 export(minimize)
-export(minimize1)
 export(isMinimalChainComplex)
 export(extendFromMiddle)
-export(resC)
+export(resolutionOfChainComplex)
+export(cartanEilenbergResolution)
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
    chainComplex(apply((min C + 1..max C), i -> substitute(C.dd_i, newRing)))
@@ -209,77 +210,25 @@ syzMap(Matrix) := (F) -> (
    map(source F, source z, z)
 )
 
-resolution(ChainComplex) := o -> (C) -> (
-   --- C is a ChainComplex
-   --- returns a surjective ChainComplexMap from a complex of free modules
-   --- to C that is a isomorphism in homology
-   --- NOTICE: When using this function, the source complex, as well as the
-   ---         map, will always be correct.  However, if you try and take
-   ---         the mapping cone of the map and the target complex has some
-   ---         zero differentials, the mapping cone complex may not be exact!
-   ---         This is a bug in M2, as of 0.9.20, on 10/30/2006.
-   mapList := {};
-   difflList := {};
-   R := ring C;
-   lengthLimit := max C + numgens R;
-   if (o.LengthLimit != infinity) then lengthLimit = min C + o.LengthLimit;
-         
-   prevf := syzMap(C.dd_(min C));
-   mapList = append(mapList, prevf);
-   prevf''' := prevf;
-   prevd := map(R^0, source prevf,0);
-   index1 := min C;
-   while (index1 <= lengthLimit) do
-   {
-      --- f''' is the part of the previous f map we need for this step
-      --- it is a cover of the kernel of the diffl C_i ---> C_(i-1)
-      (newd,newf,newf''') := nextReslnStep(prevd,prevf,C.dd_(index1+1),prevf''');
-      mapList = append(mapList,newf);
-      difflList = append(difflList,newd);
-      prevd = newd;
-      prevf = newf;
-      prevf''' = newf''';
-      if (newd == 0) then index1 = lengthLimit;
-      index1 = index1 + 1;
-   };
-   --P := chainComplex(difflList, min C);
-   --- this line is here instead of the above one because I cannot get M2 to override
-   --- chainComplex(List,ZZ)
-   P := chainComplex(difflList)[-min C];
-   P#dd = (-1)^(min C)*P.dd;
-   chainComplexMap(C,P,mapList)
-)
 
-nextReslnStep=method()
-nextReslnStep(Matrix,Matrix,Matrix,Matrix) := (prevPDiffl,prevQuism,CDiffl,PDifflCover) -> (
-   -- prevPDiffl : P_i --> P_(i-1)
-   -- prevQuism : P_i --> C_i
-   -- CDiffl == C.dd_(i+1)
-   -- PDifflCover = part of prevDQuism, P_i''' --> C_i, cover of kernel of C_i --> C_(i-1)
-   -- Returns a triple of maps (d,f,f''')
-   -- where
-   -- d : P_(i+1) --> P_i
-   -- f : P_(i+1) --> C_(i+1)
-   -- f''' : P_(i+1)''' ---> C_(i+1)
-   -- VARIABLE CONVENTION:
-   --              '    <---> fixing prevQuism and prevPDiffl
-   --              ''   <---> surjectivity of the quism
-   --              '''  <---> fixing CDiffl
-   d' := syzMap ( prevQuism || prevPDiffl);
-   f' := map(source CDiffl, source d', 0);
-   g := map(target CDiffl, source matrix CDiffl, matrix CDiffl);
-   f'' := g // CDiffl;
-   d'' := g // PDifflCover;
-   --- change the target of d'' to be the source of f'''
-   F := (source prevQuism)_{0..(numgens source prevQuism-numgens source PDifflCover-1)};
-   inc1 := map(source F, source PDifflCover, 0);
-   inc2 := id_(source PDifflCover);
-   inc := inc1 || inc2;
-   d'' = inc * d'';
-   f''' := syzMap CDiffl;
-   d''' := map(source prevPDiffl, source f''', 0);
-   (d' | d'' | d''', f' | f'' | f''', f''')
-)
+     doc ///
+        Key
+	 resolutionOfChainComplex
+	 (resolutionOfChainComplex, ChainComplex)
+        Headline
+	 free resolution of a chain complex
+        Usage
+	 F = resolutionOfChainComplex C
+        Inputs
+	 C:ChainComplex
+        Outputs
+	 F:ChainComplex
+        Description
+         Text
+         Example
+        SeeAlso
+     ///
+
 
 beginDocumentation()
 
@@ -363,7 +312,7 @@ document {
 	     "isChainComplex(kRes)",
 	     }
      }
-
+{*
 document {
      Key => (resolution,ChainComplex),
      Headline => "Resolves a ChainComplex.",
@@ -372,20 +321,24 @@ document {
 	  "C" => {},
      },
      Outputs => {
-	  {"ChainComplexMap"}
+	  {"ChainComplex"}
      },
-     "Returns a surjective ChainComplexMap whose source consists",
-     "of free R-modules, where R = C.ring.",
+     "Returns a (generally non-minimal) ChainComplex of free modules. If D = resolution C,
+     then D is quasi-isomorphic to C by a surjective quasi-isomorphims
+     C --> D stored in D.cache.pruningMap. The quasi-isomorphism is computed
+     by the method of iterated mapping cones. (For the computation of the 
+     Cartan-Eilenberg resolution, which is usually slower and results in
+     a larger complex, use cartanEilenberg C",
      EXAMPLE {
 	        "R = ZZ/32003[a..d]",
 		"I = monomialCurveIdeal(R,{1,2,3})",
 		"C = koszulComplex(ideal vars R) ** (R^1/I);",
-		"CResMap = res C;",
-		"CRes = source CResMap",
+		"CRes = res C;",
+		"CResMap = CRes.cache.pruningMap",
 		"isQuism CResMap",
 	     }
      }
-
+*}
 document {
      Key => {chainComplexMap, (chainComplexMap,ChainComplex,ChainComplex,List)},
      Headline => "Defines a ChainComplexMap via a list of matrices.",
@@ -522,22 +475,6 @@ document {
 	     }
      }
 
-nonzeroMin = method()
-nonzeroMin(ChainComplex) := C -> (
-    --assert( not C==0);
-    if C==0 then return min C; 
-    m:= min C;
-    while C_m==0 do (m=m+1);
-    m)
-
-
-nonzeroMax = method()
-nonzeroMax(ChainComplex) := C -> (
-    --assert( not C==0);
-    if C==0 then return max C; 
-    m:= max C;
-    while C_m==0 do (m=m-1);
-    m)
 ///
 symbol tt
 R=ZZ[tt]
@@ -570,6 +507,15 @@ minimize = method (
     Options => {Check => false}
     )
 minimize ChainComplex := o -> E ->(
+    --To simplify the notation consider the complex C = E[nonZeroMin E] that
+    --is shifted so that the first nonzero module is C_0.
+    --The algorithm:
+    --Set dbar = the reduction of the differential d mod the maximal ideal.
+    --choose a complement of ker dbar, and compute the idempotent rho: E -> E.
+    -- the map rho is not a chain complex map, but the image of 
+    --(rho | d*rho): C ++ C[1] --> C is a subcomplex and 
+    --minimize C = C/image(rho|d*rho).
+    --The script sets (minimize C).cache.pruningMap equal to the map from C to minimize C.
     complete E;
     C:= E[min E]; -- now min C == 0.
     M := max C;
@@ -634,8 +580,8 @@ betti (FF = res ideal ((a+1)*b, c+1))
 betti minimize FF
 ///    	    
 
-resC = method()
-resC ChainComplex := C -> (
+resolutionOfChainComplex = method(Options=>{LengthLimit => infinity})
+resolutionOfChainComplex ChainComplex := o -> (C) -> (
     -- computes a (generally non-minimal) resolution of a complex by the method
     -- of iterated mapping cones: if 
     -- C: 0 -> Cn ->...->Cm ->0
@@ -647,27 +593,29 @@ resC ChainComplex := C -> (
     -- where the map Gi -> F(i-1)
     -- is induced by lifing Gi_0 --> G(i-1)_0 to the kernel of the (i-1)-st differential of
     -- F(i-1).
-    --The map from F to C is returned as a second element of a list
-
-    len:= length C; -- =maxC-minC
+    --The map from F to C is returned as F.cache.comparisonMap
+    complete C;
     minC := min C;
     maxC := max C;
+    len:= length C; -- =maxC-minC
+    n := numgens ring C;
+    lengthLimit := max(n+len, len+o.LengthLimit);
     ind := toList(minC..maxC);
-    reslist := apply(ind, i-> res C_i);
+    reslist := apply(ind, i-> res(C_i, LengthLimit => lengthLimit));
     mats := apply(ind, i-> matrix C.dd_i);
     --mats_i is the map from the free cover of C_i to 
-    --the free cover of C_(i-1).
+    --the free cover of C_(i-1)
     F := reslist_0;
+    print betti F;
     comp :={id_(F_0)};
-    if len == 0 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
-    G := reslist_1;
-    F = cone extend(F,G, mats_1);
-    comp = comp | {F_1^[1]};
-    if len == 1 then return {F[-minC],map(C, F[-minC], i->comp_(i-minC))};
+    if len >= 1 then(
+	G := reslist_1;
+    	F = cone extend(F,G, mats_1);
+    	comp = comp | {F_1^[1]}
+	);
     k := null;
     phi := null;
-
-    for i from 2 to maxC-minC do(
+    for i from 2 to len do(
 	G = reslist_i;
 	k = syz F.dd_(i-1);
 	phi := (mats_i)//(F_(i-1)^[1]*k);
@@ -677,8 +625,91 @@ resC ChainComplex := C -> (
 	F = cone extendFromMiddle(F,G,k*phi,i-1);
 	comp = comp |{F_i^[1]};
 	);
-    {F[-minC], map(C, F[-minC], i->comp_(i-minC))}
+    compMap := chainComplexMap(C[minC],F,comp);
+    Cres := F[-minC];
+    Cres.cache.comparisonMap = compMap[-minC];
+    Cres
     )
+
+     
+--resolution(ChainComplex) := o -> (C) -> resolutionOfChainComplex C
+
+cartanEilenbergResolution = method(Options=>{LengthLimit => infinity})
+cartanEilenbergResolution(ChainComplex) := o-> (C) -> (
+   --- C is a ChainComplex
+   --- returns a free resolution F = cartanEilenbergResolution C; that is, a free complex with
+   --- surjective ChainComplexMap to C that is a isomorphism in homology.
+   --- the map F -> C is stored in F.cache.comparisonMap
+   --- NOTICE: When using this function, the source complex, as well as the
+   ---         map, will always be correct.  However, if you try and take
+   ---         the mapping cone of the map and the target complex has some
+   ---         zero differentials, the mapping cone complex may not be exact!
+   ---         This is a bug in M2, as of 0.9.20, on 10/30/2006.
+   mapList := {};
+   difflList := {};
+   R := ring C;
+   lengthLimit := max C + numgens R;
+   if (o.LengthLimit != infinity) then lengthLimit = min C + o.LengthLimit;
+         
+   prevf := syzMap(C.dd_(min C));
+   mapList = append(mapList, prevf);
+   prevf''' := prevf;
+   prevd := map(R^0, source prevf,0);
+   index1 := min C;
+   while (index1 <= lengthLimit) do
+   {
+      --- f''' is the part of the previous f map we need for this step
+      --- it is a cover of the kernel of the diffl C_i ---> C_(i-1)
+      (newd,newf,newf''') := nextReslnStep(prevd,prevf,C.dd_(index1+1),prevf''');
+      mapList = append(mapList,newf);
+      difflList = append(difflList,newd);
+      prevd = newd;
+      prevf = newf;
+      prevf''' = newf''';
+      if (newd == 0) then index1 = lengthLimit;
+      index1 = index1 + 1;
+   };
+   --P := chainComplex(difflList, min C);
+   --- this line is here instead of the above one because I cannot get M2 to override
+   --- chainComplex(List,ZZ)
+   P := chainComplex(difflList)[-min C];
+   P#dd = (-1)^(min C)*P.dd;
+   P.cache.comparisonMap = chainComplexMap(C,P,mapList);
+   P
+)
+
+nextReslnStep=method()
+nextReslnStep(Matrix,Matrix,Matrix,Matrix) := (prevPDiffl,prevQuism,CDiffl,PDifflCover) -> (
+   -- prevPDiffl : P_i --> P_(i-1)
+   -- prevQuism : P_i --> C_i
+   -- CDiffl == C.dd_(i+1)
+   -- PDifflCover = part of prevDQuism, P_i''' --> C_i, cover of kernel of C_i --> C_(i-1)
+   -- Returns a triple of maps (d,f,f''')
+   -- where
+   -- d : P_(i+1) --> P_i
+   -- f : P_(i+1) --> C_(i+1)
+   -- f''' : P_(i+1)''' ---> C_(i+1)
+   -- VARIABLE CONVENTION:
+   --              '    <---> fixing prevQuism and prevPDiffl
+   --              ''   <---> surjectivity of the quism
+   --              '''  <---> fixing CDiffl
+   d' := syzMap ( prevQuism || prevPDiffl);
+   f' := map(source CDiffl, source d', 0);
+   g := map(target CDiffl, source matrix CDiffl, matrix CDiffl);
+   f'' := g // CDiffl;
+   d'' := g // PDifflCover;
+   --- change the target of d'' to be the source of f'''
+   F := (source prevQuism)_{0..(numgens source prevQuism-numgens source PDifflCover-1)};
+   inc1 := map(source F, source PDifflCover, 0);
+   inc2 := id_(source PDifflCover);
+   inc := inc1 || inc2;
+   d'' = inc * d'';
+   f''' := syzMap CDiffl;
+   d''' := map(source prevPDiffl, source f''', 0);
+   (d' | d'' | d''', f' | f'' | f''', f''')
+)
+
+
 ///
 restart
 uninstallPackage "ChainComplexExtras"
@@ -687,26 +718,39 @@ installPackage "ChainComplexExtras"
 kk= ZZ/101
 S = kk[a,b,c,d]
 
+R = S/ideal(a^3)
+M = R^1/ideal(a)
+C = chainComplex{map(M,R^0,0)}
+cartanEilenbergResolution (C, LengthLimit => 10)
+resolutionOfChainComplex (C, LengthLimit => 10)
+resolutionOfChainComplex (C)
+
+
+
+
+use S
 M0  = coker matrix"a4, b4,ab"
 M1 = S^{ -1}**M0; M2 = S^{ -1}**M1
 phi1 = map(M0,M1,matrix"a"); phi2 = map(M1,M2,matrix"b")
 C = chainComplex{phi1,phi2}
-
 C = koszul gens (ideal vars S)^2
-time FF = (resC C)_0
-time GG = source res C
+
+time FF = resolutionOfChainComplex C;
+time GG = cartanEilenbergResolution C;
 betti FF
+FF.cache.comparisonMap
+betti minimize FF
 betti GG
-FF
-GG
-minimize FF
+GG.cache.comparisonMap
 time minimize GG
 isChainComplex FF
-phi = (resC C)_1;
+(resolutionOfChainComplex C)
+
 isQuism phi
 isQuism((minimize FF).cache.pruningMap)
 D = C[-2]
-FF = resC D
+FF = resolutionOfChainComplex D
+
 ///
 
 extendFromMiddle = method()
@@ -750,4 +794,5 @@ restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 
-loadPackage ("ChainComplexExtras", Reload=>true)
+--loadPackage ("ChainComplexExtras", Reload=>true)
+viewHelp ChainComplexExtras
