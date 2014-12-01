@@ -47,6 +47,7 @@ apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
+applyKeys(HashTable,Function,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
 applyValues(HashTable,Function) := HashTable => applyValues
 atEndOfFile(File) := Boolean => atEndOfFile
