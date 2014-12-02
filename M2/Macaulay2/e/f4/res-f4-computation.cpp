@@ -1,36 +1,105 @@
 /* Copyright 2014, Michael E. Stillman */
 
+#include "f4-m2-interface.hpp"
 #include "res-f4-computation.hpp"
+#include "res-f4.hpp"
+
 #include "matrix.hpp"
 
-ResolutionComputation* createF4Res(const Matrix *m,
+#include <memory>
+
+/** createF4Res
+ * The only function to create an (F4) resolution computation
+ * The constructor for this class is private.  This function 
+ * provides all of the logic, and throws an exception if
+ * there is a problem.
+ */
+ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int max_level,
                                    int strategy
                                    )
 {
-  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  const PolynomialRing *R = groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected polynomial ring");
+      return nullptr;
+    }
   const Ring *K = R->getCoefficients();
 
-  return new F4ResComputation(*R,
-                              * m->rows(),
-                              max_level);
+  F4Mem *Mem = new F4Mem; // Used both for Gausser and F4Res
+  Gausser *KK = Gausser::newGausser(K, Mem);
+  if (KK == 0)
+    {
+      ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
+      delete Mem;
+      return nullptr;
+    }
+  auto MI = new MonomialInfo(R->n_vars(), R->getMonoid()->getMonomialOrdering());
+  
+  auto result = new F4ResComputation(R,
+                                     groebnerBasisMatrix,
+                                     Mem,
+                                     KK,
+                                     MI,
+                                     max_level);
 
-  // Actually, now fill it the first two parts
+  // Set level 0
+  // take the info from F, place it into mComp
+  const FreeModule* F = groebnerBasisMatrix->rows();
+  SchreyerFrame& frame = result->frame();
+  for (int i=0; i<F->rank(); i++)
+    {
+      packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+      MI->one(i, elem);
+      frame.insert(0, elem, F->primary_degree(i));
+    }
+
+  // Set level 1
+  // take the columns of the matrix, and insert them into mComp
+  for (int i=0; i<groebnerBasisMatrix->n_cols(); i++)
+    {
+      packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+      poly f;
+      F4toM2Interface::from_M2_vec(KK, MI, F, groebnerBasisMatrix->elem(i), f);
+      MI->copy(f.monoms, elem);
+      frame.insert(1, elem);
+    }
+
+  frame.show();
+
+  return result;
 }
 
-F4ResComputation::F4ResComputation(const PolynomialRing& R,
-                                   const FreeModule& F,
+F4ResComputation::F4ResComputation(const PolynomialRing* R,
+                                   const Matrix* gbmatrix,
+                                   F4Mem* Mem,
+                                   const Gausser* KK,
+                                   const MonomialInfo* MI,
                                    int max_level)
 
-  : mRing(R),
-    mFreeModule(F)
+  : mRing(*R),
+    mInputGroebnerBasis(*gbmatrix),
+    mMem(Mem) // we own this.  mGausser and mComp just use it
 {
-  // Create a Gausser
+  mComp.reset(new F4Res(Mem, KK, MI, max_level)); // might need gbmatrix->rows() too
 }
 
 F4ResComputation::~F4ResComputation()
 {
   remove_res();
+}
+
+const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 
+{
+  throw exc::engine_error("get_matrix not implemented"); 
+}
+
+const FreeModule /* or null */ *F4ResComputation::get_free(int level) 
+{ 
+  if (level > 0) return mRing.make_FreeModule(0);
+  return mInputGroebnerBasis.rows();
+  //throw exc::engine_error("get_free not implemented"); 
 }
 
 // Local Variables:

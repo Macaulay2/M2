@@ -4,8 +4,11 @@
 #define _res_f4_hpp_
 
 #include "res-f4-types.hpp"
+#include "f4-mem.hpp"
+#include "res-schreyer-frame.hpp"
 
-#include <vector>
+#include <assert.h>
+#define M2_ASSERT assert
 
 class Gausser;
 class MonomialInfo;
@@ -13,30 +16,40 @@ class FreeModule;
 
 /////////////////////////////////////////////////////////////////////////////
 
+class F4Monomial;  // contains a packed monomial and component
 class F4Res
 {
 public:
-  F4Res(const Gausser& KK0,
-        const MonomialInfo& MI,
-        const FreeModule& F, // used for debugging only...
-        bool use_maxlevel,
-        int maxlevel,
-        bool use_maxdegree,
-        int maxdegree,
-        int strategy // unused so far
+  F4Res(
+        F4Mem* Mem,
+        const Gausser* KK0,
+        const MonomialInfo* MI,
+        int max_level
        );
-  ~F4Res() {}
 
-  void setLevel0();
-  void setLevel1(); // these functions 
+  ~F4Res() {
+    delete mMem;
+  }
+
+  SchreyerFrame& frame() { return mFrame; }
 
   void computeLevel(int level); // level >= 2
-private:
-  Frame mFrame;
 
-  const Gausser& mGausser;
-  const MonomialInfo& mMonoid;
-  const FreeModule& mFreeModule;
+  void startLevel0(long nComponents);
+  void insertLevel0(long degree, 
+                    const F4Monomial& monom);  // we copy the monomial info into level 0 frame
+
+  void startLevel1(long nComponents);
+  void insertLevel1(long degree, 
+                    const F4Monomial& leadMonomial, 
+                    Polynomial&& tail);  // we take ownership of this object
+private:
+  SchreyerFrame mFrame;
+
+  const Gausser* mGausser;
+  const MonomialInfo* mMonoid;
+  const F4Mem* mMem;
+  int mMaxLevel;
 };
 
 #endif

@@ -8,17 +8,28 @@
 
 #include "../comp-res.hpp"
 #include "../exceptions.hpp"
+#include "res-f4.hpp"
+#include <memory>
+#include <iostream>
 
 class PolynomialRing;
 class FreeModule;
-class F4Res {};
+class F4Res;
 
 class F4ResComputation : public ResolutionComputation
 {
-public:
-  F4ResComputation(const PolynomialRing& R,
-                   const FreeModule& F,
+private:
+  F4ResComputation(const PolynomialRing* R,
+                   const Matrix* gbmatrix,
+                   F4Mem* Mem,
+                   const Gausser* KK,
+                   const MonomialInfo* MI,
                    int max_level);
+public:
+  friend ResolutionComputation* createF4Res(const Matrix *groebnerBasisMatrix,
+                                            int max_level,
+                                            int strategy
+                                            );
 
   virtual ~F4ResComputation();
 protected:
@@ -28,20 +39,18 @@ protected:
     return true;
   }
 
-  void start_computation() { }
+  SchreyerFrame& frame() { return mComp->frame(); }
+
+  void start_computation() { std::cout << "F4ResComputation::start_computation() needs to be written" << std::endl; }
 
   int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }
   // The computation is complete up through this degree.
 
-  void remove_res() { delete mComp; mComp = nullptr; }
+  void remove_res() { mComp.reset(); mComp = nullptr; }
 
-  const Matrix /* or null */ *get_matrix(int level) { throw exc::engine_error("get_matrix not implemented"); }
+  const Matrix /* or null */ *get_matrix(int level);
 
-  const FreeModule /* or null */ *get_free(int level) { 
-    if (level > 0) return mRing.make_FreeModule(0);
-    return &mFreeModule;
-    //throw exc::engine_error("get_free not implemented"); 
-  }
+  const FreeModule /* or null */ *get_free(int level);
 
   M2_arrayint get_betti(int type) const { throw exc::engine_error("get_betti not implemented"); }
   // type is documented under rawResolutionBetti, in engine.h
@@ -49,13 +58,12 @@ protected:
   void text_out(buffer &o) const {
     o << "F4 resolution computation" << newline;
   }
-
-  // This displays statistical information, and depends on the
-  // M2_gbTrace value.
 private:
   const PolynomialRing& mRing;
-  const FreeModule& mFreeModule;
-  F4Res* mComp; // This is a pointer so that finalizers can more easily remove the data
+  const Matrix& mInputGroebnerBasis;
+  F4Mem* mMem;
+  std::unique_ptr<F4Res> mComp;
+  //  F4Res* mComp; // This is a pointer so that finalizers can more easily remove the data
 };
 
 ResolutionComputation* createF4Res(const Matrix *m,

@@ -70,8 +70,6 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
                                                          int strategy
                                                          )
 {
-  std::cout << "comp_res.cpp: algorithm = " << algorithm << std::endl;
-
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;

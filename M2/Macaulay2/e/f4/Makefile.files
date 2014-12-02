@@ -1,4 +1,5 @@
 F4_CCFILES := \
+  res-schreyer-frame \
   res-f4 \
   res-f4-computation \
   res-gausser \

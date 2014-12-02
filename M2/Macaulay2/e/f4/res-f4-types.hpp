@@ -20,14 +20,13 @@ typedef void *F4CoefficientArray;
 typedef std::vector<MonomialWord> MonomialArray;
 
 struct Polynomial {
-  long mDegree; // Degree of what??
-  unsigned long mLength;
-  F4CoefficientArray mCoefficients;
-  MonomialArray mMonomials;
 };
 
 struct FrameElement {
-  Polynomial mPolynomial; // Could be very large
+  long mDegree; // Degree of what??
+  unsigned long mLength; // number of monomials/coefficients present.
+  F4CoefficientArray mCoefficients; // if null, then lead coefficient is 1
+  MonomialArray mMonomials; // lead Monomial is the first monomial in this vector
 };
 
 struct Level {
