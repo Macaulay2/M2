@@ -7,6 +7,7 @@
 #include "matrix.hpp"
 
 #include <memory>
+#include <iostream>
 
 /** createF4Res
  * The only function to create an (F4) resolution computation
@@ -19,6 +20,9 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int strategy
                                    )
 {
+  std::cout << "warnings: (1) The monomial order in the ring should use Weights: the first weight vector is the degree" << std::endl;
+  std::cout << "          (2) If the target is not the ring, then the GB should be sorted so that comp1 comes first, then comp2, etc" << std::endl;
+
   const PolynomialRing *R = groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
   if (R == 0)
     {
@@ -52,8 +56,9 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       MI->one(i, elem);
-      frame.insert(0, elem, F->primary_degree(i));
+      frame.insert(elem, F->primary_degree(i));
     }
+  frame.endLevel();
 
   // Set level 1
   // take the columns of the matrix, and insert them into mComp
@@ -63,8 +68,9 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       poly f;
       F4toM2Interface::from_M2_vec(KK, MI, F, groebnerBasisMatrix->elem(i), f);
       MI->copy(f.monoms, elem);
-      frame.insert(1, elem);
+      frame.insert(elem);
     }
+  frame.endLevel();
 
   frame.show();
 

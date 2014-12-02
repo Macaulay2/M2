@@ -47,11 +47,11 @@ public:
   void show() const;
 
   // Actual useful functions //
-
-  long insert(int level, packed_monomial monom, long degree);
-  long insert(int level, packed_monomial monom); // computes the degree
-
-  void setBeginEnd(Level L_i, long comp_i, long begin, long end);  // Later: append a montable
+  int currentLevel() const { return mCurrentLevel; }
+  void endLevel(); // done with the frame for the current level: set's the begin/end's 
+                   // for each element at previous level
+  long insert(packed_monomial monom, long degree);
+  long insert(packed_monomial monom); // computes the degree
 
   long divides(Level Li, Level Liplus1, packed_monomial monom); // returns the index of the element which divides monom.
   // Question: should this also return the quotient?
@@ -63,12 +63,16 @@ public:
   ///////////////////////
   // Display functions //
   ///////////////////////
-  // Show
   // Betti (for non-minimal Betti)
 private:
+  std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
+  const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
+
   const MonomialInfo& mMonoid;
   Frame mFrame;
+  int mCurrentLevel;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
+  
 };
 
 #endif
