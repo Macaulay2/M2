@@ -4,6 +4,7 @@
 --   a. need to give Weights: first wt vector is the degree vector
 --   b. need to pass in the coker (or ideal) of a groebner basis
 --   c. the elements at level 1 must be inserted in order of monotone increasing component
+--   d. if the input free module is a Schreyer order: need to handle that
 
 -- test 1
 TEST ///
