@@ -115,7 +115,7 @@ fetch: $(TARFILE_DIR)/$(TARFILE)
 patch: .patched-$(VERSION)
 license-dir: $(LICENSE_DIR)
 $(LICENSE_DIR):; $(MKDIR_P) $(LICENSE_DIR)
-compile: .compiled-$(VERSION) config-chk
+compile: config-chk .compiled-$(VERSION) 
 configure: .configured-$(VERSION) config-chk 
 config-chk:
 
