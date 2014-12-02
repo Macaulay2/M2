@@ -60,12 +60,48 @@ long SchreyerFrame::insert(packed_monomial monom)
   return insert(monom, degree(currentLevel(), monom));
 }
 
+long SchreyerFrame::memoryUsage() const
+{
+  long result = mMonomialSpace.memoryUsage();
+  for (int i=0; i<mFrame.mLevels.size(); i++)
+    {
+      result += level(i).capacity() * sizeof(FrameElement);
+    }
+  return result;
+}
+
+void SchreyerFrame::showMemoryUsage() const
+{
+  std::cout << "Frame memory usage" << std::endl;
+  std::cout << "  level\t\t#elems\tused\tallocated" << std::endl;
+  long alloc = 0;
+  long used = 0;
+  long nelems = 0;
+  for (int i=0; i<mFrame.mLevels.size(); i++)
+    {
+      long nelems_level = level(i).size();
+      if (nelems_level == 0) continue;
+      long used_level = nelems_level * sizeof(FrameElement);
+      long alloc_level = level(i).capacity() * sizeof(FrameElement);
+      std::cout << "  " << i << "\t\t\t" << nelems_level << "\t\t" << used_level << "\t\t" << alloc_level << std::endl;
+      nelems += nelems_level;
+      used += used_level;
+      alloc += alloc_level;
+    }
+  std::cout << "  all lev\t" << nelems << "\t\t" << used << "\t\t" << alloc << std::endl;
+  long monomSpace = mMonomialSpace.memoryUsage();
+  long monomUsed = nelems * mMonoid.max_monomial_size() * sizeof(monomial_word);
+  std::cout << "  monomials   \t\t" << monomUsed << "\t" << monomSpace << std::endl;
+  std::cout << "  total       \t\t" << (used+monomUsed) << "\t" << (alloc+monomSpace) << std::endl;
+}
+
 void SchreyerFrame::show() const
 {
   std::cout << "#levels = " << mFrame.mLevels.size() << std::endl;
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       auto& myframe = level(i);
+      if (myframe.size() == 0) continue;
       std::cout << "--- level " << i << " ------" << std::endl;
       for (int j=0; j<myframe.size(); j++)
         {
@@ -74,6 +110,7 @@ void SchreyerFrame::show() const
           std::cout << std::endl;
         }
     }
+  showMemoryUsage();
 }
 
 // local Variables:

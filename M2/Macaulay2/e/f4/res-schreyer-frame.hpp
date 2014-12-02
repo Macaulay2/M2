@@ -37,6 +37,7 @@ public:
   // Destruct the frame
   ~SchreyerFrame();
 
+
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
   MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
@@ -44,6 +45,10 @@ public:
 
   // Debugging //
   void show() const;
+
+  // Return number of bytes in use.
+  long memoryUsage() const;
+  void showMemoryUsage() const;
 
   // Actual useful functions //
   void endLevel(); // done with the frame for the current level: set's the begin/end's 
