@@ -5,6 +5,7 @@
 
 #include "moninfo.hpp"
 #include "memblock.hpp"
+#include "varpower-monomial.hpp"
 #include <vector>
 
 class SchreyerFrame
@@ -20,16 +21,6 @@ public:
     FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(0), mEnd(0) {}
     FrameElement(packed_monomial monom, long deg) : mMonom(monom), mDegree(deg), mBegin(0), mEnd(0) {}
   };
-  struct Level
-  {
-    std::vector<FrameElement> mElements;
-  };
-  struct Frame
-  {
-    std::vector<Level> mLevels;
-  };
-
-  // Operations:
 
   // Construct an empty frame
   SchreyerFrame(const MonomialInfo& MI, int max_level);
@@ -37,17 +28,17 @@ public:
   // Destruct the frame
   ~SchreyerFrame();
 
-
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
   MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
-
 
   // Debugging //
   void show() const;
 
   // Return number of bytes in use.
   long memoryUsage() const;
+
+  // Display memory usage for this computation
   void showMemoryUsage() const;
 
   // Actual useful functions //
@@ -64,16 +55,40 @@ public:
   // The frame now owns this pointer
   long insert(packed_monomial monom); // computes the degree
 
+  packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
+
   ///////////////////////
   // Display functions //
   ///////////////////////
   // Betti (for non-minimal Betti)
 private:
+  struct PreElement
+  {
+    varpower_monomial vp;
+    int degree;
+  };
+
+  struct Level
+  {
+    std::vector<FrameElement> mElements;
+  };
+  struct Frame
+  {
+    std::vector<Level> mLevels;
+  };
+
   int currentLevel() const { return mCurrentLevel; }
   long degree(int lev, long component) const { return level(lev)[component].mDegree; }
   long degree(int lev, packed_monomial m) const { return m[2] + degree(lev-1, m[1]); }
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
+
+  PreElement* createQuotientElement(packed_monomial m1, packed_monomial m);
+  long computeIdealQuotient(int lev, long begin, long elem);
+  long insertElements(int lev, long elem);
+
+
+
 
   long divides(Level Li, Level Liplus1, packed_monomial monom); // returns the index of the element which divides monom.
   // Question: should this also return the quotient?
@@ -87,7 +102,11 @@ private:
   Frame mFrame;
   int mCurrentLevel;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
-  
+
+  // These are used during frame construction
+  MemoryBlock<PreElement> mPreElements;
+  MemoryBlock<varpower_word> mVarpowers;
+  int mMaxVPSize;
 };
 
 #endif
