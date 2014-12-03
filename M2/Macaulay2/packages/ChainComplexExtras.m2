@@ -1,7 +1,7 @@
 newPackage(
      "ChainComplexExtras",
-     Version => "0.9",
-     Date => "November 20, 2014",
+     Version => "1",
+     Date => "December 3, 2014",
      Authors => {
 	  {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de"},
 	  {Name => "Frank Moore", Email => "fmoore@math.unl.edu", HomePage => "http://www.math.unl.edu/~s-wmoore3"},
@@ -21,20 +21,20 @@ export(taylor)
 export(taylorResolution)
 export(chainComplexMap)
 export(InitialDegree)
---export(Check)
---export(comparisonMap)
 export(minimize)
 export(isMinimalChainComplex)
 export(extendFromMiddle)
 export(resolutionOfChainComplex)
 export(cartanEilenbergResolution)
+--the following are simple manipulations used in TateResolution.m2
 export(prependZeroMap) -- prepend a zero map to chain complex
 export(appendZeroMap) -- append a zero map to chain complex
 export(removeZeroTrailingTerms) -- remove trailing zero terms of a chain complex
 export(trivialHomologicalTruncation) -- return the trivial truncation of a chain complex
 export(nonzeroMin) -- computes the homological position of the first non-zero module in a ChainComplex
 export(nonzeroMax) -- computes the homological position of the last non-zero module in a ChainComplex
-
+export(chainComplexData)
+export(chainComplexFromData)
 
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
@@ -61,7 +61,7 @@ chainComplexFromData(ZZ, List) := (minC,L) ->(
     assert( min C ==0);
     C[-minC])
 
-TEST ///
+///
 S=ZZ[x,y]/ideal(x*y)
 C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
 isHomogeneous C
@@ -184,9 +184,9 @@ chainComplexMap(ChainComplex,ChainComplex,List):= o -> (D,C,maps) -> (
    F
 )
 
-isExact=method()
-isExact(ChainComplex):=(C) -> (
-   if (all((min C,max C), i -> (prune HH_i(C) == 0))) then true else false
+isExact=method(Options => {LengthLimit => infinity})
+isExact(ChainComplex):= o -> (C) -> (
+   if all((min C,min(max C,o.LengthLimit)), i -> (prune HH_i(C) == 0)) then true else false
 )
 
 isChainComplex=method()
@@ -199,9 +199,9 @@ isChainComplexMap(ChainComplexMap):=(inputMap)->(
    isChainComplex(cone inputMap)
 )
 
-isQuism=method()
-isQuism(ChainComplexMap):=(phi) -> (
-   isExact(cone phi)
+isQuism=method(Options => {LengthLimit => infinity})
+isQuism(ChainComplexMap):= o -> (phi)-> (
+   isExact(cone phi, LengthLimit => o.LengthLimit)
 )
 
 ChainComplexMap | ChainComplexMap := (f,g) -> (
@@ -376,7 +376,7 @@ minimize ChainComplex := E ->(
 --    E'
 --    )
 
-TEST///
+///
 S = ZZ/32003[a,b]
 red = map(S,S,toList(numgens S:0_S))
 C = koszul gens (ideal vars S)^2
@@ -548,10 +548,13 @@ S = kk[a,b,c,d]
 R = S/ideal(a^3)
 M = R^1/ideal(a)
 C = chainComplex{map(M,R^0,0)}
-source cartanEilenbergResolution (C, LengthLimit => 10)
-source resolutionOfChainComplex (C, LengthLimit => 10)
+source (m=cartanEilenbergResolution (C, LengthLimit => 10))
+source (n =resolutionOfChainComplex (C, LengthLimit => 10))
+assert (isQuism(m, LengthLimit=> 10))
+assert(not isQuism(m, LengthLimit => 12))
+assert(isQuism(n, LengthLimit=> 10))
 m = resolutionOfChainComplex (C[3])
-target m == C[3]
+assert(target m == C[3])
 
 use S
 M0  = coker matrix"a4, b4,ab"
@@ -562,9 +565,9 @@ C = koszul gens (ideal vars S)^2
 
 time m = resolutionOfChainComplex C;
 time n = cartanEilenbergResolution C;
-betti source m
-betti target minimize source m
-betti source n
+assert(C == source m)
+assert (C == target n)
+assert (isQuism n)
 ///
 
 extendFromMiddle = method()
@@ -735,7 +738,10 @@ document {
 	     "kRes = res coker vars R",
 	     "multBya = extend(kRes,kRes,matrix{{a}})",
 	     "isChainComplexMap(multBya)",
-	     }
+	     },
+     PARA{},
+     "Caveat: There is a problem that leads to a wrong answer
+     when the complexes have different lengths"
      }
 
 document {
@@ -1289,13 +1295,144 @@ doc ///
 	betti dual fm
 ///
 
+TEST ///
+S=ZZ[x,y]/ideal(x*y)
+C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+isHomogeneous C
+L=chainComplexData C
+C'=chainComplexFromData L
+assert(C'== C)
+///
 
+TEST///
+S = ZZ/32003[a,b]
+red = map(S,S,toList(numgens S:0_S))
+C = koszul gens (ideal vars S)^2
+G = S^{0,-1,-2,-3,-4,-5,-6}
+D = apply(length C+1, i-> C_i++G++G)
+zG = map(G,G,0)
+difs0 = apply(length C, 
+    i-> 
+    map(D_i, D_(i+1), matrix{
+	    {C.dd_(i+1),map(C_i,G,0), map(C_i,G,0)},
+	    {map(G,C_(i+1),0),zG,zG},
+	    {map(G,C_(i+1),0),id_G,zG}}
+	)
+);
+len = #difs0
+Q = apply(len, i-> random(target difs0_i, target difs0_i))|
+       {random(source difs0_(len-1), source difs0_(len-1))};
+difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
+E = chainComplex difs1
+assert(isMinimalChainComplex E == false)
+m = minimize (E[1]);
+assert (isQuism m)
+assert (E[1] == source m)
+E' = target m
+assert (isChainComplex E'==true)
+assert(isMinimalChainComplex E' == true)
+///    	    
 
+TEST///
+kk= ZZ/101
+S = kk[a,b,c,d]
+
+R = S/ideal(a^3)
+M = R^1/ideal(a)
+C = chainComplex{map(M,R^0,0)}
+m=cartanEilenbergResolution (C, LengthLimit => 10)
+n =resolutionOfChainComplex (C, LengthLimit => 10)
+assert (isQuism(m, LengthLimit=> 10))
+assert(not isQuism(m, LengthLimit => 12))
+assert(isQuism(n, LengthLimit=> 10))
+m = resolutionOfChainComplex (C[3])
+assert(target m == C[3])
+assert(isChainComplexMap m)
+
+use S
+M0  = coker matrix"a4, b4,ab"
+M1 = S^{ -1}**M0; M2 = S^{ -1}**M1
+phi1 = map(M0,M1,matrix"a"); phi2 = map(M1,M2,matrix"b")
+
+C = koszul gens (ideal vars S)^2
+m = resolutionOfChainComplex C;
+n = cartanEilenbergResolution C;
+assert(C == source m)
+assert (C == target n)
+assert (isQuism n)
+assert (isExact cone n)
+C = chainComplex{phi1,phi2}
+m = resolutionOfChainComplex C;
+n = cartanEilenbergResolution C;
+assert(C == target m)
+assert (C == target n)
+
+assert (isQuism n)
+assert (isQuism m)
+///
+
+TEST///
+S = ZZ/101[a,b]
+R=S/ideal"a3,a2+b2"
+F = res coker vars R
+assert(isExact F == false)
+assert (isExact chainComplex{F.dd_3, b*syz F.dd_3} == false)
+assert(isChainComplex substitute(F,S) == false)
+///
+
+TEST///
+S = ZZ/101[a,b,c]
+i = monomialIdeal"ab4,a2b3,abc2"
+j = ideal"ab4,a2b3,abc2"
+T = taylorResolution i
+Tr = res i
+Tr.dd_2 
+T' = chainComplex({map(S^1/j,S^1,1)}|apply(3, i->T.dd_(i+1)))
+assert(isExact T')
+assert(
+    taylor(2,i)==map(T_1,T_2,
+	matrix {{-b, -c^2, 0}, {a, 0, -c^2}, {0, a*b^2, b^3}})
+	    )
+assert ((taylorResolution i).dd_2 == taylor(2,i))
+assert(koszulComplex i == koszul gens i)
+assert(true ==
+    isChainComplexMap chainComplexMap(
+	T,T,apply(toList(min T..max T), i->id_(T_i))))
+assert(T == trivialHomologicalTruncation (T,0,3))
+assert (T != trivialHomologicalTruncation (T,1,4))
+assert (T == trivialHomologicalTruncation (T'[1], 0, 3))
+T'' = prependZeroMap (T[-1])
+assert (1 ==nonzeroMin T'')
+
+--NOTE: the following should return "true" but instead creates
+--an error
+--chainComplexMap(T'[1],T, apply(toList(min T..max T), i->id_(T_i)))
+--isChainComplexMap oo
+
+--chainComplexMap(T'[1],prependZeroMap T, apply(toList(min T..max T), i->id_(T_i)))
+--isChainComplexMap oo
+--prependZeroMap T
+--isChainComplexMap 
+///
+
+TEST///
+       E=ZZ/101[e_0,e_1,SkewCommutative=>true];F=res ideal vars E;
+       C=dual res (coker transpose F.dd_3,LengthLimit=>8)[-3]
+       C1=trivialHomologicalTruncation(C,-2,2)
+       C2=trivialHomologicalTruncation(C1,-3,3)
+assert(nonzeroMin C2 == -2)
+assert(nonzeroMax C2 == 2)
+assert(max C2 == 4)
+       C3=removeZeroTrailingTerms C2
+assert(max C3 == 2)
+assert(max appendZeroMap C3 == 3)
+///
 end--
 restart
 uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
+check "ChainComplexExtras"
+
 viewHelp ChainComplexExtras
 
-Files to add from TateOnProducts:
 
