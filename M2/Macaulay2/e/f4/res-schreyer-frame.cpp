@@ -1,13 +1,19 @@
 // Copyright 2014 Michael E. Stillman
 
 #include "res-schreyer-frame.hpp"
+#include "f4-monlookup.hpp"
+
 #include <iostream>
+#include <algorithm>
+
+long SchreyerFrame::PreElementSorter::ncmps = 0;
 
 SchreyerFrame::SchreyerFrame(const MonomialInfo& MI, int max_level)
   : mMonoid(MI),
     mCurrentLevel(0)
 {
   mFrame.mLevels.resize(max_level);
+  mMaxVPSize = 2*mMonoid.n_vars() + 1;
 }
   
 // Destruct the frame
@@ -54,127 +60,74 @@ SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial 
   PreElement* vp = mPreElements.allocate();
   vp->vp = mVarpowers.reserve(mMaxVPSize);
   mMonoid.quotient_as_vp(m1, m, vp->vp, vp->degree, not_used);
-  int len = static_cast<int>(vp->vp[0]);
+  int len = static_cast<int>(varpower_monomials::length(vp->vp));
   mVarpowers.intern(len);
   return vp;
 }
 long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 {
+  ///  std::cout << "computeIdealQuotient(" << lev << "," << begin << "," << elem << ")" << std::endl;
   // Returns the number of elements added
   packed_monomial m = monomial(lev, elem); 
   std::vector<PreElement*> elements;
   for (long i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
-  // Now sort these?
+  typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
+  MonomialLookupTable montab(mMonoid.n_vars());
 
-  return 0;
-}
-/** insertElements
-    input: lev >= 1
-           component: at level 'lev'
-    consequences: modified level(lev+1): adds new lead terms of syzygies at that level.
-                  also modifies level(lev)[component].mBegin, mEnd.
-    returns: number of new elements added at level lev+1
- */ 
-long SchreyerFrame::insertElements(int lev, long elem)
-{
-  auto& myelem = level(lev)[elem];
-  long mycomp = mMonoid.get_component(myelem.mMonom);
-  auto& prevelem = level(lev-1)[mycomp];
-  long begin = prevelem.mBegin;
-  if (elem == begin) return 0; // No lead terms at next level for this element
-  M2_ASSERT(elem > begin && elem < prevelem.mEnd);
-  return computeIdealQuotient(lev, begin, elem);
-  // Plan is the following:
-  // have: at level 'lev': an element.
-  //   find first element at level 'lev' with the same component as 'component' has
-  // For each element m in the range: [begin, end) at level 'lev'
-  //   compute (m1,...,m(i-1)) : m(i) each as a VP
-  //   sort them
-  //   for each, in order:
-  //     check if it is in the monideal of the prev ones
-  //     if so: continue to the next
-  //     if not: add it in to the monideal
-  //             add it to 'level+1': need monomial as packed_monomial, its degree.
-  //             modify the element at level 'lev': mEnd changes
-  // At the end: reset the memory blocks
-}
 #if 0
-int F4SPairSet::construct_pairs(bool remove_disjoints)
-{
-  if (gb.size() == 0) return 0;
-
-  VP.reset();
-  PS.reset();
-  gbelem *me = gb[gb.size()-1];
-  int me_component = static_cast<int>(M->get_component(me->f.monoms));
-
-  typedef VECTOR(pre_spair *) spairs;
-
-  VECTOR( VECTOR(pre_spair *) ) bins;
-
-  // Loop through each element of gb, and create the pre_spair
-  for (int i=0; i<gb.size()-1; i++)
+  ///std::cout << "  #pre elements = " << elements.size() << std::endl;
+  for (auto i=elements.begin(); i != elements.end(); ++i)
     {
-      if (gb[i]->minlevel == ELEM_NON_MIN_GB) continue;
-      if (me_component != M->get_component(gb[i]->f.monoms)) continue;
-      pre_spair *p = create_pre_spair(i);
-      insert_pre_spair(bins, p);
+      varpower_monomials::elem_text_out(stdout, (*i)->vp);
+      fprintf(stdout, "\n");
     }
+#endif
+  PreElementSorter C;
+  std::sort(elements.begin(), elements.end(), C);
 
-  ////////////////////////////
-  // Now minimalize the set //
-  ////////////////////////////
-  MonomialLookupTable *montab = new MonomialLookupTable(M->n_vars());
-
-  PreSPairSorter C;
-  int n_new_pairs = 0;
-  for (int i=0; i<bins.size(); i++)
+  long n_elems = 0;
+  for (auto i = elements.begin(); i != elements.end(); ++i)
     {
-      if (bins[i].size() == 0) continue;
-      // First sort the monomials of this degree
+      int32_t not_used;
+      bool inideal = montab.find_one_divisor_vp(0, (*i)->vp, not_used);
+      if (inideal) continue;
+      // Now we create a packed_monomial, and insert it into 'lev+1'
+      montab.insert_minimal_vp(0, (*i)->vp, 0);
+      packed_monomial monom = monomialBlock().allocate(mMonoid.max_monomial_size());
+      mMonoid.from_varpower_monomial((*i)->vp, elem, monom);
+      // Now insert it into the frame
+      insert(monom);
+      n_elems++;
+    }
+  //std::cout << "  returns " << n_elems << std::endl;
+  return n_elems;
+}
 
-      //TODO: MES remove all uses of QuickSorter here.
-      //      QuickSorter<PreSPairSorter>::sort(&C, &(bins[i])[0], bins[i].size());
-
-      std::sort(bins[i].begin(), bins[i].end(), C);
-
-      // Loop through each degree and potentially insert...
-      spairs::iterator first = bins[i].begin();
-      spairs::iterator next = first;
-      spairs::iterator end = bins[i].end();
-      for ( ; first != end; first = next)
+long SchreyerFrame::computeNextLevel()
+{
+  M2_ASSERT(currentLevel() >= 2);
+  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
+  // loop through all the elements at level currentLevel()-2
+  int level0 = currentLevel()-2;
+  int level1 = level0+1;
+  long n_elems_added = 0;
+  for (auto i = level(level0).begin(); i != level(level0).end(); ++i)
+    {
+      long begin = (*i).mBegin;
+      long end = (*i).mEnd;
+      for (long i=begin+1; i<end; ++i)
         {
-          next = first+1;
-          pre_spair *chosen = *first;
-          while (next != end)
-            {
-              pre_spair *p = *next;
-              if (!varpower_monomials::equal(chosen->quot, p->quot)) break;
-              next++;
-            }
-          /* At this point: [first,next) is the range of equal monomials */
-
-          int32_t junk;
-          bool inideal = montab->find_one_divisor_vp(0, chosen->quot, junk);
-          if (!inideal)
-            {
-              // MES: Maybe choose another of the equal monomials...
-              montab->insert_minimal_vp(0, chosen->quot, 0);
-              // The following condition is that gcd is not one
-              if (!remove_disjoints || !chosen->are_disjoint)
-                {
-                  insert_spair(chosen, INTSIZE(gb)-1);
-                  n_new_pairs++;
-                }
-            }
+          auto& elem = level(level1)[i];
+          elem.mBegin = n_elems_added;
+          n_elems_added += computeIdealQuotient(level1, begin, i);
+          elem.mEnd = n_elems_added;
         }
     }
-  delete montab;
-
-  return n_new_pairs;
+  //show();
+  mCurrentLevel++;
+  return n_elems_added;
 }
-#endif
 
 long SchreyerFrame::insert(packed_monomial monom, long degree)
 {
@@ -225,7 +178,7 @@ void SchreyerFrame::showMemoryUsage() const
 
 void SchreyerFrame::show() const
 {
-  std::cout << "#levels = " << mFrame.mLevels.size() << std::endl;
+  std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       auto& myframe = level(i);

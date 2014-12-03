@@ -45,6 +45,8 @@ public:
   void endLevel(); // done with the frame for the current level: set's the begin/end's 
                    // for each element at previous level
 
+  long computeNextLevel(); // returns true if new elements are constructed
+
   // insert monomial into level 0
   // monom should have been allocated using monomialBlock().
   // The frame now owns this pointer
@@ -62,12 +64,45 @@ public:
   ///////////////////////
   // Betti (for non-minimal Betti)
 private:
+
+
   struct PreElement
   {
     varpower_monomial vp;
     int degree;
   };
 
+  class PreElementSorter
+  {
+  public:
+    typedef PreElement* value;
+  private:
+    static long ncmps;
+  public:
+    int compare(value a, value b)
+    {
+      ncmps ++;
+      if (a->degree > b->degree) return GT;
+      if (a->degree < b->degree) return LT;
+      return varpower_monomials::compare(a->vp, b->vp);
+    }
+    
+    bool operator()(value a, value b)
+    {
+      ncmps ++;
+      if (a->degree > b->degree) return false;
+      if (a->degree < b->degree) return true;
+      return varpower_monomials::compare(a->vp, b->vp) == LT;
+    }
+    
+    PreElementSorter() {}
+    
+    void reset_ncomparisons() { ncmps = 0; }
+    long ncomparisons() const { return ncmps; }
+    
+    ~PreElementSorter() {}
+  };
+  
   struct Level
   {
     std::vector<FrameElement> mElements;
@@ -88,22 +123,13 @@ private:
   long insertElements(int lev, long elem);
 
 
-
-
-  long divides(Level Li, Level Liplus1, packed_monomial monom); // returns the index of the element which divides monom.
-  // Question: should this also return the quotient?
-  // For the moment: this looks linearly through, finding a divisor
-  // Later, we can get fancy, if it seems like a good idea
-
-  void computeQuotients(Level L_i, long first_i, long current_i, Level Liplus1); // first, current are indices into Li
-
   // Private Data
   const MonomialInfo& mMonoid;
   Frame mFrame;
-  int mCurrentLevel;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
 
   // These are used during frame construction
+  int mCurrentLevel;
   MemoryBlock<PreElement> mPreElements;
   MemoryBlock<varpower_word> mVarpowers;
   int mMaxVPSize;
