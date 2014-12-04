@@ -341,6 +341,154 @@ decompose2 BettiTally := B -> (
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      ) 
 
+---Methods for general use---
+
+--  input: pure Betti table
+-- output: degree sequence (or an error if the diagram isn't pure)
+listPureDegrees = method();
+listPureDegrees BettiTally := B -> (
+     if lowestDegrees(B)==highestDegrees(B) then return highestDegrees(B)
+     else return "Error: diagram is not pure."
+     )
+
+--  input: Betti table (eg, betti res M for a module M)
+-- output: Sum of the pure diagrams as defined in Dan's lectures 
+--         (with fractions from the H-K equations)
+decomposeHK = method();
+decomposeHK BettiTally := B-> (
+     Components:={};
+     B1:= new MutableHashTable from B;
+     while min values B1 >= 0 and max values B1 > 0 do (
+	  X:=decompose1(new BettiTally from B1);
+	  B1=new MutableHashTable from X_2;
+	  --change the type of the values in X_0 to ZZ
+	  Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+	  Components = append(Components, hold(X_1) * Y));
+     sum Components
+     )
+
+--  input: Betti table
+-- output: List of the coefficients with the pure degree sequences from above
+decomposeDegreesHK = method();
+decomposeDegreesHK BettiTally := B-> (
+     Components:={};
+     B1:= new MutableHashTable from B;
+     while min values B1 >= 0 and max values B1 > 0 do (
+	  X:=decompose1(new BettiTally from B1);
+	  B1=new MutableHashTable from X_2;
+	  --change the type of the values in X_0 to ZZ
+	  Y:=new BettiTally from apply(pairs X_0, i->{first i, last i});
+	  Components = append(Components, (X_1,listPureDegrees(Y))));
+     Components
+     )
+
+
+--  input: Betti table (eg, betti res M for a module M)
+-- output: Sum of the pure diagrams as defined in Dan's lectures (with fractions from the E-S existence proof)
+decomposeES = method();
+decomposeES BettiTally := B-> (
+     Components:={};
+     B1:= new MutableHashTable from B;
+     while min values B1 >= 0 and max values B1 > 0 do (
+	  X:=decompose2(new BettiTally from B1);
+	  B1=new MutableHashTable from X_2;
+	  --change the type of the values in X_0 to ZZ
+	  Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+	  Components = append(Components, hold(X_1) * Y));
+     sum Components
+     )
+
+decomposeDegreesES = method();
+decomposeDegreesES BettiTally := B -> (
+     Components:={};
+     B1:= new MutableHashTable from B;
+     while min values B1 >= 0 and max values B1 > 0 do (
+	  X:=decompose2(new BettiTally from B1);
+	  B1=new MutableHashTable from X_2;
+	  --change the type of the values in X_0 to ZZ
+	  Y:=new BettiTally from apply(pairs X_0, i->{first i, last i});
+	  Components = append(Components, (X_1,listPureDegrees(Y))));
+     Components
+     )
+     
+     
+--  input:  BettiTally of a Cohen-Macaulay Module
+-- output:  Boolean Value, True if more than one betti dies in the
+--     	    decompose algorithm     	    
+-- caveat:  Prints a warning if not the "Generic Case"
+isMassEliminate = method();
+isMassEliminate BettiTally :=  B -> (
+      local SCAN; local D; local LD;
+            
+      scan( values B, i -> if i != 1 then break print "-- Warning: Not Generic Case");
+      
+      D = decomposeDegreesHK B;
+      LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+      
+      SCAN = scan( LD, l -> if #positions( l, i -> i != 0 ) != 1 then break "true" );
+      if SCAN === null
+      then return false 
+      else return true;
+     )
+
+--  input:  BettiTally of a Cohen-Macaulay Module
+--     	    Cohen-Macualay Ideal
+-- output:  List, if no mass elimination occors, a list is given sequencing
+--     	    the homological degree of the elimination of betti numbers
+-- options: EliminationSequence => Boolean; default is false, thus the output is 
+--     	    a BettiTally.  If true, only the EliminationSequence is returned.
+eliminateBetti = method(Options =>{EliminationSequence => false});
+eliminateBetti BettiTally := o -> B -> (
+     local D; local LD;
+     local C;local L; local LL; local P; local K; local p; local c;
+     
+     if isMassEliminate(B) == true then print"\n --MASS EXTINCTION!--";
+     
+     D = decomposeDegreesHK B;
+     LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+     
+     if o.EliminationSequence == true then return apply( LD, l -> positions( l, i -> i != 0) );
+     
+     c = pdim B + 1;
+     p = #D;
+               
+     C = new MutableHashTable from B;
+     
+     L = prepend( {p}, eliminateBetti( B, EliminationSequence => true ) ); 
+     LL = apply(c, j -> positions(L, l ->  any( l, i -> i == j  )  ) );
+     P = flatten prepend ( p, apply(1..(#LL-1), i ->  append(LL#i, p ) ) );
+     if last LL == {0} then P = delete(0,P);
+     K = sort keys C;
+     scan(#P, i -> C#(K#i) = P#i );
+     return new BettiEliminationTally from C;
+    )
+
+eliminateBetti Ideal := o -> I -> (
+     return eliminateBetti( betti res I, EliminationSequence => o.EliminationSequence );
+     )
+ 
+--  input: List of degrees (type of an artinian complete intersection)
+--  output: BettiTally of such a complete intersection
+makeCI = method(Options=>{VariableName=>getSymbol "tt"});
+makeCI List := opts -> degs ->  (
+     c := #degs; 
+     tt := opts.VariableName;
+     S := ZZ/499[tt_1..tt_c];
+     G := toSequence(for i from 0 to (c-1) list S_i^(degs#i));
+     I := ideal G;
+     betti res (S^1/G)
+     )
+
+--  input:  BettiTally of a Cohen-Macaulay Module
+-- output:  List, differnce of degree sequence in decomposeDegreesHK
+degreeDiff = method();
+degreeDiff BettiTally := B -> (
+     local D; 
+     D = decomposeDegreesHK B;
+     return apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+)
+     
+
 -- end of patch (for now)
   
 
