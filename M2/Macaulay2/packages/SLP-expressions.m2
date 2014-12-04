@@ -1,25 +1,3 @@
-Gate = new Type of HashTable
-
-InputGate = new Type of Gate -- "abstract" unit of input  
-inputGate = method()
-inputGate Symbol := a -> new InputGate from {
-    Name => a
-    } 
-net InputGate := g -> net g.Name
-
-SumGate = new Type of Gate
-net SumGate := g -> (
-    n := net "(";
-    scan(drop(g.Inputs,-1), i -> n = n | net i | " + ");
-    n | net last g.Inputs | ")"
-    )
-Gate + Gate := (a,b) -> new SumGate from {
-    Name => a,
-    Inputs => {a,b}
-    } 
-
- 
-
 {* Expressions in M2 
    *** should have this as a Gate 
    ??? maybe?
@@ -47,7 +25,69 @@ Gate + Gate := (a,b) -> new SumGate from {
        Det     	   ***
        Submatrix   ???
        Minor       ???     
+
+TO DO:
+
+-- decide what types of non-terminal gates we need (see above)
+-- terminal gates: InputGate, ConstantGate???
+-- what does MatrixGate do?
+-- gatesToPreSLP List (rewrite existing preSLP code?)
+-- diff(InputGate,Gate), jacobian
+-- preSLPtoEngine
+-- evaluator
+-- evaluator in the engine
+-- sub(Gate,{Gate=>Gate,...,}) 
+
 *}
+
+concatenateNets = method()
+concatenateNets List := L -> (
+    result := net "";
+    for a in L do result = result | net a;
+    result
+    )
+
+Gate = new Type of HashTable
+
+InputGate = new Type of Gate -- "abstract" unit of input  
+inputGate = method()
+inputGate Thing := a -> new InputGate from {
+    Name => a
+    } 
+net InputGate := g -> net g.Name
+
+SumGate = new Type of Gate
+net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
+Gate + Gate := (a,b) -> new SumGate from {
+    Inputs => {a,b}
+    } 
+sumGate = method()
+sumGate List := L -> (
+    if not all(L, a->instance(a,Gate)) 
+    then error "expected a list of gates";
+    new SumGate from {Inputs=>L}
+    )
+ 
+ProductGate = new Type of Gate
+net ProductGate := g -> concatenateNets( {"("} | between(" * ", g.Inputs) | {")"} )
+Gate * Gate := (a,b) -> new ProductGate from {
+    Inputs => {a,b}
+    } 
+productGate = method()
+productGate List := L -> (
+    if not all(L, a->instance(a,Gate)) 
+    then error "expected a list of gates";
+    new ProductGate from {Inputs=>L}
+    )
+value (InputGate,HashTable) := (g,h) -> h#g
+value (SumGate,HashTable) := memoize ((g,h) -> sum apply(g.Inputs, a->value(a,h)))
+value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->value(a,h)))
+
+support InputGate := g -> g
+support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
+support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
+
+compile = method()
 
 end -------------------------------------------
 
@@ -55,8 +95,20 @@ restart
 load "SLP-expressions.m2"
 A = inputGate X
 B = inputGate Y
-A+B
+C = sumGate {A+B,B,A}
+D = productGate {A*B,B,C}
+h = new HashTable from {A=>1,B=>ii}
+assert (value(D,h) == product{value(A*B,h),value(B,h),value(C,h)})
+support (A*A)
+support (D+C)
+s = new MutableHashTable from {A+B=>C}
+peek s
+s#(A+B)
 
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y]
+f = random(3,R)
+poly2preSLP f
 ------------------------------------------------------------
 -- BELOW is the "expression" stuff thay used to be in SLP.m2
 
