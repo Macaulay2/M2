@@ -265,6 +265,84 @@ pureBetti List := (Degs) -> (
      Bettis := for i from 0 to c-1 list (p/D_i);
      Bettis = Bettis / gcd Bettis;
      apply(Bettis, x -> lift(x,ZZ)))
+ 
+-------------------------------------
+-- Patch: optional types ------------
+-------------------------------------
+--  input: List consisting of strictly increasing list of positive integers 
+--         (a degree sequence)
+-- output: List of theoretical rational Betti numbers resulting from the 
+--         Herzog-Kuhl equations
+makePureBettiHK = method()
+makePureBettiHK List := (degs) -> (
+     codim := #degs;
+     for i from 0 to codim-1 list
+     (
+	  1/(product(for j from 0 to i-1 list degs#i-degs#j) * product(for j from i+1 to codim-1 list degs#j-degs#i))
+	  )
+     )
+
+--  input: List consisting of strictly increasing list of positive integers 
+--         (a degree sequence)
+-- output: BettiTally with the theoretical rational Betti numbers resulting from
+--         the Eisenbud-Schreyer constructions
+makePureBettiDiagramHK = method();
+makePureBettiDiagramHK List := (degs) -> (
+     B := makePureBettiHK degs;
+     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
+     )
+ 
+--  input: BettiTally
+decompose1 = method();
+decompose1 BettiTally := B -> (
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagramHK L;
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     )
+
+--  input: List (a degree sequence)
+-- output: List (a list of the number of generators of the realization module
+--         in each degree)
+makePureBettiES = method()
+makePureBettiES List := (degs) -> (
+     codim := #degs;
+     L := for i from 1 to codim-1 list
+     (
+	 binomial(degs#i -1,degs#i-degs#(i-1) - 1)
+	 );
+     tag := first sort keys makePureBettiDiagramHK(degs);
+     b0 := (product L)*(1/(makePureBettiDiagramHK(degs))#tag);
+     --returns an error if the first degree is not 0. need to fix.
+     for i from 0 to codim-1 list
+     (
+	  b0/(product(for j from 0 to i-1 list degs#i-degs#j) * product(for j from i+1 to codim-1 list degs#j-degs#i))
+	  )
+)
+
+--  input: List (a degree sequence)
+-- output: BettiTally (the Betti table of the realization module
+--         for the given degree sequence)
+makePureBettiDiagramES = method()
+makePureBettiDiagramES List := (degs) -> (
+     B := makePureBettiES degs;
+     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
+     )
+
+
+--  input: BettiTally
+decompose2 = method();
+decompose2 BettiTally := B -> (
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagramES L;
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     ) 
+
+-- end of patch (for now)
+  
 
 pureBettiDiagram = method()
 pureBettiDiagram List := (degs) -> (
