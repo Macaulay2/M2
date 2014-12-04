@@ -216,6 +216,15 @@ linux-debug64 : always
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
+linux-profile64 : always
+	mkdir -p builds.tmp/profile64
+	cd builds.tmp/profile64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-profile \
+		--enable-download
+
 linux-opt64-mathic : always
 	mkdir -p builds.tmp/opt64-mathic
 	cd builds.tmp/opt64-mathic; ../../../../configure \
