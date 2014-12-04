@@ -293,8 +293,8 @@ makePureBettiDiagramHK List := (degs) -> (
      )
  
 --  input: BettiTally
-decompose1 = method();
-decompose1 BettiTally := B -> (
+decompose3 = method();
+decompose3 BettiTally := B -> (
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
      C:=makePureBettiDiagramHK L;
@@ -359,7 +359,7 @@ decomposeHK BettiTally := B-> (
      Components:={};
      B1:= new MutableHashTable from B;
      while min values B1 >= 0 and max values B1 > 0 do (
-	  X:=decompose1(new BettiTally from B1);
+	  X:=decompose3(new BettiTally from B1);
 	  B1=new MutableHashTable from X_2;
 	  --change the type of the values in X_0 to ZZ
 	  Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
@@ -374,7 +374,7 @@ decomposeDegreesHK BettiTally := B-> (
      Components:={};
      B1:= new MutableHashTable from B;
      while min values B1 >= 0 and max values B1 > 0 do (
-	  X:=decompose1(new BettiTally from B1);
+	  X:=decompose3(new BettiTally from B1);
 	  B1=new MutableHashTable from X_2;
 	  --change the type of the values in X_0 to ZZ
 	  Y:=new BettiTally from apply(pairs X_0, i->{first i, last i});
