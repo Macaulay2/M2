@@ -22,10 +22,54 @@ TEST ///
   I = monomialCurveIdeal(R,{1,3,7})
   gens gb I
   C = res(I, Strategy=>4)
-  
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
   R = kk[vars(0..17), MonomialOrder=>{Weights=>splice{18:1}}]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
   C = res(ideal gens gb I, Strategy=>4)
+///
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[a..f, MonomialOrder=>{Weights=>{1,1,1,1,1,1}}]
+  I = ideal(a*b*c-d*e_f, a*b^2-d*c^2, a*e*f-d^2*b)
+  J = gens gb I
+  C = res(ideal gens gb I, Strategy=>4)
+///
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{10:1}}]
+  I = ideal fromDual random(R^1, R^{-3});
+  J = gens gb I;
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)
+///
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[vars(0..15), MonomialOrder=>{Weights=>splice{16:1}}]
+  I = ideal fromDual random(R^1, R^{-3});
+  J = gens gb I;
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)
+///
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[vars(0..18), MonomialOrder=>{Weights=>splice{19:1}}]
+  I = ideal fromDual random(R^1, R^{-3});
+  J = gens gb I;
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)
 ///

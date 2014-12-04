@@ -179,6 +179,7 @@ void SchreyerFrame::showMemoryUsage() const
 void SchreyerFrame::show() const
 {
   std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
+#if 0
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       auto& myframe = level(i);
@@ -191,6 +192,7 @@ void SchreyerFrame::show() const
           std::cout << std::endl;
         }
     }
+#endif
   showMemoryUsage();
 }
 
