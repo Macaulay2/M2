@@ -22,10 +22,11 @@ protected:
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-  void betti_init(int lo, int hi, int len, int *&bettis) const;
-  M2_arrayint betti_make(int lo, int hi, int len, int *bettis) const;
-
-  void betti_display(buffer &o, M2_arrayint a) const;
+public:
+  // These three routines should be moved to a utility class
+  static void betti_init(int lo, int hi, int len, int *&bettis);
+  static M2_arrayint betti_make(int lo, int hi, int len, int *bettis);
+  static void betti_display(buffer &o, M2_arrayint a);
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;}
 

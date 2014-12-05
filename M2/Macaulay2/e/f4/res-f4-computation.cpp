@@ -75,7 +75,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //  frame.show();
 
   while (frame.computeNextLevel() > 0) { }
-  frame.show();
+  //frame.show();
   return result;
 }
 

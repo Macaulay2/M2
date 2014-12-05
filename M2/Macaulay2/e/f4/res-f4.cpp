@@ -17,6 +17,14 @@ F4Res::F4Res(
 {
 }
 
+M2_arrayint F4Res::getBetti(int type) const
+{
+  if (type == 1)
+    return mFrame.getBettiFrame();
+  ERROR("betti display not implemenented yet");
+  return 0;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

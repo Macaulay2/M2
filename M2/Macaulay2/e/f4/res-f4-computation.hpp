@@ -52,7 +52,7 @@ protected:
 
   const FreeModule /* or null */ *get_free(int level);
 
-  M2_arrayint get_betti(int type) const { throw exc::engine_error("get_betti not implemented"); }
+  M2_arrayint get_betti(int type) const { return mComp->getBetti(type); }
   // type is documented under rawResolutionBetti, in engine.h
 
   void text_out(buffer &o) const {

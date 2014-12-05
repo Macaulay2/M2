@@ -31,7 +31,19 @@ TEST ///
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
+
+  C = res(I, Strategy=>0)
+  rawBetti(raw C.Resolution, 1)
+  rawBetti(raw C.Resolution, 0)
+  rawBetti(raw C.Resolution, 2)
+  rawBetti(raw C.Resolution, 3)
+  raw C.Resolution
+  
+  C = res(I, Strategy=>1)
+  raw C.Resolution
+  
   C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
 ///
 
 TEST ///  
@@ -41,17 +53,39 @@ TEST ///
   R = kk[a..f, MonomialOrder=>{Weights=>{1,1,1,1,1,1}}]
   I = ideal(a*b*c-d*e_f, a*b^2-d*c^2, a*e*f-d^2*b)
   J = gens gb I
+
   C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
+  
+  I = ideal I_*
+  C = res(ideal gens gb I, Strategy=>1)
+  rawBetti(raw C.Resolution, 1)
+
+  I = ideal I_*
+  C = res(ideal gens gb I, Strategy=>0)
+  rawBetti(raw C.Resolution, 1)
 ///
 
 TEST ///  
   restart
   debug Core
   kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{10:1}}]
+  R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{11:1}}]
   I = ideal fromDual random(R^1, R^{-3});
   J = gens gb I;
+  
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
+
+  I = ideal I_*
+  C = res(ideal gens gb I, Strategy=>1, DegreeLimit=>0)
+  rawBetti(raw C.Resolution, 1)
+
+  I = ideal I_*;
+  elapsedTime C = res(ideal gens gb I, Strategy=>0, DegreeLimit=>0)
+  rawBetti(raw C.Resolution, 1)
+
 ///
 
 TEST ///  

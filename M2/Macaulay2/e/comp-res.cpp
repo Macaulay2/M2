@@ -157,13 +157,13 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
   return C;
 }
 
-void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis) const
+void ResolutionComputation::betti_init(int lo, int hi, int len, int *&bettis)
 {
   int z = (hi-lo+1) * (len+1);
   bettis = newarray_atomic_clear(int,z);
 }
 
-M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis) const
+M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bettis)
 {
   int d, lev;
   int hi1 = hi+1;
@@ -210,7 +210,7 @@ M2_arrayint ResolutionComputation::betti_make(int lo, int hi, int len, int *bett
   return result;
 }
 
-void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar) const
+void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar)
 {
   int *a = ar->array;
   int total_sum = 0;

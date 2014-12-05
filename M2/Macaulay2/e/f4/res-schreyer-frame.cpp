@@ -3,6 +3,9 @@
 #include "res-schreyer-frame.hpp"
 #include "f4-monlookup.hpp"
 
+#include "../comp-res.hpp"
+#include "../betti.hpp"
+
 #include <iostream>
 #include <algorithm>
 
@@ -179,7 +182,6 @@ void SchreyerFrame::showMemoryUsage() const
 void SchreyerFrame::show() const
 {
   std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
-#if 0
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       auto& myframe = level(i);
@@ -187,15 +189,54 @@ void SchreyerFrame::show() const
       std::cout << "--- level " << i << " ------" << std::endl;
       for (int j=0; j<myframe.size(); j++)
         {
-          std::cout << "    " << j << " " << myframe[j].mDegree << "(" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
+          std::cout << "    " << j << " " << myframe[j].mDegree << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
           mMonoid.show(myframe[j].mMonom);
           std::cout << std::endl;
         }
     }
-#endif
   showMemoryUsage();
 }
 
+void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
+{
+  auto lev0 = level(0);
+  loDegree = hiDegree = static_cast<int>(lev0[0].mDegree);
+  for (int lev=0; lev<mFrame.mLevels.size(); lev++)
+    {
+      auto& myframe = level(lev);
+      if (myframe.size() == 0) return;
+      length = lev;
+      for (auto p=myframe.begin(); p != myframe.end(); ++p)
+        {
+          int deg = p->mDegree;
+          deg -= lev; // slanted degree
+          if (deg < loDegree) loDegree = deg;
+          if (deg > hiDegree) hiDegree = deg;
+        }
+    }
+  //  show();
+}
+
+M2_arrayint SchreyerFrame::getBettiFrame() const
+{
+  int lo, hi, len;
+  getBounds(lo, hi, len);
+  std::cout << "bounds: lo=" << lo << " hi=" << hi << " len=" << len << std::endl;
+  BettiDisplay B(lo,hi,len);
+  // now set B
+
+  for (int lev=0; lev<=len; lev++)
+    {
+      auto& myframe = level(lev);
+      for (auto p=myframe.begin(); p != myframe.end(); ++p)
+        {
+          int deg = p->mDegree; // this is actual degree, not slanted degree
+          B.entry(deg-lev,lev) ++ ;
+        }
+    }
+
+  return B.getBetti();
+}
 // local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

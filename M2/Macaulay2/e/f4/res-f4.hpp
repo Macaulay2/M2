@@ -43,6 +43,10 @@ public:
   void insertLevel1(long degree, 
                     const F4Monomial& leadMonomial, 
                     Polynomial&& tail);  // we take ownership of this object
+
+  void getDegreeRangeAndLength(int& lodegree, int& hidegree,  int& len);
+  M2_arrayint getBetti(int type) const;
+  
 private:
   SchreyerFrame mFrame;
 

@@ -59,13 +59,13 @@ public:
 
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
+  void getBounds(int& loDegree, int& hiDegree, int& length) const;
+  M2_arrayint getBettiFrame() const;
   ///////////////////////
   // Display functions //
   ///////////////////////
   // Betti (for non-minimal Betti)
 private:
-
-
   struct PreElement
   {
     varpower_monomial vp;
