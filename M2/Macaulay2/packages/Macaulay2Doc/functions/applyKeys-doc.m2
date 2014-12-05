@@ -31,7 +31,7 @@ document {
 document { 
      Key => (applyKeys,HashTable,Function,Function),
      Headline => "apply a function to each key in a hash table with collision handling",
-     Usage => "applyKeys(H,f)",
+     Usage => "applyKeys(H,f,g)",
      Inputs => {
   	  "H" => HashTable,
   	  "f" => Function => "with one argument",
