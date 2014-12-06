@@ -18,8 +18,8 @@ public:
     long mBegin; // points into next level's elements
     long mEnd;
     FrameElement() {}
-    FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(0), mEnd(0) {}
-    FrameElement(packed_monomial monom, long deg) : mMonom(monom), mDegree(deg), mBegin(0), mEnd(0) {}
+    FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
+    FrameElement(packed_monomial monom, long deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
   };
 
   // Construct an empty frame
@@ -47,15 +47,10 @@ public:
 
   long computeNextLevel(); // returns true if new elements are constructed
 
-  // insert monomial into level 0
-  // monom should have been allocated using monomialBlock().
-  // The frame now owns this pointer
-  long insert(packed_monomial monom, long degree);
-
-  // insert monomial into level 1
-  // monom should have been allocated using monomialBlock().
-  // The frame now owns this pointer
-  long insert(packed_monomial monom); // computes the degree
+  long insertLevelZero(packed_monomial monom, long degree);
+  long insertLevelOne(packed_monomial monom);
+  long insert(packed_monomial monom);
+  long insertBasic(int lev, packed_monomial monom, long degree);
 
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 

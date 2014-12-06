@@ -31,29 +31,6 @@ void SchreyerFrame::endLevel()
 {
   /* TODO: this should be made much cleaner! */
   std::cout << "current level: " << currentLevel() << std::endl;
-  if (currentLevel() > 0)
-    {
-      auto this_elem = level(currentLevel()-1).begin();
-      (*this_elem).mBegin = 0; // These should already be set, but we'll reset them
-      (*this_elem).mEnd = 0;
-      long prev_comp = 0;
-      long count = 0;
-      auto end = level(currentLevel()).end();
-      for (auto i = level(currentLevel()).begin(); i != end; ++i, ++count)
-        {
-          auto this_comp = mMonoid.get_component((*i).mMonom);
-          (*this_elem).mEnd = count;
-          if (this_comp != prev_comp) 
-            {
-              // get next elem:
-              ++this_elem;
-              (*this_elem).mBegin = this_comp;
-              (*this_elem).mEnd = this_comp;
-            }
-          //std::cout << this_comp << " " << prev_comp << " " << count << std::endl;
-        }
-      (*this_elem).mEnd = count;
-    }
   mCurrentLevel++;
 }
 
@@ -132,16 +109,32 @@ long SchreyerFrame::computeNextLevel()
   return n_elems_added;
 }
 
-long SchreyerFrame::insert(packed_monomial monom, long degree)
+long SchreyerFrame::insertBasic(int lev, packed_monomial monom, long degree)
 {
-  auto& myframe = level(currentLevel());
+  // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
+  auto& myframe = level(lev);
   myframe.emplace_back(FrameElement(monom,degree));
   return myframe.size();
 }
 
+long SchreyerFrame::insertLevelZero(packed_monomial monom, long degree)
+{
+  return insertBasic(0, monom, degree);
+}
+long SchreyerFrame::insertLevelOne(packed_monomial monom)
+{
+
+  long last = insertBasic(1, monom, degree(1, monom));
+  long comp = mMonoid.get_component(monom);
+  auto& p = level(0)[comp];
+  if (p.mBegin == -1)
+    p.mBegin = last-1;
+  p.mEnd = last;
+  return last;
+}
 long SchreyerFrame::insert(packed_monomial monom)
 {
-  return insert(monom, degree(currentLevel(), monom));
+  return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
 }
 
 long SchreyerFrame::memoryUsage() const

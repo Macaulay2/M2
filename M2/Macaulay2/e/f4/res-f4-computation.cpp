@@ -56,7 +56,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       MI->one(i, elem);
-      frame.insert(elem, F->primary_degree(i));
+      frame.insertLevelZero(elem, F->primary_degree(i));
     }
   frame.endLevel();
 
@@ -68,9 +68,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       poly f;
       F4toM2Interface::from_M2_vec(KK, MI, F, groebnerBasisMatrix->elem(i), f);
       MI->copy(f.monoms, elem);
-      frame.insert(elem);
+      frame.insertLevelOne(elem);
     }
   frame.endLevel();
+  // frame.show();
 
   //  frame.show();
 

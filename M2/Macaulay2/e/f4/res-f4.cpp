@@ -12,8 +12,7 @@ F4Res::F4Res(
   : mFrame(*MI,max_level),
     mGausser(KK0),
     mMonoid(MI),
-    mMem(Mem),
-    mMaxLevel(max_level)
+    mMem(Mem)
 {
 }
 

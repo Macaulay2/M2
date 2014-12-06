@@ -12,11 +12,9 @@
 
 class Gausser;
 class MonomialInfo;
-class FreeModule;
 
 /////////////////////////////////////////////////////////////////////////////
 
-class F4Monomial;  // contains a packed monomial and component
 class F4Res
 {
 public:
@@ -33,18 +31,6 @@ public:
 
   SchreyerFrame& frame() { return mFrame; }
 
-  void computeLevel(int level); // level >= 2
-
-  void startLevel0(long nComponents);
-  void insertLevel0(long degree, 
-                    const F4Monomial& monom);  // we copy the monomial info into level 0 frame
-
-  void startLevel1(long nComponents);
-  void insertLevel1(long degree, 
-                    const F4Monomial& leadMonomial, 
-                    Polynomial&& tail);  // we take ownership of this object
-
-  void getDegreeRangeAndLength(int& lodegree, int& hidegree,  int& len);
   M2_arrayint getBetti(int type) const;
   
 private:
@@ -52,8 +38,7 @@ private:
 
   const Gausser* mGausser;
   const MonomialInfo* mMonoid;
-  const F4Mem* mMem;
-  int mMaxLevel;
+  const F4Mem* mMem; // Used for what TODO?
 };
 
 #endif

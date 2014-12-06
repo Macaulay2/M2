@@ -50,6 +50,17 @@ TEST ///
   restart
   debug Core
   kk = ZZp(101, Strategy=>"Old")
+  R = kk[vars(0..4), MonomialOrder=>{Weights=>splice{5:1}}]
+  I = ideal"b2c,abc,a2c,a2de,b3d,bc2de,ac2de,ab2d2e,c3d2e2"
+  J = gens gb I  
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
+///
+
+TEST ///  
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
   R = kk[a..f, MonomialOrder=>{Weights=>{1,1,1,1,1,1}}]
   I = ideal(a*b*c-d*e_f, a*b^2-d*c^2, a*e*f-d^2*b)
   J = gens gb I
@@ -96,6 +107,7 @@ TEST ///
   I = ideal fromDual random(R^1, R^{-3});
   J = gens gb I;
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
 ///
 
 TEST ///  
@@ -106,4 +118,23 @@ TEST ///
   I = ideal fromDual random(R^1, R^{-3});
   J = gens gb I;
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)  
+///
+
+///
+  restart
+  debug Core
+  load "g16n2.m2"
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[t_0..t_14, MonomialOrder=>{Weights=>splice{15:1}}]
+  I = sub(I,R);
+  J = ideal groebnerBasis(I, Strategy=>"F4");
+  J = ideal sort(gens J, MonomialOrder=>Descending, DegreeOrder=>Ascending);
+  elapsedTime C = res(J, Strategy=>4)  
+  rawBetti(raw C.Resolution, 1)
+
+  I = ideal J_*;
+  elapsedTime C = res(I, Strategy=>0, DegreeLimit=>-1)
+  rawBetti(raw C.Resolution, 1)
+
 ///
