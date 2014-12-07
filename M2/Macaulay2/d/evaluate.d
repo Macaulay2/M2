@@ -1592,7 +1592,8 @@ export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
 	       if val != notfoundE then (
 		  t := applyEEE(g,val,p.value);
 		  when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(x,newkey);
+			      if err.message != continueMessage then return t else remove(x,newkey); 
+			      -- in case "continue" is executed in g,  remove the key
 			      	   )
 			      else (
 				   storeInHashTable(x,newkey,h,t);
