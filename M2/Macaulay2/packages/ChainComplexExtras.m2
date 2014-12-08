@@ -55,6 +55,8 @@ chainComplexFromData List := L ->(
     assert( min C == 0);
     C[-L_0])
 
+
+--the functionality of this form is subsumed by that of the form without the ZZ option!
 chainComplexFromData(ZZ, List) := (minC,L) ->(
     --minC will become the min of the output complex
     C := chainComplex L;
@@ -537,38 +539,6 @@ nextReslnStep(Matrix,Matrix,Matrix,Matrix) := (prevPDiffl,prevQuism,CDiffl,PDiff
 )
 
 
-///
-restart
-uninstallPackage "ChainComplexExtras"
-installPackage "ChainComplexExtras"
-
-kk= ZZ/101
-S = kk[a,b,c,d]
-
-R = S/ideal(a^3)
-M = R^1/ideal(a)
-C = chainComplex{map(M,R^0,0)}
-source (m=cartanEilenbergResolution (C, LengthLimit => 10))
-source (n =resolutionOfChainComplex (C, LengthLimit => 10))
-assert (isQuism(m, LengthLimit=> 10))
-assert(not isQuism(m, LengthLimit => 12))
-assert(isQuism(n, LengthLimit=> 10))
-m = resolutionOfChainComplex (C[3])
-assert(target m == C[3])
-
-use S
-M0  = coker matrix"a4, b4,ab"
-M1 = S^{ -1}**M0; M2 = S^{ -1}**M1
-phi1 = map(M0,M1,matrix"a"); phi2 = map(M1,M2,matrix"b")
-C = chainComplex{phi1,phi2}
-C = koszul gens (ideal vars S)^2
-
-time m = resolutionOfChainComplex C;
-time n = cartanEilenbergResolution C;
-assert(C == source m)
-assert (C == target n)
-assert (isQuism n)
-///
 
 extendFromMiddle = method()
 extendFromMiddle (ChainComplex, ChainComplex, Matrix, ZZ) := (F1, F2, f, i) ->(
@@ -766,7 +736,7 @@ document {
 
 document {
      Key => {isQuism, (isQuism,ChainComplexMap)},
-     Headline => "Test to see if the ChainComplexMap is a quasiisomorphism.",
+     Headline => "Test to see if the ChainComplexMap is a quasi-isomorphism.",
      Usage => "isQuism(phi)",
      Inputs => {
 	  "phi" => {},
@@ -774,8 +744,8 @@ document {
      Outputs => {
 	  {"Boolean"}
      },
-     "A quasiisomorphism is a chain map that is an isomorphism in homology.",
-     "Mapping cones currently do not work properly for complexes concentrated",
+     "A quasi-isomorphism is a chain map that is an isomorphism in homology. ",
+     "Mapping cones currently do not work properly for complexes concentrated ",
      "in one degree, so isQuism could return bad information in that case.",
      EXAMPLE {
 	     "R = ZZ/101[a,b,c]",
@@ -786,6 +756,61 @@ document {
 	     "isQuism(F)",
 	     }
      }
+
+doc ///
+   Key
+    [isQuism,LengthLimit]
+   Headline
+    Option to check quasi-isomorphism only up to a certain point
+   Usage
+    t = isQuism(F, LengthLimit => n)
+   Inputs
+    F:ChainComplexMap
+    n:ZZ
+   Outputs
+    t:Boolean
+   Description
+    Text
+     Useful, for example, when checking whether a map is a resolution of a complex
+     in cases where the actual resolution is infinite
+    Example
+     kk= ZZ/101
+     S = kk[a,b,c]
+     R = S/ideal(a^3)
+     M = R^1/ideal(a)
+     C = chainComplex{map(M,R^0,0)}
+     m=cartanEilenbergResolution (C, LengthLimit => 10)
+     isQuism(m, LengthLimit=> 10)
+     isQuism(m, LengthLimit => 12)
+   SeeAlso
+    isExact
+///
+doc ///
+   Key
+    [isExact,LengthLimit]
+   Headline
+    Option to check exactness only up to a particular homological degree
+   Usage
+    t = isExact(F, LengthLimit => n)
+   Inputs
+    F:ChainComplex
+    n:ZZ
+   Outputs
+    t:Boolean
+   Description
+    Text
+    Example
+     kk= ZZ/101
+     S = kk[a,b,c]
+     R = S/ideal(a^3)
+     M = R^1/ideal(a)
+     C = chainComplex{map(M,R^0,0)}
+     n =resolutionOfChainComplex (C, LengthLimit => 10)
+     isExact(cone n, LengthLimit=> 10)
+     isExact(cone n, LengthLimit=> 12)     
+   SeeAlso
+    isQuism
+///
 
 document {
      Key => {koszulComplex, (koszulComplex,Ideal)},
@@ -1293,6 +1318,87 @@ doc ///
 	f2=res( coker dualfm.dd_(-5),LengthLimit=> 6)[6]
 	betti f2
 	betti dual fm
+///
+doc ///
+   Key
+    chainComplexData
+   Headline
+    Extract data from a chain complex
+   Usage
+    L = chainComplexData C
+   Inputs
+    C:ChainComplex
+   Outputs
+    L:List
+   Description
+    Text
+     Output is a list with elements min C, max C and a sublist of the differentials of C     
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     chainComplexData C
+   SeeAlso
+     chainComplexFromData
+///
+
+doc ///
+   Key
+    chainComplexFromData
+    (chainComplexFromData, List)
+    (chainComplexFromData, ZZ, List)
+   Headline
+    constructs a ChainComplex from a list of data, with optional shift
+   Usage
+    C = chainComplexFromData(m, L)
+   Inputs
+    m:ZZ
+    L:List
+   Outputs
+    C:ChainComplex
+   Description
+    Text
+     Without the optional argument m this is the inverse of chainComplexData; L should 
+     be a list in the form {ZZ, ZZ, List}, where the first element represents the
+     desired min, and the last element the list of differentials.
+     If m is present, then the form is a simple list of differentials, and m
+     becomes the minimal degree of C.
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     L = chainComplexData C
+     C == chainComplexFromData L
+     C == chainComplexFromData(-3,L_2)
+   SeeAlso
+    chainComplexData
+///
+
+TEST///
+kk= ZZ/101
+S = kk[a,b,c]
+
+R = S/ideal(a^3)
+M = R^1/ideal(a)
+C = chainComplex{map(M,R^0,0)}
+source (m=cartanEilenbergResolution (C, LengthLimit => 10))
+source (n =resolutionOfChainComplex (C, LengthLimit => 10))
+assert (isQuism(m, LengthLimit=> 10))
+assert(not isQuism(m, LengthLimit => 12))
+assert(isQuism(n, LengthLimit=> 10))
+m = resolutionOfChainComplex (C[3])
+assert(target m == C[3])
+
+use S
+M0  = coker matrix"a4, b4,ab"
+M1 = S^{ -1}**M0; M2 = S^{ -1}**M1
+phi1 = map(M0,M1,matrix"a"); phi2 = map(M1,M2,matrix"b")
+C = chainComplex{phi1,phi2}
+C = koszul gens (ideal vars S)^2
+
+time m = resolutionOfChainComplex C;
+time n = cartanEilenbergResolution C;
+assert(C == source m)
+assert (C == target n)
+assert (isQuism n)
 ///
 
 TEST ///
