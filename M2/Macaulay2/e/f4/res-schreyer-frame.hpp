@@ -8,9 +8,13 @@
 #include "varpower-monomial.hpp"
 #include <vector>
 
+class F4Res;
+
+
 class SchreyerFrame
 {
 public:
+  friend class F4Res;
   struct FrameElement
   {
     packed_monomial mMonom; // has component, degree too

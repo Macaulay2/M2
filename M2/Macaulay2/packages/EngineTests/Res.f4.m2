@@ -22,6 +22,8 @@ TEST ///
   I = monomialCurveIdeal(R,{1,3,7})
   gens gb I
   C = res(I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
+///
 
 TEST ///  
   restart

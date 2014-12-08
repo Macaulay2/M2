@@ -161,6 +161,7 @@ void MonomialHashTable<ValueType>::show() const
 }
 
 template class MonomialHashTable<MonomialInfo>;
+template class MonomialHashTable<MonomialsWithComponent>;
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

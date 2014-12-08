@@ -5,6 +5,18 @@
 
 #include "moninfo.hpp"
 
+class MonomialsWithComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsWithComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
 // ValueType must implement the following:
 // values should have computed hash values stored with them
 //  typename ValueType::value
