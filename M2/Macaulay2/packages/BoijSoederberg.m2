@@ -591,6 +591,97 @@ decompose BettiTally := B-> (
 	  Components = append(Components, hold(X_1) * Y));
      sum Components)
 
+-- Same as decompose but with options.
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method.
+decomposeBetti = method(Options => true)
+decomposeBetti BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -> (
+    
+    Components:={};
+    B1:= new MutableHashTable from B;
+    
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+     	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X:=decompose1(new BettiTally from B1);
+	     B1=new MutableHashTable from X_2;
+	     --change the type of the values in X_0 to ZZ
+	     Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+	     Components = append(Components, hold(X_1) * Y));
+     	 sum Components
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X3:=decompose3(new BettiTally from B1);
+	     B1=new MutableHashTable from X3_2;
+	     --change the type of the values in X3_0 to ZZ
+	     Y3:=new BettiTally from apply(pairs X3_0, i->{first i,last i});
+	     Components = append(Components, hold(X3_1) * Y3));
+	 sum Components	 
+     )
+     else if o.TableEntries == RealizationModules
+     then (
+     	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X2:=decompose2(new BettiTally from B1);
+	     B1=new MutableHashTable from X2_2;
+	     --change the type of the values in X2_0 to ZZ
+	     Y2:=new BettiTally from apply(pairs X2_0, i->{first i,last i});
+	     Components = append(Components, hold(X2_1) * Y2));
+     	 sum Components
+     )     
+     )
+ )
+
+
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"
+M'=set{m1,m2}
+assert(L===M')
+
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0,0;
+                     0,5,5,0;
+		     0,0,0,1"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix"1,0,0;
+     	  0,2,0;
+	  0,0,1"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
+///
+
 TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
