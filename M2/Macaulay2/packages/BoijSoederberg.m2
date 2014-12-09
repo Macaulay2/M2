@@ -2,7 +2,7 @@
 newPackage(
 	"BoijSoederberg",
     	Version => "1.3", 
-    	Date => "December 9, 2013",
+    	Date => "December 9, 2014",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
@@ -433,7 +433,12 @@ decomposeDegreesES BettiTally := B -> (
 	  Components = append(Components, (X_1,listPureDegrees(Y))));
      Components
      )
-     
+    
+    
+-------------------------------------
+--- Elimination Orders --------------
+-------------------------------------
+BettiEliminationTally = new Type of BettiTally;     
      
 --  input:  BettiTally of a Cohen-Macaulay Module
 -- output:  Boolean Value, True if more than one betti dies in the
@@ -489,6 +494,18 @@ eliminateBetti BettiTally := o -> B -> (
 eliminateBetti Ideal := o -> I -> (
      return eliminateBetti( betti res I, EliminationSequence => o.EliminationSequence );
      )
+  
+TEST ///
+restart
+needsPackage "BoijSoederberg"
+R = ZZ/8821[x,y,z,w]
+I = ideal(x,y^2,z^4,w^8)
+B = betti res I
+eliminateBetti I
+eliminateBetti B
+isMassEliminate B
+assert(isMassEliminate B === true)
+///
  
 --  input: List of degrees (type of an artinian complete intersection)
 --  output: BettiTally of such a complete intersection
@@ -502,6 +519,8 @@ makeCI List := opts -> degs ->  (
      betti res (S^1/G)
      )
 
+
+---- helper method, not for export ----
 --  input:  BettiTally of a Cohen-Macaulay Module
 -- output:  List, differnce of degree sequence in decomposeDegreesHK
 degreeDiff = method();
