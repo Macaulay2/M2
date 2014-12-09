@@ -10,7 +10,7 @@
 #include <assert.h>
 #define M2_ASSERT assert
 
-class Gausser;
+class ResGausser;
 class MonomialInfo;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ class F4Res
 public:
   F4Res(
         F4Mem* Mem,
-        const Gausser* KK0,
+        const ResGausser* KK0,
         const MonomialInfo* MI,
         int max_level
        );
@@ -44,7 +44,7 @@ public:
 private:
   SchreyerFrame mFrame;
 
-  const Gausser* mGausser;
+  const ResGausser* mResGausser;
   const MonomialInfo* mMonoid;
   const F4Mem* mMem; // Used for what TODO?
 

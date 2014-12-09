@@ -31,8 +31,8 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   const Ring *K = R->getCoefficients();
 
-  F4Mem *Mem = new F4Mem; // Used both for Gausser and F4Res
-  Gausser *KK = Gausser::newGausser(K, Mem);
+  F4Mem *Mem = new F4Mem; // Used both for ResGausser and F4Res
+  ResGausser *KK = ResGausser::newResGausser(K, Mem);
   if (KK == 0)
     {
       ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
@@ -83,13 +83,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 F4ResComputation::F4ResComputation(const PolynomialRing* R,
                                    const Matrix* gbmatrix,
                                    F4Mem* Mem,
-                                   const Gausser* KK,
+                                   const ResGausser* KK,
                                    const MonomialInfo* MI,
                                    int max_level)
 
   : mRing(*R),
     mInputGroebnerBasis(*gbmatrix),
-    mMem(Mem) // we own this.  mGausser and mComp just use it
+    mMem(Mem) // we own this.  mResGausser and mComp just use it
 {
   mComp.reset(new F4Res(Mem, KK, MI, max_level)); // might need gbmatrix->rows() too
 }

@@ -1,16 +1,16 @@
 // Copyright 2014 Michael E. Stillman
 
 #include "res-f4.hpp"
-#include "gausser.hpp"
+#include "res-gausser.hpp"
 
 F4Res::F4Res(
              F4Mem* Mem,
-             const Gausser* KK0,
+             const ResGausser* KK0,
              const MonomialInfo* MI,
              int max_level
              )
   : mFrame(*MI,max_level),
-    mGausser(KK0),
+    mResGausser(KK0),
     mMonoid(MI),
     mMem(Mem),
     mSchreyerRes(new MonomialsWithComponent(*mMonoid)),

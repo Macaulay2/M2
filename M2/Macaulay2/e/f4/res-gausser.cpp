@@ -1,161 +1,173 @@
-// Copyright 2014 Michael E. Stillman.
+// Copyright 2005 Michael E. Stillman.
 
 #include "res-gausser.hpp"
 #include "f4-mem.hpp"
+#include "moninfo.hpp"
 
-ResGausser *ResGausser::create(const Ring *K, F4Mem *Mem0)
+ResGausser *ResGausser::newResGausser(const Ring *K, F4Mem *Mem0)
 {
-  auto Kp = dynamic_cast<const InterfaceRingType*>(K);
+  const Z_mod *Kp = K->cast_to_Z_mod();
   if (Kp != 0)
-    return new ResGausser(Kp->ring(),Mem0);
+    return new ResGausser(Kp,Mem0);
   return 0;
 }
 
-ResGausser::ResGausser(const RingType& K0, F4Mem *Mem0)
-  : mRing(K0), Mem(Mem0)
+ResGausser::ResGausser(const Z_mod *K0, F4Mem *Mem0)
+  : typ(ZZp), K(K0), Kp(K0->get_CoeffRing()), Mem(Mem0), n_dense_row_cancel(0), n_subtract_multiple(0)
 {
-  mStats.mNumCallsDenseRowCancel = 0;
-  mStats.mNumCallsSubtractMultiple = 0;
 }
 
-ResGausser::CoefficientArray ResGausser::allocateCoefficientArray(ComponentIndex len) const
+F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_elem *elems) const
 {
-  return new ElementType[len]; // Mem->coefficients.allocate(len);
+  int i;
+  switch (typ) {
+  case ZZp:
+    int *result = Mem->coefficients.allocate(len);
+    for (i=0; i<len; i++)
+      result[i] = elems[i].int_val;
+    return result;
+  };
+  return 0;
 }
 
-ResGausser::CoefficientArray ResGausser::from_ringelem_array(ComponentIndex len, ring_elem *elems) const
+void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *result) const
 {
-  CoefficientArray result = allocateCoefficientArray(len);
-  for (ComponentIndex i=0; i<len; i++)
-    ring().from_ring_elem(result[i], elems[i]);
-  return result;
+  int *elems = static_cast<int *>(F);
+  int i;
+  switch (typ) {
+  case ZZp:
+    for (i=0; i<len; i++)
+      result[i].int_val = elems[i];
+  };
 }
 
-void ResGausser::to_ringelem_array(ComponentIndex len, CoefficientArray F, ring_elem *result) const
+F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4CoefficientArray F) const
 {
-  ElementType* elems = F;
-  for (ComponentIndex i=0; i<len; i++)
-    ring().to_ring_elem(result[i], elems[i]);
+  int *elems = static_cast<int *>(F);
+  int i;
+  switch (typ) {
+  case ZZp:
+    int *result = Mem->coefficients.allocate(len);
+    for (i=0; i<len; i++)
+      result[i] = elems[i];
+    return result;
+  };
+  return 0;
 }
 
-ResGausser::CoefficientArray ResGausser::copy_CoefficientArray(ComponentIndex len, CoefficientArray F) const
+void ResGausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const
 {
-  ElementType* elems = F;
-  ElementType* result = allocateCoefficientArray(len);
-  for (ComponentIndex i=0; i<len; i++)
-    result[i] = elems[i];
-  return result;
-}
-
-void ResGausser::deallocate_CoefficientArray(CoefficientArray &F, ComponentIndex len) const
-{
-  ElementType* elems = F;
-  delete [] elems;
-  //Mem->coefficients.deallocate(elems);
-  F = 0;
+  int *elems = static_cast<int *>(F);
+  switch (typ) {
+  case ZZp:
+    Mem->coefficients.deallocate(elems);
+    F = 0;
+  };
 }
 /////////////////////////////////////////////////////////////////////
 ///////// Dense row routines ////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-void ResGausser::dense_row_allocate(dense_row &r, ComponentIndex nelems) const
+void ResGausser::dense_row_allocate(dense_row &r, int nelems) const
 {
   //  int *elems = newarray_atomic(int, nelems);
-  ElementType* elems = allocateCoefficientArray(nelems);
+  int *elems = Mem->coefficients.allocate(nelems);
   r.coeffs = elems;
   r.len = nelems;
-  for (ComponentIndex i=0; i<nelems; i++)
-    ring().set_zero(elems[i]);
+  for (int i=0; i<nelems; i++)
+    Kp->set_zero(elems[i]);
 }
 
-void ResGausser::dense_row_clear(dense_row &r, ComponentIndex first, ComponentIndex last) const
+void ResGausser::dense_row_clear(dense_row &r, int first, int last) const
 {
-  ElementType* elems = r.coeffs;
-  for (ComponentIndex i=first; i<=last; i++)
-    ring().set_zero(elems[i]);
+  int *elems = static_cast<int *>(r.coeffs);
+  for (int i=first; i<=last; i++)
+    Kp->set_zero(elems[i]);
 }
 
 void ResGausser::dense_row_deallocate(dense_row &r) const
 {
-  deallocate_CoefficientArray(r.coeffs, r.len);
+  deallocate_F4CCoefficientArray(r.coeffs, r.len);
   r.len = 0;
 }
 
 void ResGausser::dense_row_fill_from_sparse(dense_row &r,
-                                         ComponentIndex len,
-                                         CoefficientArray sparse,
-                                         ComponentIndex *comps) const
+                                         int len,
+                                         F4CoefficientArray sparse,
+                                         int *comps) const
 {
-  ElementType* elems = r.coeffs;
-  ElementType* sparseelems = sparse;
-  for (ComponentIndex i=0; i<len; i++)
+  int *elems = static_cast<int *>(r.coeffs);
+  int *sparseelems = static_cast<int *>(sparse);
+  for (int i=0; i<len; i++)
     elems[*comps++] = *sparseelems++;
 
 }
 
-ResGausser::ComponentIndex ResGausser::dense_row_next_nonzero(dense_row &r, ComponentIndex first, ComponentIndex last) const
+int ResGausser::dense_row_next_nonzero(dense_row &r, int first, int last) const
 {
-  ElementType* elems = r.coeffs + first;
-  for (ComponentIndex i=first; i<=last; i++)
-    if (!ring().is_zero(*elems++))
+  int *elems = static_cast<int *>(r.coeffs);
+  elems += first;
+  for (int i=first; i<=last; i++)
+    if (!Kp->is_zero(*elems++))
       return i;
   return last+1;
 }
 
 void ResGausser::dense_row_cancel_sparse(dense_row &r,
-                                      ComponentIndex len,
-                                      CoefficientArray sparse,
-                                      ComponentIndex *comps) const
+                                      int len,
+                                      F4CoefficientArray sparse,
+                                      int *comps) const
 {
-  ElementType* elems = r.coeffs;
-  ElementType* sparseelems = sparse;
+  int *elems = static_cast<int *>(r.coeffs);
+  int *sparseelems = static_cast<int *>(sparse);
 
   // Basically, over ZZ/p, we are doing: r += a*sparse,
   // where sparse is monic, and a is -r.coeffs[*comps].
 
-  mStats.mNumCallsDenseRowCancel++;
-  mStats.mNumCallsSubtractMultiple += len;
-  ElementType a = elems[*comps];
-  for (ComponentIndex i=len; i>0; i--)
-    ring().subtract_multiple(elems[*comps++], a, *sparseelems++);
+  n_dense_row_cancel++;
+  n_subtract_multiple += len;
+  int a = elems[*comps];
+  //  for (int i=0; i<len; i++)
+  for (int i=len; i>0; i--)
+    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
 void ResGausser::dense_row_to_sparse_row(dense_row &r,
-                                         ComponentIndex &result_len,
-                                         CoefficientArray &result_sparse,
-                                         ComponentIndex *&result_comps,
-                                         ComponentIndex first,
-                                         ComponentIndex last) const
+                                      int &result_len,
+                                      F4CoefficientArray &result_sparse,
+                                      int *&result_comps,
+                                      int first,
+                                      int last) const
 {
-  ElementType* elems = r.coeffs;
-  ComponentIndex len = 0;
-  for (ComponentIndex i=first; i<=last; i++)
-    if (!ring().is_zero(elems[i])) len++;
-  ElementType* in_sparse = allocateCoefficientArray(len);
-  ComponentIndex *in_comps = Mem->coefficients.allocate(len);
+  int *elems = static_cast<int *>(r.coeffs);
+  int len = 0;
+  for (int i=first; i<=last; i++)
+    if (!Kp->is_zero(elems[i])) len++;
+  int *in_sparse = Mem->coefficients.allocate(len);
+  int *in_comps = Mem->components.allocate(len);
   result_len = len;
   result_sparse = in_sparse;
   result_comps = in_comps;
-  for (ComponentIndex i=first; i<=last; i++)
-    if (!ring().is_zero(elems[i]))
+  for (int i=first; i<=last; i++)
+    if (!Kp->is_zero(elems[i]))
       {
         *in_sparse++ = elems[i];
         *in_comps++ = i;
-        ring().set_zero(elems[i]);
+        Kp->set_zero(elems[i]);
       }
 }
 
-void ResGausser::sparse_row_make_monic(ComponentIndex len,
-                                       CoefficientArray sparse) const
+void ResGausser::sparse_row_make_monic(int len,
+                                    F4CoefficientArray sparse) const
 {
-  ElementType* elems = sparse;
-  ElementType lead = *elems;
+  int *elems = static_cast<int *>(sparse);
+  int lead = *elems;
   // invert lead:
-  ring().invert(lead,lead);
-  for (ComponentIndex i=0; i<len; i++, elems++)
+  Kp->invert(lead,lead);
+  for (int i=0; i<len; i++, elems++)
     {
       // multiply the non-zero value *elems by lead.
-      ring().mult(*elems, *elems, lead);
+      Kp->mult(*elems, *elems, lead);
     }
 }
 

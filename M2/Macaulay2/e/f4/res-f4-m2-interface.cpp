@@ -11,7 +11,7 @@
 
 #include <vector>
 
-void ResF4toM2Interface::from_M2_vec(const Gausser *KK,
+void ResF4toM2Interface::from_M2_vec(const ResGausser *KK,
                                   const MonomialInfo *MI,
                                   const FreeModule *F,
                                   vec v,
@@ -47,7 +47,7 @@ void ResF4toM2Interface::from_M2_vec(const Gausser *KK,
   deletearray(relem_array);
 }
 
-void ResF4toM2Interface::poly_set_degrees(const Gausser *KK,
+void ResF4toM2Interface::poly_set_degrees(const ResGausser *KK,
                                                   const MonomialInfo *MI,
                                                   const M2_arrayint wts,
                                                   const poly &f,
@@ -69,7 +69,7 @@ void ResF4toM2Interface::poly_set_degrees(const Gausser *KK,
 }
 
 #if 0
-void ResF4toM2Interface::from_M2_matrix(const Gausser *KK,
+void ResF4toM2Interface::from_M2_matrix(const ResGausser *KK,
                                      const MonomialInfo *MI,
                                      const Matrix *m,
                                      M2_arrayint wts,
@@ -87,7 +87,7 @@ void ResF4toM2Interface::from_M2_matrix(const Gausser *KK,
 }
 #endif
 
-vec ResF4toM2Interface::to_M2_vec(const Gausser *KK,
+vec ResF4toM2Interface::to_M2_vec(const ResGausser *KK,
                                const MonomialInfo *MI,
                                const poly &f,
                                const FreeModule *F)
@@ -150,7 +150,7 @@ vec ResF4toM2Interface::to_M2_vec(const Gausser *KK,
 }
 
 #if 0
-Matrix *ResF4toM2Interface::to_M2_matrix(const Gausser *KK,
+Matrix *ResF4toM2Interface::to_M2_matrix(const ResGausser *KK,
                                       const MonomialInfo *MI,
                                       gb_array &polys,
                                       const FreeModule *F)
@@ -161,7 +161,7 @@ Matrix *ResF4toM2Interface::to_M2_matrix(const Gausser *KK,
   return result.to_matrix();
 }
 
-MutableMatrix * ResF4toM2Interface::to_M2_MutableMatrix(const Gausser *KK,
+MutableMatrix * ResF4toM2Interface::to_M2_MutableMatrix(const ResGausser *KK,
                                                      coefficient_matrix *mat,
                                                      gb_array &gens,
                                                      gb_array &gb)

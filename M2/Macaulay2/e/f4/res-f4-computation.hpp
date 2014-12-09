@@ -3,7 +3,7 @@
 #ifndef _res_f4_computation_hpp_
 #define _res_f4_computation_hpp_
 
-#include "gausser.hpp"
+#include "res-gausser.hpp"
 #include "polyring.hpp"
 
 #include "../comp-res.hpp"
@@ -22,7 +22,7 @@ private:
   F4ResComputation(const PolynomialRing* R,
                    const Matrix* gbmatrix,
                    F4Mem* Mem,
-                   const Gausser* KK,
+                   const ResGausser* KK,
                    const MonomialInfo* MI,
                    int max_level);
 public:
