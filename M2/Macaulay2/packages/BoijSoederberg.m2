@@ -634,54 +634,6 @@ decomposeBetti BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -
  )
 
 
-M=matrix "1,0,0,0;
-        0,4,4,1"
-B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
-m1=mat2betti matrix "1,0,0,0;
-                     0,6,8,3"
-m2=mat2betti matrix "1,0,0;
-                     0,3,2"
-M'=set{m1,m2}
-assert(L===M')
-
-M=matrix "1,0,0,0;
-     	  0,5,5,1;
-	  0,0,1,1"		    
-B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
-m1=mat2betti matrix "1,0,0,0;
-                     0,6,8,3"
-m2=mat2betti matrix "1,0,0,0;
-                     0,5,5,0;
-		     0,0,0,1"
-m3=mat2betti matrix "3,0,0,0;
-                     0,10,0,0;
-		     0,0,15,8"
-M'=set{m1,m2,m3}
-assert(L===M')
-
-M=matrix"1,0,0,0;
-     	 0,2,0,0;
-	 0,1,3,1"
-B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
-m1=mat2betti matrix"1,0,0;
-     	  0,2,0;
-	  0,0,1"
-m2=mat2betti matrix"3,0,0,0;
-     	  0,10,0,0;
-	  0,0,15,8"
-m3=mat2betti matrix"1,0,0;
-     	  0,0,0;
-	  0,4,3"
-M'=set{m1,m2,m3}
-assert(L===M')
-///
-
 TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
