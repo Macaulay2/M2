@@ -1,3 +1,4 @@
+--New and active file to revise. Delete this line before submission.
 newPackage(
 	"BoijSoederberg",
     	Version => "1.2", 
