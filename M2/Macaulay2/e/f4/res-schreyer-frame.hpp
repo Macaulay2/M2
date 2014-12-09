@@ -1,3 +1,27 @@
+// to do list
+//  - display of "poly" elements in the resolution
+//  - get_matrix: should get these elements (if they are there yet)
+//  - F4CoefficientArray: need to be able to build one incrementally
+//  - monomial lookup routine
+//  - should monomials be varpowers?  or even lists of variables?
+//  - make sure monomials are always constructed with that "extra space" for the reducer number.
+
+// res-f4-m2-interface: needs to be rewritten:
+//   . don't use gc 
+//   . gb_array: 3 routines commented out, due to using these.
+//   . need a display routine for Polynomial, also one that limits the number of monomials displayed
+// res-gausser
+//   . don't use gc
+//   . perhaps define F4CoefficientArray in this class, so it is easily changed
+//   . don't yet use ARing stuff.
+// res-f4-types.hpp
+//   . has lots of junk (most already commented out)
+
+
+
+
+
+
 // Copyright 2014 Michael E. Stillman
 
 #ifndef _res_schreyer_frame_hpp_
@@ -6,10 +30,10 @@
 #include "moninfo.hpp"
 #include "memblock.hpp"
 #include "varpower-monomial.hpp"
+#include "res-f4-types.hpp"
 #include <vector>
 
 class F4Res;
-
 
 class SchreyerFrame
 {
@@ -21,6 +45,7 @@ public:
     long mDegree;
     long mBegin; // points into next level's elements
     long mEnd;
+    poly mSyzygy;
     FrameElement() {}
     FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
     FrameElement(packed_monomial monom, long deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
@@ -52,7 +77,7 @@ public:
   long computeNextLevel(); // returns true if new elements are constructed
 
   long insertLevelZero(packed_monomial monom, long degree);
-  long insertLevelOne(packed_monomial monom);
+  long insertLevelOne(packed_monomial monom, poly& syzygy); // grabs syzygy
   long insert(packed_monomial monom);
   long insertBasic(int lev, packed_monomial monom, long degree);
 

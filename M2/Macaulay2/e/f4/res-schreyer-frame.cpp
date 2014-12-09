@@ -121,7 +121,7 @@ long SchreyerFrame::insertLevelZero(packed_monomial monom, long degree)
 {
   return insertBasic(0, monom, degree);
 }
-long SchreyerFrame::insertLevelOne(packed_monomial monom)
+long SchreyerFrame::insertLevelOne(packed_monomial monom, poly& syzygy)
 {
 
   long last = insertBasic(1, monom, degree(1, monom));
@@ -130,6 +130,7 @@ long SchreyerFrame::insertLevelOne(packed_monomial monom)
   if (p.mBegin == -1)
     p.mBegin = last-1;
   p.mEnd = last;
+  std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
   return last;
 }
 long SchreyerFrame::insert(packed_monomial monom)
@@ -182,7 +183,9 @@ void SchreyerFrame::show() const
       std::cout << "--- level " << i << " ------" << std::endl;
       for (int j=0; j<myframe.size(); j++)
         {
-          std::cout << "    " << j << " " << myframe[j].mDegree << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
+          std::cout << "    " << j << " " << myframe[j].mDegree 
+                    << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
+          std::cout << "(size:" << myframe[j].mSyzygy.len << ") ";
           mMonoid.show(myframe[j].mMonom);
           std::cout << std::endl;
         }

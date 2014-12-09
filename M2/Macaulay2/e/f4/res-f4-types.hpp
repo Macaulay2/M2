@@ -9,6 +9,15 @@
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 
+typedef void* F4CoefficientArray;
+
+struct poly : public our_new_delete {
+  int len;
+  F4CoefficientArray coeffs;
+  monomial_word *monoms; // This is all of the monomials written contiguously
+};
+
+#if 0
 typedef unsigned int MonomialWord;
 typedef unsigned int ComponentIndex;
 
@@ -20,6 +29,9 @@ typedef void *F4CoefficientArray;
 typedef std::vector<MonomialWord> MonomialArray;
 
 struct Polynomial {
+  int len;
+  F4CoefficientArray coeffs;
+  monomial_word *monoms; // This is all of the monomials written contiguously
 };
 
 struct FrameElement {
@@ -98,7 +110,7 @@ Algorithm:
   to be determined: how best to do this
  */
 #endif
-
+#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

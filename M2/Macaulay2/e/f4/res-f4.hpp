@@ -3,7 +3,6 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
-#include "res-f4-types.hpp"
 #include "f4-mem.hpp"
 #include "res-schreyer-frame.hpp"
 #include "monhashtable.hpp"

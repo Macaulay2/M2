@@ -64,7 +64,7 @@ TEST ///
   debug Core
   kk = ZZp(101, Strategy=>"Old")
   R = kk[a..f, MonomialOrder=>{Weights=>{1,1,1,1,1,1}}]
-  I = ideal(a*b*c-d*e_f, a*b^2-d*c^2, a*e*f-d^2*b)
+  I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
   J = gens gb I
 
   C = res(ideal gens gb I, Strategy=>4)

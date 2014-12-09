@@ -1,6 +1,6 @@
 /* Copyright 2014, Michael E. Stillman */
 
-#include "f4-m2-interface.hpp"
+#include "res-f4-m2-interface.hpp"
 #include "res-f4-computation.hpp"
 #include "res-f4.hpp"
 
@@ -66,17 +66,17 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       poly f;
-      F4toM2Interface::from_M2_vec(KK, MI, F, groebnerBasisMatrix->elem(i), f);
+      ResF4toM2Interface::from_M2_vec(KK, MI, F, groebnerBasisMatrix->elem(i), f);
       MI->copy(f.monoms, elem);
-      frame.insertLevelOne(elem);
+      frame.insertLevelOne(elem, f);
     }
   frame.endLevel();
-  // frame.show();
+  frame.show();
 
   //  frame.show();
 
   while (frame.computeNextLevel() > 0) { }
-  //frame.show();
+  frame.show();
   return result;
 }
 
