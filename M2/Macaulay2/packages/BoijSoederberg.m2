@@ -38,7 +38,27 @@ export {
      bott, -- documented
      
      CohomologyTally,
-     mat2cohom
+     mat2cohom,
+     
+     -- new stuff from Branden and Courtney
+     -- Not sure what to keep yet
+     
+     -- Methods
+     decomposeBetti,
+     decomposeDegreesHK,
+     EliminationSequence,
+
+     -- Options -- need to be documented     
+     isMassEliminate, -- not written
+     eliminateBetti, -- not written
+     TableEntries,     
+     LeastIntegerEntries,
+     HerzogKuhl,
+     RealizationModules,
+     VariableName,
+     
+     -- Types
+     BettiEliminationTally --not written
      }
 -- Also defined here:
 -- pdim BettiTally
