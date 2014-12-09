@@ -8,12 +8,13 @@
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
+#include "res-gausser.hpp"
 
-typedef void* F4CoefficientArray;
+//typedef void* F4CoefficientArray;
 
 struct poly : public our_new_delete {
   int len;
-  F4CoefficientArray coeffs;
+  ResGausser::F4CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously
 };
 

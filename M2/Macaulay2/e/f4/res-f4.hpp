@@ -51,7 +51,7 @@ private:
   struct Row {
     packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
     int mLength; // common length of the following two parts
-    F4CoefficientArray mCoeffs; // from an F4Mem..
+    ResGausser::F4CoefficientArray mCoeffs; // from an F4Mem..
     int* mComponents; // where is the space? entries are indices into mColumns.
   };
 

@@ -7,15 +7,9 @@
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
-typedef void *F4CoefficientArray;
 class F4Mem;
 
-struct dense_row : public our_new_delete {
-  int len; // coeffs is an array 0..len-1
-  F4CoefficientArray coeffs;
-};
-
-class ResGausser : public our_new_delete
+class ResGausser
 {
   enum {ZZp} typ;
   const Ring *K;
@@ -25,6 +19,13 @@ class ResGausser : public our_new_delete
 
   ResGausser(const Z_mod *K0, F4Mem *Mem0);
 public:
+  typedef void *F4CoefficientArray;
+
+  struct dense_row {
+    int len; // coeffs is an array 0..len-1
+    F4CoefficientArray coeffs;
+  };
+
   ~ResGausser() {}
 
   static ResGausser *newResGausser(const Ring *K, F4Mem *Mem0);

@@ -17,7 +17,7 @@ ResGausser::ResGausser(const Z_mod *K0, F4Mem *Mem0)
 {
 }
 
-F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_elem *elems) const
+ResGausser::F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_elem *elems) const
 {
   int i;
   switch (typ) {
@@ -41,7 +41,7 @@ void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *res
   };
 }
 
-F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4CoefficientArray F) const
+ResGausser::F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4CoefficientArray F) const
 {
   int *elems = static_cast<int *>(F);
   int i;
