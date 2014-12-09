@@ -2003,6 +2003,48 @@ document {
 	  ///,
      SeeAlso => {facetEquation, pureBettiDiagram}
      }
+ 
+ document {
+    Key => {isMassEliminate, (isMassEliminate,BettiTally)},
+    Headline => " ",
+    Usage => "isMassEliminate(B)",
+    Inputs => {
+	"B", BettiTally => "a Betti diagram"
+	}
+    Outputs => {Boolean => "True or false if..."}
+    EXAMPLE lines ///
+    	  R = ZZ/8821[x,y,z,w]
+	  I = ideal(x,y^2,z^4,w^8)
+	  B = betti res I
+	  isMassEliminate(B)
+	///
+	}
+    
+document { 
+     Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetii,Ideal)},
+     Headline => "elimination table for a Betti diagram",
+     Usage => {"eliminateBetti(B)","eliminateBetti(I)"},
+     Inputs => {
+	  "B", BettiTally => "a Betti diagram",
+	  "I", Ideal => "an Ideal"
+	  },
+     Outputs => {
+	  BettiEliminationTally => "The elimination table of B or of the Betti table of R/I"
+	  },
+     EXAMPLE lines ///
+          R = ZZ/8821[x,y,z,w]
+	  I = ideal(x,y^2,z^4,w^8)
+	  B = betti res I
+	  eliminateBetti(B)
+	  ///,
+     SeeAlso => {BettiEliminationTally,isMassEliminate}
+     }
+ 
+document { --- option names for eliminateBetti
+    Key => {EliminationSequence},
+    Headline => "option for eliminateBetti"
+    }
+ 
 
 end
 
@@ -2080,3 +2122,86 @@ betti res M
 tateResolution(presentation M, -5,5)
 sheafCohomology(presentation M, E, -5,5)
 setupBGG
+
+--
+-- Branden's tests
+restart
+loadPackage"BoijSoederberg"
+
+-- test 1
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M
+C=decompose B
+C1=decomposeBetti B
+C2=decomposeBetti (B, TableEntries => HerzogKuhl )
+C3=decomposeBetti (B, TableEntries => RealizationModules )
+
+L=set apply(toList C,x->x#1)
+L1=set apply(toList C1,x->x#1)
+m1c1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2c1=mat2betti matrix "1,0,0;
+                     0,3,2"
+Mc1=set{m1c1,m2c1}
+assert(L===Mc1)
+assert(L1===Mc1)
+
+L2=set apply(toList C2,x->x#1)
+m1c2=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2c2=mat2betti matrix "1/6,0,0;
+                     0,1/2,1/3"		     
+Mc2=set{m1c2,m2c2}
+assert(L2===Mc2)
+
+L3=set apply(toList C3,x->x#1)
+m1c3=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2c3=mat2betti matrix "1,0,0;
+                     0,3,2"		     
+Mc3=set{m1c3,m2c3}
+assert(L3===Mc3)
+L3
+
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
+C=decompose B
+C=decomposeBetti B
+C=decomposeBetti(B, TableEntries => HerzogKuhl )
+C=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0,0;
+                     0,5,5,0;
+		     0,0,0,1"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix"1,0,0;
+     	  0,2,0;
+	  0,0,1"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+-- end Branden's tests
+--
