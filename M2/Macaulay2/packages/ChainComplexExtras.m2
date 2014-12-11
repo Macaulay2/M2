@@ -15,7 +15,8 @@ newPackage(
 export(isExact)
 export(isChainComplex)
 export(isChainComplexMap)
-export(isQuism)
+export(isQuasiIsomorphism)
+--export(isQuism)
 export(koszulComplex)
 export(taylor)
 export(taylorResolution)
@@ -201,10 +202,12 @@ isChainComplexMap(ChainComplexMap):=(inputMap)->(
    isChainComplex(cone inputMap)
 )
 
-isQuism=method(Options => {LengthLimit => infinity})
-isQuism(ChainComplexMap):= o -> (phi)-> (
+isQuasiIsomorphism=method(Options => {LengthLimit => infinity})
+isQuasiIsomorphism(ChainComplexMap):= o -> (phi)-> (
    isExact(cone phi, LengthLimit => o.LengthLimit)
 )
+
+--isQuism = isQuasiIsomorphism
 
 ChainComplexMap | ChainComplexMap := (f,g) -> (
    --- this function overloads the | operator for ChainComplexMap
@@ -371,7 +374,7 @@ minimize ChainComplex := E ->(
 --      if not isChainComplex minC then 
 --           error"didn't produce a chain complex";
 --    if o.Check==true then
---      if not isQuism m then 
+--      if not isQuasiIsomorphism m then 
 --           error"didn't produce a quasi-isomorphic complex";
 --    E' := pmC[-min E];
 --    E'.cache.pruningMap = m[-min E];
@@ -400,7 +403,7 @@ difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
 E = chainComplex difs1
 assert(isMinimalChainComplex E == false)
 m = minimize (E[1]);
-assert (isQuism m)
+assert (isQuasiIsomorphism m)
 assert (E[1] == source m)
 E' = target m
 assert (isChainComplex E'==true)
@@ -664,7 +667,7 @@ document {
 		"I = monomialCurveIdeal(R,{1,2,3})",
 		"C = koszulComplex(ideal vars R) ** (R^1/I);",
 		"m = res C;",
-		"isQuism m",
+		"isQuasiIsomorphism m",
 		"betti C",
 		"betti source m",
 		"C == target m"
@@ -735,6 +738,30 @@ document {
      }
 
 document {
+     Key => {isQuasiIsomorphism, (isQuasiIsomorphism,ChainComplexMap)},
+     Headline => "Test to see if the ChainComplexMap is a quasi-isomorphism.",
+     Usage => "isQuasiIsomorphism(phi)",
+     Inputs => {
+	  "phi" => {},
+     },
+     Outputs => {
+	  {"Boolean"}
+     },
+     "A quasi-isomorphism is a chain map that is an isomorphism in homology. ",
+     "Mapping cones currently do not work properly for complexes concentrated ",
+     "in one degree, so isQuasiIsomorphism could return bad information in that case.",
+     EXAMPLE {
+	     "R = ZZ/101[a,b,c]",
+	     "kRes = res coker vars R",
+	     "multBya = extend(kRes,kRes,matrix{{a}})",
+	     "isQuasiIsomorphism(multBya)",
+	     "F = extend(kRes,kRes,matrix{{1_R}})",
+	     "isQuasiIsomorphism(F)",
+	     }
+     }
+
+{*
+document {
      Key => {isQuism, (isQuism,ChainComplexMap)},
      Headline => "Test to see if the ChainComplexMap is a quasi-isomorphism.",
      Usage => "isQuism(phi)",
@@ -744,7 +771,8 @@ document {
      Outputs => {
 	  {"Boolean"}
      },
-     "A quasi-isomorphism is a chain map that is an isomorphism in homology. ",
+     "This is a synonym for isQuasiIsomorphism. 
+     A quasi-isomorphism is a chain map that is an isomorphism in homology. ",
      "Mapping cones currently do not work properly for complexes concentrated ",
      "in one degree, so isQuism could return bad information in that case.",
      EXAMPLE {
@@ -756,14 +784,14 @@ document {
 	     "isQuism(F)",
 	     }
      }
-
+*}
 doc ///
    Key
-    [isQuism,LengthLimit]
+    [isQuasiIsomorphism,LengthLimit]
    Headline
     Option to check quasi-isomorphism only up to a certain point
    Usage
-    t = isQuism(F, LengthLimit => n)
+    t = isQuasiIsomorphism(F, LengthLimit => n)
    Inputs
     F:ChainComplexMap
     n:ZZ
@@ -780,8 +808,8 @@ doc ///
      M = R^1/ideal(a)
      C = chainComplex{map(M,R^0,0)}
      m=cartanEilenbergResolution (C, LengthLimit => 10)
-     isQuism(m, LengthLimit=> 10)
-     isQuism(m, LengthLimit => 12)
+     isQuasiIsomorphism(m, LengthLimit=> 10)
+     isQuasiIsomorphism(m, LengthLimit => 12)
    SeeAlso
     isExact
 ///
@@ -809,7 +837,7 @@ doc ///
      isExact(cone n, LengthLimit=> 10)
      isExact(cone n, LengthLimit=> 12)     
    SeeAlso
-    isQuism
+    isQuasiIsomorphism
 ///
 
 document {
@@ -979,7 +1007,7 @@ doc ///
      maps to zero, and thus is part of the minimization.
     Example
      time m = minimize (E[1]);
-     isQuism m
+     isQuasiIsomorphism m
      E[1] == source m
      E' = target m
      isChainComplex E'
@@ -1321,6 +1349,60 @@ doc ///
 ///
 
 
+{*
+doc ///
+   Key
+    chainComplexData
+   Headline
+    Extract data from a chain complex
+   Usage
+    L = chainComplexData C
+   Inputs
+    C:ChainComplex
+   Outputs
+    L:List
+   Description
+    Text
+     Output is a list with elements min C, max C and a sublist of the differentials of C     
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     chainComplexData C
+   SeeAlso
+     chainComplexFromData
+///
+doc ///
+   Key
+    chainComplexFromData
+    (chainComplexFromData, List)
+    (chainComplexFromData, ZZ, List)
+   Headline
+    constructs a ChainComplex from a list of data, with optional shift
+   Usage
+    C = chainComplexFromData(m, L)
+   Inputs
+    m:ZZ
+    L:List
+   Outputs
+    C:ChainComplex
+   Description
+    Text
+     Without the optional argument m this is the inverse of chainComplexData; L should 
+     be a list in the form {ZZ, ZZ, List}, where the first element represents the
+     desired min, and the last element the list of differentials.
+     If m is present, then the form is a simple list of differentials, and m
+     becomes the minimal degree of C.
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     L = chainComplexData C
+     C == chainComplexFromData L
+     C == chainComplexFromData(-3,L_2)
+   SeeAlso
+    chainComplexData
+///
+*}
+
 TEST///
 kk= ZZ/101
 S = kk[a,b,c]
@@ -1330,9 +1412,9 @@ M = R^1/ideal(a)
 C = chainComplex{map(M,R^0,0)}
 source (m=cartanEilenbergResolution (C, LengthLimit => 10))
 source (n =resolutionOfChainComplex (C, LengthLimit => 10))
-assert (isQuism(m, LengthLimit=> 10))
-assert(not isQuism(m, LengthLimit => 12))
-assert(isQuism(n, LengthLimit=> 10))
+assert (isQuasiIsomorphism(m, LengthLimit=> 10))
+assert(not isQuasiIsomorphism(m, LengthLimit => 12))
+assert(isQuasiIsomorphism(n, LengthLimit=> 10))
 m = resolutionOfChainComplex (C[3])
 assert(target m == C[3])
 
@@ -1347,9 +1429,10 @@ time m = resolutionOfChainComplex C;
 time n = cartanEilenbergResolution C;
 assert(C == source m)
 assert (C == target n)
-assert (isQuism n)
+assert (isQuasiIsomorphism n)
 ///
 
+{*
 TEST ///
 S=ZZ[x,y]/ideal(x*y)
 C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
@@ -1358,6 +1441,7 @@ L=chainComplexData C
 C'=chainComplexFromData L
 assert(C'== C)
 ///
+*}
 
 TEST///
 S = ZZ/32003[a,b]
@@ -1381,7 +1465,7 @@ difs1 = apply(len, i-> Q_i*difs0_i*Q_(i+1)^(-1));
 E = chainComplex difs1
 assert(isMinimalChainComplex E == false)
 m = minimize (E[1]);
-assert (isQuism m)
+assert (isQuasiIsomorphism m)
 assert (E[1] == source m)
 E' = target m
 assert (isChainComplex E'==true)
@@ -1397,9 +1481,9 @@ M = R^1/ideal(a)
 C = chainComplex{map(M,R^0,0)}
 m=cartanEilenbergResolution (C, LengthLimit => 10)
 n =resolutionOfChainComplex (C, LengthLimit => 10)
-assert (isQuism(m, LengthLimit=> 10))
-assert(not isQuism(m, LengthLimit => 12))
-assert(isQuism(n, LengthLimit=> 10))
+assert (isQuasiIsomorphism(m, LengthLimit=> 10))
+assert(not isQuasiIsomorphism(m, LengthLimit => 12))
+assert(isQuasiIsomorphism(n, LengthLimit=> 10))
 m = resolutionOfChainComplex (C[3])
 assert(target m == C[3])
 assert(isChainComplexMap m)
@@ -1414,7 +1498,7 @@ m = resolutionOfChainComplex C;
 n = cartanEilenbergResolution C;
 assert(C == source m)
 assert (C == target n)
-assert (isQuism n)
+assert (isQuasiIsomorphism n)
 assert (isExact cone n)
 C = chainComplex{phi1,phi2}
 m = resolutionOfChainComplex C;
@@ -1422,8 +1506,8 @@ n = cartanEilenbergResolution C;
 assert(C == target m)
 assert (C == target n)
 
-assert (isQuism n)
-assert (isQuism m)
+assert (isQuasiIsomorphism n)
+assert (isQuasiIsomorphism m)
 ///
 
 TEST///
@@ -1488,59 +1572,10 @@ uninstallPackage "ChainComplexExtras"
 installPackage "ChainComplexExtras"
 check "ChainComplexExtras"
 
+
+
 viewHelp ChainComplexExtras
 
 
 
 
-doc ///
-   Key
-    chainComplexData
-   Headline
-    Extract data from a chain complex
-   Usage
-    L = chainComplexData C
-   Inputs
-    C:ChainComplex
-   Outputs
-    L:List
-   Description
-    Text
-     Output is a list with elements min C, max C and a sublist of the differentials of C     
-    Example
-     S=ZZ[x,y]/ideal(x*y)
-     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
-     chainComplexData C
-   SeeAlso
-     chainComplexFromData
-///
-doc ///
-   Key
-    chainComplexFromData
-    (chainComplexFromData, List)
-    (chainComplexFromData, ZZ, List)
-   Headline
-    constructs a ChainComplex from a list of data, with optional shift
-   Usage
-    C = chainComplexFromData(m, L)
-   Inputs
-    m:ZZ
-    L:List
-   Outputs
-    C:ChainComplex
-   Description
-    Text
-     Without the optional argument m this is the inverse of chainComplexData; L should 
-     be a list in the form {ZZ, ZZ, List}, where the first element represents the
-     desired min, and the last element the list of differentials.
-     If m is present, then the form is a simple list of differentials, and m
-     becomes the minimal degree of C.
-    Example
-     S=ZZ[x,y]/ideal(x*y)
-     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
-     L = chainComplexData C
-     C == chainComplexFromData L
-     C == chainComplexFromData(-3,L_2)
-   SeeAlso
-    chainComplexData
-///
