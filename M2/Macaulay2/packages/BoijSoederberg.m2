@@ -46,19 +46,21 @@ export {
      -- Methods
      decomposeBetti,
      decomposeDegreesHK,
-     EliminationSequence,
-
-     -- Options -- need to be documented     
+     makePureBettiHK, -- make as option to makePureBettiEntries
+     makePureBettiDiagramHK, -- make as option to makePureBettiDiagram
      isMassEliminate, -- not written
      eliminateBetti, -- not written
+
+     -- Options -- need to be documented     
+     EliminationSequence,     
      TableEntries,     
      LeastIntegerEntries,
      HerzogKuhl,
      RealizationModules,
-     VariableName,
+     VariableName, -- delete before submission along with makeCI.
      
      -- Types
-     BettiEliminationTally --not written
+     BettiEliminationTally 
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -289,9 +291,11 @@ pureBetti List := (Degs) -> (
      Bettis = Bettis / gcd Bettis;
      apply(Bettis, x -> lift(x,ZZ)))
  
+
 -------------------------------------
 -- Patch: optional types ------------
 -------------------------------------
+
 --  input: List consisting of strictly increasing list of positive integers 
 --         (a degree sequence)
 -- output: List of theoretical rational Betti numbers resulting from the 
@@ -461,7 +465,7 @@ isMassEliminate BettiTally :=  B -> (
 
 --  input:  BettiTally of a Cohen-Macaulay Module
 --     	    Cohen-Macualay Ideal
--- output:  List, if no mass elimination occors, a list is given sequencing
+-- output:  List, if no mass elimination occurs, a list is given sequencing
 --     	    the homological degree of the elimination of betti numbers
 -- options: EliminationSequence => Boolean; default is false, thus the output is 
 --     	    a BettiTally.  If true, only the EliminationSequence is returned.
@@ -530,9 +534,9 @@ degreeDiff BettiTally := B -> (
      return apply(#D-1, i-> D#(i+1)#1-D#i#1 );
 )
      
-
+-------------------------
 -- end of patch (for now)
-  
+-------------------------  
 
 pureBettiDiagram = method()
 pureBettiDiagram List := (degs) -> (
@@ -613,6 +617,7 @@ decompose BettiTally := B-> (
 -- Same as decompose but with options.
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
+-- We would like to replace 'decompse' with 'decomposeBetti'.
 decomposeBetti = method(Options => true)
 decomposeBetti BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -> (
     
@@ -2146,6 +2151,38 @@ setupBGG
 -- Branden's tests
 restart
 loadPackage"BoijSoederberg"
+
+-- test decomposeDegrees
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M	
+D = decomposeDegreesHK B
+pureBettiDiagram (D_0)#1
+
+pureBetti (D_0)#1
+makePureBettiHK (D_0)#1
+makePureBettiDiagramHK (D_0)#1
+
+--TODO
+-- 1. create decomposeDegreees and make options like this:
+decomposeDegrees( B, TableEntries => HerzogKuhl )
+
+-- 2. add options to makePureBettiDiagram to allow for HK and Modules (ES).
+
+-- 3. Edit decompose documentation
+
+-- 4. Create method 'makePureBettiEntries' and 'makePureBettiDiagram' have options for 
+--    TableEntries and have 'pureBetti' and 'pureBettiDiagram' be alias for these.
+--    incorporate 'makePureBettiES' and 'makePureBettiHK'
+
+-- 5. decompose3 and decompose2 need to handle options from 'makePureBettiDiagram'.
+--    I.e. HerzogKuhl...
+
+-- 6. check to see if 'decomposeHK' and 'decomposeES' is an option in 'decomposeBetti'. If so delete it. 
+
+-- 7. Delete 'makeCI' before submission, unless it is used in testing.
+
+-- 8. before deleting any method, make sure all dependencies are taken care of.
 
 -- test 1
 M=matrix "1,0,0,0;
