@@ -33,8 +33,8 @@ export(removeZeroTrailingTerms) -- remove trailing zero terms of a chain complex
 export(trivialHomologicalTruncation) -- return the trivial truncation of a chain complex
 export(nonzeroMin) -- computes the homological position of the first non-zero module in a ChainComplex
 export(nonzeroMax) -- computes the homological position of the last non-zero module in a ChainComplex
-export(chainComplexData)
-export(chainComplexFromData)
+--export(chainComplexData)
+--export(chainComplexFromData)
 
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
@@ -1319,58 +1319,7 @@ doc ///
 	betti f2
 	betti dual fm
 ///
-doc ///
-   Key
-    chainComplexData
-   Headline
-    Extract data from a chain complex
-   Usage
-    L = chainComplexData C
-   Inputs
-    C:ChainComplex
-   Outputs
-    L:List
-   Description
-    Text
-     Output is a list with elements min C, max C and a sublist of the differentials of C     
-    Example
-     S=ZZ[x,y]/ideal(x*y)
-     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
-     chainComplexData C
-   SeeAlso
-     chainComplexFromData
-///
 
-doc ///
-   Key
-    chainComplexFromData
-    (chainComplexFromData, List)
-    (chainComplexFromData, ZZ, List)
-   Headline
-    constructs a ChainComplex from a list of data, with optional shift
-   Usage
-    C = chainComplexFromData(m, L)
-   Inputs
-    m:ZZ
-    L:List
-   Outputs
-    C:ChainComplex
-   Description
-    Text
-     Without the optional argument m this is the inverse of chainComplexData; L should 
-     be a list in the form {ZZ, ZZ, List}, where the first element represents the
-     desired min, and the last element the list of differentials.
-     If m is present, then the form is a simple list of differentials, and m
-     becomes the minimal degree of C.
-    Example
-     S=ZZ[x,y]/ideal(x*y)
-     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
-     L = chainComplexData C
-     C == chainComplexFromData L
-     C == chainComplexFromData(-3,L_2)
-   SeeAlso
-    chainComplexData
-///
 
 TEST///
 kk= ZZ/101
@@ -1542,3 +1491,56 @@ check "ChainComplexExtras"
 viewHelp ChainComplexExtras
 
 
+
+
+doc ///
+   Key
+    chainComplexData
+   Headline
+    Extract data from a chain complex
+   Usage
+    L = chainComplexData C
+   Inputs
+    C:ChainComplex
+   Outputs
+    L:List
+   Description
+    Text
+     Output is a list with elements min C, max C and a sublist of the differentials of C     
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     chainComplexData C
+   SeeAlso
+     chainComplexFromData
+///
+doc ///
+   Key
+    chainComplexFromData
+    (chainComplexFromData, List)
+    (chainComplexFromData, ZZ, List)
+   Headline
+    constructs a ChainComplex from a list of data, with optional shift
+   Usage
+    C = chainComplexFromData(m, L)
+   Inputs
+    m:ZZ
+    L:List
+   Outputs
+    C:ChainComplex
+   Description
+    Text
+     Without the optional argument m this is the inverse of chainComplexData; L should 
+     be a list in the form {ZZ, ZZ, List}, where the first element represents the
+     desired min, and the last element the list of differentials.
+     If m is present, then the form is a simple list of differentials, and m
+     becomes the minimal degree of C.
+    Example
+     S=ZZ[x,y]/ideal(x*y)
+     C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
+     L = chainComplexData C
+     C == chainComplexFromData L
+     C == chainComplexFromData(-3,L_2)
+   SeeAlso
+    chainComplexData
+///
