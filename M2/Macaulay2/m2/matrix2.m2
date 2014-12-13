@@ -426,7 +426,10 @@ homogenize(Module,RingElement) := Module => (M,z) -> (
 	  if M.?generators then homogenize(M.generators,z),
 	  if M.?relations then homogenize(M.relations,z)))
 
-homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
+homogenize(Ideal,RingElement) := Ideal => (I,z) -> (
+    if I == 0 then I
+    else ideal homogenize (gens gb I, z)
+    )
 
 homogenize(Module,RingElement,List) := Module => (M,z,wts) -> (
      if isFreeModule M then M
