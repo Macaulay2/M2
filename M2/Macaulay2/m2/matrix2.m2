@@ -423,8 +423,8 @@ homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
 homogenize(Module,RingElement) := Module => (M,z) -> (
      if isFreeModule M then M
      else subquotient(
-	  if M.?generators then homogenize(M.generators,z),
-	  if M.?relations then homogenize(M.relations,z)))
+	  if M.?generators then homogenize(generators gb M.generators,z),
+	  if M.?relations then homogenize(generators gb M.relations,z)))
 
 homogenize(Ideal,RingElement) := Ideal => (I,z) -> ideal homogenize(module I, z)
 
