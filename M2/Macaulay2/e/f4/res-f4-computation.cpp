@@ -31,7 +31,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   const Ring *K = R->getCoefficients();
 
-  F4Mem *Mem = new F4Mem; // Used both for ResGausser and F4Res
+  ResF4Mem *Mem = new ResF4Mem; // Used both for ResGausser and F4Res
   ResGausser *KK = ResGausser::newResGausser(K, Mem);
   if (KK == 0)
     {
@@ -76,13 +76,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   //  frame.show();
 
   while (frame.computeNextLevel() > 0) { }
-  frame.show();
+  //frame.show();
   return result;
 }
 
 F4ResComputation::F4ResComputation(const PolynomialRing* R,
                                    const Matrix* gbmatrix,
-                                   F4Mem* Mem,
+                                   ResF4Mem* Mem,
                                    const ResGausser* KK,
                                    const MonomialInfo* MI,
                                    int max_level)

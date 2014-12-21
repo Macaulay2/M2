@@ -3,16 +3,12 @@
 #ifndef _res_f4_types_hpp_
 #define _res_f4_types_hpp_
 
-#include <vector>
-
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 #include "res-gausser.hpp"
 
-//typedef void* F4CoefficientArray;
-
-struct poly : public our_new_delete {
+struct poly {
   int len;
   ResGausser::F4CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously

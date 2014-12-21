@@ -4,7 +4,7 @@
 #include "res-gausser.hpp"
 
 F4Res::F4Res(
-             F4Mem* Mem,
+             ResF4Mem* Mem,
              const ResGausser* KK0,
              const MonomialInfo* MI,
              int max_level

@@ -7,7 +7,7 @@
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
 
-class F4Mem;
+class ResF4Mem;
 
 class ResGausser
 {
@@ -15,11 +15,12 @@ class ResGausser
   const Ring *K;
 
   CoefficientRingZZp *Kp;
-  F4Mem *Mem;
+  ResF4Mem *Mem;
 
-  ResGausser(const Z_mod *K0, F4Mem *Mem0);
+  ResGausser(const Z_mod *K0, ResF4Mem *Mem0);
 public:
-  typedef void *F4CoefficientArray;
+  typedef int* F4CoefficientArray;
+  //  typedef void *F4CoefficientArray;
 
   struct dense_row {
     int len; // coeffs is an array 0..len-1
@@ -28,7 +29,7 @@ public:
 
   ~ResGausser() {}
 
-  static ResGausser *newResGausser(const Ring *K, F4Mem *Mem0);
+  static ResGausser *newResGausser(const Ring *K, ResF4Mem *Mem0);
 
   const Ring * get_ring() const { return K; }
 
@@ -43,7 +44,7 @@ public:
   // leading coefficient
   int lead_coeff(F4CoefficientArray coeffs) const
   {
-    return (static_cast<int *>(coeffs))[0];
+    return coeffs[0];
   }
 
   // other routines:

@@ -21,7 +21,7 @@ class F4ResComputation : public ResolutionComputation
 private:
   F4ResComputation(const PolynomialRing* R,
                    const Matrix* gbmatrix,
-                   F4Mem* Mem,
+                   ResF4Mem* Mem,
                    const ResGausser* KK,
                    const MonomialInfo* MI,
                    int max_level);
@@ -61,7 +61,7 @@ protected:
 private:
   const PolynomialRing& mRing;
   const Matrix& mInputGroebnerBasis;
-  F4Mem* mMem;
+  ResF4Mem* mMem;
   std::unique_ptr<F4Res> mComp;
   //  F4Res* mComp; // This is a pointer so that finalizers can more easily remove the data
 };

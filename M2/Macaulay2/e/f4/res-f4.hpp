@@ -3,7 +3,7 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
-#include "f4-mem.hpp"
+#include "res-f4-mem.hpp"
 #include "res-schreyer-frame.hpp"
 #include "monhashtable.hpp"
 
@@ -19,7 +19,7 @@ class F4Res
 {
 public:
   F4Res(
-        F4Mem* Mem,
+        ResF4Mem* Mem,
         const ResGausser* KK0,
         const MonomialInfo* MI,
         int max_level
@@ -46,12 +46,12 @@ private:
 
   const ResGausser* mResGausser;
   const MonomialInfo* mMonoid;
-  const F4Mem* mMem; // Used for what TODO?
+  const ResF4Mem* mMem; // Used for what TODO?
 
   struct Row {
     packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
     int mLength; // common length of the following two parts
-    ResGausser::F4CoefficientArray mCoeffs; // from an F4Mem..
+    ResGausser::F4CoefficientArray mCoeffs; // from an ResF4Mem..
     int* mComponents; // where is the space? entries are indices into mColumns.
   };
 

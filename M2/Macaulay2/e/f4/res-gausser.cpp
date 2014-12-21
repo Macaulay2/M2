@@ -1,10 +1,10 @@
 // Copyright 2005 Michael E. Stillman.
 
 #include "res-gausser.hpp"
-#include "f4-mem.hpp"
+#include "res-f4-mem.hpp"
 #include "moninfo.hpp"
 
-ResGausser *ResGausser::newResGausser(const Ring *K, F4Mem *Mem0)
+ResGausser *ResGausser::newResGausser(const Ring *K, ResF4Mem *Mem0)
 {
   const Z_mod *Kp = K->cast_to_Z_mod();
   if (Kp != 0)
@@ -12,7 +12,7 @@ ResGausser *ResGausser::newResGausser(const Ring *K, F4Mem *Mem0)
   return 0;
 }
 
-ResGausser::ResGausser(const Z_mod *K0, F4Mem *Mem0)
+ResGausser::ResGausser(const Z_mod *K0, ResF4Mem *Mem0)
   : typ(ZZp), K(K0), Kp(K0->get_CoeffRing()), Mem(Mem0), n_dense_row_cancel(0), n_subtract_multiple(0)
 {
 }
@@ -32,7 +32,7 @@ ResGausser::F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_ele
 
 void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *result) const
 {
-  int *elems = static_cast<int *>(F);
+  int* elems = F;
   int i;
   switch (typ) {
   case ZZp:
@@ -43,7 +43,7 @@ void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *res
 
 ResGausser::F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4CoefficientArray F) const
 {
-  int *elems = static_cast<int *>(F);
+  int* elems = F;
   int i;
   switch (typ) {
   case ZZp:
@@ -57,7 +57,7 @@ ResGausser::F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4Co
 
 void ResGausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const
 {
-  int *elems = static_cast<int *>(F);
+  int* elems = F;
   switch (typ) {
   case ZZp:
     Mem->coefficients.deallocate(elems);
@@ -80,7 +80,7 @@ void ResGausser::dense_row_allocate(dense_row &r, int nelems) const
 
 void ResGausser::dense_row_clear(dense_row &r, int first, int last) const
 {
-  int *elems = static_cast<int *>(r.coeffs);
+  int* elems = r.coeffs;
   for (int i=first; i<=last; i++)
     Kp->set_zero(elems[i]);
 }
@@ -96,8 +96,8 @@ void ResGausser::dense_row_fill_from_sparse(dense_row &r,
                                          F4CoefficientArray sparse,
                                          int *comps) const
 {
-  int *elems = static_cast<int *>(r.coeffs);
-  int *sparseelems = static_cast<int *>(sparse);
+  int* elems = r.coeffs;
+  int* sparseelems = sparse;
   for (int i=0; i<len; i++)
     elems[*comps++] = *sparseelems++;
 
@@ -105,7 +105,7 @@ void ResGausser::dense_row_fill_from_sparse(dense_row &r,
 
 int ResGausser::dense_row_next_nonzero(dense_row &r, int first, int last) const
 {
-  int *elems = static_cast<int *>(r.coeffs);
+  int* elems = r.coeffs;
   elems += first;
   for (int i=first; i<=last; i++)
     if (!Kp->is_zero(*elems++))
@@ -118,8 +118,8 @@ void ResGausser::dense_row_cancel_sparse(dense_row &r,
                                       F4CoefficientArray sparse,
                                       int *comps) const
 {
-  int *elems = static_cast<int *>(r.coeffs);
-  int *sparseelems = static_cast<int *>(sparse);
+  int* elems = r.coeffs;
+  int* sparseelems = sparse;
 
   // Basically, over ZZ/p, we are doing: r += a*sparse,
   // where sparse is monic, and a is -r.coeffs[*comps].
@@ -139,7 +139,7 @@ void ResGausser::dense_row_to_sparse_row(dense_row &r,
                                       int first,
                                       int last) const
 {
-  int *elems = static_cast<int *>(r.coeffs);
+  int* elems = r.coeffs;
   int len = 0;
   for (int i=first; i<=last; i++)
     if (!Kp->is_zero(elems[i])) len++;
@@ -160,7 +160,7 @@ void ResGausser::dense_row_to_sparse_row(dense_row &r,
 void ResGausser::sparse_row_make_monic(int len,
                                     F4CoefficientArray sparse) const
 {
-  int *elems = static_cast<int *>(sparse);
+  int* elems = sparse;
   int lead = *elems;
   // invert lead:
   Kp->invert(lead,lead);
