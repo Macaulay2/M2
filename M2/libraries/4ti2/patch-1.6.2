@@ -1,17 +1,45 @@
 diff -ur /mike-raid/home/dan/src/M2/trunk-git/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac 4ti2-1.6.2/configure.ac
 --- /mike-raid/home/dan/src/M2/trunk-git/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac	2014-01-14 20:30:06.000000000 -0500
-+++ 4ti2-1.6.2/configure.ac	2014-12-27 14:03:48.000000000 -0500
-@@ -182,7 +182,8 @@
++++ 4ti2-1.6.2/configure.ac	2014-12-27 15:01:33.000000000 -0500
+@@ -180,12 +180,36 @@
+   CXXFLAGS="${CXXFLAGS} ${GMP_CFLAGS}"
+   save_LIBS="${LIBS}"
    LIBS="${LIBS} ${GMP_LIBS}"
-   AC_MSG_CHECKING(whether we can convert between ${int32_t} and mpz_class)
+-  AC_MSG_CHECKING(whether we can convert between ${int32_t} and mpz_class)
++  AC_MSG_CHECKING(whether we can compile gmpxx.h)
    AC_TRY_LINK(
--    [  #include <gmpxx.h>
-+    [  #include <stddef.h>
-+       #include <gmpxx.h>
+     [  #include <gmpxx.h>
         ${int32_t_int_64_t_include}
      ],
      [  ${int32_t} x = 815;
-@@ -194,7 +195,8 @@
++       ${int64_t} w = 815;
++    ],
++    [AC_MSG_RESULT(yes)],
++    [AC_MSG_RESULT([no, *** warning!!!])]
++    )
++  AC_MSG_CHECKING(whether we can compile gmpxx.h with stddef.h)
++  AC_TRY_LINK(
++    [  #include <stddef.h>
++       #include <gmpxx.h>
++       ${int32_t_int_64_t_include}
++    ],
++    [  ${int32_t} x = 815;
++       ${int64_t} w = 815;
++    ],
++    [AC_MSG_RESULT(yes)],
++    [AC_MSG_RESULT(no)]
++    )
++  AC_MSG_CHECKING(whether we can convert between ${int32_t} and mpz_class)
++  AC_TRY_LINK(
++    [  #include <stddef.h>
++       #include <gmpxx.h>
++       ${int32_t_int_64_t_include}
++    ],
++    [  ${int32_t} x = 815;
+        mpz_class y(x);
+     ],
+     [ HAVE_MPZ_INT32_CONVERSION=yes;
+@@ -194,7 +218,8 @@
    AC_MSG_RESULT(${HAVE_MPZ_INT32_CONVERSION})
    AC_MSG_CHECKING(whether we can convert between ${int64_t} and mpz_class)
    AC_TRY_LINK(
