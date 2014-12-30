@@ -616,11 +616,17 @@ document {
      Key => 1 : setRandomSeed,
      Usage => "setRandomSeed()",
      Consequences => {
-	  {"Initializes the random number generator to a fixed state, identical to the
-	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
-	       the random number seed is initially set to a number that depends on the current date, 
-	       time (in seconds), and process id, except for the running of examples and tests
-	       in packages, where it is always initialized to 0."}
+	  {"Initializes the random number generator to a certain fixed state
+	       determined at the beginning of the current Macaulay2 session. In
+	       versions 1.2 and earlier of Macaulay2, this is a single fixed initial
+	       state. In subsequent versions the initial state depends on the date,
+	       time (in seconds), and process id at the start of the current Macaulay2
+	       session (i.e., this initial state is different in each Macaulay2
+	       session, but is not updated after the beginning of the session). An
+	       exception is that when running examples and tests in packages the
+	       random number seed is always initialized to 0. To re-seed the random
+	       number generator with a new value during a Macaulay2 session, use
+	       setRandomSeed(ZZ) or setRandomSeed(String)."}
 	  },
      EXAMPLE lines ///
      setRandomSeed()
