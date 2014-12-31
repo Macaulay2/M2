@@ -155,8 +155,12 @@ document {
 document {
      Key => assert,
      Headline => "assert something is true",
-	Usage => "assert x",
-     TT "assert x", " prints an error message if x isn't true."
+	   Usage => "assert x",
+     TT "assert x", " prints an error message if x isn't true.",
+     EXAMPLE lines ///
+     assert( (2+2) === 4 )
+     ///,
+     SeeAlso => {"generateAssertions"}
      }
 
 document {
