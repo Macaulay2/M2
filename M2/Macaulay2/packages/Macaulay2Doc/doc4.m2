@@ -121,7 +121,7 @@ document {
      }
 
 document {
-     Key => {pairs,(pairs, HashTable)},
+     Key => {pairs,(pairs, HashTable),},
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
@@ -129,6 +129,19 @@ document {
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2, c => 3}",
 	  "pairs x",
+	  }
+     }
+
+document {
+     Key => {(pairs, Sequence),(pairs, List),},
+     Headline => "list the pairs in a sequence or list",
+     Usage => "pairs L",
+     Inputs => { "L" => Sequence },
+     Outputs => { List => { "a list of pairs ", TT "(i,L#i)" }},
+     EXAMPLE {
+	  "L = (a,b,c)",
+	  "pairs L",
+	  "pairs {x,y,z}",
 	  }
      }
 
