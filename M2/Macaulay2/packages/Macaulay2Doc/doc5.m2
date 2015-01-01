@@ -629,8 +629,8 @@ document {
 	       session, but is not updated after the beginning of the session). An
 	       exception is that when running examples and tests in packages the
 	       random number seed is always initialized to 0. To re-seed the random
-	       number generator with a new value during a Macaulay2 session, use
-	       setRandomSeed(ZZ) or setRandomSeed(String)."}
+	       number generator with a new value during a Macaulay2 session, use ",
+	       TO "setRandomSeed(ZZ)", " or ", TO "setRandomSeed(String)", "."}
 	  },
      EXAMPLE lines ///
      setRandomSeed()

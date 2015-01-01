@@ -77,8 +77,8 @@ document {
 	TT "frac S", " with ", TT "frac B", ".",
 	PARA{},
 	"Note that expressions such as ", TT "frac QQ[x]", " are parsed as ",
-	TT "(frac QQ)[x]", ". To obtain a fraction field use instead ",
-	TT "frac (QQ[x])", "."
+	TT "(frac QQ)[x]", ". To obtain the fraction field of ", TT "QQ[x]", 
+	" use instead ", TT "frac (QQ[x])", "."
      },
      SeeAlso => {numerator, denominator, liftable, lift}
      }
