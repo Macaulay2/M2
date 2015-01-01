@@ -121,7 +121,7 @@ document {
      }
 
 document {
-     Key => {pairs,(pairs, HashTable),},
+     Key => {pairs,(pairs, HashTable)},
      Headline => "list the pairs in a hash table",
      TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
      a hash table ", TT "x", ".",
@@ -133,7 +133,7 @@ document {
      }
 
 document {
-     Key => {(pairs, Sequence),(pairs, List),},
+     Key => {(pairs, Sequence),(pairs, List)},
      Headline => "list the pairs in a sequence or list",
      Usage => "pairs L",
      Inputs => { "L" => Sequence },
