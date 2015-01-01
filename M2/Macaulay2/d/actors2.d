@@ -107,12 +107,12 @@ pairs(e:Expr):Expr := (
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
 		    p = p.next; ))); unlock(o.mutex); l )
-     is o:Sequence do ( l:=list(
-	  new Sequence len length(o) do (
+     is o:Sequence do
+	  Expr(new Sequence len length(o) do (
 	    i := 0;
 	    while i < length(o) do (
 	      provide Expr(Sequence(toExpr(i),o.i));
-	      i = i+1;))); l )
+	      i = i+1;)))
      is o:List do pairs(Expr(o.v))
      else WrongArg("a hash table, a sequence, a list, or a raw polynomial"));
 setupfun("pairs",pairs);
