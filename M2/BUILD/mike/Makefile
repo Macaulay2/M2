@@ -8,6 +8,9 @@ always:
 darwin64 : always
 	mkdir -p builds.tmp/darwin64
 	cd builds.tmp/darwin64; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-ntl-wizard \
 		--disable-strip \

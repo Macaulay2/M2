@@ -239,6 +239,17 @@ public:
     for (int j=nslots; j>0; --j) *result++ = *m++ - *n++;
   }
 
+  bool divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+    ncalls_divide++;
+    for (int j=nslots; j>0; --j) 
+      {
+        auto cmp = *m++ - *n++;
+        if (cmp >= 0) *result++ = cmp;
+        else return false;
+      }
+    return true;
+  }
+
   bool mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
     unchecked_mult(m,n,result);
     return check_monomial(result);

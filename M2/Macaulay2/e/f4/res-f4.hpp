@@ -55,15 +55,17 @@ private:
     int* mComponents; // where is the space? entries are indices into mColumns.
   };
 
+  void appendToRow(Row& r, int coeff, long val) {} // WRITE ME
+
   ////////////////////////////////////
   // Functions for construction //////
   ////////////////////////////////////
-  void resetMatrix(int lev, int degree);
-  void clearMatrix();
-  bool findDivisor(int lev, packed_monomial m, packed_monomial result);
-  long processMonomialProduct(packed_monomial m, packed_monomial n);
-  void loadRow(Row& r);
-  void makeMatrix();
+  void resetMatrix(int lev, int degree); // WRITE ME
+  void clearMatrix(); // WRITE ME
+  bool findDivisor(packed_monomial m, packed_monomial result); // WRITE ME
+  long processMonomialProduct(packed_monomial m, packed_monomial n); // WRITE ME
+  void loadRow(Row& r); // WRITE ME
+  void makeMatrix(); // WRITE ME
 
   ////////////////////////////////////
   // Data for construct(lev,degree) //
@@ -76,7 +78,7 @@ private:
   long mNextReducerToProcess;
   packed_monomial mNextMonom;
 
-  const MonomialsWithComponent* mSchreyerRes;
+  const MonomialsWithComponent* mSchreyerRes; // Support structure for mHashTable
   MonomialHashTable<MonomialsWithComponent> mHashTable; // keys: monomials at level lev-2, values: indices into mColumns.
   // or: -1: means is determined to not need to be a column.
 

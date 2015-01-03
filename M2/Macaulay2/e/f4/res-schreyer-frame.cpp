@@ -173,7 +173,7 @@ void SchreyerFrame::showMemoryUsage() const
   std::cout << "  total       \t\t" << (used+monomUsed) << "\t" << (alloc+monomSpace) << std::endl;
 }
 
-void SchreyerFrame::show() const
+void SchreyerFrame::show(int len) const
 {
   std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
   for (int i=0; i<mFrame.mLevels.size(); i++)

@@ -39,29 +39,60 @@ void F4Res::resetMatrix(int lev, int degree)
 
 void F4Res::clearMatrix()
 {
-  // TODO: write me
+  mThisLevel = -1;
+  mThisDegree = -1;
+  mNextReducerToProcess = 0;
+
+  mMonomSpace.reset();
+
+  mNextMonom = nullptr;
+  // TODO: write the rest of me.  What needs to be removed?
 }
 
-bool F4Res::findDivisor(int lev, packed_monomial m, packed_monomial result)
+/// findDivisor
+//    m: monomial at level '??'
+//    result: monomial at level '??', IF true is returned
+//  returns true if 'm' - inG(result), for some (unique) 'result'.
+bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 {
-  // TODO: write me
+  // get component of m
+  // find the range of monomials to check
+  // for each of these, check divisibility in turn
+  //   if one works, then return true, and set result.
+  int comp = mMonoid->get_component(m); // component is an index into level mLevel-2
+  auto& elem = mFrame.level(mThisLevel-2)[comp];
+  auto& lev = mFrame.level(mThisLevel-1);
+  for (auto j=elem.mBegin; j<elem.mEnd; ++j)
+    {
+      // Check divisibility of m by this element
+      packed_monomial pj = lev[j].mMonom;
+      if (mMonoid->divide(m, pj, result)) // TODO: make sure this returns a valid monomial! Set the component too!!
+        return true;
+    }
+  
   return false;
 }
 
+// processMonomialProduct
+//     m and n are monomials at level 'mThisLevel'
+//     compute their product, and return the column index of this product
+//       or -1, if the monomial is not needed.
+//     additionally: the product monomial is inserted into the hash table
+//     and column array (if it is not already there).
+// caveats: this function is only to be used during construction 
+//     of the coeff matrices.  It used mThisLevel
 long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 {
-  //    what this does: returns column index for this product, or -1 if the monomial is not needed
-  //    additionally: it inserts the product monomial into the hash table, and column array.
   auto& p = mFrame.level(mThisLevel-2)[mMonoid->get_component(n)];
   if (p.mBegin == p.mEnd) return -1;
 
   packed_monomial new_m;
-  packed_monomial mNextMonom2;
+  packed_monomial mNextMonom2; // TODO: this needs to be allocated
   mMonoid->unchecked_mult(m,n,mNextMonom);
   if (mHashTable.find_or_insert(mNextMonom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
 
-  bool has_divisor = findDivisor(mThisLevel-1, mNextMonom, mNextMonom2);
+  bool has_divisor = findDivisor(mNextMonom, mNextMonom2);
   if (!has_divisor) return -1;
 
   mMonomSpace.intern(1+mMonoid->monomial_size(mNextMonom));
@@ -70,7 +101,7 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
   mColumns.push_back(mNextMonom);
 
   Row row;
-  row.mLeadTerm = mNextMonom2; // TODO: result of monomial lookup
+  row.mLeadTerm = mNextMonom2; // TODO: result of monomial lookup: who is saving this space?
   mReducers.push_back(row);
 
   // Now we increment mNextMonom, for the next time
@@ -83,17 +114,17 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 void F4Res::loadRow(Row& r)
 {
   long comp = mMonoid->get_component(r.mLeadTerm);
-  auto& p = mFrame.level(mThisLevel-1)[comp];
-#if 0
-  for (long i=0; i<p.mLength; i++)
+  auto& p = mFrame.level(mThisLevel-1)[comp].mSyzygy;
+  for (long i=0; i<p.len; i++)
     {
-      long val = processMonomialProduct(r.mLeadTerm, p.mMonomials[i]);
+      int* coeff = 0; // TODO: needs to be taken from the coeff array
+      monomial_word* monoms = p.monoms;
+      // TODO: this needs to be cleaned up
+      long val = processMonomialProduct(r.mLeadTerm, monoms);
+      monoms += mMonoid->max_monomial_size();
       if (val < 0) continue;
-      // TODO append val to r.mMonomials
-      // TODO append coeff to r.mCoefficients
-      // TODO increment r.mLength
+      appendToRow(r, *coeff, val);
     }
-#endif
 } 
 
 void F4Res::makeMatrix()
