@@ -58,19 +58,32 @@ BUILTLIBPATH = @abs_top_builddir@/usr-host
 # this will be a symbolic link installed by libraries/gtest/Makefile
 GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
 
-CPPFLAGS := \
-	 -I@abs_top_srcdir@/include \
-	 -I@abs_top_builddir@/include \
-	 -I$(BUILTLIBPATH)/include \
-	 $(CPPFLAGS)
+CPPFLAGS :=						\
+	-I@abs_top_srcdir@/include			\
+	-I@abs_top_builddir@/include			\
+	-I$(BUILTLIBPATH)/include			\
+	-I@abs_top_srcdir@/submodules/memtailor/src	\
+	-I@abs_top_srcdir@/submodules/mathic/src	\
+	-I@abs_top_srcdir@/submodules/mathicgb/src	\
+	$(CPPFLAGS)
 
 ifeq "@ENABLE_MPACK@" "yes"
 CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
 endif
 
 vpath %.h $(BUILTLIBPATH)/include
-LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
-LDFLAGS_FOR_BUILD := -L$(BUILTLIBPATH)/lib $(LDFLAGS_FOR_BUILD)
+LDFLAGS :=						\
+	-L$(BUILTLIBPATH)/lib				\
+	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/mathic		\
+	-L@abs_top_builddir@/submodules/mathicgb	\
+	$(LDFLAGS)
+LDFLAGS_FOR_BUILD :=					\
+	-L$(BUILTLIBPATH)/lib				\
+	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/mathic		\
+	-L@abs_top_builddir@/submodules/mathicgb	\
+	$(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
