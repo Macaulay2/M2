@@ -334,7 +334,7 @@ makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
           for i from 0 to c-1 list (
                b0/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
           )
-     )
+     );
 )
 
 -- Similar to pureBettiDiagram but with options and M2 naming convention
