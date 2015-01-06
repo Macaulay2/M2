@@ -789,7 +789,7 @@ decomposeDegrees BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B
           B1=new MutableHashTable from X_2;
           --change the type of the values in X_0 to ZZ
           Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
-          Components = append(Components, (X_1,listPureDegrees(Y)));
+          Components = append(Components, (X_1,listPureDegrees(Y))));
           Components
      )
      else if o.TableEntries == HerzogKuhl 
@@ -812,7 +812,6 @@ decomposeDegrees BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B
           Components = append(Components, (X,listPureDegrees(Y))));
      Components
      )     
-     )
  )
 
 
