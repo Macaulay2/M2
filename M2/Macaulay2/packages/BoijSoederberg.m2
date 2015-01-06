@@ -308,7 +308,6 @@ makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
        if Degs#i <= Degs#(i-1) then error "--makePureBetti: expected an increasing list of integers";
        for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
        );
-
      if o.TableEntries == LeastIntegerEntries 
      then (
           D := for i from 0 to c-1 list (
@@ -326,7 +325,7 @@ makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
      )
      else if o.TableEntries == RealizationModules
      then (
-          L := for i from 1 to codim-1 list (
+          L := for i from 1 to c-1 list (
                binomial(Degs#i -1,Degs#i-Degs#(i-1) - 1)
           );
           tag := first sort keys makePureBettiDiagram(Degs,TableEntries=>HerzogKuhl);
