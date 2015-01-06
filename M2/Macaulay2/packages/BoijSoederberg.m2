@@ -296,6 +296,58 @@ pureBetti List := (Degs) -> (
 -- Patch: optional types ------------
 -------------------------------------
 
+-- Similar to pureBetti but with options and M2 naming convention
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method.
+
+makePureBetti = method(Options => true)
+makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
+     c := # Degs;
+     p := 1;
+     for i from 1 to c-1 do (
+       if Degs#i <= Degs#(i-1) then error "--makePureBetti: expected an increasing list of integers";
+       for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
+       );
+
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+          D := for i from 0 to c-1 list (
+          (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i)
+          );
+          Bettis := for i from 0 to c-1 list (p/D_i);
+          Bettis = Bettis / gcd Bettis;
+          apply(Bettis, x -> lift(x,ZZ))
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+          for i from 0 to c-1 list (
+          1/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
+     )
+     else if o.TableEntries == RealizationModules
+     then (
+          L := for i from 1 to codim-1 list (
+               binomial(Degs#i -1,Degs#i-Degs#(i-1) - 1)
+          );
+          tag := first sort keys makePureBettiDiagram(Degs,TableEntries=>HerzogKuhl);
+          b0 := (product L)*(1/(makePureBettiDiagram(Degs,TableEntries=>HerzogKuhl))#tag);
+          --returns an error if the first degree is not 0. need to fix.
+          for i from 0 to c-1 list (
+               b0/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
+          )
+     )
+)
+
+-- Similar to pureBettiDiagram but with options and M2 naming convention
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method
+makePureBettiDiagram = method(Options => true)
+makePureBettiDiagram List := {TableEntries => LeastIntegerEntries} >> ( o -> degs -> (
+     B := makePureBetti(degs, TableEntries => o.TableEntries);
+     new BettiTally from apply(#degs i -> (i,{degs#1},degs#i) => B#i)
+)
+
+
+--- OBSOLETE!
 --  input: List consisting of strictly increasing list of positive integers 
 --         (a degree sequence)
 -- output: List of theoretical rational Betti numbers resulting from the 
@@ -309,6 +361,7 @@ makePureBettiHK List := (degs) -> (
 	  )
      )
 
+--- OBSOLETE!
 --  input: List consisting of strictly increasing list of positive integers 
 --         (a degree sequence)
 -- output: BettiTally with the theoretical rational Betti numbers resulting from
@@ -318,17 +371,19 @@ makePureBettiDiagramHK List := (degs) -> (
      B := makePureBettiHK degs;
      new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
      )
- 
+
+--- NECESSARY 
 --  input: BettiTally
 decompose3 = method();
 decompose3 BettiTally := B -> (
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=makePureBettiDiagramHK L;
+     C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
 
+--- OBSOLETE!
 --  input: List (a degree sequence)
 -- output: List (a list of the number of generators of the realization module
 --         in each degree)
@@ -348,6 +403,7 @@ makePureBettiES List := (degs) -> (
 	  )
 )
 
+--- OBSOLETE!
 --  input: List (a degree sequence)
 -- output: BettiTally (the Betti table of the realization module
 --         for the given degree sequence)
@@ -357,13 +413,13 @@ makePureBettiDiagramES List := (degs) -> (
      new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
      )
 
-
+--- NECESSARY
 --  input: BettiTally
 decompose2 = method();
 decompose2 BettiTally := B -> (
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=makePureBettiDiagramES L;
+     C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      ) 
@@ -378,6 +434,7 @@ listPureDegrees BettiTally := B -> (
      else return "Error: diagram is not pure."
      )
 
+--- OBSOLETE!
 --  input: Betti table (eg, betti res M for a module M)
 -- output: Sum of the pure diagrams as defined in Dan's lectures 
 --         (with fractions from the H-K equations)
@@ -394,6 +451,7 @@ decomposeHK BettiTally := B-> (
      sum Components
      )
 
+--- OBSOLETE!
 --  input: Betti table
 -- output: List of the coefficients with the pure degree sequences from above
 decomposeDegreesHK = method();
@@ -409,7 +467,7 @@ decomposeDegreesHK BettiTally := B-> (
      Components
      )
 
-
+--- OBSOLETE!
 --  input: Betti table (eg, betti res M for a module M)
 -- output: Sum of the pure diagrams as defined in Dan's lectures (with fractions from the E-S existence proof)
 decomposeES = method();
@@ -425,6 +483,7 @@ decomposeES BettiTally := B-> (
      sum Components
      )
 
+--- OBSOLETE!
 decomposeDegreesES = method();
 decomposeDegreesES BettiTally := B -> (
      Components:={};
@@ -454,7 +513,7 @@ isMassEliminate BettiTally :=  B -> (
             
       scan( values B, i -> if i != 1 then break print "-- Warning: Not Generic Case");
       
-      D = decomposeDegreesHK B;
+      D = decomposeDegrees(B,TableEntries=>HerzogKuhl);
       LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
       
       SCAN = scan( LD, l -> if #positions( l, i -> i != 0 ) != 1 then break "true" );
@@ -476,7 +535,7 @@ eliminateBetti BettiTally := o -> B -> (
      
      if isMassEliminate(B) == true then print"\n --MASS EXTINCTION!--";
      
-     D = decomposeDegreesHK B;
+     D = decomposeDegrees(B,TableEntries=>HerzogKuhl);
      LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
      
      if o.EliminationSequence == true then return apply( LD, l -> positions( l, i -> i != 0) );
@@ -662,8 +721,13 @@ TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+C =decompose(B)
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries)
+C2=decomposeBetti(B, TableEntries => HerzogKuhl)
+C3=decomposeBetti(B, TableEntries => RealizationModules)
+assert(C===C1)
+
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
 m2=mat2betti matrix "1,0,0;
@@ -706,6 +770,56 @@ m3=mat2betti matrix"1,0,0;
 M'=set{m1,m2,m3}
 assert(L===M')
 ///
+
+-- Similar to decompose but with options.
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method.
+-- This does not output the Betti tables themselves,
+-- but instead outputs their associated degree sequences. 
+decomposeDegrees = method(Options => true)
+decomposeDegrees BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -> (
+    
+    Components:={};
+    B1:= new MutableHashTable from B;
+    
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+           while min values B1 >= 0 and max values B1 > 0 do (
+          X:=decompose1(new BettiTally from B1);
+          B1=new MutableHashTable from X_2;
+          --change the type of the values in X_0 to ZZ
+          Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+          Components = append(Components, (X_1,listPureDegrees(Y)));
+          Components
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+     while min values B1 >= 0 and max values B1 > 0 do (
+       X:=decompose3(new BettiTally from B1);
+       B1=new MutableHashTable from X_2;
+       --change the type of the values in X_0 to ZZ
+       Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+       Components = append(Components, (X_1,listPureDegrees(Y))));
+     Components
+     )     
+     else if o.TableEntries == RealizationModules
+     then (
+           while min values B1 >= 0 and max values B1 > 0 do (
+          X:=decompose2(new BettiTally from B1);
+          B1=new MutableHashTable from X_2;
+          --change the type of the values in X_0 to ZZ
+          Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+          Components = append(Components, (X,listPureDegrees(Y))));
+     Components
+     )     
+     )
+ )
+
+
+TEST ///
+--needs writing
+///
+
 
 ---------------------------------------------
 -- Cohomology Tables ------------------------
@@ -2160,23 +2274,26 @@ D = decomposeDegreesHK B
 pureBettiDiagram (D_0)#1
 
 pureBetti (D_0)#1
-makePureBettiHK (D_0)#1
-makePureBettiDiagramHK (D_0)#1
+makePureBetti((D_0)#1,TableEntries=>HerzogKuhl)
+makePureBettiDiagram((D_0)#1, TableEntries=>HerzogKuhl)
 
 --TODO
 -- 1. create decomposeDegreees and make options like this:
-decomposeDegrees( B, TableEntries => HerzogKuhl )
+decomposeDegrees( B, TableEntries => HerzogKuhl ) 
+--- DONE
 
 -- 2. add options to makePureBettiDiagram to allow for HK and Modules (ES).
 
 -- 3. Edit decompose documentation
 
--- 4. Create method 'makePureBettiEntries' and 'makePureBettiDiagram' have options for 
+-- 4. Create method 'makePureBetti' and 'makePureBettiDiagram' have options for 
 --    TableEntries and have 'pureBetti' and 'pureBettiDiagram' be alias for these.
 --    incorporate 'makePureBettiES' and 'makePureBettiHK'
+--- DONE aside from alias (what's that?)
 
 -- 5. decompose3 and decompose2 need to handle options from 'makePureBettiDiagram'.
 --    I.e. HerzogKuhl...
+--- DONE
 
 -- 6. check to see if 'decomposeHK' and 'decomposeES' is an option in 'decomposeBetti'. If so delete it. 
 
