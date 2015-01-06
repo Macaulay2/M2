@@ -711,10 +711,10 @@ decomposeBetti BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -
 	     --change the type of the values in X2_0 to ZZ
 	     Y2:=new BettiTally from apply(pairs X2_0, i->{first i,last i});
 	     Components = append(Components, hold(X2_1) * Y2));
-     	 sum Components
+     	sum Components
      )     
-     )
- )
+)
+ 
 
 
 TEST ///
