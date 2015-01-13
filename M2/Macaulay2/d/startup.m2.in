@@ -135,7 +135,7 @@ if firstTime then (
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
      re = re | "|\\$";					    -- $www.uiuc.edu:80
      re = re | "|!";					    -- !date
-     re = re | "|~/";					    -- ~/foo/bar
+     re = re | "|~";					    -- ~user/foo/bar
      isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory and get to the same file
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
@@ -552,7 +552,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       arg := commandLine#2;
  	       -- "load" uses "./" to mean relative to the current file's directory, but right now, the current file is startup.m2.in,
 	       -- which may not even be on the user's machine.  So we convert it to an absolute path
-	       if match("^\\./",arg) then arg = toAbsolutePath arg;
+	       if match("^(\\./|\\../)",arg) then arg = toAbsolutePath arg;
 	       scriptCommandLine = drop(commandLine,2);
 	       if instance(value global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
