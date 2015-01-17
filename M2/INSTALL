@@ -96,6 +96,10 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
+    On Ubuntu 14.10 and later, add
+        --enable-build-libraries=pari
+      to the "configure" command line below.  (The version of pari possibly installed there
+      will crash when M2 exits.)
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
