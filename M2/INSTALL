@@ -135,6 +135,15 @@ various modern operating systems:
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
 
+  Arch Linux:
+      sudo pacman -S archlinux-keyring
+      sudo pacman-key --populate archlinux
+      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip
+    If the package "pari" is also installed on your system, remember to add
+    	--enable-build-libraries=pari
+    to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
+    crash when the program terminates (when the exit handlers are executed, it dies in the function "closepari".)
+
   Mac OS X:
     Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
       it will be necessary to reinstall it.
