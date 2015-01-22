@@ -138,7 +138,7 @@ various modern operating systems:
   Arch Linux:
       sudo pacman -S archlinux-keyring
       sudo pacman-key --populate archlinux
-      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex
+      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
     If the package "pari" is also installed on your system, remember to add
     	--enable-build-libraries=pari
     to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
