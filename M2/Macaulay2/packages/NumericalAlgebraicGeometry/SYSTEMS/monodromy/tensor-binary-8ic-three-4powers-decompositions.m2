@@ -18,12 +18,7 @@ solutionsWithMultiplicity List := o-> sols -> (
         si
         )
     )
-end --------------------------------------------------------------------------
 
--- START pushing F11 here
-restart
-load "tensor-binary-8ic-three-4powers-decompositions.m2"
----Dixon-Stuart
 S=CC[v_(0,0)..v_(2,2),x_0,x_1 ]
 xx=matrix{{x_0,x_1}}
 FF=diff(symmetricPower(8,xx),sum(3,i->v_(i,0)*(matrix{{1,v_(i,1),v_(i,2)}}*transpose symmetricPower(2,xx))^4))
@@ -46,13 +41,20 @@ T0 = sub(F,s0)
 -- we know one decomposition at the moment:
 sols0 = {point s0};
 
+end --------------------------------------------------------------------------
+
+-- START pushing F11 here ****************************************************
+restart
+load "tensor-binary-8ic-three-4powers-decompositions.m2"
+
 {* outsource to an external solver:
 setDefault(Software=>BERTINI)
 setDefault(Software=>PHCPACK)
 *}
 
-setDefault(tStepMin=>1e-10,CorrectorTolerance=>1e-8,InfinityThreshold=>1e12,SingularConditionNumber=>1e15)
-while #sols0 <= 1000 {* 6*76=456 *} do (
+setDefault(tStepMin=>1e-10,CorrectorTolerance=>1e-8,InfinityThreshold=>1e9,SingularConditionNumber=>1e15)
+stop = false; n = #sols0;
+while not stop {* 6*76=456 *} do (
     T1 = sub(F,random1(1,9));
     T2 = sub(F,random1(1,9));
 --    T1 = random(CC^9,CC^1);
@@ -60,11 +62,15 @@ while #sols0 <= 1000 {* 6*76=456 *} do (
     elapsedTime sols1 = track(polySystem(F-T0),polySystem(F-T1),sols0);
     elapsedTime sols2 = track(polySystem(F-T1),polySystem(F-T2),sols1);
     elapsedTime sols0' = track(polySystem(F-T2),polySystem(F-T0),sols2);
-    sols0'' = refine(polySystem(F-T0),select(sols0', s->status s === Regular), ErrorTolerance=>1e-12);
+    print "  -- refining...";
+    elapsedTime sols0'' = refine(polySystem(F-T0),select(sols0', s->status s === Regular), Bits=>100);
     sols0''' = select(sols0'',s->status s === Regular);
     sols0 = solutionsWithMultiplicity(sols0 | sols0''',Tolerance=>1e-5); -- take the union
+    if #sols0 > n then n = #sols0 else stop = true;
     << "found " << #sols0 << " decompositions so far" << endl;
     )
+
+-- ignore stuff below... ---------------------------------------------------
 
 max (sols0 / (s->s.ConditionNumber)) -- max condition number
 max (sols0 / (s->norm(2,s))) -- max norm
@@ -74,6 +80,7 @@ peek first select(sols0', s->status s===MinStepFailure)
 
 sols0'' / status
 #select(sols0'', s->status s===RefinementFailure)
+peek first sols0''
 
 select(sols0, s->norm(T0 - sub(F,matrix s)) > 1e-6)
 

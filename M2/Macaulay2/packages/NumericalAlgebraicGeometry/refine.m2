@@ -100,7 +100,9 @@ refine (PolySystem,Point) := Point => o -> (F',s) ->
 if member(o.Software,{BERTINI,PHCPACK}) then first refine(F',{s},o) else (
     o = fillInDefaultOptions o;
     errorTolerance := o.ErrorTolerance;
-    if o.Bits =!= infinity then errorTolerance = min(errorTolerance, 2.^(-o.Bits));
+    x := transpose matrix s; -- convert to vector 
+    if o.Bits =!= infinity then errorTolerance = min(errorTolerance, 
+	2.^(-o.Bits)*conditionNumber evaluate(jacobian F', x));
     bits := max(53,
 	( if o.Bits =!= infinity then o.Bits
 	    else -round(log_2 errorTolerance) )
@@ -109,7 +111,6 @@ if member(o.Software,{BERTINI,PHCPACK}) then first refine(F',{s},o) else (
     R := K(monoid[gens ring F']); -- new ring
     F := polySystem (map(R, ring F', gens R)) F'.PolyMap;
     n'iterations := o.Iterations;
-    x := transpose matrix s; -- convert to vector 
     -- if isProjective then x = normalize x;
     x1 := promote(x,K); -- refined x
     error'bound := infinity;
