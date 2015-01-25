@@ -3,6 +3,7 @@
 # @configure_input@
 all: initialize phase1
 include ../../include/config.Makefile
+VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
 USER ?= unknown-user
