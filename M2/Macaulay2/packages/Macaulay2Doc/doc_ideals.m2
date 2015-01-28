@@ -158,7 +158,8 @@ document {
      SeeAlso => {"ideals"}
      }
 document {
-     Key => {(symbol ^,Ideal,Array)
+     Key => {(symbol ^,Ideal,Array),
+	     (symbol ^,MonomialIdeal,Array)
 	  },
      Headline => "bracket power of an ideal",
      Usage => "I^e",
@@ -170,7 +171,7 @@ document {
      The array may either be a singleton, as follows:",
      EXAMPLE {
 	  "R = QQ[a..d];",
-	  "I = ideal(a^2, b^2-c*d);",
+	  "I = ideal(a^2*b, a*b^2,c^3,d^5);",
 	  "I^[3]"
 	  },
      "One may also give an array that is the same length as the number
@@ -178,12 +179,6 @@ document {
      EXAMPLE {
 	 "I^[2,3,4,5]"
      },
-     "The generators produced are often not minimal.  Use ",
-     TO (trim,Ideal), " or ", TO (mingens,Ideal), " to find a smaller
-     generating set. Test change.",
-     EXAMPLE {
-	  "trim I^[3]"
-	  },
      SeeAlso => {"ideals"}
      }
  
