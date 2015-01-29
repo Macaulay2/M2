@@ -1,23 +1,4 @@
----we study decomposition of binary 8ic as sum of three 4-powers
-----this script does not work well, maybe the degree 4 power gives bad precision.
--- PATCH for M2 version 1.7
-restart
 needsPackage "NumericalAlgebraicGeometry"
-solutionsWithMultiplicity List := o-> sols -> (
-    sorted := sortSolutions(sols,o);
-    i := 0;
-    while i<#sorted list (
-        si := sorted#i;
-        si.Multiplicity = 1;
-        j := i + 1;
-        while j < #sorted and areEqual(sorted#j,si,o) do (
-            si.Multiplicity = si.Multiplicity + 1;
-            j = j + 1;
-            );
-        i = j;
-        si
-        )
-    )
 
 S=CC[v_(0,0)..v_(2,2),x_0,x_1 ]
 xx=matrix{{x_0,x_1}}
@@ -63,7 +44,7 @@ while not stop {* 6*76=456 *} do (
     elapsedTime sols2 = track(polySystem(F-T1),polySystem(F-T2),sols1);
     elapsedTime sols0' = track(polySystem(F-T2),polySystem(F-T0),sols2);
     print "  -- refining...";
-    elapsedTime sols0'' = refine(polySystem(F-T0),select(sols0', s->status s === Regular), Bits=>100);
+    elapsedTime sols0'' = refine(polySystem(F-T0),select(sols0', s->status s === Regular), Bits=>100, Software=>M2engine);
     sols0''' = select(sols0'',s->status s === Regular);
     sols0 = solutionsWithMultiplicity(sols0 | sols0''',Tolerance=>1e-5); -- take the union
     if #sols0 > n then n = #sols0 else stop = true;
