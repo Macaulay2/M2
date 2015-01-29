@@ -55,12 +55,16 @@ inputGate Thing := a -> new InputGate from {
     Name => a
     } 
 net InputGate := g -> net g.Name
+oneGate = inputGate 1
+zeroGate = inputGate 0
 
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
-Gate + Gate := (a,b) -> new SumGate from {
-    Inputs => {a,b}
-    } 
+Gate + Gate := (a,b) -> if a===zeroGate then b else 
+                        if b===zeroGate then a else 
+			new SumGate from {
+    			    Inputs => {a,b}
+    			    } 
 sumGate = method()
 sumGate List := L -> (
     if not all(L, a->instance(a,Gate)) 
@@ -70,9 +74,12 @@ sumGate List := L -> (
  
 ProductGate = new Type of Gate
 net ProductGate := g -> concatenateNets( {"("} | between(" * ", g.Inputs) | {")"} )
-Gate * Gate := (a,b) -> new ProductGate from {
-    Inputs => {a,b}
-    } 
+Gate * Gate := (a,b) -> if a===zeroGate or b===zeroGate then zeroGate else 
+                        if a===oneGate then b else 
+			if b===oneGate then a else 
+			new ProductGate from {
+    			    Inputs => {a,b}
+    			    } 
 productGate = method()
 productGate List := L -> (
     if not all(L, a->instance(a,Gate)) 
@@ -86,6 +93,14 @@ value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->va
 support InputGate := g -> g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
 support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
+
+diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
+diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sum
+diff (InputGate, ProductGate) := (x,g) -> sum apply(#g.Inputs, i->(
+	dgi := diff(x,g.Inputs#i);
+	product(drop(g.Inputs,{i,i}))*dgi -- commutativity assumed
+	))
+
 
 compile = method()
 
@@ -104,6 +119,10 @@ support (D+C)
 s = new MutableHashTable from {A+B=>C}
 peek s
 s#(A+B)
+
+E = inputGate 2 -- one way to handel constants
+f = product {E*(A*A+E*B)+oneGate, E, oneGate}
+diff(A,f)
 
 debug needsPackage "NumericalAlgebraicGeometry"
 R = CC[x,y]

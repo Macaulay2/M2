@@ -498,10 +498,15 @@ class SLProgram
   enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
-  std::vector<GATE_TYPE> mNodes;
-  std::vector<GATE_SIZE> mNumInputs;
-  std::vector<GATE_POSITION> mInputPositions; // nonnegative = node position, negative = var or const
-  std::vector<GATE_POSITION> mOutputPositions; // nonnegative = node position, negative = var or const
+  std::vector<GATE_TYPE> mNodes; // nodes types
+  std::vector<GATE_SIZE> mNumInputs; // corresponding nodes sizes
+  std::vector<GATE_POSITION> mInputPositions;/* which nodes does input come from?
+                                                !!! this vector could be longer than mNodes !!! 
+                                                !!! since there could be several inputs per node !!!
+                                                (nonnegative = node position, 
+                                                negative = var or const) */
+  std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
+                                                  (nonnegative = node position, negative = var or const) */
 public:
   SLProgram();
   SLProgram& addCopy(GATE_POSITION p);
