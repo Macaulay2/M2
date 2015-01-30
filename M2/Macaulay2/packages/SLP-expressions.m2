@@ -101,31 +101,76 @@ diff (InputGate, ProductGate) := (x,g) -> sum apply(#g.Inputs, i->(
 	product(drop(g.Inputs,{i,i}))*dgi -- commutativity assumed
 	))
 
+subSanityCheck = method()
+subSanityCheck Option := ab -> (
+    if not instance(first ab, InputGate) then error "only an InputGate can be substituted";
+    if not instance(last ab, Gate) then error "can substitute with a Gate only";
+    )
+sub (InputGate, Option) := (g,ab) -> (
+    subSanityCheck ab;
+    (a,b) := toSequence ab; 
+    if a===g then b else g 
+    )
+sub (SumGate, Option) := (g,ab) -> (
+    subSanityCheck ab;
+    sumGate apply(g.Inputs, i->sub(i,ab))
+    )
+sub (ProductGate, Option) := (g,ab) -> (
+    subSanityCheck ab;
+    productGate apply(g.Inputs, i->sub(i,ab))
+    )
 
-compile = method()
+compress InputGate := g -> g
+compress SumGate := g -> (
+    L := g.Inputs/compress;
+    nums := positions(L, a -> instance(a,InputGate) 
+	and (instance(a.Name,Number) or instance(a.Name, RingElement)));
+    not'nums := toList(0..<#L) - set nums;
+    s := L_nums/(a->a.Name)//sum;
+    c := (if s != 0 then {inputGate s} else {}) | L_not'nums;
+    if #c == 0 then zeroGate else
+    if #c == 1 then first c else 
+    sum c
+    )
+compress ProductGate := g -> (
+    L := g.Inputs/compress;
+    nums := positions(L, a -> instance(a,InputGate) 
+	and (instance(a.Name,Number) or instance(a.Name, RingElement)));
+    not'nums := toList(0..<#L) - set nums;
+    p := L_nums/(a->a.Name)//product;
+    c := (if p != 1 then {inputGate p} else {}) | L_not'nums; -- assumes commutativity
+    if #c == 0 then oneGate else
+    if #c == 1 then first c else 
+    product c
+    )
 
 end -------------------------------------------
 
 restart
 load "SLP-expressions.m2"
-A = inputGate X
-B = inputGate Y
-C = sumGate {A+B,B,A}
-D = productGate {A*B,B,C}
-h = new HashTable from {A=>1,B=>ii}
-assert (value(D,h) == product{value(A*B,h),value(B,h),value(C,h)})
-support (A*A)
+X = inputGate symbol X
+Y = inputGate symbol Y
+C = sumGate {X+Y,Y,X}
+D = productGate {X*Y,Y,C}
+h = new HashTable from {X=>1,Y=>ii}
+assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
+support (X*X)
 support (D+C)
-s = new MutableHashTable from {A+B=>C}
+s = new MutableHashTable from {X+Y=>C}
 peek s
-s#(A+B)
+s#(X+Y)
 
-E = inputGate 2 -- one way to handel constants
-f = product {E*(A*A+E*B)+oneGate, E, oneGate}
-diff(A,f)
+E = inputGate 2 -- one way to handle constants
+F = product {E*(X*X+E*Y)+oneGate, E, oneGate}
+diff(X,F)
+
+G = sub(sub(F,X=>X+Y),Y=>X*Y)
+
+R = CC[x,y]
+H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
+compress H
 
 debug needsPackage "NumericalAlgebraicGeometry"
-R = CC[x,y]
 f = random(3,R)
 poly2preSLP f
 ------------------------------------------------------------
