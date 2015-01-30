@@ -1364,7 +1364,8 @@ AC_SUBST(FCLIBS_FLAGS,)
 for i in $FCLIBS
 do case $i in
 	-L*) FCLIBS_FLAGS="$FCLIBS_FLAGS $i" ;;
-	-lgfortranbegin | -lgfortran) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
+	dnl Arch Linux provides libgfortran in dynamic form only
+	dnl -lgfortranbegin | -lgfortran) FCLIBS_STATIC="$FCLIBS_STATIC $i" ;;
 	*) FCLIBS_DYNAMIC="$FCLIBS_DYNAMIC $i" ;;
    esac
 done
