@@ -179,6 +179,27 @@ document {
      EXAMPLE {
 	 "I^[2,3,4,5]"
      },
+     "If your ring is a tower, then the bracket power will raise the outermost
+     variables to powers.",
+     EXAMPLE {
+     	 "S = QQ[x,y];",
+	 "T = S[z,w];",
+	 "I = ideal gens T;",
+	 "I^[3]",
+	 "I^[2,3]"
+     },
+     "No check is made to determine whether the function given by exponentiating
+     the generators is a ring homomorphism.  Of course, this only is an issue when
+     taking bracket powers of ideals in a quotient ring.  One important case where the bracket
+     power is useful is when studying Frobenius powers of ideals, which corresponds to the
+     image of the ideal under the Frobenius automorphism.",
+     EXAMPLE {
+        "R = ZZ/5[a..d];",
+	"I = minors(2,matrix {{a,b,c},{b,c,d}});",
+	"S = R/I;",
+    	"J = ideal vars S",
+	"J^[5]"
+     }
      SeeAlso => {"ideals"}
      }
  
