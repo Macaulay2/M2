@@ -1,3 +1,5 @@
+debug needsPackage "NumericalAlgebraicGeometry"
+
 {* Expressions in M2 
    *** should have this as a Gate 
    ??? maybe?
@@ -120,11 +122,11 @@ sub (ProductGate, Option) := (g,ab) -> (
     productGate apply(g.Inputs, i->sub(i,ab))
     )
 
+isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
 compress InputGate := g -> g
 compress SumGate := g -> (
     L := g.Inputs/compress;
-    nums := positions(L, a -> instance(a,InputGate) 
-	and (instance(a.Name,Number) or instance(a.Name, RingElement)));
+    nums := positions(L, a -> instance(a,InputGate) and isConstant a);
     not'nums := toList(0..<#L) - set nums;
     s := L_nums/(a->a.Name)//sum;
     c := (if s != 0 then {inputGate s} else {}) | L_not'nums;
@@ -134,8 +136,7 @@ compress SumGate := g -> (
     )
 compress ProductGate := g -> (
     L := g.Inputs/compress;
-    nums := positions(L, a -> instance(a,InputGate) 
-	and (instance(a.Name,Number) or instance(a.Name, RingElement)));
+    nums := positions(L, a -> instance(a,InputGate) and isConstant a);
     not'nums := toList(0..<#L) - set nums;
     p := L_nums/(a->a.Name)//product;
     c := (if p != 1 then {inputGate p} else {}) | L_not'nums; -- assumes commutativity
@@ -143,6 +144,63 @@ compress ProductGate := g -> (
     if #c == 1 then first c else 
     product c
     )
+
+-- returns (consts,program), modifies pos
+appendToProgram = method()
+appendToProgram (Gate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
+    )
+appendToProgram (InputGate,List,List,MutableHashTable) := (g,consts,program,pos) -> (
+    if pos#?g then return (consts,program); -- do nothing
+    if isConstant g then (
+	pos#g = #consts;
+	(append(consts,g.Name),program)
+	) else (
+	if not pos#?g then error "a variable is not specified as input";
+	(consts,program)
+	)
+    )
+appendToProgram (SumGate,List,List,MutableHashTable) := (g,consts,program,pos)->( 
+    if pos#?g then return (consts,program); -- do nothing
+    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
+    abs'pos := #program;
+    pos#g = abs'pos;
+    (
+	consts,
+    	append(program, {slpMULTIsum} | {#g.Inputs} | apply(g.Inputs,f->
+	    if instance(f,InputGate) then (
+	    	if isConstant f then CONST=>pos#f
+		else INPUT=>pos#f
+		)
+	    else pos#f-abs'pos))
+        )
+    )
+appendToProgram (ProductGate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
+    if pos#?g then return (consts,program); -- do nothing
+    if #g.Inputs!=2 then error "cannot convert products of more than 2 numbers to preSLP";
+    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
+    abs'pos := #program;
+    pos#g = abs'pos;
+    (
+	consts,
+    	append(program, {slpPRODUCT} | apply(g.Inputs,f->
+	    if instance(f,InputGate) then (
+	    	if isConstant f then CONST=>pos#f
+		else INPUT=>pos#f
+		)
+	    else pos#f-abs'pos))
+        )
+    )
+
+-- assembles a preSLP (see NumericalAlgebraicGeometry/SLP.m2) 
+-- that takes a list of InputGates and a list of Gates that produce the output
+toPreSLP = method()
+toPreSLP (List,List) := (inputs,outputs) -> (
+    consts := {};
+    program := {};
+    pos := new MutableHashTable from apply(#inputs,i->inputs#i=>i);
+    scan(outputs,o->(consts,program)=appendToProgram(o,consts,program,pos));
+    (consts, program, matrix{outputs/(o->pos#o)})
+    )  
 
 end -------------------------------------------
 
@@ -161,16 +219,23 @@ peek s
 s#(X+Y)
 
 E = inputGate 2 -- one way to handle constants
-F = product {E*(X*X+E*Y)+oneGate, E, oneGate}
+F = product{E*(X*X+E*Y)+oneGate, oneGate}
 diff(X,F)
 
-G = sub(sub(F,X=>X+Y),Y=>X*Y)
+G = sub(sub(F,X=>X+Y),Y=>X*Y) -- sub
 
-R = CC[x,y]
+-- sub and compress = evaluate over a ring
+R = CC[x,y] 
 H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
-compress H
+I = compress H 
 
-debug needsPackage "NumericalAlgebraicGeometry"
+-- evaluate toPreSLP == compress 
+output = {F,diff(X,F),G}
+preSLP = toPreSLP({X,Y},output)
+out'eval = evaluatePreSLP(preSLP, gens R)
+out'comp = matrix{ output/(o->sub(sub(G,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
+assert(out'comp == out'comp)
+
 f = random(3,R)
 poly2preSLP f
 ------------------------------------------------------------

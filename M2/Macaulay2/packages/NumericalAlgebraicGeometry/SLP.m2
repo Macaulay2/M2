@@ -22,9 +22,12 @@ slpCOPY = 1; --"COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; --"MULTIsum";
 slpPRODUCT = 3; --"PRODUCT";
 slpDET = 4; --"DET";
-CONST := symbol CONST;
-INPUT := symbol INPUT;
 
+
+CONST = symbol CONST;
+INPUT = symbol INPUT;
+protect CONST
+protect INPUT
 
 -- types of predictors
 predRUNGEKUTTA = 1;
@@ -194,6 +197,7 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   else if k === slpMULTIsum then (
 		val = val | { sum(2..1+n#1, 
 			  j->if class n#j === Option and n#j#0 === CONST then constants#(n#j#1)
+    		       	  else if class n#j === Option and n#j#0 === INPUT then v#(n#j#1)
 			  else if class n#j === ZZ then val#(i+n#j)
 			  else error "unknown node type" 
 			  )
