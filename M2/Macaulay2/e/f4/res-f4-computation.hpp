@@ -41,7 +41,11 @@ protected:
 
   SchreyerFrame& frame() { return mComp->frame(); }
 
-  void start_computation() { std::cout << "F4ResComputation::start_computation() needs to be written" << std::endl; }
+  void start_computation()
+  {
+    std::cout << "F4ResComputation::start_computation() needs to be written" << std::endl;
+    mComp->construct(2,3); // testing
+  }
 
   int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }
   // The computation is complete up through this degree.

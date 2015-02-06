@@ -17,7 +17,7 @@ ResGausser::ResGausser(const Z_mod *K0, ResF4Mem *Mem0)
 {
 }
 
-ResGausser::F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_elem *elems) const
+ResGausser::CoefficientArray ResGausser::from_ringelem_array(int len, ring_elem *elems) const
 {
   int i;
   switch (typ) {
@@ -30,7 +30,7 @@ ResGausser::F4CoefficientArray ResGausser::from_ringelem_array(int len, ring_ele
   return 0;
 }
 
-void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *result) const
+void ResGausser::to_ringelem_array(int len, CoefficientArray F, ring_elem *result) const
 {
   int* elems = F;
   int i;
@@ -41,7 +41,7 @@ void ResGausser::to_ringelem_array(int len, F4CoefficientArray F, ring_elem *res
   };
 }
 
-ResGausser::F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4CoefficientArray F) const
+ResGausser::CoefficientArray ResGausser::copy_CoefficientArray(int len, CoefficientArray F) const
 {
   int* elems = F;
   int i;
@@ -55,7 +55,7 @@ ResGausser::F4CoefficientArray ResGausser::copy_F4CoefficientArray(int len, F4Co
   return 0;
 }
 
-void ResGausser::deallocate_F4CCoefficientArray(F4CoefficientArray &F, int len) const
+void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, int len) const
 {
   int* elems = F;
   switch (typ) {
@@ -93,7 +93,7 @@ void ResGausser::dense_row_deallocate(dense_row &r) const
 
 void ResGausser::dense_row_fill_from_sparse(dense_row &r,
                                          int len,
-                                         F4CoefficientArray sparse,
+                                         CoefficientArray sparse,
                                          int *comps) const
 {
   int* elems = r.coeffs;
@@ -115,7 +115,7 @@ int ResGausser::dense_row_next_nonzero(dense_row &r, int first, int last) const
 
 void ResGausser::dense_row_cancel_sparse(dense_row &r,
                                       int len,
-                                      F4CoefficientArray sparse,
+                                      CoefficientArray sparse,
                                       int *comps) const
 {
   int* elems = r.coeffs;
@@ -134,7 +134,7 @@ void ResGausser::dense_row_cancel_sparse(dense_row &r,
 
 void ResGausser::dense_row_to_sparse_row(dense_row &r,
                                       int &result_len,
-                                      F4CoefficientArray &result_sparse,
+                                      CoefficientArray &result_sparse,
                                       int *&result_comps,
                                       int first,
                                       int last) const
@@ -158,7 +158,7 @@ void ResGausser::dense_row_to_sparse_row(dense_row &r,
 }
 
 void ResGausser::sparse_row_make_monic(int len,
-                                    F4CoefficientArray sparse) const
+                                    CoefficientArray sparse) const
 {
   int* elems = sparse;
   int lead = *elems;

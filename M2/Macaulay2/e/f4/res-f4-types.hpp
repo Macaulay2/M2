@@ -9,9 +9,11 @@
 #include "res-gausser.hpp"
 
 struct poly {
-  int len;
-  ResGausser::F4CoefficientArray coeffs;
+  int len; // in monomials?  This only determines both sizes below
+           // in the case of fixed length monomials
+  ResGausser::CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously
+  poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
 };
 
 #if 0
@@ -21,20 +23,20 @@ typedef unsigned int ComponentIndex;
 // Coefficients.  The implementation of arrays of coeffs
 // is done as a private array.  Note that the length is
 // not encoded: keep that length separately.
-typedef void *F4CoefficientArray;
+typedef void *CoefficientArray;
 
 typedef std::vector<MonomialWord> MonomialArray;
 
 struct Polynomial {
   int len;
-  F4CoefficientArray coeffs;
+  CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously
 };
 
 struct FrameElement {
   long mDegree; // Degree of what??
   unsigned long mLength; // number of monomials/coefficients present.
-  F4CoefficientArray mCoefficients; // if null, then lead coefficient is 1
+  CoefficientArray mCoefficients; // if null, then lead coefficient is 1
   MonomialArray mMonomials; // lead Monomial is the first monomial in this vector
 };
 
@@ -53,7 +55,7 @@ struct RowElement {
     // where mColumn indexes into a Level
 
   unsigned int mRowLength; // length of both of the following arrays
-  F4CoefficientArray mCoefficients; 
+  CoefficientArray mCoefficients; 
   ComponentIndex* mComponentIndices; // points into a memory block
 };
 

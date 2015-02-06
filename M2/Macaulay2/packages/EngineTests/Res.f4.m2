@@ -79,6 +79,22 @@ TEST ///
   rawBetti(raw C.Resolution, 1)
 ///
 
+TEST ///
+  -- this is a small-ish example used to get the logic of matrix building right
+  restart
+  setRandomSeed 0
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[vars(0..3), MonomialOrder=>{Weights=>splice{4:1}}]
+  I = ideal fromDual random(R^1, R^{-3});
+  J = ideal gens gb I;
+  see J  
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 1)
+
+///
+
 TEST ///  
   restart
   debug Core

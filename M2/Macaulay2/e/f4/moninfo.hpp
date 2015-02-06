@@ -241,12 +241,20 @@ public:
 
   bool divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
     ncalls_divide++;
-    for (int j=nslots; j>0; --j) 
-      {
-        auto cmp = *m++ - *n++;
-        if (cmp >= 0) *result++ = cmp;
-        else return false;
-      }
+    // First, divide monomials
+    // Then, if the division is OK, set the component, hash value and rest of the monomial
+    if (m[1] != n[1]) // components are not equal
+      return false;
+    const_packed_monomial m1 = m+nslots;
+    const_packed_monomial n1 = n+nslots;
+    packed_monomial result1 = result+nslots;
+    for (int i=nslots-2; i>0; i--) {
+      varpower_word cmp = *--m1 - *--n1;
+      if (cmp < 0) return false;
+      *--result1 = cmp;
+    }
+    result[1] = 0; // the component of a division is in the ring (comp 0).
+    result[0] = m[0] - n[0]; // subtract hash codes
     return true;
   }
 
@@ -258,6 +266,8 @@ public:
   monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
 
   void show(const_packed_monomial m) const;
+
+  void showAlpha(const_packed_monomial m) const;
 
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
     ncalls_compare++;

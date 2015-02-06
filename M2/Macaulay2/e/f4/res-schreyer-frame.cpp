@@ -186,7 +186,7 @@ void SchreyerFrame::show(int len) const
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
           std::cout << "(size:" << myframe[j].mSyzygy.len << ") ";
-          mMonoid.show(myframe[j].mMonom);
+          mMonoid.showAlpha(myframe[j].mMonom);
           std::cout << std::endl;
         }
     }

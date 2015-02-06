@@ -61,8 +61,9 @@ public:
   // BUT: the size is kept the same.
 
   bool find_or_insert(value m, value &result);
-  // return true if the value already exists in the table.
-  // otherwise, result is set to the new value.
+  // If the pointer m is in the hashtable already, then return true,
+  // set result to the already existing pointer.  If m is not yet in
+  // the hashtable, insert it, set result to be m, and return false;
 
   void dump() const;
   // displays on stderr some info about the hash table

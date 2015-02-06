@@ -2,6 +2,7 @@
 
 #include "res-f4.hpp"
 #include "res-gausser.hpp"
+#include <iostream>
 
 F4Res::F4Res(
              ResF4Mem* Mem,
@@ -50,8 +51,8 @@ void F4Res::clearMatrix()
 }
 
 /// findDivisor
-//    m: monomial at level '??'
-//    result: monomial at level '??', IF true is returned
+//    m: monomial at level mThisLevel-1
+//    result: monomial at level mThisLevel, IF true is returned
 //  returns true if 'm' - inG(result), for some (unique) 'result'.
 bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 {
@@ -59,22 +60,35 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
   // find the range of monomials to check
   // for each of these, check divisibility in turn
   //   if one works, then return true, and set result.
-  int comp = mMonoid->get_component(m); // component is an index into level mLevel-2
+  long comp = mMonoid->get_component(m); // component is an index into level mLevel-2
   auto& elem = mFrame.level(mThisLevel-2)[comp];
   auto& lev = mFrame.level(mThisLevel-1);
   for (auto j=elem.mBegin; j<elem.mEnd; ++j)
     {
       // Check divisibility of m by this element
       packed_monomial pj = lev[j].mMonom;
-      if (mMonoid->divide(m, pj, result)) // TODO: make sure this returns a valid monomial! Set the component too!!
-        return true;
+      if (mMonoid->divide(m, pj, result)) // this sets the component to be 0
+        {
+          mMonoid->set_component(j, result);
+          return true;
+        }
     }
   
   return false;
 }
 
+// A monomial at level lev has the following form:
+// m[-1] index of a divisor for this monomial, -1 if no divisor exists
+//    this is only used for monomials being placed into the hash table...
+// m[0] is a hash value
+// m[1] is the component, an index into the lev-1 part of the frame.
+// m[2] is the degree,
+// m[3..3+#vars-1] is the monomial.
+//   Is m[-1] always present
+
 // processMonomialProduct
-//     m and n are monomials at level 'mThisLevel'
+//     m is a monomial, component is ignored (it determined the possible n's being used here)
+//     n is a monomial at level 'mThisLevel-1'
 //     compute their product, and return the column index of this product
 //       or -1, if the monomial is not needed.
 //     additionally: the product monomial is inserted into the hash table
@@ -86,24 +100,68 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
   auto& p = mFrame.level(mThisLevel-2)[mMonoid->get_component(n)];
   if (p.mBegin == p.mEnd) return -1;
 
-  packed_monomial new_m;
-  packed_monomial mNextMonom2; // TODO: this needs to be allocated
+#if 0
+  std::cout << "monomialProduct(";
+  mMonoid->showAlpha(m);
+  std::cout << ", ";
+  mMonoid->showAlpha(n);
+  std::cout << ")" << std::endl;
+#endif
+  
+  packed_monomial new_m; // a pointer to a monomial we are visiting
   mMonoid->unchecked_mult(m,n,mNextMonom);
+  // the component is wrong, after this operation, as it adds components
+  // So fix that:
+  mMonoid->set_component(mMonoid->get_component(n), mNextMonom);
   if (mHashTable.find_or_insert(mNextMonom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
 
-  bool has_divisor = findDivisor(mNextMonom, mNextMonom2);
-  if (!has_divisor) return -1;
-
+#if 0
+  std::cout << "find_or_insert returned:  ";
+  mMonoid->showAlpha(new_m);
+  std::cout << std::endl;
+#endif
+  
+  // intern the monomial just inserted into the hash table
   mMonomSpace.intern(1+mMonoid->monomial_size(mNextMonom));
+  
+  // At this point, we have a new monomial, and a pointer to mNextMonom
+  // has been placed into mHashTable.
+  // We need to see now what the divisor monomial for mNextMonom is.
+  // and if there is one, we need to create a new row for the mReducers matrix.
+  // (at least, put it on the queue to be created).
+  mNextMonom = mMonomSpace.reserve(1+mMonoid->max_monomial_size());
+  mNextMonom++;
+  
+  bool has_divisor = findDivisor(new_m, mNextMonom);
+  if (!has_divisor)
+    {
+      new_m[-1] = -1; // no divisor exists
+      return -1;
+    }
+
+#if 0
+  std::cout << "findDivisor returned:  ";
+  mMonoid->showAlpha(mNextMonom);
+  std::cout << std::endl;
+#endif
+  
+  mMonomSpace.intern(1+mMonoid->monomial_size(mNextMonom));
+  
   long thiscol = mColumns.size();
-  mNextMonom[-1] = thiscol; // this is a HACK
-  mColumns.push_back(mNextMonom);
+  new_m[-1] = thiscol; // this is a HACK: where we keep the divisor
+  mColumns.push_back(new_m);
 
   Row row;
-  row.mLeadTerm = mNextMonom2; // TODO: result of monomial lookup: who is saving this space?
+  row.mLeadTerm = mNextMonom;
   mReducers.push_back(row);
 
+#if 0
+  std::cout << "added ";
+  mMonoid->showAlpha(row.mLeadTerm);
+  std::cout << " to reducer todo list" << std::endl;
+#endif
+  
   // Now we increment mNextMonom, for the next time
   mNextMonom = mMonomSpace.reserve(1+mMonoid->max_monomial_size());
   mNextMonom++;
@@ -113,17 +171,27 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 
 void F4Res::loadRow(Row& r)
 {
+#if 0
+  std::cout << "loadRow: entering ";
+  mMonoid->showAlpha(r.mLeadTerm);
+  std::cout << std::endl;
+#endif
+  
   long comp = mMonoid->get_component(r.mLeadTerm);
   auto& p = mFrame.level(mThisLevel-1)[comp].mSyzygy;
+  monomial_word* this_monom = p.monoms;
   for (long i=0; i<p.len; i++)
     {
-      int* coeff = 0; // TODO: needs to be taken from the coeff array
-      monomial_word* monoms = p.monoms;
-      // TODO: this needs to be cleaned up
-      long val = processMonomialProduct(r.mLeadTerm, monoms);
-      monoms += mMonoid->max_monomial_size();
+
+#if 0
+      std::cout << "loadRow: index i=" << i << std::endl;
+#endif
+
+      // TODO: this needs to be cleaned up: we also need to set coeff[]!
+      long val = processMonomialProduct(r.mLeadTerm, this_monom);
+      this_monom += mMonoid->max_monomial_size(); // part of the iterator
       if (val < 0) continue;
-      appendToRow(r, *coeff, val);
+      //      appendToRow(r, *coeff, val); // TODO
     }
 } 
 
@@ -131,14 +199,27 @@ void F4Res::makeMatrix()
 {
   auto& myframe = mFrame.level(mThisLevel);
   long r = 0;
-  for (auto it = myframe.begin(); it != myframe.end(); ++it, ++r)
+
+#if 0  
+  std::cout << "makeMatrix: start to load spairs" << std::endl;
+#endif
+  
+  for (auto it = myframe.begin(); it != myframe.end(); ++it)
     if (it->mDegree == mThisDegree)
       {
+        mSPairs.push_back(Row());
         Row& row = mSPairs[r];
+        r++;
         row.mLeadTerm = it->mMonom;
+#if 0
+        std::cout << "about to call loadRow" << std::endl;
+#endif
         loadRow(row);
       }
 
+#if 0
+  std::cout << "makeMatrix: start to load reducers" << std::endl;
+#endif
   // Now we process all monomials in the columns array
   while (mNextReducerToProcess < mColumns.size())
     loadRow(mReducers[mNextReducerToProcess++]);
@@ -154,50 +235,30 @@ void F4Res::construct(int lev, int degree)
   //  gaussReduce();
   //  newSyzElems();
   //  clearMatrix();
+  std::cout << "-- rows --" << std::endl;
+  debugOutputReducers();
+  std::cout << "-- columns --" << std::endl;
+  debugOutputColumns();
 }
 
-#if 0
-  // First step: check that (lev-1,degree-1) and (lev,degree-1) have been finished.
-
-  // Step 1.
-  // Loop through monomials in level(lev).  For each
-  //  call processMonomial
-  auto end = level(lev).end();
-  for (auto it=level(lev).begin(); it != end; ++it)
-    if (it->mDegree == degree)
-      processMonomial(lev, it->mMonom);
-
-  long next = 0;
-  while (next < mReducers.size())
+void F4Res::debugOutputReducers()
+{
+  auto end = mReducers.cend();
+  for (auto i=mReducers.cbegin(); i != end; ++i)
     {
-      processReducer(lev-1, next); // might increase mReducers
+      mMonoid->showAlpha((*i).mLeadTerm);
+      std::cout << std::endl;
     }
-  // Construct the matrix
-  //   a. place the lead terms at level lev onto the mTODO list
-  //      Insert them into the hash table, and find their (unique) reducer monomial
-  //   b. for each reducer monomial in the todo list:
-  //      for each monomial in corresponding poly:
-  //        if it cannot be a lead term, continue
-  //        do the multiplication
-  //        look it up in the hash table
-  //          if there: add the (monomial,coeff) to the poly. (what monomial?)
-  //          if not: lookup the divisor monomial
-  //                  if it is not divisible by any elements, then
-  //                     insert into the hash table
-  //                     continue, ignoring this monomial
-  //                  if so: also insert it into the hash table, construct the quotient element, insert into TODO list
-  //   c. Maybe sort the row list
-  //   d. This is the matrix, I guess
-  // 
-  // Reduce the Spairs with respect to this matrix (or, do a solve)
-  //   For each spair:
-  //     create the dense array
-  //     reduce it to 0, keep the (reducer,coeff) result poly
-  //     store that result into the frame
-
 }
-#endif
-
+void F4Res::debugOutputColumns()
+{
+  auto end = mColumns.cend();
+  for (auto i=mColumns.cbegin(); i != end; ++i)
+    {
+      mMonoid->showAlpha((*i));
+      std::cout << std::endl;
+    }
+}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

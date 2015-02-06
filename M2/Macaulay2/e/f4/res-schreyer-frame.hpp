@@ -1,7 +1,7 @@
 // to do list
 //  - display of "poly" elements in the resolution
 //  - get_matrix: should get these elements (if they are there yet)
-//  - F4CoefficientArray: need to be able to build one incrementally
+//  - CoefficientArray: need to be able to build one incrementally
 //  - monomial lookup routine
 //  - should monomials be varpowers?  or even lists of variables?
 //  - make sure monomials are always constructed with that "extra space" for the reducer number.
@@ -12,7 +12,7 @@
 //   . need a display routine for Polynomial, also one that limits the number of monomials displayed
 // res-gausser
 //   . don't use gc
-//   . perhaps define F4CoefficientArray in this class, so it is easily changed
+//   . perhaps define CoefficientArray in this class, so it is easily changed
 //   . don't yet use ARing stuff.
 // res-f4-types.hpp
 //   . has lots of junk (most already commented out)

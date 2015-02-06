@@ -74,8 +74,6 @@ MonomialHashTable<ValueType>::~MonomialHashTable()
 
 template <typename ValueType>
 bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
-  // return true if the value already exists in the table.
-  // otherwise, result is set to the new value.
 {
   long hashval = HASHVALUE(m) & hashmask;
   if (!hashtab[hashval])

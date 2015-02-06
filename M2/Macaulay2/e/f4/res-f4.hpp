@@ -51,8 +51,9 @@ private:
   struct Row {
     packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
     int mLength; // common length of the following two parts
-    ResGausser::F4CoefficientArray mCoeffs; // from an ResF4Mem..
+    ResGausser::CoefficientArray mCoeffs; // from an ResF4Mem..
     int* mComponents; // where is the space? entries are indices into mColumns.
+    Row() : mLeadTerm(nullptr), mLength(0), mCoeffs(nullptr), mComponents(nullptr) {}
   };
 
   void appendToRow(Row& r, int coeff, long val) {} // WRITE ME
@@ -67,6 +68,9 @@ private:
   void loadRow(Row& r); // WRITE ME
   void makeMatrix(); // WRITE ME
 
+  void debugOutputReducers();
+  void debugOutputColumns();
+  
   ////////////////////////////////////
   // Data for construct(lev,degree) //
   ////////////////////////////////////
