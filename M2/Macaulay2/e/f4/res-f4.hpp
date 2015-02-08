@@ -17,6 +17,7 @@ class MonomialInfo;
 
 class F4Res
 {
+  friend class ResColumnsSorter;
 public:
   F4Res(
         ResF4Mem* Mem,
@@ -42,18 +43,13 @@ public:
   M2_arrayint getBetti(int type) const;
   
 private:
-  SchreyerFrame mFrame;
-
-  const ResGausser* mResGausser;
-  const MonomialInfo* mMonoid;
-  const ResF4Mem* mMem; // Used for what TODO?
-
   struct Row {
     packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
-    int mLength; // common length of the following two parts
-    ResGausser::CoefficientArray mCoeffs; // from an ResF4Mem..
-    int* mComponents; // where is the space? entries are indices into mColumns.
-    Row() : mLeadTerm(nullptr), mLength(0), mCoeffs(nullptr), mComponents(nullptr) {}
+    // The following two should have the same length.
+    std::vector<int> mComponents; // indices into mColumns
+    std::vector<int> mCoeffs;
+    //ResGausser::CoefficientArray mCoeffs; // from an ResF4Mem..
+    Row() : mLeadTerm(nullptr) {}
   };
 
   void appendToRow(Row& r, int coeff, long val) {} // WRITE ME
@@ -63,18 +59,27 @@ private:
   ////////////////////////////////////
   void resetMatrix(int lev, int degree); // WRITE ME
   void clearMatrix(); // WRITE ME
-  bool findDivisor(packed_monomial m, packed_monomial result); // WRITE ME
-  long processMonomialProduct(packed_monomial m, packed_monomial n); // WRITE ME
-  void loadRow(Row& r); // WRITE ME
-  void makeMatrix(); // WRITE ME
+  bool findDivisor(packed_monomial m, packed_monomial result);
+  long processMonomialProduct(packed_monomial m, packed_monomial n);
+  void loadRow(Row& r);
+  void reorderColumns();
+  void makeMatrix();
+  void gaussReduce();
 
   void debugOutputReducers();
   void debugOutputColumns();
-  
+  void debugOutputMatrix(std::vector<Row>&);
+  void debugOutputReducerMatrix();
+  void debugOutputSPairMatrix();  
   ////////////////////////////////////
   // Data for construct(lev,degree) //
   ////////////////////////////////////
 
+  SchreyerFrame mFrame;
+
+  const ResGausser* mResGausser;
+  const MonomialInfo* mMonoid;
+  ResF4Mem* mMem; // Used for what TODO?
 
   // Data used to construct the next matrix
   int mThisLevel;
@@ -88,6 +93,7 @@ private:
 
   std::vector<Row> mReducers;  // columns: mColumns.  This is a square matrix.
   std::vector<Row> mSPairs;  // columns: also mColumns  One row per element at (lev,degree).
+  std::vector<long> mSPairComponents; // index into mFrame.level(mThisLevel)
   std::vector<packed_monomial> mColumns; // all the monomials at level lev-2 we need to consider
   MemoryBlock<monomial_word> mMonomSpace; // for monomials stored in this (lev,degree) in mColumns and the lead terms in Row.
 };

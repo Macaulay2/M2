@@ -173,7 +173,7 @@ void SchreyerFrame::showMemoryUsage() const
   std::cout << "  total       \t\t" << (used+monomUsed) << "\t" << (alloc+monomSpace) << std::endl;
 }
 
-void SchreyerFrame::show(int len) const
+void SchreyerFrame::show(int len, const ResGausser& G) const
 {
   std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
   for (int i=0; i<mFrame.mLevels.size(); i++)
@@ -186,7 +186,10 @@ void SchreyerFrame::show(int len) const
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
           std::cout << "(size:" << myframe[j].mSyzygy.len << ") ";
-          mMonoid.showAlpha(myframe[j].mMonom);
+          if (len != 0)
+            display_poly(stdout, G, mMonoid, myframe[j].mSyzygy);
+          else
+            mMonoid.showAlpha(myframe[j].mMonom);
           std::cout << std::endl;
         }
     }

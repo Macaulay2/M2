@@ -62,7 +62,7 @@ public:
   MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
 
   // Debugging //
-  void show(int len) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
+  void show(int len, const ResGausser& G) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
 
   // Return number of bytes in use.
   long memoryUsage() const;

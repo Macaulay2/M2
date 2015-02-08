@@ -81,6 +81,11 @@ public:
       }
   }
 
+  void negate(elem &result, elem a) const
+  {
+    result = modulus_add(a, minus_one, p1);
+  }
+  
   void subtract(elem &result, elem a, elem b) const
   {
     if (b == zero) result = a;

@@ -8,7 +8,7 @@
 #include "../coeffrings.hpp"
 
 class ResF4Mem;
-
+typedef int FieldElement;
 class ResGausser
 {
   enum {ZZp} typ;
@@ -35,6 +35,14 @@ public:
 
   const CoefficientRingZZp* get_coeff_ring() const { return Kp; }
 
+
+  void set_one(FieldElement& one) const { one = 0; } // exponent for 1
+
+  void negate(FieldElement a, FieldElement& result) const
+  {
+    Kp->negate(result, a);
+  }
+  
   CoefficientArray from_ringelem_array(int len, ring_elem *elems) const;
 
   void to_ringelem_array(int len, CoefficientArray, ring_elem *result) const;
