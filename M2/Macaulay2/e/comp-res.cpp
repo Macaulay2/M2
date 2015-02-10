@@ -245,6 +245,13 @@ void ResolutionComputation::betti_display(buffer &o, M2_arrayint ar)
     }
 }
 
+MutableMatrix /* or null */ *ResolutionComputation::get_matrix(int level, int degree)
+{  
+  // the default version gives an error that it isn't defined
+  ERROR("this function not defined for this resolution type");
+  return 0;
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

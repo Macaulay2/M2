@@ -45,6 +45,9 @@ protected:
   {
     std::cout << "F4ResComputation::start_computation() needs to be written" << std::endl;
     mComp->construct(2,3); // testing
+    mComp->construct(2,4);
+    mComp->construct(2,5);
+    mComp->construct(3,4);
   }
 
   int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }
@@ -53,6 +56,8 @@ protected:
   void remove_res() { mComp.reset(); mComp = nullptr; }
 
   const Matrix /* or null */ *get_matrix(int level);
+
+  MutableMatrix /* or null */ *get_matrix(int level, int degree);
 
   const FreeModule /* or null */ *get_free(int level);
 
@@ -63,7 +68,8 @@ protected:
     o << "F4 resolution computation" << newline;
   }
 private:
-  const PolynomialRing& mRing;
+  const PolynomialRing& mOriginalRing;
+  const ResPolyRing mRing;
   const Matrix& mInputGroebnerBasis;
   ResF4Mem* mMem;
   std::unique_ptr<F4Res> mComp;

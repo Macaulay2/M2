@@ -30,7 +30,7 @@
 #include "moninfo.hpp"
 #include "memblock.hpp"
 #include "varpower-monomial.hpp"
-#include "res-f4-types.hpp"
+#include "res-poly-ring.hpp"
 #include <vector>
 
 class F4Res;
@@ -52,17 +52,21 @@ public:
   };
 
   // Construct an empty frame
-  SchreyerFrame(const MonomialInfo& MI, int max_level);
+  SchreyerFrame(const ResPolyRing& R, int max_level);
   
   // Destruct the frame
   ~SchreyerFrame();
 
+  const MonomialInfo& monoid() const { return mRing.monoid(); }
+  const ResPolyRing& ring() const { return mRing; }
+  const ResGausser& gausser() const { return mRing.resGausser(); }
+  
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
   MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
 
   // Debugging //
-  void show(int len, const ResGausser& G) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
+  void show(int len) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
 
   // Return number of bytes in use.
   long memoryUsage() const;
@@ -139,16 +143,19 @@ private:
   int currentLevel() const { return mCurrentLevel; }
   long degree(int lev, long component) const { return level(lev)[component].mDegree; }
   long degree(int lev, packed_monomial m) const { return m[2] + degree(lev-1, m[1]); }
+
+public:
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
 
+private:
   PreElement* createQuotientElement(packed_monomial m1, packed_monomial m);
   long computeIdealQuotient(int lev, long begin, long elem);
   long insertElements(int lev, long elem);
 
 
   // Private Data
-  const MonomialInfo& mMonoid;
+  const ResPolyRing& mRing;
   Frame mFrame;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
 

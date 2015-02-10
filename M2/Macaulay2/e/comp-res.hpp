@@ -54,6 +54,9 @@ public:
   ////////////////////////////////
   virtual const Matrix /* or null */ *get_matrix(int level) = 0;
 
+  virtual MutableMatrix /* or null */ *get_matrix(int level, int degree);
+  // the default version gives an error that it isn't defined
+
   virtual const FreeModule /* or null */ *get_free(int level) = 0;
 
   virtual M2_arrayint get_betti(int type) const = 0;

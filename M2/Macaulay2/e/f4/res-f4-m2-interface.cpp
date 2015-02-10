@@ -11,26 +11,26 @@
 
 #include <vector>
 
-void ResF4toM2Interface::from_M2_vec(const ResGausser *KK,
-                                  const MonomialInfo *MI,
+void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
                                   const FreeModule *F,
                                   vec v,
                                   poly &result)
 {
-  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  const Monoid *M = R->getMonoid();
+  const PolynomialRing *origR = F->get_ring()->cast_to_PolynomialRing();
+  const Monoid *M = origR->getMonoid();
 
   ring_elem denom;
-  gbvector *f = R->translate_gbvector_from_vec(F,v, denom);
-  GBRing *GR = R->get_gb_ring();
+  gbvector *f = origR->translate_gbvector_from_vec(F,v, denom);
+  GBRing *GR = origR->get_gb_ring();
   int n = GR->gbvector_n_terms(f);
 
-  int *exp = newarray_atomic(int, M->n_vars()+1);
-  ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
+  int *exp = new int[M->n_vars()+1];
+  ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
 
   result.len = n;
-  ring_elem *relem_array = newarray(ring_elem, n);
-  result.monoms = newarray_atomic(monomial_word, n * MI->max_monomial_size());
+  ring_elem *relem_array = new ring_elem[n]; // doesn't need to be allocated with gc, as
+          // all these pointers (or values) are still in the element f.
+  result.monoms = new monomial_word[n * R.monoid().max_monomial_size()];
   n = 0;
   monomial_word *nextmonom = result.monoms;
   for (gbvector *t = f; t != 0; t=t->next)
@@ -39,29 +39,28 @@ void ResF4toM2Interface::from_M2_vec(const ResGausser *KK,
       M->to_expvector(t->monom, exp);
       for (int a =0; a<M->n_vars(); a++)
         lexp[a] = exp[a];
-      MI->from_exponent_vector(lexp, t->comp-1, nextmonom); // gbvector components are shifted up by one
-      nextmonom += MI->monomial_size(nextmonom);
+      R.monoid().from_exponent_vector(lexp, t->comp-1, nextmonom); // gbvector components are shifted up by one
+      nextmonom += R.monoid().monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = KK->from_ringelem_array(n, relem_array);
-  deletearray(relem_array);
+  result.coeffs = R.resGausser().from_ringelem_array(n, relem_array);
+  delete [] relem_array;
 }
 
-void ResF4toM2Interface::poly_set_degrees(const ResGausser *KK,
-                                                  const MonomialInfo *MI,
-                                                  const M2_arrayint wts,
-                                                  const poly &f,
-                                                  int &deg_result,
-                                                  int &alpha)
+void ResF4toM2Interface::poly_set_degrees(const ResPolyRing& R,
+                                          const M2_arrayint wts,
+                                          const poly &f,
+                                          int &deg_result,
+                                          int &alpha)
 {
   const monomial_word *w = f.monoms;
-  monomial_word leaddeg = MI->monomial_weight(w, wts);
+  monomial_word leaddeg = R.monoid().monomial_weight(w, wts);
   monomial_word deg = leaddeg;
 
   for (int i=1; i<f.len; i++)
     {
-      w = w + MI->monomial_size(w);
-      monomial_word degi = MI->monomial_weight(w,wts);
+      w = w + R.monoid().monomial_size(w);
+      monomial_word degi = R.monoid().monomial_weight(w,wts);
       if (degi > deg) deg = degi;
     }
   alpha = static_cast<int>(deg-leaddeg);
@@ -87,13 +86,12 @@ void ResF4toM2Interface::from_M2_matrix(const ResGausser *KK,
 }
 #endif
 
-vec ResF4toM2Interface::to_M2_vec(const ResGausser *KK,
-                               const MonomialInfo *MI,
+vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
                                const poly &f,
                                const FreeModule *F)
 {
-  const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  const Monoid *M = R->getMonoid();
+  const PolynomialRing *origR = F->get_ring()->cast_to_PolynomialRing();
+  const Monoid *M = origR->getMonoid();
 
   int *m1 = M->make_one();
 
@@ -109,18 +107,18 @@ vec ResF4toM2Interface::to_M2_vec(const ResGausser *KK,
   ntuple_word *lexp = newarray_atomic(ntuple_word, M->n_vars()+1);
 
   ring_elem *relem_array = newarray(ring_elem, f.len);
-  KK->to_ringelem_array(f.len, f.coeffs, relem_array);
+  R.resGausser().to_ringelem_array(f.len, f.coeffs, relem_array);
 
   const monomial_word *w = f.monoms;
   for (int i=0; i<f.len; i++)
     {
       long comp;
-      MI->to_exponent_vector(w, lexp, comp);
-      w = w + MI->monomial_size(w);
+      R.monoid().to_exponent_vector(w, lexp, comp);
+      w = w + R.monoid().monomial_size(w);
       for (int a=0; a<M->n_vars(); a++)
         exp[a] = static_cast<int>(lexp[a]);
       M->from_expvector(exp, m1);
-      Nterm * g = R->make_flat_term(relem_array[i], m1);
+      Nterm * g = origR->make_flat_term(relem_array[i], m1);
       g->next = 0;
       if (last[comp] == 0)
         {
@@ -138,14 +136,82 @@ vec ResF4toM2Interface::to_M2_vec(const ResGausser *KK,
     {
       if (comps[i] != 0)
         {
-          vec v = R->make_vec(i,comps[i]);
-          R->add_vec_to(result,v);
+          vec v = origR->make_vec(i,comps[i]);
+          origR->add_vec_to(result,v);
           comps[i] = 0;
           last[i] = 0;
         }
     }
 
   deletearray(relem_array);
+  return result;
+}
+
+Matrix *ResF4toM2Interface::to_M2_matrix(F4Res& C,
+                                         int lev,
+                                         const FreeModule *F)
+{
+  auto& thislevel = C.frame().level(lev);
+  MatrixConstructor result(F,INTSIZE(thislevel));
+  long j = 0;
+  for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
+    {
+      result.set_column(j, to_M2_vec(C.ring(),i->mSyzygy, F));
+    }
+  return result.to_matrix();
+}
+
+MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(F4Res& C,
+                                                       int lev,
+                                                       int degree)
+{
+  // Now we loop through the elements of degree 'degree' at level 'lev'
+  auto& thislevel = C.frame().level(lev);
+  int n = 0;
+  for (auto p=thislevel.begin(); p != thislevel.end(); ++p)
+    {
+      if (p->mDegree == degree) n++;
+    }
+
+  auto& prevlevel = C.frame().level(lev-1);
+  int* newcomps = new int[prevlevel.size()];
+  int nextcomp = 0;
+  for (int i=0; i<prevlevel.size(); i++)
+    if (prevlevel[i].mDegree == degree)
+      newcomps[i] = nextcomp++;
+    else
+      newcomps[i] = -1;
+
+  // create the mutable matrix
+  MutableMatrix* result = MutableMatrix::zero_matrix(C.resGausser().get_ring(),
+                                                     nextcomp,
+                                                     n,
+                                                     true);
+  // Now loop through the elements at thislevel,
+  // and for each, loop through the terms of mSyzygy.
+  // if the component x satisfies newcomps[x] >= 0, then place
+  // this coeff into the mutable matrix.
+  int col = 0;
+  
+  for (auto p=thislevel.begin(); p != thislevel.end(); ++p)
+    {
+      if (p->mDegree != degree) continue;
+      auto& f = p->mSyzygy;
+      auto end = poly_iter(C.ring(), f, 1);
+      auto i = poly_iter(C.ring(), f);
+      for ( ; i != end; ++i)
+        {
+          long comp = C.monoid().get_component(i.monomial());
+          if (newcomps[comp] >= 0)
+            {
+              ring_elem a;
+              a.int_val = i.coefficient(); // TODO: remove this hack!
+              result->set_entry(newcomps[comp], col, a);
+            }
+        }
+      ++col;
+    }
+
   return result;
 }
 

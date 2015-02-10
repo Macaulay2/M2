@@ -1,4 +1,5 @@
 F4_CCFILES := \
+  res-poly-ring \
   res-f4-mem \
   res-f4-m2-interface \
   res-schreyer-frame \

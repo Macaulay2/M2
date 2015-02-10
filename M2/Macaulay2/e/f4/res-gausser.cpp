@@ -70,7 +70,6 @@ void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, int len) co
 
 void ResGausser::dense_row_allocate(dense_row &r, int nelems) const
 {
-  //  int *elems = newarray_atomic(int, nelems);
   int *elems = Mem->coefficients.allocate(nelems);
   r.coeffs = elems;
   r.len = nelems;

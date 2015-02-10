@@ -839,6 +839,25 @@ rawResolutionGetMatrix(Computation *C,
      }
 }
 
+MutableMatrix /* or null */ *
+rawResolutionGetMatrix2(Computation *C,
+                        int level,
+                        int degree)
+{
+  try {
+    clear_emit_size();
+    ResolutionComputation *G = C->cast_to_ResolutionComputation();
+    if (G != 0)
+      return G->get_matrix(level, degree);
+    ERROR("expected resolution computation type");
+    return 0;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
 const FreeModule /* or null */ *
 rawResolutionGetFree(Computation *C,
                      int level)

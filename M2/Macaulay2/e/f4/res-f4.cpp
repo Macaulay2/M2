@@ -9,15 +9,13 @@
 
 F4Res::F4Res(
              ResF4Mem* Mem,
-             const ResGausser* KK0,
-             const MonomialInfo* MI,
+             const ResPolyRing& R,
              int max_level
              )
-  : mFrame(*MI,max_level),
-    mResGausser(KK0),
-    mMonoid(MI),
+  : mFrame(R,max_level),
+    mRing(R),
     mMem(Mem),
-    mSchreyerRes(new MonomialsWithComponent(*mMonoid)),
+    mSchreyerRes(new MonomialsWithComponent(R.monoid())),
     mHashTable(mSchreyerRes)
 {
 }
@@ -37,7 +35,7 @@ void F4Res::resetMatrix(int lev, int degree)
   mNextReducerToProcess = 0;
 
   // mNextMonom[-1] is the reducer corresponding to this monomial
-  mNextMonom = mMonomSpace.reserve(1+mMonoid->max_monomial_size());
+  mNextMonom = mMonomSpace.reserve(1+monoid().max_monomial_size());
   mNextMonom++;
 }
 
@@ -46,11 +44,15 @@ void F4Res::clearMatrix()
   mThisLevel = -1;
   mThisDegree = -1;
   mNextReducerToProcess = 0;
-
-  mMonomSpace.reset();
-
   mNextMonom = nullptr;
-  // TODO: write the rest of me.  What needs to be removed?
+
+  mHashTable.reset();
+  mReducers.clear();
+  mSPairs.clear();
+  mSPairComponents.clear();
+  mColumns.clear();
+    
+  mMonomSpace.reset();
 }
 
 /// findDivisor
@@ -63,16 +65,16 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
   // find the range of monomials to check
   // for each of these, check divisibility in turn
   //   if one works, then return true, and set result.
-  long comp = mMonoid->get_component(m); // component is an index into level mLevel-2
+  long comp = monoid().get_component(m); // component is an index into level mLevel-2
   auto& elem = mFrame.level(mThisLevel-2)[comp];
   auto& lev = mFrame.level(mThisLevel-1);
   for (auto j=elem.mBegin; j<elem.mEnd; ++j)
     {
       // Check divisibility of m by this element
       packed_monomial pj = lev[j].mMonom;
-      if (mMonoid->divide(m, pj, result)) // this sets the component to be 0
+      if (monoid().divide(m, pj, result)) // this sets the component to be 0
         {
-          mMonoid->set_component(j, result); // this sets component correctly
+          monoid().set_component(j, result); // this sets component correctly
           return true;
         }
     }
@@ -100,40 +102,40 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 //     of the coeff matrices.  It used mThisLevel
 long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 {
-  auto& p = mFrame.level(mThisLevel-2)[mMonoid->get_component(n)];
+  auto& p = mFrame.level(mThisLevel-2)[monoid().get_component(n)];
   if (p.mBegin == p.mEnd) return -1;
 
 #if 0
   std::cout << "monomialProduct(";
-  mMonoid->showAlpha(m);
+  monoid().showAlpha(m);
   std::cout << ", ";
-  mMonoid->showAlpha(n);
+  monoid().showAlpha(n);
   std::cout << ")" << std::endl;
 #endif
   
   packed_monomial new_m; // a pointer to a monomial we are visiting
-  mMonoid->unchecked_mult(m,n,mNextMonom);
+  monoid().unchecked_mult(m,n,mNextMonom);
   // the component is wrong, after this operation, as it adds components
   // So fix that:
-  mMonoid->set_component(mMonoid->get_component(n), mNextMonom);
+  monoid().set_component(monoid().get_component(n), mNextMonom);
   if (mHashTable.find_or_insert(mNextMonom, new_m))
     return new_m[-1]; // monom exists, don't save monomial space
 
 #if 0
   std::cout << "find_or_insert returned:  ";
-  mMonoid->showAlpha(new_m);
+  monoid().showAlpha(new_m);
   std::cout << std::endl;
 #endif
   
   // intern the monomial just inserted into the hash table
-  mMonomSpace.intern(1+mMonoid->monomial_size(mNextMonom));
+  mMonomSpace.intern(1+monoid().monomial_size(mNextMonom));
   
   // At this point, we have a new monomial, and a pointer to mNextMonom
   // has been placed into mHashTable.
   // We need to see now what the divisor monomial for mNextMonom is.
   // and if there is one, we need to create a new row for the mReducers matrix.
   // (at least, put it on the queue to be created).
-  mNextMonom = mMonomSpace.reserve(1+mMonoid->max_monomial_size());
+  mNextMonom = mMonomSpace.reserve(1+monoid().max_monomial_size());
   mNextMonom++;
   
   bool has_divisor = findDivisor(new_m, mNextMonom);
@@ -145,11 +147,11 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 
 #if 0
   std::cout << "findDivisor returned:  ";
-  mMonoid->showAlpha(mNextMonom);
+  monoid().showAlpha(mNextMonom);
   std::cout << std::endl;
 #endif
   
-  mMonomSpace.intern(1+mMonoid->monomial_size(mNextMonom));
+  mMonomSpace.intern(1+monoid().monomial_size(mNextMonom));
   
   long thiscol = mColumns.size();
   new_m[-1] = thiscol; // this is a HACK: where we keep the divisor
@@ -161,12 +163,12 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 
 #if 0
   std::cout << "added ";
-  mMonoid->showAlpha(row.mLeadTerm);
+  monoid().showAlpha(row.mLeadTerm);
   std::cout << " to reducer todo list" << std::endl;
 #endif
   
   // Now we increment mNextMonom, for the next time
-  mNextMonom = mMonomSpace.reserve(1+mMonoid->max_monomial_size());
+  mNextMonom = mMonomSpace.reserve(1+monoid().max_monomial_size());
   mNextMonom++;
 
   return thiscol;
@@ -174,10 +176,23 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 
 void F4Res::loadRow(Row& r)
 {
-  long comp = mMonoid->get_component(r.mLeadTerm);
-  auto& p = mFrame.level(mThisLevel-1)[comp].mSyzygy;
-  auto end = poly_iter(*mResGausser, *mMonoid, p, 1);
-  auto i = poly_iter(*mResGausser, *mMonoid, p);
+  FieldElement one;
+  resGausser().set_one(one);
+  long comp = monoid().get_component(r.mLeadTerm);
+  auto& thiselement = mFrame.level(mThisLevel-1)[comp];
+  if (thiselement.mDegree == mThisDegree)
+    {
+      // We only need to add in the current monomial
+      fprintf(stdout, "USING degree 0 monomial\n");
+      long val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom);
+      if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
+      r.mComponents.push_back(val);
+      r.mCoeffs.push_back(one);
+      return;
+    }
+  auto& p = thiselement.mSyzygy;
+  auto end = poly_iter(mRing, p, 1);
+  auto i = poly_iter(mRing, p);
   for ( ; i != end; ++i)
     {
       long val = processMonomialProduct(r.mLeadTerm, i.monomial());
@@ -196,7 +211,7 @@ public:
   typedef MonomialInfo::value monomial;
   typedef int value;
 private:
-  const MonomialInfo *M;
+  const MonomialInfo &M;
   const F4Res& mComputation;
   const std::vector<packed_monomial>& cols;
 
@@ -206,16 +221,16 @@ public:
   int compare(value a, value b)
   {
     ncmps ++;
-    return M->compare_grevlex(cols[a],cols[b]);
+    return M.compare_grevlex(cols[a],cols[b]);
   }
 
   bool operator()(value a, value b)
   {
     ncmps0++;
-    return (M->compare_grevlex(cols[a],cols[b]) == LT);
+    return (M.compare_grevlex(cols[a],cols[b]) == LT);
   }
 
-  ResColumnsSorter(const MonomialInfo *M0, const F4Res& comp)
+  ResColumnsSorter(const MonomialInfo& M0, const F4Res& comp)
     : M(M0),
       mComputation(comp),
       cols(comp.mColumns)
@@ -271,7 +286,7 @@ void F4Res::reorderColumns()
   int *column_order = mMem->components.allocate(ncols);
   int *ord = mMem->components.allocate(ncols);
 
-  ResColumnsSorter C(mMonoid, *this);
+  ResColumnsSorter C(monoid(), *this);
 
   C.reset_ncomparisons();
 
@@ -361,6 +376,14 @@ void F4Res::makeMatrix()
   while (mNextReducerToProcess < mColumns.size())
     loadRow(mReducers[mNextReducerToProcess++]);
 
+  if (mThisLevel > 2)
+    {
+      std :: cout << "-- reducer matrix --" << std::endl;
+      debugOutputMatrixSparse(mReducers);
+      std :: cout << "-- spair matrix --" << std::endl;
+      debugOutputMatrixSparse(mSPairs);
+    }
+  
   reorderColumns();
 }
 
@@ -371,18 +394,19 @@ void F4Res::gaussReduce()
 
   // allocate a dense row, of correct size  
   ResGausser::dense_row gauss_row;
-  mResGausser->dense_row_allocate(gauss_row, mColumns.size());
+  mRing.resGausser().dense_row_allocate(gauss_row, mColumns.size());
   FieldElement one;
-  mResGausser->set_one(one);
+  mRing.resGausser().set_one(one);
 
   for (long i=0; i<mSPairs.size(); i++)
     {
+      #if 0
       std::cout << "reducing row " << i << std::endl;
+      #endif
       // Reduce spair #i
       // fill in dense row with this element.
 
-      poly_constructor result(*mMonoid);
-      // TODO: add in the first monomial
+      poly_constructor result(mRing);
 
       Row& r = mSPairs[i]; // row to be reduced.
       long comp = mSPairComponents[i];
@@ -390,61 +414,71 @@ void F4Res::gaussReduce()
                         one);
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
+      #if 0
       std::cout << "about to fill from sparse " << i << std::endl;
+      #endif
       
       long firstcol = r.mComponents[0];
       long lastcol = mColumns.size()-1; // maybe: r.mComponents[r.mComponents.size()-1];
-      mResGausser->dense_row_fill_from_sparse(gauss_row,
-                                              r.mComponents.size(),
-                                              & r.mCoeffs[0],
-                                              & r.mComponents[0]); // FIX: not correct call
+      mRing.resGausser().dense_row_fill_from_sparse(gauss_row,
+                                                    r.mComponents.size(),
+                                                    & r.mCoeffs[0],
+                                                    & r.mComponents[0]); // FIX: not correct call
 
       while (firstcol <= lastcol)
         {
-          std::cout << "about to reduce with col " << firstcol << std::endl;      
+          #if 0
+          std::cout << "about to reduce with col " << firstcol << std::endl;
+          #endif
+          
           FieldElement elem;
 
           #if 0
           for (int p=0; p<mColumns.size(); p++)
             {
-              fprintf(stdout, " %d", mResGausser->coeff_to_int(gauss_row.coeffs[p]));
+              fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
             }
           fprintf(stdout, "\n");
           #endif
           
-          mResGausser->negate(gauss_row.coeffs[firstcol], elem);
+          mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
           result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-          mResGausser->dense_row_cancel_sparse(gauss_row,
-                                               mReducers[firstcol].mCoeffs.size(),
-                                               & mReducers[firstcol].mCoeffs[0],
-                                               & mReducers[firstcol].mComponents[0]
-                                               );
-          firstcol = mResGausser->dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
+          mRing.resGausser().dense_row_cancel_sparse(gauss_row,
+                                                     mReducers[firstcol].mCoeffs.size(),
+                                                     & mReducers[firstcol].mCoeffs[0],
+                                                     & mReducers[firstcol].mComponents[0]
+                                                     );
+          firstcol = mRing.resGausser().dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
         }
       result.setPoly(syz);
     }
 
-  mResGausser->dense_row_deallocate(gauss_row);
+  mRing.resGausser().dense_row_deallocate(gauss_row);
 }
 
 void F4Res::construct(int lev, int degree)
 {
   resetMatrix(lev, degree);
   makeMatrix();
-  //  newSyzElems();
 
   std::cout << "-- rows --" << std::endl;
   debugOutputReducers();
   std::cout << "-- columns --" << std::endl;
   debugOutputColumns();
   std :: cout << "-- reducer matrix --" << std::endl;
-  debugOutputMatrix(mReducers);
+  if (lev <= 2)
+    debugOutputMatrix(mReducers);
+  else
+    debugOutputMatrixSparse(mReducers);
   std :: cout << "-- spair matrix --" << std::endl;
-  debugOutputMatrix(mSPairs);
+  if (lev <= 2)
+    debugOutputMatrix(mSPairs);
+  else
+    debugOutputMatrixSparse(mSPairs);
 
   gaussReduce();
 
-  mFrame.show(-1, *mResGausser);
+  mFrame.show(-1);
   clearMatrix();
 }
 
@@ -453,7 +487,7 @@ void F4Res::debugOutputReducers()
   auto end = mReducers.cend();
   for (auto i=mReducers.cbegin(); i != end; ++i)
     {
-      mMonoid->showAlpha((*i).mLeadTerm);
+      monoid().showAlpha((*i).mLeadTerm);
       std::cout << std::endl;
     }
 }
@@ -462,27 +496,25 @@ void F4Res::debugOutputColumns()
   auto end = mColumns.cend();
   for (auto i=mColumns.cbegin(); i != end; ++i)
     {
-      mMonoid->showAlpha((*i));
+      monoid().showAlpha((*i));
       std::cout << std::endl;
     }
 }
 
-#if 0
-void F4Res::debugOutputMatrix()
+void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 {
-  std::vector<Row>& rows = mReducers;
   for (long i=0; i<rows.size(); i++)
     {
       fprintf(stdout, "coeffs = ");
       for (long j=0; j<rows[i].mCoeffs.size(); ++j)
-        fprintf(stdout, " %d", mResGausser->coeff_to_int(rows[i].mCoeffs[j]));
+        fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(rows[i].mCoeffs[j]));
       fprintf(stdout, "\n comps = ");
       for (long j=0; j<rows[i].mComponents.size(); ++j)
         fprintf(stdout, " %d", rows[i].mComponents[j]);
       fprintf(stdout, "\n");
     }
 }
-#endif
+
 void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
   for (long i=0; i<rows.size(); i++)
@@ -496,7 +528,7 @@ void F4Res::debugOutputMatrix(std::vector<Row>& rows)
             fprintf(stdout, " .");
           else
             {
-              fprintf(stdout, " %d", mResGausser->coeff_to_int(*coeff));
+              fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(*coeff));
               ++coeff;
               ++monom;
             }

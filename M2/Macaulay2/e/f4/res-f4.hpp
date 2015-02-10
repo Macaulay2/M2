@@ -21,8 +21,7 @@ class F4Res
 public:
   F4Res(
         ResF4Mem* Mem,
-        const ResGausser* KK0,
-        const MonomialInfo* MI,
+        const ResPolyRing& R,
         int max_level
        );
 
@@ -41,6 +40,10 @@ public:
   void construct(int lev, int degree);
 
   M2_arrayint getBetti(int type) const;
+
+  const ResGausser& resGausser() const { return mRing.resGausser(); }
+  const MonomialInfo& monoid() const { return mRing.monoid(); }
+  const ResPolyRing& ring() const { return mRing; }
   
 private:
   struct Row {
@@ -52,13 +55,11 @@ private:
     Row() : mLeadTerm(nullptr) {}
   };
 
-  void appendToRow(Row& r, int coeff, long val) {} // WRITE ME
-
   ////////////////////////////////////
   // Functions for construction //////
   ////////////////////////////////////
-  void resetMatrix(int lev, int degree); // WRITE ME
-  void clearMatrix(); // WRITE ME
+  void resetMatrix(int lev, int degree); // remember to clearMatrix before calling this.
+  void clearMatrix();
   bool findDivisor(packed_monomial m, packed_monomial result);
   long processMonomialProduct(packed_monomial m, packed_monomial n);
   void loadRow(Row& r);
@@ -69,6 +70,7 @@ private:
   void debugOutputReducers();
   void debugOutputColumns();
   void debugOutputMatrix(std::vector<Row>&);
+  void debugOutputMatrixSparse(std::vector<Row>&);
   void debugOutputReducerMatrix();
   void debugOutputSPairMatrix();  
   ////////////////////////////////////
@@ -77,8 +79,7 @@ private:
 
   SchreyerFrame mFrame;
 
-  const ResGausser* mResGausser;
-  const MonomialInfo* mMonoid;
+  const ResPolyRing& mRing;
   ResF4Mem* mMem; // Used for what TODO?
 
   // Data used to construct the next matrix

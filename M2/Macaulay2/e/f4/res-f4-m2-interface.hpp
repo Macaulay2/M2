@@ -3,8 +3,9 @@
 
 #include "../engine-includes.hpp"
 
+#include "res-f4.hpp"
 #include "res-gausser.hpp"
-#include "res-f4-types.hpp"
+#include "res-poly-ring.hpp"
 
 class MonomialInfo;
 class ResGausser;
@@ -13,33 +14,36 @@ class Polynomial; // vector in a free module
 class ResF4toM2Interface
 {
 public:
-  static void poly_set_degrees(const ResGausser *KK,
-                               const MonomialInfo *MI,
+  static void poly_set_degrees(const ResPolyRing& R,
                                const M2_arrayint wts,
                                const poly &f,
                                int &deg,
                                int &alpha);
 
-  static void from_M2_vec(const ResGausser *KK,
-                          const MonomialInfo *MI,
+  static void from_M2_vec(const ResPolyRing& R,
                           const FreeModule *F,
                           vec v,
                           poly &result);
 
-  static vec to_M2_vec(const ResGausser *KK,
-                       const MonomialInfo *MI,
+  static vec to_M2_vec(const ResPolyRing& R,
                        const poly &f,
                        const FreeModule *F);
 
+  static Matrix *to_M2_matrix(F4Res& C,
+                              int lev,
+                              const FreeModule *F);
+
+  static MutableMatrix* to_M2_MutableMatrix(F4Res& C,
+                                            int lev,
+                                            int degree);
+  
 #if 0
-  static void from_M2_matrix(const ResGausser *KK,
-                             const MonomialInfo *MI,
+  static void from_M2_matrix(const ResPolyRing& R,
                              const Matrix *m,
                              M2_arrayint wts,
                              gb_array &result_polys);
 
-  static Matrix *to_M2_matrix(const ResGausser *KK,
-                              const MonomialInfo *MI,
+  static Matrix *to_M2_matrix(const ResPolyRing& R,
                               gb_array &polys,
                               const FreeModule *F);
 

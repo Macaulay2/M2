@@ -7,16 +7,17 @@
 #include "../betti.hpp"
 
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 
 long SchreyerFrame::PreElementSorter::ncmps = 0;
 
-SchreyerFrame::SchreyerFrame(const MonomialInfo& MI, int max_level)
-  : mMonoid(MI),
+SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
+  : mRing(R),
     mCurrentLevel(0)
 {
   mFrame.mLevels.resize(max_level);
-  mMaxVPSize = 2*mMonoid.n_vars() + 1;
+  mMaxVPSize = 2*monoid().n_vars() + 1;
 }
   
 // Destruct the frame
@@ -39,7 +40,7 @@ SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial 
   bool not_used;
   PreElement* vp = mPreElements.allocate();
   vp->vp = mVarpowers.reserve(mMaxVPSize);
-  mMonoid.quotient_as_vp(m1, m, vp->vp, vp->degree, not_used);
+  monoid().quotient_as_vp(m1, m, vp->vp, vp->degree, not_used);
   int len = static_cast<int>(varpower_monomials::length(vp->vp));
   mVarpowers.intern(len);
   return vp;
@@ -53,7 +54,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
   for (long i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
   typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
-  MonomialLookupTable montab(mMonoid.n_vars());
+  MonomialLookupTable montab(monoid().n_vars());
 
 #if 0
   ///std::cout << "  #pre elements = " << elements.size() << std::endl;
@@ -74,8 +75,8 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
       if (inideal) continue;
       // Now we create a packed_monomial, and insert it into 'lev+1'
       montab.insert_minimal_vp(0, (*i)->vp, 0);
-      packed_monomial monom = monomialBlock().allocate(mMonoid.max_monomial_size());
-      mMonoid.from_varpower_monomial((*i)->vp, elem, monom);
+      packed_monomial monom = monomialBlock().allocate(monoid().max_monomial_size());
+      monoid().from_varpower_monomial((*i)->vp, elem, monom);
       // Now insert it into the frame
       insert(monom);
       n_elems++;
@@ -125,7 +126,7 @@ long SchreyerFrame::insertLevelOne(packed_monomial monom, poly& syzygy)
 {
 
   long last = insertBasic(1, monom, degree(1, monom));
-  long comp = mMonoid.get_component(monom);
+  long comp = monoid().get_component(monom);
   auto& p = level(0)[comp];
   if (p.mBegin == -1)
     p.mBegin = last-1;
@@ -148,6 +149,7 @@ long SchreyerFrame::memoryUsage() const
   return result;
 }
 
+#if 0
 void SchreyerFrame::showMemoryUsage() const
 {
   std::cout << "Frame memory usage" << std::endl;
@@ -168,12 +170,69 @@ void SchreyerFrame::showMemoryUsage() const
     }
   std::cout << "  all lev\t" << nelems << "\t\t" << used << "\t\t" << alloc << std::endl;
   long monomSpace = mMonomialSpace.memoryUsage();
-  long monomUsed = nelems * mMonoid.max_monomial_size() * sizeof(monomial_word);
+  long monomUsed = nelems * monoid().max_monomial_size() * sizeof(monomial_word);
   std::cout << "  monomials   \t\t" << monomUsed << "\t" << monomSpace << std::endl;
   std::cout << "  total       \t\t" << (used+monomUsed) << "\t" << (alloc+monomSpace) << std::endl;
 }
+#endif
+void SchreyerFrame::showMemoryUsage() const
+{
+  std::cout << "Frame memory usage" << std::endl;
+  // widths: level: 6, #elems: 8, used: 6, allocated: 11
+  std::cout << " level" << "  #elems" << "  used" << "  allocated" << "    poly" << "polalloc" << std::endl;
+  long alloc = 0;
+  long used = 0;
+  long nelems = 0;
+  long poly_used = 0;
+  long poly_alloc = 0;
+  long poly_used_level = 0;
+  long poly_alloc_level = 0;
+  for (int i=0; i<mFrame.mLevels.size(); i++)
+    {
+      long nelems_level = level(i).size();
+      if (nelems_level == 0) continue;
+      long used_level = nelems_level * sizeof(FrameElement);
+      long alloc_level = level(i).capacity() * sizeof(FrameElement);
+      poly_used_level = 0;
+      poly_alloc_level = 0;
+      for (int j=0; j<nelems_level; j++)
+        {
+          ring().memUsage(level(i)[j].mSyzygy, poly_used_level, poly_alloc_level);
+        }
+      poly_used += poly_used_level;
+      poly_alloc = poly_alloc_level;
+      std::cout << std::setw(6) << i
+                << std::setw(8) << nelems_level
+                << std::setw(6) << used_level
+                << std::setw(11) << alloc_level
+                << std::setw(8) << poly_used_level
+                << std::setw(8) << poly_alloc_level
+                << std::endl;
+      nelems += nelems_level;
+      used += used_level;
+      alloc += alloc_level;
+    }
+  std::cout << "   all"
+            << std::setw(8) << nelems
+            << std::setw(6) << used
+            << std::setw(11) << alloc
+            << std::setw(8) << poly_used
+            << std::setw(8) << poly_alloc
+            << std::endl;
 
-void SchreyerFrame::show(int len, const ResGausser& G) const
+  long monomSpace = mMonomialSpace.memoryUsage();
+  long monomUsed = nelems * monoid().max_monomial_size() * sizeof(monomial_word);
+  std::cout << "monomials     "
+            << std::setw(6) << monomUsed
+            << std::setw(11) << monomSpace
+            << std::endl;
+  std::cout << "total mem     "
+            << std::setw(6) << (used+monomUsed+poly_used)
+            << std::setw(11) << (alloc+monomSpace+poly_alloc)
+            << std::endl;
+}
+
+void SchreyerFrame::show(int len) const
 {
   std::cout << "#levels=" << mFrame.mLevels.size() << " currentLevel=" << currentLevel() << std::endl;
   for (int i=0; i<mFrame.mLevels.size(); i++)
@@ -186,10 +245,10 @@ void SchreyerFrame::show(int len, const ResGausser& G) const
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
           std::cout << "(size:" << myframe[j].mSyzygy.len << ") ";
-          if (len != 0)
-            display_poly(stdout, G, mMonoid, myframe[j].mSyzygy);
+          if (len == 0 or myframe[j].mSyzygy.len == 0)
+            monoid().showAlpha(myframe[j].mMonom);
           else
-            mMonoid.showAlpha(myframe[j].mMonom);
+            display_poly(stdout, ring(), myframe[j].mSyzygy);
           std::cout << std::endl;
         }
     }
