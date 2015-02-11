@@ -30,6 +30,7 @@ public:
   }
 
   SchreyerFrame& frame() { return mFrame; }
+  const SchreyerFrame& frame() const { return mFrame; }
 
   // Constructs the elements of the GB at level 'lev', in the given degree.
   // The following must have been done:

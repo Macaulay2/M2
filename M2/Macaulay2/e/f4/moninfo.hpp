@@ -284,6 +284,37 @@ public:
     return 0;
   }
 
+  int compare_schreyer(const_packed_monomial m, const_packed_monomial n,
+                       const_packed_monomial m0, const_packed_monomial n0,
+                       long tie1, long tie2) const {
+    ncalls_compare++;
+    #if 0
+    printf("compare_schreyer: ");
+    printf("  m=");
+    showAlpha(m);
+    printf("  n=");    
+    showAlpha(n);
+    printf("  m0=");    
+    showAlpha(m0);
+    printf("  n0=");    
+    showAlpha(n0);
+    printf("  tiebreakers: %ld %ld\n", tie1, tie2);
+    #endif
+    const_packed_monomial m1 = m+nslots;
+    const_packed_monomial n1 = n+nslots;
+    const_packed_monomial m2 = m0+nslots;
+    const_packed_monomial n2 = n0+nslots;
+    for (int i=nslots-2; i>0; i--) {
+      varpower_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
+      if (cmp < 0) return -1;
+      if (cmp > 0) return 1;
+    }
+    monomial_word cmp = tie1-tie2;
+    if (cmp < 0) return 1;
+    if (cmp > 0) return -1;
+    return 0;
+  }
+
   int compare_lex(const_packed_monomial m, const_packed_monomial n) const {
     ncalls_compare++;
     const_packed_monomial m1 = m+2;

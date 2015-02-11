@@ -32,6 +32,7 @@ void SchreyerFrame::endLevel()
 {
   /* TODO: this should be made much cleaner! */
   std::cout << "current level: " << currentLevel() << std::endl;
+  setSchreyerOrder(mCurrentLevel);
   mCurrentLevel++;
 }
 
@@ -106,15 +107,55 @@ long SchreyerFrame::computeNextLevel()
         }
     }
   //show();
+  setSchreyerOrder(mCurrentLevel);
   mCurrentLevel++;
   return n_elems_added;
+}
+
+void SchreyerFrame::setSchreyerOrder(int lev)
+{
+  auto& myframe = level(lev);
+  if (lev == 0)
+    {
+      for (long i=0; i<myframe.size(); i++)
+        myframe[i].mTiebreaker = i;
+      return;
+    }
+
+  auto& prevframe = level(lev-1);
+  long* tiebreakers = new long[myframe.size()];
+  
+  for (long i=0; i<myframe.size(); i++)
+    {
+      long comp = monoid().get_component(myframe[i].mMonom);
+      tiebreakers[i] = i + myframe.size() * prevframe[comp].mTiebreaker;
+    }
+  std::sort(tiebreakers, tiebreakers + myframe.size());
+  for (long i=0; i<myframe.size(); i++)
+    {
+      myframe[tiebreakers[i] % myframe.size()].mTiebreaker = i;
+    }
 }
 
 long SchreyerFrame::insertBasic(int lev, packed_monomial monom, long degree)
 {
   // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
   auto& myframe = level(lev);
+  long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom,degree));
+  auto& myelem = myframe[idx];
+  myelem.mTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
+  if (lev > 0)
+    {
+      auto& prevlevel = level(lev-1);
+      long comp = monoid().get_component(myelem.mMonom);
+      monoid().unchecked_mult(myelem.mMonom, prevlevel[comp].mTotalMonom, myelem.mTotalMonom);
+      monoid().set_component(monoid().get_component(prevlevel[comp].mTotalMonom), myelem.mTotalMonom);
+    }
+  else
+    {
+      monoid().copy(myelem.mMonom, myelem.mTotalMonom);
+    }
   return myframe.size();
 }
 
@@ -244,7 +285,9 @@ void SchreyerFrame::show(int len) const
         {
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
-          std::cout << "(size:" << myframe[j].mSyzygy.len << ") ";
+          std::cout << "(size:" << myframe[j].mSyzygy.len << ") [";
+          monoid().showAlpha(myframe[j].mTotalMonom);
+          std::cout << "  " << myframe[j].mTiebreaker << "] ";
           if (len == 0 or myframe[j].mSyzygy.len == 0)
             monoid().showAlpha(myframe[j].mMonom);
           else

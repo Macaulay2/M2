@@ -78,7 +78,6 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
           return true;
         }
     }
-  
   return false;
 }
 
@@ -196,7 +195,6 @@ void F4Res::loadRow(Row& r)
   for ( ; i != end; ++i)
     {
       long val = processMonomialProduct(r.mLeadTerm, i.monomial());
-
       if (val < 0) continue;
       r.mComponents.push_back(val);
       r.mCoeffs.push_back(i.coefficient());
@@ -214,27 +212,56 @@ private:
   const MonomialInfo &M;
   const F4Res& mComputation;
   const std::vector<packed_monomial>& cols;
-
+  long lev;
+  const std::vector<SchreyerFrame::FrameElement>& myframe;
+  
   static long ncmps;
   static long ncmps0;
 public:
   int compare(value a, value b)
   {
     ncmps ++;
+    fprintf(stdout, "ERROR: should not get here\n");
     return M.compare_grevlex(cols[a],cols[b]);
   }
 
   bool operator()(value a, value b)
   {
     ncmps0++;
-    return (M.compare_grevlex(cols[a],cols[b]) == LT);
+    long comp1 = M.get_component(cols[a]);
+    long comp2 = M.get_component(cols[b]);
+#if 0
+    fprintf(stdout, "comp1 = %ld comp2 = %ld\n", comp1, comp2);
+
+    printf("compare_schreyer: ");
+    printf("  m=");
+    M.showAlpha(cols[a]);
+    printf("\n  n=");    
+    M.showAlpha(cols[b]);
+    printf("\n  m0=");    
+    M.showAlpha(myframe[comp1].mTotalMonom);
+    printf("\n  n0=");    
+    M.showAlpha(myframe[comp2].mTotalMonom);
+    printf("\n  tiebreakers: %ld %ld\n",  myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker);
+#endif
+    
+    bool result = (M.compare_schreyer(cols[a],cols[b],
+                               myframe[comp1].mTotalMonom, myframe[comp2].mTotalMonom,
+                               myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker) == LT);
+    #if 0
+    printf("result = %d\n", result);
+    #endif
+    return result;
   }
 
-  ResColumnsSorter(const MonomialInfo& M0, const F4Res& comp)
+  ResColumnsSorter(const MonomialInfo& M0, const F4Res& comp, int lev0)
     : M(M0),
       mComputation(comp),
-      cols(comp.mColumns)
+      cols(comp.mColumns),
+      lev(lev0),
+      myframe(comp.frame().level(lev0-1))
   {
+    printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n", lev, myframe.size());
   }
 
   long ncomparisons() const { return ncmps; }
@@ -273,12 +300,14 @@ void F4Res::reorderColumns()
   // Find the inverse of this permutation: place values into "ord" column fields.
   // Loop through every element of the matrix, changing its comp array.
 
+#if 0
   std::cout << "-- rows --" << std::endl;
   debugOutputReducers();
   std::cout << "-- columns --" << std::endl;
   debugOutputColumns();
   
   std::cout << "reorderColumns" << std::endl;
+#endif
   long ncols = mColumns.size();
 
   // sort the columns
@@ -286,7 +315,7 @@ void F4Res::reorderColumns()
   int *column_order = mMem->components.allocate(ncols);
   int *ord = mMem->components.allocate(ncols);
 
-  ResColumnsSorter C(monoid(), *this);
+  ResColumnsSorter C(monoid(), *this, mThisLevel-1);
 
   C.reset_ncomparisons();
 
@@ -296,17 +325,17 @@ void F4Res::reorderColumns()
       column_order[i] = i;
     }
 
-  if (M2_gbTrace >= 2)
+  if (true or M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
   std::sort(column_order, column_order+ncols, C);
 
   clock_t end_time0 = clock();
-  if (M2_gbTrace >= 2)
+  if (true or M2_gbTrace >= 2)
     fprintf(stderr, "%ld, ", C.ncomparisons0());
   double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
   //clock_sort_columns += nsecs0;
-  if (M2_gbTrace >= 2)
+  if (true or M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs0);
 
   ////////////////////////////
@@ -316,13 +345,14 @@ void F4Res::reorderColumns()
       ord[column_order[i]] = i;
     }
 
+#if 0
   std::cout << "column_order: ";
   for (int i=0; i<ncols; i++) std::cout << " " << column_order[i];
   std::cout <<  std::endl;
   std::cout << "ord: ";
   for (int i=0; i<ncols; i++) std::cout << " " << ord[i];
   std::cout <<  std::endl;
-
+#endif
   // Now move the columns into position
   std::vector<packed_monomial> sortedColumnArray;
   std::vector<Row> sortedRowArray;
@@ -374,16 +404,26 @@ void F4Res::makeMatrix()
     }
   // Now we process all monomials in the columns array
   while (mNextReducerToProcess < mColumns.size())
-    loadRow(mReducers[mNextReducerToProcess++]);
-
-  if (mThisLevel > 2)
     {
-      std :: cout << "-- reducer matrix --" << std::endl;
-      debugOutputMatrixSparse(mReducers);
-      std :: cout << "-- spair matrix --" << std::endl;
-      debugOutputMatrixSparse(mSPairs);
+      // Warning: mReducers is being appended to during 'loadRow', and 
+      // since we act on the Row directly, it might get moved on us!
+      // (actually, it did get moved, which prompted this fix)
+      Row thisrow;
+      std::swap(mReducers[mNextReducerToProcess], thisrow);
+      loadRow(thisrow);
+      std::swap(mReducers[mNextReducerToProcess], thisrow);
+      mNextReducerToProcess++;
     }
-  
+
+#if 0
+  std :: cout << "-- reducer matrix --" << std::endl;
+  debugOutputMatrix(mReducers);
+  debugOutputMatrixSparse(mReducers);
+
+  std :: cout << "-- spair matrix --" << std::endl;
+  debugOutputMatrix(mSPairs);
+  debugOutputMatrixSparse(mSPairs);
+#endif
   reorderColumns();
 }
 
@@ -461,21 +501,26 @@ void F4Res::construct(int lev, int degree)
   resetMatrix(lev, degree);
   makeMatrix();
 
+#if 0
   std::cout << "-- rows --" << std::endl;
   debugOutputReducers();
   std::cout << "-- columns --" << std::endl;
   debugOutputColumns();
   std :: cout << "-- reducer matrix --" << std::endl;
-  if (lev <= 2)
+  if (true or lev <= 2)
     debugOutputMatrix(mReducers);
   else
     debugOutputMatrixSparse(mReducers);
-  std :: cout << "-- spair matrix --" << std::endl;
-  if (lev <= 2)
-    debugOutputMatrix(mSPairs);
-  else
-    debugOutputMatrixSparse(mSPairs);
 
+  std :: cout << "-- reducer matrix --" << std::endl;
+  debugOutputMatrix(mReducers);
+  debugOutputMatrixSparse(mReducers);
+
+  std :: cout << "-- spair matrix --" << std::endl;
+  debugOutputMatrix(mSPairs);
+  debugOutputMatrixSparse(mSPairs);
+#endif
+  
   gaussReduce();
 
   mFrame.show(-1);

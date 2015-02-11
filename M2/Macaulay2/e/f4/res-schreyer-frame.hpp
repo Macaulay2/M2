@@ -42,6 +42,8 @@ public:
   struct FrameElement
   {
     packed_monomial mMonom; // has component, degree too
+    packed_monomial mTotalMonom; // used for Schreyer order
+    long mTiebreaker; // used for Schreyer order
     long mDegree;
     long mBegin; // points into next level's elements
     long mEnd;
@@ -84,6 +86,7 @@ public:
   long insertLevelOne(packed_monomial monom, poly& syzygy); // grabs syzygy
   long insert(packed_monomial monom);
   long insertBasic(int lev, packed_monomial monom, long degree);
+  void setSchreyerOrder(int lev);
 
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
