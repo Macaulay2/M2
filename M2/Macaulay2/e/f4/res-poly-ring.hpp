@@ -11,7 +11,7 @@
 typedef int FieldElement;
 
 struct poly {
-  long len; // in monomials?  This only determines both sizes below
+  int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
   ResGausser::CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously
@@ -48,15 +48,15 @@ public:
 
   void setPoly(poly& result)
   {
-    result.len = coeffs.size();
+    result.len = static_cast<int>(coeffs.size());
     result.coeffs = new FieldElement[result.len];
     result.monoms = new monomial_word[mRing.monoid().max_monomial_size()*result.len];
     // copy coeffs
-    for (long i=0; i<result.len; i++)
+    for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];
     // copy monoms: not pointers, actual monoms
     monomial_word* monomptr = result.monoms;
-    for (long i=0; i<result.len; i++)
+    for (int i=0; i<result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
         monomptr += mRing.monoid().max_monomial_size();

@@ -114,7 +114,6 @@ void MonomialInfo::showAlpha(const_packed_monomial m) const
   long comp = get_component(m);
 
   m += 2 + nweights; // get by: hashcode, component, weightvals
-  bool printed = false;
   for (int i=0; i<nvars; i++)
     {
       long e = *m++;

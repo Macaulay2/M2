@@ -115,7 +115,7 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
 {
   if (lev < 0) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
-  return mOriginalRing.make_FreeModule(mComp->frame().level(lev).size());
+  return mOriginalRing.make_FreeModule(static_cast<int>(mComp->frame().level(lev).size()));
   // TODO: this should return a schreyer order free module, or at least a graded one
 }
 

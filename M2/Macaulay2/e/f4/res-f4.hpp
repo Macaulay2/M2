@@ -50,8 +50,8 @@ private:
   struct Row {
     packed_monomial mLeadTerm; // monomial (level lev-1) giving rise to this row
     // The following two should have the same length.
-    std::vector<int> mComponents; // indices into mColumns
-    std::vector<int> mCoeffs;
+    std::vector<ComponentIndex> mComponents; // indices into mColumns
+    std::vector<FieldElement> mCoeffs;
     //ResGausser::CoefficientArray mCoeffs; // from an ResF4Mem..
     Row() : mLeadTerm(nullptr) {}
   };
@@ -62,7 +62,7 @@ private:
   void resetMatrix(int lev, int degree); // remember to clearMatrix before calling this.
   void clearMatrix();
   bool findDivisor(packed_monomial m, packed_monomial result);
-  long processMonomialProduct(packed_monomial m, packed_monomial n);
+  ComponentIndex processMonomialProduct(packed_monomial m, packed_monomial n);
   void loadRow(Row& r);
   void reorderColumns();
   void makeMatrix();

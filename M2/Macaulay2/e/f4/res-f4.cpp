@@ -99,7 +99,7 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 //     and column array (if it is not already there).
 // caveats: this function is only to be used during construction 
 //     of the coeff matrices.  It used mThisLevel
-long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
+ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 {
   auto& p = mFrame.level(mThisLevel-2)[monoid().get_component(n)];
   if (p.mBegin == p.mEnd) return -1;
@@ -118,7 +118,7 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
   // So fix that:
   monoid().set_component(monoid().get_component(n), mNextMonom);
   if (mHashTable.find_or_insert(mNextMonom, new_m))
-    return new_m[-1]; // monom exists, don't save monomial space
+    return static_cast<ComponentIndex>(new_m[-1]); // monom exists, don't save monomial space
 
 #if 0
   std::cout << "find_or_insert returned:  ";
@@ -152,7 +152,7 @@ long F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
   
   mMonomSpace.intern(1+monoid().monomial_size(mNextMonom));
   
-  long thiscol = mColumns.size();
+  ComponentIndex thiscol = static_cast<ComponentIndex>(mColumns.size());
   new_m[-1] = thiscol; // this is a HACK: where we keep the divisor
   mColumns.push_back(new_m);
 
@@ -182,8 +182,8 @@ void F4Res::loadRow(Row& r)
   if (thiselement.mDegree == mThisDegree)
     {
       // We only need to add in the current monomial
-      fprintf(stdout, "USING degree 0 monomial\n");
-      long val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom);
+      //fprintf(stdout, "USING degree 0 monomial\n");
+      ComponentIndex val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom);
       if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
       r.mComponents.push_back(val);
       r.mCoeffs.push_back(one);
@@ -194,7 +194,7 @@ void F4Res::loadRow(Row& r)
   auto i = poly_iter(mRing, p);
   for ( ; i != end; ++i)
     {
-      long val = processMonomialProduct(r.mLeadTerm, i.monomial());
+      ComponentIndex val = processMonomialProduct(r.mLeadTerm, i.monomial());
       if (val < 0) continue;
       r.mComponents.push_back(val);
       r.mCoeffs.push_back(i.coefficient());
@@ -207,12 +207,12 @@ class ResColumnsSorter
 {
 public:
   typedef MonomialInfo::value monomial;
-  typedef int value;
+  typedef ComponentIndex value;
 private:
   const MonomialInfo &M;
   const F4Res& mComputation;
   const std::vector<packed_monomial>& cols;
-  long lev;
+  int lev;
   const std::vector<SchreyerFrame::FrameElement>& myframe;
   
   static long ncmps;
@@ -261,7 +261,7 @@ public:
       lev(lev0),
       myframe(comp.frame().level(lev0-1))
   {
-    printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n", lev, myframe.size());
+    //printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n", lev, myframe.size());
   }
 
   long ncomparisons() const { return ncmps; }
@@ -271,15 +271,15 @@ public:
   ~ResColumnsSorter() {}
 };
 
-static void applyPermutation(int* permutation, std::vector<int>& entries)
+static void applyPermutation(ComponentIndex* permutation, std::vector<ComponentIndex>& entries)
 {
   // TODO: permutation should be a std::vector too,
   // and we should check the values of the permutation.
-  for (int i=0; i<entries.size(); i++)
+  for (ComponentIndex i=0; i<entries.size(); i++)
     entries[i] = permutation[entries[i]];
 
   // The next is just a consistency check, that maybe can be removed later.
-  for (int i=1; i<entries.size(); i++)
+  for (ComponentIndex i=1; i<entries.size(); i++)
     {
       if (entries[i] <= entries[i-1])
         {
@@ -308,19 +308,19 @@ void F4Res::reorderColumns()
   
   std::cout << "reorderColumns" << std::endl;
 #endif
-  long ncols = mColumns.size();
+  ComponentIndex ncols = static_cast<ComponentIndex>(mColumns.size());
 
   // sort the columns
 
-  int *column_order = mMem->components.allocate(ncols);
-  int *ord = mMem->components.allocate(ncols);
+  ComponentIndex* column_order = mMem->components.allocate(ncols);
+  ComponentIndex* ord = mMem->components.allocate(ncols);
 
   ResColumnsSorter C(monoid(), *this, mThisLevel-1);
 
   C.reset_ncomparisons();
 
   clock_t begin_time0 = clock();
-  for (int i=0; i<ncols; i++)
+  for (ComponentIndex i=0; i<ncols; i++)
     {
       column_order[i] = i;
     }
@@ -340,17 +340,17 @@ void F4Res::reorderColumns()
 
   ////////////////////////////
 
-  for (int i=0; i<ncols; i++)
+  for (ComponentIndex i=0; i<ncols; i++)
     {
       ord[column_order[i]] = i;
     }
 
 #if 0
   std::cout << "column_order: ";
-  for (int i=0; i<ncols; i++) std::cout << " " << column_order[i];
+  for (ComponentIndex i=0; i<ncols; i++) std::cout << " " << column_order[i];
   std::cout <<  std::endl;
   std::cout << "ord: ";
-  for (int i=0; i<ncols; i++) std::cout << " " << ord[i];
+  for (ComponentIndex i=0; i<ncols; i++) std::cout << " " << ord[i];
   std::cout <<  std::endl;
 #endif
   // Now move the columns into position
@@ -360,9 +360,9 @@ void F4Res::reorderColumns()
   sortedColumnArray.reserve(ncols);
   sortedRowArray.reserve(ncols);
 
-  for (int i=0; i<ncols; i++)
+  for (ComponentIndex i=0; i<ncols; i++)
     {
-      long newc = column_order[i];
+      ComponentIndex newc = column_order[i];
       sortedColumnArray.push_back(mColumns[newc]);
       sortedRowArray.push_back(Row());
       std::swap(sortedRowArray[i], mReducers[newc]);
@@ -371,11 +371,11 @@ void F4Res::reorderColumns()
   std::swap(mColumns, sortedColumnArray);
   std::swap(mReducers, sortedRowArray);
   
-  for (int i=0; i<mReducers.size(); i++)
+  for (ComponentIndex i=0; i<mReducers.size(); i++)
     {
       applyPermutation(ord, mReducers[i].mComponents);
     }
-  for (int i=0; i<mSPairs.size(); i++)
+  for (ComponentIndex i=0; i<mSPairs.size(); i++)
     {
       applyPermutation(ord, mSPairs[i].mComponents);
     }
@@ -434,7 +434,7 @@ void F4Res::gaussReduce()
 
   // allocate a dense row, of correct size  
   ResGausser::dense_row gauss_row;
-  mRing.resGausser().dense_row_allocate(gauss_row, mColumns.size());
+  mRing.resGausser().dense_row_allocate(gauss_row, static_cast<ComponentIndex>(mColumns.size()));
   FieldElement one;
   mRing.resGausser().set_one(one);
 
@@ -458,10 +458,10 @@ void F4Res::gaussReduce()
       std::cout << "about to fill from sparse " << i << std::endl;
       #endif
       
-      long firstcol = r.mComponents[0];
-      long lastcol = mColumns.size()-1; // maybe: r.mComponents[r.mComponents.size()-1];
+      ComponentIndex firstcol = r.mComponents[0];
+      ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size()-1); // maybe: r.mComponents[r.mComponents.size()-1];
       mRing.resGausser().dense_row_fill_from_sparse(gauss_row,
-                                                    r.mComponents.size(),
+                                                    static_cast<ComponentIndex>(r.mComponents.size()),
                                                     & r.mCoeffs[0],
                                                     & r.mComponents[0]); // FIX: not correct call
 
@@ -474,7 +474,7 @@ void F4Res::gaussReduce()
           FieldElement elem;
 
           #if 0
-          for (int p=0; p<mColumns.size(); p++)
+          for (ComponentIndex p=0; p<mColumns.size(); p++)
             {
               fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
             }
@@ -484,7 +484,7 @@ void F4Res::gaussReduce()
           mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
           result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
           mRing.resGausser().dense_row_cancel_sparse(gauss_row,
-                                                     mReducers[firstcol].mCoeffs.size(),
+                                                     static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
                                                      & mReducers[firstcol].mCoeffs[0],
                                                      & mReducers[firstcol].mComponents[0]
                                                      );
@@ -520,10 +520,18 @@ void F4Res::construct(int lev, int degree)
   debugOutputMatrix(mSPairs);
   debugOutputMatrixSparse(mSPairs);
 #endif
-  
+
+  std::cout << "(level,degree)=("
+            << mThisLevel << ","
+            << mThisDegree
+            << ") #spairs="
+            << mSPairs.size()
+            << " reducer= "
+            << mReducers.size() << " x " << mReducers.size()
+            << std::endl;
   gaussReduce();
 
-  mFrame.show(-1);
+  //  mFrame.show(-1);
   clearMatrix();
 }
 
@@ -548,7 +556,7 @@ void F4Res::debugOutputColumns()
 
 void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 {
-  for (long i=0; i<rows.size(); i++)
+  for (ComponentIndex i=0; i<rows.size(); i++)
     {
       fprintf(stdout, "coeffs = ");
       for (long j=0; j<rows[i].mCoeffs.size(); ++j)
@@ -562,12 +570,12 @@ void F4Res::debugOutputMatrixSparse(std::vector<Row>& rows)
 
 void F4Res::debugOutputMatrix(std::vector<Row>& rows)
 {
-  for (long i=0; i<rows.size(); i++)
+  for (ComponentIndex i=0; i<rows.size(); i++)
     {
       auto coeff = rows[i].mCoeffs.begin();
       auto end = rows[i].mCoeffs.end();
       auto monom = rows[i].mComponents.begin();
-      for (long c=0; c<mColumns.size(); c++)
+      for (ComponentIndex c=0; c<mColumns.size(); c++)
         {
           if (coeff == end or *monom != c)
             fprintf(stdout, " .");

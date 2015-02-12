@@ -48,6 +48,8 @@ protected:
     mComp->construct(2,4);
     mComp->construct(2,5);
     mComp->construct(3,4);
+    mComp->construct(3,5);
+    mComp->construct(3,6);
   }
 
   int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }

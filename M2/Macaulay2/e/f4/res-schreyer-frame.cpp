@@ -137,7 +137,7 @@ void SchreyerFrame::setSchreyerOrder(int lev)
     }
 }
 
-long SchreyerFrame::insertBasic(int lev, packed_monomial monom, long degree)
+long SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
 {
   // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
   auto& myframe = level(lev);
@@ -159,7 +159,7 @@ long SchreyerFrame::insertBasic(int lev, packed_monomial monom, long degree)
   return myframe.size();
 }
 
-long SchreyerFrame::insertLevelZero(packed_monomial monom, long degree)
+long SchreyerFrame::insertLevelZero(packed_monomial monom, int degree)
 {
   return insertBasic(0, monom, degree);
 }

@@ -92,7 +92,7 @@ TEST ///
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
   f1 = map(R, rawResolutionGetMatrix(raw C,1))
   f2 = map(R, rawResolutionGetMatrix(raw C,2))
-  f3 = map(R, rawResolutionGetMatrix(raw C,3))
+  f3 = map(R, rawResolutionGetMatrix(raw C,3));
   map(kk,rawResolutionGetMatrix2(raw C,2,3))
   map(kk,rawResolutionGetMatrix2(raw C,2,4))
   C = res(ideal gens gb I, Strategy=>4)

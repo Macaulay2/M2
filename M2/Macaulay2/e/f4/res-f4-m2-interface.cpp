@@ -153,7 +153,7 @@ Matrix *ResF4toM2Interface::to_M2_matrix(F4Res& C,
 {
   auto& thislevel = C.frame().level(lev);
   MatrixConstructor result(F,INTSIZE(thislevel));
-  long j = 0;
+  int j = 0;
   for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
     {
       result.set_column(j, to_M2_vec(C.ring(),i->mSyzygy, F));

@@ -9,6 +9,8 @@
 
 class ResF4Mem;
 typedef int FieldElement;
+typedef int ComponentIndex;
+
 class ResGausser
 {
   enum {ZZp} typ;
@@ -19,11 +21,11 @@ class ResGausser
 
   ResGausser(const Z_mod *K0, ResF4Mem *Mem0);
 public:
-  typedef int* CoefficientArray;
+  typedef FieldElement* CoefficientArray;
   //  typedef void *CoefficientArray;
 
   struct dense_row {
-    int len; // coeffs is an array 0..len-1
+    ComponentIndex len; // coeffs is an array 0..len-1
     CoefficientArray coeffs;
   };
 
@@ -43,20 +45,20 @@ public:
     Kp->negate(result, a);
   }
   
-  CoefficientArray from_ringelem_array(int len, ring_elem *elems) const;
+  CoefficientArray from_ringelem_array(ComponentIndex len, ring_elem *elems) const;
 
-  void to_ringelem_array(int len, CoefficientArray, ring_elem *result) const;
+  void to_ringelem_array(ComponentIndex len, CoefficientArray, ring_elem *result) const;
 
-  CoefficientArray copy_CoefficientArray(int len, CoefficientArray F) const;
+  CoefficientArray copy_CoefficientArray(ComponentIndex len, CoefficientArray F) const;
 
   // leading coefficient
-  int lead_coeff(CoefficientArray coeffs) const
+  FieldElement lead_coeff(CoefficientArray coeffs) const
   {
     return coeffs[0];
   }
 
   // other routines:
-  void deallocate_F4CCoefficientArray(CoefficientArray &F, int len) const;
+  void deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const;
 
   // reduce mod p. (QQ --> ZZ/p) (place in double's??)
 
@@ -68,39 +70,39 @@ public:
 
   // evaluation of multivariate poly's or fcn's.
 
-  void dense_row_allocate(dense_row &r, int nelems) const;
+  void dense_row_allocate(dense_row &r, ComponentIndex nelems) const;
   // create a row of 0's (over K).
 
-  void dense_row_clear(dense_row &r, int first, int last) const;
+  void dense_row_clear(dense_row &r, ComponentIndex first, ComponentIndex last) const;
 
   void dense_row_deallocate(dense_row &r) const;
 
-  int dense_row_next_nonzero(dense_row &r, int first, int last) const;
+  ComponentIndex dense_row_next_nonzero(dense_row &r, ComponentIndex first, ComponentIndex last) const;
 
-  void dense_row_fill_from_sparse(dense_row &r,
-                                  int len,
+  void dense_row_fill_from_sparse(dense_row& r,
+                                  ComponentIndex len,
                                   CoefficientArray sparse,
-                                  int *comps) const;
+                                  ComponentIndex* comps) const;
   // Fills 'r' from 'sparse' (and 'comps')
 
-  void dense_row_cancel_sparse(dense_row &r,
-                               int len,
+  void dense_row_cancel_sparse(dense_row& r,
+                               ComponentIndex len,
                                CoefficientArray sparse,
-                               int *comps) const;
+                               ComponentIndex* comps) const;
   // dense += c * sparse, where c is chosen to cancel column comps[0].
   // There should also be a version of this routine which records this value c
   // into a CoefficientArray.
 
   void dense_row_to_sparse_row(dense_row &r,
-                               int &result_len,
-                               CoefficientArray &result_sparse,
-                               int *&result_comps,
-                               int first,
-                               int last) const;
+                               ComponentIndex& result_len,
+                               CoefficientArray& result_sparse,
+                               ComponentIndex*& result_comps,
+                               ComponentIndex first,
+                               ComponentIndex last) const;
 
-  void sparse_row_make_monic(int len,
+  void sparse_row_make_monic(ComponentIndex len,
                              CoefficientArray sparse) const;
-  int coeff_to_int(int f) const //anton
+  int coeff_to_int(FieldElement f) const //anton
   {
     return Kp->to_int(f);
   }

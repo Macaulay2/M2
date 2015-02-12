@@ -35,6 +35,11 @@
 
 class F4Res;
 
+typedef int ComponentIndex; // index into f4 matrices over kk.  These tend to be larger, not sure if they
+  // will ever be > 2billion, but probably...
+
+typedef int FieldElement;
+
 class SchreyerFrame
 {
 public:
@@ -44,13 +49,13 @@ public:
     packed_monomial mMonom; // has component, degree too
     packed_monomial mTotalMonom; // used for Schreyer order
     long mTiebreaker; // used for Schreyer order
-    long mDegree;
+    int mDegree;
     long mBegin; // points into next level's elements
     long mEnd;
     poly mSyzygy;
     FrameElement() {}
     FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
-    FrameElement(packed_monomial monom, long deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
+    FrameElement(packed_monomial monom, int deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
   };
 
   // Construct an empty frame
@@ -82,10 +87,10 @@ public:
 
   long computeNextLevel(); // returns true if new elements are constructed
 
-  long insertLevelZero(packed_monomial monom, long degree);
+  long insertLevelZero(packed_monomial monom, int degree);
   long insertLevelOne(packed_monomial monom, poly& syzygy); // grabs syzygy
   long insert(packed_monomial monom);
-  long insertBasic(int lev, packed_monomial monom, long degree);
+  long insertBasic(int lev, packed_monomial monom, int degree);
   void setSchreyerOrder(int lev);
 
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
@@ -144,8 +149,8 @@ private:
   };
 
   int currentLevel() const { return mCurrentLevel; }
-  long degree(int lev, long component) const { return level(lev)[component].mDegree; }
-  long degree(int lev, packed_monomial m) const { return m[2] + degree(lev-1, m[1]); }
+  int degree(int lev, long component) const { return level(lev)[component].mDegree; }
+  int degree(int lev, packed_monomial m) const { return static_cast<int>(m[2]) + degree(lev-1, m[1]); }
 
 public:
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
@@ -155,7 +160,6 @@ private:
   PreElement* createQuotientElement(packed_monomial m1, packed_monomial m);
   long computeIdealQuotient(int lev, long begin, long elem);
   long insertElements(int lev, long elem);
-
 
   // Private Data
   const ResPolyRing& mRing;
