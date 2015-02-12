@@ -233,8 +233,8 @@ I = compress H
 output = {F,diff(X,F),G}
 preSLP = toPreSLP({X,Y},output)
 out'eval = evaluatePreSLP(preSLP, gens R)
-out'comp = matrix{ output/(o->sub(sub(G,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
-assert(out'comp == out'comp)
+out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
+assert(out'eval == out'comp)
 
 f = random(3,R)
 poly2preSLP f
