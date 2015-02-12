@@ -254,7 +254,15 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	       else error "unknown node type"; 
 	       )  
 	  else if k === slpMULTIsum then (
-	       pos := toList apply(2..1+n#1, j->if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+	       pos := toList apply(2..1+n#1, j->
+		    if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+		    else if class n#j === Option and n#j#0 === INPUT then (
+			if n#j#1 == vj then ( 
+     	       	    	      	   slp = slp | {{slpCOPY,CONST=> #constants-1}}; -- "one"
+				   (#slp-1)
+				   )
+			else -1 -- "zero"
+			)
 		    else if class n#j === ZZ then diffNodeVar(ni+n#j,vj)
 		    else error "unknown node type" 
 		    );
@@ -268,7 +276,8 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	       )
 	   else if k === slpPRODUCT then (
 	       pos = toList apply(1..2, j->(
-			 if class n#j === Option and n#j#0 === INPUT then (
+			 if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+			 else if class n#j === Option and n#j#0 === INPUT then (
 			      if n#j#1 == vj then ( 
      	       	    	      	   slp = slp | {{slpPRODUCT}|
 					toList apply(1..2, t->if t==j 
@@ -738,6 +747,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
 	   else if k === slpMULTIsum then (
 		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
 		     j->if class n#j === Option and n#j#0 === CONST then n#j#1
+		     else if class n#j === Option and n#j#0 === INPUT then #consts + n#j#1
 		     else if class n#j === ZZ then curNode+n#j
 		     else error "unknown node type" 
 		     )

@@ -652,6 +652,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 -- tracks homotopy H starting with solutions solsS 
 -- IN:  H = either a column vector of polynomials in CC[x1,...,xn,t] -- !!! not implemented 
 --          or an SLP representing one -- !!! at this point it is preSLP
+--      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
@@ -664,13 +665,29 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      
      slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
      slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
-    
+
+     toSLP := pre -> (
+       	 (constMAT, prog) := preSLPinterpretedSLP (n+1, pre);
+       	 rawSLP(raw constMAT, prog)
+       	 );  
+     if o.Software===M2enginePrecookedSLPs then ( -- !!! used temporarily
+	 slpH = toSLP slpH; 
+	 slpHx = toSLP slpHx;
+	 slpHt = toSLP slpHt; 	 
+	 );    
+
+     fromSlpMatrix := (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
+     if o.Software===M2enginePrecookedSLPs then -- !!! used temporarily
+     fromSlpMatrix = (S,params) -> (
+	 result := rawEvaluateSLP(S, raw params);
+	 lift(map(K, result),K)
+	 );
+
      -- evaluation times
      etH := 0;
      etHx := 0; 
      etHt := 0;
-   
-     fromSlpMatrix := (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
+
      evalH := (x0,t0)-> (
 	 tr := timing (
 	     transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
@@ -696,7 +713,9 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      
      compStartTime := currentTime();      
 
-     rawSols := if o.Software===M2 then 
+     rawSols := if o.Software===M2 
+     or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
+     then 
 	 apply(#solsS, sN->(
 	       s := solsS#sN;
 	       s'status := Processing;

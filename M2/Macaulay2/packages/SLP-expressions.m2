@@ -238,6 +238,49 @@ assert(out'eval == out'comp)
 
 f = random(3,R)
 poly2preSLP f
+
+-------------------------------------------------------
+-- trackHomotopy 
+
+restart
+load "SLP-expressions.m2"
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+
+K = CC
+R = K[x,y,t] 
+
+minusOne = inputGate(-1)
+F = {X*X+minusOne, Y*Y+minusOne}
+G = {X*X+Y*Y+minusOne, minusOne*X*X+Y}
+-- F = {X+minusOne, Y+minusOne}
+-- G = {X+oneGate, Y+oneGate}
+H = (oneGate + minusOne * T) * F + inputGate(1+2*ii) * T * G
+
+preH = toPreSLP({X,Y,T},H)
+evaluatePreSLP(preH, {1,1,0})
+preHx = transposePreSLP jacobianPreSLP(preH,toList(0..1));
+evaluatePreSLP(preHx, {1,1,0})
+s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
+s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
+evaluatePreSLP(preH, s|{1})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ------------------------------------------------------------
 -- BELOW is the "expression" stuff thay used to be in SLP.m2
 
