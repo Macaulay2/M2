@@ -71,10 +71,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       frame.insertLevelOne(elem, f);
     }
   frame.endLevel();
-  frame.show(0);
+  //  frame.show(0);
 
   while (frame.computeNextLevel() > 0) { }
-  frame.show(0);
+  //  frame.show(0);
 
   //  result->start_computation();
   return result;
@@ -98,6 +98,16 @@ F4ResComputation::F4ResComputation(const PolynomialRing* R,
 F4ResComputation::~F4ResComputation()
 {
   remove_res();
+}
+
+void F4ResComputation::start_computation()
+{
+  // First get overall bounds
+  int lodeg, hideg, len;
+  mComp->frame().getBounds(lodeg, hideg, len);
+  for (int deg=lodeg; deg<=hideg; deg++)
+    for (int lev=2; lev <=len; lev++)
+      mComp->construct(lev,deg+lev);
 }
 
 const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 

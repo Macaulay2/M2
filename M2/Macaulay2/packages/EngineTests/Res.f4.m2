@@ -45,7 +45,37 @@ TEST ///
   raw C.Resolution
   
   C = res(ideal gens gb I, Strategy=>4)
+
   rawBetti(raw C.Resolution, 1)
+
+  f1 = map(R, rawResolutionGetMatrix(raw C,1))
+  f2 = map(R, rawResolutionGetMatrix(raw C,2));
+  f3 = map(R, rawResolutionGetMatrix(raw C,3));
+  f4 = map(R, rawResolutionGetMatrix(raw C,4));
+  f5 = map(R, rawResolutionGetMatrix(raw C,5));
+  f6 = map(R, rawResolutionGetMatrix(raw C,6));
+  f7 = map(R, rawResolutionGetMatrix(raw C,7));
+  f8 = map(R, rawResolutionGetMatrix(raw C,8));
+  f1*f2
+  f2*f3
+  f3*f4
+  f4*f5
+  f5*f6
+  f6*f7
+  f7*f8
+  rank map(kk,rawResolutionGetMatrix2(raw C,2,3))
+  rank map(kk,rawResolutionGetMatrix2(raw C,2,4))
+  rank map(kk,rawResolutionGetMatrix2(raw C,2,5))
+
+  rank map(kk,rawResolutionGetMatrix2(raw C,3,4))
+  rank map(kk,rawResolutionGetMatrix2(raw C,3,5))
+  rank map(kk,rawResolutionGetMatrix2(raw C,3,6))
+
+  rank map(kk,rawResolutionGetMatrix2(raw C,4,5))
+  rank map(kk,rawResolutionGetMatrix2(raw C,4,6))
+  rank map(kk,rawResolutionGetMatrix2(raw C,4,7))
+
+
 ///
 
 TEST ///  
@@ -103,6 +133,7 @@ TEST ///
 TEST ///  
   restart
   debug Core
+  kk1 = ZZ/101
   kk = ZZp(101, Strategy=>"Old")
   R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{11:1}}]
   I = ideal fromDual random(R^1, R^{-3});
@@ -111,6 +142,24 @@ TEST ///
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
   C = res(ideal gens gb I, Strategy=>4)
   rawBetti(raw C.Resolution, 1)
+
+  rank matrix map(kk,rawResolutionGetMatrix2(raw C,2,3))
+  rank matrix map(kk,rawResolutionGetMatrix2(raw C,3,4));
+  time matrix map(kk,rawResolutionGetMatrix2(raw C,4,5));
+  time rank oo
+  time matrix map(kk,rawResolutionGetMatrix2(raw C,5,6));
+  time lift(oo,ZZ);
+  time promote(oo,kk1);
+  time mutableMatrix oo;
+  time rank oo  
+  time matrix map(kk,rawResolutionGetMatrix2(raw C,6,7));  
+  time rank oo
+  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,6,7)), ZZ), kk1);
+  time rank oo    
+  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,7,8)), ZZ), kk1);
+  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,8,9)), ZZ), kk1);  
+  time rank promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,9,10)), ZZ), kk1)
+  time rank promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,7,9)), ZZ), kk1)
 
   I = ideal I_*
   C = res(ideal gens gb I, Strategy=>1, DegreeLimit=>0)

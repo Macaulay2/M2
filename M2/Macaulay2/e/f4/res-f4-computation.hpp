@@ -41,16 +41,7 @@ protected:
 
   SchreyerFrame& frame() { return mComp->frame(); }
 
-  void start_computation()
-  {
-    std::cout << "F4ResComputation::start_computation() needs to be written" << std::endl;
-    mComp->construct(2,3); // testing
-    mComp->construct(2,4);
-    mComp->construct(2,5);
-    mComp->construct(3,4);
-    mComp->construct(3,5);
-    mComp->construct(3,6);
-  }
+  void start_computation();
 
   int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }
   // The computation is complete up through this degree.
@@ -75,7 +66,6 @@ private:
   const Matrix& mInputGroebnerBasis;
   ResF4Mem* mMem;
   std::unique_ptr<F4Res> mComp;
-  //  F4Res* mComp; // This is a pointer so that finalizers can more easily remove the data
 };
 
 ResolutionComputation* createF4Res(const Matrix *m,
