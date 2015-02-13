@@ -10,11 +10,49 @@
 #include <iomanip>
 #include <algorithm>
 
-long SchreyerFrame::PreElementSorter::ncmps = 0;
+namespace {
+  class PreElementSorter
+  {
+  public:
+    typedef SchreyerFrameTypes::PreElement* value;
+  private:
+    static long ncmps;
+  public:
+    int compare(value a, value b)
+    {
+      ncmps ++;
+      if (a->degree > b->degree) return GT;
+      if (a->degree < b->degree) return LT;
+      return varpower_monomials::compare(a->vp, b->vp);
+    }
+    
+    bool operator()(value a, value b)
+    {
+      ncmps ++;
+      if (a->degree > b->degree) return false;
+      if (a->degree < b->degree) return true;
+      return varpower_monomials::compare(a->vp, b->vp) == LT;
+    }
+    
+    PreElementSorter() {}
+    
+    void reset_ncomparisons() { ncmps = 0; }
+    long ncomparisons() const { return ncmps; }
+    
+    ~PreElementSorter() {}
+  };
+
+  long PreElementSorter::ncmps = 0;  
+};
 
 SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
   : mRing(R),
-    mCurrentLevel(0)
+    mState(Initializing),
+    mCurrentLevel(0),
+    mSlantedDegree(0),
+    mLoSlantedDegree(0),
+    mHiSlantedDegree(0),
+    mComputer(*this)
 {
   mFrame.mLevels.resize(max_level);
   mMaxVPSize = 2*monoid().n_vars() + 1;
@@ -28,12 +66,64 @@ SchreyerFrame::~SchreyerFrame()
   // as will the std::vector's
 }
 
+void SchreyerFrame::start_computation(StopConditions& stop)
+{
+  while (true)
+    {
+      switch (mState) {
+      case Initializing:
+        break;
+      case Frame:
+        if (computeNextLevel() == 0)
+          {
+            mState = Matrices;
+            mCurrentLevel = 2;
+            getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
+            mSlantedDegree = mLoSlantedDegree;
+          }
+        break;
+      case Matrices:
+        std::cout << "start_computation: entering Matrices" << std::endl;
+        if (stop.always_stop) return;
+        if (mCurrentLevel > mMaxLength)
+          {
+            mCurrentLevel = 2;
+            mSlantedDegree++;
+            if (mSlantedDegree > mHiSlantedDegree)
+              {
+                mState = Done;
+                break;
+              }
+            if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
+              return;
+          }
+        mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
+        mCurrentLevel++;
+        break;
+      case Done:
+        return;
+      default:
+        break;
+      }
+    }
+}
+
+M2_arrayint SchreyerFrame::getBetti(int type) const
+{
+  if (type == 1)
+    return getBettiFrame();
+  ERROR("betti display not implemenented yet");
+  return 0;
+}
+
 void SchreyerFrame::endLevel()
 {
-  /* TODO: this should be made much cleaner! */
-  std::cout << "current level: " << currentLevel() << std::endl;
   setSchreyerOrder(mCurrentLevel);
   mCurrentLevel++;
+  if (mCurrentLevel == 2)
+    {
+      mState = Frame;
+    }
 }
 
 SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial m1, packed_monomial m)

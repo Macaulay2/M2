@@ -3,7 +3,7 @@
 
 #include "../engine-includes.hpp"
 
-#include "res-f4.hpp"
+#include "res-schreyer-frame.hpp"
 #include "res-gausser.hpp"
 #include "res-poly-ring.hpp"
 
@@ -29,11 +29,11 @@ public:
                        const poly &f,
                        const FreeModule *F);
 
-  static Matrix *to_M2_matrix(F4Res& C,
+  static Matrix *to_M2_matrix(SchreyerFrame& C,
                               int lev,
                               const FreeModule *F);
 
-  static MutableMatrix* to_M2_MutableMatrix(F4Res& C,
+  static MutableMatrix* to_M2_MutableMatrix(SchreyerFrame& C,
                                             int lev,
                                             int degree);
   

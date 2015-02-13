@@ -3,11 +3,13 @@
 #include "res-f4-m2-interface.hpp"
 #include "res-f4-computation.hpp"
 #include "res-f4.hpp"
+#include "res-schreyer-frame.hpp"
 
 #include "matrix.hpp"
+#include "../exceptions.hpp"
 
-#include <memory>
 #include <iostream>
+
 
 /** createF4Res
  * The only function to create an (F4) resolution computation
@@ -31,19 +33,16 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   const Ring *K = origR->getCoefficients();
 
-  ResF4Mem *Mem = new ResF4Mem; // Used both for ResGausser and F4Res
-  ResGausser *KK = ResGausser::newResGausser(K, Mem);
+  ResGausser *KK = ResGausser::newResGausser(K);
   if (KK == 0)
     {
       ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
-      delete Mem;
       return nullptr;
     }
   auto MI = new MonomialInfo(origR->n_vars(), origR->getMonoid()->getMonomialOrdering());
   ResPolyRing R(*KK, *MI);
   auto result = new F4ResComputation(origR,
                                      groebnerBasisMatrix,
-                                     Mem,
                                      KK,
                                      MI,
                                      max_level);
@@ -82,17 +81,15 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
 
 F4ResComputation::F4ResComputation(const PolynomialRing* R,
                                    const Matrix* gbmatrix,
-                                   ResF4Mem* Mem,
                                    const ResGausser* KK,
                                    const MonomialInfo* MI,
                                    int max_level)
 
   : mOriginalRing(*R),
     mRing(*KK, *MI),
-    mInputGroebnerBasis(*gbmatrix),
-    mMem(Mem) // we own this.  mResGausser and mComp just use it
+    mInputGroebnerBasis(*gbmatrix)
 {
-  mComp.reset(new F4Res(Mem, mRing, max_level)); // might need gbmatrix->rows() too
+  mComp.reset(new SchreyerFrame(mRing, max_level)); // might need gbmatrix->rows() too
 }
 
 F4ResComputation::~F4ResComputation()
@@ -102,13 +99,32 @@ F4ResComputation::~F4ResComputation()
 
 void F4ResComputation::start_computation()
 {
-  // First get overall bounds
-  int lodeg, hideg, len;
-  mComp->frame().getBounds(lodeg, hideg, len);
-  for (int deg=lodeg; deg<=hideg; deg++)
-    for (int lev=2; lev <=len; lev++)
-      mComp->construct(lev,deg+lev);
+  mComp->start_computation(stop_);
 }
+
+int F4ResComputation::complete_thru_degree() const
+    // The computation is complete up through this degree.
+
+{
+  throw exc::engine_error("complete_thru_degree not implemented");
+}
+
+void F4ResComputation::remove_res()
+{
+  mComp.reset(); mComp = nullptr;
+}
+
+M2_arrayint F4ResComputation::get_betti(int type) const
+  // type is documented under rawResolutionBetti, in engine.h  
+{
+  return mComp->getBetti(type);
+}
+
+void F4ResComputation::text_out(buffer &o) const
+{
+  o << "F4 resolution computation" << newline;
+}
+
 
 const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 
 {
@@ -125,7 +141,7 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
 {
   if (lev < 0) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
-  return mOriginalRing.make_FreeModule(static_cast<int>(mComp->frame().level(lev).size()));
+  return mOriginalRing.make_FreeModule(static_cast<int>(mComp->level(lev).size()));
   // TODO: this should return a schreyer order free module, or at least a graded one
 }
 

@@ -44,7 +44,7 @@ TEST ///
   C = res(I, Strategy=>1)
   raw C.Resolution
   
-  C = res(ideal gens gb I, Strategy=>4)
+  elapsedTime  C = res(ideal gens gb I, Strategy=>4)
 
   rawBetti(raw C.Resolution, 1)
 
@@ -120,9 +120,15 @@ TEST ///
   J = ideal gens gb I;
   see J  
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  J = ideal gens gb I
+    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>1)
+    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>2)
+    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>3)
   f1 = map(R, rawResolutionGetMatrix(raw C,1))
   f2 = map(R, rawResolutionGetMatrix(raw C,2))
   f3 = map(R, rawResolutionGetMatrix(raw C,3));
+  assert(f1*f2 == 0)
+  assert(f2*f3 == 0)
   map(kk,rawResolutionGetMatrix2(raw C,2,3))
   map(kk,rawResolutionGetMatrix2(raw C,2,4))
   C = res(ideal gens gb I, Strategy=>4)
@@ -136,9 +142,11 @@ TEST ///
   kk1 = ZZ/101
   kk = ZZp(101, Strategy=>"Old")
   R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{11:1}}]
+  setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   J = gens gb I;
   
+  elapsedTime C = res(ideal gens gb I, Strategy=>4, StopBeforeComputation=>true)
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
   C = res(ideal gens gb I, Strategy=>4)
   rawBetti(raw C.Resolution, 1)
@@ -177,8 +185,9 @@ TEST ///
   kk = ZZp(101, Strategy=>"Old")
   R = kk[vars(0..15), MonomialOrder=>{Weights=>splice{16:1}}]
   I = ideal fromDual random(R^1, R^{-3});
-  J = gens gb I;
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)
+  J = ideal gens gb I;
+  elapsedTime C = res(J, Strategy=>4)
+  elapsedTime C = res(J, Strategy=>4, StopBeforeComputation=>true)
   rawBetti(raw C.Resolution, 1)
 ///
 

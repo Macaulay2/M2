@@ -1,3 +1,5 @@
+// Copyright 2014-2015 Michael E. Stillman
+
 // to do list
 //  - display of "poly" elements in the resolution
 //  - get_matrix: should get these elements (if they are there yet)
@@ -17,13 +19,6 @@
 // res-f4-types.hpp
 //   . has lots of junk (most already commented out)
 
-
-
-
-
-
-// Copyright 2014 Michael E. Stillman
-
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
@@ -31,6 +26,9 @@
 #include "memblock.hpp"
 #include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
+#include "res-f4.hpp"
+
+#include "../stop.hpp"
 #include <vector>
 
 class F4Res;
@@ -40,10 +38,7 @@ typedef int ComponentIndex; // index into f4 matrices over kk.  These tend to be
 
 typedef int FieldElement;
 
-class SchreyerFrame
-{
-public:
-  friend class F4Res;
+namespace SchreyerFrameTypes {
   struct FrameElement
   {
     packed_monomial mMonom; // has component, degree too
@@ -58,6 +53,20 @@ public:
     FrameElement(packed_monomial monom, int deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
   };
 
+  struct PreElement
+  {
+    varpower_monomial vp;
+    int degree;
+  };
+};
+
+class SchreyerFrame
+{
+public:
+  friend class F4Res;
+  typedef SchreyerFrameTypes::FrameElement FrameElement;
+  typedef SchreyerFrameTypes::PreElement PreElement;
+  
   // Construct an empty frame
   SchreyerFrame(const ResPolyRing& R, int max_level);
   
@@ -72,72 +81,36 @@ public:
   // This requires some care from people calling this function
   MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
 
-  // Debugging //
+  // Debugging, Memory info //
   void show(int len) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
-
-  // Return number of bytes in use.
-  long memoryUsage() const;
-
-  // Display memory usage for this computation
+  long memoryUsage() const;   // Return number of bytes in use.
   void showMemoryUsage() const;
 
-  // Actual useful functions //
-  void endLevel(); // done with the frame for the current level: set's the begin/end's 
-                   // for each element at previous level
-
-  long computeNextLevel(); // returns true if new elements are constructed
-
+  
+  M2_arrayint getBetti(int type) const;
+  
+  void getBounds(int& loDegree, int& hiDegree, int& length) const;
+  
   long insertLevelZero(packed_monomial monom, int degree);
   long insertLevelOne(packed_monomial monom, poly& syzygy); // grabs syzygy
+  void endLevel(); // done with the frame for the current level: set's the begin/end's 
+                   // for each element at previous level
+  void start_computation(StopConditions& stop);
+  
   long insert(packed_monomial monom);
   long insertBasic(int lev, packed_monomial monom, int degree);
+
+  
   void setSchreyerOrder(int lev);
 
+
+  long computeNextLevel(); // returns true if new elements are constructed
+  
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
-  void getBounds(int& loDegree, int& hiDegree, int& length) const;
   M2_arrayint getBettiFrame() const;
-  ///////////////////////
-  // Display functions //
-  ///////////////////////
-  // Betti (for non-minimal Betti)
-private:
-  struct PreElement
-  {
-    varpower_monomial vp;
-    int degree;
-  };
 
-  class PreElementSorter
-  {
-  public:
-    typedef PreElement* value;
-  private:
-    static long ncmps;
-  public:
-    int compare(value a, value b)
-    {
-      ncmps ++;
-      if (a->degree > b->degree) return GT;
-      if (a->degree < b->degree) return LT;
-      return varpower_monomials::compare(a->vp, b->vp);
-    }
-    
-    bool operator()(value a, value b)
-    {
-      ncmps ++;
-      if (a->degree > b->degree) return false;
-      if (a->degree < b->degree) return true;
-      return varpower_monomials::compare(a->vp, b->vp) == LT;
-    }
-    
-    PreElementSorter() {}
-    
-    void reset_ncomparisons() { ncmps = 0; }
-    long ncomparisons() const { return ncmps; }
-    
-    ~PreElementSorter() {}
-  };
+private:
   
   struct Level
   {
@@ -157,21 +130,41 @@ public:
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
 
 private:
+  //////////////////////////////////////////////
+  // Private functions for frame construction //
+  //////////////////////////////////////////////
   PreElement* createQuotientElement(packed_monomial m1, packed_monomial m);
   long computeIdealQuotient(int lev, long begin, long elem);
   long insertElements(int lev, long elem);
 
-  // Private Data
+  ///////////////////
+  // Private Data ///
+  ///////////////////
   const ResPolyRing& mRing;
   Frame mFrame;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
 
-  // These are used during frame construction
+  // Computation control
+  enum {Initializing, Frame, Matrices, Done} mState;
   int mCurrentLevel;
+  // The following are only valid once we are done with "Frame".
+  int mSlantedDegree; // The next degree to be considered, when "start_computation" is called next.
+  int mLoSlantedDegree;
+  int mHiSlantedDegree;
+  int mMaxLength;
+  
+  // These are used during frame construction
+
   MemoryBlock<PreElement> mPreElements;
   MemoryBlock<varpower_word> mVarpowers;
   int mMaxVPSize;
+
+  // These are used during matrix computation
+  F4Res mComputer; // used to construct (level,degree) part of the resolution
+  // this is a separate class because there could be several of these, running
+  // in parallel.
 };
+
 
 #endif
 

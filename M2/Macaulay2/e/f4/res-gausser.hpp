@@ -3,6 +3,8 @@
 #ifndef _res__gausser_hpp_
 #define _res__gausser_hpp_
 
+#include "res-f4-mem.hpp"
+
 #include "../ring.hpp"
 #include "../ZZp.hpp"
 #include "../coeffrings.hpp"
@@ -17,9 +19,9 @@ class ResGausser
   const Ring *K;
 
   CoefficientRingZZp *Kp;
-  ResF4Mem *Mem;
+  mutable ResF4Mem Mem;
 
-  ResGausser(const Z_mod *K0, ResF4Mem *Mem0);
+  ResGausser(const Z_mod *K0);
 public:
   typedef FieldElement* CoefficientArray;
   //  typedef void *CoefficientArray;
@@ -31,7 +33,7 @@ public:
 
   ~ResGausser() {}
 
-  static ResGausser *newResGausser(const Ring *K, ResF4Mem *Mem0);
+  static ResGausser *newResGausser(const Ring *K);
 
   const Ring * get_ring() const { return K; }
 
@@ -48,8 +50,6 @@ public:
   CoefficientArray from_ringelem_array(ComponentIndex len, ring_elem *elems) const;
 
   void to_ringelem_array(ComponentIndex len, CoefficientArray, ring_elem *result) const;
-
-  CoefficientArray copy_CoefficientArray(ComponentIndex len, CoefficientArray F) const;
 
   // leading coefficient
   FieldElement lead_coeff(CoefficientArray coeffs) const
@@ -93,15 +93,6 @@ public:
   // There should also be a version of this routine which records this value c
   // into a CoefficientArray.
 
-  void dense_row_to_sparse_row(dense_row &r,
-                               ComponentIndex& result_len,
-                               CoefficientArray& result_sparse,
-                               ComponentIndex*& result_comps,
-                               ComponentIndex first,
-                               ComponentIndex last) const;
-
-  void sparse_row_make_monic(ComponentIndex len,
-                             CoefficientArray sparse) const;
   int coeff_to_int(FieldElement f) const //anton
   {
     return Kp->to_int(f);

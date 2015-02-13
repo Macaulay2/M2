@@ -3,25 +3,20 @@
 #ifndef _res_f4_computation_hpp_
 #define _res_f4_computation_hpp_
 
-#include "res-gausser.hpp"
+#include "res-poly-ring.hpp"
+
 #include "polyring.hpp"
-
 #include "../comp-res.hpp"
-#include "../exceptions.hpp"
-#include "res-f4.hpp"
-#include <memory>
-#include <iostream>
 
-class PolynomialRing;
-class FreeModule;
-class F4Res;
+#include <memory>  // For std::unique_ptr
+
+class SchreyerFrame;
 
 class F4ResComputation : public ResolutionComputation
 {
 private:
   F4ResComputation(const PolynomialRing* R,
                    const Matrix* gbmatrix,
-                   ResF4Mem* Mem,
                    const ResGausser* KK,
                    const MonomialInfo* MI,
                    int max_level);
@@ -39,14 +34,14 @@ protected:
     return true;
   }
 
-  SchreyerFrame& frame() { return mComp->frame(); }
+  SchreyerFrame& frame() { return *mComp; }
 
   void start_computation();
 
-  int complete_thru_degree() const { throw exc::engine_error("complete_thru_degree not implemented"); }
-  // The computation is complete up through this degree.
+  int complete_thru_degree() const;
+  // The computation is complete up through this slanted degree.
 
-  void remove_res() { mComp.reset(); mComp = nullptr; }
+  void remove_res();
 
   const Matrix /* or null */ *get_matrix(int level);
 
@@ -54,18 +49,15 @@ protected:
 
   const FreeModule /* or null */ *get_free(int level);
 
-  M2_arrayint get_betti(int type) const { return mComp->getBetti(type); }
+  M2_arrayint get_betti(int type) const;
   // type is documented under rawResolutionBetti, in engine.h
 
-  void text_out(buffer &o) const {
-    o << "F4 resolution computation" << newline;
-  }
+  void text_out(buffer &o) const;
 private:
   const PolynomialRing& mOriginalRing;
   const ResPolyRing mRing;
   const Matrix& mInputGroebnerBasis;
-  ResF4Mem* mMem;
-  std::unique_ptr<F4Res> mComp;
+  std::unique_ptr<SchreyerFrame> mComp;
 };
 
 ResolutionComputation* createF4Res(const Matrix *m,

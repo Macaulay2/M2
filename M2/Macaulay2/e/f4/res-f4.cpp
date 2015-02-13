@@ -2,30 +2,20 @@
 
 #include "res-f4.hpp"
 #include "res-gausser.hpp"
+#include "res-schreyer-frame.hpp"
 
 #include <iostream>
 #include <ctime>
 #include <algorithm>
 
 F4Res::F4Res(
-             ResF4Mem* Mem,
-             const ResPolyRing& R,
-             int max_level
+             SchreyerFrame& res
              )
-  : mFrame(R,max_level),
-    mRing(R),
-    mMem(Mem),
-    mSchreyerRes(new MonomialsWithComponent(R.monoid())),
+  : mFrame(res),
+    mRing(res.ring()),
+    mSchreyerRes(new MonomialsWithComponent(res.ring().monoid())),
     mHashTable(mSchreyerRes)
 {
-}
-
-M2_arrayint F4Res::getBetti(int type) const
-{
-  if (type == 1)
-    return mFrame.getBettiFrame();
-  ERROR("betti display not implemenented yet");
-  return 0;
 }
 
 void F4Res::resetMatrix(int lev, int degree)
@@ -312,8 +302,8 @@ void F4Res::reorderColumns()
 
   // sort the columns
 
-  ComponentIndex* column_order = mMem->components.allocate(ncols);
-  ComponentIndex* ord = mMem->components.allocate(ncols);
+  ComponentIndex* column_order = new ComponentIndex[ncols];
+  ComponentIndex* ord = new ComponentIndex[ncols];
 
   ResColumnsSorter C(monoid(), *this, mThisLevel-1);
 
@@ -380,8 +370,8 @@ void F4Res::reorderColumns()
       applyPermutation(ord, mSPairs[i].mComponents);
     }
 
-  mMem->components.deallocate(column_order);
-  mMem->components.deallocate(ord);
+  delete [] column_order;
+  delete [] ord;
 }
 
 void F4Res::makeMatrix()
@@ -499,7 +489,13 @@ void F4Res::gaussReduce()
 void F4Res::construct(int lev, int degree)
 {
   resetMatrix(lev, degree);
+
+  std::cout << "make matrix" << std::endl;
+  clock_t begin_time0 = clock();
   makeMatrix();
+  clock_t end_time0 = clock();
+  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  std::cout << "  time: " << nsecs0 << std::endl;
 
 #if 0
   std::cout << "-- rows --" << std::endl;
@@ -529,8 +525,13 @@ void F4Res::construct(int lev, int degree)
             << " reducer= "
             << mReducers.size() << " x " << mReducers.size()
             << std::endl;
-  gaussReduce();
 
+  std::cout << "gauss reduce matrix" << std::endl;
+  begin_time0 = clock();
+  gaussReduce();
+  end_time0 = clock();
+  nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  std::cout << "  time: " << nsecs0 << std::endl;
   //  mFrame.show(-1);
   clearMatrix();
 }

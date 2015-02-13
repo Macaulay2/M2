@@ -67,25 +67,6 @@ void ResF4toM2Interface::poly_set_degrees(const ResPolyRing& R,
   deg_result = static_cast<int>(deg);
 }
 
-#if 0
-void ResF4toM2Interface::from_M2_matrix(const ResGausser *KK,
-                                     const MonomialInfo *MI,
-                                     const Matrix *m,
-                                     M2_arrayint wts,
-                                     gb_array &result_polys)
-{
-  const FreeModule *F = m->rows();
-  for (int i=0; i<m->n_cols(); i++)
-    {
-      gbelem *g = new gbelem;
-      from_M2_vec(KK,MI,F,m->elem(i),g->f);
-      if (wts != 0)
-        poly_set_degrees(KK,MI,wts,g->f,g->deg,g->alpha);
-      result_polys.push_back(g);
-    }
-}
-#endif
-
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
                                const poly &f,
                                const FreeModule *F)
@@ -147,11 +128,11 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   return result;
 }
 
-Matrix *ResF4toM2Interface::to_M2_matrix(F4Res& C,
+Matrix *ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
                                          int lev,
                                          const FreeModule *F)
 {
-  auto& thislevel = C.frame().level(lev);
+  auto& thislevel = C.level(lev);
   MatrixConstructor result(F,INTSIZE(thislevel));
   int j = 0;
   for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
@@ -161,19 +142,19 @@ Matrix *ResF4toM2Interface::to_M2_matrix(F4Res& C,
   return result.to_matrix();
 }
 
-MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(F4Res& C,
+MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(SchreyerFrame& C,
                                                        int lev,
                                                        int degree)
 {
   // Now we loop through the elements of degree 'degree' at level 'lev'
-  auto& thislevel = C.frame().level(lev);
+  auto& thislevel = C.level(lev);
   int n = 0;
   for (auto p=thislevel.begin(); p != thislevel.end(); ++p)
     {
       if (p->mDegree == degree) n++;
     }
 
-  auto& prevlevel = C.frame().level(lev-1);
+  auto& prevlevel = C.level(lev-1);
   int* newcomps = new int[prevlevel.size()];
   int nextcomp = 0;
   for (int i=0; i<prevlevel.size(); i++)
@@ -183,7 +164,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(F4Res& C,
       newcomps[i] = -1;
 
   // create the mutable matrix
-  MutableMatrix* result = MutableMatrix::zero_matrix(C.resGausser().get_ring(),
+  MutableMatrix* result = MutableMatrix::zero_matrix(C.gausser().get_ring(),
                                                      nextcomp,
                                                      n,
                                                      true);
@@ -214,53 +195,6 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(F4Res& C,
 
   return result;
 }
-
-#if 0
-Matrix *ResF4toM2Interface::to_M2_matrix(const ResGausser *KK,
-                                      const MonomialInfo *MI,
-                                      gb_array &polys,
-                                      const FreeModule *F)
-{
-  MatrixConstructor result(F,INTSIZE(polys));
-  for (int i=0; i<polys.size(); i++)
-    result.set_column(i, to_M2_vec(KK,MI,polys[i]->f, F));
-  return result.to_matrix();
-}
-
-MutableMatrix * ResF4toM2Interface::to_M2_MutableMatrix(const ResGausser *KK,
-                                                     coefficient_matrix *mat,
-                                                     gb_array &gens,
-                                                     gb_array &gb)
-{
-  int nrows = INTSIZE(mat->rows);
-  int ncols = INTSIZE(mat->columns);
-  MutableMatrix *M = IM2_MutableMatrix_make(KK->get_ring(), nrows, ncols, false);
-  for (int r=0; r<nrows; r++)
-    {
-      row_elem &row = mat->rows[r];
-      ring_elem *rowelems = newarray(ring_elem, row.len);
-      if (row.coeffs == 0)
-        {
-          if (row.monom == 0)
-            KK->to_ringelem_array(row.len, gens[row.elem]->f.coeffs, rowelems);
-          else
-            KK->to_ringelem_array(row.len, gb[row.elem]->f.coeffs, rowelems);
-        }
-      else
-        {
-          KK->to_ringelem_array(row.len, row.coeffs, rowelems);
-        }
-      for (int i=0; i<row.len; i++)
-        {
-          int c = row.comps[i];
-          ////    c = mat->columns[c].ord;
-          M->set_entry(r,c,rowelems[i]);
-        }
-      deletearray(rowelems);
-    }
-  return M;
-}
-#endif
 
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -3,16 +3,16 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
+#include "memblock.hpp"
 #include "res-f4-mem.hpp"
-#include "res-schreyer-frame.hpp"
 #include "monhashtable.hpp"
-
+#include "res-poly-ring.hpp"
 #include <assert.h>
 #define M2_ASSERT assert
 
 class ResGausser;
 class MonomialInfo;
-
+class SchreyerFrame;
 /////////////////////////////////////////////////////////////////////////////
 
 class F4Res
@@ -20,13 +20,10 @@ class F4Res
   friend class ResColumnsSorter;
 public:
   F4Res(
-        ResF4Mem* Mem,
-        const ResPolyRing& R,
-        int max_level
+        SchreyerFrame& res
        );
 
   ~F4Res() {
-    delete mMem;
   }
 
   SchreyerFrame& frame() { return mFrame; }
@@ -39,8 +36,6 @@ public:
   //    construct(lev-1, degree-1)
   // NOTE: it is not needed to have done: construct(lev-1,degree)
   void construct(int lev, int degree);
-
-  M2_arrayint getBetti(int type) const;
 
   const ResGausser& resGausser() const { return mRing.resGausser(); }
   const MonomialInfo& monoid() const { return mRing.monoid(); }
@@ -78,10 +73,9 @@ private:
   // Data for construct(lev,degree) //
   ////////////////////////////////////
 
-  SchreyerFrame mFrame;
+  SchreyerFrame& mFrame;
 
   const ResPolyRing& mRing;
-  ResF4Mem* mMem; // Used for what TODO?
 
   // Data used to construct the next matrix
   int mThisLevel;
