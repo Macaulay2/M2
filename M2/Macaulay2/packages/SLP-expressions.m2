@@ -88,19 +88,36 @@ productGate List := L -> (
     then error "expected a list of gates";
     new ProductGate from {Inputs=>L}
     )
-value (InputGate,HashTable) := (g,h) -> h#g
+
+DetGate = new Type of Gate
+net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
+detGate = method()
+detGate List := L {*doubly nested list*} -> (
+    n := #L;
+    if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))
+    then error "expected a square matrix (a doubly nested list) of gates";
+    new DetGate from {Inputs=>L}
+    )
+
+value (InputGate,HashTable) := (g,h) -> if isConstant g then g.Name else h#g
 value (SumGate,HashTable) := memoize ((g,h) -> sum apply(g.Inputs, a->value(a,h)))
 value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->value(a,h)))
+value (DetGate,HashTable) := memoize ((g,h) -> det matrix applyTable(g.Inputs, a->value(a,h)))
 
 support InputGate := g -> g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
 support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
+support DetGate := memoize (g -> g.Inputs//flatten/support//flatten//unique)
 
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
 diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sum
 diff (InputGate, ProductGate) := (x,g) -> sum apply(#g.Inputs, i->(
 	dgi := diff(x,g.Inputs#i);
 	product(drop(g.Inputs,{i,i}))*dgi -- commutativity assumed
+	))
+diff (InputGate, DetGate) := (x,g) -> sum apply(#g.Inputs, i->(
+	dgi := apply(g.Inputs#i, a->diff(x,a));
+	detGate replace(i,dgi,g.Inputs)
 	))
 
 subSanityCheck = method()
@@ -206,28 +223,42 @@ end -------------------------------------------
 
 restart
 load "SLP-expressions.m2"
+
+--InputGate
 X = inputGate symbol X
 Y = inputGate symbol Y
+
+--SumGate and ProductGate
 C = sumGate {X+Y,Y,X}
 D = productGate {X*Y,Y,C}
 h = new HashTable from {X=>1,Y=>ii}
 assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
 support (X*X)
 support (D+C)
-s = new MutableHashTable from {X+Y=>C}
-peek s
-s#(X+Y)
 
-E = inputGate 2 -- one way to handle constants
+-- one way to handle constants
+E = inputGate 2
 F = product{E*(X*X+E*Y)+oneGate, oneGate}
-diff(X,F)
 
-G = sub(sub(F,X=>X+Y),Y=>X*Y) -- sub
-
+-- sub
+G = sub(sub(F,X=>X+Y),Y=>X*Y) 
 -- sub and compress = evaluate over a ring
 R = CC[x,y] 
 H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
 I = compress H 
+
+-- DetGate
+J = detGate {{X,C},{D,Y}}
+
+-- diff
+diff(X,F)
+diff(X,J)
+h = new HashTable from {X=>x,Y=>y}
+assert(
+    value(diff(X,J),h) 
+    ==
+    value(detGate{{oneGate,C},{diff(X,D),Y}}+detGate{{X,diff(X,C)},{D,zeroGate}},h)
+    )
 
 -- evaluate toPreSLP == compress 
 output = {F,diff(X,F),G}
@@ -235,9 +266,9 @@ preSLP = toPreSLP({X,Y},output)
 out'eval = evaluatePreSLP(preSLP, gens R)
 out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
 assert(out'eval == out'comp)
+out'value = matrix {output/(o->value(o,h))}
+assert(out'eval == out'value)
 
-f = random(3,R)
-poly2preSLP f
 
 -------------------------------------------------------
 -- trackHomotopy 
