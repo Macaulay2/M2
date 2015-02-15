@@ -58,6 +58,7 @@ inputGate Thing := a -> new InputGate from {
     } 
 net InputGate := g -> net g.Name
 oneGate = inputGate 1
+minusOneGate = inputGate(-1)
 zeroGate = inputGate 0
 
 SumGate = new Type of Gate
@@ -89,6 +90,9 @@ productGate List := L -> (
     new ProductGate from {Inputs=>L}
     )
 
+- Gate := g -> minusOneGate*g
+Gate - Gate := (a,b) -> a+(-b)
+
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
 detGate = method()
@@ -99,14 +103,24 @@ detGate List := L {*doubly nested list*} -> (
     new DetGate from {Inputs=>L}
     )
 
+DivideGate = new Type of Gate
+net DivideGate := g -> net Divide(first g.Inputs,last g.Inputs) 
+Gate / Gate := (a,b) -> if b===zeroGate then error "division by zero"  else 
+                        if a===zeroGate then zeroGate else 
+			new DivideGate from {
+    			    Inputs => {a,b}
+    			    } 
+			
 value (InputGate,HashTable) := (g,h) -> if isConstant g then g.Name else h#g
 value (SumGate,HashTable) := memoize ((g,h) -> sum apply(g.Inputs, a->value(a,h)))
 value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->value(a,h)))
 value (DetGate,HashTable) := memoize ((g,h) -> det matrix applyTable(g.Inputs, a->value(a,h)))
+value (DivideGate,HashTable) := memoize ((g,h) -> value(first g.Inputs,h)/value(last g.Inputs,h))
 
 support InputGate := g -> g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
 support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
+support DivideGate := memoize (g -> g.Inputs/support//flatten//unique)
 support DetGate := memoize (g -> g.Inputs//flatten/support//flatten//unique)
 
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
@@ -119,6 +133,13 @@ diff (InputGate, DetGate) := (x,g) -> sum apply(#g.Inputs, i->(
 	dgi := apply(g.Inputs#i, a->diff(x,a));
 	detGate replace(i,dgi,g.Inputs)
 	))
+diff (InputGate, DivideGate) := (x,g) -> (
+    a := first g.Inputs;
+    b := last g.Inputs;	
+    da := diff(x,a);
+    db := diff(x,b);
+    if db===zeroGate then da/b else (da*b-a*db)/(b*b)
+    )
 
 subSanityCheck = method()
 subSanityCheck Option := ab -> (
@@ -140,7 +161,7 @@ sub (ProductGate, Option) := (g,ab) -> (
     )
 
 isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
-compress InputGate := g -> g
+compress Gate := g -> g
 compress SumGate := g -> (
     L := g.Inputs/compress;
     nums := positions(L, a -> instance(a,InputGate) and isConstant a);
@@ -260,6 +281,12 @@ assert(
     value(detGate{{oneGate,C},{diff(X,D),Y}}+detGate{{X,diff(X,C)},{D,zeroGate}},h)
     )
 
+-- DivideGate
+F/H
+diff(X,X/Y)
+diff(Y,X/Y)
+compress diff(Y,F/H)
+ 
 -- evaluate toPreSLP == compress 
 output = {F,diff(X,F),G}
 preSLP = toPreSLP({X,Y},output)
@@ -281,13 +308,10 @@ T = inputGate symbol T
 
 K = CC
 R = K[x,y,t] 
-
-minusOne = inputGate(-1)
-F = {X*X+minusOne, Y*Y+minusOne}
-G = {X*X+Y*Y+minusOne, minusOne*X*X+Y}
--- F = {X+minusOne, Y+minusOne}
--- G = {X+oneGate, Y+oneGate}
-H = (oneGate + minusOne * T) * F + inputGate(1+2*ii) * T * G
+one = oneGate
+F = {X*X-one, Y*Y-one}
+G = {X*X+Y*Y-one, minusOne*X*X+Y}
+H = (one - T) * F + T * G
 
 preH = toPreSLP({X,Y,T},H)
 evaluatePreSLP(preH, {1,1,0})
@@ -295,137 +319,4 @@ preHx = transposePreSLP jacobianPreSLP(preH,toList(0..1));
 evaluatePreSLP(preHx, {1,1,0})
 s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
 s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
-evaluatePreSLP(preH, s|{1})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-------------------------------------------------------------
--- BELOW is the "expression" stuff thay used to be in SLP.m2
-
-
----------------------------------------------------------------
--- EXPRESSIONS (think: gates of curcuits used for evaluation)
--- 
--- Already exist:
---    Sum: {E1,E2,...,En}
---    Product: {E1,E2,...,En}
---    Power: {E1,E2}
---    MatrixExpression: 
---
--- New:
---    PolyExpression: {f} where f is a RingElement
---    DetExpression: {M} where M is a MatrixExpression
---
----------------------------------------------------------------
-PolyExpression = new Type of Expression
-polyExpression = method()
-polyExpression RingElement := f -> new PolyExpression from {f}
-
-submatrix (MatrixExpression,BasicList,BasicList) := (M,rows,cols) -> 
-    MatrixExpression apply((toList M)_(toList rows), r->r_(toList cols))
-submatrix (MatrixExpression,BasicList,Nothing) := (M,rows,cols) -> 
-    submatrix(M,rows,0..<numcols M) 
-submatrix (MatrixExpression,Nothing,BasicList) := (M,rows,cols) -> 
-    submatrix(M,0..<numrows M,cols) 
-numrows MatrixExpression := M -> #M
-numcols MatrixExpression := M -> if numrows M > 0 then #(M#0) else 0
-
-MatrixExpression | MatrixExpression := (A,B) -> (
-    if #A == 0 then B
-    else if #B == 0 then A
-    else if numrows A != numrows B
-    then error "numbers of rows should match"
-    else (
-	a := toList A;
-	b := toList B;
-	MatrixExpression apply(#a, r->a#r|b#r)
-       	)
-    )
-MatrixExpression || MatrixExpression :=  (A,B) -> (
-    if #A == 0 then B
-    else if #B == 0 then A
-    else if numcols A != numcols B 
-    then error "numbers of columns should match"
-    else MatrixExpression(toList A | toList B)
-    )
-    
-DetExpression = new Type of Expression
-det MatrixExpression := o -> M -> new DetExpression from M
-value DetExpression := e -> det value e 
-
-diff'Thing'Expression = (x,e) -> (
-    if class e === Sum then Sum apply(toList e, t->diff(x,t))
-    else if class e === MatrixExpression then 
-        MatrixExpression apply(toList e, row -> apply(row, a->diff(x,a)))
-    else if class e === DetExpression then (
-	M := MatrixExpression toList e;
-	m := numrows M;
-	sum(m, r-> det(
-		submatrix(M,0..r-1,) || 
-		diff(x,submatrix(M,{r},)) || 
-		submatrix(M,r+1..<m,)
-		))
-	)  
-    else if class e === PolyExpression then polyExpression diff(x,e#0)
-    else (
-	<< "for " << e << endl; 
-	<< " of type " << class e <<endl;
-	error "diff is not emplemented"
-	)
-    )
-diff (RingElement,Expression) := memoize diff'Thing'Expression
-
-jacobian (List,MatrixExpression) := (xx,F) -> 
-    MatrixExpression apply(flatten toList F, f->apply(xx,x->diff(x,f)))
-
--- oldish...
-expression2preSLP = method()
-expression2preSLP Expression := e -> (
-    if class e === Sum then addPreSLPs apply(toList e,expression2preSLP)
-    else if class e === MatrixExpression then 
-    stackPreSLPs apply(toList e, row -> concatPreSLPs row)
-    else if class e === DetExpression then 
-    detPreSLP stackPreSLPs apply(toList e, row -> concatPreSLPs apply(row,expression2preSLP)) 
-    else if class e === PolyExpression then poly2preSLP e#0
-    else (
-	<< "for " << e << " of type " << class e <<endl;
-	error "not emplemented"
-	)
-    )
-
-end 
-
-restart
-debug needsPackage "NumericalAlgebraicGeometry"
-R = CC[x,y]
-f = new PolyExpression from {x^2 + x*y^3 + 1}
-a = diff(x,f)
-M = MatrixExpression{
-    {Sum(polyExpression (x^2+1), polyExpression x^5), f},
-    {polyExpression 2_R, polyExpression 3_R}
-    }
-submatrix(M,{1},{0,1})    	
-diff(x,M)
-jacobian ({x,y},M)
-e = det M
-diff(x,det M)
-
-value (MatrixExpression {{Sum(x,y)}} + MatrixExpression {{Sum(x,y)}})
-
-e = det M
-value e 
-diff(x,e)
-expression2preSLP e
+assert (norm evaluatePreSLP(preH, s|{1}) < 1e-6)
