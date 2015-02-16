@@ -390,6 +390,7 @@ export Expr := (
      RawMonomialIdealCell or
      RawMonomialOrderingCell or
      RawMutableMatrixCell or
+     RawSLProgramCell or
      RawStraightLineProgramCell or
      RawPathTrackerCell or
      RawRingCell or
