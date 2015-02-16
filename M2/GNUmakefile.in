@@ -27,6 +27,9 @@ which-tools:
 	printenv ACLOCAL_PATH
 configured:include/configuration
 check:configured check-in-Macaulay2
+ifeq "@ENABLE_STRIP@" "yes"
+check: check-stripped
+endif
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
 
@@ -39,8 +42,9 @@ endef
 #   usr-host   -- install the results of compilation here, for the target machine
 #   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
 
-# completion of certain make targets
-.completed:; $(MKDIR_P) $@
+check-stripped:
+	@ echo "-- checking for unstripped binaries"
+	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
 
 ## submodules
 ifneq (@build_alias@,)
@@ -64,18 +68,20 @@ all-in-mathic:all-in-memtailor
 $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
-all-in-$1: .completed/all-in-$1
-.completed/all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1 | .completed; touch $$@
+all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
 copy-license-files-from-submodules: copy-license-files-from-$1
 copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
-build-in-$1:; + $(MAKE) -C submodules/$1 all install
+build-in-$1:; + $(MAKE) -C submodules/$1 all
 check-in-$1: run-configure-in-$1; + ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 $(foreach c,clean distclean,$(eval $c-in-$1:; if [ -f submodules/$1/Makefile ]; then $(MAKE) -C submodules/$1 $c; fi))
 git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
 git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
 git-clean-in-$1:; cd @srcdir@/submodules/$1 && git clean -Xdf
 git-describe-in-$1:; cd @srcdir@/submodules/$1 && git describe --dirty --long --always --abbrev=40 --all
+run-configure-in-submodules: run-configure-in-$1
 run-configure-in-$1: submodules/$1/Makefile
+unconfigure-in-submodules: unconfigure-in-$1
+unconfigure-in-$1:; rm -f submodules/$1/Makefile
 submodules/$1/Makefile:@srcdir@/submodules/$1/configure
 	$(MKDIR_P) submodules/$1
 	$(call cdw,submodules/$1) &&							\
@@ -143,7 +149,7 @@ $(foreach t,all check clean distclean,					\
 clean:
 	rm -rf .completed
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
-	rm -rf usr-dist conf_* usr-build
+	rm -rf usr-dist conf_* usr-build usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile

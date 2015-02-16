@@ -9,7 +9,16 @@ PRECONFIGURE = autoreconf -vif
 
 # URL = http://www.4ti2.de/version_$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-STRIPFILES = src/groebner/4ti2int32@EXEEXT@ src/groebner/4ti2int64@EXEEXT@
+STRIPFILES =					\
+	src/groebner/4ti2int32@EXEEXT@		\
+	src/groebner/4ti2int64@EXEEXT@		\
+	src/groebner/4ti2gmp@EXEEXT@		\
+	src/util/genmodel			\
+	src/util/gensymm			\
+	src/ppi/ppi				\
+	src/util/output				\
+	src/zsolve/zsolve
+
 LICENSEFILES = README
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/4ti2/Makefile
