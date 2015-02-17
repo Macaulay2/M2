@@ -101,10 +101,17 @@ isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 member(Thing,Set) := Boolean => (a,s) -> s#?a
 
 Tally / Command  := 
-Tally / Function := Tally => (x,f) -> applyKeys(x,f)
+Tally / Function := Tally => (x,f) -> applyKeys(x,f,plus)
 
 Command  \ Tally := 
-Function \ Tally := Tally => (f,x) -> applyKeys(x,f)
+Function \ Tally := Tally => (f,x) -> applyKeys(x,f,plus)
+
+Set / Command  := 
+Set / Function := Tally => (x,f) -> applyKeys(x,f,(i,j)->1)
+
+Command  \ Set := 
+Function \ Set := Tally => (f,x) -> applyKeys(x,f,(i,j)->1)
+
 
 permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))

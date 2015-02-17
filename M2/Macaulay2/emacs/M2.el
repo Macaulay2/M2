@@ -173,7 +173,7 @@ current window added to it."
       (M2-comint-mode))
     buffer))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
-(defvar M2-comint-prompt-regexp "^\\([ \t]*[io]*[1-9][0-9]* [:=] \\)?"
+(defvar M2-comint-prompt-regexp "^\\([ \t]*\\(i*[1-9][0-9]* :\\|o*[1-9][0-9]* =\\) \\)?"
   "Regular expression used to recognize the Macaulay 2 prompt.")
 (defun M2-left-hand-column () (window-hscroll))
 (defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))

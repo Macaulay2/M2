@@ -31,7 +31,6 @@ include ./Makefile.files
 VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
-ENABLE_STRIP = @ENABLE_STRIP@
 ############################## main targets
 echo = $(shell echo "echo: $1" >&2) $1
 

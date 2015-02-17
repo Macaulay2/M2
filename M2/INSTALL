@@ -75,7 +75,7 @@ various modern operating systems:
 
   Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients libtool
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
     On all systems, add
         --enable-build-libraries=ntl
       to the "configure" command line below.
@@ -118,12 +118,9 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot
     Some debugging aids:
       sudo yum install -y strace
-    For making an rpm file, install fakeroot manually, from:
-         http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
-
     Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
     future version of Macaulay2.  However, one can install newer compilers
     (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
@@ -138,7 +135,18 @@ various modern operating systems:
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
 
+  Arch Linux:
+      sudo pacman -S archlinux-keyring
+      sudo pacman-key --populate archlinux
+      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+    If the package "pari" is also installed on your system, remember to add
+    	--enable-build-libraries=pari
+    to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
+    crash when the program terminates (when the exit handlers are executed, it dies in the function "closepari".)
+
   Mac OS X:
+    Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
+      it will be necessary to reinstall it.
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -151,9 +159,10 @@ various modern operating systems:
     Install the programs and libraries needed for building:
 	brew tap homebrew/versions
 	brew tap homebrew/science
-	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49
+	brew tap homebrew/homebrew-x11
+	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49 readline
     Now remember to add 
-        CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
+        CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
       to the "configure" command line below in the section on compiling Macaulay2.
     Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
       g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding

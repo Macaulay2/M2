@@ -30,6 +30,7 @@ NORMFLAGS =
 CXXFLAGS1 = $(CPPFLAGS) -Wall -Wno-sign-compare -O3 -funroll-loops -Wno-unknown-pragmas $(CXXFLAGS0)
 UNTARCMD = unzip $(TARFILE_DIR)/$(TARFILE) && $(FIXTARCMD)
 CONFIGURECMD = true
+STRIPFILES = normaliz
 BUILDOPTIONS =  CXX="$(CXX)" \
 		NORMFLAGS="$(NORMFLAGS)" \
 		CXXFLAGS="$(CXXFLAGS1)" \

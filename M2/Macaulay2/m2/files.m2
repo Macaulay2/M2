@@ -380,7 +380,7 @@ emacstempl := ///
 
 emacsenvtempl := ///
 ;; add "/PREFIX/DIR" to VAR if it isn't there
-(if (not (string-match-p "/PREFIX/DIR" (getenv "VAR")))
+(if (not (string-match "/PREFIX/DIR" (getenv "VAR")))
      (setenv "VAR" "/PREFIX/DIR:$VAR" t))
 ///
 
