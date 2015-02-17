@@ -22,6 +22,7 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class SLProgram;
 class StraightLineProgram;
 class PathTracker;
 
@@ -40,6 +41,7 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
 #endif
@@ -1964,6 +1966,10 @@ enum gbTraceValues
   gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M);
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
+
+  SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
+  M2_string rawSLProgramToString(SLProgram *); /* connected */
+  unsigned int rawSLProgramHash(SLProgram *); /* connected */
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);

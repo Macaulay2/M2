@@ -11,6 +11,13 @@ header "#include <engine.h>";
 
 -- straight line programs
 
+export rawSLProgram(e:Expr):Expr := (
+     when e
+     is numConstantsAndInputs:ZZcell do if !isULong(numConstantsAndInputs.v) then WrongArgSmallInteger() 
+     else toExpr(Ccode(SLProgramOrNull, "rawSLProgram(", toULong(numConstantsAndInputs.v), ")"))
+     else WrongArgZZ());
+setupfun("rawSLProgram",rawSLProgram);
+
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)

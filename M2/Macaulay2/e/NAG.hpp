@@ -5,6 +5,7 @@
 #ifndef _nag_
 #define _nag_
 
+#include "buffer.hpp"
 #include "matrix.hpp"
 #include "aring-CC.hpp"
 #include "complex.h"
@@ -507,16 +508,29 @@ class SLProgram
                                                 negative = var or const) */
   std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
                                                   (nonnegative = node position, negative = var or const) */
+  /* LOOKUP TABLE */
+  int gateCounter;
 public:
-  SLProgram();
-  SLProgram& addCopy(GATE_POSITION p);
-  SLProgram& addMCopy(GATE_POSITION p, GATE_SIZE s);
-  SLProgram& addSum(GATE_POSITION a, GATE_POSITION b);
-  SLProgram& addProduct(GATE_POSITION a, GATE_POSITION b);
-  SLProgram& addMSum(const std::vector<GATE_POSITION>& p);
-  SLProgram& addMProduct(const std::vector<GATE_POSITION>& p);
-  SLProgram& addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
-  std::string toString();
+  SLProgram(int nConstantsAndInputs);
+  // GATE_POSITION addCopy(GATE_POSITION p);
+  // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
+  // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
+  // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
+  GATE_POSITION addMSum(const std::vector<GATE_POSITION>& p);
+  GATE_POSITION addMProduct(const std::vector<GATE_POSITION>& p);
+  // GATE_POSITION addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
+  void toString(buffer& o);
+};
+
+
+class SLPEvaluator {
+  // vector<???> mValues: constants, inputs, values of SLP nodes 
+  //
+  // initialize with 
+  // (1) a list of constants
+  // (2) SLProgram 
+  //
+  // interface functions to construct SLPEvaluator from constants preprocessed at the top
 };
 
 template <typename R> 

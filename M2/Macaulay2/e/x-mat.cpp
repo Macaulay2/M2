@@ -704,6 +704,10 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModul
      }
 }
 
+SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { return nullptr; }
+M2_string rawSLProgramToString(SLProgram *) { return nullptr; }
+unsigned int rawSLProgramHash(SLProgram *) { return 0; }
+
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {
   return StraightLineProgram::make(consts, program);
