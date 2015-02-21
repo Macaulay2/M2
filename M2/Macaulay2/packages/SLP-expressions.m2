@@ -57,6 +57,7 @@ inputGate Thing := a -> new InputGate from {
     Name => a
     } 
 net InputGate := g -> net g.Name
+
 oneGate = inputGate 1
 minusOneGate = inputGate(-1)
 zeroGate = inputGate 0
@@ -82,7 +83,34 @@ Gate * Gate := (a,b) -> if a===zeroGate or b===zeroGate then zeroGate else
 			if b===oneGate then a else 
 			new ProductGate from {
     			    Inputs => {a,b}
-    			    } 
+    	    	    	    }
+
+ZZ + Gate := (a,b) -> inputGate a + b
+Gate + ZZ := (a,b) -> a + inputGate b 
+ZZ * Gate := (a,b) -> inputGate a * b			
+Gate * ZZ := (a,b) -> a * inputGate b
+RR + Gate := (a,b) -> inputGate a + b
+Gate + RR := (a,b) -> a + inputGate b 
+RR * Gate := (a,b) -> inputGate a * b			
+Gate * RR := (a,b) -> a * inputGate b
+CC + Gate := (a,b) -> inputGate a + b
+Gate + CC := (a,b) -> a + inputGate b 
+CC * Gate := (a,b) -> inputGate a * b			
+Gate * CC := (a,b) -> a * inputGate b
+QQ + Gate := (a,b) -> inputGate a + b
+Gate + QQ := (a,b) -> a + inputGate b 
+QQ * Gate := (a,b) -> inputGate a * b			
+Gate * QQ := (a,b) -> a * inputGate b
+
+ZZ - Gate := (a,b) -> inputGate a - b
+Gate - ZZ := (a,b) -> a - inputGate b 
+RR - Gate := (a,b) -> inputGate a - b
+Gate - RR := (a,b) -> a - inputGate b 
+CC - Gate := (a,b) -> inputGate a - b
+Gate - CC := (a,b) -> a - inputGate b 
+QQ - Gate := (a,b) -> inputGate a - b
+Gate - QQ := (a,b) -> a - inputGate b 
+
 productGate = method()
 productGate List := L -> (
     if not all(L, a->instance(a,Gate)) 
@@ -177,6 +205,7 @@ compress ProductGate := g -> (
     nums := positions(L, a -> instance(a,InputGate) and isConstant a);
     not'nums := toList(0..<#L) - set nums;
     p := L_nums/(a->a.Name)//product;
+    if p==0 then return zeroGate;
     c := (if p != 1 then {inputGate p} else {}) | L_not'nums; -- assumes commutativity
     if #c == 0 then oneGate else
     if #c == 1 then first c else 
