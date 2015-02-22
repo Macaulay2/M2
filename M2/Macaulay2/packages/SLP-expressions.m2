@@ -170,10 +170,10 @@ diff (InputGate, DivideGate) := (x,g) -> (
     )
 
 subSanityCheck = method()
-subSanityCheck Option := ab -> (
+subSanityCheck Option := memoize (ab -> (
     if not instance(first ab, InputGate) then error "only an InputGate can be substituted";
     if not instance(last ab, Gate) then error "can substitute with a Gate only";
-    )
+    ))
 sub (InputGate, Option) := (g,ab) -> (
     subSanityCheck ab;
     (a,b) := toSequence ab; 
@@ -186,6 +186,13 @@ sub (SumGate, Option) := (g,ab) -> (
 sub (ProductGate, Option) := (g,ab) -> (
     subSanityCheck ab;
     productGate apply(g.Inputs, i->sub(i,ab))
+    )
+sub (DetGate, Option) := (g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab))
+
+sub (Gate, List) := (g,L) -> (
+    g' := g;
+    for ab in L do g' = sub(g',ab);
+    g'
     )
 
 isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
@@ -269,6 +276,64 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     (consts, program, matrix{outputs/(o->pos#o)})
     )  
 
+-- GateMatrix is NOT A GATE
+GateMatrix = new Type of List
+
+old'matrix'List = lookup(matrix,List)
+gateMatrix = method()
+gateMatrix List := L -> (
+    if not isTable L then error "a table is expected";
+    new GateMatrix from L
+    )
+gateMatrix Matrix := M -> gateMatrix entries M
+matrix List := o -> L -> (
+    fL := flatten L;
+    if #fL>0 and any(fL, g->instance(g,Gate)) 
+    then gateMatrix L
+    else (old'matrix'List o) L
+    )
+
+GateMatrix_Sequence := (M,ab) -> ( (a,b):=ab; M#a#b )
+GateMatrix_List := (M,cols) -> gateMatrix transpose (transpose entries M)_cols
+
+submatrix(GateMatrix,List,List) := (M,a,b) -> gateMatrix apply(a,i->(M#i)_b)
+
+entries GateMatrix := M -> toList M  
+transpose GateMatrix := M -> gateMatrix transpose entries M
+
+numcols GateMatrix := M -> # first M
+numrows GateMatrix := M -> # M
+
+GateMatrix | GateMatrix := (A,B) -> (
+    if numrows A != numrows B then error "need the same number of rows to join";
+    gateMatrix transpose (transpose entries A | transpose entries B)      
+    )
+GateMatrix || GateMatrix := (A,B) -> (
+    if numcols A != numcols B then error "need the same number of columns to stack";
+    gateMatrix (entries A | entries B)      
+    )
+GateMatrix * GateMatrix := (A,B) -> ( -- two tables
+    B' := transpose B;
+    matrix table(#A,#B',(i,j)->sum apply(A#i,B'#j,(a,b)->a*b))
+    )
+Matrix * GateMatrix := (A,B) -> gateMatrix A * B
+GateMatrix * Matrix := (A,B) -> A * gateMatrix B
+
+GateMatrix + GateMatrix := (A,B) -> gateMatrix (entries A + entries B)
+Matrix + GateMatrix := (A,B) -> gateMatrix A + B
+GateMatrix + Matrix := (A,B) -> A + gateMatrix B
+
+GateMatrix - GateMatrix := (A,B) -> gateMatrix (entries A - entries B)
+Matrix - GateMatrix := (A,B) -> gateMatrix A - B
+GateMatrix - Matrix := (A,B) -> A - gateMatrix B
+
+det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a else inputGate a)
+
+compress GateMatrix := M -> gateMatrix applyTable(M,compress)
+
+value(GateMatrix, HashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
+
+sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
 end -------------------------------------------
 
 restart
