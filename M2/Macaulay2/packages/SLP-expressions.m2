@@ -145,7 +145,7 @@ value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->va
 value (DetGate,HashTable) := memoize ((g,h) -> det matrix applyTable(g.Inputs, a->value(a,h)))
 value (DivideGate,HashTable) := memoize ((g,h) -> value(first g.Inputs,h)/value(last g.Inputs,h))
 
-support InputGate := g -> g
+support InputGate := g -> if isConstant g then {} else g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
 support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
 support DivideGate := memoize (g -> g.Inputs/support//flatten//unique)
@@ -174,20 +174,20 @@ subSanityCheck Option := memoize (ab -> (
     if not instance(first ab, InputGate) then error "only an InputGate can be substituted";
     if not instance(last ab, Gate) then error "can substitute with a Gate only";
     ))
-sub (InputGate, Option) := (g,ab) -> (
+sub (InputGate, Option) := memoize((g,ab) -> (
     subSanityCheck ab;
     (a,b) := toSequence ab; 
     if a===g then b else g 
-    )
-sub (SumGate, Option) := (g,ab) -> (
+    ))
+sub (SumGate, Option) := memoize((g,ab) -> (
     subSanityCheck ab;
     sumGate apply(g.Inputs, i->sub(i,ab))
-    )
-sub (ProductGate, Option) := (g,ab) -> (
+    ))
+sub (ProductGate, Option) := memoize((g,ab) -> (
     subSanityCheck ab;
     productGate apply(g.Inputs, i->sub(i,ab))
-    )
-sub (DetGate, Option) := (g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab))
+    ))
+sub (DetGate, Option) := memoize((g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab)))
 
 sub (Gate, List) := (g,L) -> (
     g' := g;
@@ -334,6 +334,28 @@ compress GateMatrix := M -> gateMatrix applyTable(M,compress)
 value(GateMatrix, HashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
 
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
+
+support GateMatrix := memoize (M -> flatten entries M/support//flatten//unique)
+
+joinHorizontal = method()
+joinHorizontal List := L->(
+    if #L==0 then error "empty list";
+    r := first L;
+    scan(drop(L,1), x->r=r|x);
+    r
+    )
+joinVertical = method()
+joinVertical List := L->(
+    if #L==0 then error "empty list";
+    r := first L;
+    scan(drop(L,1), x->r=r||x);
+    r
+    )
+diff (InputGate, GateMatrix) := (x,M) -> gateMatrix applyTable(entries M, g->diff(x,g))
+diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
+    applyTable(entries xx, x->diff(x,M)), 
+    row-> joinHorizontal row
+    )
 end -------------------------------------------
 
 restart
