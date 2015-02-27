@@ -493,5 +493,15 @@ Warning messages
 	   anyway.  (We use -j1 as an option when compiling third party libraries
 	   whose makefiles are not known to support parallelism.)
 
+----------------------
+Autoconf, autoreconf, libtool, ...
+----------------------
 
+If you get any mysterious error messages involving autoconf, autoreconf,
+libtool, etc., try running
+
+	 make -f Makefile get-tools
+
+in the top level.  This command will install versions of those tools known to
+work with Macaulay2.
 
