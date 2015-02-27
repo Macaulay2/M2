@@ -1,5 +1,4 @@
 ----- This file contains tests for bracket power of ideals.
-restart
 R = QQ[a..d]
 I = minors(2,matrix {{a,b,c},{b,c,d}})
 J = monomialIdeal {a^2*b*c*d, b^2*c*d, b*c*d^4}

@@ -199,7 +199,7 @@ document {
 	"S = R/I;",
     	"J = ideal vars S",
 	"J^[5]"
-     }
+     },
      SeeAlso => {"ideals"}
      }
  
