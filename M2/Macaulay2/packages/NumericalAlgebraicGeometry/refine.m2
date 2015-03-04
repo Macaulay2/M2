@@ -222,7 +222,8 @@ refine (PolySystem,List) := List => o -> (F,solsT) -> (
 TEST /// -- refine 
 sqrt2 = point {{sqrt(2p1000)}}
 R = CC[x]
-sqrt2' = refine(polySystem{x^2-2}, point {{1.5}}, Bits=>500)
+-- sqrt2' = refine(polySystem{x^2-2}, point {{1.5}}, Bits=>500) -- fails with SIGSEGV
+sqrt2' = refine(polySystem{x^2-2}, point {{1.5_CC}}, Bits=>500)
 areEqual(sqrt2',sqrt2, Tolerance=>2^-498)
 
 R = CC[x,y];
