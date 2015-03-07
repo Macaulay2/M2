@@ -509,9 +509,10 @@ class SLProgram
   std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
                                                   (nonnegative = node position, negative = var or const) */
   /* LOOKUP TABLE */
+  int inputCounter;
   int gateCounter;
 public:
-  SLProgram(int nConstantsAndInputs);
+  SLProgram();
   // GATE_POSITION addCopy(GATE_POSITION p);
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);

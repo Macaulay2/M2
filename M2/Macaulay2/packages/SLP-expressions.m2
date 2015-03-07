@@ -54,7 +54,8 @@ Gate = new Type of HashTable
 InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()
 inputGate Thing := a -> new InputGate from {
-    Name => a
+    Name => a,
+    cache => new CacheTable
     } 
 net InputGate := g -> net g.Name
 
@@ -275,6 +276,14 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     scan(outputs,o->(consts,program)=appendToProgram(o,consts,program,pos));
     (consts, program, matrix{outputs/(o->pos#o)})
     )  
+
+appendToSLProgram = method()
+appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
+    g.cache#slp = rawSLPInputGate(slp)
+appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
+    g.cache#slp = rawSLPSumGate(slp,g.Input/(a->a.cache#slp))
+appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
+    g.cache#slp = rawSLPProductGate(slp,g.Input/(a->a.cache#slp))
 
 -- GateMatrix is NOT A GATE
 GateMatrix = new Type of List
