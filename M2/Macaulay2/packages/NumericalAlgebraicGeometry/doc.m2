@@ -295,7 +295,7 @@ document {
 	EXAMPLE lines ///
      	R = CC[x];
      	F = polySystem {x^2-2};
-	P := refine(F, point{{1.5}}, Bits=>1000)
+	P := refine(F, point{{1.5+0.001*ii}}, Bits=>1000)
 	first coordinates P
 	R = CC[x,y];
 	T = {x^2+y^2-1, x*y};
@@ -324,7 +324,7 @@ document {
 	EXAMPLE lines ///
      	R = CC[x];
      	F = polySystem {x^2-2};
-	Q := refine(F, point{{1.5}}, Bits=>1000, Iterations=>2)
+	Q := refine(F, point{{1.5+0.001*ii}}, Bits=>1000, Iterations=>2)
 	peek Q
      	///,
 	PARA {},	

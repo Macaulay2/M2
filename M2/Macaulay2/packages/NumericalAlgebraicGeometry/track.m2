@@ -4,7 +4,7 @@
 ------------------------------------------------------
 export { track, trackSegment }
 
-track = method(TypicalValue => List, Options =>{
+track'option'list = {
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
 	  NumericalAlgebraicGeometry$tDegree=>null,
@@ -31,7 +31,8 @@ track = method(TypicalValue => List, Options =>{
 	  AffinePatches => null,
 	  -- slp's 
 	  SLP => null -- possible values: false, HornerForm, CompiledHornerForm 	  
-	  } )
+	  }
+track = method(TypicalValue => List, Options => track'option'list)
 -- tracks solutions from start system to target system
 -- IN:  S = list of polynomials in start system
 --      T = list of polynomials in target system
@@ -861,9 +862,9 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      if class p === Sequence then ret else first ret
      )
 
-trackSegment = method() -- a better implementation needed!!!
-trackSegment (PolySystem,Number,Number,List) := (H,a,b,pts) -> (
+trackSegment = method(Options=>track'option'list) -- a better implementation needed!!!
+trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     S := specializeContinuationParameter(H,a);
     T := specializeContinuationParameter(H,b);
-    track(S,T,pts) 
+    track(S,T,pts,o) 
     )
