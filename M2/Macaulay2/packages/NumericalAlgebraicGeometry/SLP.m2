@@ -699,7 +699,7 @@ eg = evaluatePreSLP(g6,gens R)
 eg_(1,1) == g
 --preSLPtoCPP(g6,"slpFN")
 debug Core
-(constMAT, prog) = fromPreSLP(3,g6)
+(constMAT, prog) = preSLPinterpretedSLP(3,g6)
 rSLP = rawSLP(raw constMAT, prog)
 K = CC_53
 params = matrix{{ii_K,1_K,-1_K}}; 

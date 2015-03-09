@@ -657,60 +657,61 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
-    
-     -- the code works only for preSLP!!!
-     (R,slpH) := H;
-     n := numgens R - 1;
-     K := coefficientRing R;
-     
-     slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
-     slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
-
-     toSLP := pre -> (
-       	 (constMAT, prog) := preSLPinterpretedSLP (n+1, pre);
-       	 rawSLP(raw constMAT, prog)
-       	 );  
-     if o.Software===M2enginePrecookedSLPs then ( -- !!! used temporarily
-	 slpH = toSLP slpH; 
-	 slpHx = toSLP slpHx;
-	 slpHt = toSLP slpHt; 	 
-	 );    
-
-     fromSlpMatrix := (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
-     if o.Software===M2enginePrecookedSLPs then -- !!! used temporarily
-     fromSlpMatrix = (S,params) -> (
-	 result := rawEvaluateSLP(S, raw params);
-	 lift(map(K, result),K)
-	 );
 
      -- evaluation times
      etH := 0;
      etHx := 0; 
-     etHt := 0;
+     etHt := 0;    
+    
+     if instance(H,Sequence) {* preSLP,  if o.Software===M2enginePrecookedSLPs 
+	                        then compile preSLPs in the engine *}
+     then (
+     	 (R,slpH) := H; 
+     	 n := numgens R - 1;
+     	 K := coefficientRing R;
+      	 --
+	 fromSlpMatrix := if o.Software===M2enginePrecookedSLPs then
+     	 (S,params) -> (
+	     result := rawEvaluateSLP(S, raw params);
+	     lift(map(K, result),K)
+	     )
+	 else (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
+     	 slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
+     	 slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
+     	 toSLP := pre -> (
+       	     (constMAT, prog) := preSLPinterpretedSLP (n+1, pre);
+       	     rawSLP(raw constMAT, prog)
+       	     );  
+     	 if o.Software===M2enginePrecookedSLPs then ( -- !!! used temporarily
+	     slpH = toSLP slpH; 
+	     slpHx = toSLP slpHx;
+	     slpHt = toSLP slpHt; 	 
+	     );    
+       	 evalH := (x0,t0)-> (
+	     tr := timing (
+	       	 transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	       	 );
+	     etH = etH + tr#0;
+	     tr#1
+	     );
+       	 evalHx := (x0,t0)-> (
+	     tr := timing (
+	       	 fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	       	 );
+	     etHx = etHx + tr#0;
+	     tr#1
+	     );  
+       	 evalHt := (x0,t0)->(
+	     tr := timing (
+	       	 fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+	       	 );
+	     etHt = etHt + tr#0;
+	     tr#1
+	     );
+       	 solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
+    	 )
+     else error "unexpected type of homotopy (first parameter)";
 
-     evalH := (x0,t0)-> (
-	 tr := timing (
-	     transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
-	     );
-	 etH = etH + tr#0;
-	 tr#1
-	 );
-     evalHx := (x0,t0)-> (
-	 tr := timing (
-	     fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
-	     );
-	 etHx = etHx + tr#0;
-	 tr#1
-	 );  
-     evalHt := (x0,t0)->(
-	 tr := timing (
-	     fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
-	     );
-	 etHt = etHt + tr#0;
-	 tr#1
-	 );
-     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
-     
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2 
@@ -735,44 +736,27 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			 -- to do: see if this path coinsides with any other path
 			 );
 		    if DBG > 4 then << "--- current t = " << t0 << "; precision = " << precision ring x0 << endl;
-                    -- monitor numerical stability: perhaps change patches if not stable ???
-		    -- Hx0 := evalHx(x0,t0);
-		    -- svd := sort first SVD Hx0;
-		    -- if o.Projectivize and first svd / last svd > condNumberThresh then ( 
-     	       	    --	 << "CONDITION NUMBER = " <<  first svd / last svd << endl;			 
-		    --	 );
-
+             
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-		    -- default dt; Certified and Multistep modify dt
 		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
-		    if o.Predictor == Tangent then (
-			Hx0 := evalHx(x0,t0);
-			Ht0 := evalHt(x0,t0);
-			dx = solve(Hx0,-dt*Ht0);
-			) 
+		    dx = if o.Predictor == Tangent then solveHxTimesDXequalsMinusHt(x0,t0)
 		    else if o.Predictor == Euler then (
 			H0 := evalH(x0,t0);
-			Hx0 = evalHx(x0,t0);
-			Ht0 = evalHt(x0,t0);
-			dx = solve(Hx0, -H0-Ht0*dt);
+			Hx0 := evalHx(x0,t0);
+			Ht0 := evalHt(x0,t0);
+			solve(Hx0, -H0-Ht0*dt)
 			)
 		    else if o.Predictor == RungeKutta4 then (
-			--k1 := evalMinusInverseHxHt(x0,t0);
-			--k2 := evalMinusInverseHxHt(x0+(1/2)*k1,t0+(1/2)*dt);
-			--k3 := evalMinusInverseHxHt(x0+(1/2)*k2,t0+(1/2)*dt);
-			--k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
-			--dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
 			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
 			dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
 			dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
 			dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
-			dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
+			(1/6)*dt*(dx1+2*dx2+2*dx3+dx4)
 			)
 		    else error "unknown Predictor";
-
 
 		    if DBG > 3 then << " x0 = " << x0 << ", t0 = " << t0 << ", res=" <<  toString evalH(x0,t0) << ",  dt = " << dt << ",  dx = " << toString dx << endl;
 

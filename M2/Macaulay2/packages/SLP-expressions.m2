@@ -1,4 +1,5 @@
 debug needsPackage "NumericalAlgebraicGeometry"
+debug Core
 
 {* Expressions in M2 
    *** should have this as a Gate 
@@ -433,10 +434,9 @@ T = inputGate symbol T
 
 K = CC
 R = K[x,y,t] 
-one = oneGate
-F = {X*X-one, Y*Y-one}
-G = {X*X+Y*Y-one, minusOne*X*X+Y}
-H = (one - T) * F + T * G
+F = {X*X-1, Y*Y-1}
+G = {X*X+Y*Y-1, -X*X+Y}
+H = (1 - T) * F + T * G
 
 preH = toPreSLP({X,Y,T},H)
 evaluatePreSLP(preH, {1,1,0})
