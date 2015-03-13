@@ -12,8 +12,9 @@ class Ring;
 /**
  * \ingroup polynomialrings
  */
-struct NCPolynomial
+class NCPolynomial
 {
+public:
   std::vector<ring_elem> mCoefficients;
   std::vector<int> mMonomials;
   // each monomial is of the form:
@@ -22,7 +23,66 @@ struct NCPolynomial
   //   xy23x: 25 0 1 1 ... 1 0 -1
   // 2 monomials: xzx, xy
   //   3 0 2 1 -1 2 0 1 -1
+  /*class iterator
+  {
+  public:
+    // useful typedefs
+    typedef iterator self_type;
+    typedef std::vector<ring_elem>::iterator reIterator;
+    typedef std::vector<int>::iterator monIterator;
+    typedef std::forward_iterator_tag iterator_category;
+    
+    // constructor
+    iterator(reIterator reIt, monIterator monIt) : reIt_(reIt), monIt_(monIt) { }
+    
+    // iteration functions
+    self_type & operator++()
+    {
+      // prefix ++ operator
+      self_type i = *this;
+      stepIterators();
+      return i;
+    }
+
+    self_type operator++(int junk)
+    {
+      // postfix ++ operator
+      stepIterators();
+      return *this;
+    }
+
+    // accessor functions
+    ring_elem *mCoefficient { return mCoeffPtr; }
+    int *mMonomial { return mMononomialPtr; }
+    
+    // (in)equality checks
+    bool operator==(const self_type& rhs) { return ((mCoeffPtr == rhs.mCoeffPtr) && (mMonomialPtr == rhs.mMonomialPtr)) }
+    bool operator!=(const self_type& rhs) { return not (*this == rhs ) }
+
+  private:
+    std::vector<ring_elem>::iterator reIt_;
+    std::vector<int>::iterator monIt_;
+    void stepIterators ()
+    {
+      // this is the function that actually increments the various iterators
+      // increment the ring element first
+      reIt_++;
+      while (*monIt_ != -1) monIt_++;
+    }
+  };
+
+  iterator begin()
+  {
+    return iterator(mCoefficients.begin(), mMonomials.begin());
+  }
+
+  iterator end()
+  {
+    return iterator(mCoefficients.end(), mMonomials.end());
+  }
+  */
 };
+
 class NCFreeAlgebra : public Ring
 {
   NCFreeAlgebra(const Ring* K,
