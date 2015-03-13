@@ -82,10 +82,12 @@ int NCFreeAlgebra::compare_elems(const ring_elem f, const ring_elem g) const
 
 ring_elem NCFreeAlgebra::copy(const ring_elem f) const
 {
+  return f;
 }
 
 void NCFreeAlgebra::remove(ring_elem &f) const
 {
+  // do nothing
 }
 
 ring_elem NCFreeAlgebra::negate(const ring_elem f) const
@@ -115,6 +117,7 @@ ring_elem NCFreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 void NCFreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
+  // TODO?  what to place here?
 }
 
 void NCFreeAlgebra::elem_text_out(buffer &o,
