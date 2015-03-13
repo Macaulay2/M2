@@ -9,6 +9,7 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	NCAlgebra \
 	util \
 	GF \
 	ZZ \

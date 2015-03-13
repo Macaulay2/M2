@@ -8,3 +8,7 @@ Steps to make NCalgebra arithmetic in the engine
       a type NCFreeAlgebra
       the class NCFreeAlgebra does the arithmetic.
         R->add(f,g) --> h ("raw pointers")
+
+debug Core    
+kk = QQ
+rawNCFreeAlgebra(raw kk, {})

@@ -281,6 +281,13 @@ extern "C" {
      c (depending on i and j), or at least less than that in the monomial ordering.
   */
 
+  const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
+                                                 M2_ArrayString names);
+  /* coefficientRing will be the allowed coefficients of our non-comm polynomials.
+     Currently: all variables have degree 1, and the monomial order is the graded lex order.
+     The degreeRing should be a poly ring in 1 variable.
+  */
+
   const Ring /* or null */ *IM2_Ring_frac(const Ring *R); /* drg: connected rawFractionRing*/
 
   const Ring /* or null */ *IM2_Ring_localization(const Ring *R,
