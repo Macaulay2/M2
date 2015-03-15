@@ -279,12 +279,14 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     )  
 
 appendToSLProgram = method()
+{*
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
     g.cache#slp = rawSLPInputGate(slp)
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
     g.cache#slp = rawSLPSumGate(slp,g.Input/(a->a.cache#slp))
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
     g.cache#slp = rawSLPProductGate(slp,g.Input/(a->a.cache#slp))
+*}
 
 -- GateMatrix is NOT A GATE
 GateMatrix = new Type of List
@@ -421,6 +423,7 @@ out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compres
 assert(out'eval == out'comp)
 out'value = matrix {output/(o->value(o,h))}
 assert(out'eval == out'value)
+printSLP preSLP
 
 
 -------------------------------------------------------

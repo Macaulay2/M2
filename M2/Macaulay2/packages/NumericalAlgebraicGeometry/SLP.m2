@@ -35,6 +35,31 @@ predTANGENT = 2;
 predEULER = 3;
 predPROJECTIVENEWTON = 4;
 
+-- Xn are inputs
+-- Cn are constants
+-- Gn are "gates"
+-- output is listed in the end
+printSLP = method()
+printSLP (List,List,Matrix) := (cc,pp,o) -> (
+    scan(#cc,i-><<"C"<<i<<" = "<<cc#i<<endl);
+    scan(#pp,i->(
+	    p := pp#i;
+	    <<"G"<<i<<" = ";
+	    (op,ops) := 
+	    if first p === slpPRODUCT then (" * ",drop(p,1))
+	    else if first p === slpMULTIsum then (" + ",drop(p,2))
+	    else error "unknown gate";
+	    scan(between(op,apply(ops,
+			o->if instance(o,Option) then (
+			    if o#0 === CONST then "C" else "X"
+			    )|toString o#1 else "G"|toString(i+o)
+			)),x-><<x);
+	    << endl;
+	    ));
+    << "output:" << endl;
+    scan(flatten entries o, x-> << "G" << x <<endl); 
+    )
+
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
      n->apply(n, b->
