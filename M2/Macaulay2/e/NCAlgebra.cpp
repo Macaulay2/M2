@@ -29,6 +29,7 @@ void NCFreeAlgebra::text_out(buffer &o) const
     }
   o << "}";
 }
+
 unsigned int NCFreeAlgebra::computeHashValue(const ring_elem a) const
 {
 }
@@ -50,9 +51,9 @@ ring_elem NCFreeAlgebra::var(int v) const
   std::cout << "called var with v = " << v << std::endl;
   NCPolynomial* result = new NCPolynomial;
   result->mCoefficients.push_back(mCoefficientRing.from_long(1));
-  result->mMonomials.push_back(1);
-  result->mMonomials.push_back(v);
-  result->mMonomials.push_back(-1);  
+  result->mMonomials.push_back(1);  // degree of the monomial
+  result->mMonomials.push_back(v);  // variable
+  result->mMonomials.push_back(-1);  // end of monomial
   return reinterpret_cast<Nterm*>(result);
 }
 
@@ -92,6 +93,14 @@ void NCFreeAlgebra::remove(ring_elem &f) const
 
 ring_elem NCFreeAlgebra::negate(const ring_elem f) const
 {
+  std::cout << "entered negate " << v << std::endl;
+  NCPolynomial* result = new NCPolynomial;
+  *result = NCFreeAlgebra::copy(f);
+  for(NCPolynomial::iterator i = f.begin(); i != f.end(); i++)
+  {
+    // copy the coefficients and monomials over.
+  }
+  std::cout << "exited negate " << v << std::endl;
 }
 
 ring_elem NCFreeAlgebra::add(const ring_elem f, const ring_elem g) const

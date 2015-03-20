@@ -23,17 +23,19 @@ public:
   //   xy23x: 25 0 1 1 ... 1 0 -1
   // 2 monomials: xzx, xy
   //   3 0 2 1 -1 2 0 1 -1
-  /*class iterator
+  
+  // this class is an iterator for traversing the terms in a polynomial.
+  class iterator
   {
   public:
     // useful typedefs
     typedef iterator self_type;
-    typedef std::vector<ring_elem>::iterator reIterator;
+    typedef std::vector<ring_elem>::iterator coeffIterator;
     typedef std::vector<int>::iterator monIterator;
     typedef std::forward_iterator_tag iterator_category;
     
     // constructor
-    iterator(reIterator reIt, monIterator monIt) : reIt_(reIt), monIt_(monIt) { }
+    iterator(coeffIterator coeffIt, monIterator monIt) : coeffIt_(coeffIt), monIt_(monIt) { }
     
     // iteration functions
     self_type & operator++()
@@ -51,36 +53,39 @@ public:
       return *this;
     }
 
-    // accessor functions
-    ring_elem *mCoefficient { return mCoeffPtr; }
-    int *mMonomial { return mMononomialPtr; }
+    // accessor functions -- (unfortunately) replace the more convenient -> notation since
+    // we have two vector iterators.
+    ring_elem coeff { return *(this->coeffIt_); }
+    int monom { return *(this->monIt_); }
     
     // (in)equality checks
-    bool operator==(const self_type& rhs) { return ((mCoeffPtr == rhs.mCoeffPtr) && (mMonomialPtr == rhs.mMonomialPtr)) }
-    bool operator!=(const self_type& rhs) { return not (*this == rhs ) }
+    bool operator==(const self_type& rhs) { return ((this->coeffIt_ == rhs.coeffIt_) && (this->monIt_ == rhs.monIt_)); }
+    bool operator!=(const self_type& rhs) { return ((this->coeffIt_ != rhs.coeffIt_) || (this->monIt_ != rhs.monIt_)); }
 
   private:
-    std::vector<ring_elem>::iterator reIt_;
-    std::vector<int>::iterator monIt_;
+    coeffIterator coeffIt_;
+    monIterator monIt_;
     void stepIterators ()
     {
       // this is the function that actually increments the various iterators
       // increment the ring element first
-      reIt_++;
+      coeffIt_++;
+      // increment to the end of the monomial
       while (*monIt_ != -1) monIt_++;
+      // one more to the start of next (or the .end())
+      monIt_++;
     }
   };
 
   iterator begin()
   {
-    return iterator(mCoefficients.begin(), mMonomials.begin());
+    return iterator(coeffIt_.begin(), monIt_.begin());
   }
 
   iterator end()
   {
-    return iterator(mCoefficients.end(), mMonomials.end());
+    return iterator(coeffIt_.end(), monIt_.end());
   }
-  */
 };
 
 class NCFreeAlgebra : public Ring
