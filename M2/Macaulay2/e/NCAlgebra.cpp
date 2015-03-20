@@ -51,9 +51,9 @@ ring_elem NCFreeAlgebra::var(int v) const
   std::cout << "called var with v = " << v << std::endl;
   NCPolynomial* result = new NCPolynomial;
   result->mCoefficients.push_back(mCoefficientRing.from_long(1));
+  result->mMonomials.push_back(3);  // degree of the monomial  
   result->mMonomials.push_back(1);  // degree of the monomial
   result->mMonomials.push_back(v);  // variable
-  result->mMonomials.push_back(-1);  // end of monomial
   return reinterpret_cast<Nterm*>(result);
 }
 
@@ -91,16 +91,17 @@ void NCFreeAlgebra::remove(ring_elem &f) const
   // do nothing
 }
 
-ring_elem NCFreeAlgebra::negate(const ring_elem f) const
+ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
 {
-  std::cout << "entered negate " << v << std::endl;
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  std::cout << "entered negate " << std::endl;
   NCPolynomial* result = new NCPolynomial;
-  *result = NCFreeAlgebra::copy(f);
-  for(NCPolynomial::iterator i = f.begin(); i != f.end(); i++)
-  {
-    // copy the coefficients and monomials over.
-  }
-  std::cout << "exited negate " << v << std::endl;
+  result->mMonomials = f->mMonomials;
+  result->mCoefficients.reserve(f->mCoefficients.size());
+  for (auto i=f->mCoefficients.cbegin(); i != f->mCoefficients.cend(); ++i)
+    result->mCoefficients.push_back(mCoefficientRing.negate(*i));
+  std::cout << "exited negate " << std::endl;
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::add(const ring_elem f, const ring_elem g) const
@@ -135,8 +136,16 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
+  // TODO: also output the coefficients
+  // TODO: really
   const NCPolynomial* f = reinterpret_cast<const NCPolynomial*>(ff.poly_val);
-  o << "[";
+  o << "coeffs: [";
+  for (int i=0; i<f->mCoefficients.size(); i++)
+    {
+      if (i>0) o << " ";
+      mCoefficientRing.elem_text_out(o, f->mCoefficients[i]);
+    }
+  o << "] monoms: [";
   for (int i=0; i<f->mMonomials.size(); i++)
     {
       if (i>0) o << " ";

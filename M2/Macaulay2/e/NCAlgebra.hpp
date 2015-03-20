@@ -9,6 +9,16 @@ class Ring;
 
 #include "ring.hpp"
 
+struct NCMonomial
+{
+  NCMonomial(const int* value) : mValue(value) {}
+  const int * operator*() const { return mValue; }
+private:
+  const int* mValue; // points to an array of ints of form: [len, degree, v0, v1, v2, ..., vr]
+    // We are visiting this monomial, we do not own it!
+
+};
+
 /**
  * \ingroup polynomialrings
  */
@@ -25,6 +35,7 @@ public:
   //   3 0 2 1 -1 2 0 1 -1
   
   // this class is an iterator for traversing the terms in a polynomial.
+
   class iterator
   {
   public:
@@ -35,57 +46,56 @@ public:
     typedef std::forward_iterator_tag iterator_category;
     
     // constructor
-    iterator(coeffIterator coeffIt, monIterator monIt) : coeffIt_(coeffIt), monIt_(monIt) { }
+    iterator(coeffIterator coeffIt, monIterator monIt) : mCoeffIt(coeffIt), mMonomIt(monIt) { }
     
     // iteration functions
     self_type & operator++()
     {
       // prefix ++ operator
-      self_type i = *this;
       stepIterators();
-      return i;
+      return *this;
     }
 
     self_type operator++(int junk)
     {
       // postfix ++ operator
+      self_type i = *this;
       stepIterators();
-      return *this;
+      return i;
     }
 
     // accessor functions -- (unfortunately) replace the more convenient -> notation since
     // we have two vector iterators.
-    ring_elem coeff { return *(this->coeffIt_); }
-    int monom { return *(this->monIt_); }
+    ring_elem coeff() { return *(this->mCoeffIt); }
+    NCMonomial monom() { return NCMonomial((&*(this->mMonomIt))); }
     
     // (in)equality checks
-    bool operator==(const self_type& rhs) { return ((this->coeffIt_ == rhs.coeffIt_) && (this->monIt_ == rhs.monIt_)); }
-    bool operator!=(const self_type& rhs) { return ((this->coeffIt_ != rhs.coeffIt_) || (this->monIt_ != rhs.monIt_)); }
+    bool operator==(const self_type& rhs) { return ((this->mCoeffIt == rhs.mCoeffIt) && (this->mMonomIt == rhs.mMonomIt)); }
+    bool operator!=(const self_type& rhs) { return ((this->mCoeffIt != rhs.mCoeffIt) || (this->mMonomIt != rhs.mMonomIt)); }
 
   private:
-    coeffIterator coeffIt_;
-    monIterator monIt_;
+    coeffIterator mCoeffIt;
+    monIterator mMonomIt;
     void stepIterators ()
     {
       // this is the function that actually increments the various iterators
       // increment the ring element first
-      coeffIt_++;
+      mCoeffIt++;
       // increment to the end of the monomial
-      while (*monIt_ != -1) monIt_++;
-      // one more to the start of next (or the .end())
-      monIt_++;
+      mMonomIt += *mMonomIt; // move to next monomial
     }
   };
 
   iterator begin()
   {
-    return iterator(coeffIt_.begin(), monIt_.begin());
+    return iterator(mCoefficients.begin(), mMonomials.begin());
   }
 
   iterator end()
   {
-    return iterator(coeffIt_.end(), monIt_.end());
+    return iterator(mCoefficients.end(), mMonomials.end());
   }
+
 };
 
 class NCFreeAlgebra : public Ring
