@@ -24,25 +24,17 @@ private:
  */
 class NCPolynomial
 {
-public:
-  std::vector<ring_elem> mCoefficients;
-  std::vector<int> mMonomials;
-  // each monomial is of the form:
-  //  <degree> <var1> <var2> ... <varn> <-1>
-  // e.g. xyxy: 4 0 1 0 1 -1
-  //   xy23x: 25 0 1 1 ... 1 0 -1
-  // 2 monomials: xzx, xy
-  //   3 0 2 1 -1 2 0 1 -1
-  
-  // this class is an iterator for traversing the terms in a polynomial.
+public:  
+  typedef std::vector<ring_elem>::iterator coeffIterator;
+  typedef std::vector<int>::iterator monIterator;
 
+  // this class is an iterator for traversing the terms in a polynomial.
+  // FRANK: should I make this a const_iterator instead?
   class iterator
   {
   public:
     // useful typedefs
     typedef iterator self_type;
-    typedef std::vector<ring_elem>::iterator coeffIterator;
-    typedef std::vector<int>::iterator monIterator;
     typedef std::forward_iterator_tag iterator_category;
     
     // constructor
@@ -91,10 +83,37 @@ public:
     return iterator(mCoefficients.begin(), mMonomials.begin());
   }
 
-  iterator end()
+  iterator cend()
   {
     return iterator(mCoefficients.end(), mMonomials.end());
   }
+
+  void push_backCoeff(const ring_elem & val) {mCoefficients.push_back(val); }
+  void push_backMonom(const int & val) {mMonomials.push_back(val); }
+
+  void reserveCoeff(int n) { mCoefficients.reserve(n); }
+  void reserveMonom(int n) { mMonomials.reserve(n); }
+
+  coeffIterator cbeginCoeff() { return mCoefficients.cbegin(); }
+  monIterator cbeginMonom() { return mMonomials.cbegin(); }
+
+  coeffIterator cendCoeff() { return mCoefficients.cend(); }
+  monIterator cendMonom() { return mMonomials.cend(); }
+
+  void copyCoeffs(const std::vector<ring_elem> & rhs ) { mCoefficients = rhs; }
+  void copyMonoms(const std::vector<int> & rhs ) { mMonomials = rhs; }
+
+int numTerms() { return mCoefficients.size(); }
+
+private:
+  std::vector<ring_elem> mCoefficients;
+  std::vector<int> mMonomials;
+  // each monomial is of the form:
+  //  <degree> <var1> <var2> ... <varn> <-1>
+  // e.g. xyxy: 4 0 1 0 1 -1
+  //   xy23x: 25 0 1 1 ... 1 0 -1
+  // 2 monomials: xzx, xy
+  //   3 0 2 1 -1 2 0 1 -1
 
 };
 

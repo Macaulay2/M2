@@ -50,10 +50,10 @@ ring_elem NCFreeAlgebra::var(int v) const
 {
   std::cout << "called var with v = " << v << std::endl;
   NCPolynomial* result = new NCPolynomial;
-  result->mCoefficients.push_back(mCoefficientRing.from_long(1));
-  result->mMonomials.push_back(3);  // degree of the monomial  
-  result->mMonomials.push_back(1);  // degree of the monomial
-  result->mMonomials.push_back(v);  // variable
+  result->push_backCoeff(mCoefficientRing.from_long(1));
+  result->push_backMonom(3);  // length of the monomial data
+  result->push_backMonom(1);  // degree of the monomial.  Will need to change if weights are present.
+  result->push_backMonom(v);  // variable
   return reinterpret_cast<Nterm*>(result);
 }
 
@@ -96,10 +96,13 @@ ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   std::cout << "entered negate " << std::endl;
   NCPolynomial* result = new NCPolynomial;
-  result->mMonomials = f->mMonomials;
-  result->mCoefficients.reserve(f->mCoefficients.size());
-  for (auto i=f->mCoefficients.cbegin(); i != f->mCoefficients.cend(); ++i)
-    result->mCoefficients.push_back(mCoefficientRing.negate(*i));
+  // use the same monomials
+  result->copyMonoms(f->mMonomials);
+  // request the vector of the appropriate size
+  result->reserveCoeff(f->numTerms());
+  // negate all the coefficients 
+  for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
+    result->push_backCoeff(mCoefficientRing.negate(*i));
   std::cout << "exited negate " << std::endl;
   return reinterpret_cast<Nterm*>(result);
 }
@@ -136,8 +139,6 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
                              bool p_plus,
                              bool p_parens) const
 {
-  // TODO: also output the coefficients
-  // TODO: really
   const NCPolynomial* f = reinterpret_cast<const NCPolynomial*>(ff.poly_val);
   o << "coeffs: [";
   for (int i=0; i<f->mCoefficients.size(); i++)
@@ -152,6 +153,66 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
       o << f->mMonomials[i];
     }
   o << "]";
+
+#if 0
+  // new version
+  bool hasTwoTerms = (f->numTerms > 1);
+  for (auto i = f->begin(); i != f->end(); i++)
+    {
+      
+    }
+
+  // from poly.cpp
+  Nterm *t = f;
+  if (t == NULL)
+    {
+      o << '0';
+      return;
+    }
+
+  int two_terms = (t->next != NULL);
+
+  int needs_parens = p_parens && two_terms;
+  if (needs_parens)
+    {
+      if (p_plus) o << '+';
+      o << '(';
+      p_plus = false;
+    }
+
+  for (t = f; t != NULL; t = t->next)
+    {
+      int isone = M_->is_one(t->monom);
+      p_parens = !isone;
+      bool p_one_this = (isone && needs_parens) || (isone && p_one);
+      K_->elem_text_out(o,t->coeff, p_one_this,p_plus,p_parens);
+      if (!isone)
+        {
+          M_->elem_text_out(o, t->monom, p_one_this);
+        }
+      p_plus = true;
+    }
+  if (needs_parens) o << ')';
+ 
+  // from ntuple.cpp
+  int len_ = 0;
+  for (unsigned int v=0; v<nvars; v++)
+    if (a[v] != 0) {
+      len_++;
+        if (varnames->len < v)
+          o << ".";
+        else
+          o << varnames->array[v];
+      int e = a[v];
+      int single = (varnames->array[v]->len == 1);
+      if (e > 1 && single) o << e;
+      else if (e > 1) o << "^" << e;
+      else if (e < 0) o << "^(" << e << ")";
+    }
+  if (len_ == 0 && p_one) o << "1";
+
+#elseif
+
 }
 
 ring_elem NCFreeAlgebra::eval(const RingMap *map, const ring_elem f, int first_var) const
