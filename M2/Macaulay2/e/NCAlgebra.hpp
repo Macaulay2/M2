@@ -12,7 +12,7 @@ class Ring;
 struct NCMonomial
 {
   NCMonomial(const int* value) : mValue(value) {}
-  const int * operator*() const { return mValue; }
+  const int* operator*() const { return mValue; }
 private:
   const int* mValue; // points to an array of ints of form: [len, degree, v0, v1, v2, ..., vr]
     // We are visiting this monomial, we do not own it!
@@ -25,11 +25,13 @@ private:
 class NCPolynomial
 {
 public:  
-  typedef std::vector<ring_elem>::iterator coeffIterator;
-  typedef std::vector<int>::iterator monIterator;
+  typedef std::vector<ring_elem> coeffVector;
+  typedef std::vector<int> monomVector;
+
+  typedef coeffVector::iterator coeffIterator;
+  typedef monomVector::iterator monomIterator;
 
   // this class is an iterator for traversing the terms in a polynomial.
-  // FRANK: should I make this a const_iterator instead?
   class iterator
   {
   public:
@@ -38,7 +40,7 @@ public:
     typedef std::forward_iterator_tag iterator_category;
     
     // constructor
-    iterator(coeffIterator coeffIt, monIterator monIt) : mCoeffIt(coeffIt), mMonomIt(monIt) { }
+    iterator(coeffIterator coeffIt, monomIterator monIt) : mCoeffIt(coeffIt), mMonomIt(monIt) { }
     
     // iteration functions
     self_type & operator++()
@@ -59,15 +61,17 @@ public:
     // accessor functions -- (unfortunately) replace the more convenient -> notation since
     // we have two vector iterators.
     ring_elem coeff() { return *(this->mCoeffIt); }
+    // for the record, we are using &*it here to get the pointer that records where an iterator currently is
+    // this seems like a bit of a hack, but it seems to be the way things are done.
     NCMonomial monom() { return NCMonomial((&*(this->mMonomIt))); }
     
     // (in)equality checks
-    bool operator==(const self_type& rhs) { return ((this->mCoeffIt == rhs.mCoeffIt) && (this->mMonomIt == rhs.mMonomIt)); }
-    bool operator!=(const self_type& rhs) { return ((this->mCoeffIt != rhs.mCoeffIt) || (this->mMonomIt != rhs.mMonomIt)); }
+    bool operator==(const self_type& rhs) { return (this->mCoeffIt == rhs.mCoeffIt); }
+    bool operator!=(const self_type& rhs) { return (this->mCoeffIt != rhs.mCoeffIt); }
 
   private:
     coeffIterator mCoeffIt;
-    monIterator mMonomIt;
+    monomIterator mMonomIt;
     void stepIterators ()
     {
       // this is the function that actually increments the various iterators
@@ -95,10 +99,10 @@ public:
   void reserveMonom(int n) { mMonomials.reserve(n); }
 
   coeffIterator cbeginCoeff() { return mCoefficients.cbegin(); }
-  monIterator cbeginMonom() { return mMonomials.cbegin(); }
+  monomIterator cbeginMonom() { return mMonomials.cbegin(); }
 
   coeffIterator cendCoeff() { return mCoefficients.cend(); }
-  monIterator cendMonom() { return mMonomials.cend(); }
+  monomIterator cendMonom() { return mMonomials.cend(); }
 
   void copyCoeffs(const std::vector<ring_elem> & rhs ) { mCoefficients = rhs; }
   void copyMonoms(const std::vector<int> & rhs ) { mMonomials = rhs; }

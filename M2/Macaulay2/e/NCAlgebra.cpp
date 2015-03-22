@@ -140,6 +140,9 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
                              bool p_parens) const
 {
   const NCPolynomial* f = reinterpret_cast<const NCPolynomial*>(ff.poly_val);
+
+#if 0
+  // old version
   o << "coeffs: [";
   for (int i=0; i<f->mCoefficients.size(); i++)
     {
@@ -153,26 +156,11 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
       o << f->mMonomials[i];
     }
   o << "]";
+#endif
 
-#if 0
   // new version
-  bool hasTwoTerms = (f->numTerms > 1);
-  for (auto i = f->begin(); i != f->end(); i++)
-    {
-      
-    }
-
-  // from poly.cpp
-  Nterm *t = f;
-  if (t == NULL)
-    {
-      o << '0';
-      return;
-    }
-
-  int two_terms = (t->next != NULL);
-
-  int needs_parens = p_parens && two_terms;
+  bool two_terms = (f->numTerms() > 1);
+  bool needs_parens = p_parens && two_terms;
   if (needs_parens)
     {
       if (p_plus) o << '+';
@@ -180,39 +168,27 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
       p_plus = false;
     }
 
-  for (t = f; t != NULL; t = t->next)
+  for (auto i = f->begin(); i != f->end(); i++)
     {
-      int isone = M_->is_one(t->monom);
-      p_parens = !isone;
-      bool p_one_this = (isone && needs_parens) || (isone && p_one);
-      K_->elem_text_out(o,t->coeff, p_one_this,p_plus,p_parens);
+      bool is_one = i->is_one_monomial();
+      p_parens = !is_one;
+      bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
+      mCoefficientRing.elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
       if (!isone)
         {
-          M_->elem_text_out(o, t->monom, p_one_this);
+          // if not the empty monomial, then output the monomial
+          auto mon_length = **(i.monom()) - 2;
+          auto mon_ptr = *(i.monom());
+          for (auto j = 0; j < mon_length; j++)
+            {
+              // for now, just output the string.
+              o << mVariableNames[j];
+            }
         }
       p_plus = true;
     }
+
   if (needs_parens) o << ')';
- 
-  // from ntuple.cpp
-  int len_ = 0;
-  for (unsigned int v=0; v<nvars; v++)
-    if (a[v] != 0) {
-      len_++;
-        if (varnames->len < v)
-          o << ".";
-        else
-          o << varnames->array[v];
-      int e = a[v];
-      int single = (varnames->array[v]->len == 1);
-      if (e > 1 && single) o << e;
-      else if (e > 1) o << "^" << e;
-      else if (e < 0) o << "^(" << e << ")";
-    }
-  if (len_ == 0 && p_one) o << "1";
-
-#elseif
-
 }
 
 ring_elem NCFreeAlgebra::eval(const RingMap *map, const ring_elem f, int first_var) const
