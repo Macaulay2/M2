@@ -15,7 +15,9 @@ NCFreeAlgebra::NCFreeAlgebra(const Ring* K,
   : mCoefficientRing(*K)
 {
   for (auto i=0; i<names->len; i++)
-    mVariableNames.push_back(std::string(names->array[i]->array, names->array[i]->len));
+    // used emplace_back here.  C++11 feature which allows constructor arguments to be passed in place,
+    // rather than having to create a temporary to pass to push_back.
+    mVariableNames.emplace_back(names->array[i]->array, names->array[i]->len);
 }
 
 void NCFreeAlgebra::text_out(buffer &o) const
@@ -111,7 +113,7 @@ ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   NCPolynomial* result = new NCPolynomial;
   // use the same monomials
-  result->copyMonoms(f->getMonomVector());
+  result->copyAllMonoms(f->getMonomVector());
   // request the vector of the appropriate size
   result->reserveCoeff(f->numTerms());
   // negate all the coefficients 
@@ -122,14 +124,49 @@ ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
 
 ring_elem NCFreeAlgebra::add(const ring_elem f, const ring_elem g) const
 {
+  
 }
 
 ring_elem NCFreeAlgebra::subtract(const ring_elem f, const ring_elem g) const
 {
 }
 
-ring_elem NCFreeAlgebra::mult(const ring_elem f, const ring_elem g) const
+ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
+  // for right now, just make mult multiply f*(lead term g)
+  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  auto i = g->cbegin();
+  return mult_by_term(f1, i.coeff(), i.monom());
+}
+
+ring_elem NCFreeAlgebra::mult_by_term(const ring_elem f1,
+                                      const ring_elem c, const NCMonomial m) const
+{
+  // return f*c*m
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  NCPolynomial* result = new NCPolynomial;
+  for(auto i=f->cbegin(); i != f->cend(); i++)
+    {
+      // multiply the coefficients
+      result->push_backCoeff(mCoefficientRing.mult(i.coeff(),c));
+      // tack on the monomial pointed to by m to the end of current monomial.
+      int lenm = (*m)[0];
+      int degm = (*m)[1];
+      const int* curMon = *(i.monom());
+      result->push_backMonom(curMon[0] + lenm - 2);
+      result->push_backMonom(curMon[1] + degm);
+      // copy f's monomial
+      for(auto j = 2; j < curMon[0]; j++)
+        {
+          result->push_backMonom(curMon[j]);
+        }
+      // copy m's monomial
+      for(auto j = 2; j < (*m)[0]; j++)
+        {
+          result->push_backMonom((*m)[j]);
+        }      
+    }
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::invert(const ring_elem f) const
@@ -177,7 +214,17 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
           for (auto j = 0; j < mon_length; j++)
             {
               // for now, just output the string.
+              int curvar = mon_ptr[j];
+              int curvarPower = 0;
               o << mVariableNames[mon_ptr[j]];
+              while ((j < mon_length) && (mon_ptr[j] == curvar))
+                {
+                  j++;
+                  curvarPower++;
+                }
+              if (curvarPower > 1) o << "^" << curvarPower;
+              // back j up one since we went too far looking ahead.
+              j--;
             }
         }
       p_plus = true;

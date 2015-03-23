@@ -173,8 +173,8 @@ public:
   coeffConstIterator cendCoeff() const { return mCoefficients.cend(); }
   monomConstIterator cendMonom() const { return mMonomials.cend(); }
 
-  void copyCoeffs(const coeffVector & rhs ) { mCoefficients = rhs; }
-  void copyMonoms(const monomVector & rhs ) { mMonomials = rhs; }
+  void copyAllCoeffs(const coeffVector & rhs ) { mCoefficients = rhs; }
+  void copyAllMonoms(const monomVector & rhs ) { mMonomials = rhs; }
 
   const coeffVector & getCoeffVector() const { return mCoefficients; }
   const monomVector & getMonomVector() const { return mMonomials; }
@@ -201,6 +201,7 @@ public:
   static NCFreeAlgebra* create(const Ring* K,
                                M2_ArrayString names);
 
+  // these are all the functions from Ring that must exist for NCFreeAlgebra to be instantiated
   virtual void text_out(buffer &o) const;
   virtual unsigned int computeHashValue(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;
@@ -230,6 +231,9 @@ public:
                              bool p_parens) const;
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
   
+  // some internal functions for the above routines
+  ring_elem mult_by_term(const ring_elem f, const ring_elem c, const NCMonomial) const;
+
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;
