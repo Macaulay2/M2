@@ -12,7 +12,8 @@ Steps to make NCalgebra arithmetic in the engine
 debug Core    
 kk = QQ
 R = rawNCFreeAlgebra(raw kk, ("a","b","c"))
-R_0
-R_1
-R_2
+1_R
+a = R_0
+b = R_1
+c = R_2
 -R_0
