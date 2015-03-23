@@ -13,6 +13,9 @@ struct NCMonomial
 {
   NCMonomial(const int* value) : mValue(value) {}
   const int* operator*() const { return mValue; }
+
+  bool is_one_monomial() const { return (mValue[0] == 2 && mValue[1] == 0); }
+
 private:
   const int* mValue; // points to an array of ints of form: [len, degree, v0, v1, v2, ..., vr]
     // We are visiting this monomial, we do not own it!
@@ -31,7 +34,10 @@ public:
   typedef coeffVector::iterator coeffIterator;
   typedef monomVector::iterator monomIterator;
 
-  // this class is an iterator for traversing the terms in a polynomial.
+  typedef coeffVector::const_iterator coeffConstIterator;
+  typedef monomVector::const_iterator monomConstIterator;
+
+  // this class is an non-const_iterator for traversing the terms in a polynomial.
   class iterator
   {
   public:
@@ -63,15 +69,68 @@ public:
     ring_elem coeff() { return *(this->mCoeffIt); }
     // for the record, we are using &*it here to get the pointer that records where an iterator currently is
     // this seems like a bit of a hack, but it seems to be the way things are done.
+    // FRANK: Do we want to be making a copy here?
     NCMonomial monom() { return NCMonomial((&*(this->mMonomIt))); }
     
     // (in)equality checks
-    bool operator==(const self_type& rhs) { return (this->mCoeffIt == rhs.mCoeffIt); }
-    bool operator!=(const self_type& rhs) { return (this->mCoeffIt != rhs.mCoeffIt); }
+    bool operator==(const self_type& rhs) const { return (this->mCoeffIt == rhs.mCoeffIt); }
+    bool operator!=(const self_type& rhs) const { return (this->mCoeffIt != rhs.mCoeffIt); }
 
   private:
     coeffIterator mCoeffIt;
     monomIterator mMonomIt;
+    void stepIterators ()
+    {
+      // this is the function that actually increments the various iterators
+      // increment the ring element first
+      mCoeffIt++;
+      // increment to the end of the monomial
+      mMonomIt += *mMonomIt; // move to next monomial
+    }
+  };
+
+  // this class is an non-const_iterator for traversing the terms in a polynomial.
+  class const_iterator
+  {
+  public:
+    // useful typedefs
+    typedef const_iterator self_type;
+    typedef std::forward_iterator_tag iterator_category;
+    
+    // constructor
+    const_iterator(coeffConstIterator coeffIt, monomConstIterator monIt) : mCoeffIt(coeffIt), mMonomIt(monIt) { }
+    
+    // iteration functions
+    self_type & operator++()
+    {
+      // prefix ++ operator
+      stepIterators();
+      return *this;
+    }
+
+    self_type operator++(int junk)
+    {
+      // postfix ++ operator
+      self_type i = *this;
+      stepIterators();
+      return i;
+    }
+
+    // accessor functions -- (unfortunately) replace the more convenient -> notation since
+    // we have two vector iterators.
+    // for the record, we are using &*it here to get the pointer that records where an iterator currently is
+    // this seems like a bit of a hack, but it seems to be the way things are done.
+    const ring_elem coeff() const { return *(this->mCoeffIt); }
+    // FRANK: Same as above, do we want to make a copy here?
+    NCMonomial monom() const { return NCMonomial((&*(this->mMonomIt))); }
+    
+    // (in)equality checks
+    bool operator==(const self_type& rhs) const { return (this->mCoeffIt == rhs.mCoeffIt); }
+    bool operator!=(const self_type& rhs) const { return (this->mCoeffIt != rhs.mCoeffIt); }
+
+  private:
+    coeffConstIterator mCoeffIt;
+    monomConstIterator mMonomIt;
     void stepIterators ()
     {
       // this is the function that actually increments the various iterators
@@ -87,27 +146,40 @@ public:
     return iterator(mCoefficients.begin(), mMonomials.begin());
   }
 
-  iterator cend()
+  iterator end()
   {
     return iterator(mCoefficients.end(), mMonomials.end());
+  }
+
+  const_iterator cbegin() const
+  {
+    return const_iterator(mCoefficients.cbegin(), mMonomials.cbegin());
+  }
+
+  const_iterator cend() const
+  {
+    return const_iterator(mCoefficients.cend(), mMonomials.cend());
   }
 
   void push_backCoeff(const ring_elem & val) {mCoefficients.push_back(val); }
   void push_backMonom(const int & val) {mMonomials.push_back(val); }
 
-  void reserveCoeff(int n) { mCoefficients.reserve(n); }
-  void reserveMonom(int n) { mMonomials.reserve(n); }
+  void reserveCoeff(coeffVector::size_type n) { mCoefficients.reserve(n); }
+  void reserveMonom(monomVector::size_type n) { mMonomials.reserve(n); }
 
-  coeffIterator cbeginCoeff() { return mCoefficients.cbegin(); }
-  monomIterator cbeginMonom() { return mMonomials.cbegin(); }
+  coeffConstIterator cbeginCoeff() const { return mCoefficients.cbegin(); }
+  monomConstIterator cbeginMonom() const { return mMonomials.cbegin(); }
 
-  coeffIterator cendCoeff() { return mCoefficients.cend(); }
-  monomIterator cendMonom() { return mMonomials.cend(); }
+  coeffConstIterator cendCoeff() const { return mCoefficients.cend(); }
+  monomConstIterator cendMonom() const { return mMonomials.cend(); }
 
-  void copyCoeffs(const std::vector<ring_elem> & rhs ) { mCoefficients = rhs; }
-  void copyMonoms(const std::vector<int> & rhs ) { mMonomials = rhs; }
+  void copyCoeffs(const coeffVector & rhs ) { mCoefficients = rhs; }
+  void copyMonoms(const monomVector & rhs ) { mMonomials = rhs; }
 
-int numTerms() { return mCoefficients.size(); }
+  const coeffVector & getCoeffVector() const { return mCoefficients; }
+  const monomVector & getMonomVector() const { return mMonomials; }
+  
+  coeffVector::size_type numTerms() const { return mCoefficients.size(); }
 
 private:
   std::vector<ring_elem> mCoefficients;

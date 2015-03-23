@@ -48,7 +48,6 @@ ring_elem NCFreeAlgebra::from_rational(mpq_ptr q) const
 
 ring_elem NCFreeAlgebra::var(int v) const
 {
-  std::cout << "called var with v = " << v << std::endl;
   NCPolynomial* result = new NCPolynomial;
   result->push_backCoeff(mCoefficientRing.from_long(1));
   result->push_backMonom(3);  // length of the monomial data
@@ -94,16 +93,14 @@ void NCFreeAlgebra::remove(ring_elem &f) const
 ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
 {
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
-  std::cout << "entered negate " << std::endl;
   NCPolynomial* result = new NCPolynomial;
   // use the same monomials
-  result->copyMonoms(f->mMonomials);
+  result->copyMonoms(f->getMonomVector());
   // request the vector of the appropriate size
   result->reserveCoeff(f->numTerms());
   // negate all the coefficients 
   for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
     result->push_backCoeff(mCoefficientRing.negate(*i));
-  std::cout << "exited negate " << std::endl;
   return reinterpret_cast<Nterm*>(result);
 }
 
@@ -141,24 +138,6 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
 {
   const NCPolynomial* f = reinterpret_cast<const NCPolynomial*>(ff.poly_val);
 
-#if 0
-  // old version
-  o << "coeffs: [";
-  for (int i=0; i<f->mCoefficients.size(); i++)
-    {
-      if (i>0) o << " ";
-      mCoefficientRing.elem_text_out(o, f->mCoefficients[i]);
-    }
-  o << "] monoms: [";
-  for (int i=0; i<f->mMonomials.size(); i++)
-    {
-      if (i>0) o << " ";
-      o << f->mMonomials[i];
-    }
-  o << "]";
-#endif
-
-  // new version
   bool two_terms = (f->numTerms() > 1);
   bool needs_parens = p_parens && two_terms;
   if (needs_parens)
@@ -168,21 +147,21 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
       p_plus = false;
     }
 
-  for (auto i = f->begin(); i != f->end(); i++)
+  for (auto i = f->cbegin(); i != f->cend(); i++)
     {
-      bool is_one = i->is_one_monomial();
+      bool is_one = i.monom().is_one_monomial();
       p_parens = !is_one;
       bool p_one_this = (is_one && needs_parens) || (is_one && p_one);
       mCoefficientRing.elem_text_out(o, i.coeff(), p_one_this, p_plus, p_parens);
-      if (!isone)
+      if (!is_one)
         {
           // if not the empty monomial, then output the monomial
           auto mon_length = **(i.monom()) - 2;
-          auto mon_ptr = *(i.monom());
+          auto mon_ptr = *(i.monom()) + 2;
           for (auto j = 0; j < mon_length; j++)
             {
               // for now, just output the string.
-              o << mVariableNames[j];
+              o << mVariableNames[mon_ptr[j]];
             }
         }
       p_plus = true;

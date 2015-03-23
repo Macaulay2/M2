@@ -14,4 +14,5 @@ kk = QQ
 R = rawNCFreeAlgebra(raw kk, ("a","b","c"))
 R_0
 R_1
+R_2
 -R_0
