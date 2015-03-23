@@ -32,18 +32,34 @@ void NCFreeAlgebra::text_out(buffer &o) const
 
 unsigned int NCFreeAlgebra::computeHashValue(const ring_elem a) const
 {
+
 }
 
 ring_elem NCFreeAlgebra::from_long(long n) const
 {
+  NCPolynomial* result = new NCPolynomial;
+  result->push_backCoeff(mCoefficientRing.from_long(n));
+  result->push_backMonom(2);  // length of the monomial data
+  result->push_backMonom(0);  // degree of the monomial.  Will need to change if weights are present.
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::from_int(mpz_ptr n) const
 {
+  NCPolynomial* result = new NCPolynomial;
+  result->push_backCoeff(mCoefficientRing.from_int(n));
+  result->push_backMonom(2);  // length of the monomial data
+  result->push_backMonom(0);  // degree of the monomial.  Will need to change if weights are present.
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::from_rational(mpq_ptr q) const
 {
+  NCPolynomial* result = new NCPolynomial;
+  result->push_backCoeff(mCoefficientRing.from_rational(q));
+  result->push_backMonom(2);  // length of the monomial data
+  result->push_backMonom(0);  // degree of the monomial.  Will need to change if weights are present.
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::var(int v) const
