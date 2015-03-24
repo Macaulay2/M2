@@ -306,15 +306,30 @@ ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
   ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
   for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
     {
-      // this can be much better... multiplication preserves the order and we are not using that.
-      // TODO: need to write an add_to function.
-      resultSoFar = add(resultSoFar,mult_by_right_term(f1, gIt.coeff(), gIt.monom()));
+      add_to_end(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
     }
   return resultSoFar;
 }
 
-// TODO: need a left_term as well.
-ring_elem NCFreeAlgebra::mult_by_right_term(const ring_elem f1,
+void NCFreeAlgebra::add_to_end(ring_elem f1, const ring_elem g1) const
+{
+  // this command adds the terms of g1 to the end of f1, so you must be sure that the
+  // lead term of g1 is less than the last term of f1 to ensure that the order is preserved.
+  NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  auto gIt = g->cbegin();
+  auto gEnd = g->cend();
+  while (gIt != gEnd)
+    {
+      auto gMon = gIt.monom();
+      auto gCoeff = gIt.coeff();
+      f->push_backCoeff(gCoeff);
+      for (int j = 0; j < **gMon; j++) f->push_backMonom((*gMon)[j]);
+      gIt++;
+    }
+}
+
+ring_elem NCFreeAlgebra::mult_by_term_right(const ring_elem f1,
                                             const ring_elem c, const NCMonomial m) const
 {
   // return f*c*m
@@ -340,6 +355,36 @@ ring_elem NCFreeAlgebra::mult_by_right_term(const ring_elem f1,
         {
           result->push_backMonom((*m)[j]);
         }      
+    }
+  return reinterpret_cast<Nterm*>(result);
+}
+
+ring_elem NCFreeAlgebra::mult_by_term_left(const ring_elem f1,
+                                           const ring_elem c, const NCMonomial m) const
+{
+  // return c*m*f
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  NCPolynomial* result = new NCPolynomial;
+  for(auto i=f->cbegin(); i != f->cend(); i++)
+    {
+      // multiply the coefficients
+      result->push_backCoeff(mCoefficientRing.mult(c,i.coeff()));
+      // tack on the monomial pointed to by m to the end of current monomial.
+      int lenm = (*m)[0];
+      int degm = (*m)[1];
+      const int* curMon = *(i.monom());
+      result->push_backMonom(curMon[0] + lenm - 2);
+      result->push_backMonom(curMon[1] + degm);
+      // copy m's monomial
+      for(auto j = 2; j < (*m)[0]; j++)
+        {
+          result->push_backMonom((*m)[j]);
+        }      
+      // copy f's monomial
+      for(auto j = 2; j < curMon[0]; j++)
+        {
+          result->push_backMonom(curMon[j]);
+        }
     }
   return reinterpret_cast<Nterm*>(result);
 }

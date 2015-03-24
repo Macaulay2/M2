@@ -232,7 +232,9 @@ public:
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
   
   // some internal functions for the above routines
-  ring_elem mult_by_right_term(const ring_elem f, const ring_elem c, const NCMonomial) const;
+  ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const NCMonomial) const;
+  ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const NCMonomial) const;
+  void add_to_end(ring_elem f, const ring_elem g) const;
   int compare_monoms(const NCMonomial m1, const NCMonomial m2) const;
 
 private:
