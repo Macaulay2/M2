@@ -118,9 +118,9 @@ public:
 
     // accessor functions -- (unfortunately) replace the more convenient -> notation since
     // we have two vector iterators.
+    const ring_elem coeff() const { return *(this->mCoeffIt); }
     // for the record, we are using &*it here to get the pointer that records where an iterator currently is
     // this seems like a bit of a hack, but it seems to be the way things are done.
-    const ring_elem coeff() const { return *(this->mCoeffIt); }
     // FRANK: Same as above, do we want to make a copy here?
     NCMonomial monom() const { return NCMonomial((&*(this->mMonomIt))); }
     
@@ -232,11 +232,13 @@ public:
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
   
   // some internal functions for the above routines
-  ring_elem mult_by_term(const ring_elem f, const ring_elem c, const NCMonomial) const;
+  ring_elem mult_by_right_term(const ring_elem f, const ring_elem c, const NCMonomial) const;
+  int compare_monoms(const NCMonomial m1, const NCMonomial m2) const;
 
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;
+  unsigned int mNumVars;
 };
 
 

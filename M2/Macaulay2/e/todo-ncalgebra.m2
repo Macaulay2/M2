@@ -9,6 +9,7 @@ Steps to make NCalgebra arithmetic in the engine
       the class NCFreeAlgebra does the arithmetic.
         R->add(f,g) --> h ("raw pointers")
 
+restart
 debug Core    
 kk = QQ
 R = rawNCFreeAlgebra(raw kk, ("a","b","c"))
@@ -16,4 +17,20 @@ R = rawNCFreeAlgebra(raw kk, ("a","b","c"))
 a = R_0
 b = R_1
 c = R_2
--R_0
+-a
+a*b*a*b*b*a*a*a
+a > b
+a < b
+a >= b
+a <= b
+a == b -- not sure why this is returning true
+a*b*a*b*b*a*a*c > a*b*a*b*b*a*a*b
+a*b*b*a*a*c > a*b*a*b*b*a*a*b
+a*b*a*b*b*a*a*c > a*b*b*a*a*b
+f = a+b+c
+time(f*f*f*f*f*f*f*f*f*f*f*f*f);
+time(f6 = f*f*f*f*f*f);
+time(f6*f6);
+g = a-b-c
+f*g-g*f
+f*f

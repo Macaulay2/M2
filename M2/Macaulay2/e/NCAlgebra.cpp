@@ -12,11 +12,13 @@ NCFreeAlgebra* NCFreeAlgebra::create(const Ring* K,
 
 NCFreeAlgebra::NCFreeAlgebra(const Ring* K,
                              M2_ArrayString names)
-  : mCoefficientRing(*K)
+  : mCoefficientRing(*K),
+    mNumVars(names->len)
 {
+  
   for (auto i=0; i<names->len; i++)
     // used emplace_back here.  C++11 feature which allows constructor arguments to be passed in place,
-    // rather than having to create a temporary to pass to push_back.
+    // rather than having to create a temporary object to pass to push_back.
     mVariableNames.emplace_back(names->array[i]->array, names->array[i]->len);
 }
 
@@ -94,8 +96,49 @@ bool NCFreeAlgebra::is_equal(const ring_elem f, const ring_elem g) const
 {
 }
 
-int NCFreeAlgebra::compare_elems(const ring_elem f, const ring_elem g) const
+int NCFreeAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) const
 {
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  auto fIt = f->cbegin();
+  auto gIt = g->cbegin();
+  auto fEnd = f->cend();
+  auto gEnd = g->cend();
+  int cmp;
+  for ( ; ; fIt++, gIt++)
+    {
+      if (fIt == fEnd)
+        {
+          if (gIt == gEnd) return EQ;
+          return LT;
+        }
+      if (gIt == gEnd) return GT;
+      if (mNumVars > 0)
+        {
+          cmp = compare_monoms(fIt.monom(),gIt.monom());
+          if (cmp != 0) return cmp;
+        }
+      // if we are here, then the monomials are the same and we compare coefficients.
+      // for example if a,b are in the base and a > b then ax > bx.
+      cmp = mCoefficientRing.compare_elems(fIt.coeff(), fIt.coeff());
+      if (cmp != 0) return cmp;
+    }
+}
+
+int NCFreeAlgebra::compare_monoms(const NCMonomial m1, const NCMonomial m2) const
+{
+  // here, compare the monomials pointed to by fIt and gIt.
+  // should probably make an NCMonoid class...
+  if ((*m1)[1] > (*m2)[1]) return GT;
+  if ((*m1)[1] < (*m2)[1]) return LT;
+  // at this stage, they have the same degree, so use lex order
+  for (int j = 2; j < **m1; j++)
+    {
+      if ((*m1)[j] > (*m2)[j]) return LT;
+      if ((*m1)[j] < (*m2)[j]) return GT;
+    }
+  // if we are here, the monomials are the same.
+  return EQ;
 }
 
 ring_elem NCFreeAlgebra::copy(const ring_elem f) const
@@ -122,25 +165,155 @@ ring_elem NCFreeAlgebra::negate(const ring_elem f1) const
   return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem NCFreeAlgebra::add(const ring_elem f, const ring_elem g) const
+ring_elem NCFreeAlgebra::add(const ring_elem f1, const ring_elem g1) const
 {
-  
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  NCPolynomial* result = new NCPolynomial;
+  auto fIt = f->cbegin();
+  auto gIt = g->cbegin();
+  auto fEnd = f->cend();
+  auto gEnd = g->cend();
+
+  // loop over the iterators for f and g, adding the bigger of the two to
+  // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
+  while ((fIt != fEnd) && (gIt != gEnd))
+    {
+      auto fMon = fIt.monom();
+      auto gMon = gIt.monom();
+      auto fCoeff = fIt.coeff();
+      auto gCoeff = gIt.coeff();
+      switch(compare_monoms(fMon,gMon))
+        {
+        case LT:
+          result->push_backCoeff(gCoeff);
+          for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+          gIt++;
+          break;
+        case GT:
+          result->push_backCoeff(fCoeff);
+          for (int j = 0; j < **fMon; j++) result->push_backMonom((*fMon)[j]);
+          fIt++;
+          break;
+        case EQ:
+          ring_elem coeffResult = mCoefficientRing.add(fCoeff,gCoeff);
+          if (!mCoefficientRing.is_zero(coeffResult))
+            {
+              result->push_backCoeff(coeffResult);
+              for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+            }
+          fIt++;
+          gIt++;
+        }
+    }
+  if (fIt == fEnd)
+    {
+      while (gIt != gEnd)
+        {
+          auto gMon = gIt.monom();
+          auto gCoeff = gIt.coeff();
+          result->push_backCoeff(gCoeff);
+          for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+          gIt++;
+        }
+    }
+  if (gIt == gEnd)
+    {
+      while (fIt != fEnd)
+        {
+          auto fMon = fIt.monom();
+          auto fCoeff = fIt.coeff();
+          result->push_backCoeff(fCoeff);
+          for (int j = 0; j < **fMon; j++) result->push_backMonom((*fMon)[j]);
+          fIt++;
+        }
+    }
+  return reinterpret_cast<Nterm*>(result);
 }
 
-ring_elem NCFreeAlgebra::subtract(const ring_elem f, const ring_elem g) const
+ring_elem NCFreeAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
 {
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  NCPolynomial* result = new NCPolynomial;
+  auto fIt = f->cbegin();
+  auto gIt = g->cbegin();
+  auto fEnd = f->cend();
+  auto gEnd = g->cend();
+
+  // loop over the iterators for f and g, adding the bigger of the two to
+  // the back of the monomial and coefficient vectors of the result.  If a tie, subtract the coefficients.
+  while ((fIt != fEnd) && (gIt != gEnd))
+    {
+      auto fMon = fIt.monom();
+      auto gMon = gIt.monom();
+      auto fCoeff = fIt.coeff();
+      auto gCoeff = gIt.coeff();
+      switch(compare_monoms(fMon,gMon))
+        {
+        case LT:
+          result->push_backCoeff(mCoefficientRing.negate(gCoeff));
+          for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+          gIt++;
+          break;
+        case GT:
+          result->push_backCoeff(fCoeff);
+          for (int j = 0; j < **fMon; j++) result->push_backMonom((*fMon)[j]);
+          fIt++;
+          break;
+        case EQ:
+          ring_elem coeffResult = mCoefficientRing.subtract(fCoeff,gCoeff);
+          if (!mCoefficientRing.is_zero(coeffResult))
+            {
+              result->push_backCoeff(coeffResult);
+              for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+            }
+          fIt++;
+          gIt++;
+        }
+    }
+  if (fIt == fEnd)
+    {
+      while (gIt != gEnd)
+        {
+          auto gMon = gIt.monom();
+          auto gCoeff = gIt.coeff();
+          result->push_backCoeff(mCoefficientRing.negate(gCoeff));
+          for (int j = 0; j < **gMon; j++) result->push_backMonom((*gMon)[j]);
+          gIt++;
+        }
+    }
+  if (gIt == gEnd)
+    {
+      while (fIt != fEnd)
+        {
+          auto fMon = fIt.monom();
+          auto fCoeff = fIt.coeff();
+          result->push_backCoeff(fCoeff);
+          for (int j = 0; j < **fMon; j++) result->push_backMonom((*fMon)[j]);
+          fIt++;
+        }
+    }
+  return reinterpret_cast<Nterm*>(result);
 }
 
 ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
-  // for right now, just make mult multiply f*(lead term g)
+  // should decide whether to use right_term or left_term based on whether
+  // g or f has more terms.
   const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
-  auto i = g->cbegin();
-  return mult_by_term(f1, i.coeff(), i.monom());
+  NCPolynomial* zeroPoly = new NCPolynomial;
+  ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
+  for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
+    {
+      resultSoFar = add(resultSoFar,mult_by_right_term(f1, gIt.coeff(), gIt.monom()));
+    }
+  return resultSoFar;
 }
 
-ring_elem NCFreeAlgebra::mult_by_term(const ring_elem f1,
-                                      const ring_elem c, const NCMonomial m) const
+// need a left_term as well.
+ring_elem NCFreeAlgebra::mult_by_right_term(const ring_elem f1,
+                                            const ring_elem c, const NCMonomial m) const
 {
   // return f*c*m
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
