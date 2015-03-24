@@ -450,6 +450,85 @@ printT = (T,f) -> (
 
 
 
+--builds an equivariant monomial map from ERing R to S.
+--F is a list storing the image of y_(0,1,...,k-1) for each block of variables in R.
+buildEMonomialMap = (S,R,F) -> (
+     if S.indexBound != R.indexBound then (
+	  S' := buildERing(S,R.indexBound);
+          F = F / ringMap(S',S);
+	  S = S';
+	  );
+     Fsupp := F / support;
+     mapList := apply(R.varIndices, I -> (
+	       subs := apply(Fsupp#(I#0), v->(
+			 J := new MutableList from S.varIndices#(index v);
+			 for k from 1 to #J-1 do J#k = I#(J#k + 1);
+			 v => S.varTable#(toSequence J)
+			 ));
+	       sub(F#(I#0), subs)
+	       ));
+     map(S,R,mapList)
+     )
+
+--returns the exponent matrix associated to a monomial map
+matrixFromMap = m -> (
+     A := flatten entries m(vars source m);
+     A = A / exponents / flatten;
+     transpose matrix A
+     )
+
+egbToric = M -> (
+     R := source M;
+     S := target M;
+     r := R.semigroup;
+     F := apply(#r, p -> M(R.varTable#((1:p)|0..(r#p-1))));
+     k := R.indexBound;
+     lastNewk := k;
+     T := buildEMonomialMap(S,R,F);
+     G := transpose toricGroebner matrixFromMap T;
+     lastNewG := G;
+     while 2*lastNewk > k+1 do (
+	  collectGarbage();
+	  k = k+1;
+	  print k;
+	  Rnew := buildERing(R,k);
+	  Tnew := buildEMonomialMap(S,Rnew,F);
+	  Gnew := transpose toricGroebner matrixFromMap Tnew;
+	  shifts := subsets(k,k-1);
+	  sList := apply(shifts, s -> (
+		    m := shiftMap(Rnew,s)*ringMap(Rnew,R);
+		    matrixFromMap m
+		    ));
+	  L1 := matrix{apply(sList, s->s*G)};
+	  L1 = time sort L1;
+	  uniqueCols := time select(numgens source L1, i->(i == 0 or L1_{i} != L1_{i-1}));
+	  L1 = L1_uniqueCols;
+	  print numgens target Gnew;
+	  print numgens source Gnew;
+	  L2 := time sort Gnew;
+	  if L1 != L2 then (print "new stuff found"; lastNewk = k; lastNewG = Gnew);
+	  R = Rnew;
+	  T = Tnew;
+	  G = Gnew;
+	  );
+     k = lastNewk;
+     R = buildERing(R,lastNewk);
+     GBtrad := flatten entries sort gens toBinomial(transpose lastNewG, R);
+     seen := new MutableHashTable;
+     GB := select(GBtrad, g -> (
+	       if not seen#?g then (
+	       	    n := maxIndex{g}+1;
+	       	    shifts := subsets(k,n);
+		    shifts = apply(shifts, s->(s|(toList ((k-n):(-1)))));
+		    --print shiftMap(R,shifts#0);
+	       	    for s in shifts do seen#((shiftMap(R,s))g) = true;
+		    true
+		    )
+	       else false
+	       ));
+     GB
+     )
+
 shift = method()
 shift(List) := L -> new Shift from L
 shift(MutableList) := L -> new Shift from L
