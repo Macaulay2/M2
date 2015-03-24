@@ -28,9 +28,16 @@ a*b*a*b*b*a*a*c > a*b*a*b*b*a*a*b
 a*b*b*a*a*c > a*b*a*b*b*a*a*b
 a*b*a*b*b*a*a*c > a*b*b*a*a*b
 f = a+b+c
+-- this thing takes up a lot of memory... 3^12 many operations.
 time(f*f*f*f*f*f*f*f*f*f*f*f*f);
 time(f6 = f*f*f*f*f*f);
 time(f6*f6);
 g = a-b-c
 f*g-g*f
 f*f
+
+restart
+R = QQ[a,b,c]
+M = basis(1040,R);
+f = sum flatten entries M;
+
