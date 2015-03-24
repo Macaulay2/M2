@@ -306,7 +306,8 @@ ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
   ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
   for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
     {
-      add_to_end(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
+      resultSoFar = add(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
+      //add_to_end(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
     }
   return resultSoFar;
 }
