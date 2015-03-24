@@ -299,19 +299,21 @@ ring_elem NCFreeAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
 
 ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
-  // should decide whether to use right_term or left_term based on whether
+  // TODO: should decide whether to use right_term or left_term based on whether
   // g or f has more terms.
   const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
   NCPolynomial* zeroPoly = new NCPolynomial;
   ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
   for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
     {
+      // this can be much better... multiplication preserves the order and we are not using that.
+      // TODO: need to write an add_to function.
       resultSoFar = add(resultSoFar,mult_by_right_term(f1, gIt.coeff(), gIt.monom()));
     }
   return resultSoFar;
 }
 
-// need a left_term as well.
+// TODO: need a left_term as well.
 ring_elem NCFreeAlgebra::mult_by_right_term(const ring_elem f1,
                                             const ring_elem c, const NCMonomial m) const
 {
