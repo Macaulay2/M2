@@ -16,7 +16,9 @@ newPackage(
 
 export {
      egb,
+     egbToric,
      buildERing,
+     buildEMonomialMap,
      Symmetrize,
      Completely,
      Diagonal,
@@ -26,7 +28,7 @@ export {
      Extend
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, diagonalSlices }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings }
      
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
