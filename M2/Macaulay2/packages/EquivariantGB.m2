@@ -1,7 +1,7 @@
 newPackage(
      "EquivariantGB",
-     Version =>"0.1",
-     Date => "2013",
+     Version =>"0.2",
+     Date => "2014",
      Headline => "Equivariant Groebner bases and related algorithms",
      HomePage => "",
      Authors => {
@@ -21,12 +21,109 @@ export {
      Completely,
      Diagonal,
      reduce,
-     OutFile
+     OutFile,
+     Shift,
+     Extend
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, diagonalSlices }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, diagonalSlices }
      
 --ERing = new Type of PolynomialRing
+Shift = new Type of BasicList
+
+-- In:
+-- Out: 
+egb = method(Options=>{Symmetrize=>false, OutFile=>null})
+egb (List) := o -> F -> (
+     g := o.OutFile;
+     n := (ring first F).indexBound;
+     k := 0;
+     while k < n do (
+	  if k == 0 then (
+	       if o.Symmetrize then (
+		    g << "--   symmetrize " << flush;
+		    F = printT(timing interreduce'symmetrize F, g);
+		    );
+	       g << (sort F) << endl;
+	       g << (toExternalString sort F) << endl;
+	       g << "-- gens: " << #F
+	       << "; indices: " << (maxIndex F) + 1
+	       << "; max deg: " << max((F / degree) / first)
+	       << "." << endl;
+	       );
+	  g << "-- " << k << " gap Spairs  " << flush;
+	  newF := printT(timing processSpairs(F,k, Symmetrize => o.Symmetrize), g);
+	  g << "--   " << (#newF - #F) << " new" << endl;
+	  g << "--   interreduce ";
+	  newF = printT(timing interreduce newF, g);
+	  g << "--   reduce tails";
+	  newF = printT(timing reduceTails newF, g);
+          newF = contractERing(newF,o.Symmetrize);
+	  isNew := gensEqual(F, newF);
+	  F = newF;
+	  if isNew then k = 0
+	  else k = k+1;
+	  n = (ring first F).indexBound;
+	  );
+     F
+     )
+
+
+--version of reduce2 to export
+reduce = method(Options=>{Completely=>false})
+reduce (RingElement,List) := o -> (f,F) -> (
+     (r,R,g,G) := reduce2(f,F);
+     r
+     )
+
+--In: X, a list of symbols to name each block of variables
+--    s, a list of sequences of integers describing the action on each block of variables
+--    K, a coefficient field
+--    n, an integer
+--Out: a polynomial ring over K with variable indices determined by s.
+--     All "infinite" indices are included up to n-1. 
+buildERing = method(Options=>{MonomialOrder=>Lex})
+buildERing (List,List,Ring,ZZ) := o -> (X,s,K,n) -> buildERing((X,s,K),ZZ,n, MonomialOrder=>o.MonomialOrder)
+buildERing (Ring,ZZ) := o -> (R,n) -> (
+    if (R.rings)#?n then (R.rings)#n
+    else buildERing((R.symbols,R.semigroup,coefficientRing R),R,n, MonomialOrder=>R.MonomialOrder)
+    )
+buildERing (Sequence,Ring,ZZ) := o -> (seq,oldR,n) -> (
+     (X,s,K) := seq;
+     variableIndices := s / (b->(toList ((b:0)..(b:n-1))));
+     mo := o.MonomialOrder;
+     if mo == Diagonal then (
+	  variableIndices = apply(variableIndices, l->(
+		    dPartition := partition(i->any(i, j->(#select(i, k->(k==j)) > 1)), l);
+		    (dPartition#false)|(dPartition#true)));
+	  mo = Lex;
+	  );
+     variableIndices = flatten apply(#s, b->(reverse apply(variableIndices#b, i->((1:b)|i))));
+     moList := apply(s, b->(mo=>(n^b)));
+     R := K[apply(variableIndices, i->(
+		    if #i == 1 then X#(i#0)            --if block has only one variable, use no index
+		    else if #i == 2 then X#(i#0)_(i#1) --if block has only one index, index by integers
+		    else (X#(i#0))_(take(i,1-#i))      --if block has several indices, index by sequences
+		    )), MonomialOrder => moList];
+     R.symbols = X;
+     R.varIndices = variableIndices;
+     R.varTable = new HashTable from apply(#(R.varIndices), n->(R.varIndices#n => (gens R)#n));
+     R.varPosTable = new HashTable from apply(#(R.varIndices), n->(R.varIndices#n => n));
+     R.semigroup = s;
+     R.indexBound = n;
+     R.MonomialOrder = o.MonomialOrder;
+     if oldR === ZZ then R.rings = new MutableHashTable
+     else R.rings = oldR.rings;
+     (R.rings)#n = R;
+     R
+     )
+ 
+
+gensEqual = (F,G) -> (
+     R := ring first F; 
+     S := ring first G;
+     numgens R != numgens S or sort (F / ringMap(S,R)) != sort G
+     )
      
 spoly = (f,g) -> (
      l := lcm(leadMonomial f,leadMonomial g);
@@ -35,15 +132,18 @@ spoly = (f,g) -> (
 
 -- In: v, a polynomial
 --     w, a polynomial 
--- Out: (b, M)
---     b, a boolean, whether there is a semigroup element M s.t. M*in(v) divides in(w)
-divWitness = (v,w) -> (
+-- Out: (B, M)
+--     B, a boolean, whether there is a shift M s.t. M*in(v) divides in(w)
+divWitness = method()
+divWitness (RingElement,RingElement) := (v,w) -> (
      R := ring v;
      assert(numgens ring v == numgens ring w);
      n := R.indexBound;
      vl := (listForm leadTerm v)#0#0;
      wl := (listForm leadTerm w)#0#0;
-     diag := (vl,b,i) -> vl#(R.varPosTable#((1:b)|(R.semigroup#b:i)));
+     --diag := (vl,b,i) -> vl#(R.varPosTable#((1:b)|(R.semigroup#b:i)));
+     vhints := hints v;
+     whints := hints w;
      vmax := maxIndex {leadTerm v};
      wmax := maxIndex {leadTerm w};
      if vmax == -1 then return (true, toList(0..n-1));
@@ -54,7 +154,8 @@ divWitness = (v,w) -> (
 	  while true do (
 	       i := k;
 	       for j from (sigma#k)+1 to wmax do (
-		    if all(#(R.semigroup), b->(diag(vl,b,i) <= diag(wl,b,j))) then (
+		    if all(#vhints, s->(vhints#s#i <= whints#s#j)) then (
+		--    if all(#(R.semigroup), b->(diag(vl,b,i) <= diag(wl,b,j))) then (
 			 sigma#i = j;
 			 i = i+1;
 			 );
@@ -70,13 +171,28 @@ divWitness = (v,w) -> (
 		    then break;
 	  k = vmax;
 	  );
-     return (true, toList sigma);
+     --print (v,w,leadTerm v, leadTerm w, vhints,whints,toList sigma);
+     return (true, shift sigma);
      )
+ 
+hints = v -> (
+    R := ring v;
+    n := R.indexBound;
+    vl := (listForm leadTerm v)#0#0;
+    h := toList apply(#R.semigroup, b->toList (R.semigroup#b: new MutableList from (n:0)));
+    for ind in R.varIndices do
+	for j from 0 to R.semigroup#(ind#0)-1 do
+	    h#(ind#0)#j#(ind#(j+1)) = h#(ind#0)#j#(ind#(j+1)) + vl#(R.varPosTable#ind);
+    (flatten flatten h) / toList
+    )
+    
+	
 
 basicReduce = method(Options=>{Completely=>false})
 basicReduce (RingElement, BasicList) := o -> (f,B) -> (
      B = select(toList B,b->b!=0);
      R := ring f;
+     oldf := f;
      n := R.indexBound;
      divisible := true;
      while divisible and f != 0 do (
@@ -118,46 +234,6 @@ reduce2 (RingElement,List) := o -> (f,F) -> (
      (r,R,f,F)
      )
 
---version of reduce2 to export
-reduce = method(Options=>{Completely=>false})
-reduce (RingElement,List) := o -> (f,F) -> (
-     (r,R,g,G) := reduce2(f,F);
-     r
-     )
-
---In: X, a list of symbols to name each block of variables
---    s, a list of sequences of integers describing the action on each block of variables
---    K, a coefficient field
---    n, an integer
---Out: a polynomial ring over K with variable indices determined by s.
---     All "infinite" indices are included up to n-1. 
-buildERing = method(Options=>{MonomialOrder=>Lex})
-buildERing (Ring,ZZ) := o -> (R,n) -> buildERing(R.symbols, R.semigroup, coefficientRing R, n, MonomialOrder=>R.MonomialOrder)
-buildERing (List,List,Ring,ZZ) := o -> (X,s,K,n) -> (
-     variableIndices := s / (b->(toList ((b:0)..(b:n-1))));
-     mo := o.MonomialOrder;
-     if mo == Diagonal then (
-	  variableIndices = apply(variableIndices, l->(
-		    dPartition := partition(i->any(i, j->(#select(i, k->(k==j)) > 1)), l);
-		    (dPartition#false)|(dPartition#true)));
-	  mo = Lex;
-	  );
-     variableIndices = flatten apply(#s, b->(reverse apply(variableIndices#b, i->((1:b)|i))));
-     moList := apply(s, b->(mo=>(n^b)));
-     R := K[apply(variableIndices, i->(
-		    if #i == 1 then X#(i#0)            --if block has only one variable, use no index
-		    else if #i == 2 then X#(i#0)_(i#1) --if block has only one index, index by integers
-		    else (X#(i#0))_(take(i,1-#i))      --if block has several indices, index by sequences
-		    )), MonomialOrder => moList];
-     R.symbols = X;
-     R.varIndices = variableIndices;
-     R.varTable = new HashTable from apply(#(R.varIndices), n->(R.varIndices#n => (gens R)#n));
-     R.varPosTable = new HashTable from apply(#(R.varIndices), n->(R.varIndices#n => n));
-     R.semigroup = s;
-     R.indexBound = n;
-     R.MonomialOrder = o.MonomialOrder;
-     R
-     )
 
 -- In: F, current generators list
 --     k, ZZ (the number of "gaps")  
@@ -182,7 +258,7 @@ processSpairs (List,ZZ) := o -> (F,k) -> (
 		    f := spoly((shiftMap(S,s)) F#i, (shiftMap(S,t)) F#j);
 		    local r;
 		    (r,S,f,F) = reduce2(f,F);
-		    --if f != 0 then print (i,j,s,t);
+		    --print (f,i,j,s,t,(shiftMap(S,s)) F#i, (shiftMap(S,t)) F#j);
 		    if r != 0 then (
 			 --<< "(n)";
 			 --print(F#i,F#j,r); 
@@ -216,25 +292,34 @@ shiftPairs = (n0,n1,k) -> (
 					b
 					)
 				   ));
-			 (sImage,tImage)
+			 (shift sImage, shift tImage)
 			 ))
 	       ))			 
      )
 
---In: R, a ring
---    shift, a list of integers
---Out: a map from R to R where index i is mapped to shift#i.
---     If shift#i == -1 then all variables with index i go to 0_R.
-shiftMap = (R,shift) -> (
-     mapList := apply(R#varIndices, ind->(
-	       indnew := new MutableList from ind;
-	       for j from 1 to #ind-1 do (
-		    if ind#j >= #shift or shift#(ind#j) < 0 or shift#(ind#j) >= R.indexBound then return 0_R
-		    else indnew#j = shift#(ind#j);
-		    );
-	       R.varTable#(toSequence indnew)
-	       ));
-     map(R,R,mapList)
+--In: R, a Ring
+--    s, a Shift
+--Out: a map from R to S where index i is mapped to s#i.
+--     If Extend => false then S = R, otherwise S has index bound equal to the max entry of s -1.
+--     If s#i == -1 then all variables with index i go to 0_S.
+shiftMap = method(Options=>{Extend=>false})
+shiftMap(Ring,Shift) := o -> (R,s) -> (
+     S := R;
+     if o.Extend then (
+	  n := R.indexBound;
+	  s = s*shift(0:n-1);
+	  S = buildERing(R,max s);
+    	  );
+     mapList := apply(R.varIndices, ind->(
+	  indnew := new MutableList from ind;
+	  for j from 1 to #ind-1 do (
+	       if ind#j >= #s or s#(ind#j) < 0 or s#(ind#j) >= S.indexBound then return 0_S
+	       else indnew#j = s#(ind#j);
+	       );
+	  S.varTable#(toSequence indnew)
+	  ));
+     --print(s,R.varIndices,mapList);
+     map(R,S,mapList)
      )
 
 ringMap = (S,R) -> map(S,R, apply(R.varIndices, i->(if S.varTable#? i then S.varTable#i else 0_S)))
@@ -252,9 +337,9 @@ symmetrize RingElement := f -> (
 
 
 -- In: F, a list of generators
--- Out: ...
-interreduce = method(Options=>{Symmetrize=>false})
-interreduce (List) := o -> F -> (
+-- Out: F, a list of generators reduced with respect to itself
+interreduce = method()
+interreduce (List) := F -> (
      --Reduce elements of F with respect to each other.
      --print "-- starting \"slow\" interreduction";
      R := ring first F;
@@ -282,35 +367,36 @@ interreduce (List) := o -> F -> (
 	  i = i+1;
 	  );
      F = select(F, f->f!=0);
---   while true do (
---	  F = select(F, f->f!=0);
---     	  i := position(0..#F-1, k-> 
---	       any(#F, j-> j != k and first divWitness(F#j,F#k)));
---	  if i =!= null then (
---	       Fout := drop(F,{i,i});
---	       local r; local f;
---	       (r,R,f,Fout) = reduce2(F#i,Fout);
---	       F = insert(i, makeMonic r, Fout);
---	       )
---	  else break;
---	  );
-     F = apply(F, f->(
+     F
+     )
+
+reduceTails = F -> (
+     R := ring first F;
+     apply(F, f->(
 	       g := f - leadTerm(f);
 	       local r;
 	       (r,R,g,F) = reduce2(g,F,Completely=>true);
 	       makeMonic(leadTerm(f) + r)
-	       ));
-     --Prune unused variables from R.
+	       ))
+     )
+    
+
+--Prune unused variables from R.
+--In: F, a list of polynomials
+--    sym, a boolean whether to symmetrize.
+--Out: F, the same polynomials mapped to a ring with minimal indexBound.
+contractERing = (F,sym) -> (
+     R := ring first F;
      newn := 0;
-     if o.Symmetrize then (
+     if sym then (
 	  iS := indexSupport F;
-	  shift := toList apply(iS, j->(if j > 0 then (newn = newn+1; newn-1) else -1));
-	  F = F / shiftMap(R,shift);
+	  s := shift apply(iS, j->(if j > 0 then (newn = newn+1; newn-1) else -1));
+	  F = F / shiftMap(R,s);
 	  )
      else newn = maxIndex(F) + 1;
      S := buildERing(R,newn);
      F / ringMap(S,R)
-     ) 
+     )
 
 --In: F, a list of polynomials
 --Out: a list, the number of variables represented in F which have an index equal to i for each i from 0 to n-1
@@ -362,41 +448,17 @@ printT = (T,f) -> (
      T#1
      )
 
--- In:
--- Out: 
-egb = method(Options=>{Symmetrize=>false, OutFile=>null})
-egb (List) := o -> F -> (
-     g := o.OutFile;
-     n := (ring first F)#indexBound;
-     k := 0;
-     while k < n do (
-	  if k == 0 then (
-	       if o.Symmetrize then (
-		    g << "--   symmetrize " << flush;
-		    F = printT(timing interreduce'symmetrize F, g);
-		    );
-	       g << (sort F) << endl;
-	       g << (toExternalString sort F) << endl;
-	       g << "-- gens: " << #F
-	       << "; indices: " << (maxIndex F) + 1
-	       << "; max deg: " << max((F / degree) / first)
-	       << "." << endl;
-	       );
-	  g << "-- " << k << " gap Spairs " << flush;
-	  newF := printT(timing processSpairs(F,k, Symmetrize => o.Symmetrize), g);
-	  g << "--   " << (#newF - #F) << " new" << endl;
-	  g << "--   interreduce";
-	  newF = printT(timing interreduce(newF, Symmetrize => o.Symmetrize), g);
-	  R := ring first F; 
-	  S := ring first newF;
-	  newstuff := numgens R != numgens S or sort (F / ringMap(S,R)) != sort newF;
-	  F = newF;
-	  if newstuff then k = 0
-	  else k = k+1;
-	  n = S.indexBound;
-	  );
-     F
-     )
+
+
+shift = method()
+shift(List) := L -> new Shift from L
+shift(MutableList) := L -> new Shift from L
+shift(Sequence) := S -> shift toList S
+Shift * Shift := (I,J) ->
+    apply(J, j->(if I#?j then I#j else j + (last I) - #I + 1))
+    
+ShiftMonomial = new Type of List
+
 
 beginDocumentation()
 
