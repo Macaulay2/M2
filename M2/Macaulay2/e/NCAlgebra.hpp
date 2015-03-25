@@ -167,6 +167,14 @@ public:
   void reserveCoeff(coeffVector::size_type n) { mCoefficients.reserve(n); }
   void reserveMonom(monomVector::size_type n) { mMonomials.reserve(n); }
 
+  void appendPolynomial(const NCPolynomial* g)
+  {
+    // note: reserve is not necessary here.  It slows things down significantly
+    // for some reason.
+    mCoefficients.insert(mCoefficients.end(), g->getCoeffVector().begin(), g->getCoeffVector().end());
+    mMonomials.insert(mMonomials.end(), g->getMonomVector().begin(), g->getMonomVector().end());
+  }
+
   coeffConstIterator cbeginCoeff() const { return mCoefficients.cbegin(); }
   monomConstIterator cbeginMonom() const { return mMonomials.cbegin(); }
 

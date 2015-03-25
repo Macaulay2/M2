@@ -28,10 +28,10 @@ a*b*a*b*b*a*a*c > a*b*a*b*b*a*a*b
 a*b*b*a*a*c > a*b*a*b*b*a*a*b
 a*b*a*b*b*a*a*c > a*b*b*a*a*b
 f = a+b+c
--- this thing takes up a lot of memory... 3^12 many operations.
-time(f*f*f*f*f*f*f*f*f*f*f*f*f);
-time(f6 = f*f*f*f*f*f);
-time(f6*f6);
+-- this thing takes up a lot of memory... 3^12 terms!
+time(f*f*f*f*f*f*f*f*f*f*f*f);
+time(f3 = f*f*f);
+time(f3*f3*f3*f3);
 g = a-b-c
 f*g-g*f
 f*f

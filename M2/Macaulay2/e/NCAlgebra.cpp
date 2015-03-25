@@ -84,12 +84,19 @@ bool NCFreeAlgebra::lift(const Ring *R, const ring_elem f, ring_elem &result) co
 {
 }
 
-bool NCFreeAlgebra::is_unit(const ring_elem f) const
+bool NCFreeAlgebra::is_unit(const ring_elem f1) const
 {
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  return ((f->numTerms() == 1) &&                           // one term
+          (f->getMonomVector().size() == 2) &&              // empty monomial
+          mCoefficientRing.is_unit(f->cbegin().coeff()));   // unit coefficient
+          
 }
 
-bool NCFreeAlgebra::is_zero(const ring_elem f) const
+bool NCFreeAlgebra::is_zero(const ring_elem f1) const
 {
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  return (f->numTerms() == 0);
 }
 
 bool NCFreeAlgebra::is_equal(const ring_elem f, const ring_elem g) const
@@ -299,16 +306,15 @@ ring_elem NCFreeAlgebra::subtract(const ring_elem f1, const ring_elem g1) const
 
 ring_elem NCFreeAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
-  // TODO: should decide whether to use right_term or left_term based on whether
-  // g or f has more terms.
-  const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   NCPolynomial* zeroPoly = new NCPolynomial;
   ring_elem resultSoFar = reinterpret_cast<Nterm*>(zeroPoly);
-  for (auto gIt = g->cbegin(); gIt != g->cend(); gIt++)
+  for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
     {
-      resultSoFar = add(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
-      //add_to_end(resultSoFar,mult_by_term_right(f1, gIt.coeff(), gIt.monom()));
+      // this one sums in place, adding to the end.
+      add_to_end(resultSoFar,mult_by_term_left(g1, fIt.coeff(), fIt.monom()));
     }
+  std::cout << "Number of terms : " << zeroPoly->numTerms() << std::endl;
   return resultSoFar;
 }
 
@@ -318,16 +324,7 @@ void NCFreeAlgebra::add_to_end(ring_elem f1, const ring_elem g1) const
   // lead term of g1 is less than the last term of f1 to ensure that the order is preserved.
   NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   const NCPolynomial* g = reinterpret_cast<NCPolynomial*>(g1.poly_val);
-  auto gIt = g->cbegin();
-  auto gEnd = g->cend();
-  while (gIt != gEnd)
-    {
-      auto gMon = gIt.monom();
-      auto gCoeff = gIt.coeff();
-      f->push_backCoeff(gCoeff);
-      for (int j = 0; j < **gMon; j++) f->push_backMonom((*gMon)[j]);
-      gIt++;
-    }
+  f->appendPolynomial(g);
 }
 
 ring_elem NCFreeAlgebra::mult_by_term_right(const ring_elem f1,
@@ -366,6 +363,7 @@ ring_elem NCFreeAlgebra::mult_by_term_left(const ring_elem f1,
   // return c*m*f
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   NCPolynomial* result = new NCPolynomial;
+  result->reserveCoeff(f->numTerms());
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
       // multiply the coefficients
