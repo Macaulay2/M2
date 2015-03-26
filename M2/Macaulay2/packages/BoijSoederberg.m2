@@ -1421,7 +1421,8 @@ document { Key => BoijSoederberg,
 	  TO (matrix,BettiTally,ZZ,ZZ),
 	  TO lowestDegrees,
 	  TO highestDegrees,
-	  TO BettiTally
+	  TO BettiTally,
+	  TO makeCI
           },
      SUBSECTION "Pure Betti diagrams",
      UL {
@@ -1441,7 +1442,9 @@ document { Key => BoijSoederberg,
      UL {
 	  TO (decompose,BettiTally),
 	  TO decomposeBetti,
-	  TO decomposeDegrees
+	  TO decomposeDegrees,
+	  TO eliminateBetti,
+	  TO isMassEliminate
 	  },
      SUBSECTION "Three constructions for pure resolutions.  These routines provide the
      zero-th betti number given a degree sequence.",
@@ -1474,6 +1477,14 @@ document {
      computations involving CohomologyTally are implemented."
      
      }
+ 
+document {
+     Key => BettiEliminationTally,
+     Headline => "Betti elimination table",
+     "A ", TT "Betti elimination table", " is designed to show the order 
+     in which Betti numbers are eliminated by the Boij-Soederberg algorithm."
+     
+     } 
 
 document { 
      Key => {(lowestDegrees,BettiTally),lowestDegrees},
@@ -1630,36 +1641,7 @@ document {
      }
 
 document { 
-     Key => decomposeBetti,
-     Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
-     Usage => "decomposeBetti B",
-     Inputs => {
-	  "B" => "not necessarily Cohen-Macaulay"
-	  },
-     Outputs => {
-	  Expression => "a positive combination of pure integral Betti diagrams"
-	  },
-     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
-     even if the diagram does not corresponds to a Cohen-Macaulay module.",
-     EXAMPLE lines ///
-     	  R = ZZ/103[a,b,c]
-	  I = ideal"a3,abc,b4,c4,b2c2"
-	  B = betti res I
-	  decomposeBetti(B)
-	  ///,
-     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
-     EXAMPLE lines ///
-     	 decomposeBetti(B,TableEntries => HerzogKuhl)
-     	  ///,
-     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
-     EXAMPLE lines ///
-     	 decomposeBetti(B,TableEntries => RealizationModules)
-	 ///,
-     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
-     }
- 
- document { 
-     Key => [decomposeBetti, TableEntries]
+     Key => {decomposeBetti,[decomposeBetti,TableEntries]}
      Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
      Usage => "decomposeBetti B",
      Inputs => {
@@ -1693,6 +1675,24 @@ document {
     "The possible options are LeastIntegerEntries, HerzogKuhl, and RealizationModules.",
     SeeAlso => {decomposeBetti}
     } 
+
+document {
+    Key => LeastIntegerEntries,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    } 
+
+document {
+    Key => HerzogKuhl,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    }
+
+document {
+    Key => RealizationModules,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    }
 
 document { 
      Key => decomposeDegrees,
@@ -1742,6 +1742,18 @@ document {
 	  ///,
      SeeAlso => {(matrix,BettiTally)}
      }
+ 
+document {
+    Key => {makeCI},
+    Headline => "Make the Betti diagram of a complete intersection ideal",
+    Usage => "makeCI(degrees)",
+    Inputs => {
+	"degrees" => "A list of degrees of the forms generating the complete intersection ideal",
+	}
+    Outputs => {
+	BettiTally
+	}
+    } 
 
 document { 
      Key => {(matrix,BettiTally,ZZ,ZZ),(matrix,BettiTally,ZZ),(matrix,BettiTally)},
@@ -2230,9 +2242,7 @@ document {
 	  isMassEliminate(C)
 	///
 	}
-
-
-end 
+    
     
 document { 
      Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
