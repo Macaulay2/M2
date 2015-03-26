@@ -2425,3 +2425,23 @@ assert(L===M')
 
 -- end Branden's tests
 --
+
+-- Courtney's tests
+--
+restart
+loadPackage "BoijSoederberg"
+R = QQ[x,y,z,w]
+I = ideal(x^2,y^4,z^5,w^7)
+B = makeCI(2,4,5,7)
+C = betti res (R^1/I)
+assert(B===C)
+
+J = ideal(x^4,y^5,z^7,w^9)
+D = makeCI(4,5,7,9)
+E = betti res(R^1/J)
+assert(D===E)
+
+assert(isMassEliminate(E)===true)
+
+-- end Courtney's tests
+--
