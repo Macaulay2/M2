@@ -24,23 +24,23 @@ export {
      pureBetti, -- documented
      pureBettiDiagram, -- documented
 
-     pureCharFree,
-     pureTwoInvariant,
-     pureWeyman,
-     pureAll,
+     pureCharFree, -- documented    
+     pureTwoInvariant, -- documented
+     pureWeyman, -- documented
+     pureAll, -- documented
      
      randomSocleModule, -- documented
      randomModule, -- documented
      
      pureCohomologyTable, -- documented
      facetEquation, -- documented
-     dotProduct,
+     dotProduct, -- documented
      supportFunctional, -- not written
      
      bott, -- documented
      
-     CohomologyTally,
-     mat2cohom,
+     CohomologyTally, -- documented
+     mat2cohom, -- not written
      
      -- new stuff from Branden and Courtney
      -- Not sure what to keep yet
