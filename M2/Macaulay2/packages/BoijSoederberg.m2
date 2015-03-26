@@ -50,6 +50,10 @@ export {
      makePureBettiDiagramHK, -- make as option to makePureBettiDiagram
      isMassEliminate, -- not written
      eliminateBetti, -- not written
+     
+     -- Test Methods Tobe deleted
+     makePureBettiDiagram,
+     makePureBetti,
 
      -- Options -- need to be documented     
      EliminationSequence,     
@@ -334,7 +338,7 @@ makePureBetti List := o -> Degs -> (
           for i from 0 to c-1 list (
                b0/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
           )
-     );
+     )
 )
 
 
@@ -342,7 +346,7 @@ makePureBetti List := o -> Degs -> (
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method
 makePureBettiDiagram = method(Options => {TableEntries => LeastIntegerEntries})
-makePureBettiDiagram List := o -> degs -> (
+makePureBettiDiagram List := o -> (degs) -> (
      B := makePureBetti(degs, TableEntries => o.TableEntries);
      new BettiTally from apply(#degs, i -> (i,{degs#1},degs#i) => B#i)
 )
@@ -375,8 +379,9 @@ makePureBettiDiagramHK List := (degs) -> (
 
 --- NECESSARY 
 --  input: BettiTally
-decompose3 = method();
-decompose3 BettiTally := B -> (
+--decompose3 = method();
+-- decompose3 BettiTally := B -> (
+decompose3 = B -> (    
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
      C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
@@ -651,7 +656,8 @@ assert(not isStrictlyIncreasing L)
 decompose1= B->(
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=pureBettiDiagram L;
+--     C:=pureBettiDiagram L;
+     C:=makePureBettiDiagram L;     
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
@@ -2303,13 +2309,19 @@ decomposeDegrees( B, TableEntries => HerzogKuhl )
 -- 8. before deleting any method, make sure all dependencies are taken care of.
 
 -- test 1
+restart
+loadPackage"BoijSoederberg"
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M
 C=decompose B
 C1=decomposeBetti B
-C2=decomposeBetti (B, TableEntries => HerzogKuhl )
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
 C3=decomposeBetti (B, TableEntries => RealizationModules )
+
+L = {1,2,3}
+makePureBettiDiagram L
+makePureBetti L
 
 L=set apply(toList C,x->x#1)
 L1=set apply(toList C1,x->x#1)
