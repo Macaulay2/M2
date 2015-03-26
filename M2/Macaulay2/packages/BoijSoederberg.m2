@@ -47,7 +47,7 @@ export {
      
      -- Methods
      decomposeBetti, --not written
-     --decomposeDegreesHK,
+     decomposeDegrees, --not written, not tested
      --makePureBettiHK, -- make as option to makePureBettiEntries
      --makePureBettiDiagramHK, -- make as option to makePureBettiDiagram
      isMassEliminate, -- not written
@@ -361,30 +361,7 @@ pureBettiDiagram List := (degs) -> (
 
 
 
---- NECESSARY 
---  input: BettiTally
---decompose3 = method();
--- decompose3 BettiTally := B -> (
-decompose3 = B -> (    
-     L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
-     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
-     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
-     )
-
-
-
---- NECESSARY
---  input: BettiTally
-decompose2 = method();
-decompose2 BettiTally := B -> (
-     L:=lowestDegrees B;
-     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
-     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
-     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
-     ) 
+ 
 
 ---Methods for general use---
 
@@ -546,6 +523,24 @@ decompose1= B->(
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
 --     C:=pureBettiDiagram L;
      C:=makePureBettiDiagram L;     
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     )
+ 
+--  input: BettiTally
+decompose2 = B -> (
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     ) 
+
+--  input: BettiTally
+decompose3 = B -> (    
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
