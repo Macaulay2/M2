@@ -300,8 +300,8 @@ pureBetti List := (Degs) -> (
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
 
-makePureBetti = method(Options => true)
-makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
+makePureBetti = method(Options => {TableEntries => LeastIntegerEntries})
+makePureBetti List := o -> Degs -> (
      c := # Degs;
      p := 1;
      for i from 1 to c-1 do (
@@ -335,16 +335,16 @@ makePureBetti List := {TableEntries => LeastIntegerEntries} >> ( o -> Degs -> (
                b0/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
           )
      );
-);
 )
+
 
 -- Similar to pureBettiDiagram but with options and M2 naming convention
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method
-makePureBettiDiagram = method(Options => true)
-makePureBettiDiagram List := {TableEntries => LeastIntegerEntries} >> ( o -> degs -> (
+makePureBettiDiagram = method(Options => {TableEntries => LeastIntegerEntries})
+makePureBettiDiagram List := o -> degs -> (
      B := makePureBetti(degs, TableEntries => o.TableEntries);
-     new BettiTally from apply(#degs i -> (i,{degs#1},degs#i) => B#i)
+     new BettiTally from apply(#degs, i -> (i,{degs#1},degs#i) => B#i)
 )
 
 
@@ -678,8 +678,8 @@ decompose BettiTally := B-> (
 -- this was done in order to preserve the old functionality and give 
 -- the ability to add options to the method.
 -- We would like to replace 'decompse' with 'decomposeBetti'.
-decomposeBetti = method(Options => true)
-decomposeBetti BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -> (
+decomposeBetti = method(Options => {TableEntries => LeastIntegerEntries})
+decomposeBetti BettiTally := o -> B -> (
     
     Components:={};
     B1:= new MutableHashTable from B;
@@ -777,39 +777,40 @@ assert(L===M')
 -- the ability to add options to the method.
 -- This does not output the Betti tables themselves,
 -- but instead outputs their associated degree sequences. 
-decomposeDegrees = method(Options => true)
-decomposeDegrees BettiTally := {TableEntries => LeastIntegerEntries} >> ( o -> B -> (
+decomposeDegrees = method(Options => {TableEntries => LeastIntegerEntries})
+decomposeDegrees BettiTally := o -> B -> (
     
     Components:={};
     B1:= new MutableHashTable from B;
+    local X; local Y;
     
      if o.TableEntries == LeastIntegerEntries 
      then (
            while min values B1 >= 0 and max values B1 > 0 do (
-          X:=decompose1(new BettiTally from B1);
+          X=decompose1(new BettiTally from B1);
           B1=new MutableHashTable from X_2;
           --change the type of the values in X_0 to ZZ
-          Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+          Y=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
           Components = append(Components, (X_1,listPureDegrees(Y))));
           Components
      )
      else if o.TableEntries == HerzogKuhl 
      then (
      while min values B1 >= 0 and max values B1 > 0 do (
-       X:=decompose3(new BettiTally from B1);
+       X=decompose3(new BettiTally from B1);
        B1=new MutableHashTable from X_2;
        --change the type of the values in X_0 to ZZ
-       Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+       Y=new BettiTally from apply(pairs X_0, i->{first i,last i});
        Components = append(Components, (X_1,listPureDegrees(Y))));
      Components
      )     
      else if o.TableEntries == RealizationModules
      then (
            while min values B1 >= 0 and max values B1 > 0 do (
-          X:=decompose2(new BettiTally from B1);
+          X=decompose2(new BettiTally from B1);
           B1=new MutableHashTable from X_2;
           --change the type of the values in X_0 to ZZ
-          Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
+          Y=new BettiTally from apply(pairs X_0, i->{first i,last i});
           Components = append(Components, (X,listPureDegrees(Y))));
      Components
      )     
@@ -2148,8 +2149,8 @@ document {
     Usage => "isMassEliminate(B)",
     Inputs => {
 	"B", BettiTally => "a Betti diagram"
-	}
-    Outputs => {Boolean => "True or false if..."}
+	},
+    Outputs => {Boolean => "True or false if..."},
     EXAMPLE lines ///
     	  R = ZZ/8821[x,y,z,w]
 	  I = ideal(x,y^2,z^4,w^8)
@@ -2265,7 +2266,7 @@ setupBGG
 -- Branden's tests
 restart
 loadPackage"BoijSoederberg"
-
+check BoijSoederberg
 -- test decomposeDegrees
 M=matrix "1,0,0,0;
         0,4,4,1"
