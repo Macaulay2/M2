@@ -2208,7 +2208,7 @@ end
 document { 
      Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
      Headline => "elimination table for a Betti diagram",
-     Usage => {"eliminateBetti(B)","eliminateBetti(I)"},
+     Usage => "eliminateBetti(B), eliminateBetti(I)",
      Inputs => {
 	  "B", BettiTally => "a Betti diagram",
 	  "I", Ideal => "an Ideal"
