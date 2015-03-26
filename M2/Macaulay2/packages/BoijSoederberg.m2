@@ -174,6 +174,7 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
      new CohomologyTally from a
      )
 
+
 TEST ///
 M = matrix "1,0,0,0;
         0,4,4,1"
@@ -183,6 +184,7 @@ assert (M == matrix B)
 B2 = mat2betti(M,2)
 assert(M == matrix B2)
 ///
+
 
 TEST ///
 m = matrix "5,0,0,0,0;
@@ -213,6 +215,7 @@ matrix(BettiTally,ZZ) := opts -> (B,lo) -> (
      hi := max apply(keys B, i -> if B#i == 0 then -infinity else i_2-i_0);
      matrix(B,lo,hi)
      )
+
 
 TEST ///
 R = ZZ/101[a..e]
@@ -251,6 +254,7 @@ highestDegrees BettiTally := (B) -> (
 
 isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
+
 
 TEST ///
 matrix "1,0,0;
@@ -408,35 +412,7 @@ decompose3 = B -> (
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
 
---- OBSOLETE!
---  input: List (a degree sequence)
--- output: List (a list of the number of generators of the realization module
---         in each degree)
---makePureBettiES = method()
---makePureBettiES List := (degs) -> (
---     codim := #degs;
---    L := for i from 1 to codim-1 list
---     (
---	 binomial(degs#i -1,degs#i-degs#(i-1) - 1)
---	 );
---     tag := first sort keys makePureBettiDiagramHK(degs);
---     b0 := (product L)*(1/(makePureBettiDiagramHK(degs))#tag);
---     --returns an error if the first degree is not 0. need to fix.
---     for i from 0 to codim-1 list
---     (
---	  b0/(product(for j from 0 to i-1 list degs#i-degs#j) * product(for j from i+1 to codim-1 list degs#j-degs#i))
---	  )
---)
 
---- OBSOLETE!
---  input: List (a degree sequence)
--- output: BettiTally (the Betti table of the realization module
---         for the given degree sequence)
---makePureBettiDiagramES = method()
---makePureBettiDiagramES List := (degs) -> (
---     B := makePureBettiES degs;
---     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
---     )
 
 --- NECESSARY
 --  input: BettiTally
@@ -584,8 +560,6 @@ eliminateBetti Ideal := o -> I -> (
      )
   
 TEST ///
-restart
-needsPackage "BoijSoederberg"
 R = ZZ/8821[x,y,z,w]
 I = ideal(x,y^2,z^4,w^8)
 B = betti res I
@@ -2185,6 +2159,7 @@ document {
 	///
 	}
 
+
 end 
     
 document { 
@@ -2295,6 +2270,14 @@ setupBGG
 restart
 loadPackage"BoijSoederberg"
 check BoijSoederberg
+
+
+restart
+uninstallPackage "BoijSoederberg"
+restart
+installPackage "BoijSoederberg"
+check BoijSoederberg
+
 -- test decomposeDegrees
 M=matrix "1,0,0,0;
         0,4,4,1"
@@ -2345,19 +2328,6 @@ C=decompose B
 C1=decomposeBetti B
 C2=decomposeBetti(B, TableEntries => HerzogKuhl )
 C3=decomposeBetti (B, TableEntries => RealizationModules )
-
-check BoijSoederberg
-
-M=matrix "1,0,0,0;
-        0,4,4,1"
-B = mat2betti M
-L =lowestDegrees B
-C = makePureBettiDiagram L
-ratio = min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)))
-peek C
-peek B
-
-makePureBetti L
 
 L=set apply(toList C,x->x#1)
 L1=set apply(toList C1,x->x#1)
