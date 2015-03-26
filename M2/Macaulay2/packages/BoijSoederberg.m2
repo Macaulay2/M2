@@ -174,11 +174,7 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
      new CohomologyTally from a
      )
 
-<<<<<<< HEAD
-
-=======
 --- Test 1
->>>>>>> 13cde1d58c9ecd32b797d1aa8f98cb5a95ed2d4b
 TEST ///
 M = matrix "1,0,0,0;
         0,4,4,1"
@@ -189,17 +185,13 @@ B2 = mat2betti(M,2)
 assert(M == matrix B2)
 ///
 
-<<<<<<< HEAD
 
-=======
 --- Test 2
->>>>>>> 13cde1d58c9ecd32b797d1aa8f98cb5a95ed2d4b
 TEST ///
 m = matrix "5,0,0,0,0;
      	0,1,1,0,0;
 	0,0,0,1,2"
 c = mat2cohom (oo,0)
-
 ///
 
 matrix(BettiTally, ZZ, ZZ) := opts -> (B,lowestDegree, highestDegree) -> (
@@ -224,11 +216,8 @@ matrix(BettiTally,ZZ) := opts -> (B,lo) -> (
      matrix(B,lo,hi)
      )
 
-<<<<<<< HEAD
 
-=======
 -- Test 3
->>>>>>> 13cde1d58c9ecd32b797d1aa8f98cb5a95ed2d4b
 TEST ///
 R = ZZ/101[a..e]
 I = ideal borel monomialIdeal"abc,ad3,e4"
@@ -267,11 +256,8 @@ highestDegrees BettiTally := (B) -> (
 isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
-<<<<<<< HEAD
 
-=======
 -- Test 4
->>>>>>> 13cde1d58c9ecd32b797d1aa8f98cb5a95ed2d4b
 TEST ///
 matrix "1,0,0;
      	0,2,3"  
@@ -304,24 +290,6 @@ assert(highestDegrees B == {0,-infinity,4})
 -- Pure Betti diagrams --------------
 -------------------------------------
 
--- DELETE FROM HERE
---Input: Degs must be a strictly increasing list of positive integers
---Output: List of ranks of the minimal integral betti sequence that satisfy the
---"Peskine-Szpiro" equations
---pureBetti = method()
---pureBetti List := (Degs) -> (
---     c := # Degs;
---     p := 1;
---     for i from 1 to c-1 do (
---	  if Degs#i <= Degs#(i-1) then error "--pureBetti: expected an increasing list of integers";
---	  for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
---	  );
---     D := for i from 0 to c-1 list (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i);
---     Bettis := for i from 0 to c-1 list (p/D_i);
---     Bettis = Bettis / gcd Bettis;
---     apply(Bettis, x -> lift(x,ZZ)))
- 
--- DELETE TO HERE
 
 -------------------------------------
 -- Patch: optional types ------------
@@ -392,30 +360,6 @@ pureBettiDiagram List := (degs) -> (
      )
 
 
---- OBSOLETE!
---  input: List consisting of strictly increasing list of positive integers 
---         (a degree sequence)
--- output: List of theoretical rational Betti numbers resulting from the 
---         Herzog-Kuhl equations
--- makePureBettiHK = method()
--- makePureBettiHK List := (degs) -> (
---     codim := #degs;
---     for i from 0 to codim-1 list
---     (
---	  1/(product(for j from 0 to i-1 list degs#i-degs#j) * product(for j from i+1 to codim-1 list degs#j-degs#i))
---	  )
---     )
-
---- OBSOLETE!
---  input: List consisting of strictly increasing list of positive integers 
---         (a degree sequence)
--- output: BettiTally with the theoretical rational Betti numbers resulting from
---         the Eisenbud-Schreyer constructions
--- makePureBettiDiagramHK = method();
--- makePureBettiDiagramHK List := (degs) -> (
---     B := makePureBettiHK degs;
---     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
---     )
 
 --- NECESSARY 
 --  input: BettiTally
@@ -452,70 +396,7 @@ listPureDegrees BettiTally := B -> (
      else return "Error: diagram is not pure."
      )
 
---- OBSOLETE!
---  input: Betti table (eg, betti res M for a module M)
--- output: Sum of the pure diagrams as defined in Dan's lectures 
---         (with fractions from the H-K equations)
---decomposeHK = method();
---decomposeHK BettiTally := B-> (
---     Components:={};
---     B1:= new MutableHashTable from B;
---     while min values B1 >= 0 and max values B1 > 0 do (
---	  X:=decompose3(new BettiTally from B1);
---	  B1=new MutableHashTable from X_2;
---	  --change the type of the values in X_0 to ZZ
---	  Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
---	  Components = append(Components, hold(X_1) * Y));
---     sum Components
---     )
 
---- OBSOLETE!
---  input: Betti table
--- output: List of the coefficients with the pure degree sequences from above
---decomposeDegreesHK = method();
---decomposeDegreesHK BettiTally := B-> (
---     Components:={};
---     B1:= new MutableHashTable from B;
---     while min values B1 >= 0 and max values B1 > 0 do (
---	  X:=decompose3(new BettiTally from B1);
---	  B1=new MutableHashTable from X_2;
---	  --change the type of the values in X_0 to ZZ
---	  Y:=new BettiTally from apply(pairs X_0, i->{first i, last i});
---	  Components = append(Components, (X_1,listPureDegrees(Y))));
---     Components
---     )
-
---- OBSOLETE!
---  input: Betti table (eg, betti res M for a module M)
--- output: Sum of the pure diagrams as defined in Dan's lectures (with fractions from the E-S existence proof)
---decomposeES = method();
---decomposeES BettiTally := B-> (
---     Components:={};
---     B1:= new MutableHashTable from B;
---     while min values B1 >= 0 and max values B1 > 0 do (
---	  X:=decompose2(new BettiTally from B1);
---	  B1=new MutableHashTable from X_2;
---	  --change the type of the values in X_0 to ZZ
---	  Y:=new BettiTally from apply(pairs X_0, i->{first i,last i});
---	  Components = append(Components, hold(X_1) * Y));
---     sum Components
---     )
-
---- OBSOLETE!
---decomposeDegreesES = method();
---decomposeDegreesES BettiTally := B -> (
---     Components:={};
---     B1:= new MutableHashTable from B;
---     while min values B1 >= 0 and max values B1 > 0 do (
---	  X:=decompose2(new BettiTally from B1);
---	  B1=new MutableHashTable from X_2;
---	  --change the type of the values in X_0 to ZZ
---	  Y:=new BettiTally from apply(pairs X_0, i->{first i, last i});
---	  Components = append(Components, (X_1,listPureDegrees(Y))));
---     Components
---     )
-    
-    
 -------------------------------------
 --- Elimination Orders --------------
 -------------------------------------
@@ -584,7 +465,7 @@ B = betti res I
 eliminateBetti I
 eliminateBetti B
 isMassEliminate B
-assert(isMassEliminate B === true)
+assert(isMassEliminate B === false)
 ///
  
 --  input: List of degrees (type of an artinian complete intersection)
@@ -613,13 +494,6 @@ degreeDiff BettiTally := B -> (
 -- end of patch (for now)
 -------------------------  
 
--- DELETE FROM HERE
---pureBettiDiagram = method()
---pureBettiDiagram List := (degs) -> (
---    B := pureBetti degs;
---     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
---     )
--- TO HERE
 
 -- Test 7
 TEST ///
