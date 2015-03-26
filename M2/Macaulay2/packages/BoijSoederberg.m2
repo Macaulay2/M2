@@ -545,23 +545,7 @@ decompose3 = B -> (
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
 
---input: a BettiTally
---output: The routine prints the Boij-Soederberg summands.
---prints "not in convex hull" if the given BettiTally is not in the convex
---hull of the allowable pure betti diagrams. Prints an error message
---if the decomposition fails. Returns a list of the components as a list of pairs,
---each a rational coefficient followed by a hash table representing a pure betti diagram,
---if it succeeds.
-decompose BettiTally := B-> (
-     Components:={};
-     B1:= new MutableHashTable from B;
-     while min values B1 >= 0 and max values B1 > 0 do (
-	  X:=decompose1(new BettiTally from B1);
-	  B1=new MutableHashTable from X_2;
-	  --change the type of the values in X_0 to ZZ
-	  Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
-	  Components = append(Components, hold(X_1) * Y));
-     sum Components)
+
 
 -- Same as decompose but with options.
 -- this was done in order to preserve the old functionality and give 
@@ -604,6 +588,17 @@ decomposeBetti BettiTally := o -> B -> (
      	sum Components
      )     
 )
+
+--input: a BettiTally
+--output: The routine prints the Boij-Soederberg summands.
+--prints "not in convex hull" if the given BettiTally is not in the convex
+--hull of the allowable pure betti diagrams. Prints an error message
+--if the decomposition fails. Returns a list of the components as a list of pairs,
+--each a rational coefficient followed by a hash table representing a pure betti diagram,
+--if it succeeds.
+decompose BettiTally := B-> (
+    	decomposeBetti B
+     )
  
 
 -- Test 9
@@ -2184,7 +2179,7 @@ check BoijSoederberg
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M	
-D = decomposeDegreesHK B
+D = decomposeDegrees B
 pureBettiDiagram (D_0)#1
 
 pureBetti (D_0)#1
