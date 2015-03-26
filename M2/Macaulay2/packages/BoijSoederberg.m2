@@ -46,12 +46,13 @@ export {
      -- Not sure what to keep yet
      
      -- Methods
-     decomposeBetti,
+     decomposeBetti, --not written
      --decomposeDegreesHK,
      --makePureBettiHK, -- make as option to makePureBettiEntries
      --makePureBettiDiagramHK, -- make as option to makePureBettiDiagram
      isMassEliminate, -- not written
      eliminateBetti, -- not written
+     makeCI, -- not written
      
      -- Test Methods Tobe deleted
 --     makePureBettiDiagram,
@@ -596,12 +597,12 @@ assert(isMassEliminate B === true)
  
 --  input: List of degrees (type of an artinian complete intersection)
 --  output: BettiTally of such a complete intersection
-makeCI = method(Options=>{VariableName=>getSymbol "tt"});
-makeCI List := opts -> degs ->  (
-     c := #degs; 
-     tt := opts.VariableName;
-     S := ZZ/499[tt_1..tt_c];
-     G := toSequence(for i from 0 to (c-1) list S_i^(degs#i));
+makeCI = method();
+makeCI List := degs ->  (
+     Cc := #degs; 
+--     tt := opts.VariableName;
+     S := (ZZ/499)(monoid[vars(0..< Cc)]); -- BettiTally is independent of the field.
+     G := toSequence(for i from 0 to (Cc-1) list S_i^(degs#i));
      I := ideal G;
      betti res (S^1/G)
      )
@@ -2186,7 +2187,7 @@ document {
 	}
     
 document { 
-     Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetii,Ideal)},
+     Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
      Headline => "elimination table for a Betti diagram",
      Usage => {"eliminateBetti(B)","eliminateBetti(I)"},
      Inputs => {
@@ -2328,6 +2329,11 @@ decomposeDegrees( B, TableEntries => HerzogKuhl )
 
 -- 8. before deleting any method, make sure all dependencies are taken care of.
 
+makeCI{2,2,3}
+monoid[vars(0..2)]
+QQ(monoid[vars(0..2)])
+
+ S = ZZ/499[monoid[vars(0..2)]]
 -- test 1
 restart
 loadPackage"BoijSoederberg"
@@ -2339,6 +2345,7 @@ C1=decomposeBetti B
 C2=decomposeBetti(B, TableEntries => HerzogKuhl )
 C3=decomposeBetti (B, TableEntries => RealizationModules )
 
+check BoijSoederberg
 
 M=matrix "1,0,0,0;
         0,4,4,1"
