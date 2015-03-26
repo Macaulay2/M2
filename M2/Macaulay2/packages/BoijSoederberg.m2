@@ -606,12 +606,8 @@ TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M
-C =decompose(B)
-C1=decomposeBetti(B, TableEntries => LeastIntegerEntries)
-C2=decomposeBetti(B, TableEntries => HerzogKuhl)
-C3=decomposeBetti(B, TableEntries => RealizationModules)
-assert(C===C1)
 
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
 L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
@@ -620,12 +616,34 @@ m2=mat2betti matrix "1,0,0;
 M'=set{m1,m2}
 assert(L===M')
 
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L2=set apply(toList C2,x->x#1)
+m1c2=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2c2=mat2betti matrix "1/6,0,0;
+                     0,1/2,1/3"		     
+Mc2=set{m1c2,m2c2}
+assert(L2===Mc2)
+
+C3=decomposeBetti (B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"		     
+M'=set{m1,m2}
+assert(L===M')
+
+
+
+
 M=matrix "1,0,0,0;
      	  0,5,5,1;
 	  0,0,1,1"		    
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
 m2=mat2betti matrix "1,0,0,0;
@@ -637,15 +655,74 @@ m3=mat2betti matrix "3,0,0,0;
 M'=set{m1,m2,m3}
 assert(L===M')
 
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L=set apply(toList C2,x->x#1)
+m1=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2=mat2betti matrix "1/30,0,0,0;
+                     0,1/6,1/6,0;
+		     0,0,0,1/30"
+m3=mat2betti matrix "1/40,0,0,0;
+                     0,1/12,0,0;
+		     0,0,1/8,1/15"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+C3=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "4,0,0,0;
+                     0,20,20,0;
+		     0,0,0,4"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+
+
 M=matrix"1,0,0,0;
      	 0,2,0,0;
 	 0,1,3,1"
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix"1,0,0;
      	  0,2,0;
 	  0,0,1"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L=set apply(toList C2,x->x#1)
+m1=mat2betti matrix"1/8,0,0;
+     	  0,1/4,0;
+	  0,0,1/8"
+m2=mat2betti matrix"1/40,0,0,0;
+     	  0,1/12,0,0;
+	  0,0,1/8,1/15"
+m3=mat2betti matrix"1/12,0,0;
+     	  0,0,0;
+	  0,1/3,1/4"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+C3=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix"3,0,0;
+     	  0,6,0;
+	  0,0,3"
 m2=mat2betti matrix"3,0,0,0;
      	  0,10,0,0;
 	  0,0,15,8"
@@ -2319,21 +2396,17 @@ loadPackage"BoijSoederberg"
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M
-C=decompose B
+
 C1=decomposeBetti B
-C2=decomposeBetti(B, TableEntries => HerzogKuhl )
-C3=decomposeBetti (B, TableEntries => RealizationModules )
-
-L=set apply(toList C,x->x#1)
-L1=set apply(toList C1,x->x#1)
-m1c1=mat2betti matrix "1,0,0,0;
+L=set apply(toList C1,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
-m2c1=mat2betti matrix "1,0,0;
+m2=mat2betti matrix "1,0,0;
                      0,3,2"
-Mc1=set{m1c1,m2c1}
-assert(L===Mc1)
-assert(L1===Mc1)
+M'=set{m1,m2}
+assert(L===M')
 
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
 L2=set apply(toList C2,x->x#1)
 m1c2=mat2betti matrix "1/24,0,0,0;
                      0,1/4,1/3,1/8"
@@ -2342,14 +2415,15 @@ m2c2=mat2betti matrix "1/6,0,0;
 Mc2=set{m1c2,m2c2}
 assert(L2===Mc2)
 
-L3=set apply(toList C3,x->x#1)
-m1c3=mat2betti matrix "1,0,0,0;
+C3=decomposeBetti (B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
-m2c3=mat2betti matrix "1,0,0;
+m2=mat2betti matrix "1,0,0;
                      0,3,2"		     
-Mc3=set{m1c3,m2c3}
-assert(L3===Mc3)
-L3
+M'=set{m1,m2}
+assert(L===M')
+
 
 M=matrix "1,0,0,0;
      	  0,5,5,1;
