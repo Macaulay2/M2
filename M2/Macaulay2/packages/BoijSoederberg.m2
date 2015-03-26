@@ -174,6 +174,7 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
      new CohomologyTally from a
      )
 
+--- Test 1
 TEST ///
 M = matrix "1,0,0,0;
         0,4,4,1"
@@ -184,6 +185,7 @@ B2 = mat2betti(M,2)
 assert(M == matrix B2)
 ///
 
+--- Test 2
 TEST ///
 m = matrix "5,0,0,0,0;
      	0,1,1,0,0;
@@ -214,6 +216,7 @@ matrix(BettiTally,ZZ) := opts -> (B,lo) -> (
      matrix(B,lo,hi)
      )
 
+-- Test 3
 TEST ///
 R = ZZ/101[a..e]
 I = ideal borel monomialIdeal"abc,ad3,e4"
@@ -252,6 +255,7 @@ highestDegrees BettiTally := (B) -> (
 isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
+-- Test 4
 TEST ///
 matrix "1,0,0;
      	0,2,3"  
@@ -263,6 +267,7 @@ B2 = mat2betti oo
 assert(not isPure B2)
 ///
 
+-- Test 5
 TEST ///
 --load "BoijSoederberg.m2"
 m=matrix"1,0,0;
@@ -583,6 +588,7 @@ eliminateBetti Ideal := o -> I -> (
      return eliminateBetti( betti res I, EliminationSequence => o.EliminationSequence );
      )
   
+-- Test 6  
 TEST ///
 restart
 needsPackage "BoijSoederberg"
@@ -629,6 +635,7 @@ degreeDiff BettiTally := B -> (
 --     )
 -- TO HERE
 
+-- Test 7
 TEST ///
 assert(pureBetti{0,1,2,3,4} == {1,4,6,4,1})
 B = pureBettiDiagram {0,1,2,3,4}
@@ -660,6 +667,7 @@ isStrictlyIncreasing=L->(
      for i from 0 to #L-2 do t=(t and (L_i<L_(i+1)));
      t)
 
+-- Test 8
 TEST ///
 debug BoijSoederberg
 L={1,4,5,9}
@@ -743,7 +751,7 @@ decomposeBetti BettiTally := o -> B -> (
 )
  
 
-
+-- Test 9
 TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
@@ -842,7 +850,7 @@ decomposeDegrees BettiTally := o -> B -> (
      )     
  )
 
-
+-- Test 10
 TEST ///
 --needs writing
 ///
@@ -881,7 +889,8 @@ pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
 	  if v == 0 then (w=w+1; continue;);
 	  (n-w,i) => lift(v,ZZ)
 	  ));
-
+  
+-- Test 11
 TEST ///
 m = matrix "4,3,2,1,0,0,0,0;
             0,0,0,0,1,2,3,4"
@@ -1082,6 +1091,7 @@ facetEquation(List,ZZ,ZZ,ZZ) := (de,i,lowestDegree, highestDegree) -> (
      B1:=bettiMatrix(de,lowestDegree,highestDegree);
      if dotProduct(F,B1)>0 then F else -F)
 
+-- Test 12
 TEST ///
 m = matrix "0,1,-2;
             0,0,0;
@@ -1126,6 +1136,7 @@ dotProduct(Matrix, ZZ, BettiTally) := (A,lowest, B) -> dotProduct(mat2betti(A,lo
 
 dotProduct(Matrix, BettiTally) := (A,B) -> dotProduct(A,0,B)
 
+-- Test 13
 TEST ///
 A = matrix"1,1,0;
      	   0,1,1;
@@ -1203,6 +1214,7 @@ rkSchur = (n,L) -> (
      if #M<n then M=L|toList(n-#M:0);
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
 
+-- Test 14
 TEST ///
 debug BoijSoederberg
 rkSchur(6,{1,1,1,1}) -- exterior power
@@ -1248,6 +1260,7 @@ pureWeyman List := (L) -> (
 pureAll = method()
 pureAll List := (L) -> (pureCharFree L, pureTwoInvariant L, pureWeyman L)
 
+-- Test 15
 TEST ///
 assert(pureAll{0,1,2,3,4} == (1,1,1))
 assert(pureAll{0,1,3,4} == (2,2,3))
@@ -1285,6 +1298,7 @@ randomSocleModule(List, ZZ) := opts -> (L, m) -> (
      prune (image (f**(R^{s-r}/mR)))
      )
      
+-- Test 16     
 TEST ///
 setRandomSeed()
 L={0,1,3,4}
@@ -1309,6 +1323,7 @@ randomModule(List,ZZ) := opts -> (L, m) -> (
      B:=pureBetti L;
      coker (M:=random(R^{m*B_0:-L_0}, R^{m*B_1:-L_1})))
 
+-- Test 17
 TEST ///
 setRandomSeed()
 L={0,4,9,10}
@@ -1427,7 +1442,8 @@ bott(List,ZZ,ZZ):=(L,low,high)->(
 	  );
      new CohomologyTally from select(C, k -> k =!= null)
      )
-     
+
+-- Test 18     
 TEST ///
 B1=bott({3,2,1},-10,10)
 M=matrix"924,640,420,256,140,64,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
@@ -2090,6 +2106,7 @@ document {
 	SeeAlso => {dotProduct, pureBettiDiagram}
 	}
 
+-- Test 19
 TEST ///
 d={0,2,4}
 facetEquation(d,0,-1,3)
@@ -2117,6 +2134,7 @@ d={5,7,9,11}
 facetEquation(d,2,0,12)
 ///
 
+-- Test 20
 TEST ///
 d={1,3,4,5,7}
 e={1,3,5,6,7}
@@ -2429,6 +2447,7 @@ assert(L===M')
 -- Courtney's tests
 --
 
+-- Test 21
 TEST ///
 R = QQ[x,y,z,w]
 I = ideal(x^2,y^4,z^5,w^7)
