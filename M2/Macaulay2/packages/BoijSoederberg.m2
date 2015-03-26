@@ -2189,7 +2189,7 @@ document {
  
  document {
     Key => {isMassEliminate, (isMassEliminate,BettiTally)},
-    Headline => " ",
+    Headline => "determines whether the Boij-Soederberg decomposition algorithm eliminates multiple Betti numbers at the same time",
     Usage => "isMassEliminate(B)",
     Inputs => {
 	"B", BettiTally => "a Betti diagram"
@@ -2197,9 +2197,12 @@ document {
     Outputs => {Boolean => "True or false if..."},
     EXAMPLE lines ///
     	  R = ZZ/8821[x,y,z,w]
-	  I = ideal(x,y^2,z^4,w^8)
+	  I = ideal(x^2,y^2,z^4,w^8)
 	  B = betti res I
 	  isMassEliminate(B)
+	  J = ideal(x^4,y^5,z^7,w^9)
+          C = betti res J
+	  isMassEliminate(C)
 	///
 	}
 
