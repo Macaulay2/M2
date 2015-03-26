@@ -1400,6 +1400,14 @@ document {
      computations involving CohomologyTally are implemented."
      
      }
+ 
+document {
+     Key => BettiEliminationTally,
+     Headline => "Betti elimination table",
+     "A ", TT "Betti elimination table", " is designed to show the order 
+     in which Betti numbers are eliminated by the Boij-Soederberg algorithm."
+     
+     } 
 
 document { 
      Key => {(lowestDegrees,BettiTally),lowestDegrees},
@@ -2157,9 +2165,7 @@ document {
 	  isMassEliminate(C)
 	///
 	}
-
-
-end 
+    
     
 document { 
      Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
