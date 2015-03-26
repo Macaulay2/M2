@@ -622,11 +622,11 @@ degreeDiff BettiTally := B -> (
 -------------------------  
 
 -- DELETE FROM HERE
-pureBettiDiagram = method()
-pureBettiDiagram List := (degs) -> (
-     B := pureBetti degs;
-     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
-     )
+--pureBettiDiagram = method()
+--pureBettiDiagram List := (degs) -> (
+--    B := pureBetti degs;
+--     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
+--     )
 -- TO HERE
 
 TEST ///
