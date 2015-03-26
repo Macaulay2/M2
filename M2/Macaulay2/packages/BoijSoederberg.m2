@@ -2202,6 +2202,8 @@ document {
 	  isMassEliminate(B)
 	///
 	}
+
+end 
     
 document { 
      Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
