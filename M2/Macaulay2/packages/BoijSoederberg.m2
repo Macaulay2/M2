@@ -64,7 +64,7 @@ export {
      LeastIntegerEntries,
      HerzogKuhl,
      RealizationModules,
-     VariableName, -- delete before submission along with makeCI.
+--     VariableName, -- delete before submission along with makeCI.
      
      -- Types
      BettiEliminationTally 
@@ -600,7 +600,6 @@ assert(isMassEliminate B === true)
 makeCI = method();
 makeCI List := degs ->  (
      Cc := #degs; 
---     tt := opts.VariableName;
      S := (ZZ/499)(monoid[vars(0..< Cc)]); -- BettiTally is independent of the field.
      G := toSequence(for i from 0 to (Cc-1) list S_i^(degs#i));
      I := ideal G;
