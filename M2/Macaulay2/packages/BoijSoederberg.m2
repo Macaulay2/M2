@@ -583,7 +583,7 @@ decomposeBetti BettiTally := o -> B -> (
 	     X2:=decompose2(new BettiTally from B1);
 	     B1=new MutableHashTable from X2_2;
 	     --change the type of the values in X2_0 to ZZ
-	     Y2:=new BettiTally from apply(pairs X2_0, i->{first i,last i});
+	     Y2:=new BettiTally from apply(pairs X2_0, i->{first i,lift(last i,ZZ)});
 	     Components = append(Components, hold(X2_1) * Y2));
      	sum Components
      )     
@@ -1349,7 +1349,9 @@ document { Key => BoijSoederberg,
      SUBSECTION "Pure Betti diagrams",
      UL {
 	  TO pureBetti,
+	  TO makePureBetti
 	  TO pureBettiDiagram,
+	  TO makePureBettiDiagram,
 	  TO isPure,
 	  },
      SUBSECTION "Cohomology tables",
@@ -1360,7 +1362,9 @@ document { Key => BoijSoederberg,
 	  },
      SUBSECTION "Decomposition into pure diagrams",
      UL {
-	  TO (decompose,BettiTally)
+	  TO (decompose,BettiTally),
+	  TO decomposeBetti,
+	  TO decomposeDegrees
 	  },
      SUBSECTION "Three constructions for pure resolutions.  These routines provide the
      zero-th betti number given a degree sequence.",
@@ -1545,9 +1549,103 @@ document {
      	  try decompose B else "Betti diagram cannot exist"
 	  pureBettiDiagram lowestDegrees B
      	  ///,
-     SeeAlso => {pureBettiDiagram, betti, value, lift, toList, pack}
+     SeeAlso => {decomposeBetti, decomposeDegrees, makePureBettiDiagram, betti, value, lift, toList, pack}
      }
 
+document { 
+     Key => decomposeBetti,
+     Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
+     Usage => "decomposeBetti B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  decomposeBetti(B)
+	  ///,
+     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => HerzogKuhl)
+     	  ///,
+     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => RealizationModules)
+	 ///,
+     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
+     }
+ 
+ document { 
+     Key => [decomposeBetti, TableEntries]
+     Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
+     Usage => "decomposeBetti B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  decomposeBetti(B)
+	  ///,
+     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => HerzogKuhl)
+     	  ///,
+     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => RealizationModules)
+	 ///,
+     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
+     }
+
+document {
+    Key => TableEntries,
+    Headline => "Set the convention for what kind of pure Betti diagrams to use in a decomposition.",
+    "The possible options are LeastIntegerEntries, HerzogKuhl, and RealizationModules.",
+    SeeAlso => {decomposeBetti}
+    } 
+
+document { 
+     Key => decomposeDegrees,
+     Headline => "Find the degree sequences of pure diagrams occuring in a Boij-Soederberg decomposition of B",
+     Usage => "decomposeDegrees B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  decomposeBetti(B)
+	  ///,
+     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => HerzogKuhl)
+     	  ///,
+     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => RealizationModules)
+	 ///,
+     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
+     }
+ 
 document { 
      Key => {(mat2betti,Matrix,ZZ),(mat2betti,Matrix),mat2betti},
      Headline => "matrix to Betti diagram",
