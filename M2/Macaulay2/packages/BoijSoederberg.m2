@@ -54,8 +54,8 @@ export {
      eliminateBetti, -- not written
      
      -- Test Methods Tobe deleted
-     makePureBettiDiagram,
-     makePureBetti,
+--     makePureBettiDiagram,
+--     makePureBetti,
 
      -- Options -- need to be documented     
      EliminationSequence,     
@@ -360,7 +360,7 @@ pureBetti List := (Degs) -> (
 makePureBettiDiagram = method(Options => {TableEntries => LeastIntegerEntries})
 makePureBettiDiagram List := o -> (degs) -> (
      B := makePureBetti(degs, TableEntries => o.TableEntries);
-     new BettiTally from apply(#degs, i -> (i,{degs#1},degs#i) => B#i)
+     new BettiTally from apply(#degs, i -> (i,{degs#i},degs#i) => B#i)
 )
 
 -- alias for previous; same functionality as original
@@ -613,7 +613,7 @@ makeCI List := opts -> degs ->  (
 degreeDiff = method();
 degreeDiff BettiTally := B -> (
      local D; 
-     D = decomposeDegreesHK B;
+     D = decomposeDegrees (B, TableEntries => HerzogKuhl);
      return apply(#D-1, i-> D#(i+1)#1-D#i#1 );
 )
      
@@ -2339,8 +2339,16 @@ C1=decomposeBetti B
 C2=decomposeBetti(B, TableEntries => HerzogKuhl )
 C3=decomposeBetti (B, TableEntries => RealizationModules )
 
-L = {1,2,3}
-makePureBettiDiagram L
+
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B = mat2betti M
+L =lowestDegrees B
+C = makePureBettiDiagram L
+ratio = min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)))
+peek C
+peek B
+
 makePureBetti L
 
 L=set apply(toList C,x->x#1)
