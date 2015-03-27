@@ -813,18 +813,52 @@ M=matrix "1,0,0,0;
 B=mat2betti M	
 
 D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/3,{0,2,3,4}), (2/3,{0,2,3})}
+assert(C===D)
 
 D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(8/1,{0,2,3,4}), (4/1,{0,2,3})}
+assert(C===D)
 
 D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/3,{0,2,3,4}), (2/3,{0,2,3})}
+assert(C===D)
 
 
-pureBettiDiagram (D_0)#1
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
 
-pureBetti (D_0)#1
-makePureBetti((D_0)#1,TableEntries=>HerzogKuhl)
-makePureBettiDiagram((D_0)#1, TableEntries=>HerzogKuhl)
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/3,{0,2,3,4}), (7/15,{0,2,3,5}), (1/15,{0,2,4,5})}
+assert(C===D)
 
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(8/1,{0,2,3,4}), (14/1,{0,2,3,5}), (8/1,{0,2,4,5})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/3,{0,2,3,4}), (7/60,{0,2,3,5}), (1/15,{0,2,4,5})}
+assert(C===D)
+
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/8,{0,2,4,5}), (3/8,{0,2,4}), (1/4,{0,3,4})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(15/1,{0,2,4,5}), (3/1,{0,2,4}), (3/1,{0,3,4})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/8,{0,2,4,5}), (1/8,{0,2,4}), (1/4,{0,3,4})}
+assert(C===D)
 ///
 
 
