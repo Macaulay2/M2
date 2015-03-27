@@ -213,7 +213,8 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
 }
 
 const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
-                                               M2_ArrayString names)
+                                               M2_ArrayString names,
+                                               const Ring* degreeRing)
 {
   try {
     if (coefficientRing == nullptr)
@@ -221,7 +222,13 @@ const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
         ERROR("internal error: expected non-null Ring!");
         return nullptr;
       }
-    const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names);
+    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
+    if (P == nullptr)
+      {
+        ERROR("expected polynomial ring");
+        return nullptr;
+      }
+    const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names, P);
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
