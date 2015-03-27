@@ -779,7 +779,26 @@ decomposeDegrees BettiTally := o -> B -> (
 
 -- Test 10
 TEST ///
---needs writing
+restart
+loadPackage"BoijSoederberg"
+
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M	
+
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+
+
+pureBettiDiagram (D_0)#1
+
+pureBetti (D_0)#1
+makePureBetti((D_0)#1,TableEntries=>HerzogKuhl)
+makePureBettiDiagram((D_0)#1, TableEntries=>HerzogKuhl)
+
 ///
 
 
@@ -1427,10 +1446,10 @@ document { Key => BoijSoederberg,
      SUBSECTION "Pure Betti diagrams",
      UL {
 	  TO pureBetti,
-	  TO makePureBetti
+	  TO makePureBetti,
 	  TO pureBettiDiagram,
 	  TO makePureBettiDiagram,
-	  TO isPure,
+	  TO isPure
 	  },
      SUBSECTION "Cohomology tables",
      UL {
@@ -1641,7 +1660,7 @@ document {
      }
 
 document { 
-     Key => {decomposeBetti,[decomposeBetti,TableEntries]}
+     Key => {decomposeBetti,[decomposeBetti,TableEntries]},
      Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
      Usage => "decomposeBetti B",
      Inputs => {
@@ -1749,7 +1768,7 @@ document {
     Usage => "makeCI(degrees)",
     Inputs => {
 	"degrees" => "A list of degrees of the forms generating the complete intersection ideal",
-	}
+	},
     Outputs => {
 	BettiTally
 	}
