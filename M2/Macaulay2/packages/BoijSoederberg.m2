@@ -437,10 +437,13 @@ eliminateBetti Ideal := o -> I -> (
 -- Test 6  
 TEST ///
 R = ZZ/8821[x,y,z,w]
-I = ideal(x,y^2,z^4,w^8)
+I = ideal(x,y^4,z^8,w^9)
 B = betti res I
 eliminateBetti I
-eliminateBetti B
+X = eliminateBetti B
+peek eliminateBetti B
+assert(X#(0,{0},0) === 12)
+assert(X#(2,{13},13) === 10)
 isMassEliminate B
 assert(isMassEliminate B === false)
 ///
@@ -473,15 +476,36 @@ degreeDiff BettiTally := B -> (
 
 
 -- Test 7
+
 TEST ///
 assert(pureBetti{0,1,2,3,4} == {1,4,6,4,1})
+assert(makePureBetti{0,1,2,3,4} == pureBetti{0,1,2,3,4})
+assert(makePureBetti({0,1,2,3,4}, TableEntries => HerzogKuhl) === {1/24,1/6,1/4,1/6,1/24})
+assert(makePureBetti({0,1,2,3,4},TableEntries => RealizationModules) == {1,4,6,4,1})
+
 B = pureBettiDiagram {0,1,2,3,4}
 assert(B == mat2betti matrix "1,4,6,4,1")
+C = makePureBettiDiagram {0,1,2,3,4}
+assert(C == mat2betti matrix "1,4,6,4,1")
+D = makePureBettiDiagram({0,1,2,3,4},TableEntries => LeastIntegerEntries)
+assert(B === D)
+assert(B === C)
+E = makePureBettiDiagram({0,1,2,3,4}, TableEntries => HerzogKuhl)
+assert(E === mat2betti matrix "1/24,1/6,1/4,1/6,1/24")
+F = makePureBettiDiagram({0,1,2,3,4}, TableEntries => RealizationModules)
+assert(F === mat2betti matrix "1/1,4,6,4,1")
 
 B1=pureBetti{0,2,3,4}
 assert (B1 == {1,6,8,3})
+assert (makePureBetti{0,2,3,4} == B1)
 D1=pureBettiDiagram {0,2,3,4}
 assert (D1 == mat2betti matrix "1,0,0,0; 0,6,8,3")
+assert (makePureBettiDiagram{0,2,3,4} == D1)
+assert(makePureBetti({0,2,3,4}, TableEntries => HerzogKuhl) == {1/24,1/4,1/3,1/8})
+C1 = makePureBettiDiagram({0,2,3,4}, TableEntries => HerzogKuhl)
+assert(C1 == mat2betti matrix "1/24,0,0,0; 0,1/4,1/3,1/8")
+E1 = makePureBettiDiagram({0,2,3,4}, TableEntries => RealizationModules)
+assert(lift(E1,ZZ) == D1)
 
 B2 = pureBetti {0,2,3,5}
 assert(B2 == {1,5,5,1})
@@ -490,7 +514,9 @@ m = matrix "1,0,0,0;
      	    0,5,5,0;
 	    0,0,0,1"   
 assert(D2 == mat2betti m)
-
+assert(makePureBetti({0,2,3,5},TableEntries=> RealizationModules) == {4,20,20,4})
+C2 = makePureBettiDiagram({0,2,3,5},TableEntries=> RealizationModules)
+assert(lift(C2,ZZ) == mat2betti matrix "4,0,0,0; 0,20,20,0; 0,0,0,4")
 ///
 
 ---------------------------------------------
