@@ -441,11 +441,23 @@ I = ideal(x,y^4,z^8,w^9)
 B = betti res I
 eliminateBetti I
 X = eliminateBetti B
-peek eliminateBetti B
 assert(X#(0,{0},0) === 12)
 assert(X#(2,{13},13) === 10)
-isMassEliminate B
+
 assert(isMassEliminate B === false)
+
+R = QQ[x,y,z,w]
+I = ideal(x^2,y^4,z^5,w^7)
+B = makeCI{2,4,5,7}
+C = betti res (R^1/I)
+assert(B===C)
+
+J = ideal(x^4,y^5,z^7,w^9)
+D = makeCI{4,5,7,9}
+E = betti res(R^1/J)
+assert(D===E)
+
+assert(isMassEliminate(E)===true)
 ///
  
 --  input: List of degrees (type of an artinian complete intersection)
@@ -1666,6 +1678,33 @@ document {
      Caveat => {},
      SeeAlso => {pureBetti, betti}
      }
+ 
+ document { 
+     Key => {makePureBettiDiagram, (makePureBettiDiagram,List),[makePureBettiDiagram, TableEntries]},
+     Headline => "makes a pure Betti diagram given a list of degrees",
+     Usage => "makePureBettiDiagram L",
+     Inputs => {
+	  "L" => "of strictly increasing integers",
+	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
+	  },
+     Outputs => {
+	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defults to the minimal integral Betti numberswhich satisfy the Herzog-Kuhl equations."
+	  },
+     "See ", TO "pureBetti", " for a description of the Herzog-Kuhl equations.",
+     EXAMPLE lines ///
+     	  makePureBettiDiagram{0,2,4,5}
+	  makePureBettiDiagram({0,2,4,5}, TableEntries => HerzogKuhl)
+	  makePureBettiDiagram{0,3,4,5,6,7,10}
+	  makePureBettiDiagram({0,3,4,5,6,7,10}, TableEntries => RealizationModules)
+	  makePureBettiDiagram{0,3,4,5,6,7,8,11}
+	  makePureBettiDiagram({0,3,4,5,6,7,8,11}, TableEntries => HerzogKuhl)
+	  makePureBettiDiagram({0,3,4,5,6,7,8,11}, TableEntries => RealizationModules)
+	  ///,
+     Caveat => {},
+     SeeAlso => {LeastIntegerEntries, HerzogKuhl,RealizationModules}
+     }
+
+
 
 document { 
      Key => (decompose,BettiTally),
@@ -2438,7 +2477,7 @@ uninstallPackage "BoijSoederberg"
 restart
 installPackage "BoijSoederberg"
 check BoijSoederberg
-
+viewHelp BoijSoederberg
 -- test decomposeDegrees
 M=matrix "1,0,0,0;
         0,4,4,1"
