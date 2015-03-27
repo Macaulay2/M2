@@ -136,6 +136,7 @@ int NCFreeAlgebra::compare_monoms(const NCMonomial m1, const NCMonomial m2) cons
 {
   // here, compare the monomials pointed to by fIt and gIt.
   // should probably make an NCMonoid class...
+  // first compare degree
   if ((*m1)[1] > (*m2)[1]) return GT;
   if ((*m1)[1] < (*m2)[1]) return LT;
   // at this stage, they have the same degree, so use lex order
@@ -150,6 +151,7 @@ int NCFreeAlgebra::compare_monoms(const NCMonomial m1, const NCMonomial m2) cons
 
 ring_elem NCFreeAlgebra::copy(const ring_elem f) const
 {
+  // FRANK: is this what we want to do?
   return f;
 }
 

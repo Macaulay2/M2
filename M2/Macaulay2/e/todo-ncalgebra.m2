@@ -37,7 +37,9 @@ f*g-g*f
 f*f
 
 restart
-R = QQ[a,b,c]
-M = basis(1040,R);
-f = sum flatten entries M;
+needsPackage "NCAlgebra"
+R = QQ{a,b,c}
+f = a+b+c
+time(f^12);
+
 
