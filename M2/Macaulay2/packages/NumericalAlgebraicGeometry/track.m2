@@ -2,7 +2,7 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { track, trackSegment }
+export { track, trackSegment, HomotopySystem, evaluateH, evaluateHt, evaluateHx }
 
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
@@ -630,6 +630,14 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
+HomotopySystem = new Type of MutableHashTable -- abstract type
+evaluateH = method()
+evaluateH (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt = method()
+evaluateHt (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx = method()
+evaluateHx (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+    
 -- "track" should eventually go through "trackHomotopy"
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
@@ -668,7 +676,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	                        then compile preSLPs in the engine *}
      then (
      	 (R,slpH) := H; 
-     	 n := numgens R - 1;
+	 n := numgens R - 1;
      	 K := coefficientRing R;
       	 --
 	 fromSlpMatrix := if o.Software===M2enginePrecookedSLPs then
@@ -709,9 +717,28 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     etHt = etHt + tr#0;
 	     tr#1
 	     );
-       	 solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
     	 )
+     else if instance(H,HomotopySystem) then (
+     	 K = CC_53; --!!!
+      	 --
+       	 evalH = (x0,t0)-> (
+	     tr := timing evaluateH(H,x0,t0);
+	     etH = etH + tr#0;
+	     tr#1
+	     );
+       	 evalHx = (x0,t0)-> (
+	     tr := timing evaluateHx(H,x0,t0);
+	     etHx = etHx + tr#0;
+	     tr#1
+	     );  
+       	 evalHt = (x0,t0)->(
+	     tr := timing evaluateHt(H,x0,t0);
+	     etHt = etHt + tr#0;
+	     tr#1
+	     );
+    	 )     
      else error "unexpected type of homotopy (first parameter)";
+     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
 
      compStartTime := currentTime();      
 

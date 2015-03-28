@@ -141,7 +141,7 @@ Gate / Gate := (a,b) -> if b===zeroGate then error "division by zero"  else
     			    Inputs => {a,b}
     			    } 
 			
-value (InputGate,HashTable) := (g,h) -> if isConstant g then g.Name else h#g
+value (InputGate,HashTable) := memoize ((g,h) -> if isConstant g then g.Name else h#g)
 value (SumGate,HashTable) := memoize ((g,h) -> sum apply(g.Inputs, a->value(a,h)))
 value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->value(a,h)))
 value (DetGate,HashTable) := memoize ((g,h) -> det matrix applyTable(g.Inputs, a->value(a,h)))
@@ -441,6 +441,7 @@ F = {X*X-1, Y*Y-1}
 G = {X*X+Y*Y-1, -X*X+Y}
 H = (1 - T) * F + T * G
 
+-- preSLP way
 preH = toPreSLP({X,Y,T},H)
 evaluatePreSLP(preH, {1,1,0})
 preHx = transposePreSLP jacobianPreSLP(preH,toList(0..1));
@@ -448,3 +449,37 @@ evaluatePreSLP(preHx, {1,1,0})
 s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
 s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
 assert (norm evaluatePreSLP(preH, s|{1}) < 1e-6)
+
+-- HomotopySystem
+Rvars = hashTable{X=>x,Y=>y,T=>t} 
+gV = matrix{{X,Y}}
+gH = transpose matrix {H}
+gHx = diff(gV,gH)
+gHt = diff(T,gH)
+value(gH, Rvars)
+value(gHt, Rvars)
+value(gHx, Rvars)
+
+GateHomotopySystem = new Type of HomotopySystem    
+gateHomotopySystem = method()
+gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := (H,X,T) -> (
+    GH := new GateHomotopySystem;
+    GH.H = H;
+    GH.X = X;
+    GH.T = T;    
+    GH.Hx = diff(X,H);
+    GH.Ht = diff(T,H);
+    GH
+    ) 
+evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.H, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
+    )
+evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Ht, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
+    )
+evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Hx, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
+    )
+
+HS = gateHomotopySystem(gH,gV,T)
+s = coordinates first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
