@@ -1,14 +1,13 @@
---New and active file to revise. Delete this line before submission.
 newPackage(
 	"BoijSoederberg",
-    	Version => "1.3", 
-    	Date => "December 9, 2014",
+    	Version => "1.5", 
+    	Date => "April 01, 2015",
     	Authors => {
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
-	     {Name => "Revised by Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons"},
-	     {Name => "Revised by Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone"}
+	     {Name => "Revised by Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
+	     {Name => "Revised by Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
 	     },
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
     	DebuggingMode => false
