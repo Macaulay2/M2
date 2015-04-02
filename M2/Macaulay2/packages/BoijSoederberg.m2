@@ -1658,6 +1658,34 @@ document {
      Caveat => {},
      SeeAlso => {pureBettiDiagram}
      }
+ 
+ document { 
+     Key => {(makePureBetti,List),makePureBetti,[makePureBetti, TableEntries]},
+     Headline => "list of Betti numbers corresponding to a degree sequence",
+     Usage => "pureBetti L",
+     Inputs => {
+	  "L" => "of strictly increasing integers",
+	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
+	  },
+     Outputs => {
+	  List => "a list of the Betti numbers which satisfy the Herzog-Kuhl equations"
+	  },
+     "The numerator P(t) of the Hilbert function of a module whose free resolution has a pure resolution
+     of type L has the form P(t) = b_0 t^(d_0) - b_1 t^(d_1) + ... + (-1)^c b_c t^(d_c), 
+     where L = {d_0, ..., d_c}.  If (1-t)^c divides P(t), as in the case where the module has codimension c,
+     then the b_0, ..., b_c are determined up to a unique scalar multiple.  This 
+     routine returns the smallest positive integral solution of these (Herzog-Kuhl) equations.",
+     EXAMPLE lines ///
+     	  makePureBetti{0,2,4,5}
+	  makePureBetti({0,2,4,5},TableEntries => HerzogKuhl)
+	  makePureBetti({0,2,4,5},TableEntries => RealizationModules)
+	  makePureBetti{0,3,4,5,6,7,10}
+	  makePureBetti({0,3,4,5,6,7,10},TableEntries => HerzogKuhl)
+	  makePureBetti({0,3,4,5,6,7,10},TableEntries => RealizationModules)
+	  ///,
+     Caveat => {},
+     SeeAlso => {pureBetti,makePureBettiDiagram}
+     }
 
 document { 
      Key => {(pureBettiDiagram,List),pureBettiDiagram},
