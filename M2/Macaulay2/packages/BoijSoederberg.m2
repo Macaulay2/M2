@@ -19,8 +19,8 @@ export {
      lowestDegrees, -- documented
      highestDegrees, -- documented
      isPure, -- documented
-     makePureBetti, --not written
-     makePureBettiDiagram, --not written
+     makePureBetti, --documented
+     makePureBettiDiagram, --documented
      pureBetti, -- documented
      pureBettiDiagram, -- documented
 
@@ -42,29 +42,19 @@ export {
      CohomologyTally, -- documented
      mat2cohom, -- not written
      
-     -- new stuff from Branden and Courtney
-     -- Not sure what to keep yet
-     
      -- Methods
-     decomposeBetti, --not written
-     decomposeDegrees, --not written, not tested
-     --makePureBettiHK, -- make as option to makePureBettiEntries
-     --makePureBettiDiagramHK, -- make as option to makePureBettiDiagram
-     isMassEliminate, -- not written
-     eliminateBetti, -- not written
-     makeCI, -- not written
-     
-     -- Test Methods Tobe deleted
---     makePureBettiDiagram,
---     makePureBetti,
+     decomposeBetti, -- documented
+     decomposeDegrees, -- documented
+     isMassEliminate, -- documented
+     eliminateBetti, -- documented
+     makeCI, -- documented
 
-     -- Options -- need to be documented     
+     -- Options -- documented     
      EliminationSequence,     
      TableEntries,     
      LeastIntegerEntries,
      HerzogKuhl,
      RealizationModules,
---     VariableName, -- delete before submission along with makeCI.
      
      -- Types
      BettiEliminationTally 
@@ -289,16 +279,6 @@ assert(highestDegrees B == {0,-infinity,4})
 -------------------------------------
 -- Pure Betti diagrams --------------
 -------------------------------------
-
-
--------------------------------------
--- Patch: optional types ------------
--------------------------------------
-
--- Similar to pureBetti (from original package) 
--- but with options and M2 naming convention
--- this was done in order to preserve the old functionality and give 
--- the ability to add options to the method.
 
 makePureBetti = method(Options => {TableEntries => LeastIntegerEntries})
 makePureBetti List := o -> Degs -> (
