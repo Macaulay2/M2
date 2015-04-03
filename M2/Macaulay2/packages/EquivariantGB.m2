@@ -9,6 +9,7 @@ newPackage(
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"},
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
+     PackageImports => {"FourTiTwo"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => true 
@@ -28,10 +29,11 @@ export {
      Extend
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed }
      
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
+ShiftMonomial = new Type of HashTable
 
 -- In:
 -- Out: 
@@ -136,47 +138,54 @@ spoly = (f,g) -> (
 --     w, a polynomial 
 -- Out: (B, M)
 --     B, a boolean, whether there is a shift M s.t. M*in(v) divides in(w)
-divWitness = method()
-divWitness (RingElement,RingElement) := (v,w) -> (
-     R := ring v;
-     assert(numgens ring v == numgens ring w);
-     n := R.indexBound;
-     vl := (listForm leadTerm v)#0#0;
-     wl := (listForm leadTerm w)#0#0;
-     --diag := (vl,b,i) -> vl#(R.varPosTable#((1:b)|(R.semigroup#b:i)));
-     vhints := hints v;
-     whints := hints w;
-     vmax := maxIndex {leadTerm v};
-     wmax := maxIndex {leadTerm w};
-     if vmax == -1 then return (true, toList(0..n-1));
-     if wmax == -1 then return (false, {});
-     sigma := new MutableList from (n:-1);
-     k := 0;
-     while true do (
-	  while true do (
-	       i := k;
-	       for j from (sigma#k)+1 to wmax do (
-		    if all(#vhints, s->(vhints#s#i <= whints#s#j)) then (
-		--    if all(#(R.semigroup), b->(diag(vl,b,i) <= diag(wl,b,j))) then (
-			 sigma#i = j;
-			 i = i+1;
-			 );
-		    );
-	       if i <= vmax then k = k-1 else break;
-	       if k < 0 then return (false, {});
-	       );
-	  for i from vmax+1 to n-1 do sigma#i = sigma#vmax + i - vmax;
-	  if all(R.varIndices, ind->(
-		    sind := (1:ind#0)|apply(1..#ind-1, j->sigma#(ind#j));
-		    (not R.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
-		    or vl#(R.varPosTable#ind) <= wl#(R.varPosTable#sind))) 
-		    then break;
-	  k = vmax;
-	  );
-     --print (v,w,leadTerm v, leadTerm w, vhints,whints,toList sigma);
-     return (true, shift sigma);
-     )
- 
+divWitness = method(Options=>{Seed=>null})
+divWitness (RingElement,RingElement) := o -> (v,w) -> (
+    R := ring v;
+    assert(numgens ring v == numgens ring w);
+    n := R.indexBound;
+    vl := (listForm leadTerm v)#0#0;
+    wl := (listForm leadTerm w)#0#0;
+    --diag := (vl,b,i) -> vl#(R.varPosTable#((1:b)|(R.semigroup#b:i)));
+    (vhints,whints) := (v,w)/hints;
+    (isDiv, sigma) := divWitness(vhints,whints, Seed=>o.Seed);
+    while isDiv do (
+	if all(R.varIndices, ind->(
+		sind := (1:ind#0)|apply(1..#ind-1, j->sigma#(ind#j));
+		(not R.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
+		or vl#(R.varPosTable#ind) <= wl#(R.varPosTable#sind))) 
+	then return (true, shift sigma);
+	(isDiv, sigma) = divWitness(vhints,whints,Seed=>sigma);
+	);
+    (false, {})
+    )
+
+divWitness (Shift,Shift) := o -> (s,t) -> (
+    n := max{last s,last t};
+    divWitness({gaps(s,n)},{gaps(t,n)},Seed=>o.Seed)
+    )
+
+divWitness (List,List) := o -> (v,w) -> (
+    n := #(first v);
+    (vmax,wmax) := (v,w)/maxEntry;
+    if vmax == -1 then return (true, new MutableList from (0..n-1));
+    if wmax == -1 then return (false, {});
+    sigma := if o.Seed =!= null then o.Seed else new MutableList from (n:-1);
+    k     := if o.Seed =!= null then vmax else 0;
+    while true do (
+	i := k;
+	for j from (sigma#k)+1 to wmax do (
+	    if all(#v, s->(v#s#i <= w#s#j)) then (
+		sigma#i = j;
+		i = i+1;
+		);
+	    );
+	if i <= vmax then k = k-1 else break;
+	if k < 0 then return (false, {});
+	);
+    for i from vmax+1 to n-1 do sigma#i = sigma#vmax + i - vmax;
+    return (true, sigma);
+    )
+
 hints = v -> (
     R := ring v;
     n := R.indexBound;
@@ -423,6 +432,11 @@ maxIndex = F -> (
      if p === null then p = -1;
      p
      )
+ 
+maxEntry = V -> (
+    W := apply(V, v->position(v, i->(i > 0), Reverse=>true));
+    max apply(W, i-> if i === null then 0 else i)
+    )
 
 -- should run faster if the reduction is done with the fast internal gb routine
 -- ??? is there a function that just interreduces ???
@@ -532,14 +546,43 @@ egbToric = M -> (
      )
 
 shift = method()
-shift(List) := L -> new Shift from L
-shift(MutableList) := L -> new Shift from L
-shift(Sequence) := S -> shift toList S
+shift (List) := L -> new Shift from L
+shift (MutableList) := L -> new Shift from L
+shift (Sequence) := S -> shift toList S
 Shift * Shift := (I,J) ->
     apply(J, j->(if I#?j then I#j else j + (last I) - #I + 1))
-    
-ShiftMonomial = new Type of List
+gaps = (I,n) -> (
+    k := last I;
+    g := new MutableList from (k:1)|(n-k:0);
+    for i in I do g#i = 0;
+    toList g
+    )
+take (Shift,ZZ) := (I,n) -> (
+    k := length I;
+    if k < n then return shift (toList I) | (toList (k + degree I)..(n-1 + degree I));
+    if k > n then return shift take(I,n);
+    I
+    )
+degree (Shift) := I ->
+    if #I == 0 then 0 else last I + 1 - #I
 
+shiftMonomial = method()
+shiftMonomial (RingElement,Shift) := (p,I) ->
+    new ShiftMonomial from hashTable {Monomial=>(leadTerm p), Shift=>I}
+ShiftMonomial * ShiftMonomial := (S,T) -> (
+    (p,I) := (S.Monomial, S.Shift);
+    (q,J) := (T.Monomial, T.Shift);
+    --n := max{maxIndex{p}, #I, maxIndex{q} + degree I, #J + degree I};
+    R := ring q;
+    Iq := shiftMap(R,take(I,R.indexBound))*q;
+    shiftMonomial (p*Iq, I*J)
+    )
+mult = (p,q) -> (
+    if (ring p).indexBound < (ring q).indexBound then (p,q) = (q,p);
+    (R,S) := (p,q)/ring;
+    if R.indexBound > S.indexBound then 0
+    0)
+    
 
 beginDocumentation()
 
