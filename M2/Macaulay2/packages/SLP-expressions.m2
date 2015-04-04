@@ -140,12 +140,16 @@ Gate / Gate := (a,b) -> if b===zeroGate then error "division by zero"  else
 			new DivideGate from {
     			    Inputs => {a,b}
     			    } 
+
+ValueHashTable = new Type of HashTable
+valueHashTable = method()
+valueHashTable (List,List) := (a,b) -> hashTable (apply(a,b,identity) | {(cache,new CacheTable)})
 			
-value (InputGate,HashTable) := memoize ((g,h) -> if isConstant g then g.Name else h#g)
-value (SumGate,HashTable) := memoize ((g,h) -> sum apply(g.Inputs, a->value(a,h)))
-value (ProductGate,HashTable) := memoize ((g,h) -> product apply(g.Inputs, a->value(a,h)))
-value (DetGate,HashTable) := memoize ((g,h) -> det matrix applyTable(g.Inputs, a->value(a,h)))
-value (DivideGate,HashTable) := memoize ((g,h) -> value(first g.Inputs,h)/value(last g.Inputs,h))
+value (InputGate,HashTable) := (g,h)-> if h.cache#?g then h.cache#g else h.cache#g = (if isConstant g then g.Name else h#g)
+value (SumGate,HashTable) :=  (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (sum apply(g.Inputs, a->value(a,h)))
+value (ProductGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (product apply(g.Inputs, a->value(a,h)))
+value (DetGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
+value (DivideGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
 
 support InputGate := g -> if isConstant g then {} else g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
@@ -368,6 +372,28 @@ diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
     applyTable(entries xx, x->diff(x,M)), 
     row-> joinHorizontal row
     )
+
+GateHomotopySystem = new Type of HomotopySystem    
+gateHomotopySystem = method()
+gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := (H,X,T) -> (
+    GH := new GateHomotopySystem;
+    GH.H = H;
+    GH.X = X;
+    GH.T = T;    
+    GH.Hx = diff(X,H);
+    GH.Ht = diff(T,H);
+    GH
+    ) 
+evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.H, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    )
+evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Ht, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    )
+evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Hx, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    )
+
 end -------------------------------------------
 
 restart
@@ -380,7 +406,7 @@ Y = inputGate symbol Y
 --SumGate and ProductGate
 C = sumGate {X+Y,Y,X}
 D = productGate {X*Y,Y,C}
-h = new HashTable from {X=>1,Y=>ii}
+h = new HashTable from {X=>1,Y=>ii,cache=>new CacheTable}
 assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
 support (X*X)
 support (D+C)
@@ -402,7 +428,7 @@ J = detGate {{X,C},{D,Y}}
 -- diff
 diff(X,F)
 diff(X,J)
-h = new HashTable from {X=>x,Y=>y}
+h = new HashTable from {X=>x,Y=>y,cache=>new CacheTable}
 assert(
     value(diff(X,J),h) 
     ==
@@ -451,7 +477,7 @@ s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2engin
 assert (norm evaluatePreSLP(preH, s|{1}) < 1e-6)
 
 -- HomotopySystem
-Rvars = hashTable{X=>x,Y=>y,T=>t} 
+Rvars = hashTable{X=>x,Y=>y,T=>t,cache=>new CacheTable} 
 gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 gHx = diff(gV,gH)
@@ -460,26 +486,6 @@ value(gH, Rvars)
 value(gHt, Rvars)
 value(gHx, Rvars)
 
-GateHomotopySystem = new Type of HomotopySystem    
-gateHomotopySystem = method()
-gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := (H,X,T) -> (
-    GH := new GateHomotopySystem;
-    GH.H = H;
-    GH.X = X;
-    GH.T = T;    
-    GH.Hx = diff(X,H);
-    GH.Ht = diff(T,H);
-    GH
-    ) 
-evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.H, 
-    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
-    )
-evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Ht, 
-    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
-    )
-evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Hx, 
-    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t)})
-    )
 
 HS = gateHomotopySystem(gH,gV,T)
 s = coordinates first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)

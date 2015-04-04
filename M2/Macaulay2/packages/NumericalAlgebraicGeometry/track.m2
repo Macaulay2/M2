@@ -809,6 +809,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    if DBG>9 then << ">>> step adjusting" << endl;
 		    if dt > o.tStepMin 
 		    and norm dx > CorrectorTolerance() * norm x1 then ( -- predictor failure 
+			if norm dx < 1e-5 then 1/0; -- !!!
 			predictorSuccesses = 0;
 			stepAdj = stepAdj - 1;
 			tStep = stepDecreaseFactor*tStep;
