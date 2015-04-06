@@ -26,10 +26,13 @@ export {
      reduce,
      OutFile,
      Shift,
-     Extend
+     shift,
+     ShiftMonomial,
+     shiftMonomial,
+     divWitness
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh }
      
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
@@ -40,7 +43,7 @@ ShiftMonomial = new Type of HashTable
 egb = method(Options=>{Symmetrize=>false, OutFile=>null})
 egb (List) := o -> F -> (
      g := o.OutFile;
-     n := (ring first F).indexBound;
+     n := width ring first F;
      k := 0;
      while k < n do (
 	  if k == 0 then (
@@ -51,7 +54,7 @@ egb (List) := o -> F -> (
 	       g << (sort F) << endl;
 	       g << (toExternalString sort F) << endl;
 	       g << "-- gens: " << #F
-	       << "; indices: " << (maxIndex F) + 1
+	       << "; indices: " <<  width F
 	       << "; max deg: " << max((F / degree) / first)
 	       << "." << endl;
 	       );
@@ -67,7 +70,7 @@ egb (List) := o -> F -> (
 	  F = newF;
 	  if isNew then k = 0
 	  else k = k+1;
-	  n = (ring first F).indexBound;
+	  n = width ring first F;
 	  );
      F
      )
@@ -139,56 +142,63 @@ spoly = (f,g) -> (
 -- Out: (B, M)
 --     B, a boolean, whether there is a shift M s.t. M*in(v) divides in(w)
 divWitness = method(Options=>{Seed=>null})
-divWitness (RingElement,RingElement) := o -> (v,w) -> (
-    R := ring v;
-    assert(numgens ring v == numgens ring w);
-    n := R.indexBound;
+divWitness (RingElement,RingElement) := o -> (v,w) ->
+    divWitness(shiftMonomial(v,shift{}), shiftMonomial(w,shift{}), Seed=>o.Seed)
+
+divWitness (Shift,Shift) := o -> (I,J) -> (
+    d := listDivWitness({{}},{{}},gaps I,gaps J, Seed=>o.Seed);
+    (d#0, shift d#1)
+    )
+
+divWitness (ShiftMonomial,ShiftMonomial) := o -> (s,t) -> (
+    (v,I,w,J) := (s.Monomial,s.Sh,t.Monomial,t.Sh);
     vl := (listForm leadTerm v)#0#0;
     wl := (listForm leadTerm w)#0#0;
-    --diag := (vl,b,i) -> vl#(R.varPosTable#((1:b)|(R.semigroup#b:i)));
     (vhints,whints) := (v,w)/hints;
-    (isDiv, sigma) := divWitness(vhints,whints, Seed=>o.Seed);
-    while isDiv do (
-	if all(R.varIndices, ind->(
-		sind := (1:ind#0)|apply(1..#ind-1, j->sigma#(ind#j));
-		(not R.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
-		or vl#(R.varPosTable#ind) <= wl#(R.varPosTable#sind))) 
-	then return (true, shift sigma);
-	(isDiv, sigma) = divWitness(vhints,whints,Seed=>sigma);
+    sigma := o.Seed;
+    local isDiv;
+    while true do (
+	(isDiv, sigma) = listDivWitness(vhints,whints,gaps I,gaps J, Seed=>sigma);
+	if not isDiv then break;
+	if checkDiv(vl,wl,sigma,ring v,ring w) then return (true, shift sigma);
 	);
-    (false, {})
+    (false, shift{})
     )
 
-divWitness (Shift,Shift) := o -> (s,t) -> (
-    n := max{last s,last t};
-    divWitness({gaps(s,n)},{gaps(t,n)},Seed=>o.Seed)
-    )
-
-divWitness (List,List) := o -> (v,w) -> (
-    n := #(first v);
+listDivWitness = method(Options=>{Seed=>null})
+listDivWitness (List,List,List,List) := o -> (v,w,vgaps,wgaps) -> (
+    (vgdeg,wgdeg) := (vgaps,wgaps)/sum;
+    if vgdeg > wgdeg or any(#v, i->(sum v#i > sum w#i)) then return (false, new MutableList);
     (vmax,wmax) := (v,w)/maxEntry;
-    if vmax == -1 then return (true, new MutableList from (0..n-1));
-    if wmax == -1 then return (false, {});
-    sigma := if o.Seed =!= null then o.Seed else new MutableList from (n:-1);
-    k     := if o.Seed =!= null then vmax else 0;
+    if vgdeg == 0 and wgdeg == 0 then (
+    	if vmax == -1 then return (true, new MutableList);
+	) else (
+	wmax = max{wmax, maxEntry {wgaps} + 1};
+	vmax = max{vmax, wmax + vgdeg - wgdeg};
+	);
+    sigma := if o.Seed =!= null then o.Seed else new MutableList from {-1};
+    k     := if o.Seed =!= null then vmax   else 0;
     while true do (
 	i := k;
 	for j from (sigma#k)+1 to wmax do (
-	    if all(#v, s->(v#s#i <= w#s#j)) then (
+	    if listEl(vgaps,i) > 0 and listEl(wgaps,j) == 0 then break;
+	    if all(#v, s->(listEl(v#s,i) <= listEl(w#s,j)))
+	    and listEl(vgaps,i) == listEl(wgaps,j) then (
 		sigma#i = j;
 		i = i+1;
 		);
 	    );
 	if i <= vmax then k = k-1 else break;
-	if k < 0 then return (false, {});
+	if k < 0 then return (false, new MutableList);
 	);
-    for i from vmax+1 to n-1 do sigma#i = sigma#vmax + i - vmax;
     return (true, sigma);
     )
 
+listEl = (L,n) -> if L#?n then L#n else 0
+
 hints = v -> (
     R := ring v;
-    n := R.indexBound;
+    n := width R;
     vl := (listForm leadTerm v)#0#0;
     h := toList apply(#R.semigroup, b->toList (R.semigroup#b: new MutableList from (n:0)));
     for ind in R.varIndices do
@@ -196,15 +206,20 @@ hints = v -> (
 	    h#(ind#0)#j#(ind#(j+1)) = h#(ind#0)#j#(ind#(j+1)) + vl#(R.varPosTable#ind);
     (flatten flatten h) / toList
     )
-    
-	
+
+checkDiv = (vl,wl,sigma,R,S) -> (
+    all(R.varIndices, ind->(
+	    sind := (1:ind#0)|apply(1..#ind-1, j->sigma#(ind#j));
+	    (not S.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
+	    or vl#(R.varPosTable#ind) <= wl#(S.varPosTable#sind)))
+    )
 
 basicReduce = method(Options=>{Completely=>false})
 basicReduce (RingElement, BasicList) := o -> (f,B) -> (
      B = select(toList B,b->b!=0);
      R := ring f;
      oldf := f;
-     n := R.indexBound;
+     n := width R;
      divisible := true;
      while divisible and f != 0 do (
 	  divisible = false;
@@ -235,7 +250,7 @@ reduce2 (RingElement,List) := o -> (f,F) -> (
      R := ring f;
      r := basicReduce(f,F,Completely=>o.Completely);
      while r === null do (
-     	  Rnew := buildERing(R,(R.indexBound)+1);
+     	  Rnew := buildERing(R,(width R)+1);
      	  RtoRnew := ringMap(Rnew,R);
      	  F = RtoRnew\F;
      	  f = RtoRnew f;
@@ -254,16 +269,16 @@ processSpairs = method(Options=>{Symmetrize=>false})
 processSpairs (List,ZZ) := o -> (F,k) -> (
      --if o.Symmetrize then F = interreduce'symmetrize F; 
      R := ring F#0;
-     n := R.indexBound;
+     n := width R;
      S := buildERing(R,n+k);
      F = F / ringMap(S,R);
-     maxIndices := apply(F, f->(maxIndex {f}));
+     maxIndices := apply(F, f->(width f));
      --sp := shiftPairs(n,n,k);
      --print apply(sp,t->matrix first t||matrix last t);
      Fnew := {};
      for i from 0 to #F-1 do (
 	  for j from 0 to i do (
-	       sp := shiftPairs(maxIndices#i + 1, maxIndices#j + 1, k);
+	       sp := shiftPairs(maxIndices#i, maxIndices#j, k);
 	       for st in sp do (
 		    (s,t) := st;
 		    f := spoly((shiftMap(S,s)) F#i, (shiftMap(S,t)) F#j);
@@ -315,23 +330,24 @@ shiftPairs = (n0,n1,k) -> (
 --     If s#i == -1 then all variables with index i go to 0_S.
 shiftMap = method(Options=>{Extend=>false})
 shiftMap(Ring,Shift) := o -> (R,s) -> (
-     S := R;
-     if o.Extend then (
-	  n := R.indexBound;
-	  s = s*shift(0:n-1);
-	  S = buildERing(R,max s);
-    	  );
-     mapList := apply(R.varIndices, ind->(
-	  indnew := new MutableList from ind;
-	  for j from 1 to #ind-1 do (
-	       if ind#j >= #s or s#(ind#j) < 0 or s#(ind#j) >= S.indexBound then return 0_S
-	       else indnew#j = s#(ind#j);
-	       );
-	  S.varTable#(toSequence indnew)
-	  ));
-     --print(s,R.varIndices,mapList);
-     map(R,S,mapList)
-     )
+    s = take(s,width R);
+    S := R;
+    if o.Extend then (
+	n := width R;
+	s = s*shift(0:n-1);
+	S = buildERing(R,max s);
+	);
+    mapList := apply(R.varIndices, ind->(
+	    indnew := new MutableList from ind;
+	    for j from 1 to #ind-1 do (
+	       	if ind#j >= #s or s#(ind#j) < 0 or s#(ind#j) >= width S then return 0_S
+	       	else indnew#j = s#(ind#j);
+	       	);
+	    S.varTable#(toSequence indnew)
+	    ));
+    --print(s,R.varIndices,mapList);
+    map(R,S,mapList)
+    )
 
 ringMap = (S,R) -> map(S,R, apply(R.varIndices, i->(if S.varTable#? i then S.varTable#i else 0_S)))
 
@@ -354,7 +370,7 @@ interreduce (List) := F -> (
      --Reduce elements of F with respect to each other.
      --print "-- starting \"slow\" interreduction";
      R := ring first F;
-     n := R.indexBound;
+     n := width R;
      i := 0;
      while i < #F do (
 	  if F#i == 0 then (i = i+1; continue);
@@ -404,7 +420,7 @@ contractERing = (F,sym) -> (
 	  s := shift apply(iS, j->(if j > 0 then (newn = newn+1; newn-1) else -1));
 	  F = F / shiftMap(R,s);
 	  )
-     else newn = maxIndex(F) + 1;
+     else newn = width F;
      S := buildERing(R,newn);
      F / ringMap(S,R)
      )
@@ -413,7 +429,7 @@ contractERing = (F,sym) -> (
 --Out: a list, the number of variables represented in F which have an index equal to i for each i from 0 to n-1
 indexSupport = F -> (
      R := ring first F;
-     n := R.indexBound;
+     n := width R;
      vSupport := sum(apply(F, f->sum(listForm(f)/first))); --list of # occurrances of each variable in newF
      nSupport := new MutableList from (n:0); --list of # occurances of each index value in variable support
      for i from 0 to #(R.varIndices)-1 do (
@@ -469,8 +485,8 @@ printT = (T,f) -> (
 --builds an equivariant monomial map from ERing R to S.
 --F is a list storing the image of y_(0,1,...,k-1) for each block of variables in R.
 buildEMonomialMap = (S,R,F) -> (
-     if S.indexBound != R.indexBound then (
-	  S' := buildERing(S,R.indexBound);
+     if width S != width R then (
+	  S' := buildERing(S,width R);
           F = F / ringMap(S',S);
 	  S = S';
 	  );
@@ -498,7 +514,7 @@ egbToric = M -> (
      S := target M;
      r := R.semigroup;
      F := apply(#r, p -> M(R.varTable#((1:p)|0..(r#p-1))));
-     k := R.indexBound;
+     k := width R;
      lastNewk := k;
      T := buildEMonomialMap(S,R,F);
      G := transpose toricGroebner matrixFromMap T;
@@ -533,7 +549,7 @@ egbToric = M -> (
      seen := new MutableHashTable;
      GB := select(GBtrad, g -> (
 	       if not seen#?g then (
-	       	    n := maxIndex{g}+1;
+	       	    n := width g;
 	       	    shifts := subsets(k,n);
 		    shifts = apply(shifts, s->(s|(toList ((k-n):(-1)))));
 		    --print shiftMap(R,shifts#0);
@@ -551,9 +567,9 @@ shift (MutableList) := L -> new Shift from L
 shift (Sequence) := S -> shift toList S
 Shift * Shift := (I,J) ->
     apply(J, j->(if I#?j then I#j else j + (last I) - #I + 1))
-gaps = (I,n) -> (
-    k := last I;
-    g := new MutableList from (k:1)|(n-k:0);
+gaps = I -> (
+    k := width I;
+    g := new MutableList from (k:1);
     for i in I do g#i = 0;
     toList g
     )
@@ -568,21 +584,35 @@ degree (Shift) := I ->
 
 shiftMonomial = method()
 shiftMonomial (RingElement,Shift) := (p,I) ->
-    new ShiftMonomial from hashTable {Monomial=>(leadTerm p), Shift=>I}
+    new ShiftMonomial from hashTable {Monomial=>(leadTerm p), Sh=>I}
 ShiftMonomial * ShiftMonomial := (S,T) -> (
-    (p,I) := (S.Monomial, S.Shift);
-    (q,J) := (T.Monomial, T.Shift);
-    --n := max{maxIndex{p}, #I, maxIndex{q} + degree I, #J + degree I};
+    (p,I) := (S.Monomial, S.Sh);
+    (q,J) := (T.Monomial, T.Sh);
     R := ring q;
-    Iq := shiftMap(R,take(I,R.indexBound))*q;
-    shiftMonomial (p*Iq, I*J)
+    Iq := shiftMap(R,take(I,width R))*q;
+    (p,Iq) = matchRing(p,Iq);
+    shiftMonomial(p*Iq, I*J)
     )
-mult = (p,q) -> (
-    if (ring p).indexBound < (ring q).indexBound then (p,q) = (q,p);
+matchRing = method()
+matchRing (RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
-    if R.indexBound > S.indexBound then 0
-    0)
+    if width R < width S then p = ringMap(S,R)*p;
+    if width R > width S then q = ringMap(R,S)*q;
+    (p,q)
+    )
+matchRing (RingElement,ZZ) := (p,n) -> (
+    S := buildERing(ring p, n);
+    ringMap(S,ring p)*p
+    )
     
+width Ring := R -> R.indexBound
+width RingElement := p -> (
+    n := position(indexSupport{p}, i->(i > 0), Reverse=>true) + 1;
+    if n === null then p = n;
+    n
+    )
+width Shift := I -> if #I == 0 then 0 else last I + 1
+width List := L -> max(L / width)
 
 beginDocumentation()
 

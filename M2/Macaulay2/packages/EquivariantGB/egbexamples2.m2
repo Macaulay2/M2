@@ -24,7 +24,21 @@ G = egbToric M
 
 restart
 loadPackage "EquivariantGB"
-I = new Shift from {0,1,3}
-J = new Shift from {1,2,3}
+I = shift{0,1,3}
+J = shift{1,2,3}
 I*J
 J*I
+divWitness(I,J)
+divWitness(J,I)
+K = shift{1,2,5}
+divWitness(I,K)
+divWitness(J,K)
+
+I = shift{}
+J = shift{0,2}
+divWitness(I,J)
+
+R = buildERing({symbol x}, {1}, QQ, 4);
+S = shiftMonomial(x_2,shift{1})
+T = shiftMonomial(x_3,shift{1})
+divWitness(S,T)
