@@ -26,6 +26,16 @@ void complexAP::print()
 }
 
 
+// SLProgram 
+SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a) 
+{
+  mNodes.push_back(MSum);
+  mNumInputs.push_back(a->len);
+  for(int i=0; i<a->len; i++)
+    mOutputPositions.push_back(a->array[i]);
+  return mNodes.size()-1;
+}
+
 // Straight Line Program classes
 
 #ifdef SLPdouble

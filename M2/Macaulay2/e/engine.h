@@ -1970,6 +1970,9 @@ enum gbTraceValues
   SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLProgramHash(SLProgram *); /* connected */
+  gmp_ZZ rawSLPInputGate(SLProgram *S);
+  gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
+  //int rawSLPProductGate(SLProgram *S, M2_arrayint a);
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);

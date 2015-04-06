@@ -18,6 +18,35 @@ export rawSLProgram(e:Expr):Expr := (
      else WrongArgZZ());
 setupfun("rawSLProgram",rawSLProgram);
 
+export rawSLPInputGate(e:Expr):Expr := (
+     when e is slp:RawSLProgramCell do
+     	  toExpr(Ccode(ZZ,
+		    "rawSLPInputGate(",
+		    slp.p, 
+		    ")"
+		    ))
+     else WrongArg("SLProgram")
+     ); 
+setupfun("rawSLPInputGate",rawSLPInputGate);
+
+export rawSLPSumGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPSumGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPSumGate",rawSLPSumGate);
+
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)

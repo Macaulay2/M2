@@ -507,22 +507,23 @@ class SLProgram
                                                 (nonnegative = node position, 
                                                 negative = var or const) */
   std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
-                                                  (nonnegative = node position, negative = var or const) */
+                                                  (nonnegative = node position, 
+                                                  negative = var or const) */
   /* LOOKUP TABLE */
   int inputCounter;
-  int gateCounter;
 public:
-  SLProgram();
+  SLProgram(){ inputCounter = 0; }
+  ~SLProgram(){}
   // GATE_POSITION addCopy(GATE_POSITION p);
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
-  GATE_POSITION addMSum(const std::vector<GATE_POSITION>& p);
-  GATE_POSITION addMProduct(const std::vector<GATE_POSITION>& p);
+  GATE_POSITION addInput() { return -(inputCounter++); }
+  GATE_POSITION addMSum(const M2_arrayint);
+  // GATE_POSITION addMProduct(const M2_arrayint);
   // GATE_POSITION addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
   void toString(buffer& o);
 };
-
 
 class SLPEvaluator {
   // vector<???> mValues: constants, inputs, values of SLP nodes 

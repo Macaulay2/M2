@@ -704,9 +704,23 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModul
      }
 }
 
-SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { return nullptr; }
+gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
+{
+  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_init(result);
+  mpz_set_si(result,a);
+  return result;
+}
+
+SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { 
+  return new SLProgram;
+  //return nullptr; 
+}
 M2_string rawSLProgramToString(SLProgram *) { return nullptr; }
 unsigned int rawSLProgramHash(SLProgram *) { return 0; }
+gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
+gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMSum(a)); }
+//int rawSLPProductGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMProduct(a)); }
 
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {
