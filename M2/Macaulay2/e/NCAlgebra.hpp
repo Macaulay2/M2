@@ -207,7 +207,8 @@ class NCFreeAlgebra : public Ring
                 M2_ArrayString names);
 public:
   static NCFreeAlgebra* create(const Ring* K,
-                               M2_ArrayString names);
+                               M2_ArrayString names,
+                               const PolynomialRing* degreeRing);
 
   // these are all the functions from Ring that must exist for NCFreeAlgebra to be instantiated
   virtual void text_out(buffer &o) const;

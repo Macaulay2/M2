@@ -741,17 +741,20 @@ setupfun("rawSolvableAlgebra",rawSolvableAlgebra);
 
 export rawNCFreeAlgebra(e:Expr):Expr := (
      when e is a:Sequence do 
-     if length(a) == 2 then 
-     when a.0 is R:RawRingCell do 
+     if length(a) == 3 then 
+     when a.0 is R:RawRingCell do
+     when a.2 is degR:RawRingCell do
      if isSequenceOfStrings(a.1) then (
 	     names := getSequenceOfStrings(a.1);
          toExpr(Ccode(RawRingOrNull, "rawRingNCFreeAlgebra(", R.p, ",",
- 	       names,				    
+ 	       names, ",",
+           degR.p,
  	       ")" )))
      else WrongArg(2,"a sequence of strings to be used as names")
+     else WrongArg(3,"a raw ring")
      else WrongArg(1,"a raw ring")
-     else WrongNumArgs(2)
-     else WrongNumArgs(2));
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
 setupfun("rawNCFreeAlgebra",rawNCFreeAlgebra);
 
 export rawLocalRing(e:Expr):Expr := (			    -- localization at a prime ideal

@@ -4,10 +4,13 @@
 #include <iostream>
 
 NCFreeAlgebra* NCFreeAlgebra::create(const Ring* K,
-                      M2_ArrayString names)
+                                     M2_ArrayString names,
+                                     const PolynomialRing* degreeRing)
 {
   M2_ASSERT(K != nullptr);
-  return new NCFreeAlgebra(K, names);
+  NCFreeAlgebra* result = new NCFreeAlgebra(K, names);
+  result->initialize_ring(K->characteristic(), degreeRing, nullptr);
+  return result;
 }
 
 NCFreeAlgebra::NCFreeAlgebra(const Ring* K,
@@ -20,6 +23,10 @@ NCFreeAlgebra::NCFreeAlgebra(const Ring* K,
     // used emplace_back here.  C++11 feature which allows constructor arguments to be passed in place,
     // rather than having to create a temporary object to pass to push_back.
     mVariableNames.emplace_back(names->array[i]->array, names->array[i]->len);
+
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 }
 
 void NCFreeAlgebra::text_out(buffer &o) const
