@@ -120,6 +120,8 @@ return true;
 
 
 isEffective = method (Options => {UseHypergraphs => false})
+isEffective (List,List) := Boolean => (G,S) -> (isEffective(graph(G),S));
+isEffective (List,Set) := Boolean => (G,S) -> (isEffective(graph(G),toList(S)));
 isEffective (Graph,Set) := Boolean => opts -> (G,S) -> (isEffective(G,toList(S),opts));
 isEffective (Graph,List) := Boolean => opts -> (G,S) -> (
 if not isDisconnector(G,S) then return false;
@@ -178,14 +180,17 @@ document {
      Headline => "Parity binomial edge ideals",
      Usage => "parityBinomialEdgeIdeal G",
      Inputs => {
-          "G" => { "a graph"} },
+          "G" => { "a Graph or a List"} },
      Outputs => {
           {"the parity binomial edge ideal of G"} },
      "This routine returns the (permanental) parity binomial edge ideal of G.",
      EXAMPLE {
-          "G=graph({{1,2},{2,3},{3,1}})",
+          "G={{1,2},{2,3},{3,1}}",
           "I = parityBinomialEdgeIdeal(G,Field=>ZZ/2)",
-          "J = parityBinomialEdgeIdeal(G)"
+          "J = parityBinomialEdgeIdeal(G)",
+          "needsPackage(\"Graphs\")",
+          "H=graph({{1,2},{2,3},{3,1}})",
+          "I = binomialEdgeIdeal(H)"
           },
      "A synonym for this function is ", TO pbei, ".",
      SeeAlso => {pbei,binomialEdgeIdeal}}
@@ -201,14 +206,17 @@ document {
      Headline => "Binomial edge ideals",
      Usage => "binomialEdgeIdeal G",
      Inputs => {
-          "G" => { "a graph"} },
+          "G" => { "a Graph or a List"} },
      Outputs => {
           {"the binomial edge ideal of G"} },
      "This routine returns the (permanental) binomial edge ideal of G.",
      EXAMPLE {
-          "G=graph({{1,2},{2,3},{3,1}})",
+          "G={{1,2},{2,3},{3,1}}",
           "I = binomialEdgeIdeal(G,Field=>ZZ/2)",
-          "J = binomialEdgeIdeal(G,Permanental=>true)"
+          "J = binomialEdgeIdeal(G,Permanental=>true)",
+          "needsPackage(\"Graphs\")",
+          "H=graph({{1,2},{2,3},{3,1}})",
+          "I = binomialEdgeIdeal(H)"
           },
      "A synonym for this function is ", TO bei, ".",
      SeeAlso => {bei,parityBinomialEdgeIdeal}}
@@ -224,13 +232,13 @@ document {
      Headline => "Disconnectors of a graph",
      Usage => "disconnectors G",
      Inputs => {
-          "G" => { "a graph"} },
+          "G" => { "a Graph or a List"} },
      Outputs => {
           {"the disconnectors of G"} },
      "This routine computes the disconnectors of the parity binomial
      edge ideal and the permanental binomial edge ideal of G",
      EXAMPLE {
-          "G=graph({{1,2},{2,3},{3,1}})",
+          "G={{1,2},{2,3},{3,1}}",
           "d = disconnectors(G)",
           "d = disconnectors(G,EffectiveOnly=>true)"
           },
@@ -238,11 +246,11 @@ document {
 
 document {
      Key => {isDisconnector,
-	  (isDisconnector, Graph, Set), (isDisconnector,Graph,List)},
+     (isDisconnector,List,List),(isDisconnector,List,Set),(isDisconnector, Graph, Set),(isDisconnector,Graph,List)},
      Headline => "A test for being a disconnector",
      Usage => "isDisconnector(G,S)",
      Inputs => {
-          "G" => { "a graph"},
+          "G" => { "a Graph or a List"},
           "S" => { "a List or a Set"}},
      Outputs => {
           {"true or false, depending on wheater S is a disconnector of
@@ -250,6 +258,7 @@ document {
      "This routine checks wheater a Set or a List is a disconnector of
      a graph",
      EXAMPLE {
+          "needsPackage(\"Graphs\")",
           "G=graph({{1,2},{2,3},{3,1}})",
           "S={1}",
           "isDisconnector(G,S)"
@@ -259,11 +268,11 @@ document {
 
 document {
      Key => {isEffective,
-	  (isEffective, Graph, Set), (isEffective,Graph,List)},
+	  (isEffective, List, Set), (isEffective,List,List),(isEffective, Graph, Set), (isEffective,Graph,List)},
      Headline => "A test for being an effective disconnector",
      Usage => "isEffective(G,S)",
      Inputs => {
-          "G" => { "a graph"},
+          "G" => { "a Graph or a List"},
           "S" => { "a List or a Set"}},
      Outputs => {
           {"true or false, depending on whether S is an effective disconnector of
@@ -271,6 +280,7 @@ document {
      "This routine checks whether a Set or a List is an effective disconnector of
      a graph",
      EXAMPLE {
+          "needsPackage(\"Graphs\")",
           "G=graph({{1,2},{2,3},{3,1}})",
           "S={1}",
           "isEffective(G,S)"
