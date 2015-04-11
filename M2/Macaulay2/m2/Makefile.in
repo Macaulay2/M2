@@ -135,7 +135,6 @@ clean::; rm -f .gdb-directories
 	   fi ;\
 	done
 .gdbinit.$(USER):; touch $@
-clean::; rm -f .gdbinit.*
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@
