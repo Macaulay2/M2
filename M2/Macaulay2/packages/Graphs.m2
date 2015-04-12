@@ -687,7 +687,7 @@ children (Digraph, Thing) := Set => (G, v) -> (
 
 chromaticNumber = method()
 chromaticNumber Graph := ZZ => G -> (
-    if #edges G == 0 and #vertexSet == 0 then 0
+    if #edges G == 0 and #vertexSet G == 0 then 0
     else if #edges G == 0 and #vertexSet G != 0 then 1
     else (
         chi := 2;
