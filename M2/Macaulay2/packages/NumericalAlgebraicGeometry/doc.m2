@@ -16,8 +16,20 @@ document {
      "The package ", TO "NumericalAlgebraicGeometry", ", also known as ", 
      EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
      ", implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
-     
+     to solve systems of polynomial equations, ",
+     EXAMPLE lines ///
+R = CC[x,y,z];
+F = {x^2+y^2+z^2-1, y-x^2, z-x^3};
+s = solveSystem F 
+realPoints s
+///,
+     "and describe positive-dimensional complex algebraic varieties, ",
+     EXAMPLE lines ///
+R = CC[x,y,z];
+sph = x^2+y^2+z^2-1; 
+I = ideal {x*sph*(y-x^2), sph*(z-x^3)};
+numericalIrreducibleDecomposition I 
+///,      
      PARA {"Basic types (such as ", TO Point, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
      
      HEADER3 "Basic functions:",
@@ -30,7 +42,7 @@ document {
      	 TO sample,
      	 TO (isSubset,NumericalVariety,NumericalVariety),
 	 },
-     "Some of the basic computations can be outsourced to ", TO "Bertini", " and ", TO "PHCpack", 
+     "Optionally, the user may outsource some basic routines to ", TO "Bertini", " and ", TO "PHCpack", 
      " (look for ", TO Software, " option).",
      
      HEADER3 "Service functions:",
@@ -100,7 +112,8 @@ document {
 document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
 	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], 
-	     [track,SLPpredictor], [setDefault,SLPpredictor]},
+	     [track,SLPpredictor], [setDefault,SLPpredictor],
+	     [trackSegment,AffinePatches], [trackSegment,SLP], [trackSegment,SLPcorrector], [trackSegment,SLPpredictor]},
      	Headline => "reserved for developers"
      	} 
 
@@ -148,10 +161,17 @@ document { Key => {"numerical homotopy tracking options",
 	[refine,ErrorTolerance], [setDefault,ErrorTolerance], 
 	[refine, ResidualTolerance], [setDefault,ResidualTolerance],
 	Iterations, Bits, ErrorTolerance, ResidualTolerance,
+	-- solveSystem
 	[solveSystem,CorrectorTolerance], [solveSystem,EndZoneFactor], [solveSystem,gamma], [solveSystem,InfinityThreshold], 
 	[solveSystem,maxCorrSteps], [solveSystem,Normalize], [solveSystem,numberSuccessesBeforeIncrease],
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
-	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin]
+	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
+	-- trackSegment
+	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
+	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
+	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
+	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
+	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -363,6 +383,7 @@ document {
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
 	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
 	 [numericalIrreducibleDecomposition,Software], [hypersurfaceSection,Software],
+	 [trackSegment,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
