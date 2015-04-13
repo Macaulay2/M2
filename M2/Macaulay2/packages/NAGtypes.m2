@@ -11,7 +11,8 @@ newPackage(
 	  },
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => false 
+     -- DebuggingMode => true 
      )
 
 export {
@@ -218,7 +219,7 @@ net Point := p -> (
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === NumericalRankFailure then net "[N]"
-     else if p.SolutionStatus === RefinementFailure then net "[R]"
+     else if p.SolutionStatus === RefinementFailure then net "[RF:" | net toSequence p.Coordinates | net "]"
      else error "the point is corrupted"
     ) 
 globalAssignment Point
@@ -734,7 +735,7 @@ ring DualSpace := L -> ring gens L
 point DualSpace := L -> L.BasePoint
 
 -- DOCUMENTATION ------------------------------------------------------
-
+undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
 beginDocumentation()
 
 document {
@@ -1517,6 +1518,7 @@ doc ///
     generalEquations
     (generalEquations,ZZ,Ideal)
     (generalEquations,ZZ,List)
+    (generalEquations,WitnessSet)
   Headline
     random linear combinations of equations/generators 
   Usage
