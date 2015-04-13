@@ -2,13 +2,14 @@ newPackage(
 	"BoijSoederberg",
     	Version => "1.5", 
     	Date => "April 01, 2015",
-    	Authors => {
+    	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
+	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
 	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
-	     {Name => "Revised by Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
-	     {Name => "Revised by Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
-	     },
+	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
+	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
     	DebuggingMode => false
     	)
@@ -2485,46 +2486,12 @@ restart
 installPackage "BoijSoederberg"
 check BoijSoederberg
 viewHelp BoijSoederberg
--- test decomposeDegrees
-M=matrix "1,0,0,0;
-        0,4,4,1"
-B=mat2betti M	
-D = decomposeDegrees B
-pureBettiDiagram (D_0)#1
-
-pureBetti (D_0)#1
-makePureBetti((D_0)#1,TableEntries=>HerzogKuhl)
-makePureBettiDiagram((D_0)#1, TableEntries=>HerzogKuhl)
-
---TODO
--- 1. create decomposeDegreees and make options like this:
-decomposeDegrees( B, TableEntries => HerzogKuhl ) 
---- DONE
-
--- 2. add options to makePureBettiDiagram to allow for HK and Modules (ES).
-
--- 3. Edit decompose documentation
-
--- 4. Create method 'makePureBetti' and 'makePureBettiDiagram' have options for 
---    TableEntries and have 'pureBetti' and 'pureBettiDiagram' be alias for these.
---    incorporate 'makePureBettiES' and 'makePureBettiHK'
---- DONE aside from alias (what's that?)
-
--- 5. decompose3 and decompose2 need to handle options from 'makePureBettiDiagram'.
---    I.e. HerzogKuhl...
---- DONE
-
--- 6. check to see if 'decomposeHK' and 'decomposeES' is an option in 'decomposeBetti'. If so delete it. 
-
--- 7. Delete 'makeCI' before submission, unless it is used in testing.
-
--- 8. before deleting any method, make sure all dependencies are taken care of.
 
 makeCI{2,2,3}
 monoid[vars(0..2)]
 QQ(monoid[vars(0..2)])
 
- S = ZZ/499[monoid[vars(0..2)]]
+S = ZZ/499[monoid[vars(0..2)]]
 -- test 1
 restart
 loadPackage"BoijSoederberg"
