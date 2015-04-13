@@ -25,6 +25,7 @@ export {
      Diagonal,
      reduce,
      OutFile,
+     --for testing
      Shift,
      shift,
      ShiftMonomial,
@@ -65,7 +66,7 @@ egb (List) := o -> F -> (
 	  newF = printT(timing interreduce newF, g);
 	  g << "--   reduce tails";
 	  newF = printT(timing reduceTails newF, g);
-          newF = contractERing(newF,o.Symmetrize);
+          newF = pruneERing(newF,o.Symmetrize);
 	  isNew := gensEqual(F, newF);
 	  F = newF;
 	  if isNew then k = 0
@@ -144,7 +145,6 @@ spoly = (f,g) -> (
 divWitness = method(Options=>{Seed=>null})
 divWitness (RingElement,RingElement) := o -> (v,w) ->
     divWitness(shiftMonomial(v,shift{}), shiftMonomial(w,shift{}), Seed=>o.Seed)
-
 divWitness (Shift,Shift) := o -> (I,J) -> (
     d := listDivWitness({{}},{{}},gaps I,gaps J, Seed=>o.Seed);
     (d#0, shift d#1)
@@ -164,6 +164,22 @@ divWitness (ShiftMonomial,ShiftMonomial) := o -> (s,t) -> (
 	);
     (false, shift{})
     )
+
+divQuotient = method(Options=>{Seed=>null})
+divQuotient (RingElement,RingElement) := o -> (v,w) ->
+    divQuotient(shiftMonomial(v,shift{}), shiftMonomial(w,shift{}), Seed=>o.Seed)
+divQuotient (Shift,Shift) := o -> (I,J) -> (
+    d := listDivWitness({{}},{{}},gaps I,gaps J, Seed=>o.Seed);
+    (d#0, shift d#1)
+    )
+divQuotient (ShiftMonomial,ShiftMonomial) := o -> (s,t) -> (
+    (isDiv, I) := divWitness(s,t,Seed=>o.Seed);
+    if not isDiv return (false, 0_R);
+    Is := shiftMap(ring s,I,Extend=>true)*s;
+    Is = ringMap(ring t,ring Is)*Is;
+    (true, shiftMonomial(t.Monomial//Is,I))
+    )
+    
 
 listDivWitness = method(Options=>{Seed=>null})
 listDivWitness (List,List,List,List) := o -> (v,w,vgaps,wgaps) -> (
@@ -412,7 +428,7 @@ reduceTails = F -> (
 --In: F, a list of polynomials
 --    sym, a boolean whether to symmetrize.
 --Out: F, the same polynomials mapped to a ring with minimal indexBound.
-contractERing = (F,sym) -> (
+pruneERing = (F,sym) -> (
      R := ring first F;
      newn := 0;
      if sym then (
@@ -439,14 +455,6 @@ indexSupport = F -> (
 	       );
 	  );
      toList nSupport
-     )
-
---In: F, a list of polynomials
---Out: p, ZZ: the largest index appearing in F.  If all elements of F are 0, return -1.
-maxIndex = F -> (
-     p := position(indexSupport(F), i->(i > 0), Reverse=>true);
-     if p === null then p = -1;
-     p
      )
  
 maxEntry = V -> (
@@ -593,6 +601,11 @@ ShiftMonomial * ShiftMonomial := (S,T) -> (
     (p,Iq) = matchRing(p,Iq);
     shiftMonomial(p*Iq, I*J)
     )
+ShiftMonomial * RingElement := (S,p) -> (
+    T := S*shiftMonomial(p,shift{});
+    T.Monomial
+    )
+ring (ShiftMonomial) := S -> ring S.Monomial
 matchRing = method()
 matchRing (RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
@@ -604,6 +617,16 @@ matchRing (RingElement,ZZ) := (p,n) -> (
     S := buildERing(ring p, n);
     ringMap(S,ring p)*p
     )
+matchRing (RingElement,Ring) := (p,S) -> ringMap(S,ring p)*p
+matchRing List := L -> (
+    n := max width@@ring\L;
+    apply(L, p->(matchRing(p,n)))
+    )
+lessThan = method()
+lessThan (RingElement,RingElement) := (p,q) -> (
+    (p,q) = matchRing(p,q);
+    p < q
+    )
     
 width Ring := R -> R.indexBound
 width RingElement := p -> (
@@ -613,6 +636,45 @@ width RingElement := p -> (
     )
 width Shift := I -> if #I == 0 then 0 else last I + 1
 width List := L -> max(L / width)
+
+
+egbSignature = method()
+egbSignature (List) := F -> (
+    R := ring first F;
+    JP := toList apply(#F, i->({ShiftMonomial(1_R,shift{}),i},F#i));
+    H := {};
+    G := {};
+    while length JP > 0 do (
+	j := first JP;
+	JP = take(JP,-(#JP-1));
+	if isCovered(j,G) then continue;
+	j = regularTopReduce(j,G);
+	(T,w) := j;
+	if w == 0 then H = append(H,T) else (
+	    for g in G do (
+		JP = JP|jPairs(j,g);
+		H  = H|prinSyzygies(j,g);
+	    	);
+	    );
+	G = append(G,j);
+	);
+    G/last
+    )
+
+isCovered = (j,G) -> (
+    (T,v) := j;
+    for g in G do (
+	(S,w) := g;
+	if S#1 != T#1 then continue;
+	isDiv := true; local q; seed = null;
+	while isDiv do (
+	    (isDiv,Q) = divQuotien(S#0,T#0,Seed=>seed);
+	    if isDiv and lessThan(Q*w,v) then return true;
+	    seed = Q.Sh;
+	    )
+	)
+    false
+    )
 
 beginDocumentation()
 
