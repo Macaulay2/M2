@@ -620,24 +620,19 @@ document {
      Key => 1 : setRandomSeed,
      Usage => "setRandomSeed()",
      Consequences => {
-	  {"Initializes the random number generator to a certain fixed state
-	       determined at the beginning of the current Macaulay2 session. In
-	       versions 1.2 and earlier of Macaulay2, this is a single fixed initial
-	       state. In subsequent versions the initial state depends on the date,
-	       time (in seconds), and process id at the start of the current Macaulay2
-	       session (i.e., this initial state is different in each Macaulay2
-	       session, but is not updated after the beginning of the session). An
-	       exception is that when running examples and tests in packages the
-	       random number seed is always initialized to 0. To re-seed the random
-	       number generator with a new value during a Macaulay2 session, use ",
-	       TO "setRandomSeed(ZZ)", " or ", TO "setRandomSeed(String)", "."}
+	  {"Initializes the random number generator to a fixed state, identical to the
+	       initial state (upon program start) in version 1.2 and earlier of Macaulay2.  (After version 1.2,
+	       the random number seed is initially set (when Macaulay2 starts) to a number that depends on the current date, 
+	       the time (in seconds), and the process id, except for when running examples and tests
+	       in packages (as signalled by use of the command line option ", TT "--no-randomize", "), where it is always initialized to 0.)"}
 	  },
      EXAMPLE lines ///
      setRandomSeed()
      random 2^100
      setRandomSeed()
      random 2^100
-     ///
+     ///,
+     SeeAlso => { (setRandomSeed,ZZ), (setRandomSeed,String) }
      }
 
 document {
@@ -653,7 +648,8 @@ document {
 	  "for i to 10 list random 100",
 	  "setRandomSeed 123456",
 	  "for i to 10 list random 100"
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,String) }
      }
 
 document {
@@ -670,7 +666,8 @@ document {
 	  ///for i to 10 list random 100///,
 	  ///setRandomSeed "thrkwjsxz"///,
 	  ///for i to 10 list random 100///
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,ZZ) }
      }
 
 document {

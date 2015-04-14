@@ -84,7 +84,7 @@ setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
-     is oc:DictionaryClosure do (
+     is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
 	  o := oc.dictionary;
 	  Expr(list(
 		    new Sequence len o.symboltable.numEntries do (
@@ -100,7 +100,7 @@ pairs(e:Expr):Expr := (
 					p=q.next;)
 				   else break; ));
 			 ))))
-     is o:HashTable do (lock(o.mutex); l:=list(
+     is o:HashTable do (lock(o.mutex); l:=list(	-- # typical value: pairs, HashTable, List
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
@@ -113,7 +113,7 @@ pairs(e:Expr):Expr := (
 	    while i < length(o) do (
 	      provide Expr(Sequence(toExpr(i),o.i));
 	      i = i+1;)))
-     is o:List do pairs(Expr(o.v))
+     is o:List do pairs(Expr(o.v))   -- # typical value: pairs, BasicList, List
      else WrongArg("a hash table, a sequence, a list, or a raw polynomial"));
 setupfun("pairs",pairs);
 
