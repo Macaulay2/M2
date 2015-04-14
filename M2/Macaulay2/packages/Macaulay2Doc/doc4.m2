@@ -133,7 +133,7 @@ document {
      }
 
 document {
-     Key => {(pairs, Sequence),(pairs, List)},
+     Key => {(pairs, BasicList)},
      Headline => "list the pairs in a sequence or list",
      Usage => "pairs L",
      Inputs => { "L" => Sequence },
