@@ -74,7 +74,11 @@ document {
 	TT "frac S", " or fractions ", TT "u/v", 
 	".  One can get around that by defining ",
 	TT "B = ZZ/101[x,y,u,v]", " and identify ",
-	TT "frac S", " with ", TT "frac B", "."
+	TT "frac S", " with ", TT "frac B", ".",
+	PARA{},
+	"Note that expressions such as ", TT "frac QQ[x]", " are parsed as ",
+	TT "(frac QQ)[x]", ". To obtain the fraction field of ", TT "QQ[x]", 
+	" use instead ", TT "frac (QQ[x])", "."
      },
      SeeAlso => {numerator, denominator, liftable, lift}
      }

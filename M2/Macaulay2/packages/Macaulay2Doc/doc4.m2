@@ -133,6 +133,19 @@ document {
      }
 
 document {
+     Key => {(pairs, BasicList)},
+     Headline => "list the pairs in a sequence or list",
+     Usage => "pairs L",
+     Inputs => { "L" => Sequence },
+     Outputs => { List => { "a list of pairs ", TT "(i,L#i)" }},
+     EXAMPLE {
+	  "L = (a,b,c)",
+	  "pairs L",
+	  "pairs {x,y,z}",
+	  }
+     }
+
+document {
      Key => sequence,
      Headline => "make a sequence",
      Usage => "sequence v",
