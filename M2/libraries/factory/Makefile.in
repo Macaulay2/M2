@@ -6,17 +6,14 @@
 
 # URL = ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-LIBNAME = factory+m4
-VERSION = 4.0.1
-VERSIONH := $(shell echo $(VERSION) | sed 's/\./-/g')
-TARDIR = $(LIBNAME)-$(VERSION)/factory
+VERSION = 4.0.2
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 BUILDTARGET = all ftmpl_inst.o
 LIBRARIES = ftmpl_inst.o
 
-LICENSEFILES = INSTALL COPYING
+LICENSEFILES = COPYING
 
 # Sometimes the official factory library tar file is incomplete, in that it leaves out
 # the m4 macros needed to rebuild the autoconf files, and the file configure.ac will

@@ -149,8 +149,10 @@ $(foreach t,all check clean distclean,					\
 clean:
 	rm -rf .completed
 	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
-	rm -rf usr-dist conf_* usr-build usr-host
+	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
+	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
+
 install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
 recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages

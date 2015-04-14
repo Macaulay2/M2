@@ -26,7 +26,7 @@ assert(areEqual(sortSolutions solsT, sortSolutions sols))
 -- refine 
 R = CC[x,y];
 T = {x^2+y^2-1, x*y};
-sols = { {1.0001_CC,0.00001}, { -0.00001,1.0000002} };
+sols = { {1.0001,0.00001}, { -0.00001,1.0000002} };
 rsols = refine(T, sols, Software=>BERTINI, Bits=>1000)
 assert areEqual(rsols, {{1,0},{0,1}})
 

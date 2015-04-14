@@ -782,38 +782,3 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
-
--- Expressions to preSLPs
-PolyExpression = new Type of Expression
-polyExpression = method()
-polyExpression RingElement := f -> new PolyExpression from {f}
-
-DetExpression = new Type of Expression
-det MatrixExpression := o -> M -> new DetExpression from M
-value DetExpression := e -> det value e#0 
-
-expression2preSLP = method()
-expression2preSLP Expression := e -> (
-    if class e === Sum then addPreSLPs apply(toList e,expression2preSLP)
-    else if class e === MatrixExpression then 
-    stackPreSLPs apply(toList e, row -> concatPreSLPs row)
-    else if class e === DetExpression then 
-    detPreSLP stackPreSLPs apply(toList e, row -> concatPreSLPs apply(row,expression2preSLP)) 
-    else if class e === PolyExpression then poly2preSLP e#0
-    else (
-	<< "for " << e << " of type " << class e <<endl;
-	error "not emplemented"
-	)
-    )
-
-end 
-restart
-debug needsPackage "NumericalAlgebraicGeometry"
-R = CC[x]
-f = new PolyExpression from {(x^2)}
-e = f + det( MatrixExpression{
-	{Sum(polyExpression (x^2+1), polyExpression x^5), polyExpression 1_R},
-	{polyExpression 2_R, polyExpression 3_R}
-	} )
-value e 
-expression2preSLP e
