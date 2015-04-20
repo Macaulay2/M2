@@ -30,14 +30,22 @@ export {
      shift,
      ShiftMonomial,
      shiftMonomial,
-     divWitness
+     divWitness,
+     --priority queue
+     PriorityQueue,
+     priorityQueue,
+     mergePQ,
+     deleteMin
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial }
      
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
 ShiftMonomial = new Type of HashTable
+PriorityQueue = new Type of MutableHashTable
+Node = new Type of HashTable
+MPair = new Type of HashTable
 
 -- In:
 -- Out: 
@@ -137,6 +145,11 @@ spoly = (f,g) -> (
      l := lcm(leadMonomial f,leadMonomial g);
      return (l//(leadTerm f))*f - (l//(leadTerm g))*g;
      )
+ 
+jpoly = (f,g) -> (
+    l := lcm(leadMonomial f,leadMonomial g);
+    l//(leadMonomial f)
+    )
 
 -- In: v, a polynomial
 --     w, a polynomial 
@@ -174,7 +187,7 @@ divQuotient (Shift,Shift) := o -> (I,J) -> (
     )
 divQuotient (ShiftMonomial,ShiftMonomial) := o -> (s,t) -> (
     (isDiv, I) := divWitness(s,t,Seed=>o.Seed);
-    if not isDiv return (false, 0_R);
+    if not isDiv then return (false, 0);
     Is := shiftMap(ring s,I,Extend=>true)*s;
     Is = ringMap(ring t,ring Is)*Is;
     (true, shiftMonomial(t.Monomial//Is,I))
@@ -587,8 +600,11 @@ take (Shift,ZZ) := (I,n) -> (
     if k > n then return shift take(I,n);
     I
     )
-degree (Shift) := I ->
-    if #I == 0 then 0 else last I + 1 - #I
+degree (Shift) := I -> if #I == 0 then 0 else last I + 1 - #I
+Shift ? Shift := (I,J) -> (
+    if degree I == degree J then toSequence gaps I ? toSequence gaps J
+    else degree I ? degree J
+    )
 
 shiftMonomial = method()
 shiftMonomial (RingElement,Shift) := (p,I) ->
@@ -605,7 +621,23 @@ ShiftMonomial * RingElement := (S,p) -> (
     T := S*shiftMonomial(p,shift{});
     T.Monomial
     )
+width (ShiftMonomial) := S -> max {width S.Monomial, width S.Sh}
 ring (ShiftMonomial) := S -> ring S.Monomial
+ShiftMonomial ? ShiftMonomial := (S,T) -> (
+    if width S == width T then (
+	if S.Shift == T.Shift then (
+	    compare(S.Monomial,T.Monomial)
+	    ) else S.Shift ? T.Shift
+	) else width S ? width T
+    )
+
+mPair = method()
+mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
+MPair ? MPair := (m,n) -> if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+ShiftMonomial * MPair := (S,M) -> (
+    new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
+    )
+
 matchRing = method()
 matchRing (RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
@@ -622,17 +654,15 @@ matchRing List := L -> (
     n := max width@@ring\L;
     apply(L, p->(matchRing(p,n)))
     )
-lessThan = method()
-lessThan (RingElement,RingElement) := (p,q) -> (
+compare = method()
+compare (RingElement,RingElement) := (p,q) -> (
     (p,q) = matchRing(p,q);
-    p < q
+    p ? q
     )
-    
 width Ring := R -> R.indexBound
 width RingElement := p -> (
     n := position(indexSupport{p}, i->(i > 0), Reverse=>true) + 1;
-    if n === null then p = n;
-    n
+    if n =!= null then n else 0
     )
 width Shift := I -> if #I == 0 then 0 else last I + 1
 width List := L -> max(L / width)
@@ -641,24 +671,66 @@ width List := L -> max(L / width)
 egbSignature = method()
 egbSignature (List) := F -> (
     R := ring first F;
-    JP := toList apply(#F, i->({ShiftMonomial(1_R,shift{}),i},F#i));
+    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i)); --should stratify by width
     H := {};
     G := {};
     while length JP > 0 do (
-	j := first JP;
-	JP = take(JP,-(#JP-1));
+	j := min JP;
+	deleteMin JP;
 	if isCovered(j,G) then continue;
 	j = regularTopReduce(j,G);
 	(T,w) := j;
 	if w == 0 then H = append(H,T) else (
 	    for g in G do (
-		JP = JP|jPairs(j,g);
-		H  = H|prinSyzygies(j,g);
+		newJP := jPairs(j,g);
+		newJP = select(newJP, j->not isCovered(j,H));
+		scan(newJP, j->insert(JP,j));
+		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
 	    );
 	G = append(G,j);
 	);
-    G/last
+    apply(G, g->g.polynomial)
+    )
+
+jPairs = (j,g) -> (
+    newJP := new MutableList;
+    (jw,gw) := (j,g)/width;
+    for k from 0 to min(jw,gw)-1 do (
+	for p in shiftPairs(jw,gw,k) do (
+	    (jI,gI) := p;
+	    jshift := jI*(j.polynomial);
+	    gshift := gI*(g.polynomial);
+	    (jshift,gshift) = matchRing(jshift,gshift);
+	    jSP := shiftMonomial(jI,jpoly(jshift,gshift));
+	    gSP := shiftMonomial(gI,jpoly(gshift,jshift));
+	    if jSP == gSP then continue;
+	    newJP#(#newJP) = if jSP > gSP then jI*j else gI*g;
+	    );
+	);
+    toList newJP
+    )
+
+regularTopReduce = (j,G) -> (
+    (T,v) := j;
+    for g in G do (
+	(S,w) := g;
+	isDiv := true; local Q; seed := null;
+	while isDiv do (
+	    (isDiv,Q) = divQuotient(w,v,Seed=>seed);
+	    if isDiv and Q*g < j then (
+		v = reduction(v,Q*w);
+		return regularTopReduce((T,v),G);
+		);
+	    seed = Q.Sh;
+	    );
+	);
+    return j;
+    )
+
+reduction = (v,w) -> (
+    (v,w) = matchRing(v,w);
+    v - (leadTerm v//leadTerm w)*w
     )
 
 isCovered = (j,G) -> (
@@ -666,15 +738,87 @@ isCovered = (j,G) -> (
     for g in G do (
 	(S,w) := g;
 	if S#1 != T#1 then continue;
-	isDiv := true; local q; seed = null;
+	isDiv := true; local Q; seed := null;
 	while isDiv do (
-	    (isDiv,Q) = divQuotien(S#0,T#0,Seed=>seed);
-	    if isDiv and lessThan(Q*w,v) then return true;
+	    (isDiv,Q) = divQuotient(S#0,T#0,Seed=>seed);
+	    if isDiv and Q*w < v then return true;
 	    seed = Q.Sh;
-	    )
-	)
+	    );
+	);
     false
     )
+
+------------------------------
+-- PriorityQueue
+------------------------------
+-- PriorityQueue is a mutable priority queue implemented as a binomial heap, prioritizing the minimum.
+
+priorityQueue = method()
+--Instantiates an empty priority queue.
+installMethod(priorityQueue, () -> new PriorityQueue from new MutableHashTable from {Min=>null,Roots=>new MutableList,Degree=>0})
+--Instantiates a priority queue with elements from a list L.
+priorityQueue (List) := L -> (
+    Q := priorityQueue();
+    for l in L do (
+	n := node l;
+	R := new PriorityQueue from new MutableHashTable from {Min=>n,Roots=>new MutableList from {n},Degree=>1};
+	Q = mergePQ(Q,R);
+	);
+    Q
+    )
+
+--Inserts x into the priority queue Q.  Returns Q.
+insert (PriorityQueue,Thing) := (Q,x) -> mergePQ(Q,priorityQueue({x}))
+
+--Merges priority queue R into priority queue Q.  Returns Q.
+mergePQ = method()	
+mergePQ (PriorityQueue,PriorityQueue) := (Q,R) -> (
+    if R.Min === null then return Q;
+    if Q.Min === null or min R < min Q then Q.Min = R.Min;
+    cr := null;
+    k := 0;
+    while k < R.Degree or cr =!= null do (
+	rr := if R.Roots#?k then R.Roots#k else null;
+	qr := if Q.Roots#?k then Q.Roots#k else null;
+	roots := sort select({qr,rr,cr}, r->(r =!= null));
+	if #roots == 1 then Q.Roots#k = roots#0;
+	if #roots < 2 then cr = null else (
+	    (roots#0).Children#(#(roots#0).Children) = roots#1;
+	    cr = roots#0;
+	    Q.Roots#k = if #roots == 3 then roots#2 else null;
+	    );
+	k = k+1;
+	);
+    deg := position(toList Q.Roots, r->(r =!= null), Reverse=>true);
+    Q.Degree = if deg === null then 0 else deg + 1;
+    --print apply(Q.Degree, i->(if Q.Roots#i === null then null else (Q.Roots#i).Value));
+    Q	
+    )
+
+--Returns the minimum element in Q.
+min PriorityQueue := Q -> if Q.Min === null then null else nValue Q.Min
+
+--Deletes the minimum element from priority queue Q.  Returns Q.
+deleteMin = method()
+deleteMin (PriorityQueue) := Q -> (
+    if Q.Min === null then return null;
+    m := min Q;
+    k := position(toList Q.Roots, r->(r === Q.Min));
+    Rroots := (Q.Roots#k).Children;
+    Rmin := if #Rroots == 0 then null else min toList Rroots;
+    R := new PriorityQueue from new MutableHashTable from {Min=>Rmin,Roots=>Rroots,Degree=>#Rroots};
+    Q.Roots#k = null;
+    Qroots := delete(null, toList Q.Roots);
+    Q.Min = if #Qroots == 0 then null else min toList Qroots;
+    deg := position(toList Q.Roots, r->(r =!= null), Reverse=>true);
+    Q.Degree = if deg === null then 0 else deg + 1;
+    mergePQ(Q,R)
+    )
+
+node = f -> new Node from hashTable {Value=>f,Children=>new MutableList}
+nValue = N -> N.Value
+Node ? Node := (n,m) -> nValue n ? nValue m
+    
 
 beginDocumentation()
 
