@@ -770,7 +770,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    local dx; local dt;
 		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
-		    dx = if o.Predictor == Tangent then solveHxTimesDXequalsMinusHt(x0,t0)
+		    dx = if o.Predictor == Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
 		    else if o.Predictor == Euler then (
 			H0 := evalH(x0,t0);
 			Hx0 := evalHx(x0,t0);

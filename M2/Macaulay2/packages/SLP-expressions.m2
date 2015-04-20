@@ -283,11 +283,11 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     )  
 
 appendToSLProgram = method()
+{*
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
     g.cache#slp = rawSLPInputGate(slp)
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
     g.cache#slp = rawSLPSumGate(slp,g.Input/(a->a.cache#slp))
-{*
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
     g.cache#slp = rawSLPProductGate(slp,g.Input/(a->a.cache#slp))
 *}
@@ -494,3 +494,12 @@ value(gHx, Rvars)
 
 HS = gateHomotopySystem(gH,gV,T)
 s = coordinates first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+
+F = {X*X-1, Y*Y*Y-1}
+G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
+H = (1 - T) * F + T * G
+gV = matrix{{X,Y}}
+gH = transpose matrix {H}
+HS = gateHomotopySystem(gH,gV,T)
+trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+
