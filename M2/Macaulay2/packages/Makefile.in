@@ -64,7 +64,6 @@ unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 @pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
 	: installing package $1
-	$(call uninstall,$1)
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
