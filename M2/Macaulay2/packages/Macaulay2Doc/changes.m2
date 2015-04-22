@@ -10,6 +10,7 @@ document {
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
+	  TO "changes, 1.8",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -62,6 +63,55 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+ 
+document {
+     Key => "changes, 1.8",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "packages that have been published and certified:",
+	  --      UL {
+	  -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	  --      	    }
+	  --      },
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "BinomialEdgeIdeals::BinomialEdgeIdeals", ", a package by Tobias Windisch for computations with binomial edge ideals, has been added." },
+		    LI { TO "TateOnProducts::TateOnProducts", ", a package by Daniel Erman, David Eisenbud, and Frank-Olaf Schreyer for Tate resolutions on products of projective spaces, has been added." }
+	  	    }
+	       },
+	  LI { "improved packages:",
+	        UL {
+		    -- LI { "The package ", TO "::", " has been ..." },
+		    LI { "The package ", TO "Binomials::Binomials", " has been upgraded from version 1.0 to 1.2." },
+		    LI { "The package ", TO "BoijSoederberg::BoijSoederberg", " has been upgraded from version 1.2 to 1.5." },
+		    LI { "The package ", TO "ChainComplexExtras::ChainComplexExtras", " has been upgraded from version 0.5 to version 1." },
+		    LI { "The package ", TO "MultiplierIdeals::MultiplierIdeals", " has been upgraded from version 1.0 to version 1.1." }
+	            }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "The function ", TO "pairs", " will now accept (basic) list (or sequence) ", TT "x", " and return the list of pairs ", TT "(i,x#i)", ",
+			 thanks to Zach Teitler." },
+		    LI { "The function ", TO "minimalPresentation", " has been modified so that it applies its degree-preserving method also for homogeneous
+			 modules over affine algebras over affine algebras." },
+     	       	    LI { "The function ", TO "applyKeys", " will now accept an additional function to be called when collisions occur between new keys, for combining the
+			 corresponding values, thanks to Paul Zinn-Justin." }
+	  	    }
+	       },
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  --      	    }
+	  --      },
+	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  --      UL {
+	  --      	    }
+	  --      }
+     	  }
+     }
  
 document {
      Key => "changes, 1.7",
