@@ -18,6 +18,7 @@ newPackage(
 export {
      egb,
      egbToric,
+     egbSignature,
      buildERing,
      buildEMonomialMap,
      Symmetrize,
@@ -38,7 +39,7 @@ export {
      deleteMin
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial }
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len }
      
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
@@ -188,8 +189,8 @@ divQuotient (Shift,Shift) := o -> (I,J) -> (
 divQuotient (ShiftMonomial,ShiftMonomial) := o -> (s,t) -> (
     (isDiv, I) := divWitness(s,t,Seed=>o.Seed);
     if not isDiv then return (false, 0);
-    Is := shiftMap(ring s,I,Extend=>true)*s;
-    Is = ringMap(ring t,ring Is)*Is;
+    Is := I*s.Monomial;
+    Is = (ringMap(ring t,ring Is))Is;
     (true, shiftMonomial(t.Monomial//Is,I))
     )
     
@@ -202,11 +203,11 @@ listDivWitness (List,List,List,List) := o -> (v,w,vgaps,wgaps) -> (
     if vgdeg == 0 and wgdeg == 0 then (
     	if vmax == -1 then return (true, new MutableList);
 	) else (
-	wmax = max{wmax, maxEntry {wgaps} + 1};
-	vmax = max{vmax, wmax + vgdeg - wgdeg};
+	wmax = max{wmax, maxEntry {wgaps} + 1, 0};
+	vmax = max{vmax, wmax + vgdeg - wgdeg, 0};
 	);
-    sigma := if o.Seed =!= null then o.Seed else new MutableList from {-1};
-    k     := if o.Seed =!= null then vmax   else 0;
+    sigma := new MutableList from if o.Seed =!= null then o.Seed else {-1};
+    k := if o.Seed =!= null then vmax else 0;
     while true do (
 	i := k;
 	for j from (sigma#k)+1 to wmax do (
@@ -238,10 +239,11 @@ hints = v -> (
 
 checkDiv = (vl,wl,sigma,R,S) -> (
     all(R.varIndices, ind->(
-	    sind := (1:ind#0)|apply(1..#ind-1, j->sigma#(ind#j));
+	    sind := (1:ind#0)|apply(1..#ind-1, j->sigmaEntry(sigma,ind#j));
 	    (not S.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
 	    or vl#(R.varPosTable#ind) <= wl#(S.varPosTable#sind)))
     )
+sigmaEntry = (sigma,k) -> if sigma#?k then sigma#k else last sigma + k - #sigma + 1
 
 basicReduce = method(Options=>{Completely=>false})
 basicReduce (RingElement, BasicList) := o -> (f,B) -> (
@@ -332,14 +334,13 @@ processSpairs (List,ZZ) := o -> (F,k) -> (
 -- Out: a List of all interlacing pairs of subsets of [max{n0,n1}+k] of size n0 and n1 (with k gaps)
 shiftPairs = (n0,n1,k) -> (
      --assert(k==1); -- assume k=1
-     (big,small) := if n0 >= n1 then (0,1) else (1,0);
-     n := (n0,n1);
-     if k >= n#small then return {};
-     flatten apply(subsets(n#big + k, n0), sImage->(
-	       apply(subsets(sImage, n#small - k), stImage->(
+     (small,big) := toSequence sort{n0,n1};
+     --if k >= small then return {};
+     flatten apply(subsets(big + k, n0), sImage->(
+	       apply(subsets(sImage, small - k), stImage->(
 			 sPos := 0;
 			 stPos := 0;
-			 tImage := select(n#big + k, i->(
+			 tImage := select(big + k, i->(
 				   sPos >= #sImage or i != sImage#sPos or (
 					sPos = sPos+1;
 					b := stPos < #stImage and i == stImage#stPos;
@@ -358,24 +359,20 @@ shiftPairs = (n0,n1,k) -> (
 --     If Extend => false then S = R, otherwise S has index bound equal to the max entry of s -1.
 --     If s#i == -1 then all variables with index i go to 0_S.
 shiftMap = method(Options=>{Extend=>false})
-shiftMap(Ring,Shift) := o -> (R,s) -> (
-    s = take(s,width R);
+shiftMap(Ring,Shift) := o -> (R,I) -> (
+    I = crop(I,width R);
     S := R;
-    if o.Extend then (
-	n := width R;
-	s = s*shift(0:n-1);
-	S = buildERing(R,max s);
-	);
+    if o.Extend then S = buildERing(R,(I*(width R-1))+1);
     mapList := apply(R.varIndices, ind->(
 	    indnew := new MutableList from ind;
 	    for j from 1 to #ind-1 do (
-	       	if ind#j >= #s or s#(ind#j) < 0 or s#(ind#j) >= width S then return 0_S
-	       	else indnew#j = s#(ind#j);
+	       	if ind#j >= #I or I#(ind#j) < 0 or I#(ind#j) >= width S then return 0_S
+	       	else indnew#j = I#(ind#j);
 	       	);
 	    S.varTable#(toSequence indnew)
 	    ));
     --print(s,R.varIndices,mapList);
-    map(R,S,mapList)
+    map(S,R,mapList)
     )
 
 ringMap = (S,R) -> map(S,R, apply(R.varIndices, i->(if S.varTable#? i then S.varTable#i else 0_S)))
@@ -457,22 +454,24 @@ pruneERing = (F,sym) -> (
 --In: F, a list of polynomials
 --Out: a list, the number of variables represented in F which have an index equal to i for each i from 0 to n-1
 indexSupport = F -> (
-     R := ring first F;
-     n := width R;
-     vSupport := sum(apply(F, f->sum(listForm(f)/first))); --list of # occurrances of each variable in newF
-     nSupport := new MutableList from (n:0); --list of # occurances of each index value in variable support
-     for i from 0 to #(R.varIndices)-1 do (
-	  if vSupport#i > 0 then (
-	       ind := R.varIndices#i;
-	       for j from 1 to #ind-1 do nSupport#(ind#j) = nSupport#(ind#j)+1;
-	       );
-	  );
-     toList nSupport
-     )
+    R := ring first F;
+    n := width R;
+    F = select(F, f-> f != 0);
+    if #F == 0 then return toList (n:0);
+    vSupport := sum(apply(F, f->sum(listForm(f)/first))); --list of # occurrances of each variable in newF
+    nSupport := new MutableList from (n:0); --list of # occurances of each index value in variable support
+    for i from 0 to #(R.varIndices)-1 do (
+	if vSupport#i > 0 then (
+	    ind := R.varIndices#i;
+	    for j from 1 to #ind-1 do nSupport#(ind#j) = nSupport#(ind#j)+1;
+	    );
+	);
+    toList nSupport
+    )
  
 maxEntry = V -> (
     W := apply(V, v->position(v, i->(i > 0), Reverse=>true));
-    max apply(W, i-> if i === null then 0 else i)
+    max (apply(W, i-> if i === null then 0 else i)|{0})
     )
 
 -- should run faster if the reduction is done with the fast internal gb routine
@@ -583,28 +582,39 @@ egbToric = M -> (
      )
 
 shift = method()
-shift (List) := L -> new Shift from L
-shift (MutableList) := L -> new Shift from L
-shift (Sequence) := S -> shift toList S
-Shift * Shift := (I,J) ->
-    apply(J, j->(if I#?j then I#j else j + (last I) - #I + 1))
+shift List := L -> new Shift from L
+shift MutableList := L -> new Shift from L
+shift Shift := S -> S
+Shift*Shift := (I,J) -> (
+    if #J < #I - degree J then J = crop(J,#I - degree J);
+    apply(J, j->(if I#?j then I#j else j + degree I))
+    )
 gaps = I -> (
-    k := width I;
+    k := #I + degree I;
     g := new MutableList from (k:1);
     for i in I do g#i = 0;
     toList g
     )
-take (Shift,ZZ) := (I,n) -> (
-    k := length I;
-    if k < n then return shift (toList I) | (toList (k + degree I)..(n-1 + degree I));
+crop = method()
+crop (Shift,ZZ) := (I,n) -> (
+    k := #I;
+    if k < n then return shift((toList I) | (toList ((k + degree I)..(n-1 + degree I))));
     if k > n then return shift take(I,n);
     I
     )
 degree (Shift) := I -> if #I == 0 then 0 else last I + 1 - #I
 Shift ? Shift := (I,J) -> (
-    if degree I == degree J then toSequence gaps I ? toSequence gaps J
+    if degree I == degree J then (
+	(gapsI,gapsJ) := (I,J)/gaps;
+	k := max{#gapsI,#gapsJ};
+	(toSequence gaps I)|((k-#gapsI):0) ? (toSequence gaps J)|((k-#gapsJ):0)
+	)
     else degree I ? degree J
     )
+Shift == Shift := (I,J) -> (I ? J) === symbol ==
+Shift*RingElement := (I,f) -> (shiftMap(ring f, I, Extend=>true))f
+Shift*Number := (I,n) -> if I#?n then I#n else if n >= 0 then n + degree I else n
+max Shift := I -> max ((toList I)|{0})
 
 shiftMonomial = method()
 shiftMonomial (RingElement,Shift) := (p,I) ->
@@ -613,36 +623,42 @@ ShiftMonomial * ShiftMonomial := (S,T) -> (
     (p,I) := (S.Monomial, S.Sh);
     (q,J) := (T.Monomial, T.Sh);
     R := ring q;
-    Iq := shiftMap(R,take(I,width R))*q;
+    Iq := (shiftMap(R,crop(I,width R),Extend=>true))q;
     (p,Iq) = matchRing(p,Iq);
     shiftMonomial(p*Iq, I*J)
     )
 ShiftMonomial * RingElement := (S,p) -> (
-    T := S*shiftMonomial(p,shift{});
-    T.Monomial
+    p = S.Sh*p;
+    (a,b) := matchRing(S.Monomial,p);
+    a*b
     )
+Shift * ShiftMonomial := (I,S) -> shiftMonomial(I*S.Monomial,I*S.Sh)
 width (ShiftMonomial) := S -> max {width S.Monomial, width S.Sh}
 ring (ShiftMonomial) := S -> ring S.Monomial
 ShiftMonomial ? ShiftMonomial := (S,T) -> (
     if width S == width T then (
-	if S.Shift == T.Shift then (
+	if S.Sh == T.Sh then (
 	    compare(S.Monomial,T.Monomial)
-	    ) else S.Shift ? T.Shift
+	    ) else S.Sh ? T.Sh
 	) else width S ? width T
     )
+ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 
 mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
 MPair ? MPair := (m,n) -> if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+MPair == MPair := (M,N) -> (M ? N) === symbol ==
 ShiftMonomial * MPair := (S,M) -> (
     new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
     )
+Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,I*M.polynomial)
+width MPair := M -> max {width M.shM, width M.polynomial}
 
 matchRing = method()
 matchRing (RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
-    if width R < width S then p = ringMap(S,R)*p;
-    if width R > width S then q = ringMap(R,S)*q;
+    if width R < width S then p = (ringMap(S,R))p;
+    if width R > width S then q = (ringMap(R,S))q;
     (p,q)
     )
 matchRing (RingElement,ZZ) := (p,n) -> (
@@ -661,34 +677,39 @@ compare (RingElement,RingElement) := (p,q) -> (
     )
 width Ring := R -> R.indexBound
 width RingElement := p -> (
-    n := position(indexSupport{p}, i->(i > 0), Reverse=>true) + 1;
-    if n =!= null then n else 0
+    n := position(indexSupport{p}, i->(i > 0), Reverse=>true);
+    if n =!= null then n+1 else 0
     )
-width Shift := I -> if #I == 0 then 0 else last I + 1
+width Shift := I -> (
+    n := position(gaps I, i->i==1, Reverse=>true);
+    if n === null then 0 else n+1
+    )
 width List := L -> max(L / width)
 
 
 egbSignature = method()
 egbSignature (List) := F -> (
     R := ring first F;
-    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i)); --should stratify by width
+    JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i));
     H := {};
     G := {};
-    while length JP > 0 do (
+    while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
 	if isCovered(j,G) then continue;
 	j = regularTopReduce(j,G);
-	(T,w) := j;
-	if w == 0 then H = append(H,T) else (
+	if j.polynomial == 0 then H = append(H,j) else (
+	    G = append(G,j);
+	    if #G > 3 then assert false;
 	    for g in G do (
 		newJP := jPairs(j,g);
+		--print newJP;
 		newJP = select(newJP, j->not isCovered(j,H));
 		scan(newJP, j->insert(JP,j));
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
 	    );
-	G = append(G,j);
+	print(H|G);
 	);
     apply(G, g->g.polynomial)
     )
@@ -696,33 +717,34 @@ egbSignature (List) := F -> (
 jPairs = (j,g) -> (
     newJP := new MutableList;
     (jw,gw) := (j,g)/width;
-    for k from 0 to min(jw,gw)-1 do (
+    for k from 0 to max(min(jw,gw)-1,0) do (
 	for p in shiftPairs(jw,gw,k) do (
 	    (jI,gI) := p;
 	    jshift := jI*(j.polynomial);
 	    gshift := gI*(g.polynomial);
 	    (jshift,gshift) = matchRing(jshift,gshift);
-	    jSP := shiftMonomial(jI,jpoly(jshift,gshift));
-	    gSP := shiftMonomial(gI,jpoly(gshift,jshift));
+	    jSP := shiftMonomial(jpoly(jshift,gshift),jI)*j;
+	    gSP := shiftMonomial(jpoly(gshift,jshift),gI)*g;
 	    if jSP == gSP then continue;
-	    newJP#(#newJP) = if jSP > gSP then jI*j else gI*g;
+	    JP := if jSP > gSP then jSP else gSP;
+	    assert((JP.shM).Monomial != 0);
+	    newJP#(#newJP) = JP;
 	    );
 	);
     toList newJP
     )
 
 regularTopReduce = (j,G) -> (
-    (T,v) := j;
+    if j.polynomial == 0 then return j;
     for g in G do (
-	(S,w) := g;
 	isDiv := true; local Q; seed := null;
 	while isDiv do (
-	    (isDiv,Q) = divQuotient(w,v,Seed=>seed);
+	    (isDiv,Q) = divQuotient(g.polynomial,j.polynomial,Seed=>seed);
 	    if isDiv and Q*g < j then (
-		v = reduction(v,Q*w);
-		return regularTopReduce((T,v),G);
+		v := reduction(j.polynomial,Q*g.polynomial);
+		return regularTopReduce(mPair(j.shM,j.pos,v),G);
 		);
-	    seed = Q.Sh;
+	    if isDiv then seed = Q.Sh;
 	    );
 	);
     return j;
@@ -734,15 +756,13 @@ reduction = (v,w) -> (
     )
 
 isCovered = (j,G) -> (
-    (T,v) := j;
     for g in G do (
-	(S,w) := g;
-	if S#1 != T#1 then continue;
+	if j.pos != g.pos then continue;
 	isDiv := true; local Q; seed := null;
 	while isDiv do (
-	    (isDiv,Q) = divQuotient(S#0,T#0,Seed=>seed);
-	    if isDiv and Q*w < v then return true;
-	    seed = Q.Sh;
+	    (isDiv,Q) = divQuotient(g.shM,j.shM,Seed=>seed);
+	    if isDiv and (g.polynomial == 0 or compare(Q*(g.polynomial),j.polynomial) === symbol <) then return true;
+	    if isDiv then seed = Q.Sh;
 	    );
 	);
     false
@@ -755,13 +775,23 @@ isCovered = (j,G) -> (
 
 priorityQueue = method()
 --Instantiates an empty priority queue.
-installMethod(priorityQueue, () -> new PriorityQueue from new MutableHashTable from {Min=>null,Roots=>new MutableList,Degree=>0})
+installMethod(priorityQueue, () -> new PriorityQueue from new MutableHashTable from {
+	Min=>null,
+	Roots=>new MutableList,
+	Degree=>0,
+	len=>0
+	})
 --Instantiates a priority queue with elements from a list L.
 priorityQueue (List) := L -> (
     Q := priorityQueue();
     for l in L do (
 	n := node l;
-	R := new PriorityQueue from new MutableHashTable from {Min=>n,Roots=>new MutableList from {n},Degree=>1};
+	R := new PriorityQueue from new MutableHashTable from {
+	    Min=>n,
+	    Roots=>new MutableList from {n},
+	    Degree=>1,
+	    len=>1
+	    };
 	Q = mergePQ(Q,R);
 	);
     Q
@@ -773,6 +803,7 @@ insert (PriorityQueue,Thing) := (Q,x) -> mergePQ(Q,priorityQueue({x}))
 --Merges priority queue R into priority queue Q.  Returns Q.
 mergePQ = method()	
 mergePQ (PriorityQueue,PriorityQueue) := (Q,R) -> (
+    Q.len = Q.len + R.len;
     if R.Min === null then return Q;
     if Q.Min === null or min R < min Q then Q.Min = R.Min;
     cr := null;
@@ -780,9 +811,14 @@ mergePQ (PriorityQueue,PriorityQueue) := (Q,R) -> (
     while k < R.Degree or cr =!= null do (
 	rr := if R.Roots#?k then R.Roots#k else null;
 	qr := if Q.Roots#?k then Q.Roots#k else null;
-	roots := sort select({qr,rr,cr}, r->(r =!= null));
+	roots := new MutableList from select({qr,rr,cr}, r->(r =!= null));
 	if #roots == 1 then Q.Roots#k = roots#0;
 	if #roots < 2 then cr = null else (
+	    if roots#1 < roots#0 or roots#1 === Q.Min then (
+		(a,b) := (roots#0,roots#1);
+		roots#0 = b;
+		roots#1 = a;
+		);
 	    (roots#0).Children#(#(roots#0).Children) = roots#1;
 	    cr = roots#0;
 	    Q.Roots#k = if #roots == 3 then roots#2 else null;
@@ -802,11 +838,12 @@ min PriorityQueue := Q -> if Q.Min === null then null else nValue Q.Min
 deleteMin = method()
 deleteMin (PriorityQueue) := Q -> (
     if Q.Min === null then return null;
+    Q.len = Q.len - 1;
     m := min Q;
     k := position(toList Q.Roots, r->(r === Q.Min));
     Rroots := (Q.Roots#k).Children;
     Rmin := if #Rroots == 0 then null else min toList Rroots;
-    R := new PriorityQueue from new MutableHashTable from {Min=>Rmin,Roots=>Rroots,Degree=>#Rroots};
+    R := new PriorityQueue from new MutableHashTable from {Min=>Rmin,Roots=>Rroots,Degree=>#Rroots,len=>2^k-1};
     Q.Roots#k = null;
     Qroots := delete(null, toList Q.Roots);
     Q.Min = if #Qroots == 0 then null else min toList Qroots;
@@ -815,6 +852,14 @@ deleteMin (PriorityQueue) := Q -> (
     mergePQ(Q,R)
     )
 
+pop = method()
+pop PriorityQueue := Q -> (
+    m := min Q;
+    deleteMin Q;
+    m
+    )
+
+length PriorityQueue := Q -> Q.len
 node = f -> new Node from hashTable {Value=>f,Children=>new MutableList}
 nValue = N -> N.Value
 Node ? Node := (n,m) -> nValue n ? nValue m
