@@ -698,9 +698,13 @@ egbSignature (List) := F -> (
 	deleteMin JP;
 	if isCovered(j,G) then continue;
 	j = regularTopReduce(j,G);
-	if j.polynomial == 0 then H = append(H,j) else (
+	if j.polynomial == 0 then (
+	    H = append(H,j); 
+	    << #H << "th syzygy is: " << j << endl;
+	    )
+	else (
 	    G = append(G,j);
-	    if #G > 3 then assert false;
+	    << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		newJP := jPairs(j,g);
 		--print newJP;
@@ -709,7 +713,6 @@ egbSignature (List) := F -> (
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
 	    );
-	print(H|G);
 	);
     apply(G, g->g.polynomial)
     )

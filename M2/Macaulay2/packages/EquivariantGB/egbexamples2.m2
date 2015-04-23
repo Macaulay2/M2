@@ -49,10 +49,12 @@ restart
 loadPackage "EquivariantGB"
 R = buildERing({symbol x},{0},QQ,1)
 F = {x^2+1, x-1}
+egbSignature F
 
 R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2, MonomialOrder=>Lex);
 F = {y_(1,0) - x_0*x_1};
 egbSignature F
+egb(F, OutFile=>stdio)
 
 R = buildERing({symbol y},{1},QQ,2)
 F = {y_0 + y_1}
