@@ -96,6 +96,10 @@ various modern operating systems:
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
+    On Ubuntu 14.10 and later, add
+        --enable-build-libraries=pari
+      to the "configure" command line below.  (The version of pari possibly installed there
+      will crash when M2 exits.)
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
@@ -135,9 +139,19 @@ various modern operating systems:
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
 
+  Arch Linux:
+      sudo pacman -S archlinux-keyring
+      sudo pacman-key --populate archlinux
+      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+    If the package "pari" is also installed on your system, remember to add
+    	--enable-build-libraries=pari
+    to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
+    crash when the program terminates (when the exit handlers are executed, it dies in the function "closepari".)
+
   Mac OS X:
     Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
-      it will be necessary to reinstall it.
+      it will be necessary to reinstall it.  One may use the following command for installing it:
+      	 xcode-select --install
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -151,7 +165,7 @@ various modern operating systems:
 	brew tap homebrew/versions
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
-	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49 readline
+	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm gmp pari boost cddlib glpk libtool gcc49
     Now remember to add 
         CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
       to the "configure" command line below in the section on compiling Macaulay2.
@@ -484,5 +498,15 @@ Warning messages
 	   anyway.  (We use -j1 as an option when compiling third party libraries
 	   whose makefiles are not known to support parallelism.)
 
+----------------------
+Autoconf, autoreconf, libtool, ...
+----------------------
 
+If you get any mysterious error messages involving autoconf, autoreconf,
+libtool, etc., try running
+
+	 make -f Makefile get-tools
+
+in the top level.  This command will install versions of those tools known to
+work with Macaulay2.
 

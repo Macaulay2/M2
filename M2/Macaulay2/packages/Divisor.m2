@@ -1,5 +1,5 @@
 newPackage( "Divisor",
-Version => "0.1p", Date => "September 3rd, 2014", Authors => {
+Version => "0.1q", Date => "February 21st, 2015", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -92,8 +92,9 @@ export{
 	KnownNormal, --an option, used to specify that the ring is known to be normal
 	KnownCartier, --an option, used to specify that the divisor is known to be Cartier
 	IsGraded, --an option, if you specify it in several arguments it assumes we are working on a projective variety
+	ReturnMap, --an option, for moduleToIdeal and moduleWithSectionToIdeal which returns the map from the module to R^1
 	Primes, --a potential value for the divPullBack Strategy option
-	Sheaves --a potential value for the divPullBack Strategy option
+	Sheaves --a potential value for the divPullBack Strategy option	
 }
 
 ----------------------------------------------------------------
@@ -1470,7 +1471,7 @@ torsionSubmodule(Module) := (M1) -> (
 -- http://katzman.staff.shef.ac.uk/FSplitting/ParameterTestIdeals.m2
 --under canonicalIdeal
 
-moduleToIdeal = method(Options => {MTries=>10, IsGraded=>false});
+moduleToIdeal = method(Options => {MTries=>10, IsGraded=>false, ReturnMap=>false});
 
 moduleToIdeal(Ring, Module) := o ->(R1, M2) -> 
 (--turns a module to an ideal of a ring
@@ -1498,14 +1499,19 @@ moduleToIdeal(Ring, Module) := o ->(R1, M2) ->
 				--print {degree(t#0), (degrees M2)#0};
 				d1 = degree(t#0) - (degrees M2)#0;
 				answer = {answer, d1};
+			);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
 			)
 		);
 		i = i+1;
 	);
 	-- if that doesn't work, then try a random combination/embedding
+     i = 0;
 	while ((flag == false) and (i < o.MTries) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
+       -- print d;
 		h = map(R1^1, M2**R1, {d});
 		if (isWellDefined(h) == false) then error "moduleToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
@@ -1514,8 +1520,12 @@ moduleToIdeal(Ring, Module) := o ->(R1, M2) ->
 			if (o.IsGraded==true) then (
 				d1 = degree(d#0) - (degrees M2)#0;
 				answer = {answer, d1};
+			);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
 			)
 		);
+        i = i + 1;
 	);
 	if (flag == false) then error "moduleToIdeal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	answer
@@ -1524,12 +1534,12 @@ moduleToIdeal(Ring, Module) := o ->(R1, M2) ->
 moduleToIdeal(Module) := o ->(M1) ->
 (
 	S1 := ring M1;
-	moduleToIdeal(S1, M1, MTries=>o.MTries, IsGraded=>o.IsGraded)
+	moduleToIdeal(S1, M1, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 );
 
 --this variant takes a map from a free module of rank 1 and maps to another rank 1 module.  The function returns the second module as an ideal combined with the element 
 
-moduleWithSectionToIdeal = method(Options => {MTries=>10});
+moduleWithSectionToIdeal = method(Options => {MTries=>10, ReturnMap=>false});
 
 moduleWithSectionToIdeal(Matrix) := o->(f1)->
 (
@@ -1552,6 +1562,9 @@ moduleWithSectionToIdeal(Matrix) := o->(f1)->
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(t);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
+			);
 		);
 		i = i+1;
 	);
@@ -1564,12 +1577,15 @@ moduleWithSectionToIdeal(Matrix) := o->(f1)->
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(d);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
+			);
 		);
 	);
 	
 	if (flag == false) then error "moduleWithSectionToIdeal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	newMatrix := h*f1;
-	{first first entries newMatrix, answer}
+	flatten {first first entries newMatrix, answer}
 );
 
 
@@ -2867,6 +2883,19 @@ doc ///
 ///
 
 doc ///
+	Key
+	 ReturnMap
+	Headline
+	 An option for moduleToIdeal and moduleWithSectionToIdeal
+	Description
+	 Text
+	  If moduleToIdeal is set to true, then instead of just converting a module into an isomorphic ideal, this also returns the map from the module to the ring.
+	SeeAlso
+	 moduleToIdeal
+	 moduleWithSectionToIdeal
+///
+
+doc ///
  	Key 
  	 reflexifyModule
  	 (reflexifyModule, Module)
@@ -3054,11 +3083,14 @@ doc ///
  	 (moduleToIdeal, Module)
  	 [moduleToIdeal, MTries]
  	 [moduleToIdeal, IsGraded]
+ 	 [moduleToIdeal, ReturnMap]
  	Headline
  	 Turn a module to an ideal of a ring
  	Usage
  	 I = moduleToIdeal(R, M, MTries=>n, IsGraded=>false)
  	 L = moduleToIdeal(R, M, MTries=>n, IsGraded=>true)
+ 	 L = moduleToIdeal(R, M, MTries=>n, ReturnMap=>true)
+ 	 L = moduleToIdeal(R, M, MTries=>n, ReturnMap=>true, IsGraded=>true)
  	Inputs
  	 M: Module
  	 R: Ring
@@ -3076,17 +3108,25 @@ doc ///
  	 Text
  	  It also works for non-domains
  	 Example
- 	  R = QQ[x,y]/ideal(x*y)
- 	  M = (ideal(x^3, y^5))*R^1
+ 	  R = QQ[x,y]/ideal(x*y);
+ 	  M = (ideal(x^3, y^5))*R^1;
  	  moduleToIdeal(M)
- 	  N = (ideal(x,y))*R^1
+ 	  N = (ideal(x,y))*R^1;
  	  moduleToIdeal(N)
  	 Text
- 	  Note that the answer is right even if you don't recognize it at first.  Finally, consider the IsGraded option.
+ 	  Note that the answer is right even if you don't recognize it at first.  Next, consider the IsGraded option. If this is set to true, then the system returns the degree as well (as you can see in the example below).
  	 Example
- 	  R = QQ[x,y]
- 	  M = R^{-3}
+ 	  R = QQ[x,y];
+ 	  M = R^{-3};
  	  moduleToIdeal(M, IsGraded=>true)
+ 	 Text
+ 	  In conclusion, we consider the ReturnMap option.  What this does is also return the map from M to R^1 of which the map is based upon.  Note that if both IsGraded and ReturnMap are enabled, then the map comes after the degree.
+ 	 Example
+ 	  R = QQ[x,y];
+ 	  M = ideal(x^2, x*y)*R^1;
+ 	  L = moduleToIdeal(M, ReturnMap=>true)
+ 	  target L#1
+ 	  source L#1
  	SeeAlso
  	 moduleToDivisor
  	 moduleWithSectionToIdeal
@@ -3097,10 +3137,11 @@ doc ///
  	 moduleWithSectionToIdeal
  	 (moduleWithSectionToIdeal, Matrix)
  	 [moduleWithSectionToIdeal, MTries]
+ 	 [moduleWithSectionToIdeal, ReturnMap]
  	Headline
  	 Turn a module to an ideal of a ring and keep track of a module element
  	Usage
- 	 L = moduleWithSectionToIdeal(mat, MTries=>n, IsGraded=>false)
+ 	 L = moduleWithSectionToIdeal(mat, MTries=>n, ReturnMap=>false)
  	Inputs
  	 mat: Matrix
  	 R: Ring
@@ -3111,10 +3152,19 @@ doc ///
  	 Text
  	  Tries to embed the target of the module map as an ideal in R, it will also return the image of 1 under the module map.  These are returned as a list, the element first, and then the ideal.  It uses MTries=>n (the default n value is 10) in the same way as moduleToIdeal.  
  	 Example
- 	  R = QQ[x,y]
- 	  M = (ideal(x^2,x*y))*R^1
- 	  mat = map(M, R^1, {{1}, {1}})
+ 	  R = QQ[x,y];
+ 	  M = (ideal(x^2,x*y))*R^1;
+ 	  mat = map(M, R^1, {{1}, {1}});
  	  moduleWithSectionToIdeal(mat)
+ 	 Text
+ 	  Like moduleToIdeal, if ReturnMap is set to true, then the method will also return the map from M to R^1.
+ 	 Example
+ 	  R = QQ[x,y];
+ 	  M = (ideal(x^2,x*y))*R^1;
+ 	  mat = map(M, R^1, {{1}, {1}});
+ 	  L = moduleWithSectionToIdeal(mat, ReturnMap=>true)
+ 	  target L#2
+ 	  source L#2
  	SeeAlso
  	 moduleToIdeal
 ///
@@ -4028,6 +4078,10 @@ end
 ---***************************
 ---*******CHANGELOG***********
 ---***************************
+--changes 0.1q
+------modified moduleToIdeal to allow the user to also output the map via the ReturnMap flag.
+------fixed a bug in moduleToIdeal which caused it to sometimes not produce the right output for domains.
+
 --changes 0.1p
 ------added verifyDivisor
 ------added applyToCoefficients
