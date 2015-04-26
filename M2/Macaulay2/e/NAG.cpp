@@ -26,7 +26,9 @@ void complexAP::print()
 }
 
 
-// SLProgram 
+// SLProgram
+SLProgram::SLProgram() { inputCounter = 0; }
+SLProgram::~SLProgram() {}
 SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a) 
 {
   mNodes.push_back(MSum);
@@ -35,6 +37,16 @@ SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
     mOutputPositions.push_back(a->array[i]);
   return mNodes.size()-1;
 }
+SLProgram::GATE_POSITION SLProgram::addMProduct(const M2_arrayint a) 
+{
+  mNodes.push_back(MProduct);
+  mNumInputs.push_back(a->len);
+  for(int i=0; i<a->len; i++)
+    mOutputPositions.push_back(a->array[i]);
+  return mNodes.size()-1;
+}
+
+void SLProgram::text_out(buffer& o) const { o << "SLProgram!" << newline; }
 
 // Straight Line Program classes
 

@@ -512,17 +512,17 @@ class SLProgram
   /* LOOKUP TABLE */
   int inputCounter;
 public:
-  SLProgram(){ inputCounter = 0; }
-  ~SLProgram(){}
+  SLProgram();
+  virtual ~SLProgram();
   // GATE_POSITION addCopy(GATE_POSITION p);
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
-  GATE_POSITION addInput() { return -(inputCounter++); }
+  GATE_POSITION addInput() { return -(++inputCounter); }
   GATE_POSITION addMSum(const M2_arrayint);
-  // GATE_POSITION addMProduct(const M2_arrayint);
+  GATE_POSITION addMProduct(const M2_arrayint);
   // GATE_POSITION addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
-  void toString(buffer& o);
+  void text_out(buffer& o) const;
 };
 
 class SLPEvaluator {

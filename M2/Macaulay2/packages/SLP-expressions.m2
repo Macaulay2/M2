@@ -69,13 +69,14 @@ net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
 Gate + Gate := (a,b) -> if a===zeroGate then b else 
                         if b===zeroGate then a else 
 			new SumGate from {
-    			    Inputs => {a,b}
+    			    Inputs => {a,b}, 
+			    cache => new CacheTable
     			    } 
 sumGate = method()
 sumGate List := L -> (
     if not all(L, a->instance(a,Gate)) 
     then error "expected a list of gates";
-    new SumGate from {Inputs=>L}
+    new SumGate from {Inputs=>L, cache => new CacheTable}
     )
  
 ProductGate = new Type of Gate
@@ -84,7 +85,8 @@ Gate * Gate := (a,b) -> if a===zeroGate or b===zeroGate then zeroGate else
                         if a===oneGate then b else 
 			if b===oneGate then a else 
 			new ProductGate from {
-    			    Inputs => {a,b}
+    			    Inputs => {a,b},
+			    cache => new CacheTable
     	    	    	    }
 
 ZZ + Gate := (a,b) -> inputGate a + b
@@ -283,18 +285,19 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     )  
 
 appendToSLProgram = method()
-{*
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
     g.cache#slp = rawSLPInputGate(slp)
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
-    g.cache#slp = rawSLPSumGate(slp,g.Input/(a->a.cache#slp))
+    g.cache#slp = rawSLPSumGate(slp,g.Inputs/(a->a.cache#slp))
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
     g.cache#slp = rawSLPProductGate(slp,g.Input/(a->a.cache#slp))
-*}
 ///
 load "SLP-expressions.m2"
-s = rawSLP()
 s = rawSLProgram(1)
+X = inputGate symbol X
+appendToSLProgram(s,X)
+appendToSLProgram(s,X+X)
+appendToSLProgram(s,productGate{X,X,X})
 ///
 
 -- GateMatrix is NOT A GATE

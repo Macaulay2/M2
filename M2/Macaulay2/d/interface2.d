@@ -12,8 +12,8 @@ header "#include <engine.h>";
 -- straight line programs
 
 export rawSLProgram(e:Expr):Expr := (
-     when e
-     is numConstantsAndInputs:ZZcell do if !isULong(numConstantsAndInputs.v) then WrongArgSmallInteger() 
+     when e is numConstantsAndInputs:ZZcell do 
+     if !isULong(numConstantsAndInputs.v) then WrongArgSmallInteger() 
      else toExpr(Ccode(RawSLProgramOrNull, "rawSLProgram(", toULong(numConstantsAndInputs.v), ")"))
      else WrongArgZZ());
 setupfun("rawSLProgram",rawSLProgram);
@@ -46,6 +46,24 @@ export rawSLPSumGate(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("rawSLPSumGate",rawSLPSumGate);
+
+export rawSLPProductGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPProductGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPProductGate",rawSLPProductGate);
 
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
