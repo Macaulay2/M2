@@ -1,67 +1,116 @@
 newPackage(
               "CompleteIntersectionResolutions",
-              Version => "1.0", 
-              Date => "April 2013",
+              Version => "0.8", 
+              Date => "April 2015",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
               Headline => "Analyzing Resolutions over a Complete Intersection",
 	      PackageExports => {"BGG"},
-              DebuggingMode => true
+              DebuggingMode => true --should be false when submitted
               )
 	  export{
-	   --some utilities
+          --some utilities
 --	   submoduleByDegrees,	   
 --    	   toArray,
-	   splittings,
-	   S2,
-	   hf,
-	   isQuasiRegular,
-	   makeModule,
-	   makeModule1,	   
-   	   isLinear,
-	   cosyzygyRes,	  	   
+	   "splittings",
+	   "S2",
+	   "hf",
+	   "isQuasiRegular",
+	   "makeModule",
+	   "makeModule1",	   
+   	   "isLinear",
+	   "cosyzygyRes",	  	   
 	   	   --things related to Ext over a complete intersection
-	   ExtModule, 
-	   evenExtModule, 
-	   oddExtModule,
-	   ExtModuleData,
-	   highSyzygy,
-  	   Optimism, -- optional arg for highSyzygy etc	   
+	   "ExtModule", 
+	   "evenExtModule", 
+	   "oddExtModule",
+	   "ExtModuleData",
+	   "highSyzygy",
+  	   "Optimism", -- optional arg for highSyzygy etc	   
 	       --tools used to construct the matrix factorization and 
 	       --things related to it
-	   makeT,
-	   koszulExtension,
-	   matrixFactorization,
-	   Check, -- optional arg for matrixFactorization
+	   "makeT",
+	   "koszulExtension",
+	   "matrixFactorization",
+	   "Check", -- optional arg for matrixFactorization
 	       --scripts to unpack the info in a matrix factorization
-	   BRanks,
-	   ARanks,
-	   bMaps,
-	   dMaps,
-	   psiMaps,
-	   hMaps,
-	   mfBound,
-	   finiteBettiNumbers,
-           infiniteBettiNumbers,
-	   makeFiniteResolution,	   
+	   "BRanks",
+	   "ARanks",
+	   "bMaps",
+	   "dMaps",
+	   "psiMaps",
+	   "hMaps",
+	   "mfBound",
+	   "finiteBettiNumbers",
+           "infiniteBettiNumbers",
+	   "makeFiniteResolution",	   
 	          --some families of examples
-	   twoMonomials,
-	   sumTwoMonomials,
+	   "twoMonomials",
+	   "sumTwoMonomials",
     	    	    --modules over the exterior algebra
-	   makeHomotopies,
-	   makeHomotopies1,
-	   extVsCohomology,
-   	   exteriorTorModule,
-           exteriorExtModule,	   
-	   TateResolution,
-	   BGGL,	   
-	   freeExteriorSummand,
+	   "makeHomotopies",
+	   "makeHomotopies1",
+	   "extVsCohomology",
+   	   "exteriorTorModule",
+	    "exteriorExtModule",	   
+	   "TateResolution",
+	   "BGGL",	   
+	   "freeExteriorSummand",
 	   --the inverse problem: represent a module as an Ext_R(M,k)
-	   moduleAsExt,
-	   hfModuleAsExt,
-	   complexity
+	   "moduleAsExt",
+	   "hfModuleAsExt",
+	   "complexity",
+	   "stableHom",
+	   "mapToHomomorphism",
+	   "isStablyTrivial"
 	   }
+
+stableHom = method()
+stableHom(Module, Module) := (M,N)->(
+    --returns the map from Hom(M,N) to the stable Hom
+    H = Hom(M,N);
+    if isFreeModule M then return map((ring M)^0, H, 0);
+    p = map(N, cover N, 1);
+    map(coker Hom(M,p), Hom(M,N), 1))
+
+mapToHomomorphism = method()
+mapToHomomorphism Matrix := f ->(
+    S := ring f;
+    M := source f;
+    N := target f;
+    F := cover M;
+    p := map(M, F, 1);
+    Fd := dual F;
+    one := sum(apply(toList(0..rank F-1), i->map(Fd**F, S^1, Fd_{i}**F_{i})));
+    map(Hom(M,N), S^1, Hom(M,f)*((Hom(F,p)//Hom(p,M)))*one)
+	    )
+
+isStablyTrivial = method()
+isStablyTrivial Matrix := f ->(
+   -- f: M \to N is given.
+   -- represent f as an element of Hom, that is, as a map (ring M)^1 \to Hom(M,N) 
+   --then apply stableHom.
+   f1 := mapToHomomorphism f;
+   (stableHom(source f, target f)*f1) == 0)
+
+///
+restart
+uninstallPackage "CompleteIntersectionResolutions"
+installPackage "CompleteIntersectionResolutions"
+loadPackage("CompleteIntersectionResolutions", Reload=>true)
+S = ZZ/101[a,b,c]
+M = S^2/ideal"a,b"++S^3/ideal"b,c"
+N = coker random (S^{0,1}, S^{-1})
+Hom(M,M)
+g = mapToHomomorphism id_M
+homomorphism g
+stableHom(M,M)
+isStablyTrivial id_M
+isStablyTrivial(map(M, cover M, 1))
+///
+
+   
 
 isQuasiRegular = method()
 isQuasiRegular(Matrix, Module) := (ff,E) ->(
@@ -106,7 +155,7 @@ toArray List := L -> splice [toSequence L]
 toArray ZZ := n->[n]
 
 transpose Module := M -> coker transpose presentation M
-    --this is Auslanders transpose functor
+    --this is Auslander's transpose functor
     
 
 
@@ -981,14 +1030,18 @@ exteriorTorModule(Matrix,Ring,Module,Module) := (ff,E,M,N) ->(
     map(H_(1+k_1), S^{ -deglist_(k_0)}**H_(k_1), 
 	(matrix (h#k**N)//(generators H_(1+k_1)))*(generators H_(k_1)))}
     );
-    M1 := makeModule1(E,H,e);
+(H,e))
+{*
 error();
+    M1 := makeModule1(E,H,e);
+    --why does "prune M1" kill the grading??
     f := presentation M1;
     g := complement f;
     M2 := cokernel modulo(g, f);
-    (M2, M1)
+--    (M2, M1)
+    M2
      )
-
+*}
 
  
 makeModule1 = method()
@@ -1006,27 +1059,36 @@ makeModule1(Ring, List, HashTable) := (E,T,e)->(
     --this is obtained as the cokernel of the obvious map
     -- oplus_(i=1)^m T_(i-1)**E^{{-1,0}} --> oplus_(i=0)^m T_i
     
-     m := max ((keys e)/last); -- there are m+1 modules T_0..T_m
-     if m == -infinity then return E**T_0;
-     d := apply(numgens E, j->degree E_j);
+     m := 1+max(0,max ((keys e)/last)); -- there are m+1 modules T_0..T_m
+     if m == 1 then return E**T_0; -- handles case of only 1 module
      flength := #unique apply(keys e, k->k_0); -- number of E-variables involved
+     --promote e#{j,i} to a bi-homogeneous map eE#{j,i}: $T_i(-i) \to T_{i+1}(-i-1)$ over E.
      eE := hashTable apply(keys e, ke ->(
        	       (ke,map(E^{{ -ke_1-1, 0}}**(E**T_(ke_1+1)), 
 		       E^{{ -ke_1-1, 0}}**(E**T_(ke_1)), 
 		       (E**e#ke)))
 	       ));
-     
-     P := T_0**E++directSum apply(m+1, i->target eE#{0,i}); -- puts T_i in first-degree i
-     Q := apply(flength, j-> directSum apply(m+1, i-> source(eE#{j,i}))); --was -1,0
-
-     f := apply(flength, j -> map(P, Q_j, 
-		 0_E*id_(T_0**E)||directSum apply(m+1, i->eE#{j,i})
+     fir := new Array from 0..m-1;
+     las := new Array from 1..m;
+     P := directSum apply(m+1, i-> if i==0 then 
+	          T_0**E else target eE#{0,i-1});
+--     directSum0 := L -> if #L==0 then L_0 else directSum L;
+     Q := apply(flength, j-> 
+	  directSum apply(m, i-> source(eE#{j,i})));
+--     P := T_0**E++directSum apply(m, i->target eE#{0,i}); -- puts T_i in first-degree i
+     --P_[1] is the inclusion of T_1++..++T_m     
+     f := apply(flength, j -> 
+	 map(P, Q_j, 
+	 P_las*directSum apply(m, i->eE#{j,i})
 		 ));
+     g := apply(flength, j ->
+	  map(P,Q_j, 
+	      P_fir*(E^{{1,0}}**(E_j**id_(Q_j)))
+		  ));
+--     g := apply(flength, j ->map(P,Q_j, E_j**id_(Q_j)||matrix map(T_0**E,Q_j,0)));
 
-     g := apply(flength, j ->map(P,Q_j, E_j**id_(Q_j)||matrix map(T_0**E,Q_j,0)));
-     if m == 0 then 
-         M := P;
-     M = P/sum(apply (m+1, j->image(f_j-g_j)));
+     M := P/sum(apply (flength, j->image(f_j-g_j)));
+     error();
      --prune M
      M
      )
@@ -1035,6 +1097,7 @@ makeModule1(Ring, List, HashTable) := (E,T,e)->(
 --1-var
 restart
 loadPackage( "CompleteIntersectionResolutions", Reload => true)
+--viewHelp CompleteIntersectionResolutions
 S = ZZ/101[a,b,c]
 E = S[x]
 T = {S^1,S^1}
@@ -1043,12 +1106,54 @@ X = makeModule1(E,T,e)
 isHomogeneous X
 prune X
 
+
 kk=ZZ/101
 S = kk[a,b,c]
-F = res (ideal vars S)
+
 f = matrix{{a^2,b^2}}
-E = S[x,y, SkewCommutative=>true]
-exteriorTorModule(f, E, coker F.dd_1, coker F.dd_1)
+R = S/ideal f
+red = map(R,S)
+F = res (ideal vars R, LengthLimit => 7)
+complete F
+M = apply(7, i-> coker F.dd_(i+1));
+MS = M/(Mi -> pushForward(red, Mi));
+E = R[x,y, SkewCommutative=>true]
+(H,e) = exteriorTorModule(f, E, MS_4, MS_4);
+M1 = makeModule1(E,H,e);
+
+
+apply(keys e, ke ->(
+       	       (ke,map(E^{{ -ke_1-1, 0}}**(E**H_(ke_1+1)), 
+		       E^{{ -ke_1-1, 0}}**(E**H_(ke_1)), 
+		       (E**e#ke)))
+	       ))
+
+H = {cokernel matrix {{0, 0, 0, 0, 0, c, b, a, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, c, b, a, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, b, a}}, cokernel matrix {{0, 0, c, b, a, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, c, b, a, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, c, b, a, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, b, a, 0, 0, 0}, {0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, b, a}}, cokernel matrix {{c, b, a, 0, 0, 0}, {0, 0, 0, c, b, a}}, 0}
+
+e = new HashTable from {{1, -1} => matrix {{}, {}, {}}, {1, 0} => matrix {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {1, 1} => matrix {{0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0}}, {1, 2} =>
+       matrix {}, {0, -1} => matrix {{}, {}, {}}, {0, 0} => matrix {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 1} => matrix {{0, 0, 0, 0, 0}, {0, 0, 0, 1, 0}}, {0, 2} => matrix {}}
+e
+H/(h->betti presentation h)
+makeModule1(E,H,e)
+
+exteriorTorModule(f, E, MS_0, S^{1}**MS_1)
+
+
+
+
+for i from 0 to 7 do
+    for j from i to 3 do
+        print betti res exteriorTorModule(f, E, MS_i, MS_j)
+
+
+Pt = directSum(apply(3, j-> F_(j+1)))
+viewHelp directSum
+viewHelp Array
+new Array from 0..2
+[1..2]
+PtFirst = Pt_
 ///
 
 
@@ -1931,7 +2036,7 @@ Description
   The resolution of a module over a hypersurface ring 
   (graded or local) is always periodic of period at most 2 (Eisenbud, "Homological Algebra Over A Complete Intersection",
   Trans. Am. Math. Soc. 260 (1980) 35--64),
-  but the assymptotic structure of minimal resolutions over a 
+  but the asymptotic structure of minimal resolutions over a 
   complete intersection is a topic of active research. 
   This package contains code that helps analyze (graded) examples. 
   
@@ -2054,7 +2159,7 @@ Key
  moduleAsExt
  (moduleAsExt, Module, Ring)
 Headline
- Find a module with given assymptotic resolution
+ Find a module with given asymptotic resolution
 Usage
  M = moduleAsExt(MM,R)
 Inputs
