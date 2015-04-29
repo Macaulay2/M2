@@ -3890,6 +3890,9 @@ end--
 
 --Do we really need all of stable triviality??
 
+--Note that T is well-defined up to homotopy; so T^2 is well-defined
+--mod mm^2. 
+
 restart
 loadPackage ("CompleteIntersectionResolutions", Reload=>true)
 kk = ZZ/101
@@ -3900,6 +3903,23 @@ M = R^1/ideal"a,bc"
 m = 10
 F = res(M, LengthLimit => m)
 syzygies = apply(1..m, i->coker F.dd_i);
+k = 3
+t1 = makeT(ff,F,k+4);
+t2 = makeT(ff,F,k+2);
+T2Components = flatten for i from 0 to 1 list(
+    for j from i+1 to 2 list map(F_k, F_(k+4), t2_i*t1_j-t2_j*t1_i));
+g = map(syzygies_k, syzygies_(k+4), T2Components_2)
+isStablyTrivial g
+mm = ideal(a,b,c)
+(image g) % (mm^2*syzygies_k)
+
+--Since T is well-defined up to homotopy, I think that T^2 is well defined mod mm^2.
+--in the example above, T^2 is nonzero mod mm^2, and thus cannot be made 0 by a
+--different choice of T (if this is all correct.)
+
+--Nevertheless, T^2 seems to be stably trivial. Perhaps this is simply because
+--T^2 == 0 up to homotopy.
+
 for k from 2 to 5 do(
 t1 = makeT(ff,F,k+4);
 t2 = makeT(ff,F,k+2);
