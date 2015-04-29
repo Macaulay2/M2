@@ -3877,7 +3877,7 @@ doc ///
 end--
 
 
--- Noncommutativity of CI operators ---
+-- Noncommutativity of CI operators --
 
 -- A possible obstruction to the commutativity of the CI operators in codim c
 -- is the non-triviality of the map
