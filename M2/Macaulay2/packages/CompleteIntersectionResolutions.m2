@@ -69,9 +69,9 @@ newPackage(
 stableHom = method()
 stableHom(Module, Module) := (M,N)->(
     --returns the map from Hom(M,N) to the stable Hom
-    H = Hom(M,N);
+    H := Hom(M,N);
     if isFreeModule M then return map((ring M)^0, H, 0);
-    p = map(N, cover N, 1);
+    p := map(N, cover N, 1);
     map(coker Hom(M,p), Hom(M,N), 1))
 
 mapToHomomorphism = method()
@@ -82,7 +82,7 @@ mapToHomomorphism Matrix := f ->(
     F := cover M;
     p := map(M, F, 1);
     Fd := dual F;
-    one := sum(apply(toList(0..rank F-1), i->map(Fd**F, S^1, Fd_{i}**F_{i})));
+    one := reshape(Fd**F,S^1, id_F);
     map(Hom(M,N), S^1, Hom(M,f)*((Hom(F,p)//Hom(p,M)))*one)
 	    )
 
@@ -98,6 +98,7 @@ isStablyTrivial Matrix := f ->(
 restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
+viewHelp CompleteIntersectionResolutions
 loadPackage("CompleteIntersectionResolutions", Reload=>true)
 S = ZZ/101[a,b,c]
 M = S^2/ideal"a,b"++S^3/ideal"b,c"
@@ -3807,9 +3808,108 @@ doc ///
      isQuasiRegular(f4,E)
 ///
 
+doc ///
+   Key
+    stableHom
+    (stableHom, Module, Module)
+   Headline
+    map from Hom(M,N) to the stable Hom module
+   Usage
+    p = stableHom(M,N)
+   Inputs
+    M:Module
+    N:Module
+   Outputs
+    p:Matrix
+     projection from Hom(M,N) to the stable Hom
+   Description
+    Text
+     The stable Hom is Hom(M,N)/T where T is the submodule of homomorphisms
+     that factor through a free cover of N (or, equivalently, through any projective)
+   SeeAlso
+    isStablyTrivial
+///
+doc ///
+   Key
+    isStablyTrivial
+    (isStablyTrivial, Matrix)
+   Headline
+    returns true if the map goes to 0 under stableHom
+   Usage
+    b = isStablyTrivial f
+   Inputs
+    f:Matrix
+     map M to N
+   Outputs
+    b:Boolean
+     true iff f factors through a projective
+   SeeAlso
+    stableHom
+///
+doc ///
+   Key
+    mapToHomomorphism
+    (mapToHomomorphism, Matrix)
+   Headline
+    converts a map f:M\to N to a map S^1 \to Hom(M,N), where M,N are S-modules
+   Usage
+    g = mapToHomomorphism f
+   Inputs
+    f:Matrix
+     map f: M \to N, S-modules
+   Outputs
+    g:Matrix
+     map g: S^1 \to Hom(M,N)
+   Description
+    Text
+     This is the inverse of the function homomorphism.
+     Thus if M,N are S-modules and g:S^1 \to Hom(M,N), then
+     f = homomorphism g produces f:M\to N
+     and 
+     g = mapToHomomorphism f.
+     
+     The function is used in the script isStablyTrivial
+   SeeAlso
+    Hom
+    homomorphism
+    isStablyTrivial
+///
 end--
 
-----experiment with exteriorExtModule
+
+-- Noncommutativity of CI operators ---
+
+-- A possible obstruction to the commutativity of the CI operators in codim c
+-- is the non-triviality of the map
+-- M_(k+4) --> M_k \otimes \wedge^2(S^c)
+--in the stable category of maximal Cohen-Macaulay modules.
+
+--In the following example, the map is non-trivial...but it is stably trivial.
+--(note that in this case, with c = 3, two of the three alternating products are
+--actually equal to 0, so we test only the third.)
+
+--Do we really need all of stable triviality??
+
+restart
+loadPackage ("CompleteIntersectionResolutions", Reload=>true)
+kk = ZZ/101
+S = kk[a,b,c]
+ff = matrix"a2,b2,c2"
+R = S/ideal ff
+M = R^1/ideal"a,bc"
+m = 10
+F = res(M, LengthLimit => m)
+syzygies = apply(1..m, i->coker F.dd_i);
+for k from 2 to 5 do(
+t1 = makeT(ff,F,k+4);
+t2 = makeT(ff,F,k+2);
+T2Components = flatten for i from 0 to 1 list(
+    for j from i+1 to 2 list map(F_k, F_(k+4), t2_i*t1_j-t2_j*t1_i));
+print isStablyTrivial map(syzygies_k, syzygies_(k+4),T2Components_2)
+)
+
+
+-- Experiment with exteriorExtModule
 restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
@@ -3916,4 +4016,3 @@ viewHelp CompleteIntersectionResolutions
 
 
     
-
