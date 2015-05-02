@@ -581,6 +581,7 @@ egbToric = M -> (
      GB
      )
 
+net Shift := S -> net toList S 
 shift = method()
 shift List := L -> new Shift from L
 shift MutableList := L -> new Shift from L
@@ -616,6 +617,7 @@ Shift*RingElement := (I,f) -> (shiftMap(ring f, I, Extend=>true))f
 Shift*Number := (I,n) -> if I#?n then I#n else if n >= 0 then n + degree I else n
 max Shift := I -> max ((toList I)|{0})
 
+net ShiftMonomial := S -> net S.Monomial | "*" | net S.Sh
 shiftMonomial = method()
 shiftMonomial (RingElement,Shift) := (p,I) ->
     new ShiftMonomial from hashTable {Monomial=>(leadTerm p), Sh=>I}
@@ -644,6 +646,7 @@ ShiftMonomial ? ShiftMonomial := (S,T) -> (
     )
 ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 
+net MPair := M -> net "(" | net M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
 MPair ? MPair := (m,n) -> if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
@@ -696,19 +699,30 @@ egbSignature (List) := F -> (
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
-	if isCovered(j,G) then continue;
+	if width j > 3 then error "breakpoint!!!"; 
+	if isCovered(j,G) or 
+	   isCovered(j,H) {* perhaps this is not needed... 
+	                  but there are duplicates in JP at the moment.
+			  Another question: why do we check if a j-pair is covered by syzygies only when we insert it in JP? 
+	                  *} 
+	   then (
+	    << "  covered pair in JP: " << j << endl;
+	    continue
+	    );
+	<< "  processing pair: " << j << endl;
 	j = regularTopReduce(j,G);
 	if j.polynomial == 0 then (
 	    H = append(H,j); 
-	    << #H << "th syzygy is: " << j << endl;
+	    << "-- " << #H << "th syzygy is: " << j << endl;
 	    )
 	else (
 	    G = append(G,j);
-	    << #G << "th basis element is: " << j << endl;
+	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		newJP := jPairs(j,g);
-		--print newJP;
+		<< "   new J-pairs: " << newJP << endl;
 		newJP = select(newJP, j->not isCovered(j,H));
+		<< "   new NOT covered J-pairs: " << newJP << endl;
 		scan(newJP, j->insert(JP,j));
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
@@ -744,6 +758,7 @@ regularTopReduce = (j,G) -> (
 	while isDiv do (
 	    (isDiv,Q) = divQuotient(g.polynomial,j.polynomial,Seed=>seed);
 	    if isDiv and Q*g < j then (
+		<< "  reducing j = " << j << endl << "  by Q*g = " << Q << "*" << g << endl;
 		v := reduction(j.polynomial,Q*g.polynomial);
 		return regularTopReduce(mPair(j.shM,j.pos,v),G);
 		);

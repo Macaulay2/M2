@@ -51,11 +51,34 @@ R = buildERing({symbol x},{0},QQ,1)
 F = {x^2+1, x-1}
 egbSignature F
 
+restart
+loadPackage "EquivariantGB"
 R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2, MonomialOrder=>Lex);
 F = {y_(1,0) - x_0*x_1};
 egbSignature F
 egb(F, OutFile=>stdio)
+///
+                                                       2
+o10 = {x x  - y   , x y    - x y   , x y    - x y   , x y    - y   y   , y   y    - y   y   , y   y    - y   y   }
+        1 0    1,0   2 1,0    0 2,1   1 2,0    0 2,1   0 2,1    2,0 1,0   3,2 1,0    3,0 2,1   3,1 2,0    3,0 2,1
+///
 
 R = buildERing({symbol y},{1},QQ,2)
 F = {y_0 + y_1}
 egbSignature F
+
+
+restart 
+needsPackage "ExampleIdeals"
+needsPackage "EquivariantGB" 
+R = buildERing(toList(a..d),{0,0,0,0},QQ,1)
+describe R
+I = cyclicRoots(4,QQ)
+F = (sub(I,R))_*
+eGB = egbSignature F
+jGB = first entries gens gb ideal F
+eGB / leadMonomial // sort
+jGB / leadMonomial // sort
+
+R = buildERing(toList(a..e),{0,0,0,0,0},ZZ/101,1)
+I = katsura(5,QQ)
