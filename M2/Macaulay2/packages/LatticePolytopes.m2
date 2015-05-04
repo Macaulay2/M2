@@ -5,7 +5,6 @@
    This file is in the public domain.
    *}
 ---------------------------------------------------------------------------
---
 -- PURPOSE: A package for computations with lattice polytopes 
 -- PROGRAMMERS : Anders Lundman and Gustav Sædén Ståhl 
 -- UPDATE HISTORY : March 2014, May 2015
