@@ -1365,7 +1365,7 @@ assert(isCayley cayley(P,Q))
 ///
 
 TEST ///
-(A,b)=correctHalfspaces(hypercube(3));
+(A,b)=ambientHalfspaces(hypercube(3));
 assert(areIsomorphic(intersection(A,b),hypercube(3)));
 ///
 
@@ -1386,7 +1386,7 @@ assert(not isEmpty(randZPoly(5,2)))
 ///
 
 TEST ///
-assert(areIsomorphic(stellaSubdivision(convexHull(matrix{{0,2,0},{0,0,2}}),convexHull(matrix{{0},{0}}),1),convexHull(matrix{{1,0,2,0},{0,1,0,2}})))
+assert(areIsomorphic(toricBlowUp(convexHull(matrix{{0,2,0},{0,0,2}}),convexHull(matrix{{0},{0}}),1),convexHull(matrix{{1,0,2,0},{0,1,0,2}})))
 ///
 
 TEST ///
