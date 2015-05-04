@@ -1078,9 +1078,10 @@ F = res (ideal (vars R)_{0..2}, LengthLimit => 7)
 complete F
 M = apply(7, i-> coker F.dd_(i+1));
 MS = M/(Mi -> pushForward(red, Mi));
-T = exteriorTorModule(ff, MS_4, MS_4);
+T = exteriorTorModule(ff, MS_0, MS_1);
+T = exteriorTorModule(ff, MS_0, coker vars S);
 isHomogeneous T
-
+betti res T
 
 
 --viewHelp CompleteIntersectionResolutions
@@ -1267,8 +1268,11 @@ phi = presentation PT;
 isLinear phi
 submatrixByDegrees(phi,{0},{2})
 
+restart
+loadPackage("CompleteIntersectionResolutions", Reload=>true)
+kk=ZZ/101
 S = kk[a,b,c,d]
-f = (vars S)^[3]
+f = matrix{apply(numgens S, i->S_i^3)} -- (vars S)^[3]
 R = S/ideal f
 p = map(R,S)
 --M= coker random(R^2, R^{3:-1}) -- too hard!
@@ -1278,8 +1282,14 @@ time betti (FF =res( M, LengthLimit =>6))
 MS = prune pushForward(p, coker FF.dd_4);
 --the pruned presentation of tor starts with FF.dd_5
 betti(F = res MS)
+
 time T = exteriorTorModule(f,F);
-betti T
+time T1 = exteriorTorModule(f,MS, coker vars S);
+time T2 = exteriorTorModule(f,coker vars S,MS);
+betti prune T
+betti prune  ((coker vars ring T1)**T1)
+betti prune T2
+betti prune  ((coker vars ring T2)**T2)
 betti (PT = prune T)
 phi = presentation PT;
 isLinear phi
