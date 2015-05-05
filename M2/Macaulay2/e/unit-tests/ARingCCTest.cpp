@@ -240,7 +240,8 @@ TEST(ARingCC, power_and_invert)
       // Make sure that powers via mpz work (at least for small exponents)
       mpz_set_si(gmp1, e1);
       C.power_mpz(d, a, gmp1);
-      EXPECT_TRUE(C.is_equal(d, b));
+      EXPECT_TRUE(fabs(d.re-b.re) < 1.e-14);
+      EXPECT_TRUE(fabs(d.im-b.im) < 1.e-14);
     }
   mpz_clear(gmp1);
   C.clear(d);
