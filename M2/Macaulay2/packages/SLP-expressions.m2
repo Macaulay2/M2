@@ -119,7 +119,7 @@ productGate = method()
 productGate List := L -> (
     if not all(L, a->instance(a,Gate)) 
     then error "expected a list of gates";
-    new ProductGate from {Inputs=>L}
+    new ProductGate from {Inputs=>L, cache => new CacheTable}
     )
 
 - Gate := g -> minusOneGate*g
@@ -290,14 +290,16 @@ appendToSLProgram (RawSLProgram, InputGate) := (slp, g) ->
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
     g.cache#slp = rawSLPSumGate(slp,g.Inputs/(a->a.cache#slp))
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
-    g.cache#slp = rawSLPProductGate(slp,g.Input/(a->a.cache#slp))
+    g.cache#slp = rawSLPProductGate(slp,g.Inputs/(a->a.cache#slp))
 ///
+restart
 load "SLP-expressions.m2"
 s = rawSLProgram(1)
 X = inputGate symbol X
 appendToSLProgram(s,X)
 appendToSLProgram(s,X+X)
 appendToSLProgram(s,productGate{X,X,X})
+e = rawSLEvaluator(s,{-1},{-2},raw matrix{{1_QQ}})
 ///
 
 -- GateMatrix is NOT A GATE
