@@ -65,6 +65,27 @@ export rawSLPProductGate(e:Expr):Expr := (
      );
 setupfun("rawSLPProductGate",rawSLPProductGate);
 
+-- SLProgram evaluator
+
+export rawSLEvaluator(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(2)
+     else when s.0 is slp:RawSLProgramCell do (
+	  when s.1 is M:RawMatrixCell do (
+	       toExpr(Ccode(RawMatrixOrNull,
+		    	 "rawEvaluateSLP(",
+		    	 slp.p, ",",
+		    	 M.p,
+		    	 ")"
+		    	 )))
+	  else WrongArgMatrix(1))
+     else WrongArg(2,"a raw straight line program")
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLEvaluator",rawSLEvaluator);
+
+-- old SLPs 
+
 export rawSLP(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 2 then WrongNumArgs(2)
@@ -96,6 +117,8 @@ export rawEvaluateSLP(e:Expr):Expr := (
      else WrongNumArgs(2)
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
+
+-- ols path trackers
 
 export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do
@@ -229,7 +252,7 @@ export rawGetSolutionPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionPT",rawGetSolutionPT);
 
-export rawGetAllSolutionsPT(e:Expr):Expr := (
+export rawGetAllSoluionsPT(e:Expr):Expr := (
      when e is PT:RawPathTrackerCell  do 
 		toExpr(Ccode(RawMatrixOrNull,
 		    "rawGetAllSolutionsPT(",

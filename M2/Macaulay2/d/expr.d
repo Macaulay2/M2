@@ -309,6 +309,7 @@ export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
 export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
+export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
 export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawStraightLineProgramClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation

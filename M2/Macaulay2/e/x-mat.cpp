@@ -712,6 +712,17 @@ gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
   return result;
 }
 
+SLEvaluator /* or null */ *rawSLEvaluator(const SLProgram *SLP, const Matrix *consts) {
+  return new SLEvaluator(SLP,consts);
+  //return nullptr; 
+}
+M2_string rawSLEvaluatorToString(SLEvaluator * sle) { 
+  buffer o;
+  sle->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawSLEvaluatorHash(SLEvaluator *) { return 0; }
+
 SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { 
   return new SLProgram;
   //return nullptr; 

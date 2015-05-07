@@ -526,27 +526,32 @@ public:
 };
 
 class SLPEvaluator {
-  // vector<???> mValues: constants, inputs, values of SLP nodes 
+  vector<> mValues: constants, inputs, values of SLP nodes 
   //
-  // initialize with 
-  // (1) a list of constants
-  // (2) SLProgram 
+
+
   //
   // interface functions to construct SLPEvaluator from constants preprocessed at the top
+  std::vector<GATE_TYPE> mNodes; // nodes types
+  std::vector<GATE_SIZE> mNumInputs; // corresponding nodes sizes
+  std::vector<GATE_POSITION> mInputPositions;/* which nodes does input come from?
+                                                !!! this vector could be longer than mNodes !!! 
+                                                !!! since there could be several inputs per node !!!
+                                                (nonnegative = node position, 
+                                                negative = var or const) */
+  std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
+                                                  (nonnegative = node position, 
+                                                  negative = var or const) */
+public:
+  SLEvaluator();
+  virtual ~SLEvaluator();
+  void text_out(buffer& o) const;
 };
 
 template <typename R> 
 void evaluateSLP(const SLProgram& slp,
                  std::vector<typename R::ElementType>& values); 
                  
-
-// expression types:
-//   "input gate" (variable or constant) -- has no inputs
-//   sequence
-class Expression 
-{
-  
-};
 
 template <class Field>
 class SLP : public MutableEngineObject
