@@ -154,7 +154,6 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       if (p != NULL)
         {
           spair_set_insert(p);
-          n_gens_left++;
         }
     }
 
@@ -922,6 +921,7 @@ void gbA::spair_set_insert(gbA::spair *p)
 {
   while (p != 0)
     {
+      if (p->type == SPAIR_GEN) n_gens_left++;
       spair_set_lead_spoly(p);
       spair *tmp = p;
       p = p->next;
@@ -985,6 +985,7 @@ gbA::spair *gbA::spair_set_next()
   S->nelems--;
   S->n_in_degree--;
   S->n_computed++;
+  if (result->type == SPAIR_GEN) n_gens_left--;
   return result;
 }
 
@@ -1005,6 +1006,7 @@ void gbA::spair_set_defer(spair *&p)
     {
       S->gen_last_deferred->next = p;
       S->gen_last_deferred = p;
+      n_gens_left++;
     }
   else
     {
@@ -2125,7 +2127,6 @@ bool gbA::process_spair(spair *p)
 
   gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
 
-  if (p->type == SPAIR_GEN) n_gens_left--;
   POLY f = p->x.f;
   p->x.f.f = 0;
   p->x.f.fsyz = 0;
