@@ -69,18 +69,22 @@ setupfun("rawSLPProductGate",rawSLPProductGate);
 
 export rawSLEvaluator(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(2)
+     if length(s) != 4 then WrongNumArgs(4)
      else when s.0 is slp:RawSLProgramCell do (
-	  when s.1 is M:RawMatrixCell do (
-	       toExpr(Ccode(RawMatrixOrNull,
-		    	 "rawEvaluateSLP(",
+     	  if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+     	  if !isSequenceOfSmallIntegers(s.2) then WrongArg(2,"a sequence of small integers") else
+	  when s.3 is M:RawMatrixCell do (
+	       toExpr(Ccode(RawSLEvaluatorOrNull,
+		    	 "rawSLEvaluator(",
 		    	 slp.p, ",",
+			 getSequenceOfSmallIntegers(s.1), ",",
+			 getSequenceOfSmallIntegers(s.2), ",",
 		    	 M.p,
 		    	 ")"
 		    	 )))
-	  else WrongArgMatrix(1))
-     else WrongArg(2,"a raw straight line program")
-     else WrongNumArgs(2)
+	  else WrongArgMatrix(4))
+     else WrongArg(1,"a raw straight line program")
+     else WrongNumArgs(4)
      );
 setupfun("rawSLEvaluator",rawSLEvaluator);
 
@@ -252,7 +256,7 @@ export rawGetSolutionPT(e:Expr):Expr := (
      );
 setupfun("rawGetSolutionPT",rawGetSolutionPT);
 
-export rawGetAllSoluionsPT(e:Expr):Expr := (
+export rawGetAllSolutionsPT(e:Expr):Expr := (
      when e is PT:RawPathTrackerCell  do 
 		toExpr(Ccode(RawMatrixOrNull,
 		    "rawGetAllSolutionsPT(",

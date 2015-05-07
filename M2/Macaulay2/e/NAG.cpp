@@ -26,6 +26,18 @@ void complexAP::print()
 }
 
 
+// SLEvaluator
+SLEvaluator::SLEvaluator(const SLProgram *SLP, M2_arrayint constsPos,  M2_arrayint varsPos, const Matrix *consts)  
+{
+  slp = SLP;
+  for(int i=0; i<constsPos->len; i++) 
+    this->constsPos.push_back(slp->inputCounter+constsPos->array[i]);
+  for(int i=0; i<varsPos->len; i++) 
+    this->varsPos.push_back(slp->inputCounter+varsPos->array[i]);
+}
+SLEvaluator::~SLEvaluator() {}
+void SLEvaluator::text_out(buffer& o) const { o << "SLEvaluator!" << newline; }
+
 // SLProgram
 SLProgram::SLProgram() { inputCounter = 0; }
 SLProgram::~SLProgram() {}

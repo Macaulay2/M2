@@ -496,6 +496,7 @@ public:
 // SLP
 class SLProgram 
 {
+  friend class SLEvaluator;
   enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
@@ -510,7 +511,7 @@ class SLProgram
                                                   (nonnegative = node position, 
                                                   negative = var or const) */
   /* LOOKUP TABLE */
-  int inputCounter;
+  int inputCounter; // this is the count; the position numbering is -1, -2, ...
 public:
   SLProgram();
   virtual ~SLProgram();
@@ -525,25 +526,15 @@ public:
   void text_out(buffer& o) const;
 };
 
-class SLPEvaluator {
-  vector<> mValues: constants, inputs, values of SLP nodes 
-  //
-
-
-  //
-  // interface functions to construct SLPEvaluator from constants preprocessed at the top
-  std::vector<GATE_TYPE> mNodes; // nodes types
-  std::vector<GATE_SIZE> mNumInputs; // corresponding nodes sizes
-  std::vector<GATE_POSITION> mInputPositions;/* which nodes does input come from?
-                                                !!! this vector could be longer than mNodes !!! 
-                                                !!! since there could be several inputs per node !!!
-                                                (nonnegative = node position, 
-                                                negative = var or const) */
-  std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
-                                                  (nonnegative = node position, 
-                                                  negative = var or const) */
+class SLEvaluator {
+  // mValues should be a vector of values starting with inputCounter many vars and consts 
+  //                               and continuing with the values of other GATEs  
+  //vector<???> mValues: constants, inputs, values of SLP nodes 
+  const SLProgram* slp;
+  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of consts in mValues (slp.inputCounter + rel position) 
+  std::vector<SLProgram::GATE_POSITION> varsPos; // the rest of inputs with neg rel position
 public:
-  SLEvaluator();
+  SLEvaluator(const SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts);
   virtual ~SLEvaluator();
   void text_out(buffer& o) const;
 };
