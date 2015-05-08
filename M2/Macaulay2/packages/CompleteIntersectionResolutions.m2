@@ -10,9 +10,7 @@ newPackage(
               DebuggingMode => true --should be false when submitted
               )
 	  export{
-          --some utilities
---	   submoduleByDegrees,	   
---    	   toArray,
+         --some utilities
 	   "splittings",
 	   "S2",
 	   "hf",
@@ -21,20 +19,23 @@ newPackage(
 	   "makeModule1",	   
    	   "isLinear",
 	   "cosyzygyRes",	  	   
-	   	   --things related to Ext over a complete intersection
+	   "stableHom",
+	   "mapToHomomorphism",
+	   "isStablyTrivial",
+	--things related to Ext over a complete intersection
 	   "ExtModule", 
 	   "evenExtModule", 
 	   "oddExtModule",
 	   "ExtModuleData",
 	   "highSyzygy",
   	   "Optimism", -- optional arg for highSyzygy etc	   
-	       --tools used to construct the matrix factorization and 
-	       --things related to it
+	--tools used to construct the matrix factorization and 
+        --things related to it
 	   "makeT",
 	   "koszulExtension",
 	   "matrixFactorization",
 	   "Check", -- optional arg for matrixFactorization
-	       --scripts to unpack the info in a matrix factorization
+       --scripts to unpack the info in a matrix factorization
 	   "BRanks",
 	   "ARanks",
 	   "bMaps",
@@ -45,29 +46,24 @@ newPackage(
 	   "finiteBettiNumbers",
            "infiniteBettiNumbers",
 	   "makeFiniteResolution",	   
-	          --some families of examples
+	--some families of examples
 	   "twoMonomials",
 	   "sumTwoMonomials",
-    	    	    --modules over the exterior algebra
+    	--modules over the exterior algebra
 	   "makeHomotopies",
 	   "makeHomotopies1",
-	   "extVsCohomology",
+    	   "makeHomotopiesOnHomology",
+	   "exteriorHomologyModule",
    	   "exteriorTorModule",
-	    "exteriorExtModule",	   
+	   "exteriorExtModule",	   
 	   "TateResolution",
 	   "BGGL",	   
+	   "extVsCohomology",
 	   "freeExteriorSummand",
-	   --the inverse problem: represent a module as an Ext_R(M,k)
+       --the inverse problem: represent a module as an Ext_R(M,k)
 	   "moduleAsExt",
 	   "hfModuleAsExt",
-	   "complexity",
-	   "stableHom",
-	   "mapToHomomorphism",
-	   "isStablyTrivial",
-   	   "exteriorHomologyModule",
-    	   "makeHomotopiesOnHomology",
-	   --
-	   "exteriorTorModule1"
+	   "complexity"
 	   }
 
 stableHom = method()
@@ -866,29 +862,6 @@ expo(ZZ,List):= (n,L) ->(
      )
 
 
-makeModule = method()
-makeModule(Ring,List,HashTable) := (R,T,Hk) -> (
-     --T is a list of free modules F_i over over R.
-     --H is a HashTable with pairs of the form {j,i} => phi,
-     --where Hk: F_i\to F_(i+1).
-     --The script takes directSum T as a graded R-module, 
-     --where the j-th generator of R acts as Hk#{j,i}:.
-     k := coefficientRing R;
-     pro := map(R,k);
-     RT := apply(#T, i->pro(T_i)**R^{ -i});
-     P := directSum RT;
-     RHk := hashTable apply(keys Hk,ke ->(
-	       i := last ke;
-	       j := first ke;
-	       (ke, map(RT_(i+1), RT_i**R^{ -1},pro Hk#{j,i})))
-	       );
-     M := P/sum apply(keys Hk,ke ->(
-	       i := last ke;
-	       j := first ke;
-	       image(P_[i+1]*RHk#{j,i}-R_j*P_[i])));
-     --prune M
-     M
-     )
 
 makeHomotopies = method()
 makeHomotopies (Matrix, ChainComplex) := (f,F) ->
@@ -993,119 +966,6 @@ netList select(keys H, k->H#k!=0)
 ///
 
 
-
-exteriorTorModule = method()
-
-exteriorTorModule(Matrix, Module) := (ff,M) -> exteriorTorModule(ff, res M)
-
-
-exteriorTorModule(Matrix, ChainComplex) := (f,F) -> (
-     --Write Tor_S(M,k) as a module over Tor(S/(f),k) = \wedge V:
-     --f is a matrix with entries that are homotopic to zero on F
-     --Typically, F is a resolution of a module annihilated by
-     --the entries of f.
-     H := makeHomotopies1(f,F);
-     flist := flatten entries f;
-     lenf := #flist;
-     k := coefficientRing ring F;
-     T := toList apply(min F..max F,i->sub(F_i,k));
-     Hk := hashTable apply(keys H, h-> (h, sub(H#h,k)));
-     --Hk(j,i) is the homotopy for f_j from F_i**k to F_(i+1)**k,
-     --defined for i from min F to max F-1.
-     e := symbol e;
-     E := k[e_0..e_(numcols f -1), SkewCommutative => true];
-     TE :=makeModule(E,T,Hk);
-     TE
-)	  
-
-exteriorTorModule1 = method()
-exteriorTorModule1(Matrix, Module) := (ff,M) -> exteriorTorModule(ff, res M)
-exteriorTorModule1(Matrix, ChainComplex) := (f,F) -> (
-     --Write Tor_S(M,k) as a module over Tor(S/(f),k) = \wedge V:
-     --f is a matrix with entries that are homotopic to zero on F
-     --Typically, F is a resolution of a module annihilated by
-     --the entries of f.
-     S := ring f;
-     k:=coefficientRing S;
-     H := makeHomotopies1(f,F);
-     e := symbol e;
-     E := k[e_0..e_(numcols f -1), SkewCommutative => true];
-     toE := map (E,S,{numgens S:0});
-     Fk := toE F;
-     Hk := hashTable apply(keys H, h-> (h, toE(H#h)));
-     --Hk(j,i) is the homotopy for f_j from F_i**k to F_(i+1)**k,
-     --defined for i from min F to max F-1.
-     makeModule1(Fk, vars E, Hk)
---     TE :=makeModule(E,T,Hk);
---     TE
-)	  
-
-exteriorExtModule = method()
-exteriorExtModule(Matrix, ChainComplex) := (f,F) -> (
-    --dual of exteriorTorModule
-    TE := exteriorTorModule(f,F);
-    Hom(TE, (ring TE)^1))
-
-
-
-exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
-    --M,N are modules in a ring S;
-    --ff is a sequence of elements in S that annihilate M and N;
-    --The script defines a new ring
-    --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
-    --with with degree e_j = degree f_j.
-    --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
-    --
-    --the script returns Tor^S(M,N) as an SE-module.
-    --NOTE:
-    --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
-    Mres := res M;
-    complete Mres;
-    maxM := max Mres; -- this could be given as an options LengthLimit value
-    TS := for i from 0 to maxM list HH_i(Mres**N); -- TS are S-modules
-    
-    h0 := makeHomotopies1(ff,Mres);
-    h := hashTable apply(keys h0, k->
-	{
-	 k,  map(TS_(1+k_1), 
-	 TS_(k_1), 
-         (matrix (h0#k**N)//(generators TS_(1+k_1))) *(generators TS_(k_1)))
-	 });
-    --make an exterior algebra SE over S
-    S := ring M;
-    kk := coefficientRing S;
-    numS := numgens S;
-    J := ideal S;
-    X := symbol X;
-    e := symbol e;
-    n := numgens S;
-    Sdegs := apply((degrees vars S)_1, i->{i_0,0});
-    c := rank source ff;
-    Edegs := apply((degrees ff)_1, i->{i_0,1});
-    SE0 := kk[X_0..X_(n-1),e_0..e_(c-1), 
-	SkewCommutative=>toList(numS..numS+c-1),
-	Degrees =>Sdegs|Edegs];
-    S0 := (ring presentation S);
-    bringJ := map(SE0, S0, {X_0..X_(n-1)});
-    SE := SE0/bringJ(J);
-    toE := map(SE, S, toList(X_0..X_(numS-1)), DegreeMap=>i->{i_0,0});
-    NE := coker toE presentation N;
-
-    TE := apply(length TS, i->
-	SE^{{0,-i}}**subquotient(toE generators TS_i, toE relations TS_i));
-      hE := hashTable (apply(keys h, hk-> {hk, map(TE_(hk_1+1), TE_hk_1, toE matrix h#hk)}));
-    E := (vars SE)_{numS..numS+c-1};
-    F := apply(c, j->source E_{j});
-    
-    phi := hashTable apply(keys h, k -> 
-	{k,  map(TE_(1+k_1), 
-		 F_(k_0)**TE_(k_1), 
-		 hE#k)
-	 }
-                         );
-   makeModule1(TE,E,phi)
-)
-
 makeHomotopiesOnHomology = method()
 makeHomotopiesOnHomology (Matrix, ChainComplex) := (ff,C)->(
     --returns a pair (H,h) whose first element is the hashTable of homology of C
@@ -1121,6 +981,7 @@ makeHomotopiesOnHomology (Matrix, ChainComplex) := (ff,C)->(
 --     error();
      (H,h)
      )
+
 
 exteriorHomologyModule = method()
 exteriorHomologyModule(Matrix,ChainComplex) := (ff, C) ->(
@@ -1164,57 +1025,29 @@ exteriorHomologyModule(Matrix,ChainComplex) := (ff, C) ->(
                          );
    makeModule1(HE,E,phi)
 )
-    
-
-///
-restart
-loadPackage( "CompleteIntersectionResolutions", Reload => true)
-kk=ZZ/101
-S = kk[a,b,c]
-extring = kk[e_0,e_1, Degrees =>{2:1}, SkewCommutative =>true]
-
-ff = matrix{{a^2,b^2}}
-R = S/ideal ff
-red = map(R,S)
-F = res (ideal (vars R)_{0..2}, LengthLimit => 7)
-complete F
-M = apply(7, i-> coker F.dd_(i+1));
-MS = M/(Mi -> pushForward(red, Mi));
-
-
-C = (complete res MS_1)**MS_0;
-time T0 = apply(7, i -> exteriorTorModule(ff,MS_i));
-time T = apply(7, i -> exteriorTorModule1(ff,MS_i));
-time T1 = apply(7, i -> exteriorTorModule(ff, MS_i, coker vars S));
-time T2 = apply(7, i -> exteriorHomologyModule(ff, (complete res MS_i)**coker vars S));
-apply(T, t->isHomogeneous t)
-apply(T1, t->isHomogeneous t)
-apply(T2, t->isHomogeneous t)
-
-simplify = TT ->(
-toe := map(extring, ring TT, {3:0, e_0,e_1}, DegreeMap => i->{i_1});
-toe presentation TT)
-for i from 0 to 6 do print (betti prune presentation T0_i == betti prune  presentation  T_i)
-for i from 0 to 6 do print (betti prune coker simplify T2_i == betti prune  presentation  T_i)
-for i from 0 to 6 do print (betti prune coker simplify T1_i == betti prune  presentation  T_i)
-
-
---2-var, deg 0
-SE = ZZ/101[a,b,c,x,y,SkewCommutative=>{x,y}]
-
-RE = SE/ideal"a2,b2,c2"
-T = {RE^1,RE^{2:-1}, RE^{-2}}
-E = matrix{{x,y}}
-phi = hashTable{
-    ({0,0} => map(T_1, T_0, T_1_{0})),
-    ({1,0} => map(T_1, T_0, T_1_{1})),
-    ({0,1} => map(T_2, T_1, T_1^{1})),  
-    ({1,1} => -map(T_2, T_1, T_1^{0}))        
-    }
-X = makeModule1(T,E,phi)
-isHomogeneous X
-
-///
+makeModule = method()
+makeModule(Ring,List,HashTable) := (R,T,Hk) -> (
+     --T is a list of free modules F_i over over R.
+     --H is a HashTable with pairs of the form {j,i} => phi,
+     --where Hk: F_i\to F_(i+1).
+     --The script takes directSum T as a graded R-module, 
+     --where the j-th generator of R acts as Hk#{j,i}:.
+     k := coefficientRing R;
+     pro := map(R,k);
+     RT := apply(#T, i->pro(T_i)**R^{ -i});
+     P := directSum RT;
+     RHk := hashTable apply(keys Hk,ke ->(
+	       i := last ke;
+	       j := first ke;
+	       (ke, map(RT_(i+1), RT_i**R^{ -1},pro Hk#{j,i})))
+	       );
+     M := P/sum apply(keys Hk,ke ->(
+	       i := last ke;
+	       j := first ke;
+	       image(P_[i+1]*RHk#{j,i}-R_j*P_[i])));
+     --prune M
+     M
+     )
 
 makeModule1 = method()
 makeModule1(HashTable, Matrix, HashTable) := (T,E,phi) ->(
@@ -1291,6 +1124,186 @@ makeModule1(List, Matrix, HashTable) := (T,E,phi)->(
     M
      )
   
+
+
+exteriorTorModule = method()
+
+exteriorTorModule(Matrix, Module) := (ff,M) -> exteriorTorModule(ff, res M)
+
+exteriorTorModule(Matrix, ChainComplex) := (f,F) -> (
+     --Write Tor_S(M,k) as a module over Tor(S/(f),k) = \wedge V:
+     --f is a matrix with entries that are homotopic to zero on F
+     --Typically, F is a resolution of a module annihilated by
+     --the entries of f.
+     H := makeHomotopies1(f,F);
+     flist := flatten entries f;
+     lenf := #flist;
+     k := coefficientRing ring F;
+     T := toList apply(min F..max F,i->sub(F_i,k));
+     Hk := hashTable apply(keys H, h-> (h, sub(H#h,k)));
+     --Hk(j,i) is the homotopy for f_j from F_i**k to F_(i+1)**k,
+     --defined for i from min F to max F-1.
+     e := symbol e;
+     E := k[e_0..e_(numcols f -1), SkewCommutative => true];
+     TE :=makeModule(E,T,Hk);
+     TE
+)	  
+{*
+exteriorTorModule(Matrix, ChainComplex) := (f,F) -> (
+     --Write Tor_S(M,k) as a module over Tor(S/(f),k) = \wedge V:
+     --f is a matrix with entries that are homotopic to zero on F
+     --Typically, F is a resolution of a module annihilated by
+     --the entries of f.
+     S := ring f;
+     k:=coefficientRing S;
+     H := makeHomotopies1(f,F);
+     e := symbol e;
+     E := k[e_0..e_(numcols f -1), SkewCommutative => true];
+     toE := map (E,S,{numgens S:0});
+     Fk := apply(toList(min F..max F), i->toE F_i);
+     Hk := hashTable apply(keys H, h-> (h, toE(H#h)));
+     --Hk(j,i) is the homotopy for f_j from F_i**k to F_(i+1)**k,
+     --defined for i from min F to max F-1.
+     makeModule1(Fk, vars E, Hk)
+     
+)	  
+*}
+
+exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
+    --M,N are modules in a ring S;
+    --ff is a sequence of elements in S that annihilate M and N;
+    --The script defines a new ring
+    --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
+    --with with degree e_j = degree f_j.
+    --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
+    --
+    --the script returns Tor^S(M,N) as an SE-module with structure induced
+    --by the homotopies of the resolution of the first factor; note that
+    --this is NOT symmetric in the two factors.
+    --NOTE:
+    --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
+    Mres := res M;
+    complete Mres;
+    exteriorHomologyModule(ff, Mres**N)
+    )
+
+exteriorExtModule = method()
+
+exteriorExtModule(Matrix, ChainComplex) := (f,F) -> (
+    --dual of exteriorTorModule
+    TE := exteriorTorModule(f,F);
+    E := ring TE;
+    Hom(TE, E^{ -numgens E}))
+
+exteriorExtModule(Matrix, Module) := (f,M) -> (
+    --dual of exteriorTorModule
+    exteriorTorModule(f, dual res M))
+{*    
+    TE := exteriorTorModule(f,M);
+    E := ring TE;
+    Hom(TE, E^{numgens E}))
+*}
+exteriorExtModule(Matrix, Module, Module) := (ff, M,N)->(
+    --M,N are modules in a ring S;
+    --ff is a sequence of elements in S that annihilate M and N;
+    --The script defines a new ring
+    --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
+    --with with degree e_j = degree f_j.
+    --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
+    --
+    --the script returns Ext_S(M,N) as an SE-module with structure induced
+    --by the homotopies of the resolution of the first factor; note that
+    --this is NOT symmetric in the two factors.
+    --NOTE:
+    --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
+    Mres := complete res M;
+    exteriorHomologyModule(ff, Hom(Mres,N))
+    )
+
+///
+restart
+loadPackage( "CompleteIntersectionResolutions", Reload => true)
+///    
+TEST///
+kk=ZZ/101
+S = kk[a,b,c]
+ff = matrix{{a^2,b^2}}
+R = S/ideal ff
+red = map(R,S)
+F = res (ideal (vars R)_{0..2}, LengthLimit => 3)
+MS2 = pushForward(red, coker F.dd_3)
+MS1 = pushForward(red, coker F.dd_2)
+T = exteriorTorModule(ff, MS2, MS1);
+assert(apply(10, d->rank source basis({d,1}, T))==
+    apply(10, d->rank source basis(d, Tor_1(MS2, MS1))))
+
+T1 = exteriorTorModule(ff, MS2)
+assert(apply(10, d->rank source basis(d, T1))==
+    apply(10, d->rank source basis(Tor_d(MS2,coker vars ring MS2)))
+
+exteriorExtModule(ff, MS2)
+Ex1 = exteriorHomologyModule(ff, (coker vars ring ff)**dual res MS2);
+ring Ex1
+
+apply(10, d->rank source basis(-d, Ex1))
+
+Ex = exteriorExtModule(ff, MS2, MS1);
+betti res Ex
+apply(10, d->rank source basis({-d,1}, Ex))
+    apply(10, d->rank source basis(-d, Ext^1(MS2, MS1)))
+apply(10, d->rank source basis({-d,1}, Ex1))
+    apply(10, d->rank source basis(d, Tor_1(MS2, MS1)))
+///
+
+///
+restart
+loadPackage( "CompleteIntersectionResolutions", Reload => true)
+kk=ZZ/101
+S = kk[a,b,c]
+extring = kk[e_0,e_1, Degrees =>{2:1}, SkewCommutative =>true]
+
+ff = matrix{{a^2,b^2}}
+R = S/ideal ff
+red = map(R,S)
+F = res (ideal (vars R)_{0..2}, LengthLimit => 7)
+complete F
+M = apply(7, i-> coker F.dd_(i+1));
+MS = M/(Mi -> pushForward(red, Mi));
+
+
+C = (complete res MS_1)**MS_0;
+time T0 = apply(7, i -> exteriorTorModule(ff,MS_i));
+time T = apply(7, i -> exteriorTorModule1(ff,MS_i));
+time T1 = apply(7, i -> exteriorTorModule(ff, MS_i, coker vars S));
+time T2 = apply(7, i -> exteriorHomologyModule(ff, (complete res MS_i)**coker vars S));
+apply(T0, t->isHomogeneous t)
+apply(T, t->isHomogeneous t)
+apply(T1, t->isHomogeneous t)
+apply(T2, t->isHomogeneous t)
+
+simplify = TT ->(
+toe := map(extring, ring TT, {3:0, e_0,e_1}, DegreeMap => i->{i_1});
+toe presentation TT)
+for i from 0 to 6 do print (betti prune presentation T0_i == betti prune  presentation  T_i)
+for i from 0 to 6 do print (betti prune coker simplify T2_i == betti prune  presentation  T_i)
+for i from 0 to 6 do print (betti prune coker simplify T1_i == betti prune  presentation  T_i)
+
+--2-var, deg 0
+SE = ZZ/101[a,b,c,x,y,SkewCommutative=>{x,y}]
+
+RE = SE/ideal"a2,b2,c2"
+T = {RE^1,RE^{2:-1}, RE^{-2}}
+E = matrix{{x,y}}
+phi = hashTable{
+    ({0,0} => map(T_1, T_0, T_1_{0})),
+    ({1,0} => map(T_1, T_0, T_1_{1})),
+    ({0,1} => map(T_2, T_1, T_1^{1})),  
+    ({1,1} => -map(T_2, T_1, T_1^{0}))        
+    }
+X = makeModule1(T,E,phi)
+isHomogeneous X
+
+///
 
 TEST///
 kk=ZZ/101
@@ -4258,4 +4271,69 @@ exteriorTorModule(Matrix,Module,Module,Ideal) := (ff,M,N,J) ->(
 	(matrix (hE#k**NE)//(generators TE_(1+k_1))) *(generators TE_(k_1)))});
    makeModule1(TE,E,phi)
 )
+
+{*
+exteriorTorModule(Matrix,Module,Module) := (ff,M,N) ->(
+    --M,N are modules in a ring S;
+    --ff is a sequence of elements in S that annihilate M and N;
+    --The script defines a new ring
+    --SE =kk[X_0..X_(n-1), e_0..e_c] mod the defining relations of S,
+    --with with degree e_j = degree f_j.
+    --which is is an exterior algebra over S on c:=numcols ff generators e_0..e_(c-1),
+    --
+    --the script returns Tor^S(M,N) as an SE-module.
+    --NOTE:
+    --h0#{i,j} is the homotopy for f_i starting from the j-th step of the resolution.    
+    Mres := res M;
+    complete Mres;
+    maxM := max Mres; -- this could be given as an options LengthLimit value
+    TS := for i from 0 to maxM list HH_i(Mres**N); -- TS are S-modules
+    
+    h0 := makeHomotopies1(ff,Mres);
+    h := hashTable apply(keys h0, k->
+	{
+	 k,  map(TS_(1+k_1), 
+	 TS_(k_1), 
+         (matrix (h0#k**N)//(generators TS_(1+k_1))) *(generators TS_(k_1)))
+	 });
+    --make an exterior algebra SE over S
+    S := ring M;
+    kk := coefficientRing S;
+    numS := numgens S;
+    J := ideal S;
+    X := symbol X;
+    e := symbol e;
+    n := numgens S;
+    Sdegs := apply((degrees vars S)_1, i->{i_0,0});
+    c := rank source ff;
+    Edegs := apply((degrees ff)_1, i->{i_0,1});
+    SE0 := kk[X_0..X_(n-1),e_0..e_(c-1), 
+	SkewCommutative=>toList(numS..numS+c-1),
+	Degrees =>Sdegs|Edegs];
+    S0 := (ring presentation S);
+    bringJ := map(SE0, S0, {X_0..X_(n-1)});
+    SE := SE0/bringJ(J);
+    toE := map(SE, S, toList(X_0..X_(numS-1)), DegreeMap=>i->{i_0,0});
+    NE := coker toE presentation N;
+
+    TE := apply(length TS, i->
+	SE^{{0,-i}}**subquotient(toE generators TS_i, toE relations TS_i));
+      hE := hashTable (apply(keys h, hk-> {hk, map(TE_(hk_1+1), TE_hk_1, toE matrix h#hk)}));
+    E := (vars SE)_{numS..numS+c-1};
+    F := apply(c, j->source E_{j});
+    
+    phi := hashTable apply(keys h, k -> 
+	{k,  map(TE_(1+k_1), 
+		 F_(k_0)**TE_(k_1), 
+		 hE#k)
+	 }
+                         );
+   makeModule1(TE,E,phi)
+)
+*}
+
+
+{*
+*}
+
 
