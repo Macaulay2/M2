@@ -3348,16 +3348,16 @@ toString MF == "{matrix {{0, u, v, 0}, {-a, b, 0, 0}, {0, 0, -a, b}}, matrix {{b
 assert(BRanks MF =={{2,2}, {1,2}})
 ///
 
--- This test doesn't work, so I've disabled it.  The problem is "(vars S)^[3]"
--- TEST///--Example2
--- kk = ZZ/101
--- S = kk[a,b]
--- ff = (vars S)^[3]
--- R = S/ideal ff;
--- M0=R^1/ideal"ab" 
--- MF = matrixFactorization (ff, highSyzygy M0)
--- assert(BRanks MF == {{2, 2}, {1, 2}})
--- ///
+
+TEST///--Example2
+kk = ZZ/101
+S = kk[a,b]
+ff = matrix{{a^3,b^3}}
+R = S/ideal ff;
+M0=R^1/ideal"ab" 
+MF = matrixFactorization (ff, highSyzygy M0)
+assert(BRanks MF == {{2, 2}, {1, 2}})
+///
 
 TEST///
 --Example3
