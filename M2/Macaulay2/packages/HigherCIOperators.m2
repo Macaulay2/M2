@@ -6,7 +6,7 @@ newPackage(
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "Higer CI operators",
-        DebuggingMode => true
+        DebuggingMode => false
         )
 
 export {"exteriorMultiplication",
@@ -17,7 +17,7 @@ export {"exteriorMultiplication",
 	"trueKoszul"
        }
 
-notify = true
+--notify = true
 needsPackage "CompleteIntersectionResolutions"
 
 trueKoszul=method()
