@@ -1,5 +1,3 @@
-
-
 newPackage(
         "HigherCIOperators",
         Version => "0.5", 
@@ -33,9 +31,7 @@ trueKoszul Matrix := ff -> (
     scan(toList(1..len-1), i-> mapList =  append(mapList, map(source last mapList, , matrix Klist_i)));
     chainComplex mapList
     )
-///
-trueKoszul ff
-///
+
 syzygyModule = method()
 syzygyModule (ZZ, Module) := (d,M)->(
     F:= res(M, LengthLimit => d+1);
@@ -186,9 +182,18 @@ reverseTensor(ZZ,ZZ) := (p,q) ->(
 	matrix m)
 ///
 TEST///
+reverseTensor = method()
+reverseTensor(ZZ,ZZ) := (p,q) ->(
+    m := mutableMatrix map(ZZ^(p*q), ZZ^(p*q), 0);
+    scan(p, x -> 
+	scan(q, y->
+	    m_(x+p*y, y+q*x) = 1
+	    ));
+	matrix m)
+
 N = 7;p=2;q=3;
 mu = exteriorMultiplication N;
-check skew commutativity
+--check skew commutativity
 assert(
     mu#{p,q}*reverseTensor(binomial(N,q),binomial(N,p)) == (-1)^(p*q)*(mu#{q,p})
     )
@@ -211,12 +216,14 @@ viewHelp CompleteIntersectionResolutions
 viewHelp higherCIOperators
 viewHelp complexity
 *}
+
+
 doc ///
    Key 
     trueKoszul
     (trueKoszul, Matrix)
    Headline
-    Makes Koszul complex, with basis sorted in lex
+    "Makes Koszul complex, with bases sorted in lex"
    Usage
     K = trueKoszul ff
    Inputs
@@ -244,7 +251,7 @@ doc ///
     exteriorMultiplication
     (exteriorMultiplication,ZZ)
    Headline
-    multiplication maps in the exterior algebra
+    "multiplication maps in the exterior algebra"
    Usage
     mu = exteriorMultiplication n
    Inputs
@@ -268,7 +275,7 @@ doc ///
     higherCIOperators
     (higherCIOperators, ChainComplex, ChainComplex)
    Headline
-    creates the HashTable of higher CI operators on a lifted resolution
+    "creates the HashTable of higher CI operators on a lifted resolution"
    Usage
     u = higherCIOperators(A,L)
    Inputs
@@ -337,7 +344,7 @@ doc ///
     makeALDifferential
     (makeALDifferential,ZZ,ChainComplex, ChainComplex, HashTable)
    Headline
-    makes the differential used in ciOperatorResolution
+    "makes the differential used in ciOperatorResolution"
    Usage
     dj = makeALDifferential(j, A, L, u)
    Inputs
@@ -362,7 +369,7 @@ doc ///
     ciOperatorResolution
     (ciOperatorResolution, ChainComplex, ChainComplex)
    Headline
-    lift resolution from complete intersection using higher ci-operators
+    "lift resolution from complete intersection using higher ci-operators"
    Usage
     AL = ciOperatorResolution(A,L)
    Inputs
@@ -417,7 +424,7 @@ doc ///
     syzygyModule
     (syzygyModule, ZZ, Module)
    Headline
-    Make the d-th module of syzygies
+    "Make the d-th module of syzygies"
    Usage
     M = syzygyModule(d,N)
    Inputs
@@ -427,6 +434,31 @@ doc ///
    Outputs
     M:Module
 ///
+doc ///
+   Key
+    HigherCIOperators
+   Headline
+    "Higher CI operators on a resolution over a complete intersection"
+   Description
+    Text
+     The "higher CI operators" complete the structure of the
+     ordinary CI operators on (sometimes called "Eisenbud operators")
+     on a resolution over a complete intersection in the same sense
+     that the "higher homotopies" complete the structure of homotopies on
+     with respect to a sequence of elements. Details will appear in a
+     preprint in preparation by Burke, Eisenbud and Schreyer.
+     
+     The higher CI operators are constructed by the routine higherCIOperators.
+     
+     Just as a system of higher
+     homotopies for a regular sequence f_1..f_c
+     on a resolution over a ring S allow  one to construct the Shamash resolution
+     over R = S/(f_1..f_c), the higher CI operators are involved in a sort of
+     dual construction: from a resolution F over R, lifted to
+     a sequence of maps A over S, and lifted higher CI operators on A\otimes L,
+     where L is the Koszul complex on f, one can construct a nonminimal resolution
+     AL over S using the routine ciOperatorResolution.
+ ///
 
 end--
 restart
