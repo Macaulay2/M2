@@ -17,7 +17,7 @@ export {"exteriorMultiplication",
 	"trueKoszul"
        }
 
---notify = true
+---notify = true
 needsPackage "CompleteIntersectionResolutions"
 
 trueKoszul=method()
