@@ -401,7 +401,7 @@ doc ///
      on the algebra resolution.
     Example
      needsPackage "CompleteIntersectionResolutions"
-     S = kk[a,b,c];
+     S = ZZ/101[a,b,c];
      ff = matrix"a4,b4,c4";
      N = coker matrix"a,b,c;b,c,a";
      R = S/ideal ff;

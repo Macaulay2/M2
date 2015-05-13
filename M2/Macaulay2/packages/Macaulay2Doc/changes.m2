@@ -82,7 +82,12 @@ document {
 		    LI { TO "BinomialEdgeIdeals::BinomialEdgeIdeals", ", a package by Tobias Windisch for computations with binomial edge ideals, has been added." },
 		    LI { TO "TateOnProducts::TateOnProducts", ", a package by Daniel Erman, David Eisenbud, and Frank-Olaf Schreyer for Tate resolutions on products of projective spaces, has been added." },
 		    LI { TO "LatticePolytopes::LatticePolytopes", ", a package by Anders Lundman and Gustav Sædén Ståhl for computations with lattice polytopes, has been added." },
-		    LI { TO "FiniteFittingIdeals::FiniteFittingIdeals", ", a package by Gustav Sædén Ståhl for computing Fitting ideals of finite modules, has been added." }
+		    LI { TO "FiniteFittingIdeals::FiniteFittingIdeals", ", a package by Gustav Sædén Ståhl for computing Fitting ideals of finite modules, has been added." },
+		    LI { TO "HigherCIOperators::HigherCIOperators", ", a package by David Eisenbud for computing higher complete intersection operators, has been added.
+			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
+			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
+			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
+			 to the well known Eisenbud-Shamash construction, which is also implemented." }
 	  	    }
 	       },
 	  LI { "improved packages:",

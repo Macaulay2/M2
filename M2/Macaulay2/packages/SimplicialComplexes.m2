@@ -351,7 +351,7 @@ buchbergerComplex(List,Ring) := (L,R) -> (
 	      P = P + ideal nonfaces;
 	  d = d+1;
           );
-     simplicialComplex monomialIdeal nonfaces
+     simplicialComplex monomialIdeal matrix(R, {nonfaces})
      )
 
 buchbergerComplex(MonomialIdeal) := (I) -> (
@@ -391,7 +391,7 @@ lyubeznikComplex(List,Ring) := (L,R) -> (
 	      P = P + ideal nonfaces;
 	  d = d+1;
           );
-     simplicialComplex monomialIdeal nonfaces
+     simplicialComplex monomialIdeal matrix(R, {nonfaces})
      )
 
 lyubeznikComplex(MonomialIdeal) := (I) -> (

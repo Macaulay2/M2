@@ -4,13 +4,14 @@ VPATH = $(chapter_srcdir)
 EXPECTED ?= test.out.expected
 include ../../../../include/config.Makefile
 all: check
+# we depend on "diff" accepting some options that perhaps only GNU diff does
 check: test.out.expected.trim test.out.trim
-	if ! diff -b -u test.out.expected.trim test.out.trim ;\
+	if ! diff -B -b -u test.out.expected.trim test.out.trim ;\
 	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/packages/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
 	     false ;\
 	fi
 diff:
-	diff -b -u test.out.expected.trim test.out.trim
+	diff -B -b -u test.out.expected.trim test.out.trim
 
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
