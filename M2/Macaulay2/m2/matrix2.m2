@@ -354,7 +354,7 @@ RingElement % Ideal := (r,I) -> (
 Number % Ideal := (r,I) -> (
      r = promote(r,ring I);
      if r == 0 then return r;
-     r % if isHomogeneous I then gb(I,DegreeLimit=>0) else gb I)
+     r % if isHomogeneous I then gb(I,DegreeLimit => toList (degreeLength ring I : 0)) else gb I)
 
 Matrix % RingElement := (f,r) -> f % (r * id_(target f))    -- this could be sped up: compute gb matrix {{r}} first, tensor with id matrix, force gb, etc
 
