@@ -74,6 +74,18 @@ stableHom(Module, Module) := (M,N)->(
     map(coker Hom(M,p), Hom(M,N), 1))
 
 mapToHomomorphism = method()
+mapToHomomorphism Matrix := f -> (
+   S := ring f;
+   M := source f;
+   N := target f;
+   H := Hom(M,N);
+   M0 := cover M;
+   N0 := cover N;
+   f1 := reshape((dual M0)**N0, S^1, matrix f);
+   f2 := f1 // (generators H);
+   map(H,S^1,f2)
+   )
+{*
 mapToHomomorphism Matrix := f ->(
     S := ring f;
     M := source f;
@@ -84,7 +96,7 @@ mapToHomomorphism Matrix := f ->(
     one := reshape(Fd**F,S^1, id_F);
     map(Hom(M,N), S^1, Hom(M,f)*((Hom(F,p)//Hom(p,M)))*one)
 	    )
-
+*}
 isStablyTrivial = method()
 isStablyTrivial Matrix := f ->(
    -- f: M \to N is given.
@@ -3583,4 +3595,5 @@ check "CompleteIntersectionResolutions"
 
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
+
 

@@ -82,7 +82,12 @@ document {
 		    LI { TO "BinomialEdgeIdeals::BinomialEdgeIdeals", ", a package by Tobias Windisch for computations with binomial edge ideals, has been added." },
 		    LI { TO "TateOnProducts::TateOnProducts", ", a package by Daniel Erman, David Eisenbud, and Frank-Olaf Schreyer for Tate resolutions on products of projective spaces, has been added." },
 		    LI { TO "LatticePolytopes::LatticePolytopes", ", a package by Anders Lundman and Gustav Sædén Ståhl for computations with lattice polytopes, has been added." },
-		    LI { TO "FiniteFittingIdeals::FiniteFittingIdeals", ", a package by Gustav Sædén Ståhl for computing Fitting ideals of finite modules, has been added." }
+		    LI { TO "FiniteFittingIdeals::FiniteFittingIdeals", ", a package by Gustav Sædén Ståhl for computing Fitting ideals of finite modules, has been added." },
+		    LI { TO "HigherCIOperators::HigherCIOperators", ", a package by David Eisenbud for computing higher complete intersection operators, has been added.
+			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
+			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
+			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
+			 to the well known Eisenbud-Shamash construction, which is also implemented." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -91,7 +96,30 @@ document {
 		    LI { "The package ", TO "Binomials::Binomials", " has been upgraded from version 1.0 to 1.2." },
 		    LI { "The package ", TO "BoijSoederberg::BoijSoederberg", " has been upgraded from version 1.2 to 1.5." },
 		    LI { "The package ", TO "ChainComplexExtras::ChainComplexExtras", " has been upgraded from version 0.5 to version 1." },
-		    LI { "The package ", TO "MultiplierIdeals::MultiplierIdeals", " has been upgraded from version 1.0 to version 1.1." }
+		    LI { "The package ", TO "MultiplierIdeals::MultiplierIdeals", " has been upgraded from version 1.0 to version 1.1." },
+		    LI { "The package ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " has been upgraded from version 0.8 to version 0.9.
+			 It implements a number of old and new ideas about minimal resolutions over a complete intersection
+			 developed by Eisenbud-Peeva, Avramov-Jorgensen, Eisenbud-Peeva-Schreyer, and
+			 Burke-Eisenbud-Schreyer. Let ", TT "S = k[x_1..x_n]", " be a
+			 polynomial ring, ff a codimension c regular sequence of homogeneous forms of the same degree, and ", TT "R = S/(ff)", ". It contains:",
+			 UL {
+			      LI { "routines to compute the structure of ", EM { "higher matrix factorization" }, "
+				   on a ", EM { "high" }, " R-syzygy M — one for which the modules ", TT "Ext_R^even(M,k)", "
+				   and ", TT "Ext_R^odd(M,k)", " have negative regularity over the ring of CI operators.
+				   There are also routines to extract various information from the higher matrix factorization." },
+			      LI { "routines that implement the reconstruction algorithm of Avramov and Jorgensen that constructs 
+				   modules M having (certain kinds of) specified Ext-modules." },
+			      LI { "routines to test of a conjecture of Eisenbud about the vanishing of certain local cohomology 
+				   of Ext-modules, implementing the map from a module to its saturation." },
+			      LI { "routines to compute the higher homotopies for ff on an S-free resolution of an S-module M 
+				   annihilated by ff, and understanding the structure of module over an exterior algebra, determined
+				   by the ff-homotopies on a resolution of M, on Tor^S(M,N) and Ext_S(M,N), when M and N are S-modules
+				   annihilated by ff. These routines led to conjectures that were later proven, and will appear in a 
+				   work-in-progress of Eisenbud, Peeva and Schreyer." },
+			      LI { "routines to compute Hom in the stable category of Cohen-Macaulay R-modules, and test for stable 
+				   triviality. This is used in understanding possible obstructions to commutativity of CI-operators." }
+			      }
+			 }
 	            }
 	       },
 	  LI { "functionality added or improved:",

@@ -52,7 +52,12 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 FreeModule *FreeModule::make_schreyer(const Matrix *m)
 {
   int i;
-  const Ring *R = m->get_ring();
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *F = R->make_FreeModule();
   int rk = m->n_cols();
   if (rk == 0) return F;
@@ -69,7 +74,11 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
 {
   const FreeModule *F = m->get_free_module();
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  assert(R);
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *G = R->make_FreeModule();
   int rk = INTSIZE(m->elems);
   if (rk == 0) return G;
