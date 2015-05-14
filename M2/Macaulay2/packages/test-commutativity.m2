@@ -56,8 +56,13 @@ isHomogeneous red (u#{2,2,1}*u#{2,4,0})
 --The square of the ordinary CI operators:
 t2 = map(M_0**red L_2, M_4, red(u#{2,2,1}*u#{2,4,0})) 
 isStablyTrivial t2
-
 --But we have a subtler test
 
+isStablyTrivial (p4 = map(M_2**red L_1, M_4, red u#{2,4,0}))
+isStablyTrivial (p2=map(M_0**red L_2, M_2**red L_1, red u#{2,2,1}))
+--the question is whether
+-- p2*p4
+-- is in the submodule p2*triv + triv*p4 + triv*triv
+--compute these one at a time!
 
 
