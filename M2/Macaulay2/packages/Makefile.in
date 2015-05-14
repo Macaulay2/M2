@@ -86,6 +86,9 @@ check-info::@pre_infodir@/$1.info.errors
 	@ [ ! -s $$@ ] || (echo error: stopping, info validation errors (above) >&2; false)
 endef
 $(foreach i, $(ALL_PACKAGES), $(eval $(call bld,$i)))
+ifeq "$(ReinstallPackages)" "true"
+$(foreach i, $(PACKAGES), $(eval all: unmark-$i))
+endif
 $(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
 # make packages Style and Macaulay2Doc get installed before the others:
@@ -106,6 +109,7 @@ distclean:clean
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+.NOTPARALLEL:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:
