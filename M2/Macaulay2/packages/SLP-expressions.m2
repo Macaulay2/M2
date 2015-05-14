@@ -296,10 +296,14 @@ restart
 load "SLP-expressions.m2"
 s = rawSLProgram(1)
 X = inputGate symbol X
-appendToSLProgram(s,X)
-appendToSLProgram(s,X+X)
-appendToSLProgram(s,productGate{X,X,X})
-e = rawSLEvaluator(s,{-1},{-2},raw matrix{{1_QQ}})
+C = inputGate symbol C
+n0 = appendToSLProgram(s,C)
+n1 = appendToSLProgram(s,X)
+n2 = appendToSLProgram(s,X+C)
+n3 = appendToSLProgram(s,productGate{X,X,C})
+rawSLPsetOutputPositions(s,{n1,n2}) 
+e = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
+rawSLEvaluatorEvaluate(e, raw matrix{{2_QQ}})
 ///
 
 -- GateMatrix is NOT A GATE
@@ -382,6 +386,55 @@ diff (GateMatrix, GateMatrix) := (xx,M) -> joinVertical apply(
     applyTable(entries xx, x->diff(x,M)), 
     row-> joinHorizontal row
     )
+PrintTable = new Type of MutableHashTable
+newPrintTable := method()
+newPrintTable List := o -> (h := new PrintTable; h.numConsts=h.numVars=h.numGates=h.numLines=0; h.Outputs=o; h)
+addLine := method()
+addLine (PrintTable, Thing) := (h,t) -> ( h#(h#numLines) = t; h#numLines = h#numLines + 1; )    
+printName = method()
+printName (Gate, HashTable) := (g,h) -> error "not implemented"
+printName (InputGate, HashTable) := (g,h) -> if h#?g then h#g else (
+    if isConstant g then (
+	h#g = "C"|toString h#numConsts;
+	addLine(h,h#g | " = " | toString g.Name);
+    	h#numConsts = h#numConsts + 1;
+	)
+    else (
+	h#g = "X"|toString h#numVars;
+    	h#numVars = h#numVars + 1;
+	);
+    h#g
+    )
+printName (SumGate, HashTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" + ", apply(g.Inputs, gg->printName(gg,h)));  
+    h#g = "G"|toString h#numGates;
+    addLine(h, h#g | " = " | concatenateNets s);  
+    h#numGates = h#numGates + 1;
+    h#g 
+    )
+printName (ProductGate, HashTable) := (g,h) -> if h#?g then h#g else (
+    s := between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
+    h#g = "G"|toString h#numGates;
+    addLine(h, h#g | " = " | concatenateNets s);  
+    h#numGates = h#numGates + 1;
+    h#g 
+    )
+printName (DetGate, HashTable) := (g,h) -> if h#?g then h#g else (
+    h#g = "G"|toString h#numGates;
+    addLine(h, h#g | " = det " | toString applyTable(g.Inputs, gg->printName(gg,h)));  
+    h#numGates = h#numGates + 1;
+    h#g 
+    )
+
+printAsSLP = method()
+printAsSLP List := outputs -> (
+    h := newPrintTable outputs;
+    scan(outputs, g->printName(g,h));
+    scan(h#numLines, i->print h#i);
+    print "output:";
+    scan(h#Outputs, g->print printName(g,h));     
+    )
+printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
 GateHomotopySystem = new Type of HomotopySystem    
 gateHomotopySystem = method()
@@ -460,7 +513,7 @@ assert(out'eval == out'comp)
 out'value = matrix {output/(o->value(o,h))}
 assert(out'eval == out'value)
 printSLP preSLP
-
+printAsSLP output
 
 -------------------------------------------------------
 -- trackHomotopy 

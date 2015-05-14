@@ -1969,15 +1969,17 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
-  SLEvaluator /* or null */ *rawSLEvaluator(const SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts);
+  SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts);
   SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
-  M2_string rawSLProgramToString(SLProgram *); /* connected */
+  const Matrix /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const Matrix *inputs);
+   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
   unsigned int rawSLProgramHash(SLProgram *); /* connected */
   gmp_ZZ rawSLPInputGate(SLProgram *S);
   gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
   gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a);
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);

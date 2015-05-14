@@ -27,13 +27,63 @@ void complexAP::print()
 
 
 // SLEvaluator
-SLEvaluator::SLEvaluator(const SLProgram *SLP, M2_arrayint constsPos,  M2_arrayint varsPos, const Matrix *consts)  
+SLEvaluator::SLEvaluator(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, const Matrix *consts)  
 {
   slp = SLP;
-  for(int i=0; i<constsPos->len; i++) 
-    this->constsPos.push_back(slp->inputCounter+constsPos->array[i]);
-  for(int i=0; i<varsPos->len; i++) 
-    this->varsPos.push_back(slp->inputCounter+varsPos->array[i]);
+  for(int i=0; i<cPos->len; i++) 
+    constsPos.push_back(slp->inputCounter+cPos->array[i]);
+  for(int i=0; i<vPos->len; i++) 
+    varsPos.push_back(slp->inputCounter+vPos->array[i]);
+  if (consts->n_rows() != 1 || consts->n_cols() != constsPos.size())
+    ERROR("1-row matrix expected; or numbers of constants don't match");
+  R = consts->get_ring();  
+  values.resize(slp->inputCounter+slp->mNodes.size());
+  for (int i=0; i<constsPos.size(); i++) 
+    values[constsPos[i]] = R->copy(consts->elem(0,i));
+}
+
+
+void SLEvaluator::computeNextNode()
+{
+  ring_elem v;
+  switch (*nIt++) {
+  case SLProgram::MProduct:
+    v = R->copy(R->one());
+    for (int i=0; i<*numInputsIt; i++)
+      v = v * values[ap(*inputPositionsIt++)];
+    numInputsIt++;
+    break;
+  case SLProgram::MSum:
+    v = R->copy(R->zero());
+    for (int i=0; i<*numInputsIt; i++)
+      v = v + values[ap(*inputPositionsIt++)];
+    numInputsIt++;
+    break;
+  default: ERROR("unknown node type");
+  }
+}
+
+Matrix* SLEvaluator::evaluate(const Matrix *inputs)
+{
+  if (R != inputs->get_ring()) 
+    ERROR("inputs are in a different ring");
+  if (inputs->n_rows() != 1 || inputs->n_cols() != varsPos.size())
+    ERROR("1-row matrix expected; or numbers of inputs and vars don't match");
+  for (int i=0; i<varsPos.size(); i++) 
+    values[varsPos[i]] = R->copy(inputs->elem(0,i));
+  
+  nIt = slp->mNodes.begin();
+  numInputsIt = slp->mNumInputs.begin();
+  inputPositionsIt = slp->mInputPositions.begin();
+  for (vIt = values.begin(); vIt != values.end(); ++vIt) 
+    computeNextNode();
+
+  FreeModule* S = R->make_FreeModule(slp->mOutputPositions.size());
+  FreeModule* T = R->make_FreeModule(1);
+  MatrixConstructor mat(T,S);
+  for(int i = 0; i < slp->mOutputPositions.size(); i++)
+    mat.set_entry(i,0,values[ap(slp->mOutputPositions[i])]);
+  return mat.to_matrix();
 }
 SLEvaluator::~SLEvaluator() {}
 void SLEvaluator::text_out(buffer& o) const { o << "SLEvaluator!" << newline; }
@@ -46,7 +96,7 @@ SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
   mNodes.push_back(MSum);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
-    mOutputPositions.push_back(a->array[i]);
+    mInputPositions.push_back(a->array[i]);
   return mNodes.size()-1;
 }
 SLProgram::GATE_POSITION SLProgram::addMProduct(const M2_arrayint a) 
@@ -54,8 +104,19 @@ SLProgram::GATE_POSITION SLProgram::addMProduct(const M2_arrayint a)
   mNodes.push_back(MProduct);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
-    mOutputPositions.push_back(a->array[i]);
+    mInputPositions.push_back(a->array[i]);
   return mNodes.size()-1;
+}
+void SLProgram::setOutputPositions(const M2_arrayint a) 
+{
+  for(int i=0; i<a->len; i++) {
+    int p = a->array[i];
+    if (p<0 && -p>inputCounter)
+      ERROR("input or constant position out of range");
+    else if (p>=0 && p>=mNodes.size()) 
+      ERROR("node position out of range");
+    else mOutputPositions.push_back(p);
+  }
 }
 
 void SLProgram::text_out(buffer& o) const { o << "SLProgram!" << newline; }

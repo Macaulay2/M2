@@ -712,9 +712,14 @@ gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
   return result;
 }
 
-SLEvaluator /* or null */ *rawSLEvaluator(const SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts) {
+SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts) {
   return new SLEvaluator(SLP,constsPos,varsPos,consts);
 }
+
+const Matrix /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const Matrix *inputs) {
+  return sle->evaluate(inputs);
+}
+
 M2_string rawSLEvaluatorToString(SLEvaluator * sle) { 
   buffer o;
   sle->text_out(o);
@@ -735,6 +740,10 @@ unsigned int rawSLProgramHash(SLProgram *) { return 0; }
 gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
 gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMSum(a)); }
 gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMProduct(a)); }
+gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a) { 
+  S->setOutputPositions(a); 
+  return to_gmp_ZZ(0); // this function should have returned "void"
+}
 
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {

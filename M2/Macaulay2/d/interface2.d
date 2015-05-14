@@ -65,6 +65,24 @@ export rawSLPProductGate(e:Expr):Expr := (
      );
 setupfun("rawSLPProductGate",rawSLPProductGate);
 
+export rawSLPsetOutputPositions(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPsetOutputPositions(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPsetOutputPositions",rawSLPsetOutputPositions);
+
 -- SLProgram evaluator
 
 export rawSLEvaluator(e:Expr):Expr := (
@@ -87,6 +105,23 @@ export rawSLEvaluator(e:Expr):Expr := (
      else WrongNumArgs(4)
      );
 setupfun("rawSLEvaluator",rawSLEvaluator);
+
+export rawSLEvaluatorEvaluate(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 2 then WrongNumArgs(4)
+     else when s.0 is sle:RawSLEvaluatorCell do (
+	  when s.1 is M:RawMatrixCell do (
+	       toExpr(Ccode(RawMatrixOrNull,
+		    	 "rawSLEvaluatorEvaluate(",
+		    	 sle.p, ",",
+		    	 M.p,
+		    	 ")"
+		    	 )))
+	  else WrongArgMatrix(2))
+     else WrongArg(1,"a raw straight line program")
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLEvaluatorEvaluate",rawSLEvaluatorEvaluate);
 
 -- old SLPs 
 
