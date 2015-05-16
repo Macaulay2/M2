@@ -61,8 +61,8 @@ triv(M,N)
 ///
 
 end -- 
-restart
 
+restart
 load "test-commutativity.m2"
 --viewHelp HigherCIOperators
 S = ZZ/101[a,b,c]
