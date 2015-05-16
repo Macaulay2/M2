@@ -1,3 +1,6 @@
+--This file computes an (the?) obstruction to the commutativity of the CI operators
+--at a given stage (ie F_k --> F_(k-4)).
+--it is nonzero in the case M = R/(a,bc) where R = k[a,b,c]/(a2, b2, c2) and k = 4,5.
 
 needsPackage "CompleteIntersectionResolutions"
 needsPackage "HigherCIOperators"
@@ -9,7 +12,23 @@ triv(Module, Module) := (M,N) -> (
     Hom(M, p))
 
 compose = method()
-compose(Module, Module, Module) := (M,N,P)-> (
+compose(Module, Module, Module) := (M,N,P) ->(
+        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
+    MN := Hom(M,N);
+    NP := Hom(N,P);
+    MP := Hom(M,P);
+    ambMap := map(ambient MP, (ambient MN) ** ambient(NP), 
+	    (cover M)**ev(cover N)**(cover P));
+    gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
+    map(MP, MN**NP,gensMap)
+    )
+ev = N -> (
+    --if N is a free R-module returns the contraction map N**N^* -> R.
+    reshape((ring N)^1, N**(dual N), id_N)
+    )
+
+{*
+compose1 = (M,N,P)-> (
     --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
     S := ring M;
     MN := Hom(M,N);
@@ -24,7 +43,13 @@ compose(Module, Module, Module) := (M,N,P)-> (
 	    scan(gNP, j->(
 	    np = homomorphism NP_{j};
 	    phi = phi|mapToHomomorphism(np*mn)))));
-    phi)
+    map(Hom(M,P), MN**NP, phi)
+    )
+--time c1 = compose1(B,C,D); -- 2 min for k=4
+time c  = compose(B,C,D); -- .06 sec for k=4
+--assert(c == c1) -- amazing!
+*}
+
 
 TEST///
 S = ZZ/101[a,b,c]
@@ -34,35 +59,57 @@ P = S^1/a^3
 assert(homomorphism((compose(M,N,P))_{0}) == map(M,P,matrix{{a}}))
 triv(M,N)
 ///
-    
+
 end -- 
 restart
+
 load "test-commutativity.m2"
-viewHelp HigherCIOperators
+--viewHelp HigherCIOperators
 S = ZZ/101[a,b,c]
 ff = matrix"a2,b2,c2"
 R = S/ideal ff
 red = map(R,S)
 M0 = R^1/ideal(a,b*c)
-FR = complete res(MR, LengthLimit=>8)
+FR = complete res(M0, LengthLimit=>8)
 M=apply(7,i->coker FR.dd_(i+1));
-betti FR
 A = chainComplex(apply(length FR-1, i->lift (FR.dd_(i+1),S)))
-betti A
 L = trueKoszul ff
 u = higherCIOperators(A,L);
-isHomogeneous red (u#{2,2,1}*u#{2,4,0})
 
---The square of the ordinary CI operators:
-t2 = map(M_0**red L_2, M_4, red(u#{2,2,1}*u#{2,4,0})) 
-isStablyTrivial t2
---But we have a subtler test
+k = 5
+B = M_k;
+C = M_(k-2)**red L_1;
+D = M_(k-4)**red L_2;
 
-isStablyTrivial (p4 = map(M_2**red L_1, M_4, red u#{2,4,0}))
-isStablyTrivial (p2=map(M_0**red L_2, M_2**red L_1, red u#{2,2,1}))
---the question is whether
--- p2*p4
--- is in the submodule p2*triv + triv*p4 + triv*triv
---compute these one at a time!
+--form the map Hom(B,D)<--Hom(B,C)**Hom(C,D)
+time c = compose(B,C,D);
 
+--now make the CI operators
+p = map(C,B, red u#{2,k,0}); --M_k -> M_(k-2)**red L_1
+q = map(D,C, red u#{2,k-2,1}); --M_(k-2)**red L_1 -> M_(k-4)**red L_2
 
+--The CI operators are not stably trivial, but their composition is:
+assert(isStablyTrivial (q*p) and not isStablyTrivial p and not isStablyTrivial p)
+--But we have a subtler test:
+--the question is whether q*p
+-- is in the submodule q*str + str'*p + str'*str, where 
+--str = stably trivial maps from B to C
+--str' = stably trivial maps C to D
+
+P = mapToHomomorphism p;
+Q = mapToHomomorphism q;
+QP = mapToHomomorphism (q*p);
+str = triv(B,C);
+str' = triv(C,D);
+time strp = c*(P**str');
+time qstr = c*(str**Q);
+time str'str = c*(str**str');
+
+assert(str'str ==0)
+assert(strp!=0)
+assert(qstr !=0)
+
+time test = map(coker(strp|qstr|str'str), source QP, QP);
+assert(test !=0)
+unique flatten entries (q*p)
+betti(q*p)
