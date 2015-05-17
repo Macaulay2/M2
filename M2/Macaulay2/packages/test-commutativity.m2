@@ -5,12 +5,10 @@
 needsPackage "CompleteIntersectionResolutions"
 needsPackage "HigherCIOperators"
 
-triv = method()
-triv(Module, Module) := (M,N) -> (
-    --image triv is the submodule of stably trivial homomorphisms
-    p :=map(N, cover N,1);
-    Hom(M, p))
-
+ev = N -> (
+    --if N is a free R-module returns the contraction map N**N^* -> R.
+    reshape((ring N)^1, N**(dual N), id_N)
+    )
 compose = method()
 compose(Module, Module, Module) := (M,N,P) ->(
         --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
@@ -22,34 +20,11 @@ compose(Module, Module, Module) := (M,N,P) ->(
     gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
     map(MP, MN**NP,gensMap)
     )
-ev = N -> (
-    --if N is a free R-module returns the contraction map N**N^* -> R.
-    reshape((ring N)^1, N**(dual N), id_N)
-    )
-
-{*
-compose1 = (M,N,P)-> (
-    --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
-    S := ring M;
-    MN := Hom(M,N);
-    NP := Hom(N,P);
-    gMN := numgens MN;
-    gNP := numgens NP;
-    phi := map(Hom(M,P), S^0,0);
-    mn:= null;
-    np:= null;
-    scan(gMN, i->(
-	    mn = homomorphism MN_{i}; 
-	    scan(gNP, j->(
-	    np = homomorphism NP_{j};
-	    phi = phi|mapToHomomorphism(np*mn)))));
-    map(Hom(M,P), MN**NP, phi)
-    )
---time c1 = compose1(B,C,D); -- 2 min for k=4
-time c  = compose(B,C,D); -- .06 sec for k=4
---assert(c == c1) -- amazing!
-*}
-
+triv = method()
+triv(Module, Module) := (M,N) -> (
+    --image triv is the submodule of stably trivial homomorphisms
+    p :=map(N, cover N,1);
+    Hom(M, p))
 
 TEST///
 S = ZZ/101[a,b,c]
@@ -76,17 +51,17 @@ A = chainComplex(apply(length FR-1, i->lift (FR.dd_(i+1),S)))
 L = trueKoszul ff
 u = higherCIOperators(A,L);
 
-k = 5
-B = M_k;
-C = M_(k-2)**red L_1;
-D = M_(k-4)**red L_2;
+k = 1
+B = M_(k+4);
+C = M_(k+2)**red L_1;
+D = M_k**red L_2;
 
 --form the map Hom(B,D)<--Hom(B,C)**Hom(C,D)
 time c = compose(B,C,D);
 
 --now make the CI operators
-p = map(C,B, red u#{2,k,0}); --M_k -> M_(k-2)**red L_1
-q = map(D,C, red u#{2,k-2,1}); --M_(k-2)**red L_1 -> M_(k-4)**red L_2
+p = map(C,B, red u#{2,k+4,0}); --M_(k+4) -> M_(k+2)**red L_1
+q = map(D,C, red u#{2,k+2,1}); --M_(k+2)**red L_1 -> M_(k)**red L_2
 
 --The CI operators are not stably trivial, but their composition is:
 assert(isStablyTrivial (q*p) and not isStablyTrivial p and not isStablyTrivial p)
@@ -97,31 +72,31 @@ assert(isStablyTrivial (q*p) and not isStablyTrivial p and not isStablyTrivial p
 --str' = stably trivial maps C to D
 
 P = mapToHomomorphism p;
-p == homomorphism P
 Q = mapToHomomorphism q;
-q == homomorphism Q
 QP = mapToHomomorphism (q*p);
-q*p == homomorphism QP
 
-betti prune Hom(B,C)
-betti prune Hom(C,D)
 str = triv(B,C);
 str' = triv(C,D);
-time Pstr' = P**str'
-time strp = c*(Pstr');
-time qstr = c*(str**Q);
+betti P
+betti str'
+
+time (source P)**source str'; -- fast!
+time (target P)**target str'; -- fast!
+time Pstr' = P**str';--SLOW!: when k=1 it takes 100 sec on my fastest machine.
+--MIKE
+
+time pstr = c*(Pstr'); 
+time strQ = str**Q;
+time strq = c*(strQ);
 time str'str = c*(str**str');
 
 assert(str'str ==0)
-assert(strp!=0)
-assert(qstr !=0)
+assert(pstr!=0)
+assert(strq !=0)
 
 
-time test = map(coker(strp|qstr|str'str), source QP, QP);
+time test = map(coker(pstr|strq|str'str), source QP, QP);
 assert(test !=0)
-unique flatten entries (q*p)
-betti(q*p)
-
 
 ---In the Tate resolution, it seems that commutativity holds even for perturbed differentials
 restart
@@ -138,14 +113,17 @@ A0 = chainComplex apply(length FR-1, i->lift (FR.dd_(i+1),S))
 --make a general perturbation:
 L = trueKoszul ff
 A = chainComplex apply(length FR-1, i-> A0.dd_(i+1) + (A0_i**L.dd_1)*random(A0_i**L_1,A0_(i+1)))
+k = 2
+B = M_(k+4);
+C = M_(k+2)**red L_1;
+D = M_k**red L_2;
 
-u = higherCIOperators(A,L);
 --now make the CI operators
-k = 6
-B = M_k;
-C = M_(k-2)**red L_1;
-D = M_(k-4)**red L_2;
-p = map(C,B, red u#{2,k,0}); --M_k -> M_(k-2)**red L_1
-q = map(D,C, red u#{2,k-2,1}); --M_(k-2)**red L_1 -> M_(k-4)**red L_2
+--now make the CI operators
+u = higherCIOperators(A,L);
+p = map(C,B, red u#{2,k+4,0}); --M_(k+4) -> M_(k+2)**red L_1
+q = map(D,C, red u#{2,k+2,1}); --M_(k+2)**red L_1 -> M_(k)**red L_2
+
 --curious: commutativity holds here even for the perturbed maps
 assert(q*p == 0)
+
