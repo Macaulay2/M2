@@ -301,7 +301,7 @@ n0 = appendToSLProgram(s,C)
 n1 = appendToSLProgram(s,X)
 n2 = appendToSLProgram(s,X+C)
 n3 = appendToSLProgram(s,productGate{X,X,C})
-rawSLPsetOutputPositions(s,{n1,n2}) 
+rawSLPsetOutputPositions(s,{n0,n1,n2,n3}) 
 e = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
 rawSLEvaluatorEvaluate(e, raw matrix{{2_QQ}})
 ///

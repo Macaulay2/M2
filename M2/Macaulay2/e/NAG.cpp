@@ -48,19 +48,20 @@ void SLEvaluator::computeNextNode()
   ring_elem v;
   switch (*nIt++) {
   case SLProgram::MProduct:
-    v = R->copy(R->one());
+    v = R->one();
     for (int i=0; i<*numInputsIt; i++)
-      v = v * values[ap(*inputPositionsIt++)];
+      R->mult_to(v,values[ap(*inputPositionsIt++)]);
     numInputsIt++;
     break;
   case SLProgram::MSum:
-    v = R->copy(R->zero());
+    v = R->zero();
     for (int i=0; i<*numInputsIt; i++)
-      v = v + values[ap(*inputPositionsIt++)];
+      R->add_to(v,values[ap(*inputPositionsIt++)]);
     numInputsIt++;
     break;
   default: ERROR("unknown node type");
   }
+  *vIt = v;  
 }
 
 Matrix* SLEvaluator::evaluate(const Matrix *inputs)
@@ -75,14 +76,14 @@ Matrix* SLEvaluator::evaluate(const Matrix *inputs)
   nIt = slp->mNodes.begin();
   numInputsIt = slp->mNumInputs.begin();
   inputPositionsIt = slp->mInputPositions.begin();
-  for (vIt = values.begin(); vIt != values.end(); ++vIt) 
+  for (vIt = values.begin()+slp->inputCounter; vIt != values.end(); ++vIt) 
     computeNextNode();
 
   FreeModule* S = R->make_FreeModule(slp->mOutputPositions.size());
   FreeModule* T = R->make_FreeModule(1);
   MatrixConstructor mat(T,S);
   for(int i = 0; i < slp->mOutputPositions.size(); i++)
-    mat.set_entry(i,0,values[ap(slp->mOutputPositions[i])]);
+    mat.set_entry(0,i,values[ap(slp->mOutputPositions[i])]);
   return mat.to_matrix();
 }
 SLEvaluator::~SLEvaluator() {}
