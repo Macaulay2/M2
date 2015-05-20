@@ -512,7 +512,7 @@ Matrix /* or null */ *Matrix::reshape(const FreeModule *F, const FreeModule *G) 
     }
 
   // EFFICIENCY: might be better to sort columns at end?
-  MatrixConstructor mat(F,G,0);
+  MatrixConstructor mat(F,G,degree_shift());
   for (int c=0; c<n_cols(); c++)
     for (vecterm *p = elem(c); p != NULL; p = p->next)
       {
