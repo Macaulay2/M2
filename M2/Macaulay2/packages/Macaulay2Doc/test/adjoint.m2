@@ -10,7 +10,20 @@ R = QQ[x]
 F = G = H = R^1
 f = map(G**H,F,{{x}},Degree=>1)
 assert isHomogeneous f
-assert isHomogeneous adjoint1(f,G,H)
+f' = adjoint1(f,G,H)
+assert isHomogeneous f'
+assert (source f' === F ** dual G)
+assert (target f' === H)
+
+F = R^{2}
+G = R^{3}
+H = R^{7}
+f = map(G**H,F,{{x}},Degree=>-7)
+assert isHomogeneous f
+f' = adjoint1(f,G,H)
+assert isHomogeneous f'
+assert (source f' === F ** dual G)
+assert (target f' === H)
 
 -- * Usage:adjoint(f,F,G)
 -- * Inputs:
@@ -20,6 +33,17 @@ assert isHomogeneous adjoint1(f,G,H)
 -- * Outputs:
 --     * a matrix, the adjoint homomorphism F --> (dual G) ** H
 
+F = G = H = R^1
 f = map(H,F**G,{{x}},Degree => 1)
 assert isHomogeneous f
 assert isHomogeneous adjoint(f,F,G)
+
+F = R^{2}
+G = R^{3}
+H = R^{7}
+f = map(H,F**G,{{x}},Degree => -1)
+assert isHomogeneous f
+f' = adjoint(f,F,G)
+assert isHomogeneous f'
+assert (source f' === F)
+assert (target f' === dual G ** H)
