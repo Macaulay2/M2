@@ -650,6 +650,10 @@ Hom(Matrix, Module) := Matrix => (f,N) -> (
     )
 
 Hom(Module, Matrix) := Matrix => (M,g) -> (
+     if not isQuotientModule M
+     or not isQuotientModule source g
+     or not isQuotientModule target g
+     then error "Hom(Module, Matrix): not implemented in this case";
      -- this function was written by David Eisenbud
      --say g: N --> N'	 
      mg := matrix g;     
