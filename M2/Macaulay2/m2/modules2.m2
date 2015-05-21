@@ -22,6 +22,9 @@ Module + Module := Module => (M,N) -> (
 
 tensor(Module, Module) := Module => options -> (M,N) -> M**N
 Module ** Module := Module => (M,N) -> (
+     (oM,oN) := (M,N);
+     Y := youngest(M.cache.cache,N.cache.cache);
+     if Y#?(symbol **,M,N) then return Y#(symbol **,M,N);
      if M.?generators and not isFreeModule N
      or N.?generators and not isFreeModule M then (
 	  if M.?generators then M = cokernel presentation M;
@@ -29,19 +32,21 @@ Module ** Module := Module => (M,N) -> (
 	  );
      R := ring M;
      if R =!= ring N then error "expected modules over the same ring";
-     if isFreeModule M then (
-	  if isFreeModule N then (
-	       new Module from (R, raw M ** raw N)
-	       )
-	  else subquotient(
-	       if N.?generators then M ** N.generators,
-	       if N.?relations then M ** N.relations))
-     else (
-	  if isFreeModule N then (
-	       subquotient(
-		    if M.?generators then M.generators ** N,
-		    if M.?relations then M.relations ** N))
-	  else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations ))))
+     T := if isFreeModule M then (
+	       if isFreeModule N then (
+		    new Module from (R, raw M ** raw N)
+		    )
+	       else subquotient(
+		    if N.?generators then M ** N.generators,
+		    if N.?relations then M ** N.relations))
+	  else (
+	       if isFreeModule N then (
+		    subquotient(
+			 if M.?generators then M.generators ** N,
+			 if M.?relations then M.relations ** N))
+	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )));
+     Y#(symbol **,oM,oN) = T;
+     T)
 
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
@@ -490,7 +495,7 @@ Hom(Module, Module) := Module => (M,N) -> (
 	  );
      H.cache.Hom = (M,N);
      -- the following is a hack; we really want to type "Hom(M,N) = ..."
-     (youngest(M.cache.cache,N.cache.cache))#(Hom,M,N) = H;
+     Y#(Hom,M,N) = H;
      H)
 
 homomorphism = method()

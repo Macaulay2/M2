@@ -12,7 +12,9 @@ N' = coker presentation N
 f' = map(M',M,1) * f * map(N,N',1)
 assert isHomogeneous f'
 assert isWellDefined f'
+
 assert ( hash (Hom(M,N)).cache.cache === hash (Hom(M,N)).cache.cache )
+assert ( hash (M**N).cache.cache === hash (M**N).cache.cache )
 
 assert ( prune coker Hom(M',f') == coker vars R )
 assert ( prune coker Hom(M,f') == coker vars R )
