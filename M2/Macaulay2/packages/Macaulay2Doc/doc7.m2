@@ -1580,6 +1580,24 @@ document {
      Headline => "dual coherent sheaf",
      TT "dual M", " -- the dual of a coherent sheaf."
      }
+
+document {
+     Key => {homomorphism',(homomorphism', Matrix)},
+     Headline => "get the element of Hom from a homomorphism",
+     Usage => "homomorphism' f",
+     Inputs => {
+	  "f" => {"of the form M --> N"},
+	  },
+     Outputs => {
+	  {"the map ", TT "R^1 --> Hom(M,N)", ", corresponding to the map ", TT "f", ""}
+	  },
+     EXAMPLE lines ///
+	  R = QQ[x,y,z]
+	  f = vars R ++ vars R
+	  g = homomorphism' f
+	  target g === Hom(source f, target f)
+	  ///
+     }
 document {
      Key => {homomorphism,(homomorphism, Matrix)},
      Headline => "get the homomorphism from element of Hom",

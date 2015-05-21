@@ -88,6 +88,66 @@ j = homomorphism H_{1} + homomorphism H_{2}
 
 -----------------------------------------------------------------------------
 
+-- test homomorphism' and homomorphism are inverse
+
+R = QQ[x]
+
+f = x ++ x^2
+assert ( degree f == {0} )
+assert isHomogeneous f
+g = homomorphism' f
+assert ( degree g == {0} )
+assert isHomogeneous g
+assert ( source g === R^1 )
+assert ( target g === Hom(source f,target f) )
+f' = homomorphism g
+assert ( f === f' )
+
+f = x ++ x^2
+f = map(target f ** R^{2}, source f, f, Degree => {-2})
+assert ( degree f == {-2} )
+assert isHomogeneous f
+g = homomorphism' f
+assert (degree g == {-2} )
+assert isHomogeneous g
+assert ( source g === R^1 )
+assert ( target g === Hom(source f,target f) )
+f' = homomorphism g
+assert ( f === f' )
+
+M = R^{1,2}
+N = R^{3,5}
+H = Hom(M,N)
+assert isHomogeneous H
+g = H_{0}
+assert ( source g === R^{2} )
+assert ( target g === H )
+assert isHomogeneous g
+f = homomorphism g
+assert ( source f === M )
+assert ( target f === N )
+g' = homomorphism' f
+assert isHomogeneous g'
+assert ( target g' === H )
+assert ( source g' === R^1 )
+degree g
+degree g'
+assert ( g === map(target g, source g, g', Degree => degree g ))
+
+S = QQ[a,b]
+M = S^2/(a,b)++S^2/(b)
+g = id_M
+f = homomorphism' g
+assert ( g == homomorphism f )
+
+S = QQ[a,b,c]
+M = S^2/(a,b)++S^2/(b,c)
+g = id_M
+f = homomorphism' g
+assert ( g == homomorphism f )
+
+-----------------------------------------------------------------------------
+
 R = QQ[x]
 M = subquotient( matrix {{x,x^2}} , matrix {{x^3,x^4}} )
 p = presentation M

@@ -495,11 +495,21 @@ Hom(Module, Module) := Module => (M,N) -> (
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
+     -- from a map R^1 -> Hom(M,N) produce a map M-->N
      H := target f;
      if not H.cache.?homomorphism then error "expected target of map to be of the form 'Hom(M,N)'";
      if not isFreeModule source f
      or not rank source f == 1 then error "expected source of map to be free of rank 1";
      H.cache.homomorphism f)
+
+homomorphism' = method()
+homomorphism' Matrix := Matrix => (f) -> (
+     -- from a map M-->N produce a map R^1 -> Hom(M,N)
+     R := ring f;
+     M := source f;
+     adjoint(f,R^1,M)
+     )
+
 -----------------------------------------------------------------------------
 pdim Module := M -> length resolution trim M
 

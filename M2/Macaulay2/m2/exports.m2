@@ -729,6 +729,7 @@ export {
 	symbol homogenize,
 	symbol homology,
 	symbol homomorphism,
+	symbol homomorphism',
 	symbol horizontalJoin,
 	symbol html,
 	symbol httpHeaders,
