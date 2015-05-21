@@ -290,15 +290,12 @@ matrix(List) := Matrix => opts -> (m) -> (
 Module#id = (M) -> map(M,M,1)
 
 reshape = method()
-reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     map(F,G,rawReshape(raw m, raw F, raw G)))
+reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
 
--- adjoint1:  m : F --> G ** H ===> F ** dual G --> H
+-- adjoint':  m : F --> G ** H ===> F ** dual G --> H
 -- adjoint:   m : F ** G --> H ===> F --> dual G ** H
-adjoint1 = method()
-adjoint1(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, (source m) ** (dual G), m)
+adjoint' = method()
+adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, (source m) ** (dual G), m)
 adjoint  = method()
 adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> reshape((dual G) ** (target m), F, m)
 

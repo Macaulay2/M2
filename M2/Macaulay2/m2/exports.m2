@@ -474,7 +474,7 @@ export {
 	symbol addHook,
 	symbol addStartFunction,
 	symbol adjoint,
-	symbol adjoint1,				    -- adjoint' ?
+	symbol adjoint',
 	symbol alarm,
 	symbol all,
 	symbol ambient,

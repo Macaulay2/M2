@@ -906,9 +906,9 @@ g = reshape(R^1, R^{-1}, f)
 assert isHomogeneous g
 "
 document {
-     Key => {(adjoint1,Matrix,Module,Module),adjoint1},
+     Key => {(adjoint',Matrix,Module,Module),adjoint'},
      Headline => "an adjoint map",
-     Usage => "adjoint1(f,G,H)",
+     Usage => "adjoint'(f,G,H)",
      Inputs => {
 	  "f" => {"a homomorphism ", TT "F --> G ** H", " between free modules"},
 	  "G" => "a free module",
@@ -932,7 +932,7 @@ document {
      EXAMPLE {
 	  "R = QQ[x_1 .. x_12];",
 	  "f = genericMatrix(R,6,2)",
-	  "g = adjoint1(f,R^2,R^3)",
+	  "g = adjoint'(f,R^2,R^3)",
 	  "isHomogeneous g"
 	  },
      SeeAlso => {adjoint, flip, reshape, (symbol**,Module,Module), dual}
@@ -971,7 +971,7 @@ document {
 	  isHomogeneous g
 	  ///,
      PARA{},
-     SeeAlso => {adjoint1, flip, reshape, (symbol**,Module,Module), dual}
+     SeeAlso => {adjoint', flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
      Key => {(flip,Module,Module),flip},

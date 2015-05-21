@@ -490,12 +490,10 @@ Hom(Module, Module) := Module => (M,N) -> (
      if Y#?(Hom,M,N) then return Y#(Hom,M,N);
      H := kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> (
-	  -- map(N,M,adjoint1(super f, M', N), Degree => first degrees source f); -- ???
-	  error "homomorphism: not implemented";
-	  );
+	  if debugLevel > 0 then error "debug me";
+	  map(N,M,adjoint'(super f, dual cover M, N), Degree => first degrees source f));
      H.cache.Hom = (M,N);
-     -- the following is a hack; we really want to type "Hom(M,N) = ..."
-     Y#(Hom,M,N) = H;
+     Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
      H)
 
 homomorphism = method()

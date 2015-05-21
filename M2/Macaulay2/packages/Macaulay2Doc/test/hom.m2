@@ -59,6 +59,32 @@ i = homomorphism H_{0} + homomorphism H_{3}
 j = homomorphism H_{1} + homomorphism H_{2}
     assert not isHomogeneous j
     assert isIsomorphism j
+M = x*M / (y*M)
+N = x*N / (y*N)
+H = Hom(M,N)
+    assert ( H === Hom(M,N) )
+    debugLevel = 1
+    assert( entries homomorphism H_{0} == {{1, 0}, {0, 0}} )
+    assert( entries homomorphism H_{1} == {{0, 0}, {1, 0}} )
+    assert( entries homomorphism H_{2} == {{0, 1}, {0, 0}} )
+    assert( entries homomorphism H_{3} == {{0, 0}, {0, 1}} )
+    assert( {{1}, {2}} == degrees source homomorphism H_{0} )
+    assert( 2 == degree source homomorphism H_{0} )
+    for i from 0 to 3 do (
+	 h = H_{i};
+	 assert isHomogeneous h;
+	 g = homomorphism h;
+    	 assert isHomogeneous g;
+	 -- wait for implementation of "adjoint" in general
+    	 -- assert ( h === homomorphism'_H g )
+	 )
+i = homomorphism H_{0} + homomorphism H_{3}
+    assert isHomogeneous i
+    assert ( {2} == degree i )
+    assert isIsomorphism i
+j = homomorphism H_{1} + homomorphism H_{2}
+    assert not isHomogeneous j
+    assert isIsomorphism j
 
 -----------------------------------------------------------------------------
 
