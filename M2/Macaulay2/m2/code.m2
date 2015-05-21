@@ -29,7 +29,7 @@ getSourceLines Sequence := x -> (
 	       concatenate(filename, ":", 
 		    toString start, ":", toString (startcol+1),
 		    "-",
-		    toString stop, ":", toString (stopcol+1),
+		    toString stop, ":", toString (stopcol+2),
 		    ": --source code:"),
 	       apply(start-1 .. stop-1, i -> file#i)
 	       )
