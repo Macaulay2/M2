@@ -910,12 +910,12 @@ document {
      Headline => "an adjoint map",
      Usage => "adjoint'(f,G,H)",
      Inputs => {
-	  "f" => {"a homomorphism ", TT "F --> G ** H", " between free modules"},
+	  "f" => {"a homomorphism ", TT "F --> Hom(G,H)", " between free modules"},
 	  "G" => "a free module",
 	  "H" => "a free module"
 	  },
      Outputs => {
-	  {"the adjoint homomorphism ", TT "F ** (dual G) --> H"}
+	  {"the adjoint homomorphism ", TT "F ** G --> H"}
 	  },
      "All modules should be free modules over the same base ring, and the rank of the
      target of ", TT "f", " should be the product of the ranks of ", TT "G", " and ", 

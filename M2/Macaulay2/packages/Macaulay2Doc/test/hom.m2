@@ -63,12 +63,12 @@ M = x*M / (y*M)
 N = x*N / (y*N)
 H = Hom(M,N)
     assert ( H === Hom(M,N) )
-    debugLevel = 1
+    -- debugLevel = 1
     assert( entries homomorphism H_{0} == {{1, 0}, {0, 0}} )
     assert( entries homomorphism H_{1} == {{0, 0}, {1, 0}} )
     assert( entries homomorphism H_{2} == {{0, 1}, {0, 0}} )
     assert( entries homomorphism H_{3} == {{0, 0}, {0, 1}} )
-    assert( {{1}, {2}} == degrees source homomorphism H_{0} )
+    assert( {{2}, {3}} == degrees source homomorphism H_{0} )
     assert( 2 == degree source homomorphism H_{0} )
     for i from 0 to 3 do (
 	 h = H_{i};
