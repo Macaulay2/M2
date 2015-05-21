@@ -1591,8 +1591,6 @@ document {
      Outputs => {
 	  {"the ", TO "Matrix", " ", TT "M --> N", ", corresponding to the element ", TT "f", ""}
 	  },
-     "When ", TT "H := Hom(M,N)", " is computed, enough information is stored in ", 
-     TT "H.cache.Hom", " to compute this correspondence.",
      EXAMPLE lines ///
 	  R = QQ[x,y,z]/(y^2-x^3)
 	  H = Hom(ideal(x,y), R^1)
