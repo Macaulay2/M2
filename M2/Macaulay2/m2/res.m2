@@ -263,7 +263,9 @@ status Resolution := options -> (r) -> (
      b = transpose prepend(leftside,b);
      toString unsequence lab || "" || stack apply(b, concatenate))
 
-status ChainComplex := options -> (C) -> status(C.Resolution, options)
+status ChainComplex := options -> (C) -> (
+     if not C.?Resolution then error "status: expected a resolution constructed in the engine";
+     status(C.Resolution, options))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2"
