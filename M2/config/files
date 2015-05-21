@@ -81,7 +81,9 @@ Macaulay2/d/Makefile.files
 Macaulay2/d/startup.m2
 Macaulay2/dumpdata/Makefile
 Macaulay2/bin/Makefile
-Macaulay2/bin/M2
+Macaulay2/bin/M2_common_setenv_bin
+Macaulay2/bin/M2_setenv_tail
+Macaulay2/bin/M2_tail
 Macaulay2/e-includes/Makefile
 Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common

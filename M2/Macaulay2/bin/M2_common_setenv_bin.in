@@ -1,0 +1,16 @@
+#!/bin/bash
+#SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+
+
+# `dirname "$0"` is unreliable...http://mywiki.wooledge.org/BashFAQ/028
+# SCRIPTPATH=$( cd "$(dirname "$0")" ; pwd -P )
+SCRIPTPATH=`readlink -f "$0"|xargs dirname`
+
+# We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
+case "@host_os@" in
+   cygwin) export PATH="$SCRIPTPATH"/../@tail_librariesdir@:$PATH ;;
+  darwin*) # Mac OS X:
+           export DYLD_LIBRARY_PATH="$SCRIPTPATH"/../@tail_librariesdir@:$DYLD_LIBRARY_PATH ;;
+        *) export   LD_LIBRARY_PATH="$SCRIPTPATH"/../@tail_librariesdir@:$LD_LIBRARY_PATH ;;
+esac
+
