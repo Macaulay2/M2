@@ -481,47 +481,28 @@ Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
 Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
 
 Hom(Module, Module) := Module => (M,N) -> (
+     -- We will write Hom(M,N) as a submodule of Hom(cover M,super N).
+     local H;
      if isFreeModule M 
-     then dual M ** N
-     else kernel Hom(presentation M, N)
-     )
--- An alternate Hom routine:
-Hom(Module, Module) := Module => (M,N) -> (
-    if isFreeModule M and isFreeModule N then (
-        dualM := dual M;
-        MN := dualM ** N;
-        MN.cache.Hom = {M, N, dualM, N};
-        return MN;
-        );
-     homog := isHomogeneous M and isHomogeneous N;
-     if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
-     -- This version is perhaps less transparent, but is
-     -- easier to determine the link with homomorphisms.
-     m := presentation M;
-     mdual := transpose m;
-     n := presentation N;
-     h1 := modulo(mdual ** target n, target mdual ** n);
-     MN = trim subquotient(h1,source mdual ** n);
-     -- Now we store the information that 'homomorphism'
-     -- will need to reconstruct the map corresponding to
-     -- an element.
-     MN.cache.Hom = {M,N,source mdual,target n};
-     if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
-     MN)
+     then (
+	  M' := dual M;
+	  H = M' ** N;
+	  H.cache.homomorphism = (f) -> map(N,M,adjoint1(super f, M', N), Degree => first degrees source f);
+	  )
+     else (
+	  H = kernel Hom(presentation M, N);
+	  H.cache.homomorphism = (f) -> error "not implemented yet";
+	  );
+     H.cache.Hom = (M,N);
+     H)
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
-     if not isFreeModule(source f) or 
-        numgens source f =!= 1 or
-        not (target f).cache.?Hom
-	then error "homomorphism may only be determined for maps R --> Hom(M,N)";
-     MN := (target f).cache.Hom;
-     M := MN#0;
-     N := MN#1;
-     M0 := MN#2;
-     N0 := MN#3;
-     deg := (degrees source f)#0;
-     map(N,M,adjoint1(super f, M0, N0),Degree=>deg))
+     H := target f;
+     if not H.cache.?homomorphism then error "expected target of map to be of the form 'Hom(M,N)'";
+     if not isFreeModule source f
+     or not rank source f == 1 then error "expected source of map to be free of rank 1";
+     H.cache.homomorphism f)
 -----------------------------------------------------------------------------
 pdim Module := M -> length resolution trim M
 

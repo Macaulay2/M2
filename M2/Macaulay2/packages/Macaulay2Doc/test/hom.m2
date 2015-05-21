@@ -1,3 +1,36 @@
+-- testing Hom(Module,Module)
+-- free modules:
+
+R = QQ[x,y]
+M = R^{ -1,-2 }
+N = R^{ -3,-4 }
+H = Hom(M,N)
+    assert ( H === Hom(M,N) )
+    assert isFreeModule H
+    assert( entries homomorphism H_{0} == {{1, 0}, {0, 0}} )
+    assert( entries homomorphism H_{1} == {{0, 0}, {1, 0}} )
+    assert( entries homomorphism H_{2} == {{0, 1}, {0, 0}} )
+    assert( entries homomorphism H_{3} == {{0, 0}, {0, 1}} )
+    assert( {{1}, {2}} == degrees source homomorphism H_{0} )
+    assert( 2 == degree source homomorphism H_{0} )
+    for i from 0 to 3 do (
+	 h = H_{i};
+	 assert isHomogeneous h;
+	 g = homomorphism h;
+    	 assert isHomogeneous g;
+	 -- wait for implementation of "adjoint" in general
+    	 -- assert ( h === homomorphism'_H g )
+	 )
+i = homomorphism H_{0} + homomorphism H_{3}
+    assert isHomogeneous i
+    assert ( {2} == degree i )
+    assert isIsomorphism i
+j = homomorphism H_{1} + homomorphism H_{2}
+    assert not isHomogeneous j
+    assert isIsomorphism j
+
+-----------------------------------------------------------------------------
+
 R = QQ[x]
 M = subquotient( matrix {{x,x^2}} , matrix {{x^3,x^4}} )
 p = presentation M
