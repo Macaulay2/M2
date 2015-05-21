@@ -1,6 +1,35 @@
 -- testing Hom(Module,Module)
 -- free modules:
 
+R = ZZ/101[a,b,c]
+M = ker vars R
+N = ideal vars R * M
+f = map(M, N, gens N//gens M) -- the inclusion of N into M
+assert isHomogeneous f
+assert isWellDefined f
+M' = coker presentation M
+N' = coker presentation N
+f' = map(M',M,1) * f * map(N,N',1)
+assert isHomogeneous f'
+assert isWellDefined f'
+assert ( hash (Hom(M,N)).cache.cache === hash (Hom(M,N)).cache.cache )
+
+assert ( prune coker Hom(M',f') == coker vars R )
+assert ( prune coker Hom(M,f') == coker vars R )
+assert ( prune coker Hom(M',f) == coker vars R )
+assert ( prune coker Hom(M,f) == coker vars R )
+
+assert ( coker Hom(f',M') == 0 )
+assert ( coker Hom(f',M) == 0 )
+assert ( coker Hom(f,M') == 0 )
+assert ( coker Hom(f,M) == 0 )
+
+assert ( prune coker Hom(f',N') == coker vars R )
+assert ( prune coker Hom(f,N') == coker vars R )
+assert ( prune coker Hom(f',N) == coker vars R )
+assert ( prune coker Hom(f,N) == coker vars R )
+
+
 R = QQ[x,y]
 M = R^{ -1,-2 }
 N = R^{ -3,-4 }

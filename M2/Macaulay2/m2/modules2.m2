@@ -481,19 +481,16 @@ Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
 Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
 
 Hom(Module, Module) := Module => (M,N) -> (
-     -- We will write Hom(M,N) as a submodule of Hom(cover M,super N).
-     local H;
-     if isFreeModule M 
-     then (
-	  M' := dual M;
-	  H = M' ** N;
-	  H.cache.homomorphism = (f) -> map(N,M,adjoint1(super f, M', N), Degree => first degrees source f);
-	  )
-     else (
-	  H = kernel Hom(presentation M, N);
-	  H.cache.homomorphism = (f) -> error "not implemented yet";
+     Y := youngest(M.cache.cache,N.cache.cache);
+     if Y#?(Hom,M,N) then return Y#(Hom,M,N);
+     H := kernel (transpose presentation M ** N);
+     H.cache.homomorphism = (f) -> (
+	  -- map(N,M,adjoint1(super f, M', N), Degree => first degrees source f); -- ???
+	  error "homomorphism: not implemented";
 	  );
      H.cache.Hom = (M,N);
+     -- the following is a hack; we really want to type "Hom(M,N) = ..."
+     (youngest(M.cache.cache,N.cache.cache))#(Hom,M,N) = H;
      H)
 
 homomorphism = method()

@@ -328,7 +328,9 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
      E := target relns;
      rE := E.RawFreeModule;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE
@@ -350,7 +352,9 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
      subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE,
@@ -376,7 +380,9 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	       );
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
-	       symbol cache => new CacheTable,
+	       symbol cache => new CacheTable from { 
+		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+		    },
 	       symbol RawFreeModule => rE,
 	       symbol ring => R,
 	       symbol numgens => rawRank rE,
@@ -636,39 +642,9 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix, Module) := Matrix => (f,N) -> (
-     -- this function was written by David Eisenbud
-     --say f: M --> M'
-     mfdual := transpose matrix f;
-     cN := cover N;
-     --Hom(M,N)
-     MN := Hom(source f,N);
-     --Hom(M',N)    
-     M'N :=Hom(target f, N);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN, M'N, ((mfdual**cN) * generators M'N)//generators MN)
-    )
-
-Hom(Module, Matrix) := Matrix => (M,g) -> (
-     if not isQuotientModule M
-     or not isQuotientModule source g
-     or not isQuotientModule target g
-     then error "Hom(Module, Matrix): not implemented in this case";
-     -- this function was written by David Eisenbud
-     --say g: N --> N'	 
-     mg := matrix g;     
-     cMdual := dual cover M;
-     --Hom(M,N)
-     MN := Hom(M,source g);
-     --Hom(M,N')    
-     MN' := Hom(M,target g);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN', MN, ((cMdual**mg)*generators MN)//generators MN')
-     )
-
-Hom(Matrix,Matrix) := Matrix => (f,g) -> (
-     -- this function was written by David Eisenbud
-     Hom(source f, g)*Hom(f, source g))
+Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N)
+Hom(Module,Matrix) := Matrix => (M,f) -> inducedMap(Hom(M,target f),Hom(M,source f),dual cover M ** f)
+Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
 
 dual(Matrix) := Matrix => {} >> o -> f -> (
      R := ring f;
