@@ -768,7 +768,7 @@ document {
 document {
      Key => {(inducedMap, Module, Module, Matrix),(inducedMap, Module, Nothing, Matrix),(inducedMap, Nothing, Module, Matrix),(inducedMap, Nothing, Nothing, Matrix)},
      Headline => "compute the induced map",
-     Usage => "inducedMap(M,N)",
+     Usage => "inducedMap(M,N,f)",
      Inputs => { "M", "N", "f" => {"a homomorphism ", TT "P <-- Q"}
 	  },
      Outputs => {
