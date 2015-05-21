@@ -292,12 +292,17 @@ Module#id = (M) -> map(M,M,1)
 reshape = method()
 reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
 
--- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H   --- warning: we have replaced G by dual G
--- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
 adjoint' = method()
-adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, source m ** G, m)
-adjoint  = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> reshape(dual G ** target m, F, m)
+adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
+     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G.
+     -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
+     F := source m;
+     reshape(H, F ** G, m))
+adjoint = method()
+adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
+     -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
+     H := target m;
+     reshape(Hom(G,H), F, m))
 
 flatten Matrix := Matrix => m -> (
      R := ring m;
