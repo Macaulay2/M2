@@ -278,7 +278,7 @@ systemFromFile (String) := (name) -> (
   s = replace("E","e",s);
   s = replace("e\\+","e",s);   -- M2 does not like 3.0e+00 as constant
   L := lines(s);
-  dimL0 := separate(" ", L_0); -- deal with case of nonsquare systems
+  dimL0 := separate(" ", replace ("^ *","",L_0)); -- deal with case of nonsquare systems
   n := value dimL0_0;          -- first is always number of equations
   result := {};
   i := 0; j := 1;
@@ -1388,8 +1388,7 @@ TEST///
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = solveSystem(f);
      zeroSols = zeroFilter(fSols,1,1.0e-10);
-     assert(  sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} == {{-1, 0}, {1, 0}}
-	      )
+     assert(  max \\ abs \ flatten ( sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} - {{ -1, 0}, {1, 0}} ) < 1e-17 )
 ///;
 
 --##########################################################################--
