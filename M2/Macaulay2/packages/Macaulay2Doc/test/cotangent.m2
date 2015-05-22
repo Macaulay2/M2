@@ -4,5 +4,5 @@ X = variety I;
 R = ring X;
 Omega = cotangentSheaf X;
 OmegaDual = dual Omega;
-assert ( module Omega == cokernel map(R^{3:-1}, , {{z, y, w}, {w, v, u}, {-y, -x, -v}} ))
-assert ( module OmegaDual == image map(R^{3:1}, , {{y, x, w, 0, v, 0, u, 0}, {0, 0, -z, y, -y, x, -w, v}, {z, y, 0, w, 0, v, 0, u}}) )
+assert ( module Omega == cokernel map((R)^{{-1},{-1},{-1}},(R)^{{-2},{-2},{-2}},{{w, v, u}, {-y, -x, -v}, {z, y, w}}))
+assert ( module OmegaDual == image map((R)^{{1},{1},{1}},(R)^8,{{y, x, v, 0, 0, -z, -y, -w}, {w, v, u, z, y, 0, 0, 0}, {0, 0, 0, y, x, w, v, u}}) )

@@ -910,25 +910,17 @@ document {
      Headline => "an adjoint map",
      Usage => "adjoint'(f,G,H)",
      Inputs => {
-	  "f" => {"a homomorphism ", TT "F --> Hom(G,H)", " between free modules"},
+	  "f" => {"a homomorphism ", TT "F --> Hom(G,H)", " between modules"},
 	  "G" => "a free module",
 	  "H" => "a free module"
 	  },
      Outputs => {
 	  {"the adjoint homomorphism ", TT "F ** G --> H"}
 	  },
-     "All modules should be free modules over the same base ring, and the rank of the
-     target of ", TT "f", " should be the product of the ranks of ", TT "G", " and ", 
-     TT "H", ".  Recall that ", 
-     TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
-     a free module with the same rank as ", TT "G", ".",
-     PARA{},
-     "No computation is required.  The resulting matrix has the same entries as ", 
-     TT "f", ", but in a different layout.",
-     PARA{},
-     "If ", TT "f", " is homogeneous, and ", TT "target f == G ** H", ",including 
-     the grading, then the resulting matrix will be homogeneous.",
-     PARA{},
+     PARA {
+     	  "Recall that ", TO "**", " refers to the tensor product of modules.  If ", TT "f", " is
+	  homogeneous, then the resulting matrix will be homogeneous."
+	  },
      EXAMPLE {
 	  "R = QQ[x_1 .. x_12];",
 	  "f = genericMatrix(R,6,2)",
@@ -942,35 +934,24 @@ document {
      Headline => "an adjoint map",
      Usage => "adjoint(f,F,G)",
      Inputs => {
-	  "f" => {"a homomorphism ", TT "F ** G --> H", " between free modules"},
+	  "f" => {"a homomorphism ", TT "F ** G --> H"},
 	  "F" => "a free module",
 	  "G" => "a free module"
 	  },
-     Outputs => {
-	  {"the adjoint homomorphism ", TT "F --> (dual G) ** H"}
-	  },
-     "All modules should be free modules over the same base ring, and the rank of the
-     source of ", TT "f", " should be the product of the ranks of ", TT "F", " and ", 
-     TT "G", ".  Recall that ", 
-     TT "**", " refers to the tensor product of modules, and that ", TT "dual G", " is 
-     a free module with the same rank as ", TT "G", ".",
-     PARA{},
-     "No computation is required.  The resulting matrix has the same entries as ", 
-     TT "f", ", but in a different layout.",
+     Outputs => {{"the adjoint homomorphism ", TT "F --> Hom(G,H)"}},
+     PARA{"Recall that ", TO "**", " refers to the tensor product of modules."},
      EXAMPLE lines ///
 	  R = QQ[x_1 .. x_24];
 	  f = genericMatrix(R,2,4*3)
+     	  isHomogeneous f
 	  g = adjoint(f,R^4,R^3)
 	  ///,
-     PARA{},
-     "If ", TT "f", " is homogeneous, and ", TT "source f == F ** G", 
-     ", including the grading, then 
-     the resulting matrix will be homogeneous.",
+     PARA{"If ", TT "f", " is homogeneous, and ", TT "source f === F ** G", 
+     	  " (including the grading), then the resulting matrix will be homogeneous."},
      EXAMPLE lines ///
 	  g = adjoint(f,R^4,R^{-1,-1,-1})
 	  isHomogeneous g
 	  ///,
-     PARA{},
      SeeAlso => {adjoint', flip, reshape, (symbol**,Module,Module), dual}
      }
 document {
@@ -1596,7 +1577,15 @@ document {
 	  f = vars R ++ vars R
 	  g = homomorphism' f
 	  target g === Hom(source f, target f)
-	  ///
+	  ///,
+     PARA {
+	  "We can undo the process with ", TO "homomorphism", "."
+	  },      
+     EXAMPLE lines ///
+	  f' = homomorphism g
+     	  f === f'
+	  ///,
+     SeeAlso => {homomorphism}
      }
 document {
      Key => {homomorphism,(homomorphism, Matrix)},
@@ -1610,31 +1599,34 @@ document {
 	  {"the ", TO "Matrix", " ", TT "M --> N", ", corresponding to the element ", TT "f", ""}
 	  },
      EXAMPLE lines ///
-	  R = QQ[x,y,z]/(y^2-x^3)
+	  R = QQ[x,y,z,Degrees=>{2,3,1}]/(y^2-x^3)
 	  H = Hom(ideal(x,y), R^1)
-	  g = homomorphism H_{1}
+	  f = H_{1}
+	  g = homomorphism f
 	  ///,
-     "The homomorphism g takes x to y and y to x2.  The source and target are
-     what they should be.",
+     "The source and target are what they should be.",
      EXAMPLE lines ///
-	  source g
-	  target g
+	  source g === module ideal(x,y)
+	  target g === R^1
 	  ///,
-     PARA{},
-     "After ", TO2((minimalPresentation,Module),"pruning"), " a Hom module, one cannot use 
-     homomorphism directly.  Instead, first apply the pruning map:",
+     PARA {
+	  "Except for a possible redistribution of degrees between the map and modules,
+	  we can undo the process with ", TO "homomorphism'", "."
+	  },      
+     EXAMPLE lines ///
+	  f' = homomorphism' g
+	  f === f'
+     	  f - f'
+     	  degree f, degree f'
+     	  degrees f, degrees f'
+	  ///,
+     PARA{
+	  "After ", TO2((minimalPresentation,Module),"pruning"), " a Hom module, one cannot use 
+	  homomorphism directly.  Instead, first apply the pruning map:"
+	  },
      EXAMPLE lines ///
           H1 = prune H
 	  homomorphism(H1.cache.pruningMap * H1_{1})
-          ///,
-     PARA{},
-     "Sometime, one wants a random homomorphism of a given degree.  Here is one method:",
-     EXAMPLE lines ///
-          f = basis(3,H)
-	  rand = random(R^(numgens source f), R^1)
-	  h = homomorphism(f * rand)
-	  source h
-	  target h
           ///,
      SeeAlso => {Hom,prune,random,basis}
      }
@@ -1646,12 +1638,15 @@ use R
 J = module ideal(a,d)
 K = module ideal(b^2,c^2)
 JK = Hom(J,K)
-F = JK_{0}
-F1 = homomorphism F
-source F1
-target F1
-ker F1
-prune coker F1
+f = JK_{0}
+g = homomorphism f
+assert isHomogeneous g
+assert ( source g === J )
+assert ( target g === K )
+f' = homomorphism' g
+assert (f-f' == 0)
+assert (degrees f === {{{0}, {1}}, {{1}}})
+assert (degrees f' === {{{0}, {1}}, {{0}}})
 ///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
