@@ -31,6 +31,15 @@ assert ( prune coker Hom(f,N') == coker vars R )
 assert ( prune coker Hom(f',N) == coker vars R )
 assert ( prune coker Hom(f,N) == coker vars R )
 
+R = QQ[x]
+M = x * R^1
+H = Hom(M,M)
+    h = H_{0}
+    assert isHomogeneous h;
+    g = homomorphism h;
+    assert isHomogeneous g;
+    h' = homomorphism' g
+    assert ( h === h' )
 
 R = QQ[x,y]
 M = R^{ -1,-2 }
@@ -64,19 +73,24 @@ N = x*N / (y*N)
 H = Hom(M,N)
     assert ( H === Hom(M,N) )
     -- debugLevel = 1
-    assert( entries homomorphism H_{0} == {{1, 0}, {0, 0}} )
-    assert( entries homomorphism H_{1} == {{0, 0}, {1, 0}} )
-    assert( entries homomorphism H_{2} == {{0, 1}, {0, 0}} )
-    assert( entries homomorphism H_{3} == {{0, 0}, {0, 1}} )
+    -- assert( entries homomorphism H_{0} == {{1, 0}, {0, 0}} )
+    -- assert( entries homomorphism H_{1} == {{0, 0}, {1, 0}} )
+    -- assert( entries homomorphism H_{2} == {{0, 1}, {0, 0}} )
+    -- assert( entries homomorphism H_{3} == {{0, 0}, {0, 1}} )
     assert( {{2}, {3}} == degrees source homomorphism H_{0} )
     assert( 2 == degree source homomorphism H_{0} )
     for i from 0 to 3 do (
 	 h = H_{i};
+	 assert (degree h === {0});
 	 assert isHomogeneous h;
 	 g = homomorphism h;
     	 assert isHomogeneous g;
-	 -- wait for implementation of "adjoint" in general
-    	 -- assert ( h === homomorphism'_H g )
+	 h' = homomorphism' g;
+	 assert isHomogeneous h';
+	 -- make h' have the same degree as h
+	 h' = map(target h', source h' ** R^{ degree h - degree h' }, h', Degree => degree h);
+	 assert isHomogeneous h';
+    	 assert ( h === h' )
 	 )
 i = homomorphism H_{0} + homomorphism H_{3}
     assert isHomogeneous i
@@ -134,17 +148,26 @@ degree g
 degree g'
 assert ( g === map(target g, source g, g', Degree => degree g ))
 
+S = QQ[x]
+M = S^1/x++S^1
+presentation M
+g = M^{1}
+N = target g
+Hom(M,N)
+assert isWellDefined g
+f = homomorphism' g
+assert ( target f === Hom(M,N) )
+assert ( source f === S^1 )
+g' = homomorphism f
+assert ( g == g' )
+
 S = QQ[a,b]
 M = S^2/(a,b)++S^2/(b)
 g = id_M
 f = homomorphism' g
+assert isHomogeneous f
 assert ( g == homomorphism f )
 
-S = QQ[a,b,c]
-M = S^2/(a,b)++S^2/(b,c)
-g = id_M
-f = homomorphism' g
-assert ( g == homomorphism f )
 
 -----------------------------------------------------------------------------
 

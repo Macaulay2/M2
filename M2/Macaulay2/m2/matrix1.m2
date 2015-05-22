@@ -294,15 +294,16 @@ reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m
 
 adjoint' = method()
 adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
-     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G.
      -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
+     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
      F := source m;
-     reshape(H, F ** G, m))
+     inducedMap(H, F ** G, reshape(super H, F ** G, super m)))
+
 adjoint = method()
 adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
      -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
      H := target m;
-     reshape(Hom(G,H), F, m))
+     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m)))
 
 flatten Matrix := Matrix => m -> (
      R := ring m;
