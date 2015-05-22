@@ -59,6 +59,18 @@ void SLEvaluator::computeNextNode()
       R->add_to(v,values[ap(*inputPositionsIt++)]);
     numInputsIt++;
     break;
+  case SLProgram::Det:
+    {
+      int n = sqrt(*numInputsIt++);
+      FreeModule* S = R->make_FreeModule(n);
+      MatrixConstructor mat(S,S);
+      for (int i=0; i<n; i++)
+        for (int j=0; j<n; j++)
+          mat.set_entry(i,j,values[ap(*inputPositionsIt++)]);
+      MutableMatrix* M = MutableMatrix::from_matrix(mat.to_matrix(), true);
+      v = M->determinant()->get_value();
+    }
+   break;
   default: ERROR("unknown node type");
   }
   *vIt = v;  
@@ -103,6 +115,14 @@ SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
 SLProgram::GATE_POSITION SLProgram::addMProduct(const M2_arrayint a) 
 {
   mNodes.push_back(MProduct);
+  mNumInputs.push_back(a->len);
+  for(int i=0; i<a->len; i++)
+    mInputPositions.push_back(a->array[i]);
+  return mNodes.size()-1;
+}
+SLProgram::GATE_POSITION SLProgram::addDet(const M2_arrayint a) 
+{
+  mNodes.push_back(Det);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
     mInputPositions.push_back(a->array[i]);

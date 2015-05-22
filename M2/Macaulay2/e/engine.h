@@ -1979,6 +1979,7 @@ enum gbTraceValues
   gmp_ZZ rawSLPInputGate(SLProgram *S);
   gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
   gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a);
   gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a);
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);

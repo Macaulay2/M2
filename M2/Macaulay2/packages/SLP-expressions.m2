@@ -132,7 +132,7 @@ detGate List := L {*doubly nested list*} -> (
     n := #L;
     if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))
     then error "expected a square matrix (a doubly nested list) of gates";
-    new DetGate from {Inputs=>L}
+    new DetGate from {Inputs=>L,cache => new CacheTable}
     )
 
 DivideGate = new Type of Gate
@@ -140,7 +140,8 @@ net DivideGate := g -> net Divide(first g.Inputs,last g.Inputs)
 Gate / Gate := (a,b) -> if b===zeroGate then error "division by zero"  else 
                         if a===zeroGate then zeroGate else 
 			new DivideGate from {
-    			    Inputs => {a,b}
+    			    Inputs => {a,b}, 
+			    cache => new CacheTable
     			    } 
 
 ValueHashTable = new Type of HashTable
@@ -288,9 +289,11 @@ appendToSLProgram = method()
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
     g.cache#slp = rawSLPInputGate(slp)
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
-    g.cache#slp = rawSLPSumGate(slp,g.Inputs/(a->a.cache#slp))
+    g.cache#slp = rawSLPSumGate(slp, g.Inputs/(a->a.cache#slp))
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
-    g.cache#slp = rawSLPProductGate(slp,g.Inputs/(a->a.cache#slp))
+    g.cache#slp = rawSLPProductGate(slp, g.Inputs/(a->a.cache#slp))
+appendToSLProgram (RawSLProgram, DetGate) := (slp, g) -> 
+    g.cache#slp = rawSLPDetGate(slp, flatten g.Inputs/(a->a.cache#slp))
 ///
 restart
 load "SLP-expressions.m2"
@@ -301,7 +304,8 @@ n0 = appendToSLProgram(s,C)
 n1 = appendToSLProgram(s,X)
 n2 = appendToSLProgram(s,X+C)
 n3 = appendToSLProgram(s,productGate{X,X,C})
-rawSLPsetOutputPositions(s,{n0,n1,n2,n3}) 
+n4 = appendToSLProgram(s,detGate{{X,C},{C,X}})
+rawSLPsetOutputPositions(s,{n0,n1,n2,n3,n4}) 
 e = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
 rawSLEvaluatorEvaluate(e, raw matrix{{2_QQ}})
 ///

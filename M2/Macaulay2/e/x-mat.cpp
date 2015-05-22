@@ -740,6 +740,7 @@ unsigned int rawSLProgramHash(SLProgram *) { return 0; }
 gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
 gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMSum(a)); }
 gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMProduct(a)); }
+gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDet(a)); }
 gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a) { 
   S->setOutputPositions(a); 
   return to_gmp_ZZ(0); // this function should have returned "void"

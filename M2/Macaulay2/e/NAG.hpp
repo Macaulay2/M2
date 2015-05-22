@@ -522,7 +522,7 @@ public:
   GATE_POSITION addInput() { return -(++inputCounter); }
   GATE_POSITION addMSum(const M2_arrayint);
   GATE_POSITION addMProduct(const M2_arrayint);
-  // GATE_POSITION addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
+  GATE_POSITION addDet(const M2_arrayint);
   void setOutputPositions(const M2_arrayint); 
   void text_out(buffer&) const;
 };
