@@ -122,8 +122,11 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 	  else (
 	       m := basis(deg,R);
 	       s := degreesTally#deg;
-	       reshape(F,G, 
-		    m * (randommat opts)(R, numgens source m, s))))
+	       f := reshape(F,G, 
+		    m * (randommat opts)(R, numgens source m, s));
+	       -- note: "reshape" does not preserve homogeneity, so we restore it here:
+	       f = map(F,G,f, Degree => toList (degreeLength R:0));
+	       f))
      else (
 	  randomElement := memoize(
 	       deg -> (

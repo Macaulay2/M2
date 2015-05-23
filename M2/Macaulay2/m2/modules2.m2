@@ -22,6 +22,9 @@ Module + Module := Module => (M,N) -> (
 
 tensor(Module, Module) := Module => options -> (M,N) -> M**N
 Module ** Module := Module => (M,N) -> (
+     (oM,oN) := (M,N);
+     Y := youngest(M.cache.cache,N.cache.cache);
+     if Y#?(symbol **,M,N) then return Y#(symbol **,M,N);
      if M.?generators and not isFreeModule N
      or N.?generators and not isFreeModule M then (
 	  if M.?generators then M = cokernel presentation M;
@@ -29,19 +32,21 @@ Module ** Module := Module => (M,N) -> (
 	  );
      R := ring M;
      if R =!= ring N then error "expected modules over the same ring";
-     if isFreeModule M then (
-	  if isFreeModule N then (
-	       new Module from (R, raw M ** raw N)
-	       )
-	  else subquotient(
-	       if N.?generators then M ** N.generators,
-	       if N.?relations then M ** N.relations))
-     else (
-	  if isFreeModule N then (
-	       subquotient(
-		    if M.?generators then M.generators ** N,
-		    if M.?relations then M.relations ** N))
-	  else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations ))))
+     T := if isFreeModule M then (
+	       if isFreeModule N then (
+		    new Module from (R, raw M ** raw N)
+		    )
+	       else subquotient(
+		    if N.?generators then M ** N.generators,
+		    if N.?relations then M ** N.relations))
+	  else (
+	       if isFreeModule N then (
+		    subquotient(
+			 if M.?generators then M.generators ** N,
+			 if M.?relations then M.relations ** N))
+	       else cokernel map(R, rawModuleTensor( raw M.relations, raw N.relations )));
+     Y#(symbol **,oM,oN) = T;
+     T)
 
 Matrix ** Module := Matrix => (f,M) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else  f ** id_M
 Module ** Matrix := Matrix => (M,f) -> if isFreeModule M and M == (ring M)^1 and ring M === ring f then f else id_M ** f
@@ -481,47 +486,30 @@ Hom(Ideal, Ring) := Module => (I,R) -> Hom(module I, R^1)
 Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
 
 Hom(Module, Module) := Module => (M,N) -> (
-     if isFreeModule M 
-     then dual M ** N
-     else kernel Hom(presentation M, N)
-     )
--- An alternate Hom routine:
-Hom(Module, Module) := Module => (M,N) -> (
-    if isFreeModule M and isFreeModule N then (
-        dualM := dual M;
-        MN := dualM ** N;
-        MN.cache.Hom = {M, N, dualM, N};
-        return MN;
-        );
-     homog := isHomogeneous M and isHomogeneous N;
-     if debugLevel > 0 and homog then pushvar(symbol flagInhomogeneity,true);
-     -- This version is perhaps less transparent, but is
-     -- easier to determine the link with homomorphisms.
-     m := presentation M;
-     mdual := transpose m;
-     n := presentation N;
-     h1 := modulo(mdual ** target n, target mdual ** n);
-     MN = trim subquotient(h1,source mdual ** n);
-     -- Now we store the information that 'homomorphism'
-     -- will need to reconstruct the map corresponding to
-     -- an element.
-     MN.cache.Hom = {M,N,source mdual,target n};
-     if debugLevel > 0 and homog then popvar symbol flagInhomogeneity;
-     MN)
+     Y := youngest(M.cache.cache,N.cache.cache);
+     if Y#?(Hom,M,N) then return Y#(Hom,M,N);
+     H := kernel (transpose presentation M ** N);
+     H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
+     Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
+     H)
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
-     if not isFreeModule(source f) or 
-        numgens source f =!= 1 or
-        not (target f).cache.?Hom
-	then error "homomorphism may only be determined for maps R --> Hom(M,N)";
-     MN := (target f).cache.Hom;
-     M := MN#0;
-     N := MN#1;
-     M0 := MN#2;
-     N0 := MN#3;
-     deg := (degrees source f)#0;
-     map(N,M,adjoint1(super f, M0, N0),Degree=>deg))
+     -- from a map R^1 -> Hom(M,N) produce a map M-->N
+     H := target f;
+     if not H.cache.?homomorphism then error "expected target of map to be of the form 'Hom(M,N)'";
+     if not isFreeModule source f
+     or not rank source f == 1 then error "expected source of map to be free of rank 1";
+     H.cache.homomorphism f)
+
+homomorphism' = method()
+homomorphism' Matrix := Matrix => (f) -> (
+     -- from a map M-->N produce a map R^1 -> Hom(M,N)
+     R := ring f;
+     M := source f;
+     adjoint(f,R^1,M)
+     )
+
 -----------------------------------------------------------------------------
 pdim Module := M -> length resolution trim M
 

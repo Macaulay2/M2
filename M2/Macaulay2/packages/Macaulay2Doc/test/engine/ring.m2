@@ -193,7 +193,7 @@ assert( degrees source w == {{1}, {2}, {3}} )
 
 f = matrix {{1,x,x^2}}
 g = matrix {{1,x^5}}
-assert ( adjoint1(dual f ** g, dual source f, target g) === g ** f )
+assert ( adjoint'(dual f ** g, source f, target g) === g ** f )
 
 -- right multiplication:
 raw v * raw x

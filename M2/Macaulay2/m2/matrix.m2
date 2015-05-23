@@ -590,13 +590,15 @@ inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
 	  );
      g := generators sM * cover f * (generators N // generators sN);
      h := generators M;
-     p := map(M, N, g // h, Degree => options.Degree);
+     p := g//h;
+     p = map(M,N,p,Degree => if options.Degree === null then degree p else options.Degree);
      if options.Verify then (
 	  if relations sM % relations M != 0 then error "inducedMap: expected new target not to have fewer relations";
 	  if generators N % generators sN != 0 then error "inducedMap: expected new source not to have more generators";
-	  if g % h != 0 then error "inducedMap: expected matrix to induce a map";
+	  if g % h % relations M != 0 then error "inducedMap: expected matrix to induce a map";
 	  if not isWellDefined p then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
+     if isHomogeneous M and isHomogeneous N and isHomogeneous f then assert isHomogeneous p;
      p)
 inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)

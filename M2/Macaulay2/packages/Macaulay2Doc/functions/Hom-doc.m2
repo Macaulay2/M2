@@ -117,10 +117,11 @@ Node
   :
    the induced map on Hom
  Description
+  -- the code for Hom(Module,Matrix) is wrong, so we simplify this example temporarily
   Example
    R = QQ[x]
    f = vars R
-   M = image f
+   M = coker presentation image f
    g = Hom(M,f)
    target g
    source g

@@ -1554,7 +1554,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
 
-if ! test "$FAKEROOT"
+if test "$FAKEROOT" = false
 then if test "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      fi

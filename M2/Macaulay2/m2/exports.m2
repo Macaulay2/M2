@@ -474,7 +474,7 @@ export {
 	symbol addHook,
 	symbol addStartFunction,
 	symbol adjoint,
-	symbol adjoint1,				    -- adjoint' ?
+	symbol adjoint',
 	symbol alarm,
 	symbol all,
 	symbol ambient,
@@ -729,6 +729,7 @@ export {
 	symbol homogenize,
 	symbol homology,
 	symbol homomorphism,
+	symbol homomorphism',
 	symbol horizontalJoin,
 	symbol html,
 	symbol httpHeaders,
