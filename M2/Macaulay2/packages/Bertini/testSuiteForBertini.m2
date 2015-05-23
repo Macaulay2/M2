@@ -9,7 +9,7 @@ help  "bertiniRefineSols"--check
 
 
 
-<<<<<<< HEAD
+-- <<<<<<< HEAD
 --
 restart
 path=prepend("/Applications/Macaulay2-1.5/gitStuff/M2/M2/Macaulay2/packages",path)
@@ -45,8 +45,8 @@ oo#1
 keys o20
 o21_0
 peek oo
-=======
->>>>>>> f6913c93582189b936de324a20911184ac79b04c
+-- =======
+-- >>>>>>> f6913c93582189b936de324a20911184ac79b04c
 
 ----refined solutions--broken
 R=CC[x,y]
