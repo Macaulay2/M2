@@ -67,7 +67,6 @@ help bertiniRefineSols
 
 
 
-<<<<<<< HEAD
 ---Get sample to work
 ---This is an example of bertiniSample
 --We do a pos run to get witness_data file found 
