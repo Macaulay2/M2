@@ -15,18 +15,28 @@
 needsPackage "CompleteIntersectionResolutions"
 needsPackage "HigherCIOperators"
 
+--This is the code Dan wrote May 20 2015 to replace the incorrect Hom (temporarily called Hom2)
+Hom(Module,Module) := (M,N) -> kernel (transpose presentation M ** N)
+Hom(Matrix,Module) := (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N)
+Hom(Module,Matrix) := (M,f) -> inducedMap(Hom(M,target f),Hom(M,source f),dual cover M ** f)
+
+{*
 ev = N -> (
     --if N is a free R-module returns the contraction map N**N^* -> R.
     reshape((ring N)^1, N**(dual N), id_N)
     )
+*}
 compose = method()
 compose(Module, Module, Module) := (M,N,P) ->(
         --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
     MN := Hom(M,N);
     NP := Hom(N,P);
     MP := Hom(M,P);
+    CN := cover N;
+    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
     ambMap := map(ambient MP, (ambient MN) ** ambient(NP), 
-	    (cover M)**ev(cover N)**(cover P));
+--	    (cover M)**ev(cover N)**(cover P));
+	    (cover M)**ev**(cover P));
     gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
     map(MP, MN**NP,gensMap)
     )
@@ -86,7 +96,7 @@ A = chainComplex(apply(length FR-1, i->lift (FR.dd_(i+1),S)))
 L = trueKoszul ff
 u = higherCIOperators(A,L);
 
-k = 1
+k = 0
 B = M_(k+4);
 C = M_(k+2)**red L_1;
 D = M_k**red L_2;
