@@ -197,6 +197,11 @@ sub (ProductGate, Option) := memoize((g,ab) -> (
     productGate apply(g.Inputs, i->sub(i,ab))
     ))
 sub (DetGate, Option) := memoize((g,ab) -> detGate applyTable(g.Inputs, i->sub(i,ab)))
+sub (DivideGate, Option) := memoize((g,ab) -> (
+    subSanityCheck ab;
+    (x,y) := toSequence apply(g.Inputs, i->sub(i,ab));
+    x/y
+    ))
 
 sub (Gate, List) := (g,L) -> (
     g' := g;
@@ -420,6 +425,13 @@ printName (ProductGate, HashTable) := (g,h) -> if h#?g then h#g else (
     s := between(" * ", apply(g.Inputs, gg->printName(gg,h)));  
     h#g = "G"|toString h#numGates;
     addLine(h, h#g | " = " | concatenateNets s);  
+    h#numGates = h#numGates + 1;
+    h#g 
+    )
+printName (DivideGate, HashTable) := (g,h) -> if h#?g then h#g else (
+    (x,y) := toSequence apply(g.Inputs, gg->printName(gg,h));  
+    h#g = "G"|toString h#numGates;
+    addLine(h, h#g | " = " | x | " / " | y);  
     h#numGates = h#numGates + 1;
     h#g 
     )
