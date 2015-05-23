@@ -313,7 +313,10 @@ flatten Matrix := Matrix => m -> (
      then error "expected source and target to be free modules";
      if numgens F === 1 
      then m
-     else reshape(R^1, G ** dual F ** R^{- degree m}, m))
+     else (
+	  f := reshape(R^1, G ** dual F ** R^{ - degree m}, m);
+	  f = map(target f, source f, f, Degree => toList(degreeLength R:0));
+	  f))
 
 flip = method()
 flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
