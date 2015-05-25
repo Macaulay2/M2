@@ -9,7 +9,9 @@ double pi = 3.1415;
 int break2 = breakOnMe ();
 
 #ifdef NDEBUG
-#define GC_IGNORE_WARN
+#ifndef GC_IGNORE_WARN
+#define GC_IGNORE_WARN 1
+#endif
 #endif
 #define GC_FREE_SPACE_DIVISOR 12
 #define GC_INITIAL_HEAP_SIZE 70000000

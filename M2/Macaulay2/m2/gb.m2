@@ -274,6 +274,12 @@ recordOptions := (G,opts) -> (
      G#"computation options" = getSomeOptions(opts,computationOptionDefaults);
      )
 
+degreeToHeft = (R,d) -> (
+     if d === null	 -- null is a default value for HardDegreeLimit
+     or d === {}	 -- see stoppingOptionDefaults.DegreeLimit, which is {}
+     then {}
+     else {sum apply(heft R,checkListOfIntegers d,times)})
+
 gb Matrix := GroebnerBasis => opts -> (f) -> (
      checkArgGB f;
      type := gbTypeCode opts;
@@ -288,7 +294,7 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      log := FunctionApplication { rawGBSetStop, (
 	       G.RawComputation,
 	       opts.StopBeforeComputation,
-	       if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
+	       degreeToHeft(ring f, opts.DegreeLimit),
 	       toEngineNat opts.BasisElementLimit,
 	       toEngineNat opts.SyzygyLimit,
 	       toEngineNat opts.PairLimit,
