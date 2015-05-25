@@ -170,9 +170,6 @@ M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATI
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
 endif
-ifeq (@XML@,yes)
-M2_LIBRARIES += -lxml2
-endif
 M2_LIBRARIES += -lm
 ifneq (@host_os@,mingw32)
 M2_LIBRARIES += -lc
@@ -212,6 +209,10 @@ ifneq ("$(EXECSTACK)","no")
 endif
 	- printenv LD_LIBRARY_PATH
 ifneq (@LDD@,false)
+	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
+	then echo "some libraries not found" >&2;							\
+	     exit 1;											\
+	fi
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
 ifneq (@OTOOL@,false)

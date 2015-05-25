@@ -194,14 +194,14 @@ TEST ///
 ///
 
 TEST ///
-  -- largest prime < 2^62
-  R = ZZpFlint( 4611686018427387847 ) 
+  -- largest prime < 2^31
+  R = ZZpFlint( 2147483647 ) 
   testLinearAlgebra$FLINT R
 ///
 
 TEST ///
-  -- largest prime < 2^63
-  R = ZZpFlint(9223372036854775783 )
+  -- largest prime < 2^30
+  R = ZZpFlint(1073741789 )
   testLinearAlgebra$FLINT R
 ///
 

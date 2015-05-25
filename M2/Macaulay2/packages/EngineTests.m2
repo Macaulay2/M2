@@ -41,7 +41,8 @@ fieldsFLINT = {
     "ZZpFlint 2",
     "ZZpFlint 5",
     "ZZpFlint 101",
-    "ZZpFlint 8589934669"
+    "ZZpFlint 4294967291"		  -- less than 2^32
+--    "ZZpFlint 8589934669"
 --    "ZZpFlint 4611686018427387847",
 --    "ZZpFlint 9223372036854775783"
     }

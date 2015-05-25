@@ -447,7 +447,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,yes)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
@@ -1333,7 +1333,7 @@ then AC_MSG_CHECKING([whether the Accelerate framework is available])
 	     fi
 	 ])
 fi
-test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
+test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
 
 if test $BUILD_lapack = yes
 then # test whether the fortran compiler can handle lapack, which, starting with
@@ -1375,7 +1375,8 @@ CPPFLAGS="-I/usr/local/include/libxml2 -I/usr/include/libxml2 $CPPFLAGS"
 AC_CHECK_HEADER(libxml/parser.h,,[AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS (-I/foo/bar/libxml2) or install libxml2 development files])])
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
-AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(libxml2 not found or not linkable))
+AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
+AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
 
 AC_SUBST(ENABLE_MPACK,no)
 AC_ARG_ENABLE(mpack,
@@ -1553,7 +1554,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
 
-if ! test "$FAKEROOT"
+if test "$FAKEROOT" = false
 then if test "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      fi
@@ -1573,7 +1574,7 @@ do case $i in
 	#  libgcc_s: comes only in dynamic form
 	#      pari: it's only the dynamic form that is gmp compatible, and it needs mpir to be dynamic
 	#      mpir: pari needs mpir to be dynamic
-	-lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
+	-lpthread | -ldl | -lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
 		LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
 	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
 	# and later we'll figure out a run-time test for whether pari is based on gmp

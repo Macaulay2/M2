@@ -6,7 +6,7 @@
 
 isOn (Point,NumericalVariety) := o -> (p, V) -> (
     o = fillInDefaultOptions o;
-    if o.Software === BERTINI then #bertiniComponentMemberTest(V,{p})>0
+    if o.Software === BERTINI then #bertiniComponentMemberTest({p},V)>0
     else any(keys V, d->any(V#d, C->isOn(p,C,o)))  
     )
 

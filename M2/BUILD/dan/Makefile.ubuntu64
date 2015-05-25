@@ -40,6 +40,10 @@ endif
 endif
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
 CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
+
+# /usr/lib/x86_64-linux-gnu/libpari-gmp-tls.so.4 crashes on exit, so avoid it:
+CONFIGOPTIONS += --enable-build-libraries=pari
+
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = x86_64 ]

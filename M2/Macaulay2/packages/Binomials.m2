@@ -23,14 +23,15 @@
 
 newPackage(
 	"Binomials",
-	Version => "1.1",
-	Date => "December 2014",
+	Version => "1.2",
+	Date => "April 2015",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "Specialized routines for binomial ideals",
 	Configuration => { },
+	PackageImports => {"FourTiTwo", "Cyclotomic"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",
@@ -101,9 +102,6 @@ export {
      --Types
      PartialCharacter--HashTable
      }
-
-needsPackage "FourTiTwo";
-needsPackage "Cyclotomic";
 
 axisSaturate = (I,i) -> (
 -- By Ignacio Ojeda and Mike Stillman

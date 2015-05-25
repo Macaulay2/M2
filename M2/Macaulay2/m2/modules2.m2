@@ -402,7 +402,7 @@ addHook(Module, symbol minimalPresentation, (opts,M) -> (
 
 addHook(Module, symbol minimalPresentation, (opts,M) -> (
      	  R := ring M;
-	  if (isAffineRing R and isHomogeneous M) or (R.?SkewCommutative and isField coefficientRing R and isHomogeneous M) then (
+	  if (isAffineRing R and isHomogeneous M) or (R.?SkewCommutative and isAffineRing coefficientRing R and isHomogeneous M) then (
 	       f := presentation M;
 	       g := complement f;
 	       N := cokernel modulo(g, f);
