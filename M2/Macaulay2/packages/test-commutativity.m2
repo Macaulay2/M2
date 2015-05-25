@@ -1,15 +1,6 @@
---The function call 
---isPossiblyCommutative(ff,MR,k) 
---computes whether the class of the map 
---M_(k+4) --> M_k**(L_2), modulo the maximal ideal times the space of stably trivial
---maps, where L_2 is the 2nd exterior power of R^c 
---and M_k is the k-th R-syzygy of MR = M_0.
---This is nonzero, for example, nonzero in the case M = R/(a,bc) 
---where R = k[a,b,c]/(a2, b2, c2) for small values of k.
-
 needsPackage "CompleteIntersectionResolutions"
 needsPackage "HigherCIOperators"
-
+load "compose.m2"
 {*
 --This is the code Dan wrote May 20 2015 to replace the incorrect Hom (temporarily called Hom2)
 Hom(Module,Module) := (M,N) -> kernel (transpose presentation M ** N)
@@ -39,7 +30,7 @@ compose(Module, Module, Module) := (M,N,P) ->(
     gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
     map(MP, MN**NP,gensMap)
     )
-*}
+
 
 compose = method()
 compose(Module, Module, Module) := (M,N,P) ->(
@@ -52,15 +43,74 @@ compose(Module, Module, Module) := (M,N,P) ->(
     liftGens := map (ambient MN**ambient NP,
 	    	     dual cover M ** cover N ** dual cover N ** ambient P,
 		     dual cover M ** gens N ** dual cover N ** ambient P);
+
+assert (liftGens% ( gens MN ** gens MP) == 0);
     liftedGens := (gens MN ** gens NP)//liftGens;
     contractor := map(ambient MP, dual cover M ** cover N ** dual cover N ** ambient P,
 	    (cover M)**ev**(ambient P));
+assert ((contractor*liftedGens)% ( gens MP | relations MP ) == 0);
     gensMap := (contractor*liftedGens)//gens(MP);
     map(MP, MN**NP,gensMap)
     )
 
 
-triv = method()
+compose = method()
+compose(Module, Module, Module) := (M,N,P) ->(
+        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
+	--the following just simplify notation:
+    MN = Hom(M,N);
+    NP = Hom(N,P);
+    MP = Hom(M,P);
+    CN := cover N;
+    pN = presentation N;
+    pM = presentation M;
+    
+    --version of MN whose cover naturally maps to (dual cover M ** cover N), and similarly for NP, MP
+    gensMN' = (dual cover M ** gens N)*gens ker map(dual source pM**N, dual target pM ** cover N,
+	      dual pM**map(N,cover N, 1));
+    MN' = subquotient(gensMN', relations MN);
+    toMN' = map(MN', MN, gens MN'//gens MN);  
+    
+    gensNP' = (dual cover N ** gens P)*
+              gens ker map(dual source pN**P, dual target pN ** cover P, dual pN**map(P,cover P, 1));
+    NP' = subquotient(gensNP', relations NP);
+    toNP' = map(NP', NP, gens NP'//gens NP);  
+
+    gensMP' = (dual cover M ** gens P)*gens ker map(dual source pM**P, dual target pM ** cover P,
+	      dual pM**map(P,cover P, 1));
+    MP' = subquotient(gensMP', relations MP);
+    toMP = map(MP, MP', gens MP'//gens MP); -- note that this goes the other way from toMN'
+    
+    --define the map the cover of the new version of MN into the tensor product, and similarly for NP and MP
+    toCMStarCN = map (dual cover M**cover N, cover MN', 
+	gens ker map(dual source pM**N, dual target pM ** cover N, dual pM**map(N,cover N, 1)));
+    toCNStarCP = map (dual cover N**cover P, cover NP', 
+	gens ker map(dual source pN**P, dual target pN ** cover P, dual pN**map(P,cover P, 1)));
+    toCMStarCP = map (dual cover M**cover P, cover MP', 
+	gens ker map(dual source pM**P, dual target pM ** cover P, dual pM**map(P,cover P, 1)));
+
+    --now that we can map cover MN'** cover NP' --> (dual cover M)**cover N **(dual cover N) ** cover P
+    --we can contract the middle terms
+    ev = reshape((ring CN)^1, CN**(dual CN), id_CN);
+    contractor = map(MP',MN'**NP', ((dual cover M **ev**cover P)*(toCMStarCN**toCNStarCP))//toCMStarCP);
+    compose = toMP*(contractor)*(toMN'**toNP')
+    )
+
+///
+restart
+load "test-commutativity.m2"
+R=QQ[x,y]
+M=image vars R ++ R^2
+f = compose(M,M,M);
+H = Hom(M,M);
+scan(numgens H,i->(
+g = H_{i};
+h = homomorphism g;
+assert(homomorphism (f * (g ** g)) -= h * h)
+))
+///
+*}
+
 
 {*
 triv(Module, Module) := (M,N)->(
@@ -73,6 +123,7 @@ triv(Module, Module) := (M,N)->(
     )
 *}
 
+triv = method()
 triv(Module, Module) := (M,N) ->(
     gN := map(N,cover N, 1);
     MCN := Hom(M,cover N);
@@ -101,6 +152,9 @@ S = ZZ/101[a,b,c]
 A = matrix"a,b,c;b,c,a" 
 B = matrix"a,b;b,c"
 N = subquotient(A,B)
+
+compose(N,N,N)
+
 assert( (minimalPresentation compose(N,N,N)) === 
     map(cokernel map((S)^1,(S)^{{-2}},{{b^2-a*c}}),
 		cokernel map((S)^1,(S)^{{-2}},
@@ -256,6 +310,15 @@ rank source u
 
 
 --The following doesn't quite work, and would not be useful if it did!!
+--The function call 
+--isPossiblyCommutative(ff,MR,k) 
+--computes whether the class of the map 
+--M_(k+4) --> M_k**(L_2), modulo the maximal ideal times the space of stably trivial
+--maps, where L_2 is the 2nd exterior power of R^c 
+--and M_k is the k-th R-syzygy of MR = M_0.
+--This is nonzero, for example, nonzero in the case M = R/(a,bc) 
+--where R = k[a,b,c]/(a2, b2, c2) for small values of k.
+
 isPossiblyCommutative = (ff,MR,k) ->(
     --MR a module over R = S/ff.
     --the script returns false if the test shows that
@@ -287,14 +350,3 @@ isPossiblyCommutative = (ff,MR,k) ->(
    0==test % gb relations HBD
    )
 
-TEST///
-restart
-load "test-commutativity.m2"
-R=QQ[x,y]
-M=image vars R ++ R^2
-f = compose(M,M,M);
-H = Hom(M,M);
-g = H_{0}
-h = homomorphism g
-homomorphism (f * (g ** g)) == h * h
-///
