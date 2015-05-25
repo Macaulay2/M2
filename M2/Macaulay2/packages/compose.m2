@@ -1,3 +1,36 @@
+coverHomToProduct = (M,N) -> (
+    --provides the correct map cover Hom(M,N) --> dual cover M ** cover N
+    pM := presentation M;
+    kMN :=gens ker map(dual source pM**N, 
+	       dual target pM ** cover N,
+	      dual pM**map(N,cover N, 1));
+    gensMN' := (dual cover M ** gens N)*kMN;
+    (kMN, kMN*(gens Hom(M,N)//gensMN'))
+	)
+
+coverHomFromProduct = (M,N) -> (
+    --provides the correct map dual cover M ** cover N--> cover Hom(M,N)
+    pM := presentation M;
+    kMN :=gens ker map(dual source pM**N, 
+	       dual target pM ** cover N,
+	      dual pM**map(N,cover N, 1));
+    gensMN' := (dual cover M ** gens N)*kMN;
+    gensMN'//gens Hom(M,N))
+
+compose1 = (M,N,P) -> (
+    CN := cover N;
+    (kMN, toProductMN) := coverHomToProduct(M,N);
+    (kNP, toProductNP) := coverHomToProduct(N,P);
+    (kMP, toProductMP) := coverHomToProduct(M,P);    
+    fromProductMP := coverHomFromProduct(M,P);
+    ev := reshape((ring N)^1, CN**(dual CN), id_CN);
+    contractor := ((dual cover M **ev**cover P)*(kMN**kNP))//kMP;
+--    toMP*contractor*(toMN'**toNP')
+    map(Hom(M,P), Hom(M,N)**Hom(N,P),
+    fromProductMP*contractor*(toProductMN**toProductNP)
+    )
+    )
+
 compose = method()
 compose(Module, Module, Module) := (M,N,P) ->(
     --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
@@ -43,9 +76,17 @@ compose(Module, Module, Module) := (M,N,P) ->(
     )
 
 TEST///
+restart
+load "compose.m2"
 R=QQ[x,y]
 M=image vars R ++ R^2
-f = compose(M,M,M);
+f = compose1(M,M,M);
+
+source fromProductMP
+target (toProductMN**toProductNP)
+target contractor == source fromProductMP
+source contractor == target (toProductMN**toProductNP)
+
 H = Hom(M,M);
 scan(numgens H,i->(
 g = H_{i};
@@ -67,6 +108,4 @@ assert( (minimalPresentation compose(N,N,N)) ===
 
 end
 
-restart
-load "compose.m2"
 
