@@ -7,110 +7,6 @@ Hom(Module,Module) := (M,N) -> kernel (transpose presentation M ** N)
 Hom(Matrix,Module) := (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N)
 Hom(Module,Matrix) := (M,f) -> inducedMap(Hom(M,target f),Hom(M,source f),dual cover M ** f)
 *}
-{*
-ev = N -> (
-    --if N is a free R-module returns the contraction map N**N^* -> R.
-    reshape((ring N)^1, N**(dual N), id_N)
-    )
-*}
-
-{*
---old version of compose: assumed that ambient Hom(N,P) had cover N as a factor.
-compose = method()
-compose(Module, Module, Module) := (M,N,P) ->(
-        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
-    MN := Hom(M,N);
-    NP := Hom(N,P);
-    MP := Hom(M,P);
-    CN := cover N;
-    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
-    ambMap := map(ambient MP, (ambient MN) ** ambient(NP), 
---	    (cover M)**ev(cover N)**(cover P));
-	    (cover M)**ev**(cover P));
-    gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
-    map(MP, MN**NP,gensMap)
-    )
-
-
-compose = method()
-compose(Module, Module, Module) := (M,N,P) ->(
-        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
-    MN := Hom(M,N);
-    NP := Hom(N,P);
-    MP := Hom(M,P);
-    CN := cover N;
-    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
-    liftGens := map (ambient MN**ambient NP,
-	    	     dual cover M ** cover N ** dual cover N ** ambient P,
-		     dual cover M ** gens N ** dual cover N ** ambient P);
-
-assert (liftGens% ( gens MN ** gens MP) == 0);
-    liftedGens := (gens MN ** gens NP)//liftGens;
-    contractor := map(ambient MP, dual cover M ** cover N ** dual cover N ** ambient P,
-	    (cover M)**ev**(ambient P));
-assert ((contractor*liftedGens)% ( gens MP | relations MP ) == 0);
-    gensMap := (contractor*liftedGens)//gens(MP);
-    map(MP, MN**NP,gensMap)
-    )
-
-
-compose = method()
-compose(Module, Module, Module) := (M,N,P) ->(
-        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
-	--the following just simplify notation:
-    MN = Hom(M,N);
-    NP = Hom(N,P);
-    MP = Hom(M,P);
-    CN := cover N;
-    pN = presentation N;
-    pM = presentation M;
-    
-    --version of MN whose cover naturally maps to (dual cover M ** cover N), and similarly for NP, MP
-    gensMN' = (dual cover M ** gens N)*gens ker map(dual source pM**N, dual target pM ** cover N,
-	      dual pM**map(N,cover N, 1));
-    MN' = subquotient(gensMN', relations MN);
-    toMN' = map(MN', MN, gens MN'//gens MN);  
-    
-    gensNP' = (dual cover N ** gens P)*
-              gens ker map(dual source pN**P, dual target pN ** cover P, dual pN**map(P,cover P, 1));
-    NP' = subquotient(gensNP', relations NP);
-    toNP' = map(NP', NP, gens NP'//gens NP);  
-
-    gensMP' = (dual cover M ** gens P)*gens ker map(dual source pM**P, dual target pM ** cover P,
-	      dual pM**map(P,cover P, 1));
-    MP' = subquotient(gensMP', relations MP);
-    toMP = map(MP, MP', gens MP'//gens MP); -- note that this goes the other way from toMN'
-    
-    --define the map the cover of the new version of MN into the tensor product, and similarly for NP and MP
-    toCMStarCN = map (dual cover M**cover N, cover MN', 
-	gens ker map(dual source pM**N, dual target pM ** cover N, dual pM**map(N,cover N, 1)));
-    toCNStarCP = map (dual cover N**cover P, cover NP', 
-	gens ker map(dual source pN**P, dual target pN ** cover P, dual pN**map(P,cover P, 1)));
-    toCMStarCP = map (dual cover M**cover P, cover MP', 
-	gens ker map(dual source pM**P, dual target pM ** cover P, dual pM**map(P,cover P, 1)));
-
-    --now that we can map cover MN'** cover NP' --> (dual cover M)**cover N **(dual cover N) ** cover P
-    --we can contract the middle terms
-    ev = reshape((ring CN)^1, CN**(dual CN), id_CN);
-    contractor = map(MP',MN'**NP', ((dual cover M **ev**cover P)*(toCMStarCN**toCNStarCP))//toCMStarCP);
-    compose = toMP*(contractor)*(toMN'**toNP')
-    )
-
-///
-restart
-load "test-commutativity.m2"
-R=QQ[x,y]
-M=image vars R ++ R^2
-f = compose(M,M,M);
-H = Hom(M,M);
-scan(numgens H,i->(
-g = H_{i};
-h = homomorphism g;
-assert(homomorphism (f * (g ** g)) -= h * h)
-))
-///
-*}
-
 
 {*
 triv(Module, Module) := (M,N)->(
@@ -122,15 +18,6 @@ triv(Module, Module) := (M,N)->(
     map(Hom(M,N), Hom(target s, source proj), Hom(inc,proj))
     )
 *}
-
-triv = method()
-triv(Module, Module) := (M,N) ->(
-    gN := map(N,cover N, 1);
-    MCN := Hom(M,cover N);
-    freegens := map(MCN, cover MCN, 1);
-    Hom(M, gN)*freegens)
-
-
 {*
 triv(Module, Module) := (M,N) -> (
     --image triv is the submodule of stably trivial homomorphisms
@@ -138,29 +25,13 @@ triv(Module, Module) := (M,N) -> (
     Hom(M, p))
 *}
 
-TEST///
-S = ZZ/101[a,b,c]
-M = S^1/ideal a^3
-N= S^1/ideal a^2
-P = S^1/a^3
-assert(homomorphism((compose(M,N,P))_{0}) == map(M,P,matrix{{a}}))
-triv(M,N)
-///
-
-TEST///
-S = ZZ/101[a,b,c]
-A = matrix"a,b,c;b,c,a" 
-B = matrix"a,b;b,c"
-N = subquotient(A,B)
-
-compose(N,N,N)
-
-assert( (minimalPresentation compose(N,N,N)) === 
-    map(cokernel map((S)^1,(S)^{{-2}},{{b^2-a*c}}),
-		cokernel map((S)^1,(S)^{{-2}},
-			{{b^2-a*c}}),{{1}}) );
-///
-
+triv = method()
+triv(Module, Module) := (M,N) ->(
+    --image triv is the submodule of stably trivial homomorphisms
+    gN := map(N,cover N, 1);
+    MCN := Hom(M,cover N);
+    freegens := map(MCN, cover MCN, 1);
+    Hom(M, gN)*freegens)
 
 end -- 
 
@@ -184,7 +55,7 @@ A = chainComplex(apply(length FR-1, i->lift (FR.dd_(i+1),S)))
 L = trueKoszul ff
 u = higherCIOperators(A,L);
 
-k = 1
+k = 0
 B = M_(k+4);
 C = M_(k+2)**red L_1;
 D = M_k**red L_2;
@@ -196,7 +67,15 @@ q = map(D,C, red u#{2,k+2,1}); --M_(k+2)**red L_1 -> M_(k)**red L_2
 assert(isStablyTrivial (q*p) and not isStablyTrivial p and not isStablyTrivial p)
 
 --form the map Hom(B,D)<--Hom(B,C)**Hom(C,D)
-time c = compose(B,C,D);
+elapsedTime c = compose(B,C,D);
+elapsedTime c1 = compose1(B,C,D);
+c == c1
+betti c
+betti c1
+source c == source c1
+target c == target c1
+(gens target c * matrix c)%relations target c == (gens target c1 * matrix c1) % relations target c1
+
 betti gens Hom(B,C)
 betti gens Hom(C,D)
 -- test whether q*p

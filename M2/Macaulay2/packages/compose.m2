@@ -24,11 +24,10 @@ compose1 = (M,N,P) -> (
     (kMP, toProductMP) := coverHomToProduct(M,P);    
     fromProductMP := coverHomFromProduct(M,P);
     ev := reshape((ring N)^1, CN**(dual CN), id_CN);
-    contractor := ((dual cover M **ev**cover P)*(kMN**kNP))//kMP;
---    toMP*contractor*(toMN'**toNP')
+    contractor := (dual cover M **ev**cover P)//kMP;
     map(Hom(M,P), Hom(M,N)**Hom(N,P),
     fromProductMP*contractor*(toProductMN**toProductNP)
-    )
+       )
     )
 
 compose = method()
@@ -75,24 +74,38 @@ compose(Module, Module, Module) := (M,N,P) ->(
     toMP*(contractor)*(toMN'**toNP')
     )
 
+end
+
 TEST///
 restart
 load "compose.m2"
 R=QQ[x,y]
 M=image vars R ++ R^2
-f = compose1(M,M,M);
-
-source fromProductMP
-target (toProductMN**toProductNP)
-target contractor == source fromProductMP
-source contractor == target (toProductMN**toProductNP)
-
+f = compose(M,M,M);
+f1 = compose1(M,M,M);
+f == f1 -- false!!
 H = Hom(M,M);
+
 scan(numgens H,i->(
+	scan(numgens H, j->(
 g = H_{i};
+g1 = H_{j};
 h = homomorphism g;
-assert(homomorphism (f * (g ** g)) == h * h)
-))
+h1 = homomorphism g1;
+if (homomorphism (f * (g ** g1)) != h1 * h) then error();
+))))
+
+-- compose1, in the following test fails as of 5/25, 12:30
+scan(numgens H,i->(
+	scan(numgens H, j->(
+g = H_{i};
+g1 = H_{j};
+h = homomorphism g;
+h1 = homomorphism g1;
+if (homomorphism (f1 * (g ** g1)) != h1 * h) then error();
+))))
+
+
 ///
 
 TEST///
@@ -100,12 +113,19 @@ S = ZZ/101[a,b,c]
 A = matrix"a,b,c;b,c,a" 
 B = matrix"a,b;b,c"
 N = subquotient(A,B)
-assert( (minimalPresentation compose(N,N,N)) === 
+assert( (minimalPresentation compose1(N,N,N)) === 
     map(cokernel map((S)^1,(S)^{{-2}},{{b^2-a*c}}),
 		cokernel map((S)^1,(S)^{{-2}},
 			{{b^2-a*c}}),{{1}}) );
+ ///
+restart
+load "compose.m2"
+R=ZZ/101[x_0..x_4]
+F = res coker vars R
+M = apply(length F, i-> image F.dd_i);
+elapsedTime c = compose(M_1, M_2, M_3);
+elapsedTime c1 = compose1(M_1, M_2, M_3);
+c != c1
 ///
-
-end
 
 
