@@ -285,41 +285,7 @@ matrix(List) := Matrix => opts -> (m) -> (
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
      else error "expected a table of ring elements or matrices, or a list of elements of the same module")
 
---------------------------------------------------------------------------
-
-Module#id = (M) -> map(M,M,1)
-
-reshape = method()
-reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
-
-adjoint' = method()
-adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
-     -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
-     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
-     F := source m;
-     inducedMap(H, F ** G, reshape(super H, F ** G, super m)))
-
-adjoint = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
-     -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
-     H := target m;
-     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m)))
-
-flatten Matrix := Matrix => m -> (
-     R := ring m;
-     F := target m;
-     G := source m;
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     if numgens F === 1 
-     then m
-     else (
-	  f := reshape(R^1, G ** dual F ** R^{ - degree m}, m);
-	  f = map(target f, source f, f, Degree => toList(degreeLength R:0));
-	  f))
-
-flip = method()
-flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
+-----------------------------------------------------------------------------
 
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
