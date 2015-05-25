@@ -285,8 +285,6 @@ matrix(List) := Matrix => opts -> (m) -> (
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
      else error "expected a table of ring elements or matrices, or a list of elements of the same module")
 
------------------------------------------------------------------------------
-
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
      -- this function zeroes the degree, preserving homogeneity
