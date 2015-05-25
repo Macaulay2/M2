@@ -72,7 +72,7 @@ stableHom(Module, Module) := (M,N)->(
     if isFreeModule M then return map((ring M)^0, H, 0);
     p := map(N, cover N, 1);
     map(coker Hom(M,p), Hom(M,N), 1))
-
+{*
 mapToHomomorphism = method()
 mapToHomomorphism Matrix := f -> (
    S := ring f;
@@ -85,7 +85,7 @@ mapToHomomorphism Matrix := f -> (
    f2 := f1 // (generators H);
    map(H,S^1,f2)
    )
-{*
+
 mapToHomomorphism Matrix := f ->(
     S := ring f;
     M := source f;
@@ -102,7 +102,7 @@ isStablyTrivial Matrix := f ->(
    -- f: M \to N is given.
    -- represent f as an element of Hom, that is, as a map (ring M)^1 \to Hom(M,N) 
    --then apply stableHom.
-   f1 := mapToHomomorphism f;
+   f1 := homomorphism' f;
    (stableHom(source f, target f)*f1) == 0)
 
 
@@ -3256,42 +3256,6 @@ doc ///
    SeeAlso
     stableHom
 ///
-doc ///
-   Key
-    mapToHomomorphism
-    (mapToHomomorphism, Matrix)
-   Headline
-    converts a map f:M\to N to a map S^1 \to Hom(M,N), where M,N are S-modules
-   Usage
-    g = mapToHomomorphism f
-   Inputs
-    f:Matrix
-     map f: M \to N, S-modules
-   Outputs
-    g:Matrix
-     map g: S^1 \to Hom(M,N)
-   Description
-    Text
-     This is the inverse of the function homomorphism.
-     Thus if M,N are S-modules and g:S^1 \to Hom(M,N), then
-     f = homomorphism g produces f:M\to N
-     and 
-     g = mapToHomomorphism f.
-     
-     The function is used in the script isStablyTrivial
-    Example
-     S = ZZ/101[a,b,c]
-     M = S^2/ideal"a,b"++S^3/ideal"b,c"
-     N = coker random (S^{0,1}, S^{-1})
-     g = mapToHomomorphism id_M
-     id_M == homomorphism g
-     isStablyTrivial id_M
-     isStablyTrivial(map(M, cover M, 1))
-   SeeAlso
-    Hom
-    homomorphism
-    isStablyTrivial
-///
 
 
 ------TESTs------
@@ -3597,3 +3561,39 @@ uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 
 
+doc ///
+   Key
+    mapToHomomorphism
+    (mapToHomomorphism, Matrix)
+   Headline
+    converts a map f:M\to N to a map S^1 \to Hom(M,N), where M,N are S-modules
+   Usage
+    g = mapToHomomorphism f
+   Inputs
+    f:Matrix
+     map f: M \to N, S-modules
+   Outputs
+    g:Matrix
+     map g: S^1 \to Hom(M,N)
+   Description
+    Text
+     This is the inverse of the function homomorphism.
+     Thus if M,N are S-modules and g:S^1 \to Hom(M,N), then
+     f = homomorphism g produces f:M\to N
+     and 
+     g = mapToHomomorphism f.
+     
+     The function is used in the script isStablyTrivial
+    Example
+     S = ZZ/101[a,b,c]
+     M = S^2/ideal"a,b"++S^3/ideal"b,c"
+     N = coker random (S^{0,1}, S^{-1})
+     g = mapToHomomorphism id_M
+     id_M == homomorphism g
+     isStablyTrivial id_M
+     isStablyTrivial(map(M, cover M, 1))
+   SeeAlso
+    Hom
+    homomorphism
+    isStablyTrivial
+///

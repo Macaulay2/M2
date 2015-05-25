@@ -91,12 +91,12 @@ TEST///
 S = ZZ/101[a,b,c]
 mm = ideal vars S
 M = subquotient(gens mm, gens (mm^2))
-assert(ann Hom1(M,M) == mm)
-assert(rank target gens prune Hom1(M,M) == 9)
+assert(ann Hom(M,M) == mm)
+assert(rank target gens prune Hom(M,M) == 9)
 
 D = ker vars S -- second syz of k
 inD = map(D, mm*D, gens(mm*D)//gens D) -- the inclusion of mm*D into D
-assert(ann (Hom1(D,D)/image Hom1(D, inD))== ideal(a,b,c))
+assert(ann (Hom(D,D)/image Hom(D, inD))== ideal(a,b,c))
 ///
 
 

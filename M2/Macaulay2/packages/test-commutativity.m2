@@ -1,31 +1,30 @@
 --The function call 
 --isPossiblyCommutative(ff,MR,k) 
---computes an obstruction to the commutativity of the CI operators
---at the k-th stage (ie F_(k+4) --> F_k) 
---of the resolution of a module MR over a complete intersection S/(ideal ff)
---of codimension c. It returns false if the obstruction is nonzero.
-
---This obstruction is the class of the map 
+--computes whether the class of the map 
 --M_(k+4) --> M_k**(L_2), modulo the maximal ideal times the space of stably trivial
 --maps, where L_2 is the 2nd exterior power of R^c 
 --and M_k is the k-th R-syzygy of MR = M_0.
---This obstruction is, for example, nonzero in the case M = R/(a,bc) 
+--This is nonzero, for example, nonzero in the case M = R/(a,bc) 
 --where R = k[a,b,c]/(a2, b2, c2) for small values of k.
 
 needsPackage "CompleteIntersectionResolutions"
 needsPackage "HigherCIOperators"
 
+{*
 --This is the code Dan wrote May 20 2015 to replace the incorrect Hom (temporarily called Hom2)
 Hom(Module,Module) := (M,N) -> kernel (transpose presentation M ** N)
 Hom(Matrix,Module) := (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N)
 Hom(Module,Matrix) := (M,f) -> inducedMap(Hom(M,target f),Hom(M,source f),dual cover M ** f)
-
+*}
 {*
 ev = N -> (
     --if N is a free R-module returns the contraction map N**N^* -> R.
     reshape((ring N)^1, N**(dual N), id_N)
     )
 *}
+
+{*
+--old version of compose: assumed that ambient Hom(N,P) had cover N as a factor.
 compose = method()
 compose(Module, Module, Module) := (M,N,P) ->(
         --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
@@ -40,8 +39,30 @@ compose(Module, Module, Module) := (M,N,P) ->(
     gensMap := (ambMap*((gens MN)**(gens NP)))//gens(MP);
     map(MP, MN**NP,gensMap)
     )
+*}
+
+compose = method()
+compose(Module, Module, Module) := (M,N,P) ->(
+        --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
+    MN := Hom(M,N);
+    NP := Hom(N,P);
+    MP := Hom(M,P);
+    CN := cover N;
+    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
+    liftGens := map (ambient MN**ambient NP,
+	    	     dual cover M ** cover N ** dual cover N ** ambient P,
+		     dual cover M ** gens N ** dual cover N ** ambient P);
+    liftedGens := (gens MN ** gens NP)//liftGens;
+    contractor := map(ambient MP, dual cover M ** cover N ** dual cover N ** ambient P,
+	    (cover M)**ev**(ambient P));
+    gensMap := (contractor*liftedGens)//gens(MP);
+    map(MP, MN**NP,gensMap)
+    )
+
 
 triv = method()
+
+{*
 triv(Module, Module) := (M,N)->(
     --image triv is the submodule of stably trivial homomorphisms
     --this version has source a free module; might make for faster computation.
@@ -50,6 +71,15 @@ triv(Module, Module) := (M,N)->(
     proj := map(N, cover N, 1);
     map(Hom(M,N), Hom(target s, source proj), Hom(inc,proj))
     )
+*}
+
+triv(Module, Module) := (M,N) ->(
+    gN := map(N,cover N, 1);
+    MCN := Hom(M,cover N);
+    freegens := map(MCN, cover MCN, 1);
+    Hom(M, gN)*freegens)
+
+
 {*
 triv(Module, Module) := (M,N) -> (
     --image triv is the submodule of stably trivial homomorphisms
@@ -66,13 +96,16 @@ assert(homomorphism((compose(M,N,P))_{0}) == map(M,P,matrix{{a}}))
 triv(M,N)
 ///
 
-inmm2 = u ->(
-    mm = ideal vars ring u;
-    D := target u;
-    in2 := map(D, mm^2*D, gens(mm^2*D)//gens D); -- the inclusion of mm^2*D into D
-    modmm2 := map(coker in2D, D, 1);
-    0 == modmm2*u)
-
+TEST///
+S = ZZ/101[a,b,c]
+A = matrix"a,b,c;b,c,a" 
+B = matrix"a,b;b,c"
+N = subquotient(A,B)
+assert( (minimalPresentation compose(N,N,N)) === 
+    map(cokernel map((S)^1,(S)^{{-2}},{{b^2-a*c}}),
+		cokernel map((S)^1,(S)^{{-2}},
+			{{b^2-a*c}}),{{1}}) );
+///
 
 
 end -- 
@@ -91,58 +124,42 @@ red = map(R,S)
 M0 = R^1/ideal(a,b*c)
 
 FR = complete res(M0, LengthLimit=>10)
-M=apply(9,i->coker FR.dd_(i+1));
+--M=apply(9,i->coker FR.dd_(i+1));
+M={M0}|apply(9,i->image FR.dd_(i+1));
 A = chainComplex(apply(length FR-1, i->lift (FR.dd_(i+1),S)))
 L = trueKoszul ff
 u = higherCIOperators(A,L);
 
-k = 0
+k = 1
 B = M_(k+4);
 C = M_(k+2)**red L_1;
 D = M_k**red L_2;
 
---form the map Hom(B,D)<--Hom(B,C)**Hom(C,D)
-time c = compose(B,C,D);
-
---now make the CI operators
 p = map(C,B, red u#{2,k+4,0}); --M_(k+4) -> M_(k+2)**red L_1
 q = map(D,C, red u#{2,k+2,1}); --M_(k+2)**red L_1 -> M_(k)**red L_2
 
-
 --The CI operators are not stably trivial, but their composition is:
 assert(isStablyTrivial (q*p) and not isStablyTrivial p and not isStablyTrivial p)
---But we have a subtler test:
---the question is whether q*p
+
+--form the map Hom(B,D)<--Hom(B,C)**Hom(C,D)
+time c = compose(B,C,D);
+betti gens Hom(B,C)
+betti gens Hom(C,D)
+-- test whether q*p
 -- is in the submodule q*str + str'*p + str'*str, where 
 --str = stably trivial maps from B to C
 --str' = stably trivial maps C to D
 
-P = mapToHomomorphism p;
-Q = mapToHomomorphism q;
-QP = mapToHomomorphism (q*p);
+P = homomorphism' p;
+Q = homomorphism' q;
+QP = homomorphism' (q*p);
 
 str = triv(B,C);
 str' = triv(C,D);
 
---time Pstr' = P**str';--SLOW!: when k=1 it takes 100 sec on my fastest machine.
---time pstr = c*(Pstr'); 
-
---the following is a much faster way of composing:
-str'p = map(Hom(B,D), R^0,0)
-time scan(rank source str', i-> str'p = str'p|mapToHomomorphism (homomorphism (str'_{i})*p))
-
---time strQ = str**Q;
---time strq = c*(strQ);
---time str'str = c*(str**str');
-
-qstr = map(Hom(B,D), R^0,0)
-target (str_{0}) == source q
-time scan(rank source str, i-> qstr = qstr|mapToHomomorphism (q*homomorphism (str_{i})))
-
-str'str = map(Hom(B,D), R^0, 0)
-time scan(rank source str', i-> (
-     scan(rank source str, j->
-	    str'str = str'str|mapToHomomorphism(homomorphism(str'_{i})*homomorphism(str_{j})))))
+str'p =  map(Hom(B,D),,matrix compose(B,C,D)*(matrix P ** matrix str'));
+qstr = map(Hom(B,D),,matrix compose(B,C,D)*(matrix str ** matrix Q));
+time str'str = map(Hom(B,D),,matrix c*(matrix str ** matrix str'));
 
 --confirm that q*p does not map into mm^2*D:
 --assert(inmm2(q*p) == false)
@@ -151,8 +168,8 @@ time test = map(coker(str'p|qstr|str'str), source QP, QP);
 assert(test !=0)
 
 --================
-the following code shows that q*p has image in the max ideal times D, even though
-it's not 0. This follows anyway from stable triviality.
+--the following code shows that q*p has image in the max ideal times D, even though
+--it's not 0. This follows anyway from stable triviality.
 mm = ideal vars R
 (q*p) 
 inD = map(D, mm*D, gens(mm*D)//gens D); -- the inclusion of mm*D into D
@@ -261,7 +278,7 @@ isPossiblyCommutative = (ff,MR,k) ->(
     p := map(C,B, red u#{2,k+4,0}); --M_(k+4) -> M_(k+2)**red L_1
     q := map(D,C, red u#{2,k+2,1}); --M_(k+2)**red L_1 -> M_(k)**red L_2
 --is q*p in mm*triv?
-   QP := mapToHomomorphism (q*p);
+   QP := homomorphism' (q*p);
    TrivBD := mmR*image triv(B,D);
 --   HBD := Hom(B,D)/TrivBD;
    HBD := Hom(B,D)/Hom(B,mmR*D);
@@ -269,3 +286,15 @@ isPossiblyCommutative = (ff,MR,k) ->(
    test := (gens HBD)*matrix (test1*QP);
    0==test % gb relations HBD
    )
+
+TEST///
+restart
+load "test-commutativity.m2"
+R=QQ[x,y]
+M=image vars R ++ R^2
+f = compose(M,M,M);
+H = Hom(M,M);
+g = H_{0}
+h = homomorphism g
+homomorphism (f * (g ** g)) == h * h
+///
