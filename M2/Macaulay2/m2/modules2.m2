@@ -502,13 +502,13 @@ adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
      -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
      -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
      F := source m;
-     inducedMap(H, F ** G, reshape(super H, F ** G, super m)))
+     inducedMap(H, F ** G, reshape(super H, F ** G, super m),Verify=>true))
 
 adjoint = method()
 adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
      -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
      H := target m;
-     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m)))
+     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m),Verify=>true))
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
@@ -527,46 +527,64 @@ homomorphism' Matrix := Matrix => (f) -> (
      adjoint(f,R^1,M)
      )
 
-compose = method()
-compose(Module, Module, Module) := Matrix => (M,N,P) ->(
-    -- this code was written by David Eisenbud
-    --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
-    
-    --the following just simplify notation:
-    MN := Hom(M,N);
-    NP := Hom(N,P);
-    MP := Hom(M,P);
-    CN := cover N;
-    pN := presentation N;
-    pM := presentation M;
-    
-    --next define a version of MN whose cover naturally maps to (dual cover M ** cover N), 
-    --and similarly for NP, MP
-    gensMN' := (dual cover M ** generators N) * generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N);
-    MN' := subquotient(gensMN', relations MN);
-    toMN' := map(MN', MN, generators MN'//generators MN);  
-    
-    gensNP' := (dual cover N ** generators P) * generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P);
-    NP' := subquotient(gensNP', relations NP);
-    toNP' := map(NP', NP, generators NP'//generators NP);  
+compose = method(Options => {Strategy => 0})
+compose(Module, Module, Module) := Matrix => opts -> (M,N,P) -> (
+     R := ring M;
+     if not ring N === R or not ring P === R then error "expected modules over the same ring";
+     if opts.Strategy == 0 then (
+	 -- this code was written by David Eisenbud
+	 --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
 
-    gensMP' := (dual cover M ** generators P) * generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P);
-    MP' := subquotient(gensMP', relations MP);
-    toMP := map(MP, MP', generators MP'//generators MP); -- note that this goes the other way from toMN'
-    
-    --define the map the cover of the new version of MN into the tensor product, and similarly for NP and MP
-    toCMStarCN := map (dual cover M**cover N, cover MN', 
-	generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N));
-    toCNStarCP := map (dual cover N**cover P, cover NP', 
-	generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P));
-    toCMStarCP := map (dual cover M**cover P, cover MP', 
-	generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P));
+	 --the following just simplify notation:
+	 MN := Hom(M,N);
+	 NP := Hom(N,P);
+	 MP := Hom(M,P);
+	 CN := cover N;
+	 pN := presentation N;
+	 pM := presentation M;
 
-    --now that we can map cover MN'** cover NP' --> (dual cover M)**cover N **(dual cover N) ** cover P
-    --we can contract the middle terms
-    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
-    contractor := map(MP',MN' ** NP', ((dual cover M ** ev ** cover P)*(toCMStarCN ** toCNStarCP))//toCMStarCP);
-    toMP * contractor * (toMN' ** toNP'))
+	 --next define a version of MN whose cover naturally maps to (dual cover M ** cover N), 
+	 --and similarly for NP, MP
+	 gensMN' := (dual cover M ** generators N) * generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N);
+	 MN' := subquotient(gensMN', relations MN);
+	 toMN' := map(MN', MN, generators MN'//generators MN);  
+
+	 gensNP' := (dual cover N ** generators P) * generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P);
+	 NP' := subquotient(gensNP', relations NP);
+	 toNP' := map(NP', NP, generators NP'//generators NP);  
+
+	 gensMP' := (dual cover M ** generators P) * generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P);
+	 MP' := subquotient(gensMP', relations MP);
+	 toMP := map(MP, MP', generators MP'//generators MP); -- note that this goes the other way from toMN'
+
+	 --define the map the cover of the new version of MN into the tensor product, and similarly for NP and MP
+	 toCMStarCN := map (dual cover M**cover N, cover MN', 
+	     generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N));
+	 toCNStarCP := map (dual cover N**cover P, cover NP', 
+	     generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P));
+	 toCMStarCP := map (dual cover M**cover P, cover MP', 
+	     generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P));
+
+	 --now that we can map cover MN'** cover NP' --> (dual cover M)**cover N **(dual cover N) ** cover P
+	 --we can contract the middle terms
+	 ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
+	 contractor := map(MP',MN' ** NP', ((dual cover M ** ev ** cover P)*(toCMStarCN ** toCNStarCP))//toCMStarCP);
+	 toMP * contractor * (toMN' ** toNP'))
+    else if opts.Strategy == 1 then (			    -- slower than Strategy 0 by a factor of 5, on big examples
+	 if isQuotientModule N then (
+	      -- Now cover N === ambient N
+	      inducedMap(Hom(M,P),,
+		   map(dual cover M ** ambient P, Hom(M,N)**Hom(N,P), 
+			(dual cover M ** reshape(R^1, cover N ** dual cover N, id_(cover N)) ** ambient P)
+			*
+			(generators Hom(M,N) ** generators Hom(N,P))),
+		   Verify=>false))
+	 else (
+	      N' := cokernel presentation N;
+	      i := map(N,N',1);
+	      i' := map(N',N,1);
+	      compose(M,N',P) * (Hom(M,i')**Hom(N',P)) * (Hom(M,N)**Hom(i,P))))
+    else error "unrecognized Strategy value")
 
 flatten Matrix := Matrix => m -> (
      R := ring m;

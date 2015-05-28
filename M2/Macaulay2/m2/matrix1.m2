@@ -612,8 +612,8 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N)
-Hom(Module,Matrix) := Matrix => (M,f) -> inducedMap(Hom(M,target f),Hom(M,source f),dual cover M ** f)
+Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
+Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
 Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
 
 dual(Matrix) := Matrix => {} >> o -> f -> (

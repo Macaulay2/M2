@@ -106,7 +106,9 @@ j = homomorphism H_{1} + homomorphism H_{2}
 
 R=QQ[x,y]
 M=image vars R ++ R^2
-f = compose(M,M,M);
+time f = compose(M,M,M,Strategy=>0);
+time f' = compose(M,M,M,Strategy=>1);
+assert ( f === f' )
 H = Hom(M,M);
 for i to numgens H - 1 do for j to numgens H - 1 do (
      g = H_{i};
@@ -119,7 +121,10 @@ S = ZZ/101[a,b,c]
 A = matrix"a,b,c;b,c,a" 
 B = matrix"a,b;b,c"
 N = subquotient(A,B)
-assert( (minimalPresentation compose(N,N,N)) === 
+time com = compose(N,N,N,Strategy => 0)
+time com' = compose(N,N,N,Strategy => 1)
+assert ( com === com' )
+assert( (minimalPresentation com) === 
     map(cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
 	cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
 	{{1}}));
