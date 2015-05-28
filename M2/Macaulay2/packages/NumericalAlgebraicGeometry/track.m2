@@ -738,8 +738,10 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     );
     	 )     
      else error "unexpected type of homotopy (first parameter)";
-     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
-
+     
+     solveLinear := (A,b) -> solve(A,b,ClosestFit=>true,MaximalRank=>true); -- this takes care of non-square case!!!
+     solveHxTimesDXequalsMinusHt := (x0,t0) -> solveLinear(evalHx(x0,t0),-evalHt(x0,t0));
+     
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2 
@@ -770,14 +772,15 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    local dx; local dt;
 		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
-		    dx = if o.Predictor == Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
-		    else if o.Predictor == Euler then (
+		    dx = if o.Predictor === zero then 0*x0
+		    else if o.Predictor === Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
+		    else if o.Predictor === Euler then (
 			H0 := evalH(x0,t0);
 			Hx0 := evalHx(x0,t0);
 			Ht0 := evalHt(x0,t0);
-			solve(Hx0, -H0-Ht0*dt)
+			solveLinear(Hx0, -H0-Ht0*dt)
 			)
-		    else if o.Predictor == RungeKutta4 then (
+		    else if o.Predictor === RungeKutta4 then (
 			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
 			dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
 			dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
@@ -798,7 +801,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    while dx === infinity or norm dx > CorrectorTolerance()*norm x1+theSmallestNumber 
 		    and nCorrSteps < o.maxCorrSteps
 		    do( 
-			dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			dx = solveLinear(evalHx(x1,t1), -evalH(x1,t1));
 			x1 = x1 + dx;
 			nCorrSteps = nCorrSteps + 1;
 			if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
@@ -809,7 +812,6 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    if DBG>9 then << ">>> step adjusting" << endl;
 		    if dt > o.tStepMin 
 		    and norm dx > CorrectorTolerance() * norm x1 then ( -- predictor failure 
-			if norm dx < 1e-5 then 1/0; -- !!!
 			predictorSuccesses = 0;
 			stepAdj = stepAdj - 1;
 			tStep = stepDecreaseFactor*tStep;

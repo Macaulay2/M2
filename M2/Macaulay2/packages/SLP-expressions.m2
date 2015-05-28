@@ -502,7 +502,7 @@ H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
 I = compress H 
 
 -- DetGate
-J = detGate {{X,C},{D,Y}}
+J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
 
 -- diff
 diff(X,F)
@@ -511,15 +511,18 @@ h = new HashTable from {X=>x,Y=>y,cache=>new CacheTable}
 assert(
     value(diff(X,J),h) 
     ==
-    value(detGate{{oneGate,C},{diff(X,D),Y}}+detGate{{X,diff(X,C)},{D,zeroGate}},h)
+    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
     )
 
 -- DivideGate
-F/H
+G/F
 diff(X,X/Y)
 diff(Y,X/Y)
-compress diff(Y,F/H)
- 
+h = new HashTable from {X=>2,Y=>3,cache=>new CacheTable}
+GY = value(diff(Y,G),h)
+FY = value(diff(Y,F),h)
+assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
+
 -- evaluate toPreSLP == compress 
 output = {F,diff(X,F),G}
 preSLP = toPreSLP({X,Y},output)
@@ -551,9 +554,11 @@ preH = toPreSLP({X,Y,T},H)
 evaluatePreSLP(preH, {1,1,0})
 preHx = transposePreSLP jacobianPreSLP(preH,toList(0..1));
 evaluatePreSLP(preHx, {1,1,0})
-s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
-s = coordinates first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
-assert (norm evaluatePreSLP(preH, s|{1}) < 1e-6)
+s = first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
+peek s
+s = first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
+peek s
+assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 
 -- HomotopySystem
 Rvars = hashTable{X=>x,Y=>y,T=>t,cache=>new CacheTable} 
@@ -567,7 +572,8 @@ value(gHx, Rvars)
 
 
 HS = gateHomotopySystem(gH,gV,T)
-s = coordinates first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+peek s
 
 F = {X*X-1, Y*Y*Y-1}
 G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
