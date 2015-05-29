@@ -502,13 +502,13 @@ adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
      -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
      -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
      F := source m;
-     inducedMap(H, F ** G, reshape(super H, F ** G, super m),Verify=>true))
+     inducedMap(H, F ** G, reshape(super H, F ** G, super m),Verify=>false))
 
 adjoint = method()
 adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
      -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
      H := target m;
-     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m),Verify=>true))
+     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m),Verify=>false))
 
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
@@ -581,9 +581,7 @@ compose(Module, Module, Module) := Matrix => opts -> (M,N,P) -> (
 		   Verify=>false))
 	 else (
 	      N' := cokernel presentation N;
-	      i := map(N,N',1);
-	      i' := map(N',N,1);
-	      compose(M,N',P) * (Hom(M,i')**Hom(N',P)) * (Hom(M,N)**Hom(i,P))))
+	      compose(M,N',P,opts) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
     else error "unrecognized Strategy value")
 
 flatten Matrix := Matrix => m -> (
