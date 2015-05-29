@@ -339,10 +339,10 @@ remainder'(Matrix,Matrix) := Matrix => (f,g) -> (
 remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      R := ring n;
      if R =!= ring m then error "expected matrices over the same ring";
-     if not isFreeModule source n or not isFreeModule source m
-     or not isFreeModule target n or not isFreeModule target m
-     then error "expected maps between free modules";
-     n % gb m)
+     if target m =!= target n then error "expected matrices with the same target";
+     if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
+     if not isQuotientModule target m then error "expected maps to a quotient module";
+     n % gb (matrix m | relations target m))
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 

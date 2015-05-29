@@ -174,21 +174,12 @@ processAlgorithm := (a,f) -> (
      else if a === Test then 8
      else error ("unknown algorithm encountered"))
 
-gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
+gb Ideal := GroebnerBasis => opts -> (I) -> gb ( module I, opts )
 
-gb Module := GroebnerBasis => options -> (M) -> (
+gb Module := GroebnerBasis => opts -> (M) -> (
      if M.?relations 
-     then (
-	  notImplemented();
-	  -- provisional
-	  m := generators M;
-	  n := relations M;
-	  gb (m|n, 
-	       options,
-	       -- ChangeMatrix => true,
-	       -- Syzygies => true,
-	       SyzygyRows => numgens source m))
-     else gb(generators M, options))
+     then gb(generators M|relations M, opts, SyzygyRows => numgens source generators M)
+     else gb(generators M, opts))
 
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 

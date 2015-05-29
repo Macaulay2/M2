@@ -126,7 +126,9 @@ new Module from Sequence := (Module,x) -> (
 	  assert instance(R,Ring);
 	  assert instance(rM,RawFreeModule);
 	  new Module of Vector from hashTable {
-     	       symbol cache => new CacheTable,
+     	       symbol cache => new CacheTable from { 
+		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+		    },
      	       symbol RawFreeModule => rM,
      	       symbol ring => R,
      	       symbol numgens => rawRank rM

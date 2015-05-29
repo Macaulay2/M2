@@ -175,11 +175,11 @@ opsTest = () -> (
                {map(R^6, R^1, 0), koszul(3,v)}};
   assert(m1 - m2 == 0);
 
-  -- reshape(implicitly), adjoint, adjoint1, flatten, flip
+  -- reshape(implicitly), adjoint, adjoint', flatten, flip
   R = ZZ/101[vars(0..23)];
   m1 = genericMatrix(R,a,4,6);
   m2 = adjoint(m1, R^{-1,-1}, R^3);
-  m3 = adjoint1(m2, R^3, R^4);
+  m3 = adjoint'(m2, R^3, R^4);
   assert(m1 == m3);
   assert(flatten m1 == flatten m2);
 

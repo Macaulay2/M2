@@ -41,7 +41,7 @@ document {
      "In this example, f1 is the identity map, f2 is multiplication by x,
      and f3 maps x to y and y to x^2.",
      PARA{},
-     SeeAlso => {homomorphism, Ext}
+     SeeAlso => {homomorphism, Ext, compose}
      }
 
 document { 
@@ -167,8 +167,7 @@ document {
      Outputs => {
 	  Module => {"over the coefficient field of ", TT "R"}
 	  },
-     "If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way.",
-     PARA{},
+     PARA{"If ", TT "F", " or ", TT "G", " is a sheaf of rings, it is regarded as a sheaf of modules in the evident way."},
      EXAMPLE lines ///
           R = QQ[a..d];
 	  P3 = Proj R
@@ -180,3 +179,25 @@ document {
      SeeAlso => {sheafHom, Ext, sheafExt}
      }
 
+document {
+     Key => {(compose,Module,Module,Module), compose},
+     Headline => "composition as a pairing on Hom-modules",
+     Usage => "compose(M,N,P)",
+     Inputs => { "M", "N", "P" },
+     Outputs => { { "The map ", TT "Hom(M,N) ** Hom(N,P) -> Hom(M,P)", " provided by composition of homomorphisms." } },
+     PARA { "The modules should be defined over the same ring." },
+     PARA { "In the following example we check that the map does implement composition." },
+     EXAMPLE lines ///
+	R = QQ[x,y]
+	M = image vars R ++ R^2
+	f = compose(M,M,M);
+	H = Hom(M,M);
+	g = H_{0}
+	h = homomorphism g
+	f * (g ** g)
+	h' = homomorphism oo
+	h' === h * h
+	assert oo
+     ///,
+     SeeAlso => {Hom, homomorphism, homomorphism'}
+     }
