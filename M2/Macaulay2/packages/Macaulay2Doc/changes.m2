@@ -129,7 +129,9 @@ document {
 		    LI { "The function ", TO "minimalPresentation", " has been modified so that it applies its degree-preserving method also for homogeneous
 			 modules over affine algebras over affine algebras." },
      	       	    LI { "The function ", TO "applyKeys", " will now accept an additional function to be called when collisions occur between new keys, for combining the
-			 corresponding values, thanks to Paul Zinn-Justin." }
+			 corresponding values, thanks to Paul Zinn-Justin." },
+		    LI { "The function ", TO "partition", " now takes a third argument: a list of additional values in the range of the function, allowing
+			 members of the resulting partition to be empty." },
 	  	    }
 	       },
 	  -- LI { "functionality changed:",
