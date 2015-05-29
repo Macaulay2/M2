@@ -5039,5 +5039,17 @@ doc ///
             H = vertexMultiplication(G, 0, 6)
 ///
 
+TEST ///
+--test expansion of graphs
+G=pathGraph(7);
+assert(expansion(G)===1/3);
+///
+
+TEST ///
+--expansion of empty graph
+G=graph({});
+assert(expansion(G)===0);
+///
+
 
 end;
