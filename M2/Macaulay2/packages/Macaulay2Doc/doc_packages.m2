@@ -79,6 +79,32 @@ document {
      SeeAlso => {"packages", "an example of a package", needsPackage, load }
      }
 document {
+     Key => {(loadPackage,Package)},
+     Headline => "reload an already loaded package",
+     Usage => "loadPackage PACKAGE",
+     Inputs => {
+       "PACKAGE" => Package => "the already loaded package"
+     },
+     Outputs => { Package => "the package just reloaded" },
+     Consequences => {{"Reloads the already loaded package PACKAGE"}},
+     PARA { "This reloads an already loaded package. ",
+       "The package ", TT "PACKAGE", " should already have been loaded at an earlier step, ",
+       "using a command such as ", TT "loadPackage(\"PACKAGE\")", " or ",
+       TT "needsPackage(\"PACKAGE\")", ", i.e., using the name of the package ",
+       "as a string. If that has been done, then this command will reload the package."},
+     PARA { "In fact this version of the command is simply a convenient short form ",
+     "of ", TT "loadPackage", " with the option ", TT "Reload", " set to ",
+     TT "true", ". All options of ", TT "loadPackage", " (other than ", TT "Reload",
+     ") are available." },
+     EXAMPLE lines ///
+       loadPackage "FirstPackage"
+       loadPackage FirstPackage
+       loadPackage oo
+     ///,
+     SeeAlso => {loadPackage}
+     }
+       
+document {
      Key => {(needsPackage,String),needsPackage,
 	  [needsPackage, LoadDocumentation],[needsPackage,Configuration],[needsPackage,DebuggingMode],[needsPackage,FileName]},
      Headline => "load a package if not already loaded",
