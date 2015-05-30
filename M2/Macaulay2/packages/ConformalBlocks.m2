@@ -1,5 +1,3 @@
-needsPackage "LieTypes"
-
 newPackage(
     "ConformalBlocks",
     Version => "2.2", 
@@ -7,6 +5,7 @@ newPackage(
     Authors => {
 	{Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	},
+    PackageExports => { "LieTypes" },
     Headline => "for conformal block divisors"
     )
 
@@ -32,8 +31,6 @@ export {
     "conformalBlockDegreeM04bar",
     "FCurveDotConformalBlockDivisor"
      }
-
-needsPackage "LieTypes"
 
 ---------------------------------------------------------
 ---------------------------------------------------------
