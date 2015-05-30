@@ -60,8 +60,7 @@ loadPackage String := opts -> pkgtitle -> (
      if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
-loadPackage Package := opts -> pkg -> (
-     loadPackage(toString pkg, opts ++ { Reload => true }))
+loadPackage Package := opts -> pkg -> loadPackage(toString pkg, opts ++ { Reload => true })
 
 needsPackage = method(
      TypicalValue => Package,

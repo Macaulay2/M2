@@ -83,11 +83,11 @@ document {
      Headline => "reload an already loaded package",
      Usage => "loadPackage PACKAGE",
      Inputs => {
-       "PACKAGE" => Package => "the already loaded package"
+       "PACKAGE" => "the already loaded package"
      },
      Outputs => { Package => "the package just reloaded" },
-     Consequences => {{"Reloads the already loaded package PACKAGE"}},
-     PARA { "This reloads an already loaded package. ",
+     Consequences => {{"Reloads the package PACKAGE"}},
+     PARA { "This reloads a package. ",
        "The package ", TT "PACKAGE", " should already have been loaded at an earlier step, ",
        "using a command such as ", TT "loadPackage(\"PACKAGE\")", " or ",
        TT "needsPackage(\"PACKAGE\")", ", i.e., using the name of the package ",
@@ -99,9 +99,8 @@ document {
      EXAMPLE lines ///
        loadPackage "FirstPackage"
        loadPackage FirstPackage
-       loadPackage oo
      ///,
-     SeeAlso => {loadPackage}
+     SeeAlso => {loadPackage, needsPackage}
      }
        
 document {
