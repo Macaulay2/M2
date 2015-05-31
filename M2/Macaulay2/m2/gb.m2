@@ -245,7 +245,7 @@ newGB := (f,type,opts) -> (
 	       else opts.GBDegrees
 	       ),
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
-	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
+	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then first degreeToHeft(R,opts.HardDegreeLimit) else 0,
 	  processAlgorithm(opts.Algorithm,f),
 	  processStrategy opts.Strategy,
 	  opts.MaxReductionCount
