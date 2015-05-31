@@ -87,7 +87,10 @@ document {
 			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
 			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
 			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
-			 to the well known Eisenbud-Shamash construction, which is also implemented." }
+			 to the well known Eisenbud-Shamash construction, which is also implemented." },
+		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
+		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -132,6 +135,14 @@ document {
 			 corresponding values, thanks to Paul Zinn-Justin." },
 		    LI { "The function ", TO "partition", " now takes a third argument: a list of additional values in the range of the function, allowing
 			 members of the resulting partition to be empty." },
+		    LI { "The function ", TO "loadPackage", " can now be used to reload a package by giving the package itself as the argument.  This
+			 is easier than setting the ", TO "Reload", " option." },
+		    LI { "The function ", TO "adjoint", " has been improved to work not just for free modules, and the function ", TT "adjoint1", " has
+			 been replaced by ", TO "adjoint'", ".  This pair of function now implements both direction in the adjointness between Hom
+			 and tensor product." },
+		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
+			 produces the element of Hom." },
+		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." }
 	  	    }
 	       },
 	  -- LI { "functionality changed:",
