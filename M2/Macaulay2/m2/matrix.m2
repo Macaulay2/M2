@@ -594,7 +594,7 @@ inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
      if options.Verify then (
 	  if relations sM % relations M != 0 then error "inducedMap: expected new target not to have fewer relations";
 	  if generators N % generators sN != 0 then error "inducedMap: expected new source not to have more generators";
-	  if g % h != 0 then error "inducedMap: expected matrix to induce a map";
+	  if g % h % relations M != 0 then error "inducedMap: expected matrix to induce a map";
 	  if not isWellDefined p then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
      p)

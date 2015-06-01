@@ -1,6 +1,22 @@
 -- Bertini interface for NAG4M2
 -- used by ../NumericalAlgebraicGeometry.m2
 
+toRingXbertini = method()
+toRingXbertini (List,List) := (F,G) -> (
+    R := ring ideal (F|G); 
+    XbertiniRing := (coefficientRing R)[(vars(52)..vars(51 + numgens R))/getSymbol@@toString]; --!!! dangerous
+    M := map(XbertiniRing,R,gens XbertiniRing);
+    ((M ideal F)_*, (M ideal G)_*)
+    )
+toRingXbertini List := F -> first toRingXbertini(F,F)
+ 
+fromRingXbertini = method()
+fromRingXbertini (List,Ring) := (F,R) -> (
+    XbertiniRing := ring ideal F;
+    M := map(R,XbertiniRing,gens R);
+    (M ideal F)_*
+    )
+
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
     opt := {
@@ -10,6 +26,7 @@ toBertiniOptions OptionTable := OptionTable => o -> (
 	};
     new OptionTable from opt -- TODO: write all options
     )
+
 solveBertini = method(TypicalValue => List)
 solveBertini (List,OptionTable) := List => (F,o) -> (
     R := ring first F;
@@ -25,7 +42,8 @@ solveBertini (List,OptionTable) := List => (F,o) -> (
 
 trackHomotopyBertini = method(TypicalValue => List)
 trackHomotopyBertini (List,RingElement,List,OptionTable) := List => (F,t,solS,o) -> (
-    bertiniTrackHomotopy(t,F,solS,toBertiniOptions o)
+    (F',t'list) := toRingXbertini(F,{t});    
+    bertiniTrackHomotopy(first t'list,F',solS,toBertiniOptions o)
     )
 
 trackBertini = method(TypicalValue => List)
@@ -36,6 +54,6 @@ trackBertini (List,List,List,OptionTable) := List => (S,T,solS,o) -> (
     Rt := K(monoid[gens R, t]);     
     t = last gens Rt;
     H := apply(#S, i->o#(NumericalAlgebraicGeometry$gamma)*t^(o#(NumericalAlgebraicGeometry$tDegree))*sub(S#i,Rt)+(1-t)^(o#(NumericalAlgebraicGeometry$tDegree))*sub(T#i,Rt));
-    bertiniTrackHomotopy(t,H,solS,toBertiniOptions o)
+    trackHomotopyBertini(H,t,solS,o)
     )
 trackBertini (PolySystem,PolySystem,List,OptionTable) := List => (S,T,solS,o) -> trackBertini (equations S, equations T, solS, o)

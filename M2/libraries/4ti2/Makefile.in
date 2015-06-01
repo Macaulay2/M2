@@ -12,12 +12,22 @@ URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 STRIPFILES =					\
 	src/groebner/4ti2int32@EXEEXT@		\
 	src/groebner/4ti2int64@EXEEXT@		\
-	src/groebner/4ti2gmp@EXEEXT@		\
 	src/util/genmodel			\
 	src/util/gensymm			\
 	src/ppi/ppi				\
 	src/util/output				\
 	src/zsolve/zsolve
+
+# we have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
+# support provided by GMP, so this file will not be there:
+# STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
+
+# according to the documentation, the line below should prevent GMP from being used,
+# but it doesn't
+  # --with-gmp={DIR|no}     Use the GMP library installed in DIR. If the
+  #                         argument is no, do not use the GMP library; some
+  #                         functionality will not be available then.
+CONFIGOPTIONS += --with-gmp=no
 
 LICENSEFILES = README
 include ../Makefile.library

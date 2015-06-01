@@ -34,8 +34,8 @@ FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
 CC  := gcc-4.9 -m64
-CXX := g++-4.9 -m64
-FC  := gfortran-4.9
+CXX := g++-4.9 -O -j4 -m64
+FC  := gfortran-5
 CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master

@@ -7,7 +7,8 @@ H = Hom(M,M)
 peek H.cache
 f = id_M
 -- implemented by David:
-Hom(M,f)
+-- disabled temporarily:
+-- Hom(M,f)
 Hom(f,M)
 
 -- tests for Hom(Matrix,Module) from David:
@@ -31,13 +32,14 @@ assert( fh === map(image map(S^{{3},{3},{3}},S^1,{{a^3}, {b^3}, {c^3}}),S^1,{{1}
 M = module ((ideal(a,b))^3)
 M'= module ((ideal(a,b))^2)
 f=inducedMap(M',M)
-fh = Hom(M,f)
-assert (target fh == Hom(M, target f))
-assert (source fh == Hom(M, source f))
-assert( (minimalPresentation Hom(f,M)) === 
-   map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
-assert( (minimalPresentation Hom(f,f)) === 
-     map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
+-- disabled temporarily:
+-- fh = Hom(M,f)
+-- assert (target fh == Hom(M, target f))
+-- assert (source fh == Hom(M, source f))
+-- assert( (minimalPresentation Hom(f,M)) === 
+--    map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
+-- assert( (minimalPresentation Hom(f,f)) === 
+--      map(S^1,cokernel map(S^{{ -1},{ -1}},S^{{ -2}},{{ -b}, {a}}),{{0,b}}) )
 
 -- bug found by David Treumann:
 

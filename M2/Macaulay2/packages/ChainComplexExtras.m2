@@ -12,30 +12,30 @@ newPackage(
      DebuggingMode =>true
      )
 
-export(isExact)
-export(isChainComplex)
-export(isChainComplexMap)
-export(isQuasiIsomorphism)
---export(isQuism)
-export(koszulComplex)
-export(taylor)
-export(taylorResolution)
-export(chainComplexMap)
-export(InitialDegree)
-export(minimize)
-export(isMinimalChainComplex)
-export(extendFromMiddle)
-export(resolutionOfChainComplex)
-export(cartanEilenbergResolution)
+export "isExact"
+export "isChainComplex"
+export "isChainComplexMap"
+export "isQuasiIsomorphism"
+--export "isQuism"
+export "koszulComplex"
+export "taylor"
+export "taylorResolution"
+export "chainComplexMap"
+export "InitialDegree"
+export "minimize"
+export "isMinimalChainComplex"
+export "extendFromMiddle"
+export "resolutionOfChainComplex"
+export "cartanEilenbergResolution"
 --the following are simple manipulations used in TateResolution.m2
-export(prependZeroMap) -- prepend a zero map to chain complex
-export(appendZeroMap) -- append a zero map to chain complex
-export(removeZeroTrailingTerms) -- remove trailing zero terms of a chain complex
-export(trivialHomologicalTruncation) -- return the trivial truncation of a chain complex
-export(nonzeroMin) -- computes the homological position of the first non-zero module in a ChainComplex
-export(nonzeroMax) -- computes the homological position of the last non-zero module in a ChainComplex
---export(chainComplexData)
---export(chainComplexFromData)
+export "prependZeroMap" -- prepend a zero map to chain complex
+export "appendZeroMap" -- append a zero map to chain complex
+export "removeZeroTrailingTerms" -- remove trailing zero terms of a chain complex
+export "trivialHomologicalTruncation" -- return the trivial truncation of a chain complex
+export "nonzeroMin" -- computes the homological position of the first non-zero module in a ChainComplex
+export "nonzeroMax" -- computes the homological position of the last non-zero module in a ChainComplex
+--export "chainComplexData"
+--export "chainComplexFromData"
 
 substitute(ChainComplex,Ring):=(C,newRing)->(
    --- this function is just a version of substitute for chain complexes
