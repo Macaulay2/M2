@@ -84,10 +84,19 @@ gbWithChg    := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygi
 gbWithSyzygy := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygies => true , ChangeMatrix => false, HardDegreeLimit => null }
 
 gbGetSuitable := (f,type) -> (
-     if f.cache#?type then f.cache#type
-     else if type === gbOnly and computationIsComplete(f,gbWithChg) then getComputation(f,gbWithChg)
-     else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then getComputation(f,gbWithSyzygy)
-     )
+     if debugLevel == 77 then stderr << "-- gb type requested: " << type << endl;
+     if f.cache#?type then (
+	  if debugLevel == 77 then stderr << "-- gb type found, gb number " << hash f.cache#type << endl;
+	  f.cache#type)
+     else if type === gbOnly and computationIsComplete(f,gbWithChg) then (
+	  if debugLevel == 77 then stderr << "-- gb type found, but fetching " << gbWithChg << endl;
+	  getComputation(f,gbWithChg))
+     else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then (
+	  if debugLevel == 77 then stderr << "-- gb type found, but fetching " << gbWithSyzygy << endl;
+	  getComputation(f,gbWithSyzygy))
+     else (
+	  if debugLevel == 77 then stderr << "-- gb type not found, returning" << endl;
+	  null))
 
 engineMGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
   -- possible values for Reducer: "Classic", "F4",  (0,1)
@@ -251,6 +260,7 @@ newGB := (f,type,opts) -> (
 	  opts.MaxReductionCount
 	  );
      f.cache#type = G;			  -- do this last, in case of an interrupt
+     if debugLevel == 77 then stderr << "-- new gb computed of type " << type << " and number " << hash G << " with options " << opts << endl;
      G)
 
 checkArgGB := f -> (

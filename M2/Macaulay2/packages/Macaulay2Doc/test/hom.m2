@@ -116,6 +116,20 @@ for i to numgens H - 1 do for j to numgens H - 1 do (
      h = homomorphism g;
      h' = homomorphism g';
      assert ( homomorphism (f * (g ** g')) == h' * h ))
+H' = trim H
+assert ( ambient H === ambient H' )
+toH = inducedMap(H,H')
+toH' = inducedMap(H',H)
+assert ( isIsomorphism toH )
+assert ( isIsomorphism toH' )
+assert ( toH * toH' == 1 )
+assert ( toH' * toH == 1 )
+for i to numgens H' - 1 do for j to numgens H' - 1 do (
+     g = H'_{i};
+     g' = H'_{j};
+     h = homomorphism (toH * g);
+     h' = homomorphism (toH * g');
+     assert ( homomorphism (f * ((toH * g) ** (toH * g'))) == h' * h ))
 
 S = ZZ/101[a,b,c]
 A = matrix"a,b,c;b,c,a" 
