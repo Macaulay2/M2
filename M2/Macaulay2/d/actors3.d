@@ -1023,23 +1023,23 @@ agm(e:Expr):Expr := (
      );
 setupfun("agm",agm);
 -- abs(x:double):double := if x.v < 0. then -x.v else x.v;
-floor(e:Expr):Expr := (
+floor0(e:Expr):Expr := (
      when e
      is x:RRcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v))				    -- # typical value: floor, RR, ZZ
+	  toExpr(floor0(x.v))
 	  )
      is x:CCcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v.re))				    -- # typical value: floor, CC, ZZ
+	  toExpr(floor0(x.v.re))
 	  )
-     is x:QQcell do toExpr(floor(x.v))				    -- # typical value: floor, QQ, ZZ
-     is ZZcell do e				    -- # typical value: floor, ZZ, ZZ
+     is x:QQcell do toExpr(floor0(x.v))
+     is ZZcell do e
      else buildErrorPacket("expected an integral, rational, or real number")
      );
-setupfun("floor",floor);
+setupfun("floor0",floor0);
 
 round0(e:Expr):Expr := (
      when e

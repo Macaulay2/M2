@@ -86,6 +86,8 @@ random(ZZ,ZZ) := ZZ => opts -> (min,max) -> (
      if min > max then error "random: empty range";
      min + rawRandomZZ(max-min+1)
      )
+floor = method()
+floor Number := x -> floor0(x)
 ceiling = method()
 ceiling Number := x -> - floor(-x)
 isUnit ZZ := x -> x == 1 or x == -1
