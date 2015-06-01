@@ -2,11 +2,17 @@
 --- author(s): MES
 --- notes: just added example
 
+document {
+     Key => {floor},
+     Headline => "floor function",
+     SeeAlso => {ceiling}
+     }
+     
 document { 
-     Key => {floor,(floor,Number)},
+     Key => {(floor,Number)},
      Headline => "floor function",
      Usage => "floor x",
-     Inputs => { "x" => Number },
+     Inputs => { "x" },
      Outputs => { { "the greatest integer less than or equal to the number ", TT "x", ".  The
 	       imaginary part of a complex number is ignored." } },
      EXAMPLE {

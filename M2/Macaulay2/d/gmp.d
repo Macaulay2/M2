@@ -452,7 +452,7 @@ export toRational(x:ZZ):QQ := (
      Ccode(void, "mpq_set_z(", z, ",", x, ")");
      z);
 
-export floor0(x:QQ):ZZ := numeratorRef(x)//denominatorRef(x);
+export floor(x:QQ):ZZ := numeratorRef(x)//denominatorRef(x);
 
 export (x:QQ) + (y:QQ) : QQ := (
      z := newRational();
@@ -1078,7 +1078,7 @@ export (x:RR) ^ (y:RR) : RR := (
      Ccode( void, "mpfr_pow(",  z, ",",  x, ",", y, ", GMP_RNDN)" );
      z);
 
-export floor0(x:RR) : ZZ := (
+export floor(x:RR) : ZZ := (
      if !isfinite0(x) then return toInteger(0);			    -- nothing else to do!
      y := newZZ();
      Ccode( void, "mpfr_get_z(", y, ",", x, ", GMP_RNDD)" );
