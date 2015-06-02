@@ -1039,7 +1039,7 @@ floor(e:Expr):Expr := (
      is ZZcell do e				    -- # typical value: floor, ZZ, ZZ
      else buildErrorPacket("expected an integral, rational, or real number")
      );
-setupfun("floor",floor);
+setupfun("floor0",floor);
 
 round0(e:Expr):Expr := (
      when e
