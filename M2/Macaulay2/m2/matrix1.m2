@@ -592,6 +592,21 @@ ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
 
+Ideal ^ Array := (I, e) -> (
+   R := ring I;
+   n := numgens R;
+   -- Error if input is not correct.
+   if any(e, i -> i < 0) then error "Expected nonnegative exponents.";
+   if #e != 1 and n != #e then error "Expected single integer array, or array with length equal to the number of variables.";
+   -- if only one element, then make vector the same as the length of
+   -- the number of variables with the same number in each entry
+   if #e == 1 then e = new Array from n:(e_0);
+   -- build a ring homomorphism that will perform this substitution for us
+   phi := map(R,R,matrix {apply(numgens R, i -> (R_i)^(e_i))});
+   -- apply the ring homomorphism and create the new ideal
+   ideal phi generators I
+)
+
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f
      else if f == 0 then kernel g
