@@ -102,6 +102,31 @@ j = homomorphism H_{1} + homomorphism H_{2}
 
 -----------------------------------------------------------------------------
 
+-- test "compose"
+
+R=QQ[x,y]
+M=image vars R ++ R^2
+f = compose(M,M,M);
+H = Hom(M,M);
+for i to numgens H - 1 do for j to numgens H - 1 do (
+     g = H_{i};
+     g' = H_{j};
+     h = homomorphism g;
+     h' = homomorphism g';
+     assert ( homomorphism (f * (g ** g')) == h' * h ))
+
+S = ZZ/101[a,b,c]
+A = matrix"a,b,c;b,c,a" 
+B = matrix"a,b;b,c"
+N = subquotient(A,B)
+assert( (minimalPresentation compose(N,N,N)) === 
+    map(cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
+	cokernel map((S)^1,(S)^{{ -2}},{{b^2-a*c}}),
+	{{1}}));
+
+
+-----------------------------------------------------------------------------
+
 -- test homomorphism' and homomorphism are inverse
 
 R = QQ[x]

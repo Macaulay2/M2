@@ -892,7 +892,8 @@ document {
 	  },
      "Currently, it is assumed
      that ", TT "f", " and the result both have the same 
-     number of entries.  The resulting map is always of degree zero.",
+     number of entries.  The resulting map has the same degree that ", TT "f", " has,
+     but it is easy to spoil homogeneity by giving incorrect free modules.",
      EXAMPLE lines ///
 	  f = matrix{{1,3,5,7,9,11},{2,4,6,8,10,12}}
 	  reshape(ZZ^3,ZZ^4,f)

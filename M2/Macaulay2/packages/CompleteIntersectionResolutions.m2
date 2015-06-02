@@ -19,7 +19,6 @@ newPackage(
    	   "isLinear",
 	   "cosyzygyRes",	  	   
 	   "stableHom",
-	   "mapToHomomorphism",
 	   "isStablyTrivial",
 	--things related to Ext over a complete intersection
 	   "ExtModule", 
@@ -72,31 +71,7 @@ stableHom(Module, Module) := (M,N)->(
     if isFreeModule M then return map((ring M)^0, H, 0);
     p := map(N, cover N, 1);
     map(coker Hom(M,p), Hom(M,N), 1))
-{*
-mapToHomomorphism = method()
-mapToHomomorphism Matrix := f -> (
-   S := ring f;
-   M := source f;
-   N := target f;
-   H := Hom(M,N);
-   M0 := cover M;
-   N0 := cover N;
-   f1 := reshape((dual M0)**N0, S^1, matrix f);
-   f2 := f1 // (generators H);
-   map(H,S^1,f2)
-   )
 
-mapToHomomorphism Matrix := f ->(
-    S := ring f;
-    M := source f;
-    N := target f;
-    F := cover M;
-    p := map(M, F, 1);
-    Fd := dual F;
-    one := reshape(Fd**F,S^1, id_F);
-    map(Hom(M,N), S^1, Hom(M,f)*((Hom(F,p)//Hom(p,M)))*one)
-	    )
-*}
 isStablyTrivial = method()
 isStablyTrivial Matrix := f ->(
    -- f: M \to N is given.
@@ -3397,7 +3372,7 @@ TEST///
      S = ZZ/101[a,b,c];
      M = S^2/ideal"a,b"++S^3/ideal"b,c";
      N = coker random (S^{0,1}, S^{-1});
-     g = mapToHomomorphism id_M;
+     g = homomorphism' id_M;
      assert(id_M == homomorphism g)
      assert(isStablyTrivial id_M == false)
      assert(isStablyTrivial(map(M, cover M, 1))==true)

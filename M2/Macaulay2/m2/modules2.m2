@@ -475,7 +475,11 @@ dual Module := Module => {} >> o -> F -> if F.cache.?dual then F.cache.dual else
      if not isFreeModule F then kernel transpose presentation F
      else new Module from (ring F,rawDual raw F))
 
------------------------------------------------------------------------------
+Module#id = (M) -> map(M,M,1)
+
+reshape = method()
+reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> map(F,G,rawReshape(raw m, raw cover F, raw cover G))
+
 Hom(Ideal, Ideal) := Module => (I,J) -> Hom(module I, module J)
 Hom(Ideal, Module) := Module => (I,M) -> Hom(module I, M)
 Hom(Module, Ideal) := Module => (M,I) -> Hom(M, module I)
@@ -493,6 +497,19 @@ Hom(Module, Module) := Module => (M,N) -> (
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
      H)
 
+adjoint' = method()
+adjoint'(Matrix,Module,Module) := Matrix => (m,G,H) -> (
+     -- adjoint':  m : F --> Hom(G,H) ===> F ** G --> H
+     -- warning: in versions 1.7.0.1 and older dual G was called for, instead of G, since G was assumed to be free
+     F := source m;
+     inducedMap(H, F ** G, reshape(super H, F ** G, super m)))
+
+adjoint = method()
+adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> (
+     -- adjoint :  m : F ** G --> H ===> F --> Hom(G,H)
+     H := target m;
+     inducedMap(Hom(G,H), F, reshape(Hom(cover G,ambient H), F, super m)))
+
 homomorphism = method()
 homomorphism Matrix := Matrix => (f) -> (
      -- from a map R^1 -> Hom(M,N) produce a map M-->N
@@ -509,6 +526,63 @@ homomorphism' Matrix := Matrix => (f) -> (
      M := source f;
      adjoint(f,R^1,M)
      )
+
+compose = method()
+compose(Module, Module, Module) := Matrix => (M,N,P) ->(
+    -- this code was written by David Eisenbud
+    --defines the map Hom(M,N)**Hom(N,P) -> Hom(M,P)
+    
+    --the following just simplify notation:
+    MN := Hom(M,N);
+    NP := Hom(N,P);
+    MP := Hom(M,P);
+    CN := cover N;
+    pN := presentation N;
+    pM := presentation M;
+    
+    --next define a version of MN whose cover naturally maps to (dual cover M ** cover N), 
+    --and similarly for NP, MP
+    gensMN' := (dual cover M ** generators N) * generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N);
+    MN' := subquotient(gensMN', relations MN);
+    toMN' := map(MN', MN, generators MN'//generators MN);  
+    
+    gensNP' := (dual cover N ** generators P) * generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P);
+    NP' := subquotient(gensNP', relations NP);
+    toNP' := map(NP', NP, generators NP'//generators NP);  
+
+    gensMP' := (dual cover M ** generators P) * generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P);
+    MP' := subquotient(gensMP', relations MP);
+    toMP := map(MP, MP', generators MP'//generators MP); -- note that this goes the other way from toMN'
+    
+    --define the map the cover of the new version of MN into the tensor product, and similarly for NP and MP
+    toCMStarCN := map (dual cover M**cover N, cover MN', 
+	generators kernel map(dual source pM ** N, dual target pM ** cover N, dual pM ** coverMap N));
+    toCNStarCP := map (dual cover N**cover P, cover NP', 
+	generators kernel map(dual source pN ** P, dual target pN ** cover P, dual pN ** coverMap P));
+    toCMStarCP := map (dual cover M**cover P, cover MP', 
+	generators kernel map(dual source pM ** P, dual target pM ** cover P, dual pM ** coverMap P));
+
+    --now that we can map cover MN'** cover NP' --> (dual cover M)**cover N **(dual cover N) ** cover P
+    --we can contract the middle terms
+    ev := reshape((ring CN)^1, CN**(dual CN), id_CN);
+    contractor := map(MP',MN' ** NP', ((dual cover M ** ev ** cover P)*(toCMStarCN ** toCNStarCP))//toCMStarCP);
+    toMP * contractor * (toMN' ** toNP'))
+
+flatten Matrix := Matrix => m -> (
+     R := ring m;
+     F := target m;
+     G := source m;
+     if not isFreeModule F or not isFreeModule G
+     then error "expected source and target to be free modules";
+     if numgens F === 1 
+     then m
+     else (
+	  f := reshape(R^1, G ** dual F ** R^{ - degree m}, m);
+	  f = map(target f, source f, f, Degree => toList(degreeLength R:0));
+	  f))
+
+flip = method()
+flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 -----------------------------------------------------------------------------
 pdim Module := M -> length resolution trim M

@@ -8,15 +8,6 @@ export {
         symbol antipode,
         symbol chi,
         symbol submatrixByDegrees,
---	symbol setAttribute,				    -- experimental
---	symbol hasAnAttribute,				    -- experimental
---	symbol hasAttribute,				    -- experimental
---	symbol getAttribute,				    -- experimental
---	symbol getAttributes,				    -- experimental
---	symbol removeAttribute,				    -- experimental
---	symbol PrintNames,				    -- experimental (changed from an earlier version)
---	symbol PrintNet,				    -- experimental (changed from an earlier version)
---	symbol ReverseDictionary,			    -- experimental (changed from an earlier version)
 	"ass" => symbol associatedPrimes,
         "ann" => symbol annihilator,
 	"coker" => symbol cokernel,
@@ -35,7 +26,6 @@ export {
 	symbol eint,
 	symbol Gamma,
 	symbol lngamma,
-	-- symbol lgamma,
 	symbol zeta,
 	symbol erf,
 	symbol erfc,
@@ -190,9 +180,7 @@ export {
 	symbol Exclude,
 	symbol Expression,
 	symbol Ext,
-	-- symbol F4,
 	symbol Fano,
-	-- symbol Faugere,
 	symbol File,
 	symbol FileName,
 	symbol FilePosition,
@@ -238,7 +226,6 @@ export {
 	symbol Height,
 	symbol Hilbert,
 	symbol Holder,
---	symbol Holder2,
 	symbol Hom,
 	symbol HomePage,
 	symbol Homogeneous,
@@ -314,7 +301,6 @@ export {
 	symbol NewOfMethod,
 	symbol NoPrint,
 	symbol NonAssociativeProduct,
-	-- symbol NonLinear,
 	symbol Nothing,
 	symbol Number,
 	symbol OO,
@@ -434,7 +420,6 @@ export {
 	symbol GroebnerBasisOptions,
 	symbol installHilbertFunction,
 	symbol instances,
-	-- Mike wanted this: symbol installGroebner,
 	symbol gbSnapshot,
 	symbol gbRemove,
 	symbol UserMode,
@@ -553,6 +538,7 @@ export {
 	symbol complement,
 	symbol complete,
 	symbol components,
+	symbol compose,
 	symbol compositions,
 	symbol compress,
 	symbol concatenate,
@@ -696,7 +682,6 @@ export {
 	symbol getc,
 	symbol getenv,
 	symbol global,
-	-- symbol collectThreads,
 	symbol threadVariable,
 	symbol taskResult,
 	symbol cancelTask,
