@@ -103,7 +103,7 @@ H = Hom(M,N)
 
 R=QQ[x,y]
 M=image vars R ++ R^2
-time f = compose(M,M,M,Strategy=>1);
+time f = compose(M,M,M);
 -- broken by trimming Hom
 -- time f' = compose(M,M,M,Strategy=>0);
 -- assert ( f === f' )
@@ -135,7 +135,7 @@ S = ZZ/101[a,b,c]
 A = matrix"a,b,c;b,c,a" 
 B = matrix"a,b;b,c"
 N = subquotient(A,B)
-time com = compose(N,N,N,Strategy => 1)
+time com = compose(N,N,N)
 assert isHomogeneous com
 -- broken by trimming Hom
 -- time com' = compose(N,N,N,Strategy => 0)
