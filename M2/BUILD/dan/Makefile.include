@@ -19,10 +19,12 @@ endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
 clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true IgnoreExampleErrors=true -k all
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
+big-check check:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) -k $@
+help:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
 	D=`pwd` ;\

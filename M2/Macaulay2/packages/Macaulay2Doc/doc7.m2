@@ -1646,8 +1646,8 @@ assert ( source g === J )
 assert ( target g === K )
 f' = homomorphism' g
 assert (f-f' == 0)
-assert (degrees f' === {{{1}, {2}, {2}, {3}, {3}}, {{0}}})
-assert (degrees f === {{{1}, {2}, {2}, {3}, {3}}, {{1}}})
+assert (degrees f' === {{{1}}, {{0}}})
+assert (degrees f === {{{1}}, {{1}}})
 assert (degree f == {0})
 assert (degree f' == {1})
 ///

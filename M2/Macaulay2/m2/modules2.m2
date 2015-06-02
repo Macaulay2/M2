@@ -492,7 +492,7 @@ Hom(Ring, Ideal) := Module => (R,I) -> Hom(R^1, module I)
 Hom(Module, Module) := Module => (M,N) -> (
      Y := youngest(M.cache.cache,N.cache.cache);
      if Y#?(Hom,M,N) then return Y#(Hom,M,N);
-     H := kernel (transpose presentation M ** N);
+     H := trim kernel (transpose presentation M ** N);
      H.cache.homomorphism = (f) -> map(N,M,adjoint'(f,M,N), Degree => first degrees source f);
      Y#(Hom,M,N) = H; -- a hack: we really want to type "Hom(M,N) = ..."
      H)
@@ -527,8 +527,9 @@ homomorphism' Matrix := Matrix => (f) -> (
      adjoint(f,R^1,M)
      )
 
-compose = method(Options => {Strategy => 0})
-compose(Module, Module, Module) := Matrix => opts -> (M,N,P) -> (
+compose = method(Options => true)
+composeModuleOptions = new OptionTable from {Strategy => 1}
+compose(Module, Module, Module) := Matrix => composeModuleOptions >> opts -> (M,N,P) -> (
      R := ring M;
      if not ring N === R or not ring P === R then error "expected modules over the same ring";
      if opts.Strategy == 0 then (

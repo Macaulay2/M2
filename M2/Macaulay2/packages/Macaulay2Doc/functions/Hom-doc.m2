@@ -30,17 +30,13 @@ document {
      	  R = QQ[x,y]/(y^2-x^3);
 	  M = image matrix{{x,y}}
 	  H = Hom(M,M)
-	  H1 = prune H
 	  ///,
      "Specific homomorphisms may be obtained using ", TO homomorphism, ".",
      EXAMPLE lines ///
-	  f1 = homomorphism H_{0}
-	  f2 = homomorphism H_{1}
-	  f3 = homomorphism H_{2}
+	  f0 = homomorphism H_{0}
+	  f1 = homomorphism H_{1}
 	  ///,
-     "In this example, f1 is the identity map, f2 is multiplication by x,
-     and f3 maps x to y and y to x^2.",
-     PARA{},
+     "In this example, f0 is the identity map, and f1 maps x to y and y to x^2.",
      SeeAlso => {homomorphism, Ext, compose}
      }
 

@@ -65,7 +65,7 @@ P3 = Proj ringP3
 HH^1((OO_P3(1)/idealX)(>=0))
 degrees oo
 omegaX = Ext^(codim idealX)(ringP3^1/idealX, ringP3^{-4})
-dualModule = trim Hom(omegaX, ringP3^1/idealX)
+dualModule = Hom(omegaX, ringP3^1/idealX)
 betti prune dualModule
 f = homomorphism dualModule_{0}
 canGens = f*basis(0,omegaX)
@@ -81,9 +81,9 @@ codim singularLocus idealS
 omegaS = Ext^(codim idealS)(ringP5^1/idealS, ringP5^{-6})
 OS = ringP5^1/idealS
 omegaS**omegaS
-omega2S = trim Hom(trim Hom(omegaS**omegaS, OS),OS)
-L = trim Hom(omegaS, OS**(ringP5^{-1}))
-dualModule = trim Hom(L, OS)
+omega2S = Hom(Hom(omegaS**omegaS, OS),OS)
+L = Hom(omegaS, OS**(ringP5^{-1}))
+dualModule = Hom(L, OS)
 betti generators dualModule
 g = homomorphism dualModule_{0}
 toP2 = g*basis(0,L)
