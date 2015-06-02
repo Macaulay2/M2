@@ -187,22 +187,24 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 		    if opts.Strategy === Complement then (
 			 g := mingens(M,opts);
 			 if g === M.generators then M else (
-			      M' := image g;		    -- this submodule has the same gb as M does
-			      Mgc := M.generators.cache;
-			      M'gc := M'.generators.cache;
-			      scan(pairs Mgc, (k,v) -> (
-					if instance(k,GroebnerBasisOptions) then (
-					     if not k.Syzygies then M'gc#k = v
-					     else (
-						  k' := new GroebnerBasisOptions from {
-						       HardDegreeLimit => k.HardDegreeLimit,
-						       Syzygies => false,
-						       SyzygyRows => 0
-						       };
-						  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
-						  )
-					     );
-					));
+			      M' := image g;
+			      -- The code below was intended to give M' a cheap Groebner basis,
+     			      -- but we comment out it, because even if Syzygies is set to false, ChangeMatrix might have been true, and we don't record that somehow.
+			      -- Mgc := M.generators.cache;
+			      -- M'gc := M'.generators.cache;
+			      -- scan(pairs Mgc, (k,v) -> (
+			      -- 		if instance(k,GroebnerBasisOptions) then (
+			      -- 		     if not k.Syzygies then M'gc#k = v
+			      -- 		     else (
+			      -- 			  k' := new GroebnerBasisOptions from {
+			      -- 			       HardDegreeLimit => k.HardDegreeLimit,
+			      -- 			       Syzygies => false,
+			      -- 			       SyzygyRows => 0
+			      -- 			       };
+			      -- 			  M'gc#k' = v; -- the gb, v, may actually have syzygies, but they won't be accessed
+			      -- 			  )
+			      -- 		     );
+			      -- 		));
 			      M'))
 		    else if opts.Strategy === null then (
 	  	    	 tot = mingb M.generators;
