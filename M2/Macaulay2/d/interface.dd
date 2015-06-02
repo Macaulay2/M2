@@ -15,11 +15,24 @@ header "
   #include <relem.hpp>
   #include <aring-glue.hpp>
   #include <aring-zzp.hpp>
+
+  #include <stdexcept>
+  void test_catch0() { 
+       throw (std::runtime_error(\"test\")); 
+       }
+  int test_catch() {
+       try { test_catch0(); } catch (std::runtime_error x) { return 1; }
+       return 0;
+       }
+  
   ";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
 setupfun("engineMemory", engineMemory);
+
+export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"test_catch()"));
+setupfun("testCatch",testCatch);
 
 -- random numbers
 
