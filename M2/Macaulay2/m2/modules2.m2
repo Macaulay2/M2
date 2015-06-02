@@ -528,7 +528,7 @@ homomorphism' Matrix := Matrix => (f) -> (
      )
 
 compose = method()
-compose(Module, Module, Module) := Matrix => opts -> (M,N,P) -> (
+compose(Module, Module, Module) := Matrix => (M,N,P) -> (
      R := ring M;
      if not ring N === R or not ring P === R then error "expected modules over the same ring";
      if isQuotientModule N then (
@@ -541,7 +541,7 @@ compose(Module, Module, Module) := Matrix => opts -> (M,N,P) -> (
 	       Verify=>false))
      else (
 	  N' := cokernel presentation N;
-	  compose(M,N',P,opts) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
+	  compose(M,N',P) * (Hom(M,map(N',N,1))**Hom(map(N,N',1),P))))
 
 flatten Matrix := Matrix => m -> (
      R := ring m;
