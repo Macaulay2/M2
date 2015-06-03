@@ -160,8 +160,10 @@ document {
      SeeAlso => {"packages"}
      }
 
+undocumented (export,Symbol)
+
 document {
-     Key => {export, (export,List), (export,Symbol), (export,String)},
+     Key => {export, (export,List), (export,String)},
      Headline => "package item: export functions",
      Usage => "export {symbol1,symbol2,...}",
      Inputs => { { TT "{symbol1,symbol2,...}", ", a list of strings or options" } },
@@ -178,12 +180,17 @@ document {
 	  allows one to specify which symbols are to be made visible.
 	  For an example see ", TO "an example of a package", "."
 	  },
+     PARA {
+	  "No single-letter symbol should be exported, as such symbols are reserved as variables for the user."
+	  },
      PARA{ "Use ", TO exportMutable, " to export symbols whose values the user is permitted to modify." },
      SeeAlso => {debug}
      }
 
+undocumented (exportMutable,Symbol)
+
 document {
-     Key => {exportMutable, (exportMutable,List), (exportMutable,Symbol)},
+     Key => {exportMutable, (exportMutable,List), (exportMutable,String)},
      Headline => "package item: export writable variables",
      Usage => "exportMutable(symbol1,symbol2,...)",
      Inputs => { Nothing => { TT "(symbol1,symbol2,...)", ", a sequence of strings interpreted as names of symbols"  } },
@@ -192,7 +199,12 @@ document {
 	  {"the names of symbols in the sequence, which should refer to variables defined in the package,
 	       are made available to the user of the package, in such a way that their values may be modified by the user"}
 	 },
-     "This function is needed much less frequently than ", TO export, ".  For an example, see ", TO "an example of a package",
+     PARA {
+     	  "This function is needed much less frequently than ", TO export, ".  For an example, see ", TO "an example of a package"
+	  },
+     PARA {
+	  "No single-letter symbol should be exported, as such symbols are reserved as variables for the user."
+	  },
      SeeAlso => {export, debug}
      }
 

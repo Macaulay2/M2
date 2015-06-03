@@ -315,6 +315,7 @@ export List := v -> (
 		    sym = getGlobalSymbol(pd,sym#1);
 		    )
 	       else if instance(sym, String) then (
+		    if match("^[[:alpha:]]$",sym) then error ("cannot export single-letter symbol ", getGlobalSymbol(pd,sym));
 		    nam = sym;
 		    sym = if pd#?nam then pd#nam else getGlobalSymbol(pd,nam);
 		    )
@@ -330,6 +331,7 @@ export List := v -> (
      syms)
 exportMutable = method(Dispatch => Thing)
 exportMutable Symbol := x -> exportMutable {x}
+exportMutable String := x -> exportMutable {x}
 exportMutable List := v -> (
      syms := export v;
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",syms);
