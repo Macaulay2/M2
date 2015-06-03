@@ -33,6 +33,7 @@ header "
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
    #include <factory/factory.h>
+   #include \"git-description.c\"
    #undef Matrix
    extern char timestamp[];
    #undef ASSERT
@@ -226,7 +227,8 @@ setupconst("version", Expr(toHashTable(Sequence(
    "packages" => Ccode(constcharstar,"PACKAGES"),
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
-   "threads" => USE_THREADS
+   "threads" => USE_THREADS,
+   "git description" => Ccode(constcharstar,"gitDescription")
    ))));
 
 -- Local Variables:
