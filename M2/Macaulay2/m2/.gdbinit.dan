@@ -1,0 +1,26 @@
+# -*- sh -*-
+echo -- loading .gdbinit\n
+# when debugging, gdb sets a trap in the memory space of ld.so, so its checksum will always change
+# so we send a message to the loaddata routine to ignore that
+set environment LOADDATA_IGNORE_CHECKSUMS yes
+set auto-load safe-path /
+source .gdb-directories
+source .gdb-files
+b fatalarrayindex
+# b GC_default_warn_proc
+# can only do this after the program starts:
+# b __gmp_set_memory_functions
+# b main
+b fatal
+b ERROR
+b outofmem
+b abort
+b _ntl_abort
+b GC_err_puts
+set args -q --no-randomize --no-time
+handle SIGPWR nostop noprint
+handle SIGXCPU nostop noprint
+# source .gdb-run-it
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
+# End:
