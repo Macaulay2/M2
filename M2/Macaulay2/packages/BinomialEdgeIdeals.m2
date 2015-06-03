@@ -14,25 +14,24 @@ newPackage("BinomialEdgeIdeals",
 export {
 
    --methods
-   "binomialEdgeIdeal",
-   "parityBinomialEdgeIdeal",
-   "disconnectors",
-   "isDisconnector",
-   "isEffective",
-   "s",
+   binomialEdgeIdeal,
+   parityBinomialEdgeIdeal,
+   disconnectors,
+   isDisconnector,
+   isEffective,
+   sFunc,
 
    -- wrapper
-   "bei",
-   "pbei",
+   bei,
+   pbei,
 
    --Options
-   "Field",
-   "Permanental",
-   "TermOrder", 
-   "EffectiveOnly",
-   "UseHypergraphs"
+   Field,
+   Permanental,
+   TermOrder, 
+   EffectiveOnly,
+   UseHypergraphs
 }
-
 
 --variable for polynomial ring
 xx:=vars(23);
@@ -113,8 +112,8 @@ isDisconnector (List,Set) := Boolean => (G,S) -> (isDisconnector(graph(G),toList
 isDisconnector (Graph,Set) := Boolean => (G,S) -> (isDisconnector(G,toList(S)));
 isDisconnector (Graph,List) := Boolean => (G,S) -> (
 GS:=deleteVertices(G,S);
-sGS:=s(GS);
-for v in S do (if sGS <= s(deleteVertices(G,delete(v,S))) then return false);
+sGS:=sFunc(GS);
+for v in S do (if sGS <= sFunc(deleteVertices(G,delete(v,S))) then return false);
 return true;
 );
 
@@ -134,9 +133,9 @@ if opts.UseHypergraphs then (
     );
 );
 
-s = method()
-s List := ZZ => G -> (s(graph(G)));
-s Graph := ZZ => G -> (
+sFunc = method()
+sFunc List := ZZ => G -> (sFunc(graph(G)));
+sFunc Graph := ZZ => G -> (
 nb:=0;
 b:=0;
 for H in connectedComponents(G) do (
@@ -311,7 +310,7 @@ assert(isDisconnector(G,{1,3})===false);
 TEST ///
 --count connected components
 G={{1,2},{2,3},{3,1},{4,5},{6,7},{7,8},{6,8}};
-assert(s(G)==4);
+assert(sFunc(G)==4);
 ///
 
 TEST ///
