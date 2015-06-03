@@ -39,7 +39,7 @@ newPackage select((
 export {
      "setDefault", "getDefault",
      "solveSystem", 
-     solveGenericSystemInTorus, -- works with PHCpack only
+     "solveGenericSystemInTorus", -- works with PHCpack only
      "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",

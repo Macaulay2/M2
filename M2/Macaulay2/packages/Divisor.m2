@@ -93,7 +93,7 @@ export{
 	"KnownCartier", --an option, used to specify that the divisor is known to be Cartier
 	"IsGraded", --an option, if you specify it in several arguments it assumes we are working on a projective variety
 	"ReturnMap", --an option, for moduleToIdeal and moduleWithSectionToIdeal which returns the map from the module to R^1
-	"Primes" --a potential value for the divPullBack Strategy option
+	"Primes", --a potential value for the divPullBack Strategy option
 	"Sheaves" --a potential value for the divPullBack Strategy option	
 }
 

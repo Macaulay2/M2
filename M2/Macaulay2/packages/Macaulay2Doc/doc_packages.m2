@@ -164,22 +164,14 @@ document {
      Key => {export, (export,List), (export,Symbol), (export,String)},
      Headline => "package item: export functions",
      Usage => "export {symbol1,symbol2,...}",
-     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of strings, symbols, or options" } },
+     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of strings or options" } },
      Outputs => {List => "the list of exported symbols"},
-     Consequences => {{"The symbols whose names are in the list, which should refer
+     Consequences => {{"The symbols whose names are in the list as strings, which should refer
 	  to functions or other symbols defined in the package, are made available 
 	  to the user of the package, and are marked non-mutable.  The strings are converted to symbols
-	  with those names in the dictionary of the package.  An option of the form ", TT "\"nam\" => sym", "
-	  creates a symbol with the name ", TT "\"nam\"", " that is a synonym of the symbol", TT "\"nam\" => sym", "."
+	  with those names in the dictionary of the package.  An option of the form ", TT "\"nam\" => \"sym\"", "
+	  creates a symbol with the name ", TT "nam", " that is a synonym of the symbol", TT "sym", "."
 	  }},
-     PARA {
-	  "It is best always to enclose the name of a symbol to be exported in quotation marks, because
-	  that effectively signals the intention of the package writer to export a new symbol.  This uniform
-	  practice will prevent problems that might arise if a user loads a package and has already provided
-	  definitions or uses for some of the symbols in the package.  (It is possible
-	  to export an old symbol, defined elsewhere, but it is best for each symbol to be exported by just
-	  one package.)"
-	  },
      PARA {
 	  "A package can contain the code for many functions, only some 
 	  of which should be made visible to the user.  The function ", TT "export", " 
@@ -194,10 +186,10 @@ document {
      Key => {exportMutable, (exportMutable,List), (exportMutable,Symbol)},
      Headline => "package item: export writable variables",
      Usage => "exportMutable(symbol1,symbol2,...)",
-     Inputs => { Nothing => { TT "(symbol1,symbol2,...)", ", a sequence of symbols"  } },
+     Inputs => { Nothing => { TT "(symbol1,symbol2,...)", ", a sequence of strings interpreted as names of symbols"  } },
      Outputs => {List => "the list of exported symbols"},
      Consequences => {
-	  {"the symbols in the sequence, which should refer to variables defined in the package,
+	  {"the names of symbols in the sequence, which should refer to variables defined in the package,
 	       are made available to the user of the package, in such a way that their values may be modified by the user"}
 	 },
      "This function is needed much less frequently than ", TO export, ".  For an example, see ", TO "an example of a package",

@@ -1159,18 +1159,19 @@ export {
 }
 
 export {
-     	"ann" => "annihilator",
-	"ass" => "associatedPrimes",
-	"coker" => "cokernel",
-	"det" => "determinant",
-	"gens" => "generators",
-	"ker" => "kernel",
-	"minPres" => "minimalPresentation",
-	"numcols" => "numColumns",
-	"numrows" => "numRows",
-	"res" => "resolution",
-	"sub" => "substitute",
-	"top" => "topComponents"
+	-- synonyms:
+        "ann" => "annihilator",
+        "ass" => "associatedPrimes",
+        "coker" => "cokernel",
+        "det" => "determinant",
+        "gens" => "generators",
+        "ker" => "kernel",
+        "minPres" => "minimalPresentation",
+        "numcols" => "numColumns",
+        "numrows" => "numRows",
+        "res" => "resolution",
+        "sub" => "substitute",
+        "top" => "topComponents"
 }
 
 exportMutable {

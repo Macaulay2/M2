@@ -57,7 +57,7 @@ export {
      "RealizationModules",
      
      -- Types
-     "BettiEliminationTally "
+     "BettiEliminationTally"
      }
 -- Also defined here:
 -- pdim BettiTally

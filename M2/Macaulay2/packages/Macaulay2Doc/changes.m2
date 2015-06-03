@@ -148,10 +148,11 @@ document {
 		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." }
 	  	    }
 	       },
-	  -- LI { "functionality changed:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "The function ", TO "export", " now accepts strings and options only, not symbols." }
+	       	    }
+	       },
 	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
 	  --      UL {
 	  --      	    }
