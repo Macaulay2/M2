@@ -289,7 +289,13 @@ twocolon RR := x -> toString floor x | ":" | twodigits onecolon (60 * (x - floor
 twocolon QQ := twocolon ZZ := x -> twocolon (0. + x)
 twocolon Measurement := m -> toString ( expression onecolon m#0 * expression m#1 )
 
-export keys Units#"private dictionary"
+-- this is a poorly behaved package, because it sets user symbols
+-- after being dismissed and recalled, those won't be reset again
+for x in pairs Units#"private dictionary" do (
+     (nam,sym) := x;
+     if match("^[[:alpha:]]$",nam)
+     then getSymbol nam <- value sym
+     else export nam)
 
 beginDocumentation()
 
