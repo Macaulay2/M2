@@ -15,7 +15,7 @@ newPackage(
 
 -- For information see documentation key "MapleInterface" below.
 
-export({"callMaple","store","readMaple","msqrt","integralBasis"})
+export {"callMaple","store","readMaple","msqrt","integralBasis"}
 
 getFilename = () -> (
      filename := temporaryFileName();

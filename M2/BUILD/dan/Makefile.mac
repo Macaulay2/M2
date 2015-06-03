@@ -44,7 +44,6 @@ endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all
 
 ifeq ($(PRODUCTION),yes)

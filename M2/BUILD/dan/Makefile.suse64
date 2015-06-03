@@ -10,7 +10,9 @@
 # gfan doesn't compile with g++ 4.5, so I used gcc 4.3 instead
 
 CONFIGOPTIONS += --enable-rpm
-CONFIGOPTIONS += CC=gcc-4.3 CXX=g++-4.3 FC=gfortran-4.3
+CC=gcc-4.3
+CXX=g++-4.3
+FC=gfortran-4.3
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu --with-mpir-config-options="ABI=64"
 DIRECTORY = suse64
 include Makefile.include

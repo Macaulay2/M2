@@ -1,20 +1,20 @@
 -- -*- coding: utf-8 -*-
 
 
-export { jordanForm,
-    maxFLINTPrime,
-    maxFFPACKPrime,
-    testDeterminant,
-    testMult,
-    testInverse,
-    testNullspace,
-    testRank,
-    testRankProfile,
-    testSolve,
-    testLinearAlgebra,
-    testLinearAlgebraSet,
-    testLUBoundaryCases,
-    testHasEngineLinearAlgebra
+export { "jordanForm",
+    "maxFLINTPrime",
+    "maxFFPACKPrime",
+    "testDeterminant",
+    "testMult",
+    "testInverse",
+    "testNullspace",
+    "testRank",
+    "testRankProfile",
+    "testSolve",
+    "testLinearAlgebra",
+    "testLinearAlgebraSet",
+    "testLUBoundaryCases",
+    "testHasEngineLinearAlgebra"
     }
 
 

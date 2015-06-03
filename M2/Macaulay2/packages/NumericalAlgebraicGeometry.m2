@@ -52,9 +52,9 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     Bits, Iterations, ErrorTolerance, ResidualTolerance,
+     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, squareUp,
+     "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"

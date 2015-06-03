@@ -11,7 +11,7 @@ document {
      that opened the package will call ", TO "endPackage", ".",
      EXAMPLE lines ///
           newPackage "Foo"
-	  export abc
+	  export "abc"
 	  abc = 3
 	  dictionaryPath
 	  endPackage "Foo"

@@ -13,10 +13,10 @@ newPackage(
     	)
 
 export {
-     pointsMat,
-     points,
-     pointsByIntersection,
-     makeRingMaps
+     "pointsMat",
+     "points",
+     "pointsByIntersection",
+     "makeRingMaps"
      }
 
 

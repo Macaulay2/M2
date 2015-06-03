@@ -12,15 +12,15 @@ newPackage(
     	)
 
 export {
-     setMaxIdeal,
-     localComplement,
-     localsyz,
-     localMingens,
-     localModulo,
-     localPrune,
-     localResolution,
-     residueMap,
-     maxIdeal
+     "setMaxIdeal",
+     "localComplement",
+     "localsyz",
+     "localMingens",
+     "localModulo",
+     "localPrune",
+     "localResolution",
+     "residueMap",
+     "maxIdeal"
      }
 
 -- This routine, localRing, is not functional yet -----
@@ -462,7 +462,7 @@ B = A[x,y,z]
 --------------------------------
 
 newPackage "LocalRings"
-export {LocalRing,localRing,ambientRing,maxIdeal}
+export {"LocalRing","localRing","ambientRing","maxIdeal"}
 LocalRing = new Type of EngineRing
 debug Core
 presentation LocalRing := (R) -> presentation R.ambientRing

@@ -73,9 +73,9 @@ export {
   --"vertices",
     --
     -- Display Methods
-    displayGraph,
-    showTikZ,
-    writeDotFile,
+    "displayGraph",
+    "showTikZ",
+    "writeDotFile",
     --
     -- Derivative graphs
     "barycenter",

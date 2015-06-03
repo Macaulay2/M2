@@ -164,18 +164,28 @@ document {
      Key => {export, (export,List), (export,Symbol), (export,String)},
      Headline => "package item: export functions",
      Usage => "export {symbol1,symbol2,...}",
-     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of symbols, strings, or options" } },
+     Inputs => { { TT "{symbol1,symbol2,...}", ", a list of strings, symbols, or options" } },
      Outputs => {List => "the list of exported symbols"},
-     Consequences => {{"The symbols in the list, which should refer
+     Consequences => {{"The symbols whose names are in the list, which should refer
 	  to functions or other symbols defined in the package, are made available 
 	  to the user of the package, and are marked non-mutable.  The strings are converted to symbols
 	  with those names in the dictionary of the package.  An option of the form ", TT "\"nam\" => sym", "
 	  creates a symbol with the name ", TT "\"nam\"", " that is a synonym of the symbol", TT "\"nam\" => sym", "."
 	  }},
-     "A package can contain the code for many functions, only some 
-     of which should be made visible to the user.  The function ", TT "export", " 
-     allows one to specify which symbols are to be made visible.
-     For an example see ", TO "an example of a package", ".",
+     PARA {
+	  "It is best always to enclose the name of a symbol to be exported in quotation marks, because
+	  that effectively signals the intention of the package writer to export a new symbol.  This uniform
+	  practice will prevent problems that might arise if a user loads a package and has already provided
+	  definitions or uses for some of the symbols in the package.  (It is possible
+	  to export an old symbol, defined elsewhere, but it is best for each symbol to be exported by just
+	  one package.)"
+	  },
+     PARA {
+	  "A package can contain the code for many functions, only some 
+	  of which should be made visible to the user.  The function ", TT "export", " 
+	  allows one to specify which symbols are to be made visible.
+	  For an example see ", TO "an example of a package", "."
+	  },
      PARA{ "Use ", TO exportMutable, " to export symbols whose values the user is permitted to modify." },
      SeeAlso => {debug}
      }

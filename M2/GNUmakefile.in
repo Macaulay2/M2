@@ -62,7 +62,7 @@ copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
 SUBTARGETS = check all clean distclean run-configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
-all-in-submodules:all-in-libraries
+#all-in-submodules:all-in-libraries
 all-in-mathicgb:all-in-mathic all-in-memtailor
 all-in-mathic:all-in-memtailor
 $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))

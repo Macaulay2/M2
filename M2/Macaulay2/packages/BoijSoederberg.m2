@@ -15,49 +15,49 @@ newPackage(
     	)
 
 export {
-     mat2betti, -- documented
-     lowestDegrees, -- documented
-     highestDegrees, -- documented
-     isPure, -- documented
-     makePureBetti, --documented
-     makePureBettiDiagram, --documented
-     pureBetti, -- documented
-     pureBettiDiagram, -- documented
+     "mat2betti", -- documented
+     "lowestDegrees", -- documented
+     "highestDegrees", -- documented
+     "isPure", -- documented
+     "makePureBetti", --documented
+     "makePureBettiDiagram", --documented
+     "pureBetti", -- documented
+     "pureBettiDiagram", -- documented
 
-     pureCharFree, -- documented    
-     pureTwoInvariant, -- documented
-     pureWeyman, -- documented
-     pureAll, -- documented
+     "pureCharFree", -- documented    
+     "pureTwoInvariant", -- documented
+     "pureWeyman", -- documented
+     "pureAll", -- documented
      
-     randomSocleModule, -- documented
-     randomModule, -- documented
+     "randomSocleModule", -- documented
+     "randomModule", -- documented
      
-     pureCohomologyTable, -- documented
-     facetEquation, -- documented
-     dotProduct, -- documented
-     supportFunctional, -- not written
+     "pureCohomologyTable", -- documented
+     "facetEquation", -- documented
+     "dotProduct", -- documented
+     "supportFunctional", -- not written
      
-     bott, -- documented
+     "bott", -- documented
      
-     CohomologyTally, -- documented
-     mat2cohom, -- not written
+     "CohomologyTally", -- documented
+     "mat2cohom", -- not written
      
      -- Methods
-     decomposeBetti, -- documented
-     decomposeDegrees, -- documented
-     isMassEliminate, -- documented
-     eliminateBetti, -- documented
-     makeCI, -- documented
+     "decomposeBetti", -- documented
+     "decomposeDegrees", -- documented
+     "isMassEliminate", -- documented
+     "eliminateBetti", -- documented
+     "makeCI", -- documented
 
      -- Options -- documented     
-     EliminationSequence,     
-     TableEntries,     
-     LeastIntegerEntries,
-     HerzogKuhl,
-     RealizationModules,
+     "EliminationSequence",     
+     "TableEntries",     
+     "LeastIntegerEntries",
+     "HerzogKuhl",
+     "RealizationModules",
      
      -- Types
-     BettiEliminationTally 
+     "BettiEliminationTally "
      }
 -- Also defined here:
 -- pdim BettiTally
