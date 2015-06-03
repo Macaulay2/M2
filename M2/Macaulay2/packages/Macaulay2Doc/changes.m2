@@ -41,7 +41,8 @@ document {
 		    LI { "'assign' has been replaced by ", TO "<-" },
 		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
 		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
-		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" },
+		    LI { TT "adjoint1", " has been replaced by ", TO "adjoint'", ", whose interface is different" }
 		    }
 	       },
 	  LI {
@@ -90,7 +91,8 @@ document {
 			 to the well known Eisenbud-Shamash construction, which is also implemented." },
 		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
 		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
-			 on the moduli space of n-pointed curves of genus 0, has been added." }
+			 on the moduli space of n-pointed curves of genus 0, has been added." },
+		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -142,7 +144,8 @@ document {
 			 and tensor product." },
 		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
 			 produces the element of Hom." },
-		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." }
+		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
+		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." }
 	  	    }
 	       },
 	  -- LI { "functionality changed:",
