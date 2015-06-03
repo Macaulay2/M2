@@ -19,7 +19,7 @@ export {
    "disconnectors",
    "isDisconnector",
    "isEffective",
-   "sFunc",
+   "weightedConnectedComponents",
 
    -- wrapper
    "bei",
@@ -30,6 +30,7 @@ export {
    "Permanental",
    "TermOrder", 
    "EffectiveOnly",
+   "WeightMethod",
    "UseHypergraphs"
 }
 
@@ -112,8 +113,8 @@ isDisconnector (List,Set) := Boolean => (G,S) -> (isDisconnector(graph(G),toList
 isDisconnector (Graph,Set) := Boolean => (G,S) -> (isDisconnector(G,toList(S)));
 isDisconnector (Graph,List) := Boolean => (G,S) -> (
 GS:=deleteVertices(G,S);
-sGS:=sFunc(GS);
-for v in S do (if sGS <= sFunc(deleteVertices(G,delete(v,S))) then return false);
+sGS:=weightedConnectedComponents(GS);
+for v in S do (if sGS <= weightedConnectedComponents(deleteVertices(G,delete(v,S))) then return false);
 return true;
 );
 
@@ -133,9 +134,9 @@ if opts.UseHypergraphs then (
     );
 );
 
-sFunc = method()
-sFunc List := ZZ => G -> (sFunc(graph(G)));
-sFunc Graph := ZZ => G -> (
+weightedConnectedComponents = method(Options => {WeightMethod=>"PBEI"})
+weightedConnectedComponents List := ZZ => opts -> G -> (weightedConnectedComponents(graph(G),opts));
+weightedConnectedComponents Graph := ZZ => opts -> G -> (
 nb:=0;
 b:=0;
 for H in connectedComponents(G) do (
@@ -145,7 +146,8 @@ for H in connectedComponents(G) do (
         if isBipartite(IG) then b=b+1 else nb=nb+1; 
         ) else b=b+1;
     );
-return 2*b+nb;
+if opts.WeightMethod == "PBEI" then return 2*b+nb; 
+if opts.WeightMethod == "BEI" then return b+nb; 
 );
 
 
@@ -286,6 +288,29 @@ document {
           },
      SeeAlso => disconnectors}
 
+
+document {
+     Key => {weightedConnectedComponents,
+	  (weightedConnectedComponents, List), (weightedConnectedComponents,Graph)},
+     Headline => "Counting the weighted number of connected components of a graph",
+     Usage => "weightedConnectedComponents(G)",
+     Inputs => {
+          "G" => { "a Graph or a List"}},
+     Outputs => {
+          {"the (weighted) number of connected components of G"} },
+     "This computes the (weighted) number of connected components of a
+     graph. The weights are all one if WeightMethod='BEI' is chosen
+     and if WeightMethod='PBEI', then bipartite components count
+     twice.",
+     EXAMPLE {
+          "G={{1,2},{2,3},{3,1},{4,5},{6,7},{7,8},{6,8}};",
+          "weightedConnectedComponents(G,WeightMethod=>\"BEI\")",
+          "weightedConnectedComponents(G,WeightMethod=>\"PBEI\")",
+          },
+     SeeAlso => disconnectors}
+
+
+
 -- Tests --
 
 TEST ///
@@ -308,9 +333,10 @@ assert(isDisconnector(G,{1,3})===false);
 ///
 
 TEST ///
---count connected components
+--count connected components 
 G={{1,2},{2,3},{3,1},{4,5},{6,7},{7,8},{6,8}};
-assert(sFunc(G)==4);
+assert(weightedConnectedComponents(G,WeightMethod=>"PBEI")==4);
+assert(weightedConnectedComponents(G,WeightMethod=>"BEI")==3);
 ///
 
 TEST ///
