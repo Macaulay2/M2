@@ -35,7 +35,7 @@ newPackage(
 	  DebuggingMode => false
 	  )
 
-export({straighten, standardTableaux, pieri, pureFree, schurRank})
+export {"straighten", "standardTableaux", "pieri", "pureFree", "schurRank"}
 
 --------------------------------
 -- subroutines (not exported) --

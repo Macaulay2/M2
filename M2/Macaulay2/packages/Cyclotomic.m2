@@ -32,10 +32,10 @@ newPackage(
         Reload=>true
     	)
 
-export {cyclotomicField,
-        cyclotomicPoly,
-	findRootPower,
-	joinCyclotomic
+export {"cyclotomicField",
+        "cyclotomicPoly",
+	"findRootPower",
+	"joinCyclotomic"
        }
 
 ww := getSymbol "ww"

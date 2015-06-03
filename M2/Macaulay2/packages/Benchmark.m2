@@ -14,7 +14,7 @@ needsPackage "XML"
 
 -- we should remove the dependence of this on the unix "date" command!
 
-export {runBenchmarks}
+export {"runBenchmarks"}
 
 benchmarks = new HashTable from {
      "res39" => "res of a generic 3 by 9 matrix over ZZ/101" => () -> (

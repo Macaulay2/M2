@@ -12,9 +12,9 @@ newPackage(
 	DebuggingMode => false
 	)
 
-export {macaulayRep, macaulayBound, macaulayLowerOperator, isHF, hilbertFunct, 
-     isCM, lexIdeal, isLexIdeal, isPurePower, LPP, generateLPPs, isLPP, cancelAll, 
-     multUpperHF, multLowerBound, multUpperBound, multBounds, PrintIdeals, MaxDegree}
+export {"macaulayRep", "macaulayBound", "macaulayLowerOperator", "isHF", "hilbertFunct", 
+     "isCM", "lexIdeal", "isLexIdeal", "isPurePower", "LPP", "generateLPPs", "isLPP", "cancelAll", 
+     "multUpperHF", "multLowerBound", "multUpperBound", "multBounds", "PrintIdeals", "MaxDegree"}
 
 --gives the d-th Macaulay representation of a.
 --use for finding upper bound for Hilbert function in degree d+1

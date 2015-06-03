@@ -6,7 +6,7 @@ newPackage("Elimination",
      Headline => "a package for elimination of variables"
      )
 
-export {eliminate, sylvesterMatrix, discriminant, resultant}
+export {"eliminate", "sylvesterMatrix", "discriminant", "resultant"}
 
 ---------------------
 --- Preliminaries  --

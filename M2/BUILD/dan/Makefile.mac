@@ -34,8 +34,8 @@ FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
 CC  := gcc-4.9 -m64
-CXX := g++-4.9 -O -j4 -m64
-FC  := gfortran-5
+CXX := g++-4.9 -m64
+# FC  := gfortran-5
 CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
@@ -44,11 +44,10 @@ endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all
 
 ifeq ($(PRODUCTION),yes)
-   default: check install
+   default: check
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY).production
    PREFIX = /Applications/Macaulay2-1.6
@@ -72,7 +71,6 @@ ifeq ($(PROFILE),yes)
    DIRECTORY := $(DIRECTORY).profile
 endif
 include Makefile.include
-pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 
 # Local Variables:
 # compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "

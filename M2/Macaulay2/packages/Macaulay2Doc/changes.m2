@@ -41,7 +41,8 @@ document {
 		    LI { "'assign' has been replaced by ", TO "<-" },
 		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
 		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
-		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" },
+		    LI { TT "adjoint1", " has been replaced by ", TO "adjoint'", ", whose interface is different" }
 		    }
 	       },
 	  LI {
@@ -87,7 +88,11 @@ document {
 			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
 			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
 			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
-			 to the well known Eisenbud-Shamash construction, which is also implemented." }
+			 to the well known Eisenbud-Shamash construction, which is also implemented." },
+		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
+		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, has been added." },
+		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -129,13 +134,25 @@ document {
 		    LI { "The function ", TO "minimalPresentation", " has been modified so that it applies its degree-preserving method also for homogeneous
 			 modules over affine algebras over affine algebras." },
      	       	    LI { "The function ", TO "applyKeys", " will now accept an additional function to be called when collisions occur between new keys, for combining the
-			 corresponding values, thanks to Paul Zinn-Justin." }
+			 corresponding values, thanks to Paul Zinn-Justin." },
+		    LI { "The function ", TO "partition", " now takes a third argument: a list of additional values in the range of the function, allowing
+			 members of the resulting partition to be empty." },
+		    LI { "The function ", TO "loadPackage", " can now be used to reload a package by giving the package itself as the argument.  This
+			 is easier than setting the ", TO "Reload", " option." },
+		    LI { "The function ", TO "adjoint", " has been improved to work not just for free modules, and the function ", TT "adjoint1", " has
+			 been replaced by ", TO "adjoint'", ".  This pair of function now implements both direction in the adjointness between Hom
+			 and tensor product." },
+		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
+			 produces the element of Hom." },
+		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
+		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." }
 	  	    }
 	       },
-	  -- LI { "functionality changed:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "The function ", TO "export", " now accepts strings and options only, not symbols." }
+	       	    }
+	       },
 	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
 	  --      UL {
 	  --      	    }

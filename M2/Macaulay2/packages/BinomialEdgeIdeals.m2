@@ -14,23 +14,23 @@ newPackage("BinomialEdgeIdeals",
 export {
 
    --methods
-   binomialEdgeIdeal,
-   parityBinomialEdgeIdeal,
-   disconnectors,
-   isDisconnector,
-   isEffective,
-   s,
+   "binomialEdgeIdeal",
+   "parityBinomialEdgeIdeal",
+   "disconnectors",
+   "isDisconnector",
+   "isEffective",
+   "s",
 
    -- wrapper
-   bei,
-   pbei,
+   "bei",
+   "pbei",
 
    --Options
-   Field,
-   Permanental,
-   TermOrder, 
-   EffectiveOnly,
-   UseHypergraphs
+   "Field",
+   "Permanental",
+   "TermOrder", 
+   "EffectiveOnly",
+   "UseHypergraphs"
 }
 
 

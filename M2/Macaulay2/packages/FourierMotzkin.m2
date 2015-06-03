@@ -26,7 +26,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export fourierMotzkin
+export "fourierMotzkin"
 
 
 -- Transposition along the antidiagonal; used to compute row-reduced 

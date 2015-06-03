@@ -98,7 +98,7 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe";
 --if the user is using an old version of NAGtypes.
 
 if not((class(NumericalVariety))===Type) then
-     (--export {generalEquations, "IsIrreducible"};
+     (--export {"generalEquations", "IsIrreducible"};
       --protect generalEquations;
       protect IsIrreducible;
       NumericalVariety = new Type of MutableHashTable;

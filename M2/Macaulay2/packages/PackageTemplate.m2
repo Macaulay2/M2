@@ -14,7 +14,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {firstFunction, secondFunction, MyOption}
+export {"firstFunction", "secondFunction", "MyOption"}
 exportMutable {}
 
 firstFunction = method(TypicalValue => String)

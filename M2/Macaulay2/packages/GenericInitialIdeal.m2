@@ -13,7 +13,7 @@ newPackage(
      )
 --=========================================================================--
      
-export{gin,lexgin,AttemptCount,Modular } -- if the new routines which you are adding have new
+export{"gin","lexgin","AttemptCount","Modular" } -- if the new routines which you are adding have new
 -- names, then they need to be exported; otherwise they should not be
 -- exported
 
