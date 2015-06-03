@@ -14,23 +14,23 @@ newPackage("BinomialEdgeIdeals",
 export {
 
    --methods
-   binomialEdgeIdeal,
-   parityBinomialEdgeIdeal,
-   disconnectors,
-   isDisconnector,
-   isEffective,
-   sFunc,
+   "binomialEdgeIdeal",
+   "parityBinomialEdgeIdeal",
+   "disconnectors",
+   "isDisconnector",
+   "isEffective",
+   "sFunc",
 
    -- wrapper
-   bei,
-   pbei,
+   "bei",
+   "pbei",
 
    --Options
-   Field,
-   Permanental,
-   TermOrder, 
-   EffectiveOnly,
-   UseHypergraphs
+   "Field",
+   "Permanental",
+   "TermOrder", 
+   "EffectiveOnly",
+   "UseHypergraphs"
 }
 
 --variable for polynomial ring
