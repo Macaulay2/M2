@@ -116,7 +116,8 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   stats_npairs = 0;
   stats_ngb = 0;
   stats_ngcd1 = 0;
-
+  stats_nretired = 0;
+  
   divisor_previous = -1;
   divisor_previous_comp = -1;
 
@@ -201,21 +202,23 @@ void gbA::remove_gb()
 {
   // removes all allocated objects
   for (int i=first_gb_element; i<gb.size(); i++)
-    {
-      R->gbvector_remove(gb[i]->g.f);
-      R->gbvector_remove(gb[i]->g.fsyz);
-    }
+    if (gb[i])
+      {
+        R->gbvector_remove(gb[i]->g.f);
+        R->gbvector_remove(gb[i]->g.fsyz);
+      }
   for (int i=0; i<gb.size(); i++)
-    {
-      lcm_stash->delete_elem(gb[i]->lead);
-      gbelem_stash->delete_elem(gb[i]);
-      gb[i] = 0;
-    }
+    if (gb[i])
+      {
+        lcm_stash->delete_elem(gb[i]->lead);
+        gbelem_stash->delete_elem(gb[i]);
+        gb[i] = nullptr;
+      }
   delete minimal_gb; // will free its own gbvector's.
   for (int i=0; i<_syz.size(); i++)
     {
       R->gbvector_remove(_syz[i]);
-      _syz[i] = 0;
+      _syz[i] = nullptr;
     }
   delete lookup;
   delete lookupZZ;
@@ -328,22 +331,29 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 
 void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 {
-  gbelem_type minlevel = gb[i]->minlevel;
-  bool ismingen = (minlevel & ELEM_MINGEN);
-  bool ismingb = (minlevel & ELEM_MINGB);
-  if (ismingb)
-    o << "GB elem: ";
+  if (!gb[i])
+    {
+      o << "removed";
+    }
   else
-    o << "reducer: ";
-  o << "g" << i << " = ";
-  R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
-  o << " ["
-    << "gap " << gb[i]->gap
-    << " size " << gb[i]->size
-    << " deg "  << gb[i]->deg;
-  if (ismingen)
-    o << " mingen";
-  o << "]";
+    {
+      gbelem_type minlevel = gb[i]->minlevel;
+      bool ismingen = (minlevel & ELEM_MINGEN);
+      bool ismingb = (minlevel & ELEM_MINGB);
+      if (ismingb)
+        o << "GB elem: ";
+      else
+        o << "reducer: ";
+      o << "g" << i << " = ";
+      R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
+      o << " ["
+        << "gap " << gb[i]->gap
+        << " size " << gb[i]->size
+        << " deg "  << gb[i]->deg;
+      if (ismingen)
+        o << " mingen";
+      o << "]";
+    }
 }
 
 /*************************
@@ -836,6 +846,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 
 void gbA::update_pairs(int id)
 {
+  M2_ASSERT(gb[id] != nullptr);
   gbelem *r = gb[id];
   int x = gbelem_COMPONENT(r);
 
@@ -866,7 +877,7 @@ void gbA::update_pairs(int id)
   for (int i=first_gb_element; i<id; i++)
     {
       gbelem *g = gb[i];
-      if ((g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
+      if (g && (g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
         {
           spair *s = spair_make(id,i);
           new_set.push_back(s);
@@ -1400,7 +1411,7 @@ bool gbA::reduce_ZZ(spair *p)
           MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP,
                                                                        x,
                                                                        first_in_degree);
-          if (t != 0)
+          if (t != nullptr)
             {
               // f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
               // p <-- c*p-d*f
@@ -1411,21 +1422,20 @@ bool gbA::reduce_ZZ(spair *p)
                   o << "  swapping with GB element " << t->_val;
                   emit_line(o.str());
                 }
+
+              // If the element p is a generator, then we must assume that now the
+              // swapped g is a (possible) minimal generator.
+              g->minlevel |= ELEM_MINGB;
+              if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
+                {
+                  g->minlevel |= ELEM_MINGEN;
+                  p->type = SPAIR_GEN;
+                }
+              
               R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
               // Before continuing, do remainder of g->g
-              tail_remainder_ZZ(g->g, this_degree);
-              lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
+              replace_gb_element_ZZ(t);
 
-                // If the element p is a generator, then we must assume that now the
-                // swapped g is a (possible) minimal generator.
-              g->minlevel |= ELEM_MINGB;
-                if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
-                  {
-                    g->minlevel |= ELEM_MINGEN;
-                    p->type = SPAIR_GEN;
-                  }
-
-              auto_reduce_by(t->_val);
               if (M2_gbTrace >= 10)
                 {
                   buffer o;
@@ -1987,6 +1997,7 @@ void gbA::auto_reduce_by(int id)
                       // and not a higher gap level
   for (int i=INTSIZE(gb)-1; i>=first_gb_element; i--)
     {
+      if (!gb[i]) continue;
       if (i == id) continue;
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
@@ -2117,12 +2128,81 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
     }
 }
 
+void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
+{
+  /* Reduce this element as far as possible.  This either removes content,
+     makes it monic, or at least negates it so the lead coeff is positive. */
+  ring_elem not_used;
+
+  stats_ngb++;
+  n_gb++;
+
+  int gbval = t->_val;
+  gbelem* g = gb[gbval];
+  gb[gbval] = nullptr;
+
+  g->deg = this_degree; // replace the degree
+  g->minlevel |= ELEM_MINGB;
+  minimal_gb_valid = false;
+  int me = INTSIZE(gb);
+
+  tail_remainder_ZZ(g->g,this_degree);
+  gb.push_back(g);
+  lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz(), me); 
+  if (M2_gbTrace == 15)
+    {
+      buffer o;
+      o << "    retiring " << gbval << " new ";
+      //      o << "    new ";
+      gbelem_text_out(o, INTSIZE(gb)-1);
+
+      emit_line(o.str());
+    }
+  else if (M2_gbTrace >= 5)
+    {
+      char s[100];
+      buffer o;
+      sprintf(s, "replacing-inserting element %d (minimal %d replacing %d): ",me,g->minlevel,gbval);
+      o << s;
+      R->gbvector_text_out(o,_F,g->g.f);
+      emit_line(o.str()); o.reset();
+      o << "                          syzygy : ";
+      R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
+      emit_line(o.str());
+    }
+
+  if (!is_local_gb)
+    auto_reduce_by(me);
+}
+
+bool gbA::spair_is_retired(spair* p) const
+{
+  if (p->type == SPAIR_GCD_ZZ or p->type == SPAIR_SPAIR)
+    {
+      return gb[p->x.pair.i] == nullptr or gb[p->x.pair.j] == nullptr;
+    }
+  if (p->type == SPAIR_RING)
+    {
+      return gb[p->x.pair.i] == nullptr;
+    }
+  if (p->type == SPAIR_SKEW)
+    {
+      return gb[p->x.pair.i] == nullptr;
+    }
+  return false;
+}
+  
 bool gbA::process_spair(spair *p)
 {
   stats_npairs++;
+  if (spair_is_retired(p))
+    {
+      stats_nretired++;
+      spair_delete(p);      
+      return true;
+    }
 
   bool not_deferred = reduceit(p);
-
   if (!not_deferred) return true;
 
   gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
@@ -2131,7 +2211,6 @@ bool gbA::process_spair(spair *p)
   p->x.f.f = 0;
   p->x.f.fsyz = 0;
   spair_delete(p);
-
 
   if (!R->gbvector_is_zero(f.f))
     {
@@ -2244,17 +2323,20 @@ void gbA::do_computation()
         // np_i is initialized at the beginning, and also here.
             while (np_i < n_gb)
               {
-                  if (system_interrupted())
+                if (system_interrupted())
                   {
                     set_status(COMP_INTERRUPTED);
                     return;
                   }
-                if (gb[np_i]->minlevel & ELEM_MINGB)
-                  update_pairs(np_i);
+                if (gb[np_i])
+                  {
+                    if (gb[np_i]->minlevel & ELEM_MINGB)
+                      update_pairs(np_i);
+                  }
                 np_i++;
               }
             state = STATE_HILB;
-
+            
       case STATE_HILB:
         // If we are using hilbert function tracking:
         // Recompute the Hilbert function if new GB elements have been added
@@ -2333,7 +2415,6 @@ void gbA::do_computation()
       case STATE_SPAIRS:
       case STATE_GENS:
         // Compute the spairs for this degree
-
             while ((p = spair_set_next()) != 0)
               {
                 process_spair(p);
@@ -2361,33 +2442,37 @@ void gbA::do_computation()
         if (!is_local_gb)
         while (ar_i < n_gb)
               {
-                while (ar_j < n_gb)
-                  {
+                if (gb[ar_i])
+                  while (ar_j < n_gb)
+                    {
                       if (system_interrupted())
-                      {
-                        set_status(COMP_INTERRUPTED);
-                        return;
-                      }
-                    if (over_ZZ())
-                      {
-                        R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
-                                                   gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
-                                                   gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-                      }
-                    else
-                      {
-                        R->gbvector_auto_reduce(_F, _Fsyz,
-                                                gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
-                                                gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-                      }
-                    ar_j++;
-                  }
+                        {
+                          set_status(COMP_INTERRUPTED);
+                          return;
+                        }
+                      if (gb[ar_j])
+                        {
+                          if (over_ZZ())
+                            {
+                              R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
+                                                         gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                         gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                            }
+                          else
+                            {
+                              R->gbvector_auto_reduce(_F, _Fsyz,
+                                                      gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                      gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                            }
+                        }
+                      ar_j++;
+                    }
                 ar_i++;
                 ar_j = ar_i+1;
               }
-            state = STATE_NEWPAIRS;
-            break;
-
+        state = STATE_NEWPAIRS;
+        break;
+        
       case STATE_DONE:
         return;
       }
@@ -2441,10 +2526,11 @@ void gbA::minimalize_gb()
 
   VECTOR(POLY) polys;
   for (int i=first_gb_element; i<gb.size(); i++)
-    {
-      if (gb[i]->minlevel & ELEM_MINGB)
-        polys.push_back(gb[i]->g);
-    }
+    if (gb[i])
+      {
+        if (gb[i]->minlevel & ELEM_MINGB)
+          polys.push_back(gb[i]->g);
+      }
 
   minimal_gb->minimalize(polys);
   minimal_gb_valid = true;
@@ -2501,7 +2587,7 @@ const Matrix /* or null */ *gbA::get_mingens()
 {
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
-    if ((*i)->minlevel & ELEM_MINGEN)
+    if ((*i) and ((*i)->minlevel & ELEM_MINGEN))
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
 
@@ -2518,9 +2604,10 @@ const Matrix /* or null */ *gbA::get_syzygies()
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
   for (VECTOR(gbvector *)::iterator i = _syz.begin(); i != _syz.end(); i++)
-    {
-      mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
-    }
+    if (*i)
+      {
+        mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+      }
   return mat.to_matrix();
 }
 
@@ -2573,11 +2660,12 @@ void gbA::text_out(buffer &o) const
   o << "# pairs computed = " << n_pairs_computed << newline;
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
     for (unsigned int i=0; i<gb.size(); i++)
-      {
-        o << i << '\t';
-        R->gbvector_text_out(o, _F, gb[i]->g.f);
-        o << newline;
-      }
+      if (gb[i])
+        {
+          o << i << '\t';
+          R->gbvector_text_out(o, _F, gb[i]->g.f);
+          o << newline;
+        }
 }
 
 void gbA::debug_spair(spair *p)
@@ -2622,10 +2710,11 @@ void gbA::show_mem_usage()
 
   long nmonoms = 0;
   for (int i=0; i<gb.size(); i++)
-    {
-      nmonoms += R->gbvector_n_terms(gb[i]->g.f);
-      nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
-    }
+    if (gb[i])
+      {
+        nmonoms += R->gbvector_n_terms(gb[i]->g.f);
+        nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
+      }
   emit_line(o.str());
   o << "number of (nonminimal) gb elements = " << gb.size();
   emit_line(o.str());
