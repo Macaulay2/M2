@@ -206,8 +206,15 @@ listDivWitness (List,List,List,List) := o -> (v,w,vgaps,wgaps) -> (
 	wmax = max{wmax, maxEntry {wgaps} + 1, 0};
 	vmax = max{vmax, wmax + vgdeg - wgdeg, 0};
 	);
-    sigma := new MutableList from if o.Seed =!= null then o.Seed else {-1};
-    k := if o.Seed =!= null then vmax else 0;
+    local sigma; local k;
+    if o.Seed === null then (
+	sigma = new MutableList from {-1};
+	k = 0;
+	) else (
+	sigma = new MutableList from o.Seed;
+    	for l from #sigma to vmax do sigma#l = if #sigma == 0 then 0 else 1 + last sigma;
+    	k = vmax;
+	);
     while true do (
 	i := k;
 	for j from (sigma#k)+1 to wmax do (
@@ -619,8 +626,10 @@ max Shift := I -> max ((toList I)|{0})
 
 net ShiftMonomial := S -> net S.Monomial | "*" | net S.Sh
 shiftMonomial = method()
-shiftMonomial (RingElement,Shift) := (p,I) ->
+shiftMonomial (RingElement,Shift) := (p,I) -> (
+    I = crop(I,width I);
     new ShiftMonomial from hashTable {Monomial=>(leadTerm p), Sh=>I}
+    )
 ShiftMonomial * ShiftMonomial := (S,T) -> (
     (p,I) := (S.Monomial, S.Sh);
     (q,J) := (T.Monomial, T.Sh);
