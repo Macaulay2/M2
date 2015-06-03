@@ -467,3 +467,4 @@ uninstallPackage "HigherCIOperators"
 installPackage "HigherCIOperators"
 viewHelp HigherCIOperators
 check HigherCIOperators
+
