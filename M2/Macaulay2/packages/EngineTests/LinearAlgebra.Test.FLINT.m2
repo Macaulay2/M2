@@ -5,8 +5,8 @@
 --------------------------------
 
 export {
-    ZZpFlint,
-    testLinearAlgebra$FLINT
+    "ZZpFlint",
+    "testLinearAlgebra$FLINT"
 }
 
 ZZpFlint = (char) ->

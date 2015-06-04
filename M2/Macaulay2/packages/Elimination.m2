@@ -108,8 +108,8 @@ sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      degf := degree(x,f);
      degg := degree(x,g);
      if degf === 0 and degg === 0 then map(R^0,R^0,1)
-     else if degf === 0 then map(R^1,R^1,f^degg)
-     else if degg === 0 then map(R^1,R^1,g^degf)
+     else if degf === 0 then map(R^degg,R^degg,f)
+     else if degg === 0 then map(R^degf,R^degf,g)
      else (
        x1 := matrix{{x,1}};
        xfg := transpose symmetricPower(degf + degg - 1, x1);

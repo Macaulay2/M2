@@ -2146,7 +2146,12 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
   minimal_gb_valid = false;
   int me = INTSIZE(gb);
 
-  tail_remainder_ZZ(g->g,this_degree);
+  if (is_local_gb)
+    R->gbvector_remove_content(g->g.f,g->g.fsyz,false,not_used);
+  else
+    tail_remainder_ZZ(g->g,this_degree);
+  
+  //  tail_remainder_ZZ(g->g,this_degree);
   gb.push_back(g);
   lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz(), me); 
   if (M2_gbTrace == 15)
