@@ -39,8 +39,8 @@ export {
      deleteMin
      }
 
-protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len }
-     
+protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList }
+
 --ERing = new Type of PolynomialRing
 Shift = new Type of BasicList
 ShiftMonomial = new Type of HashTable
@@ -99,29 +99,34 @@ reduce (RingElement,List) := o -> (f,F) -> (
 --    n, an integer
 --Out: a polynomial ring over K with variable indices determined by s.
 --     All "infinite" indices are included up to n-1. 
-buildERing = method(Options=>{MonomialOrder=>Lex})
-buildERing (List,List,Ring,ZZ) := o -> (X,s,K,n) -> buildERing((X,s,K),ZZ,n, MonomialOrder=>o.MonomialOrder)
+buildERing = method(Options=>{MonomialOrder=>Lex,Degrees=>{}})
+buildERing (List,List,Ring,ZZ) := o -> (X,s,K,n) -> buildERing((X,s,K),ZZ,n, MonomialOrder=>o.MonomialOrder, Degrees=>o.Degrees)
 buildERing (Ring,ZZ) := o -> (R,n) -> (
     if (R.rings)#?n then (R.rings)#n
-    else buildERing((R.symbols,R.semigroup,coefficientRing R),R,n, MonomialOrder=>R.MonomialOrder)
+    else buildERing((R.symbols,R.semigroup,coefficientRing R),R,n, MonomialOrder=>R.MonomialOrder, Degrees=>R.degreesList)
     )
 buildERing (Sequence,Ring,ZZ) := o -> (seq,oldR,n) -> (
      (X,s,K) := seq;
      variableIndices := s / (b->(toList ((b:0)..(b:n-1))));
      mo := o.MonomialOrder;
+     degreesList := if #o.Degrees == 0 then toList (#s:1) else o.Degrees;
      if mo == Diagonal then (
 	  variableIndices = apply(variableIndices, l->(
 		    dPartition := partition(i->any(i, j->(#select(i, k->(k==j)) > 1)), l);
 		    (dPartition#false)|(dPartition#true)));
 	  mo = Lex;
 	  );
+     degreesLongList := flatten apply(#s, b->toList (#(variableIndices#b):degreesList#b));
      variableIndices = flatten apply(#s, b->(reverse apply(variableIndices#b, i->((1:b)|i))));
      moList := apply(s, b->(mo=>(n^b)));
      R := K[apply(variableIndices, i->(
 		    if #i == 1 then X#(i#0)            --if block has only one variable, use no index
 		    else if #i == 2 then X#(i#0)_(i#1) --if block has only one index, index by integers
 		    else (X#(i#0))_(take(i,1-#i))      --if block has several indices, index by sequences
-		    )), MonomialOrder => moList];
+		    )),
+	    MonomialOrder => moList,
+	    Degrees => degreesLongList
+	    ];
      R.symbols = X;
      R.varIndices = variableIndices;
      R.varTable = new HashTable from apply(#(R.varIndices), n->(R.varIndices#n => (gens R)#n));
@@ -129,6 +134,7 @@ buildERing (Sequence,Ring,ZZ) := o -> (seq,oldR,n) -> (
      R.semigroup = s;
      R.indexBound = n;
      R.MonomialOrder = o.MonomialOrder;
+     R.degreesList = degreesList;
      if oldR === ZZ then R.rings = new MutableHashTable
      else R.rings = oldR.rings;
      (R.rings)#n = R;
@@ -250,7 +256,7 @@ checkDiv = (vl,wl,sigma,R,S) -> (
 	    (not S.varPosTable#? sind and vl#(R.varPosTable#ind) == 0)
 	    or vl#(R.varPosTable#ind) <= wl#(S.varPosTable#sind)))
     )
-sigmaEntry = (sigma,k) -> if sigma#?k then sigma#k else last sigma + k - #sigma + 1
+sigmaEntry = (sigma,k) -> if sigma#?k then sigma#k else if #sigma == 0 then k else last sigma + k - #sigma + 1
 
 basicReduce = method(Options=>{Completely=>false})
 basicReduce (RingElement, BasicList) := o -> (f,B) -> (
@@ -658,7 +664,9 @@ ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 net MPair := M -> net "(" | net M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
-MPair ? MPair := (m,n) -> if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+MPair ? MPair := (m,n) -> if degree m.polynomial == degree n.polynomial then (
+    if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+    ) else degree m.polynomial ? degree n.polynomial
 MPair == MPair := (M,N) -> (M ? N) === symbol ==
 ShiftMonomial * MPair := (S,M) -> (
     new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
@@ -708,7 +716,7 @@ egbSignature (List) := F -> (
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
-	if width j > 3 then error "breakpoint!!!"; 
+	if width j > 4 then error "breakpoint!!!"; 
 	if isCovered(j,G) or 
 	   isCovered(j,H) {* perhaps this is not needed... 
 	                  but there are duplicates in JP at the moment.
@@ -729,9 +737,9 @@ egbSignature (List) := F -> (
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		newJP := jPairs(j,g);
-		<< "   new J-pairs: " << newJP << endl;
+		--<< "   new J-pairs: " << newJP << endl;
 		newJP = select(newJP, j->not isCovered(j,H));
-		<< "   new NOT covered J-pairs: " << newJP << endl;
+		--<< "   new NOT covered J-pairs: " << newJP << endl;
 		scan(newJP, j->insert(JP,j));
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);

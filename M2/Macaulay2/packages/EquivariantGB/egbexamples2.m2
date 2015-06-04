@@ -8,11 +8,12 @@ F = {x_0 + x_1};
 egb(F)
 
 -- QQ[x_0,x_1,...; y_(0,1),y(1,0),...]
-R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2, MonomialOrder=>Lex);
+R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2, MonomialOrder=>Lex, Degrees=>{1,2});
 gens R
 F = {y_(1,0) - x_0*x_1};
 -- kernel of y_(i,j) -> x_i*x_j with i > j
 G1 = egb(F, OutFile=>stdio)
+G2 = egbSignature F
 selectInSubring(1,matrix{G1})
 
 F = {y_(1,0) - x_0*x_1^2, y_(0,1) - x_0^2*x_1};
