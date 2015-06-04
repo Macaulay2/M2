@@ -1,9 +1,9 @@
 -- -*- coding: utf-8 -*-
 
 export  { 
-   testPromote,
-   testPromoteLift,
-   testRingMapEval
+   "testPromote",
+   "testPromoteLift",
+   "testRingMapEval"
 }
 
 testPromote = () -> (
