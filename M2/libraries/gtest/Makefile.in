@@ -1,4 +1,5 @@
 # from http://googletest.googlecode.com/files/gtest-1.6.0.zip
+LICENSEFILES = LICENSE
 URL = http://macaulay2.com/Downloads/OtherSourceCode
 MLIMIT = 1400000
 VLIMIT = 1400000
