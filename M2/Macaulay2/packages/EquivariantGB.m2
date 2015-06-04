@@ -624,7 +624,7 @@ Shift*RingElement := (I,f) -> (shiftMap(ring f, I, Extend=>true))f
 Shift*Number := (I,n) -> if I#?n then I#n else if n >= 0 then n + degree I else n
 max Shift := I -> max ((toList I)|{0})
 
-net ShiftMonomial := S -> net S.Monomial | "*" | net S.Sh
+net ShiftMonomial := S -> net toString S.Monomial | "*" | net S.Sh
 shiftMonomial = method()
 shiftMonomial (RingElement,Shift) := (p,I) -> (
     I = crop(I,width I);
@@ -655,7 +655,7 @@ ShiftMonomial ? ShiftMonomial := (S,T) -> (
     )
 ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 
-net MPair := M -> net "(" | net M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
+net MPair := M -> net "(" | net toString M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
 MPair ? MPair := (m,n) -> if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
@@ -708,7 +708,7 @@ egbSignature (List) := F -> (
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
-	if width j > 3 then error "breakpoint!!!"; 
+	if width j > 5 then error "breakpoint!!!"; 
 	if isCovered(j,G) or 
 	   isCovered(j,H) {* perhaps this is not needed... 
 	                  but there are duplicates in JP at the moment.
@@ -729,9 +729,9 @@ egbSignature (List) := F -> (
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		newJP := jPairs(j,g);
-		<< "   new J-pairs: " << newJP << endl;
+		<< "   new J-pairs: " << #newJP << endl;
 		newJP = select(newJP, j->not isCovered(j,H));
-		<< "   new NOT covered J-pairs: " << newJP << endl;
+		<< "   new NOT covered J-pairs: " << #newJP << endl;
 		scan(newJP, j->insert(JP,j));
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
@@ -767,7 +767,7 @@ regularTopReduce = (j,G) -> (
 	while isDiv do (
 	    (isDiv,Q) = divQuotient(g.polynomial,j.polynomial,Seed=>seed);
 	    if isDiv and Q*g < j then (
-		<< "  reducing j = " << j << endl << "  by Q*g = " << Q << "*" << g << endl;
+		-- << "  reducing j = " << j << endl << "  by Q*g = " << Q << "*" << g << endl;
 		v := reduction(j.polynomial,Q*g.polynomial);
 		return regularTopReduce(mPair(j.shM,j.pos,v),G);
 		);
