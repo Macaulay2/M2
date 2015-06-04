@@ -3,9 +3,10 @@ dnl This is the only place in the code where the Macaulay2 version number
 dnl appears as a literal value.
 
 dnl Things to do when incrementing the version number:
-dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
-dnl    - make a git tag of the form version-X.Y.Z, if it's stable
 dnl    - add an entry to distributions/deb/changelog
+dnl Things to do after incrementing the version number and committing:
+dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
+dnl    - make a git tag of the form version-X.Y.Z
 AC_INIT(Macaulay2, 1.7.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
@@ -776,21 +777,16 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on mpir and mpfr
-#    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
-#	we always build it, and every program should link with it
-#	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
-BUILD_ALWAYS=" missing gtest "
+BUILD_ALWAYS=" gtest "
 
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
-BUILD_missing=yes
-BUILTLIBS="-lmissing $BUILTLIBS"
 
 for i in $PROGLIST
 do eval BUILD_$i=yes
