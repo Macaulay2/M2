@@ -1258,7 +1258,7 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-BUILD_gftables=no		dnl it seems that factory now includes gftables, and installs it
+BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
 if test "$DEBUG" = yes
 then SINGULARLIBS="-lfactory  "
