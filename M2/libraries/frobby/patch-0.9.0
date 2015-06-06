@@ -1,15 +1,17 @@
 diff -ur /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile frobby_v0.9.0/Makefile
 --- /home/dan/src/M2/1.6/M2/BUILD/dan/builds.tmp/mingw/libraries/frobby/tmp/frobby_v0.9.0/Makefile	2011-09-23 15:09:12.000000000 -0500
 +++ frobby_v0.9.0/Makefile	2013-05-10 14:30:25.599394200 -0500
-@@ -70,7 +70,7 @@
+@@ -70,8 +70,8 @@
    BIN_INSTALL_DIR = "/usr/local/bin/"
  endif
  
 -cflags = $(CFLAGS) $(CPPFLAGS) -Wall -ansi -pedantic -I $(GMP_INC_DIR)	\
+-         -Wno-uninitialized -Wno-unused-parameter
 +cflags = $(CFLAGS) $(CPPFLAGS) -Wall -I $(GMP_INC_DIR)	\
-          -Wno-uninitialized -Wno-unused-parameter
++         -Wno-uninitialized -Wno-unused-parameter -std=c++11
  program = frobby
  library = libfrobby.a
+ benchArgs = $(FROBBYARGS)
 @@ -217,6 +217,7 @@
  	  $(patsubst $(outdir)main.o,,$(objs))
  else
@@ -160,19 +162,20 @@ diff -ur /home/dan/src/M2/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/
 +if [ $? = 0 ]; then exit 0; fi
  echo "*** Internal test failed, rerunning tests with output ***"
  $frobby test
-diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h frobby_v0.9.0/src/HashMap.h
---- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h	2011-09-23 16:09:12.000000000 -0400
-+++ frobby_v0.9.0/src/HashMap.h	2015-06-02 23:06:43.000000000 -0400
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h frobby_v0.9.0/src/HashMap.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/HashMap.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/HashMap.h	2015-06-06 12:56:15.000000000 -0400
 @@ -35,10 +35,16 @@
  class FrobbyHash {};
  
  // *********************************************************
+-#ifdef __GNUC__ // Only GCC defines this macro
++#if defined(__GNUC__) || defined(__clang__)
 +#if 0
- #ifdef __GNUC__ // Only GCC defines this macro
  #include "hash_map/hash_map"
  #include <string>
 +#endif
-+
++#include <unordered_map>
 +template<class Key, class Value>
 +  class HashMap : public std::unordered_map<Key, Value, FrobbyHash<Key>> { };
  
@@ -180,14 +183,17 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/
  template<>
  class FrobbyHash<string> : public __gnu_cxx::hash<string> {
  };
-@@ -47,6 +53,7 @@
+@@ -47,9 +53,8 @@
  class HashMap : public __gnu_cxx::hash_map<Key, Value,
    FrobbyHash<Key> > {
  };
+-
 +#endif
- 
  #else
- 
+-
+ // *********************************************************
+ #ifdef _MSC_VER // Only Microsoft C++ defines this macro
+ #include <hash_map>
 diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h frobby_v0.9.0/src/stdinc.h
 --- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/frobby/tmp/frobby_v0.9.0/src/stdinc.h	2011-09-23 16:09:12.000000000 -0400
 +++ frobby_v0.9.0/src/stdinc.h	2015-06-02 21:27:34.000000000 -0400
@@ -199,3 +205,25 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/opt64-clang-full/libraries/
  
  #include <gmp.h>
  #include <gmpxx.h>
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h frobby_v0.9.0/src/VarNames.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64/libraries/frobby/tmp/frobby_v0.9.0/src/VarNames.h	2011-09-23 16:09:12.000000000 -0400
++++ frobby_v0.9.0/src/VarNames.h	2015-06-06 12:36:28.000000000 -0400
+@@ -21,7 +21,7 @@
+ 
+ #include <vector>
+ #include <string>
+-
++#include <unordered_map>
+ class Scanner;
+ 
+ /** Defines the variables of a polynomial ring and facilities IO
+@@ -102,7 +102,8 @@
+ private:
+   static bool compareNames(const string* a, const string* b);
+ 
+-  typedef HashMap<string, size_t> VarNameMap;
++  typedef unordered_map<string, size_t> VarNameMap;
++  //typedef HashMap<string, size_t> VarNameMap;
+   VarNameMap _nameToIndex;
+   vector<const string*> _indexToName;
+ };
