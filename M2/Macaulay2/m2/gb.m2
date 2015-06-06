@@ -171,7 +171,12 @@ processStrategy := (v) -> (
 warnexp := () -> stderr << "--warning: gb algorithm requested is experimental" << endl
 
 processAlgorithm := (a,f) -> (
+     R := ring f;
+     M := R.FlatMonoid;
+     k := ultimate(coefficientRing, R);
      if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
+     if k === ZZ and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with base ring ZZ";
+     if not M.Options.Global and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with a non-global monomial ordering";
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
 --     else if a === F4 then error "the F4 algorithm option has been replaced by LinearAlgebra"
