@@ -315,17 +315,17 @@ void F4Res::reorderColumns()
       column_order[i] = i;
     }
 
-  if (true or M2_gbTrace >= 2)
+  if (M2_gbTrace >= 3)
     fprintf(stderr, "ncomparisons = ");
 
   std::sort(column_order, column_order+ncols, C);
 
   clock_t end_time0 = clock();
-  if (true or M2_gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, "%ld, ", C.ncomparisons0());
   double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
   //clock_sort_columns += nsecs0;
-  if (true or M2_gbTrace >= 2)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, " time = %f\n", nsecs0);
 
   ////////////////////////////
@@ -389,6 +389,9 @@ void F4Res::makeMatrix()
           r++;
           row.mLeadTerm = it->mMonom;
           loadRow(row);
+          if (M2_gbTrace >= 4)
+            if (r % 5000 == 0)
+              std::cout << "makeMatrix  sp: " << r << " #rows = " << mColumns.size() << std::endl;
         }
       comp++;
     }
@@ -403,6 +406,9 @@ void F4Res::makeMatrix()
       loadRow(thisrow);
       std::swap(mReducers[mNextReducerToProcess], thisrow);
       mNextReducerToProcess++;
+      if (M2_gbTrace >= 4)
+        if (mNextReducerToProcess % 5000 == 0)
+          std::cout << "makeMatrix red: " << mNextReducerToProcess << " #rows = " << mReducers.size() << std::endl;
     }
 
 #if 0
@@ -490,12 +496,14 @@ void F4Res::construct(int lev, int degree)
 {
   resetMatrix(lev, degree);
 
-  std::cout << "make matrix" << std::endl;
+  if (M2_gbTrace >= 2)
+    std::cout << "make matrix" << std::endl;
   clock_t begin_time0 = clock();
   makeMatrix();
   clock_t end_time0 = clock();
   double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
-  std::cout << "  time: " << nsecs0 << std::endl;
+  if (M2_gbTrace >= 2)
+    std::cout << "  time: " << nsecs0 << std::endl;
 
 #if 0
   std::cout << "-- rows --" << std::endl;
@@ -517,6 +525,7 @@ void F4Res::construct(int lev, int degree)
   debugOutputMatrixSparse(mSPairs);
 #endif
 
+  if (M2_gbTrace >= 2)
   std::cout << "(level,degree)=("
             << mThisLevel << ","
             << mThisDegree
@@ -526,12 +535,14 @@ void F4Res::construct(int lev, int degree)
             << mReducers.size() << " x " << mReducers.size()
             << std::endl;
 
-  std::cout << "gauss reduce matrix" << std::endl;
+  if (M2_gbTrace >= 2)
+    std::cout << "gauss reduce matrix" << std::endl;
   begin_time0 = clock();
   gaussReduce();
   end_time0 = clock();
   nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
-  std::cout << "  time: " << nsecs0 << std::endl;
+  if (M2_gbTrace >= 2)
+    std::cout << "  time: " << nsecs0 << std::endl;
   //  mFrame.show(-1);
   clearMatrix();
 }

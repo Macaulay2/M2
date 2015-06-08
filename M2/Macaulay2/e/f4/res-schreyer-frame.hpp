@@ -28,6 +28,7 @@
 #include "res-poly-ring.hpp"
 #include "res-f4.hpp"
 
+#include "../betti.hpp"
 #include "../stop.hpp"
 #include <vector>
 
@@ -44,7 +45,7 @@ namespace SchreyerFrameTypes {
     packed_monomial mMonom; // has component, degree too
     packed_monomial mTotalMonom; // used for Schreyer order
     long mTiebreaker; // used for Schreyer order
-    int mDegree;
+    int mDegree; // actual degree, not slanted degree
     long mBegin; // points into next level's elements
     long mEnd;
     poly mSyzygy;
@@ -109,6 +110,8 @@ public:
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
   M2_arrayint getBettiFrame() const;
+  void setBettiDisplays();
+  int rank(int slanted_degree, int lev); // rank of the degree 'degree' map of scalars level 'lev' to 'lev-1'.
 
 private:
   
@@ -126,6 +129,7 @@ private:
   int degree(int lev, packed_monomial m) const { return static_cast<int>(m[2]) + degree(lev-1, m[1]); }
 
 public:
+  int maxLevel() const { return static_cast<int>(mFrame.mLevels.size() - 1); }
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
 
@@ -144,6 +148,11 @@ private:
   Frame mFrame;
   MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
 
+  // Betti tables: set after the frame has been constructed.
+  BettiDisplay mBettiNonminimal;
+  BettiDisplay mBettiMinimal;
+  std::vector<std::pair<int,int>> mMinimalizeTODO; // a list of (slanted deg, level) for which to compute min betti numbers.
+  
   // Computation control
   enum {Initializing, Frame, Matrices, Done} mState;
   int mCurrentLevel;

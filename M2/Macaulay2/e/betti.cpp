@@ -2,18 +2,60 @@
 
 #include <iostream>
 
+BettiDisplay::BettiDisplay()
+  : mLoDegree(0),
+    mHiDegree(0),
+    mHiLength(0),
+    mNLevels(0)
+{
+  mValues = 0;
+}
+
 BettiDisplay::BettiDisplay(int lodegree, int hidegree, int hilen)
   : mLoDegree(lodegree),
     mHiDegree(hidegree),
     mHiLength(hilen),
     mNLevels(hilen+1)
 {
-  mValues = newarray_atomic_clear(int,(hidegree-lodegree+1)*mNLevels);
+  int nelems = (hidegree-lodegree+1)*mNLevels;
+  mValues = new int[nelems];
+  for (int i=0; i<nelems; i++) mValues[i] = 0;
+}
+
+BettiDisplay::BettiDisplay(const BettiDisplay& B)
+  : mLoDegree(B.mLoDegree),
+    mHiDegree(B.mHiDegree),
+    mHiLength(B.mHiLength),
+    mNLevels(B.mNLevels)
+{
+  int nelems = (mHiDegree - mLoDegree + 1) * mNLevels;
+  mValues = new int[nelems];
+  for (int i=0; i<nelems; i++)
+    mValues[i] = B.mValues[i];
+}
+
+void BettiDisplay::swap(BettiDisplay& B)
+{
+  std::swap(mLoDegree, B.mLoDegree);
+  std::swap(mHiDegree, B.mHiDegree);
+  std::swap(mHiLength, B.mHiLength);
+  std::swap(mNLevels, B.mNLevels);
+  std::swap(mValues, B.mValues);
+}
+
+BettiDisplay& BettiDisplay::operator=(const BettiDisplay& B)
+{
+  if (this != &B)
+    {
+      BettiDisplay b(B); 
+      swap(b);
+    }
+  return *this;
 }
 
 BettiDisplay::~BettiDisplay()
 {
-  deletearray(mValues);
+  delete [] mValues;
   mValues = 0;
 }
 
@@ -30,15 +72,22 @@ int& BettiDisplay::entry(int deg, int lev)
   return mValues[lev + mNLevels*(deg-mLoDegree)];
 }
 
-M2_arrayint BettiDisplay::getBetti()
+M2_arrayint BettiDisplay::getBetti() const
 {
   return betti_make(mLoDegree, mHiDegree, mHiLength, mValues);
 }
 
-void BettiDisplay::displayBetti(buffer& o)
+void BettiDisplay::displayBetti(buffer& o) const
 {
   M2_arrayint b = getBetti();
   betti_display(o, b);
+}
+
+void BettiDisplay::output() const
+{
+  buffer o;
+  displayBetti(o);
+  std::cout << o.str() << std::endl;
 }
 
 M2_arrayint BettiDisplay::betti_make(int lo, int hi, int len, int *bettis)

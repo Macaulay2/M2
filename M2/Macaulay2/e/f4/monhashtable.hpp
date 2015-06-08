@@ -49,7 +49,7 @@ private:
   void initialize(int logsize0);
 public:
 
-  MonomialHashTable(const ValueType *M0, int logsize = 16);
+  MonomialHashTable(const ValueType *M0, int logsize = 24);
   // The hash table size will be a power of 2, and this
   // is the initial power.
 

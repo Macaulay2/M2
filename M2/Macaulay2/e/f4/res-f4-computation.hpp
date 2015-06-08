@@ -45,7 +45,7 @@ protected:
 
   const Matrix /* or null */ *get_matrix(int level);
 
-  MutableMatrix /* or null */ *get_matrix(int level, int degree);
+  MutableMatrix /* or null */ *get_matrix(int slanted_degree, int level);
 
   const FreeModule /* or null */ *get_free(int level);
 

@@ -4,7 +4,6 @@
 #include "f4-monlookup.hpp"
 
 #include "../comp-res.hpp"
-#include "../betti.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -74,16 +73,29 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       case Initializing:
         break;
       case Frame:
-        if (computeNextLevel() == 0)
+        //        std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
+        if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
             mState = Matrices;
             mCurrentLevel = 2;
             getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
             mSlantedDegree = mLoSlantedDegree;
+            setBettiDisplays();
+            if (M2_gbTrace >= 1)
+              {
+                std::cout << "non-minimal betti: " << std::endl;
+                mBettiNonminimal.output();
+              }
+            for (int i=0; i<mMinimalizeTODO.size(); i++)
+              {
+                auto a = mMinimalizeTODO[i];
+                //                std::cout << "(" << a.first << "," << a.second << ") ";
+              }
+            // std::cout << std::endl;
           }
         break;
       case Matrices:
-        std::cout << "start_computation: entering Matrices" << std::endl;
+        //        std::cout << "start_computation: entering Matrices" << std::endl;
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
@@ -91,7 +103,14 @@ void SchreyerFrame::start_computation(StopConditions& stop)
             mSlantedDegree++;
             if (mSlantedDegree > mHiSlantedDegree)
               {
+                for (auto it=mMinimalizeTODO.cbegin(); it != mMinimalizeTODO.cend(); ++it)
+                  {
+                    int rk = rank(it->first, it->second);
+                    mBettiMinimal.entry(it->first, it->second) -= rk;
+                    mBettiMinimal.entry(it->first+1, it->second-1) -= rk;
+                  }
                 mState = Done;
+                mBettiMinimal.output();
                 break;
               }
             if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
@@ -110,8 +129,11 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
 M2_arrayint SchreyerFrame::getBetti(int type) const
 {
+  if (type == 0)
+    return mBettiMinimal.getBetti();
   if (type == 1)
     return getBettiFrame();
+  
   ERROR("betti display not implemenented yet");
   return 0;
 }
@@ -179,7 +201,8 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 long SchreyerFrame::computeNextLevel()
 {
   M2_ASSERT(currentLevel() >= 2);
-  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
+  if (currentLevel() >= mFrame.mLevels.size()) return 0;
+  //  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
   // loop through all the elements at level currentLevel()-2
   int level0 = currentLevel()-2;
   int level1 = level0+1;
@@ -408,11 +431,44 @@ void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
   //  show();
 }
 
+void SchreyerFrame::setBettiDisplays()
+{
+  int lo, hi, len;
+  getBounds(lo, hi, len);
+  //std::cout << "bounds: lo=" << lo << " hi=" << hi << " len=" << len << std::endl;
+  mBettiNonminimal = BettiDisplay(lo,hi,len);
+  mBettiMinimal = BettiDisplay(lo,hi,len);
+
+  for (int lev=0; lev<=len; lev++)
+    {
+      auto& myframe = level(lev);
+      for (auto p=myframe.begin(); p != myframe.end(); ++p)
+        {
+          int deg = p->mDegree; // this is actual degree, not slanted degree
+          mBettiNonminimal.entry(deg-lev,lev) ++ ;
+          mBettiMinimal.entry(deg-lev,lev) ++ ;
+        }
+    }
+
+  // Now set the todo list of pairs (degree, level) for minimalization.
+  for (int slanted_degree = lo; slanted_degree < hi; slanted_degree++)
+    {
+      for (int lev = 1; lev <= len; lev++)
+        {
+          if (mBettiNonminimal.entry(slanted_degree, lev) > 0 and mBettiNonminimal.entry(slanted_degree+1, lev-1) > 0)
+            {
+              mMinimalizeTODO.push_back(std::make_pair(slanted_degree, lev));
+            }
+        }
+    }
+}
+
+
 M2_arrayint SchreyerFrame::getBettiFrame() const
 {
   int lo, hi, len;
   getBounds(lo, hi, len);
-  std::cout << "bounds: lo=" << lo << " hi=" << hi << " len=" << len << std::endl;
+  //  std::cout << "bounds: lo=" << lo << " hi=" << hi << " len=" << len << std::endl;
   BettiDisplay B(lo,hi,len);
   // now set B
 

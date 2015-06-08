@@ -26,6 +26,7 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
   size = (1<<logsize);
   //threshold = size/3; // was 2*size/3
   threshold = 2*size/3; // was 2*size/3
+  threshold = size/16; // was 2*size/3  
   hashtab = newarray(value, size);
   hashmask = size-1;
   reset();

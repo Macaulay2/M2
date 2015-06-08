@@ -131,6 +131,9 @@ TEST ///
   assert(f2*f3 == 0)
   map(kk,rawResolutionGetMatrix2(raw C,2,3))
   map(kk,rawResolutionGetMatrix2(raw C,2,4))
+
+  map(kk,rawResolutionGetMatrix2(raw C,3,4))
+  map(kk,rawResolutionGetMatrix2(raw C,2,4))
   C = res(ideal gens gb I, Strategy=>4)
   rawBetti(raw C.Resolution, 1)
 
@@ -141,18 +144,22 @@ TEST ///
   debug Core
   kk1 = ZZ/101
   kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..10), MonomialOrder=>{Weights=>splice{11:1}}]
+  nvars = 13
+  nvars = 14
+  R = kk[vars(0..nvars-1), MonomialOrder=>{Weights=>splice{nvars:1}}]
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
-  J = gens gb I;
-  
+  J = ideal gens gb I;
+  gbTrace=2
   elapsedTime C = res(ideal gens gb I, Strategy=>4, StopBeforeComputation=>true)
   elapsedTime C = res(ideal gens gb I, Strategy=>4)
-  C = res(ideal gens gb I, Strategy=>4)
+  elapsedTime C = res(J, Strategy=>4, LengthLimit=>16)
+  elapsedTime C = res(J, Strategy=>4);
+  elapsedTime C = res(J, Strategy=>4, DegreeLimit=>0)
   rawBetti(raw C.Resolution, 1)
 
   rank matrix map(kk,rawResolutionGetMatrix2(raw C,2,3))
-  rank matrix map(kk,rawResolutionGetMatrix2(raw C,3,4));
+  rank matrix map(kk,rawResolutionGetMatrix2(raw C,3,4))
   time matrix map(kk,rawResolutionGetMatrix2(raw C,4,5));
   time rank oo
   time matrix map(kk,rawResolutionGetMatrix2(raw C,5,6));
@@ -184,6 +191,7 @@ TEST ///
   debug Core
   kk = ZZp(101, Strategy=>"Old")
   R = kk[vars(0..15), MonomialOrder=>{Weights=>splice{16:1}}]
+  setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   J = ideal gens gb I;
   elapsedTime C = res(J, Strategy=>4)
@@ -218,4 +226,73 @@ TEST ///
   elapsedTime C = res(I, Strategy=>0, DegreeLimit=>-1)
   rawBetti(raw C.Resolution, 1)
 
+///
+
+///
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_20, MonomialOrder=>{Weights=>splice{20:1}}]
+  I = Grassmannian(2,5,R)
+  gbTrace=2
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+///
+
+///
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_21, MonomialOrder=>{Weights=>splice{21:1}}]
+  I = Grassmannian(1,6,R)
+  gbTrace=2
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+///
+
+///
+-- this one takes too much memory on my laptop
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_28, MonomialOrder=>{Weights=>splice{28:1}}]
+  I = Grassmannian(1,7,R)
+  gbTrace=2
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+///
+
+///
+-- this one takes too much memory on my laptop too
+  restart
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_35, MonomialOrder=>{Weights=>splice{35:1}}]
+  I = Grassmannian(2,6,R)
+  gbTrace=2
+  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+///
+
+///
+  restart 
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_16, MonomialOrder=>{Weights=>splice{16:1}}]
+  M = genericMatrix(R,x_1,4,4)
+  I = permanents(3,M)
+  gbTrace=1
+  J = ideal gens gb(I, Algorithm=>LinearAlgebra);
+  gbTrace=2
+  elapsedTime C = res(J, Strategy=>4)  
+
+  restart 
+  debug Core
+  kk = ZZp(101, Strategy=>"Old")
+  R = kk[x_1..x_16, MonomialOrder=>{Weights=>splice{16:1}}]
+  M = genericMatrix(R,x_1,4,4)
+  I = permanents(3,M)
+  res I
+  codim I
+  phi = map(R,R,random(R^1, R^{16:-1}));
+  J = phi I;
+  gbTrace=2
+  
+  gens gb(J, Algorithm=>LinearAlgebra);
 ///
