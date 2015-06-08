@@ -638,7 +638,14 @@ minimalVertexCuts Graph := List => G -> (
 
 vertexConnectivity = method()
 --returns n-1 for K_n as suggested by West
-vertexConnectivity Graph := ZZ => G -> if cliqueNumber G == #vertexSet G then #vertexSet G - 1 else #first minimalVertexCuts G
+vertexConnectivity Graph := ZZ => G -> (
+if #(vertexSet G)==0 then return 0;
+if cliqueNumber G == #(vertexSet G) then (
+    return #(vertexSet G) - 1;
+    ) else (
+    return #(first minimalVertexCuts G);
+    );
+);
 
 vertexCuts = method()
 --West does not specify, but Wikipedia does, that K_n has no vertex cuts.  
@@ -5087,7 +5094,7 @@ G=graph({});
 assert(vertexSet(G)==={});
 assert(expansion(G)===0);
 assert(edgeConnectivity(G)===0);
---assert(vertexConnectivity(G)===0); --this test fails 
+assert(vertexConnectivity(G)===0);
 assert(edgeCuts(G)==={{}});
 assert(vertexCuts(G)==={});
 assert(connectedComponents(G)==={});
