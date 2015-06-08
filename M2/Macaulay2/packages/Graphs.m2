@@ -5047,11 +5047,39 @@ assert(expansion(G)===1/3);
 
 
 TEST ///
---test vertex-connectivity
+--test connectivity
 G=completeGraph(5);
 assert(vertexConnectivity(G)===4);
+assert(edgeConnectivity(G)===4);
+H=graph({{1,2},{1,3},{2,4},{3,4},{4,5},{4,6},{5,7},{6,7}});
+assert(vertexConnectivity(H)===1);
+assert(edgeConnectivity(H)===2);
 ///
 
+TEST ///
+--test cuts
+G=completeGraph(4);
+--complete graphs have no vertex cuts
+assert(vertexCuts(G)==={});
+assert(edgeCuts(G)==={{{0,1},{0,2},{0,3}},{{0,1},{1,2},
+{1,3}},{{0,2},{1,2},{2,3}},{{0,3},{1,3},{2,3}}});
+H=graph({{1,2},{2,3},{3,4},{4,1}});
+assert(vertexCuts(H)==={{1,3},{2,4}});
+assert(edgeCuts(H)==={{{1,2},{4,1}},{{1,2},{2,3}},
+{{4,1},{2,3}},{{1,2},{4,3}},{{4,1},{4,3}},{{2,3},{4,3}}});
+///
+
+TEST ///
+--vertices of complete graphs start at zero
+assert(vertexSet(completeGraph(4))==={0,1,2,3});
+--vertices of path graphs start at zero
+assert(vertexSet(pathGraph(4))==={0,1,2,3});
+///
+
+TEST ///
+--check diameter
+assert(diameter(pathGraph(7))===6);
+///
 
 TEST ///
 --check properties of empty graph
@@ -5065,6 +5093,7 @@ assert(vertexCuts(G)==={});
 assert(connectedComponents(G)==={});
 assert(cliqueNumber(G)===0);
 assert(independenceNumber(G)===0);
+assert(numberOfComponents(G)===0);
 assert(isConnected(G)===true);
 assert(isBipartite(G)===true);
 assert(isCyclic(G)===true);
