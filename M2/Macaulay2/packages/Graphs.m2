@@ -5045,11 +5045,32 @@ G=pathGraph(7);
 assert(expansion(G)===1/3);
 ///
 
+
 TEST ///
---expansion of empty graph
-G=graph({});
-assert(expansion(G)===0);
+--test vertex-connectivity
+G=completeGraph(5);
+assert(vertexConnectivity(G)===4);
 ///
 
+
+TEST ///
+--check properties of empty graph
+G=graph({});
+assert(vertexSet(G)==={});
+assert(expansion(G)===0);
+assert(edgeConnectivity(G)===0);
+--assert(vertexConnectivity(G)===0); --this test fails 
+assert(edgeCuts(G)==={{}});
+assert(vertexCuts(G)==={});
+assert(connectedComponents(G)==={});
+assert(cliqueNumber(G)===0);
+assert(independenceNumber(G)===0);
+assert(isConnected(G)===true);
+assert(isBipartite(G)===true);
+assert(isCyclic(G)===true);
+assert(isForest(G)===true);
+assert(isChordal(G)===true);
+assert(isSimple(G)===true);
+///
 
 end;
