@@ -664,9 +664,11 @@ ShiftMonomial == ShiftMonomial := (S,T) -> (S ? T) === symbol ==
 net MPair := M -> net "(" | net toString M.polynomial | ", " | net M.shM | "*[" | net M.pos | "])"   
 mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
-MPair ? MPair := (m,n) -> if degree m.polynomial == degree n.polynomial then (
-    if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
-    ) else degree m.polynomial ? degree n.polynomial
+MPair ? MPair := (m,n) -> if width m == width n then (
+    if degree m.polynomial == degree n.polynomial then (
+    	if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+    	) else degree m.polynomial ? degree n.polynomial
+    ) else width m ? width n
 MPair == MPair := (M,N) -> (M ? N) === symbol ==
 ShiftMonomial * MPair := (S,M) -> (
     new MPair from hashTable{shM=>S*M.shM, pos=>M.pos, polynomial=>S*M.polynomial}
@@ -710,6 +712,7 @@ width List := L -> max(L / width)
 egbSignature = method()
 egbSignature (List) := F -> (
     R := ring first F;
+    Fwidths := F/(width@@leadMonomial);
     JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i));
     H := {};
     G := {};
@@ -717,7 +720,8 @@ egbSignature (List) := F -> (
 	j := min JP;
 	deleteMin JP;
 	if width j > 5 then error "breakpoint!!!"; 
-	if isCovered(j,G) or 
+	if isCoveredByTrivSyg(j,Fwidths#(j.pos)) or
+	   isCovered(j,G) or 
 	   isCovered(j,H) {* perhaps this is not needed... 
 	                  but there are duplicates in JP at the moment.
 			  Another question: why do we check if a j-pair is covered by syzygies only when we insert it in JP? 
@@ -743,6 +747,7 @@ egbSignature (List) := F -> (
 		scan(newJP, j->insert(JP,j));
 		--H  = H|prinSyzygies(j,g); --do we need this?
 	    	);
+	    << "  JP queue length: " << length JP << endl;
 	    );
 	);
     apply(G, g->g.polynomial)
@@ -788,6 +793,13 @@ regularTopReduce = (j,G) -> (
 reduction = (v,w) -> (
     (v,w) = matchRing(v,w);
     v - (leadTerm v//leadTerm w)*w
+    )
+
+isCoveredByTrivSyg = (j,k) -> (
+    J := j.shM.Sh;
+    Jwidth := position(0..<#J, i->(J#i > if i == 0 then 0 else J#(i-1)+1), Reverse=>true);
+    Jwidth = if Jwidth === null then 0 else Jwidth+1;
+    Jwidth > k
     )
 
 isCovered = (j,G) -> (
