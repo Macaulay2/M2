@@ -1,6 +1,6 @@
 export {
-    testGFpromote,
-    testGFGenerator
+    "testGFpromote",
+    "testGFGenerator"
     }
 
 debug Core

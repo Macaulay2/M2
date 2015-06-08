@@ -73,7 +73,7 @@ tags: @srcdir@/TAGS
 wc : $(SRCFILES) ; wc -l $^
 ############################## cleaning
 clean::; rm -f *.o scc1 scc.a grammar.output grammar.tab.h \
-		scc.install scc core y.tab.h y.output grammar.c \
+		scc.install scc core y.tab.h y.output grammar.c TAGS \
 		*-exports.h *-exports.h.tmp *.sig *.sig.tmp typecode.db *.sym *.dep *.log *-tmp.c *.out *.dep.tmp
 distclean: clean
 	rm -f Makefile @srcdir@/TAGS

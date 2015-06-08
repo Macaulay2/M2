@@ -34,18 +34,18 @@ newPackage(
 		}
 )
 
-export{rmNmzFiles,
-       writeNmzData, readNmzData, readMultipleNmzData,
-       normaliz, setNmzOption, showNmzOptions,
-       normalToricRing, intclToricRing, ehrhartRing, intclMonIdeal,
-       torusInvariants, finiteDiagInvariants, diagInvariants, RationalCone,
-       allComputations, grading,
-       intersectionValRings, intersectionValRingIdeals,
-       MonomialSubalgebra,  createMonomialSubalgebra,
-       getNumInvs
+export{"rmNmzFiles",
+       "writeNmzData", "readNmzData", "readMultipleNmzData",
+       "normaliz", "setNmzOption", "showNmzOptions",
+       "normalToricRing", "intclToricRing", "ehrhartRing", "intclMonIdeal",
+       "torusInvariants", "finiteDiagInvariants", "diagInvariants", "RationalCone",
+       "allComputations", "grading",
+       "intersectionValRings", "intersectionValRingIdeals",
+       "MonomialSubalgebra",  "createMonomialSubalgebra",
+       "getNumInvs"
       }
 
-exportMutable{nmzVersion, nmzDataPath, nmzFilename, nmzNumberThreads}
+exportMutable{"nmzVersion", "nmzDataPath", "nmzFilename", "nmzNumberThreads"}
 
 ----------------------------------------------------------------------
 

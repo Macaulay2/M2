@@ -73,9 +73,9 @@ export {
   --"vertices",
     --
     -- Display Methods
-    displayGraph,
-    showTikZ,
-    writeDotFile,
+    "displayGraph",
+    "showTikZ",
+    "writeDotFile",
     --
     -- Derivative graphs
     "barycenter",
@@ -143,6 +143,7 @@ export {
     "distanceMatrix",
     "eccentricity",
     "edgeIdeal",
+    "expansion",
     "findPaths",
     "floydWarshall",
     "forefathers",
@@ -911,6 +912,28 @@ edgeIdeal Graph := Ideal => G -> (
         else apply(toList \ edges G, e -> R_(position(V, i -> i == e_0)) * R_(position(V, i -> i == e_1)))
         )
     )
+
+expansion = method ()
+expansion Graph := QQ => G -> (
+   V:=set(vertexSet(G));
+   E:=edges(G);
+   --return 0 if graph is empty graph
+   if #E===0 then return 0;
+   n:=floor((#V)/2);
+   --CS:={};
+   RS:={};
+   qq:=0;
+   ee:=degree(G,(toList(V))_0);
+   for i in 1..n do (
+      for S in subsets(V,i) do (
+           CS:=V-S;
+           qq:=sum for e in edges(G) list if #(e*S)>0 and #(e*CS)>0 then 1 else 0;
+           ee=min(ee,qq/#S);
+           if(ee == qq) then RS=S;
+           );
+      );
+   return ee;
+)
 
 findPaths = method()
 findPaths (Digraph,Thing,ZZ) := List => (G,v,l) -> (
@@ -3398,6 +3421,35 @@ doc ///
         independenceComplex
 ///
 
+--expansion
+doc ///
+    Key
+        expansion
+        (expansion, Graph)
+    Headline
+        returns the expansion of a graph
+    Usage
+        h=expansion G
+    Inputs
+        G:Graph
+    Outputs
+        h:QQ
+            the expansion of a graph G
+    Description
+        Text
+            The expansion of a subset S of vertices is the ratio of
+            the number of edges leaving S and the size of S. The
+            (edge) expansion of a graph G is the minimal expansion of
+            all not too large subsets of the vertex set. The expansion
+            of a disconnected graph is 0 whereas the expansion of the
+            complete graph on n vertices is ceiling(n/2)
+        Example
+            G = graph({{1, 2}, {1, 3}, {2, 3}, {3, 4}},EntryMode=>"edges");
+            expansion G
+            expansion pathGraph 7
+            
+///
+
 --findPaths
 doc ///
     Key
@@ -4985,6 +5037,18 @@ doc ///
         Example
             G = completeGraph 5
             H = vertexMultiplication(G, 0, 6)
+///
+
+TEST ///
+--test expansion of graphs
+G=pathGraph(7);
+assert(expansion(G)===1/3);
+///
+
+TEST ///
+--expansion of empty graph
+G=graph({});
+assert(expansion(G)===0);
 ///
 
 

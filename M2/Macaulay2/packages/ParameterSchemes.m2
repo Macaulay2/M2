@@ -11,15 +11,15 @@ newPackage(
     	)
 
 export { 
-     findHefty,
-     findWtVec,
-     smallerMonomials, 
-     standardMonomials,
-     parameterFamily, 
-     parameterIdeal, 
-     parameterRing,
-     pruneParameterScheme, 
-     groebnerScheme
+     "findHefty",
+     "findWtVec",
+     "smallerMonomials", 
+     "standardMonomials",
+     "parameterFamily", 
+     "parameterIdeal", 
+     "parameterRing",
+     "pruneParameterScheme", 
+     "groebnerScheme"
      }
 
 needsPackage "FourierMotzkin"

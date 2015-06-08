@@ -12,11 +12,16 @@ Use the command "gfan list" to view all subcommands.
 The command "gfan" is deprecate for computing all Groebner bases of an ideal.
 Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake:  WARNING: created private directory /home/member/dgrayson/.polymake
-polymake: used package cddlib
+polymake: used package cdd
+  cddlib
   Implementation of the double description method of Motzkin et al.
   Copyright by Komei Fukuda.
   http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 9 6 6 9
@@ -33,10 +38,16 @@ Use the command "gfan list" to view all subcommands.
 The command "gfan" is deprecate for computing all Groebner bases of an ideal.
 Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
+polymake: used package cdd
+  cddlib
   Implementation of the double description method of Motzkin et al.
   Copyright by Komei Fukuda.
   http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 9 6 6 9
@@ -61,10 +72,16 @@ Use the command "gfan list" to view all subcommands.
 The command "gfan" is deprecate for computing all Groebner bases of an ideal.
 Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
+polymake: used package cdd
+  cddlib
   Implementation of the double description method of Motzkin et al.
   Copyright by Komei Fukuda.
   http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 11 13 6 3
@@ -74,10 +91,16 @@ Use the command "gfan list" to view all subcommands.
 The command "gfan" is deprecate for computing all Groebner bases of an ideal.
 Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
+polymake: used package cdd
+  cddlib
   Implementation of the double description method of Motzkin et al.
   Copyright by Komei Fukuda.
   http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 33/4 33/4 33/4 33/4

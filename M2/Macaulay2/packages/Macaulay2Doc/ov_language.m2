@@ -431,13 +431,13 @@ document {
 	  },
      "Code that implements composition of functions is easy to write, because
      functions can create new functions and return them.  We illustrate
-     this by writing a function called ", TT "compose", " that will
+     this by writing a function called ", TT "comp", " that will
      compose two functions, just as the operator ", TO "@@", " did
      above.",
      EXAMPLE {
-	  "compose = (f,g) -> x -> f(g(x))",
-	  "sincos = compose(sin,cos)",
-	  "cossin = compose(cos,sin)",
+	  "comp = (f,g) -> x -> f(g x)",
+	  "sincos = comp(sin,cos)",
+	  "cossin = comp(cos,sin)",
 	  "sincos 2.2",
 	  "cossin 2.2",
 	  },

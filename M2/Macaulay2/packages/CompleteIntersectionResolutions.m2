@@ -19,7 +19,6 @@ newPackage(
    	   "isLinear",
 	   "cosyzygyRes",	  	   
 	   "stableHom",
-	   "mapToHomomorphism",
 	   "isStablyTrivial",
 	--things related to Ext over a complete intersection
 	   "ExtModule", 
@@ -73,24 +72,12 @@ stableHom(Module, Module) := (M,N)->(
     p := map(N, cover N, 1);
     map(coker Hom(M,p), Hom(M,N), 1))
 
-mapToHomomorphism = method()
-mapToHomomorphism Matrix := f ->(
-    S := ring f;
-    M := source f;
-    N := target f;
-    F := cover M;
-    p := map(M, F, 1);
-    Fd := dual F;
-    one := reshape(Fd**F,S^1, id_F);
-    map(Hom(M,N), S^1, Hom(M,f)*((Hom(F,p)//Hom(p,M)))*one)
-	    )
-
 isStablyTrivial = method()
 isStablyTrivial Matrix := f ->(
    -- f: M \to N is given.
    -- represent f as an element of Hom, that is, as a map (ring M)^1 \to Hom(M,N) 
    --then apply stableHom.
-   f1 := mapToHomomorphism f;
+   f1 := homomorphism' f;
    (stableHom(source f, target f)*f1) == 0)
 
 
@@ -404,7 +391,7 @@ scan(reverse toList(1..c), p->(
 --END OF MAIN LOOP
 --Now put together the maps for output. All the work is done except
 --for the creation of the homotopies.
-    if fail == true then return("cannot complete MF");
+    if fail == true then error("cannot complete MF");
     --lift all the relevant maps to S
     scan(toList(1..c), p-> (
 	    BS#p = substitute(B1#p, S);
@@ -581,10 +568,10 @@ ExtModuleData Module := M -> (
     
 mfBound = method()
 mfBound Module := M0 ->( 
-    --gives (conjectural) bound for which map in the resolution
-    --of M0 will have cokernel a high syzygy
+    --gives (conjectural) bound for which syzygy
+    --of M0 will be a high syzygy
 E := ExtModuleData M0;
-1+max(2*E_2, 1+2*E_3)
+max(2*E_2, 1+2*E_3)
 )
 
 highSyzygy = method(Options=>{Optimism => 0})
@@ -592,7 +579,7 @@ highSyzygy Module := opts -> M0 ->(
     --with increment => 0 (the default) this gives our conjectural
     --bound, which is best possible.
     -- But if that's not good enough, use Optimism=>-1 etc
-    len := mfBound M0-opts#Optimism;
+    len := 1+mfBound M0-opts#Optimism;
     F := res(M0, LengthLimit => len);
     coker F.dd_len)
 
@@ -1614,8 +1601,8 @@ Description
   ff = X*map(source X, , genericMatrix(S,a_(1,1),c,c));
   R = S/ideal ff;
   mbound = mfBound coker (R**X)
-  F = res(coker (R**X) , LengthLimit =>mbound);
-  M = coker F.dd_(mbound);
+  F = res(coker (R**X) , LengthLimit =>mbound+1);
+  M = coker F.dd_(mbound+1);
   MF = matrixFactorization(ff,M)
   netList BRanks MF
   netList ARanks MF
@@ -1883,7 +1870,7 @@ doc ///
      If p = mfBound M0, then highSyzygy M0
      returns the p-th syzygy of M0.
      (if F is a resolution of M this is the cokernel 
-     of F.dd_p). Optimism => r as optional
+     of F.dd_{p+1}). Optimism => r as optional
      argument, highSyzygy(M0,Optimism=>r)
      returns the (p-r)-th syzygy. The script is
      useful with matrixFactorization(ff, highSyzygy M0).
@@ -1901,9 +1888,9 @@ doc ///
     Text
      In this case as in all others we have examined, 
      greater "Optimism" is not 
-     justified:
-    Example
+     justified, and thus
      matrixFactorization(ff, highSyzygy(M0, Optimism=>1));
+     would produce an error.
    Caveat
     A bug in the total Ext script means that the oddExtModule
     is sometimes zero, and this can cause a wrong value to be
@@ -1942,7 +1929,7 @@ doc ///
     
      The actual formula used is:
     
-     mfBound M = 1+max(2*r_{even}, 1+2*r_{odd})
+     mfBound M = max(2*r_{even}, 1+2*r_{odd})
     
      where r_{even} = regularity evenExtModule M and
      r_{odd} = regularity oddExtModule M. Here
@@ -3244,42 +3231,6 @@ doc ///
    SeeAlso
     stableHom
 ///
-doc ///
-   Key
-    mapToHomomorphism
-    (mapToHomomorphism, Matrix)
-   Headline
-    converts a map f:M\to N to a map S^1 \to Hom(M,N), where M,N are S-modules
-   Usage
-    g = mapToHomomorphism f
-   Inputs
-    f:Matrix
-     map f: M \to N, S-modules
-   Outputs
-    g:Matrix
-     map g: S^1 \to Hom(M,N)
-   Description
-    Text
-     This is the inverse of the function homomorphism.
-     Thus if M,N are S-modules and g:S^1 \to Hom(M,N), then
-     f = homomorphism g produces f:M\to N
-     and 
-     g = mapToHomomorphism f.
-     
-     The function is used in the script isStablyTrivial
-    Example
-     S = ZZ/101[a,b,c]
-     M = S^2/ideal"a,b"++S^3/ideal"b,c"
-     N = coker random (S^{0,1}, S^{-1})
-     g = mapToHomomorphism id_M
-     id_M == homomorphism g
-     isStablyTrivial id_M
-     isStablyTrivial(map(M, cover M, 1))
-   SeeAlso
-    Hom
-    homomorphism
-    isStablyTrivial
-///
 
 
 ------TESTs------
@@ -3421,7 +3372,7 @@ TEST///
      S = ZZ/101[a,b,c];
      M = S^2/ideal"a,b"++S^3/ideal"b,c";
      N = coker random (S^{0,1}, S^{-1});
-     g = mapToHomomorphism id_M;
+     g = homomorphism' id_M;
      assert(id_M == homomorphism g)
      assert(isStablyTrivial id_M == false)
      assert(isStablyTrivial(map(M, cover M, 1))==true)
@@ -3583,4 +3534,5 @@ check "CompleteIntersectionResolutions"
 
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
+
 
