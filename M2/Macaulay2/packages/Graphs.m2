@@ -1046,7 +1046,7 @@ highestCommonDescendant(Digraph,Thing,Thing) := Thing => (D,u,v) -> (
 
 neighbors = method()
 neighbors (Graph, Thing) := Set => (G,v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(first entries (adjacencyMatrix G)^{i}, j -> j != 0))
     )
