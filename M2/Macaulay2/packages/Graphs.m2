@@ -1413,9 +1413,9 @@ bipartiteColoring Graph := List => G -> (
 
 deleteEdges = method()
 deleteEdges (Graph, List) := Graph => (G,L) -> (
-    E := sort \ toList \ edges G;
-    E' := E - set (sort \ L);
-    graph(vertexSet G, E', EntryMode => "edges")
+    E := set edges G;
+    E' := E - set(for l in L list set l);
+    graph(vertexSet G, toList(E'), EntryMode => "edges")
     )
 deleteEdges (Digraph, List) := Graph => (G,L) -> digraph(vertexSet G, edges G - set L)
 
@@ -5103,6 +5103,8 @@ assert(numberOfComponents(G)===3);
 assert(chromaticNumber(G)===2);
 assert(isConnected(G)===false);
 assert(neighbors(G,a)===set({b}));
+assert(deleteEdges(G,{{a,b}})===graph({1,2,a,b,3,c},{{1,2},{c,3}}));
+
 H=digraph({{1,2},{a,b},{3,c}});
 assert(children(H,3)===set({c}));
 assert(parents(H,c)===set({3}));
