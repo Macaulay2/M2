@@ -687,7 +687,7 @@ center Graph := List => G -> select(vertexSet G, i -> eccentricity(G, i) == radi
 
 children = method()
 children (Digraph, Thing) := Set => (G, v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(first entries (adjacencyMatrix G)^{i}, j -> j != 0))
     )
@@ -880,7 +880,7 @@ distance (Digraph, Thing, Thing) := ZZ => (G,v,u) -> (
 distance (Digraph, Thing) := HashTable => (G, v) -> (
     if not member(v, vertexSet G) then error "The given vertex is not a vertex of G.";
     n := #vertexSet G;
-    v = position(vertexSet G, i -> i == v);
+    v = position(vertexSet G, i -> i === v);
     C := new MutableList from toList(#vertexSet G:infinity);
     Q := {v};
     C#v = 0;
@@ -1066,7 +1066,7 @@ numberOfTriangles Graph := ZZ => G -> number(ass (coverIdeal G)^2, i -> codim i 
 
 parents = method()
 parents (Digraph, Thing) := Set => (G, v) -> (
-    i := position(vertexSet G, u -> u == v);
+    i := position(vertexSet G, u -> u === v);
     if i === null then error "v is not a vertex of G.";
     set (vertexSet G)_(positions(flatten entries (adjacencyMatrix G)_{i}, j -> j != 0))
     )
@@ -5100,7 +5100,13 @@ TEST ///
 --check graphs with vertices from different classes
 G=graph({{1,2},{a,b},{3,c}});
 assert(numberOfComponents(G)===3);
---assert(chromaticNumber(G)===3); --this test fails!
+assert(chromaticNumber(G)===2);
+assert(isConnected(G)===false);
+assert(neighbors(G,a)===set({b}));
+H=digraph({{1,2},{a,b},{3,c}});
+assert(children(H,3)===set({c}));
+assert(parents(H,c)===set({3}));
+assert(degree(H,c)===1);
 ///
 
 TEST ///
