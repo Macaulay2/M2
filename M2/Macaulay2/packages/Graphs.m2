@@ -916,7 +916,7 @@ edgeIdeal Graph := Ideal => G -> (
     R := QQ(monoid[x_1..x_(#V)]);
     monomialIdeal (
         if #edges G == 0 then 0_R
-        else apply(toList \ edges G, e -> R_(position(V, i -> i == e_0)) * R_(position(V, i -> i == e_1)))
+        else apply(toList \ edges G, e -> R_(position(V, i -> i === e_0)) * R_(position(V, i -> i === e_1)))
         )
     )
 
