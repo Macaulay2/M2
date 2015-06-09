@@ -2590,6 +2590,8 @@ const Matrix /* or null */ *gbA::get_gb()
 
 const Matrix /* or null */ *gbA::get_mingens()
 {
+  if (over_ZZ())
+    return get_gb();
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i) and ((*i)->minlevel & ELEM_MINGEN))

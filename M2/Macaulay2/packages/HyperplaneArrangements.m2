@@ -1703,7 +1703,7 @@ document {
 }
 
 TEST ///
-R = ZZ[x,y,z];
+R = QQ[x,y,z];
 trivial = arrangement({},R);
 nontrivial = arrangement({x},R);
 assert(rank trivial == 0)
