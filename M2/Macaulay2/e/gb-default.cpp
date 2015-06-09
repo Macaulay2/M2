@@ -40,6 +40,18 @@ gbA * gbA::create(const Matrix *m,
                   int max_degree_limit,
                   int max_reduction_count)
 {
+  const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
+  if (origR == NULL)
+    {
+      ERROR("ring is not a polynomial ring");
+      return nullptr;
+    }
+  if (origR->getMonoid()->numInvertibleVariables() > 0)
+    {
+      ERROR("cannot compute Groebner basis of ideal over a Laurent polynomial ring, ie. with Inverses=>true");
+      return nullptr;
+    }
+  
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
   return result;
@@ -2590,6 +2602,8 @@ const Matrix /* or null */ *gbA::get_gb()
 
 const Matrix /* or null */ *gbA::get_mingens()
 {
+  if (over_ZZ())
+    return get_gb();
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
     if ((*i) and ((*i)->minlevel & ELEM_MINGEN))
