@@ -48,7 +48,7 @@ newPackage(
 	   "finiteBettiNumbers",
            "infiniteBettiNumbers",
 	   "makeFiniteResolution",	   
-	   "makeFiniteResolution2",	   	   
+--	   "makeFiniteResolution2",	   	   
 	--some families of examples
 	   "twoMonomials",
 	   "sumTwoMonomials",
@@ -1197,7 +1197,7 @@ makeFiniteResolution(List,Matrix) := (MF,ff) -> (
     scan(length A-1, i-> if( prune HH_(i+1) A) != 0 then error"A not acyclic");
     A
     )
-
+{*
 makeFiniteResolution2 = method()
 makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
     --given a codim 2 matrix factorization, makes all the maps
@@ -1234,6 +1234,7 @@ h_1_[0]^[0]
 h_1_[0]^[1]
 (source h_1)_[0]
 ///
+*}
 
 complexity = method()
 --complexity of a module over a CI ring
@@ -1607,7 +1608,7 @@ SeeAlso
  psiMaps
  complexity
 ///
-
+{*
 doc ///
    Key
     makeFiniteResolution2
@@ -1634,7 +1635,7 @@ doc ///
    SeeAlso
     makeFiniteResolution
 ///
-
+*}
 doc ///
 Key
  complexity
