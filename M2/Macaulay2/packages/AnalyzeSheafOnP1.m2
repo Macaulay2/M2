@@ -11,7 +11,9 @@
      export {
 	 "analyze",
 	 "doubleDualMap",
-	 "isNZD"
+	 "isNZD",
+	 "showSheafOnP1",
+	 "killH0"
 	 }
 
 
@@ -30,22 +32,25 @@ doubleDualMap Module := M ->(
     map(target ddh, M, matrix ddh)
     )
 
+killH0 = method()
+killH0 Module := M-> M/(saturate 0_M)
+
 analyze = method()
-analyze Module := N ->(
+analyze CoherentSheaf := SN -> analyze module SN
+analyze Module := M ->(
+   N := M;
    S := ring N;
    if numgens S != 2 or dim S != 2 then 
         error"Ring should be a polynomial ring in 2 variables";
    kk := coefficientRing S;
    if not isField kk then error"Ring should be polynomials over a field";
    if length complete res N >1 then 
-         error"module has (possibly embedded) component of codim >1";
+   N = killH0 N;
    Y := symbol Y;
    T := kk[Y];
    e := doubleDualMap N;
    tors := prune ker e;
---<<"The double dual is free on generators of degrees:"<<endl;
    freegens := flatten degrees prune target e;
---<< freegens<<endl<<endl;
    --find a linear nonzerodivisor on tors if possible
    X := S_0;
    newVars := vars S;
@@ -70,11 +75,19 @@ analyze Module := N ->(
    presN' := changeVars presentation tors;
    Sm1 := smithNormalForm(dehomog presN',ChangeMatrix => {false, false});
    Sm := changeVarsBack homogenize(toS Sm1, S_0);
-<<"The annihilators of the cyclic components are:"<<endl;
    anns := apply(numrows Sm, i-> Sm_(i,i));
---   <<anns<<endl;
 {freegens,anns,e,Sm}
 )
+
+showSheafOnP1 = method()
+showSheafOnP1 CoherentSheaf := MS -> showSheafOnP1 module MS
+showSheafOnP1 Module := M->(
+    L := analyze M;
+    <<"The double dual is free on generators of degrees:"<<endl;
+    << L_0<<endl;
+    <<"The annihilators of the cyclic components are:"<<endl;
+     <<L_1<<endl;
+    )
 
 beginDocumentation()
      doc ///
@@ -88,11 +101,12 @@ beginDocumentation()
 	--twists of the structure sheaf--
 	and cyclic skyscraper sheaves represented by modules of the form
 	k[x,y]/(l^m)
-	where l is an klirreducible homogeneous polynomial and
+	where l is an kirreducible homogeneous polynomial and
 	m is a non-negative integer.
-	This package computes the twissts and the annihilators l^m
+	The routine "analyze"
+	computes the twists and the annihilators l^m
 	that appear in the decomposition, starting from a
-	graded module over k[x,y].
+	coherent sheaf on P1 or a graded module over a polynomial ring on 2 variables.
        Example
         k = ZZ/5
         S = k[a,b]
@@ -100,7 +114,8 @@ beginDocumentation()
     	L = analyze M;
 	twists = L_0
 	anns = L_1
-       Caveat
+	analyze sheaf M
+     Caveat
         The script uses a linear nonzerodivisor, which would not exist over a finite
 	field in the case where every point of P1 is the support of one of the
 	skyscraper components.
@@ -110,6 +125,7 @@ beginDocumentation()
      doc ///
      Key
       analyze
+      (analyze,CoherentSheaf)
       (analyze,Module)
      Headline
       Compute the decomposition of a sheaf on P1
@@ -117,33 +133,37 @@ beginDocumentation()
       L=analyze M
      Inputs
       M:Module
+      M:CoherentSheaf
      Outputs
       L:List
        L_0 = map from M to double dual of M, L_1 is the smith normal form pres of the torsion of M
      Description
        Text
-        The routine decomposes M in to a direct of free summands and 
-	cycle torsion part modules. It prints the degrees of the generators
-	of the free summands and then the powers of the linear forms that annihilate each
-	cyclic torsion summand, as computed from the smith normal form of a 
-	dehomogenization of M. It returns a list
-	L ={freegens, anns, e,D} where:
+        The routine decomposes the sheaf associated to M 
+	into a direct of twists of the structure sheaf and 
+	cycle torsion part modules. It returns a list
+	L ={freegens, anns, e, D} where:
 	
-	freegens is the list of generator degrees;
+	freegens is the list of the twists;
 	
 	anns is the list of annihilators;
 	
-	e is the map from M to its double dual and D is the;
+	e is the map from M' to its double dual, where M' = is the result
+	of reducing M mod 0-dimensional torsion, if necessary;
 	
-	presentation of the torsion part in Smith normal form.
+	D is a presentation of the torsion part in
+	the appropriate version of Smith normal form.
 	
-	To compute the Smith normal form, we need to dehomogenize with respect to
-	a linear form; we try first the first variable, then the second, then
-	up to 100 random choices.
+	To compute this Smith normal form, we dehomogenize with respect to
+	a linear form that is a nonzerodivisor on M', 
+	use the routine smithNormalForm, and then
+	rehomogenize. To find this nonzerodivisor we 
+	try first the first variable, then the second, then
+        up to 100 random choices
 	
 	The routine returns an error if the base ring is not a polynomial ring in 2
-	variables over a field or if the module has a component primary to the maximal 
-	ideal or if after 100 tries it finds no linear form that is a nonzerodivisor on
+	variables over a field 
+	or if after 100 tries it finds no linear form that is a nonzerodivisor on
 	the module.
        Example
        	setRandomSeed 0
@@ -153,12 +173,51 @@ beginDocumentation()
 	M1 =S^1/ideal(a^3)++S^{-1}/(ideal b^2)++S^1/(ideal b^2) ;
         M = M0++M1;
         L = analyze M0;
-	L
-        analyze M1;	
-        analyze M;
+	freegens = L_0
+	anns = L_1
+	e = L_2
+	D = L_3
      SeeAlso
       doubleDualMap
+      showSheafOnP1
      ///
+
+doc ///
+   Key
+    killH0
+    (killH0,Module)
+   Headline
+    removes 0-dimensional torsion
+   Usage
+    M' = killH0 M
+   Inputs
+    M:Module
+   Outputs
+    M':Module
+   Description
+    Text
+     "M' = M/(saturate 0_M)"
+///
+
+doc ///
+   Key
+    showSheafOnP1
+    (showSheafOnP1, CoherentSheaf)    
+    (showSheafOnP1, Module)
+   Headline
+    Prints the analysis of a sheaf on P1
+   Usage
+    showSheafOnP1 M
+   Inputs
+    M:Module
+    M:CoherentSheaf
+   Description
+    Text
+     prints out the twists of the line bundle summands
+     and the annihilators of the (cyclic) torsion components.
+   SeeAlso
+    AnalyzeSheafOnP1
+///
 
 doc ///
    Key
@@ -193,7 +252,7 @@ doc ///
     t:Boolean
    Description
     Text
-     returns true if 0 == ker (X*id_M)
+     returns true if "0 == ker (X*id_M)"
 ///
 
 TEST///
