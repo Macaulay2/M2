@@ -23,6 +23,7 @@ newPackage(
 	   "dualWithComponents",
 	   "HomWithComponents",
 	   "tensorWithComponents",
+	   "toArray",
 	--things related to Ext over a complete intersection
 	   "ExtModule", 
 	   "evenExtModule", 
@@ -458,7 +459,8 @@ scan(reverse toList(1..c), p->(
         Asour_(toArray toList(0..p-1)));
 	       
     h#p = map(source dpartial#p, 
-        S^{ -degs#p}**target dpartial#p,
+--        S^{ -degs#p}**target dpartial#p,
+        tensorWithComponents(S^{ -degs#p},target dpartial#p),
         substitute(
         (R#(p-1)**(target dpartial#p**ci#p))//
                         (R#(p-1)**dpartial#p),
@@ -531,11 +533,15 @@ psiMaps List := MF -> (
 
 hMaps = method()
 hMaps List := mf-> (
+    --makes a list of the components of h, preserving the direct sum decompositions
+    --of the sources and targets of the components.
     h := mf_1;
-    apply(#(source h).cache.components, 
-    p -> (target h)^(toArray toList(0..p))*h*(source h)_[p])
-)
---Hlist == hMaps
+    apply(#components source h,
+        p -> (
+          map(directSum ((components target h)_(toList(0..p))),
+              directSum(((components source h)/components)_p),
+	      h_[p]^(toArray toList(0..p)))
+	     )))
 
 ExtModuleData = method()
 ExtModuleData Module := M -> (
@@ -1303,6 +1309,7 @@ uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 *}
+
 
 doc ///
    Key
@@ -3130,7 +3137,8 @@ doc ///
 	  output of a matrixFactorization computation
         Outputs
 	 hMaps: List
-	  list matrices $h_p: A_0(p)\to A_1(p)$
+	  list matrices $h_p: A_0(p)\to A_1(p)$. The sources and targets of these
+	  maps have the components B_s(p).
         Description
 	 Text
 	  See the documentation for matrixFactorization for an example.
@@ -3383,6 +3391,28 @@ doc ///
 
 
 ------TESTs------
+TEST///
+kk=ZZ/101
+S = kk[a,b]
+ff = matrix"a4,b4"
+R = S/ideal ff
+N = coker vars R
+M = highSyzygy N
+mf = matrixFactorization(ff, M)
+
+h = (hMaps mf)_1
+h' = map(target h, source h,
+    matrix apply (#components source h, i->(apply(#components target h, j-> h_[j]^[i])))
+)
+assert(h == h')
+
+h = (hMaps mf)_0
+h' = map(target h, source h,
+    matrix apply (#components source h, i->(apply(#components target h, j-> h_[j]^[i])))
+)
+assert(h == h')
+///
+
 TEST///
 S = ZZ/101[a,b,c];
 ff = matrix"a3,b3";
