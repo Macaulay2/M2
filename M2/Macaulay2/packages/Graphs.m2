@@ -5052,7 +5052,6 @@ G=pathGraph(7);
 assert(expansion(G)===1/3);
 ///
 
-
 TEST ///
 --test connectivity
 G=completeGraph(5);
@@ -5089,9 +5088,19 @@ assert(diameter(pathGraph(7))===6);
 ///
 
 TEST ///
+--check chromatic number
+G=starGraph(4);
+H=completeGraph(3);
+assert(chromaticNumber(G)===2);
+assert(chromaticNumber(H)===3);
+assert(chromaticNumber(cartesianProduct(G,H))===max(2,3));
+///
+
+TEST ///
 --check graphs with vertices from different classes
 G=graph({{1,2},{a,b},{3,c}});
 assert(numberOfComponents(G)===3);
+--assert(chromaticNumber(G)===3); --this test fails!
 ///
 
 TEST ///
@@ -5105,6 +5114,7 @@ assert(edgeCuts(G)==={{}});
 assert(vertexCuts(G)==={});
 assert(connectedComponents(G)==={});
 assert(cliqueNumber(G)===0);
+assert(chromaticNumber(G)===0);
 assert(independenceNumber(G)===0);
 assert(numberOfComponents(G)===0);
 assert(isConnected(G)===true);
