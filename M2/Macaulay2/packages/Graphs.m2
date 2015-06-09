@@ -5089,6 +5089,12 @@ assert(diameter(pathGraph(7))===6);
 ///
 
 TEST ///
+--check graphs with vertices from different classes
+G=graph({{1,2},{a,b},{3,c}});
+assert(numberOfComponents(G)===3);
+///
+
+TEST ///
 --check properties of empty graph
 G=graph({});
 assert(vertexSet(G)==={});
