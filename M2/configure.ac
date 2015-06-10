@@ -35,7 +35,7 @@ dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 echo "relevant environment variable values, if any:"
 for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
 do eval v=\$$x
-   test "$v" && echo "   $x=$v"
+   test "$v" && echo "   $x = $v"
 done
 
 AC_SUBST(DISTRIBUTION) # use this starting number to sequentially number the downstream distributions
@@ -66,6 +66,91 @@ do case $i in
    -I*) AC_MSG_ERROR(preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS);;
    esac
 done
+
+dnl AC_MSG_CHECKING(whether $FIND is GNU find)
+dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
+dnl then AC_MSG_RESULT(yes)
+dnl else AC_MSG_ERROR($FIND: GNU find is required")
+dnl fi
+
+dnl interesting behavior: $A expansion happens after statement separation!
+dnl       $ A="echo hi 2>/dev/null "
+dnl       $ echo "`$A`"
+dnl       hi 2>/dev/null
+dnl       $ $A
+dnl       hi 2>/dev/null
+dnl       $ eval $A
+dnl       hi
+
+AC_SUBST(NODENAME,"`uname -n`")
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+AC_SUBST(ISSUE) # no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+
+case $OS in
+  # Here we normalize the name of the OS for windows for startup.m2, which
+  # needs to know that C:/FOO/BAR is an absolute path.
+  CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
+esac
+
+case $OS in
+   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
+esac
+
+if test ! "$ISSUE"
+then if test -f /usr/bin/sw_vers -a "`/usr/bin/sw_vers -productName`" = "Mac OS X"
+     then ISSUE_FLAVOR=MacOS
+     	  ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
+     elif test -f /etc/os-release
+     then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
+     elif test -f /usr/lib/os-release
+     then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /etc/issue
+     then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+          ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     fi
+     # translate to something standard (for us), and verify :
+     case $ISSUE_FLAVOR in
+         "MacOS") ;;
+         "ubuntu") ISSUE_FLAVOR=Ubuntu ;;
+         "debian") ISSUE_FLAVOR=Debian ;;
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
+	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
+	 "") AC_MSG_ERROR([issue not found]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
+     esac
+     case $ISSUE_RELEASE in
+	 "") AC_MSG_NOTICE([release number not found]) 
+	     ISSUE_RELEASE=unknown ;;
+     esac
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+fi
+
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
+test "$ISSUE" || ISSUE=$REL
+
+AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
+AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
+AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
+
+AC_MSG_NOTICE([operating system information:
+   OS    = $OS
+   ISSUE = $ISSUE])
+
+AC_CONFIG_AUX_DIR(config)
 
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
@@ -112,98 +197,6 @@ if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
-
-dnl AC_MSG_CHECKING(whether $FIND is GNU find)
-dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_ERROR($FIND: GNU find is required")
-dnl fi
-
-dnl interesting behavior: $A expansion happens after statement separation!
-dnl       $ A="echo hi 2>/dev/null "
-dnl       $ echo "`$A`"
-dnl       hi 2>/dev/null
-dnl       $ $A
-dnl       hi 2>/dev/null
-dnl       $ eval $A
-dnl       hi
-
-AC_SUBST(NODENAME,"`uname -n`")
-AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-
-AC_SUBST(ISSUE) # no initial value
-AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
-AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
-
-# Here we translate OS and REL into something the user can understand, because the names of the binary
-# distribution tar files on the web site contain those strings.
-case $OS-$REL in
-  Darwin-7.*) REL=10.3 ; OS=MacOS ;;
-  Darwin-8.*) REL=10.4 ; OS=MacOS ;;
-  Darwin-9.*) REL=10.5 ; OS=MacOS ;; # Leopard
-  Darwin-10.*) REL=10.6 ; OS=MacOS ;; # Snow Leopard
-  Darwin-11.*) REL=10.7 ; OS=MacOS ;; # Lion
-  Darwin-12.*) REL=10.8 ; OS=MacOS ;; # Mountain Lion
-  Darwin-13.*) REL=10.9 ; OS=MacOS ;; # Mavericks
-  Darwin-14.*) REL=10.10 ; OS=MacOS ;; # Yosemite
-  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
-  CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
-
-case $OS in
-  # Here we normalize the name of the OS for windows for startup.m2, which
-  # needs to know that C:/FOO/BAR is an absolute path.
-  CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
-esac
-
-if test ! "$ISSUE"
-then if test -f /etc/os-release
-     then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
-          ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
-     elif test -f /usr/lib/os-release
-     then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
-          ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
-     elif test -f /etc/issue
-     then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-	  ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     fi
-     # translate to something standard (for us) :
-     case $ISSUE_FLAVOR in
-         "ubuntu") ISSUE_FLAVOR=Ubuntu ;;
-         "debian") ISSUE_FLAVOR=Debian ;;
-	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
-	 "") AC_MSG_ERROR([issue not found in /etc/issue]) ;;
-	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
-     esac
-     case $ISSUE_RELEASE in
-	 "") AC_MSG_NOTICE([release number not found in /etc/issue: `</etc/issue head -1`]) 
-	     ISSUE_RELEASE=unknown ;;
-     esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-fi
-
-# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
-test "$ISSUE" || ISSUE=$REL
-
-AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
-AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
-
-AC_MSG_NOTICE([operating system information:
-   OS    = $OS
-   ISSUE = $ISSUE])
-
-AC_CONFIG_AUX_DIR(config)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
