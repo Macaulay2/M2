@@ -92,7 +92,9 @@ document {
 		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
 		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
 			 on the moduli space of n-pointed curves of genus 0, has been added." },
-		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." }
+		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." },
+		    LI { TO "AnalyzeSheafOnP1::AnalyzeSheafOnP1", ", a package by David Eisenbud for decomposing a coherent sheaf on the projective line into a direct sum of line bundles and 
+			 cyclic skyscraper sheaves, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
