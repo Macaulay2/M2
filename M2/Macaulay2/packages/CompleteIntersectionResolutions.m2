@@ -20,6 +20,10 @@ newPackage(
 	   "cosyzygyRes",	  	   
 	   "stableHom",
 	   "isStablyTrivial",
+	   "dualWithComponents",
+	   "HomWithComponents",
+	   "tensorWithComponents",
+	   "toArray",
 	--things related to Ext over a complete intersection
 	   "ExtModule", 
 	   "evenExtModule", 
@@ -44,6 +48,7 @@ newPackage(
 	   "finiteBettiNumbers",
            "infiniteBettiNumbers",
 	   "makeFiniteResolution",	   
+--	   "makeFiniteResolution2",	   	   
 	--some families of examples
 	   "twoMonomials",
 	   "sumTwoMonomials",
@@ -63,6 +68,23 @@ newPackage(
 	   "hfModuleAsExt",
 	   "complexity"
 	   }
+
+dualWithComponents = method()
+dualWithComponents Module := M -> (
+   if not isDirectSum M then return dual M else (
+	directSum(components M/dualWithComponents)))
+
+tensorWithComponents = method()
+tensorWithComponents(Module, Module) := (M,N) ->(
+   if not isDirectSum M and not isDirectSum N then return M**N else
+      directSum flatten apply(components M, m->apply(components N, n->(
+	       tensorWithComponents(m,n)))))
+
+HomWithComponents = method()
+HomWithComponents (Module, Module) :=  (M,N) ->(
+   if not isDirectSum M and not isDirectSum N then return Hom(M,N) else
+      directSum flatten apply(components M, m->apply(components N, n->(
+	       HomWithComponents(m,n)))))
 
 stableHom = method()
 stableHom(Module, Module) := (M,N)->(
@@ -281,7 +303,7 @@ matrixFactorization(Matrix, Module) := opts -> (ff, M) -> (
     --d: a triangular map of direct-sum modules,
     --the matrix factorization differential.
     --
-    --h: a hashTable where the h#p are maps of direct sum modules.
+    --h: a map, the sum of the
     --the partial homotopies.
     --
     --Description:
@@ -437,7 +459,8 @@ scan(reverse toList(1..c), p->(
         Asour_(toArray toList(0..p-1)));
 	       
     h#p = map(source dpartial#p, 
-        S^{ -degs#p}**target dpartial#p,
+--        S^{ -degs#p}**target dpartial#p,
+        tensorWithComponents(S^{ -degs#p},target dpartial#p),
         substitute(
         (R#(p-1)**(target dpartial#p**ci#p))//
                         (R#(p-1)**dpartial#p),
@@ -510,11 +533,15 @@ psiMaps List := MF -> (
 
 hMaps = method()
 hMaps List := mf-> (
+    --makes a list of the components of h, preserving the direct sum decompositions
+    --of the sources and targets of the components.
     h := mf_1;
-    apply(#(source h).cache.components, 
-    p -> (target h)^(toArray toList(0..p))*h*(source h)_[p])
-)
---Hlist == hMaps
+    apply(#components source h,
+        p -> (
+          map(directSum ((components target h)_(toList(0..p))),
+              directSum(((components source h)/components)_p),
+	      h_[p]^(toArray toList(0..p)))
+	     )))
 
 ExtModuleData = method()
 ExtModuleData Module := M -> (
@@ -1170,6 +1197,44 @@ makeFiniteResolution(List,Matrix) := (MF,ff) -> (
     scan(length A-1, i-> if( prune HH_(i+1) A) != 0 then error"A not acyclic");
     A
     )
+{*
+makeFiniteResolution2 = method()
+makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
+    --given a codim 2 matrix factorization, makes all the maps
+    --that are relevant, as in 4.2.3 of Eisenbud-Peeva 
+    --"Minimal Free Resolutions and Higher Matrix Factorizations"
+    c := rank source ff; -- the codim
+    if c !=2 then error"requires a codim 2 complete intersection";
+    c' := complexity MF; -- the complexity
+    if c'<2  then return MF;
+    
+    --from here on c=c'=2, and we build the maps over S
+    S := ring MF_0;
+    b := bMaps MF;
+    h := hMaps MF;
+    psi := psiMaps MF;
+    )
+
+///
+kk=ZZ/101
+S = kk[a,b]
+ff = matrix"a4,b4"
+R = S/ideal ff
+toR = map(R,S)
+
+N = R^1/ideal"a2, ab, b3"
+N = coker vars R
+M = highSyzygy N
+
+mf = matrixFactorization(ff, M)
+b = bMaps mf
+h = hMaps mf
+psi = psiMaps mf
+h_1_[0]^[0]
+h_1_[0]^[1]
+(source h_1)_[0]
+///
+*}
 
 complexity = method()
 --complexity of a module over a CI ring
@@ -1245,6 +1310,73 @@ uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 *}
+
+
+doc ///
+   Key
+    dualWithComponents
+    (dualWithComponents, Module)
+   Headline
+    dual module preserving direct sum information
+   Usage
+    N = dualWithComponents M
+   Inputs
+    M:Module
+   Outputs
+    N:Module
+   Description
+    Text
+     If M is a direct sum module (isDirectSum M == true) then
+     N is the direct sum of the duals of the components (and this is done recursively).
+     This SHOULD be built into dual M, but isn't as of M2, v. 1.7
+   SeeAlso
+    HomWithComponents
+    tensorWithComponents
+///
+doc ///
+   Key
+    HomWithComponents
+    (HomWithComponents, Module, Module)
+   Headline
+    computes Hom, preserving direct sum information
+   Usage
+    H = Hom(M,N)
+   Inputs
+    M:Module
+    N:Module
+   Outputs
+    H:Module
+   Description
+    Text
+     If M and/or N are direct sum modules (isDirectSum M == true) then
+     H is the direct sum of the Homs between the components.
+     This SHOULD be built into Hom(M,N), but isn't as of M2, v. 1.7
+   SeeAlso
+    tensorWithComponents
+    dualWithComponents
+///
+doc ///
+   Key
+    tensorWithComponents
+    (tensorWithComponents, Module, Module)
+   Headline
+    forms the tensor product, preserving direct sum information
+   Usage
+    T = tensor(M,N)
+   Inputs
+    M:Module
+    N:Module
+   Outputs
+    T:Module
+   Description
+    Text
+     If M and/or N are direct sum modules (isDirectSum M == true) then
+     T is the direct sum of the tensor products between the components.
+     This SHOULD be built into M**N, but isn't as of M2, v. 1.7
+   SeeAlso
+    HomWithComponents
+    dualWithComponents
+///
 
 
 doc///
@@ -1476,7 +1608,34 @@ SeeAlso
  psiMaps
  complexity
 ///
-
+{*
+doc ///
+   Key
+    makeFiniteResolution2
+    (makeFiniteResolution2, List, Matrix)
+   Headline
+    Maps associated to the finite resolution of a high syzygy module in codim 2
+   Usage
+    maps = makeFiniteResolution2(mf,ff)
+   Inputs
+    mf:List
+     matrix factorization
+    ff:Matrix
+     regular sequence
+   Outputs
+    maps:HashTable
+     many maps
+   Description
+    Text
+     Given a codim 2 matrix factorization, makes all the components of 
+     the differential and of the homotopies
+     that are relevant to the finite resolution, as in 4.2.3 of Eisenbud-Peeva 
+     "Minimal Free Resolutions and Higher Matrix Factorizations"
+    Example
+   SeeAlso
+    makeFiniteResolution
+///
+*}
 doc ///
 Key
  complexity
@@ -2503,7 +2662,8 @@ Inputs
    a high syzygy over S/ideal ff 
 Outputs
  MF:List
-    \{d,h\}, where d:A_1 \to A_0 and h is a hashTable of ``partial homotopies''
+    \{d,h\}, where d:A_1 \to A_0 and h: \oplus A_0(p) \to A_1
+    is the direct sum of partial homotopies.
 Description
  Text
   The input module M should be a ``high syzygy'' over
@@ -2512,9 +2672,7 @@ Description
   over the ring of CI operators (regraded with variables of degree 1).
   
   If the CI operator at some stage of the induction is NOT surjective,
-  then the script returns a String containing the presentation matrix
-  of M. This condition can be caught by testing whether the
-  returned value is a String or a List.
+  then the script returns an error.
   
   When the optional input Check==true (the default is Check==false), 
   the properties in the definition of Matrix Factorization are verified
@@ -2522,8 +2680,7 @@ Description
   If the CI operators at each stage are surjective (that is, if
   M is really a high syzygy), then:
   
-  The output is a list   
-  \{d,h\}. 
+  The output is a list of maps \{d,h\} whose sources and targets are direct sums.
   
   The map d is a special lifting to S of a presentation of
   M over R. To explain the contents, we introduce some notation
@@ -2537,9 +2694,9 @@ Description
   d(i): A_1(i) \to A_0(i) the restriction of d = d(c).
   where A(i) = \oplus_{i=1}^p B(i)
   
-  The object h is a hashTable. 
-  The map h#p:target A(p) \to source A(p)
-  is a homotopy for ff#p on the restriction
+  
+  The map h is a direct sum of maps target d(p) \to source d(p)
+  that are  homotopies for ff_p on the restriction
   d(p): over the ring R#(p-1) = S/(ff#1..ff#(p-1),
   so d(p) * h#p = ff#p mod (ff#1..ff#(p-1).
   
@@ -2981,7 +3138,8 @@ doc ///
 	  output of a matrixFactorization computation
         Outputs
 	 hMaps: List
-	  list matrices $h_p: A_0(p)\to A_1(p)$
+	  list matrices $h_p: A_0(p)\to A_1(p)$. The sources and targets of these
+	  maps have the components B_s(p).
         Description
 	 Text
 	  See the documentation for matrixFactorization for an example.
@@ -3234,6 +3392,28 @@ doc ///
 
 
 ------TESTs------
+TEST///
+kk=ZZ/101
+S = kk[a,b]
+ff = matrix"a4,b4"
+R = S/ideal ff
+N = coker vars R
+M = highSyzygy N
+mf = matrixFactorization(ff, M)
+
+h = (hMaps mf)_1
+h' = map(target h, source h,
+    matrix apply (#components source h, i->(apply(#components target h, j-> h_[j]^[i])))
+)
+assert(h == h')
+
+h = (hMaps mf)_0
+h' = map(target h, source h,
+    matrix apply (#components source h, i->(apply(#components target h, j-> h_[j]^[i])))
+)
+assert(h == h')
+///
+
 TEST///
 S = ZZ/101[a,b,c];
 ff = matrix"a3,b3";
@@ -3527,11 +3707,13 @@ assert(rank E==1);
 ///
 
 end--
-
+viewHelp notify
 restart
+notify=true
 loadPackage("CompleteIntersectionResolutions", Reload=>true)
 check "CompleteIntersectionResolutions"
 
+restart
 uninstallPackage "CompleteIntersectionResolutions"
 installPackage "CompleteIntersectionResolutions"
 
