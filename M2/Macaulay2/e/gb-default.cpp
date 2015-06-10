@@ -46,12 +46,14 @@ gbA * gbA::create(const Matrix *m,
       ERROR("ring is not a polynomial ring");
       return nullptr;
     }
+#if 0
+  // This test should be added, commented out in version 1.8, as QuillenSuslin package uses this (suspect) functionality!
   if (origR->getMonoid()->numInvertibleVariables() > 0)
     {
       ERROR("cannot compute Groebner basis of ideal over a Laurent polynomial ring, ie. with Inverses=>true");
       return nullptr;
     }
-  
+#endif  
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
   return result;
