@@ -2,8 +2,6 @@
 
 #include "gb-default.hpp"
 #include "text-io.hpp"
-#include <functional>
-#include <algorithm>
 
 #include "matrix.hpp"
 #include "matrix-con.hpp"
@@ -21,6 +19,9 @@
 
 #define PrintingDegree 0x0001
 
+#include <functional>
+#include <algorithm>
+#include <iostream>
 /*************************
  * Initialization ********
  *************************/
@@ -384,7 +385,7 @@ gbA::spair *gbA::spair_node()
 void gbA::spair_delete(spair *&p)
 {
   if (p == 0) return;
-  if (p->type == SPAIR_GEN || p->type == SPAIR_ELEM)
+  if (p->type == SPAIR::SPAIR_GEN || p->type == SPAIR::SPAIR_ELEM)
     {
       R->gbvector_remove(p->x.f.f);
       R->gbvector_remove(p->x.f.fsyz);
@@ -402,7 +403,7 @@ gbA::spair *gbA::spair_make(int i, int j)
   exponents exp2 = g2->lead;
   spair *result = spair_node();
   result->next = 0;
-  result->type = SPAIR_SPAIR;
+  result->type = SPAIR::SPAIR_SPAIR;
   result->lcm = exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
     if (g2->gap > g1->gap)
@@ -416,7 +417,7 @@ gbA::spair *gbA::spair_make(int i, int j)
 gbA::spair *gbA::spair_make_gcd_ZZ(int i, int j)
 {
   spair *result = spair_make(i,j);
-  result->type = SPAIR_GCD_ZZ;
+  result->type = SPAIR::SPAIR_GCD_ZZ;
   return result;
 }
 
@@ -428,7 +429,7 @@ gbA::spair *gbA::spair_make_gen(POLY f)
   int deg = weightInfo_->gbvector_weight(f.f);
   spair *result = spair_node();
   result->next = 0;
-  result->type = SPAIR_GEN;
+  result->type = SPAIR::SPAIR_GEN;
   result->deg = deg;
   result->lcm = exp1;
   result->x.f = f;
@@ -449,7 +450,7 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   exp2[vvar] = 2;
   result = spair_node();
   result->next = 0;
-  result->type = SPAIR_SKEW;
+  result->type = SPAIR::SPAIR_SKEW;
   result->lcm = exp2;
     exponents_lcm(_nvars, g1->deg, exp1, exp2, exp2, gb_weights, result->deg);
   result->x.pair.i = i;
@@ -462,7 +463,7 @@ gbA::spair *gbA::spair_make_ring(int i, int j)
 {
   /* This requires that j indexes into the gb array somewhere. */
   spair *result = spair_make(i,j);
-  result->type = SPAIR_RING;
+  result->type = SPAIR::SPAIR_RING;
 
   return result;
 }
@@ -471,7 +472,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
 {
   char s[100]; // enough room for all of the non polynomial cases.
   switch (p->type) {
-  case SPAIR_GCD_ZZ:
+  case SPAIR::SPAIR_GCD_ZZ:
     sprintf(s, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     sprintf(s, " deg(%d)", p->deg);
@@ -484,7 +485,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
       }
     o << "]";
     break;
-  case SPAIR_SPAIR:
+  case SPAIR::SPAIR_SPAIR:
     sprintf(s, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
     o << s;
     sprintf(s, " deg %d", p->deg);
@@ -497,19 +498,19 @@ void gbA::spair_text_out(buffer &o, spair *p)
       }
     o << "]";
     break;
-  case SPAIR_GEN:
+  case SPAIR::SPAIR_GEN:
     o << "generator ";
     R->gbvector_text_out(o, _F, p->f(), 3);
     break;
-  case SPAIR_ELEM:
+  case SPAIR::SPAIR_ELEM:
     o << "elem ";
     R->gbvector_text_out(o, _F, p->f(), 3);
     break;
-  case SPAIR_RING:
+  case SPAIR::SPAIR_RING:
     sprintf(s, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
     o << s;
     break;
-  case SPAIR_SKEW:
+  case SPAIR::SPAIR_SKEW:
     sprintf(s, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     break;
@@ -536,7 +537,7 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
   int i, first, second;
   bool firstok;
   exponents mexp, lcm, p1exp, p2exp;
-  if (p->type != SPAIR_SPAIR && p->type != SPAIR_RING) return false;
+  if (p->type != SPAIR::SPAIR_SPAIR && p->type != SPAIR::SPAIR_RING) return false;
   mexp = m->lead;
   lcm = p->lcm;
   if (gbelem_COMPONENT(m) !=
@@ -605,7 +606,7 @@ bool gbA::is_gcd_one_pair(spair *p)
 {
   int i,j;
   exponents e1, e2;
-  if (p->type != SPAIR_SPAIR) return false;
+  if (p->type != SPAIR::SPAIR_SPAIR) return false;
   i = p->x.pair.i;
   j = p->x.pair.j;
   e1 = gb[i] -> lead;
@@ -667,8 +668,8 @@ public:
       else if (cmp > 0) result = LT;
       else
         {
-          gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
-          gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
+          gbvector *a1 = (a->type > gbA::SPAIR::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
+          gbvector *b1 = (b->type > gbA::SPAIR::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
           if (a1 == 0)
             {
               if (b1 == 0) result = EQ;
@@ -787,7 +788,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
                              have the same component */
       /* Now get the coefficient */
       /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
-      if (a->type == SPAIR_SKEW)
+      if (a->type == SPAIR::SPAIR_SKEW)
         {
           coeffs.push_back(globalZZ->one().get_mpz());
           coeffs2.push_back(0); // will never be referred to below
@@ -835,7 +836,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 #if 0
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
-      if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
+      if (p->type != SPAIR::SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
         {
           spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
           if (M2_gbTrace >= 4)
@@ -946,7 +947,7 @@ void gbA::spair_set_insert(gbA::spair *p)
 {
   while (p != 0)
     {
-      if (p->type == SPAIR_GEN) n_gens_left++;
+      if (p->type == SPAIR::SPAIR_GEN) n_gens_left++;
       spair_set_lead_spoly(p);
       spair *tmp = p;
       p = p->next;
@@ -1010,14 +1011,14 @@ gbA::spair *gbA::spair_set_next()
   S->nelems--;
   S->n_in_degree--;
   S->n_computed++;
-  if (result->type == SPAIR_GEN) n_gens_left--;
+  if (result->type == SPAIR::SPAIR_GEN) n_gens_left--;
   return result;
 }
 
 void gbA::spair_set_defer(spair *&p)
   // Defer the spair p until later in this same degree
   // The spair should have been reduced a number of times
-  // already, so its type should be SPAIR_GEN or SPAIR_ELEM
+  // already, so its type should be SPAIR::SPAIR_GEN or SPAIR::SPAIR_ELEM
 {
   if (M2_gbTrace == 15)
     {
@@ -1027,7 +1028,7 @@ void gbA::spair_set_defer(spair *&p)
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
   S->n_in_degree++;
-  if (p->type == SPAIR_GEN)
+  if (p->type == SPAIR::SPAIR_GEN)
     {
       S->gen_last_deferred->next = p;
       S->gen_last_deferred = p;
@@ -1086,7 +1087,7 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
       {
         spair *tmp = p->next;
         p->next = tmp->next;
-        if (tmp->type == SPAIR_GEN)
+        if (tmp->type == SPAIR::SPAIR_GEN)
           {
             tmp->next = S->gen_list;
             S->gen_list = tmp;
@@ -1137,7 +1138,7 @@ void gbA::spairs_sort(int len, spair *&ps)
   a.reserve(len);
   for (spair *p = ps; p != 0; p=p->next)
     {
-      if ((p->type > gbA::SPAIR_SKEW) || p->lead_of_spoly)
+      if ((p->type > SPAIR::SPAIR_SKEW) || p->lead_of_spoly)
         a.push_back(p);
       else
         b.push_back(p);
@@ -1186,14 +1187,14 @@ void gbA::spair_set_lead_spoly(spair *p)
 {
   gbvector *ltsyz = 0;
   POLY f,g;
-  if (p->type > SPAIR_SKEW)
+  if (p->type > SPAIR::SPAIR_SKEW)
     {
       R->gbvector_remove(p->lead_of_spoly);
       p->lead_of_spoly = 0;
       return;
     }
   f = gb[p->x.pair.i]->g;
-  if (p->type == SPAIR_SKEW)
+  if (p->type == SPAIR::SPAIR_SKEW)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
@@ -1201,7 +1202,7 @@ void gbA::spair_set_lead_spoly(spair *p)
                                f.f, 0,
                                p->lead_of_spoly, ltsyz);
     }
-  else if (p->type == SPAIR_GCD_ZZ)
+  else if (p->type == SPAIR::SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
       R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
@@ -1236,11 +1237,11 @@ void gbA::compute_s_pair(spair *p)
       spair_text_out(o,p);
       emit_line(o.str());
     }
-  if (p->type > SPAIR_SKEW) return;
+  if (p->type > SPAIR::SPAIR_SKEW) return;
   R->gbvector_remove(p->lead_of_spoly);
   p->lead_of_spoly = 0;
   f = gb[p->x.pair.i]->g;
-  if (p->type == SPAIR_SKEW)
+  if (p->type == SPAIR::SPAIR_SKEW)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
@@ -1248,7 +1249,7 @@ void gbA::compute_s_pair(spair *p)
                                f.f, f.fsyz,
                                p->f(), p->fsyz());
     }
-  else if (p->type == SPAIR_GCD_ZZ)
+  else if (p->type == SPAIR::SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
       R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
@@ -1266,7 +1267,7 @@ void gbA::compute_s_pair(spair *p)
                                     p->f(),
                                     p->fsyz());
     }
-  p->type = SPAIR_ELEM;
+  p->type = SPAIR::SPAIR_ELEM;
   if (M2_gbTrace >= 5 && M2_gbTrace != 15)
     {
       buffer o;
@@ -1329,7 +1330,7 @@ bool gbA::reduce_kk(spair *p)
           POLY h;
           h.f = R->gbvector_copy(p->x.f.f);
           h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+          insert_gb(h,(p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0));
         }
       POLY g = gb[w]->g;
 
@@ -1440,10 +1441,10 @@ bool gbA::reduce_ZZ(spair *p)
               // If the element p is a generator, then we must assume that now the
               // swapped g is a (possible) minimal generator.
               g->minlevel |= ELEM_MINGB;
-              if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
+              if (p->type == SPAIR::SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
                 {
                   g->minlevel |= ELEM_MINGEN;
-                  p->type = SPAIR_GEN;
+                  p->type = SPAIR::SPAIR_GEN;
                 }
               
               R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
@@ -1472,7 +1473,7 @@ bool gbA::reduce_ZZ(spair *p)
           POLY h;
           h.f = R->gbvector_copy(p->x.f.f);
           h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+          insert_gb(h,(p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0));
         }
       POLY g = gb[w]->g;
 
@@ -2196,15 +2197,15 @@ void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
 
 bool gbA::spair_is_retired(spair* p) const
 {
-  if (p->type == SPAIR_GCD_ZZ or p->type == SPAIR_SPAIR)
+  if (p->type == SPAIR::SPAIR_GCD_ZZ or p->type == SPAIR::SPAIR_SPAIR)
     {
       return gb[p->x.pair.i] == nullptr or gb[p->x.pair.j] == nullptr;
     }
-  if (p->type == SPAIR_RING)
+  if (p->type == SPAIR::SPAIR_RING)
     {
       return gb[p->x.pair.i] == nullptr;
     }
-  if (p->type == SPAIR_SKEW)
+  if (p->type == SPAIR::SPAIR_SKEW)
     {
       return gb[p->x.pair.i] == nullptr;
     }
@@ -2224,7 +2225,7 @@ bool gbA::process_spair(spair *p)
   bool not_deferred = reduceit(p);
   if (!not_deferred) return true;
 
-  gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
+  gbelem_type minlevel = (p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
 
   POLY f = p->x.f;
   p->x.f.f = 0;

@@ -46,7 +46,7 @@ public:
   };
 
   /* Types of minimality */
-  enum spair_type {
+  enum SPAIR {
     SPAIR_SPAIR,
     SPAIR_GCD_ZZ,
     SPAIR_RING,
@@ -59,7 +59,7 @@ public:
   // This is only public to allow spair_sorter to use it!!
   struct spair {
     spair *next;
-    spair_type type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ,
+    SPAIR type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ,
                         SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
     exponents lcm; /* Contains homogenizing variable, component */
