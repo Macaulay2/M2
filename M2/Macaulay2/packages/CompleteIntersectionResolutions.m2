@@ -1,7 +1,7 @@
 newPackage(
               "CompleteIntersectionResolutions",
               Version => "0.9", 
-              Date => "May 10, 2015",
+              Date => "June 10, 2015",
               Authors => {{Name => "David Eisenbud", 
                         Email => "de@msri.org", 
                         HomePage => "http://www.msri.org/~de"}},
@@ -48,7 +48,7 @@ newPackage(
 	   "finiteBettiNumbers",
            "infiniteBettiNumbers",
 	   "makeFiniteResolution",	   
---	   "makeFiniteResolution2",	   	   
+	   "makeFiniteResolution2",	   	   
 	--some families of examples
 	   "twoMonomials",
 	   "sumTwoMonomials",
@@ -130,17 +130,7 @@ submoduleByDegrees(Module,ZZ):= (A,n)->(
      L1:= positions(L,d->d<=n);
      image (inducedMap(A,cover A)*F_L1)
      )
-{*
-submatrixByDegrees = method()
-submatrixByDegrees(Matrix, List, List) := (f,D,E)->(
-     --D,E are lists of degrees for rows and cols, respectively
-     Ltarget := flatten degrees target f;
-     Lsource := flatten degrees source f;
-     Lt:= toList select(toList(0..(rank target f)-1),i->member(Ltarget_i, D));
-     Ls:= toList select(toList(0..(rank source f)-1),i->member(Lsource_i, E));
-     map(target((target f)^Lt),source((source f)_Ls), f_Ls^Lt)
-     )
-*}
+
 toArray = method()
 toArray List := L -> splice [toSequence L]
 toArray ZZ := n->[n]
@@ -1230,7 +1220,7 @@ makeFiniteResolution(List,Matrix) := (MF,ff) -> (
     scan(length A-1, i-> if( prune HH_(i+1) A) != 0 then error"A not acyclic");
     A
     )
-{*
+
 makeFiniteResolution2 = method()
 makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
     --given a codim 2 matrix factorization, makes all the maps
@@ -1238,36 +1228,74 @@ makeFiniteResolution2(List,Matrix) := (MF,ff) -> (
     --"Minimal Free Resolutions and Higher Matrix Factorizations"
     c := rank source ff; -- the codim
     if c !=2 then error"requires a codim 2 complete intersection";
-    c' := complexity MF; -- the complexity
-    if c'<2  then return MF;
-    
-    --from here on c=c'=2, and we build the maps over S
     S := ring MF_0;
-    b := bMaps MF;
-    h := hMaps MF;
-    psi := psiMaps MF;
+    bb := bMaps MF;
+    ps := psiMaps MF;
+    h := hMaps MF;    
+    c' := complexity MF; -- the complexity
+    if c'<2  then return {MF_0,MF_1};
+
+    --from here on c=c'=2, and we build the maps over S
+    --write Bsp for B_s(p)
+    B01 := target bb_0;
+    B02 := target bb_1;
+    B11 := source bb_0;
+    B12 := source bb_1;
+    f1 := (entries ff)_0_0 ;-- first elt of the reg seq
+    f2 := (entries ff)_0_1 ;-- second elt of the reg seq    
+    deg1 := (degree f1)_0 ;
+    B02' := S^{ -deg1}**B02;
+    B12' := S^{ -deg1}**B12;    
+    --next two lines are really cosmetic
+    B13 := B02'; 
+    B23 := B12';
+    F0 := B01++B02;
+    F1 := directSum{B11,B12,B13};
+    F2 := B23;
+    hh0 := h_0;
+    hh1' := h_1;
+    d1 := map(F0,F1,(bb_0 | ps_0 | map(B01,B02',0)) || (map(B02,B11,0)| bb_1 | f1*map(B02,B02',1)));
+    d2 := map(F1,F2, map(B11,B12', h_0*ps_0) || -f1*map(B12,B12',1) || (S^{ -deg1}**bb_1));
+    F := chainComplex{d1,d2};
+    homot := makeHomotopies1(ff, F);
+    --note that the following are various components of homotopies related to f2!
+    hf1 := homot#{1,0};
+    hf2 := homot#{1,1};    
+    hh1 := hf1^[0,1];
+    vv1 := homot#{1,1};
+    vv := vv1_[0];
+    out := hashTable{"resolution" => F,
+	"partial" => bb_0,
+	"b" => bb_1,
+	"mu" => hh0,
+	"h1" => hh1,
+	"h1'" =>hh1',
+	"alpha" => hh1_[0]^[0],
+	"tau" => hh1_[1]^[0],
+	"sigma" => hh1_[1]^[1],
+    	"u" => -hf1_[0]^[2],
+	"v" => vv,
+	"psi" => ps_0,
+    	"X" => -hf1_[1]^[2],
+	"Y" => hf2_[1]
+	};
+    --make sure the formula for the f1 homotopy works:
+    hconst := {
+	    map(F_1,S^{ -deg1}**F_0,
+	    (map(B11,B01,out#"alpha")    | map(B11,B02, out#"tau")) ||
+	    (map(B12,B01,out#"v"*out#"mu") | map(B12,B02, out#"sigma"))||
+	    (map(B13,B01,-out#"u")       | map(B13,B02, -out#"X"))
+	    ),
+	    map(S^{deg1}**F_2, F_1, out#"v" | out#"Y" | out#"sigma")
+	    };
+    assert(F.dd_1*hconst_0 == map(F0, S^{ -deg1}**F_0, f2*id_(F_0)));
+    assert(hconst_0*F.dd_1+F.dd_2*hconst_1 == f2*id_(F_1));
+    assert(hconst_1*F.dd_2 == map(S^{deg1}**F_2, F_2, f2*id_(F_2)));
+    if hh1 !=hh1' then 
+           <<"matrixFactorization did not produce a strong matrix factorization"<<endl;
+    out
     )
 
-///
-kk=ZZ/101
-S = kk[a,b]
-ff = matrix"a4,b4"
-R = S/ideal ff
-toR = map(R,S)
-
-N = R^1/ideal"a2, ab, b3"
-N = coker vars R
-M = highSyzygy N
-
-mf = matrixFactorization(ff, M)
-b = bMaps mf
-h = hMaps mf
-psi = psiMaps mf
-h_1_[0]^[0]
-h_1_[0]^[1]
-(source h_1)_[0]
-///
-*}
 
 complexity = method()
 --complexity of a module over a CI ring
@@ -1641,7 +1669,8 @@ SeeAlso
  psiMaps
  complexity
 ///
-{*
+
+
 doc ///
    Key
     makeFiniteResolution2
@@ -1665,10 +1694,21 @@ doc ///
      that are relevant to the finite resolution, as in 4.2.3 of Eisenbud-Peeva 
      "Minimal Free Resolutions and Higher Matrix Factorizations"
     Example
+     kk=ZZ/101
+     S = kk[a,b]
+     ff = matrix"a4,b4"
+     R = S/ideal ff
+     N = R^1/ideal"a2, ab, b3"
+     N = coker vars R
+     M = highSyzygy N
+     MS = pushForward(map(R,S),M)
+     mf = matrixFactorization(ff, M)
+     G = makeFiniteResolution2(mf, ff)
+     F = G#"resolution"
    SeeAlso
     makeFiniteResolution
 ///
-*}
+
 doc ///
 Key
  complexity
@@ -3743,9 +3783,10 @@ assert(rank E==1);
 ///
 
 end--
-viewHelp notify
 restart
 notify=true
+uninstallPackage "CompleteIntersectionResolutions"
+installPackage "CompleteIntersectionResolutions"
 loadPackage("CompleteIntersectionResolutions", Reload=>true)
 check "CompleteIntersectionResolutions"
 
