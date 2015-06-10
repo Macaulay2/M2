@@ -106,6 +106,9 @@ if test ! "$ISSUE"
 then if test -f /usr/bin/sw_vers
      then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
           ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
+     elif test -f /usr/bin/lsb_release
+     then ISSUE_FLAVOR=`lsb_release --id | sed 's/.*:[	]*//'`
+          ISSUE_RELEASE=`lsb_release --release | sed 's/.*:[	]*//'`
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
@@ -119,18 +122,17 @@ then if test -f /usr/bin/sw_vers
      # translate to something standard (for us), and verify :
      case $ISSUE_FLAVOR in
          "Mac OS X") ISSUE_FLAVOR=MacOS ;;
-         "ubuntu") ISSUE_FLAVOR=Ubuntu ;;
-         "debian") ISSUE_FLAVOR=Debian ;;
+	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
+         "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
 	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
 	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
-	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
      case $ISSUE_RELEASE in
 	 "") AC_MSG_NOTICE([release number not found]) 
