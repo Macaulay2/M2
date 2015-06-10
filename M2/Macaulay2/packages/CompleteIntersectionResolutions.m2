@@ -670,21 +670,22 @@ expo(ZZ,List):= (n,L) ->(
 
 
 
+
+
+
+--the following version makes inhomgeneous maps!
 makeHomotopies = method()
 makeHomotopies (Matrix, ChainComplex) := (f,F) ->
      makeHomotopies(f,F, max F)
-
-
-     
-makeHomotopies (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
+makeHomotopies(Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      --given a 1 x lenf matrix f and a chain complex 
      -- F_min <-...,
      --the script attempts to make a family of higher homotopies
      --on F for the elements of f.
-     --The output is a hash table {{i,J}=>s), where
+     --The output is a hash table {{J,i}=>s), where     
      --J is a list of non-negative integers, of length = ncols f
      --and s is a map F_i->F_(i+2|J|-1) satisfying the conditions
-     --s_0 = d
+     --s_0 = differential of F
      -- s_0s_{i}+s_{i}s_0 = f_i
      -- and, for each index list I with |I|<=d,
      -- sum s_J s_K = 0, when the sum is over all J+K = I
@@ -696,7 +697,6 @@ makeHomotopies (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
      lenf := #flist;
      e0 := (expo(lenf,0))_0;
      for i from minF to d+1 do H#{e0,i} = F.dd_i;
-
      e1 := expo(lenf,1);
      scan(#flist, j->H#{e1_j,minF-1}= map(F_minF, F_(minF-1), 0));
      for i from minF to d do
@@ -712,8 +712,35 @@ makeHomotopies (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
 	      H#{L,i} = sum(expo(lenf,L), 
 		 M->(H#{L-M,i+2*sum(M)-1}*H#{M,i}))//H#{e0,i+2*k-1};
 	    )));
-     hashTable pairs H
+     --hashTable pairs H
+     S := ring f;
+     degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
+     hashTable apply(keys H, k->
+     {k, map(F_(k_1+2*sum (k_0)-1), 
+	     tensorWithComponents( S^(-sum(#k_0,i->(k_0)_i*degs_i)),F_(k_1)), 
+				         H#k)})
      )
+///
+restart
+notify=true
+uninstallPackage "CompleteIntersectionResolutions"
+installPackage "CompleteIntersectionResolutions"
+check"CompleteIntersectionResolutions"
+loadPackage("CompleteIntersectionResolutions", Reload =>true)
+S = kk[a,b,c]
+ff = matrix"a4,b4,c4"
+R = S/ideal ff
+N = coker vars R
+MR=highSyzygy N
+M = pushForward(map(R,S), MR);
+F = res M
+H = makeHomotopies1(ff, F)
+H = makeHomotopies(ff, F)
+
+scan(keys H, k-> if not isHomogeneous H#k then print k)
+
+///
+
 
 makeHomotopies1 = method()
 makeHomotopies1 (Matrix, ChainComplex) := (f,F) ->(
@@ -748,7 +775,13 @@ makeHomotopies1 (Matrix, ChainComplex, ZZ) := (f,F,d) ->(
 		     error());
 	       H#{j,i} = h;    
 	       ));
-     hashTable pairs H
+     S := ring f;
+     degs := apply(flist, fi -> degree fi); -- list of degrees (each is a list)
+     hashTable apply(keys H, k->
+     {k, map(F_(k_1+1), 
+	     tensorWithComponents(S^(-degs_(k_0)),F_(k_1)), 
+				         H#k)})
+--     hashTable pairs H
      )
 
 
@@ -2456,6 +2489,9 @@ Description
   $$
   sum_{J<I} H#\{I\setminus J, \} H#\{J, \} = 0.
   $$
+  
+  To make themaps homogeneous, $H\#\{J,i\}$ is actually a map from
+  a an appropriate negative twist of F to a shift of S.
  Example
   kk=ZZ/101
   S = kk[a,b,c,d]
