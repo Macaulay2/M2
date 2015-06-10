@@ -103,9 +103,9 @@ case $OS in
 esac
 
 if test ! "$ISSUE"
-then if test -f /usr/bin/sw_vers -a "`/usr/bin/sw_vers -productName`" = "Mac OS X"
-     then ISSUE_FLAVOR=MacOS
-     	  ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
+then if test -f /usr/bin/sw_vers
+     then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
+          ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
@@ -118,7 +118,7 @@ then if test -f /usr/bin/sw_vers -a "`/usr/bin/sw_vers -productName`" = "Mac OS 
      fi
      # translate to something standard (for us), and verify :
      case $ISSUE_FLAVOR in
-         "MacOS") ;;
+         "Mac OS X") ISSUE_FLAVOR=MacOS ;;
          "ubuntu") ISSUE_FLAVOR=Ubuntu ;;
          "debian") ISSUE_FLAVOR=Debian ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
