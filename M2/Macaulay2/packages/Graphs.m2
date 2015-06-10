@@ -903,6 +903,7 @@ eccentricity (Graph, Thing) := ZZ => (G,v) ->(
 
 edgeIdeal = method()
 edgeIdeal Graph := Ideal => G -> (
+    G = indexLabelGraph G;
     V := vertexSet G;
     x := local x;
     R := QQ(monoid[x_1..x_(#V)]);
