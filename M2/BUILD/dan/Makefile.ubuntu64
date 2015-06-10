@@ -6,6 +6,8 @@ ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif
 
+FC =
+
 default:
 tools:;: $(CC) $(CXX) $(FC)
 

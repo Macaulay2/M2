@@ -159,11 +159,21 @@ case $OS in
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
 esac
 
-if test -f /etc/issue -a ! "$ISSUE"
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     # translate the contents of /etc/issue to something sensible:
+if test ! "$ISSUE"
+then if test -f /etc/os-release
+     then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
+     elif test -f /usr/lib/os-release
+     then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /etc/issue
+     then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+	  ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     fi
+     # translate to something standard (for us) :
      case $ISSUE_FLAVOR in
+         "ubuntu") ISSUE_FLAVOR=Ubuntu ;;
+         "debian") ISSUE_FLAVOR=Debian ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
 	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
 	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
@@ -188,6 +198,10 @@ test "$ISSUE" || ISSUE=$REL
 AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
 AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
 AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
+
+AC_MSG_NOTICE([operating system information:
+   OS    = $OS
+   ISSUE = $ISSUE])
 
 AC_CONFIG_AUX_DIR(config)
 
