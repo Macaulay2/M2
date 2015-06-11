@@ -91,6 +91,11 @@ various modern operating systems:
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
+    On all systems, add
+        FC=gfortran
+      to the environment or to the "configure" command line below.  (The
+      program "make" has a default value of "f77" for "FC", the Fortran
+      compiler, but "f77" isn't available.)
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
