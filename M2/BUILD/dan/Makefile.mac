@@ -47,6 +47,10 @@ DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
 default: all
 
+# we build pari because brew's pari brings in gmp
+# we build flint because of the gmp problem Mike found once
+CONFIGOPTIONS += --enable-build-libraries="pari flint"
+
 ifeq ($(PRODUCTION),yes)
    default: check
    CONFIGOPTIONS += --disable-common-staging-area
