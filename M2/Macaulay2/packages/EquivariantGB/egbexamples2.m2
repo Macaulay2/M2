@@ -14,6 +14,8 @@ F = {y_(1,0) - x_0*x_1};
 -- kernel of y_(i,j) -> x_i*x_j with i > j
 G1 = egb(F, OutFile=>stdio)
 G2 = egbSignature F
+break
+G3 = egbSignature(F, PrincipalSyzygies=>true)
 selectInSubring(1,matrix{G1})
 
 F = {y_(1,0) - x_0*x_1^2, y_(0,1) - x_0^2*x_1};

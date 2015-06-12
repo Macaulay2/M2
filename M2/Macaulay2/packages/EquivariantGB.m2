@@ -26,6 +26,7 @@ export {
      Diagonal,
      reduce,
      OutFile,
+     PrincipalSyzygies,
      --for testing
      Shift,
      shift,
@@ -709,8 +710,8 @@ width Shift := I -> (
 width List := L -> max(L / width)
 
 
-egbSignature = method()
-egbSignature (List) := F -> (
+egbSignature = method(Options=>{PrincipalSyzygies=>false})
+egbSignature (List) := o -> F -> (
     R := ring first F;
     Fwidths := F/(width@@leadMonomial);
     JP := priorityQueue toList apply(#F, i -> mPair(shiftMonomial(1_R,shift{}),i,F#i));
@@ -720,8 +721,7 @@ egbSignature (List) := F -> (
 	j := min JP;
 	deleteMin JP;
 	if width j > 5 then error "breakpoint!!!"; 
-	if isCoveredByTrivSyg(j,Fwidths#(j.pos)) or
-	   isCovered(j,G) or 
+	if isCovered(j,G) or 
 	   isCovered(j,H) {* perhaps this is not needed... 
 	                  but there are duplicates in JP at the moment.
 			  Another question: why do we check if a j-pair is covered by syzygies only when we insert it in JP? 
@@ -740,14 +740,19 @@ egbSignature (List) := F -> (
 	    G = append(G,j);
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
-		newJP := jPairs(j,g);
+		(newJP,newPS) := jPairs(j,g);
 		<< "   new J-pairs: " << #newJP << endl;
-		newJP = select(newJP, j->not isCovered(j,H));
-		<< "   new NOT covered J-pairs: " << #newJP << endl;
+		newJP = select(newJP, j->not isCoveredByTrivSyg(j,Fwidths#(j.pos)) and not isCovered(j,H));
 		scan(newJP, j->insert(JP,j));
-		--H  = H|prinSyzygies(j,g); --do we need this?
-	    	);
+		<< "   new NOT covered J-pairs: " << #newJP << endl;
+		if o.PrincipalSyzygies then
+		  for s in newPS do 
+		    if not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and 
+		       not isCovered(s,H) 
+		    then H = H | {s};
+		);
 	    << "  JP queue length: " << length JP << endl;
+	    << "  syzygies in H: " << #H << endl;
 	    );
 	);
     apply(G, g->g.polynomial)
@@ -755,6 +760,7 @@ egbSignature (List) := F -> (
 
 jPairs = (j,g) -> (
     newJP := new MutableList;
+    newPS := new MutableList; -- principal syzygies
     (jw,gw) := (j,g)/width;
     for k from 0 to max(min(jw,gw)-1,0) do (
 	for p in shiftPairs(jw,gw,k) do (
@@ -768,9 +774,15 @@ jPairs = (j,g) -> (
 	    JP := if jSP > gSP then jSP else gSP;
 	    assert((JP.shM).Monomial != 0);
 	    newJP#(#newJP) = JP;
+	    jSP = shiftMonomial(leadMonomial gshift,jI)*j;
+	    gSP = shiftMonomial(leadMonomial jshift,gI)*g;
+	    if jSP == gSP then continue;
+	    PS := if jSP > gSP then jSP else gSP;
+	    assert((PS.shM).Monomial != 0);
+	    newPS#(#newPS) = PS;
 	    );
 	);
-    toList newJP
+    (toList newJP, toList newPS)
     )
 
 regularTopReduce = (j,G) -> (
