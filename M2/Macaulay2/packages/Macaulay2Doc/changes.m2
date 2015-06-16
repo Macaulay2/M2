@@ -11,6 +11,7 @@ document {
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
 	  TO "changes, 1.8",
+	  TO "changes, 1.8.1",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -65,6 +66,16 @@ document {
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
  
+document {
+     Key => "changes, 1.8.1",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { 
+			 "The function ", TO "remainder", " was recently made more general (so the modules involved are not necessarily free),
+			 but as a result, some Gröbner bases were no longer cached, necessitating frequent recomputation in certain examples,
+			 slowing them down substantially. We fixed that for ", TO "remainder", " and also for ", TO "quotient", " and ", TO "gb", "." }}}}}
+
 document {
      Key => "changes, 1.8",
      UL {
