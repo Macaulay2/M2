@@ -191,7 +191,12 @@ gb Ideal := GroebnerBasis => opts -> (I) -> gb ( module I, opts )
 
 gb Module := GroebnerBasis => opts -> (M) -> (
      if M.?relations 
-     then gb(generators M|relations M, opts, SyzygyRows => numgens source generators M)
+     then (
+	  f := (
+	       if M.cache#?"full gens" 
+	       then M.cache#"full gens"
+	       else M.cache#"full gens" = generators M|relations M);
+	  gb(f, opts, SyzygyRows => numgens source generators M))
      else gb(generators M, opts))
 
 	  -- handle the Hilbert numerator later, which might be here:

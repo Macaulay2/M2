@@ -299,7 +299,7 @@ quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      or not isFreeModule source g or not isFreeModule source g then error "expected maps between free modules";
      dual quotient(dual f, dual g))
 quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
-     L := source f;					    -- result may not be well-defined if L is not free
+     L := source f;	     -- result may not be well-defined if L is not free
      M := target f;
      N := source g;
      if M != target g then error "expected maps with the same target";
@@ -313,13 +313,18 @@ quotient(Matrix,Matrix) := Matrix => opts -> (f,g) -> (
      if M.?generators then (
 	  M = cokernel presentation M;	    -- this doesn't change the cover
 	  );
-     f = matrix f;
-     g = matrix g;
-     map(N, L, f //
-	  if M.?relations 
-	  then gb(g | presentation M, ChangeMatrix => true, SyzygyRows => rank source g)
-	  else gb(g,                  ChangeMatrix => true),
-	  Degree => degree f - degree g  -- do this in the engine instead
+     -- now M is a quotient module, without explicit generators
+     f' := matrix f;
+     g' := matrix g;
+     G := (
+	  if g.cache#?"gb for quotient"
+	  then g.cache#"gb for quotient"
+	  else g.cache#"gb for quotient" = (
+	       if M.?relations 
+	       then gb(g' | relations M, ChangeMatrix => true, SyzygyRows => rank source g')
+	       else gb(g',               ChangeMatrix => true)));
+     map(N, L, f' // G, 
+	  Degree => degree f' - degree g'  -- set the degree in the engine instead
 	  ))
 
 RingElement // Matrix      := (r,f) -> (r * id_(target f)) // f
@@ -344,7 +349,7 @@ remainder(Matrix,Matrix) := Matrix % Matrix := Matrix => (n,m) -> (
      if target m =!= target n then error "expected matrices with the same target";
      if not isFreeModule source n or not isFreeModule source m then error "expected maps from free modules";
      if not isQuotientModule target m then error "expected maps to a quotient module";
-     n % gb (matrix m | relations target m))
+     n % gb image m)
 
 Matrix % Module := Matrix => (f,M) -> f % gb M
 
