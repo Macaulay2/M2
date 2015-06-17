@@ -127,7 +127,7 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot xz-devel
     Some debugging aids:
       sudo yum install -y strace
     Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
