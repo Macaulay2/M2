@@ -1,3 +1,5 @@
+standardSecond = first timing (value Core#"private dictionary"#"spin") 2833 -- about 1 second on a Macbook Pro in 2015
+
 kk = ZZ/32003
 R = kk(monoid[L_(1,1), L_(1,2), L_(2,1), L_(2,2), L_(3,1), L_(3,2), H_1, H_2, I_1, I_2, d_(1,1), d_(1,2), d_(1,3), d_(2,1), d_(2,2), d_(2,3), d_(3,1), d_(3,2), d_(3,3), u_(1,1), u_(1,2), u_(1,3), u_(2,1), u_(2,2), u_(2,3), u_(3,1), u_(3,2), u_(3,3), e_1,
       e_2, e_3, Q_(1,1,1), Q_(1,1,2), Q_(1,2,1), Q_(1,2,2), Q_(1,3,1), Q_(1,3,2), Q_(2,1,1), Q_(2,1,2), Q_(2,2,1), Q_(2,2,2), Q_(2,3,1), Q_(2,3,2), Q_(3,1,1), Q_(3,1,2), Q_(3,2,1), Q_(3,2,2), Q_(3,3,1), Q_(3,3,2), Degrees => {49:1}, Heft => {1},
@@ -207,11 +209,9 @@ comp1 = ideal(
     L_(1,2)*L_(2,1)-L_(1,1)*L_(2,2)
     )
 
-time0 = first timing ideal gens R;
-tim = timing(jacW : comp1); -- recomputes the same GB 150 times.  We want a test against that problem.
+tim = timing(jacW : comp1); -- recomputes the same GB 150 times in 1.8.  We want a test against that problem.
+-- version 1.7: 0.15 seconds
+-- version 1.8: 17.5 seconds
+-- after fix: .166 seconds
 assert(numgens tim#1 == 33)
-assert(tim#0 < 3000 * time0) -- This might not be a good way to calibrate timing.
-  -- on my (Mike S) macbookpro, 2015: time0 is .000057, once, also .000133 another time
-  -- tim#0 is approx. .15 sec
-
-
+assert(tim#0 < .3 * standardSecond)
