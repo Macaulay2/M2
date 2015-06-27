@@ -27,6 +27,7 @@ export {
      reduce,
      OutFile,
      PrincipalSyzygies,
+     CompleteReduce,
      --for testing
      Shift,
      shift,
@@ -711,7 +712,7 @@ width Shift := I -> (
 width List := L -> max(L / width)
 
 
-egbSignature = method(Options=>{PrincipalSyzygies=>false})
+egbSignature = method(Options=>{PrincipalSyzygies=>false, CompleteReduce=>true})
 egbSignature (List) := o -> F -> (
     R := ring first F;
     Fwidths := F/(width@@leadMonomial);
@@ -721,7 +722,7 @@ egbSignature (List) := o -> F -> (
     while min JP =!= null do (
 	j := min JP;
 	deleteMin JP;
-	if width j > 5 then error "breakpoint!!!"; 
+	if width j > 7 then error "breakpoint!!!"; 
 	if isCovered(j,G) or 
 	   isCovered(j,H) {* perhaps this is not needed... 
 	                  but there are duplicates in JP at the moment.
@@ -733,11 +734,19 @@ egbSignature (List) := o -> F -> (
 	    );
 	<< "  processing pair: " << j << endl;
 	j = regularTopReduce(j,G);
-	if j.polynomial == 0 then (
+	p := if o.CompleteReduce 
+	     then completeReduce(j.polynomial,apply(G,g->g.polynomial))
+	     else j.polynomial;
+	if j.polynomial == 0 then ( -- p==0 is not enough to record a syzygy
 	    H = append(H,j); 
 	    << "-- " << #H << "th syzygy is: " << j << endl;
 	    )
-	else (
+	else if p!=0 then (
+	    if j.polynomial != p then (
+		j = mPair(shiftMonomial(1_R,shift{}),#F,p);
+		F = F|{p};
+		Fwidths = Fwidths|{width leadMonomial p};
+		);
 	    G = append(G,j);
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
@@ -801,6 +810,16 @@ regularTopReduce = (j,G) -> (
 	    );
 	);
     return j;
+    )
+
+--copied from regularTopReduce and simplified
+completeReduce = (p,G) -> (
+    if p == 0 then return p;
+    for g in G do (
+	(isDiv,Q) := divQuotient(g,p); 
+	if isDiv then return completeReduce(reduction(p,Q*g),G);
+	);
+    p
     )
 
 reduction = (v,w) -> (
