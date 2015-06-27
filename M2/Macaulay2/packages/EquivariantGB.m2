@@ -667,7 +667,8 @@ mPair = method()
 mPair (ShiftMonomial,ZZ,RingElement) := (S,i,v) -> new MPair from hashTable{shM=>S,pos=>i,polynomial=>v}
 MPair ? MPair := (m,n) -> if width m == width n then (
     if degree m.polynomial == degree n.polynomial then (
-    	if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+    	-- if m.pos == n.pos then m.shM ? n.shM else m.pos ? n.pos
+    	if m.shM == n.shM then m.pos ? n.pos else m.shM ? n.shM
     	) else degree m.polynomial ? degree n.polynomial
     ) else width m ? width n
 MPair == MPair := (M,N) -> (M ? N) === symbol ==
