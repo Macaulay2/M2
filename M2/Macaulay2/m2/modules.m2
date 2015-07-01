@@ -387,6 +387,8 @@ genus Module := (M) -> (
      (-1)^d * (e - 1))
 genus Ring := (R) -> genus R^1
 
+possiblyLift := x -> if denominator x === 1 then numerator x else x -- x is in QQ
+
 rank Module := (cacheValue symbol rank) (M -> (
 	  R := ring M;
 	  if isFreeModule M then numgens M 
@@ -404,8 +406,7 @@ rank Module := (cacheValue symbol rank) (M -> (
 			 numgens source generators gb M.generators)
 		    else numgens M))
 	  else if dim M < dim ring M then 0
-	  else degree M / degree R
-	       ))
+	  else possiblyLift( degree M / degree R )))
 
 ambient Module := Module => M -> (
      if M.?generators then M.generators.target
