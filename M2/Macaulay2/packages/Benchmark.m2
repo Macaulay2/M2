@@ -239,11 +239,13 @@ runBenchmarks0 List := x -> (
 	       s -> ( t := select(s,"\\1, ",r); if #t > 0 then << t#0));
 	  << endl;
 	  );
-     -- The following string can also be obtained with 
-     --    /usr/sbin/sysctl -n machdep.cpu.brand_string
-     -- or
-     --    /sbin/sysctl -n machdep.cpu.brand_string
-     if fileExists "/proc/sys/machdep/cpu/brand_string" then << "-- Processor: " << get "/proc/sys/machdep/cpu/brand_string";
+     brandString := (
+     	  if fileExists "/usr/sbin/sysctl" then get "!/usr/sbin/sysctl -n machdep.cpu.brand_string"
+	  else
+     	  if fileExists "/sbin/sysctl" then get "!/sbin/sysctl -n machdep.cpu.brand_string"
+	  else
+     	  if fileExists "/proc/sys/machdep/cpu/brand_string" then get "/proc/sys/machdep/cpu/brand_string");
+     if brandString =!= null then << "-- Processor: " << brandString;
      << "-- Macaulay2 " << version#"VERSION";
      << ", compiled with " << version#"compiler";
      << endl;
