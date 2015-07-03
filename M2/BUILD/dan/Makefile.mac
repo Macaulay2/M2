@@ -54,7 +54,7 @@ default: all
 #   (gdb) x/i min_bytes_allocd+100
 #   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
 #   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
-CONFIGOPTIONS += --enable-build-libraries="pari flint gc"
+CONFIGOPTIONS += --enable-build-libraries="pari flint"
 
 ifeq ($(PRODUCTION),yes)
    default: check
