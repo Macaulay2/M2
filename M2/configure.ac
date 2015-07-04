@@ -107,8 +107,8 @@ then if test -f /usr/bin/sw_vers
      then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
           ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
      elif test -f /usr/bin/lsb_release
-     then ISSUE_FLAVOR=`lsb_release --id | sed 's/.*:[	]*//'`
-          ISSUE_RELEASE=`lsb_release --release | sed 's/.*:[	]*//'`
+     then ISSUE_FLAVOR=`lsb_release -s --id`
+          ISSUE_RELEASE=`lsb_release -s --release`
      elif test -f /etc/os-release
      then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
           ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
