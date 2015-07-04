@@ -170,22 +170,23 @@ various modern operating systems:
 	brew tap homebrew/versions
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
-	brew install gcc49  pkg-config autoconf automake gnu-tar libtool boost
+	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
 	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
     Note: the reason we compile from source with gcc is that the precompiled
       packages that brew would otherwise download are compiled using "clang"
       and assume that the CPU supports advanced vector extensions, which not
       all of the machines of our users do.
     Now remember to add 
-        --enable-build-libraries="pari flint" CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" CC="gcc-4.9 -mtune=generic" CXX="g++-4.9 -mtune=generic"
+        --enable-build-libraries="pari flint readline" CC="gcc-4.9 -mtune=generic" CXX="g++-4.9 -mtune=generic"
       to the "configure" command line below in the section on compiling Macaulay2.
     Note: the compiler option "-mtune=generic" ensures that gcc generates code that
       will run on the most commonly available CPUs.  If you won't be distributing the
       code to others, it can be omitted.
-    Note: including "gc" in the "--enable-build-libraries" option is necessary
-      only because "brew" uses "clang", which will optimize the code in "gc"
-      for your particular CPU.  If you won't be distributing the code to
-      others, it can be omitted.
+    Note: including "readline" in the "--enable-build-libraries" option is
+      necessary because it doesn't seem to be possible to recompile it from
+      source; the binary distribution used by homebrew uses "clang", which will
+      optimize the code in "gc" for your particular CPU.  If you won't be
+      distributing the code to others, it can be omitted.
     Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
       g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
         MACOSX_DEPLOYMENT_TARGET=10.9
