@@ -80,8 +80,8 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
  echo "LIBS2=$LIBS2" >> Makefile
 diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq/ctx_init_conway.c flint-2.4.5/fq/ctx_init_conway.c
 --- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
-+++ flint-2.4.5/fq/ctx_init_conway.c	2015-07-10 16:44:02.000000000 -0400
-@@ -29,79 +29,28 @@
++++ flint-2.4.5/fq/ctx_init_conway.c	2015-07-10 19:37:51.000000000 -0400
+@@ -29,79 +29,27 @@
  #include <string.h>
  
  #include "fq.h"
@@ -158,7 +158,6 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 -        }
 +    /* compare with _fq_nmod_ctx_init_conway and qadic_ctx_init_conway */
 +    const int *cp = CPimport;
-+    if (fmpz_cmp_ui(p, 109987) > 0) return 0;
 +    while (*cp != -2) {
 +	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
 +	      fmpz_mod_poly_t mod;
@@ -180,8 +179,8 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
  
 diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq_nmod/ctx_init_conway.c flint-2.4.5/fq_nmod/ctx_init_conway.c
 --- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/fq_nmod/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
-+++ flint-2.4.5/fq_nmod/ctx_init_conway.c	2015-07-10 16:44:05.000000000 -0400
-@@ -29,78 +29,27 @@
++++ flint-2.4.5/fq_nmod/ctx_init_conway.c	2015-07-10 19:37:58.000000000 -0400
+@@ -29,78 +29,26 @@
  #include <string.h>
  
  #include "fq_nmod.h"
@@ -260,7 +259,6 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 -
 +    /* compare with _fq_ctx_init_conway and qadic_ctx_init_conway */
 +    const int *cp = CPimport;
-+    if (fmpz_cmp_ui(p, 109987) > 0) return 0;
 +    while (*cp != -2) {
 +	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
 +	      nmod_poly_t mod;
@@ -280,8 +278,8 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
  
 diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/qadic/ctx_init_conway.c flint-2.4.5/qadic/ctx_init_conway.c
 --- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/flint/tmp/flint-2.4.5/qadic/ctx_init_conway.c	2015-02-17 09:56:55.000000000 -0500
-+++ flint-2.4.5/qadic/ctx_init_conway.c	2015-07-10 16:52:24.000000000 -0400
-@@ -30,19 +30,14 @@
++++ flint-2.4.5/qadic/ctx_init_conway.c	2015-07-10 19:38:35.000000000 -0400
+@@ -30,95 +30,39 @@
  #include "fmpz_vec.h"
  #include "padic.h"
  #include "qadic.h"
@@ -299,15 +297,14 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
  {
 -    char *buf;
 -    FILE *file;
-+    /* compare with _fq_nmod_ctx_init_conway and _fq_ctx_init_conway */
-+    const int *cp = CPimport;
- 
-     if (fmpz_cmp_ui(p, 109987) > 0)
-     {
-@@ -51,74 +46,31 @@
-         abort();
-     }
- 
+-
+-    if (fmpz_cmp_ui(p, 109987) > 0)
+-    {
+-        flint_printf("Exception (qadic_ctx_init_conway).  Conway polynomials \n");
+-        flint_printf("are only available for primes up to 109987.\n");
+-        abort();
+-    }
+-
 -    buf  = flint_malloc(832);
 -    file = fopen(FLINT_CPIMPORT, "r");
 -
@@ -338,6 +335,8 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 -        /* Same degree? */
 -        if (d == atoi(tmp))
 -        {
++    /* compare with _fq_nmod_ctx_init_conway and _fq_ctx_init_conway */
++    const int *cp = CPimport;
 +    while (*cp != -2) {
 +	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
              slong i, j;
@@ -386,7 +385,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
              fmpz_set_ui(ctx->a + j, 1);
              ctx->j[j] = d;
  
-@@ -128,15 +80,11 @@
+@@ -128,15 +72,11 @@
              ctx->var = flint_malloc(strlen(var) + 1);
              strcpy(ctx->var, var);
  
