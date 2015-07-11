@@ -163,7 +163,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +    /* compare with _fq_nmod_ctx_init_conway and qadic_ctx_init_conway */
 +    const int *cp = CPimport;
 +    while (*cp != -2) {
-+	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
 +	      fmpz_mod_poly_t mod;
 +	      int i;
 +	      fmpz_mod_poly_init(mod, p);
@@ -267,7 +267,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +    /* compare with _fq_ctx_init_conway and qadic_ctx_init_conway */
 +    const int *cp = CPimport;
 +    while (*cp != -2) {
-+	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
 +	      nmod_poly_t mod;
 +	      int i;
 +	      nmod_poly_init(mod, fmpz_get_ui(p));
@@ -351,7 +351,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +    /* compare with _fq_nmod_ctx_init_conway and _fq_ctx_init_conway */
 +    const int *cp = CPimport;
 +    while (*cp != -2) {
-+	 if (fmpz_cmp_ui(p, *cp++) && d == *cp++) {
++	 if (fmpz_cmp_ui(p, *cp++) == 0 && d == *cp++) {
              slong i, j;
 -            char *ptr;
 -
