@@ -219,7 +219,7 @@ listDivWitness (List,List,List,List) := o -> (v,w,vgaps,wgaps) -> (
 	sigma = new MutableList from {-1};
 	k = 0;
 	) else (
-	sigma = new MutableList from o.Seed;
+	sigma = take(new MutableList from o.Seed,vmax+1);
     	for l from #sigma to vmax do sigma#l = if #sigma == 0 then 0 else 1 + last sigma;
     	k = vmax;
 	);
@@ -734,20 +734,18 @@ egbSignature (List) := o -> F -> (
 	    );
 	<< "  processing pair: " << j << endl;
 	j = regularTopReduce(j,G);
-	p := if o.CompleteReduce 
-	     then completeReduce(j.polynomial,apply(G,g->g.polynomial))
-	     else j.polynomial;
-	if j.polynomial == 0 then ( -- p==0 is not enough to record a syzygy
+	p := j.polynomial;
+	if p == 0 then ( -- p==0 is not enough to record a syzygy
 	    H = append(H,j); 
 	    << "-- " << #H << "th syzygy is: " << j << endl;
 	    )
-	else if p!=0 then (
-	    if j.polynomial != p then (
-		j = mPair(shiftMonomial(1_R,shift{}),#F,p);
-		F = F|{p};
-		Fwidths = Fwidths|{width leadMonomial p};
-		);
-	    G = append(G,j);
+	else (
+	    if o.CompleteReduce then p = completeReduce(p,apply(G,g->g.polynomial));
+	    if p == 0 then continue;
+	    j = mPair(shiftMonomial(1_R,shift{}),#F,p);
+	    F       = append(F,p);
+	    Fwidths = append(Fwidths,width leadMonomial p);
+	    G       = append(G,j);
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		(newJP,newPS) := jPairs(j,g);
@@ -756,10 +754,8 @@ egbSignature (List) := o -> F -> (
 		scan(newJP, j->insert(JP,j));
 		<< "   new NOT covered J-pairs: " << #newJP << endl;
 		if o.PrincipalSyzygies then
-		  for s in newPS do 
-		    if not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and 
-		       not isCovered(s,H) 
-		    then H = H | {s};
+		  newPS = select(newPS, s->not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and not isCovered(s,H));
+		  H = H | newPS;
 		);
 	    << "  JP queue length: " << length JP << endl;
 	    << "  syzygies in H: " << #H << endl;
