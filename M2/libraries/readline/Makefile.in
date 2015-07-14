@@ -1,4 +1,3 @@
-# readline is licensed under GPL v3
 LICENSEFILES = COPYING
 
 VERSION = 6.3

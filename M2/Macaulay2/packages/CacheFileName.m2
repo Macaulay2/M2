@@ -4,7 +4,7 @@ newPackage(
      Version => "1.0",
      Headline => "creating filenames for files to be used for caching information")
 
-export {cacheFileName}
+export {"cacheFileName"}
 
 queryFun := symbol queryFun
 getFun := symbol getFun

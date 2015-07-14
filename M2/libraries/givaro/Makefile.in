@@ -1,9 +1,7 @@
-# VERSION = 3.3.5
 # URL = http://ljk.imag.fr/CASYS/LOGICIELS/givaro/Downloads
 
 # our snapshot taken from:
 #  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
-#VERSION = 3.4.3.491
 VERSION = 3.7.0
 #URL = http://macaulay2.com/Downloads/OtherSourceCode
 URL = http://forge.imag.fr/frs/download.php/207/

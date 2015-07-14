@@ -395,9 +395,10 @@ MonomialTableZZ::mon_term *MonomialTableZZ::find_exact_monomial(exponents exp,
   return result;
 }
 
-void MonomialTableZZ::change_coefficient(mon_term *t, mpz_ptr new_coeff)
+void MonomialTableZZ::change_coefficient(mon_term *t, mpz_ptr new_coeff, int new_id)
 {
   t->_coeff = new_coeff;
+  t->_val = new_id;
 }
 
 void MonomialTableZZ::insert(mpz_ptr coeff, exponents exp, int comp, int id)

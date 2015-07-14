@@ -11,6 +11,7 @@ document {
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
 	  TO "changes, 1.8",
+	  TO "changes, 1.8.1",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -41,7 +42,8 @@ document {
 		    LI { "'assign' has been replaced by ", TO "<-" },
 		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
 		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
-		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" },
+		    LI { TT "adjoint1", " has been replaced by ", TO "adjoint'", ", whose interface is different" }
 		    }
 	       },
 	  LI {
@@ -65,6 +67,16 @@ document {
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
  
 document {
+     Key => "changes, 1.8.1",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { 
+			 "The function ", TO "remainder", " was recently made more general (so the modules involved are not necessarily free),
+			 but as a result, some Gröbner bases were no longer cached, necessitating frequent recomputation in certain examples,
+			 slowing them down substantially. We fixed that for ", TO "remainder", " and also for ", TO "quotient", " and ", TO "gb", "." }}}}}
+
+document {
      Key => "changes, 1.8",
      UL {
 	  -- LI { "major improvements and additions:",
@@ -87,7 +99,13 @@ document {
 			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
 			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
 			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
-			 to the well known Eisenbud-Shamash construction, which is also implemented." }
+			 to the well known Eisenbud-Shamash construction, which is also implemented." },
+		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
+		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, has been added." },
+		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." },
+		    LI { TO "AnalyzeSheafOnP1::AnalyzeSheafOnP1", ", a package by David Eisenbud for decomposing a coherent sheaf on the projective line into a direct sum of line bundles and 
+			 cyclic skyscraper sheaves, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -129,13 +147,29 @@ document {
 		    LI { "The function ", TO "minimalPresentation", " has been modified so that it applies its degree-preserving method also for homogeneous
 			 modules over affine algebras over affine algebras." },
      	       	    LI { "The function ", TO "applyKeys", " will now accept an additional function to be called when collisions occur between new keys, for combining the
-			 corresponding values, thanks to Paul Zinn-Justin." }
+			 corresponding values, thanks to Paul Zinn-Justin." },
+		    LI { "The function ", TO "partition", " now takes a third argument: a list of additional values in the range of the function, allowing
+			 members of the resulting partition to be empty." },
+		    LI { "The function ", TO "loadPackage", " can now be used to reload a package by giving the package itself as the argument.  This
+			 is easier than setting the ", TO "Reload", " option." },
+		    LI { "The function ", TO "adjoint", " has been improved to work not just for free modules, and the function ", TT "adjoint1", " has
+			 been replaced by ", TO "adjoint'", ".  This pair of function now implements both direction in the adjointness between Hom
+			 and tensor product." },
+		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
+			 produces the element of Hom." },
+		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
+		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." },
+            LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
+                now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
+                provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
+                function might be changed to give an error in cases where there is not a well-defined notion of minimal generators."}
 	  	    }
 	       },
-	  -- LI { "functionality changed:",
-	  --      UL {
-	  --      	    }
-	  --      },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "The function ", TO "export", " now accepts strings and options only, not symbols." }
+	       	    }
+	       },
 	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
 	  --      UL {
 	  --      	    }

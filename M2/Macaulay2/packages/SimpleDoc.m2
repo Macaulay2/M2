@@ -15,7 +15,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {multidoc, doc, docTemplate, docExample, packageTemplate, simpleDocFrob}
+export {"multidoc", "doc", "docTemplate", "docExample", "packageTemplate", "simpleDocFrob"}
 
 needsPackage "Text"
 

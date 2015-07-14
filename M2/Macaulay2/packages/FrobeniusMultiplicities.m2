@@ -30,7 +30,7 @@ newPackage(
 
 --=========================================================================--
      
-export{frob,tensorF,torF,hkSeq,tiSeq,frobeniusPower} 
+export{"frob","tensorF","torF","hkSeq","tiSeq","frobeniusPower"} 
         
 --=========================================================================--
 

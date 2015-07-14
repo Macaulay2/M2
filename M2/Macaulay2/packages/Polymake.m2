@@ -9,12 +9,12 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {PolymakeObject, polymakeObject,
-     removeComments,
-     getPropertyNames,
-     getProperty, getMatrixProperty, getListProperty,
-     getVectorProperty, makevec, makemat, 
-     toPolymakeFormat, runPolymake, NewtonPolytope}
+export {"PolymakeObject", "polymakeObject",
+     "removeComments",
+     "getPropertyNames",
+     "getProperty", "getMatrixProperty", "getListProperty",
+     "getVectorProperty", "makevec", "makemat", 
+     "toPolymakeFormat", "runPolymake", "NewtonPolytope"}
 
 PolymakeObject = new Type of MutableHashTable
 
