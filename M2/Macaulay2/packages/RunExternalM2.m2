@@ -7,19 +7,32 @@
   the License, or any later version.
 *}
 newPackage(
-        "RunExternalM2",
-        Version => "0.8", 
-        Date => "July 14, 2015",
-        Authors => {{Name => "Brian Pike", 
-                  Email => "bapike@gmail.com",
-                  HomePage => "http://www.brianpike.info/"}},
-        Headline => "run Macaulay2 functions outside the current Macaulay2 process",
-        DebuggingMode => false 
-        )
+		"RunExternalM2",
+		Version => "0.81", 
+		Date => "July 15, 2015",
+		Authors => {
+			{Name => "Brian Pike", 
+			Email => "bapike@gmail.com",
+			HomePage => "http://www.brianpike.info/"}},
+		Headline => "run Macaulay2 functions outside the current Macaulay2 process",
+		DebuggingMode => false,
+		Configuration => {"isChild"=>false} 
+	)
 
 {*
 Changelog:
- v0.8: initial release
+ v0.81:
+  o remove setExternalM2Child() and use Configuration option instead
+  o change default M2Location to null so that documentation looks OK
+  o use toAbsolutePath when finding default M2Location
+ v0.8:
+  o initial release
+
+Known issues:
+ o Untested on OS X or Cygwin
+ o The method used to discover the location of M2 can fail.  If you get an
+   error about libgmp from the child M2 process, then try initially
+   starting the parent M2 by using its full path.
 *}
 
 
@@ -30,8 +43,7 @@ Changelog:
   This proc will spawn a new M2 process in such a way that we may:
     keep track of stdout, stderr, running time, memory usage, and M2's return value
   and execute something like:
-    needsPackage "RunExternalM2";
-    setExternalM2Child();
+    loadPackage("RunExternalM2",Configuration=>{"isChild"=>true},Reload=>true);
     load "filename.m2";
     runExternalM2ReturnAnswer("blargh.ans",name-of-procedure(parameters));
   where runExternalM2ReturnAnswer will print to blargh.ans 
@@ -57,20 +69,18 @@ TODO:
 *}  
 
 
-
 export {
-	setExternalM2Child,
-	isExternalM2Child,
-	isExternalM2Parent,
-	runExternalM2InClone,
-	runExternalM2,
-	runExternalM2ReturnAnswer,
+	"isExternalM2Child",
+	"isExternalM2Parent",
+	"runExternalM2InClone",
+	"runExternalM2",
+	"runExternalM2ReturnAnswer",
 	-- Various Options:
-	M2Location,
-	KeepFiles,
-	KeepStatistics,
-	KeepStatisticsCommand,
-	PreRunScript
+	"M2Location",
+	"KeepFiles",
+	"KeepStatistics",
+	"KeepStatisticsCommand",
+	"PreRunScript"
 };
 
 --exportMutable {};
@@ -251,29 +261,6 @@ Node
 M2Options:=" --stop --no-debug --silent ";
 
 
-amIAnExternalChild:=false;
-
-
-mydoc=concatenate(mydoc,///
-Node
-	Key
-		setExternalM2Child
-	Headline
-		flag this process as being a child process.  This is not intended for use by users.
-	Description
-		Text
-			Set a flag so that @TO isExternalM2Child@ and @TO isExternalM2Parent@ will
-			then indicate that this process is a child process.
-
-			This is not intended for use by users.
-	SeeAlso
-		isExternalM2Child
-		isExternalM2Parent
-///);
-setExternalM2Child = () -> (
-	amIAnExternalChild = true;
-);
-
 mydoc=concatenate(mydoc,///
 Node
 	Key
@@ -294,7 +281,11 @@ Node
 		isExternalM2Parent
 ///);
 isExternalM2Child = () -> (
-	return amIAnExternalChild;
+	v:=(options RunExternalM2).Configuration#"isChild";
+	if not(instance(v,Boolean)) then (
+		error "RunExternalM2: package option isChild should be a boolean";
+	);
+	return v;
 );
 
 mydoc=concatenate(mydoc,///
@@ -318,7 +309,11 @@ Node
 		isExternalM2Child
 ///);
 isExternalM2Parent = () -> (
-	return not(amIAnExternalChild);
+	v:=(options RunExternalM2).Configuration#"isChild";
+	if not(instance(v,Boolean)) then (
+		error "RunExternalM2: package option isChild should be a boolean";
+	);
+	return not(v);
 );
 
 
@@ -471,8 +466,8 @@ Node
 			R===value(toExternalString(R))
 		Text
 
-			An abnormal program exit will be reflected in the
-			exit code; the value will be null.
+			An abnormal program exit will have a nonzero
+			{\tt exit code}, and the {\tt value} will be null.
 		Example
 			justexit = () -> (  exit(27); );
 			h=runExternalM2InClone(justexit,());
@@ -542,7 +537,7 @@ runExternalM2InClone = {
 	pid:=fork();
 	if (pid==0) then (
 		-- We are the child.
-		setExternalM2Child();
+		loadPackage("RunExternalM2",Configuration=>{"isChild"=>true},Reload=>true);
 
 		-- TODO: Work around https://github.com/Macaulay2/M2/issues/296,
 		-- which was fixed in release 1.8.  Eventually this check should be
@@ -605,7 +600,8 @@ Node
 		params:Thing
 			the parameters for {\tt func}, usually a @TO Sequence@
 		M2Location=>String
-			the location of the M2 executable.  By default, the first entry of @TO "commandLine"@.
+			the location of the M2 executable.  If {\tt null}, then the absolute
+			path of the first entry of @TO "commandLine"@ is used.
 		KeepStatistics => Boolean
 			whether to keep statistics on the resources used during execution
 	Outputs
@@ -788,18 +784,23 @@ Node
 ///);
 
 runExternalM2 = {
-	M2Location => first(commandLine), -- TODO, do we need rootPath for Cygwin?
+	M2Location => null,
 	KeepFiles => null,
 	KeepStatistics => false,
 	KeepStatisticsCommand => (f,c) -> ("/usr/bin/time --verbose -o \""|f|"\" "|c),
 	PreRunScript => "echo -n"
 } >> opt -> (fname, proc, params) -> (
 	-- Validate options
-	if not(instance(opt#M2Location,String)) then (
-		error "runExternalM2: M2Location must be a string";
+  M2Loc:=opt#M2Location;
+	if not(instance(M2Loc,String) or M2Loc===null) then (
+		error "runExternalM2: M2Location must be a string, or null";
+	);	
+	if (M2Loc===null) then (
+		-- TODO, do we need rootPath for Cygwin?
+		M2Loc=toAbsolutePath(first(commandLine));
 	);
-	if not(fileExists(opt#M2Location)) then (
-		error "runExternalM2: M2Location must point to an existing file";
+	if not(fileExists(M2Loc)) then (
+		error "runExternalM2: error finding location of M2 program; check M2Location option";
 	);
 	if not(instance(opt#KeepFiles,Boolean) or opt#KeepFiles===null) then (
 		error "runExternalM2: invalid KeepFiles setting";
@@ -861,15 +862,14 @@ runExternalM2 = {
 	runString:="("|opt#PreRunScript|" && ("|
 		statsCommand(
 			statFileName,
-			opt#M2Location|" "|M2Options|" <\""|scriptFileName|"\" >\""|outFileName|"\" 2>&1"
+			M2Loc|" "|M2Options|" <\""|scriptFileName|"\" >\""|outFileName|"\" 2>&1"
 		)|" ))";
 
 	-- Write the script
 	try (
 		scriptFile:=openOut(scriptFileName);
 		scriptFile<<"-- Script "|scriptFileName|" automatically generated by RunExternalM2"<<endl;
-		scriptFile<<"needsPackage \"RunExternalM2\";"<<endl;
-		scriptFile<<"setExternalM2Child();"<<endl;
+		scriptFile<<"needsPackage(\"RunExternalM2\",Configuration=>{\"isChild\"=>true});"<<endl;
 		scriptFile<<"load "<<toExternalString(fname)<<";"<<endl;
 		scriptFile<<"runExternalM2ReturnAnswer("<<toExternalString(answerFileName)<<","<<procString<<" "<<paramString<<");"<<endl;
 		scriptFile<<"exit();"<<endl<<close;
@@ -946,10 +946,6 @@ h=runExternalM2(fn,isExternalM2Child,());
 assert(h#value===true);
 h=runExternalM2(fn,isExternalM2Parent,());
 assert(h#value===false);
-
-setExternalM2Child();
-assert(isExternalM2Child()===true);
-assert(isExternalM2Parent()===false);
 ///
  
 
