@@ -356,7 +356,7 @@ findSynonyms Symbol := x -> (
      scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
      sort unique r)
 
-warn0 := (sym,front,behind,syns) -> if debuggingMode then (
+warn0 := (sym,front,behind,syns) -> (
      -- just for debugging:
      -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
      stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
@@ -366,7 +366,7 @@ warn0 := (sym,front,behind,syns) -> if debuggingMode then (
      else stderr << "--  use the synonym " << syns#0 << endl
      else stderr << "--  no synonym is available" << endl)
 warnedAlready := new MutableHashTable; addStartFunction(() -> warnedAlready = new MutableHashTable)
-warn := x -> if not warnedAlready#?x then (warn0 x; warnedAlready#x = true)
+warn := x -> if not warnedAlready#?x and debuggingMode then (warn0 x; warnedAlready#x = true)
 
 checkShadow = () -> (
      d := dictionaryPath;
