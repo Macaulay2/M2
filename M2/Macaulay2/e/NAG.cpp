@@ -36,7 +36,7 @@ SLEvaluator::SLEvaluator(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, co
     varsPos.push_back(slp->inputCounter+vPos->array[i]);
   if (consts->n_rows() != 1 || consts->n_cols() != constsPos.size())
     ERROR("1-row matrix expected; or numbers of constants don't match");
-  R = consts->get_ring();  
+  R = consts->get_ring();
   values.resize(slp->inputCounter+slp->mNodes.size());
   for (int i=0; i<constsPos.size(); i++) 
     values[constsPos[i]] = R->copy(consts->elem(0,i));
@@ -70,7 +70,11 @@ void SLEvaluator::computeNextNode()
       MutableMatrix* M = MutableMatrix::from_matrix(mat.to_matrix(), true);
       v = M->determinant()->get_value();
     }
-   break;
+    break;
+  case SLProgram::Divide:
+    v = values[ap(*inputPositionsIt++)];
+    v = R->divide(v,values[ap(*inputPositionsIt++)]);
+    break;
   default: ERROR("unknown node type");
   }
   *vIt = v;  
@@ -125,6 +129,15 @@ SLProgram::GATE_POSITION SLProgram::addDet(const M2_arrayint a)
   mNodes.push_back(Det);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
+    mInputPositions.push_back(a->array[i]);
+  return mNodes.size()-1;
+}
+SLProgram::GATE_POSITION SLProgram::addDivide(const M2_arrayint a) 
+{
+  mNodes.push_back(Divide);
+  if (a->len!=2) 
+    ERROR("Divide expected two arguments");
+  for(int i=0; i<2; i++)
     mInputPositions.push_back(a->array[i]);
   return mNodes.size()-1;
 }

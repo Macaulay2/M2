@@ -83,6 +83,24 @@ export rawSLPDetGate(e:Expr):Expr := (
      );
 setupfun("rawSLPDetGate",rawSLPDetGate);
 
+export rawSLPDivideGate(e:Expr):Expr := (
+     when e is s:Sequence do (
+          if length(s) != 2 then WrongNumArgs(2)
+     	  else when s.0 is slp:RawSLProgramCell do (
+	       if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
+	       toExpr(Ccode(ZZ,
+	       	    "rawSLPDivideGate(",
+		    	    slp.p, ",",
+			    getSequenceOfSmallIntegers(s.1),
+			    ")"
+		      ))
+               )
+               else WrongArg("SLProgram")
+	  )
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLPDivideGate",rawSLPDivideGate);
+
 export rawSLPsetOutputPositions(e:Expr):Expr := (
      when e is s:Sequence do (
           if length(s) != 2 then WrongNumArgs(2)

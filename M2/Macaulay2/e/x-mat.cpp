@@ -745,6 +745,7 @@ gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a) {
   S->setOutputPositions(a); 
   return to_gmp_ZZ(0); // this function should have returned "void"
 }
+gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDivide(a)); }
 
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {

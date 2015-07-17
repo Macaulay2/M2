@@ -299,20 +299,30 @@ appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) ->
     g.cache#slp = rawSLPProductGate(slp, g.Inputs/(a->a.cache#slp))
 appendToSLProgram (RawSLProgram, DetGate) := (slp, g) -> 
     g.cache#slp = rawSLPDetGate(slp, flatten g.Inputs/(a->a.cache#slp))
+appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) -> 
+    g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
 ///
 restart
 load "SLP-expressions.m2"
-s = rawSLProgram(1)
 X = inputGate symbol X
 C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+s = rawSLProgram(1) -- 1 means nothing anymore
 n0 = appendToSLProgram(s,C)
 n1 = appendToSLProgram(s,X)
-n2 = appendToSLProgram(s,X+C)
-n3 = appendToSLProgram(s,productGate{X,X,C})
-n4 = appendToSLProgram(s,detGate{{X,C},{C,X}})
-rawSLPsetOutputPositions(s,{n0,n1,n2,n3,n4}) 
-e = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
-rawSLEvaluatorEvaluate(e, raw matrix{{2_QQ}})
+n2 = appendToSLProgram(s,XpC)
+n3 = appendToSLProgram(s,XXC)
+n4 = appendToSLProgram(s,detXCCX)
+n5 = appendToSLProgram(s,XoC)
+rawSLPsetOutputPositions(s,{n0,n1,n2,n3,n4,n5}) 
+eQQ = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
+rawSLEvaluatorEvaluate(eQQ, raw matrix{{7/2}}) -- divide over QQ works lke over ZZ?
+eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_CC}})
+rawSLEvaluatorEvaluate(eCC, raw matrix{{toCC 3.5}}) -- divide over QQ works lke over ZZ?
+
 ///
 
 -- GateMatrix is NOT A GATE

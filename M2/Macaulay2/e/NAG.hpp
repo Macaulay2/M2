@@ -497,7 +497,7 @@ public:
 class SLProgram 
 {
   friend class SLEvaluator;
-  enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det};
+  enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
   std::vector<GATE_TYPE> mNodes; // nodes types
@@ -523,6 +523,7 @@ public:
   GATE_POSITION addMSum(const M2_arrayint);
   GATE_POSITION addMProduct(const M2_arrayint);
   GATE_POSITION addDet(const M2_arrayint);
+  GATE_POSITION addDivide(const M2_arrayint);
   void setOutputPositions(const M2_arrayint); 
   void text_out(buffer&) const;
 };
