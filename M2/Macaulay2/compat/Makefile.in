@@ -24,3 +24,4 @@ $(LIB): $(OFILES)
 endif
 
 distclean clean :; rm -f $(LIB) *.o
+.NOTPARALLEL:

@@ -1,8 +1,13 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
-        symbol submatrixByDegrees,
+        symbol Invertible,
+        symbol rowRankProfile,
+        symbol columnRankProfile,
+        symbol nullSpace,
+        symbol antipode,
         symbol chi,
+        symbol submatrixByDegrees,
 --	symbol setAttribute,				    -- experimental
 --	symbol hasAnAttribute,				    -- experimental
 --	symbol hasAttribute,				    -- experimental

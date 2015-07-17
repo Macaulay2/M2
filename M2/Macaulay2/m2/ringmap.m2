@@ -159,6 +159,13 @@ RingMap Matrix := Matrix => (p,m) -> (
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
 
+RingMap MutableMatrix := MutableMatrix => (p,m) -> (
+     R := source p;
+     S := target p;
+     if R =!= ring m 
+     then error "expected source of ring map to be the same as ring of matrix";
+     map(S,rawRingMapEval(raw p, raw m)))
+
 RingMap Vector := Vector => (p,m) -> (
      f := p new Matrix from m;
      new target f from f)

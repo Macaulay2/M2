@@ -157,6 +157,10 @@ assert try ( map(S,R) ; false ) else true		    -- collision detection should giv
 k = GF (P = ZZ/3[a]/(a^2-2), PrimitiveElement => a+1)	    -- we specify the primitive element, because otherwise it's chosen randomly
 r = map(k,k,{a+1})					    -- this map is not well defined
 
+{*
+  -- This functionality has changed
+  -- and this not-well-defined behavior is no longer valid.
+  -- In particular, 
 pe = promote(k.PrimitiveElement,k)
 assert ( pe == a+1 )
 r pe == (a+1)+1				  -- it works for the primitive element
@@ -173,6 +177,7 @@ pe+pe^2-1 == 0
 
 pe^2 + a == 0
 (r pe)^2 + a == 0
+*}
 
 -- deferred
 -- assert( not isWellDefined r )

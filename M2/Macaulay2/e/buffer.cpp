@@ -73,10 +73,18 @@ void buffer::put(unsigned int n)
   sprintf(s, "%u", n);
   put(s, strlen(s));
 }
+
 void buffer::put(unsigned long n)
 {
   char s[100];
   sprintf(s, "%lu", n);
+  put(s, strlen(s));
+}
+
+void buffer::put(unsigned long long n)
+{
+  char s[100];
+  sprintf(s, "%llu", n);
   put(s, strlen(s));
 }
 

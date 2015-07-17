@@ -35,6 +35,38 @@ void SkewPolynomialRing::text_out(buffer &o) const
   o << ")";
 }
 
+static int sign4[4] = {1, 1, -1, -1};
+
+ring_elem SkewPolynomialRing::antipode(const ring_elem f) const
+{
+  Nterm head;
+  Nterm *inresult = &head;
+
+  exponents EXP = ALLOCATE_EXPONENTS(exp_size);
+
+  for (Nterm *s = f; s != NULL; s = s->next)
+    {
+      M_->to_expvector(s->monom, EXP);
+      int deg = skew_.skew_degree(EXP);
+      // sign is (-1)^ (binomial(deg,2))
+      // deg = 0: sign is 1
+      // deg = 1: sign is 1
+      // deg = 2: sign is -1
+      // deg = 3: sign is -1
+      // deg = 4: sign is 1, and so on
+      int mod4 = deg % 4;
+      int sign = sign4[mod4];
+      Nterm *t = new_term();
+      t->next = 0;
+      t->coeff = (sign == 1 ? s->coeff : K_->negate(s->coeff));
+      M_->copy(s->monom, t->monom);
+      inresult->next = t;
+      inresult = inresult->next;
+    }
+  inresult->next = 0;
+  return head.next;
+}
+
 ring_elem SkewPolynomialRing::mult_by_term(const ring_elem f,
                                                const ring_elem c,
                                                const int *m) const

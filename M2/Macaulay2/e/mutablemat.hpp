@@ -6,14 +6,118 @@
 #include <iostream>
 #include "mat.hpp"
 
-class CoefficientRingCCC;
-class Ring_RRR;
-template <typename RT> class DMat;
 namespace M2 {
   class ARingZZp;
+  class ARingRR;
+  class ARingCC;
+  class ARingRRR;
+  class ARingCCC;
 };
 
-#include "linalg.hpp"
+template<typename RT> class DMat;
+template<typename RT> class SMat;
+template<typename MT> bool isDense(const MT& mat);
+template<typename RT> bool isDense(const DMat<RT>& mat) { return true; }
+template<typename RT> bool isDense(const SMat<RT>& mat) { return false; }
+
+template<typename RT> struct EigenTypes
+{
+  typedef RT EigenvalueType;
+  typedef RT EigenvectorType;
+  typedef RT HermitianEigenvalueType;
+  typedef RT HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingRR>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingRR HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingCC>
+{
+  typedef M2::ARingCC EigenvalueType;
+  typedef M2::ARingCC EigenvectorType;
+  typedef M2::ARingRR HermitianEigenvalueType;
+  typedef M2::ARingCC HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingRRR>
+{
+  typedef M2::ARingCCC EigenvalueType;
+  typedef M2::ARingCCC EigenvectorType;
+  typedef M2::ARingRRR HermitianEigenvalueType;
+  typedef M2::ARingRRR HermitianEigenvectorType;
+};
+
+template<> struct EigenTypes<M2::ARingCCC>
+{
+  typedef M2::ARingCCC EigenvalueType;
+  typedef M2::ARingCCC EigenvectorType;
+  typedef M2::ARingRRR HermitianEigenvalueType;
+  typedef M2::ARingCCC HermitianEigenvectorType;
+};
+
+// The following include file is for creating a Matrix, in "toMatrix"
+#include "matrix-con.hpp"
+
+#include "dmat.hpp"
+#include "smat.hpp"
+#include "mat-elem-ops.hpp"
+#include "mat-arith.hpp"
+#include "mat-linalg.hpp"
+
+template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const DMat<CoeffRing>& A)
+{
+  int nrows = static_cast<int>(A.numRows());
+  int ncols = static_cast<int>(A.numColumns());
+  FreeModule *F = R->make_FreeModule(nrows);
+  MatrixConstructor result(F,ncols);
+  if (nrows == 0 || ncols == 0)
+    return result.to_matrix();
+
+  for (int c=0; c<ncols; c++)
+    {
+      int r=0;
+      auto end = A.columnEnd(c);
+      for(auto j = A.columnBegin(c); not(j == end); ++j, ++r)
+        {
+          if (not A.ring().is_zero(*j))
+            {
+              ring_elem a;
+              A.ring().to_ring_elem(a, *j);
+              result.set_entry(r, c, a);
+            }
+        }
+    }
+  result.compute_column_degrees();
+  return result.to_matrix();
+}
+template<typename CoeffRing> Matrix* toMatrix(const Ring* R, const SMat<CoeffRing>& A)
+{
+  int nrows = static_cast<int>(A.numRows());
+  int ncols = static_cast<int>(A.numColumns());
+  FreeModule *F = R->make_FreeModule(nrows);
+  MatrixConstructor result(F,ncols);
+  if (nrows == 0 || ncols == 0)
+    return result.to_matrix();
+  ring_elem f;
+  auto i = A.begin();
+  for (int c=0; c<ncols; c++)
+    {
+      ring_elem a;
+      for (i.set(c); i.valid(); i.next())
+        {
+          i.copy_elem(a);
+          int r = static_cast<int>(i.row());
+          result.set_entry(r, c, a);
+        }
+    }
+  result.compute_column_degrees();
+  return result.to_matrix();
+}
 
 inline bool error_column_bound(size_t c, size_t ncols)
 {
@@ -47,27 +151,34 @@ public:
   typedef typename Mat::CoeffRing CoeffRing;
   typedef typename CoeffRing::elem elem;
 
+  typedef MatElementaryOps<Mat> MatOps;
+
+
+  typedef typename EigenTypes<CoeffRing>::EigenvalueType EigenvalueType;
+  typedef typename EigenTypes<CoeffRing>::EigenvectorType EigenvectorType;
+  typedef typename EigenTypes<CoeffRing>::HermitianEigenvalueType HermitianEigenvalueType;
+  typedef typename EigenTypes<CoeffRing>::HermitianEigenvectorType HermitianEigenvectorType;
 private:
+  const Ring* mRing;
   Mat mat;
   // This class wraps the operations for Mat to make a MutableMatrix
 
   // Same operations as in MutableMatrix.  Almost nothing is
   // done except to call the Mat routines.
 
-  // Linear algebra routines: Default is to return 0.
-  // Caller must then make error message?
-  // Specific template instances must provide these functions
   MutableMat() {}
 
-  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-    : mat(R,coeffR,nrows,ncols) {}
 
-  MutableMat(Mat &m) : mat(m) {}
+  MutableMat(const Ring* R, const Mat &m) : mRing(R), mat(m) {}
 
 public:
+  // This constructor makes a zero matrix
+  MutableMat(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
+    : mRing(R), mat(*coeffR,nrows,ncols) {}
+
   // Make a zero matrix, using the same ring and density taken from 'mat'.
   MutableMat* makeZeroMatrix(size_t nrows, size_t ncols) const {
-    return zero_matrix(mat.get_ring(), &mat.ring(), nrows, ncols);
+    return new MutableMat(get_ring(),&mat.ring(),nrows,ncols);
   }
 
   Mat * get_Mat() { return &mat; }
@@ -76,7 +187,7 @@ public:
   Mat& getMat() { return mat; }
   const Mat& getMat() const { return mat; }
 
-#if 1
+#if 0
   // MESXXX
   class iterator : public MutableMatrix::iterator
   {
@@ -87,29 +198,26 @@ public:
     void next() { i.next(); }
     bool valid() { return i.valid(); }
     size_t row() { return i.row(); }
-    elem value() { return i.value(); }
+    const elem& value() { return i.value(); }
     void copy_ring_elem(ring_elem &result) { i.copy_elem(result); }
   };
 #endif
-  static MutableMat *zero_matrix(const Ring *R, const CoeffRing *coeffR, size_t nrows, size_t ncols)
-  {
-    return new MutableMat(R,coeffR,nrows,ncols);
-  }
-
-  //  static MutableMat *grab_Mat(const Mat *m);
-
-#if 1
+#if 0
   // MESXXX
   virtual iterator * begin() const { return new iterator(&mat); }
 #endif
-  virtual const Ring * get_ring() const { return mat.get_ring(); }
+  virtual const Ring * get_ring() const { return mRing; }
 
-  virtual size_t n_rows() const { return mat.n_rows(); }
+  virtual size_t n_rows() const { return mat.numRows(); }
 
-  virtual size_t n_cols() const { return mat.n_cols(); }
+  virtual size_t n_cols() const { return mat.numColumns(); }
 
-  virtual bool is_dense() const { return mat.is_dense(); }
+  virtual bool is_dense() const { return isDense(mat); }
 
+  virtual Matrix* to_matrix() const
+  {
+    return toMatrix(get_ring(), mat);
+  }
   virtual MutableMat *copy(bool prefer_dense) const
   {
 #if 0
@@ -123,11 +231,14 @@ public:
 
   virtual MutableMat *clone() const
   {
-    Mat *m = new Mat(mat); // copies mat
-    return new MutableMat(*m); // places copy into result
+    MutableMat* result = new MutableMat(mRing, mat);
+    return result;
+    //    result->mat.copy(mat);
+    //    Mat *m = new Mat(mat); // copies mat
+    //    return new MutableMat(*m); // places copy into result
   }
 
-  virtual size_t lead_row(size_t col) const { return mat.lead_row(col); }
+  virtual size_t lead_row(size_t col) const { return MatOps::lead_row(mat,col); }
   /* returns the largest index row which has a non-zero value in column 'col'.
      returns -1 if the column is 0 */
 
@@ -137,10 +248,14 @@ public:
      returns -1 if the column is 0 */
   {
     elem b;
-    mat.get_CoeffRing()->set_zero(b);
-    size_t ret = mat.lead_row(col, b);
-    if (ret >= 0)
-      mat.get_CoeffRing()->to_ring_elem(result, b);
+    mat.ring().init(b);
+    mat.ring().set_zero(b);
+
+    size_t ret = MatOps::lead_row(mat, col, b);
+    if (ret != static_cast<size_t>(-1))
+      mat.ring().to_ring_elem(result, b);
+
+    mat.ring().clear(b);
     return ret;
   }
 
@@ -151,15 +266,14 @@ public:
     if (r >= 0 && r < n_rows() && c >= 0 && c < n_cols())
       {
         elem a;
-        mat.get_CoeffRing()->set_zero(a);
-        if (mat.get_entry(r,c,a))
-          {
-            mat.get_CoeffRing()->to_ring_elem(result,a);
-            return true;
-          }
+        
+        mat.ring().init(a);
+        MatOps::getEntry(mat, r, c, a);
+        mat.ring().to_ring_elem(result,a);
+        return (not mat.ring().is_zero(a));
       }
 
-    result = mat.get_ring()->zero();
+    result = get_ring()->zero();
     return false;
   }
 
@@ -169,8 +283,10 @@ public:
     if (error_row_bound(r,n_rows())) return false;
     if (error_column_bound(c,n_cols())) return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,a);
-    mat.set_entry(r,c,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b, a);
+    MatOps::setEntry(mat, r,c, b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -186,7 +302,7 @@ public:
     size_t nrows = n_rows();
     if (error_row_bound(i,nrows) || error_row_bound(j,nrows))
       return false;
-    mat.interchange_rows(i,j);
+    MatOps::interchange_rows(mat,i,j);
     return true;
   }
 
@@ -196,7 +312,7 @@ public:
     size_t ncols = n_cols();
     if (error_column_bound(i,ncols) || error_column_bound(j,ncols))
       return false;
-    mat.interchange_columns(i,j);
+    MatOps::interchange_columns(mat,i,j);
     return true;
   }
 
@@ -207,8 +323,10 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.scale_row(i,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::scale_row(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -219,8 +337,10 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.scale_column(i,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::scale_column(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -231,8 +351,10 @@ public:
     if (error_row_bound(i,nrows))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.divide_row(i,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::divide_row(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -243,8 +365,10 @@ public:
     if (error_column_bound(i,ncols))
       return false;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.divide_column(i,b);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::divide_column(mat,i,b);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -256,8 +380,10 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.row_op(i,b,j);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::row_op(mat,i,b,j);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -269,8 +395,10 @@ public:
       return false;
     if (i == j) return true;
     elem b;
-    mat.get_CoeffRing()->from_ring_elem(b,r);
-    mat.column_op(i,b,j);
+    mat.ring().init(b);
+    mat.ring().from_ring_elem(b,r);
+    MatOps::column_op(mat,i,b,j);
+    mat.ring().clear(b);
     return true;
   }
 
@@ -286,11 +414,19 @@ public:
       return false;
     if (c1 == c2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
-    mat.column2by2(c1,c2,aa1,aa2,bb1,bb2);
+    mat.ring().init(aa1);
+    mat.ring().init(aa2);
+    mat.ring().init(bb1);
+    mat.ring().init(bb2);
+    mat.ring().from_ring_elem(aa1,a1);
+    mat.ring().from_ring_elem(aa2,a2);
+    mat.ring().from_ring_elem(bb1,b1);
+    mat.ring().from_ring_elem(bb2,b2);
+    MatOps::column2by2(mat,c1,c2,aa1,aa2,bb1,bb2);
+    mat.ring().clear(aa1);
+    mat.ring().clear(aa2);
+    mat.ring().clear(bb1);
+    mat.ring().clear(bb2);
     return true;
   }
 
@@ -306,11 +442,19 @@ public:
       return false;
     if (r1 == r2) return true;
     elem aa1, aa2, bb1, bb2;
-    mat.get_CoeffRing()->from_ring_elem(aa1,a1);
-    mat.get_CoeffRing()->from_ring_elem(aa2,a2);
-    mat.get_CoeffRing()->from_ring_elem(bb1,b1);
-    mat.get_CoeffRing()->from_ring_elem(bb2,b2);
-    mat.row2by2(r1,r2,aa1,aa2,bb1,bb2);
+    mat.ring().init(aa1);
+    mat.ring().init(aa2);
+    mat.ring().init(bb1);
+    mat.ring().init(bb2);
+    mat.ring().from_ring_elem(aa1,a1);
+    mat.ring().from_ring_elem(aa2,a2);
+    mat.ring().from_ring_elem(bb1,b1);
+    mat.ring().from_ring_elem(bb2,b2);
+    MatOps::row2by2(mat,r1,r2,aa1,aa2,bb1,bb2);
+    mat.ring().clear(aa1);
+    mat.ring().clear(aa2);
+    mat.ring().clear(bb1);
+    mat.ring().clear(bb2);
     return true;
   }
 
@@ -320,20 +464,22 @@ public:
     if (error_column_bound(c1,ncols) || error_column_bound(c2,ncols))
       return false;
     elem a;
-    mat.get_CoeffRing()->set_zero(a);
-    mat.dot_product(c1,c2,a);
-    mat.get_CoeffRing()->to_ring_elem(result,a);
+    mat.ring().init(a);
+    mat.ring().set_zero(a);
+    MatOps::dot_product(mat,c1,c2,a);
+    mat.ring().to_ring_elem(result,a);
+    mat.ring().clear(a);
     return true;
   }
 
   virtual bool row_permute(size_t start_row, M2_arrayint perm)
   {
-    return mat.row_permute(start_row, perm);
+    return MatOps::row_permute(mat, start_row, perm);
   }
 
   virtual bool column_permute(size_t start_col, M2_arrayint perm)
   {
-    return mat.column_permute(start_col, perm);
+    return MatOps::column_permute(mat, start_col, perm);
   }
 
   virtual bool insert_columns(size_t i, size_t n_to_add)
@@ -344,7 +490,7 @@ public:
         ERROR("cannot insert %l columns before column %ln",n_to_add,i);
         return false;
       }
-    mat.insert_columns(i, n_to_add);
+    MatOps::insert_columns(mat, i, n_to_add);
     return true;
   }
 
@@ -356,7 +502,7 @@ public:
         ERROR("cannot insert %l rows before row %ln",n_to_add,i);
         return false;
       }
-    mat.insert_rows(i, n_to_add);
+    MatOps::insert_rows(mat, i, n_to_add);
     return true;
   }
 
@@ -370,7 +516,7 @@ public:
         return false;
       }
 
-    mat.delete_columns(i, j);
+    MatOps::delete_columns(mat, i, j);
     return true;
   }
 
@@ -383,8 +529,13 @@ public:
         ERROR("row index out of range");
         return false;
       }
-    mat.delete_rows(i, j);
+    MatOps::delete_rows(mat, i, j);
     return true;
+  }
+
+  virtual void reduce_by_pivots()
+  {
+    MatOps::reduce_by_pivots(mat);
   }
 
   virtual MutableMatrix * submatrix(M2_arrayint rows, M2_arrayint cols) const
@@ -402,7 +553,7 @@ public:
           return 0;
         }
     MutableMat *result = new MutableMat(*this); // zero matrix, over the same ring
-    result->getMat().setFromSubmatrix(getMat(), rows, cols);
+    MatOps::setFromSubmatrix(getMat(), rows, cols, result->getMat());
     return result;
   }
 
@@ -415,25 +566,25 @@ public:
           return 0;
         }
     MutableMat *result = new MutableMat(*this); // zero matrix, over the same ring
-    result->getMat().setFromSubmatrix(getMat(), cols);
+    MatOps::setFromSubmatrix(getMat(), cols, result->getMat());
     return result;
   }
 
-  virtual bool set_submatrix(M2_arrayint rows,
-                             M2_arrayint cols,
-                             const MutableMatrix *N)
-  // returns false iff there is an error
-  {
-    return mat.set_submatrix(rows,cols,N);
-  }
+  ///////////////////////////////
+  // promote, lift, eval ////////
+  ///////////////////////////////
 
+  virtual MutableMatrix* promote(const Ring* S) const { return 0; }
+  virtual MutableMatrix* lift(const Ring* R) const { return 0; }
+  virtual MutableMatrix* eval(const RingMap* F) const { return 0; }
+  
   ///////////////////////////////
   // Matrix operations //////////
   ///////////////////////////////
 
   virtual bool is_zero() const
   {
-    return mat.is_zero();
+    return MatrixOps::isZero(getMat());
   }
 
   virtual bool is_equal(const MutableMatrix *B) const
@@ -441,13 +592,13 @@ public:
     const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
     if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
       return false;
-    return getMat().is_equal(B1->getMat());
+    return MatrixOps::isEqual(getMat(), B1->getMat());
   }
 
   virtual MutableMat * add(const MutableMatrix *B) const
   // return this + B.  return NULL if sizes or types do not match.
   {
-    const Mat *B1 = B->coerce<Mat>();
+    const Mat *B1 = B->coerce_const<Mat>();
     if (B1 == NULL) 
       {
         ERROR("expected matrices with the same ring and sparsity");
@@ -458,45 +609,46 @@ public:
         ERROR("expected matrices with the same ring");
         return NULL;
       }
-    if (B1->n_rows() != n_rows() || B1->n_cols() != n_cols())
+    if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
       {
         ERROR("expected matrices of the same shape");
         return NULL;
       }
 
     MutableMat* result = clone();
-    result->getMat().addInPlace(*B1);
+    MatrixOps::addInPlace(result->getMat(), *B1);
     return result;
   }
 
   virtual MutableMatrix * negate() const
   {
     MutableMat *result = clone();
-    result->getMat().negateInPlace();
+    MatrixOps::negateInPlace(result->getMat());
     return result;
   }
 
   virtual MutableMat * subtract(const MutableMatrix *B) const
   // return this - B.  return NULL of sizes or types do not match.
   {
-    const MutableMat *B1 = dynamic_cast<const MutableMat *>(B);
-    if (B1 == NULL || &B1->getMat().ring() != &getMat().ring())
+    const Mat *B1 = B->coerce_const<Mat>();
+    if (B1 == NULL) 
       {
-        ERROR("expected matrices with same sparsity and same base ring");
-        return 0;
+        ERROR("expected matrices with the same ring and sparsity");
+        return NULL;
       }
-    MutableMat *result = clone();
-    result->getMat().subtractInPlace(B1->getMat());
-    return result;
-  }
+    if (B->get_ring() != get_ring())
+      {
+        ERROR("expected matrices with the same ring");
+        return NULL;
+      }
+    if (B1->numRows() != n_rows() || B1->numColumns() != n_cols())
+      {
+        ERROR("expected matrices of the same shape");
+        return NULL;
+      }
 
-  virtual MutableMat * mult(const MutableMatrix *B) const
-  // return this * B.  return NULL of sizes or types do not match.
-  // note: can mult a sparse + dense
-  //       can mult a matrix over RR and one over CC and/or one over ZZ.
-  {
-    MutableMat *result = new MutableMat;
-    result->mat.grab(mat.mult(B));
+    MutableMat* result = clone();
+    MatrixOps::subtractInPlace(result->getMat(), *B1);
     return result;
   }
 
@@ -509,24 +661,26 @@ public:
         return 0;
       }
     elem a;
+    mat.ring().init(a);
     mat.ring().from_ring_elem(a, f->get_value());
 
     MutableMat *result = clone();
-    result->mat.scalarMultInPlace(a);
+    MatrixOps::scalarMultInPlace(result->mat, a);
 
+    mat.ring().clear(a);
+    return result;
+  }
+
+  virtual MutableMat /* or null */ * transpose() const
+  {
+    MutableMat *result = makeZeroMatrix(n_cols(), n_rows());
+    MatrixOps::transpose(getMat(), result->getMat());
     return result;
   }
 
   ///////////////////////////////
   // Linear algebra /////////////
   ///////////////////////////////
-
-  virtual bool solve(const MutableMatrix *b, MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ax=b
-  // assumes that 'this' is full rank and a square matrix
-
-  virtual bool nullspaceU(MutableMatrix *x) const;
-  // resets x, find a basis of solutions for Ux=0, U upper triangular
 
   virtual M2_arrayintOrNull LU(MutableMatrix *L,
                                 MutableMatrix *U) const;
@@ -561,6 +715,8 @@ public:
   // then NULL is returned, and an error message is set.
   virtual MutableMatrix* invert() const;
 
+  virtual MutableMatrix* rowReducedEchelonForm() const;
+
   // Returns an array of increasing integers {n_1, n_2, ...}
   // such that if M is the matrix with rows (resp columns, if row_profile is false)
   // then rank(M_{0..n_i-1}) + 1 = rank(M_{0..n_i}).
@@ -569,39 +725,36 @@ public:
   virtual M2_arrayintOrNull rankProfile(bool row_profile) const;
   
   // Find a spanning set for the null space.  If M = this,
-  // and right_side is true, return a matrix whose rows span {x |  xM = 0},
-  // otherwise return a matrix whose columns span {x | Mx = 0}
-  virtual MutableMatrix* nullSpace(bool right_side) const;
+  // return a matrix whose columns span {x | Mx = 0}
+  virtual MutableMatrix* nullSpace() const;
 
-  // Return a matrix whose rows or columns solve either Ax = B (right_side=true)
-  // or xA = B (right_side=false).  The first argument returned is false
-  // in this case.
-  virtual std::pair<bool, MutableMatrix*> solveLinear(const MutableMatrix* B, 
-                                              bool right_side) const;
+  // Returns X, if (this=A) AX=B has a solution.
+  // Returns NULL, if not.
+  // Throws an exception if any other usage issues arise (bad rings, sizes, not implemented...)
+  virtual MutableMatrix* solveLinear(const MutableMatrix* B) const;
 
-  /** C=this,A,B should be mutable matrices over the same ring, and a,b
-     elements of this ring. AND of the same density type.
-     C = b*C + a * op(A)*op(B),
-     where op(A) = A or transpose(A), depending on transposeA
-     where op(B) = B or transpose(B), depending on transposeB
-  */
+  // Returns X, if this=A is invertible, and AX=B. (so X is uniquely determined)
+  // Returns NULL, if A is not invertible.
+  // Throws an exception if any other usage issues arise.
+  virtual MutableMatrix* solveInvertible(const MutableMatrix* B) const;
+
   virtual void addMultipleTo(const MutableMatrix* A,
-                                             const MutableMatrix* B,
-                                             bool transposeA,
-                                             bool transposeB,
-                                             const RingElement* a,
-                                             const RingElement* b);
+                             const MutableMatrix* B);
+
+  virtual void subtractMultipleTo(const MutableMatrix* A,
+                                  const MutableMatrix* B);
+
+  virtual MutableMatrix /* or null */ * mult(const MutableMatrix *B) const;
+
+  // Special routines for approximate fields
+  virtual void clean(gmp_RR epsilon);  // modifies 'this'
+  virtual gmp_RRorNull norm() const;
 };
-
-
-
-
-
 
 template <typename T>
 size_t MutableMat<T>::rank() const 
 {
-  return mat.rank();
+  return MatrixOps::rank(mat);
 }
 
 template <typename T>
@@ -609,16 +762,20 @@ const RingElement* MutableMat<T>::determinant() const
 {
   ring_elem det;
   elem a;
-  mat.determinant(a);
-  mat.get_CoeffRing()->to_ring_elem(det, a);
-  return RingElement::make_raw(mat.get_ring(), det);
+  mat.ring().init(a);
+  MatrixOps::determinant(mat, a);
+  //  MatrixOps::BasicLinAlg<MatType>::determinant(mat, a);
+  mat.ring().to_ring_elem(det, a);
+  mat.ring().clear(a);
+  return RingElement::make_raw(get_ring(), det);
 }
 
 template <typename T>
 MutableMatrix* MutableMat<T>::invert() const
 {
+  M2_ASSERT(n_rows() == n_cols());
   MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
-  bool val = mat.invert(result->mat);
+  bool val = MatrixOps::inverse(mat, result->mat);
   if (!val)
     {
       delete result;
@@ -628,43 +785,237 @@ MutableMatrix* MutableMat<T>::invert() const
 }
 
 template <typename T>
+MutableMatrix* MutableMat<T>::rowReducedEchelonForm() const
+{
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), n_cols());
+  try {
+    // ignore returned value (the rank of mat):
+    MatrixOps::rowReducedEchelonForm(mat, result->mat);
+    return result;
+  }
+  catch (exc::engine_error e) {
+    delete result;
+    throw(e);
+  }
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::solveLinear(const MutableMatrix* B) const
+{ 
+  const T* B1 = B->coerce_const<T>();
+  if (B1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  if (B->get_ring() != get_ring())
+    throw exc::engine_error("expected same ring");
+  if (B->n_rows() != n_rows())
+    throw exc::engine_error("expected matrices with same number of rows");
+  MutableMat<T>* solns = makeZeroMatrix(0,0);
+  bool retval = MatrixOps::solveLinear(mat, *B1, solns->mat);
+  if (retval)
+    return solns;
+  delete solns;
+  return NULL;
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::solveInvertible(const MutableMatrix* B) const
+{ 
+  const T* B1 = B->coerce_const<T>();
+  if (B1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  if (B->get_ring() != get_ring())
+    throw exc::engine_error("expected same ring");
+  if (n_rows() != n_cols())
+    throw exc::engine_error("expected a square matrix");
+  if (B->n_rows() != n_rows())
+    throw exc::engine_error("expected matrices with same number of rows");
+  MutableMat<T>* solns = makeZeroMatrix(0,0);
+  bool retval = MatrixOps::solveInvertible(mat, *B1, solns->mat);
+  if (retval)
+    return solns;
+  delete solns;
+  return NULL;
+}
+
+template <typename T>
+MutableMatrix* MutableMat<T>::nullSpace() const
+{
+  MutableMat<T>* ker = makeZeroMatrix(0,0);
+  MatrixOps::nullSpace(mat, ker->mat); // ignore return value of nullSpace...
+  return ker;
+}
+
+template <typename T>
+MutableMatrix /* or null */ * MutableMat<T>::mult(const MutableMatrix *B) const
+{
+  // First, make sure B has the same ring/type as 'this'.
+  const T* B1 = B->coerce_const<T>();
+  if (B1 == 0)
+    {
+      ERROR("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
+      return 0;
+    }
+  // Second, make sure the sizes are correct.
+  if (mat.numColumns() != B1->numRows())
+    {
+      ERROR("matrix sizes do not match in matrix multiplication");
+      return 0;
+    }
+  // create the result matrix
+  MutableMat<T>*  result = makeZeroMatrix(n_rows(), B1->numColumns());
+  MatrixOps::mult(mat, *B1, result->mat);
+
+  return result;
+}
+
+template <typename T>
+void MutableMat<T>::addMultipleTo(const MutableMatrix* A,
+                                  const MutableMatrix* B)
+{
+  // First: make sure that A, B have the right ring/matrix type
+  const T* A1 = A->coerce_const<T>();
+  const T* B1 = B->coerce_const<T>();
+  if (A1 == 0 or B1 == 0)
+    throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
+  if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
+    throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
+  MatrixOps::addMultipleTo(mat,*A1,*B1);
+}
+
+template <typename T>
+void MutableMat<T>::subtractMultipleTo(const MutableMatrix* A,
+                                       const MutableMatrix* B)
+{
+  // First: make sure that A, B have the right ring/matrix type
+  const T* A1 = A->coerce_const<T>();
+  const T* B1 = B->coerce_const<T>();
+  if (A1 == 0 or B1 == 0)
+    throw exc::engine_error("mutable matrix/ring type for (mutable) matrix multiplication required to be the same");
+  if (mat.numRows() != A1->numRows() or mat.numColumns() != B1->numColumns())
+    throw exc::engine_error("expected matrix sizes to be compatible with matrix multiplication");
+  MatrixOps::subtractMultipleTo(mat,*A1,*B1);
+}
+
+template <typename T>
 M2_arrayintOrNull MutableMat<T>::rankProfile(bool row_profile) const
 {
-  return mat.rankProfile(row_profile);
+  //  LUComputation<T> C(mat);
+  //  return C.rankProfile(row_profile);
+  return MatrixOps::rankProfile(mat, row_profile);
 }
 
-
-///////////////////////////////////////////////
-#if 0
-#include "dmat.hpp"
-template<typename MT>
-bool solve1(const MT &A, const MT &b, MT& x)
+template<typename T>
+M2_arrayintOrNull MutableMat<T>::LU(MutableMatrix* L,
+                                    MutableMatrix* U) const
 {
-  std::cout << "calling base template for solve1" << std::endl;
-  ERROR("'solve' not implemented for this ring amd matrix type");
-  return false;
+  T* L1 = L->coerce<T>();
+  T* U1 = U->coerce<T>();
+  if (L1 == 0 or U1 == 0)
+    throw exc::engine_error("expected matrices of the same ring/type");
+  return MatrixOps::LU(mat,*L1,*U1);
 }
 
-template<typename CoeffRing>
-bool solve1< DMat<CoeffRing> >(const DMat<CoeffRing> &A, const DMat<CoeffRing> &b, DMat<CoeffRing>& x)
+template<typename T>
+bool MutableMat<T>::eigenvalues(MutableMatrix* eigenvals, 
+                                bool is_symm_or_hermitian) const
 {
-  std::cout << "calling DMat template for solve1" << std::endl;
-  return DMatLU<typename MT::CoeffRing>::solve(&A, &b, &x);
+  if (!is_dense())
+    throw exc::engine_error("'eigenvalues' is only implemented for dense matrices");
+  if (is_symm_or_hermitian)
+    {
+      auto E1 = eigenvals->coerce< DMat<HermitianEigenvalueType> >();
+      if (E1 == 0)
+        throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
+      return MatrixOps::eigenvaluesHermitian(mat,*E1);
+    }
+  else
+    {
+      auto E1 = eigenvals->coerce< DMat<EigenvalueType> >();
+      if (E1 == 0)
+        throw exc::engine_error("eigenvalue matrix is of the wrong type/ring");
+      return MatrixOps::eigenvalues(mat,*E1);
+    }
 }
 
-bool solve1(const DMat<Ring_RRR> &A, const DMat<Ring_RRR> &b, DMat<Ring_RRR> &x);
-//bool solve1(const DMat<M2::ARingZZp> &A, const DMat<M2::ARingZZp> &b, DMat<M2::ARingZZp> &x);
-#endif
-
-template<typename MT>
-bool eigenvalues1(const MT &A, typename MT::EigenvalueMatrixType &eigenvals)
+template<typename T>
+bool MutableMat<T>::eigenvectors(MutableMatrix* eigenvals,
+                                 MutableMatrix* eigenvecs,
+                                 bool is_symm_or_hermitian) const
 {
-  std::cout << "calling base template for eigenvalues1" << std::endl;
-  ERROR("'eigenvalues' not implemented for this ring amd matrix type");
-  return false;
+  if (!is_dense())
+    throw exc::engine_error("'eigenvalues' is only implemented for dense matrices");
+  if (is_symm_or_hermitian)
+    {
+      DMat<HermitianEigenvalueType>* E1 = eigenvals->coerce< DMat<HermitianEigenvalueType> >();
+      DMat<HermitianEigenvectorType>* evecs1 = eigenvecs->coerce< DMat<HermitianEigenvectorType> >();
+      if (E1 == 0 or evecs1 == 0)
+        throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
+      return MatrixOps::eigenvectorsHermitian(mat,*E1,*evecs1);
+    }
+  else
+    {
+      DMat<EigenvalueType>* E1 = eigenvals->coerce< DMat<EigenvalueType> >();
+      DMat<EigenvectorType>* evecs1 = eigenvecs->coerce< DMat<EigenvectorType> >();
+      if (E1 == 0 or evecs1 == 0)
+        throw exc::engine_error("eigenvalue/vector matrix is of the wrong type/ring");
+      return MatrixOps::eigenvectors(mat,*E1,*evecs1);
+    }
 }
 
-bool eigenvalues1(const DMat<Ring_RRR> &A, DMat<Ring_RRR> &eigenvalues);
+template<typename T>
+bool MutableMat<T>::least_squares(const MutableMatrix* B,
+                                  MutableMatrix* X,
+                                  bool assume_full_rank) const
+{
+  const T* B1 = B->coerce_const<T>();
+  T* X1 = X->coerce<T>();
+  if (B1 == 0 or X1 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  bool retval = MatrixOps::leastSquares(mat, *B1, *X1, assume_full_rank);
+  return retval;
+}
+
+template<typename T>
+bool MutableMat<T>::SVD(MutableMatrix* Sigma,
+                        MutableMatrix* U,
+                        MutableMatrix* Vt,
+                        bool use_divide_and_conquer) const
+{
+  auto Sigma2 = Sigma->coerce< DMat<HermitianEigenvalueType> >();
+  T *U2 = U->coerce<T>();
+  T *Vt2 = Vt->coerce<T>();
+  if (Sigma2 == 0 || U2 == 0 || Vt2 == 0)
+    throw exc::engine_error("expected matrices of the same type");
+  int strategy = (use_divide_and_conquer ? 1 : 0);
+  return MatrixOps::SVD(mat, *Sigma2, *U2, *Vt2, strategy);
+}
+
+template<typename Mat>
+engine_RawArrayIntPairOrNull MutableMat<Mat>::
+  LQUPFactorizationInPlace(bool transpose)
+{
+  throw exc::engine_error("LU decomposition currently not implemented for this ring and matrix type");
+}
+
+template<typename T>
+void MutableMat<T>::clean(gmp_RR epsilon)
+{
+  MatrixOps::clean(epsilon, mat);
+}
+
+template<typename T>
+gmp_RRorNull MutableMat<T>::norm() const
+{
+  if (get_ring()->get_precision() == 0)
+    throw exc::engine_error("expected a matrix over RR or CC");
+
+  gmp_RR nm = getmemstructtype(gmp_RR);
+  mpfr_init2(nm, get_ring()->get_precision());
+  mpfr_set_si(nm, 0, GMP_RNDN);
+
+  MatrixOps::increase_norm(nm, mat);
+  return nm;
+}
 
 #endif
 

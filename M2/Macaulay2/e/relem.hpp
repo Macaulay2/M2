@@ -7,14 +7,15 @@
 #include "ring.hpp"
 class Monomial;
 
-class RingElement : public immutable_object
+class RingElement : public EngineObject
 {
   const Ring *R;
   ring_elem val;
-
+protected:
+  virtual unsigned int computeHashValue() const;
+public:
   RingElement(const Ring *R, ring_elem f);
 
-public:
   static RingElement * make_raw(const Ring *R, ring_elem f);
 
   ring_elem    get_value ()             const { return val; }
@@ -94,10 +95,19 @@ public:
   RingElement *numerator() const;
   RingElement *denominator() const;
   RingElement *fraction(const Ring *R, const RingElement *bottom) const;
+
+  // functions for univariate polynomials
+
+  // raises an exception if ring is not a univariate polynomial ring
+  // returns false if the polynomial coefficients cannot be coerced to long ints.
+  // otherwise: returns true, and sets result_coeffs.
+  // (Mainly useful for univariate poly rings over finite fields)
+  bool getSmallIntegerCoefficients(std::vector<long>& result_coeffs) const;
+  const M2_arrayintOrNull getSmallIntegerCoefficients() const;
 };
 
-inline RingElement::RingElement(const Ring *R0, ring_elem f) :
-  immutable_object(0), R(R0), val(f)
+inline RingElement::RingElement(const Ring *R0, ring_elem f) 
+  : R(R0), val(f)
 {
 }
 

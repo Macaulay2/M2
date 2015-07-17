@@ -1,9 +1,16 @@
---		Copyright 2010 by Daniel R. Grayson
+--		Copyright 2010 by Daniel R. Grayson 
 
+use M2;
 use hashtables;
 
 declarations "
-   #include <M2/config.h>
+   #ifdef HAVE_WINSOCK2_H
+    #include <winsock2.h>
+      /* under mingw64 winsock2.h should be included before including windows.h
+	  pthread.h includes windows.h
+	   therefore winsock2.h should be included before pthread */
+    #undef ERROR
+   #endif
    #if USE_MYSQL
      #include <mysql/mysql.h>
    #endif
@@ -19,6 +26,9 @@ declarations "
 header "
    #include <atomic_ops.h>
    #include <mpfr.h>
+   #include <memtailor.h>
+   #include <mathic.h>
+   #include <mathicgb.h>
    #define stringize0(a) #a
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
@@ -32,24 +42,7 @@ header "
    #else
      #define FROBBY_VERSION \"not present\"
    #endif
-   #include <pari/pari.h>
-   // now undefine some macros defined in <pari/paricom.h> :
-   #undef max
-   #undef min
-   const char *get_pari_version() {
-     /*
-       /usr/include/pari/paricfg.h:#define PARI_VERSION_CODE 131843
-       /usr/include/pari/paricfg.h:#define PARI_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-       It's disappointing that the version number of libpari.so is not available at run time.
-     */
-     static char buf[20];
-     sprintf(buf,\"%d.%d.%d\",
-	     0xff & (PARI_VERSION_CODE >> 16),
-	     0xff & (PARI_VERSION_CODE >> 8),
-	     0xff & (PARI_VERSION_CODE >> 0)
-	     );
-     return buf;
-   }
+   #include <pari-c.h>
    #ifdef HAVE_SCSCP
      #include <scscp.h>
      void scscp_dummy() { SCSCP_sc_init(NULL,NULL); /* just to force linking with the library */ }
@@ -69,6 +62,7 @@ header "
        #include <linbox/linbox-config.h>
    #endif
    #ifdef HAVE_FLINT
+       #include <M2/gc-include.h>
        #include <flint/flint.h>
    #endif
    ";
@@ -198,7 +192,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "ntl version" => Ccode(constcharstar,"NTL_VERSION"),
    "frobby version" => Ccode(constcharstar,"FROBBY_VERSION"),
    "pari version" => Ccode(constcharstar,"
-	 #if HAVE_PARI
+	 #ifdef HAVE_PARI
 	   get_pari_version()
 	 #else
 	   \"not present\"
@@ -218,6 +212,9 @@ setupconst("version", Expr(toHashTable(Sequence(
 	   \"not present\"
 	 #endif
 	 "),
+   "memtailor version" => Ccode(constcharstar,"MEMTAILOR_VERSION_STRING"),
+   "mathic version" => Ccode(constcharstar,"MATHIC_VERSION_STRING"),
+   "mathicgb version" => Ccode(constcharstar,"MATHICGB_VERSION_STRING"),
    "factory version" => factoryversion(),
    "readline version" => readlineversion(),
    "mpfr version" => Ccode(constcharstar,"mpfr_version"),

@@ -1,0 +1,316 @@
+diff -ur /mike-raid/home/dan/src/M2/trunk-git/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac 4ti2-1.6.2/configure.ac
+--- /mike-raid/home/dan/src/M2/trunk-git/M2/BUILD/dan/builds.tmp/ubuntu64.production/libraries/4ti2/tmp/4ti2-1.6.2/configure.ac	2014-01-14 20:30:06.000000000 -0500
++++ 4ti2-1.6.2/configure.ac	2014-12-27 15:01:33.000000000 -0500
+@@ -180,12 +180,36 @@
+   CXXFLAGS="${CXXFLAGS} ${GMP_CFLAGS}"
+   save_LIBS="${LIBS}"
+   LIBS="${LIBS} ${GMP_LIBS}"
+-  AC_MSG_CHECKING(whether we can convert between ${int32_t} and mpz_class)
++  AC_MSG_CHECKING(whether we can compile gmpxx.h)
+   AC_TRY_LINK(
+     [  #include <gmpxx.h>
+        ${int32_t_int_64_t_include}
+     ],
+     [  ${int32_t} x = 815;
++       ${int64_t} w = 815;
++    ],
++    [AC_MSG_RESULT(yes)],
++    [AC_MSG_RESULT([no, *** warning!!!])]
++    )
++  AC_MSG_CHECKING(whether we can compile gmpxx.h with stddef.h)
++  AC_TRY_LINK(
++    [  #include <stddef.h>
++       #include <gmpxx.h>
++       ${int32_t_int_64_t_include}
++    ],
++    [  ${int32_t} x = 815;
++       ${int64_t} w = 815;
++    ],
++    [AC_MSG_RESULT(yes)],
++    [AC_MSG_RESULT(no)]
++    )
++  AC_MSG_CHECKING(whether we can convert between ${int32_t} and mpz_class)
++  AC_TRY_LINK(
++    [  #include <stddef.h>
++       #include <gmpxx.h>
++       ${int32_t_int_64_t_include}
++    ],
++    [  ${int32_t} x = 815;
+        mpz_class y(x);
+     ],
+     [ HAVE_MPZ_INT32_CONVERSION=yes;
+@@ -194,7 +218,8 @@
+   AC_MSG_RESULT(${HAVE_MPZ_INT32_CONVERSION})
+   AC_MSG_CHECKING(whether we can convert between ${int64_t} and mpz_class)
+   AC_TRY_LINK(
+-    [  #include <gmpxx.h>
++    [  #include <stddef.h>
++       #include <gmpxx.h>
+        ${int32_t_int_64_t_include}
+     ],
+     [  ${int64_t} x = 815;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/config.guess 4ti2-1.6.2/config.guess
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/config.guess	2013-06-26 14:13:17.000000000 -0500
++++ 4ti2-1.6.2/config.guess	2014-12-14 14:11:37.000000000 -0600
+@@ -2,7 +2,7 @@
+ # Attempt to guess a canonical system name.
+ #   Copyright 1992-2013 Free Software Foundation, Inc.
+ 
+-timestamp='2013-06-10'
++timestamp='2013-11-29'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -1260,16 +1260,26 @@
+ 	if test "$UNAME_PROCESSOR" = unknown ; then
+ 	    UNAME_PROCESSOR=powerpc
+ 	fi
+-	if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
+-	    if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		(CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
+-		grep IS_64BIT_ARCH >/dev/null
+-	    then
+-		case $UNAME_PROCESSOR in
+-		    i386) UNAME_PROCESSOR=x86_64 ;;
+-		    powerpc) UNAME_PROCESSOR=powerpc64 ;;
+-		esac
++	if test `echo "$UNAME_RELEASE" | sed -e 's/\..*//'` -le 10 ; then
++	    if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
++		if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
++		    (CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
++		    grep IS_64BIT_ARCH >/dev/null
++		then
++		    case $UNAME_PROCESSOR in
++			i386) UNAME_PROCESSOR=x86_64 ;;
++			powerpc) UNAME_PROCESSOR=powerpc64 ;;
++		    esac
++		fi
+ 	    fi
++	elif test "$UNAME_PROCESSOR" = i386 ; then
++	    # Avoid executing cc on OS X 10.9, as it ships with a stub
++	    # that puts up a graphical alert prompting to install
++	    # developer tools.  Any system running Mac OS X 10.7 or
++	    # later (Darwin 11 and later) is required to have a 64-bit
++	    # processor. This is not true of the ARM version of Darwin
++	    # that Apple uses in portable devices.
++	    UNAME_PROCESSOR=x86_64
+ 	fi
+ 	echo ${UNAME_PROCESSOR}-apple-darwin${UNAME_RELEASE}
+ 	exit ;;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/config.sub 4ti2-1.6.2/config.sub
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/config.sub	2013-06-26 14:13:17.000000000 -0500
++++ 4ti2-1.6.2/config.sub	2014-12-14 14:11:37.000000000 -0600
+@@ -2,7 +2,7 @@
+ # Configuration validation subroutine script.
+ #   Copyright 1992-2013 Free Software Foundation, Inc.
+ 
+-timestamp='2013-04-24'
++timestamp='2013-10-01'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -257,7 +257,7 @@
+ 	| avr | avr32 \
+ 	| be32 | be64 \
+ 	| bfin \
+-	| c4x | clipper \
++	| c4x | c8051 | clipper \
+ 	| d10v | d30v | dlx | dsp16xx \
+ 	| epiphany \
+ 	| fido | fr30 | frv \
+@@ -265,6 +265,7 @@
+ 	| hexagon \
+ 	| i370 | i860 | i960 | ia64 \
+ 	| ip2k | iq2000 \
++	| k1om \
+ 	| le32 | le64 \
+ 	| lm32 \
+ 	| m32c | m32r | m32rle | m68000 | m68k | m88k \
+@@ -324,7 +325,7 @@
+ 	c6x)
+ 		basic_machine=tic6x-unknown
+ 		;;
+-	m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | picochip)
++	m6811 | m68hc11 | m6812 | m68hc12 | m68hcs12x | nvptx | picochip)
+ 		basic_machine=$basic_machine-unknown
+ 		os=-none
+ 		;;
+@@ -372,7 +373,7 @@
+ 	| be32-* | be64-* \
+ 	| bfin-* | bs2000-* \
+ 	| c[123]* | c30-* | [cjt]90-* | c4x-* \
+-	| clipper-* | craynv-* | cydra-* \
++	| c8051-* | clipper-* | craynv-* | cydra-* \
+ 	| d10v-* | d30v-* | dlx-* \
+ 	| elxsi-* \
+ 	| f30[01]-* | f700-* | fido-* | fr30-* | frv-* | fx80-* \
+@@ -381,6 +382,7 @@
+ 	| hexagon-* \
+ 	| i*86-* | i860-* | i960-* | ia64-* \
+ 	| ip2k-* | iq2000-* \
++	| k1om-* \
+ 	| le32-* | le64-* \
+ 	| lm32-* \
+ 	| m32c-* | m32r-* | m32rle-* \
+@@ -794,7 +796,7 @@
+ 		os=-mingw64
+ 		;;
+ 	mingw32)
+-		basic_machine=i386-pc
++		basic_machine=i686-pc
+ 		os=-mingw32
+ 		;;
+ 	mingw32ce)
+@@ -830,7 +832,7 @@
+ 		basic_machine=`echo $basic_machine | sed -e 's/ms1-/mt-/'`
+ 		;;
+ 	msys)
+-		basic_machine=i386-pc
++		basic_machine=i686-pc
+ 		os=-msys
+ 		;;
+ 	mvs)
+@@ -1546,6 +1548,9 @@
+ 	c4x-* | tic4x-*)
+ 		os=-coff
+ 		;;
++	c8051-*)
++		os=-elf
++		;;
+ 	hexagon-*)
+ 		os=-elf
+ 		;;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/glpk-check.m4 4ti2-1.6.2/m4/glpk-check.m4
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/glpk-check.m4	2014-01-14 19:30:57.000000000 -0600
++++ 4ti2-1.6.2/m4/glpk-check.m4	2014-12-14 14:11:19.000000000 -0600
+@@ -56,9 +56,9 @@
+ 		CXXFLAGS="${CXXFLAGS} ${GLPK_CFLAGS}"
+ 		LIBS="${LIBS} ${GLPK_LIBS_NOLIBTOOL}"
+ 
+-		AC_LINK_IFELSE(AC_LANG_PROGRAM([extern "C" {
++		AC_LINK_IFELSE([AC_LANG_PROGRAM([extern "C" {
+ #include <glpk.h>
+-}], [glp_prob *lpx = glp_create_prob(); glp_delete_prob(lpx); ]),
++}], [glp_prob *lpx = glp_create_prob(); glp_delete_prob(lpx); ])],
+ 		[
+ 				AC_MSG_RESULT(found)
+ 				AC_SUBST(GLPK_CFLAGS)
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/gmp-check.m4 4ti2-1.6.2/m4/gmp-check.m4
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/m4/gmp-check.m4	2011-12-15 11:10:12.000000000 -0600
++++ 4ti2-1.6.2/m4/gmp-check.m4	2014-12-14 14:11:19.000000000 -0600
+@@ -52,11 +52,13 @@
+ 		LIBS="${LIBS} ${GMP_LIBS}"
+ 
+ 		AC_TRY_LINK(
+-		[#include <gmp.h>],
++		[#include <stddef.h>
++		 #include <gmp.h>],
+ 		[mpz_t a; mpz_init (a);],
+ 		[
+         		AC_TRY_RUN(
+- 			[#include <gmp.h>
++ 			[#include <stddef.h>
++		 	 #include <gmp.h>
+ 			 int main () {  if (__GNU_MP_VERSION < 3) return -1; else return 0; }
+ 		  	],[
+ 				AC_MSG_RESULT(found)
+@@ -66,7 +68,8 @@
+ 				# See if we are running GMP 4.0
+ 	   			AC_MSG_CHECKING(whether GMP is 4.0 or greater)
+ 		   		AC_TRY_RUN(
+-		   		[#include <gmp.h>
++		   		[#include <stddef.h>
++		 		 #include <gmp.h>
+ 	    			int main () { if (__GNU_MP_VERSION < 4) return -1; else return 0; }
+ 	   			],[
+ 					gmp_found="yes"
+@@ -74,7 +77,8 @@
+ 					# See if GMP was compiled with --enable-cxx
+ 					AC_MSG_CHECKING(whether GMP was compiled with --enable-cxx)
+ 					AC_TRY_RUN(
+-					[#include <gmpxx.h>
++					[#include <stddef.h>
++		 			 #include <gmpxx.h>
+ 					int main () { mpz_class a(2),b(3),c(5); if ( a+b == c ) return 0; else return -1; }
+ 					],[
+ 						AC_MSG_RESULT(yes)
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/4ti2/4ti2.h 4ti2-1.6.2/src/4ti2/4ti2.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/4ti2/4ti2.h	2013-07-28 19:11:58.000000000 -0500
++++ 4ti2-1.6.2/src/4ti2/4ti2.h	2014-12-14 14:11:19.000000000 -0600
+@@ -28,6 +28,7 @@
+ #include "4ti2/4ti2_config.h"
+ 
+ #ifdef _4ti2_HAVE_GMP
++#include <stddef.h>
+ #include <gmp.h>
+ #endif
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/4ti2/4ti2xx.h 4ti2-1.6.2/src/4ti2/4ti2xx.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/4ti2/4ti2xx.h	2013-07-28 19:14:08.000000000 -0500
++++ 4ti2-1.6.2/src/4ti2/4ti2xx.h	2014-12-20 10:24:22.000000000 -0600
+@@ -28,7 +28,15 @@
+ #include "4ti2/4ti2_config.h"
+ 
+ #ifdef _4ti2_HAVE_GMP
++#include <stddef.h>
+ #include <gmp.h>
++
++#ifdef LLONG_MAX
++#if LLONG_MAX == LONG_MAX
++/* #define MPIRXX_HAVE_LLONG 1 */
++#endif
++#endif
++
+ #include <gmpxx.h>
+ #endif
+ 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/groebner/DataType.h 4ti2-1.6.2/src/groebner/DataType.h
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/src/groebner/DataType.h	2013-07-28 19:01:01.000000000 -0500
++++ 4ti2-1.6.2/src/groebner/DataType.h	2014-12-14 14:11:19.000000000 -0600
+@@ -28,6 +28,7 @@
+ 
+ #ifdef _4ti2_GMP_
+ 
++#include <stddef.h>
+ #include <gmp.h>
+ #include <gmpxx.h>
+ typedef mpz_class IntegerType;
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am 4ti2-1.6.2/test/qsolve/api/Makefile.am
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/Makefile.am	2013-07-28 19:27:28.000000000 -0500
++++ 4ti2-1.6.2/test/qsolve/api/Makefile.am	2014-12-14 14:11:19.000000000 -0600
+@@ -1,5 +1,5 @@
+ check_PROGRAMS = 
+-check_PROGRAMS += qsolve_main test_input_conversion_64_to_gmp test_input_conversion_gmp_to_64
++check_PROGRAMS += qsolve_main
+ 
+ # Allow accessing groebner's header files as "groebner/HEADER.h"
+ AM_CXXFLAGS = -I$(top_srcdir)/src/
+@@ -12,16 +12,9 @@
+ qsolve_main_SOURCES = qsolve_main.cpp
+ qsolve_main_LDADD = $(top_builddir)/src/groebner/lib4ti2int64.la $(top_builddir)/src/4ti2/lib4ti2common.la 
+ 
+-test_input_conversion_64_to_gmp_SOURCES = test_input_conversion_64.cpp
+-test_input_conversion_64_to_gmp_LDADD = $(top_builddir)/src/groebner/lib4ti2gmp.la $(top_builddir)/src/4ti2/lib4ti2common.la
+-
+-test_input_conversion_gmp_to_64_SOURCES = test_input_conversion_gmp.cpp
+-test_input_conversion_gmp_to_64_LDADD = $(top_builddir)/src/groebner/lib4ti2int64.la $(top_builddir)/src/4ti2/lib4ti2common.la
+-
+ TESTS = 
+ TESTS += qsolve_main 
+-#test_input_conversion_64_to_gmp.sh test_input_conversion_gmp_to_64.sh
+ 
+-EXTRA_DIST = test_input_conversion_64_to_gmp.sh test_input_conversion_gmp_to_64.sh
++EXTRA_DIST = test_input_conversion_gmp_to_64.sh
+ 
+ $(TESTS): $(top_builddir)/src/groebner/lib4ti2int64.la 
+diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp 4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp
+--- /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.production/libraries/4ti2/tmp/4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp	2009-03-16 16:00:17.000000000 -0500
++++ 4ti2-1.6.2/test/qsolve/api/test_input_conversion_gmp.cpp	2014-12-14 14:11:19.000000000 -0600
+@@ -27,6 +27,7 @@
+ 
+ #include "4ti2/4ti2.h"
+ #include "4ti2/4ti2xx.h"
++#include <stddef.h>
+ #include <gmpxx.h>
+ 
+ using namespace std;

@@ -628,10 +628,10 @@ res2_pair *res2_comp::new_res2_pair(res2_pair *first,
   p->degree = (short unsigned int)(M->primary_degree(basemon) + first->degree
                                    - M->primary_degree(first->syz->monom) - 1);
   p->compare_num = 0;           // Will be set after pairs are done
-  p->syz = R->new_term(K->from_int(1), basemon, first);
+  p->syz = R->new_term(K->from_long(1), basemon, first);
 #if 0
 //   if (second != NULL)
-//     p->syz->next = R->new_term(K->from_int(-1), basemon, second);
+//     p->syz->next = R->new_term(K->from_long(-1), basemon, second);
 #endif
   p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;
@@ -650,7 +650,7 @@ res2_pair *res2_comp::new_base_res2_pair(int i)
   p->degree = (short unsigned int)(generator_matrix->rows()->primary_degree(i) - lodegree);
   p->compare_num = i;
   int *m = M->make_one();
-  p->syz = R->new_term(K->from_int(1), m, p); // circular link...
+  p->syz = R->new_term(K->from_long(1), m, p); // circular link...
   M->remove(m);
   p->mi = new MonomialIdeal(P, mi_stash);
   p->pivot_term = NULL;

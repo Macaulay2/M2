@@ -10,8 +10,8 @@ LD_LIBRARY_PATH (for unix) and DYLD_LIBRARY_PATH (for Mac OS), and there are
 two shell scripts, both called M2, each of which adds one directory to the
 path.  The one at the top level of the build directory adds
 libraries/final/lib, where the dynamic libraries are deposited after being
-built, and the one in StagingArea/$ARCH/bin/ adds the directory
-StagingArea/$ARCH/lib/, where they are eventually copied.
+built, and the one in usr-dist/$ARCH/bin/ adds the directory
+usr-dist/$ARCH/lib/, where they are eventually copied.
 
 To add a new program:
 

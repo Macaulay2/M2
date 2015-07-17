@@ -144,7 +144,8 @@ document {
 	  },
      PARA {
 	  "A backup files is made carefully, and if a mangled initialization file is detected, it will not be modified.
-	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", "."
+	  The lines added are bracketed by comment lines containing the phrases ", TT "Macaulay 2 start", " and ", TT "Macaulay 2 end", ".
+	  The function ", TO "setup", " does all this and more."
 	  },
      SeeAlso => {
 	  setup,

@@ -15,84 +15,36 @@
 
 PRODUCTION=yes
 DEBUG=no
+unexport DEBUG
 PROFILE=no
-M64=yes
-FIX_UNWIND=no
+unexport PROFILE
 
-# CONFIGOPTIONS += --disable-strip
-CONFIGOPTIONS += --disable-ntl-wizard
+# see the INSTALL file:
+export MACOSX_DEPLOYMENT_TARGET=10.9
 
-
-# We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
+ifeq ($(CLANG),yes)
+# The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-# CC=gcc-4.2
-# CXX=g++-4.2
-
-# now I've installed gcc 4.6.2
-# but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:
-# CC=/usr/local/bin/gcc
-# CXX=/usr/local/bin/g++
-
-ifeq ($(MATHICGB),yes)
-CONFIGOPTIONS += --enable-mathicgb
-endif
-
-ifeq ($(FFPACK),yes)
-CONFIGOPTIONS += --enable-fflas-ffpack
-endif
-
-ifeq ($(LINBOX),yes)
-CONFIGOPTIONS += --enable-linbox
-endif
-
-ifeq ($(FLINT),yes)
-CONFIGOPTIONS += --enable-flint
-endif
-
-ifeq ($(GIVARO),yes)
-CONFIGOPTIONS += --enable-givaro
-endif
-
-# The standard gcc under Mac OS X is buggy, so we typically compile the latest one. 
-# We tried linking statically with its libraries, but it makes c++ exceptions not work:
-# CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
-
-unexport DEBUG
-unexport PROFILE
-
-# use the latest version from homebrew, not clang:
-CC  := /usr/local/bin/gcc-4.9
-CXX := /usr/local/bin/g++-4.9
-# FC  := /usr/local/bin/gfortran-4.8
-
-# CC := clang
-# CXX := clang++
-
-BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
-
-ifeq ($(M64),yes)
-DIRECTORY := mac64
-CC  += -m64
-CXX += -m64
-# export MPIR_CONFIGOPTIONS=ABI=64
+DIRECTORY := $(DIRECTORY)-clang
+CC  := /usr/bin/gcc
+CXX := /usr/bin/g++
+FC  := false
+CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
-DIRECTORY := mac32
-CC  += -m32
-CXX += -m32
-# export MPIR_CONFIGOPTIONS=ABI=32
+CC  := gcc-4.9 -m64
+CXX := g++-4.9 -m64
+FC  := gfortran-4.9
+CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
+# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
+DIRECTORY := mac64
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-# the warning messages about this from clang have gotten noisy:
-# V = -mmacosx-version-min=10.6
-# CC  += $V
-# CXX += $V
-
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
-
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all
 
 ifeq ($(PRODUCTION),yes)
@@ -123,5 +75,5 @@ include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 
 # Local Variables:
-# compile-command: "time make -w -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
 # End:

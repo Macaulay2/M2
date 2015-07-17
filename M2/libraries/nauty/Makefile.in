@@ -1,7 +1,8 @@
 # URL = http://cs.anu.edu.au/~bdm/nauty
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
-VERSION = 25r2
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+VERSION = 25r9
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+PRECONFIGURE = autoreconf -i
 TARFILE = nauty$(VERSION).tar.gz
 TARDIR = nauty$(VERSION)
 PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
@@ -9,6 +10,9 @@ PROGRAMS = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg \
 	   multig newedgeg pickg planarg shortg showg
 CHECKERS = dreadtest dreadtestS dreadtestS1 dreadtest4K dreadtest1 dreadtestW1 dreadtestL1 dreadtestL
 CHECKCMD = rm -f $(CHECKERS) && $(MAKE) BIGTEST=0 checks
+STRIPFILES = NRswitchg addedgeg amtog biplabg catg complg copyg countg deledgeg directg	\
+	dreadnaut dretog genbg geng genrang gentourng labelg linegraphg listg multig	\
+	newedgeg pickg planarg ranlabg shortg showg subdivideg watercluster2
 LICENSEFILES = nauty.h
 INSTALLCMD = true
 include ../Makefile.library

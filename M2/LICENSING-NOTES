@@ -12,6 +12,9 @@ libraries linked with M2:
 -lmpirxx -lmpir	mpir			version 2.4.0 : LGPL 2.1 or later
 	 	lapack			copyright by U Tennessee under a liberal license
 		blas			no license file provided, probably public domain
+-lmemtailor	memtailor		the Modified BSD License
+-lmathic	mathic			LGPL 2 or later
+-lmathicgb	mathicgb		GPL 2 or later
 
 code by other authors compiled as part of M2:
 

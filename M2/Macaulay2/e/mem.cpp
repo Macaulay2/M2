@@ -6,10 +6,6 @@
 static int allocated_amount = 0;
 static int deleted_amount = 0;
 
-
-
-const int trace_bad_deletes = 0;
-
 int slab::n_slabs = 0;
 
 //Array of stashes of 2^n powers.

@@ -3,20 +3,20 @@
 #include "engine.h"
 #include "relem.hpp"
 #include "ring.hpp"
-#include "QQ.hpp"
 #include "GF.hpp"
 
 #include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 #include "mat.hpp"
 #include "fractionfreeLU.hpp"
 #include "LLL.hpp"
-#include "dmat-LU.hpp"
 #include "exceptions.hpp"
 
 #include "matrix.hpp"
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "mutablemat.hpp"
+
+#include "finalize.hpp"
 
 MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
                                                  int n,
@@ -28,7 +28,7 @@ MutableMatrix * IM2_MutableMatrix_identity(const Ring *R,
       return 0;
     }
   size_t nrows = static_cast<size_t>(n);
-  return MutableMatrix::identity(R, nrows, is_dense);
+  return internMutableMatrix(MutableMatrix::identity(R, nrows, is_dense));
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
@@ -40,12 +40,13 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_make(const Ring *R,
   M2_ASSERT(ncols >= 0);
   size_t nr = static_cast<size_t>(nrows);
   size_t nc = static_cast<size_t>(ncols);
-  return MutableMatrix::zero_matrix(R,nr,nc,is_dense);
+  //  return R->makeMutableMatrix(nr,nc,is_dense);
+  return internMutableMatrix(MutableMatrix::zero_matrix(R,nr,nc,is_dense));
 }
 
 MutableMatrix * IM2_MutableMatrix_from_matrix(const Matrix *M, M2_bool is_dense)
 {
-  return MutableMatrix::from_matrix(M, is_dense);
+  return internMutableMatrix(MutableMatrix::from_matrix(M, is_dense));
 }
 
 const Matrix * IM2_MutableMatrix_to_matrix(const MutableMatrix *M)
@@ -60,9 +61,33 @@ M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M)
   return o.to_string();
 }
 
-unsigned long IM2_MutableMatrix_hash(const MutableMatrix *M)
+
+unsigned int rawMutableMatrixHash(const MutableMatrix *M)
 {
-  return M->get_hash_value();
+  return M->hash();
+}
+
+MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S, 
+                                                     const MutableMatrix *f)
+{
+  // Given a natural map i : R --> S
+  // f is a matrix over R.
+  // returns a matrix over S.
+  auto result = MutableMatrix::zero_matrix(S, f->n_rows(), f->n_cols(), f->is_dense());
+  return result;
+}
+
+MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, 
+                                                  const Ring* R, 
+                                                  const MutableMatrix *f)
+{
+  // Given a natural map i : R --> S
+  // f is a matrix over S.
+  // returns a matrix over R.
+
+  auto result = MutableMatrix::zero_matrix(R, f->n_rows(), f->n_cols(), f->is_dense());
+  *success_return = 1;
+  return result;
 }
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)
@@ -379,7 +404,7 @@ M2_bool IM2_MutableMatrix_row_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then row(start + i) --> row(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  int nrows = M->n_rows();
+  size_t nrows = M->n_rows();
   if (start < 0 || start + perm->len > nrows)
     {
       ERROR("row indices out of range");
@@ -403,7 +428,7 @@ M2_bool IM2_MutableMatrix_column_permute(MutableMatrix *M,
   /* if perm = [p0 .. pr], then column(start + i) --> column(start + pi), and
      all other rows are unchanged.  p0 .. pr should be a permutation of 0..r */
 {
-  int ncols = M->n_cols();
+  size_t ncols = M->n_cols();
   if (start < 0 || start + perm->len > ncols)
     {
       ERROR("column indices out of range");
@@ -441,6 +466,17 @@ M2_bool IM2_MutableMatrix_is_equal(const MutableMatrix *M,
   return M->is_equal(N);
 }
 
+MutableMatrix /* or null */ * rawMutableMatrixTranspose(MutableMatrix* M)
+{
+     try {
+          return internMutableMatrix(M->transpose());
+     }
+     catch (exc::engine_error e) {
+          ERROR(e.what());
+          return NULL;
+     }
+}
+
 M2_bool rawMutableMatrixIsDense(const MutableMatrix *M)
 {
   return M->is_dense();
@@ -448,7 +484,7 @@ M2_bool rawMutableMatrixIsDense(const MutableMatrix *M)
 
 MutableMatrix * IM2_MutableMatrix_copy(MutableMatrix *M, M2_bool prefer_dense)
 {
-  return M->copy(prefer_dense);
+  return internMutableMatrix(M->copy(prefer_dense));
 }
 
 M2_bool IM2_MutableMatrix_set_values(MutableMatrix *M,
@@ -499,8 +535,10 @@ void perform_reduction(MutableMatrix *M,
 
 void reduce_pivots(MutableMatrix *M)
 {
-  int nr = M->n_rows()-1;
-  int nc = M->n_cols()-1;
+#warning "reinstate reduce_pivots after iterator is fixed"
+#if 0
+  int nr = static_cast<int>(M->n_rows())-1;
+  int nc = static_cast<int>(M->n_cols())-1;
   if (nr < 0 || nc < 0) return;
   const Ring *K = M->get_ring();
   ring_elem one = K->one();
@@ -508,6 +546,8 @@ void reduce_pivots(MutableMatrix *M)
 
   // After using the pivot element, it is moved to [nrows-1,ncols-1]
   // and nrows and ncols are decremented.
+
+
 
   MutableMatrix::iterator *p = M->begin();
   for (int i=0; i<=nc; i++)
@@ -524,7 +564,7 @@ void reduce_pivots(MutableMatrix *M)
             pivot_type = -1;
           if (pivot_type != 0)
             {
-              perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+              perform_reduction(M, static_cast<int>(p->row()), i, nr--, nc--, pivot_type);
               if (nr < 0 || nc < 0) return;
               // restart loop with the (new) column i
               i = -1;
@@ -548,13 +588,14 @@ void reduce_pivots(MutableMatrix *M)
           else if (K->is_equal(minus_one, coef))
             pivot_type = -1;
 
-          perform_reduction(M, p->row(), i, nr--, nc--, pivot_type);
+          perform_reduction(M, static_cast<int>(p->row()), i, nr--, nc--, pivot_type);
           if (nr < 0 || nc < 0) return;
           // restart loop with the (new) column i
           i = -1;
           break;
         }
     }
+#endif
 }
 
 ////////////////////////////
@@ -650,7 +691,7 @@ void reduce_pivots(MutableMatrix *M)
 M2_bool IM2_MutableMatrix_reduce_by_pivots(MutableMatrix *M)
 /* Using row and column operations, use unit pivots to reduce the matrix */
 {
-  reduce_pivots(M);
+  M->reduce_by_pivots();
   return true;
 }
 
@@ -658,21 +699,13 @@ MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix(const MutableMatrix *M
                                                   M2_arrayint rows,
                                                   M2_arrayint cols)
 {
-  return M->submatrix(rows,cols);
-}
-
-bool IM2_MutableMatrix_set_submatrix(MutableMatrix *M,
-                                     M2_arrayint rows,
-                                     M2_arrayint cols,
-                                     const MutableMatrix *N)
-{
-  return M->set_submatrix(rows,cols,N);
+  return internMutableMatrix(M->submatrix(rows,cols));
 }
 
 MutableMatrix /* or null */ * IM2_MutableMatrix_submatrix1(const MutableMatrix *M,
                                                    M2_arrayint cols)
 {
-  return M->submatrix(cols);
+  return internMutableMatrix(M->submatrix(cols));
 }
 
 /*******************************
@@ -685,6 +718,7 @@ M2_arrayintOrNull IM2_FF_LU(MutableMatrix *M)
 }
 
 #include <fplll-interface.h>
+#include "ntl-interface.hpp"
 
 M2_bool rawLLL(MutableMatrix *M,
                 MutableMatrix /* or null */ *U,
@@ -762,72 +796,9 @@ engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A)
 #endif
 }
 
-///////////////////////////////////////////////
-// with Anton:
-//   add in Jon's code from LUdecomp.c (at least for mpf)
-//   RR_53, CC_53: should use doubles as their rep
-//   RR_n, CC_n, n > 53 should use either mpf or mpfr (which?)
-// warning: avoid default precision if possible
-//   1. make ring types (use with aring...) for these 4 rings
-//   2. make DMat routines for these functions
-//   
-
-M2_arrayintOrNull rawLU1(const MutableMatrix *A,
-                         MutableMatrix *LU)
-{
-  // A = input, which is r x c.
-  // factors A as A = PLU
-  // P = r x r perm matrix
-  // L = r x r unit lower triangular (ones on diagonal)
-  // U = r x c upper triangular matrix
-
-  // LU are placed in the same LU matrix
-  //TODO: MES write this.
-  //  return A->LU(LU);
-  ERROR("not implemented yet");
-  return NULL;
-}
-
-MutableMatrix* rawLUSolve(MutableMatrix* resultX, 
-                          const MutableMatrix* LU, 
-                          const M2_arrayint row_permutation, 
-                          const MutableMatrix* B)
-{
-  //TODO: MES write this.
-  //  resultX->LUSolve(LU,row_permutation,B);
-  return resultX;
-}
-
-void rawLUSplit(const MutableMatrix *LU, 
-                MutableMatrix *L,
-                MutableMatrix *U)
-{
-  //TODO: MES write this.
-  // make sure that L, U and LU have the same type?
-  // resize L, U if necessary.
-  // loop through LU, and set the corresponding entries of L and U
-}
 ////////////////////////////////////////////////
 
-
-
-
-M2_bool rawNullspaceU(MutableMatrix *U,
-                      MutableMatrix *x)
-  /* U should be a matrix in LU 'U' format.
-     x is set to the matrix whose columns form a basis of Ux=0,
-     which is the same as Ax=0. if A = PLU is the LU-decomp of A.
-  */
-{
-  const Ring *R = U->get_ring();
-  if (R != x->get_ring())
-    {
-      ERROR("expected matrices with same base ring");
-      return false;
-    }
-  return U->nullspaceU(x);
-}
-
+#if 0
 M2_bool rawSolve(MutableMatrix *A,
                  MutableMatrix *b,
                  MutableMatrix *x)
@@ -838,26 +809,38 @@ M2_bool rawSolve(MutableMatrix *A,
   /* Otherwise: give error:
      OR: make mutable matrices of the correct size, call the correct routine
      and afterwords, copy to x. */
-
-  const Ring *R = A->get_ring();
-  if (R != b->get_ring() || R != x->get_ring())
-    {
-      ERROR("expected matrices with same base ring");
-      return false;
-    }
-  if (A->n_rows() != b->n_rows())
-    {
-      ERROR("expected matrices with the same number of rows");
-      return false;
-    }
-  return A->solve(b,x);
+  try {
+    const Ring *R = A->get_ring();
+    if (R != b->get_ring() || R != x->get_ring())
+      {
+        ERROR("expected matrices with same base ring");
+        return false;
+      }
+    if (A->n_rows() != b->n_rows())
+      {
+        ERROR("expected matrices with the same number of rows");
+        return false;
+      }
+    return A->solve(b,x);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
+#endif
 
 M2_bool rawEigenvalues(MutableMatrix *A,
                        MutableMatrix *eigenvalues,
                        M2_bool is_symm_or_hermitian)
 {
-  return A->eigenvalues(eigenvalues,is_symm_or_hermitian);
+  try {
+    return A->eigenvalues(eigenvalues,is_symm_or_hermitian);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 M2_bool rawEigenvectors(MutableMatrix *A,
@@ -865,7 +848,13 @@ M2_bool rawEigenvectors(MutableMatrix *A,
                         MutableMatrix *eigenvectors,
                         M2_bool is_symm_or_hermitian)
 {
-  return A->eigenvectors(eigenvalues, eigenvectors, is_symm_or_hermitian);
+  try {
+    return A->eigenvectors(eigenvalues, eigenvectors, is_symm_or_hermitian);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 M2_bool rawSVD(MutableMatrix *A,
@@ -874,7 +863,13 @@ M2_bool rawSVD(MutableMatrix *A,
                MutableMatrix *VT,
                M2_bool use_divide_and_conquer)
 {
-  return A->SVD(Sigma,U,VT,use_divide_and_conquer);
+  try {
+    return A->SVD(Sigma,U,VT,use_divide_and_conquer);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 M2_bool rawLeastSquares(MutableMatrix *A,
@@ -884,18 +879,24 @@ M2_bool rawLeastSquares(MutableMatrix *A,
 /* Case 1: A is a dense matrix over RR.  Then so are b,x.
    Case 2: A is a dense matrix over CC.  Then so are b,x. */
 {
-  const Ring *R = A->get_ring();
-  if (R != b->get_ring() || R != x->get_ring())
-    {
-      ERROR("expected matrices with same base ring");
-      return false;
-    }
-  if (A->n_rows() != b->n_rows())
-    {
-      ERROR("expected matrices with the same number of rows");
-      return false;
-    }
-  return A->least_squares(b,x,assume_full_rank);
+  try {
+    const Ring *R = A->get_ring();
+    if (R != b->get_ring() || R != x->get_ring())
+      {
+        ERROR("expected matrices with same base ring");
+        return false;
+      }
+    if (A->n_rows() != b->n_rows())
+      {
+        ERROR("expected matrices with the same number of rows");
+        return false;
+      }
+    return A->least_squares(b,x,assume_full_rank);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
 }
 
 ////////////////////////////////////////
@@ -929,8 +930,8 @@ MutableMatrix /* or null */ *rawMutableMatrixClean(gmp_RR epsilon, MutableMatrix
       ERROR("expected ring over an RR or CC");
       return 0;
     }
-  //return M->clean(epsilon);
-  return NULL;
+  M->clean(epsilon);
+  return M;
 }
 
 static gmp_RRorNull get_norm_start(gmp_RR p, const Ring *R)
@@ -967,6 +968,7 @@ gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f)
 
 gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 {
+  return M->norm();
 #if 0
   gmp_RR nm = get_norm_start(p, M->get_ring());
   iterator *i = M->begin();
@@ -990,72 +992,159 @@ gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M)
 // Fast linear algebra routines //
 //////////////////////////////////
 
-// how many of each need to be written:
-// DONE FastLinearAlgebra
-// DONE interface.dd, actually done.  But should rename these functions
-//   rawFFPackRank
-//   rawFFPackDeterminant
-//   rawFFPackInvert
-//   rawFFPackRankProfile
-//   rawFFPackNullSpace
-//   rawFFPackSolve
-//   rawFFPackAddMultipleTo
-// DONE engine.h
-// DONE x-mutablemat.cpp
-// DONE MutableMatrix (not addMultipleTo)
-// MutableMat<X> -- has actual code to call the routines in DMat, SMat
-// DMat<X>  -- one for each X, and one that is the "default" (default: DONE)
-// SMat<X> -- one for each X and one that is the "default" (default: DONE)
-
-size_t rawLinAlgRank(MutableMatrix* M)
+long rawLinAlgRank(MutableMatrix* M)
 {
-  return M->rank();
+  try {
+    return M->rank();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return -1;
+  }
 }
 
 const RingElement* rawLinAlgDeterminant(MutableMatrix* A)
 {
-  return A->determinant();
+  try {
+    return A->determinant();
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
-MutableMatrix* rawLinAlgInvert(MutableMatrix* A)
+MutableMatrix* rawLinAlgInverse(MutableMatrix* A)
 {
-  return A->invert();
+  try {
+    return internMutableMatrix(A->invert());
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+MutableMatrix* rawLinAlgRREF(MutableMatrix* A)
+{
+  try {
+    return internMutableMatrix(A->rowReducedEchelonForm());
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile)
 {
-  return A->rankProfile(row_profile);
+  try {
+    return A->rankProfile(row_profile);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
-MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side)
+MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A)
 {
-  return A->nullSpace(right_side);
+  try {
+    return internMutableMatrix(A->nullSpace());
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
-                         const MutableMatrix* B,
-                         M2_bool right_side)
+                              const MutableMatrix* B,
+                              int* success)
 {
-  std::cerr << "calling rawLinAlgSolve" << std::endl;
-  //TODO: return type doesn't distinguish between error, and no solution.
-  std::pair<bool, MutableMatrix*> result = A->solveLinear(B, right_side);
-  if (result.first)
-    return result.second;
-  ERROR("got a zero -- why??");
-  return 0;
+  try {
+    *success = 1;
+    MutableMatrix* result = A->solveLinear(B);
+    if (result != NULL)
+      {
+        return internMutableMatrix(result);
+      }
+    else
+      {
+        return NULL;
+      }
+  }
+  catch (exc::engine_error e) {
+    *success = 0;
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
-MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
-                                                    const MutableMatrix* A,
-                                                    const MutableMatrix* B,
-                                                    M2_bool transposeA,
-                                                    M2_bool transposeB,
-                                                    const RingElement* a,
-                                                    const RingElement* b)
+MutableMatrix* rawLinAlgSolveInvertible(const MutableMatrix* A, 
+                                        const MutableMatrix* B,
+                                        int* success)
 {
-    std::cerr << "x-mutableMat : rawLinAlgAddMultipleTo" << std::endl;
-    C->addMultipleTo(A,B,transposeA,transposeB,a,b);
-    return C;
+  try {
+    *success = 1;
+    MutableMatrix* result = A->solveInvertible(B);
+    if (result != NULL)
+      {
+        return internMutableMatrix(result);
+      }
+    else
+      {
+        return NULL;
+      }
+  }
+  catch (exc::engine_error e) {
+    *success = 0;
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+M2_bool rawLinAlgAddMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+  try {
+    C->addMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+M2_bool rawLinAlgSubMult(MutableMatrix* C,
+                      const MutableMatrix* A,
+                      const MutableMatrix* B)
+{
+  try {
+    C->subtractMultipleTo(A,B);
+    return true;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return false;
+  }
+}
+
+/* Note: the following routine is *not* called by the front end, as 
+   the * operator for MutableMatrix is implemented directly in d/engine.dd
+*/
+MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
+                                           const MutableMatrix* B)
+{
+  try {
+    return internMutableMatrix(A->mult(B));
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
 }
 
 engine_RawRingElementArray convertRingelemsToArray(const Ring *R, 
@@ -1063,7 +1152,7 @@ engine_RawRingElementArray convertRingelemsToArray(const Ring *R,
 {
   size_t len = elems.size();
   engine_RawRingElementArray result = getmemarraytype( engine_RawRingElementArray, len );
-  result->len = len;
+  result->len = static_cast<int>(len);
   for (size_t i=0; i<len; i++)
     result->array[i] = RingElement::make_raw( R, static_cast<int>(elems[i]) );
   
@@ -1082,7 +1171,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
       ERROR("expected a dense mutable matrix over the ffpack finite field");
       return 0;
     }
-  M2::ARingZZpFFPACK::ElementType* elemsA = B->get_Mat()->get_array();
+  M2::ARingZZpFFPACK::ElementType* elemsA = B->get_Mat()->array();
   std::vector< M2::ARingZZpFFPACK::ElementType > charpoly;
 
   FFPACK::CharPoly(B->get_Mat()->ring().field(), charpoly, A->n_rows(), elemsA, A->n_rows());
@@ -1112,7 +1201,7 @@ engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
   typedef M2::ARingZZpFFPACK::ElementType Element;
   typedef std::vector<Element> Polynomial;
 
-  Element* elemsA = B->get_Mat()->get_array();
+  Element* elemsA = B->get_Mat()->array();
   size_t n = B->n_rows();
   Polynomial minpoly(n);
 

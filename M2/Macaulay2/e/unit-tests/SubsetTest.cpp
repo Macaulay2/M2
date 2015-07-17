@@ -123,7 +123,6 @@ TEST(Subsets, concatenateSubsets)
   const int p = 3;
   const int q = 2;
   const int n_choose_p = 35;
-  const int n_choose_q = 21;
   Subsets C(n,std::max(p,q));
 
   Subset a(p, 0);

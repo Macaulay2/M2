@@ -3,19 +3,45 @@
 -- not included in other files
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-
-solveSystem = method(TypicalValue => List, Options =>{Software=>null, PostProcess=>true})
+solveSystem = method(TypicalValue => List, Options =>{
+	PostProcess=>true, 
+	-- *** below are the relevant options of track ***
+	Software=>null, 
+	NumericalAlgebraicGeometry$gamma=>null, 
+	NumericalAlgebraicGeometry$tDegree=>null,
+	-- step control
+	tStep => null, -- initial
+	tStepMin => null,
+	stepIncreaseFactor => null,
+	numberSuccessesBeforeIncrease => null,
+	-- predictor 
+	Predictor=>null, 
+	-- corrector 
+	maxCorrSteps => null,
+	CorrectorTolerance => null, -- tracking tolerance
+	-- end of path
+	EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	InfinityThreshold => null, -- used to tell if the path is diverging
+	SingularConditionNumber=>null, -- threshold for the condition number of the jacobian
+	-- projectivize and normalize
+	Normalize => null, -- normalize in the Bombieri-Weyl norm
+	Projectivize => null
+	})
 solveSystem List := List => o -> F -> (
+    checkCCpolynomials F;
+    solveSystem(polySystem F, o)
+    )
+solveSystem PolySystem := List => o -> P -> (
 -- solves a system of polynomial equations
 -- IN:  F = list of polynomials
 --      Software => {PHCPACK, BERTINI, hom4ps2}
 -- OUT: {s,m}, where 
 --             s = list of solutions 
 --     	       m = list of corresponding multiplicities	 
-     o = new MutableHashTable from o;
-     scan(keys o, k->if o#k===null then o#k=DEFAULT#k); o = new OptionTable from o;
+     o = fillInDefaultOptions o;
      local result;
-     F = toCCpolynomials(F,53);
+     -- F = toCCpolynomials(F,53);
+     F := equations P; 
      R := ring F#0;
      v := flatten entries vars R;
      if numgens R > #F then error "expected a 0-dimensional system";
@@ -24,15 +50,7 @@ solveSystem List := List => o -> F -> (
 	  T := (if overdetermined 
 	       then generalEquations(numgens R, F)
 	       else F);  
-  	  result = 
--- 	  if all(F, f -> sum degree f <= 1)
---      	  then ( 
--- 	       A := matrix apply(F, f->apply(v, x->coefficient(x,f)));
--- 	       b := matrix apply(F, f->{coefficient(1_R,f)});
--- 	       {{flatten entries solve(A,-b)}}
--- 	       )
---	  else 
-	       (
+  	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
 	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
 	       );

@@ -176,13 +176,8 @@ export (M:RawMatrix) * (N:RawMatrix) : RawMatrixOrNull := Ccode(returns, "
      --    respectively.  The degree of the result is the sum of the two degrees */
      );
 export (M:RawMutableMatrix) * (N:RawMutableMatrix) : RawMutableMatrixOrNull := Ccode(returns, "
-     ERROR(\"not implemented for mutable matrices\");
-     return 0;
-     // return M->mult(N);
-     "
-     -- /* If the sizes do not match, then NULL is returned.  If they do match,
-     --    the multiplication is performed, and the source and target are taken from N,M
-     --    respectively.  The degree of the result is the sum of the two degrees */
+     try { return M->mult(N); }
+     catch (exc::engine_error e) { ERROR(e.what()); return NULL; } "
      );
 -- 
 
@@ -222,7 +217,7 @@ export tostring(a:RawMonomial):string := Ccode(returns,"
      catch (exc::engine_error e) { o << \"[unprintable monomial]\"; }
      return o.to_string();
      ");
-export hash(a:RawMonomial):ulong := Ccode(ulong,"a->get_hash_value()");
+export hash(a:RawMonomial):uint := Ccode(uint,"a->hash()");
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d engine.o "

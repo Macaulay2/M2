@@ -167,10 +167,10 @@ ring_elem PolyRingQuotient::invert(const ring_elem f) const
 
     }
   else if (M_->getNonTermOrderVariables()->len ==  0)
-    return ann(from_int(1),f);
+    return ann(from_long(1),f);
   else {
     // An error message is generated higher up
-    return from_int(0);
+    return from_long(0);
   }
 }
 
@@ -224,7 +224,7 @@ ring_elem PolyRingQuotient::remainder(const ring_elem f, const ring_elem g) cons
   if (K_->get_precision() > 0)
     {
       ERROR("polynomial division not yet implemented for RR or CC coefficients");
-      return from_int(0);
+      return from_long(0);
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
@@ -246,7 +246,7 @@ ring_elem PolyRingQuotient::quotient(const ring_elem f, const ring_elem g) const
   if (K_->get_precision() > 0)
     {
       ERROR("polynomial division not yet implemented for RR or CC coefficients");
-      return from_int(0);
+      return from_long(0);
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
@@ -271,8 +271,8 @@ ring_elem PolyRingQuotient::remainderAndQuotient(const ring_elem f, const ring_e
   if (K_->get_precision() > 0)
     {
       ERROR("polynomial division not yet implemented for RR or CC coefficients");
-      quot = from_int(0);
-      return from_int(0);
+      quot = from_long(0);
+      return from_long(0);
     }
   MatrixConstructor matf(make_FreeModule(1),1);
   matf.set_entry(0,0,f);
@@ -311,7 +311,7 @@ ring_elem PolyRingQuotient::ann(const ring_elem a, const ring_elem b) const
       // We have just determined that a/b does not exist.
       // So b is not a unit in this ring.
       set_non_unit(b);
-      return from_int(0);
+      return from_long(0);
     }
   return mquot->elem(0,0);
 }

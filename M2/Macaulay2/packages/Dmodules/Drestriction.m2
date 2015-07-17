@@ -1,7 +1,5 @@
 -- Copyright 1999-2002 by Anton Leykin and Harrison Tsai
 
-local bFunctionM
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- These local routines are needed for Drestriction
@@ -655,7 +653,7 @@ computeRestriction = (M,wt,n0,n1,output,options) -> (
      else (
 	  pInfo(1, "Computing b-function using module bFunction... ");
 	  tInfo = toString first timing(
-	       b = bFunctionM(M, wt, toList(rank ambient M: 0));
+	       b = bFunction(M, wt, toList(rank ambient M: 0));
 	       );
 	  );
      
@@ -960,35 +958,3 @@ if member(ResToOrigRing, output) then outputList = append(
 
 hashTable outputList 
 )
-
-bFunctionM = method()
-bFunctionM(Module, List, List) := (M, w, m) -> (
-     s := symbol s;
-     S := QQ[s];
-     bf := 1_S; 
-     M' := image presentation M; 
-     R := ring M';
-     F := super M';
-     n := numgens F;
-    
-     --sanity check
-     if #m != n then 
-     error "wrong shift vector length";
-     if any(m, u -> class u =!= ZZ) then
-     error "shift vector should consist of integers";
-     
-     i := 0;
-     while i < n do (
-	  -- N = i-th component of F
-	  N := image matrix( (toList(i : {0_R})) | {{1}} | (toList((n-i-1):{0_R})) );  
-	  NM := intersect(M', N);
-	  I := ideal apply(numgens NM, j -> NM_j_i);
-	  bf' := bFunction(I, w);
-	  bf' = (map(S, ring bf', matrix{{s}})) bf';
-	  bf' = substitute(bf', { s => s - m#i });
-	  -- bf = lcm (bf, bf')
-	  bf = bf * (bf' // gcd(bf, bf'));
-	  i = i + 1;
-	  );
-     bf 
-     );-- end bFunctionM 

@@ -2,6 +2,7 @@
 
 # @configure_input@
 VPATH = @srcdir@
+ENABLE_STRIP = @ENABLE_STRIP@
 NORULES = yes
 include ../../include/config.Makefile
 include ../d/Makefile.files
@@ -37,7 +38,7 @@ relink:
 	$(MAKE)
 
 check: $(EXEFILE)
-	$< --check 1 --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
 
 ifeq (@OS@,MacOS)
 # We specify the search path for finding shareable libraries, in case there are any,
@@ -120,7 +121,7 @@ else
 ifeq (@OS@,MacOS)
 # we know about it
 else
-$(warning no static linking method configured for this OS or linker)
+$(warning no static linking method configured for this OS (@OS@) + ISSUE (@ISSUE@))
 endif
 endif
 endif
@@ -155,15 +156,16 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-
+M2_LIBRARIES += -lmathicgb -lmathic -lmemtailor
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
+
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 
 M2_LDFLAGS += @FCLIBS_FLAGS@
-M2_LIBRARIES += @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
+M2_LIBRARIES += $(UNSTATIC) @LIBS_DYNAMIC@ $(TOSTATIC) @FCLIBS_STATIC@ $(UNSTATIC) @FCLIBS_DYNAMIC@
 
 ifeq (@MYSQL@,yes)
 M2_LIBRARIES += -L/usr/lib/mysql -lmysqlclient
@@ -171,13 +173,19 @@ endif
 ifeq (@XML@,yes)
 M2_LIBRARIES += -lxml2
 endif
-M2_LIBRARIES += -lm -lc
+M2_LIBRARIES += -lm
+ifneq (@host_os@,mingw32)
+M2_LIBRARIES += -lc
+endif
 ifeq (@CONSTRUCTOR_ORDER_LIB@,LR)
 M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
-M2_LIBDEPS += ../d/libM2inits2.a
+M2_LIBDEPS += ../d/libM2inits2.a				\
+	@abs_top_builddir@/submodules/memtailor/libmemtailor.a	\
+	@abs_top_builddir@/submodules/mathic/libmathic.a	\
+	@abs_top_builddir@/submodules/mathicgb/libmathicgb.a
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else
@@ -188,33 +196,49 @@ clean::; rm -f $(EXEFILE) timestamp.o
 @pre_bindir@ : ; $(MKDIR_P) "$@"
 
 $(EXEFILE): $(M2_OBJECTS) $(M2_LIBDEPS) | @pre_bindir@
+	@ echo "compiling timestamp.c"
 	$(COMPILE.c) @srcdir@/timestamp.c -o timestamp.o
 	time @CC@ $(M2_LDFLAGS) timestamp.o $(M2_OBJECTS) $(M2_LIBRARIES) -o "$@".tmp
-	printenv LD_LIBRARY_PATH
-ifneq (@LDD@,)
-	- @LDD@ $@.tmp
+ifneq ("$(EXECSTACK)","no")
+	@ if [ -x /usr/bin/execstack ] ;\
+	  then if (set -x ; execstack -q "$@".tmp; execstack -c "$@".tmp ) ; \
+	       then : ;\
+	       else echo "-- execstack command failed, please report" >&2 ;\
+		    echo "   selinux may interfere: try using a different file system," >&2 ;\
+		    echo "   or add EXECSTACK=no to command line to bypass" >&2 ;\
+		    exit 1 ;\
+	       fi ;\
+	  fi
 endif
-ifneq (@OTOOL@,)
-	- @OTOOL@ -L $@.tmp
+	- printenv LD_LIBRARY_PATH
+ifneq (@LDD@,false)
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
-ifneq "@OBJCOPY@" ""
+ifneq (@OTOOL@,false)
+	@OTOOL@ -L $@.tmp
+endif
+
+ifneq "@DEBUG@" "yes"
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --only-keep-debug "$@".tmp M2.debug-info
 endif
-ifeq "$(STRIP)" "yes"
-ifneq "@STRIPCMD@" ""
+ifeq "$(ENABLE_STRIP)" "yes"
+ifneq "@STRIP@" "false"
 ifeq (@STRIP_REMOVE_SECTION@,yes)
-	@STRIPCMD@ --remove-section=.comment --remove-section=.note "$@".tmp
+	@STRIP@ --remove-section=.comment --remove-section=.note "$@".tmp
 else
-	@STRIPCMD@ "$@".tmp
-ifneq "@OBJCOPY@" ""
+	@STRIP@ "$@".tmp
+ifneq "@OBJCOPY@" "false"
 	@OBJCOPY@ --add-gnu-debuglink=M2.debug-info "$@".tmp
 endif
 endif
 endif
 endif
+endif
+
 ifeq (@OS@ @SHARED@,Linux yes)
 ifneq (@BUILDLIST@,)
-ifneq (@OBJDUMP@,)
+ifneq (@OBJDUMP@,false)
 	@OBJDUMP@ -x "$@".tmp | egrep RPATH || [ $$? -lt 2 ]
 	@OBJDUMP@ -x "$@".tmp | egrep "RPATH +@librariesdir@$$" || [ $$? -lt 2 ]
 else
@@ -240,3 +264,4 @@ M2: M2.in; cd ../..; ./config.status Macaulay2/bin/M2
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/bin relink "
 # End:
+.NOTPARALLEL:

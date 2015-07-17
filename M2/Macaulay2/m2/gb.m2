@@ -89,8 +89,58 @@ gbGetSuitable := (f,type) -> (
      else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then getComputation(f,gbWithSyzygy)
      )
 
+engineMGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
+  -- possible values for Reducer: "Classic", "F4",  (0,1)
+  -- see 'mgb help logs' for format of the Logs argument.
+engineMGB Matrix := opts -> (M) -> (
+     reducer := if opts#"Reducer" === null then 0
+                else if instance(opts#"Reducer", ZZ) then opts#"Reducer"
+                else if opts#"Reducer" === "F4" then 1
+                else if opts#"Reducer" === "Classic" then 0
+                else error ///Expected "F4" or "Classic" as reducer type///;
+     spairGroupSize := if instance(opts#"SPairGroupSize", ZZ) then opts#"SPairGroupSize"
+                else error "expected an integer for SPairGroupSize";
+     nthreads := if instance(opts#"Threads", ZZ) then opts#"Threads"
+                else error "expected an integer for number of threads to use";
+     log := if instance(opts#"Log", String) then opts#"Log"
+                else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
+     rawgb := rawMGB(raw M, reducer, spairGroupSize, nthreads, log);
+     map(ring M, rawgb)
+     )
+     
+engineMGBF4 = method(Options => options engineMGB)
+engineMGBF4 Ideal := opts -> (I) -> engineMGB(I, opts, "Reducer"=>"F4")
+
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
-groebnerBasis = x -> generators gb x
+
+groebnerBasis = method( TypicalValue => Matrix, Options => new OptionTable from {
+        Strategy => null, -- possible values: "MGB", "F4"
+        "MGBOptions" => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""}
+        })
+
+groebnerBasis Ideal := opts -> x -> groebnerBasis(generators x, opts)
+groebnerBasis Matrix := opts -> x -> (
+    R := ring x;
+    if opts.Strategy =!= null 
+      and char R > 0 -- MGB only works over prime finite fields
+      and isPolynomialRing R
+      and isCommutative R
+      and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
+      then (
+        mgbopts := opts#"MGBOptions";
+        if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
+        else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
+        if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
+        -- use rawMGB
+        mgbopts = new OptionTable from mgbopts;
+        g := engineMGB(x, new OptionTable from mgbopts);
+        generators forceGB g
+        )
+    else
+        generators gb(x)
+    )
+-- This doesn't use MGB yet...
+groebnerBasis Module := opts -> x -> generators gb(x)
 
 strategyCodes := new HashTable from { -- must match values in e/engine.h in enum StrategyValues
      LongPolynomial => 1,

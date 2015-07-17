@@ -93,11 +93,15 @@ void Table_map(T *table,
         void apply(const void *key, void **value, void *cl),
         void *cl) {
         int i;
+#ifdef DEBUG
         unsigned stamp;
+#endif
         struct binding *p;
         assert(table);
         assert(apply);
+#ifdef DEBUG
         stamp = table->timestamp;
+#endif
         for (i = 0; i < table->size; i++)
                 for (p = table->buckets[i]; p; p = p->link) {
                         apply(p->key, &p->value, cl);

@@ -3,6 +3,7 @@
 #include "hilb.hpp"
 #include "relem.hpp"
 #include "interrupted.hpp"
+#include <limits>
 
 int partition_table::representative(int x)
 {
@@ -284,16 +285,16 @@ void hilb_comp::reset()
     {
       current = new hilb_step;
       current->up = current->down = NULL;
-      current->h0 = R->from_int(0);
-      current->h1 = R->from_int(0);
+      current->h0 = R->from_long(0);
+      current->h1 = R->from_long(0);
     }
   else
     while (current->up != NULL) current = current->up;
 
   R->remove(current->h0);       // This line should not be needed...
   R->remove(current->h1);
-  current->h0 = R->from_int(0);         // This top level h0 is not used
-  current->h1 = R->from_int(1);
+  current->h0 = R->from_long(0);         // This top level h0 is not used
+  current->h1 = R->from_long(1);
 }
 hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
 : S(m->get_ring()->cast_to_PolynomialRing()),
@@ -308,11 +309,11 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const Matrix *m)
   part_table(S->n_vars(), mi_stash)
 {
   assert(D == R->getMonoid());
-  one = R->getCoefficientRing()->from_int(1);
-  minus_one = R->getCoefficientRing()->from_int(-1);
+  one = R->getCoefficientRing()->from_long(1);
+  minus_one = R->getCoefficientRing()->from_long(-1);
   LOCAL_deg1 = D->make_one();
 
-  result_poincare = R->from_int(0);
+  result_poincare = R->from_long(0);
   nsteps = 0;
   maxdepth = 0;
   nideal = 0;
@@ -336,11 +337,11 @@ hilb_comp::hilb_comp(const PolynomialRing *RR, const MonomialIdeal *I)
   part_table(S->n_vars(),mi_stash)
 {
   assert(D == R->getMonoid());
-  one = R->getCoefficientRing()->from_int(1);
-  minus_one = R->getCoefficientRing()->from_int(-1);
+  one = R->getCoefficientRing()->from_long(1);
+  minus_one = R->getCoefficientRing()->from_long(-1);
   LOCAL_deg1 = D->make_one();
 
-  result_poincare = R->from_int(0);
+  result_poincare = R->from_long(0);
   nsteps = 0;
   maxdepth = 0;
   nideal = 0;
@@ -411,7 +412,7 @@ int hilb_comp::step()
   if (current->i == current->first_sum)
     {
       current->h0 = current->h1;
-      current->h1 = R->from_int(1);
+      current->h1 = R->from_long(1);
     }
   if (current->i >= 0)
     {
@@ -427,8 +428,8 @@ int hilb_comp::step()
       // computed, so add the values, and place one step up
       R->add_to(current->h0, current->h1);
       ring_elem f = current->h0;
-      current->h0 = R->from_int(0);
-      current->h1 = R->from_int(0);
+      current->h0 = R->from_long(0);
+      current->h1 = R->from_long(0);
       current->monids.shrink(0);
       if (current->up == NULL)
         {
@@ -469,7 +470,7 @@ void hilb_comp::recurse(MonomialIdeal *&I, const int *pivot_vp)
       current->down->down = NULL;
     }
   current = current->down;
-  current->h0 = R->from_int(0);
+  current->h0 = R->from_long(0);
   M->degree_of_varpower(pivot_vp, LOCAL_deg1);
   current->h1 = R->make_flat_term(one, LOCAL_deg1); // t^(deg vp)
   MonomialIdeal *quot, *sum;
@@ -487,7 +488,7 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
   // Notice that one, and minus_one are global in this class.
   // LOCAL_deg1, LOCAL_vp are scratch variables defined in this class
   nideal++;
-  ring_elem F = R->from_int(1);
+  ring_elem F = R->from_long(1);
   ring_elem G;
   int len = I->length();
   if (len <= 2)
@@ -528,14 +529,14 @@ void hilb_comp::do_ideal(MonomialIdeal *I)
           for (index_varpower i = pivot.raw(); i.valid(); ++i)
             if (pure[i.var()] != -1)
               {
-                ring_elem H = R->from_int(1);
+                ring_elem H = R->from_long(1);
                 D->power(M->degree_of_var(i.var()), pure[i.var()], LOCAL_deg1);
                 ring_elem tmp = R->make_flat_term(minus_one, LOCAL_deg1);
                 R->add_to(H, tmp);
                 R->mult_to(F, H);
                 R->remove(H);
 
-                H = R->from_int(1);
+                H = R->from_long(1);
                 D->power(M->degree_of_var(i.var()), pure[i.var()] - i.exponent(), LOCAL_deg1);
                 tmp = R->make_flat_term(minus_one, LOCAL_deg1);
                 R->add_to(H, tmp);
@@ -671,13 +672,14 @@ int hilb_comp::coeff_of(const RingElement *h, int deg)
       if (exp[0] < deg)
         {
           ERROR("incorrect Hilbert function given");
-#warning "this error message doesn't get printed out, because 0 is a valid return value for this function"
-          result = 0;
-          break;
+          fprintf(stderr, "internal error: incorrect Hilbert function given, aborting\n");
+          abort();
         }
       else if (exp[0] == deg)
         {
-          int n = P->getCoefficientRing()->coerce_to_int(f->coeff);
+          std::pair<bool,long> res = P->getCoefficientRing()->coerceToLongInteger(f->coeff);
+          M2_ASSERT(res.first && abs(res.second) < std::numeric_limits<int>::max());
+          int n = static_cast<int>(res.second);
           result += n;
         }
 

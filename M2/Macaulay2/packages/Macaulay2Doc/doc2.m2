@@ -771,18 +771,25 @@ document {
      Usage => "run s",
      Inputs => { "s" => String => {"a command understandable by the operating system"} },
      Outputs => {
-	  ZZ => {
-	       "the exit status of the command
-	       if it returned normally; it is an integer, normally zero, in the range from 0 to 255.
-	       If the command was interrupted, then 1000 plus the number of the signal 
-	       is returned.  A return value of -1 indicates an error in creating a new process
-	       or in discovering its status.  A return value of 255 may indicate that the shell
-	       to run the command was not found."
-	       }
+	  ZZ => "the return code"
 	  },
      PARA {
 	  "The process is run in the same process group, so signals invoked by control characters at the terminal will
 	  go both to it and to Macaulay2."
+	  },
+     PARA {
+	  "Under Linux and Mac OS, the return code is 256 times the exit status
+	  code of the command, if the command exited normally; by convention,
+	  an exit status code of 0 indicates error free execution or the
+	  Boolean value ", TT "true", ", an exit status code of 1 indicates an
+	  error or the Boolean value ", TT "false", "; if the command
+	  terminated in response to a signal or fault, the signal number (in
+	  the range 1-126) is returned, added to 128 if a core dump was
+	  created; if the shell (command interpreter) could not be executed,
+	  then 127 is returned.  Signal numbers typically include 2 for
+	  interrupt, 3 for quit, 6 for abort, 9 for kill, 11 for segmentation
+	  fault, and 15 for termination.  For details, see the man page of the
+	  libc routine ", TT "system()", "."
 	  }
      }
 document {

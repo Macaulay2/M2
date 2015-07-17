@@ -210,18 +210,18 @@ ring_elem WeylAlgebra::binomial(int top, int bottom) const
 {
   // This should be located elsewhere
   // Assumption: bottom <= top, top >= 0, bottom >= 0.
-  if (bottom == 0) return K_->from_int(1);
-  if (bottom == 1) return K_->from_int(top);
+  if (bottom == 0) return K_->from_long(1);
+  if (bottom == 1) return K_->from_long(top);
   if (top <= binomtop)
-    return K_->from_int(binomtable[top][bottom]);
-  ring_elem result = K_->from_int(1);
+    return K_->from_long(binomtable[top][bottom]);
+  ring_elem result = K_->from_long(1);
   for (int a=0; a<bottom; a++)
     {
-      ring_elem b = K_->from_int(top-a);
+      ring_elem b = K_->from_long(top-a);
       ring_elem result1 = K_->mult(result,b);
       K_->remove(result);
       K_->remove(b);
-      ring_elem c = K_->from_int(a+1);
+      ring_elem c = K_->from_long(a+1);
       result = K_->divide(result1,c); // exact
       K_->remove(c);
     }
@@ -295,7 +295,7 @@ ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
       if (derivatives[i] == 0) continue;
       if (exponents[i] <= diffcoeffstop)
         {
-          ring_elem g = K_->from_int(diffcoeffstable[exponents[i]][derivatives[i]]);
+          ring_elem g = K_->from_long(diffcoeffstable[exponents[i]][derivatives[i]]);
           ring_elem h = K_->mult(result,g);
           K_->remove(g);
           K_->remove(result);
@@ -305,7 +305,7 @@ ring_elem WeylAlgebra::diff_coefficients(const ring_elem c,
         }
       else for (int j=derivatives[i]-1; j>=0; j--)
         {
-          ring_elem g = K_->from_int(exponents[i]-j);
+          ring_elem g = K_->from_long(exponents[i]-j);
           ring_elem h = K_->mult(result,g);
           K_->remove(g);
           K_->remove(result);
@@ -543,14 +543,14 @@ gbvector * WeylAlgebra::gbvector_mult_by_term(
 /////////////////
 ring_elem WeylAlgebra::multinomial(const int *exptop, const int *exp) const
 {
-  ring_elem result = K_->from_int(1);
+  ring_elem result = K_->from_long(1);
   for (int i=0; i<nvars_; i++)
     if (exptop[i] > 0)
       {
         for (int j=exptop[i]; j > exp[i]; j--)
           {
-            ring_elem c = K_->from_int(j);
-            ring_elem d = K_->from_int(exptop[i]-j+1);
+            ring_elem c = K_->from_long(j);
+            ring_elem d = K_->from_long(exptop[i]-j+1);
             K_->mult_to(result, c);
             ring_elem e = K_->divide(result, d); // exact
             K_->remove(c);

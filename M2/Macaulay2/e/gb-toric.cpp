@@ -377,7 +377,10 @@ void binomial_ring::intvector_to_binomial(vec f, binomial &result) const
 
   for ( ; f != NULL; f = f->next)
     {
-      int e = globalZZ->coerce_to_int(f->coeff);
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(f->coeff);
+      M2_ASSERT(res.first);
+      int e = static_cast<int>(res.second);
+
       if (e > 0)
         result.lead[f->comp] = e;
       else if (e < 0)
@@ -670,7 +673,7 @@ void binomial_s_pair_set::stats() const
 ///////////////////////
 binomialGB::binomialGB(const binomial_ring *R0, bool bigcell,bool homogprime)
   : R(R0), first(NULL), _max_degree(0),
-    use_bigcell(bigcell),
+    //use_bigcell(bigcell),
     is_homogeneous_prime(homogprime)
 {
 }

@@ -59,7 +59,7 @@ chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 ifeq ($(TIDY),yes)
 maybe-tidy: tidy
 else
@@ -123,10 +123,13 @@ libraries-used: .prepared always
 	| sort | uniq \
 	> $@ || true
 
+# Typical results returned by "rmp --query -f":
+#     gmp-devel-4.3.1-7.el6_2.2.x86_64
+#     cddlib-094g-9.fc20.x86_64
 packages-used: libraries-used
 	cat libraries-used \
 	| while read x ; \
-	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\([0-9][0-9._]*[0-9]\)\(-.*$$\|$$\)/\1 \2/' ;\
+	do rpm --query -f "$$x" | sed 's/\([^.]*\)-\(.*\)\(-.*$$\)/\1 \2/' ;\
 	done | fgrep -v 'is not owned by any package' | sort | uniq | sed -e 's=.*/==' -e 's=\.list$$==' >$@
 
 ifneq (@RPMLINT@,)
@@ -143,3 +146,4 @@ Macaulay2-common-body.spec: Macaulay2-common-body.spec.in; cd ../..; ./config.st
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/rpm "
 # End:
+.NOTPARALLEL:

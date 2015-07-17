@@ -11,18 +11,8 @@ EXES += screen
 endif
 
 all: $(EXES)
-
-# overlay.h is no longer needed
-#  all: overlay.h
-#  overlay.h : overlay ; ./$< >$@
-
-# all: targettypes.h
-#  we don't need targettypes.h any more
-#  it's replaced by stdint.h
-#  and it makes cross-compiling not work
-# targettypes.h : targettypes ; ./$^ >$@
 clean:
-	rm -f overlay.h overlay gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) targettypes.h gc_tested gc_test
+	rm -f gmon.out $(EXES) *.o $(EXES:=.exe) $(EXES:=.obj) gc_tested gc_test
 	rm -rf *.dSYM
 ../bin/linkexec : linkexec ; cp -a $< $@
 ifeq "@OS@" "Windows-95-98-NT"
@@ -43,7 +33,8 @@ gc_test : gc_test.c
 # .LIBPATTERNS = lib%.a
 gc_test:
 
-gc_tested: gc_test; ./$< && touch $@
+gc_tested: gc_test; LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" ./$< && touch $@
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/util "
 # End:
+.NOTPARALLEL:

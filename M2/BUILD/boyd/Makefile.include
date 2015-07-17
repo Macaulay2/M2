@@ -57,7 +57,7 @@ check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
 PREFIX ?= /usr

@@ -1,5 +1,4 @@
 GNUmakefile
-Makefile.configfiles
 check-configure/Makefile
 include/config.Makefile
 include/configuration
@@ -48,9 +47,6 @@ libraries/mpfr/Makefile
 libraries/mpir/Makefile
 libraries/boost/Makefile
 libraries/mpack/Makefile
-libraries/memtailor/Makefile
-libraries/mathic/Makefile
-libraries/mathicgb/Makefile
 libraries/gtest/Makefile
 libraries/qd/Makefile
 libraries/mpc/Makefile
@@ -73,7 +69,6 @@ libraries/ntl/Makefile
 libraries/libtool/Makefile
 libraries/gftables/Makefile
 libraries/factory/Makefile
-libraries/libfac/Makefile
 libraries/frobby/Makefile
 libraries/lapack/Makefile
 libraries/blas/Makefile

@@ -35,7 +35,7 @@ ifeq (@DUMPDATA@,yes)
 endif
 
 install::@infodir@/dir
-@infodir@/dir :; @INSTALL_DATA@ @top_srcdir@/files/info-dir-template $@
+@infodir@/dir :; @INSTALL_DATA@ @abs_top_srcdir@/files/info-dir-template $@
 
 define ii
 install::
@@ -60,3 +60,4 @@ report-installed-M2-location:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/install install "
 # End:
+.NOTPARALLEL:

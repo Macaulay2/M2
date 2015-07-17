@@ -954,7 +954,7 @@ discreteVanishingIdeal (Ring, Digraph)  := Ideal => (R, G) -> (
      R1 = markovRing dshuff;          
      p := j -> R1.markovVariables#j;
      I := trim ideal(0_R1);     
-     SortedG := H#"newDigraph"; --Note: "" is there because Graphs.m2 is silly and this key is an unexported string!~Sonja
+     SortedG := H#newDigraph;
      a := local a;
      S := local S;
      apply(2..n, i -> (
@@ -999,33 +999,31 @@ trekSeparation MixedGraph := List => (g) -> (
     bb := graph G#Bigraph; 
     vv := sort vertices g;
     -- Construct canonical double DAG cdG associated to mixed graph G:
-    cdG:= digraph join(
-      apply(vv,i->{(1,i),join(
-        apply(toList parents(G#Digraph,i),j->(1,j)),
-        {(2,i)}, apply(toList bb#i,j->(2,j)))}),
-      apply(vv,i->{(2,i),apply(toList dd#i,j->(2,j))}));
+    cdGgraph := hashTable join(
+        apply(vv, i -> (1, i) => set join(
+                apply(toList parents(G#Digraph,i),j->(1,j)),
+                {(2,i)},
+                apply(toList bb#i,j->(2,j)))),
+        apply(vv,i-> (2,i) => set apply(toList dd#i,j->(2,j))));
     aVertices := apply(vv, i->(1,i));
     bVertices := apply(vv, i->(2,i));
     allVertices := aVertices|bVertices;
     statements := {};
-    cdC0 := new MutableHashTable;
-    cdC0#cache = new CacheTable from {};
-    cdC0#graph = new MutableHashTable from apply(allVertices,i->{i,cdG#graph#i});
-    cdC := new Digraph from cdC0;
+    cdC := new MutableHashTable from apply(allVertices,i->{i,cdGgraph#i});
     for CA in (subsets aVertices) do (
       for CB in (subsets bVertices) do (
 	CAbin := setToBinary(aVertices,CA);
 	CBbin := setToBinary(bVertices,CB);
 	if CAbin <= CBbin then (
           C := CA|CB;
-	  scan(allVertices,i->cdC#graph#i=cdG#graph#i);
+	  scan(allVertices,i->cdC#i=cdGgraph#i);
           scan(C, i->scan(allVertices, j->(
-	    cdC#graph#i=cdC#graph#i-{j};
-	    cdC#graph#j=cdC#graph#j-{i};)));
+	    cdC#i=cdC#i-{j};
+	    cdC#j=cdC#j-{i};)));
 	  Alist := delete({},subsetsBetween(CA,aVertices));
           while #Alist > 0 do (
 	    minA := first Alist;
-	    pC := reachable(cdC,set minA);
+	    pC := reachable(digraph cdC,set minA);
 	    A := toList ((pC*(set aVertices)) + set CA);
 	    Alist = Alist - (set subsetsBetween(minA,A));
 	    B := toList ((set bVertices) - pC);
@@ -2138,7 +2136,7 @@ doc///
        further describes the indeterminates $l_{(i,j)}$.
 
      Example
-       G = mixedGraph(digraph {{b,{c,d}},{c,d}},bigraph {{a,d}})
+       G = mixedGraph(digraph {{b,{c,d}},{c,{d}}},bigraph {{a,d}})
        R = gaussianRing G
        compactMatrixForm =false;
        directedEdgesMatrix R

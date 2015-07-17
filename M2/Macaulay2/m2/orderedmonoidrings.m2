@@ -366,6 +366,9 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
 
+antipode = method();
+antipode RingElement := (f) -> new ring f from rawAntipode raw f;
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

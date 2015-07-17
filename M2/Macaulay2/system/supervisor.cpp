@@ -1,5 +1,6 @@
 #include "pthread-exports.h"
 #include "supervisor.hpp"
+#include "pthread-methods.hpp"
 
 #include <iostream>
 #include <stdlib.h>
@@ -79,6 +80,7 @@ extern "C" {
     task->m_Mutex.unlock();
     threadSupervisor->m_Mutex.unlock();
   }
+
   void delThread(pthread_t thread)
   {
     threadSupervisor->m_Mutex.lock();

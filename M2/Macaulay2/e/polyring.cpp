@@ -1,3 +1,4 @@
+#include "util.hpp"
 #include "polyring.hpp"
 #include "ring.hpp"
 #include "monoid.hpp"
@@ -114,7 +115,7 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
     break;
   }
 
-  result->initialize_ring(R->charac(),
+  result->initialize_ring(R->characteristic(),
                           R->get_degree_ring(),
                           R->get_heft_vector());
 
@@ -127,9 +128,9 @@ PolynomialRing *PolynomialRing::create_quotient(const PolynomialRing *R,
   result->gb_ring_ = R->get_gb_ring();
   result->setQuotientInfo(qrinfo); // Also sets graded-ness
 
-  result->zeroV = result->from_int(0);
-  result->oneV = result->from_int(1);
-  result->minus_oneV = result->from_int(-1);
+  result->zeroV = result->from_long(0);
+  result->oneV = result->from_long(1);
+  result->minus_oneV = result->from_long(-1);
 
   return result;
 }
@@ -186,10 +187,9 @@ Matrix * PolynomialRing::getPresentation() const
 }
 
 class SumCollectorPolyHeap : public SumCollector {
-  const PolynomialRing *R;
   polyheap H;
 public:
-  SumCollectorPolyHeap(const PolynomialRing *R0) : R(R0), H(R0) {}
+  SumCollectorPolyHeap(const PolynomialRing *R0) : H(R0) {}
   ~SumCollectorPolyHeap() {}
 
   virtual void add(ring_elem f) { H.add(f); }
@@ -200,6 +200,23 @@ SumCollector *PolynomialRing::make_SumCollector() const
 {
   return new SumCollectorPolyHeap(this);
 }
+
+unsigned int PolynomialRing::computeHashValue(const ring_elem a) const
+{
+  unsigned int hash = 0;
+  unsigned int seed1 = 103;
+  unsigned int seed2 = 347654;
+  for (const Nterm* t = a.poly_val; t!=0; t=t->next)
+    {
+      unsigned int hash1 = getCoefficientRing()->computeHashValue(t->coeff);
+      unsigned int hash2 = getMonoid()->computeHashValue(t->monom); 
+      hash += seed1 * hash1 + seed2 * hash2;
+      seed1 += 463633;
+      seed2 += 7858565;
+    }
+  return hash;
+}
+
 
 #if 0
 // const RRing *PPolynomialRing::findCoefficientRing(const RRing *A) const

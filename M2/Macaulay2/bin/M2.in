@@ -1,12 +1,12 @@
 #! /bin/sh
-
 # We assume that @ pre_bindir @/.. is ${pre_exec_prefix} (see configure.ac)
-# This one is for Mac OS:
-export DYLD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$DYLD_LIBRARY_PATH
-# This one is for Unix:
-export LD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$LD_LIBRARY_PATH
+case "@host_os@" in
+   cygwin) export PATH=`dirname "$0"`/../@tail_librariesdir@:$PATH ;;
+  darwin*) # Mac OS X:
+           export DYLD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$DYLD_LIBRARY_PATH ;;
+        *) export   LD_LIBRARY_PATH=`dirname "$0"`/../@tail_librariesdir@:$LD_LIBRARY_PATH ;;
+esac
 exec `dirname "$0"`/M2@EXE@ "$@"
-
 # Local Variables:
-# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin "
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/bin M2 "
 # End:

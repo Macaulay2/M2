@@ -9,15 +9,15 @@
 debug Core
 R = rawTowerRing(101, 1:"a")
 a = rawRingVar(R,0)
-toString(a) == "a"
-toString(a*a) == "a2"
-toString(a^2) == "a2"
-toString(7*a^2) == "7a2"
-toString(1+a) == "a+1"
-toString(a-a) == "0"
-toString(1+a+a^2) == "a2+a+1"
-toString(3+a^2) == "a2+3"
-toString(2*a^2+1) == "2a2+1"
+assert(toString(a) == "a")
+assert(toString(a*a) == "a2")
+assert(toString(a^2) == "a2")
+assert(toString(7*a^2) == "7a2")
+assert(toString(1+a) == "a+1")
+assert(toString(a-a) == "0")
+assert(toString(1+a+a^2) == "a2+a+1")
+assert(toString(3+a^2) == "a2+3")
+assert(toString(2*a^2+1) == "2a2+1")
 toString(3*a^10+4*a^3+12) == "3a10+4a3+12"
 --  Test 1B. 2 variable.
 debug Core
@@ -66,8 +66,8 @@ toString(a) == "a"
 F = a^2+a+1
 F1 = 2*F
 F2 = 15*F
-F1+F2
-(2*F) + (15*F)
+assert(F1+F2 == 0)
+assert((2*F) + (15*F) == 0)
 
 debug Core
 R = rawTowerRing(17, ("a", "b", "c"))
@@ -101,7 +101,7 @@ a*a + a*c + a*b + b*c == F*G
 F^3
 F = a+b+c
 {*
-F = F^50;
+time F = F^50;
 time(F*F);
 *}
 
@@ -123,6 +123,7 @@ a*a
 16*a^3
 (b+1)*(b+1)
 b*b
+assert(b^2 == -a)
 
 debug Core
 R = rawTowerRing(17, 1:"a")
@@ -131,7 +132,7 @@ F = a^3+a+1
 A = rawTowerQuotientRing(R, 1:F)
 a = rawRingVar(A,0)
 a^2
-a^3
+assert(a^3 == -a-1)
 assert(a * rawInverse a == 1_A)
 
 debug Core
@@ -140,9 +141,9 @@ a = rawRingVar(R,0)
 F = a^2+2*a+1
 A = rawTowerQuotientRing(R, 1:F)
 a = rawRingVar(A,0)
+{*
 rawInverse (a+1) -- error not considered?
-
-end -- disabled by Dan: stdio:8:2:(3): error: element not invertible
+*}
 
 a^2 
 a^3
@@ -166,10 +167,10 @@ F1 = (a+1)*(a+2)
 F2 = (a+1)*(2*a+3)
 (G,U,V) = testGCD(F1,F2)
 
-rawGCD(0_R,F1)
-rawGCD(F1,0_R) -- should be F1!! WRONG!!
-rawGCD(0_R,F2) -- good: this is the monic-ification of F2
-rawGCD(F2,0_R) 
+assert(rawGCD(0_R,F1) == F1)
+assert(rawGCD(F1,0_R) == F1)
+assert(rawGCD(0_R,F2) == 9*F2) -- good: this is the monic-ification of F2
+assert(rawGCD(F2,0_R) == rawGCD(0_R,F2))
 assert(rawGCD(0_R,0_R) == 0)
 
 F1 = (a+1)*(a+2)^10
@@ -201,7 +202,7 @@ testGCD(0_A,F1)
 testGCD(F1,0_A)
 rawGCD(F1,0_A)
 (G,U,V) = rawExtendedGCD(F1,0_A)
-U * F1 + V * 0_A
+assert(U * F1 + V * 0_A == G)
 
 U 
 F1 = (b-a)*a
@@ -220,17 +221,6 @@ F1 = (b^4-a*b-1)^100*(b-a-1);
 F2 = (b^4-a*b-1)*(b-a-1)^100;
 time (G,U,V) = testGCD(F1,F2) -- G is 0
 assert(G == 0) -- the monic gcd alg can't find a monic gcd
-
-U*F1 + V*F2
-G
-U
-V
-a^2
-a
-a*a
-16*a^3
-(b+1)*(b+1)
-b*b
 
 -- example: gcd over a quotient ring which is a domain
 debug Core

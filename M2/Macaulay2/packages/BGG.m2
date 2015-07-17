@@ -1280,7 +1280,7 @@ TEST ///
 	  alphad = map(E^1,E^{2:-1},{{e_1,e_2}})
           assert(matrix entries beilinson(alphad,S) == matrix {{x_0, 0, -x_2, 0, x_0, x_1}})
           alpha = map(E^{2:-1},E^{1:-2},{{e_1},{e_2}});
-	  assert(matrix entries beilinson(alpha,S) ==  map(S^6,S^1,{{0}, {-1}, {0}, {1}, {0}, {0}}))
+	  assert(matrix entries beilinson(alpha,S) ==  map(S^6,S^1,{{0}, {1}, {0}, {-1}, {0}, {0}}))
 ///
 
 
