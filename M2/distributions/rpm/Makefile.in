@@ -12,7 +12,6 @@ DISTRIBUTION = @DISTRIBUTION@
 include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 
-CHOWN = chown
 TIDY = yes
 VPATH = @srcdir@
 DEPENDS = yes
@@ -66,15 +65,20 @@ else
 maybe-tidy:
 endif
 check-id:
-	@if [ `@FAKEROOT@ id -u` != 0 ] ; \
+	@if ! @FAKEROOT@ ; \
 	 then ( \
 	    echo "=============================================================================" ;\
-	    echo "Warning: 'fakeroot' not installed (at configuration time), so" ;\
-	    echo "  either run this as root, or use 'make CHOWN=:' to bypass ownership setting." ;\
+	    echo "Warning: 'fakeroot' not installed (at configuration time)." ;\
 	    echo "  It is available at http://ftp.debian.org/debian/pool/main/f/fakeroot/" ;\
 	    echo "=============================================================================" \
 	  ) >&2 ;\
 	 fi
+
+ifeq "@FAKEROOT@" "false"
+FAKEROOT =
+else
+FAKEROOT = @FAKEROOT@
+endif
 
 SEDOPTS = -e 's=^\.="=' -e 's=$$="='
 
@@ -83,12 +87,12 @@ T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --f
 .prepared:
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files@prefix@
-	umask 022 ; $(T) -C @pre_exec_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files@prefix@
+	umask 022 ; $(T) -C @pre_exec_prefix@ . | $(FAKEROOT) @TAR@ xfp - -C files@prefix@
 
 .prepared-common:
 	rm -rf files-common
 	umask 022 ; $(MKDIR_P) files-common@prefix@
-	umask 022 ; $(T) -C @pre_prefix@ . | @FAKEROOT@ @TAR@ xfp - -C files-common@prefix@
+	umask 022 ; $(T) -C @pre_prefix@ . | $(FAKEROOT) @TAR@ xfp - -C files-common@prefix@
 	: warning: fixed layout in use, just trying both common possibilities:
 	@FIND@ \
 		files-common@prefix@/man/man1 \
@@ -105,14 +109,14 @@ Macaulay2.spec: Macaulay2-body.spec packages-used Makefile .prepared
 	sed -e '1,/Requires/d' -e 's/%PKG_RPM%/$(PKG_RPM)/g' <$< >>$@
 	(cd files && @FIND@ . -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2.spec
 
-../../$(PKG_RPM) : Macaulay2.spec .prepared; @FAKEROOT@ rpmbuild $(SIGN) --buildroot @abs_builddir@/files -bb Macaulay2.spec
+../../$(PKG_RPM) : Macaulay2.spec .prepared; $(FAKEROOT) rpmbuild $(SIGN) --buildroot @abs_builddir@/files -bb Macaulay2.spec
 
 Macaulay2-common.spec: Macaulay2-common-body.spec Makefile .prepared-common
 	sed -e 's/^Release: .*/Release: $(DISTRIBUTION)/' \
 	    -e 's/%PKG_COM_RPM%/$(PKG_COM_RPM)/g' <$< >$@
 	(cd files-common && @FIND@ -type d -a -name Macaulay2 -prune -o -type f) | sed $(SEDOPTS) >>Macaulay2-common.spec
 
-../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; @FAKEROOT@ rpmbuild $(SIGN) --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
+../../$(PKG_COM_RPM) : Macaulay2-common.spec .prepared-common; $(FAKEROOT) rpmbuild $(SIGN) --buildroot @abs_builddir@/files-common -bb Macaulay2-common.spec
 
 libraries-used: .prepared always
 	for i in files@bindir@/M2@EXE@ files@programsdir@/* ;\
