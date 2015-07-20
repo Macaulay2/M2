@@ -51,10 +51,21 @@ concatenateNets List := L -> (
     )
 
 Gate = new Type of HashTable
+GateMatrix = new Type of List
+
+gateCatalog = new MutableHashTable -- records all gates
+gateCatalogCount = new MutableHashTable -- count for each gate
+add2GC := g -> if gateCatalog#?g then (
+    gateCatalogCount#g = gateCatalogCount#g + 1;
+    gateCatalog#g -- value = stored identical gate (may differ in "cache")
+    ) else (
+    gateCatalogCount#g= 1;
+    gateCatalog#g = g
+    ) 
 
 InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()
-inputGate Thing := a -> new InputGate from {
+inputGate Thing := a -> add2GC new InputGate from {
     Name => a,
     cache => new CacheTable
     } 
@@ -66,14 +77,16 @@ zeroGate = inputGate 0
 
 SumGate = new Type of Gate
 net SumGate := g -> concatenateNets( {"("} | between(" + ", g.Inputs) | {")"} )
-Gate + Gate := (a,b) -> if a===zeroGate then b else 
-                        if b===zeroGate then a else 
-			new SumGate from {
-    			    Inputs => {a,b}, 
-			    cache => new CacheTable
-    			    } 
+Gate + Gate := (a,b) -> add2GC (
+    if a===zeroGate then b else 
+    if b===zeroGate then a else 
+    new SumGate from {
+      	Inputs => {a,b}, 
+      	cache => new CacheTable
+      	} 
+    )
 sumGate = method()
-sumGate List := L -> (
+sumGate List := L -> add2GC(
     if not all(L, a->instance(a,Gate)) 
     then error "expected a list of gates";
     new SumGate from {Inputs=>L, cache => new CacheTable}
@@ -81,13 +94,25 @@ sumGate List := L -> (
  
 ProductGate = new Type of Gate
 net ProductGate := g -> concatenateNets( {"("} | between(" * ", g.Inputs) | {")"} )
-Gate * Gate := (a,b) -> if a===zeroGate or b===zeroGate then zeroGate else 
-                        if a===oneGate then b else 
-			if b===oneGate then a else 
-			new ProductGate from {
-    			    Inputs => {a,b},
-			    cache => new CacheTable
-    	    	    	    }
+Gate * Gate := (a,b) -> add2GC (
+    if a===zeroGate or b===zeroGate then zeroGate else 
+    if a===oneGate then b else 
+    if b===oneGate then a else 
+    new ProductGate from {
+      	Inputs => {a,b},
+      	cache => new CacheTable
+      	}	   
+    )
+
+productGate = method()
+productGate List := L -> add2GC(
+    if not all(L, a->instance(a,Gate)) 
+    then error "expected a list of gates";
+    new ProductGate from {Inputs=>L, cache => new CacheTable}
+    )
+
+- Gate := g -> minusOneGate*g
+Gate - Gate := (a,b) -> a+(-b)
 
 ZZ + Gate := (a,b) -> inputGate a + b
 Gate + ZZ := (a,b) -> a + inputGate b 
@@ -115,20 +140,10 @@ Gate - CC := (a,b) -> a - inputGate b
 QQ - Gate := (a,b) -> inputGate a - b
 Gate - QQ := (a,b) -> a - inputGate b 
 
-productGate = method()
-productGate List := L -> (
-    if not all(L, a->instance(a,Gate)) 
-    then error "expected a list of gates";
-    new ProductGate from {Inputs=>L, cache => new CacheTable}
-    )
-
-- Gate := g -> minusOneGate*g
-Gate - Gate := (a,b) -> a+(-b)
-
 DetGate = new Type of Gate
 net DetGate := g -> concatenateNets {"det", MatrixExpression applyTable(g.Inputs,net)}
 detGate = method()
-detGate List := L {*doubly nested list*} -> (
+detGate List := L {*doubly nested list*} -> add2GC(
     n := #L;
     if not all(L, a->instance(a,List) and #a==n and all(a,b->instance(b,Gate)))
     then error "expected a square matrix (a doubly nested list) of gates";
@@ -137,13 +152,15 @@ detGate List := L {*doubly nested list*} -> (
 
 DivideGate = new Type of Gate
 net DivideGate := g -> net Divide(first g.Inputs,last g.Inputs) 
-Gate / Gate := (a,b) -> if b===zeroGate then error "division by zero"  else 
-                        if a===zeroGate then zeroGate else 
-			new DivideGate from {
-    			    Inputs => {a,b}, 
-			    cache => new CacheTable
-    			    } 
-
+Gate / Gate := (a,b) -> add2GC(
+    if b===zeroGate then error "division by zero"  else 
+    if a===zeroGate then zeroGate else 
+    new DivideGate from {
+      	Inputs => {a,b}, 
+      	cache => new CacheTable
+      	}
+    ) 
+    
 ValueHashTable = new Type of HashTable
 valueHashTable = method()
 valueHashTable (List,List) := (a,b) -> hashTable (apply(a,b,identity) | {(cache,new CacheTable)})
@@ -159,6 +176,17 @@ support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
 support ProductGate := memoize (g -> g.Inputs/support//flatten//unique)
 support DivideGate := memoize (g -> g.Inputs/support//flatten//unique)
 support DetGate := memoize (g -> g.Inputs//flatten/support//flatten//unique)
+support List := memoize (L -> L/support//flatten//unique)
+support GateMatrix := memoize (M -> support flatten entries M)
+
+constants = method()
+constants InputGate := g -> if isConstant g then g else {}
+constants SumGate := memoize (g -> g.Inputs/constants//flatten//unique)
+constants ProductGate := memoize (g -> g.Inputs/constants//flatten//unique)
+constants DivideGate := memoize (g -> g.Inputs/constants//flatten//unique)
+constants DetGate := memoize (g -> g.Inputs//flatten/constants//flatten//unique)
+constants List := memoize (L -> L/constants//flatten//unique)
+constants GateMatrix := memoize (M -> constants flatten entries M)
 
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
 diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sum
@@ -292,15 +320,27 @@ toPreSLP (List,List) := (inputs,outputs) -> (
 
 appendToSLProgram = method()
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
-    g.cache#slp = rawSLPInputGate(slp)
+    if g.cache#?slp then g.cache#slp else g.cache#slp = rawSLPInputGate(slp)
 appendToSLProgram (RawSLProgram, SumGate) := (slp, g) -> 
-    g.cache#slp = rawSLPSumGate(slp, g.Inputs/(a->a.cache#slp))
+    if g.cache#?slp then g.cache#slp else (
+	scan(g.Inputs, a->appendToSLProgram (slp,a));
+	g.cache#slp = rawSLPSumGate(slp, g.Inputs/(a->a.cache#slp))
+	)
 appendToSLProgram (RawSLProgram, ProductGate) := (slp, g) -> 
-    g.cache#slp = rawSLPProductGate(slp, g.Inputs/(a->a.cache#slp))
+    if g.cache#?slp then g.cache#slp else (
+	scan(g.Inputs, a->appendToSLProgram (slp,a));
+    	g.cache#slp = rawSLPProductGate(slp, g.Inputs/(a->a.cache#slp))
+	)
 appendToSLProgram (RawSLProgram, DetGate) := (slp, g) -> 
-    g.cache#slp = rawSLPDetGate(slp, flatten g.Inputs/(a->a.cache#slp))
+    if g.cache#?slp then g.cache#slp else (
+	scan(flatten g.Inputs, a->appendToSLProgram (slp,a));
+    	g.cache#slp = rawSLPDetGate(slp, flatten g.Inputs/(a->a.cache#slp))
+	)
 appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) -> 
-    g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
+    if g.cache#?slp then g.cache#slp else (
+	scan(g.Inputs, a->appendToSLProgram (slp,a));
+	g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
+	)
 ///
 restart
 load "SLP-expressions.m2"
@@ -313,20 +353,25 @@ XoC = X/C
 s = rawSLProgram(1) -- 1 means nothing anymore
 n0 = appendToSLProgram(s,C)
 n1 = appendToSLProgram(s,X)
-n2 = appendToSLProgram(s,XpC)
+-- n2 = appendToSLProgram(s,XpC)
 n3 = appendToSLProgram(s,XXC)
 n4 = appendToSLProgram(s,detXCCX)
 n5 = appendToSLProgram(s,XoC)
-rawSLPsetOutputPositions(s,{n0,n1,n2,n3,n4,n5}) 
-eQQ = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
-rawSLEvaluatorEvaluate(eQQ, raw matrix{{7/2}}) -- divide over QQ works lke over ZZ?
-eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_CC}})
-rawSLEvaluatorEvaluate(eCC, raw matrix{{toCC 3.5}}) -- divide over QQ works lke over ZZ?
+n6 = appendToSLProgram(s,XpC+XoC)
 
+rawSLPsetOutputPositions(s,{n0,n1,n3,n4,n5,n6}) 
+eQQ = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
+rawSLEvaluatorEvaluate(eQQ, raw matrix{{7_QQ}}) 
+eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_CC}})
+rawSLEvaluatorEvaluate(eCC, raw matrix{{7_CC}}) 
+R = CC_1000
+eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_R}})
+rawM = rawSLEvaluatorEvaluate(eCC, raw matrix{{7_R}}) 
+last flatten entries map(R,rawM) 
 ///
 
 -- GateMatrix is NOT A GATE
-GateMatrix = new Type of List
+-- GateMatrix = new Type of List
 
 old'matrix'List = lookup(matrix,List)
 gateMatrix = method()
@@ -462,25 +507,83 @@ printAsSLP List := outputs -> (
     )
 printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
+makeSLProgram = method()
+makeSLProgram (List,List) := (inL,outL) -> (
+    s := rawSLProgram(1); -- 1 means nothing anymore
+    scan(inL,g->appendToSLProgram(s,g)); 
+    out := apply(outL, g->appendToSLProgram(s,g));
+    rawSLPsetOutputPositions(s,out);
+    s
+    )
+makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
+
 GateHomotopySystem = new Type of HomotopySystem    
-gateHomotopySystem = method()
-gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := (H,X,T) -> (
+gateHomotopySystem = method(Options=>{Software=>M2engine})
+gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     GH := new GateHomotopySystem;
-    GH.H = H;
     GH.X = X;
     GH.T = T;    
+    GH.H = H;
     GH.Hx = diff(X,H);
     GH.Ht = diff(T,H);
+    if (GH.Software = o.Software) === M2 then (
+	)
+    else if (GH.Software = o.Software) === M2engine then (
+	varMat := X | matrix{{T}};
+    	GH.H'core = makeSLProgram (varMat,H);
+	GH.H'consts = constants H;
+    	GH.Hx'core = makeSLProgram (varMat,GH.Hx);
+	GH.Hx'consts = constants GH.Hx;
+    	GH.Ht'core = makeSLProgram (varMat,GH.Ht);
+	GH.Ht'consts = constants GH.Ht;
+	)
+    else error "uknown Software option value";
     GH
     ) 
-evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.H, 
-    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
+    R := ring M;
+    e := flatten entries M;  
+    map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
-evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Ht, 
-    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
+    e := flatten entries M;  
+    map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
-evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> value(H.Hx, 
+evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H.H, 
     hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    ) else if H.Software===M2engine then (
+    K := ring x;
+    if not H#?(H.H,K) then (
+	s := H.H'core; -- core SLP
+	consts := H.H'consts; -- constants of SLP
+	H#(H.H,K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H.X | {H.T},c->c.cache#s),
+	    raw matrix{apply(consts,c->c.Name_K)});
+	);
+    matrix(K, rawSLEvaluatorEvaluate(H#(H.H,K), raw (transpose x | matrix{{t}})), numrows H.H, numcols H.H)
+    )
+evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H.Ht, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    ) else if H.Software===M2engine then (
+    K := ring x;
+    if not H#?(H.Ht,K) then (
+	s := H.Ht'core; -- core SLP
+	consts := H.Ht'consts; -- constants of SLP
+	H#(H.Ht,K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H.X | {H.T},c->c.cache#s),
+	    raw matrix{apply(consts,c->c.Name_K)});
+	);
+    matrix(K, rawSLEvaluatorEvaluate(H#(H.Ht,K), raw (transpose x | matrix{{t}})), numrows H.Ht, numcols H.Ht)
+    )
+evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H.Hx, 
+    hashTable(apply(flatten entries H.X, flatten entries x,identity) | {(H.T,t), (cache,new CacheTable)})
+    ) else if H.Software===M2engine then (
+    K := ring x;
+    if not H#?(H.Hx,K) then (
+	s := H.Hx'core; -- core SLP
+	consts := H.Hx'consts; -- constants of SLP
+	H#(H.Hx,K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H.X | {H.T},c->c.cache#s),
+	    raw matrix{apply(consts,c->c.Name_K)});
+	);
+    matrix(K,rawSLEvaluatorEvaluate(H#(H.Hx,K), raw (transpose x | matrix{{t}})), numrows H.Hx, numcols H.Hx)
     )
 
 end -------------------------------------------
@@ -571,6 +674,16 @@ peek s
 assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 
 -- HomotopySystem
+restart
+load "SLP-expressions.m2"
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+K = CC
+R = K[x,y,t] 
+F = {X*X-1, Y*Y-1}
+G = {X*X+Y*Y-1, -X*X+Y}
+H = (1 - T) * F + T * G
 Rvars = hashTable{X=>x,Y=>y,T=>t,cache=>new CacheTable} 
 gV = matrix{{X,Y}}
 gH = transpose matrix {H}
@@ -582,8 +695,16 @@ value(gHx, Rvars)
 
 
 HS = gateHomotopySystem(gH,gV,T)
-s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+x0 = matrix{{1_CC},{1}}
+s = first trackHomotopy(HS,{x0},Software=>M2)
 peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+value(HS.H, Rvars)
+evaluateH(HS,x0,0.1_CC)
+value(HS.Ht, Rvars)
+evaluateHt(HS,x0,0.1_CC)
+evaluateHx(HS,x0,0.1_CC)
+
 
 F = {X*X-1, Y*Y*Y-1}
 G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
@@ -591,5 +712,5 @@ H = (1 - T) * F + T * G
 gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 HS = gateHomotopySystem(gH,gV,T)
-trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
-
+s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
+peek s
