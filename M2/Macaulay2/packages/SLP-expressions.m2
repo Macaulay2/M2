@@ -518,10 +518,14 @@ makeSLProgram (List,List) := (inL,outL) -> (
 makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
 
 GateHomotopySystem = new Type of HomotopySystem    
-gateHomotopySystem = method(Options=>{Software=>M2engine})
+GateParameterHomotopySystem = new Type of ParameterHomotopySystem
+
+gateHomotopySystem = method(Options=>{Parameters=>null,Software=>M2engine})
 gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
+    para := o.Parameters=!=null;
     GH := new GateHomotopySystem;
     GH.X = X;
+    if para then GH.X = o.Parameters | GH.X;
     GH.T = T;    
     GH.H = H;
     GH.Hx = diff(X,H);
@@ -530,6 +534,7 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
 	)
     else if (GH.Software = o.Software) === M2engine then (
 	varMat := X | matrix{{T}};
+	if para then varMat = o.Parameters | varMat;
     	GH.H'core = makeSLProgram (varMat,H);
 	GH.H'consts = constants H;
     	GH.Hx'core = makeSLProgram (varMat,GH.Hx);
@@ -538,8 +543,14 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
 	GH.Ht'consts = constants GH.Ht;
 	)
     else error "uknown Software option value";
-    GH
+    if para then (
+	GPH := new GateParameterHomotopySystem;
+	GPH.GateHomotopySystem = GH;
+	GPH
+	) 
+    else GH
     ) 
+
 matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
     R := ring M;
     e := flatten entries M;  
@@ -585,6 +596,9 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
 	);
     matrix(K,rawSLEvaluatorEvaluate(H#(H.Hx,K), raw (transpose x | matrix{{t}})), numrows H.Hx, numcols H.Hx)
     )
+evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopySystem,parameters||x,t)
+evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
+evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopySystem,parameters||x,t)
 
 end -------------------------------------------
 
@@ -693,7 +707,6 @@ value(gH, Rvars)
 value(gHt, Rvars)
 value(gHx, Rvars)
 
-
 HS = gateHomotopySystem(gH,gV,T)
 x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
@@ -705,7 +718,6 @@ value(HS.Ht, Rvars)
 evaluateHt(HS,x0,0.1_CC)
 evaluateHx(HS,x0,0.1_CC)
 
-
 F = {X*X-1, Y*Y*Y-1}
 G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
 H = (1 - T) * F + T * G
@@ -714,3 +726,27 @@ gH = transpose matrix {H}
 HS = gateHomotopySystem(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 peek s
+
+-- ParameterHomotopySystem
+restart
+load "SLP-expressions.m2"
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+P = inputGate symbol P
+K = CC
+R = K[x,y,t] 
+F = {X*X-1, Y*Y-1}
+G = {X*X+Y*Y-P, -X*X+Y}
+H = (1 - T) * F + T * G
+gV = matrix{{X,Y}}
+gH = transpose matrix {H}
+gP = matrix{{P}}
+
+PHS = gateHomotopySystem(gH,gV,T,Parameters=>gP)
+HS = specialize(PHS,matrix{{1_CC}})
+x0 = matrix{{1_CC},{1}}
+s = first trackHomotopy(HS,{x0},Software=>M2)
+peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+ 

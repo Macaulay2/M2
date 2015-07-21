@@ -2,7 +2,7 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { track, trackSegment, HomotopySystem, evaluateH, evaluateHt, evaluateHx }
+export { track, trackSegment }
 
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
@@ -630,14 +630,6 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
-HomotopySystem = new Type of MutableHashTable -- abstract type
-evaluateH = method()
-evaluateH (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
-evaluateHt = method()
-evaluateHt (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
-evaluateHx = method()
-evaluateHx (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
-    
 -- "track" should eventually go through "trackHomotopy"
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
