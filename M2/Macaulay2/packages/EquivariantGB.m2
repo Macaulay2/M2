@@ -735,17 +735,19 @@ egbSignature (List) := o -> F -> (
 	<< "  processing pair: " << j << endl;
 	j = regularTopReduce(j,G);
 	p := j.polynomial;
-	if p == 0 then ( -- p==0 is not enough to record a syzygy
+	if p == 0 then ( 
 	    H = append(H,j); 
 	    << "-- " << #H << "th syzygy is: " << j << endl;
 	    )
 	else (
 	    if o.CompleteReduce then p = completeReduce(p,apply(G,g->g.polynomial));
-	    if p == 0 then continue;
-	    j = mPair(shiftMonomial(1_R,shift{}),#F,p);
-	    F       = append(F,p);
-	    Fwidths = append(Fwidths,width leadMonomial p);
-	    G       = append(G,j);
+	    if p == 0 then continue; -- p==0 is not enough to record a syzygy
+	    if p =!= j.polynomial then (
+	      j = mPair(shiftMonomial(1_R,shift{}),#F,p);
+	      F       = append(F,p);
+	      Fwidths = append(Fwidths,width leadMonomial p);
+	      );
+	    G = append(G,j);
 	    << "-- " << #G << "th basis element is: " << j << endl;
 	    for g in G do (
 		(newJP,newPS) := jPairs(j,g);
@@ -753,9 +755,10 @@ egbSignature (List) := o -> F -> (
 		newJP = select(newJP, j->not isCoveredByTrivSyg(j,Fwidths#(j.pos)) and not isCovered(j,H));
 		scan(newJP, j->insert(JP,j));
 		<< "   new NOT covered J-pairs: " << #newJP << endl;
-		if o.PrincipalSyzygies then
+		if o.PrincipalSyzygies then (
 		  newPS = select(newPS, s->not isCoveredByTrivSyg(s,Fwidths#(s.pos)) and not isCovered(s,H));
 		  H = H | newPS;
+		  )
 		);
 	    << "  JP queue length: " << length JP << endl;
 	    << "  syzygies in H: " << #H << endl;
