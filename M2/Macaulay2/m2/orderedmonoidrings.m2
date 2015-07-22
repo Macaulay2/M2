@@ -265,7 +265,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> (
-	       c := 1_R; ff:=f;
+	       c := 1_R; ff := f;
 	       if (options RM).Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
@@ -275,8 +275,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
-		       pp:=new RM from facs#i; 
-		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
+		       pp:=new RM from facs#i;
+		       if conv(leadCoefficient pp) >= 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
