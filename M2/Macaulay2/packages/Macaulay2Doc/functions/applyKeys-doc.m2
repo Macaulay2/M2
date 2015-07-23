@@ -19,7 +19,7 @@ document {
   	  HashTable => {"obtained by applying ", TT "f", " to each key ", 
 	  TT "k", " in ", TT "H"}
 	  },
-     Caveat => {"It is an error for the function ", TT "f", " to return two pairs with the same key. If such a case may occur, use ",TO "applyKeys(HashTable,Function,Function)","instead."},
+     Caveat => {"It is an error for the function ", TT "f", " to return two pairs with the same key. If such a case may occur, use ",TO "applyKeys(HashTable,Function,Function)"," instead."},
      EXAMPLE {
 	  "H = new HashTable from {1 => a, 2 => b, 3 => c}",
 	  "applyKeys(H, k -> k + 100)",
