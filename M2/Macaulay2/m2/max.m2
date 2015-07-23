@@ -24,26 +24,61 @@ InfiniteNumber ..< InfiniteNumber :=
 InfiniteNumber .. InfiniteNumber := (i,j) -> if i < j then error "infinite range specified" else ()
 InfiniteNumber == InfiniteNumber := (x,y) -> x === y
 
-InfiniteNumber + QQ := 
-InfiniteNumber + ZZ := (i,j) -> i
-QQ + InfiniteNumber := 
-ZZ + InfiniteNumber := (i,j) -> j
-InfiniteNumber - QQ := 
-InfiniteNumber - ZZ := (i,j) -> i
-QQ - InfiniteNumber := 
-ZZ - InfiniteNumber := (i,j) -> -j
+InfiniteNumber + Number := (i,j) -> i
+Number + InfiniteNumber := (i,j) -> j
+InfiniteNumber - Number := (i,j) -> i
+Number - InfiniteNumber := (i,j) -> -j
+InfiniteNumber * RR := 
 InfiniteNumber * QQ := 
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
+RR * InfiniteNumber := 
 QQ * InfiniteNumber := 
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
-QQ // InfiniteNumber := QQ / InfiniteNumber := 
-ZZ // InfiniteNumber := ZZ / InfiniteNumber := (x,y) -> 0
-InfiniteNumber // QQ := InfiniteNumber / QQ := 
+Number // InfiniteNumber := Number / InfiniteNumber := (x,y) -> 0
+InfiniteNumber // RR := InfiniteNumber / RR := 
+InfiniteNumber // QQ := InfiniteNumber / QQ :=
 InfiniteNumber // ZZ := InfiniteNumber / ZZ := (x,y) -> if y > 0 then x else if y < 0 then -x else indeterminate
-InfiniteNumber == QQ := 
-InfiniteNumber == ZZ :=
-QQ == InfiniteNumber := 
-ZZ == InfiniteNumber := (x,y) -> false
+InfiniteNumber ^ ZZ := (x,n) -> (
+  if (n > 0 and even n) then infinity
+  else if (n > 0 and odd n) then x
+  else if n < 0 then 0
+  else indeterminate
+)
+InfiniteNumber ^ QQ := (x,q) -> if (odd denominator q or x > 0) then x ^ (numerator q) else indeterminate
+InfiniteNumber ^ RR := (x,r) -> if (x > 0 and r > 0) then x else if (x > 0 and r < 0) then 0 else indeterminate
+ZZ ^ InfiniteNumber := (n,x) -> (
+  if n==1 then 
+    1
+  else if n==0 and x > 0 then
+    0
+  else if n==0 and x < 0 then
+    indeterminate
+  else if n == -1 then
+    indeterminate
+  else if x < 0 then
+    0
+  else if n > 1 then
+    infinity
+  else
+    indeterminate
+)
+QQ ^ InfiniteNumber := (q,x) -> ((numerator q)^x)/((denominator q)^x)
+RR ^ InfiniteNumber := (r,x) -> (
+  if (-1 < r and r < 1 and x > 0) then
+    0
+  else if (r > 1 and x > 0) then
+    infinity
+  else if (x < 0 and (r > 1 or r < -1)) then
+    0
+  else if (x < 0 and 0 < r and r < 1) then
+    infinity
+  else if r == 1 then
+    1
+  else
+    indeterminate
+)
+InfiniteNumber == Number := 
+Number == InfiniteNumber := (x,y) -> false
 Thing ? InfiniteNumber := (x,y) -> if y === infinity then symbol < else symbol >
 InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
 
