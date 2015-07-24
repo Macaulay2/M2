@@ -271,7 +271,7 @@ M2_common_setenv_bin:  M2_common_setenv_bin.in ; cd ../..; ./config.status Macau
 
 M2_setenv_tail: M2_setenv_tail.in ; cd ../..; ./config.status Macaulay2/bin/M2_setenv_tail;
 
-M2: M2_tail M2_common_setenv_bin ; cat M2_common_setenv_bin >M2 ;  cat M2_tail >> M2 ; 
+M2: M2_tail M2_common_setenv_bin ; rm -f M2; cat M2_common_setenv_bin >M2 ;  cat M2_tail >> M2 ; 
 
 #rm -f M2_tail M2_common_setenv_bin;
 
