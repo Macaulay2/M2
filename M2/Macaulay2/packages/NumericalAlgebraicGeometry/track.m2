@@ -747,7 +747,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := sub(o.tStep,K);
 	       predictorSuccesses := 0;
-	       x0 := s; 
+	       x0 := if instance(s,Point) then transpose matrix s else s; 
 	       t0 := 0_K; 
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
