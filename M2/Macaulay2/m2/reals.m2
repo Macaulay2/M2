@@ -274,10 +274,11 @@ Constant + InfiniteNumber := (c,x) -> x
 InfiniteNumber + Constant := (x,c) -> x
 Constant - InfiniteNumber := (c,x) -> -x
 InfiniteNumber - Constant := (x,c) -> x
-Constant * InfiniteNumber := (c,x) -> if c > 0 then x else if c < 0 then -x else indeterminate
-InfiniteNumber * Constant := (x,c) -> c*x
+Constant * InfiniteNumber := (c,x) -> (numeric c)*x
+InfiniteNumber * Constant := (x,c) -> x*(numeric c)
 Constant // InfiniteNumber := Constant / InfiniteNumber := (c,x) -> 0
-InfiniteNumber // Constant := InfiniteNumber / Constant := (x,c) -> if c > 0 then x else if c < 0 then -x else indeterminate
+InfiniteNumber // Constant := (x,c) -> x // (numeric c)
+InfiniteNumber / Constant := (x,c) -> x / (numeric c)
 Constant ! := c -> (numeric c)!
 
 -- printing
