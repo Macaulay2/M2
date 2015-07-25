@@ -11,13 +11,13 @@ newPackage(
     Reload => true
 )
 ------------------------------------------------------------------------
-export{qthConductor, 
-       qthIntegralClosure, 
-       rationalIntegralClosure, 
-       minimization,
-       weightGrevlex,
-       grevlexWeight,
-       testWeightMatrix
+export{"qthConductor", 
+       "qthIntegralClosure", 
+       "rationalIntegralClosure", 
+       "minimization",
+       "weightGrevlex",
+       "grevlexWeight",
+       "testWeightMatrix"
 }
 -- PURPOSE : To implement Leonard's Qth-power algorithm 
 --           to compute the integral closure C(A,Q(A)) of a domain A=R/I

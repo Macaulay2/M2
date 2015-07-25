@@ -123,6 +123,8 @@ things to do manually before release
 
 	try edit(dim,Module), in emacs under X and in emacs in an xterm
 
+	verify that " applicationDirectory() " yields "~/Library/Application Support/Macaulay2/" under Mac OS X and "~/.Macaulay2" under other OSes.
+
 	verify that ~/.Macaulay2/README or ~/Library/Application Support/Macaulay2/README, if it is deleted, is restored by running
 	       M2 without the -q option
 

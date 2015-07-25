@@ -3,10 +3,11 @@ dnl This is the only place in the code where the Macaulay2 version number
 dnl appears as a literal value.
 
 dnl Things to do when incrementing the version number:
-dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
-dnl    - make a git tag of the form version-X.Y.Z, if it's stable
 dnl    - add an entry to distributions/deb/changelog
-AC_INIT(Macaulay2, 1.7.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+dnl Things to do after incrementing the version number and committing:
+dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
+dnl    - make a git tag of the form version-X.Y.Z
+AC_INIT(Macaulay2, 1.8.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -34,7 +35,7 @@ dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 echo "relevant environment variable values, if any:"
 for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
 do eval v=\$$x
-   test "$v" && echo "   $x=$v"
+   test "$v" && echo "   $x = $v"
 done
 
 AC_SUBST(DISTRIBUTION) # use this starting number to sequentially number the downstream distributions
@@ -65,6 +66,93 @@ do case $i in
    -I*) AC_MSG_ERROR(preprocessor flag $i found in LDFLAGS instead of in CPPFLAGS);;
    esac
 done
+
+dnl AC_MSG_CHECKING(whether $FIND is GNU find)
+dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
+dnl then AC_MSG_RESULT(yes)
+dnl else AC_MSG_ERROR($FIND: GNU find is required")
+dnl fi
+
+dnl interesting behavior: $A expansion happens after statement separation!
+dnl       $ A="echo hi 2>/dev/null "
+dnl       $ echo "`$A`"
+dnl       hi 2>/dev/null
+dnl       $ $A
+dnl       hi 2>/dev/null
+dnl       $ eval $A
+dnl       hi
+
+AC_SUBST(NODENAME,"`uname -n`")
+AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
+
+AC_SUBST(ISSUE) # no initial value
+AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
+AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
+AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
+AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
+AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
+
+case $OS in
+  # Here we normalize the name of the OS for windows for startup.m2, which
+  # needs to know that C:/FOO/BAR is an absolute path.
+  CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
+esac
+
+case $OS in
+   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
+esac
+
+if test ! "$ISSUE"
+then if test -f /usr/bin/sw_vers
+     then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
+          ISSUE_RELEASE=`/usr/bin/sw_vers -productVersion`
+     elif test -f /usr/bin/lsb_release
+     then ISSUE_FLAVOR=`lsb_release -s --id`
+          ISSUE_RELEASE=`lsb_release -s --release`
+     elif test -f /etc/os-release
+     then ISSUE_FLAVOR=`. /etc/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /etc/os-release ; echo $VERSION_ID`
+     elif test -f /usr/lib/os-release
+     then ISSUE_FLAVOR=`. /usr/lib/os-release ; echo $ID`
+          ISSUE_RELEASE=`. /usr/lib/os-release ; echo $VERSION_ID`
+     elif test -f /etc/issue
+     then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
+          ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
+     fi
+     # translate to something standard (for us), and verify :
+     case $ISSUE_FLAVOR in
+         "Mac OS X") ISSUE_FLAVOR=MacOS ;;
+	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
+         "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
+	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
+	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
+	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
+	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
+	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
+	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
+	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
+	 "") AC_MSG_ERROR([issue not found]) ;;
+	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
+     esac
+     case $ISSUE_RELEASE in
+	 "") AC_MSG_NOTICE([release number not found]) 
+	     ISSUE_RELEASE=unknown ;;
+     esac
+     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
+fi
+
+# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
+test "$ISSUE" || ISSUE=$REL
+
+AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
+AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
+AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
+
+AC_MSG_NOTICE([operating system information:
+   OS    = $OS
+   ISSUE = $ISSUE])
+
+AC_CONFIG_AUX_DIR(config)
 
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
@@ -111,84 +199,6 @@ if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
-
-dnl AC_MSG_CHECKING(whether $FIND is GNU find)
-dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
-dnl then AC_MSG_RESULT(yes)
-dnl else AC_MSG_ERROR($FIND: GNU find is required")
-dnl fi
-
-dnl interesting behavior: $A expansion happens after statement separation!
-dnl       $ A="echo hi 2>/dev/null "
-dnl       $ echo "`$A`"
-dnl       hi 2>/dev/null
-dnl       $ $A
-dnl       hi 2>/dev/null
-dnl       $ eval $A
-dnl       hi
-
-AC_SUBST(NODENAME,"`uname -n`")
-AC_DEFINE_UNQUOTED(NODENAME,"$NODENAME",hostname used for compilation)
-
-AC_SUBST(ISSUE) # no initial value
-AC_ARG_WITH(issue, AS_HELP_STRING([--with-issue=...,specify the OS issue (e.g., Ubuntu-7.10)]),ISSUE=$withval)
-AC_SUBST(OS,"`  uname -s | sed s=/=-=g  `")
-AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
-AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
-AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
-
-# Here we translate OS and REL into something the user can understand, because the names of the binary
-# distribution tar files on the web site contain those strings.
-case $OS-$REL in
-  Darwin-7.*) REL=10.3 ; OS=MacOS ;;
-  Darwin-8.*) REL=10.4 ; OS=MacOS ;;
-  Darwin-9.*) REL=10.5 ; OS=MacOS ;; # Leopard
-  Darwin-10.*) REL=10.6 ; OS=MacOS ;; # Snow Leopard
-  Darwin-11.*) REL=10.7 ; OS=MacOS ;; # Lion
-  Darwin-12.*) REL=10.8 ; OS=MacOS ;; # Mountain Lion
-  Darwin-13.*) REL=10.9 ; OS=MacOS ;; # Mavericks
-  Darwin-14.*) REL=10.10 ; OS=MacOS ;; # Yosemite
-  Darwin-*) echo "Darwin release number translation needed in configure.ac" >&2 ; exit 1 ;;
-  CYGWIN*-*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
-
-case $OS in
-  # Here we normalize the name of the OS for windows for startup.m2, which
-  # needs to know that C:/FOO/BAR is an absolute path.
-  CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
-esac
-
-if test -f /etc/issue -a ! "$ISSUE"
-then ISSUE_FLAVOR=[`</etc/issue head -1 | sed 's/^\([A-Za-z ]*\).*/\1/' | sed 's/ //g' `]
-     ISSUE_RELEASE=[`</etc/issue head -1 | sed 's/[^0-9]*\([0-9.]*\).*/\1/'`]
-     # translate the contents of /etc/issue to something sensible:
-     case $ISSUE_FLAVOR in
-	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
-	 "Fedora"*) ISSUE_FLAVOR=Fedora ;;
-	 "RedHatEnterprise"*) ISSUE_FLAVOR=RedHatEnterprise ;;
-	 "RedHat"*) ISSUE_FLAVOR=RedHat ;;
-	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
-	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;; # Raspbian GNU/Linux 7 \n \l
-	 "Debian"*) ISSUE_FLAVOR=Debian ;;     # Debian GNU/Linux 4.0 \n \l
-	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;; # Welcome to openSUSE 11.2 "Emerald" - Kernel \r (\l).
-	 "") AC_MSG_ERROR([issue not found in /etc/issue]) ;;
-	 *)  AC_MSG_NOTICE([unrecognized issue in /etc/issue: $ISSUE_FLAVOR]) ;;
-     esac
-     case $ISSUE_RELEASE in
-	 "") AC_MSG_NOTICE([release number not found in /etc/issue: `</etc/issue head -1`]) 
-	     ISSUE_RELEASE=unknown ;;
-     esac
-     ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
-fi
-
-# some operating systems have no ISSUE_FLAVOR, e.g., MacOS
-test "$ISSUE" || ISSUE=$REL
-
-AC_DEFINE_UNQUOTED(ISSUE,"$ISSUE",[issue (flavor) of operating system, if any])
-AC_DEFINE_UNQUOTED(OS,"$OS",[operating system name, obtained with uname -s, perhaps modified])
-AC_DEFINE_UNQUOTED(REL,"$REL",[operating system release, obtained with uname -r])
-
-AC_CONFIG_AUX_DIR(config)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -447,7 +457,7 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,no)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--enable-strip,strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,yes)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
@@ -776,21 +786,16 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on mpir and mpfr
-#    "missing" is our own library -- it provides unix functions (e.g., sync) missing on certain architectures (mingw);
-#	we always build it, and every program should link with it
-#	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
-BUILD_ALWAYS=" missing gtest "
+BUILD_ALWAYS=" gtest "
 
 for i in $LIBLIST
 do eval BUILD_$i=no
 done
-BUILD_missing=yes
-BUILTLIBS="-lmissing $BUILTLIBS"
 
 for i in $PROGLIST
 do eval BUILD_$i=yes
@@ -1262,7 +1267,7 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-BUILD_gftables=yes
+BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
 if test "$DEBUG" = yes
 then SINGULARLIBS="-lfactory  "
@@ -1333,7 +1338,7 @@ then AC_MSG_CHECKING([whether the Accelerate framework is available])
 	     fi
 	 ])
 fi
-test $BUILD_lapack = yes && BUILTLIBS="-llapack -lblas $BUILTLIBS"
+test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
 
 if test $BUILD_lapack = yes
 then # test whether the fortran compiler can handle lapack, which, starting with
@@ -1375,7 +1380,8 @@ CPPFLAGS="-I/usr/local/include/libxml2 -I/usr/include/libxml2 $CPPFLAGS"
 AC_CHECK_HEADER(libxml/parser.h,,[AC_MSG_ERROR([include file libxml/parser.h not found, set CPPFLAGS (-I/foo/bar/libxml2) or install libxml2 development files])])
 AC_SEARCH_LIBS(pow,m,,AC_MSG_ERROR(libm not found or not linkable))
 AC_SEARCH_LIBS(gzopen,z,,AC_MSG_ERROR(libz not found or not linkable))
-AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(libxml2 not found or not linkable))
+AC_SEARCH_LIBS(lzma_end,lzma,,AC_MSG_ERROR(library lzma not found or not linkable))
+AC_SEARCH_LIBS(xmlNewNode,xml2,,AC_MSG_ERROR(library xml2 not found or not linkable))
 
 AC_SUBST(ENABLE_MPACK,no)
 AC_ARG_ENABLE(mpack,
@@ -1553,7 +1559,7 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
 
-if ! test "$FAKEROOT"
+if test "$FAKEROOT" = false
 then if test "$RPM" = yes
      then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
      fi
@@ -1573,7 +1579,7 @@ do case $i in
 	#  libgcc_s: comes only in dynamic form
 	#      pari: it's only the dynamic form that is gmp compatible, and it needs mpir to be dynamic
 	#      mpir: pari needs mpir to be dynamic
-	-lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
+	-lpthread | -ldl | -lpari | -lmpir | -lncurses | -lsocket  | -lgcc_s* ) 
 		LIBS_DYNAMIC="$LIBS_DYNAMIC $i" ;;
 	# but on some systems, libpari is provided only dynamically (fedora), so we link dynamically
 	# and later we'll figure out a run-time test for whether pari is based on gmp
@@ -1602,6 +1608,7 @@ AC_MSG_NOTICE([using CPPFLAGS          = $CPPFLAGS])
 AC_MSG_NOTICE([using CFLAGS            = $CFLAGS])
 AC_MSG_NOTICE([using CXX               = $CXX])
 AC_MSG_NOTICE([using CXXFLAGS          = $CXXFLAGS])
+AC_MSG_NOTICE([using FC                = $FC])
 AC_MSG_NOTICE([using LDFLAGS           = $LDFLAGS])
 AC_MSG_NOTICE([using CC_FOR_BUILD      = $CC_FOR_BUILD])
 AC_MSG_NOTICE([using LDFLAGS_FOR_BUILD = $LDFLAGS_FOR_BUILD])

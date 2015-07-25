@@ -1,5 +1,5 @@
 export {
-    tests
+    "tests"
     }
     
 debug Core -- for ZZp

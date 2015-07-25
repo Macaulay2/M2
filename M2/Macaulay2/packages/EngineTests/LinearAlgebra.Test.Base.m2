@@ -1,20 +1,20 @@
 -- -*- coding: utf-8 -*-
 
 
-export { jordanForm,
-    maxFLINTPrime,
-    maxFFPACKPrime,
-    testDeterminant,
-    testMult,
-    testInverse,
-    testNullspace,
-    testRank,
-    testRankProfile,
-    testSolve,
-    testLinearAlgebra,
-    testLinearAlgebraSet,
-    testLUBoundaryCases,
-    testHasEngineLinearAlgebra
+export { "jordanForm",
+    "maxFLINTPrime",
+    "maxFFPACKPrime",
+    "testDeterminant",
+    "testMult",
+    "testInverse",
+    "testNullspace",
+    "testRank",
+    "testRankProfile",
+    "testSolve",
+    "testLinearAlgebra",
+    "testLinearAlgebraSet",
+    "testLUBoundaryCases",
+    "testHasEngineLinearAlgebra"
     }
 
 
@@ -23,7 +23,7 @@ debug Core;
 -----------------------------------------------------------------
 -- Test of MutableMatrix linear algebra over fields -------------
 -----------------------------------------------------------------
-maxFLINTPrime = 18446744073709551521
+maxFLINTPrime = 4294967291		    -- the largest prime less than 2^32
 maxFFPACKPrime = 33554393
 
 needsPackage "FastLinearAlgebra"

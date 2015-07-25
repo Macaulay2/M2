@@ -23,8 +23,8 @@ assert( source adjoint(f,A,B) == A )
 assert( target adjoint(f,A,B) == dual B ** C )
 
 g = map(B**C,A,0)
-assert( source adjoint1(g,B,C) == A ** dual B)
-assert( target adjoint1(g,B,C) == C )
+assert( source adjoint'(g,dual B,C) == A ** dual B)
+assert( target adjoint'(g,dual B,C) == C )
 
 -- square matrices
 assert(isHomogeneous flip(R^{0,1},R^{0,5}))

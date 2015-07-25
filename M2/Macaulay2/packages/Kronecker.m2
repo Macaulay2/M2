@@ -8,8 +8,8 @@ newPackage(
      DebuggingMode => false
      )
     
-export {kroneckerNormalForm, kroneckerIndices, rationalNormalForm, 
-     decomposeModule, decomposeGradedModule, doubleDualMap}
+export {"kroneckerNormalForm", "kroneckerIndices", "rationalNormalForm", 
+     "decomposeModule", "decomposeGradedModule", "doubleDualMap"}
 
 -- columns(A)
 --

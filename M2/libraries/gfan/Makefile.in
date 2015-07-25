@@ -1,4 +1,3 @@
-# license for gfan: GPL v2
 GFAN_VERSION = 0.5
 VERSION = $(GFAN_VERSION)
 PATCHFILE = @abs_srcdir@/patch-$(GFAN_VERSION)

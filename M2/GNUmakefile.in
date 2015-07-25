@@ -62,7 +62,7 @@ copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
 SUBTARGETS = check all clean distclean run-configure
 GITSUBTARGETS = git-clean git-update git-status git-describe
-all-in-submodules:all-in-libraries
+#all-in-submodules:all-in-libraries
 all-in-mathicgb:all-in-mathic all-in-memtailor
 all-in-mathic:all-in-memtailor
 $(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
@@ -205,6 +205,7 @@ unmark-packages:; $(MAKE) -C Macaulay2/packages $@
 reconfigure: reconfigure-top-only unconfigure-libs 
 unconfigure-libs:; $(MAKE) -C libraries unconfigure
 remove-deps:; find . -name \*.dep -delete
+find-conflicts:; grep -r -nH --exclude-dir BUILD -e '^<<<<<<< ' @srcdir@ || true
 log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
@@ -242,14 +243,17 @@ help:
 	@ echo "  unconfigure-libs          set libraries for later reconfiguration"
 	@ echo "  subst                     re-run config.status, remaking the makefiles"
 	@ echo "  show                      show configuration variable values"
+	@ echo "  find-conflicts            find conflict markers in source files"
 	@ echo ""
 	@ echo "package options:"
-	@ echo "  PACKAGES='Foo Bar'             the list of packages to process"
+	@ echo "  PACKAGES='Foo Bar'             the list of packages to install"
+	@ echo "  ReinstallPackages=true         reinstall the packages"
+	@ echo ""
+	@ echo "package options, when installing:"
 	@ echo "  IgnoreExampleErrors=true       continue even after errors in example code"
-	@ echo "  RemakePackages=true            remake the packages"
+	@ echo "  RerunExamples=true             rerun example output files"
 	@ echo "  RemakeAllDocumentation=true    remake all documentation"
 	@ echo "  CheckDocumentation=false       don't check documentation for completeness"
-	@ echo "  RerunExamples=true             rerun example output files"
 	@ echo "  debugLevel=1                   turn on further M2 debugging output"
 	@ echo ""
 	@ echo "make install options:"

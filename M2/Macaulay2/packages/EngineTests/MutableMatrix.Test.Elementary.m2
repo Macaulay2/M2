@@ -4,8 +4,8 @@
 --needsPackage "MutableMatrix.Test.Base"
 
 export {
-   testMutableMatrices,
-   testGF
+   "testMutableMatrices",
+   "testGF"
 }
 
 -----------------------------------------------------------------

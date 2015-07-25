@@ -17,26 +17,26 @@ newPackage(
 
 -- Put here the name of functions that should be visible to users
 export{
-RootSystem, 
-cartanMatrix, 
-rootSystem, rootSystemA, rootSystemB, rootSystemC, rootSystemD, rootSystemE, rootSystemF4, rootSystemG2, 
-Weight, 
-weight, 
-Root, 
-isPositiveRoot, isRoot, addRoots,
-halfSumOfRoots, reflect, simpleRoot, rootCoefficients, 
-WeylGroupElement, 
-reduce, reducedDecomposition, isReduced, coxeterLength, longestWeylGroupElement, positiveRoots, reflection, scalarProduct, eval, isReflection, whoseReflection, 
-Parabolic, WeylGroupLeftCoset, WeylGroupRightCoset, WeylGroupDoubleCoset, 
-parabolic, minimalRepresentative, isMinimalRepresentative, 
-DynkinDiagram, DynkinType, 
-dynkinDiagram, connectedComponents, endVertices, dynkinType, dynkinExponents,
-poincareSeries,
-HasseDiagram, HasseGraph, 
-hasseDiagramToGraph, hasseGraphToPicture, storeHasseGraph, loadHasseGraph,
-underBruhat, aboveBruhat,
-isLtBruhat, intervalBruhat,
-numberOfPositiveRoots, listWeylGroupElements, neutralWeylGroupElement
+"RootSystem", 
+"cartanMatrix", 
+"rootSystem", "rootSystemA", "rootSystemB", "rootSystemC", "rootSystemD", "rootSystemE", "rootSystemF4", "rootSystemG2", 
+"Weight", 
+"weight", 
+"Root", 
+"isPositiveRoot", "isRoot", "addRoots",
+"halfSumOfRoots", "reflect", "simpleRoot", "rootCoefficients", 
+"WeylGroupElement", 
+"reduce", "reducedDecomposition", "isReduced", "coxeterLength", "longestWeylGroupElement", "positiveRoots", "reflection", "scalarProduct", "eval", "isReflection", "whoseReflection", 
+"Parabolic", "WeylGroupLeftCoset", "WeylGroupRightCoset", "WeylGroupDoubleCoset", 
+"parabolic", "minimalRepresentative", "isMinimalRepresentative", 
+"DynkinDiagram", "DynkinType", 
+"dynkinDiagram", "connectedComponents", "endVertices", "dynkinType", "dynkinExponents",
+"poincareSeries",
+"HasseDiagram", "HasseGraph", 
+"hasseDiagramToGraph", "hasseGraphToPicture", "storeHasseGraph", "loadHasseGraph",
+"underBruhat", "aboveBruhat",
+"isLtBruhat", "intervalBruhat",
+"numberOfPositiveRoots", "listWeylGroupElements", "neutralWeylGroupElement"
 }
 
 -- Variables that can be modified by the user
