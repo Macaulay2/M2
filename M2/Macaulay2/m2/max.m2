@@ -81,12 +81,10 @@ ZZ ^ InfiniteNumber := (n,x) -> (
     0
   else if n==0 and x < 0 then
     indeterminate
-  else if n == -1 then
-    indeterminate
-  else if x < 0 then
-    0
-  else if n > 1 then
+  else if n > 1 and x > 0 then
     infinity
+  else if n > 1 and x < 0 then
+    0
   else
     indeterminate
 )
