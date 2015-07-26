@@ -307,6 +307,7 @@ toCCpolynomials (List,ZZ) := (F,prec) -> (
     apply(F,f->sub(f,R)) 
     )    
 
+load "./NumericalAlgebraicGeometry/extraNAGtypes.m2"
 load "./NumericalAlgebraicGeometry/track.m2"
 load "./NumericalAlgebraicGeometry/refine.m2"
 

@@ -22,15 +22,43 @@ slpCOPY = 1; --"COPY"; -- node positions for slpCOPY commands are absolute
 slpMULTIsum = 2; --"MULTIsum";
 slpPRODUCT = 3; --"PRODUCT";
 slpDET = 4; --"DET";
-CONST := symbol CONST;
-INPUT := symbol INPUT;
 
+
+CONST = symbol CONST;
+INPUT = symbol INPUT;
+protect CONST
+protect INPUT
 
 -- types of predictors
 predRUNGEKUTTA = 1;
 predTANGENT = 2;
 predEULER = 3;
 predPROJECTIVENEWTON = 4;
+
+-- Xn are inputs
+-- Cn are constants
+-- Gn are "gates"
+-- output is listed in the end
+printSLP = method()
+printSLP (List,List,Matrix) := (cc,pp,o) -> (
+    scan(#cc,i-><<"C"<<i<<" = "<<cc#i<<endl);
+    scan(#pp,i->(
+	    p := pp#i;
+	    <<"G"<<i<<" = ";
+	    (op,ops) := 
+	    if first p === slpPRODUCT then (" * ",drop(p,1))
+	    else if first p === slpMULTIsum then (" + ",drop(p,2))
+	    else error "unknown gate";
+	    scan(between(op,apply(ops,
+			o->if instance(o,Option) then (
+			    if o#0 === CONST then "C" else "X"
+			    )|toString o#1 else "G"|toString(i+o)
+			)),x-><<x);
+	    << endl;
+	    ));
+    << "output:" << endl;
+    scan(flatten entries o, x-> << "G" << x <<endl); 
+    )
 
 shiftConstsSLP = method(TypicalValue=>List);
 shiftConstsSLP (List,ZZ) := (slp,shift) -> apply(slp, 
@@ -194,6 +222,7 @@ evaluatePreSLP (Sequence,List) := (S,v)-> (
 	   else if k === slpMULTIsum then (
 		val = val | { sum(2..1+n#1, 
 			  j->if class n#j === Option and n#j#0 === CONST then constants#(n#j#1)
+    		       	  else if class n#j === Option and n#j#0 === INPUT then v#(n#j#1)
 			  else if class n#j === ZZ then val#(i+n#j)
 			  else error "unknown node type" 
 			  )
@@ -250,7 +279,15 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	       else error "unknown node type"; 
 	       )  
 	  else if k === slpMULTIsum then (
-	       pos := toList apply(2..1+n#1, j->if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+	       pos := toList apply(2..1+n#1, j->
+		    if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+		    else if class n#j === Option and n#j#0 === INPUT then (
+			if n#j#1 == vj then ( 
+     	       	    	      	   slp = slp | {{slpCOPY,CONST=> #constants-1}}; -- "one"
+				   (#slp-1)
+				   )
+			else -1 -- "zero"
+			)
 		    else if class n#j === ZZ then diffNodeVar(ni+n#j,vj)
 		    else error "unknown node type" 
 		    );
@@ -264,7 +301,8 @@ jacobianPreSLP (Sequence, List) := (S,L) -> (
 	       )
 	   else if k === slpPRODUCT then (
 	       pos = toList apply(1..2, j->(
-			 if class n#j === Option and n#j#0 === INPUT then (
+			 if class n#j === Option and n#j#0 === CONST then -1 -- "zero"
+			 else if class n#j === Option and n#j#0 === INPUT then (
 			      if n#j#1 == vj then ( 
      	       	    	      	   slp = slp | {{slpPRODUCT}|
 					toList apply(1..2, t->if t==j 
@@ -686,7 +724,7 @@ eg = evaluatePreSLP(g6,gens R)
 eg_(1,1) == g
 --preSLPtoCPP(g6,"slpFN")
 debug Core
-(constMAT, prog) = fromPreSLP(3,g6)
+(constMAT, prog) = preSLPinterpretedSLP(3,g6)
 rSLP = rawSLP(raw constMAT, prog)
 K = CC_53
 params = matrix{{ii_K,1_K,-1_K}}; 
@@ -734,6 +772,7 @@ preSLPinterpretedSLP (ZZ,Sequence) := (nIns,S) -> (
 	   else if k === slpMULTIsum then (
 		p = p | {slpMULTIsum, n#1} | toList apply(2..1+n#1, 
 		     j->if class n#j === Option and n#j#0 === CONST then n#j#1
+		     else if class n#j === Option and n#j#0 === INPUT then #consts + n#j#1
 		     else if class n#j === ZZ then curNode+n#j
 		     else error "unknown node type" 
 		     )

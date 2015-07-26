@@ -704,6 +704,49 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModul
      }
 }
 
+gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
+{
+  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_init(result);
+  mpz_set_si(result,a);
+  return result;
+}
+
+SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts) {
+  return new SLEvaluator(SLP,constsPos,varsPos,consts);
+}
+
+const Matrix /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const Matrix *inputs) {
+  return sle->evaluate(inputs);
+}
+
+M2_string rawSLEvaluatorToString(SLEvaluator * sle) { 
+  buffer o;
+  sle->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawSLEvaluatorHash(SLEvaluator *) { return 0; }
+
+SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { 
+  return new SLProgram;
+  //return nullptr; 
+}
+M2_string rawSLProgramToString(SLProgram * slp) { 
+  buffer o;
+  slp->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawSLProgramHash(SLProgram *) { return 0; }
+gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
+gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMSum(a)); }
+gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMProduct(a)); }
+gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDet(a)); }
+gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a) { 
+  S->setOutputPositions(a); 
+  return to_gmp_ZZ(0); // this function should have returned "void"
+}
+gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDivide(a)); }
+
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {
   return StraightLineProgram::make(consts, program);
