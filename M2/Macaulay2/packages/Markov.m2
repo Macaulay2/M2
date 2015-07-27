@@ -34,10 +34,10 @@ newPackage("Markov",
 
 
 
-export {makeGraph, displayGraph, localMarkovStmts, globalMarkovStmts, pairMarkovStmts,
-       markovRing, marginMap, hideMap, markovMatrices, markovIdeal, writeDotFile, removeRedundants, 
-       gaussRing, gaussMinors, gaussIdeal, gaussTrekIdeal, Graph}
-exportMutable {dotBinary,jpgViewer}
+export {"makeGraph", "displayGraph", "localMarkovStmts", "globalMarkovStmts", "pairMarkovStmts",
+       "markovRing", "marginMap", "hideMap", "markovMatrices", "markovIdeal", "writeDotFile", "removeRedundants", 
+       "gaussRing", "gaussMinors", "gaussIdeal", "gaussTrekIdeal", "Graph"}
+exportMutable {"dotBinary","jpgViewer"}
 
 -------------------------
 -- Graph visualization --

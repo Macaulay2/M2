@@ -14,50 +14,50 @@ newPackage(
         )
 
 export {   
-   StartSolutions,
-   skewSchubertVariety,
-   createRandomFlagsForSimpleSchubert,
-   solveSimpleSchubert,
-   trackSimpleSchubert,
-   findGaloisElement,
-   isFullSymmetric,
-   isGaloisFullSymmetric,
-   Memoize,
+   "StartSolutions",
+   "skewSchubertVariety",
+   "createRandomFlagsForSimpleSchubert",
+   "solveSimpleSchubert",
+   "trackSimpleSchubert",
+   "findGaloisElement",
+   "isFullSymmetric",
+   "isGaloisFullSymmetric",
+   "Memoize",
 -----------------------
 -- The following are functions for
 -- LR-Homotopies
 -----------------------
-   trackHomotopy,
-   partition2bracket,
-   bracket2input,
-   output2partition,
-   output2bracket,
-   bracket2partition,
-   redcheckers2partitions,
-   redChkrPos,
-   moveRed,
-   moveCheckers,
-   playCheckers,
-   NC,
-   FFF,
-   Board,
-   IsResolved,
-   Fathers,
-   Children,
-   printTree,
-   makeLocalCoordinates,
-   resolveNode,
-   FlagM,
-   CriticalRow,
-   Polynomials,
-   Solutions,
-   solveSchubertProblem,
-   changeFlags, -- temporary
-   makePolynomials, -- temporary
-   SolutionsSuperset, -- temporary
-   checkIncidenceSolution, --temporary
-   moveFlags2Flags, --temporary
-   dist --temporary Aug,20,2013
+   "trackHomotopy",
+   "partition2bracket",
+   "bracket2input",
+   "output2partition",
+   "output2bracket",
+   "bracket2partition",
+   "redcheckers2partitions",
+   "redChkrPos",
+   "moveRed",
+   "moveCheckers",
+   "playCheckers",
+   "NC",
+   "FFF",
+   "Board",
+   "IsResolved",
+   "Fathers",
+   "Children",
+   "printTree",
+   "makeLocalCoordinates",
+   "resolveNode",
+   "FlagM",
+   "CriticalRow",
+   "Polynomials",
+   "Solutions",
+   "solveSchubertProblem",
+   "changeFlags", -- temporary
+   "makePolynomials", -- temporary
+   "SolutionsSuperset", -- temporary
+   "checkIncidenceSolution", --temporary
+   "moveFlags2Flags", --temporary
+   "dist" --temporary Aug,20,2013
    }
 
 -------------------------

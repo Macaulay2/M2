@@ -75,9 +75,9 @@ various modern operating systems:
 
   Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
     On all systems, add
-        --enable-build-libraries=ntl
+        --enable-build-libraries="ntl pari"
       to the "configure" command line below.
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
@@ -87,15 +87,24 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
+    On all systems, add
+        FC=gfortran
+      to the environment or to the "configure" command line below.  (The
+      program "make" has a default value of "f77" for "FC", the Fortran
+      compiler, but "f77" isn't available.)
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
+    On Ubuntu 14.10 and later, add
+        --enable-build-libraries=pari
+      to the "configure" command line below.  (The version of pari possibly installed there
+      will crash when M2 exits.)
     (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
     "do-release-upgrade" for a command line interface.)
 
@@ -118,7 +127,7 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot xz-devel
     Some debugging aids:
       sudo yum install -y strace
     Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
@@ -146,7 +155,8 @@ various modern operating systems:
 
   Mac OS X:
     Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
-      it will be necessary to reinstall it.
+      it will be necessary to reinstall it.  One may use the following command for installing it:
+      	 xcode-select --install
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -160,10 +170,23 @@ various modern operating systems:
 	brew tap homebrew/versions
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
-	brew install pkg-config autoconf automake gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk libtool gcc49 readline
+	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
+	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
+    Note: the reason we compile from source with gcc is that the precompiled
+      packages that brew would otherwise download are compiled using "clang"
+      and assume that the CPU supports advanced vector extensions, which not
+      all of the machines of our users do.
     Now remember to add 
-        CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" --build=x86_64-apple-darwin
+        --enable-build-libraries="pari flint readline" CC="gcc-4.9 -mtune=generic" CXX="g++-4.9 -mtune=generic"
       to the "configure" command line below in the section on compiling Macaulay2.
+    Note: the compiler option "-mtune=generic" ensures that gcc generates code that
+      will run on the most commonly available CPUs.  If you won't be distributing the
+      code to others, it can be omitted.
+    Note: including "readline" in the "--enable-build-libraries" option is
+      necessary because it doesn't seem to be possible to recompile it from
+      source; the binary distribution used by homebrew uses "clang", which will
+      optimize the code in "gc" for your particular CPU.  If you won't be
+      distributing the code to others, it can be omitted.
     Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
       g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
         MACOSX_DEPLOYMENT_TARGET=10.9

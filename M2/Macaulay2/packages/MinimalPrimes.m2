@@ -29,9 +29,9 @@ USEMGB = false;
 
 export {
     -- Main functions
-    installMinprimes,
-    minprimes,
-    newIsPrime
+    "installMinprimes",
+    "minprimes",
+    "newIsPrime"
     }
 
 protect symbol IndependentSet

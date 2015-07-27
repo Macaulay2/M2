@@ -1,6 +1,0 @@
-Something like this would add a bit of orthogonality:
-
-    i13 : pairs {a,b,c,d}
-    stdio:13:1:(3): error: expected a hash table or a raw polynomial
-
-    i12 : pairs List := x -> apply(#x, i -> (i,x#i));

@@ -31,17 +31,17 @@ newPackage(
     	)
 
 export {
-     toBinomial,
-     getMatrix,
-     putMatrix,
-     toricMarkov,
-     toricGroebner,
-     toricCircuits,
-     toricGraver,
-     hilbertBasis,
-     rays,
-     InputType,
-     toricGraverDegrees
+     "toBinomial",
+     "getMatrix",
+     "putMatrix",
+     "toricMarkov",
+     "toricGroebner",
+     "toricCircuits",
+     "toricGraver",
+     "hilbertBasis",
+     "rays",
+     "InputType",
+     "toricGraverDegrees"
      }
 
 

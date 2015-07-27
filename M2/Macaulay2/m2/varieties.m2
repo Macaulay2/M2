@@ -329,7 +329,7 @@ binaryPower := (W,n,times,unit,inverse) -> (
      Z)
 
 Module        ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> (ring F)^1, dual)
-CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety), dual)
+CoherentSheaf ^** ZZ := (F,n) -> binaryPower(F,n,tensor,() -> OO_(F.variety)^1, dual)
 
 sheafHom = method(TypicalValue => CoherentSheaf)
 sheafHom(CoherentSheaf,CoherentSheaf) := (F,G) -> sheaf Hom(module F, module G)

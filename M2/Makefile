@@ -52,6 +52,7 @@ usr-build/share/aclocal/pkg.m4: usr-build/pkg.m4
 	if [ ! -d usr-build/share ] ; then mkdir usr-build/share ; fi
 	if [ ! -d usr-build/share/aclocal ] ; then mkdir usr-build/share/aclocal ; fi
 	cp $^ $@
+clean-tools:; rm -rf usr-build/aclocal-path usr-build/aclocal-path2 usr-build/bin usr-build/include usr-build/lib usr-build/share usr-build/src usr-build/.compiled-* usr-build/.configured-* usr-build/.installed-*  usr-build/.patched-* usr-build/.untarred-*
 
 autoconf-absent : autoconf-absent-msg autoconf-msg 
 autoconf-absent-msg :
@@ -133,6 +134,7 @@ count count-source-code-lines:
 	-name BUILD -prune -false -o \
 	-name .svn -prune -false -o \
 	-name bugs -prune -false -o \
+	-name submodules -prune -false -o \
 	-name autoconf-\* -prune -false -o \
 	-name regex -prune -false -o \
 	-name examples -prune -false -o \
