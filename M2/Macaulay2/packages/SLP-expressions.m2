@@ -110,6 +110,9 @@ productGate List := L -> add2GC(
     then error "expected a list of gates";
     new ProductGate from {Inputs=>L, cache => new CacheTable}
     )
+Gate ^ ZZ := (g,n) -> if n == 0 then oneGate else 
+    if n > 0 then productGate toList(n:g) else -- inefficient!!!
+    {*(n < 0)*}   oneGate / productGate toList(n:g) 
 
 - Gate := g -> minusOneGate*g
 Gate - Gate := (a,b) -> a+(-b)

@@ -29,3 +29,18 @@ degree (ParameterHomotopySystem, Matrix, Matrix, FunctionClosure) := (PH,p0,s0,f
     	) else print "something went wrong";
     nSols
     )
+
+-- Homotopy-based algorithm
+-- in: 
+--     F, a map (column vector)
+--     V, variables (list)
+gateHomotopy4preimage = method()
+gateHomotopy4preimage(GateMatrix,List) := (F,V) -> (
+    assert(#V == numrows F); 
+    A := matrix{apply(V, v->inputGate symbol A_v)};
+    B := matrix{apply(V, v->inputGate symbol B_v)};
+    t := inputGate symbol t;
+    H := F-((1-t)*transpose A+t*transpose B);
+    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)
+    )
+--     xy, option x0=>y0, where P(x0)=y0 
