@@ -1,3 +1,11 @@
+undocumented {
+    ParameterHomotopySystem, 
+    evaluateHt, (evaluateHt,HomotopySystem,Matrix,Number), (evaluateHt,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopySystem,Matrix,Number), 
+    evaluateHx, (evaluateHx,HomotopySystem,Matrix,Number), (evaluateHx,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopySystem,Matrix,Number),
+    Parameters, SpecializedParameterHomotopySystem, HomotopySystem, 
+    evaluateH, (evaluateH,HomotopySystem,Matrix,Number), (evaluateH,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopySystem,Matrix,Number)
+    }
+
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
 refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
@@ -670,12 +678,10 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of the ", TO2{NumericalVariety,"numerical variety"}, TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
-setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-V = numericalIrreducibleDecomposition I 
-peek V
+I = ideal {sph*(y-x^2), sph*(z-x^3)};
+numericalIrreducibleDecomposition I 
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
