@@ -228,6 +228,7 @@ point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
+toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 

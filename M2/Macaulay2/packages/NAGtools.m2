@@ -5,12 +5,16 @@
 -- in: 
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
 --     p0, column vector, values of parameters (assumed generic)
---     s0, column vector, solution of PH    
+--     s0, list of points, solutions of PH_p0 (at least one)    
 --     nextP(seed), a functions that returns a random column vector of parameters p1 suitable for the family f  
-degree (ParameterHomotopySystem, Matrix, Matrix, FunctionClosure) := (PH,p0,s0,f) -> (
-    sols0 := {point s0};
+degree (ParameterHomotopySystem, Matrix, List, FunctionClosure) := (PH,p0,s0,f) -> (
+    if #s0 < 1 then error "at least one solution expected";   
+    sols0 := s0;
     nSols := #sols0; 
     same := 0;
+    dir := temporaryFileName(); -- build a directory to store temporary data 
+    makeDirectory dir;
+    << "--backup directory created: "<< toString dir << endl;  
     while same<10 do try (
     	p1 := nextP(random 100000);
     	p2 := nextP(random 100000);
@@ -24,16 +28,25 @@ degree (ParameterHomotopySystem, Matrix, Matrix, FunctionClosure) := (PH,p0,s0,f
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
 	sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
-	if #sols0 == nSols then same = same + 1 else (nSols = #sols0; same = 0);  
+	if #sols0 == nSols then same = same + 1 else (
+	    nSols = #sols0; 
+	    same = 0;
+	    ff := openOut (dir|"/backup-"|toString nSols|"-solutions"); 
+	    ff << toExternalString sols0;
+	    close ff; 
+	    );  
     	<< "found " << #sols0 << " points in the fiber so far" << endl;
     	) else print "something went wrong";
     nSols
     )
 
--- Homotopy-based algorithm
+-- Parameter homotopy for getting a point on the fiber of an onto map 
 -- in: 
 --     F, a map (column vector)
 --     V, variables (list)
+-- out: 
+--     HomotopySystem that has A_v and B_v as parameters, 
+--     	       	      where v in V are coordinates of the target space 
 gateHomotopy4preimage = method()
 gateHomotopy4preimage(GateMatrix,List) := (F,V) -> (
     assert(#V == numrows F); 
@@ -43,4 +56,3 @@ gateHomotopy4preimage(GateMatrix,List) := (F,V) -> (
     H := F-((1-t)*transpose A+t*transpose B);
     gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)
     )
---     xy, option x0=>y0, where P(x0)=y0 
