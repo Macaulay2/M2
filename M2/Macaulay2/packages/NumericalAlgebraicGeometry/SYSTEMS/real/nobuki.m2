@@ -53,6 +53,7 @@ assert areEqual(value(F,hashTable(apply(zs,flatten entries x1,(i,j)->(i=>j))|{ca
 
 restart -- No1: arbitrary m  
 load "nobuki.m2"
+K = CC;
 m = 8 -- crashes
 m = 7; recursionLimit = 100000 -- works
 for i from 1 to m do z_i = inputGate symbol z_i
@@ -60,12 +61,15 @@ zs = apply(m,i->z_(i+1))
 f = makeF (-m, toList(m:-m), 1, zs);
 F = transpose matrix{apply(zs, z->z*diff(z,f)/f)};
 PHS = gateHomotopy4preimage(F,zs)
-x0 = transpose matrix{toList(m:1_CC)}
+x0 = transpose matrix{toList(m:1_K)}
 y0 = value(F,hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
-y1 = transpose matrix{toList(m-1:0.1_CC)|{m-0.1*(m-1)-0.001}}
-HS = specialize(PHS,y0||y1)
-time s = first trackHomotopy(HS, {x0}, Software=>M2)
-peek s
-x1 = transpose matrix s
-assert areEqual(value(F,hashTable(apply(zs,flatten entries x1,(i,j)->(i=>j))|{cache=>new CacheTable})), y1)
+while true do (
+    x1known = transpose matrix{apply(m, i->toRR random 10)};
+    y1 = value(F,hashTable(apply(zs,flatten entries x1known,(i,j)->(i=>j))|{cache=>new CacheTable}));
+    HS = specialize(PHS,y0||y1);
+    time s = first trackHomotopy(HS, {x0}, Software=>M2);
+    print (transpose x1known=>status s=>s.NumberOfSteps);
+    x1 = transpose matrix s;
+    assert areEqual(x1, x1known);
+    )
 
