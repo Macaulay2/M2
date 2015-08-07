@@ -1,15 +1,5 @@
---changes 0.1m
-------added getPrimeDiviors
-------renamed divAmbientRing to getAmbientRing for consistency
-------substantial speed improvement for moduleToDivisor in the graded case via a change of module2Ideal (adding an IsGraded option)
-------fixed bug in moduleToDivisor which would sometimes provide the wrong shift
-------added mapToProjectiveSpace 
-------made divisorToIdeal work slightly better for anti-effective divisors
-------added a second algorithm to divPullBack which works for Cartier divisors even in the map is not flat or finite
-------added getLinearDiophantineSolution which makes findElementOfDegree work in the multigraded setting
-
- 	 	newPackage( "Divisor",
-Version => "0.1m", Date => "August 27th, 2014", Authors => {
+newPackage( "Divisor",
+Version => "0.1q", Date => "February 21st, 2015", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -22,89 +12,89 @@ Version => "0.1m", Date => "August 27th, 2014", Authors => {
 Headline => "A package for working with Weil divisors.", DebuggingMode => true, Reload=>true)
 export{
     --objects
-	BasicDiv,
-	WDiv,
-	QDiv,
-	RDiv,
+	"BasicDiv",
+	"WDiv",
+	"QDiv",
+	"RDiv",
     --methods for defining divisors and related options
-	divisor,
-	rationalDivisor,
-	realDivisor,
-	zeroDivisor,
+	"divisor",
+	"rationalDivisor",
+	"realDivisor",
+	"zeroDivisor",
+	"verifyDivisor",
     --accessing data
-	getPrimeList,
-	getPrimeCount,
-	getGBList,
-	getCoeffList,
-	simplifyDiv,
-	coeff,
-	getAmbientRing,
-	isDivAmbient, 
-	sameDivAmbient, 
-	getPrimeDivisors,
+	"getPrimeList",
+	"getPrimeCount",
+	"getGBList",
+	"getCoeffList",
+	"simplifyDiv",
+	"coeff",
+	"getAmbientRing",
+	"isDivAmbient", 
+	"sameDivAmbient", 
+	"getPrimeDivisors",
      --simple operations
-	floorDiv,
-	ceilingDiv,
-	divPlus,
-	divMinus,
+	"floorDiv",
+	"ceilingDiv",
+	"divPlus",
+	"divMinus",
+	"applyToCoefficients",
     --conversion
-	toWDiv,
-	toQDiv,
-	toRDiv,
+	"toWDiv",
+	"toQDiv",
+	"toRDiv",
     --divisors to modules and functorial properties
-	divisorToModule,
-	divisorToIdeal,
-	idealToDivisor,
-	idealWithSectionToDivisor,
-	moduleToDivisor,
-	moduleWithSectionToDivisor,
-	divPullBack,
-	findElementOfDegree, 
-	getLinearDiophantineSolution,		--has Unsafe option
-	canonicalDivisor, --has IsGraded option
+	"divisorToModule",
+	"divisorToIdeal",
+	"idealToDivisor",
+	"idealWithSectionToDivisor",
+	"moduleToDivisor",
+	"moduleWithSectionToDivisor",
+	"divPullBack",
+	"findElementOfDegree", 
+	"getLinearDiophantineSolution",		--has Unsafe option
+	"canonicalDivisor", --has IsGraded option
     --tests and related constructions
-    	isWDiv,
-	isEffective,
-	isDivPrime,
-	isDivPrincipal, --has IsGraded option
-    	isDivReduced,
-    	isCartier, --has IsGraded option
-    	isLinearEquivalent, --has IsGraded option
-    	isQCartier, --has IsGraded option
-    	isQLinearEquivalent, --has IsGraded option
-    	isDivGraded,
-    	nonCartierLocus, --has IsGraded option
-    	isSNC, --has IsGraded option
-    	isZeroDivisor,
+    	"isWDiv",
+	"isEffective",
+	"isDivPrime",
+	"isDivPrincipal", --has IsGraded option
+    	"isDivReduced",
+    	"isCartier", --has IsGraded option
+    	"isLinearEquivalent", --has IsGraded option
+    	"isQCartier", --has IsGraded option
+    	"isQLinearEquivalent", --has IsGraded option
+    	"isDivGraded",
+    	"nonCartierLocus", --has IsGraded option
+    	"isSNC", --has IsGraded option
+    	"isZeroDivisor",
     --functions for getting maps to projective space from divisors (graded only)
-	--isVeryAmple,
-	--isAmple,
-	--isBasePointFree,
-	baseLocus,
-	mapToProjectiveSpace,  
+	"baseLocus",
+	"mapToProjectiveSpace",  
     --general useful functions not directly related to divisors
-        idealPower,
-        reflexifyIdeal,
-	reflexifyModule, 
-	reflexifyModuleWithMap,
-	isReflexive,
-	reflexivePower,
-	torsionSubmodule,
-	dualizeIdeal,
-	module2Ideal, --has IsGraded option
-	moduleWithSection2Ideal,
-	isDomain,
-	isRegular, --has IsGraded option
+        "idealPower",
+        "reflexifyIdeal",
+	"reflexifyModule", 
+	"reflexifyModuleWithMap",
+	"isReflexive",
+	"reflexivePower",
+	"torsionSubmodule",
+	"dualizeIdeal",
+	"moduleToIdeal", --has IsGraded option
+	"moduleWithSectionToIdeal",
+	"isDomain",
+	"isRegular", --has IsGraded option
     --options
-    	Unsafe, --an option, if set true then the above commands avoid doing any checks
-	CoeffType, --an option, one can set the coefficient type
-	AmbRing, --an option, one can specify the ambient ring during divisor construction
-    	MTries, --an option, used to try to embed a module into a ring as an ideal in a random way
-	KnownNormal, --an option, used to specify that the ring is known to be normal
-	KnownCartier, --an option, used to specify that the divisor is known to be Cartier
-	IsGraded, --an option, if you specify it in several arguments it assumes we are working on a projective variety
-	Primes, --a potential value for the divPullBack Strategy option
-	Sheaves --a potential value for the divPullBack Strategy option
+    	"Unsafe", --an option, if set true then the above commands avoid doing any checks
+	"CoeffType", --an option, one can set the coefficient type
+	"AmbRing", --an option, one can specify the ambient ring during divisor construction
+    	"MTries", --an option, used to try to embed a module into a ring as an ideal in a random way
+	"KnownNormal", --an option, used to specify that the ring is known to be normal
+	"KnownCartier", --an option, used to specify that the divisor is known to be Cartier
+	"IsGraded", --an option, if you specify it in several arguments it assumes we are working on a projective variety
+	"ReturnMap", --an option, for moduleToIdeal and moduleWithSectionToIdeal which returns the map from the module to R^1
+	"Primes", --a potential value for the divPullBack Strategy option
+	"Sheaves" --a potential value for the divPullBack Strategy option	
 }
 
 ----------------------------------------------------------------
@@ -315,6 +305,52 @@ zeroDivisor(Ring) := (R1) -> (
 	divisor(sub(1, R1))
 );
 
+--the following function is used to verify that a divisor is valid, it checks to make sure the coefficients are the right type, that the ideals are prime and height 1, etc.
+
+verifyDivisor = method(Options => {Verbose=>true});
+
+verifyDivisor(BasicDiv) := o->(D1) -> (
+	myType := class D1;
+	myList := getCoeffList(D1);
+	flag := true;
+	--first we check the coefficients
+	if (myType === WDiv) then (
+		flag = all(myList, z->instance(z, ZZ));
+		if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all coefficients are integers");
+	)
+	else if (myType === QDiv) then (
+		flag = all(myList, z->instance(z, QQ));
+		if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all coefficients are rational numbers");
+	)
+	else if (myType === RDiv) then (
+		flag = all(myList, z->instance(z, RR));
+		if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all coefficients are real numbers");
+	);
+	
+	--now check to see if the ideals are prime and height one and in the same ambient ring
+	if (flag == true) then(
+		myList = getPrimeList(D1);
+		myAmb := getAmbientRing(D1);
+		--first we check the ambient ring
+		flag = all(myList, z -> (myAmb === ring z));
+		if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all ideals have the same ambient ring");
+		--next we check primality
+		if (flag == true) then ( 
+			flag = all(myList, z->(isPrime(z)));
+			if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all ideals are prime");
+		);
+		
+		--finally we check dimension
+		if (flag == true) then (
+			d1 := dim myAmb;
+			flag = all(myList, z->(d1 - dim(z) == 1));
+			if ((o.Verbose == true) and (flag == false)) then (print "verifyDivisor: Not all ideals are height one");
+		);
+	);
+	
+	flag
+);
+
 ----------------------------------------------------------------
 --************************************************************--
 --Accessing divisor data----------------------------------------
@@ -429,25 +465,43 @@ getPrimeDivisors( BasicDiv ) := (D) ->
 --************************************************************--
 ----------------------------------------------------------------
 
---simplifyDiv simply removes prime divisors with coefficient 0
+--simplifyDiv simply removes prime divisors with coefficient 0 (it also keeps the flag specifying the ambient ring of course)
 
 simplifyDiv = method();
 
 simplifyDiv( BasicDiv ) := (D)  -> ( select(D, x -> ( if (instance(x, Ring)) then true else (x#0 != 0) )) );	
+
+--applyFunctionToDivisorCoefficients applies the function to the coefficients of the divisor
+
+applyToCoefficients = method(Options => {CoeffType => null, Unsafe => true});
+
+applyToCoefficients( BasicDiv, Function) := o -> (D, hh) -> (
+	myClass := class D;
+	if (o.CoeffType === ZZ) then (myClass = WDiv)
+	else if (o.CoeffType === QQ) then (myClass = QDiv)
+	else if (o.CoeffType === RR) then (myClass = RDiv);
+
+	tempDiv := simplifyDiv(new myClass from applyValues(D, x -> (if (instance(x, Ring)) then x else {hh(x#0), x#1} )) );
+	if (o.Unsafe == false) then (
+		if (not (verifyDivisor(tempDiv))) then (error "applyToCoefficients: the ouput of this function is not a valid divisor, did you set the CoeffType option properly?";);
+	);
+	tempDiv	
+);
 
 --Given a rational/real divisor, we return a Weil Divisor, such that new coefficients are obtained 
 --from taking ceilings from the given one
 
 ceilingDiv = method();
 
-ceilingDiv( RDiv ) := ( D ) -> ( new WDiv from applyValues(D, x -> (if (instance(x, Ring)) then x else {ceiling (x#0), x#1} )) );
+ceilingDiv( RDiv ) := ( D ) -> ( applyToCoefficients(D, ceiling, CoeffType=>ZZ) );
+--new WDiv from applyValues(D, x -> (if (instance(x, Ring)) then x else {ceiling (x#0), x#1} )) );
 
 --Given a rational/real divisor, we return a Weil divisor for which new coefficients are obtained
 --from taking floors from the given one
 
 floorDiv = method();
 
-floorDiv( RDiv ) := ( D ) -> ( new WDiv from applyValues(D, x -> (if (instance(x, Ring)) then x else {floor (x#0), x#1} )) );
+floorDiv( RDiv ) := ( D ) -> ( applyToCoefficients(D, floor, CoeffType=>ZZ) );
 
 --Given a divisor D, we want to return positive/negative part of D
 
@@ -763,11 +817,11 @@ moduleToDivisor( Ring, Module ) := o -> (R, M) ->
 	I := 0;
 	
 	if (o.IsGraded == false) then ( 
-		I = module2Ideal(R, M);	
+		I = moduleToIdeal(R, M);	
 		idealToDivisor( I )
 	)
 	else(
-		L1 := module2Ideal(R, M, IsGraded => true);
+		L1 := moduleToIdeal(R, M, IsGraded => true);
 		I = L1#0;
 		l := (-1)*L1#1;
 		--print l;
@@ -788,7 +842,7 @@ moduleToDivisor(Module) := o-> (M) ->
 moduleWithSectionToDivisor = method();
 
 moduleWithSectionToDivisor(Matrix) := (f1) -> (
-	L := moduleWithSection2Ideal(f1);
+	L := moduleWithSectionToIdeal(f1);
 	idealWithSectionToDivisor(L#0, L#1)
 );
 
@@ -865,7 +919,7 @@ findElementOfDegree(ZZ, Ring) := (n1, R1) ->  (
 );
 
 --sometimes elements are given by multidegrees
-findElementOfDegree(BasicList, Ring) := (l1, R1) ->  ( --this needs to be made faster using Hermite matrices and the usual stuff
+findElementOfDegree(BasicList, Ring) := (l1, R1) ->  ( 
 	if (not (all(l1, z->instance(z, ZZ)) ) ) then error "Expected a list with integer entries";
 	
 	if (#l1 == 0) then (error "findElementOfDegree: Expected a list of positive length";)
@@ -894,6 +948,7 @@ findElementOfDegree(BasicList, Ring) := (l1, R1) ->  ( --this needs to be made f
 --requires some knowledge on Smith Normal Form which says for any m * n integer matrix A, A = L* D * R where both L is in SL(m, ZZ)
 --R is in SL(n, ZZ), and D = diag(d1, d2, ..., dr ) where di divides di + 1 (r = rank A).
 --For the sake of simplicity, our basic list input will be a list of column vectors (which we immediately transpose).
+--***it might be better to use Hermite matrices***
 
 getLinearDiophantineSolution = method(Options => {Unsafe => false});
 
@@ -970,8 +1025,7 @@ getLinearDiophantineSolution(BasicList, BasicList) := o ->(l1, l2) -> (	--the fi
 				)
 				else (
 					y := vector ( apply(n, i -> ( if (i > r - 1) then ( 0 ) else( (cEntry#i)/(diagList#i) ) ) ) ); --the solution of equation Dy = c		
-					--As we said previously, y = R^(-1)x. So to get the solution of equation Ax = b, we only need to find the inverse and apply
-					--it to the vector y.			
+					--As we said previously, y = R^(-1)x. So to get the solution of equation Ax = b, we only need to apply R to the vector y.			
 					--output := flatten entries ( (inverse( R ) ) * (matrix y) );		
 					output := flatten entries  ( R  * (matrix y) );		
 --					1/0;	
@@ -1064,7 +1118,7 @@ isDivPrincipal( WDiv ):= o -> (D) ->
 	if (o.IsGraded == false) then(
 		flag = isFreeModule ( M );
 		if ((flag == false) and (isDivGraded(D) == false)) then ( --let's try some other tricks to see if we can make it principal
-			J1 := module2Ideal(M);
+			J1 := moduleToIdeal(M);
 			if (#(first entries gens J1) == 1) then (flag = true;);
 			if (flag == false) then (
 				J1 = trim (J1 : (J1^0)); 
@@ -1270,7 +1324,7 @@ mapToProjectiveSpace(WDiv) := o->(D1) -> (
 	--and then proceeding as they did might be faster
 	R1 := getAmbientRing(D1);
 	M1 := prune divisorToModule(D1);
-	L1 := module2Ideal(M1, IsGraded=>true);
+	L1 := moduleToIdeal(M1, IsGraded=>true);
 	d1 := L1#1;
 	M1 = L1#0*R1^{d1};
 	b1 := super ((basis(0, M1))**R1);
@@ -1336,7 +1390,7 @@ dualizeIdeal(Ideal) := o->(I1) -> (
 	else (
 		inc := inducedMap(S1^1, I1*(S1^1));
 		mydual := Hom(inc, S1^1);
-		module2Ideal(mydual)
+		moduleToIdeal(mydual)
 	)
 
 );
@@ -1403,7 +1457,7 @@ isReflexive(Module) := (M1) ->(
 isReflexive(Ideal) := (I1) ->(
 	J1 := reflexifyIdeal(I1);
 	(J1 == I1)
-)
+);
 
 --we can also grab the torsion submodule since we are here
 torsionSubmodule = method();
@@ -1417,9 +1471,9 @@ torsionSubmodule(Module) := (M1) -> (
 -- http://katzman.staff.shef.ac.uk/FSplitting/ParameterTestIdeals.m2
 --under canonicalIdeal
 
-module2Ideal = method(Options => {MTries=>10, IsGraded=>false});
+moduleToIdeal = method(Options => {MTries=>10, IsGraded=>false, ReturnMap=>false});
 
-module2Ideal(Ring, Module) := o ->(R1, M2) -> 
+moduleToIdeal(Ring, Module) := o ->(R1, M2) -> 
 (--turns a module to an ideal of a ring
 --	S1 := ambient R1;
 	flag := false;
@@ -1437,7 +1491,7 @@ module2Ideal(Ring, Module) := o ->(R1, M2) ->
 	while ((i < #s2) and (flag == false)) do (
 		t = s2#i;
 		h = map(R1^1, M2**R1, {t});
-		if (isWellDefined(h) == false) then error "module2Ideal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "moduleToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(t);
@@ -1445,45 +1499,54 @@ module2Ideal(Ring, Module) := o ->(R1, M2) ->
 				--print {degree(t#0), (degrees M2)#0};
 				d1 = degree(t#0) - (degrees M2)#0;
 				answer = {answer, d1};
+			);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
 			)
 		);
 		i = i+1;
 	);
 	-- if that doesn't work, then try a random combination/embedding
+     i = 0;
 	while ((flag == false) and (i < o.MTries) ) do (
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
+       -- print d;
 		h = map(R1^1, M2**R1, {d});
-		if (isWellDefined(h) == false) then error "module2Ideal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "moduleToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(d);
 			if (o.IsGraded==true) then (
 				d1 = degree(d#0) - (degrees M2)#0;
 				answer = {answer, d1};
+			);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
 			)
 		);
+        i = i + 1;
 	);
-	if (flag == false) then error "module2Ideal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
+	if (flag == false) then error "moduleToIdeal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	answer
 );
 
-module2Ideal(Module) := o ->(M1) ->
+moduleToIdeal(Module) := o ->(M1) ->
 (
 	S1 := ring M1;
-	module2Ideal(S1, M1, MTries=>o.MTries, IsGraded=>o.IsGraded)
+	moduleToIdeal(S1, M1, MTries=>o.MTries, IsGraded=>o.IsGraded, ReturnMap=>o.ReturnMap)
 );
 
 --this variant takes a map from a free module of rank 1 and maps to another rank 1 module.  The function returns the second module as an ideal combined with the element 
 
-moduleWithSection2Ideal = method(Options => {MTries=>10});
+moduleWithSectionToIdeal = method(Options => {MTries=>10, ReturnMap=>false});
 
-moduleWithSection2Ideal(Matrix) := o->(f1)->
+moduleWithSectionToIdeal(Matrix) := o->(f1)->
 (
 	M1 := source f1;
 	M2 := target f1;
 	R1 := ring M1;
-	if ((isFreeModule M1 == false) or (not (rank M1 == 1))) then error ("moduleWithSection2Ideal: Error, source is not a rank-1 free module";);
+	if ((isFreeModule M1 == false) or (not (rank M1 == 1))) then error ("moduleWithSectionToIdeal: Error, source is not a rank-1 free module";);
 	flag := false;
 	answer:=0;
 	s2 := entries transpose syz transpose presentation M2;
@@ -1495,10 +1558,13 @@ moduleWithSection2Ideal(Matrix) := o->(f1)->
 	while ((i < #s2) and (flag == false)) do (
 		t = s2#i;
 		h = map(R1^1, M2**R1, {t});
-		if (isWellDefined(h) == false) then error "moduleWithSection2Ideal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "moduleWithSectionToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(t);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
+			);
 		);
 		i = i+1;
 	);
@@ -1507,16 +1573,19 @@ moduleWithSection2Ideal(Matrix) := o->(f1)->
 		coeffRing := coefficientRing(R1);
 		d := sum(#s2, z -> random(coeffRing, Height=>100000)*(s2#z));
 		h = map(R1^1, M2**R1, {d});
-		if (isWellDefined(h) == false) then error "moduleWithSection2Ideal: Something went wrong, the map is not well defined.";
+		if (isWellDefined(h) == false) then error "moduleWithSectionToIdeal: Something went wrong, the map is not well defined.";
 		if (isInjective(h) == true) then (
 			flag = true;
 			answer = trim ideal(d);
+			if (o.ReturnMap==true) then (
+				answer = flatten {answer, h};
+			);
 		);
 	);
 	
-	if (flag == false) then error "moduleWithSection2Ideal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
+	if (flag == false) then error "moduleWithSectionToIdeal: No way found to embed the module into the ring as an ideal, are you sure it can be embedded as an ideal?";
 	newMatrix := h*f1;
-	{first first entries newMatrix, answer}
+	flatten {first first entries newMatrix, answer}
 );
 
 
@@ -1548,7 +1617,7 @@ reflexivePower = method();
 
 reflexivePower(ZZ, Ideal) := (n1, I1) -> (
 	reflexifyIdeal(idealPower(n1, I1))
-)
+);
 
 --****************************************************--
 --*****************Documentation**********************--
@@ -1563,6 +1632,7 @@ doc ///
      	A package for divisors on normal rings (graded or not).
      Description
     	Text   
+    	 A package for handling Weil divisors on normal rings, graded or not.
 ///
 
 doc ///
@@ -1625,7 +1695,7 @@ doc ///
 	 BasicDiv
 	 WDiv
 	 RDiv
-///
+///;
 
 doc ///
 	Key
@@ -1677,10 +1747,10 @@ doc ///
 	Key
 	 MTries
 	Headline
-	 An option used by module2Ideal how many times to try embedding the module as an ideal in a random way.
+	 An option used by moduleToIdeal how many times to try embedding the module as an ideal in a random way.
 	Description
 	 Text
-	  After making some canonical attempts, module2Ideal tries to embed the module into a ring as an ideal in a random way.  The value of this option is how many times that random embedding is attempted.  The default value is 10.
+	  After making some canonical attempts, moduleToIdeal tries to embed the module into a ring as an ideal in a random way.  The value of this option is how many times that random embedding is attempted.  The default value is 10.
 ///
 
 doc ///
@@ -1704,7 +1774,7 @@ doc ///
 		[divisor, CoeffType]
 		[divisor, AmbRing]
      Headline
-     	Define the Weil divisor as a formal sum of height one prime ideals
+     	Constructor for (Weil/Q/R)-divisors
      Usage
      	D1 = divisor(l1, l2, Unsafe=>u, CoeffType=>v, AmbRing=>R)
      	D2 = divisor( I )
@@ -1769,7 +1839,7 @@ doc ///
 		[rationalDivisor, AmbRing]
 		[rationalDivisor, Unsafe]
      Headline
-     	Define the divisor as a formal sum of height one prime ideals whose coefficients are rational numbers
+     	Constructs a Q-divisor
      Usage
      	D1 = rationalDivisor(l1, l2, Unsafe=>u, AmbRing=>R)
      	D2 = rationalDivisor( l3, Unsafe=>u, AmbRing=>R)
@@ -1806,7 +1876,7 @@ doc ///
 		[realDivisor, Unsafe]
 		[realDivisor, AmbRing]
      Headline
-     	Define the divisor as a formal sum of height one prime ideals whose coefficients are real numbers
+     	Constructs an R-divisor
      Usage
      	D = realDivisor(l1, l2, Unsafe=>u, AmbRing=>R)
      	D = realDivisor(l3, Unsafe=>u, AmbRing=>R)
@@ -1833,6 +1903,37 @@ doc ///
      	divisor
      	rationalDivisor
 ///
+
+doc ///
+	Key
+	 verifyDivisor
+	 (verifyDivisor, BasicDiv)
+	 [verifyDivisor, Verbose]
+	Headline
+	 Checks to make sure a divisor is valid
+	Usage
+	 b = verifyDivisor( D1 )
+	Inputs
+	 D1: BasicDiv
+	Outputs
+	 b: Boolean
+	Description
+	 Text
+	  Given a WDiv/QDiv/RDiv/BasicDiv, this function tries to verify that this really is a valid divisor.  It checks that the coefficients are from the right ring (in the WDiv/QDiv/RDiv cases at least).  It also checks to make sure all the ideals are from the same ring, are prime, and have height one.  If Verbose is set to true (it is true by default), then it will print an error message explaining why the divisor was not valid.
+	 Example
+	  R = QQ[x,y];
+	  verifyDivisor(divisor({1}, {ideal(x)}, Unsafe=>true))
+	  verifyDivisor(divisor({1/2}, {ideal(x)}, Unsafe=>true))
+	  verifyDivisor(divisor({1/2}, {ideal(x)}, Unsafe=>true, CoeffType=>QQ))
+	  verifyDivisor(divisor({1}, {ideal(x,y)}, Unsafe=>true))
+	  verifyDivisor(divisor({1}, {ideal(x^2)}, Unsafe=>true))
+	  S = QQ[a,b];
+	  verifyDivisor(divisor({1,2}, {ideal(x), ideal(a)}, Unsafe=>true))
+	SeeAlso
+	 divisor
+	 Unsafe
+///
+
 
 doc ///
 	Key
@@ -2117,7 +2218,7 @@ doc ///
 		ceilingDiv
 		(ceilingDiv, RDiv)
 	Headline
-		Get a divisor whose coefficients are floors of the given divisor
+		Get a divisor whose coefficients are ceilings of the given divisor
 	Usage
 		E2 = ceilingDiv( E1 )
 	Inputs
@@ -2163,7 +2264,7 @@ doc ///
 	 divMinus
 	 (divMinus, RDiv)
 	Headline
-	 Get the positive part of a divisor
+	 Get the negative part of a divisor
 	Usage
 	 F2 = divMinus( F1 )
 	Inputs
@@ -2281,7 +2382,7 @@ doc ///
 	 	toWDiv
 	 	(toWDiv, RDiv)
 	Headline
-		Turn a rational/real divisor to a Weil Divisor
+		Turn a rational/real divisor with integer coefficients into to a Weil Divisor
 	Usage
 		E2 = toWDiv( E1 )
 	Inputs
@@ -2290,7 +2391,7 @@ doc ///
 		E2: WDiv
 	Description
 	 Text
-	  Given a divisor with rational or real coefficient we first check if all coefficients are integers.
+	  Given a divisor with rational or real coefficients, but whose coefficients are actually integers, we first check if all coefficients are integers.
 	  If so we make this divisor to a Weil divisor.  Otherwise, an error is thrown.
 	 Example
 	  R=QQ[x]
@@ -2590,7 +2691,7 @@ doc ///
 	 (mapToProjectiveSpace, WDiv)
 	 [mapToProjectiveSpace, KnownCartier]
 	Headline
-	 Calculate the double dual of an ideal
+	 Compute the map to projective space associated with the global sections of a Cartier divisor
 	Usage
 	 h = mapToProjectiveSpace( D, KnownNormal=>b)
 	Inputs
@@ -2782,6 +2883,19 @@ doc ///
 ///
 
 doc ///
+	Key
+	 ReturnMap
+	Headline
+	 An option for moduleToIdeal and moduleWithSectionToIdeal
+	Description
+	 Text
+	  If moduleToIdeal is set to true, then instead of just converting a module into an isomorphic ideal, this also returns the map from the module to the ring.
+	SeeAlso
+	 moduleToIdeal
+	 moduleWithSectionToIdeal
+///
+
+doc ///
  	Key 
  	 reflexifyModule
  	 (reflexifyModule, Module)
@@ -2964,16 +3078,19 @@ doc ///
 
 doc ///
  	Key
- 	 module2Ideal
- 	 (module2Ideal, Ring, Module)
- 	 (module2Ideal, Module)
- 	 [module2Ideal, MTries]
- 	 [module2Ideal, IsGraded]
+ 	 moduleToIdeal
+ 	 (moduleToIdeal, Ring, Module)
+ 	 (moduleToIdeal, Module)
+ 	 [moduleToIdeal, MTries]
+ 	 [moduleToIdeal, IsGraded]
+ 	 [moduleToIdeal, ReturnMap]
  	Headline
  	 Turn a module to an ideal of a ring
  	Usage
- 	 I = module2Ideal(R, M, MTries=>n, IsGraded=>false)
- 	 L = module2Ideal(R, M, MTries=>n, IsGraded=>true)
+ 	 I = moduleToIdeal(R, M, MTries=>n, IsGraded=>false)
+ 	 L = moduleToIdeal(R, M, MTries=>n, IsGraded=>true)
+ 	 L = moduleToIdeal(R, M, MTries=>n, ReturnMap=>true)
+ 	 L = moduleToIdeal(R, M, MTries=>n, ReturnMap=>true, IsGraded=>true)
  	Inputs
  	 M: Module
  	 R: Ring
@@ -2987,35 +3104,44 @@ doc ///
  	 Example
  	  R = QQ[x,y]
  	  M = (ideal(x^2,x*y))*R^1
- 	  module2Ideal(M)
+ 	  moduleToIdeal(M)
  	 Text
  	  It also works for non-domains
  	 Example
- 	  R = QQ[x,y]/ideal(x*y)
- 	  M = (ideal(x^3, y^5))*R^1
- 	  module2Ideal(M)
- 	  N = (ideal(x,y))*R^1
- 	  module2Ideal(N)
+ 	  R = QQ[x,y]/ideal(x*y);
+ 	  M = (ideal(x^3, y^5))*R^1;
+ 	  moduleToIdeal(M)
+ 	  N = (ideal(x,y))*R^1;
+ 	  moduleToIdeal(N)
  	 Text
- 	  Note that the answer is right even if you don't recognize it at first.  Finally, consider the IsGraded option.
+ 	  Note that the answer is right even if you don't recognize it at first.  Next, consider the IsGraded option. If this is set to true, then the system returns the degree as well (as you can see in the example below).
  	 Example
- 	  R = QQ[x,y]
- 	  M = R^{-3}
- 	  module2Ideal(M, IsGraded=>true)
+ 	  R = QQ[x,y];
+ 	  M = R^{-3};
+ 	  moduleToIdeal(M, IsGraded=>true)
+ 	 Text
+ 	  In conclusion, we consider the ReturnMap option.  What this does is also return the map from M to R^1 of which the map is based upon.  Note that if both IsGraded and ReturnMap are enabled, then the map comes after the degree.
+ 	 Example
+ 	  R = QQ[x,y];
+ 	  M = ideal(x^2, x*y)*R^1;
+ 	  L = moduleToIdeal(M, ReturnMap=>true)
+ 	  target L#1
+ 	  source L#1
  	SeeAlso
  	 moduleToDivisor
- 	 moduleWithSection2Ideal
+ 	 moduleWithSectionToIdeal
 ///
 
 doc ///
  	Key
- 	 moduleWithSection2Ideal
- 	 (moduleWithSection2Ideal, Matrix)
- 	 [moduleWithSection2Ideal, MTries]
+ 	 moduleWithSectionToIdeal
+ 	 (moduleWithSectionToIdeal, Matrix)
+ 	 [moduleWithSectionToIdeal, MTries]
+ 	 [moduleWithSectionToIdeal, ReturnMap]
  	Headline
  	 Turn a module to an ideal of a ring and keep track of a module element
  	Usage
- 	 L = moduleWithSection2Ideal(mat, MTries=>n, IsGraded=>false)
+ 	 L = moduleWithSectionToIdeal(mat, MTries=>n, ReturnMap=>false)
  	Inputs
  	 mat: Matrix
  	 R: Ring
@@ -3024,14 +3150,23 @@ doc ///
  	 L: List
  	Description
  	 Text
- 	  Tries to embed the target of the module map as an ideal in R, it will also return the image of 1 under the module map.  These are returned as a list, the element first, and then the ideal.  It uses MTries=>n (the default n value is 10) in the same way as module2Ideal.  
+ 	  Tries to embed the target of the module map as an ideal in R, it will also return the image of 1 under the module map.  These are returned as a list, the element first, and then the ideal.  It uses MTries=>n (the default n value is 10) in the same way as moduleToIdeal.  
  	 Example
- 	  R = QQ[x,y]
- 	  M = (ideal(x^2,x*y))*R^1
- 	  mat = map(M, R^1, {{1}, {1}})
- 	  moduleWithSection2Ideal(mat)
+ 	  R = QQ[x,y];
+ 	  M = (ideal(x^2,x*y))*R^1;
+ 	  mat = map(M, R^1, {{1}, {1}});
+ 	  moduleWithSectionToIdeal(mat)
+ 	 Text
+ 	  Like moduleToIdeal, if ReturnMap is set to true, then the method will also return the map from M to R^1.
+ 	 Example
+ 	  R = QQ[x,y];
+ 	  M = (ideal(x^2,x*y))*R^1;
+ 	  mat = map(M, R^1, {{1}, {1}});
+ 	  L = moduleWithSectionToIdeal(mat, ReturnMap=>true)
+ 	  target L#2
+ 	  source L#2
  	SeeAlso
- 	 module2Ideal
+ 	 moduleToIdeal
 ///
 
 doc ///
@@ -3060,7 +3195,7 @@ doc ///
 	  moduleToDivisor(M)
 	  moduleToDivisor(M, IsGraded=>true)
 	SeeAlso
-	 module2Ideal
+	 moduleToIdeal
 	 idealToDivisor
 	 moduleWithSectionToDivisor
 ///
@@ -3087,7 +3222,7 @@ doc ///
 	  mat = map(M, R^1, {{1},{0}})
 	  moduleToDivisor(M)
 	SeeAlso
-	 module2Ideal
+	 moduleToIdeal
 	 moduleToDivisor
 	 idealWithSectionToDivisor
 ///
@@ -3177,7 +3312,7 @@ doc ///
 	 Find a solution of the linear Diophantine equation Ax = b
 	Usage
 	 x = getLinearDiophantineSolution(l, L)
-	 x = getLinearDiophantineSolution(l, L)
+	 x = getLinearDiophantineSolution(l, A)
 	Inputs
 	 L: BasicList
 	 l: BasicList
@@ -3203,6 +3338,36 @@ doc ///
 	SeeAlso
 	 findElementOfDegree
 ///
+
+doc ///
+   	Key
+   	 applyToCoefficients
+   	 (applyToCoefficients, BasicDiv, Function)
+   	 [applyToCoefficients, CoeffType]
+   	 [applyToCoefficients, Unsafe]
+   	Headline
+   	 Applies a function to the coefficients of a divisor
+   	Usage
+   	 D = applyToCoefficients(D1, h, CoeffType=>nn, Unsafe=>b)
+   	Inputs
+   	 D1: BasicDiv
+   	 h: Function
+   	 nn: Number
+   	 b: Boolean
+   	Outputs
+   	 D: WDiv
+   	Description
+   	 Text
+	  applyToCoefficients applies the function h to the coefficients of the divisor of D.  Specifying the CoeffType=>ZZ, CoeffType=>QQ, CoeffType=>RR, will force the output divisor to be of a certain form (WDiv, QDiv, RDiv respectively), otherwise the class of the output D is the same as the class of the input D1 (WDiv, QDiv, RDiv, or BasicDiv).  If Unsafe is set to false (the default is true), then the function will check to make sure the output is really a valid divisor.  
+	 Example
+	  R = QQ[x, y, z];
+	  D = divisor(x*y^2/z)
+	  applyToCoefficients(D, z->5*z)
+	SeeAlso
+	 floorDiv
+	 ceilingDiv
+///
+
 
 
 doc /// 
@@ -3345,7 +3510,7 @@ doc ///
   	 flag: Boolean
   	Description
   	 Text
-  	  Returns true if the Weil divisor D is principal, otherwise false.  If IsGraded is set to true, then this checks whether the divisor corresponds to a principal divisor on the Proj of the ambient ring.
+  	  Returns true if the Weil divisor D is principal, otherwise false.  If IsGraded is set to true, then this checks whether the divisor corresponds to a principal divisor on the Proj of the ambient ring.  Note that this function may return a false negative if the defining equations of the divisor are not homogeneous (it warns the user if this occurs).
   	 Example
   	  R = QQ[x, y, z]
   	  D = divisor(x)
@@ -3819,7 +3984,7 @@ h = map(T, R, {a^3, a^2*b, a*b^2, b^3}); --this is the natural inclusion map
 D = divisor(y*z);
 E = divisor(x*w);
 H = 3*divisor(a*b);
-assert( (divPullBack(h, D) == H) and (divPullBack(h, E) == H))
+assert( (divPullBack(h, D) == H) and (divPullBack(h, E) == H) and (divPullBack(h, zeroDivisor(R)) == zeroDivisor(T))  )
 ///
 
 TEST /// --test functoriality for localization (ie, a flat but not finite map)
@@ -3858,6 +4023,7 @@ TEST ///
 ///
 
 TEST ///
+---some linear equivalence tests
  R = QQ[x,y,z];
  K = canonicalDivisor(R, IsGraded=>true);
  Z = zeroDivisor(R);
@@ -3866,6 +4032,7 @@ TEST ///
 ///
 
 TEST ///
+---some nonCartierLocus tests
 R = QQ[x,y,z]/ideal(x^2-y*z);
 m = ideal(x,y,z);
 D = divisor(ideal(x,y));
@@ -3899,20 +4066,48 @@ G = divisor(x*y-z^2);
 assert( (isSNC(D) == true) and (isSNC(E) == true) and (isSNC(F) == false) and (isSNC(G) == false) )
 ///
 
---a final test to see if things are fixed in terms of minimalPrimes
+--various checks for the zero divisor (ie, make sure it behaves well and doesn't break various functions)
 TEST ///
-R = QQ[x,y];
-I = ideal(sub(1,R));
-assert( #(minimalPrimes I) == 0 )
+R = QQ[x,y,z];
+D = 0*divisor(x);
+E = zeroDivisor(R);
+assert( (D == E) and (isCartier(D) == true) and (isQCartier(5, D) == 1) and (dim source mapToProjectiveSpace(D) == 1) and (isFreeModule divisorToModule(D) == true) and (isSNC(D) == true) and (D == floorDiv(D)) )
 ///
 end
 
+---***************************
+---*******CHANGELOG***********
+---***************************
+--changes 0.1q
+------modified moduleToIdeal to allow the user to also output the map via the ReturnMap flag.
+------fixed a bug in moduleToIdeal which caused it to sometimes not produce the right output for domains.
+
+--changes 0.1p
+------added verifyDivisor
+------added applyToCoefficients
+------fixed some typos in documentation
+------renamed module2Ideal to moduleToIdeal for consistency
+------added additional testing (in particular checking things for the zero divisor)
+
+
+--changes 0.1m
+------added getPrimeDiviors
+------renamed divAmbientRing to getAmbientRing for consistency
+------substantial speed improvement for moduleToDivisor in the graded case via a change of moduleToIdeal (adding an IsGraded option)
+------fixed bug in moduleToDivisor which would sometimes provide the wrong shift
+------added mapToProjectiveSpace 
+------made divisorToIdeal work slightly better for anti-effective divisors
+------added a second algorithm to divPullBack which works for Cartier divisors even in the map is not flat or finite
+------added getLinearDiophantineSolution which makes findElementOfDegree work in the multigraded setting
+
 
 ----FUTURE PLANS------
+--add the ability to compute relative canonical divisors including ramification divisors for finite maps (there are a couple options for this latter one, if R \subseteq S, then can we figure out how to represent the trace map as a section of Hom(pushForward(S), R)?  If so, it's really easy.  Otherwise maybe we can compute the module of relative differentials.
+--for not necessarily S2 graded rings, handle things (this should be pretty easy, it just takes some re-coding)
 --add a very ample check
 --can we check ampleness, is there a better way to do this than to check if some power is very ample?  Hm, how do we prove that something is *not* ample...
 --can we check semi-ampleness, is there a better way to do this than to check if some power induces a base point free morphism?  Hm, how do we prove something is *not* semi-ample
---we ought to be able to do bigness by seeing if nD - (ample) has a section for large n.
+--we ought to be able to do bigness by seeing if nD - (ample) has a section for large n (or at least give an affirmative answer)
 --do lots of optimization when the IsGraded flag is true (I'm sure things can be speeded up)
 --compare the current nonCartierLocus with the approach that David suggested, using minors of a presentation matrix, probably what's there now is faster but...
---making checking principalness and checking linearEquivalence work better for non-homogeneous rings and ideals (sometimes it can give false negatives now, this might be unavoidable but maybe it can give fewer false negatives)
+--making checking principalness and checking linearEquivalence work better for non-homogeneous rings and ideals.  Sometimes it can give false negatives now, although the user is warned about before a (false?) negative is provided, this might be unavoidable but maybe it can give fewer false negatives.

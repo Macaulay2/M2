@@ -9,13 +9,13 @@ newPackage ( "Parsing",
      DebuggingMode => false
      )
 
-export constParser 
+export "constParser" 
 
-export Parser
+export "Parser"
 Parser = new SelfInitializingType of FunctionClosure
 Parser.synonym = "parser"
 	  
-export Analyzer
+export "Analyzer"
 Analyzer = new SelfInitializingType of FunctionClosure
 Analyzer.synonym = "lexical analyzer"
 
@@ -25,13 +25,13 @@ alpha = set characters "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 digit = hashTable {"0" => 0, "1" => 1, "2" => 2, "3" => 3, "4" => 4, "5" => 5, "6" => 6, "7" => 7, "8" => 8, "9" => 9}
 -- trivial lexical analyzers
 chkstring := string -> if not instance(string, String) then error "analyzer expected a string";
-export charAnalyzer
+export "charAnalyzer"
 charAnalyzer = Analyzer( 
      string -> (
 	  chkstring string;
 	  i := 0;
 	  () -> if string#?i then ( r := (i,string#i); i = i+1; r)))
-export nonspaceAnalyzer
+export "nonspaceAnalyzer"
 nonspaceAnalyzer = Analyzer(
      string -> (
 	  chkstring string;
@@ -50,21 +50,21 @@ Parser : Analyzer := (p0,a0) -> s -> (
      if null === (r := p null) then error "parser unfinished, at end of input";
      r)
 -- result symbols
-export nil						    -- something useless for a parser to return to indicate acceptance
+export "nil"						    -- something useless for a parser to return to indicate acceptance
 -- parsers
-export deadParser
+export "deadParser"
 deadParser = Parser (c -> null)
-export terminalParser
+export "terminalParser"
 terminalParser = val -> new Parser from (c -> if c === null then val)
-export nullParser
+export "nullParser"
 nullParser = terminalParser nil
-export letterParser
+export "letterParser"
 letterParser = Parser (c -> if alpha#?c then new Parser from (b -> if b === null then c))
-export futureParser
+export "futureParser"
 futureParser = parserSymbol -> new Parser from (c -> (value parserSymbol) c)
 
 -- parser makers
-export orP
+export "orP"
 orP = x -> (
      if instance(x, Function) then return x;
      if instance(x, String) then return constParser x;
@@ -87,12 +87,12 @@ Parser | Parser := (p,q) -> new Parser from ( c -> (
 	  else if q' === null then p'
 	  else if c === null then p' else p'|q'))
 
-export optP
+export "optP"
 optP = parser -> parser | nullParser
 
 Function % Parser := (fun,p) -> new Parser from ( c -> if (p' := p c) =!= null then if c === null then fun p' else fun % p' )
 
-export andP
+export "andP"
 andP = x -> (						    -- we don't do backtracking: the first parser absorbs as much as it can, and then the second one takes over, etc.
      if instance(x, Parser) then return x;
      if instance(x, String) then return constParser x;
@@ -146,19 +146,19 @@ Parser @ Parser := (p,q) -> new Parser from (
 
 constParser = s -> ( f := n -> new Parser from (c -> if c === null then if n === #s then s else null else if s#?n and c === s#n then f(n+1) else null)) 0
 
-export NNParser
+export "NNParser"
 NNParser = (() -> (
      	  f := n -> new Parser from (c -> if c === null then n else if digit#?c then f (10*n + digit#c)); 
      	  new Parser from (c -> if digit#?c then f digit#c)
      	  )) ()
 
-export optionalSignParser
+export "optionalSignParser"
 optionalSignParser = Parser(c -> if c === null then 1 else if c === "-" then terminalParser(-1) else if c === "+" then terminalParser 1)
 
-export ZZParser
+export "ZZParser"
 ZZParser = times % optionalSignParser @ NNParser
 
-export QQParser
+export "QQParser"
 QQParser = ((num,sl,den) -> num/den) % andP(ZZParser,constParser "/",NNParser)
 
 beginDocumentation()

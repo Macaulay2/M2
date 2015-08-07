@@ -4,12 +4,12 @@
 #  sudo apt-get install -y ...
 # see ../../INSTALL for the list of packages
 
-CONFIGOPTIONS += --enable-deb
+CONFIGOPTIONS += --enable-deb --enable-strip
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu --with-mpir-config-options="ABI=64"
+CONFIGOPTIONS += --enable-build-libraries="ntl pari"
 DIRECTORY = debian64
 include Makefile.include
 default: check
-arch-chk:; [ `hostname` = debian64 -o `hostname` = debian64-5 ]
 # Local Variables:
 # compile-command: "time make -f Makefile.debian64 "
 # End:

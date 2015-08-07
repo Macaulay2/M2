@@ -5,9 +5,6 @@ VERSION = 7.4.2
 LICENSEFILES = README.QUICK
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-# license for gc: "Permission is hereby granted to use or copy this program for any purpose ... " 
-#  for details, see file README.QUICK
-
 # We can also get the sources from the home page above or from
 #   https://github.com/ivmai/bdwgc/
 #   https://github.com/ivmai/libatomic_ops/

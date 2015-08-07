@@ -53,7 +53,13 @@ T = R/I
 time primaryDecomposition(ideal(0_T))
 assert(intersect oo == 0)
 
-end
+-- see https://github.com/jakobkroeker/M2/issues/42
+R = QQ[x,y,z]
+I = ideal(4*y*z-(1/2)*z,(1/2)*x*y*z+4*z^3+2*x*z,-(5/2)*z^2-z-1)
+-- used to not finish in reasonable time:
+pd = primaryDecomposition( I, Strategy=>ShimoyamaYokoyama );
+assert ( #pd == 1 and pd#0 == I and isPrimary I )
+
 
 kk = QQ
 A = kk[s,t]/(s^2-t^3)
@@ -80,6 +86,5 @@ I = ideal (y^2*s-y*s*t-s^2,x^2-y*s-t^2,-x^3*s+z*w,-t^3+s^2)
 p = primaryDecomposition I
 assert( I == intersect p )
 
--- example 2
 
 

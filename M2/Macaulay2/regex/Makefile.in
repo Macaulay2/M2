@@ -43,7 +43,7 @@ ifneq (@ETAGS@,false)
 all: tags
 endif
 tags:: @srcdir@/TAGS
-clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
+clean:: ; rm -f *.o *.dep *.s *.E LOGFILE TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
 distclean::; rm -f Makefile
 

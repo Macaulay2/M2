@@ -8,6 +8,9 @@ always:
 darwin64 : always
 	mkdir -p builds.tmp/darwin64
 	cd builds.tmp/darwin64; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-ntl-wizard \
 		--disable-strip \
@@ -23,7 +26,8 @@ debug64 : always
 	mkdir -p builds.tmp/debug64
 	cd builds.tmp/debug64; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CPPFLAGS="-DENGINE_DEBUG_" \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--disable-ntl-wizard \
 		--enable-debug \

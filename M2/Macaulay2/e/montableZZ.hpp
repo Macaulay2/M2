@@ -84,7 +84,7 @@ public:
   // Is there an element 'exp*comp' with _val >= first_val?  If so, return the mon_term.
   // Otherwise return 0.
 
-  void change_coefficient(mon_term *t, mpz_ptr new_coeff);
+  void change_coefficient(mon_term *t, mpz_ptr new_coeff, int new_id);
 
   static void find_weak_generators(int nvars,
                                    const VECTOR(mpz_ptr) &coeffs,

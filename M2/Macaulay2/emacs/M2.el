@@ -169,11 +169,13 @@ current window added to it."
 	(buffer (get-buffer-create buffer-name)))
     (pop-to-buffer buffer)
     (unless (comint-check-proc buffer)
-      (make-comint name M2-shell-exe nil "-c" (concat "echo; set -x; " command))
-      (M2-comint-mode))
+      (let ((n (if (boundp 'text-scale-mode-amount) text-scale-mode-amount 0)))
+	(make-comint name M2-shell-exe nil "-c" (concat "echo; set -x; " command))
+	(M2-comint-mode)
+	(text-scale-set n)))
     buffer))
 (defvar M2-usual-jog 30 "Usual distance scrolled by M2-jog-left and M2-jog-right")
-(defvar M2-comint-prompt-regexp "^\\([ \t]*[io]*[1-9][0-9]* [:=] \\)?"
+(defvar M2-comint-prompt-regexp "^\\([ \t]*\\(i*[1-9][0-9]* :\\|o*[1-9][0-9]* =\\) \\)?"
   "Regular expression used to recognize the Macaulay 2 prompt.")
 (defun M2-left-hand-column () (window-hscroll))
 (defun M2-right-hand-column () (+ (window-hscroll) (window-width) -1))

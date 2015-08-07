@@ -51,6 +51,8 @@ doc ///
      If B'Polynomials is not used then the user should use the  NamePolynomials option. 
    Example
      R=QQ[x1,x2,y]
+     theDir = temporaryFileName()
+     makeDirectory theDir
      makeB'InputFile(theDir,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AVG=>{{x1,x2},{y}},

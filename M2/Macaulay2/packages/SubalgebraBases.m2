@@ -11,7 +11,7 @@ newPackage(
     	DebuggingMode => false
     	)
 
-export {subalgebraBasis, "sagbi" => subalgebraBasis, PrintLevel}
+export {"subalgebraBasis", "sagbi" => "subalgebraBasis", "PrintLevel"}
 
 load "SubalgebraBases/sagbi-common.m2"
 load "SubalgebraBases/sagbitop.m2"

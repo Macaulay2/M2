@@ -578,26 +578,30 @@ inducedMap = method (
 	  Verify => true,
 	  Degree => null 
 	  })
-inducedMap(Module,Module,Matrix) := Matrix => options -> (M,N,f) -> (
-     sM := target f;
-     sN := source f;
-     if ring M =!= ring N or ring M =!= ring f then error "inducedMap: expected modules and map over the same ring";
-     if isFreeModule sM and isFreeModule sN and (sM =!= ambient M and rank sM === rank ambient M or sN =!= ambient N and rank sN === rank ambient N)
-     then f = map(sM = ambient M, sN = ambient N, f)
+inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
+     N := target f;
+     M := source f;
+     if ring N' =!= ring M' or ring N' =!= ring f then error "inducedMap: expected modules and map over the same ring";
+     if isFreeModule N and isFreeModule M and (N =!= ambient N' and rank N === rank ambient N' or M =!= ambient M' and rank M === rank ambient M')
+     then f = map(N = ambient N', M = ambient M', f)
      else (
-     	  if ambient M =!= ambient sM then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
-     	  if ambient N =!= ambient sN then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
+     	  if ambient N' =!= ambient N then error "inducedMap: expected new target and target of map provided to be subquotients of same free module";
+     	  if ambient M' =!= ambient M then error "inducedMap: expected new source and source of map provided to be subquotients of same free module";
 	  );
-     g := generators sM * cover f * (generators N // generators sN);
-     h := generators M;
-     p := map(M, N, g // h, Degree => options.Degree);
-     if options.Verify then (
-	  if relations sM % relations M != 0 then error "inducedMap: expected new target not to have fewer relations";
-	  if generators N % generators sN != 0 then error "inducedMap: expected new source not to have more generators";
-	  if g % h != 0 then error "inducedMap: expected matrix to induce a map";
-	  if not isWellDefined p then error "inducedMap: expected matrix to induce a well-defined map";
+     gbM  := gb(M,ChangeMatrix => true);
+     gbN' := gb(N',ChangeMatrix => true);
+     g := generators N * cover f * (generators M' // gbM);
+     f' := g // gbN';
+     f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
+     if opts.Verify then (
+	  if relations M % relations M' != 0 then error "inducedMap: expected new source not to have fewer relations";
+	  if relations N % relations N' != 0 then error "inducedMap: expected new target not to have fewer relations";
+	  if generators M' % gbM != 0 then error "inducedMap: expected new source not to have more generators";
+	  if generators N' % gb N != 0 then error "inducedMap: expected new target not to have more generators";
+	  if g % gbN' != 0 then error "inducedMap: expected matrix to induce a map";
+	  if not isWellDefined f' then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
-     p)
+     f')
 inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)

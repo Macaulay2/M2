@@ -1,4 +1,3 @@
-# license for pari: GPL v2 or later
 LICENSEFILES = README COPYING
 
 # svn://pari.math.u-bordeaux.fr/pari/trunk
@@ -9,12 +8,7 @@ VPATH = @srcdir@
 # pari maintainers have been known to break URL's, so we copy their software to another server:
 # URL = http://pari.math.u-bordeaux.fr/pub/pari/unix
 
-VERSION = 2.7.1
-
-ifeq ($(VERSION) @host@,2.5.3 x86_64-w64-mingw32)
-PATCHFILE = @abs_srcdir@/patch-2.5.3-mingw64
-endif
-
+VERSION = 2.7.3
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
@@ -41,6 +35,11 @@ ifeq ($(HOST_OS),mingw32)
 HOST_OS = mingw
 endif
 
+ifneq (,$(findstring darwin,$(HOST_OS)))
+# Pari's configure script gets confused if the host_os contains the version number, e.g., darwin14.0.0:
+HOST_OS = darwin
+endif
+
 CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib ./Configure --prefix=$(LIBRARIESDIR) --with-gmp=$(LIBRARIESDIR) --host=$(HOST_CPU)-$(HOST_OS)
 
 # Pari's configure script is needlessly confusing, since it's almost impossible to figure out what directory is chosen as the build directory.
@@ -51,15 +50,15 @@ GETODIR2 = `find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 
 ifeq (@PROFILING@,yes)
 CONFIGURECMD += -pg
-INSTALLOPTIONS = -C $(GETODIR2).prf
-BUILDOPTIONS = -C $(GETODIR2).prf
-CHECKOPTIONS = -C $(GETODIR2).prf
+INSTALLOPTIONS = -C $(GETODIR2)
+BUILDOPTIONS = -C $(GETODIR2)
+CHECKOPTIONS = -C $(GETODIR2)
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
-INSTALLOPTIONS = -C $(GETODIR2).dbg
-BUILDOPTIONS = -C $(GETODIR2).dbg
-CHECKOPTIONS = -C $(GETODIR2).dbg
+INSTALLOPTIONS = -C $(GETODIR2)
+BUILDOPTIONS = -C $(GETODIR2)
+CHECKOPTIONS = -C $(GETODIR2)
 else
 INSTALLOPTIONS = -C $(GETODIR2)
 BUILDOPTIONS = -C $(GETODIR2)
@@ -82,6 +81,8 @@ clean::; rm -f .config-checked-*
 	: test whether pari successfully found gmp library during configuration :
 	echo 'configfile(s) : '` find . -name pari.cfg `
 	. $(GETODIR2)/pari.cfg && echo kernlvl1 = $$kernlvl1 && [ $$kernlvl1 = gmp ]
+	: test whether pari found a dynamic library linker during configuration :
+	. $(GETODIR2)/pari.cfg && echo DLLD = $$DLLD && [ "$$DLLD" != "" ]
 	touch $@
 
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/pari/Makefile

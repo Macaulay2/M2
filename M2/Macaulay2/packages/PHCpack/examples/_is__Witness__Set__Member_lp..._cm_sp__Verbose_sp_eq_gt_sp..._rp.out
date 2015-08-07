@@ -14,10 +14,10 @@ i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 o5 = true
 
 i6 : isWitnessSetMember(W, point{{0,0,0,0,0,0}},Verbose=>true)
-writing witness set to file /tmp/M2-8434-0/17PHCwitset
-writing test point to file /tmp/M2-8434-0/18PHCtestpoint
-calling phc -f < /tmp/M2-8434-0/19PHCbatch > /tmp/M2-8434-0/21PHCsession
-output of phc -f is in file /tmp/M2-8434-0/20PHCoutput
+writing witness set to file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/17PHCwitset
+writing test point to file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/18PHCtestpoint
+calling phc -f < /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/19PHCbatch > /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/21PHCsession
+output of phc -f is in file /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22986-0/20PHCoutput
 
 o6 = true
 

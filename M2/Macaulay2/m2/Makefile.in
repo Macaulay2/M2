@@ -3,7 +3,7 @@
 # @configure_input@
 all: initialize phase1
 include ../../include/config.Makefile
-VPATH = @srcdir@ @srcdir@/../d
+VPATH = @srcdir@
 srcdir = $(shell cd @srcdir@; /bin/pwd)
 
 USER ?= unknown-user
@@ -117,11 +117,10 @@ phase1:: .Macaulay2-made
 .Macaulay2-made: $(DUMPEDM2FILES) $(DUMPEDM2DOCFILES) @pre_exec_prefix@/bin/M2@EXE@
 	touch $@
 clean::; rm -f .Macaulay2-made
-all: .gdbinit .gdb-files .gdb-run-it
-gdb: .gdbinit .gdb-files
+initialize: .gdb-directories .gdbinit .gdb-files .gdb-run-it
+gdb: .gdb-directories .gdbinit .gdb-files .gdb-run-it
 	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)" gdb @pre_exec_prefix@/bin/M2@EXE@
 .gdbinit: .gdbinit.$(USER); cp $< $@
-all: .gdb-directories
 clean::; rm -f .gdb-directories
 .gdb-directories: ../../libraries/*
 	echo 'echo -- loading .gdb-directories\n' >$@
@@ -136,7 +135,6 @@ clean::; rm -f .gdb-directories
 	   fi ;\
 	done
 .gdbinit.$(USER):; touch $@
-clean::; rm -f .gdbinit.$(USER)
 clean::; rm -f .gdbinit
 .gdb-files: Makefile
 	echo 'echo -- loading .gdb-files\n' >$@

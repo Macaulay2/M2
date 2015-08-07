@@ -27,9 +27,9 @@ newPackage(
 --      "pretty printing" for InvolutiveBasis and FactorModuleBasis
 
 
-export {basisElements, multVar, janetMultVar, pommaretMultVar, janetBasis, InvolutiveBasis,
-     isPommaretBasis, invReduce, invSyzygies, janetResolution, Involutive, multVars,
-     FactorModuleBasis, factorModuleBasis, invNoetherNormalization, PermuteVariables}
+export {"basisElements", "multVar", "janetMultVar", "pommaretMultVar", "janetBasis", "InvolutiveBasis",
+     "isPommaretBasis", "invReduce", "invSyzygies", "janetResolution", "Involutive", "multVars",
+     "FactorModuleBasis", "factorModuleBasis", "invNoetherNormalization", "PermuteVariables"}
 
 ----------------------------------------------------------------------
 -- type InvolutiveBasis
