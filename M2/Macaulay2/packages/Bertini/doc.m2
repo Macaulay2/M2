@@ -255,6 +255,10 @@ doc ///
      runBertini(theDir)
    Example
      R=QQ[x,y]
+     theDir1 = temporaryFileName()
+     makeDirectory theDir1
+     theDir2 = temporaryFileName()
+     makeDirectory theDir2
      makeB'InputFile(theDir1,
      	 AVG=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-4})
@@ -1128,6 +1132,10 @@ doc///
      Set this option to the directory where the Bertini input file is located.  
    Example
      R=QQ[x,y]
+     theDir1 = temporaryFileName()
+     makeDirectory theDir1
+     theDir2 = temporaryFileName()
+     makeDirectory theDir2
      makeB'InputFile(theDir1,
 	 AVG=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2})
