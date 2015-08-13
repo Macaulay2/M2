@@ -33,11 +33,10 @@ CXX := /usr/bin/g++
 FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
-CC  := gcc-4.9 -m64
-CXX := g++-4.9 -m64
+CC  := gcc-4.9 -mtune=generic
+CXX := g++-4.9 -mtune=generic
 FC  := 
 # FC  := gfortran-5
-CONFIGOPTIONS += CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib"
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := mac64
@@ -46,6 +45,15 @@ endif
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
 default: all
+
+# we build pari because brew's pari brings in gmp
+# we build flint because of the gmp problem Mike found once
+# we build gc because homebrew compiles with clang and produces non-generic code and ignores the command line option -mtune=generic
+#   $ gdb /usr/local/lib/libgc.1.dylib 
+#   (gdb) x/i min_bytes_allocd+100
+#   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
+#   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
+CONFIGOPTIONS += --enable-build-libraries="pari flint readline"
 
 ifeq ($(PRODUCTION),yes)
    default: check

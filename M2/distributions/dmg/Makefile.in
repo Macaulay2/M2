@@ -3,7 +3,7 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
+PKG_DMG = @package@-@ARCH@-@ISSUE@.dmg
 
 all: dmg tidy
 dmg: ../../$(PKG_DMG)
