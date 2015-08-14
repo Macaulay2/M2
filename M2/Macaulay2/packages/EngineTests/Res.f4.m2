@@ -213,7 +213,7 @@ TEST ///
 ///
   restart
   debug Core
-  load "g16n2.m2"
+  load "free-resolutions/g16n2.m2"
   kk = ZZp(101, Strategy=>"Old")
   R = kk[t_0..t_14, MonomialOrder=>{Weights=>splice{15:1}}]
   I = sub(I,R);
