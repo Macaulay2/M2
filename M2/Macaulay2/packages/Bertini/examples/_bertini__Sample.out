@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1057685552 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y,z]
 
@@ -15,7 +15,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : NV = bertiniPosDimSolve(F)
-Temporary directory for input and output files:/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-66077-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56401-0/0
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -35,7 +35,7 @@ o4 = W
 o4 : WitnessSet
 
 i5 : bertiniSample(4, W)
-Temporary directory for input and output files:/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-66077-0/1
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56401-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -44,17 +44,15 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o5 = {{2.87208e-318+2.93501e-318*ii, 6.67432e-21-1.12604e-20*ii,
+o5 = {{1.08556e-305-5.998e-308*ii, -1.08556e-305+5.998e-308*ii,
      ------------------------------------------------------------------------
-     .513657-.94029*ii}, {2.25077e-315-1.17713e-315*ii,
+     .17026+.152258*ii}, {-5.1174e-313-5.13666e-312*ii,
      ------------------------------------------------------------------------
-     4.95972e-20+1.08459e-19*ii, .285085-.0441893*ii},
+     -5.1174e-313-5.13666e-312*ii, -.0715045+.152106*ii},
      ------------------------------------------------------------------------
-     {-1.77751e-272-3.3852e-272*ii, 3.83315e-20-2.38351e-19*ii,
+     {-6.1147e-310+5.61753e-309*ii, -6.1147e-310+5.61753e-309*ii,
      ------------------------------------------------------------------------
-     .0479183-.411661*ii}, {6.49578e-316+1.57193e-315*ii,
-     ------------------------------------------------------------------------
-     -4.92392e-21-2.31591e-21*ii, .121787-.719758*ii}}
+     -.3348-.370738*ii}, {0, 0, .298007-.559218*ii}}
 
 o5 : List
 

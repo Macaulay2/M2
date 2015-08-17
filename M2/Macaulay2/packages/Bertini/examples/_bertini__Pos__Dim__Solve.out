@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: 704393788 *}
+--loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = QQ[x,y,z]
 
@@ -14,10 +15,13 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : S = bertiniPosDimSolve F
-Temporary directory for input and output files:/tmp/M2-14805-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56419-0/0
 
-The version of Bertini you have installed on your computer was used for this run. 
-Bertini is under ongoing development by D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+The version of Bertini 
+	    you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
 o3 = S
@@ -26,9 +30,9 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{1.31165e-60+1.68487e-60*ii, -1.5376e-60-1.48332e-60*ii,
+o4 = {{2.46204e-69-1.22685e-68*ii, -8.23987e-69+9.77033e-69*ii,
      ------------------------------------------------------------------------
-     .499782-.256389*ii}}
+     .482397-.286512*ii}}
 
 o4 : VerticalList
 
@@ -40,13 +44,13 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{ComponentNumber => 0                                                                    }
+o6 = WitnessSet{ComponentNumber => 0                                                                             }
                 IsIrreducible => null
-                Points => {{1.31165e-60+1.68487e-60*ii, -1.5376e-60-1.48332e-60*ii, .499782-.256389*ii}}
-                Slice => | .056846+.724565i .516568+.153937i 1.49808+.948033i 2.80355+1.09854i |
-                WitnessDataFileName => /tmp/M2-14805-0/0/witness_data
-                                     3      2      2       2     3      2
-                Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)
+                Points => {{2.46204e-69-1.22685e-68*ii, -8.23987e-69+9.77033e-69*ii, .482397-.286512*ii}}
+                Slice => | -.302736-.320197i -.669583+2.24476i 3.98978-.948652i .487324+.86715i |
+                WitnessDataFileName => /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56419-0/0/witness_data
+                               3      2      2       2     3      2
+                Equations => {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 
 i7 : PD=primaryDecomposition( ideal F)
 
