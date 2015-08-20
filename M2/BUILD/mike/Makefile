@@ -17,6 +17,23 @@ darwin64 : always
 		--enable-dmg \
 		--enable-download
 
+darwin64-ffpack : always
+	mkdir -p builds.tmp/darwin64-ffpack
+	cd builds.tmp/darwin64-ffpack; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		CC="gcc-4.9 -m64" \
+		CXX="g++-4.9 -m64" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="mpir"
+
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
 

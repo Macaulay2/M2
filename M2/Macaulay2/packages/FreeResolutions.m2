@@ -27,7 +27,8 @@ export {
     "LeadTerm",
     "Coefficients",
     "DescendentRange",
-    "getMatrix"
+    "getMatrix",
+    "AGRExample"
     }
 
 protect Frame
@@ -377,6 +378,28 @@ betti(ResolutionData) := opts -> (D) -> (
             )
         )
     )
+
+-- Examples --
+
+AGRExample = method()
+AGRExample(ZZ,ZZ,ZZ,Ring) := (n,d,s,kk) -> (
+    x := getSymbol "x";
+    R := kk[x_0..x_n];
+    F := sum for i from 1 to s list (random(1,R))^d;
+    trim sum for i from 1 to d list (
+        B := basis(i,R);
+        G := diff(transpose B, matrix{{F}});
+        M := monomials flatten G;
+        cfs := contract(transpose M, transpose G);
+        ideal(B * (syz cfs))
+        )
+    )
+AGRExample(ZZ,ZZ,ZZ) := (n,d,s) -> AGRExample(n,d,s,ZZ/10007)
+
+CNC = method()
+CNC(ZZ, Ring) := (g,kk) -> (
+    )
+CNC ZZ := (g) -> CNC(g, ZZ/32003)
 end
 
 beginDocumentation()

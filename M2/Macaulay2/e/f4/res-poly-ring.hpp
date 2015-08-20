@@ -26,7 +26,7 @@ public:
   const ResGausser& resGausser() const { return mResGausser; }
   const MonomialInfo& monoid() const { return mMonoid; }
 
-  void memUsage(const poly& f, long& bytes_used, long& bytes_alloc) const;
+  void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
   const ResGausser& mResGausser;
   const MonomialInfo& mMonoid;

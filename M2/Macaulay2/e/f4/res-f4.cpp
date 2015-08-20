@@ -315,7 +315,7 @@ void F4Res::reorderColumns()
       column_order[i] = i;
     }
 
-  if (M2_gbTrace >= 3)
+  if (M2_gbTrace >= 2)
     fprintf(stderr, "ncomparisons = ");
 
   std::sort(column_order, column_order+ncols, C);
@@ -326,7 +326,7 @@ void F4Res::reorderColumns()
   double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
   //clock_sort_columns += nsecs0;
   if (M2_gbTrace >= 2)
-    fprintf(stderr, " time = %f\n", nsecs0);
+    fprintf(stderr, " sort time = %f\n", nsecs0);
 
   ////////////////////////////
 

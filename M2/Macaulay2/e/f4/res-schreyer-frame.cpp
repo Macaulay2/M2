@@ -73,7 +73,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       case Initializing:
         break;
       case Frame:
-        //        std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
+                std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
             mState = Matrices;
@@ -95,7 +95,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           }
         break;
       case Matrices:
-        //        std::cout << "start_computation: entering Matrices" << std::endl;
+        std::cout << "start_computation: entering Matrices(" << mCurrentLevel << ", " << mSlantedDegree << ")" << std::endl;
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
@@ -103,6 +103,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
             mSlantedDegree++;
             if (mSlantedDegree > mHiSlantedDegree)
               {
+                showMemoryUsage();
                 for (auto it=mMinimalizeTODO.cbegin(); it != mMinimalizeTODO.cend(); ++it)
                   {
                     int rk = rank(it->first, it->second);
@@ -317,7 +318,7 @@ void SchreyerFrame::showMemoryUsage() const
       if (nelems_level == 0) continue;
       long used_level = nelems_level * sizeof(FrameElement);
       long alloc_level = level(i).capacity() * sizeof(FrameElement);
-      std::cout << "  " << i << "\t\t\t" << nelems_level << "\t\t" << used_level << "\t\t" << alloc_level << std::endl;
+      std::cout << "  " << i << "\t\t\t " << nelems_level << "\t\t " << used_level << "\t\t " << alloc_level << std::endl;
       nelems += nelems_level;
       used += used_level;
       alloc += alloc_level;
@@ -333,56 +334,62 @@ void SchreyerFrame::showMemoryUsage() const
 {
   std::cout << "Frame memory usage" << std::endl;
   // widths: level: 6, #elems: 8, used: 6, allocated: 11
-  std::cout << " level" << "  #elems" << "  used" << "  allocated" << "    poly" << "polalloc" << std::endl;
+  std::cout << " level" << "   #elems" << "   used" << "   allocated" << "     nterms" << "       poly" << "   polalloc" << std::endl;
   long alloc = 0;
   long used = 0;
   long nelems = 0;
   long poly_used = 0;
   long poly_alloc = 0;
+  long poly_nterms = 0;
   long poly_used_level = 0;
   long poly_alloc_level = 0;
+  long poly_nterms_level = 0;
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       long nelems_level = level(i).size();
       if (nelems_level == 0) continue;
       long used_level = nelems_level * sizeof(FrameElement);
       long alloc_level = level(i).capacity() * sizeof(FrameElement);
+      poly_nterms_level = 0;
       poly_used_level = 0;
       poly_alloc_level = 0;
       for (int j=0; j<nelems_level; j++)
         {
-          ring().memUsage(level(i)[j].mSyzygy, poly_used_level, poly_alloc_level);
+          ring().memUsage(level(i)[j].mSyzygy, poly_nterms_level, poly_used_level, poly_alloc_level);
         }
+      poly_nterms += poly_nterms_level;
       poly_used += poly_used_level;
-      poly_alloc = poly_alloc_level;
+      poly_alloc += poly_alloc_level;
       std::cout << std::setw(6) << i
-                << std::setw(8) << nelems_level
-                << std::setw(6) << used_level
-                << std::setw(11) << alloc_level
-                << std::setw(8) << poly_used_level
-                << std::setw(8) << poly_alloc_level
+                << " " << std::setw(8) << nelems_level
+                << " " << std::setw(6) << used_level
+                << " " << std::setw(11) << alloc_level
+                << " " << std::setw(10) << poly_nterms_level        
+                << " " << std::setw(10) << poly_used_level
+                << " " << std::setw(10) << poly_alloc_level
                 << std::endl;
       nelems += nelems_level;
       used += used_level;
       alloc += alloc_level;
     }
   std::cout << "   all"
-            << std::setw(8) << nelems
-            << std::setw(6) << used
-            << std::setw(11) << alloc
-            << std::setw(8) << poly_used
-            << std::setw(8) << poly_alloc
+            << " " << std::setw(8) << nelems
+            << " " << std::setw(6) << used
+            << " " << std::setw(11) << alloc
+            << " " << std::setw(10) << poly_nterms
+            << " " << std::setw(10) << poly_used
+            << " " << std::setw(10) << poly_alloc
             << std::endl;
 
   long monomSpace = mMonomialSpace.memoryUsage();
   long monomUsed = nelems * monoid().max_monomial_size() * sizeof(monomial_word);
   std::cout << "monomials     "
             << std::setw(6) << monomUsed
-            << std::setw(11) << monomSpace
+            << " " << std::setw(11) << monomSpace
             << std::endl;
   std::cout << "total mem     "
             << std::setw(6) << (used+monomUsed+poly_used)
-            << std::setw(11) << (alloc+monomSpace+poly_alloc)
+            << " " << std::setw(11) << (alloc+monomSpace+poly_alloc)
             << std::endl;
 }
 
