@@ -298,6 +298,9 @@ compress ProductGate := g -> (
     product c
     )
 
+-----------------------------------------------
+-- OLD!!! preSLP routines
+
 -- returns (consts,program), modifies pos
 appendToProgram = method()
 appendToProgram (Gate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
@@ -355,6 +358,82 @@ toPreSLP (List,List) := (inputs,outputs) -> (
     (consts, program, matrix{outputs/(o->pos#o)})
     )  
 
+TEST ///
+needsPackage "SLPexpressions"
+
+--InputGate
+X = inputGate symbol X
+Y = inputGate symbol Y
+
+--SumGate and ProductGate
+C = sumGate {X+Y,Y,X}
+D = productGate {X*Y,Y,C}
+h = new HashTable from {X=>1,Y=>ii,cache=>new CacheTable}
+assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
+support (X*X)
+support (D+C)
+
+-- one way to handle constants
+E = inputGate 2
+F = product{E*(X*X+E*Y)+oneGate, oneGate}
+
+-- sub
+G = sub(sub(F,X=>X+Y),Y=>X*Y) 
+-- sub and compress = evaluate over a ring
+R = CC[x,y] 
+H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
+I = compress H 
+
+-- DetGate
+J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
+
+-- diff
+diff(X,F)
+diff(X,J)
+h = new HashTable from {X=>x,Y=>y,cache=>new CacheTable}
+assert(
+    value(diff(X,J),h) 
+    ==
+    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
+    )
+
+-- DivideGate
+G/F
+diff(X,X/Y)
+diff(Y,X/Y)
+h = new HashTable from {X=>2,Y=>3,cache=>new CacheTable}
+GY = value(diff(Y,G),h)
+FY = value(diff(Y,F),h)
+assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
+
+debug SLPexpressions
+debug NumericalAlgebraicGeometry
+-- evaluate toPreSLP == compress 
+output = {F,diff(X,F),G}
+preSLP = toPreSLP({X,Y},output)
+out'eval = evaluatePreSLP(preSLP, gens R)
+out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
+assert(out'eval == out'comp)
+printSLP preSLP
+printAsSLP output
+///
+
+--------------------------------------------------
+-- RawSLProgram routines
+--------------------------------------------------
+
+makeSLProgram = method()
+makeSLProgram (List,List) := (inL,outL) -> (
+    s := rawSLProgram(1); -- 1 means nothing anymore
+    scan(inL,g->appendToSLProgram(s,g)); 
+    out := apply(outL, g->appendToSLProgram(s,g));
+    rawSLPsetOutputPositions(s,out);
+    s
+    )
+makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
+
+positions(List, RawSLProgram) := (L,s) -> apply(L, g->g.cache#s)
+
 appendToSLProgram = method()
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
     if g.cache#?slp then g.cache#slp else g.cache#slp = rawSLPInputGate(slp)
@@ -378,37 +457,33 @@ appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) ->
 	scan(g.Inputs, a->appendToSLProgram (slp,a));
 	g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
 	)
-///
-restart
-load "SLP-expressions.m2"
+TEST ///
+needsPackage "SLPexpressions"
+debug SLPexpressions
 X = inputGate symbol X
 C = inputGate symbol C
 XpC = X+C
 XXC = productGate{X,X,C}
 detXCCX = detGate{{X,C},{C,X}}
 XoC = X/C
-s = rawSLProgram(1) -- 1 means nothing anymore
-n0 = appendToSLProgram(s,C)
-n1 = appendToSLProgram(s,X)
--- n2 = appendToSLProgram(s,XpC)
-n3 = appendToSLProgram(s,XXC)
-n4 = appendToSLProgram(s,detXCCX)
-n5 = appendToSLProgram(s,XoC)
-n6 = appendToSLProgram(s,XpC+XoC)
+s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC}) 
 
-rawSLPsetOutputPositions(s,{n0,n1,n3,n4,n5,n6}) 
-eQQ = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_QQ}})
+debug Core
+(consts,indets):=(positions({C},s), positions({X},s))
+eQQ = rawSLEvaluator(s,consts,indets,raw matrix{{3_QQ}})
 rawSLEvaluatorEvaluate(eQQ, raw matrix{{7_QQ}}) 
-eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_CC}})
+eCC = rawSLEvaluator(s,consts,indets,raw matrix{{3_CC}})
 rawSLEvaluatorEvaluate(eCC, raw matrix{{7_CC}}) 
 R = CC_1000
-eCC = rawSLEvaluator(s,{n0},{n1},raw matrix{{3_R}})
+eCC = rawSLEvaluator(s,consts,indets,raw matrix{{3_R}})
 rawM = rawSLEvaluatorEvaluate(eCC, raw matrix{{7_R}}) 
-last flatten entries map(R,rawM) 
+assert (abs(last flatten entries map(R,rawM) - 37/3) < 2^(-999))
 ///
 
+-------------------------------------
 -- GateMatrix is NOT A GATE
--- GateMatrix = new Type of List
+-- GateMatrix = new Type of List (actually a table) 
+-------------------------------------
 
 old'matrix'List = lookup(matrix,List)
 gateMatrix = method()
@@ -544,15 +619,8 @@ printAsSLP List := outputs -> (
     )
 printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
-makeSLProgram = method()
-makeSLProgram (List,List) := (inL,outL) -> (
-    s := rawSLProgram(1); -- 1 means nothing anymore
-    scan(inL,g->appendToSLProgram(s,g)); 
-    out := apply(outL, g->appendToSLProgram(s,g));
-    rawSLPsetOutputPositions(s,out);
-    s
-    )
-makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
+----------------------------------
+-- GateHomotopySystem
 
 GateHomotopySystem := new Type of HomotopySystem    
 GateParameterHomotopySystem := new Type of ParameterHomotopySystem
@@ -604,7 +672,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
     if not H#?(H#"H",K) then (
 	s := H#"H core"; -- core SLP
 	consts := H#"H consts"; -- constants of SLP
-	H#(H#"H",K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H#"X" | {H#"T"},c->c.cache#s),
+	H#(H#"H",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
 	    raw matrix{apply(consts,c->c.Name_K)});
 	);
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"H",K), raw (transpose x | matrix{{t}})), numrows H#"H", numcols H#"H")
@@ -616,7 +684,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     if not H#?(H#"Ht",K) then (
 	s := H#"Ht core"; -- core SLP
 	consts := H#"Ht consts"; -- constants of SLP
-	H#(H#"Ht",K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H#"X" | {H#"T"},c->c.cache#s),
+	H#(H#"Ht",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
 	    raw matrix{apply(consts,c->c.Name_K)});
 	);
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw (transpose x | matrix{{t}})), numrows H#"Ht", numcols H#"Ht")
@@ -628,7 +696,7 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     if not H#?(H#"Hx",K) then (
 	s := H#"Hx core"; -- core SLP
 	consts := H#"Hx consts"; -- constants of SLP
-	H#(H#"Hx",K) = rawSLEvaluator(s, apply(consts,c->c.cache#s), apply(flatten entries H#"X" | {H#"T"},c->c.cache#s),
+	H#(H#"Hx",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
 	    raw matrix{apply(consts,c->c.Name_K)});
 	);
     matrix(K,rawSLEvaluatorEvaluate(H#(H#"Hx",K), raw (transpose x | matrix{{t}})), numrows H#"Hx", numcols H#"Hx")
@@ -637,71 +705,11 @@ evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,
 evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
 evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopySystem,parameters||x,t)
 
-end -------------------------------------------
 
-restart
-needsPackage "SLPexpressions"
-
---InputGate
-X = inputGate symbol X
-Y = inputGate symbol Y
-
---SumGate and ProductGate
-C = sumGate {X+Y,Y,X}
-D = productGate {X*Y,Y,C}
-h = new HashTable from {X=>1,Y=>ii,cache=>new CacheTable}
-assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
-support (X*X)
-support (D+C)
-
--- one way to handle constants
-E = inputGate 2
-F = product{E*(X*X+E*Y)+oneGate, oneGate}
-
--- sub
-G = sub(sub(F,X=>X+Y),Y=>X*Y) 
--- sub and compress = evaluate over a ring
-R = CC[x,y] 
-H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
-I = compress H 
-
--- DetGate
-J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
-
--- diff
-diff(X,F)
-diff(X,J)
-h = new HashTable from {X=>x,Y=>y,cache=>new CacheTable}
-assert(
-    value(diff(X,J),h) 
-    ==
-    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
-    )
-
--- DivideGate
-G/F
-diff(X,X/Y)
-diff(Y,X/Y)
-h = new HashTable from {X=>2,Y=>3,cache=>new CacheTable}
-GY = value(diff(Y,G),h)
-FY = value(diff(Y,F),h)
-assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
-
-debug SLPexpressions
-debug NumericalAlgebraicGeometry
--- evaluate toPreSLP == compress 
-output = {F,diff(X,F),G}
-preSLP = toPreSLP({X,Y},output)
-out'eval = evaluatePreSLP(preSLP, gens R)
-out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
-assert(out'eval == out'comp)
-printSLP preSLP
-printAsSLP output
 
 -------------------------------------------------------
--- trackHomotopy 
-
-restart
+-- trackHomotopy tests
+TEST ///
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -725,9 +733,9 @@ peek s
 s = first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
 peek s
 assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
+///
 
--- HomotopySystem
-restart
+TEST /// -- HomotopySystem
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -766,9 +774,9 @@ gH = transpose matrix {H}
 HS = gateHomotopySystem(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 peek s
+///
 
--- ParameterHomotopySystem
-restart
+TEST /// -- ParameterHomotopySystem
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -790,4 +798,5 @@ x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
 peek s
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
- 
+///
+
