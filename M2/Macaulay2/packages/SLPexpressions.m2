@@ -7,7 +7,7 @@ newPackage select((
      Date => "August 2015",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
-     AuxiliaryFiles => true,
+     AuxiliaryFiles => false,
      Authors => {
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
@@ -800,3 +800,45 @@ peek s
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///
 
+beginDocumentation()
+{* run
+
+restart
+installPackage "SLPexpressions"
+
+to see missing docs.
+ 
+-------- TEMPLATE ------------------
+document {
+    Key => {,},
+    Headline => "",
+    Usage => "",
+    Inputs => { ""=>"" },
+    Outputs => { "" },
+    "", 
+    EXAMPLE lines ///
+    ///,
+    Caveat => {"" },
+    SeeAlso=>{()}
+    }
+*}
+
+document {
+    Key => {Gate,InputGate,SumGate,ProductGate},
+    "Some basic gates:",
+    UL{
+	{TO InputGate, " is constructed with ", TO inputGate, TT " name", ", if ", TT "name", 
+	    " is a number then this gate is assumed to be constant"},
+	{TO SumGate, " is constructed with ", TO sumGate, TT " {list of gates}", " or ", TO (symbol +,Gate,Gate)},
+	{TO ProductGate, " is constructed with ", TO productGate, TT " {list of gates}", " or ", TO (symbol *,Gate,Gate)}	 
+	},  
+    Headline => "an expression that is a part of an evaluation circuit (abstract type)"
+    }
+document {
+    Key => {GateMatrix},
+    Headline => "a matrix of Gates",
+    "An object of this type is a matrix with Gates as entries. 
+    Some algebraic operations (matrix multiplication, determinant, etc.) are defined for this type. 
+    It is provided, in part, for convenience of setting up involved evaluation circuits.",
+    SeeAlso=>{Gate, Matrix}
+    }
