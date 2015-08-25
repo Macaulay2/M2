@@ -1,9 +1,6 @@
 VPATH = @srcdir@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-
-# starting with 4.2.2 is LGPL version 3
-# version 6.0.0a is licensed under LGPL version 3 or under GPL version 2
 VERSION = 6.0.0a
 TARDIR = gmp-6.0.0
 TAROPTIONS = --bzip2

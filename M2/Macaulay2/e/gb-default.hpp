@@ -46,7 +46,7 @@ public:
   };
 
   /* Types of minimality */
-  enum spair_type {
+  enum SPAIR {
     SPAIR_SPAIR,
     SPAIR_GCD_ZZ,
     SPAIR_RING,
@@ -59,7 +59,7 @@ public:
   // This is only public to allow spair_sorter to use it!!
   struct spair {
     spair *next;
-    spair_type type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ,
+    SPAIR type; /* SPAIR_SPAIR, SPAIR_GCD_ZZ,
                         SPAIR_GEN, SPAIR_ELEM, SPAIR_RING, SPAIR_SKEW */
     int deg;
     exponents lcm; /* Contains homogenizing variable, component */
@@ -168,6 +168,7 @@ private:
   int stats_ntail;
   int stats_ngb;
   int stats_npairs;
+  int stats_nretired;
 
   /* for ending conditions */
   int n_syz;
@@ -209,9 +210,10 @@ private:
 
   /* new state machine routines */
   void insert_gb(POLY f, gbelem_type minlevel);
+  void replace_gb_element_ZZ(MonomialTableZZ::mon_term* t);
+  
   bool process_spair(spair *p);
   void do_computation();
-
 
   gbelem *gbelem_ring_make(gbvector *f);
 
@@ -232,6 +234,7 @@ private:
   spair *spair_make_ring(int i, int j);
   void spair_text_out(buffer &o, spair *p);
   void spair_delete(spair *&p);
+  bool spair_is_retired(spair* p) const;
 
   /* spair handling */
   bool pair_not_needed(spair *p, gbelem *m);

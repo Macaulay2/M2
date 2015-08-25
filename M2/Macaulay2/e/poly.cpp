@@ -406,6 +406,8 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   lead_logical_exponents(nvars0,f,exp);
   if (!ntuple::is_one(nvars0,exp))
     return false;
+  if (n_logical_terms(nvars0,f) > 1)
+    return false;
   result = lead_logical_coeff(Rg,f);
   return true;
 }

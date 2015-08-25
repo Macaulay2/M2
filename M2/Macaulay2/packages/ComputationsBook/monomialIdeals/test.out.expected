@@ -191,6 +191,7 @@ o28 = -- code for method: primaryDecomposition(MonomialIdeal)
            R := ring I;
            aI := first exponents lcm I;
            J := dual I;
+           if J == 1 then return {monomialIdeal(0_R)};
            M := first entries generators J;
            H := new MutableHashTable;
            scan(M, m -> (

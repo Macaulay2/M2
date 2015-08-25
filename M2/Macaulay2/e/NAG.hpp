@@ -496,7 +496,8 @@ public:
 // SLP
 class SLProgram 
 {
-  enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det};
+  friend class SLEvaluator;
+  enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
   std::vector<GATE_TYPE> mNodes; // nodes types
@@ -507,44 +508,51 @@ class SLProgram
                                                 (nonnegative = node position, 
                                                 negative = var or const) */
   std::vector<GATE_POSITION> mOutputPositions; /* which nodes are outputs
-                                                  (nonnegative = node position, negative = var or const) */
+                                                  (nonnegative = node position, 
+                                                  negative = var or const) */
   /* LOOKUP TABLE */
-  int gateCounter;
+  int inputCounter; // this is the count; the position numbering is -1, -2, ...
 public:
-  SLProgram(int nConstantsAndInputs);
+  SLProgram();
+  virtual ~SLProgram();
   // GATE_POSITION addCopy(GATE_POSITION p);
   // GATE_POSITION addMCopy(GATE_POSITION p, GATE_SIZE s);
   // GATE_POSITION addSum(GATE_POSITION a, GATE_POSITION b);
   // GATE_POSITION addProduct(GATE_POSITION a, GATE_POSITION b);
-  GATE_POSITION addMSum(const std::vector<GATE_POSITION>& p);
-  GATE_POSITION addMProduct(const std::vector<GATE_POSITION>& p);
-  // GATE_POSITION addDet(GATE_SIZE s, const std::vector<GATE_POSITION>& p);
-  void toString(buffer& o);
+  GATE_POSITION addInput() { return -(++inputCounter); }
+  GATE_POSITION addMSum(const M2_arrayint);
+  GATE_POSITION addMProduct(const M2_arrayint);
+  GATE_POSITION addDet(const M2_arrayint);
+  GATE_POSITION addDivide(const M2_arrayint);
+  void setOutputPositions(const M2_arrayint); 
+  void text_out(buffer&) const;
 };
 
-
-class SLPEvaluator {
-  // vector<???> mValues: constants, inputs, values of SLP nodes 
-  //
-  // initialize with 
-  // (1) a list of constants
-  // (2) SLProgram 
-  //
-  // interface functions to construct SLPEvaluator from constants preprocessed at the top
+class SLEvaluator {
+  SLProgram* slp;
+  const Ring* R;
+  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of consts in mValues (slp.inputCounter + rel position) 
+  std::vector<SLProgram::GATE_POSITION> varsPos; // the rest of inputs with neg rel position
+  std::vector<ring_elem> values; /* should be a vector of values 
+                              starting with inputCounter many vars and consts and 
+                              continuing with the values of other GATEs */  
+  std::vector<ring_elem>::iterator vIt; // values
+  std::vector<SLProgram::GATE_TYPE>::iterator nIt; // slp nodes
+  std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt; 
+  std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
+  int ap(int rp) { return rp+slp->inputCounter; } // absolute position
+  void computeNextNode();
+public:
+  SLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts);
+  Matrix* evaluate(const Matrix *inputs);
+  virtual ~SLEvaluator();
+  void text_out(buffer& o) const;
 };
 
 template <typename R> 
 void evaluateSLP(const SLProgram& slp,
                  std::vector<typename R::ElementType>& values); 
                  
-
-// expression types:
-//   "input gate" (variable or constant) -- has no inputs
-//   sequence
-class Expression 
-{
-  
-};
 
 template <class Field>
 class SLP : public MutableEngineObject

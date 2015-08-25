@@ -18,9 +18,9 @@ newPackage(
 
 export {
        -- functions
-       biBasis,
+       "biBasis",
        -- options
-       toGroebner -- whether reduce to Groebner basis or not
+       "toGroebner" -- whether reduce to Groebner basis or not
        }
 
 debug Core

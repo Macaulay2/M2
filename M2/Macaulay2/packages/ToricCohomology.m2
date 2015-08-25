@@ -9,7 +9,7 @@ newPackage("ToricCohomology",
     Configuration => {}
     )
 
-export {picard,toricIdeal,toricVariety,toricHH,irrelevantIdeal}
+export {"picard","toricIdeal","toricVariety","toricHH","irrelevantIdeal"}
 
 
 

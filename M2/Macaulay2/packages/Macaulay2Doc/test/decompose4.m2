@@ -1,7 +1,7 @@
 -- This one seems fixed.  10-12-09.
 -- This one has been broken for a while (2013-04-03), crashing in Singular code.  Disabled for a while:
 -- if version#"VERSION" <= "1.6" then 
-end
+-- Now works again (11 May 2015 MES), so most recent factory changes seem to have fixed this.
 
 kk = QQ[a..d]
 I = ideal"1/2a2bc-2/3c2,a-b"

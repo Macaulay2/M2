@@ -23,14 +23,15 @@
 
 newPackage(
 	"Binomials",
-	Version => "1.1",
-	Date => "December 2014",
+	Version => "1.2",
+	Date => "April 2015",
 	Authors => {{
 		  Name => "Thomas Kahle",
 		  Email => "thomas.kahle@jpberlin.de",
 		  HomePage => "http://www.thomas-kahle.de"}},
     	Headline => "Specialized routines for binomial ideals",
 	Configuration => { },
+	PackageImports => {"FourTiTwo", "Cyclotomic"},
 	Certification => {
 	     "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	     "journal URI" => "http://j-sag.org/",
@@ -48,62 +49,59 @@ newPackage(
    
 export {
      -- 'Official' functions
-     binomialPrimaryDecomposition,
-     binomialCellularDecomposition,
-     binomialUnmixedDecomposition,
-     binomialRadical,
-     binomialMinimalPrimes,
-     binomialAssociatedPrimes,
-     binomialSolve,
+     "binomialPrimaryDecomposition",
+     "binomialCellularDecomposition",
+     "binomialUnmixedDecomposition",
+     "binomialRadical",
+     "binomialMinimalPrimes",
+     "binomialAssociatedPrimes",
+     "binomialSolve",
      -- tests
-     binomialIsPrime,
-     binomialIsPrimary,
-     cellularBinomialIsPrimary,
-     isCellular,
-     isBinomial,
-     isUnital,
+     "binomialIsPrime",
+     "binomialIsPrimary",
+     "cellularBinomialIsPrimary",
+     "isCellular",
+     "isBinomial",
+     "isUnital",
      -- input related
-     makeBinomial,
-     latticeBasisIdeal,
+     "makeBinomial",
+     "latticeBasisIdeal",
      -- cellular stuff:
-     cellularBinomialAssociatedPrimes,
-     cellularBinomialUnmixedDecomposition,
-     -- cellularAssociatedLattices,
-     cellularBinomialPrimaryDecomposition,
-     cellularBinomialRadical,
+     "cellularBinomialAssociatedPrimes",
+     "cellularBinomialUnmixedDecomposition",
+     -- "cellularAssociatedLattices",
+     "cellularBinomialPrimaryDecomposition",
+     "cellularBinomialRadical",
      -- simple wrappers:
-     BPD,
-     BCD,
-     BUD,
+     "BPD",
+     "BCD",
+     "BUD",
      -- auxillary functions:
-     partialCharacter,
-     idealFromCharacter,  -- should be renamed to ideal once M2 supports this
-     randomBinomialIdeal,
-     extractInclusionMinimalIdeals,
+     "partialCharacter",
+     "idealFromCharacter",  -- should be renamed to ideal once M2 supports this
+     "randomBinomialIdeal",
+     "extractInclusionMinimalIdeals",
      -- Not in the interface:
---     axisSaturate,
---     cellVars,
---     cellularEmbeddedLatticeWitnesses,
---     Lsat,
---     saturatePChar,
---     satIdeals,
---     nonCellstdm,
---     maxNonCellstdm,
---     minimalPrimaryComponent,
---     binomialFrobeniusPower,
+--     "axisSaturate",
+--     "cellVars",
+--     "cellularEmbeddedLatticeWitnesses",
+--     "Lsat",
+--     "saturatePChar",
+--     "satIdeals",
+--     "nonCellstdm",
+--     "maxNonCellstdm",
+--     "minimalPrimaryComponent",
+--     "binomialFrobeniusPower",
 
      -- Options
-     CellVariables, -- for partialCharacter
-     ReturnPrimes, -- for cellularBinomialIsPrimary 
-     ReturnPChars, -- for cellularBinomialIsPrimary
-     ReturnCellVars, -- for binomialCellularDecomposition
+     "CellVariables", -- for partialCharacter
+     "ReturnPrimes", -- for cellularBinomialIsPrimary 
+     "ReturnPChars", -- for cellularBinomialIsPrimary
+     "ReturnCellVars", -- for binomialCellularDecomposition
      
      --Types
-     PartialCharacter--HashTable
+     "PartialCharacter"--HashTable
      }
-
-needsPackage "FourTiTwo";
-needsPackage "Cyclotomic";
 
 axisSaturate = (I,i) -> (
 -- By Ignacio Ojeda and Mike Stillman

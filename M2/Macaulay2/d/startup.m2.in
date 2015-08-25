@@ -248,7 +248,7 @@ if firstTime then (
 			 if f =!= null then f(sym,x);
 			 ))));
      applicationDirectorySuffix = () -> (
-	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
+	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
      applicationDirectory = () -> (
 	  getenv "HOME" | "/" |

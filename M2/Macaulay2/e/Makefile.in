@@ -82,7 +82,7 @@ Makefile : Makefile.in; cd ../..; ./config.status Macaulay2/e/Makefile
 all: Makefile.common
 Makefile.common : Makefile.common.in; cd ../..; ./config.status Macaulay2/e/Makefile.common
 Makefile.include : Makefile.include.in; cd ../..; ./config.status Macaulay2/e/Makefile.include
-clean::; rm -f *.dep dep-*.tmp typecode.db
+clean::; rm -f *.dep dep-*.tmp typecode.db TAGS
 ifeq "$(DEPENDS)" "yes"
 include $(ENGINE_CFILES:.c=.dep) $(ENGINE_CCFILES:.cpp=.dep)
 endif

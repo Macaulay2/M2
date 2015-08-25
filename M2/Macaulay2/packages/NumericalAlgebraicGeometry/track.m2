@@ -2,9 +2,9 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { track, trackSegment }
+export { "track", "trackSegment" }
 
-track = method(TypicalValue => List, Options =>{
+track'option'list = {
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
 	  NumericalAlgebraicGeometry$tDegree=>null,
@@ -31,7 +31,8 @@ track = method(TypicalValue => List, Options =>{
 	  AffinePatches => null,
 	  -- slp's 
 	  SLP => null -- possible values: false, HornerForm, CompiledHornerForm 	  
-	  } )
+	  }
+track = method(TypicalValue => List, Options => track'option'list)
 -- tracks solutions from start system to target system
 -- IN:  S = list of polynomials in start system
 --      T = list of polynomials in target system
@@ -657,59 +658,81 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
-    
-     -- the code works only for preSLP!!!
-     (R,slpH) := H;
-     n := numgens R - 1;
-     K := coefficientRing R;
-     
-     slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
-     slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
-
-     toSLP := pre -> (
-       	 (constMAT, prog) := preSLPinterpretedSLP (n+1, pre);
-       	 rawSLP(raw constMAT, prog)
-       	 );  
-     if o.Software===M2enginePrecookedSLPs then ( -- !!! used temporarily
-	 slpH = toSLP slpH; 
-	 slpHx = toSLP slpHx;
-	 slpHt = toSLP slpHt; 	 
-	 );    
-
-     fromSlpMatrix := (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
-     if o.Software===M2enginePrecookedSLPs then -- !!! used temporarily
-     fromSlpMatrix = (S,params) -> (
-	 result := rawEvaluateSLP(S, raw params);
-	 lift(map(K, result),K)
-	 );
 
      -- evaluation times
      etH := 0;
      etHx := 0; 
-     etHt := 0;
-
-     evalH := (x0,t0)-> (
-	 tr := timing (
-	     transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+     etHt := 0;    
+    
+     if instance(H,Sequence) {* preSLP,  if o.Software===M2enginePrecookedSLPs 
+	                        then compile preSLPs in the engine *}
+     then (
+     	 (R,slpH) := H; 
+	 n := numgens R - 1;
+     	 K := coefficientRing R;
+      	 --
+	 fromSlpMatrix := if o.Software===M2enginePrecookedSLPs then
+     	 (S,params) -> (
+	     result := rawEvaluateSLP(S, raw params);
+	     lift(map(K, result),K)
+	     )
+	 else (S,inputMatrix) -> evaluatePreSLP(S, flatten entries inputMatrix);
+     	 slpHx := transposePreSLP jacobianPreSLP(slpH,toList(0..n-1));
+     	 slpHt := transposePreSLP jacobianPreSLP(slpH,{n}); 
+     	 toSLP := pre -> (
+       	     (constMAT, prog) := preSLPinterpretedSLP (n+1, pre);
+       	     rawSLP(raw constMAT, prog)
+       	     );  
+     	 if o.Software===M2enginePrecookedSLPs then ( -- !!! used temporarily
+	     slpH = toSLP slpH; 
+	     slpHx = toSLP slpHx;
+	     slpHt = toSLP slpHt; 	 
+	     );    
+       	 evalH := (x0,t0)-> (
+	     tr := timing (
+	       	 transpose fromSlpMatrix(slpH, transpose x0 | matrix {{t0}})
+	       	 );
+	     etH = etH + tr#0;
+	     tr#1
 	     );
-	 etH = etH + tr#0;
-	 tr#1
-	 );
-     evalHx := (x0,t0)-> (
-	 tr := timing (
-	     fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+       	 evalHx := (x0,t0)-> (
+	     tr := timing (
+	       	 fromSlpMatrix(slpHx, transpose x0 | matrix {{t0}})
+	       	 );
+	     etHx = etHx + tr#0;
+	     tr#1
+	     );  
+       	 evalHt := (x0,t0)->(
+	     tr := timing (
+	       	 fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+	       	 );
+	     etHt = etHt + tr#0;
+	     tr#1
 	     );
-	 etHx = etHx + tr#0;
-	 tr#1
-	 );  
-     evalHt := (x0,t0)->(
-	 tr := timing (
-	     fromSlpMatrix(slpHt, transpose x0 | matrix {{t0}})
+    	 )
+     else if instance(H,HomotopySystem) then (
+     	 K = CC_53; --!!!
+      	 --
+       	 evalH = (x0,t0)-> (
+	     tr := timing evaluateH(H,x0,t0);
+	     etH = etH + tr#0;
+	     tr#1
 	     );
-	 etHt = etHt + tr#0;
-	 tr#1
-	 );
-     solveHxTimesDXequalsMinusHt := (x0,t0) -> solve(evalHx(x0,t0),-evalHt(x0,t0)); 
+       	 evalHx = (x0,t0)-> (
+	     tr := timing evaluateHx(H,x0,t0);
+	     etHx = etHx + tr#0;
+	     tr#1
+	     );  
+       	 evalHt = (x0,t0)->(
+	     tr := timing evaluateHt(H,x0,t0);
+	     etHt = etHt + tr#0;
+	     tr#1
+	     );
+    	 )     
+     else error "unexpected type of homotopy (first parameter)";
+     
+     solveLinear := (A,b) -> solve(A,b,ClosestFit=>true,MaximalRank=>true); -- this takes care of non-square case!!!
+     solveHxTimesDXequalsMinusHt := (x0,t0) -> solveLinear(evalHx(x0,t0),-evalHt(x0,t0));
      
      compStartTime := currentTime();      
 
@@ -724,7 +747,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	       if DBG > 2 then << "tracking solution " << toString s << endl;
      	       tStep := sub(o.tStep,K);
 	       predictorSuccesses := 0;
-	       x0 := s; 
+	       x0 := if instance(s,Point) then transpose matrix s else s; 
 	       t0 := 0_K; 
 	       count := 1; -- number of computed points
 	       stepAdj := 0; -- step adjustment number (wrt previous step): 
@@ -735,44 +758,28 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			 -- to do: see if this path coinsides with any other path
 			 );
 		    if DBG > 4 then << "--- current t = " << t0 << "; precision = " << precision ring x0 << endl;
-                    -- monitor numerical stability: perhaps change patches if not stable ???
-		    -- Hx0 := evalHx(x0,t0);
-		    -- svd := sort first SVD Hx0;
-		    -- if o.Projectivize and first svd / last svd > condNumberThresh then ( 
-     	       	    --	 << "CONDITION NUMBER = " <<  first svd / last svd << endl;			 
-		    --	 );
-
+             
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-		    -- default dt; Certified and Multistep modify dt
 		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
 
-		    if o.Predictor == Tangent then (
+		    dx = if o.Predictor === zero then 0*x0
+		    else if o.Predictor === Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
+		    else if o.Predictor === Euler then (
+			H0 := evalH(x0,t0);
 			Hx0 := evalHx(x0,t0);
 			Ht0 := evalHt(x0,t0);
-			dx = solve(Hx0,-dt*Ht0);
-			) 
-		    else if o.Predictor == Euler then (
-			H0 := evalH(x0,t0);
-			Hx0 = evalHx(x0,t0);
-			Ht0 = evalHt(x0,t0);
-			dx = solve(Hx0, -H0-Ht0*dt);
+			solveLinear(Hx0, -H0-Ht0*dt)
 			)
-		    else if o.Predictor == RungeKutta4 then (
-			--k1 := evalMinusInverseHxHt(x0,t0);
-			--k2 := evalMinusInverseHxHt(x0+(1/2)*k1,t0+(1/2)*dt);
-			--k3 := evalMinusInverseHxHt(x0+(1/2)*k2,t0+(1/2)*dt);
-			--k4 := evalMinusInverseHxHt(x0+k3,t0+dt);
-			--dx = (1/6)*(k1+2*k2+2*k3+k4)*dt;     
+		    else if o.Predictor === RungeKutta4 then (
 			dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
 			dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
 			dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
 			dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
-			dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4);     
+			(1/6)*dt*(dx1+2*dx2+2*dx3+dx4)
 			)
 		    else error "unknown Predictor";
-
 
 		    if DBG > 3 then << " x0 = " << x0 << ", t0 = " << t0 << ", res=" <<  toString evalH(x0,t0) << ",  dt = " << dt << ",  dx = " << toString dx << endl;
 
@@ -786,7 +793,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    while dx === infinity or norm dx > CorrectorTolerance()*norm x1+theSmallestNumber 
 		    and nCorrSteps < o.maxCorrSteps
 		    do( 
-			dx = solve(evalHx(x1,t1), -evalH(x1,t1));
+			dx = solveLinear(evalHx(x1,t1), -evalH(x1,t1));
 			x1 = x1 + dx;
 			nCorrSteps = nCorrSteps + 1;
 			if DBG > 4 then <<"corrector step " << nCorrSteps << endl <<"x=" << toString x1 << " res=" <<  toString evalH(x1,t1) 
@@ -877,9 +884,9 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      if class p === Sequence then ret else first ret
      )
 
-trackSegment = method() -- a better implementation needed!!!
-trackSegment (PolySystem,Number,Number,List) := (H,a,b,pts) -> (
+trackSegment = method(Options=>track'option'list) -- a better implementation needed!!!
+trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     S := specializeContinuationParameter(H,a);
     T := specializeContinuationParameter(H,b);
-    track(S,T,pts) 
+    track(S,T,pts,o) 
     )

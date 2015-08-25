@@ -113,6 +113,7 @@ pushLinear := opts -> (f,M) -> (
 
 kernel Matrix := Module => opts -> (cacheValue symbol kernel) ((m) -> (
 	  N := source m;
+	  if m == 0 then return N;
 	  P := target m;
 	  if m.?RingMap then (
 	       f := m.RingMap;

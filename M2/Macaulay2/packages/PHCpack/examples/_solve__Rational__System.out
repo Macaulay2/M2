@@ -17,7 +17,7 @@ o3 : List
 
 i4 : peek first sols
 
-o4 = Point{ConditionNumber => 4.93583                }
+o4 = Point{ConditionNumber => 4.87567                }
            Coordinates => {.543689, .295598, .160713}
            LastT => 1
            SolutionStatus => Regular
