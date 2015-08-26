@@ -12,6 +12,13 @@ VERSION = 2.7.3
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
+# uname gives a strange answer on the second command line below, under mac os x.  Pari's configure
+# script uses "uname -p", but I'm not sure whether it causes any problems.
+#   einsteinium$ uname -m
+#   x86_64
+#   einsteinium$ uname -p
+#   i386
+
 # We (used to) leave out these tests, now we don't test at all
 #   (test-all would run them all) :
 #   test-ellglobalred - requires data files that we don't download

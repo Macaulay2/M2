@@ -29,6 +29,7 @@ export {
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
     "printAsSLP",
+    "ValueHashTable","valueHashTable",
     "GateHomotopySystem", "gateHomotopySystem" 
     }
 exportMutable {
@@ -200,13 +201,13 @@ Gate / Gate := (a,b) -> add2GC(
     
 ValueHashTable = new Type of HashTable
 valueHashTable = method()
-valueHashTable (List,List) := (a,b) -> hashTable (apply(a,b,identity) | {(cache,new CacheTable)})
+valueHashTable (List,List) := (a,b) -> new ValueHashTable from hashTable (apply(a,b,identity) | {(cache,new CacheTable)})
 			
-value (InputGate,HashTable) := (g,h)-> if h.cache#?g then h.cache#g else h.cache#g = (if isConstant g then g.Name else h#g)
-value (SumGate,HashTable) :=  (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (sum apply(g.Inputs, a->value(a,h)))
-value (ProductGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (product apply(g.Inputs, a->value(a,h)))
-value (DetGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
-value (DivideGate,HashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
+value (InputGate,ValueHashTable) := (g,h)-> if h.cache#?g then h.cache#g else h.cache#g = (if isConstant g then g.Name else h#g)
+value (SumGate,ValueHashTable) :=  (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (sum apply(g.Inputs, a->value(a,h)))
+value (ProductGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (product apply(g.Inputs, a->value(a,h)))
+value (DetGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (det matrix applyTable(g.Inputs, a->value(a,h)))
+value (DivideGate,ValueHashTable) := (g,h) -> if h.cache#?g then h.cache#g else h.cache#g = (value(first g.Inputs,h)/value(last g.Inputs,h))
 
 support InputGate := g -> if isConstant g then {} else g
 support SumGate := memoize (g -> g.Inputs/support//flatten//unique)
@@ -368,7 +369,7 @@ Y = inputGate symbol Y
 --SumGate and ProductGate
 C = sumGate {X+Y,Y,X}
 D = productGate {X*Y,Y,C}
-h = new HashTable from {X=>1,Y=>ii,cache=>new CacheTable}
+h = valueHashTable({X,Y},{1,ii})
 assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
 support (X*X)
 support (D+C)
@@ -390,7 +391,7 @@ J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
 -- diff
 diff(X,F)
 diff(X,J)
-h = new HashTable from {X=>x,Y=>y,cache=>new CacheTable}
+h = valueHashTable({X,Y},{x,y})
 assert(
     value(diff(X,J),h) 
     ==
@@ -401,7 +402,7 @@ assert(
 G/F
 diff(X,X/Y)
 diff(Y,X/Y)
-h = new HashTable from {X=>2,Y=>3,cache=>new CacheTable}
+h = valueHashTable({X,Y},{2,3})
 GY = value(diff(Y,G),h)
 FY = value(diff(Y,F),h)
 assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
@@ -666,7 +667,7 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
     map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
 evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
-    hashTable(apply(flatten entries H#"X", flatten entries x,identity) | {(H#"T",t), (cache,new CacheTable)})
+    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
     if not H#?(H#"H",K) then (
@@ -678,7 +679,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"H",K), raw (transpose x | matrix{{t}})), numrows H#"H", numcols H#"H")
     )
 evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
-    hashTable(apply(flatten entries H#"X", flatten entries x,identity) | {(H#"T",t), (cache,new CacheTable)})
+    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
     if not H#?(H#"Ht",K) then (
@@ -690,7 +691,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw (transpose x | matrix{{t}})), numrows H#"Ht", numcols H#"Ht")
     )
 evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
-    hashTable(apply(flatten entries H#"X", flatten entries x,identity) | {(H#"T",t), (cache,new CacheTable)})
+    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
     if not H#?(H#"Hx",K) then (
@@ -745,7 +746,7 @@ R = K[x,y,t]
 F = {X*X-1, Y*Y-1}
 G = {X*X+Y*Y-1, -X*X+Y}
 H = (1 - T) * F + T * G
-Rvars = hashTable{X=>x,Y=>y,T=>t,cache=>new CacheTable} 
+Rvars = valueHashTable({X,Y,T},{x,y,t})
 gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 gHx = diff(gV,gH)
@@ -773,7 +774,7 @@ gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 HS = gateHomotopySystem(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
-peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 ///
 
 TEST /// -- ParameterHomotopySystem
@@ -824,6 +825,23 @@ document {
 *}
 
 document {
+    Key => {SLPexpressions},
+    Headline => "Straight Line Programs and expressions for evaluation circuits",
+    "", 
+    EXAMPLE lines ///
+    X = inputGate x
+    f = X + 1
+    n = 12;
+    for i from 1 to n do f = f*f -- f = (x+1)^(2^n)
+    time A = value(f,valueHashTable({X},{1}))  
+    ZZ[y];
+    time B = sub((y+1)^(2^n),{y=>1})    
+    A == B
+    ///,
+    SeeAlso=>{NumericalAlgebraicGeometry,NAGtypes}
+    }
+
+document {
     Key => {Gate,InputGate,SumGate,ProductGate},
     "Some basic gates:",
     UL{
@@ -834,11 +852,23 @@ document {
 	},  
     Headline => "an expression that is a part of an evaluation circuit (abstract type)"
     }
+
 document {
     Key => {GateMatrix},
     Headline => "a matrix of Gates",
     "An object of this type is a matrix with Gates as entries. 
     Some algebraic operations (matrix multiplication, determinant, etc.) are defined for this type. 
     It is provided, in part, for convenience of setting up involved evaluation circuits.",
+    PARA {
+	"The package ", TO SLPexpressions, " overrides ", TO matrix, " to allow a table (a nested list) of ", TO Gate,"s as an argument." 
+	},    
+    EXAMPLE lines ///
+    X = inputGate x; Y = inputGate y; 
+    A = matrix { apply(5,i->i*X) }
+    B = matrix { apply(4,i->Y^i) }
+    C = transpose A * B    
+    numrows C, numcols C
+    ///,
     SeeAlso=>{Gate, Matrix}
     }
+
