@@ -1,6 +1,6 @@
 needsPackage "SLPexpressions"
-load "NAGtools.m2"
 debug NumericalAlgebraicGeometry
+load "NAGtools.m2"
 PH = (q,n)->if n==0 then 1 else product apply(n,i->q+i)   
 makeF = abcz -> (
     (a,b,c,z) := abcz;
@@ -27,9 +27,26 @@ y1 = transpose matrix{{0_CC,1.9}}
 y0y1 = y0||y1;
 HS = specialize(PHS,y0y1);
 
+K = CC_53
+evaluateH(HS, x0, random RR);
+H = HS.ParameterHomotopySystem.GateHomotopySystem; eH = H#(H#"H",K)
+debug Core
+real = 0.0
 for i to 1000000000 do (
-s = first trackHomotopy(HS, {x0}, Software=>M2);
-if i%100==0 then (collectGarbage(); print i); 
+    -- m0 = transpose y0y1 | transpose x0 | matrix{{0.0_CC}}; -- no leak
+    -- m0 = transpose y0y1 | transpose x0 | matrix{{0}}; -- no leak
+    m0 = transpose y0y1 | transpose x0 | matrix{{0.0}}; -- leaked
+    matrix{{0.0}}; -- leaked
+    -- matrix{{0.0_CC}}; -- no leak
+    -- 0.0_RR; -- no leak
+    matrix{{real}}; -- leaked
+    -- matrix{{0.0p100}}; -- no leak
+    -- matrix{{0.0p53+ii}}; -- no leak
+    -- rawSLEvaluatorEvaluate(eH, raw m0);
+    --evaluateHx(HS, x0, random RR);
+    --evaluateHt(HS, x0, random RR);
+--s = first trackHomotopy(HS, {x0}, Software=>M2);
+if i%1000==0 then (collectGarbage(); print i); 
 -- x1 = transpose matrix s;
 -- assert areEqual(value(F,valueHashTable(zs,flatten entries x1)),y1)
 )
@@ -37,3 +54,4 @@ if i%100==0 then (collectGarbage(); print i);
 end
 restart
 load "mem-leak-1.m2"
+

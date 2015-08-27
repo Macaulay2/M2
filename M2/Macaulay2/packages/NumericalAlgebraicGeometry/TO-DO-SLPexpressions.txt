@@ -1,0 +1,13 @@
+* det sign bug (fix on master)
+
+* memory leak? (perhaps garbage collector problem)
+
+* evaluation with Aring
+
+* return values: not-a-value, division-by-zero... or null
+
+Distant future:
+
+* more general Gates
+
+
