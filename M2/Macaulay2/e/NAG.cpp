@@ -30,6 +30,7 @@ void complexAP::print()
 SLEvaluator::SLEvaluator(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, const Matrix *consts)  
 {
   slp = SLP;
+  std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
   for(int i=0; i<cPos->len; i++) 
     constsPos.push_back(slp->inputCounter+cPos->array[i]);
   for(int i=0; i<vPos->len; i++) 
@@ -61,6 +62,7 @@ void SLEvaluator::computeNextNode()
     break;
   case SLProgram::Det:
     {
+      std::cout << "in Det" << std::endl;
       int n = sqrt(*numInputsIt++);
       FreeModule* S = R->make_FreeModule(n);
       MatrixConstructor mat(S,S);
@@ -88,6 +90,7 @@ Matrix* SLEvaluator::evaluate(const Matrix *inputs)
     ERROR("1-row matrix expected; or numbers of inputs and vars don't match");
   for (int i=0; i<varsPos.size(); i++) 
     values[varsPos[i]] = R->copy(inputs->elem(0,i));
+  // values[varsPos[i]] = inputs->elem(0,i); // should work
   
   nIt = slp->mNodes.begin();
   numInputsIt = slp->mNumInputs.begin();
@@ -106,7 +109,10 @@ SLEvaluator::~SLEvaluator() {}
 void SLEvaluator::text_out(buffer& o) const { o << "SLEvaluator!" << newline; }
 
 // SLProgram
-SLProgram::SLProgram() { inputCounter = 0; }
+SLProgram::SLProgram() { 
+  std::cout << "in SLProgram::SLProgram" << std::endl;
+  inputCounter = 0; 
+}
 SLProgram::~SLProgram() {}
 SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a) 
 {

@@ -43,13 +43,13 @@ zs = apply(m, i->z_(i+1))
 F = transpose matrix{apply(zs, z->z*diff(z,f)/f)}
 PHS = gateHomotopy4preimage(F,zs)
 x0 = transpose matrix{{1_CC,1}}
-y0 = value(F,hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
+y0 = value(F,valueHashTable(zs,flatten entries x0))
 y1 = transpose matrix{{0_CC,1.9}}
 HS = specialize(PHS,y0||y1)
 time s = first trackHomotopy(HS, {x0}, Software=>M2)
 peek s
 x1 = transpose matrix s
-assert areEqual(value(F,hashTable(apply(zs,flatten entries x1,(i,j)->(i=>j))|{cache=>new CacheTable})), y1)
+assert areEqual(value(F,valueHashTable(zs,flatten entries x1)),y1)
 
 restart -- No1: arbitrary m  
 load "nobuki.m2"
