@@ -157,9 +157,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
 if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
-AC_CHECK_PROGS(WGET,wget,false)
-AC_CHECK_PROGS(CURL,curl,false)
-if test "$WGET" = false -a "$CURL" = false; then AC_MSG_ERROR(wget or curl is required); fi
 AC_CHECK_PROGS(ETAGS,etags ctags,false)
 if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
@@ -861,6 +858,11 @@ AC_ARG_WITH(unbuilt-programs,
 
 AC_SUBST(DOWNLOAD,no)
 AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+AC_CHECK_PROGS(WGET,wget,false)
+AC_CHECK_PROGS(CURL,curl,false)
+if test $DOWNLOAD = yes
+then if test "$WGET" = false -a "$CURL" = false; then AC_MSG_ERROR(wget or curl is required); fi
+fi
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
