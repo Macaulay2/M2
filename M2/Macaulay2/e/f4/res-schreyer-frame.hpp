@@ -27,6 +27,7 @@
 #include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
 #include "res-f4.hpp"
+#include "monhashtable.hpp"
 
 #include "../betti.hpp"
 #include "../stop.hpp"
@@ -38,6 +39,26 @@ typedef int ComponentIndex; // index into f4 matrices over kk.  These tend to be
   // will ever be > 2billion, but probably...
 
 typedef int FieldElement;
+
+class MonomialCounter
+{
+public:
+  void accountForMonomial(const packed_monomial mon);
+  long count() const { return mNumAllMonomials; }
+
+  MonomialCounter(const MonomialInfo& M);
+  ~MonomialCounter() { delete mIgnoreMonomials; }
+
+  const MonomialInfo& monoid() const { return mMonoid; }
+private:
+  const MonomialsIgnoringComponent* mIgnoreMonomials; // 
+  MonomialHashTable<MonomialsIgnoringComponent> mAllMonomials; // all monomials in the ring which appear in the mSyzygy's
+  long mNumAllMonomials; // total number of monomials
+  MemoryBlock<monomial_word> mMonomSpace;
+  packed_monomial mNextMonom;
+  
+  const MonomialInfo& mMonoid;
+};
 
 namespace SchreyerFrameTypes {
   struct FrameElement
@@ -168,10 +189,16 @@ private:
   MemoryBlock<varpower_word> mVarpowers;
   int mMaxVPSize;
 
+  
   // These are used during matrix computation
   F4Res mComputer; // used to construct (level,degree) part of the resolution
   // this is a separate class because there could be several of these, running
   // in parallel.
+
+public:
+  MonomialCounter mAllMonomials;
+
+
 };
 
 

@@ -9,6 +9,41 @@
 #include <iomanip>
 #include <algorithm>
 
+MonomialCounter::MonomialCounter(const MonomialInfo& M)
+  : mIgnoreMonomials(new MonomialsIgnoringComponent(M)),
+    mAllMonomials(mIgnoreMonomials),
+    mNumAllMonomials(0),
+    mNextMonom(nullptr),
+    mMonoid(M)
+{
+  // start out mNextMonom
+  mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
+}
+void MonomialCounter::accountForMonomial(const packed_monomial mon)
+{
+  // First copy monomial
+  // Then call find_or_insert
+  // If not there, increment number of monomials
+  // If there: intern monomial
+
+  monoid().copy(mon, mNextMonom);
+  packed_monomial not_used;
+  if (mAllMonomials.find_or_insert(mNextMonom, not_used))
+    {
+      // true, means that it was already there
+      // nothing needs to be done
+    }
+  else
+    {
+      // false: new monomial
+      mNumAllMonomials++;
+      mMonomSpace.intern(monoid().monomial_size(mNextMonom));
+      mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());      
+    }
+}
+
+
+
 namespace {
   class PreElementSorter
   {
@@ -51,7 +86,8 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
     mSlantedDegree(0),
     mLoSlantedDegree(0),
     mHiSlantedDegree(0),
-    mComputer(*this)
+    mComputer(*this),
+    mAllMonomials(R.monoid())
 {
   mFrame.mLevels.resize(max_level);
   mMaxVPSize = 2*monoid().n_vars() + 1;
@@ -118,6 +154,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
               return;
           }
         mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
+        std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;
       case Done:
@@ -491,6 +528,8 @@ M2_arrayint SchreyerFrame::getBettiFrame() const
 
   return B.getBetti();
 }
+
+
 // local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

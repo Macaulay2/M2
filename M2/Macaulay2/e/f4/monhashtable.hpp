@@ -17,6 +17,18 @@ private:
   const MonomialInfo& mMonoid;
 };
 
+class MonomialsIgnoringComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsIgnoringComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
 // ValueType must implement the following:
 // values should have computed hash values stored with them
 //  typename ValueType::value

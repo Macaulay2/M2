@@ -448,6 +448,8 @@ void F4Res::gaussReduce()
       long comp = mSPairComponents[i];
       result.appendTerm(mFrame.level(mThisLevel)[comp].mMonom,
                         one);
+      mFrame.mAllMonomials.accountForMonomial(mFrame.level(mThisLevel)[comp].mMonom);
+      
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
       #if 0
@@ -479,6 +481,7 @@ void F4Res::gaussReduce()
           
           mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
           result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
+          mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
           mRing.resGausser().dense_row_cancel_sparse(gauss_row,
                                                      static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
                                                      & mReducers[firstcol].mCoeffs[0],

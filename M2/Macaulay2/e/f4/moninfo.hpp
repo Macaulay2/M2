@@ -221,6 +221,16 @@ public:
     return true;
   }
 
+  bool monomial_part_is_equal(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_is_equal++;
+    if (*m++ != *n++) return false;
+    m++; n++;
+    for (int j=nslots-2; j>0; --j)
+      if (*m++ != *n++) return false;
+    ncalls_is_equal_true++;
+    return true;
+  }
+
   bool check_monomial(const_packed_monomial m) const {
     // Determine if m represents a well-formed monomial.
     m++;
