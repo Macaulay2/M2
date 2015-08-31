@@ -1,3 +1,4 @@
+#include "stdinc.hpp"
 #include "res-f4-mem.hpp"
 #include <cstdio>
 

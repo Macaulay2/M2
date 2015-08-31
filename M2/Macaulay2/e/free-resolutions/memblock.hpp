@@ -2,12 +2,11 @@
 #ifndef __memblock_h_
 #define __memblock_h_
 
-#include "../newdelete.hpp"
-
 template<typename T, long int NSLAB = 4092>
-class MemoryBlock : public our_new_delete
+class MemoryBlock
 {
-  struct slab : public our_new_delete {
+  struct slab
+  {
     slab *next;
     T block[NSLAB];
   };
@@ -136,5 +135,5 @@ long MemoryBlock<T,NSLAB>::memoryUsage() const
 #endif
 
 // Local Variables:
-//  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+//  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4-res-standalone "
 //  End:

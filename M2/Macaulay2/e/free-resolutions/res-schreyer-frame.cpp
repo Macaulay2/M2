@@ -1,9 +1,7 @@
 // Copyright 2014 Michael E. Stillman
 
+#include "stdinc.hpp"
 #include "res-schreyer-frame.hpp"
-#include "f4-monlookup.hpp"
-
-#include "../comp-res.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -57,7 +55,7 @@ namespace {
       ncmps ++;
       if (a->degree > b->degree) return GT;
       if (a->degree < b->degree) return LT;
-      return varpower_monomials::compare(a->vp, b->vp);
+      return varpower_monomials_compare(a->vp, b->vp);
     }
     
     bool operator()(value a, value b)
@@ -65,7 +63,7 @@ namespace {
       ncmps ++;
       if (a->degree > b->degree) return false;
       if (a->degree < b->degree) return true;
-      return varpower_monomials::compare(a->vp, b->vp) == LT;
+      return varpower_monomials_compare(a->vp, b->vp) == LT;
     }
     
     PreElementSorter() {}
@@ -150,7 +148,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
                 mBettiMinimal.output();
                 break;
               }
-            if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
+            if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit)
               return;
           }
         mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
@@ -165,15 +163,16 @@ void SchreyerFrame::start_computation(StopConditions& stop)
     }
 }
 
-M2_arrayint SchreyerFrame::getBetti(int type) const
+std::vector<int> SchreyerFrame::getBetti(int type) const
 {
   if (type == 0)
     return mBettiMinimal.getBetti();
   if (type == 1)
     return getBettiFrame();
   
-  ERROR("betti display not implemenented yet");
-  return 0;
+  std::cerr << "betti display not implemenented yet" << std::endl;
+  std::vector<int> nothing;
+  return nothing;
 }
 
 void SchreyerFrame::endLevel()
@@ -192,7 +191,7 @@ SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial 
   PreElement* vp = mPreElements.allocate();
   vp->vp = mVarpowers.reserve(mMaxVPSize);
   monoid().quotient_as_vp(m1, m, vp->vp, vp->degree, not_used);
-  int len = static_cast<int>(varpower_monomials::length(vp->vp));
+  int len = static_cast<int>(varpower_length(vp->vp));
   mVarpowers.intern(len);
   return vp;
 }
@@ -508,7 +507,7 @@ void SchreyerFrame::setBettiDisplays()
 }
 
 
-M2_arrayint SchreyerFrame::getBettiFrame() const
+std::vector<int> SchreyerFrame::getBettiFrame() const
 {
   int lo, hi, len;
   getBounds(lo, hi, len);

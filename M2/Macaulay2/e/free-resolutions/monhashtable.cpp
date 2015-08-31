@@ -1,7 +1,8 @@
 // Copyright 2005  Michael E. Stillman
 
-#include "../newdelete.hpp"
+#include "stdinc.hpp"
 #include "monhashtable.hpp"
+#include <cstdio>
 
 #define HASHVALUE(m) (M->hash_value(m))
 #define MONOMIAL_EQUAL(m,n) (M->is_equal(m,n))
@@ -27,7 +28,7 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
   //threshold = size/3; // was 2*size/3
   threshold = 2*size/3; // was 2*size/3
   threshold = size/16; // was 2*size/3  
-  hashtab = newarray(value, size);
+  hashtab = new value[size];
   hashmask = size-1;
   reset();
 }
@@ -70,7 +71,7 @@ MonomialHashTable<ValueType>::MonomialHashTable(const ValueType *M0, int logsize
 template <typename ValueType>
 MonomialHashTable<ValueType>::~MonomialHashTable()
 {
-  deletearray(hashtab);
+  delete [] hashtab;
 }
 
 template <typename ValueType>

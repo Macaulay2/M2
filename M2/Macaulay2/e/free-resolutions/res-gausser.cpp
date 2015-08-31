@@ -1,44 +1,12 @@
 // Copyright 2005 Michael E. Stillman.
 
+#include "stdinc.hpp"
 #include "res-gausser.hpp"
 #include "res-f4-mem.hpp"
-#include "moninfo.hpp"
 
-ResGausser *ResGausser::newResGausser(const Ring *K)
+ResGausser::ResGausser(const CoefficientRingZZp *K)
+  : typ(ZZp), Kp(K), n_dense_row_cancel(0), n_subtract_multiple(0)
 {
-  const Z_mod *Kp = K->cast_to_Z_mod();
-  if (Kp != 0)
-    return new ResGausser(Kp);
-  return 0;
-}
-
-ResGausser::ResGausser(const Z_mod *K0)
-  : typ(ZZp), K(K0), Kp(K0->get_CoeffRing()), n_dense_row_cancel(0), n_subtract_multiple(0)
-{
-}
-
-ResGausser::CoefficientArray ResGausser::from_ringelem_array(ComponentIndex len, ring_elem *elems) const
-{
-  int i;
-  switch (typ) {
-  case ZZp:
-    int *result = Mem.coefficients.allocate(len);
-    for (i=0; i<len; i++)
-      result[i] = elems[i].int_val;
-    return result;
-  };
-  return 0;
-}
-
-void ResGausser::to_ringelem_array(ComponentIndex len, CoefficientArray F, ring_elem *result) const
-{
-  int* elems = F;
-  int i;
-  switch (typ) {
-  case ZZp:
-    for (i=0; i<len; i++)
-      result[i].int_val = elems[i];
-  };
 }
 
 void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const

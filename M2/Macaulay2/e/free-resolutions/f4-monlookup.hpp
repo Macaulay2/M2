@@ -3,19 +3,20 @@
 #ifndef _f4monlookup_h_
 #define _f4monlookup_h_
 
-#include <vector>
 
-#include "../style.hpp"
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
+
+//#include "varpower-monomial.hpp"
+//#include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
+#include "stash.hpp"
 
-class buffer;
+#include <vector>
+#include <iostream>
 
 template <typename Key>
-class F4MonomialLookupTableT : public our_new_delete
+class F4MonomialLookupTableT
 {
-  struct mi_node : public our_new_delete // monomial ideal internal node ///
+  struct mi_node // monomial ideal internal node ///
   {
     varpower_word       var;
     varpower_word       exp;
@@ -41,7 +42,7 @@ class F4MonomialLookupTableT : public our_new_delete
   };
 
   stash *mi_stash;
-  VECTOR(mi_node *) mis;
+  std::vector<mi_node*> mis;
   int count;
 
   int size_of_exp; // in ints, size of exp0
@@ -60,8 +61,8 @@ private:
                         Key &result_k) const;
 
   void find_all_divisors1(mi_node *mi,
-                         const_ntuple_monomial exp,
-                         VECTOR(Key) &result_k) const;
+                          const_ntuple_monomial exp,
+                          std::vector<Key> &result_k) const;
 
 
   void insert1(mi_node *&p, const_varpower_monomial m, Key k);
@@ -102,16 +103,16 @@ public:
         // found.  If so, return true, set the key.
 
   void find_all_divisors_vp(long comp,
-                         const_varpower_monomial m,
-                         VECTOR(Key) &result_k) const;
+                            const_varpower_monomial m,
+                            std::vector<Key> &result_k) const;
 
   void find_all_divisors_packed(const MonomialInfo *M,
-                         const_packed_monomial m,
-                         VECTOR(Key) &result_k) const;
-        // Search. Return a vector of all keys corresponding to
-        // monomials which divide m.
+                                const_packed_monomial m,
+                                std::vector<Key> &result_k) const;
+  // Search. Return a vector of all keys corresponding to
+  // monomials which divide m.
 
-  void text_out(buffer &o) const;
+  void text_out(std::ostream& o) const;
 
   int length() const { return count/2; }
 private:
@@ -128,8 +129,8 @@ private:
 
 void
 minimalize_varpower_monomials(
-                              const VECTOR(varpower_monomial) &elems,
-                              VECTOR(int) &result_minimals,
+                              const std::vector<varpower_monomial> &elems,
+                              std::vector<int> &result_minimals,
                               stash *mi_stash=0);
 
 

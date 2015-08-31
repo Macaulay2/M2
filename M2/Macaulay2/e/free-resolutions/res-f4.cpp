@@ -1,5 +1,7 @@
 // Copyright 2014 Michael E. Stillman
 
+#include "stdinc.hpp"
+
 #include "res-f4.hpp"
 #include "res-gausser.hpp"
 #include "res-schreyer-frame.hpp"
@@ -237,7 +239,7 @@ public:
     
     bool result = (M.compare_schreyer(cols[a],cols[b],
                                myframe[comp1].mTotalMonom, myframe[comp2].mTotalMonom,
-                               myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker) == LT);
+                                      myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker) < 0); // TODO: make sure this is LT !!
     #if 0
     printf("result = %d\n", result);
     #endif

@@ -1,5 +1,6 @@
 /* Copyright 2015, Michael E. Stillman */
 
+#include "stdinc.hpp"
 #include "res-poly-ring.hpp"
 
 void ResPolyRing::memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const

@@ -1,9 +1,9 @@
 // (c) 1994-2006 Michael E. Stillman
 
-#include "../text-io.hpp"
-
-#include "varpower-monomial.hpp"
+#include "stdinc.hpp"
 #include "f4-monlookup.hpp"
+
+#include <iostream>
 
 template <typename Key>
 typename F4MonomialLookupTableT<Key>::mi_node *
@@ -59,13 +59,13 @@ F4MonomialLookupTableT<Key>::F4MonomialLookupTableT(int nvars, stash *mi_stash0)
     }
 
   size_of_exp = nvars;
-  exp0 = newarray_atomic_clear(ntuple_word,size_of_exp);
+  exp0 = new ntuple_word[size_of_exp]; // TODO: clear this??
 }
 
 template <typename Key>
 F4MonomialLookupTableT<Key>::~F4MonomialLookupTableT()
 {
-  for (typename VECTOR(mi_node *)::const_iterator i = mis.begin(); i != mis.end(); i++)
+  for (auto i = mis.cbegin(); i != mis.cend(); i++)
     delete_mi_node(*i);
   if ((count % 2) == 1) delete mi_stash;
 }
@@ -182,7 +182,7 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor1(mi_node *mi,
 template <typename Key>
 void F4MonomialLookupTableT<Key>::find_all_divisors1(mi_node *mi,
                                                      const_ntuple_monomial exp,
-                                                     VECTOR(Key) &result_k) const
+                                                     std::vector<Key>& result_k) const
 {
   mi_node *p = mi;
 
@@ -220,13 +220,13 @@ void F4MonomialLookupTableT<Key>::update_exponent_vector(int topvar, const_varpo
   if (size_of_exp <= nvars)
     {
       // Increase size of exponent vector
-      deleteitem(exp0);
+      delete [] exp0;
       if (nvars > 2*size_of_exp)
         size_of_exp = nvars;
       else
         size_of_exp *= 2;
 
-      exp0 = newarray_atomic_clear(ntuple_word,size_of_exp);
+      exp0 = new ntuple_word[size_of_exp]; // TODO: clear exp0??
     }
 
   int nparts = static_cast<int>(*m++);
@@ -264,8 +264,8 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor_vp(long comp,
 
 template <typename Key>
 void F4MonomialLookupTableT<Key>::find_all_divisors_vp(long comp,
-                                                    const_varpower_monomial m,
-                                                    VECTOR(Key) &result_k) const
+                                                       const_varpower_monomial m,
+                                                       std::vector<Key>& result_k) const
 {
   if (comp >= mis.size()) return;
   mi_node *mi = mis[comp];
@@ -293,8 +293,8 @@ bool F4MonomialLookupTableT<Key>::find_one_divisor_packed(const MonomialInfo *M,
 
 template <typename Key>
 void F4MonomialLookupTableT<Key>::find_all_divisors_packed(const MonomialInfo *M,
-                                                    const_packed_monomial m,
-                                                    VECTOR(Key) &result_k) const
+                                                           const_packed_monomial m,
+                                                           std::vector<Key>& result_k) const
 {
   long comp = M->get_component(m);
   if (comp >= mis.size()) return;
@@ -370,7 +370,6 @@ static int ndepth = 0;
 template <typename Key>
 void F4MonomialLookupTableT<Key>::do_node(mi_node *p, int indent, int disp) const
 {
-  buffer o;
   int i;
   assert(p->left != NULL);
   assert(p->right != NULL);
@@ -378,19 +377,18 @@ void F4MonomialLookupTableT<Key>::do_node(mi_node *p, int indent, int disp) cons
   assert(p->right->left == p);
   if (disp)
     {
-      for (i=1; i<=indent; i++) o << ' ';
-      o << p->var << ' ' <<  p->exp;
+      for (i=1; i<=indent; i++) std::cout << ' ';
+      std::cout << p->var << ' ' <<  p->exp;
     }
   if (p->tag == mi_node::leaf)
     {
       nleaves++;
-      if (disp) o << ' ' << p->key();
+      if (disp) std::cout << ' ' << p->key();
     }
   else if (p == p->header)
     nlists++;
   else
     nnodes++;
-  emit_line(o.str());
 }
 
 template <typename Key>
@@ -415,14 +413,12 @@ void F4MonomialLookupTableT<Key>::debug_out(int disp) const
   nnodes = 0;
   nleaves = 0;
   ndepth = 0;
-  for (typename VECTOR(mi_node *)::const_iterator i = mis.begin(); i != mis.end(); i++)
+  for (auto i = mis.cbegin(); i != mis.cend(); i++)
     if (*i != NULL) do_tree(*i, 0, 0, disp);
-  buffer o;
-  o << "list nodes     = " << nlists << newline;
-  o << "internal nodes = " << nnodes << newline;
-  o << "monomials      = " << nleaves << newline;
-  o << "max depth      = " << ndepth << newline;
-  emit(o.str());
+  std::cout << "list nodes     = " << nlists << std::endl;
+  std::cout << "internal nodes = " << nnodes << std::endl;
+  std::cout << "monomials      = " << nleaves << std::endl;
+  std::cout << "max depth      = " << ndepth << std::endl;
 }
 
 template <typename Key>
@@ -472,7 +468,7 @@ template <typename Key>
 void F4MonomialLookupTableT<Key>::debug_check() const
 {
   int nfound = 0;
-  for (typename VECTOR(mi_node *)::const_iterator i = mis.begin(); i != mis.end(); i++)
+  for (auto i = mis.cbegin(); i != mis.cend(); i++)
     {
       if (*i != NULL)
         nfound += debug_check(*i, NULL);
@@ -481,17 +477,17 @@ void F4MonomialLookupTableT<Key>::debug_check() const
 }
 
 template <typename Key>
-void F4MonomialLookupTableT<Key>::text_out(buffer &o) const
+void F4MonomialLookupTableT<Key>::text_out(std::ostream& o) const
 {
   o << "F4MonomialLookupTableT (";
   o << count/2 << " entries)\n";
   int a = 0;
-  for (typename VECTOR(mi_node *)::const_iterator i = mis.begin(); i != mis.end(); i++)
+  for (auto i = mis.cbegin(); i != mis.cend(); i++)
     {
       for (mi_node *p = *i; p != NULL; p = next(p))
         {
           if ((++a) % 15 == 0)
-            o << newline;
+            o << std::endl;
           o << p->key() << "  ";
         }
     }
@@ -499,19 +495,19 @@ void F4MonomialLookupTableT<Key>::text_out(buffer &o) const
 
 void
 minimalize_varpower_monomials(
-                              const VECTOR(varpower_monomial) &elems,
-                              VECTOR(int) &result_minimals,
-                              stash *mi_stash)
+                              const std::vector<varpower_monomial>& elems,
+                              std::vector<int>& result_minimals,
+                              stash* mi_stash)
 {
-  VECTOR( VECTOR(int) *) bins;
+  std::vector< std::vector<int> * > bins;
   for (int j=0; j<elems.size(); j++)
     {
-      varpower_word d = varpower_monomials::simple_degree(elems[j]);
+      varpower_word d = varpower_simple_degree(elems[j]);
       if (d >= bins.size())
-        for (int i=INTSIZE(bins); i<=d; i++)
-          bins.push_back(NULL);
-      if (bins[d] == NULL)
-        bins[d] = new VECTOR(int);
+        for (auto i=bins.size(); i<=d; i++)
+          bins.push_back(nullptr);
+      if (bins[d] == nullptr)
+        bins[d] = new std::vector<int>;
       bins[d]->push_back(j);
     }
 
@@ -520,7 +516,7 @@ minimalize_varpower_monomials(
   for (int i=0; i < bins.size(); i++)
     if (bins[i] != NULL)
       {
-        for (VECTOR(int)::iterator j = bins[i]->begin(); j != bins[i]->end(); j++)
+        for (auto j = bins[i]->begin(); j != bins[i]->end(); j++)
           {
             int k;
             if (!M.find_one_divisor_vp(0, elems[*j], k))
@@ -529,7 +525,7 @@ minimalize_varpower_monomials(
                 result_minimals.push_back(*j);
               }
           }
-        deleteitem(bins[i]);
+        delete bins[i];
       }
 }
 

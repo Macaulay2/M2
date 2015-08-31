@@ -3,11 +3,10 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 #include "res-gausser.hpp"
 
+#include <cstdio>
 typedef int FieldElement;
 
 struct poly {
@@ -109,6 +108,5 @@ inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
 
 #endif
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:

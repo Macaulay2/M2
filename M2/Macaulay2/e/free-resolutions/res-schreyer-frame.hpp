@@ -24,13 +24,12 @@
 
 #include "moninfo.hpp"
 #include "memblock.hpp"
-#include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
 #include "res-f4.hpp"
 #include "monhashtable.hpp"
+#include "betti.hpp"
+#include "f4-monlookup.hpp"
 
-#include "../betti.hpp"
-#include "../stop.hpp"
 #include <vector>
 
 class F4Res;
@@ -58,6 +57,13 @@ private:
   packed_monomial mNextMonom;
   
   const MonomialInfo& mMonoid;
+};
+
+struct StopConditions
+{
+  bool always_stop;
+  bool stop_after_degree;
+  int degree_limit; // Stop after completing this 'slanted' degree
 };
 
 namespace SchreyerFrameTypes {
@@ -109,7 +115,7 @@ public:
   void showMemoryUsage() const;
 
   
-  M2_arrayint getBetti(int type) const;
+  std::vector<int> getBetti(int type) const;
   
   void getBounds(int& loDegree, int& hiDegree, int& length) const;
   
@@ -130,7 +136,7 @@ public:
   
   packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
-  M2_arrayint getBettiFrame() const;
+  std::vector<int> getBettiFrame() const;
   void setBettiDisplays();
   int rank(int slanted_degree, int lev); // rank of the degree 'degree' map of scalars level 'lev' to 'lev-1'.
 
