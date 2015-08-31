@@ -1,15 +1,16 @@
 // Copyright 2005  Michael E. Stillman
 
-#include "../newdelete.hpp"
+#include "stdinc.hpp"
 #include "moninfo.hpp"
-#include "monordering.h"
+
 #include <cstdio>
 #include <cstdlib>
 
-MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
+
+MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering& mo)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word,nvars);
+  hashfcn = new monomial_word[nvars];
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
@@ -29,15 +30,14 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
   ncalls_quotient_as_vp = 0;
 
   nweights = 0;
-  weight_vectors = 0;
-  if (moIsLex(mo))
+  if (mo.isLex())
     {
       compare = &MonomialInfo::compare_lex;
 
       if (M2_gbTrace >= 1)
         fprintf(stderr, "lex order\n");
     }
-  else if (moIsGRevLex(mo))
+  else if (mo.isGRevLex())
     {
       compare = &MonomialInfo::compare_grevlex;
 
@@ -46,8 +46,8 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
     }
   else
     {
-      weight_vectors = moGetWeightValues(mo);
-      nweights = weight_vectors->len / nvars;
+      weight_vectors = mo.weightVectors();
+      nweights = weight_vectors.size() / nvars;
       compare = &MonomialInfo::compare_weightvector;
 
       if (M2_gbTrace >= 1)
@@ -60,17 +60,17 @@ MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering *mo)
 
 MonomialInfo::~MonomialInfo()
 {
-  deletearray(hashfcn);
+  delete [] hashfcn;
 }
 
-monomial_word MonomialInfo::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
+monomial_word MonomialInfo::monomial_weight(const_packed_monomial m, const std::vector<int>& wts) const
 {
   ncalls_weight++;
   const_packed_monomial m1 = m+2;
-  int top = wts->len;
-  int *n = wts->array;
+  long top = wts.size();
+  auto n = wts.cbegin();
   monomial_word sum = 0;
-  for (int j=top; j>0; --j) sum += *m1++ * *n++;
+  for (long j=top; j>0; --j) sum += *m1++ * *n++;
   return sum;
 }
 

@@ -3,8 +3,8 @@
 #ifndef _moninfo_h_
 #define _moninfo_h_
 
+#if 0
 #include <cstdio>
-
 #include <M2/config.h>
 #include <stdio.h>
 #if HAVE_STDINT_H
@@ -15,9 +15,20 @@
 #error integer type definitions not available
 #endif
 
-struct MonomialOrdering;
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
+#endif
+
+
+
+#include <vector>
+
+typedef long varpower_word;
+typedef varpower_word * varpower_monomial;
+typedef const varpower_word * const_varpower_monomial;
+typedef long ntuple_word;
+typedef ntuple_word * ntuple_monomial;
+typedef const ntuple_word * const_ntuple_monomial;
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?
@@ -30,13 +41,47 @@ typedef const monomial_word * const_packed_monomial;
   // packing info, hash values, weights are all
   // defined in: PackedMonomials
 
+class index_varpower_monomial
+{
+  const_varpower_monomial loc;
+  const_varpower_monomial hi;
+public:
+  index_varpower_monomial() : loc(0), hi(0) {}
+  index_varpower_monomial(const_varpower_monomial m) : loc(m+1), hi(m+(2*(*m))) {}
+
+                                     //  index_monomial(const int *m, int)
+                                     //    : lo(m+1), hi(m+*m-2) { loc = hi; }
+
+  index_varpower_monomial(const index_varpower_monomial &i) : loc(i.loc), hi(i.hi) {}
+
+  bool valid() { return loc < hi; }
+  index_varpower_monomial &operator++() { loc += 2; return *this; }
+
+  //  index_monomial &operator--() { loc -= 2; return *this; }
+
+  varpower_word var() { return *loc; }
+  varpower_word exponent() { return loc[1]; }
+};
+
+
+class MonomialOrdering
+{
+public:
+  MonomialOrdering() {}
+  bool isLex() const { return false; }
+  bool isGRevLex() const { return true; }
+  const std::vector<int>& weightVectors() const { return mWeights; }
+private:
+  std::vector<int> mWeights;
+};
+
 
 // with weight vector values:
 // [hashvalue comp w1 w2 ... wr e1 e2 ... en]
 // or is it:
 // [hashvalue comp e1 e2 ... en -wr ... -w1]
 
-class MonomialInfo : public our_new_delete
+class MonomialInfo
 {
   int nvars;
   int nslots;
@@ -45,7 +90,7 @@ class MonomialInfo : public our_new_delete
 
   int firstvar; // = 2, if no weight vector, otherwise 2 + nweights
   int nweights; // number of weight vector values placed.  These should all be positve values?
-  M2_arrayint weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
+  std::vector<int> weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
 
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
   // other possible:
@@ -70,7 +115,7 @@ public:
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  MonomialInfo(int nvars, const MonomialOrdering *mo);
+  MonomialInfo(int nvars, const MonomialOrdering& mo);
 
   virtual ~MonomialInfo();
 
@@ -111,15 +156,15 @@ public:
           result[0] += hashfcn[i] * e[i];
       }
 
-    int *wt = weight_vectors->array;
-    for (int j=0; j<nweights; j++, wt += nvars)
+    auto wt = weight_vectors.cbegin();
+    for (int j=0; j<nweights; j++)
       {
         long val = 0;
         for (int i=0; i<nvars; i++)
           {
             long a = e[i];
             if (a > 0)
-              val += a * wt[i];
+              val += a * (*wt++);
           }
         result[2+j] = val;
       }
@@ -195,7 +240,7 @@ public:
           result[0] += e * hashfcn[v];
       }
 
-    int *wt = weight_vectors->array;
+    auto wt = weight_vectors.cbegin();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
         long val = 0;
@@ -273,7 +318,7 @@ public:
     return check_monomial(result);
   }
 
-  monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
+  monomial_word monomial_weight(const_packed_monomial m, const std::vector<int>& wts) const;
 
   void show(const_packed_monomial m) const;
 
@@ -487,9 +532,52 @@ public:
   }
 
 };
+
+inline varpower_word varpower_simple_degree(const_varpower_monomial m)
+{
+  varpower_word i;
+  varpower_word sum = 0;
+  varpower_word npairs = *m;
+  m += 2;
+  for (i=npairs; i>0; i--, m += 2)
+    sum += *m;
+  return sum;
+}
+
+inline int varpower_monomials_compare(const_varpower_monomial a, const_varpower_monomial b)
+    // return EQ, LT, or GT for a == b, a < b, or a > b.
+{
+  varpower_word i;
+  varpower_word alen = 2*(*a++);
+  varpower_word blen = 2*(*b++);
+  if (alen > blen)
+    {
+      for (i=0; i<blen; i++)
+        {
+          varpower_word c = *a++ - *b++;
+          if (c == 0) continue;
+          if (c > 0) return GT;
+          return LT;
+        }
+      return GT;
+    }
+  for (i=0; i<alen; i++)
+    {
+      varpower_word c = *a++ - *b++;
+      if (c == 0) continue;
+      if (c > 0) return GT;
+      return LT;
+    }
+  if (alen == blen)
+    return EQ;
+  return LT;
+}
+
+inline long varpower_length(const_varpower_monomial m) { return ((*(m))*2+1); }
+
+
 #endif
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
