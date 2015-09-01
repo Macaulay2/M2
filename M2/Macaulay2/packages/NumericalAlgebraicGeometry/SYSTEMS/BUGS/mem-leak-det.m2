@@ -16,7 +16,9 @@ s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC}) -- does not leak for a finite
 -- s = makeSLProgram({C,X},{XXC,XoC,XpC+XoC}) -- fine
 
 debug Core
-K = CC
+K = ZZ/101 -- no leak
+K = QQ -- leak
+K = CC -- leak
 (consts,indets):=(positions({C},s), positions({X},s))
 eQQ = rawSLEvaluator(s,consts,indets,raw matrix{{3_K}})
 
@@ -30,3 +32,10 @@ end
 restart
 load "mem-leak-det.m2"
 
+K = CC_53
+A := random(K^5,K^5)
+
+for i to 100000000 do (
+    M = mutableMatrix(A);
+    if i%10000 == 0 then print i;
+    )   
