@@ -1047,7 +1047,7 @@ if test $BUILD_cddlib = no
 then AC_LANG(C)
      AC_CHECK_HEADER(cdd.h,,
      	[ 
-	  CPPFLAGS="-I/usr/include/cddlib $CPPFLAGS"
+	  CPPFLAGS="-I/usr/include/cddlib -I/usr/include/cdd $CPPFLAGS"
 	  unset ac_cv_header_cdd_h
 	  AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
 	],
