@@ -1,5 +1,3 @@
-* det sign bug (fix on master)
-
 * memory leak? (perhaps garbage collector problem)
 
 * evaluation with Aring

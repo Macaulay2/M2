@@ -30,7 +30,7 @@ void complexAP::print()
 SLEvaluator::SLEvaluator(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, const Matrix *consts)  
 {
   slp = SLP;
-  std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
+  //  std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
   for(int i=0; i<cPos->len; i++) 
     constsPos.push_back(slp->inputCounter+cPos->array[i]);
   for(int i=0; i<vPos->len; i++) 
@@ -62,7 +62,6 @@ void SLEvaluator::computeNextNode()
     break;
   case SLProgram::Det:
     {
-      std::cout << "in Det" << std::endl;
       int n = sqrt(*numInputsIt++);
       FreeModule* S = R->make_FreeModule(n);
       MatrixConstructor mat(S,S);
@@ -110,7 +109,7 @@ void SLEvaluator::text_out(buffer& o) const { o << "SLEvaluator!" << newline; }
 
 // SLProgram
 SLProgram::SLProgram() { 
-  std::cout << "in SLProgram::SLProgram" << std::endl;
+  // std::cout << "in SLProgram::SLProgram" << std::endl;
   inputCounter = 0; 
 }
 SLProgram::~SLProgram() {}

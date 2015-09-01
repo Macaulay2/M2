@@ -1,3 +1,5 @@
+-- SLOW MEMORY LEAK -- FIXED
+
 needsPackage "SLPexpressions"
 debug NumericalAlgebraicGeometry
 load "NAGtools.m2"
