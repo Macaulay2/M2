@@ -1,6 +1,5 @@
 TARGET := main
 TARGET_CCFILES := \
-    main \
     betti \
     moninfo \
     f4-monlookup \

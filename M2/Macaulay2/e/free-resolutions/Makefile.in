@@ -22,7 +22,7 @@ all: $(UNITTEST_OBJECT_FILES) freeres check
 	echo @BUILTLIBS@
 	echo @LIBS@
 
-freeres : $(TARGET_OBJECT_CCFILES)
+freeres : $(TARGET_OBJECT_CCFILES) main.o
 	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 check: runtests
@@ -30,7 +30,7 @@ check: runtests
 fullCheck: $(UNITTEST_TARGET)
 	valgrind --track-origins=yes ./$(UNITTEST_TARGET)
 
-$(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES)
+$(UNITTEST_TARGET) : gtest-include.o $(UNITTEST_OBJECT_FILES) $(TARGET_OBJECT_CCFILES)
 	@CC@ $(LDFLAGS) $^ $(LOADLIBES) -o $@
 
 runtests: $(UNITTEST_TARGET)
