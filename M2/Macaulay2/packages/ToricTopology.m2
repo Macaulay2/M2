@@ -24,7 +24,7 @@ newPackage(
     	Version => "1.0", 
     	Date => "September 1, 2015",
     	Authors => {
-    		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com"},
+    		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", Homepage => "http://www.enpicom.com"},
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
     	Headline => "Toric topology"
@@ -79,6 +79,7 @@ quasiToricManifold(SimplicialComplex,Matrix) := QuasiToricManifold => (sc,chi) -
 
 -- methods --
 
+-- check whether a matrix is characteristic for a given simplicial complex 
 isValidChar = method(TypicalValue=>Boolean);
 isValidChar(SimplicialComplex,Matrix) := Boolean => (sc,chi) -> (
 	flag := true;
@@ -88,6 +89,7 @@ isValidChar(SimplicialComplex,Matrix) := Boolean => (sc,chi) -> (
 )
 
 cohomologyRing = method(TypicalValue=>QuotientRing,Options=>true)
+-- cohomology ring over the integers mod 2 of a small cover
 cohomologyRing(SmallCover) := QuotientRing => {CoefficientRing=>ZZ/2} >> opts -> (N) -> (
 	if not opts.CoefficientRing===ZZ/2 then error "Expected ZZ/2 as coefficient ring";
 	sc := N.QTMSimplicialComplex; 
@@ -100,6 +102,7 @@ cohomologyRing(SmallCover) := QuotientRing => {CoefficientRing=>ZZ/2} >> opts ->
 	S/(I+J)
 )
 
+-- cohomology ring over the integers of a quasi-toric manifold
 cohomologyRing(QuasiToricManifold) := QuotientRing =>  {CoefficientRing=>ZZ} >> opts -> (M) -> (
 	sc := M.QTMSimplicialComplex;
 	chi := M.QTMCharacteristicMatrix;
@@ -113,6 +116,7 @@ cohomologyRing(QuasiToricManifold) := QuotientRing =>  {CoefficientRing=>ZZ} >> 
 )
 
 chern = method(TypicalValue=>List,Options=>{CoefficientRing=>ZZ})
+-- Chern classes of a quasi-toric manifold
 chern(QuasiToricManifold) := List => opts -> (M) -> (
 	T := cohomologyRing(M,CoefficientRing=>opts.CoefficientRing);
 	c := 1;
@@ -124,6 +128,7 @@ chern(QuasiToricManifold) := List => opts -> (M) -> (
 )
 
 stiefelWhitney = method(TypicalValue=>List)
+-- Stiefel-Whitney classes of a small cover
 stiefelWhitney(SmallCover) := List => (N) -> (
 	T := cohomologyRing(N);
 	w := 1;
@@ -134,8 +139,8 @@ stiefelWhitney(SmallCover) := List => (N) -> (
 	swclasses
 )
 
-
 bettiSmallCover = method()
+-- k-th betti number of a small cover
 bettiSmallCover(ZZ,SmallCover) := ZZ => (k,N) -> (
 	sc := N.QTMSimplicialComplex;
 	chi := N.QTMCharacteristicMatrix;
@@ -148,6 +153,7 @@ bettiSmallCover(ZZ,SmallCover) := ZZ => (k,N) -> (
 	b
 )
 
+-- all the betti numbers up to n of an n-dimensional small cover
 bettiSmallCover(SmallCover) := List => (N) -> (
 	b := {1};
 	for i in 1..(N.QTMDimension) do b=append(b, bettiSmallCover(i,N));
@@ -155,6 +161,7 @@ bettiSmallCover(SmallCover) := List => (N) -> (
 )
 
 bettiQTM = method()
+-- k-th betti number of a quasi-toric manifold
 bettiQTM(ZZ,QuasiToricManifold) := ZZ => (k, M) -> (
 	if ((k < 0) or (k > M.QTMDimension) or (k % 2 == 1)) then (
 		0
@@ -165,6 +172,7 @@ bettiQTM(ZZ,QuasiToricManifold) := ZZ => (k, M) -> (
 	)
 )
 
+-- all the betti numbers up to 2n of an 2n-dimensional quasi-toric manifold
 bettiQTM(QuasiToricManifold) := List => (M) -> (
 	b := {};
 	for i in 1..(M.QTMDimension) do b = append(b, bettiQTM(i, M));
@@ -172,14 +180,16 @@ bettiQTM(QuasiToricManifold) := List => (M) -> (
 )
 
 -- Sample small covers --
+
 realProjectiveSpace = method(TypicalValue=>SmallCover)
+-- n-dimensional real projective space
 realProjectiveSpace(ZZ) := SmallCover => (n) -> (
 	smallCover(projectiveSpace(n, ZZ/2))
 )
 
 
--- Hessenberg variety associated to the (dual of the) n-dimensional permutahedron
 hessenbergVariety = method(TypicalValue=>SmallCover)
+-- Hessenberg variety associated to the (dual of the) n-dimensional permutahedron
 hessenbergVariety(ZZ) := SmallCover => (n) -> (
     smallCover(permutahedronDual(n),chiHessenberg(n))
 )
@@ -187,6 +197,7 @@ hessenbergVariety(ZZ) := SmallCover => (n) -> (
 
 -- Sample quasi-toric manifolds
 complexProjectiveSpace = method(TypicalValue=>QuasiToricManifold)
+-- n-dimensional complex projective space
 complexProjectiveSpace(ZZ) := QuasiToricManifold => (n) -> (
 	quasiToricManifold(projectiveSpace(n, ZZ))
 )
@@ -342,3 +353,38 @@ permutahedronDual = (n) -> (
 	);
 	simplicialIntToMon(simplices)
 )
+
+
+beginDocumentation()
+
+document { Key => ToricTopology,
+     Headline => "simplicial complexes",
+     EM "ToricTopology", " is a package for computing with quasi-toric manifolds and small covers.",
+     PARA{},
+     "A quasi-toric manifold (or small cover) is entirely determined by a pair consisting of a simplicial complex",
+     TT "K", " and a matrix ", TT "chi", " which is characteristic for ", TT "K", ".",
+     "If ", TT "K", " has n vertices, we can think of its k-faces as sets of integers between 1 and n.",
+     "A matrix ", TT "chi", " is characteristic for ", TT "K", " if all maximal minors indexed by the facets of ", 
+     TT "K", " have determinant equal to 1 or -1.",
+     
+     PARA{},
+     "This package contains routines for computing homological properties of quasi-toric manifolds and",
+     "small covers. It also includes some sample manifolds to experiment with.",
+     
+     PARA{},
+     "This package includes the following functions:",
+     UL {
+        TO isValidChar,
+        TO smallCover, 
+        TO quasiToricManifold,
+        TO (cohomologyRing, SmallCover),
+        TO (cohomologyRing, QuasiToricManifold),
+        TO chern, 
+        TO stiefelWhitney,
+        TO bettiSmallCover, 
+        TO bettiQTM,
+        TO realProjectiveSpace, 
+        TO hessenbergVariety, 
+        TO complexProjectiveSpace
+    }
+}
