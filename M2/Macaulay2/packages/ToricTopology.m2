@@ -387,4 +387,202 @@ document { Key => ToricTopology,
         TO hessenbergVariety, 
         TO complexProjectiveSpace
     }
-}
+    
+doc ///
+  Key
+    isValidChar
+    (isValidChar,SimplicialComplex,Matrix)
+  Headline
+    Whether a matrix is characteristic for a simplicial complex
+  Usage
+    isValidChar(K,chi)
+  Inputs
+    K:SimplicialComplex
+    chi:Matrix
+  Outputs
+    :Boolean
+  Description
+   Text
+        Checks whether chi is characteristic for K.
+
+   Example
+     
+  SeeAlso
+     
+///
+
+doc ///
+  Key
+    smallCover
+    (smallCover,SimplicialComplex,Matrix)
+  Headline
+    Create a small cover
+  Usage
+    smallCover(K,chi)
+  Inputs
+    K:SimplicialComplex
+    chi:Matrix
+  Outputs
+    :SmallCover
+  Description
+   Text
+        Create a small cover over K with characteristic matrix chi.
+        If chi is not characteristic for K, an error is returned.
+        The entries of chi are automatically converted to ZZ/2 entries, if they not already so.
+
+   Example
+     
+  SeeAlso
+     
+///
+
+doc ///
+  Key
+    quasiToricManifold
+    (quasiToricManifold,SimplicialComplex,Matrix)
+  Headline
+    Create a quasi-toric manifold
+  Usage
+    quasiToricManifold(K,chi)
+  Inputs
+    K:SimplicialComplex
+    chi:Matrix
+  Outputs
+    :QuasiToricManifold
+  Description
+   Text
+        Create a quasi-toric manifold over K with characteristic matrix chi.
+        If chi is not characteristic for K, an error is returned.
+
+   Example
+     
+  SeeAlso
+     
+///
+
+
+doc ///
+  Key
+    cohomologyRing
+    (cohomologyRing,SmallCover)
+    (cohomologyRing,QuasiToricManifold)
+  Headline
+    Compute the cohomology ring of a small cover or quasi-toric manifold
+  Usage
+    cohomologyRing(N)
+    cohomologyRing(M)
+  Inputs
+    N:SmallCover
+    M:QuasiToricManifold
+  Outputs
+    :QuotientRing
+  Description
+   Text
+        Compute the cohomology ring of a small cover (over ZZ/2) or quasi-toric manifold (over ZZ). 
+
+   Example
+     
+  SeeAlso
+     
+///
+
+
+doc ///
+  Key
+    stiefelWhitney
+    (stiefelWhitney,SmallCover)
+  Headline
+    Compute the Stiefel-Whitney classes of a small cover
+  Usage
+    stiefelWhitney(N)
+  Inputs
+    N:SmallCover
+  Outputs
+    :List
+  Description
+   Text
+        Compute the Stiefel-Whitney classes of a small cover.
+        The output is a list of elements in the cohomology ring of N.
+   Example
+     
+  SeeAlso
+    cohomologyRing
+///
+
+doc ///
+  Key
+    chern
+    (chern,QuasiToricManifold)
+  Headline
+    Compute the Chern classes of a quasi-toric manifold
+  Usage
+    chern(M)
+  Inputs
+    M:QuasiToricManifold
+  Outputs
+    :List
+  Description
+   Text
+        Compute the Chern classes of a quasi-toric manifold.
+        The output is a list of elements in the cohomology ring of M.
+   Example
+     
+  SeeAlso
+    cohomologyRing
+///
+
+doc ///
+  Key
+    bettiSmallCover
+    (bettiSmallCover,ZZ,SmallCover)
+    (bettiSmallCover,SmallCover)
+  Headline
+    Compute the betti numbers of a small cover
+  Usage
+    bettiSmallCover(k,N)
+    bettiSmallCover(N)
+  Inputs
+    k:ZZ
+    N:SmallCover
+  Outputs
+    :ZZ
+    :List
+  Description
+   Text
+        Compute the betti numbers of a small cover.
+        If a dimension k is specified, then only the k-th betti number of N is computed.
+        If no dimension is specified, all the betti numbers between 0 and the dimension of N are computed.
+
+   Example
+     
+  SeeAlso
+     
+///
+
+doc ///
+  Key
+    bettiQTM
+    (bettiQTM,ZZ,QuasiToricManifold)
+    (bettiQTM,QuasiToricManifold)
+  Headline
+    Compute the betti numbers of a quasi-toric manifold
+  Usage
+    bettiQTM(k,M)
+    bettiQTM(M)
+  Inputs
+    k:ZZ
+    M:QuasiToricManifold
+  Outputs
+    :ZZ
+    :List
+  Description
+   Text
+        Compute the betti numbers of a quasi-toric manifold.
+        If a dimension k is specified, then only the k-th betti number of M is computed.
+        If no dimension is specified, all the betti numbers between 0 and the dimension of M are computed.
+
+   Example
+     
+  SeeAlso
+     
+///
