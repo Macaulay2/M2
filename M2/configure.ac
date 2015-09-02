@@ -1271,20 +1271,32 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
+AC_MSG_CHECKING([whether factory library is installed])
 SINGULARLIBS="-lfactory  "
+FACTORY_MINVERSION=4.0.0
 if test $BUILD_factory = no
 then
-   PKG_CHECK_MODULES(FACTORY, factory >= 4.0.0, , BUILD_factory=maybe)
-   if test $BUILD_factory = maybe
-   then
-	BUILD_factory=no
-	PKG_CHECK_MODULES(FACTORY, singular-factory >= 4.0.0, , BUILD_factory=yes)
-   fi
+    if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
+    then
+	FACTORY_NAME=factory
+	AC_MSG_RESULT([yes ($FACTORY_NAME)])
+    elif $PKG_CONFIG --exists "singular-factory >= $FACTORY_MINVERSION"
+    then
+	FACTORY_NAME=singular-factory
+	AC_MSG_RESULT([yes ($FACTORY_NAME)])
+    elif $PKG_CONFIG --exists factory || $PKG_CONFIG --exists singular-factory
+    then
+	BUILD_factory=yes
+	AC_MSG_RESULT([yes, but version $FACTORY_MINVERSION required; will build])
+    else
+	BUILD_factory=yes
+	AC_MSG_RESULT([no; will build])
+    fi
 fi
 if test $BUILD_factory = no
 then
-     LIBS="$FACTORY_LIBS $LIBS"
-     CPPFLAGS="$FACTORY_CFLAGS $CPPFLAGS"
+     LIBS="`$PKG_CONFIG --libs $FACTORY_NAME` $LIBS"
+     CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
 else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
 fi
