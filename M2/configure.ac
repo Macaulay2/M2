@@ -1271,11 +1271,11 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
-AC_MSG_CHECKING([whether factory library is installed])
 SINGULARLIBS="-lfactory  "
-FACTORY_MINVERSION=4.0.0
 if test $BUILD_factory = no
 then
+    AC_MSG_CHECKING([whether factory library is installed])
+    FACTORY_MINVERSION=4.0.0
     if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
     then
 	FACTORY_NAME=factory
