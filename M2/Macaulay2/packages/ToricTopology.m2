@@ -41,7 +41,7 @@ export{
 	cohomologyRing,
 	chern, stiefelWhitney,
 	bettiSmallCover, bettiQTM,
-	realProjectiveSpace, complexProjectiveSpace,
+	realProjectiveSpace, hessenbergVariety, complexProjectiveSpace,
 	QTMSimplicialComplex, QTMCharacteristicMatrix, QTMDimension
 }
 
@@ -171,11 +171,21 @@ bettiQTM(QuasiToricManifold) := List => (M) -> (
 	b
 )
 
+-- Sample small covers --
 realProjectiveSpace = method(TypicalValue=>SmallCover)
 realProjectiveSpace(ZZ) := SmallCover => (n) -> (
 	smallCover(projectiveSpace(n, ZZ/2))
 )
 
+
+-- Hessenberg variety associated to the (dual of the) n-dimensional permutahedron
+hessenbergVariety = method(TypicalValue=>SmallCover)
+hessenbergVariety(ZZ) := SmallCover => (n) -> (
+    smallCover(permutahedronDual(n),chiHessenberg(n))
+)
+
+
+-- Sample quasi-toric manifolds
 complexProjectiveSpace = method(TypicalValue=>QuasiToricManifold)
 complexProjectiveSpace(ZZ) := QuasiToricManifold => (n) -> (
 	quasiToricManifold(projectiveSpace(n, ZZ))
@@ -242,3 +252,93 @@ supportChi = (chi, I) -> (
                 );
                 supp
 );
+
+
+simplicialIntToMon = (sc) -> (
+			  p := max( flatten( sc ) );
+			  R := ZZ[vars(0..p-1)];
+			  e := {};
+			  for i in (1..p) do e=append(e,0);
+			  lis := {};
+			  for i in (0..length(sc)-1) do (
+			  		lis = append(lis,new MutableList from e); 
+			  		for j in sc#i do (
+			  				lis#i#(j-1)=1; 
+			  				); 
+			    	);
+			  lismon := {};
+			  for i in lis do lismon=append(lismon,R_(toList(i)));
+			  simplicialComplex( lismon )
+			  );
+              
+-- returns the characteristic matrix for the Hessenberg variety sitting on the dual of the n-dimensional permutahedron
+chiHessenberg = (n) -> (
+	-- finds the char matrix
+	col1s := {};
+	chisimplex := id_((ZZ/2)^n)|(transpose (matrix {apply(n,i->1)} ));
+	columns := new MutableHashTable;
+	i :=0;
+	for maxl in subsets(n+1,n) do (
+		columns#maxl = chisimplex_{i};
+		i=i+1;
+	);
+	
+    vertices := drop(drop(subsets(n+1),1),-1);
+	for vert in vertices do (
+		if not member(vert, subsets(n+1,n)) then (
+			supersets := {};
+			scan(subsets(n+1,n), i -> (if (not(i==vert) and isSubset(set(vert),set(i))) then 
+				supersets= append(supersets,i) ) );
+			col := 0;
+			scan(supersets, i -> col = col+ columns#i);	
+			columns#vert = col;
+		);
+	);
+	
+	--finally computes the char matrix
+	chi := columns#(vertices#0);
+	for i in 1..(length(vertices)-1) do (
+		chi = chi | columns#(vertices#i);
+	);
+	
+    chi
+);
+
+permsimplices = (lis) -> (
+    resl :={};
+    for fac in lis do (
+        if length(last(fac))==1 then return lis
+        else (
+            tmplis := {};
+            for sub in subsets(last(fac),length(last(fac))-1) do (
+                tmplis = append(tmplis, append(fac, sub));
+            );
+            resl = join(resl, tmplis);
+        );
+    );
+    return permsimplices(resl);
+)
+
+-- returns the simplicial complex dual to the n-dimensional permutahedron
+permutahedronDual = (n) -> (
+	vertices := drop(drop(subsets(n+1),1),-1);
+	hashgen := {};
+	for i in 1..length(vertices) do (
+		hashgen = append( hashgen, {vertices#(i-1),i});
+	); 
+	vhash := hashTable(hashgen); 
+    
+	psimplices := {}; 
+	for i in 0..n do (
+		psimplices = append(psimplices,{(subsets(n+1,n))#i}); 
+	);
+	simplices := {};
+	for permsimplex in permsimplices(psimplices) do (
+		simplex := {};
+		for sub in permsimplex do ( 
+			simplex = append(simplex, vhash#sub);
+		);
+		simplices = append(simplices, simplex);
+	);
+	simplicialIntToMon(simplices)
+)
