@@ -21,6 +21,7 @@ newPackage(
 
 {*
 Changelog:
+  o Change default PreRunScript
   o Make the default KeepStatisticsCommand try to detect which time implementation to use
  v0.81:
   o remove setExternalM2Child() and use Configuration option instead
@@ -793,9 +794,9 @@ Node
 			any @TO "resource limits"@ on the Macaulay2 process started by
 			@TO runExternalM2@.
 
-			By default, it is set to the no-op
+			By default, it is set to the shell command
 		Pre
-			echo -n
+			true
 		Text
 			but you can set it to things like
 		Pre
@@ -822,7 +823,7 @@ runExternalM2 = {
 	KeepFiles => null,
 	KeepStatistics => false,
 	KeepStatisticsCommand => defaultKeepStatsCommand,
-	PreRunScript => "echo -n"
+	PreRunScript => "true"
 } >> opt -> (fname, proc, params) -> (
 	-- Validate options
   M2Loc:=opt#M2Location;
