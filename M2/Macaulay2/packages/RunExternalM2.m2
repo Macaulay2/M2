@@ -21,6 +21,7 @@ newPackage(
 
 {*
 Changelog:
+  o Make the default KeepStatisticsCommand try to detect which time implementation to use
  v0.81:
   o remove setExternalM2Child() and use Configuration option instead
   o change default M2Location to null so that documentation looks OK
@@ -745,6 +746,39 @@ Node
 		RunExternalM2
 		runExternalM2
 ///);
+defaultKeepStatsCommand := (f,c) -> (
+	-- Every POSIX-y system should have a 'time' command, which may be
+	-- a shell internal or its own executable, and should follow:
+	--   http://pubs.opengroup.org/onlinepubs/9699919799/utilities/time.html
+
+	whichTime:="";
+	-- Prefer the executable.
+	if fileExecutable("/usr/bin/time") then (
+		-- Detect certain implementations to request more details.
+
+		if match("GNU",get("!/usr/bin/time --version 2>&1")) then (
+			-- GNU Time (version is on stderr)
+			whichTime="/usr/bin/time --verbose";
+		) else if fileExecutable("/usr/bin/sw_vers") and match("OS X",get("!/usr/bin/sw_vers -productName")) then (
+			-- OS X's time
+			whichTime="/usr/bin/time -l";
+		) else (
+			whichTime="/usr/bin/time";
+		);
+	) else if run("(time sh -c \"\") >/dev/null 2>&1")==0 then (
+		-- Then the shell internal probably exists
+		whichTime="time";
+	) else (
+		-- No executable, no shell internal.  Dash doesn't have one.
+		return " (echo \"Statistics not supported on this system\">\""|f|"\"; "|c|")";
+	);
+	-- Per the standard, time writes usage details to stderr.  Use a
+	-- technique suggested there to separate the usage details from
+	-- the command's output.
+	-- The parantheses are necessary for bash's builtin time command
+	return " ("|whichTime|" sh -c '"|c|"') >\""|f|"\" 2>&1";
+);
+
 mydoc=concatenate(mydoc,///
 Node
 	Key
@@ -787,7 +821,7 @@ runExternalM2 = {
 	M2Location => null,
 	KeepFiles => null,
 	KeepStatistics => false,
-	KeepStatisticsCommand => (f,c) -> ("/usr/bin/time --verbose -o \""|f|"\" "|c),
+	KeepStatisticsCommand => defaultKeepStatsCommand,
 	PreRunScript => "echo -n"
 } >> opt -> (fname, proc, params) -> (
 	-- Validate options
