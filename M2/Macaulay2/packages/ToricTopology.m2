@@ -398,7 +398,7 @@ doc ///
     the class of all quasi-toric manifolds
   Description
    Text
-       A quasi-toric manifolds is represented by a simplicial complex K and matrix which is characteristic for K.
+       A quasi-toric manifold is represented by a simplicial complex K and matrix which is characteristic for K.
    Example
 
   SeeAlso
@@ -662,7 +662,7 @@ doc ///
     :SmallCover
   Description
    Text
-       Hessenberg variety asscoiated to the n-permutahedro, as small cover.
+       Hessenberg variety asscoiated to the n-permutahedron, as small cover.
    Example
      
   SeeAlso
