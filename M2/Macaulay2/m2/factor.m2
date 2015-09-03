@@ -158,6 +158,11 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 
 isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
 
+
+roots = method(TypicalValue => List,
+               Options => { Precision => -1 });
+roots RingElement := opts -> p -> toList rawRoots(raw p, opts.Precision)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

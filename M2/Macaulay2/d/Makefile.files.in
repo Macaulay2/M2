@@ -96,6 +96,9 @@ else
 M2_SRCFILES += pari.d pari-c.h pari-c.c
 endif
 
+M2_HFILES += pari-gnump.h
+M2_CFILES += pari-gnump.c
+
 M2_DFILES += flint.d
 
 ifeq (@PYTHON@,yes)

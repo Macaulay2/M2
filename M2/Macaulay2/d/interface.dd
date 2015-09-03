@@ -1552,6 +1552,20 @@ export rawFactor(e:Expr):Expr := (
      );
 setupfun("rawFactor",rawFactor);
 
+export rawRoots(e:Expr):Expr := (
+    when e
+    is s:Sequence do (
+      if length(s) == 2 then
+        when s.0 is x:RawRingElementCell do
+        when s.1 is n:ZZcell do
+          toExpr(Ccode(RawRingElementArrayOrNull, "rawRoots(", x.p, ",", toInt(n.v), ")" ))
+        else WrongArg(2, "a raw ring element")
+        else WrongArg(1, "an integer")
+      else WrongNumArgs(2))
+    else WrongArg("a raw ring element and an integer")
+);
+setupfun("rawRoots", rawRoots);
+
 export rawCharSeries(e:Expr):Expr := (
      when e
      is x:RawMatrixCell do toExpr( Ccode( RawMatrixArrayOrNull, "rawCharSeries(", x.p, ")" ))

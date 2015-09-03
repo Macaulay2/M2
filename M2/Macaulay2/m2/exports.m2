@@ -981,6 +981,7 @@ export {
 	"ring",
 	"rootPath",
 	"rootURI",
+  "roots",
 	"rotate",
 	"round",
 	"rowAdd",
