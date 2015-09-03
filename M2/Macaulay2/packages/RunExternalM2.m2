@@ -8,8 +8,8 @@
 *}
 newPackage(
 		"RunExternalM2",
-		Version => "0.81", 
-		Date => "July 15, 2015",
+		Version => "0.82", 
+		Date => "September 03, 2015",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",
@@ -21,6 +21,7 @@ newPackage(
 
 {*
 Changelog:
+ v0.82:
   o Remove a workaround for github issue #296, fixed in M2 v1.8
   o Change default PreRunScript
   o Make the default KeepStatisticsCommand try to detect which time implementation to use
