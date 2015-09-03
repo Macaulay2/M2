@@ -741,8 +741,13 @@ Node
 			and returns a string that, when @TO run@, will execute {\tt c}
 			and put statistics in {\tt f}.
 
-			The default expects to find GNU Time at
-			{\tt /usr/bin/time}.
+			The default function should work in most cases.
+			It first tries to use {\tt /usr/bin/time}, 
+			then the {\tt time} implementation built-in to certain shells,
+			and otherwise makes the feature unavailable.
+			Certain implementations of {\tt /usr/bin/time} are given special
+			flags to provide more details.
+
 	SeeAlso
 		RunExternalM2
 		runExternalM2
