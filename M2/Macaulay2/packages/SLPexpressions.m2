@@ -872,3 +872,37 @@ document {
     SeeAlso=>{Gate, Matrix}
     }
 
+document {
+    Key => {(gateHomotopySystem, GateMatrix, GateMatrix, InputGate),
+	gateHomotopySystem,--[Parameters,gateHomotopySystem]
+	},
+    Headline => "homotopy system via SLPexpressions",
+    Usage => "HS = gateHomotopySystem(H,X,T)",
+    Inputs => { 
+	"H"=>"a family of systems (given by a column vector)",
+	"X"=>"(a row vector of) variables",
+	"T"=>"homotopy (continuation) parameter" 
+	 },
+    Outputs => { "HS", 
+	-- ofClass {GateHomotopySystemof, GateParameterHomotopySystem}, 
+	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
+    "Optional arguments:",
+    UL{
+	{TO "Parameters", "-- a row vector of parameter variables"},
+	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
+	},  
+    EXAMPLE lines ///
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+F = {X*X-1, Y*Y*Y-1}
+G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
+H = (1 - T) * F + T * G
+HS = gateHomotopySystem(transpose matrix {H},matrix{{X,Y}},T)
+    ///,
+    Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
+	TT "Parameters, X, T", "."},
+    SeeAlso=>{ --GateHomotopySystem,GateParameterHomotopySystem,
+    	specialize}
+    }
+    

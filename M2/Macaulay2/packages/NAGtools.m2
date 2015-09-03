@@ -1,13 +1,15 @@
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
 
+needsPackage "SLPexpressions"
 
 -- Monodromy-based algorithm
 -- in: 
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
---     p0, column vector, values of parameters (assumed generic)
---     s0, list of points, solutions of PH_p0 (at least one)    
---     nextP(seed), a functions that returns a random column vector of parameters p1 suitable for the family f  
-degree (ParameterHomotopySystem, Matrix, List, FunctionClosure) := (PH,p0,s0,f) -> (
+--     p0, column vector, values of m parameters (assumed generic)
+--     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
+--     NextPoint, a function that returns a random column vector of m parameters p1 suitable for PH  
+degreeViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>9)})
+degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";   
     sols0 := s0;
     nSols := #sols0; 
@@ -15,9 +17,9 @@ degree (ParameterHomotopySystem, Matrix, List, FunctionClosure) := (PH,p0,s0,f) 
     dir := temporaryFileName(); -- build a directory to store temporary data 
     makeDirectory dir;
     << "--backup directory created: "<< toString dir << endl;  
-    while same<10 do try (
-    	p1 := nextP(random 100000);
-    	p2 := nextP(random 100000);
+    while stop() do try (
+    	p1 := nextP();
+    	p2 := nextP();
 	elapsedTime sols1 = trackHomotopy(specialize(PH,p0||p1),sols0);
 	sols1 = select(sols1, s->status s === Regular);
 	<< "  H01: " << #sols1 << endl;
@@ -40,18 +42,21 @@ degree (ParameterHomotopySystem, Matrix, List, FunctionClosure) := (PH,p0,s0,f) 
     nSols
     )
 
--- Parameter homotopy for getting a point on the fiber of an onto map 
+-- Parameter homotopy for getting a point on the fiber of a ***generically finite-to-one onto*** map 
 -- in: 
 --     F, a map (column vector)
---     V, variables (list)
+--     V, variables (list of InputGates)
+--     W (optional; W=V if omitted), variables names (list of anything) for coordinates in the target space 
 -- out: 
 --     HomotopySystem that has A_v and B_v as parameters, 
 --     	       	      where v in V are coordinates of the target space 
 gateHomotopy4preimage = method()
-gateHomotopy4preimage(GateMatrix,List) := (F,V) -> (
-    assert(#V == numrows F); 
-    A := matrix{apply(V, v->inputGate symbol A_v)};
-    B := matrix{apply(V, v->inputGate symbol B_v)};
+gateHomotopy4preimage(GateMatrix,List) := (F,V) -> gateHomotopy4preimage(F,V,V)
+gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
+    assert(#W == numrows F); 
+    assert(#V == #W); 
+    A := matrix{apply(W, v->inputGate symbol A_v)};
+    B := matrix{apply(W, v->inputGate symbol B_v)};
     t := inputGate symbol t;
     H := F-((1-t)*transpose A+t*transpose B);
     gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)

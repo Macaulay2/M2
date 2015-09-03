@@ -4,7 +4,7 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 export { "HomotopySystem", "ParameterHomotopySystem", "SpecializedParameterHomotopySystem", 
-    "evaluateH", "evaluateHt", "evaluateHx", "Parameters" }
+    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
 
 HomotopySystem = new Type of MutableHashTable -- abstract type
 evaluateH = method()
