@@ -21,6 +21,7 @@ newPackage(
 
 {*
 Changelog:
+  o Remove a workaround for github issue #296, fixed in M2 v1.8
   o Change default PreRunScript
   o Make the default KeepStatisticsCommand try to detect which time implementation to use
  v0.81:
@@ -540,14 +541,6 @@ runExternalM2InClone = {
 	if (pid==0) then (
 		-- We are the child.
 		loadPackage("RunExternalM2",Configuration=>{"isChild"=>true},Reload=>true);
-
-		-- TODO: Work around https://github.com/Macaulay2/M2/issues/296,
-		-- which was fixed in release 1.8.  Eventually this check should be
-		-- removed.  Not a big deal, as it only affects the child.
-		if (version#"VERSION"==="1.7") then (
-			debug Core;
-			((Core#"private dictionary")#"temporaryDirectoryName") <- null;
-		);
 
 		-- Shove the output into the file, then quit.
 		-- The computation may break in many, many ways.
