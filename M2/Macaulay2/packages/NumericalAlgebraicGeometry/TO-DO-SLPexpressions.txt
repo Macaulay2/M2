@@ -1,4 +1,7 @@
-* memory leak? (perhaps garbage collector problem)
+* change Matrix to MutableMatrix in interface functions:
+
+  rawSLEvaluator -> SLEvaluator constructor
+  rawSLEvaluatorEvaluate -> SLEvaluator::evaluate(...)
 
 * evaluation with Aring
 

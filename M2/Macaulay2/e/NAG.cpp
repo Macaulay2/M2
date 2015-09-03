@@ -68,11 +68,9 @@ void SLEvaluator::computeNextNode()
       for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
           mat.set_entry(i,j,values[ap(*inputPositionsIt++)]);
-      Matrix* M = mat.to_matrix();
-      MutableMatrix* MM = MutableMatrix::from_matrix(M,true);
-      //MutableMatrix* M = MutableMatrix::from_matrix(mat.to_matrix(), true);
-      v = R->one();
-      //v = M->determinant()->get_value();
+      MutableMatrix* M = MutableMatrix::from_matrix(mat.to_matrix(), true); 
+      v = M->determinant()->get_value();
+      delete M;
     }
     break;
   case SLProgram::Divide:
