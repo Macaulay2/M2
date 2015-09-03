@@ -24,7 +24,7 @@ newPackage(
     	Version => "1.0", 
     	Date => "September 1, 2015",
     	Authors => {
-    		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", Homepage => "http://www.enpicom.com"},
+    		{Name => "Alvise Trevisan", Email => "a.trevisan@enpicom.com", HomePage => "http://www.enpicom.com"},
     		{Name => "Alexander I. Suciu", Email => "a.suciu@neu.edu"}
 		},  
     	Headline => "Toric topology"
@@ -35,14 +35,14 @@ protect QTMCharacteristicMatrix
 protect QTMDimension
 		
 export{
-	SmallCover,QuasiToricManifold,
-	isValidChar,
-	smallCover, quasiToricManifold,
-	cohomologyRing,
-	chern, stiefelWhitney,
-	bettiSmallCover, bettiQTM,
-	realProjectiveSpace, hessenbergVariety, complexProjectiveSpace,
-	QTMSimplicialComplex, QTMCharacteristicMatrix, QTMDimension
+	"SmallCover", "QuasiToricManifold",
+	"isValidChar",
+	"smallCover", "quasiToricManifold",
+	"cohomologyRing",
+	"chern", "stiefelWhitney",
+	"bettiSmallCover", "bettiQTM",
+	"realProjectiveSpace", "hessenbergVariety", "complexProjectiveSpace",
+	"QTMSimplicialComplex", "QTMCharacteristicMatrix", "QTMDimension"
 }
 
 needsPackage "SimplicialComplexes"
@@ -354,40 +354,57 @@ permutahedronDual = (n) -> (
 	simplicialIntToMon(simplices)
 )
 
+-------------------
+-- Documentation --
+-------------------
 
 beginDocumentation()
 
-document { Key => ToricTopology,
-     Headline => "simplicial complexes",
-     EM "ToricTopology", " is a package for computing with quasi-toric manifolds and small covers.",
-     PARA{},
-     "A quasi-toric manifold (or small cover) is entirely determined by a pair consisting of a simplicial complex",
-     TT "K", " and a matrix ", TT "chi", " which is characteristic for ", TT "K", ".",
-     "If ", TT "K", " has n vertices, we can think of its k-faces as sets of integers between 1 and n.",
-     "A matrix ", TT "chi", " is characteristic for ", TT "K", " if all maximal minors indexed by the facets of ", 
-     TT "K", " have determinant equal to 1 or -1.",
-     
-     PARA{},
-     "This package contains routines for computing homological properties of quasi-toric manifolds and",
-     "small covers. It also includes some sample manifolds to experiment with.",
-     
-     PARA{},
-     "This package includes the following functions:",
-     UL {
-        TO isValidChar,
-        TO smallCover, 
-        TO quasiToricManifold,
-        TO (cohomologyRing, SmallCover),
-        TO (cohomologyRing, QuasiToricManifold),
-        TO chern, 
-        TO stiefelWhitney,
-        TO bettiSmallCover, 
-        TO bettiQTM,
-        TO realProjectiveSpace, 
-        TO hessenbergVariety, 
-        TO complexProjectiveSpace
-    }
-    
+doc ///
+    Key
+        ToricTopology
+    Headline
+        homological computations in toric topology
+    Description
+        Text 
+            ToricTopology is a package for computing with quasi-toric manifolds and small covers.
+            
+	    A quasi-toric manifold (or small cover) is entirely determined by a pair consisting of a simplicial complex K and a matrix chi which is characteristic for K.
+   
+  	    If K has n vertices, we can think of its k-faces as sets of integers between 1 and n.
+            A matrix chi is characteristic for K if all maximal minors of chi indexed by the facets of  K have determinant equal to 1 or -1.
+
+///
+
+
+doc ///
+  Key
+    SmallCover
+  Headline
+    the class of all small covers 
+  Description
+   Text
+       A small cover is represented by a simplicial complex K and matrix which is characteristic for K.
+   Example
+
+  SeeAlso
+    QuasiToricManifold
+///
+
+doc ///
+  Key
+    QuasiToricManifold
+  Headline
+    the class of all quasi-toric manifolds
+  Description
+   Text
+       A quasi-toric manifolds is represented by a simplicial complex K and matrix which is characteristic for K.
+   Example
+
+  SeeAlso
+   SmallCover
+///
+
 doc ///
   Key
     isValidChar
@@ -411,6 +428,7 @@ doc ///
      
 ///
 
+
 doc ///
   Key
     smallCover
@@ -427,7 +445,7 @@ doc ///
   Description
    Text
         Create a small cover over K with characteristic matrix chi.
-        If chi is not characteristic for K, an error is returned.
+        If chi is not characteristic for K, then an error is returned.
         The entries of chi are automatically converted to ZZ/2 entries, if they not already so.
 
    Example
@@ -457,7 +475,6 @@ doc ///
    Example
      
   SeeAlso
-     
 ///
 
 
@@ -531,6 +548,7 @@ doc ///
     cohomologyRing
 ///
 
+
 doc ///
   Key
     bettiSmallCover
@@ -585,4 +603,68 @@ doc ///
      
   SeeAlso
      
+///
+
+doc ///
+  Key
+    realProjectiveSpace
+    (realProjectiveSpace,ZZ)
+  Headline
+    Real projective space of dimension n
+  Usage
+    realProjectiveSpace(n)
+  Inputs
+    n:ZZ
+  Outputs
+    :SmallCover
+  Description
+   Text
+        Real projective space of dimension n, as small cover.
+   Example
+     
+  SeeAlso
+    complexProjectiveSpace
+///
+
+doc ///
+  Key
+    complexProjectiveSpace
+    (complexProjectiveSpace,ZZ)
+  Headline
+    Complex projective space of dimension n
+  Usage
+    complexProjectiveSpace(n)
+  Inputs
+    n:ZZ
+  Outputs
+    :QuasiToricManifold
+  Description
+   Text
+        Complex projective space of dimension n, as small cover.
+   Example
+     
+  SeeAlso
+    realProjectiveSpace
+///
+
+
+doc ///
+  Key
+    hessenbergVariety
+    (hessenbergVariety,ZZ)
+  Headline
+    Hessenberg variety asscoiated to the n-permutahedron 
+  Usage
+    hessenbergVariety(n)
+  Inputs
+    n:ZZ
+  Outputs
+    :SmallCover
+  Description
+   Text
+       Hessenberg variety asscoiated to the n-permutahedro, as small cover.
+   Example
+     
+  SeeAlso
+    
 ///
