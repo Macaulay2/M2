@@ -7,7 +7,7 @@ dnl    - add an entry to distributions/deb/changelog
 dnl Things to do after incrementing the version number and committing:
 dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
 dnl    - make a git tag of the form version-X.Y.Z
-AC_INIT(Macaulay2, 1.8.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.8.2.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -1550,12 +1550,6 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
-
-if test "$FAKEROOT" = false
-then if test "$RPM" = yes
-     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
-     fi
-fi
 
 # Here we split up LIBS into three parts, LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC.
 # M2 will get linked against LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC, in that order

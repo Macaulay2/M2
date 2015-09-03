@@ -28,15 +28,15 @@ ifeq ($(CLANG),yes)
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
 DIRECTORY := $(DIRECTORY)-clang
-CC  := /usr/bin/gcc
-CXX := /usr/bin/g++
-FC  := false
+_CC  := /usr/bin/gcc
+_CXX := /usr/bin/g++
+_FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
-CC  := gcc-4.9 -mtune=generic
-CXX := g++-4.9 -mtune=generic
-FC  := 
-# FC  := gfortran-5
+_CC  := gcc-4.9 -mtune=generic
+_CXX := g++-4.9 -mtune=generic
+_FC  := 
+# _FC  := gfortran-5
 # BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := mac64
