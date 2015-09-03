@@ -27,7 +27,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     degree = max(degree, abs(*(t->monom)));
   }
   if (prec == -1) {
-    prec = (K->get_precision() == 0 : 53 ? K->precision());
+    prec = (K->get_precision() == 0 ? 53 : K->precision());
   }
 
   /* Start PARI computations. */
