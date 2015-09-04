@@ -6,14 +6,12 @@
 
 #include "relem.hpp"
 #include "polyring.hpp"
-#include "poly.hpp"
-#include "aring-glue.hpp"
-#include "aring-RR.hpp"
-#include "aring-RRR.hpp"
 #include "aring-CC.hpp"
 #include "aring-CCC.hpp"
 
 typedef M2::ARingCC::complex complex;
+
+typedef M2::ARingCCC::mpfc_struct mpc_t[1];
 typedef M2::ARingCCC::mpfc_ptr mpc_ptr;
 
 extern "C" GEN mpz_get_GEN (const mpz_ptr f);
