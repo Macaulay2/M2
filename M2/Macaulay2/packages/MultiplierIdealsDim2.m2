@@ -302,8 +302,9 @@ Tucker = {SmallestJN => 0,MaxIterations => 10000,BiggestJN => 2} >> o -> (F,Inte
     while not NextDivisor do(
       j = j + 1;
       CandidateJN := (RelCanDivisor_(0,k) + j) / F_(0,k);
-      if (CandidateJN <= o.BiggestJN) and (CandidateJN > o.SmallestJN) then(
-        Candidates#(j - 1) = CandidateJN;
+      if (CandidateJN <= o.SmallestJN) then(
+      ) else if (CandidateJN <= o.BiggestJN) and (CandidateJN > o.SmallestJN) then(
+        Candidates#(#Candidates) = CandidateJN;
         if k >= NumExceptionalDiv then(
             Chain := mutableMatrix(ZZ,1,NumDiv);
             Chain_(0,k) = 1;
@@ -365,7 +366,7 @@ Tucker = {SmallestJN => 0,MaxIterations => 10000,BiggestJN => 2} >> o -> (F,Inte
       if AdmissibleChains#jj#0_(0,i) == 1 then(
          Candidates := new MutableList;
          for j from 0 to #JNOptions - 1 do(
-           SearchedJN := JNOptions#j;
+           SearchedJN := JNOptions#j; 
            for k from 0 to #CandidateJumpingNumbers#i - 1 when SearchedJN >= CandidateJumpingNumbers#i#k do(
              if SearchedJN == CandidateJumpingNumbers#i#k then(
                Candidates#(#Candidates) = SearchedJN;
