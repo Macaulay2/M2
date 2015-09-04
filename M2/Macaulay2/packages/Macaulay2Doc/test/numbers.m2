@@ -731,7 +731,6 @@ assert ( infinity - -infinity == infinity )
 assert ( infinity * infinity == infinity )
 assert ( infinity * - infinity == - infinity )
 assert ( infinity / infinity === indeterminate )
-assert ( infinity // infinity === indeterminate )
 
 nan = 1./0. - 1./0.
 assert ( infinity + 3 == infinity )
