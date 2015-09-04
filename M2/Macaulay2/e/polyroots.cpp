@@ -33,17 +33,24 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     prec = (K->get_precision() == 0 ? 53 : K->get_precision());
   }
 
+  engine_RawRingElementArrayOrNull result =
+      getmemarraytype(engine_RawRingElementArray, degree);
+  result->len = degree;
+
   /* Start PARI computations. */
-  const pari_sp av = avma;
+  pari_CATCH(e_STACK) {
+    allocatemem(0);
+  } pari_RETRY {
+    const pari_sp av = avma;
 
-  GEN q = cgetg(2 + degree + 1, t_POL);
-  setsigne(q, 1);
-  setvarn(q, 0);
-  for (int i = 0; i < degree + 1; ++i) {
-    gel(q, 2 + i) = gen_0;
-  }
+    GEN q = cgetg(2 + degree + 1, t_POL);
+    setsigne(q, 1);
+    setvarn(q, 0);
+    for (int i = 0; i < degree + 1; ++i) {
+      gel(q, 2 + i) = gen_0;
+    }
 
-  switch (K->ringID()) {
+    switch (K->ringID()) {
     case M2::ring_ZZ:
     ZZ_GMP:
       for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
@@ -66,10 +73,8 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     case M2::ring_CC:
       for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
         GEN z = cgetg(3, t_COMPLEX);
-        gel(z, 1) = dbltor(
-            reinterpret_cast<complex *>(t->coeff.poly_val)->re);
-        gel(z, 2) = dbltor(
-            reinterpret_cast<complex *>(t->coeff.poly_val)->im);
+        gel(z, 1) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->re);
+        gel(z, 2) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->im);
         gel(q, 2 + abs(*(t->monom))) = z;
       }
       break;
@@ -92,46 +97,44 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     default:
       ERROR("expected coefficient ring of the form ZZ, QQ, RR or CC");
       return NULL;
-  }
-
-  GEN roots = cleanroots(q, nbits2prec(prec));
-
-  engine_RawRingElementArrayOrNull result =
-      getmemarraytype(engine_RawRingElementArray, degree);
-  result->len = degree;
-  ring_elem m2_root;
-
-  if (prec <= 53) {
-    const RingCC *CC =
-        dynamic_cast<const RingCC *>(IM2_Ring_CCC(prec));
-
-    for (int i = 0; i < degree; ++i) {
-      const pari_sp av2 = avma;
-
-      GEN pari_root = gel(roots, 1 + i);
-      const complex root = {rtodbl(greal(pari_root)), rtodbl(gimag(pari_root))};
-      CC->ring().to_ring_elem(m2_root, root);
-      result->array[i] = RingElement::make_raw(CC, m2_root);
-
-      avma = av2;
     }
-  } else {
-    const RingCCC *CCC =
-        dynamic_cast<const RingCCC *>(IM2_Ring_CCC(prec));
 
-    for (int i = 0; i < degree; ++i) {
-      const pari_sp av2 = avma;
+    GEN roots = cleanroots(q, nbits2prec(prec));
 
-      mpc_t root;
-      pari_mpc_init_set_GEN(root, gel(roots, 1 + i), GMP_RNDN);
-      CCC->ring().to_ring_elem(m2_root, *root);
-      result->array[i] = RingElement::make_raw(CCC, m2_root);
+    ring_elem m2_root;
+    if (prec <= 53) {
+      const RingCC *CC = dynamic_cast<const RingCC *>(IM2_Ring_CCC(prec));
 
-      avma = av2;
+      for (int i = 0; i < degree; ++i) {
+        const pari_sp av2 = avma;
+
+        GEN pari_root = gel(roots, 1 + i);
+        const complex root = {rtodbl(greal(pari_root)),
+                              rtodbl(gimag(pari_root))};
+        CC->ring().to_ring_elem(m2_root, root);
+        result->array[i] = RingElement::make_raw(CC, m2_root);
+
+        avma = av2;
+      }
+    } else {
+      const RingCCC *CCC = dynamic_cast<const RingCCC *>(IM2_Ring_CCC(prec));
+
+      for (int i = 0; i < degree; ++i) {
+        const pari_sp av2 = avma;
+
+        mpc_t root;
+        pari_mpc_init_set_GEN(root, gel(roots, 1 + i), GMP_RNDN);
+        CCC->ring().to_ring_elem(m2_root, *root);
+        result->array[i] = RingElement::make_raw(CCC, m2_root);
+
+        avma = av2;
+      }
     }
-  }
 
-  /* End PARI computations. */
-  avma = av;
+    /* End PARI computations. */
+    avma = av;
+  }
+  pari_ENDCATCH
+
   return result;
 }

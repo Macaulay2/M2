@@ -31,8 +31,8 @@
 #if RETAIN_PARI_STATE
 static void initpari() __attribute__ ((constructor));
 static void closepari() __attribute__ ((destructor));
-#define INIT 
-#define CLOSE 
+#define INIT
+#define CLOSE
 #else
 #define INIT initpari()
 #define CLOSE closepari()
@@ -41,6 +41,14 @@ static void closepari() __attribute__ ((destructor));
 static int self_initialized;
 
 static int pari_disabled;
+
+void m2_pari_err_recover(long err) {
+  if (err != -1) {
+    exit(1);
+  }
+}
+
+void (*cb_pari_err_recover)(long) = &m2_pari_err_recover;
 
 static void initpari() {
   if (pari_disabled) return;
