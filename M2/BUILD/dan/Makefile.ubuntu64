@@ -6,10 +6,6 @@ ifeq ($(SHARED),yes)
 CONFIGOPTIONS += --enable-shared
 endif
 
-CC=gcc
-CXX=g++
-FC=gfortran
-
 default:
 
 DIR_BASE := $(shell lsb_release -s --id)-$(shell lsb_release -s --release)-$(shell uname -m)

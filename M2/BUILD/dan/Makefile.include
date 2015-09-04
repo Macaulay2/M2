@@ -1,13 +1,11 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
-CC ?= gcc
-CXX ?= g++
-FC ?= gfortran
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
-banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+banner:
+	@echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
@@ -66,7 +64,8 @@ find-M2:
 	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
-CONFIGOPTIONS += CC="$(CC)" CXX"=$(CXX)" FC="$(FC)"
+# we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
+CONFIGOPTIONS += CC="$(_CC)" CXX="$(_CXX)" FC="$(_FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
