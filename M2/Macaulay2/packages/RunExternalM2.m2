@@ -755,11 +755,13 @@ defaultKeepStatsCommand := (f,c) -> (
 	-- Prefer the executable.
 	if fileExecutable("/usr/bin/time") then (
 		-- Detect certain implementations to request more details.
+		-- Note: get("!command-with-nonzero-exit-status") produces an error
 
-		if match("GNU",get("!/usr/bin/time --version 2>&1")) then (
+		tf:=temporaryFileName();
+		if run("/usr/bin/time --version > \""|tf|"\" 2>&1")==0 and match("GNU",get(tf)) then (
 			-- GNU Time (version is on stderr)
 			whichTime="/usr/bin/time --verbose";
-		) else if fileExecutable("/usr/bin/sw_vers") and match("OS X",get("!/usr/bin/sw_vers -productName")) then (
+		) else if fileExecutable("/usr/bin/sw_vers") and run("/usr/bin/sw_vers -productName > \""|tf|"\" 2>&1")==0 and match("OS X",get(tf)) then (
 			-- OS X's time
 			whichTime="/usr/bin/time -l";
 		) else (
