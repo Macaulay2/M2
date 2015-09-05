@@ -37,9 +37,23 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
       getmemarraytype(engine_RawRingElementArray, degree);
   result->len = degree;
 
+
   /* Start PARI computations. */
   pari_CATCH(e_STACK) {
-    allocatemem(0);
+#ifndef DEBUG
+    FILE *tmp, *dev_null = fopen("/dev/null", "w");
+    if (dev_null != NULL) {
+      tmp = pari_errfile;
+      pari_errfile = dev_null;
+    }
+#endif
+    allocatemem(0); //x2
+#ifndef DEBUG
+    if (dev_null != NULL) {
+      pari_errfile = tmp;
+      fclose(dev_null);
+    }
+#endif
   } pari_RETRY {
     const pari_sp av = avma;
 
@@ -65,18 +79,34 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
       }
       break;
     case M2::ring_RR:
-      for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
-        gel(q, 2 + abs(*(t->monom))) =
-            dbltor(*reinterpret_cast<double *>(t->coeff.poly_val));
+      pari_CATCH(e_OVERFLOW) {
+        ERROR("coefficient is NaN or Infinity");
+        avma = av;
+        return NULL;
       }
+      pari_TRY {
+        for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
+          gel(q, 2 + abs(*(t->monom))) =
+              dbltor(*reinterpret_cast<double *>(t->coeff.poly_val));
+        }
+      }
+      pari_ENDCATCH
       break;
     case M2::ring_CC:
-      for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
-        GEN z = cgetg(3, t_COMPLEX);
-        gel(z, 1) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->re);
-        gel(z, 2) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->im);
-        gel(q, 2 + abs(*(t->monom))) = z;
+      pari_CATCH(e_OVERFLOW) {
+        ERROR("coefficient is NaN or Infinity");
+        avma = av;
+        return NULL;
       }
+      pari_TRY {
+        for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
+          GEN z = cgetg(3, t_COMPLEX);
+          gel(z, 1) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->re);
+          gel(z, 2) = dbltor(reinterpret_cast<complex *>(t->coeff.poly_val)->im);
+          gel(q, 2 + abs(*(t->monom))) = z;
+        }
+      }
+      pari_ENDCATCH
       break;
     case M2::ring_RRR:
       for (Nterm *t = p->get_value(); t != NULL; t = t->next) {
