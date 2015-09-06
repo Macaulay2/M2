@@ -86,6 +86,8 @@ endif
 pari-c.o: ../../include/M2/config.h ../../config.status
 endif
 
+pari-gnump.o: CFLAGS += -Wno-error
+
 pthread-tmp.c : SCCFLAGS += -noline
 
 ## the problem with this is that it can make "make" think the targets were made:

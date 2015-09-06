@@ -37,7 +37,6 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
       getmemarraytype(engine_RawRingElementArray, degree);
   result->len = degree;
 
-
   /* Start PARI computations. */
   pari_CATCH(e_STACK) {
 #ifndef DEBUG
