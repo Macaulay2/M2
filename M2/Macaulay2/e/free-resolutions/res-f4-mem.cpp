@@ -53,6 +53,6 @@ void ResF4Mem::show()
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
 // indent-tabs-mode: nil
 // End:

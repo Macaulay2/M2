@@ -14,6 +14,6 @@ void ResPolyRing::memUsage(const poly& f, long& nterms, long& bytes_used, long& 
 }
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
 // indent-tabs-mode: nil
 // End:

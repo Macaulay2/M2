@@ -20,9 +20,53 @@
 #include "res-poly-ring.hpp"
 #include "res-schreyer-frame.hpp"
 
+#include "memtailor.h"
+#include "mathic.h"
+memt::BufferPool testBuffer(16);
+
 int M2_gbTrace = 0;
 
 int main(int argc, char** argv)
 {
+  // read ring info: #vars, degrees of vars, characteristic
+  int nvars = 5;
+  #if 0
+  MonomialOrder mo;
+  MonomialInfo M(nvars, mo);
+
+
+  ResGausser G(101);
+  ResPolyRing R(G, M);
+  // TODO: need degrees of variables...
+  // Possibly need different term orders
+  
+  // read Groebner basis
+  //   
+  FreeModule F(R, ncomps, degrees);
+  std::vector<poly> GB;
+  // read in GB somehow, or should the SchreyerResolution provide
+  // a set of routines to read in the GB?
+
+  C.startGB(nelems);
+  C.startGenerator(nterms);
+  C.term(intcoeff, nparts);
+  C.exponent(var,exp);
+  C.endGB();
+  
+  SchreyerResolution C(R, GB);
+  // set Schreyer frame #0
+  // set Schreyer frame #1
+  // compute the rest of the frame
+
+  // compute the maps in the res, possibly parallel.
+  
+  // compute the ranks of the matrices, obtaining minimal betti numbers.
+  // WARNING: need to worry about entire degree 0 complex?
+#endif
   return 0;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
+// indent-tabs-mode: nil
+// End:

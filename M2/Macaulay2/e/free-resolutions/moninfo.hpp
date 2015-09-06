@@ -579,5 +579,6 @@ inline long varpower_length(const_varpower_monomial m) { return ((*(m))*2+1); }
 #endif
 
 // Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
 // indent-tabs-mode: nil
 // End:

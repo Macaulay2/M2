@@ -8,6 +8,6 @@
 #include "src/gtest-all.cc"
 
 // Local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions check"
 // indent-tabs-mode: nil
 // End:

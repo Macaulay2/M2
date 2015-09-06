@@ -12,3 +12,8 @@ TEST(moninfo, create) {
   MonomialInfo M(4, mo);
   M.show();
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions check "
+// indent-tabs-mode: nil
+// End:

@@ -528,8 +528,7 @@ std::vector<int> SchreyerFrame::getBettiFrame() const
   return B.getBetti();
 }
 
-
-// local Variables:
-// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
 // indent-tabs-mode: nil
 // End:

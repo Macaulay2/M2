@@ -171,5 +171,6 @@ void BettiDisplay::betti_display(std::ostream &o, const std::vector<int>& a)
 }
 
 // Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
 // indent-tabs-mode: nil
 // End:

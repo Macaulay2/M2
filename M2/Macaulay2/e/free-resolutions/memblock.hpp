@@ -135,5 +135,6 @@ long MemoryBlock<T,NSLAB>::memoryUsage() const
 #endif
 
 // Local Variables:
-//  compile-command: "make -C $M2BUILDDIR/Macaulay2/e/f4-res-standalone "
-//  End:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
+// indent-tabs-mode: nil
+// End:

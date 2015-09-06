@@ -99,3 +99,8 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   
   return rk;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "
+// indent-tabs-mode: nil
+// End:
