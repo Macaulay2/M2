@@ -676,7 +676,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
 	s := H#"H core"; -- core SLP
 	consts := H#"H consts"; -- constants of SLP
 	H#(H#"H",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix{apply(consts,c->c.Name_K)});
+	    raw matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"H",K), raw (transpose x | matrix{{t}})), numrows H#"H", numcols H#"H")
     )
@@ -688,7 +688,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
 	s := H#"Ht core"; -- core SLP
 	consts := H#"Ht consts"; -- constants of SLP
 	H#(H#"Ht",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix{apply(consts,c->c.Name_K)});
+	    raw matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     matrix(K, rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw (transpose x | matrix{{t}})), numrows H#"Ht", numcols H#"Ht")
     )
@@ -700,7 +700,7 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
 	s := H#"Hx core"; -- core SLP
 	consts := H#"Hx consts"; -- constants of SLP
 	H#(H#"Hx",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix{apply(consts,c->c.Name_K)});
+	    raw matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     matrix(K,rawSLEvaluatorEvaluate(H#(H#"Hx",K), raw (transpose x | matrix{{t}})), numrows H#"Hx", numcols H#"Hx")
     )

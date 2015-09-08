@@ -84,10 +84,14 @@ void SLEvaluator::computeNextNode()
 
 Matrix* SLEvaluator::evaluate(const Matrix *inputs)
 {
-  if (R != inputs->get_ring()) 
+  if (R != inputs->get_ring()) { 
     ERROR("inputs are in a different ring");
-  if (inputs->n_rows() != 1 || inputs->n_cols() != varsPos.size())
+    return nullptr;
+  }
+  if (inputs->n_rows() != 1 || inputs->n_cols() != varsPos.size()) {
     ERROR("1-row matrix expected; or numbers of inputs and vars don't match");
+    return nullptr;
+  }
   for (int i=0; i<varsPos.size(); i++) 
     values[varsPos[i]] = R->copy(inputs->elem(0,i));
   // values[varsPos[i]] = inputs->elem(0,i); // should work
@@ -106,7 +110,9 @@ Matrix* SLEvaluator::evaluate(const Matrix *inputs)
   return mat.to_matrix();
 }
 SLEvaluator::~SLEvaluator() {}
-void SLEvaluator::text_out(buffer& o) const { o << "SLEvaluator!" << newline; }
+void SLEvaluator::text_out(buffer& o) const { 
+  slp->text_out(o);
+}
 
 // SLProgram
 SLProgram::SLProgram() { 
@@ -159,7 +165,12 @@ void SLProgram::setOutputPositions(const M2_arrayint a)
   }
 }
 
-void SLProgram::text_out(buffer& o) const { o << "SLProgram!" << newline; }
+void SLProgram::text_out(buffer& o) const { 
+  o << "SLProgram (" << newline;
+  o << "  inputCounter: " << inputCounter << newline; 
+  o << "  #mNodes: " << mNodes.size() << newline;
+  o << "  )" << newline;  
+}
 
 // Straight Line Program classes
 
