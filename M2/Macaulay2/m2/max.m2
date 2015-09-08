@@ -124,6 +124,42 @@ InfiniteNumber ? Thing := (x,y) -> if x === infinity then symbol > else symbol <
 RR == InfiniteNumber := (x,y) -> isInfinite x and ( x < 0 and y < 0 or x > 0 and y > 0 )
 InfiniteNumber == RR := (x,y) -> y == x
 
+RR ? InfiniteNumber := (x,y) -> (
+  if ( not isANumber(x) ) then
+    symbol incomparable
+  else if isInfinite(x) then (
+    if (x > 0 and y > 0) then
+      symbol ==
+    else if (x < 0 and y < 0) then
+      symbol ==
+    else if (x > 0 and y < 0) then
+      symbol >
+    else
+      symbol <
+  ) else if y > 0 then
+      symbol <
+    else
+      symbol >
+)
+InfiniteNumber ? RR := (x,y) -> (
+  if ( not isANumber(y) ) then ( symbol incomparable )
+  else if isInfinite(y) then (
+    if (x > 0 and y > 0) then
+      symbol ==
+    else if (x < 0 and y < 0) then
+      symbol ==
+    else if (x > 0 and y < 0) then
+      symbol >
+    else
+      symbol <
+  ) else if x > 0 then
+      symbol >
+    else
+      symbol <
+)
+CC ? InfiniteNumber := (x,y) -> if (isANumber(x) and not isFinite(x)) then symbol == else symbol incomparable
+InfiniteNumber ? CC := (x,y) -> if (isANumber(y) and not isFinite(y)) then symbol == else symbol incomparable
+
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
 max VisibleList := x -> (
