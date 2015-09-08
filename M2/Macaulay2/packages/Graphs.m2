@@ -111,6 +111,7 @@ export {
     "edgeConnectivity",
     "edgeCuts",
     "minimalVertexCuts",
+    "minimalDegree",
     "vertexConnectivity",
     "vertexCuts",
     --
@@ -635,6 +636,11 @@ minimalVertexCuts Graph := List => G -> (
         );
     VC
     )
+
+minimalDegree = method()
+minimalDegree (Graph) := ZZ => G -> (
+   return min for v in vertexSet(G) list degree(G,v);
+);
 
 vertexConnectivity = method()
 --returns n-1 for K_n as suggested by West
@@ -2790,6 +2796,32 @@ doc ///
     SeeAlso
         vertexCuts
         vertexConnectivity
+///
+
+
+--minimalDegree
+doc ///
+    Key
+        minimalDegree
+        (minimalDegree, Graph)
+    Headline
+       computes the minimal degree of a graph 
+    Usage
+        d = minimalDegree G
+    Inputs
+        G:Graph
+    Outputs
+        d:ZZ
+            the minimal degree of a graph
+    Description
+        Text
+           This computes the minimal vertex degree of an undirected
+           graph G 
+        Example
+            G = graph({{1,2},{2,3},{3,1},{3,4},{4,5},{5,3}},EntryMode=>"edges");
+            minimalDegree G
+    SeeAlso
+        degree
 ///
 
 --vertexConnectivity
