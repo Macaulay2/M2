@@ -23,7 +23,9 @@ newPackage select((
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
-    "Gate", "GateMatrix", "InputGate", 
+    "Gate", 
+    "GateMatrix", 
+    "InputGate", 
     "oneGate", "minusOneGate", "zeroGate",
     "SumGate", "ProductGate", "DetGate", "DivideGate",
     "inputGate", "sumGate", "productGate", "detGate", 

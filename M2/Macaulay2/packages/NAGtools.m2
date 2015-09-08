@@ -1,6 +1,36 @@
--- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
+-- -*- coding: utf-8 -*-
+-- licensed under GPL v2 or any later version
 
-needsPackage "SLPexpressions"
+-- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
+newPackage select((
+     "NAGtools",
+     Version => "1.8",
+     Date => "August 2015",
+     Headline => "Tools of NumericalAlgebraicGeometry",
+     HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
+     AuxiliaryFiles => false,
+     Authors => {
+	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
+	  },
+     Configuration =>  {},	
+     PackageExports => {"NumericalAlgebraicGeometry", "SLPexpressions"},
+     PackageImports => {},
+     -- DebuggingMode should be true while developing a package, 
+     --   but false after it is done
+     DebuggingMode => true
+     --DebuggingMode => false
+     ), x -> x =!= null)
+
+-- Any symbols or functions that the user is to have access to
+-- must be placed in one of the following two lists
+export {
+    "degreeViaMonodromy",
+    "gateHomotopy4preimage",
+    "RandomPointFunction",
+    "StoppingCriterion"    
+    }
+exportMutable {
+    }
 
 -- Monodromy-based algorithm
 -- in: 
@@ -10,23 +40,29 @@ needsPackage "SLPexpressions"
 --     NextPoint, a function that returns a random column vector of m parameters p1 suitable for PH  
 degreeViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>9)})
 degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) -> (
-    if #s0 < 1 then error "at least one solution expected";   
+    if #s0 < 1 then error "at least one solution expected";  
+    nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
+	K := ring p0;
+	()->random(K^(numrows p0), K^(numcols p0))
+	); 
     sols0 := s0;
     nSols := #sols0; 
     same := 0;
     dir := temporaryFileName(); -- build a directory to store temporary data 
     makeDirectory dir;
     << "--backup directory created: "<< toString dir << endl;  
-    while stop() do try (
+    while not o.StoppingCriterion(same,sols0) do --try 
+    (
     	p1 := nextP();
     	p2 := nextP();
-	elapsedTime sols1 = trackHomotopy(specialize(PH,p0||p1),sols0);
+	1/0;
+	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0);
 	sols1 = select(sols1, s->status s === Regular);
 	<< "  H01: " << #sols1 << endl;
-	elapsedTime sols2 = trackHomotopy(specialize(PH,p1||p2),sols1);
+	elapsedTime sols2 := trackHomotopy(specialize(PH,p1||p2),sols1);
 	sols2 = select(sols2, s->status s === Regular);
 	<< "  H12: " << #sols2 << endl;
-    	elapsedTime sols0' = trackHomotopy(specialize(PH,p2||p0),sols2);
+    	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
 	sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
@@ -38,7 +74,8 @@ degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) ->
 	    close ff; 
 	    );  
     	<< "found " << #sols0 << " points in the fiber so far" << endl;
-    	) else print "something went wrong";
+    	) -- else print "something went wrong"
+    ;
     nSols
     )
 

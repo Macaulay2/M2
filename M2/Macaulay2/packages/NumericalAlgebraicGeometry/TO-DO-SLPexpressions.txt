@@ -1,3 +1,6 @@
+* bug in SLProgram constructor? 
+NumericalAlgebraicGeometry/SYSTEMS/monodromy/degree-computation.m2
+
 * change Matrix to MutableMatrix in interface functions:
 
   rawSLEvaluator -> SLEvaluator constructor
