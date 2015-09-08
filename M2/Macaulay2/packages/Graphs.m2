@@ -81,6 +81,7 @@ export {
     "barycenter",
     "complementGraph",
     "digraphTranspose",
+    "lineGraph",
     "underlyingGraph",
     --
     -- Enumerators
@@ -111,7 +112,6 @@ export {
     "edgeConnectivity",
     "edgeCuts",
     "minimalVertexCuts",
-    "minimalDegree",
     "vertexConnectivity",
     "vertexCuts",
     --
@@ -154,6 +154,7 @@ export {
     "independenceNumber",
     "leaves",
     "lowestCommonAncestors",
+    "minimalDegree",
     "neighbors",
     "nondescendants",
     "nondescendents",
@@ -438,6 +439,29 @@ complementGraph Graph := Graph => G -> graph(vertexSet G, subsets(vertexSet G, 2
 digraphTranspose = method()
 digraphTranspose Digraph := Digraph => D -> digraph(vertexSet D, reverse \ edges D, EntryMode => "edges")
 
+
+lineGraph = method()
+lineGraph Graph := Graph => (G) -> (
+   E:=edges(G);
+   if #E==0 then return graph({});
+   EE:={};
+   for e in E do (
+      for f in E do (
+         if not e===f then (
+            if #(e*f)>0 then (
+               EE=EE|{{e,f}};
+               ); 
+            );   
+         ); 
+      );
+   --non-singeltons
+   nS:=unique flatten EE;
+   --singeltons
+   S:=for e in E list if member(e,nS)===false then e else continue;
+   return graph(EE,Singletons=>S);
+)
+
+
 underlyingGraph = method()
 underlyingGraph Digraph := Graph => D -> graph(vertexSet D, edges D, EntryMode => "edges")
 
@@ -635,12 +659,12 @@ minimalVertexCuts Graph := List => G -> (
         if #VC != 0 then break;
         );
     VC
-    )
+)
 
 minimalDegree = method()
-minimalDegree (Graph) := ZZ => G -> (
+minimalDegree Graph := ZZ => G -> (
    return min for v in vertexSet(G) list degree(G,v);
-);
+)
 
 vertexConnectivity = method()
 --returns n-1 for K_n as suggested by West
@@ -651,7 +675,7 @@ if cliqueNumber G == #(vertexSet G) then (
     ) else (
     return #(first minimalVertexCuts G);
     );
-);
+)
 
 vertexCuts = method()
 --West does not specify, but Wikipedia does, that K_n has no vertex cuts.  
@@ -2199,6 +2223,32 @@ doc ///
             D'' = digraphTranspose D'
 ///
 
+--lineGraph
+doc ///
+    Key
+        lineGraph
+        (lineGraph, Graph)
+    Headline
+        Returns the line graph of an undirected graph
+    Usage
+        L = lineGraph G
+    Inputs
+        G:Graph
+    Outputs
+        L:Graph
+            The line graph of G
+    Description
+        Text
+            The line graph L of an undirected graph G is the graph whose
+            vertex set is the edge set of the original graph G and in
+            which two vertices are adjacent if their corresponding
+            edges share a common endpoint in G.
+        Example
+            G = graph({{1,2},{2,3},{3,4},{4,1},{1,3},{4,2}},EntryMode=>"edges")
+            lineGraph G
+    SeeAlso
+///
+
 --underlyingGraph
 doc ///
     Key
@@ -2816,9 +2866,9 @@ doc ///
     Description
         Text
            This computes the minimal vertex degree of an undirected
-           graph G 
+           graph.
         Example
-            G = graph({{1,2},{2,3},{3,1},{3,4},{4,5},{5,3}},EntryMode=>"edges");
+            G = graph({{1,2}});
             minimalDegree G
     SeeAlso
         degree
