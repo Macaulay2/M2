@@ -126,8 +126,8 @@ public:
 
   virtual ~MonomialInfo();
 
-  int n_vars() const { return nvars; }
-
+  int numVariables() const { return nvars; }
+  
   int max_monomial_size() const { return nslots; }
 
   int monomial_size(const_packed_monomial m) const { return nslots; }

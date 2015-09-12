@@ -8,6 +8,7 @@
 
 std::istream& ResPolyIO::readPolynomial(std::istream& i, const ResPolyRing& R, poly& result)
 {
+  return i;
 }
 
 std::ostream& ResPolyIO::writePolynomial(std::ostream& o, const ResPolyRing& R, const poly& f)
@@ -15,25 +16,23 @@ std::ostream& ResPolyIO::writePolynomial(std::ostream& o, const ResPolyRing& R, 
   o << f.len << " ";
   for (int i=0; i<f.len; i++)
     o << f.coeffs[i];
+  return o;
 }
 
 std::ostream& ResPolyIO::writeMonomial(std::ostream& o, const ResPolyRing& R, const packed_monomial m)
 {
   int nv = 0;
-  for (int i=0; i<nvars; i++)
+  for (int i=0; i<R.monoid().numVariables(); i++)
     if (m[i] > 0) nv++;
   o << nv << " ";
-  for (int i=0; i<nvars; i++)
+  for (int i=0; i<R.monoid().numVariables(); i++)
     if (m[i] > 0)
       {
         o << i << " " << m[i] << " ";
       }
+  return o;
 }
 
-std::ostream& ResPolyIO::writeTerm(std::ostream& o, const ResPolyRing& R)
-{
-  o << 
-}
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions "

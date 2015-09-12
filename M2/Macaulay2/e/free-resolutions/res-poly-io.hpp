@@ -25,6 +25,8 @@ public:
   //  e. component >= 0, and represents a basis element of this free module.
   static std::istream& readPolynomial(std::istream& i, const ResPolyRing& R, poly& result);
   static std::ostream& writePolynomial(std::ostream& o, const ResPolyRing& R, const poly& result);
+
+  static std::ostream& writeMonomial(std::ostream& o, const ResPolyRing& R, const packed_monomial m);
 };
 #endif
 
