@@ -1121,39 +1121,39 @@ export -(y:CC) : CC := toCC(-y.re,-y.im);
 
 export (x:CC) * (y:RR) : CC := (
      if isfinite0(x.re) && isfinite0(x.im) && isfinite0(y)
-     then CC(x.re*y, x.im*y)
+     then toCC(x.re*y, x.im*y)
      else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
      else infinityCC(min(precision(x),precision(y))));
 export (y:RR) * (x:CC) : CC := (
      if isfinite0(x.re) && isfinite0(x.im) && isfinite(y)
-     then CC(x.re*y, x.im*y)
+     then toCC(x.re*y, x.im*y)
      else if isnan(x) || isnan(y) then nanCC(min(precision(x),precision(y)))
      else infinityCC(min(precision(x),precision(y))));
 export (y:int) * (x:CC) : CC := (
      if isinf(x) && y != 0
      then infinityCC(precision(x))
-     else CC(x.re*y, x.im*y));
+     else toCC(x.re*y, x.im*y));
 export (x:CC) * (y:ZZ) : CC := (
      if isinf(x) && !isZero(y)
      then infinityCC(precision(x))
-     else CC(x.re*y, x.im*y));
+     else toCC(x.re*y, x.im*y));
 export (y:ZZ) * (x:CC) : CC := (
      if isinf(x) && !isZero(y)
      then infinityCC(precision(x))
-     else CC(x.re*y, x.im*y));
+     else toCC(x.re*y, x.im*y));
 export (x:CC) * (y:CC) : CC := (
      if isinf(x) && !isZero(y) && !isnan(y) || isinf(y) && !isZero(x) && !isnan(x)
      then infinityCC(min(precision(x),precision(y)))
-     else CC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
+     else toCC(x.re*y.re-x.im*y.im, x.im*y.re+x.re*y.im));
 export (x:CC) / (y:RR) : CC := (
      if isZero(y) && !isnan(x) && !isZero(x)
      then infinityCC(min(precision(x),precision(y)))
-     else CC(x.re/y, x.im/y));
+     else toCC(x.re/y, x.im/y));
 export (x:CC) / (y:int) : CC := (
      if y == 0 && !isnan(x) && !isZero(x)
      then infinityCC(precision(x))
-     else CC(x.re/y, x.im/y));
-export conj(x:CC):CC := CC(x.re,-x.im);
+     else toCC(x.re/y, x.im/y));
+export conj(x:CC):CC := toCC(x.re,-x.im);
 export norm2(x:CC):RR := x.re*x.re + x.im*x.im;
 
 export (x:CC) << (n:long) : CC := if n == long(0) then x else CC(x.re<<n,x.im<<n);

@@ -909,18 +909,28 @@ assert( toString toCC( -0.1, 8.88888 ) == "-.1+8.9*ii" )
 
 -- Tests of comparisons among real numbers, complex numbers, NaNs, and infinite numbers
 
-assert( 1/0. > 0 )
-assert( (1/0. ? 0) == symbol > )
-assert( (ii/0. ? 0) == symbol incomparable )
+assert( 1/0. > 0. )
+assert( (1/0. ? 0.) == symbol > )
+assert( (ii/0. ? 0.) == symbol incomparable )
 assert( (1/0. ? (1/0. - 1/0.)) == symbol incomparable )
+assert( (1. ? (1/0. - 1/0.)) == symbol incomparable )
+assert( ((1/0. - 1/0.) ? (1/0. - 1/0.)) == symbol incomparable )
+assert( (1/0. ? 1.) == symbol > )
+assert( (1/0. ? 2/0.) == symbol == )
+assert( (1/0. + 1*ii ? 1.) == symbol incomparable )
+assert( (ii/0. ? ii/0. - ii/0.) == symbol incomparable )
+assert( (infinity ? 1/0. - 1/0.) == symbol incomparable )
+assert( (infinity ? ii/0. - ii/0.) == symbol incomparable )
 assert( ii/0. == 1 + ii/0. )
-assert( (1/0. ? 1) == symbol > )
-assert( (1/0. + 1*ii ? 1) == symbol incomparable )
-assert( (1/0. ? 1/0.-1/0.) == symbol incomparable )
-assert( (infinity ? 1/0.-1/0.) == symbol incomparable )
 assert( ii/0. == 1/0. + ii*1 )
-assert( ii/0. == 1 + ii/0. )
+assert( ii/0. == 1/0. + ii/1. )
+assert( ii/0. == -ii/0. )
 assert( ii/0. == 1 - ii/0. )
+assert( ii/0. - ii/0. != 1 + ii/0. )
+assert( not isANumber ((1/0.-1/0.) + 1*ii) )
+assert( not isANumber (1 + (ii/0.-ii/0.) ) )
+assert( not isANumber ((1 + ii/0.) - ii/0. ) )
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test numbers.out"
