@@ -8,8 +8,8 @@ TEST(testingTest, first) {
 }
 
 TEST(moninfo, create) {
-  MonomialOrdering mo;
-  MonomialInfo M(4, mo);
+  MonomialOrdering mo(4);
+  MonomialInfo M(mo);
   M.show();
 }
 

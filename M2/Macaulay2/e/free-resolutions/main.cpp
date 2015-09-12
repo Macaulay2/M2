@@ -16,6 +16,7 @@
 #include "monhashtable.hpp"
 #include "f4-monlookup.hpp"
 #include "res-f4-mem.hpp"
+#include "aring-zzp.hpp"
 #include "res-gausser.hpp"
 #include "res-poly-ring.hpp"
 #include "res-schreyer-frame.hpp"
@@ -26,16 +27,27 @@ memt::BufferPool testBuffer(16);
 
 int M2_gbTrace = 0;
 
+// Format for reading.
 int main(int argc, char** argv)
 {
   // read ring info: #vars, degrees of vars, characteristic
   int nvars = 5;
-  #if 0
-  MonomialOrder mo;
-  MonomialInfo M(nvars, mo);
+  MonomialOrdering mo(nvars);
+  MonomialInfo M(mo);
+  M2::ARingZZp kk(101);
+  ResGausser G(kk);
+  ResPolyRing R(G, M);  
+
+  SchreyerFrame S(R, nvars);
+
+  int v;
+  for (int i=0; i<50; i++)
+    for (int j=0; j<50; j++)
+      kk.add(v,i,j);
+#if 0
 
 
-  ResGausser G(101);
+
   ResPolyRing R(G, M);
   // TODO: need degrees of variables...
   // Possibly need different term orders

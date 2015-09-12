@@ -27,8 +27,8 @@ public:
 
   void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
-  const ResGausser& mResGausser;
-  const MonomialInfo& mMonoid;
+  ResGausser mResGausser;
+  MonomialInfo mMonoid;
 };
 
 class poly_constructor {

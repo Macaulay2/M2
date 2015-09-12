@@ -6,10 +6,9 @@
 #include <cstdio>
 #include <cstdlib>
 
-
-MonomialInfo::MonomialInfo(int nvars0, const MonomialOrdering& mo)
+MonomialInfo::MonomialInfo(const MonomialOrdering mo)
 {
-  nvars = nvars0;
+  nvars = mo.numVariables();
   hashfcn = new monomial_word[nvars];
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();

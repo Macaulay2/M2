@@ -68,10 +68,17 @@ class MonomialOrdering
 {
 public:
   MonomialOrdering() {}
+  MonomialOrdering(unsigned int nvars) : mNumVariables(nvars) { for (int i=0; i<nvars; i++) mWeights.push_back(1); }
+  MonomialOrdering(unsigned int nvars, std::vector<int>& weights) : mNumVariables(nvars) {
+    mWeights = weights;
+  }
+  MonomialOrdering& operator=(const MonomialOrdering& mo) { *this = mo; return *this; }
   bool isLex() const { return false; }
   bool isGRevLex() const { return true; }
+  unsigned int numVariables() const { return mNumVariables; }
   const std::vector<int>& weightVectors() const { return mWeights; }
 private:
+  unsigned int mNumVariables;
   std::vector<int> mWeights;
 };
 
@@ -115,7 +122,7 @@ public:
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  MonomialInfo(int nvars, const MonomialOrdering& mo);
+  MonomialInfo(MonomialOrdering mo);
 
   virtual ~MonomialInfo();
 

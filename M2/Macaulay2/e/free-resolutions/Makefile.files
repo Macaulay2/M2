@@ -1,5 +1,6 @@
 TARGET := main
 TARGET_CCFILES := \
+    aring-zzp \
     betti \
     moninfo \
     f4-monlookup \
@@ -7,6 +8,7 @@ TARGET_CCFILES := \
     monhashtable \
     res-gausser \
     res-poly-ring \
+    res-poly-io \
     res-f4 \
     res-schreyer-frame \
     rank \

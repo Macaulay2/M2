@@ -4,7 +4,7 @@
 #include "res-gausser.hpp"
 #include "res-f4-mem.hpp"
 
-ResGausser::ResGausser(const CoefficientRingZZp *K)
+ResGausser::ResGausser(const M2::ARingZZp& K)
   : typ(ZZp), Kp(K), n_dense_row_cancel(0), n_subtract_multiple(0)
 {
 }
@@ -28,14 +28,14 @@ void ResGausser::dense_row_allocate(dense_row &r, ComponentIndex nelems) const
   r.coeffs = elems;
   r.len = nelems;
   for (ComponentIndex i=0; i<nelems; i++)
-    Kp->set_zero(elems[i]);
+    Kp.set_zero(elems[i]);
 }
 
 void ResGausser::dense_row_clear(dense_row &r, ComponentIndex first, ComponentIndex last) const
 {
   int* elems = r.coeffs;
   for (ComponentIndex i=first; i<=last; i++)
-    Kp->set_zero(elems[i]);
+    Kp.set_zero(elems[i]);
 }
 
 void ResGausser::dense_row_deallocate(dense_row &r) const
@@ -61,7 +61,7 @@ ComponentIndex ResGausser::dense_row_next_nonzero(dense_row &r, ComponentIndex f
   int* elems = r.coeffs;
   elems += first;
   for (ComponentIndex i=first; i<=last; i++)
-    if (!Kp->is_zero(*elems++))
+    if (!Kp.is_zero(*elems++))
       return i;
   return last+1;
 }
@@ -81,7 +81,7 @@ void ResGausser::dense_row_cancel_sparse(dense_row &r,
   n_subtract_multiple += len;
   int a = elems[*comps];
   for (ComponentIndex i=len; i>0; i--)
-    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
+    Kp.subtract_multiple(elems[*comps++], a, *sparseelems++);
 }
 
 // Local Variables:
