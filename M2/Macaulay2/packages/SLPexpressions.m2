@@ -528,6 +528,11 @@ GateMatrix * GateMatrix := (A,B) -> ( -- two tables
 Matrix * GateMatrix := (A,B) -> gateMatrix A * B
 GateMatrix * Matrix := (A,B) -> A * gateMatrix B
 
+RingElement * GateMatrix := (a,B) -> matrix applyTable(entries B, x->a*x) 
+GateMatrix * RingElement := (A,b) -> matrix applyTable(entries A, x->x*b) 
+Gate * Matrix := (a,B) -> matrix applyTable(entries B, x->a*x) 
+Matrix * Gate := (A,b) -> matrix applyTable(entries A, x->x*b) 
+
 GateMatrix + GateMatrix := (A,B) -> gateMatrix (entries A + entries B)
 Matrix + GateMatrix := (A,B) -> gateMatrix A + B
 GateMatrix + Matrix := (A,B) -> A + gateMatrix B
@@ -628,9 +633,10 @@ printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 GateHomotopySystem := new Type of HomotopySystem    
 GateParameterHomotopySystem := new Type of ParameterHomotopySystem
 
-gateHomotopySystem = method(Options=>{Parameters=>null,Software=>M2engine})
+gateHomotopySystem = method(Options=>{Parameters=>null,Software=>null})
 gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
+    soft := if o.Software=!=null then o.Software else DEFAULT.Software;
     GH := new GateHomotopySystem;
     GH#"X" = X;
     if para then GH#"X" = o.Parameters | GH#"X";
@@ -638,9 +644,10 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     GH#"H" = H;
     GH#"Hx" = diff(X,H);
     GH#"Ht" = diff(T,H);
-    if (GH.Software = o.Software) === M2 then (
+    GH.Software = soft;
+    if soft === M2 then (
 	)
-    else if (GH.Software = o.Software) === M2engine then (
+    else if soft === M2engine then (
 	varMat := X | matrix{{T}};
 	if para then varMat = o.Parameters | varMat;
     	GH#"H core" = makeSLProgram (varMat,H);

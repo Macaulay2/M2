@@ -24,7 +24,7 @@ newPackage select((
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
-    "degreeViaMonodromy",
+    "preimageViaMonodromy",
     "gateHomotopy4preimage",
     "RandomPointFunction",
     "StoppingCriterion"    
@@ -38,12 +38,13 @@ exportMutable {
 --     p0, column vector, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     NextPoint, a function that returns a random column vector of m parameters p1 suitable for PH  
-degreeViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>9)})
-degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) -> (
+preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
+    p0 := transpose matrix point0; 
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
 	K := ring p0;
-	()->random(K^(numrows p0), K^(numcols p0))
+	()->point {apply(numrows p0, i->exp(2*pi*ii*random RR))}
 	); 
     sols0 := s0;
     nSols := #sols0; 
@@ -53,9 +54,8 @@ degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) ->
     << "--backup directory created: "<< toString dir << endl;  
     while not o.StoppingCriterion(same,sols0) do --try 
     (
-    	p1 := nextP();
-    	p2 := nextP();
-	1/0;
+    	p1 := transpose matrix nextP();
+    	p2 := transpose matrix nextP();
 	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0);
 	sols1 = select(sols1, s->status s === Regular);
 	<< "  H01: " << #sols1 << endl;
@@ -76,10 +76,10 @@ degreeViaMonodromy (ParameterHomotopySystem, Matrix, List) := o -> (PH,p0,s0) ->
     	<< "found " << #sols0 << " points in the fiber so far" << endl;
     	) -- else print "something went wrong"
     ;
-    nSols
+    sols0
     )
 
--- Parameter homotopy for getting a point on the fiber of a ***generically finite-to-one onto*** map 
+-- Parameter homotopy for tracking a point on the fiber of a covering (generically finite-to-one onto) map 
 -- in: 
 --     F, a map (column vector)
 --     V, variables (list of InputGates)
@@ -96,5 +96,20 @@ gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
     B := matrix{apply(W, v->inputGate symbol B_v)};
     t := inputGate symbol t;
     H := F-((1-t)*transpose A+t*transpose B);
-    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)
+    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
     )
+
+TEST ///
+X = inputGate x
+F = matrix{{X^2}} 
+PH = gateHomotopy4preimage(F,{X})
+K = CC_53
+setDefault(Software=>M2)
+SPH = specialize(PH,matrix{{1_K},{2}})
+p =matrix{{1_K}}
+assert areEqual(norm evaluateH(SPH,p,0), 0)
+assert areEqual(norm evaluateHt(SPH,p,0), 1)
+assert areEqual(norm evaluateHx(SPH,p,0), 2)
+peek PH.GateHomotopySystem    
+assert (#preimageViaMonodromy(PH,p,{point p}) == 2)
+///
