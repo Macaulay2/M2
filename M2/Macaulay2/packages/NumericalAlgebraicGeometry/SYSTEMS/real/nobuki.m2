@@ -41,7 +41,7 @@ for i from 1 to m do z_i = inputGate symbol z_i
 f = 1+4*z_1+4*z_2+z_1^2+4*z_1*z_2+z_2^2
 zs = apply(m, i->z_(i+1))
 F = transpose matrix{apply(zs, z->z*diff(z,f)/f)}
-PHS = gateHomotopy4preimage(F,zs)
+PHS = gateHomotopy4preimage(F,zs,zs)
 x0 = transpose matrix{{1_CC,1}}
 y0 = value(F,valueHashTable(zs,flatten entries x0))
 y1 = transpose matrix{{0_CC,1.9}}
@@ -60,7 +60,7 @@ for i from 1 to m do z_i = inputGate symbol z_i
 zs = apply(m,i->z_(i+1)) 
 f = makeF (-m, toList(m:-m), 1, zs);
 F = transpose matrix{apply(zs, z->z*diff(z,f)/f)};
-PHS = gateHomotopy4preimage(F,zs)
+PHS = gateHomotopy4preimage(F,zs,zs)
 x0 = transpose matrix{toList(m:1_K)}
 y0 = value(F,hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
 while true do (

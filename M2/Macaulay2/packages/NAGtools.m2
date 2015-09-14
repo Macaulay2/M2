@@ -85,8 +85,8 @@ preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s
 --     V, variables (list of InputGates)
 --     W (optional; W=V if omitted), variables names (list of anything) for coordinates in the target space 
 -- out: 
---     HomotopySystem that has A_v and B_v as parameters, 
---     	       	      where v in V are coordinates of the target space 
+--     HomotopySystem that has A_v and B_w as parameters, 
+--     	       	      where v in V are coordinates of the source space 
 gateHomotopy4preimage = method()
 gateHomotopy4preimage(GateMatrix,List) := (F,V) -> gateHomotopy4preimage(F,V,V)
 gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
@@ -113,3 +113,11 @@ assert areEqual(norm evaluateHx(SPH,p,0), 2)
 peek PH.GateHomotopySystem    
 assert (#preimageViaMonodromy(PH,p,{point p}) == 2)
 ///
+parametricSegmentHomotopy = method()
+parametricSegmentHomotopy(GateMatrix,List,List) := (F,V,W) -> (
+    A := matrix{apply(W, v->inputGate symbol A_v)};
+    B := matrix{apply(W, v->inputGate symbol B_v)};
+    t := inputGate symbol t;
+    H := sub(F, transpose matrix{W}, ((1-t)*transpose A+t*transpose B));
+    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)
+    )

@@ -37,8 +37,7 @@ export {
 exportMutable {
     }
 debug NumericalAlgebraicGeometry
-debug Core
-
+debug Core 
 {* Expressions in M2 
    *** should have this as a Gate 
    ??? maybe?
@@ -276,7 +275,11 @@ sub (Gate, List) := (g,L) -> (
     for ab in L do g' = sub(g',ab);
     g'
     )
-
+sub (Gate, GateMatrix, GateMatrix) := (g,A,B) -> (
+    if numcols A != numcols B or numrows A != numrows B 
+    then error "matrices are of different shape";
+    sub(g, apply(flatten entries A, flatten entries B, (a,b)->a=>b))
+    )
 isConstant InputGate := a -> (instance(a.Name,Number) or instance(a.Name, RingElement))
 compress Gate := g -> g
 compress SumGate := g -> (
@@ -546,8 +549,10 @@ det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a 
 compress GateMatrix := M -> gateMatrix applyTable(M,compress)
 
 value(GateMatrix, HashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
+evaluate(GateMatrix, List, List) := (M,x,x0) -> value(M,hashTable(apply(x,x0,(a,b)->a=>b)|{cache=>new CacheTable})) 
 
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
+sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
 
 support GateMatrix := memoize (M -> flatten entries M/support//flatten//unique)
 

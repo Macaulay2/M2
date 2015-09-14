@@ -8,7 +8,7 @@ f = sum apply(subsets(4,3), a->product apply(a,i->z_(i+1)))
 zs = apply(m, i->z_(i+1))
 -- F = transpose matrix{apply(zs, z->z*diff(z,f)/f)}
 F = transpose matrix{apply(zs, z->diff(z,f))}
-PHS = gateHomotopy4preimage(F,zs)
+PHS = gateHomotopy4preimage(F,zs,zs)
 x0 = transpose matrix{toList(m:1_CC)}
 y0 = value(F,hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
 dF = value(diff(matrix{zs},F),hashTable(apply(zs,flatten entries x0,(i,j)->(i=>j))|{cache=>new CacheTable}))
