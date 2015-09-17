@@ -712,8 +712,8 @@ gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
   return result;
 }
 
-SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const Matrix *consts) {
-  return new SLEvaluator(SLP,constsPos,varsPos,consts);
+SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts) {
+  return consts->createSLEvaluator(SLP,constsPos,varsPos);
 }
 
 const Matrix /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const Matrix *inputs) {

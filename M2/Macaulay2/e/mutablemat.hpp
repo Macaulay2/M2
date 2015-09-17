@@ -14,6 +14,8 @@ namespace M2 {
   class ARingCCC;
 };
 
+
+template<typename RT> class SLEvaluatorConcrete;
 template<typename RT> class DMat;
 template<typename RT> class SMat;
 template<typename MT> bool isDense(const MT& mat);
@@ -749,7 +751,16 @@ public:
   // Special routines for approximate fields
   virtual void clean(gmp_RR epsilon);  // modifies 'this'
   virtual gmp_RRorNull norm() const;
+
+  virtual SLEvaluator* createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos); // this = const matrix
 };
+
+template <typename Mat>
+SLEvaluator* MutableMat<Mat>::createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos)  
+{
+  // RT = CoeffRing
+  return new SLEvaluatorConcrete<typename Mat::CoeffRing>(P, constsPos, varsPos, this->getMat());
+}
 
 template <typename T>
 size_t MutableMat<T>::rank() const 

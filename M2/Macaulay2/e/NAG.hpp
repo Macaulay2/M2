@@ -549,6 +549,21 @@ public:
   void text_out(buffer& o) const;
 };
 
+template<typename RT>
+class SLEvaluatorConcrete : public SLEvaluator
+{
+public:
+  SLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
+	      const DMat<RT>& consts);
+  // SLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMat<SMat<RT>> *consts);
+  const RT& ring() const { return mRing; }
+  bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
+  bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
+private:
+  const RT& mRing;
+};
+
+
 template <typename R> 
 void evaluateSLP(const SLProgram& slp,
                  std::vector<typename R::ElementType>& values); 

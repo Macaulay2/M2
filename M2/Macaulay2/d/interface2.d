@@ -127,7 +127,7 @@ export rawSLEvaluator(e:Expr):Expr := (
      else when s.0 is slp:RawSLProgramCell do (
      	  if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else
      	  if !isSequenceOfSmallIntegers(s.2) then WrongArg(2,"a sequence of small integers") else
-	  when s.3 is M:RawMatrixCell do (
+	  when s.3 is M:RawMutableMatrixCell do (
 	       toExpr(Ccode(RawSLEvaluatorOrNull,
 		    	 "rawSLEvaluator(",
 		    	 slp.p, ",",
