@@ -409,28 +409,28 @@ document {
 
 document {
   Key => {(roots, RingElement), [roots, Precision]},
-  Headline => "compute the roots of an univariate polynomial",
-  Usage => "factor x",
+  Headline => "compute the roots of a polynomial",
+  Usage => "roots x",
   Inputs => {"x" => "a univariate polynomial"},
   Outputs => {List => {"the roots of ", TT "x"}},
   PARA{
     "The result is a ", TO "List", " each of whose elements is a ", TO "CC", ". The default ",
-    TO "precision", " is 53 bits for polynomials over ZZ or QQ, and the same as the coefficient ring for RR or CC.",
+    TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR", " or ", TO "CC", ".",
   },
   EXAMPLE {
     "RR_100[x]",
     "p = x^13 + 5*x^9 + 7*x^4 + x +1",
     "roots p",
-    "print o3#0",
+    "o3#0",
   },
   EXAMPLE {
     "ZZ[x]",
     "p = x^13 + 5*x^9 + 7*x^4 + x +1",
     "roots(p^2, Precision=>150)",
-    "print o3#0",
+    "o7#0",
   },
   PARA {
-    "The roots are found using ", TO "pari", ".",
+    "The roots are computed using ", TO "pari", ".",
   }
 }
 
