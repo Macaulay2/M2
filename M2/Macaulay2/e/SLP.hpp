@@ -1,12 +1,15 @@
-// Copyright 2005-2012  Michael E. Stillman
+// Copyright 2015 Anton Leykin and Mike Stillman
 
-#ifndef _mutable_mat_hpp_
-#define _mutable_mat_hpp_
+// Anton Leykin's code in this file is in the public domain.
+
+#ifndef _slp_hpp_
+#define _slp_hpp_
 
 #include "mutablemat-defs.hpp"
 #include "SLP-defs.hpp"
-#include "mutablemat-imp.hpp"
 #include "SLP-imp.hpp"
+#include "mutablemat-imp.hpp"
+
 #endif
 
 // Local Variables:
