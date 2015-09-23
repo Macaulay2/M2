@@ -180,7 +180,7 @@ else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
 M2_LIBDEPS += ../d/libM2inits2.a				\
-	@abs_top_builddir@/submodules/memtailor/libmemtailor.a	\
+	@abs_top_builddir@/submodules/memtailor/.libs/libmemtailor.a	\
 	@abs_top_builddir@/submodules/mathic/libmathic.a	\
 	@abs_top_builddir@/submodules/mathicgb/.libs/libmathicgb.a
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)

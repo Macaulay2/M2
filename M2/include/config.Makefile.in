@@ -74,13 +74,13 @@ endif
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/memtailor/.libs	\
 	-L@abs_top_builddir@/submodules/mathic		\
 	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/memtailor/.libs	\
 	-L@abs_top_builddir@/submodules/mathic		\
 	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
 	$(LDFLAGS_FOR_BUILD)
