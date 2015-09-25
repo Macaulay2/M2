@@ -12,7 +12,8 @@
 // SLP
 class SLProgram 
 {
-  friend class SLEvaluator;
+  //  friend class SLEvaluator;
+public:
   enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide};
   typedef int GATE_SIZE;
   typedef int GATE_POSITION; // gate position is ABSOLUTE
@@ -45,35 +46,37 @@ public:
 };
 
 class SLEvaluator {
+public:
+  virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
+  void text_out(buffer& o) const;
+protected:
+  int ap(int rp) { return rp+slp->inputCounter; } // absolute position
   SLProgram* slp;
   std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of consts in mValues (slp.inputCounter + rel position) 
   std::vector<SLProgram::GATE_POSITION> varsPos; // the rest of inputs with neg rel position
   std::vector<SLProgram::GATE_TYPE>::iterator nIt; // slp nodes
   std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt; 
   std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
-  int ap(int rp) { return rp+slp->inputCounter; } // absolute position
-public:
-  virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
-  void text_out(buffer& o) const;
 };
 
 template<typename RT>
 class SLEvaluatorConcrete : public SLEvaluator
 {
+public:
+  SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
+		      const MutableMat< DMat<RT> >* consts /*const DMat<RT>& DMat_consts */);
+  SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
+		      const MutableMat< SMat<RT> >* consts /*const SMat<RT>& consts*/);
+  const RT& ring() const { return mRing; }
+  bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
+  // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
+private:
+  void computeNextNode();
   const Ring* R;
   std::vector<ring_elem> values; /* should be a vector of values 
                               starting with inputCounter many vars and consts and 
                               continuing with the values of other GATEs */  
   std::vector<ring_elem>::iterator vIt; // values
-  void computeNextNode();
-public:
-  SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
-	      const DMat<RT>& consts);
-  SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const SMat<RT>& consts);
-  const RT& ring() const { return mRing; }
-  bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
-  bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
-private:
   const RT& mRing;
 };
 

@@ -8,21 +8,22 @@
 // SLEvaluator
 
 template<typename RT>
-SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, const DMat<RT>& DMat_consts)  
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, 
+					     const MutableMat< DMat<RT> >* consts /* DMat<RT>& DMat_consts */)
+  : mRing(consts->getMat().ring())    
 {
-  Matrix* consts =  "how to make Matrix from DMat<RT>";
   slp = SLP;
   //  std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
   for(int i=0; i<cPos->len; i++) 
     constsPos.push_back(slp->inputCounter+cPos->array[i]);
   for(int i=0; i<vPos->len; i++) 
     varsPos.push_back(slp->inputCounter+vPos->array[i]);
-  if (consts.n_rows() != 1 || consts.n_cols() != constsPos.size())
+  if (consts->n_rows() != 1 || consts->n_cols() != constsPos.size())
     ERROR("1-row matrix expected; or numbers of constants don't match");
-  R = consts.get_ring();
+  R = consts->get_ring();
   values.resize(slp->inputCounter+slp->mNodes.size());
   for (int i=0; i<constsPos.size(); i++) 
-    values[constsPos[i]] = R->copy(consts.elem(0,i));
+    consts->get_entry(0,i,values[constsPos[i]]);
 }
 
 
@@ -77,7 +78,7 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
     return nullptr;
   }
   for (int i=0; i<varsPos.size(); i++) 
-    values[varsPos[i]] = R->copy(inputs->elem(0,i));
+    inputs->get_entry(0,i,values[varsPos[i]]);
   // values[varsPos[i]] = inputs->elem(0,i); // should work
   
   nIt = slp->mNodes.begin();
@@ -86,13 +87,8 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
   for (vIt = values.begin()+slp->inputCounter; vIt != values.end(); ++vIt) 
     computeNextNode();
 
-  FreeModule* S = R->make_FreeModule(slp->mOutputPositions.size());
-  FreeModule* T = R->make_FreeModule(1);
-  MatrixConstructor mat(T,S);
   for(int i = 0; i < slp->mOutputPositions.size(); i++)
-    mat.set_entry(0,i,values[ap(slp->mOutputPositions[i])]);
-  // outputs = mat.to_matrix();
-  outputs = mat.clone();
+    outputs->set_entry(0,i,values[ap(slp->mOutputPositions[i])]);
   return true;
 }
 

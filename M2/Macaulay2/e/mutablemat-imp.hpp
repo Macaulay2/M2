@@ -8,7 +8,7 @@
 template <typename Mat>
 SLEvaluator* MutableMat<Mat>::createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos)  
 {
-  return new SLEvaluatorConcrete<typename Mat::CoeffRing>(P, constsPos, varsPos, this->getMat());
+  return new SLEvaluatorConcrete<typename Mat::CoeffRing>(P, constsPos, varsPos, this/*->getMat()*/);
 }
 
 template <typename T>

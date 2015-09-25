@@ -144,18 +144,21 @@ setupfun("rawSLEvaluator",rawSLEvaluator);
 
 export rawSLEvaluatorEvaluate(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 2 then WrongNumArgs(4)
+     if length(s) != 3 then WrongNumArgs(3)
      else when s.0 is sle:RawSLEvaluatorCell do (
-	  when s.1 is M:RawMatrixCell do (
-	       toExpr(Ccode(RawMatrixOrNull,
-		    	 "rawSLEvaluatorEvaluate(",
-		    	 sle.p, ",",
-		    	 M.p,
-		    	 ")"
-		    	 )))
+	  when s.1 is inputs:RawMutableMatrixCell do (
+	  when s.2 is outputs:RawMutableMatrixCell do (
+	       toExpr(Ccode(bool, -- PROBLEM HERE
+			    "rawSLEvaluatorEvaluate(",
+			    sle.p, ",",
+			    inputs.p, ",",
+			    outputs.p,
+			    ")"
+			    )))
 	  else WrongArgMatrix(2))
+	  else WrongArgMatrix(3))
      else WrongArg(1,"a raw straight line program")
-     else WrongNumArgs(2)
+     else WrongNumArgs(3)
      );
 setupfun("rawSLEvaluatorEvaluate",rawSLEvaluatorEvaluate);
 

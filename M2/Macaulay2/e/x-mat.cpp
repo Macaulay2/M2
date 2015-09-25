@@ -716,8 +716,8 @@ SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos,
   return consts->createSLEvaluator(SLP,constsPos,varsPos);
 }
 
-const Matrix /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const Matrix *inputs) {
-  return sle->evaluate(inputs);
+M2_bool /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs) {
+  return evaluate(sle,inputs,outputs);
 }
 
 M2_string rawSLEvaluatorToString(SLEvaluator * sle) { 
