@@ -6,6 +6,13 @@
 #define _slp_imp_hpp_
 
 // SLEvaluator
+template<typename RT>
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, 
+					     const MutableMat< SMat<RT> >* consts /* DMat<RT>& DMat_consts */)
+  : mRing(consts->getMat().ring())
+{
+  ERROR("not implemented");
+}    
 
 template<typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, 
@@ -46,7 +53,7 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
     break;
   case SLProgram::Det:
     {
-      int n = sqrt(*numInputsIt++);
+      int n = static_cast<int>(sqrt(*numInputsIt++));
       FreeModule* S = R->make_FreeModule(n);
       MatrixConstructor mat(S,S);
       for (int i=0; i<n; i++)
@@ -71,12 +78,21 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
 {
   if (R != inputs->get_ring()) { 
     ERROR("inputs are in a different ring");
-    return nullptr;
+    return false;
+  }
+  if (R != outputs->get_ring()) { 
+    ERROR("outputs are in a different ring");
+    return false;
   }
   if (inputs->n_rows() != 1 || inputs->n_cols() != varsPos.size()) {
     ERROR("1-row matrix expected; or numbers of inputs and vars don't match");
-    return nullptr;
+    return false;
   }
+  if (outputs->n_rows() != 1 || outputs->n_cols() != slp->mOutputPositions.size()) {
+    ERROR("1-row matrix expected; or number of outputs doesn't match");
+    return false;
+  }
+
   for (int i=0; i<varsPos.size(); i++) 
     inputs->get_entry(0,i,values[varsPos[i]]);
   // values[varsPos[i]] = inputs->elem(0,i); // should work
@@ -92,6 +108,14 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
   return true;
 }
 
+template<typename RT>
+void SLEvaluatorConcrete<RT>::text_out(buffer& o) const { 
+  o << "SLEvaluator(slp = ";
+  slp->text_out(o);
+  //o << ", mRing = ";
+  //mRing.text_out(o);
+  o << ")" << newline; 
+}
 
 #endif
 

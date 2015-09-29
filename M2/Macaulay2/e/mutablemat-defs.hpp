@@ -750,7 +750,7 @@ public:
   virtual void clean(gmp_RR epsilon);  // modifies 'this'
   virtual gmp_RRorNull norm() const;
 
-  virtual SLEvaluator* createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos); // this = const matrix
+  virtual SLEvaluator* createSLEvaluator(SLProgram* P, M2_arrayint constsPos, M2_arrayint varsPos) const; // this = const matrix
 };
 
 

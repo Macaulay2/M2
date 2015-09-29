@@ -136,7 +136,7 @@ export rawSLEvaluator(e:Expr):Expr := (
 		    	 M.p,
 		    	 ")"
 		    	 )))
-	  else WrongArgMatrix(4))
+	  else  WrongArg(4, "a raw mutable matrix"))
      else WrongArg(1,"a raw straight line program")
      else WrongNumArgs(4)
      );
@@ -148,15 +148,15 @@ export rawSLEvaluatorEvaluate(e:Expr):Expr := (
      else when s.0 is sle:RawSLEvaluatorCell do (
 	  when s.1 is inputs:RawMutableMatrixCell do (
 	  when s.2 is outputs:RawMutableMatrixCell do (
-	       toExpr(Ccode(bool, -- PROBLEM HERE
-			    "rawSLEvaluatorEvaluate(",
-			    sle.p, ",",
-			    inputs.p, ",",
-			    outputs.p,
-			    ")"
-			    )))
-	  else WrongArgMatrix(2))
-	  else WrongArgMatrix(3))
+	       possibleEngineError(Ccode(bool, 
+		       "rawSLEvaluatorEvaluate(",
+		       sle.p, ",",
+		       inputs.p, ",",
+		       outputs.p,
+		       ")"
+		       )))
+	  else WrongArg(3, "a raw mutable matrix"))
+	  else WrongArg(2, "a raw mutable matrix"))
      else WrongArg(1,"a raw straight line program")
      else WrongNumArgs(3)
      );

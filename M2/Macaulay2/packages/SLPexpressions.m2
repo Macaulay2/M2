@@ -16,8 +16,8 @@ newPackage select((
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     --DebuggingMode => true
-     DebuggingMode => false
+     DebuggingMode => true
+     --DebuggingMode => false
      ), x -> x =!= null)
 
 -- Any symbols or functions that the user is to have access to
@@ -463,7 +463,7 @@ appendToSLProgram (RawSLProgram, DivideGate) := (slp, g) ->
 	scan(g.Inputs, a->appendToSLProgram (slp,a));
 	g.cache#slp = rawSLPDivideGate(slp, g.Inputs/(a->a.cache#slp))
 	)
-TEST ///
+TEST /// 
 needsPackage "SLPexpressions"
 debug SLPexpressions
 X = inputGate symbol X
@@ -476,14 +476,19 @@ s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC})
 
 debug Core
 (consts,indets):=(positions({C},s), positions({X},s))
-eQQ = rawSLEvaluator(s,consts,indets,raw matrix{{3_QQ}})
-rawSLEvaluatorEvaluate(eQQ, raw matrix{{7_QQ}}) 
-eCC = rawSLEvaluator(s,consts,indets,raw matrix{{3_CC}})
-rawSLEvaluatorEvaluate(eCC, raw matrix{{7_CC}}) 
+eQQ = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_QQ}})
+output = mutableMatrix(QQ,1,4)
+rawSLEvaluatorEvaluate(eQQ, raw mutableMatrix{{7_QQ}}, raw output) 
+output
+eCC = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_CC}})
+output = mutableMatrix(CC,1,4)
+rawSLEvaluatorEvaluate(eCC, raw mutableMatrix{{7_CC}}, raw output) 
+output
 R = CC_1000
-eCC = rawSLEvaluator(s,consts,indets,raw matrix{{3_R}})
-rawM = rawSLEvaluatorEvaluate(eCC, raw matrix{{7_R}}) 
-assert (abs(last flatten entries map(R,rawM) - 37/3) < 2^(-999))
+eCC = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_R}})
+rawM = mutableMatrix(R,1,4)
+rawSLEvaluatorEvaluate(eCC, raw mutableMatrix{{7_R}}, raw rawM) 
+assert (abs(last flatten entries rawM - 37/3) < 2^(-999))
 ///
 
 -------------------------------------
@@ -688,9 +693,11 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
 	s := H#"H core"; -- core SLP
 	consts := H#"H consts"; -- constants of SLP
 	H#(H#"H",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix(K,{apply(consts,c->c.Name_K)}));
+	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
-    matrix(K, rawSLEvaluatorEvaluate(H#(H#"H",K), raw (transpose x | matrix{{t}})), numrows H#"H", numcols H#"H")
+    r := mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
+    rawSLEvaluatorEvaluate(H#(H#"H",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
+    matrix(matrix r, numrows H#"H", numcols H#"H")
     )
 evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
@@ -700,9 +707,11 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
 	s := H#"Ht core"; -- core SLP
 	consts := H#"Ht consts"; -- constants of SLP
 	H#(H#"Ht",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix(K,{apply(consts,c->c.Name_K)}));
+	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
-    matrix(K, rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw (transpose x | matrix{{t}})), numrows H#"Ht", numcols H#"Ht")
+    r := mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
+    rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
+    matrix(matrix r, numrows H#"Ht", numcols H#"Ht")
     )
 evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
@@ -712,9 +721,11 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
 	s := H#"Hx core"; -- core SLP
 	consts := H#"Hx consts"; -- constants of SLP
 	H#(H#"Hx",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
-	    raw matrix(K,{apply(consts,c->c.Name_K)}));
+	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
-    matrix(K,rawSLEvaluatorEvaluate(H#(H#"Hx",K), raw (transpose x | matrix{{t}})), numrows H#"Hx", numcols H#"Hx")
+    r := mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
+    rawSLEvaluatorEvaluate(H#(H#"Hx",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
+    matrix(matrix r, numrows H#"Hx", numcols H#"Hx")
     )
 evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopySystem,parameters||x,t)
 evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
@@ -724,7 +735,7 @@ evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x
 
 -------------------------------------------------------
 -- trackHomotopy tests
-TEST ///
+TEST /// 
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -750,7 +761,7 @@ peek s
 assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
-TEST /// -- HomotopySystem
+TEST ///-- HomotopySystem
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y

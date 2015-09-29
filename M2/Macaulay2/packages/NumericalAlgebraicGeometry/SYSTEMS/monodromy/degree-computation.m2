@@ -29,6 +29,11 @@ print preimageViaMonodromy(PH,p,{point {{1,0,0}}},RandomPointFunction=>nextP)
 stop = (n,L)->n>30
 print preimageViaMonodromy(PH,p,{point {{1,0,0}}},StoppingCriterion=>stop)
 
+-- implicit twisted cubic in projective space
+(X,Y,Z,H) = inputGate \ (x,y,z,h)
+F = minors matrix{{X,Y,Z},{H,Z,Y}}
+
+
 end
 restart
 load "degree-computation.m2"

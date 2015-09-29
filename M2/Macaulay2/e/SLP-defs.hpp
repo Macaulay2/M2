@@ -5,10 +5,6 @@
 #ifndef _slp_defs_hpp_
 #define _slp_defs_hpp_
 
-#include "buffer.hpp"
-#include "matrix.hpp"
-#include "aring-glue.hpp"
-
 // SLP
 class SLProgram 
 {
@@ -48,7 +44,7 @@ public:
 class SLEvaluator {
 public:
   virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
-  void text_out(buffer& o) const;
+  virtual void text_out(buffer& o) const = 0;
 protected:
   int ap(int rp) { return rp+slp->inputCounter; } // absolute position
   SLProgram* slp;
@@ -70,6 +66,7 @@ public:
   const RT& ring() const { return mRing; }
   bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
   // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
+  void text_out(buffer& o) const;
 private:
   void computeNextNode();
   const Ring* R;

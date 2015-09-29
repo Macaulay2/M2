@@ -1972,7 +1972,7 @@ enum gbTraceValues
   SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
   SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
-  M2_bool /* or null */ *rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
   unsigned int rawSLProgramHash(SLProgram *); /* connected */

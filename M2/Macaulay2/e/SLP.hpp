@@ -10,6 +10,10 @@
 #include "SLP-imp.hpp"
 #include "mutablemat-imp.hpp"
 
+#include "buffer.hpp"
+#include "matrix.hpp"
+#include "aring-glue.hpp"
+
 #endif
 
 // Local Variables:
