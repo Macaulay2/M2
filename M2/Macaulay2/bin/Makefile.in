@@ -182,7 +182,7 @@ endif
 M2_LIBDEPS += ../d/libM2inits2.a				\
 	@abs_top_builddir@/submodules/memtailor/libmemtailor.a	\
 	@abs_top_builddir@/submodules/mathic/libmathic.a	\
-	@abs_top_builddir@/submodules/mathicgb/libmathicgb.a
+	@abs_top_builddir@/submodules/mathicgb/.libs/libmathicgb.a
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else

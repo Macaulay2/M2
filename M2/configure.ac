@@ -7,7 +7,7 @@ dnl    - add an entry to distributions/deb/changelog
 dnl Things to do after incrementing the version number and committing:
 dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
 dnl    - make a git tag of the form version-X.Y.Z
-AC_INIT(Macaulay2, 1.8.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.8.2.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -16,6 +16,7 @@ dnl   1.3.1.1 : a development version, with no binary distributions
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
 dnl =============================================================================
 
+AC_MSG_NOTICE([configuring Macaulay2 version $PACKAGE_VERSION])
 AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
@@ -157,9 +158,6 @@ AC_CONFIG_AUX_DIR(config)
 AC_CHECK_PROGS(MAKE,gmake make,false)
 AC_CHECK_PROGS(PKG_CONFIG,pkg-config,false)
 if test $PKG_CONFIG = false; then AC_MSG_ERROR(pkg-config is required); fi
-AC_CHECK_PROGS(WGET,wget,false)
-AC_CHECK_PROGS(CURL,curl,false)
-if test "$WGET" = false -a "$CURL" = false; then AC_MSG_ERROR(wget or curl is required); fi
 AC_CHECK_PROGS(ETAGS,etags ctags,false)
 if test "$ETAGS" = false; then AC_MSG_WARN(without etags no TAGS files will be made); fi
 AC_CHECK_PROGS(LINTIAN,lintian,false)
@@ -861,6 +859,11 @@ AC_ARG_WITH(unbuilt-programs,
 
 AC_SUBST(DOWNLOAD,no)
 AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+AC_CHECK_PROGS(WGET,wget,false)
+AC_CHECK_PROGS(CURL,curl,false)
+if test $DOWNLOAD = yes
+then if test "$WGET" = false -a "$CURL" = false; then AC_MSG_ERROR(wget or curl is required); fi
+fi
 
 # the order of these segments also reflects dependencies
 AC_LANG(C)
@@ -1045,7 +1048,7 @@ if test $BUILD_cddlib = no
 then AC_LANG(C)
      AC_CHECK_HEADER(cdd.h,,
      	[ 
-	  CPPFLAGS="-I/usr/include/cddlib $CPPFLAGS"
+	  CPPFLAGS="-I/usr/include/cddlib -I/usr/include/cdd $CPPFLAGS"
 	  unset ac_cv_header_cdd_h
 	  AC_CHECK_HEADER(cdd.h,,BUILD_cddlib=yes,[#include <setoper.h>])
 	],
@@ -1269,45 +1272,35 @@ AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
 BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
-if test "$DEBUG" = yes
-then SINGULARLIBS="-lfactory  "
-else SINGULARLIBS="-lfactory  "
+SINGULARLIBS="-lfactory  "
+if test $BUILD_factory = no
+then
+    AC_MSG_CHECKING([whether factory library is installed])
+    FACTORY_MINVERSION=4.0.0
+    if $PKG_CONFIG --exists "factory >= $FACTORY_MINVERSION"
+    then
+	FACTORY_NAME=factory
+	AC_MSG_RESULT([yes ($FACTORY_NAME)])
+    elif $PKG_CONFIG --exists "singular-factory >= $FACTORY_MINVERSION"
+    then
+	FACTORY_NAME=singular-factory
+	AC_MSG_RESULT([yes ($FACTORY_NAME)])
+    elif $PKG_CONFIG --exists factory || $PKG_CONFIG --exists singular-factory
+    then
+	BUILD_factory=yes
+	AC_MSG_RESULT([yes, but version $FACTORY_MINVERSION required; will build])
+    else
+	BUILD_factory=yes
+	AC_MSG_RESULT([no; will build])
+    fi
 fi
-while test $BUILD_factory = no 
-do AC_LANG(C++)
-   AC_CHECK_HEADER(factory/factory.h,,BUILD_factory=yes; break)
-   SAVELIBS=$LIBS
-   LIBS="$SINGULARLIBS $LIBS"
-   AC_MSG_CHECKING([whether factory library is installed ($SINGULARLIBS)])
-   dnl if -lntl is needed, it's been added to $LIBS above
-   AC_LINK_IFELSE([AC_LANG_SOURCE([[ #undef NOSTREAMIO
-	              #include <factory/factory.h>
-		      int main () { return 0 ; } ]])],
-       [AC_MSG_RESULT(yes)],
-       [AC_MSG_RESULT([no, will build factory]) ; BUILD_factory=yes  LIBS=$SAVELIBS ; break] )
-   AC_MSG_CHECKING([whether up-to-date factory libraries are installed])
-   AC_RUN_IFELSE([AC_LANG_SOURCE([[
-	   #include <stdio.h>
-	   #include <string.h>
-           #undef NOSTREAMIO
-	   #undef PACKAGE_VERSION /* so we can get PACKAGE_VERSION from factoryconf.h */
-	   #include <factory/factory.h>
-	   int main () {
-		FILE *msg = fdopen(]]AS_MESSAGE_FD[[,"w");
-		static int factoryV[3], fV[3] = {4,0,0}, fOK;
-		sscanf(PACKAGE_VERSION,"%d.%d.%d", &factoryV[0], &factoryV[1], &factoryV[2]);
-		fOK = factoryV[0] > fV[0] ||
-		      factoryV[0] == fV[0] && factoryV[1] > fV[1] ||
-		      factoryV[0] == fV[0] && factoryV[1] == fV[1] && factoryV[2] >= fV[2];
-		fprintf(msg,"(factory-%s %s %d.%d.%d) ", PACKAGE_VERSION, fOK ? ">=" : "<", fV[0], fV[1], fV[2]);
-		return fOK ? 0 : 1;
-		}
-	   ]])],
-	[AC_MSG_RESULT(yes)],
-	[AC_MSG_RESULT([no, will build factory ]); BUILD_factory=yes LIBS=$SAVELIBS])
-   break
-done
-test $BUILD_factory = yes && BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
+if test $BUILD_factory = no
+then
+     LIBS="`$PKG_CONFIG --libs $FACTORY_NAME` $LIBS"
+     CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
+else
+     BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
+fi
 
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
 # one of them to $LIBS, making it impossible to check for the presence of C or
@@ -1558,12 +1551,6 @@ AC_SUBST(DESC,$PACKAGE_VERSION-$host_cpu-$OS-$REL)
 # config.guess assembles host_cpu from /proc/cpuinfo, and can be something
 # like "alphaev6" or "alphaev56", but ARCH, which is determined from 'uname'
 # by the 'configure' script, will be simply "alpha".
-
-if test "$FAKEROOT" = false
-then if test "$RPM" = yes
-     then AC_MSG_ERROR([program "fakeroot" not installed, required for creating *.deb or *.rpm distributions])
-     fi
-fi
 
 # Here we split up LIBS into three parts, LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC.
 # M2 will get linked against LIBS_STATIC, LIBS_EITHER, and LIBS_DYNAMIC, in that order

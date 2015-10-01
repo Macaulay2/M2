@@ -12,6 +12,7 @@ document {
 	  TO "changes, 1.7",
 	  TO "changes, 1.8",
 	  TO "changes, 1.8.1",
+	  TO "changes, 1.8.2",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -65,6 +66,16 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
+document {
+     Key => "changes, 1.8.2",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { 
+			 "A problem with making finite fields using ", TO "GF", " was fixed.  It involved the third-party
+			 FLINT number theory library not being able to find its file containing a list of Conway polynomials." }}}}}
+
  
 document {
      Key => "changes, 1.8.1",
