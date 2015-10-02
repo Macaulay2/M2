@@ -26,6 +26,7 @@ newPackage select((
 export {
     "preimageViaMonodromy",
     "gateHomotopy4preimage",
+    "parametricSegmentHomotopy",
     "RandomPointFunction",
     "StoppingCriterion"    
     }
@@ -108,6 +109,22 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
     )
 
+-- Parameter homotopy for tracking a point on the fiber of a covering (generically finite-to-one onto) map 
+-- in: 
+--     S, polynomials desribing a subvariety of CC^(V,W)
+--     V, variables (list of InputGates)
+--     W, parameter variables
+-- out: 
+--     HomotopySystem that has A_w and B_w as parameters, 
+--     	       	      where v in V|W  are coordinates of the source space 
+parametricSegmentHomotopy = method()
+parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
+    A := matrix{apply(W, w->inputGate symbol A_w)};
+    B := matrix{apply(W, w->inputGate symbol B_w)};
+    t := inputGate symbol t;
+    H := sub(S,matrix{W},(1-t)*A+t*B);
+    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
+    )
 TEST ///
 X = inputGate x
 F = matrix{{X^2}} 
@@ -122,11 +139,3 @@ assert areEqual(norm evaluateHx(SPH,p,0), 2)
 peek PH.GateHomotopySystem    
 assert (#preimageViaMonodromy(PH,p,{point p}) == 2)
 ///
-parametricSegmentHomotopy = method()
-parametricSegmentHomotopy(GateMatrix,List,List) := (F,V,W) -> (
-    A := matrix{apply(W, v->inputGate symbol A_v)};
-    B := matrix{apply(W, v->inputGate symbol B_v)};
-    t := inputGate symbol t;
-    H := sub(F, transpose matrix{W}, ((1-t)*transpose A+t*transpose B));
-    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B,Software=>M2engine)
-    )

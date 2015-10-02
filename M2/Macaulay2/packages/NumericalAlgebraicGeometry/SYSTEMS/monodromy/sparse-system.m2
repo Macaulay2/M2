@@ -1,9 +1,11 @@
 restart
 needsPackage "NAGtools"
 setDefault(Software=>M2)
-
+setRandomSeed 0
 needsPackage "ExampleIdeals"
-S = gens cyclicRoots(5,CC)
+n = 10
+degree cyclicRoots(n,ZZ/32003)
+S = gens cyclicRoots(n,CC)
 R = ring S
 X = apply(gens R, v->inputGate (symbol x)_v) -- variables
 monoms = flatten entries monomials S
@@ -18,6 +20,7 @@ S = transpose matrix{
 	    C#i#j*M#((monomials polys#i)_(0,j))
 	    ))
     }
+{*
 F = transpose matrix{flatten C}
 PH = gateHomotopy4preimage(F,S,X|flatten C,flatten C)
 x0 = apply(X,x->1)
@@ -28,11 +31,21 @@ c0 = point{
 	    )) 
     }
 pre0 = point{x0|coordinates c0}
+*}
+PH = parametricSegmentHomotopy(S,X,flatten C)
+x0 = apply(X,x->1)
+c0 = point{ 
+    flatten apply(C,r->(
+	    t := apply(#r-1, i->random CC);
+	    t | { -sum t }
+	    )) 
+    }
+pre0 = point{x0}
 stop = (n,L)->n>5
 --nextP = () -> point {{ c0 }}
-print preimageViaMonodromy(PH,c0,{pre0},
+pre'all = preimageViaMonodromy(PH,c0,{pre0},
     --RandomPointFunction=>nextP,
-    StoppingCriterion=>stop)
+    StoppingCriterion=>stop);
 
 end
 restart
