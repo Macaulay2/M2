@@ -35,7 +35,7 @@ exportMutable {
 -- Monodromy-based algorithm
 -- in: 
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
---     p0, column vector, values of m parameters (assumed generic)
+--     p0, Point, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     NextPoint, a function that returns a random column vector of m parameters p1 suitable for PH  
 preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
@@ -96,6 +96,15 @@ gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
     B := matrix{apply(W, v->inputGate symbol B_v)};
     t := inputGate symbol t;
     H := F-((1-t)*transpose A+t*transpose B);
+    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
+    )
+-- in: S, polynomials desribing a subvariety of CC^V
+gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
+    assert(#W == numrows F); 
+    A := matrix{apply(W, w->inputGate symbol A_w)};
+    B := matrix{apply(W, w->inputGate symbol B_w)};
+    t := inputGate symbol t;
+    H := (F-((1-t)*transpose A+t*transpose B)) || S;
     gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
     )
 
