@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "1.6.0.1", 
-  Date => "August 7, 2015",
+  Date => "September 21, 2015",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -26,6 +26,8 @@ newPackage(
 )
 
 export { 
+  "OrderPaths",
+  "storeBM2Files",
   "bertiniZeroDimSolve",
   "bertiniParameterHomotopy",
   "bertiniPosDimSolve",
@@ -98,9 +100,9 @@ export {
   "RandomComplex",
   "RandomReal",  --a list of unknowns whose values will be fixed by Bertini
   "B'Constants",--A list of pairs
-  "B'Polynomials", --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "daej"  	    	  
+  "B'Polynomials", --a list of polynomials whose zero set we want to solve; when used then the NamePolynomials option is disabled and the polynomials are automatically named "jade"  	    	  
   "NamePolynomials", --A list of names of the polynomials which we want to find the common zero set of.
-  "B'Functions", --A list of list of pairs.  The number of list of pairs equals the number of polynomials which we want to solve. 	    	
+  "B'Functions", --A list of list of pairs.  
 --
   "runBertini",
   "InputFileDirectory",
@@ -219,7 +221,8 @@ DBG = 0 -- debug level (10=keep temp files)
 BERTINIexe=(options Bertini).Configuration#"BERTINIexecutable"
 
 needsPackage "SimpleDoc"
-
+     storeBM2Files = temporaryFileName()
+     makeDirectory storeBM2Files
 -- Bertini interface for M2
 -- used by ../NumericalAlgebraicGeometry.m2
 
@@ -1640,9 +1643,9 @@ makeMembershipFile(String) := o ->(filesGoHere)->(
 
 
 
-
+--To do a trace test we need to evaluate the points using a Bertini Tracktype 4. the number of variables in this input file equals the number of points times the number of coordinates.
 makeB'TraceInput = method(TypicalValue => Nothing, Options=>{
-	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file.
+	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
 	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 	})
 makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,NumberOfCoordinates)->(    
@@ -1662,9 +1665,9 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
     )    
 
 calculateB'Trace = method(TypicalValue=>Nothing,Options=>{
-	NameStartFile=>"start",
-	NameFuntionFile=>"function",
-	NameB'InputFile=>"inputTT"
+	NameStartFile=>"start",---we will read these start points.
+	NameFuntionFile=>"function",---the traces will be written to this file.
+	NameB'InputFile=>"inputTT"---this file should be created prior to calling the calculateB'Trace function.
 	})
 calculateB'Trace(String) := o ->(
     filesGoHere) ->(
@@ -1677,7 +1680,7 @@ calculateB'Trace(String) := o ->(
      if o.NameFuntionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFuntionFile));      
 
 
-b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a startfile and start parameters and parameter homotopy file with one parameter
+b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
 	NameB'InputFile=>"input",
 	NameStartFile=>"start",
 	NameParameterFile=>"start_parameters",
@@ -1953,7 +1956,11 @@ runBertini(String) := o ->(filesGoHere)->(
 --    	runSuccess:=run("cd "|filesGoHere|"; "|o.B'Exe|" "|IFD|"/"|o.NameB'InputFile|" >bertini_session.log");
     	runSuccess:=run("cd "|filesGoHere|"; "|(o.B'Exe)|" "|IFD|"/"|o.NameB'InputFile|theTS|" >bertini_session.log");
 --        	    run("cd "|dir|"; "|BERTINIexe|" < sample_script >bertini_session.log");  
-    	if runSuccess=!=0 then error"Bertin run failed. ";
+    	if runSuccess=!=0 
+	then (
+	  print fileExists(filesGoHere|"/bertini_session.log");
+	  print readFile(filesGoHere,"bertini_session.log",10000);
+	  error"Bertin run failed. ");
 	if o.PreparePH2=!=false and runSuccess===0
 	then (
 --	  s:= run("sed -i -e 's/"|o.PreparePH2|" : 1"|"/"|o.PreparePH2|" : 2"|"/' "|IFD|"/"|o.NameB'InputFile);
@@ -2066,7 +2073,7 @@ writeStartFile(String,List) := o ->(
 
 importSolutionsFile= method(TypicalValue=>Nothing,Options=>{
 	NameSolutionsFile=>"raw_solutions",
-	UsePrecision=>53 })
+	UsePrecision=>53, OrderPaths=>false })
 importSolutionsFile(String) := o -> (importFrom)-> (
     if importFrom_-1=!="/" then importFrom=importFrom|"/";
     if  class o.NameSolutionsFile===String then NSF:=o.NameSolutionsFile;
@@ -2085,6 +2092,7 @@ importSolutionsFile(String) := o -> (importFrom)-> (
     storeSolutions:={};---We will store the solutions we specified and return this in the end
     collectedCoordinates:={};
 --    print collectedCoordinates;
+    if o.OrderPaths===false then(
     for i in importedFileLines do(
 --    	print( "i",i);
 	if #i==2 then  (
@@ -2099,11 +2107,37 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 	    	ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
 		   ));
 --	print collectedCoordinates;
-    	if  #i>2  then error ("Line was not parsed: "|i_0|"...");
---    	if  #i===1  then   error ("Line was not parsed: "|i_0|"...");
-    	if  #i===0   then   (
-	    if #collectedCoordinates=!=0 then storeSolutions=append(storeSolutions,collectedCoordinates);
-	    collectedCoordinates={}));
+    	if  #i>2  then error ("Line was not parsed: "|i_0|"...")));
+    if o.OrderPaths===true then(
+    solutionCount:=0;
+    for i in importedFileLines do(
+      if #i==1 then (
+	collectedCoordinates=append(collectedCoordinates,value(i_0));
+	solutionCount=solutionCount+1);
+      if #i==2 then (
+        coordRealPart:=select("[0-9.+-]+",i_0);
+	coordImagPart:=select("[0-9.+-]+",i_1);
+	if #coordRealPart===1 then coordRealPart=append(coordRealPart,"0");
+	if #coordImagPart===1 then coordImagPart=append(coordImagPart,"0");
+	oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
+--	print oneCoord;
+	collectedCoordinates=append(collectedCoordinates,
+	  value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))+
+	    ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
+	      ));
+--	print collectedCoordinates;
+    	if  #i>2  then error ("Line was not parsed: "|i_0|"...")));
+    	numberOfCoordinates:=numerator(#collectedCoordinates/numberOfsolutionsInFile);
+--	print numberOfCoordinates;
+    	storeSolutions=for i to numberOfsolutionsInFile-1 list 
+	  for j to numberOfCoordinates-1 list collectedCoordinates_(i*numberOfCoordinates+j);
+    	if o.OrderPaths===true then(
+--	  print "inLoop";
+	  sortStoreSolutions:=sort storeSolutions;
+	  storeSolutions=for i in sortStoreSolutions list drop(i,1);   
+--    	  for i in sortStoreSolutions do print i_0;
+    	  if #storeSolutions=!=solutionCount then print "Warning: Unexpected solution count. OrderPaths option should only be set to 'true' when importing solution files with path numbers."
+	    );	
     return storeSolutions    );
 
 
@@ -2147,7 +2181,7 @@ b'PHSequence=method(TypicalValue=>Thing,Options=>{
 	NameSolutionsFile=>"nonsingular_solutions",
 	InputFileDirectory=>{},
     	StartFileDirectory=>{},
-    	StartParameterFileDirectory=>{},	
+    	StartParameterFileDirectory=>{},
 	SaveData=>false,
 	B'Exe=>BERTINIexe,
 	SolutionFileStyle=>"simple"	})
@@ -2186,22 +2220,24 @@ b'PHSequence(String,List) := o ->(storeFiles,listOfListOfParameterValues)->(
 --	print listPV;
 	runBertini(storeFiles,InputFileDirectory=>o.InputFileDirectory,NameB'InputFile=>o.NameB'InputFile,B'Exe=>o.B'Exe);
 --	print "-rc";
-    	if fileExists(storeFiles|o.NameSolutionsFile)==false then (
+    	if fileExists(storeFiles|o.NameSolutionsFile)===false and o.NameSolutionsFile=!="simple_raw_solutions" then (
 	  start0pnts:= openOut(storeFiles|"start");  
      	  start0pnts << "0" << endl << endl;
 	  close start0pnts;
 	  print ("Warning: No paths in this seqence were successfuly tracked: Run count "|toString(runCount));
 	  break);
+	if o.NameSolutionsFile==="simple_raw_solutions" then  (
+	  simplifyRawSolutions(storeFiles));	  
+	if o.NameSolutionsFile==="raw_solutions" 
+	then  error "NameSolutionsFiles should not be set as raw_solutions, instead set as simple_raw_solutions";	  
 	if o.SaveData then (
 	    copyFile(storeFiles|o.NameSolutionsFile,storeFiles|o.NameSolutionsFile|toString(runCount));
 	    copyFile(storeFiles|"final_parameters",storeFiles|"start_parameters"|toString(runCount))
 	    );
+--	print o.NameSolutionsFile;
+--	print ("Number of solutions: "|toString(#importSolutionsFile(storeFiles,NameSolutionsFile=>o.NameSolutionsFile|toString(runCount))));
 	moveFile(storeFiles|"final_parameters",storeFiles|"start_parameters");
-    	if o.SolutionFileStyle==="simple" then
-	  moveFile(storeFiles|o.NameSolutionsFile,storeFiles|"start");
-	if o.SolutionFileStyle==="raw_solutions" then  (
-	  simplifyRawSolutions(storeFiles);
-	  moveFile(storeFiles|"simple_raw_solutions",storeFiles|"start"));	  
+	moveFile(storeFiles|o.NameSolutionsFile,storeFiles|"start");
     	sfIn=openIn(storeFiles|"start");
 	NumPathsTracked:=value(read(sfIn,1));
 	close sfIn;
@@ -2210,31 +2246,41 @@ b'PHSequence(String,List) := o ->(storeFiles,listOfListOfParameterValues)->(
 --    	print "seq";
 --	print(importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
     	));
-
+ 
 simplifyRawSolutions=(aDirectory)->(
     importedFileLines := apply(lines get (aDirectory|"raw_solutions"),i->select("[0-9.e+-]+",i)); -- grabs all lines of the solution file and selects desired words.
     numberOfsolutionsInFile:=value(importedFileLines_0_0);--the first line of the solution file gives the number of solutions in the file
-    print "1";
     importedFileLines=drop(importedFileLines,1);--drop the first  line
-    storeSolutions:=for i to numberOfsolutionsInFile-1 list {};---We will store the solutions we specified and return this in the end
---    print collectedCoordinates;
-    pathNumberIndex:=null;
+    collectedCoordinates:={};
+    solutionCount:=0;
     for i in importedFileLines do(
-      print i;
-      if #i==1 then pathNumberIndex=value i_0;
-      print ("path ",pathNumberIndex);
-      if #i==2 then  (oneString:=concatenate {i_0," ",i_1};
-	  storeSolutions=replace(pathNumberIndex,
-	  append(storeSolutions_pathNumberIndex,oneString),
-	  storeSolutions));
-      if  #i>2  then error ("Line was not parsed: "|i_0|"...")      );
-    print storeSolutions;
+      if #i==1 then (
+	collectedCoordinates=append(collectedCoordinates,value(i_0));
+	solutionCount=solutionCount+1);
+      if #i==2 then (
+        coordRealPart:=select("[0-9.+-]+",i_0);
+	coordImagPart:=select("[0-9.+-]+",i_1);
+	if #coordRealPart===1 then coordRealPart=append(coordRealPart,"0");
+	if #coordImagPart===1 then coordImagPart=append(coordImagPart,"0");
+	oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
+        collectedCoordinates=append(collectedCoordinates,
+	  (oneCoord_0)|"e"|toString(value(oneCoord_1))|" "|(oneCoord_2)|"e"|toString(value(oneCoord_3)))
+		   );
+      if  #i>2  then error ("Line was not parsed: "|i_0|"..."));
+    numberOfCoordinates:=numerator(#collectedCoordinates/numberOfsolutionsInFile); --This also counts the path number as a coordinate.
+    storeSolutions:=for i to numberOfsolutionsInFile-1 list 
+      for j to numberOfCoordinates-1 list collectedCoordinates_(i*numberOfCoordinates+j);
+    sortStoreSolutions:=sort storeSolutions;
+    storeSolutions=for i in sortStoreSolutions list drop(i,1);   
+    if #storeSolutions=!=solutionCount then print "Warning: Unexpected solution count. OrderPaths option should only be set to 'true' when importing solution files with path numbers.";
     orderedStartFile:=openOut (aDirectory|"simple_raw_solutions");
     orderedStartFile << toString numberOfsolutionsInFile <<endl;
     for oneSolution in storeSolutions do (
 	orderedStartFile<<endl;
 	for aString in oneSolution do (orderedStartFile <<aString<<endl) );
     close orderedStartFile;
+    print ("Wrote simple_raw_solutions to "|aDirectory|"simple_raw_solutions");
+--    print "22222222222222222222";
     return storeSolutions    );
      
 --simplifyRawSolutions(theDir|"/")     
@@ -2297,7 +2343,7 @@ b'PHMonodromyCollect(String) := o ->(storeFiles)->(
     	b'PHSequence(storeFiles,
 	    append(listsOfParameterValues,bP),
 	    B'Exe=>o.B'Exe,InputFileDirectory=>IFD,
---	    NameSolutionsFile=>o.NameSolutionsFile,
+	    NameSolutionsFile=>o.NameSolutionsFile,---ProblemLine
        	    NameB'InputFile=>o.NameB'InputFile);
 --	print ".5";
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
@@ -2309,7 +2355,7 @@ b'PHMonodromyCollect(String) := o ->(storeFiles)->(
     	if #preSolCollection>=2 then (
 	    solCollection={};
 	    for i to #preSolCollection-2 do 
-	    if (not areEqual(preSolCollection_i,preSolCollection_(i+1))) 
+	    if (not areEqual(preSolCollection_i,preSolCollection_(i+1),Tolerance=>1e-6)) 
 	    then (
 --    	      print (preSolCollection_i,preSolCollection_(i+1));
 --	      print areEqual(preSolCollection_i,preSolCollection_(i+1)) ;
@@ -2344,7 +2390,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
 	NameStartFile=>"start",  --this start file will be the solutions we start with
 	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
-	NameSolutionsFile=>"nonsingular_solutions",--this file tells us which solutions to consider at the end
+	NameSolutionsFile=>"simple_raw_solutions",--this file tells us which solutions to consider at the end
 	InputFileDirectory=>{},--this says where the input file is located if different from the user's input
     	StartFileDirectory=>{},--this says where the start file is lcoated if different from the user's unput
     	StartParameterFileDirectory=>{},	--this says where the start_parameter file is located if different from the user's input
@@ -2354,6 +2400,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	MonodromyStartParameters=>false,--This will write a start_parameters file in the StartParametersFileDirectory with the name NameParameterFile
   	NumberOfLoops=>1,--This is the number of loops we will perform. 
 	BranchPoints=>false,
+	UsePrecision=>52
 --	SpecifyLoops=>false
 	})
 b'PHGaloisGroup(String) := o ->(storeFiles)->(
@@ -2390,31 +2437,45 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
     if o.NameParameterFile=!="start_parameters" or SPFD=!=storeFiles then copyFile(SPFD|o.NameParameterFile,storeFiles|"start_parameters");
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
     copyFile(SFD|"start",storeFiles|"ggStartJade");
-    solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
+    solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
     --We save the start points' parameters as bP in memory rather than a text file. 
-    bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");
-    -----
-    print "base parameters:";
-    print bP;
-    ----
+    bP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision);
     --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
     loopCount:=0;
     breakLoop:=false;
-    baseSP:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters");
-    if o.BranchPoints=!=false and #baseSP =!=1 then error "If BranchPoints are specified then there can only be one parameter.";
+    if o.BranchPoints=!=false and #bP =!=1 then error "If BranchPoints are specified then there can only be one parameter.";
     if o.BranchPoints=!=false then (
-      critTs:=o.BranchPoints;	---get rid of multiplicities
+      critTs:=(o.BranchPoints);	
       centroidT:=sum critTs/#critTs+0;--+.05*ii-.03;--this is the average value of the crtitical ts.
+      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"final_parameters");
+      runBertini(storeFiles);
+      copyFile(storeFiles|"nonsingular_solutions",storeFiles|"ggStartJade");
+      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"ggStartParametersJade");      
+      solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
+-------------------
+      bP={centroidT};
+      print "base parameters:";
       normalizedTs:=for i in critTs list i-centroidT;--we subtract the centroidT from each critical point to treat centroidT as the origin
-      pizzaRadius:=max(normalizedTs/abs+for i in normalizedTs list .5);--this is the maximum distance plus .5 from a critical t and the centroid t
+      pizzaRadius:=max(normalizedTs/abs+for i in normalizedTs list 1);--this is the maximum distance plus .5 from a critical t and the centroid t
       --these refer to the arguments of the endpoints with respect to the centroid
       someEndpoints:= sort( normalizedTs/log/imaginaryPart);--this is the angle of each critical t wrt to the centroid
-      moreEndpoints:=prepend(someEndpoints_-1-2*pi,
-    	append(someEndpoints,someEndpoints_0+2*pi));--we include extra boundary endpoints on the pizza so we can easily get the midangle
+      print (1/(2*pi)*someEndpoints);
+      mostPositiveAngle:=max(someEndpoints);
+      mostNegativeAngle:=min(someEndpoints);
+      moreEndpoints:=prepend(mostPositiveAngle-2*pi, 
+    	append(someEndpoints,mostNegativeAngle+2*pi));--we include extra boundary endpoints on the pizza so we can easily get the midangle
+      print (1/(2*pi)*moreEndpoints);
       allEndPoints:=flatten append(
     	for i from 1 to #moreEndpoints-2 list {
-    	1/2*(moreEndpoints_i+moreEndpoints_(i-1)),moreEndpoints_i},
-        1/2*(moreEndpoints_-1+moreEndpoints_-2));--this list includes the angle of each critical t and the midangle between each nearby pair
+    	1/2*(moreEndpoints_(i-1)+moreEndpoints_i),
+	moreEndpoints_i},
+        1/2*(moreEndpoints_-2+moreEndpoints_-1));--this list includes the angle of each critical t and the midangle between each nearby pair
+      print (1/(2*pi)*allEndPoints);
+      parameterAngles:=for i to #critTs-1 list {
+        {allEndPoints_(2*i)},    
+    	{allEndPoints_(1+2*i)},    
+        {allEndPoints_(2+2*i)} };      
+     for i in parameterAngles do print ((1/(2*pi))*flatten i);
       if not(#allEndPoints==2*#critTs+1) then error "A mistake was made. An unexpected solution was found or a numerical error occurred.";
       --these above we were working with angles of the imaginary numbers with tCentroid as the origin. Now we renormalize so that 0 is the origin and we are in the standard complex plane realPart+imanginaryPary*ii
       allLandMarkers:=for i to #allEndPoints-1 list pizzaRadius*exp(ii*allEndPoints_i)+centroidT;
@@ -2422,9 +2483,9 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
       listsOfListsOfParameterValues:=for i to #critTs-1 list {
         {allLandMarkers_(2*i)},    
     	{allLandMarkers_(1+2*i)},    
-        {allLandMarkers_(2+2*i)},
-    	{centroidT}});      
-    print ("ggPVS",listsOfListsOfParameterValues);
+        {allLandMarkers_(2+2*i)} });      --the tip of the pizza, ie. the centroid will be appened in the b'PHSequence below.
+    print ("ggPVS");
+    for i in listsOfListsOfParameterValues do print (((flatten i)));
     theGaloisG:={};
     loopFailures:=0;
     while not breakLoop do(
@@ -2432,23 +2493,24 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
 	print ("loopCount",loopCount);
---    	print (	    append(listsOfParameterValues,bP));	
+    	print (	 flatten   append(listsOfParameterValues,bP));	
     	print "Go into b'PHSequence.";
     	b'PHSequence(storeFiles,
 	    append(listsOfParameterValues,bP),
 	    B'Exe=>o.B'Exe,
 	    InputFileDirectory=>IFD,
 	    NameB'InputFile=>o.NameB'InputFile,
-	    NameSolutionsFile=>"nonsingular_solutions",
-	    SolutionFileStyle=>"simple");
+	    SaveData=>true,
+	    NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
+	    );
     	print "Out of b'PHSequence.";
 --	print ".5";
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	permutedSols:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
     	copyFile(storeFiles|"ggStartJade",storeFiles|"start");
-        trackingSucess:=#solCollection===#permutedSols;
+        trackingSucess:=(#solCollection==#permutedSols);
 	print ("trackingSucess: ",trackingSucess);
-	print (#solCollection-#permutedSols);
+	print (#solCollection,#permutedSols);
         if not trackingSucess then (
 	    loopFailures=loopFailures+1;
 	    print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
@@ -2458,8 +2520,9 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 --    	    print solCollection;
 --	    print permutedSols;
     	    ggGenerator:={};
-    	    for i to #solCollection-1 do for j to #permutedSols-1 do if areEqual(solCollection_i,permutedSols_j) then ggGenerator=append(ggGenerator,j);
+    	    for i to #solCollection-1 do for j to #permutedSols-1 do if areEqual({solCollection_i_0},{permutedSols_j_0},Tolerance=>1e-6) then ggGenerator=append(ggGenerator,j);
     	    if #solCollection=!=#ggGenerator then (
+    	    	print (#ggGenerator, #solCollection);
 		loopFailures=loopFailures+1;
 		print ("Warning: Monodrompy loop "|loopCount|" found unexpected new solutions or a numerical error occurred.")
 		);
@@ -2679,6 +2742,32 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bertiniISPROJECTIVE.tst.m2")
 ///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeBInputFile.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/runBertini.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/importSolutionsFile.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/importMainDataFile.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bPHSequence.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bPHMonodromyCollect.tst.m2")
+///
+
+---newtst
 
 --##########################################################################--
 -- DOCUMENTATION
