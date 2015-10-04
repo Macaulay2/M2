@@ -115,15 +115,15 @@ doc ///
      
    Example
      R=QQ[x,y,t1,t2]
-     makeB'InputFile(theDir, PG=>{t1,t2},AVG=>{{x,y}},	 
+     makeB'InputFile(storeBM2Files, PG=>{t1,t2},AVG=>{{x,y}},	 
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 B'Polynomials=>{x^2-t1,y-t2})
-     runBertini(theDir)
-     moveFile(theDir|"/finite_solutions",theDir|"/start")
-     makeB'InputFile(theDir, PG=>{t1,t2},AVG=>{{x,y}},	 
+     runBertini(storeBM2Files)
+     moveFile(storeBM2Files|"/finite_solutions",storeBM2Files|"/start")
+     makeB'InputFile(storeBM2Files, PG=>{t1,t2},AVG=>{{x,y}},	 
 	 B'Configs=>{{"PARAMETERHOMOTOPY",2}},
 	 B'Polynomials=>{x^2-t1,y-t2})
-     b'PHSequence(theDir,{{1,1},{1,2}},SaveData=>true)
+     b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
       
 ///;
 
@@ -155,13 +155,13 @@ doc ///
      is set to 5 then "raw_solutions" is imported.
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
      	 AVG=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^3-1})
-     runBertini(theDir)
-     importSolutionsFile(theDir)
-     importSolutionsFile(theDir,NameSolutionsFile=>"real_finite_solutions")
-     importSolutionsFile(theDir,NameSolutionsFile=>0)     
+     runBertini(storeBM2Files)
+     importSolutionsFile(storeBM2Files)
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)     
       
 ///;
 
@@ -184,12 +184,12 @@ doc ///
    Text
      If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
    Example
-    makeB'InputFile(theDir,
+    makeB'InputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
-    runBertini(theDir)
-    makeSamplePointFile(theDir,1,0,2)
-    makeMembershipFile(theDir,NameWitnessPointFile=>"sample_point_file")
-    importIncidenceMatrix(theDir)
+    runBertini(storeBM2Files)
+    makeSamplePointFile(storeBM2Files,1,0,2)
+    makeMembershipFile(storeBM2Files,NameWitnessPointFile=>"sample_point_file")
+    importIncidenceMatrix(storeBM2Files)
       
 ///;
 
@@ -215,13 +215,13 @@ doc ///
    Text
      The option TestSolutions can be set to a list of coordinates of points which will be written to a file. 
    Example
-    makeB'InputFile(theDir,
+    makeB'InputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
-    runBertini(theDir)
-    makeSamplePointFile(theDir,1,0,2)
-    makeMembershipFile(theDir,NameWitnessPointFile=>"sample_point_file")
-    makeMembershipFile(theDir,TestSolutions=>{{1,2,0},{3,2,1}})
-    importIncidenceMatrix(theDir)
+    runBertini(storeBM2Files)
+    makeSamplePointFile(storeBM2Files,1,0,2)
+    makeMembershipFile(storeBM2Files,NameWitnessPointFile=>"sample_point_file")
+    makeMembershipFile(storeBM2Files,TestSolutions=>{{1,2,0},{3,2,1}})
+    importIncidenceMatrix(storeBM2Files)
       
 ///;
 
@@ -249,10 +249,10 @@ doc ///
      InputFileName has its default as "input". 
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
      	 AVG=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-4})
-     runBertini(theDir)
+     runBertini(storeBM2Files)
    Example
      R=QQ[x,y]
      theDir1 = temporaryFileName()
@@ -284,18 +284,18 @@ doc ///
    Text
      This function does a track type 4 Bertini run creating a linear system file. The slice information for a positive dimensional run can be recovered from such a file.     
    Example
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
        AVG=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
-     runBertini(theDir)
-     makeWitnessSetFile(theDir,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
-     L=importSliceFile(theDir) 
+     runBertini(storeBM2Files)
+     makeWitnessSetFile(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
+     L=importSliceFile(storeBM2Files) 
 --
-     makeWitnessSetFile(theDir,2,
+     makeWitnessSetFile(storeBM2Files,2,
        NameWitnessPointFile=>"custom_name_witness_points",--creates a witness point file with a custom name. 
        SpecifyComponent=>0)  --Component indexing begins at 0. The function creates a witness point file for only a particular component. 
-     L1=importSliceFile(theDir) 
+     L1=importSliceFile(storeBM2Files) 
       
 ///;
 
@@ -318,13 +318,13 @@ doc ///
    Text
      This function does a track type 2 Bertini run creating "sample_point_file" that contains a list of witness points in the standard Bertini format.     
    Example
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
        AVG=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
-     runBertini(theDir)
-     makeSamplePointFile(theDir,2,0,100)--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
-     theSols=importSolutionsFile(theDir,NameSolutionsFile=>"sample_point_file") 
+     runBertini(storeBM2Files)
+     makeSamplePointFile(storeBM2Files,2,0,100)--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
+     theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_point_file") 
       
 ///;
 
@@ -344,13 +344,13 @@ doc ///
      This function does not import a list of coordinates. Instead it imports points from a main_data file. These points contain coordinates, condition numbers, and etc.      
      The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.    
    Example
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
        AVG=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
-     runBertini(theDir)
-     thePoints=importMainDataFile(theDir)
-     witnessPointsDim1= importMainDataFile(theDir,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+     runBertini(storeBM2Files)
+     thePoints=importMainDataFile(storeBM2Files)
+     witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
       
 ///;
 
@@ -373,18 +373,18 @@ doc ///
      To do a paremeter homotopy one must have a start_parameters file and a final_parameters file. 
    Example
      R=QQ[x,y,t]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
      	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 PG=>{t},    AVG=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
-     runBertini(theDir)
-     copyFile(theDir|"/nonsingular_solutions",theDir|"/start")
-     makeB'InputFile(theDir,
+     runBertini(storeBM2Files)
+     copyFile(storeBM2Files|"/nonsingular_solutions",storeBM2Files|"/start")
+     makeB'InputFile(storeBM2Files,
      	 B'Configs=>{{"PARAMETERHOMOTOPY",2}},
 	 PG=>{t},    AVG=>{{x,y}},
 	 B'Polynomials=>{x^2-1,y^2-t})
-     writeParameterFile(theDir,{1})
-     runBertini(theDir)
+     writeParameterFile(storeBM2Files,{1})
+     runBertini(storeBM2Files)
 
 ///;
 
@@ -407,7 +407,7 @@ doc ///
      This function can be used to write "start" files and any other solution file using the option NameStartFile=>"AnyNameYouWant". 
    Example
      coordinatesOfTwoPnts={{1,0},{3,4}}
-     writeStartFile(theDir,coordinatesOfTwoPnts)
+     writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
 
 ///;
 
@@ -838,7 +838,7 @@ doc///
      We can group variables together when using zero-dimensional runs in Bertini. 
    Example
      R=QQ[x1,x2,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
      	 AVG=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
@@ -856,7 +856,7 @@ doc///
      We can group variables together when using zero-dimensional runs in Bertini. 
    Example
      R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
      	 HVG=>{{x0,x1},{y0,y1}},
 	 AVG=>{{z}},
@@ -875,7 +875,7 @@ doc///
      This option should be set to a list of parameters. 
    Example
      R=QQ[x,y,u]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
 	 AVG=>{{x,y}},
 	 PG=>{u},
@@ -894,7 +894,7 @@ doc///
      This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPTYPE" and and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
      	 HVG=>{{x0,x1},{y0,y1}},
 	 AVG=>{{z}},
@@ -916,7 +916,7 @@ doc///
      The second element is the value that the consant will be set.
    Example
      R=QQ[z,a,b,c]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AVG=>{{z}},
 	 B'Constants=>{{a,2},{b,3+2*ii},{c,3/2}},
@@ -937,7 +937,7 @@ doc///
      Elemenets of this list will be set to random complex numbers when Bertini is called.
    Example
      R=QQ[x,y,c1,c2]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
@@ -958,7 +958,7 @@ doc///
      Elemenets of this list will be set to random real numbers when Bertini is called.
    Example
      R=QQ[x,y,c1,c2]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
@@ -980,7 +980,7 @@ doc///
      If B'Polynomials is not used then the user should use the  NamePolynomials option. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AVG=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2})
@@ -988,7 +988,7 @@ doc///
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
      R=QQ[x,y,A]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},
 	 B'Polynomials=>{A+y,x+y-2})
@@ -1008,7 +1008,7 @@ doc///
      The user should use the  NamePolynomials option in conjunction with B'Functions whenever B'Polynomials is not used. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
 	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
@@ -1016,7 +1016,7 @@ doc///
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
      R=QQ[x,y,A]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 B'Functions=>{{A,x^2-1}},--A=x^2-1 is written to the input file
 	 B'Polynomials=>{A+y,x+y-2})
@@ -1036,7 +1036,7 @@ doc///
      The user should use the  NamePolynomials option in conjunction with B'Functions whenever B'Polynomials is not used. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
 	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
@@ -1055,7 +1055,7 @@ doc///
      Set this option to a string to name the input file. 
    Example
      R=QQ[x,y]
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
 	 AVG=>{{x,y}},
 	 B'Polynomials=>{x+y-1,x^2-2},
 	 NameB'InputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
@@ -1073,7 +1073,7 @@ doc///
    Text
      Set this option to a string to name the parameter file.
    Example
-     writeParameterFile(theDir,{.1,.2,.5},NameParameterFile=>"testParameters")  --this function writes a parameter file named testParameters
+     writeParameterFile(storeBM2Files,{.1,.2,.5},NameParameterFile=>"testParameters")  --this function writes a parameter file named testParameters
      
 ///;
 
@@ -1101,25 +1101,13 @@ doc///
    Text
      Set this option to a string to name the solution file. 
    Example
-     importSolutionsFile(theDir,NameSolutionsFile=>"nonsingular_solutions")     
+     makeB'InputFile(storeBM2Files,AVG=>{x},B'Polynomials=>{"x^2-2"})
+     runBertini(storeBM2Files)
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")     
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")     
      
 ///;
 
-doc///
- Key
-   NameStartFile
-   [b'PHMonodromyCollect, NameStartFile]
-   [b'PHSequence, NameStartFile]
-   [b'PHGaloisGroup, NameStartFile]
- Headline
-   This option names the start file. 
- Description
-   Text
-     Set this option to a string to name the start file. 
-   Example
-     importSolutionsFile(theDir,NameSolutionsFile=>"nonsingular_solutions")     
-     
-///;
 
 doc///
  Key
