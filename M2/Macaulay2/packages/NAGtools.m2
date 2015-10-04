@@ -137,5 +137,5 @@ assert areEqual(norm evaluateH(SPH,p,0), 0)
 assert areEqual(norm evaluateHt(SPH,p,0), 1)
 assert areEqual(norm evaluateHx(SPH,p,0), 2)
 peek PH.GateHomotopySystem    
-assert (#preimageViaMonodromy(PH,p,{point p}) == 2)
+assert (#preimageViaMonodromy(PH,point p,{point p}) == 2)
 ///
