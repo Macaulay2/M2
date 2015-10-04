@@ -35,6 +35,30 @@ F = minors matrix{{X,Y,Z},{H,Z,Y}}
 
 
 end
+-- implicit twisted cubic in projective space
+restart
+needsPackage "NAGtools"
+setDefault(Software=>M2)
+
+XYZH = toList (
+    (X,Y,Z,H) = inputGate \ (x,y,z,h)
+    )
+M = matrix{{X,Y,Z},{H,X,Y}}
+S1 = matrix{apply(subsets({0,1,2},2), s->det M_s)}
+A = toList (inputGate \(a_1..a_4))
+S2 = matrix{A}*transpose matrix {XYZH} 
+S = transpose(S1|S2|matrix{{H-1}})
+F = transpose matrix{A}
+PH = gateHomotopy4preimage(F,S,XYZH|A,A)
+x0 = random CC
+p0 = point{{
+	x0^2, 0, -1, 0
+	}}
+pre0 = point{{x0,x0^2,x0^3,1}|coordinates p0}
+stop = (n,L)->n>5
+print preimageViaMonodromy(PH,p0,{pre0},StoppingCriterion=>stop)
+
+end
 restart
 load "degree-computation.m2"
 peek PH.GateHomotopySystem
