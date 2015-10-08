@@ -160,8 +160,8 @@ isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
 
 
 roots = method(TypicalValue => List,
-               Options => { Precision => -1 });
-roots RingElement := opts -> p -> toList apply(rawRoots(raw p, opts.Precision), r -> new CC from r)
+roots RingElement := opts -> p -> toList apply(rawRoots(raw p, opts.Precision, opts.Unique), r -> new CC from r)
+>>>>>>> roots-unique
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

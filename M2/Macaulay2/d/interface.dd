@@ -1555,10 +1555,12 @@ setupfun("rawFactor",rawFactor);
 export rawRoots(e:Expr):Expr := (
     when e
     is s:Sequence do (
-      if length(s) == 2 then
+      if length(s) == 3 then
         when s.0 is x:RawRingElementCell do
         when s.1 is n:ZZcell do
-          toExpr(Ccode(RawRingElementArrayOrNull, "rawRoots(", x.p, ",", toInt(n.v), ")" ))
+        if isBoolean(s.2) then 
+          toExpr(Ccode(RawRingElementArrayOrNull, "rawRoots(", x.p, ",", toInt(n.v), ",", toBoolean(s.2), ")" ))
+        else WrongArg(3, "a boolean")
         else WrongArg(2, "a raw ring element")
         else WrongArg(1, "an integer")
       else WrongNumArgs(2))

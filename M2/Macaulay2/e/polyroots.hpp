@@ -23,6 +23,7 @@ extern "C" void pari_mpfr_init_set_GEN(mpfr_ptr f, GEN x,
 extern "C" void pari_mpc_init_set_GEN(mpc_ptr c, GEN x,
                                       mpfr_prec_t default_prec);
 
-engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec);
+engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
+                                          int unique);
 
 #endif

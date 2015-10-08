@@ -12,7 +12,8 @@ typedef M2::ConcreteRing<M2::ARingRRR> RingRRR;
 typedef M2::ConcreteRing<M2::ARingCC> RingCC;
 typedef M2::ConcreteRing<M2::ARingCCC> RingCCC;
 
-engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
+engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
+                                          int unique) {
   const Ring *R = p->get_ring();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
   if (P == 0) {
@@ -33,9 +34,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     prec = (K->get_precision() == 0 ? 53 : K->get_precision());
   }
 
-  engine_RawRingElementArrayOrNull result =
-      getmemarraytype(engine_RawRingElementArray, degree);
-  result->len = degree;
+  engine_RawRingElementArrayOrNull result = nullptr;
 
   /* Start PARI computations. */
   pari_CATCH(e_STACK) {
@@ -128,13 +127,21 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
       return NULL;
     }
 
+    if (unique) {
+      q = RgX_div(q, RgX_gcd_simple(q, RgX_deriv(q)));
+    }
+
     GEN roots = cleanroots(q, nbits2prec(prec));
+
+    const size_t num_roots = lg(roots) - 1;
+    result = getmemarraytype(engine_RawRingElementArray, num_roots);
+    result->len = num_roots;
 
     ring_elem m2_root;
     if (prec <= 53) {
       const RingCC *CC = dynamic_cast<const RingCC *>(IM2_Ring_CCC(prec));
 
-      for (int i = 0; i < degree; ++i) {
+      for (int i = 0; i < num_roots; ++i) {
         const pari_sp av2 = avma;
 
         GEN pari_root = gel(roots, 1 + i);
@@ -148,7 +155,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec) {
     } else {
       const RingCCC *CCC = dynamic_cast<const RingCCC *>(IM2_Ring_CCC(prec));
 
-      for (int i = 0; i < degree; ++i) {
+      for (int i = 0; i < num_roots; ++i) {
         const pari_sp av2 = avma;
 
         mpc_t root;

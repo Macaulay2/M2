@@ -381,6 +381,7 @@ export {
 	"TypicalValue",
 	"URL",
 	"Undo",
+  "Unique",
 	"Unmixed",
 	"Up",
 	"UpdateOnly",

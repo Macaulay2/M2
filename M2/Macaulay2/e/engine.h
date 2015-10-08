@@ -1939,7 +1939,7 @@ enum gbTraceValues
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
-  engine_RawRingElementArrayOrNull rawRoots(const RingElement *g, long prec); /* connected to rawRoots */
+  engine_RawRingElementArrayOrNull rawRoots(const RingElement *g, long prec, int unique); /* connected to rawRoots */
 
   void rawDummy(void);          /* connected to rawDummy */
 
