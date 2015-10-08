@@ -408,7 +408,13 @@ document {
 }
 
 document {
-  Key => {(roots, RingElement), [roots, Precision]},
+  Key => Unique,
+  Headline => "do not return repeated polynomial roots",
+  "A boolean", TO "boolean", ", to select whether to return repeated roots or not.",
+}
+
+document {
+  Key => {(roots, RingElement), [roots, Precision, Unique]},
   Headline => "compute the roots of a polynomial",
   Usage => "roots x",
   Inputs => {"x" => "a univariate polynomial"},
