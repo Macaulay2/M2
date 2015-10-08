@@ -42,6 +42,12 @@ static int self_initialized;
 
 static int pari_disabled;
 
+static void m2_pari_err_recover(long errnum) {
+  if (errnum != -1) {
+    exit(1);
+  }
+}
+
 static void initpari() {
   if (pari_disabled) return;
   static int firsttime = TRUE;
@@ -57,6 +63,7 @@ static void initpari() {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
     self_initialized = TRUE;
   }
+  cb_pari_err_recover = m2_pari_err_recover;
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 

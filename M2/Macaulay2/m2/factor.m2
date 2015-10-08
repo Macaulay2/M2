@@ -80,11 +80,11 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
      (apply(rawCharSeries raw StoT m, rawmat -> map(T,rawmat)),TtoR))
 
 factor ZZ := ( f -> opts -> f ) (
-     if instance(Pari$factorint, Function) 
+     if instance(Pari$factorint, Function)
      then n -> (
 	  if n === 0 then Product { Power{0,1} }
 	  else (
-	       r := Pari$factorint n; 
+	       r := Pari$factorint n;
 	       Product apply(r#0,r#1,(p,i)-> Power{p,i})
 	       )
 	  )
@@ -157,6 +157,11 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  ))
 
 isPrime Ideal := J -> (C := minimalPrimes J; #C === 1 and C#0 == J)
+
+
+roots = method(TypicalValue => List,
+               Options => { Precision => -1, Unique => false});
+roots RingElement := opts -> p -> toList apply(rawRoots(raw p, opts.Precision, opts.Unique), r -> new CC from r)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
