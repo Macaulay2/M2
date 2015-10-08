@@ -4,4 +4,6 @@
 /*/.configured-*
 /*/.installed-*
 /*/.patched-*
+/*/.checked-*
 /*/build
+/*/build-old

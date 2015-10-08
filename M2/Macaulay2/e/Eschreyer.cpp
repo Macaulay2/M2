@@ -246,7 +246,7 @@ void GBKernelComputation::new_pairs(int i)
       M->from_varpower((*new_mi)[j]->monom().raw(), m);
       M->mult(m, gb[i]->monom, m);
 
-      gbvector * q = make_syz_term(GR->get_flattened_coefficients()->from_int(1),m,i+1);
+      gbvector * q = make_syz_term(GR->get_flattened_coefficients()->from_long(1),m,i+1);
       syzygies.append(q);
     }
 }
@@ -368,7 +368,7 @@ void GBKernelComputation::reduce(gbvector * &f, gbvector * &fsyz)
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();
-  ring_elem one = gbringK->from_int(1);
+  ring_elem one = gbringK->from_long(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
   const gbvector * r;
   int q;
@@ -458,7 +458,7 @@ void GBKernelComputation::geo_reduce(gbvector * &f, gbvector * &fsyz)
   monomial REDUCE_mon = ALLOCATE_MONOMIAL(monom_size);
 
   const Ring *gbringK = GR->get_flattened_coefficients();
-  ring_elem one = gbringK->from_int(1);
+  ring_elem one = gbringK->from_long(1);
   gbvector * lastterm = fsyz;  // fsyz has only ONE term.
   const gbvector * r;
   gbvectorHeap fb(GR,F);

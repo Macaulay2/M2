@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <string>
-#include "aring-ffpack.hpp"
+#include "aring-zzp-ffpack.hpp"
 
 #include "style.hpp"
 #include "aring.hpp"
@@ -19,8 +19,8 @@ namespace M2 {
   typedef struct poly_struct * poly;
 
   struct poly_struct  {
-    unsigned long deg;
-    unsigned long len;
+    int deg;
+    int len;
     union {
       ARingZZpFFPACK::ElementType* coeffs;
       //      long* ints;  // array of integers.  at level == 0
@@ -73,6 +73,11 @@ namespace M2 {
     // The following are he routines required to be of type "RingInterface"
     ///////////////////////////////////
 
+    unsigned int computeHashValue(const elem& a) const 
+    { 
+      return a->deg;
+    }
+
     void text_out(buffer &o) const;
 
     /////////////////////////////////////////////////////////
@@ -113,12 +118,6 @@ namespace M2 {
       result = reinterpret_cast<ElementType>(b);
     }
 
-    // 'get' functions
-
-    //needed?    int get_int(elem f) const { return 0; }
-
-    //needed?    int get_repr(elem f) const { return f; }
-
     // 'init', 'init_set' functions
 
     void init(elem &result) const { result = NULL; }
@@ -129,7 +128,7 @@ namespace M2 {
 
     void copy(elem &result, elem a) const { result = copy(mStartLevel, a); }
 
-    void set_from_int(elem &result, int a) const {       // TODO: write this
+    void set_from_long(elem &result, long a) const {       // TODO: write this
     }
 
     // v from 0..n_vars()-1, sets result to 0 if v is out of range
@@ -180,9 +179,9 @@ namespace M2 {
 
     void elem_text_out(buffer &o,
                        ElementType a,
-                       bool p_one,
-                       bool p_plus,
-                       bool p_parens) const { elem_text_out(o,mStartLevel,a,p_one,p_plus,p_parens); }
+                       bool p_one=true,
+                       bool p_plus=false,
+                       bool p_parens=false) const { elem_text_out(o,mStartLevel,a,p_one,p_plus,p_parens); }
 
     // returns x,y s.y. x*a + y*b == 0.
     // if possible, x is set to 1.
@@ -213,8 +212,8 @@ namespace M2 {
     bool is_one(int level, const poly f) const;  // TODO: write this
     bool is_equal(int level, const poly f, const poly g) const;
 
-    poly alloc_poly_n(long deg) const;
-    poly alloc_poly_0(long deg) const;
+    poly alloc_poly_n(int deg) const;
+    poly alloc_poly_0(int deg) const;
     void dealloc_poly(poly &f) const;
 
     poly copy(int level, const poly f) const;
@@ -277,10 +276,10 @@ namespace M2 {
     void set_zero(ElementType &result) const { result = 0; }
     
     
-    void set_from_int(ElementType &result, long r) {
+    void set_from_long(ElementType &result, long r) {
       r = r % mCharacteristic;
       if (r < 0) r += P;
-      result = mRing.from_int(mStartLevel, r);
+      result = mRing.from_long(mStartLevel, r);
     }
     
     void set_from_int(ElementType &result, mpz_ptr r);
@@ -410,7 +409,7 @@ namespace M2 {
 
     poly copy(int level, const_poly f);
     poly var(int level, int v); // make the variable v (but at level 'level')
-    poly from_int(int level, long c);  // c should be reduced mod p
+    poly from_long(int level, long c);  // c should be reduced mod p
     
     /////////////////////////////////////
     // Private routines for arithmetic //

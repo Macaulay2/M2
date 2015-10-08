@@ -1,12 +1,7 @@
 #ifndef _system_supervisorinterface_h_
 #define _system_supervisorinterface_h_
 
-    #ifndef _REENTRANT
-      #define _REENTRANT
-    #endif
-    #include <pthread.h>
-    #define GC_THREADS
-    #include <gc/gc.h>
+#include <M2/gc-include.h>
 
 typedef void* (*ThreadTaskFunctionPtr)(void*);
 

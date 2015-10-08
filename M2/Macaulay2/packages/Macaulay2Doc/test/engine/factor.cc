@@ -5,7 +5,7 @@
 #include <gmp.h>
 
 #include "config.h"
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 #include <factory.h>
 #include <templates/ftmpl_inst.cc>
 

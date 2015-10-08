@@ -34,15 +34,45 @@ macaulay2 (1.4) stable; urgency=low
 macaulay2 (1.4.0.1) unstable; urgency=low
   * release version 1.4.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Tue,  8 Feb 2011 09:26:46 -0500
-macaulay2 (1.5) unstable; urgency=low
+macaulay2 (1.5) stable; urgency=low
   * release version 1.5
  -- Daniel R Grayson <dan@math.uiuc.edu>  Tue,  19 Jun 2012 09:50:25 -0500
 macaulay2 (1.5.0.1) unstable; urgency=low
   * release version 1.5.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Tue, 11 Nov 2012 05:43:05 -0500
-macaulay2 (1.6) unstable; urgency=low
+macaulay2 (1.6) stable; urgency=low
   * release version 1.6
  -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  26 Apr 2013 09:50:25 -0500
 macaulay2 (1.6.0.1) unstable; urgency=low
   * release version 1.6.0.1
  -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  26 Apr 2013 09:50:25 -0500
+macaulay2 (1.6.1) unstable; urgency=low
+  * release version 1.6.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  27 Aug 2014 09:50:25 -0500
+macaulay2 (1.6.1.1) unstable; urgency=low
+  * release version 1.6.1.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  27 Aug 2014 09:50:25 -0500
+macaulay2 (1.7) stable; urgency=low
+  * release version 1.7
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  17 Oct 2014 09:50:25 -0500
+macaulay2 (1.7.0.1) stable; urgency=low
+  * release version 1.7.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  17 Oct 2014 09:50:25 -0500
+macaulay2 (1.8) stable; urgency=low
+  * release version 1.8
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500
+macaulay2 (1.8.0.1) stable; urgency=low
+  * release version 1.8.0.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500
+macaulay2 (1.8.1) stable; urgency=low
+  * release version 1.8.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500
+macaulay2 (1.8.1.1) stable; urgency=low
+  * release version 1.8.1.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500
+macaulay2 (1.8.2) stable; urgency=low
+  * release version 1.8.2
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500
+macaulay2 (1.8.2.1) stable; urgency=low
+  * release version 1.8.2.1
+ -- Daniel R Grayson <dan@math.uiuc.edu>  Fri,  10 Jun 2015 09:50:25 -0500

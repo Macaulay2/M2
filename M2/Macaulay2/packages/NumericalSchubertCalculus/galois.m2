@@ -1,7 +1,7 @@
 export {
-    findGaloisElement,
-    isFullSymmetric,
-    isGaloisFullSymmetric
+    "findGaloisElement",
+    "isFullSymmetric",
+    "isGaloisFullSymmetric"
     }
 -------------------------------
 ---  findGaloisElement

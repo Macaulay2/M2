@@ -1,13 +1,19 @@
 # @configure_input@
+.NOTPARALLEL:
 include include/config.Makefile
 VPATH = @srcdir@
 .PRECIOUS:@srcdir@/configure config.status
 .PHONY:unconfigure-libs reconfigure configure-help report-M2-location help scripts
 all install: \
-	check-make configured check-for-undefined-configure-variables\
-	srcdir protect-configs configfiles check-machine \
-	all-in-subdirs report-M2-location
-
+	check-make config.status configured check-for-undefined-configure-variables\
+	srcdir protect-configs configured-files check-machine \
+	M2 all-in-subdirs report-M2-location
+configured-files: @CONFIGURED_FILES@
+$(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
+M2: GNUmakefile
+	rm -f M2
+	echo 'exec @pre_bindir@/M2 "$$@"' >M2
+	chmod a+x M2
 define package
 all install-$1: all-$1
 install: install-$1
@@ -15,38 +21,141 @@ install-$1 all-$1:; $(MAKE) -C Macaulay2/packages $@
 endef
 $(foreach i, $(PACKAGES), $(eval $(call package,$i)))
 
-configfiles:; $(MAKE) -f Makefile.configfiles
 check-make:; @ echo "$(.FEATURES)" | grep order-only >/dev/null || (echo error: version >= 3.81 of GNU make is required >&2; false)
+which-tools:
+	for i in m4 autoconf automake; do which $$i ; $$i --version | head -1 ; done
+	printenv ACLOCAL_PATH
 configured:include/configuration
-include/configuration: config.status; ./config.status
 check:configured check-in-Macaulay2
+ifeq "@ENABLE_STRIP@" "yes"
+check: check-stripped
+endif
 check:; : +++ all Macaulay2 tests succeeded +++
 check-machine:; @[ "@UNAME_INFO@" = "` @UNAME_INFO_COMMAND@ `" ] || (echo "error: reconfiguration required (uname output seems different)" >&2; false)
+
+define cdw
+set +x && cd "$1" && echo make: Entering directory \'`pwd`\' && set -x
+endef
+
+# terminology:
+#   usr-build  -- install tools needed for compilation here
+#   usr-host   -- install the results of compilation here, for the target machine
+#   usr-dist   -- install everything needed in the final Macaulay2 distribution here, for the target machine
+
+check-stripped:
+	@ echo "-- checking for unstripped binaries"
+	file @pre_programsdir@/* $(BUILTLIBPATH)/bin/* @pre_bindir@/M2-binary usr-dist/bin/M2-binary usr-host/bin/* | (! grep "not stripped")
+
+## submodules
+ifneq (@build_alias@,)
+# it was ../configure --build=@build_alias@
+SUBMODULE_CONFIGOPTIONS += --build=@build_alias@
+endif
+ifneq (@host_alias@,)
+# it was ../configure --build=@host_alias@ (for cross compiling)
+SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
+endif
+SUBMODULES = memtailor mathic mathicgb
+copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
+copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
+copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
+submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
+SUBTARGETS = check all clean distclean run-configure
+GITSUBTARGETS = git-clean git-update git-status git-describe
+#all-in-submodules:all-in-libraries
+all-in-mathicgb:all-in-mathic all-in-memtailor
+all-in-mathic:all-in-memtailor
+$(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
+define submodule-rules
+$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
+all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
+copy-license-files-from-submodules: copy-license-files-from-$1
+copy-license-files-from-$1:; $(MKDIR_P) $(BUILTLIBPATH)/licenses/$1 && for i in $$(LICENSE_FILES); do cp -v @srcdir@/submodules/$1/$$$$i $(BUILTLIBPATH)/licenses/$1 ; done
+build-in-$1:; + $(MAKE) -C submodules/$1 all
+check-in-$1: run-configure-in-$1; + ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
+$(foreach c,clean distclean,$(eval $c-in-$1:; + if [ -f submodules/$1/Makefile ]; then $(MAKE) -C submodules/$1 $c; fi))
+git-update-in-$1:; cd @srcdir@/submodules/$1 && git checkout master && git pull
+git-status-in-$1:; cd @srcdir@/submodules/$1 && git status
+git-clean-in-$1:; cd @srcdir@/submodules/$1 && git clean -Xdf
+git-describe-in-$1:; cd @srcdir@/submodules/$1 && git describe --dirty --long --always --abbrev=40 --all
+run-configure-in-submodules: run-configure-in-$1
+run-configure-in-$1: submodules/$1/Makefile
+unconfigure-in-submodules: unconfigure-in-$1
+unconfigure-in-$1:; rm -f submodules/$1/Makefile
+submodules/$1/Makefile:@srcdir@/submodules/$1/configure
+	$(MKDIR_P) submodules/$1
+	$(call cdw,submodules/$1) &&							\
+	 @abs_srcdir@/submodules/$1/configure						\
+		--prefix=$(BUILTLIBPATH)						\
+		--with-gtest=yes							\
+		PKG_CONFIG_PATH="$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)"	\
+		GTEST_PATH=$(BUILTLIBPATH)/include/gtest				\
+		AR=@AR@									\
+		AS=@AS@									\
+		DLLTOOL=@DLLTOOL@							\
+		OBJDUMP=@OBJDUMP@							\
+		STRIP=@STRIP@								\
+		CXXFLAGS="$(CXXFLAGS)"							\
+		CFLAGS="$(CFLAGS)"							\
+		FFLAGS="$(FCFLAGS)"							\
+		FCFLAGS="$(FCFLAGS)"							\
+		TARGET_ARCH=$(TARGET_ARCH)						\
+		CPPFLAGS="$(CPPFLAGS)"							\
+		CC="$(CC)"								\
+		CXX="$(CXX)"								\
+		LDFLAGS="$(LDFLAGS)"							\
+		LOADLIBES="$(LOADLIBES)"						\
+		LDLIBS="$(LDLIBS)"							\
+		$$(SUBMODULE_CONFIGOPTIONS)
+@srcdir@/submodules/$1/configure.ac:
+ifeq (@DOWNLOAD@,yes)
+	cd @srcdir@/.. && git submodule update --init M2/submodules/$1
+else
+	@ echo "error: for the submodule \"$1\"" >&2
+	@ echo "       the source code is not present in the directory \"submodules/$1\"" >&2
+	@ echo "       so either run 'git submodule update --init' in the source tree" >&2
+	@ echo "       or rerun the Macaulay2 \"configure\" command with the added option \"--enable-download\"" >&2
+	@ echo "       to enable automatic downloading of the source code over the internet." >&2
+	@ echo "       To clone a repository together with its submodules, add the option" >&2
+	@ echo "       '--recursive' to the 'git clone' command." >&2
+	@ false
+endif
+@srcdir@/submodules/$1/configure:@srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am; cd @srcdir@/submodules/$1 && ./autogen.sh
+endef
+$(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
+$(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules))
+
+# installation into usr-dist
+all-in-Macaulay2:install-licenses
+install-licenses:all-in-submodules
+	: installing library and submodule licenses in @pre_licensesdir@
+	if [ -d $(BUILTLIBPATH)/licenses/. ] ; \
+	then rm -rf @pre_licensesdir@ ; \
+	     @INSTALL@ -d @pre_licensesdir@ ; \
+	     @TAR@ cf - -C $(BUILTLIBPATH)/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
+	fi
+
+## 
 distclean:clean distclean-in-subdirs distclean-this-dir
 distclean-this-dir:
 	rm -f @CONFIGURED_FILES@ include/M2/config.h include/config.Makefile config.cache config.log configure.options config.status config.args
 	rm -f include/M2/synchronization.h
+	find . -type d -empty -delete
 $(foreach t,all check clean distclean,					\
 	$(foreach d,libraries Macaulay2 distributions check-configure,	\
 	   $(eval .PHONY: $t-in-subdirs)				\
 	   $(eval .PHONY $t $t-in-subdirs:$t-in-$d)			\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 clean:
-	rm -f srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
-	rm -rf StagingArea conf_*
+	rm -rf .completed
+	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
+	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
-install: configured normal; $(MAKE) -C distributions $@
-normal:; $(NORMAL_INSTALL) 
-scripts: pre-install.sh post-install.sh
-MI = $(MAKE) -s --no-print-directory -n install -o all PRE_INSTALL=turn-off POST_INSTALL=turn-off NORMAL_INSTALL=turn-off
-pre-install.sh    : install-scripts.awk ; $(MI) PRE_INSTALL=turn-on |gawk -f $^ >$@
-post-install.sh   : install-scripts.awk ; $(MI) POST_INSTALL=turn-on |gawk -f $^ >$@
-normal-install.sh : install-scripts.awk ; $(MI) NORMAL_INSTALL=turn-on |gawk -f $^ >$@
-GNUmakefile: GNUmakefile.in; ./config.status GNUmakefile
-include/config.Makefile: include/config.Makefile.in ; ./config.status include/config.Makefile
-include/M2/config.h: include/M2/config.h.in ./config.status ; ./config.status include/M2/config.h
+	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
+
+install: configured; $(MAKE) -C distributions $@
 @srcdir@/configure : @srcdir@/configure.ac @srcdir@/config/files; $(MAKE) -C @srcdir@ -f Makefile
-recheck config.status: @srcdir@/configure
+recheck config.status: @srcdir@/configure @srcdir@/Macaulay2/packages/=distributed-packages
 	./config.status --recheck
 	./config.status
 status: @srcdir@/configure
@@ -64,16 +173,16 @@ srcdir: GNUmakefile
 	: creating or removing symbolic link to common staging area, if necessary,
 	: based on comparision of these directories:
 	:                      pre_prefix : @pre_prefix@
-	: abs_builddir/StagingArea/common : @abs_builddir@/StagingArea/common
-	@ if [ "@abs_builddir@"/StagingArea/common != "@pre_prefix@" ] ;\
+	: abs_builddir/usr-dist/common : @abs_builddir@/usr-dist/common
+	@ if [ "@abs_builddir@"/usr-dist/common != "@pre_prefix@" ] ;\
 	then (set -x ;\
-	     rm -rf StagingArea/common ;\
-	     $(MKDIR_P) StagingArea ;\
-	     ln -s "@pre_prefix@" StagingArea/common) ;\
+	     rm -rf usr-dist/common ;\
+	     $(MKDIR_P) usr-dist ;\
+	     ln -s "@pre_prefix@" usr-dist/common) ;\
 	else \
-	     if [ -L "@abs_builddir@"/StagingArea/common ] ;\
+	     if [ -L "@abs_builddir@"/usr-dist/common ] ;\
 	     then (set -x ;\
-		   rm StagingArea/common ;\
+		   rm usr-dist/common ;\
 		  ) ;\
 	     fi ;\
 	fi
@@ -84,17 +193,19 @@ show: config.status
 	<$< sed -e 's/\\\n//' |egrep '^[SD]\["' | sed -e 's/^S."\(.*\)"\]="\(.*\)"$$/\1=\2/' -e 's/^D."\(.*\)"\]="\(.*\)"$$/#define \1 \2/' -e 's/\\"/"/g'
 CONFIG_FILES = @srcdir@/configure @srcdir@/config/install-sh @srcdir@/config/config.sub @srcdir@/config/config.guess @srcdir@/config/files
 reconfigure-top-only: recheck check-for-undefined-configure-variables protect-configs
-protect-configs:; chmod a-w $(shell cat @srcdir@/config/files)
+protect-configs:
+	 @ chmod a-w $(shell cat @srcdir@/config/files)
 check-for-undefined-configure-variables:
-	: "checking for strings that look like unsubstituted configure variables in all *.in files..."
+	: "checking for strings that look like undefined configure variables in all *.in files..."
 	@ egrep -nH '@[A-Za-z_]+@' $(shell cat @srcdir@/config/files) | sed -e 's=^\([^:]*\):=@srcdir@/\1.in:='  | egrep . ; [ "$?" != 0 ]
 configure-help: $(CONFIG_FILES) ; @ @srcdir@/configure --help
 relink:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d @pre_exec_prefix@/bin/M2@EXE@
-relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d STRIP=no @pre_exec_prefix@/bin/M2@EXE@
+relink-nostrip:; rm -f @pre_exec_prefix@/bin/M2@EXE@ && $(MAKE) -C Macaulay2/d ENABLE_STRIP=no @pre_exec_prefix@/bin/M2@EXE@
 unmark-packages:; $(MAKE) -C Macaulay2/packages $@
 reconfigure: reconfigure-top-only unconfigure-libs 
 unconfigure-libs:; $(MAKE) -C libraries unconfigure
 remove-deps:; find . -name \*.dep -delete
+find-conflicts:; grep -r -nH --exclude-dir BUILD -e '^<<<<<<< ' @srcdir@ || true
 log-archive:; find . -name config.log |xargs tar xzf config-logs.tgz
 report-M2-location:
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : :
@@ -127,19 +238,22 @@ help:
 	@ echo "configuration display:"
 	@ echo "  status                    show options used with 'configure'"
 	@ echo "  configure-help            show help for 'configure'"
-	@ echo "  reconfigure               re-run configure, set libraries for later reconfiguration"
+	@ echo "  reconfigure               re-run configure, set libraries for later reconfiguration and thus recompilation"
 	@ echo "  reconfigure-top-only      re-run configure"
 	@ echo "  unconfigure-libs          set libraries for later reconfiguration"
 	@ echo "  subst                     re-run config.status, remaking the makefiles"
 	@ echo "  show                      show configuration variable values"
+	@ echo "  find-conflicts            find conflict markers in source files"
 	@ echo ""
 	@ echo "package options:"
-	@ echo "  PACKAGES='Foo Bar'             the list of packages to process"
+	@ echo "  PACKAGES='Foo Bar'             the list of packages to install"
+	@ echo "  ReinstallPackages=true         reinstall the packages"
+	@ echo ""
+	@ echo "package options, when installing:"
 	@ echo "  IgnoreExampleErrors=true       continue even after errors in example code"
-	@ echo "  RemakePackages=true            remake the packages"
+	@ echo "  RerunExamples=true             rerun example output files"
 	@ echo "  RemakeAllDocumentation=true    remake all documentation"
 	@ echo "  CheckDocumentation=false       don't check documentation for completeness"
-	@ echo "  RerunExamples=true             rerun example output files"
 	@ echo "  debugLevel=1                   turn on further M2 debugging output"
 	@ echo ""
 	@ echo "make install options:"

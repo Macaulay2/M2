@@ -16,22 +16,20 @@ newPackage(
 *}
 
 export { 
-     symbol EllipticCurve, 
-     symbol Period, 
-     symbol Period', 
-     symbol periodCoordinates, 
-     symbol checkEquation,
-     symbol distance,
-     symbol PointClass,
-     symbol EllipticCurvePoint,
-     symbol test					    -- remove later
+     "EllipticCurve", 
+     "Period", 
+     "Period'", 
+     "periodCoordinates", 
+     "checkEquation",
+     "distance",
+     "PointClass",
+     "EllipticCurvePoint",
+     "modPeriods",
+     "test"					    -- remove later
      }
 
-exportMutable {
-     symbol b,
-     symbol c,
-     symbol modPeriods
-     }
+b := getSymbol "b"
+c := getSymbol "c"
 
 see := (label,x) -> (stderr << "--" << label << " = " << x << endl; x)
 
@@ -45,7 +43,7 @@ net EllipticCurve := net @@ expression
 ellset					    -- function defined later
 new EllipticCurve from List := (EllipticCurve,v) -> ellset toSequence v
 precision EllipticCurve := E -> precision E.Period
-isReal EllipticCurve := E -> isReal E.b and isReal E.c
+isReal EllipticCurve := E -> isReal E#b and isReal E#c
 
 log2ten = log_2 10p20
 
@@ -192,8 +190,8 @@ ellset = (b,c) -> (
 		    x := hold getSymbol "x";
 		    y := hold getSymbol "y";
 		    y^2 == x^3 + b * x^2 + c * x)) (),
-	  global b => b,
-	  global c => c,
+	  getSymbol "b" => b,
+	  getSymbol "c" => c,
 	  global Period => numeric_prec period,
 	  global Period' => numeric_prec period',
 	  global periodCoordinates => z -> (
@@ -347,7 +345,7 @@ scan(20, i -> (
 	  ));
 scan(20, i -> (
 	  x := random CC * 20 - (10+10*ii);
-	  y := sqrt ( x^3 + E.b*x^2 + E.c*x );
+	  y := sqrt ( x^3 + E#b*x^2 + E#c*x );
 	  P := E {x,y,1};
 	  assert( E.checkEquation P < 1p20e-40 );
 	  assert( distance(E.exp E.log P, P) < 1p20e-40 );

@@ -11,36 +11,37 @@ newPackage(
 	  },
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => false 
+     -- DebuggingMode => true 
      )
 
 export {
      -- service functions
-     generalEquations, 
+     "generalEquations", 
      -- witness set
-     WitnessSet, witnessSet, equations, slice, points, 
-     Equations, Slice, Points, ProjectionDimension, 
-     sliceEquations, projectiveSliceEquations, IsIrreducible, 
-     ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
+     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "Equations", "Slice", "Points", "ProjectionDimension", 
+     "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
+     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
      -- numerical variety
-     NumericalVariety, numericalVariety, numericalAffineSpace,
+     "NumericalVariety", "numericalVariety", "numericalAffineSpace",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     Point, point, coordinates,
-     project,
-     isRealPoint, realPoints, residual, origin,
-     Norm, 
+     "Point", "point", "coordinates",
+     "project",
+     "isRealPoint", "realPoints", "residual", "origin",
+     "Norm", 
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     Regular, Singular, Infinity, 
-     MinStepFailure, NumericalRankFailure, RefinementFailure, 
+     "Regular", "Singular", "Infinity", 
+     "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
      -- polynomial systems
-     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, -- JacobianAndPolySystem, 
-     ContinuationParameter, SpecializationRing,
-     polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
+     "ContinuationParameter", "SpecializationRing",
+     "polySystem", "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
      "evaluate",
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
@@ -218,7 +219,7 @@ net Point := p -> (
      else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
      else if p.SolutionStatus === NumericalRankFailure then net "[N]"
-     else if p.SolutionStatus === RefinementFailure then net "[R]"
+     else if p.SolutionStatus === RefinementFailure then net "[RF:" | net toSequence p.Coordinates | net "]"
      else error "the point is corrupted"
     ) 
 globalAssignment Point
@@ -227,6 +228,7 @@ point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
+toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 
@@ -308,9 +310,12 @@ isGEQ(List,List) := o->(t,s)-> (
 sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
-     if #sols == 0 then sols
+     if #sols == 0 then (
+	 sorted := {};
+	 sols
+	 )
      else (
-	  sorted := {0};
+	  sorted = {0};
 	  get'coordinates := sol -> if class sol === Point then coordinates sol 
 	                       else if ancestor(BasicList, class sol) then toList sol
 			       else error "expected Points or BasicLists";
@@ -423,6 +428,23 @@ groupClusters MutableHashTable := H -> (
 
 solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 solutionsWithMultiplicity List := o-> sols -> ( 
+    sorted := sortSolutions(sols,o);
+    i := 0; 
+    while i<#sorted list (
+	si := sorted#i;
+	si.Multiplicity = 1;
+	j := i + 1;
+	while j < #sorted and areEqual(sorted#j,si,o) do (
+	    si.Multiplicity = si.Multiplicity + 1;
+	    j = j + 1;
+	    );
+	i = j;
+	si
+	) 
+    )
+
+{*
+solutionsWithMultiplicity List := o-> sols -> ( 
      clusters := groupClusters solutionDuplicates(sols,o);
      apply(clusters, c->(
 	       s := new Point from sols#(first c);
@@ -430,6 +452,7 @@ solutionsWithMultiplicity List := o-> sols -> (
 	       s
 	       ))
      )
+*}
 
 TEST ///
 a = point {{0,1}}
@@ -713,7 +736,7 @@ ring DualSpace := L -> ring gens L
 point DualSpace := L -> L.BasePoint
 
 -- DOCUMENTATION ------------------------------------------------------
-
+undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
 beginDocumentation()
 
 document {
@@ -722,7 +745,7 @@ document {
      PARA{
      	  "The package defines types used by the package ", TO "NumericalAlgebraicGeometry::NumericalAlgebraicGeometry", 
      	  " as well as other numerical algebraic geometry packages: e.g., interface packages ", 
-     	  TO "PHCpack::PHCpack", " and ", TO "Bertini::Bertini", "."
+     	  TO "PHCpack::PHCpack", " and ", TT "Bertini::Bertini", "."
 	  },  
      PARA{"Datatypes: "},
      UL{    
@@ -1496,6 +1519,7 @@ doc ///
     generalEquations
     (generalEquations,ZZ,Ideal)
     (generalEquations,ZZ,List)
+    (generalEquations,WitnessSet)
   Headline
     random linear combinations of equations/generators 
   Usage

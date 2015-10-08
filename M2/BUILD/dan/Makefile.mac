@@ -11,89 +11,52 @@
 #   gdb --osabi Darwin64
 #############################################################################
 
-export GC_MAXIMUM_HEAP_SIZE = 300000000
+# export GC_MAXIMUM_HEAP_SIZE = 300000000
 
 PRODUCTION=yes
 DEBUG=no
+unexport DEBUG
 PROFILE=no
-M64=yes
-FIX_UNWIND=no
+unexport PROFILE
 
-# CONFIGOPTIONS += --disable-strip
+# see the INSTALL file:
+export MACOSX_DEPLOYMENT_TARGET=10.9
 
-
-# We need to avoid the LLVM compiler, because it miscompiles pari; it is /usr/bin/gcc .
+ifeq ($(CLANG),yes)
+# The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
-# CC=gcc-4.2
-# CXX=g++-4.2
-
-# now I've installed gcc 4.6.2
-# but it compiles e/montableZZ.cpp incorrectly, or else evokes a bug in it:
-# CC=/usr/local/bin/gcc
-# CXX=/usr/local/bin/g++
-
-ifeq ($(MATHICGB),yes)
-CONFIGOPTIONS += --enable-mathicgb
-endif
-
-ifeq ($(FFPACK),yes)
-CONFIGOPTIONS += --enable-fflas-ffpack
-endif
-
-ifeq ($(LINBOX),yes)
-CONFIGOPTIONS += --enable-linbox
-endif
-
-ifeq ($(FLINT),yes)
-CONFIGOPTIONS += --enable-flint
-endif
-
-ifeq ($(GIVARO),yes)
-CONFIGOPTIONS += --enable-givaro
-endif
-
-# The standard gcc under Mac OS X is buggy, so we typically compile the latest one. 
-# We tried linking statically with its libraries, but it makes c++ exceptions not work:
-# CONFIGOPTIONS += LDFLAGS="-static-libstdc++ -static-libgcc"
-
-unexport DEBUG
-unexport PROFILE
-
-CC := gcc
-CXX := g++
-
-# CC := clang
-# CXX := clang++
-
-BRANCH := $(shell git branch --contains | sed s/^..//)
-
-ifeq ($(M64),yes)
-DIRECTORY := mac64
-CC  += -m64
-CXX += -m64
-export MPIR_CONFIGOPTIONS=ABI=64
+DIRECTORY := $(DIRECTORY)-clang
+_CC  := /usr/bin/gcc
+_CXX := /usr/bin/g++
+_FC  := false
+CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
-DIRECTORY := mac32
-CC  += -m32
-CXX += -m32
-export MPIR_CONFIGOPTIONS=ABI=32
+_CC  := gcc-4.9 -mtune=generic
+_CXX := g++-4.9 -mtune=generic
+_FC  := 
+# _FC  := gfortran-5
+# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
+DIRECTORY := mac64
 endif
 
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-# the warning messages about this from clang have gotten noisy:
-# V = -mmacosx-version-min=10.6
-# CC  += $V
-# CXX += $V
-
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" --build=x86_64-apple-darwin
-
 default: all
 
+# we build pari because brew's pari brings in gmp
+# we build flint because of the gmp problem Mike found once
+# we build gc because homebrew compiles with clang and produces non-generic code and ignores the command line option -mtune=generic
+#   $ gdb /usr/local/lib/libgc.1.dylib 
+#   (gdb) x/i min_bytes_allocd+100
+#   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
+#   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
+CONFIGOPTIONS += --enable-build-libraries="pari flint readline"
+
 ifeq ($(PRODUCTION),yes)
-   default: check install
+   default: check
    CONFIGOPTIONS += --disable-common-staging-area
    DIRECTORY := $(DIRECTORY).production
    PREFIX = /Applications/Macaulay2-1.6
@@ -107,7 +70,7 @@ ifeq ($(PRODUCTION),yes)
 endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
-   CONFIGOPTIONS += --enable-debug --disable-optimize
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
    DIRECTORY := $(DIRECTORY).debug
 endif
 
@@ -117,7 +80,7 @@ ifeq ($(PROFILE),yes)
    DIRECTORY := $(DIRECTORY).profile
 endif
 include Makefile.include
-pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
+
 # Local Variables:
-# compile-command: "time make -w -f Makefile.mac PRODUCTION=yes DEBUG=no rebuild-world "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
 # End:

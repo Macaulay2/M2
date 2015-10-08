@@ -1,9 +1,9 @@
 export {
-    checkIncidenceSolution, --this is only for our tests... shouldn't be used by the user
-    checkNewtonIteration, -- this is for testing only should be removed from the final version
-    solutionsToAffineCoords,
-    partition2bracket,
-    bracket2partition
+    "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
+    "checkNewtonIteration", -- this is for testing only should be removed from the final version
+    "solutionsToAffineCoords",
+    "partition2bracket",
+    "bracket2partition"
     }
 ----------------
 --Functions contained here but not exported:

@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.6.0.1",
-     Date => "May, 2014",
+     Version => "1.8",
+     Date => "August 2015",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -17,7 +17,7 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     --DebuggingMode => true,
+     -- DebuggingMode => true,
      DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
@@ -39,7 +39,7 @@ newPackage select((
 export {
      "setDefault", "getDefault",
      "solveSystem", 
-     solveGenericSystemInTorus, -- works with PHCpack only
+     "solveGenericSystemInTorus", -- works with PHCpack only
      "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
@@ -52,9 +52,9 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     Bits, Iterations, ErrorTolerance, ResidualTolerance,
+     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, squareUp,
+     "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -120,9 +120,9 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => 1e-8,
+     ResidualTolerance => infinity,
      Iterations => 30, 
-     Bits => 300,
+     Bits => infinity,
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
@@ -307,6 +307,7 @@ toCCpolynomials (List,ZZ) := (F,prec) -> (
     apply(F,f->sub(f,R)) 
     )    
 
+load "./NumericalAlgebraicGeometry/extraNAGtypes.m2"
 load "./NumericalAlgebraicGeometry/track.m2"
 load "./NumericalAlgebraicGeometry/refine.m2"
 

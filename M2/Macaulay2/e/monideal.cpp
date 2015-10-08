@@ -4,6 +4,22 @@
 #include "monoid.hpp"
 #include "text-io.hpp"
 
+unsigned int MonomialIdeal::computeHashValue() const
+{
+  // Incorporate the length and the first 5 elements
+  unsigned int hashval = length();
+  int count = 0;
+  Index<MonomialIdeal> i = first();
+  while (i.valid() and count < 5)
+    {
+      const int *m = operator[](i)->monom().raw();
+      hashval = 4436435 * hashval + varpower::computeHashValue(m);
+      i++;
+      count++;
+    }
+  return hashval;
+}
+
 void MonomialIdeal::remove_MonomialIdeal()
 {
   delete_mi_node(mi);

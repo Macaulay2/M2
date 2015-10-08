@@ -26,8 +26,8 @@ newPackage(
     )
 
 export {   
-   NSC'DBG, NSC'VERIFY'SOLUTIONS, NSC'BLACKBOX, setFlags,
-   solveSchubertProblem
+   "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
+   "solveSchubertProblem"
    --   changeFlags  -- better name?
    }
 protect Board
@@ -807,8 +807,8 @@ load "NumericalSchubertCalculus/LR-makePolynomials.m2"
 --    T - a list of Points that are solutions to H at t=1
 -- Caveat:
 --    H should be a _linear_ in t
-trackHomotopy = method(TypicalValue=>List)
-trackHomotopy (Matrix,List) := (H,S) -> (
+trackHomotopyNSC = method(TypicalValue=>List)
+trackHomotopyNSC (Matrix,List) := (H,S) -> (
      Rt := ring H;
      R := (coefficientRing Rt)[drop(gens Rt,1)];
      map't'0 := map(R, Rt, matrix{{0_FFF}}|vars R);

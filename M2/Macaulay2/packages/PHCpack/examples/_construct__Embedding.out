@@ -1,35 +1,31 @@
 -- -*- M2-comint -*- {* hash: -1285962778 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y,z];
 
 i2 : f = { x^2 - y, x^3 - z };
 
 i3 : fe1 = constructEmbedding(f,1);
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/3PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/1PHCoutput
 
 i4 : toString fe1
 
-o4 = {x^2-y+(-.200288-.979737*ii)*zz1, x^3-z+(.584209-.811603*ii)*zz1, zz1,
-     (.983404+.18143*ii)*x+(.996696+.0812267*ii)*y+(-.99595-.0899065*ii)*z
-     +(-.411914+.911223*ii)*zz1-.785149+.619307*ii}
+o4 = {x^2-y+(.934667+.355524*ii)*zz1, x^3-z+(-.0847828+.996399*ii)*zz1, zz1,
+     (-.572854-.819658*ii)*x+(-.824003-.566585*ii)*y+(.00702545-.999975*ii)*z
+     +(.964285+.264868*ii)*zz1+.0513446-.998681*ii}
 
 i5 : R = CC[x,y,z];
 
 i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
 
 i7 : fe1 = constructEmbedding(f,1);
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/6PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/7PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44639-0/5PHCoutput
 
 i8 : toString fe1
 
-o8 = {x^2-y+(-.517053-.301215*ii)*ss1+(.44113-.897443*ii)*zz1,
-     x^3-z+(-.807631-.115119*ii)*ss1+(-.338609+.940927*ii)*zz1,
-     x*y-z+(-.145323+.149572*ii)*ss1+(.107681-.994185*ii)*zz1,
-     -y^2+x*z+(.135875-.440999*ii)*ss1+(.576771-.816906*ii)*zz1,
-     (-.654952-.755671*ii)*x+(.965941+.258763*ii)*y+(.657153+.753757*ii)*z
-     +(-.0744425-.997225*ii)*ss1+(.92541-.378968*ii)*zz1-.252792-.967521*ii}
+o8 = {x^2-y+(-.429165-.903226*ii)*ss1+(.714253+.699887*ii)*zz1,
+     x^3-z+(-.0582899-.9983*ii)*ss1+(-.30047-.953791*ii)*zz1,
+     x*y-z+(.0577689+.99833*ii)*ss1+(.822596-.568627*ii)*zz1,
+     -y^2+x*z+(.651957+.758256*ii)*ss1+(.74634+.665565*ii)*zz1,
+     (-.976263+.216588*ii)*x+(-.993524-.11362*ii)*y+(.871737+.489974*ii)*z
+     +(-.195836-.980637*ii)*ss1+(.999757-.0220546*ii)*zz1+.997386+.0722627*ii
+     }
 
 i9 : 

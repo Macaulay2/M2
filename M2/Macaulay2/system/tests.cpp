@@ -81,9 +81,10 @@ static void* TS_Test2_Func1(void* vtup)
      }
  }
 
- int TS_Test()
+extern "C" {
+ void TS_Test()
  {
    TS_Test1();
    TS_Test2();
 }
-
+}

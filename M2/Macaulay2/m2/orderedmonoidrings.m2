@@ -261,32 +261,45 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --	       f}
 	  );
      	  if M.Options.Inverses === true then (
-	       denominator RM := f -> RM_( - min \ transpose exponents f );
+	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> (
-	       c := 1;
+	       c := 1_R; 
+	       if (options RM).Inverses then (
+		   minexps:=min \ transpose exponents f;
+		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+		   c=RM_minexps;
+		   );
 	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-     	       facs = apply(facs, p -> new RM from p);
+	       leadCoeff := x->( -- iterated leadCoefficient
+		   R:=ring x;
+		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
+		   if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+    	    	   x);
+     	       facs = apply(#facs, i -> (
+		       p:=new RM from facs#i;
+		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
+		       ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
-		    c = facs#0;
+		    c = c*(facs#0);
 		    facs = drop(facs,1);
 		    exps = drop(exps,1);
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       if c != 1 then (
-		    -- we put the possible constant factor at the end
+		    -- we put the possible constant (and monomial for Laurent polynomials) at the end
 		    facs = append(facs,c);
 		    exps = append(exps,1);
 		    );
 	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
-	       v := factor f;				    -- constant term last
-	       #v === 1 and last v#0 === 1 and not isConstant first v#0
-	       or
-	       #v === 2 and v#0#1 === 1 and isConstant first v#0 and v#1#1 === 1
+	      v := factor f;
+	      cnt := 0; -- counts number of factors
+	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
+	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
 	  RM.generators = apply(num, i -> RM_i);
@@ -355,6 +368,9 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
+
+antipode = method();
+antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -239,6 +239,10 @@ int system_strnumcmp(M2_string s,M2_string t) {
      return ret;
 }
 
+#ifndef PACKAGE_NAME
+#error "M2/config.h not included"
+#endif
+
 M2_arrayint system_waitNoHang(M2_arrayint pids)
 {
      int n = pids->len;
@@ -248,8 +252,12 @@ M2_arrayint system_waitNoHang(M2_arrayint pids)
 	  M2_arrayint z = (M2_arrayint)getmem_atomic(sizeofarray(z,n));
 	  z->len = n;
 	  for (i=0; i<n; i++) {
+	       #ifdef HAVE_WAIT4
 	       int ret = wait4(pid[i],&status[i],WNOHANG,NULL);
 	       z->array[i] = ret == ERROR ? -1 : WIFEXITED(status[i]) ? status[i] >> 8 : -2;
+	       #else
+	       z->array[i] = -1;
+	       #endif
 	  }
 	  return z;
      }
@@ -302,7 +310,13 @@ M2_string system_readlink(M2_string filename) {
   M2_string s = NULL;
   while (TRUE) {
     char buf[size];
-    int r = readlink(fn,buf,sizeof buf);
+    int r = 
+      #ifdef HAVE_READLINK
+      readlink(fn,buf,sizeof buf)
+      #else
+      -1
+      #endif
+      ;
     if (r == -1) {
       s = M2_tostring("");
       break;
@@ -326,17 +340,27 @@ int system_chdir(M2_string filename) {
 
 static bool isDirectory(const char *cname) {
   struct stat buf;
-  int r = lstat(cname,&buf);
+  int r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+      (cname,&buf);
   return r != ERROR && S_ISDIR(buf.st_mode);
 }
 
 M2_string system_realpath(M2_string filename) {
+ #ifdef HAVE_REALPATH
   char *fn = M2_tocharstar(filename);
   char buf[PATH_MAX+1];
   char *r = realpath(*fn ? fn : ".",buf);
   if (isDirectory(r)) strcat(r,"/");
   GC_FREE(fn);
   return r == NULL ? NULL : M2_tostring(buf);
+ #else
+  return filename;
+ #endif
 }
 
 M2_string system_errfmt(M2_string filename, int lineno, int colno, int loaddepth) {
@@ -515,7 +539,13 @@ int system_isDirectory(M2_string name) {
 int system_isRegularFile(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
-  int r = lstat(cname,&buf);
+  int r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+    (cname,&buf);
   GC_FREE(cname);
   return r == ERROR ? -1 : S_ISREG(buf.st_mode);
 }
@@ -565,7 +595,13 @@ int system_fileTime(M2_string name) {
   char *cname = M2_tocharstar(name);
   struct stat buf;
   int r;
-  r = lstat(cname,&buf);
+  r = 
+    #ifdef HAVE_LSTAT
+    lstat
+    #else
+    stat
+    #endif
+      (cname,&buf);
   GC_FREE(cname);
   if (r == ERROR) return -1;
   return buf.st_mtime;
@@ -583,7 +619,13 @@ int system_setFileTime(M2_string name, int modtime) {
 
 int system_mkdir(M2_string name) {
   char *cname = M2_tocharstar(name);
-  int r = mkdir(cname,0777);
+  int r = 
+    #ifdef __MINGW32__
+    mkdir(cname)
+    #else
+    mkdir(cname,0777)
+    #endif
+    ;
   GC_FREE(cname);
   return r;
 }
@@ -605,7 +647,13 @@ int system_unlink(M2_string name) {
 int system_link(M2_string oldfilename,M2_string newfilename) {
   char *old = M2_tocharstar(oldfilename);
   char *new = M2_tocharstar(newfilename);
-  int r = link(old,new);
+  int r = 
+    #ifdef HAVE_LINK
+    link(old,new)
+    #else
+    -1
+    #endif
+    ;
   GC_FREE(old);
   GC_FREE(new);
   return r;
@@ -614,7 +662,13 @@ int system_link(M2_string oldfilename,M2_string newfilename) {
 int system_symlink(M2_string oldfilename,M2_string newfilename) {
   char *old = M2_tocharstar(oldfilename);
   char *new = M2_tocharstar(newfilename);
-  int r = symlink(old,new);
+  int r = 
+    #ifdef HAVE_SYMLINK
+    symlink(old,new)
+    #else
+    -1
+    #endif
+    ;
   GC_FREE(old);
   GC_FREE(new);
   return r;
@@ -662,7 +716,7 @@ M2_string system_readfile(int fd) {
 
 static const char *hostname_error_message;
 
-#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
+#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
 static int set_addrinfo(struct addrinfo **addr, struct addrinfo *hints, char *hostname, char *service) {
      int ret;
      ret = getaddrinfo(hostname, service, hints /* thanks to Dan Roozemond for pointing out this was NULL before, causing problems */, addr);
@@ -684,11 +738,11 @@ const char *hstrerror(int herrno) {
 }
 #endif
 
-#if !(HAVE_GETADDRINFO && GETADDRINFO_WORKS)
+#if !(defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS)
 int host_address(name)
 char *name;
 {
-#if HAVE_SOCKET
+#ifdef HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
      	  int s;
 	  s = inet_addr(name);	/* this function is obsolete, replaced by inet_aton(); we use it only if getaddrinfo is not available */
@@ -723,7 +777,7 @@ char *name;
 int serv_address(name)
 char *name;
 {
-#if HAVE_SOCKET
+#ifdef HAVE_SOCKET
      if ('0' <= name[0] && name[0] <= '9') {
 	  return htons(atoi(name));
 	  }
@@ -744,10 +798,12 @@ char *name;
 #endif
 
 int system_acceptBlocking(int so) {
-#if HAVE_SOCKET
+#ifdef HAVE_ACCEPT
   struct sockaddr_in addr;
-  socklen_t addrlen = sizeof addr;
+  SOCKLEN_T addrlen = sizeof addr;
+#ifdef HAVE_FCNTL
   fcntl(so,F_SETFL,0);
+#endif
   return accept(so,(struct sockaddr*)&addr,&addrlen);
 #else
   return ERROR;
@@ -755,7 +811,7 @@ int system_acceptBlocking(int so) {
 }
 
 int system_acceptNonblocking(int so) {
-#if HAVE_SOCKET
+#if defined(HAVE_SOCKET) && defined(HAVE_FCNTL)
   struct sockaddr_in addr;
   socklen_t addrlen = sizeof addr;
   int sd;
@@ -769,15 +825,15 @@ int system_acceptNonblocking(int so) {
 
 #define INCOMING_QUEUE_LEN 10
 
-int openlistener(char *interface, char *service) {
-#if HAVE_SOCKET
-#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
+int openlistener(char *interface0, char *service) {
+#ifdef HAVE_SOCKET
+#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
   struct addrinfo *addr = NULL;
   static struct addrinfo hints;	/* static so all parts get initialized to zero */
   int so;
   hints.ai_family = PF_UNSPEC;
   hints.ai_flags = AI_PASSIVE;
-  if (0 != set_addrinfo(&addr,&hints,interface,service)) return ERROR;
+  if (0 != set_addrinfo(&addr,&hints,interface0,service)) return ERROR;
   so = socket(addr->ai_family,SOCK_STREAM,0);
   if (ERROR == so) { freeaddrinfo(addr); return ERROR; }
   if (ERROR == bind(so,addr->ai_addr,addr->ai_addrlen) || ERROR == listen(so, INCOMING_QUEUE_LEN)) { freeaddrinfo(addr); close(so); return ERROR; }
@@ -802,8 +858,8 @@ int openlistener(char *interface, char *service) {
 }
 
 int opensocket(char *host, char *service) {
-#if HAVE_SOCKET
-#if HAVE_GETADDRINFO && GETADDRINFO_WORKS
+#ifdef HAVE_SOCKET
+#if defined(HAVE_GETADDRINFO) && GETADDRINFO_WORKS
   struct addrinfo *addr;
   int so;
   if (sigsetjmp(interrupt_jump,TRUE)) {
@@ -854,34 +910,33 @@ int system_opensocket(M2_string host,M2_string serv) {
      return sd;
      }
 
-int system_openlistener(M2_string interface,M2_string serv) {
-     char *tmpinterface = M2_tocharstar(interface);
+int system_openlistener(M2_string interface0,M2_string serv) {
+     char *tmpinterface0 = M2_tocharstar(interface0);
      char *tmpserv = M2_tocharstar(serv);
-     int sd = openlistener(*tmpinterface ? tmpinterface : NULL,tmpserv);
-     GC_FREE(tmpinterface);
+     int sd = openlistener(*tmpinterface0 ? tmpinterface0 : NULL,tmpserv);
+     GC_FREE(tmpinterface0);
      GC_FREE(tmpserv);
      return sd;
      }
 
-extern int errno;
 #if defined(HAVE_DECL_SYS_NERR) && !HAVE_DECL_SYS_NERR
 extern int sys_nerr;
 #endif
 
-#if HAVE_HERROR
+#ifdef HAVE_HERROR
 extern int h_nerr;
-#if !H_ERRLIST_IS_DECLARED
-extern const char * const h_errlist[];
-#endif
+ #if defined(HAVE_DECL_H_ERRLIST) && !HAVE_DECL_H_ERRLIST
+ extern const char * const h_errlist[];
+ #endif
 #endif
 
-#if !SYS_ERRLIST_IS_DECLARED
+#if defined(HAVE_DECL_SYS_ERRLIST) && !HAVE_DECL_SYS_ERRLIST
 extern const char * const sys_errlist[];
 #endif
 
 int system_errno(void) {
   return 
-#if HAVE_HERROR
+#ifdef HAVE_HERROR
     h_errno > 0 ? h_errno : 
 #endif
     errno;
@@ -1147,6 +1202,8 @@ bool gotArg(const char *arg, const char **argv) {
   for (; *argv; argv++) if (0 == strcmp(arg,*argv)) return TRUE;
   return FALSE;
 }
+
+void do_nothing () { }
 
 /*
 // Local Variables:

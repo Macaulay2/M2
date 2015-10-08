@@ -347,7 +347,10 @@ document {
 	  [status, TotalPairs],[status, Monomials],[status, PairsRemaining]},
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
-     chain complex ", TT "C", " constructed by ", TO "resolution", ".  The display has
+     chain complex ", TT "C", " constructed by application of ", TO "resolution", " to
+     a module, provided the resolution has been constructed in the engine; 
+     in particular, the module should be homogeneous and the ultimate coefficient ring of its
+     ring should be a field.  The display has
      the same shape as the display produced by ", TO "betti", ", but
      the number(s) displayed in each degree differ.",
      PARA{},
@@ -442,7 +445,7 @@ document {
      PARA {
 	  "For multivariate polynomials the
 	  factorization is done with code of Michael Messollen (see 
-	  ", TO "Singular-Libfac", ").  For univariate
+	  ", TO "Singular-Factory", ").  For univariate
 	  polynomials the factorization is in turn done with code of 
 	  Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
 	  },

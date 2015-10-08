@@ -233,7 +233,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    if VERIFY'SOLUTIONS then verifyStart(polys, startSolutions);
    if DBG>0 then t1:= cpuTime();
    -- track homotopy and plug in the solution together with t=1 into Xt
-   targetSolutions := trackHomotopy(polys,startSolutions);
+   targetSolutions := trackHomotopyNSC(polys,startSolutions);
    if DBG>0 then (
       t2 := cpuTime();
       << " -- trackHomotopy time = " << (t2-t1)

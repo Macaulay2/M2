@@ -16,17 +16,17 @@ newPackage(
     	)
 
 export { 
-     --gfanRingInput, 
-     --gfanIdealInput, 
-     initialIdeals, --documented
-     --hilbertPt, 
-     --statePolytopePoints, 
-     --statePolytopePoints, 
-     --printHilbPt, 
-     --createPolymakeInputFile,
-     statePolytope, --documented
-     --maxUGBDegree, 
-     isStable --documented
+     --"gfanRingInput", 
+     --"gfanIdealInput", 
+     "initialIdeals", --documented
+     --"hilbertPt", 
+     --"statePolytopePoints", 
+     --"statePolytopePoints", 
+     --"printHilbPt", 
+     --"createPolymakeInputFile",
+     "statePolytope", --documented
+     --"maxUGBDegree", 
+     "isStable" --documented
      }
 
 

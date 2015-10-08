@@ -83,6 +83,12 @@ void tableau2::display() const
 }
 
 //////////////////////////////////////////
+unsigned int SchurRing2::computeHashValue(const ring_elem a) const
+{
+  // TODO HASH
+  return 95864398;
+}
+
 bool operator==(const schur_poly::iterator &a, const schur_poly::iterator &b)
 {
   return a.ic == b.ic;
@@ -126,11 +132,11 @@ SchurRing2::SchurRing2(const Ring *A, int n)
 
 bool SchurRing2::initialize_SchurRing2()
 {
-  initialize_ring(coefficientRing->charac());
+  initialize_ring(coefficientRing->characteristic());
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   SMinitialize(nvars,0);
   return true;
@@ -151,22 +157,29 @@ bool SchurRing2::is_valid_partition(M2_arrayint part, bool set_error) const
           ERROR("expected a non-increasing sequence of integers");
         return false;
       }
-  if (part->len > 0 && part->array[part->len-1] <= 0)
+  if (part->len > 0 && part->array[part->len-1] < 0)
     {
       if (set_error)
-        ERROR("expected positive integers only");
+        ERROR("expected nonnegative integers only");
       return false;
     }
   return true;
 }
 
+static int last_nonzero(M2_arrayint part)
+{
+  for (int i=part->len-1; i >= 0; i--)
+    if (part->array[i] != 0) return i;
+  return -1;
+}
 ring_elem SchurRing2::from_partition(M2_arrayint part) const
 {
   ring_elem result;
   schur_poly *f = new schur_poly;
   f->coeffs.push_back(coefficientRing->one());
-  f->monoms.push_back(part->len + 1);
-  for (int i=0; i<part->len; i++)
+  int len = last_nonzero(part) + 1;
+  f->monoms.push_back(len + 1);
+  for (int i=0; i<len; i++)
     f->monoms.push_back(part->array[i]);
   result.schur_poly_val = f;
   return result;
@@ -188,7 +201,7 @@ void SchurRing2::elem_text_out(buffer &o,
                                bool p_parens) const
 {
   const schur_poly *g = f.schur_poly_val;
-  int n = g->size();
+  size_t n = g->size();
 
   bool needs_parens = p_parens && (n > 1);
   if (needs_parens)
@@ -273,9 +286,9 @@ ring_elem SchurRing2::from_coeff(ring_elem a) const
   result.schur_poly_val = f;
   return result;
 }
-ring_elem SchurRing2::from_int(int n) const
+ring_elem SchurRing2::from_long(long n) const
 {
-  ring_elem a = coefficientRing->from_int(n);
+  ring_elem a = coefficientRing->from_long(n);
   return from_coeff(a);
 }
 ring_elem SchurRing2::from_int(mpz_ptr n) const
@@ -341,6 +354,8 @@ int SchurRing2::compare_partitions(const_schur_partition a, const_schur_partitio
 int SchurRing2::compare_elems(const ring_elem f, const ring_elem g) const
 {
   /* write me */
+#warning "compare_elems method needs to be written"
+  return 0;
 }
 bool SchurRing2::promote_coeffs(const SchurRing2 *Rf, const ring_elem f, ring_elem &resultRE) const
 {
@@ -587,8 +602,6 @@ ring_elem SchurRing2::mult(const ring_elem f, const ring_elem g) const
             ring_elem c = coefficientRing->mult(i.getCoefficient(), j.getCoefficient());
             ring_elem r = const_cast<SchurRing2 *>(this)->mult_terms(i.getMonomial(), j.getMonomial());
             resultRE.schur_poly_val = mult_by_coefficient(c, r.schur_poly_val);
-#warning "Dan commented out a 'delete' call that was freeing a pointer twice; leaving for Mike to debug"
-            //      delete r;
             H.add(resultRE);
           }
       return H.value();
@@ -636,7 +649,7 @@ engine_RawArrayPairOrNull SchurRing2::list_form(const Ring *coeffR, const ring_e
       return 0;
     }
   const schur_poly *f1 = f.schur_poly_val;
-  int n = f1->size();
+  int n = static_cast<int>(f1->size()); // this is here because the lengths of arrays for M3 front end use int as length field.
   engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,n));
   engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,n));
   monoms->len = n;

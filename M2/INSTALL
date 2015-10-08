@@ -8,7 +8,7 @@
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay2.
 
-Macaulay2 is copyright 1993-2012 by Daniel R. Grayson and Michael E. Stillman.
+Macaulay2 is copyright 1993-2014 by Daniel R. Grayson and Michael E. Stillman.
 We permit you to use the source code under the terms of the GNU General Public
 License (GPL), version 2 or 3, as published by the Free Software Foundation;
 see the files Macaulay2/COPYING-*.  The packages contributed by various
@@ -22,6 +22,30 @@ fitness for a particular purpose.
 This file describes how to build the software from sources and is not included
 in binary distributions.  Most users will prefer to download a binary
 distribution.
+
+----------------------
+Getting the source code
+----------------------
+
+The current development version of the source code can be obtained with this
+command, assuming you have installed "git" on your machine:
+
+    git clone https://github.com/Macaulay2/M2
+
+A directory called M2, which you can move or rename, will be created, and this
+INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
+to the branch containing version 1.6 with the following command:
+
+    git checkout release-1.6
+
+The following command shows the list of release branches:
+
+    git branch -a | grep origin/release
+
+The following commands will download the latest changes to the source code:
+
+    git pull
+    git submodule update
 
 ---------
 Programs
@@ -51,7 +75,10 @@ various modern operating systems:
 
   Debian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gcc-4.3 gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline5-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libboost-dev libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev liblzma-dev libmpfr-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libtool libxml2-dev libz-dev make openssh-server pkg-config subversion xbase-clients unzip pinentry-curses
+    On all systems, add
+        --enable-build-libraries="ntl pari"
+      to the "configure" command line below.
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -60,19 +87,30 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
+    On all systems, add
+        FC=gfortran
+      to the environment or to the "configure" command line below.  (The
+      program "make" has a default value of "f77" for "FC", the Fortran
+      compiler, but "f77" isn't available.)
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
       only to enable distribution of the resulting binaries to users of other
       hardware.) 
+    On Ubuntu 14.10 and later, add
+        --enable-build-libraries=pari
+      to the "configure" command line below.  (The version of pari possibly installed there
+      will crash when M2 exits.)
+    (To upgrade to a new release of Ubuntu, run "update-manager" if you want a GUI, or run
+    "do-release-upgrade" for a command line interface.)
 
   Raspbian:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time
+      sudo apt-get install -y -q autoconf bison curl emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev libgmp3-dev liblapack-dev libmpfr-dev libncurses-dev libntl-dev libpari-dev libreadline-dev libxml2-dev libz-dev make openssh-server subversion xbase-clients time libtool
     On a 32-bit system, add
         --with-mpir-config-options="ABI=32 --build=i686-pc-linux-gnu"
       to the "configure" command line below.  (The --build option is necessary
@@ -83,36 +121,43 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo yum -y install  autoconf bison cddlib-devel emacs fakeroot flex gc-devel gcc-c++ gdbm-devel glpk-devel gmp-devel kernel-devel lapack-devel libxml2-devel mpfr-devel ncurses-devel ntl-devel pari-devel patch rpm-build rpmdevtools subversion
+      sudo yum -y install autoconf bison boost-devel cddlib-devel emacs factory-devel fakeroot flex gc-devel gcc-c++ gdbm-devel git glpk-devel gmp-devel kernel-devel lapack-devel libatomic_ops-devel libfac-devel libgfortran-static libtool libxml2-devel mpfr-devel mpir-devel ncurses-devel ntl-devel pari-devel patch readline-devel rpm-build rpm-sign rpmdevtools subversion
     Some debugging aids:
-       sudo debuginfo-install blas gdbm glibc gmp lapack libgcc libgfortran libstdc++ libxml2 ncurses-libs ntl pari readline zlib
+      sudo debuginfo-install strace
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison emacs flex gcc-c++ gcc-gfortran gdbm-devel gmp-devel lapack-devel libxml2-devel ncurses-devel readline-devel rpm-build strace subversion zlib-devel
-    For making an rpm file, install fakeroot manually, from:
-         http://ftp.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.11.tar.gz
-
-    Scientific Linux 6.4 has an old version (4.4.7) of gcc that may not work with a
-    future version of Macaulay2.  However, one can install newer compilers
-    (4.8.1) from the repository of the "Scientific Linux CERN 6" distribution,
-    (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
-	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
-	yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran
-    Or you can install the whole set with
-        yum install devtoolset-2
-    Then use
-	scl enable devtoolset-2 bash
-    to start up bash running in an environment where the modern versions are on
-    the path, or use
-        . /opt/rh/devtoolset-2/enable
-    to update the environment of your currently running shell.  The latter
-    command will work in your shell initialization file, ".profile".
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign subversion zlib-devel xz-devel
+    Some debugging aids:
+      sudo yum install -y strace
+    Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
+      Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
+      future version of Macaulay2.  However, one can install newer compilers
+      (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
+      (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
+	  wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	  yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
+      Then use
+	  . /opt/rh/devtoolset-2/enable
+      to update the environment of your currently running shell.  The latter
+      command will also work in your shell initialization file, ".profile".
 
   Suse64:
-    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel
+    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
+
+  Arch Linux:
+      sudo pacman -S archlinux-keyring
+      sudo pacman-key --populate archlinux
+      sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
+    If the package "pari" is also installed on your system, remember to add
+    	--enable-build-libraries=pari
+    to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
+    crash when the program terminates (when the exit handlers are executed, it dies in the function "closepari".)
 
   Mac OS X:
+    Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
+      it will be necessary to reinstall it.  One may use the following command for installing it:
+      	 xcode-select --install
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -123,27 +168,69 @@ various modern operating systems:
       at https://github.com/Homebrew/homebrew/tarball/master, which will download
       a tar file that can be untarred anywhere and renamed.)
     Install the programs and libraries needed for building:
-        brew tap homebrew/versions homebrew/science
-        brew install gcc48 autoconf gnu-tar bdw-gc libatomic_ops gdbm pari boost cddlib glpk
-        brew link --force autoconf # just to ensure it got linked upon installation
+	brew tap homebrew/versions
+	brew tap homebrew/science
+	brew tap homebrew/homebrew-x11
+	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
+	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
+    Note: the reason we compile from source with gcc is that the precompiled
+      packages that brew would otherwise download are compiled using "clang"
+      and assume that the CPU supports advanced vector extensions, which not
+      all of the machines of our users do.
     Now remember to add 
-        CC=gcc-4.8 CXX=g++-4.8 FC=gfortran-4.8.2
-    to the "configure" command line below, because those are the names of the
-    compilers in the package gcc48.
+        --enable-build-libraries="pari flint readline" CC="gcc-4.9 -mtune=generic" CXX="g++-4.9 -mtune=generic"
+      to the "configure" command line below in the section on compiling Macaulay2.
+    Note: the compiler option "-mtune=generic" ensures that gcc generates code that
+      will run on the most commonly available CPUs.  If you won't be distributing the
+      code to others, it can be omitted.
+    Note: including "readline" in the "--enable-build-libraries" option is
+      necessary because it doesn't seem to be possible to recompile it from
+      source; the binary distribution used by homebrew uses "clang", which will
+      optimize the code in "gc" for your particular CPU.  If you won't be
+      distributing the code to others, it can be omitted.
+    Note: under Mac OS version 10.10 (Yosemite), the test for whether compiling with
+      g++-4.9 and then linking with gcc-4.9 works may fail, in which case adding
+        MACOSX_DEPLOYMENT_TARGET=10.9
+      to the environment (e.g., with the "sh" command
+        export MACOSX_DEPLOYMENT_TARGET=10.9
+      ) may help.  Apparently the tools have trouble determining that 10.10 is a
+      newer version number than 10.9.  Linking alternatively with libgcc_eh
+      seems to break C++ exception handling.
+    Note: homebrew uses /usr/bin/gcc to compile its libraries.  If compiling
+      with clang instead of gcc, then run this first:
+        brew install gmp mpfr
+    Note: software installed by "fink", if not kept up to date, can interfere
+      with the Macaulay2 build process.  To test, for example, whether the
+      correct version of "automake" is available, run the shell command
+        type automake
+      and expect to see /usr/local/bin/automake, as opposed to
+      /sw/bin/automake.  Since homebrew suffices for most purposes, it's
+      probably best to just remove fink entirely, with the command
+        sudo rm -rf /sw
 
   Cygwin 1.7 under Microsoft Windows:
-    use setup to install these packages:
-        autoconf automake bison emacs-X11 file flex gcc4-core gcc4-fortran gcc4-g++ gdb
-        libgc-devel libgdbm-devel libglpk-devel liblapack-devel libstdc++6-devel
-        libxml2-devel make mpfr-devel patchutils readline subversion time wget
-     you may also want these:
-        emacs-el gvim libxml2-doc openssh psmisc unzip vim xconsole xkill
+    Use setup to install these packages:
+	autoconf automake bison emacs-X11 file flex gcc-core gcc-fortran
+	gcc-g++ git libatomic_ops-devel libboost-devel libgc-devel
+	libgdbm-devel libglpk-devel liblapack-devel libmpfr-devel
+	libncurses-devel libreadline-devel libstdc++6-devel libtool
+	libxml2-devel make patchutils pkg-config time unzip wget
+    You may also want these:
+        ctags emacs-el gdb gvim libxml2-doc openssh psmisc vim xauth xconsole
+        xinit xkill xterm
+    After installing xinit, the program "startxwin" can be used to start X Windows.
 
 ----------------------
   Compiling the most recent GNU C compiler
 ----------------------
 
-  To download and install the GNU C compiler, without having root access:
+  It may happen that you need a modern version of the GNU C compiler, but you
+  have no way to download a binary distribution of it, or you have no way to
+  use "brew" or "fink" to download and compile it for you.  In that case, you
+  may download, compile, and install the GNU C compiler (without necessariy
+  having root access) as follows.  Change "$HOME/local" below to the path to
+  the directory where you want to install the files; if it's a directory not
+  owned by you, prefix the "make install" command below with "sudo".
 
        wget ftp://ftp.gnu.org/gnu/gcc/gcc-4.8.2/gcc-4.8.2.tar.bz2
        tar xjf gcc-4.8.2.tar.bz2
@@ -161,7 +248,7 @@ various modern operating systems:
      of its libraries, and it would be bad to have a mismatch.
 
      It might be possible to add --disable-libstdcxx to the "configure"
-     commandn line above, allowing the resulting binaries to depend on the
+     command line above, allowing the resulting binaries to depend on the
      version of libstdc++ already installed on your system.
 
      The resulting compiler executables will be named gcc-4.8.2 and g++-4.8.2.
@@ -175,7 +262,8 @@ various modern operating systems:
         export CXX=g++-4.8.2
         export FC=gfortran-4.8.2
 
-     and then log out and log in again.
+     and then log out and log in again (or source the file into your
+     environment and continue in the same process or in daughter processes).
 
      Under Scientific Linux 6.4, if you run "sudo yum install -y glibc-devel.i686"
      first, then you can omit --disable-multilib above and get a 32 bit
@@ -187,6 +275,11 @@ various modern operating systems:
      Any other libraries you may want to use may also be installed with
      $HOME/local as the install prefix, as gcc-4.8.2 will automatically search
      in there for include files and libraries.
+
+     Installing multiple software in the same directory, such as in $HOME/local
+     (as described above), makes it hard to remove or upgrade packages.  To
+     solve that problem, use the program "epkg", available from
+     http://www.encap.org/epkg/.
 
 ----------------------
 Choosing a place for the repository
@@ -201,10 +294,16 @@ files are not backed up.  For your changes to Macaulay2 source code, github.com
 will serve as your backup.
 
 -----------------------
-Compiling
+Compiling Macaulay2
 -----------------------
 
-Begin with this command, run in this directory:
+Now the directory to be in is the one containing this file in the source
+distribution -- it is called "M2", and is a subdirectory of the top level
+directory of the source tree.  If you are reading this file on the web, it may
+be more convenient to switch now to reading it in its location in the source
+tree.
+
+Begin with this command:
 
         make
 
@@ -214,34 +313,30 @@ next steps.  Once those files are created, it is not necessary to make them
 again.  The "make" command on your system should be a recent version of GNU
 make.
 
-Now continute building the program this way:
+Now continue building the program this way:
 
         ./configure --enable-download
         make
         make check                      # optional
         make install
 
-On some systems, especially if you are building a binary distribution of Macaulay2,
-additional arguments should be given to the "./configure" command, and are explained
-below.
+Remember to add any options specified above, in the section for your particular
+operating system, to the "configure" command line.
 
-Alternatively, especially if you would like to build versions for multiple
-architectures, or if you want confidence that "make clean" and "make distclean"
-will really work, you can make a separate "build directory" somewhere else and
-compile it there, for example, in a subdirectory of the subdirectory BUILD,
-provided for that purpose:
+To take advantage of parallelism when running "make", append an option of
+the form "-jN" to the command line, where "N" is replaced by the number of
+processors you wish to devote to the task.  (Our makefiles are just begining to
+take advantage of this.)
 
-        cd BUILD/build
-        ../../configure --enable-download
-        make
-        make check                      # optional
-        make install
+To skip the running of the NTL "wizard", which conducts time consuming
+experiments to optimize the speed of its code, before compiling it, add the
+option --disable-ntl-wizard to the "configure" command line above.
 
 By default, the files are installed in appropriate subdirectories of
 /usr/local.  To specify a different location (prefix) you may use an option to
 the configure script:
 
-        ../../configure --enable-download --prefix=/foo/bar
+        ./configure --enable-download --prefix=/foo/bar
 
 Files will then be installed in the following directories:
 
@@ -383,3 +478,54 @@ MacOS X notes
     look something like this:
 
         ../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
+
+----------------------
+Rerunning the package examples
+----------------------
+
+Some packages cache their example output in the source code tree, since they
+depend on the presence of external programs not included with Macaulay2.  Here
+we briefly summarize them and the software they depend on:
+
+    gfanInterface StatePolytope need polymake, builds OK
+	    http://polymake.org/lib/exe/fetch.php/download/polymake-2.13-1.tar.bz2
+	    (Make 3.81 has a problem with their makefile, so use 4.0)
+
+    Bertini needs bertini:
+	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	which needs gmp and mpfr:
+	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
+	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+
+    PHCpack needs PHCpack, download the binary:
+	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+
+    AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
+
+    ConvexInterface also needs the maple package "convex" installed.  See the 
+    package documentation for hints about installing it.
+    	    http://www.math.uwo.ca/~mfranz/convex/files/current/convex.m
+
+----------------------
+Warning messages
+----------------------
+
+	-  warning: -jN forced in submake: disabling jobserver mode
+
+	   This message can be ignored, if the previous recursive make command
+	   had -j1 as an option, as -j1 implies the use of just one processor,
+	   anyway.  (We use -j1 as an option when compiling third party libraries
+	   whose makefiles are not known to support parallelism.)
+
+----------------------
+Autoconf, autoreconf, libtool, ...
+----------------------
+
+If you get any mysterious error messages involving autoconf, autoreconf,
+libtool, etc., try running
+
+	 make -f Makefile get-tools
+
+in the top level.  This command will install versions of those tools known to
+work with Macaulay2.
+

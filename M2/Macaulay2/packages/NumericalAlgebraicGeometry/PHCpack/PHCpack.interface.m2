@@ -43,6 +43,7 @@ refinePHCpack (List,List,HashTable) := List => (T,sols,o) -> (
      )
 
 solveGenericSystemInTorus = method()
+solveGenericSystemInTorus PolySystem := F -> solveGenericSystemInTorus equations F
 solveGenericSystemInTorus List := F -> (
     (vol,S,solsS) := mixedVolume(toRingXphc F, StartSystem=>true);
     assert(vol==#solsS);

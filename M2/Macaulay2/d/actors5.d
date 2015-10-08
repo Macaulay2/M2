@@ -267,20 +267,32 @@ leftDividefun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,LeftDivideS);
 setup(LeftDivideS,leftDividefun);
 
 header "
+#ifdef HAVE_SYS_IOCTL_H
  #include <sys/ioctl.h>
+#endif
+#ifdef HAVE_TERMIOS_H
  #include <termios.h>
- ";
+#endif
+";
 
 WindowWidth(fd:int):int := Ccode(returns,"
+   #ifdef HAVE_SYS_IOCTL_H
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_col;
-     ");
+   #else
+     return -1;
+   #endif
+");
 WindowHeight(fd:int):int := Ccode(returns,"
+   #ifdef HAVE_SYS_IOCTL_H
      struct winsize x;
      ioctl(1,TIOCGWINSZ,&x);	/* see /usr/include/$SYSTEM/termios.h */
      return x.ws_row;
-     ");
+   #else
+     return -1;
+   #endif
+");
 
 fileWidth(e:Expr):Expr := (
      when e
@@ -379,7 +391,7 @@ NetFileAppend(e:Expr):Expr := (
 installMethod(LessLessS,netFileClass,stringClass,NetFileAppend);
 installMethod(LessLessS,netFileClass,netClass,NetFileAppend);
 		   
-address(f:Frame):ulong := Ccode(ulong,"((unsigned long)",f,")");
+address(f:Frame):ulong := Ccode(ulong,"((unsigned long)(intptr_t)",f,")");
 
 showFrames(f:Frame):void := (
      stdIO << " frames bound :";
@@ -530,8 +542,6 @@ unstack(e:Expr):Expr := (
      else WrongArg("a net"));
 setupfun("unstack",unstack);
 
-header "#include <unistd.h>";
-alarm(x:uint) ::= Ccode(int,"alarm(",x,")");
 alarm(e:Expr):Expr := (
      when e is i:ZZcell do 
      if isInt(i)
@@ -1141,7 +1151,13 @@ echoOff(e:Expr):Expr := (
      );
 setupfun("echoOff",echoOff);
 header "#include <signal.h>";
-kill(pid:int,sig:int) ::= Ccode(int,"kill(",pid,",",sig,")");
+kill(pid:int,sig:int) ::= Ccode(int,"
+     #ifdef HAVE_KILL
+      kill(",pid,",",sig,")
+     #else
+      -1
+     #endif
+     ");
 kill(e:Expr):Expr := (
      when e 
      is pid:ZZcell do if !isInt(pid) then WrongArgSmallInteger() else (
@@ -1356,9 +1372,14 @@ fileTime(e:Expr):Expr := (
      else WrongArg("string, or integer and string"));
 setupfun("fileTime",fileTime);
 
+haveNoTimeInitialized := false;
+haveNoTime := false;
 currentTime(e:Expr):Expr := (
+     if !haveNoTimeInitialized then (
+	  haveNoTimeInitialized = true;
+	  foreach s in argv do if s === "--no-time" then haveNoTime = true);
      when e is a:Sequence do
-     if length(a) == 0 then toExpr(currentTime())
+     if length(a) == 0 then toExpr(if haveNoTime then 0 else currentTime())
      else WrongNumArgs(0)
      else WrongNumArgs(0));
 setupfun("currentTime",currentTime);
@@ -2006,7 +2027,6 @@ GCstats(e:Expr):Expr := (
 		    "heap size" => toExpr(Ccode(int,"GC_get_heap_size()")),
 		    "number of collections" => toExpr(Ccode(int,"GC_get_gc_no()")),
 		    "parallel" => toExpr(Ccode(bool,"!!GC_get_parallel()")),
-		    "all interior pointers" => toExpr(Ccode(bool,"GC_get_all_interior_pointers()")),
 		    "finalize on demand" => toExpr(Ccode(bool,"!!GC_get_finalize_on_demand()")),
 		    "java finalization" => toExpr(Ccode(bool,"GC_get_java_finalization()")),
 		    "don't expand" => toExpr(Ccode(bool,"GC_get_dont_expand()")),
@@ -2034,11 +2054,13 @@ GCstats(e:Expr):Expr := (
 		    "GC_ENABLE_INCREMENTAL" => toExpr(getenv("GC_ENABLE_INCREMENTAL")),
 		    "GC_PAUSE_TIME_TARGET" => toExpr(getenv("GC_PAUSE_TIME_TARGET")),
 		    "GC_FULL_FREQUENCY" => toExpr(getenv("GC_FULL_FREQUENCY")),
-		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")),
+		    "GC_FREE_SPACE_DIVISOR" => toExpr(getenv("GC_FREE_SPACE_DIVISOR")), -- the environment variable
+		    "GC_free_space_divisor" => toExpr(Ccode(long,"GC_get_free_space_divisor()")),           -- the set value in memory
 		    "GC_UNMAP_THRESHOLD" => toExpr(getenv("GC_UNMAP_THRESHOLD")),
 		    "GC_FORCE_UNMAP_ON_GCOLLECT" => toExpr(getenv("GC_FORCE_UNMAP_ON_GCOLLECT")),
 		    "GC_FIND_LEAK" => toExpr(getenv("GC_FIND_LEAK")),
 		    "GC_ALL_INTERIOR_POINTERS" => toExpr(getenv("GC_ALL_INTERIOR_POINTERS")),
+		    "GC_all_interior_pointers" => toExpr(Ccode(long,"GC_get_all_interior_pointers()")),           -- the set value in memory
 		    "GC_DONT_GC" => toExpr(getenv("GC_DONT_GC")),
 		    "GC_TRACE" => toExpr(getenv("GC_TRACE"))
 		    )))
@@ -2055,6 +2077,22 @@ setFactoryGFtableDirectory(e:Expr):Expr := (
 	  nullE)
      else WrongArgString());
 setupfun("setFactoryGFtableDirectory",setFactoryGFtableDirectory);
+
+serialNumber(e:Expr):Expr := (
+     when e 
+     is s:SymbolClosure do toExpr(s.symbol.serialNumber)
+     is o:HashTable do if o.Mutable then toExpr(o.hash) else WrongArg("hash table to be mutable")
+     is o:List do if o.Mutable then toExpr(o.hash) else WrongArg("list to be mutable")
+     is o:DictionaryClosure do toExpr(o.dictionary.hash)
+     is t:TaskCell do toExpr(t.body.serialNumber)
+     else WrongArg("a symbol or a mutable hash table or list"));
+setupfun("serialNumber",serialNumber);
+
+header "extern void TS_Test();";
+threadTest(e:Expr):Expr := (
+     Ccode(void, "TS_Test()");
+     nullE);
+setupfun("threadTest",threadTest);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d actors5.o "

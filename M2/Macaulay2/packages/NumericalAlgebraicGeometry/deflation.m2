@@ -3,11 +3,11 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export { deflate, 
-    SolutionSystem, Deflation, DeflationRandomMatrix, liftPointToDeflation, 
-    deflateInPlace, DeflationSequence, DeflationSequenceMatrices,
-    LiftedPoint, LiftedSystem, SquareUp,
-    numericalRank, isFullNumericalRank
+export { "deflate", 
+    "SolutionSystem", "Deflation", "DeflationRandomMatrix", "liftPointToDeflation", 
+    "deflateInPlace", "DeflationSequence", "DeflationSequenceMatrices",
+    "LiftedPoint", "LiftedSystem", "SquareUp",
+    "numericalRank", "isFullNumericalRank"
     }
 
 numericalRank = method(Options=>{Threshold=>1e-4})
@@ -192,14 +192,14 @@ deflateInPlace(Point,PolySystem) := o -> (P,F) -> (
     )
 
 TEST ///
-setRandomSeed 0
+setRandomSeed 1
 C=CC_200
 C[x,y,z]
 F = polySystem {x^3,y^3,x^2*y,z*(z-1)^2}
 P = point sub(matrix{{0.000001, 0.000001*ii,1.000001-0.000001*ii}},C)
 deflateInPlace(P,F)
 assert(P.DeflationSequence == {0,1})
-assert(2*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
+assert(10{*a not too large constant*}*P.ErrorBoundEstimate^2 > (newton(P.LiftedSystem,P.LiftedPoint)).ErrorBoundEstimate)
 ///
 
 partitionViaDeflationSequence = method()

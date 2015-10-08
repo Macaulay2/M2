@@ -57,11 +57,32 @@ MutableMatrix + MutableMatrix := (m,n) -> map(ring m, raw m + raw n)
 MutableMatrix - MutableMatrix := (m,n) -> map(ring m, raw m - raw n)
 MutableMatrix * MutableMatrix := (m,n) -> map(ring m, raw m * raw n)
 RingElement * MutableMatrix := (f,n) -> map(ring f, raw f * raw n)
+MutableMatrix * RingElement := (n,f) -> map(ring f, raw n * raw f)
+ZZ * MutableMatrix := (f,n) -> map(ring f, raw (f_(ring n)) * raw n)
+MutableMatrix * ZZ := (n,f) -> map(ring f, raw n * raw (f_(ring n)))
 
 MutableMatrix _ Sequence = (M,ij,val) -> (
      val = promote(val,ring M);
      (raw M)_ij = raw val; 
      val)
+
+transpose MutableMatrix := (f) -> map(ring f, rawDual raw f)
+
+lift(MutableMatrix,InexactNumber) := opts -> (M,RR) -> lift(M,default RR,opts)
+lift(MutableMatrix,InexactNumber') :=
+lift(MutableMatrix,RingElement) := 
+lift(MutableMatrix,Number) := Matrix => opts -> (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     lift(f, R, S, opts))     
+
+promote(MutableMatrix,InexactNumber) := (M,RR) -> promote(M,default RR)
+promote(MutableMatrix,InexactNumber') :=
+promote(MutableMatrix,RingElement) := 
+promote(MutableMatrix,Number) := Matrix => (f,S) -> (
+     R := ring f;
+     if R === S then return f;
+     promote(f, R, S))
 
 --------------------------------
 -- submatrices -----------------
@@ -168,11 +189,10 @@ LUdecomposition Matrix := (A) -> (
      (p,L,U) := LUdecomposition mutableMatrix A;
      (p, matrix L,matrix U))
 
-solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0 })
+solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0, Invertible=>false })
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
-     if hasEngineLinearAlgebra R then (
-         return map(R,rawLinAlgSolve(raw A, raw b, true));
+     if not opts.ClosestFit then (
          );
      if (opts#Precision !=0) then (
 		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
@@ -181,11 +201,30 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
 --     if (precision A > precision b) then b=promote(b, ring A);
 --     if (precision b > precision A) then A=promote(A, ring b);
      x := mutableMatrix(ring A,0,0,Dense=>true);
-     if opts.ClosestFit
-     then rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank)
-     else rawSolve(raw A,raw b,raw x);
+     rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
      x)
+
+solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
+     R := ring A;
+     if opts.ClosestFit then (
+         if (opts#Precision !=0) then (
+		     A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
+		     b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
+	         );
+         x := mutableMatrix(ring A,0,0,Dense=>true);
+         rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
+         x)
+     else (
+         ans := if opts.Invertible then
+                    rawLinAlgSolveInvertible(raw A, raw b)
+                else
+                    rawLinAlgSolve(raw A, raw b);
+         if ans === null then null else map(R, ans)
+         )
+     )
+
 solve(Matrix,Matrix) := opts -> (A,b) -> (
+    if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
@@ -232,6 +271,37 @@ SVD Matrix := o -> A -> (
      A = mutableMatrix(A,Dense=>true);
      (Sigma,U,VT) := SVD(A,o);
      (VerticalList flatten entries matrix Sigma,matrix U,matrix VT))
+
+rank MutableMatrix := (M) -> rawLinAlgRank raw M
+
+determinant MutableMatrix := opts -> (M) -> promote(rawLinAlgDeterminant raw M, ring M)
+
+inverse MutableMatrix := (A) -> (
+     R := ring A;
+     if numRows A =!= numColumns A then error "expected square matrix";
+     map(R,rawLinAlgInverse raw A)
+     )
+
+nullSpace = method()
+nullSpace(MutableMatrix) := (M) -> map(ring M, rawLinAlgNullSpace raw M)
+
+MutableMatrix ^ ZZ := (A, r) -> (
+     if r == 0 then 
+       return mutableIdentity(ring A, numRows A);
+     if r < 0 then (
+	  r = -r;
+	  A = inverse A;
+	  );
+     result := A;
+     if r > 1 then for i from 2 to r do result = result * A;
+     result     
+     )
+
+rowRankProfile = method()
+rowRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, true)
+
+columnRankProfile = method()
+columnRankProfile MutableMatrix := (A) -> rawLinAlgRankProfile(raw A, false)
      
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

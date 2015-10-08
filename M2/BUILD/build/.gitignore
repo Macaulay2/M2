@@ -1,6 +1,5 @@
 GNUmakefile
 Macaulay2
-Makefile.configfiles
 check-configure
 config.args
 config.log

@@ -1,18 +1,13 @@
 # -*- makefile-gmake -*-
-M=64
-ifeq ($M,64)
-A=x86_64
+DIRECTORY = sl64.production
+ifeq ($(DEBUG),yes)
+   CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
+   DIRECTORY := debug
 else
-ifeq ($M,32)
-A=i686
-else
-$(error "$M should be 32 or 64")
+   CONFIGOPTIONS += --enable-rpm --enable-strip
 endif
-endif
-CONFIGOPTIONS += --build=$A-unknown-linux-gnu --with-mpir-config-options="ABI=$M" --enable-rpm
-DIRECTORY = scientific-$M
 include Makefile.include
 default: check
 # Local Variables:
-# compile-command: "time make -f Makefile.scientific M=64 "
+# compile-command: "time make -f Makefile.scientific NTL_WIZARD=no "
 # End:

@@ -7,39 +7,57 @@ i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 o2 : Ideal of R
 
 i3 : isStable(3,I)
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake:  WARNING: directory /Users/dan/.polymake created for keeping personal user settings
-polymake: used package cddlib
- Implementation of the double description method of Motzkin et al.
- Copyright by Komei Fukuda.
- http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
 
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 9 6 6 9
+1 6 12 3 9
+1 4 14 5 7
+1 3 14 8 5
 1 9 3 12 6
 1 7 5 14 4
 1 5 8 14 3
 1 3 12 12 3
-1 6 12 3 9
-1 4 14 5 7
-1 3 14 8 5
 
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
- Implementation of the double description method of Motzkin et al.
- Copyright by Komei Fukuda.
- http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 9 6 6 9
+1 6 12 3 9
+1 4 14 5 7
+1 3 14 8 5
 1 9 3 12 6
 1 7 5 14 4
 1 5 8 14 3
 1 3 12 12 3
-1 6 12 3 9
-1 4 14 5 7
-1 3 14 8 5
 
 
 o3 = true
@@ -49,20 +67,40 @@ i4 : I = ideal(a^2,b^2,b*c);
 o4 : Ideal of R
 
 i5 : isStable(3,I) 
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
- Implementation of the double description method of Motzkin et al.
- Copyright by Komei Fukuda.
- http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 11 13 6 3
 
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-polymake: used package cddlib
- Implementation of the double description method of Motzkin et al.
- Copyright by Komei Fukuda.
- http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+polymake: used package cdd
+  cddlib
+  Implementation of the double description method of Motzkin et al.
+  Copyright by Komei Fukuda.
+  http://www.ifor.math.ethz.ch/~fukuda/cdd_home/cdd.html
+
+polymake: used package ppl
+  The Parma Polyhedra Library (PPL): A C++ library for convex polyhedra
+  and other numerical abstractions.
+  http://www.cs.unipr.it/ppl/
 
 VERTICES
 1 33/4 33/4 33/4 33/4

@@ -53,6 +53,10 @@ a = -1.984139325e-01
 lift(a,QQ)
 assert( instance(oo,QQ) and a === promote(oo,RR) )
 
+-- from github issue #194
+R=QQ[x,Inverses=>true,MonomialOrder=>RevLex]
+assert not liftable(x-1,QQ)
+
 end
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test lift.out"

@@ -68,3 +68,4 @@ check-return-code :; if echo 'error "foo"' | @pre_exec_prefix@/bin/M2@EXE@ $(ARG
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/basictests "
 # End:
+.NOTPARALLEL:

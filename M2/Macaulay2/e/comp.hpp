@@ -27,7 +27,7 @@ class GBBComputation;
 
     @brief Non-functional code.
 */
-class GBBComputation : public mutable_object
+class GBBComputation : public MutableEngineObject
 // This is the base type for all Groebner basis and syzygy computations
 {
 protected:
@@ -71,7 +71,7 @@ public:
   virtual void show() const;
 };
 
-class GroebnerBasis : public mutable_object // mutable, or immutable???
+class GroebnerBasis : public MutableEngineObject // mutable, or immutable???
 {
 protected:
   GroebnerBasis() {}
@@ -115,7 +115,7 @@ public:
   // M2_gbTrace value.
 };
 
-class EngineComputation : public mutable_object
+class EngineComputation : public MutableEngineObject
 {
 private:
   enum ComputationStatusCode computation_status;
@@ -213,7 +213,7 @@ public:
 };
 
 /// Older -- but current --- code ///
-class Computation : public mutable_object
+class Computation : public MutableEngineObject
 {
 private:
   enum ComputationStatusCode computation_status;

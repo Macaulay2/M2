@@ -15,14 +15,7 @@
   #define store_Field(x,val) AO_store(&(x).field,val)
 #endif
 #include "mutexclass.hpp"
-    /* gc doc tells us to include pthread.h before gc.h */
-    #ifndef _REENTRANT
-      #define _REENTRANT
-    #endif
-    #include <pthread.h>
-    #define GC_THREADS
-    #include <gc/gc.h>
-
+#include <M2/gc-include.h>
 #include <set>
 #include <map> 
 #include <list>
@@ -99,7 +92,8 @@ public:
   pthread_t ThreadId() { return m_ThreadId; }
   void start();
   void shutdown() { m_KeepRunning = false; }
-  static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); }
+  // the next function, I believe, doesn't ever return. The return statement is here to shut up the compiler warnings.
+  static void* threadEntryPoint(void* st) { ((SupervisorThread*)st)->threadEntryPoint(); return 0;}
   ///Pointer to the interrupt field that is the exception flag
   struct atomic_field* m_Interrupt;
   ///Pointer to the atomic field that is the exception flag

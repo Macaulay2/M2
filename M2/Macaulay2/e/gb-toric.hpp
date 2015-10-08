@@ -203,7 +203,7 @@ class binomialGB : public our_new_delete
   gbmin_elem *first;
   int _max_degree;  // The highest degree of a GB generator found so far.
 
-  bool use_bigcell;
+  //bool use_bigcell;
   bool is_homogeneous_prime;
 
 public:

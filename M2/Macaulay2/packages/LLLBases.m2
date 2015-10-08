@@ -1348,13 +1348,73 @@ TEST ///
     time LLL m1;  -- .76 sec 44.9 seconds (front-end implementation), Quality of output is higher still
     time LLL(m1, Strategy=>CohenEngine); -- 
     time LLL(m1, Strategy=>CohenTopLevel); -- 
-    -- time LLL(m1, Strategy=>{BKZ,RealFP}); -- too long
+    time LLL(m1, Strategy=>{BKZ,RealFP}); -- 
+    time LLL(m, Strategy=>{BKZ,RealFP}); --
+    --time LLL(m, Strategy=>{BKZ,RealRR}); -- 4.9 sec (in 2015)
+    time LLL(m); 
+
+    assert isLLL (a = time LLL(m, Strategy=>NTL))
+    assert isLLL (a = time LLL(m, Strategy=>CohenEngine))
+    assert isLLL (a = time LLL(m, Strategy=>CohenTopLevel))
     
-    -- time LLL(m, Strategy=>{BKZ,RealFP}); -- too long
-    -- time LLL(m, Strategy=>{BKZ,RealRR}); -- too long
-    time LLL(m);    
+    assert isLLL (a = time LLL(m, Strategy=>RealFP))
+    assert isLLL (a = time LLL(m, Strategy=>RealQP))
+    assert isLLL (a = time LLL(m, Strategy=>RealXD))
+    assert isLLL (a = time LLL(m, Strategy=>RealRR)) -- many times slower than all other variants
+
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{Givens,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{Givens,RealRR})) -- really slow
+
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealQP1}))    
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{BKZ,Givens,RealRR})) -- too slow
+
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealFP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealQP}))
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealQP1}))    
+    assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealXD}))
+    --assert isLLL (a = time LLL(m, Strategy=>{BKZ,RealRR})) -- too slow
 ///
 
+TEST ///
+  -- trivial and edge cases
+  m = random(ZZ^0, ZZ^5)
+  a = LLL m
+  assert(numRows a == 0)
+  --assert(numColumns a == 0) -- what is the correct value here?
+  assert(a == 0)  
+
+  m = random(ZZ^5, ZZ^0)
+  a = LLL m
+  assert(numRows a == 5)
+  assert(numColumns a == 0) -- no, what is the correct value here?
+  assert(a == 0)
+
+  m = matrix{{1}}  
+  a = LLL m
+  assert (a == m)
+///
+TEST ///
+    setRandomSeed 0
+    m0 = random(ZZ^20, ZZ^30, Height=>100000)
+    m1 = syz m0;
+    m = m1;
+
+    setRandomSeed 0
+    m0 = random(ZZ^40, ZZ^50, Height=>10000)
+    m1 = syz m0;
+    m2 = kernelLLL m0;
+    m = m1;
+    m = m2;
+
+    time LLL(m1);
+    ---time LLL(m1, Strategy=>fpLLL);
+    -- TODO: run these on all variants that work
+///
 
 -------------------
 -- hermite -----

@@ -15,7 +15,7 @@ newPackage(
 
 -- For information see documentation key "MapleInterface" below.
 
-export({"callMaple","store","readMaple","msqrt","integralBasis"})
+export {"callMaple","store","readMaple","msqrt","integralBasis"}
 
 getFilename = () -> (
      filename := temporaryFileName();
@@ -47,15 +47,16 @@ mapleprogram=replace("placeholder2",inputdata2,mapleprogram);
 mapleprogram=replace("placeholder1",L1,mapleprogram);
 mapleprogram=replace("placeholder3",rootPath|filename3,mapleprogram);
 --print mapleprogram;
-F := openOut(filename|".txt");
-F<<mapleprogram<<endl;
-close F;
---run(maplecommand|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
-run("\""|maplecommand|"\""|" "|rootPath|filename|".txt >"|rootPath|filename2|".txt");
+filename|".txt" << mapleprogram << endl << close;
+outfile := rootPath|filename2|".txt";
+command := "\""|maplecommand|"\""|" <"|rootPath|filename|".txt >"|outfile;
+if debugLevel > 0 then (
+     stderr << "running " << command << endl
+     	    << "with input:" << endl << mapleprogram << endl);
+run command;
+if debugLevel > 0 then stderr << "and with output:" << endl << get outfile << endl;
 if fileExists(rootPath|filename3|".txt")==false then error("Maple returned errors, see file "|rootPath|filename2|".txt for the Maple-output and "|rootPath|filename|".txt for the Maple-input");
-F= openIn(rootPath|filename3|".txt");
-Lfc:=changeBrackets2(get(F));
---close F;
+Lfc:=changeBrackets2(get(rootPath|filename3|".txt"));
 run("rm"|" "|rootPath|filename|".txt");
 run("rm"|" "|rootPath|filename2|".txt");
 if class(opts.store)===String then (
@@ -76,10 +77,7 @@ replace("[]]","}",replace("[[]","{",S)))
 --changeBrackets("{{1,2},{3,4}}")
 
 readMaple=method()
-readMaple(String):=(fn)->(
-F:= openIn(fn);
-Lfc:=changeBrackets2(get(F));
-value Lfc)
+readMaple String := fn-> value changeBrackets2 get fn
 
 msqrt=method()
 msqrt(ZZ,ZZ):=(a,b)->(

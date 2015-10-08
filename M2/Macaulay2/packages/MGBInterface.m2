@@ -7,6 +7,8 @@ newPackage(
                   HomePage => ""}},
         Headline => "Experimental package for mathicgb interface.  Not meant for general use",
         PackageExports => {"ExampleIdeals"},
+        Configuration => { "path" => ""
+	        },
         DebuggingMode => false
         )
 
@@ -17,21 +19,26 @@ debug Core
 -- It also has the routines from there which involve writing example
 -- files for other computer algebra systems.
 
-export {write,
-     toClassic,
-     displayit,
-     toABC,
-     makeExampleFiles,
-     createExamples,
-     helpMGB,
-     mgbStr,
-     MGB,
-     MGBF4,
-     runMGB,
-     doMGB,
-     testRawMGB,
-     testMGB
+export {"write",
+     "toClassic",
+     "displayit",
+     "toABC",
+     "makeExampleFiles",
+     "createExamples",
+     "helpMGB",
+     "mgbStr",
+     "MGB",
+     "MGBF4",
+     "runMGB",
+     "doMGB",
+     "testRawMGB",
+     "testMGB"
      }
+
+-- NOTE: the absolute path where 'mgb' lives should be put into the .init file for MGBInterface
+--  inside the .Macaulay2 directory (or, on the mac: the ~/Library/Application Support/Macaulay2/ folder)
+path'mgb = (options MGBInterface).Configuration#"path"
+if path'mgb === "" then path'mgb = prefixDirectory | currentLayout#"programs"
 
 write = method()
 write Ring  := (R) -> (
@@ -45,7 +52,21 @@ write Ring  := (R) -> (
 write Ring  := (R) -> (
      -- R should be a polynomial ring
      debug Core;
-     (mo, tiebreak) := monomialOrderMatrix R;
+     (mo, tiebreak, positionUpDown, componentLocation) := monomialOrderMatrix R;
+     wts := entries mo;
+     s1 := char R | " " | numgens R;
+     s1a := if tiebreak === Lex then " lex " else " revlex ";
+     s1b := toString(#wts) | "\n";
+     s2 := concatenate for wtvec in wts list (
+          "   " | (concatenate between(" ", wtvec/toString)) | "\n"
+          );
+     s1 | s1a | s1b | s2
+     )
+
+write Ring  := (R) -> (
+     -- R should be a polynomial ring
+     debug Core; -- for monomialOrderMatrix.
+     (mo, tiebreak, positionUpDown, componentLocation) := monomialOrderMatrix R;
      wts := entries mo;
      s1 := char R | " " | numgens R;
      s1a := if tiebreak === Lex then " lex " else " revlex ";
@@ -232,9 +253,11 @@ mgbOptions = hashTable {
      "AutoTopReduce" => {"on", "-autoTopReduce "},
      "BreakAfter" => {0, "-breakAfter "},
      "DivisorLookup" => {2, "-divisorLookup"},
-     "Log" => {"", "-log"},
+     "Log" => {"", "-log "},
      "MemoryQuantumForReducer" => {1048576, "-memoryQuantumForReducer "},
+     "Module" => {"off", "-module"},
      "MonomialTable" => {2, "-monomialTable "},
+     "Output" => {"off", "-outputResult "},
      "PreferSparseReducers" => {"on", "-preferSparseReducers "},
      "PrintInterval" => {0, "-printInterval"},
      "Reducer" => {4, "-reducer "},
@@ -248,18 +271,19 @@ mgbOptions = hashTable {
 optionsMGB = join(
      apply(keys mgbOptions, k -> k => null),
      {
-          "Executable" => "~/src/github/mathicgb/rel/mgb",
-          "Algorithm" => null -- default is "gb", other option is "sig"
+          "Algorithm" => null, -- default is "gb", other option is "sig"
+          "ProjectName" => null -- default is to choose a temporary file name (w/o the ".ideal" on the end)
           }
      )
 runMGB = method(Options => optionsMGB)
 
-helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
+--helpMGB = () -> get ("!"|(options runMGB)#"Executable"| " help gb");
+helpMGB = () -> get ("!"|path'mgb|"mgb help gb");
 
 mgbStr = method(Options => options runMGB)
 mgbStr String := opts -> (projectName) -> (
      alg := if opts#"Algorithm" === "sig" then " sig " else " gb ";
-     execString := "time "| opts#"Executable" | alg |projectName|" ";
+     execString := "time "| path'mgb | "mgb " | alg |projectName|" ";
      -- now add in the options
      for k in keys opts do (
           if mgbOptions#?k and opts#k =!= null then (
@@ -271,7 +295,7 @@ mgbStr String := opts -> (projectName) -> (
 
 runMGB Ideal := opts -> (J) -> (
      R := ring J;
-     projectName := temporaryFileName();
+     projectName := if opts#"ProjectName" === null then temporaryFileName() else opts#"ProjectName";
      (projectName |  ".ideal") << displayit toABC J << endl << close;
      runMGB(projectName, opts)
      )
@@ -424,6 +448,66 @@ testMGB List := (L) -> (
 SLOWER = (str) -> null
 BENCHMARK = (str) -> null
 -------------------------------------------------------------
+TEST ///
+  -- test of MGB, MGBF4, for a small example, with a number of monomial orders
+  needsPackage "MGBInterface"
+  R = ZZ/101[a..d]
+  I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
+  g1 = gens gb I
+  g2 = gens forceGB matrix {MGB I}
+  g3 = gens forceGB matrix {MGBF4 I}
+  assert(g1 == g2 and g2 == g3)
+
+  R1 = ZZ/101[a..d, MonomialOrder=>Lex]
+  I1 = sub(I,R1)
+  g1 = gens gb I1
+  g2 = gens forceGB matrix {MGB I1}
+  g3 = gens forceGB matrix {MGBF4 I1}
+  assert(g1 == g2 and g2 == g3)
+
+  R1 = ZZ/101[a..d, MonomialOrder=>{1,3}]
+  I1 = sub(I,R1)
+  g1 = gens gb I1
+  g2 = gens forceGB matrix {MGB I1}
+  g3 = gens forceGB matrix {MGBF4 I1}
+  assert(g1 == g2 and g2 == g3)
+
+  R1 = ZZ/101[a..d, MonomialOrder=>{GRevLex=>{1,4,7,10}}]
+  I1 = sub(I,R1)
+  g1 = gens gb I1
+  g2 = gens forceGB matrix {MGB I1}
+  g3 = gens forceGB matrix {MGBF4 I1}
+  assert(g1 == g2 and g2 == g3)
+
+  R1 = ZZ/101[a..d, MonomialOrder=>{Weights=>{1,3,2,1}, Lex}]
+  I1 = sub(I,R1)
+  g1 = gens gb I1
+  g2 = gens forceGB matrix {MGB I1}
+  g3 = gens forceGB matrix {MGBF4 I1}
+  assert(g1 == g2 and g2 == g3)
+
+  R1 = ZZ/101[a..d, MonomialOrder=>{
+          Weights=>{100,1,1,1}, 
+          Weights=>{0,-5,-1,1}, 
+          Lex}]
+  I1 = sub(I,R1)
+  g1 = gens gb I1
+  g2 = gens forceGB matrix {MGB I1}
+  g3 = gens forceGB matrix {MGBF4 I1}
+  assert(g1 == g2 and g2 == g3)
+///
+
+TEST ///
+  -- test of MGB, MGBF4, for a submodule
+  needsPackage "MGBInterface"
+  R = ZZ/101[a..d]
+  m = matrix"ad-1,ba-c,c;a,d-1,b-1" 
+  gens gb m
+  leadTerm oo
+  debug Core
+  rawMGB(raw m, 0, 1, 0, "")
+///
+
 TEST ///
 -- running some test files, checking results against M2
 restart
@@ -600,7 +684,6 @@ TEST ///
     7w2+5wx+2x2+3wy+9xy-4y2-5wz-7xz-5yz-4z2-5w+4x+6y-9z+2,
     8w2+5wx+5x2-4wy+2xy+7y2+2wz-7xz-8yz+7z2+3w-7x-7y-8z+8"
 -- UNCOMMENT once Lex is working ok
-{*
   MGBF4(J1, "Log"=>"all");  -- FAILS NOW (just doesn't finish)
   time G2 = MGB J1;  -- [mike rMBP; 17 April 2013;   sec]
   time G3 = MGBF4 J1; -- [mike rMBP; 17 April 2013;   sec]
@@ -610,7 +693,7 @@ TEST ///
   time g3 = gens forceGB matrix{G3};
   assert(g1 == g2)
   assert(g1 == g3)
-*}
+
   R1 = ZZ/32003[w,x,y,z,MonomialOrder => {1,1,1,1}]
   J1 = ideal"
     -2w2+9wx+8x2+9wy+9xy+6y2-7wz-3xz-7yz-6z2-4w+8x+4y+8z+2,
@@ -990,7 +1073,7 @@ TEST ///
   monomialOrderMatrix R1
   time G3 = flatten entries map(ring J1, rawMGB(raw gens J1, 0, 1, ""));  -- 
   time G4 = flatten entries map(ring J1, rawMGB(raw gens J1, 1, 1, "F4Detail"));  -- 
-
+  time g1 = MGB J1;
 ///
 
 

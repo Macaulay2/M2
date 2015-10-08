@@ -14,12 +14,15 @@
 #include "allocator.hpp"
 #include "error.h"
 
+#define int_divide_ceil(x,y) (((x)+(y)-1)/(y))
+#define int_divide_floor(x,y) ((x)/(y))
+
 namespace BIBasis
 {
     FastAllocator::FastAllocator(size_t blockSize)
         : MemoryPageSize(1048576)
-        , TSize(ceil(static_cast<double>(blockSize) / sizeof(void*)))
-        , PageSize(floor(static_cast<double>(MemoryPageSize) / blockSize))
+        , TSize(int_divide_ceil(blockSize,sizeof(void*)))
+        , PageSize(int_divide_floor(MemoryPageSize,blockSize))
         , FreeBlock(0) 
     {
     }

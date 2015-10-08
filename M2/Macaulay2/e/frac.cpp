@@ -28,16 +28,16 @@ int FractionField::n_fraction_vars() const
 
 bool FractionField::initialize_frac(const PolyRingFlat *R)
 {
-  initialize_ring(R->charac(),
+  initialize_ring(R->characteristic(),
                   R->get_degree_ring(),
                   R->get_heft_vector());
 
   R_ = R;
-  _MINUS_ONE = R->from_int(-1);
+  _MINUS_ONE = R->from_long(-1);
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   if (R->n_quotients() > 0
       || R->getCoefficients()->cast_to_FractionField() // disallowed in x-relem.cpp
@@ -77,6 +77,12 @@ ring_elem FractionField::denominator(ring_elem f) const
 {
   frac_elem *g = FRAC_VAL(f);
   return R_->copy(g->denom);
+}
+
+unsigned int FractionField::computeHashValue(const ring_elem f) const
+{
+  frac_elem *g = FRAC_VAL(f);
+  return(16473 * R_->computeHashValue(g->numer) + 7698908 * R_->computeHashValue(g->denom));
 }
 
 frac_elem *FractionField::new_frac_elem() const
@@ -218,7 +224,7 @@ ring_elem FractionField::random() const
   if (R_->is_zero(b))
     {
       R_->remove(b);
-      b = R_->from_int(1);
+      b = R_->from_long(1);
     }
   return FRAC_RINGELEM(make_elem(a,b));
 }
@@ -243,11 +249,11 @@ void FractionField::elem_text_out(buffer &o,
     }
 }
 
-ring_elem FractionField::from_int(int n) const
+ring_elem FractionField::from_long(long n) const
 {
   frac_elem *f = new_frac_elem();
-  f->numer = R_->from_int(n);
-  f->denom = R_->from_int(1);
+  f->numer = R_->from_long(n);
+  f->denom = R_->from_long(1);
   return FRAC_RINGELEM(f);
 }
 
@@ -255,7 +261,7 @@ ring_elem FractionField::from_int(mpz_ptr n) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->from_int(n);
-  f->denom = R_->from_int(1);
+  f->denom = R_->from_long(1);
   return FRAC_RINGELEM(f);
 }
 
@@ -271,7 +277,7 @@ ring_elem FractionField::var(int v) const
 {
   frac_elem *f = new_frac_elem();
   f->numer = R_->var(v);
-  f->denom = R_->from_int(1);
+  f->denom = R_->from_long(1);
   return FRAC_RINGELEM(f);
 }
 
@@ -305,7 +311,7 @@ bool FractionField::promote(const Ring *Rf, const ring_elem f, ring_elem &result
     {
       frac_elem *g = new_frac_elem();
       g->numer = R_->copy(f);
-      g->denom = R_->from_int(1);
+      g->denom = R_->from_long(1);
       result = FRAC_RINGELEM(g);
       return true;
     }
@@ -600,7 +606,7 @@ ring_elem FractionField::divide(const ring_elem a, const ring_elem b) const
 void FractionField::syzygy(const ring_elem a, const ring_elem b,
                            ring_elem &x, ring_elem &y) const
 {
-  x = FractionField::from_int(1);
+  x = FractionField::from_long(1);
   y = FractionField::divide(a,b);
   y = FractionField::negate(y);
 }
@@ -616,7 +622,7 @@ ring_elem FractionField::eval(const RingMap *map, const ring_elem a, int first_v
     {
       ERROR("division by zero!");
       S->remove(bottom);
-      bottom = S->from_int(1);
+      bottom = S->from_long(1);
     }
   ring_elem result = S->divide(top, bottom);
   S->remove(top);

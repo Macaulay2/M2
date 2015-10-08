@@ -32,10 +32,13 @@ bool HilbertController::setDegree(int this_degree)
 {
   // Recomputes Hilbert function, returns #elems expected in degree this_degree
   // There should be NO elements expected in lower degrees than that.
-  // -1 is returned if the computation was interrupted.
+  // false is returned if either the computation was interrupted, or
+  // it was determined that the Hilbert function could not be correct
+  // (by expecting a negative number of elements).
   if (!recomputeHilbertFunction()) return false;
   hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
-  return hilb_n_in_degree;
+  if (error()) return false;
+  return true;
 }
 
 bool HilbertController::addMonomial(int *a, int comp)

@@ -178,9 +178,10 @@ setupMethods((), {
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
-	  determinant, presentation, dismiss, precision, 
+	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
-	  chi, hasEngineLinearAlgebra
+	  chi, hasEngineLinearAlgebra, nullSpace,
+      isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
 
 use = method()
@@ -193,6 +194,8 @@ default = method()
 --     m := lookup(X,symbol default);
 --     if m === null then error "no method found";
 --     m ())
+
+determinant = method(Options => { Strategy => null })
 
 random = method(Options => {
 	  MaximalRank => false,

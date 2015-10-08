@@ -1,3 +1,11 @@
+undocumented {
+    ParameterHomotopySystem, 
+    evaluateHt, (evaluateHt,HomotopySystem,Matrix,Number), (evaluateHt,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopySystem,Matrix,Number), 
+    evaluateHx, (evaluateHx,HomotopySystem,Matrix,Number), (evaluateHx,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopySystem,Matrix,Number),
+    Parameters, SpecializedParameterHomotopySystem, HomotopySystem, 
+    evaluateH, (evaluateH,HomotopySystem,Matrix,Number), (evaluateH,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopySystem,Matrix,Number)
+    }
+
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
 refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
@@ -16,8 +24,20 @@ document {
      "The package ", TO "NumericalAlgebraicGeometry", ", also known as ", 
      EM "NAG4M2 (Numerical Algebraic Geometry for Macaulay2)", 
      ", implements methods of polynomial homotopy continuation                                                                                                  
-     to solve systems of polynomial equations and describe positive-dimensional complex algebraic varieties. ", 
-     
+     to solve systems of polynomial equations, ",
+     EXAMPLE lines ///
+R = CC[x,y,z];
+F = {x^2+y^2+z^2-1, y-x^2, z-x^3};
+s = solveSystem F 
+realPoints s
+///,
+     "and describe positive-dimensional complex algebraic varieties, ",
+     EXAMPLE lines ///
+R = CC[x,y,z];
+sph = x^2+y^2+z^2-1; 
+I = ideal {x*sph*(y-x^2), sph*(z-x^3)};
+numericalIrreducibleDecomposition I 
+///,      
      PARA {"Basic types (such as ", TO Point, " and ", TO "WitnessSet", ") are defined in the package ", TO NAGtypes, "."},
      
      HEADER3 "Basic functions:",
@@ -30,7 +50,7 @@ document {
      	 TO sample,
      	 TO (isSubset,NumericalVariety,NumericalVariety),
 	 },
-     "Some of the basic computations can be outsourced to ", TO "Bertini", " and ", TO "PHCpack", 
+     "Optionally, the user may outsource some basic routines to ", TO "Bertini", " and ", TO "PHCpack", 
      " (look for ", TO Software, " option).",
      
      HEADER3 "Service functions:",
@@ -100,7 +120,8 @@ document {
 document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatches], DynamicPatch, 
 	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
 	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], 
-	     [track,SLPpredictor], [setDefault,SLPpredictor]},
+	     [track,SLPpredictor], [setDefault,SLPpredictor],
+	     [trackSegment,AffinePatches], [trackSegment,SLP], [trackSegment,SLPcorrector], [trackSegment,SLPpredictor]},
      	Headline => "reserved for developers"
      	} 
 
@@ -127,54 +148,79 @@ solveSystem F
 	}
 
 
-document {
-	Key => { (track, List, List, List), track, (track,PolySystem,PolySystem,List),
-	     [track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
-	     [track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
-	     NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
-	     [track,stepIncreaseFactor], [setDefault,stepIncreaseFactor], 
-	     [track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
-	     stepIncreaseFactor, numberSuccessesBeforeIncrease, 
-	     Predictor, [track,Predictor], [setDefault,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
-	     MultistepDegree, [track,MultistepDegree], [setDefault,MultistepDegree], 
-     	     [track,EndZoneFactor], [setDefault,EndZoneFactor], [track,maxCorrSteps], [setDefault,maxCorrSteps],
-	     [track,InfinityThreshold], [setDefault,InfinityThreshold],
-     	     EndZoneFactor, maxCorrSteps, InfinityThreshold,
-     	     Projectivize, [track,Projectivize], [setDefault,Projectivize], 
-	     CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
-	     [track,NoOutput], [setDefault,NoOutput], 
-	     [track,Normalize], [setDefault,Normalize],
-	     NoOutput, Normalize
-	     },
+document { Key => {"numerical homotopy tracking options",
+	[track,NumericalAlgebraicGeometry$gamma], [setDefault,NumericalAlgebraicGeometry$gamma], [track,NumericalAlgebraicGeometry$tDegree], [setDefault,NumericalAlgebraicGeometry$tDegree], 
+	[track,tStep], [setDefault,tStep], [track,tStepMin], [setDefault,tStepMin],
+	NumericalAlgebraicGeometry$gamma, NumericalAlgebraicGeometry$tDegree, tStep, tStepMin, 
+	[track,stepIncreaseFactor], [setDefault,stepIncreaseFactor], 
+	[track, numberSuccessesBeforeIncrease], [setDefault,numberSuccessesBeforeIncrease],
+	stepIncreaseFactor, numberSuccessesBeforeIncrease, 
+	Predictor, [track,Predictor], [setDefault,Predictor], RungeKutta4, Multistep, Tangent, Euler, Secant,
+	MultistepDegree, [track,MultistepDegree], [setDefault,MultistepDegree], 
+	[track,EndZoneFactor], [setDefault,EndZoneFactor], [track,maxCorrSteps], [setDefault,maxCorrSteps],
+	[track,InfinityThreshold], [setDefault,InfinityThreshold],
+	EndZoneFactor, maxCorrSteps, InfinityThreshold,
+	Projectivize, [track,Projectivize], [setDefault,Projectivize], 
+	CorrectorTolerance, [track,CorrectorTolerance], [setDefault,CorrectorTolerance],
+	[track,NoOutput], [setDefault,NoOutput], 
+	[track,Normalize], [setDefault,Normalize],
+	NoOutput, Normalize,
+	[refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
+	[refine,ErrorTolerance], [setDefault,ErrorTolerance], 
+	[refine, ResidualTolerance], [setDefault,ResidualTolerance],
+	Iterations, Bits, ErrorTolerance, ResidualTolerance,
+	-- solveSystem
+	[solveSystem,CorrectorTolerance], [solveSystem,EndZoneFactor], [solveSystem,gamma], [solveSystem,InfinityThreshold], 
+	[solveSystem,maxCorrSteps], [solveSystem,Normalize], [solveSystem,numberSuccessesBeforeIncrease],
+	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
+	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
+	-- trackSegment
+	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
+	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
+	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
+	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
+	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
+	},
+    Headline => "options for core functions of Numerical Algebraic Geometry",
+    UL apply({
+	NumericalAlgebraicGeometry$gamma => {" (default gamma = ",  toString DEFAULT.NumericalAlgebraicGeometry$gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
+	NumericalAlgebraicGeometry$tDegree =>{" (default tDegree = ", toString DEFAULT.NumericalAlgebraicGeometry$tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
+	tStep => {" (default tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
+	tStepMin => {" (default tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
+	stepIncreaseFactor => {" (default stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how the step size is adjusted."},
+	numberSuccessesBeforeIncrease => {
+	    " (default numberSuccessesBeforeIncrease = ", toString DEFAULT.numberSuccessesBeforeIncrease, 
+	    "). Determines how the step size is adjusted."},
+	Predictor => {" (default Predictor = ", toString DEFAULT.Predictor, 
+	    "). A method to predict the next point on the homotopy path: choose between ", 
+	    TO "RungeKutta4", ", ", TO "Tangent", ", ", 
+	    TO "Euler", ", ", TO "Secant", ", ", TO "Multistep", ", ", TO "Certified", 
+	    ". The option ", TO "Certified", " provides certified tracking."},
+	MultistepDegree => {" (default MultistepDegree = ", toString DEFAULT.MultistepDegree, 
+	    "). Degree of the Multistep predictor."},
+	maxCorrSteps => {" (default maxCorrSteps = ", toString DEFAULT.maxCorrSteps, 
+	    "). Max number of steps corrector takes before a failure is declared."}, 
+	CorrectorTolerance => {" (default CorrectorTolerance = ", toString DEFAULT.CorrectorTolerance, "). Corrector succeeds if the relative error does not exceed this tolerance."},
+	EndZoneFactor => {" (default EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where ", TO CorrectorTolerance, " is tighter." },  
+	InfinityThreshold => {" (default InfinityThreshold = ", toString DEFAULT.InfinityThreshold, "). Paths are truncated if the norm of the approximation exceeds the threshold."},
+	Projectivize => {" (default Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and the projective tracker is executed."},
+	Normalize => {" (default Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. the Bombieri-Weyl norm."},
+	NoOutput => {" (default NoOutput = ", toString DEFAULT.NoOutput, "). If true, no output is produced (used by developers)."},
+	Iterations => {" (default Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
+	Bits => {" (default Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
+	ErrorTolerance => {" (default ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
+	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
+    	}, 
+        item -> {TT "[", TT toString item#0, TT "]: "} | item#1 
+	)
+    }
+document {Key => { (track, List, List, List), track, (track,PolySystem,PolySystem,List) },
 	Headline => "track a user homotopy",
 	Usage => "solsT = track(S,T,solsS)",
 	Inputs => { 
 	     "S" => {" contains the polynomials in the start system"},
 	     "T" => {" contains the polynomials in the target system"},
 	     "solsS" => {" contains start solutions"},
-	     NumericalAlgebraicGeometry$gamma => {" (meaning gamma = ",  toString DEFAULT.NumericalAlgebraicGeometry$gamma, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."}, 
-	     NumericalAlgebraicGeometry$tDegree =>{" (meaning tDegree = ", toString DEFAULT.NumericalAlgebraicGeometry$tDegree, "). A parameter in the homotopy: ", TEX "H(t)=(1-t)^{tDegree} S + \\gamma t^{tDegree} T."},
-	     tStep => {" (meaning tStep = ", toString DEFAULT.tStep, "). Initial step size."}, 
-	     tStepMin => {" (meaning tStepMin = ", toString DEFAULT.tStepMin, "). Minimal step size."},
-	     stepIncreaseFactor => {" (meaning stepIncreaseFactor = ", toString DEFAULT.stepIncreaseFactor, "). Determines how the step size is adjusted."},
-	     numberSuccessesBeforeIncrease => {
-		  " (meaning numberSuccessesBeforeIncrease = ", toString DEFAULT.numberSuccessesBeforeIncrease, 
-		  "). Determines how the step size is adjusted."},
-	     Predictor => {" (meaning Predictor = ", toString DEFAULT.Predictor, 
-		  "). A method to predict the next point on the homotopy path: choose between ", 
-		  TO "RungeKutta4", ", ", TO "Tangent", ", ", 
-		  TO "Euler", ", ", TO "Secant", ", ", TO "Multistep", ", ", TO "Certified", 
-		  ". The option ", TO "Certified", " provides certified tracking."},
-	     MultistepDegree => {" (meaning MultistepDegree = ", toString DEFAULT.MultistepDegree, 
-		  "). Degree of the Multistep predictor."},
-	     maxCorrSteps => {" (meaning maxCorrSteps = ", toString DEFAULT.maxCorrSteps, 
-		  "). Max number of steps corrector takes before a failure is declared."}, 
-	     CorrectorTolerance => {" (meaning CorrectorTolerance = ", toString DEFAULT.CorrectorTolerance, "). Corrector succeeds if the relative error does not exceed this tolerance."},
-     	     EndZoneFactor => {" (meaning EndZoneFactor = ", toString DEFAULT.EndZoneFactor, "). Determines the size of the \"end zone\", the interval at the end of the path where ", TO CorrectorTolerance, " is tighter." },  
-	     InfinityThreshold => {" (meaning InfinityThreshold = ", toString DEFAULT.InfinityThreshold, "). Paths are truncated if the norm of the approximation exceeds the threshold."},
-     	     Projectivize => {" (meaning Projectivize = ", toString DEFAULT.Projectivize, "). If true then the system is homogenized and the projective tracker is executed."},
-	     Normalize => {" (meaning Normalize = ", toString DEFAULT.Normalize, "). Normalize the start and target systems w.r.t. the Bombieri-Weyl norm."},
-	     NoOutput => {" (meaning NoOutput = ", toString DEFAULT.NoOutput, "). If true, no output is produced (used by developers)."} 	     
 	     },
 	Outputs => {{ TT "solsT", " is a list of ", TO2{Point,"points"}, " that are solutions of ", TT "T=0", " obtained by continuing ", TT "solsS", " of ", TT "S=0" }},
 	"Polynomial homotopy continuation techniques are used to obtain solutions 
@@ -258,35 +304,31 @@ document {
 	Key => {
 	     (refine, List, List), refine, 
 	     (refine,Point), (refine,PolySystem,List), (refine,PolySystem,Point),
-	     [refine, Iterations], [setDefault,Iterations], [refine, Bits], [setDefault,Bits], 
-	     [refine,ErrorTolerance], [setDefault,ErrorTolerance], 
-	     [refine, ResidualTolerance], [setDefault,ResidualTolerance],
-	     Iterations, Bits, ErrorTolerance, ResidualTolerance
 	     },
 	Headline => "refine numerical solutions to a system of polynomial equations",
 	Usage => "solsR = refine(T,sols)",
 	Inputs => { 
 	     "T" => {"contains the polynomials of the system (may be of type ", TO PolySystem, ")"},
 	     "sols" => {"contains (a) solution(s) (", TO2{Point,"points"}," or lists of coordinates or ", TO2{Point,"points"}, ")"},
-	     Iterations => {" (meaning Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
-	     Bits => {" (meaning Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
-	     ErrorTolerance => {" (meaning ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
-	     ResidualTolerance => {" (meaning ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
 	     },
 	Outputs => {"solsR" => {"contains refined solutions (as ", TO2{Point, "points"}, ")" }},
 	"Uses Newton's method to correct the given solutions so that the resulting approximation 
-	has its estimated relative error bounded by ", TO "ErrorTolerance", 
-	". The number of iterations made is at most ", TO "Iterations", ".",
+	has its estimated relative error bounded by min(", TO "ErrorTolerance", ",2^(-", TO "Bits", ")). ",
+	"The number of iterations made is at most ", TO "Iterations", ".",
 -- 	Caveat => {"If option ", TT "Software=>M2engine", " is specified, 
 -- 	     then the refinement happens in the M2 engine and it is assumed that the last path tracking procedure 
 -- 	     took place with the same option and was given the same target system. 
 -- 	     Any other value of this option would launch an M2-language procedure."},
         PARA {},
 	EXAMPLE lines ///
-R = CC[x,y];
-T = {x^2+y^2-1, x*y};
-sols = { {1.1_CC,0.1}, {-0.1,1.2} };
-refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
+     	R = CC[x];
+     	F = polySystem {x^2-2};
+	P := refine(F, point{{1.5+0.001*ii}}, Bits=>1000)
+	first coordinates P
+	R = CC[x,y];
+	T = {x^2+y^2-1, x*y};
+	sols = { {1.1,-0.1}, {0.1,1.2} };
+	refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
      	///,
 	PARA {},
 	"In case of a singular (multiplicity>1) solution, while ", TO solveSystem, " and ", TO track, 
@@ -303,6 +345,20 @@ refine(T, sols, Software=>M2, ErrorTolerance=>.001, Iterations=>10)
 	refSols = refine(T, solsT)
 	refSols / status
      	///,
+	PARA {},
+    	"The failure to complete the refinement procedure is indicated 
+	by warning messages and the resulting point is displayed as ", TT "[R]", ".",
+	PARA {},
+	EXAMPLE lines ///
+     	R = CC[x];
+     	F = polySystem {x^2-2};
+	Q := refine(F, point{{1.5+0.001*ii}}, Bits=>1000, Iterations=>2)
+	peek Q
+     	///,
+	PARA {},	
+	Caveat => {"There are 2 'safety' bits in the computation. 
+	    If the condition of the system at the refined point is poor 
+	    the number of correct bits may be much smaller than requested."},
 	SeeAlso => {solveSystem, track}
 	}
 
@@ -335,6 +391,7 @@ document {
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
 	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
 	 [numericalIrreducibleDecomposition,Software], [hypersurfaceSection,Software],
+	 [trackSegment,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -621,12 +678,10 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of the ", TO2{NumericalVariety,"numerical variety"}, TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
-setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-V = numericalIrreducibleDecomposition I 
-peek V
+I = ideal {sph*(y-x^2), sph*(z-x^3)};
+numericalIrreducibleDecomposition I 
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
@@ -642,7 +697,7 @@ document {
     Usage => "B = isOn(P,V)",
     Inputs => { 
 	"P"=>Point,  
-	"V"=>{ofClass NumericalVariety, ofClass WitnessSet, ofClass Ideal, ofClass RingElement}
+	"V"=>{ofClass NumericalVariety, ", ", ofClass WitnessSet, ", ", ofClass Ideal, ", or ", ofClass RingElement}
 	},
     Outputs => { "B"=>Boolean },
     "Determines whether the given point is (approximately) on the given variety, 
@@ -709,9 +764,11 @@ document {
 	LiftedSystem, LiftedPoint, SolutionSystem, DeflationSequenceMatrices, -- attached to a Point
 	deflateInPlace, (deflateInPlace,Point,PolySystem), 
 	SquareUp, [deflateInPlace,SquareUp], -- whether to square up at each step
+	[deflate,Variable]
 	},
     Headline => "first-order deflation",
-    "Deflate a polynomial system to restore quadratic convergence of Newton's method", 
+    "Deflate a polynomial system to restore quadratic convergence of Newton's method. 
+    The  option ", TT "Variable", " specifies the base name for the augmented variables.",
     Caveat => {"Needs more documentation!!!"},
     SeeAlso=>{PolySystem,newton}
     }
@@ -765,7 +822,7 @@ document {
     }
 
 document {
-    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal)},
+    Key => {colon, (colon,DualSpace,RingElement), (colon,DualSpace,Ideal), [colon,Tolerance]},
     Headline => "colon of a (truncated) dual space",
     Usage => "Dg = colon(D,g)\nDJ = colon(D,J)",
     Inputs => { "D"=>DualSpace, "g"=>RingElement, "J"=>Ideal },
@@ -808,7 +865,7 @@ document {
     }
 
 document {
-    Key => {(isSolution,Point,PolySystem), isSolution},
+    Key => {(isSolution,Point,PolySystem), isSolution, [isSolution,Tolerance] },
     Headline => "check if a point satisfies a polynomial system approximately",
     Caveat => {"Either rewrite or phase out!!!"}
     }
@@ -825,6 +882,23 @@ document {
     Headline => "track the one-parametric homotopy",
     "Tracks a homotopy on a linear segment in complex plane..",
     Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
+    }
+
+document {
+    Key => {(solveGenericSystemInTorus,List), solveGenericSystemInTorus, (solveGenericSystemInTorus,PolySystem)},
+    Headline => "solve a generic system of sparse polynomial equations in the torus",
+    Usage => "s = solveGenericSystemInTorus F",
+    Inputs => { "F"=>"contains polynomials with complex coefficients" },
+    Outputs => { "s"=>{"contains all complex solutions in the torus 
+	    (i.e., with no zero coordinates) to ", TT "G=0", 
+	    ", where ", TT "G", 
+	    " is a generic system with the same monomial support as ", TT "F" } 
+	},
+    "Polyhedral homotopy approach is used to compute the solutions in the torus. 
+    The number of the solutions equals the ", EM "mixed volume", 
+    " of the Newton polytopes of polynomials in ", TT "F", ".", 
+    Caveat => {"PHCpack needs to be installed."},
+    SeeAlso=>{PHCPACK, PHCpack, solveSystem}
     }
 
 {*-------- TEMPLATE ------------------

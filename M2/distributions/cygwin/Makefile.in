@@ -22,7 +22,7 @@ chk-opts: check-prefix-is-slash-usr check-debug-disabled check-optimize-enabled
 check-prefix-is-slash-usr:; [ "${prefix}" = /usr ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 announce: 
 	@ echo "============================================================================="
 	@ echo "the cygwin package files have been prepared in cygwin/server"
@@ -122,3 +122,4 @@ Macaulay2.README: Macaulay2.README.in; cd ../..; ./config.status distributions/c
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/cygwin TIDY=no "
 # End:
+.NOTPARALLEL:

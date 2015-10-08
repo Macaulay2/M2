@@ -22,6 +22,8 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class SLEvaluator;
+class SLProgram;
 class StraightLineProgram;
 class PathTracker;
 
@@ -40,6 +42,8 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+typedef struct SLEvaluator SLEvaluator;
+typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
 #endif
@@ -112,7 +116,7 @@ extern "C" {
 
   M2_string IM2_MonomialOrdering_to_string(const MonomialOrdering *mo); /* drg: connected */
 
-  unsigned long IM2_MonomialOrdering_hash(const MonomialOrdering *mo); /* drg: connected hash */
+  unsigned int rawMonomialOrderingHash(const MonomialOrdering *mo); /* drg: connected hash */
     /* Assigned sequentially */
 
   int moIsGRevLex(const struct MonomialOrdering *mo);
@@ -123,10 +127,15 @@ extern "C" {
 
   M2_arrayintOrNull rawMonomialOrderingToMatrix(const struct MonomialOrdering *mo);
   /* return a (flattened) matrix corresponding to the monomial ordering 'mo'.
-     If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, one further value of "0" is added.
+     Appended to this sequence of integers is 3 further numbers:
+     (1) If the tie-breaker is revlex, one further value of "1" is added, else if it is lex, 
+     one further value of "0" is added.
+     (2) If the module order is Position=>Up, then 0 else 1 in the next spot.
+     (3) If the modules part of the order is considered right before the ith row of this matrix
+         then "i" is in the next spot. (i=#rows, f the module component is considered last).
      The returned value represents a matrix with #vars columns, and #gradings weights, in row-major order
-     (each row is contiguous in memory), plus the one extra entry.
-     NULL is returned if 'mo' has Inverses=>true, or corresponds to a non-commutative monoid.
+     (each row is contiguous in memory), plus the three extra entries.
+     NULL is returned if 'mo' corresponds to a non-commutative monoid, or has "Inverses=>true" set.
   */
 
   /**************************************************/
@@ -144,7 +153,7 @@ extern "C" {
        currently, if the first components for each degree are not all
        positive, or under various other "internal" error conditions */
 
-  unsigned long IM2_Monoid_hash(const Monoid *M);  /* drg: connected hash */
+  unsigned int rawMonoidHash(const Monoid *M);  /* drg: connected hash */
     /* Assigned sequentially */
 
   M2_string IM2_Monoid_to_string(const Monoid *M);  /* drg: connected */
@@ -154,11 +163,19 @@ extern "C" {
   /**** ARing routines ******************************/
   /**************************************************/
 
-  const Ring /* or null */ *rawARingZZp(int p); /* connected */
+  const Ring /* or null */ *rawARingZZp(unsigned long p); /* connected */
     /* Expects a prime number p in range 2 <= p <= 32749 */
 
   const Ring /* or null */ *rawARingGaloisField1(const RingElement *prim); /* connected */
   /* same interface as rawGaloisField, but uses different internal code */
+
+  const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, but too big 
+     for lookup tables */
+
+  const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *prim); /* connected */
+  /* same interface as rawGaloisField, but uses Flint GF code designed for wordsize p, 
+     and uses lookup tables */
 
   const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *prim); /* connected */
   /* same interface as rawGaloisField, but uses Givaro */
@@ -180,17 +197,37 @@ extern "C" {
      ring over ZZ/p.  This function returns {f0, f1, ..., f_(d-1)},
      where each entry is an integer */
 
-  const RingElement*  rawARingGFGenerator(const Ring *R);
+  const RingElement*  rawMultiplicativeGenerator(const Ring *R);
   /* given an ARingGF, return the  the generator of the multiplicative group.
     */
 
   /**************************************************/
+  /**** ARing flint routines ************************/
+  /**************************************************/
+  const Ring* /* or null */ rawARingZZFlint(); /* connected */
+
+  const Ring* /* or null */ rawARingQQFlint(); /* connected */
+
+  const Ring /* or null */ *rawARingZZpFlint(unsigned long p); /* connected */
+    /* Expects a prime number p in range 2 <= p <= 2^64-1 */
+
+  /* returns an array of non-negative integers, which represents the given Conway polynomial
+     If there is none, a list of length 0 is returned.
+     if the boolean argument is set to true, returns a random poly that flint finds 
+  */
+  M2_arrayintOrNull rawConwayPolynomial(long charac, 
+                                        long deg, 
+                                        M2_bool find_random_if_no_conway_poly_available);
+
+  /**************************************************/
   /**** Ring routines *******************************/
   /**************************************************/
-  unsigned long IM2_Ring_hash(const Ring *R);  /* drg: connected hash */
+  unsigned int rawRingHash(const Ring *R);  /* drg: connected hash */
     /* assigned sequentially */
 
   M2_string IM2_Ring_to_string(const Ring *M); /* drg: connected */
+
+  long rawRingCharacteristic(const Ring* R); /* connected: rawCharacteristic */
 
   const Ring *IM2_Ring_ZZ(void);  /* drg: connected rawZZ*/
     /* always returns the same object */
@@ -373,7 +410,7 @@ extern "C" {
 
   M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */
 
-  unsigned long IM2_RingElement_hash(const RingElement *a);/* TODO */
+  unsigned int rawRingElementHash(const RingElement *a);/* connected */
 
   const Ring * IM2_RingElement_ring(const RingElement *a); /* drg: connected rawRing*/
 
@@ -391,6 +428,12 @@ extern "C" {
        Returns lo,hi degree.  If the ring is not a graded ring or a polynomial ring
        then (0,0) is returned.
     */
+
+  const RingElement* /* or null */ rawRingElementAntipode(const RingElement* f);
+  /* If the ring is not a skew commuting poly ring, this is the identity map.  Otherwise
+     this returns a poly, with the signs of the coefficients possibly changed, 
+     this implements the (anti-)isomorphism of the ring and its opposite ring.
+  */
 
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
@@ -543,7 +586,7 @@ extern "C" {
   const RingElement /* or null */ *rawSchurSnTensorMult(const RingElement *f, const RingElement *g);
   /* the tensor multiplication function in SchurSnRing */
 
-  int rawDiscreteLog(const RingElement *h); /* drg: connected */
+  long rawDiscreteLog(const RingElement *h); /* drg: connected */
   /* returns -1 if h is 0, or if elements of the ring of h
      are not represented as powers of a primitive element.
      Otherwise returns an integer in the range 0..q-1 */
@@ -599,9 +642,9 @@ extern "C" {
   IM2_FreeModule_to_string(
           const FreeModule *F); /* drg: connected */
 
-  unsigned long int
-  IM2_FreeModule_hash(
-          const FreeModule *F); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned int
+  rawFreeModuleHash(
+          const FreeModule *F); /* not quite connected */
 
   const FreeModule /* or null */ *
   IM2_FreeModule_make(
@@ -738,7 +781,7 @@ extern "C" {
 
   M2_string IM2_Matrix_to_string(const Matrix *M); /* drg: connected */
 
-  unsigned long IM2_Matrix_hash(const Matrix *M); /* drg: connected to "hash", but it always returns 0, sigh */
+  unsigned int rawMatrixHash(const Matrix *M); /* drg: connected to "hash"  */
 
   const RingElement /* or null */ * IM2_Matrix_get_entry(const Matrix *M, int r, int c); /* drg: connected rawMatrixEntry, OK*/
 
@@ -937,15 +980,6 @@ extern "C" {
   const Matrix /* or null */ * IM2_Matrix_contract(const Matrix *M,
                                            const Matrix *N); /* drg: connected rawMatrixContract*/
 
-  const Matrix /* or null */ * IM2_Matrix_contract0(
-                                            int n_top_variables,
-                                            const Matrix *M,
-                                            const Matrix *N); /* drg: connect*/
-  /* same shape of result as contract, except that the entries corresponding to M_(i,j), N_(k,l)
-     is the dot product of the polynomials, thought of as polynomials in the first n_top_variables
-     vars in the ring.  It is assumed that the monomial order is a product order, so that
-     all monomials with the same first n_top_variables vars are in order. */
-
   const Matrix /* or null */ * IM2_Matrix_homogenize(const Matrix *M,
                                              int var,
                                              M2_arrayint wts); /* drg: connected rawHomogenize*/
@@ -1070,7 +1104,7 @@ extern "C" {
 
   M2_string IM2_RingMap_to_string(const RingMap *F); /* drg: connected */
 
-  unsigned long int IM2_RingMap_hash(const RingMap *F); /* TODO */ /* drg: waiting, returning 0 */
+  unsigned int rawRingMapHash(const RingMap *F); /* TODO */ 
 
   M2_bool IM2_RingMap_is_equal(const RingMap*, const RingMap*); /* drg: connected === */
 
@@ -1085,6 +1119,10 @@ extern "C" {
   const Matrix /* or null */ * IM2_RingMap_eval_matrix(const RingMap *F,
                                                const FreeModule *newTarget,
                                                const Matrix *M); /* drg: connected rawRingMapEval*/
+
+  MutableMatrix /* or null */ * rawRingMapEvalMutableMatrix(const RingMap* F,
+                                                            const MutableMatrix* M);
+  /* drg: connected rawRingMapEval*/
 
   const RingElement *IM2_RingElement_promote(const Ring *S, const RingElement *f); /* drg: connected rawPromote*/
 
@@ -1129,7 +1167,7 @@ extern "C" {
 
   M2_string IM2_MutableMatrix_to_string(const MutableMatrix *M); /* drg: connected toString, OK */
 
-  unsigned long  IM2_MutableMatrix_hash(const MutableMatrix *M); /* drg: connected to "hash" */
+  unsigned int  rawMutableMatrixHash(const MutableMatrix *M); /* drg: connected to "hash" */
 
   int IM2_MutableMatrix_n_rows(const MutableMatrix *M); /* drg: connected rawNumberOfRows, OK */
 
@@ -1141,6 +1179,11 @@ extern "C" {
 
   void rawMutableMatrixFillRandom(MutableMatrix *M, long nelems);
   /* drg: connected rawMutableMatrixFillRandom */
+
+  MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *R, const MutableMatrix *f); /* connected to rawPromote*/
+
+  MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, const Ring* R, const MutableMatrix *f); /* connected to rawLift */
+  // returns null if lifting not possible
 
   const RingElement /* or null */ * IM2_MutableMatrix_get_entry(const MutableMatrix *M,
                                                         int r, int c); /* drg: connected rawMatrixEntry, OK*/
@@ -1267,23 +1310,56 @@ extern "C" {
   /* Using row and column operations, use unit pivots to reduce the matrix */
   /* A return value of false means that the computation was interrupted */
 
-  size_t rawLinAlgRank(MutableMatrix* M);
+  /** return the transpose of A */
+  MutableMatrix* rawMutableMatrixTranspose(MutableMatrix* A);
+
+  /**
+     returns the rank of the matrix M.  If 'rank' is not defined on this type of matrix,
+     then returns -1 (and an error message is given).
+   */
+  long rawLinAlgRank(MutableMatrix* M);
 
   /** requires: M should be a square matrix.  
       If not, or if the ring has not implemented this routine,
-      then -1 is returned (and an error message is given).
+      then null is returned (and an error message is given).
    */
   const RingElement* rawLinAlgDeterminant(MutableMatrix* A);
 
-  MutableMatrix* rawLinAlgInvert(MutableMatrix* A);
+  MutableMatrix* rawLinAlgInverse(MutableMatrix* A);
+
+  /** compute the row reduced echelon form of the matrix A.
+      This is a matrix of the same shape as A.
+      NULL, and an error, is returned if the ring is not
+      equipped to compute this, or if it has not been
+      implemented for that ring type yet
+  */
+  MutableMatrix* rawLinAlgRREF(MutableMatrix* A);
 
   M2_arrayintOrNull rawLinAlgRankProfile(MutableMatrix* A, M2_bool row_profile);
 
-  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A, M2_bool right_side);
+  MutableMatrix* rawLinAlgNullSpace(MutableMatrix* A);
 
+  /** Returns X s.t. AX = B.  Assumptions: 
+      A has the same number of rows as B. A doesn't have to be invertible or square.
+      If a usage error occurs, NULL is returned and 'success' is set to 0.
+      In all other cases, 'success' is set to 1.
+      If AX=B has no solutions, then NULL is returned,
+      otherwise a matrix X solving AX=B is returned.
+  */
   MutableMatrix* rawLinAlgSolve(const MutableMatrix* A, 
                                 const MutableMatrix* B,
-                                M2_bool right_side);
+                                int* success);
+
+  /** Returns X s.t. AX = B.  Assumptions: 
+      A is a square matrix, with the same number of rows as B.
+      If a usage error occurs, NULL is returned and 'success' is set to 0.
+      In all other cases, 'success' is set to 1.
+      If A turns out to be not invertible, NULL is returned,
+      otherwise the unique matrix X solving AX=B is returned.
+  */
+  MutableMatrix* rawLinAlgSolveInvertible(const MutableMatrix* A, 
+                                          const MutableMatrix* B,
+                                          int* success);
 
   /** A,B,C should be mutable matrices over the same ring, and a,b
      elements of this ring.
@@ -1291,13 +1367,26 @@ extern "C" {
      where op(A) = A or transpose(A), depending on transposeA
      where op(B) = B or transpose(B), depending on transposeB
   */ 
-  MutableMatrix* /* or null */ rawLinAlgAddMultipleTo(MutableMatrix* C,
-                                                      const MutableMatrix* A,
-                                                      const MutableMatrix* B,
-                                                      M2_bool transposeA,
-                                                      M2_bool transposeB,
-                                                      const RingElement* a,
-                                                      const RingElement* b);
+
+  /** set C += A*B.  If not implemented, or sizes/rings are not compatible
+      then false is returned.  Otherwise true is returned.
+  */
+  M2_bool rawLinAlgAddMult(MutableMatrix* C,
+                        const MutableMatrix* A,
+                        const MutableMatrix* B);
+
+  /** set C -= A*B.  If not implemented, or sizes/rings are not compatible
+      then false is returned.  Otherwise true is returned.
+  */
+  M2_bool rawLinAlgSubMult(MutableMatrix* C,
+                        const MutableMatrix* A,
+                        const MutableMatrix* B);
+
+  /* return A*B, where A,B are mutable matrices, over same ring, same density type.
+   */
+  MutableMatrix* /* or null */ rawLinAlgMult(const MutableMatrix* A,
+                                             const MutableMatrix* B);
+
 
   engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A);
   // returns an array whose coefficients give the characteristic polynomial of the square matrix A
@@ -1307,7 +1396,7 @@ extern "C" {
 
 
 
-
+#if 0
   RingElement *rawFFPackDeterminant(MutableMatrix *M);
   /* connected to rawFFPackDeterminant, MES */
   /* requires: M should be a square matrix over a prime finite field */
@@ -1350,6 +1439,7 @@ extern "C" {
 
   M2_arrayintOrNull rawFFPackColumnRankProfile(MutableMatrix *A);
   /* connected, MES */
+#endif
 
   engine_RawArrayIntPairOrNull rawLQUPFactorization(MutableMatrix *A);
 
@@ -1360,16 +1450,6 @@ extern "C" {
   /* Each of the following routines accepts honest MutableMatrix arguments,
      and returns false if there is an error.  The return values are placed into
      some of the (already existing) parameters of the routine */
-
-  M2_bool rawSolve(MutableMatrix *A,
-                   MutableMatrix *b,
-                   MutableMatrix *x); /* connected */
-
-  M2_bool rawNullspaceU(MutableMatrix *U,
-                     MutableMatrix *x); /* connected */
-  /* If U is a matrix in upper triangular echelon form (i.e.as
-     returned by LU decomp), then x is replaced with
-     a matrix whose columns form a basis for the null space of U. */
 
   M2_arrayintOrNull rawLU(const MutableMatrix *A,
                            MutableMatrix *L,
@@ -1431,7 +1511,8 @@ extern "C" {
 
   M2_string IM2_MonomialIdeal_to_string(const MonomialIdeal *I); /* TODO */
 
-  unsigned long IM2_MonomialIdeal_hash(const MonomialIdeal *I);/* TODO */
+  unsigned int rawMonomialIdealHash(const MonomialIdeal *I); 
+  /* connected to 'hash', sequential, as it is mutable */
 
   int IM2_MonomialIdeal_is_equal(const MonomialIdeal *I1,
                                      const MonomialIdeal *I2); /* drg: connected === */
@@ -1569,7 +1650,7 @@ enum gbTraceValues
 
   M2_string IM2_GB_to_string(Computation *C); /* drg: connected, in actors4.d */
 
-  unsigned long IM2_GB_hash(const Computation *C); /* drg: connected, in basic.d */
+  unsigned int rawComputationHash(const Computation *C); /* drg: connected, in basic.d */
 
   void rawShowComputation(const Computation *C); /* Dan: connected to rawShowComputation */
 
@@ -1860,11 +1941,6 @@ enum gbTraceValues
   void rawFactor2(const RingElement *f, const RingElement *minpoly,
                  engine_RawRingElementArrayOrNull *result_factors,
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
-  void rawFactorOverTower(const RingElement *f,
-                          const Matrix *M, /* the tower */
-                          engine_RawRingElementArrayOrNull *result_factors,
-                          M2_arrayintOrNull *result_powers); /* connected to rawFactorOverTower  */
-
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
 
@@ -1893,10 +1969,24 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
+  SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
+  SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
+  M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
+  M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_string rawSLProgramToString(SLProgram *); /* connected */
+  unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
+  unsigned int rawSLProgramHash(SLProgram *); /* connected */
+  gmp_ZZ rawSLPInputGate(SLProgram *S);
+  gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a);
+
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);
   M2_string rawStraightLineProgramToString(StraightLineProgram *); /* connected */
-  unsigned long rawStraightLineProgramHash(StraightLineProgram *); /* connected */
+  unsigned int rawStraightLineProgramHash(StraightLineProgram *); /* connected */
   const Matrix /* or null */ *rawTrackPaths(StraightLineProgram* slp_pred, StraightLineProgram* slp_corr, const Matrix* start_sols ,
                                     M2_bool is_projective,
                                     gmp_RR init_dt, gmp_RR min_dt, gmp_RR max_dt,
@@ -1908,7 +1998,7 @@ enum gbTraceValues
   PathTracker /* or null */ *rawPathTracker(const Matrix *);
   PathTracker /* or null */ *rawPathTrackerProjective(const Matrix *, const Matrix *, gmp_RR);
   M2_string rawPathTrackerToString(PathTracker *); /* connected */
-  unsigned long rawPathTrackerHash(PathTracker *); /* connected */
+  unsigned int rawPathTrackerHash(PathTracker *); /* connected */
   void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
                           gmp_RR init_dt, gmp_RR min_dt,
                           gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,

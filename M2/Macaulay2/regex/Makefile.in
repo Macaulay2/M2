@@ -39,14 +39,15 @@ DEPENDS = yes
 ifeq "$(DEPENDS)" "yes"
 include regex.dep
 endif
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 tags:: @srcdir@/TAGS
-clean :: ; rm -f *.o *.dep *.s *.E LOGFILE
+clean:: ; rm -f *.o *.dep *.s *.E LOGFILE TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/regex/Makefile
 distclean::; rm -f Makefile
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/regex "
 # End:
+.NOTPARALLEL:

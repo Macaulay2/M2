@@ -7,21 +7,26 @@ include ../Makefile.common
 include @srcdir@/../Makefile.files
 include @srcdir@/../f4/Makefile.files
 include @srcdir@/Makefile.files
+export LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 
 CPPFLAGS := -I. -I@srcdir@  -I@srcdir@/..  $(CPPFLAGS) \
-     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)include \
+     -isystem $(GTEST_DIR) -isystem $(GTEST_DIR)/include \
 	 -I../../e-includes -I@srcdir@/../../d -I../../d \
-	 -I@srcdir@/../../c 
-CXXFLAGS += -std=gnu++0x #-coverage
-LDFLAGS += #-coverage
+	 -I@srcdir@/../../c #-Wno-unused-local-typedefs # ffpack has some of these.
+
+#CXXFLAGS += -O0 -std=gnu++0x #-coverage
+CXXFLAGS += -std=c++0x -Wno-sign-conversion #-Wno-unused-local-typedefs -coverage
 
 # removed from CPPFLAGS for tests:
 #    -I../../d -I@srcdir@/../../c \
 #    -I../../e-includes
 
-
-LOADLIBES += @BUILTLIBS@ @LIBS@ -lstdc++
+LOADLIBES += @BUILTLIBS@ @LIBS@ -lmathicgb -lmathic -lmemtailor -lstdc++ @FCLIBS@
 #LOADLIBES += -lgc -lstdc++ -lgmp -lmpfr -lflint -lntl -pthread -framework vecLib # -lgivaro -llinbox
+
+# do not link with gtest -- it's supposed to get compiled in via #include:
+# LDFLAGS += -L$(GTEST_DIR)/lib/.libs
+# LOADLIBES += -lgtest
 
 .PHONY: place_into_lib runtests
 
@@ -79,7 +84,7 @@ COMPILE.cc += $(MORE_OPTIONS)
 
 
 Makefile: Makefile.in; cd ../../..; ./config.status Macaulay2/e/unit-tests/Makefile
-clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE
+clean::; rm -f *.o *.rpo *.dep dep-*.tmp LOGFILE testMain
 distclean: clean; rm -f Makefile
 
 ifeq "$(DEPENDS)" "yes"
@@ -89,3 +94,4 @@ endif
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check"
 # End:
+.NOTPARALLEL:

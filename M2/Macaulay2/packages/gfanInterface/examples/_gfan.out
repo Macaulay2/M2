@@ -10,8 +10,12 @@ o2 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o2 : Ideal of R
 
 i3 : time (M,L) = gfan I;
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-     -- used 0.023258 seconds
+     -- used 0.003946 seconds
 
 i4 : M/toString/print;
 {b*d^2, a*d, a*c^2, a^2*c}
@@ -50,6 +54,10 @@ o7 = ideal (a + b + c + d, a*b + b*c + a*d + c*d, a*b*c + a*b*d + a*c*d +
 o7 : Ideal of S
 
 i8 : (inL,L) = gfan I;
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
 
 i9 : #inL
@@ -57,6 +65,10 @@ i9 : #inL
 o9 = 96
 
 i10 : (inL1, L1) = gfan(I, Symmetries=>{(b,c,d,a,e)});
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
 
 i11 : #inL1
@@ -74,8 +86,13 @@ i13 : I = ideal"fg + gh";
 o13 : Ideal of QQ[f, g, h]
 
 i14 : gfan I;
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
---warning: clearing value of symbol g to allow access to subscripted variables based on it
+warning: clearing value of symbol g to allow access to subscripted variables based on it
+       : debug with expression   debug 2909   or with command line option   --debug 2909
 
 i15 : R = ring I;
 

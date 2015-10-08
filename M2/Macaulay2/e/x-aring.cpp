@@ -4,21 +4,48 @@
 #include "relem.hpp"
 #include "aring-glue.hpp"
 #include "aring-zzp.hpp"
-#include "aring-gf.hpp"
+#include "aring-zz-flint.hpp"
+#include "aring-zzp-flint.hpp"
+#include "aring-gf-givaro.hpp"
 #include "aring-m2-gf.hpp"
-#include "aring-ffpack.hpp"
+#include "aring-gf-flint-big.hpp"
+#include "aring-gf-flint.hpp"
+#include "aring-zzp-ffpack.hpp"
 #include "aring-tower.hpp"
+#include "aring-qq.hpp"
 
 #include "polyring.hpp"
 
-#ifdef HAVE_MEMTAILOR
 #include "memtailor.h"
 #include "mathic.h"
 memt::BufferPool testBuffer(16);
-#endif
 
-const Ring /* or null */ *rawARingZZp(int p)
-  /* p must be a prime number <= 32767 */
+const QQ* globalQQ;
+
+void initializeRationalRing()
+{
+  M2::ARingQQ *A = new M2::ARingQQ();
+  globalQQ = QQ::create(A);
+}
+
+const QQ* rawARingQQ()
+{
+  return globalQQ;
+}
+
+const Ring* /* or null */ rawARingZZFlint()
+{
+  M2::ARingZZ *A = new M2::ARingZZ();
+  return M2::ConcreteRing<M2::ARingZZ>::create(A);
+}
+
+const Ring* /* or null */ rawARingQQFlint()
+{
+  M2::ARingQQFlint *A = new M2::ARingQQFlint();
+  return M2::ConcreteRing<M2::ARingQQFlint>::create(A);
+}
+
+const Ring /* or null */ *rawARingZZp(unsigned long p)
 {
   if (p <= 1 || p >= 32750)
     {
@@ -28,11 +55,15 @@ const Ring /* or null */ *rawARingZZp(int p)
   M2::ARingZZp *A = new M2::ARingZZp(p);
   return M2::ConcreteRing<M2::ARingZZp>::create(A);
 }
+const Ring /* or null */ *rawARingZZpFlint(unsigned long p)
+{
+  M2::ARingZZpFlint *A = new M2::ARingZZpFlint(p);
+  return M2::ConcreteRing<M2::ARingZZpFlint>::create(A);
+}
 
-const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
+static const PolynomialRing* /* or null */ checkGaloisFieldInput(const RingElement* f)
 {
   // Check that the ring R of f is a polynomial ring in one var over a ZZ/p
-  // Check that f has degree >= 2
   // Check that f is monic
   // If any of these fail, then return 0.
   const PolynomialRing *R = f->get_ring()->cast_to_PolynomialRing();
@@ -51,14 +82,47 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
-  if (R->charac() == 0)
+  if (R->characteristic() == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
+  return R;
+}
+const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
   try {
     M2::ARingGFM2 *A = new M2::ARingGFM2(*R,f->get_value());
     return M2::ConcreteRing<M2::ARingGFM2>::create(A);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+const Ring /* or null */ *rawARingGaloisFieldFlintBig(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
+  try {
+    M2::ARingGFFlintBig *A = new M2::ARingGFFlintBig(*R,f->get_value());
+    return M2::ConcreteRing<M2::ARingGFFlintBig>::create(A);
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const Ring /* or null */ *rawARingGaloisFieldFlintZech(const RingElement *f)
+{
+  const PolynomialRing* R = checkGaloisFieldInput(f);
+  if (R == 0) return 0; // error message has already been logged
+  try {
+    M2::ARingGFFlint *A = new M2::ARingGFFlint(*R,f->get_value());
+    return M2::ConcreteRing<M2::ARingGFFlint>::create(A);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -69,9 +133,9 @@ const Ring /* or null */ *rawARingGaloisField1(const RingElement *f)
 
 /// @todo why parameters are ints and not longs or mpz's? is an overflow possible?
 /// @todo check prime for primality (probably at top of Macaulay2)
-/// @todo ARingGF uses tables and may consume a huge amount of memory -
-///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGF, create polynomial representation?
-/// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGF?
+/// @todo ARingGFGivaro uses tables and may consume a huge amount of memory -
+///        pass therefore a 'MaxMemoryConsumption' parameter and if the value is overstepped by ARingGFGivaro, create polynomial representation?
+/// @todo  the check if in general polynomial representation is needed cost some additional work, similar to linbox/field/givaro-gfq.h. Use GivaroGfq instead of Givaro::GFqDom in ARingGFGivaro?
 ///@todo: return Macaulay Galois field in some cases.
 
 const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
@@ -98,17 +162,17 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
         }*/
         if (dimension==1 && M2::ARingZZpFFPACK::getMaxModulus()> prime) 
         {
-	  std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
+          // std::cout << "maximum modulus = " << M2::ARingZZpFFPACK::getMaxModulus() << std::endl;
           M2::ARingZZpFFPACK *A = new M2::ARingZZpFFPACK(prime);
           return M2::ConcreteRing<M2::ARingZZpFFPACK>::create(A);
         }
-	if (dimension==1)
-	  {
-	    ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
-	    return 0;
-	  }
-        M2::ARingGF *A = new M2::ARingGF(prime,dimension);
-        return M2::ConcreteRing<M2::ARingGF>::create(A);
+        if (dimension==1)
+          {
+            ERROR("maximum modulus = %f\n", M2::ARingZZpFFPACK::getMaxModulus());
+            return 0;
+          }
+        M2::ARingGFGivaro *A = new M2::ARingGFGivaro(prime,dimension);
+        return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
 #else
        ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
        return 0;
@@ -118,32 +182,6 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
           ERROR(e.what());
           return NULL;
      }
-}
-
-const M2_arrayint getPolynomialCoefficients(const PolynomialRing *R, const ring_elem f)
-{
-  // Assumption: ring of f has one variable.
-  if (R == 0 || R->n_vars() > 1)
-    {
-      ERROR("expected polynomial ring in one variable");
-      return 0;
-    }
-
-  int lo, deg; // ignore lo, and deg == degree of the univariate polynomial f.
-  R->degree_of_var(0, f, lo, deg);
-  M2_arrayint polynomialCoeffs = M2_makearrayint(deg+1);
-  for (int i=0; i<=deg; i++)
-    polynomialCoeffs->array[i] = 0;
-  int exp[1];
-  for (Nterm *t = f; t != NULL; t = t->next)
-      {
-	int coef = R->getCoefficientRing()->coerce_to_int(t->coeff);
-        R->getMonoid()->to_expvector(t->monom, exp);
-	ASSERT(exp[0] >= 0);
-	ASSERT(exp[0] <= deg);
-	polynomialCoeffs->array[exp[0]] = coef;
-      }
-  return polynomialCoeffs;
 }
 
 const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
@@ -168,7 +206,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
     }
-  if (R->charac() == 0)
+  if (R->characteristic() == 0)
     {
       ERROR("expected poly ring of the form ZZ/p[x]/(f)");
       return 0;
@@ -179,19 +217,21 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
       ERROR("primitive element needs to be the generator of the ring, we think...!");
       return 0;
     }
-  
-  M2_arrayint modPoly = getPolynomialCoefficients(R, R->quotient_element(0));
-  if (modPoly == 0)
-    return 0;
 
-  // Now get the generator for the group of units (a 'primitive' element)
-  M2_arrayint primitiveElementPoly = getPolynomialCoefficients(R, a->get_value());
-  if (primitiveElementPoly == 0)
-    return 0;
-    
   try {
-    M2::ARingGF *A = new M2::ARingGF(R->charac(), modPoly, primitiveElementPoly, *R);
-    return M2::ConcreteRing<M2::ARingGF>::create(A);
+    RingElement F(R,R->quotient_element(0));
+    M2_arrayint modPoly = F.getSmallIntegerCoefficients();
+    if (modPoly == 0)
+      {
+        ERROR("internal error: this should not happen");
+        return NULL;
+      }
+    M2_arrayint primitiveElementPoly = a->getSmallIntegerCoefficients();
+    if (primitiveElementPoly == 0)
+      return NULL;
+    
+    M2::ARingGFGivaro *A = new M2::ARingGFGivaro(R->characteristic(), modPoly, primitiveElementPoly, *R);
+    return M2::ConcreteRing<M2::ARingGFGivaro>::create(A);
   }
   catch (exc::engine_error e) {
     ERROR(e.what());
@@ -203,32 +243,14 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
 M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 {
 #if defined(HAVE_GIVARO)
-  const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(R);
+  const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
     {
       ERROR("expected a GaloisField");
       return 0;
     }
-  const M2::ARingGF &A = RGF->ring();
+  const M2::ARingGFGivaro &A = RGF->ring();
   return A.getModPolynomialCoeffs();
-#else
-  ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
-  return 0;
-#endif
-}
-
-
-const RingElement* rawARingGFGenerator(const Ring *R)
-{
-#if defined(HAVE_GIVARO)
- const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(R);
-  if (RGF == 0)
-    {
-      ERROR("expected a GaloisField");
-      return 0;
-    }
-  const M2::ARingGF &A = RGF->ring();
-  return RingElement::make_raw( R, A.getGenerator() );
 #else
   ERROR("add --enable-fflas-ffpack --enable-givaro when building M2");
   return 0;
@@ -239,14 +261,14 @@ const RingElement* rawARingGFGenerator(const Ring *R)
 M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 {
 #if defined(HAVE_GIVARO)
-  const M2::ConcreteRing<M2::ARingGF> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGF> *>(f->get_ring());
+  const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(f->get_ring());
   if (RGF == 0)
   {
       ERROR("expected a GaloisField");
       return 0;
   }
-  const M2::ARingGF &A = RGF->ring();
-  M2::ARingGF::ElementType a;
+  const M2::ARingGFGivaro &A = RGF->ring();
+  M2::ARingGFGivaro::ElementType a;
   A.from_ring_elem(a, f->get_value());
   return A.fieldElementToM2Array(a);
 #else
@@ -255,15 +277,6 @@ M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 #endif
 }
 
-void M2_ArrayString_to_stdvector(M2_ArrayString strs, std::vector<std::string> &result)
-{
-  for (size_t i = 0; i< strs->len; i++)
-    {
-      M2_string a = strs->array[i];
-      std::string b(a->array, a->len);
-      result.push_back(b);
-    }
-}
 
 const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
 {
@@ -291,11 +304,11 @@ const Ring /* or null */ *rawARingTower1(const Ring *K, M2_ArrayString names)
 const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_names)
 {
   try {
-    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(K);
+    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
     if (K == 0)
       {
-	ERROR("expected a tower ring");
-	return NULL;
+        ERROR("expected a tower ring");
+        return NULL;
       }
     const M2::ARingTower &A = K->ring();
     
@@ -313,14 +326,14 @@ const Ring /* or null */ *rawARingTower2(const Ring *R1, M2_ArrayString new_name
 const Ring /* or null */ *rawARingTower3(const Ring *R1, engine_RawRingElementArray eqns)
 {
   try {
-    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(K);
+    const M2::ConcreteRing<M2::ARingTower> *K = dynamic_cast<const M2::ConcreteRing<M2::ARingTower> *>(R1);
     if (K == 0)
       {
-	ERROR("expected a tower ring");
-	return NULL;
+        ERROR("expected a tower ring");
+        return NULL;
       }
     const M2::ARingTower &A = K->ring();
-
+    
     std::vector<M2::ARingTower::ElementType> extensions;
     
     for (int i=0; i<eqns->len; i++)

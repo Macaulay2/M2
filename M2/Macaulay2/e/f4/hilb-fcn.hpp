@@ -3,7 +3,7 @@
 #ifndef _hilb_fcn_h_
 #define _hilb_fcn_h_
 
-#include "gc.h"
+#include "M2/gc-include.h"
 #include <vector>
 
 #include "../matrix-con.hpp"

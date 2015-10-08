@@ -2,7 +2,7 @@
 -- operations for PolySpace and DualSpace
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { addition, intersection, colon, isContained }
+export { "addition", "intersection", "colon", "isContained" }
 
 ------------------------------------------------
 

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 #include "types.h"
 
 #include "M2mem-replacement.h"

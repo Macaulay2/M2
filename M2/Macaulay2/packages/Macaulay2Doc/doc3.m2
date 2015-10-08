@@ -395,7 +395,7 @@ document {
      Headline => "whether something may be modified",
      TT "mutable x", " -- returns true or false, depending on whether x is mutable.",
      PARA{},
-     "If ", TT "x", " is a hash table, list, or database, then it's mutable if its contents
+     "If ", TT "x", " is a hash table, list, dictionary, or database, then it is mutable if its contents
      can be destructively altered.",
      PARA{},
      "If ", TT "x", " is a symbol, then it's mutable if a value can be assigned to
@@ -403,10 +403,23 @@ document {
      PARA{},
      "If ", TT "x", " is anything else, then it isn't mutable.",
      PARA{},
-     "The contents of a mutable hash table do not participate in strong comparison
+     "The (changeable) contents of a mutable hash table or list do not participate in strong comparison
      with ", TO "===", " or in ", TO "hashing", ".",
      SeeAlso => {"MutableList", "MutableHashTable"}
      }
+
+document {
+     Key => serialNumber,
+     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list, ",
+     Usage => "serialNumber x",
+     Inputs => {"x"},
+     Outputs => { ZZ => { "the serial number of ", TT "x" } },
+     EXAMPLE lines ///
+     	  serialNumber asdf
+	  serialNumber foo
+	  serialNumber ZZ
+     ///
+     }     
 
 document {
      Key => setEcho,
@@ -1451,6 +1464,11 @@ document {
 	  },
      PARA {
 	  "The temporary file name is derived from the value of the environment variable ", TT "TMPDIR", ", if it has one."
+	  },
+     PARA {
+	  "If ", TO "fork", " is used, then the parent and child Macaulay2 processes will each remove their
+	  own temporary files upon termination, with the parent removing any files created before ", TO "fork",
+	  " was called.",
 	  },
      SeeAlso => {File, "rootPath", "rootURI"}
      }

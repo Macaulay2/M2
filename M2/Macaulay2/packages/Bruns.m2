@@ -22,11 +22,11 @@ newPackage(
      DebuggingMode => false
      )
 
-export{bruns, 
-       brunsIdeal,
-       elementary, 
-       evansGriffith,
-       isSyzygy}
+export{"bruns", 
+       "brunsIdeal",
+       "elementary", 
+       "evansGriffith",
+       "isSyzygy"}
        
 
 --------------------------------------------------------------

@@ -3,15 +3,18 @@
 include ../../include/config.Makefile
 VPATH = @srcdir@
 DEPENDS = yes
-PKG_DMG = @package@-@ARCH@-@OS@-@REL@.dmg
+PKG_DMG = @package@-@ARCH@-@ISSUE@.dmg
 
 all: dmg tidy
 dmg: ../../$(PKG_DMG)
 T=@TAR@ --create --mode=a+rX,og-ws --exclude-from=@srcdir@/../tar-exclusions --file=-
-../../$(PKG_DMG) : Makefile always file_preparation library_preparation
+../../$(PKG_DMG) : Makefile always file_preparation library_preparation top-directory-preparation
 	rm -f "$@"
 	@echo "warning: sometimes the following command gives a mystical error message about '(ipc/send) invalid destination port' ... "
 	hdiutil create -srcfolder files -volname "@package@-@ARCH@-@OS@-@REL@" "$@"
+top-directory-preparation:
+	umask 022 ; $(MKDIR_P) files
+	ln -sf /Applications files/.
 file_preparation: always
 	rm -rf files
 	umask 022 ; $(MKDIR_P) files/@package@
@@ -27,6 +30,7 @@ file_preparation: always
 #     @executable_path : relative to the path to the executable
 #     @loader_path     : relative to the path to the library that wants the library
 #     @rpath           : relative to any path installed on the path with the -rpath option to ld
+# Read about all that with "man dyld".
 library_preparation: file_preparation
 
 	$(MKDIR_P) files/@package@/@tail_libdir@
@@ -83,3 +87,4 @@ Makefile: Makefile.in; cd ../..; ./config.status distributions/dmg/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/dmg -o tidy "
 # End:
+.NOTPARALLEL:

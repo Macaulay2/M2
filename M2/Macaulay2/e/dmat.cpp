@@ -1,288 +1,309 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005,2013  Michael E. Stillman
 
 #include "exceptions.hpp"
+#include "error.h"
 
-#include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
-#include "ZZp.hpp"
-#include "aring-RRR.hpp"
-#include "aring-gf.hpp"
-#include "aring-m2-gf.hpp"
-#include "aring-tower.hpp"
-
-#include "dmat.hpp"
-#include "mat.hpp"
-#include "mpfr.h"
-#include <iostream>
-
-#include "aring-zzp.hpp"
-#include "aring-ffpack.hpp"
-
- #include <typeinfo>
-
-#include "dmat-RRR.hpp"
-
-
+#include "mat-linalg.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 // dmat code that might have alternate implementations, depending of type //
 ////////////////////////////////////////////////////////////////////////////
 
-
-///////////////////////////////////
-/// Fast linear algebra routines //
-///////////////////////////////////
-
-template<typename CoeffRing>
-size_t DMat<CoeffRing>::rank() const
-{
-  ERROR("not implemented for this ring yet");
-  return static_cast<size_t>(-3);
-}
-
-///////////////////////////////////
-/// Real linear algebra routines //
-///////////////////////////////////
-
-template<> 
-size_t DMat<M2::ARingRRR>::rank() const
-{
-  return LUDecompositionRRR::rankRRR(*this);
-}
-
-template<>
-void DMat<M2::ARingRRR>::determinant(elem &result) const
-{
-  LUDecompositionRRR::determinantRRR(*this, result);
-}
-
-//////////////////////////////////////
-/// Generic linear algebra routines //
-//////////////////////////////////////
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::determinant(elem &result) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::invert(DMat<CoeffRing> &inverse) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
-}
-
-template<typename CoeffRing>
-M2_arrayintOrNull DMat<CoeffRing>::rankProfile(bool row_profile) const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::nullSpace(DMat<CoeffRing> &nullspace, bool right_side) const
-{
-  ERROR("not implemented for this ring yet");
-}
-
-template<typename CoeffRing>
-bool DMat<CoeffRing>::solveLinear(DMat<CoeffRing> &X, const DMat<CoeffRing> &B, bool right_size) const
-{
-  ERROR("not implemented for this ring yet");
-  return false;
-}
-
-template<typename CoeffRing>
-engine_RawRingElementArrayOrNull DMat<CoeffRing>::characteristicPolynomial() const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-engine_RawRingElementArrayOrNull DMat<CoeffRing>::minimalPolynomial() const
-{
-  ERROR("not implemented for this ring yet");
-  return 0;
-}
-
-template<typename CoeffRing>
-void DMat<CoeffRing>::addMultipleTo(const DMat<CoeffRing> &A,
-                                    const DMat<CoeffRing> &B,
-                                    bool transposeA,
-                                    bool transposeB,
-                                    const ElementType& a,
-                                    const ElementType& b)
-{
-  std::cerr << "DMat  addMultipleTo" << std::endl;
-    std::cerr << "typeid: " << typeid(CoeffRing).name () << std::endl;
-  ERROR("addMultipleTo not implemented for this ring yet");
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-template <> double *DMat<M2::ARingRRR>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, len);
-
-  elem *a = array_;
-  double *p = result;
-  for (long i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
-  return result;
-}
-
-template <> void DMat<M2::ARingRRR>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  elem *a = array_;
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
-}
-
-
-
-template <> double *DMat<CoefficientRingRRR>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, len);
-
-  elem *a = array_;
-  double *p = result;
-  for (long i=0; i<len; i++)
-    *p++ = mpfr_get_d(a++, GMP_RNDN);
-  return result;
-}
-
-template <> void DMat<CoefficientRingRRR>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  elem *a = array_;
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    mpfr_set_d(a++, *p++, GMP_RNDN);
-}
-
-template <> double *DMat<CoefficientRingCCC>::make_lapack_array() const
-{
-  long len = n_rows() * n_cols();
-  double *result = newarray_atomic(double, 2*len);
-
-  elem *a = array_;
-  double *p = result;
-  for (long i=0; i<len; i++)
-    {
-      *p++ = mpfr_get_d(a->re, GMP_RNDN);
-      *p++ = mpfr_get_d(a->im, GMP_RNDN);
-      a++;
-    }
-  return result;
-}
-
-template <> void DMat<CoefficientRingCCC>::fill_from_lapack_array(double *lapack_array)
-{
-  long len = n_rows() * n_cols();
-
-  elem *a = array_;
-  double *p = lapack_array;
-  for (long i=0; i<len; i++)
-    {
-      mpfr_set_d(a->re, *p++, GMP_RNDN);
-      mpfr_set_d(a->im, *p++, GMP_RNDN);
-      a++;
-    }
-}
-
-#include "mutablemat.hpp"
-
-template<typename MatT> 
-inline MatT * MutableMatrix::coerce()
-{
-  MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-template<typename MatT> 
-inline const MatT * MutableMatrix::coerce() const
-{
-  const MutableMat<MatT> *P = cast_to_MutableMat<MatT>();
-  if (P == 0) return 0;
-  return P->get_Mat();
-}
-
-M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v)
-{
-  M2_arrayint result = M2_makearrayint(v.size());
-  for (size_t i = 0; i < v.size(); i++)
-    result->array[i] = v[i];
-  return result;
-}
-
-engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
-{
 #ifdef HAVE_FFLAS_FFPACK
-  // Suppose A is m x n
-  // P is n element permutation on columns
-  // Qt is m element permutation on rows (inverse permutation)
-  DMat<M2::ARingZZpFFPACK> *mat = A->coerce< DMat<M2::ARingZZpFFPACK> >();
-  if (mat == 0) 
-    {
-      throw exc::engine_error("LUDivine not defined for this ring");
-      //      ERROR("LUDivine not defined for this ring");
-      //      return 0;
-    }
-  size_t nelems = mat->n_cols();
-  if (mat->n_rows() > mat->n_cols()) nelems = mat->n_rows();
+namespace MatrixOps {
+  void addMultipleTo(DMatZZpFFPACK& C,
+                     const DMatZZpFFPACK::ElementType& a,
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B)
+  {
+    // Compute C := C + a*A*B
+    // Both DMat, and FFPACK store dense matrices in row major order.
+    // Note that the leading dimension in gemm arguments is #columns, 
+    // as the matrix is in row-major order
+    
+    FFLAS::FFLAS_TRANSPOSE tA = FFLAS::FflasNoTrans;
+    FFLAS::FFLAS_TRANSPOSE tB = FFLAS::FflasNoTrans;
 
-  std::vector<size_t> P(nelems, -1);
-  std::vector<size_t> Qt(nelems, -1);
+    size_t m = A.numRows();
+    size_t k = A.numColumns();
+    M2_ASSERT(A.numColumns() == B.numRows());
+    size_t n = B.numColumns();
+    
+    M2_ASSERT(C.numRows() == m);
+    M2_ASSERT(C.numColumns() == n);
 
-  // ignore return value (rank) of:
-  LUdivine(mat->ring().field(),
-                       FFLAS::FflasNonUnit,
-                       (!transpose ? FFLAS::FflasTrans : FFLAS::FflasNoTrans),
-                       mat->n_cols(),
-                       mat->n_rows(),
-                       mat->get_array(),
-                       mat->n_rows(),
-                       &P[0], 
-                       &Qt[0]);
+    DMatZZpFFPACK::ElementType b;
+    C.ring().init(b);
+    C.ring().set_from_long(b, 1);
+    FFLAS::fgemm( C.ring().field(),
+                  tB, tA,
+                  m,n,k,
+                  a,
+                  A.array(),
+                  A.numColumns(),
+                  B.array(),
+                  B.numColumns(),
+                  b,
+                  C.array(),
+                  C.numColumns()
+                  );
+  }
 
-  engine_RawArrayIntPairOrNull result = new engine_RawArrayIntPair_struct;
-  result->a = stdvector_to_M2_arrayint(Qt);
-  result->b = stdvector_to_M2_arrayint(P);
-  return result;
-#endif
-  return 0;
-}
+  void addMultipleTo(DMatZZpFFPACK& C, 
+                     const DMatZZpFFPACK& A, 
+                     const DMatZZpFFPACK& B)
+  {
+    DMatZZpFFPACK::ElementType one;
+    A.ring().set_from_long( one,1 );
 
-#include "dmat-ffpack.cpp"
-#include "dmat-LU.hpp"
-#include "lapack.hpp"
+    addMultipleTo(C,one,A,B);
+  }
+  
+  void subtractMultipleTo(DMatZZpFFPACK& C, 
+                          const DMatZZpFFPACK& A, 
+                          const DMatZZpFFPACK& B)
+  {
+    DMatZZpFFPACK::ElementType minus_one;
+    A.ring().set_from_long( minus_one,-1 );
+    addMultipleTo(C,minus_one,A,B);
+  }
 
-template class DMat<CoefficientRingZZ_NTL>;
-template class DMat<M2::ARingZZp>;
-template class DMat<M2::ARingTower>;
+  void mult(const DMatZZpFFPACK& A, 
+            const DMatZZpFFPACK& B, 
+            DMatZZpFFPACK& C)
+  {
+    // We assume that C is set to the correct size, and is the zero matrix here.
+    addMultipleTo(C,A,B);
+  }
+}; // namespace MatrixOps
 
+namespace ffpackInterface 
+{
+  size_t rank(const DMatZZpFFPACK& mat)
+  {
+    /// @note 1. matrix data (N) is modified by FFPACK
+    DMatZZpFFPACK N(mat); // copy of matrix mat.
+    size_t result = FFPACK::Rank(mat.ring().field(), 
+                                 mat.numRows(), 
+                                 mat.numColumns(), 
+                                 N.array(), 
+                                 mat.numColumns());
+    return result;
+  }
+  
+  void determinant(const DMatZZpFFPACK& mat, 
+                   ZZpFFPACK::ElementType& result_det)
+  {
+    /// @note 1. matrix data (N) is modified by FFPACK
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        mat.ring().set_from_long(result_det, 1);
+      }
+    else
+      {
+        DMatZZpFFPACK N(mat);
+        result_det = FFPACK::Det(mat.ring().field(), 
+                                 mat.numRows(), 
+                                 mat.numColumns(),  
+                                 N.array(),  
+                                 mat.numColumns());
+      }
+  }
+  
+  bool inverse(const DMatZZpFFPACK& mat, 
+               DMatZZpFFPACK& result_inv)
+  {
+    M2_ASSERT(mat.numRows() == mat.numColumns());
+    result_inv.resize(mat.numRows(), mat.numRows());
 
-template class DMat<CoefficientRingRRR>;
-template class DMat<CoefficientRingCCC>;
-template class DMat<CoefficientRingR>;
+    M2_ASSERT(result_inv.numRows() == mat.numRows());
+    M2_ASSERT(result_inv.numColumns() == mat.numRows());
 
-template class DMat<M2::ARingGFM2>;
-template class DMat<M2::ARingZZpFFPACK>;
-template class DMat<M2::ARingGF>;
-template class DMat<M2::ARingRRR>;
+    if (mat.numRows() == 0)
+      {
+        // 26 April 2014: this branch is needed as FFPACK gives answer of 0 in this case.
+        return true;
+      }
+
+    DMatZZpFFPACK N(mat);
+    size_t n = mat.numRows();
+    int nullspacedim;
+    FFPACK::Invert2(mat.ring().field(), 
+                    n, 
+                    N.array(), 
+                    n, 
+                    result_inv.array(), 
+                    n, 
+                    nullspacedim);
+    return (nullspacedim == 0);
+  }
+  
+  size_t nullSpace(const DMatZZpFFPACK& mat, 
+                   DMatZZpFFPACK& nullspace)
+  {
+    bool right_side = true;  // This function is written so that one could set right_side to false.
+    // (It used to be a parameter).
+
+    DMatZZpFFPACK N(mat); // copy of mat
+    size_t nr = mat.numRows();
+    size_t nc = mat.numColumns();
+    
+    DMatZZpFFPACK::ElementType *nullspaceFFPACK = 0;
+    
+    size_t nullspace_dim;
+    size_t nullspace_leading_dim;
+    
+    FFPACK::NullSpaceBasis(mat.ring().field(),
+                           (right_side ? FFLAS::FflasRight : FFLAS::FflasLeft),
+                           nr, 
+                           nc, 
+                           N.array(), 
+                           nc, 
+                           nullspaceFFPACK, 
+                           nullspace_leading_dim, 
+                           nullspace_dim);
+    
+    //    std::cerr << "leading dim = " << nullspace_leading_dim << " and dim = " << nullspace_dim << std::endl;
+    if (right_side && nullspace_dim != nullspace_leading_dim)
+      {
+        std::cerr << "error: this should not happen!" << std::endl;
+      }
+    else if (!right_side && nullspace_leading_dim != nc)
+      {
+        std::cerr << "error: this should not happen either!" << std::endl;
+      }
+    
+    if (right_side)
+      nullspace.resize(nc,nullspace_dim);
+    else
+      nullspace.resize(nullspace_dim,nr);
+    
+    std::swap(nullspace.array(), nullspaceFFPACK);
+    
+    delete [] nullspaceFFPACK;
+    return nullspace_dim;
+  }
+
+  bool solveLinear(const DMatZZpFFPACK& A, 
+                   const DMatZZpFFPACK& B, 
+                   bool right_side, 
+                   DMatZZpFFPACK& X, 
+                   bool declare_A_is_invertible) // this parameter is unused
+  {
+    //    std::cerr << "inside FFpackSolveLinear" << std::endl;
+    
+    size_t a_rows = A.numRows();
+    size_t a_cols = A.numColumns();
+    
+    size_t b_rows = B.numRows();
+    size_t b_cols = B.numColumns();
+    
+    DMatZZpFFPACK copyA(A);
+    DMatZZpFFPACK copyB(B);
+    
+    // preallocate the space for the solutions:
+    size_t x_rows = (right_side ? a_cols : b_rows);
+    size_t x_cols = (right_side ? b_cols : a_rows);
+    
+    X.resize(x_rows, x_cols); // sets it to 0 too.
+    
+    int info = 0; // >0 if the system is inconsistent, ==0 means success
+
+    FFPACK::fgesv(A.ring().field(),
+                  (right_side ? FFLAS::FflasLeft : FFLAS::FflasRight),
+                  a_rows, 
+                  a_cols, 
+                  (right_side ? b_cols : b_rows),
+                  copyA.array(),
+                  a_cols, // leading dim of A
+                  X.array(), 
+                  x_cols,
+                  copyB.array(), 
+                  b_cols,
+                  &info);
+
+    if (info > 0)
+      {
+        // the system is inconsistent
+        return false;
+      }
+    
+    return true;
+  } 
+
+  bool solveLinear(const DMatZZpFFPACK& A, 
+                   const DMatZZpFFPACK& B, 
+                   DMatZZpFFPACK& X)
+  {
+    return solveLinear(A, B, true, X, false);
+  }
+  
+  M2_arrayintOrNull rankProfile(const DMatZZpFFPACK& mat, 
+                                bool row_profile)
+  
+  {
+    DMatZZpFFPACK N(mat);
+    
+    size_t * prof; // this is where the result will be placed
+    size_t rk;
+    if (row_profile)
+      rk = FFPACK::RowRankProfile(mat.ring().field(),
+                                  mat.numRows(),
+                                  mat.numColumns(),
+                                  N.array(),
+                                  mat.numColumns(),
+                                  prof);
+    else
+      rk = FFPACK::ColumnRankProfile(mat.ring().field(),
+                                     mat.numRows(),
+                                     mat.numColumns(),
+                                     N.array(),
+                                     mat.numColumns(),
+                                     prof);
+    
+    M2_arrayint profile = M2_makearrayint(static_cast<int>(rk));
+    for (size_t i=0; i<rk; i++)
+      profile->array[i] = static_cast<int>(prof[i]);
+    
+    delete [] prof;
+    return profile;
+  }
+
+  void rankProfile(const DMatZZpFFPACK& mat, 
+                   bool row_profile,
+                   std::vector<size_t>& result_profile)
+  
+  {
+    DMatZZpFFPACK N(mat);
+    
+    size_t * prof; // this is where the result will be placed
+    size_t rk;
+    if (row_profile)
+      rk = FFPACK::RowRankProfile(mat.ring().field(),
+                                  mat.numRows(),
+                                  mat.numColumns(),
+                                  N.array(),
+                                  mat.numColumns(),
+                                  prof);
+    else
+      rk = FFPACK::ColumnRankProfile(mat.ring().field(),
+                                     mat.numRows(),
+                                     mat.numColumns(),
+                                     N.array(),
+                                     mat.numColumns(),
+                                     prof);
+    
+    result_profile.resize(0);
+    for (size_t i=0; i<rk; i++)
+      result_profile.push_back(prof[i]);
+    
+    delete [] prof;
+  }
+  
+}; // namespace ffpackInterface
+
+#endif // HAVE_FFLAS_FFPACK
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

@@ -1,6 +1,6 @@
 export {   
-   createRandomFlagsForSimpleSchubert,
-   solveSimpleSchubert
+   "createRandomFlagsForSimpleSchubert",
+   "solveSimpleSchubert"
    }
 protect StartSolutions
 protect Memoize

@@ -1,8 +1,8 @@
 
 newPackage(
   "PHCpack",
-  Version => "1.6.1", 
-  Date => "23 September 2014",
+  Version => "1.6.2", 
+  Date => "21 May 2015",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
@@ -98,7 +98,7 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe";
 --if the user is using an old version of NAGtypes.
 
 if not((class(NumericalVariety))===Type) then
-     (--export {generalEquations, "IsIrreducible"};
+     (--export {"generalEquations", "IsIrreducible"};
       --protect generalEquations;
       protect IsIrreducible;
       NumericalVariety = new Type of MutableHashTable;
@@ -278,7 +278,7 @@ systemFromFile (String) := (name) -> (
   s = replace("E","e",s);
   s = replace("e\\+","e",s);   -- M2 does not like 3.0e+00 as constant
   L := lines(s);
-  dimL0 := separate(" ", L_0); -- deal with case of nonsquare systems
+  dimL0 := separate(" ", replace ("^ *","",L_0)); -- deal with case of nonsquare systems
   n := value dimL0_0;          -- first is always number of equations
   result := {};
   i := 0; j := 1;
@@ -738,7 +738,9 @@ mixedVolume  List := Sequence => opt -> system -> (
   -- Calls an Ada translation of ACM TOMS Algorithm 846:
   --  "MixedVol: a software package for mixed-volume computation" 
   -- by Tangan Gao, T. Y. Li, Mengnien Wu, ACM TOMS 31(4):555-560, 2005.
- 
+  -- With the introduction of double double and quad double arithmetic,
+  -- the menu options after version 2.3.90 changed.
+  -- Fixed in the distribution of 2.3.97 of PHCpack.
   R := ring ideal system;
   n := #system;
   
@@ -761,16 +763,18 @@ mixedVolume  List := Sequence => opt -> system -> (
   -- writing data to the corresponding files
   file := openOut cmdfile; 
   file << "4" << endl; -- call MixedVol in PHCpack
+  if opt.StartSystem
+   then (file << "1" << endl)  -- random coefficient start system wanted
+   else (file << "0" << endl); -- no random coefficient start system
   if opt.StableMixedVolume
    then (file << "y" << endl)  -- stable mixed volume wanted
    else (file << "n" << endl); -- no stable mixed volume 
   file << "n" << endl; -- no mixed-cell configuration on file
-  if opt.StartSystem then (
-    file << "y" << endl; -- random coefficient start system wanted
+  if opt.StartSystem then (    -- file and options for start system
     file << startfile << endl;
     file << "0" << endl << "1" << endl;
-   )
-   else (file << "n" << endl); -- no random coefficient start system
+  );
+
   close file;
   systemToFile(system,infile);
   
@@ -1384,8 +1388,7 @@ TEST///
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = solveSystem(f);
      zeroSols = zeroFilter(fSols,1,1.0e-10);
-     assert(  sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} == {{-1, 0}, {1, 0}}
-	      )
+     assert(  max \\ abs \ flatten ( sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} - {{ -1, 0}, {1, 0}} ) < 1e-17 )
 ///;
 
 --##########################################################################--

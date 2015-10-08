@@ -43,8 +43,12 @@ o6 = ideal (b*c - a*d, c  - b*d , a*c  - b d, b  - a c)
 o6 : Ideal of R
 
 i7 : time (inLs,Ls) = gfan I
+This is the Gfan program for computing Groebner fans and tropical varieties.
+Use the command "gfan list" to view all subcommands.
+The command "gfan" is deprecate for computing all Groebner bases of an ideal.
+Please use subcommand "gfan _bases" instead. Awaiting input. <Ctrl>-D to end.
 LP algorithm being used: "cddgmp".
-     -- used 0.022681 seconds
+     -- used 0.003566 seconds
 
            2          2   2      3          2   2      3          2   2  
 o7 = ({{b*d , a*d, a*c , a c}, {c , a*d, a*c , a c}, {c , b*c, a*c , a c,

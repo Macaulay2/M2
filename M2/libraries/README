@@ -1,0 +1,63 @@
+This directory contains compilation instructions for various libraries and
+programs used by Macaulay2.  A library is code linked into the Macaulay2 binary
+"M2", whereas a program is code that runs separately or a library that gets
+linked into a program and does not get linked into M2.  The programs are
+distributed with their own licenses; we've made notes about that in the file
+../LICENSING-NOTES.
+
+Some of the libraries are sharable, so the various other makefiles takes care
+of adding the appropriate directories to the value of the environment variables
+LD_LIBRARY_PATH (for unix) and DYLD_LIBRARY_PATH (for Mac OS), and there are
+two shell scripts, both called M2, each of which adds one directory to the
+path.  The one at the top level of the build directory adds
+libraries/final/lib, where the dynamic libraries are deposited after being
+built, and the one in usr-dist/$ARCH/bin/ adds the directory
+usr-dist/$ARCH/lib/, where they are eventually copied.
+
+To add a new program:
+
+     - add a directory here with the same name as the library, together with an
+       appropriate file Makefile.in.  Use the other Makefile.in files as
+       models.
+
+     - Document the dependencies in the appropriate comment in ../configure.ac.
+       Add the program to the list "PROGLIST".
+
+     - add documentation about the program to
+       ../Macaulay2/packages/Macaulay2Doc/overview3.m2, with a link to it from
+       the node called "Copyright and license".  Use the nodes for the other
+       programs as models.  Describe the licensing model there.
+
+     - a licensing note to ../LICENSING-NOTES
+
+To add a new library:
+
+     - add a directory here with the same name as the library, together with an
+       appropriate file Makefile.in.  Use the other Makefile.in files as
+       models.
+
+     - add code to ../configure.ac to check for the presence of the library and
+       arrange for it to get built if not present.  Document the dependencies 
+       in the appropriate comment.  Add the library to the list "LIBLIST".
+
+     - add code to ../Macaulay2/d/version.dd to add the version number of
+       the library used to the hashtable "version"
+
+     - add code to ../Macaulay2/d/version.dd to add the version number of
+       the library used to the hashtable "version",
+       displayable at top level
+
+     - add code to ../Macaulay2/d/startup.m2.in to add the version number of
+       the library and the copyright status to the string "copyright",
+       displayable at top level
+
+     - add documentation about the library to
+       ../Macaulay2/packages/Macaulay2Doc/overview3.m2, with a link to it from
+       the node called "Copyright and license".  Use the nodes for the other
+       libraries as models.  Describe the licensing model there.
+
+     - verify that the code of the library is licensed in such a way that we
+       may link it our program and distribute the resulting binary under
+       GNU GPL 3.
+
+     - a licensing note to ../LICENSING-NOTES

@@ -18,12 +18,16 @@ ICXX = icpc
 ifeq ($(M64),yes)
 
     DIRECTORY := mac64-icc
-    CONFIGOPTIONS += CC="$(ICC) -m64" CXX="$(ICXX) -m64" --build=x86_64-apple-darwin
+    CONFIGOPTIONS += --build=x86_64-apple-darwin
+    CC="$(ICC) -m64"
+    CXX="$(ICXX) -m64"
 
 else
 
     DIRECTORY := mac32-icc
-    CONFIGOPTIONS += CC="$(ICC) -m32" CXX="$(ICXX) -m32" --build=i386-apple-darwin
+    CONFIGOPTIONS += --build=i386-apple-darwin
+    CC="$(ICC) -m32"
+    CXX="$(ICXX) -m32"
 
 endif
 

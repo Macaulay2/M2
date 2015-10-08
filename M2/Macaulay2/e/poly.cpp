@@ -12,10 +12,10 @@
 #include "frac.hpp"
 #include "geopoly.hpp"
 #include "ZZ.hpp"
-#include "QQ.hpp"
 #include "monomial.hpp"
 #include "relem.hpp"
 
+#include "aring-glue.hpp" // for globalQQ
 #define POLY(q) ((q).poly_val)
 
 PolyRing *PolyRing::trivial_poly_ring = 0; // Will be ZZ[]
@@ -55,7 +55,8 @@ void PolyRing::make_trivial_ZZ_poly_ring()
 {
   if (trivial_poly_ring != 0) return;
 
-  globalZZ = new RingZZ;
+  //  globalZZ = new RingZZ;
+  globalZZ = makeIntegerRing();
   Monoid *M = Monoid::get_trivial_monoid();
   trivial_poly_ring = new PolyRing();
 
@@ -74,7 +75,7 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 // This version is to be called directly ONLY by initialize_poly_ring
 // and make_trivial_ZZ_poly_ring.
 {
-  initialize_ring(K->charac(),
+  initialize_ring(K->characteristic(),
                   deg_ring,
                   M->get_heft_vector());
 
@@ -93,9 +94,9 @@ void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M,
 
   exp_size = EXPONENT_BYTE_SIZE(nvars_);
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 }
 
 void PolyRing::initialize_poly_ring(const Ring *K, const Monoid *M)
@@ -170,9 +171,9 @@ Nterm *PolyRing::copy_term(const Nterm *t) const
   return result;
 }
 
-ring_elem PolyRing::from_int(int n) const
+ring_elem PolyRing::from_long(long n) const
 {
-  ring_elem a = K_->from_int(n);
+  ring_elem a = K_->from_long(n);
   if (K_->is_zero(a))
     {
       return ZERO_RINGELEM;
@@ -208,6 +209,19 @@ ring_elem PolyRing::from_rational(mpq_ptr q) const
   return result;
 }
 
+ring_elem PolyRing::fromCoefficient(ring_elem& coeff) const
+{
+  Nterm* result;
+  if (K_->is_zero(coeff))
+    {
+      result = ZERO_RINGELEM;
+      return result;
+    }
+  result = new_term();
+  result->coeff = coeff;
+  M_->one(result->monom);
+  return result;
+}
 bool PolyRing::from_BigComplex(gmp_CC z, ring_elem &result) const
 {
   ring_elem a;
@@ -216,15 +230,7 @@ bool PolyRing::from_BigComplex(gmp_CC z, ring_elem &result) const
       result = ZERO_RINGELEM;
       return false;
     }
-  if (K_->is_zero(a))
-    {
-      return ZERO_RINGELEM;
-    }
-  Nterm *result1 = new_term();
-  result1->coeff = a;
-  M_->one(result1->monom);
-  result = result1;
-
+  result = fromCoefficient(a);
   return true;
 }
 
@@ -236,15 +242,29 @@ bool PolyRing::from_BigReal(gmp_RR z, ring_elem &result) const
       result = ZERO_RINGELEM;
       return false;
     }
-  if (K_->is_zero(a))
+  result = fromCoefficient(a);
+  return true;
+}
+bool PolyRing::from_double(double z, ring_elem &result) const
+{
+  ring_elem a;
+  if (!K_->from_double(z,a))
     {
-      return ZERO_RINGELEM;
+      result = ZERO_RINGELEM;
+      return false;
     }
-  Nterm *result1 = new_term();
-  result1->coeff = a;
-  M_->one(result1->monom);
-  result = result1;
-
+  result = fromCoefficient(a);
+  return true;
+}
+bool PolyRing::from_complex_double(double re, double im, ring_elem &result) const
+{
+  ring_elem a;
+  if (!K_->from_complex_double(re, im, a))
+    {
+      result = ZERO_RINGELEM;
+      return false;
+    }
+  result = fromCoefficient(a);
   return true;
 }
 
@@ -255,13 +275,13 @@ ring_elem PolyRing::var(int v) const
   if (v >= 0 && v < nvars_) EXP1[v] = 1;
   else
     {
-#ifndef NDEBUG
       std::cerr << "internal error: PolyRing::var(int v) with v = " << v << "  nvars = " << nvars_ << std::endl;
-#endif
+      std::cerr << "aborting" << std::endl;
+      abort();
       return ZERO_RINGELEM;
     }
   Nterm *result = new_term();
-  result->coeff = K_->from_int(1);
+  result->coeff = K_->from_long(1);
   M_->from_expvector(EXP1, result->monom);
   return result;
 }
@@ -270,7 +290,7 @@ int PolyRing::index_of_var(const ring_elem a) const
 {
   Nterm *f = a;
   if (f == 0 || f->next != 0) return -1;
-  if (!K_->is_equal(f->coeff, K_->from_int(1))) return -1;
+  if (!K_->is_equal(f->coeff, K_->from_long(1))) return -1;
   int result = -1;
   exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
   M_->to_expvector(f->monom, EXP1);
@@ -386,6 +406,8 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   lead_logical_exponents(nvars0,f,exp);
   if (!ntuple::is_one(nvars0,exp))
     return false;
+  if (n_logical_terms(nvars0,f) > 1)
+    return false;
   result = lead_logical_coeff(Rg,f);
   return true;
 }
@@ -393,7 +415,7 @@ bool PolyRing::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
 ring_elem PolyRing::preferred_associate(ring_elem ff) const
 {
   Nterm *f = ff;
-  if (f == NULL) return from_int(1);
+  if (f == NULL) return from_long(1);
   ring_elem c = K_->preferred_associate(f->coeff);
   Nterm *t = new_term();
   t->coeff = c;
@@ -780,7 +802,7 @@ ring_elem PolyRing::power(const ring_elem f0, mpz_t n) const
   ring_elem ff, result;
   bool isinverted = false;
 
-  if (mpz_sgn(n) == 0) return from_int(1);
+  if (mpz_sgn(n) == 0) return from_long(1);
   if (is_zero(f0)) return ZERO_RINGELEM;
 
   if (mpz_sgn(n) > 0)
@@ -828,7 +850,7 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
       n = -n;
     }
   else
-    return from_int(1);
+    return from_long(1);
 
   ring_elem result, g, rest, h, tmp;
   ring_elem coef1, coef2, coef3;
@@ -837,7 +859,7 @@ ring_elem PolyRing::power(const ring_elem f0, int n) const
   if (lead == NULL) return ZERO_RINGELEM;
 
   rest = lead->next;
-  g = from_int(1);
+  g = from_long(1);
 
   // Start the result with the n th power of the lead term
   Nterm *t = new_term();
@@ -995,12 +1017,12 @@ ring_elem PolyRing::gcd_extended(const ring_elem f, const ring_elem g,
                                ring_elem &u, ring_elem &v) const
   // result == gcd(f,g) = u f + v g
 {
-  u = from_int(1);
+  u = from_long(1);
   ring_elem result = copy(f);
 
   if (is_zero(g))
     {
-      v = from_int(0);
+      v = from_long(0);
       return result;
     }
   ring_elem v1 = ZERO_RINGELEM;
@@ -1074,14 +1096,14 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f, const ring_elem g,
   if (K_->get_precision() > 0)
     {
       ERROR("polynomial division not yet implemented for RR or CC coefficients");
-      quot = from_int(0);
-      return from_int(0);
+      quot = from_long(0);
+      return from_long(0);
     }
   Nterm *q, *r;
   ring_elem rem;
   if (is_zero(g))
     {
-      quot = from_int(0);
+      quot = from_long(0);
       return copy(f);
     }
   else
@@ -1101,8 +1123,8 @@ ring_elem PolyRing::remainderAndQuotient(const ring_elem f, const ring_elem g,
           return rem;
         }
     }
-  quot = from_int(0);
-  return from_int(0);
+  quot = from_long(0);
+  return from_long(0);
 }
 
 
@@ -1692,7 +1714,7 @@ ring_elem PolyRing::make_logical_term(const Ring *coeffR, const ring_elem a, con
   if (logicalK == 0)
     {
       ERROR("expected actual coefficient ring");
-      return from_int(0);
+      return from_long(0);
     }
   nvars0 -= logicalK->n_vars();
 
@@ -1771,7 +1793,7 @@ ring_elem PolyRing::make_flat_term(const ring_elem a, const int *m) const
 ring_elem PolyRing::lead_flat_coeff(const ring_elem f) const
 {
   Nterm *t = f;
-  if (t == NULL) return K_->from_int(0);
+  if (t == NULL) return K_->from_long(0);
   return K_->copy(t->coeff);
 }
 
@@ -1786,7 +1808,7 @@ ring_elem PolyRing::get_coeff(const Ring *coeffR, const ring_elem f, const int *
   // note: vp is a varpower monomial.
 {
   int nvars0 = check_coeff_ring(coeffR, this);
-  if (nvars0 < 0) return from_int(0);
+  if (nvars0 < 0) return from_long(0);
 
   int *exp = newarray_atomic(int, nvars0);
   int *exp2 = newarray_atomic(int, n_vars()); // FLAT number of variables
@@ -1829,35 +1851,12 @@ ring_elem PolyRing::diff(ring_elem a, ring_elem b, int use_coeff) const
   return H.value();
 }
 
-ring_elem PolyRing::contract0(int n_top_variables, ring_elem a, ring_elem b) const
-{
-#warning "Mike needs to write PolyRing::contract0 !!"
-  polyheap H(this);
-  Nterm *d = new_term();
-  for (Nterm *s = a; s != 0; s = s->next)
-    {
-      for (Nterm *t = b; t != 0; t = t->next)
-        {
-          d->coeff = diff_term(s->monom, t->monom, d->monom, false);
-          if (!K_->is_zero(d->coeff))
-            {
-              K_->mult_to(d->coeff, s->coeff);
-              K_->mult_to(d->coeff, t->coeff);
-              d->next = 0;
-              H.add(d);
-              d = new_term();
-            }
-        }
-    }
-  return H.value();
-}
-
 ring_elem PolyRing::diff_term(const int *m, const int *n,
                                     int *resultmon,
                                     int use_coeff) const
 {
   int sign = 0;
-  if (!M_->divides(m, n)) return K_->from_int(0);
+  if (!M_->divides(m, n)) return K_->from_long(0);
   if (is_skew_ && use_coeff)
     {
       exponents EXP1 = ALLOCATE_EXPONENTS(exp_size);
@@ -1870,7 +1869,7 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
     }
   else
     M_->divide(n, m, resultmon);
-  ring_elem result = K_->from_int(1);
+  ring_elem result = K_->from_long(1);
   if (!use_coeff) return result;
   intarray e1, e2;
   int *exp1 = e1.alloc(n_vars());
@@ -1885,7 +1884,7 @@ ring_elem PolyRing::diff_term(const int *m, const int *n,
     {
       for (int j=exp1[i]-1; j>=0; j--)
         {
-          ring_elem g = K_->from_int(exp2[i]-j);
+          ring_elem g = K_->from_long(exp2[i]-j);
           K_->mult_to(result, g);
           if (K_->is_zero(result)) return result;
         }
@@ -2057,7 +2056,39 @@ ring_elem PolyRing::divide_by_given_content(ring_elem f, ring_elem c) const
   return head.next;
 }
 
+////////////////////////////////////
+// Translation to/from arrays //////
+////////////////////////////////////
+const PolyRing* /* or null */ isUnivariateOverPrimeField(const Ring* R)
+{
+  const PolyRing* P = R->cast_to_PolyRing();
+  if (P == 0) return 0;
+  if (P->n_vars() != 1) return 0;
+  if (P->characteristic() == 0) return 0;
+  return P;
+}
 
+ring_elem PolyRing::fromSmallIntegerCoefficients(const std::vector<long>& coeffs, int var) const
+{
+  // create a poly
+  SumCollector* H = make_SumCollector();
+  exponents exp = ALLOCATE_EXPONENTS(EXPONENT_BYTE_SIZE(n_vars())); // deallocates automatically at end of block
+  ntuple::one(n_vars(), exp);
+  for (long i=0; i<coeffs.size(); i++)
+    {
+      exp[var] = static_cast<int>(i);
+      ring_elem c = K_->from_long(coeffs[i]);
+      if (K_->is_zero(c)) continue;
+      Nterm* t = new_term();
+      t->coeff = c;
+      t->next = NULL;
+      M_->from_expvector(exp, t->monom);
+      H->add(t);
+    }
+  ring_elem result = H->getValue();
+  delete H;
+  return result;
+}
 
 ///////////////////////////////////
 // vec routines for polynomials ///
@@ -2161,9 +2192,11 @@ vec PolyRing::vec_coefficient_of_var(vec v, int x, int e) const
 }
 
 vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
-// find the smallest variable x which occurs in v, and also find e s.t. x^e is
+// find the smallest index variable x which occurs in v, and also find e s.t. x^e is
 // the largest power of x occuring in v.  Set x and e accordingly.
-// Return the coefficient of x^e,
+// Return the coefficient of x^e.
+// IF v has no variables occuring in it, then set x to be #vars, e to be 0 and return v.
+// If v is 0, then set x to -1, e to 0, and v to 0.
 {
   x = n_vars();
   e = 0;
@@ -2186,7 +2219,7 @@ vec PolyRing::vec_top_coefficient(const vec v, int &x, int &e) const
                 break;
               }
           }
-        if (exp[x] > e)
+        if (x < n_vars() && exp[x] > e)
           e = exp[x];
       }
 
@@ -2387,7 +2420,7 @@ vec PolyRing::translate_gbvector_to_vec_QQ(const FreeModule *F,
     {
       Nterm *s = new_term();
       GR->gbvector_get_lead_monomial(F, t, s->monom);
-      s->coeff = globalQQ->QQ::fraction(t->coeff, denom);
+      s->coeff = globalQQ->fraction(t->coeff, denom);
       s->next = 0;
       int x = t->comp - firstcomp;
       if (!vec_comps[x])

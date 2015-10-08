@@ -84,7 +84,7 @@ setupfun("values",values);
 
 pairs(e:Expr):Expr := (
      when e
-     is oc:DictionaryClosure do (
+     is oc:DictionaryClosure do (    -- # typical value: pairs, Dictionary, List
 	  o := oc.dictionary;
 	  Expr(list(
 		    new Sequence len o.symboltable.numEntries do (
@@ -100,14 +100,21 @@ pairs(e:Expr):Expr := (
 					p=q.next;)
 				   else break; ));
 			 ))))
-     is o:HashTable do (lock(o.mutex); l:=list(
+     is o:HashTable do (lock(o.mutex); l:=list(	-- # typical value: pairs, HashTable, List
 	  new Sequence len o.numEntries do
 	  foreach bucket in o.table do (
 	       p := bucket;
 	       while p != p.next do (
 		    provide Expr(Sequence(p.key,p.value));
 		    p = p.next; ))); unlock(o.mutex); l )
-     else WrongArg("a hash table or a raw polynomial"));
+     is o:Sequence do
+	  Expr(new Sequence len length(o) do (
+	    i := 0;
+	    while i < length(o) do (
+	      provide Expr(Sequence(toExpr(i),o.i));
+	      i = i+1;)))
+     is o:List do pairs(Expr(o.v))   -- # typical value: pairs, BasicList, List
+     else WrongArg("a hash table, a sequence, a list, or a raw polynomial"));
 setupfun("pairs",pairs);
 
 -- operators
@@ -653,6 +660,21 @@ showtimefun(a:Code):Expr := (
      stdIO << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
+elapsedTimefun(a:Code):Expr := (
+     v := double(currentTime());
+     ret := eval(a);
+     x := double(currentTime());
+     when ret
+     is Error do ret
+     else list(timeClass,Sequence(toExpr(x-v),ret)));
+setupop(elapsedTimingS,elapsedTimefun);
+showElapsedTimefun(a:Code):Expr := (
+     v := double(currentTime());
+     ret := eval(a);
+     x := double(currentTime());
+     stdIO << "     -- " << x-v << " seconds elapsed" << endl;
+     ret);
+setupop(elapsedTimeS,showElapsedTimefun);
 
 exponent(e:Expr):Expr := (
      when e
@@ -701,7 +723,7 @@ spin(e:Expr):Expr := (
      when e is x:ZZcell do (
 	  if isInt(x.v) then (
 	       n := toInt(x.v);
-	       for i from 1 to n do for j from 1 to 290000 do nothing;
+	       for i from 1 to n do for j from 1 to 290000 do Ccode(void,"{extern void do_nothing(); do_nothing();}");
 	       nullE)
 	  else WrongArgSmallInteger())
      else WrongArgZZ());

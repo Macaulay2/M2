@@ -829,6 +829,11 @@ void GB_comp::start_computation()
                   _hilb_new_elems = false;
                 }
               _hilb_n_in_degree = hilb_comp::coeff_of(_hf_diff, _this_degree);
+              if (error())
+                {
+                  is_done = COMP_ERROR;
+                  break;
+                }
               if (_hilb_n_in_degree == 0) flush_pairs(_this_degree);
             }
           if (M2_gbTrace >= 1)

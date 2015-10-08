@@ -195,7 +195,7 @@ r5 = rawMutableIdentity(R,5,true) -- mutable r5
   b = rawMutableMatrix(b0,true)
   x = rawMutableMatrix(b0,true)
   p
-  rawSolve(A,b,x)
+  x = rawLinAlgSolve(A,b)
   x
   x1 = rawMatrix b
   m*(rawMatrix x)

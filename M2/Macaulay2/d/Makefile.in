@@ -31,11 +31,10 @@ include ./Makefile.files
 VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
-STRIP = @STRIP@
 ############################## main targets
 echo = $(shell echo "echo: $1" >&2) $1
 
-ifneq (@ETAGS@,)
+ifneq (@ETAGS@,false)
 all: tags
 endif
 all: .gdbinit
@@ -79,7 +78,8 @@ M2inits.o basic.o equality.o actors4.o actors5.o interface.o interface2.o engine
 ifeq (@PARI@,yes)
 pari.o: CFLAGS += -Wno-shadow
 pari.o: CPPFLAGS += -DINCLUDE_PARI_H
-pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow
+pari-c.o: CFLAGS += -Wall -UNDEBUG -Wno-shadow -Wno-error
+version-tmp.cc: pari-c.h
 ifeq "@__INTEL_COMPILER@" "no"
 pari-c.o: CFLAGS += -Wno-unused
 endif
@@ -91,7 +91,9 @@ pthread-tmp.c : SCCFLAGS += -noline
 ## the problem with this is that it can make "make" think the targets were made:
 # actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
-version.o : ../../include/M2/config.h
+version.o : ../../include/M2/config.h git-description.c
+git-description.c: git-description; echo "const char * gitDescription = \"`cat $<`\";" >$@
+git-description: .; (git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown) > $@
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
@@ -103,7 +105,7 @@ endif
 .SUFFIXES: .d .sig .dep .res .test .m2
 .PHONY : clean all check tags
 
-ifeq "@HAVE_NO_PARENTHESES_EQUALITY@" "yes"
+ifeq "@HAVE_WPARENTHESES_EQUALITY@" "yes"
 DCFLAGS += -Wno-parentheses-equality
 endif
 
@@ -140,16 +142,16 @@ M2INCLUDES += -I@srcdir@/../c
 # we use this to override the regex library in the system
 M2INCLUDES += -I@srcdir@/../regex
 
-# ifeq (@XML@,yes)
-# M2INCLUDES += -I/usr/include/libxml2
-# endif
-
 # it's important that *our* directories get searched first:
 CPPFLAGS := $(M2INCLUDES) $(CPPFLAGS) $(M2_CPPFLAGS)
+
+CPPFLAGS += -Wno-fatal-errors
+
 CFLAGS += $(M2_CFLAGS) -Werror
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wno-unused-label
 endif
+
 # # C standards
 # ## CFLAGS += -std=c89
 # # c99 allows declarations and statements to be mingled:
@@ -162,6 +164,7 @@ endif
 
 CFLAGS   += -Wreturn-type -Werror
 CXXFLAGS += -Wreturn-type -Werror
+CXXFLAGS += -std=c++0x
 
 python-c.o : | python-exports.h.tmp
 M2lib.o scclib.o : | interp-exports.h.tmp
@@ -172,7 +175,9 @@ M2.o : ../../include/M2/config.h
 
 all: M2inits1.o
 all: libM2inits2.a
-libM2inits2.a: M2inits2.o ; ar ru $@ $^
+libM2inits2.a: M2inits2.o
+	:; @AR@ ru $@ $^
+	:; @RANLIB@ $@
 
 clean::; rm -f startup.c
 SSTRING := -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\(.*\)/"\1\\n"/'
@@ -203,7 +208,7 @@ all: $(M2_LIBDEPS) M2inits.o
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
-clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp
+clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
 distclean: clean; rm -f Makefile startup.m2 @srcdir@/TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 Makefile.files: Makefile.files.in; cd ../..; ./config.status Macaulay2/d/Makefile.files
@@ -215,3 +220,4 @@ LOADLIBES = -lgc
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/d "
 # End:
+.NOTPARALLEL:

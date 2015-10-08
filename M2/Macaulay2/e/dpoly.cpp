@@ -1,10 +1,11 @@
 #include "dpoly.hpp"
 #include <cstdlib>
 #include <cctype>
-#include <strstream>
+#include <sstream>
 #include <cassert>
 #include "ZZ.hpp"
 
+#include <vector>
 #define DEBUGGCDno
 
 long gcd_extended(long a,
@@ -43,7 +44,7 @@ void ZZp_INVERT(long charac, long &result, long b) {
   if (v < 0) v += charac;
   result = v;
 }
-void ZZp_RANDOM(long charac, long &result) { result = rawRandomInt(charac); }
+void ZZp_RANDOM(long charac, long &result) { result = rawRandomInt(static_cast<int32_t>(charac)); }
 
 void DPoly::initialize(long p, int nvars0, const_poly *ext0)
 {
@@ -235,7 +236,7 @@ void DPoly::increase_size_n(int newdeg, poly &f)
     }
 }
 
-poly DPoly::alloc_poly_n(long deg, poly *elems)
+poly DPoly::alloc_poly_n(int deg, poly *elems)
 // if elems == 0, then set all coeffs to 0.
 {
   poly result = new poly_struct;
@@ -251,7 +252,7 @@ poly DPoly::alloc_poly_n(long deg, poly *elems)
   return result;
 }
 
-poly DPoly::alloc_poly_0(long deg, long *elems)
+poly DPoly::alloc_poly_0(int deg, long *elems)
 {
   poly result = new poly_struct;
   result->arr.ints = newarray_atomic(long, deg+1);
@@ -394,11 +395,11 @@ std::ostream& DPoly::append_to_stream(std::ostream &o, int level, const poly f)
 }
 char *DPoly::to_string(int level, const poly f)
 {
-  std::ostrstream o;
+  std::ostringstream o;
   append_to_stream(o, level, f);
   o << '\0';
-  char *s = o.str(); // only valid until o is destroyed
-  int n = strlen(s);
+  const char *s = o.str().c_str(); // only valid until o is destroyed
+  size_t n = strlen(s);
   char *result = new char[n+1];
   strcpy(result, s);
   return result;
@@ -481,7 +482,7 @@ poly DPoly::copy(int level, const_poly f)
   return result;
 }
 
-poly DPoly::from_int(int level, long c)
+poly DPoly::from_long(int level, long c)
 {
   if (c == 0) return 0;
   poly result = alloc_poly_0(0);
@@ -560,7 +561,7 @@ int DPoly::compare(int level, poly f, poly g)
     {
       for (int i=f->deg; i>=0; i--)
         {
-          int cmp = f->arr.ints[i] - g->arr.ints[i];
+          long cmp = f->arr.ints[i] - g->arr.ints[i];
           if (cmp > 0) return -1;
           if (cmp < 0) return 1;
         }
@@ -1120,10 +1121,10 @@ poly  DPoly::gcd_coefficients(int level, const poly f, const poly g,
   poly q = 0;
 
   v1 = 0;
-  v2 = from_int(level,1);
+  v2 = from_long(level,1);
   v3 = copy(level,g);
 
-  u1 = from_int(level,1);
+  u1 = from_long(level,1);
   u2 = 0;
   u3 = copy(level,f);
 
@@ -1330,7 +1331,7 @@ poly DPoly::power_mod(int level, const poly f, mpz_t m, const poly g)
   // We assume that m > 0. THIS IS NOT CHECKED!!
   mpz_t n;
   mpz_init_set(n, m);
-  poly prod = from_int(level,1);
+  poly prod = from_long(level,1);
   poly base = copy(level,f);
   poly tmp;
 
@@ -1375,12 +1376,13 @@ poly DPoly::lowerP(int level, const poly f)
   int i,j;
   poly result;
   if (f == 0) return 0;
-  int newdeg = f->deg / charac; // should be exact...
+  int charac_as_int = static_cast<int>(charac);
+  int newdeg = f->deg / charac_as_int; // should be exact...
   if (level == 0)
     {
       result = alloc_poly_0(newdeg);
       // In this situation, we just need to grab every p*i coeff...
-      for (i=0, j=0; i<=newdeg; i++, j += charac)
+      for (i=0, j=0; i<=newdeg; i++, j += charac_as_int)
         result->arr.ints[i] = f->arr.ints[j];
     }
   else
@@ -1391,8 +1393,8 @@ poly DPoly::lowerP(int level, const poly f)
       unsigned long extdeg = 1;
       for (i=0; i<level; i++)
         extdeg *= degree_of_extension(i);
-      mpz_ui_pow_ui(order, charac, extdeg-1);
-      for (i=0, j=0; i<=newdeg; i++, j += charac)
+      mpz_ui_pow_ui(order, charac_as_int, extdeg-1);
+      for (i=0, j=0; i<=newdeg; i++, j += charac_as_int)
         {
           // need p-th roots of the coefficients.  So we take p^(n-1)
           // power (if coefficients are in field of size p^n)
@@ -1403,6 +1405,36 @@ poly DPoly::lowerP(int level, const poly f)
       mpz_clear(order);
     }
   return result;
+}
+
+int DPoly::index_of_var(int level, const poly f) const
+{
+  if (f == 0 or level < 0 or f->deg >= 2) return -1;
+  if (level == 0)
+    {
+      if (f->deg == 0) return -1;
+      // At this point, degree is 1.
+      if (f->arr.ints[0] == 0 and f->arr.ints[1] == 1)
+        return 0;
+      else
+        return -1;
+    }
+  else
+    {
+      if (f->arr.polys[0] == 0 and is_one(level-1, f->arr.polys[1]))
+        return level;
+      if (f->deg == 1) return -1;
+      return index_of_var(level-1, f->arr.polys[0]);
+    }
+}
+
+void DPoly::degrees_of_vars(int level, const poly f, std::vector<int>& result_maxdegs) const
+{
+  // Set the values of result_maxdegs at indices: 0..level
+  result_maxdegs[level] = std::max(result_maxdegs[level],f->deg);
+  if (level == 0) return;
+  for (int i=0; i<=f->deg; i++)
+    if (f->arr.polys[i] != 0) degrees_of_vars(level-1, f->arr.polys[i], result_maxdegs);
 }
 
 DRing::DRing(long charac, int nvars, const_poly *exts)
@@ -1425,7 +1457,7 @@ void DRing::set_from_int(poly &result, mpz_ptr r)
   long c = mpz_get_si(a);
   mpz_clear(a);
   if (c < 0) c += P;
-  result = D.from_int(level, c);
+  result = D.from_long(level, c);
 }
 
 bool DRing::set_from_rational(poly &result, mpq_ptr r)
@@ -1448,7 +1480,7 @@ bool DRing::set_from_rational(poly &result, mpq_ptr r)
   ZZp_INVERT(P, cbottom, cbottom);
   ZZp_MULT(P, ctop, cbottom);
 
-  result = D.from_int(level, ctop);
+  result = D.from_long(level, ctop);
   return true;
 }
 

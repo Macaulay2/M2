@@ -203,7 +203,8 @@ export dummySymbol := Symbol(
      Macaulay2Dictionary.frameID,dummySymbolFrameIndex,1,
      false,						    -- not protected, so we can use it in parallelAssignmentFun
      false,
-     false
+     false,
+     0
      );
 dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
@@ -308,10 +309,12 @@ export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
 export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
+export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
+export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawStraightLineProgramClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
 export nothingClass := newbasictype(); -- we are testing, in basictests/hashcodes.m2, that the hash code of this one doesn't change
-export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
+export rawPathTrackerClass := newtypeof(rawObjectClass);    -- RawPathTracker
 export pythonObjectClass := newbasictype();
 export xmlNodeClass := newbasictype();
 export xmlAttrClass := newbasictype();

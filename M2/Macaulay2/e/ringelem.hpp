@@ -3,6 +3,7 @@
 #ifndef _ringelem_hh_
 #define _ringelem_hh_
 
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
 #include "newdelete.hpp"
