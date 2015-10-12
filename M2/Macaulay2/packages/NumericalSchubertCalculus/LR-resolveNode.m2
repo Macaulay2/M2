@@ -439,7 +439,7 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
                if DBG>1 then
                   << "the previous level gets solution: " << S << endl;
                brack := output2bracket last node.Board;
-               -- compute the bracket afecting the standard flag
+               -- compute the bracket affecting the standard flag
                -- we use the bracket for column reduction of the solutions;
                if DBG>1 then << "the bracket" << brack << endl;
                   node.Solutions = if #newRemainingFlags > 0 then (

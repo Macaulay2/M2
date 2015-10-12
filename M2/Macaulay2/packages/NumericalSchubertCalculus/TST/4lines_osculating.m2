@@ -1,5 +1,5 @@
 debug needsPackage "NumericalSchubertCalculus"
-setRandomSeed 4
+setRandomSeed 2
 setFlags(NSC'DBG=>2)
  
 -- problem of 4 lines w.r.t. id, idop, 2 osculating flags
@@ -31,4 +31,4 @@ assert all(S,s->checkIncidenceSolution(s,Pblm))
 end
 
 restart
-load "4lines_osculating.m2"
+load "NumericalSchubertCalculus/TST/4lines_osculating.m2"

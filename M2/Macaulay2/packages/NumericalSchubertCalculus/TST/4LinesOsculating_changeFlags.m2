@@ -1,6 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
-setRandomSeed 4
-DBG=1
+setRandomSeed 0
+DBG=0
 -- TEST the function changeFlags
 
 -- problem of 4 lines w.r.t. random flags
@@ -27,15 +27,21 @@ OsculatingFlags = {
 --prepare Change of Flags
 conditions =toList(4:{1}); 
 Sosc = changeFlags(S,(conditions,RandomFlags,OsculatingFlags))
+oscPblm = apply(OsculatingFlags, f->({1},f))
+assert all(Sosc, s->checkIncidenceSolution(s,oscPblm))
 
-
+///
+brack = partition2bracket({1},2,4)
+Sreduced = apply(Sosc,s->clean_0.001 columnReduce(s,brack))
+///
+    
 -- we need to make a column reduction
 -- to see if these solutions are real
 Sreduced = apply(Sosc, s->(
 	M1:= matrix{
 	    {s_(0,0)^(-1), -s_(0,1)*s_(0,0)^-1},
 	    {0, 1}};
-	s1 := clean_0.001 s*M1;
+	s1 := s*M1;
 	M2 := matrix{
 	    {1,0},
 	    {-s1_(3,0)*s1_(3,1)^-1 ,s1_(3,1)^-1 }
@@ -46,10 +52,9 @@ Sreduced = apply(Sosc, s->(
 
 assert all(flatten flatten (Sreduced/entries), isReal)
 
-oscPblm = apply(OsculatingFlags, f->({1},f))
 assert all(Sreduced, s->checkIncidenceSolution(s,oscPblm))
 
 end
 
 restart
-load "4linesOsculating_changeFlags.m2"
+load "NumericalSchubertCalculus/TST/4linesOsculating_changeFlags.m2"
