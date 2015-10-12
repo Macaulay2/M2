@@ -1,3 +1,4 @@
+if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
 --##########################################
 -----------------
 -- makePolynomials
@@ -101,22 +102,25 @@ makeGG (ZZ,ZZ,List) := (k,n,schubertProblem) -> (
 -- #4: called once per checker move
 makeSquareSystem = method()
 GGstash := new MutableHashTable
-makeSquareSystem (Matrix,List) := (MX,remaining'conditions'flags) -> (
-    r := #remaining'conditions'flags;
-    k := numColumns MX; 
-    n := numRows MX; 
-    GG := if GGstash#?r then GGstash#r else (
-	GGstash#r = makeGG(k,n,remaining'conditions'flags)
-	);
-    makeSquareSystem(GG,MX)  	  
-    )
-makeSquareSystem (Matrix, Matrix) := (GG,MX) -> (
+makeSquareSystemGGMX := (GG,MX) -> (
     k := numColumns MX; 
     n := numRows MX; 
     B := getB(k,n);
     plueckerCoords := transpose matrix {apply(B,b->det MX^b)};
     promote(GG,ring plueckerCoords)*plueckerCoords  
     ) 
+makeSquareSystem'Matrix'GateMatrix := (MX,remaining'conditions'flags) -> (
+    r := #remaining'conditions'flags;
+    k := numColumns MX; 
+    n := numRows MX; 
+    GG := if GGstash#?r then GGstash#r else (
+	GGstash#r = makeGG(k,n,remaining'conditions'flags)
+	);
+    makeSquareSystemGGMX(GG,MX)  	  
+    )
+makeSquareSystem (Matrix,List) := makeSquareSystem'Matrix'GateMatrix
+if version#"VERSION" =!= "1.8.2.1" then GateMatrix = List
+makeSquareSystem (GateMatrix,List) := makeSquareSystem'Matrix'GateMatrix
 
 -- SUBSTITUTING makePolynomials !!!
 makePolynomials(Matrix, List) := (MX,conds) -> (

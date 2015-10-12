@@ -512,6 +512,7 @@ matrix List := o -> L -> (
 
 GateMatrix_Sequence := (M,ab) -> ( (a,b):=ab; M#a#b )
 GateMatrix_List := (M,cols) -> gateMatrix transpose (transpose entries M)_cols
+GateMatrix^List := (M,rows) -> gateMatrix (entries M)_rows
 
 submatrix(GateMatrix,List,List) := (M,a,b) -> gateMatrix apply(a,i->(M#i)_b)
 

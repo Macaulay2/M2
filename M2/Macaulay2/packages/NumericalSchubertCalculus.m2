@@ -73,7 +73,6 @@ installMethod(setFlags, o -> () -> scan(keys o, k->if o#k=!=null then
 
  
 load "NumericalSchubertCalculus/PHCpack-LRhomotopies.m2"
-
 load "NumericalSchubertCalculus/pieri.m2"
 load "NumericalSchubertCalculus/service-functions.m2"
 load "NumericalSchubertCalculus/galois.m2"
@@ -394,7 +393,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	--
 	LocalFlags1 := {F1,F2};
 	flgM := matrix;
-	LocalFlags2 := List;
+	local LocalFlags2;
 	if #remaining'conditions'flags == 0 then (
 	    flgM = ID;
 	    LocalFlags2 = {flgM, rsort ID};
@@ -796,6 +795,7 @@ load "NumericalSchubertCalculus/TST/columnReduce.m2"
 ///    
 
 load "NumericalSchubertCalculus/LR-makePolynomials.m2"
+load "NumericalSchubertCalculus/LR-ParameterHomotopy.m2"
 
 -----------------------------
 -- Tracks a homotopy

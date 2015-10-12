@@ -1,4 +1,6 @@
+if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
 export {
+    "skewSchubertVariety",
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
     "checkNewtonIteration", -- this is for testing only should be removed from the final version
     "solutionsToAffineCoords",
@@ -407,3 +409,39 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
       );
   apply(flatten values notAbove, la->partition2bracket(la,k,n))
   )
+
+---------------------------
+--  skewSchubertVariety  --
+-- Creates Matrix E_{m,l} --
+---------------------------
+-- option: Inputs, an integer or symbol; if integer then 
+if version#"VERSION" == "1.8.2.1" then inputGate := id
+
+skewSchubertVariety = method(TypicalValue=>Matrix, Options=>{Inputs=>53})
+skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
+     -- k and n are the integers defining the Grassmanian G(k,n)
+     -- l and m are partitions of n
+     (k,n):=kn;
+     l = verifyLength(l, k);
+     m = verifyLength(m, k);
+     d := (k*(n-k)-sum(l)-sum(m));
+     if instance(o.Inputs,ZZ) then R := FFF[vars(o.Inputs..d+o.Inputs-1)]; -- ring where the variables for the matrix lie
+     r := 0;
+     M := matrix (
+	 for i from 1 to k list (
+	     for j from 1 to n list (
+		 if j==i+l_(k-i) then 1
+		 else if j>i+l_(k-i) and j<=(n-k+i-m_(i-1)) then ( 
+		     r=r+1; 
+		     if instance(o.Inputs,ZZ) 
+		     then R_(r-1) 
+		     else inputGate (o.Inputs)_(r-1)
+		     )
+		 else 0
+		 ) 
+	     )    
+	 );
+     if instance(o.Inputs,ZZ) then M else 
+     (M,toList apply(d,i->inputGate (o.Inputs)_i))
+     )
+
