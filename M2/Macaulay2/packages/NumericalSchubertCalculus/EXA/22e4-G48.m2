@@ -1,6 +1,6 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 4
-DBG=0
+DBG=1
 
 -- 4 4-planes in C^8 wrt standard and 3 random flags
 SchPblm = {({2,2},id_(FFF^8)), 
