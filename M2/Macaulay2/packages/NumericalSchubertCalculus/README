@@ -1,1 +1,22 @@
 This is the auxiliary directory for NumericalSchubertCalculus package.
+
+https://github.com/NumericalSchubertCalculus
+
+M2/M2/Macaulay2/packages/NumericalSchubertCalculus
+
+Workflow
+
+ - edit file
+ - git pull
+ - git add file.name       Only if file is new, no need if already in the db
+ - git commmit file.name -m "comment here"
+ - git push
+
+ - git status               can be used at any time
+ - git checkout file.name   Reverts to previous version (discards your edits)
+
+
+If editing......
+ - git pull   If this does not work (if a conflict)
+ - git stash  Stashes changes; they can be appied later
+ - git 
