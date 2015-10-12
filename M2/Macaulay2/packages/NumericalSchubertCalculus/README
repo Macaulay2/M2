@@ -20,3 +20,10 @@ If editing......
  - git pull   If this does not work (if a conflict)
  - git stash  Stashes changes; they can be appied later
  - git 
+
+MODIFY path in M2
+
+edit the file  ~/Library/Application Support/Macaulay2/init.m2
+
+to include something like
+path = {"~/......../M2/Macaulay2/packages/"} | path
