@@ -1,4 +1,14 @@
 if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
+if version#"VERSION" == "1.8.2" then ( -- temporary det bug fix
+    olddet = lookup(det,Matrix);
+    det Matrix := o -> M -> ( 
+	R := ring M;
+	if instance(R, ComplexField) or instance(R, RealField) then (
+	RP := R[];
+	lift((olddet o) sub(M,RP), R)
+	) else (olddet o) M
+    	)
+    ) 
 export {
     "skewSchubertVariety",
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
