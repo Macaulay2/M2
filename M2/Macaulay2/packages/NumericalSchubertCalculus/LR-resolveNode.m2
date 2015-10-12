@@ -120,9 +120,9 @@ globalSwapCoords(MutableHashTable,Sequence,Sequence,Sequence) := (father,
    (r, s, n, M) := rsnM;
    VwrtM := map(Rt^n,Rt^0,{}); -- an empty column vector
    -- V(t) = M'(t) X'(t) ... we write everything in terms of M
-   bigR := red'sorted#(s+1); -- row of the second moving red checker
+   bigR := red'sorted#(s+1);   -- row of the second moving red checker
    rightmost'col'B := position(black, j->j==r);
-   leftmost'col'A := position(black, j->j==r+1)+1;
+   leftmost'col'A  := position(black, j->j==r+1)+1;
    -- check if the black checker in the i'th row is in region A
    isRegionA := i -> position(black, i'->i'==i) >= leftmost'col'A;
    -- check if the black checker in the i'th row is in region B

@@ -82,7 +82,7 @@ load "NumericalSchubertCalculus/galois.m2"
 -----------------------------
 
 ---------------------
--- input: two schubert conditions l and m
+-- input: two Schubert conditions l and m
 --			entered as brackets
 --		  the Grassmannian G(k,n)
 --
@@ -92,8 +92,10 @@ load "NumericalSchubertCalculus/galois.m2"
 -- example: for {2,1}*{2} in G(3,6)
 --
 --partition2bracket({2,1},3,6)
+--     o = {2, 4, 6}
 --partition2bracket({2},3,6)
---redChkrPos({2,4,6},{2,5,6},3,6)
+--     o = {2, 5, 6}
+--redChkrPos({2,4,6},{2,5,6},3,6)  
 --------------------
 redChkrPos = method(TypicalValue => List)
 redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
@@ -107,38 +109,37 @@ redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
      toList redPos
 )
 
---####################
+----------------------------------------------------
 -- "moveRed" moves the red checkers
 --
--- input:
+-- input: {(blackup, blackdown, redposition)}
 --       blackup - Coordinates of the ascending black checker
 --       blackdown - Coordinates of the descending black checker
 --       redpos - List of red checker positions
 --
---	output: {(repos,typeofmove,critrow)} or {(repos1,typeofmove1,critrow),(repos2,typeofmove2,critrow)}
+-- output: {(repos,typeofmove,critrow)} or {(repos1,typeofmove1,critrow),(repos2,typeofmove2,critrow)}
 --       redpos - Updated list (of lists) of red checker positions
 --       typeofmove - {row,column,split}
---                    a tuple which tells the type of the move we had to perform from
---                    the 3x3 table of moves. This is given as a 
+--                    a triple which tells the type of the move we had to perform from
+--                    the 3x3 table of moves (critical row/diagonal). This is given as a 
 --                    tuple {row,column,split} where split says
 --                    if you moved or not the red checkers
 --                    (by 0 and 1 respectively) when there was a split
---        critrow - the critical row
+--       critrow - the critical row
 moveRed = method(TypicalValue => List)
 moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     ------------------------------------------------
     -- We need to check first if it is a valid configuration
-    -- that is why I have been having errors
     ------------------------------------------------
     n := #redposition; -- n is the size of the checkboard
     split:=0;
     critrow := 0;
     critdiag := 0;
-    g:=2; -- These are two flags to indicate in which situation we are 
-    r:=2;
+    g:=2; -- g answers where is the red checker in the critical row
+    r:=2; -- r answers where is the red checker in the critical row
     indx := new List;
     redpos := new MutableList from redposition;
-    -- find the "critical row"
+    -- find the critical row, and how the red checkers sit with respect to it
     indx = for i to n-blackdown#0-1 list n-1-i;
     apply(indx, j -> (
 	    if redpos#j === blackdown#1 then (
@@ -146,7 +147,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 	       	if j == blackdown#0 then g=0 else g=1;
 	  	) 	
      	    ));    
-    -- find the "critical diagonal"
+    -- find the critical diagonal, and how the red checkers sit with respect to it
     indx= for i to blackdown#0-1 list i;
     indx = reverse indx;
     apply(indx, j->(
@@ -169,8 +170,8 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
 	    blockindx := for i to critrow-1-critdiag-1 list critrow-1-i;
 	    apply(blockindx, b -> if redpos#critrow < redpos#b and redpos#b < redpos#critdiag then block = 1);
 	    if block != 1 then (
-		-- switch the rows of the red checkers in the critical diagonal and row
-		-- then, move the left one over to the column of the ascending black
+		-- switch the rows of the red checkers in the critical diagonal and critical row
+		-- then, move the left one over to the column of the ascending black checker
 		redpos#critrow = redpos#critdiag;
 		redpos#critdiag = NC;
 		redpos#(blackup#0) = blackdown#1;
@@ -184,6 +185,7 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     if split == 0 then {(toList redpos,{r,g,split})} else {(redposition,{r,g,0}), (toList redpos,{r,g,split})}
     )
 
+---------------------------------------------------------------------------------
 moveCheckers = method(TypicalValue => List)
 moveCheckers Array := blackred -> (
      blackposition := first blackred;
@@ -194,7 +196,7 @@ moveCheckers Array := blackred -> (
      -- determine the columns of the descending and ascending black checkers
      -- blackdown1 is the column to the right of the column of the lowest black checker
 	 -- blackup1 is the column of the checker that is one row lower than the checker 
-	 --        in blackdown1 
+	 --  in blackdown1 
      blackdown1 := position(blackposition, x->x == n-1) + 1;
      if blackdown1 == n then return ({},"leaf");
      blackup1 := position(blackposition, x-> x == 1+blackposition#blackdown1);
@@ -217,18 +219,18 @@ moveCheckers Array := blackred -> (
 )
 
 
------------------
+--------------------------------------------------------
 -- playCheckers
 -----------------
--- Function that gets a specific node and plays
+-- This function takes as in put a specific node and plays
 -- a checkerboard game between two varieties X1 and X2
 --
 -- It sets up the game, and then it uses
--- the combinatorial LR-rule to make deformations
+-- the combinatorial Littlewood Richardson rule to make deformations
 -- between the Schubert variety X2 to X1
 -- It stores all the information in a HashTable
 -------------------
--- If we want to compute X1\cap X2 \cap X3 \cap...\cap Xn
+-- To compute X1\cap X2 \cap X3 \cap...\cap Xn
 -- we first play the checkers with X1 and X2
 --
 -- input1:
@@ -341,7 +343,6 @@ makeLocalCoordinates Array := blackred ->(
 )
 
 load "NumericalSchubertCalculus/LR-resolveNode.m2"
-
 
 
 ---------------
