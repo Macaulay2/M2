@@ -1,1 +1,12 @@
+Examples that do not work go here
+
+1e43e3111-G48.m2    Seed 4: evaluation 
+                    Seed 3: Singularity
+21e422-G48.m2       Seed 4: Singularity encountered
+
+apply(startSolutions, s-> norm sub(polys,matrix{{0_FFF}|s}))
+
 Examples that WORK go here.
+
+2e53e2-G48.m2   26 solutions computed in 408.48 
+
