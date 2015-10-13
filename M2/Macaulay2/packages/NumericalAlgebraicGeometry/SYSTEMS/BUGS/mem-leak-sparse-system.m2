@@ -2,7 +2,7 @@ needsPackage "NAGtools"
 setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
-n = 3
+n = 7
 --degree cyclicRoots(n,ZZ/32003)
 S = gens cyclicRoots(n,CC)
 R = ring S
@@ -33,8 +33,11 @@ p1 = random(CC^(#coordinates c0),CC^1)
 
 SPH = specialize(PH,p0||p1)
 for i to 1000000 do (
-    if i%10 == 0 then print i;
-    pre'all = trackHomotopy(SPH,{pre0})
+    pre1 = trackHomotopy(SPH,{pre0});
+    if i%10 == 0 then (
+	<< "<<<<<"  << i << endl;
+	print (first pre1).NumberOfSteps
+    );
     )
 -- preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
 
