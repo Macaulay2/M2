@@ -1,9 +1,10 @@
 debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 0
-DBG=0
+
 -- TEST the function changeFlags
 
 -- problem of 4 lines w.r.t. random flags
+
 RandomFlags = apply(4,i->random(FFF^4,FFF^4));
 SchPblm = {
     ({1},RandomFlags_0), 
@@ -12,7 +13,7 @@ SchPblm = {
     ({1},RandomFlags_3)
     };
 
-S = solveSchubertProblem(SchPblm, 2,4)
+time S = solveSchubertProblem(SchPblm, 2,4)
 assert all(S,s->checkIncidenceSolution(s,SchPblm))
 
 

@@ -1,8 +1,9 @@
-debug needsPackage "NumericalSchubertCalculus"
+needsPackage "NumericalSchubertCalculus"
 setRandomSeed 2
 setFlags(NSC'DBG=>2)
  
 -- problem of 4 lines w.r.t. id, idop, 2 osculating flags
+FFF = CC;
 Pblm = {({1},id_(FFF^4)),
    ({1},rsort id_(FFF^4)), 
    ({1},sub(transpose matrix {{1,1,1,1},{0,1,2,3},{0,0,2,6},{0,0,0,1}},FFF)),
