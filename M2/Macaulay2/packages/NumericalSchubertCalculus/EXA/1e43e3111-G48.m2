@@ -1,10 +1,12 @@
-restart
 recursionLimit=1000
 needsPackage "NumericalSchubertCalculus"
-setRandomSeed 1
-DBG=0
+needsPackage "NumericalAlgebraicGeometry"
+setRandomSeed 0
+setDefault(Software=>M2engine) --"singularity"
+setDefault(Software=>BERTINI) --works
+--setDefault(Software=>PHCPACK) --"singularity"
 
--- 10 4-planes in C^8 wrt standard and 7 random flags
+-- 10 4-planes in C^8 
 --  1^4  3^3 111
 
 SchPblm = randomSchubertProblemInstance ({{1,1,1},{3},{3},{3},{1},{1},{1},{1}},4,8)

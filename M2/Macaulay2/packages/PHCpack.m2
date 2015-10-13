@@ -35,7 +35,8 @@ newPackage(
 	"volume number" => "5",
 	"volume URI" => "http://j-sag.org/Volume5/"
 	},
-  DebuggingMode => false,
+  --DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
   PackageImports => {"SimpleDoc"},
