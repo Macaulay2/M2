@@ -15,7 +15,8 @@ export {
     "checkNewtonIteration", -- this is for testing only should be removed from the final version
     "solutionsToAffineCoords",
     "partition2bracket",
-    "bracket2partition"
+    "bracket2partition",
+    "randomSchubertProblemInstance"
     }
 ----------------
 --Functions contained here but not exported:
@@ -455,3 +456,20 @@ skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
      (M,toList apply(d,i->inputGate (o.Inputs)_i))
      )
 
+-- sanity check
+checkSchubertProblem = method()
+checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
+    scan(conds, c -> if #c > k or 
+	c != rsort c or
+	first c > n-k then error ("wrong partition: "|toString c)
+	);
+    if sum flatten conds != k*(n-k) then 
+    error "sum of codimensions of partitions should equal the dimension of the Grassmannian";
+    ) 
+
+-- create an instance of a Schubert problem with random unitary matrices specifying flags
+randomSchubertProblemInstance = method()
+randomSchubertProblemInstance (List,ZZ,ZZ) := (conds,k,n) -> (
+    checkSchubertProblem(conds,k,n);
+    apply(conds, c->(c, randomUnitaryMatrix n))
+    )  

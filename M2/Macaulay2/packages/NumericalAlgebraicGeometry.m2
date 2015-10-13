@@ -388,7 +388,7 @@ dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
 randomDiagonalUnitaryMatrix = method()
 randomDiagonalUnitaryMatrix ZZ := n -> diagonalMatrix apply(n, i->exp(ii*random(2*pi)))
 
---random unitary n-by-n matrix (w.r.t. Haar measure)
+--random unitary n-by-n matrix (w.r.t. Haar measure): what is the ref?
 randomUnitaryMatrix = method()
 randomUnitaryMatrix ZZ := n -> (
      Ml := flatten entries randomInComplexUnitBall(n^2);

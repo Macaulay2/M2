@@ -24,7 +24,7 @@ newPackage(
     AuxiliaryFiles => true,
     DebuggingMode => true
     )
-
+debug NumericalAlgebraicGeometry
 export {   
    "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
    "solveSchubertProblem"
@@ -815,7 +815,8 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
      map't'0 := map(R, Rt, matrix{{0_FFF}}|vars R);
      map't'1 := map(R, Rt, matrix{{1_FFF}}|vars R);
      sols := track(first entries map't'0 H, first entries map't'1 H, S
-	 , NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
+	 --, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
+	 -- can we do the gamma-trick?
 	 );
      if any(sols/status, s->s=!=Regular) then error "trackHomotopy: singularity encountered";
      sols 
@@ -860,9 +861,6 @@ load "NumericalSchubertCalculus/doc.m2"
 -- Tests         --
 -------------------
 TEST ///
-load "NumericalSchubertCalculus/TST/poincare-G36.m2"
-///
-TEST ///
 load "NumericalSchubertCalculus/TST/4lines.m2"
 ///
 TEST ///
@@ -870,6 +868,9 @@ load "NumericalSchubertCalculus/TST/2e4-G26.m2"
 ///
 TEST ///
 load "NumericalSchubertCalculus/TST/21e3-G36.m2"
+///
+TEST ///
+load "NumericalSchubertCalculus/TST/4LinesOsculating_changeFlags.m2"
 ///
 end ---------------------------------------------------------------------
 -- END OF THE PACKAGE
