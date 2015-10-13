@@ -1,7 +1,7 @@
 restart
 recursionLimit=1000
 debug needsPackage "NumericalSchubertCalculus"
-setRandomSeed 4
+setRandomSeed 23
 DBG=0
 
 -- 26 4-planes in C^8 wrt standard and 6 random flags

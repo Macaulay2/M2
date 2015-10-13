@@ -3,10 +3,8 @@ debug needsPackage "NumericalSchubertCalculus"
 setRandomSeed 21
 setFlags(NSC'DBG=>1,NSC'VERIFY'SOLUTIONS=>false)
 
--- Problem (2,1)^5 = ? in Gr(3,8)
--- a problem with ? solutions
-
--- Does not work!
+-- Problem (2,1)^5 in Gr(3,8)
+-- a problem with 32 solutions
 
 SchPblm = {
     ({2,1}, id_(FFF^8)),
