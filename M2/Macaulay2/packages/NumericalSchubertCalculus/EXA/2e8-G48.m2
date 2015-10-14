@@ -1,4 +1,4 @@
-recursionLimit=5000
+recursionLimit=1000
 needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 
