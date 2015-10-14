@@ -1,5 +1,5 @@
 needsPackage "NAGtools"
-setDefault(Software=>M2)
+--setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 n = 7
@@ -31,6 +31,7 @@ pre0 = point{x0}
 p0 = transpose matrix c0
 p1 = random(CC^(#coordinates c0),CC^1)
 
+{*
 SPH = specialize(PH,p0||p1)
 for i to 1000000 do (
     pre1 = trackHomotopy(SPH,{pre0});
@@ -39,7 +40,8 @@ for i to 1000000 do (
 	print (first pre1).NumberOfSteps
     );
     )
--- preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
+*}
+preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
 
 end
 restart

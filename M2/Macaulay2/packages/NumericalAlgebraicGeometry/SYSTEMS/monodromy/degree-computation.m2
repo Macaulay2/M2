@@ -1,12 +1,11 @@
 needsPackage "NAGtools"
-setDefault(Software=>M2)
+--setDefault(Software=>M2)
 
 -- double cover
 X = inputGate x
 F = matrix{{X^2}} 
 PH = gateHomotopy4preimage(F,{X})
 K = CC_53
-setDefault(Software=>M2)
 p = point{{1_K}}
 preimageViaMonodromy(PH,p,{point p})
 
@@ -30,16 +29,6 @@ stop = (n,L)->n>30
 print preimageViaMonodromy(PH,p,{point {{1,0,0}}},StoppingCriterion=>stop)
 
 -- implicit twisted cubic in projective space
-(X,Y,Z,H) = inputGate \ (x,y,z,h)
-F = minors matrix{{X,Y,Z},{H,Z,Y}}
-
-
-end
--- implicit twisted cubic in projective space
-restart
-needsPackage "NAGtools"
-setDefault(Software=>M2)
-
 XYZH = toList (
     (X,Y,Z,H) = inputGate \ (x,y,z,h)
     )
@@ -49,7 +38,7 @@ A = toList (inputGate \(a_1..a_4))
 S2 = matrix{A}*transpose matrix {XYZH} 
 S = transpose(S1|S2|matrix{{H-1}})
 F = transpose matrix{A}
-PH = gateHomotopy4preimage(F,S,XYZH|A,A)
+PH = gateHomotopy4preimage(F,S,XYZH|A,A) -- one way of doing this
 x0 = random CC
 p0 = point{{
 	x0^2, 0, -1, 0
@@ -58,7 +47,11 @@ pre0 = point{{x0,x0^2,x0^3,1}|coordinates p0}
 stop = (n,L)->n>5
 print preimageViaMonodromy(PH,p0,{pre0},StoppingCriterion=>stop)
 
+pre0 = point{{x0,x0^2,x0^3,1}}
+PS = parametricSegmentHomotopy(S,XYZH,A) -- a more efficient way
+print preimageViaMonodromy(PS,p0,{pre0},StoppingCriterion=>stop)
+
 end
+
 restart
 load "degree-computation.m2"
-peek PH.GateHomotopySystem

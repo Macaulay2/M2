@@ -737,7 +737,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2 
-     or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
+     or o.Software===M2engine or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
 	 apply(#solsS, sN->(
 	       s := solsS#sN;

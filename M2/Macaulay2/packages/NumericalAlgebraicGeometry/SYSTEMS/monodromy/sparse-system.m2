@@ -1,6 +1,6 @@
 restart
 needsPackage "NAGtools"
-setDefault(Software=>M2)
+--setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 n = 10
