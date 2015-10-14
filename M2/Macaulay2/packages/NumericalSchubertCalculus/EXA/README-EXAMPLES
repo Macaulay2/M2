@@ -1,11 +1,7 @@
-To test: 
-2e511e3-G48.m2
-2e631-G48.m2
-
 Examples that do not work go here
 
-1e43e3111-G48.m2    Seed 4: evaluation 
-                    Seed 3: Singularity
+1e43e3111-G48.m2    ***works with multiprecision*** 
+
 21e422-G48.m2       Seed 4: Singularity encountered
 
 apply(startSolutions, s-> norm sub(polys,matrix{{0_FFF}|s}))
@@ -13,4 +9,9 @@ apply(startSolutions, s-> norm sub(polys,matrix{{0_FFF}|s}))
 Examples that WORK go here.
 
 2e53e2-G48.m2   26 solutions computed in 408.48 
+
+--------------------------------------------------
+-- Verified by Abraham with times on 14 Oct 2015 --
+
+ProblemsG36:
 
