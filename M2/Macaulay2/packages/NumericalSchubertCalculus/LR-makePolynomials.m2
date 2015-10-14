@@ -1,4 +1,4 @@
-if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
+if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions" else GateMatrix = List
 --##########################################
 -----------------
 -- makePolynomials
@@ -127,7 +127,6 @@ makeSquareSystem'Matrix'GateMatrix := (MX,remaining'conditions'flags) -> (
     makeSquareSystemGGMX(GG,MX)  	  
     )
 makeSquareSystem (Matrix,List) := makeSquareSystem'Matrix'GateMatrix
-if version#"VERSION" =!= "1.8.2.1" then GateMatrix = List
 makeSquareSystem (GateMatrix,List) := makeSquareSystem'Matrix'GateMatrix
 
 -- SUBSTITUTING makePolynomials !!!
