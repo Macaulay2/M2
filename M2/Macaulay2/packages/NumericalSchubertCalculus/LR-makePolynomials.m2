@@ -80,6 +80,12 @@ makeG (ZZ,ZZ,List, Matrix) := (k,n,lambda,F) -> (
     B := getB(k,n);
     matrix apply(A, a->apply(B,b->det submatrix(Finv,a,b)))
     ) 
+makeG (ZZ,ZZ,List, GateMatrix) := (k,n,lambda,F) -> (
+    Finv := F; -- assumption: we supply the dense expression for the inverse 
+    A := getA(k,n,lambda);
+    B := getB(k,n);
+    matrix apply(A, a->apply(B,b->det submatrix(Finv,a,b)))
+    ) 
 
 -- #3: called once per level
 -- IN: k,n = Grassmannian size
@@ -88,13 +94,14 @@ makeG (ZZ,ZZ,List, Matrix) := (k,n,lambda,F) -> (
 makeGG = method()
 makeGG (ZZ,ZZ,List) := (k,n,schubertProblem) -> (
     B := getB(k,n);
-    GG := map(FFF^0,FFF^(#B),0); 
+    GG := null;
     scan(schubertProblem, lambdaF->(
 	    (lambda, F) := lambdaF;
 	    c := sum lambda;
     	    G := makeG(k,n,lambda,F);
     	    R := random(FFF^c,FFF^(numRows G));
-	    GG = GG || (R*G)
+	    if GG === null then GG = R*G
+	    else GG = GG || (R*G)
 	    ));
     GG
     ) 
@@ -102,6 +109,7 @@ makeGG (ZZ,ZZ,List) := (k,n,schubertProblem) -> (
 -- #4: called once per checker move
 makeSquareSystem = method()
 GGstash := new MutableHashTable
+resetGGstash = () -> (GGstash = new MutableHashTable;)
 makeSquareSystemGGMX := (GG,MX) -> (
     k := numColumns MX; 
     n := numRows MX; 

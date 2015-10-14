@@ -344,7 +344,6 @@ makeLocalCoordinates Array := blackred ->(
 
 load "NumericalSchubertCalculus/LR-resolveNode.m2"
 
-
 ---------------
 -- solveSchubertProblem
 ---------------
@@ -374,7 +373,7 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
     l2:=verifyLength(first last twoconds,k);
     F1:=promote(last first twoconds,FFF);
     F2:=promote(last last twoconds,FFF);
-    
+    resetGGstash(); -- resets GGstash in LR-makePolynomials.m2    
     Slns:={};
     checkPartitionsOverlap := (l1+reverse l2)/(i->n-k-i);
     if min(checkPartitionsOverlap) < 0 then
