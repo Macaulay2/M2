@@ -56,7 +56,7 @@ NEWTON'TOLERANCE = 10^-10
 -- 1 = print progress info and time main processes
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
-DBG = 0
+DBG = 2
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
 
