@@ -1,0 +1,65 @@
+README:
+Functions that are used to see Exported vs. not Exported
+
+---- NumericalSchubertCalculus.m2 ----
+
+=== Exported ===
+
+"NSC'DBG", 
+"NSC'VERIFY'SOLUTIONS", 
+"NSC'BLACKBOX", 
+"setFlags",
+solveSchubertProblem
+			---uses homotopies of the Geometrical LR-rule to solve Schubert problems on a Grassmannian
+
+=== Not Exported ===
+redChkrPos 
+				-- given two partitions, computes the positions of the red checkers in the board
+moveRed  
+				-- makes the move of the red checkers during a game
+moveCheckers 
+				-- makes the next move of black and red checkers during a game
+playCheckers 
+				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
+        -- it is also called recursively to play the next game of the Tournament
+makeLocalCoordinates
+				-- translates a checkerboard into a matrix with 0s,1s, and variables
+toRawSolutions
+				-- takes solutions as nxk matrices and writes a list of values that 
+						match with the variables of the local coordinates coordX in the 
+						checkerboard variety
+
+
+--   changeFlags  -- better name?
+
+=== Protected Variables ===
+
+Board  -- pair of arrays describing the checkerboard game: [positions.blackCheckers, positions.redCheckers]
+IsResolved -- Flag to know if a specific node in the checkerboard game is already resolved or not (values only true or false)
+Fathers  -- HashTable with the information of the previous checkerboard game in the tournament
+Children  -- HashTable with the information of the next checkerboard game
+FlagM  -- local coordinates of the moving flag at a specific internal node inside a game
+CriticalRow  -- the row/column that is moving at the current internal node inside a game
+Solutions  -- the solutions of the checkerboard variety w.r.t. the local coordinates
+SolutionsSuperset -- (temporary) the solutions of the checkerboard variety w.r.t. local coordinates, computed with the BlackBox Solver
+
+-- NC means no checker in that column
+NC = infinity
+
+-- OUR working FIELD
+FFF = CC
+--FFF = CC_53
+
+ERROR'TOLERANCE = 0.001
+NEWTON'TOLERANCE = 10^-10
+
+------------------
+-- Debug Level --
+------------------
+-- 0 = no debug mode
+-- 1 = print progress info and time main processes
+-- 2 = ... + checkerboard steps info
+-- >2 = new experimental stuff kicks in
+DBG = 1
+VERIFY'SOLUTIONS = true 
+BLACKBOX = false

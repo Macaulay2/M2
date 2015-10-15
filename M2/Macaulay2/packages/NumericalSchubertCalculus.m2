@@ -7,8 +7,8 @@ newPackage(
 	    Email => "leykin@math.gatech.edu", 
 	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
 	{Name => "Abraham Martin del Campo", 
-	    Email => "abraham.mc@ist.ac.at", 
-	    HomePage => "http://pub.ist.ac.at/~adelcampo"},
+	    Email => "abraham.mc@cimat.mx", 
+	    HomePage => "www.cimat.mx/~abraham.mc"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
@@ -96,6 +96,7 @@ load "NumericalSchubertCalculus/galois.m2"
 --partition2bracket({2},3,6)
 --     o = {2, 5, 6}
 --redChkrPos({2,4,6},{2,5,6},3,6)  
+--     o = {NC, 5, NC, 4, NC, 1}
 --------------------
 redChkrPos = method(TypicalValue => List)
 redChkrPos(List,List,ZZ,ZZ) := (l,m,k,n) -> (
@@ -458,43 +459,9 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 	    changeFlags(flgM*newDag.Solutions, -- these are matrices in absolute coordinates
 	    	(conds, LocalFlags2, LocalFlags1)
 		)
-	    )
+	    ) --
 	)
     )-- end of solveSchubertProblem
-
-----------------------------
--- changeCoordsSolutions
-----------------------------
--- !!! this function should be removed!!!
-changeCoordsSolutions = method()
-changeCoordsSolutions Matrix := MX ->(
-    k := numcols MX;
-    n := numrows MX;
-    a := symbol a;
-    RMX := ring MX;
-    indx:= subsets(0..n-1,k)/toSequence;
-    Vars := apply(indx, i-> a_(i));
-    R:= (coefficientRing RMX)[Vars, gens RMX];
-    G := mutableIdentity(R,n);
-    scan(indx, i->G_i=a_i);
-    --s:= mutableMatrix random(FFF^n,FFF^k);
-    Temp:=entries transpose MX;
-    zeroes:=apply(Temp, t->position(t, i-> i==1));
-    s := transpose matrix apply(zeroes, i->(
-	    cl:=for j from 0 to i list 1;
-	    cl2:=for j from i to n-1 list 0;
-	    cl|drop(cl2,1)	    
-	    ));
-    f:=flatten entries(matrix G*sub(s,R)-sub(MX,R));
-    nk := n*k;
-    numParameters := #Vars+#gens RMX;
-    A:= map(FFF^nk, FFF^numParameters, (i,j)-> (f#i)_(R_j));
-    b := map(FFF^nk, FFF^1, (i,j)-> -(f#i)_(1_R));
-    X := solve(A,b, ClosestFit=>true);
-    Vals:=take(flatten entries X, #Vars); -- take a_(i,j) coordinates
-    scan(#indx, i->G_(indx#i) = Vals#i);
-    sub(matrix G, coefficientRing RMX)
-    )
 
 --------- March 24, 2013
 -- created a linear homotopy
@@ -527,6 +494,21 @@ changeCoordsSolutions Matrix := MX ->(
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
+---------------------------------
+--- solutionToChart
+---------------------------------
+-- 
+-- writes a solution Matrix in terms 
+-- of the chart MX  (as a list of values 
+-- of the parameters)
+---
+-- Input:
+--    s -> a nxk matrix representing the 
+--    	   solutions of the problem (in global coordinates ?)
+--    MX -> the local coordinates of the checkerboard variety
+--
+-- Output:
+--    
 solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
 solutionToChart(Matrix, Matrix) := (s,MX) -> (
     k := numcols s;
@@ -647,7 +629,19 @@ assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually 
 --
 -- Function that takes solutions as nxk matrices
 -- and writes them into a list of values cooresponding to
--- the variables in the local oordinates coordX of the checkerboard variety 
+-- the variables in the local coordinates coordX of the 
+-- checkerboard variety 
+--
+-- !! This functions is used to express the solutions from
+-- matrix form to list form when using homotopies !!
+--------------------------
+-- Inut:
+--    coordX -- matrix of 0s,1s, and variables representing
+--              the local coordinates of the checkerboard variety
+--    X -- an nxk matrix that is a solution of the current incidence problem
+--
+-- Output:
+--    List of values that correspond to the variables in the local coordinates
 -------------------------
 toRawSolutions = method()
 toRawSolutions(Matrix,Matrix) := (coordX,X) -> (
