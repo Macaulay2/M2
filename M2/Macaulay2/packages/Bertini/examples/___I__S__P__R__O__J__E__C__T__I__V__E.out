@@ -6,7 +6,7 @@ i1 : R = CC[x,y,z];
 i2 : f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
 
 i3 : bertiniPosDimSolve(f,ISPROJECTIVE=>1);
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56407-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65483-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -24,7 +24,7 @@ i6 : f2=u1*x+u2*y;
 i7 : finalParameters={{0,1}};
 
 i8 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },ISPROJECTIVE=>1)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56407-0/1
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65483-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -33,9 +33,9 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o8 = {{{-.29136+.338551*ii, 7.46744e-18+7.53521e-18*ii, -.29136+.338551*ii},
+o8 = {{{.554725+.065261*ii, 1.4569e-16-1.28403e-16*ii, .554725+.065261*ii},
      ------------------------------------------------------------------------
-     {4.05782+.990194*ii, -7.80626e-18+1.04117e-17*ii, -4.05782-.990194*ii}}}
+     {.998426-2.03042*ii, 6.9145e-16+1.32967e-15*ii, -.998426+2.03042*ii}}}
 
 o8 : List
 

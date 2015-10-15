@@ -12,7 +12,7 @@ i4 : sol2 = point {{-1}};
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 
 i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56441-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65532-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -65,7 +65,7 @@ o14 = {sol1, sol2}
 o14 : List
 
 i15 : S0=bertiniTrackHomotopy(t, H, S1, ISPROJECTIVE=>1) --solutions to H when t=0
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56441-0/1
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65532-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -74,9 +74,9 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o15 = {{.723405-.299691*ii, .383882+.312867*ii}, {.835873+.151662*ii,
+o15 = {{-.949899+.37448*ii, -.493471-.416537*ii}, {-.014548+1.05353*ii,
       -----------------------------------------------------------------------
-      .335204-.419896*ii}}
+      .582216+.324159*ii}}
 
 o15 : List
 

@@ -438,7 +438,8 @@ makeSLProgram (List,List) := (inL,outL) -> (
     )
 makeSLProgram (GateMatrix,GateMatrix) := (inM,outM) -> makeSLProgram(flatten entries inM, flatten entries outM)
 
-positions(List, RawSLProgram) := (L,s) -> apply(L, g->g.cache#s)
+positionsOfInputGates = method()
+positionsOfInputGates(List, RawSLProgram) := (L,s) -> apply(L, g->g.cache#s)
 
 appendToSLProgram = method()
 appendToSLProgram (RawSLProgram, InputGate) := (slp, g) -> 
@@ -475,7 +476,7 @@ XoC = X/C
 s = makeSLProgram({C,X},{XXC,detXCCX,XoC,XpC+XoC}) 
 
 debug Core
-(consts,indets):=(positions({C},s), positions({X},s))
+(consts,indets):=(positionsOfInputGates({C},s), positionsOfInputGates({X},s))
 eQQ = rawSLEvaluator(s,consts,indets,raw mutableMatrix{{3_QQ}})
 output = mutableMatrix(QQ,1,4)
 rawSLEvaluatorEvaluate(eQQ, raw mutableMatrix{{7_QQ}}, raw output) 
@@ -554,8 +555,8 @@ det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a 
 
 compress GateMatrix := M -> gateMatrix applyTable(M,compress)
 
-value(GateMatrix, HashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
-evaluate(GateMatrix, List, List) := (M,x,x0) -> value(M,hashTable(apply(x,x0,(a,b)->a=>b)|{cache=>new CacheTable})) 
+value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
+-- evaluate(GateMatrix, List, List) := (M,x,x0) -> value(M,hashTable(apply(x,x0,(a,b)->a=>b)|{cache=>new CacheTable})) 
 
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
 sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
@@ -677,6 +678,7 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     else GH
     ) 
 
+--fill m x n matrix with values from another matrix
 matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
     R := ring M;
     e := flatten entries M;  
@@ -686,6 +688,7 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
     e := flatten entries M;  
     map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
+
 evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
@@ -693,7 +696,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
     if not H#?(H#"H",K) then (
 	s := H#"H core"; -- core SLP
 	consts := H#"H consts"; -- constants of SLP
-	H#(H#"H",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
+	H#(H#"H",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
 	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     r := mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
@@ -707,7 +710,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     if not H#?(H#"Ht",K) then (
 	s := H#"Ht core"; -- core SLP
 	consts := H#"Ht consts"; -- constants of SLP
-	H#(H#"Ht",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
+	H#(H#"Ht",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
 	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     r := mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
@@ -721,7 +724,7 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     if not H#?(H#"Hx",K) then (
 	s := H#"Hx core"; -- core SLP
 	consts := H#"Hx consts"; -- constants of SLP
-	H#(H#"Hx",K) = rawSLEvaluator(s, positions(consts,s), positions(flatten entries H#"X" | {H#"T"},s),
+	H#(H#"Hx",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
 	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
 	);
     r := mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");

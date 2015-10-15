@@ -6,7 +6,7 @@ i1 : R = CC[x,y,z];
 i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
 
 i3 : NV = bertiniPosDimSolve(F)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56475-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65578-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -26,7 +26,7 @@ o4 = {{0, 0, 0}}
 o4 : List
 
 i5 : bertiniComponentMemberTest(pts, NV)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56475-0/1
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65578-0/2
 
 The version of Bertini 
 	    you have installed on your computer 

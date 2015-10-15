@@ -12,7 +12,7 @@ i4 : paramValues0={{1,0,0}};
 i5 : paramValues1={{0,1+2*ii,0}};
 
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56491-0/0
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65598-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -65,7 +65,7 @@ o12 = {{1, 0}}
 o12 : List
 
 i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-56491-0/2
+Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65598-0/3
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -74,23 +74,23 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o13 = {{{-.010581-1.28562*ii, 1.07065e-16-1.37152e-16*ii,
+o13 = {{{-1.35626+1.38149*ii, 8.19928e-19-2.71051e-20*ii,
       -----------------------------------------------------------------------
-      .010581+1.28562*ii}, {.554116+.420665*ii, -9.6765e-18+5.9631e-19*ii,
+      1.35626-1.38149*ii}, {.363821+.426141*ii, -7.9553e-18-1.13048e-16*ii,
       -----------------------------------------------------------------------
-      .554116+.420665*ii}}, {{2.27039e-17-5.17707e-18*ii, -.357722-.4234*ii,
+      .363821+.426141*ii}}, {{-2.87314e-18+1.2902e-17*ii,
       -----------------------------------------------------------------------
-      .357722+.4234*ii}, {-2.98156e-19-2.43945e-19*ii, -.180527+3.71133*ii,
+      -1.02026+.726416*ii, 1.02026-.726416*ii}, {-1.4962e-17-4.36391e-18*ii,
       -----------------------------------------------------------------------
-      -.180527+3.71133*ii}}}
+      .303747+.506727*ii, .303747+.506727*ii}}}
 
 o13 : List
 
 i14 : bPH_0--The two solutions for finalParameters0
 
-o14 = {{-.010581-1.28562*ii, 1.07065e-16-1.37152e-16*ii, .010581+1.28562*ii},
+o14 = {{-1.35626+1.38149*ii, 8.19928e-19-2.71051e-20*ii, 1.35626-1.38149*ii},
       -----------------------------------------------------------------------
-      {.554116+.420665*ii, -9.6765e-18+5.9631e-19*ii, .554116+.420665*ii}}
+      {.363821+.426141*ii, -7.9553e-18-1.13048e-16*ii, .363821+.426141*ii}}
 
 o14 : List
 
