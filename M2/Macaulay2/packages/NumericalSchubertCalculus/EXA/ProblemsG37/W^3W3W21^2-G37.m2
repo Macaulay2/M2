@@ -1,5 +1,5 @@
 needsPackage "NumericalSchubertCalculus"
-setRandomSeed 2
+setRandomSeed 5
 
 --Problem W^3W3W21^2 in G(3,7)
  --a problem with 11 solutions
