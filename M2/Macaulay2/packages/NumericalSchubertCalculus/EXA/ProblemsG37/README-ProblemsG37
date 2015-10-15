@@ -6,18 +6,6 @@ W^3W2^3W3-G37.m2						"trackHomotopy: singularity encountered"
 W^3W2^3W21-G37.m2						"trackHomotopy: singularity encountered"
 
 
-WW11^2W21W211-G37.m2				partition above is not valid
-WW11^2W21W22-G37.m2					partition above is not valid
-WW21W31^2-G37.m2
-WW21^2W32-G37.m2
-WW11W3W21^2-G37.m2
-WW11^2W21W31-G37.m2
-WW2W3W21^2-G37.m2
-WW11^4W21-G37.m2
-WW11W21^3-G37.m2
-W^3W3W21^2-G37.m2
-
-
 W^2W11^2W21W111-G37.m2			found all solutions but assertion of incidence failed
 W^2W2W11W21W111-G37.m2			found all solutions but assertion of incidence failed
 W^2W2^2W21W111-G37.m2				found all solutions but assertion of incidence failed
