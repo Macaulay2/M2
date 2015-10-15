@@ -56,7 +56,7 @@ NEWTON'TOLERANCE = 10^-10
 -- 1 = print progress info and time main processes
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
-DBG = 0
+DBG = 1
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
 
@@ -813,12 +813,22 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
      R := (coefficientRing Rt)[drop(gens Rt,1)];
      map't'0 := map(R, Rt, matrix{{0_FFF}}|vars R);
      map't'1 := map(R, Rt, matrix{{1_FFF}}|vars R);
-     sols := track(first entries map't'0 H, first entries map't'1 H, S
-	 --, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
-	 -- can we do the gamma-trick?
+     all'sols := {};
+     nAttempts := 3;
+     correctorTolerance := 0.1 * getDefault NumericalAlgebraicGeometry$CorrectorTolerance;
+     while nAttempts > 0 and #all'sols < #S do (
+     	 sols := track(first entries map't'0 H, first entries map't'1 H, S,
+	     --, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
+	     -- can we do the gamma-trick?
+	     NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+	     );
+     	 all'sols = solutionsWithMultiplicity(all'sols|select(sols, s->status s===Regular));
+	 nAttempts = nAttempts - 1;
+	 correctorTolerance = 0.1 * correctorTolerance;
 	 );
-     if any(sols/status, s->s=!=Regular) then error "trackHomotopy: singularity encountered";
-     sols 
+     if #all'sols < #S then error "trackHomotopy: singularity encountered";
+     if #all'sols > #S then error "trackHomotopy: more solutions found than expected";
+     all'sols 
      )
 
 ------------------------

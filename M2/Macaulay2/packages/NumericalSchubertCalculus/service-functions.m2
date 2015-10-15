@@ -468,8 +468,12 @@ checkSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
     ) 
 
 -- create an instance of a Schubert problem with random unitary matrices specifying flags
-randomSchubertProblemInstance = method()
-randomSchubertProblemInstance (List,ZZ,ZZ) := (conds,k,n) -> (
+randomSchubertProblemInstance = method(Options=>{Strategy=>"unit circle"})
+randomSchubertProblemInstance (List,ZZ,ZZ) := o -> (conds,k,n) -> (
     checkSchubertProblem(conds,k,n);
-    apply(conds, c->(c, randomUnitaryMatrix n))
+    apply(conds, c->(c, 
+	    if o.Strategy == "unitary" then randomUnitaryMatrix n else
+	    if o.Strategy == "unit circle" then matrix table(n,n,(i,j)->exp(2*pi*ii*random RR))
+	    else error "unknown strategy"   
+	    ))
     )  

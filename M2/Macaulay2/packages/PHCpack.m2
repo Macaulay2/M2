@@ -1119,6 +1119,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   Ssolsfile := temporaryFileName() | "PHCstartsols";
   Tsolsfile := temporaryFileName() | "PHCtargetsols";
   batchfile := temporaryFileName() | "PHCbat";
+  logfile := temporaryFileName() | "phc_session_log";
   if o.Verbose then
     stdio   << "using temporary files " << outfile << " and " << Tsolsfile << endl;
   
@@ -1150,7 +1151,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- fourth menu
   bat << "0" << endl; -- exit for now
   close bat;
-  run(PHCexe|" -p <"|batchfile|" >phc_session.log");
+  run(PHCexe|" -p <"|batchfile|" >" |logfile);
   run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   
   -- parse and output the solutions

@@ -2,9 +2,9 @@ recursionLimit=1000
 needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 
---setDefault(Software=>M2engine) --"singularity"
---setDefault(Software=>BERTINI) --"singularity" with randSeed 23 + randSeed 0
-setDefault(Software=>PHCPACK) --"singularity" with randSeed 23 and 0
+setDefault(Software=>M2engine) --"singularity"
+-- setDefault(Software=>BERTINI) -- works
+-- setDefault(Software=>PHCPACK) --"singularity" with randSeed 23 and 0
 
 setRandomSeed 23
 
