@@ -4,7 +4,7 @@ Functions that are used to see Exported vs. not Exported
 ---- NumericalSchubertCalculus.m2 ----
 
 === Exported ===
-
+"setVerboseLevel", --function to change the amount of information printed on screen while running (levels 0,1,or 2)
 "NSC'DBG", 
 "NSC'VERIFY'SOLUTIONS", 
 "NSC'BLACKBOX", 
@@ -21,13 +21,17 @@ moveCheckers
 				-- makes the next move of black and red checkers during a game
 playCheckers 
 				-- given two partitions, plays the combinatorial checkerboard game and outputs the hashtable of the checkermoves played
-        -- it is also called recursively to play the next game of the Tournament
+        -- it is also called recursively to play the next game of the Tournament and creates the Hashtable
+
 makeLocalCoordinates
 				-- translates a checkerboard into a matrix with 0s,1s, and variables
+
 toRawSolutions
 				-- takes solutions as nxk matrices and writes a list of values that 
 						match with the variables of the local coordinates coordX in the 
-						checkerboard variety
+						checkerboard variety (mainly used for writing solutions for the homotopy functions)
+
+changeFlags
 
 
 --   changeFlags  -- better name?

@@ -52,13 +52,24 @@ NEWTON'TOLERANCE = 10^-10
 ------------------
 -- Debug Level --
 ------------------
--- 0 = no debug mode
+-- 0 = no debug mode (default)
 -- 1 = print progress info and time main processes
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
 DBG = 0
+
+---------------------
+-- setVerboseLevel --
+---------------------
+--
+-- Function to change different levels of 
+-- information printed while running
+---------------------
+-- input: integer number between 0,1,2, or greater
+--
 setVerboseLevel = method()
 setVerboseLevel ZZ := i->DBG=i
+--
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
 "setVerboseLevel"
@@ -84,6 +95,11 @@ load "NumericalSchubertCalculus/galois.m2"
 -- Numerical LR-Homotopies
 -----------------------------
 
+---------------------
+-- redChkrPos 
+--
+-- given two partitions, computes the positions 
+-- of the red checkers
 ---------------------
 -- input: two Schubert conditions l and m
 --			entered as brackets
@@ -134,6 +150,8 @@ moveRed = method(TypicalValue => List)
 moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     ------------------------------------------------
     -- We need to check first if it is a valid configuration
+    --
+    -- (no longer need as it is checked before calling playCheckers) -- Abr. 15.0ct.15 
     ------------------------------------------------
     n := #redposition; -- n is the size of the checkboard
     split:=0;
@@ -190,6 +208,28 @@ moveRed(List,List,List) := (blackup, blackdown, redposition) -> (
     )
 
 ---------------------------------------------------------------------------------
+-- moveCheckers
+-----------------
+-- makes the next move of black and 
+-- red checkers during a game
+-----------------
+-- Input:
+--    blackred -> array of black and redchecker positions [blackPositions, redPositions]
+--
+-- Output:
+--         a Sequence containing:
+--    board --> the new checkerboard [blackCheckers, redCheckers]
+--    move --> the type of move that we realized: {i,j,splt} (from Ravi's notes) 
+--    critrow --> the critical row
+-----------------------------------
+-- Example:
+--
+-- blackCheckersPosition = {0,1,3,4,5,2};
+-- redCheckersPosition = {0, NC, NC, 4, NC, NC};
+--
+-- moveCheckers [blackCheckers, redCheckers];
+--    o =  ({[{0, 1, 2, 4, 5, 3}, {0, infinity, infinity, 4, infinity, infinity}, {1, 2, 0}]}, 2)
+-------------------------------------
 moveCheckers = method(TypicalValue => List)
 moveCheckers Array := blackred -> (
      blackposition := first blackred;
@@ -207,26 +247,26 @@ moveCheckers Array := blackred -> (
      -- The column of the right black checker to be sorted goes from desccol 
      -- to the end of the board.
      -- Determine the rows of the next pair of black checkers to be sorted.
-	 blackup2 := n-blackdown1+blackup1;
-	 blackdown2 := blackup2-1; -- this is the critical row
-	 listofredpositions := moveRed({blackup1,blackup2},{blackdown1,blackdown2}, redposition);
-	 blackposition = new MutableList from blackposition;
-	 blackposition#blackup1 = blackposition#blackup1 - 1;
-	 blackposition#blackdown1 = blackposition#blackdown1 + 1;
-	 (
-	      apply(listofredpositions, r-> [toList blackposition, 
-		   	first r, -- new redposition
-		   	last r -- new type of move
-		   	]), 
-	      blackdown2 --return also the critical row
-	      )
+     blackup2 := n-blackdown1+blackup1;
+     blackdown2 := blackup2-1; -- this is the critical row
+     listofredpositions := moveRed({blackup1,blackup2},{blackdown1,blackdown2}, redposition);
+     blackposition = new MutableList from blackposition;
+     blackposition#blackup1 = blackposition#blackup1 - 1;
+     blackposition#blackdown1 = blackposition#blackdown1 + 1;
+     (
+	 apply(listofredpositions, r-> [toList blackposition, 
+		 first r, -- new redposition
+		 last r -- new type of move
+		 ]), 
+	 blackdown2 --return also the critical row
+	 )
 )
 
 
 --------------------------------------------------------
 -- playCheckers
 -----------------
--- This function takes as in put a specific node and plays
+-- This function takes as input a specific node and plays
 -- a checkerboard game between two varieties X1 and X2
 --
 -- It sets up the game, and then it uses
@@ -273,9 +313,16 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
 --       all'nodes - the list of games played already
 --
 -- THIS IS THE RECURSIVE CALL OF PLAYCHECKERS
+--
+-- Output: 
+--      Dag --> a HashTable with the following information:
+--           	     Board
+--           	     IsResolved
+--           	     Fathers
+--           	     Children (a HashTable if the condition is not 0-dimensional)
+-- 
 ----------------------------
 playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all'nodes) ->(
-    -- Document this function!! it is not understandable
     -- all'nodes is a HashTable whose keys are boards,
     -- and this is where we store all nodes that we have
     -- already visited.
@@ -290,9 +337,9 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 	  IsResolved => false,
 	  Fathers => {}
 	  };
-     if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)};
+     if father=!=null then self.Fathers = self.Fathers | {(father,typeofmove)}; -- add the new way to get to this node
      if not node'exists then ( --add the ultimate node part here...
---<< "this is node'exists "<< node'exists<<endl;
+         --<< "this is node'exists "<< node'exists<<endl;
 	 coordX := makeLocalCoordinates board; -- local coordinates X = (x_(i,j))
      	 if numgens ring coordX > 0 then ( 
      	     (children,c) := moveCheckers board;
@@ -308,15 +355,27 @@ playCheckers (Array,Thing,List,MutableHashTable) := (board,father,typeofmove,all
 -----------------
 --- makeLocalCoordinates
 --
--- This procedure will translate a checker 
--- board configuration into a matrix with
+-- Translates a checkerboard
+-- configuration into a matrix with
 -- 0's, 1's and variables
 -----------------
 -- input: an array of black and red checkers
---        in the form ( ListofPositionsBlack, ListofPositionsRed)
+--        in the form [ ListofPositionsBlack, ListofPositionsRed ]
 -- output: a matrix with local coordinates
 -----------------
 -- example:
+--
+-- blackCheckersPosition = {0,1,3,4,5,2};
+-- redCheckersPosition = {0, NC, NC, 4, NC, NC};
+--
+-- makeLocalCoordinates [blackCheckers, redCheckers]
+--   o = | 1 0       |
+--       | 0 x_(1,1) |
+--       | 0 0       |
+--       | 0 x_(3,1) |
+--       | 0 1       |
+--       | 0 0       |
+-- 
 -----------------
 makeLocalCoordinates = method(TypicalValue => MutableMatrix)
 makeLocalCoordinates Array := blackred ->(
@@ -479,6 +538,56 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 -- flag...
 --------------------------
 ---------------------------------
+--- solutionToChart
+---------------------------------
+-- takes a solution matrix in global coordinates
+-- and converts it into local coordinates to know
+-- what the values of the variables of the loocal 
+-- coordinates are, i.e., 
+-- writes a solution Matrix in terms 
+-- of the chart MX  (as a list of values 
+-- of the parameters)
+---
+-- Input:
+--    s -> a nxk matrix representing the 
+--    	   solutions of the problem (in global coordinates ?)
+--    MX -> the local coordinates of the checkerboard variety
+--
+-- Output: List of values for the variables in MX
+--
+---------------------------------
+-- Example:
+--
+-- MX = matrix {{1,    0}, 
+--              {0, x_(1,1)}, 
+--              {0,    0}, 
+--              {0, x_(3,1)}, 
+--              {0,    1}, 
+--              {0,    0}};
+-- s =  promote(transpose matrix{
+--                        {1,0,0,0,0,0},
+--                        {1,3,5,7,1,0}},FFF);
+--
+-- solutionToChart(s,MX)
+--         o = {.115385, .269231}
+---------------------------------    
+solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
+solutionToChart(Matrix, Matrix) := (s,MX) -> (
+    k := numcols s;
+    n := numrows s;
+    a := symbol a;
+    RMX := ring MX;
+    R := (coefficientRing RMX)[a_(1,1)..a_(k,k),gens RMX];
+    G := genericMatrix(R,k,k);
+    f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
+    nk := n*k;
+    nParameters := k^2+#gens RMX; -- number of parameters in f
+    A := map(FFF^nk,FFF^nParameters,(i,j)->(f#i)_(R_j));
+    b := map(FFF^nk,FFF^1,(i,j)->-(f#i)_(1_R));
+    X := solve(A,b, ClosestFit=>true);
+    drop(flatten entries X, k*k) -- drop a_(i,j) coordinates
+    )
+---------------------------------
 --- changeFlags
 ---------------------------------
 ---
@@ -497,37 +606,6 @@ solveSchubertProblem(List,ZZ,ZZ) := o -> (SchPblm,k,n) ->(
 -- Output:
 --    List of solutions written w.r.t flags B
 ---------------------------------
----------------------------------
---- solutionToChart
----------------------------------
--- 
--- writes a solution Matrix in terms 
--- of the chart MX  (as a list of values 
--- of the parameters)
----
--- Input:
---    s -> a nxk matrix representing the 
---    	   solutions of the problem (in global coordinates ?)
---    MX -> the local coordinates of the checkerboard variety
---
--- Output:
---    
-solutionToChart = method() -- writes s (a matrix solution) in terms the chart MX (as a list of values of the parameters)
-solutionToChart(Matrix, Matrix) := (s,MX) -> (
-    k := numcols s;
-    n := numrows s;
-    a := symbol a;
-    RMX := ring MX;
-    R := (coefficientRing RMX)[a_(1,1)..a_(k,k),gens RMX];
-    G := genericMatrix(R,k,k);
-    f := flatten entries(s*G - sub(MX,R)); -- linear system in nk vars 
-    nk := n*k;
-    nParameters := k^2+#gens RMX; -- number of parameters in f
-    A := map(FFF^nk,FFF^nParameters,(i,j)->(f#i)_(R_j));
-    b := map(FFF^nk,FFF^1,(i,j)->-(f#i)_(1_R));
-    X := solve(A,b, ClosestFit=>true);
-    drop(flatten entries X, k*k) -- drop a_(i,j) coordinates
-    )
 changeFlags = method()
 changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a list of matrices
    if #solutionsA == 0 then return {};
