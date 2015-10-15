@@ -32,7 +32,8 @@ export {
     "constants",  
     "printAsSLP",
     "ValueHashTable","valueHashTable",
-    "GateHomotopySystem", "gateHomotopySystem" 
+    "GateHomotopySystem", "gateHomotopySystem",
+    "getGateCatalogCount" 
     }
 exportMutable {
     }
@@ -98,6 +99,8 @@ add2GC := g -> if gateCatalog#?g then (
     gateCatalogCount#g= 1;
     gateCatalog#g = g
     ) 
+
+getGateCatalogCount = () -> gateCatalogCount  
 
 InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()

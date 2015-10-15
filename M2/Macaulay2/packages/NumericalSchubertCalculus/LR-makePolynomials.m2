@@ -115,7 +115,7 @@ makeSquareSystemGGMX := (GG,MX) -> (
     n := numRows MX; 
     B := getB(k,n);
     plueckerCoords := transpose matrix {apply(B,b->det MX^b)};
-    (if instance(plueckerCoords,GateMatrix) then GG else promote(GG,ring plueckerCoords))*plueckerCoords  
+    (if instance(GG,GateMatrix) or instance(plueckerCoords,GateMatrix) then GG else promote(GG,ring plueckerCoords))*plueckerCoords  
     ) 
 makeSquareSystem'Matrix'GateMatrix := (MX,remaining'conditions'flags) -> (
     r := #remaining'conditions'flags;

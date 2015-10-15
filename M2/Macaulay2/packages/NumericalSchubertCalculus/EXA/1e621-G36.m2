@@ -16,5 +16,5 @@ S = solveSchubertProblem(Pblm,3,6)
 end
 
 restart
-time load "1e621-G36.m2"
+time load "NumericalSchubertCalculus/EXA/1e621-G36.m2"
 

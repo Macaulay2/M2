@@ -3,7 +3,7 @@ needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 
 setDefault(Software=>M2engine) --"singularity"
--- setDefault(Software=>BERTINI) -- works
+setDefault(Software=>BERTINI) -- works
 -- setDefault(Software=>PHCPACK) --"singularity" with randSeed 23 and 0
 
 setRandomSeed 23
