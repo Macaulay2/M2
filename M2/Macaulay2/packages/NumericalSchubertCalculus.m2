@@ -26,7 +26,7 @@ newPackage(
     )
 debug NumericalAlgebraicGeometry
 export {   
-   "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
+   "setVerboseLevel", "NSC'DBG", "NSC'VERIFY'SOLUTIONS", "NSC'BLACKBOX", "setFlags",
    "solveSchubertProblem"
    --   changeFlags  -- better name?
    }
@@ -56,9 +56,12 @@ NEWTON'TOLERANCE = 10^-10
 -- 1 = print progress info and time main processes
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
-DBG = 1
+DBG = 0
+setVerboseLevel = method()
+setVerboseLevel ZZ := i->DBG=i
 VERIFY'SOLUTIONS = true
 BLACKBOX = false
+"setVerboseLevel"
 
 --INITIALIZING THE KEYS OF NODE
 --Board= symbol Board
@@ -812,10 +815,10 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
      nAttempts := 3;
      correctorTolerance := 0.1 * getDefault NumericalAlgebraicGeometry$CorrectorTolerance;
      while nAttempts > 0 and #all'sols < #S do (
-     	 sols := track(first entries map't'0 H, first entries map't'1 H, S,
-	     --, NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
+     	 sols := track(first entries map't'0 H, first entries map't'1 H, S
+	     -- , NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
 	     -- can we do the gamma-trick?
-	     NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+	     , NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
 	     );
      	 all'sols = solutionsWithMultiplicity(all'sols|select(sols, s->status s===Regular));
 	 nAttempts = nAttempts - 1;

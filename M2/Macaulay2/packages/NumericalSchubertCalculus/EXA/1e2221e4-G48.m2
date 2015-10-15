@@ -15,4 +15,5 @@ assert(#S == 194)
 end
 
 restart
-time load "NumericalSchubertCalculus/EXA/1e2e2221e4-G48.m2"
+time load "NumericalSchubertCalculus/EXA/1e2221e4-G48.m2"
+
