@@ -27,3 +27,17 @@ edit the file  ~/Library/Application Support/Macaulay2/init.m2
 
 to include something like
 path = {"~/......../M2/Macaulay2/packages/"} | path
+
+===========================================
+ToDo
+
+Functionality
+
+- A method to find even one solution to a given problem
+- Query this solution:  singular ?  compute its multiplicity ?
+   Compute a few and see if they are general or not (i.e. monodromy)
+- Functions to help debugging e.g. --verbose, or how talkative it should be
+
+- Document all exported commands
+- Maybe don't export as many commands as we now do
+
