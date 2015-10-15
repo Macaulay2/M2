@@ -7,6 +7,7 @@ To Do for the Numerical Schubert Calculus project
    - Conclusion
 
 * Decent library of examples, for both Macaulay2 and Phc Pack
+   - Run all problems in G(3,7), G(3,8), and G(4,8)
 
 * Write Software for Macaulay2 paper
 
