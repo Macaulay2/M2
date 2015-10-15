@@ -66,3 +66,5 @@ restart
 restart
  load"NumericalSchubertCalculus/EXA/ProblemsG36/X^9-G36.m2"
 
+
+

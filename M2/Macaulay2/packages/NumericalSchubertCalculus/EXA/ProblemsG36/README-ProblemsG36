@@ -1,0 +1,7 @@
+-- Report of problems with errors in G36
+
+File									Error
+
+X^3X2^2X11-G36.m2			found all solutions but assertion of incidence failed
+X^5X2X11-G36.m2				found all solutions but assertion of incidence failed
+X^9-G36.m2						 "trackHomotopy: singularity encountered" (tried 2 seeds but only works with Bertini)
