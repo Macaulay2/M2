@@ -1,5 +1,6 @@
 -- -*- M2-comint -*- {* hash: -1057685552 *}
---loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+-- COMPILE TIME: Oct 14 2015, 14:51:21
+--loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y,z]
 
@@ -15,7 +16,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : NV = bertiniPosDimSolve(F)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65477-0/1
+Temporary directory for input and output files:/tmp/M2-29516-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -35,7 +36,7 @@ o4 = W
 o4 : WitnessSet
 
 i5 : bertiniSample(4, W)
-Temporary directory for input and output files:/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-65477-0/2
+Temporary directory for input and output files:/tmp/M2-29516-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -44,17 +45,15 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o5 = {{3.70976e-314-1.46343e-313*ii, -1.24008e-20+1.1047e-20*ii,
+o5 = {{-2.85717e-312+1.9319e-312*ii, 0, -.053369-.588498*ii},
      ------------------------------------------------------------------------
-     -.215477-.126929*ii}, {-7.74483e-268+3.1479e-268*ii,
+     {3.97751e-313-5.3063e-315*ii, 7.6062e-211+5.70151e-209*ii,
      ------------------------------------------------------------------------
-     -1.05956e-19-5.03265e-20*ii, -.276779-.679123*ii},
+     -.241676-.0953132*ii}, {0, 0, -.079421+.534184*ii},
      ------------------------------------------------------------------------
-     {-3.58732e-316+3.5687e-316*ii, 1.7697e-21+1.27082e-20*ii,
+     {-1.13494e-307-2.19688e-307*ii, 1.17412e-189+5.63179e-190*ii,
      ------------------------------------------------------------------------
-     -.0022695-.314097*ii}, {4.7072e-317+7.45755e-316*ii,
-     ------------------------------------------------------------------------
-     8.49209e-21+1.94682e-20*ii, -.297856-.677585*ii}}
+     1.62639-.368105*ii}}
 
 o5 : List
 
