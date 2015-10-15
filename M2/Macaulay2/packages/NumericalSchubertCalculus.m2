@@ -250,6 +250,7 @@ playCheckers(List,List,ZZ,ZZ) := (partn1,partn2,k,n) -> (
           redChkrPos(partition2bracket(partn1,k,n),partition2bracket(partn2,k,n),k,n);
      blackChkrs := reverse toList (0..(n-1)); --initial black positions
      if DBG>0 then print "-- playCheckers";
+     if DBG>1 then print(partn1,partn2);
      if DBG>1 then print([blackChkrs, redChkrs]);
      if DBG>0 then cpu0 := cpuTime();
      root :=playCheckers ([blackChkrs, redChkrs], null, {}, all'nodes);  -- returns the root of the tree

@@ -433,30 +433,39 @@ resolveNode(MutableHashTable,List) := (node,remaining'conditions'flags) -> (
                   print(remaining'conditions'flags);
                );
                new'l := output2partition last node.Board;
-               newDag := playCheckers(new'l,l3,k,n);
-               resolveNode(newDag,newRemainingFlags); -- recursive call
-               S := newDag.Solutions; 
-               if DBG>1 then
-                  << "the previous level gets solution: " << S << endl;
-               brack := output2bracket last node.Board;
-               -- compute the bracket affecting the standard flag
-               -- we use the bracket for column reduction of the solutions;
-               if DBG>1 then << "the bracket" << brack << endl;
+	       -- Abraham 15-Oct-2015:
+	       l3 = verifyLength(l3,k);
+	       checkPartitionsOverlap := (new'l+reverse l3)/(i->n-k-i);
+    	       if min(checkPartitionsOverlap) < 0 then (
+		   node.Solutions = {};
+         	   node.IsResolved = true;
+	       )else(
+	       --
+               	  newDag := playCheckers(new'l,l3,k,n);
+               	  resolveNode(newDag,newRemainingFlags); -- recursive call
+               	  S := newDag.Solutions; 
+               	  if DBG>1 then
+                     << "the previous level gets solution: " << S << endl;
+               	  brack := output2bracket last node.Board;
+               	  -- compute the bracket affecting the standard flag
+               	  -- we use the bracket for column reduction of the solutions;
+               	  if DBG>1 then << "the bracket" << brack << endl;
                   node.Solutions = if #newRemainingFlags > 0 then (
-                  assert(MM == newDag.FlagM);
-                  apply(S, s->columnReduce(A*MM*s,brack)) -- A is M^{-1} ??? 
-               ) else (
-                  MM = newDag.FlagM;
-                  (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
-                  apply(S, s->columnReduce(A*MM*s,brack))
-               );
-               if DBG>1 then (
-                  print "... and the transformed solutions are:";
-                  print(node.Solutions);
-                  print "-- end (recursive call to resolveNode)"
-               );
-               node.IsResolved = true
-            ); -- end else of the if not validpartition
+                      assert(MM == newDag.FlagM);
+                      apply(S, s->columnReduce(A*MM*s,brack)) -- A is M^{-1} ??? 
+               	  ) else (
+                     MM = newDag.FlagM;
+                     (A,T1,T2) = moveFlags2Flags({MM,ID},{ID,F3});
+                     apply(S, s->columnReduce(A*MM*s,brack))
+                  );
+	          if DBG>1 then (
+                     print "... and the transformed solutions are:";
+                     print(node.Solutions);
+                     print "-- end (recursive call to resolveNode)"
+               	  );
+	          node.IsResolved = true
+               );--end else of the if checkPartitionsOverlap
+	   ); -- end else of the if not validpartition
          ); -- end if node.children == {}
          solveCases(node,remaining'conditions'flags,coordX);
          if VERIFY'SOLUTIONS and BLACKBOX then
