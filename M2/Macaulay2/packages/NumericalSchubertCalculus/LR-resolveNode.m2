@@ -329,12 +329,14 @@ solveCases(MutableHashTable,List,Matrix) := (node,
       parent'solutions :=  -- this is where the main action happens
          if node.Solutions == {} then
             {} -- means: not implemented
-         else if movetype#1 == 2 then ( -- case (_,2)
+         else if movetype#1 == 2 then ( -- case (_,2), where the 
+	     --   conditions on the k-plane do not change, case I in the paper
             apply(node.Solutions, X -> (
                X'' := (X^{0..r-1}) || (-X^{r+1})
                                    || (X^{r}+X^{r+1}) ||( X^{r+2..n-1});
                j := position(red'sorted, i-> i == r+1);
-               -- the column we need to normalize
+               -- In this case, we need to normalize the jth column to return to coordinates
+	       --   to echelon form
                if j =!= null then
                   redCheckersColumnReduce2(normalizeColumn(X'',r+1,j), father)
                else X'' )
