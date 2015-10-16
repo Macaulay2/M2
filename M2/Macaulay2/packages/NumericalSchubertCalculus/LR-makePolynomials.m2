@@ -141,7 +141,7 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
     	    --MM := MX|F_{0..k-1}; for this m := 2*k above
 	    a := first first conds#i;
 	    FinvMX := Finv*MX;
-	    MM := FinvMX^{n-k+a-1..n-1};
+	    MM := FinvMX^{n-k-a+1..n-1};
 	    slice := random(C^1,C^m);
 	    sols' = apply(#sols, i->sols'#i|transpose solve(
 		    evaluate(MM,matrix{{0}}|sols#i)||slice,

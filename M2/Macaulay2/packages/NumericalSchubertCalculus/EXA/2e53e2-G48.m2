@@ -1,8 +1,7 @@
 restart
 recursionLimit=1000
-debug needsPackage "NumericalSchubertCalculus"
+needsPackage "NumericalSchubertCalculus"
 setRandomSeed 23
-DBG=0
 
 -- 26 4-planes in C^8 wrt standard and 6 random flags
 --  2^5  3^2
@@ -19,4 +18,4 @@ solveSchubertProblem(SchPblm,4,8)
 end
 
 restart
-time load "NumericalSchubertCalculus/EXA/2e53e2-G48.m2"
+elapsedTime load "NumericalSchubertCalculus/EXA/2e53e2-G48.m2"

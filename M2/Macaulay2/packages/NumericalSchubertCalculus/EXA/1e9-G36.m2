@@ -7,8 +7,8 @@ Pblm = randomSchubertProblemInstance(
     {{1},{1},{1},{1},{1},{1},{1},{1},{1}},3,6
     );
 
-time S = solveSchubertProblem(Pblm,3,6)
-#S
+setVerboseLevel 1
+elapsedTime S = solveSchubertProblem(Pblm,3,6)
 assert all(S,s->checkIncidenceSolution(s,Pblm))
 end
 

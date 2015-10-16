@@ -16,5 +16,5 @@ assert(#sols==10)
 end
 
 restart
-time load "NumericalSchubertCalculus/EXA/1e43e3111-G48.m2"
+elapsedTime load "NumericalSchubertCalculus/EXA/1e43e3111-G48.m2"
 
