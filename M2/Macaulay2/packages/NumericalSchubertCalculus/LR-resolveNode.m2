@@ -221,8 +221,8 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
       else
          error "an unaccounted case";
    if DBG>0 then timemakePolys1 := cpuTime();
-   strategy := "Cauchy-Binet";
-     --if all(remaining'conditions'flags/first, c->c=={1}) then "deflation" else "Cauchy-Binet";
+   strategy := --"Cauchy-Binet";
+     if all(remaining'conditions'flags/first, c->c=={1}) then "deflation" else "Cauchy-Binet";
    (all'polys,startSolutions) := makePolynomials(M'X', remaining'conditions'flags, 
        apply(node.Solutions, X->toRawSolutions(coordX,X)), --start solutions
        Strategy=>strategy
@@ -235,17 +235,20 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    polys := squareUpPolynomials(numgens ring all'polys-1, all'polys);
    -- check at t=0
    if VERIFY'SOLUTIONS then verifyStart(polys, startSolutions);
-   if DBG>0 then t1:= cpuTime();
+   if DBG>0 then t1:= currentTime();
    -- track homotopy and plug in the solution together with t=1 into Xt
    targetSolutions := trackHomotopyNSC(polys,startSolutions);
    if DBG>0 then (
-      t2 := cpuTime();
-      << " -- trackHomotopy time = " << (t2-t1)
+      t2 := currentTime();
+      << " -- trackHomotopy time = " << (t2-t1) << " sec."
       << " for " << node.Board << endl;
    );
    apply(targetSolutions, sln -> (
       x'sln := if strategy != "deflation" 
-               then matrix sln else matrix sln_{0..numgens R-1};
+               then matrix sln else (
+		   print sln;
+		   (matrix sln)_{0..numgens R-1}
+		   );
       M''X'' := (map(FFF,Rt,matrix{{1}}|x'sln)) M'X';
       X'' := inverse M'' * M''X'';
       if not member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- SWAP CASE
