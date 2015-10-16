@@ -1,13 +1,14 @@
 --recursionLimit=1000
-
 needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 
---setDefault(Software=>M2engine) --"singularity"
---setDefault(Software=>BERTINI) -- works
-setDefault(Software=>PHCPACK) -- "singularity"
+setVerboseLevel 0;
 
-setRandomSeed 5
+setDefault(Software=>M2engine) --works 177.367 secs
+--setDefault(Software=>BERTINI) -- works
+--setDefault(Software=>PHCPACK) -- works 70secs
+
+setRandomSeed 0
 
 --Problem X^9 in G(3,6)
  --a problem with 42 solutions
