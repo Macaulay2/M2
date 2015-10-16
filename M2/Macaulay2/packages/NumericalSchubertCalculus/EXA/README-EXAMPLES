@@ -4,7 +4,9 @@
 
 21e422-G48.m2       Seed 4: Singularity encountered
 
-1e9-G36.m2          Seed 21:Singularity but Finds 42 solutions with Seed 5 in 3m4.142s
+1e9-G36.m2          Seed 21:Singularity but Finds all 42 solutions with Seed 5 in 3m4.142s
+
+1e43e3111-G48.m2		Seed 0: Singularity encountered for M2 and PHC but Bertini finds all 10 solutions in ~97.4706s
 
 
 =========   Examples that WORK go here. =======================
