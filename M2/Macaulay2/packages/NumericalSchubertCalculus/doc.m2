@@ -256,7 +256,10 @@ doc ///
        	 d = k*(n-k)-sum(l)-sum(m);
        	 G = apply(d, i->matrix apply(n-k,i->apply(n,j->random CC)));
        	 ---------------------------------
-       	 solveSimpleSchubert((k,n),l,m,G)
+       	 Sols =solveSimpleSchubert((k,n),l,m,G) --This problem has 77 solutions! --
+	 -- to see the solutions in human form:
+	 E := skewSchubertVariety((k,n),l,m);
+	 apply(Sols ,s-> sub(E,matrix{s}) )
    SeeAlso
          createRandomFlagsForSimpleSchubert 
 ///

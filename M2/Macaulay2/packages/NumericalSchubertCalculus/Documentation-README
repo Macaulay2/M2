@@ -90,6 +90,78 @@ DBG = 1
 VERIFY'SOLUTIONS = true 
 BLACKBOX = false
 
+====================================================
+==        pieri.m2 
+====================================================
+
+=== Exported ===
+
+createRandomFlagsForSimpleSchubert
+				-- Given two conditions l,m in G(k,n) it produces d = k(n-k)-sum(l)-sum(m) many 
+				-- random matrices of size (n-k) x n
+
+solveSimpleSchubert
+				-- Solves a simple Schubert problem using Pieri's homotopy algorithm
+				-- (assumes user gives two partitions l,m and a bunch of flags)
+
+
+====================================================
+==        service-functions.m2 
+====================================================
+
+=== Exported ===
+
+skewSchubertVariety 
+				-- (used in Pieri-homotopy)
+				-- 
+checkIncidenceSolution
+				--this is only for our tests... shouldn't be used by the user
+
+checkNewtonIteration
+				-- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
+
+solutionsToAffineCoords
+
+partition2bracket
+
+bracket2partition
+
+randomSchubertProblemInstance
+
+
+=== Not Exported ===
+
+verifyLength(List, ZZ)
+				-- check if a partition l has k elements and adds 0s if not
+
+partition2bracket(List,ZZ,ZZ)
+				-- Dictionary function input partition and k,n
+
+output2partition(List) --input redcheckers
+				-- Dictionary function RedCheckers --> partition
+				
+
+output2bracket(List)
+				-- Dictionary
+
+printTree(MutableHashTable)--input node
+
+dist(List,List) -- computes euclidean distance of 2 vectors
+
+moveFlags2Flags (List, List) --input two list of flags (F's, G's)
+
+MovingFlag'at'Root ZZ
+
+notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
+
+
+
+====================================================
+==        LR-makePolynomials.m2 
+====================================================
+
+=== Not Exported ===
+
 
 ====================================================
 ==        LR-resolveNode.m2 

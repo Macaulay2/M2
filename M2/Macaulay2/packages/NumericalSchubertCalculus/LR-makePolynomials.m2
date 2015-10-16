@@ -16,7 +16,7 @@ getB (ZZ,ZZ) := memoize(
     (k,n) -> subsets(n,k) 
     )
 
--- #1: get all partitions not above the current condition lambda
+-- #1: get all partitions not above the current condition lambda (in the Bruhat order)
 getA = method()
 getA (ZZ,ZZ,List) := memoize(
     -- bracket are 1-based... subtracting 1 from everything

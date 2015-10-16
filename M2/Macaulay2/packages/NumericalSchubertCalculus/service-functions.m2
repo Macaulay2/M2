@@ -13,7 +13,7 @@ export {
     "skewSchubertVariety",
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
     "checkNewtonIteration", -- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
-    "solutionsToAffineCoords",
+    "solutionsToAffineCoords", --Temporary! User shouldn't use this function
     "partition2bracket",
     "bracket2partition",
     "randomSchubertProblemInstance"
@@ -22,6 +22,7 @@ export {
 --Functions contained here but not exported:
 ----------------
 -- verifyLength(List, ZZ)
+-- partition2bracket(List,ZZ,ZZ)
 -- output2partition(List) --input redcheckers
 -- output2bracket(List)
 -- printTree(MutableHashTable)--input node
@@ -69,7 +70,7 @@ output2partition(List) := redpos ->(
 		reverse sort toList partitn
 )
 
--- not using this function
+-- not using this function (we use redChkrPos instead)
 bracket2input = method(TypicalValue => List)
 bracket2input(List,ZZ) := (br,n) ->(
      inp := for i to n-1 list NC;
