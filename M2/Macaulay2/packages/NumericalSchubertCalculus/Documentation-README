@@ -1,18 +1,20 @@
 README:
 Functions that are used to see Exported vs. not Exported
 
----- NumericalSchubertCalculus.m2 ----
+====================================================
+==        NumericalSchubertCalculus.m2 
+====================================================
 
 === Exported ===
-"setVerboseLevel", --function to change the amount of information printed on screen while running (levels 0,1,or 2)
-"NSC'DBG", 
-"NSC'VERIFY'SOLUTIONS", 
-"NSC'BLACKBOX", 
-"setFlags",
+
+setVerboseLevel, 
+			--function to change the amount of information printed on screen while running (levels 0,1,or 2)
 solveSchubertProblem
 			---uses homotopies of the Geometrical LR-rule to solve Schubert problems on a Grassmannian
 
+
 === Not Exported ===
+
 redChkrPos 
 				-- given two partitions, computes the positions of the red checkers in the board
 moveRed  
@@ -58,6 +60,7 @@ columnReduce
 isRedCheckerInRegionE
 				-- Boolean to tell if a checker is northwest
 
+
 === Protected Variables ===
 
 Board  -- pair of arrays describing the checkerboard game: [positions.blackCheckers, positions.redCheckers]
@@ -76,9 +79,6 @@ NC = infinity
 FFF = CC
 --FFF = CC_53
 
-ERROR'TOLERANCE = 0.001
-NEWTON'TOLERANCE = 10^-10
-
 ------------------
 -- Debug Level --
 ------------------
@@ -89,3 +89,30 @@ NEWTON'TOLERANCE = 10^-10
 DBG = 1
 VERIFY'SOLUTIONS = true 
 BLACKBOX = false
+
+
+====================================================
+==        LR-resolveNode.m2 
+====================================================
+
+=== Not Exported ===
+
+blackBoxSolve
+				-- used to verify solutions vs. blackbox solver (only if resolveNodes is ran with the options
+				-- VERIFY'SOLUTIONS and BLACKBOX
+verifyStart
+				-- verifies the given solutions at the start of a homotopy
+globalStayCoords
+				-- the global (change of) coordinates of solutions in the LR-homotopy in the Stay Case
+globalSwapCoords
+				-- the global (change of) coordinates of solutions in the LR-homotopy in the Swap Case
+caseSwapStay
+				-- Homotopy done for the cases Swap and Stay
+verifyParent
+				-- Verify if the solution computed with LR-homotopies fits the father pattern (local coordinates)
+solveCases
+				-- This is one of the main things of the algorithm. It decides and transforms the nine cases
+				-- of the LR-homotopy algorithm
+resolveNode
+				-- Recursive function that fills up the information of each node in the whole checkerboard tournament
+				-- This is where ALL the action happens! 
