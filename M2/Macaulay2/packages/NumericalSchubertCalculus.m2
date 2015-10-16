@@ -642,6 +642,10 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
 -- change one column at a time to move solutions
 -- w.r.t. flags A to solutions w.r.t. flags B
 --
+-- CAVEAT:
+--     it generates the polynomial equations using
+--     all minors of the incidence conditions
+--     (not the efficient way later implemented)
 ---------------------------------
 -- Input:
 --    MX --> matrix of local coordinates
@@ -775,6 +779,9 @@ normalizeColumn(Matrix,ZZ,ZZ) := (X,r,j) -> (
 -----------------
 -- This function reduce specific column
 -- using elementary column operations
+--
+-- These reductions are necessary for the
+-- change of coordinates in Ravi's notes
 -----------------
 redCheckersColumnReduce = method(TypicalValue => Matrix)
 redCheckersColumnReduce(Matrix, MutableHashTable) := (X'', father) -> (
@@ -848,8 +855,12 @@ redCheckersColumnReduce2(Matrix, MutableHashTable) := (X'', father) -> (
 -------------------
 -- columnReduce
 -------------------
--- given a matrix of solutions in checkerboard coordinates (w.r.t lambda1,lambda2)
--- we do column row reduction to the solutions
+-- Given a matrix of solutions in checkerboard 
+-- coordinates (w.r.t lambda1,lambda2) we do
+-- column row reduction to the solutions:
+--
+-- Given a solution matrix and the bracket (where 
+-- the pivots are) makes 0's in the columns right to the pivots
 -------------------
 -- input:     S -- matrix of solutions
 --    	      	    assumes the matrix lives in the Schubert cell for l with
@@ -898,7 +909,8 @@ load "NumericalSchubertCalculus/LR-ParameterHomotopy.m2"
 -- Output: 
 --    T - a list of Points that are solutions to H at t=1
 -- Caveat:
---    H should be a _linear_ in t
+--    H should be _linear_ in t
+------------------------------
 trackHomotopyNSC = method(TypicalValue=>List)
 trackHomotopyNSC (Matrix,List) := (H,S) -> (
      Rt := ring H;
@@ -926,12 +938,30 @@ trackHomotopyNSC (Matrix,List) := (H,S) -> (
 ------------------------
 -- isRedCheckerInRegionE
 ------------------------
--- NEEDS to be documented!
+-- Binary function that tells if 
+-- a given red checker is NorthWest to
+-- a the critical black checker. (better explained in the paper) 
+-- 
+-- This function is necessary for
+-- Ravi's change of coordinates
 ----------------------------
 -- Input: 
---     j = number of a red checker
+--     i = coordinates of a red checker
 --     r = critical row
 --     black = black checkers on the board
+---------------------------
+-- Example:
+--
+-- !! Show a better example!!
+--
+--blackCheckersPosition = {0,1,3,4,5,2};
+--redCheckersPosition = {0, NC, NC, 4, NC, NC};
+--
+-- simNode = new MutableHashTable
+-- simNode.Board =  [{0, 1, 2, 4, 5, 3}, {0, infinity, infinity, 4, infinity, infinity}]
+-- simNode.CriticalRow = 2;
+-- isRedCheckerInRegionE(1,simNode)
+---------------------------
 isRedCheckerInRegionE = method()
 isRedCheckerInRegionE(ZZ,MutableHashTable) := (i,node) -> (
      r := node.CriticalRow;

@@ -54,6 +54,10 @@ redCheckersColumnReduce2
 
 columnReduce
 				-- given a solution matrix and the bracket (where the pivots are) makes 0's in the columns right to the pivots
+
+isRedCheckerInRegionE
+				-- Boolean to tell if a checker is northwest
+
 === Protected Variables ===
 
 Board  -- pair of arrays describing the checkerboard game: [positions.blackCheckers, positions.redCheckers]
