@@ -675,7 +675,8 @@ changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutio
 	       RMx := ring MX;
 	       m := numgens RMx;
        	       R2 := (coefficientRing RMx)[t,gens RMx];
-	       Polys := flatten entries squareUpPolynomials(m, makePolynomials(sub(MX,R2),conditions,flagsHomot));
+	       Polys := flatten entries squareUpPolynomials(m, 
+		   makePolynomialsGivenConditionsFlags(sub(MX,R2),conditions,flagsHomot));
 	       A0 := map(RMx,R2,prepend(0_RMx,gens RMx));
 	       A1 := map(RMx,R2,prepend(1_RMx, gens RMx));
 	       solutionsT:=track(Polys/A0, Polys/A1, solutionsS, 
@@ -712,7 +713,9 @@ Rng = FFF[x_{1,1}, x_{1,2}];
 MX = matrix{{x_{1,1}, x_{1,2}}, {1,0}, {0,1}, {0,0}};
 conds = {{1},{1}};
 Flags1 = {random(FFF^4,FFF^4), random(FFF^4,FFF^4)};
-sols = solveSystem (makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i))))_*
+sols = solveSystem (
+    first makePolynomials(MX, apply(#conds,i->(conds#i,Flags1#i)),{})
+    )_*
 Flags2 = {id_(FFF^4)_{1,3,0,2}, rsort id_(FFF^4)} --we should get (0,0) as solution
 solsT = changeFlags(MX, sols/coordinates, (conds, Flags1, Flags2))
 assert(clean_0.0001 matrix solsT == 0) -- check that the solutions are actually (0,0)

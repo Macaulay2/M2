@@ -15,5 +15,7 @@ assert(#S == 194)
 end
 
 restart
+needsPackage "NumericalSchubertCalculus"
+setVerboseLevel 1
 time load "NumericalSchubertCalculus/EXA/1e2221e4-G48.m2"
-
+needsPackage "NumericalAlgebraicGeometry"; setDefault(Software=>BERTINI)

@@ -13,9 +13,9 @@ SchPblm = {({3},id_(FFF^8)),
     ({2},random(FFF^8,FFF^8)),
     ({2},random(FFF^8,FFF^8))};
 conds = SchPblm/first; 
-(X,P,PS) = parametricSchubertProblem(conds,k,n)
+(X,P,PS) = parametricSchubertProblem(conds,k,n);
 needsPackage "NAGtools"
-PH = parametricSegmentHomotopy(PS,X,P)
+PH = parametricSegmentHomotopy(PS,X,P);
 (s0,X,inverse'flags) = oneSolutionForOneInstance(conds,k,n)
 p0 = point{inverse'flags/entries//flatten//flatten}
 {*
