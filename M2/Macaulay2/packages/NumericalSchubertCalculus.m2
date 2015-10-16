@@ -626,19 +626,32 @@ changeFlags(List, Sequence) := (solutionsA, conds'A'B)->( -- solutionsA is a lis
    -- THE SOLUTIONS MIGHT NOT FIT MX (that's why I have an error for some problems)
    solutionsB := changeFlags(MX,solutionsA/(s->solutionToChart(s,MX)),conds'A'B);
    -- the following clean is a hack, instead, we need to do a newton step check
-   -- when we all changeFlags as there is a numerical check in there... 
+   -- when we changeFlags as there is a numerical check in there... 
    -- the following is a hack
    ret := apply(solutionsB, s-> clean(ERROR'TOLERANCE^2,sub(MX, matrix{s})));
+   --print(" changing solutions from flagsA to FlagsB using parameter homotopy\n we verify the returned solutions using newton Iteration");
+   --print(checkNewtonIteration(ret,SchB,(k,n))); --this is not working with the new way to create eqns
    --assert all(ret, s->checkIncidenceSolution(s,SchB));
    ret
    )
 
 ---------------------------------
--- DOCUMENT THIS FUNCTION!!!
+-- changeFlags (recursive call!!!)
 --
 -- This function is doing a parameter homotopy
 -- change one column at a time to move solutions
 -- w.r.t. flags A to solutions w.r.t. flags B
+--
+---------------------------------
+-- Input:
+--    MX --> matrix of local coordinates
+--    solutionsA -> solutions to the problem specialized to flagsA
+--    conds'A'B -> sequence with conditions and flags as follows: 
+--    	  conditions = list of partitions (L3,..., Lm), _not_pairs (partition, flag)
+--    	  flagsA = (A3,...,Am)
+--    	  flagsB = (B3,...,Bm)
+-- Output:
+--    List of solutions to the problem specialized to flagsB
 ----------------------------------
 changeFlags(Matrix, List, Sequence) := (MX, solutionsA, conds'A'B)->( -- solutionsA is a list of lists (of values for the parameters)
    (conditions,flagsA,flagsB) := conds'A'B; 

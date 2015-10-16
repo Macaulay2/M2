@@ -12,7 +12,7 @@ if version#"VERSION" == "1.8.2" then ( -- temporary det bug fix
 export {
     "skewSchubertVariety",
     "checkIncidenceSolution", --this is only for our tests... shouldn't be used by the user
-    "checkNewtonIteration", -- this is for testing only should be removed from the final version
+    "checkNewtonIteration", -- this is for testing only should be removed from the final version (seems not working with the new way to create eqns)
     "solutionsToAffineCoords",
     "partition2bracket",
     "bracket2partition",

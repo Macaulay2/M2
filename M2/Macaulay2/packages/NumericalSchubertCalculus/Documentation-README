@@ -26,16 +26,34 @@ playCheckers
 makeLocalCoordinates
 				-- translates a checkerboard into a matrix with 0s,1s, and variables
 
+solutionToChart
+				-- takes a solution matrix in global coordinates and converts it into local coordinates
+
+changeFlags (better name?) (only used when LinearAlgebra is set to false!)
+				-- function to convert solutions written wrt FlagsA to solutions written wrt FlagsB
+				-- it is called recursively: first only makes a change of coordinates (linear transformation)
+				-- the other call makes parameter homotopy changing one column at the time
+
 toRawSolutions
 				-- takes solutions as nxk matrices and writes a list of values that 
 						match with the variables of the local coordinates coordX in the 
 						checkerboard variety (mainly used for writing solutions for the homotopy functions)
 
-changeFlags
+normalizeColumn
+				-- given a matrix X, will create a 1 in position X_(r,c) by normalizing the column, i.e.
+				-- multiplying the column c by the multip. inverse of X_(r,c) leaving the other columns intact
 
+redCheckersColumnReduce
+				-- uses elementary operations to normalize columns according with redChecker positions
 
---   changeFlags  -- better name?
+redCheckersColumnReduceSwap
+				-- specific column reduction used in Ravi's change of coordinates for the swapping move
 
+redCheckersColumnReduce2
+				-- specific column reduction used in Ravi's change of coordinates
+
+columnReduce
+				-- given a solution matrix and the bracket (where the pivots are) makes 0's in the columns right to the pivots
 === Protected Variables ===
 
 Board  -- pair of arrays describing the checkerboard game: [positions.blackCheckers, positions.redCheckers]
