@@ -171,7 +171,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    r'Mdprime'father'movetype'black'red'red'sorted) -> (
 --
 -- DESCRIPTION :
---   Applies a homotopy in the cases of swap or stay.
+--   Applies a homotopy in the cases of swap or stay. II, III(a), and III(b) from the paper.
 --
 -- IN :
 --    node : see the resolveNode documentation for all items
@@ -204,7 +204,7 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
    -- number of the first moving red checker
    local M'X'; -- homotopy in global coordinates
    -- (produced by each case) these are used only in SWAP cases
-   if member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- case "STAY"
+   if member(movetype,{{2,0,0},{2,1,0},{1,1,0}}) then ( -- stay case, case II in paper
       M'X' = globalStayCoords(father,(Rt,Xt,t),(red,red'sorted),(r,n,M))
    ) -- end case "STAY" 
    else
@@ -329,8 +329,8 @@ solveCases(MutableHashTable,List,Matrix) := (node,
       parent'solutions :=  -- this is where the main action happens
          if node.Solutions == {} then
             {} -- means: not implemented
-         else if movetype#1 == 2 then ( -- case (_,2), where the 
-	     --   conditions on the k-plane do not change, case I in the paper
+         else if movetype#1 == 2 then ( -- case (_,2).  The conditions on the k-plane do not change.
+	     --  This is case I in the paper, and is just a coordinate change.
             apply(node.Solutions, X -> (
                X'' := (X^{0..r-1}) || (-X^{r+1})
                                    || (X^{r}+X^{r+1}) ||( X^{r+2..n-1});
