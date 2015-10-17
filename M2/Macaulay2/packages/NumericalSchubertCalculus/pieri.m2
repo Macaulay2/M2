@@ -22,10 +22,11 @@ solutionsHash := new MutableHashTable;
 -- Authors: Anton Leykin
 --          Abraham Martin del Campo
 --          Frank Sottile
+--          Jan Verschelde
 --
 -- Date: April 5, 2012
 --
--- Last Update: August 19, 2013
+-- Last Update: October 16, 2015
 ------------------------------------
 
 -- needsPackage "NumericalAlgebraicGeometry"
@@ -103,7 +104,8 @@ createRandomFlagsForSimpleSchubert(Sequence, List, List) := (kn,l,m)->(
 	 l = verifyLength(l, k);
 	 m = verifyLength(m, k);
    d := k*(n-k)-sum(l)-sum(m);
-   apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
+   --apply(d, i->matrix apply(n-k,i->apply(n,j->random FFF)))
+   apply(d, i-> random(FFF^(n-k),FFF^n))
    )
 
      
@@ -153,7 +155,7 @@ solveSimpleSchubert(Sequence,List,List,List) := (kn,l,m,G)->(
       ---------------------
       assert all(solutionsHash#{l,m,G}, s->norm sub(matrix{T},matrix{s}) < 1e-3);
       solutionsHash#{l,m,G}
-   )
+      )
 )
 
 

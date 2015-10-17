@@ -1,4 +1,5 @@
 if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions" else GateMatrix = List
+needsPackage "NAGtypes"
 ---------------------------------
 -- squareUpPolynomials
 ---------------------------------
@@ -16,7 +17,7 @@ getB (ZZ,ZZ) := memoize(
     (k,n) -> subsets(n,k) 
     )
 
--- #1: get all partitions not above the current condition lambda
+-- #1: get all partitions not above the current condition lambda (in the Bruhat order)
 getA = method()
 getA (ZZ,ZZ,List) := memoize(
     -- bracket are 1-based... subtracting 1 from everything
@@ -127,19 +128,30 @@ makePolynomials(Matrix, List, List) := o -> (MX, conds, sols) -> if o.Strategy =
     C := coefficientRing R;
     k = numColumns MX; 
     n = numRows MX;   
-    assert all(conds, c->c=={1}); -- assuming all partitions are {1}  
-    sols' := sols / matrix;
-    I := sum(#conds, i ->( 
+    assert all(conds, c->#first c==1); -- assuming all partitions are {a}  
+    sols = sols / (s->matrix {s});
+    sols' := sols;
+    L := symbol L; 
+    Ilist := apply(#conds, i ->( 
 	    F := last conds#i;
-	    -- Finv := solve(F,id_(FFF^n));
-	    L := symbol L;
-	    m := 2*k; -- number of new variables
-    	    RL := C monoid([gens R, L_(i,1)..L_(i,m)]);
-	    colL := transpose matrix{take(gens RL,-m)}; 	    
-    	    ideal ((MX|F_{0..k-1})*colL) + ideal (random(C^1,C^k)*colL - 1)
+	    Finv := solve(F,id_(FFF^n));
+	    m := k; -- number of new variables
+    	    R = C monoid([gens R, L_(i,1)..L_(i,m)]);
+	    colL := transpose matrix{take(gens R,-m)}; 	    
+    	    --MM := MX|F_{0..k-1}; for this m := 2*k above
+	    a := first first conds#i;
+	    FinvMX := Finv*MX;
+	    MM := FinvMX^{n-k-a+1..n-1};
+	    slice := random(C^1,C^m);
+	    sols' = apply(#sols, i->sols'#i|transpose solve(
+		    evaluate(MM,matrix{{0}}|sols#i)||slice,
+		    map(C^(k+a-1),C^1,0)||matrix{{1}},
+		    ClosestFit=>true
+		    ));
+	    ideal (sub(MM,R)*colL) + ideal ((slice*colL)_(0,0) - 1)
 	    ));
-    (I,sols') 
-    ) error "unknown Strategy"
+    (sum(Ilist,I->sub(I,R)),sols'/entries//flatten) 
+    ) else error "unknown Strategy"
 
 -- ******* old way (used in changeFlags) ********************************
 makePolynomialsGivenConditionsFlags = method()

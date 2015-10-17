@@ -1,3 +1,4 @@
+export {"randomSchubertProblemSolution"}
 needsPackage "NumericalAlgebraicGeometry"
 if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
 parametricSchubertProblem = method()
@@ -20,6 +21,7 @@ parametricSchubertProblem (List,ZZ,ZZ) := (conds,k,n) -> (
     (PX,X) := skewSchubertVariety((k,n),c1,c2,Inputs=>symbol x);
     (X,P,makeSquareSystem(transpose PX,remaining'conditions'flags))
     )
+
 oneSolutionForOneInstance = method()
 oneSolutionForOneInstance (List,ZZ,ZZ) := (conds,k,n) -> (
     twoconds := take(conds,2);
@@ -42,4 +44,13 @@ oneSolutionForOneInstance (List,ZZ,ZZ) := (conds,k,n) -> (
 	    --F
 	));
     (p0,X0,remaining'inverse'flags)
+    )
+
+randomSchubertProblemSolution = method()
+randomSchubertProblemSolution (List,ZZ,ZZ) := (problem,k,n) -> (
+    (p,X,remaining'inverse'flags) := oneSolutionForOneInstance(problem/first,k,n);
+    ID := id_(FFF^n);
+    flags1 := {ID,rsort ID} | remaining'inverse'flags/(F->solve(F,id_(FFF^n)));
+    flags2 := problem/last;
+    changeFlags({X},(problem/first,flags1,flags2))
     )
