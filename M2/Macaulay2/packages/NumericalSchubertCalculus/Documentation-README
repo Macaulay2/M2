@@ -61,24 +61,6 @@ isRedCheckerInRegionE
 				-- Boolean to tell if a checker is northwest
 
 
-=== Protected Variables ===
-
-Board  -- pair of arrays describing the checkerboard game: [positions.blackCheckers, positions.redCheckers]
-IsResolved -- Flag to know if a specific node in the checkerboard game is already resolved or not (values only true or false)
-Fathers  -- HashTable with the information of the previous checkerboard game in the tournament
-Children  -- HashTable with the information of the next checkerboard game
-FlagM  -- local coordinates of the moving flag at a specific internal node inside a game
-CriticalRow  -- the row/column that is moving at the current internal node inside a game
-Solutions  -- the solutions of the checkerboard variety w.r.t. the local coordinates
-SolutionsSuperset -- (temporary) the solutions of the checkerboard variety w.r.t. local coordinates, computed with the BlackBox Solver
-
--- NC means no checker in that column
-NC = infinity
-
--- OUR working FIELD
-FFF = CC
---FFF = CC_53
-
 ------------------
 -- Debug Level --
 ------------------
@@ -86,9 +68,6 @@ FFF = CC
 -- 1 = print progress info and time main processes
 -- 2 = ... + checkerboard steps info
 -- >2 = new experimental stuff kicks in
-DBG = 1
-VERIFY'SOLUTIONS = true 
-BLACKBOX = false
 
 ====================================================
 ==        pieri.m2 
@@ -103,6 +82,19 @@ createRandomFlagsForSimpleSchubert
 solveSimpleSchubert
 				-- Solves a simple Schubert problem using Pieri's homotopy algorithm
 				-- (assumes user gives two partitions l,m and a bunch of flags)
+
+
+=== Not Exported ===
+
+generateChildren
+
+positionVariableChildren
+
+precookPieriHomotopy
+
+solveEasy
+
+trackSimpleSchubert
 
 
 ====================================================
@@ -154,13 +146,12 @@ MovingFlag'at'Root ZZ
 
 notAboveLambda(List,ZZ,ZZ) -- input(lambda, k,n)
 
-
-
 ====================================================
 ==        LR-makePolynomials.m2 
 ====================================================
 
 === Not Exported ===
+
 
 
 ====================================================
@@ -188,3 +179,20 @@ solveCases
 resolveNode
 				-- Recursive function that fills up the information of each node in the whole checkerboard tournament
 				-- This is where ALL the action happens! 
+
+
+====================================================
+==        LR-ParameterHomotopy.m2 
+====================================================
+
+=== Exported ===
+
+randomSchubertProblemSolution
+				-- Given Schubert Problem conditions gives a random instance together with one solution
+
+=== Not Exported ===
+
+oneSolutionForOneInstance
+
+parametricSchubertProblem
+

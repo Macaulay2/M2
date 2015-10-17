@@ -6,8 +6,11 @@
 
 1e9-G36.m2          Seed 21:Singularity but Finds all 42 solutions with Seed 5 in 3m4.142s
 
-1e43e3111-G48.m2		Seed 0: Singularity encountered for M2 and PHC but Bertini finds all 10 solutions in ~97.4706s
-
+2e8-G48.m2          126 solutions found and tested with all 3 engines:
+                       M2engine: 1819.89s = 30m 19.89s
+                       BERTINI:  1771.24s
+                       PHCPACK:  Singularity encountered
+                                
 
 =========   Examples that WORK go here. =======================
 
@@ -26,6 +29,10 @@
 																M2engine: 4m 25.335s
 																BERTINI:  2m41.881s
 																PHCPACK:  1m51.526s
+
+
+more
+
 
 -----  Other: -----
 

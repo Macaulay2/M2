@@ -2,12 +2,7 @@ recursionLimit=1000
 needsPackage "NumericalSchubertCalculus"
 needsPackage "NumericalAlgebraicGeometry"
 
-setDefault(Software=>M2engine) --"singularity"
-setDefault(Software=>BERTINI) -- works
--- setDefault(Software=>PHCPACK) --"singularity" with randSeed 23 and 0
-
 setRandomSeed 23
-
 
 -- 126 4-planes in C^8 wrt  random flags
 --  2^8  
@@ -15,9 +10,25 @@ setRandomSeed 23
 SchPblm = randomSchubertProblemInstance( 
     {{2},{2},{2},{2},{2},{2},{2},{2}},4,8);
     
+setDefault(Software=>M2engine) --works ~1801.89s
+
 time S = solveSchubertProblem(SchPblm,4,8);
 
 assert(#S == 126)
+
+setDefault(Software=>BERTINI) -- works 1771.24s
+
+time S = solveSchubertProblem(SchPblm,4,8);
+
+assert(#S == 126)
+
+
+setDefault(Software=>PHCPACK) -- "Singularity"
+
+time S = solveSchubertProblem(SchPblm,4,8);
+
+assert(#S == 126)
+
 
 end
 
