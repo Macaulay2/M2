@@ -12,20 +12,20 @@ SchPblm = randomSchubertProblemInstance(
     
 setDefault(Software=>M2engine) --works ~1801.89s
 
-time S = solveSchubertProblem(SchPblm,4,8);
+elapsedTime S = solveSchubertProblem(SchPblm,4,8);
 
 assert(#S == 126)
 
 setDefault(Software=>BERTINI) -- works 1771.24s
 
-time S = solveSchubertProblem(SchPblm,4,8);
+elapsedTime S = solveSchubertProblem(SchPblm,4,8);
 
 assert(#S == 126)
 
 
 setDefault(Software=>PHCPACK) -- "Singularity"
 
-time S = solveSchubertProblem(SchPblm,4,8);
+elapsedTime S = solveSchubertProblem(SchPblm,4,8);
 
 assert(#S == 126)
 
