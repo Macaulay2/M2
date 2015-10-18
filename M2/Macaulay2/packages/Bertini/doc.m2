@@ -187,8 +187,8 @@ doc ///
     makeB'InputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
-    makeSamplePointFile(storeBM2Files,1,0,2)
-    makeMembershipFile(storeBM2Files,NameWitnessPointFile=>"sample_point_file")
+    makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
+    makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
     importIncidenceMatrix(storeBM2Files)
       
 ///;
@@ -218,8 +218,8 @@ doc ///
     makeB'InputFile(storeBM2Files,
     	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
     runBertini(storeBM2Files)
-    makeSamplePointFile(storeBM2Files,1,0,2)
-    makeMembershipFile(storeBM2Files,NameWitnessPointFile=>"sample_point_file")
+    makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
+    makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
     makeMembershipFile(storeBM2Files,TestSolutions=>{{1,2,0},{3,2,1}})
     importIncidenceMatrix(storeBM2Files)
       
@@ -269,12 +269,12 @@ doc ///
 
 doc ///
  Key
-   makeWitnessSetFile
-   (makeWitnessSetFile,String,Number)
+   makeWitnessSetFiles
+   (makeWitnessSetFiles,String,Number)
  Headline
    This function creates a witness point file and a slice file. 
  Usage
-   makeWitnessSetFile(theDir,d) 
+   makeWitnessSetFiles(theDir,d) 
  Inputs
    theDir:String
      The directory where Bertini will store files and the witness_data file and input file are located.
@@ -289,42 +289,45 @@ doc ///
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
-     makeWitnessSetFile(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
+     makeWitnessSetFiles(storeBM2Files,2)--creats a witness point file for all dimension 2 components and a linear slice file for dimension 2 components. 
      L=importSliceFile(storeBM2Files) 
 --
-     makeWitnessSetFile(storeBM2Files,2,
-       NameWitnessPointFile=>"custom_name_witness_points",--creates a witness point file with a custom name. 
+     makeWitnessSetFiles(storeBM2Files,2,
+       NameSolutionsFile=>"custom_name_witness_points",--creates a witness point file with a custom name. 
        SpecifyComponent=>0)  --Component indexing begins at 0. The function creates a witness point file for only a particular component. 
      L1=importSliceFile(storeBM2Files) 
+     S0=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"custom_name_witness_points")
+--
+     makeWitnessSetFiles(storeBM2Files,2,
+       NameSolutionsFile=>"custom_name_witness_points")
+     S=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"custom_name_witness_points")
       
 ///;
 
 doc ///
  Key
-   makeSamplePointFile
-   (makeSamplePointFile,String,Number,Number,Number)
+   makeSampleSolutionsFile
+   (makeSampleSolutionsFile,String,Number)
  Headline
    This function samples points from a component by performing a Bertini TrackType 2.
  Usage
-   makeSamplePointFile(theDir,d,c,s) 
+   makeSampleSolutionsFile(theDir,s) 
  Inputs
    theDir:String
      The directory where Bertini will store files and the witness_data file and input file are located.
-   d:Number 
-     The dimension of the component that we want to sample from.
-   c:Number
-     The component number that we will sample from (indexing starts at 0).
+   s:Number 
+     The number of sample points we want.
  Description
    Text
-     This function does a track type 2 Bertini run creating "sample_point_file" that contains a list of witness points in the standard Bertini format.     
+     This function does a track type 2 Bertini run creating "sample_solutions_file" that contains a list of witness points in the standard Bertini format.     
    Example
      makeB'InputFile(storeBM2Files,
        AVG=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
-     makeSamplePointFile(storeBM2Files,2,0,100)--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
-     theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_point_file") 
+     makeSampleSolutionsFile(storeBM2Files,100,SpecifyComponent=>{2,0})--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
+     theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file") 
       
 ///;
 

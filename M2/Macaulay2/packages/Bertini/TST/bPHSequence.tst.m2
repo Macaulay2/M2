@@ -20,7 +20,7 @@ makeB'InputFile(storeBM2Files,
     B'Configs=>{{PARAMETERHOMOTOPY,2}},---NOTE THE 2!
     B'Polynomials=>{"x^2+u"}
     )
-writeParameterFile(storeBM2Files,{-2},NameParameterFile=>"final_parameters")
+writeParameterFile(storeBM2Files,{ -2},NameParameterFile=>"final_parameters")
 runBertini(storeBM2Files)
 
 assert(#importSolutionsFile(storeBM2Files)==2)

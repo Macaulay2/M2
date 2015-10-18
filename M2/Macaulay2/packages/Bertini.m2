@@ -8,8 +8,8 @@ newPackage(
      Email=> "elizabeth.gross@sjsu.edu",
      HomePage => "http://math.sjsu.edu/~egross"},
     {Name => "Jose Israel Rodriguez",
-     Email => "jo.ro@ND.edu",
-     HomePage => "http://www3.nd.edu/~jrodri18/"},
+     Email => "JoIsRo@UChicago.edu",
+     HomePage =>"http://home.uchicago.edu/~joisro"},
     {Name => "Dan Bates",
      Email => "bates@math.colostate.edu",
      HomePage => "http://www.math.colostate.edu/~bates"}, 
@@ -116,7 +116,7 @@ export {
   "importParameterFile",   --need doc
   "b'TraceTest",
   "calculateB'Trace",
-  "UseStartPoints",
+  "UseStartPointsFirst",
   "b'PHSequence"   ,
   "b'PHMonodromyCollect",
 --  "b'PHMonodromyLoop",
@@ -175,14 +175,14 @@ export {
   "DeflationsNeeded",
   "B'WitnessSet",
   "SpecifyDim",
-  "NameWitnessSetFile",
+  "NameWitnessSliceFile",
   "importSliceFile",
   "TextScripts",
-  "NameWitnessPointFile",
+  "NameWitnessSolutionsFile",
   "SpecifyComponent",
-  "makeWitnessSetFile",
-  "makeSamplePointFile",
-  "NameSamplePointFile",
+  "makeWitnessSetFiles",
+  "makeSampleSolutionsFile",
+  "NameSampleSolutionsFile",
   "TestSolutions",
   "makeMembershipFile",
   "ComponentNumber"
@@ -1557,7 +1557,7 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
     for onePolynomialIndex to  #o.B'Polynomials-1 do (
       if class ((o.B'Polynomials)_onePolynomialIndex)===B'Section 
       then (
-	if not member(NameB'Section,keys ((o.B'Polynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with an unset NameB'Section option. ");
+	if  member(NameB'Section,keys ((o.B'Polynomials)_onePolynomialIndex)) then print ("Warning: Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with a set NameB'Section option that will be ignored. ");
 	if not member(B'SectionString,keys ((o.B'Polynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with an unset B'SectionString option. ");
 	openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<((o.B'Polynomials)_onePolynomialIndex)#B'SectionString<< " ; "<<endl << endl   
 	)
@@ -1570,14 +1570,14 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
     close openedInputFile        		);
 
 
-makeWitnessSetFile = method(TypicalValue => Nothing, Options=>{
-	NameWitnessSetFile=>"linear_slice_file",
-    	NameWitnessPointFile=>"witness_point_file",
+makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
+	NameWitnessSliceFile=>"linear_slice_file",
+    	NameSolutionsFile=>"witness_solutions_file",
 	NameB'InputFile=>"input",
 	SpecifyComponent=>-2,
 	InputFileDirectory=>{}
 		})
-makeWitnessSetFile(String,Number) := o ->(filesGoHere,theDim)->(
+makeWitnessSetFiles(String,Number) := o ->(filesGoHere,theDim)->(
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
 --    if filesGoHere_-1=!="/" then filesGoHere=filesGoHere|"/";     
@@ -1587,20 +1587,28 @@ makeWitnessSetFile(String,Number) := o ->(filesGoHere,theDim)->(
     PFile:= openOut(filesGoHere|"/"|tempfileName); 
     PFile << toString(theDim) << endl ;
     PFile << toString(o.SpecifyComponent) << endl ;
-    PFile << toString(o.NameWitnessPointFile) << endl ;
-    PFile << toString(o.NameWitnessSetFile) << endl ;
+    PFile << toString(o.NameSolutionsFile) << endl ;
+    PFile << toString(o.NameWitnessSliceFile) << endl ;
     close PFile;
     runBertini(filesGoHere,TextScripts=>tempfileName);
     removeFile(filesGoHere|"/"|tempfileName);    
         )
 
 
-makeSamplePointFile = method(TypicalValue => Nothing, Options=>{
-	NameSamplePointFile=>"sample_point_file",
+makeSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
+	NameSolutionsFile=>"sample_solutions_file",
 	NameB'InputFile=>"input",
-	InputFileDirectory=>{}
+	InputFileDirectory=>{},
+	SpecifyComponent=>{}
 		})
-makeSamplePointFile(String,Number,Number,Number) := o ->(filesGoHere,theDim,theComponent,theNumberOfPoints)->(
+makeSampleSolutionsFile(String,Number) := o ->(filesGoHere,aNumber)->(    
+    theNumberOfPoints:=aNumber;
+    if o.SpecifyComponent==={} then error"SpecifyComponent option must be set to a point or a list {dimension,component number}.";
+    if  class o.SpecifyComponent===List     then (    
+      theDim:=(o.SpecifyComponent)_0;
+      theComponent:=(o.SpecifyComponent)_1) else if class o.SpecifyComponent===Point then(
+      theDim=(o.SpecifyComponent)#Dimension;
+      theComponent=(o.SpecifyComponent)#ComponentNumber);         
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
     if theNumberOfPoints<1 then error" The number of sample points should be positive. ";
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
@@ -1613,14 +1621,14 @@ makeSamplePointFile(String,Number,Number,Number) := o ->(filesGoHere,theDim,theC
     PFile << toString(theComponent) << endl ;
     PFile << toString(theNumberOfPoints) << endl ;
     PFile << "0" << endl ;    
-    PFile << toString(o.NameSamplePointFile) << endl ;
+    PFile << toString(o.NameSolutionsFile) << endl ;
     close PFile;
     runBertini(filesGoHere,TextScripts=>tempfileName);
     removeFile(filesGoHere|"/"|tempfileName)            )
 
 
 makeMembershipFile = method(TypicalValue => Nothing, Options=>{
-	NameWitnessPointFile=>"member_points",
+	NameSolutionsFile=>"member_points",
 	NameB'InputFile=>"input",
 	InputFileDirectory=>{},
 	TestSolutions=>{},
@@ -1628,11 +1636,11 @@ makeMembershipFile = method(TypicalValue => Nothing, Options=>{
 		})
 makeMembershipFile(String) := o ->(filesGoHere)->(
     if o.TestSolutions=!={} then writeStartFile(filesGoHere,o.TestSolutions,
-	NameStartFile=>o.NameWitnessPointFile,
+	NameStartFile=>o.NameSolutionsFile,
 	UsePrecision=>o.UsePrecision	);
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
-    if not fileExists(filesGoHere|"/"|o.NameWitnessPointFile) then error("The file "|o.NameWitnessPointFile|" does not exist. ");
-    copyFile(filesGoHere|"/"|o.NameWitnessPointFile,filesGoHere|"/member_points");    
+    if not fileExists(filesGoHere|"/"|o.NameSolutionsFile) then error("The file "|o.NameSolutionsFile|" does not exist. ");
+    copyFile(filesGoHere|"/"|o.NameSolutionsFile,filesGoHere|"/member_points");    
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
 --    if filesGoHere_-1=!="/" then filesGoHere=filesGoHere|"/";     
 --    if not fileExists(filesGoHere|"/witness_data") then error"witness_data file does not exist. ";
@@ -1654,7 +1662,7 @@ makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,Number
 	NameB'InputFile=>o.NameB'InputFile,
 	B'Configs=>o.B'Configs|{{"TRACKTYPE",-4}},
 	AVG=>theVars,
-	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1))#B'SectionString)
+	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#B'SectionString)
 	))
 
 replaceFirstLine = method(TypicalValue => Nothing, Options=>{
@@ -1666,7 +1674,7 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
 
 calculateB'Trace = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",---we will read these start points.
-	NameFuntionFile=>"function",---the traces will be written to this file.
+	NameFuntionFile=>"calculatedTrace",---the traces will be written to this file.
 	NameB'InputFile=>"inputTT"---this file should be created prior to calling the calculateB'Trace function.
 	})
 calculateB'Trace(String) := o ->(
@@ -1688,8 +1696,8 @@ b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory conta
 --	NameSolutionsFile=>"nonsingular_solutions",		
 	InputFileDirectory=>{},
 	B'Exe=>BERTINIexe,
-	ParameterValues=>{.5,1},
-	UseStartPoints=>true	})
+	ParameterValues=>{0,.5,1},
+	UseStartPointsFirst=>false	})
 b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoordinates)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
@@ -1706,7 +1714,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     makeB'TraceInput(storeFiles,NumberOfPoints,NumberOfCoordinates,NameB'InputFile=>"inputTTjade");
     print "tt2";
     runCount:=1;
-    if o.UseStartPoints===true then (
+    if o.UseStartPointsFirst===true then (
       print "tt3";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
@@ -1774,16 +1782,16 @@ valueBM2(String) := o->(aString)->(
 
   
 importSliceFile=method(TypicalValue=>String,Options=>{
-	NameWitnessSetFile=>"linear_slice_file"})
+	NameWitnessSliceFile=>"linear_slice_file"})
 importSliceFile(String) := o->(aString)->(
     if aString_-1=!="/" then aString=aString|"/";
-    allInfo:=lines get(aString|o.NameWitnessSetFile);
+    allInfo:=lines get(aString|o.NameWitnessSliceFile);
     theConstants:={};
     theLinearSystems:={};
     for aLine in allInfo do (
       sepLine:=separate("=",aLine);
-      print sepLine;
-      print ( #sepLine);
+--      print sepLine;
+--      print ( #sepLine);
       if #sepLine==2 then (
 	if #select("const",sepLine_0)==1
 	then theConstants=append(theConstants,{sepLine_0,
@@ -2333,7 +2341,7 @@ b'PHMonodromyCollect(String) := o ->(storeFiles)->(
     breakLoop:=false;
     if o.SpecifyLoops=!=false then listsOfListsOfParameterValues:=o.SpecifyLoops;
     while not breakLoop do(
-      if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 3-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
+      if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 2-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
 	print ("Monodromy loop number",loopCount);
@@ -2456,7 +2464,7 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
       bP={centroidT};
       print "base parameters:";
       normalizedTs:=for i in critTs list i-centroidT;--we subtract the centroidT from each critical point to treat centroidT as the origin
-      pizzaRadius:=max(normalizedTs/abs+for i in normalizedTs list 1);--this is the maximum distance plus .5 from a critical t and the centroid t
+      pizzaRadius:=max(normalizedTs/abs)+ 1;--this is the maximum distance plus 1 from a critical t and the centroid t
       --these refer to the arguments of the endpoints with respect to the centroid
       someEndpoints:= sort( normalizedTs/log/imaginaryPart);--this is the angle of each critical t wrt to the centroid
       print (1/(2*pi)*someEndpoints);
@@ -2635,7 +2643,7 @@ makeB'Slice(List,List) := o ->(sliceType,multipleVariableGroups)->(
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===MutableHashTable then  theMultiProjectivePoint={o.ContainsPoint#Coordinates};
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===VisibleList then  theMultiProjectivePoint={o.ContainsPoint};
     if o.ContainsPoint==={} and o.ContainsMultiProjectivePoint==={} then theMultiProjectivePoint=for i in sliceType list {};
-    print theMultiProjectivePoint;
+--    print theMultiProjectivePoint;
     for aSlice to #sliceType-1 do(
 --
       oneVariableGroup:=multipleVariableGroups_(sliceType_aSlice);
@@ -2765,6 +2773,26 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bPHSequence.tst.m2")
 
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bPHMonodromyCollect.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeBSection.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeBSlice.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeWitnessSetFiles.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeMembershipFile.tst.m2")
 ///
 
 ---newtst
