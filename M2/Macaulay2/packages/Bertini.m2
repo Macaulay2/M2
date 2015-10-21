@@ -2451,39 +2451,40 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
     --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
     loopCount:=0;
     breakLoop:=false;
+    ---If BranchPoints is specificied we go through the follow if-then statements. 
     if o.BranchPoints=!=false and #bP =!=1 then error "If BranchPoints are specified then there can only be one parameter.";
     if o.BranchPoints=!=false then (
       critTs:=(o.BranchPoints);	
-      centroidT:=sum critTs/#critTs+0;--+.05*ii-.03;--this is the average value of the crtitical ts.
-      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"final_parameters");
-      runBertini(storeFiles);
-      copyFile(storeFiles|"nonsingular_solutions",storeFiles|"ggStartJade");
-      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"ggStartParametersJade");      
+--      centroidT:=sum critTs/#critTs+0;--+.05*ii-.03;--this is the average value of the crtitical ts.
+      centroidT:=bP_0;
+--      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"final_parameters");
+--      runBertini(storeFiles);
+--      copyFile(storeFiles|"nonsingular_solutions",storeFiles|"ggStartJade");
       solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
--------------------
-      bP={centroidT};
-      print "base parameters:";
+      writeParameterFile(storeFiles,bP,NameParameterFile=>"ggStartParametersJade");      
+--      bP={centroidT};
+--      print "base parameters:";
       normalizedTs:=for i in critTs list i-centroidT;--we subtract the centroidT from each critical point to treat centroidT as the origin
       pizzaRadius:=max(normalizedTs/abs)+ 1;--this is the maximum distance plus 1 from a critical t and the centroid t
       --these refer to the arguments of the endpoints with respect to the centroid
       someEndpoints:= sort( normalizedTs/log/imaginaryPart);--this is the angle of each critical t wrt to the centroid
-      print (1/(2*pi)*someEndpoints);
+--      print (1/(2*pi)*someEndpoints);
       mostPositiveAngle:=max(someEndpoints);
       mostNegativeAngle:=min(someEndpoints);
       moreEndpoints:=prepend(mostPositiveAngle-2*pi, 
     	append(someEndpoints,mostNegativeAngle+2*pi));--we include extra boundary endpoints on the pizza so we can easily get the midangle
-      print (1/(2*pi)*moreEndpoints);
+--      print (1/(2*pi)*moreEndpoints);
       allEndPoints:=flatten append(
     	for i from 1 to #moreEndpoints-2 list {
     	1/2*(moreEndpoints_(i-1)+moreEndpoints_i),
 	moreEndpoints_i},
         1/2*(moreEndpoints_-2+moreEndpoints_-1));--this list includes the angle of each critical t and the midangle between each nearby pair
-      print (1/(2*pi)*allEndPoints);
+--      print (1/(2*pi)*allEndPoints);
       parameterAngles:=for i to #critTs-1 list {
         {allEndPoints_(2*i)},    
     	{allEndPoints_(1+2*i)},    
         {allEndPoints_(2+2*i)} };      
-     for i in parameterAngles do print ((1/(2*pi))*flatten i);
+--     for i in parameterAngles do print ((1/(2*pi))*flatten i);
       if not(#allEndPoints==2*#critTs+1) then error "A mistake was made. An unexpected solution was found or a numerical error occurred.";
       --these above we were working with angles of the imaginary numbers with tCentroid as the origin. Now we renormalize so that 0 is the origin and we are in the standard complex plane realPart+imanginaryPary*ii
       allLandMarkers:=for i to #allEndPoints-1 list pizzaRadius*exp(ii*allEndPoints_i)+centroidT;
@@ -2492,7 +2493,7 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
         {allLandMarkers_(2*i)},    
     	{allLandMarkers_(1+2*i)},    
         {allLandMarkers_(2+2*i)} });      --the tip of the pizza, ie. the centroid will be appened in the b'PHSequence below.
-    print ("ggPVS");
+--    print ("ggPVS");
     for i in listsOfListsOfParameterValues do print (((flatten i)));
     theGaloisG:={};
     loopFailures:=0;
@@ -2500,9 +2501,9 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
       if (o.BranchPoints===false) then listsOfListsOfParameterValues={for i to 3-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
-	print ("loopCount",loopCount);
-    	print (	 flatten   append(listsOfParameterValues,bP));	
-    	print "Go into b'PHSequence.";
+--	print ("loopCount",loopCount);
+--    	print (	 flatten   append(listsOfParameterValues,bP));	
+--    	print "Go into b'PHSequence.";
     	b'PHSequence(storeFiles,
 	    append(listsOfParameterValues,bP),
 	    B'Exe=>o.B'Exe,
@@ -2511,14 +2512,14 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 	    SaveData=>true,
 	    NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
 	    );
-    	print "Out of b'PHSequence.";
+--    	print "Out of b'PHSequence.";
 --	print ".5";
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	permutedSols:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
     	copyFile(storeFiles|"ggStartJade",storeFiles|"start");
         trackingSucess:=(#solCollection==#permutedSols);
-	print ("trackingSucess: ",trackingSucess);
-	print (#solCollection,#permutedSols);
+--	print ("trackingSucess: ",trackingSucess);
+--	print (#solCollection,#permutedSols);
         if not trackingSucess then (
 	    loopFailures=loopFailures+1;
 	    print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
