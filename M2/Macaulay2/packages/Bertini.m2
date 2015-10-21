@@ -23,7 +23,7 @@ newPackage(
   DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
-)
+) 
 
 export { 
   "OrderPaths",
@@ -64,25 +64,7 @@ export {
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
   "REGENSTARTLEVEL",
- -- "SpecifyPoints",
- -- "SpecifyCoordinates",
- -- "PrintNotes",
- -- "InputFilesName",--depracated
- -- "SolutionType",--depracated
- -- "AllowStrings",--depracated
- -- "SubFunctions"
- -- "OutputLocation",
- -- "B'InputFile",--depracated
- -- "B'StartFile",--depracated
- -- "B'StartParameters",--depracated
- "ParameterValues",
-  --"MonodromyStart",
-  --"NumberOfLoops",
-  --"MonodromyTolerance",
-  --"NumberOfWrites",
-  --"MonodromyUpperBound",
-  --"WriteOnly",
-  --"SpecifyDirectory"
+  "ParameterValues",
   "NameB'InputFile",--This option allows us to change the name of the input file.
   "NameParameterFile",
   "NameSolutionsFile",
@@ -119,7 +101,6 @@ export {
   "UseStartPointsFirst",
   "b'PHSequence"   ,
   "b'PHMonodromyCollect",
---  "b'PHMonodromyLoop",
   "importSolutionsFile",
   "importIncidenceMatrix",
   "SaveData",
@@ -146,7 +127,7 @@ export {
   "SelectVarGroup",
   "B'SectionString",
   "NameB'Section",
-  "ContainsMultiProjectivePoint",
+  "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
   "NameB'Slice",
   "ListB'Sections",
   "makeB'TraceInput",
@@ -159,7 +140,7 @@ export {
   "readFile",
   "valueBM2",
   "NameMainDataFile",
-  "linesPerSolutions",
+--  "linesPerSolutions",
   "PathNumber",
   "FinalTValue",
   "MaxPrecisionUtilized",
@@ -2638,7 +2619,6 @@ makeB'Slice(List,List) := o ->(sliceType,multipleVariableGroups)->(
       else (
         theSliceSpecifiedCoefficients=o.B'NumberCoefficients;
         theSliceNumberCoefficients=o.B'NumberCoefficients));    
---
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===MutableHashTable then  theMultiProjectivePoint:=o.ContainsMultiProjectivePoint#Coordinates;
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===VisibleList then  theMultiProjectivePoint=o.ContainsMultiProjectivePoint;
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===MutableHashTable then  theMultiProjectivePoint={o.ContainsPoint#Coordinates};

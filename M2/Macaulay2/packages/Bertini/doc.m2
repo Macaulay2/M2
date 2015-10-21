@@ -127,6 +127,142 @@ doc ///
       
 ///;
 
+doc ///
+ Key
+   makeB'Section
+   (makeB'Section,List)
+ Headline
+   makeB'Section creates a hash table that represents a hyperplane. 
+ Usage
+   makeB'Section(l) 
+ Inputs
+   l:List
+     A list of variables.
+ Description
+   Text
+     makeB'Section allows for easy creation of equations that define hyperplanes.
+     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     The first key is a list of numbers in CC that are coefficients, and the second key is a string representing the linear polynomial.
+     The option RandomCoefficientGenerator can be set to a function to generate random numbers for the coefficients. 
+   Text   
+     To get affine linear equations include 1 in the input list. 
+   Text
+     To have an affine linear equation that contains a particular point we set the ContainsPoint option to a list of coordinates or a point.
+     To get an homogeneous equation that contains a projective point we have to set the ContainsPoint option as well as the B'Homogenization option.
+   Example
+     s=makeB'Section({x,y,z})
+     class s
+     randomRealCoefficientGenerator=()->random(RR)
+     sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
+     sReal#B'NumberCoefficients
+     randomRationalCoefficientGenerator=()->random(QQ)
+     sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
+     sRational#B'NumberCoefficients
+   Example
+     affineSection=makeB'Section({x,y,z,1})
+   Example
+     X={x,y,z}
+     P={1,2,3}
+     affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
+     r= affineContainingPoint#B'SectionString
+     print r
+   Example
+     rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
+     peek rHomogeSection
+     print rHomogeSection#B'SectionString
+   Example
+     f="y^3-x*y+1"
+     s1=makeB'Section({x,y,1})
+     makeB'InputFile(storeBM2Files,
+       AVG=>{x,y},
+       B'Polynomials=>{f,s1})
+     runBertini(storeBM2Files)
+     #importSolutionsFile(storeBM2Files)==3
+      
+///;
+
+
+doc ///
+ Key
+   makeB'Slice
+   (makeB'Slice,List,List)
+ Headline
+   makeB'Slice creates a hash table that represents a linear slice. 
+ Usage
+   makeB'Slice(sliceType,variableGroups) 
+ Inputs
+   sliceType:List
+     A list of integers.
+   variableGroups:List
+     A list of list of variables.
+ Description
+   Text
+     makeB'Slice allows for easy creation of equations that define linear spaces, i.e. slices.
+     The default creates a hash table with two keys: B'NumberCoefficients and B'SectionString.
+     When we have a multiprojective variety we can different types of slices.
+     To make a slice we need to specify the type of slice we want followed by variable groups.
+   Example
+     sliceType={0,1}
+     variableGroups={{x0,x1},{y0,y1,y2}}
+     xySlice=makeB'Slice(sliceType,variableGroups)
+     peek xySlice
+     --Our slice consists of two sections. 
+     --The ith section is in the variables variableGroups_(sliceType_i)
+     for i in  xySlice#B'SectionString do print i
+   Example
+     --We can use slices to determine multidegrees.
+     f1="x0*y0+x1*y0+x2*y2"
+     f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
+     variableGroups={{x0,x1,x2},{y0,y1,y2}}
+     xxSlice=makeB'Slice({0,0},variableGroups)
+     xySlice=makeB'Slice({0,1},variableGroups)
+     yySlice=makeB'Slice({1,1},variableGroups)
+     makeB'InputFile(storeBM2Files,
+    	 HVG=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     xxDegree=#importSolutionsFile(storeBM2Files)
+     makeB'InputFile(storeBM2Files,
+    	 HVG=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     xyDegree=#importSolutionsFile(storeBM2Files)
+     makeB'InputFile(storeBM2Files,
+    	 HVG=>variableGroups,
+    	 B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
+     runBertini(storeBM2Files)
+     yyDegree=#importSolutionsFile(storeBM2Files)
+      
+///;
+
+
+doc ///
+ Key
+   valueBM2
+   (valueBM2,String)
+ Headline
+   This function makes a number in CC from a string.
+ Usage
+   valueBM2(s) 
+ Inputs
+   s:String
+     A string that gives a coordinate.
+ Description
+   Text
+     This function take a string representing a coordinate in a Bertini solutions file or parameter file and makes a number in CC. 
+     We can adjust the precision using the UsePrecision option.
+     Fractions should not be in the string s. 
+   Example
+     valueBM2("1.22e-2 4e-5")
+     valueBM2("1.22 4e-5")
+     valueBM2("1.22 4")     
+     valueBM2("1.22e+2 4 ")           
+     n1=valueBM2("1.11",UsePrecision=>52)
+     n2=valueBM2("1.11",UsePrecision=>300)
+     toExternalString n1
+     toExternalString n2
+///;
+
 
 doc ///
  Key
@@ -168,6 +304,28 @@ doc ///
 
 doc ///
  Key
+   importParameterFile
+   (importParameterFile,String)
+ Headline
+   Imports parameters from a Bertini parameter file.
+ Usage
+   importParameterFile(s) 
+ Inputs
+   s:String
+     The directory where the file is stored.
+ Description
+   Text
+     After Bertini does a parameter homotopy many files are created. 
+     This function imports the parameters from  the "final_parameters" file as the default.  
+   Example
+     writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters")
+     importParameterFile(storeBM2Files)
+      
+///;
+
+
+doc ///
+ Key
    importIncidenceMatrix
    (importIncidenceMatrix,String)
  Headline
@@ -180,7 +338,11 @@ doc ///
  Description
    Text
      After running makeMembershipFile Bertini produces an incidence_matrix file. 
-     The incidence_matrix says which points belong to which components.
+     The incidence_matrix says which points belong to which components. 
+     Our incidence matrix is flattened to a list.    
+     The number of elemenets in theIM is equal to the number of points in the solutions file. 
+     Each element of theIM is a list of sequences of 2 elements (codim,component Number). 
+     Note that we follow the Bertini convention and switch from (dimension,component number) indexing to (codimension,component number) indexing. 
    Text
      If the NameIncidenceMatrixFile option is set when we want to import files with a different name.
    Example
@@ -189,7 +351,7 @@ doc ///
     runBertini(storeBM2Files)
     makeSampleSolutionsFile(storeBM2Files,2,SpecifyComponent=>{1,0})
     makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
-    importIncidenceMatrix(storeBM2Files)
+    theIM=importIncidenceMatrix(storeBM2Files)
       
 ///;
 
@@ -1461,6 +1623,32 @@ doc ///
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)
 ///;
+
+
+
+doc ///
+ Key
+   NameIncidenceMatrixFile
+   [importIncidenceMatrix, NameIncidenceMatrixFile]
+ Headline
+   An optional argument to import an incidence matrix that has a different name than "incidence_matrix".
+ Description
+   Text
+     When this option is set to "another_incidence_matrix", a file named "another_incidence_matrix" is imported. The default is "incidence_matrix".
+///;
+
+doc ///
+ Key
+   NameStartFile
+   [writeStartFile, NameStartFile]
+ Headline
+   An optional argument to write a start file that has a different name than "start".
+ Description
+   Text
+     When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
+///;
+
+
 
 end
 
