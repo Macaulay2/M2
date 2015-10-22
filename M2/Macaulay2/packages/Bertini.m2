@@ -2,7 +2,7 @@ needsPackage "NAGtypes"
 newPackage(
   "Bertini",
   Version => "1.6.0.1", 
-  Date => "September 21, 2015",
+  Date => "October 22, 2015",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
