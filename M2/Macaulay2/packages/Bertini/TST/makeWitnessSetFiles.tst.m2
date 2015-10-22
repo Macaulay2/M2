@@ -6,7 +6,7 @@ needsPackage "Bertini"
 ---To get slice information we need to create witness set files by doing a track type 4.
 ---The witness set file varies by dimension. Our input is a directory along with a dimension. 
 makeB'InputFile(storeBM2Files,
-     AVG=>{x,y,z},
+     AffVariableGroup=>{x,y,z},
      B'Configs=>{{TrackType,1}},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
 runBertini(storeBM2Files)
@@ -36,7 +36,7 @@ assert(#s==1 or #s==2)
      storeBM2Files2 = temporaryFileName()
      makeDirectory storeBM2Files2
 makeB'InputFile(storeBM2Files2,
-     AVG=>{x,y,z},
+     AffVariableGroup=>{x,y,z},
      B'Configs=>{{TrackType,1}},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
  runBertini(storeBM2Files2)

@@ -19,7 +19,7 @@ variableGroups={{x0,x1,x2},{y0,y1,y2}}
 xxSlice=makeB'Slice({0,0},variableGroups)
 
 makeB'InputFile(storeBM2Files,
-    HVG=>variableGroups,
+    HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
 runBertini(storeBM2Files)
 xxDegree=#importSolutionsFile(storeBM2Files)
@@ -33,13 +33,13 @@ yySlice=makeB'Slice({1,1},variableGroups)
 
 ---Commentted out below
 "makeB'InputFile(storeBM2Files,
-    HVG=>variableGroups,
+    HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
 runBertini(storeBM2Files)
 xyDegree=#importSolutionsFile(storeBM2Files)
 
 makeB'InputFile(storeBM2Files,
-    HVG=>variableGroups,
+    HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
 runBertini(storeBM2Files)
 yyDegree=#importSolutionsFile(storeBM2Files)"

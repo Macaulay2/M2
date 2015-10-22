@@ -5,7 +5,7 @@ needsPackage "Bertini"
 --A component membership test is tracktype 3.
 
     makeB'InputFile(storeBM2Files,
-    	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    
+    	B'Configs=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    
 	B'Polynomials=>{"z*((x+y+z)^3-1)","z*(y^2-3+z)"}    )
 ---By running Bertini we will create a witness_data file. 
     runBertini(storeBM2Files)
@@ -40,7 +40,7 @@ assert(newIM_1=={})
 
 ---------It is possible for a TestSolution to be in more than one point.
     makeB'InputFile(storeBM2Files,
-    	B'Configs=>{{TrackType,1}},    AVG=>{x,y,z},    
+    	B'Configs=>{{TrackType,1}},    AffVariableGroup=>{x,y,z},    
 	B'Polynomials=>{"x*y"}    )
 ---By running Bertini we will create a witness_data file. 
     runBertini(storeBM2Files)

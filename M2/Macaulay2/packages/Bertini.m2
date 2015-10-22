@@ -74,10 +74,10 @@ export {
 --
   "makeB'InputFile",
   "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
-  "HVG", --A list of lists of homogeneous variable groups. 
-  "AVG", --A list of lists of affine variable groups. 	
-  "PG",
-  "VG",
+  "HomVariableGroup", --A list of lists of homogeneous variable groups. 
+  "AffVariableGroup", --A list of lists of affine variable groups. 	
+  "ParameterGroup",
+  "VariableGroup",
   "PathVariable",
   "RandomComplex",
   "RandomReal",  --a list of unknowns whose values will be fixed by Bertini
@@ -1394,10 +1394,10 @@ makeB'InputFile = method(TypicalValue => String, Options=>{
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
 	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
-	HVG=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
-	AVG=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
-    	PG=>{}, --A list of parameters or list of list of parameters.
-    	VG=>{}, --A list of variables or a list of list of variables.  
+	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
+	AffVariableGroup=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
+    	ParameterGroup=>{}, --A list of parameters or list of list of parameters.
+    	VariableGroup=>{}, --A list of variables or a list of list of variables.  
     	PathVariable=>{}, --A list of path variables or a list of list of path variables.  
     	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
     	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
@@ -1411,7 +1411,7 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
 --Warnings are printed here.     
      if #o.B'Polynomials===0 and #o.NamePolynomials===0 then (print "Warning: NamePolynomials and B'Polynomials are both empty.");
      if #o.B'Polynomials=!=0 and #o.NamePolynomials=!=0 then (print "Warning: NamePolynomials and B'Polynomials are both non-empty.");     
-     if #o.VG===0 and #o.AVG===0 and #o.HVG===0 then stdio << "Warning: VG, AVG, and HVG are all empty." <<endl<<endl;     
+     if #o.VariableGroup===0 and #o.AffVariableGroup===0 and #o.HomVariableGroup===0 then stdio << "Warning: VariableGroup, AffVariableGroup, and HomVariableGroup are all empty." <<endl<<endl;     
 --Errors are printed here. 
      for onePair to #o.B'Constants-1 do if #((o.B'Constants)_onePair)=!=2 then  error ("B'Constants is not a list of pairs because of element "|onePair);
      for onePair to #o.B'Functions-1 do if #((o.B'Functions)_onePair)=!=2  and class ((o.B'Functions)_onePair)=!=B'Section and class ((o.B'Functions)_onePair)=!=B'Slice then  error ("B'Functions is not a list of pairs because of element "|onePair);
@@ -1431,33 +1431,33 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
      openedInputFile << "INPUT" << endl << endl;
 -----Write the Variable groups, parameters, and constants.
 --Write the homogeneous variable groups
-     if #o.HVG=!=0 and class ((o.HVG)_0 )=!=List then theHVG:={o.HVG} else theHVG=o.HVG;
-     if #theHVG=!=0 then 
-     for oneGroup in theHVG do (
+     if #o.HomVariableGroup=!=0 and class ((o.HomVariableGroup)_0 )=!=List then theHomVariableGroup:={o.HomVariableGroup} else theHomVariableGroup=o.HomVariableGroup;
+     if #theHomVariableGroup=!=0 then 
+     for oneGroup in theHomVariableGroup do (
 	 openedInputFile << "hom_variable_group "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
 --Write the affine variable groups
-     if #o.AVG=!=0 and class ((o.AVG)_0 )=!=List then theAVG:={o.AVG} else theAVG=o.AVG;
-     if #theAVG=!=0 then 
-     for oneGroup in theAVG do (
+     if #o.AffVariableGroup=!=0 and class ((o.AffVariableGroup)_0 )=!=List then theAffVariableGroup:={o.AffVariableGroup} else theAffVariableGroup=o.AffVariableGroup;
+     if #theAffVariableGroup=!=0 then 
+     for oneGroup in theAffVariableGroup do (
 	 openedInputFile << "variable_group "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --Write  variable groups
-     if #o.VG=!=0 and class ((o.VG)_0 )=!=List then theVG:={o.VG} else theVG=o.VG;
-     if #theVG=!=0 then 
-     for oneGroup in theVG do (
+     if #o.VariableGroup=!=0 and class ((o.VariableGroup)_0 )=!=List then theVariableGroup:={o.VariableGroup} else theVariableGroup=o.VariableGroup;
+     if #theVariableGroup=!=0 then 
+     for oneGroup in theVariableGroup do (
 	 openedInputFile << "variable "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --Write the parameters
-     if #o.PG=!=0 and class ((o.PG)_0 )=!=List then thePG:={o.PG} else thePG=o.PG;
-     if #thePG=!=0 then 
-     if #thePG=!=0 then 
-     for oneGroup in thePG do (
+     if #o.ParameterGroup=!=0 and class ((o.ParameterGroup)_0 )=!=List then theParameterGroup:={o.ParameterGroup} else theParameterGroup=o.ParameterGroup;
+     if #theParameterGroup=!=0 then 
+     if #theParameterGroup=!=0 then 
+     for oneGroup in theParameterGroup do (
 	 openedInputFile << "parameter "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
@@ -1640,7 +1640,7 @@ makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,Number
     makeB'InputFile(filesGoHere,
 	NameB'InputFile=>o.NameB'InputFile,
 	B'Configs=>o.B'Configs|{{"TRACKTYPE",-4}},
-	AVG=>theVars,
+	AffVariableGroup=>theVars,
 	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#B'SectionString)
 	))
 

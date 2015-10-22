@@ -52,7 +52,7 @@ assert(rHomogeSection#B'SectionString=="(2)*(x-(x+y+z)*(1))+(5)*(y-(x+y+z)*(2))+
 f="y^3-x*y+1"
 s1=makeB'Section({x,y,1},B'NumberCoefficients=>{1.47364+1.1251*ii, .869195+.661049*ii, .115018-.813524*ii})
 makeB'InputFile(storeBM2Files,
-    AVG=>{x,y},
+    AffVariableGroup=>{x,y},
     B'Polynomials=>{f,s1})
 runBertini(storeBM2Files)
 assert(#importSolutionsFile(storeBM2Files)==3)
@@ -66,7 +66,7 @@ s1=makeB'Section({x,y,1},B'NumberCoefficients=>{1.47364+1.1251*ii, .869195+.6610
 s2=makeB'Section({x,y,1},B'NumberCoefficients=>{ -.607416+.747061*ii, .939866-.205217*ii, -.814605-.233723*ii})
 makeB'InputFile(storeBM2Files,
     B'Functions=>{l,{S,"x+y+z"}},
-    AVG=>{x,y,z},
+    AffVariableGroup=>{x,y,z},
     B'Polynomials=>{s1,s2,f})
 readFile(storeBM2Files,"input",1000)
 runBertini(storeBM2Files)

@@ -5,7 +5,7 @@ needsPackage "Bertini"
 
 --First we do a postive dimensional run.
 makeB'InputFile(storeBM2Files,
-     AVG=>{x,y,z},
+     AffVariableGroup=>{x,y,z},
      B'Configs=>{{TrackType,1}},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
 runBertini(storeBM2Files)
@@ -26,7 +26,7 @@ assert(6==#importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solution
 
 ---Again first do a postive dimensional run, and then we can sample a component that contains a particular witness point. 
 makeB'InputFile(storeBM2Files,
-     AVG=>{x,y,z},
+     AffVariableGroup=>{x,y,z},
      B'Configs=>{{TrackType,1}},
      B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})  
 runBertini(storeBM2Files)
