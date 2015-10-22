@@ -84,6 +84,59 @@ doc ///
       
 ///;
 
+doc ///
+ Key
+   replaceFirstLine
+   (replaceFirstLine,String,String,Thing)
+ Headline
+   Replaces the first line of a file with a string.
+ Usage
+   replaceFirstLine(filesGoHere,fileName,aString) 
+ Inputs
+   filesGoHere:String
+     The directory where the files are stored.
+   fileName:String
+     The file whose first line we will replace with aString.
+   aString:Thing
+     The string which we write in the first line. 
+ Description
+   Text
+     replaceFirstLine replaces the first line of a file with a string. This function is used in the trace test functions.
+   Example
+     writeStartFile(storeBM2Files,{{2,3},{4,5}})
+     replaceFirstLine(storeBM2Files,"start","1")
+         
+///;
+
+
+
+doc ///
+ Key
+   readFile
+   (readFile,String,String,Number)
+   (readFile,String,Number)
+ Headline
+   Read the first lines of a file.
+ Usage
+   readFile(filesGoHere,fileName,numCharacters) 
+   readFile(filesGoHere,numCharacters) 
+ Inputs
+   filesGoHere:String
+     The directory where the files are stored.
+   fileName:String
+     The file whose lines we will read.
+   numCharacters:Number
+     The number of lines we read. 
+ Description
+   Text
+     Read the first characters of a file. When fileName is omitted "bertini_session.log" is read.
+   Example
+     makeB'InputFile(storeBM2Files,AVG=>{x,y},B'Polynomials=>{"x^2+2","y^2+3"})
+     runBertini(storeBM2Files)
+     readFile(storeBM2Files,"nonsingular_solutions",1)
+     readFile(storeBM2Files,10000)
+         
+///;
 
 doc ///
  Key
@@ -126,6 +179,44 @@ doc ///
      b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
       
 ///;
+
+
+
+doc ///
+ Key
+   b'PHMonodromyCollect
+   (b'PHMonodromyCollect,String)
+ Headline
+   Uses monodromy to find more solutions to a parameterized system of polynomial equations.
+ Usage
+   b'PHSequence(s) 
+ Inputs
+   s:String
+     The directory where the files are stored.
+ Description
+   Text
+     Given a directory that has a Bertini input file that has ParameterHomotopy set to 2, a start file, for start_parameters,
+     this function uses parameter homotopies to perform a monodromy homotopy.           
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     --f defines a cubic surface. The intersection with the hyerplane h is 3 points. 
+     --We consider f=h=0 as a parameterized system with parameters a1,a2 and unknowns x,y.
+     --The parameters (a1,a2)=(1,0) has a solution (x,y)=(1,0).
+     --we write a start file:
+     writeStartFile(theDir,{{1,0}},NameStartFile=>"startSave");
+     --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
+     writeParameterFile(theDir,{1,0},NameParameterFile=>"start_parameters");
+     --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
+     makeB'InputFile(theDir,
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AVG=>{x,y},PG=>{a1,a2}, B'Polynomials=>{f,h}    )
+     b'PHMonodromyCollect(theDir,
+	 NameStartFile=>"startSave",
+   	 NameSolutionsFile=>"simple_raw_solutions",
+      	 NumberOfLoops=>10,NumSolBound=>3,
+	 MonodromyStartParameters=>{1,0}	)
+      
+///;
+
 
 doc ///
  Key
@@ -185,6 +276,7 @@ doc ///
 doc ///
  Key
    makeB'Slice
+   NameB'Slice
    (makeB'Slice,List,List)
  Headline
    makeB'Slice creates a hash table that represents a linear slice. 
@@ -209,6 +301,11 @@ doc ///
      --Our slice consists of two sections. 
      --The ith section is in the variables variableGroups_(sliceType_i)
      for i in  xySlice#B'SectionString do print i
+   Example
+     --Using the NameB'Slice option we can put a slice in the B'Functions option.
+     aSlice=makeB'Slice({0,0,0},{x,y,z,1},NameB'Slice=>"f");
+     aSlice#NameB'Slice
+     makeB'InputFile(storeBM2Files,AVG=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
    Example
      --We can use slices to determine multidegrees.
      f1="x0*y0+x1*y0+x2*y2"
@@ -361,7 +458,7 @@ doc ///
    makeMembershipFile
    (makeMembershipFile,String)
  Headline
-   Creats a Bertini incidence_matrix file using Tracktype 3..
+   Creates a Bertini incidence_matrix file using Tracktype 3..
  Usage
    makeMembershipFile(s) 
  Inputs
@@ -1650,7 +1747,82 @@ doc ///
 
 
 
-end
+-------------------
+-------Types-------
+-------------------
+doc ///
+ Key
+   B'Section
+ Headline
+   This is a mutable hash table that gives information about a hyperplane used to slice a numerical variety.
+ Description
+   Text
+     B'Section is a type of mutable hash table. It can be created using makeB'Section.
+///;
+
+doc ///
+ Key
+   B'Slice
+ Headline
+   This is a mutable hash table that gives information about a linear space used to slice a numerical variety.
+ Description
+   Text
+     B'Slice is a type of mutable hash table. It can be created using makeB'Slice.
+///;
+
+
+-------------------
+---EXPERIMENTAL------
+-------------------
+doc ///
+ Key
+   NumSolBound
+   OrderPaths
+   PreRunCopyFiles
+   NumberOfLoops
+   BranchPoints
+   PreRunMoveFiles
+   SpecifyLoops
+   NameFunctionFile
+   PostRunCopyFiles
+   SaveData
+   PostRunMoveFiles
+   ListB'Sections
+   NameWitnessSliceFile
+   NameWitnessSolutionsFile
+   NameMainDataFile
+   NameSampleSolutionsFile
+   TextScripts
+   PreparePH2
+   SpecifyDim
+   MonodromyStartPoints
+   PathNumber
+   TestSolutions
+   SpecifyComponent
+   ContainsMultiProjectivePoint
+   UseStartPointsFirst
+   MonodromyStartParameters
+   B'FileCoefficients
+   B'Exe
+   UsePrecision
+   b'PHGaloisGroup
+   B'FileCoordinates
+   calculateB'Trace
+   makeB'TraceInput
+   importSliceFile
+   b'TraceTest
+ Headline
+   This option or key is for a function that is in active development. 
+ Description
+   Text
+     The Bertini.m2 package is in active developement for version 2 to provide additional functionality.
+     This option is for a function in version 2. 
+     For more information contact Jose Israel Rodriguez at JoIsRo[AT]UChicago.edu.
+///;
+
+
+
+end--ENDFILE
 
 
 -- to be added in another version

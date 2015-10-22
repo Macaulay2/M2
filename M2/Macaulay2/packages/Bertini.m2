@@ -70,7 +70,7 @@ export {
   "NameSolutionsFile",
   "NameIncidenceMatrixFile",
   "NameStartFile",
-  "NameFuntionFile",
+  "NameFunctionFile",
 --
   "makeB'InputFile",
   "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
@@ -114,17 +114,15 @@ export {
   "SolutionFileStyle",
   "B'Section",
   "B'Slice",
-  "B'MultiProjectivePoint",
+--  "B'MultiProjectivePoint",
   "makeB'Section",
   "makeB'Slice",
   "ContainsPoint", 
   "B'NumberCoefficients", 
-  "B'NumberCoordinates",
   "B'FileCoefficients",
   "B'FileCoordinates",  
   "B'Homogenization", 
   "RandomCoefficientGenerator", 
-  "SelectVarGroup",
   "B'SectionString",
   "NameB'Section",
   "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
@@ -154,7 +152,7 @@ export {
   "Dimension",
   "SolutionType",
   "DeflationsNeeded",
-  "B'WitnessSet",
+--  "B'WitnessSet",
   "SpecifyDim",
   "NameWitnessSliceFile",
   "importSliceFile",
@@ -1655,7 +1653,7 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
 
 calculateB'Trace = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",---we will read these start points.
-	NameFuntionFile=>"calculatedTrace",---the traces will be written to this file.
+	NameFunctionFile=>"calculatedTrace",---the traces will be written to this file.
 	NameB'InputFile=>"inputTT"---this file should be created prior to calling the calculateB'Trace function.
 	})
 calculateB'Trace(String) := o ->(
@@ -1666,7 +1664,7 @@ calculateB'Trace(String) := o ->(
      if o.NameStartFile=!="start" then copyFile(filesGoHere|o.NameStartFile,filesGoHere|"start");
      replaceFirstLine(filesGoHere,"start",1);
      runBertini(filesGoHere,NameB'InputFile=>o.NameB'InputFile);--maybe an error because of the backslash at the end. 
-     if o.NameFuntionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFuntionFile));      
+     if o.NameFunctionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFunctionFile));      
 
 
 b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
@@ -1699,7 +1697,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
       print "tt3";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
-	NameFuntionFile=>"trace"|toString(runCount),
+	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       moveFile(storeFiles|"startPHjade",storeFiles|"start");      
       runCount=runCount+1);
@@ -1713,7 +1711,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       print "tt7Loop";
       calculateB'Trace(storeFiles,NameStartFile=>"nonsingular_solutions",--need a check to make sure we don't lose solutions
-	NameFuntionFile=>"trace"|toString(runCount),
+	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       print "tt8Loop";
       runCount=runCount+1;      
@@ -1733,7 +1731,15 @@ readFile(String,String,Number) := o ->(filesGoHere,fileName,aInteger)->(
     s:=read(aFile,aInteger);
     close aFile;
     return s
-    );    
+    );  
+readFile(String,Number) := o ->(filesGoHere,aInteger)->(
+    if toString(filesGoHere)_-1==="/" then aDir:=filesGoHere else aDir=filesGoHere|"/";
+    aFile:=openIn(aDir|"bertini_session.log");
+    s:=read(aFile,aInteger);
+    close aFile;
+    return s
+    );  
+  
 
 valueBM2=method(TypicalValue=>String,Options=>{
 	UsePrecision=>53})
@@ -2532,10 +2538,10 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 
 
 -------MULTIPROJECTIVE POINTS AND SLICES 
-B'MultiProjectivePoint=new Type of MutableHashTable;
+--B'MultiProjectivePoint=new Type of MutableHashTable;
 B'Section=new Type of MutableHashTable;
 B'Slice= new Type of MutableHashTable;
-B'WitnessSet= new Type of MutableHashTable;
+--B'WitnessSet= new Type of MutableHashTable;
 
 
 par'String=(aString)->("("|toString(aString)|")");
