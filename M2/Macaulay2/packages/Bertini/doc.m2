@@ -207,7 +207,7 @@ doc ///
      --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
      writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
      --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
-     makeB'InputFile(storeBM2Files,
+     makeB'InputFile(storeBM2Files, 
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AVG=>{x,y},PG=>{a1,a2}, B'Polynomials=>{f,h}    )
      b'PHMonodromyCollect(storeBM2Files,
 	 NameStartFile=>"startSave",
@@ -1820,11 +1820,110 @@ doc ///
    (b'PHGaloisGroup,String)
    (importSliceFile,String)
    SolutionType
+--   storeBM2Files
+   [makeB'TraceInput,B'Configs]
+   [b'PHGaloisGroup,InputFileDirectory]
+   [b'PHMonodromyCollect,InputFileDirectory]
+   [b'PHSequence,InputFileDirectory]
+   [b'TraceTest,InputFileDirectory]
+   [makeMembershipFile,InputFileDirectory]
+   [makeSampleSolutionsFile,InputFileDirectory]
+   [makeWitnessSetFiles,InputFileDirectory]
+   [b'PHGaloisGroup,NameB'InputFile]
+   [b'PHMonodromyCollect,NameB'InputFile]
+   [b'PHSequence,NameB'InputFile]
+   [b'TraceTest,NameB'InputFile]
+   [calculateB'Trace,NameB'InputFile]
+   [makeB'TraceInput,NameB'InputFile]
+   [makeSampleSolutionsFile,NameB'InputFile]
+   [makeWitnessSetFiles,NameB'InputFile]
+   [runBertini,NameB'InputFile]
+   [runBertini,B'Exe]
+   [b'PHGaloisGroup,NameParameterFile]
+   [b'PHMonodromyCollect,NameParameterFile]
+   [b'PHSequence,NameParameterFile]
+   [b'TraceTest,NameParameterFile]
+   [importParameterFile,NameParameterFile]
+   [b'PHGaloisGroup,NameSolutionsFile]
+   [b'PHMonodromyCollect,NameSolutionsFile]
+   [b'PHSequence,NameSolutionsFile]
+   [makeMembershipFile,NameSolutionsFile]
+   [makeSampleSolutionsFile,NameSolutionsFile]
+   [makeWitnessSetFiles,NameSolutionsFile]
+   [b'PHGaloisGroup,NameStartFile]
+   [b'TraceTest,NameStartFile]
+   [calculateB'Trace,NameStartFile]
+   [b'PHMonodromyCollect,NumSolBound]
+   [b'TraceTest,ParameterValues]
+   (makeB'TraceInput,String,Number,Number)
+   [makeB'InputFile,PathVariable]
+   [b'PHGaloisGroup,StartFileDirectory]
+   [b'PHMonodromyCollect,StartFileDirectory]
+   [b'PHSequence,StartFileDirectory]
+   [b'PHGaloisGroup,StartParameterFileDirectory]
+   [b'PHMonodromyCollect,StartParameterFileDirectory]
+   [b'PHSequence,StartParameterFileDirectory]
+   [makeB'InputFile,VG]
+   [makeMembershipFile,TestSolutions]
+   [makeMembershipFile,UsePrecision]
+   [valueBM2,UsePrecision]
+   [NumberToB'String,UsePrecision]
+   [makeSampleSolutionsFile,SpecifyComponent]
+   [b'PHMonodromyCollect,B'Exe]
+   [b'PHMonodromyCollect,MonodromyStartParameters]
+   [b'PHMonodromyCollect,MonodromyStartPoints]
+   [b'PHMonodromyCollect,NumberOfLoops]
+   [b'PHMonodromyCollect,SaveData]
+   [b'PHMonodromyCollect,SpecifyLoops]
+   B'Homogenization
+   ContainsPoint
+   RandomCoefficientGenerator
+   NameB'Section
+   B'NumberCoefficients
+   B'SectionString
+   [makeB'Slice,B'FileCoefficients]
+   [makeB'Slice,B'Homogenization]
+   [makeB'Slice,B'NumberCoefficients]
+   [makeB'Slice,ContainsMultiProjectivePoint]
+   [makeB'Slice,ContainsPoint]
+   [makeB'Slice,NameB'Slice]
+   [makeB'Slice,RandomCoefficientGenerator]
+   [makeB'Section,B'FileCoefficients]
+   [makeB'Section,B'NumberCoefficients]
+   [makeB'Section,NameB'Section]
+   [runBertini,PostRunCopyFiles]
+   [runBertini,PostRunMoveFiles]
+   [runBertini,PreparePH2]
+   [runBertini,PreRunCopyFiles]
+   [runBertini,PreRunMoveFiles]
+   [runBertini,TextScripts]
+   [importSolutionsFile,OrderPaths]
+   [importSolutionsFile,UsePrecision]
+   [importParameterFile,UsePrecision]
+   [writeParameterFile,UsePrecision]
+   [importMainDataFile,NameMainDataFile]
+   [importMainDataFile,SpecifyDim]
+   [importMainDataFile,UsePrecision]
+   [b'PHSequence,B'Exe]
+   [b'PHSequence,SaveData]
+   [makeWitnessSetFiles,NameWitnessSliceFile]
+   [makeWitnessSetFiles,SpecifyComponent]
+   [writeStartFile,UsePrecision]
+   PathVariable
+   PathsWithSameEndpoint
+   FunctionResidual
+   ParameterValues
+   CycleNumber
+   VG
+   AccuracyEst
+   PrecisionIncreased
+   AccuracyEstInternal
+   ComponentNumber
  Headline
    This option or key is for a function that is in active development. 
  Description
    Text
-     The Bertini.m2 package is in active developement for version 2 to provide additional functionality.
+     The Bertini.m2 package is in active development for version 2 to provide additional functionality.
      This option is for a function in version 2. 
      For more information contact Jose Israel Rodriguez at JoIsRo[AT]UChicago.edu.
 ///;

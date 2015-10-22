@@ -189,7 +189,7 @@ export {
   protect StartSolutions
   protect FailedPath
   protect AllowStrings
-  
+       
 needsPackage "NAGtypes"
 
 --##########################################################################--
