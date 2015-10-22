@@ -68,14 +68,14 @@ public:
   // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
   void text_out(buffer& o) const;
 private:
-  typedef ring_elem ElementType; 
-  // typedef typename RT::ElementType ElementType; 
+  //typedef ring_elem ElementType; 
+  typedef typename RT::ElementType ElementType; 
   void computeNextNode();
   const Ring* R;
   std::vector<ElementType> values; /* should be a vector of values 
                               starting with inputCounter many vars and consts and 
                               continuing with the values of other GATEs */  
-  std::vector<ElementType>::iterator vIt; // values
+  typename std::vector<ElementType>::iterator vIt; // values
   const RT& mRing;
 };
 

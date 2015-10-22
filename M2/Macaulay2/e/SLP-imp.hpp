@@ -27,16 +27,49 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  
     varsPos.push_back(slp->inputCounter+vPos->array[i]);
   if (consts->n_rows() != 1 || consts->n_cols() != constsPos.size())
     ERROR("1-row matrix expected; or numbers of constants don't match");
-  R = consts->get_ring();
   values.resize(slp->inputCounter+slp->mNodes.size());
+  for(auto i=values.begin(); i!=values.end(); ++i)
+    ring().init(*i);
+  R = consts->get_ring();
   for (int i=0; i<constsPos.size(); i++) 
-    consts->get_entry(0,i,values[constsPos[i]]);
+    ring().set(values[constsPos[i]],consts->getMat().entry(0,i));
 }
 
 
 template<typename RT>
 void SLEvaluatorConcrete<RT>::computeNextNode()
 {
+  ElementType& v = *vIt;
+  switch (*nIt++) {
+  case SLProgram::MProduct:
+    ring().set_from_long(v,1);
+    for (int i=0; i<*numInputsIt; i++)
+      ring().mult(v,v,values[ap(*inputPositionsIt++)]);
+    numInputsIt++;
+    break;
+  case SLProgram::MSum:
+    ring().set_zero(v);
+    for (int i=0; i<*numInputsIt; i++)
+      ring().add(v,v,values[ap(*inputPositionsIt++)]);
+    numInputsIt++;
+    break;
+  case SLProgram::Det:
+    {
+      int n = static_cast<int>(sqrt(*numInputsIt++));
+      DMat<RT> mat(ring(),n,n);
+      for (int i=0; i<n; i++)
+        for (int j=0; j<n; j++)
+          ring().set(mat.entry(i,j),values[ap(*inputPositionsIt++)]);
+      DMatLinAlg<RT>(mat).determinant(v);      
+    }
+    break;
+  case SLProgram::Divide:
+    ring().set(v,values[ap(*inputPositionsIt++)]);
+    ring().divide(v,v,values[ap(*inputPositionsIt++)]);
+    break;
+  default: ERROR("unknown node type");
+  }
+  /*  
   ElementType v;
   switch (*nIt++) {
   case SLProgram::MProduct:
@@ -70,7 +103,8 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
     break;
   default: ERROR("unknown node type");
   }
-  *vIt = v;  
+  *vIt = v;
+  */  
 }
 
 template<typename RT>
@@ -93,9 +127,19 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
     return false;
   }
 
+  auto inp = dynamic_cast<const MutableMat< DMat<RT> >*>(inputs);
+  auto out = dynamic_cast<MutableMat< DMat<RT> >*>(outputs);
+  if (inp == nullptr) { 
+    ERROR("inputs: expected a dense mutable matrix");
+    return false;
+  }
+  if (out == nullptr) { 
+    ERROR("inputs: expected a dense mutable matrix");
+    return false;
+  }
+
   for (int i=0; i<varsPos.size(); i++) 
-    inputs->get_entry(0,i,values[varsPos[i]]);
-  // values[varsPos[i]] = inputs->elem(0,i); // should work
+    ring().set(values[varsPos[i]],inp->getMat().entry(0,i));
   
   nIt = slp->mNodes.begin();
   numInputsIt = slp->mNumInputs.begin();
@@ -104,7 +148,7 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
     computeNextNode();
 
   for(int i = 0; i < slp->mOutputPositions.size(); i++)
-    outputs->set_entry(0,i,values[ap(slp->mOutputPositions[i])]);
+    ring().set(out->getMat().entry(0,i),values[ap(slp->mOutputPositions[i])]);
   return true;
 }
 

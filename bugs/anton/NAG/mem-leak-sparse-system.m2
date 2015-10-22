@@ -3,6 +3,7 @@ needsPackage "NAGtools"
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 n = 7
+n = 5 --      -- 174. seconds elapsed
 --degree cyclicRoots(n,ZZ/32003)
 S = gens cyclicRoots(n,CC)
 R = ring S
@@ -41,8 +42,8 @@ for i to 1000000 do (
     );
     )
 *}
-preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
+elapsedTime preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
 
 end
 restart
-load "~/M2-NAG/M2/Macaulay2/packages/NumericalAlgebraicGeometry/SYSTEMS/BUGS/mem-leak-sparse-system.m2"
+load "~/M2-NAG/bugs/anton/NAG/mem-leak-sparse-system.m2"
