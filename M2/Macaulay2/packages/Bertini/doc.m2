@@ -1811,6 +1811,11 @@ doc ///
    makeB'TraceInput
    importSliceFile
    b'TraceTest
+   DeflationsNeeded
+   Dimension
+   MaxPrecisionUtilized
+   FinalTValue
+   SolutionType
  Headline
    This option or key is for a function that is in active development. 
  Description
