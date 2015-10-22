@@ -37,7 +37,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  
 template<typename RT>
 void SLEvaluatorConcrete<RT>::computeNextNode()
 {
-  ring_elem v;
+  ElementType v;
   switch (*nIt++) {
   case SLProgram::MProduct:
     v = R->one();
