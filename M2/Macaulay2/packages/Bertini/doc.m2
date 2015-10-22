@@ -203,13 +203,13 @@ doc ///
      --We consider f=h=0 as a parameterized system with parameters a1,a2 and unknowns x,y.
      --The parameters (a1,a2)=(1,0) has a solution (x,y)=(1,0).
      --we write a start file:
-     writeStartFile(theDir,{{1,0}},NameStartFile=>"startSave");
+     writeStartFile(storeBM2Files,{{1,0}},NameStartFile=>"startSave");
      --write a start_parameter file. Note that you need to name the parameter file as "start_parameters" because the default is "final_parameters"
-     writeParameterFile(theDir,{1,0},NameParameterFile=>"start_parameters");
+     writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
      --Now we write our Bertini input file with PARAMETERHOMOTOPY set to 2. 
-     makeB'InputFile(theDir,
+     makeB'InputFile(storeBM2Files,
     	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AVG=>{x,y},PG=>{a1,a2}, B'Polynomials=>{f,h}    )
-     b'PHMonodromyCollect(theDir,
+     b'PHMonodromyCollect(storeBM2Files,
 	 NameStartFile=>"startSave",
    	 NameSolutionsFile=>"simple_raw_solutions",
       	 NumberOfLoops=>10,NumSolBound=>3,
@@ -1815,6 +1815,10 @@ doc ///
    Dimension
    MaxPrecisionUtilized
    FinalTValue
+   (b'TraceTest,String,Number,Number)
+   (calculateB'Trace,String)
+   (b'PHGaloisGroup,String)
+   (importSliceFile,String)
    SolutionType
  Headline
    This option or key is for a function that is in active development. 
