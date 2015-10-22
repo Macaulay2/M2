@@ -42,8 +42,16 @@ for i to 1000000 do (
     );
     )
 *}
+NAGtrace 2
 elapsedTime preimageViaMonodromy(PH,c0,{pre0},StoppingCriterion=>((n,L)->n>0));
 
 end
 restart
-load "~/M2-NAG/bugs/anton/NAG/mem-leak-sparse-system.m2"
+load "../../../bugs/anton/NAG/mem-leak-sparse-system.m2"
+
+elapsedTime for i to 100000 do 
+evaluateH(
+    PH.GateHomotopySystem
+    , 
+    transpose(matrix c0 | matrix c0 | matrix pre0), .5+.3*ii)
+-- approx. 70 sec... and it does not depend on n.  

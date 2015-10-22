@@ -848,13 +848,11 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     if DBG>3 then print rawSols;
     ret := if o.NoOutput then null 
     else rawSols/(s->{flatten entries first s} | drop(toList s,1));
-    if DBG>0 then (
-	  if o.Software==M2 then (
-	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
-     	       if DBG>1 then (
-	       	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
-		    )
-	       )
+    if DBG>1 then (
+	  if member(o.Software,{M2,M2engine}) then (
+	      << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+	      << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+	      )
 	   );
      apply(ret, s->point toList s)
      ) -- trackHomotopy
