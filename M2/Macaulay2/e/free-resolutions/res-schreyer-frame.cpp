@@ -88,7 +88,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
     mAllMonomials(R.monoid())
 {
   mFrame.mLevels.resize(max_level);
-  mMaxVPSize = 2*monoid().n_vars() + 1;
+  mMaxVPSize = 2*monoid().numVariables() + 1;
 }
   
 // Destruct the frame
@@ -204,7 +204,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
   for (long i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
   typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
-  MonomialLookupTable montab(monoid().n_vars());
+  MonomialLookupTable montab(monoid().numVariables());
 
 #if 0
   ///std::cout << "  #pre elements = " << elements.size() << std::endl;

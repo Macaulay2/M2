@@ -23,28 +23,65 @@
 
 #include "memtailor.h"
 #include "mathic.h"
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 memt::BufferPool testBuffer(16);
 
 int M2_gbTrace = 0;
 
-// Format for reading.
-int main(int argc, char** argv)
+ResPolyRing* readRing(std::istream& infile)
 {
-  // read ring info: #vars, degrees of vars, characteristic
-  int nvars = 5;
-  MonomialOrdering mo(nvars);
+  // Hack job.
+  // Input format:
+  //   <characteristic>
+  //   <n:#variables>
+  //   <weight_0> <weight_1> ... <weight_(n-1)>
+  //   grevlex | lex | ...
+  int charac;
+  int nvars;
+  infile >> charac;
+  infile >> nvars;
+  std::vector<int> wts(nvars);
+  for (int i=0; i<nvars; i++)
+    {
+      int a;
+      infile >> a;
+      wts.push_back(a);
+    }
+  MonomialOrdering mo(nvars, wts);
   MonomialInfo M(mo);
   M2::ARingZZp kk(101);
   ResGausser G(kk);
-  ResPolyRing R(G, M);  
 
-  SchreyerFrame S(R, nvars);
+  ResPolyRing* R = new ResPolyRing(G,M);
+  return R;
+}
+
+void loadSchreyerFrame(std::istream& infile, SchreyerFrame& S)
+{
+  // reads polynomials in and sets up levels 0, 1 of the frame.
+  // Assumption: i contains data in the following format
+  //   (NOTE: this will be changed to be more efficient, if needed!)
+}
+
+// Format for reading.
+int main(int argc, char** argv)
+{
+  std::ifstream infile(argv[1]);
+  ResPolyRing* R = readRing(infile);
+  SchreyerFrame S(R);
+  loadSchreyerFrame(infile, S);
+  infile.close();
+#if 0  
+
 
   int v;
   for (int i=0; i<50; i++)
     for (int j=0; j<50; j++)
       kk.add(v,i,j);
-#if 0
+
 
 
 
