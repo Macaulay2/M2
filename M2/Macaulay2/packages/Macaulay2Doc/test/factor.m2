@@ -68,6 +68,12 @@ assert (r === new Product from
 	  new Power from {2*x^2+x+1,1},
 	  new Power from {x^(-3),1}})
 
+-- factoring in an iterated polynomial ring
+R=QQ[x];
+R2=R[y];
+r=factor(x^2*y^2-1);
+assert (r === new Product from { new Power from {x*y-1,1}, new Power from {x*y+1,1} } )
+
 -- isPrime
 
 R=ZZ[x];

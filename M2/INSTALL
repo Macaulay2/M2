@@ -127,19 +127,20 @@ various modern operating systems:
 
   Scientific linux:
     Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build subversion zlib-devel fakeroot xz-devel
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign subversion zlib-devel xz-devel
     Some debugging aids:
       sudo yum install -y strace
-    Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
-    future version of Macaulay2.  However, one can install newer compilers
-    (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
-    (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
-	wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
-	yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
-    Then use
-        . /opt/rh/devtoolset-2/enable
-    to update the environment of your currently running shell.  The latter
-    command will also work in your shell initialization file, ".profile".
+    Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
+      Scientific Linux 6.5 has an old version (4.4.7) of gcc that may not work with a
+      future version of Macaulay2.  However, one can install newer compilers
+      (4.8.2) from the repository of the "Scientific Linux CERN 6" distribution,
+      (see http://linux.web.cern.ch/linux/devtoolset/) using the following commands.
+	  wget -O /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo
+	  yum install devtoolset-2-gcc devtoolset-2-gcc-g++ devtoolset-2-gcc-gfortran devtoolset-2-binutils
+      Then use
+	  . /opt/rh/devtoolset-2/enable
+      to update the environment of your currently running shell.  The latter
+      command will also work in your shell initialization file, ".profile".
 
   Suse64:
     sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
