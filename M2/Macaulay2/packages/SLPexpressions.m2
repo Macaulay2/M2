@@ -711,7 +711,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    r := if H#?("retH",K) then H#("retH",K) else mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
+    r := if H#?("retH",K) then H#("retH",K) else H#("retH",K) = mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
     evaluate(H#"EH", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"H", numcols H#"H")    
     )
@@ -719,7 +719,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    r := if H#?("retHt",K) then H#("retHt",K) else mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
+    r := if H#?("retHt",K) then H#("retHt",K) else H#("retHt",K) = mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
     evaluate(H#"EHt", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Ht", numcols H#"Ht")
     )
@@ -727,7 +727,7 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    r := if H#?("retHx",K) then H#("retHx",K) else mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
+    r := if H#?("retHx",K) then H#("retHx",K) else H#("retHx",K) = mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
     evaluate(H#"EHx", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Hx", numcols H#"Hx")
     )

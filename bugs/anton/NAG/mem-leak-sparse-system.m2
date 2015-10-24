@@ -49,11 +49,34 @@ end
 restart
 load "../../../bugs/anton/NAG/mem-leak-sparse-system.m2"
 
-elapsedTime for i to 100000 do 
-evaluateH(
-    PH.GateHomotopySystem
-    , 
-    transpose(matrix c0 | matrix c0 | matrix pre0), .5+.3*ii)
--- approx. 70 sec... and it does not depend on n.  
 GHS = PH.GateHomotopySystem
-GHS#(GHS#"H",CC_53)
+elapsedTime for i to 100000 do 
+evaluateH(GHS, transpose(matrix c0 | matrix c0 | matrix pre0), .5+.3*ii)
+-- 70 sec
+
+EH = GHS#"EH"
+mc0 = matrix c0;
+mpre0 = matrix pre0;
+inp = mutableMatrix(mc0 | mc0 | mpre0 | matrix{{.5+.3*ii}})
+retH = GHS#("retH",CC_53)
+cc = .5+.3*ii
+
+fillIn = M -> (
+    i := 0;
+    scan(numcols mc0, c->(M_(0,i)=mc0_(0,c);i=i+1));
+    scan(numcols mc0, c->(M_(0,i)=mc0_(0,c);i=i+1));
+    scan(numcols mpre0, c->(M_(0,i)=mpre0_(0,c);i=i+1));
+    M_(0,i)=cc
+    )  
+elapsedTime for i to 100000 do ( 
+    fillIn inp;
+    evaluate(EH,inp,retH);
+    )
+-- 230 sec
+
+elapsedTime for i to 10000000 do ( 
+    evaluate(EH,inp,retH);
+    )
+
+-- 0.19 sec (370 times speedup)
+-- with fillMatrix inp: 1.5 sec (45 times speedup)	    
