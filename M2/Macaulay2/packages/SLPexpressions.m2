@@ -556,7 +556,6 @@ det GateMatrix := o -> M -> detGate applyTable(M, a->if instance(a,Gate) then a 
 compress GateMatrix := M -> gateMatrix applyTable(M,compress)
 
 value(GateMatrix, ValueHashTable) := (M,H) -> matrix applyTable(M,g->value(g,H))
--- evaluate(GateMatrix, List, List) := (M,x,x0) -> value(M,hashTable(apply(x,x0,(a,b)->a=>b)|{cache=>new CacheTable})) 
 
 sub (GateMatrix, List) := (M,L) -> matrix applyTable(M,g->sub(g,L))
 sub (GateMatrix, GateMatrix, GateMatrix) := (M,A,B) -> matrix applyTable(M,g->sub(g,A,B))
@@ -662,12 +661,9 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     else if soft === M2engine then (
 	varMat := X | matrix{{T}};
 	if para then varMat = o.Parameters | varMat;
-    	GH#"H core" = makeSLProgram (varMat,H);
-	GH#"H consts" = constants H;
-    	GH#"Hx core" = makeSLProgram (varMat,GH#"Hx");
-	GH#"Hx consts" = constants GH#"Hx";
-    	GH#"Ht core" = makeSLProgram (varMat,GH#"Ht");
-	GH#"Ht consts" = constants GH#"Ht";
+    	GH#"EH" = makeEvaluator(H,varMat);
+    	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
+    	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	)
     else error "uknown Software option value";
     if para then (
@@ -689,46 +685,50 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
     map(R^m,R^n,(i,j)->e#(n*i+j)) 
     )
 
+Evaluator = new Type of MutableHashTable
+makeEvaluator = method()
+makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
+    E := new Evaluator from {
+    	"rawSLP"=>makeSLProgram(I,M),
+    	"constants"=>constants M
+    	};
+    E#"constant positions" = positionsOfInputGates(E#"constants",E#"rawSLP");
+    E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
+    E
+    )
+
+evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
+    K := ring I; 
+    assert(ring O === K);
+    if not E#?K then E#K = rawSLEvaluator(
+	E#"rawSLP", E#"constant positions", E#"input positions",
+	raw mutableMatrix matrix(K,{apply(E#"constants",c->c.Name_K)})
+	);
+    rawSLEvaluatorEvaluate(E#K, raw I, raw O);
+    )
+ 
 evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    if not H#?(H#"H",K) then (
-	s := H#"H core"; -- core SLP
-	consts := H#"H consts"; -- constants of SLP
-	H#(H#"H",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
-	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
-	);
-    r := mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
-    rawSLEvaluatorEvaluate(H#(H#"H",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
-    matrix(matrix r, numrows H#"H", numcols H#"H")
+    r := if H#?("retH",K) then H#("retH",K) else mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
+    evaluate(H#"EH", mutableMatrix(transpose x | matrix{{t}}), r);
+    matrix(matrix r, numrows H#"H", numcols H#"H")    
     )
 evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    if not H#?(H#"Ht",K) then (
-	s := H#"Ht core"; -- core SLP
-	consts := H#"Ht consts"; -- constants of SLP
-	H#(H#"Ht",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
-	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
-	);
-    r := mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
-    rawSLEvaluatorEvaluate(H#(H#"Ht",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
+    r := if H#?("retHt",K) then H#("retHt",K) else mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
+    evaluate(H#"EHt", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Ht", numcols H#"Ht")
     )
 evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
-    if not H#?(H#"Hx",K) then (
-	s := H#"Hx core"; -- core SLP
-	consts := H#"Hx consts"; -- constants of SLP
-	H#(H#"Hx",K) = rawSLEvaluator(s, positionsOfInputGates(consts,s), positionsOfInputGates(flatten entries H#"X" | {H#"T"},s),
-	    raw mutableMatrix matrix(K,{apply(consts,c->c.Name_K)}));
-	);
-    r := mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
-    rawSLEvaluatorEvaluate(H#(H#"Hx",K), raw mutableMatrix(transpose x | matrix{{t}}), raw r);
+    r := if H#?("retHx",K) then H#("retHx",K) else mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
+    evaluate(H#"EHx", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Hx", numcols H#"Hx")
     )
 evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopySystem,parameters||x,t)

@@ -55,3 +55,5 @@ evaluateH(
     , 
     transpose(matrix c0 | matrix c0 | matrix pre0), .5+.3*ii)
 -- approx. 70 sec... and it does not depend on n.  
+GHS = PH.GateHomotopySystem
+GHS#(GHS#"H",CC_53)

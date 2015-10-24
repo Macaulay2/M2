@@ -20,7 +20,7 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  
   : mRing(consts->getMat().ring())    
 {
   slp = SLP;
-  //  std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
+  // std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
   for(int i=0; i<cPos->len; i++) 
     constsPos.push_back(slp->inputCounter+cPos->array[i]);
   for(int i=0; i<vPos->len; i++) 
@@ -156,8 +156,8 @@ template<typename RT>
 void SLEvaluatorConcrete<RT>::text_out(buffer& o) const { 
   o << "SLEvaluator(slp = ";
   slp->text_out(o);
-  //o << ", mRing = ";
-  //mRing.text_out(o);
+  o << ", mRing = ";
+  ring().text_out(o);
   o << ")" << newline; 
 }
 
