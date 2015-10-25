@@ -1,18 +1,20 @@
 newPackage(
         "PushForward",
-        Version => "0.1", 
-        Date => "December 15, 2009",
+        Version => "0.1",
+        Date => "October 18, 2015",
         Authors => {{Name => "Claudiu Raicu", 
-                  Email => "claudiu@math.berkeley.edu", 
-                  HomePage => "http://www.math.berkeley.edu/~claudiu"}},
+                  Email => "craicu@nd.edu", 
+                  HomePage => "http://www3.nd.edu/~craicu"}},
         Headline => "push forwards of finite ring maps",
         DebuggingMode => false
         )
+        
+--note, this version has a slight change added by Karl Schwede.  It has an option to turn off the prune calls.
 
-export {"pushFwd"}
+export {"pushFwd", "NoPrune"}
 
-pushFwd=method()
-pushFwd(RingMap):=(f)->
+pushFwd=method(Options => {NoPrune => false})
+pushFwd(RingMap):=o->(f)->
 (
      A:=source f;
      B:=target f;     
@@ -20,10 +22,19 @@ pushFwd(RingMap):=(f)->
      psh:= if usehgs then pushAuxHgs f else pushAux f;
      matB:=psh_0;
      k:=psh_1;
-     mapf:=psh_7;
+--     mapf:=psh_7;
+     mapfaux:=psh_7;
      local ke;
+     local freeA;
 
-     if usehgs then (
+     if usehgs then freeA = A^(-(last degrees matB)) else freeA = A^k;
+     ke = kernel map(B^1,freeA,f,matB);
+     pfB := freeA/ke;
+     g := map(pfB,freeA,gens pfB);
+     mapf := (b) -> g*(mapfaux b); 
+     pfB,matB,mapf
+
+{*     if usehgs then (
      	  freeA := A^(-(last degrees matB));
      	  ke=kernel map(B^1,freeA,f,matB);
      	  freeA/ke,matB,mapf
@@ -31,10 +42,11 @@ pushFwd(RingMap):=(f)->
      	  ke=kernel map(B^1,A^k,f,matB);
      	  A^k/ke,matB,mapf
      )
+*}
      )
 
 
-pushFwd(Module,RingMap):=(N,f)->
+pushFwd(Module,RingMap):=o->(N,f)->
 (
      B:=target f;
      aN:=ann N;
@@ -43,10 +55,10 @@ pushFwd(Module,RingMap):=(N,f)->
      g:=bc*f;
      
      matB:=(pushAux g)_0;
-     prune makeModule(N**C,g,matB)
+     if (o.NoPrune == false) then prune makeModule(N**C,g,matB) else makeModule(N**C,g,matB)
      )
 
-pushFwd(ModuleMap,RingMap):=(d,f)->
+pushFwd(ModuleMap,RingMap):=o->(d,f)->
 (
      A:=source f;
      B:=target f;
@@ -87,7 +99,7 @@ pushFwd(ModuleMap,RingMap):=(d,f)->
 	       for i3 from 0 to k-1 do matMap_(i2+l*i3,i1)=e_0_i3;	       
 	   );
 
-     prune map(pushN,pushM,matrix matMap)
+          if (o.NoPrune == false) then prune map(pushN,pushM,matrix matMap) else map(pushN,pushM,matrix matMap)
      )
 
 makeModule=method()
@@ -272,6 +284,28 @@ document{
   kerp = prune ker p
   ///
   }
+
+doc ///
+Key
+  NoPrune
+  [pushFwd,NoPrune]
+Headline
+  NoPrune option for pushFwd
+Description
+ Text
+  This is an optional argument for the @TO pushFwd@ function. Its default value is {\tt false},
+  which means that the presentation of a pushed forward module is pruned by default. If NoPrune 
+  is set to {\tt true}, then the prune calls in pushFwd are turned off.
+ 
+ Example
+  R5=QQ[a..e]
+  R6=QQ[a..f]
+  M=coker genericMatrix(R6,a,2,3)
+  G=map(R6,R5,{a+b+c+d+e+f,b,c,d,e})
+  notpruned = pushFwd(M,G,NoPrune => true)
+  pruned = pushFwd(M,G)
+ 
+///
 --test 0
 TEST ///
 
@@ -419,3 +453,16 @@ assert(ph1==h2_0)
 ///
 
 end
+
+restart
+uninstallPackage"PushForward"
+installPackage"PushForward"
+check PushForward
+viewHelp PushForward
+kk = QQ
+R = kk[x,y]/(x^2-y^3-y^5)
+R' = integralClosure R
+pr = pushFwd map(R',R)
+pf = last pr;
+pf w_(0,0)
+target oo == pr_0
