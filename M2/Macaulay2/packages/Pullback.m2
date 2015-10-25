@@ -4,11 +4,10 @@ Version => "1.0",
 Date => "October 18th, 2015",
 Authors => {{Name => "Drew Ellingson"},{Name => "Karl Schwede"}},
 Headline => "Pullback of rings.",
-DebuggingMode => true,
-Reload => true
+DebuggingMode => false,
+PackageImports => {"PushForward"},
+Reload => false
 )
-
-needsPackage "PushForward"
 
 --************************************************************************************************************
 --************************************************************************************************************
