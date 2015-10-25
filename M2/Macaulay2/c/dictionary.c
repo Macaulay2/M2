@@ -17,7 +17,7 @@ char *Csymbols[] = {
      "union", "unsigned", "volatile", "wait", "remove", "expm1", "log1p", "erfc", "erf",
      "dummy", "acos", "asin", "atan", "atan2", "cos", "cosh", "exp",
      "floor", "lgamma", "log", "sin", "sinh", "sqrt", "tan", "tanh", "cot",
-     "characters"
+     "characters", "errno", "accept", "bind"
      };
 
 char *CXXkeywords[] = {

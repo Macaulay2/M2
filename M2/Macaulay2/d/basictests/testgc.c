@@ -1,7 +1,7 @@
 /* we test gc to whether it properly marks pointers found in registers */
 
 #include "M2/config.h"
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

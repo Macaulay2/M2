@@ -173,14 +173,22 @@ assert( round_1 .35 === .4 )
 assert( round_1 .45 === .4 )
 setRandomSeed 4
 assert( apply(20,i -> random 100) === {47, 38, 51, 74, 28, 50, 44, 25, 72, 16, 41, 61, 76, 89, 28, 27, 77, 34, 26, 57} ) -- version 1.1
-setRandomSeed 4
-assert( random RR === .75495928896616160p53e-2 )
-setRandomSeed 4
-assert( random RR_100 === .70502447625750651317270153955621p100e-1 )
-setRandomSeed 4
-assert( random CC === .75495928896616160p53e-2+.70502447625750642p53e-1*ii )
-setRandomSeed 4
-assert( random CC_100 === .70502447625750651317270153955621p100e-1+.58738933054097710728398429265722p100e0*ii)
+
+{*
+    The MPFR library changed the way it generates random real numbers in version 3.1, see
+    their file doc/mpfr.texi .
+
+    generateAssertions ///
+    setRandomSeed 4; random RR
+    setRandomSeed 4; random RR_100
+    setRandomSeed 4; random CC
+    setRandomSeed 4; random CC_100
+    ///
+    *}
+   assert( (setRandomSeed 4; random RR) === .46156623802715113p53 );
+   assert( (setRandomSeed 4; random RR_100) === .67753449342864841445246801151208p100 );
+   assert( (setRandomSeed 4; random CC) === toCC(.46156623802715113p53,.3890127375373339p53) );
+   assert( (setRandomSeed 4; random CC_100) === toCC(.67753449342864841445246801151208p100,.79330191647933724509628456990079p100) );
 
 RR[x]
 f = (1+x)^5

@@ -18,7 +18,7 @@ std::istream &fromStream<M2::ARingZZp>(std::istream &i, const M2::ARingZZp& R, M
 {
   int a;
   i >> a;
-  R.set_from_int(result, a);
+  R.set_from_long(result, a);
   return i;
 }
 
@@ -33,7 +33,7 @@ bool fromStream<Z_mod>(std::istream &i, const Z_mod& R, ring_elem &result)
 
   int a;
   i >> a;
-  result = R.from_int(a);
+  result = R.from_long(a);
   return true;
 }
 
@@ -50,22 +50,17 @@ bool fromStream<RingZZ>(std::istream &i, const RingZZ& R, ring_elem &result)
   char original_s[original_s_len];
   char *s_str = original_s;
   char *s = s_str;
-  int s_len = original_s_len;
-  int len = 0;
+  //  int s_len = original_s_len;
+  //  int len = 0;
   while (isdigit(i.peek()))
     {
-      *s++ = i.get();
-      len++;
-      if (len > s_len)
-        {
-          // NOT DONE BEING WRITTEN!!!!!!
-        }
+      // NOT DONE BEING WRITTEN!!!!!!
     }
   *s++ = '\0';
 
   int a;
   i >> a;
-  result = R.from_int(a);
+  result = R.from_long(a);
   return true;
 }
 

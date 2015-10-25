@@ -6,12 +6,11 @@
 #include <M2/config.h>
 #include <assert.h>
 #include <iostream>
-using std::cout;
-using std::endl;
 #include <cstdio>
 
-#define Matrix MaTrIx
-#include <factor.h>             // from Messollen's libfac
+#define Matrix FactoryMatrix
+#include <factory/factory.h>             // from Messollen's libfac
+#undef INT64
 #undef Matrix
 #undef ASSERT
 #include <NTL/ZZ.h>
@@ -23,13 +22,12 @@ using std::endl;
 #include "poly.hpp"
 
 #include "relem.hpp"
-#include "GF.hpp"
+//#include "GF.hpp"
 #include "text-io.hpp"
 #include "buffer.hpp"
 
 #include "tower.hpp"
 
-using namespace NTL;
 
 const bool notInExtension = false;
 
@@ -38,10 +36,11 @@ const bool notInExtension = false;
 enum factoryCoeffMode { modeError = 0, modeQQ, modeZZ, modeZn, modeGF, modeUnknown };
 static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
      const Ring *F = P->getCoefficientRing();
-     if (F->cast_to_QQ()) return modeQQ;
+     //if (F->cast_to_QQ()) return modeQQ;
+     if (F->is_QQ()) return modeQQ;
      if (F->cast_to_RingZZ()) return modeZZ;
-     if (F->cast_to_Z_mod()) return modeZn;
-     if (F->cast_to_GF()) return modeGF;
+     if (F->isFinitePrimeField()) return modeZn;
+     if (F->isGaloisField()) return modeGF;
      ERROR("expected coefficient ring of the form ZZ/n, ZZ, QQ, or GF");
      return modeError;
 }
@@ -53,7 +52,7 @@ int debugging
     ;
 
 static void init_seeds() {
-     SetSeed(ZZ::zero());       // NTL
+     NTL::SetSeed(NTL::ZZ::zero());       // NTL
      factoryseed(0);            // factory (which uses NTL, as we've compiled it)
 }
 
@@ -66,22 +65,19 @@ struct enter_factory {
   int newcharac;
   int oldRatlState;
   int newRatlState;
-  const Z_mod *Zn;
-  const GF *gf;
+  const Ring* Zn;
   void enter();
   void exit();
 
   enter_factory() :
        mode(modeUnknown),
-       Zn(NULL),
-       gf(NULL)
+       Zn(NULL)
      { enter(); }
 
   enter_factory(const PolynomialRing *P) :
        mode(coeffMode(P)),
-       newcharac(mode == modeZn || mode == modeGF ? P->charac() : 0),
-       Zn(mode == modeZn ? P->getCoefficientRing()->cast_to_Z_mod() : NULL),
-       gf(mode == modeGF ? P->getCoefficientRing()->cast_to_GF(): NULL)
+       newcharac(mode == modeZn || mode == modeGF ? static_cast<int>(P->characteristic()) : 0),
+       Zn(mode == modeZn ? P->getCoefficientRing() : NULL)
      { enter(); }
 
   ~enter_factory() { exit(); }
@@ -149,7 +145,7 @@ static __mpz_struct toInteger(CanonicalForm h) {
        if (h < 0) { sign = -1; h = -h; } else sign = 1;
        while ( h != 0 ) {
             CanonicalForm k = h % (int)base;
-            v.append(k.intval());
+            v.append(static_cast<int>(k.intval()));
             h = h/(int)base;
        }
        if (RationalMode) On(SW_RATIONAL);
@@ -181,10 +177,10 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                mpq_clear(&z);
                return ret;
           }
-          else if (h.inFF()) return RingElement::make_raw(R, R->from_int(h.intval()));
+          else if (h.inFF()) return RingElement::make_raw(R, R->from_long(h.intval()));
           else if (h.inExtension()) {
                assert( algebraicElement_M2 != NULL );
-               ring_elem result = R->from_int(0);
+               ring_elem result = R->from_long(0);
                for (int j = h.taildegree(); j <= h.degree(); j++) {
                  const RingElement *r = convertToM2(R, h[j]);
                  if (error()) return RingElement::make_raw(R,R->one());
@@ -201,7 +197,7 @@ static const RingElement * convertToM2(const PolynomialRing *R, CanonicalForm h)
                return RingElement::make_raw(R,R->one());
           }
      }
-     ring_elem result = R->from_int(0);
+     ring_elem result = R->from_long(0);
      for (int j = h.taildegree(); j <= h.degree(); j++) {
        const RingElement *r = convertToM2(R, h[j]);
        if (error()) return RingElement::make_raw(R,R->one());
@@ -226,12 +222,12 @@ static struct enter_factory foo1;
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
 #if 1
-void showvar(Variable &t) { cout << t << endl; }
-void showcf(CanonicalForm &t) { cout << t << endl; }
-void showcfl(CFList &t) { cout << t << endl; }
-void showcffl(CFFList &t) { cout << t << endl; }
-void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); cout << endl; }
-void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); cout << endl; }
+void showvar(Variable &t) { std::cout << t << std::endl; }
+void showcf(CanonicalForm &t) { std::cout << t << std::endl; }
+void showcfl(CFList &t) { std::cout << t << std::endl; }
+void showcffl(CFFList &t) { std::cout << t << std::endl; }
+void showmpint(gmp_ZZ p) { mpz_out_str (stdout, 10, p); std::cout << std::endl; }
+void showmpz(mpz_t p) { mpz_out_str (stdout, 10, p); std::cout << std::endl; }
 #endif
 
 static struct enter_factory foo2;
@@ -264,23 +260,77 @@ static CanonicalForm convertToFactory(const mpz_ptr p) {
 
 static CanonicalForm convertToFactory(const RingElement &g, bool inExtension);
 
+
+////////////////////////////////////////////////////////////////////////
+// Code to convert GF elements to/from factory CanonicalForm elements //
+////////////////////////////////////////////////////////////////////////
+static Variable set_GF_minimal_poly(const PolynomialRing* P)
+{
+  M2_ASSERT(P->getCoefficientRing()->isGaloisField());
+  const Ring* kk = P->getCoefficientRing();
+  M2_ASSERT(kk != 0);
+  RingElement F = RingElement(kk, kk->var(0));
+  F.promote(P, algebraicElement_M2); // sets algebraicElement_M2
+  Variable a = rootOf(convertToFactory(* kk->getMinimalPolynomial(),notInExtension),'a');
+  algebraicElement_Fac = a;
+  return a;
+}
+static void getGFRepresentation(const Ring* kk1, const ring_elem& a, std::vector<long>& result_rep)
+{
+  M2_ASSERT(kk1->isGaloisField());
+  //  const GF* kk = kk1->cast_to_GF();
+  //  M2_ASSERT(kk != 0);
+  const RingElement* F = kk1->getRepresentation(a);
+  //  RingElement F(kk->originalR(), kk->get_rep(a));
+  F->getSmallIntegerCoefficients(result_rep);
+}
+static CanonicalForm convertGFToFactory(const std::vector<long>& repr)
+{
+  // Uses algebraicElement_Fac as the element
+  CanonicalForm f = 0;
+  for (int i=0; i<repr.size(); i++)
+    {
+      if (repr[i] == 0) continue;
+      CanonicalForm m = CanonicalForm(repr[i]);
+      m *= power(algebraicElement_Fac, i);
+      f += m;
+    }
+  return f;
+}
+static CanonicalForm convertGFToFactory(const ring_elem &q, const PolynomialRing *P) 
+  // use algebraicElement_Fac for converting this galois field element
+  //  SO: one needs to have called set_GF_minimal_poly first!
+{
+  std::vector<long> poly;
+  getGFRepresentation(P->getCoefficientRing(), q, poly);
+  return convertGFToFactory(poly);
+}
+///////////////////////////////////////////////////////////////////////
+
+#if 0
 static CanonicalForm convertToFactory(const ring_elem &q, const GF *k) { // use algebraicElement_Fac for converting this galois field element
   const PolynomialRing *A = k->originalR();
   RingElement *g = RingElement::make_raw(A,k->get_rep(q));
   intarray vp;
   const Monoid *M = A->getMonoid();
-  const Z_mod *Zn = k->originalR()->getCoefficientRing()->cast_to_Z_mod();
+  const Ring *Zn = k->originalR()->getCoefficientRing();
   CanonicalForm f = 0;
   for (Nterm *t = g->get_value(); t != NULL; t = t->next) {
     vp.shrink(0);
     M->to_varpower(t->monom,vp);
-    CanonicalForm m = CanonicalForm(Zn->to_int(t->coeff));
+
+    std::pair<bool,long> res = Zn->coerceToLongInteger(t->coeff);
+    M2_ASSERT(res.first);
+    int coef = static_cast<int>(res.second);
+
+    CanonicalForm m = CanonicalForm(coef);
     for (index_varpower l = vp.raw(); l.valid(); ++l)
       m *= power( algebraicElement_Fac, l.exponent() );
     f += m;
   }
   return f;
 }
+#endif
 
 static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
      const Ring *R = g.get_ring();
@@ -297,11 +347,18 @@ static CanonicalForm convertToFactory(const RingElement &g,bool inExtension) {
      if (foo.mode == modeError) return 0;
      CanonicalForm f = 0;
      for (Nterm *t = g.get_value(); t != NULL; t = t->next) {
+       int coef = 0;
        vp.shrink(0);
        M->to_varpower(t->monom,vp);
+       if (foo.mode == modeZn)
+         {
+           std::pair<bool,long> res = foo.Zn->coerceToLongInteger(t->coeff);
+           M2_ASSERT(res.first);
+           coef = static_cast<int>(res.second);
+         }
        CanonicalForm m = (
-                          foo.mode == modeZn ? CanonicalForm(foo.Zn->to_int(t->coeff)) :
-                          foo.mode == modeGF ? convertToFactory(t->coeff,foo.gf) :
+                          foo.mode == modeZn ? CanonicalForm(coef) :
+                          foo.mode == modeGF ? convertGFToFactory(t->coeff,P) :
                           foo.mode == modeZZ ? convertToFactory(t->coeff.get_mpz()) :
                           foo.mode == modeQQ ? (
                                                 convertToFactory(mpq_numref(MPQ_VAL(t->coeff)))
@@ -360,10 +417,7 @@ const RingElement /* or null */ *rawGCDRingElement(const RingElement *f, const R
     if (foo.mode == modeError) { algebraicElement_M2 = NULL; return 0; }
     if (foo.mode == modeGF) {
       assert( ! inExtension );
-      algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-      {
-        (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-      }
+      set_GF_minimal_poly(P);
     }
     if (inExtension) {
       CanonicalForm minp = convertToFactory(*mipo,false);
@@ -424,10 +478,7 @@ const RingElement /* or null */ *rawExtendedGCDRingElement(const RingElement *f,
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   if (foo.mode == modeGF) {
-    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-    {
-      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-    }
+    set_GF_minimal_poly(P);
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
@@ -462,10 +513,7 @@ const RingElement /* or null */ *rawPseudoRemainder(const RingElement *f, const 
   struct enter_factory foo(P);
   if (foo.mode == modeError) return 0;
   if (foo.mode == modeGF) {
-    algebraicElement_Fac = rootOf(convertToFactory(*foo.gf->get_minimal_poly(),inExtension),'a');
-    {
-      (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,algebraicElement_M2); // sets algebraicElement_M2
-    }
+    set_GF_minimal_poly(P);
   }
   CanonicalForm p = convertToFactory(*f,inExtension);
   CanonicalForm q = convertToFactory(*g,inExtension);
@@ -499,12 +547,9 @@ void rawFactorBase(const RingElement *g,
 
           if (foo.mode == modeGF) {
             inExtension = true;
-            CanonicalForm mipocf = convertToFactory(*foo.gf->get_minimal_poly(),notInExtension);
-            Variable a = rootOf(mipocf,'a');
-            algebraicElement_Fac = a;
+            Variable a = set_GF_minimal_poly(P);
             CanonicalForm h = convertToFactory(*g,notInExtension);
             q = factorize(h,a);
-            (RingElement::make_raw(P->getCoefficientRing()->cast_to_GF(), foo.gf->var(0)))->promote(P,/* sets: */ algebraicElement_M2);
           }
           else if (mipo != NULL) {
             CanonicalForm mipocf = convertToFactory(*mipo,notInExtension);
@@ -646,7 +691,7 @@ engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M)
                   }
              }
 
-             List<CFList> t = IrrCharSeries(I);
+             List<CFList> t = irrCharSeries(I);
 
              engine_RawMatrixArray result = getmemarraytype(engine_RawMatrixArray,t.length());
              result->len = t.length();
@@ -687,54 +732,6 @@ CFList convertToCFList(const Matrix &M,
     }
   }
   return I;
-}
-
-void rawFactorOverTower(const RingElement *g,
-                        const Matrix *tower,
-                        engine_RawRingElementArrayOrNull *result_factors,
-                        M2_arrayintOrNull *result_powers)
-{
-  // g is expected to be a polynomial in one variable over the polynomials in 'tower'.
-  // tower should define a finite, irreducible ring extension, which is prime over the base field.
-  // result: as in rawFactor, the factors and their powers are placed into result_factors and
-  // result_powers.
-     try {
-          const PolynomialRing *P = g->get_ring()->cast_to_PolynomialRing();
-          *result_factors = 0;
-          *result_powers = 0;
-          if (P == 0) {
-               ERROR("expected polynomial ring");
-               return;
-          }
-          struct enter_factory foo(P);
-          if (foo.mode == modeError) return;
-
-          CFFList q;
-          init_seeds();
-
-          int success = 0;
-          CanonicalForm h = convertToFactory(*g,false);
-          CFList T = convertToCFList(*tower, false);
-          q = newfactoras(h, T, success);
-     
-          int nfactors = q.length();
-
-          *result_factors = getmemarraytype(engine_RawRingElementArray,nfactors);
-          (*result_factors)->len = nfactors;
-
-          *result_powers = M2_makearrayint(nfactors);
-
-          int next = 0;
-          for (CFFListIterator i = q; i.hasItem(); i++) {
-            (*result_factors)->array[next] = convertToM2(P,i.getItem().factor());
-            (*result_powers)->array[next++] = i.getItem().exp();
-          }
-          if (error()) *result_factors = NULL, *result_powers = NULL;
-     }
-     catch (exc::engine_error e) {
-          ERROR(e.what());
-          return;
-     }
 }
 
 // Local Variables:

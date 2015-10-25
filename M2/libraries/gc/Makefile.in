@@ -1,7 +1,35 @@
-HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
+HOMEPAGE = http://www.hboehm.info/gc/
+URL = http://www.hboehm.info/gc/gc_source/
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
+VERSION = 7.4.2
+LICENSEFILES = README.QUICK
+#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 
-# license for gc: "Permission is hereby granted to use or copy this program for any purpose ... " 
-#  for details, see if file README.QUICK
+# We can also get the sources from the home page above or from
+#   https://github.com/ivmai/bdwgc/
+#   https://github.com/ivmai/libatomic_ops/
+# Run the appropriate autoconf tools and tar them up
+# In more detail, run these commands:
+#   git clone git://github.com/ivmai/bdwgc.git
+#   cd bdwgc
+#   git clone git://github.com/ivmai/libatomic_ops
+#   autoreconf -vif
+#   automake --add-missing
+#   ./configure
+#   make
+#   make check
+
+# History:
+
+# We made gc+libatomic_ops-7.4.0.tar.gz by untarring
+#    http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz
+# and then untarring
+#    http://www.hboehm.info/gc/gc_source/gc-7.4.0.tar.gz
+# inside it, with the resulting directory libatomic_ops-7.4.0
+# renamed to libatomic_ops.
+# We don't use that technique any further, since it is simpler to make libatomic_ops separately.
+
+# Problems:
 
 # warning: we don't use libcord.so, but it gets compiled with an RPATH set like this:
 #   $ objdump -x libcord.so | grep RPA
@@ -9,32 +37,7 @@ HOMEPAGE = http://www.hpl.hp.com/personal/Hans_Boehm/gc/
 # That might happen to other sharable libraries we import
 # That's why it's better for sharable libraries to be distributed as separate packages.
 
-# URL = http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source
-
-# We get the sources from
-#   https://github.com/ivmai/bdwgc/
-#   https://github.com/ivmai/libatomic_ops/
-# Run the appropriate autoconf tools and tar them up
-# In more detail, run these commands:
-#   git clone git://github.com/ivmai/bdwgc.git
-#   cd bdwgc
-#   git clone git://github.com/ivmai/libatomic_ops.git
-#   autoreconf -vif
-#   automake --add-missing
-#   ./configure
-#   make
-#   make check
-
-# or we get it from the home page
-
-#VERSION = 20120729
-VERSION = 7.2d
-TARDIR = gc-7.2
-#PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-AOVERSION = 
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
-
-# for gc "make check" requires far too much memory
+# For gc "make check" requires far too much memory
 VLIMIT := 2500000
 MLIMIT := $(VLIMIT)
 # oddly, unless the VLIMIT is bigger than 2GB, the test subthread_create fails with this message
@@ -43,44 +46,37 @@ MLIMIT := $(VLIMIT)
 
 CONFIGOPTIONS += --enable-cplusplus
 
-# this tells it that libatomic_ops is included internally as a subdirectory
-CONFIGOPTIONS += --with-libatomic-ops=no
-
-# PRECONFIGURE = (cd libatomic_ops$(AOVERSION) && autoconf)
-
 #################################
 
 VPATH = @srcdir@
 
-# ifeq (@ PTHREADS @,yes)
 CONFIGOPTIONS += --enable-threads=posix
-CONFIGOPTIONS += --enable-parallel-mark
-# else 
-# CONFIGOPTIONS += --disable-threads
-# endif
 
 ifeq (@SHARED@,no)
 CONFIGOPTIONS += --disable-shared
 endif
+
 ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-gc-debug
+CPPFLAGS += -DDBG_HDRS_ALL=1 -DGC_ABORT_ON_LEAK=1
 
-# --enable-gc-assertions causes all the tests to fail on 64 bit mac os x
+#   "--enable-gc-assertions" causes all the tests to fail on 64 bit mac os x
 #   because addresses of roots are added that are not a multiple of 8.
 #   One such address is "start", the linker defined symbol, which can be a
 #   non-multiple of 8 under gcc 4.6.2
 CONFIGOPTIONS += --enable-gc-assertions
 
+# disable parallel mark when debugging, to ensure determinism:
+CONFIGOPTIONS += --disable-parallel-mark
 else
+CONFIGOPTIONS +=  --enable-parallel-mark
 # INSTALLTARGET = install-strip
 endif
+
 CONFIGOPTIONS += --enable-large-config --disable-gcj-support --disable-java-finalization
-# PATCHFILE = @abs_srcdir@/patch-7.0
+
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gc/Makefile
-# CONFIGURECMD += && cd libatomic_ops$(AOVERSION) && $(CONFIGENV) ./configure --prefix=$(LIBRARIESDIR) $(CONFIGOPTIONS)
-# BUILDCMD     += && $(MAKE) -C libatomic_ops$(AOVERSION) $(BUILDOPTIONS) $(BUILDTARGET)
-INSTALLCMD   += && $(MAKE) -C libatomic_ops$(AOVERSION) $(INSTALLOPTIONS) prefix=$(LIBRARIESDIR) $(INSTALLTARGET)
 clean uninstall::
 	if [ -d $(LIBRARIESDIR) ] ; \
 	then cd $(LIBRARIESDIR) && \

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- {* hash: -1388999538 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y,z]
 
@@ -15,7 +14,6 @@ o2 = {- x  + y, - x  + z, x + y + z - 1}
 o2 : List
 
 i3 : solns = solveSystem(system)
-using temporary files /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44653-0/0PHCinput and /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44653-0/0PHCoutput
 
 o3 = {{.543689, .295598, .160713}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
      ------------------------------------------------------------------------
@@ -40,7 +38,7 @@ o5 : List
 
 i6 : oneSoln = solns_0
 
-o6 = {.543689, .295598, .160713}
+o6 = oneSoln
 
 o6 : Point
 

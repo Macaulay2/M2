@@ -1,13 +1,12 @@
-# readline is licensed under GPL v3
 LICENSEFILES = COPYING
 
-VERSION = 6.2
-PATCHES = 001 002 003 004
+VERSION = 6.3
+PATCHES = 001 002 003 004 005 006 007 008
 
 RELAX = yes
 # URL = ftp://ftp.gnu.org/gnu/readline
 # PATCHURL = $(URL)/readline-$(VERSION)-patches
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 PATCHURL = $(URL)
 
 BUILDTARGET = all -o install-examples
@@ -23,7 +22,14 @@ endif
 # warning: we have to set PATCHFILE first, so the dependencies work out, but $(TARFILE_DIR) isn't defined yet, so we use its value here:
 PATCHFILE = $(addprefix @abs_top_srcdir@/BUILD/tarfiles/readline$(shell echo $(VERSION) | sed 's/\.//g')-,$(PATCHES))
 
+ifeq ($(VERSION) @host@,6.2 x86_64-w64-mingw32)
+PATCHFILE += @abs_srcdir@/patch-6.2-mingw64
+endif
+
 include ../Makefile.library
+
+CFLAGS += -Wfatal-errors
+
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/readline/Makefile
 
 PATCHCMD = cd $(BUILDDIR) && for i in $(PATCHFILE) ; do echo patching with $$i ; patch -p0 < $$i ; done
@@ -31,7 +37,7 @@ PATCHCMD = cd $(BUILDDIR) && for i in $(PATCHFILE) ; do echo patching with $$i ;
 ifeq (@DOWNLOAD@,yes)
 $(PATCHFILE) :
 	rm -f $@
-ifneq (@WGET@,)
+ifneq (@WGET@,false)
 	cd $(TARFILE_DIR) && @WGET@ $(PATCHURL)/$(notdir $@)
 else
 	cd $(TARFILE_DIR) && @CURL@ -o $(notdir $@) $(PATCHURL)/$(notdir $@)

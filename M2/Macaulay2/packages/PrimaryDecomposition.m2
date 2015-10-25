@@ -9,23 +9,23 @@ newPackage(
      )
 
 export {
-     primaryDecomposition,
-     irreducibleDecomposition,
-     isPrimary,
-     EisenbudHunekeVasconcelos,					    -- cryptic
-     Hybrid,
-     Increment,
-     GTZ,
-     ShimoyamaYokoyama,
---     binomialCD,
---     extract,
---     findNonMember,
---     flattener,
-     localize,
---     minSat,
-     primaryComponent
---     quotMin,
---     radicalContainment
+     "primaryDecomposition",
+     "irreducibleDecomposition",
+     "isPrimary",
+     "EisenbudHunekeVasconcelos",					    -- cryptic
+     "Hybrid",
+     "Increment",
+     "GTZ",
+     "ShimoyamaYokoyama",
+--     "binomialCD",
+--     "extract",
+--     "findNonMember",
+--     "flattener",
+     "localize",
+--     "minSat",
+     "primaryComponent"
+--     "quotMin",
+--     "radicalContainment"
      }
 
 -- private symbols used as keys:
@@ -140,7 +140,9 @@ isPrimary(Ideal,Ideal) := (Q,P) -> (
 minimalPrimes MonomialIdeal := decompose MonomialIdeal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  minI := dual radical I;
-	  apply(flatten entries generators minI, monomialIdeal @@ support)))
+          if minI == 1 then {monomialIdeal(0_(ring I))}
+          else
+	      apply(flatten entries generators minI, monomialIdeal @@ support)))
 
 irreducibleDecomposition = method();
 irreducibleDecomposition MonomialIdeal := List => (I) -> (
@@ -179,6 +181,7 @@ primaryDecomposition MonomialIdeal := List => o -> (I) -> (
      R := ring I;
      aI := first exponents lcm I;
      J := dual I;
+     if J == 1 then return {monomialIdeal(0_R)};
      M := first entries generators J;
      H := new MutableHashTable;
      scan(M, m -> (
@@ -269,6 +272,40 @@ TEST ///
 	  )
 ///
 
+TEST ///
+  -- trivial cases:
+  R = QQ[x,y,z]
+  I = monomialIdeal(1_R)
+  assert(primaryDecomposition I == {})
+  assert not isPrimary I
+  assert not isPrime I
+  assert(minimalPrimes I == {})
+
+  I = ideal(1_R)
+  assert(primaryDecomposition I == {})
+  assert not isPrimary I
+  assert not isPrime I
+  assert(minimalPrimes I == {})
+
+  I = ideal(0_R)
+  assert(primaryDecomposition I == {trim ideal(0_R)})
+  assert isPrimary I
+  assert isPrime I
+  assert(minimalPrimes I == {ideal(0_R)})
+
+  I = trim ideal(0_R)
+  assert(primaryDecomposition I == {trim ideal(0_R)})
+  assert isPrimary I
+  assert isPrime I
+  assert(minimalPrimes I == {ideal(0_R)})
+
+  I = monomialIdeal(0_R)
+  assert(primaryDecomposition I == {monomialIdeal(0_R)})
+  assert isPrimary I
+  assert isPrime I
+  assert(minimalPrimes I == {ideal(0_R)})
+  assert(all(minimalPrimes I, f -> class f === MonomialIdeal))
+///
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PrimaryDecomposition pre-install"
 -- End:

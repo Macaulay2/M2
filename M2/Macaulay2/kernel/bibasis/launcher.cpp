@@ -62,7 +62,7 @@ namespace BIBasis
             return false;
         }
   
-        if (matrixRing->charac() != 2)
+        if (matrixRing->characteristic() != 2)
         {
             ERROR("BIBasis::CheckMatrix(): input matrix ring is not ZZ/2.");
             return false;
@@ -82,7 +82,7 @@ namespace BIBasis
             return false;
         }
   
-        if (!coefficientRing->cast_to_Z_mod())
+        if (!coefficientRing->isFinitePrimeField())
         {
             ERROR("BIBasis::CheckMatrix(): coefficient ring is not ZZ/2.");
             return false;
@@ -124,7 +124,7 @@ namespace BIBasis
                 return false;
         }
         
-        GetSettingsManager().SetNumberOfVariables(polynomialRing->n_vars());
+        GetSettingsManager().SetNumberOfVariables(static_cast<BIBasis::Monom::Integer>(polynomialRing->n_vars()));
         
         return true;
     }

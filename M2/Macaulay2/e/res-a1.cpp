@@ -738,14 +738,14 @@ resterm *res_comp::s_pair(res_pair *p) const
     // returns this value multiplied out.
     // Care is of course taken with the Schreyer order
 {
-  p->syz = R->new_term(K->from_int(1), p->base_monom, p->first);
+  p->syz = R->new_term(K->from_long(1), p->base_monom, p->first);
   int *si = M->make_one();
   M->divide(p->base_monom, p->first->base_monom, si);
   resterm *result = R->mult_by_monomial(p->first->syz, si);
-  ring_elem one = K->from_int(1);
+  ring_elem one = K->from_long(1);
   if (p->second != NULL)
     {
-      p->syz->next = R->new_term(K->from_int(-1), p->base_monom, p->second);
+      p->syz->next = R->new_term(K->from_long(-1), p->base_monom, p->second);
       M->divide(p->base_monom, p->second->base_monom, si);
       R->subtract_multiple_to(result, one, si, p->second->syz);
     }

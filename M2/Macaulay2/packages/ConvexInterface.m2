@@ -454,7 +454,7 @@ doc ///
 
       installPackage("MapleInterface")
 
-      Edit the file init-MapleInterface.m2 in the directory .Macaulay2 in your home directory
+      Edit the file init-ConvexInterface.m2 in the directory .Macaulay2 in your home directory
       changing the line
 
       "ConvexPath" =""

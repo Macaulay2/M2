@@ -25,8 +25,9 @@ document {
 		    }
 	       },
 	  Consequences => {
-	       "The tests in the package ", TT "P", " are run (in separate Macaulay2 processes), and 
-	       any errors are reported."
+	       { "The tests in the package ", TT "P", " are run (in separate Macaulay2 processes, with the
+	       random number seed initialized to 0), and 
+	       any errors are reported." }
 	       },     
 	  PARA {
 	       "For example, to run the tests for the LLLBases package (Lenstra-Lenstra-Lovasz bases)

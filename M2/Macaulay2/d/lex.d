@@ -113,7 +113,7 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      pos := position(o);
      hadnewline := false;
-     tokenbuf << '\"';
+     tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
 	  if ch == ERROR then (
@@ -170,7 +170,11 @@ getstring(o:PosFile):(null or Word) := (
 	  ch := getc(o);
 	  if ch == ERROR then (
 	       if !test(interruptedFlag)
-	       then printErrorMessage(o.filename,line,column,"ERROR in string beginning here: " + o.file.errorMessage);
+	       then printErrorMessage(o.filename,line,column,
+		    (if o.file.eof 
+			 then "reading beyond EOF in string beginning here: "
+			 else "ERROR in string beginning here: ")
+		    + o.file.errorMessage);
 	       empty(tokenbuf);
 	       return NULL;
 	       );

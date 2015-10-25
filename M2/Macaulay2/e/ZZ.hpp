@@ -4,10 +4,13 @@
 #define _ZZ_hh_
 
 #include "ring.hpp"
+#include <stddef.h>
 #include <gmp.h>
 #include <mpfr.h>
-class CoefficientRingZZ_NTL;
 
+namespace M2 {
+  class ARingZZGMP;
+};
 
 // The following lines are here only to remove complaints about old style casts from gmp
 extern "C" inline int mask_mpz_cmp_si(mpz_t x, long int i) { return mpz_cmp_si(x,i); }
@@ -18,7 +21,7 @@ extern "C" inline int mask_mpq_cmp_si(mpq_t x, long int i, long int j) { return 
 */
 class RingZZ : public Ring
 {
-  friend class CoefficientRingZZ_NTL;
+  friend class M2::ARingZZGMP;
 
   int _elem_size;
   mpz_ptr _zero_elem;
@@ -26,7 +29,7 @@ class RingZZ : public Ring
   mpz_ptr new_elem() const;
   void remove_elem(mpz_ptr f) const;
 
-  CoefficientRingZZ_NTL *coeffR;
+  M2::ARingZZGMP *coeffR;
 protected:
   virtual ~RingZZ() {}
 
@@ -43,9 +46,11 @@ public:
   RingZZ * cast_to_RingZZ() { return this; }
   const RingZZ * cast_to_RingZZ() const { return this; }
 
-  CoefficientRingZZ_NTL * get_CoeffRing() const { return coeffR; }
-  CoefficientRingZZ_NTL * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
+  M2::ARingZZGMP * get_CoeffRing() const { return coeffR; }
+  M2::ARingZZGMP * get_ARing() const { return coeffR; }  //TODO: MES: change to ARing type once implemented.
 
+  virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const;
+  
 // The following are all the routines required by 'ring'
   virtual bool is_ZZ() const         { return true; }
 
@@ -61,9 +66,11 @@ public:
   // To get a bignum from a RingElement a, use: a.get_value().get_mpz()
   // To get a bignum from an ring_elem  a, use: a.get_mpz()
 
-  virtual int coerce_to_int(ring_elem a) const;
+  virtual unsigned int computeHashValue(const ring_elem a) const;
 
-  virtual ring_elem from_int(int n) const;
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
+
+  virtual ring_elem from_long(long n) const;
   virtual ring_elem from_int(mpz_ptr n) const;
   virtual ring_elem from_rational(mpq_ptr q) const;
   virtual bool promote(const Ring *R, const ring_elem f, ring_elem &result) const;
@@ -123,6 +130,7 @@ public:
 
 };
 
+unsigned int computeHashValue_mpz(mpz_ptr a);
 #endif
 
 // Local Variables:

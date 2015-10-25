@@ -9,9 +9,10 @@
 // Later, we will extend this to multivariate polynomials and function fields
 
 #include <cstdio>
-#include <strstream>
+#include <sstream>
 #include "ringelem.hpp"
 #include "buffer.hpp"
+#include <vector>
 
 class Tower;
 class DPolyTraverser;
@@ -23,9 +24,10 @@ typedef const struct poly_struct * const_poly;
 /**
  * \ingroup polynomialrings
  */
+
 struct poly_struct : public our_new_delete {
-  unsigned long deg;
-  unsigned long len;
+  int deg;
+  int len;
   union {
     long *ints;  // array of integers.  at level == 0
     poly *polys; // array of more ptrs to poly structs, at level > 0
@@ -84,8 +86,8 @@ public:
 
   static void increase_size_0(int newdeg, poly &f);
   static void increase_size_n(int newdeg, poly &f);
-  static poly alloc_poly_n(long deg, poly *elems=0);
-  static poly alloc_poly_0(long deg, long *elems=0);
+  static poly alloc_poly_n(int deg, poly *elems=0);
+  static poly alloc_poly_0(int deg, long *elems=0);
   static void dealloc_poly(poly &f);
 
   static void display_poly(FILE *fil, int level, const poly f);
@@ -96,8 +98,7 @@ public:
   static bool is_equal(int level, const poly f, const poly g);
   static poly copy(int level, const_poly f);
 
-  static poly from_int(int level, long c);  // c should be reduced mod p
-  static bool is_one(int level, poly f);
+  static poly from_long(int level, long c);  // c should be reduced mod p
 
   static bool is_zero(poly f) { return f == 0; }
 
@@ -153,6 +154,12 @@ public:
   poly diff(int level, int var, const poly f);
   poly power_mod(int level, const poly f, mpz_t n, const poly g);  // f^n mod g
   poly lowerP(int level, const poly f);
+
+  static bool is_one(int level, const poly f);
+  int index_of_var(int level, const poly f) const;
+  void degrees_of_vars(int level, 
+                       const poly f, 
+                       std::vector<int>& result_max_degs) const;
 
   // DPoly management
   ~DPoly() {}
@@ -286,10 +293,10 @@ public:
     result = D.var(level,n);
   }
 
-  void set_from_int(poly &result, long r) {
+  void set_from_long(poly &result, long r) {
     r = r % P;
     if (r < 0) r += P;
-    result = D.from_int(level, r);
+    result = D.from_long(level, r);
   }
 
   void set_from_int(poly &result, mpz_ptr r); // written
@@ -321,6 +328,14 @@ public:
   int extension_degree(int firstvar); // returns -1 if infinite
   void power_mod(poly &result, const poly f, mpz_t n, const poly g) const { result = D.power_mod(level, f, n, g); } // f^n mod g
   void lowerP(poly &result, const poly f) { result = D.lowerP(level, f); }
+
+  int index_of_var(const poly f) const { return D.index_of_var(level, f); }
+  void degrees_of_vars(const poly f, std::vector<int>& result) const {
+    result.resize(level+1);
+    for (size_t i=0; i<=level; i++)
+      result[i] = 0;
+    D.degrees_of_vars(level, f, result); 
+  }
 };
 
 /**

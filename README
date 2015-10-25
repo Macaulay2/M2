@@ -1,22 +1,35 @@
+
+			       Macaulay2
+
 Macaulay2 is a system for computing in commutative algebra, algebraic geometry
 and related fields.  The system was originally written by Dan Grayson and Mike
 Stillman.  David Eisenbud joined the project a number of years ago, and many
 users are writing packages for the system, and some are contributing source
-code.
+code.  See our web page 
 
-See our web page 
+  http://macaulay2.com/
 
-  http://www.macaulay2.com 
+for more details and for downloading binary releases.
 
-for more details, and binary releases. Report bugs via the github issue tracker at 
+The source code is available at
+
+   https://github.com/Macaulay2/M2.
+
+One uses the program "git" to access it.  For brief instructions about how to
+use git, see
+
+  https://github.com/Macaulay2/M2/wiki/GitHowTo.
+
+Report bugs via the github issue tracker at
 
   http://github.com/Macaulay2/M2/.  
 
-This repository contains the source code for Macaulay2, and is intended to be
-checked out by developers of Macaulay2.  The subdirectory "M2" contains
-everything needed by a user to build Macaulay2.  The subdirectory "bugs" is
-where we keep track of bugs and new features.
+The directory containing this file is the top level directory of the directory
+tree that contains the following subdirectories:
 
-The subversion repository at svn://svn.macaulay2.com is kept up to date,
-although it does not see detailed commit messages from git commits.
+    M2	     The subdirectory "M2" contains everything needed by a user to
+	     build Macaulay2, and the file "M2/INSTALL" gives instructions for
+	     doing so.
 
+    bugs     The subdirectory "bugs" is where we keep track of older bug 
+    	     reports.

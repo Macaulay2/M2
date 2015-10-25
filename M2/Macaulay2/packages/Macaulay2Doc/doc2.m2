@@ -13,7 +13,7 @@ document {
 	  "timing 3^30",
       	  "peek oo",
 	  },
-     SeeAlso => {"Time", "time", "cpuTime"}
+     SeeAlso => {"Time", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 
 document {
@@ -23,7 +23,33 @@ document {
      TT "time e", " evaluates ", TT "e", ", prints the amount of cpu time
      used, and returns the value of ", TT "e", ".",
      EXAMPLE "time 3^30",
-     SeeAlso => {"timing", "cpuTime"}
+     SeeAlso => {"timing", "cpuTime", "elapsedTiming", "elapsedTime"}
+     }
+
+document {
+     Key => "elapsedTiming",
+     Headline => "time a computation using time elapsed",
+     TT "elapsedTiming e", " evaluates ", TT "e", " and returns a list of type ", TO "Time", "
+     of the form ", TT "{t,v}", ", where ", TT "t", " is the number of seconds
+     of time elapsed, and ", TT "v", " is the value of the the expression.",
+     PARA{},
+     "The default method for printing such timing results is to display the
+     timing separately in a comment below the computed value.",
+     EXAMPLE {
+	  "elapsedTiming sleep 1",
+      	  "peek oo",
+	  },
+     SeeAlso => {"Time", "elapsedTime", "cpuTime", "timing", "time"}
+     }
+
+document {
+     Key => "elapsedTime",
+     Headline => "time a computation using time elapsed",
+	Usage => "elapsedTime e",
+     TT "elapsedTime e", " evaluates ", TT "e", ", prints the amount of time
+     elapsed, and returns the value of ", TT "e", ".",
+     EXAMPLE "elapsedTime sleep 1",
+     SeeAlso => {"elapsedTiming", "cpuTime"}
      }
 
 document {
@@ -33,7 +59,7 @@ document {
      is ", ofClass BasicList, " of the form ", TT "{t,v}", ", where ", TT "t", " 
      is the number of seconds of cpu time used, and ", TT "v", " is the value 
      of the the expression.",
-     SeeAlso => {"timing", "time", "cpuTime"}
+     SeeAlso => {"timing", "time", "cpuTime", "elapsedTiming", "elapsedTime"}
      }
 
 document {
@@ -609,10 +635,10 @@ document {
      Headline => "comparison operator",
      Usage => "x ? y", 
      Inputs => { "x", "y" },
-     Outputs => { Boolean },
-     "Compares ", TT "x", " and ", TT "y", " (of the same type), returning ", TT "symbol <", ", ",
-     TT "symbol >", ", ", TT "symbol ==", ", or ", TO "incomparable", ".",
-     PARA{},
+     Outputs => {{
+	  "One of the symbols ", TT "symbol <", ", ", TT "symbol >", ", ", TT "symbol ==", ", or ", TT "incomparable", ",
+	  depending (respectively) on whether ", TT "x < y", ", ", TT "x > y", ", ", TT "x == y", ", or ", TT "x", " and ", TT "y", " are not comparable."	  
+	  }},
      "Many types of objects may be compared.  Numbers are handled as one would expect,
      and strings, lists and sequences are generally compared lexicographically.",
      EXAMPLE lines ///
@@ -745,18 +771,25 @@ document {
      Usage => "run s",
      Inputs => { "s" => String => {"a command understandable by the operating system"} },
      Outputs => {
-	  ZZ => {
-	       "the exit status of the command
-	       if it returned normally; it is an integer, normally zero, in the range from 0 to 255.
-	       If the command was interrupted, then 1000 plus the number of the signal 
-	       is returned.  A return value of -1 indicates an error in creating a new process
-	       or in discovering its status.  A return value of 255 may indicate that the shell
-	       to run the command was not found."
-	       }
+	  ZZ => "the return code"
 	  },
      PARA {
 	  "The process is run in the same process group, so signals invoked by control characters at the terminal will
 	  go both to it and to Macaulay2."
+	  },
+     PARA {
+	  "Under Linux and Mac OS, the return code is 256 times the exit status
+	  code of the command, if the command exited normally; by convention,
+	  an exit status code of 0 indicates error free execution or the
+	  Boolean value ", TT "true", ", an exit status code of 1 indicates an
+	  error or the Boolean value ", TT "false", "; if the command
+	  terminated in response to a signal or fault, the signal number (in
+	  the range 1-126) is returned, added to 128 if a core dump was
+	  created; if the shell (command interpreter) could not be executed,
+	  then 127 is returned.  Signal numbers typically include 2 for
+	  interrupt, 3 for quit, 6 for abort, 9 for kill, 11 for segmentation
+	  fault, and 15 for termination.  For details, see the man page of the
+	  libc routine ", TT "system()", "."
 	  }
      }
 document {

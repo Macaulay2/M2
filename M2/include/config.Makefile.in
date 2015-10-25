@@ -15,10 +15,15 @@ CC = @CC@
 CXX = @CXX@
 FC = @FC@
 CFLAGS = @CFLAGS@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS += @CPPFLAGS@
 CXXFLAGS = @CXXFLAGS@
 FCFLAGS = @FCFLAGS@
 LDFLAGS = @LDFLAGS@
+LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
+
+# here we set the variables that "configure" uses
+# this is the only way to add libraries to the linking done by "gdbm", since it doesn't use LDLIBS or LOADLIBES
+LIBS = @LIBS@
 
 # Macaulay 2 file system layout definitions, dependent on $(prefix) and PackageName.
 #  see http://www.pathname.com/fhs/
@@ -48,36 +53,49 @@ INSTALL = @INSTALL@
 # by older include files in a directory specified by the user with CPPFLAGS=-I/foo/bar, causing
 # version skew (gcc preprocessor searches -I directories first, then -isystem directories)
 
-BUILTLIBPATH = @abs_top_builddir@/libraries/final
+BUILTLIBPATH = @abs_top_builddir@/usr-host
 
 # this will be a symbolic link installed by libraries/gtest/Makefile
 GTEST_DIR = @abs_top_builddir@/libraries/final/gtest
 
-CPPFLAGS := \
-	 -I@abs_top_srcdir@/include \
-	 -I@abs_top_builddir@/include \
-	 -I$(BUILTLIBPATH)/include \
-	 $(CPPFLAGS)
+CPPFLAGS :=						\
+	-I@abs_top_srcdir@/include			\
+	-I@abs_top_builddir@/include			\
+	-I$(BUILTLIBPATH)/include			\
+	-I@abs_top_srcdir@/submodules/memtailor/src	\
+	-I@abs_top_srcdir@/submodules/mathic/src	\
+	-I@abs_top_srcdir@/submodules/mathicgb/src	\
+	$(CPPFLAGS)
 
 ifeq "@ENABLE_MPACK@" "yes"
 CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
 endif
 
 vpath %.h $(BUILTLIBPATH)/include
-LDFLAGS := -L$(BUILTLIBPATH)/lib $(LDFLAGS)
+LDFLAGS :=						\
+	-L$(BUILTLIBPATH)/lib				\
+	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/mathic		\
+	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
+	$(LDFLAGS)
+LDFLAGS_FOR_BUILD :=					\
+	-L$(BUILTLIBPATH)/lib				\
+	-L@abs_top_builddir@/submodules/memtailor	\
+	-L@abs_top_builddir@/submodules/mathic		\
+	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
+	$(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
 vpath %.so $(BUILTLIBPATH)/lib
-LD_LIBRARY_PATH := $(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
-export LD_LIBRARY_PATH
-export PATH := @abs_top_srcdir@/bin:${PATH}
-AR = ar
+export PATH := @abs_top_srcdir@/usr-build/bin:${PATH}
+-include @abs_top_srcdir@/usr-build/aclocal-path
+-include @abs_top_srcdir@/usr-build/aclocal-path2
+export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))
 MAKEFLAGS += -w
 endif
-ifeq "@OS@ @ARCH@" "Linux alpha"
-AS = gcc -c -x assembler-with-cpp
-endif
+
 M2_CPPFLAGS += @M2_CPPFLAGS@
 ifeq "@GCC@" "yes"
 # if it's gcc, we can get stricter warning and error messages
@@ -101,6 +119,7 @@ ifeq "@DEBUG@" "yes"
 CFLAGS += -debug
 CXXFLAGS += -debug
 LDFLAGS += -debug
+LDFLAGS_FOR_BUILD += -debug
 endif
 else
 M2_BOTH += -Wno-parentheses
@@ -130,10 +149,11 @@ endif
 # returns a 64-bit pointer is not declared as such, then only 32 bits of the return value will be used.
 endif
 endif
-STRIPCMD = @STRIPCMD@
-ifeq "$(STRIP)" "yes"
+STRIP = @STRIP@
+ifeq "$(ENABLE_STRIP)" "yes"
 ifneq "@OS@" "Darwin"
 LDFLAGS  += -s
+LDFLAGS_FOR_BUILD  += -s
 endif
 endif
 MKDIR_P = @INSTALL@ -d
@@ -189,6 +209,9 @@ endif
 
 # libgc
 export GC_LARGE_ALLOC_WARN_INTERVAL=1
+
+# status info
+WHY = : remaking $@ because of $?
 
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR include/config.Makefile DEPENDS=no "

@@ -174,10 +174,10 @@ void DetComputation::get_minor(size_t *r, size_t *c, int p0, ring_elem **D0)
 {
   for (size_t i=0; i<p0; i++)
     for (size_t j=0; j<p0; j++)
-      D0[i][j] = M->elem(r[i],c[j]);
+      D0[i][j] = M->elem(static_cast<int>(r[i]),static_cast<int>(c[j]));
 }
 
-bool DetComputation::get_pivot(ring_elem **D0, int r, ring_elem &pivot, size_t &pivot_col)
+bool DetComputation::get_pivot(ring_elem **D0, size_t r, ring_elem &pivot, size_t &pivot_col)
   // Get a non-zero column 0..r in the r th row.
 {
   // MES: it would be worthwhile to find a good pivot.
@@ -228,8 +228,8 @@ ring_elem DetComputation::bareiss_det()
   int sign = 1;
   size_t pivot_col;
 
-  ring_elem pivot = R->from_int(0);
-  ring_elem lastpivot = R->from_int(0);
+  ring_elem pivot = R->from_long(0);
+  ring_elem lastpivot = R->from_long(0);
 
   for (size_t r=p-1; r>=1; --r)
     {
@@ -242,7 +242,7 @@ ring_elem DetComputation::bareiss_det()
             for (size_t j=0; j<=r; j++)
               R->remove(D[i][j]);
           R->remove(lastpivot);
-          return R->from_int(0);
+          return R->from_long(0);
         }
       for (size_t i=0; i<r; i++)
         gauss(D,i,r,pivot_col,lastpivot);
@@ -270,15 +270,15 @@ ring_elem DetComputation::calc_det(size_t *r, size_t *c, int p0)
      // Compute the determinant of the minor with rows r[0]..r[p0-1]
      // and columns c[0]..c[p0-1].
 {
-  if (p0 == 1) return M->elem(r[0],c[0]);
-  ring_elem answer = R->from_int(0);
+  if (p0 == 1) return M->elem(static_cast<int>(r[0]),static_cast<int>(c[0]));
+  ring_elem answer = R->from_long(0);
 
   int negate = 1;
   for (int i=p0-1; i>=0; i--)
     {
       std::swap(c[i],c[p0-1]);
       negate = !negate;
-      ring_elem g = M->elem(r[p0-1],c[p0-1]);
+      ring_elem g = M->elem(static_cast<int>(r[p0-1]),static_cast<int>(c[p0-1]));
       if (R->is_zero(g))
         {
           R->remove(g);
@@ -296,7 +296,7 @@ ring_elem DetComputation::calc_det(size_t *r, size_t *c, int p0)
 
   // pulling out the columns has disordered c. Fix it.
 
-  int temp = c[p0-1];
+  size_t temp = c[p0-1];
   for (size_t i=p0-1; i>0; i--)
     c[i] = c[i-1];
   c[0] = temp;

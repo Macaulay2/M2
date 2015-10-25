@@ -393,7 +393,8 @@ document { Key => "the debugger",
      "After we are done debugging, we can quit the debugger entirely and return to top level
      with ", TO "break", ".",
      EXAMPLE "break",
-     SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "disassemble" }
+     "The variable ", TO "errorDepth", " can be used to control how deep inside the code the debugger should be activated.",
+     SeeAlso => { "break", "end", "step", "continue", "return", "listLocalSymbols", "listUserSymbols", "code", "value", "disassemble", "errorDepth" }
      }     
 
 -- Local Variables:

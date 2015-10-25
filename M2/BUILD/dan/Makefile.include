@@ -2,24 +2,28 @@
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
 .PHONY : $(TARGETS)
+.NOTPARALLEL:
 $(TARGETS): banner
-banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+banner:
+	@echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
 # include builds.tmp/$(DIRECTORY)/include/configuration
-all:builds.tmp/$(DIRECTORY)/include/configuration
+all: banner make-configure builds.tmp/$(DIRECTORY)/include/configuration
 else
 $(warning DIRECTORY variable unset)
 endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
 clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true -k all check
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
-configure builds.tmp/$(DIRECTORY)/include/configuration:../../configure
+big-check check:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) -k $@
+help:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
+configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
 	D=`pwd` ;\
 	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
@@ -46,23 +50,28 @@ install-info:
 cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
-rebuild-world1: arch-chk distclean-or-rm-rf
-distclean-or-rm-rf:
-	$(MAKE) -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
-rebuild-world2:; $(MAKE) -C ../..
+rebuild-world1: arch-chk distclean2
+distclean2:
+	@set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean
+rebuild-world2:make-configure
+make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
 world: arch-chk configure all install check
 check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
-../../configure :; $(MAKE) -C ../..
 rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+# we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
+CONFIGOPTIONS += CC="$(_CC)" CXX="$(_CXX)" FC="$(_FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+ifeq ($(NTL_WIZARD),no)
+   CONFIGOPTIONS += --disable-ntl-wizard 
+endif
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

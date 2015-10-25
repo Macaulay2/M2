@@ -48,10 +48,13 @@ pseudoRemainder(RingElement,RingElement) := RingElement => (f,g) -> (
 
 inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(v#i)=i); toList w)
 
+-- We mimic the procedure for finding a finite field addition table used in the routine gf_get_table
+-- for building the file name in "gffilename", in the file BUILD_DIR/libraries/factory/build/factory/gfops.cc .
+-- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
 gfdir = prefixDirectory | currentLayout#"factory gftables"
-gftestfile = gfdir | "gftable.31.2"
+gftestfile = gfdir | "gftables/961" -- 961==31^2
 if not fileExists gftestfile
-then stderr << "warning: sample Factory finite field addition table file missing, factorization may fail: " << gftestfile << endl
+then error ("sample Factory finite field addition table file missing, needed for factorization: ", gftestfile)
 setFactoryGFtableDirectory gfdir
 
 irreducibleCharacteristicSeries = method()
@@ -127,7 +130,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 		    chk := topCoefficients CS;
 		    chk = chk#1;  -- just keep the coefficients
 		    chk = first entries chk;
-		    iniCS := select(chk, i -> degree i =!= {0});
+		    iniCS := select(chk, i -> # support i > 0); -- this is bad if degrees are 0: degree i =!= {0});
 		    if gbTrace >= 1 then << "saturating with " << iniCS << endl;
 		    CS = ideal CS;
 		    --<< "saturating " << CS << " with respect to " << iniCS << endl;
@@ -136,6 +139,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      --	       scan(iniCS, a -> CS = saturate(CS, a));
 		    --<< "result is " << CS << endl;
 		    CS));
+	  Psi = select(Psi, I -> I != 1);
 	  Psi = new MutableList from Psi;
 	  p := #Psi;
 	  scan(0 .. p-1, i -> if Psi#i =!= null then 

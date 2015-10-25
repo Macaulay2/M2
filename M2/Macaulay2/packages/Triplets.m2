@@ -12,34 +12,34 @@ and cohomology tables",
 	Reload => true
    	)
 export {
-     Triplet,
-     strands,
-     strandsL,
-     conj,
+     "Triplet",
+     "strands",
+     "strandsL",
+     "conj",
      --
-     triplet,
-     rotForw,
-     rotBack,
-     toHomology,
-     toDegree,
-     dualHomTriplet,
-     type,     
+     "triplet",
+     "rotForw",
+     "rotBack",
+     "toHomology",
+     "toDegree",
+     "dualHomTriplet",
+     "type",     
      --
-     isDegreeTriplet,
-     isHomologyTriplet,
+     "isDegreeTriplet",
+     "isHomologyTriplet",
      --
-     Betti1,
-     Betti3,
-     BettiDiagram1,
-     BettiDiagram3,
+     "Betti1",
+     "Betti3",
+     "BettiDiagram1",
+     "BettiDiagram3",
      --     
-     binPol,
-     hilbCoeff, 
-     hilbPol,
-     chiPol,
+     "binPol",
+     "hilbCoeff", 
+     "hilbPol",
+     "chiPol",
      --
-     cohMatrix,
-     cohTable}
+     "cohMatrix",
+     "cohTable"}
   
 needsPackage("BoijSoederberg");
 

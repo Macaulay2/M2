@@ -8,7 +8,7 @@
 extern ring_elem hilb(const Matrix &M, const Ring *RR);
 
 gb_emitter::gb_emitter(const Matrix *m)
-  : gens(m), g(NULL), n_left(m->n_cols()), n_i(0), n_in_degree(-1)
+  : gens(m), g(NULL), n_left(m->n_cols()), n_i(0)
 {
   originalR = m->get_ring()->cast_to_PolynomialRing();
   assert(originalR != 0);

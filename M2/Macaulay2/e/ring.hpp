@@ -7,11 +7,10 @@
 #include "ringelem.hpp"
 #include "monoid.hpp"
 #include "aring.hpp"
-
+#include "exceptions.hpp"
 ///// Ring Hierarchy ///////////////////////////////////
 
 class RingZZ;
-class QQ;
 class RRR;
 class CCC;
 class Z_mod;
@@ -40,6 +39,9 @@ class SumCollector;
 
 class ARing;
 class MutableMatrix;
+
+class CoefficientRingR;
+
 /**
     @ingroup rings
 
@@ -47,11 +49,12 @@ class MutableMatrix;
     xxx
     xxx
 */
-class Ring : public mutable_object
+class Ring : public MutableEngineObject
 {
 protected:
   const ARing * getARing() const { return AR; }
-  int P;
+  long mCharacteristic; // not all rings will have characteristic that fits in a long int
+  //int P;
   const PolynomialRing *degree_ring;
   M2_arrayint heft_vector;
   // This vector, if NULL, and if there are any variables in the ring imply that
@@ -60,6 +63,8 @@ protected:
   // Question: does this include coefficient variables in the ring?
 
   const ARing *AR;
+  mutable const CoefficientRingR* cR;  // set to NULL.  If a ring does not have a better "ARing" or "coeffring" implementation,
+                               // then calling getCoefficientRingR() will set this, and return it.
   ring_elem _non_unit;
   int _isfield;         // 1: means yes, or declared yes.
                         // 0: means not declared to be so.
@@ -71,18 +76,20 @@ protected:
   ring_elem oneV;
   ring_elem minus_oneV;
 
-  void initialize_ring(int charac,
+  void initialize_ring(long charac,
                        const PolynomialRing *DR = 0,
                        const M2_arrayint heft_vec = 0);
   Ring() : heft_vector(0) {}
 public:
   virtual ~Ring();
 
+  const CoefficientRingR* getCoefficientRingR() const;
+
   ////////////////////////
   // Ring informational //
   ////////////////////////
 
-  int charac() const { return P; }
+  long characteristic()  const { return mCharacteristic; }
 
   const Monoid * degree_monoid() const;
   const PolynomialRing *get_degree_ring() const { return degree_ring; }
@@ -92,6 +99,8 @@ public:
     return M2::ring_old; 
   }
   virtual bool is_basic_ring() const { return true; } // The default is to be a basic ring.
+  virtual bool isFinitePrimeField() const { return false; }
+  virtual bool isGaloisField() const { return false; }
   virtual bool is_ZZ() const { return false; }
   virtual bool is_QQ() const { return false; }
   virtual bool is_RRR() const { return false; }
@@ -157,8 +166,6 @@ public:
   ///////////////////////////////////
   virtual const RingZZ * cast_to_RingZZ() const         { return 0; }
   virtual       RingZZ * cast_to_RingZZ()               { return 0; }
-  virtual const QQ * cast_to_QQ() const         { return 0; }
-  virtual       QQ * cast_to_QQ()               { return 0; }
   virtual const Z_mod * cast_to_Z_mod() const         { return 0; }
   virtual       Z_mod * cast_to_Z_mod()               { return 0; }
   virtual const GF * cast_to_GF() const         { return 0; }
@@ -197,6 +204,29 @@ public:
   virtual CCC * cast_to_CCC() { return 0; }
   virtual const CCC * cast_to_CCC() const { return 0; }
 
+  // Galois Field routines.  These three routines only return non-NULL values
+  // if this was created as a Galois field, isom to A = kk[b]/(f(b)), kk = prime field of char p.
+
+  // Returns NULL if not a GF.  Returns f(b) in the ring kk[b].  (Variable name might be different)
+  virtual const RingElement* getMinimalPolynomial() const { return 0; }
+
+  // Returns NULL if not a GF.  Returns an element of 'this', whose powers give all non-zero elements
+  // of the field.
+  virtual const RingElement* getGenerator() const { ERROR("not implemented for this ring"); return 0; }
+
+  // For some finite fields, if a = (getGenerator())^r, return r.
+  // If it is not implemented for this ring, an exception is thrown
+  // If a is zero, then r is set to -1.
+  virtual long discreteLog(const ring_elem& a) const { 
+    throw exc::engine_error("cannot compute discrete logarithm in this ring");
+  }
+
+  // Returns the element in the polynomial ring A corresponding to the element a.
+  // Returns NULL if not a GF field.
+  // Essentially the same as 'lift', except that more information, not readily available, is needed
+  // for that call.
+  virtual const RingElement* getRepresentation(const ring_elem& a) const { return 0; }
+
   virtual MutableMatrix* makeMutableMatrix(size_t nrows, size_t ncols, bool dense) const { return 0; }
 
   virtual FreeModule *make_FreeModule() const;
@@ -210,21 +240,28 @@ public:
   //////////////////////
   // Ring arithmetic ///
   //////////////////////
-  virtual int coerce_to_int(ring_elem a) const;
+  virtual unsigned int computeHashValue(const ring_elem a) const = 0;
+
+  virtual std::pair<bool, long> coerceToLongInteger(ring_elem a) const;
 
   ring_elem one() const { return oneV; }
   ring_elem minus_one() const { return minus_oneV; }
   ring_elem zero() const { return zeroV; }
 
-  virtual ring_elem from_int(int n) const = 0;
+  virtual ring_elem from_long(long n) const = 0;
   virtual ring_elem from_int(mpz_ptr n) const = 0;
 
   virtual ring_elem from_rational(mpq_ptr q) const = 0;
-  // The default version calls from_int(0). Change it?
+  // The default version calls from_long(0). Change it?
+
+  // The default version calls from_long(0) and returns false.
   virtual bool from_BigReal(gmp_RR a, ring_elem &result) const;
-  // The default version calls from_int(0) and returns false.
+  // The default version calls from_long(0) and returns false.
   virtual bool from_BigComplex(gmp_CC z, ring_elem &result) const;
-  // The default version calls from_int(0) and returns false.
+  // Returns false if this ring cannot coerce a double to an element in this ring
+  virtual bool from_double(double a, ring_elem& result) const;
+  // Returns false if this ring cannot coerce a complex double (re+im*ii) to an element in this ring
+  virtual bool from_complex_double(double re, double im, ring_elem& result) const;
 
   virtual ring_elem var(int v) const;
 
@@ -312,7 +349,6 @@ public:
 
   virtual void monomial_divisor(const ring_elem a, int *exp) const;
   virtual ring_elem diff(ring_elem a, ring_elem b, int use_coeff) const;
-  virtual ring_elem contract0(int n_top_variables, ring_elem a, ring_elem b) const;
   virtual bool in_subring(int nslots, const ring_elem a) const;
   virtual void degree_of_var(int n, const ring_elem a, int &lo, int &hi) const;
   virtual ring_elem divide_by_var(int n, int d, const ring_elem a) const;
@@ -329,6 +365,11 @@ public:
   virtual bool multi_degree(const ring_elem f, int *d) const;
     // returns true iff f is homogeneous
   virtual void degree_weights(const ring_elem f, M2_arrayint wts, int &lo, int &hi) const;
+
+  // antipode: for non skew commuting poly rings, this is the identity.
+  // Otherwise, this changes the signs of the monomials, implementing the (anti)-isomorphism
+  // of the ring with its opposite ring.
+  virtual ring_elem antipode(ring_elem f) const { return f; }
 
   //////////////////////////////////////////
   // Cleaning real and complex numbers /////
@@ -366,6 +407,8 @@ public:
 
   vec e_sub_i(int r) const;
   vec make_vec(int r, ring_elem a) const;
+  vec make_vec_from_array(int len, Nterm** array) const; // takes ownership of the Nterm's!!
+
   vec copy_vec(const vecterm * v) const;
   void remove_vec(vec v) const;
 
@@ -412,7 +455,6 @@ public:
   /* Polynomial routines.  These all set an error if the ring is not
      a polynomial ring.  OR, they will be moved to polyring.hpp  */
   vec vec_diff(vec v, int rankFw, vec w, int use_coeff) const;
-  vec vec_contract0(int n_top_variables, vec v, int rankFw, vec w) const;
   int vec_in_subring(int n, const vec v) const;
   void vec_degree_of_var(int n, const vec v, int &lo, int &hi) const;
   vec vec_divide_by_var(int n, int d, const vec v) const;
@@ -467,8 +509,9 @@ public:
 #define ZERO_RINGELEM (ring_elem(static_cast<Nterm *>(0)))
 
 #include "ZZ.hpp"
-extern RingZZ *globalZZ;
-extern QQ *globalQQ;
+extern RingZZ* globalZZ;
+extern RingZZ* makeIntegerRing();
+
 #endif
 
 // Local Variables:

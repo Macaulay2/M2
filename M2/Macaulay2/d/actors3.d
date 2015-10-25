@@ -202,6 +202,13 @@ NotEqualfun(lhs:Code,rhs:Code):Expr := (
 	  else notFun(EqualEqualfun(x,y))));
 setup(NotEqualS,NotEqualfun);
 
+binarycomparison(left:Expr,right:Expr):Expr := (
+     result := binarymethod(left,right,QuestionS);
+     when result is Error do result else
+     if result === GreaterS || result === LessS || result === EqualEqualS || result === incomparableS
+     then result
+     else buildErrorPacket("expected result of comparison to be one of the following symbols: <, >, ==, incomparable"));
+
 compare(left:Expr,right:Expr):Expr := (
      if left == right then EqualEqualE else
      when left
@@ -222,7 +229,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:stringCell do (
 	  when right
 	  is y:stringCell do (
@@ -238,7 +245,7 @@ compare(left:Expr,right:Expr):Expr := (
      	       else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:SymbolClosure do (
 	  when right
 	  is y:SymbolClosure do (
@@ -255,7 +262,7 @@ compare(left:Expr,right:Expr):Expr := (
 			 )
 		    )
 	       )
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:QQcell do (
 	  when right
 	  is y:ZZcell do 
@@ -273,7 +280,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:RRcell do (
 	  when right
 	  is y:ZZcell do (
@@ -297,7 +304,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:CCcell do (
 	  when right
 	  is y:ZZcell do (
@@ -321,7 +328,7 @@ compare(left:Expr,right:Expr):Expr := (
 	       if r < 0 then LessE else if r > 0 then GreaterE else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is x:Net do (
 	  when right
 	  is y:Net do (
@@ -337,7 +344,7 @@ compare(left:Expr,right:Expr):Expr := (
      	       else EqualEqualE
 	       )
      	  is Error do right
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is s:Sequence do (
 	  when right
 	  is t:Sequence do (
@@ -354,12 +361,12 @@ compare(left:Expr,right:Expr):Expr := (
 			 if !(c === EqualEqualS) then return c);
 		    i = i+1);
 	       nullE)
-	  else binarymethod(left,right,QuestionS))
+	  else binarycomparison(left,right))
      is Error do left
      else (
 	  when right
 	  is Error do right
-	  else binarymethod(left,right,QuestionS)));
+	  else binarycomparison(left,right)));
 compareop(lhs:Code,rhs:Code):Expr := (
      x := eval(lhs);
      when x
@@ -1021,18 +1028,18 @@ floor(e:Expr):Expr := (
      is x:RRcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v))				    -- # typical value: floor, RR, ZZ
+	  toExpr(floor(x.v))
 	  )
      is x:CCcell do (
 	  if isnan(x.v) then buildErrorPacket("encountered NotANumber in conversion to integer") else
 	  if isinf(x.v) then buildErrorPacket("encountered infinite real number in conversion to integer") else
-	  toExpr(floor(x.v.re))				    -- # typical value: floor, CC, ZZ
+	  toExpr(floor(x.v.re))
 	  )
-     is x:QQcell do toExpr(floor(x.v))				    -- # typical value: floor, QQ, ZZ
-     is ZZcell do e				    -- # typical value: floor, ZZ, ZZ
+     is x:QQcell do toExpr(floor(x.v))
+     is ZZcell do e
      else buildErrorPacket("expected an integral, rational, or real number")
      );
-setupfun("floor",floor);
+setupfun("floor0",floor);
 
 round0(e:Expr):Expr := (
      when e

@@ -192,14 +192,17 @@ String << Thing := File => (filename,x) -> (
 
 temporaryDirectoryName = null
 temporaryDirectoryCounter = 0
+-- Track the process ID: if we fork, then the child should (lazily) get a new temp dir and not clean up the parent's temp dir
+temporaryDirectoryProcessID = -1
 temporaryFilenameCounter = 0
 addStartFunction( () -> (
 	  temporaryDirectoryCounter = 0;
 	  temporaryFilenameCounter = 0;
 	  temporaryDirectoryName = null;
+	  temporaryDirectoryProcessID = -1;
 	  ))
 addEndFunction( () -> (
-	  if temporaryDirectoryName =!= null 
+	  if (temporaryDirectoryName =!= null and temporaryDirectoryProcessID === processID())
 	  then scan(reverse findFiles temporaryDirectoryName, 
 	       fn -> (
 		    if isDirectory fn then (
@@ -212,7 +215,7 @@ addEndFunction( () -> (
 			 )))))
 
 temporaryDirectory = () -> (
-     if temporaryDirectoryName === null 
+     if (temporaryDirectoryName === null or temporaryDirectoryProcessID =!= processID())
      then temporaryDirectoryName = (
 	  tmp := (
 	       if getenv "TMPDIR" === ""
@@ -223,8 +226,9 @@ temporaryDirectory = () -> (
 	  if not isDirectory tmp then error("expected a directory: ", tmp);
 	  if not fileExecutable tmp then error("expected a executable directory: ", tmp);
 	  if not fileWritable tmp then error("expected a writable directory: ", tmp);
+	  temporaryDirectoryProcessID=processID();
 	  while true do (
-	       fn := tmp | "M2-" | toString processID() | "-" | toString temporaryDirectoryCounter | "/";
+	       fn := tmp | "M2-" | toString temporaryDirectoryProcessID | "-" | toString temporaryDirectoryCounter | "/";
 	       temporaryDirectoryCounter = temporaryDirectoryCounter + 1;
 	       try mkdir fn else continue;
 	       break fn
@@ -380,7 +384,7 @@ emacstempl := ///
 
 emacsenvtempl := ///
 ;; add "/PREFIX/DIR" to VAR if it isn't there
-(if (not (string-match-p "/PREFIX/DIR" (getenv "VAR")))
+(if (not (string-match "/PREFIX/DIR" (getenv "VAR")))
      (setenv "VAR" "/PREFIX/DIR:$VAR" t))
 ///
 

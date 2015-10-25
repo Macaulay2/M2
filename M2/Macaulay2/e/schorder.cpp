@@ -36,6 +36,10 @@ SchreyerOrder *SchreyerOrder::create(const Matrix *m)
   const Ring *R = m->get_ring();
   const SchreyerOrder *S = m->rows()->get_schreyer_order();
   const PolynomialRing *P = R->cast_to_PolynomialRing();
+  if (P == 0)
+    {
+      throw exc::engine_error("expected polynomial ring");
+    }
   const Monoid *M = P->getMonoid();
   SchreyerOrder *result = new SchreyerOrder(M);
   int rk = m->n_cols();
@@ -243,7 +247,7 @@ SchreyerOrder *SchreyerOrder::exterior(int pp) const
     {
       M->one(base);
       for (size_t r=0; r<p; r++)
-        M->mult(base, base_monom(a[r]), base);
+        M->mult(base, base_monom(static_cast<int>(a[r])), base);
 
       result->append(next++, base);
     }

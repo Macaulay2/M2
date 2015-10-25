@@ -7,27 +7,31 @@
 #include "ringmap.hpp"
 #include "gbring.hpp"
 
-#include "coeffrings.hpp"
-#include "coeffrings-zz.hpp"
+#include "aring-zz-gmp.hpp"
 #if 0
 // #include "gmp.h"
 // #define MPZ_VAL(f) (mpz_ptr ((f).poly_val))
 // #define MPZ_RINGELEM(a) ((ring_elem) ((Nterm *) (a)))
 #endif
 
+unsigned int computeHashValue_mpz(mpz_ptr a)
+{
+  return static_cast<unsigned int>(mpz_get_si(a));
+}
+
 bool RingZZ::initialize_ZZ(const PolynomialRing *deg_ring)
 {
   initialize_ring(0);
-  _elem_size = sizeof(mpz_t);
+  _elem_size = static_cast<int>(sizeof(mpz_t));
   _zero_elem = new_elem();
   mpz_init_set_si(_zero_elem, 0);
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   degree_ring = deg_ring;
-  coeffR = new CoefficientRingZZ_NTL(this);
+  coeffR = new M2::ARingZZGMP;
   return true;
 }
 
@@ -44,6 +48,11 @@ mpz_ptr RingZZ::new_elem() const
 }
 void RingZZ::remove_elem(mpz_ptr f) const
 {
+}
+
+unsigned int RingZZ::computeHashValue(const ring_elem a) const
+{
+  return computeHashValue_mpz(a.get_mpz());
 }
 
 bool RingZZ::get_ui(unsigned int &result, mpz_t n)
@@ -67,9 +76,10 @@ unsigned int RingZZ::mod_ui(mpz_t n, unsigned int p)
   return exp;
 }
 
-int RingZZ::coerce_to_int(ring_elem a) const
+std::pair<bool, long> RingZZ::coerceToLongInteger(ring_elem a) const
 {
-  return static_cast<int>(mpz_get_si(a.get_mpz()));
+  return std::pair<bool, long>(mpz_fits_slong_p(a.get_mpz()), 
+                               mpz_get_si(a.get_mpz()));
 }
 
 ring_elem RingZZ::random() const
@@ -85,7 +95,6 @@ void RingZZ::elem_text_out(buffer &o,
 {
   mpz_ptr a = ap.get_mpz();
 
-#warning "possible overflow in large int situations"
   char s[1000];
   char *str;
 
@@ -110,7 +119,7 @@ void RingZZ::elem_text_out(buffer &o,
   if (size > 1000) deletearray(allocstr);
 }
 
-ring_elem RingZZ::from_int(int n) const
+ring_elem RingZZ::from_long(long n) const
 {
   mpz_ptr result = new_elem();
   mpz_set_si(result, n);
@@ -198,8 +207,8 @@ ring_elem RingZZ::preferred_associate(ring_elem f) const
 {
   mpz_ptr a = f.get_mpz();
   if (mpz_sgn(a) >= 0)
-    return from_int(1);
-  return from_int(-1);
+    return from_long(1);
+  return from_long(-1);
 }
 
 bool RingZZ::lower_associate_divisor(ring_elem &f, const ring_elem g) const
@@ -302,7 +311,7 @@ ring_elem RingZZ::invert(const ring_elem f) const
   if (is_unit(f))
     return copy(f);
   else
-    return from_int(0);
+    return from_long(0);
 }
 
 ring_elem RingZZ::divide(const ring_elem f, const ring_elem g) const
@@ -380,20 +389,20 @@ void RingZZ::syzygy(const ring_elem a, const ring_elem b,
   // First check the special cases a = 0, b = 1, -1.  Other cases: use gcd.
   if (RingZZ::is_zero(a))
     {
-      x = RingZZ::from_int(1);
-      y = RingZZ::from_int(0);
+      x = RingZZ::from_long(1);
+      y = RingZZ::from_long(0);
       return;
     }
   mpz_ptr bb = b.get_mpz();
   if (mpz_cmp_ui(bb,1) == 0)
     {
-      x = RingZZ::from_int(1);
+      x = RingZZ::from_long(1);
       y = RingZZ::negate(a);
       return;
     }
   if (mask_mpz_cmp_si(bb,-1) == 0)
     {
-      x = RingZZ::from_int(1);
+      x = RingZZ::from_long(1);
       y = RingZZ::copy(a);
       return;
     }

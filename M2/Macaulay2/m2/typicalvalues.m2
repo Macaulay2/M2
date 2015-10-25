@@ -47,6 +47,7 @@ apply(BasicList,Function) := BasicList => apply
 apply(BasicList,BasicList,Function) := BasicList => apply
 apply(ZZ,Function) := List => apply
 applyKeys(HashTable,Function) := HashTable => applyKeys
+applyKeys(HashTable,Function,Function) := HashTable => applyKeys
 applyPairs(HashTable,Function) := HashTable => applyPairs
 applyValues(HashTable,Function) := HashTable => applyValues
 atEndOfFile(File) := Boolean => atEndOfFile
@@ -73,7 +74,6 @@ typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
 keys HashTable := List => keys
-pairs HashTable := List => pairs
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries

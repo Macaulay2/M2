@@ -1,15 +1,17 @@
 # -*- mode: Makefile -*-
 # this makefile is run from a subdirectory, hence an extra ../ in the paths
 VPATH = $(chapter_srcdir)
+EXPECTED ?= test.out.expected
 include ../../../../include/config.Makefile
 all: check
+# we depend on "diff" accepting some options that perhaps only GNU diff does
 check: test.out.expected.trim test.out.trim
-	if ! diff -b -u test.out.expected.trim test.out.trim ;\
+	if ! diff -B -b -u test.out.expected.trim test.out.trim ;\
 	then echo 'make[$(MAKELEVEL)]: *''** test failed: [Macaulay2/packages/ComputationsBook/$(shell basename $(chapter_srcdir))]' ;\
 	     false ;\
 	fi
 diff:
-	diff -b -u test.out.expected.trim test.out.trim
+	diff -B -b -u test.out.expected.trim test.out.trim
 
 LIMIT :=
 ifeq (@ULIMIT_T@,yes)
@@ -27,7 +29,7 @@ endif
 
 
 PATHJOIN := 'path = join({"./","$(chapter_srcdir)/"},path)'
-M2CMD := time nice -18 @pre_exec_prefix@/bin/M2@EXE@ --stop -q -e $(PATHJOIN) --print-width 0
+M2CMD := time nice -18 @pre_exec_prefix@/bin/M2 --stop -q -e $(PATHJOIN) --print-width 0
 EXIT := -e "exit 0"
 INPUT = -e 'input "$<"'
 
@@ -37,12 +39,14 @@ chapter_patterns := $(chapter_srcdir)/patterns
 test.out.trim: test.out $(book_patterns) $(chapter_patterns)
 	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
-test.out.expected.trim: test.out.expected $(book_patterns) $(chapter_patterns)
+test.out.expected.trim: $(EXPECTED) $(book_patterns) $(chapter_patterns)
 	<$< sed -f $(book_patterns) -f $(chapter_patterns) >$@
 
 test.out: test.m2 always
 	$(LIMIT) $(M2CMD) $(INPUT) $(EXIT) >test.out.tmp
 	mv test.out.tmp test.out
+
+clean:; rm -f *.trim
 
 distclean::clean
 distclean::; rm -f Makefile

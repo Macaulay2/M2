@@ -24,7 +24,7 @@ newPackage(
 
 --=========================================================================--
      
-export{coneProjectTarget,coneProjectSource,coneInjectTarget,coneInjectSource,TorConnectingMap} 
+export{"coneProjectTarget","coneProjectSource","coneInjectTarget","coneInjectSource","TorConnectingMap"}
 
 --=========================================================================--
 

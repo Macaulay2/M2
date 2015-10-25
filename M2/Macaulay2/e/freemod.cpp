@@ -18,9 +18,18 @@ void FreeModule::initialize(const Ring *RR)
   schreyer = 0;
 }
 
+unsigned int FreeModule::computeHashValue() const
+{
+  unsigned int hashval = 13;
+  if (degree_monoid()->n_vars() == 0)
+    hashval += rank();
+  else
+    for (int i=0; i<rank(); i++)
+      hashval = 14535*hashval + degree(i)[0];
+  return hashval;
+}
 FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
-: immutable_object(0)
-     // Create R^n, with all gradings zero.
+// Create R^n, with all gradings zero.
 {
   initialize(RR);
 
@@ -43,7 +52,12 @@ FreeModule::FreeModule(const Ring *RR, int n, bool has_schreyer_order)
 FreeModule *FreeModule::make_schreyer(const Matrix *m)
 {
   int i;
-  const Ring *R = m->get_ring();
+  const PolynomialRing *R = m->get_ring()->cast_to_PolynomialRing();
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *F = R->make_FreeModule();
   int rk = m->n_cols();
   if (rk == 0) return F;
@@ -60,7 +74,11 @@ FreeModule *FreeModule::make_schreyer(const GBMatrix *m)
 {
   const FreeModule *F = m->get_free_module();
   const PolynomialRing *R = F->get_ring()->cast_to_PolynomialRing();
-  assert(R);
+  if (R == 0)
+    {
+      ERROR("expected a polynomial ring");
+      return nullptr;
+    }
   FreeModule *G = R->make_FreeModule();
   int rk = INTSIZE(m->elems);
   if (rk == 0) return G;
@@ -94,7 +112,7 @@ Matrix * FreeModule::get_induced_order() const
   MatrixConstructor mat(F,this,0);
   for (i=0; i<rank(); i++)
     {
-      ring_elem f = P->make_flat_term(P->getCoefficients()->from_int(1),
+      ring_elem f = P->make_flat_term(P->getCoefficients()->from_long(1),
                             S->base_monom(i));
       mat.set_entry(S->compare_num(i), i, f);
     }
@@ -309,7 +327,7 @@ FreeModule *FreeModule::exterior(int pp) const
       degree_monoid()->one(deg);
 
       for (size_t r=0; r<p; r++)
-        degree_monoid()->mult(deg, degree(a[r]), deg);
+        degree_monoid()->mult(deg, degree(static_cast<int>(a[r])), deg);
 
       result->append(deg);
     }
@@ -318,7 +336,7 @@ FreeModule *FreeModule::exterior(int pp) const
   degree_monoid()->remove(deg);
 
   if (schreyer != NULL)
-    result->schreyer = schreyer->exterior(p);
+    result->schreyer = schreyer->exterior(pp);
   return result;
 }
 

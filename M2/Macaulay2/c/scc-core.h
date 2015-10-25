@@ -1,8 +1,7 @@
 /* this file gets included into each file created by scc1 */
 #ifndef SCC_CORE_H
 #define SCC_CORE_H
-#define GC_REDIRECT_TO_LOCAL
-#include <gc/gc.h>
+#include <M2/gc-include.h>
 /* for size_t: */
  #include <stdlib.h>
 /* for memcpy: */

@@ -8,6 +8,7 @@ GET := (host,url,connection) -> (
      openInOut connection
      << "GET " << url << " HTTP/1.1" << endl
      << "User-Agent: " << httpProduct << endl
+     << "Connection: close" << endl
      << "Host: " << host << endl
      << endl << flush;
      first( get connection, close connection )
@@ -18,6 +19,7 @@ POST := (host,url,body,connection) -> (
      openInOut connection
      << "POST " << url << " HTTP/1.1" << endl
      << "User-Agent: " << httpProduct << endl
+     << "Connection: close" << endl
      << "Host: " << host << endl
      << "Content-type: application/x-www-form-urlencoded" << endl
      << "Content-length: " << # body << endl << endl

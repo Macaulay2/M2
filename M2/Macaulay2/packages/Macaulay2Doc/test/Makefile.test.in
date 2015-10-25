@@ -49,10 +49,12 @@ check-deferred-warning:
 	@ for i in $(TESTFILES) ; do echo "$$i:1: warning: test file deferred" >&2 ; done
 endif
 
-$(RESULTS) : @pre_exec_prefix@/bin/M2@EXE@ always
+$(RESULTS) : @pre_exec_prefix@/bin/M2 always
 
 ARGS := --silent --stop -q -e 'path=join(path,{"$(SRCDIR)/","$(SRCDIR)/$(DOTS)/packages/"})'
 ARGS += --no-debug --print-width 140
+ARGS += --no-randomize
+
 # ARGS += -e 'errorDepth=0'
 # ARGS += -e 'gbTrace=5'
 
@@ -65,7 +67,7 @@ status-files: $(TESTFILES)
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
 		if (echo 'input "$<"'; echo 'collectGarbage()'; echo exit 0) | \
-		   time @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) >>$*.errors 2>&1 ; \
+		   time @pre_exec_prefix@/bin/M2 $(ARGS) >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     <$*.errors $(FILTER) ; \
@@ -78,7 +80,7 @@ status-files: $(TESTFILES)
 	@ egrep -n '^--status:' $< /dev/null || true
 	@ $(LIMIT) \
 		echo "--*- compilation -*-" >$*.errors; \
-		if time @pre_exec_prefix@/bin/M2@EXE@ $(ARGS) <$< >>$*.errors 2>&1 ; \
+		if time @pre_exec_prefix@/bin/M2 $(ARGS) <$< >>$*.errors 2>&1 ; \
 		then mv $*.errors $@ ; \
 		else a=$$?; \
 		     echo "$*.errors:0: error output left here; some errors follow" >&2 ; \

@@ -1,11 +1,11 @@
 VPATH = @srcdir@
 RELAX = yes
 URL = ftp://ftp.gnu.org/gnu/gmp
-
-# starting with 4.2.2 is LGPL version 3
-VERSION = 5.1.1
+VERSION = 6.0.0a
+TARDIR = gmp-6.0.0
 TAROPTIONS = --bzip2
 TARFILE = $(LIBNAME)-$(VERSION).tar.bz2
+LICENSEFILES = README COPYING* doc/gmp.info*
 
 CONFIGOPTIONS += --enable-cxx
 ifeq (@SHARED@,no)

@@ -1,7 +1,0 @@
-#! /bin/sh -e
-# this script replaces "svn ls", which works only when online and lists entries that have been deleted
-# this script also lists entries that have been recently deleted, so do "svn up" first
-sed -n "/\f/N;/\f./N;/^\f\n.*\nfile$/{s,..,$1,;s/\n.*//;p};d" <.svn/entries 
-sed -n "/\f/N;/\f./N;/^\f\n.*\ndir$/{s,..,,;s/\n.*//;p};d" <.svn/entries | while read x ; do ( cd $x && svn-ls $1$x/ ) ; done
-
-

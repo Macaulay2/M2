@@ -1,4 +1,3 @@
-# license for frobby: GPL v2 or later
 LICENSEFILES = COPYING
 # author: Bjarke Roune <bjarke@cs.au.dk>
 #VERSION = 0.7.7-M2
@@ -11,15 +10,15 @@ TARDIR = frobby_v$(VERSION)
 TARFILE := frobby_v$(VERSION).tar.gz
 # this site was unreliable:
 # URL = http://www.broune.com/frobby
-URL = http://www.math.uiuc.edu/Macaulay2/Extra
-# URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/1.4
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 
 BUILDTARGET = library
-BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include \
-	CFLAGS="$(CFLAGS)" \
-	CXX="$(CXX)" \
-	LDFLAGS="$(LDFLAGS)" \
-	CPPFLAGS="$(CPPFLAGS)"
+BUILDOPTIONS = GMP_INC_DIR=$(LIBRARIESDIR)/include	\
+	CFLAGS="$(CFLAGS)"				\
+	CXX="$(CXX)"					\
+	LDFLAGS="$(LDFLAGS)"				\
+	CPPFLAGS="$(CPPFLAGS)"				\
+	RANLIB="@RANLIB@"
 CHECKOPTIONS = $(BUILDOPTIONS)
 
 # this ought to prevent trouble with carriage returns

@@ -712,8 +712,10 @@ export filbuf(o:file):int := (
 	       if o.bol then maybeprompt(o);
 	       flush(stdIO);
 	       if test(interruptedFlag) then return ERROR;
-	       r = read(o.infd,o.inbuffer,n,o.insize);
-	       );
+	       r = (
+		    if o.infd == NOFD 
+		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
+		    else read(o.infd,o.inbuffer,n,o.insize)));
 	  if r == ERROR then (
 	       fileErrorMessage(o,"read");
 	       return r;

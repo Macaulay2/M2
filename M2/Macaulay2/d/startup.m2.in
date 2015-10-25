@@ -135,7 +135,7 @@ if firstTime then (
      then re = re | "|.:/";				    -- "C:/FOO/BAR"
      re = re | "|\\$";					    -- $www.uiuc.edu:80
      re = re | "|!";					    -- !date
-     re = re | "|~/";					    -- ~/foo/bar
+     re = re | "|~";					    -- ~user/foo/bar
      isAbsolutePathRegexp := "^(" | re | ")";		    -- whether the path will work from any directory and get to the same file
      re = re | "|\\./";					    -- ./foo/bar
      re = re | "|\\.\\./";				    -- ../foo/bar
@@ -148,7 +148,7 @@ if firstTime then (
 
      copyright = (
 	  "Macaulay2, version " | version#"VERSION" | newline
-	  | "Copyright 2012 Daniel R. Grayson and Michael E. Stillman:" | newline
+	  | "Copyright 2014 Daniel R. Grayson and Michael E. Stillman:" | newline
      	  | "  source code licensed under the GNU General Public License version 2 or 3;" | newline
      	  | "  this binary code licensed under the GNU General Public License version 3." | newline
      	  -- our binary code is linked with :
@@ -160,10 +160,9 @@ if firstTime then (
      	  | "Compiled with the following libraries:" | newline
 	  | "  GC " | version#"gc version" | ", by H. Boehm and Alan J. Demers" | newline
 	  | "  Singular-Factory " | version#"factory version" | ", by G.-M. Greuel et al." | newline
-	  | "  Singular-Libfac " | version#"libfac version" | ", by M. Messollen" | newline
 	  |    ( 
 	       if version#"frobby version" =!= "not present" 
-	       then ("  frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
+	       then ("  Frobby " | version#"frobby version" | ", by B. H. Roune" | newline)
 	       else ""
 	       )
 	  |    ( 
@@ -172,6 +171,7 @@ if firstTime then (
 	       else ""
 	       )
 	  | "  NTL " | version#"ntl version" | ", by V. Shoup" | newline
+	  | "  FLINT " | version#"flint version" | ", by W. Hart et al." | newline
 	  |    (
 	       if version#"gmp version" =!= "not present"
 	       then "  GNU MP " | version#"gmp version" | ", by T. Granlund et al." | newline
@@ -183,12 +183,11 @@ if firstTime then (
 	       else ""
 	       )
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
-	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al."
+	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
+          | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline
+          | "  Mathic " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
+          | "  MathicGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
 	  );
-
-     scan(
-	  { ("factory version", "3.0.2"), ("libfac version", "3.0.1") },
-	  (k,v) -> if version#k < v then stderr << "--warning: old " << k << " " << version#k << " < " << v << endl);
 
      use = x -> x;				  -- temporary, until methods.m2
 
@@ -249,7 +248,7 @@ if firstTime then (
 			 if f =!= null then f(sym,x);
 			 ))));
      applicationDirectorySuffix = () -> (
-	  if version#"operating system" === "MacOS" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
+	  if version#"operating system" === "Darwin" then "Library/Application Support/Macaulay2/" else ".Macaulay2/"
 	  );
      applicationDirectory = () -> (
 	  getenv "HOME" | "/" |
@@ -310,8 +309,8 @@ initcurrentlayout := () -> (
      issuffix := (s,t) -> t =!= null and s === substring(t,-#s);
      bindir := dir exe | "/";
      currentLayout = (
-	  if issuffix(Layout#2#"bin",bindir) then Layout#2 else
-	  if issuffix(Layout#1#"bin",bindir) then Layout#1
+	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
+	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
 	  );
      prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      if notify then stderr << "--prefixDirectory = " << prefixDirectory << endl;
@@ -331,11 +330,11 @@ initcurrentlayout := () -> (
 	  prefixDirectory = prefixDirectory2;
 	  currentLayout = currentLayout2;
 	  );
-     stA := "StagingArea/";
+     usrDist := "usr-dist/";
      topBuilddir = (
-	  if issuffix(stA,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#stA)
+	  if issuffix(usrDist,prefixDirectory) then substring(prefixDirectory,0,#prefixDirectory-#usrDist)
 	  else
-	  if issuffix(stA,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#stA));
+	  if issuffix(usrDist,prefixDirectory2) then substring(prefixDirectory2,0,#prefixDirectory2-#usrDist));
      if notify then stderr << "--topBuilddir = " << topBuilddir << endl;
      topSrcdir = if topBuilddir =!= null and fileExists(topBuilddir|"srcdir") then (
 	  sdir := first lines get(topBuilddir|"srcdir");
@@ -395,9 +394,6 @@ usage := arg -> (
      << "    --int              don't handle interrupts" << newline -- handled by M2lib.c
      << "    --notify           notify when loading files during initialization" << newline
      << "                       and when evaluating command line arguments" << newline
-     << "    --no-prompts       print no input prompts" << newline;
-     << "    --no-readline      don't use readline" << newline;
-     << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
      << "    --prefix DIR       set prefixDirectory" << newline
      << "    --print-width n    set printWidth=n (the default is the window width)" << newline
      << "    --restarted        used internally to indicate this is a restart" << newline
@@ -405,13 +401,18 @@ usage := arg -> (
      << "    --script           as first argument, interpret second argument as name of a script" << newline
      << "                       implies --stop, --no-debug, --silent and -q" << newline
      << "                       see scriptCommandLine" << newline
-     << "    --no-setup         don't try to load setup.m2 or to loaddata" << newline
      << "    --silent           no startup banner" << newline
      << "    --stop             exit on error" << newline
-     << "    --no-tty           do not treat stdin and stdout as tty's" << newline
-     << "    --no-tvalues       do not load tvalues.m2" << newline
      << "    --texmacs          TeXmacs session mode" << newline
      << "    --version          print version number and exit" << newline
+     << "    --no-personality   don't set the personality and re-exec M2 (linux only)" << newline
+     << "    --no-prompts       print no input prompts" << newline;
+     << "    --no-randomize     don't set the random number seed based on the date" << newline
+     << "    --no-readline      don't use readline" << newline;
+     << "    --no-setup         don't try to load setup.m2 or to loaddata" << newline
+     << "    --no-time          arrange for the current time to be always 0" << newline;
+     << "    --no-tty           do not treat stdin and stdout as tty's" << newline
+     << "    --no-tvalues       do not load tvalues.m2" << newline
      << "    -q                 don't load user's init.m2 file or use packages in home directory" << newline
      << "    -E '...'           evaluate expression '...' before initialization" << newline
      << "    -e '...'           evaluate expression '...' after initialization" << newline
@@ -470,6 +471,8 @@ action := hashTable {
      "--no-backtrace" => arg -> if phase == 1 then backtrace = false,
      "--no-debug" => arg -> debuggingMode = false,
      "--no-loaddata" => arg -> if phase == 1 then noloaddata = true,
+     "--no-randomize" => arg -> arg,
+     "--no-time" => arg -> arg,
      "--no-personality" => arg -> arg,
      "--no-prompts" => arg -> if phase == 3 then noPrompts(),
      "--no-readline" => arg -> arg,			    -- handled in d/stdio.d
@@ -549,7 +552,7 @@ processCommandLineOptions := phase0 -> (			    -- 3 passes
 	       arg := commandLine#2;
  	       -- "load" uses "./" to mean relative to the current file's directory, but right now, the current file is startup.m2.in,
 	       -- which may not even be on the user's machine.  So we convert it to an absolute path
-	       if match("^\\./",arg) then arg = toAbsolutePath arg;
+	       if match("^(\\./|\\../)",arg) then arg = toAbsolutePath arg;
 	       scriptCommandLine = drop(commandLine,2);
 	       if instance(value global load, Function) then load arg else simpleLoad arg;
 	       exit 0))
@@ -656,6 +659,9 @@ scan(commandLine, arg -> if arg === "-q" or arg === "--dumpdata" then noinitfile
 homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
+
+copyright = copyright | newline | "For licenses see " | prefixDirectory | currentLayout#"program licenses"
+
 path = (x -> select(x, i -> i =!= null)) deepSplice {
 	  if prefixDirectory =!= null then (
 	       if topBuilddir =!= null then (

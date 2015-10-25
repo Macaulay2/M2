@@ -52,12 +52,12 @@ bool LLLoperations::initializeLLL(const MutableMatrix *A,
   // Last four columns just have entries in row 0:
   // The entries are: k, kmax, alphaTop, alphaBottom: all are ZZ values.
 
-  int n = A->n_cols();
+  size_t n = A->n_cols();
   LLLstate = MutableMatrix::zero_matrix(globalZZ,n,n+4,A->is_dense());
   if (n > 0)
     {
-      LLLstate->set_entry(0,n,globalZZ->from_int(1));  // k := 2
-      //LLLstate->set_entry(0,n+1,globalZZ->from_int(0)); // kmax := 1
+      LLLstate->set_entry(0,n,globalZZ->from_long(1));  // k := 2
+      //LLLstate->set_entry(0,n+1,globalZZ->from_long(0)); // kmax := 1
       LLLstate->set_entry(0,n+2,num); // Set threshold numerator, denominator
       LLLstate->set_entry(0,n+3,den);
       ring_elem dot;
@@ -171,7 +171,7 @@ void LLLoperations::SWAPI(int k, int kmax,
       lambda->interchange_columns(k,k-1);
       lambda->set_entry(k-1,k,globalZZ->from_int(lam));
       lambda->set_entry(k,k,globalZZ->from_int(D));
-      lambda->set_entry(k,k-1,globalZZ->from_int(0));
+      lambda->set_entry(k,k-1,globalZZ->from_long(0));
       // (k-1,k-1) is set below.
     }
 
@@ -238,7 +238,7 @@ int LLLoperations::doLLL(MutableMatrix *A,
                          MutableMatrix *LLLstate,
                          int nsteps)
 {
-  int n = A->n_cols();
+  size_t n = A->n_cols();
   if (n == 0) return COMP_DONE;
 
   // Extract the state from LLLstate:
@@ -247,12 +247,20 @@ int LLLoperations::doLLL(MutableMatrix *A,
   buffer o;
 
   if (LLLstate->get_entry(0,n,a))
-    k = globalZZ->coerce_to_int(a);
+    {
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
+      M2_ASSERT(res.first);
+      k = static_cast<int>(res.second);
+    }
   else
     k = 0;
 
   if (LLLstate->get_entry(0,n+1,a))
-    kmax = globalZZ->coerce_to_int(a);
+    {
+      std::pair<bool,long> res = globalZZ->coerceToLongInteger(a);
+      M2_ASSERT(res.first);
+      kmax = static_cast<int>(res.second);
+    }
   else
     kmax = 0;
 
@@ -333,8 +341,8 @@ int LLLoperations::doLLL(MutableMatrix *A,
     }
 
   // Before returning, reset k,kmax:
-  LLLstate->set_entry(0,n,globalZZ->from_int(k));
-  LLLstate->set_entry(0,n+1,globalZZ->from_int(kmax));
+  LLLstate->set_entry(0,n,globalZZ->from_long(k));
+  LLLstate->set_entry(0,n+1,globalZZ->from_long(kmax));
 
   if (k >= n) return COMP_DONE;
   if (nsteps == 0) return COMP_DONE_STEPS;

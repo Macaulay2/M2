@@ -47,15 +47,16 @@ document {
      Subnodes => {
 	  "libraries",
 	  TO "Singular-Factory",
-	  TO "Singular-Libfac",
 	  TO "frobby",
 	  TO "pari",
 	  TO "MPIR",
+	  TO "GNU MP",
 	  TO "MPFR",
 	  TO "GC garbage collector",
 	  TO "LAPACK",
 	  TO "BLAS",
 	  TO "NTL library",
+	  TO "FLINT",
 	  TO "mpack",
 	  "programs and their libraries",
 	  TO "4ti2",
@@ -65,6 +66,18 @@ document {
 	  TO "cdd+",
 	  TO "lrslib"
      	  }
+     }
+
+document {
+     Key => "FLINT",
+     PARA {
+	  "The library ", TT "FLINT", " (Fast Library for Number Theory) is a
+	  library for computations in number theory, consisting mainly of routines for
+	  integer and polynomial arithmetic and linear algebra.  It was written
+	  by William Hart, Mike Hansen, Sebastian Pancratz, Fredrik Johansson,
+	  and others, and is available at ", HREF "http://flintlib.org/", ".  It is 
+	  distributed under the terms of the GNU General Public License, version 2 or later."
+	  }
      }
 
 document {
@@ -155,7 +168,8 @@ document {
      Key => "NTL library",
      PARA {
 	  "The ", TT "NTL", " library, written by Victor Shoup, is used by Macaulay2, through the ", TO "Singular-Factory", " library,
-	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "."
+	  for its algebraic routines.  It is available at ", HREF "http://shoup.net/ntl/", "
+	  and is licensed under the GNU Lesser General Public License, version 2 or later."
 	  }
      }
 
@@ -274,34 +288,13 @@ document {
      }
 
 document {
-     Key => "Singular-Libfac",
-     "With the kind permission of the author, Michael Messollen, Macaulay2
-     incorporates ", TT "Singular-Libfac", ", version ", version#"libfac version", ",
-     a free library of routines, depending on ", TO "Singular-Factory", ", that provides
-     factorization of multivariate polynomials over finite fields and computation of the minimal associated primes 
-     of ideals via characteristic sets.  It is distributed under the terms of the
-     GNU General Public License (version 2 (see ", TO "COPYING-GPL-2", ") or version 3 (see ", TO "COPYING-GPL-3", ")), and is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Libfac"," and at 
-     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
-     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
-     PARA{},
-     "The following important routines call upon it:",
-     UL {
-	  TOH "factor",
-	  TOH "gcd",
-	  TOH "minimalPrimes",
-	  TOH "irreducibleCharacteristicSeries"
-	  }
-     }
-
-document {
      Key => "MPIR",
      "The MPIR library, version ", version#"mpir version", " provides
      routines for arbitrary precision integer and floating point arithmetic,
      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
-     It is available at ", HREF "http://www.mpir.org/", "."
+     It is available at ", HREF "http://www.mpir.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with GMP), examine the variable ", TO "version", "."
      }
-
 
 document {
      Key => "4ti2",
@@ -310,21 +303,21 @@ document {
      It is available at ", HREF "http://www.4ti2.de/", ".  The package ", TO "FourTiTwo::FourTiTwo", " runs it."
      }
 
--- document {
---      Key => "GNU MP",
---      "The GNU MP library, gmp, version ", version#"gmp version", " provides
---      routines for arbitrary precision integer and floating point arithmetic,
---      and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 2.1 or later.
---      It's available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and 
---      ", HREF "http://gmplib.org/", "."
---      }
+document {
+     Key => "GNU MP",
+     "The GNU MP library (GMP) provides
+     routines for arbitrary precision integer and floating point arithmetic,
+     and is distributed under the terms of the GNU Lesser General Public License (LGPL), version 3,
+     and also under the GNU General Public License (GPL), version 2.
+     It is available at ", HREF "ftp://ftp.gnu.org/gnu/gmp/", " and ", HREF "http://gmplib.org/", ".  To see whether your copy of Macaulay2 is linked
+     with it (or with MPIR), examine the variable ", TO "version", "."
+     }
 
 document {
      Key => "Acknowledgements",
      "We thank the National Science Foundation for generous funding since
      1993 for this project, Gert-Martin Greuel and Ruediger Stobbe for the
-     incorporation of their library ", TO "Singular-Factory", ", Michael Messollen for
-     the incorporation of his library ", TO "Singular-Libfac", ",
+     incorporation of their library ", TO "Singular-Factory", ",
      and David Eisenbud, Wolfram Decker and Sorin Popescu for
      early support, encouragement and suggestions.  We also acknowledge an
      intellectual debt to Dave Bayer, who, with Michael Stillman,

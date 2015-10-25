@@ -15,7 +15,7 @@ bool Z_mod::initialize_Z_mod(int p)
 {
 
   initialize_ring(p);
-
+  P = p;
 
   declare_field();
   int i,j,q,n;
@@ -49,9 +49,9 @@ bool Z_mod::initialize_Z_mod(int p)
 
   _P1 = P-1;
 
-  zeroV = from_int(0);
-  oneV = from_int(1);
-  minus_oneV = from_int(-1);
+  zeroV = from_long(0);
+  oneV = from_long(1);
+  minus_oneV = from_long(-1);
 
   coeffR = new CoefficientRingZZp(P,_log_table, _exp_table);
   aringZZp = new M2::ARingZZp(P); // WARNING: this uses that the primitive element is the SAME as computed above!!
@@ -80,12 +80,12 @@ int Z_mod::to_int(int f) const
   return n;
 }
 
-int Z_mod::coerce_to_int(ring_elem a) const
+std::pair<bool, long> Z_mod::coerceToLongInteger(ring_elem a) const
 {
-  return to_int(a.int_val);
+  return std::pair<bool, long>(true, to_int(a.int_val));
 }
 
-int Z_mod::discrete_log(ring_elem a) const
+long Z_mod::discreteLog(const ring_elem& a) const
 {
   if (a.int_val == _ZERO) return -1;
   return a.int_val;
@@ -109,6 +109,11 @@ inline int Z_mod::int_to_exp(int a) const
   return _log_table[(n < 0 ? n+P : n)];
 }
 
+unsigned int Z_mod::computeHashValue(const ring_elem a) const
+{
+  return a.int_val;
+}
+
 void Z_mod::elem_text_out(buffer &o,
                         const ring_elem a,
                         bool p_one,
@@ -126,9 +131,9 @@ void Z_mod::elem_text_out(buffer &o,
   if (p_one || n != 1) o << n;
 }
 
-ring_elem Z_mod::from_int(int n) const
+ring_elem Z_mod::from_long(long n) const
 {
-  int m = n % P;
+  int m = static_cast<int>(n % P);
   if (m < 0) m += P;
   m = _log_table[m];
   return ring_elem(m);
@@ -174,7 +179,7 @@ bool Z_mod::lift(const Ring *Rg, const ring_elem f, ring_elem &result) const
   // Rg = Z ---> Z/p
   if (Rg == globalZZ)
     {
-      result = Rg->from_int(coerce_to_int(f));
+      result = Rg->from_long(to_int(f));
       return true;
     }
   return false;
@@ -310,7 +315,7 @@ void Z_mod::syzygy(const ring_elem a, const ring_elem b,
                    ring_elem &x, ring_elem &y) const
 {
   ASSERT(!Z_mod::is_zero(b));
-  x = Z_mod::from_int(1);
+  x = Z_mod::from_long(1);
   y = Z_mod::divide(a,b);
   internal_negate_to(y);
 }
@@ -319,7 +324,7 @@ void Z_mod::syzygy(const ring_elem a, const ring_elem b,
 ring_elem Z_mod::eval(const RingMap *map, const ring_elem f, int) const
 {
   int a = to_int(f);
-  return map->get_ring()->from_int(a);
+  return map->get_ring()->from_long(a);
 }
 
 ring_elem Z_mod::random() const

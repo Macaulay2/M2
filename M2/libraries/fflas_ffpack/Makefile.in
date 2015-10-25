@@ -1,14 +1,13 @@
 # svn://linalg.org/fflas-ffpack/
 # http://linalg.org/projects/fflas-ffpack
+VERSION = 1.6.0
+URL = http://linalg.org/
 
-# the tar files provided are too old, so we took a snapshot:
-# VERSION = 20110329
-VERSION = 1.4.2.169
-URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode/trunk
 TARDIR = fflas-ffpack-$(VERSION)
+TARFILE = fflas-ffpack-$(VERSION).tar.gz
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 LICENSEFILES = COPYING
-PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+PRECONFIGURE = NOCONFIGURE=yes 
 # INSTALLCMD = $(MKDIR_P) $(LIBRARIESDIR)/include/fflas-ffpack && \
 # 		@INSTALL_DATA@ include/config-blas.h $(LIBRARIESDIR)/include/. && \
 # 		@INSTALL_DATA@ include/fflas-ffpack/*.{h,inl} $(LIBRARIESDIR)/include/fflas-ffpack/.

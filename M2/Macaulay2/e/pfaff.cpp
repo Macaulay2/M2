@@ -71,15 +71,15 @@ ring_elem PfaffianComputation::calc_pfaff(size_t *r, int p2)
      // minor with rows and columns r[0]..r[p2-1].
      // assumption: p2 is an even number.
 {
-  if (p2 == 2) return M->elem(r[0],r[1]);
-  ring_elem result = R->from_int(0);
+  if (p2 == 2) return M->elem(static_cast<int>(r[0]),static_cast<int>(r[1]));
+  ring_elem result = R->from_long(0);
 
   bool negate = true;
   for (int i=p2-2; i>=0; i--)
     {
       std::swap(r[i],r[p2-2]);
       negate = !negate;
-      ring_elem g = M->elem(r[p2-2],r[p2-1]);
+      ring_elem g = M->elem(static_cast<int>(r[p2-2]),static_cast<int>(r[p2-1]));
       if (R->is_zero(g))
         {
           R->remove(g);

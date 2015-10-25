@@ -50,10 +50,11 @@ $(BOOKNAME).bbl : papers.bib
 # max_strings = 30000
 
 $(BOOKNAME).tex : ../cache/Macaulay2-doc book.m2 booktex.m2
-	@pre_exec_prefix@/bin/M2@EXE@ -q book.m2 -e 'exit 0'
+	@pre_exec_prefix@/bin/M2 -q book.m2 -e 'exit 0'
 	mv M2book.tmp $(BOOKNAME).tex
 
 clean:; rm -rf Macaulay2-*-book.*
 
 distclean: clean
 	rm -f Makefile
+.NOTPARALLEL:

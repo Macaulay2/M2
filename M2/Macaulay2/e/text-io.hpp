@@ -5,6 +5,7 @@
 //#include <mpfr.h>
 //#include "debug.hpp"
 #include "buffer.hpp"
+#include <stddef.h>
 #include <gmp.h>
 
 extern int i_text_io();

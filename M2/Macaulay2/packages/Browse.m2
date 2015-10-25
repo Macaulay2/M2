@@ -10,7 +10,7 @@ newPackage ( "Browse",
      DebuggingMode => false
      )
 
-export {browse}
+export {"browse"}
 
 dictionaryPath = prepend(Core#"private dictionary",dictionaryPath)
 frame' = frame

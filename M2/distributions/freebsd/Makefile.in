@@ -20,7 +20,7 @@ chk-opts: check-prefix-is-slash-usr-slash-local check-debug-disabled check-optim
 check-prefix-is-slash-usr-slash-local:; [ "${prefix}" = /usr/local ]
 check-debug-disabled:; [ @DEBUG@ = no ]
 check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
-check-strip-enabled:; [ @STRIP@ = yes ]
+check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 ../../$(PKG): .prepared packinglist
 	chmod a+x post-install post-deinstall
 	pkg_create \
@@ -72,3 +72,4 @@ distclean: clean; rm -f Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/distributions/freebsd "
 # End:
+.NOTPARALLEL:

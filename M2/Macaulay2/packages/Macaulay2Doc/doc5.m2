@@ -155,8 +155,12 @@ document {
 document {
      Key => assert,
      Headline => "assert something is true",
-	Usage => "assert x",
-     TT "assert x", " prints an error message if x isn't true."
+	   Usage => "assert x",
+     TT "assert x", " prints an error message if x isn't true.",
+     EXAMPLE lines ///
+     assert( (2+2) === 4 )
+     ///,
+     SeeAlso => {"generateAssertions"}
      }
 
 document {
@@ -174,13 +178,12 @@ document {
      a small integer, returning the old value.",
      PARA{
 	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  Typically, the
-	  error depth is set so that messages from code pre-interpreted and
-	  reloaded with ", TO "loaddata", " will not appear in the backtrace.",
-	  },
-     PARA{
-     	  "To increase the size of the stack trace for debugging, reduce the ", TT "errorDepth", ".",
+	  code is displayed and the debugger is entered only if the load depth was at least as large at the
+	  time the code was parsed as the error depth is now.
+	  The default value is 3, which shows only positions in the user's code and positions
+	  inside loaded packages whose debugging mode is true.  Set it to 2 to also debug statements
+	  inside loaded packages, except for the package ", TO "Core", ".  Set it to 1 to also
+	  debug statements in the core, and set it to 0 to debug statements in the bootstrap code."
 	  },
      SeeAlso => { "loadDepth" }
      }
@@ -192,15 +195,17 @@ document {
      a small integer, returning the old value.",
      PARA{
 	  "During the backtrace after an error message, a position in interpreted
-	  code is displayed only if the load depth was at least as large at the
-	  time the code was parsed as the error depth is now.  The load depth 
+	  code is displayed only if the load depth at the
+	  time the code was parsed is at least as large as the error depth is now.  The load depth 
 	  is set to 0 initially, is set to 1 when the files of the ", TO "Core::Core", "
 	  package are being loaded, is set to 2 while loading a package with the ", TO "debuggingMode", " option
-	  set to ", TO "false", ", and is set to 3 for user input."
+	  set to ", TO "false", ", and is set to 3 while loading a package with the ", TO "debuggingMode", " option
+	  set to ", TO "true", " and for user input."
 	  },
      PARA {
 	  "The value of ", TO "loadDepth", " active when code is parsed is referred to later when
-	  error messages are being handled: see ", TO "errorDepth", "."
+	  error messages are being handled: see ", TO "errorDepth", ", and it is also displayed, in parentheses,
+	  when the error message is printed."
 	  },
      Caveat => { "The user should not attempt to adjust the value of ", TO "loadDepth", "." },
      }
@@ -217,7 +222,7 @@ document {
      Usage => "benchmark s",
      "Produces an accurate timing for the code contained in the string ", TT "s", ".  The value returned is the number of seconds.",
      EXAMPLE {
-		///benchmark "sqrt 2p3000000"///
+		///benchmark "sqrt 2p100000"///
 		},
      "The snippet of code provided will be run enough times to register
      meaningfully on the clock, and the garbage collector will be called
@@ -616,15 +621,18 @@ document {
      Usage => "setRandomSeed()",
      Consequences => {
 	  {"Initializes the random number generator to a fixed state, identical to the
-	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
-	       the random number seed is initially set to a number that depends on the current date, time (in seconds), and process id."}
+	       initial state (upon program start) in version 1.2 and earlier of Macaulay2.  (After version 1.2,
+	       the random number seed is initially set (when Macaulay2 starts) to a number that depends on the current date, 
+	       the time (in seconds), and the process id, except for when running examples and tests
+	       in packages (as signalled by use of the command line option ", TT "--no-randomize", "), where it is always initialized to 0.)"}
 	  },
      EXAMPLE lines ///
      setRandomSeed()
      random 2^100
      setRandomSeed()
      random 2^100
-     ///
+     ///,
+     SeeAlso => { (setRandomSeed,ZZ), (setRandomSeed,String) }
      }
 
 document {
@@ -640,7 +648,8 @@ document {
 	  "for i to 10 list random 100",
 	  "setRandomSeed 123456",
 	  "for i to 10 list random 100"
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,String) }
      }
 
 document {
@@ -657,7 +666,8 @@ document {
 	  ///for i to 10 list random 100///,
 	  ///setRandomSeed "thrkwjsxz"///,
 	  ///for i to 10 list random 100///
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,ZZ) }
      }
 
 document {

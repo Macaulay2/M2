@@ -1192,7 +1192,6 @@ document {
      }
 
 undocumented {
-     (symbol ^, Thing, QQ),
      (symbol ^, ZeroExpression, Holder),
      (symbol ^, Holder, ZeroExpression),
      (symbol ^, Holder, OneExpression),

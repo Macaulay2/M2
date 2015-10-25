@@ -1,49 +1,48 @@
 -- -*- M2-comint -*- {* hash: 1935272175 *}
---loading configuration for package "PHCpack" from file /Users/dan/Library/Application Support/Macaulay2/init-PHCpack.m2
 
 i1 : R = CC[x,y,z];
 
 i2 : L = { z*(x+y), z*(x-y) };
 
 i3 : WitSets = cascade(L)
-writing output to file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/1PHCoutput
-calling phc -c < /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/2PHCbatch > /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/4PHCsession
-output of phc -c is in file /var/folders/40/dy88l5qd361391m_3v2m51bm0000gn/T/M2-44701-0/1PHCoutput
-... constructing witness sets ... 
 
-o3 = A variety of dimension 2 with components in
-     dim 1:  [dim=1,deg=1]
-     dim 2:  [dim=2,deg=1]
+o3 = WitSets
 
 o3 : NumericalVariety
 
 i4 : W=first WitSets#1
 
-o4 = [dim=1,deg=1]
+o4 = W
 
 o4 : WitnessSet
 
 i5 : W#Equations
 
-o5 = ideal ((.97573 + .218976*ii)zz1 + x*z + y*z, (- .98618 - .16568*ii)zz1 +
+o5 = ideal ((.846284 + .532733*ii)zz1 + x*z + y*z, (.530401 - .847747*ii)zz1
      ------------------------------------------------------------------------
-     x*z - y*z, zz1)
+     + x*z - y*z, zz1)
 
 o5 : Ideal of CC  {x, y, z, zz1}
                 53
 
 i6 : W#Points
 
-o6 = {{1.95866e-107-3.40637e-108*ii, 1.36255e-107, .993651+.112505*ii, 0}}
+o6 = {{-1.58621e-117+3.96553e-118*ii, 7.93107e-118, .31475-.949175*ii, 0}   
+     {{-.195774-.571639*ii, -.136562-.678453*ii, -1.06046e-31-1.6549e-31*ii,
+     ------------------------------------------------------------------------
+                                 }
+     -2.36286e-31-5.84296e-31*ii}}
 
 o6 : VerticalList
 
 i7 : W#Slice
 
-o7 = {.879234 - .476389*ii + (.232678 - .972554*ii)x + (- .263104 -
+o7 = | .120939-.99266i -.984292-.176551i -.957027-.289999i .02212+.999755i
      ------------------------------------------------------------------------
-     .964767*ii)y + (- .820056 + .572283*ii)z + (.861897 + .507083*ii)zz1}
+     .576484-.817109i |
 
-o7 : List
+                1          5
+o7 : Matrix CC    <--- CC
+              53         53
 
 i8 : 

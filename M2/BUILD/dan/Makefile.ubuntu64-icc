@@ -1,7 +1,8 @@
 # -*- makefile-gmake -*-
 
 # CONFIGOPTIONS += --with-python
-CONFIGOPTIONS += CC=icc CXX=icpc
+CC=icc
+CXX=icpc
 DIRECTORY = ubuntu64-icc
 include Makefile.include
 default: check

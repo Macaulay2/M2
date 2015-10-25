@@ -2,8 +2,6 @@
 
 #include "gb-default.hpp"
 #include "text-io.hpp"
-#include <functional>
-#include <algorithm>
 
 #include "matrix.hpp"
 #include "matrix-con.hpp"
@@ -21,6 +19,9 @@
 
 #define PrintingDegree 0x0001
 
+#include <functional>
+#include <algorithm>
+#include <iostream>
 /*************************
  * Initialization ********
  *************************/
@@ -40,6 +41,20 @@ gbA * gbA::create(const Matrix *m,
                   int max_degree_limit,
                   int max_reduction_count)
 {
+  const PolynomialRing *origR = m->get_ring()->cast_to_PolynomialRing();
+  if (origR == NULL)
+    {
+      ERROR("ring is not a polynomial ring");
+      return nullptr;
+    }
+#if 0
+  // This test should be added, commented out in version 1.8, as QuillenSuslin package uses this (suspect) functionality!
+  if (origR->getMonoid()->numInvertibleVariables() > 0)
+    {
+      ERROR("cannot compute Groebner basis of ideal over a Laurent polynomial ring, ie. with Inverses=>true");
+      return nullptr;
+    }
+#endif  
   gbA *result = new gbA;
   result->initialize(m, collect_syz, n_rows_to_keep, gb_weights, strategy, max_reduction_count);
   return result;
@@ -116,7 +131,8 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
   stats_npairs = 0;
   stats_ngb = 0;
   stats_ngcd1 = 0;
-
+  stats_nretired = 0;
+  
   divisor_previous = -1;
   divisor_previous_comp = -1;
 
@@ -154,7 +170,6 @@ void gbA::initialize(const Matrix *m, int csyz, int nsyz, M2_arrayint gb_weights
       if (p != NULL)
         {
           spair_set_insert(p);
-          n_gens_left++;
         }
     }
 
@@ -202,21 +217,23 @@ void gbA::remove_gb()
 {
   // removes all allocated objects
   for (int i=first_gb_element; i<gb.size(); i++)
-    {
-      R->gbvector_remove(gb[i]->g.f);
-      R->gbvector_remove(gb[i]->g.fsyz);
-    }
+    if (gb[i])
+      {
+        R->gbvector_remove(gb[i]->g.f);
+        R->gbvector_remove(gb[i]->g.fsyz);
+      }
   for (int i=0; i<gb.size(); i++)
-    {
-      lcm_stash->delete_elem(gb[i]->lead);
-      gbelem_stash->delete_elem(gb[i]);
-      gb[i] = 0;
-    }
+    if (gb[i])
+      {
+        lcm_stash->delete_elem(gb[i]->lead);
+        gbelem_stash->delete_elem(gb[i]);
+        gb[i] = nullptr;
+      }
   delete minimal_gb; // will free its own gbvector's.
   for (int i=0; i<_syz.size(); i++)
     {
       R->gbvector_remove(_syz[i]);
-      _syz[i] = 0;
+      _syz[i] = nullptr;
     }
   delete lookup;
   delete lookupZZ;
@@ -329,22 +346,29 @@ gbA::gbelem *gbA::gbelem_make(gbvector *f,  // grabs f
 
 void gbA::gbelem_text_out(buffer &o, int i, int nterms) const
 {
-  gbelem_type minlevel = gb[i]->minlevel;
-  bool ismingen = (minlevel & ELEM_MINGEN);
-  bool ismingb = (minlevel & ELEM_MINGB);
-  if (ismingb)
-    o << "GB elem: ";
+  if (!gb[i])
+    {
+      o << "removed";
+    }
   else
-    o << "reducer: ";
-  o << "g" << i << " = ";
-  R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
-  o << " ["
-    << "gap " << gb[i]->gap
-    << " size " << gb[i]->size
-    << " deg "  << gb[i]->deg;
-  if (ismingen)
-    o << " mingen";
-  o << "]";
+    {
+      gbelem_type minlevel = gb[i]->minlevel;
+      bool ismingen = (minlevel & ELEM_MINGEN);
+      bool ismingb = (minlevel & ELEM_MINGB);
+      if (ismingb)
+        o << "GB elem: ";
+      else
+        o << "reducer: ";
+      o << "g" << i << " = ";
+      R->gbvector_text_out(o, _F, gb[i]->g.f, nterms);
+      o << " ["
+        << "gap " << gb[i]->gap
+        << " size " << gb[i]->size
+        << " deg "  << gb[i]->deg;
+      if (ismingen)
+        o << " mingen";
+      o << "]";
+    }
 }
 
 /*************************
@@ -361,7 +385,7 @@ gbA::spair *gbA::spair_node()
 void gbA::spair_delete(spair *&p)
 {
   if (p == 0) return;
-  if (p->type == SPAIR_GEN || p->type == SPAIR_ELEM)
+  if (p->type == SPAIR::SPAIR_GEN || p->type == SPAIR::SPAIR_ELEM)
     {
       R->gbvector_remove(p->x.f.f);
       R->gbvector_remove(p->x.f.fsyz);
@@ -379,7 +403,7 @@ gbA::spair *gbA::spair_make(int i, int j)
   exponents exp2 = g2->lead;
   spair *result = spair_node();
   result->next = 0;
-  result->type = SPAIR_SPAIR;
+  result->type = SPAIR::SPAIR_SPAIR;
   result->lcm = exponents_make();
     exponents_lcm(_nvars, g1->deg, exp1, exp2, result->lcm, gb_weights, result->deg);
     if (g2->gap > g1->gap)
@@ -393,7 +417,7 @@ gbA::spair *gbA::spair_make(int i, int j)
 gbA::spair *gbA::spair_make_gcd_ZZ(int i, int j)
 {
   spair *result = spair_make(i,j);
-  result->type = SPAIR_GCD_ZZ;
+  result->type = SPAIR::SPAIR_GCD_ZZ;
   return result;
 }
 
@@ -405,7 +429,7 @@ gbA::spair *gbA::spair_make_gen(POLY f)
   int deg = weightInfo_->gbvector_weight(f.f);
   spair *result = spair_node();
   result->next = 0;
-  result->type = SPAIR_GEN;
+  result->type = SPAIR::SPAIR_GEN;
   result->deg = deg;
   result->lcm = exp1;
   result->x.f = f;
@@ -426,7 +450,7 @@ gbA::spair *gbA::spair_make_skew(int i, int v)
   exp2[vvar] = 2;
   result = spair_node();
   result->next = 0;
-  result->type = SPAIR_SKEW;
+  result->type = SPAIR::SPAIR_SKEW;
   result->lcm = exp2;
     exponents_lcm(_nvars, g1->deg, exp1, exp2, exp2, gb_weights, result->deg);
   result->x.pair.i = i;
@@ -439,7 +463,7 @@ gbA::spair *gbA::spair_make_ring(int i, int j)
 {
   /* This requires that j indexes into the gb array somewhere. */
   spair *result = spair_make(i,j);
-  result->type = SPAIR_RING;
+  result->type = SPAIR::SPAIR_RING;
 
   return result;
 }
@@ -448,7 +472,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
 {
   char s[100]; // enough room for all of the non polynomial cases.
   switch (p->type) {
-  case SPAIR_GCD_ZZ:
+  case SPAIR::SPAIR_GCD_ZZ:
     sprintf(s, "spairgcd(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     sprintf(s, " deg(%d)", p->deg);
@@ -461,7 +485,7 @@ void gbA::spair_text_out(buffer &o, spair *p)
       }
     o << "]";
     break;
-  case SPAIR_SPAIR:
+  case SPAIR::SPAIR_SPAIR:
     sprintf(s, "spair(g%d,g%d):", p->x.pair.j, p->x.pair.i);
     o << s;
     sprintf(s, " deg %d", p->deg);
@@ -474,19 +498,19 @@ void gbA::spair_text_out(buffer &o, spair *p)
       }
     o << "]";
     break;
-  case SPAIR_GEN:
+  case SPAIR::SPAIR_GEN:
     o << "generator ";
     R->gbvector_text_out(o, _F, p->f(), 3);
     break;
-  case SPAIR_ELEM:
+  case SPAIR::SPAIR_ELEM:
     o << "elem ";
     R->gbvector_text_out(o, _F, p->f(), 3);
     break;
-  case SPAIR_RING:
+  case SPAIR::SPAIR_RING:
     sprintf(s, "rpair(%d,%d)", p->x.pair.i, p->x.pair.j);
     o << s;
     break;
-  case SPAIR_SKEW:
+  case SPAIR::SPAIR_SKEW:
     sprintf(s, "skewpair(g%d,g%d)", p->x.pair.j, p->x.pair.i);
     o << s;
     break;
@@ -513,7 +537,7 @@ bool gbA::pair_not_needed(spair *p, gbelem *m)
   int i, first, second;
   bool firstok;
   exponents mexp, lcm, p1exp, p2exp;
-  if (p->type != SPAIR_SPAIR && p->type != SPAIR_RING) return false;
+  if (p->type != SPAIR::SPAIR_SPAIR && p->type != SPAIR::SPAIR_RING) return false;
   mexp = m->lead;
   lcm = p->lcm;
   if (gbelem_COMPONENT(m) !=
@@ -582,7 +606,7 @@ bool gbA::is_gcd_one_pair(spair *p)
 {
   int i,j;
   exponents e1, e2;
-  if (p->type != SPAIR_SPAIR) return false;
+  if (p->type != SPAIR::SPAIR_SPAIR) return false;
   i = p->x.pair.i;
   j = p->x.pair.j;
   e1 = gb[i] -> lead;
@@ -644,8 +668,8 @@ public:
       else if (cmp > 0) result = LT;
       else
         {
-          gbvector *a1 = (a->type > gbA::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
-          gbvector *b1 = (b->type > gbA::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
+          gbvector *a1 = (a->type > gbA::SPAIR::SPAIR_SKEW ? a->f() : a->lead_of_spoly);
+          gbvector *b1 = (b->type > gbA::SPAIR::SPAIR_SKEW ? b->f() : b->lead_of_spoly);
           if (a1 == 0)
             {
               if (b1 == 0) result = EQ;
@@ -764,7 +788,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
                              have the same component */
       /* Now get the coefficient */
       /* This is the lcm divided by the lead coeff, but it depends on the kind of spair */
-      if (a->type == SPAIR_SKEW)
+      if (a->type == SPAIR::SPAIR_SKEW)
         {
           coeffs.push_back(globalZZ->one().get_mpz());
           coeffs2.push_back(0); // will never be referred to below
@@ -812,7 +836,7 @@ void gbA::minimalize_pairs_ZZ(spairs &new_set)
 #if 0
       mpz_ptr u = coeffs[*i];
       mpz_ptr v = coeffs2[*i];
-      if (p->type != SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
+      if (p->type != SPAIR::SPAIR_SKEW && mpz_cmpabs_ui(u,1) && mpz_cmpabs_ui(v,1))
         {
           spair *p2 = spair_make_gcd_ZZ(p->x.pair.i, p->x.pair.j);
           if (M2_gbTrace >= 4)
@@ -837,6 +861,7 @@ void gbA::minimalize_pairs(spairs &new_set)
 
 void gbA::update_pairs(int id)
 {
+  M2_ASSERT(gb[id] != nullptr);
   gbelem *r = gb[id];
   int x = gbelem_COMPONENT(r);
 
@@ -867,7 +892,7 @@ void gbA::update_pairs(int id)
   for (int i=first_gb_element; i<id; i++)
     {
       gbelem *g = gb[i];
-      if ((g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
+      if (g && (g->minlevel & ELEM_MINGB) && gbelem_COMPONENT(g) == x)
         {
           spair *s = spair_make(id,i);
           new_set.push_back(s);
@@ -922,6 +947,7 @@ void gbA::spair_set_insert(gbA::spair *p)
 {
   while (p != 0)
     {
+      if (p->type == SPAIR::SPAIR_GEN) n_gens_left++;
       spair_set_lead_spoly(p);
       spair *tmp = p;
       p = p->next;
@@ -985,13 +1011,14 @@ gbA::spair *gbA::spair_set_next()
   S->nelems--;
   S->n_in_degree--;
   S->n_computed++;
+  if (result->type == SPAIR::SPAIR_GEN) n_gens_left--;
   return result;
 }
 
 void gbA::spair_set_defer(spair *&p)
   // Defer the spair p until later in this same degree
   // The spair should have been reduced a number of times
-  // already, so its type should be SPAIR_GEN or SPAIR_ELEM
+  // already, so its type should be SPAIR::SPAIR_GEN or SPAIR::SPAIR_ELEM
 {
   if (M2_gbTrace == 15)
     {
@@ -1001,10 +1028,11 @@ void gbA::spair_set_defer(spair *&p)
   //  spair_delete(p); // ONLY FOR TESTING!! THIS IS INCORRECT!!
   //  return;
   S->n_in_degree++;
-  if (p->type == SPAIR_GEN)
+  if (p->type == SPAIR::SPAIR_GEN)
     {
       S->gen_last_deferred->next = p;
       S->gen_last_deferred = p;
+      n_gens_left++;
     }
   else
     {
@@ -1059,7 +1087,7 @@ int gbA::spair_set_prepare_next_degree(int &nextdegree)
       {
         spair *tmp = p->next;
         p->next = tmp->next;
-        if (tmp->type == SPAIR_GEN)
+        if (tmp->type == SPAIR::SPAIR_GEN)
           {
             tmp->next = S->gen_list;
             S->gen_list = tmp;
@@ -1110,7 +1138,7 @@ void gbA::spairs_sort(int len, spair *&ps)
   a.reserve(len);
   for (spair *p = ps; p != 0; p=p->next)
     {
-      if ((p->type > gbA::SPAIR_SKEW) || p->lead_of_spoly)
+      if ((p->type > SPAIR::SPAIR_SKEW) || p->lead_of_spoly)
         a.push_back(p);
       else
         b.push_back(p);
@@ -1159,14 +1187,14 @@ void gbA::spair_set_lead_spoly(spair *p)
 {
   gbvector *ltsyz = 0;
   POLY f,g;
-  if (p->type > SPAIR_SKEW)
+  if (p->type > SPAIR::SPAIR_SKEW)
     {
       R->gbvector_remove(p->lead_of_spoly);
       p->lead_of_spoly = 0;
       return;
     }
   f = gb[p->x.pair.i]->g;
-  if (p->type == SPAIR_SKEW)
+  if (p->type == SPAIR::SPAIR_SKEW)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
@@ -1174,7 +1202,7 @@ void gbA::spair_set_lead_spoly(spair *p)
                                f.f, 0,
                                p->lead_of_spoly, ltsyz);
     }
-  else if (p->type == SPAIR_GCD_ZZ)
+  else if (p->type == SPAIR::SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
       R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
@@ -1209,11 +1237,11 @@ void gbA::compute_s_pair(spair *p)
       spair_text_out(o,p);
       emit_line(o.str());
     }
-  if (p->type > SPAIR_SKEW) return;
+  if (p->type > SPAIR::SPAIR_SKEW) return;
   R->gbvector_remove(p->lead_of_spoly);
   p->lead_of_spoly = 0;
   f = gb[p->x.pair.i]->g;
-  if (p->type == SPAIR_SKEW)
+  if (p->type == SPAIR::SPAIR_SKEW)
     {
       const int *mon = R->skew_monomial_var(p->x.pair.j);
       R->gbvector_mult_by_term(_F,_Fsyz,
@@ -1221,7 +1249,7 @@ void gbA::compute_s_pair(spair *p)
                                f.f, f.fsyz,
                                p->f(), p->fsyz());
     }
-  else if (p->type == SPAIR_GCD_ZZ)
+  else if (p->type == SPAIR::SPAIR_GCD_ZZ)
     {
       g = gb[p->x.pair.j]->g;
       R->gbvector_combine_lead_terms_ZZ(_F, _Fsyz,
@@ -1239,7 +1267,7 @@ void gbA::compute_s_pair(spair *p)
                                     p->f(),
                                     p->fsyz());
     }
-  p->type = SPAIR_ELEM;
+  p->type = SPAIR::SPAIR_ELEM;
   if (M2_gbTrace >= 5 && M2_gbTrace != 15)
     {
       buffer o;
@@ -1302,7 +1330,7 @@ bool gbA::reduce_kk(spair *p)
           POLY h;
           h.f = R->gbvector_copy(p->x.f.f);
           h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+          insert_gb(h,(p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0));
         }
       POLY g = gb[w]->g;
 
@@ -1398,7 +1426,7 @@ bool gbA::reduce_ZZ(spair *p)
           MonomialTableZZ::mon_term *t = lookupZZ->find_exact_monomial(EXP,
                                                                        x,
                                                                        first_in_degree);
-          if (t != 0)
+          if (t != nullptr)
             {
               // f <-- u*p+v*f (same with syz versions), need to change lookupZZ too?
               // p <-- c*p-d*f
@@ -1409,21 +1437,20 @@ bool gbA::reduce_ZZ(spair *p)
                   o << "  swapping with GB element " << t->_val;
                   emit_line(o.str());
                 }
+
+              // If the element p is a generator, then we must assume that now the
+              // swapped g is a (possible) minimal generator.
+              g->minlevel |= ELEM_MINGB;
+              if (p->type == SPAIR::SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
+                {
+                  g->minlevel |= ELEM_MINGEN;
+                  p->type = SPAIR::SPAIR_GEN;
+                }
+              
               R->gbvector_replace_2by2_ZZ(_F, _Fsyz, p->f(), p->fsyz(), g->g.f, g->g.fsyz);
               // Before continuing, do remainder of g->g
-              tail_remainder_ZZ(g->g, this_degree);
-              lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz());
+              replace_gb_element_ZZ(t);
 
-                // If the element p is a generator, then we must assume that now the
-                // swapped g is a (possible) minimal generator.
-              g->minlevel |= ELEM_MINGB;
-                if (p->type == SPAIR_GEN || (g->minlevel & ELEM_MINGEN))
-                  {
-                    g->minlevel |= ELEM_MINGEN;
-                    p->type = SPAIR_GEN;
-                  }
-
-              auto_reduce_by(t->_val);
               if (M2_gbTrace >= 10)
                 {
                   buffer o;
@@ -1446,7 +1473,7 @@ bool gbA::reduce_ZZ(spair *p)
           POLY h;
           h.f = R->gbvector_copy(p->x.f.f);
           h.fsyz = R->gbvector_copy(p->x.f.fsyz);
-          insert_gb(h,(p->type == SPAIR_GEN ? ELEM_MINGEN : 0));
+          insert_gb(h,(p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0));
         }
       POLY g = gb[w]->g;
 
@@ -1985,6 +2012,7 @@ void gbA::auto_reduce_by(int id)
                       // and not a higher gap level
   for (int i=INTSIZE(gb)-1; i>=first_gb_element; i--)
     {
+      if (!gb[i]) continue;
       if (i == id) continue;
       gbelem *g = gb[i];
       if (g->deg < me->deg) return;
@@ -2115,22 +2143,94 @@ void gbA::insert_gb(POLY f, gbelem_type minlevel)
     }
 }
 
+void gbA::replace_gb_element_ZZ(MonomialTableZZ::mon_term* t)
+{
+  /* Reduce this element as far as possible.  This either removes content,
+     makes it monic, or at least negates it so the lead coeff is positive. */
+  ring_elem not_used;
+
+  stats_ngb++;
+  n_gb++;
+
+  int gbval = t->_val;
+  gbelem* g = gb[gbval];
+  gb[gbval] = nullptr;
+
+  g->deg = this_degree; // replace the degree
+  g->minlevel |= ELEM_MINGB;
+  minimal_gb_valid = false;
+  int me = INTSIZE(gb);
+
+  if (is_local_gb)
+    R->gbvector_remove_content(g->g.f,g->g.fsyz,false,not_used);
+  else
+    tail_remainder_ZZ(g->g,this_degree);
+  
+  //  tail_remainder_ZZ(g->g,this_degree);
+  gb.push_back(g);
+  lookupZZ->change_coefficient(t, g->g.f->coeff.get_mpz(), me); 
+  if (M2_gbTrace == 15)
+    {
+      buffer o;
+      o << "    retiring " << gbval << " new ";
+      //      o << "    new ";
+      gbelem_text_out(o, INTSIZE(gb)-1);
+
+      emit_line(o.str());
+    }
+  else if (M2_gbTrace >= 5)
+    {
+      char s[100];
+      buffer o;
+      sprintf(s, "replacing-inserting element %d (minimal %d replacing %d): ",me,g->minlevel,gbval);
+      o << s;
+      R->gbvector_text_out(o,_F,g->g.f);
+      emit_line(o.str()); o.reset();
+      o << "                          syzygy : ";
+      R->gbvector_text_out(o,_Fsyz,g->g.fsyz);
+      emit_line(o.str());
+    }
+
+  if (!is_local_gb)
+    auto_reduce_by(me);
+}
+
+bool gbA::spair_is_retired(spair* p) const
+{
+  if (p->type == SPAIR::SPAIR_GCD_ZZ or p->type == SPAIR::SPAIR_SPAIR)
+    {
+      return gb[p->x.pair.i] == nullptr or gb[p->x.pair.j] == nullptr;
+    }
+  if (p->type == SPAIR::SPAIR_RING)
+    {
+      return gb[p->x.pair.i] == nullptr;
+    }
+  if (p->type == SPAIR::SPAIR_SKEW)
+    {
+      return gb[p->x.pair.i] == nullptr;
+    }
+  return false;
+}
+  
 bool gbA::process_spair(spair *p)
 {
   stats_npairs++;
+  if (spair_is_retired(p))
+    {
+      stats_nretired++;
+      spair_delete(p);      
+      return true;
+    }
 
   bool not_deferred = reduceit(p);
-
   if (!not_deferred) return true;
 
-  gbelem_type minlevel = (p->type == SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
+  gbelem_type minlevel = (p->type == SPAIR::SPAIR_GEN ? ELEM_MINGEN : 0) | ELEM_MINGB;
 
-  if (p->type == SPAIR_GEN) n_gens_left--;
   POLY f = p->x.f;
   p->x.f.f = 0;
   p->x.f.fsyz = 0;
   spair_delete(p);
-
 
   if (!R->gbvector_is_zero(f.f))
     {
@@ -2243,17 +2343,20 @@ void gbA::do_computation()
         // np_i is initialized at the beginning, and also here.
             while (np_i < n_gb)
               {
-                  if (system_interrupted())
+                if (system_interrupted())
                   {
                     set_status(COMP_INTERRUPTED);
                     return;
                   }
-                if (gb[np_i]->minlevel & ELEM_MINGB)
-                  update_pairs(np_i);
+                if (gb[np_i])
+                  {
+                    if (gb[np_i]->minlevel & ELEM_MINGB)
+                      update_pairs(np_i);
+                  }
                 np_i++;
               }
             state = STATE_HILB;
-
+            
       case STATE_HILB:
         // If we are using hilbert function tracking:
         // Recompute the Hilbert function if new GB elements have been added
@@ -2297,6 +2400,12 @@ void gbA::do_computation()
                 if (use_hilb)
                   {
                     hilb_n_in_degree = hilb_comp::coeff_of(hf_diff, this_degree);
+                    if (error()) {
+                      // The previous line can give an error, which measn that the Hilbert
+                      // function declared was actually incorrect.
+                      set_status(COMP_ERROR);
+                      return;
+                    }
                     if (hilb_n_in_degree == 0) flush_pairs();
                   }
               }
@@ -2326,7 +2435,6 @@ void gbA::do_computation()
       case STATE_SPAIRS:
       case STATE_GENS:
         // Compute the spairs for this degree
-
             while ((p = spair_set_next()) != 0)
               {
                 process_spair(p);
@@ -2354,33 +2462,37 @@ void gbA::do_computation()
         if (!is_local_gb)
         while (ar_i < n_gb)
               {
-                while (ar_j < n_gb)
-                  {
+                if (gb[ar_i])
+                  while (ar_j < n_gb)
+                    {
                       if (system_interrupted())
-                      {
-                        set_status(COMP_INTERRUPTED);
-                        return;
-                      }
-                    if (over_ZZ())
-                      {
-                        R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
-                                                   gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
-                                                   gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-                      }
-                    else
-                      {
-                        R->gbvector_auto_reduce(_F, _Fsyz,
-                                                gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
-                                                gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
-                      }
-                    ar_j++;
-                  }
+                        {
+                          set_status(COMP_INTERRUPTED);
+                          return;
+                        }
+                      if (gb[ar_j])
+                        {
+                          if (over_ZZ())
+                            {
+                              R->gbvector_auto_reduce_ZZ(_F, _Fsyz,
+                                                         gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                         gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                            }
+                          else
+                            {
+                              R->gbvector_auto_reduce(_F, _Fsyz,
+                                                      gb[ar_i]->g.f, gb[ar_i]->g.fsyz,
+                                                      gb[ar_j]->g.f, gb[ar_j]->g.fsyz);
+                            }
+                        }
+                      ar_j++;
+                    }
                 ar_i++;
                 ar_j = ar_i+1;
               }
-            state = STATE_NEWPAIRS;
-            break;
-
+        state = STATE_NEWPAIRS;
+        break;
+        
       case STATE_DONE:
         return;
       }
@@ -2434,10 +2546,11 @@ void gbA::minimalize_gb()
 
   VECTOR(POLY) polys;
   for (int i=first_gb_element; i<gb.size(); i++)
-    {
-      if (gb[i]->minlevel & ELEM_MINGB)
-        polys.push_back(gb[i]->g);
-    }
+    if (gb[i])
+      {
+        if (gb[i]->minlevel & ELEM_MINGB)
+          polys.push_back(gb[i]->g);
+      }
 
   minimal_gb->minimalize(polys);
   minimal_gb_valid = true;
@@ -2492,9 +2605,11 @@ const Matrix /* or null */ *gbA::get_gb()
 
 const Matrix /* or null */ *gbA::get_mingens()
 {
+  if (over_ZZ())
+    return get_gb();
   MatrixConstructor mat(_F,0);
   for (VECTOR(gbelem *)::iterator i = gb.begin(); i != gb.end(); i++)
-    if ((*i)->minlevel & ELEM_MINGEN)
+    if ((*i) and ((*i)->minlevel & ELEM_MINGEN))
       mat.append(originalR->translate_gbvector_to_vec(_F, (*i)->g.f));
   return mat.to_matrix();
 
@@ -2511,9 +2626,10 @@ const Matrix /* or null */ *gbA::get_syzygies()
   // The (non-minimal) syzygy matrix
   MatrixConstructor mat(_Fsyz, 0);
   for (VECTOR(gbvector *)::iterator i = _syz.begin(); i != _syz.end(); i++)
-    {
-      mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
-    }
+    if (*i)
+      {
+        mat.append(originalR->translate_gbvector_to_vec(_Fsyz, *i));
+      }
   return mat.to_matrix();
 }
 
@@ -2566,11 +2682,12 @@ void gbA::text_out(buffer &o) const
   o << "# pairs computed = " << n_pairs_computed << newline;
   if (M2_gbTrace >= 5 && M2_gbTrace % 2 == 1)
     for (unsigned int i=0; i<gb.size(); i++)
-      {
-        o << i << '\t';
-        R->gbvector_text_out(o, _F, gb[i]->g.f);
-        o << newline;
-      }
+      if (gb[i])
+        {
+          o << i << '\t';
+          R->gbvector_text_out(o, _F, gb[i]->g.f);
+          o << newline;
+        }
 }
 
 void gbA::debug_spair(spair *p)
@@ -2615,10 +2732,11 @@ void gbA::show_mem_usage()
 
   long nmonoms = 0;
   for (int i=0; i<gb.size(); i++)
-    {
-      nmonoms += R->gbvector_n_terms(gb[i]->g.f);
-      nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
-    }
+    if (gb[i])
+      {
+        nmonoms += R->gbvector_n_terms(gb[i]->g.f);
+        nmonoms += R->gbvector_n_terms(gb[i]->g.fsyz);
+      }
   emit_line(o.str());
   o << "number of (nonminimal) gb elements = " << gb.size();
   emit_line(o.str());

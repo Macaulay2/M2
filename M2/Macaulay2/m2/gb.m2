@@ -84,13 +84,72 @@ gbWithChg    := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygi
 gbWithSyzygy := gbTypeCode new OptionTable from { SyzygyRows => infinity, Syzygies => true , ChangeMatrix => false, HardDegreeLimit => null }
 
 gbGetSuitable := (f,type) -> (
-     if f.cache#?type then f.cache#type
-     else if type === gbOnly and computationIsComplete(f,gbWithChg) then getComputation(f,gbWithChg)
-     else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then getComputation(f,gbWithSyzygy)
+     if debugLevel == 77 then stderr << "-- gb type requested: " << type << endl;
+     if f.cache#?type then (
+	  if debugLevel == 77 then stderr << "-- gb type found, gb number " << hash f.cache#type << endl;
+	  f.cache#type)
+     else if type === gbOnly and computationIsComplete(f,gbWithChg) then (
+	  if debugLevel == 77 then stderr << "-- gb type found, but fetching " << gbWithChg << endl;
+	  getComputation(f,gbWithChg))
+     else if ( type===gbOnly or type===gbWithChg ) and computationIsComplete(f,gbWithSyzygy) then (
+	  if debugLevel == 77 then stderr << "-- gb type found, but fetching " << gbWithSyzygy << endl;
+	  getComputation(f,gbWithSyzygy))
+     else (
+	  if debugLevel == 77 then stderr << "-- gb type not found, returning" << endl;
+	  null))
+
+engineMGB = method(Options => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""})
+  -- possible values for Reducer: "Classic", "F4",  (0,1)
+  -- see 'mgb help logs' for format of the Logs argument.
+engineMGB Matrix := opts -> (M) -> (
+     reducer := if opts#"Reducer" === null then 0
+                else if instance(opts#"Reducer", ZZ) then opts#"Reducer"
+                else if opts#"Reducer" === "F4" then 1
+                else if opts#"Reducer" === "Classic" then 0
+                else error ///Expected "F4" or "Classic" as reducer type///;
+     spairGroupSize := if instance(opts#"SPairGroupSize", ZZ) then opts#"SPairGroupSize"
+                else error "expected an integer for SPairGroupSize";
+     nthreads := if instance(opts#"Threads", ZZ) then opts#"Threads"
+                else error "expected an integer for number of threads to use";
+     log := if instance(opts#"Log", String) then opts#"Log"
+                else error "Log expects a string argument, e.g. \"all\" or \"F4\"";
+     rawgb := rawMGB(raw M, reducer, spairGroupSize, nthreads, log);
+     map(ring M, rawgb)
      )
+     
+engineMGBF4 = method(Options => options engineMGB)
+engineMGBF4 Ideal := opts -> (I) -> engineMGB(I, opts, "Reducer"=>"F4")
 
 gb = method( TypicalValue => GroebnerBasis, Options => gbDefaults )
-groebnerBasis = x -> generators gb x
+
+groebnerBasis = method( TypicalValue => Matrix, Options => new OptionTable from {
+        Strategy => null, -- possible values: "MGB", "F4"
+        "MGBOptions" => {"Reducer"=>null, "Threads"=>0, "SPairGroupSize"=>0,"Log"=>""}
+        })
+
+groebnerBasis Ideal := opts -> x -> groebnerBasis(generators x, opts)
+groebnerBasis Matrix := opts -> x -> (
+    R := ring x;
+    if opts.Strategy =!= null 
+      and char R > 0 -- MGB only works over prime finite fields
+      and isPolynomialRing R
+      and isCommutative R
+      and instance(coefficientRing R, QuotientRing) -- really: want to say it is a prime field
+      then (
+        mgbopts := opts#"MGBOptions";
+        if opts.Strategy === "F4" then mgbopts = append(mgbopts, "Reducer"=>"F4")
+        else if opts.Strategy =!= "MGB" then error ///expected Strategy to be "F4" or "MGB"///;
+        if gbTrace > 0 then << "-- computing mgb " << opts.Strategy << " " << mgbopts << endl;
+        -- use rawMGB
+        mgbopts = new OptionTable from mgbopts;
+        g := engineMGB(x, new OptionTable from mgbopts);
+        generators forceGB g
+        )
+    else
+        generators gb(x)
+    )
+-- This doesn't use MGB yet...
+groebnerBasis Module := opts -> x -> generators gb(x)
 
 strategyCodes := new HashTable from { -- must match values in e/engine.h in enum StrategyValues
      LongPolynomial => 1,
@@ -112,7 +171,11 @@ processStrategy := (v) -> (
 warnexp := () -> stderr << "--warning: gb algorithm requested is experimental" << endl
 
 processAlgorithm := (a,f) -> (
+     R := ring f;
+     k := ultimate(coefficientRing, R);
      if (a === Homogeneous or a === Homogeneous2) and not isHomogeneous f then error "gb: homogeneous algorithm specified with inhomogeneous matrrix";
+     if k === ZZ and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with base ring ZZ";
+     if R.?FlatMonoid and not R.FlatMonoid.Options.Global and a =!= Inhomogeneous then error "gb: only the algorithm 'Inhomogeneous' may be used with a non-global monomial ordering";
      if a === Homogeneous then 1
      else if a === Inhomogeneous then 2
 --     else if a === F4 then error "the F4 algorithm option has been replaced by LinearAlgebra"
@@ -124,21 +187,17 @@ processAlgorithm := (a,f) -> (
      else if a === Test then 8
      else error ("unknown algorithm encountered"))
 
-gb Ideal := GroebnerBasis => options -> (I) -> gb ( module I, options )
+gb Ideal := GroebnerBasis => opts -> (I) -> gb ( module I, opts )
 
-gb Module := GroebnerBasis => options -> (M) -> (
+gb Module := GroebnerBasis => opts -> (M) -> (
      if M.?relations 
      then (
-	  notImplemented();
-	  -- provisional
-	  m := generators M;
-	  n := relations M;
-	  gb (m|n, 
-	       options,
-	       -- ChangeMatrix => true,
-	       -- Syzygies => true,
-	       SyzygyRows => numgens source m))
-     else gb(generators M, options))
+	  f := (
+	       if M.cache#?"full gens" 
+	       then M.cache#"full gens"
+	       else M.cache#"full gens" = generators M|relations M);
+	  gb(f, opts, SyzygyRows => numgens source generators M))
+     else gb(generators M, opts))
 
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 
@@ -204,12 +263,13 @@ newGB := (f,type,opts) -> (
 	       else opts.GBDegrees
 	       ),
 	  opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit,
-	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then opts.HardDegreeLimit else 0,
+	  if opts.HardDegreeLimit =!= computationOptionDefaults.HardDegreeLimit then first degreeToHeft(R,opts.HardDegreeLimit) else 0,
 	  processAlgorithm(opts.Algorithm,f),
 	  processStrategy opts.Strategy,
 	  opts.MaxReductionCount
 	  );
      f.cache#type = G;			  -- do this last, in case of an interrupt
+     if debugLevel == 77 then stderr << "-- new gb computed of type " << type << " and number " << hash G << " with options " << opts << endl;
      G)
 
 checkArgGB := f -> (
@@ -223,6 +283,12 @@ recordOptions := (G,opts) -> (
      G#"stopping options" = getSomeOptions(opts,stoppingOptionDefaults);
      G#"computation options" = getSomeOptions(opts,computationOptionDefaults);
      )
+
+degreeToHeft = (R,d) -> (
+     if d === null	 -- null is a default value for HardDegreeLimit
+     or d === {}	 -- see stoppingOptionDefaults.DegreeLimit, which is {}
+     then {}
+     else {sum apply(heft R,checkListOfIntegers d,times)})
 
 gb Matrix := GroebnerBasis => opts -> (f) -> (
      checkArgGB f;
@@ -238,7 +304,7 @@ gb Matrix := GroebnerBasis => opts -> (f) -> (
      log := FunctionApplication { rawGBSetStop, (
 	       G.RawComputation,
 	       opts.StopBeforeComputation,
-	       if opts.DegreeLimit =!= stoppingOptionDefaults.DegreeLimit then checkListOfIntegers opts.DegreeLimit else {},
+	       degreeToHeft(ring f, opts.DegreeLimit),
 	       toEngineNat opts.BasisElementLimit,
 	       toEngineNat opts.SyzygyLimit,
 	       toEngineNat opts.PairLimit,
