@@ -1,3 +1,5 @@
+-- -*- coding: utf-8 -*-
+
 newPackage(
      	"CharacteristicClasses",
 	Version =>"2.0",
