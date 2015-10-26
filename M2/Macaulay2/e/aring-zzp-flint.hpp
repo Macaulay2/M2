@@ -69,8 +69,8 @@ namespace M2 {
     bool is_equal(ElementType f, ElementType g) const { return f == g; }
 
     int compare_elems(ElementType f, ElementType g) const {
-      if (f > g) return -1;
-      if (f < g) return 1;
+      if (f > g) return 1;
+      if (f < g) return -1;
       return 0;
     }
     
