@@ -50,10 +50,6 @@ restart
 load "../../../bugs/anton/NAG/mem-leak-sparse-system.m2"
 
 GHS = PH.GateHomotopySystem
-elapsedTime for i to 100000 do 
-evaluateH(GHS, transpose(matrix c0 | matrix c0 | matrix pre0), .5+.3*ii)
--- 70 sec
-
 EH = GHS#"EH"
 mc0 = matrix c0;
 mpre0 = matrix pre0;
@@ -61,6 +57,21 @@ inp = mutableMatrix(mc0 | mc0 | mpre0 | matrix{{.5+.3*ii}})
 retH = GHS#("retH",CC_53)
 cc = .5+.3*ii
 
+
+mc0 = matrix c0
+mpre0 = matrix(CC,{coordinates pre0})
+time elapsedTime for i to 10000 do ( 
+    M = mc0 | mc0 | mpre0;
+    inp = mutableMatrix (M | matrix {{ .3+.4*ii}});
+    -- evaluate(EH,inp,retH)
+    )
+-- 8 sec
+
+
+mc0 = matrix c0;
+mpre0 = matrix pre0;
+mc0 = mutableMatrix matrix c0;
+mpre0 = mutableMatrix matrix pre0;
 fillIn = M -> (
     i := 0;
     scan(numcols mc0, c->(M_(0,i)=mc0_(0,c);i=i+1));
@@ -68,13 +79,29 @@ fillIn = M -> (
     scan(numcols mpre0, c->(M_(0,i)=mpre0_(0,c);i=i+1));
     M_(0,i)=cc
     )  
-elapsedTime for i to 100000 do ( 
-    fillIn inp;
+e1 = first entries mc0;
+e2 = first entries mpre0;
+fillIn2 = M -> (
+    i := 0;
+    scan(numcols mc0, c->(M_(0,i)=e1#c;i=i+1));
+    scan(numcols mc0, c->(M_(0,i)=e1#c;i=i+1));
+    scan(numcols mpre0, c->(M_(0,i)=e2#c;i=i+1));
+    M_(0,i)=cc
+    )  
+fillIn3 = M -> (
+    i := 0;
+    for c in e1 do (M_(0,i)=c;i=i+1);
+    for c in e1 do (M_(0,i)=c;i=i+1);
+    for c in e2 do (M_(0,i)=c;i=i+1);
+    M_(0,i)=cc
+    )  
+time elapsedTime for i to 20000 do ( 
+    fillIn3 inp;
     evaluate(EH,inp,retH);
     )
--- 230 sec
+-- 5 sec for both Matrix/MutableMatrix 
 
-elapsedTime for i to 10000000 do ( 
+elapsedTime for i to 100000 do ( 
     evaluate(EH,inp,retH);
     )
 

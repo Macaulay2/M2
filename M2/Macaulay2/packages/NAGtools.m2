@@ -66,7 +66,7 @@ preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s
     	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
-	sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
+	elapsedTime sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
 	if #sols0 == nSols then same = same + 1 else (
 	    nSols = #sols0; 
 	    same = 0;
