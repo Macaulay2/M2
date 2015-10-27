@@ -15,6 +15,16 @@ Q = frac R
 L = {1/x, 1/y, 14*x^3/y^2, x^2/y, x^3/y, -14_Q}
 assert(sort L === {-14_Q, 1/(y), 1/(x), (x^2)/(y), (x^3)/(y), (14*x^3)/(y^2)})
 
+-- Ordering in ZZ/p:
+-- This order isn't perfect, but it is the way we have done it now for some time.
+-- Changing it causes a number of tests to fail, since the sort order affects many things.
+-- So we are leaving this as is (MES 27 Oct 2015).
+assert(
+    sort apply (11, i -> mod(i,11))
+    ==
+    {-1, -2, -3, -4, -5, 5, 4, 3, 2, 1, 0}
+    )
+
 -- Some more comparisons
 debug Core
 R = ZZ[x]
@@ -35,7 +45,7 @@ f > g -- also gives wrong answer.
 debug Core
 kk = ZZp(101)
 R = kk[x,y,z]
-assert(rawCompare(raw(3*x), raw(5*x)) == -1)
+assert(rawCompare(raw(3*x), raw(5*x)) == 1)
 for i from 0 to 100 list (i*x)
 sort oo
 
