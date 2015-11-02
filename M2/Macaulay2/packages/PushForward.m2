@@ -232,7 +232,8 @@ document{
   use R
   F = map(R,A)
   pushFwd F
-  ///
+  ///,
+  TEX "In a previous version of this package, the third output was a function which assigned to each element of the target of ", TT "f", " its representation as an element of a free module which surjected onto the pushed forward module."
   }
 
 document{
