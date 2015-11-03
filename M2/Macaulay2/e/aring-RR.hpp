@@ -67,7 +67,7 @@ namespace M2 {
     // Do not take the same element and store it as two different ring_elem's!!
     void to_ring_elem(ring_elem &result, const ElementType &a) const
     {
-      double* res = new double;
+      double* res = newitem(double);
       *res = a;
       result.poly_val = reinterpret_cast<Nterm*>(res);
     }
