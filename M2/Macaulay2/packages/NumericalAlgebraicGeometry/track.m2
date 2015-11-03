@@ -630,7 +630,27 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
--- "track" should eventually go through "trackHomotopy"
+-- invoke engine routine for tracking  
+trackHomotopyM2engine = method(Options =>{
+     	  -- step control
+	  tStep => null, -- initial
+          tStepMin => null,
+	  stepIncreaseFactor => null,
+	  numberSuccessesBeforeIncrease => null,
+	  -- predictor 
+	  Predictor=>null, 
+	  MultistepDegree => null, -- used only for Predictor=>Multistep
+	  -- corrector 
+	  maxCorrSteps => null,
+	  maxPrecision => null,
+     	  CorrectorTolerance => null, -- tracking tolerance
+	  -- end of path
+	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	  InfinityThreshold => null -- used to tell if the path is diverging
+	  } )  
+debug Core
+trackHomotopyM2engine(RawSLProgram,MutableMatrix,MutableMatrix) := o -> (H,inp,out) -> ()
+
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
      	  -- step control
@@ -739,7 +759,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      rawSols := if o.Software===M2 
      or o.Software===M2engine or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
-	 apply(#solsS, sN-> time (
+	 apply(#solsS, sN->(
 	       s := solsS#sN;
 	       s'status := Processing;
 	       endZone := false;
