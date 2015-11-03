@@ -101,26 +101,34 @@ isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 member(Thing,Set) := Boolean => (a,s) -> s#?a
 
 Tally / Command  := 
-Tally / Function := Tally => (x,f) -> applyKeys(x,f)
+Tally / Function := Tally => (x,f) -> applyKeys(x,f,plus)
 
 Command  \ Tally := 
-Function \ Tally := Tally => (f,x) -> applyKeys(x,f)
+Function \ Tally := Tally => (f,x) -> applyKeys(x,f,plus)
+
+Set / Command  := 
+Set / Function := Tally => (x,f) -> applyKeys(x,f,(i,j)->1)
+
+Command  \ Set := 
+Function \ Set := Tally => (f,x) -> applyKeys(x,f,(i,j)->1)
+
 
 permutations = method()
 permutations VisibleList := VisibleList => x -> if #x <= 1 then {x} else flatten apply(#x, i -> apply(permutations drop(x,{i,i}), t -> prepend(x#i,t)))
 permutations ZZ := List => n -> permutations toList (0 .. n-1)
 
 partition = method()
-partition(Function,Tally) := (f,s) -> (
-     p := new MutableHashTable;
+partition(Function,Tally) := (f,s) -> partition(f,s,{})
+partition(Function,Tally,VisibleList) := (f,s,i) -> (
+     p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scanPairs(s, (x,n) -> ( y := f x; if p#?y then if p#y#?x then p#y#x = p#y#x + n else p#y#x = n else (p#y = new MutableHashTable)#x = n; ));
      applyValues(new HashTable from p, px -> new class s from px))
-partition(Function,VisibleList) := (f,s) -> (
-     p := new MutableHashTable;
+partition(Function,VisibleList) := (f,s) -> partition(f,s,{})
+partition(Function,VisibleList,VisibleList) := (f,s,i) -> (
+     p := new MutableHashTable from apply(i,e->(e,new MutableHashTable));
      scan(s, x -> ( y := f x; if p#?y then (p#y)#(#p#y) = x else p#y = new MutableHashTable from {(0,x)}));
      p = pairs p;
      new HashTable from apply(p, (k,v) -> (k,new class s from values v)))
-
 -----------------------------------------------------------------------------
 -- a first use of sets:
 

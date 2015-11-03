@@ -1,13 +1,11 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
-CC ?= gcc
-CXX ?= g++
-FC ?= gfortran
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
-banner:; @echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
+banner:
+	@echo "-*- mode: compilation; default-directory: \"`pwd`/\" -*-"
 DIRECTORY ?= none
 ifneq ($(DIRECTORY),none)
 # why did I think this was a good idea ??
@@ -19,10 +17,12 @@ endif
 all:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@ $(BUILDOPTIONS)
 clean:; $(MAKE) -C builds.tmp/$(DIRECTORY) $@
 arch-chk:
-everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) all RemakeAllDocumentation=true RemakePackages=true
+everything:; $(MAKE) -C builds.tmp/$(DIRECTORY) ReinstallPackages=true RemakeAllDocumentation=true RerunExamples=true -k all check
 check-links:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/html-check-links check
-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k check
-big-check:; $(MAKE) -C builds.tmp/$(DIRECTORY) -k big-check
+big-check check:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) -k $@
+help:
+	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
 	D=`pwd` ;\
@@ -50,9 +50,9 @@ install-info:
 cygwin-signature:; $(MAKE) -C builds.tmp/$(DIRECTORY)/distributions/cygwin/server signature
 pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
-rebuild-world1: arch-chk distclean-or-rm-rf
-distclean-or-rm-rf:
-	@set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
+rebuild-world1: arch-chk distclean2
+distclean2:
+	@set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean
 rebuild-world2:make-configure
 make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
@@ -64,7 +64,8 @@ find-M2:
 	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)"
+# we avoid CC, CXX, and FC here, because gnu "make" sets default values for them, which we don't want to use:
+CONFIGOPTIONS += CC="$(_CC)" CXX="$(_CXX)" FC="$(_FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)

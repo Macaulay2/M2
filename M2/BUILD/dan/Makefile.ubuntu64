@@ -7,30 +7,31 @@ CONFIGOPTIONS += --enable-shared
 endif
 
 default:
-tools:;: $(CC) $(CXX) $(FC)
+
+DIR_BASE := $(shell lsb_release -s --id)-$(shell lsb_release -s --release)-$(shell uname -m)
 
 ifeq ($(DEBUG),yes)
 
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
-DIRECTORY = ubuntu64.debug
+DIRECTORY = $(DIR_BASE).debug
 
 else
 default: arch-chk all check
 
 ifeq ($(PRODUCTION),yes)
     SIGN = yes
-    CONFIGOPTIONS += --enable-deb
+    CONFIGOPTIONS += --enable-deb --enable-strip
     CONFIGOPTIONS += --disable-common-staging-area
 ifeq ($(PROFILE),yes)
     CONFIGOPTIONS += --enable-profile
 export CC = gcc -pg
 export CXX = g++ -pg
 export FC = gfortran -pg
-    DIRECTORY = ubuntu64.profile
+    DIRECTORY = $(DIR_BASE).profile
 else
-    DIRECTORY = ubuntu64.production
+    DIRECTORY = $(DIR_BASE).production
 endif
 else
     SIGN = no
@@ -40,6 +41,10 @@ endif
 endif
 CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu
 CONFIGOPTIONS += --with-mpir-config-options="ABI=64"
+
+# /usr/lib/x86_64-linux-gnu/libpari-gmp-tls.so.4 crashes on exit, so avoid it:
+CONFIGOPTIONS += --enable-build-libraries=pari
+
 include Makefile.include
 pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 arch-chk:; grep -q Ubuntu /etc/issue && [ `uname -m` = x86_64 ]

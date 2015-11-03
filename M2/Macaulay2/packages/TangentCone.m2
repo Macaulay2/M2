@@ -10,7 +10,7 @@ newPackage ("TangentCone",
     	DebuggingMode => false
     	)
 
-export { tangentCone }
+export { "tangentCone" }
 
 tangentCone = method(TypicalValue => Ideal, 
      Options => { 

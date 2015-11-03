@@ -39,7 +39,7 @@ newPackage select((
 export {
      "setDefault", "getDefault",
      "solveSystem", 
-     solveGenericSystemInTorus, -- works with PHCpack only
+     "solveGenericSystemInTorus", -- works with PHCpack only
      "refine", "totalDegreeStartSystem", "newton",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
@@ -52,9 +52,9 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     Bits, Iterations, ErrorTolerance, ResidualTolerance,
+     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, squareUp,
+     "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -120,9 +120,9 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => 1e-8,
+     ResidualTolerance => infinity,
      Iterations => 30, 
-     Bits => 300,
+     Bits => infinity,
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,

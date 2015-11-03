@@ -9,7 +9,7 @@ newPackage(
         DebuggingMode => false
         )
 
-export {pushFwd}
+export {"pushFwd"}
 
 pushFwd=method()
 pushFwd(RingMap):=(f)->

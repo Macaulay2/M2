@@ -41,7 +41,7 @@ newPackage(
 --     zips - a list containing zeroes, by the end it will contain all of them
 --     evaluationspace - a list of potential zeroes (although not necessarily whole points of affine n-space)
 
-export{rationalPoints, UseGB, UseMinGens, SortGens, LowMem, Amount}
+export{"rationalPoints", "UseGB", "UseMinGens", "SortGens", "LowMem", "Amount"}
 
 --This function shuffles two lists of lists naively.
 --e.g. combineLists({{a},{b}},{{0,1},{2}}) == {{a,0,1},{a,2},{b,0,1},{b,2}}

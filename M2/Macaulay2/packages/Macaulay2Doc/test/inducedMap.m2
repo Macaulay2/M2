@@ -20,3 +20,21 @@ assert isHomogeneous h
 h = inducedMap(R^1 / f 4, R^1 / f 5, Verify => true)
 assert (coker h == 0)
 assert isHomogeneous h
+
+R = QQ[x,y]
+M = subquotient(matrix{{x}}, matrix{{x-y}})
+G = gb(M,ChangeMatrix=>true)
+e = matrix {{y}}
+k = e // G
+assert( k == 1 )
+assert(target k == cover M)
+assert( e % G == 0 )
+M' = subquotient(matrix{{y}}, matrix{{x-y}})
+assert ( M == M' )
+N = image e
+f' = inducedMap(M',N,id_(R^1))
+g = map(M,N,1)
+assert isWellDefined g
+assert ( f' == g )
+f = inducedMap(M,N,id_(R^1))
+assert ( f == f' )

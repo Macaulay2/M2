@@ -7,7 +7,7 @@ newPackage(
      DebuggingMode => false
      )
 
-export {buildSymmetricGB,elementarySymmetric}
+export {"buildSymmetricGB","elementarySymmetric"}
 
 mons = (X,i)-> (
     n := #X;

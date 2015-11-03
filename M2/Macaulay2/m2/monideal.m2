@@ -47,6 +47,10 @@ MonomialIdeal ^ ZZ := MonomialIdeal => (I,n) -> (
      else SimplePowerMethod(I,n)
      )
 
+MonomialIdeal ^ Array := (I, e) -> (
+   monomialIdeal (ideal I)^e
+)
+
 Ring / MonomialIdeal := (R,I) -> R / ideal I
 
 monomialIdeal MonomialIdeal := identity

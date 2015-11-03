@@ -31,7 +31,6 @@ include ./Makefile.files
 VPATH = @srcdir@
 # these can be overridden on the command line
 DEPENDS = yes
-ENABLE_STRIP = @ENABLE_STRIP@
 ############################## main targets
 echo = $(shell echo "echo: $1" >&2) $1
 
@@ -92,7 +91,9 @@ pthread-tmp.c : SCCFLAGS += -noline
 ## the problem with this is that it can make "make" think the targets were made:
 # actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
-version.o : ../../include/M2/config.h
+version.o : ../../include/M2/config.h git-description.c
+git-description.c: git-description; echo "const char * gitDescription = \"`cat $<`\";" >$@
+git-description: .; (git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown) > $@
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h
@@ -207,7 +208,7 @@ all: $(M2_LIBDEPS) M2inits.o
 tags: @srcdir@/TAGS
 @srcdir@/TAGS: $(M2_SRCFILES); cd @srcdir@ && @ETAGS@ $(M2_SRCFILES)
 clean-bin:; rm -f *.o *-tmp.c *-tmp.cc *.sig.tmp *-exports.h.tmp
-clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp
+clean::; rm -f typecode.db *-exports.h *-exports.h.tmp *-tmp.c *-tmp.cc *.log a.out *.o *.sym *.out *.a *.oo *.sig *.sig.tmp *.sg *.dep *.dp *.dep.tmp core gmon.out mapfile restart.tmp TAGS
 distclean: clean; rm -f Makefile startup.m2 @srcdir@/TAGS
 Makefile: Makefile.in; cd ../..; ./config.status Macaulay2/d/Makefile
 Makefile.files: Makefile.files.in; cd ../..; ./config.status Macaulay2/d/Makefile.files

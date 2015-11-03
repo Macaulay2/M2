@@ -24,13 +24,21 @@ InfiniteNumber ..< InfiniteNumber :=
 InfiniteNumber .. InfiniteNumber := (i,j) -> if i < j then error "infinite range specified" else ()
 InfiniteNumber == InfiniteNumber := (x,y) -> x === y
 
+InfiniteNumber + QQ := 
 InfiniteNumber + ZZ := (i,j) -> i
+QQ + InfiniteNumber := 
 ZZ + InfiniteNumber := (i,j) -> j
+InfiniteNumber - QQ := 
 InfiniteNumber - ZZ := (i,j) -> i
+QQ - InfiniteNumber := 
 ZZ - InfiniteNumber := (i,j) -> -j
+InfiniteNumber * QQ := 
 InfiniteNumber * ZZ := (i,j) -> if j > 0 then i else if j < 0 then -i else indeterminate
+QQ * InfiniteNumber := 
 ZZ * InfiniteNumber := (j,i) -> if j > 0 then i else if j < 0 then -i else indeterminate
+QQ // InfiniteNumber := QQ / InfiniteNumber := 
 ZZ // InfiniteNumber := ZZ / InfiniteNumber := (x,y) -> 0
+InfiniteNumber // QQ := InfiniteNumber / QQ := 
 InfiniteNumber // ZZ := InfiniteNumber / ZZ := (x,y) -> if y > 0 then x else if y < 0 then -x else indeterminate
 InfiniteNumber == QQ := 
 InfiniteNumber == ZZ :=

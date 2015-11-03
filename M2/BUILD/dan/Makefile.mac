@@ -19,37 +19,52 @@ unexport DEBUG
 PROFILE=no
 unexport PROFILE
 
-# see the INSTALL file:
-export MACOSX_DEPLOYMENT_TARGET=10.9
+DIRECTORY = mac64
+BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
+# see the INSTALL file:
+# export MACOSX_DEPLOYMENT_TARGET=10.9
+
+ifeq ($(GCC5),yes)
+BUILDLIBS += mpir flint
+_CC  = gcc-5 -m64
+_CXX = g++-5 -m64
+DIRECTORY := $(DIRECTORY)-gcc5
+else
 ifeq ($(CLANG),yes)
 # The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
 #   factor(28752093487520394720397634653456)
 # One of our M2 examples factors the same number, which causes M2 to crash.
 DIRECTORY := $(DIRECTORY)-clang
-CC  := /usr/bin/gcc
-CXX := /usr/bin/g++
-FC  := false
+_CC  := /usr/bin/gcc
+_CXX := /usr/bin/g++
+_FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 else
-CC  := gcc-4.9 -m64
-CXX := g++-4.9 -m64
-FC  := gfortran-4.9
-# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
-BRANCH := master
-DIRECTORY := mac64
+_CC  := gcc-4.9 -mtune=generic
+_CXX := g++-4.9 -mtune=generic
+_FC  := 
+# _FC  := gfortran-5
+endif
 endif
 
-DIRECTORY := $(DIRECTORY)-$(BRANCH)
-
-CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)"
 default: all
 
+# we build pari because brew's pari brings in gmp
+# we build flint because of the gmp problem Mike found once
+# we build gc because homebrew compiles with clang and produces non-generic code and ignores the command line option -mtune=generic
+#   $ gdb /usr/local/lib/libgc.1.dylib 
+#   (gdb) x/i min_bytes_allocd+100
+#   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
+#   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
+BUILDLIBS += pari flint readline
+
 ifeq ($(PRODUCTION),yes)
-   default: check install
+   default: check
    CONFIGOPTIONS += --disable-common-staging-area
-   DIRECTORY := $(DIRECTORY).production
+   DIRECTORY := $(DIRECTORY)-production
    PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
    ifeq ($(DEBUG),yes)
@@ -62,16 +77,17 @@ endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
-   DIRECTORY := $(DIRECTORY).debug
+   DIRECTORY := $(DIRECTORY)-debug
 endif
 
 ifeq ($(PROFILE),yes)
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-profile
-   DIRECTORY := $(DIRECTORY).profile
+   DIRECTORY := $(DIRECTORY)-profile
 endif
+
+CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
-pre-install:;	rm -rf /usr/local/encap/Macaulay2-$(PACKAGE_VERSION)
 
 # Local Variables:
 # compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "

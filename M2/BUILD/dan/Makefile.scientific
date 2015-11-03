@@ -1,10 +1,10 @@
 # -*- makefile-gmake -*-
-DIRECTORY = production
+DIRECTORY = sl64.production
 ifeq ($(DEBUG),yes)
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
    DIRECTORY := debug
 else
-   CONFIGOPTIONS += --enable-rpm
+   CONFIGOPTIONS += --enable-rpm --enable-strip
 endif
 include Makefile.include
 default: check

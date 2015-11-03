@@ -1465,6 +1465,11 @@ document {
      PARA {
 	  "The temporary file name is derived from the value of the environment variable ", TT "TMPDIR", ", if it has one."
 	  },
+     PARA {
+	  "If ", TO "fork", " is used, then the parent and child Macaulay2 processes will each remove their
+	  own temporary files upon termination, with the parent removing any files created before ", TO "fork",
+	  " was called.",
+	  },
      SeeAlso => {File, "rootPath", "rootURI"}
      }
 
