@@ -780,33 +780,33 @@ point DualSpace := L -> L.BasePoint
 
 
 -- extra types used (at this point) only by NumericalAlgebraicGeometry 
-export { "HomotopySystem", "ParameterHomotopySystem", "SpecializedParameterHomotopySystem", 
+export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
     "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
 
-HomotopySystem = new Type of MutableHashTable -- abstract type
+Homotopy = new Type of MutableHashTable -- abstract type
 evaluateH = method()
-evaluateH (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
 evaluateHt = method()
-evaluateHt (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
 evaluateHx = method()
-evaluateHx (HomotopySystem,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
 
-ParameterHomotopySystem = new Type of MutableHashTable -- abstract type
-evaluateH (ParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
-evaluateHt (ParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
-evaluateHx (ParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+ParameterHomotopy = new Type of MutableHashTable -- abstract type
+evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
 
-SpecializedParameterHomotopySystem = new Type of HomotopySystem
+SpecializedParameterHomotopy = new Type of Homotopy
 specialize = method()
-specialize (ParameterHomotopySystem,Matrix) := (PH, M) -> (
-    SPH := new SpecializedParameterHomotopySystem;
-    SPH.ParameterHomotopySystem = PH;
+specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    SPH := new SpecializedParameterHomotopy;
+    SPH.ParameterHomotopy = PH;
     SPH.Parameters = M;
     SPH
     ) 
-evaluateH (SpecializedParameterHomotopySystem,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopySystem,H.Parameters,x,t) 
-evaluateHt (SpecializedParameterHomotopySystem,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopySystem,H.Parameters,x,t) 
-evaluateHx (SpecializedParameterHomotopySystem,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopySystem,H.Parameters,x,t) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
 
 
 -- DOCUMENTATION ------------------------------------------------------

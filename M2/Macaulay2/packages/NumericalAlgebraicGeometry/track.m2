@@ -718,7 +718,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,HomotopySystem) then (
+     else if instance(H,Homotopy) then (
      	 K = CC_53; --!!!
       	 --
        	 evalH = (x0,t0)-> (
@@ -745,7 +745,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 if not (instance(H,HomotopySystem) and H#?"EH") then "expected a HomotopySystem with an Evaluator";  
+	 if not (instance(H,Homotopy) and H#?"EH") then "expected a Homotopy with an Evaluator";  
 	 apply(#solsS, sN->(
 		 s := solsS#sN;
 		 inp := mutableMatrix (if instance(s,Point) then {coordinates s | {0}} else s | matrix{{0_(ring s)}}); 

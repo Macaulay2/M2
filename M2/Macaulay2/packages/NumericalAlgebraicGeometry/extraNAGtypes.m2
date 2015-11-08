@@ -4,21 +4,21 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopySystem", "gateHomotopySystem", "getEvaluators", "getParameters" }
+export{ "GateHomotopy", "gateHomotopy", "getEvaluators", "getParameters" }
 
 debug SLPexpressions
 
 ----------------------------------
--- GateHomotopySystem
+-- GateHomotopy
 
-GateHomotopySystem := new Type of HomotopySystem    
-GateParameterHomotopySystem := new Type of ParameterHomotopySystem
+GateHomotopy := new Type of Homotopy    
+GateParameterHomotopy := new Type of ParameterHomotopy
 
-gateHomotopySystem = method(Options=>{Parameters=>null,Software=>null})
-gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
+gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
+gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
     soft := if o.Software=!=null then o.Software else DEFAULT.Software;
-    GH := new GateHomotopySystem;
+    GH := new GateHomotopy;
     GH#"X" = X;
     if para then GH#"X" = o.Parameters | GH#"X";
     GH#"T" = T;    
@@ -37,14 +37,14 @@ gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
 	)
     else error "uknown Software option value";
     if para then (
-	GPH := new GateParameterHomotopySystem;
-	GPH.GateHomotopySystem = GH;
+	GPH := new GateParameterHomotopy;
+	GPH.GateHomotopy = GH;
 	GPH
 	) 
     else GH
     ) 
     
-evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
+evaluateH (GateHomotopy,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
@@ -52,7 +52,7 @@ evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 th
     evaluate(H#"EH", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"H", numcols H#"H")    
     )
-evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
+evaluateHt (GateHomotopy,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
@@ -60,7 +60,7 @@ evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     evaluate(H#"EHt", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Ht", numcols H#"Ht")
     )
-evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
+evaluateHx (GateHomotopy,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
     valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
     ) else if H.Software===M2engine then (
     K := ring x;
@@ -68,13 +68,13 @@ evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 t
     evaluate(H#"EHx", mutableMatrix(transpose x | matrix{{t}}), r);
     matrix(matrix r, numrows H#"Hx", numcols H#"Hx")
     )
-evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopySystem,parameters||x,t)
-evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
-evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopySystem,parameters||x,t)
+evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopy,parameters||x,t)
+evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
+evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
 debug SLPexpressions
 getEvaluators := method()
-getEvaluators (GateHomotopySystem,Ring) := (H,K) -> (
+getEvaluators (GateHomotopy,Ring) := (H,K) -> (
     rawSLEvaluatorK(H#"EHx",K),
     rawSLEvaluatorK(H#"EHxt",K),
     rawSLEvaluatorK(H#"EHxH",K)
@@ -107,7 +107,7 @@ peek s
 assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
-TEST ///-- HomotopySystem
+TEST ///-- Homotopy
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -126,7 +126,7 @@ value(gHt, Rvars)
 value(gHx, Rvars)
 
 debug NumericalAlgebraicGeometry
-HS = gateHomotopySystem(gH,gV,T)
+HS = gateHomotopy(gH,gV,T)
 x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
 peek s
@@ -142,12 +142,12 @@ G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
 H = (1 - T) * F + T * G
 gV = matrix{{X,Y}}
 gH = transpose matrix {H}
-HS = gateHomotopySystem(gH,gV,T)
+HS = gateHomotopy(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 ///
 
-TEST /// -- ParameterHomotopySystem
+TEST /// -- ParameterHomotopy
 needsPackage "SLPexpressions"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -163,7 +163,7 @@ gH = transpose matrix {H}
 gP = matrix{{P}}
 
 debug NumericalAlgebraicGeometry
-PHS = gateHomotopySystem(gH,gV,T,Parameters=>gP)
+PHS = gateHomotopy(gH,gV,T,Parameters=>gP)
 HS = specialize(PHS,matrix{{1_CC}})
 x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)

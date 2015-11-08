@@ -1,9 +1,9 @@
 undocumented {
-    ParameterHomotopySystem, 
-    evaluateHt, (evaluateHt,HomotopySystem,Matrix,Number), (evaluateHt,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopySystem,Matrix,Number), 
-    evaluateHx, (evaluateHx,HomotopySystem,Matrix,Number), (evaluateHx,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopySystem,Matrix,Number),
-    Parameters, SpecializedParameterHomotopySystem, HomotopySystem, 
-    evaluateH, (evaluateH,HomotopySystem,Matrix,Number), (evaluateH,ParameterHomotopySystem,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopySystem,Matrix,Number)
+    ParameterHomotopy, 
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    Parameters, SpecializedParameterHomotopy, Homotopy, 
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
     }
 
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
@@ -917,18 +917,18 @@ document {
 *}
 
 document {
-    Key => {(gateHomotopySystem, GateMatrix, GateMatrix, InputGate),
-	gateHomotopySystem,--[Parameters,gateHomotopySystem]
+    Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
+	gateHomotopy,--[Parameters,gateHomotopy]
 	},
     Headline => "homotopy system via SLPexpressions",
-    Usage => "HS = gateHomotopySystem(H,X,T)",
+    Usage => "HS = gateHomotopy(H,X,T)",
     Inputs => { 
 	"H"=>"a family of systems (given by a column vector)",
 	"X"=>"(a row vector of) variables",
 	"T"=>"homotopy (continuation) parameter" 
 	 },
     Outputs => { "HS", 
-	-- ofClass {GateHomotopySystemof, GateParameterHomotopySystem}, 
+	-- ofClass {GateHomotopyof, GateParameterHomotopy}, 
 	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
     "Optional arguments:",
     UL{
@@ -942,11 +942,11 @@ T = inputGate symbol T
 F = {X*X-1, Y*Y*Y-1}
 G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
 H = (1 - T) * F + T * G
-HS = gateHomotopySystem(transpose matrix {H},matrix{{X,Y}},T)
+HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
     ///,
     Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
 	TT "Parameters, X, T", "."},
-    SeeAlso=>{ --GateHomotopySystem,GateParameterHomotopySystem,
+    SeeAlso=>{ --GateHomotopy,GateParameterHomotopy,
     	specialize}
     }
     
