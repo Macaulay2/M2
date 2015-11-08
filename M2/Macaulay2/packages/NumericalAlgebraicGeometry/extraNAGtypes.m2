@@ -39,7 +39,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
 	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
-	GH#"RawHomotopy" = makeRawHomotopy(GH#"EHx",GH#"EHt",GH#"EHxH");
+	GH#"RawHomotopy" = (GH#"EHx",GH#"EHt",GH#"EHxH") / rawSLEvaluatorK // makeRawHomotopy;
 	)
     else error "uknown Software option value";
     if para then (

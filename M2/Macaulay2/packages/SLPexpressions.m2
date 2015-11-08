@@ -532,19 +532,21 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
 Evaluator = new Type of MutableHashTable
 makeEvaluator = method()
 makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
+    consts := constants M;
     E := new Evaluator from {
     	"rawSLP"=>makeSLProgram(I,M),
-    	"constants"=>constants M
     	};
-    E#"constant positions" = positionsOfInputGates(E#"constants",E#"rawSLP");
+    E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
     E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
+    E#"constants" = matrix{consts/(c->c.Name)};
     E
     )
 
 rawSLEvaluatorK = method()
+rawSLEvaluatorK Evaluator := E -> rawSLEvaluatorK(E,ring E#"constants")
 rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
     E#"rawSLP", E#"constant positions", E#"input positions",
-    raw mutableMatrix matrix(K,{apply(E#"constants",c->c.Name_K)})
+    raw mutableMatrix promote(E#"constants",K)
     );
   
 evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
@@ -553,6 +555,25 @@ evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
  
+TEST /// 
+needsPackage "SLPexpressions"
+debug SLPexpressions
+X = inputGate symbol X
+C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+E = makeEvaluator(matrix{{XXC,detXCCX,XoC,XpC+2}},matrix{{C,X}}) 
+inp = mutableMatrix{{1.2,-1}}
+out = mutableMatrix(ring inp,1,4)
+evaluate(E,inp,out)
+assert(clean_0.001(out - mutableMatrix {{1.2, -.44, -.833333, 2.2}})==0)  
+inp = mutableMatrix{{1.2,ii+2}}
+out = mutableMatrix(ring inp,1,4)
+evaluate(E,inp,out)
+assert(clean_0.001(out - mutableMatrix {{3.6+4.8*ii, 1.56+4*ii, 1.66667+.833333*ii, 5.2+ii}})==0)  
+///
 
 beginDocumentation()
 {* run
