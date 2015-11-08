@@ -745,15 +745,14 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 if not (instance(H,Homotopy) and H#?"EH") then "expected a Homotopy with an Evaluator";  
+	 if not (instance(H,Homotopy) and H#?"RawHomotopy") then "expected a Homotopy with RawHomotopy";  
 	 apply(#solsS, sN->(
 		 s := solsS#sN;
 		 inp := mutableMatrix (if instance(s,Point) then {coordinates s | {0}} else s | matrix{{0_(ring s)}}); 
 		 out := mutableMatrix inp; -- "copy" does not copy!!!
 		 n := numcols out - 1;
 		 out_(0,n) = 1; 
-		 (Hx,Hxt,HxH) := getEvaluators(H,CC_53);
-		 st := rawTrackHomotopy(Hx, Hxt, HxH, raw getParameters H, inp, out,
+		 st := rawTrackHomotopy(H#"RawHomotopy", inp, out,
 	     	     o.tStep, o.tStepMin, 
 	     	     o.CorrectorTolerance, o.maxCorrSteps, 
 	     	     toRR o.InfinityThreshold

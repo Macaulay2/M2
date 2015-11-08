@@ -1,5 +1,4 @@
 --- IMPLEMENT SOON ---
-
 rawHomotopy: stores a handle for a homotopy 
   -- data --
   MutableMat: constants, parameters (some given precision? QQ? QQ[ii]? any ring that has promote toCC?)
@@ -8,8 +7,9 @@ rawHomotopy: stores a handle for a homotopy
   -- methods --
   constructor/destructor 
   track: heuristric tracking using CC_p (or RR_p?)     
-makeRawHomotopy -- set up rawHomotopy: specifies SLPrograms, constants and parameters 
-trackRawHomotopy -- tracks raw homotopy given one (many?) initial solutions
+makeRawHomotopy: specifies SLPrograms, constants and inputs positions 
+trackRawHomotopy: tracks raw homotopy given one (many?) initial solutions
+specializeRawHomotopy: specializes parameters and makes new RawHomotopy
 
 --- ISSUES ---
 

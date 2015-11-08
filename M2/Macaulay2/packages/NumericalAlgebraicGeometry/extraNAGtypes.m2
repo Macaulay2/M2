@@ -4,7 +4,7 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopy", "gateHomotopy", "getEvaluators", "getParameters" }
+export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy" }
 
 debug SLPexpressions
 
@@ -13,6 +13,9 @@ debug SLPexpressions
 
 GateHomotopy := new Type of Homotopy    
 GateParameterHomotopy := new Type of ParameterHomotopy
+
+-- !!! DUMMY engine function
+makeRawHomotopy = S -> null
 
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
@@ -34,6 +37,9 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     	GH#"EH" = makeEvaluator(H,varMat);
     	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
     	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
+	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
+	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
+	GH#"RawHomotopy" = makeRawHomotopy(GH#"EHx",GH#"EHt",GH#"EHxH");
 	)
     else error "uknown Software option value";
     if para then (
@@ -72,13 +78,17 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
-debug SLPexpressions
-getEvaluators := method()
-getEvaluators (GateHomotopy,Ring) := (H,K) -> (
-    rawSLEvaluatorK(H#"EHx",K),
-    rawSLEvaluatorK(H#"EHxt",K),
-    rawSLEvaluatorK(H#"EHxH",K)
-    )
+-- !!! DUMMY engine function
+specializeRawHomotopy = (H,M) -> H 
+
+specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
+specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
+    SPH := new SpecializedParameterHomotopy;                                                                                                                  
+    SPH.ParameterHomotopy = PH;                                                                                                                               
+    SPH.Parameters = M;                                                                                                                                       
+    if PH#?"RawHomotopy" then SPH#"RawHomotopy" = specializeRawHomotopy(PH#"RawHomotopy",M);
+    SPH                                                                                                                                                       
+    ) 
 
 -------------------------------------------------------
 -- trackHomotopy tests
