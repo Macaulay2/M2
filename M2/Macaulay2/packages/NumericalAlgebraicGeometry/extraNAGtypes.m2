@@ -4,7 +4,7 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopySystem", "gateHomotopySystem" }
+export{ "GateHomotopySystem", "gateHomotopySystem", "getEvaluators", "getParameters" }
 
 debug SLPexpressions
 
@@ -72,7 +72,13 @@ evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,
 evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
 evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopySystem,parameters||x,t)
 
-
+debug SLPexpressions
+getEvaluators := method()
+getEvaluators (GateHomotopySystem,Ring) := (H,K) -> (
+    rawSLEvaluatorK(H#"EHx",K),
+    rawSLEvaluatorK(H#"EHxt",K),
+    rawSLEvaluatorK(H#"EHxH",K)
+    )
 
 -------------------------------------------------------
 -- trackHomotopy tests

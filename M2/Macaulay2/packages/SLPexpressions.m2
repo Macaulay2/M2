@@ -541,14 +541,16 @@ makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
     E
     )
 
+rawSLEvaluatorK = method()
+rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
+    E#"rawSLP", E#"constant positions", E#"input positions",
+    raw mutableMatrix matrix(K,{apply(E#"constants",c->c.Name_K)})
+    );
+  
 evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     K := ring I; 
     assert(ring O === K);
-    if not E#?K then E#K = rawSLEvaluator(
-	E#"rawSLP", E#"constant positions", E#"input positions",
-	raw mutableMatrix matrix(K,{apply(E#"constants",c->c.Name_K)})
-	);
-    rawSLEvaluatorEvaluate(E#K, raw I, raw O);
+    rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
  
 
