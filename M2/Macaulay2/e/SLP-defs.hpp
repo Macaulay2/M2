@@ -79,6 +79,22 @@ private:
   const RT& mRing;
 };
 
+class Homotopy {
+public:
+  Homotopy(SLEvaluator& Hx, SLEvaluator& Hxt, SLEvaluator& HxH) : masterHx(Hx), masterHxt(Hxt), masterHxH(HxH) { }
+  virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold
+                     );
+  virtual void text_out(buffer& o) const;
+private:
+  const SLEvaluator &masterHx, &masterHxt, &masterHxH;
+  struct Evaluators {SLEvaluator *mHx, *mHxt, *mHxH;};
+  std::vector<Evaluators> mE; // a vector of evaluators increasing in precision 
+};
+
 #endif
 
 // Local Variables:
