@@ -4,6 +4,9 @@
 ------------------------------------------------------
 export { "track", "trackSegment", "trackHomotopy" }
 
+-- possible solution statuses returned by engine
+solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
+
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
@@ -630,7 +633,12 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
--- "track" should eventually go through "trackHomotopy"
+
+-- !!! DUMMY engine routine
+debug Core
+rawTrackHomotopy = method()
+rawTrackHomotopy Sequence := s -> 0
+ 
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
      	  -- step control
@@ -710,7 +718,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,HomotopySystem) then (
+     else if instance(H,Homotopy) then (
      	 K = CC_53; --!!!
       	 --
        	 evalH = (x0,t0)-> (
@@ -736,10 +744,39 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      
      compStartTime := currentTime();      
 
-     rawSols := if o.Software===M2 
-     or o.Software===M2engine or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
+     rawSols := if o.Software===M2engine then (
+	 if not (instance(H,Homotopy) and H#?"RawHomotopy") then "expected a Homotopy with RawHomotopy";  
+	 apply(#solsS, sN->(
+		 s := solsS#sN;
+		 inp := mutableMatrix (if instance(s,Point) then {coordinates s | {0}} else s | matrix{{0_(ring s)}}); 
+		 out := mutableMatrix inp; -- "copy" does not copy!!!
+		 n := numcols out - 1;
+		 out_(0,n) = 1; 
+		 st := rawTrackHomotopy(H#"RawHomotopy", inp, out,
+	     	     o.tStep, o.tStepMin, 
+	     	     o.CorrectorTolerance, o.maxCorrSteps, 
+	     	     toRR o.InfinityThreshold
+	     	     );
+	         s'status := solutionStatusLIST#st;
+		 if DBG > 0 then << (if s'status == Regular then "."
+		    else if s'status == Singular then "S"
+		    else if s'status == MinStepFailure then "M"
+		    else if s'status == Infinity then "I"
+		    else error "unknown solution status"
+		    ) << if (sN+1)%100 == 0 then endl else flush;
+	       	-- create a solution record 
+		x0 := submatrix(out,0..n-1);
+		t0 := out_(0,n);
+		{x0,
+		    SolutionStatus => s'status, 
+		    LastT => t0
+		    }
+		))
+	)
+     else if o.Software===M2 
+     or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
-	 apply(#solsS, sN-> time (
+	 apply(#solsS, sN->(
 	       s := solsS#sN;
 	       s'status := Processing;
 	       endZone := false;
@@ -856,9 +893,6 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	   );
      apply(ret, s->point toList s)
      ) -- trackHomotopy
-
--- possible solution statuses returned by engine
-solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
 
 getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps)})
 getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (

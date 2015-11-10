@@ -1,3 +1,18 @@
+--- IMPLEMENT SOON ---
+rawHomotopy: stores a handle for a homotopy 
+  -- data --
+  MutableMat: constants, parameters (some given precision? QQ? QQ[ii]? any ring that has promote toCC?)
+  SLProgram: Hx, Hxt, HxH 
+  SLEvaluator: EHx, EHxt, EHxH
+  -- methods --
+  constructor/destructor 
+  track: heuristric tracking using CC_p (or RR_p?)     
+makeRawHomotopy: specifies SLPrograms, constants and inputs positions 
+trackRawHomotopy: tracks raw homotopy given one (many?) initial solutions
+specializeRawHomotopy: specializes parameters and makes new RawHomotopy
+
+--- ISSUES ---
+
 movePoints: fails if the new points are not regular -- there should be a blackbox combining endgame/refine before this is fixed
 
 isSolution?
@@ -23,3 +38,4 @@ deflation needs work
 points WitnessSet -- should return list of Points not list of lists (check if external packages use it)
 
 decompose -- still not robust for nonreduced components 
+

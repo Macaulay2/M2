@@ -778,8 +778,47 @@ ring DualSpace := L -> ring gens L
 
 point DualSpace := L -> L.BasePoint
 
+
+-- extra types used (at this point) only by NumericalAlgebraicGeometry 
+export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
+    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
+
+Homotopy = new Type of MutableHashTable -- abstract type
+evaluateH = method()
+evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt = method()
+evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx = method()
+evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+
+ParameterHomotopy = new Type of MutableHashTable -- abstract type
+evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+
+SpecializedParameterHomotopy = new Type of Homotopy
+specialize = method()
+specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    SPH := new SpecializedParameterHomotopy;
+    SPH.ParameterHomotopy = PH;
+    SPH.Parameters = M;
+    SPH
+    ) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
+
+
 -- DOCUMENTATION ------------------------------------------------------
 undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {
+    ParameterHomotopy, 
+    Parameters, SpecializedParameterHomotopy, Homotopy,
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+    }
+
 beginDocumentation()
 
 document {

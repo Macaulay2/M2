@@ -12,7 +12,7 @@ newPackage select((
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      Configuration =>  {},	
-     PackageExports => {"NumericalAlgebraicGeometry"},
+     PackageExports => {"NAGtypes"},
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -31,13 +31,10 @@ export {
     "inputGate", "sumGate", "productGate", "detGate", 
     "constants",  
     "printAsSLP",
-    "ValueHashTable","valueHashTable",
-    "GateHomotopySystem", "gateHomotopySystem",
-    "getGateCatalogCount" 
+    "ValueHashTable","valueHashTable"
     }
 exportMutable {
     }
-debug NumericalAlgebraicGeometry
 debug Core 
 {* Expressions in M2 
    *** should have this as a Gate 
@@ -307,125 +304,6 @@ compress ProductGate := g -> (
     product c
     )
 
------------------------------------------------
--- OLD!!! preSLP routines
-
--- returns (consts,program), modifies pos
-appendToProgram = method()
-appendToProgram (Gate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
-    )
-appendToProgram (InputGate,List,List,MutableHashTable) := (g,consts,program,pos) -> (
-    if pos#?g then return (consts,program); -- do nothing
-    if isConstant g then (
-	pos#g = #consts;
-	(append(consts,g.Name),program)
-	) else (
-	if not pos#?g then error "a variable is not specified as input";
-	(consts,program)
-	)
-    )
-appendToProgram (SumGate,List,List,MutableHashTable) := (g,consts,program,pos)->( 
-    if pos#?g then return (consts,program); -- do nothing
-    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
-    abs'pos := #program;
-    pos#g = abs'pos;
-    (
-	consts,
-    	append(program, {slpMULTIsum} | {#g.Inputs} | apply(g.Inputs,f->
-	    if instance(f,InputGate) then (
-	    	if isConstant f then CONST=>pos#f
-		else INPUT=>pos#f
-		)
-	    else pos#f-abs'pos))
-        )
-    )
-appendToProgram (ProductGate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
-    if pos#?g then return (consts,program); -- do nothing
-    if #g.Inputs!=2 then error "cannot convert products of more than 2 numbers to preSLP";
-    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
-    abs'pos := #program;
-    pos#g = abs'pos;
-    (
-	consts,
-    	append(program, {slpPRODUCT} | apply(g.Inputs,f->
-	    if instance(f,InputGate) then (
-	    	if isConstant f then CONST=>pos#f
-		else INPUT=>pos#f
-		)
-	    else pos#f-abs'pos))
-        )
-    )
-
--- assembles a preSLP (see NumericalAlgebraicGeometry/SLP.m2) 
--- that takes a list of InputGates and a list of Gates that produce the output
-toPreSLP = method()
-toPreSLP (List,List) := (inputs,outputs) -> (
-    consts := {};
-    program := {};
-    pos := new MutableHashTable from apply(#inputs,i->inputs#i=>i);
-    scan(outputs,o->(consts,program)=appendToProgram(o,consts,program,pos));
-    (consts, program, matrix{outputs/(o->pos#o)})
-    )  
-
-TEST ///
-needsPackage "SLPexpressions"
-
---InputGate
-X = inputGate symbol X
-Y = inputGate symbol Y
-
---SumGate and ProductGate
-C = sumGate {X+Y,Y,X}
-D = productGate {X*Y,Y,C}
-h = valueHashTable({X,Y},{1,ii})
-assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
-support (X*X)
-support (D+C)
-
--- one way to handle constants
-E = inputGate 2
-F = product{E*(X*X+E*Y)+oneGate, oneGate}
-
--- sub
-G = sub(sub(F,X=>X+Y),Y=>X*Y) 
--- sub and compress = evaluate over a ring
-R = CC[x,y] 
-H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
-I = compress H 
-
--- DetGate
-J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
-
--- diff
-diff(X,F)
-diff(X,J)
-h = valueHashTable({X,Y},{x,y})
-assert(
-    value(diff(X,J),h) 
-    ==
-    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
-    )
-
--- DivideGate
-G/F
-diff(X,X/Y)
-diff(Y,X/Y)
-h = valueHashTable({X,Y},{2,3})
-GY = value(diff(Y,G),h)
-FY = value(diff(Y,F),h)
-assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
-
-debug SLPexpressions
-debug NumericalAlgebraicGeometry
--- evaluate toPreSLP == compress 
-output = {F,diff(X,F),G}
-preSLP = toPreSLP({X,Y},output)
-out'eval = evaluatePreSLP(preSLP, gens R)
-out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
-assert(out'eval == out'comp)
-printSLP preSLP
-printAsSLP output
-///
 
 --------------------------------------------------
 -- RawSLProgram routines
@@ -648,41 +526,6 @@ printAsSLP List := outputs -> (
     )
 printAsSLP GateMatrix := M -> printAsSLP flatten entries M
 
-----------------------------------
--- GateHomotopySystem
-
-GateHomotopySystem := new Type of HomotopySystem    
-GateParameterHomotopySystem := new Type of ParameterHomotopySystem
-
-gateHomotopySystem = method(Options=>{Parameters=>null,Software=>null})
-gateHomotopySystem (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
-    para := o.Parameters=!=null;
-    soft := if o.Software=!=null then o.Software else DEFAULT.Software;
-    GH := new GateHomotopySystem;
-    GH#"X" = X;
-    if para then GH#"X" = o.Parameters | GH#"X";
-    GH#"T" = T;    
-    GH#"H" = H;
-    GH#"Hx" = diff(X,H);
-    GH#"Ht" = diff(T,H);
-    GH.Software = soft;
-    if soft === M2 then (
-	)
-    else if soft === M2engine then (
-	varMat := X | matrix{{T}};
-	if para then varMat = o.Parameters | varMat;
-    	GH#"EH" = makeEvaluator(H,varMat);
-    	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
-    	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
-	)
-    else error "uknown Software option value";
-    if para then (
-	GPH := new GateParameterHomotopySystem;
-	GPH.GateHomotopySystem = GH;
-	GPH
-	) 
-    else GH
-    ) 
 
 --fill m x n matrix with values from another matrix
 matrix (Matrix,ZZ,ZZ) := o -> (M,m,n) -> (
@@ -698,146 +541,47 @@ matrix (Ring,RawMatrix,ZZ,ZZ) := o -> (R,M,m,n) -> (
 Evaluator = new Type of MutableHashTable
 makeEvaluator = method()
 makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
+    consts := constants M;
     E := new Evaluator from {
     	"rawSLP"=>makeSLProgram(I,M),
-    	"constants"=>constants M
     	};
-    E#"constant positions" = positionsOfInputGates(E#"constants",E#"rawSLP");
+    E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
     E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
+    E#"constants" = matrix{consts/(c->c.Name)};
     E
     )
 
+rawSLEvaluatorK = method()
+rawSLEvaluatorK Evaluator := E -> rawSLEvaluatorK(E,ring E#"constants")
+rawSLEvaluatorK (Evaluator,Ring) := (E,K) -> if E#?K then E#K else E#K = rawSLEvaluator(
+    E#"rawSLP", E#"constant positions", E#"input positions",
+    raw mutableMatrix promote(E#"constants",K)
+    );
+  
 evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     K := ring I; 
     assert(ring O === K);
-    if not E#?K then E#K = rawSLEvaluator(
-	E#"rawSLP", E#"constant positions", E#"input positions",
-	raw mutableMatrix matrix(K,{apply(E#"constants",c->c.Name_K)})
-	);
-    rawSLEvaluatorEvaluate(E#K, raw I, raw O);
+    rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
  
-evaluateH (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"H", 
-    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
-    ) else if H.Software===M2engine then (
-    K := ring x;
-    r := if H#?("retH",K) then H#("retH",K) else H#("retH",K) = mutableMatrix(K, 1, numcols H#"H"*numrows H#"H");
-    evaluate(H#"EH", mutableMatrix(transpose x | matrix{{t}}), r);
-    matrix(matrix r, numrows H#"H", numcols H#"H")    
-    )
-evaluateHt (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Ht", 
-    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
-    ) else if H.Software===M2engine then (
-    K := ring x;
-    r := if H#?("retHt",K) then H#("retHt",K) else H#("retHt",K) = mutableMatrix(K, 1, numcols H#"Ht"*numrows H#"Ht");
-    evaluate(H#"EHt", mutableMatrix(transpose x | matrix{{t}}), r);
-    matrix(matrix r, numrows H#"Ht", numcols H#"Ht")
-    )
-evaluateHx (GateHomotopySystem,Matrix,Number) := (H,x,t) -> if H.Software===M2 then value(H#"Hx", 
-    valueHashTable(flatten entries H#"X" | {H#"T"}, flatten entries x | {t}) 
-    ) else if H.Software===M2engine then (
-    K := ring x;
-    r := if H#?("retHx",K) then H#("retHx",K) else H#("retHx",K) = mutableMatrix(K, 1, numcols H#"Hx"*numrows H#"Hx");
-    evaluate(H#"EHx", mutableMatrix(transpose x | matrix{{t}}), r);
-    matrix(matrix r, numrows H#"Hx", numcols H#"Hx")
-    )
-evaluateH (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateH(H.GateHomotopySystem,parameters||x,t)
-evaluateHt (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopySystem,parameters||x,t)
-evaluateHx (GateParameterHomotopySystem,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopySystem,parameters||x,t)
-
-
-
--------------------------------------------------------
--- trackHomotopy tests
 TEST /// 
 needsPackage "SLPexpressions"
-X = inputGate symbol X
-Y = inputGate symbol Y
-T = inputGate symbol T
-
-K = CC
-R = K[x,y,t] 
-F = {X*X-1, Y*Y-1}
-G = {X*X+Y*Y-1, -X*X+Y}
-H = (1 - T) * F + T * G
-
 debug SLPexpressions
-debug NumericalAlgebraicGeometry
--- preSLP way
-preH = toPreSLP({X,Y,T},H)
-evaluatePreSLP(preH, {1,1,0})
-preHx = transposePreSLP jacobianPreSLP(preH,toList(0..1));
-evaluatePreSLP(preHx, {1,1,0})
-s = first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2)
-peek s
-s = first trackHomotopy((R,preH),{matrix{{1},{1}}},Software=>M2enginePrecookedSLPs)
-peek s
-assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
-///
-
-TEST ///-- HomotopySystem
-needsPackage "SLPexpressions"
 X = inputGate symbol X
-Y = inputGate symbol Y
-T = inputGate symbol T
-K = CC
-R = K[x,y,t] 
-F = {X*X-1, Y*Y-1}
-G = {X*X+Y*Y-1, -X*X+Y}
-H = (1 - T) * F + T * G
-Rvars = valueHashTable({X,Y,T},{x,y,t})
-gV = matrix{{X,Y}}
-gH = transpose matrix {H}
-gHx = diff(gV,gH)
-gHt = diff(T,gH)
-value(gH, Rvars)
-value(gHt, Rvars)
-value(gHx, Rvars)
-
-debug NumericalAlgebraicGeometry
-HS = gateHomotopySystem(gH,gV,T)
-x0 = matrix{{1_CC},{1}}
-s = first trackHomotopy(HS,{x0},Software=>M2)
-peek s
-assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
-value(HS#"H", Rvars)
-evaluateH(HS,x0,0.1_CC)
-value(HS#"Ht", Rvars)
-evaluateHt(HS,x0,0.1_CC)
-evaluateHx(HS,x0,0.1_CC)
-
-F = {X*X-1, Y*Y*Y-1}
-G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
-H = (1 - T) * F + T * G
-gV = matrix{{X,Y}}
-gH = transpose matrix {H}
-HS = gateHomotopySystem(gH,gV,T)
-s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
-assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
-///
-
-TEST /// -- ParameterHomotopySystem
-needsPackage "SLPexpressions"
-X = inputGate symbol X
-Y = inputGate symbol Y
-T = inputGate symbol T
-P = inputGate symbol P
-K = CC
-R = K[x,y,t] 
-F = {X*X-1, Y*Y-1}
-G = {X*X+Y*Y-P, -X*X+Y}
-H = (1 - T) * F + T * G
-gV = matrix{{X,Y}}
-gH = transpose matrix {H}
-gP = matrix{{P}}
-
-debug NumericalAlgebraicGeometry
-PHS = gateHomotopySystem(gH,gV,T,Parameters=>gP)
-HS = specialize(PHS,matrix{{1_CC}})
-x0 = matrix{{1_CC},{1}}
-s = first trackHomotopy(HS,{x0},Software=>M2)
-peek s
-assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+C = inputGate symbol C
+XpC = X+C
+XXC = productGate{X,X,C}
+detXCCX = detGate{{X,C},{C,X}}
+XoC = X/C
+E = makeEvaluator(matrix{{XXC,detXCCX,XoC,XpC+2}},matrix{{C,X}}) 
+inp = mutableMatrix{{1.2,-1}}
+out = mutableMatrix(ring inp,1,4)
+evaluate(E,inp,out)
+assert(clean_0.001(out - mutableMatrix {{1.2, -.44, -.833333, 2.2}})==0)  
+inp = mutableMatrix{{1.2,ii+2}}
+out = mutableMatrix(ring inp,1,4)
+evaluate(E,inp,out)
+assert(clean_0.001(out - mutableMatrix {{3.6+4.8*ii, 1.56+4*ii, 1.66667+.833333*ii, 5.2+ii}})==0)  
 ///
 
 beginDocumentation()
@@ -877,7 +621,7 @@ document {
     time B = sub((y+1)^(2^n),{y=>1})    
     A == B
     ///,
-    SeeAlso=>{NumericalAlgebraicGeometry,NAGtypes}
+    SeeAlso=>{"NumericalAlgebraicGeometry",NAGtypes}
     }
 
 document {
@@ -911,37 +655,3 @@ document {
     SeeAlso=>{Gate, Matrix}
     }
 
-document {
-    Key => {(gateHomotopySystem, GateMatrix, GateMatrix, InputGate),
-	gateHomotopySystem,--[Parameters,gateHomotopySystem]
-	},
-    Headline => "homotopy system via SLPexpressions",
-    Usage => "HS = gateHomotopySystem(H,X,T)",
-    Inputs => { 
-	"H"=>"a family of systems (given by a column vector)",
-	"X"=>"(a row vector of) variables",
-	"T"=>"homotopy (continuation) parameter" 
-	 },
-    Outputs => { "HS", 
-	-- ofClass {GateHomotopySystemof, GateParameterHomotopySystem}, 
-	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
-    "Optional arguments:",
-    UL{
-	{TO "Parameters", "-- a row vector of parameter variables"},
-	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
-	},  
-    EXAMPLE lines ///
-X = inputGate symbol X
-Y = inputGate symbol Y
-T = inputGate symbol T
-F = {X*X-1, Y*Y*Y-1}
-G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
-H = (1 - T) * F + T * G
-HS = gateHomotopySystem(transpose matrix {H},matrix{{X,Y}},T)
-    ///,
-    Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
-	TT "Parameters, X, T", "."},
-    SeeAlso=>{ --GateHomotopySystem,GateParameterHomotopySystem,
-    	specialize}
-    }
-    

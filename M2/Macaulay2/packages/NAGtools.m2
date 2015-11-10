@@ -40,7 +40,7 @@ exportMutable {
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     RandomPointFunction, a function that returns a random point p1 suitable for PH  
 preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
-preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s0) -> (
+preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := transpose matrix point0; 
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
@@ -86,7 +86,7 @@ preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s
 --     V, variables (list of InputGates)
 --     W (optional; W=V if omitted), variables names (list of anything) for coordinates in the target space 
 -- out: 
---     HomotopySystem that has A_v and B_w as parameters, 
+--     Homotopy that has A_v and B_w as parameters, 
 --     	       	      where v in V are coordinates of the source space 
 gateHomotopy4preimage = method()
 gateHomotopy4preimage(GateMatrix,List) := (F,V) -> gateHomotopy4preimage(F,V,V)
@@ -97,7 +97,7 @@ gateHomotopy4preimage(GateMatrix,List,List) := (F,V,W) -> (
     B := matrix{apply(W, v->inputGate symbol B_v)};
     t := inputGate symbol t;
     H := F-((1-t)*transpose A+t*transpose B);
-    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 -- in: S, polynomials desribing a subvariety of CC^V
 gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
@@ -106,7 +106,7 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     B := matrix{apply(W, w->inputGate symbol B_w)};
     t := inputGate symbol t;
     H := (F-((1-t)*transpose A+t*transpose B)) || S;
-    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 
 -- Parameter homotopy for tracking a point on the fiber of a covering (generically finite-to-one onto) map 
@@ -115,7 +115,7 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
 --     V, variables (list of InputGates)
 --     W, parameter variables
 -- out: 
---     HomotopySystem that has A_w and B_w as parameters, 
+--     Homotopy that has A_w and B_w as parameters, 
 --     	       	      where v in V|W  are coordinates of the source space 
 parametricSegmentHomotopy = method()
 parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
@@ -123,7 +123,7 @@ parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
     B := matrix{apply(W, w->inputGate symbol B_w)};
     t := inputGate symbol t;
     H := sub(S,matrix{W},(1-t)*A+t*B);
-    gateHomotopySystem(H,matrix{V},t,Parameters=>A|B)
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 TEST ///
 X = inputGate x
@@ -136,6 +136,6 @@ p =matrix{{1_K}}
 assert areEqual(norm evaluateH(SPH,p,0), 0)
 assert areEqual(norm evaluateHt(SPH,p,0), 1)
 assert areEqual(norm evaluateHx(SPH,p,0), 2)
-peek PH.GateHomotopySystem    
+peek PH.GateHomotopy    
 assert (#preimageViaMonodromy(PH,point p,{point p}) == 2)
 ///
