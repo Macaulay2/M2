@@ -32,7 +32,8 @@ export {
     "constants",  
     "printAsSLP",
     "ValueHashTable","valueHashTable",
-    "GateHomotopySystem", "gateHomotopySystem" 
+    "GateHomotopySystem", "gateHomotopySystem",
+    "getGateCatalogCount" 
     }
 exportMutable {
     }
@@ -98,6 +99,8 @@ add2GC := g -> if gateCatalog#?g then (
     gateCatalogCount#g= 1;
     gateCatalog#g = g
     ) 
+
+getGateCatalogCount = () -> gateCatalogCount  
 
 InputGate = new Type of Gate -- "abstract" unit of input  
 inputGate = method()
@@ -503,7 +506,8 @@ gateMatrix List := L -> (
     if not isTable L then error "a table is expected";
     new GateMatrix from L
     )
-gateMatrix Matrix := M -> gateMatrix entries M
+gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
+
 matrix List := o -> L -> (
     fL := flatten L;
     if #fL>0 and any(fL, g->instance(g,Gate)) 
@@ -527,10 +531,16 @@ GateMatrix | GateMatrix := (A,B) -> (
     if numrows A != numrows B then error "need the same number of rows to join";
     gateMatrix transpose (transpose entries A | transpose entries B)      
     )
+Matrix | GateMatrix := (A,B) -> gateMatrix A | B
+GateMatrix | Matrix := (A,B) -> A | gateMatrix B
+
 GateMatrix || GateMatrix := (A,B) -> (
     if numcols A != numcols B then error "need the same number of columns to stack";
     gateMatrix (entries A | entries B)      
     )
+Matrix || GateMatrix := (A,B) -> gateMatrix A || B
+GateMatrix || Matrix := (A,B) -> A || gateMatrix B
+
 GateMatrix * GateMatrix := (A,B) -> ( -- two tables
     B' := transpose B;
     matrix table(#A,#B',(i,j)->sum apply(A#i,B'#j,(a,b)->a*b))

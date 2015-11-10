@@ -1,0 +1,43 @@
+This is the auxiliary directory for NumericalSchubertCalculus package.
+
+https://github.com/NumericalSchubertCalculus
+
+M2/M2/Macaulay2/packages/NumericalSchubertCalculus
+
+Workflow
+
+ - edit file
+ - git pull
+ - git add file.name       Only if file is new, no need if already in the db
+ - git commmit file.name -m "comment here"
+ - git push
+
+ - git status               can be used at any time
+ - git checkout file.name   Reverts to previous version (discards your edits)
+
+
+If editing......
+ - git pull   If this does not work (if a conflict)
+ - git stash  Stashes changes; they can be appied later
+ - git 
+
+MODIFY path in M2
+
+edit the file  ~/Library/Application Support/Macaulay2/init.m2
+
+to include something like
+path = {"~/......../M2/Macaulay2/packages/"} | path
+
+===========================================
+ToDo
+
+Functionality
+
+- A method to find even one solution to a given problem
+- Query this solution:  singular ?  compute its multiplicity ?
+   Compute a few and see if they are general or not (i.e. monodromy)
+- Functions to help debugging e.g. --verbose, or how talkative it should be
+
+- Document all exported commands
+- Maybe don't export as many commands as we now do
+

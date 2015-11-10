@@ -38,7 +38,7 @@ exportMutable {
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
 --     p0, Point, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
---     NextPoint, a function that returns a random column vector of m parameters p1 suitable for PH  
+--     RandomPointFunction, a function that returns a random point p1 suitable for PH  
 preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 preimageViaMonodromy (ParameterHomotopySystem, Point, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
