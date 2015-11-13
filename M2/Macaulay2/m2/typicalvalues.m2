@@ -74,7 +74,6 @@ typicalValues#horizontalJoin = Net
 horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
 keys HashTable := List => keys
-pairs HashTable := List => pairs
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
 localDictionaries Pseudocode := List => localDictionaries

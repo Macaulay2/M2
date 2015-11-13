@@ -11,7 +11,7 @@ debug Core;
 
 
 export {
-ZZpFFPACK
+    "ZZpFFPACK"
 }
 
 ZZpFFPACK  = ( modPrime )->

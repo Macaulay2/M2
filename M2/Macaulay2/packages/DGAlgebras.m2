@@ -10,13 +10,13 @@ newPackage("DGAlgebras",
      DebuggingMode => false
      )
 
-export {DGAlgebra, freeDGAlgebra, setDiff, natural, cycles,
-	getBasis, koszulComplexDGA, acyclicClosure, toComplex,
-	killCycles, getGenerators, adjoinVariables, deviations, zerothHomology,
-        homologyAlgebra, torAlgebra, maxDegree, StartDegree, EndDegree,
-	isHomologyAlgebraTrivial, findTrivialMasseyOperation,
-	isGolod, isGolodHomomorphism, GenDegreeLimit, RelDegreeLimit, TMOLimit,
-	InitializeDegreeZeroHomology, InitializeComplex, isAcyclic, getDegNModule}
+export {"DGAlgebra", "freeDGAlgebra", "setDiff", "natural", "cycles",
+	"getBasis", "koszulComplexDGA", "acyclicClosure", "toComplex",
+	"killCycles", "getGenerators", "adjoinVariables", "deviations", "zerothHomology",
+        "homologyAlgebra", "torAlgebra", "maxDegree", "StartDegree", "EndDegree",
+	"isHomologyAlgebraTrivial", "findTrivialMasseyOperation",
+	"isGolod", "isGolodHomomorphism", "GenDegreeLimit", "RelDegreeLimit", "TMOLimit",
+	"InitializeDegreeZeroHomology", "InitializeComplex", "isAcyclic", "getDegNModule"}
 
 -- current bugs:
 

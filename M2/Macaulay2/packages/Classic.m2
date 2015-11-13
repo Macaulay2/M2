@@ -30,7 +30,7 @@ polyP = plus @@ deepSplice % +monomialP | terminalParser 0
 parenExprP = ((l,x,r) -> x) % andP("(", futureParser parenExprP | polyP, ")")
 listPolyP = toList % seqP_"," polyP
 arrayPolyP = toList % seqP_";" listPolyP
-export poly ; poly = method()
+export "poly" ; poly = method()
 poly String :=  RingElement => polyP : nonspaceAnalyzer
 ideal String := Ideal => ideal % listPolyP : nonspaceAnalyzer
 monomialIdeal String := MonomialIdeal => 

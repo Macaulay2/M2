@@ -15,11 +15,24 @@ header "
   #include <relem.hpp>
   #include <aring-glue.hpp>
   #include <aring-zzp.hpp>
+
+  #include <stdexcept>
+  void test_catch0() { 
+       throw (std::runtime_error(\"test\")); 
+       }
+  int test_catch() {
+       try { test_catch0(); } catch (std::runtime_error x) { return 1; }
+       return 0;
+       }
+  
   ";
 
 -- debugging:
 export engineMemory(e:Expr):Expr := toExpr(Ccode(string, "engineMemory()"));
 setupfun("engineMemory", engineMemory);
+
+export testCatch(e:Expr):Expr := toExpr(Ccode(bool,"test_catch()"));
+setupfun("testCatch",testCatch);
 
 -- random numbers
 
@@ -3561,7 +3574,8 @@ export rawGBSetStop(e:Expr):Expr := (
      if length(s) != 10 then WrongNumArgs(10) else
      when s.0 is G:RawComputationCell do
      when s.1 is always_stop:Boolean do
-     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else -- degree_limit
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else -- degree_limit ...
+     if getLengthOfSequence(s.2)>1 then WrongArg(3,"a sequence of small integers of length at most 1") else -- ... converted to a heft value
      when s.3 is basis_element_limit:ZZcell do
      if !isInt(basis_element_limit) then WrongArgSmallInteger(4) else
      when s.4 is syzygy_limit:ZZcell do

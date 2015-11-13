@@ -17,40 +17,41 @@ newPackage(
     	)
 
 export {
-    setupRings,
-    symExt,
-    numFactors,
-    cohomologyTable,
-    tallyDegrees,
-    truncateInE,
-    lowerCorner,
-    upperCorner,
-    beilinsonWindow,
-    tateExtension,
-    sloppyTateExtension,
-    pushAboveWindow,
-    firstQuadrantComplex,
-    lastQuadrantComplex,
-    cornerComplex,
-    cornerComplex1,
-    regionComplex,
-    strand,
-    ringData,
-    cornerCohomologyTablesOfUa,
+    "boxDegrees",
+    "setupRings",
+    "symExt",
+    "numFactors",
+    "cohomologyTable",
+    "tallyDegrees",
+    "truncateInE",
+    "lowerCorner",
+    "upperCorner",
+    "beilinsonWindow",
+    "tateExtension",
+    "sloppyTateExtension",
+    "pushAboveWindow",
+    "firstQuadrantComplex",
+    "lastQuadrantComplex",
+    "cornerComplex",
+    "cornerComplex1",
+    "regionComplex",
+    "strand",
+    "ringData",
+    "cornerCohomologyTablesOfUa",
     --the following could all be part of ChainComplexExtras
-    prependZeroMap,
-    appendZeroMap,
-    removeZeroTrailingTerms,
-    trivialHomologicalTruncation,
-    isChainComplex,
-    nonzeroMin, 
-    nonzeroMax,
-    minimize,
-    isMinimalChainComplex,
-    resolutionOfChainComplex,
-    chainComplexMap,
-    InitialDegree,
-    isQuism
+    "prependZeroMap",
+    "appendZeroMap",
+    "removeZeroTrailingTerms",
+    "trivialHomologicalTruncation",
+    "isChainComplex",
+    "nonzeroMin", 
+    "nonzeroMax",
+    "minimize",
+    "isMinimalChainComplex",
+    "resolutionOfChainComplex",
+    "chainComplexMap",
+    "InitialDegree",
+    "isQuism"
     --    Check
     }
 --needsPackage "ChainComplexExtras"
@@ -536,9 +537,10 @@ TEST ///
 S=ZZ[x,y]/ideal(x*y)
 C=(chainComplex(matrix{{x}},matrix{{y^2}},matrix{{x^2}}))[3]
 isHomogeneous C
-L=chainComplexData C
-C'=chainComplexFromData L
-assert(C'== C)
+-- chainComplexData is no longer exported by ChainComplexExtras
+-- L=chainComplexData C
+-- C'=chainComplexFromData L
+-- assert(C'== C)
 ///
 
 

@@ -18,7 +18,7 @@ newPackage(
 --         subschemes of P^n using quotients of monomial ideals",
 --         Journal of Pure and Applied Algebra 164/2001
 
-export{mRegularity}
+export{"mRegularity"}
 
 
 -- ========================================================================

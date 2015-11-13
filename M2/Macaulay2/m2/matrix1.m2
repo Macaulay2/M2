@@ -285,36 +285,6 @@ matrix(List) := Matrix => opts -> (m) -> (
 	  else error "expected a table of ring elements or matrices, or a list of elements of the same module")
      else error "expected a table of ring elements or matrices, or a list of elements of the same module")
 
---------------------------------------------------------------------------
-
-Module#id = (M) -> map(M,M,1)
-
-reshape = method()
-reshape(Module,Module,Matrix) := Matrix => (F, G, m) -> (
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     map(F,G,rawReshape(raw m, raw F, raw G)))
-
--- adjoint1:  m : F --> G ** H ===> F ** dual G --> H
--- adjoint:   m : F ** G --> H ===> F --> dual G ** H
-adjoint1 = method()
-adjoint1(Matrix,Module,Module) := Matrix => (m,G,H) -> reshape(H, (source m) ** (dual G), m)
-adjoint  = method()
-adjoint (Matrix,Module,Module) := Matrix => (m,F,G) -> reshape((dual G) ** (target m), F, m)
-
-flatten Matrix := Matrix => m -> (
-     R := ring m;
-     F := target m;
-     G := source m;
-     if not isFreeModule F or not isFreeModule G
-     then error "expected source and target to be free modules";
-     if numgens F === 1 
-     then m
-     else reshape(R^1, G ** dual F ** R^{- degree m}, m))
-
-flip = method()
-flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
-
 align := g -> (
      -- generator and relation maps can just as well have a nonzero degree
      -- this function zeroes the degree, preserving homogeneity
@@ -328,7 +298,9 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
      E := target relns;
      rE := E.RawFreeModule;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE
@@ -350,7 +322,9 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
      subgens = align matrix subgens;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
-	  symbol cache => new CacheTable,
+	  symbol cache => new CacheTable from { 
+	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+	       },
 	  symbol RawFreeModule => rE,
 	  symbol ring => R,
 	  symbol numgens => rawRank rE,
@@ -376,7 +350,9 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	       );
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
-	       symbol cache => new CacheTable,
+	       symbol cache => new CacheTable from { 
+		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
+		    },
 	       symbol RawFreeModule => rE,
 	       symbol ring => R,
 	       symbol numgens => rawRank rE,
@@ -651,35 +627,9 @@ homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
 	       );
 	  subquotient(h, if N.?relations then f | N.relations else f)))
 
-Hom(Matrix, Module) := Matrix => (f,N) -> (
-     -- this function was written by David Eisenbud
-     --say f: M --> M'
-     mfdual := transpose matrix f;
-     cN := cover N;
-     --Hom(M,N)
-     MN := Hom(source f,N);
-     --Hom(M',N)    
-     M'N :=Hom(target f, N);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN, M'N, ((mfdual**cN) * generators M'N)//generators MN)
-    )
-
-Hom(Module, Matrix) := Matrix => (M,g) -> (
-     -- this function was written by David Eisenbud
-     --say g: N --> N'	 
-     mg := matrix g;     
-     cMdual := dual cover M;
-     --Hom(M,N)
-     MN := Hom(M,source g);
-     --Hom(M,N')    
-     MN' := Hom(M,target g);
-     --Hom(f,N): Hom(M',N) --> Hom(M,N)
-     map(MN', MN, ((cMdual**mg)*generators MN)//generators MN')
-     )
-
-Hom(Matrix,Matrix) := Matrix => (f,g) -> (
-     -- this function was written by David Eisenbud
-     Hom(source f, g)*Hom(f, source g))
+Hom(Matrix,Module) := Matrix => (f,N) -> inducedMap(Hom(source f,N),Hom(target f,N),transpose cover f ** N,Verify=>false)
+Hom(Module,Matrix) := Matrix => (M,g) -> inducedMap(Hom(M,target g),Hom(M,source g),dual cover M ** g,Verify=>false)
+Hom(Matrix,Matrix) := Matrix => (f,g) -> Hom(source f,g) * Hom(f,source g)
 
 dual(Matrix) := Matrix => {} >> o -> f -> (
      R := ring f;

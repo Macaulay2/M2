@@ -15,7 +15,7 @@
 -- this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
 
-export {decomposeWeightsList}
+export {"decomposeWeightsList"}
 
 --THROUGHOUT HW stands for Highest Weight
 

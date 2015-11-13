@@ -404,12 +404,12 @@ extern "C" {
   int rawRingElementCompare(const RingElement *a,
                             const RingElement *b);
   /* Superficially compares two ring elements a,b from the same ring.  If the ring is
-     a polynomial ring, then the lead flat monomials are compared.  If the ring is ZZ or QQ
-     then a > b iff |a| > |b|.
+     a polynomial ring, then the lead flat monomials are compared.
      -1 means that a < b
-     0 means that a == b (not equal, but this order does not distinguish them)
+     0 means that a == b
      1 means that a > b
-     If the two rings are different, then 0 is silently returned.
+     If the two rings are different, then 0 is returned (without error).  The front end never will call
+     this function in that case though, as methods are installed for comparison on a ring by ring basis.
   */
 
   M2_string IM2_RingElement_to_string(const RingElement *a); /* drg: connected */

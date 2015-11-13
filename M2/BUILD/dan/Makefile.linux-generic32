@@ -10,7 +10,7 @@ CONFIGOPTIONS += --disable-common-staging-area
 # This time I didn't try to install lapack on my ubuntu32 system.
 # # for some strange reason liblapack and libblas, in static form under ubuntu32, are incompatible, 
 # # (multiple definition of `xerbla_') so we compile lapack:
-CONFIGOPTIONS += --enable-build-libraries=lapack
+CONFIGOPTIONS += --enable-build-libraries="lapack pari"
 
 include Makefile.include
 default:check
