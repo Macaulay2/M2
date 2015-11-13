@@ -245,11 +245,11 @@ pullback(RingMap, RingMap) := o -> (f,g) -> (
 	--**Warning, in what is below I am assuming that C as an R-module is *always* represented as a quotient module.  In particular, 1 in R gets sent to 1 in C.  This should be fine as long as pushFwd behaves as expected.
 	--Now get a list of generators of A, in B, as an R-module, via the map through C.
 	m1 := null;
-	AmodGensInBasRModListTemp := apply(AmodGensInBasCModList, vv->( pushFwd(vv, RtoCMap, NoPrune=>true)) );
+	AmodGensInBasRModListTemp := apply(AmodGensInBasCModList, vv->( pushFwd(RtoCMap, vv, NoPrune=>true)) );
 	AmodGensInBasRModList := apply(AmodGensInBasRModListTemp, vv->(map(target vv, R^1, matrix vv) ));
 	BasRmodule := target (AmodGensInBasRModList#0);
 	AtoBasRmoduleMap := map(BasRmodule, AasRmodule#0, matrix fold( (a,b)->(a|b), AmodGensInBasRModList));
-	CtoBasRmoduleMap := (-1)*pushFwd( (BasCmodule#2)(sub(1,B)), RtoCMap, NoPrune=>true);
+	CtoBasRmoduleMap := (-1)*pushFwd( RtoCMap, (BasCmodule#2)(sub(1,B)),  NoPrune=>true);
 	AsumCtoBasRmoduleMap := AtoBasRmoduleMap|CtoBasRmoduleMap;
 	--that should construct AsumC -> B.  We can take the kernel etc.
 	--Now we need R -> AsumC.  Let's do this directly.
@@ -420,7 +420,7 @@ document{
   g = map(B, C, {y^2});
   (pullback(f,g))#0
   ///,
-  TEX "We include a final example showing how to create a cusp.  Note we have to make C be QQ[u]/(u) since certain other functions this package calls need lists of variables to be non-empty.",
+  TEX "We include a final example showing how to create a cusp.  Note we have to make C be QQ[u]/(u) since certain other functions this package calls need lists of variables to be non-empty.  See issue https://github.com/Macaulay2/M2/issues/350",
   EXAMPLE lines ///
   A = QQ[x];
   I = ideal(x^2);
