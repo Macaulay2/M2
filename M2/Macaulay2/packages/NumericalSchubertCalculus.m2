@@ -8,7 +8,7 @@ newPackage(
 	    HomePage => "http://people.math.gatech.edu/~aleykin3"},
 	{Name => "Abraham Martin del Campo", 
 	    Email => "abraham.mc@cimat.mx", 
-	    HomePage => "www.cimat.mx/~abraham.mc"},
+	    HomePage => "http://www.cimat.mx/~abraham.mc"},
 	{Name => "Jan Verschelde",
 		Email => "jan@math.uic.edu",
 		HomePage => "http://www.math.uic.edu/~jan/"}
