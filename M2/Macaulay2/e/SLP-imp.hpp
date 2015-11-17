@@ -161,6 +161,44 @@ void SLEvaluatorConcrete<RT>::text_out(buffer& o) const {
   o << ")" << newline; 
 }
 
+template <typename RT>
+Homotopy* SLEvaluatorConcrete<RT>::createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH)
+{
+  auto castHxt = dynamic_cast < SLEvaluatorConcrete < RT > * > (Hxt);
+  auto castHxH = dynamic_cast < SLEvaluatorConcrete < RT > * > (HxH);
+  if (not castHxt or not castHxH) { 
+    ERROR("expected SLEvaluators in the same ring");
+    return nullptr;
+  } 
+  return new HomotopyConcrete<RT>(*this, *castHxt, *castHxH);
+}
+
+template <typename RT> 
+bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     M2_arrayint output_status,  
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold
+                   ) 
+{
+  // double the_smallest_number = 1e-13;
+  const Ring* R = inputs->get_ring();
+  if (outputs->get_ring()!= R) { 
+    ERROR("outputs and inputs are in different rings");
+    return false;
+  }
+  /*
+  double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
+  double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
+  double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
+  double dt_increase_factor_dbl = mpfr_get_d(dt_increase_factor,GMP_RNDN);
+  double dt_decrease_factor_dbl = mpfr_get_d(dt_decrease_factor,GMP_RNDN);
+  double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
+  double end_zone_factor_dbl = mpfr_get_d(end_zone_factor,GMP_RNDN);
+  */
+  return true;
+}
 #endif
 
 // Local Variables:

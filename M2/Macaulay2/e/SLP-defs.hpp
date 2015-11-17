@@ -55,10 +55,24 @@ protected:
   std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
 };
 
+
+class Homotopy {
+public: 
+  virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     M2_arrayint output_status,  
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold) = 0; 
+  virtual void text_out(buffer& o) const = 0;
+};
+
+
 template<typename RT>
 class SLEvaluatorConcrete : public SLEvaluator
 {
 public:
+  // SLEvaluatorConcrete(const SLEvaluator* e); 
   SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
 		      const MutableMat< DMat<RT> >* consts /*const DMat<RT>& DMat_consts */);
   SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
@@ -67,6 +81,7 @@ public:
   bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
   // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
   void text_out(buffer& o) const;
+  Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);
 private:
   //typedef ring_elem ElementType; 
   typedef typename RT::ElementType ElementType; 
@@ -79,20 +94,30 @@ private:
   const RT& mRing;
 };
 
-class Homotopy {
+
+template<typename RT>
+class HomotopyConcrete : public Homotopy {
 public:
-  Homotopy(SLEvaluator& Hx, SLEvaluator& Hxt, SLEvaluator& HxH) : masterHx(Hx), masterHxt(Hxt), masterHxH(HxH) { }
-  virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+  typedef SLEvaluatorConcrete<RT> EType;
+  HomotopyConcrete(EType &Hx, 
+           EType &Hxt, 
+           EType &HxH) : masterHx(Hx), masterHxt(Hxt), masterHxH(HxH) { }
+  /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
+     outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
+     output_status an array of integers: each give the status of the solution (or path) */
+  bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     M2_arrayint output_status,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 
                      gmp_RR infinity_threshold
                      );
-  virtual void text_out(buffer& o) const;
+  void text_out(buffer& o) const;
 private:
-  const SLEvaluator &masterHx, &masterHxt, &masterHxH;
-  struct Evaluators {SLEvaluator *mHx, *mHxt, *mHxH;};
-  std::vector<Evaluators> mE; // a vector of evaluators increasing in precision 
+  EType &masterHx, &masterHxt, &masterHxH;
+  // struct Evaluators {SLEvaluator *mHx, *mHxt, *mHxH;};
+  // std::vector<Evaluators> mE; // a vector of evaluators increasing in precision 
+  // std::vector<Ring*> mR; // a vector of available rings (corresponding to mE?)
 };
 
 #endif

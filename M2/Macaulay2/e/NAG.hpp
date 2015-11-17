@@ -733,7 +733,6 @@ public:
   virtual ~PathTracker();
 
   void text_out(buffer& o) const;
-  int makeFromHomotopy(const Matrix*);
   Matrix /* or null */* getSolution(int);
   Matrix /* or null */* getAllSolutions();
   int getSolutionStatus(int);

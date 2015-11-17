@@ -1562,24 +1562,6 @@ PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred, Stra
   return p;
 }
 
-int PathTracker::makeFromHomotopy(const Matrix *HH)
-{
-  if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
-    ERROR("max number of path trackers exceeded");
-    return -1;
-  };
-  PathTracker* p = catalog[num_path_trackers] = new PathTracker;
-  p->number = num_path_trackers++;
-  if (HH->n_rows()!=1) {
-    ERROR("1-row matrix expected");
-    return -1;
-  };
-  return p->number;
-}
-
-
-
-
 void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
                         gmp_RR init_dt, gmp_RR min_dt,
                         gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
