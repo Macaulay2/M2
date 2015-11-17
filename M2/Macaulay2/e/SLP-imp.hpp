@@ -199,6 +199,18 @@ bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* out
   */
   return true;
 }
+
+template<typename RT>
+void HomotopyConcrete<RT>::text_out(buffer& o) const { 
+  o << "HomotopyConcrete(Hx = ";
+  mHx.text_out(o);
+  o << ", Hxt = ";
+  mHxt.text_out(o);
+  o << ", HxH = ";
+  mHxH.text_out(o);
+  o << ")" << newline; 
+}
+
 #endif
 
 // Local Variables:

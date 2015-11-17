@@ -41,10 +41,13 @@ public:
   void text_out(buffer&) const;
 };
 
+class Homotopy;
+
 class SLEvaluator {
 public:
   virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
   virtual void text_out(buffer& o) const = 0;
+  virtual Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH) = 0;
 protected:
   int ap(int rp) { return rp+slp->inputCounter; } // absolute position
   SLProgram* slp;
@@ -54,19 +57,6 @@ protected:
   std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt; 
   std::vector<SLProgram::GATE_POSITION>::iterator inputPositionsIt;
 };
-
-
-class Homotopy {
-public: 
-  virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold) = 0; 
-  virtual void text_out(buffer& o) const = 0;
-};
-
 
 template<typename RT>
 class SLEvaluatorConcrete : public SLEvaluator
@@ -94,6 +84,16 @@ private:
   const RT& mRing;
 };
 
+class Homotopy {
+public: 
+  virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     M2_arrayint output_status,  
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold) = 0; 
+  virtual void text_out(buffer& o) const = 0;
+};
 
 template<typename RT>
 class HomotopyConcrete : public Homotopy {
@@ -101,7 +101,7 @@ public:
   typedef SLEvaluatorConcrete<RT> EType;
   HomotopyConcrete(EType &Hx, 
            EType &Hxt, 
-           EType &HxH) : masterHx(Hx), masterHxt(Hxt), masterHxH(HxH) { }
+           EType &HxH) : mHx(Hx), mHxt(Hxt), mHxH(HxH) { }
   /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
      output_status an array of integers: each give the status of the solution (or path) */
@@ -114,7 +114,7 @@ public:
                      );
   void text_out(buffer& o) const;
 private:
-  EType &masterHx, &masterHxt, &masterHxH;
+  EType &mHx, &mHxt, &mHxH;
   // struct Evaluators {SLEvaluator *mHx, *mHxt, *mHxH;};
   // std::vector<Evaluators> mE; // a vector of evaluators increasing in precision 
   // std::vector<Ring*> mR; // a vector of available rings (corresponding to mE?)

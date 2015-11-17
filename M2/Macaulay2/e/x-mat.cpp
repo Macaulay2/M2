@@ -712,6 +712,33 @@ gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
   return result;
 }
 
+Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH) {
+  return Hx->createHomotopy(Hxt,Hx);
+}
+
+M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs, 
+                         M2_arrayint output_status,  
+                         gmp_RR init_dt, gmp_RR min_dt,
+                         gmp_RR epsilon, // o.CorrectorTolerance,
+                         int max_corr_steps, 
+                         gmp_RR infinity_threshold) 
+{
+  return H->track(inputs,outputs, 
+                  output_status,  
+                  init_dt, min_dt,
+                  epsilon, // o.CorrectorTolerance,
+                  max_corr_steps, 
+                  infinity_threshold);
+}
+
+M2_string rawHomotopyToString(Homotopy * H) { 
+  buffer o;
+  H->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawHomotopyHash(Homotopy *) { return 0; }
+
+
 SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts) {
   return consts->createSLEvaluator(SLP,constsPos,varsPos);
 }
