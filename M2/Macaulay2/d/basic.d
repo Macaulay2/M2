@@ -50,6 +50,7 @@ export hash(e:Expr):int := (
      is x:RawMonoidCell do int(Ccode(uint, "rawMonoidHash(",x.p,")" ))
      is x:RawMatrixCell do int(Ccode(uint, "rawMatrixHash(",x.p,")" ))
      is x:RawMutableMatrixCell do int(Ccode(uint, "rawMutableMatrixHash(",x.p,")" ))
+     is x:RawHomotopyCell do int(Ccode(uint, "rawHomotopyHash(",x.p,")" ))
      is x:RawSLEvaluatorCell do int(Ccode(uint, "rawSLEvaluatorHash(",x.p,")" ))
      is x:RawSLProgramCell do int(Ccode(uint, "rawSLProgramHash(",x.p,")" ))
      is x:RawStraightLineProgramCell do int(Ccode(uint, "rawStraightLineProgramHash(",x.p,")" ))

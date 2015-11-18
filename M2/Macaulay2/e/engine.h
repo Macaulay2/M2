@@ -1977,7 +1977,12 @@ enum gbTraceValues
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
   M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
   M2_string rawHomotopyToString(Homotopy *); /* connected */
-  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
+                           M2_arrayint output_status,  
+                           gmp_RR init_dt, gmp_RR min_dt,
+                           gmp_RR epsilon, // o.CorrectorTolerance,
+                           int max_corr_steps, 
+                           gmp_RR infinity_threshold);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
   unsigned int rawHomotopyHash(Homotopy *); /* connected */

@@ -151,7 +151,7 @@ export rawSLEvaluatorEvaluate(e:Expr):Expr := (
 	       possibleEngineError(Ccode(bool, 
 		       "rawSLEvaluatorEvaluate(",
 		       sle.p, ",",
-		       inputs.p, ",",
+ 		       inputs.p, ",",
 		       outputs.p,
 		       ")"
 		       )))
@@ -161,6 +161,66 @@ export rawSLEvaluatorEvaluate(e:Expr):Expr := (
      else WrongNumArgs(3)
      );
 setupfun("rawSLEvaluatorEvaluate",rawSLEvaluatorEvaluate);
+
+-- Homotopy
+
+export rawHomotopy(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 3 then WrongNumArgs(3)
+     else when s.0 is Hx:RawSLEvaluatorCell do (
+	  when s.1 is Hxt:RawSLEvaluatorCell do (
+     	  when s.2 is HxH:RawSLEvaluatorCell do (
+	       toExpr(Ccode(RawHomotopyOrNull,
+		    	 "rawHomotopy(",
+			    Hx.p, ",",
+			    Hxt.p, ",",
+			    HxH.p,
+		    	 ")"
+		    	 )))
+	  else  WrongArg(3, "a raw evaluator"))
+	  else  WrongArg(2, "a raw evaluator"))
+	  else  WrongArg(1, "a raw evaluator")
+     else WrongNumArgs(3)
+     );
+setupfun("rawHomotopy",rawHomotopy);
+
+export rawHomotopyTrack(e:Expr):Expr := (
+     when e is s:Sequence do
+     if length(s) != 9 then WrongNumArgs(9)
+     else when s.0 is H:RawHomotopyCell do 
+	  when s.1 is inputs:RawMutableMatrixCell do 
+	  when s.2 is outputs:RawMutableMatrixCell do
+	  if !isSequenceOfSmallIntegers(s.3) then 
+              WrongArg(4,"a sequence of small integers") else 
+	  when s.3 is initDt:RRcell do
+	  when s.4 is minDt:RRcell do
+	  when s.5 is epsilon:RRcell do 
+	  when s.6 is maxCorrSteps:ZZcell do
+	  when s.7 is infinityThreshold:RRcell do 
+	  possibleEngineError(Ccode(bool, 
+		     "rawHomotopyTrack(",
+		     H.p, ",",
+		     inputs.p, ",",
+		     outputs.p, ",",
+		     getSequenceOfSmallIntegers(s.3), ",",
+		     initDt.v,",",
+		     minDt.v,",",
+		     epsilon.v,",",
+		     toInt(s.7),",",
+		     infinityThreshold.v,
+		     ")"
+		     ))
+	  else WrongArgRR(9)
+	  else WrongArgZZ(8)
+	  else WrongArgRR(7)
+	  else WrongArgRR(6)
+	  else WrongArgRR(5)
+          else WrongArg(3, "a raw mutable matrix")
+	  else WrongArg(2, "a raw mutable matrix")
+          else WrongArg(1,"a homotopy")
+     else WrongNumArgs(9)
+     );
+setupfun("rawHomotopyTrack",rawHomotopyTrack);
 
 -- old SLPs 
 
