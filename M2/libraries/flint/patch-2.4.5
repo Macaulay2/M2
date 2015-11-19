@@ -536,3 +536,18 @@ diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/f
      else
          if (r > 0)
              r = flint_printf(" ");
+diff -ur /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c flint-2.4.5/fmpz_factor /factor_pp1.c
+--- /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c     2015-02-17 09:56:55.0000 00000 -0500
++++ flint-2.4.5/fmpz_factor/factor_pp1.c        2015-11-19 09:32:37.252776183 -0500
+@@ -35,6 +35,11 @@
+ #include "mpn_extras.h"
+ #include "ulong_extras.h"
+ 
++/* DEBUG can be defined already */
++#ifdef DEBUG
++#undef DEBUG
++#endif
++
+ #define DEBUG 0 /* turn on some trace information */
+ 
+ #define pp1_mulmod(rxx, axx, bxx, nnn, nxx, ninv, norm)             \
