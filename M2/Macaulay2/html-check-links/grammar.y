@@ -159,7 +159,7 @@ static void checkURL(char *s0) {
   if (s0[0] == '"' && s0[strlen(s0)-1] == '"') s0++, s0[strlen(s0)-1]=0;
   else if (s0[0] == '\'' && s0[strlen(s0)-1] == '\'') s0++, s0[strlen(s0)-1]=0;
   s = strdup(s0);
-  if (strseg(s,"mailto:") || strseg(s,"http://") || strseg(s,"ftp://")) {
+  if (strseg(s,"mailto:") || strseg(s,"https://") || strseg(s,"http://") || strseg(s,"ftp://")) {
     /* warning("unchecked external link: %s",s); */
     return;
   }

@@ -21,7 +21,9 @@ document {
 	  collectGarbage()
 	  ///,
      Caveat => "This function should mainly be used for debugging.  Having a large number of finalizers
-     might degrade the performance of the program.",
+     might degrade the performance of the program.  Moreover, registering two or more objects that are members of a circular chain
+     of pointers for finalization will result in a memory leak, with none of the objects in the chain
+     being freed, even if nothing else points to any of them.",
      SeeAlso => {
 	  collectGarbage
 	  }
