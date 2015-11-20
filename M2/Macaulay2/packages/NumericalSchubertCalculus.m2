@@ -914,24 +914,48 @@ load "NumericalSchubertCalculus/LR-ParameterHomotopy.m2"
 trackHomotopyNSC = method(TypicalValue=>List)
 trackHomotopyNSC (Matrix,List) := (H,S) -> (
      Rt := ring H;
+     t := Rt_0;
      R := (coefficientRing Rt)[drop(gens Rt,1)];
      map't'0 := map(R, Rt, matrix{{0_FFF}}|vars R);
      map't'1 := map(R, Rt, matrix{{1_FFF}}|vars R);
-     all'sols := {};
+     correctorTolerance := 0.1*getDefault NumericalAlgebraicGeometry$CorrectorTolerance;
+     all'sols := select(
+	 track(first entries map't'0 H, first entries map't'1 H, S,
+	     NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+	     ),
+	 s->status s === Regular
+	 );
      nAttempts := 3;
-     correctorTolerance := 0.1 * getDefault NumericalAlgebraicGeometry$CorrectorTolerance;
      while nAttempts > 0 and #all'sols < #S do (
-     	 sols := track(first entries map't'0 H, first entries map't'1 H, S
-	     -- , NumericalAlgebraicGeometry$gamma=>exp(2*pi*ii*random RR)
-	     -- can we do the gamma-trick?
-	     , NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+     	 sols := track(first entries map't'0 H, first entries map't'1 H, S,
+	     NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
 	     );
      	 all'sols = solutionsWithMultiplicity(all'sols|select(sols, s->status s===Regular));
 	 nAttempts = nAttempts - 1;
 	 correctorTolerance = 0.1 * correctorTolerance;
+	 {* -- alternative rerun strategy: piecewise linear path 
+   	    -- (gets other solutions though... need to sync between undegenerations?) 
+     	 t' := exp(2*pi*ii*random RR);
+	 H1 := sub(H,matrix{{t'*t}|drop(gens Rt,1)});
+	 sols' := select(track(
+		 first entries map't'0 H1, 
+	     	 first entries map't'1 H1, 
+	     	 S,
+	     	 NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+	     	 ), s->status s === Regular);
+	 H2 := sub(H,matrix{{t+(1-t)*t'}|drop(gens Rt,1)});
+     	 sols := select(track(
+		 first entries map't'0 H2, 
+	     	 first entries map't'1 H2, sols',
+	     	 NumericalAlgebraicGeometry$CorrectorTolerance=>correctorTolerance
+	     	 ), s->status s === Regular);
+     	 all'sols = solutionsWithMultiplicity(all'sols|sols);
+	 nAttempts = nAttempts - 1;
+	 *}
 	 );
      if #all'sols < #S then error "trackHomotopy: singularity encountered";
      if #all'sols > #S then error "trackHomotopy: more solutions found than expected";
+     if VERIFY'SOLUTIONS then verifyTarget(H, all'sols);
      all'sols 
      )
 

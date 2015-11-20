@@ -39,20 +39,38 @@ blackBoxSolve(MutableHashTable,List,Matrix) := (node,
    ); -- end of apply
 );
 
+verifyTarget = method();
+verifyTarget(Matrix,List) := (polys, targetSolutions) -> (
+--
+-- DESCRIPTION :
+--   Verifies the solutions at the end of the homotopy.
+--
+-- IN :
+--   polys : matrix of polynomials;
+--   startSolutions : solutions that should vanish as polys.
+--
+   scan(targetSolutions, p->assert (
+      s := matrix p;
+      norm sub(polys,matrix{{1_FFF}}| s)
+      < ERROR'TOLERANCE * max{1,norm s}
+      * norm sub(last coefficients polys,FFF)
+      ) -- end assert
+   ) -- end scan 
+);
+
 verifyStart = method();
 verifyStart(Matrix,List) := (polys, startSolutions) -> (
 --
 -- DESCRIPTION :
---   Verifies the solutions at the start of the homotopy,
---   defined by a list of polynomials.
+--   Verifies the solutions at the start of the homotopy.
 --
 -- IN :
---   polys : list of polynomials;
+--   polys : matrix of polynomials;
 --   startSolutions : solutions that should vanish as polys.
 --
    scan(startSolutions, s->assert (
       norm sub(polys,matrix{{0_FFF}|s})
-      < ERROR'TOLERANCE * norm matrix{s}
+      < ERROR'TOLERANCE * max{1,norm matrix{s}}
       * norm sub(last coefficients polys,FFF)
       ) -- end assert
    ) -- end scan startSolutions
@@ -222,7 +240,9 @@ caseSwapStay(MutableHashTable,List,Matrix,Sequence) := (node,
          error "an unaccounted case";
    if DBG>0 then timemakePolys1 := cpuTime();
    strategy := --"Cauchy-Binet";
-     if all(remaining'conditions'flags/first, c->#c==1) then "deflation" else "Cauchy-Binet";
+     if all(remaining'conditions'flags/first, c->#c==1) and 
+        #remaining'conditions'flags*numrows M'X' <= 30 
+     then "deflation" else "Cauchy-Binet";
    (all'polys,startSolutions) := makePolynomials(M'X', remaining'conditions'flags, 
        apply(node.Solutions, X->toRawSolutions(coordX,X)), --start solutions
        Strategy=>strategy
