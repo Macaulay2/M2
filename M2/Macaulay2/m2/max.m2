@@ -44,21 +44,59 @@ InfiniteNumber + Number := (i,j) -> (
 Number + InfiniteNumber := (i,j) -> j + i
 InfiniteNumber - Number := (i,j) -> i + (-j)
 Number - InfiniteNumber := (i,j) -> i + (-j)
-InfiniteNumber * RR := 
+InfiniteNumber + CC := InfiniteNumber - CC := (i,j) -> if isANumber j then promote(1/0.,CC) else indeterminate
+CC + InfiniteNumber := CC - InfiniteNumber := (i,j) -> j+i
 InfiniteNumber * QQ := 
 InfiniteNumber * ZZ := (i,j) -> (
   if isANumber j then
+--    if j > 0 then i else if j < 0 then -i else if j == 0 then j else indeterminate
     if j > 0 then i else if j < 0 then -i else indeterminate
   else
     indeterminate
 )
+InfiniteNumber * RR := (i,j) -> (
+  if (isANumber j and j > 0) then
+    i
+  else if (isANumber j and j < 0) then
+    -i
+  else if j == 0 then
+    0_RR
+  else
+    1/0.-1/0.
+)
+InfiniteNumber * CC := (i,j) -> (
+  if (isANumber j and j != 0) then
+    promote(1/0.,CC)
+  else if j == 0 then
+    0_CC
+  else (1/0.-1/0.+ii)
+)
 RR * InfiniteNumber := 
 QQ * InfiniteNumber := 
-ZZ * InfiniteNumber := (i,j) -> j * i
+ZZ * InfiniteNumber :=
+CC * InfiniteNumber := (i,j) -> j * i
+    
 Number // InfiniteNumber := Number / InfiniteNumber := (i,j) -> if isFinite i then 0 else indeterminate
-InfiniteNumber // RR := InfiniteNumber / RR := 
 InfiniteNumber // QQ := InfiniteNumber / QQ :=
 InfiniteNumber // ZZ := InfiniteNumber / ZZ := (i,j) -> if (isFinite j and j > 0) then i else if (isFinite j and j < 0) then -i else indeterminate
+InfiniteNumber // RR := InfiniteNumber / RR := (i,j) -> (
+  if (isFinite j and j > 0.) then
+    i
+  else if (isFinite j and j < 0.) then
+    -i
+  else if j === 0. then
+    i
+  else if j === -0. then
+    -i
+  else
+    1/0.-1/0.
+)
+InfiniteNumber // CC := InfiniteNumber / CC := (i,j) -> (
+  if isFinite j then
+    promote(1/0.,CC)
+  else
+    1/0.-1/0.+ii
+)
 InfiniteNumber ^ ZZ := (x,n) -> (
   if (n > 0 and even n) then infinity
   else if (n > 0 and odd n) then x
@@ -67,10 +105,10 @@ InfiniteNumber ^ ZZ := (x,n) -> (
 )
 InfiniteNumber ^ QQ := (x,q) -> if (odd denominator q or x > 0) then x ^ (numerator q) else indeterminate
 InfiniteNumber ^ RR := (x,r) -> (
-  if (x > 0 and r > 0) then
+  if (x > 0 and r > 0.) then
     x
-  else if (x > 0 and r < 0) then
-    0
+  else if (x > 0 and r < 0.) then
+    0.
   else
     indeterminate
 )
@@ -128,11 +166,11 @@ RR ? InfiniteNumber := (x,y) -> (
   if ( not isANumber(x) ) then
     symbol incomparable
   else if isInfinite(x) then (
-    if (x > 0 and y > 0) then
+    if (x > 0. and y > 0) then
       symbol ==
-    else if (x < 0 and y < 0) then
+    else if (x < 0. and y < 0) then
       symbol ==
-    else if (x > 0 and y < 0) then
+    else if (x > 0. and y < 0) then
       symbol >
     else
       symbol <
@@ -144,11 +182,11 @@ RR ? InfiniteNumber := (x,y) -> (
 InfiniteNumber ? RR := (x,y) -> (
   if ( not isANumber(y) ) then ( symbol incomparable )
   else if isInfinite(y) then (
-    if (x > 0 and y > 0) then
+    if (x > 0 and y > 0.) then
       symbol ==
-    else if (x < 0 and y < 0) then
+    else if (x < 0 and y < 0.) then
       symbol ==
-    else if (x > 0 and y < 0) then
+    else if (x > 0 and y < 0.) then
       symbol >
     else
       symbol <
