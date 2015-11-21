@@ -9,13 +9,19 @@ export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy" }
 debug SLPexpressions
 
 ----------------------------------
--- GateHomotopy
+-- GateHomotopy (::Homotopy::MutableHashTable)
+-- keys: 
+--   "X", GateMatrix: a row of X variables
+--   "T", Gate: the continuation parameter  
+--   "H", "Ht","Hx"; GateMatrix: matrix, derivatives
+--   "EH", "EHx", "EHt", "EHxt", "EHxH"; Evaluators: top-level evaluators
+--   K, a ring: rawEvaluator for the ring
+GateHomotopy = new Type of Homotopy    
+GateParameterHomotopy = new Type of ParameterHomotopy
 
-GateHomotopy := new Type of Homotopy    
-GateParameterHomotopy := new Type of ParameterHomotopy
-
--- !!! DUMMY engine function
-makeRawHomotopy = S -> null
+debug Core
+makeRawHomotopy = method() 
+makeRawHomotopy(GateHomotopy,Ring) := (GH,K) ->  (GH#"EHx",GH#"EHt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
 
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
@@ -39,7 +45,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
 	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
-	GH#"RawHomotopy" = (GH#"EHx",GH#"EHt",GH#"EHxH") / rawSLEvaluatorK // makeRawHomotopy;
+	-- GH#"RawHomotopy" = (GH#"EHx",GH#"EHt",GH#"EHxH") / rawSLEvaluatorK // makeRawHomotopy;
 	)
     else error "uknown Software option value";
     if para then (
@@ -93,6 +99,7 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
 -------------------------------------------------------
 -- trackHomotopy tests
 TEST /// 
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -118,6 +125,7 @@ assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
 TEST ///-- Homotopy
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -155,6 +163,7 @@ gH = transpose matrix {H}
 HS = gateHomotopy(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
+s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2engine)
 ///
 
 TEST /// -- ParameterHomotopy

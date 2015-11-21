@@ -134,7 +134,7 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
     return false;
   }
   if (out == nullptr) { 
-    ERROR("inputs: expected a dense mutable matrix");
+    ERROR("outputs: expected a dense mutable matrix");
     return false;
   }
 
@@ -173,6 +173,111 @@ Homotopy* SLEvaluatorConcrete<RT>::createHomotopy(SLEvaluator* Hxt, SLEvaluator*
   return new HomotopyConcrete<RT>(*this, *castHxt, *castHxH);
 }
 
+/*
+template <> 
+bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     M2_arrayint output_status,  
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold
+                   ) 
+{
+  // double the_smallest_number = 1e-13;
+  const Ring* R = inputs->get_ring();
+  if (outputs->get_ring()!= R) { 
+    ERROR("outputs and inputs are in different rings");
+    return false;
+  }
+  auto inp = dynamic_cast<const MutableMat< DMat<M2::ARingCC> >*>(inputs);
+  auto out = dynamic_cast<MutableMat< DMat<M2::ARingCC> >*>(outputs);
+  if (inp == nullptr) { 
+    ERROR("inputs: expected a dense mutable matrix");
+    return false;
+  }
+  if (out == nullptr) { 
+    ERROR("outputs: expected a dense mutable matrix");
+    return false;
+  }
+
+  double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
+  double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
+  double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
+  double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
+  /*
+  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
+    t_s->make(n,s_s); // cook a Solution
+    t_s->status = PROCESSING;
+    bool end_zone = false;
+    double tol2 = epsilon2; // current tolerance squared, will change in end zone
+    copy_complex_array<ComplexField>(n,s_s,x0);
+    *t0 = complex(0,0);
+
+    *dt = complex(t_step);
+    int predictor_successes = 0;
+    int count = 0; // number of steps
+    while (t_s->status == PROCESSING && 1 - t0->getreal() > the_smallest_number) {
+      if (dt->getreal() > 1 - t0->getreal() )
+        *dt = complex(1);
+  
+      // PREDICTOR in: x0t0,dt,pred_type
+      //           out: dx
+
+      // make prediction
+      copy_complex_array<ComplexField>(n+1,x0t0,x1t1);
+      //      add_to_complex_array<ComplexField>(n+1,x1t1,dxdt);
+
+      // CORRECTOR
+      int n_corr_steps = 0;
+      bool is_successful;
+      do {
+        n_corr_steps++;
+        //
+        evaluate_slpHxH(n,x1t1,HxH);
+        LHS = HxH;
+        RHS = HxH+n*n; // i.e., H
+        //
+        negate_complex_array<ComplexField>(n,RHS);
+        LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
+        add_to_complex_array<ComplexField>(n,x1t1,dx);
+        is_successful = norm2_complex_array<ComplexField>(n,dx) < tol2*norm2_complex_array<ComplexField>(n,x1t1);
+      } while (!is_successful and n_corr_steps<max_corr_steps);
+
+      if (!is_successful) {
+        // predictor failure
+        predictor_successes = 0;
+        *dt = complex(dt_decrease_factor_dbl)*(*dt);
+        if (dt->getreal() < dt_min_dbl)
+          t_s->status = MIN_STEP_FAILED;
+      } else {
+        // predictor success
+        predictor_successes = predictor_successes + 1;
+        copy_complex_array<ComplexField>(n+1, x1t1, x0t0);
+        count++;
+        if (is_successful && predictor_successes >= num_successes_before_increase) {
+          predictor_successes = 0;
+          *dt  = complex(dt_increase_factor_dbl)*(*dt);
+        }
+      }
+      if (norm2_complex_array<ComplexField>(n,x0) > infinity_threshold2)
+        t_s->status = INFINITY_FAILED;
+      if (!LAPACK_success)
+        t_s->status = SINGULAR;
+    }
+    // record the solution
+    copy_complex_array<ComplexField>(n, x0, t_s->x);
+    t_s->t = t0->getreal();
+    if (t_s->status == PROCESSING)
+      t_s->status = REGULAR;
+    evaluate_slpHxH(n,x0t0,HxH);
+    }
+  }
+  
+
+  return true;
+}
+*/
+
 template <typename RT> 
 bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      M2_arrayint output_status,  
@@ -199,6 +304,7 @@ bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* out
   */
   return true;
 }
+
 
 template<typename RT>
 void HomotopyConcrete<RT>::text_out(buffer& o) const { 

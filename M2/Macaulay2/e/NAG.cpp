@@ -25,7 +25,6 @@ void complexAP::print()
   printf("(%lf,%lf) ", getreal(), getimaginary());
 }
 
-
 // Straight Line Program classes
 
 #ifdef SLPdouble

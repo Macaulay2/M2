@@ -192,11 +192,11 @@ export rawHomotopyTrack(e:Expr):Expr := (
 	  when s.2 is outputs:RawMutableMatrixCell do
 	  if !isSequenceOfSmallIntegers(s.3) then 
               WrongArg(4,"a sequence of small integers") else 
-	  when s.3 is initDt:RRcell do
-	  when s.4 is minDt:RRcell do
-	  when s.5 is epsilon:RRcell do 
-	  when s.6 is maxCorrSteps:ZZcell do
-	  when s.7 is infinityThreshold:RRcell do 
+	  when s.4 is initDt:RRcell do
+	  when s.5 is minDt:RRcell do
+	  when s.6 is epsilon:RRcell do 
+	  when s.7 is maxCorrSteps:ZZcell do
+	  when s.8 is infinityThreshold:RRcell do 
 	  possibleEngineError(Ccode(bool, 
 		     "rawHomotopyTrack(",
 		     H.p, ",",

@@ -636,8 +636,27 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 
 -- !!! DUMMY engine routine
 debug Core
-rawTrackHomotopy = method()
-rawTrackHomotopy Sequence := s -> 0
+
+doublePrecisionK := CC_53;
+trackHomotopyM2engine := inputs -> (
+    (H, inp, 
+	out, statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold
+	) :=  inputs;
+    K := doublePrecisionK;
+    -- this should change: promote to the ring that is necessary
+    if K =!= ring out then error "same ring (CC_53) is expected (for now)";
+    inpK := inp;
+    outK := out;
+    if not H#?K then H#K = makeRawHomotopy(H,K);
+    rawHomotopyTrack(H#K, raw inpK, 
+	raw outK, statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold)
+    )
  
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
@@ -745,19 +764,25 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 if not (instance(H,Homotopy) and H#?"RawHomotopy") then "expected a Homotopy with RawHomotopy";  
+	 if not (instance(H,GateHomotopy) and H.Software == M2engine) then error "expected a Homotopy with RawHomotopy";  
+	 statusOut := new MutableList from {1};
 	 apply(#solsS, sN->(
 		 s := solsS#sN;
-		 inp := mutableMatrix (if instance(s,Point) then {coordinates s | {0}} else s | matrix{{0_(ring s)}}); 
+		 inp := mutableMatrix (
+		     if instance(s,Point) 
+		     then {coordinates s | {0}} 
+		     else s || matrix{{0_(ring s)}}
+		     ); 
 		 out := mutableMatrix inp; -- "copy" does not copy!!!
-		 n := numcols out - 1;
-		 out_(0,n) = 1; 
-		 st := rawTrackHomotopy(H#"RawHomotopy", inp, out,
+		 n := numrows out - 1;
+		 out_(n,0) = 1; 
+		 trackHomotopyM2engine(H, inp, 
+		     out, statusOut,
 	     	     o.tStep, o.tStepMin, 
 	     	     o.CorrectorTolerance, o.maxCorrSteps, 
 	     	     toRR o.InfinityThreshold
 	     	     );
-	         s'status := solutionStatusLIST#st;
+		 s'status := solutionStatusLIST#(first statusOut);
 		 if DBG > 0 then << (if s'status == Regular then "."
 		    else if s'status == Singular then "S"
 		    else if s'status == MinStepFailure then "M"
@@ -765,8 +790,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    else error "unknown solution status"
 		    ) << if (sN+1)%100 == 0 then endl else flush;
 	       	-- create a solution record 
-		x0 := submatrix(out,0..n-1);
-		t0 := out_(0,n);
+		x0 := out^(toList(0..n-1));
+		t0 := out_(n,0);
 		{x0,
 		    SolutionStatus => s'status, 
 		    LastT => t0
