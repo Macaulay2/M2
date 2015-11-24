@@ -2530,9 +2530,10 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 	  print "NumberOfLoops has been reached."); 
       ));
     print ("There were "|toString loopFailures|" loop failures.");
-    return theGaloisG);
+    return convertToGap(theGaloisG));
 	    
 
+convertToGap=(aList)->(new Array from for i in aList list  new Array from toList i+for j in i list 1);
 
 
 

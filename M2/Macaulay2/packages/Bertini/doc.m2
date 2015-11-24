@@ -1909,6 +1909,12 @@ doc ///
    [makeWitnessSetFiles,NameWitnessSliceFile]
    [makeWitnessSetFiles,SpecifyComponent]
    [writeStartFile,UsePrecision]
+   [makeMembershipFile,NameB'InputFile]
+   [b'PHMonodromyCollect,NameStartFile]
+   [b'PHSequence,NameStartFile]
+   [makeB'Section,B'Homogenization]
+   [makeB'Section,ContainsPoint]
+   [makeB'Section,RandomCoefficientGenerator]
    PathVariable
    PathsWithSameEndpoint
    FunctionResidual
@@ -1918,7 +1924,7 @@ doc ///
    AccuracyEst
    PrecisionIncreased
    AccuracyEstInternal
-   ComponentNumber
+   ComponentNumber 
  Headline
    This option or key is for a function that is in active development. 
  Description
