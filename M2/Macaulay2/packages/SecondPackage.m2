@@ -8,8 +8,10 @@ newPackage (
      DebuggingMode => false,
      PackageImports => {"FirstPackage"}
      )
-export secondFunction
+export "secondFunction"
 secondFunction = () -> apply(5, firstFunction)
+
+beginDocumentation()
 
 document {
      Key => SecondPackage,
