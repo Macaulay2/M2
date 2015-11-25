@@ -3,7 +3,8 @@
 assert(concatenate("ABC")=="ABC");
 assert(concatenate(2)=="  ");
 assert(concatenate(0)=="");
-assert(concatenate(-1)=="");
+-- concatenate(-1) should give an error
+try concatenate(-1) then assert(false) else true;
 -- multiple args
 assert(concatenate("ABC","DEF")=="ABCDEF");
 assert(concatenate("ABC",2)=="ABC  ");
@@ -18,7 +19,7 @@ assert(concatenate(-2^10,2^10)==concatenate(2^10));
 
 ---- pad
 assert(pad("ABC",4)=="ABC ");
-assert(pad(4,"ABC")=="ABC ");
+assert(pad(4,"ABC")==" ABC");
 assert(pad("ABC",3)=="ABC");
 assert(pad(3,"ABC")=="ABC");
 -- ignore the numbers if it's too short
