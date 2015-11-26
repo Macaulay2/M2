@@ -637,17 +637,15 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 -- !!! DUMMY engine routine
 debug Core
 
-doublePrecisionK := CC_53;
-trackHomotopyM2engine := inputs -> (
-    (H, inp, 
+-- doublePrecisionK := CC_53;
+trackHomotopyM2engine = (H, inp, 
 	out, statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
 	InfinityThreshold
-	) :=  inputs;
-    K := doublePrecisionK;
-    -- this should change: promote to the ring that is necessary
-    if K =!= ring out then error "same ring (CC_53) is expected (for now)";
+	) -> (
+    K := ring inp;
+    if K =!= ring out then error "inp and out have to have the same ring";
     inpK := inp;
     outK := out;
     if not H#?K then H#K = makeRawHomotopy(H,K);

@@ -167,7 +167,7 @@ s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2engine)
 ///
 
 TEST /// -- ParameterHomotopy
-needsPackage "SLPexpressions"
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -188,4 +188,27 @@ x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
 peek s
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+///
+
+TEST ///
+debug needsPackage "NumericalAlgebraicGeometry"
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+K = CC
+R = K[x,y,t] 
+F = {X*X-1, Y*Y-1}
+G = {X*X+Y*Y-1, -X*X+Y}
+H = (1 - T) * F + T * G
+Rvars = valueHashTable({X,Y,T},{x,y,t})
+gV = matrix{{X,Y}}
+gH = transpose matrix {H}
+
+HS = gateHomotopy(gH,gV,T)
+inp = matrix{{1_CC},{1}}
+s = first trackHomotopy(HS,{inp},Software=>M2engine)
+peek s
+inpCCC = sub(inp,CC_1000) 
+s = first trackHomotopy(HS,{inpCCC},Software=>M2engine)
+peek s
 ///

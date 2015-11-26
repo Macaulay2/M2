@@ -34,6 +34,7 @@ namespace M2 {
 
     typedef complex elem;
     typedef elem ElementType;
+    typedef ARingRR RealRingType;
 
     ARingCC() {}
 
@@ -42,7 +43,7 @@ namespace M2 {
     unsigned long get_precision() const { return 53; }
     void text_out(buffer &o) const;
 
-    const ARingRR& real_ring() const { return mRR; }
+    const RealRingType& real_ring() const { return mRR; }
 
     unsigned int computeHashValue(const elem& a) const 
     { 

@@ -69,6 +69,7 @@ public:
 		      const MutableMat< SMat<RT> >* consts /*const SMat<RT>& consts*/);
   const RT& ring() const { return mRing; }
   bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
+  bool evaluate(const DMat<RT>& inputs, DMat<RT>& outputs);
   // TODO: bool evaluate(DMat<RT>& inputs, DMat<RT>& outputs);
   void text_out(buffer& o) const;
   Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH);

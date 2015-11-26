@@ -615,7 +615,7 @@ public:
 };
 #endif
 
-enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
+// enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
 struct Solution
 {
   int n; // number of coordinates
