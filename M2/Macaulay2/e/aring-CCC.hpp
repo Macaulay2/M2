@@ -356,15 +356,20 @@ namespace M2 {
       clear(result);
     }
 
-    void abs(ARingRRR::ElementType& result, const ElementType& a) const
+    void abs_squared(ARingRRR::ElementType& result, const ElementType& a) const
     {
       mRRR.mult(result,realPartReference(a),realPartReference(a));
       ARingRRR::ElementType s;
       mRRR.init(s);
       mRRR.mult(s,imaginaryPartReference(a),imaginaryPartReference(a));
       mRRR.add(result,result,s);
-      mpfr_sqrt(&result,&result,GMP_RNDN); // should we have ARingRRR::sqrt ???
       mRRR.clear(s);
+    }
+
+    void abs(ARingRRR::ElementType& result, const ElementType& a) const
+    {
+      abs_squared(result,a);
+      mpfr_sqrt(&result,&result,GMP_RNDN); // should we have ARingRRR::sqrt ???
     }
 
     void power(ElementType &result, const ElementType& a, int n) const

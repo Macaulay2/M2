@@ -21,8 +21,8 @@ GateParameterHomotopy = new Type of ParameterHomotopy
 
 debug Core
 makeRawHomotopy = method() 
-makeRawHomotopy(GateHomotopy,Ring) := (GH,K) ->  (GH#"EHx",GH#"EHt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
-
+makeRawHomotopy(GateHomotopy,Ring) := (GH,K) -> -- (GH#"EHx",GH#"EHt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
+    rawHomotopy(rawSLEvaluatorK(GH#"EHx",K),rawSLEvaluatorK(GH#"EHxt",K),rawSLEvaluatorK(GH#"EHxH",K)) 
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
@@ -45,7 +45,6 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
 	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
-	-- GH#"RawHomotopy" = (GH#"EHx",GH#"EHt",GH#"EHxH") / rawSLEvaluatorK // makeRawHomotopy;
 	)
     else error "uknown Software option value";
     if para then (
@@ -191,6 +190,7 @@ assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///
 
 TEST ///
+restart
 debug needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -208,6 +208,12 @@ HS = gateHomotopy(gH,gV,T)
 inp = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{inp},Software=>M2engine)
 peek s
+peek HS
+peek HS#"EHx"
+peek HS#"EHxt"
+peek HS#"EHxH"
+
+NAGtrace 2
 inpCCC = sub(inp,CC_1000) 
 s = first trackHomotopy(HS,{inpCCC},Software=>M2engine)
 peek s

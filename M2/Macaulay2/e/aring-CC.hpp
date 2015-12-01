@@ -251,6 +251,11 @@ namespace M2 {
       set(res,result);
     }
 
+    void abs_squared(ARingRR::ElementType& result, const ElementType& a) const
+    {
+      result = a.re * a.re + a.im * a.im;
+    }
+
     void abs(ARingRR::ElementType& result, const ElementType& a) const
     {
       result = sqrt(a.re * a.re + a.im * a.im);

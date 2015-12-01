@@ -713,7 +713,7 @@ gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
 }
 
 Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH) {
-  return Hx->createHomotopy(Hxt,Hx);
+  return Hx->createHomotopy(Hxt,HxH);
 }
 
 M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs, 

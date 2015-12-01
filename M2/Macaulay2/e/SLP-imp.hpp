@@ -137,7 +137,7 @@ template<typename RT>
 bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs, DMat<RT>& outputs)
 {
   if (varsPos.size() != inputs.numRows()*inputs.numColumns()) { 
-    ERROR("outputs: the number of outputs does not match the number of entries in the outputs matrix");
+    ERROR("inputs: the number of outputs does not match the number of entries in the outputs matrix");
     return false;
   }
   size_t i=0;
@@ -153,6 +153,7 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs, DMat<RT>& outputs
 
   if (slp->mOutputPositions.size() != outputs.numRows()*outputs.numColumns()) { 
     ERROR("outputs: the number of outputs does not match the number of entries in the outputs matrix");
+    // std::cout <<  slp->mOutputPositions.size() << " != " << outputs.numRows() << " * " << outputs.numColumns() << std::endl;
     return false;
   }
   i=0;
@@ -288,8 +289,24 @@ inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, Mu
   return true;
 }
 
+template <typename RT>
+inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& result)
+{
+  const auto& C = M.ring();
+  const auto& R = C.real_ring();
+  typename RT::RealElementType c;
+  R.init(c);
+  R.set_zero(result);
+  for(size_t i=0; i<n; i++) {
+    C.abs_squared(c,M.entry(0,i));
+    R.add(result,result,c);
+  }
+  R.clear(c);
+}
+
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
 
+// ****************************** XXX **************************************************
 template <> 
 inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      M2_arrayint output_status,  
@@ -325,7 +342,8 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
 
   typedef typename RT::ElementType ElementType;
   typedef typename RT::RealRingType::ElementType RealElementType;
-
+  typedef MatElementaryOps< DMat< RT > > MatOps;
+ 
   RealElementType t_step;
   RealElementType dt_min;
   RealElementType epsilon2;
@@ -340,33 +358,45 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   R.mult(epsilon2, epsilon2, epsilon2); //epsilon^2
   R.set_from_BigReal(infinity_threshold2,infinity_threshold); 
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
+  int num_successes_before_increase = 3;
 
-  RealElementType t0,t1,one,dt,one_minus_t0;
+  RealElementType t0,one,dt,one_minus_t0,dt_factor,dx_norm2,x1_norm2;
   R.init(t0);
-  R.init(t1);
   R.init(dt);
   R.init(one_minus_t0);
+  R.init(dt_factor);
+  R.set_from_double(dt_factor,0.5);
   R.init(one);
   R.set_from_long(one,1);    
+  R.init(dx_norm2);
+  R.init(x1_norm2);
   ElementType c_init,c_end,dc;
   C.init(c_init);
   C.init(c_end);
   C.init(dc);
   size_t n_sols = in.numColumns();  
-  size_t n = in.numRows()-1;  
+  size_t n = in.numRows()-1;
+  // think: x_0..x_(n-1), c
+  // c = the homotopy continuation parameter "t" upstair, varies on a (staight line) segment of complex plane (from c_init to c_end)  
+  // t = a real running in the interval [0,1] 
   DMat<RT> x0c0(C,n+1,1); 
   DMat<RT> dx(C,n,1);
   DMat<RT> x1c1(C,n+1,1);
   DMat<RT> HxH(C,n,n+1);
+  DMat<RT> LHS(C,n,n);
+  DMat<RT> RHS(C,n,1);
+
   ElementType& c0 = x0c0.entry(n,0);
   ElementType& c1 = x1c1.entry(n,0);  
+  RealElementType& tol2 = epsilon2; // current tolerance squared
   for(size_t s=0; s<n_sols; s++) {
     SolutionStatus status = PROCESSING;
-    RealElementType& tol2 = epsilon2; // current tolerance squared, will change in end zone
     // set initial solution and initial value of the continuation parameter
     for(size_t i=0; i<n+1; i++)   
       C.set(x0c0.entry(i,0), in.entry(i,s));
- 
+    C.set(c_init,c0);
+    C.set(c_end,ou.entry(n,s));
+
     R.set_zero(t0);
     bool t0equals1 = false;
     R.set(dt,t_step);
@@ -374,6 +404,13 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     int count = 0; // number of steps
     // track the real segment (1-t)*c0 + t*c1, a\in [0,1]
     while (status == PROCESSING and not t0equals1) {
+      buffer o; 
+      R.elem_text_out(o,t0,true,false,false);
+      std::cout << "t0 = " << o.str();
+      o.reset();
+      C.elem_text_out(o,c0,true,false,false);
+      std::cout << ", c0 = " << o.str() << std::endl;
+
       R.subtract(one_minus_t0,one,t0);
       if (R.compare_elems(dt,one_minus_t0)>0) {
         R.set(dt,one_minus_t0);
@@ -404,45 +441,69 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
       do {
         n_corr_steps++;
         //
+        std::cout << "evaluate...\n";
         mHxH.evaluate(x1c1,HxH);
-        /*
-        submatrix(C,HxH,0,n-1,0,n-1,LHS); // Hx
-        submatrix(C,HxH,0,n-1,n-1,n,LHS); // Hx
-        //
-        negate_complex_array<ComplexField>(n,RHS);
-        LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-        add_to_complex_array<ComplexField>(n,x1t1,dx);
-        is_successful = norm2_complex_array<ComplexField>(n,dx) < tol2*norm2_complex_array<ComplexField>(n,x1t1);
-        */
-        is_successful = true;
+        
+        std::cout << "setFromSubmatrix 1...\n";
+        MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHS); // Hx
+        std::cout << "setFromSubmatrix 2...\n";
+        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // H
+        std::cout << "negate...\n";
+        MatrixOps::negateInPlace(RHS);
+        //solve LHS*dx = RHS
+
+        std::cout << "solveLinear...\n";
+        MatrixOps::solveLinear(LHS,RHS,dx);
+        std::cout << "solveLinear done\n";
+
+        // x1 += dx
+        for(size_t i=0; i<n; i++)   
+          C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
+        
+        norm2(dx,n,dx_norm2);
+        norm2(x1c1,n,x1_norm2);
+        R.mult(x1_norm2,x1_norm2,tol2);
+        is_successful = R.compare_elems(dx_norm2,x1_norm2) < 0;
       } while (not is_successful and n_corr_steps<max_corr_steps);
-      /*
-      if (!is_successful) {
+      std::cout << "past corrector loop...\n";
+      if (not is_successful) {
         // predictor failure
         predictor_successes = 0;
-        *dt = complex(dt_decrease_factor_dbl)*(*dt);
-        if (dt->getreal() < dt_min_dbl)
-          t_s->status = MIN_STEP_FAILED;
+        R.mult(dt,dt,dt_factor);
+        if (R.compare_elems(dt,dt_min)<0)
+          status = MIN_STEP_FAILED;
       } else {
         // predictor success
         predictor_successes = predictor_successes + 1;
-        copy_complex_array<ComplexField>(n+1, x1t1, x0t0);
+        // x0c0 = x1c1
+        std::cout << "before...\n";
+        displayMat(x0c0);
+        std::cout << std::endl;
+        displayMat(x1c1);
+        MatOps::setFromSubmatrix(x1c1,0,n,0,0,x0c0);
+        std::cout << "after...\n";
+        displayMat(x0c0);
+        std::cout << std::endl;
+        displayMat(x1c1);
+        R.add(t0,t0,dt);
         count++;
-        if (is_successful && predictor_successes >= num_successes_before_increase) {
+        if (predictor_successes >= num_successes_before_increase) {
           predictor_successes = 0;
-          *dt  = complex(dt_increase_factor_dbl)*(*dt);
-        }
+          R.divide(dt,dt,dt_factor);
+        }       
       }
-      */
       /*
       if (norm2_complex_array<ComplexField>(n,x0) > infinity_threshold2)
         t_s->status = INFINITY_FAILED;
       if (!LAPACK_success)
         t_s->status = SINGULAR;
       */
-      t0equals1 = true;
+      // t0equals1 = true;
     }
     // record the solution
+    // set initial solution and initial value of the continuation parameter
+    for(size_t i=0; i<=n; i++)   
+      C.set(ou.entry(i,s),x0c0.entry(i,0));
     /* copy_complex_array<ComplexField>(n, x0, t_s->x);
     t_s->t = t0->getreal();
     if (t_s->status == PROCESSING)
@@ -451,11 +512,18 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     */
   }
 
+
+  C.clear(c_init);
+  C.clear(c_end);
+  C.clear(dc);
+
   R.clear(t0);
-  R.clear(t1);
   R.clear(dt);
   R.clear(one_minus_t0);
+  R.clear(dt_factor);
   R.clear(one);
+  R.clear(dx_norm2);
+  R.clear(x1_norm2);
 
   R.clear(t_step);
   R.clear(dt_min);
