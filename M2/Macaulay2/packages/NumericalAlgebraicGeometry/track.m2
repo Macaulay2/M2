@@ -763,7 +763,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 
      rawSols := if o.Software===M2engine then (
 	 if not (instance(H,GateHomotopy) and H.Software == M2engine) then error "expected a Homotopy with RawHomotopy";  
-	 statusOut := mutableMatrix {{0}};
+	 statusOut := mutableMatrix {{0},{0}}; -- 2 rows (status, number of steps), #solutions columns 
 	 apply(#solsS, sN->(
 		 s := solsS#sN;
 		 inp := mutableMatrix (
@@ -781,6 +781,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     	     toRR o.InfinityThreshold
 	     	     );
 		 s'status := solutionStatusLIST#(statusOut_(0,0));
+		 count := statusOut_(1,0);
 		 if DBG > 0 then << (if s'status == Regular then "."
 		    else if s'status == Singular then "S"
 		    else if s'status == MinStepFailure then "M"
@@ -792,6 +793,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		t0 := out_(n,0);
 		{x0,
 		    SolutionStatus => s'status, 
+		    NumberOfSteps => count,
 		    LastT => t0
 		    }
 		))

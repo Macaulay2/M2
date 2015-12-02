@@ -338,12 +338,24 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     ERROR("output_extras: expected a dense mutable matrix");
     return false;
   }
+
   auto& in = inp->getMat();
   auto& ou = out->getMat();
   auto& oe = out_extras->getMat();
+  size_t n_sols = in.numColumns();  
+  size_t n = in.numRows()-1; // number of x vars
+
+  if (ou.numColumns() != n_sols or ou.numRows() != n+1) { 
+    ERROR("output: wrong shape");
+    return false;
+  }
+  if (oe.numColumns() != n_sols or oe.numRows() != 2) { 
+    ERROR("output_extras: wrong shape");
+    return false;
+  }
+  
   const RT& C = in.ring();  
   RT::RealRingType R = C.real_ring();  
-
 
   typedef typename RT::ElementType ElementType;
   typedef typename RT::RealRingType::ElementType RealElementType;
@@ -379,8 +391,6 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   C.init(c_init);
   C.init(c_end);
   C.init(dc);
-  size_t n_sols = in.numColumns();  
-  size_t n = in.numRows()-1;
   // think: x_0..x_(n-1), c
   // c = the homotopy continuation parameter "t" upstair, varies on a (staight line) segment of complex plane (from c_init to c_end)  
   // t = a real running in the interval [0,1] 
@@ -512,6 +522,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     if (status == PROCESSING)
       status = REGULAR;
     oe.ring().set_from_long(oe.entry(0,s),status);
+    oe.ring().set_from_long(oe.entry(1,s),count); 
   }
 
 
