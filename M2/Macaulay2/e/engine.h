@@ -1978,7 +1978,7 @@ enum gbTraceValues
   M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
   M2_string rawHomotopyToString(Homotopy *); /* connected */
   M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
-                           M2_arrayint output_status,  
+                           MutableMatrix* output_extras,  
                            gmp_RR init_dt, gmp_RR min_dt,
                            gmp_RR epsilon, // o.CorrectorTolerance,
                            int max_corr_steps, 

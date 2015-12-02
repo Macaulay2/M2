@@ -88,7 +88,7 @@ private:
 class Homotopy {
 public: 
   virtual bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
+                     MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 
@@ -105,9 +105,9 @@ public:
            EType &HxH) : mHx(Hx), mHxt(Hxt), mHxH(HxH) { }
   /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
-     output_status an array of integers: each give the status of the solution (or path) */
+     output_extras: the first row gives the status of the solutions (or path) */
   bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
+                     MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 

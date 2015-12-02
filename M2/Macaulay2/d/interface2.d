@@ -190,8 +190,7 @@ export rawHomotopyTrack(e:Expr):Expr := (
      else when s.0 is H:RawHomotopyCell do 
 	  when s.1 is inputs:RawMutableMatrixCell do 
 	  when s.2 is outputs:RawMutableMatrixCell do
-	  if !isSequenceOfSmallIntegers(s.3) then 
-              WrongArg(4,"a sequence of small integers") else 
+	  when s.3 is output_extras:RawMutableMatrixCell do 
 	  when s.4 is initDt:RRcell do
 	  when s.5 is minDt:RRcell do
 	  when s.6 is epsilon:RRcell do 
@@ -202,7 +201,7 @@ export rawHomotopyTrack(e:Expr):Expr := (
 		     H.p, ",",
 		     inputs.p, ",",
 		     outputs.p, ",",
-		     getSequenceOfSmallIntegers(s.3), ",",
+		     output_extras.p, ",",
 		     initDt.v,",",
 		     minDt.v,",",
 		     epsilon.v,",",
@@ -215,7 +214,8 @@ export rawHomotopyTrack(e:Expr):Expr := (
 	  else WrongArgRR(7)
 	  else WrongArgRR(6)
 	  else WrongArgRR(5)
-          else WrongArg(3, "a raw mutable matrix")
+          else WrongArg(4, "a raw mutable matrix")
+	  else WrongArg(3, "a raw mutable matrix")
 	  else WrongArg(2, "a raw mutable matrix")
           else WrongArg(1,"a homotopy")
      else WrongNumArgs(9)

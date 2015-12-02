@@ -717,14 +717,14 @@ Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluat
 }
 
 M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs, 
-                         M2_arrayint output_status,  
+                         MutableMatrix* output_extras,  
                          gmp_RR init_dt, gmp_RR min_dt,
                          gmp_RR epsilon, // o.CorrectorTolerance,
                          int max_corr_steps, 
                          gmp_RR infinity_threshold) 
 {
   return H->track(inputs,outputs, 
-                  output_status,  
+                  output_extras,  
                   init_dt, min_dt,
                   epsilon, // o.CorrectorTolerance,
                   max_corr_steps, 

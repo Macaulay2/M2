@@ -187,7 +187,7 @@ Homotopy* SLEvaluatorConcrete<RT>::createHomotopy(SLEvaluator* Hxt, SLEvaluator*
 
 template <> 
 inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
+                     MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 
@@ -281,7 +281,6 @@ inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, Mu
     t_s->t = t0->getreal();
     if (t_s->status == PROCESSING)
       t_s->status = REGULAR;
-    evaluate_slpHxH(n,x0t0,HxH);
     }
   }
   */
@@ -309,7 +308,7 @@ enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILE
 // ****************************** XXX **************************************************
 template <> 
 inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
+                     MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 
@@ -326,6 +325,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   }
   auto inp = dynamic_cast<const MutableMat< DMat<RT> >*>(inputs);
   auto out = dynamic_cast<MutableMat< DMat<RT> >*>(outputs);
+  auto out_extras = dynamic_cast<MutableMat< DMat<M2::ARingZZGMP> >*>(output_extras);
   if (inp == nullptr) { 
     ERROR("inputs: expected a dense mutable matrix");
     return false;
@@ -334,8 +334,13 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     ERROR("outputs: expected a dense mutable matrix");
     return false;
   }
+  if (out_extras == nullptr) { 
+    ERROR("output_extras: expected a dense mutable matrix");
+    return false;
+  }
   auto& in = inp->getMat();
   auto& ou = out->getMat();
+  auto& oe = out_extras->getMat();
   const RT& C = in.ring();  
   RT::RealRingType R = C.real_ring();  
 
@@ -360,7 +365,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   int num_successes_before_increase = 3;
 
-  RealElementType t0,one,dt,one_minus_t0,dt_factor,dx_norm2,x1_norm2;
+  RealElementType t0,one,dt,one_minus_t0,dt_factor,dx_norm2,x_norm2;
   R.init(t0);
   R.init(dt);
   R.init(one_minus_t0);
@@ -369,7 +374,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   R.init(one);
   R.set_from_long(one,1);    
   R.init(dx_norm2);
-  R.init(x1_norm2);
+  R.init(x_norm2);
   ElementType c_init,c_end,dc;
   C.init(c_init);
   C.init(c_end);
@@ -389,6 +394,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   ElementType& c0 = x0c0.entry(n,0);
   ElementType& c1 = x1c1.entry(n,0);  
   RealElementType& tol2 = epsilon2; // current tolerance squared
+  bool linearSolve_success;
   for(size_t s=0; s<n_sols; s++) {
     SolutionStatus status = PROCESSING;
     // set initial solution and initial value of the continuation parameter
@@ -441,31 +447,31 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
       do {
         n_corr_steps++;
         //
-        std::cout << "evaluate...\n";
+        //std::cout << "evaluate...\n";
         mHxH.evaluate(x1c1,HxH);
         
-        std::cout << "setFromSubmatrix 1...\n";
+        //std::cout << "setFromSubmatrix 1...\n";
         MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHS); // Hx
-        std::cout << "setFromSubmatrix 2...\n";
+        //std::cout << "setFromSubmatrix 2...\n";
         MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // H
-        std::cout << "negate...\n";
+        //std::cout << "negate...\n";
         MatrixOps::negateInPlace(RHS);
         //solve LHS*dx = RHS
 
-        std::cout << "solveLinear...\n";
-        MatrixOps::solveLinear(LHS,RHS,dx);
-        std::cout << "solveLinear done\n";
+        //std::cout << "solveLinear...\n";
+        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx);
+        //std::cout << "solveLinear done\n";
 
         // x1 += dx
         for(size_t i=0; i<n; i++)   
           C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
         
         norm2(dx,n,dx_norm2);
-        norm2(x1c1,n,x1_norm2);
-        R.mult(x1_norm2,x1_norm2,tol2);
-        is_successful = R.compare_elems(dx_norm2,x1_norm2) < 0;
+        norm2(x1c1,n,x_norm2);
+        R.mult(x_norm2,x_norm2,tol2);
+        is_successful = R.compare_elems(dx_norm2,x_norm2) < 0;
       } while (not is_successful and n_corr_steps<max_corr_steps);
-      std::cout << "past corrector loop...\n";
+      //std::cout << "past corrector loop...\n";
       if (not is_successful) {
         // predictor failure
         predictor_successes = 0;
@@ -476,15 +482,15 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
         // predictor success
         predictor_successes = predictor_successes + 1;
         // x0c0 = x1c1
-        std::cout << "before...\n";
-        displayMat(x0c0);
-        std::cout << std::endl;
-        displayMat(x1c1);
+        // std::cout << "before...\n";
+        //displayMat(x0c0);
+        //std::cout << std::endl;
+        //displayMat(x1c1);
         MatOps::setFromSubmatrix(x1c1,0,n,0,0,x0c0);
-        std::cout << "after...\n";
-        displayMat(x0c0);
-        std::cout << std::endl;
-        displayMat(x1c1);
+        //std::cout << "after...\n";
+        //displayMat(x0c0);
+        //std::cout << std::endl;
+        //displayMat(x1c1);
         R.add(t0,t0,dt);
         count++;
         if (predictor_successes >= num_successes_before_increase) {
@@ -492,24 +498,20 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
           R.divide(dt,dt,dt_factor);
         }       
       }
-      /*
-      if (norm2_complex_array<ComplexField>(n,x0) > infinity_threshold2)
-        t_s->status = INFINITY_FAILED;
-      if (!LAPACK_success)
-        t_s->status = SINGULAR;
-      */
-      // t0equals1 = true;
+      
+      norm2(x0c0,n,x_norm2);
+      if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
+        status = INFINITY_FAILED;
+      if (not linearSolve_success)
+        status = SINGULAR;
     }
     // record the solution
     // set initial solution and initial value of the continuation parameter
     for(size_t i=0; i<=n; i++)   
       C.set(ou.entry(i,s),x0c0.entry(i,0));
-    /* copy_complex_array<ComplexField>(n, x0, t_s->x);
-    t_s->t = t0->getreal();
-    if (t_s->status == PROCESSING)
-      t_s->status = REGULAR;
-    evaluate_slpHxH(n,x0t0,HxH);
-    */
+    if (status == PROCESSING)
+      status = REGULAR;
+    oe.ring().set_from_long(oe.entry(0,s),status);
   }
 
 
@@ -523,7 +525,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   R.clear(dt_factor);
   R.clear(one);
   R.clear(dx_norm2);
-  R.clear(x1_norm2);
+  R.clear(x_norm2);
 
   R.clear(t_step);
   R.clear(dt_min);
@@ -544,7 +546,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
 
 template <typename RT> 
 bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     M2_arrayint output_status,  
+                     MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 

@@ -650,7 +650,7 @@ trackHomotopyM2engine = (H, inp,
     outK := out;
     if not H#?K then H#K = makeRawHomotopy(H,K);
     rawHomotopyTrack(H#K, raw inpK, 
-	raw outK, statusOut,
+	raw outK, raw statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
 	InfinityThreshold)
@@ -763,7 +763,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 
      rawSols := if o.Software===M2engine then (
 	 if not (instance(H,GateHomotopy) and H.Software == M2engine) then error "expected a Homotopy with RawHomotopy";  
-	 statusOut := new MutableList from {1};
+	 statusOut := mutableMatrix {{0}};
 	 apply(#solsS, sN->(
 		 s := solsS#sN;
 		 inp := mutableMatrix (
@@ -780,7 +780,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     	     o.CorrectorTolerance, o.maxCorrSteps, 
 	     	     toRR o.InfinityThreshold
 	     	     );
-		 s'status := solutionStatusLIST#(first statusOut);
+		 s'status := solutionStatusLIST#(statusOut_(0,0));
 		 if DBG > 0 then << (if s'status == Regular then "."
 		    else if s'status == Singular then "S"
 		    else if s'status == MinStepFailure then "M"
@@ -910,7 +910,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     else rawSols/(s->{flatten entries first s} | drop(toList s,1));
     if DBG>1 then (
 	  if member(o.Software,{M2,M2engine}) then (
-	      << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+	      << "Number of solutions = " << #ret << endl 
+	      --<< "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
 	      << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	      )
 	   );
