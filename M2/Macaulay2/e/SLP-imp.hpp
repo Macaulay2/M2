@@ -377,32 +377,55 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   int num_successes_before_increase = 3;
 
-  RealElementType t0,one,dt,one_minus_t0,dt_factor,dx_norm2,x_norm2;
+  RealElementType t0,dt,one_minus_t0,dx_norm2,x_norm2;
   R.init(t0);
   R.init(dt);
   R.init(one_minus_t0);
-  R.init(dt_factor);
-  R.set_from_double(dt_factor,0.5);
-  R.init(one);
-  R.set_from_long(one,1);    
   R.init(dx_norm2);
   R.init(x_norm2);
-  ElementType c_init,c_end,dc;
+
+  // constants
+  RealElementType one,two,four,six,one_half,one_sixth;
+  RealElementType& dt_factor = one_half; 
+  R.init(one);
+  R.set_from_long(one,1);    
+  R.init(two);
+  R.set_from_long(two,2);    
+  R.init(four);
+  R.set_from_long(four,4);
+  R.init(six);
+  R.set_from_long(six,6);    
+  R.init(one_half);
+  R.divide(one_half,one,two);
+  R.init(one_sixth);
+  R.divide(one_sixth,one,six);
+
+  ElementType c_init,c_end,dc,one_half_dc;
   C.init(c_init);
   C.init(c_end);
   C.init(dc);
+  C.init(one_half_dc);
+
   // think: x_0..x_(n-1), c
   // c = the homotopy continuation parameter "t" upstair, varies on a (staight line) segment of complex plane (from c_init to c_end)  
   // t = a real running in the interval [0,1] 
+
   DMat<RT> x0c0(C,n+1,1); 
-  DMat<RT> dx(C,n,1);
   DMat<RT> x1c1(C,n+1,1);
+  DMat<RT> xc(C,n+1,1);
   DMat<RT> HxH(C,n,n+1);
+  DMat<RT>& Hxt = HxH; // the matrix has the same shape: reuse memory  
   DMat<RT> LHS(C,n,n);
   DMat<RT> RHS(C,n,1);
+  DMat<RT> dx(C,n,1);
+  DMat<RT> dx1(C,n,1);
+  DMat<RT> dx2(C,n,1);
+  DMat<RT> dx3(C,n,1);
+  DMat<RT> dx4(C,n,1);
 
   ElementType& c0 = x0c0.entry(n,0);
   ElementType& c1 = x1c1.entry(n,0);  
+  ElementType& c = xc.entry(n,0);
   RealElementType& tol2 = epsilon2; // current tolerance squared
   bool linearSolve_success;
   for(size_t s=0; s<n_sols; s++) {
@@ -447,7 +470,135 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
       // make prediction
       for(size_t i=0; i<n; i++)   
         C.set_zero(dx.entry(i,0)); // "zero"-th order predictor
+
+      // Runge-Kutta 4th order
+      C.mult(one_half_dc, dc, one_half);
+
+      //copy_complex_array<ComplexField>(n+1,x0t0,xt);
+      for(size_t i=0; i<n+1; i++)   
+        C.set(xc.entry(i,0), x0c0.entry(i,0));
+
+      // dx1
+      /* evaluate_slpHxt(n,xt,Hxt);
+         LHS = Hxt;
+         RHS = Hxt+n*n;
+         //
+         negate_complex_array<ComplexField>(n,RHS);
+         solve_via_lapack_without_transposition(n,LHS,1,RHS,dx1);
+      */
+      mHxt.evaluate(xc,Hxt);
+      MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
+      MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+      MatrixOps::negateInPlace(RHS);
+      //solve LHS*dx1 = RHS
+      linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx1);
+
+      // dx2
+      if (linearSolve_success) { 
+        // multiply_complex_array_scalar<ComplexField>(n,dx1,one_half*(*dt));
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx1.entry(i,0),dx1.entry(i,0),one_half_dc);  
+        // add_to_complex_array<ComplexField>(n,xt,dx1); // x0+.5dx1*dt
+        for(size_t i=0; i<n; i++)   
+          C.add(xc.entry(i,0),xc.entry(i,0),dx1.entry(i,0));  
+        // xt[n] += one_half*(*dt); // t0+.5dt
+        C.add(c,c,one_half_dc); 
+        // evaluate_slpHxt(n,xt,Hxt);
+        mHxt.evaluate(xc,Hxt);
+        // LHS = Hxt; RHS = Hxt+n*n;
+        //negate_complex_array<ComplexField>(n,RHS);
+        MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
+        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatrixOps::negateInPlace(RHS);
+        //solve LHS*dx2 = RHS
+        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx2);
+      }
+
+      // dx3
+      if (linearSolve_success) { 
+        // multiply_complex_array_scalar<ComplexField>(n,dx2,one_half*(*dt));
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx2.entry(i,0),dx2.entry(i,0),one_half_dc);
+        // copy_complex_array<ComplexField>(n,x0t0,xt); // spare t
+        for(size_t i=0; i<n; i++)   
+          C.set(xc.entry(i,0), x0c0.entry(i,0));
+        // add_to_complex_array<ComplexField>(n,xt,dx2); // x0+.5dx2*dt
+        for(size_t i=0; i<n; i++)   
+          C.add(xc.entry(i,0),xc.entry(i,0),dx2.entry(i,0));  
+        // xt[n] += one_half*(*dt); // t0+.5dt (SAME)
+        C.add(c,c,one_half_dc);
+       
+        /* evaluate_slpHxt(n,xt,Hxt);
+           LHS = Hxt;
+           RHS = Hxt+n*n;
+           negate_complex_array<ComplexField>(n,RHS);
+           LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
+        */
+        mHxt.evaluate(xc,Hxt);
+        MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
+        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatrixOps::negateInPlace(RHS);
+        //solve LHS*dx3 = RHS
+        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx3);
+      }
+
+      // dx4
+      if (linearSolve_success) { 
+        // multiply_complex_array_scalar<ComplexField>(n,dx3,*dt);
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx3.entry(i,0),dx3.entry(i,0),dc);
+        // copy_complex_array<ComplexField>(n+1,x0t0,xt);
+        for(size_t i=0; i<n+1; i++)   
+          C.set(xc.entry(i,0), x0c0.entry(i,0));
+        // add_to_complex_array<ComplexField>(n,xt,dx3); // x0+dx3*dt
+        for(size_t i=0; i<n; i++)   
+          C.add(xc.entry(i,0),xc.entry(i,0),dx3.entry(i,0));  
+        // xt[n] += *dt; // t0+dt
+        C.add(c,c,dc);
+        /*
+          evaluate_slpHxt(n,xt,Hxt);
+          LHS = Hxt;
+          RHS = Hxt+n*n;
+          negate_complex_array<ComplexField>(n,RHS);
+          LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
+        */
+        mHxt.evaluate(xc,Hxt);
+        MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
+        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatrixOps::negateInPlace(RHS);
+        //solve LHS*dx4 = RHS
+        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx4);
+      }
       
+      // "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
+      if (linearSolve_success) { 
+        // multiply_complex_array_scalar<ComplexField>(n,dx4,*dt);
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx4.entry(i,0),dx4.entry(i,0),dc);
+        // multiply_complex_array_scalar<ComplexField>(n,dx1,2);
+      
+        // multiply_complex_array_scalar<ComplexField>(n,dx2,4);
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx2.entry(i,0),dx2.entry(i,0),four);
+        // multiply_complex_array_scalar<ComplexField>(n,dx3,2);
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx3.entry(i,0),dx3.entry(i,0),two);
+        // add_to_complex_array<ComplexField>(n,dx4,dx1);
+        for(size_t i=0; i<n; i++)   
+        C.add(dx4.entry(i,0),dx4.entry(i,0),dx1.entry(i,0));
+        // add_to_complex_array<ComplexField>(n,dx4,dx2);
+        for(size_t i=0; i<n; i++)   
+          C.add(dx4.entry(i,0),dx4.entry(i,0),dx2.entry(i,0));
+        // add_to_complex_array<ComplexField>(n,dx4,dx3);
+        for(size_t i=0; i<n; i++)   
+          C.add(dx4.entry(i,0),dx4.entry(i,0),dx3.entry(i,0));
+        // multiply_complex_array_scalar<ComplexField>(n,dx4,1.0/6);
+        // copy_complex_array<ComplexField>(n,dx4,dx);
+        for(size_t i=0; i<n; i++)   
+          C.mult(dx.entry(i,0),dx4.entry(i,0),one_sixth);
+      }
+
+      // update x0c0
       for(size_t i=0; i<n; i++)   
         C.add(x1c1.entry(i,0),x0c0.entry(i,0),dx.entry(i,0));  
       C.add(c1,c0,dc);  
@@ -530,14 +681,20 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   C.clear(c_init);
   C.clear(c_end);
   C.clear(dc);
+  C.clear(one_half_dc);
 
   R.clear(t0);
   R.clear(dt);
   R.clear(one_minus_t0);
-  R.clear(dt_factor);
-  R.clear(one);
   R.clear(dx_norm2);
   R.clear(x_norm2);
+
+  R.clear(one);
+  R.clear(two);
+  R.clear(four);
+  R.clear(six);
+  R.clear(one_half);
+  R.clear(one_sixth);
 
   R.clear(t_step);
   R.clear(dt_min);
