@@ -420,13 +420,14 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     int count = 0; // number of steps
     // track the real segment (1-t)*c0 + t*c1, a\in [0,1]
     while (status == PROCESSING and not t0equals1) {
-      buffer o; 
-      R.elem_text_out(o,t0,true,false,false);
-      std::cout << "t0 = " << o.str();
-      o.reset();
-      C.elem_text_out(o,c0,true,false,false);
-      std::cout << ", c0 = " << o.str() << std::endl;
-
+      if (M2_gbTrace>3) {
+        buffer o; 
+        R.elem_text_out(o,t0,true,false,false);
+        std::cout << "t0 = " << o.str();
+        o.reset();
+        C.elem_text_out(o,c0,true,false,false);
+        std::cout << ", c0 = " << o.str() << std::endl;
+      }
       R.subtract(one_minus_t0,one,t0);
       if (R.compare_elems(dt,one_minus_t0)>0) {
         R.set(dt,one_minus_t0);

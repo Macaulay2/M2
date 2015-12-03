@@ -208,13 +208,10 @@ HS = gateHomotopy(gH,gV,T)
 inp = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{inp},Software=>M2engine)
 peek s
-peek HS
-peek HS#"EHx"
-peek HS#"EHxt"
-peek HS#"EHxH"
 
 NAGtrace 2
 inpCCC = sub(inp,CC_1000) 
 s = first trackHomotopy(HS,{inpCCC},Software=>M2engine)
 peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///
