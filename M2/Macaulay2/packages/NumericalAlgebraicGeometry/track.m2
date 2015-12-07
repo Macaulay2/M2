@@ -763,25 +763,25 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 
      rawSols := if o.Software===M2engine then (
 	 if not (instance(H,GateHomotopy) and H.Software == M2engine) then error "expected a Homotopy with RawHomotopy";  
-	 statusOut := mutableMatrix {{0},{0}}; -- 2 rows (status, number of steps), #solutions columns 
-	 apply(#solsS, sN->(
-		 s := solsS#sN;
-		 inp := mutableMatrix (
-		     if instance(s,Point) 
-		     then {coordinates s | {0}} 
-		     else s || matrix{{0_(ring s)}}
-		     ); 
-		 out := mutableMatrix inp; -- "copy" does not copy!!!
-		 n := numrows out - 1;
-		 out_(n,0) = 1; 
-		 trackHomotopyM2engine(H, inp, 
-		     out, statusOut,
-	     	     o.tStep, o.tStepMin, 
-	     	     o.CorrectorTolerance, o.maxCorrSteps, 
-	     	     toRR o.InfinityThreshold
-	     	     );
-		 s'status := solutionStatusLIST#(statusOut_(0,0));
-		 count := statusOut_(1,0);
+	 statusOut := mutableMatrix(ZZ,2,#solsS); -- 2 rows (status, number of steps), #solutions columns 
+	 inp := mutableMatrix (
+	     transpose apply( solsS, s->(if instance(s,Point) 
+	     	     then coordinates s  
+	     	     else flatten entries s) | {0} )
+	     ); 
+	 out := mutableMatrix inp; -- "copy" does not copy!!!
+	 n = numrows out - 1;
+	 nSols := #solsS;
+	 scan(nSols, i->out_(n,i) = 1); 
+	 trackHomotopyM2engine(H, inp, 
+	     out, statusOut,
+	     o.tStep, o.tStepMin, 
+	     o.CorrectorTolerance, o.maxCorrSteps, 
+	     toRR o.InfinityThreshold
+	     );
+	 apply(nSols, sN->(
+		 s'status := solutionStatusLIST#(statusOut_(0,sN));
+		 count := statusOut_(1,sN);
 		 if DBG > 0 then << (if s'status == Regular then "."
 		    else if s'status == Singular then "S"
 		    else if s'status == MinStepFailure then "M"
@@ -789,8 +789,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    else error "unknown solution status"
 		    ) << if (sN+1)%100 == 0 then endl else flush;
 	       	-- create a solution record 
-		x0 := out^(toList(0..n-1));
-		t0 := out_(n,0);
+		x0 := submatrix(out,toList(0..n-1),{sN});
+		t0 := out_(n,sN);
 		{x0,
 		    SolutionStatus => s'status, 
 		    NumberOfSteps => count,

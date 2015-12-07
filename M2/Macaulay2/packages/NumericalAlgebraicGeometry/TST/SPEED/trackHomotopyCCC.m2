@@ -1,4 +1,3 @@
-restart
 debug needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -13,9 +12,14 @@ gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 
 HS = gateHomotopy(gH,gV,T)
-inp = matrix(CC_1000,{{1,1,-1,-1},{1,-1,1,-1}})
+prec = 10000
+inp = matrix(CC_prec,{{1,1,-1,-1},{1,-1,1,-1}})
 s = trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
 peek s
 assert (norm evaluateH(HS, transpose matrix first s, 1) < 1e-6)
 
-elapsedTime for i to 100 do trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
+elapsedTime for i to 1000 do trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
+
+end
+restart
+load "NumericalAlgebraicGeometry/TST/SPEED/trackHomotopyCCC.m2"

@@ -194,7 +194,7 @@ inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, Mu
                      gmp_RR infinity_threshold
                    ) 
 {
-  std::cout << "inside HomotopyConcrete<M2::ARingCC>::track" << std::endl;
+  // std::cout << "inside HomotopyConcrete<M2::ARingCC>::track" << std::endl;
   // double the_smallest_number = 1e-13;
   const Ring* R = inputs->get_ring();
   if (outputs->get_ring()!= R) { 
@@ -316,7 +316,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
                    ) 
 {
   typedef M2::ARingCCC RT;
-  std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
+  //std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
   // double the_smallest_number = 1e-13;
   const Ring* matRing = inputs->get_ring();
   if (outputs->get_ring()!= matRing) { 
@@ -443,7 +443,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
     int count = 0; // number of steps
     // track the real segment (1-t)*c0 + t*c1, a\in [0,1]
     while (status == PROCESSING and not t0equals1) {
-      if (M2_gbTrace>3) {
+      if (M2_numericalAlgebraicGeometryTrace>3) {
         buffer o; 
         R.elem_text_out(o,t0,true,false,false);
         std::cout << "t0 = " << o.str();

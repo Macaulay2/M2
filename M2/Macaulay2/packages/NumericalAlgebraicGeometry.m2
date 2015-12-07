@@ -505,7 +505,7 @@ selectUnique List := o -> sols ->(
      )
  
 NAGtrace = method()
-NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
+NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- conjugate all entries of the matrix (should be a part of M2!!!)
 conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
