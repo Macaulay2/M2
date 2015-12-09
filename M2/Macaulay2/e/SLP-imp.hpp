@@ -181,10 +181,10 @@ Homotopy* SLEvaluatorConcrete<RT>::createHomotopy(SLEvaluator* Hxt, SLEvaluator*
     ERROR("expected SLEvaluators in the same ring");
     return nullptr;
   } 
-  return new HomotopyConcrete<RT>(*this, *castHxt, *castHxH);
+  return new HomotopyConcrete< RT, typename HomotopyAlgorithm<RT>::Algorithm >(*this, *castHxt, *castHxH);
 }
 
-
+/*
 template <> 
 inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      MutableMatrix* output_extras,  
@@ -216,7 +216,7 @@ inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, Mu
   double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
   double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
   double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
-  /*
+  
   for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
     t_s->make(n,s_s); // cook a Solution
     t_s->status = PROCESSING;
@@ -283,10 +283,10 @@ inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, Mu
       t_s->status = REGULAR;
     }
   }
-  */
 
   return true;
 }
+*/
 
 template <typename RT>
 inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& result)
@@ -306,8 +306,8 @@ inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& res
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
 
 // ****************************** XXX **************************************************
-template <> 
-inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+template <typename RT> 
+bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
@@ -315,8 +315,8 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
                      gmp_RR infinity_threshold
                    ) 
 {
-  typedef M2::ARingCCC RT;
-  //std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
+  // typedef M2::ARingCCC RT;
+  // std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
   // double the_smallest_number = 1e-13;
   const Ring* matRing = inputs->get_ring();
   if (outputs->get_ring()!= matRing) { 
@@ -355,7 +355,7 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   }
   
   const RT& C = in.ring();  
-  RT::RealRingType R = C.real_ring();  
+  typename RT::RealRingType R = C.real_ring();  
 
   typedef typename RT::ElementType ElementType;
   typedef typename RT::RealRingType::ElementType RealElementType;
@@ -703,16 +703,20 @@ inline bool HomotopyConcrete<M2::ARingCCC>::track(const MutableMatrix* inputs, M
   return true;
 }
 
+template <typename RT, typename Algorithm>
+bool HomotopyConcrete< RT, Algorithm >::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                                              MutableMatrix* output_extras,  
+                                              gmp_RR init_dt, gmp_RR min_dt,
+                                              gmp_RR epsilon, // o.CorrectorTolerance,
+                                              int max_corr_steps, 
+                                              gmp_RR infinity_threshold
+                                              )
+{
+  ERROR("track: not implemented for this type of ring");
+  return false;  
+}
 
-
-
-
-
-
-
-
-
-
+/*
 template <typename RT> 
 bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      MutableMatrix* output_extras,  
@@ -739,19 +743,19 @@ bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* out
     ERROR("outputs: expected a dense mutable matrix");
     return false;
   }
-  /*
-  double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
-  double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
-  double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
-  double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
-  */
+  
   return true;
 }
+*/
 
+template<typename RT, typename Algorithm>
+void HomotopyConcrete<RT, Algorithm>::text_out(buffer& o) const { 
+  o << "HomotopyConcrete<...,...> : track not implemented" << newline; 
+}
 
 template<typename RT>
-void HomotopyConcrete<RT>::text_out(buffer& o) const { 
-  o << "HomotopyConcrete(Hx = ";
+void HomotopyConcrete<RT, FixedPrecisionHomotopyAlgorithm>::text_out(buffer& o) const { 
+  o << "HomotopyConcrete<...,fixed precision>(Hx = ";
   mHx.text_out(o);
   o << ", Hxt = ";
   mHxt.text_out(o);

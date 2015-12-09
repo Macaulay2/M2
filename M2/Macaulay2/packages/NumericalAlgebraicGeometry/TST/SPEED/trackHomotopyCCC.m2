@@ -12,7 +12,7 @@ gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 
 HS = gateHomotopy(gH,gV,T)
-prec = 10000
+prec = 1000
 inp = matrix(CC_prec,{{1,1,-1,-1},{1,-1,1,-1}})
 s = trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
 peek s

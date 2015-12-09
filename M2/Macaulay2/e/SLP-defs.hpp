@@ -43,6 +43,33 @@ public:
 
 class Homotopy;
 
+class TrivialHomotopyAlgorithm {};
+class FixedPrecisionHomotopyAlgorithm {};
+class VariablePrecisionHomotopyAlgorithm {};
+
+template <typename RT> 
+struct HomotopyAlgorithm {
+  typedef TrivialHomotopyAlgorithm Algorithm; 
+};
+template<>
+struct HomotopyAlgorithm<M2::ARingCC> {
+  typedef FixedPrecisionHomotopyAlgorithm Algorithm; 
+};
+template<>
+struct HomotopyAlgorithm<M2::ARingCCC> {
+  typedef FixedPrecisionHomotopyAlgorithm Algorithm; 
+};
+/*
+template<>
+struct HomotopyAlgorithm<M2::ARingRR> {
+  typedef FixedPrecisionHomotopyAlgorithm Algorithm; 
+};
+template<>
+struct HomotopyAlgorithm<M2::ARingRRR> {
+  typedef FixedPrecisionHomotopyAlgorithm Algorithm; 
+};
+*/
+
 class SLEvaluator {
 public:
   virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
@@ -96,8 +123,33 @@ public:
   virtual void text_out(buffer& o) const = 0;
 };
 
-template<typename RT>
+template<typename RT, typename Algorithm>
 class HomotopyConcrete : public Homotopy {
+public:
+  typedef SLEvaluatorConcrete<RT> EType;
+  HomotopyConcrete(EType &Hx, 
+           EType &Hxt, 
+           EType &HxH) : mHx(Hx), mHxt(Hxt), mHxH(HxH) { }
+  /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
+     outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
+     output_extras: the first row gives the status of the solutions (or path) */
+  bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
+                     MutableMatrix* output_extras,  
+                     gmp_RR init_dt, gmp_RR min_dt,
+                     gmp_RR epsilon, // o.CorrectorTolerance,
+                     int max_corr_steps, 
+                     gmp_RR infinity_threshold
+                     );
+  void text_out(buffer& o) const;
+private:
+  EType &mHx, &mHxt, &mHxH;
+  // struct Evaluators {SLEvaluator *mHx, *mHxt, *mHxH;};
+  // std::vector<Evaluators> mE; // a vector of evaluators increasing in precision 
+  // std::vector<Ring*> mR; // a vector of available rings (corresponding to mE?)
+};
+
+template<typename RT>
+class HomotopyConcrete<RT,FixedPrecisionHomotopyAlgorithm> : public Homotopy {
 public:
   typedef SLEvaluatorConcrete<RT> EType;
   HomotopyConcrete(EType &Hx, 
