@@ -12,13 +12,19 @@ gV = matrix{{X,Y}}
 gH = transpose matrix {H}
 
 HS = gateHomotopy(gH,gV,T)
-prec = 1000
+prec = 53
 inp = matrix(CC_prec,{{1,1,-1,-1},{1,-1,1,-1}})
 s = trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
 peek s
 assert (norm evaluateH(HS, transpose matrix first s, 1) < 1e-6)
 
 elapsedTime for i to 1000 do trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine)
+
+NAGtrace 3
+inp1 = matrix(CC_prec,{{1,1,-1,-1},{1,-1,1,-1}})
+inp = matrix {toList(1000:inp1)}
+elapsedTime  s = trackHomotopy(HS,apply(numColumns inp,i->inp_{i}),Software=>M2engine);
+
 
 end
 restart

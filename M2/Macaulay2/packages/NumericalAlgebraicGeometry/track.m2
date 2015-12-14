@@ -773,12 +773,12 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	 n = numrows out - 1;
 	 nSols := #solsS;
 	 scan(nSols, i->out_(n,i) = 1); 
-	 trackHomotopyM2engine(H, inp, 
+	 ti'out := timing trackHomotopyM2engine(H, inp, 
 	     out, statusOut,
 	     o.tStep, o.tStepMin, 
 	     o.CorrectorTolerance, o.maxCorrSteps, 
-	     toRR o.InfinityThreshold
-	     );
+	     toRR o.InfinityThreshold);
+	 if DBG>2 then << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
 	 apply(nSols, sN->(
 		 s'status := solutionStatusLIST#(statusOut_(0,sN));
 		 count := statusOut_(1,sN);
