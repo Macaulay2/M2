@@ -142,6 +142,24 @@ export rawSLEvaluator(e:Expr):Expr := (
      );
 setupfun("rawSLEvaluator",rawSLEvaluator);
 
+export rawSLEvaluatorSpecialize(e:Expr):Expr := (
+     when e is s:Sequence do
+       if length(s) != 2 then WrongNumArgs(2)
+       else when s.0 is H:RawSLEvaluatorCell do 
+	    when s.1 is parameters:RawMutableMatrixCell do 
+	    toExpr(Ccode(RawSLEvaluatorOrNull,
+		    	 "rawSLEvaluatorSpecialize(",
+			 H.p, ",",
+			 parameters.p,
+		    	 ")"
+		    	 ))
+	    else  WrongArg(2, "a raw mutable matrix")
+	    else  WrongArg(1, "a raw homtopy")
+     else WrongNumArgs(2)
+     );
+setupfun("rawSLEvaluatorSpecialize",rawSLEvaluatorSpecialize);
+
+
 export rawSLEvaluatorEvaluate(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3)

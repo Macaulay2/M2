@@ -19,10 +19,20 @@ debug SLPexpressions
 GateHomotopy = new Type of Homotopy    
 GateParameterHomotopy = new Type of ParameterHomotopy
 
+canHaveRawHomotopy = method()
+canHaveRawHomotopy Thing := T -> false 
+canHaveRawHomotopy GateHomotopy := H -> H.Software == M2engine
+canHaveRawHomotopy SpecializedParameterHomotopy := H -> canHaveRawHomotopy H.ParameterHomotopy.GateHomotopy
+
 debug Core
-makeRawHomotopy = method() 
-makeRawHomotopy(GateHomotopy,Ring) := (GH,K) -> -- (GH#"EHx",GH#"EHt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
+getRawHomotopy = method() 
+getRawHomotopy(GateHomotopy,Ring) := (GH,K) -> if GH#?K then GH#K else GH#K = --(GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
     rawHomotopy(rawSLEvaluatorK(GH#"EHx",K),rawSLEvaluatorK(GH#"EHxt",K),rawSLEvaluatorK(GH#"EHxH",K)) 
+getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else (
+    GH := H.ParameterHomotopy.GateHomotopy;
+    paramsK := raw mutableMatrix promote(H.Parameters,K);
+    H#K = (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
+    )
 gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
@@ -124,6 +134,7 @@ assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
 TEST ///-- Homotopy
+restart
 needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -163,9 +174,11 @@ HS = gateHomotopy(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2engine)
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 ///
 
 TEST /// -- ParameterHomotopy
+restart
 needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
@@ -185,6 +198,9 @@ PHS = gateHomotopy(gH,gV,T,Parameters=>gP)
 HS = specialize(PHS,matrix{{1_CC}})
 x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
+peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+s = first trackHomotopy(HS,{x0},Software=>M2engine)
 peek s
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///

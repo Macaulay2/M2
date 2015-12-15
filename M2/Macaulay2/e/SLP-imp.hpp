@@ -14,25 +14,66 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  
   ERROR("not implemented");
 }    
 
+//copy constructor
+template<typename RT>
+SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
+  : mRing(a.ring()), values(a.values.size())   
+{
+  slp = a.slp;
+  varsPos = a.varsPos;
+  for(auto i=values.begin(), j=a.values.begin(); i!=values.end(); ++i,++j)
+    ring().init_set(*i,*j);
+}
+
+template<typename RT>
+SLEvaluatorConcrete<RT>::~SLEvaluatorConcrete()
+{
+  for(auto v : values) 
+    ring().clear(v);
+}
+
 template<typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, 
 					     const MutableMat< DMat<RT> >* consts /* DMat<RT>& DMat_consts */)
   : mRing(consts->getMat().ring())    
 {
+  if (consts->n_rows() != 1 || consts->n_cols() != cPos->len)
+    ERROR("1-row matrix expected; or numbers of constants don't match");
   slp = SLP;
-  // std::cout << "in SLEvaluator::SLEvaluator" << std::endl;
-  for(int i=0; i<cPos->len; i++) 
-    constsPos.push_back(slp->inputCounter+cPos->array[i]);
+  // for(int i=0; i<cPos->len; i++) 
+  //  constsPos.push_back(slp->inputCounter+cPos->array[i]);
   for(int i=0; i<vPos->len; i++) 
     varsPos.push_back(slp->inputCounter+vPos->array[i]);
-  if (consts->n_rows() != 1 || consts->n_cols() != constsPos.size())
-    ERROR("1-row matrix expected; or numbers of constants don't match");
   values.resize(slp->inputCounter+slp->mNodes.size());
   for(auto i=values.begin(); i!=values.end(); ++i)
     ring().init(*i);
-  R = consts->get_ring();
-  for (int i=0; i<constsPos.size(); i++) 
-    ring().set(values[constsPos[i]],consts->getMat().entry(0,i));
+  // R = consts->get_ring();
+  for (int i=0; i<cPos->len; i++) 
+    ring().set(values[slp->inputCounter+cPos->array[i]],consts->getMat().entry(0,i));
+}
+
+template<typename RT>
+SLEvaluator* SLEvaluatorConcrete<RT>::specialize(const MutableMatrix* parameters) const
+{
+  auto p = dynamic_cast<const MutableMat< DMat<RT> >*>(parameters);
+  if (p == nullptr) { 
+    ERROR("specialize: expected a dense mutable matrix");
+    return nullptr;
+  }
+  return specialize(p);
+}
+
+template<typename RT>
+SLEvaluator* SLEvaluatorConcrete<RT>::specialize(const MutableMat< DMat<RT> >* parameters) const
+{
+  if (parameters->n_cols() != 1 || parameters->n_rows() > varsPos.size())
+    ERROR("1-column matrix expected; or #parameters > #vars");  
+  auto *e = new SLEvaluatorConcrete<RT>(*this);
+  size_t nParams = parameters->n_rows();
+  for (int i=0; i<nParams; ++i) 
+    ring().set(e->values[varsPos[i]],parameters->getMat().entry(i,0));
+  e->varsPos.erase(e->varsPos.begin(),e->varsPos.begin()+nParams);
+  return e;
 }
 
 
@@ -69,55 +110,11 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
     break;
   default: ERROR("unknown node type");
   }
-  /*  
-  ElementType v;
-  switch (*nIt++) {
-  case SLProgram::MProduct:
-    v = R->one();
-    for (int i=0; i<*numInputsIt; i++)
-      R->mult_to(v,values[ap(*inputPositionsIt++)]);
-    numInputsIt++;
-    break;
-  case SLProgram::MSum:
-    v = R->zero();
-    for (int i=0; i<*numInputsIt; i++)
-      R->add_to(v,values[ap(*inputPositionsIt++)]);
-    numInputsIt++;
-    break;
-  case SLProgram::Det:
-    {
-      int n = static_cast<int>(sqrt(*numInputsIt++));
-      FreeModule* S = R->make_FreeModule(n);
-      MatrixConstructor mat(S,S);
-      for (int i=0; i<n; i++)
-        for (int j=0; j<n; j++)
-          mat.set_entry(i,j,values[ap(*inputPositionsIt++)]);
-      MutableMatrix* M = MutableMatrix::from_matrix(mat.to_matrix(), true); 
-      v = M->determinant()->get_value();
-      delete M;
-    }
-    break;
-  case SLProgram::Divide:
-    v = values[ap(*inputPositionsIt++)];
-    v = R->divide(v,values[ap(*inputPositionsIt++)]);
-    break;
-  default: ERROR("unknown node type");
-  }
-  *vIt = v;
-  */  
 }
 
 template<typename RT>
 bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatrix* outputs)
 {
-  if (R != inputs->get_ring()) { 
-    ERROR("inputs are in a different ring");
-    return false;
-  }
-  if (R != outputs->get_ring()) { 
-    ERROR("outputs are in a different ring");
-    return false;
-  }
   auto inp = dynamic_cast<const MutableMat< DMat<RT> >*>(inputs);
   auto out = dynamic_cast<MutableMat< DMat<RT> >*>(outputs);
   if (inp == nullptr) { 
@@ -126,6 +123,14 @@ bool SLEvaluatorConcrete<RT>::evaluate(const MutableMatrix* inputs, MutableMatri
   }
   if (out == nullptr) { 
     ERROR("outputs: expected a dense mutable matrix");
+    return false;
+  }
+  if (&ring() != &inp->getMat().ring()) { 
+    ERROR("inputs are in a different ring");
+    return false;
+  }
+  if (&ring() != &out->getMat().ring()) { 
+    ERROR("outputs are in a different ring");
     return false;
   }
   
@@ -184,109 +189,6 @@ Homotopy* SLEvaluatorConcrete<RT>::createHomotopy(SLEvaluator* Hxt, SLEvaluator*
   return new HomotopyConcrete< RT, typename HomotopyAlgorithm<RT>::Algorithm >(*this, *castHxt, *castHxH);
 }
 
-/*
-template <> 
-inline bool HomotopyConcrete<M2::ARingCC>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     MutableMatrix* output_extras,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold
-                   ) 
-{
-  // std::cout << "inside HomotopyConcrete<M2::ARingCC>::track" << std::endl;
-  // double the_smallest_number = 1e-13;
-  const Ring* R = inputs->get_ring();
-  if (outputs->get_ring()!= R) { 
-    ERROR("outputs and inputs are in different rings");
-    return false;
-  }
-  auto inp = dynamic_cast<const MutableMat< DMat<M2::ARingCC> >*>(inputs);
-  auto out = dynamic_cast<MutableMat< DMat<M2::ARingCC> >*>(outputs);
-  if (inp == nullptr) { 
-    ERROR("inputs: expected a dense mutable matrix");
-    return false;
-  }
-  if (out == nullptr) { 
-    ERROR("outputs: expected a dense mutable matrix");
-    return false;
-  }
-
-  double t_step = mpfr_get_d(init_dt,GMP_RNDN); // initial step
-  double dt_min_dbl = mpfr_get_d(min_dt,GMP_RNDN);
-  double epsilon2 = mpfr_get_d(epsilon,GMP_RNDN); epsilon2 *= epsilon2; //epsilon^2
-  double infinity_threshold2 = mpfr_get_d(infinity_threshold,GMP_RNDN); infinity_threshold2 *= infinity_threshold2;
-  
-  for(int sol_n =0; sol_n<n_sols; sol_n++, s_s+=n, t_s++) {
-    t_s->make(n,s_s); // cook a Solution
-    t_s->status = PROCESSING;
-    bool end_zone = false;
-    double tol2 = epsilon2; // current tolerance squared, will change in end zone
-    copy_complex_array<ComplexField>(n,s_s,x0);
-    *t0 = complex(0,0);
-
-    *dt = complex(t_step);
-    int predictor_successes = 0;
-    int count = 0; // number of steps
-    while (t_s->status == PROCESSING && 1 - t0->getreal() > the_smallest_number) {
-      if (dt->getreal() > 1 - t0->getreal() )
-        *dt = complex(1);
-  
-      // PREDICTOR in: x0t0,dt,pred_type
-      //           out: dx
-
-      // make prediction
-      copy_complex_array<ComplexField>(n+1,x0t0,x1t1);
-      //      add_to_complex_array<ComplexField>(n+1,x1t1,dxdt);
-
-      // CORRECTOR
-      int n_corr_steps = 0;
-      bool is_successful;
-      do {
-        n_corr_steps++;
-        //
-        evaluate_slpHxH(n,x1t1,HxH);
-        LHS = HxH;
-        RHS = HxH+n*n; // i.e., H
-        //
-        negate_complex_array<ComplexField>(n,RHS);
-        LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx);
-        add_to_complex_array<ComplexField>(n,x1t1,dx);
-        is_successful = norm2_complex_array<ComplexField>(n,dx) < tol2*norm2_complex_array<ComplexField>(n,x1t1);
-      } while (!is_successful and n_corr_steps<max_corr_steps);
-
-      if (!is_successful) {
-        // predictor failure
-        predictor_successes = 0;
-        *dt = complex(dt_decrease_factor_dbl)*(*dt);
-        if (dt->getreal() < dt_min_dbl)
-          t_s->status = MIN_STEP_FAILED;
-      } else {
-        // predictor success
-        predictor_successes = predictor_successes + 1;
-        copy_complex_array<ComplexField>(n+1, x1t1, x0t0);
-        count++;
-        if (is_successful && predictor_successes >= num_successes_before_increase) {
-          predictor_successes = 0;
-          *dt  = complex(dt_increase_factor_dbl)*(*dt);
-        }
-      }
-      if (norm2_complex_array<ComplexField>(n,x0) > infinity_threshold2)
-        t_s->status = INFINITY_FAILED;
-      if (!LAPACK_success)
-        t_s->status = SINGULAR;
-    }
-    // record the solution
-    copy_complex_array<ComplexField>(n, x0, t_s->x);
-    t_s->t = t0->getreal();
-    if (t_s->status == PROCESSING)
-      t_s->status = REGULAR;
-    }
-  }
-
-  return true;
-}
-*/
 
 template <typename RT>
 inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& result)
@@ -638,6 +540,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         // predictor failure
         predictor_successes = 0;
         R.mult(dt,dt,dt_factor);
+        t0equals1 = false;
         if (R.compare_elems(dt,dt_min)<0)
           status = MIN_STEP_FAILED;
       } else {
@@ -715,38 +618,6 @@ bool HomotopyConcrete< RT, Algorithm >::track(const MutableMatrix* inputs, Mutab
   ERROR("track: not implemented for this type of ring");
   return false;  
 }
-
-/*
-template <typename RT> 
-bool HomotopyConcrete<RT>::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     MutableMatrix* output_extras,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold
-                   ) 
-{
-  std::cout << "inside HomotopyConcrete<RT>::track" << std::endl;
-  // double the_smallest_number = 1e-13;
-  const Ring* R = inputs->get_ring();
-  if (outputs->get_ring()!= R) { 
-    ERROR("outputs and inputs are in different rings");
-    return false;
-  }
-  auto inp = dynamic_cast<const MutableMat< DMat< RT > >*>(inputs);
-  auto out = dynamic_cast<MutableMat< DMat< RT > >*>(outputs);
-  if (inp == nullptr) { 
-    ERROR("inputs: expected a dense mutable matrix");
-    return false;
-  }
-  if (out == nullptr) { 
-    ERROR("outputs: expected a dense mutable matrix");
-    return false;
-  }
-  
-  return true;
-}
-*/
 
 template<typename RT, typename Algorithm>
 void HomotopyConcrete<RT, Algorithm>::text_out(buffer& o) const { 

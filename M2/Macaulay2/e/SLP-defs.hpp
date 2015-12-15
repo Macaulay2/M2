@@ -72,13 +72,15 @@ struct HomotopyAlgorithm<M2::ARingRRR> {
 
 class SLEvaluator {
 public:
+  virtual ~SLEvaluator() {}
+  virtual SLEvaluator* specialize(const MutableMatrix* parameters) const = 0;
   virtual bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs) = 0;
   virtual void text_out(buffer& o) const = 0;
   virtual Homotopy* createHomotopy(SLEvaluator* Hxt, SLEvaluator* HxH) = 0;
 protected:
   int ap(int rp) { return rp+slp->inputCounter; } // absolute position
   SLProgram* slp;
-  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of consts in mValues (slp.inputCounter + rel position) 
+  //  std::vector<SLProgram::GATE_POSITION> constsPos; // absolute position of consts in mValues (slp.inputCounter + rel position) 
   std::vector<SLProgram::GATE_POSITION> varsPos; // the rest of inputs with neg rel position
   std::vector<SLProgram::GATE_TYPE>::iterator nIt; // slp nodes
   std::vector<SLProgram::GATE_SIZE>::iterator numInputsIt; 
@@ -89,11 +91,14 @@ template<typename RT>
 class SLEvaluatorConcrete : public SLEvaluator
 {
 public:
-  // SLEvaluatorConcrete(const SLEvaluator* e); 
+  SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>&); //copy constructor
   SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
 		      const MutableMat< DMat<RT> >* consts /*const DMat<RT>& DMat_consts */);
   SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, 
 		      const MutableMat< SMat<RT> >* consts /*const SMat<RT>& consts*/);
+  ~SLEvaluatorConcrete();
+  SLEvaluator* specialize(const MutableMatrix* parameters) const;
+  SLEvaluator* specialize(const MutableMat< DMat<RT> >* parameters) const;
   const RT& ring() const { return mRing; }
   bool evaluate(const MutableMatrix* inputs, MutableMatrix* outputs);
   bool evaluate(const DMat<RT>& inputs, DMat<RT>& outputs);
@@ -104,12 +109,12 @@ private:
   //typedef ring_elem ElementType; 
   typedef typename RT::ElementType ElementType; 
   void computeNextNode();
-  const Ring* R;
+  // const Ring* R;
+  const RT& mRing;
   std::vector<ElementType> values; /* should be a vector of values 
                               starting with inputCounter many vars and consts and 
                               continuing with the values of other GATEs */  
   typename std::vector<ElementType>::iterator vIt; // values
-  const RT& mRing;
 };
 
 class Homotopy {
@@ -127,12 +132,14 @@ template<typename RT, typename Algorithm>
 class HomotopyConcrete : public Homotopy {
 public:
   typedef SLEvaluatorConcrete<RT> EType;
+
   HomotopyConcrete(EType &Hx, 
            EType &Hxt, 
            EType &HxH) : mHx(Hx), mHxt(Hxt), mHxH(HxH) { }
   /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
      output_extras: the first row gives the status of the solutions (or path) */
+
   bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
                      MutableMatrix* output_extras,  
                      gmp_RR init_dt, gmp_RR min_dt,

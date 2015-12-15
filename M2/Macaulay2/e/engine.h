@@ -1973,6 +1973,7 @@ enum gbTraceValues
 
   Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
   SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
+  SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);
   SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
   M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);

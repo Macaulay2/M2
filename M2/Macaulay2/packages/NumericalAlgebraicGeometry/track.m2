@@ -648,8 +648,7 @@ trackHomotopyM2engine = (H, inp,
     if K =!= ring out then error "inp and out have to have the same ring";
     inpK := inp;
     outK := out;
-    if not H#?K then H#K = makeRawHomotopy(H,K);
-    rawHomotopyTrack(H#K, raw inpK, 
+    rawHomotopyTrack(getRawHomotopy(H,K), raw inpK, 
 	raw outK, raw statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
@@ -762,12 +761,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 if not (instance(H,GateHomotopy) and H.Software == M2engine) then error "expected a Homotopy with RawHomotopy";  
+	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision
+	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
 	 statusOut := mutableMatrix(ZZ,2,#solsS); -- 2 rows (status, number of steps), #solutions columns 
 	 inp := mutableMatrix (
 	     transpose apply( solsS, s->(if instance(s,Point) 
 	     	     then coordinates s  
-	     	     else flatten entries s) | {0} )
+	     	     else flatten entries s) | {0_mainRing} )
 	     ); 
 	 out := mutableMatrix inp; -- "copy" does not copy!!!
 	 n = numrows out - 1;

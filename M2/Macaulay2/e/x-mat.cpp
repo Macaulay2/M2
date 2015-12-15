@@ -743,6 +743,10 @@ SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos,
   return consts->createSLEvaluator(SLP,constsPos,varsPos);
 }
 
+SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator *H, const MutableMatrix *parameters) {
+  return H->specialize(parameters);
+}
+
 M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs) {
   return sle->evaluate(inputs,outputs);
 }
