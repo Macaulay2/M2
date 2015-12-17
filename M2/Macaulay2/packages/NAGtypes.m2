@@ -233,6 +233,8 @@ point Matrix := M -> point {flatten entries M}
 toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
+Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
+
 
 coordinates = method()
 coordinates Point := p -> p.Coordinates
@@ -481,9 +483,11 @@ groupClusters MutableHashTable := H -> (
 
 solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
 solutionsWithMultiplicity List := o-> sols -> ( 
-    sorted := sortSolutions(sols,o);
+    -- time sorted' := sortSolutions(sols,o);
+    time sorted := sort sols;
+    -- assert(sorted == sorted');
     i := 0; 
-    while i<#sorted list (
+    time while i<#sorted list (
 	si := sorted#i;
 	si.Multiplicity = 1;
 	j := i + 1;

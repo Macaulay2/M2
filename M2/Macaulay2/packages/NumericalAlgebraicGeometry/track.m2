@@ -778,7 +778,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     o.tStep, o.tStepMin, 
 	     o.CorrectorTolerance, o.maxCorrSteps, 
 	     toRR o.InfinityThreshold);
-	 if DBG>2 then << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
+	 --if DBG>2 then 
+	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
 	 apply(nSols, sN->(
 		 s'status := solutionStatusLIST#(statusOut_(0,sN));
 		 count := statusOut_(1,sN);
