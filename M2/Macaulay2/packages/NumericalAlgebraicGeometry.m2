@@ -303,7 +303,7 @@ checkCCpolynomials (List,List) := (S,T) -> (
 toCCpolynomials = method()
 toCCpolynomials (List,ZZ) := (F,prec) -> (
     checkCCpolynomials F;
-    R := CC_prec(monoid[gens ring first F]);
+    R := CC_prec(monoid[gens commonRing F]);
     apply(F,f->sub(f,R)) 
     )    
 
@@ -322,14 +322,14 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
-     R := ring first T;
+     R := commonRing T;
      h := symbol h;
      Rh := (coefficientRing R)[gens R | {h}]; 
      apply(T, f->homogenize(sub(f,Rh), h))
      )
 dehomogenizeSystem = method(TypicalValue => List)
 dehomogenizeSystem List := List => T -> (
-     Rh := ring first T;
+     Rh := commonRing T;
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
@@ -342,7 +342,7 @@ totalDegreeStartSystem List := Sequence => T -> (
 -- OUT: (S,solsS}, where 
 --      S     = list of polynomials, 
 --      solsS = list of sequences
-     R := ring first T;
+     R := commonRing T;
      if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
      n := #T;
      if n != numgens R then (
