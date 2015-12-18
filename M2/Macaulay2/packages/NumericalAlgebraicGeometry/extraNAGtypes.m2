@@ -93,17 +93,42 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
--- !!! DUMMY engine function
-specializeRawHomotopy = (H,M) -> H 
-
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
     SPH := new SpecializedParameterHomotopy;                                                                                                                  
     SPH.ParameterHomotopy = PH;                                                                                                                               
     SPH.Parameters = M;                                                                                                                                       
-    if PH#?"RawHomotopy" then SPH#"RawHomotopy" = specializeRawHomotopy(PH#"RawHomotopy",M);
     SPH                                                                                                                                                       
     ) 
+
+getVarGates = method()
+getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
+ 
+gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else (
+    S := F.PolyMap;
+    R := ring S; 
+    X := getVarGates R;
+    -- monoms := flatten entries monomials S;
+    polys := flatten entries S;
+    F.GateMatrix = gateMatrix apply(polys, p->sum(listForm p,mc->(
+		(m,c) := mc;
+		{c*product(#m,i->X#i^(m#i))}
+		)))
+    )
+
+TEST ///
+needsPackage "NumericalAlgebraicGeometry"
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+debug SLPexpressions
+debug NumericalAlgebraicGeometry
+gS = gateMatrix S
+p = point {{1.0+3*ii,2.3+ii}};
+X = getVarGates ring S
+vals = valueHashTable(X, coordinates p)
+assert(evaluate(S,p) == value(gS,vals))
+assert(evaluate(jacobian S, p)== value(diff(matrix{X},gS),vals))
+///
 
 -------------------------------------------------------
 -- trackHomotopy tests

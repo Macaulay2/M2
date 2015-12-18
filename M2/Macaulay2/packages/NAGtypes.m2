@@ -704,7 +704,7 @@ check NumericalVariety := o-> V -> (
 ---------------------------------------------
 checkCCpolynomials = method()
 checkCCpolynomials List := F -> (    
-    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if #F > 0 then R := commonRing F else error "expected a nonempty list of polynomials";
     if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
     coeffR := coefficientRing R; 
     if not(
