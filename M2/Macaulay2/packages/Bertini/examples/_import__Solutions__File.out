@@ -1,0 +1,42 @@
+-- -*- M2-comint -*- {* hash: 307369936 *}
+
+i1 : R=QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : makeB'InputFile(storeBM2Files,
+         AVG=>{{x,y}},
+         B'Polynomials=>{x^2-1,y^3-1})
+
+o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62271-0/0/input
+
+o2 : File
+
+i3 : runBertini(storeBM2Files)
+bertini
+
+i4 : importSolutionsFile(storeBM2Files)
+
+o4 = {{1, 1}, {1, -.5+.866025*ii}, {1, -.5-.866025*ii}, {-1, 1}, {-1,
+     ------------------------------------------------------------------------
+     -.5+.866025*ii}, {-1, -.5-.866025*ii}}
+
+o4 : List
+
+i5 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+
+o5 = {{1, 1}, {-1, 1}}
+
+o5 : List
+
+i6 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
+
+o6 = {{1, 1}, {1, -.5+.866025*ii}, {1, -.5-.866025*ii}, {-1, 1}, {-1,
+     ------------------------------------------------------------------------
+     -.5+.866025*ii}, {-1, -.5-.866025*ii}}
+
+o6 : List
+
+i7 : 

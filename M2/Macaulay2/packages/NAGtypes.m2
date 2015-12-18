@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.6.0.1",
-     Date => "June, 2013",
+     Version => "1.8",
+     Date => "Oct, 2015",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -38,6 +38,8 @@ export {
      "MaxPrecision", "WindingNumber", "DeflationNumber",
      "Regular", "Singular", "Infinity", 
      "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
+     -- point sets 
+     "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
      "ContinuationParameter", "SpecializationRing",
@@ -228,6 +230,7 @@ point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
+toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 
@@ -357,6 +360,55 @@ assert areEqual(
     )
 ///
 
+PointSet = new Type of HashTable
+pointSet = method()
+pointSet Thing := L -> (
+    if not instance(L,List) and not instance(L,Set) then error "a list/set is expected"; 
+    LL := toList L;
+    if not all(LL, x->instance(x,Point)) then error "a list/set of Points is expected"; 
+    S := solutionsWithMultiplicity LL;
+    new PointSet from apply(#S, i->((S#i).Multiplicity=1; i=>S#i))	 
+    ) 
+net PointSet := P -> net values P
+
+areEqual (PointSet,PointSet) := o-> (a,b) -> areEqual(values a, values b, o)
+PointSet == PointSet := (A,B) -> areEqual(A,B)
+
+unionPointSet = method(Options=>{Tolerance=>1e-6})
+unionPointSet (PointSet,PointSet) := o -> (A,B) -> (
+    S := solutionsWithMultiplicity(values A | values B, Tolerance=>o.Tolerance); 
+    new PointSet from apply(#S, i->((S#i).Multiplicity=1; i=>S#i))	 
+    )
+PointSet + PointSet := (A,B) -> unionPointSet(A,B)  
+PointSet - PointSet := (A,B) -> differencePointSet(A,B)
+differencePointSet = method(Options=>{Tolerance=>1e-6})
+differencePointSet (PointSet,PointSet) := o -> (A,B) -> (
+    D := new MutableHashTable;
+    i := 0; 
+    j := 0;
+    c := 0;
+    while i<#A and j<#B do (
+	a := isGEQ(A#i,B#j,Tolerance=>o.Tolerance);
+	if not a then (D#c = A#i; i=i+1; c=c+1)
+	else (
+	    if areEqual(A#i,B#j,Tolerance=>o.Tolerance) then i=i+1;
+	    j=j+1;
+	    ) 
+	);
+    if j==#B then for i' from i to #A-1 do (D#c = A#i'; c=c+1);
+    new PointSet from D
+    )
+
+TEST /// 
+    restart
+    needsPackage "NAGtypes"
+    A = set {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}}} /point // pointSet
+    B = {{{1,3.1}},{{0,3}}}/point//pointSet
+    assert(A + B == {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}},{{1,3.1}}} /point // pointSet)	
+    assert(A - B == {{{1, 3}}, {{1+ii, 3}}, {{2, 5}}}/point//pointSet)
+///
+
+{* not exported. obsolete?
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
@@ -370,6 +422,8 @@ diffSolutions (List,List) := o -> (A,B) -> (
      else (a = append(a,i); i = i+1);	  
      (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
+
+*}
 
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
 toAffineChart (ZZ,List) := List => (k,x) -> (
@@ -442,16 +496,6 @@ solutionsWithMultiplicity List := o-> sols -> (
 	) 
     )
 
-{*
-solutionsWithMultiplicity List := o-> sols -> ( 
-     clusters := groupClusters solutionDuplicates(sols,o);
-     apply(clusters, c->(
-	       s := new Point from sols#(first c);
-	       if (s.Multiplicity = #c)>1 then s.SolutionStatus = Singular;
-	       s
-	       ))
-     )
-*}
 
 TEST ///
 a = point {{0,1}}
@@ -734,8 +778,47 @@ ring DualSpace := L -> ring gens L
 
 point DualSpace := L -> L.BasePoint
 
+
+-- extra types used (at this point) only by NumericalAlgebraicGeometry 
+export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
+    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
+
+Homotopy = new Type of MutableHashTable -- abstract type
+evaluateH = method()
+evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt = method()
+evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx = method()
+evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+
+ParameterHomotopy = new Type of MutableHashTable -- abstract type
+evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+
+SpecializedParameterHomotopy = new Type of Homotopy
+specialize = method()
+specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    SPH := new SpecializedParameterHomotopy;
+    SPH.ParameterHomotopy = PH;
+    SPH.Parameters = M;
+    SPH
+    ) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
+
+
 -- DOCUMENTATION ------------------------------------------------------
 undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {
+    ParameterHomotopy, 
+    Parameters, SpecializedParameterHomotopy, Homotopy,
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+    }
+
 beginDocumentation()
 
 document {
