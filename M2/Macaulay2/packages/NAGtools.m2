@@ -33,6 +33,8 @@ export {
 exportMutable {
     }
 
+debug NAGtypes
+
 -- Monodromy-based algorithm
 -- in: 
 --     PH, a homotopy from f_A to f_B, where f is a family of (polynomial or other) systems; depends on 2m parameters, m=|A|=|B| 
@@ -66,7 +68,7 @@ preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> 
     	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
-	elapsedTime sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
+	elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
 	if #sols0 == nSols then same = same + 1 else (
 	    nSols = #sols0; 
 	    same = 0;
