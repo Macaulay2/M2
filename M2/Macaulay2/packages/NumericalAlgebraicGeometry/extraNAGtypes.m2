@@ -33,7 +33,7 @@ getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K e
     paramsK := raw mutableMatrix promote(H.Parameters,K);
     H#K = (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
     )
-gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
+gateHomotopy = method(Options=>{Parameters=>null,Software=>null,Strategy=>compress})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
     soft := if o.Software=!=null then o.Software else DEFAULT.Software;
@@ -44,15 +44,20 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     GH#"H" = H;
     GH#"Hx" = diff(X,H);
     GH#"Ht" = diff(T,H);
+    if o.Strategy === compress then (
+    	GH#"H" = compress H;
+    	GH#"Hx" = compress GH#"Hx";
+    	GH#"Ht" = compress GH#"Ht";
+	);
     GH.Software = soft;
     if soft === M2 then (
 	)
     else if soft === M2engine then (
 	varMat := X | matrix{{T}};
 	if para then varMat = o.Parameters | varMat;
-    	GH#"EH" = makeEvaluator(H,varMat);
-    	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
-    	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
+	GH#"EH" = makeEvaluator(H,varMat);
+	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
+	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
 	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
 	)
@@ -110,10 +115,11 @@ gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else (
     X := getVarGates R;
     -- monoms := flatten entries monomials S;
     polys := flatten entries S;
-    F.GateMatrix = gateMatrix apply(polys, p->sum(listForm p,mc->(
-		(m,c) := mc;
-		{c*product(#m,i->X#i^(m#i))}
-		)))
+    F.GateMatrix = gateMatrix apply(polys, p->{ sumGate apply(listForm p,mc->(
+		    (m,c) := mc;
+		    c*product(#m,i->X#i^(m#i))
+		    )) }
+    	)	 
     )
 
 TEST ///

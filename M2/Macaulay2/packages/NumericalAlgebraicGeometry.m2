@@ -334,37 +334,6 @@ dehomogenizeSystem List := List => T -> (
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
 
-totalDegreeStartSystem = method(TypicalValue => Sequence)
-totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
--- for the given target system T
--- IN:  T = list of polynomials 
--- OUT: (S,solsS}, where 
---      S     = list of polynomials, 
---      solsS = list of sequences
-     R := commonRing T;
-     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
-     n := #T;
-     if n != numgens R then (
-	  if numgens R == n+1 and all(T, isHomogeneous) 
-	  then isH := true
-	  else error "wrong number of polynomials";
-	  )
-     else isH = false;
-     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
-     s := apply(n, i->( 
-	  d := sum degree T_i; 
-	  set apply(d, j->sequence exp(ii*2*pi*j/d))
-	  ));
-     solsS := first s;
-     scan(drop(s,1), t->solsS=solsS**t);
-     if numgens R === 1 
-     then solsS = toList solsS/(a -> 1:a)
-     else solsS = toList solsS/deepSplice; 
-     if isH then solsS = solsS / (s->s|sequence 1);
-     (S, solsS)
-     ) 
-
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
 

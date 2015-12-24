@@ -664,7 +664,6 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  numberSuccessesBeforeIncrease => null,
 	  -- predictor 
 	  Predictor=>null, 
-	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  maxCorrSteps => null,
 --!!!	  maxPrecision => null,
