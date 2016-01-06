@@ -21,6 +21,8 @@ newPackage(
 
 {*
 Changelog:
+  o Remove runExternalM2InClone because it is fundamentally unsafe to use
+    fork() in a multithreaded application like M2 (github issue #355) 
   o Improve documentation
  v0.82:
   o Remove a workaround for github issue #296, fixed in M2 v1.8
@@ -55,16 +57,17 @@ Known issues:
     the value returned by name-of-procedure, serialized into a string with toExternalString or the like.
   Then runExternal parses the stdout and returns a hash with all of this data.
 
-  Motivation:  ulimits seem to apply to processes, not threads, and
+  Motivation:  ulimits apply to processes, not threads, and
      using try and alarm seems buggy when executing code in a library
+     (e.g., alarms that would ring in the middle of computing a groebner basis
+     seem to not work.) 
 
-  Methods:
+  Possible Methods:
     - forking
+      No.  M2 is a multithreaded process, and it is unsafe to do almost
+      anything after forking, even if only one thread ever runs.
     - run()ing a new M2 process
-   are both implemented, but they have tradeoffs:
-    (pro fork) uses all context setup
-    (???) would only fork current thread?  http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them
-    (con fork) potentially resource-intensive
+      Yes, how we actually do it.
 *}
 
 
@@ -77,7 +80,6 @@ TODO:
 export {
 	"isExternalM2Child",
 	"isExternalM2Parent",
-	"runExternalM2InClone",
 	"runExternalM2",
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
@@ -502,57 +504,6 @@ Node
 		RunExternalM2
 		runExternalM2
 ///);
-runExternalM2InClone = {
-	KeepFiles => null
-} >> opt -> (proc, params) -> (
-	-- Validate parameters
-	if not(instance(proc,Function)) then (
-		error "runExternalM2InClone: first parameter has unknown type; should be a function";
-	);
-	if not(instance(opt#KeepFiles,Boolean) or opt#KeepFiles===null) then (
-		error "runExternalM2InClone: unknown KeepFiles setting";
-	);
-	-- params can be anything, really.
-
-	-- Idea here is just to fork().
-	ansFileName:=rootPath|temporaryFileName()|".ans";
-	pid:=fork();
-	if (pid==0) then (
-		-- We are the child.
-		loadPackage("RunExternalM2",Configuration=>{"isChild"=>true},Reload=>true);
-
-		-- Shove the output into the file, then quit.
-		-- The computation may break in many, many ways.
-		result:=try (
-			proc params
-		) else (
-			exit(-1)
-		);
-		runExternalM2ReturnAnswer(ansFileName,result);
-		exit(0);
-	) else (
-		-- We are the parent, and pid is the process ID of the child
-		-- Wait until it finishes, then read the output and cleanup
-		timer:=currentTime();
-		exitcode:=wait(pid);
-		timer=currentTime()-timer;
-
-		(theanswer,wasSuccess):=parseAnswer(ansFileName);
-		if (opt#KeepFiles===false or (opt#KeepFiles===null and wasSuccess)) then (
-			-- Remove the temporary files
-			safelyRemoveFile("runExternalM2InClone: missing answer file",ansFileName); 
-			ansFileName=null;
-		);
-
-		return hashTable({
-			"exit code"=>exitcode,
-			"time used"=>timer,
-			"answer file"=>ansFileName,
-			value=>theanswer});
-
-	);
-);
-
 
 mydoc=concatenate(mydoc,///
 Node
