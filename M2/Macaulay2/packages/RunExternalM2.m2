@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 {*
-  Copyright 2015 Brian Pike
+  Copyright 2016 Brian Pike
 
   You may redistribute this file under the terms of the GNU General Public
   License as published by the Free Software Foundation, either version 2 of
@@ -8,8 +8,8 @@
 *}
 newPackage(
 		"RunExternalM2",
-		Version => "0.82", 
-		Date => "September 03, 2015",
+		Version => "0.83",
+		Date => "January 06, 2016",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",
@@ -21,6 +21,7 @@ newPackage(
 
 {*
 Changelog:
+ v0.83:
   o Remove runExternalM2InClone because it is fundamentally unsafe to use
     fork() in a multithreaded application like M2 (github issue #355) 
   o Improve documentation
