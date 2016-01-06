@@ -427,7 +427,7 @@ runExternalM2ReturnAnswer = (f,t) -> (
 		s:=toExternalString(t);
 		file<<s<<flush<<close;
 	) else (
-		error "runExternalM2ReturnAnswer: failed to store output!";
+		error "runExternalM2ReturnAnswer: failed to store output! Return type unhandled by toExternalString? Disk full or read-only?";
 	);
 );
 
