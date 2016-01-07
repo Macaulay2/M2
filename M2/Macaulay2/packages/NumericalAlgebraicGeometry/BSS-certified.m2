@@ -75,10 +75,9 @@ randomSd List := ds -> (
      ret          
      );
 
-///
-restart 
-debug loadPackage "NumericalAlgebraicGeometry"
-sum(randomSd {2,3,4,5} / BombieriWeylNormSquared) -- should be 1
+TEST ///
+debug NumericalAlgebraicGeometry
+assert( abs(sum(randomSd {2,3,4,5} / BombieriWeylNormSquared)-1)<1e-8 )
 ///
 
 randomInitialPair = method()

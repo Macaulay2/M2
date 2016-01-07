@@ -236,7 +236,6 @@ namespace M2 {
 
     void mult(ElementType &res, const ElementType& a, const ElementType& b) const
     {
-      // std::cout << "in ARingCCC::mult" << std::endl;
       mpfr_t tmp;
       ElementType result;
       init(result);

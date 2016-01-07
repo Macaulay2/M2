@@ -1,0 +1,19 @@
+-- -*- M2-comint -*- {* hash: -1982248580 *}
+
+i1 : R=QQ[x0,x1,y0,y1,z]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : makeB'InputFile(storeBM2Files,
+         B'Configs=>{{"MPTYPE",2}},
+         HVG=>{{x0,x1},{y0,y1}},
+         AVG=>{{z}},
+         B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
+
+o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62340-0/0/input
+
+o2 : File
+
+i3 : 

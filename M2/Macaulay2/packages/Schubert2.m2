@@ -1091,8 +1091,9 @@ blowup(AbstractVarietyMap) :=
      Ndual := dual N;
      PN := projectiveBundle'(Ndual, VariableNames => {,{x}}); -- x = chern(1,OO_PN(1))
      C := intersectionRing PN;
-     (BasAModule, bas, iLowerMod) := pushFwd iupper;     
+     (BasAModule, bas, iLowerMod2) := pushFwd iupper;     
      -- iLowerMod(element b of B) = one column matrix over A whose product with bas is b
+     iLowerMod := zz -> matrix(iLowerMod2(zz));
      n := numgens BasAModule;
      -- the fundamental idea: we build the Chow ring of the blowup as an algebra over A
      -- we introduce one algebra generator per basis element of B over A, and we let the first generator, E_0, play a special role:
@@ -1225,7 +1226,8 @@ extensionAlgebra(RingMap, RingElement) := opts -> (f, c) -> (
 	  if not (r == opts.Codimension) then error "Given codimension conflicts with degree of c";
 	  );
           
-     (BasAModule, Bbasis, fLowerMod) := pushFwd f;
+     (BasAModule, Bbasis, fLowerMod2) := pushFwd f;
+     fLowerMod := zz -> matrix(fLowerMod2(zz));
      n := numgens BasAModule;
      
      E := getSymbol "E"; -- I don't like this

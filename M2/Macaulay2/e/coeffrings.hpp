@@ -233,6 +233,8 @@ public:
                      bool p_one=true,
                      bool p_plus=false,
                      bool p_parens=false) const;
+
+  void text_out(buffer &o) const { o << "CoefficientRingR"; }
 };
 
 
