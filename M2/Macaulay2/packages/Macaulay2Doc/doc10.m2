@@ -19,12 +19,12 @@ document {
      "These resolutions are internal engine objects not meant to be examined
      by the user.",
      PARA{},
-     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to 
+     "The symbol ", TT "Resolution", " is also used in a ", TO "ChainComplex", " to
      store the resolution it comes from."
      }
 
 document {  -- This node is used as an example in the node: Key
-     Key => resolution, 
+     Key => resolution,
      Headline => "projective resolution"
      }
 document {
@@ -137,28 +137,28 @@ document {
 	  SPAN (TT "Strategy => 0", " -- Compute syzygies on the Gröbner bases of each syzygy
 	       module.  The algorithm uses important speedups due to R. La Scala.
 	       This algorithm appears to be on the average the fastest."),
-	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as 
+	  SPAN (TT "Strategy => 1", " -- An older version of algorithm 0, which doesn't allow as
 	       much experimentation, but can sometimes be marginally faster."),
-	  SPAN (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each 
+	  SPAN (TT "Strategy => 2", " -- Compute syzygies on the minimal generators of each
 	       matrix in the resolution.  Over quotient rings, it's preferred."),
-	  SPAN (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions 
+	  SPAN (TT "Strategy => 3", " -- Same as algorithm 2, but compute those Hilbert functions
 	       which allow removal of S-pairs (a la Robbiano, et al.). Sometimes this
 	       improvement can be very dramatic.")
 	  },
-     "All algorithms use induced monomial orders (Schreyer orders), since 
+     "All algorithms use induced monomial orders (Schreyer orders), since
      this makes an enormous improvement to the efficiency of the algorithm."
      }
 
 document {
      Key => SortStrategy,
      Headline => "specify a strategy for sorting S-pairs",
-     TT "SortStrategy", " -- a keyword for an optional argument that 
+     TT "SortStrategy", " -- a keyword for an optional argument that
      specifies the strategy to be used for sorting S-pairs."
      }
 
 document {
      Key => [resolution,SortStrategy],
-     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which 
+     TT "SortStrategy => n", " -- an option for ", TO "resolution", " which
      specifies the strategy to be used for sorting S-pairs.",
      PARA{},
      "Not implemented yet."
@@ -348,7 +348,7 @@ document {
      Headline => "status of a resolution computation",
      TT "status C", " -- displays the status of the computation of a
      chain complex ", TT "C", " constructed by application of ", TO "resolution", " to
-     a module, provided the resolution has been constructed in the engine; 
+     a module, provided the resolution has been constructed in the engine;
      in particular, the module should be homogeneous and the ultimate coefficient ring of its
      ring should be a field.  The display has
      the same shape as the display produced by ", TO "betti", ", but
@@ -421,7 +421,7 @@ document {
   Outputs => {List => {"the roots of ", TT "x"}},
   PARA{
     "The result is a ", TO "List", " each of whose elements is a ", TO "CC", ". The default ",
-    TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR", " or ", TO "CC", ".",
+    TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", ".",
   },
   EXAMPLE {
     "RR_100[x]",
@@ -462,7 +462,7 @@ document {
      Inputs => {"x" => {"or ", ofClass{QQ,ZZ}}},
      Outputs => {Product => {"the factorization of ", TT "x"}},
      PARA{
-	  "The result is a ", TO "Product", " each of whose factors is a 
+	  "The result is a ", TO "Product", " each of whose factors is a
 	  ", TO "Power", " whose base is one of the factors found and whose
 	  exponent is an integer.",
 	  },
@@ -483,9 +483,9 @@ document {
 	  },
      PARA {
 	  "For multivariate polynomials the
-	  factorization is done with code of Michael Messollen (see 
+	  factorization is done with code of Michael Messollen (see
 	  ", TO "Singular-Factory", ").  For univariate
-	  polynomials the factorization is in turn done with code of 
+	  polynomials the factorization is in turn done with code of
 	  Gert-Martin Greuel and Ruediger Stobbe (see ", TO "Singular-Factory", ").",
 	  },
      EXAMPLE {
@@ -530,7 +530,7 @@ document {
 
 document {
      Key => Descent,
-     "A type of mutable hash table used by ", TO "showUserStructure", ", ", TO "showClassStructure", ", 
+     "A type of mutable hash table used by ", TO "showUserStructure", ", ", TO "showClassStructure", ",
      and ", TO "showStructure", " to display their tree of results conveniently."
      }
 
@@ -594,7 +594,7 @@ document {
 
 document {
      Key => Variety,
-     Headline => "the class of all algebraic varieties", 
+     Headline => "the class of all algebraic varieties",
      SeeAlso => "varieties"
      }
 document { Key => AffineVariety, Headline => "the class of all affine varieties" }
@@ -640,7 +640,7 @@ document {
      Inputs => {"X","M"},
      Outputs => {{ "the coherent sheaf on the variety ", TT "X", " corresponding to the module ", TT "M" }},
      PARA{
-     	  "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is 
+     	  "If ", TT "X", " is the affine variety ", TT "Spec R", ", then ", TT "M", " should be an ", TT "R", "-module.  If ", TT "X", " is
      	  the projective variety ", TT "Proj R", ", then ", TT "M", " should be a homogeneous ", TT "R", "-module."
 	  }
      }
@@ -758,7 +758,7 @@ document {
      ///
      }
 
-document { 
+document {
      Key => {(symbol /, CoherentSheaf, CoherentSheaf), (symbol /, CoherentSheaf, Ideal)},
      Headline => "quotient of coherent sheaves",
      Usage => "F / G",
@@ -827,7 +827,7 @@ document {
 document { Key => Core,
      Headline => "the core part of Macaulay2",
      PARA {
-     	  "This package contains the core functionality of Macaulay2, without the documentation, 
+     	  "This package contains the core functionality of Macaulay2, without the documentation,
      	  which is in the package ", TO "Macaulay2Doc", "."
 	  }
      }
@@ -835,7 +835,7 @@ document { Key => Core,
 document { Key => toRR,
      Headline => "convert to high-precision real number",
      Usage => "toRR(prec,x)",
-     Inputs => { 
+     Inputs => {
 	  "prec" => ZZ => {"the number of bits of precision desired"},
 	  "x" => {ofClass{RR,ZZ,QQ}}
 	  },
@@ -849,15 +849,15 @@ document { Key => toRR,
 document {
      Key => {toCC,
  	  (toCC, ZZ, ZZ), (toCC, ZZ, QQ), (toCC, ZZ, RR), (toCC, ZZ, CC),
- 	  (toCC, RR, RR), (toCC, ZZ, ZZ, ZZ), (toCC, ZZ, ZZ, QQ), 
-	  (toCC, ZZ, QQ, ZZ), (toCC, ZZ), (toCC, ZZ, QQ, QQ), (toCC, QQ), 
-	  (toCC, ZZ, RR, ZZ), (toCC, ZZ, ZZ, RR), (toCC, ZZ, RR, QQ), 
+ 	  (toCC, RR, RR), (toCC, ZZ, ZZ, ZZ), (toCC, ZZ, ZZ, QQ),
+	  (toCC, ZZ, QQ, ZZ), (toCC, ZZ), (toCC, ZZ, QQ, QQ), (toCC, QQ),
+	  (toCC, ZZ, RR, ZZ), (toCC, ZZ, ZZ, RR), (toCC, ZZ, RR, QQ),
 	  (toCC, ZZ, QQ, RR), (toCC, RR), (toCC, CC), (toCC, ZZ, RR, RR)
 	  },
      Headline => "convert to high-precision complex number",
      SYNOPSIS (
 	  Usage => "toCC(prec,x,y)\ntoCC(prec,x)",
-	  Inputs => { 
+	  Inputs => {
 	       "prec" => ZZ => {"the number of bits of precision desired"},
 	       "x" => {ofClass{ZZ,QQ,RR}},
 	       "y" => {ofClass{ZZ,QQ,RR}}
@@ -889,7 +889,7 @@ document { Key => InexactNumber,
 	  }
      }
 
-document { 
+document {
      Key => { Constant,
 	  (symbol /,Constant,Constant),
 	  (symbol /,Constant,InexactNumber),
@@ -916,7 +916,7 @@ document {
      	  },
      PARA {
 	  "A constant is a symbolic entity that can be approximated by a real or complex
-	  number to any desired accuracy.  It is converted to a numeric value of the 
+	  number to any desired accuracy.  It is converted to a numeric value of the
 	  correct precision, when necessary."
 	  },
      EXAMPLE lines ///
