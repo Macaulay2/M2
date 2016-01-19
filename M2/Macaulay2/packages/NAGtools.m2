@@ -4,8 +4,8 @@
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
 newPackage select((
      "NAGtools",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.8.2.1",
+     Date => "Jan 2016",
      Headline => "Tools of NumericalAlgebraicGeometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
