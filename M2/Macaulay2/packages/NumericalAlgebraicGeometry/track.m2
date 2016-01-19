@@ -4,9 +4,6 @@
 ------------------------------------------------------
 export { "track", "trackSegment", "trackHomotopy" }
 
--- possible solution statuses returned by engine
-solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
-
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
@@ -633,8 +630,6 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
-
--- !!! DUMMY engine routine
 debug Core
 
 -- doublePrecisionK := CC_53;
@@ -762,7 +757,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      rawSols := if o.Software===M2engine then (
 	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision
 	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
-	 statusOut := mutableMatrix(ZZ,2,#solsS); -- 2 rows (status, number of steps), #solutions columns 
+	 nSols := #solsS;
+	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
 	 inp := mutableMatrix (
 	     transpose apply( solsS, s->(if instance(s,Point) 
 	     	     then coordinates s  
@@ -770,7 +766,6 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     ); 
 	 out := mutableMatrix inp; -- "copy" does not copy!!!
 	 n = numrows out - 1;
-	 nSols := #solsS;
 	 scan(nSols, i->out_(n,i) = 1); 
 	 ti'out := timing trackHomotopyM2engine(H, inp, 
 	     out, statusOut,
@@ -794,7 +789,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		{x0,
 		    SolutionStatus => s'status, 
 		    NumberOfSteps => count,
-		    LastT => t0
+		    LastT => t0,
+		    "H" => H
 		    }
 		))
 	)
