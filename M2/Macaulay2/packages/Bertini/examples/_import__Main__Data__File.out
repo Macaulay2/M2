@@ -1,0 +1,56 @@
+-- -*- M2-comint -*- {* hash: -1937456387 *}
+
+i1 : makeB'InputFile(storeBM2Files,
+       AVG=>{x,y,z},
+       B'Configs=>{{TrackType,1}},
+       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
+
+o1 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62312-0/0/input
+
+o1 : File
+
+i2 : runBertini(storeBM2Files)
+bertini
+
+i3 : thePoints=importMainDataFile(storeBM2Files)
+1
+2
+3
+2
+2
+4
+2
+9
+2
+9
+2
+9
+2
+2
+
+o3 = {{.0840238+.133066*ii, 3.82563e-17+3.73041e-17*ii, .396623-.931373*ii},
+     ------------------------------------------------------------------------
+     {1.07098+.252913*ii, -.979054-.077576*ii, .324682-1.06817*ii},
+     ------------------------------------------------------------------------
+     {-.826555-.152222*ii, .910491+.244014*ii, .440656-.789715*ii}}
+
+o3 : List
+
+i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+1
+2
+3
+2
+2
+4
+2
+2
+2
+2
+2
+
+o4 = {}
+
+o4 : List
+
+i5 : 

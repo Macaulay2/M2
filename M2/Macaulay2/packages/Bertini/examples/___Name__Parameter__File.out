@@ -1,0 +1,9 @@
+-- -*- M2-comint -*- {* hash: -307701312 *}
+
+i1 : writeParameterFile(storeBM2Files,{.1,.2,.5},NameParameterFile=>"testParameters")  --this function writes a parameter file named testParameters
+
+o1 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62296-0/0/testParameters
+
+o1 : File
+
+i2 : 
