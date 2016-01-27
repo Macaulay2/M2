@@ -40,7 +40,7 @@ export {
      "setDefault", "getDefault",
      "solveSystem", 
      "solveGenericSystemInTorus", -- works with PHCpack only
-     "refine", "totalDegreeStartSystem", "newton",
+     "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -62,10 +62,14 @@ export {
 exportMutable {
      }
 
+
 -- local functions/symbols:
 protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+
+-- possible solution statuses returned by engine
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 

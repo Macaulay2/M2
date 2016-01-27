@@ -279,6 +279,9 @@ areEqual (CC,CC) := o -> (a,b) -> (
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
+areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
+     areEqual(flatten entries a, flatten entries b, o)
+     ) 
 areEqual (Point,Point) := o -> (a,b) -> (
     a = a.Coordinates; 
     b = b.Coordinates;
@@ -1040,7 +1043,7 @@ isGEQ({1,1e-7},{1, 0})
 document {
 	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
 	    (areEqual,List,List), (areEqual,BasicList,BasicList),
-	    (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,Point,Point), 
 	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
 	    (symbol ==,Point,Point),
 	    [areEqual,Projective]},
