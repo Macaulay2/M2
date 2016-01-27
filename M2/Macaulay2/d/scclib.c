@@ -15,22 +15,9 @@ int reading_from_readline = FALSE;
 extern void stack_trace();
 
 void
-#if defined(__STDC__)
 fatal(const char *s,...)   {
      va_list ap;
-#else
-fatal( va_alist  ) 
-va_dcl
-{
-     va_list ap;
-     char *s;
-#endif
-#if defined(__STDC__)
      va_start(ap,s);
-#else
-     va_start(ap);
-     s = va_arg(ap, char *);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
