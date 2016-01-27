@@ -919,21 +919,6 @@ int system_openlistener(M2_string interface0,M2_string serv) {
      return sd;
      }
 
-#if defined(HAVE_DECL_SYS_NERR) && !HAVE_DECL_SYS_NERR
-extern int sys_nerr;
-#endif
-
-#ifdef HAVE_HERROR
-extern int h_nerr;
- #if defined(HAVE_DECL_H_ERRLIST) && !HAVE_DECL_H_ERRLIST
- extern const char * const h_errlist[];
- #endif
-#endif
-
-#if defined(HAVE_DECL_SYS_ERRLIST) && !HAVE_DECL_SYS_ERRLIST
-extern const char * const sys_errlist[];
-#endif
-
 int system_errno(void) {
   return 
 #ifdef HAVE_HERROR
