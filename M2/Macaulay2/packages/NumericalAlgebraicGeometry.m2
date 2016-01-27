@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.8.2.1",
+     Date => "Jan 2016",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -17,8 +17,8 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true,
-     --DebuggingMode => false,
+     --DebuggingMode => true,
+     DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -40,7 +40,7 @@ export {
      "setDefault", "getDefault",
      "solveSystem", 
      "solveGenericSystemInTorus", -- works with PHCpack only
-     "refine", "totalDegreeStartSystem", "newton",
+     "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -62,10 +62,14 @@ export {
 exportMutable {
      }
 
+
 -- local functions/symbols:
 protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+
+-- possible solution statuses returned by engine
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -303,7 +307,7 @@ checkCCpolynomials (List,List) := (S,T) -> (
 toCCpolynomials = method()
 toCCpolynomials (List,ZZ) := (F,prec) -> (
     checkCCpolynomials F;
-    R := CC_prec(monoid[gens ring first F]);
+    R := CC_prec(monoid[gens commonRing F]);
     apply(F,f->sub(f,R)) 
     )    
 
@@ -322,48 +326,17 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
-     R := ring first T;
+     R := commonRing T;
      h := symbol h;
      Rh := (coefficientRing R)[gens R | {h}]; 
      apply(T, f->homogenize(sub(f,Rh), h))
      )
 dehomogenizeSystem = method(TypicalValue => List)
 dehomogenizeSystem List := List => T -> (
-     Rh := ring first T;
+     Rh := commonRing T;
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
-
-totalDegreeStartSystem = method(TypicalValue => Sequence)
-totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
--- for the given target system T
--- IN:  T = list of polynomials 
--- OUT: (S,solsS}, where 
---      S     = list of polynomials, 
---      solsS = list of sequences
-     R := ring first T;
-     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
-     n := #T;
-     if n != numgens R then (
-	  if numgens R == n+1 and all(T, isHomogeneous) 
-	  then isH := true
-	  else error "wrong number of polynomials";
-	  )
-     else isH = false;
-     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
-     s := apply(n, i->( 
-	  d := sum degree T_i; 
-	  set apply(d, j->sequence exp(ii*2*pi*j/d))
-	  ));
-     solsS := first s;
-     scan(drop(s,1), t->solsS=solsS**t);
-     if numgens R === 1 
-     then solsS = toList solsS/(a -> 1:a)
-     else solsS = toList solsS/deepSplice; 
-     if isH then solsS = solsS / (s->s|sequence 1);
-     (S, solsS)
-     ) 
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -505,7 +478,7 @@ selectUnique List := o -> sols ->(
      )
  
 NAGtrace = method()
-NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
+NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- conjugate all entries of the matrix (should be a part of M2!!!)
 conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))

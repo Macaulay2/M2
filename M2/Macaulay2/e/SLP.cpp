@@ -55,8 +55,9 @@ void SLProgram::setOutputPositions(const M2_arrayint a)
 
 void SLProgram::text_out(buffer& o) const { 
   o << "SLProgram (" << newline;
-  o << "  inputCounter: " << inputCounter << newline; 
+  o << "  inputs: " << inputCounter << newline; 
   o << "  #mNodes: " << mNodes.size() << newline;
+  o << "  outputs: " << mOutputPositions.size() << newline;
   o << "  )" << newline;  
 }
 

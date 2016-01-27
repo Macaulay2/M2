@@ -4,8 +4,8 @@
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
 newPackage select((
      "NAGtools",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.8.2.1",
+     Date => "Jan 2016",
      Headline => "Tools of NumericalAlgebraicGeometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -32,6 +32,8 @@ export {
     }
 exportMutable {
     }
+
+debug NAGtypes
 
 -- Monodromy-based algorithm
 -- in: 
@@ -66,7 +68,7 @@ preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> 
     	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
-	elapsedTime sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
+	elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
 	if #sols0 == nSols then same = same + 1 else (
 	    nSols = #sols0; 
 	    same = 0;

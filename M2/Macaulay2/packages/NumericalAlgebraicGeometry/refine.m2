@@ -1,7 +1,9 @@
 ------------------------------------------------------
--- refining/sharpening routines, Newton step 
+-- refining/sharpening routines, Newton's method
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
+export {"refine", "newton", "endGameCauchy"}
+    
 newton = method()
 -- assumes F has coefficients in field RR_prec or CC_prec 
 --         P has coordinates in that can be promoted to the above field 
@@ -243,6 +245,100 @@ assert(P'.ErrorBoundEstimate < 1e-6 and P'.ConditionNumber > 1e6 and status P' =
 deflateInPlace(P,T)
 P'' = refine P
 assert(P''.ErrorBoundEstimate < 1e-6 and P''.ConditionNumber < 100 and status P'' === Singular)
+///
+
+------------------------------- ENGAMES -------------------------------------------------------------------
+-- H: a homotopy
+-- t'end: the end value of the continuation parameter t
+-- p0: a Point = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
+-- "number of vertices" (optional): ... of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
+-- OUTPUT: a Point
+endGameCauchy = method(Options=>{"number of vertices"=>8,
+	tStep => null, -- initial
+	tStepMin => null,
+	stepIncreaseFactor => null,
+	numberSuccessesBeforeIncrease => null,
+	maxCorrSteps => null,
+	CorrectorTolerance => null, -- tracking tolerance
+	-- end of path
+	EndZoneFactor => null, --!!! EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
+	InfinityThreshold => null -- used to tell if the path is diverging
+	})
+
+endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
+    x0 := mutableMatrix transpose {coordinates p0 | {p0.LastT}} ; 
+    w := endGameCauchy(H,t'end,x0,o);
+    p := point {drop(first entries transpose x0,-1)};
+    if w>0 then ( 
+	p.Multiplicity = w; 
+	p.SolutionStatus = (if w == 1 then Regular else Singular);
+	p.LastT = t'end;
+	) 
+    else (
+	p.SolutionStatus = RefinementFailure; 
+	);
+    p
+    )
+
+-- x0: a column vector with n+1 coordinates, the last one is t0
+-- OUTPUT: changes x0 in place, returns the winding number or 0 if failed 
+endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0) -> (
+    if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
+    o = fillInDefaultOptions o;
+    m := o#"number of vertices";
+    n := numrows x0 - 1;
+    statusOut := mutableMatrix(ZZ,2,1); -- 2 rows (status, number of steps), #solutions columns  
+    x0' := mutableMatrix x0;
+    inp := mutableMatrix x0;
+    out := mutableMatrix inp; -- "copy" does not copy!!!
+    dt0 := x0_(n,0)-t'end;
+    out_(n,0) = t'end + dt0*exp(2*pi*ii/m);
+    loop'incomplete := true;
+    s'status := Regular; 
+    w := 0;
+    while loop'incomplete or w>1000 --!!!
+    do (
+    	for i to m-1 do (
+	    ti'out := timing trackHomotopyM2engine(H, inp, 
+		out, statusOut, -- output goes here
+		o.tStep, o.tStepMin, 
+		o.CorrectorTolerance, o.maxCorrSteps, 
+		toRR o.InfinityThreshold);
+    	    if DBG>2 then << "-- endGameCauchy: trackHomotopyM2engine time = " << first ti'out << " sec." << endl;
+    	    s'status = solutionStatusLIST#(statusOut_(0,0));
+	    if s'status =!= Regular then (
+		loop'incomplete = false;
+		break;
+		);
+    	    if DBG>2 then << "-- endGameCauchy: number of steps = " << statusOut_(1,0) << endl;
+    	    if DBG>0 then << "(C"<<m<<")";
+    	    x0' = x0'+out;
+	    ( temp := inp; inp = out; out = temp ); -- reuse matrices for the next step;
+    	    out_(n,0) = t'end + dt0*exp(2*pi*(i+2)*ii/m); 
+	    );
+	w = w + 1;
+	loop'incomplete = not areEqual(inp,x0);
+	out_(n,0) = t'end + dt0*exp(2*pi*ii/m); -- reset (roundoff error may accumulate)
+	);
+    for i to n do x0_(i,0) = x0'_(i,0)/(w*m); 
+    w
+    )
+
+TEST ///
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+CC[x,y]
+d = 4;
+T = {(x-2)^d,y-x+x^2-x^3}
+sols = solveSystem(T,PostProcess=>false)
+p0 = first sols
+peek p0
+t'end = 1
+NAGtrace 1
+p = endGameCauchy(p0#"H",t'end,p0)
+assert (d == p.Multiplicity)
+p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>20)
+assert (d == p.Multiplicity)
 ///
 
 endGame'Cauchy'polygon = method(Dispatch=>Thing)

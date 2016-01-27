@@ -19,10 +19,13 @@ assert all({1,3}, i->M#i#SolutionStatus==Regular)
 assert(M#3#LastT>0.99999 and M#3#NumberOfSteps < 20)
 
 T = cyclic(5,CC) 
-M = solveSystem(T_*, Software=>M2engine, PostProcess=>false);
-S = apply(#M,i->M#i#SolutionStatus);
-assert( #select(S, s->s==Regular) == 70
-     and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
+M = solveSystem(T_*, 
+    --CorrectorTolerance=>1e-6, tStepMin=>1e-7, tStep=>1e-2, 
+    Software=>M2engine, PostProcess=>false);
+sum(M,s->s.NumberOfSteps)
+S = apply(M,status);
+assert(#select(S, s->s==Regular) == 70
+    and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
 -- projective tracking (including Certified)
 for predictor in {RungeKutta4,Tangent,Certified} do (

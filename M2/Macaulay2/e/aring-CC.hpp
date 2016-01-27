@@ -34,6 +34,8 @@ namespace M2 {
 
     typedef complex elem;
     typedef elem ElementType;
+    typedef ARingRR RealRingType;
+    typedef RealRingType::ElementType RealElementType;
 
     ARingCC() {}
 
@@ -42,7 +44,7 @@ namespace M2 {
     unsigned long get_precision() const { return 53; }
     void text_out(buffer &o) const;
 
-    const ARingRR& real_ring() const { return mRR; }
+    const RealRingType& real_ring() const { return mRR; }
 
     unsigned int computeHashValue(const elem& a) const 
     { 
@@ -219,18 +221,30 @@ namespace M2 {
       mult(ab,a,b);
       subtract(result,result,ab);
     }
+    
+    void mult(ElementType &res, const ElementType& a, const RealElementType& b) const
+    {
+      res.re = a.re*b;
+      res.im = a.im*b;
+    }
 
     void mult(ElementType &res, const ElementType& a, const ElementType& b) const
     {
-      ElementType result;
-      result.re = a.re*b.re - a.im*b.im;
-      result.im = a.re*b.im + a.im*b.re;
-      set(res,result);
+      RealElementType tmp;
+      tmp = a.re*b.re - a.im*b.im;
+      res.im = a.re*b.im + a.im*b.re;
+      res.re = tmp;
+    }
+
+    void divide(ElementType &res, const ElementType& a, const RealElementType& b) const
+    {
+      res.re = a.re / b;
+      res.im = a.im / b;
     }
 
     void divide(ElementType &res, const ElementType& a, const ElementType& b) const
     {
-      ARingRR::ElementType p, denom; // double
+      RealElementType p, denom; // double
 
       ElementType result;
       if (fabs(b.re)>=fabs(b.im))
@@ -248,6 +262,11 @@ namespace M2 {
           result.im = (p*a.im - a.re)/denom;
         }
       set(res,result);
+    }
+
+    void abs_squared(ARingRR::ElementType& result, const ElementType& a) const
+    {
+      result = a.re * a.re + a.im * a.im;
     }
 
     void abs(ARingRR::ElementType& result, const ElementType& a) const
