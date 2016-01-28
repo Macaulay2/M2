@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.8",
-     Date => "Oct, 2015",
+     Version => "1.8.2.1",
+     Date => "Jan, 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -12,7 +12,7 @@ newPackage(
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
-     -- DebuggingMode => true 
+     --DebuggingMode => true 
      )
 
 export {
@@ -233,6 +233,8 @@ point Matrix := M -> point {flatten entries M}
 toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
+Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
+
 
 coordinates = method()
 coordinates Point := p -> p.Coordinates
@@ -277,6 +279,9 @@ areEqual (CC,CC) := o -> (a,b) -> (
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
+areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
+     areEqual(flatten entries a, flatten entries b, o)
+     ) 
 areEqual (Point,Point) := o -> (a,b) -> (
     a = a.Coordinates; 
     b = b.Coordinates;
@@ -309,7 +314,40 @@ isGEQ(List,List) := o->(t,s)-> (
      true -- if approx. equal 
      )
 
-sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+sortSolutionsWithWeights = method()
+sortSolutionsWithWeights (List, List) := (sols,w) -> (
+    n := #coordinates first sols;
+    solsCoords := sols/coordinates; 
+    R := commonRing solsCoords;
+    if #w === 0 then w = for i to n list random R
+    else if n =!= #w then error "weight list is of wrong length";
+    dot := (a,b) -> sum(n,i->a#i*b#i);
+    --print "-- in sortSolutionsWithWeights ----------";
+    L := matrix{for s in solsCoords list dot(w,s)};    
+    --print(w,L); 
+    sortedCols := sortColumns L;
+    sols_sortedCols
+    ) 
+
+{*
+sortSolutionsWithWeights = method()
+sortSolutionsWithWeights (List, List) := (sols,w) -> (
+    n := #coordinates first sols;
+    R := ring matrix first sols;
+    if #w === 0 then w = random(R^1,R^n)
+    else (
+	if n =!= #w then error "weight list is of wrong length";
+	w = matrix{w};
+	);
+    print "-- in sortSolutionsWithWeights ----------";
+    time M := transpose matrix(sols/coordinates); 
+    time L := w*M;    
+    time sortedCols := sortColumns L;
+    time sols_sortedCols
+    ) 
+*}
+
+sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6,Weights=>null})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
      if #sols == 0 then (
@@ -317,11 +355,12 @@ sortSolutions List := o -> sols -> (
 	 sols
 	 )
      else (
-	  sorted = {0};
-	  get'coordinates := sol -> if class sol === Point then coordinates sol 
-	                       else if ancestor(BasicList, class sol) then toList sol
-			       else error "expected Points or BasicLists";
-	  scan(#sols-1, s->(
+     	 if o.Weights =!= null then return sortSolutionsWithWeights(sols,o.Weights);
+	 sorted = {0};
+	 get'coordinates := sol -> if class sol === Point then coordinates sol else 
+	     if ancestor(BasicList, class sol) then toList sol
+	     else error "expected Points or BasicLists";
+	 scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
 		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
@@ -479,9 +518,11 @@ groupClusters MutableHashTable := H -> (
      cs
      )
 
-solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
-solutionsWithMultiplicity List := o-> sols -> ( 
-    sorted := sortSolutions(sols,o);
+clusterSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+clusterSolutions List := o-> sols -> ( 
+    -- time sorted' := sortSolutions(sols,o);
+    -- time sorted'' := sort sols;
+    sorted := sortSolutions(sols,Weights=>{});
     i := 0; 
     while i<#sorted list (
 	si := sorted#i;
@@ -495,7 +536,8 @@ solutionsWithMultiplicity List := o-> sols -> (
 	si
 	) 
     )
-
+solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+solutionsWithMultiplicity List := o-> sols -> sortSolutions clusterSolutions(sols,o)
 
 TEST ///
 a = point {{0,1}}
@@ -700,7 +742,7 @@ check NumericalVariety := o-> V -> (
 ---------------------------------------------
 checkCCpolynomials = method()
 checkCCpolynomials List := F -> (    
-    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if #F > 0 then R := commonRing F else error "expected a nonempty list of polynomials";
     if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
     coeffR := coefficientRing R; 
     if not(
@@ -1001,7 +1043,7 @@ isGEQ({1,1e-7},{1, 0})
 document {
 	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
 	    (areEqual,List,List), (areEqual,BasicList,BasicList),
-	    (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,Point,Point), 
 	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
 	    (symbol ==,Point,Point),
 	    [areEqual,Projective]},

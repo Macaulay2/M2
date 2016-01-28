@@ -234,6 +234,11 @@ namespace M2 {
         }
     }
 
+    void abs_squared(ElementType& result, const ElementType& a) const
+    {
+      mult(result,a,a);
+    }
+
     void abs(ElementType& result, const ElementType& a) const
     {
       if (mpfr_cmp_si(&a, 0) < 0)

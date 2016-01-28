@@ -932,7 +932,7 @@ assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(valu
 debug SLPexpressions
 debug NumericalAlgebraicGeometry
 -- evaluate toPreSLP == compress 
-output = {F,diff(X,F),G}
+output = {F, compress diff(X,F), G}
 preSLP = toPreSLP({X,Y},output)
 out'eval = evaluatePreSLP(preSLP, gens R)
 out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }

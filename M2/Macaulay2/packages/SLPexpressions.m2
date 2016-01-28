@@ -3,8 +3,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.8.2.1",
+     Date => "Jan 2016",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -227,13 +227,31 @@ constants DetGate := memoize (g -> g.Inputs//flatten/constants//flatten//unique)
 constants List := memoize (L -> L/constants//flatten//unique)
 constants GateMatrix := memoize (M -> constants flatten entries M)
 
+depth InputGate := g -> 0
+depth SumGate := memoize (g -> g.Inputs//depth + 1)
+depth ProductGate := memoize (g -> g.Inputs//depth + 1)
+depth DivideGate := memoize (g -> g.Inputs//depth + 1)
+depth DetGate := memoize (g -> g.Inputs//flatten//depth + 1)
+depth GateMatrix := memoize (M -> depth flatten entries M)
+depth List := memoize (L -> L/depth//max)
+
+flattenGates = method()
+flattenGates InputGate := g -> {}
+flattenGates SumGate := memoize (g -> g.Inputs//unique)
+flattenGates ProductGate := memoize (g -> g.Inputs//unique)
+flattenGates DivideGate := memoize (g -> g.Inputs//unique)
+flattenGates DetGate := memoize (g -> g.Inputs//flatten//unique)
+flattenGates GateMatrix := memoize (M -> flattenGates flatten entries M)
+flattenGates List := memoize (L -> L/flattenGates//flatten//unique)
+
+
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
-diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sum
-diff (InputGate, ProductGate) := (x,g) -> sum apply(#g.Inputs, i->(
+diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sumGate
+diff (InputGate, ProductGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
 	dgi := diff(x,g.Inputs#i);
-	product(drop(g.Inputs,{i,i}))*dgi -- commutativity assumed
+	productGate drop(g.Inputs,{i,i}) * dgi -- commutativity assumed
 	))
-diff (InputGate, DetGate) := (x,g) -> sum apply(#g.Inputs, i->(
+diff (InputGate, DetGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
 	dgi := apply(g.Inputs#i, a->diff(x,a));
 	detGate replace(i,dgi,g.Inputs)
 	))
@@ -290,7 +308,7 @@ compress SumGate := g -> (
     c := (if s != 0 then {inputGate s} else {}) | L_not'nums;
     if #c == 0 then zeroGate else
     if #c == 1 then first c else 
-    sum c
+    sumGate c
     )
 compress ProductGate := g -> (
     L := g.Inputs/compress;
@@ -301,7 +319,7 @@ compress ProductGate := g -> (
     c := (if p != 1 then {inputGate p} else {}) | L_not'nums; -- assumes commutativity
     if #c == 0 then oneGate else
     if #c == 1 then first c else 
-    product c
+    productGate c
     )
 
 
@@ -380,6 +398,7 @@ assert (abs(last flatten entries rawM - 37/3) < 2^(-999))
 
 old'matrix'List = lookup(matrix,List)
 gateMatrix = method()
+gateMatrix GateMatrix := M -> M
 gateMatrix List := L -> (
     if not isTable L then error "a table is expected";
     new GateMatrix from L
@@ -421,7 +440,7 @@ GateMatrix || Matrix := (A,B) -> A || gateMatrix B
 
 GateMatrix * GateMatrix := (A,B) -> ( -- two tables
     B' := transpose B;
-    matrix table(#A,#B',(i,j)->sum apply(A#i,B'#j,(a,b)->a*b))
+    matrix table(#A,#B',(i,j)->sumGate apply(A#i,B'#j,(a,b)->a*b))
     )
 Matrix * GateMatrix := (A,B) -> gateMatrix A * B
 GateMatrix * Matrix := (A,B) -> A * gateMatrix B
@@ -563,6 +582,7 @@ evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     assert(ring O === K);
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
+
  
 TEST /// 
 needsPackage "SLPexpressions"

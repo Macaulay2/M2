@@ -166,6 +166,11 @@ namespace M2 {
       result = a/b;
     }
 
+    void abs_squared(ElementType& result, const ElementType& a) const
+    {
+      result = a*a;
+    }
+
     void abs(ElementType& result, const ElementType& a) const
     {
       result = fabs(a);
