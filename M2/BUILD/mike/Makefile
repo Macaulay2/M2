@@ -17,7 +17,7 @@ darwin64-gcc5 : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="mpir flint"
+		--enable-build-libraries="mpir flint gc"
 
 darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
@@ -48,7 +48,7 @@ darwin64-ffpack : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="mpir"
+		--enable-build-libraries="mpir flint"
 
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \

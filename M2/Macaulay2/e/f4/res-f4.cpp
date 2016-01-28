@@ -48,7 +48,7 @@ void F4Res::clearMatrix()
 /// findDivisor
 //    m: monomial at level mThisLevel-1
 //    result: monomial at level mThisLevel, IF true is returned
-//  returns true if 'm' - inG(result), for some (unique) 'result'.
+//  returns true if 'm' == inG(result), for some (unique) 'result'.
 bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 {
   // get component of m
@@ -88,7 +88,7 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 //     additionally: the product monomial is inserted into the hash table
 //     and column array (if it is not already there).
 // caveats: this function is only to be used during construction 
-//     of the coeff matrices.  It used mThisLevel
+//     of the coeff matrices.  It uses mThisLevel.
 ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
 {
   auto& p = mFrame.level(mThisLevel-2)[monoid().get_component(n)];
@@ -448,7 +448,7 @@ void F4Res::gaussReduce()
       long comp = mSPairComponents[i];
       result.appendTerm(mFrame.level(mThisLevel)[comp].mMonom,
                         one);
-      mFrame.mAllMonomials.accountForMonomial(mFrame.level(mThisLevel)[comp].mMonom);
+      ///mFrame.mAllMonomials.accountForMonomial(mFrame.level(mThisLevel)[comp].mMonom);
       
       auto& syz = mFrame.level(mThisLevel)[comp].mSyzygy; // this is the element we will fill out
 
@@ -481,7 +481,7 @@ void F4Res::gaussReduce()
           
           mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
           result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-          mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
+          ///mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
           mRing.resGausser().dense_row_cancel_sparse(gauss_row,
                                                      static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
                                                      & mReducers[firstcol].mCoeffs[0],

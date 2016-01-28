@@ -86,8 +86,8 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
     mSlantedDegree(0),
     mLoSlantedDegree(0),
     mHiSlantedDegree(0),
-    mComputer(*this),
-    mAllMonomials(R.monoid())
+    mComputer(*this)
+    //mAllMonomials(R.monoid())
 {
   mFrame.mLevels.resize(max_level);
   mMaxVPSize = 2*monoid().n_vars() + 1;
@@ -154,7 +154,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
               return;
           }
         mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
-        std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
+        ///std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;
       case Done:

@@ -196,7 +196,7 @@ private:
   // in parallel.
 
 public:
-  MonomialCounter mAllMonomials;
+  //  MonomialCounter mAllMonomials;
 
 
 };
