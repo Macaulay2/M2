@@ -72,29 +72,6 @@ public:
 
 };
 
-class EngineResolutionComputation : public EngineComputation
-// This is the base type for all resolution computations
-{
-protected:
-  ResolutionComputation *C;
-protected:
-  EngineResolutionComputation(ResolutionComputation *C);
-  virtual ~EngineResolutionComputation();
-public:
-  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return this;}
-
-  static EngineResolutionComputation * create(ResolutionComputation *C0);
-
-  virtual void destroy();
-
-  virtual void start_computation();
-
-  virtual long complete_thru_degree() const;
-  // The computation is complete up through this slanted degree.
-
-  ResolutionComputation *get_ResolutionComputation() { return C; }
-};
-
 
 extern "C" void remove_res(void *p, void *cd);
 void intern_res(ResolutionComputation *G);
