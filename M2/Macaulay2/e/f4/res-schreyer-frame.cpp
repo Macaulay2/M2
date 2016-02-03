@@ -1,9 +1,7 @@
 // Copyright 2014 Michael E. Stillman
 
-#include "res-schreyer-frame.hpp"
 #include "f4-monlookup.hpp"
-
-#include "../comp-res.hpp"
+#include "res-schreyer-frame.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -109,7 +107,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       case Initializing:
         break;
       case Frame:
-                std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
+        if (M2_gbTrace >= 1)
+          std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
             mState = Matrices;
@@ -122,16 +121,17 @@ void SchreyerFrame::start_computation(StopConditions& stop)
                 std::cout << "non-minimal betti: " << std::endl;
                 mBettiNonminimal.output();
               }
-            for (int i=0; i<mMinimalizeTODO.size(); i++)
-              {
-                auto a = mMinimalizeTODO[i];
-                //                std::cout << "(" << a.first << "," << a.second << ") ";
-              }
+            //for (int i=0; i<mMinimalizeTODO.size(); i++)
+            //  {
+            //     auto a = mMinimalizeTODO[i];
+            //     std::cout << "(" << a.first << "," << a.second << ") ";
+            //  }
             // std::cout << std::endl;
           }
         break;
       case Matrices:
-        std::cout << "start_computation: entering Matrices(" << mCurrentLevel << ", " << mSlantedDegree << ")" << std::endl;
+        if (M2_gbTrace >= 1)
+          std::cout << "start_computation: entering Matrices(" << mCurrentLevel << ", " << mSlantedDegree << ")" << std::endl;
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
@@ -341,32 +341,6 @@ long SchreyerFrame::memoryUsage() const
   return result;
 }
 
-#if 0
-void SchreyerFrame::showMemoryUsage() const
-{
-  std::cout << "Frame memory usage" << std::endl;
-  std::cout << "  level\t\t#elems\tused\tallocated" << std::endl;
-  long alloc = 0;
-  long used = 0;
-  long nelems = 0;
-  for (int i=0; i<mFrame.mLevels.size(); i++)
-    {
-      long nelems_level = level(i).size();
-      if (nelems_level == 0) continue;
-      long used_level = nelems_level * sizeof(FrameElement);
-      long alloc_level = level(i).capacity() * sizeof(FrameElement);
-      std::cout << "  " << i << "\t\t\t " << nelems_level << "\t\t " << used_level << "\t\t " << alloc_level << std::endl;
-      nelems += nelems_level;
-      used += used_level;
-      alloc += alloc_level;
-    }
-  std::cout << "  all lev\t" << nelems << "\t\t" << used << "\t\t" << alloc << std::endl;
-  long monomSpace = mMonomialSpace.memoryUsage();
-  long monomUsed = nelems * monoid().max_monomial_size() * sizeof(monomial_word);
-  std::cout << "  monomials   \t\t" << monomUsed << "\t" << monomSpace << std::endl;
-  std::cout << "  total       \t\t" << (used+monomUsed) << "\t" << (alloc+monomSpace) << std::endl;
-}
-#endif
 void SchreyerFrame::showMemoryUsage() const
 {
   std::cout << "Frame memory usage" << std::endl;

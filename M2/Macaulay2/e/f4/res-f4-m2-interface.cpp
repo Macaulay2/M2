@@ -1,4 +1,4 @@
-// Copyright 2005 Michael E. Stillman
+// Copyright 2016 Michael E. Stillman
 
 #include "../polyring.hpp"
 #include "../freemod.hpp"

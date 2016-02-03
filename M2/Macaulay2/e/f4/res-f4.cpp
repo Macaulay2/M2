@@ -360,14 +360,41 @@ void F4Res::reorderColumns()
 
   std::swap(mColumns, sortedColumnArray);
   std::swap(mReducers, sortedRowArray);
-  
+
+#if 0
+  std::cout << "applying permutation to reducers" << std::endl;
+#endif
+
   for (ComponentIndex i=0; i<mReducers.size(); i++)
     {
+#if 0
+      std::cout << "reducer " << i << " before:";
+      for (ComponentIndex j=0; j<mReducers[i].mComponents.size(); j++) std::cout << " " << mReducers[i].mComponents[j];
+      std::cout << std::endl;
+#endif      
       applyPermutation(ord, mReducers[i].mComponents);
+#if 0
+      std::cout << "reducer " << i << " after:";
+      for (ComponentIndex j=0; j<mReducers[i].mComponents.size(); j++) std::cout << " " << mReducers[i].mComponents[j];
+      std::cout << std::endl;
+#endif      
     }
+#if 0
+  std::cout << "applying permutation to spairs" << std::endl;
+#endif
   for (ComponentIndex i=0; i<mSPairs.size(); i++)
     {
+#if 0
+      std::cout << "spair " << i << " before:";
+      for (ComponentIndex j=0; j<mSPairs[i].mComponents.size(); j++) std::cout << " " << mSPairs[i].mComponents[j];
+      std::cout << std::endl;
+#endif      
       applyPermutation(ord, mSPairs[i].mComponents);
+#if 0
+      std::cout << "spair " << i << " after:";
+      for (ComponentIndex j=0; j<mSPairs[i].mComponents.size(); j++) std::cout << " " << mSPairs[i].mComponents[j];
+      std::cout << std::endl;
+#endif      
     }
 
   delete [] column_order;
