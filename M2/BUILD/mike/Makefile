@@ -48,7 +48,7 @@ darwin64-ffpack : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="mpir flint"
+		--enable-build-libraries="mpir flint gc"
 
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
