@@ -26,6 +26,7 @@
 #include "memblock.hpp"
 #include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
+#include "res-schreyer-order.hpp"
 #include "res-f4.hpp"
 #include "monhashtable.hpp"
 
@@ -64,8 +65,8 @@ namespace SchreyerFrameTypes {
   struct FrameElement
   {
     packed_monomial mMonom; // has component, degree too
-    packed_monomial mTotalMonom; // used for Schreyer order
-    long mTiebreaker; // used for Schreyer order
+    //    packed_monomial mTotalMonom; // used for Schreyer order
+    //    long mTiebreaker; // used for Schreyer order
     int mDegree; // actual degree, not slanted degree
     long mBegin; // points into next level's elements
     long mEnd;
@@ -139,6 +140,7 @@ private:
   struct Level
   {
     std::vector<FrameElement> mElements;
+    ResSchreyerOrder mSchreyerOrder;
   };
   struct Frame
   {
@@ -150,6 +152,8 @@ private:
   int degree(int lev, packed_monomial m) const { return static_cast<int>(m[2]) + degree(lev-1, m[1]); }
 
 public:
+  ResSchreyerOrder& schreyerOrder(int lev) { return mFrame.mLevels[lev].mSchreyerOrder; }
+  const ResSchreyerOrder& schreyerOrder(int lev) const { return mFrame.mLevels[lev].mSchreyerOrder; }
   int maxLevel() const { return static_cast<int>(mFrame.mLevels.size() - 1); }
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
@@ -208,4 +212,3 @@ public:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
 // End:
-

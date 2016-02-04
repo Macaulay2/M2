@@ -203,7 +203,8 @@ private:
   const F4Res& mComputation;
   const std::vector<packed_monomial>& cols;
   int lev;
-  const std::vector<SchreyerFrame::FrameElement>& myframe;
+  const ResSchreyerOrder& myorder;
+  //  const std::vector<SchreyerFrame::FrameElement>& myframe;
   
   static long ncmps;
   static long ncmps0;
@@ -229,18 +230,18 @@ public:
     printf("\n  n=");    
     M.showAlpha(cols[b]);
     printf("\n  m0=");    
-    M.showAlpha(myframe[comp1].mTotalMonom);
+    M.showAlpha(myorder.mTotalMonom[comp1]);
     printf("\n  n0=");    
-    M.showAlpha(myframe[comp2].mTotalMonom);
-    printf("\n  tiebreakers: %ld %ld\n",  myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker);
+    M.showAlpha(myorder.mTotalMonom[comp2]);
+    printf("\n  tiebreakers: %ld %ld\n",  myorder.mTieBreaker[comp1], myorder.mTieBreaker[comp2]);
 #endif
     
     bool result = (M.compare_schreyer(cols[a],cols[b],
-                               myframe[comp1].mTotalMonom, myframe[comp2].mTotalMonom,
-                               myframe[comp1].mTiebreaker, myframe[comp2].mTiebreaker) == LT);
-    #if 0
+                                      myorder.mTotalMonom[comp1], myorder.mTotalMonom[comp2],
+                                      myorder.mTieBreaker[comp1], myorder.mTieBreaker[comp2]) == LT);
+#if 0
     printf("result = %d\n", result);
-    #endif
+#endif
     return result;
   }
 
@@ -249,7 +250,7 @@ public:
       mComputation(comp),
       cols(comp.mColumns),
       lev(lev0),
-      myframe(comp.frame().level(lev0-1))
+      myorder(comp.frame().schreyerOrder(lev0-1))
   {
     //printf("Creating a ResColumnsSorter with level = %ld, length = %ld\n", lev, myframe.size());
   }

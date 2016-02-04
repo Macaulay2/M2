@@ -266,26 +266,32 @@ long SchreyerFrame::computeNextLevel()
 void SchreyerFrame::setSchreyerOrder(int lev)
 {
   auto& myframe = level(lev);
+  auto& myorder = schreyerOrder(lev);
+  myorder.mTieBreaker.resize(myframe.size());
   if (lev == 0)
     {
-      for (long i=0; i<myframe.size(); i++)
-        myframe[i].mTiebreaker = i;
+      for (long i=0; i<myorder.mTieBreaker.size(); i++)
+        myorder.mTieBreaker[i] = i;
       return;
     }
 
   auto& prevframe = level(lev-1);
+  auto& prevorder = schreyerOrder(lev-1);
   long* tiebreakers = new long[myframe.size()];
   
   for (long i=0; i<myframe.size(); i++)
     {
       long comp = monoid().get_component(myframe[i].mMonom);
-      tiebreakers[i] = i + myframe.size() * prevframe[comp].mTiebreaker;
+      tiebreakers[i] = i + myframe.size() * prevorder.mTieBreaker[comp];
     }
   std::sort(tiebreakers, tiebreakers + myframe.size());
+
+  
   for (long i=0; i<myframe.size(); i++)
     {
-      myframe[tiebreakers[i] % myframe.size()].mTiebreaker = i;
+      myorder.mTieBreaker[tiebreakers[i] % myframe.size()] = i;
     }
+  delete [] tiebreakers;
 }
 
 long SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
@@ -295,18 +301,24 @@ long SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
   long idx = myframe.size();
   myframe.emplace_back(FrameElement(monom,degree));
   auto& myelem = myframe[idx];
-  myelem.mTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
+
+  // The rest of this code simply sets the total monomial for the Schreyer order
+  // and should be moved out of here. (MES 3 Feb 2016)
+  auto& myorder = schreyerOrder(lev);
+  auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
   if (lev > 0)
     {
       auto& prevlevel = level(lev-1);
+      auto& prevorder = schreyerOrder(lev-1);
       long comp = monoid().get_component(myelem.mMonom);
-      monoid().unchecked_mult(myelem.mMonom, prevlevel[comp].mTotalMonom, myelem.mTotalMonom);
-      monoid().set_component(monoid().get_component(prevlevel[comp].mTotalMonom), myelem.mTotalMonom);
+      monoid().unchecked_mult(myelem.mMonom, prevorder.mTotalMonom[comp], myTotalMonom);
+      monoid().set_component(monoid().get_component(prevorder.mTotalMonom[comp]), myTotalMonom);
     }
   else
     {
-      monoid().copy(myelem.mMonom, myelem.mTotalMonom);
+      monoid().copy(myelem.mMonom, myTotalMonom);
     }
+  myorder.mTotalMonom.push_back(myTotalMonom);
   return myframe.size();
 }
 
@@ -410,6 +422,7 @@ void SchreyerFrame::show(int len) const
   for (int i=0; i<mFrame.mLevels.size(); i++)
     {
       auto& myframe = level(i);
+      auto& myorder = schreyerOrder(i);
       if (myframe.size() == 0) continue;
       std::cout << "--- level " << i << " ------" << std::endl;
       for (int j=0; j<myframe.size(); j++)
@@ -417,8 +430,8 @@ void SchreyerFrame::show(int len) const
           std::cout << "    " << j << " " << myframe[j].mDegree 
                     << " (" << myframe[j].mBegin << "," << myframe[j].mEnd << ") " << std::flush;
           std::cout << "(size:" << myframe[j].mSyzygy.len << ") [";
-          monoid().showAlpha(myframe[j].mTotalMonom);
-          std::cout << "  " << myframe[j].mTiebreaker << "] ";
+          monoid().showAlpha(myorder.mTotalMonom[j]);
+          std::cout << "  " << myorder.mTieBreaker[j] << "] ";
           if (len == 0 or myframe[j].mSyzygy.len == 0)
             monoid().showAlpha(myframe[j].mMonom);
           else
