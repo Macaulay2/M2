@@ -615,7 +615,7 @@ public:
 };
 #endif
 
-enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
+// enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
 struct Solution
 {
   int n; // number of coordinates
@@ -733,7 +733,6 @@ public:
   virtual ~PathTracker();
 
   void text_out(buffer& o) const;
-  int makeFromHomotopy(const Matrix*);
   Matrix /* or null */* getSolution(int);
   Matrix /* or null */* getAllSolutions();
   int getSolutionStatus(int);

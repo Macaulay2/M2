@@ -4,9 +4,6 @@
 ------------------------------------------------------
 export { "track", "trackSegment", "trackHomotopy" }
 
--- possible solution statuses returned by engine
-solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
-
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
 	  NumericalAlgebraicGeometry$gamma=>null, 
@@ -633,11 +630,25 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
-
--- !!! DUMMY engine routine
 debug Core
-rawTrackHomotopy = method()
-rawTrackHomotopy Sequence := s -> 0
+
+-- doublePrecisionK := CC_53;
+trackHomotopyM2engine = (H, inp, 
+	out, statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold
+	) -> (
+    K := ring inp;
+    if K =!= ring out then error "inp and out have to have the same ring";
+    inpK := inp;
+    outK := out;
+    rawHomotopyTrack(getRawHomotopy(H,K), raw inpK, 
+	raw outK, raw statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold)
+    )
  
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
@@ -648,7 +659,6 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  numberSuccessesBeforeIncrease => null,
 	  -- predictor 
 	  Predictor=>null, 
-	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  maxCorrSteps => null,
 --!!!	  maxPrecision => null,
@@ -745,19 +755,28 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 if not (instance(H,Homotopy) and H#?"RawHomotopy") then "expected a Homotopy with RawHomotopy";  
-	 apply(#solsS, sN->(
-		 s := solsS#sN;
-		 inp := mutableMatrix (if instance(s,Point) then {coordinates s | {0}} else s | matrix{{0_(ring s)}}); 
-		 out := mutableMatrix inp; -- "copy" does not copy!!!
-		 n := numcols out - 1;
-		 out_(0,n) = 1; 
-		 st := rawTrackHomotopy(H#"RawHomotopy", inp, out,
-	     	     o.tStep, o.tStepMin, 
-	     	     o.CorrectorTolerance, o.maxCorrSteps, 
-	     	     toRR o.InfinityThreshold
-	     	     );
-	         s'status := solutionStatusLIST#st;
+	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision
+	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
+	 nSols := #solsS;
+	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
+	 inp := mutableMatrix (
+	     transpose apply( solsS, s->(if instance(s,Point) 
+	     	     then coordinates s  
+	     	     else flatten entries s) | {0_mainRing} )
+	     ); 
+	 out := mutableMatrix inp; -- "copy" does not copy!!!
+	 n = numrows out - 1;
+	 scan(nSols, i->out_(n,i) = 1); 
+	 ti'out := timing trackHomotopyM2engine(H, inp, 
+	     out, statusOut,
+	     o.tStep, o.tStepMin, 
+	     o.CorrectorTolerance, o.maxCorrSteps, 
+	     toRR o.InfinityThreshold);
+	 --if DBG>2 then 
+	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
+	 apply(nSols, sN->(
+		 s'status := solutionStatusLIST#(statusOut_(0,sN));
+		 count := statusOut_(1,sN);
 		 if DBG > 0 then << (if s'status == Regular then "."
 		    else if s'status == Singular then "S"
 		    else if s'status == MinStepFailure then "M"
@@ -765,11 +784,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    else error "unknown solution status"
 		    ) << if (sN+1)%100 == 0 then endl else flush;
 	       	-- create a solution record 
-		x0 := submatrix(out,0..n-1);
-		t0 := out_(0,n);
+		x0 := submatrix(out,toList(0..n-1),{sN});
+		t0 := out_(n,sN);
 		{x0,
 		    SolutionStatus => s'status, 
-		    LastT => t0
+		    NumberOfSteps => count,
+		    LastT => t0,
+		    "H" => H
 		    }
 		))
 	)
@@ -887,7 +908,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     else rawSols/(s->{flatten entries first s} | drop(toList s,1));
     if DBG>1 then (
 	  if member(o.Software,{M2,M2engine}) then (
-	      << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
+	      << "Number of solutions = " << #ret << endl 
+	      --<< "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
 	      << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	      )
 	   );

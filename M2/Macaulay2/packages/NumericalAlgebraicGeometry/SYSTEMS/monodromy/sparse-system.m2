@@ -4,7 +4,7 @@ needsPackage "NAGtools"
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 n = 10
-degree cyclicRoots(n,ZZ/32003)
+--time degree cyclicRoots(n,ZZ/32003)
 S = gens cyclicRoots(n,CC)
 R = ring S
 X = apply(gens R, v->inputGate (symbol x)_v) -- variables
@@ -50,3 +50,16 @@ pre'all = preimageViaMonodromy(PH,c0,{pre0},
 end
 restart
 load "sparse-system.m2"
+
+
+---------- PHCpack timing ------------------------
+restart
+loadPackage "PHCpack"
+
+needsPackage "ExampleIdeals"
+n = 10
+I = cyclicRoots(n,CC);
+R = CC[x_1..x_(numgens ring I)]
+toR = map(R,ring I,vars R)
+elapsedTime (mv,q,qsols) = mixedVolume(I_*/toR,StartSystem => true);
+

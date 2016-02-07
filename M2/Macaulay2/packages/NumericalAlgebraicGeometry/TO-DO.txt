@@ -1,31 +1,16 @@
---- IMPLEMENT SOON ---
-rawHomotopy: stores a handle for a homotopy 
-  -- data --
-  MutableMat: constants, parameters (some given precision? QQ? QQ[ii]? any ring that has promote toCC?)
-  SLProgram: Hx, Hxt, HxH 
-  SLEvaluator: EHx, EHxt, EHxH
-  -- methods --
-  constructor/destructor 
-  track: heuristric tracking using CC_p (or RR_p?)     
-makeRawHomotopy: specifies SLPrograms, constants and inputs positions 
-trackRawHomotopy: tracks raw homotopy given one (many?) initial solutions
-specializeRawHomotopy: specializes parameters and makes new RawHomotopy
-
 --- ISSUES ---
 
 movePoints: fails if the new points are not regular -- there should be a blackbox combining endgame/refine before this is fixed
 
 isSolution?
 
+isOn: merge two versions?
+
 numericalIntersection: need to handle witness sets with ProjectionDimension key
 
 engine track: problem with the origin (change handling relative error tolerance, wee witness-set examples)
 
-isOn: merge two versions?
-
-NAGtrace: separate "progress update" from other "talk"
-
-NAGtrace: unhook gbTrace
+NAGtrace: separate "progress update" from other "talk"?
 
 hypersurfaceSection does not remove junk
 
