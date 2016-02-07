@@ -13,9 +13,14 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
 endif
-CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls --prefix='$(PREFIX)' --disable-shared CC='$(CC)' CFLAGS='$(CPPFLAGS) $(CFLAGS) -std=c90 -pedantic-errors' \
-		--with-gmp=$(LIBRARIESDIR) \
-		--with-mpfr=$(LIBRARIESDIR)
+CPPFLAGS += -UDEBUG
+CFLAGS += -std=c90 -pedantic-errors
+# the flint configure script does not accept CPPFLAGS
+CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls \
+			--prefix='$(PREFIX)' --disable-shared CC='$(CC)' \
+			CFLAGS='$(CFLAGS) $(CPPFLAGS)' \
+			--with-gmp=$(LIBRARIESDIR) \
+			--with-mpfr=$(LIBRARIESDIR)
 # The with-gmp and with-mpfr options above are barely used by the configure script: the directory given should contain a subdirectory "lib"; that's all.
 include ../Makefile.library
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/flint/Makefile
