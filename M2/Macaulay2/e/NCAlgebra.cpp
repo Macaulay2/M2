@@ -369,7 +369,7 @@ ring_elem NCFreeAlgebra::mult_by_term_right(const ring_elem f1,
 ring_elem NCFreeAlgebra::mult_by_term_left(const ring_elem f1,
                                            const ring_elem c, const NCMonomial m) const
 {
-  // return c*m*f
+  // return (c*m)*f
   const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
   NCPolynomial* result = new NCPolynomial;
   result->reserveCoeff(f->numTerms());
@@ -397,6 +397,37 @@ ring_elem NCFreeAlgebra::mult_by_term_left(const ring_elem f1,
   return reinterpret_cast<Nterm*>(result);
 }
 
+ring_elem NCFreeAlgebra::mult_by_term_right(const ring_elem f1,
+                                           const ring_elem c, const NCMonomial m) const
+{
+  // return f*(c*m)
+  const NCPolynomial* f = reinterpret_cast<NCPolynomial*>(f1.poly_val);
+  NCPolynomial* result = new NCPolynomial;
+  result->reserveCoeff(f->numTerms());
+  for(auto i=f->cbegin(); i != f->cend(); i++)
+    {
+      // multiply the coefficients
+      result->push_backCoeff(mCoefficientRing.mult(i.coeff(),c));
+      // tack on the monomial pointed to by m to the end of current monomial.
+      int lenm = (*m)[0];
+      int degm = (*m)[1];
+      const int* curMon = *(i.monom());
+      result->push_backMonom(curMon[0] + lenm - 2);
+      result->push_backMonom(curMon[1] + degm);
+      // copy f's monomial
+      for(auto j = 2; j < curMon[0]; j++)
+        {
+          result->push_backMonom(curMon[j]);
+        }
+      // copy m's monomial
+      for(auto j = 2; j < (*m)[0]; j++)
+        {
+          result->push_backMonom((*m)[j]);
+        }      
+    }
+  return reinterpret_cast<Nterm*>(result);
+}
+
 ring_elem NCFreeAlgebra::invert(const ring_elem f) const
 {
 }
@@ -408,7 +439,9 @@ ring_elem NCFreeAlgebra::divide(const ring_elem f, const ring_elem g) const
 void NCFreeAlgebra::syzygy(const ring_elem a, const ring_elem b,
                       ring_elem &x, ring_elem &y) const
 {
-  // TODO?  what to place here?
+  // TODO: In the commutative case, this function is to find x and y (as simple as possible)
+  //       such that ax + by = 0.  No such x and y may exist in the noncommutative case, however.
+  //       In this case, the function should return x = y = 0.
 }
 
 void NCFreeAlgebra::elem_text_out(buffer &o,
@@ -463,8 +496,46 @@ void NCFreeAlgebra::elem_text_out(buffer &o,
 
 ring_elem NCFreeAlgebra::eval(const RingMap *map, const ring_elem f, int first_var) const
 {
+  // evaluate a ring map at a ring element.
 }
 
+/*
+engine_RawArrayPairOrNull NCFreeAlgebra::list_form(const Ring *coeffR, const ring_elem f) const
+{
+  // Either coeffR should be the actual coefficient ring (possible a "toField"ed ring)
+  // or a polynomial ring.  If not, NULL is returned and an error given
+  // In the latter case, the last set of variables are part of
+  // the coefficients.
+  int nvars0 = check_coeff_ring(coeffR, this);
+  if (nvars0 < 0) return 0;
+  int n = n_logical_terms(nvars0,f);
+  engine_RawMonomialArray monoms = GETMEM(engine_RawMonomialArray, sizeofarray(monoms,n));
+  engine_RawRingElementArray coeffs = GETMEM(engine_RawRingElementArray, sizeofarray(coeffs,n));
+  monoms->len = n;
+  coeffs->len = n;
+  engine_RawArrayPair result = newitem(struct engine_RawArrayPair_struct);
+  result->monoms = monoms;
+  result->coeffs = coeffs;
+
+  int *exp = newarray_atomic(int, n_vars());
+  intarray resultvp;
+  const Nterm *t = f;
+  for (int next = 0; next < n; next++)
+    {
+      getMonoid()->to_expvector(t->monom, exp);
+      ring_elem c = get_logical_coeff(coeffR, t); // increments t to the next term of f.
+      varpower::from_ntuple(nvars0, exp, resultvp);
+      monoms->array[next] = Monomial::make(resultvp.raw());
+      coeffs->array[next] = RingElement::make_raw(coeffR, c);
+      resultvp.shrink(0);
+
+      assert( monoms->array[next] != NULL );
+      assert( coeffs->array[next] != NULL );
+    }
+  deletearray(exp);
+  return result;
+}
+*/
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

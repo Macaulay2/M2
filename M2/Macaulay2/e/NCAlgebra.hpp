@@ -19,7 +19,6 @@ struct NCMonomial
 private:
   const int* mValue; // points to an array of ints of form: [len, degree, v0, v1, v2, ..., vr]
     // We are visiting this monomial, we do not own it!
-
 };
 
 /**
@@ -245,6 +244,10 @@ public:
   ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const NCMonomial) const;
   void add_to_end(ring_elem f, const ring_elem g) const;
   int compare_monoms(const NCMonomial m1, const NCMonomial m2) const;
+
+  // casting functions
+  virtual const NCFreeAlgebra * cast_to_NCFreeAlgebra()  const { return this; }
+  virtual       NCFreeAlgebra * cast_to_NCFreeAlgebra()        { return this; }
 
 private:
   std::vector<std::string> mVariableNames;

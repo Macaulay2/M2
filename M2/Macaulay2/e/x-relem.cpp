@@ -991,6 +991,13 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
       {
         return S->list_form(coeffRing, f->get_value());
       }
+    /* added by Frank
+    const NCFreeAlgebra *ncP = f->get_ring()->cast_to_NCFreeAlgebra();
+    if (ncP != 0)
+      {
+        return ncP->list_form(coeffRing, f->get_value());
+      }
+    */ *****
     ERROR("expected a polynomial");
     return 0;
   }

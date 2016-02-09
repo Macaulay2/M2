@@ -41,7 +41,7 @@ restart
 needsPackage "NCAlgebra"
 R = QQ{a,b,c}
 f = a+b+c
---elapsedTime time(f^12);
+elapsedTime time(f^12);
 M = ncMatrix {{a,b},{c,a}}
 elapsedTime(M^10);
 
@@ -74,30 +74,51 @@ M = rawMutableMatrix(R,4,4,false) -- crashes
 -- Creating a new NCAlgebra Ring
 restart
 debug Core    
-NCEngineRing = new Type of EngineRing
-NCEngineRing.synonym = "NCEngineAlgebra"
-NCRingElement = new Type of RingElement
-new NCEngineRing from List := (NCEngineRing, inits) -> new NCEngineRing of NCRingElement from new HashTable from inits
+NCPolynomialRing = new Type of EngineRing
+NCPolynomialRing.synonym = "noncommutative polynomial ring"
+new NCPolynomialRing from List := (EngineRing, inits) -> new EngineRing of RingElement from new HashTable from inits
 Ring List := (R, varList) -> (
    -- get the symbols associated to the list that is passed in, in case the variables have been used earlier.
    if #varList == 0 then error "Expected at least one variable.";
    if #varList == 1 and class varList#0 === Sequence then varList = toList first varList;
    varList = varList / baseName;
    rawA := rawNCFreeAlgebra(raw R, toSequence(varList/toString), raw degreesRing 1);
-   A := new NCEngineRing from {
-       symbol rawRing => rawA,
+   A := new NCPolynomialRing from {
+       (symbol rawRing) => rawA,
        (symbol generators) => {},
        (symbol generatorSymbols) => varList,
        (symbol degreesRing) => degreesRing 1,
        (symbol CoefficientRing) => R,
        (symbol cache) => new CacheTable from {},
-       (symbol baseRings) => {ZZ}
+       (symbol baseRings) => {ZZ,R}
        };
-   --newGens := apply(varList, v -> v <- new A from putInRing({v},A,1));
    newGens := for i from 0 to #varList-1 list varList#i <- new A from A.rawRing_i;
    A#(symbol generators) = newGens;
+   --- need to fix net of an RingElement coming from a NCPolynomial ring.
+   net A := f -> net raw f;
    A);
+NCPolynomialRing _ ZZ := (A, n) -> (A.generators)#n
+coefficientRing NCPolynomialRing := A -> last A.baseRings
+
 R = QQ {a,b,c}
+coefficientRing R
+f = a*a*a*a*a + a*b*a*b;
+terms f
+ring f
+rawPairs(raw coefficientRing R, raw f)
+
+time g = f^20;
+time g = f^10;
+time h = g*g;
+f + f^2
+R_0
+
+restart
+needsPackage "NCAlgebra"
+R = QQ {a,b,c}
+f = a*a*a*a*a + a*b*a*b;
+time g = f^20;
+
 R_0
 gens R
 
