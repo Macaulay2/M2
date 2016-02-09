@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.8",
-     Date => "Oct, 2015",
+     Version => "1.8.2.1",
+     Date => "Jan, 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -11,8 +11,8 @@ newPackage(
 	  },
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     -- DebuggingMode => false 
-     DebuggingMode => true 
+     DebuggingMode => false 
+     --DebuggingMode => true 
      )
 
 export {

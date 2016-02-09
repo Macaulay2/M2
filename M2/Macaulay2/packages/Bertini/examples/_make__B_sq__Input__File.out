@@ -1,0 +1,61 @@
+-- -*- M2-comint -*- {* hash: 1762694930 *}
+
+i1 : R=QQ[x1,x2,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : theDir = temporaryFileName()
+
+o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62285-0/1
+
+i3 : makeDirectory theDir
+
+i4 : makeB'InputFile(theDir,
+         B'Configs=>{{"MPTYPE",2}},
+         AVG=>{{x1,x2},{y}},
+         B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+
+o4 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62285-0/1/input
+
+o4 : File
+
+i5 : R=QQ[x1,x2,y,X]
+
+o5 = R
+
+o5 : PolynomialRing
+
+i6 : makeB'InputFile(theDir,
+         B'Configs=>{{"MPTYPE",2}},
+         AVG=>{{x1,x2},{y}},
+         NamePolynomials=>{f1,f2,f3},
+         B'Functions=>{
+             {X,x1+x2+1},
+             {f1,y*X^2+1},
+             {f2,x1-x2+1},
+             {f3,y-2}})
+
+o6 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62285-0/1/input
+
+o6 : File
+
+i7 : R=QQ[x1,x2,y,X]
+
+o7 = R
+
+o7 : PolynomialRing
+
+i8 : makeB'InputFile(theDir,
+         B'Configs=>{{"MPTYPE",2}},
+         AVG=>{{x1,x2},{y}},
+         B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
+         B'Functions=>{
+             {X,x1+x2+1}})
+
+o8 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62285-0/1/input
+
+o8 : File
+
+i9 : 
