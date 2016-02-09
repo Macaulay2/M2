@@ -111,22 +111,6 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 
--- Parameter homotopy for tracking a point on the fiber of a covering (generically finite-to-one onto) map 
--- in: 
---     S, polynomials desribing a subvariety of CC^(V,W)
---     V, variables (list of InputGates)
---     W, parameter variables
--- out: 
---     Homotopy that has A_w and B_w as parameters, 
---     	       	      where v in V|W  are coordinates of the source space 
-parametricSegmentHomotopy = method()
-parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
-    A := matrix{apply(W, w->inputGate symbol A_w)};
-    B := matrix{apply(W, w->inputGate symbol B_w)};
-    t := inputGate symbol t;
-    H := sub(S,matrix{W},(1-t)*A+t*B);
-    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
-    )
 TEST ///
 X = inputGate x
 F = matrix{{X^2}} 

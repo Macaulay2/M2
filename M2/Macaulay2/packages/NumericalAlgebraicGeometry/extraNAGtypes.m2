@@ -108,18 +108,51 @@ specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (
 
 getVarGates = method()
 getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
- 
-gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else (
-    S := F.PolyMap;
-    R := ring S; 
+
+makeGateMatrix = method(Options=>{Parameters=>{}})
+makeGateMatrix PolySystem := o -> F -> (
+    R := ring F; 
+    if not isSubset(o.Parameters, gens R) then "parameters do appear in the ring";
     X := getVarGates R;
-    -- monoms := flatten entries monomials S;
-    polys := flatten entries S;
+    F.Variables = X_(positions(gens R, x->not member(x,o.Parameters)));  
+    F.NumberOfVariables = #F.Variables; -- reconsile 
+    F.Parameters =X_(positions(gens R, x->member(x,o.Parameters)));
+    polys := flatten entries F.PolyMap;
+    -- one naive way of converting a sparse system to a circuit  
     F.GateMatrix = gateMatrix apply(polys, p->{ sumGate apply(listForm p,mc->(
 		    (m,c) := mc;
 		    c*product(#m,i->X#i^(m#i))
 		    )) }
-    	)	 
+    	)   
+    ) 
+ 
+gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else makeGateMatrix F
+
+-- Homotopy that follows a segment in the parameter space 
+parametricSegmentHomotopy = method()
+
+-- in:
+--     F, PolySystem (F.GateMatrix, F.Variables, F.Parameters are assumed to be set)
+-- in-place: 
+--     the output is stored in F.GateParameterHomotopy
+-- out:
+--     GateParameterHomotopy
+parametricSegmentHomotopy PolySystem := F -> if F.?GateParameterHomotopy then F.GateParameterHomotopy else     
+    parametricSegmentHomotopy(F.GateMatrix,F.Variables,F.Parameters)    
+
+-- in: 
+--     S, polynomials (GateMatrix)
+--     V, variables (list of InputGates)
+--     W, parameters
+-- out: 
+--     Homotopy that has A_w and B_w as parameters, 
+--     	       	      where v in V|W  are coordinates of the source space 
+parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
+    A := matrix{apply(W, w->inputGate symbol A_w)};
+    B := matrix{apply(W, w->inputGate symbol B_w)};
+    t := inputGate symbol t;
+    H := sub(S,matrix{W},(1-t)*A+t*B);
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 
 TEST ///

@@ -142,7 +142,8 @@ template<typename RT>
 bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs, DMat<RT>& outputs)
 {
   if (varsPos.size() != inputs.numRows()*inputs.numColumns()) { 
-    ERROR("inputs: the number of outputs does not match the number of entries in the outputs matrix");
+    ERROR("inputs: the number of inputs does not match the number of entries in the inputs matrix");
+    std::cout << varsPos.size() << " != " << inputs.numRows()*inputs.numColumns() << std::endl;
     return false;
   }
   size_t i=0;

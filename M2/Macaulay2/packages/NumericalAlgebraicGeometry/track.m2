@@ -755,7 +755,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision
+	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision !!!
 	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
 	 nSols := #solsS;
 	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
