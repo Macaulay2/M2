@@ -153,7 +153,7 @@ int PolynomialAlgebra::compare_elems(const ring_elem f1, const ring_elem g1) con
     }
 }
 
-int PolynomialAlgebra::compare_monoms(const Monomial m1, const Monomial m2) const
+int PolynomialAlgebra::compare_monoms(const Monom m1, const Monom m2) const
 {
   // here, compare the monomials pointed to by fIt and gIt.
   // should probably make an NCMonoid class...
@@ -186,10 +186,14 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
   Poly* result = new Poly;
 
-  std::copy(f->cbeginMonom(), f->cendMonom(), result->getMonomInserter());
-  auto out = result->getCoeffInserter();
+  auto outmonom = result->getMonomInserter();
+  auto outcoeff = result->getCoeffInserter();
+
+  for (auto i = f->cbeginMonom(); i != f->cendMonom(); ++i)
+    outmonom.push_back(*i);
+
   for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
-    out.push_back(mCoefficientRing.negate(*i));
+    outcoeff.push_back(mCoefficientRing.negate(*i));
 
   return reinterpret_cast<Nterm*>(result);
 }
@@ -388,7 +392,7 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 }
 
 ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
-                                            const ring_elem c, const Monomial m) const
+                                            const ring_elem c, const Monom m) const
 {
   // return f*c*m
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
@@ -423,7 +427,7 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
 }
 
 ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
-                                           const ring_elem c, const Monomial m) const
+                                           const ring_elem c, const Monom m) const
 {
   // return (c*m)*f
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);

@@ -11,7 +11,7 @@ class Ring;
 
 class PolynomialAlgebra;
 
-struct Monomial
+struct Monom
 // Format for monomials:
   // A monomial is an array of ints, the first of which is the length of that array (including length field).
   // e.g. [2 0] (is currently the empty monomial, but this class knows nothing about specific monomials.
@@ -22,7 +22,7 @@ struct Monomial
   // 2 monomials: xzx, xy (dot is only there for readability)
   //   5 3 0 2 1 . 4 2 0 1
 {
-  Monomial(const int* value) : mValue(value) {}
+  Monom(const int* value) : mValue(value) {}
   const int* operator*() const { return mValue; }
 
   //TODO: move to Monoid class?
@@ -92,7 +92,7 @@ public:
     // for the record, we are using &*it here to get the pointer that records where an iterator currently is
     // this seems like a bit of a hack, but it seems to be the way things are done.
     // FRANK: Same as above, do we want to make a copy here?
-    Monomial monom() const { return Monomial((&*(this->mMonomIt))); }
+    Monom monom() const { return Monom((&*(this->mMonomIt))); }
 
     // (in)equality checks
     bool operator==(const self_type& rhs) const { return (this->mCoeffIt == rhs.mCoeffIt); }

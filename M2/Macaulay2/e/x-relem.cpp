@@ -244,7 +244,7 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
                                                const Ring* degreeRing)
 {
-  Polynomial<int> noop; // This is just to force a compile of the code, until we have more of PolynomialAlgebra running.
+  Polynomial<CoefficientRingTypeExample> noop; // This is just to force a compile of the code, until we have more of PolynomialAlgebra running.
   try {
     if (coefficientRing == nullptr)
       {
@@ -1026,7 +1026,7 @@ engine_RawArrayPairOrNull IM2_RingElement_list_form(
       {
         return ncP->list_form(coeffRing, f->get_value());
       }
-    */ *****
+    */
     ERROR("expected a polynomial");
     return 0;
   }

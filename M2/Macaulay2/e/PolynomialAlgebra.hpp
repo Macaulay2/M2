@@ -50,10 +50,10 @@ public:
   virtual ring_elem eval(const RingMap *map, const ring_elem f, int first_var) const;
   
   // some internal functions for the above routines
-  ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monomial) const;
-  ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monomial) const;
+  ring_elem mult_by_term_right(const ring_elem f, const ring_elem c, const Monom) const;
+  ring_elem mult_by_term_left(const ring_elem f, const ring_elem c, const Monom) const;
   void add_to_end(ring_elem f, const ring_elem g) const;
-  int compare_monoms(const Monomial m1, const Monomial m2) const;
+  int compare_monoms(const Monom m1, const Monom m2) const;
 
   // casting functions
   virtual const PolynomialAlgebra * cast_to_PolynomialAlgebra()  const { return this; }
