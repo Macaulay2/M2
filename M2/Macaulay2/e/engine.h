@@ -22,6 +22,9 @@ class RingElement;
 class RingMap;
 class Computation;
 class EngineComputation;
+class SLEvaluator;
+class Homotopy;
+class SLProgram;
 class StraightLineProgram;
 class PathTracker;
 
@@ -40,6 +43,9 @@ typedef struct Computation Computation;
 typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
+typedef struct SLEvaluator SLEvaluator;
+typedef struct Homotopy Homotopy;
+typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
 #endif
@@ -1972,6 +1978,30 @@ enum gbTraceValues
   gmp_RRorNull rawMatrixNorm(gmp_RR p, const Matrix *M);
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
+
+  Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
+  SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
+  SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);
+  SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
+  M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
+  M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_string rawHomotopyToString(Homotopy *); /* connected */
+  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
+                           MutableMatrix* output_extras,  
+                           gmp_RR init_dt, gmp_RR min_dt,
+                           gmp_RR epsilon, // o.CorrectorTolerance,
+                           int max_corr_steps, 
+                           gmp_RR infinity_threshold);
+  M2_string rawSLProgramToString(SLProgram *); /* connected */
+  unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
+  unsigned int rawHomotopyHash(Homotopy *); /* connected */
+  unsigned int rawSLProgramHash(SLProgram *); /* connected */
+  gmp_ZZ rawSLPInputGate(SLProgram *S);
+  gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a);
+  gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a);
 
   StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program);
   const Matrix /* or null */ *rawEvaluateSLP(StraightLineProgram *SLP, const Matrix *vals);

@@ -147,10 +147,6 @@ extern char current_time[];
 extern int system_errno();
 extern char *progname;
 
-#ifdef HAVE_GNU_GET_LIBC_VERSION
-extern char *gnu_get_libc_version();
-#endif
-
 #include "../dumpdata/dumpdata.h"
 
  /* set this jump and the flag below if the handler should always jump; e.g., for interrupting a slow 3rd party or system library routine */

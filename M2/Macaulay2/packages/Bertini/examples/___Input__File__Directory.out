@@ -1,0 +1,32 @@
+-- -*- M2-comint -*- {* hash: -1497010589 *}
+
+i1 : R=QQ[x,y]
+
+o1 = R
+
+o1 : PolynomialRing
+
+i2 : theDir1 = temporaryFileName()
+
+o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62259-0/1
+
+i3 : makeDirectory theDir1
+
+i4 : theDir2 = temporaryFileName()
+
+o4 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62259-0/2
+
+i5 : makeDirectory theDir2
+
+i6 : makeB'InputFile(theDir1,
+         AVG=>{{x,y}},
+         B'Polynomials=>{x+y-1,x^2-2})
+
+o6 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62259-0/1/input
+
+o6 : File
+
+i7 : runBertini(theDir2,InputFileDirectory=>theDir1)
+bertini
+
+i8 : 

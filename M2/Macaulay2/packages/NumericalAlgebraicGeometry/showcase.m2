@@ -23,9 +23,11 @@ for system in systems do (
 	       << "---------------------------------------------------------" << endl;
 	       << "---------- COMPUTING with " << soft << "-----------------" << endl; 
 	       << "---------------------------------------------------------" << endl;
-	       soft=>sortSolutions if soft===HOM4PS2 then solveSystem(T,Software=>soft)/point
-	       else 
-	       track(S,T,solsS,gamma=>1+ii,Software=>soft)/point
+	       soft=>sortSolutions if soft===HOM4PS2 then elapsedTime solveSystem(T,Software=>soft)/point
+	       else (
+		    elapsedTime track(S,T,solsS,gamma=>1+ii,Software=>soft);
+		    elapsedTime solveSystem(T,Software=>soft)
+		    )
 	       ));
      --assert all(drop(softwares,1), soft->areEqual(sols#soft/(s->{first s}),sols#(first softwares),Tolerance=>1e-3));
      --on large problems some of the softwares do not refine solutions to high enough precision -- can't check the match
@@ -38,13 +40,15 @@ needsPackage "NumericalAlgebraicGeometry"
 softwares = {
      M2engine,
      BERTINI,
-     PHCPACK,
-     HOM4PS2
+     PHCPACK
+     -- , HOM4PS2
      };
+-- recursionLimit = 1000;
 load "NumericalAlgebraicGeometry/showcase.m2"
 M = sols#(first softwares);
-<< "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(first M#i,first M#(i+1),Tolerance=>1e-3)) << endl;
-assert all(#M, i->getSolution(i,SolutionAttributes=>SolutionStatus)=="REGULAR") 
+assert all(softwares, soft->#M==#(sols#soft))
+<< "Multiple solutions: " << select(toList(0..#M-2), i->areEqual(M#i,M#(i+1),Tolerance=>1e-3)) << endl;
+assert all(M, s->status s === Regular) 
 << "Large residual: " << select(toList(0..#M-2), i->norm sub(matrix {T}, matrix M#i)>0.001) << endl;
 
 -- try projective tracker

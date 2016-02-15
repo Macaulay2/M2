@@ -1,5 +1,6 @@
 *.m2 loaded by ../NumericalAlgebraicGeometry.m2 :
 
+     extraNAGtypes				-- NAGtypes that are not shared (yet) by other numerical packages
      track					-- core homotopy tracking routines
      refine 					-- refining/sharpening routines 
      BSS-certified				-- certified tracking that emulates Blum-Shub-Smale machine
