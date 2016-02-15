@@ -16,6 +16,8 @@
 #include "weylalg.hpp"
 #include "skewpoly.hpp"
 #include "solvable.hpp"
+#include "Polynomial.hpp"
+#include "PolynomialAlgebra.hpp"
 #include "NCAlgebra.hpp"
 #include "polyquotient.hpp"
 
@@ -229,6 +231,33 @@ const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
         return nullptr;
       }
     const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names, P);
+    //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
+                                               M2_ArrayString names,
+                                               const Ring* degreeRing)
+{
+  Polynomial<int> noop; // This is just to force a compile of the code, until we have more of PolynomialAlgebra running.
+  try {
+    if (coefficientRing == nullptr)
+      {
+        ERROR("internal error: expected non-null Ring!");
+        return nullptr;
+      }
+    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
+    if (P == nullptr)
+      {
+        ERROR("expected polynomial ring");
+        return nullptr;
+      }
+    const PolynomialAlgebra* result = PolynomialAlgebra::create(coefficientRing, names, P);
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }

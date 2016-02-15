@@ -9,6 +9,8 @@ INTERFACE2 = \
 	newdelete \
 
 INTERFACE = \
+	Polynomial \
+	PolynomialAlgebra \
 	NCAlgebra \
 	util \
 	GF \
