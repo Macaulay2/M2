@@ -5,6 +5,9 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
+#include <ctime>
+#include <chrono>
+
 // SLEvaluator
 template<typename RT>
 SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(SLProgram *SLP, M2_arrayint cPos,  M2_arrayint vPos, 
@@ -218,6 +221,9 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
                      gmp_RR infinity_threshold
                    ) 
 {
+  std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+  size_t solveLinearTime = 0, solveLinearCount = 0;
+ 
   // typedef M2::ARingCCC RT;
   // std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
   // double the_smallest_number = 1e-13;
@@ -394,7 +400,12 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
       MatrixOps::negateInPlace(RHS);
       //solve LHS*dx1 = RHS
+
+      std::chrono::steady_clock::time_point startLinear = std::chrono::steady_clock::now();
       linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx1);
+      std::chrono::steady_clock::time_point endLinear = std::chrono::steady_clock::now();
+      solveLinearCount++;
+      solveLinearTime += std::chrono::duration_cast<std::chrono::microseconds>(endLinear - startLinear).count(); 
 
       // dx2
       if (linearSolve_success) { 
@@ -604,6 +615,15 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   R.clear(dt_min);
   R.clear(epsilon2);
   R.clear(infinity_threshold2);
+  
+  std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+  if (M2_numericalAlgebraicGeometryTrace>0) {
+    std::cout << "-- track took "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+              << "ms.\n";
+    std::cout << "-- # of solveLinear calls = " << solveLinearCount << std::endl;
+    std::cout << "-- time of solveLinear calls = " << solveLinearTime << "micros." << std::endl;
+  }
   return true;
 }
 
