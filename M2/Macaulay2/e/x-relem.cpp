@@ -214,32 +214,6 @@ const Ring /* or null */ *IM2_Ring_solvable_algebra(const Ring *R,
      }
 }
 
-const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
-                                               M2_ArrayString names,
-                                               const Ring* degreeRing)
-{
-  try {
-    if (coefficientRing == nullptr)
-      {
-        ERROR("internal error: expected non-null Ring!");
-        return nullptr;
-      }
-    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
-    if (P == nullptr)
-      {
-        ERROR("expected polynomial ring");
-        return nullptr;
-      }
-    const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names, P);
-    //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
-    return result;
-  }
-  catch (exc::engine_error e) {
-    ERROR(e.what());
-    return NULL;
-  }
-}
-
 const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
                                                M2_ArrayString names,
                                                const Ring* degreeRing)
@@ -258,6 +232,35 @@ const Ring* /* or null */ rawRingPolynomialAlgebra(const Ring* coefficientRing,
         return nullptr;
       }
     const PolynomialAlgebra* result = PolynomialAlgebra::create(coefficientRing, names, P);
+    //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
+    return result;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return NULL;
+  }
+}
+
+const Ring* /* or null */ rawRingNCFreeAlgebra(const Ring* coefficientRing,
+                                               M2_ArrayString names,
+                                               const Ring* degreeRing)
+{
+  return rawRingPolynomialAlgebra(coefficientRing, names, degreeRing);
+  // TODO: don't need two of these functions.  For now, switching to the one we are currently
+  // writing. (16 Feb 2016 Mike+Frank).
+  try {
+    if (coefficientRing == nullptr)
+      {
+        ERROR("internal error: expected non-null Ring!");
+        return nullptr;
+      }
+    const PolynomialRing *P = degreeRing->cast_to_PolynomialRing();
+    if (P == nullptr)
+      {
+        ERROR("expected polynomial ring");
+        return nullptr;
+      }
+    const NCFreeAlgebra* result = NCFreeAlgebra::create(coefficientRing, names, P);
     //intern_polyring(result); // we might want to intern our rings (to register a finalizer with the gc)
     return result;
   }
