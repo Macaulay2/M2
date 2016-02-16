@@ -21,6 +21,7 @@ public:
 
   // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
   virtual int index_of_var(const ring_elem a) const;
+  
   virtual void text_out(buffer &o) const;
   virtual unsigned int computeHashValue(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;
@@ -60,6 +61,8 @@ public:
   virtual const PolynomialAlgebra * cast_to_PolynomialAlgebra()  const { return this; }
   virtual       PolynomialAlgebra * cast_to_PolynomialAlgebra()        { return this; }
 
+  void debug_display(const Poly* f) const;
+  void debug_display(const ring_elem ff) const;
 private:
   std::vector<std::string> mVariableNames;
   const Ring& mCoefficientRing;

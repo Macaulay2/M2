@@ -106,6 +106,7 @@ ring_elem PolynomialAlgebra::var(int v) const
 
 bool PolynomialAlgebra::promote(const Ring *R, const ring_elem f, ring_elem &result) const
 {
+  std::cout << "Called promote" << std::endl;
   // TODO
   return false;
 }
@@ -135,6 +136,7 @@ bool PolynomialAlgebra::is_zero(const ring_elem f1) const
 
 bool PolynomialAlgebra::is_equal(const ring_elem f, const ring_elem g) const
 {
+  std::cout << "Called is_equal" << std::endl;
   return false; // TODO
 }
 
@@ -200,8 +202,8 @@ ring_elem PolynomialAlgebra::negate(const ring_elem f1) const
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
   Poly* result = new Poly;
 
-  auto outmonom = result->getMonomInserter();
-  auto outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
+  auto& outcoeff = result->getCoeffInserter();
 
   for (auto i = f->cbeginMonom(); i != f->cendMonom(); ++i)
     outmonom.push_back(*i);
@@ -222,8 +224,8 @@ ring_elem PolynomialAlgebra::add(const ring_elem f1, const ring_elem g1) const
   auto fEnd = f->cend();
   auto gEnd = g->cend();
 
-  auto outcoeff = result->getCoeffInserter();
-  auto outmonom = result->getMonomInserter();
+  auto& outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
   
   // loop over the iterators for f and g, adding the bigger of the two to
   // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
@@ -309,8 +311,8 @@ ring_elem PolynomialAlgebra::subtract(const ring_elem f1, const ring_elem g1) co
   auto fEnd = f->cend();
   auto gEnd = g->cend();
 
-  auto outcoeff = result->getCoeffInserter();
-  auto outmonom = result->getMonomInserter();
+  auto& outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
 
   // loop over the iterators for f and g, adding the bigger of the two to
   // the back of the monomial and coefficient vectors of the result.  If a tie, add the coefficients.
@@ -390,7 +392,20 @@ ring_elem PolynomialAlgebra::mult(const ring_elem f1, const ring_elem g1) const
 {
   // TODO: make this a geobucket heap multiply function?
   //
-  return f1; // BAD RETURN
+  const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
+  const Poly* g = reinterpret_cast<Poly*>(g1.poly_val);
+  Poly* result = new Poly;
+  ring_elem resultW = reinterpret_cast<Nterm*>(result);
+
+  for (auto fIt = f->cbegin(); fIt != f->cend(); fIt++)
+    {
+      ring_elem tmp = mult_by_term_left(g1, fIt.coeff(), fIt.monom());
+      ring_elem resultW1 = add(resultW, tmp);
+      std::swap(resultW1, resultW);
+      delete reinterpret_cast<Poly*>(tmp.poly_val);
+      delete reinterpret_cast<Poly*>(resultW1.poly_val);
+    }
+  return resultW;
 #if 0  
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
   Poly* zeroPoly = new Poly;
@@ -411,8 +426,8 @@ ring_elem PolynomialAlgebra::mult_by_term_right(const ring_elem f1,
   // return f*c*m
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
   Poly* result = new Poly;
-  auto outcoeff = result->getCoeffInserter();
-  auto outmonom = result->getMonomInserter();
+  auto& outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
       // multiply the coefficients
@@ -446,8 +461,8 @@ ring_elem PolynomialAlgebra::mult_by_term_left(const ring_elem f1,
   // return (c*m)*f
   const Poly* f = reinterpret_cast<Poly*>(f1.poly_val);
   Poly* result = new Poly;
-  auto outcoeff = result->getCoeffInserter();
-  auto outmonom = result->getMonomInserter();
+  auto& outcoeff = result->getCoeffInserter();
+  auto& outmonom = result->getMonomInserter();
   for(auto i=f->cbegin(); i != f->cend(); i++)
     {
       // multiply the coefficients
@@ -488,6 +503,30 @@ void PolynomialAlgebra::syzygy(const ring_elem a, const ring_elem b,
   // TODO: In the commutative case, this function is to find x and y (as simple as possible)
   //       such that ax + by = 0.  No such x and y may exist in the noncommutative case, however.
   //       In this case, the function should return x = y = 0.
+}
+
+void PolynomialAlgebra::debug_display(const Poly* f) const
+{
+  std::cout << "coeffs: ";
+  for (auto i=f->cbeginCoeff(); i != f->cendCoeff(); ++i)
+    {
+      buffer o;
+      mCoefficientRing.elem_text_out(o, *i);
+      std::cout << o.str() << " ";
+    }
+  std::cout << std::endl  << "  monoms: ";
+  for (auto i=f->cbeginMonom(); i != f->cendMonom(); ++i)
+    {
+      std::cout << (*i) << " ";
+    }
+  std::cout << std::endl;
+}
+
+void PolynomialAlgebra::debug_display(const ring_elem ff) const
+
+{
+  const Poly* f = reinterpret_cast<const Poly*>(ff.poly_val);
+  debug_display(f);
 }
 
 void PolynomialAlgebra::elem_text_out(buffer &o,

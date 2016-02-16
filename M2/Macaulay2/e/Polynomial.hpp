@@ -44,7 +44,7 @@ public:
  * \ingroup polynomialrings
  */
 template<typename CoefficientRingType>
-class Polynomial
+class Polynomial : public our_new_delete
 {
   friend class PolynomialAlgebra;
   
