@@ -20,6 +20,7 @@ public:
                                const PolynomialRing* degreeRing);
 
   // these are all the functions from Ring that must exist for PolynomialAlgebra to be instantiated
+  virtual int index_of_var(const ring_elem a) const;
   virtual void text_out(buffer &o) const;
   virtual unsigned int computeHashValue(const ring_elem a) const;
   virtual ring_elem from_long(long n) const;

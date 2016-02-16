@@ -46,6 +46,20 @@ unsigned int PolynomialAlgebra::computeHashValue(const ring_elem a) const
   return 0; // TODO: change this to a more reasonable hash code.
 }
 
+int PolynomialAlgebra::index_of_var(const ring_elem a) const
+{
+  // This function is needed at top level to be able to determine if a ring element is a variable
+  const Poly* f = reinterpret_cast<Poly*>(a.poly_val);
+
+  // f is a variable iff: #terms is 1, monomial is [3,1,v], coeff is 1
+  if (f->numTerms() != 1) return -1;
+  auto i = f->cbegin();
+  if (!mCoefficientRing.is_equal(mCoefficientRing.one(), i.coeff())) return -1;
+  const int* m = *i.monom();
+  if (m[0] != 3 || m[1] != 1) return 0;
+  return m[2];
+}
+
 ring_elem PolynomialAlgebra::from_long(long n) const
 {
   Poly* result = new Poly;
