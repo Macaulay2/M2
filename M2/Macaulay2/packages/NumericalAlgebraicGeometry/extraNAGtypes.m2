@@ -100,7 +100,8 @@ evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) ->
 
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
-    SPH := new SpecializedParameterHomotopy;                                                                                                                  
+    if numcols M != 1 then error "1-column matrix expected";  
+    SPH := new SpecializedParameterHomotopy;
     SPH.ParameterHomotopy = PH;                                                                                                                               
     SPH.Parameters = M;                                                                                                                                       
     SPH                                                                                                                                                       

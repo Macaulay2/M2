@@ -45,9 +45,11 @@ p0 = point{{
 	}}
 pre0 = point{{x0,x0^2,x0^3,1}|coordinates p0}
 stop = (n,L)->n>5
+setDefault(Software=>M2) -- !!! need to square-up for the engine
 print preimageViaMonodromy(PH,p0,{pre0},StoppingCriterion=>stop)
 
 pre0 = point{{x0,x0^2,x0^3,1}}
+debug NumericalAlgebraicGeometry
 PS = parametricSegmentHomotopy(S,XYZH,A) -- a more efficient way
 print preimageViaMonodromy(PS,p0,{pre0},StoppingCriterion=>stop)
 

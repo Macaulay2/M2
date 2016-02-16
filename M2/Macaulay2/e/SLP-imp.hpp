@@ -159,7 +159,7 @@ bool SLEvaluatorConcrete<RT>::evaluate(const DMat<RT>& inputs, DMat<RT>& outputs
 
   if (slp->mOutputPositions.size() != outputs.numRows()*outputs.numColumns()) { 
     ERROR("outputs: the number of outputs does not match the number of entries in the outputs matrix");
-    // std::cout <<  slp->mOutputPositions.size() << " != " << outputs.numRows() << " * " << outputs.numColumns() << std::endl;
+    std::cout <<  slp->mOutputPositions.size() << " != " << outputs.numRows() << " * " << outputs.numColumns() << std::endl;
     return false;
   }
   i=0;
