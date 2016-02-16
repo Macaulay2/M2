@@ -19,6 +19,12 @@ debug SLPexpressions
 GateHomotopy = new Type of Homotopy    
 GateParameterHomotopy = new Type of ParameterHomotopy
 
+numVars = method()
+numVars GateHomotopy := H->numcols H#"X"
+numVars ParameterHomotopy := H->numcols H.GateHomotopy#"X" - numcols H.Parameters
+numVars SpecializedParameterHomotopy := H -> numVars H.ParameterHomotopy 
+ 
+
 canHaveRawHomotopy = method()
 canHaveRawHomotopy Thing := T -> false 
 canHaveRawHomotopy GateHomotopy := H -> H.Software == M2engine
@@ -65,6 +71,7 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     if para then (
 	GPH := new GateParameterHomotopy;
 	GPH.GateHomotopy = GH;
+	GPH.Parameters = o.Parameters;
 	GPH
 	) 
     else GH
@@ -100,7 +107,8 @@ evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) ->
 
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
-    if numcols M != 1 then error "1-column matrix expected";  
+    if numcols M != 1 then error "1-column matrix expected"; 
+    if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
     SPH := new SpecializedParameterHomotopy;
     SPH.ParameterHomotopy = PH;                                                                                                                               
     SPH.Parameters = M;                                                                                                                                       
@@ -155,6 +163,20 @@ parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
     H := sub(S,matrix{W},(1-t)*A+t*B);
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
+TEST /// 
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y,a]
+PS = polySystem {x^2+y^2-1, x+a*y, (a^2+1)*y^2-1}
+PS.NumberOfVariables = 2 -- hack!!!
+squarePS = squareUp PS
+makeGateMatrix(squarePS,Parameters=>drop(gens R,2))  
+PH := parametricSegmentHomotopy squarePS
+a0 = 0; a1 = 1;
+H = specialize (PH, transpose matrix{{a0,a1}})
+s'sols = { {{0,1}},{{0,-1}} }/point
+time sols = trackHomotopy(H,s'sols)
+assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.707107, -.707107}, SolutionStatus => Regular }} / point)
+///
 
 TEST ///
 needsPackage "NumericalAlgebraicGeometry"

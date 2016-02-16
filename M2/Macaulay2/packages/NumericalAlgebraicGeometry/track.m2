@@ -639,6 +639,8 @@ trackHomotopyM2engine = (H, inp,
 	CorrectorTolerance, maxCorrSteps, 
 	InfinityThreshold
 	) -> (
+    if numVars H != numrows inp - 1 -- one input is t-value 
+    then error "the number of variables does not match the number of inputs"; 
     K := ring inp;
     if K =!= ring out then error "inp and out have to have the same ring";
     inpK := inp;
@@ -756,6 +758,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 
      rawSols := if o.Software===M2engine then (
 	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision !!!
+	 -- if class H === SpecializedParameterHomotopy then 1/0;
 	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
 	 nSols := #solsS;
 	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
