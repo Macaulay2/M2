@@ -2,7 +2,7 @@
 
 {*
 Copyright 2009, 2010 Winfried Bruns and Gesa Kaempf.
-Copyright 2011, 2012, 2015 Christof Soeger
+Copyright 2011, 2012, 2015, 2016 Christof Soeger
 
 You may redistribute this file under the terms of the GNU General Public
 License as published by the Free Software Foundation, either version 2 of
@@ -11,8 +11,8 @@ the License, or any later version.
 
 newPackage(
            "Normaliz",
-           Version=>"2.5",
-           Date=>"August 28, 2015",
+           Version=>"2.6",
+           Date=>"February 18, 2016",
            Authors=>{{Name=> "Gesa Kaempf",
                     Email=>"gkaempf@uni-osnabrueck.de"},
                     {Name=> "Christof Soeger",
@@ -286,8 +286,11 @@ doWriteNmzData(List):=(matrices)->
         );
         outf << s << endl;
      );
-     if nmzModes#?nmzMode then
-        outf << nmzModes#nmzMode << endl
+     if nmzModes#?nmzMode then(
+        -- deprecated input type as integer
+        print("Using Normaliz integer input types is deprecated, please use " | nmzModes#nmzMode | " instead of " | nmzMode);
+        outf << nmzModes#nmzMode << endl;
+     )
      else
         outf << nmzMode << endl;
   );
@@ -297,6 +300,12 @@ doWriteNmzData(List):=(matrices)->
 -- writes the given data in a normaliz input file
 writeNmzData=method()
 writeNmzData(Matrix,String):=(sgr, nmzMode)->
+(
+    doWriteNmzData({(sgr,nmzMode)});
+);
+
+-- deprecated input type as integer
+writeNmzData(Matrix,ZZ):=(sgr, nmzMode)->
 (
     doWriteNmzData({(sgr,nmzMode)});
 );
@@ -511,6 +520,14 @@ checkNmzExecVersion=()->
 normaliz=method(Options=>true)
 opts={allComputations=>false, grading=>{}}
 normaliz(Matrix,String):=opts>>o->(sgr,nmzMode)->
+(
+  return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
+                     {(sgr,nmzMode)});
+);
+
+-- deprecated input type as integer
+opts={allComputations=>false, grading=>{}}
+normaliz(Matrix,ZZ):=opts>>o->(sgr,nmzMode)->
 (
   return runNormaliz(allComputations=>o.allComputations, grading=>o.grading,
                      {(sgr,nmzMode)});
