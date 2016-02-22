@@ -12,7 +12,7 @@ class SLProgram
 public:
   enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide};
   typedef int GATE_SIZE;
-  typedef int GATE_POSITION; // gate position is ABSOLUTE
+  typedef int GATE_POSITION; // gate position is RELATIVE (exception: ABSOLUTE for output)
   std::vector<GATE_TYPE> mNodes; // nodes types
   std::vector<GATE_SIZE> mNumInputs; // corresponding nodes sizes
   std::vector<GATE_POSITION> mInputPositions;/* which nodes does input come from?

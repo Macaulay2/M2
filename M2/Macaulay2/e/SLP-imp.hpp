@@ -88,13 +88,13 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
   case SLProgram::MProduct:
     ring().set_from_long(v,1);
     for (int i=0; i<*numInputsIt; i++)
-      ring().mult(v,v,values[ap(*inputPositionsIt++)]);
+      ring().mult(v,v,*(vIt+(*inputPositionsIt++)));
     numInputsIt++;
     break;
   case SLProgram::MSum:
     ring().set_zero(v);
     for (int i=0; i<*numInputsIt; i++)
-      ring().add(v,v,values[ap(*inputPositionsIt++)]);
+      ring().add(v,v,*(vIt+(*inputPositionsIt++)));
     numInputsIt++;
     break;
   case SLProgram::Det:
@@ -103,13 +103,13 @@ void SLEvaluatorConcrete<RT>::computeNextNode()
       DMat<RT> mat(ring(),n,n);
       for (int i=0; i<n; i++)
         for (int j=0; j<n; j++)
-          ring().set(mat.entry(i,j),values[ap(*inputPositionsIt++)]);
+          ring().set(mat.entry(i,j),*(vIt+(*inputPositionsIt++)));
       DMatLinAlg<RT>(mat).determinant(v);      
     }
     break;
   case SLProgram::Divide:
-    ring().set(v,values[ap(*inputPositionsIt++)]);
-    ring().divide(v,v,values[ap(*inputPositionsIt++)]);
+    ring().set(v,*(vIt+(*inputPositionsIt++)));
+    ring().divide(v,v,*(vIt+(*inputPositionsIt++)));
     break;
   default: ERROR("unknown node type");
   }

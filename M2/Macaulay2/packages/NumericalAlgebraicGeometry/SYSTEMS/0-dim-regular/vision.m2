@@ -16,20 +16,21 @@ matrix{{1}}|vars R1
 *}
 RtoR1 = map(R1,R,matrix{{1_F}}|vars R1)
 PS = polySystem RtoR1 I
-{* -- run these lines... --------------
-sols = solveSystem PS;
-reg'sols = select(sols,s -> status s == Regular);
-#reg'sols
-ten'sols = select(reg'sols,s -> norm evaluate(PS,s) < 1e-5)
-#ten'sols
--- to generate the ten solutions below *}
-ten'sols = point \ {{ {1.25678+.773202*ii, -2.43669-1.18573*ii, .807574-.166822*ii, -2.80276-.965475*ii, 1.42974+.443489*ii, -2.83727-.605914*ii, 1.66649+1.43463*ii, 1.69374+1.21527*ii}, SolutionStatus => Regular },{ {-1.11861+1.03509*ii, -.839097-1.38552*ii, .288841+1.22571*ii, -2.02908-.857154*ii, 1.21923-1.78306*ii,
+
+if F === CC_53 then (
+    -- stashed solutions
+    ten'sols = point \ {{ {1.25678+.773202*ii, -2.43669-1.18573*ii, .807574-.166822*ii, -2.80276-.965475*ii, 1.42974+.443489*ii, -2.83727-.605914*ii, 1.66649+1.43463*ii, 1.69374+1.21527*ii}, SolutionStatus => Regular },{ {-1.11861+1.03509*ii, -.839097-1.38552*ii, .288841+1.22571*ii, -2.02908-.857154*ii, 1.21923-1.78306*ii,
       -2.96057-.050912*ii, 3.79458-2.01041*ii, 1.59868+4.63222*ii}, SolutionStatus => Regular },{ {-.307929+3.84135*ii, -5.10546-4.5236*ii, -1.99881-.046587*ii, -3.44626-1.23565*ii, 8.11083-2.19987*ii, -.033004-2.65553*ii, 2.36344-1.73295*ii, -.65177+8.35282*ii}, SolutionStatus => Regular },{ {1.59495+.054244*ii,
       1.20444-.592168*ii, 3.78567+1.59631*ii, -2.04716-4.24008*ii, -4.49854+3.70089*ii, -5.02978-1.00028*ii, .254582+4.85886*ii, 3.21692-2.57055*ii}, SolutionStatus => Regular },{ {-.350564+.157102*ii, -.343433+.119616*ii, -.522361+.11855*ii, .812316-.253519*ii, -.708143+.364527*ii, -.509347+.332827*ii,
       -.31393-.344132*ii, .830918-.154772*ii}, SolutionStatus => Regular },{ {-.691862-.540768*ii, -.417566+.359237*ii, -.868051-.637898*ii, .576807+.808934*ii, .156835+.346513*ii, -.464842+1.29024*ii, .988549-.934435*ii, -.0099413-.264246*ii}, SolutionStatus => Regular },{ {-4.18591-.106823*ii,
       3.15493-.633812*ii, -3.41618+1.54952*ii, 4.53757-2.56195*ii, 1.14272+1.20649*ii, 2.62605-1.21085*ii, .706372-.307508*ii, -5.36774+2.4767*ii}, SolutionStatus => Regular },{ {-.0270915-.12955*ii, -1.06035-.348027*ii, -.525361-.26785*ii, -.657316-.484579*ii, 1.26734+.664573*ii, -1.28462-.108466*ii,
       1.54955+.925889*ii, -.33974+.59602*ii}, SolutionStatus => Regular },{ {-1.6033-.256744*ii, 1.63431-.544357*ii, .772456+.357682*ii, .27222-.829672*ii, -1.90073+1.54093*ii, -1.69713+1.63451*ii, 1.71868-1.16308*ii, .640531-.099971*ii}, SolutionStatus => Regular },{ {-.098315+.871262*ii, -1.30013-.712257*ii,
       -.747723-.713907*ii, .625451+.157568*ii, .291167+.840718*ii, .512794+.54527*ii, -1.37721-.904274*ii, .813883-.287774*ii}, SolutionStatus => Regular }}
+    ) else (
+    sols = solveSystem PS;
+    reg'sols = select(sols,s -> status s == Regular);
+    ten'sols = select(reg'sols,s -> norm evaluate(PS,s) < 1e-5)
+    )
 scan(ten'sols, s->s.Coordinates = s.Coordinates/(c->sub(c,F))) 
 
 -- parameter homotopy 
@@ -81,3 +82,23 @@ sols2 / (s->s.NumberOfSteps)
 end --------------------------------------------------------------------------------------
 restart
 load "vision.m2"
+
+-- *** absolute position *** (OS X)
+-- trackHomotopyM2engine time: .149645 sec.
+..........     -- used 0.150203 seconds
+-- trackHomotopyM2engine time: .02781 sec.
+..........     -- used 0.028909 seconds
+
+-- *** relative psotion *** (faster by 10-20%)
+-- track took 132ms.
+-- # of solveLinear calls = 3585
+-- time of solveLinear calls = 9206000 ns.
+-- time of evaluate calls = 121961000 ns.
+-- trackHomotopyM2engine time: .130884 sec.
+..........     -- used 0.133882 seconds
+-- track took 27ms.
+-- # of solveLinear calls = 602
+-- time of solveLinear calls = 2942000 ns.
+-- time of evaluate calls = 23838000 ns.
+-- trackHomotopyM2engine time: .024862 sec.
+..........     -- used 0.025597 seconds
