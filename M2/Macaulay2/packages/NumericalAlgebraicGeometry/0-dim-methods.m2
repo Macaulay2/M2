@@ -3,6 +3,12 @@
 -- not included in other files
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
+satisfiesOverdeterminedSystem = method(Options=>{ResidualTolerance=>null})
+satisfiesOverdeterminedSystem (Point, List) := o -> (s,F) -> (
+    o = fillInDefaultOptions o;    
+    norm evaluate(matrix{F},s) < o.ResidualTolerance    
+    )
+
 solveSystem = method(TypicalValue => List, Options =>{
 	PostProcess=>true, 
 	-- *** below are the relevant options of track ***
@@ -72,19 +78,23 @@ solveSystem PolySystem := List => o -> P -> (
                    tStep => o.tStep,
                    tStepMin => o.tStepMin)
 	       );
-	   if o.PostProcess and not overdetermined 
-	   then (
-	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
-	       result = solutionsWithMultiplicity result;
-	       -- below is a hack!!!
-	       scan(result, s->if status s =!= Regular 
-		   and s.?ErrorBoundEstimate 
-		   and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
-			 if DBG>1 then print "path jump occured";
-			 s.Multiplicity = 1;
-			 s.SolutionStatus = Regular;
-			 ));
-	       )
+	  if o.PostProcess 
+	  then (
+	      -- endgame
+	      result = select(result, p->status p === Regular) | apply(select(result, p-> status p =!= Regular and p.LastT>0.95), p->endGameCauchy(p#"H",1,p,"backtrack factor"=>2));
+	      -- result = solutionsWithMultiplicity result;
+	      -- result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
+	      -- below is a hack!!!
+	      {* scan(result, s->if status s =!= Regular 
+	         and s.?ErrorBoundEstimate 
+	         and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
+		  if DBG>1 then print "path jump occured";
+		  s.Multiplicity = 1;
+		  s.SolutionStatus = Regular;
+		  ));
+	      *}
+	      );
+	  if overdetermined then result = select(result, s->satisfiesOverdeterminedSystem(s,F))  	      
 	  )
      else if o.Software === PHCPACK then result = solvePHCpack(F,o)
      else if o.Software === BERTINI then result = solveBertini(F,o)

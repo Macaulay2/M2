@@ -120,24 +120,30 @@ document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatch
 
 document {
 	Key => {(solveSystem, List),solveSystem,(solveSystem,PolySystem)},
-	Headline => "solve a square system of polynomial equations",
+	Headline => "solve a system of polynomial equations",
 	Usage => "s = solveSystem F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
-	"Solve a system of polynomial equations using homotopy continuation methods. (See ", TO track, " for more optional arguments.)",
-     	PARA {"The system is assumed to be square (number of equations = number of variables) 
-	     and to have finitely many solutions."},
+	"Solve a system of polynomial equations using homotopy continuation methods.",
+     	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
-     	PARA {},
-	"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
-	" obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
-	"In particular, this means that solving a system that 
-	has fewer than Bezout bound many solutions will produce 
-	points that are not marked as regular. See ", TO track, " for detailed examples. "
+	EXAMPLE lines ///
+R = CC[x,y];
+F = {x^2+y^2-1, x*y, x*(y+1)};
+solveSystem F 
+	///,
+     	PARA {"The system is assumed to have finitely many solutions. If it is not square (number of equations = number of variables), ", 
+	    TO squareUp, " is applied and solutions to the original system are then picked out from the resulting (larger) set of solutions."},
+	PARA {"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
+	    " obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
+	    "In particular, this means that solving a system that 
+	    has fewer than Bezout bound many solutions will produce 
+	    points that are not marked as regular. See ", TO track, " for detailed examples. "
+	    }
 	}
 
 

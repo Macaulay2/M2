@@ -124,7 +124,7 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => infinity,
+     ResidualTolerance => 1e-4,
      Iterations => 30, 
      Bits => infinity,
      -- general

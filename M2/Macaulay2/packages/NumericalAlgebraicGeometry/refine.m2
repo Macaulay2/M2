@@ -253,7 +253,7 @@ assert(P''.ErrorBoundEstimate < 1e-6 and P''.ConditionNumber < 100 and status P'
 -- p0: a Point = a solution to H_t(x)=0, with t0=p0.LastT close to t'end
 -- "number of vertices" (optional): ... of the regular polygon approximating the circle |t-t'end|=|t0-t'end|
 -- OUTPUT: a Point
-endGameCauchy = method(Options=>{"number of vertices"=>8,
+endGameCauchy = method(Options=>{"number of vertices"=>16,"backtrack factor"=>1.,
 	tStep => null, -- initial
 	tStepMin => null,
 	stepIncreaseFactor => null,
@@ -268,6 +268,7 @@ endGameCauchy = method(Options=>{"number of vertices"=>8,
 endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
     x0 := mutableMatrix transpose {coordinates p0 | {p0.LastT}} ; 
     w := endGameCauchy(H,t'end,x0,o);
+    -- if w == 0 then error "endGameCauchy: something went wrong";
     p := point {drop(first entries transpose x0,-1)};
     if w>0 then ( 
 	p.Multiplicity = w; 
@@ -282,21 +283,35 @@ endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
 
 -- x0: a column vector with n+1 coordinates, the last one is t0
 -- OUTPUT: changes x0 in place, returns the winding number or 0 if failed 
-endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0) -> (
+endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
     o = fillInDefaultOptions o;
     m := o#"number of vertices";
-    n := numrows x0 - 1;
-    statusOut := mutableMatrix(ZZ,2,1); -- 2 rows (status, number of steps), #solutions columns  
-    x0' := mutableMatrix x0;
+    n := numrows x0in - 1;
+    statusOut := mutableMatrix(ZZ,2,1); -- 2 rows (status, number of steps), #solutions 
+    
+    -- bactrack from x0in to x0
+    x0 := mutableMatrix x0in; -- copy     
+    dt0 := x0_(n,0)-t'end;
+    x0_(n,0) = t'end + o#"backtrack factor"*dt0;  
+    trackHomotopyM2engine(H, x0in, 
+	x0, statusOut, -- output goes here
+	o.tStep, o.tStepMin, 
+	o.CorrectorTolerance, o.maxCorrSteps, 
+	toRR o.InfinityThreshold);
+    s'status := solutionStatusLIST#(statusOut_(0,0));
+    if s'status =!= Regular then return 0; -- error
+    	         
     inp := mutableMatrix x0;
     out := mutableMatrix inp; -- "copy" does not copy!!!
-    dt0 := x0_(n,0)-t'end;
+    
+    x0' := mutableMatrix x0; -- x0' stores the sum approximating the integral
+    dt0 = x0_(n,0)-t'end;
     out_(n,0) = t'end + dt0*exp(2*pi*ii/m);
     loop'incomplete := true;
-    s'status := Regular; 
+    s'status = Regular; 
     w := 0;
-    while loop'incomplete or w>1000 --!!!
+    while loop'incomplete or w>100 --!!!
     do (
     	for i to m-1 do (
 	    ti'out := timing trackHomotopyM2engine(H, inp, 
@@ -306,10 +321,7 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0) -> (
 		toRR o.InfinityThreshold);
     	    if DBG>2 then << "-- endGameCauchy: trackHomotopyM2engine time = " << first ti'out << " sec." << endl;
     	    s'status = solutionStatusLIST#(statusOut_(0,0));
-	    if s'status =!= Regular then (
-		loop'incomplete = false;
-		break;
-		);
+	    if s'status =!= Regular then return 0; -- error
     	    if DBG>2 then << "-- endGameCauchy: number of steps = " << statusOut_(1,0) << endl;
     	    if DBG>0 then << "(C"<<m<<")";
     	    x0' = x0'+out;
@@ -318,9 +330,13 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0) -> (
 	    );
 	w = w + 1;
 	loop'incomplete = not areEqual(inp,x0);
-	out_(n,0) = t'end + dt0*exp(2*pi*ii/m); -- reset (roundoff error may accumulate)
+	-- print (inp-x0);
+	if loop'incomplete 
+	then out_(n,0) = t'end + dt0*exp(2*pi*ii/m) -- reset (roundoff error may accumulate)
+	else x0' = x0' - out; -- x0 is "double counted"
 	);
-    for i to n do x0_(i,0) = x0'_(i,0)/(w*m); 
+    for i to n do x0in_(i,0) = x0'_(i,0)/(w*m);    
+    x0in_(n,0) = t'end;
     w
     )
 
@@ -329,6 +345,7 @@ restart
 debug needsPackage "NumericalAlgebraicGeometry"
 CC[x,y]
 d = 4;
+-- d = 5; -- fails 
 T = {(x-2)^d,y-x+x^2-x^3}
 sols = solveSystem(T,PostProcess=>false)
 p0 = first sols
@@ -336,11 +353,47 @@ peek p0
 t'end = 1
 NAGtrace 1
 p = endGameCauchy(p0#"H",t'end,p0)
+p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>0.5)
 assert (d == p.Multiplicity)
 p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>20)
 assert (d == p.Multiplicity)
+
+-- 
+restart
+needsPackage "NumericalAlgebraicGeometry"
+n = 3;
+R = CC[x_1..x_n]
+d = 3;
+rMap = map(R,R,apply(n,i->random(1,R)+random(2,R)))
+T = polySystem(gens R / (f->rMap (f-1)^d))
+sols = solveSystem(T,PostProcess=>false)
+p0 = first select(sols, s->status s =!= Regular)
+peek p0
+t'end = 1
+p = endGameCauchy(p0#"H",t'end,p0)
+norm evaluate(T,p)
+assert (d == p.Multiplicity)
+p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>2)
+norm evaluate(T,p)
+assert (d == p.Multiplicity)
+p = endGameCauchy(p0#"H",t'end,p0,"number of vertices"=>16)
+norm evaluate(T,p)
+assert (d == p.Multiplicity)
+p = endGameCauchy(p0#"H",t'end,p0,"backtrack factor"=>100,"number of vertices"=>100)
+norm evaluate(T,p)
+assert (d == p.Multiplicity)
+--
+restart
+R=QQ[x,y]
+f = x^2 + y^2 - 1 
+g = x^3 + y^3 - 1 
+needsPackage "NumericalAlgebraicGeometry"
+solveSystem  ({f,g},PostProcess=>false)
+solveSystem  {f,g}
+
 ///
 
+-- (Deprecated) 
 endGame'Cauchy'polygon = method(Dispatch=>Thing)
 endGame'Cauchy'polygon Sequence := parameters -> (
     -- H: PolySystem, a homotopy
