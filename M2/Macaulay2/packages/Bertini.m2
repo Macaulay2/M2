@@ -2933,16 +2933,22 @@ subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
 
 
 moveB'File = method(TypicalValue=>List,Options=>{
+    	SubFolder=>null,
 	MoveToDirectory=>null,
   	CopyB'File=>false
 	 })
 moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
+    if o.SubFolder=!=null and o.MoveToDirectory=!=null then error"SubFolder and MoveToDirectory cannot both be set.";
+--
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
 --
-    if o.MoveToDirectory===null then finalDirectory:=storeFiles else finalDirectory=o.MoveToDirectory;    
-    if finalDirectory_-1===" " then error ("MoveToDirectory"|" cannot end with whitespace.");
-    if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
+    if o.SubFolder=!=null then finalDirectory:=storeFiles|o.SubFolder;        
+    if o.MoveToDirectory=!=null then finalDirectory=o.MoveToDirectory;    
+    if o.MoveToDirectory===null and o.SubFolder===null then finalDirectory=storeFiles; 
+-- 
+    if finalDirectory_-1===" " then error ("MoveToDirectory nor SubFolder cannot end with whitespace.");
+    if finalDirectory_-1=!="/" then finalDirectory=finalDirectory|"/";    
 --
     if o.CopyB'File===false then moveFile(storeFiles|originalName,finalDirectory|newName);
     if o.CopyB'File===true then copyFile(storeFiles|originalName,finalDirectory|newName)    
@@ -3070,6 +3076,19 @@ load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.t
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/makeMembershipFile.tst.m2")
 ///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bTraceTestImage.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/subPoint.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/moveBFile.tst.m2")
+///
+
 
 ---newtst
 

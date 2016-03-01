@@ -907,6 +907,48 @@ doc ///
 
 doc ///
  Key
+   moveB'File
+   (moveB'File,String,String,String)
+ Headline
+   Move or copy files. 
+ Usage
+   makeB'Section(s,f,n) 
+ Inputs
+   s:String
+     A string giving a directory.
+   f:String
+     A name of a file.
+   s:String
+     A new name for the file.
+ Description
+   Text
+     This function takes the file f in the directory s and renames it to n. 
+   Example
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     fileExists(storeBM2Files|"/final_parameters")
+     moveB'File(storeBM2Files,"final_parameters","start_parameters")
+     fileExists(storeBM2Files|"/final_parameters")
+     fileExists(storeBM2Files|"/start_parameters")
+     moveB'File(storeBM2Files,"start_parameters","backup",CopyB'File=>true)
+     fileExists(storeBM2Files|"/start_parameters")
+     fileExists(storeBM2Files|"/backup")
+   Example
+     Dir1 = temporaryFileName()
+     makeDirectory Dir1
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
+     fileExists(Dir1|"/start_parameters")
+   Example
+     makeDirectory (storeBM2Files|"/Dir2")
+     writeParameterFile(storeBM2Files,{2,3,5,7})
+     moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
+     fileExists(storeBM2Files|"/Dir2/start_parameters")
+      
+///;
+
+
+doc ///
+ Key
    makeB'Section
    (makeB'Section,List)
  Headline
