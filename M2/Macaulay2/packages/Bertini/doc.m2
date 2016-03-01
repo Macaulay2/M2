@@ -907,6 +907,34 @@ doc ///
 
 doc ///
  Key
+   sortMainDataComponents
+   (sortMainDataComponents,List)
+ Headline
+   Sorts imported main data into components.  
+ Usage
+   sortMainDataComponents(l) 
+ Inputs
+   l:List
+     A list of points imported from a main_data file.
+ Description
+   Text
+     After importing a main_data file we have a list of points. This function organizes the components by irreducible component. 
+   Example
+     F={"x*(x+2*y+3*z^2)","(y^3-x+z)*(z)*(x+2*y+3*z^2)"}
+     makeB'InputFile(storeBM2Files,B'Configs=>{{TrackType,1}},AffVariableGroup=>{x,y,z},B'Polynomials=>F)
+     runBertini(storeBM2Files)
+     listPoints=importMainDataFile(storeBM2Files)
+     #listPoints
+     theComponents=sortMainDataComponents(listPoints)
+     for i in theComponents_0 list (i#ComponentNumber,i#Dimension)     
+     for i in theComponents_1 list (i#ComponentNumber,i#Dimension)          
+     for i in theComponents_2 list (i#ComponentNumber,i#Dimension)          
+      
+///;
+
+
+doc ///
+ Key
    moveB'File
    (moveB'File,String,String,String)
  Headline
