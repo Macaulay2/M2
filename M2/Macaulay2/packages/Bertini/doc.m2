@@ -491,7 +491,7 @@ doc ///
    Example
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
-     sliceH=makeB'Slice({0,0},{x0,x1,x2,1},NameB'Slice=>"H")
+     sliceH=makeB'Slice({2},{{x0,x1,x2,1}},NameB'Slice=>"H")
      makeB'InputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
@@ -503,7 +503,7 @@ doc ///
    Example    
      R=CC[x,y,z]**CC[a,b]
      xyzSub={{x,a},{y,a^2+b},{z,a^2+b^2}}
-     sliceH=makeB'Slice({0,0},{x,y,z,1},NameB'Slice=>"H")
+     sliceH=makeB'Slice({2},{{x,y,z,1}},NameB'Slice=>"H")
      makeB'InputFile(storeBM2Files,
     	 AffVariableGroup=>{a,b},
     	 ParameterGroup=>{T},
@@ -517,7 +517,7 @@ doc ///
    Example
      R=CC[x0,x1,x2]
      F={x0^3-x1^3+x2^3+1}
-     sliceH=makeB'Slice({0,0},{x0,x1,x2,1},NameB'Slice=>"H")
+     sliceH=makeB'Slice(2,{x0,x1,x2,1},NameB'Slice=>"H")
      makeB'InputFile(storeBM2Files,
     	 AffVariableGroup=>{x0,x1,x2},
     	 ParameterGroup=>{T},
@@ -964,16 +964,16 @@ doc ///
  Key
    makeB'Slice
    NameB'Slice
-   (makeB'Slice,List,List)
+   (makeB'Slice,Thing,List)
  Headline
    makeB'Slice creates a hash table that represents a linear slice. 
  Usage
    makeB'Slice(sliceType,variableGroups) 
  Inputs
    sliceType:List
-     A list of integers.
+     A list of integers or integer.
    variableGroups:List
-     A list of list of variables.
+     A list of list of variables or list of variables.
  Description
    Text
      makeB'Slice allows for easy creation of equations that define linear spaces, i.e. slices.
@@ -981,7 +981,7 @@ doc ///
      When we have a multiprojective variety we can different types of slices.
      To make a slice we need to specify the type of slice we want followed by variable groups.
    Example
-     sliceType={0,1}
+     sliceType={1,1}
      variableGroups={{x0,x1},{y0,y1,y2}}
      xySlice=makeB'Slice(sliceType,variableGroups)
      peek xySlice
@@ -990,7 +990,7 @@ doc ///
      for i in  xySlice#B'SectionString do print i
    Example
      --Using the NameB'Slice option we can put a slice in the B'Functions option.
-     aSlice=makeB'Slice({0,0,0},{x,y,z,1},NameB'Slice=>"f");
+     aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
      aSlice#NameB'Slice
      makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
    Example
@@ -998,9 +998,9 @@ doc ///
      f1="x0*y0+x1*y0+x2*y2"
      f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
      variableGroups={{x0,x1,x2},{y0,y1,y2}}
-     xxSlice=makeB'Slice({0,0},variableGroups)
-     xySlice=makeB'Slice({0,1},variableGroups)
-     yySlice=makeB'Slice({1,1},variableGroups)
+     xxSlice=makeB'Slice({2,0},variableGroups)
+     xySlice=makeB'Slice({1,1},variableGroups)
+     yySlice=makeB'Slice({0,2},variableGroups)
      makeB'InputFile(storeBM2Files,
     	 HomVariableGroup=>variableGroups,
     	 B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
@@ -1926,11 +1926,9 @@ doc ///
    ContainsMultiProjectivePoint
    UseStartPointsFirst
    MonodromyStartParameters
-   B'FileCoefficients
    B'Exe
    UsePrecision
    b'PHGaloisGroup
-   B'FileCoordinates
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
@@ -2005,14 +2003,12 @@ doc ///
    NameB'Section
    B'NumberCoefficients
    B'SectionString
-   [makeB'Slice,B'FileCoefficients]
    [makeB'Slice,B'Homogenization]
    [makeB'Slice,B'NumberCoefficients]
    [makeB'Slice,ContainsMultiProjectivePoint]
    [makeB'Slice,ContainsPoint]
    [makeB'Slice,NameB'Slice]
    [makeB'Slice,RandomCoefficientGenerator]
-   [makeB'Section,B'FileCoefficients]
    [makeB'Section,B'NumberCoefficients]
    [makeB'Section,NameB'Section]
    [runBertini,PostRunCopyFiles]

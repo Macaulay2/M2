@@ -132,8 +132,6 @@ export {
   "makeB'Slice",
   "ContainsPoint", 
   "B'NumberCoefficients", 
-  "B'FileCoefficients",
-  "B'FileCoordinates",  
   "B'Homogenization", 
   "RandomCoefficientGenerator", 
   "B'SectionString",
@@ -2777,8 +2775,7 @@ par'String=(aString)->("("|toString(aString)|")");
 makeB'Section = method(TypicalValue=>Nothing,Options=>{
 	ContainsPoint=>{},
 	B'NumberCoefficients=>{},
-    	B'FileCoefficients=>{},
-	B'Homogenization=>1,
+    	B'Homogenization=>1,
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
 	NameB'Section=>null
 	 })
@@ -2791,7 +2788,6 @@ makeB'Section(List) := o -> (oneVariableGroup)-> (
     if o.B'NumberCoefficients=!={} then (
       theSpecifiedCoefficients=o.B'NumberCoefficients;
       theNumberCoefficients=o.B'NumberCoefficients);
---else if B'FileCoefficients=!={} then theSpecifieCoefficients=o.B'FileCoefficients;    
     for aVar to #oneVariableGroup-1 do (
       if theSpecifiedCoefficients==={} then (
 	theCoefficient:=createsNumbers();
@@ -2821,61 +2817,76 @@ makeB'Slice = method(TypicalValue=>Nothing,Options=>{
 	ContainsMultiProjectivePoint=>{},
     	ContainsPoint=>{},
 	B'NumberCoefficients=>{},
-    	B'FileCoefficients=>{},
 	B'Homogenization=>{},
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
-	NameB'Slice=>null
+	NameB'Slice=>null,
 	 })
-makeB'Slice(List,List) := o ->(sliceType,multipleVariableGroups)->(
---
+makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
+--      
+    if class sliceType===ZZ then (
+      numberOfSections:=sliceType;
+      numSliceTypes:=1;
+      AssumeOneGroup:=true);
+    if class sliceType===List then (
+      numberOfSections=sum sliceType;
+      numSliceTypes=#sliceType;
+      AssumeOneGroup=false);
     if multipleVariableGroups==={} then error "An empty list is not a valid input.";
-    if class multipleVariableGroups_0=!=List then multipleVariableGroups={multipleVariableGroups};
-    if class o.B'Homogenization=!=List then theHomogenization:={o.B'Homogenization} else theHomogenization=o.B'Homogenization;
-    if o.B'FileCoefficients=!={} and #o.B'NumberCoefficients=!=#sliceType then error "sliceType and B'FileCoefficients are not the same size. ";
-    if o.B'Homogenization=!={} and #o.B'Homogenization=!=#multipleVariableGroups then error "multipleVariableGroups and B'Homogenization are not the same size. ";
-    if o.B'Homogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
-    if class o.NameB'Slice===List and #o.NameB'Slice=!=#sliceType then error"NameB'Slice and multipleVariableGroups are not the same size. ";
---    print theHomogenization;
+---------- 
+    if AssumeOneGroup===true then (
+      if class multipleVariableGroups_0===List then error"If sliceType is an integer the second input cannot be a list of lists.";
+      multipleVariableGroups={multipleVariableGroups};
+      if o.B'Homogenization=!={} and class o.B'Homogenization===List then error"If sliceType is an integer then B'Homogenization must be {} or not a list.";
+      if o.B'Homogenization==={} then theHomogenization:={1};
+      if o.B'NumberCoefficients=!={} then(
+	if class ((o.B'NumberCoefficients)_0_0)===List then error"When sliceType is an integer B'NumberCoefficients cannot be a list of lists. ";
+	if class ((o.B'NumberCoefficients)_0_0)=!=List then  theCoefs:=o.B'NumberCoefficients));
+---------- 
+    if AssumeOneGroup===false then (
+      if class o.B'Homogenization=!=List then error"When sliceType is a list, B'Homogenization should be a list.";
+      if o.B'Homogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
+      if o.B'Homogenization=!={} then theHomogenization=o.B'Homogenization;
+      if o.B'NumberCoefficients=!={} then(
+	if class ((o.B'NumberCoefficients)_0)=!=List then error"When sliceType is a list B'NumberCoefficients should be a list of lists. ";
+	if class ((o.B'NumberCoefficients)_0)===List then  theCoefs=o.B'NumberCoefficients));          
+---------- 
+    if o.B'NumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
+    print numberOfSections;
+    print theCoefs;
+    if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of B'NumberCoefficients does not match the number of sections to be made. ";
+    if #theHomogenization=!=#multipleVariableGroups then error "B'Homogenization does not match the number of variable groups. ";
+    if class o.NameB'Slice===List and #o.NameB'Slice=!=numberOfSections then error"When NameB'Slice is a list, the number of elements should equal the number of sections being made. ";
 --
     createsNumbers:=o.RandomCoefficientGenerator;
+    if class sliceType===ZZ then sliceType={sliceType};
 --
     theSlice:= new B'Slice;
     listSections:={};
-    theSliceSpecifiedCoefficients:=for i in sliceType list {};
-    theSliceNumberCoefficients:=for i in sliceType list {};
 --
-    if o.B'NumberCoefficients=!={} and #o.B'NumberCoefficients=!=#sliceType then error "sliceType and B'NumberCoefficients are not the same size. ";
-    if o.B'NumberCoefficients=!={} 
-    then (
-      if class o.B'NumberCoefficients_0=!=List 
-      then (
-	theSliceSpecifiedCoefficients={o.B'NumberCoefficients};
-        theSliceNumberCoefficients={o.B'NumberCoefficients})
-      else (
-        theSliceSpecifiedCoefficients=o.B'NumberCoefficients;
-        theSliceNumberCoefficients=o.B'NumberCoefficients));    
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===MutableHashTable then  theMultiProjectivePoint:=o.ContainsMultiProjectivePoint#Coordinates;
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===VisibleList then  theMultiProjectivePoint=o.ContainsMultiProjectivePoint;
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===MutableHashTable then  theMultiProjectivePoint={o.ContainsPoint#Coordinates};
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===VisibleList then  theMultiProjectivePoint={o.ContainsPoint};
-    if o.ContainsPoint==={} and o.ContainsMultiProjectivePoint==={} then theMultiProjectivePoint=for i in sliceType list {};
+    if o.ContainsPoint==={} and o.ContainsMultiProjectivePoint==={} then theMultiProjectivePoint=for i to numberOfSections list {};
 --    print theMultiProjectivePoint;
-    for aSlice to #sliceType-1 do(
---
-      oneVariableGroup:=multipleVariableGroups_(sliceType_aSlice);
-      theSpecifiedCoefficients:=theSliceSpecifiedCoefficients_aSlice;
-      theNameB'Section:=if o.NameB'Slice===null then null else(
-        if class o.NameB'Slice===List 
-	then ((o.NameB'Slice)_aSlice) 
-	else (toString (o.NameB'Slice)|toString aSlice));
+    sliceCount:=0;
+    for useGroup to numSliceTypes-1 do(
+      for oneSlice to (sliceType_useGroup)-1 do(
+	oneVariableGroup:=multipleVariableGroups_(useGroup);
+      	oneSetCoefs:=theCoefs_sliceCount;
+      	theNameB'Section:=if o.NameB'Slice===null 
+	then null else(
+          if class o.NameB'Slice===List 
+	  then ((o.NameB'Slice)_sliceCount) 
+	  else (toString (o.NameB'Slice)|toString sliceCount));
       listSections=append(listSections,makeB'Section(oneVariableGroup,
-	  B'Homogenization=>theHomogenization_(sliceType_aSlice),
-	  ContainsPoint=>theMultiProjectivePoint_(sliceType_aSlice),
-	  B'NumberCoefficients=>theSliceNumberCoefficients_aSlice,
---    	  B'FileCoefficients=>{},
+	  B'Homogenization=>theHomogenization_useGroup,
+	  ContainsPoint=>theMultiProjectivePoint_(useGroup),
+	  B'NumberCoefficients=>oneSetCoefs,
 	  RandomCoefficientGenerator=>createsNumbers,
 	  NameB'Section=>theNameB'Section	  
-	  )));
+	  ));
+      sliceCount=sliceCount+1) );
     theSlice.ListB'Sections=listSections;
     theSlice.B'SectionString=for i in theSlice#ListB'Sections list i#B'SectionString;    
     theSlice.B'NumberCoefficients=for i in theSlice#ListB'Sections list i#B'NumberCoefficients;    
