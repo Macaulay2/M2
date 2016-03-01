@@ -566,7 +566,7 @@ makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
     	};
     E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
     E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
-    E#"constants" = matrix{consts/(c->c.Name)};
+    E#"constants" = matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
     E
     )
 

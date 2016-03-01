@@ -643,10 +643,8 @@ trackHomotopyM2engine = (H, inp,
     then error "the number of variables does not match the number of inputs"; 
     K := ring inp;
     if K =!= ring out then error "inp and out have to have the same ring";
-    inpK := inp;
-    outK := out;
-    rawHomotopyTrack(getRawHomotopy(H,K), raw inpK, 
-	raw outK, raw statusOut,
+    rawHomotopyTrack(getRawHomotopy(H,K), raw inp, 
+	raw out, raw statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
 	InfinityThreshold)
@@ -663,6 +661,7 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  Predictor=>null, 
 	  -- corrector 
 	  maxCorrSteps => null,
+	  Precision => 53, 
 --!!!	  maxPrecision => null,
      	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
@@ -757,19 +756,21 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
      compStartTime := currentTime();      
 
      rawSols := if o.Software===M2engine then (
-	 mainRing := CC_53; -- homotopyRing, i.e. RR or CC with current precision !!!
+	 mainRing := CC_(o.Precision); -- homotopyRing, i.e. RR or CC with current precision !!!
 	 -- if class H === SpecializedParameterHomotopy then 1/0;
 	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
 	 nSols := #solsS;
 	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
-	 inp := mutableMatrix (
-	     transpose apply( solsS, s->(if instance(s,Point) 
-	     	     then coordinates s  
-	     	     else flatten entries s) | {0_mainRing} )
-	     ); 
+	 inp := mutableMatrix promote(matrix(
+	     	 transpose apply( solsS, s->(if instance(s,Point) 
+	     	     	 then coordinates s  
+	     	     	 else flatten entries s) | {	
+		     	 if instance(s,Point) and s.?LastT then s.LastT else 0 -- track from t=0
+		     	 } )), 
+	     mainRing); 
 	 out := mutableMatrix inp; -- "copy" does not copy!!!
 	 n = numrows out - 1;
-	 scan(nSols, i->out_(n,i) = 1); 
+	 scan(nSols, i->out_(n,i) = 1); -- track to t=1 
 	 ti'out := timing trackHomotopyM2engine(H, inp, 
 	     out, statusOut,
 	     o.tStep, o.tStepMin, 

@@ -1,3 +1,4 @@
+
 /*
 
 * return values: not-a-value, division-by-zero... or null ???
