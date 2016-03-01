@@ -1,8 +1,8 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "1.6.0.1", 
-  Date => "October 22, 2015",
+  Version => "2.0.0.0", 
+  Date => "March 1, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -2472,7 +2472,7 @@ radicalList=(aList,aTolerance)->(
     return newList)
 
      
-b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
+b'PHGaloisGroup2=method(TypicalValue=>Thing,Options=>{
 	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
 	NameStartFile=>"start",  --this start file will be the solutions we start with
 	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
@@ -2489,7 +2489,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	UsePrecision=>52
 --	SpecifyLoops=>false
 	})
-b'PHGaloisGroup(String) := o ->(storeFiles)->(
+b'PHGaloisGroup2(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
 --
@@ -2625,7 +2625,7 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 
 
 
-b'PHGaloisGroup2=method(TypicalValue=>Thing,Options=>{
+b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
     	LoopRadius=>{},
 	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
 	NameStartFile=>"start",  --this start file will be the solutions we start with
@@ -2645,7 +2645,7 @@ b'PHGaloisGroup2=method(TypicalValue=>Thing,Options=>{
 	ReturnGaloisGroupGeneratorFile=>true
 --	SpecifyLoops=>false
 	})
-b'PHGaloisGroup2(String) := o ->(storeFiles)->(
+b'PHGaloisGroup(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
 --
