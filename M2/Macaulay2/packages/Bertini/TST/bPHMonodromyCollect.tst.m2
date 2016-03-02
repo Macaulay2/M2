@@ -24,8 +24,8 @@ makeB'InputFile(storeBM2Files,
     B'Configs=>{
 	{PARAMETERHOMOTOPY,2},
 	{MPTYPE,2}},
-    AVG=>{x,y},
-    PG=>{a1,a2},
+    AffVariableGroup=>{x,y},
+    ParameterGroup=>{a1,a2},
     B'Polynomials=>{f,h}    )
 collectedSols=b'PHMonodromyCollect(storeBM2Files,
     NameStartFile=>"startSave",
