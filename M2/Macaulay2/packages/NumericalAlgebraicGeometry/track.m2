@@ -948,3 +948,39 @@ trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     T := specializeContinuationParameter(H,b);
     track(S,T,pts,o) 
     )
+
+-- The following code added by MES, for debugging purposes
+-- for adaptive homotopy tracking.  This code is not exported or used elsewhere.
+mesTracker = method(Options => {
+        tStep => .05,
+        tStepMin => .000001,
+        CorrectorTolerance => .000001,
+        maxCorrSteps => 3,
+        InfinityThreshold => 100000.
+        })
+mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
+    -- Returns a pair (out, outStatus)
+    -- out: d x npoints MutableMatrix of points (last coordinate is homotopy parameter)
+    -- outStatus: a list of length npoints, where the i-th element is 
+    --  (status, nsteps)
+    -- status can be:
+    --  Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure
+    -- ANTON: which of these can actually occur here?  All of them?
+    -- nsteps: number of tracker steps?
+    out := mutableMatrix inp;
+    for i from 0 to numColumns inp-1 do out_(numRows inp-1, i) = 1.0;
+    statusOut := mutableMatrix(ZZ, 2, numColumns inp);
+    trackHomotopyM2engine(
+        H, 
+        inp, 
+        out, 
+        statusOut, 
+        o.tStep,
+        o.tStepMin,
+        o.CorrectorTolerance,
+        o.maxCorrSteps,
+        o.InfinityThreshold
+        );
+    -- now we need to grab results
+    (out, for i from 0 to numColumns statusOut - 1 list (solutionStatusLIST#(statusOut_(0,i)), statusOut_(1,i)))
+    )
