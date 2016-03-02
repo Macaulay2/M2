@@ -1,0 +1,8 @@
+
+
+echo "child shell: using M2 environment "
+echo "SSCRIPTPATH "$SCRIPTPATH
+echo "child shell: using M2 environment "
+echo "type exit to return" 
+exec bash
+

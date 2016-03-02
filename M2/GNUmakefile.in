@@ -7,13 +7,17 @@ VPATH = @srcdir@
 all install: \
 	check-make config.status configured check-for-undefined-configure-variables\
 	srcdir protect-configs configured-files check-machine \
-	M2 all-in-subdirs report-M2-location
+	M2 M2_setenv all-in-subdirs report-M2-location
 configured-files: @CONFIGURED_FILES@
 $(foreach f,@CONFIGURED_FILES@,$(eval $f: @srcdir@/$f.in; ./config.status $f))
 M2: GNUmakefile
 	rm -f M2
 	echo 'exec @pre_bindir@/M2 "$$@"' >M2
 	chmod a+x M2
+M2_setenv: GNUmakefile
+	rm -f M2_setenv
+	echo 'exec @pre_bindir@/M2_setenv "$$@"'  >M2_setenv
+	chmod a+x M2_setenv
 define package
 all install-$1: all-$1
 install: install-$1
@@ -148,7 +152,7 @@ $(foreach t,all check clean distclean,					\
 	   $(eval $t-in-$d:; $$(MAKE) -C $d $t)))
 clean:
 	rm -rf .completed
-	rm -f M2 srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
+	rm -f M2 M2_setenv srcdir .link-test srcdir confdefs.h configure.lineno conftest.* include/config.h
 	rm -rf usr-dist conf_* usr-host
 	rm -f pre-install.sh post-install.sh normal-install.sh
 	if [ -f Makefile ] ; then $(MAKE) -f Makefile clean-tools ; fi
