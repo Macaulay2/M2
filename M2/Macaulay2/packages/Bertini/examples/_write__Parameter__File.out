@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 1434670481 *}
+-- -*- M2-comint -*- {* hash: 1664419905 *}
 
 i1 : R=QQ[x,y,t]
 
@@ -8,10 +8,10 @@ o1 : PolynomialRing
 
 i2 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{"PARAMETERHOMOTOPY",1}},
-         PG=>{t},    AVG=>{{x,y}},
+         ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-t})
 
-o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62316-0/0/input
+o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98087-0/0/input
 
 o2 : File
 
@@ -22,16 +22,16 @@ i4 : copyFile(storeBM2Files|"/nonsingular_solutions",storeBM2Files|"/start")
 
 i5 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{"PARAMETERHOMOTOPY",2}},
-         PG=>{t},    AVG=>{{x,y}},
+         ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-t})
 
-o5 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62316-0/0/input
+o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98087-0/0/input
 
 o5 : File
 
 i6 : writeParameterFile(storeBM2Files,{1})
 
-o6 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62316-0/0/final_parameters
+o6 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98087-0/0/final_parameters
 
 o6 : File
 

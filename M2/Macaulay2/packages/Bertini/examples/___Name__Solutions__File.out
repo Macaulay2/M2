@@ -1,8 +1,8 @@
--- -*- M2-comint -*- {* hash: -1763488852 *}
+-- -*- M2-comint -*- {* hash: 1207386204 *}
 
-i1 : makeB'InputFile(storeBM2Files,AVG=>{x},B'Polynomials=>{"x^2-2"})
+i1 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"})
 
-o1 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62263-0/0/input
+o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98059-0/0/input
 
 o1 : File
 
