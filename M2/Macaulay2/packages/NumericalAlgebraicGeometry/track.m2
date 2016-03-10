@@ -2,7 +2,9 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { "track", "trackSegment", "trackHomotopy" }
+export { "track", 
+    -- "trackSegment", 
+    "trackHomotopy" }
 
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
@@ -649,6 +651,31 @@ trackHomotopyM2engine = (H, inp,
 	CorrectorTolerance, maxCorrSteps, 
 	InfinityThreshold)
     )
+extractM2engineOutput = method()
+extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
+    nSols := numColumns out; 
+    n := numRows out - 1;
+    assert(nSols == numColumns statusOut);
+    apply(nSols, sN->(
+	    s'status := solutionStatusLIST#(statusOut_(0,sN));
+	    count := statusOut_(1,sN);
+	    if DBG > 0 then << (if s'status == Regular then "."
+		else if s'status == Singular then "S"
+		else if s'status == MinStepFailure then "M"
+		else if s'status == Infinity then "I"
+		else error "unknown solution status"
+		) << if (sN+1)%100 == 0 then endl else flush;
+	    -- create a solution record 
+	    x0 := submatrix(out,toList(0..n-1),{sN});
+	    t0 := out_(n,sN);
+	    {flatten entries x0,
+		SolutionStatus => s'status, 
+		NumberOfSteps => count,
+		LastT => t0,
+		"H" => H
+		}
+	    ))
+    )    
  
 trackHomotopy = method(TypicalValue => List, Options =>{
 	  Software=>null, NoOutput=>null, 
@@ -778,26 +805,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     toRR o.InfinityThreshold);
 	 --if DBG>2 then 
 	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
-	 apply(nSols, sN->(
-		 s'status := solutionStatusLIST#(statusOut_(0,sN));
-		 count := statusOut_(1,sN);
-		 if DBG > 0 then << (if s'status == Regular then "."
-		    else if s'status == Singular then "S"
-		    else if s'status == MinStepFailure then "M"
-		    else if s'status == Infinity then "I"
-		    else error "unknown solution status"
-		    ) << if (sN+1)%100 == 0 then endl else flush;
-	       	-- create a solution record 
-		x0 := submatrix(out,toList(0..n-1),{sN});
-		t0 := out_(n,sN);
-		{x0,
-		    SolutionStatus => s'status, 
-		    NumberOfSteps => count,
-		    LastT => t0,
-		    "H" => H
-		    }
-		))
-	)
+    	 extractM2engineOutput(H,out,statusOut)
+	 )
      else if o.Software===M2 
      or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
@@ -942,12 +951,14 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      if class p === Sequence then ret else first ret
      )
 
+{*
 trackSegment = method(Options=>track'option'list) -- a better implementation needed!!!
 trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     S := specializeContinuationParameter(H,a);
     T := specializeContinuationParameter(H,b);
     track(S,T,pts,o) 
     )
+*}
 
 -- The following code added by MES, for debugging purposes
 -- for adaptive homotopy tracking.  This code is not exported or used elsewhere.
@@ -982,5 +993,6 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
         o.InfinityThreshold
         );
     -- now we need to grab results
-    (out, for i from 0 to numColumns statusOut - 1 list (solutionStatusLIST#(statusOut_(0,i)), statusOut_(1,i)))
+    --(out, for i from 0 to numColumns statusOut - 1 list (solutionStatusLIST#(statusOut_(0,i)), statusOut_(1,i)))
+    (out,statusOut)
     )

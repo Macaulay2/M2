@@ -192,6 +192,16 @@ assert(evaluate(S,p) == value(gS,vals))
 assert(evaluate(jacobian S, p)== value(diff(matrix{X},gS),vals))
 ///
 
+segmentHomotopy = method(Options=>{gamma=>1})
+segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
+segmentHomotopy (PolySystem, PolySystem) := o -> (S,T) -> (
+    R := ring T;
+    if R =!= ring S then error "systems in the same ring expected";  
+    t := local t;
+    tt := inputGate [t];
+    gateHomotopy(o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T, 
+	gateMatrix{getVarGates R}, tt, Strategy=>compress)
+    )
 -------------------------------------------------------
 -- trackHomotopy tests
 TEST /// 

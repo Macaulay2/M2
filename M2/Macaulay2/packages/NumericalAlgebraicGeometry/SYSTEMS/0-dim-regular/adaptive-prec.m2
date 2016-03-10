@@ -47,20 +47,25 @@ trackHomotopyM2engine(H, inp, out, statusOut,
     100000.0) -- InfinityThreshold
 
 -- Mike example 2:
-(x,y,t) = (X,Y,T)/inputGate
-H = gateHomotopy(
-    (1-t)*matrix{{x^5-1},{y^5-1}} + t*matrix{{x^5+x*y^2-y^2-1}, {x^3+y^5-x*y-1}}
-    ,
-    matrix{{x,y}},
-    t 
-    );
-roots = for i from 1 to 5 list numeric(100, exp(i*2*ii*pi/5))
-pts = mutableMatrix transpose matrix(CC_100, (toList(set roots ** set roots))/toList/(a -> append(a, 0.0)))
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+R=CC[x,y]
+T = {x^5+x*y^2-y^2-1, x^3+y^5-x*y-1}
+(S,solsS) := totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>
+    exp(ii*0.00000000001)
+    )
+peek H
+prec = 53 
+prec = 10000
+pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out,outStatus) = mesTracker(H, pts, tStepMin=>1e-9)
+netList (entries outStatus | entries out)
+sols = extractM2engineOutput(H,out,outStatus)/point
+coordinates sols#4 
+# solutionsWithMultiplicity sols
 
-mesTracker(H, pts) -- this example seems to be missing 2 solutions?  And 2 solutions don't make it very far
-  -- (1,0), (1,01) are missing.  This might be a good place to test adaptive?
-transpose first oo
-VerticalList last ooo
+sols2 = trackHomotopy(H,solsS)
 
 R = QQ[symbol x, symbol y]
 I = ideal matrix{{x^5+x*y^2-y^2-1}, {x^3+y^5-x*y-1}}

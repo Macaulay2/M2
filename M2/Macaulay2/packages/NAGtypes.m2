@@ -43,7 +43,8 @@ export {
      -- polynomial systems
      "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
      "ContinuationParameter", "SpecializationRing",
-     "polySystem", "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
+     "polySystem", 
+     -- "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
      "evaluate",
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
@@ -129,6 +130,7 @@ jacobian PolySystem := P -> (
     else P.Jacobian = transpose jacobian(transpose P.PolyMap) -- TO DO: make "jacobian" work for SLPs
     )
 
+{*
 segmentHomotopy = method()
 segmentHomotopy (PolySystem,PolySystem) := (S,T) -> (
     R := ring S;
@@ -192,6 +194,7 @@ assert(S'.PolyMap - S.PolyMap == 0)
 T' = specializeContinuationParameter(H',0_CC) 
 assert(T'.PolyMap - T.PolyMap == 0)
 ///
+*}
 
 -----------------------------------------------------------------------
 -- POINT = {
@@ -1226,13 +1229,14 @@ document {
 	 {TT "PolyMap", " of type ", TO Matrix, ", a column matrix over a polynomial ring"},
     	 {TT "Jacobian", " of type ", TO Matrix, ", the jacobian of ", TT "PolyMap"},
 	 },
-     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
+{*     "Basic methods for ", TO "polynomial homotopy", " use additional keys: ",
      UL {
 	 {TT "ContinuationParameter", " -- stores one variable of the ring" },
 	 {TT "SpecializationRing", 
 	     " -- stores the subring generated my all variables except the additional parameter",
 	     " (e.g., used by ", TO specializeContinuationParameter, ")"}
 	 },
+     *}
      EXAMPLE lines ///
 CC[x,y]
 S = polySystem {x^2+y^2-6, 2*x^2-y}
@@ -1244,8 +1248,8 @@ evaluate(jacobian S, p)
      UL{
     	TO polySystem,
 	TO evaluate,
-	TO segmentHomotopy,
-	TO specializeContinuationParameter,
+	--TO segmentHomotopy,
+	--TO specializeContinuationParameter,
 	},     
      SeeAlso => {WitnessSet}
      }
@@ -1356,6 +1360,7 @@ ring T
     SeeAlso => {homogenize,PolySystem}
     }
 
+{*
 document {
     Key => {"polynomial homotopy", 
 	segmentHomotopy, (segmentHomotopy,PolySystem,PolySystem), 
@@ -1397,7 +1402,7 @@ H' := substituteContinuationParameter(H,1-t)
     ///,    
     SeeAlso => {ContinuationParameter,SpecializationRing}
     }
-
+*}
 -- WitnessSet ------------------------------------------------------------------------------
 document {
      Key => {WitnessSet,equations,(equations,WitnessSet),slice,(slice,WitnessSet),

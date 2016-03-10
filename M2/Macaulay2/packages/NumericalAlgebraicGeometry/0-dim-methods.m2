@@ -58,16 +58,7 @@ solveSystem PolySystem := List => o -> P -> (
 	       else F);  
   	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       --track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
-	       gamma := exp(random(0.,2*pi)*ii);
-	       t := local t;
-	       tt := inputGate [t];
-	       --H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + gamma*tt*gateMatrix polySystem T, 
-	       --   gateMatrix{getVarGates R}, tt, Strategy=>null);
-	       --time elapsedTime trackHomotopy(H,solsS); -- !!! fill in options
-	       H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + tt*gateMatrix polySystem T, 
-		   gateMatrix{getVarGates R}, tt,Strategy=>compress);
-	       --time elapsedTime trackHomotopy(H,solsS) -- !!! fill in options
+	       H := segmentHomotopy(polySystem S, polySystem T, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
 	       trackHomotopy(H,solsS,
 		   CorrectorTolerance => o.CorrectorTolerance,
 		   maxCorrSteps => o.maxCorrSteps,

@@ -393,7 +393,7 @@ solveSystem  {f,g}
 
 ///
 
--- (Deprecated) 
+{* -- (Deprecated) 
 endGame'Cauchy'polygon = method(Dispatch=>Thing)
 endGame'Cauchy'polygon Sequence := parameters -> (
     -- H: PolySystem, a homotopy
@@ -438,7 +438,7 @@ x32 = endGame'Cauchy'polygon(H,1,t0,x0,32)
 -- x64 = endGame'Cauchy'polygon(H,1,t0,x0,64)
 assert areEqual(first x32, {2,6}, Tolerance=>0.001)
 ///
-
+*}
 
 /// -- OLD CODE
 refineViaDeflation = method(Options=>{Order=>1, Tolerance=>0.0001})
