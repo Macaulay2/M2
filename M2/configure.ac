@@ -30,6 +30,7 @@ AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
 m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
+m4_include(config/relpaths.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -1269,8 +1270,6 @@ AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without la
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
 
-BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
-
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
@@ -1299,6 +1298,29 @@ then
      CPPFLAGS="`$PKG_CONFIG --cflags $FACTORY_NAME` $CPPFLAGS"
 else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
+fi
+
+AC_ARG_VAR([GFTABLESDIR],
+    [path to gftables directory if factory is already installed])
+if test $BUILD_factory = yes
+then
+    BUILD_gftables=yes
+    AC_SUBST([gftablesdir], [${datadir}/Macaulay2/Core/factory/])
+else
+    BUILD_gftables=no
+    if test x$GFTABLESDIR = x
+    then
+	if test $FACTORY_NAME = factory
+	then
+	    GFTABLESDIR="${datadir}/factory/"
+	else
+	    GFTABLESDIR="${datadir}/singular/factory/"
+	fi
+    fi
+    adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
+    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],
+	[AC_SUBST([gftablesdir], [$GFTABLESDIR])],
+	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
@@ -1666,7 +1688,7 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir gftablesdir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1679,7 +1701,9 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 	   eval  pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
 	   eval      ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
 	   ;;
-     *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
+     *) if test $i != gftablesdir #only needs normalized if we build factory
+	then AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"])
+	fi ;;
    esac
 done
 prefix=$save_prefix
