@@ -753,7 +753,7 @@ AC_SUBST(BUILTLIBS,)
 # it reflects dependencies, with prerequisites listed first
 # in particular, there are the following dependencies:
 #    gc needs atomic_ops (and sometimes includes it)
-#    factory needs gftables, flint, ntl and gmp
+#    factory needs flint, ntl and gmp
 #    libfac has been replaced by code in factory
 #    ntl needs gmp
 #    lapack includes blas, makes both libblas and liblapack
@@ -783,7 +783,7 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on mpir and mpfr
-AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
+AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
@@ -823,7 +823,7 @@ then BUILD_gfan=no
 fi
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
     do case $LIBLIST in
 	    *" $i "*) 
@@ -1268,8 +1268,6 @@ AC_SUBST(LAPACK,yes)
 AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
 test "$LAPACK" = no; val=$?
 AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
-
-BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
