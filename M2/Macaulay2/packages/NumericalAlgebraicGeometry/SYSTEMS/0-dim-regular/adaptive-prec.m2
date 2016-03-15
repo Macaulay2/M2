@@ -72,5 +72,19 @@ I = ideal matrix{{x^5+x*y^2-y^2-1}, {x^3+y^5-x*y-1}}
 netList primaryDecomposition I
 radical I == I -- this one is radical.
 
-
-
+-- example multiplicity=d^2
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+R=QQ[x,y]
+eps = 1/100000
+d = 3
+T = {x^d-eps, (y-1)^d-eps*x}
+(S,solsS) = totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>1+ii)
+peek H
+prec = 53 
+prec = 10000
+pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out,outStatus) = mesTracker(H, pts, tStepMin=>1e-5, LastT=>2.0)
+netList (entries outStatus | entries out)
+sols = extractM2engineOutput(H,out,outStatus)/point

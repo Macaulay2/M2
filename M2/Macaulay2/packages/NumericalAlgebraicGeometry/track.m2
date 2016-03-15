@@ -967,7 +967,8 @@ mesTracker = method(Options => {
         tStepMin => .000001,
         CorrectorTolerance => .000001,
         maxCorrSteps => 3,
-        InfinityThreshold => 100000.
+        InfinityThreshold => 100000.,
+	LastT => 1.
         })
 mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
     -- Returns a pair (out, outStatus)
@@ -979,7 +980,7 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
     -- ANTON: which of these can actually occur here?  All of them?
     -- nsteps: number of tracker steps?
     out := mutableMatrix inp;
-    for i from 0 to numColumns inp-1 do out_(numRows inp-1, i) = 1.0;
+    for i from 0 to numColumns inp-1 do out_(numRows inp-1, i) = o.LastT;
     statusOut := mutableMatrix(ZZ, 2, numColumns inp);
     trackHomotopyM2engine(
         H, 
