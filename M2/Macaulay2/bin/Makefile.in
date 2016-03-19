@@ -207,7 +207,7 @@ ifneq ("$(EXECSTACK)","no")
 	       fi ;\
 	  fi
 endif
-	- printenv LD_LIBRARY_PATH
+	printenv LD_LIBRARY_PATH || true
 ifneq (@LDD@,false)
 	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
 	then echo "some libraries not found" >&2;							\
