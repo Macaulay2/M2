@@ -25,10 +25,11 @@ help:
 	$(MAKE) -C builds.tmp/$(DIRECTORY) $@
 configure builds.tmp/$(DIRECTORY)/include/configuration:
 	mkdir -p builds.tmp/$(DIRECTORY)
-	D=`pwd` ;\
-	  echo "make: Entering directory \`$$D/builds.tmp/$(DIRECTORY)'" &&\
-	  cd builds.tmp/$(DIRECTORY) && $$D/../../configure $(CONFIGOPTIONS) &&\
-	  echo "make: Leaving directory \`$$D/builds.tmp/$(DIRECTORY)'"
+	D=`cd ../.. ; /bin/pwd` ;\
+	E=`pwd` ;\
+	  echo "make: Entering directory \`$$E/builds.tmp/$(DIRECTORY)'" &&\
+	  cd builds.tmp/$(DIRECTORY) && $$D/configure $(CONFIGOPTIONS) &&\
+	  echo "make: Leaving directory \`$$E/builds.tmp/$(DIRECTORY)'"
 default: arch-chk all
 default: check-links
 distclean: distclean1
