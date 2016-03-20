@@ -1630,9 +1630,9 @@ TEST /// -- Example 3.9 of [Johnson, 2003] (thesis)
   R = QQ[x_1..x_12];
   X = genericMatrix(R,3,4);
   assert(I(X) == J(X));
-  R = QQ[x_1..x_15];
-  X = genericMatrix(R,3,5);
-  assert(I(X) == J(X));
+--  R = QQ[x_1..x_15];
+--  X = genericMatrix(R,3,5);
+--  assert(I(X) == J(X));
 ///
 
 TEST /// -- Example 5.7 of [Johnson, 2003] (thesis)
