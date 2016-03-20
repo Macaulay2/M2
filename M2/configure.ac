@@ -230,8 +230,8 @@ AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
 if test "$DEBUG" = yes
-then CPPFLAGS="$CPPFLAGS -DDEBUG"
-     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+then 
+     # it is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint"
      if test "$GCC" = yes
      then CFLAGS="$CFLAGS -g3"
 	  CXXFLAGS="$CXXFLAGS -g3"

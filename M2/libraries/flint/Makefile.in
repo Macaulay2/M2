@@ -13,7 +13,6 @@ ifeq (@DEBUG@,yes)
 CONFIGOPTIONS += --enable-assert
 CFLAGS += -O0 -fno-unroll-loops 
 endif
-CPPFLAGS += -UDEBUG
 CFLAGS += -std=c90 -pedantic-errors
 # the flint configure script does not accept CPPFLAGS
 CONFIGURECMD =  LIB_DIRS=$(LIBRARIESDIR)/lib ./configure  --with-gc --with-blas --disable-tls \
