@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 {*
-  Copyright 2015 Brian Pike
+  Copyright 2016 Brian Pike
 
   You may redistribute this file under the terms of the GNU General Public
   License as published by the Free Software Foundation, either version 2 of
@@ -8,8 +8,8 @@
 *}
 newPackage(
 		"RunExternalM2",
-		Version => "0.82", 
-		Date => "September 03, 2015",
+		Version => "0.83",
+		Date => "January 06, 2016",
 		Authors => {
 			{Name => "Brian Pike", 
 			Email => "bapike@gmail.com",
@@ -21,6 +21,10 @@ newPackage(
 
 {*
 Changelog:
+ v0.83:
+  o Remove runExternalM2InClone because it is fundamentally unsafe to use
+    fork() in a multithreaded application like M2 (github issue #355) 
+  o Improve documentation
  v0.82:
   o Remove a workaround for github issue #296, fixed in M2 v1.8
   o Change default PreRunScript
@@ -54,16 +58,17 @@ Known issues:
     the value returned by name-of-procedure, serialized into a string with toExternalString or the like.
   Then runExternal parses the stdout and returns a hash with all of this data.
 
-  Motivation:  ulimits seem to apply to processes, not threads, and
+  Motivation:  ulimits apply to processes, not threads, and
      using try and alarm seems buggy when executing code in a library
+     (e.g., alarms that would ring in the middle of computing a groebner basis
+     seem to not work.) 
 
-  Methods:
+  Possible Methods:
     - forking
+      No.  M2 is a multithreaded process, and it is unsafe to do almost
+      anything after forking, even if only one thread ever runs.
     - run()ing a new M2 process
-   are both implemented, but they have tradeoffs:
-    (pro fork) uses all context setup
-    (???) would only fork current thread?  http://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them
-    (con fork) potentially resource-intensive
+      Yes, how we actually do it.
 *}
 
 
@@ -76,7 +81,6 @@ TODO:
 export {
 	"isExternalM2Child",
 	"isExternalM2Parent",
-	"runExternalM2InClone",
 	"runExternalM2",
 	"runExternalM2ReturnAnswer",
 	-- Various Options:
@@ -101,11 +105,10 @@ Node
 		a package to run Macaulay2 code externally and retrieve the result
 	Description
 		Text
-			This package allows the user to run a Macaulay2 function in an external
-			Macaulay2 process and automatically retrieve any results.
-			The external Macaulay2 process can be either a brand-new instance of
-			Macaulay2 (using @TO runExternalM2@), or a copy (fork) of the
-			current Macaulay2 process (using @TO runExternalM2InClone@).
+			This package allows the user to run a Macaulay2 function in
+			a brand-new instance of Macaulay2, wait for the instance to finish,
+			and automatically retrieve any results.
+			This is primarily done with the @TO runExternalM2@ function.
 
 			One of the main purposes of this package is to allow the use of
 			operating system features (e.g., ulimit on Unix-like systems) to
@@ -120,15 +123,14 @@ Node
 			this property can vary enormously.
 			First write a Macaulay2 function {\tt foo()} that generates a random
 			ideal {\tt I} and checks whether {\tt I} has this property.
-			Then use a loop to repeatedly call {\tt foo()} using RunExternalM2,
+			Then use a loop to repeatedly call {\tt foo()} using @TO runExternalM2@,
 			with a time limit of 20 seconds, until such an ideal is found;
 			now let it run overnight.
 
-			For examples, please see @TO runExternalM2@ and
-			@TO runExternalM2InClone@.
+			For examples, please see @TO runExternalM2@ or
+			@TO "suggestions for using RunExternalM2"@.
 	SeeAlso
 		runExternalM2
-		runExternalM2InClone
 		"suggestions for using RunExternalM2"
 		"resource limits"
 ///);
@@ -169,11 +171,80 @@ Node
 		Pre
 			i1 : load "somefilename.m2"
 		Text
-			With this setup, you can use either @TO runExternalM2@ or @TO runExternalM2InClone@.
+
+			This has a few advantages.
+			It ensures that ring definitions are always the same in the parent
+			and child Macaulay2 processes, even if you are frequently editing
+			the file and running the calculation again.
+			If the file containing the function has syntax errors,
+			then they should appear directly in the console rather than inside
+			a temporary file containing the program's output.
+			If a particular try at execution does not work, then you can immediately call
+			the function directly for quick debugging.
+
+			For instance, the following code calculates an ideal of minors:
+		Pre
+			needsPackage "RunExternalM2"
+
+			m=4;
+			n=3;
+			R=QQ[x_(1,1)..x_(m,n)];
+
+			idealOfMinors = (i) -> (
+				M:=genericMatrix(R,m,n);
+				return trim minors(i,M);
+			);
+
+			if isExternalM2Parent() then (
+				h=runExternalM2("example1.m2",idealOfMinors,2);
+				if (h#"exit code"===0) then (
+					stdio<<"The code ran successfully and the answer was:"<<endl;
+					stdio<<toExternalString(h#value)<<endl;
+				) else (
+					stderr<<"There was a problem."<<endl;
+				);
+			);
+		Text
+
+			When using random numbers, it may be useful for the parent to
+			provide the random number seed to the child, so that the output of
+			the child is reproducible.
+			For instance, the following code searches for a random integer matrix
+			with a large determinant:
+		Pre
+			needsPackage "RunExternalM2"
+
+			getRandomMat = (seed,size,height) -> (
+				setRandomSeed(seed);
+				blankMat:=mutableMatrix(ZZ,size,size);
+				return matrix fillMatrix(blankMat,Height=>height);
+			);
+
+			if isExternalM2Parent() then (
+				seed:=0;
+				while (true) do (
+					seed=random(0,2^32);
+					h:=runExternalM2("z1.m2",getRandomMat,(seed,5,5));
+					if (h#"exit code"===0) then (
+						d:=det(h#value);
+						stdio<<"Starting with seed "<<seed<<" gives this matrix (with det="<<d<<"):"<<endl;
+						stdio<<"  "<<h#value<<endl;
+
+						if (d>100) then (
+							break;
+						);
+					) else (
+						stderr<<"There was a problem; aborting."<<endl;
+						break;
+					);
+				);
+
+				stdio<<"Using the seed "<<seed<<" again gives the same matrix:"<<endl;
+				stdio<<"  "<<getRandomMat(seed,5,5)<<endl;
+			);
 	SeeAlso
 		RunExternalM2
 		runExternalM2
-		runExternalM2InClone
 		isExternalM2Parent
 ///);
 
@@ -204,11 +275,11 @@ Node
 			There are two types of limits, {\it hard} and {\it soft}:
 			soft levels are always less than or equal to the hard limits, and
 			hard levels can only be adjusted down.
-			Note that when a process creates a child process, the
+			When a process creates a child process, the
 			{\bf child process
 			receives the ulimits of the parent process}.
 
-			As an example, we give commands for a Linux system in a Bash shell session.
+			As an example, we give commands for a Linux system using a Bash shell.
 			To {\bf view} the current limits, run:
 		Pre
 			ulimit -a
@@ -220,28 +291,33 @@ Node
 		Text
 			Because ulimits are inherited by child processes, any commands run
 			later in your shell session (say, Macaulay2) will inherit these ulimits.
-			Perhaps the {\bf best way to set} the limits on a process is to run
+			Perhaps the {\bf best way to set} the limits on a specific process is to
+			run something like
 		Pre
 			(ulimit -S -m 123456 -S -t 5; M2)
 		Text
 			which will run M2 with these limits while leaving the shell's ulimits unchanged.
 
-			From within Macaulay2, you can {\bf view} the ulimits currently available
+			{\bf From within Macaulay2}, you can {\bf view} the ulimits currently available
 			to the Macaulay2 process by using the @TO run@ command:
 		Example
 			run("ulimit -a")
 		Text
 			-- M2/M2/Macaulay2/d/scclib.c: system_run
-			Internally, @TO run@ starts a new shell
+			This starts a new shell
 			--(which may differ from your user's shell!)
 			and executes the command given, which in this
 			case provides the list of ulimits of the shell.
 			Since ulimits are inherited, this should be the same as
 			the ulimits of Macaulay2 itself.
-			It is not possible to {\bf set} limits on the current Macaulay2 process from
-			within Macaulay2 because Macaulay2 
+
+			{\bf From within Macaulay2}, it is not possible to set ulimits on the
+			current Macaulay2 process because Macaulay2 
 			does not provide access to the {\tt setrlimit} system call
-			(other than the @TO limitFiles@ and @TO limitProcesses@ commands). 
+			(other than the @TO limitFiles@ and @TO limitProcesses@ commands).
+			However, it is possible to {\bf set} ulimits on child Macaulay2
+			processes that are started by @TO runExternalM2@,
+			by using the @TO PreRunScript@ option of @TO runExternalM2@.
 
 --			As of 2012, Windows and Cygwin do not support the 
 --			{\tt setrlimit} system call, and so on these systems {\tt ulimit} is
@@ -250,10 +326,10 @@ Node
 --			but I am
 --			unaware if there is any way to use this for Macaulay2.
 --			--TODO 
-			
 	SeeAlso
 		alarm
 		"try"
+		[runExternalM2,PreRunScript]
 ///);
 
 
@@ -352,7 +428,7 @@ runExternalM2ReturnAnswer = (f,t) -> (
 		s:=toExternalString(t);
 		file<<s<<flush<<close;
 	) else (
-		error "runExternalM2ReturnAnswer: failed to store output!";
+		error "runExternalM2ReturnAnswer: failed to store output! Return type unhandled by toExternalString? Disk full or read-only?";
 	);
 );
 
@@ -403,108 +479,14 @@ safelyRemoveFile := (s,f) -> (
 mydoc=concatenate(mydoc,///
 Node
 	Key
-		runExternalM2InClone
-	Headline
-		run a Macaulay2 function in a duplicate of the current Macaulay2 process
-	Usage
-		h=runExternalM2InClone(func,params)
-		h=runExternalM2InClone(func,params,KeepFiles=>b)
-	Inputs	
-		func:Function
-			the function to run 
-		params:Thing
-			the parameters for {\tt func}
-	Outputs
-		h:HashTable
-			contains the result of applying {\tt func} to {\tt params}, and other data
-	Description
-		Text
-			This function runs the function {\tt func} with the parameters {\tt params} in
-			a short-lived duplicate (``child'') of the current (``parent'')
-			Macaulay2 process,
-			captures the value returned by {\tt func},
-			and stores it in {\tt h} in the original Macaulay2 process.
-			The duplicate is obtained using @TO fork@ and hence has the same defined
-			variables, functions, and environment as the current Macaulay2 process.
-
-			The hash table {\tt h} stores
-			the {\tt exit code} of the created Macaulay2 process (0 means success),
-			the wall-clock {\tt time used} (as opposed to the CPU time),
-			the name of the {\tt answer file} (unless it was deleted),
-			and the {\tt value} returned by the function {\tt func}.
-			If the child process terminates abnormally, then the {\tt exit code} is 
-			nonzero and the {\tt value} returned is @TO null@. 
-
-			With this method, the only @TO "resource limits"@ on the child process
-			are those inherited from the parent.
-			This limitation can be overcome using the similar function @TO runExternalM2@.
-
-			For example, we can write a simple function that should take 3 seconds to execute:
-		Example
-			square = (x) -> (print("Running"); sleep(3); x^2);
-			h=runExternalM2InClone(square,(4));
-			h
-			h#value===4^2
-			h#"exit code"===0
-		Text
-
-			We can handle most kinds of objects as return values.  Here, we
-			use the built-in @TO identity@ function:
-		Example
-			R=QQ[x,y];
-			v=coker random(R^2,R^{3:-1})
-			(runExternalM2InClone(identity,v))#value===v
-			
-			v=//// A complicated string^%&C@#CERQVASDFQ#BQBSDH"' ewrjwklsf////;
-			(runExternalM2InClone(identity,v))#value===v
-		Text
-			The objects may unavoidably lose some internal references, though:
-		Example
-			v=R;
-			h=runExternalM2InClone(identity,v);
-			h#value
-			v===h#value
-		Text
-			but this happens because
-		Example
-			R===value(toExternalString(R))
-		Text
-
-			An abnormal program exit will have a nonzero
-			{\tt exit code}, and the {\tt value} will be null.
-		Example
-			justexit = () -> (  exit(27); );
-			h=runExternalM2InClone(justexit,());
-			h
-		Text
-			The {\tt answer file} may not exist unless the routine finished
-			successfully.
-		Example
-			fileExists(h#"answer file")
-	Caveat
-		@TO fork@ warns against using @TO fork@ and threads
-		at the same time
-		(see @TO "parallel programming with threads and tasks"@).
-		Therefore, do not use @TO runExternalM2InClone@ and
-		threads at the same time.
---		TODO I am not sure what would happen.
-	SeeAlso
-		RunExternalM2
-		fork
-		runExternalM2
-///);
-mydoc=concatenate(mydoc,///
-Node
-	Key
 		KeepFiles
 		[runExternalM2,KeepFiles]
-		[runExternalM2InClone,KeepFiles]
 	Headline
 		indicate whether or not temporary files should be saved
 	Description
 		Text
 			If {\tt true}, then always keep any files that arise during the use of
-			@TO runExternalM2@ or @TO runExternalM2InClone@.
+			@TO runExternalM2@.
 
 			If {\tt false}, then always delete these files.
 
@@ -522,59 +504,7 @@ Node
 	SeeAlso
 		RunExternalM2
 		runExternalM2
-		runExternalM2InClone
 ///);
-runExternalM2InClone = {
-	KeepFiles => null
-} >> opt -> (proc, params) -> (
-	-- Validate parameters
-	if not(instance(proc,Function)) then (
-		error "runExternalM2InClone: first parameter has unknown type; should be a function";
-	);
-	if not(instance(opt#KeepFiles,Boolean) or opt#KeepFiles===null) then (
-		error "runExternalM2InClone: unknown KeepFiles setting";
-	);
-	-- params can be anything, really.
-
-	-- Idea here is just to fork().
-	ansFileName:=rootPath|temporaryFileName()|".ans";
-	pid:=fork();
-	if (pid==0) then (
-		-- We are the child.
-		loadPackage("RunExternalM2",Configuration=>{"isChild"=>true},Reload=>true);
-
-		-- Shove the output into the file, then quit.
-		-- The computation may break in many, many ways.
-		result:=try (
-			proc params
-		) else (
-			exit(-1)
-		);
-		runExternalM2ReturnAnswer(ansFileName,result);
-		exit(0);
-	) else (
-		-- We are the parent, and pid is the process ID of the child
-		-- Wait until it finishes, then read the output and cleanup
-		timer:=currentTime();
-		exitcode:=wait(pid);
-		timer=currentTime()-timer;
-
-		(theanswer,wasSuccess):=parseAnswer(ansFileName);
-		if (opt#KeepFiles===false or (opt#KeepFiles===null and wasSuccess)) then (
-			-- Remove the temporary files
-			safelyRemoveFile("runExternalM2InClone: missing answer file",ansFileName); 
-			ansFileName=null;
-		);
-
-		return hashTable({
-			"exit code"=>exitcode,
-			"time used"=>timer,
-			"answer file"=>ansFileName,
-			value=>theanswer});
-
-	);
-);
-
 
 mydoc=concatenate(mydoc,///
 Node
@@ -610,8 +540,14 @@ Node
 			runs the function {\tt func} with the parameters {\tt params},
 			captures the value returned by {\tt func},
 			and stores it inside {\tt h} in the original Macaulay2 process.
+			Optionally, strict @TO "resource limits"@ may be imposed on the
+			child process from within Macaulay2, or data may be collected
+			about the resources used by the child process.
+
 			Since the child is a new Macaulay2 process, it has no defined
 			variables or functions except those defined in {\tt fname}.
+			Hence, {\tt func} and anything it needs (e.g., ring definitions)
+			must be defined in the file {\tt fname}.
 
 			The hash table {\tt h} stores
 			the {\tt exit code} of the created Macaulay2 process,
@@ -626,13 +562,6 @@ Node
 			If the child process terminates abnormally, then usually
 			the {\tt exit code} is 
 			nonzero and the {\tt value} returned is @TO null@. 
-
-			The method used by this function requires {\tt func} and its dependencies
-			to be defined in the file {\tt fname}.
-			This is less convenient than the method used by @TO runExternalM2InClone@
-			but has the advantage that @TO "resource limits"@ can be imposed
-			from within Macaulay2, and actual resource usage statistics may
-			be collected by the operating system.
 
 			For example, we can write a few functions to a temporary file:
 		Example
@@ -672,6 +601,7 @@ Node
 			if fileExists(h#"output file") then get(h#"output file")
 			fileExists(h#"answer file")
 		Text
+
 			We can get quite a lot of detail on the resources used
 			with the @TO KeepStatistics@ command: 
 		Example
@@ -679,13 +609,14 @@ Node
 			h#"statistics"
 		Text
 
-			We can handle most kinds of objects as return values.
+			We can handle most kinds of objects as return values,
+			although @TO MutableMatrix@ does not work.
 			Here, we use the built-in @TO identity@ function:
 		Example
 			v=//// A complicated string^%&C@#CERQVASDFQ#BQBSDH"' ewrjwklsf////;
 			(runExternalM2(fn,identity,v))#value===v
 		Text
-			Sometimes we must be careful:
+			Some care is required, however:
 		Example
 			R=QQ[x,y];
 			v=coker random(R^2,R^{3:-1})
@@ -696,8 +627,8 @@ Node
 			get(h#"output file")
 		Text
 			Keep in mind that the object you are passing must make sense
-			in the context of the file containing your function!  For instance, here 
-			we need to define the ring:
+			in the context of the file containing your function!
+			For instance, here we need to define the ring:
 		Example
 			fn<<////R=QQ[x,y];////<<endl<<flush;
 			(runExternalM2(fn,identity,v))#value===v			
@@ -717,7 +648,6 @@ Node
 			R===value(toExternalString(R))
 	SeeAlso
 		RunExternalM2
-		runExternalM2InClone
 		"suggestions for using RunExternalM2"
 ///);
 mydoc=concatenate(mydoc,///
@@ -974,117 +904,12 @@ fn<<flush;
 
 assert(isExternalM2Child()===false);
 assert(isExternalM2Parent()===true);
-h=runExternalM2InClone(isExternalM2Child,());
-assert(h#value===true);
-h=runExternalM2InClone(isExternalM2Parent,());
-assert(h#value===false);
 h=runExternalM2(fn,isExternalM2Child,());
 assert(h#value===true);
 h=runExternalM2(fn,isExternalM2Parent,());
 assert(h#value===false);
 ///
  
-
--- runExternalM2InClone tests
--- Test that we can return various objects.
-TEST ///
-justwait = (z,t)->(
-  i:=0;
-  for i from 0 when i<t do ();
-  z
-);
-basicChecks = (h) -> (
-	assert(h#"exit code"===0);
-	assert(instance(h#"time used",ZZ));
-	assert(h#"time used">=0);
-);
-
-h=runExternalM2InClone(justwait,(QQ,4));
-basicChecks(h);
-assert(h#value===QQ);
-assert(h#"answer file"===null);
-
-R=QQ[x,y,z];
-f=x^2+y^2+z+(3/2);
-h=runExternalM2InClone(justwait,(f,10^2));
-basicChecks(h);
-assert(ring(h#value)===R);
-assert(h#value===f);
-assert(h#"answer file"===null);
-
-M=image random(R^3,R^{5:-2});
-h=runExternalM2InClone(justwait,(M,10^2));
-basicChecks(h);
-assert(ring(h#value)===R);
-assert(h#value===M);
-
-s=toExternalString(M);
-h=runExternalM2InClone(justwait,(s,10^2));
-basicChecks(h);
-assert(h#value===s);
-///;
-
--- Test 0 or 1 argument, and test abnormal exits
-TEST ///
-justexit = (z)->(
-  exit(z);
-);
-justnull = (z)-> (
-  3+3;
-);
-just3 = () -> (
-  return 3;
-);
-basicChecks = (h,eec,ev) -> (
-	assert(h#"exit code"===eec);
-	assert(h#value===ev);
-	assert(instance(h#"time used",ZZ));
-	assert(h#"time used">=0);
-);
-
--- Test a singleton object, and a list of length 1 give the same result
-h=runExternalM2InClone(justexit,3);
-basicChecks(h,3,null);
-assert(not(h#"answer file"===null));
-assert(not(fileExists(h#"answer file")));
-
-h=runExternalM2InClone(justexit,(3));
-basicChecks(h,3,null);
-assert(not(h#"answer file"===null));
-assert(not(fileExists(h#"answer file")));
-
--- What happens if we don't return anything?
-h=runExternalM2InClone(justnull,("howdy"));
-basicChecks(h,0,null);
-
--- What happens if there are no parameters?
-h=runExternalM2InClone(just3,());
-basicChecks(h,0,3);
-
--- Check handling of saved files
--- KeepFiles=null has been checked above
--- KeepFiles=true?
-h=runExternalM2InClone(justexit,(3),KeepFiles=>true);
-basicChecks(h,3,null);
-assert(not(h#"answer file"===null));
-assert(not(fileExists(h#"answer file")));
-
-h=runExternalM2InClone(just3,(),KeepFiles=>true);
-basicChecks(h,0,3);
-assert(not(h#"answer file"===null));
-assert(fileExists(h#"answer file"));
-
--- KeepFiles=false?
-h=runExternalM2InClone(justexit,(3),KeepFiles=>false);
-basicChecks(h,3,null);
-assert(h#"answer file"===null);
-
-h=runExternalM2InClone(just3,(),KeepFiles=>false);
-basicChecks(h,0,3);
-assert(h#"answer file"===null);
-///;
-
-
 -- runExternalM2 tests
 -- a basic test of functionality.
 -- Also test different ways of referring to the function.
