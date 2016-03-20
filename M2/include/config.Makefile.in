@@ -90,7 +90,11 @@ vpath %.so $(BUILTLIBPATH)/lib
 export PATH := @abs_top_srcdir@/usr-build/bin:${PATH}
 -include @abs_top_srcdir@/usr-build/aclocal-path
 -include @abs_top_srcdir@/usr-build/aclocal-path2
-export PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
+
+# it is a mistake to set PKG_CONFIG_PATH here, because when this makefile calls upon
+# "configure", it should find only pre-installed libaries, not libraries installed by
+# M2
+M2_PKG_CONFIG_PATH := $(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 
 ifeq (,$(findstring --no-print-directory,$(word 1,$(MAKEFLAGS))))
 MAKEFLAGS += -w
