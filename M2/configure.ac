@@ -1265,11 +1265,6 @@ test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
-AC_SUBST(LAPACK,yes)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
-test "$LAPACK" = no; val=$?
-AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
-
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
@@ -1343,8 +1338,8 @@ fi
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
 # needlessly causes the library to be linked against.)
 FORTRANUSED=no
-if test "$LAPACK" = yes
-then AC_MSG_CHECKING([whether the Accelerate framework is available])
+if test $BUILD_lapack = no
+then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
      SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
@@ -1356,15 +1351,13 @@ then AC_MSG_CHECKING([whether the Accelerate framework is available])
 	     AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
 	     FORTRANUSED=yes
-	     if test $BUILD_lapack = no
-	     then AC_LANG(Fortran)
-	     	  if test "$FC" = ""
-		  then AC_MSG_ERROR(no fortran compiler found)
-		  else AC_MSG_NOTICE(using fortran compiler $FC)
-		  fi
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
+	     AC_LANG(Fortran)
+	     if test "$FC" = ""
+	     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
+	     else AC_MSG_NOTICE(using fortran compiler $FC)
 	     fi
+	     AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
+	     AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	 ])
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
@@ -1374,7 +1367,7 @@ then # test whether the fortran compiler can handle lapack, which, starting with
      # version 3.2, requires fortran 90, not fortran 77
     AC_LANG(Fortran)
     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-    AC_COMPILE_IFELSE([instrinsic maxloc],
+    AC_COMPILE_IFELSE([instrinsic maxloc], dnl is "instrinsic" spelled correctly ??
 	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
 	AC_MSG_RESULT(yes))
 fi
