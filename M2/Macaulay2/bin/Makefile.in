@@ -156,7 +156,6 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-M2_LIBRARIES += -lmathicgb -lmathic -lmemtailor
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
