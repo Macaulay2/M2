@@ -1323,6 +1323,21 @@ else
 	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
 fi
 
+AC_DEFINE([FACTORY_STREAMIO], [1],
+    [whether factory was built with --enable-streamio])
+if test $BUILD_factory = no
+then
+    AC_MSG_CHECKING([whether factory was built with --enable-streamio])
+    AC_LANG([C++])
+    AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [#include <factory/factory.h>],
+	    [Variable x; x = Variable(); std::cout << x])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no])
+	 AC_DEFINE([FACTORY_STREAMIO], [0])])
+fi
+
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
 # one of them to $LIBS, making it impossible to check for the presence of C or
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
