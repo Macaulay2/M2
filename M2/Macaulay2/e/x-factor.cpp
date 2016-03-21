@@ -221,7 +221,7 @@ static struct enter_factory foo1;
 
     // debugging display routines to be called from gdb
     // needs factory to be configured without option --disable-streamio
-#if 1
+#if FACTORY_STREAMIO
 void showvar(Variable &t) { std::cout << t << std::endl; }
 void showcf(CanonicalForm &t) { std::cout << t << std::endl; }
 void showcfl(CFList &t) { std::cout << t << std::endl; }
