@@ -155,7 +155,7 @@ document {
 	  ", TT (replace("PKG", "PACKAGENAME", Layout#1#"packagelib")|".installed"), " or
 	  ", TT (replace("PKG", "PACKAGENAME", Layout#2#"packagelib")|".installed"), " is created, to signify that installation was completed."
 	  },
-     SeeAlso => {"packages", "epkg", "prefixPath", "Layout"}
+     SeeAlso => {"packages", "epkg", "prefixPath", "Layout", installedPackages, uninstallAllPackages}
      }
 
 -- Local Variables:
