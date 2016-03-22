@@ -489,7 +489,7 @@ lenseq(y:Sequence):int := (
 	  is y:SymbolClosure do l = l + length(y.symbol.word.name)
 	  is y:ZZcell do (
 	       if isInt(y) 
-	       then l = l + toInt(y)
+	       then (if toInt(y)>0 then l = l + toInt(y);)
 	       else return -1)
 	  is w:Sequence do (
 	       m := lenseq(w);

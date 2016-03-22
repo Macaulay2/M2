@@ -1,6 +1,6 @@
 needsPackage "Bertini"
 
-makeB'InputFile(storeBM2Files,AVG=>{x,y},B'Polynomials=>{"x^2-2","y^2+x+1"})
+makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y},B'Polynomials=>{"x^2-2","y^2+x+1"})
 runBertini(storeBM2Files)
 
 raws=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"raw_solutions");--this is the same as the default
@@ -22,7 +22,7 @@ assert(#raws2===4)
 assert( abs( abs(raws2_0_0)-sqrt 2)<1e-10)
 
 --Singular solutions can be imported.
-makeB'InputFile(storeBM2Files,AVG=>{x},B'Polynomials=>{"(x^2-2)*x^3"});
+makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"(x^2-2)*x^3"});
 runBertini(storeBM2Files);
 
 
@@ -45,7 +45,7 @@ assert( abs( abs(sings_0_0)-0)<1e-10)
 
 
 ----We want to make sure we have lots of precision. 
-makeB'InputFile(storeBM2Files,AVG=>{x},B'Polynomials=>{"(x^2-2)"},
+makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"(x^2-2)"},
     B'Configs=>{{FINALTOL,1e-300}})
 runBertini(storeBM2Files)
 printingPrecision =256 

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 848875442 *}
+-- -*- M2-comint -*- {* hash: 990989090 *}
 
 i1 : R=QQ[x,y]
 
@@ -7,10 +7,10 @@ o1 = R
 o1 : PolynomialRing
 
 i2 : makeB'InputFile(storeBM2Files,
-         AVG=>{{x,y}},
+         AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-4})
 
-o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62328-0/0/input
+o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/0/input
 
 o2 : File
 
@@ -25,21 +25,21 @@ o4 : PolynomialRing
 
 i5 : theDir1 = temporaryFileName()
 
-o5 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62328-0/1
+o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/1
 
 i6 : makeDirectory theDir1
 
 i7 : theDir2 = temporaryFileName()
 
-o7 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62328-0/2
+o7 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/2
 
 i8 : makeDirectory theDir2
 
 i9 : makeB'InputFile(theDir1,
-         AVG=>{{x,y}},
+         AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-4})
 
-o9 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62328-0/1/input
+o9 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/1/input
 
 o9 : File
 

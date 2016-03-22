@@ -30,6 +30,7 @@ AC_SUBST(CONFIG_CMD,"'$0' $ac_configure_args")
 AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
 m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
+m4_include(config/relpaths.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -220,6 +221,10 @@ AC_PROG_CXX()			# set CXXFLAGS before this
 AC_SUBST(GXX)			# gets set to yes or no by AC_PROG_CXX
 
 AC_PROG_YACC()
+if test "$YACC" = byacc
+then AC_MSG_ERROR([byacc found, but leads to a crash in scc1: install bison instead])
+fi
+
 AC_PROG_RANLIB()
 AC_PROG_INSTALL()
 AC_PROG_AWK()
@@ -229,8 +234,8 @@ AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
 if test "$DEBUG" = yes
-then CPPFLAGS="$CPPFLAGS -DDEBUG"
-     M2_CPPFLAGS="$M2_CPPFLAGS -DDEBUG"
+then 
+     # it is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint"
      if test "$GCC" = yes
      then CFLAGS="$CFLAGS -g3"
 	  CXXFLAGS="$CXXFLAGS -g3"
@@ -1264,13 +1269,6 @@ test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
-AC_SUBST(LAPACK,yes)
-AC_ARG_WITH(lapack, AS_HELP_STRING(--without-lapack,[compile and link without lapack and blas]), LAPACK=$withval)
-test "$LAPACK" = no; val=$?
-AC_DEFINE_UNQUOTED(LAPACK,$val,whether to link with lapack)
-
-BUILD_gftables=yes		dnl it seems that factory now includes gftables, and installs it
-
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
 then
@@ -1301,32 +1299,86 @@ else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
 fi
 
+AC_ARG_VAR([GFTABLESDIR],
+    [path to gftables directory if factory is already installed])
+if test $BUILD_factory = yes
+then
+    BUILD_gftables=yes
+    AC_SUBST([gftablesdir], [${datadir}/Macaulay2/Core/factory/])
+else
+    BUILD_gftables=no
+    if test x$GFTABLESDIR = x
+    then
+	if test $FACTORY_NAME = factory
+	then
+	    GFTABLESDIR="${datadir}/factory/"
+	else
+	    GFTABLESDIR="${datadir}/singular/factory/"
+	fi
+    fi
+    adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
+    AC_CHECK_FILE([${GFTABLESDIR}gftables/961],
+	[AC_SUBST([gftablesdir], [$GFTABLESDIR])],
+	[AC_MSG_ERROR([could not find gftables but we are not building factory; try specifying the directory with GFTABLESDIR])])
+fi
+
+AC_DEFINE([FACTORY_STREAMIO], [1],
+    [whether factory was built with --enable-streamio])
+if test $BUILD_factory = no
+then
+    AC_MSG_CHECKING([whether factory was built with --enable-streamio])
+    AC_LANG([C++])
+    AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [#include <factory/factory.h>],
+	    [Variable x; x = Variable(); std::cout << x])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no])
+	 AC_DEFINE([FACTORY_STREAMIO], [0])])
+fi
+
 # we need to do the fortran library testing last, in case AC_SEARCH_LIBS adds
 # one of them to $LIBS, making it impossible to check for the presence of C or
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
 # needlessly causes the library to be linked against.)
 FORTRANUSED=no
-if test "$LAPACK" = yes
-then AC_MSG_CHECKING([whether the Accelerate framework is available])
+if test $BUILD_lapack = no
+then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
      SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [
-	     AC_MSG_RESULT(yes)
-	     ],
-	 [
-	     AC_MSG_RESULT(no)
+	 [AC_MSG_RESULT(yes)],
+	 [AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
 	     FORTRANUSED=yes
-	     if test $BUILD_lapack = no
-	     then AC_LANG(Fortran)
-	     	  if test "$FC" = ""
-		  then AC_MSG_ERROR(no fortran compiler found)
-		  else AC_MSG_NOTICE(using fortran compiler $FC)
+	     AC_LANG(Fortran)
+	     if test "$FC" = ""
+	     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
+	     else AC_MSG_NOTICE(using fortran compiler $FC)
+	     fi
+	     AC_MSG_CHECKING([whether lapack is known to pkg-config])
+	     if pkg-config --exists lapack
+	     then AC_MSG_RESULT(yes)
+	          LIBS="`pkg-config --libs lapack blas` $LIB"
+		  CPPFLAGS="`pkg-config --cflags lapack blas` $CPPFLAGS"
+		  AC_SEARCH_LIBS(sgemv,,,AC_MSG_ERROR(lapack function sgemv not found))
+		  AC_SEARCH_LIBS(dgetrf,,,AC_MSG_ERROR(lapack function dgetrf not found))
+	     else AC_MSG_RESULT(no)
+	          LIBS1="-latllapack -latlcblas -lf77blas"
+	          AC_MSG_CHECKING([whether lapack is available with $LIBS1])
+		    found=yes
+		    SAVELIBS="$LIBS"
+		    LIBS="$LIBS1 $LIBS"
+  		    AC_SEARCH_LIBS(sgemv,,,found=no)
+ 		    AC_SEARCH_LIBS(dgetrf,,,found=no)
+		    LIBS="$SAVELIBS"
+		  if [ $found = yes ]
+		  then AC_MSG_RESULT(yes)
+		  else AC_MSG_RESULT(no)
+ 		       AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
+  		       AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 		  fi
-		  AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-		  AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
 	     fi
 	 ])
 fi
@@ -1337,7 +1389,7 @@ then # test whether the fortran compiler can handle lapack, which, starting with
      # version 3.2, requires fortran 90, not fortran 77
     AC_LANG(Fortran)
     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-    AC_COMPILE_IFELSE([instrinsic maxloc],
+    AC_COMPILE_IFELSE([instrinsic maxloc], dnl is "instrinsic" spelled correctly ??
 	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
 	AC_MSG_RESULT(yes))
 fi
@@ -1666,7 +1718,7 @@ sysconfdir=/nowhere
 sharedstatedir=/nowhere
 localstatedir=/nowhere
 for i in bindir datadir includedir infodir libdir libexecdir mandir sbindir \
-         psdir pdfdir dvidir htmldir localedir docdir datarootdir
+         psdir pdfdir dvidir htmldir localedir gftablesdir docdir datarootdir
 do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v="$v"
    case $v in
      "$exec_prefix"|"$exec_prefix"/*)
@@ -1679,7 +1731,9 @@ do eval w=\$$i ; eval v="$w" ; eval v="$v" ; eval v="$v" ; eval v="$v" ; eval v=
 	   eval  pre_${i}=`echo $v | sed s,"^$prefix","'\\${pre_prefix}'",`
 	   eval      ${i}=`echo $v | sed s,"^$prefix","'\\${prefix}'",`
 	   ;;
-     *) AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"]) ;;
+     *) if test $i != gftablesdir #only needs normalized if we build factory
+	then AC_MSG_ERROR([expected "\${$i}" => "$w" to start with "\${prefix}" or with "\${exec_prefix}"])
+	fi ;;
    esac
 done
 prefix=$save_prefix

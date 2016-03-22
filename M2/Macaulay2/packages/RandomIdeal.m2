@@ -12,19 +12,19 @@ newPackage(
     	)
 
 export {
-     randomIdeal,
-     randomMonomialIdeal, 
-     randomSquareFreeMonomialIdeal,
-     randomSquareFreeStep,
-     randomBinomialIdeal,
-     randomPureBinomialIdeal,
-     randomSparseIdeal,
-     randomElementsFromIdeal,
-     randomMonomial, 
-     squareFree,
-     regSeq,
-     AlexanderProbability,
-     prepare     
+     "randomIdeal",
+     "randomMonomialIdeal",
+     "randomSquareFreeMonomialIdeal",
+     "randomSquareFreeStep",
+     "randomBinomialIdeal",
+     "randomPureBinomialIdeal",
+     "randomSparseIdeal",
+     "randomElementsFromIdeal",
+     "randomMonomial",
+     "squareFree",
+     "regSeq",
+     "AlexanderProbability",
+     "prepare"
      }
      
 

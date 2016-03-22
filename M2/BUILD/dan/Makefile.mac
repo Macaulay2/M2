@@ -21,7 +21,10 @@ unexport PROFILE
 
 DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
+
+export CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
@@ -40,8 +43,9 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-_FC  := false
+# _FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
+export CFLAGS += -Wno-unknown-attributes
 else
 _CC  := gcc-4.9 -mtune=generic
 _CXX := g++-4.9 -mtune=generic
