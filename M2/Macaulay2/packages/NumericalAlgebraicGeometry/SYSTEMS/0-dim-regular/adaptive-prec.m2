@@ -72,19 +72,87 @@ I = ideal matrix{{x^5+x*y^2-y^2-1}, {x^3+y^5-x*y-1}}
 netList primaryDecomposition I
 radical I == I -- this one is radical.
 
--- example multiplicity=d^2
+-- example multiplicity=d^n
 restart
 debug needsPackage "NumericalAlgebraicGeometry"
-R=QQ[x,y]
-eps = 1/100000
-d = 3
-T = {x^d-eps, (y-1)^d-eps*x}
+
+-- these settings make 53 terminate around t=1, while 100 goes comfortably to t=2
+st = 1e-10 -- min step size
+tol = 1e-15 -- CorrectorTolerance
+n = 2; d = 2;
+
+R=QQ[x_0..x_(n-1)]
+eps = 1/1000
+T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 (S,solsS) = totalDegreeStartSystem T
-H = segmentHomotopy(S,T,gamma=>1+ii)
+H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 peek H
+
+
 prec = 53 
-prec = 10000
 pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
-(out,outStatus) = mesTracker(H, pts, tStepMin=>1e-5, LastT=>2.0)
+(out,outStatus) = mesTracker(H, pts, tStepMin=>st, CorrectorTolerance=>tol, LastT=>2.0)
 netList (entries outStatus | entries out)
 sols = extractM2engineOutput(H,out,outStatus)/point
+sols/(s->evaluateH(H, transpose matrix s , 1)) 
+
+prec = 100
+pts' = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out',outStatus') = mesTracker(H, pts', tStepMin=>st, CorrectorTolerance=>tol, LastT=>2.0)
+netList (entries outStatus' | entries out')
+sols' = extractM2engineOutput(H,out',outStatus')/point
+sols'/(s->evaluateH(H, transpose matrix s , 2)) 
+
+matrix out' - sub(matrix out,CC_prec)
+
+-- (5.4) from "adaptive" by bertini
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+QQ[x,y,z] 
+T = {poly "14x2+6xy+5x-72y2-18y-850z+2/1000000000", 
+    poly "1/2xy2+1/100xy+13/100y2+4/100y-40000",
+    poly "3/100xz+4/100z-850"}
+(S,solsS) = totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>1+pi*ii)
+peek H
+
+st = 1e-6 -- min step size
+tol = 1e-13 -- CorrectorTolerance
+
+prec = 53 
+pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out,outStatus) = mesTracker(H, pts, tStepMin=>st,  CorrectorTolerance=> tol, LastT=>1)
+sols = extractM2engineOutput(H,out,outStatus)/point
+
+prec = 1000
+pts' = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out',outStatus') = mesTracker(H, pts', tStepMin=>st, CorrectorTolerance=> tol, LastT=>1)
+sols' = extractM2engineOutput(H,out',outStatus')/point
+
+matrix out' - sub(matrix out,CC_prec)
+netList (entries outStatus | entries out)
+netList (entries outStatus' | entries out')
+
+-- sqrt(2) example --------------------------------------------------------------------
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+R=QQ[x]
+T = {x^2-2}
+(S,solsS) = totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>1+pi*ii)
+st = 1e-5 -- min step size
+
+prec = 53 
+pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out,outStatus) = mesTracker(H, pts, tStepMin=>st, LastT=>1)
+netList (entries outStatus | entries out)
+sols = extractM2engineOutput(H,out,outStatus)/point
+sols/(s->evaluateH(H, transpose matrix s , 1)) 
+
+prec = 1000
+pts' = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}
+(out',outStatus') = mesTracker(H, pts', tStepMin=>st, CorrectorTolerance => 2.^(-64), LastT=>1)
+netList (entries outStatus' | entries out')
+sols' = extractM2engineOutput(H,out',outStatus')/point
+sols'/(s->evaluateH(H, transpose matrix s , 1)) 
+realPart first coordinates first sols' - sqrt sub(2, RR_prec)

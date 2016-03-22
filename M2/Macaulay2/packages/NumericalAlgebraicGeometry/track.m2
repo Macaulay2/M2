@@ -668,7 +668,7 @@ extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut
 	    -- create a solution record 
 	    x0 := submatrix(out,toList(0..n-1),{sN});
 	    t0 := out_(n,sN);
-	    {flatten entries x0,
+	    {x0,
 		SolutionStatus => s'status, 
 		NumberOfSteps => count,
 		LastT => t0,

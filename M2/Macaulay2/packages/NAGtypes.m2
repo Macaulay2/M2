@@ -231,7 +231,12 @@ globalAssignment Point
 
 point = method()
 point Point := p -> new Point from p
-point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
+point List := s -> new Point from {Coordinates=>(
+	c := first s;
+	if instance(c,List) then c	
+	else if instance(c,Matrix) or instance(c,MutableMatrix) then flatten entries c
+	else error "wrong type of coordinates: List or Matrix expected"   
+	)} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
 toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 

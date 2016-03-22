@@ -224,8 +224,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
   size_t solveLinearTime = 0, solveLinearCount = 0, evaluateTime = 0;
  
-  // typedef M2::ARingCCC RT;
-  // std::cout << "inside HomotopyConcrete<M2::ARingCCC>::track" << std::endl;
+  // std::cout << "inside HomotopyConcrete<RT,FixedPrecisionHomotopyAlgorithm>::track" << std::endl;
   // double the_smallest_number = 1e-13;
   const Ring* matRing = inputs->get_ring();
   if (outputs->get_ring()!= matRing) { 
