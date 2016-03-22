@@ -1344,11 +1344,8 @@ then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [
-	     AC_MSG_RESULT(yes)
-	     ],
-	 [
-	     AC_MSG_RESULT(no)
+	 [AC_MSG_RESULT(yes)],
+	 [AC_MSG_RESULT(no)
 	     LIBS=$SAVELIBS
 	     FORTRANUSED=yes
 	     AC_LANG(Fortran)
@@ -1356,8 +1353,29 @@ then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
 	     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
 	     else AC_MSG_NOTICE(using fortran compiler $FC)
 	     fi
-	     AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-	     AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
+	     AC_MSG_CHECKING([whether lapack is known to pkg-config])
+	     if pkg-config --exists lapack
+	     then AC_MSG_RESULT(yes)
+	          LIBS="`pkg-config --libs lapack blas` $LIB"
+		  CPPFLAGS="`pkg-config --cflags lapack blas` $CPPFLAGS"
+		  AC_SEARCH_LIBS(sgemv,,,AC_MSG_ERROR(lapack function sgemv not found))
+		  AC_SEARCH_LIBS(dgetrf,,,AC_MSG_ERROR(lapack function dgetrf not found))
+	     else AC_MSG_RESULT(no)
+	          LIBS1="-latllapack -latlcblas -lf77blas"
+	          AC_MSG_CHECKING([whether lapack is available with $LIBS1])
+		    found=yes
+		    SAVELIBS="$LIBS"
+		    LIBS="$LIBS1 $LIBS"
+  		    AC_SEARCH_LIBS(sgemv,,,found=no)
+ 		    AC_SEARCH_LIBS(dgetrf,,,found=no)
+		    LIBS="$SAVELIBS"
+		  if [ $found = yes ]
+		  then AC_MSG_RESULT(yes)
+		  else AC_MSG_RESULT(no)
+ 		       AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
+  		       AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
+		  fi
+	     fi
 	 ])
 fi
 test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
