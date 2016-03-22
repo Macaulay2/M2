@@ -284,26 +284,30 @@ endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
 -- x0: a column vector with n+1 coordinates, the last one is t0
 -- OUTPUT: changes x0 in place, returns the winding number or 0 if failed 
 endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
+    assert(numcols x0in === 1);
     if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
     o = fillInDefaultOptions o;
     m := o#"number of vertices";
     n := numrows x0in - 1;
     statusOut := mutableMatrix(ZZ,2,1); -- 2 rows (status, number of steps), #solutions 
+    nPlus1rows := toList(0..n);
+    nPlus1by1submatrix := M -> submatrix(M,nPlus1rows,{0});
     
     -- bactrack from x0in to x0
-    x0 := mutableMatrix x0in; -- copy     
-    dt0 := x0_(n,0)-t'end;
-    x0_(n,0) = t'end + o#"backtrack factor"*dt0;  
+    x0out := mutableMatrix(ring x0in,n+2,1);     
+    dt0 := x0in_(n,0)-t'end;
+    x0out_(n,0) = t'end + o#"backtrack factor"*dt0;  
     trackHomotopyM2engine(H, x0in, 
-	x0, statusOut, -- output goes here
+	x0out, statusOut, -- output goes here
 	o.tStep, o.tStepMin, 
 	o.CorrectorTolerance, o.maxCorrSteps, 
 	toRR o.InfinityThreshold);
     s'status := solutionStatusLIST#(statusOut_(0,0));
     if s'status =!= Regular then return 0; -- error
-    	         
+    
+    x0 := nPlus1by1submatrix(x0out);
     inp := mutableMatrix x0;
-    out := mutableMatrix inp; -- "copy" does not copy!!!
+    out := mutableMatrix(ring x0,n+2,1);
     
     x0' := mutableMatrix x0; -- x0' stores the sum approximating the integral
     dt0 = x0_(n,0)-t'end;
@@ -324,8 +328,9 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
 	    if s'status =!= Regular then return 0; -- error
     	    if DBG>2 then << "-- endGameCauchy: number of steps = " << statusOut_(1,0) << endl;
     	    if DBG>0 then << "(C"<<m<<")";
-    	    x0' = x0'+out;
-	    ( temp := inp; inp = out; out = temp ); -- reuse matrices for the next step;
+	    x0'' := nPlus1by1submatrix(out);
+    	    x0' = x0'+x0'';
+	    inp = x0''; -- reuse matrix for the next step;
     	    out_(n,0) = t'end + dt0*exp(2*pi*(i+2)*ii/m); 
 	    );
 	w = w + 1;
@@ -333,7 +338,7 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
 	-- print (inp-x0);
 	if loop'incomplete 
 	then out_(n,0) = t'end + dt0*exp(2*pi*ii/m) -- reset (roundoff error may accumulate)
-	else x0' = x0' - out; -- x0 is "double counted"
+	else x0' = x0' - inp; -- x0 is "double counted"
 	);
     for i to n do x0in_(i,0) = x0'_(i,0)/(w*m);    
     x0in_(n,0) = t'end;

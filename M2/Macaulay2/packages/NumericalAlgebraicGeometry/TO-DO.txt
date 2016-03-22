@@ -1,4 +1,15 @@
 --- NEAR FUTURE ---
+engine track:
+
+  DMat submatrix operations
+  (A,B are submatrices given by a rectangular window; c is a scalar) 
+    set_zero(A), copy i.e. A=B, A+=B, 
+    A *= c 
+    A = c*B
+    A += c*B 
+  )
+  MatOps vs MatrixOps???  
+
 
 adaptive precision:
 

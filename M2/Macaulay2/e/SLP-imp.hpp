@@ -253,7 +253,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   size_t n_sols = in.numColumns();  
   size_t n = in.numRows()-1; // number of x vars
 
-  if (ou.numColumns() != n_sols or ou.numRows() != n+1) { 
+  if (ou.numColumns() != n_sols or ou.numRows() != n+2) { 
     ERROR("output: wrong shape");
     return false;
   }
@@ -270,28 +270,30 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   typedef MatElementaryOps< DMat< RT > > MatOps;
  
   RealElementType t_step;
-  RealElementType dt_min;
+  RealElementType min_step2;
   RealElementType epsilon2;
   RealElementType infinity_threshold2;
   R.init(t_step);
-  R.init(dt_min);
+  R.init(min_step2);
   R.init(epsilon2);
   R.init(infinity_threshold2);
   R.set_from_BigReal(t_step,init_dt); // initial step
-  R.set_from_BigReal(dt_min,min_dt); 
+  R.set_from_BigReal(min_step2,min_dt); 
   R.set_from_BigReal(epsilon2,epsilon); 
+  R.mult(min_step2, min_step2, min_step2); //min_step^2
   R.mult(epsilon2, epsilon2, epsilon2); //epsilon^2
   R.set_from_BigReal(infinity_threshold2,infinity_threshold); 
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
   int num_successes_before_increase = 3;
 
-  RealElementType t0,dt,one_minus_t0,dx_norm2,x_norm2;
+  RealElementType t0,dt,one_minus_t0,dx_norm2,x_norm2,abs2dc;
   R.init(t0);
   R.init(dt);
   R.init(one_minus_t0);
   R.init(dx_norm2);
   R.init(x_norm2);
-
+  R.init(abs2dc);
+  
   // constants
   RealElementType one,two,four,six,one_half,one_sixth;
   RealElementType& dt_factor = one_half; 
@@ -399,7 +401,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       std::chrono::steady_clock::time_point endEvaluate = std::chrono::steady_clock::now();
       evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
       MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-      MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+      MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
       MatrixOps::negateInPlace(RHS);
       //solve LHS*dx1 = RHS
 
@@ -427,7 +429,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         // LHS = Hxt; RHS = Hxt+n*n;
         //negate_complex_array<ComplexField>(n,RHS);
         MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
         MatrixOps::negateInPlace(RHS);
         //solve LHS*dx2 = RHS
         startLinear = std::chrono::steady_clock::now();
@@ -463,7 +465,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
 
         MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
         MatrixOps::negateInPlace(RHS);
         //solve LHS*dx3 = RHS
         startLinear = std::chrono::steady_clock::now();
@@ -499,7 +501,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
 
         MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // Ht
+        MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
         MatrixOps::negateInPlace(RHS);
         //solve LHS*dx4 = RHS
         startLinear = std::chrono::steady_clock::now();
@@ -522,15 +524,17 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         // multiply_complex_array_scalar<ComplexField>(n,dx3,2);
         for(size_t i=0; i<n; i++)   
           C.mult(dx3.entry(i,0),dx3.entry(i,0),two);
+
         // add_to_complex_array<ComplexField>(n,dx4,dx1);
         for(size_t i=0; i<n; i++)   
-        C.add(dx4.entry(i,0),dx4.entry(i,0),dx1.entry(i,0));
+          C.add(dx4.entry(i,0),dx4.entry(i,0),dx1.entry(i,0));
         // add_to_complex_array<ComplexField>(n,dx4,dx2);
         for(size_t i=0; i<n; i++)   
           C.add(dx4.entry(i,0),dx4.entry(i,0),dx2.entry(i,0));
         // add_to_complex_array<ComplexField>(n,dx4,dx3);
         for(size_t i=0; i<n; i++)   
           C.add(dx4.entry(i,0),dx4.entry(i,0),dx3.entry(i,0));
+
         // multiply_complex_array_scalar<ComplexField>(n,dx4,1.0/6);
         // copy_complex_array<ComplexField>(n,dx4,dx);
         for(size_t i=0; i<n; i++)   
@@ -585,7 +589,8 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         predictor_successes = 0;
         R.mult(dt,dt,dt_factor);
         t0equals1 = false;
-        if (R.compare_elems(dt,dt_min)<0)
+        C.abs_squared(abs2dc,dc);
+        if (R.compare_elems(abs2dc,min_step2)<0) 
           status = MIN_STEP_FAILED;
       } else {
         // predictor success
@@ -618,6 +623,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
     // set initial solution and initial value of the continuation parameter
     for(size_t i=0; i<=n; i++)   
       C.set(ou.entry(i,s),x0c0.entry(i,0));
+    C.set(ou.entry(n+1,s),dc); // store last increment attempted 
     if (status == PROCESSING)
       status = REGULAR;
     oe.ring().set_from_long(oe.entry(0,s),status);
@@ -635,6 +641,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   R.clear(one_minus_t0);
   R.clear(dx_norm2);
   R.clear(x_norm2);
+  R.clear(abs2dc);
 
   R.clear(one);
   R.clear(two);
@@ -644,7 +651,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   R.clear(one_sixth);
 
   R.clear(t_step);
-  R.clear(dt_min);
+  R.clear(min_step2);
   R.clear(epsilon2);
   R.clear(infinity_threshold2);
   

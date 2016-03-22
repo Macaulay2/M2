@@ -370,7 +370,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
 		    -- default dt; Certified and Multistep modify dt
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+		    dt = if endZone then min(realPart tStep, realPart(1-t0)) else min(realPart tStep, realPart(1-o.EndZoneFactor-t0));
 
      	       	    -- projective stuff
 		    if o.Predictor == Certified then (
@@ -634,7 +634,6 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 
 debug Core
 
--- doublePrecisionK := CC_53;
 trackHomotopyM2engine = (H, inp, 
 	out, statusOut,
 	tStep, tStepMin, 
@@ -654,7 +653,7 @@ trackHomotopyM2engine = (H, inp,
 extractM2engineOutput = method()
 extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
     nSols := numColumns out; 
-    n := numRows out - 1;
+    n := numRows out - 2;
     assert(nSols == numColumns statusOut);
     apply(nSols, sN->(
 	    s'status := solutionStatusLIST#(statusOut_(0,sN));
@@ -795,8 +794,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		     	 if instance(s,Point) and s.?LastT then s.LastT else 0 -- track from t=0
 		     	 } )), 
 	     mainRing); 
-	 out := mutableMatrix inp; -- "copy" does not copy!!!
-	 n = numrows out - 1;
+	 n = numrows inp - 1;
+	 out := mutableMatrix(mainRing,n+2,nSols); -- one more row than inp (to store last increment)
 	 scan(nSols, i->out_(n,i) = 1); -- track to t=1 
 	 ti'out := timing trackHomotopyM2engine(H, inp, 
 	     out, statusOut,
@@ -833,7 +832,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
+		    dt = if endZone then min(realPart tStep, realPart(1-t0)) else min(realPart tStep, realPart(1-o.EndZoneFactor-t0));
 
 		    dx = if o.Predictor === zero then 0*x0
 		    else if o.Predictor === Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
@@ -979,8 +978,9 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
     --  Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure
     -- ANTON: which of these can actually occur here?  All of them?
     -- nsteps: number of tracker steps?
-    out := mutableMatrix inp;
-    for i from 0 to numColumns inp-1 do out_(numRows inp-1, i) = o.LastT;
+    n := numrows inp;
+    out := mutableMatrix(ring inp, n+2, numcols inp);
+    for i from 0 to numColumns inp-1 do out_(n, i) = o.LastT;
     statusOut := mutableMatrix(ZZ, 2, numColumns inp);
     trackHomotopyM2engine(
         H, 
