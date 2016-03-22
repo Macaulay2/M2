@@ -7,6 +7,7 @@
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
 #include "res-gausser.hpp"
+#include "res-schreyer-order.hpp"
 
 typedef int FieldElement;
 
@@ -107,6 +108,7 @@ inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
     }
 }
 
+bool check_poly(const ResPolyRing& R, const poly&f, const ResSchreyerOrder& O);
 #endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

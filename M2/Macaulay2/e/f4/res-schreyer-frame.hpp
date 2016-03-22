@@ -108,6 +108,8 @@ public:
   void show(int len) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
   long memoryUsage() const;   // Return number of bytes in use.
   void showMemoryUsage() const;
+  bool debugCheckOrder(int lev) const;  // make sure polynomials constructed, at level 'lev' are in order.
+  bool debugCheckOrderAll() const;
 
   
   M2_arrayint getBetti(int type) const;

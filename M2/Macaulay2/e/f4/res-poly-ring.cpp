@@ -12,6 +12,35 @@ void ResPolyRing::memUsage(const poly& f, long& nterms, long& bytes_used, long& 
   bytes_alloc += sz;
 }
 
+bool check_poly(const ResPolyRing& R, const poly&f, const ResSchreyerOrder& ord)
+{
+  // We loop through each monomial, checking it against the one before
+  // The order used is the Schreyer order given.
+  auto& M = R.monoid();
+  poly_iter i(R, f);
+  poly_iter end(R,f,1);
+  packed_monomial prev = nullptr;
+  for (; i != end; ++i)
+    {
+      if (prev == nullptr)
+        prev = i.monomial();
+      else
+        {
+          // Now compare to previous monomial
+          long comp1 = M.get_component(prev);
+          long comp2 = M.get_component(i.monomial());
+          int result = M.compare_schreyer(prev, i.monomial(),
+                                          ord.mTotalMonom[comp1], ord.mTotalMonom[comp2],
+                                          ord.mTieBreaker[comp1], ord.mTieBreaker[comp2]);
+          if (result == EQ or result == GT)
+            {
+              return false;
+            }
+          prev = i.monomial();
+        }
+    }
+  return true;
+}
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

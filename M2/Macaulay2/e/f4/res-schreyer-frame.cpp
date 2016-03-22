@@ -140,6 +140,9 @@ void SchreyerFrame::start_computation(StopConditions& stop)
             if (mSlantedDegree > mHiSlantedDegree)
               {
                 showMemoryUsage();
+#if 0                
+                debugCheckOrderAll();
+#endif
                 for (auto it=mMinimalizeTODO.cbegin(); it != mMinimalizeTODO.cend(); ++it)
                   {
                     int rk = rank(it->first, it->second);
@@ -335,12 +338,48 @@ long SchreyerFrame::insertLevelOne(packed_monomial monom, poly& syzygy)
   if (p.mBegin == -1)
     p.mBegin = last-1;
   p.mEnd = last;
+  if (!check_poly(ring(), syzygy, schreyerOrder(0)))
+    {
+      std::cout << "Error: expected terms of polynomial to be in order" << std::endl;
+    }
   std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
   return last;
 }
 long SchreyerFrame::insert(packed_monomial monom)
 {
   return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
+}
+
+bool SchreyerFrame::debugCheckOrder(int lev) const
+{
+  if (lev == 0) return true;
+  bool result = true;
+  auto& mylevel = level(lev);
+  auto& myorder = schreyerOrder(lev-1);
+  int which = 0;
+  for (auto i = mylevel.cbegin(); i != mylevel.cend(); ++i, ++which)
+    {
+      if (!check_poly(ring(), i->mSyzygy, myorder))
+        {
+          std::cout << "Error: terms of polynomial at level " << lev << " location " << which << " not in order" << std::endl;
+          std::cout << "  poly = ";
+          display_poly(stdin, ring(), i->mSyzygy);
+          std::cout << std::endl;
+          result = false;
+        }
+    }
+  return result;
+}
+bool SchreyerFrame::debugCheckOrderAll() const
+{
+  std::cout << "checking that all input and constructed polynomials are in order...";
+  bool result = true;
+  for (auto i = 1; i<maxLevel(); ++i)
+    if (!debugCheckOrder(i))
+      result = false;
+  if (result)
+    std::cout << "ok" << std::endl;
+  return result;
 }
 
 long SchreyerFrame::memoryUsage() const

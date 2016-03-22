@@ -191,8 +191,6 @@ void F4Res::loadRow(Row& r)
     }
 } 
 
-// IMPORTANT TODO!!!!
-// This class needs to implement Schreyer order comparison.
 class ResColumnsSorter
 {
 public:
