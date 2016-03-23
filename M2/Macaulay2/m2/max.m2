@@ -200,14 +200,8 @@ InfiniteNumber ? CC := (x,y) -> if (isANumber(y) and not isFinite(y)) then symbo
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
-max VisibleList := x -> (
-     m := neginfinity;
-     scan(x, n -> if n > m then m = n);
-     m)
-min VisibleList := x -> (
-     m := infinity;
-     scan(x, n -> if m > n then m = n);
-     m)
+max VisibleList := x -> if #x === 0 then -infinity else fold((i,j) -> if i > j then i else j, x)
+min VisibleList := x -> if #x === 0 then  infinity else fold((i,j) -> if i < j then i else j, x)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
