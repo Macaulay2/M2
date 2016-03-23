@@ -87,10 +87,12 @@ all-in-mathicgb:all-in-mathic all-in-memtailor
 
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t:$t-in-submodules))
 
+$(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:))
 define build-submodule-rules
 $(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 endef
 
+$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
