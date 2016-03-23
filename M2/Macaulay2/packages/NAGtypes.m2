@@ -200,7 +200,7 @@ assert(T'.PolyMap - T.PolyMap == 0)
 -- POINT = {
 --   Coordinates => List of CC,
 --   NumberOfSteps => ZZ, -- number of steps made while tracking the path
---   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure, null}
+--   SolutionStatus => {Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure, Origin, null}
 --   LastT => RR in [0,1]
 --   ConditionNumber => condition number of the Jacobian
 --   ErrorBoundEstimate => absolute error bound estimate (from Newton's method)

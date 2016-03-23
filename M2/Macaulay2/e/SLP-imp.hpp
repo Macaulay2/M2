@@ -209,7 +209,7 @@ inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& res
   R.clear(c);
 }
 
-enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED};
+enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED, ORIGIN_FAILED, INCREASE_PRECISION, DECREASE_PRECISION};
 
 // ****************************** XXX **************************************************
 template <typename RT> 
@@ -341,14 +341,21 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   for(size_t s=0; s<n_sols; s++) {
     SolutionStatus status = PROCESSING;
     // set initial solution and initial value of the continuation parameter
-    for(size_t i=0; i<n+1; i++)   
+    for(size_t i=0; i<=n; i++)   
       C.set(x0c0.entry(i,0), in.entry(i,s));
     C.set(c_init,c0);
     C.set(c_end,ou.entry(n,s));
 
     R.set_zero(t0);
     bool t0equals1 = false;
+
+    // t_step is actually the initial (absolute) length of step on the interval [c_init,c_end]
+    // dt is an increment for t on the interval [0,1]
     R.set(dt,t_step);
+    C.subtract(dc,c_end,c_init); 
+    C.abs(abs2dc,dc); // don't wnat to create new temporary elts: reusing dc and abs2dc
+    R.divide(dt,dt,abs2dc);
+
     int predictor_successes = 0;
     int count = 0; // number of steps
     // track the real segment (1-t)*c0 + t*c1, a\in [0,1]
@@ -547,44 +554,46 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       C.add(c1,c0,dc);  
       
       // CORRECTOR
-      int n_corr_steps = 0;
       bool is_successful;
-      do {
-        n_corr_steps++;
-        //
-        //std::cout << "evaluate...\n";
-        startEvaluate = std::chrono::steady_clock::now();
-        mHxH.evaluate(x1c1,HxH);
-        endEvaluate = std::chrono::steady_clock::now();
-        evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+      int n_corr_steps = 0;
+      if (linearSolve_success) {
+        do {
+          n_corr_steps++;
+          //
+          //std::cout << "evaluate...\n";
+          startEvaluate = std::chrono::steady_clock::now();
+          mHxH.evaluate(x1c1,HxH);
+          endEvaluate = std::chrono::steady_clock::now();
+          evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
         
-        //std::cout << "setFromSubmatrix 1...\n";
-        MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHS); // Hx
-        //std::cout << "setFromSubmatrix 2...\n";
-        MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // H
-        //std::cout << "negate...\n";
-        MatrixOps::negateInPlace(RHS);
-        //solve LHS*dx = RHS
+          //std::cout << "setFromSubmatrix 1...\n";
+          MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHS); // Hx
+          //std::cout << "setFromSubmatrix 2...\n";
+          MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHS); // H
+          //std::cout << "negate...\n";
+          MatrixOps::negateInPlace(RHS);
+          //solve LHS*dx = RHS
 
-        //std::cout << "solveLinear...\n";
-        startLinear = std::chrono::steady_clock::now();
-        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx);
-        endLinear = std::chrono::steady_clock::now();
-        solveLinearCount++;
-        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
-        //std::cout << "solveLinear done\n";
+          //std::cout << "solveLinear...\n";
+          startLinear = std::chrono::steady_clock::now();
+          linearSolve_success = MatrixOps::solveLinear(LHS,RHS,dx);
+          endLinear = std::chrono::steady_clock::now();
+          solveLinearCount++;
+          solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
+          //std::cout << "solveLinear done\n";
 
-        // x1 += dx
-        for(size_t i=0; i<n; i++)   
-          C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
+          // x1 += dx
+          for(size_t i=0; i<n; i++)   
+            C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
         
-        norm2(dx,n,dx_norm2);
-        norm2(x1c1,n,x_norm2);
-        R.mult(x_norm2,x_norm2,tol2);
-        is_successful = R.compare_elems(dx_norm2,x_norm2) < 0;
-      } while (not is_successful and n_corr_steps<max_corr_steps);
+          norm2(dx,n,dx_norm2);
+          norm2(x1c1,n,x_norm2);
+          R.mult(x_norm2,x_norm2,tol2);
+          is_successful = R.compare_elems(dx_norm2,x_norm2) < 0;
+        } while (not is_successful and n_corr_steps<max_corr_steps);
+      }
       //std::cout << "past corrector loop...\n";
-      if (not is_successful) {
+      if (not linearSolve_success or not is_successful) {
         // predictor failure
         predictor_successes = 0;
         R.mult(dt,dt,dt_factor);
@@ -616,6 +625,12 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       norm2(x0c0,n,x_norm2);
       if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
         status = INFINITY_FAILED;
+      if (R.is_zero(x_norm2))  status = ORIGIN_FAILED;
+      else {
+        R.divide(x_norm2,one,x_norm2); // 1/||x||^2
+        if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
+          status = ORIGIN_FAILED;
+        }
       if (not linearSolve_success)
         status = SINGULAR;
     }

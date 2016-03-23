@@ -94,7 +94,7 @@ pts = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},C
 (out,outStatus) = mesTracker(H, pts, tStepMin=>st, CorrectorTolerance=>tol, LastT=>2.0)
 netList (entries outStatus | entries out)
 sols = extractM2engineOutput(H,out,outStatus)/point
-sols/(s->evaluateH(H, transpose matrix s , 1)) 
+sols/(s->evaluateH(H, transpose matrix s , 2)) 
 
 prec = 100
 pts' = mutableMatrix {apply(solsS, s->promote(transpose matrix s || matrix{{0}},CC_prec))}

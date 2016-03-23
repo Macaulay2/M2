@@ -42,7 +42,7 @@ export {
      "solveGenericSystemInTorus", -- works with PHCpack only
      "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
-     -- "multistepPredictor", "multistepPredictorLooseEnd",
+     "Field",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
@@ -64,12 +64,14 @@ exportMutable {
 
 
 -- local functions/symbols:
-protect Processing, protect Undetermined -- possible values of SolutionStatus
+protect Processing; protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+protect Origin; protect IncreasePrecision; protect DecreasePrecision; 
+protect LastIncrement;
 
 -- possible solution statuses returned by engine
-solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure}
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure, Origin, IncreasePrecision, DecreasePrecision}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -98,6 +100,7 @@ SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries
 Package % Symbol := (p,s) -> value (toString p | "$" | toString s) -- get an option name from the correct dictionary
 
 DEFAULT = new MutableHashTable from {
+     Field => CC,
      Software=>M2engine, NoOutput=>false, 
      NumericalAlgebraicGeometry$gamma=>1, 
      NumericalAlgebraicGeometry$tDegree=>1,
