@@ -24,7 +24,10 @@ BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
-export CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+CPPFLAGS += -I$(HOME)/local/include
+LDFLAGS += -L$(HOME)/local/lib
+CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
