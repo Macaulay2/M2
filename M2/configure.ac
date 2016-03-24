@@ -752,11 +752,14 @@ dnl else AC_MSG_RESULT(none found)
 dnl fi
 
 AC_SUBST(BUILTLIBS,)
-# the list LIBLIST is the list of libraries that might be used and linked into M2
-# the list PROGLIST is the list of programs and libraries for them that are distributed with M2
-#     initially, we offer no option for not compiling some of them
-# it reflects dependencies, with prerequisites listed first
-# in particular, there are the following dependencies:
+# The list LIBLIST is the list of libraries that might be used and linked into M2.
+# The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
+#     Initially, we offer no option for not compiling some of them.
+# The list SUBLIST is the list of submodules that might be used and linked into M2.
+# They reflect dependencies, with prerequisites listed first.
+# In particular, there are the following dependencies:
+#    mathicgb need mathic and memtailor
+#    mathic need memtailor
 #    gc needs atomic_ops (and sometimes includes it)
 #    factory needs gftables, flint, ntl and gmp
 #    libfac has been replaced by code in factory
@@ -790,12 +793,13 @@ AC_SUBST(BUILTLIBS,)
 #    flint depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=" gtest "
 
-for i in $LIBLIST
+for i in $LIBLIST $SUBLIST
 do eval BUILD_$i=no
 done
 
@@ -828,9 +832,9 @@ then BUILD_gfan=no
 fi
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
-    do case $LIBLIST in
+    do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
@@ -944,6 +948,36 @@ dnl if test $BUILD_gmp = yes
 dnl then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
 dnl else LIBS="-lgmpxx $LIBS"
 dnl fi
+
+if test $BUILD_memtailor = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
+
+if test $BUILD_mathic = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
+
+if test $BUILD_mathicgb = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
 
 if test $BUILD_mpir = no
 then AC_LANG(C)
@@ -1482,6 +1516,12 @@ do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
 done
 
+AC_SUBST(BUILDSUBLIST,)
+for i in $SUBLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
+done
+
 AC_SUBST(BUILDPROGLIST,)
 for i in $PROGLIST
 do eval t=\$BUILD_$i
@@ -1628,9 +1668,10 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST])
+AC_MSG_NOTICE([using BUILDSUBLIST  = $BUILDSUBLIST])
+AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST])
+AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST])
 AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
 AC_MSG_NOTICE([link using:])
 dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in

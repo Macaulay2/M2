@@ -62,9 +62,7 @@ CPPFLAGS :=						\
 	-I@abs_top_srcdir@/include			\
 	-I@abs_top_builddir@/include			\
 	-I$(BUILTLIBPATH)/include			\
-	-I@abs_top_srcdir@/submodules/memtailor/src	\
-	-I@abs_top_srcdir@/submodules/mathic/src	\
-	-I@abs_top_srcdir@/submodules/mathicgb/src	\
+	$(foreach S, @BUILDSUBLIST@, -I@abs_top_srcdir@/submodules/$S/src) \
 	$(CPPFLAGS)
 
 ifeq "@ENABLE_MPACK@" "yes"
@@ -74,15 +72,11 @@ endif
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS :=						\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor/.libs	\
-	-L@abs_top_builddir@/submodules/mathic/.libs	\
-	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
+	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
 	-L$(BUILTLIBPATH)/lib				\
-	-L@abs_top_builddir@/submodules/memtailor/.libs	\
-	-L@abs_top_builddir@/submodules/mathic/.libs	\
-	-L@abs_top_builddir@/submodules/mathicgb/.libs	\
+	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS_FOR_BUILD)
 vpath %.a $(BUILTLIBPATH)/lib
 vpath %.o $(BUILTLIBPATH)/lib
