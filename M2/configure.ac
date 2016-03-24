@@ -1064,6 +1064,20 @@ then if test $BUILD_frobby = no
 		 BUILD_frobby=yes
 		 AC_MSG_RESULT([no, will build it])])
      fi
+     AC_DEFINE([HAVE_FROBBY_VERSION_NUMBER], [1],
+	 [if we can get version number from frobby])
+     if test $BUILD_frobby = no
+     then
+	AC_MSG_CHECKING([if we can get version number from frobby])
+	AC_LANG([C++])
+	AC_COMPILE_IFELSE(
+	    [AC_LANG_PROGRAM(
+		[#include <stdinc.h>],
+		[constants::version])],
+	    [AC_MSG_RESULT([yes])],
+	    [AC_MSG_RESULT([no])
+	     AC_DEFINE([HAVE_FROBBY_VERSION_NUMBER], [0])])
+     fi
      test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
 
