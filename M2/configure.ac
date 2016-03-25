@@ -1426,8 +1426,8 @@ else lapack_found=no
      fi
 fi
 
-if $BUILD_lapack = yes
-then if $added_fclibs != yes
+if test $BUILD_lapack = yes
+then if test $added_fclibs != yes
      then LIBS="$FCLIBS $LIBS"
      fi
      BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
