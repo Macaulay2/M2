@@ -315,7 +315,7 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     loop'incomplete := true;
     s'status = Regular; 
     w := 0;
-    while loop'incomplete or w>100 --!!!
+    while loop'incomplete and w<=10 --!!!
     do (
     	for i to m-1 do (
 	    ti'out := timing trackHomotopyM2engine(H, inp, 

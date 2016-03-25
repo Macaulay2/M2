@@ -171,6 +171,11 @@ namespace M2 {
       result = a*a;
     }
 
+    double log2abs(const ElementType& a) const //!!! hack
+    {
+      return log2(fabs(a));
+    }
+
     void abs(ElementType& result, const ElementType& a) const
     {
       result = fabs(a);

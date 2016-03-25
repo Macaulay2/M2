@@ -691,6 +691,7 @@ lowerPrecision = new HashTable from {
     1600 => 800,
     800 => 400,
     400 => 200,
+    200 => 100,
     100 => 53,
     53 => null
     }
@@ -835,12 +836,30 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		 currentPrec := prec;
 	     	 while not ( 
 		     member(status s, {Regular,Infinity,Origin}) 
-		     or (1-s.LastT) > o.EndZoneFactor
+		     or realPart(1-s.LastT) < o.EndZoneFactor
 		     or currentPrec === null 
 		     ) do ( 
 		     if status s === DecreasePrecision then (
 			 -- decrease precision increase minimal step size
-		     	 )
+			 currentPrec = lowerPrecision#currentPrec;
+			 if currentPrec === null then error "precision can not be lowered (this is a bug)";
+			 F := o.Field_currentPrec;
+			 inp = tempInpMatrix F;
+			 scan(n, i->inp_(i,0) = (coordinates s)#i);
+			 inp_(n,0) = s.LastT;
+			 out = tempOutMatrix F; 
+			 out_(n,0) = 1;
+			 ti'out := timing trackHomotopyM2engine(H, inp, 
+			     out, statusOut,
+			     abs s.LastIncrement, minimalStepSize currentPrec, 
+			     o.CorrectorTolerance, o.maxCorrSteps, 
+			     toRR o.InfinityThreshold);
+			 -- if DBG>3 then 
+			 << "-- trackHomotopyM2engine (at prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+			 sols#nS = first extractM2engineOutput(H,out,statusOut);
+			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
+			 s = sols#nS;
+			 )
 		     else ( -- s === IncreasePrecision... or other reason
 		     	 -- increase precision decrease minimal step size
 			 currentPrec = higherPrecision#currentPrec;
@@ -1064,10 +1083,10 @@ restart
 debug needsPackage "NumericalAlgebraicGeometry"
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
-eps = 1/1000
+eps = 1/10^20
 T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 (S,solsS) = totalDegreeStartSystem T
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
-sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
 ///

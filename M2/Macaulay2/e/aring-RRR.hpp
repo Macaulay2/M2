@@ -247,6 +247,16 @@ namespace M2 {
         set(result, a);
     }
 
+    double log2abs(const ElementType& a) const //!!! hack
+    {
+      ElementType b;
+      init(b);
+      abs(b,a);
+      double result = log2(mpfr_get_d(&b, GMP_RNDN));
+      clear(b);
+      return result;
+    }
+
   private:
       unsigned long mPrecision;
   };

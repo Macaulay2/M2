@@ -278,9 +278,10 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   R.init(epsilon2);
   R.init(infinity_threshold2);
   R.set_from_BigReal(t_step,init_dt); // initial step
-  R.set_from_BigReal(min_step2,min_dt); 
-  R.set_from_BigReal(epsilon2,epsilon); 
+  R.set_from_BigReal(min_step2,min_dt);
   R.mult(min_step2, min_step2, min_step2); //min_step^2
+  R.set_from_BigReal(epsilon2,epsilon); 
+  int tolerance_bits = -R.log2abs(epsilon2);  
   R.mult(epsilon2, epsilon2, epsilon2); //epsilon^2
   R.set_from_BigReal(infinity_threshold2,infinity_threshold); 
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
@@ -332,6 +333,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   DMat<RT> dx2(C,n,1);
   DMat<RT> dx3(C,n,1);
   DMat<RT> dx4(C,n,1);
+  DMat<RT> Jinv_times_random(C,n,1);
 
   ElementType& c0 = x0c0.entry(n,0);
   ElementType& c1 = x1c1.entry(n,0);  
@@ -623,16 +625,49 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       }
       
       norm2(x0c0,n,x_norm2);
-      if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
-        status = INFINITY_FAILED;
-      if (R.is_zero(x_norm2))  status = ORIGIN_FAILED;
-      else {
-        R.divide(x_norm2,one,x_norm2); // 1/||x||^2
-        if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
-          status = ORIGIN_FAILED;
-        }
+
       if (not linearSolve_success)
         status = SINGULAR;
+      else if (not t0equals1) { // precision check 
+#define PRECISION_SAFETY_BITS 10
+        //std::cout << "evaluate...\n";
+        mHxH.evaluate(x0c0,HxH);
+        MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHS); // Hx
+        for(int i=0; i<n; i++) 
+          C.random(RHS.entry(i,0));
+        
+        //std::cout << "solveLinear...\n";
+        startLinear = std::chrono::steady_clock::now();
+        linearSolve_success = MatrixOps::solveLinear(LHS,RHS,Jinv_times_random);
+        endLinear = std::chrono::steady_clock::now();
+        solveLinearCount++;
+        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
+        //std::cout << "solveLinear done\n";
+       
+        norm2(Jinv_times_random,n,dx_norm2); // this stands for ||J^{-1}||
+        //!!! R.add(dx_norm2,dx_norm2,x_norm2); // ||J^{-1}|| + ||x||
+                                          //   ||J^{-1}|| should be multiplied by a factor 
+                                          //   reflecting an estimate on the error of evaluation of J 
+        int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + R.log2abs(dx_norm2) - 1; // subtract 1 for using squares under "log"
+        if (R.get_precision() < precision_needed)    
+          status = INCREASE_PRECISION;
+        else if (R.get_precision() != 53 and R.get_precision() > 2*precision_needed) 
+          status = DECREASE_PRECISION;
+      };
+
+      // infinity/origin checks
+      if (status == PROCESSING){ 
+        if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
+          status = INFINITY_FAILED;
+        else {
+          if (R.is_zero(x_norm2)) status = ORIGIN_FAILED;
+          else {
+            R.divide(x_norm2,one,x_norm2); // 1/||x||^2
+            if (R.compare_elems(infinity_threshold2,x_norm2) < 0)
+              status = ORIGIN_FAILED;
+          }
+        }
+      }
     }
     // record the solution
     // set initial solution and initial value of the continuation parameter

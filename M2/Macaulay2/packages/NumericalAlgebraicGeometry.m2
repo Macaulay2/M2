@@ -71,7 +71,7 @@ protect Origin; protect IncreasePrecision; protect DecreasePrecision;
 protect LastIncrement;
 
 -- possible solution statuses returned by engine
-solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure, Origin, IncreasePrecision, DecreasePrecision}
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
