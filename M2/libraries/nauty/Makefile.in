@@ -1,6 +1,6 @@
 # URL = http://cs.anu.edu.au/~bdm/nauty
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 25r9
+VERSION = 26r3
 # PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -i
 TARFILE = nauty$(VERSION).tar.gz
