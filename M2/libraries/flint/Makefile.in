@@ -1,8 +1,8 @@
 HOMEPAGE = http://flintlib.org
 #URL = http://flintlib.org
 URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-VERSION = 2.4.5
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+VERSION = 2.5.2
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PARALLEL = yes
 # The patch file disables some tests that need too much memory, but
 # many other tests keep failing, so disable them all:
