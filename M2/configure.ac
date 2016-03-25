@@ -1413,7 +1413,7 @@ else lapack_found=no
 	  else AC_MSG_RESULT(no)
 	  fi
      fi
-     LIBS="$FCLIBS $LIBS"
+     LIBS="$FCLIBS $LIBS"; added_fclibs=yes
      if test $blas_found = no
      then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,blas_found=yes)
           # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
@@ -1423,13 +1423,19 @@ else lapack_found=no
      fi
      if test $blas_found = no -o $lapack_found = no
      then BUILD_lapack=yes
-	  BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
-	  dnl we'll need the fortran compiler to be present to compile lapack
-	  FORTRANUSED=yes
-	  if test "$FC" = ""
-	  then AC_MSG_ERROR([no fortran compiler found (FC not set)])
-	  else AC_MSG_NOTICE(using fortran compiler $FC)
-	  fi
+     fi
+fi
+
+if $BUILD_lapack = yes
+then if $added_fclibs != yes
+     then LIBS="$FCLIBS $LIBS"
+     fi
+     BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+     dnl we'll need the fortran compiler to be present to compile lapack
+     FORTRANUSED=yes
+     if test "$FC" = ""
+     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
+     else AC_MSG_NOTICE(using fortran compiler $FC)
      fi
 fi
 
