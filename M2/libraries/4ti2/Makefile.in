@@ -1,8 +1,8 @@
 # temporary beta testing version
-VERSION = 1.6.2
-TARDIR = 4ti2-1.6.2
+VERSION = 1.6.7
+TARDIR = 4ti2-$(VERSION)
 
-PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 PRECONFIGURE = autoreconf -vif
 
 # URL = http://www.4ti2.de/version_$(VERSION)
