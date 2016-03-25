@@ -52,8 +52,7 @@ export CFLAGS += -Wno-unknown-attributes
 else
 _CC  := gcc-4.9 -mtune=generic
 _CXX := g++-4.9 -mtune=generic
-_FC  := 
-# _FC  := gfortran-5
+_FC  := gfortran-4.9 -mtune=generic
 endif
 endif
 
