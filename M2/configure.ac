@@ -35,7 +35,7 @@ m4_include(config/relpaths.m4)
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR
 do eval v=\$$x
    test "$v" && echo "   $x = $v"
 done
@@ -1376,57 +1376,73 @@ fi
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
 # needlessly causes the library to be linked against.)
 FORTRANUSED=no
-if test $BUILD_lapack = no
-then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
+if test $BUILD_lapack = yes
+then if test $USE_FCLIBS != no
+     then LIBS="$FCLIBS $LIBS"
+     fi
+else lapack_found=no
+     blas_found=no
+     AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
      SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [AC_MSG_RESULT(yes)],
-	 [AC_MSG_RESULT(no)
-	     LIBS=$SAVELIBS
-	     FORTRANUSED=yes
-	     AC_LANG(Fortran)
-	     if test "$FC" = ""
-	     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
-	     else AC_MSG_NOTICE(using fortran compiler $FC)
-	     fi
-	     AC_MSG_CHECKING([whether lapack is known to pkg-config])
-	     if pkg-config --exists lapack
-	     then AC_MSG_RESULT(yes)
-	          LIBS="`pkg-config --libs lapack blas` $LIB"
-		  CPPFLAGS="`pkg-config --cflags lapack blas` $CPPFLAGS"
-		  AC_SEARCH_LIBS(sgemv,,,AC_MSG_ERROR(lapack function sgemv not found))
-		  AC_SEARCH_LIBS(dgetrf,,,AC_MSG_ERROR(lapack function dgetrf not found))
-	     else AC_MSG_RESULT(no)
-	          LIBS1="-latllapack -latlcblas -lf77blas"
-	          AC_MSG_CHECKING([whether lapack is available with $LIBS1])
-		    found=yes
-		    SAVELIBS="$LIBS"
-		    LIBS="$LIBS1 $LIBS"
-  		    AC_SEARCH_LIBS(sgemv,,,found=no)
- 		    AC_SEARCH_LIBS(dgetrf,,,found=no)
-		    LIBS="$SAVELIBS"
-		  if [ $found = yes ]
-		  then AC_MSG_RESULT(yes)
-		  else AC_MSG_RESULT(no)
- 		       AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-  		       AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
-		  fi
-	     fi
-	 ])
+	 [blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
+	 [LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
+     if test $blas_found = no
+     then AC_MSG_CHECKING([whether blas is known to pkg-config])
+	  if pkg-config --exists blas
+	  then AC_MSG_RESULT(yes)
+	       blas_found=yes
+	       NEWLIBS=`pkg-config --libs blas`
+	       LIBS="$NEWLIBS $LIB"
+	       CPPFLAGS="`pkg-config --cflags blas` $CPPFLAGS"
+	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $NEWLIBS))
+	  else AC_MSG_RESULT(no)
+	  fi
+     fi
+     if test $lapack_found = no
+     then AC_MSG_CHECKING([whether lapack is known to pkg-config])
+	  if pkg-config --exists lapack
+	  then AC_MSG_RESULT(yes)
+	       lapack_found=yes
+	       NEWLIBS=`pkg-config --libs lapack`
+	       LIBS="$NEWLIBS $LIB"
+	       CPPFLAGS="`pkg-config --cflags lapack` $CPPFLAGS"
+	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $NEWLIBS))
+	  else AC_MSG_RESULT(no)
+	  fi
+     fi
+     LIBS="$FCLIBS $LIBS"
+     if test $blas_found = no
+     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,blas_found=yes)
+          # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
+     fi
+     if test $lapack_found = no
+     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,lapack_found=yes)
+     fi
+     if test $blas_found = no -o $lapack_found = no
+     then BUILD_lapack=yes
+	  BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+	  dnl we'll need the fortran compiler to be present to compile lapack
+	  FORTRANUSED=yes
+	  if test "$FC" = ""
+	  then AC_MSG_ERROR([no fortran compiler found (FC not set)])
+	  else AC_MSG_NOTICE(using fortran compiler $FC)
+	  fi
+     fi
 fi
-test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
 
-if test $BUILD_lapack = yes
-then # test whether the fortran compiler can handle lapack, which, starting with
-     # version 3.2, requires fortran 90, not fortran 77
-    AC_LANG(Fortran)
-    AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-    AC_COMPILE_IFELSE([instrinsic maxloc], dnl is "instrinsic" spelled correctly ??
-	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
-	AC_MSG_RESULT(yes))
-fi
+dnl This code doesn't seem to be needed, and it wasn't ever working, anyway:
+dnl if test $BUILD_lapack = yes
+dnl then # test whether the fortran compiler can handle lapack, which, starting with
+dnl      # version 3.2, requires fortran 90, not fortran 77
+dnl     AC_LANG(Fortran)
+dnl     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
+dnl     AC_COMPILE_IFELSE([intrinsic maxloc], dnl this is said to be a Fortran 90 feature
+dnl 	AC_MSG_RESULT(yes),
+dnl 	AC_MSG_RESULT(no))
+dnl fi
 
 test "$USE_FCLIBS" = no && FCLIBS=
 test "$FORTRANUSED" = no && FCLIBS=
