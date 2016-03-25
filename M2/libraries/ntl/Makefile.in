@@ -49,6 +49,9 @@ BUILDOPTIONS =					\
 	LDFLAGS="$(LDFLAGS) $(DEB_LDFLAGS)"	\
 	LDFLAGS_CXX="$(LDFLAGS) $(DEB_LDFLAGS)"
 
+# ntl's makefiles give too many warning messages about "jobserver unavailable: using -j1.  Add `+' to parent make rule."
+BUILDOPTIONS += -j1
+
 ifeq (@NTL_WIZARD@,yes)
 BUILDOPTIONS += WIZARD=on
 else
