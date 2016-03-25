@@ -1,10 +1,8 @@
+# a library for doing number theory
 LICENSEFILES = doc/copying.txt
 # @configure_input@
-# http://www.shoup.net
-# a library for doing number theory
-#VERSION = 6.2.1
 #PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-VERSION = 9.0.2
+VERSION = 9.7.0
 TARDIR = ntl-$(VERSION)
 BUILDDIR = $(UNTARDIR)/$(TARDIR)/src
 TARFILE = ntl-$(VERSION).tar.gz
