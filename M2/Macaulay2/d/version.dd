@@ -42,7 +42,7 @@ header "
        #include <stdinc.h>		// to get version number of frobby
        #define FROBBY_VERSION constants::version
      #else
-       #define FROBBY_VERSION \"\"
+       #define FROBBY_VERSION \"unknown\"
      #endif
    #else
      #define FROBBY_VERSION \"not present\"
