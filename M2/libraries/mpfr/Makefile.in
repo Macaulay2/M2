@@ -3,6 +3,7 @@
 VERSION = 3.1.4
 LICENSEFILES = README COPYING.LESSER
 TARFILE = $(LIBNAME)-$(VERSION).tar.xz
+TAROPTIONS = --xz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe

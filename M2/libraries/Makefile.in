@@ -1,6 +1,6 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
-BUILT_TARGETS = untar fetch all check unconfigure reinstall
+BUILT_TARGETS = patch fetch all check unconfigure reinstall
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
 all:fetch
 $(ALL_TARGETS): Makefile.library
