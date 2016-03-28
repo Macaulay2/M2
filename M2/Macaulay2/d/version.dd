@@ -38,8 +38,12 @@ header "
    extern char timestamp[];
    #undef ASSERT
    #ifdef HAVE_FROBBY
-     #include <stdinc.h>		// to get version number of frobby
-     #define FROBBY_VERSION constants::version
+     #if HAVE_FROBBY_VERSION_NUMBER
+       #include <stdinc.h>		// to get version number of frobby
+       #define FROBBY_VERSION constants::version
+     #else
+       #define FROBBY_VERSION \"unknown\"
+     #endif
    #else
      #define FROBBY_VERSION \"not present\"
    #endif
