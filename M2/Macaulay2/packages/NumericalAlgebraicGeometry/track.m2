@@ -662,6 +662,9 @@ extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut
 		else if s'status == Singular then "S"
 		else if s'status == MinStepFailure then "M"
 		else if s'status == Infinity then "I"
+		else if s'status == Origin then "O"
+		else if s'status == IncreasePrecision then "P"
+		else if s'status == DecreasePrecision then "p"
 		else error "unknown solution status"
 		) << if (sN+1)%100 == 0 then endl else flush;
 	    -- create a solution record 
@@ -1092,4 +1095,5 @@ T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
+assert((first sols).NumberOfSteps == 3771)
 ///

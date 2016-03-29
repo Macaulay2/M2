@@ -584,7 +584,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         // copy_complex_array<ComplexField>(n,dx4,dx);
         //for(size_t i=0; i<n; i++)   
         ///  C.mult(dx.entry(i,0),dx4.entry(i,0),one_sixth);
-        submatrix(dx4) *= one_sixth; 
+        submatrix(dx4) *= one_sixth; // submatrix(dx).addMultipleTo(one_sixth,dx4) 
         submatrix(dx) += dx4; 
       }
 
@@ -592,6 +592,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       //for(size_t i=0; i<n; i++)   
       //  C.add(x1c1.entry(i,0),x0c0.entry(i,0),dx.entry(i,0));  
       submatrix(x1c1) = submatrix(x0c0);
+      submatrix(x1c1, 0,0, n,1) += dx;
       C.add(c1,c0,dc);   
       
       // CORRECTOR
@@ -608,9 +609,12 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
           evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
         
           //std::cout << "setFromSubmatrix 1...\n";
-          MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
+          //MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
           //std::cout << "setFromSubmatrix 2...\n";
-          MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHSmat); // H
+          //MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHSmat); // H
+          LHS = submatrix(HxH, 0,0, n,n);
+          RHS = submatrix(HxH, 0,n, n,1);
+
           //std::cout << "negate...\n";
           MatrixOps::negateInPlace(RHSmat);
           //solve LHS*dx = RHS
@@ -624,11 +628,15 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
           //std::cout << "solveLinear done\n";
 
           // x1 += dx
-          for(size_t i=0; i<n; i++)   
-            C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
-        
-          norm2(dx,n,dx_norm2);
-          norm2(x1c1,n,x_norm2);
+          //for(size_t i=0; i<n; i++)   
+          //  C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
+          submatrix(x1c1, 0,0, n,1) += dx;
+
+          //norm2(dx,n,dx_norm2);
+          submatrix(dx).normSquared(dx_norm2);
+          //norm2(x1c1,n,x_norm2);
+          submatrix(x1c1, 0,0, n,1).normSquared(x_norm2);
+          
           R.mult(x_norm2,x_norm2,tol2);
           is_successful = R.compare_elems(dx_norm2,x_norm2) < 0;
         } while (not is_successful and n_corr_steps<max_corr_steps);

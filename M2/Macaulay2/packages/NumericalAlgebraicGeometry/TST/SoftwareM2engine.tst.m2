@@ -1,4 +1,4 @@
-needsPackage "NumericalAlgebraicGeometry"
+debug needsPackage "NumericalAlgebraicGeometry"
 needs "NumericalAlgebraicGeometry/benchmarks.m2"
 NAGtrace 1
 
@@ -25,7 +25,7 @@ M = solveSystem(T_*,
 sum(M,s->s.NumberOfSteps)
 S = apply(M,status);
 assert(#select(S, s->s==Regular) == 70
-    and #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
+    and #select(S, s->s==IncreasePrecision) + #select(S, s->s==Infinity) + #select(S, s->s==MinStepFailure) == 50 )
 
 -- projective tracking (including Certified)
 for predictor in {RungeKutta4,Tangent,Certified} do (

@@ -111,18 +111,20 @@ struct SubMatrix
       }
   }
 
-  /*  void operator*=(typename MatType::ElementType& c)
+  void normSquared(typename MatType::CoeffRing::RealElementType& result)
   {
+    const auto& C = matrix.ring();
+    const auto& R = C.real_ring();
+    typename MatType::CoeffRing::RealElementType c;
+    R.init(c);
+    R.set_zero(result);
     for (long rA = begin_row; rA < end_row; ++rA)
-      {
-        for (long cA = begin_column; cA < end_column; ++cA)
-          {
-            auto& a = matrix.entry(rA,cA);
-            matrix.ring().mult(a, a, c);
-          }
+      for (long cA = begin_column; cA < end_column; ++cA) {
+        C.abs_squared(c,matrix.entry(rA,cA));
+        R.add(result,result,c);
       }
+    R.clear(c);
   }
-  */
 };
 
 template <typename MatType>
