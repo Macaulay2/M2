@@ -98,7 +98,8 @@ struct SubMatrix
       }
   }
 
-  void operator*=(typename MatType::ElementType& c)
+  template<typename ElementType>
+  void operator*=(ElementType& c)
   {
     for (long rA = begin_row; rA < end_row; ++rA)
       {
@@ -109,6 +110,19 @@ struct SubMatrix
           }
       }
   }
+
+  /*  void operator*=(typename MatType::ElementType& c)
+  {
+    for (long rA = begin_row; rA < end_row; ++rA)
+      {
+        for (long cA = begin_column; cA < end_column; ++cA)
+          {
+            auto& a = matrix.entry(rA,cA);
+            matrix.ring().mult(a, a, c);
+          }
+      }
+  }
+  */
 };
 
 template <typename MatType>

@@ -731,7 +731,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     
      if instance(H,Sequence) {* preSLP,  if o.Software===M2enginePrecookedSLPs 
 	                        then compile preSLPs in the engine *}
-     then (
+     then ( -- preSLPs (developer only) -------------------------------------------------------
      	 (R,slpH) := H; 
 	 n := numgens R - 1;
      	 K := coefficientRing R;
@@ -775,7 +775,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,Homotopy) then (
+     else if instance(H,Homotopy) then ( -- main case... but M2engine does not need these !!!  
      	 K = CC_53; --!!!
       	 --
        	 evalH = (x0,t0)-> (
@@ -796,11 +796,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     	 )     
      else error "unexpected type of homotopy (first parameter)";
      
+     -- Sortware=>M2 only ---------------------------------------------------------------------------------
      solveLinear := (A,b) -> solve(A,b,ClosestFit=>true,MaximalRank=>true); -- this takes care of non-square case!!!
      solveHxTimesDXequalsMinusHt := (x0,t0) -> solveLinear(evalHx(x0,t0),-evalHt(x0,t0));
      
      compStartTime := currentTime();      
 
+--------------------- M2engine --------------------------------------------------------------------------
      rawSols := if o.Software===M2engine then ( 
 	 prec := o.Precision;
 	 if prec === infinity then prec = 53; -- for adaptive precision, start with double precision
@@ -864,13 +866,13 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		     	 -- increase precision decrease minimal step size
 			 currentPrec = higherPrecision#currentPrec;
 			 if currentPrec =!= null then (
-			     F := o.Field_currentPrec;
+			     F = o.Field_currentPrec;
 			     inp = tempInpMatrix F;
 			     scan(n, i->inp_(i,0) = (coordinates s)#i);
 			     inp_(n,0) = s.LastT;
 			     out = tempOutMatrix F; 
 			     out_(n,0) = 1;
-			     ti'out := timing trackHomotopyM2engine(H, inp, 
+			     ti'out = timing trackHomotopyM2engine(H, inp, 
 	     			 out, statusOut,
 	     			 abs s.LastIncrement, minimalStepSize currentPrec, 
 	     			 o.CorrectorTolerance, o.maxCorrSteps, 
@@ -887,6 +889,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     );	      
 	 toList sols 
 	 )
+     ---------------- M2 (top-level) -------------------------------------------------------------------------------------
      else if o.Software===M2 
      or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
