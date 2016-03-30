@@ -164,7 +164,7 @@ endif
 
 CFLAGS   += -Wreturn-type -Werror
 CXXFLAGS += -Wreturn-type -Werror
-CXXFLAGS += -std=c++0x
+CXXFLAGS += -std=c++11
 
 python-c.o : | python-exports.h.tmp
 M2lib.o scclib.o : | interp-exports.h.tmp
