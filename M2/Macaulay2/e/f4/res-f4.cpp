@@ -94,36 +94,45 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
   auto& p = mFrame.level(mThisLevel-2)[monoid().get_component(n)];
   if (p.mBegin == p.mEnd) return -1;
 
-#if 0
-  std::cout << "monomialProduct(";
-  monoid().showAlpha(m);
-  std::cout << ", ";
-  monoid().showAlpha(n);
-  std::cout << ")" << std::endl;
-#endif
-  
-  packed_monomial new_m; // a pointer to a monomial we are visiting
   monoid().unchecked_mult(m,n,mNextMonom);
   // the component is wrong, after this operation, as it adds components
   // So fix that:
   monoid().set_component(monoid().get_component(n), mNextMonom);
-  if (mHashTable.find_or_insert(mNextMonom, new_m))
-    return static_cast<ComponentIndex>(new_m[-1]); // monom exists, don't save monomial space
+
+  return processCurrentMonomial();
+}
 
 #if 0
-  std::cout << "find_or_insert returned:  ";
-  monoid().showAlpha(new_m);
-  std::cout << std::endl;
+// The returned int value can be: 0, 1, -1: 0 means product is zero.
+// 1 means multiplier is 1, -1, means -1 (i.e. sign of the permutation to put the
+// monomial back in sorted order).
+std::pair<ComponentIndex, int> F4Res::processSkewMonomialProduct(packed_monomial m, packed_monomial n)
+{
+}
 #endif
+
+// new_m is a monomial that we have just created.  There are several
+// things that can happen:
+//  (1) new_m is already in the hash table (as is).
+//       i.e. we have already processed this monomial.
+//       in this case new_m[-1] is the index of the divisor for this monomial
+//       (possibly -1).
+//  (2) new_m is a newly seen monomial in this degree.
+//       insert it into the hash table as a seen monomial
+//       we set the divisor for new_m: either -1 or some index
+//       If there is no divisor, return -1.
+//       If there is: create a row, and push onto the mReducers list.
+//    (2A) 
+ComponentIndex F4Res::processCurrentMonomial()
+{
+  packed_monomial new_m; // a pointer to a monomial we are visiting
+  if (mHashTable.find_or_insert(mNextMonom, new_m))
+    return static_cast<ComponentIndex>(new_m[-1]); // monom exists, don't save monomial space
   
   // intern the monomial just inserted into the hash table
   mMonomSpace.intern(1+monoid().monomial_size(mNextMonom));
-  
-  // At this point, we have a new monomial, and a pointer to mNextMonom
-  // has been placed into mHashTable.
-  // We need to see now what the divisor monomial for mNextMonom is.
-  // and if there is one, we need to create a new row for the mReducers matrix.
-  // (at least, put it on the queue to be created).
+
+  // leave room for the next monomial.  This might be set below.
   mNextMonom = mMonomSpace.reserve(1+monoid().max_monomial_size());
   mNextMonom++;
   
@@ -134,12 +143,6 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
       return -1;
     }
 
-#if 0
-  std::cout << "findDivisor returned:  ";
-  monoid().showAlpha(mNextMonom);
-  std::cout << std::endl;
-#endif
-  
   mMonomSpace.intern(1+monoid().monomial_size(mNextMonom));
   
   ComponentIndex thiscol = static_cast<ComponentIndex>(mColumns.size());
@@ -149,12 +152,6 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
   Row row;
   row.mLeadTerm = mNextMonom;
   mReducers.push_back(row);
-
-#if 0
-  std::cout << "added ";
-  monoid().showAlpha(row.mLeadTerm);
-  std::cout << " to reducer todo list" << std::endl;
-#endif
   
   // Now we increment mNextMonom, for the next time
   mNextMonom = mMonomSpace.reserve(1+monoid().max_monomial_size());
@@ -162,7 +159,6 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
 
   return thiscol;
 }
-
 void F4Res::loadRow(Row& r)
 {
   FieldElement one;

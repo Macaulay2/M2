@@ -15,10 +15,9 @@ class SchreyerFrame;
 class F4ResComputation : public ResolutionComputation
 {
 private:
-  F4ResComputation(const PolynomialRing* R,
+  F4ResComputation(const PolynomialRing* origR,
+                   ResPolyRing* R,
                    const Matrix* gbmatrix,
-                   const ResGausser* KK,
-                   const MonomialInfo* MI,
                    int max_level);
 public:
   friend ResolutionComputation* createF4Res(const Matrix *groebnerBasisMatrix,
@@ -55,7 +54,7 @@ protected:
   void text_out(buffer &o) const;
 private:
   const PolynomialRing& mOriginalRing;
-  const ResPolyRing mRing;
+  ResPolyRing* mRing;
   const Matrix& mInputGroebnerBasis;
   std::unique_ptr<SchreyerFrame> mComp;
 };

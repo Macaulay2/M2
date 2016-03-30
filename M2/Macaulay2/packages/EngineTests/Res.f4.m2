@@ -47,6 +47,7 @@ TEST ///
   elapsedTime  C = res(ideal gens gb I, Strategy=>4)
 
   rawBetti(raw C.Resolution, 1)
+  rawBetti(raw C.Resolution, 0)
 
   f1 = map(R, rawResolutionGetMatrix(raw C,1))
   f2 = map(R, rawResolutionGetMatrix(raw C,2));
@@ -99,14 +100,17 @@ TEST ///
 
   C = res(ideal gens gb I, Strategy=>4)
   rawBetti(raw C.Resolution, 1)
+  rawBetti(raw C.Resolution, 0)
   
   I = ideal I_*
   C = res(ideal gens gb I, Strategy=>1)
   rawBetti(raw C.Resolution, 1)
+  rawBetti(raw C.Resolution, 0)
 
   I = ideal I_*
   C = res(ideal gens gb I, Strategy=>0)
   rawBetti(raw C.Resolution, 1)
+  rawBetti(raw C.Resolution, 0)  
 ///
 
 TEST ///

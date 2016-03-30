@@ -40,11 +40,18 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       return nullptr;
     }
   auto MI = new MonomialInfo(origR->n_vars(), origR->getMonoid()->getMonomialOrdering());
-  ResPolyRing R(*KK, *MI);
+  ResPolyRing* R;
+  if (origR->is_skew_commutative())
+    {
+      R = new ResPolyRing(*KK, *MI, & (origR->getSkewInfo()));
+    }
+  else
+    {
+      R = new ResPolyRing(*KK, *MI);
+    }
   auto result = new F4ResComputation(origR,
+                                     R,
                                      groebnerBasisMatrix,
-                                     KK,
-                                     MI,
                                      max_level);
 
   // Set level 0
@@ -65,7 +72,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       poly f;
-      ResF4toM2Interface::from_M2_vec(R, F, groebnerBasisMatrix->elem(i), f);
+      ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
       MI->copy(f.monoms, elem);
       frame.insertLevelOne(elem, f);
     }
@@ -80,17 +87,16 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   return result;
 }
 
-F4ResComputation::F4ResComputation(const PolynomialRing* R,
+F4ResComputation::F4ResComputation(const PolynomialRing* origR,
+                                   ResPolyRing* R,
                                    const Matrix* gbmatrix,
-                                   const ResGausser* KK,
-                                   const MonomialInfo* MI,
                                    int max_level)
 
-  : mOriginalRing(*R),
-    mRing(*KK, *MI),
+  : mOriginalRing(*origR),
+    mRing(R),
     mInputGroebnerBasis(*gbmatrix)
 {
-  mComp.reset(new SchreyerFrame(mRing, max_level)); // might need gbmatrix->rows() too
+  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
 }
 
 F4ResComputation::~F4ResComputation()

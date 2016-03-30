@@ -3,6 +3,7 @@
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
+#include "../skew.hpp"
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
 #include "moninfo.hpp"
@@ -22,15 +23,20 @@ struct poly {
 class ResPolyRing
 {
 public:
-  ResPolyRing(const ResGausser& G, const MonomialInfo& M) : mResGausser(G), mMonoid(M) {}
+  ResPolyRing(const ResGausser& G, const MonomialInfo& M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
+  ResPolyRing(const ResGausser& G, const MonomialInfo& M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
 
   const ResGausser& resGausser() const { return mResGausser; }
   const MonomialInfo& monoid() const { return mMonoid; }
+
+  bool isSkewCommutative() const { return mSkew != nullptr; }
+  const SkewMultiplication* skewInfo() const { return mSkew; }
 
   void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
   const ResGausser& mResGausser;
   const MonomialInfo& mMonoid;
+  const SkewMultiplication* mSkew;
 };
 
 class poly_constructor {
