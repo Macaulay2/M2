@@ -211,6 +211,7 @@ inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& res
 
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED, ORIGIN_FAILED, INCREASE_PRECISION, DECREASE_PRECISION};
 
+
 // ****************************** XXX **************************************************
 template <typename RT> 
 bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
@@ -386,41 +387,28 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         C.add(c1,c0,dc);
       }
       
-      // PREDICTOR in: x0c0,dt,pred_type
+      // PREDICTOR in: x0c0,dt
       //           out: dx
-      
-      // make prediction
-      //for(size_t i=0; i<n; i++)   
-      //  C.set_zero(dx.entry(i,0)); // "zero"-th order predictor
-      submatrix(dx) = 0;
+      /*  top-level code for Runge-Kutta-4 
+          dx1 := solveHxTimesDXequalsMinusHt(x0,t0);
+          dx2 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx1*dt,t0+(1/2)*dt);
+          dx3 := solveHxTimesDXequalsMinusHt(x0+(1/2)*dx2*dt,t0+(1/2)*dt);
+          dx4 := solveHxTimesDXequalsMinusHt(x0+dx3*dt,t0+dt);
+          (1/6)*dt*(dx1+2*dx2+2*dx3+dx4)      
+      */                    
 
-      // Runge-Kutta 4th order
       C.mult(one_half_dc, dc, one_half);
 
-      //copy_complex_array<ComplexField>(n+1,x0t0,xt);
-      //for(size_t i=0; i<=n; i++)   
-      //  C.set(xc.entry(i,0), x0c0.entry(i,0));
-      submatrix(xc) = submatrix(x0c0);
-
       // dx1
-      /* evaluate_slpHxt(n,xt,Hxt);
-         LHS = Hxt;
-         RHS = Hxt+n*n;
-         //
-         negate_complex_array<ComplexField>(n,RHS);
-         solve_via_lapack_without_transposition(n,LHS,1,RHS,dx1);
-      */
+      submatrix(xc) = submatrix(x0c0);
       std::chrono::steady_clock::time_point startEvaluate = std::chrono::steady_clock::now();
       mHxt.evaluate(xc,Hxt);
       std::chrono::steady_clock::time_point endEvaluate = std::chrono::steady_clock::now();
       evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
-      //MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-      //MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
+
       LHS = submatrix(Hxt, 0,0, n,n);
       RHS = submatrix(Hxt, 0,n, n,1);
-      
       MatrixOps::negateInPlace(RHSmat);
-      //solve LHS*dx1 = RHS
 
       std::chrono::steady_clock::time_point startLinear = std::chrono::steady_clock::now();
       linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx1);
@@ -430,29 +418,19 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 
       // dx2
       if (linearSolve_success) { 
-        // multiply_complex_array_scalar<ComplexField>(n,dx1,one_half*(*dt));
-        //for(size_t i=0; i<n; i++)   
-        //  C.mult(dx1.entry(i,0),dx1.entry(i,0),one_half_dc);  
-        submatrix(dx1) *= one_half_dc;
-        // add_to_complex_array<ComplexField>(n,xt,dx1); // x0+.5dx1*dt
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(xc.entry(i,0),xc.entry(i,0),dx1.entry(i,0));  
-        submatrix(xc, 0,0, n,1) += submatrix(dx1);
-        // xt[n] += one_half*(*dt); // t0+.5dt
+        submatrix(dx1) *= one_half_dc; // "dx1" := (1/2)*dx1*dt
+        submatrix(xc, 0,0, n,1) += submatrix(dx1); 
         C.add(c,c,one_half_dc); 
-        // evaluate_slpHxt(n,xt,Hxt);
+       
         startEvaluate = std::chrono::steady_clock::now();
         mHxt.evaluate(xc,Hxt);
         endEvaluate = std::chrono::steady_clock::now();
         evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
-        // LHS = Hxt; RHS = Hxt+n*n;
-        //negate_complex_array<ComplexField>(n,RHS);
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
+
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
-        //solve LHS*dx2 = RHS
+
         startLinear = std::chrono::steady_clock::now();
         linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx2);
         endLinear = std::chrono::steady_clock::now();
@@ -462,41 +440,20 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 
       // dx3
       if (linearSolve_success) { 
-        // multiply_complex_array_scalar<ComplexField>(n,dx2,one_half*(*dt));
-        //for(size_t i=0; i<n; i++)   
-        //  C.mult(dx2.entry(i,0),dx2.entry(i,0),one_half_dc);
-        submatrix(dx2) *= one_half_dc;
-        
-        // copy_complex_array<ComplexField>(n,x0t0,xt); // spare t
-        //for(size_t i=0; i<n; i++)   
-        //  C.set(xc.entry(i,0), x0c0.entry(i,0));
+        submatrix(dx2) *= one_half_dc; // "dx2" := (1/2)*dx2*dt
         submatrix(xc, 0,0, n,1) = submatrix(x0c0,  0,0, n,1);
-
-        // add_to_complex_array<ComplexField>(n,xt,dx2); // x0+.5dx2*dt
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(xc.entry(i,0),xc.entry(i,0),dx2.entry(i,0));  
         submatrix(xc, 0,0, n,1) += submatrix(dx2);
-
-        // xt[n] += one_half*(*dt); // t0+.5dt (SAME)
-        C.add(c,c,one_half_dc);
+        C.add(c,c,one_half_dc); // c should not change here??? or copy c two lines above??? 
        
-        /* evaluate_slpHxt(n,xt,Hxt);
-           LHS = Hxt;
-           RHS = Hxt+n*n;
-           negate_complex_array<ComplexField>(n,RHS);
-           LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx3);
-        */
         startEvaluate = std::chrono::steady_clock::now();
         mHxt.evaluate(xc,Hxt);
         endEvaluate = std::chrono::steady_clock::now();
         evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
 
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
-        //solve LHS*dx3 = RHS
+
         startLinear = std::chrono::steady_clock::now();
         linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx3);
         endLinear = std::chrono::steady_clock::now();
@@ -506,40 +463,20 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 
       // dx4
       if (linearSolve_success) { 
-        // multiply_complex_array_scalar<ComplexField>(n,dx3,*dt);
-        // for(size_t i=0; i<n; i++)   
-        //  C.mult(dx3.entry(i,0),dx3.entry(i,0),dc);
-        submatrix(dx3) *= dc;
-
-        // copy_complex_array<ComplexField>(n+1,x0t0,xt);
-        //for(size_t i=0; i<n+1; i++)   
-        //  C.set(xc.entry(i,0), x0c0.entry(i,0));
-        submatrix(xc) = submatrix(x0c0); // sets c=c0 as well (not needed for dx1,dx2,dx3)
-        
-        // add_to_complex_array<ComplexField>(n,xt,dx3); // x0+dx3*dt
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(xc.entry(i,0),xc.entry(i,0),dx3.entry(i,0));  
+        submatrix(dx3) *= dc; // "dx3" := dx3*dt
+        submatrix(xc) = submatrix(x0c0); // sets c=c0 as well (not needed for dx2???,dx3)
         submatrix(xc, 0,0, n,1) += submatrix(dx3); 
-        // xt[n] += *dt; // t0+dt
         C.add(c,c,dc);
-        /*
-          evaluate_slpHxt(n,xt,Hxt);
-          LHS = Hxt;
-          RHS = Hxt+n*n;
-          negate_complex_array<ComplexField>(n,RHS);
-          LAPACK_success = LAPACK_success && solve_via_lapack_without_transposition(n,LHS,1,RHS,dx4);
-        */
+
         startEvaluate = std::chrono::steady_clock::now();
         mHxt.evaluate(xc,Hxt);
         endEvaluate = std::chrono::steady_clock::now();
         evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
 
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,0,n-1,LHS); // Hx
-        //MatOps::setFromSubmatrix(Hxt,0,n-1,n,n,RHS); // Ht
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
-        //solve LHS*dx4 = RHS
+
         startLinear = std::chrono::steady_clock::now();
         linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx4);
         endLinear = std::chrono::steady_clock::now();
@@ -549,51 +486,21 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       
       // "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
       if (linearSolve_success) { 
-        // multiply_complex_array_scalar<ComplexField>(n,dx4,*dt);
-        //for(size_t i=0; i<n; i++)   
-        //  C.mult(dx4.entry(i,0),dx4.entry(i,0),dc);
-        submatrix(dx4) *= dc; 
-        // multiply_complex_array_scalar<ComplexField>(n,dx1,2);
-        // ???
-      
-        // multiply_complex_array_scalar<ComplexField>(n,dx2,4);
-        //for(size_t i=0; i<n; i++)   
-        //  C.mult(dx2.entry(i,0),dx2.entry(i,0),four);
+        submatrix(dx4) *= dc; // "dx4" = dx4*dt
+        submatrix(dx) = submatrix(dx4); // dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4) 
+                                        //    = (1/6)*(2*"dx1"+4*"dx2"+2*"dx3"+"dx4")
         submatrix(dx2) *= four; 
-        
-        // multiply_complex_array_scalar<ComplexField>(n,dx3,2);
-        //for(size_t i=0; i<n; i++)   
-        //  C.mult(dx3.entry(i,0),dx3.entry(i,0),two);
         submatrix(dx3) *= two; 
+        submatrix(dx) += dx1; 
+        submatrix(dx) += dx2; 
+        submatrix(dx) += dx3; 
+        submatrix(dx) *= one_sixth; // submatrix(dx).addMultipleTo(one_sixth,dx4) 
 
-        // add_to_complex_array<ComplexField>(n,dx4,dx1);
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(dx4.entry(i,0),dx4.entry(i,0),dx1.entry(i,0));
-        // add_to_complex_array<ComplexField>(n,dx4,dx2);
-        submatrix(dx4) += dx1; 
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(dx4.entry(i,0),dx4.entry(i,0),dx2.entry(i,0));
-        submatrix(dx4) += dx2; 
- 
-        // add_to_complex_array<ComplexField>(n,dx4,dx3);
-        //for(size_t i=0; i<n; i++)   
-        //  C.add(dx4.entry(i,0),dx4.entry(i,0),dx3.entry(i,0));
-        submatrix(dx4) += dx3; 
-
-        // multiply_complex_array_scalar<ComplexField>(n,dx4,1.0/6);
-        // copy_complex_array<ComplexField>(n,dx4,dx);
-        //for(size_t i=0; i<n; i++)   
-        ///  C.mult(dx.entry(i,0),dx4.entry(i,0),one_sixth);
-        submatrix(dx4) *= one_sixth; // submatrix(dx).addMultipleTo(one_sixth,dx4) 
-        submatrix(dx) += dx4; 
+        // update x0c0
+        submatrix(x1c1) = submatrix(x0c0);
+        submatrix(x1c1, 0,0, n,1) += dx;
+        C.add(c1,c0,dc);   
       }
-
-      // update x0c0
-      //for(size_t i=0; i<n; i++)   
-      //  C.add(x1c1.entry(i,0),x0c0.entry(i,0),dx.entry(i,0));  
-      submatrix(x1c1) = submatrix(x0c0);
-      submatrix(x1c1, 0,0, n,1) += dx;
-      C.add(c1,c0,dc);   
       
       // CORRECTOR
       bool is_successful;
