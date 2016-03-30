@@ -16,9 +16,10 @@ STRIPFILES =					\
 	src/util/output				\
 	src/zsolve/zsolve
 
-# we have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
-# support provided by GMP, so this file will not be there:
-# STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
+# # We have stopped trying to get 4ti2 to compile on all architectures with arbitrary precision
+# # support provided by GMP, so this file will not be there:
+# But now it is there, and we get a complaint when checking for unstripped binaries.
+STRIPFILES += 	src/groebner/4ti2gmp@EXEEXT@
 
 # according to the documentation, the line below should prevent GMP from being used,
 # but it doesn't
