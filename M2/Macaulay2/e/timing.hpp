@@ -2,7 +2,7 @@
 #define __timing_hpp_
 #include <chrono>
 
-inline std::chrono::steady_clock::time_point timer() { return std::chrono::steady_clock::now(); }
+inline std::chrono::steady_clock::time_point now() { return std::chrono::steady_clock::now(); }
 
 template<typename DurationType>
 long nanoseconds(DurationType time_diff)
@@ -15,6 +15,8 @@ long microseconds(DurationType time_diff)
 {
   return std::chrono::duration_cast<std::chrono::microseconds>(time_diff).count();
 }
+
+#define TIME(t,call) {auto __now1 = now(); call; auto __now2 = now(); t += nanoseconds(__now2-__now1);}
 
 #endif
 // Local Variables:

@@ -1087,6 +1087,7 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
 TEST ///
 restart
 debug needsPackage "NumericalAlgebraicGeometry"
+NAGtrace 1
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
 eps = 1/10^20

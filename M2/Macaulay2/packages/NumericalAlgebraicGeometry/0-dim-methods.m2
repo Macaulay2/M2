@@ -58,7 +58,14 @@ solveSystem PolySystem := List => o -> P -> (
 	       else F);  
   	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       H := segmentHomotopy(polySystem S, polySystem T, NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii));
+	       polyS := polySystem S;
+	       polyT := polySystem T;
+	       unit := exp(random(0.,2*pi)*ii);
+	       if DBG>2 then (
+		   << "H = segmentHomotopy(" << toExternalString polyS << "," << toExternalString polyT << ",gamma=>" << toExternalString unit << ")" << endl;    
+	       	   << "trackHomotopy(H," << toExternalString solsS << ")" << endl;
+		   );
+	       H := segmentHomotopy(polyS, polyT, NumericalAlgebraicGeometry$gamma=>unit);
 	       trackHomotopy(H,solsS,
 		   CorrectorTolerance => o.CorrectorTolerance,
 		   maxCorrSteps => o.maxCorrSteps,

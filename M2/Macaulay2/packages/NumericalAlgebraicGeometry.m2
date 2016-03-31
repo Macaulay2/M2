@@ -119,7 +119,7 @@ DEFAULT = new MutableHashTable from {
      CorrectorTolerance => 1e-6, -- tracking tolerance
      -- end of path
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
-     InfinityThreshold => 100000, -- used to tell if the path is diverging
+     InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
@@ -134,7 +134,7 @@ DEFAULT = new MutableHashTable from {
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e5, -- this may need to go away!!!
-     maxPrecision => 53,
+     maxPrecision => infinity,
      maxNumberOfVariables => 50
      }
 

@@ -13,7 +13,7 @@ for predictor in {RungeKutta4,Tangent,Euler} do (
      )
 (S,T,solsS) = smallInfinityExample()
 M = track(S,T,solsS, gamma=>0.6+0.8*ii, Software=>M2engine);
-assert all({0,2}, i->M#i#SolutionStatus==Infinity) 
+assert all({0,2}, i->M#i#SolutionStatus!=Regular) 
 assert all({1,3}, i->M#i#SolutionStatus==Regular) 
 
 assert(M#3#LastT>0.99999 and M#3#NumberOfSteps < 20)

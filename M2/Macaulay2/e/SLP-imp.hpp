@@ -5,8 +5,7 @@
 #ifndef _slp_imp_hpp_
 #define _slp_imp_hpp_
 
-#include <ctime>
-#include <chrono>
+#include "timing.hpp"
 
 // SLEvaluator
 template<typename RT>
@@ -401,20 +400,18 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 
       // dx1
       submatrix(xc) = submatrix(x0c0);
-      std::chrono::steady_clock::time_point startEvaluate = std::chrono::steady_clock::now();
-      mHxt.evaluate(xc,Hxt);
-      std::chrono::steady_clock::time_point endEvaluate = std::chrono::steady_clock::now();
-      evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+      TIME(evaluateTime,
+           mHxt.evaluate(xc,Hxt)
+           )
 
       LHS = submatrix(Hxt, 0,0, n,n);
       RHS = submatrix(Hxt, 0,n, n,1);
       MatrixOps::negateInPlace(RHSmat);
 
-      std::chrono::steady_clock::time_point startLinear = std::chrono::steady_clock::now();
-      linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx1);
-      std::chrono::steady_clock::time_point endLinear = std::chrono::steady_clock::now();
+      TIME(solveLinearTime,
+           linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx1)
+           );
       solveLinearCount++;
-      solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
 
       // dx2
       if (linearSolve_success) { 
@@ -422,20 +419,18 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(xc, 0,0, n,1) += submatrix(dx1); 
         C.add(c,c,one_half_dc); 
        
-        startEvaluate = std::chrono::steady_clock::now();
-        mHxt.evaluate(xc,Hxt);
-        endEvaluate = std::chrono::steady_clock::now();
-        evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+        TIME(evaluateTime,
+             mHxt.evaluate(xc,Hxt)
+             )
 
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
 
-        startLinear = std::chrono::steady_clock::now();
-        linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx2);
-        endLinear = std::chrono::steady_clock::now();
+        TIME(solveLinearTime,
+             linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx2);
+             )
         solveLinearCount++;
-        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
       }
 
       // dx3
@@ -445,20 +440,18 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(xc, 0,0, n,1) += submatrix(dx2);
         // C.add(c,c,one_half_dc); // c should not change here??? or copy c two lines above??? 
        
-        startEvaluate = std::chrono::steady_clock::now();
-        mHxt.evaluate(xc,Hxt);
-        endEvaluate = std::chrono::steady_clock::now();
-        evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+        TIME(evaluateTime,
+             mHxt.evaluate(xc,Hxt)
+             );
 
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
 
-        startLinear = std::chrono::steady_clock::now();
-        linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx3);
-        endLinear = std::chrono::steady_clock::now();
+        TIME(solveLinearTime,
+             linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx3);
+             );
         solveLinearCount++;
-        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
       }
 
       // dx4
@@ -468,20 +461,18 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(xc, 0,0, n,1) += submatrix(dx3); 
         C.add(c,c,dc);
 
-        startEvaluate = std::chrono::steady_clock::now();
-        mHxt.evaluate(xc,Hxt);
-        endEvaluate = std::chrono::steady_clock::now();
-        evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+        TIME(evaluateTime,
+             mHxt.evaluate(xc,Hxt)
+             );
 
         LHS = submatrix(Hxt, 0,0, n,n);
         RHS = submatrix(Hxt, 0,n, n,1);
         MatrixOps::negateInPlace(RHSmat);
 
-        startLinear = std::chrono::steady_clock::now();
-        linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx4);
-        endLinear = std::chrono::steady_clock::now();
+        TIME(solveLinearTime,
+             linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx4);
+             );
         solveLinearCount++;
-        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
       }
       
       // "dx1" = .5*dx1*dt, "dx2" = .5*dx2*dt, "dx3" = dx3*dt
@@ -510,23 +501,18 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         do {
           n_corr_steps++;
 
-          //std::cout << "evaluate...\n";
-          startEvaluate = std::chrono::steady_clock::now();
-          mHxH.evaluate(x1c1,HxH);
-          endEvaluate = std::chrono::steady_clock::now();
-          evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
+          TIME(evaluateTime,
+               mHxH.evaluate(x1c1,HxH)
+               );
         
           LHS = submatrix(HxH, 0,0, n,n);
           RHS = submatrix(HxH, 0,n, n,1);
           MatrixOps::negateInPlace(RHSmat);
 
-          //std::cout << "solveLinear...\n";
-          startLinear = std::chrono::steady_clock::now();
-          linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx);
-          endLinear = std::chrono::steady_clock::now();
+          TIME(solveLinearTime,
+               linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,dx);
+               );
           solveLinearCount++;
-          solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
-          //std::cout << "solveLinear done\n";
 
           // x1 += dx
           submatrix(x1c1, 0,0, n,1) += dx;
@@ -569,11 +555,10 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         for(int i=0; i<n; i++) 
           C.random(RHSmat.entry(i,0));
         
-        startLinear = std::chrono::steady_clock::now();
-        linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,Jinv_times_random);
-        endLinear = std::chrono::steady_clock::now();
+        TIME(solveLinearTime,
+             linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,Jinv_times_random);
+             );
         solveLinearCount++;
-        solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
               
         norm2(Jinv_times_random,n,dx_norm2); // this stands for ||J^{-1}||
         //!!! R.add(dx_norm2,dx_norm2,x_norm2); // ||J^{-1}|| + ||x||
@@ -638,7 +623,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
   R.clear(infinity_threshold2);
   
   std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-  if (M2_numericalAlgebraicGeometryTrace>0) {
+  if (M2_numericalAlgebraicGeometryTrace>1) {
     std::cout << "-- track took "
               << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
               << "ms.\n";

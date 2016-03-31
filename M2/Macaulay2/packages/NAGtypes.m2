@@ -100,6 +100,7 @@ ring PolySystem := P -> ring P.PolyMap -- change this for SLP!!!
 equations = method() -- returns list of equations
 equations PolySystem := P -> flatten entries P.PolyMap -- change this for SLP!!!
 ideal PolySystem := P -> ideal P.PolyMap -- change this for SLP!!!
+toExternalString PolySystem := P -> "polySystem " | toExternalString equations P 
 
 isHomogeneous PolySystem := P -> isHomogeneous ideal P.PolyMap -- change this for SLP!!!
 XXXapply = method()
@@ -238,7 +239,7 @@ point List := s -> new Point from {Coordinates=>(
 	else error "wrong type of coordinates: List or Matrix expected"   
 	)} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
-toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
+toExternalString Point := p -> "point { " | toExternalString coordinates p |" }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
 Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
