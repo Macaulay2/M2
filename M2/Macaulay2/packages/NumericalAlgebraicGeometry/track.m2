@@ -860,12 +860,12 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     o.CorrectorTolerance, o.maxCorrSteps, 
 			     toRR o.InfinityThreshold);
 			 -- if DBG>3 then 
-			 << "-- trackHomotopyM2engine (at prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			 sols#nS = first extractM2engineOutput(H,out,statusOut);
 			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			 s = sols#nS;
 			 )
-		     else ( -- s === IncreasePrecision... or other reason
+		     else ( -- status s === IncreasePrecision... or other reason
 		     	 -- increase precision decrease minimal step size
 			 currentPrec = higherPrecision#currentPrec;
 			 if currentPrec =!= null then (
@@ -881,7 +881,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     			 o.CorrectorTolerance, o.maxCorrSteps, 
 	     			 toRR o.InfinityThreshold);
 	 		     -- if DBG>3 then 
-	 		     << "-- trackHomotopyM2engine (at prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			     sols#nS = first extractM2engineOutput(H,out,statusOut);
 			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			     s = sols#nS;
@@ -1095,5 +1095,5 @@ T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
 H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
-assert((first sols).NumberOfSteps == 3771)
+assert((first sols).NumberOfSteps == 101)
 ///

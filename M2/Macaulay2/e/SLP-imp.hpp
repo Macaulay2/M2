@@ -443,7 +443,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(dx2) *= one_half_dc; // "dx2" := (1/2)*dx2*dt
         submatrix(xc, 0,0, n,1) = submatrix(x0c0,  0,0, n,1);
         submatrix(xc, 0,0, n,1) += submatrix(dx2);
-        C.add(c,c,one_half_dc); // c should not change here??? or copy c two lines above??? 
+        // C.add(c,c,one_half_dc); // c should not change here??? or copy c two lines above??? 
        
         startEvaluate = std::chrono::steady_clock::now();
         mHxt.evaluate(xc,Hxt);
@@ -489,6 +489,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(dx4) *= dc; // "dx4" = dx4*dt
         submatrix(dx) = submatrix(dx4); // dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4) 
                                         //    = (1/6)*(2*"dx1"+4*"dx2"+2*"dx3"+"dx4")
+        submatrix(dx1) *= two;
         submatrix(dx2) *= four; 
         submatrix(dx3) *= two; 
         submatrix(dx) += dx1; 
@@ -508,23 +509,16 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       if (linearSolve_success) {
         do {
           n_corr_steps++;
-          //
+
           //std::cout << "evaluate...\n";
           startEvaluate = std::chrono::steady_clock::now();
           mHxH.evaluate(x1c1,HxH);
           endEvaluate = std::chrono::steady_clock::now();
           evaluateTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endEvaluate - startEvaluate).count(); 
         
-          //std::cout << "setFromSubmatrix 1...\n";
-          //MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
-          //std::cout << "setFromSubmatrix 2...\n";
-          //MatOps::setFromSubmatrix(HxH,0,n-1,n,n,RHSmat); // H
           LHS = submatrix(HxH, 0,0, n,n);
           RHS = submatrix(HxH, 0,n, n,1);
-
-          //std::cout << "negate...\n";
           MatrixOps::negateInPlace(RHSmat);
-          //solve LHS*dx = RHS
 
           //std::cout << "solveLinear...\n";
           startLinear = std::chrono::steady_clock::now();
@@ -535,13 +529,9 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
           //std::cout << "solveLinear done\n";
 
           // x1 += dx
-          //for(size_t i=0; i<n; i++)   
-          //  C.add(x1c1.entry(i,0),x1c1.entry(i,0),dx.entry(i,0));  
           submatrix(x1c1, 0,0, n,1) += dx;
 
-          //norm2(dx,n,dx_norm2);
           submatrix(dx).normSquared(dx_norm2);
-          //norm2(x1c1,n,x_norm2);
           submatrix(x1c1, 0,0, n,1).normSquared(x_norm2);
           
           R.mult(x_norm2,x_norm2,tol2);
@@ -560,17 +550,8 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       } else {
         // predictor success
         predictor_successes = predictor_successes + 1;
-        // x0c0 = x1c1
-        // std::cout << "before...\n";
-        //displayMat(x0c0);
-        //std::cout << std::endl;
-        //displayMat(x1c1);
-        MatOps::setFromSubmatrix(x1c1,0,n,0,0,x0c0);
-        //std::cout << "after...\n";
-        //displayMat(x0c0);
-        //std::cout << std::endl;
-        //displayMat(x1c1);
-        R.add(t0,t0,dt);
+        MatOps::setFromSubmatrix(x1c1,0,n,0,0,x0c0); // x1=x0
+        R.add(t0,t0,dt); // increment t: so far only s was incremented 
         count++;
         if (predictor_successes >= num_successes_before_increase) {
           predictor_successes = 0;
@@ -578,30 +559,27 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         }       
       }
       
-      norm2(x0c0,n,x_norm2);
+      submatrix(x0c0,0,0,n,1).normSquared(x_norm2); // x_norm2 = ||x0||^2
 
       if (not linearSolve_success)
         status = SINGULAR;
       else if (not t0equals1) { // precision check 
-#define PRECISION_SAFETY_BITS 10
-        //std::cout << "evaluate...\n";
         mHxH.evaluate(x0c0,HxH);
         MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
         for(int i=0; i<n; i++) 
           C.random(RHSmat.entry(i,0));
         
-        //std::cout << "solveLinear...\n";
         startLinear = std::chrono::steady_clock::now();
         linearSolve_success = MatrixOps::solveLinear(LHSmat,RHSmat,Jinv_times_random);
         endLinear = std::chrono::steady_clock::now();
         solveLinearCount++;
         solveLinearTime += std::chrono::duration_cast<std::chrono::nanoseconds>(endLinear - startLinear).count(); 
-        //std::cout << "solveLinear done\n";
-       
+              
         norm2(Jinv_times_random,n,dx_norm2); // this stands for ||J^{-1}||
         //!!! R.add(dx_norm2,dx_norm2,x_norm2); // ||J^{-1}|| + ||x||
                                           //   ||J^{-1}|| should be multiplied by a factor 
                                           //   reflecting an estimate on the error of evaluation of J 
+#define PRECISION_SAFETY_BITS 10
         int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + R.log2abs(dx_norm2) - 1; // subtract 1 for using squares under "log"
         if (R.get_precision() < precision_needed)    
           status = INCREASE_PRECISION;
