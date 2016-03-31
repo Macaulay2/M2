@@ -53,7 +53,7 @@ inversePermutation = v -> ( w := new MutableList from #v:null; scan(#v, i -> w#(
 -- Reminder: the contents of currentLayout are determined by the file ../d/startup.m2.in .
 gfdirs = {prefixDirectory | currentLayout#"factory gftables",
 	  currentLayout#"factory gftables"}
-i = position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
+i := position(gfdirs, gfdir -> fileExists(gfdir | "gftables/961")) -- 961==31^2
 if i === null
 then error ("sample Factory finite field addition table file missing, needed for factorization: ",
     prefixDirectory, currentLayout#"factory gftables",

@@ -55,17 +55,44 @@ ifneq (@host_alias@,)
 # it was ../configure --build=@host_alias@ (for cross compiling)
 SUBMODULE_CONFIGOPTIONS += --host=@host_alias@
 endif
-SUBMODULES = memtailor mathic mathicgb
 copy-license-files-from-memtailor: LICENSE_FILES = README.md license.txt
 copy-license-files-from-mathic: LICENSE_FILES = README.md lgpl-*
 copy-license-files-from-mathicgb: LICENSE_FILES = README.md gpl-*
 submodules/mathicgb/Makefile: SUBMODULE_CONFIGOPTIONS += --without-tbb
-SUBTARGETS = check all clean distclean run-configure
+
+# Note: we don't use the "install" target of submodules, even though we did so
+# for libraries.  The problem with "install" targets is that they *always* copy
+# their files, which is annoying.  Moreover, our submodules don't even come
+# with "uninstall" targets, typically.  include/config.Makefile.in for lines
+# that add the locations of the the include files and libraries to CPPFLAGS and
+# LDFLAGS.
+BUILDSUBTARGETS = check all run-configure
+
+# Even for submodules not scheduled to be built, we might as well arrange
+# for these targets to fire also for them when doing them for all submodules:
+SUBTARGETS = clean distclean
 GITSUBTARGETS = git-clean git-update git-status git-describe
+
 #all-in-submodules:all-in-libraries
+
+ifneq (,$(findstring memtailor,@BUILDSUBLIST@))
+all-in-mathicgb all-in-mathic:all-in-memtailor
+endif
+
+ifneq (,$(findstring mathic ,@BUILDSUBLIST@))
+all-in-mathicgb:all-in-mathic
+endif
+
 all-in-mathicgb:all-in-mathic all-in-memtailor
-all-in-mathic:all-in-memtailor
-$(foreach t,$(SUBTARGETS),$(eval $t:$t-in-submodules))
+
+$(foreach t,$(BUILDSUBTARGETS),$(eval $t:$t-in-submodules))
+
+$(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:))
+define build-submodule-rules
+$(foreach t,$(BUILDSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
+endef
+
+$(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:))
 define submodule-rules
 $(foreach t,$(SUBTARGETS) $(GITSUBTARGETS),$(eval $t-in-submodules:$t-in-$1))
 all-in-$1: run-configure-in-$1 build-in-$1 copy-license-files-from-$1
@@ -128,7 +155,8 @@ endif
 @srcdir@/submodules/$1/configure @srcdir@/submodules/$1/Makefile.in: @srcdir@/submodules/$1/configure.ac @srcdir@/submodules/$1/Makefile.am
 	cd @srcdir@/submodules/$1 && ./autogen.sh
 endef
-$(foreach s,$(SUBMODULES),$(eval $(call submodule-rules,$s)))
+$(foreach s,@SUBLIST@,$(eval $(call submodule-rules,$s)))
+$(foreach s,@BUILDSUBLIST@,$(eval $(call build-submodule-rules,$s)))
 $(foreach t,all check clean distclean,$(eval $t-in-Macaulay2:$t-in-submodules))
 
 # installation into usr-dist

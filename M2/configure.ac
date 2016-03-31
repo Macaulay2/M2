@@ -35,7 +35,7 @@ m4_include(config/relpaths.m4)
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
 echo "relevant environment variable values, if any:"
-for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION
+for x in CC FC CXX CPPFLAGS CFLAGS FCFLAGS CXXFLAGS LDFLAGS LIBS ISSUE DISTRIBUTION PKG_CONFIG_PATH GFTABLESDIR
 do eval v=\$$x
    test "$v" && echo "   $x = $v"
 done
@@ -752,11 +752,14 @@ dnl else AC_MSG_RESULT(none found)
 dnl fi
 
 AC_SUBST(BUILTLIBS,)
-# the list LIBLIST is the list of libraries that might be used and linked into M2
-# the list PROGLIST is the list of programs and libraries for them that are distributed with M2
-#     initially, we offer no option for not compiling some of them
-# it reflects dependencies, with prerequisites listed first
-# in particular, there are the following dependencies:
+# The list LIBLIST is the list of libraries that might be used and linked into M2.
+# The list PROGLIST is the list of programs and libraries for them that are distributed with M2.
+#     Initially, we offer no option for not compiling some of them.
+# The list SUBLIST is the list of submodules that might be used and linked into M2.
+# They reflect dependencies, with prerequisites listed first.
+# In particular, there are the following dependencies:
+#    mathicgb need mathic and memtailor
+#    mathic need memtailor
 #    gc needs atomic_ops (and sometimes includes it)
 #    factory needs gftables, flint, ntl and gmp
 #    libfac has been replaced by code in factory
@@ -790,12 +793,13 @@ AC_SUBST(BUILTLIBS,)
 #    flint depends on mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
+AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
 BUILD_ALWAYS=" gtest "
 
-for i in $LIBLIST
+for i in $LIBLIST $SUBLIST
 do eval BUILD_$i=no
 done
 
@@ -828,9 +832,9 @@ then BUILD_gfan=no
 fi
 
 LIBLIST=" $LIBLIST "
-AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
+AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list of libraries, submodules, and programs to build from downloaded source code (e.g., gc gdbm mpir mpfr pari readline ntl gftables factory lapack frobby glpk cddlib givaro fflas_ffpack linbox boost mpc qd mpack 4ti2 gfan normaliz nauty cddplus lrslib)]),
     [for i in $enableval
-    do case $LIBLIST in
+    do case "$LIBLIST $SUBLIST" in
 	    *" $i "*) 
 	        eval BUILD_$i=yes 
 		BUILD_ALWAYS="$BUILD_ALWAYS $i"
@@ -945,6 +949,36 @@ dnl then BUILTLIBS="-lgmpxx -lgmp $BUILTLIBS"
 dnl else LIBS="-lgmpxx $LIBS"
 dnl fi
 
+if test $BUILD_memtailor = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MEMTAILOR_VERSION_STRING,memtailor,,BUILD_memtailor=yes)
+     AC_CHECK_HEADER(memtailor.h,,BUILD_memtailor=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_memtailor = yes && BUILTLIBS="-lmemtailor $BUILTLIBS"
+
+if test $BUILD_mathic = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MATHIC_VERSION_STRING,mathic,,BUILD_mathic=yes)
+     AC_CHECK_HEADER(mathic.h,,BUILD_mathic=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_mathic = yes && BUILTLIBS="-lmathic $BUILTLIBS"
+
+if test $BUILD_mathicgb = no
+then AC_LANG(C++)
+     SAVE_CXXFLAGS="$CXXFLAGS"
+     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+     AC_SEARCH_LIBS(MATHICGB_VERSION_STRING,mathicgb,,BUILD_mathicgb=yes)
+     AC_CHECK_HEADER(mathicgb.h,,BUILD_mathicgb=yes)
+     CXXFLAGS="$SAVE_CXXFLAGS"
+fi
+test $BUILD_mathicgb = yes && BUILTLIBS="-lmathicgb $BUILTLIBS"
+
 if test $BUILD_mpir = no
 then AC_LANG(C)
      AC_SEARCH_LIBS(__gmp_version,gmp,,BUILD_mpir=yes)
@@ -1029,6 +1063,20 @@ then if test $BUILD_frobby = no
 		[LIBS=$SAVELIBS
 		 BUILD_frobby=yes
 		 AC_MSG_RESULT([no, will build it])])
+     fi
+     AC_DEFINE([HAVE_FROBBY_VERSION_NUMBER], [1],
+	 [if we can get version number from frobby])
+     if test $BUILD_frobby = no
+     then
+	AC_MSG_CHECKING([if we can get version number from frobby])
+	AC_LANG([C++])
+	AC_COMPILE_IFELSE(
+	    [AC_LANG_PROGRAM(
+		[#include <stdinc.h>],
+		[constants::version])],
+	    [AC_MSG_RESULT([yes])],
+	    [AC_MSG_RESULT([no])
+	     AC_DEFINE([HAVE_FROBBY_VERSION_NUMBER], [0])])
      fi
      test $BUILD_frobby = yes && BUILTLIBS="-lfrobby $BUILTLIBS"
 fi
@@ -1299,6 +1347,21 @@ else
      BUILTLIBS="$SINGULARLIBS $BUILTLIBS"
 fi
 
+AC_DEFINE([HAVE_FACTORY_PREM], [1],
+    [whether Prem() from factory is public])
+if test $BUILD_factory = no
+then
+    AC_MSG_CHECKING([whether Prem() from factory is public])
+    AC_LANG([C++])
+    AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [#include <factory/factory.h>],
+	    [CanonicalForm p,q; Prem(p,q)])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no])
+	 AC_DEFINE([HAVE_FACTORY_PREM], [0])])
+fi
+
 AC_ARG_VAR([GFTABLESDIR],
     [path to gftables directory if factory is already installed])
 if test $BUILD_factory = yes
@@ -1342,57 +1405,79 @@ fi
 # C++ libraries.  (I'm not sure why putting -llapack on the gcc command line
 # needlessly causes the library to be linked against.)
 FORTRANUSED=no
-if test $BUILD_lapack = no
-then AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
+if test $BUILD_lapack = yes
+then if test $USE_FCLIBS != no
+     then LIBS="$FCLIBS $LIBS"
+     fi
+else lapack_found=no
+     blas_found=no
+     AC_MSG_CHECKING([whether the Accelerate framework for lapack is available])
      SAVELIBS=$LIBS LIBS="-framework Accelerate $LIBS"
      AC_LANG(C)
      AC_LINK_IFELSE(
 	 [AC_LANG_PROGRAM(,[sgemv_();dgetrf_();])],
-	 [AC_MSG_RESULT(yes)],
-	 [AC_MSG_RESULT(no)
-	     LIBS=$SAVELIBS
-	     FORTRANUSED=yes
-	     AC_LANG(Fortran)
-	     if test "$FC" = ""
-	     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
-	     else AC_MSG_NOTICE(using fortran compiler $FC)
-	     fi
-	     AC_MSG_CHECKING([whether lapack is known to pkg-config])
-	     if pkg-config --exists lapack
-	     then AC_MSG_RESULT(yes)
-	          LIBS="`pkg-config --libs lapack blas` $LIB"
-		  CPPFLAGS="`pkg-config --cflags lapack blas` $CPPFLAGS"
-		  AC_SEARCH_LIBS(sgemv,,,AC_MSG_ERROR(lapack function sgemv not found))
-		  AC_SEARCH_LIBS(dgetrf,,,AC_MSG_ERROR(lapack function dgetrf not found))
-	     else AC_MSG_RESULT(no)
-	          LIBS1="-latllapack -latlcblas -lf77blas"
-	          AC_MSG_CHECKING([whether lapack is available with $LIBS1])
-		    found=yes
-		    SAVELIBS="$LIBS"
-		    LIBS="$LIBS1 $LIBS"
-  		    AC_SEARCH_LIBS(sgemv,,,found=no)
- 		    AC_SEARCH_LIBS(dgetrf,,,found=no)
-		    LIBS="$SAVELIBS"
-		  if [ $found = yes ]
-		  then AC_MSG_RESULT(yes)
-		  else AC_MSG_RESULT(no)
- 		       AC_SEARCH_LIBS(sgemv,blas f77blas,,BUILD_lapack=yes)
-  		       AC_SEARCH_LIBS(dgetrf,lapack,,BUILD_lapack=yes)
-		  fi
-	     fi
-	 ])
+	 [blas_found=yes; lapack_found=yes; AC_MSG_RESULT(yes)],
+	 [LIBS=$SAVELIBS; AC_MSG_RESULT(no)])
+     if test $blas_found = no
+     then AC_MSG_CHECKING([whether blas is known to pkg-config])
+	  if pkg-config --exists blas
+	  then AC_MSG_RESULT(yes)
+	       blas_found=yes
+	       NEWLIBS=`pkg-config --libs blas`
+	       LIBS="$NEWLIBS $LIB"
+	       CPPFLAGS="`pkg-config --cflags blas` $CPPFLAGS"
+	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $NEWLIBS))
+	  else AC_MSG_RESULT(no)
+	  fi
+     fi
+     if test $lapack_found = no
+     then AC_MSG_CHECKING([whether lapack is known to pkg-config])
+	  if pkg-config --exists lapack
+	  then AC_MSG_RESULT(yes)
+	       lapack_found=yes
+	       NEWLIBS=`pkg-config --libs lapack`
+	       LIBS="$NEWLIBS $LIB"
+	       CPPFLAGS="`pkg-config --cflags lapack` $CPPFLAGS"
+	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $NEWLIBS))
+	  else AC_MSG_RESULT(no)
+	  fi
+     fi
+     LIBS="$FCLIBS $LIBS"; added_fclibs=yes
+     if test $blas_found = no
+     then AC_SEARCH_LIBS(sgemv_,refblas blas f77blas atlcblas,blas_found=yes)
+          # we've been told that both f77blas and atlcblas are needed.  If so, fix this somehow.
+     fi
+     if test $lapack_found = no
+     then AC_SEARCH_LIBS(dgetrf_,lapack atllapack,lapack_found=yes)
+     fi
+     if test $blas_found = no -o $lapack_found = no
+     then BUILD_lapack=yes
+     fi
 fi
-test $BUILD_lapack = yes && BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
 
 if test $BUILD_lapack = yes
-then # test whether the fortran compiler can handle lapack, which, starting with
-     # version 3.2, requires fortran 90, not fortran 77
-    AC_LANG(Fortran)
-    AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
-    AC_COMPILE_IFELSE([instrinsic maxloc], dnl is "instrinsic" spelled correctly ??
-	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
-	AC_MSG_RESULT(yes))
+then if test $added_fclibs != yes
+     then LIBS="$FCLIBS $LIBS"
+     fi
+     BUILTLIBS="-llapack -lrefblas $BUILTLIBS"
+     dnl we'll need the fortran compiler to be present to compile lapack
+     FORTRANUSED=yes
+     if test "$FC" = ""
+     then AC_MSG_ERROR([no fortran compiler found (FC not set)])
+     else AC_MSG_NOTICE(using fortran compiler $FC)
+     fi
 fi
+
+dnl This code doesn't seem to be needed, and it wasn't ever working, anyway:
+dnl if test $BUILD_lapack = yes
+dnl then # test whether the fortran compiler can handle lapack, which, starting with
+dnl      # version 3.2, requires fortran 90, not fortran 77
+dnl     AC_LANG(Fortran)
+dnl     AC_MSG_CHECKING([whether the fortran compiler is modern enough for lapack])
+dnl     AC_COMPILE_IFELSE([intrinsic maxloc], dnl this is said to be a Fortran 90 feature
+dnl 	AC_MSG_RESULT(yes),
+dnl 	AC_MSG_RESULT(no))
+dnl fi
 
 test "$USE_FCLIBS" = no && FCLIBS=
 test "$FORTRANUSED" = no && FCLIBS=
@@ -1480,6 +1565,12 @@ AC_SUBST(BUILDLIBLIST,)
 for i in $LIBLIST
 do eval t=\$BUILD_$i
    test "$t" = yes && BUILDLIBLIST="$BUILDLIBLIST $i"
+done
+
+AC_SUBST(BUILDSUBLIST,)
+for i in $SUBLIST
+do eval t=\$BUILD_$i
+   test "$t" = yes && BUILDSUBLIST="$BUILDSUBLIST $i"
 done
 
 AC_SUBST(BUILDPROGLIST,)
@@ -1628,9 +1719,10 @@ do case $i in
    esac
 done
 
-AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST (libraries to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST (programs to be built from downloaded sources)])
-AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST (libraries and programs to be built from downloaded sources)])
+AC_MSG_NOTICE([using BUILDLIBLIST  = $BUILDLIBLIST])
+AC_MSG_NOTICE([using BUILDSUBLIST  = $BUILDSUBLIST])
+AC_MSG_NOTICE([using BUILDPROGLIST = $BUILDPROGLIST])
+AC_MSG_NOTICE([using BUILDLIST     = $BUILDLIST])
 AC_MSG_NOTICE([using BUILD_ALWAYS  = $BUILD_ALWAYS])
 AC_MSG_NOTICE([link using:])
 dnl the order of this list should agree with that in Macaulay2/bin/Makefile.in

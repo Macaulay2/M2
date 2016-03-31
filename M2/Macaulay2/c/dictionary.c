@@ -22,7 +22,7 @@ char *Csymbols[] = {
 
 char *CXXkeywords[] = {
   /* avoid collisions with C++ keywords not allowed as identifiers */
-  "this", "default",
+     "this", "default", "class", "mutable"
 };
 
 char *uniquify(char *s){
