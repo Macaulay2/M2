@@ -146,6 +146,11 @@ namespace M2 {
       result = a+b;
     }
 
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      result += a*b;
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       result = a-b;

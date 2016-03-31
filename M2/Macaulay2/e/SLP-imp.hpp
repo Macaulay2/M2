@@ -481,12 +481,13 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         submatrix(dx) = submatrix(dx4); // dx = (1/6)*dt*(dx1+2*dx2+2*dx3+dx4) 
                                         //    = (1/6)*(2*"dx1"+4*"dx2"+2*"dx3"+"dx4")
         submatrix(dx1) *= two;
-        submatrix(dx2) *= four; 
-        submatrix(dx3) *= two; 
         submatrix(dx) += dx1; 
+        //submatrix(dx).addMultipleTo(two,dx1);
+        submatrix(dx2) *= four; 
         submatrix(dx) += dx2; 
+        submatrix(dx3) *= two; 
         submatrix(dx) += dx3; 
-        submatrix(dx) *= one_sixth; // submatrix(dx).addMultipleTo(one_sixth,dx4) 
+        submatrix(dx) *= one_sixth;  
 
         // update x0c0
         submatrix(x1c1) = submatrix(x0c0);

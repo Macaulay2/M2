@@ -99,6 +99,23 @@ struct SubMatrix
   }
 
   template<typename ElementType>
+  void addMultipleTo(ElementType& c, SubMatrix<MatType> src)
+  {
+    M2_ASSERT(sameSize(src));
+    long rA = begin_row;
+    long rB = src.begin_row;
+    for ( ; rA < end_row; ++rA, ++rB)
+      {
+        long cA = begin_column;
+        long cB = src.begin_column;
+        for ( ; cA < end_column; ++cA, ++cB)
+          matrix.ring().addMultipleTo(matrix.entry(rA,cA),
+                                      c,
+                                      src.matrix.entry(rB,cB));
+      }
+  }
+
+  template<typename ElementType>
   void operator*=(ElementType& c)
   {
     for (long rA = begin_row; rA < end_row; ++rA)
