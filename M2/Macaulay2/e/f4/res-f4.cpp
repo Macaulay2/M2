@@ -89,27 +89,28 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 //     and column array (if it is not already there).
 // caveats: this function is only to be used during construction 
 //     of the coeff matrices.  It uses mThisLevel.
-ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial n)
+//
+// If the ring has skew commuting variables, then result_sign_if_skew is set to 0, 1, or -1.
+ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial n, int& result_sign_if_skew)
 {
-  auto& p = mFrame.level(mThisLevel-2)[monoid().get_component(n)];
+  result_sign_if_skew = 1;
+  auto x = monoid().get_component(n);
+  auto& p = mFrame.level(mThisLevel-2)[x];
   if (p.mBegin == p.mEnd) return -1;
 
   monoid().unchecked_mult(m,n,mNextMonom);
   // the component is wrong, after this operation, as it adds components
   // So fix that:
-  monoid().set_component(monoid().get_component(n), mNextMonom);
+  monoid().set_component(x, mNextMonom);
 
+  if (ring().isSkewCommutative())
+    {
+      result_sign_if_skew = ring().skewInfo()->mult_sign(m, n);
+      if (result_sign_if_skew == 0)
+        return -1;
+    }
   return processCurrentMonomial();
 }
-
-#if 0
-// The returned int value can be: 0, 1, -1: 0 means product is zero.
-// 1 means multiplier is 1, -1, means -1 (i.e. sign of the permutation to put the
-// monomial back in sorted order).
-std::pair<ComponentIndex, int> F4Res::processSkewMonomialProduct(packed_monomial m, packed_monomial n)
-{
-}
-#endif
 
 // new_m is a monomial that we have just created.  There are several
 // things that can happen:
@@ -161,6 +162,8 @@ ComponentIndex F4Res::processCurrentMonomial()
 }
 void F4Res::loadRow(Row& r)
 {
+  int skew_sign; // will be set to 1, unless ring().isSkewCommutative() is true, then it can be -1,0,1.
+  // however, if it is 0, then "val" below will also be -1.
   FieldElement one;
   resGausser().set_one(one);
   long comp = monoid().get_component(r.mLeadTerm);
@@ -169,7 +172,7 @@ void F4Res::loadRow(Row& r)
     {
       // We only need to add in the current monomial
       //fprintf(stdout, "USING degree 0 monomial\n");
-      ComponentIndex val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom);
+      ComponentIndex val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom, skew_sign);
       if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
       r.mComponents.push_back(val);
       r.mCoeffs.push_back(one);
@@ -180,10 +183,18 @@ void F4Res::loadRow(Row& r)
   auto i = poly_iter(mRing, p);
   for ( ; i != end; ++i)
     {
-      ComponentIndex val = processMonomialProduct(r.mLeadTerm, i.monomial());
+      ComponentIndex val = processMonomialProduct(r.mLeadTerm, i.monomial(), skew_sign);
       if (val < 0) continue;
       r.mComponents.push_back(val);
-      r.mCoeffs.push_back(i.coefficient());
+      if (skew_sign > 0)
+        r.mCoeffs.push_back(i.coefficient());
+      else
+        {
+          // Only happens if we are in a skew commuting ring.
+          FieldElement c;
+          ring().resGausser().negate(i.coefficient(), c);
+          r.mCoeffs.push_back(c);
+        }
     }
 } 
 
@@ -530,7 +541,7 @@ void F4Res::construct(int lev, int degree)
   if (M2_gbTrace >= 2)
     std::cout << "  time: " << nsecs0 << std::endl;
 
-#if 0
+#if 1
   std::cout << "-- rows --" << std::endl;
   debugOutputReducers();
   std::cout << "-- columns --" << std::endl;

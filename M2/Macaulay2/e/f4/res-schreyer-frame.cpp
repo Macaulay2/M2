@@ -156,7 +156,9 @@ void SchreyerFrame::start_computation(StopConditions& stop)
             if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
               return;
           }
+        //std::cout << "MES: about to do construct(" << mCurrentLevel << "," << mSlantedDegree << ")" << std::endl;
         mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
+        //std::cout << "MES: done with construct(" << mCurrentLevel << "," << mSlantedDegree << ")" << std::endl;        
         ///std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;
@@ -205,13 +207,30 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
   // Returns the number of elements added
   packed_monomial m = monomial(lev, elem); 
   std::vector<PreElement*> elements;
+  if (ring().isSkewCommutative())
+    {
+      auto skewvars = new int[ring().monoid().n_vars()];
+      int a = ring().monoid().skew_vars(ring().skewInfo(), m, skewvars);
+      // std::cout << "adding " << a << " syz from skew" << std::endl;
+      for (int i=0; i<a; ++i)
+        {
+          PreElement* vp = mPreElements.allocate();
+          vp->vp = mVarpowers.reserve(mMaxVPSize);
+          monoid().variable_as_vp(skewvars[i], vp->vp);
+          int len = static_cast<int>(varpower_monomials::length(vp->vp));
+          mVarpowers.intern(len);
+
+          elements.push_back(vp);
+        }
+      delete [] skewvars;
+    }
   for (long i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
   typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
   MonomialLookupTable montab(monoid().n_vars());
 
 #if 0
-  ///std::cout << "  #pre elements = " << elements.size() << std::endl;
+  std::cout << "  #pre elements = " << elements.size() << std::endl;
   for (auto i=elements.begin(); i != elements.end(); ++i)
     {
       varpower_monomials::elem_text_out(stdout, (*i)->vp);
@@ -252,7 +271,7 @@ long SchreyerFrame::computeNextLevel()
     {
       long begin = (*i).mBegin;
       long end = (*i).mEnd;
-      for (long i=begin+1; i<end; ++i)
+      for (long i=begin; i<end; ++i)
         {
           auto& elem = level(level1)[i];
           elem.mBegin = n_elems_added;

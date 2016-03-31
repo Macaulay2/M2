@@ -101,7 +101,7 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
         ERROR("resolution Strategy=>4 cannot resolve a cokernel with a given presentation: use Strategy=>2 or Strategy=>3 instead");
         return 0;
       }
-    if (!R->is_commutative_ring())
+    if (!P->is_skew_commutative() and !R->is_commutative_ring())
       {
         ERROR("use resolution Strategy=>2 or Strategy=>3 for non commutative polynomial rings");
         return 0;

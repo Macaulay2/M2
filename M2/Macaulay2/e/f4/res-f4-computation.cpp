@@ -79,9 +79,11 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   frame.endLevel();
   //  frame.show(0);
 
-  while (frame.computeNextLevel() > 0)
+  int mylevel = 2;
+  while (mylevel <= max_level and frame.computeNextLevel() > 0)
     {
-      //frame.show(0);
+      //      frame.show(0);
+      mylevel++;
     }
 
   return result;

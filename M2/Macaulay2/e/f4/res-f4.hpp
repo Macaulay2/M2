@@ -58,7 +58,8 @@ private:
   void clearMatrix();
   bool findDivisor(packed_monomial m, packed_monomial result);
   ComponentIndex processCurrentMonomial(); // process mNextMonomial
-  ComponentIndex processMonomialProduct(packed_monomial m, packed_monomial n);
+  ComponentIndex processMonomialProduct(packed_monomial m, packed_monomial n, int& result_sign_if_skew);
+    // if result_sign_if_skew is set to 0, then result is set to -1.
   void loadRow(Row& r);
   void reorderColumns();
   void makeMatrix();
