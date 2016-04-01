@@ -208,7 +208,7 @@ dnl AC_ARG_VAR(CC,C compiler to use)
 dnl AC_ARG_VAR(CXX,C++ compiler to use)
 
 AC_SUBST(OPTIMIZE,yes) AC_ARG_ENABLE(optimize, AS_HELP_STRING(--disable-optimize,disable optimization), OPTIMIZE=$enableval)
-AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
+
 AC_SUBST(NTL_WIZARD,yes) AC_ARG_ENABLE(ntl-wizard, AS_HELP_STRING(--disable-ntl-wizard,disable running the NTL wizard), NTL_WIZARD=$enableval)
 
 AC_SUBST(M2_CPPFLAGS,)
@@ -233,9 +233,10 @@ AC_MSG_NOTICE([checking for C compiler for build environment...])
 AC_PROG_CC_FOR_BUILD		dnl see config/ax_prog_cc_for_build.m4
 AC_MSG_NOTICE([checking for C compiler for build environment... done])
 
+AC_SUBST(DEBUG,no)     AC_ARG_ENABLE(debug, AS_HELP_STRING(--enable-debug,enable debugging (and disable stripping)), DEBUG=$enableval)
 if test "$DEBUG" = yes
-then 
-     # it is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint"
+then # It is a mistake to add "-DDEBUG" to CPPFLAGS, because it is nonstandard and may confusing libraries, such as "flint".
+     # Instead, NDEBUG being *not* defined as a C macro is what indicates debug mode.  This is standard practice.
      if test "$GCC" = yes
      then CFLAGS="$CFLAGS -g3"
 	  CXXFLAGS="$CXXFLAGS -g3"
@@ -244,6 +245,9 @@ then
 	  CXXFLAGS="$CXXFLAGS -g"
 	  LDFLAGS="$LDFLAGS -g"
      fi
+     # gc.h obeys the GC_DEBUG flag:
+     M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
+     CPPFLAGS="$CPPFLAGS -DGC_DEBUG"
 else M2_CPPFLAGS="$M2_CPPFLAGS -DNDEBUG"
      CPPFLAGS="$CPPFLAGS -DNDEBUG"
 fi
@@ -459,7 +463,9 @@ AC_LANG(C)
 
 dnl AC_SUBST(PTHREADS,yes) AC_ARG_ENABLE(pthreads, AS_HELP_STRING(--disable-pthreads,[disable pthreads (for gc)]), PTHREADS=$enableval)
 
-AC_SUBST(ENABLE_STRIP,yes)     AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+AC_SUBST(ENABLE_STRIP,yes) AC_ARG_ENABLE(strip, AS_HELP_STRING(--disable-strip,do not strip the symbol table from the Macaulay 2 binary), ENABLE_STRIP=$enableval)
+test "$DEBUG" = "yes" && ENABLE_STRIP=no
+
 AC_SUBST(STATIC,no)    AC_ARG_ENABLE(static, AS_HELP_STRING(--enable-static,enable static linking), STATIC=$enableval)
 AC_SUBST(MEMDEBUG,no)  AC_ARG_ENABLE(memdebug, AS_HELP_STRING(--enable-memdebug,enable memory allocation debugging), MEMDEBUG=$enableval)
 AC_SUBST(ENCAP,no)     AC_ARG_ENABLE(encap, AS_HELP_STRING(--enable-encap,encapsulate all files in a subdirectory at installation time), ENCAP=$enableval)
@@ -558,7 +564,6 @@ AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,in
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
-test "$DEBUG" = "yes" && ENABLE_STRIP=no
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
 
 
@@ -1669,7 +1674,6 @@ LDFLAGS=$SAVE
 AC_SUBST(DUMPDATAFILE,Macaulay2-$ARCH-data)
 
 test "$MEMDEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DMEMDEBUG"
-test "$DEBUG" = yes && M2_CPPFLAGS="$M2_CPPFLAGS -DGC_DEBUG"
 
 if test "$OS" = MacOS 
 then 

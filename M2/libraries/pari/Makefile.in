@@ -55,21 +55,15 @@ CONFIGURECMD = $(CONFIGENV) dfltlibdir=$(LIBRARIESDIR)/lib ./Configure --prefix=
 GETODIR  = `cd $(BUILDDIR) && find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 GETODIR2 = `find . -name pari.cfg | head -1 | sed 's=/[^/]*$$=='`
 
-ifeq (@PROFILING@,yes)
-CONFIGURECMD += -pg
 INSTALLOPTIONS = -C $(GETODIR2)
 BUILDOPTIONS = -C $(GETODIR2)
 CHECKOPTIONS = -C $(GETODIR2)
+
+ifeq (@PROFILING@,yes)
+CONFIGURECMD += -pg
 else
 ifeq (@DEBUG@,yes)
 CONFIGURECMD += -g
-INSTALLOPTIONS = -C $(GETODIR2)
-BUILDOPTIONS = -C $(GETODIR2)
-CHECKOPTIONS = -C $(GETODIR2)
-else
-INSTALLOPTIONS = -C $(GETODIR2)
-BUILDOPTIONS = -C $(GETODIR2)
-CHECKOPTIONS = -C $(GETODIR2)
 endif
 endif
 

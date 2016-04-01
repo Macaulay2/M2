@@ -12,7 +12,7 @@
 #endif
 #include "pi-masks.h"
 
-#ifdef DEBUG
+#ifndef NDEBUG
 extern void trap ();
 #endif
 
@@ -86,7 +86,7 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
      static T add(T x, T y, T &carries) {
           T sum = x + y - encoded_zeroes();
           carries |= bool_neq(bool_sub(bool_add(x,y),encoded_zeroes()),sum);
-#ifdef DEBUG
+#ifndef NDEBUG
           if (0 != (carries & ovmask())) trap();
 #endif
           if (extrabits_per_bin() == 0) {
@@ -105,7 +105,7 @@ template <typename T, typename U, int bits_per_fld, field_type type> class pui {
      static T sub(T x, T y, T &borrows) {
           T dif = x - y + encoded_zeroes();
           borrows |= bool_neq(bool_add(bool_sub(x,y),encoded_zeroes()),dif);
-#ifdef DEBUG
+#ifndef NDEBUG
           if (0 != (borrows & ovmask())) trap();
 #endif
           if (extrabits_per_bin() == 0) {
