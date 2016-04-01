@@ -98,11 +98,12 @@ ComponentIndex ResGausser::dense_row_next_nonzero(dense_row &r, ComponentIndex f
   return last+1;
 }
 
-void ResGausser::dense_row_cancel_sparse(dense_row &r,
+void ResGausser::dense_row_cancel_sparse_monic(dense_row &r,
                                       ComponentIndex len,
                                       CoefficientArray sparse,
                                       ComponentIndex *comps) const
 {
+  // KEY ASSUMPTION HERE: sparse[0] is "1".
   int* elems = r.coeffs;
   int* sparseelems = sparse;
 
@@ -114,6 +115,42 @@ void ResGausser::dense_row_cancel_sparse(dense_row &r,
   int a = elems[*comps];
   for (ComponentIndex i=len; i>0; i--)
     Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
+}
+
+void ResGausser::dense_row_cancel_sparse(dense_row &r,
+                                         ComponentIndex len,
+                                         CoefficientArray sparse,
+                                         ComponentIndex *comps,
+                                         FieldElement& a
+                                         ) const
+{
+  // r += a*sparse
+  // ASSUMPTIONS:
+  //   len > 0,
+  //   sparse[0] = 1 or -1 (in the field)
+  // where a is
+  //   r[comps[0]], if sparse[0]==1
+  //   -r[comps[0]], if sparse[0]==-1
+  // r = [...., b, .....]
+  // sparse = [1,...]  then a = -b
+  // sparse = [-1,...] then a = b
+  
+  int* elems = r.coeffs;
+  int* sparseelems = sparse;
+  int one;
+  set_one(one);
+  
+  // Basically, over ZZ/p, we are doing: r += a*sparse,
+  // where sparse is monic, and a is -r.coeffs[*comps].
+
+  n_dense_row_cancel++;
+  n_subtract_multiple += len;
+  a = elems[*comps];
+  if (sparse[0] != one) // should be minus_one
+    Kp->negate(a, a);
+  for (ComponentIndex i=len; i>0; i--)
+    Kp->subtract_multiple(elems[*comps++], a, *sparseelems++);
+  Kp->negate(a,a);
 }
 
 // Local Variables:

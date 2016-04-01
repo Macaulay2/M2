@@ -131,7 +131,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         break;
       case Matrices:
         if (M2_gbTrace >= 1)
-          std::cout << "start_computation: entering Matrices(" << mCurrentLevel << ", " << mSlantedDegree << ")" << std::endl;
+          std::cout << "start_computation: entering matrices(" << mSlantedDegree << ", " << mCurrentLevel << ")" << std::endl;
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
@@ -139,7 +139,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
             mSlantedDegree++;
             if (mSlantedDegree > mHiSlantedDegree)
               {
-                showMemoryUsage();
+                if (M2_gbTrace >= 1)
+                  showMemoryUsage();
 #if 0                
                 debugCheckOrderAll();
 #endif
@@ -150,15 +151,22 @@ void SchreyerFrame::start_computation(StopConditions& stop)
                     mBettiMinimal.entry(it->first+1, it->second-1) -= rk;
                   }
                 mState = Done;
-                mBettiMinimal.output();
+                if (M2_gbTrace >= 1)
+                  mBettiMinimal.output();
                 break;
               }
             if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
               return;
           }
-        //std::cout << "MES: about to do construct(" << mCurrentLevel << "," << mSlantedDegree << ")" << std::endl;
+        if (M2_gbTrace >= 2)
+          {
+            std::cout << "construct(" << mSlantedDegree << ", " << mCurrentLevel << ")..." << std::flush;
+          }
         mComputer.construct(mCurrentLevel, mSlantedDegree+mCurrentLevel);
-        //std::cout << "MES: done with construct(" << mCurrentLevel << "," << mSlantedDegree << ")" << std::endl;        
+        if (M2_gbTrace >= 2)
+          {
+            std::cout << "done" << std::endl;
+          }
         ///std::cout << "Number of distinct monomials so far = " << mAllMonomials.count() << std::endl;
         mCurrentLevel++;
         break;

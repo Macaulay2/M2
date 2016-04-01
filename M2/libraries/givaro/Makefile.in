@@ -1,9 +1,14 @@
-URL = https://github.com/linbox-team/givaro/archive
-VERSION = 4.0.1
-TARFILE = v$(VERSION).tar.gz
-# PATCHFILE = @abs_srcdir@/patch-$(VERSION)
+# URL = http://ljk.imag.fr/CASYS/LOGICIELS/givaro/Downloads
+
+# our snapshot taken from:
+#  svn://scm.forge.imag.fr/var/lib/gforge/chroot/scmrepos/svn/givaro/trunk
+VERSION = 3.7.0
+#URL = http://macaulay2.com/Downloads/OtherSourceCode
+URL = http://forge.imag.fr/frs/download.php/207/
+#URL = http://forge.imag.fr/frs/download.php/370/
+#PRECONFIGURE = NOCONFIGURE=yes ./autogen.sh
+PATCHFILE = @abs_srcdir@/patch-$(VERSION)
 LICENSEFILES = COPYRIGHT Licence_CeCILL-B_V1-en.txt Licence_CeCILL-B_V1-fr.txt
-PRECONFIGURE = ./autogen.sh
 
 # linking givaro as a shared library is bad, because then under Mac OS X its static constructors
 # get run before ours do, and it calls our "operator new", which calls GC_malloc, before we've

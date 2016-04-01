@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ctime>
 #include <algorithm>
+#include "../timing.hpp"
 
 F4Res::F4Res(
              SchreyerFrame& res
@@ -105,7 +106,7 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
 
   if (ring().isSkewCommutative())
     {
-      result_sign_if_skew = ring().skewInfo()->mult_sign(m, n);
+      result_sign_if_skew = monoid().skew_mult_sign(ring().skewInfo(), m, n);
       if (result_sign_if_skew == 0)
         return -1;
     }
@@ -162,12 +163,16 @@ ComponentIndex F4Res::processCurrentMonomial()
 }
 void F4Res::loadRow(Row& r)
 {
+  //  std::cout << "loadRow: ";
+  //  monoid().showAlpha(r.mLeadTerm);
+  //  std::cout << std::endl;
   int skew_sign; // will be set to 1, unless ring().isSkewCommutative() is true, then it can be -1,0,1.
   // however, if it is 0, then "val" below will also be -1.
   FieldElement one;
   resGausser().set_one(one);
   long comp = monoid().get_component(r.mLeadTerm);
   auto& thiselement = mFrame.level(mThisLevel-1)[comp];
+  //std::cout << "  comp=" << comp << " mDegree=" << thiselement.mDegree << " mThisDegree=" << mThisDegree << std::endl;
   if (thiselement.mDegree == mThisDegree)
     {
       // We only need to add in the current monomial
@@ -175,7 +180,15 @@ void F4Res::loadRow(Row& r)
       ComponentIndex val = processMonomialProduct(r.mLeadTerm, thiselement.mMonom, skew_sign);
       if (val < 0) fprintf(stderr, "ERROR: expected monomial to live\n");
       r.mComponents.push_back(val);
-      r.mCoeffs.push_back(one);
+      if (skew_sign > 0)
+        r.mCoeffs.push_back(one);
+      else
+        {
+          // Only happens if we are in a skew commuting ring.
+          FieldElement c;
+          ring().resGausser().negate(one, c);
+          r.mCoeffs.push_back(c);
+        }
       return;
     }
   auto& p = thiselement.mSyzygy;
@@ -184,6 +197,7 @@ void F4Res::loadRow(Row& r)
   for ( ; i != end; ++i)
     {
       ComponentIndex val = processMonomialProduct(r.mLeadTerm, i.monomial(), skew_sign);
+      //std::cout << "  monom: " << val << " skewsign=" << skew_sign << " mColumns.size=" << mColumns.size() << std::endl;
       if (val < 0) continue;
       r.mComponents.push_back(val);
       if (skew_sign > 0)
@@ -461,7 +475,8 @@ void F4Res::gaussReduce()
   // Reduce to zero every spair. Recording creates the
   // corresponding syzygy, which is auto-reduced and correctly ordered.
 
-  // allocate a dense row, of correct size  
+  // allocate a dense row, of correct size
+  //std::cout << "gaussReduce: entering" << std::flush;
   ResGausser::dense_row gauss_row;
   mRing.resGausser().dense_row_allocate(gauss_row, static_cast<ComponentIndex>(mColumns.size()));
   FieldElement one;
@@ -488,39 +503,55 @@ void F4Res::gaussReduce()
       #if 0
       std::cout << "about to fill from sparse " << i << std::endl;
       #endif
-      
-      ComponentIndex firstcol = r.mComponents[0];
-      ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size()-1); // maybe: r.mComponents[r.mComponents.size()-1];
-      mRing.resGausser().dense_row_fill_from_sparse(gauss_row,
-                                                    static_cast<ComponentIndex>(r.mComponents.size()),
-                                                    & r.mCoeffs[0],
-                                                    & r.mComponents[0]); // FIX: not correct call
 
-      while (firstcol <= lastcol)
+      // Note: in the polynomial ring case, the row r is non-zero.
+      // BUT: for skew commuting variables, it can happen that r is zero
+      // (e.g. a.(acd<0>) = 0).  In this case we have nothing to reduce.
+      if (!r.mComponents.empty())
         {
-          #if 0
-          std::cout << "about to reduce with col " << firstcol << std::endl;
-          #endif
+          ComponentIndex firstcol = r.mComponents[0];
+          ComponentIndex lastcol = static_cast<ComponentIndex>(mColumns.size()-1); // maybe: r.mComponents[r.mComponents.size()-1];
+          mRing.resGausser().dense_row_fill_from_sparse(gauss_row,
+                                                        static_cast<ComponentIndex>(r.mComponents.size()),
+                                                        & r.mCoeffs[0],
+                                                        & r.mComponents[0]); // FIX: not correct call
           
-          FieldElement elem;
-
-          #if 0
-          for (ComponentIndex p=0; p<mColumns.size(); p++)
+          while (firstcol <= lastcol)
             {
-              fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
-            }
-          fprintf(stdout, "\n");
-          #endif
+              #if 0
+              std::cout << "about to reduce with col " << firstcol << std::endl;
+              #endif
           
-          mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
-          result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
-          ///mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
-          mRing.resGausser().dense_row_cancel_sparse(gauss_row,
-                                                     static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
-                                                     & mReducers[firstcol].mCoeffs[0],
-                                                     & mReducers[firstcol].mComponents[0]
-                                                     );
-          firstcol = mRing.resGausser().dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
+              FieldElement elem;
+
+              #if 0
+              for (ComponentIndex p=0; p<mColumns.size(); p++)
+                {
+                  fprintf(stdout, " %d", mRing.resGausser().coeff_to_int(gauss_row.coeffs[p]));
+                }
+              fprintf(stdout, "\n");
+              #endif
+
+#if 0             
+              mRing.resGausser().negate(gauss_row.coeffs[firstcol], elem);
+              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
+              ///mFrame.mAllMonomials.accountForMonomial(mReducers[firstcol].mLeadTerm);
+              mRing.resGausser().dense_row_cancel_sparse_monic(gauss_row,
+                                                         static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
+                                                         & mReducers[firstcol].mCoeffs[0],
+                                                         & mReducers[firstcol].mComponents[0]
+                                                         );
+#else
+              mRing.resGausser().dense_row_cancel_sparse(gauss_row,
+                                                         static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
+                                                         & mReducers[firstcol].mCoeffs[0],
+                                                         & mReducers[firstcol].mComponents[0],
+                                                         elem
+                                                         );
+              result.appendTerm(mReducers[firstcol].mLeadTerm, elem);
+#endif
+              firstcol = mRing.resGausser().dense_row_next_nonzero(gauss_row, firstcol+1, lastcol);
+            }
         }
       result.setPoly(syz);
     }
@@ -534,14 +565,19 @@ void F4Res::construct(int lev, int degree)
 
   if (M2_gbTrace >= 2)
     std::cout << "make matrix" << std::endl;
-  clock_t begin_time0 = clock();
+  auto begin_time0 = timer();
+  //  clock_t begin_time0 = clock();
   makeMatrix();
-  clock_t end_time0 = clock();
-  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  //  clock_t end_time0 = clock();
+  auto end_time0 = timer();
   if (M2_gbTrace >= 2)
-    std::cout << "  time: " << nsecs0 << std::endl;
+    std::cout << "  time: " << microseconds(end_time0-begin_time0) << " microsec"  << std::endl;
+  
+  ///  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  //  if (M2_gbTrace >= 2)
+  //    std::cout << "  time: " << nsecs0 << std::endl;
 
-#if 1
+#if 0
   std::cout << "-- rows --" << std::endl;
   debugOutputReducers();
   std::cout << "-- columns --" << std::endl;
@@ -562,9 +598,9 @@ void F4Res::construct(int lev, int degree)
 #endif
 
   if (M2_gbTrace >= 2)
-  std::cout << "(level,degree)=("
-            << mThisLevel << ","
-            << mThisDegree
+  std::cout << "(degree,level)=("
+            << (mThisDegree-mThisLevel) << ","
+            << mThisLevel 
             << ") #spairs="
             << mSPairs.size()
             << " reducer= "
@@ -573,12 +609,16 @@ void F4Res::construct(int lev, int degree)
 
   if (M2_gbTrace >= 2)
     std::cout << "gauss reduce matrix" << std::endl;
-  begin_time0 = clock();
+  //  begin_time0 = clock();
+  begin_time0 = timer();
   gaussReduce();
-  end_time0 = clock();
-  nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  end_time0 = timer();
   if (M2_gbTrace >= 2)
-    std::cout << "  time: " << nsecs0 << std::endl;
+    std::cout << "  time: " << microseconds(end_time0-begin_time0) << " microsec"  << std::endl;
+  //  end_time0 = clock();
+  //  nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  //  if (M2_gbTrace >= 2)
+  //    std::cout << "  time: " << nsecs0 << std::endl;
   //  mFrame.show(-1);
   clearMatrix();
 }

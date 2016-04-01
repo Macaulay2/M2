@@ -85,14 +85,22 @@ public:
                                   ComponentIndex* comps) const;
   // Fills 'r' from 'sparse' (and 'comps')
 
-  void dense_row_cancel_sparse(dense_row& r,
+  void dense_row_cancel_sparse_monic(dense_row& r,
                                ComponentIndex len,
                                CoefficientArray sparse,
                                ComponentIndex* comps) const;
   // dense += c * sparse, where c is chosen to cancel column comps[0].
-  // There should also be a version of this routine which records this value c
-  // into a CoefficientArray.
+  // ASSUMPTION: the lead coeff of 'sparse' is 1.
 
+  void dense_row_cancel_sparse(dense_row& r,
+                               ComponentIndex len,
+                               CoefficientArray sparse,
+                               ComponentIndex* comps,
+                               FieldElement& result_c) const;
+  // dense += c * sparse, where c is chosen to cancel column comps[0].
+  // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
+  // The value of c is recorded in result_c.
+  
   int coeff_to_int(FieldElement f) const //anton
   {
     return Kp->to_int(f);

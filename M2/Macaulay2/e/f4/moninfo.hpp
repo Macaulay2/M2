@@ -130,7 +130,11 @@ public:
   int skew_vars(const SkewMultiplication* skew, const_packed_monomial m, int* skewvars) const {
     return skew->skew_vars(m + 2 + nweights, skewvars);
   }
-    
+
+  int skew_mult_sign(const SkewMultiplication* skew, const_packed_monomial m, const_packed_monomial n) const {
+    return skew->mult_sign(m + 2 + nweights, n + 2 + nweights);
+  }
+  
   bool one(long comp, packed_monomial result) const {
     // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account ???
