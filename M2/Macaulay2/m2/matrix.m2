@@ -166,8 +166,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  then error "maps not composable";
 	  dif := degrees P - degrees Q;
 	  deg := (
-	       if same dif
-	       then (degree m + degree n + dif#0)
+	       if #dif === 0
+	       then degree m + degree n
+	       else if same dif
+	       then degree m + degree n + dif#0
  	       else toList (degreeLength R:0)
 	       );
 	  f := m.RawMatrix * n.RawMatrix;
