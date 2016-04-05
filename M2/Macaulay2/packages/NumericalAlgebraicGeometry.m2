@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.7",
-     Date => "October 2014",
+     Version => "1.8.2.1",
+     Date => "Jan 2016",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -13,7 +13,7 @@ newPackage select((
 	  {Name => "Robert Krone", Email => "krone@math.gatech.edu"}
 	  },
      Configuration => { "PHCPACK" => "phc",  "BERTINI" => "bertini", "HOM4PS2" => "hom4ps2" },	
-     PackageExports => {"NAGtypes","NumericalHilbert"},
+     PackageExports => {"NAGtypes","NumericalHilbert","SLPexpressions"},
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
@@ -39,8 +39,8 @@ newPackage select((
 export {
      "setDefault", "getDefault",
      "solveSystem", 
-     solveGenericSystemInTorus, -- works with PHCpack only
-     "refine", "totalDegreeStartSystem", "newton",
+     "solveGenericSystemInTorus", -- works with PHCpack only
+     "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
      -- "multistepPredictor", "multistepPredictorLooseEnd",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
@@ -52,9 +52,9 @@ export {
      "SLP", "HornerForm", "CompiledHornerForm", "CorrectorTolerance", "SLPcorrector", "SLPpredictor",
      "NoOutput",
      "randomSd", "goodInitialPair", "randomInitialPair", "GeneralPosition",
-     Bits, Iterations, ErrorTolerance, ResidualTolerance,
+     "Bits", "Iterations", "ErrorTolerance", "ResidualTolerance",
      "Attempts", "SingularConditionNumber", 
-     regeneration, isSolution, SquaredUpSystem, SquareUpMatrix, squareUp,
+     "regeneration", "isSolution", "SquaredUpSystem", "SquareUpMatrix", "squareUp",
      "isOn",
      "Output", -- may rename/remove later
      "NAGtrace"
@@ -62,10 +62,14 @@ export {
 exportMutable {
      }
 
+
 -- local functions/symbols:
 protect Processing, protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+
+-- possible solution statuses returned by engine
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -303,10 +307,11 @@ checkCCpolynomials (List,List) := (S,T) -> (
 toCCpolynomials = method()
 toCCpolynomials (List,ZZ) := (F,prec) -> (
     checkCCpolynomials F;
-    R := CC_prec(monoid[gens ring first F]);
+    R := CC_prec(monoid[gens commonRing F]);
     apply(F,f->sub(f,R)) 
     )    
 
+load "./NumericalAlgebraicGeometry/extraNAGtypes.m2"
 load "./NumericalAlgebraicGeometry/track.m2"
 load "./NumericalAlgebraicGeometry/refine.m2"
 
@@ -321,48 +326,17 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
-     R := ring first T;
+     R := commonRing T;
      h := symbol h;
      Rh := (coefficientRing R)[gens R | {h}]; 
      apply(T, f->homogenize(sub(f,Rh), h))
      )
 dehomogenizeSystem = method(TypicalValue => List)
 dehomogenizeSystem List := List => T -> (
-     Rh := ring first T;
+     Rh := commonRing T;
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
-
-totalDegreeStartSystem = method(TypicalValue => Sequence)
-totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
--- for the given target system T
--- IN:  T = list of polynomials 
--- OUT: (S,solsS}, where 
---      S     = list of polynomials, 
---      solsS = list of sequences
-     R := ring first T;
-     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
-     n := #T;
-     if n != numgens R then (
-	  if numgens R == n+1 and all(T, isHomogeneous) 
-	  then isH := true
-	  else error "wrong number of polynomials";
-	  )
-     else isH = false;
-     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
-     s := apply(n, i->( 
-	  d := sum degree T_i; 
-	  set apply(d, j->sequence exp(ii*2*pi*j/d))
-	  ));
-     solsS := first s;
-     scan(drop(s,1), t->solsS=solsS**t);
-     if numgens R === 1 
-     then solsS = toList solsS/(a -> 1:a)
-     else solsS = toList solsS/deepSplice; 
-     if isH then solsS = solsS / (s->s|sequence 1);
-     (S, solsS)
-     ) 
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -387,7 +361,7 @@ dimHd List := ZZ => d->sum(#d, i->binomial(#d+d#i,d#i));
 randomDiagonalUnitaryMatrix = method()
 randomDiagonalUnitaryMatrix ZZ := n -> diagonalMatrix apply(n, i->exp(ii*random(2*pi)))
 
---random unitary n-by-n matrix (w.r.t. Haar measure)
+--random unitary n-by-n matrix (w.r.t. Haar measure): what is the ref?
 randomUnitaryMatrix = method()
 randomUnitaryMatrix ZZ := n -> (
      Ml := flatten entries randomInComplexUnitBall(n^2);
@@ -504,7 +478,7 @@ selectUnique List := o -> sols ->(
      )
  
 NAGtrace = method()
-NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
+NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- conjugate all entries of the matrix (should be a part of M2!!!)
 conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))

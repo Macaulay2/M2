@@ -1955,13 +1955,17 @@ assert(
 ------------------------------------------------
 
 TEST ///
-setRandomSeed 0
 K=GF(101);
 S=K[x,y,z];
 r=matrix{{0,1,0},{0,0,1},{1,0,0}};
 s=matrix{{0,1,0},{1,0,0},{0,0,1}};
 S3=generateGroup({r,s},K);
+setRandomSeed 0
 P=primaryInvariants(S,S3,Dade=>true);
+P/degree			 -- under Ubuntu 32, this gives {{3}, {6}, {6}}
+setRandomSeed 0
+P=primaryInvariants(S,S3,Dade=>true);
+P/degree			 -- under Ubuntu 32, this gives {{6}, {6}, {6}}
 assert(
      P==apply(P,f->reynoldsOperator(f,S3))
      )

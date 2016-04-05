@@ -3,7 +3,7 @@
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
 
-export {hypersurfaceSection, numericalIntersection}
+export {"hypersurfaceSection", "numericalIntersection"}
 
 insertComponent = method()
 insertComponent(WitnessSet,MutableHashTable) := (W,H) -> (
@@ -40,6 +40,7 @@ hypersurfaceSection(NumericalVariety,RingElement) := o -> (c1,f) -> (
     "hypersurface: " << f << endl;
     d := sum degree f;
     R := ring f;
+    if getDefault Normalize then f = f/sqrt(numgens R * BombieriWeylNormSquared f); 
     c2 := new MutableHashTable; -- new components
     for comp in components c1 do (
 	if DBG>2 then << "*** proccesing component " << peek comp << endl;

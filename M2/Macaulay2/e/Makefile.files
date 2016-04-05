@@ -42,6 +42,7 @@ INTERFACE = \
 	gb-test1 \
 	finalize \
 	NAG \
+	SLP \
 	overflow \
 	memory-status \
 	imonorder \

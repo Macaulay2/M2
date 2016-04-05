@@ -147,6 +147,7 @@ export envp := array(string)();
 export argv := array(string)();
 export args := array(string)();
 export gbTrace := 0;
+export numericalAlgebraicGeometryTrace := 0;
 export notify := false;
 export readonlyfiles := false;				    -- see stdio.d
 export USE_THREADS ::= Ccode(bool,"

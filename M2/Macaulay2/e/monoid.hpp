@@ -107,6 +107,9 @@ public:
   bool has_monomials_lt_one() const {
     return (n_invertible_vars_ > 0 || local_vars->len > 0); }
 
+  int numInvertibleVariables() const { return n_invertible_vars_; }
+  int numNonTermOrderVariables() const { return local_vars->len; }
+
   void text_out(buffer &o) const;
 
   int n_vars()        const { return nvars_; }

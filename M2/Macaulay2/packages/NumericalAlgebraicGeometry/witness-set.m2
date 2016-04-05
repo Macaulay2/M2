@@ -4,9 +4,9 @@
 ------------------------------------------------------
 
 export { 
-    sample, 
-    union, -- aka "|"
-    removeRedundantComponents 
+    "sample", 
+    "union", -- aka "|"
+    "removeRedundantComponents"
     }
 
 polySystem WitnessSet := W->if W.?SolutionSystem then W.SolutionSystem else 

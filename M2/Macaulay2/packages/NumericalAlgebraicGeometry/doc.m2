@@ -1,3 +1,4 @@
+
 refKroneLeykin := "R. Krone and A. Leykin, \"Numerical algorithms for detecting embedded components.\", arXiv:1405.7871"
 refBeltranLeykin := "C. Beltran and A. Leykin, \"Certified numerical homotopy tracking\", Experimental Mathematics 21(1): 69-83 (2012)" 
 refBeltranLeykinRobust := "C. Beltran and A. Leykin, \"Robust certified numerical homotopy tracking\", Foundations of Computational Mathematics 13(2): 253-295 (2013)" 
@@ -670,12 +671,10 @@ document {
      	"The ", TO2{WitnessSet,"witness sets"}, " of the ", TO2{NumericalVariety,"numerical variety"}, TT "V",
 	" are in one-to-one correspondence with irreducible components of the variety defined by ", TT "I", ". ", 
 	EXAMPLE lines ///
-setRandomSeed 1
 R = CC[x,y,z]
 sph = (x^2+y^2+z^2-1); 
-I = ideal {sph*(x-1)*(y-x^2), sph*(y-2)*(z-x^3)};
-V = numericalIrreducibleDecomposition I 
-peek V
+I = ideal {sph*(y-x^2), sph*(z-x^3)};
+numericalIrreducibleDecomposition I 
     	///,
 	Caveat => {"This function is under development. It may not work well if the input represents a nonreduced scheme." },
         SeeAlso=>{(decompose, WitnessSet)}
@@ -909,3 +908,38 @@ document {
     SeeAlso=>{()}
     }
 *}
+
+document {
+    Key => {(gateHomotopy, GateMatrix, GateMatrix, InputGate),
+	gateHomotopy,--[Parameters,gateHomotopy]
+	},
+    Headline => "homotopy system via SLPexpressions",
+    Usage => "HS = gateHomotopy(H,X,T)",
+    Inputs => { 
+	"H"=>"a family of systems (given by a column vector)",
+	"X"=>"(a row vector of) variables",
+	"T"=>"homotopy (continuation) parameter" 
+	 },
+    Outputs => { "HS", 
+	-- ofClass {GateHomotopyof, GateParameterHomotopy}, 
+	", a homotopy that can be used with some routines of ", TO "NumericalAG" },    
+    "Optional arguments:",
+    UL{
+	{TO "Parameters", "-- a row vector of parameter variables"},
+	{TO "Software", "-- specifies how the homotopy is evaluated: ", TT "(M2,M2engine)"}
+	},  
+    EXAMPLE lines ///
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+F = {X*X-1, Y*Y*Y-1}
+G = {X*X+Y*Y-1, X*X*X+Y*Y*Y-1}
+H = (1 - T) * F + T * G
+HS = gateHomotopy(transpose matrix {H},matrix{{X,Y}},T)
+    ///,
+    Caveat => {"The order of inputs for unexported internal evaluation functions (evaluateH, etc.) is fixed as follows: ",
+	TT "Parameters, X, T", "."},
+    SeeAlso=>{ --GateHomotopy,GateParameterHomotopy,
+    	specialize}
+    }
+    

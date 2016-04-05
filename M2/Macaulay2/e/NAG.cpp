@@ -25,7 +25,6 @@ void complexAP::print()
   printf("(%lf,%lf) ", getreal(), getimaginary());
 }
 
-
 // Straight Line Program classes
 
 #ifdef SLPdouble
@@ -1562,24 +1561,6 @@ PathTracker /* or null */* PathTracker::make(StraightLineProgram* slp_pred, Stra
   return p;
 }
 
-int PathTracker::makeFromHomotopy(const Matrix *HH)
-{
-  if (num_path_trackers>MAX_NUM_PATH_TRACKERS) {
-    ERROR("max number of path trackers exceeded");
-    return -1;
-  };
-  PathTracker* p = catalog[num_path_trackers] = new PathTracker;
-  p->number = num_path_trackers++;
-  if (HH->n_rows()!=1) {
-    ERROR("1-row matrix expected");
-    return -1;
-  };
-  return p->number;
-}
-
-
-
-
 void rawSetParametersPT(PathTracker* PT, M2_bool is_projective,
                         gmp_RR init_dt, gmp_RR min_dt,
                         gmp_RR dt_increase_factor, gmp_RR dt_decrease_factor, int num_successes_before_increase,
@@ -1657,7 +1638,7 @@ int PathTracker::track(const Matrix* start_sols)
   int n = n_coords = start_sols->n_cols();
   n_sols = start_sols->n_rows();
 
-  if (M2_gbTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n",
+  if (M2_numericalAlgebraicGeometryTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n",
                         epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
 
   // memory distribution for arrays
@@ -1883,7 +1864,7 @@ int PathTracker::track(const Matrix* start_sols)
     evaluate_slpHxH(n,x0t0,HxH);
     cond_number_via_svd(n, HxH/*Hx*/, t_s->cond);
     t_s->num_steps = count;
-    if (M2_gbTrace>0) {
+    if (M2_numericalAlgebraicGeometryTrace>0) {
       if (sol_n%50==0) printf("\n");
       switch (t_s->status) {
       case REGULAR: printf("."); break;
@@ -1895,7 +1876,7 @@ int PathTracker::track(const Matrix* start_sols)
       fflush(stdout);
     }
   }
-  if (M2_gbTrace>0) printf("\n");
+  if (M2_numericalAlgebraicGeometryTrace>0) printf("\n");
 
 
   // clear arrays
@@ -1943,7 +1924,7 @@ int PathTracker::track(const Matrix* start_sols)
 //   gmp_RR end_zone_factor_dbl = end_zone_factor;
 
 
-  //if (M2_gbTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n",
+  //if (M2_numericalAlgebraicGeometryTrace>1) printf("epsilon2 = %e, t_step = %lf, dt_min_dbl = %lf, dt_increase_factor_dbl = %lf, dt_decrease_factor_dbl = %lf\n",
   //            epsilon2, t_step, dt_min_dbl, dt_increase_factor_dbl, dt_decrease_factor_dbl);
 
 
@@ -2191,7 +2172,7 @@ int PathTracker::track(const Matrix* start_sols)
     //evaluate_slpHxH(n,x0t0,HxH);
     //cond_number_via_svd(n, HxH/*Hx*/, t_s->cond);
     t_s->num_steps = count;
-    if (M2_gbTrace>0) {
+    if (M2_numericalAlgebraicGeometryTrace>0) {
       if (sol_n%50==0) printf("\n");
       switch (t_s->status) {
       case REGULAR: printf("."); break;
@@ -2203,7 +2184,7 @@ int PathTracker::track(const Matrix* start_sols)
       fflush(stdout);
     }
   }
-  if (M2_gbTrace>0) printf("\n");
+  if (M2_numericalAlgebraicGeometryTrace>0) printf("\n");
 
 
   // clear arrays

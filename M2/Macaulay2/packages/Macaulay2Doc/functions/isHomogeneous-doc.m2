@@ -73,6 +73,14 @@ document {
 	  "isHomogeneous(a*M)",
      	  "isHomogeneous((a+1)*M)"
 	  },
+     PARA{},
+    "Note that no implicit simplification is done.",
+     EXAMPLE {
+	 "R = QQ[x]",
+	 "isHomogeneous ideal(x+x^2, x^2)"
+	 },
+     Caveat => {"No computation on the generators and relations is performed.
+	 For example, if inhomogeneous generators of a homogeneous ideal are given, then the return value is ", TO false, "."},
      SeeAlso => {degree, "graded and multigraded polynomial rings"}
      }
 

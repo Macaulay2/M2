@@ -60,6 +60,8 @@ loadPackage String := opts -> pkgtitle -> (
      if not PackageDictionary#?pkgtitle then error("the file ", actualFilename, " did not define a package called ", pkgtitle);
      value PackageDictionary#pkgtitle)
 
+loadPackage Package := opts -> pkg -> loadPackage(toString pkg, opts ++ { Reload => true })
+
 needsPackage = method(
      TypicalValue => Package,
      Options => {
@@ -293,7 +295,7 @@ newPackage(String) := opts -> (title) -> (
 
 export = method(Dispatch => Thing)
 exportFrom = method()
-exportFrom(Package,List) := (P,x) -> export \\ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
+exportFrom(Package,List) := (P,x) -> export \\ toString \ (s -> currentPackage#"private dictionary"#s = P#"private dictionary"#s) \ x
 export Symbol := x -> export {x}
 export String := x -> export {x}
 export List := v -> (
@@ -304,25 +306,22 @@ export List := v -> (
      syms := new MutableHashTable;
      scan(v, sym -> (
 	       local nam;
+     	       if instance(sym,Symbol) then error("'export' no longer accepts symbols (such as ",toString sym,"); enclose the name in quotation marks");
 	       if instance(sym, Option) then (
 		    nam = sym#0;			    -- synonym
      	       	    if class nam =!= String then error("expected a string: ", nam);
 		    if pd#?nam then error("symbol intended as exported synonym already used internally: ",format nam, "\n", symbolLocation pd#nam, ": it was used here");
-		    sym = sym#1;
+     	       	    if class sym#1 =!= String then error("expected a string: ", nam);
+		    sym = getGlobalSymbol(pd,sym#1);
 		    )
 	       else if instance(sym, String) then (
+		    if match("^[[:alpha:]]$",sym) then error ("cannot export single-letter symbol ", getGlobalSymbol(pd,sym));
 		    nam = sym;
-		    sym = getGlobalSymbol(pd,nam);
+		    sym = if pd#?nam then pd#nam else getGlobalSymbol(pd,nam);
 		    )
-	       else (
-		    nam = toString sym;
-		    );
-	       if not instance(sym,Symbol) then error ("expected a symbol: ", sym);
-	       if not pd#?(toString sym) or pd#(toString sym) =!= sym 
-	       then (
-		    error ("symbol ",sym," defined elsewhere, not in current package: ", currentPackage);
-		    sym = getGlobalSymbol(pd,nam);	    -- replace sym by one in the current package's private dictionary
-		    );
+	       else error ("'export' expected a string or an option but was given ", sym, ", of class ", class sym);
+	       -- we use "symbolBody" here, because a few symbols are threadlocal, and a symbol is really a symbol closure, which include the frame
+	       assert(pd#(toString sym) === sym);
 	       syn := title | "$" | nam;
 	       d#syn = d#nam = sym;
 	       syms#sym = true;
@@ -332,6 +331,7 @@ export List := v -> (
      syms)
 exportMutable = method(Dispatch => Thing)
 exportMutable Symbol := x -> exportMutable {x}
+exportMutable String := x -> exportMutable {x}
 exportMutable List := v -> (
      syms := export v;
      currentPackage#"exported mutable symbols" = join(currentPackage#"exported mutable symbols",syms);
@@ -356,7 +356,7 @@ findSynonyms Symbol := x -> (
      scan(dictionaryPath, d -> scan(pairs d, (nam,sym) -> if x === sym and getGlobalSymbol nam === sym then r = append(r,nam)));
      sort unique r)
 
-warn0 := (sym,front,behind,syns) -> if debuggingMode then (
+warn0 := (sym,front,behind,syns) -> (
      -- just for debugging:
      -- error("symbol '",sym,"' in ",toString behind," is shadowed by a symbol in ",toString front);
      stderr << "--warning: symbol " << format toString sym << " in " << behind << " is shadowed by a symbol in " << front << endl;
@@ -366,7 +366,7 @@ warn0 := (sym,front,behind,syns) -> if debuggingMode then (
      else stderr << "--  use the synonym " << syns#0 << endl
      else stderr << "--  no synonym is available" << endl)
 warnedAlready := new MutableHashTable; addStartFunction(() -> warnedAlready = new MutableHashTable)
-warn := x -> if not warnedAlready#?x then (warn0 x; warnedAlready#x = true)
+warn := x -> if not warnedAlready#?x and debuggingMode then (warn0 x; warnedAlready#x = true)
 
 checkShadow = () -> (
      d := dictionaryPath;
@@ -395,9 +395,9 @@ endPackage = method()
 endPackage String := title -> (
      if currentPackage === null or title =!= currentPackage#"title" then error ("package not current: ",title);
      pkg := currentPackage;
-     ws := set pkg#"exported mutable symbols";
+     ws := set apply(pkg#"exported mutable symbols",symbolBody);
      exportDict := pkg.Dictionary;
-     scan(sortByHash values exportDict, s -> if not ws#?s then (
+     scan(sortByHash values exportDict, s -> if not ws#?(symbolBody s) then (
 	       protect s;
 	       ---if value s =!= s and not hasAttribute(value s,ReverseDictionary) then setAttribute((value s),ReverseDictionary,s)
 	       ));

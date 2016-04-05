@@ -7,14 +7,15 @@ CONFIGOPTIONS += --enable-shared
 endif
 
 default:
-tools:;: $(CC) $(CXX) $(FC)
+
+DIR_BASE := $(shell lsb_release -s --id)-$(shell lsb_release -s --release)-$(shell uname -m)
 
 ifeq ($(DEBUG),yes)
 
 default: arch-chk all
 INSTALLOPTIONS += prefix=/none
 CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize
-DIRECTORY = ubuntu64.debug
+DIRECTORY = $(DIR_BASE).debug
 
 else
 default: arch-chk all check
@@ -28,9 +29,9 @@ ifeq ($(PROFILE),yes)
 export CC = gcc -pg
 export CXX = g++ -pg
 export FC = gfortran -pg
-    DIRECTORY = ubuntu64.profile
+    DIRECTORY = $(DIR_BASE).profile
 else
-    DIRECTORY = ubuntu64.production
+    DIRECTORY = $(DIR_BASE).production
 endif
 else
     SIGN = no

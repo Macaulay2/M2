@@ -52,10 +52,28 @@ solveSystem PolySystem := List => o -> P -> (
 	       else F);  
   	  result = (
 	       (S,solsS) := totalDegreeStartSystem T;
-	       track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       --track(S,T,solsS,NumericalAlgebraicGeometry$gamma=>exp(random(0.,2*pi)*ii),Software=>o.Software)
+	       gamma := exp(random(0.,2*pi)*ii);
+	       t := local t;
+	       tt := inputGate [t];
+	       --H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + gamma*tt*gateMatrix polySystem T, 
+	       --   gateMatrix{getVarGates R}, tt, Strategy=>null);
+	       --time elapsedTime trackHomotopy(H,solsS); -- !!! fill in options
+	       H := gateHomotopy(gamma*(1-tt)*gateMatrix polySystem S + tt*gateMatrix polySystem T, 
+		   gateMatrix{getVarGates R}, tt,Strategy=>compress);
+	       --time elapsedTime trackHomotopy(H,solsS) -- !!! fill in options
+	       trackHomotopy(H,solsS,
+		   CorrectorTolerance => o.CorrectorTolerance,
+		   maxCorrSteps => o.maxCorrSteps,
+		   numberSuccessesBeforeIncrease => o.numberSuccessesBeforeIncrease,
+                   Predictor => o.Predictor,
+                   Software => o.Software,
+                   stepIncreaseFactor => o.stepIncreaseFactor,
+                   tStep => o.tStep,
+                   tStepMin => o.tStepMin)
 	       );
-	  if o.PostProcess and not overdetermined 
-	  then (
+	   if o.PostProcess and not overdetermined 
+	   then (
 	       result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
 	       result = solutionsWithMultiplicity result;
 	       -- below is a hack!!!
@@ -71,11 +89,9 @@ solveSystem PolySystem := List => o -> P -> (
      else if o.Software === PHCPACK then result = solvePHCpack(F,o)
      else if o.Software === BERTINI then result = solveBertini(F,o)
      else if o.Software === HOM4PS2 then (
-	  -- newR := coefficientRing R[xx_1..xx_(numgens R)];
 	  (name, p) := makeHom4psInput(R, F);
-	  targetfile := name; --(map(newR, R, gens newR)\F);
-	  tarsolfile := temporaryFileName() | 
-	                "tasols";
+	  targetfile := name;
+	  tarsolfile := temporaryFileName() | "tasols";
  	  run(HOM4PS2exe|" "|targetfile|" "|tarsolfile);
 	  sols := readSolutionsHom4ps(tarsolfile, p);
 	  result = sols;
@@ -87,3 +103,35 @@ solveSystem PolySystem := List => o -> P -> (
      else error "invalid Software option";  		
      result
      )
+
+totalDegreeStartSystem = method(TypicalValue => Sequence)
+totalDegreeStartSystem List := Sequence => T -> (
+-- contructs a total degree start system and its solutions 
+-- for the given target system T
+-- IN:  T = list of polynomials 
+-- OUT: (S,solsS}, where 
+--      S     = list of polynomials, 
+--      solsS = list of sequences
+     R := commonRing T;
+     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
+     n := #T;
+     if n != numgens R then (
+	  if numgens R == n+1 and all(T, isHomogeneous) 
+	  then isH := true
+	  else error "wrong number of polynomials";
+	  )
+     else isH = false;
+     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
+     s := apply(n, i->( 
+	  d := sum degree T_i; 
+	  set apply(d, j->sequence exp(ii*2*pi*j/d))
+	  ));
+     solsS := first s;
+     scan(drop(s,1), t->solsS=solsS**t);
+     if numgens R === 1 
+     then solsS = toList solsS/(a -> 1:a)
+     else solsS = toList solsS/deepSplice; 
+     if isH then solsS = solsS / (s->s|sequence 1);
+     (S, apply(solsS,s->point{toList s}))
+     ) 
+

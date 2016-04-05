@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.6.0.1",
-     Date => "June, 2013",
+     Version => "1.8.2.1",
+     Date => "Jan, 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -12,36 +12,38 @@ newPackage(
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => false 
-     -- DebuggingMode => true 
+     --DebuggingMode => true 
      )
 
 export {
      -- service functions
-     generalEquations, 
+     "generalEquations", 
      -- witness set
-     WitnessSet, witnessSet, equations, slice, points, 
-     Equations, Slice, "Points", ProjectionDimension, 
-     sliceEquations, projectiveSliceEquations, IsIrreducible, 
-     ProjectiveWitnessSet, AffineChart, projectiveWitnessSet,
+     "WitnessSet", "witnessSet", "equations", "slice", "points", 
+     "Equations", "Slice", "Points", "ProjectionDimension", 
+     "sliceEquations", "projectiveSliceEquations", "IsIrreducible", 
+     "ProjectiveWitnessSet", "AffineChart", "projectiveWitnessSet",
      -- numerical variety
-     NumericalVariety, numericalVariety, numericalAffineSpace,
+     "NumericalVariety", "numericalVariety", "numericalAffineSpace",
      "ProjectiveNumericalVariety", "projectiveNumericalVariety",
      -- point (solution)
-     Point, point, coordinates,
-     project,
-     isRealPoint, realPoints, residual, origin,
-     Norm, 
+     "Point", "point", "coordinates",
+     "project",
+     "isRealPoint", "realPoints", "residual", "origin",
+     "Norm", 
      "toAffineChart",
      "Tolerance", "sortSolutions", "areEqual", "isGEQ", "solutionsWithMultiplicity",
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
-     Regular, Singular, Infinity, 
-     MinStepFailure, NumericalRankFailure, RefinementFailure, 
+     "Regular", "Singular", "Infinity", 
+     "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
+     -- point sets 
+     "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- polynomial systems
-     PolySystem, NumberOfPolys, NumberOfVariables, PolyMap, Jacobian, -- JacobianAndPolySystem, 
-     ContinuationParameter, SpecializationRing,
-     polySystem, segmentHomotopy, substituteContinuationParameter, specializeContinuationParameter,
+     "PolySystem", "NumberOfPolys", "NumberOfVariables", "PolyMap", "Jacobian", -- "JacobianAndPolySystem", 
+     "ContinuationParameter", "SpecializationRing",
+     "polySystem", "segmentHomotopy", "substituteContinuationParameter", "specializeContinuationParameter",
      "evaluate",
      -- dual space
      "DualSpace", "BasePoint", "dualSpace", "PolySpace", "polySpace", "Reduced", "Gens", "Space"
@@ -228,8 +230,11 @@ point = method()
 point Point := p -> new Point from p
 point List := s -> new Point from {Coordinates=>first s} | drop(s,1)
 point Matrix := M -> point {flatten entries M} 
+toExternalString Point := p -> "{ " | toString coordinates p | ", SolutionStatus => " | toString status p | " }"
 
 Point == Point := (a,b) -> areEqual(a,b) -- the default Tolerance is used
+Point ? Point := (a,b) -> if isGEQ(a,b) then symbol > else symbol < 
+
 
 coordinates = method()
 coordinates Point := p -> p.Coordinates
@@ -274,6 +279,9 @@ areEqual (CC,CC) := o -> (a,b) -> (
 areEqual (Matrix,Matrix) := o -> (a,b) -> (
      areEqual(flatten entries a, flatten entries b, o)
      ) 
+areEqual (MutableMatrix,MutableMatrix) := o -> (a,b) -> (
+     areEqual(flatten entries a, flatten entries b, o)
+     ) 
 areEqual (Point,Point) := o -> (a,b) -> (
     a = a.Coordinates; 
     b = b.Coordinates;
@@ -306,7 +314,40 @@ isGEQ(List,List) := o->(t,s)-> (
      true -- if approx. equal 
      )
 
-sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+sortSolutionsWithWeights = method()
+sortSolutionsWithWeights (List, List) := (sols,w) -> (
+    n := #coordinates first sols;
+    solsCoords := sols/coordinates; 
+    R := commonRing solsCoords;
+    if #w === 0 then w = for i to n list random R
+    else if n =!= #w then error "weight list is of wrong length";
+    dot := (a,b) -> sum(n,i->a#i*b#i);
+    --print "-- in sortSolutionsWithWeights ----------";
+    L := matrix{for s in solsCoords list dot(w,s)};    
+    --print(w,L); 
+    sortedCols := sortColumns L;
+    sols_sortedCols
+    ) 
+
+{*
+sortSolutionsWithWeights = method()
+sortSolutionsWithWeights (List, List) := (sols,w) -> (
+    n := #coordinates first sols;
+    R := ring matrix first sols;
+    if #w === 0 then w = random(R^1,R^n)
+    else (
+	if n =!= #w then error "weight list is of wrong length";
+	w = matrix{w};
+	);
+    print "-- in sortSolutionsWithWeights ----------";
+    time M := transpose matrix(sols/coordinates); 
+    time L := w*M;    
+    time sortedCols := sortColumns L;
+    time sols_sortedCols
+    ) 
+*}
+
+sortSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6,Weights=>null})
 sortSolutions List := o -> sols -> (
 -- sorts numerical solutions     
      if #sols == 0 then (
@@ -314,11 +355,12 @@ sortSolutions List := o -> sols -> (
 	 sols
 	 )
      else (
-	  sorted = {0};
-	  get'coordinates := sol -> if class sol === Point then coordinates sol 
-	                       else if ancestor(BasicList, class sol) then toList sol
-			       else error "expected Points or BasicLists";
-	  scan(#sols-1, s->(
+     	 if o.Weights =!= null then return sortSolutionsWithWeights(sols,o.Weights);
+	 sorted = {0};
+	 get'coordinates := sol -> if class sol === Point then coordinates sol else 
+	     if ancestor(BasicList, class sol) then toList sol
+	     else error "expected Points or BasicLists";
+	 scan(#sols-1, s->(
 		    -- find the first element that is "larger";
 		    -- "larger" means the first coord that is not (approx.) equal 
 		    -- has (significantly) larger realPart, if tie then larger imaginaryPart
@@ -357,6 +399,55 @@ assert areEqual(
     )
 ///
 
+PointSet = new Type of HashTable
+pointSet = method()
+pointSet Thing := L -> (
+    if not instance(L,List) and not instance(L,Set) then error "a list/set is expected"; 
+    LL := toList L;
+    if not all(LL, x->instance(x,Point)) then error "a list/set of Points is expected"; 
+    S := solutionsWithMultiplicity LL;
+    new PointSet from apply(#S, i->((S#i).Multiplicity=1; i=>S#i))	 
+    ) 
+net PointSet := P -> net values P
+
+areEqual (PointSet,PointSet) := o-> (a,b) -> areEqual(values a, values b, o)
+PointSet == PointSet := (A,B) -> areEqual(A,B)
+
+unionPointSet = method(Options=>{Tolerance=>1e-6})
+unionPointSet (PointSet,PointSet) := o -> (A,B) -> (
+    S := solutionsWithMultiplicity(values A | values B, Tolerance=>o.Tolerance); 
+    new PointSet from apply(#S, i->((S#i).Multiplicity=1; i=>S#i))	 
+    )
+PointSet + PointSet := (A,B) -> unionPointSet(A,B)  
+PointSet - PointSet := (A,B) -> differencePointSet(A,B)
+differencePointSet = method(Options=>{Tolerance=>1e-6})
+differencePointSet (PointSet,PointSet) := o -> (A,B) -> (
+    D := new MutableHashTable;
+    i := 0; 
+    j := 0;
+    c := 0;
+    while i<#A and j<#B do (
+	a := isGEQ(A#i,B#j,Tolerance=>o.Tolerance);
+	if not a then (D#c = A#i; i=i+1; c=c+1)
+	else (
+	    if areEqual(A#i,B#j,Tolerance=>o.Tolerance) then i=i+1;
+	    j=j+1;
+	    ) 
+	);
+    if j==#B then for i' from i to #A-1 do (D#c = A#i'; c=c+1);
+    new PointSet from D
+    )
+
+TEST /// 
+    restart
+    needsPackage "NAGtypes"
+    A = set {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}}} /point // pointSet
+    B = {{{1,3.1}},{{0,3}}}/point//pointSet
+    assert(A + B == {{{1,3}},{{2,5}},{{0,3}},{{1+ii,3}},{{1,3.1}}} /point // pointSet)	
+    assert(A - B == {{{1, 3}}, {{1+ii, 3}}, {{2, 5}}}/point//pointSet)
+///
+
+{* not exported. obsolete?
 
 diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
 -- in:  A, B (presumably sorted)
@@ -370,6 +461,8 @@ diffSolutions (List,List) := o -> (A,B) -> (
      else (a = append(a,i); i = i+1);	  
      (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
      )
+
+*}
 
 toAffineChart = method() -- coordinates of the point (x_0:...:x_n) in the k-th affine chart
 toAffineChart (ZZ,List) := List => (k,x) -> (
@@ -425,9 +518,11 @@ groupClusters MutableHashTable := H -> (
      cs
      )
 
-solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
-solutionsWithMultiplicity List := o-> sols -> ( 
-    sorted := sortSolutions(sols,o);
+clusterSolutions = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+clusterSolutions List := o-> sols -> ( 
+    -- time sorted' := sortSolutions(sols,o);
+    -- time sorted'' := sort sols;
+    sorted := sortSolutions(sols,Weights=>{});
     i := 0; 
     while i<#sorted list (
 	si := sorted#i;
@@ -441,17 +536,8 @@ solutionsWithMultiplicity List := o-> sols -> (
 	si
 	) 
     )
-
-{*
-solutionsWithMultiplicity List := o-> sols -> ( 
-     clusters := groupClusters solutionDuplicates(sols,o);
-     apply(clusters, c->(
-	       s := new Point from sols#(first c);
-	       if (s.Multiplicity = #c)>1 then s.SolutionStatus = Singular;
-	       s
-	       ))
-     )
-*}
+solutionsWithMultiplicity = method(TypicalValue=>List, Options=>{Tolerance=>1e-6})
+solutionsWithMultiplicity List := o-> sols -> sortSolutions clusterSolutions(sols,o)
 
 TEST ///
 a = point {{0,1}}
@@ -656,7 +742,7 @@ check NumericalVariety := o-> V -> (
 ---------------------------------------------
 checkCCpolynomials = method()
 checkCCpolynomials List := F -> (    
-    if #F > 0 then R := ring first F else error "expected a nonempty list of polynomials";
+    if #F > 0 then R := commonRing F else error "expected a nonempty list of polynomials";
     if not instance(R, PolynomialRing) then error "expected input in a polynomial ring"; 
     coeffR := coefficientRing R; 
     if not(
@@ -734,8 +820,47 @@ ring DualSpace := L -> ring gens L
 
 point DualSpace := L -> L.BasePoint
 
+
+-- extra types used (at this point) only by NumericalAlgebraicGeometry 
+export { "Homotopy", "ParameterHomotopy", "SpecializedParameterHomotopy", 
+    "evaluateH", "evaluateHt", "evaluateHx", "Parameters", "specialize"}
+
+Homotopy = new Type of MutableHashTable -- abstract type
+evaluateH = method()
+evaluateH (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHt = method()
+evaluateHt (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+evaluateHx = method()
+evaluateHx (Homotopy,Matrix,Number) := (H,x,t) -> error "not implemented"
+
+ParameterHomotopy = new Type of MutableHashTable -- abstract type
+evaluateH (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHt (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+evaluateHx (ParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> error "not implemented"
+
+SpecializedParameterHomotopy = new Type of Homotopy
+specialize = method()
+specialize (ParameterHomotopy,Matrix) := (PH, M) -> (
+    SPH := new SpecializedParameterHomotopy;
+    SPH.ParameterHomotopy = PH;
+    SPH.Parameters = M;
+    SPH
+    ) 
+evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
+evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
+
+
 -- DOCUMENTATION ------------------------------------------------------
 undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {
+    ParameterHomotopy, 
+    Parameters, SpecializedParameterHomotopy, Homotopy,
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+    }
+
 beginDocumentation()
 
 document {
@@ -918,7 +1043,7 @@ isGEQ({1,1e-7},{1, 0})
 document {
 	Key => {areEqual, (areEqual,CC,CC), (areEqual,Number,Number), 
 	    (areEqual,List,List), (areEqual,BasicList,BasicList),
-	    (areEqual,Matrix,Matrix), (areEqual,Point,Point), 
+	    (areEqual,Matrix,Matrix), (areEqual,MutableMatrix,MutableMatrix), (areEqual,Point,Point), 
 	    (areEqual,BasicList,Point), (areEqual,Point,BasicList),
 	    (symbol ==,Point,Point),
 	    [areEqual,Projective]},

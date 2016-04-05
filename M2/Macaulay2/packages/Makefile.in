@@ -4,6 +4,9 @@
 include ../../include/config.Makefile
 # we want to ignore the --datarootdir setting, whatever that means, so here we we mention it: @datarootdir@
 VPATH = @srcdir@
+ALL_PACKAGES = @PACKAGES@
+
+# this one can be overridden by the user:
 PACKAGES = @PACKAGES@
 
 # packages under development that should be checked but not installed:
@@ -35,7 +38,7 @@ endif
 
 STOP = --stop --silent
 $(foreach i,\
-	$(sort $(PACKAGES) $(DEVEL)),\
+	$(sort $(ALL_PACKAGES) $(DEVEL)),\
 	$(eval check::check-$i)\
 	$(eval check-$i:; \
 		if ! grep "CacheExampleOutput => true" @srcdir@/$i.m2 >/dev/null ;\
@@ -54,8 +57,7 @@ define uninstall
 endef
 
 define bld
-all install-$1: all-$1
-install: install-$1
+install-$1: all-$1
 uninstall-packages: uninstall-package-$1
 uninstall-package-$1:
 	$(call uninstall,$1)
@@ -64,7 +66,6 @@ unmark-packages: unmark-$1
 unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 @pre_libm2dir@/$1/.installed : $1.m2 $$(wildcard @srcdir@/$1/* @srcdir@/$1/*/*) | info-dir
 	: installing package $1
-	$(call uninstall,$1)
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
@@ -84,11 +85,15 @@ check-info::@pre_infodir@/$1.info.errors
 	cat $$@
 	@ [ ! -s $$@ ] || (echo error: stopping, info validation errors (above) >&2; false)
 endef
-$(foreach i, $(PACKAGES), $(eval $(call bld,$i)))
+$(foreach i, $(ALL_PACKAGES), $(eval $(call bld,$i)))
+ifeq "$(ReinstallPackages)" "true"
+$(foreach i, $(PACKAGES), $(eval all: unmark-$i))
+endif
+$(foreach i, $(PACKAGES), $(eval all: all-$i) $(eval install: install-$i))
 
 # make packages Style and Macaulay2Doc get installed before the others:
-$(foreach i, $(patsubst Style,,$(PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
-$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
+$(foreach i, $(patsubst Style,,$(ALL_PACKAGES)), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Style/.installed))
+$(foreach i, $(patsubst Macaulay2Doc,,$(patsubst Style,,$(ALL_PACKAGES))), $(eval @pre_libm2dir@/$i/.installed: @pre_libm2dir@/Macaulay2Doc/.installed))
 
 # the Info-validate function doesn't work well enough to be useful:
 # check::check-info
@@ -104,6 +109,7 @@ distclean:clean
 
 ## here is the list of other files to install along with Macaulay2
 @pre_packagesdir@/%.m2 : %.m2 ; @INSTALL_DATA@ $^ $@
+.NOTPARALLEL:
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/Macaulay2/packages RemakeAllDocumentation=false IgnoreExampleErrors=false Verbose=false debugLevel=0"
 # End:
