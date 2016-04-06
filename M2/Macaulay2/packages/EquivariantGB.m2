@@ -16,29 +16,29 @@ newPackage(
      )
 
 export {
-     egb,
-     egbToric,
-     egbSignature,
-     buildERing,
-     buildEMonomialMap,
-     Symmetrize,
-     Completely,
-     Diagonal,
-     reduce,
-     OutFile,
-     PrincipalSyzygies,
-     CompleteReduce,
+     "egb",
+     "egbToric",
+     "egbSignature",
+     "buildERing",
+     "buildEMonomialMap",
+     "Symmetrize",
+     "Completely",
+     "Diagonal",
+     "reduce",
+     "OutFile",
+     "PrincipalSyzygies",
+     "CompleteReduce",
      --for testing
-     Shift,
-     shift,
-     ShiftMonomial,
-     shiftMonomial,
-     divWitness,
+     "Shift",
+     "shift",
+     "ShiftMonomial",
+     "shiftMonomial",
+     "divWitness",
      --priority queue
-     PriorityQueue,
-     priorityQueue,
-     mergePQ,
-     deleteMin
+     "PriorityQueue",
+     "priorityQueue",
+     "mergePQ",
+     "deleteMin"
      }
 
 protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList }
