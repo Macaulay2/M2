@@ -66,7 +66,7 @@ internalResultant = (F) -> (
        if Res0 == 0 then return Res0;
     A:=S/ideal(submatrix'(f,,{n}));
     mf:=map(A^1,A^1,matrix{{sub(f_(0,n),A)}});
-    mf=pushFwd(mf,map(A,K[],{}));
+    mf=pushFwd(map(A,K[],{}),mf);
     Res0^(d_n) * sub(det mf,K)
 );
     
@@ -174,7 +174,8 @@ GenericMatrix = (d,K) -> (
     N:=for i to n list binomial(n+d_i,d_i)-1;
     a:=local a; x:=local x;
     A:=for i to n list K[a_(i,0)..a_(i,N_i)];
-    S:=K[]; for i to n do S=S**A_i;
+--  S:=K[]; for i to n do S=S**A_i;
+    S:=K[]; for i to n do S=K[gens S,a_(i,0)..a_(i,N_i)]; 
     R:=S[x_0..x_n];
     M:=matrix pack(n+1,for i to n list (sub(vars A_i,R)*transpose(gens (ideal vars R)^(d_i)))_(0,0));
     M
@@ -217,7 +218,9 @@ SLtransf = (F) -> (
 L=true; for i from 1 to 5 do for j from 1 to 5 do L= L and compareResultants(i,j,QQ);
 for i from 1 to 5 do for j from 1 to 5 do L= L and compareResultants(i,j,ZZ/33331);
 assert(L) 
-assert(toString GenericResultant((1,1,2),ZZ) == "a_(0,0)^2*a_(1,1)^2*a_(2,5)-a_(0,0)^2*a_(1,1)*a_(1,2)*a_(2,4)+a_(0,0)^2*a_(1,2)^2*a_(2,3)-2*a_(0,0)*a_(0,1)*a_(1,0)*a_(1,1)*a_(2,5)+a_(0,0)*a_(0,1)*a_(1,0)*a_(1,2)*a_(2,4)+a_(0,0)*a_(0,1)*a_(1,1)*a_(1,2)*a_(2,2)-a_(0,0)*a_(0,1)*a_(1,2)^2*a_(2,1)+a_(0,1)^2*a_(1,0)^2*a_(2,5)-a_(0,1)^2*a_(1,0)*a_(1,2)*a_(2,2)+a_(0,1)^2*a_(1,2)^2*a_(2,0)+a_(0,0)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,4)-a_(0,0)*a_(0,2)*a_(1,1)^2*a_(2,2)-2*a_(0,0)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,3)+a_(0,0)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,1)-a_(0,1)*a_(0,2)*a_(1,0)^2*a_(2,4)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,2)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,1)-2*a_(0,1)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,0)+a_(0,2)^2*a_(1,0)^2*a_(2,3)-a_(0,2)^2*a_(1,0)*a_(1,1)*a_(2,1)+a_(0,2)^2*a_(1,1)^2*a_(2,0)");
+rightRing112=ZZ[a_(0,0),a_(0,1),a_(0,2),a_(1,0),a_(1,1),a_(1,2),a_(2,0),a_(2,1),a_(2,2),a_(2,3),a_(2,4),a_(2,5)];
+rightRes112=a_(0,0)^2*a_(1,1)^2*a_(2,5)-a_(0,0)^2*a_(1,1)*a_(1,2)*a_(2,4)+a_(0,0)^2*a_(1,2)^2*a_(2,3)-2*a_(0,0)*a_(0,1)*a_(1,0)*a_(1,1)*a_(2,5)+a_(0,0)*a_(0,1)*a_(1,0)*a_(1,2)*a_(2,4)+a_(0,0)*a_(0,1)*a_(1,1)*a_(1,2)*a_(2,2)-a_(0,0)*a_(0,1)*a_(1,2)^2*a_(2,1)+a_(0,1)^2*a_(1,0)^2*a_(2,5)-a_(0,1)^2*a_(1,0)*a_(1,2)*a_(2,2)+a_(0,1)^2*a_(1,2)^2*a_(2,0)+a_(0,0)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,4)-a_(0,0)*a_(0,2)*a_(1,1)^2*a_(2,2)-2*a_(0,0)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,3)+a_(0,0)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,1)-a_(0,1)*a_(0,2)*a_(1,0)^2*a_(2,4)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,2)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,1)-2*a_(0,1)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,0)+a_(0,2)^2*a_(1,0)^2*a_(2,3)-a_(0,2)^2*a_(1,0)*a_(1,1)*a_(2,1)+a_(0,2)^2*a_(1,1)^2*a_(2,0)
+assert(sub(GenericResultant((1,1,2),ZZ),vars rightRing112)==rightRes112);
 x:=local x;
 R:=ZZ[x_0..x_3];
 assert( Resultant matrix{for i to 3 list x_i^(random(1,5))} == 1)
