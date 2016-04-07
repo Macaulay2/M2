@@ -16,12 +16,12 @@ typedef int ComponentIndex;
 class ResGausser
 {
   enum {ZZp} typ;
-  const Ring *K;
+  const Z_mod *K; // only used to construct Kp.  Will be removed MES.
 
   CoefficientRingZZp *Kp;
   mutable ResF4Mem Mem;
 
-  ResGausser(const Z_mod *K0);
+  ResGausser(int p);
 public:
   typedef FieldElement* CoefficientArray;
   //  typedef void *CoefficientArray;
@@ -33,7 +33,7 @@ public:
 
   ~ResGausser() {}
 
-  static ResGausser *newResGausser(const Ring *K);
+  static ResGausser *newResGausser(int p);
 
   const Ring * get_ring() const { return K; }
 
@@ -47,9 +47,9 @@ public:
     Kp->negate(result, a);
   }
   
-  CoefficientArray from_ringelem_array(ComponentIndex len, ring_elem *elems) const;
+  CoefficientArray from_ints(ComponentIndex len, const int* elems) const;
 
-  void to_ringelem_array(ComponentIndex len, CoefficientArray, ring_elem *result) const;
+  void to_ints(ComponentIndex len, CoefficientArray, int *result) const;
 
   // leading coefficient
   FieldElement lead_coeff(CoefficientArray coeffs) const
@@ -101,7 +101,8 @@ public:
   // ASSUMPTION: the lead coeff of 'sparse' is 1 or -1 (in the field)
   // The value of c is recorded in result_c.
   
-  int coeff_to_int(FieldElement f) const //anton
+  int coeff_to_int(FieldElement f) const
+  // Returns an integer in the range -a..a, (or 0..1) where a = floor(p/2),  p is the characteristic.
   {
     return Kp->to_int(f);
   }

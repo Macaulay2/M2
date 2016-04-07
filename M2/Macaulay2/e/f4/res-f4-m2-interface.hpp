@@ -14,12 +14,6 @@ class Polynomial; // vector in a free module
 class ResF4toM2Interface
 {
 public:
-  static void poly_set_degrees(const ResPolyRing& R,
-                               const M2_arrayint wts,
-                               const poly &f,
-                               int &deg,
-                               int &alpha);
-
   static void from_M2_vec(const ResPolyRing& R,
                           const FreeModule *F,
                           vec v,
@@ -33,25 +27,12 @@ public:
                               int lev,
                               const FreeModule *F);
 
-  static MutableMatrix* to_M2_MutableMatrix(SchreyerFrame& C,
+  static MutableMatrix* to_M2_MutableMatrix(
+                                            const Ring* K, // should be a ZZ/p ring.
+                                            SchreyerFrame& C,
                                             int lev,
                                             int degree);
   
-#if 0
-  static void from_M2_matrix(const ResPolyRing& R,
-                             const Matrix *m,
-                             M2_arrayint wts,
-                             gb_array &result_polys);
-
-  static Matrix *to_M2_matrix(const ResPolyRing& R,
-                              gb_array &polys,
-                              const FreeModule *F);
-
-  static MutableMatrix *to_M2_MutableMatrix(const ResGausser *KK,
-                                            coefficient_matrix *mat,
-                                            gb_array &gens,
-                                            gb_array &gb);
-#endif
 };
 
 #endif

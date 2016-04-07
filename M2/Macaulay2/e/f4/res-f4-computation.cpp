@@ -33,7 +33,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   const Ring *K = origR->getCoefficients();
 
-  ResGausser *KK = ResGausser::newResGausser(K);
+  ResGausser *KK = ResGausser::newResGausser(static_cast<int>(K->characteristic()));
   if (KK == 0)
     {
       ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
@@ -143,7 +143,7 @@ const Matrix /* or null */ *F4ResComputation::get_matrix(int level)
 
 MutableMatrix /* or null */ *F4ResComputation::get_matrix(int level, int degree)
 {
-  return ResF4toM2Interface::to_M2_MutableMatrix(*mComp, level, degree);
+  return ResF4toM2Interface::to_M2_MutableMatrix(mOriginalRing.getCoefficientRing(), *mComp, level, degree);
 }
 
 const FreeModule /* or null */ *F4ResComputation::get_free(int lev) 

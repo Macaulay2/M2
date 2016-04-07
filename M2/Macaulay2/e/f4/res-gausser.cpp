@@ -4,40 +4,41 @@
 #include "res-f4-mem.hpp"
 #include "moninfo.hpp"
 
-ResGausser *ResGausser::newResGausser(const Ring *K)
+ResGausser *ResGausser::newResGausser(int p)
 {
-  const Z_mod *Kp = K->cast_to_Z_mod();
-  if (Kp != 0)
-    return new ResGausser(Kp);
-  return 0;
+  M2_ASSERT(p < 32767);
+  M2_ASSERT(p > 1);
+  return new ResGausser(p);
 }
 
-ResGausser::ResGausser(const Z_mod *K0)
-  : typ(ZZp), K(K0), Kp(K0->get_CoeffRing()), n_dense_row_cancel(0), n_subtract_multiple(0)
+ResGausser::ResGausser(int p)
+  : typ(ZZp), n_dense_row_cancel(0), n_subtract_multiple(0)
 {
+  K = Z_mod::create(p);
+  Kp = K->get_CoeffRing();
 }
 
-ResGausser::CoefficientArray ResGausser::from_ringelem_array(ComponentIndex len, ring_elem *elems) const
+ResGausser::CoefficientArray ResGausser::from_ints(ComponentIndex len, const int* elems) const
 {
   int i;
   switch (typ) {
   case ZZp:
     int *result = Mem.coefficients.allocate(len);
     for (i=0; i<len; i++)
-      result[i] = elems[i].int_val;
+      Kp->set_from_long(result[i], elems[i]);
     return result;
   };
   return 0;
 }
 
-void ResGausser::to_ringelem_array(ComponentIndex len, CoefficientArray F, ring_elem *result) const
+void ResGausser::to_ints(ComponentIndex len, CoefficientArray F, int* result) const
 {
   int* elems = F;
   int i;
   switch (typ) {
   case ZZp:
     for (i=0; i<len; i++)
-      result[i].int_val = elems[i];
+      result[i] = coeff_to_int(elems[i]);
   };
 }
 
