@@ -25,7 +25,21 @@ newPackage(
 	       HomePage => "http://math.galetto.org"}},
      Headline => "decompose free resolutions and graded modules with a semisimple Lie group action",
      PackageExports => {"WeylGroups"},
-     PackageImports => {"SimpleDoc"}
+     PackageImports => {"SimpleDoc"},
+     Certification => {
+	  "journal name" => "The Journal of Software for Algebra and Geometry",
+	  "journal URI" => "http://j-sag.org/",
+	  "article title" => "Free resolutions and modules with a semisimple Lie group action",
+	  "acceptance date" => "5 June 2015",
+	  "published article URI" => "http://msp.org/jsag/2015/7-1/p03.xhtml",
+	  "published article DOI" => "http://dx.doi.org/10.2140/jsag.2015.7.9",
+	  "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x03-HW.zip",
+	  "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/HighestWeights.m2",
+	  "release at publication" => "a434adb94f76f9be38131f87745867b0d7925405",	    -- git commit number in hex
+	  "version at publication" => "0.6.5",
+	  "volume number" => "7",
+	  "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	  }
      )
 
 load "./HighestWeights/freudenthal.m2"
