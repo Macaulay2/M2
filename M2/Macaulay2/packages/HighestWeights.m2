@@ -17,12 +17,12 @@
 
 newPackage(
      "HighestWeights",
-     Version => "0.6.3",
-     Date => "October 11, 2014",
+     Version => "0.6.5",
+     Date => "July 03, 2015",
      AuxiliaryFiles => true,
      Authors => {{Name => "Federico Galetto",
      	       Email => "galetto.federico@gmail.com",
-	       HomePage => "http://www.mast.queensu.ca/~galetto"}},
+	       HomePage => "http://math.galetto.org"}},
      Headline => "decompose free resolutions and graded modules with a semisimple Lie group action",
      PackageExports => {"WeylGroups"},
      PackageImports => {"SimpleDoc"}
@@ -67,3 +67,5 @@ end
 --0.6.1: decomposeWeightsList returns error if multiplicities are negative
 --0.6.2: included changes from technical comments
 --0.6.3: updated one reference
+--0.6.4: updated website link
+--0.6.5: updated reference to theory article

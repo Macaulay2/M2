@@ -15,9 +15,9 @@
 -- this program.  If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------------
 
-export {"LieWeights", "setWeights", "getWeights", "propagateWeights",
-     "GroupActing", "MinimalityTest", "LeadingTermTest", "Forward",
-     "highestWeightsDecomposition","Range"}
+export {LieWeights,setWeights,getWeights,propagateWeights,
+     GroupActing,MinimalityTest,LeadingTermTest,Forward,
+     highestWeightsDecomposition,Range}
 
 --INPUT
 --D: a Dynkin type
