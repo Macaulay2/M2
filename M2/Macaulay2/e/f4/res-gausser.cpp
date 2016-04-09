@@ -2,7 +2,7 @@
 
 #include "res-gausser.hpp"
 #include "res-f4-mem.hpp"
-#include "moninfo.hpp"
+#include "res-moninfo.hpp"
 
 ResGausser *ResGausser::newResGausser(int p)
 {

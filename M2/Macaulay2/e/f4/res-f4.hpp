@@ -11,7 +11,7 @@
 #define M2_ASSERT assert
 
 class ResGausser;
-class MonomialInfo;
+class ResMonoid;
 class SchreyerFrame;
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +38,7 @@ public:
   void construct(int lev, int degree);
 
   const ResGausser& resGausser() const { return mRing.resGausser(); }
-  const MonomialInfo& monoid() const { return mRing.monoid(); }
+  const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
   
 private:
@@ -85,8 +85,8 @@ private:
   long mNextReducerToProcess;
   packed_monomial mNextMonom;
 
-  const MonomialsWithComponent* mSchreyerRes; // Support structure for mHashTable
-  MonomialHashTable<MonomialsWithComponent> mHashTable; // keys: monomials at level lev-2, values: indices into mColumns.
+  const ResMonomialsWithComponent* mSchreyerRes; // Support structure for mHashTable
+  MonomialHashTable<ResMonomialsWithComponent> mHashTable; // keys: monomials at level lev-2, values: indices into mColumns.
   // or: -1: means is determined to not need to be a column.
 
   std::vector<Row> mReducers;  // columns: mColumns.  This is a square matrix.

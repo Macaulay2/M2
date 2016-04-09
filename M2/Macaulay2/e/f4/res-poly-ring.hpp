@@ -6,7 +6,7 @@
 #include "../skew.hpp"
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
-#include "moninfo.hpp"
+#include "res-moninfo.hpp"
 #include "res-gausser.hpp"
 #include "res-schreyer-order.hpp"
 
@@ -23,11 +23,11 @@ struct poly {
 class ResPolyRing
 {
 public:
-  ResPolyRing(const ResGausser& G, const MonomialInfo& M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
-  ResPolyRing(const ResGausser& G, const MonomialInfo& M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
+  ResPolyRing(const ResGausser& G, const ResMonoid& M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
+  ResPolyRing(const ResGausser& G, const ResMonoid& M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
 
   const ResGausser& resGausser() const { return mResGausser; }
-  const MonomialInfo& monoid() const { return mMonoid; }
+  const ResMonoid& monoid() const { return mMonoid; }
 
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
@@ -35,7 +35,7 @@ public:
   void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
   const ResGausser& mResGausser;
-  const MonomialInfo& mMonoid;
+  const ResMonoid& mMonoid;
   const SkewMultiplication* mSkew;
 };
 

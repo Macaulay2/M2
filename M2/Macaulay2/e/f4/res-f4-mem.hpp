@@ -3,7 +3,7 @@
 #ifndef _res_f4_mem_hpp_
 #define _res_f4_mem_hpp_
 
-#include "moninfo.hpp"  // only for monomial_word
+#include "res-moninfo.hpp"  // only for monomial_word
 
 typedef int *f4vec;
 

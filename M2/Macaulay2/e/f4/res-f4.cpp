@@ -14,7 +14,7 @@ F4Res::F4Res(
              )
   : mFrame(res),
     mRing(res.ring()),
-    mSchreyerRes(new MonomialsWithComponent(res.ring().monoid())),
+    mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
     mHashTable(mSchreyerRes)
 {
 }
@@ -215,10 +215,10 @@ void F4Res::loadRow(Row& r)
 class ResColumnsSorter
 {
 public:
-  typedef MonomialInfo::value monomial;
+  typedef ResMonoid::value monomial;
   typedef ComponentIndex value;
 private:
-  const MonomialInfo &M;
+  const ResMonoid &M;
   const F4Res& mComputation;
   const std::vector<packed_monomial>& cols;
   int lev;
@@ -264,7 +264,7 @@ public:
     return result;
   }
 
-  ResColumnsSorter(const MonomialInfo& M0, const F4Res& comp, int lev0)
+  ResColumnsSorter(const ResMonoid& M0, const F4Res& comp, int lev0)
     : M(M0),
       mComputation(comp),
       cols(comp.mColumns),

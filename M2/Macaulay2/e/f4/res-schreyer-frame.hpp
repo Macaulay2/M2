@@ -22,7 +22,7 @@
 #ifndef _res_schreyer_frame_hpp_
 #define _res_schreyer_frame_hpp_
 
-#include "moninfo.hpp"
+#include "res-moninfo.hpp"
 #include "memblock.hpp"
 #include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
@@ -47,18 +47,18 @@ public:
   void accountForMonomial(const packed_monomial mon);
   long count() const { return mNumAllMonomials; }
 
-  MonomialCounter(const MonomialInfo& M);
+  MonomialCounter(const ResMonoid& M);
   ~MonomialCounter() { delete mIgnoreMonomials; }
 
-  const MonomialInfo& monoid() const { return mMonoid; }
+  const ResMonoid& monoid() const { return mMonoid; }
 private:
-  const MonomialsIgnoringComponent* mIgnoreMonomials; // 
-  MonomialHashTable<MonomialsIgnoringComponent> mAllMonomials; // all monomials in the ring which appear in the mSyzygy's
+  const ResMonomialsIgnoringComponent* mIgnoreMonomials; // 
+  MonomialHashTable<ResMonomialsIgnoringComponent> mAllMonomials; // all monomials in the ring which appear in the mSyzygy's
   long mNumAllMonomials; // total number of monomials
   MemoryBlock<monomial_word> mMonomSpace;
   packed_monomial mNextMonom;
   
-  const MonomialInfo& mMonoid;
+  const ResMonoid& mMonoid;
 };
 
 namespace SchreyerFrameTypes {
@@ -96,7 +96,7 @@ public:
   // Destruct the frame
   ~SchreyerFrame();
 
-  const MonomialInfo& monoid() const { return mRing.monoid(); }
+  const ResMonoid& monoid() const { return mRing.monoid(); }
   const ResPolyRing& ring() const { return mRing; }
   const ResGausser& gausser() const { return mRing.resGausser(); }
   

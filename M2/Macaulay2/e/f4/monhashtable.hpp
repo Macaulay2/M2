@@ -4,6 +4,7 @@
 #define _monhashtable_h_
 
 #include "moninfo.hpp"
+#include "res-moninfo.hpp"
 
 class MonomialsWithComponent {
 public:
@@ -17,6 +18,18 @@ private:
   const MonomialInfo& mMonoid;
 };
 
+class ResMonomialsWithComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsWithComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
+
 class MonomialsIgnoringComponent {
 public:
   typedef packed_monomial value;
@@ -27,6 +40,18 @@ public:
   MonomialsIgnoringComponent(const MonomialInfo& MI) : mMonoid(MI) {}
 private:
   const MonomialInfo& mMonoid;
+};
+
+class ResMonomialsIgnoringComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsIgnoringComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
 };
 
 // ValueType must implement the following:

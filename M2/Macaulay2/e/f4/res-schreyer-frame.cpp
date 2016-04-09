@@ -7,8 +7,8 @@
 #include <iomanip>
 #include <algorithm>
 
-MonomialCounter::MonomialCounter(const MonomialInfo& M)
-  : mIgnoreMonomials(new MonomialsIgnoringComponent(M)),
+MonomialCounter::MonomialCounter(const ResMonoid& M)
+  : mIgnoreMonomials(new ResMonomialsIgnoringComponent(M)),
     mAllMonomials(mIgnoreMonomials),
     mNumAllMonomials(0),
     mNextMonom(nullptr),
