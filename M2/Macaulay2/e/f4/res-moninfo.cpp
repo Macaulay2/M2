@@ -6,14 +6,15 @@
 #include <cstdio>
 #include <cstdlib>
 
-ResMonoid::ResMonoid(int nvars0, const MonomialOrdering *mo)
+ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering *mo)
 {
   nvars = nvars0;
   hashfcn = newarray_atomic(monomial_word,nvars);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
-
+  mVarDegrees = var_degrees;
+  
   ncalls_compare = 0;
   ncalls_mult = 0;
   ncalls_get_component = 0;

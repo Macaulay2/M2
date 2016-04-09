@@ -43,7 +43,8 @@ class ResMonoid : public our_new_delete
   int nslots;
   monomial_word *hashfcn; // array 0..nvars-1 of hash values for each variable
   monomial_word mask;
-
+  M2_arrayint mVarDegrees; // array 0..nvars-1 of primary (heft) degrees for each variable.
+  
   int firstvar; // = 2, if no weight vector, otherwise 2 + nweights
   int nweights; // number of weight vector values placed.  These should all be positve values?
   M2_arrayint weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
@@ -71,7 +72,7 @@ public:
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  ResMonoid(int nvars, const MonomialOrdering *mo);
+  ResMonoid(int nvars, M2_arrayint var_degrees, const MonomialOrdering *mo);
 
   virtual ~ResMonoid();
 
@@ -373,97 +374,6 @@ public:
 
   int (ResMonoid::*compare)(const_packed_monomial m, const_packed_monomial n) const;
 
-  bool unnecessary1(const_packed_monomial m,
-                   const_packed_monomial p1,
-                   const_packed_monomial p2,
-                   const_packed_monomial lcm) const
-    // Returns true if the corresponding pair (p1,p2) could be removed
-    // This is essentially the Buchberger-Moeller criterion
-    // Assumptions: lcm(p1,p2) = lcm.
-    // Here is the criterion:
-    //   (a) if component(lcm) != component(m) return false
-    //   (b) if m does not divide lcm, return false
-    //   (c) need that (A) lcm(p1,m) != lcm and that (B) lcm(p2,m) != lcm
-    //       (in these two cases, we will have already removed one of the other
-    //        two pairs: (p1,m), (p2,m).  Note that in any case,
-    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
-    //        if A and B then return true
-  {
-    //TODO: MES: this maybe should check that lead components of m and p1 and p2 are the same...
-    ncalls_unneccesary++;
-    bool A=false;
-    bool B=false;
-    m += firstvar;
-    p1 += firstvar;
-    p2 += firstvar;
-    lcm += firstvar;
-    for (int i=0; i<nvars; i++)
-      {
-        if (m[i] > lcm[i]) return false;
-        if (m[i] == lcm[i]) continue;
-        if (!A && p1[i] < lcm[i]) {A = true; continue;}
-        if (!B && p2[i] < lcm[i]) {B = true; }
-      }
-    return (A && B);
-  }
-
-  bool unnecessary(const_packed_monomial m,
-                   const_packed_monomial p1,
-                   const_packed_monomial p2,
-                   const_packed_monomial lcm) const
-    // Returns true if the corresponding pair (p1,p2) could be removed
-    // This is essentially the Buchberger-Moeller criterion
-    // Assumptions: lcm(p1,p2) = lcm.
-    // Here is the criterion:
-    //   (a) if component(lcm) != component(m) return false
-    //   (b) if m does not divide lcm, return false
-    //   (c) need that (A) lcm(p1,m) != lcm and that (B) lcm(p2,m) != lcm
-    //       (in these two cases, we will have already removed one of the other
-    //        two pairs: (p1,m), (p2,m).  Note that in any case,
-    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
-    //        if A and B then return true
-
-  // Here is the criterion to remove a pair (i.e. return true)
-    //   (a) need: component(lcm) == component(m) (else return false)
-    //   (b) need: m divides lcm, (else return false)
-    //   (c) need: (A) and (B), where
-    //         (A) lcm(p1,m) != lcm
-    //         (B) lcm(p2,m) != lcm
-    //
-    //       (in these two cases, we will have already removed one of the other
-    //        two pairs: (p1,m), (p2,m).  Note that in any case,
-    //        if (b) holds, then lcm(p1,m) divides lcm, same with lcm(p2,m).
-    //        if A and B then return true
-
-  {
-    //TODO: MES: this maybe should check that lead components of m and p1 and p2 are the same...
-    ncalls_unneccesary++;
-    bool A=false;
-    m += firstvar;
-    p1 += firstvar;
-    p2 += firstvar;
-    lcm += firstvar;
-    for (int i=0; i<nvars; i++)
-      if (m[i] > lcm[i]) return false;
-
-    for (int i=0; i<nvars; i++) {
-      varpower_word a = lcm[i];
-      if (p1[i] < a && m[i] < a) {
-        A = true; break;
-      }
-    }
-
-    if (!A) return false;
-
-    // Now (b), (A) hold.  Check (B).
-    for (int i=0; i<nvars; i++)  {
-      varpower_word a = lcm[i];
-      if (p2[i] < a && m[i] < a) return true;
-    }
-
-    return false;
-  }
-
   void variable_as_vp(int v,
                       varpower_monomial result) const
   {
@@ -471,36 +381,33 @@ public:
     result[1] = v;
     result[2] = 1;
   }
+
+  int degree_of_vp(const_varpower_monomial a) const
+  {
+    return static_cast<int>(varpower_monomials::weight(a, mVarDegrees));
+  }
   
   void quotient_as_vp(const_packed_monomial a,
                       const_packed_monomial b,
-                      varpower_monomial result,
-                      int &deg_result,
-                      bool &are_disjoint) const
+                      varpower_monomial result) const
   {
-    varpower_word deg = 0;
-    // sets result, deg, are_disjoint
+    // sets result
     ncalls_quotient_as_vp++;
-    are_disjoint = true;
     a += firstvar;
     b += firstvar;
     int len = 0;
     varpower_word *r = result+1;
     for (int i=nvars-1; i>=0; --i)
       {
-        if (a[i] != 0 && b[i] != 0)
-          are_disjoint = false;
         long c = a[i] - b[i];
         if (c > 0)
           {
             *r++ = i;
             *r++ = c;
-            deg += c;
             len++;
           }
       }
     result[0] = len;
-    deg_result = static_cast<int>(deg);
   }
 
 };

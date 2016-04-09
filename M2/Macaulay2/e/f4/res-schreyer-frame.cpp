@@ -201,10 +201,10 @@ void SchreyerFrame::endLevel()
 
 SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial m1, packed_monomial m)
 {
-  bool not_used;
   PreElement* vp = mPreElements.allocate();
   vp->vp = mVarpowers.reserve(mMaxVPSize);
-  monoid().quotient_as_vp(m1, m, vp->vp, vp->degree, not_used);
+  monoid().quotient_as_vp(m1, m, vp->vp);
+  vp->degree = monoid().degree_of_vp(vp->vp);
   int len = static_cast<int>(varpower_monomials::length(vp->vp));
   mVarpowers.intern(len);
   return vp;
@@ -224,7 +224,8 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
         {
           PreElement* vp = mPreElements.allocate();
           vp->vp = mVarpowers.reserve(mMaxVPSize);
-          monoid().variable_as_vp(skewvars[i], vp->vp);
+          monoid().variable_as_vp(skewvars[i], vp->vp); 
+          vp->degree = monoid().degree_of_vp(vp->vp);         
           int len = static_cast<int>(varpower_monomials::length(vp->vp));
           mVarpowers.intern(len);
 

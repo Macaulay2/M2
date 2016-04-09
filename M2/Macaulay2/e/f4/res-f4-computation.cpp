@@ -39,7 +39,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
       return nullptr;
     }
-  auto MI = new ResMonoid(origR->n_vars(), origR->getMonoid()->getMonomialOrdering());
+  auto MI = new ResMonoid(origR->n_vars(), origR->getMonoid()->primary_degree_of_vars(), origR->getMonoid()->getMonomialOrdering());
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
