@@ -74,7 +74,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       poly f;
       ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
       MI->copy(f.monoms, elem);
-      frame.insertLevelOne(elem, f);
+      frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(i), f);
     }
   frame.endLevel();
   //  frame.show(0);

@@ -259,7 +259,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
       packed_monomial monom = monomialBlock().allocate(monoid().max_monomial_size());
       monoid().from_varpower_monomial((*i)->vp, elem, monom);
       // Now insert it into the frame
-      insert(monom);
+      insertBasic(currentLevel(), monom, (*i)->degree + degree(currentLevel()-1, monoid().get_component(monom)));
       n_elems++;
     }
   //std::cout << "  returns " << n_elems << std::endl;
@@ -356,10 +356,10 @@ long SchreyerFrame::insertLevelZero(packed_monomial monom, int degree)
 {
   return insertBasic(0, monom, degree);
 }
-long SchreyerFrame::insertLevelOne(packed_monomial monom, poly& syzygy)
+long SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
 {
 
-  long last = insertBasic(1, monom, degree(1, monom));
+  long last = insertBasic(1, monom, deg + degree(0, monoid().get_component(monom)));
   long comp = monoid().get_component(monom);
   auto& p = level(0)[comp];
   if (p.mBegin == -1)
@@ -372,10 +372,10 @@ long SchreyerFrame::insertLevelOne(packed_monomial monom, poly& syzygy)
   std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
   return last;
 }
-long SchreyerFrame::insert(packed_monomial monom)
-{
-  return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
-}
+//long SchreyerFrame::insert(packed_monomial monom)
+//{
+//  return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
+//}
 
 bool SchreyerFrame::debugCheckOrder(int lev) const
 {

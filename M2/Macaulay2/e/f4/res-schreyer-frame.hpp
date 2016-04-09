@@ -117,12 +117,11 @@ public:
   void getBounds(int& loDegree, int& hiDegree, int& length) const;
   
   long insertLevelZero(packed_monomial monom, int degree);
-  long insertLevelOne(packed_monomial monom, poly& syzygy); // grabs syzygy
+  long insertLevelOne(packed_monomial monom, int degree, poly& syzygy); // grabs syzygy
   void endLevel(); // done with the frame for the current level: set's the begin/end's 
                    // for each element at previous level
   void start_computation(StopConditions& stop);
   
-  long insert(packed_monomial monom);
   long insertBasic(int lev, packed_monomial monom, int degree);
 
   
@@ -151,8 +150,6 @@ private:
 
   int currentLevel() const { return mCurrentLevel; }
   int degree(int lev, long component) const { return level(lev)[component].mDegree; }
-  int degree(int lev, packed_monomial m) const { return static_cast<int>(m[2]) + degree(lev-1, m[1]); }
-
 public:
   ResSchreyerOrder& schreyerOrder(int lev) { return mFrame.mLevels[lev].mSchreyerOrder; }
   const ResSchreyerOrder& schreyerOrder(int lev) const { return mFrame.mLevels[lev].mSchreyerOrder; }
