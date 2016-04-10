@@ -121,7 +121,7 @@ submodules/$1/Makefile:@srcdir@/submodules/$1/configure @srcdir@/submodules/$1/M
 		--prefix=$(BUILTLIBPATH)						\
 		--with-gtest=yes							\
 		PKG_CONFIG_PATH="$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)"	\
-		GTEST_PATH=$(BUILTLIBPATH)/include/gtest				\
+		GTEST_PATH=@GTEST_PATH@							\
 		AR=@AR@									\
 		AS=@AS@									\
 		DLLTOOL=@DLLTOOL@							\

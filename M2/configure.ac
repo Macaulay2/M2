@@ -31,6 +31,7 @@ AC_CONFIG_MACRO_DIR([config])	dnl can't get this to work
 m4_include(config/ax_prog_cc_for_build.m4)
 m4_include(config/ax_func_accept_argtypes.m4)
 m4_include(config/relpaths.m4)
+m4_include(config/gtest.m4)
 
 dnl define(TO_UPPER,[translit($1, [a-z], [A-Z])])
 
@@ -806,7 +807,7 @@ AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
-BUILD_ALWAYS=" gtest "
+BUILD_ALWAYS=""
 
 for i in $LIBLIST $SUBLIST
 do eval BUILD_$i=no
@@ -862,7 +863,21 @@ AC_ARG_ENABLE(fflas-ffpack,
     ENABLE_GIVARO=yes
     )
 
-BUILD_gtest=yes
+if test $BUILD_gtest = no
+then
+    CHECK_GTEST
+    if test $have_gtest = yes
+    then
+        CPPFLAGS="$GTEST_CPPFLAGS $CPPFLAGS"
+        GTEST_PATH=$GTEST_SOURCE
+    else
+        BUILD_gtest=yes
+        GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+    fi
+else
+    GTEST_PATH="\$(BUILTLIBPATH)/include/gtest"
+fi
+AC_SUBST(GTEST_PATH)
 
 PROGLIST=" $PROGLIST "
 AC_ARG_WITH(unbuilt-programs, 
