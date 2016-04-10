@@ -1,13 +1,13 @@
 
 newPackage(
        "Cremona",
-	Version => "0.1.1", 
-    	Date => "April 4, 2016",
+	Version => "1.0", 
+    	Date => "April 10, 2016",
     	Authors => {{Name => "Giovanni Stagliano'", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
                    },
-    	Headline => "Computation on rational maps between projective varieties",
+    	Headline => "Some computations for rational maps between projective varieties",
     	DebuggingMode => false,
 	Reload => false
     	)
@@ -16,11 +16,12 @@ export{
    "composeRationalMaps",
    "degreeOfRationalMap",   
    "invertBirMap",
+   "isBirational",
    "isInverseMap",
-   "Kernel",
+   "kernelComponent",
    "projectiveDegrees",
    "toMap",
-   "CheckInverseMap", 
+   "MathMode", 
    "Dominant", 
    "Limit"
 };
@@ -30,10 +31,11 @@ needsPackage "Parametrization"
 verbose:=false;
 
 composeRationalMaps=method(TypicalValue => RingMap);
-degreeOfRationalMap=method(TypicalValue => ZZ);
-invertBirMap=method(TypicalValue => RingMap, Options => {CheckInverseMap => false});
+degreeOfRationalMap=method(TypicalValue => ZZ, Options => {MathMode => false});
+invertBirMap=method(TypicalValue => RingMap, Options => {MathMode => false});
+isBirational=method(TypicalValue => Boolean);
 isInverseMap=method(TypicalValue => Boolean);
-Kernel=method(TypicalValue => Ideal);
+kernelComponent=method(TypicalValue => Ideal);
 projectiveDegrees=method(TypicalValue => List, Options => {Limit => infinity});
 toMap=method(TypicalValue => RingMap, Options => {Dominant => null});
 
@@ -47,11 +49,12 @@ composeRationalMaps(RingMap,RingMap) := (phi,psi) -> (
    map(target phi,source psi,lift(matrix{linSys/fixComp},target phi))
 );
 
-degreeOfRationalMap RingMap := (phi) -> (
-   -- computes the degree of a rational map as the degree of the general fibre
+degreeOfRationalMap RingMap := o -> (phi) -> (
+   -- computes the degree of a rational map as the degree of the generic fibre
    -- input: rational map P^n-->P^m 
    -- output: integer, the degree of the rational map   
    checkRationalMapFromPn phi;
+      if o.MathMode then return degreeOfMapMath phi;
    ringPn:=target phi;
    ringPm:=source phi;
    n:=numgens ringPn -1;
@@ -64,14 +67,44 @@ degreeOfRationalMap RingMap := (phi) -> (
    degMap 
 );
 
+degreeOfMapMath = (phi) -> (
+   -- input: rational map P^n-->P^m 
+   -- output: integer, the degree of the rational map   
+   ringPn:=target phi;
+   ringPm:=source phi;
+   n:=numgens ringPn -1;
+   m:=numgens ringPm -1;
+   if m<n then return 0;
+    K:=coefficientRing ringPn;
+    a:=local a;
+    K':=frac(K[a_0..a_n]);
+    Pn':=K'[gens ringPn];
+    Pm':=K'[gens ringPm];
+    phi':=map(Pn',Pm',sub(toMatrix phi,Pn'));
+    x:=gens Pn';
+   p:=preimage(phi',ideal(for i from 1 to n list a_i*x_0-a_0*x_i));
+   idealFibre:=saturate(phi'(p),ideal toMatrix phi');
+   hP:=hilbertPolynomial(idealFibre,Projective=>false);
+   degMap:=if degree hP > {0} then 0 else sub(hP,ZZ);
+   degMap 
+);
+
 invertBirMap (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
    a:=ideal source phi;
    F:=toMatrix phi;
-   G:=if (isPolynomialRing target phi and (o.CheckInverseMap =!= null)) then invertBirationalMapRS(F,a) else invertBirationalMapViaParametrization(F,a);
+   G:=if (isPolynomialRing target phi and (o.MathMode =!= null)) then invertBirationalMapRS(F,a) else invertBirationalMapViaParametrization(F,a);
    psi:=map(source phi,target phi,G);
-         if class o.CheckInverseMap === Boolean then if o.CheckInverseMap then try isInv:=(isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if isInv then <<"Good news! :-)  'invertBirMap' has successfully worked!"<<endl else <<"Bad news! :-(  The output of 'invertBirMap' is incorrect!"<<endl) else (<<"'CheckInverseMap' option failed, try 'isInverseMap()'"<<endl);
+         if class o.MathMode === Boolean then if o.MathMode then try isInv:=(isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if isInv then <<"Good news! :-)  'invertBirMap' has successfully worked!"<<endl else <<"Bad news! :-(  The output of 'invertBirMap' is incorrect!"<<endl) else (<<"'MathMode' option failed, try 'isInverseMap()'"<<endl);
    psi
+);
+
+isBirational (RingMap) := (phi) -> (
+   checkRationalMap phi;
+   X:=target phi; Y:=source phi;
+   if dim X != dim Y then return false;
+   if isPolynomialRing X then return degreeOfRationalMap phi == 1;
+   first projectiveDegrees(phi,Limit=>0) == degree Y 
 );
 
 isInverseMap(RingMap,RingMap) := (mapF,mapG) -> (
@@ -84,7 +117,7 @@ isInverseMap(RingMap,RingMap) := (mapF,mapG) -> (
    identityOfSource - Composition == 0
 );
 
-Kernel(RingMap,ZZ) := (phi,d) -> (
+kernelComponent(RingMap,ZZ) := (phi,d) -> (
    checkRationalMap phi;
         if not isPolynomialRing target phi then (
            if (numgens ideal target phi == 1) and ( degree ideal target phi == d * (max flatten degrees ideal toMatrix phi) ) then (
@@ -92,8 +125,8 @@ Kernel(RingMap,ZZ) := (phi,d) -> (
                K0:=ideal join variationOFhomogPartOfImage(phi0,ideal target phi);
                return trim sub(K0,source phi);
            );
-           if verbose then <<"Running 'ideal image basis("<<d<<",saturate kernel phi)'..."<<endl;
-           return ideal image basis(d,saturate kernel phi); 
+           if verbose then <<"Running 'ideal image basis("<<d<<",kernel phi)'..."<<endl;
+           return ideal image basis(d,trim kernel phi); 
         );
    phi':=phi * map(source phi,ambient source phi);
    K:=ideal homogPartOfImage(phi',d); 
@@ -121,7 +154,7 @@ toMap Matrix := o -> (F)  -> (
    if numgens ambient ring F -1 == N then PN=ambient ring F;
    phi:=map(ring F,PN,F);
       if class o.Dominant === ZZ then (
-      return map(ring F,PN/(Kernel(phi,o.Dominant)),F);
+      return map(ring F,PN/(kernelComponent(phi,o.Dominant)),F);
       ); 
       if (o.Dominant === infinity or o.Dominant === true) then (
       return map(ring F,PN/(saturate kernel phi),F);
@@ -133,7 +166,7 @@ toMap Ideal := o -> (F)  -> toMap(gens F,Dominant=>o.Dominant);
 toMap RingMap := o -> (phi)  -> (
       phi=phi * map(source phi,ambient source phi);
       if class o.Dominant === ZZ then (
-      return map(target phi,(source phi)/(Kernel(phi,o.Dominant)),toMatrix phi);
+      return map(target phi,(source phi)/(kernelComponent(phi,o.Dominant)),toMatrix phi);
       ); 
       if (o.Dominant === infinity or o.Dominant === true) then (
       return map(target phi,(source phi)/(saturate kernel phi),toMatrix phi);
@@ -341,8 +374,8 @@ genericRestriction = (phi) -> (
 beginDocumentation() 
    document { 
     Key => Cremona, 
-    Headline => "package for computations on rational maps between projective varieties", 
-          EM "Cremona", " is a package to perform basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,", with particular emphasis when the source variety is a projective space. ",TEX///$K$///," is allowed to be ",TEX///$\mathbb{Q}$///,", a finite field, or also a ", TO FractionField,".", 
+    Headline => "package for some computations on rational maps between projective varieties", 
+          EM "Cremona", " is a package to perform some basic computations on rational and birational maps between absolutely irreducible projective varieties over a field ",TEX///$K$///,", with particular emphasis when the source variety is a projective space. ",TEX///$K$///," is allowed to be ",TEX///$\mathbb{Q}$///,", a finite field, or also a ", TO FractionField,".", 
           PARA{}, 
           "Let ",TEX///$\Phi:X ---> Y$///,"  be a rational map from a subvariety ",TEX///$X=V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n])$///," to a subvariety ",TEX///$Y=V(J)\subseteq\mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The map ",TEX///$\Phi $///," (in a non-pathological case) can be represented, although not uniquely, by a homogeneous ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," of quotients of polynomial rings by homogeneous ideals. These kinds of ring maps are the typical inputs for the methods in this package. The method ", TO toMap," constructs such a map from a list of ",TEX///$m+1$///," homogeneous elements of the same degree in ",TEX///$K[x_0,...,x_n]/I$///,".", 
          PARA{},
@@ -352,12 +385,12 @@ beginDocumentation()
           TO invertBirMap, 
           TO degreeOfRationalMap, 
           TO projectiveDegrees, 
-          TO Kernel
+          TO kernelComponent
              },
     EXAMPLE { 
           "ZZ/33331[t_0..t_6];", 
           "time phi=toMap minors(3,matrix{{t_0..t_4},{t_1..t_5},{t_2..t_6}})", 
-          "time J=Kernel(phi,2)", 
+          "time J=kernelComponent(phi,2)", 
           "time degreeOfRationalMap phi", 
           "time projectiveDegrees phi", 
           "time projectiveDegrees(phi,Limit=>1)", 
@@ -380,7 +413,7 @@ beginDocumentation()
           {"a ring map representing the inverse of ",TEX///$\Phi$///,""} 
           }, 
           PARA{}, 
-         "The method computes the inverse rational map of a birational map ",TEX///$\mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///, " represented by a ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]$///,". The algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. This algorithm requires (besides, of course, the birationality of the map) that a certain condition on ranks of appropriate matrices be satisfied. For efficiency purpose, no check is done on the input, but the output can be checked through the option ", TO CheckInverseMap, TT "=>true",".", 
+         "The method computes the inverse rational map of a birational map ",TEX///$\mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///, " represented by a ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]$///,". The algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. This algorithm requires (besides, of course, the birationality of the map) that a certain condition on ranks of appropriate matrices be satisfied. For efficiency purpose, no check is done on the input, but the output can be checked through the option ", TO MathMode, TT "=>true",".", 
     EXAMPLE { 
           "-- A Cremona transformation of P^20 
 ringP20=QQ[t_0..t_20];", 
@@ -414,7 +447,7 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
           "time degreeOfRationalMap phi'"
           }, 
           "This method can be generalized for the case when the source of the map ",TEX///$\Phi$///," is just parameterized by a projective space.",
-    Caveat => {"For efficiency purpose, this has been implemented as a probabilistic method: it takes a random point of ",TEX///$\mathbb{P}^n$///,"."}, 
+    Caveat => {"With the option ",TO MathMode, TT "=>true"," this method is too slow to be useful."}, 
     SeeAlso => {projectiveDegrees} 
           } 
    document { 
@@ -425,7 +458,7 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
           }, 
      Outputs => { {"the list of the projective degrees of ",TEX///$\Phi$///} 
           }, 
-          "Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension (for the precise definition, see Harris's book (Algebraic geometry: A first course. Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,".", 
+          "Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,".", 
     EXAMPLE { 
           "-- map from P^4 to G(1,3) given by the quadrics through a rational normal curve of degree 4
 GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})", 
@@ -441,10 +474,11 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
     SeeAlso => {degreeOfRationalMap} 
           } 
    document { 
-    Key => {CheckInverseMap, [invertBirMap,CheckInverseMap]}, 
---    Headline => "option for checking outputs", 
-    "This option accepts a ", TO Boolean, " value for whether or not to check the correctness of the output of ", TO invertBirMap, ". In this version, no error message will be generated, but a message will be displayed.",
-    SeeAlso => {isInverseMap} 
+    Key => {MathMode, [invertBirMap,MathMode], [degreeOfRationalMap,MathMode]}, 
+    Headline => "whether or not to ensure correctness of output", 
+    "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
+     PARA{},
+     "When passed to the method ", TO invertBirMap,", it means whether or not a test must be performed to confirm the correctness of the output (and of the input); however, in this version, no error message will be generated, but a message will be displayed. When passed to the method ", TO degreeOfRationalMap,", it means whether or not to use a non-probabilistic algorithm."
           } 
    document { 
     Key => {Dominant, [toMap,Dominant]}, 
@@ -457,9 +491,9 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
     "This is an optional argument of ", TO projectiveDegrees, " and accepts a non-negative integer, the number ", TEX///$-1$///," of projective degrees to be computed.",
           } 
    document { 
-    Key => {Kernel,(Kernel, RingMap,ZZ)}, 
+    Key => {kernelComponent,(kernelComponent, RingMap,ZZ)}, 
     Headline => "about the image of a rational map", 
-     Usage => "Kernel(phi,d)", 
+     Usage => "kernelComponent(phi,d)", 
      Inputs => { 
           "phi" => RingMap => {"a homogeneous map ",TEX///$K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]$///,", where ",TEX///$J$///," is a homogeneous ideal"}, 
           "d" => ZZ 
@@ -467,17 +501,17 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
      Outputs => { {"the ideal generated by all homogeneous elements of degree ", TT "d"," belonging to the kernel of ",TT "phi"} 
           }, 
      Consequences => { 
-          {TT "Kernel(phi,d)"," is contained in ", TT "kernel phi"} 
+          {TT "kernelComponent(phi,d)"," is contained in ", TT "kernel phi"} 
           }, 
-          " Assume, for simplicity, that ", TEX///$J=0$///,", and let ",TEX///$\phi:K[y_0,\ldots,y_m] \to K[x_0,\ldots,x_n]$///," be a ring map representing a rational map ",TEX///$\Phi: \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". Then ", TT "Kernel(phi,d)"," returns the ideal generated by a basis of the vector space ",TEX///$H^0(\mathbb{P}^m,\mathcal{I}(d))$///,", where ",TEX///$\mathcal{I}$///," denotes the ideal sheaf of the image of ",TEX///$\Phi$///,".", 
+          " Assume, for simplicity, that ", TEX///$J=0$///,", and let ",TEX///$\phi:K[y_0,\ldots,y_m] \to K[x_0,\ldots,x_n]$///," be a ring map representing a rational map ",TEX///$\Phi: \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". Then ", TT "kernelComponent(phi,d)"," returns the ideal generated by a basis of the vector space ",TEX///$H^0(\mathbb{P}^m,\mathcal{I}(d))$///,", where ",TEX///$\mathcal{I}$///," denotes the ideal sheaf of the image of ",TEX///$\Phi$///,".", 
           PARA{}, 
-"This is equivalent to ",TT "ideal image basis(d,saturate kernel phi)",", but we use a more naive algorithm. Indeed, taking a generic homogeneous degree ",TEX///$d$///," polynomial ", TEX///$G(y_0,\ldots,y_m)$///," and substituting the ",TEX///$y_i$///,"'s with the ",TEX///$F_i$///,"'s, where ",TEX///$F_i=F_i(x_0,\ldots,x_n)=\phi(y_i)$///,", we obtain a homogeneous polynomial that vanishes identically if and only if ",TEX///$G$///," lies in the kernel of ",TEX///$phi$///,"; thus, the problem is reduced to resolving a homogeneous linear system in the coefficients of ",TEX///$G$///,".", 
+"This is equivalent to ",TT "ideal image basis(d,kernel phi)",", but a more direct algorithm is used. Indeed, taking a generic homogeneous degree ",TEX///$d$///," polynomial ", TEX///$G(y_0,\ldots,y_m)$///," and substituting the ",TEX///$y_i$///,"'s with the ",TEX///$F_i$///,"'s, where ",TEX///$F_i=F_i(x_0,\ldots,x_n)=\phi(y_i)$///,", we obtain a homogeneous polynomial that vanishes identically if and only if ",TEX///$G$///," lies in the kernel of ",TEX///$phi$///,"; thus, the problem is reduced to resolving a homogeneous linear system in the coefficients of ",TEX///$G$///,".", 
     EXAMPLE { 
           "-- A special birational transformation of P^8 into a complete intersection of three quadrics in P^11
 K=QQ; ringP8=K[x_0..x_8]; ringP11=K[y_0..y_11];",
           "phi=map(ringP8,ringP11,{-5*x_0*x_3+x_2*x_4+x_3*x_4+35*x_0*x_5-7*x_2*x_5+x_3*x_5-x_4*x_5-49*x_5^2-5*x_0*x_6+2*x_2*x_6-x_4*x_6+27*x_5*x_6-4*x_6^2+x_4*x_7-7*x_5*x_7+2*x_6*x_7-2*x_4*x_8+14*x_5*x_8-4*x_6*x_8,-x_1*x_2-6*x_1*x_5-5*x_0*x_6+2*x_1*x_6+x_4*x_6+x_5*x_6-5*x_0*x_7-x_1*x_7+2*x_2*x_7+7*x_5*x_7-2*x_6*x_7+2*x_1*x_8-3*x_7*x_8,-25*x_0^2+9*x_0*x_2+10*x_0*x_4-2*x_2*x_4-x_4^2+29*x_0*x_5-x_2*x_5-7*x_4*x_5-13*x_0*x_6+3*x_4*x_6+x_5*x_6-x_0*x_7+2*x_2*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-8*x_0*x_8+2*x_4*x_8-3*x_7*x_8,x_2*x_4+x_3*x_4+x_4^2+7*x_2*x_5-9*x_4*x_5+12*x_5*x_6-4*x_6^2+2*x_3*x_7+2*x_4*x_7-14*x_5*x_7+4*x_6*x_7+x_3*x_8-x_4*x_8-14*x_5*x_8+x_6*x_8,-5*x_0*x_4+x_2*x_4-7*x_2*x_5+8*x_4*x_5-5*x_0*x_6+2*x_2*x_6-x_4*x_6+x_5*x_6-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,x_0*x_4+x_4^2-7*x_1*x_5-8*x_4*x_5+x_0*x_6+x_1*x_6+2*x_4*x_6-x_5*x_6+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_2*x_3+x_4^2-8*x_4*x_5+x_4*x_6+6*x_5*x_6-2*x_6^2+x_3*x_7+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_1*x_3-7*x_1*x_5+x_1*x_6+x_4*x_6-7*x_5*x_6+2*x_6^2-x_3*x_7,-4*x_0*x_3+x_3*x_4-x_4^2-7*x_0*x_5+8*x_4*x_5+x_0*x_6-x_4*x_6-6*x_5*x_6+2*x_6^2-x_3*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,-5*x_0*x_2+2*x_2^2+x_2*x_4-x_4^2-x_2*x_5+8*x_4*x_5-10*x_0*x_6+2*x_5*x_6+2*x_2*x_7-2*x_4*x_7+14*x_5*x_7-4*x_6*x_7+5*x_0*x_8-3*x_2*x_8-2*x_4*x_8+7*x_5*x_8-2*x_6*x_8-3*x_7*x_8,-5*x_0*x_1+x_1*x_2+x_1*x_4-4*x_0*x_6-x_1*x_6+x_4*x_6+x_0*x_7,x_0*x_2-x_1*x_2+5*x_0*x_4+x_1*x_4-14*x_1*x_5-x_2*x_5-8*x_4*x_5-8*x_0*x_6+2*x_1*x_6+4*x_4*x_6+2*x_2*x_7+4*x_0*x_8+3*x_1*x_8-7*x_5*x_8+2*x_6*x_8-3*x_7*x_8})",
-          "time Kernel(phi,1)",
-          "time Kernel(phi,2)"
+          "time kernelComponent(phi,1)",
+          "time kernelComponent(phi,2)"
           },
           PARA{},
           "An obvious change to the idea of the algorithm allows to perform this computation even when the source of the rational map ", TEX///$\Phi$///, " is a hypersurface of degree ", TEX///$d$///, " times the degree of the forms defining the map.",
@@ -486,8 +520,31 @@ K=QQ; ringP8=K[x_0..x_8]; ringP11=K[y_0..y_11];",
 -- to the inverse image of a general hyperplane H in P^11
 H=trim ideal random(1,ringP11)",
           "ringHypersurface=ringP8/phi(H); phi'=map(ringHypersurface,ringP8) * phi;",
-          "time Kernel(phi',1)",
-          }
+          "time kernelComponent(phi',1)",
+          },
+    SeeAlso => {(kernel,RingMap)} 
+          } 
+   document { 
+    Key => {isBirational,(isBirational,RingMap)}, 
+    Headline => "whether a rational map is birational", 
+     Usage => "isBirational phi", 
+     Inputs => { 
+          "phi" => RingMap => {"representing a rational map ",TEX///$\Phi:X--->Y$///," (with ",TEX///$X$///," and ",TEX///$Y$///," absolutely irreducible)"}         
+               }, 
+     Outputs => { 
+          Boolean => {"whether ",TEX///$\Phi$///," is birational"  } 
+                },
+          "The testing passes through the methods ", TO degreeOfRationalMap, " and ", TO projectiveDegrees, ", so that there is a positive (but very small) probability of obtaining a wrong answer.
+",
+          PARA{},
+          "In the example below we check the birationality of a map between two quadric hypersurfaces in ",TEX///$\mathbb{P}^8$///,".",
+    EXAMPLE { 
+          "K=ZZ/331",
+          "X=K[x_0..x_8]/ideal(x_0^2+60*x_0*x_1-155*x_1^2-108*x_0*x_2-87*x_1*x_2-23*x_2^2-153*x_0*x_3-44*x_1*x_3-101*x_2*x_3-23*x_3^2-108*x_0*x_4+108*x_1*x_4-74*x_2*x_4+157*x_3*x_4+4*x_4^2+92*x_0*x_5-23*x_2*x_5+46*x_3*x_5+85*x_4*x_5+99*x_0*x_6-77*x_1*x_6-131*x_2*x_6+85*x_3*x_6+104*x_4*x_6-97*x_6^2-141*x_0*x_7-147*x_1*x_7+127*x_2*x_7-104*x_3*x_7-113*x_5*x_7-151*x_0*x_8+142*x_1*x_8+104*x_2*x_8+3*x_3*x_8-113*x_4*x_8+111*x_5*x_8+81*x_6*x_8+120*x_7*x_8)",
+          "Y=K[t_0..t_8]/ideal(t_1*t_2-t_2*t_3+104*t_0*t_5+71*t_0*t_7-142*t_1*t_7+154*t_2*t_7-124*t_3*t_7-70*t_4*t_7-43*t_5*t_7+155*t_6*t_7+11*t_7^2-10*t_7*t_8)",
+          "phi=map(X,Y,{10*x_2*x_3+165*x_1*x_4+153*x_2*x_5-102*x_4*x_5-121*x_1*x_6+28*x_2*x_6-152*x_3*x_6-27*x_4*x_6-141*x_6^2+131*x_1*x_7+27*x_3*x_7-38*x_5*x_7-144*x_1*x_8+157*x_2*x_8+83*x_5*x_8-100*x_6*x_8+126*x_7*x_8, -71*x_1*x_3+2*x_0*x_4-98*x_1*x_4-85*x_2*x_4-95*x_3*x_4+59*x_4^2-51*x_0*x_5-86*x_2*x_5-126*x_3*x_5+71*x_4*x_5-68*x_0*x_6-144*x_1*x_6+150*x_2*x_6-155*x_3*x_6-81*x_4*x_6-80*x_6^2-11*x_0*x_7-28*x_1*x_7-80*x_2*x_7+81*x_3*x_7+16*x_5*x_7-32*x_0*x_8-11*x_1*x_8-19*x_4*x_8+155*x_5*x_8-95*x_6*x_8-7*x_7*x_8, -131*x_0*x_3+81*x_0*x_5+142*x_4*x_5-102*x_0*x_6-48*x_3*x_6+159*x_4*x_6+80*x_6^2-159*x_3*x_7-16*x_5*x_7+161*x_0*x_8-148*x_5*x_8-110*x_6*x_8-80*x_7*x_8, 94*x_2^2+2*x_0*x_4-98*x_1*x_4-85*x_2*x_4-95*x_3*x_4+59*x_4^2-51*x_0*x_5+142*x_2*x_5+125*x_3*x_5+71*x_4*x_5-68*x_0*x_6+130*x_1*x_6+90*x_2*x_6+38*x_3*x_6-81*x_4*x_6-145*x_6^2-11*x_0*x_7-17*x_1*x_7-91*x_2*x_7+81*x_3*x_7+29*x_5*x_7-32*x_0*x_8-11*x_1*x_8-19*x_4*x_8+155*x_5*x_8-95*x_6*x_8-7*x_7*x_8, -49*x_1*x_2+107*x_0*x_4-18*x_1*x_4+131*x_2*x_4-134*x_3*x_4+62*x_4^2-66*x_0*x_5-56*x_2*x_5-37*x_3*x_5-29*x_4*x_5-36*x_0*x_6+14*x_1*x_6-109*x_2*x_6-120*x_3*x_6+130*x_4*x_6+8*x_6^2-34*x_0*x_7+125*x_1*x_7+106*x_2*x_7-130*x_3*x_7-134*x_5*x_7+139*x_0*x_8-38*x_1*x_8+142*x_4*x_8-158*x_5*x_8+58*x_6*x_8-32*x_7*x_8, 69*x_0*x_2-58*x_0*x_5+48*x_3*x_5+85*x_0*x_6-96*x_2*x_6+133*x_3*x_6-102*x_6^2+13*x_2*x_7-112*x_5*x_7, -147*x_1^2+87*x_0*x_4-27*x_1*x_4-59*x_2*x_4-121*x_3*x_4+140*x_4^2+123*x_0*x_5-98*x_2*x_5+84*x_3*x_5-106*x_4*x_5+2*x_0*x_6-141*x_1*x_6-156*x_2*x_6-140*x_3*x_6-34*x_4*x_6+117*x_6^2+30*x_0*x_7-133*x_1*x_7-63*x_2*x_7+34*x_3*x_7+109*x_5*x_7-153*x_0*x_8+137*x_1*x_8+148*x_4*x_8-164*x_5*x_8-129*x_6*x_8+109*x_7*x_8, -131*x_0*x_1+87*x_0*x_5-139*x_2*x_5-123*x_0*x_6-48*x_1*x_6-130*x_2*x_6+46*x_6^2-159*x_1*x_7+57*x_5*x_7, -111*x_0*x_1-127*x_1^2-65*x_0*x_2+12*x_1*x_2+26*x_2^2+101*x_0*x_3-51*x_1*x_3+71*x_2*x_3+26*x_3^2+116*x_0*x_4-89*x_1*x_4+55*x_2*x_4+100*x_3*x_4-32*x_4^2+154*x_0*x_5-5*x_2*x_5+138*x_3*x_5+99*x_4*x_5-46*x_0*x_6+84*x_1*x_6+68*x_2*x_6+74*x_3*x_6+129*x_4*x_6+80*x_6^2+135*x_0*x_7+49*x_1*x_7-29*x_2*x_7-129*x_3*x_7-16*x_5*x_7-47*x_0*x_8+104*x_1*x_8-60*x_2*x_8+11*x_3*x_8+18*x_4*x_8-90*x_5*x_8+80*x_6*x_8+47*x_7*x_8})",
+          "time isBirational phi"
+            }
           } 
    document { 
     Key => {isInverseMap,(isInverseMap,RingMap,RingMap)}, 
@@ -538,7 +595,7 @@ H=trim ideal random(1,ringP11)",
           "QQ[t_0..t_2];", 
           "toMap {t_0^2,t_0*t_1,t_0*t_2,t_1*t_2}", 
           }, 
-          "If a positive integer ",TEX///$d$///," is passed to the option ", TO Dominant, ", then the method returns the induced map on ",TEX///$K[x_0,\ldots,x_m]/J_d$///,", where ",TEX///$J_d$///," is the ideal generated by all homogeneous elements of degree ",TEX///$d$///," of the kernel of ",TEX///$\phi$///,". (In this case, the method ", TO Kernel, " is called.)",
+          "If a positive integer ",TEX///$d$///," is passed to the option ", TO Dominant, ", then the method returns the induced map on ",TEX///$K[x_0,\ldots,x_m]/J_d$///,", where ",TEX///$J_d$///," is the ideal generated by all homogeneous elements of degree ",TEX///$d$///," of the kernel of ",TEX///$\phi$///,". (In this case, the method ", TO kernelComponent, " is called.)",
     EXAMPLE { 
           "toMap({t_0^2,t_0*t_1,t_0*t_2,t_1*t_2},Dominant=>2)", 
           } 
@@ -551,9 +608,9 @@ TEST ///  --- quadro-quadric Cremona transformations
     phi2=toMap minors(2,genericMatrix(ringP8,3,3)) 
     phi3=toMap pfaffians(4,genericSkewMatrix(ringP14,6)) 
     phi4=map(ringP20,ringP20,{t_10*t_15-t_9*t_16+t_6*t_20,t_10*t_14-t_8*t_16+t_5*t_20,t_9*t_14-t_8*t_15+t_4*t_20,t_6*t_14-t_5*t_15+t_4*t_16,t_11*t_13-t_16*t_17+t_15*t_18-t_14*t_19+t_12*t_20,t_3*t_13-t_10*t_17+t_9*t_18-t_8*t_19+t_7*t_20,t_10*t_12-t_2*t_13-t_7*t_16-t_6*t_18+t_5*t_19,t_9*t_12-t_1*t_13-t_7*t_15-t_6*t_17+t_4*t_19,t_8*t_12-t_0*t_13-t_7*t_14-t_5*t_17+t_4*t_18,t_10*t_11-t_3*t_16+t_2*t_20,t_9*t_11-t_3*t_15+t_1*t_20,t_8*t_11-t_3*t_14+t_0*t_20,t_7*t_11-t_3*t_12+t_2*t_17-t_1*t_18+t_0*t_19,t_6*t_11-t_2*t_15+t_1*t_16,t_5*t_11-t_2*t_14+t_0*t_16,t_4*t_11-t_1*t_14+t_0*t_15,t_6*t_8-t_5*t_9+t_4*t_10,t_3*t_6-t_2*t_9+t_1*t_10,t_3*t_5-t_2*t_8+t_0*t_10,t_3*t_4-t_1*t_8+t_0*t_9,t_2*t_4-t_1*t_5+t_0*t_6})
-    time psi1=invertBirMap(phi1,CheckInverseMap=>null)
-    time psi2=invertBirMap(phi2,CheckInverseMap=>true)
-    time psi3=invertBirMap(phi3,CheckInverseMap=>false)
+    time psi1=invertBirMap(phi1,MathMode=>null)
+    time psi2=invertBirMap(phi2,MathMode=>true)
+    time psi3=invertBirMap(phi3,MathMode=>false)
     time psi4=invertBirMap phi4
     time assert (isInverseMap(phi1,psi1) and isInverseMap(phi2,psi2) and isInverseMap(phi3,psi3) and isInverseMap(phi4,psi4))
     time assert (degreeOfRationalMap phi1 == 1 and degreeOfRationalMap phi2 == 1 and degreeOfRationalMap phi3 == 1 and degreeOfRationalMap phi4 == 1)
@@ -581,15 +638,15 @@ TEST ///  -- special map P^8 ---> P^11
     K=ZZ/331; ringP8=K[x_0..x_8]; ringP11=K[y_0..y_11];
     phi=map(ringP8,ringP11,{-5*x_0*x_3+x_2*x_4+x_3*x_4+35*x_0*x_5-7*x_2*x_5+x_3*x_5-x_4*x_5-49*x_5^2-5*x_0*x_6+2*x_2*x_6-x_4*x_6+27*x_5*x_6-4*x_6^2+x_4*x_7-7*x_5*x_7+2*x_6*x_7-2*x_4*x_8+14*x_5*x_8-4*x_6*x_8,-x_1*x_2-6*x_1*x_5-5*x_0*x_6+2*x_1*x_6+x_4*x_6+x_5*x_6-5*x_0*x_7-x_1*x_7+2*x_2*x_7+7*x_5*x_7-2*x_6*x_7+2*x_1*x_8-3*x_7*x_8,-25*x_0^2+9*x_0*x_2+10*x_0*x_4-2*x_2*x_4-x_4^2+29*x_0*x_5-x_2*x_5-7*x_4*x_5-13*x_0*x_6+3*x_4*x_6+x_5*x_6-x_0*x_7+2*x_2*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-8*x_0*x_8+2*x_4*x_8-3*x_7*x_8,x_2*x_4+x_3*x_4+x_4^2+7*x_2*x_5-9*x_4*x_5+12*x_5*x_6-4*x_6^2+2*x_3*x_7+2*x_4*x_7-14*x_5*x_7+4*x_6*x_7+x_3*x_8-x_4*x_8-14*x_5*x_8+x_6*x_8,-5*x_0*x_4+x_2*x_4-7*x_2*x_5+8*x_4*x_5-5*x_0*x_6+2*x_2*x_6-x_4*x_6+x_5*x_6-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,x_0*x_4+x_4^2-7*x_1*x_5-8*x_4*x_5+x_0*x_6+x_1*x_6+2*x_4*x_6-x_5*x_6+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_2*x_3+x_4^2-8*x_4*x_5+x_4*x_6+6*x_5*x_6-2*x_6^2+x_3*x_7+x_4*x_7-7*x_5*x_7+2*x_6*x_7+x_4*x_8-7*x_5*x_8+2*x_6*x_8,x_1*x_3-7*x_1*x_5+x_1*x_6+x_4*x_6-7*x_5*x_6+2*x_6^2-x_3*x_7,-4*x_0*x_3+x_3*x_4-x_4^2-7*x_0*x_5+8*x_4*x_5+x_0*x_6-x_4*x_6-6*x_5*x_6+2*x_6^2-x_3*x_7-x_4*x_7+7*x_5*x_7-2*x_6*x_7-x_4*x_8+7*x_5*x_8-2*x_6*x_8,-5*x_0*x_2+2*x_2^2+x_2*x_4-x_4^2-x_2*x_5+8*x_4*x_5-10*x_0*x_6+2*x_5*x_6+2*x_2*x_7-2*x_4*x_7+14*x_5*x_7-4*x_6*x_7+5*x_0*x_8-3*x_2*x_8-2*x_4*x_8+7*x_5*x_8-2*x_6*x_8-3*x_7*x_8,-5*x_0*x_1+x_1*x_2+x_1*x_4-4*x_0*x_6-x_1*x_6+x_4*x_6+x_0*x_7,x_0*x_2-x_1*x_2+5*x_0*x_4+x_1*x_4-14*x_1*x_5-x_2*x_5-8*x_4*x_5-8*x_0*x_6+2*x_1*x_6+4*x_4*x_6+2*x_2*x_7+4*x_0*x_8+3*x_1*x_8-7*x_5*x_8+2*x_6*x_8-3*x_7*x_8});
     Z=ideal(y_2*y_4+y_3*y_4+y_4^2+5*y_2*y_5+y_3*y_5+5*y_4*y_5-y_1*y_6-4*y_2*y_6-5*y_5*y_6-4*y_2*y_7-2*y_4*y_7-y_1*y_8+4*y_4*y_8-5*y_5*y_8-4*y_5*y_9+3*y_7*y_9-4*y_8*y_9-y_3*y_10-3*y_6*y_10-5*y_8*y_10-y_4*y_11+4*y_6*y_11+5*y_8*y_11,3*y_1*y_3-y_2*y_3-3*y_3*y_4-y_4^2+2*y_0*y_5-y_3*y_5+y_1*y_6+2*y_2*y_6+3*y_5*y_6-7*y_2*y_7-4*y_4*y_7+7*y_1*y_8-2*y_4*y_8+y_0*y_9-y_4*y_9+2*y_5*y_9+2*y_7*y_9+y_8*y_9-7*y_0*y_10+5*y_3*y_10-3*y_6*y_10-y_0*y_11-2*y_3*y_11-2*y_4*y_11,7*y_0*y_1+y_0*y_4+7*y_1*y_4-y_3*y_4+8*y_0*y_5-y_3*y_5-y_1*y_6+7*y_2*y_6+8*y_5*y_6+y_2*y_7+8*y_4*y_7-y_1*y_8-8*y_4*y_8+7*y_5*y_9-8*y_7*y_9+7*y_8*y_9+y_0*y_10-y_3*y_10+8*y_6*y_10-7*y_0*y_11-7*y_4*y_11-7*y_6*y_11);
-    time assert(Kernel(phi,2) == Z)
+    time assert(kernelComponent(phi,2) == Z)
     time assert(projectiveDegrees phi == {1, 2, 4, 8, 16, 23, 23, 16, 8})
     time assert(degreeOfRationalMap phi == 1)
     H=ideal random(1,ringP11)
     phi'=map(ringP8/phi(H),ringP8) * phi;
-    time assert ( Kernel(phi',1) == H )
+    time assert ( kernelComponent(phi',1) == H )
     Q=ideal random(2,ringP11)
     phi'=map(ringP8/phi(Q),ringP8) * phi;
-    time assert ( Kernel(phi',2) == Q+Z )
+    time assert ( kernelComponent(phi',2) == Q+Z )
 /// 
     
 TEST ///
@@ -606,10 +663,10 @@ TEST ///
     S=K[x_0..x_8];
     phi=map(R,S,{t_4*t_6+t_3*t_7,t_5^2-t_1*t_7,t_4*t_5-t_2*t_7,t_3*t_5+t_2*t_6,t_2*t_5-t_0*t_7,t_1*t_4-t_0*t_7,t_1*t_3+t_0*t_6,t_2^2-t_0*t_4,t_1*t_2-t_0*t_5});
     Out=ideal(x_3*x_5-x_2*x_6-x_0*x_8,x_4^2-x_4*x_5-x_1*x_7+x_2*x_8,x_3^2-4*x_0*x_6);
-    assert( Kernel(phi,2) == Out )
+    assert( kernelComponent(phi,2) == Out )
     assert( ideal image basis(2,kernel phi) == Out )
     phi'=toMap(phi,Dominant=>ideal(Out_0,Out_1))
-    assert( ideal image basis(2,kernel phi') == Kernel(phi',2) )
+    assert( ideal image basis(2,kernel phi') == kernelComponent(phi',2) )
 ///
 
 end 
