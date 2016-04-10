@@ -1,8 +1,8 @@
 
 newPackage(
        "MultipolynomialResultants",
-	Version => "0.3", 
-    	Date => "April 6, 2016",
+	Version => "1.0", 
+    	Date => "April 9, 2016",
     	Authors => {{Name => "Giovanni Stagliano'", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -30,6 +30,10 @@ Resultant Matrix := (F) -> (
       if not isPolynomialRing ring F then error("the base ring must be a polynomial ring");
       if numgens source F != numgens ring F then error("the number of variables in the ring must be equal to the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
 --    if not isHomogeneous F then error("expected a homogeneous matrix");
+    -----
+    if numgens source F -1 == 1 then return standardRes F;
+    if {2,2,2} === for i to numgens source F -1 list first degree F_(0,i) then if char coefficientRing ring F =!= 2 then return Res222 F;
+    -----
     n:=numgens source F-1;
     K:=coefficientRing ring F;
     x:=local x;
@@ -47,6 +51,10 @@ Resultant Matrix := (F) -> (
     if dim ideal F' > 0 then return sub(0,K);
     return Resultant wobble F; 
 );
+
+Resultant List := (s) -> (
+    return Resultant matrix{s};
+);
     
 internalResultant = (F) -> (
     if verbose then <<"Running internalResultant for "<<toString F<<endl;
@@ -57,8 +65,10 @@ internalResultant = (F) -> (
     x:=local x;
     R:=K[x_0..x_n];
     F=sub(F,vars R);
-      if n==0 then return leadCoefficient F_(0,0);
+    if n == 1 then return standardRes F;
+    if n == 0 then return leadCoefficient F_(0,0);
     d:=flatten degrees ideal F;
+    if d === {2,2,2} then if char K =!= 2 then return Res222 F; 
     xn:=x_n; S:=K[x_0..x_(n-1)];
     f:=sub(sub(F,{xn=>1}),S);
     Fbar:=submatrix'(sub(sub(F,{xn=>0}),S),,{n});
@@ -81,10 +91,48 @@ wobble = (F) -> (
     Sub(F)
 );
 
+standardRes = (F) -> (
+    if verbose then <<"Running standardRes for "<<toString F<<endl;
+    -- Determinant of the Sylvester matrix
+    K:=coefficientRing ring F;
+    (x,y):=toSequence gens ring F;
+    (l,m):=(first degree F_(0,0),first degree F_(0,1));
+     A:=sub(transpose (coefficients(matrix{{F_(0,0)}}, Monomials => for i to l list x^(l-i) * y^i))_1,K);   
+     B:=sub(transpose (coefficients(matrix{{F_(0,1)}}, Monomials => for i to m list x^(m-i) * y^i))_1,K);   
+     A':=transpose(A|matrix{toList(m-1:0_K)});
+     B':=transpose(B|matrix{toList(l-1:0_K)});
+     Sylvester:=A';
+     for i from 1 to m-1 do (
+          A'=matrix{{0_K}} || submatrix'(A',{l+m-1},);
+          Sylvester=Sylvester|A'
+     );
+     Sylvester=Sylvester|B';
+     for i from 1 to l-1 do (
+          B'=matrix{{0_K}} || submatrix'(B',{l+m-1},);
+          Sylvester=Sylvester|B'
+     );
+     det Sylvester
+);
+
+Res222 = (F) -> ( 
+    if verbose then <<"Running Res222 for "<<toString F<<endl;
+    -- Resultant of three ternary quadrics
+    -- p. 89 of [David A. Cox and John Little and Donal O'shea - Using Algebraic Geometry (2005)]
+    K:=coefficientRing ring F;
+    (x,y,z):=toSequence gens ring F;
+    M:={x^2,y^2,z^2,x*y,x*z,y*z};
+    J:=transpose jacobian matrix{{det jacobian F}};
+    A:=sub(transpose (coefficients(F,Monomials=>M))_1,K);
+    B:=sub(transpose (coefficients(J,Monomials=>M))_1,K);
+    d:=-1/sub(512,K)*det(A||B);
+    try lift(d,K) else d
+);
+
 Discriminant=method(TypicalValue => RingElement);
     
 Discriminant RingElement := (G) -> (
-    if not (isPolynomialRing ring G and isHomogeneous G) then error("expected a homogeneous polynomial");   
+--  if not (isPolynomialRing ring G and isHomogeneous G) then error("expected a homogeneous polynomial");   
+    if not (isPolynomialRing ring G) then error("expected a homogeneous polynomial");   
     n:=numgens ring G;
     d:=first degree G;
     a:=((d-1)^n - (-1)^n)/d;
@@ -99,7 +147,7 @@ document {
     EM "MultipolynomialResultants", " is a package to compute resultants and discriminants.",
     PARA{},
     "Let ",TEX///$F_0,\ldots,F_n$///," be ",TEX///$n+1$///," homogeneous polynomials in ",TEX///$n+1$///," variables ",TEX///$x_0,\ldots,x_n$///," over a commutative ring ",TEX///$K$///,". The resultant ",TEX///$R(F_0,\ldots,F_n)$///," is a certain polynomial in the coefficients of ",TEX///$F_0,\ldots,F_n$///,"; when ",TEX///$K$///," is an algebraically closed field, ",TEX///$R(F_0,\ldots,F_n)$///," vanishes if and only if ",TEX///$F_0,\ldots,F_n$///," have a common nontrivial root.
-    The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the resultant of its partial derivatives. In this package, the resultant is computed, recursively, through the Poisson Formula.",
+    The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the resultant of its partial derivatives. In this package, the resultant is computed, recursively, through the Poisson Formula; in some special cases, faster algorithms are used.",
     PARA{},
     "For the general theory, see one of the following:",
     PARA{},
@@ -108,10 +156,10 @@ document {
     "2) Israel M. Gelfand, Mikhail M. Kapranov, Andrei V. Zelevinsky - ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"}, ", Mathematics: Theory & Applications (1994)",
 }
 document { 
-    Key => {Resultant,(Resultant,Matrix)}, 
+    Key => {Resultant,(Resultant,Matrix),(Resultant,List)}, 
     Headline => "multipolynomial resultant", 
     Usage => "Resultant F", 
-    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables"} 
+    Inputs => { "F" => Matrix => {"a row matrix whose entries are ", TEX///$n+1$///," homogeneous polynomials ", TEX///$F_0,\ldots,F_n$///," in ", TEX///$n+1$///," variables (or a ", TO List," to be interpreted as such a matrix)"} 
 }, 
     Outputs => { 
     {"the resultant of ",TEX///$F_0,\ldots,F_n$///} 
@@ -134,7 +182,7 @@ oo[t_0,t_1,t_2]",
     "L = u_(1,0,0)*t_0+u_(0,1,0)*t_1+u_(0,0,1)*t_2",
     "Q = u_(2,0,0)*t_0^2+u_(1,1,0)*t_0*t_1+u_(0,2,0)*t_1^2+u_(1,0,1)*t_0*t_2+u_(0,1,1)*t_1*t_2+u_(0,0,2)*t_2^2",
     "C = u_(3,0,0)*t_0^3+u_(2,1,0)*t_0^2*t_1+u_(1,2,0)*t_0*t_1^2+u_(0,3,0)*t_1^3+u_(2,0,1)*t_0^2*t_2+u_(1,1,1)*t_0*t_1*t_2+u_(0,2,1)*t_1^2*t_2+u_(1,0,2)*t_0*t_2^2+u_(0,1,2)*t_1*t_2^2+u_(0,3,0)*t_2^3",
-    "time Resultant matrix{{L,Q,C}}",
+    "time Resultant {L,Q,C}",
     },
     SeeAlso => {resultant} 
 }
@@ -159,114 +207,56 @@ document {
     "R=ZZ/331[x_0..x_3];",
     "F=x_0^4+x_1^4+x_2^4+x_3^4",
     "G=x_0^4-x_0*x_1^3-x_2^4+x_2*x_3^3",
-    "R'=ZZ/331[t_0,t_1][x_0,x_1,x_2];",
+    "R'=ZZ/331[t_0,t_1][x_0..x_3];",
     "pencil=t_0*sub(F,R')+t_1*sub(G,R')",
     "time D=Discriminant pencil",
-    "time factor D"
+    "factor D"
 },
     SeeAlso => {discriminant} 
 }
 
 
-TEST /// -- testing resultant
-GenericMatrix = (d,K) -> (
-    -- row matrix of generic homogeneous polynomials of degrees d_0,d_1,...,d_n in n+1 variables
+TEST /// 
+genericResultant = (d,K) -> ( -- Res_(d_0,d_1,...,d_n) over K
     n:=#d-1;
     N:=for i to n list binomial(n+d_i,d_i)-1;
     a:=local a; x:=local x;
     A:=for i to n list K[a_(i,0)..a_(i,N_i)];
---  S:=K[]; for i to n do S=S**A_i;
     S:=K[]; for i to n do S=K[gens S,a_(i,0)..a_(i,N_i)]; 
     R:=S[x_0..x_n];
-    M:=matrix pack(n+1,for i to n list (sub(vars A_i,R)*transpose(gens (ideal vars R)^(d_i)))_(0,0));
-    M
+    F:=matrix pack(n+1,for i to n list (sub(vars A_i,R)*transpose(gens (ideal vars R)^(d_i)))_(0,0));
+    Resultant F
 );
-GenericResultant = (d,K) -> Resultant GenericMatrix (d,K);
-standardResultant = (F) -> (
-    R:=ring F;
-    K:=coefficientRing R;
-    x:=gens R;
-    if 1 =!= #x-1 or numgens target F =!= 1 or numgens source F =!= 2 then error("invalid input data");
-    d:=for i to 1 list degree ideal F_(0,i);
-    f:=sub(F,{x_1=>1});
-    S:=K[x_0];
-    f=sub(f,S);
-    sub(resultant(f_(0,0),f_(0,1),(gens S)_0),K)
-);
-compareResultants = (d0,d1,K) -> (
-    t:=local t;
-    R:=K[t_0,t_1];
-    G:=matrix{{random(d0,R),random(d1,R)}};
-    <<"Polynomials: "<<toString flatten entries G<<endl; 
-    w:=Resultant G;
-    v:=standardResultant G;
-    <<"Resultants: "<<w<<endl;
-    <<"            "<<v<<endl;
-    w == v or w == -v
-);
-SLtransf = (F) -> (
-    -- F row matrix of polynomials
-    n:=numgens source F -1;
-    K:=coefficientRing ring F;
-    A:=matrix 0; d:=0; randomness:=2;
-    while d == 0 do (
-       A=matrix(for i to n list for j to n list sub(random(-randomness+1,randomness),K));
-       d=determinant A
-    ); 
-    A=d^(-1) * (matrix A_0) | submatrix'(A,,{0});
-    transpose(sub(A,ring F)*transpose(F))
-);
-changeVars = (K,u) -> (
-    d:=for i to random(1,u) list random(1,u+1);
-    <<"d="<<toSequence d<<endl;
+a:=local a; ring112=ZZ[a_(0,0),a_(0,1),a_(0,2),a_(1,0),a_(1,1),a_(1,2),a_(2,0),a_(2,1),a_(2,2),a_(2,3),a_(2,4),a_(2,5)];
+res112=a_(0,0)^2*a_(1,1)^2*a_(2,5)-a_(0,0)^2*a_(1,1)*a_(1,2)*a_(2,4)+a_(0,0)^2*a_(1,2)^2*a_(2,3)-2*a_(0,0)*a_(0,1)*a_(1,0)*a_(1,1)*a_(2,5)+a_(0,0)*a_(0,1)*a_(1,0)*a_(1,2)*a_(2,4)+a_(0,0)*a_(0,1)*a_(1,1)*a_(1,2)*a_(2,2)-a_(0,0)*a_(0,1)*a_(1,2)^2*a_(2,1)+a_(0,1)^2*a_(1,0)^2*a_(2,5)-a_(0,1)^2*a_(1,0)*a_(1,2)*a_(2,2)+a_(0,1)^2*a_(1,2)^2*a_(2,0)+a_(0,0)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,4)-a_(0,0)*a_(0,2)*a_(1,1)^2*a_(2,2)-2*a_(0,0)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,3)+a_(0,0)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,1)-a_(0,1)*a_(0,2)*a_(1,0)^2*a_(2,4)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,2)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,1)-2*a_(0,1)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,0)+a_(0,2)^2*a_(1,0)^2*a_(2,3)-a_(0,2)^2*a_(1,0)*a_(1,1)*a_(2,1)+a_(0,2)^2*a_(1,1)^2*a_(2,0);
+assert(sub(genericResultant((1,1,2),ZZ),vars ring112) == res112);
+///
+
+TEST ///
+invariance = (d,K) -> (
     n:=#d -1; x:=local x; R:=K[x_0..x_n];
     F:=matrix({for i to n list sub(random(d_i,ZZ[x_0..x_n]),R)});
-    <<"F="<<toString F<<endl;
-    pr:=product for i to n list first degree F_(0,i);
     A:=matrix for i to n list for j to n list sub(random(-10,10),K); 
-    <<"det A = "<<toString(det A)<<endl;
     Sub:=map(R,R,transpose(A*(transpose vars R)));
     F':=Sub(F);
-    <<"F'="<<toString F'<<endl;
     (Resultant F') == (det A)^(product toList d) * (Resultant F)
 );
-L=true; for i from 1 to 5 do for j from 1 to 5 do L= L and compareResultants(i,j,QQ);
-for i from 1 to 5 do for j from 1 to 5 do L= L and compareResultants(i,j,ZZ/33331);
-assert(L) 
-rightRing112=ZZ[a_(0,0),a_(0,1),a_(0,2),a_(1,0),a_(1,1),a_(1,2),a_(2,0),a_(2,1),a_(2,2),a_(2,3),a_(2,4),a_(2,5)];
-rightRes112=a_(0,0)^2*a_(1,1)^2*a_(2,5)-a_(0,0)^2*a_(1,1)*a_(1,2)*a_(2,4)+a_(0,0)^2*a_(1,2)^2*a_(2,3)-2*a_(0,0)*a_(0,1)*a_(1,0)*a_(1,1)*a_(2,5)+a_(0,0)*a_(0,1)*a_(1,0)*a_(1,2)*a_(2,4)+a_(0,0)*a_(0,1)*a_(1,1)*a_(1,2)*a_(2,2)-a_(0,0)*a_(0,1)*a_(1,2)^2*a_(2,1)+a_(0,1)^2*a_(1,0)^2*a_(2,5)-a_(0,1)^2*a_(1,0)*a_(1,2)*a_(2,2)+a_(0,1)^2*a_(1,2)^2*a_(2,0)+a_(0,0)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,4)-a_(0,0)*a_(0,2)*a_(1,1)^2*a_(2,2)-2*a_(0,0)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,3)+a_(0,0)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,1)-a_(0,1)*a_(0,2)*a_(1,0)^2*a_(2,4)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,2)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,1)-2*a_(0,1)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,0)+a_(0,2)^2*a_(1,0)^2*a_(2,3)-a_(0,2)^2*a_(1,0)*a_(1,1)*a_(2,1)+a_(0,2)^2*a_(1,1)^2*a_(2,0)
-assert(sub(GenericResultant((1,1,2),ZZ),vars rightRing112)==rightRes112);
-x:=local x;
-R:=ZZ[x_0..x_3];
-assert( Resultant matrix{for i to 3 list x_i^(random(1,5))} == 1)
-F=GenericMatrix((1,1,1),ZZ/3331) 
-assert(Resultant F == Resultant SLtransf F)
-F=GenericMatrix((2,2),ZZ/3331) 
-assert(Resultant F == Resultant SLtransf F)
-F=GenericMatrix((1,1,1),QQ) 
-assert(Resultant F == Resultant SLtransf F)
-F=GenericMatrix((2,2),QQ) 
-assert(Resultant F == Resultant SLtransf F)
-R=QQ[t_0,t_1]
-assert(Resultant(matrix{{8*t_0*t_1+2*t_1^2, 6*t_0^2+3*t_0*t_1+6*t_1^2}}) == 2160)
-assert(Resultant matrix{{8*t_0*t_1^2+2*t_1^3, 6*t_0^2+3*t_0*t_1+6*t_1^2}} == 12960)
-R=QQ[x_0..x_6]; X=transpose vars R;
-A=matrix for i to 6 list for j to 6 list random(QQ)
-assert(Resultant transpose(A*X) == det A)
-assert(changeVars(ZZ,3) and changeVars(QQ,3) and changeVars(ZZ[z],2) and changeVars(ZZ/331,4))
+assert(invariance((4,6),ZZ)) 
+assert(invariance((1,2,3),ZZ)) 
+assert(invariance((2,3,5),QQ)) 
+assert(invariance((1,1,2),ZZ[z])) 
+assert(invariance((3,3,1,1,2),ZZ/331))
 /// 
     
-TEST /// -- testing discriminant
-genericPolynomial = (d,n,K) -> ( 
-    -- generic homogeneous polynomial in n+1 variables of degree d over K
+TEST /// 
+genericDiscriminant = (d,n,K) -> ( 
     N:=binomial(n+d,d)-1;
     a:=local a; x:=local x;
     S:=K[a_0..a_N];
     R:=S[x_0..x_n];
     F:=((vars S)*transpose(gens (ideal vars R)^d))_(0,0);
-    F
+    Discriminant F
 );
-GenericDiscriminant = (d,n,K) -> Discriminant genericPolynomial(d,n,K);
 dualOfSmoothVariety = (I) -> ( 
     R:=ring I; c:=codim I;
     K:=coefficientRing R; n:=numgens R-1;
@@ -282,14 +272,15 @@ Veronese = (d,n,K) -> (
     saturate kernel map(T,R,gens((ideal vars T)^d))
 );
 compareDiscriminants = (d,n,K) -> (
-    D1:=GenericDiscriminant(d,n,K);
-    D2:=(dualOfSmoothVariety Veronese(d,n,K))_0;
-    D2=sub(D2,vars ring D1);
-    <<"via Poisson: "<<toString D1<<endl;
-    <<"via Dual:    "<<toString D2<<endl;
+    D1:=genericDiscriminant(d,n,K);
+    D2:=sub((dualOfSmoothVariety Veronese(d,n,K))_0,vars ring D1);
     ideal(D2) == ideal(D1)
 );
-assert(compareDiscriminants(2,1,QQ) and compareDiscriminants(3,1,GF 5^5) and compareDiscriminants(4,1,QQ) and compareDiscriminants(5,1,ZZ/33331) and compareDiscriminants(2,2,ZZ/101))
+assert compareDiscriminants(2,1,QQ) 
+assert compareDiscriminants(3,1,GF 5^5) 
+assert compareDiscriminants(4,1,QQ) 
+assert compareDiscriminants(5,1,ZZ/33331) 
+assert compareDiscriminants(2,2,ZZ/101)
 /// 
 
 end 
