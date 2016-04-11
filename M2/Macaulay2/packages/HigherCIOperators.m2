@@ -6,7 +6,7 @@ newPackage(
                   Email => "de@msri.org",
                   HomePage => "http://www.msri.org/~de/"}},
         Headline => "Higer CI operators",
-        DebuggingMode => true,
+        DebuggingMode => false,
 	PackageExports =>{"MCMApproximations"}
         )
 
