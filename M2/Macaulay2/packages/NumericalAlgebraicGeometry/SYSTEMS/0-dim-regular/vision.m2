@@ -55,18 +55,17 @@ PH = parametricSegmentHomotopy squarePS
 BC = matrix{flatten flatten(B/entries) | flatten flatten(C/entries)}
 assert all(ten'sols,s->norm evaluate(PS,matrix s | BC) < 0.001)
 
-NAGtrace 1
+NAGtrace 3
 setDefault(ErrorTolerance=>1e-6)
 
-
--- tun 1
+-- run 1
 setRandomSeed 1
 B' = apply(n,i->random(F^3,F^1))
 C' = apply(n,i->random(F^3,F^1))
 BC' = matrix{flatten flatten(B'/entries) | flatten flatten(C'/entries)}
 H = specialize (PH, transpose (BC|BC'))
 time sols = trackHomotopy(H,ten'sols)
-apply(sols,s->evaluate(PS,matrix s | BC'))
+assert all(sols,s->norm evaluate(PS,matrix s | BC') < 0.001)
 sols / (s->s.NumberOfSteps)
 
 -- run 2 (the target is close to start)
@@ -76,29 +75,23 @@ C'' = C+0.1*apply(n,i->random(F^3,F^1))
 BC'' = matrix{flatten flatten(B''/entries) | flatten flatten(C''/entries)}
 H2 = specialize (PH, transpose (BC|BC''))
 time sols2 = trackHomotopy(H2,ten'sols)
-apply(sols2,s->evaluate(PS,matrix s | BC''))
+assert all(sols2,s->norm evaluate(PS,matrix s | BC'') < 0.001)
 sols2 / (s->s.NumberOfSteps)
 
 end --------------------------------------------------------------------------------------
 restart
 load "vision.m2"
 
--- *** absolute position *** (OS X)
--- trackHomotopyM2engine time: .149645 sec.
-..........     -- used 0.150203 seconds
--- trackHomotopyM2engine time: .02781 sec.
-..........     -- used 0.028909 seconds
+-- RedHat
 
--- *** relative psotion *** (faster by 10-20%)
--- track took 132ms.
--- # of solveLinear calls = 3585
--- time of solveLinear calls = 9206000 ns.
--- time of evaluate calls = 121961000 ns.
--- trackHomotopyM2engine time: .130884 sec.
-..........     -- used 0.133882 seconds
--- track took 27ms.
--- # of solveLinear calls = 602
--- time of solveLinear calls = 2942000 ns.
--- time of evaluate calls = 23838000 ns.
--- trackHomotopyM2engine time: .024862 sec.
-..........     -- used 0.025597 seconds
+-- track took 63ms.
+-- # of solveLinear calls = 2158
+-- time of solveLinear calls = 7739859 ns.
+-- time of evaluate calls = 46275195 ns.
+-- trackHomotopyM2engine time: .0630688 sec.
+
+-- track took 18ms.
+-- # of solveLinear calls = 566
+-- time of solveLinear calls = 2382026 ns.
+-- time of evaluate calls = 13412694 ns.
+-- trackHomotopyM2engine time: .0191059 sec.

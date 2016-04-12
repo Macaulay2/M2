@@ -401,7 +401,7 @@ gateMatrix = method()
 gateMatrix GateMatrix := M -> M
 gateMatrix List := L -> (
     if not isTable L then error "a table is expected";
-    new GateMatrix from L
+    new GateMatrix from applyTable(L,x->if instance(x,Gate) then x else inputGate x) 
     )
 gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
 

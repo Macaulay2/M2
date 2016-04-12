@@ -4,7 +4,9 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy" }
+export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy"
+    , "parametricSegmentHomotopy"
+    }
 
 debug SLPexpressions
 
@@ -176,6 +178,16 @@ H = specialize (PH, transpose matrix{{a0,a1}})
 s'sols = { {{0,1}},{{0,-1}} }/point
 time sols = trackHomotopy(H,s'sols)
 assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.707107, -.707107}, SolutionStatus => Regular }} / point)
+///
+
+TEST ///
+needsPackage "NAGtools"
+X = inputGate x
+F = matrix{{X^2}} 
+PH = gateHomotopy4preimage(F,{X})
+K = CC_53
+H = specialize (PH, transpose matrix{{1_K,2}})
+time sols = trackHomotopy(H,{point{{1_K}}})
 ///
 
 TEST ///

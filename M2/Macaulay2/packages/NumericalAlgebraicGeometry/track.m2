@@ -723,6 +723,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
+     if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
@@ -815,11 +816,10 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	 nSols := #solsS;
 	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
 	 inp := mutableMatrix promote(matrix(
-	     	 transpose apply( solsS, s->(if instance(s,Point) 
-	     	     	 then coordinates s  
-	     	     	 else flatten entries s) | {	
-		     	 if instance(s,Point) and s.?LastT then s.LastT else 0 -- track from t=0
-		     	 } )), 
+	     	 transpose apply(solsS, s->(if instance(s,Point) 
+		     	 then coordinates s 	 
+		     	 else flatten entries s) | {0} -- track from t=0 
+		     )),
 	     mainRing); 
 	 n = numrows inp - 1;
 	 out := mutableMatrix(mainRing,n+2,nSols); -- one more row than inp (to store last increment)

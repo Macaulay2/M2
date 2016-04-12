@@ -553,6 +553,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
       else if (not t0equals1) { // precision check 
         mHxH.evaluate(x0c0,HxH);
         MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
+        // setRandomUnitVector(RHSmat,n);
         for(int i=0; i<n; i++) 
           C.random(RHSmat.entry(i,0));
         

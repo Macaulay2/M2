@@ -26,7 +26,6 @@ newPackage select((
 export {
     "preimageViaMonodromy",
     "gateHomotopy4preimage",
-    "parametricSegmentHomotopy",
     "RandomPointFunction",
     "StoppingCriterion"    
     }

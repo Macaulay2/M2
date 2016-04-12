@@ -28,6 +28,10 @@ print preimageViaMonodromy(PH,p,{point {{1,0,0}}},RandomPointFunction=>nextP)
 stop = (n,L)->n>30
 print preimageViaMonodromy(PH,p,{point {{1,0,0}}},StoppingCriterion=>stop)
 
+-- the following have overdetermined systems: 
+-- does not work with Software=>M2engine yet
+setDefault(Software=>M2)
+
 -- implicit twisted cubic in projective space
 XYZH = toList (
     (X,Y,Z,H) = inputGate \ (x,y,z,h)
@@ -56,4 +60,4 @@ print preimageViaMonodromy(PS,p0,{pre0},StoppingCriterion=>stop)
 end
 
 restart
-load "degree-computation.m2"
+load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/degree-computation.m2"
