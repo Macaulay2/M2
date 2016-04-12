@@ -31,7 +31,9 @@ document {
 	  LI { "packages that have been published and certified:",
 	       UL {
 	  	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
-		    LI { star, " ", TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been published." }
+		    LI { star, " ", TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been published." },
+		    LI { star, " ", TO "Posets::Posets", ", a package by David Cook II, Sonja Mapes, and Gwyn Whieldon, for processing partially ordered sets, has been published." },
+		    LI { star, " ", TO "MultiplierIdeals::MultiplierIdeals", ", a package by Zach Teitler for computing multiplier ideals of monomial ideals, has been published." }
 	       	    }
 	       },
 	  -- LI { "new packages:",                       -- get this with : git diff version-1.8.2 ../=distributed-packages 
