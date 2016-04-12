@@ -708,7 +708,7 @@ TEST///
 ///
 TEST///
 setRandomSeed()
-R = kk[a,b,c,d,e]/(ideal(a,b)*ideal(c,d))
+R = ZZ/101[a,b,c,d,e]/(ideal(a,b)*ideal(c,d))
 assert(profondeur R == 2)    
 assert(profondeur(ideal(a,d,e), R^1) == 2)
 assert(profondeur R^1 == 2)
