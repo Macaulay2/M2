@@ -14,6 +14,7 @@ check-config:
 	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
 	    GFTABLESDIR=@pre_packagesdir@/Core/factory/				\
 	    LDFLAGS="$(LDFLAGS)"						\
+	    --with-gtest-source-path="@GTEST_PATH@"				\
 	    CPPFLAGS="$(CPPFLAGS)"						\
 	    CC="$(CC)"								\
 	    CXX="$(CXX)"							\
