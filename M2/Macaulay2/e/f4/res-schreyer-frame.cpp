@@ -2,6 +2,7 @@
 
 #include "f4-monlookup.hpp"
 #include "res-schreyer-frame.hpp"
+#include "../timing.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -89,6 +90,14 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
 {
   mFrame.mLevels.resize(max_level);
   mMaxVPSize = 2*monoid().n_vars() + 1;
+
+  timeMakeMatrix = 0.0;
+  timeSortMatrix = 0.0;
+  timeReorderMatrix = 0.0;
+  timeGaussMatrix = 0.0;
+  timeClearMatrix = 0.0;
+  timeResetHashTable = 0.0;
+  timeComputeRanks = 0.0;
 }
   
 // Destruct the frame
@@ -101,6 +110,7 @@ SchreyerFrame::~SchreyerFrame()
 
 void SchreyerFrame::start_computation(StopConditions& stop)
 {
+  decltype(timer()) timeA, timeB;
   while (true)
     {
       switch (mState) {
@@ -111,7 +121,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
-            mState = Matrices;
+             mState = Matrices;
             mCurrentLevel = 2;
             getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
             mSlantedDegree = mLoSlantedDegree;
@@ -135,7 +145,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
-            mCurrentLevel = 2;
+             mCurrentLevel = 2;
             mSlantedDegree++;
             if (mSlantedDegree > mHiSlantedDegree)
               {
@@ -144,16 +154,19 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 #if 0                
                 debugCheckOrderAll();
 #endif
+                timeA = timer();
                 for (auto it=mMinimalizeTODO.cbegin(); it != mMinimalizeTODO.cend(); ++it)
                   {
                     int rk = rank(it->first, it->second);
                     mBettiMinimal.entry(it->first, it->second) -= rk;
                     mBettiMinimal.entry(it->first+1, it->second-1) -= rk;
                   }
+                timeB = timer();
+                timeComputeRanks += seconds(timeB-timeA);
                 mState = Done;
                 if (M2_gbTrace >= 1)
                   mBettiMinimal.output();
-                break;
+                 break;
               }
             if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
               return;
@@ -171,6 +184,13 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         mCurrentLevel++;
         break;
       case Done:
+        std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
+        std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
+        std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
+        std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
+        std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
+        std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
+        std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
         return;
       default:
         break;

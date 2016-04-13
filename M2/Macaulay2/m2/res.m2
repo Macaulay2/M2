@@ -83,10 +83,11 @@ resolutionInEngine := opts -> (M) -> (
 	       );
 	  g := presentation M;
 	  if not instance(opts.Strategy, ZZ) then error "resolution in engine: expected Strategy option to be an integer";
-	  if opts.Strategy === 0 then
+	  if opts.Strategy === 0 or opts.Strategy === 4 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
+                              -- The non-minimal resolution algorithm 4 also needs this.
 	  harddegreelimit := (
 	       if class opts.HardDegreeLimit === ZZ then {opts.HardDegreeLimit}
 	       else if harddegreelimit === null then harddegreelimit = {}
@@ -154,6 +155,7 @@ Strategy0 := new OptionTable from { Strategy => 0 }
 Strategy1 := new OptionTable from { Strategy => 1 }
 Strategy2 := new OptionTable from { Strategy => 2 }
 Strategy3 := new OptionTable from { Strategy => 3 }
+Strategy4 := new OptionTable from { Strategy => 4 }
 
 resolution = method(
      Options => {
@@ -216,6 +218,18 @@ resolution Ideal := ChainComplex => options -> (I) -> resolution(
      then I.cache.quotient
      else I.cache.quotient = (ring I)^1/I,
      options)
+
+nonminimalResolution = method(Options => options resolution)
+nonminimalResolution Module := ChainComplex => o -> (M) -> (
+    resolution(M, o, Strategy=>4)
+    )
+nonminimalResolution Ideal := ChainComplex => o -> (I) -> (
+    resolution(I, o, Strategy=>4)
+    )
+nonminimalResolution Matrix := ChainComplex => o -> (f) -> (
+    resolution(f, o, Strategy=>4)
+    )
+
 
 -----------------------------------------------------------------------------
 getpairs := g -> rawGBBetti(raw g,1)

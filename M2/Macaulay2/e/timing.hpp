@@ -16,6 +16,12 @@ long microseconds(DurationType time_diff)
   return std::chrono::duration_cast<std::chrono::microseconds>(time_diff).count();
 }
 
+template<typename DurationType>
+double seconds(DurationType time_diff)
+{
+  return 1.0e-9 * std::chrono::duration_cast<std::chrono::nanoseconds>(time_diff).count();
+}
+
 #endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

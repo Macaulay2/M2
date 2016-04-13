@@ -1,104 +1,113 @@
 -- Tests for free resolutions
 
 -- Current caveats:
---   a. need to give Weights: first wt vector is the degree vector
---   b. need to pass in the coker (or ideal) of a groebner basis
---   c. the elements at level 1 must be inserted in order of monotone increasing component
---   d. if the input free module is a Schreyer order: need to handle that
+--   a. REMOVED need to give Weights: first wt vector is the degree vector
+--   b. ?? need to pass in the coker (or ideal) of a groebner basis
+--   c. REMOVED the elements at level 1 must be inserted in order of monotone increasing component
+--   d. TODO!! if the input free module is a Schreyer order: need to handle that
 
--- test 1
 TEST ///
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  --R = kk[a..d, Degrees=>{1,2,3,4}, MonomialOrder=>{Weights=>{1,2,3,4}}]
-  R = kk[a..d, MonomialOrder=>{Weights=>{1,1,1,1}}]
+  R = ZZ/101[a..d]
   M = coker vars R
   gbTrace = 1
+  C = nonminimalResolution M
   C = res(M, Strategy=>4)
+  betti'ans = new BettiTally from {(0,{0},0) => 1, (3,{3},3) => 4, (1,{1},1) => 4, (4,{4},4) => 1, (2,{2},2) => 6}
+  assert(betti'ans == betti C)
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)    
+///
+
+TEST ///
+  R = ZZ/101[a..d]
   F = R^{0,-1,-2}
   M = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
-  
-  I = monomialCurveIdeal(R,{1,3,7})
-  gens gb I
-  C = res(I, Strategy=>4)
-  rawBetti(raw C.Resolution, 1)
+  isHomogeneous M  
+  C = nonminimalResolution M
+  betti res M == betti C
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
+
+  nonminimalBetti C
+///
+
+TEST ///
+  R = ZZ/101[a..d]
+  F = R^{0,-2,-1}
+  M = coker map(F,,{{a,0,0},{0,0,b},{0,c,0}})
+  M1 = coker map(F,,{{a,0,0},{0,0,b},{0,c,0}})
+  isHomogeneous M  
+  C = nonminimalResolution M
+  betti res M1 == betti C -- BUG?? YES!!
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
+
+  nonminimalBetti C
+///
+
+TEST ///
+  R = ZZ/101[a..e]
+  I = monomialCurveIdeal(R,{1,3,7,9})
+  C = nonminimalResolution I
+  assert(betti C == betti res (ideal I_*))
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
 ///
 
 TEST ///  
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..17), MonomialOrder=>{Weights=>splice{18:1}}]
+  R = ZZ/101[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
+  elapsedTime C = nonminimalResolution I
+  elapsedTime  assert(betti C == betti res (ideal I_*))
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
+  betti C
 
-  C = res(I, Strategy=>0)
+  elapsedTime  res(ideal(I_*), Strategy=>0)
+  elapsedTime  res(ideal(I_*), Strategy=>1)
+  elapsedTime  res(ideal(I_*), Strategy=>2)
+  elapsedTime  res(ideal(I_*), Strategy=>3)
+
+  nonminimalBetti C
+  debug Core
   rawBetti(raw C.Resolution, 1)
   rawBetti(raw C.Resolution, 0)
-  rawBetti(raw C.Resolution, 2)
-  rawBetti(raw C.Resolution, 3)
-  raw C.Resolution
-  
-  C = res(I, Strategy=>1)
-  raw C.Resolution
-  
-  elapsedTime  C = res(ideal gens gb I, Strategy=>4)
+  rawBetti(raw C.Resolution, 2) -- not implemented yet
+  rawBetti(raw C.Resolution, 3) -- not implemented yet
 
-  rawBetti(raw C.Resolution, 1)
-  rawBetti(raw C.Resolution, 0)
+  kk = coefficientRing R
 
-  f1 = map(R, rawResolutionGetMatrix(raw C,1))
-  f2 = map(R, rawResolutionGetMatrix(raw C,2));
-  f3 = map(R, rawResolutionGetMatrix(raw C,3));
-  f4 = map(R, rawResolutionGetMatrix(raw C,4));
-  f5 = map(R, rawResolutionGetMatrix(raw C,5));
-  f6 = map(R, rawResolutionGetMatrix(raw C,6));
-  f7 = map(R, rawResolutionGetMatrix(raw C,7));
-  f8 = map(R, rawResolutionGetMatrix(raw C,8));
-  f1*f2
-  f2*f3
-  f3*f4
-  f4*f5
-  f5*f6
-  f6*f7
-  f7*f8
-  rank map(kk,rawResolutionGetMatrix2(raw C,2,3))
-  rank map(kk,rawResolutionGetMatrix2(raw C,2,4))
-  rank map(kk,rawResolutionGetMatrix2(raw C,2,5))
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,3)) == 12)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,4)) == 5)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,2,5)) == 1)
 
-  rank map(kk,rawResolutionGetMatrix2(raw C,3,4))
-  rank map(kk,rawResolutionGetMatrix2(raw C,3,5))
-  rank map(kk,rawResolutionGetMatrix2(raw C,3,6))
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,4)) == 9)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,5)) == 41)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,3,6)) == 7)
 
-  rank map(kk,rawResolutionGetMatrix2(raw C,4,5))
-  rank map(kk,rawResolutionGetMatrix2(raw C,4,6))
-  rank map(kk,rawResolutionGetMatrix2(raw C,4,7))
-
-
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,5)) == 2)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,6)) == 69)
+  assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,7)) == 20)
 ///
 
 TEST ///  
   restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..4), MonomialOrder=>{Weights=>splice{5:1}}]
+  kk = ZZ/101
+  R = kk[vars(0..4)]
   I = ideal"b2c,abc,a2c,a2de,b3d,bc2de,ac2de,ab2d2e,c3d2e2"
-  J = gens gb I  
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)
-  rawBetti(raw C.Resolution, 1)
+  elapsedTime C = nonminimalResolution I
+  C1 = res (ideal I_*)
+  elapsedTime  assert(betti C == betti C1)
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
+  nonminimalBetti C
 ///
 
 TEST ///  
   restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[a..f, MonomialOrder=>{Weights=>{1,1,1,1,1,1}}]
+  kk = ZZ/101
+  R = kk[a..f]
   I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
-  J = gens gb I
-
-  C = res(ideal gens gb I, Strategy=>4)
+  gbTrace=3
+  elapsedTime C = res(I, Strategy=>4)
+  betti C
+  debug Core
   rawBetti(raw C.Resolution, 1)
   rawBetti(raw C.Resolution, 0)
   
@@ -201,6 +210,14 @@ TEST ///
   elapsedTime C = res(J, Strategy=>4)
   elapsedTime C = res(J, Strategy=>4, StopBeforeComputation=>true)
   rawBetti(raw C.Resolution, 1)
+  
+  kk = ZZ/101
+  R = kk[vars(0..10)]
+  setRandomSeed 0
+  I = ideal fromDual random(R^1, R^{-3});
+  elapsedTime C = nonminimalResolution I
+  betti C
+  nonminimalBetti C
 ///
 
 TEST ///  

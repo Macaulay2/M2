@@ -9,13 +9,14 @@
 #include <algorithm>
 #include "../timing.hpp"
 
+
 F4Res::F4Res(
              SchreyerFrame& res
              )
   : mFrame(res),
     mRing(res.ring()),
     mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
-    mHashTable(mSchreyerRes)
+    mHashTable(mSchreyerRes, 10)
 {
 }
 
@@ -37,7 +38,11 @@ void F4Res::clearMatrix()
   mNextReducerToProcess = 0;
   mNextMonom = nullptr;
 
+  auto timeA = timer();
   mHashTable.reset();
+  auto timeB = timer();
+  mFrame.timeResetHashTable += seconds(timeB-timeA);
+  
   mReducers.clear();
   mSPairs.clear();
   mSPairComponents.clear();
@@ -322,32 +327,34 @@ void F4Res::reorderColumns()
 
   // sort the columns
 
+  auto timeA = timer();
+
   ComponentIndex* column_order = new ComponentIndex[ncols];
   ComponentIndex* ord = new ComponentIndex[ncols];
-
   ResColumnsSorter C(monoid(), *this, mThisLevel-1);
-
+  
   C.reset_ncomparisons();
 
-  clock_t begin_time0 = clock();
   for (ComponentIndex i=0; i<ncols; i++)
     {
       column_order[i] = i;
     }
 
   if (M2_gbTrace >= 2)
-    fprintf(stderr, "ncomparisons = ");
+    fprintf(stderr, "  ncomparisons = ");
 
   std::sort(column_order, column_order+ncols, C);
 
-  clock_t end_time0 = clock();
+  auto timeB = timer();
+  mFrame.timeSortMatrix += seconds(timeB-timeA);
+  
   if (M2_gbTrace >= 2)
     fprintf(stderr, "%ld, ", C.ncomparisons0());
-  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
-  //clock_sort_columns += nsecs0;
-  if (M2_gbTrace >= 2)
-    fprintf(stderr, " sort time = %f\n", nsecs0);
 
+  if (M2_gbTrace >= 2)
+    std::cout << " sort time: " << seconds(timeB-timeA) << std::endl;
+
+  timeA = timer();
   ////////////////////////////
 
   for (ComponentIndex i=0; i<ncols; i++)
@@ -417,6 +424,8 @@ void F4Res::reorderColumns()
 #endif      
     }
 
+  timeB = timer();
+  mFrame.timeReorderMatrix += seconds(timeB-timeA);
   delete [] column_order;
   delete [] ord;
 }
@@ -561,21 +570,17 @@ void F4Res::gaussReduce()
 
 void F4Res::construct(int lev, int degree)
 {
+  decltype(timer()) timeA, timeB;
+
   resetMatrix(lev, degree);
+   
+  timeA = timer();
+  makeMatrix();
+  timeB = timer();
+  mFrame.timeMakeMatrix += seconds(timeB-timeA);  
 
   if (M2_gbTrace >= 2)
-    std::cout << "make matrix" << std::endl;
-  auto begin_time0 = timer();
-  //  clock_t begin_time0 = clock();
-  makeMatrix();
-  //  clock_t end_time0 = clock();
-  auto end_time0 = timer();
-  if (M2_gbTrace >= 2)
-    std::cout << "  time: " << microseconds(end_time0-begin_time0) << " microsec"  << std::endl;
-  
-  ///  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
-  //  if (M2_gbTrace >= 2)
-  //    std::cout << "  time: " << nsecs0 << std::endl;
+    std::cout << "  make matrix time: " << seconds(timeB-timeA) << " sec"  << std::endl;
 
 #if 0
   std::cout << "-- rows --" << std::endl;
@@ -598,7 +603,7 @@ void F4Res::construct(int lev, int degree)
 #endif
 
   if (M2_gbTrace >= 2)
-  std::cout << "(degree,level)=("
+    std::cout << "  (degree,level)=("
             << (mThisDegree-mThisLevel) << ","
             << mThisLevel 
             << ") #spairs="
@@ -608,19 +613,21 @@ void F4Res::construct(int lev, int degree)
             << std::endl;
 
   if (M2_gbTrace >= 2)
-    std::cout << "gauss reduce matrix" << std::endl;
-  //  begin_time0 = clock();
-  begin_time0 = timer();
+    std::cout << "  gauss reduce matrix" << std::endl;
+
+  timeA = timer();
   gaussReduce();
-  end_time0 = timer();
+  timeB = timer();
+  mFrame.timeGaussMatrix += seconds(timeB-timeA);
+  
   if (M2_gbTrace >= 2)
-    std::cout << "  time: " << microseconds(end_time0-begin_time0) << " microsec"  << std::endl;
-  //  end_time0 = clock();
-  //  nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
-  //  if (M2_gbTrace >= 2)
-  //    std::cout << "  time: " << nsecs0 << std::endl;
+    std::cout << "    time: " << seconds(timeB-timeA) << " sec"  << std::endl;
   //  mFrame.show(-1);
+
+  timeA = timer();
   clearMatrix();
+  timeB = timer();
+  mFrame.timeClearMatrix += seconds(timeB-timeA);
 }
 
 void F4Res::debugOutputReducers()

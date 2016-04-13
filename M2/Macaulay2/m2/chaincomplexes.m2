@@ -747,6 +747,18 @@ betti GradedModule := opts -> C -> (
 	       select(pairs C, (i,F) -> class i === ZZ), 
 	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
 
+nonminimalBetti = method(Options => options betti)
+nonminimalBetti Resolution := BettiTally => o -> (X) -> (
+    -- this version works only for rings of degree length 1
+    b := rawBetti(X.RawComputation, 1); -- the raw version takes no weight option
+    heftfn := heftfun(o.Weights,heft X);
+    b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
+    b)
+nonminimalBetti ChainComplex := BettiTally => o -> (C) -> (
+    if C.?Resolution then nonminimalBetti C.Resolution
+    else betti(C,o)
+    )
+
 -----------------------------------------------------------------------------
 -- some extra betti tally routines by David Eisenbud and Mike :
 lift(BettiTally, ZZ) := opts -> (B,R) -> applyValues(B, v -> lift(v,ZZ))

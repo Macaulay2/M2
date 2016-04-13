@@ -9,14 +9,28 @@
 template <typename ValueType>
 void MonomialHashTable<ValueType>::reset()
 {
+  // best so far
+  if (count > 0)
+    {
+      //dump();
+      //fprintf(stderr, "hashtab reset: size = %ld, count = %ld\n", size, count);
+      memset(hashtab, 0, sizeof(value) * size);
+    }
+
   count = 0;
   nclashes = 0;
   max_run_length = 0;
   monequal_count = 0;
   monequal_fails = 0;
-  //  bzero(hashtab, sizeof(value) * size);
-  for (unsigned long i=0; i<size; i++)
-    hashtab[i] = 0;
+
+
+  // slower
+  //  for (unsigned long i=0; i<size; i++)
+  //    hashtab[i] = 0;
+
+  // also bit slower than memset
+  //  deletearray(hashtab);
+  //  hashtab = newarray_clear(value, size);
 }
 
 template <typename ValueType>
@@ -51,7 +65,7 @@ template <typename ValueType>
 void MonomialHashTable<ValueType>::grow()
 {
   // Increase logsize, reset fields, and repopulate new hash table.
-  dump();
+  if (M2_gbTrace >= 2) dump();
   value *oldtab = hashtab;
   long oldsize = size;
   initialize(logsize+1);

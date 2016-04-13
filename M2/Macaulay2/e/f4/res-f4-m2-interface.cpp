@@ -13,6 +13,8 @@
 #include "../dmat.hpp"
 #include "../mat-linalg.hpp"
 
+#include "../timing.hpp"
+
 #include <vector>
 #include <iostream>
 
@@ -281,10 +283,10 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   // call rank
   //  auto a = DMatLinAlg<M2::ARingZZpFlint>(M);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
-  clock_t begin_time0 = clock();
+  auto timeA = timer();
   int rk = static_cast<int>(a.rank());
-  clock_t end_time0 = clock();
-  double nsecs0 = (double)(end_time0 - begin_time0)/CLOCKS_PER_SEC;
+  auto timeB = timer();
+  double nsecs0 = seconds(timeB-timeA);
   if (M2_gbTrace >= 2)
     {
       std::cout << "rank (" << slanted_degree << "," << lev << ") = " << rk << " time " << nsecs0 << " size= " << M.numRows() << " x " << M.numColumns() << " nonzero " << nnonzeros << std::endl;

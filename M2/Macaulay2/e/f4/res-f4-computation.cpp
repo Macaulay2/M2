@@ -22,9 +22,6 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int strategy
                                    )
 {
-  std::cout << "warnings: (1) The monomial order in the ring should use Weights: the first weight vector is the degree" << std::endl;
-  std::cout << "          (2) If the target is not the ring, then the GB should be sorted so that comp1 comes first, then comp2, etc" << std::endl;
-
   const PolynomialRing *origR = groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
   if (origR == 0)
     {
@@ -66,8 +63,38 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   frame.endLevel();
 
+  // At this point, we want to sort the columns of groebnerBasisMatrix.
+  Matrix *leadterms = groebnerBasisMatrix->lead_term();
+  M2_arrayint pos = leadterms->sort(1 /* ascending degree */, -1 /* descending monomial order */);
+
+  std::vector<poly> input_polys;
+  for (int i=0; i<groebnerBasisMatrix->n_cols(); i++)
+    {
+      poly f;
+      ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
+      input_polys.emplace_back(f);
+    }
+
   // Set level 1
   // take the columns of the matrix, and insert them into mComp
+  for (int j=0; j<F->rank(); j++)
+    {
+      // Only insert the ones whose lead monomials are in component j:
+      for (int i=0; i<pos->len; i++)
+        {
+          int loc = pos->array[i];
+          poly&f = input_polys[loc];
+          if (f.len == 0) continue;
+          if (MI->get_component(f.monoms) != j)
+            continue;
+          packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+          MI->copy(f.monoms, elem);
+          // the following line grabs f.
+          frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f);
+        }
+    }
+
+#if 0
   for (int i=0; i<groebnerBasisMatrix->n_cols(); i++)
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
@@ -76,9 +103,13 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       MI->copy(f.monoms, elem);
       frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(i), f);
     }
+#endif
   frame.endLevel();
   //  frame.show(0);
 
+  // Remove matrix:
+  delete leadterms;
+  
   int mylevel = 2;
   while (mylevel <= max_level and frame.computeNextLevel() > 0)
     {

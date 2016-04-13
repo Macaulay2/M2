@@ -199,9 +199,15 @@ private:
   // in parallel.
 
 public:
-  //  MonomialCounter mAllMonomials;
-
-
+  // To allow res-f4.cpp to add to timings.
+  double timeMakeMatrix;
+  double timeSortMatrix;
+  double timeReorderMatrix;
+  double timeGaussMatrix;
+  double timeClearMatrix;
+  double timeResetHashTable;
+  double timeComputeRanks;
+  
 };
 
 

@@ -868,6 +868,8 @@ export {
 	"newRing",
 	"newline",
 	"nextkey",
+    "nonminimalBetti",
+    "nonminimalResolution",
 	"norm",
 	"not",
 	"notImplemented",
