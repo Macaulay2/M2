@@ -37,9 +37,6 @@ endif
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
 
-# the DEBUG flag just makes lots of junk print out:
-CPPFLAGS += -UDEBUG
-
 BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 

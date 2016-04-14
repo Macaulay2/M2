@@ -1,15 +1,9 @@
 HOMEPAGE = https://www.normaliz.uni-osnabrueck.de/
-
-VERSION = 3.1.0
+VERSION = 3.1.1
 VERSION2 = 3.1
-
-# http://www.mathematik.uni-osnabrueck.de/normaliz/Normaliz2.9/Normaliz2.9.zip
 # these authors sometimes change the file without changing the name, so we copy it to our own site:
-#URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
-URL = https://www.normaliz.uni-osnabrueck.de/wp-content/uploads/2016/02/
-# the name of the tar file changes each time:
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 TARFILE = Normaliz$(VERSION)Source.zip
-# this changes each time, too:
 TARDIR = Normaliz$(VERSION2)/source
 FIXTARCMD = :
 

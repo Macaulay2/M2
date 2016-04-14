@@ -91,9 +91,7 @@ pthread-tmp.c : SCCFLAGS += -noline
 ## the problem with this is that it can make "make" think the targets were made:
 # actors4-tmp.c actors5-tmp.c basic-tmp.c interface-tmp.c interface2-tmp.c objects-tmp.c : ../e/engine.h ../e/rand.h
 
-version.o : ../../include/M2/config.h git-description.c
-git-description.c: git-description; echo "const char * gitDescription = \"`cat $<`\";" >$@
-git-description: .; (git describe --dirty --long --always --abbrev=40 --tags --match 'version-*' || echo unknown) > $@
+version.o : ../../include/M2/config.h
 
 # these files depend on USE_MYSQL, which is in config.h:
 actors4.o actors2.o : ../../include/M2/config.h

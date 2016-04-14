@@ -1,4 +1,7 @@
 -- -*- coding:utf-8 -*-
+
+star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
@@ -13,9 +16,51 @@ document {
 	  TO "changes, 1.8",
 	  TO "changes, 1.8.1",
 	  TO "changes, 1.8.2",
+	  TO "changes, 1.9",
 	  TO "list of obsolete functions"
 	  }
      }
+
+document {
+     Key => "changes, 1.9",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  LI { "packages that have been published and certified:",
+	       UL {
+	  	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been published." },
+		    LI { star, " ", TO "Posets::Posets", ", a package by David Cook II, Sonja Mapes, and Gwyn Whieldon, for processing partially ordered sets, has been published." },
+		    LI { star, " ", TO "MultiplierIdeals::MultiplierIdeals", ", a package by Zach Teitler for computing multiplier ideals of monomial ideals, has been published." },
+		    LI { star, " ", TO "CharacteristicClasses::CharacteristicClasses", ", a package by Christine Jost and Martin Helmer for computing characteristic classes on toric varieties, has been published." }
+	       	    }
+	       },
+	  -- LI { "new packages:",                       -- get this with : git diff version-1.8.2 ../=distributed-packages 
+	  --      UL {
+	  -- 	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	  -- 	    }
+	  --      },
+	  -- LI { "improved packages:",
+	  --       UL {
+	  -- 	    -- LI { "The package ", TO "::", " has been ..." },
+	  --           }
+	  --      },
+	  -- LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
+	  --      UL {
+	  --      },
+	  -- LI { "new constants and operators:",
+	  --      UL {
+	  --      	    }
+	  --      }
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  --      	    }
+	  --      },
+     	  }
+     }
+
 
 document {
      Key => "list of obsolete functions",
@@ -64,8 +109,6 @@ document {
 	       }
 	  }
      }
-
-star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
 
 document {
      Key => "changes, 1.8.2",

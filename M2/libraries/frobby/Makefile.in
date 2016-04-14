@@ -34,12 +34,6 @@ INSTALLCMD = \
 CHECKTARGET = test
 include ../Makefile.library
 
-ifeq (@DEBUG@,yes)
-#### Building frobby in debug mode causes it to redefine operators new and delete.  So we don't do that.
-# BUILDOPTIONS += MODE=debug
-CPPFLAGS += -UDEBUG
-endif
-
 ifeq (@OS@-@ISSUE@,MicrosoftWindows-Cygwin)
 LDFLAGS += -Wl,--enable-auto-import
 endif

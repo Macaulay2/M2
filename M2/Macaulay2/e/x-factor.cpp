@@ -50,7 +50,7 @@ static enum factoryCoeffMode coeffMode(const PolynomialRing *P) {
 }
 
 int debugging
-    #ifdef DEBUG
+    #ifndef NDEBUG
       = true
     #endif
     ;

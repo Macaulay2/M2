@@ -95,6 +95,7 @@ EliminationMatrices
 EllipticIntegrals
 Triplets
 CompleteIntersectionResolutions
+MCMApproximations
 MultiplierIdeals
 InvariantRing
 QuillenSuslin
@@ -122,3 +123,7 @@ RunExternalM2
 SLPexpressions
 NumericalSchubertCalculus
 ToricTopology
+Cremona
+MultipolynomialResultants
+VectorFields
+RandomIdeal

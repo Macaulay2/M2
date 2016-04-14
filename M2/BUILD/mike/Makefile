@@ -68,6 +68,21 @@ darwin64-debug-ffpack : always
 		--enable-download \
 		--enable-build-libraries="mpir flint gc"
 
+darwin64-debug : always
+	mkdir -p builds.tmp/darwin64-debug
+	cd builds.tmp/darwin64-debug; ../../../../configure \
+		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
+		--prefix="`pwd`/installed" \
+		--build=x86_64-apple-darwin \
+		--disable-ntl-wizard \
+		--enable-debug \
+		--disable-optimize \
+		--enable-build-libraries="gc mpir flint" \
+		--enable-download
+
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
 
