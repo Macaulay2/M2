@@ -22,13 +22,58 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                    int strategy
                                    )
 {
+  // We expect the following to hold:
+  // the ring of groebnerBasisMatrix is a PolynomialRing, but not:
+  //   quotient ring
+  //   Weyl algebra
+  // We assume also that the matrix is homogeneous.
+  // If any of these are incorrect, an error message is provided, and
+  // null is returned.
   const PolynomialRing *origR = groebnerBasisMatrix->get_ring()->cast_to_PolynomialRing();
   if (origR == 0)
     {
       ERROR("expected polynomial ring");
       return nullptr;
     }
+  if (origR->is_quotient_ring())
+    {
+      ERROR("cannot use nonminimalResolution for quotient rings");
+      return nullptr;
+    }
+  if (origR->is_weyl_algebra())
+    {
+      ERROR("cannot use nonminimalResolution over Weyl algebras");
+      return nullptr;
+    }
+  if (origR->is_solvable_algebra())
+    {
+      ERROR("cannot use nonminimalResolution over non-commutative algebras");
+      return nullptr;
+    }
+  if (!groebnerBasisMatrix->is_homogeneous())
+    {
+      ERROR("cannot use nonminimalResolution with inhomogeneous input");
+      return nullptr;
+    }
+  if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
+    {
+      ERROR("expected singly graded with positive degrees for the variables");
+      return nullptr;
+    }
+  if (!origR->getMonoid()->primary_degrees_of_vars_positive())
+    {
+      ERROR("expected the degree of each variable to be positive");
+      return nullptr;
+    }
+  // Still to check:
+  //   (a) coefficients are ZZ/p, for p in range.
+  
   const Ring *K = origR->getCoefficients();
+  if (!K->isFinitePrimeField())
+    {
+      ERROR("currently, nonminimalResolution requires finite prime fields");
+      return nullptr;
+    }
 
   ResGausser *KK = ResGausser::newResGausser(static_cast<int>(K->characteristic()));
   if (KK == 0)
@@ -93,30 +138,20 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f);
         }
     }
-
-#if 0
-  for (int i=0; i<groebnerBasisMatrix->n_cols(); i++)
-    {
-      packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
-      poly f;
-      ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
-      MI->copy(f.monoms, elem);
-      frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(i), f);
-    }
-#endif
   frame.endLevel();
   //  frame.show(0);
 
   // Remove matrix:
   delete leadterms;
-  
+
+#if 0  
   int mylevel = 2;
   while (mylevel <= max_level and frame.computeNextLevel() > 0)
     {
       //      frame.show(0);
       mylevel++;
     }
-
+#endif
   return result;
 }
 
@@ -129,6 +164,7 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
     mRing(R),
     mInputGroebnerBasis(*gbmatrix)
 {
+  std::cout << "making a nonminimalResolution" << std::endl;
   mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
 }
 

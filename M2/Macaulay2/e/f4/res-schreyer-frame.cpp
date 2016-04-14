@@ -88,7 +88,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
     mComputer(*this)
     //mAllMonomials(R.monoid())
 {
-  mFrame.mLevels.resize(max_level);
+  mFrame.mLevels.resize(max_level+1);
   mMaxVPSize = 2*monoid().n_vars() + 1;
 
   timeMakeMatrix = 0.0;

@@ -146,6 +146,11 @@ Matrix *ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
                                          int lev,
                                          const FreeModule *F)
 {
+  if (lev < 0 or lev > C.maxLevel())
+    {
+      MatrixConstructor zero(F, 0);
+      return zero.to_matrix();
+    }
   auto& thislevel = C.level(lev);
   MatrixConstructor result(F,INTSIZE(thislevel));
   int j = 0;

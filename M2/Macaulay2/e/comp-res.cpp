@@ -108,6 +108,8 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
       }
     if (M2_gbTrace > 0) emit_line("resolution Strategy=>4 (res-f4)");
     C = createF4Res(m, max_level, strategy);
+    if (C == nullptr)
+      return nullptr;
    break;
   }
   if (C == 0)

@@ -2,9 +2,131 @@
 
 -- Current caveats:
 --   a. REMOVED need to give Weights: first wt vector is the degree vector
---   b. ?? need to pass in the coker (or ideal) of a groebner basis
+--   b. DONE need to pass in the coker (or ideal) of a groebner basis (in res.m2)
 --   c. REMOVED the elements at level 1 must be inserted in order of monotone increasing component
 --   d. TODO!! if the input free module is a Schreyer order: need to handle that
+--   e. some module gradings don't seem to work.  Either fix, or check for this.
+
+TEST ///
+  -- nonminimal resolution.
+  -- test the zero ideal
+  R = ZZ/101[a..d]
+  I = ideal(0_R)
+  C = nonminimalResolution I
+  betti'ans = new BettiTally from {(0,{0},0) => 1}
+  assert(betti C == betti'ans)
+  assert(C.dd_1 == 0)
+  assert(length C == 0)
+
+  I = trim ideal(0_R)
+  C = nonminimalResolution I
+  betti'ans = new BettiTally from {(0,{0},0) => 1}
+  assert(betti C == betti'ans)
+  assert(C.dd_1 == 0)
+  assert(length C == 0)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
+  -- test the unit ideal
+  R = ZZ/101[a..d]
+  I = ideal(1_R)
+  C = nonminimalResolution I
+  betti'ans = new BettiTally from {}
+  assert(betti C == betti'ans)
+  assert(C.dd_1 == 1)
+  assert(length C == 1)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
+  -- test linear ideals.
+  R = ZZ/101[a..d]
+  I = ideal(a-d, b+13*a)
+  C = nonminimalResolution I
+  betti'ans = new BettiTally from {(1,{1},1) => 2, (0,{0},0) => 1, (2,{2},2) => 1}
+  assert(betti C == betti'ans)
+  assert(numRows C.dd_1 == 1) 
+  assert(numColumns C.dd_1 == 2)
+  assert(length C == 2)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
+  -- test linear ideal in exterior algebra
+  R = ZZ/101[a..d, SkewCommutative=>true]
+  I = ideal(a-d, b+13*a)
+  B1 = betti res I
+  C = nonminimalResolution(ideal(I_*))
+  assert(B1 == betti C)
+  B1 = betti res (ideal(I_*), LengthLimit=>7)
+  B2 = betti nonminimalResolution(ideal(I_*), LengthLimit=>7)
+  assert(B1 == B2)
+  assert(C.dd^2 == 0)
+///
+
+TEST ///
+  -- nonminimal resolution.
+  -- test ideal in non-standard grading
+  R = ZZ/101[a..d, Degrees=>{1,2,3,4}]
+  I = ideal(a^4-a*c-d, b^3-c^2, a^8-d^2)
+  isHomogeneous I
+  B1 = betti res I
+  C = nonminimalResolution(ideal(I_*))
+  B2 = betti C
+  assert(B1 == B2)
+  nonminimalBetti C
+  C.dd_-1
+  C.dd_0
+  C.dd_1
+  C.dd_2
+  C.dd_3
+  C.dd_4
+  C.dd_5
+  assert(C.dd^2 == 0)
+  degrees C_1
+  degrees C_2
+  degrees C_-1
+  C_0 
+  C_5 
+  C_4 -- BUG!! these are still not correct: they should be Schreyer free modules
+///
+
+TEST ///
+  -- test that inhomogeneous input either works, or doesn't crash the system
+  -- inhomogeneous input.  For now, disallow...
+  -- We never get to our code if the module is inhomogeneous.
+  -- Instead, the front end homogenizes the inout, calls this, and then dehomogenizes later.
+  S = ZZ/101[a..d]
+  I = ideal(a*b-a-1, b^3-c*d-3)
+  time res I
+  C = nonminimalResolution(ideal(I_*)) -- Want: to do this, just don't try to minimize??
+  betti C -- ??
+  C.dd 
+  
+  -- don't allow quotient rings
+  S = ZZ/101[a..d]
+  I = ideal(a^2-b*c, b^2-c*d)
+  R = S/I
+  M = coker vars R
+  nonminimalResolution M
+  assert (try (nonminimalResolution M; false) else true) 
+  
+  -- don't allow Weyl algebras
+
+  -- don't allow zero heft vectors
+  -- this code never gets to non minimal res code in the engine.
+  S = ZZ/101[a,b,c,d,Degrees=>{-1,1,2,-5}]  
+  C = nonminimalResolution (ideal gens S)^3
+  C.dd^2 == 0
+  
+  -- don't allow multi-gradings  
+  S = ZZ/101[a,b,c,d,DegreeRank=>4]
+  assert try (nonminimalResolution ideal gens S; false) else true
+///
 
 TEST ///
   R = ZZ/101[a..d]
@@ -67,10 +189,10 @@ TEST ///
 
   nonminimalBetti C
   debug Core
-  rawBetti(raw C.Resolution, 1)
-  rawBetti(raw C.Resolution, 0)
-  rawBetti(raw C.Resolution, 2) -- not implemented yet
-  rawBetti(raw C.Resolution, 3) -- not implemented yet
+  rawBetti(raw C.Resolution, 1) == nonminimalBetti C
+  rawBetti(raw C.Resolution, 0) == betti C
+  --rawBetti(raw C.Resolution, 2) -- not implemented yet
+  --rawBetti(raw C.Resolution, 3) -- not implemented yet
 
   kk = coefficientRing R
 
@@ -88,7 +210,6 @@ TEST ///
 ///
 
 TEST ///  
-  restart
   kk = ZZ/101
   R = kk[vars(0..4)]
   I = ideal"b2c,abc,a2c,a2de,b3d,bc2de,ac2de,ab2d2e,c3d2e2"
@@ -100,7 +221,6 @@ TEST ///
 ///
 
 TEST ///  
-  restart
   kk = ZZ/101
   R = kk[a..f]
   I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
