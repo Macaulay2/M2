@@ -8,7 +8,7 @@ newPackage(
 		     Email => "suzuki@math.sci.osaka-u.ac.jp", 
 		     HomePage => ""}
 	},
-	Headline => "Miura: Divisor Class Group Arithmetic",
+	Headline => "Miura: Divisor Class Group Computation",
 	DebuggingMode => false
 	)
 
