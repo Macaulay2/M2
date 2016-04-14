@@ -1,8 +1,8 @@
 
 newPackage(
        "MultipolynomialResultants",
-	Version => "1.0", 
-    	Date => "April 9, 2016",
+	Version => "1.1", 
+    	Date => "April 14, 2016",
     	Authors => {{Name => "Giovanni Stagliano'", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -13,6 +13,7 @@ newPackage(
     	)
 
 export{
+   "Algorithm", "Poisson", "Macaulay",
    "Resultant",
    "Discriminant"
 };
@@ -21,20 +22,19 @@ needsPackage "PushForward"
 
 verbose:=false;
     
-Resultant=method(TypicalValue => RingElement);
+Resultant=method(TypicalValue => RingElement, Options => {Algorithm => Poisson});
     
-Resultant Matrix := (F) -> (
+Resultant Matrix := o -> (F) -> (
       if verbose then <<"Running Resultant for "<<toString F<<endl;
-      ------
       if numgens target F != 1 then error("expected a matrix with one row");
       if not isPolynomialRing ring F then error("the base ring must be a polynomial ring");
       if numgens source F != numgens ring F then error("the number of variables in the ring must be equal to the number of entries of the matrix, but got " | toString(numgens ring F) | " variables and " | toString(numgens source F) | " entries");
 --    if not isHomogeneous F then error("expected a homogeneous matrix");
-    -----
-    if numgens source F -1 == 1 then return standardRes F;
-    if {2,2,2} === for i to numgens source F -1 list first degree F_(0,i) then if char coefficientRing ring F =!= 2 then return Res222 F;
-    -----
     n:=numgens source F-1;
+    d:=for i to n list first degree F_(0,i);
+    if n == 1 then if min d > 0 then return standardRes F;
+    if o.Algorithm === Macaulay then if (min d > -1 and sum(d) > n) then return macaulayRes F;
+    if {2,2,2} === d then if char coefficientRing ring F =!= 2 then return Res222 F;
     K:=coefficientRing ring F;
     x:=local x;
     Pn:=K[x_0..x_n];
@@ -52,8 +52,8 @@ Resultant Matrix := (F) -> (
     return Resultant wobble F; 
 );
 
-Resultant List := (s) -> (
-    return Resultant matrix{s};
+Resultant List := o -> (s) -> (
+    return Resultant(matrix{s},Algorithm=>o.Algorithm);
 );
     
 internalResultant = (F) -> (
@@ -65,7 +65,7 @@ internalResultant = (F) -> (
     x:=local x;
     R:=K[x_0..x_n];
     F=sub(F,vars R);
-    if n == 1 then return standardRes F;
+    if n == 1 then if (first degree F_(0,0) > 0 and first degree F_(0,1) > 0) then return standardRes F;
     if n == 0 then return leadCoefficient F_(0,0);
     d:=flatten degrees ideal F;
     if d === {2,2,2} then if char K =!= 2 then return Res222 F; 
@@ -79,6 +79,34 @@ internalResultant = (F) -> (
     mf=pushFwd(map(A,K[],{}),mf);
     Res0^(d_n) * sub(det mf,K)
 );
+
+macaulayRes = (F) -> (
+    if verbose then <<"Running macaulayRes for "<<toString F<<endl;
+    ------
+    -- Theorem 4.9, p. 108 of [David A. Cox and John Little and Donal O'shea - Using Algebraic Geometry - (2005)]
+    K:=coefficientRing ring F;
+    n:=numgens source F -1;
+    d:=for j to n list first degree F_(0,j);
+    x:=gens ring F;
+    mons:=flatten entries gens (ideal x)^(sum(d)-n);
+    eqs:={}; nonReducedMons:={}; q:=local q; r:=local r; divs:=local divs;
+    for i to #mons -1 do (
+          divs={};
+          for j to n do (
+                (q,r)=quotientRemainder(mons_i,x_j^(d_j));
+                if r == 0 then divs=append(divs,j);
+                if divs == {j} then eqs=append(eqs,q*F_(0,j));
+                if #divs >= 2 then (nonReducedMons=append(nonReducedMons,i); break);
+          );
+    );
+    Mn:=sub(transpose (coefficients(matrix{eqs},Monomials=>mons))_1,K);
+    Mn':=submatrix(Mn,nonReducedMons,nonReducedMons);
+    Dn:=det Mn;
+    Dn':=det Mn';
+    if Dn' == 0 then return macaulayRes wobble F;
+    resF:=Dn/Dn';
+    try lift(resF,K) else resF
+);   
 
 wobble = (F) -> (  
     R:=ring F;
@@ -128,15 +156,15 @@ Res222 = (F) -> (
     try lift(d,K) else d
 );
 
-Discriminant=method(TypicalValue => RingElement);
+Discriminant=method(TypicalValue => RingElement, Options => {Algorithm => Poisson});
     
-Discriminant RingElement := (G) -> (
+Discriminant RingElement := o -> (G) -> (
 --  if not (isPolynomialRing ring G and isHomogeneous G) then error("expected a homogeneous polynomial");   
     if not (isPolynomialRing ring G) then error("expected a homogeneous polynomial");   
     n:=numgens ring G;
     d:=first degree G;
     a:=((d-1)^n - (-1)^n)/d;
-    resG:=Resultant transpose jacobian matrix{{G}};
+    resG:=Resultant(transpose jacobian matrix{{G}},Algorithm=>o.Algorithm);
     try lift(resG/(d^a),ring resG) else resG
 );
         
@@ -147,14 +175,24 @@ document {
     EM "MultipolynomialResultants", " is a package to compute resultants and discriminants.",
     PARA{},
     "Let ",TEX///$F_0,\ldots,F_n$///," be ",TEX///$n+1$///," homogeneous polynomials in ",TEX///$n+1$///," variables ",TEX///$x_0,\ldots,x_n$///," over a commutative ring ",TEX///$K$///,". The resultant ",TEX///$R(F_0,\ldots,F_n)$///," is a certain polynomial in the coefficients of ",TEX///$F_0,\ldots,F_n$///,"; when ",TEX///$K$///," is an algebraically closed field, ",TEX///$R(F_0,\ldots,F_n)$///," vanishes if and only if ",TEX///$F_0,\ldots,F_n$///," have a common nontrivial root.
-    The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the resultant of its partial derivatives. In this package, the resultant is computed, recursively, through the Poisson Formula; in some special cases, faster algorithms are used.",
-    PARA{},
-    "For the general theory, see one of the following:",
+    The discriminant of a homogeneous polynomial is defined, up to a scalar factor, as the resultant of its partial derivatives. For the general theory, see one of the following:",
     PARA{},
     "1) David A. Cox, John Little, Donal O'shea - ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"}, ", Graduate Texts in Mathematics, Volume 185 (2005).", 
     PARA{},
-    "2) Israel M. Gelfand, Mikhail M. Kapranov, Andrei V. Zelevinsky - ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"}, ", Mathematics: Theory & Applications (1994)",
+    "2) Israel M. Gelfand, Mikhail M. Kapranov, Andrei V. Zelevinsky - ",HREF{"http://link.springer.com/book/10.1007%2F978-0-8176-4771-1","Discriminants, Resultants, and Multidimensional Determinants"}, ", Mathematics: Theory & Applications (1994).",
+    PARA{},
+    "In this package, there are currently two algorithms implemented: ", TO Poisson, " (default) and ",TO Macaulay,".",
 }
+document { 
+    Key => {Algorithm, Poisson, Macaulay, [Resultant,Algorithm], [Discriminant,Algorithm]}, 
+    "The option ", TO Algorithm," determines which algorithm will be used to compute the Resultant. There are currently two algorithms implemented: ",
+    PARA{},
+    "[",TO Algorithm, TT " => ", TO Poisson,"]"," (default) the resultant is computed, recursively, through the Poisson Formula (see [1, Theorem 3.4]);",
+    PARA{}, 
+    "[", TO Algorithm, TT " => ", TO Macaulay,"]"," the resultant is computed as a Macaulay resultant, i.e. as a ratio of two determinants (see [1, Theorem 4.9]).",
+    PARA{},
+    "[1] David A. Cox, John Little, Donal O'shea - ",HREF{"http://link.springer.com/book/10.1007%2Fb138611","Using Algebraic Geometry"}, ", Graduate Texts in Mathematics, Volume 185 (2005).", 
+} 
 document { 
     Key => {Resultant,(Resultant,Matrix),(Resultant,List)}, 
     Headline => "multipolynomial resultant", 
@@ -217,7 +255,7 @@ document {
 
 
 TEST /// 
-genericResultant = (d,K) -> ( -- Res_(d_0,d_1,...,d_n) over K
+genericResultant = {Algorithm => Poisson} >> o -> (d,K) -> ( -- Res_(d_0,d_1,...,d_n) over K
     n:=#d-1;
     N:=for i to n list binomial(n+d_i,d_i)-1;
     a:=local a; x:=local x;
@@ -225,11 +263,15 @@ genericResultant = (d,K) -> ( -- Res_(d_0,d_1,...,d_n) over K
     S:=K[]; for i to n do S=K[gens S,a_(i,0)..a_(i,N_i)]; 
     R:=S[x_0..x_n];
     F:=matrix pack(n+1,for i to n list (sub(vars A_i,R)*transpose(gens (ideal vars R)^(d_i)))_(0,0));
-    Resultant F
+    Resultant(F,Algorithm=>o.Algorithm)
 );
 a:=local a; ring112=ZZ[a_(0,0),a_(0,1),a_(0,2),a_(1,0),a_(1,1),a_(1,2),a_(2,0),a_(2,1),a_(2,2),a_(2,3),a_(2,4),a_(2,5)];
 res112=a_(0,0)^2*a_(1,1)^2*a_(2,5)-a_(0,0)^2*a_(1,1)*a_(1,2)*a_(2,4)+a_(0,0)^2*a_(1,2)^2*a_(2,3)-2*a_(0,0)*a_(0,1)*a_(1,0)*a_(1,1)*a_(2,5)+a_(0,0)*a_(0,1)*a_(1,0)*a_(1,2)*a_(2,4)+a_(0,0)*a_(0,1)*a_(1,1)*a_(1,2)*a_(2,2)-a_(0,0)*a_(0,1)*a_(1,2)^2*a_(2,1)+a_(0,1)^2*a_(1,0)^2*a_(2,5)-a_(0,1)^2*a_(1,0)*a_(1,2)*a_(2,2)+a_(0,1)^2*a_(1,2)^2*a_(2,0)+a_(0,0)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,4)-a_(0,0)*a_(0,2)*a_(1,1)^2*a_(2,2)-2*a_(0,0)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,3)+a_(0,0)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,1)-a_(0,1)*a_(0,2)*a_(1,0)^2*a_(2,4)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,1)*a_(2,2)+a_(0,1)*a_(0,2)*a_(1,0)*a_(1,2)*a_(2,1)-2*a_(0,1)*a_(0,2)*a_(1,1)*a_(1,2)*a_(2,0)+a_(0,2)^2*a_(1,0)^2*a_(2,3)-a_(0,2)^2*a_(1,0)*a_(1,1)*a_(2,1)+a_(0,2)^2*a_(1,1)^2*a_(2,0);
-assert(sub(genericResultant((1,1,2),ZZ),vars ring112) == res112);
+assert(sub(genericResultant((1,1,2),ZZ,Algorithm=>Poisson),vars ring112) == res112);
+ResM=genericResultant((1,3,1),ZZ,Algorithm=>Macaulay); ResP=genericResultant((1,3,1),ZZ,Algorithm=>Poisson); ResP=sub(ResP,vars ring ResM);
+assert(ResM - ResP == 0 or ResM + ResP == 0)
+ResM=genericResultant((2,1,2),ZZ,Algorithm=>Macaulay); ResP=genericResultant((2,1,2),ZZ,Algorithm=>Poisson); ResP=sub(ResP,vars ring ResM);
+assert(ResM - ResP == 0 or ResM + ResP == 0)
 ///
 
 TEST ///
@@ -248,14 +290,30 @@ assert(invariance((1,1,2),ZZ[z]))
 assert(invariance((3,3,1,1,2),ZZ/331))
 /// 
     
+TEST ///
+PoissonVsMacaulay = (d,K) -> (
+    n:=#d -1; x:=local x; R:=K[x_0..x_n];
+    F:=matrix({for i to n list try random(d_i,R) else sub(random(d_i,ZZ[x_0..x_n]),R)});
+    poiRes:=Resultant(F,Algorithm=>Poisson);
+    macRes:=Resultant(F,Algorithm=>Macaulay);
+    (poiRes - macRes) * (poiRes + macRes) == 0
+);
+assert(PoissonVsMacaulay((4,6),ZZ)) 
+assert(PoissonVsMacaulay((1,2,3),ZZ)) 
+assert(PoissonVsMacaulay((2,3,5),QQ)) 
+assert(PoissonVsMacaulay((1,1,2),ZZ[z])) 
+assert(PoissonVsMacaulay((3,3,1,1,2),ZZ/331))
+assert(PoissonVsMacaulay((3,2,2,2),ZZ/33331))
+/// 
+
 TEST /// 
-genericDiscriminant = (d,n,K) -> ( 
+genericDiscriminant = {Algorithm => Poisson} >> o -> (d,n,K) -> ( 
     N:=binomial(n+d,d)-1;
     a:=local a; x:=local x;
     S:=K[a_0..a_N];
     R:=S[x_0..x_n];
     F:=((vars S)*transpose(gens (ideal vars R)^d))_(0,0);
-    Discriminant F
+    Discriminant(F,Algorithm=>o.Algorithm)
 );
 dualOfSmoothVariety = (I) -> ( 
     R:=ring I; c:=codim I;
@@ -272,9 +330,10 @@ Veronese = (d,n,K) -> (
     saturate kernel map(T,R,gens((ideal vars T)^d))
 );
 compareDiscriminants = (d,n,K) -> (
-    D1:=genericDiscriminant(d,n,K);
+    D1:=genericDiscriminant(d,n,K,Algorithm=>Poisson);
+    D1':=sub(genericDiscriminant(d,n,K,Algorithm=>Macaulay),vars ring D1);
     D2:=sub((dualOfSmoothVariety Veronese(d,n,K))_0,vars ring D1);
-    ideal(D2) == ideal(D1)
+    ideal(D2) == ideal(D1) and ideal(D1) == ideal(D1')
 );
 assert compareDiscriminants(2,1,QQ) 
 assert compareDiscriminants(3,1,GF 5^5) 
