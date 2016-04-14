@@ -9,7 +9,6 @@
      extraNAGtypes				-- NAGtypes that are not shared (yet) by other numerical packages
      intersection				-- intersection of two numerical varieties
      npd					-- numerical primary decomposition
-     
      polynomial-space 				-- PolySpace and DualSpace operations
      positive-dim-methods			-- routines for positive-dimensional solution sets 
      refine 					-- refining/sharpening routines 

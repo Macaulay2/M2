@@ -37,6 +37,7 @@ newPackage select((
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
+     "DoublePrecision",
      "setDefault", "getDefault",
      "solveSystem", 
      "solveGenericSystemInTorus", -- works with PHCpack only
@@ -67,7 +68,6 @@ exportMutable {
 protect Processing; protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
-protect Origin; protect IncreasePrecision; protect DecreasePrecision; 
 protect LastIncrement;
 
 -- possible solution statuses returned by engine
@@ -89,6 +89,9 @@ load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2"
 
 -- GLOBAL VARIABLES ----------------------------------
 NAG = NumericalAlgebraicGeometry
+protect symbol NAG
+DoublePrecision = 53
+protect symbol DoublePrecision
 
 --PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
@@ -134,7 +137,7 @@ DEFAULT = new MutableHashTable from {
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e5, -- this may need to go away!!!
-     maxPrecision => infinity,
+     Precision => infinity,
      maxNumberOfVariables => 50
      }
 
@@ -173,7 +176,8 @@ setDefault = method(Options => {
      -- general
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
      Tolerance => null,
-     SingularConditionNumber => null
+     SingularConditionNumber => null,
+     Precision => null,
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -509,6 +513,25 @@ isSolution(Point,PolySystem) := o -> (P,F) -> (
 beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
+
+undocumented {
+    Field, "DoublePrecision", 
+    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
+    (endGameCauchy,GateHomotopy,Number,Point),
+    (evaluateH,GateHomotopy,Matrix,Number),
+(evaluateH,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHt,GateHomotopy,Matrix,Number),
+(evaluateHt,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHx,GateHomotopy,Matrix,Number),
+(evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number),
+(specialize,GateParameterHomotopy,MutableMatrix),
+[gateHomotopy,Software],
+[trackHomotopy,Software],
+[setDefault,Precision],
+[gateHomotopy,Parameters],
+[gateHomotopy,Strategy],
+    }
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")

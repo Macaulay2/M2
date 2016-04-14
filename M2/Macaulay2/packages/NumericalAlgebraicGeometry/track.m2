@@ -666,7 +666,7 @@ extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut
 		else if s'status == IncreasePrecision then "P"
 		else if s'status == DecreasePrecision then "p"
 		else error "unknown solution status"
-		) << if (sN+1)%100 == 0 then endl else flush;
+		) << if (sN+1)%100 == 0 or sN==nSols-1 then endl else flush;
 	    -- create a solution record 
 	    x0 := submatrix(out,toList(0..n-1),{sN});
 	    point {flatten entries x0,
@@ -711,7 +711,7 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  Predictor=>null, 
 	  -- corrector 
 	  maxCorrSteps => null,
-	  Precision => 53, 
+	  Precision => null, 
      	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
@@ -808,7 +808,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 
 --------------------- M2engine --------------------------------------------------------------------------
      rawSols := if o.Software===M2engine then ( 
-	 prec := o.Precision;
+	 prec := o.Precision; -- current precision
 	 if prec === infinity then prec = 53; -- for adaptive precision, start with double precision
 	 mainRing := (o.Field)_prec; -- homotopyRing, i.e. RR or CC with current precision !!!
 	 -- if class H === SpecializedParameterHomotopy then 1/0;
@@ -859,7 +859,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     abs s.LastIncrement, minimalStepSize currentPrec, 
 			     o.CorrectorTolerance, o.maxCorrSteps, 
 			     toRR o.InfinityThreshold);
-			 -- if DBG>3 then 
+			 if DBG>3 then 
 			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			 sols#nS = first extractM2engineOutput(H,out,statusOut);
 			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
@@ -880,7 +880,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     			 abs s.LastIncrement, minimalStepSize currentPrec, 
 	     			 o.CorrectorTolerance, o.maxCorrSteps, 
 	     			 toRR o.InfinityThreshold);
-	 		     -- if DBG>3 then 
+	 		     if DBG>3 then 
 	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			     sols#nS = first extractM2engineOutput(H,out,statusOut);
 			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;

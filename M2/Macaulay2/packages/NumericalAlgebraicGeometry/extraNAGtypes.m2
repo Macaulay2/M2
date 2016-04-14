@@ -4,8 +4,8 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy"
-    , "parametricSegmentHomotopy"
+export{ 
+    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "parametricSegmentHomotopy"
     }
 
 debug SLPexpressions

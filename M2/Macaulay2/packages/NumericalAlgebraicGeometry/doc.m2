@@ -174,6 +174,7 @@ document { Key => {"numerical homotopy tracking options",
 	[solveSystem,maxCorrSteps], [solveSystem,Normalize], [solveSystem,numberSuccessesBeforeIncrease],
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
 	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
+	[solveSystem,Precision],[solveSystem,ResidualTolerance],
 	{*
 	-- trackSegment
 	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
@@ -211,7 +212,10 @@ document { Key => {"numerical homotopy tracking options",
 	Iterations => {" (default Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
 	Bits => {" (default Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
 	ErrorTolerance => {" (default ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
-	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
+	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."},
+	Precision => {" (default Precision = ", toString DEFAULT.Precision, "). Precision of the floating-point numbers used in computation. If set to ", 
+	    TO "infinity", " the precision in homotopy continuation adapts according to numerical conditioning. ", 
+	    "The other popular setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. "}
     	}, 
         item -> {TT "[", TT toString item#0, TT "]: "} | item#1 
 	)

@@ -36,8 +36,10 @@ export {
      "Coordinates", "SolutionStatus", "LastT", "ConditionNumber", "Multiplicity", 
      "NumberOfSteps", "ErrorBoundEstimate",
      "MaxPrecision", "WindingNumber", "DeflationNumber",
+     -- values for status(Point) 
      "Regular", "Singular", "Infinity", 
      "MinStepFailure", "NumericalRankFailure", "RefinementFailure", 
+     "Origin", "IncreasePrecision", "DecreasePrecision", 
      -- point sets 
      "PointSet", "pointSet", "unionPointSet", "differencePointSet",
      -- polynomial systems
@@ -220,13 +222,17 @@ net Point := p -> (
   	if hasAttribute(p,PrintNames) then return net getAttribute(p,PrintNames);
   	if hasAttribute(p,ReverseDictionary) then return toString getAttribute(p,ReverseDictionary);
   	);
-     if not p.?SolutionStatus or p.SolutionStatus === Regular then net p.Coordinates 
-     else if p.SolutionStatus === Singular then net toSequence p.Coordinates
-     else if p.SolutionStatus === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === Infinity then net "[I,t=" | net p.LastT | net "]"
-     else if p.SolutionStatus === NumericalRankFailure then net "[N]"
-     else if p.SolutionStatus === RefinementFailure then net "[RF:" | net toSequence p.Coordinates | net "]"
-     else error "the point is corrupted"
+    s := if p.?SolutionStatus then p.SolutionStatus else Regular;
+    if s === Regular then net p.Coordinates 
+    else if s === Singular then net toSequence p.Coordinates
+    else if s === MinStepFailure then net "[M,t=" | net p.LastT | net "]"
+    else if s === Infinity then net "[I,t=" | net p.LastT | net "]"
+    else if s === NumericalRankFailure then net "[NF]"
+    else if s === RefinementFailure then net "[RF]"
+    else if s === IncreasePrecision then net "[P+]"
+    else if s === DecreasePrecision then net "[P-]"         
+    else if s === Origin then net "[0]"         
+    else error "the point is corrupted"
     ) 
 globalAssignment Point
 
@@ -912,6 +918,7 @@ peek O
 document {
      Key => {Point, coordinates, (coordinates,Point), (status,Point), (matrix,Point), (net, Point),
 	  Regular, Singular, Infinity, MinStepFailure, NumericalRankFailure, RefinementFailure,
+	  Origin, IncreasePrecision, DecreasePrecision,
 	  Multiplicity,
 	  Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps, ErrorBoundEstimate,
 	  MaxPrecision, WindingNumber, DeflationNumber
@@ -929,10 +936,13 @@ document {
      "Possible types of Points (accessed by ", TO "status", "): ",
      UL { {"Regular", " -- the jacobian of the polynomial system is regular at the point"}, 
 	  {"Singular", " -- the jacobian of the polynomial system is (near)singular at the point"}, 
-	  {"Infinity", " -- the solution path has been deemed divergent"},
+	  {"Infinity", " -- the solution path is deemed divergent"},
 	  {"MinStepFailure", " -- the tracker failed to stay above the minimal step increment threshold"},
 	  {"NumericalRankFailure", " -- it is likely that in a sequence of deflations numerical rank did not give the correct rank"},
 	  {"RefinementFailure", " -- a solution refinement function failed"},
+	  {"Origin", " -- the solution path approaches the origin (impossible to give a relative error estimate)"},
+	  {"IncreasePrecision", " -- the current precision is deemed inadequate for robust computation"},
+	  {"DecreasePrecision", " -- the current precision is deemed excessive (more than the double of sufficient precision)"},
 	  {"null", " -- the point has not been classified"}
 	  },
      "Only coordinates are displayed (by ", TO "net", "); to see the rest use ", 
@@ -947,11 +957,13 @@ document {
        coordinates pt
        status pt
      ///,
+     {* condition number is not computed by default anymore !!!
      PARA{"For example, one may see the condition number of the Jacobian of the polynomial system, evaluated at this point
       (the smaller the value, the better) as follows."},
      EXAMPLE lines ///
        pt.ConditionNumber
      ///,
+     *}
      PARA{"The other keys that may be attached include "}, 
      UL{
 	  {TO NumberOfSteps, " -- the number of steps in made by the continuation procedure"}, 
@@ -993,7 +1005,7 @@ q := point p
 	}
 
 document {
-	Key => {(sortSolutions,List), sortSolutions},
+	Key => {(sortSolutions,List), sortSolutions, [sortSolutions,Weights]},
 	Headline => "sort the list of solutions",
 	Usage => "t = sortSolutions s",
 	Inputs => { 
@@ -1011,7 +1023,10 @@ R = CC[x,y];
 s = solveSystem {x^2+y^2-1, x*y}
 sortSolutions s
      	///,
-	SeeAlso => {"solveSystem", "track", areEqual}
+	Caveat => {"The sorting described above does not possess good properties, since there may be near ties in specific coordinate values between several points. ",
+	    "A better way is to specify a random weight (of length 2n where n=#points) as an optional parameter ", TO [sortSolutions,Weights], 
+	    ", which provides a linear functional that evaluates to distinct (and sufficiently) real numbers on the given points. " }, 
+	SeeAlso => {"solveSystem", "track", "areEqual"}
 	}
 
 document { Key => {Tolerance, 
@@ -1020,7 +1035,8 @@ document { Key => {Tolerance,
 	[isGEQ,Tolerance], 
 	[isRealPoint,Tolerance], 
 	[realPoints,Tolerance], 
-	[solutionsWithMultiplicity,Tolerance]
+	[solutionsWithMultiplicity,Tolerance],
+	[differencePointSet,Tolerance], [unionPointSet,Tolerance]
 	},
      Headline => "the tolerance of a numerical computation" 
      }
@@ -1796,6 +1812,13 @@ p2 =  point {{1.001,2.3+ii}}
 p3 =  point {{.999,2.3+ii}}
 assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
 ///
+
+undocumented {(toExternalString,Point), (toExternalString,PolySystem),
+    unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,
+    differencePointSet, (differencePointSet,PointSet,PointSet), specialize, (specialize,ParameterHomotopy,Matrix),
+    (symbol ==,PointSet,PointSet), (symbol ?,Point,Point), (net,PointSet), 
+    (symbol +,PointSet,PointSet), (symbol -,PointSet,PointSet),
+    }
 
 endPackage "NAGtypes" 
 

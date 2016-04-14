@@ -288,6 +288,7 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
     o = fillInDefaultOptions o;
     m := o#"number of vertices";
+    if DBG>0 then << "(C"<<m<<")";
     n := numrows x0in - 1;
     statusOut := mutableMatrix(ZZ,2,1); -- 2 rows (status, number of steps), #solutions 
     nPlus1rows := toList(0..n);
@@ -327,7 +328,6 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     	    s'status = solutionStatusLIST#(statusOut_(0,0));
 	    if s'status =!= Regular then return 0; -- error
     	    if DBG>2 then << "-- endGameCauchy: number of steps = " << statusOut_(1,0) << endl;
-    	    if DBG>0 then << "(C"<<m<<")";
 	    x0'' := nPlus1by1submatrix(out);
     	    x0' = x0'+x0'';
 	    inp = x0''; -- reuse matrix for the next step;

@@ -675,3 +675,160 @@ document {
     SeeAlso=>{Gate, Matrix}
     }
 
+undocumented {
+"zeroGate",
+inputGate,
+(inputGate,Thing),
+sumGate,
+(sumGate,List),
+printAsSLP,
+(printAsSLP,GateMatrix),
+(printAsSLP,List),
+productGate,
+(productGate,List),
+detGate,
+(detGate,List),
+DetGate,
+"minusOneGate",
+DivideGate,
+valueHashTable,
+(valueHashTable,List,List),
+ValueHashTable,
+constants,
+(constants,DetGate),
+(constants,DivideGate),
+(constants,GateMatrix),
+(constants,InputGate),
+(constants,List),
+(constants,ProductGate),
+(constants,SumGate),
+"oneGate",
+(symbol -,Gate),
+(symbol *,CC,Gate),
+(symbol +,CC,Gate),
+(symbol -,CC,Gate),
+(compress,Gate),
+(compress,GateMatrix),
+(compress,ProductGate),
+(compress,SumGate),
+(depth,DetGate),
+(depth,DivideGate),
+(depth,GateMatrix),
+(depth,InputGate),
+(depth,ProductGate),
+(depth,SumGate),
+(determinant,GateMatrix),
+(diff,GateMatrix,GateMatrix),
+(diff,InputGate,DetGate),
+(diff,InputGate,DivideGate),
+(diff,InputGate,GateMatrix),
+(diff,InputGate,InputGate),
+(diff,InputGate,ProductGate),
+(diff,InputGate,SumGate),
+(entries,GateMatrix),
+(symbol *,Gate,CC),
+(symbol *,Gate,Gate),
+(symbol *,Gate,Matrix),
+(symbol *,Gate,QQ),
+(symbol *,Gate,RR),
+(symbol *,Gate,ZZ),
+(symbol +,Gate,CC),
+(symbol +,Gate,Gate),
+(symbol +,Gate,QQ),
+(symbol +,Gate,RR),
+(symbol +,Gate,ZZ),
+(symbol -,Gate,CC),
+(symbol -,Gate,Gate),
+(symbol -,Gate,QQ),
+(symbol -,Gate,RR),
+(symbol -,Gate,ZZ),
+(symbol /,Gate,Gate),
+(symbol ^,Gate,ZZ),
+(symbol *,GateMatrix,GateMatrix),
+(symbol *,GateMatrix,Matrix),
+(symbol *,GateMatrix,RingElement),
+(symbol +,GateMatrix,GateMatrix),
+(symbol +,GateMatrix,Matrix),
+(symbol -,GateMatrix,GateMatrix),
+(symbol -,GateMatrix,Matrix),
+(symbol ^,GateMatrix,List),
+(symbol _,GateMatrix,List),
+(symbol _,GateMatrix,Sequence),
+(symbol |,GateMatrix,GateMatrix),
+(symbol |,GateMatrix,Matrix),
+(symbol ||,GateMatrix,GateMatrix),
+(symbol ||,GateMatrix,Matrix),
+(isConstant,InputGate),
+(symbol *,Matrix,Gate),
+(symbol *,Matrix,GateMatrix),
+(symbol +,Matrix,GateMatrix),
+(symbol -,Matrix,GateMatrix),
+(symbol |,Matrix,GateMatrix),
+(symbol ||,Matrix,GateMatrix),
+(net,DetGate),
+(net,DivideGate),
+(net,InputGate),
+(net,ProductGate),
+(net,SumGate),
+(numColumns,GateMatrix),
+(numRows,GateMatrix),
+(symbol *,QQ,Gate),
+(symbol +,QQ,Gate),
+(symbol -,QQ,Gate),
+(symbol *,RingElement,GateMatrix),
+(symbol *,RR,Gate),
+(symbol +,RR,Gate),
+(symbol -,RR,Gate),
+(submatrix,GateMatrix,List,List),
+(substitute,DetGate,Option),
+(substitute,DivideGate,Option),
+(substitute,Gate,GateMatrix,GateMatrix),
+(substitute,Gate,List),
+(substitute,GateMatrix,GateMatrix,GateMatrix),
+(substitute,GateMatrix,List),
+(substitute,InputGate,Option),
+(substitute,ProductGate,Option),
+(substitute,SumGate,Option),
+(support,DetGate),
+(support,DivideGate),
+(support,GateMatrix),
+(support,InputGate),
+(support,ProductGate),
+(support,SumGate),
+(transpose,GateMatrix),
+(value,DetGate,ValueHashTable),
+(value,DivideGate,ValueHashTable),
+(value,GateMatrix,ValueHashTable),
+(value,InputGate,ValueHashTable),
+(value,ProductGate,ValueHashTable),
+(value,SumGate,ValueHashTable),
+(symbol *,ZZ,Gate),
+(symbol +,ZZ,Gate),
+(symbol -,ZZ,Gate)
+    }
+
+end
+
+-- Here place M2 code that you find useful while developing this
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
+
+restart
+uninstallPackage "SLPexpressions"
+installPackage "SLPexpressions"
+installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
+installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
+
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+
+-- install docs with no absolute links
+uninstallPackage "Style"
+installPackage("Style", AbsoluteLinks=>false)
+installPackage("SLPexpressions", AbsoluteLinks=>false)
+
+installPackage ("SLPexpressions", MakeDocumentation=>false)
+check "SLPexpressions"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SLPexpressions "
+-- End:

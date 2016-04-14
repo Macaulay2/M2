@@ -11,7 +11,8 @@ satisfiesOverdeterminedSystem (Point, List) := o -> (s,F) -> (
 
 solveSystem = method(TypicalValue => List, Options =>{
 	PostProcess=>true, 
-	-- *** below are the relevant options of track ***
+	-- *** below are the relevant options of trackHomotopy ***
+	Precision=>null,
 	Software=>null, 
 	NumericalAlgebraicGeometry$gamma=>null, 
 	NumericalAlgebraicGeometry$tDegree=>null,
@@ -28,7 +29,8 @@ solveSystem = method(TypicalValue => List, Options =>{
 	-- end of path
 	EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
 	InfinityThreshold => null, -- used to tell if the path is diverging
-	SingularConditionNumber=>null, -- threshold for the condition number of the jacobian
+	SingularConditionNumber=> null, -- threshold for the condition number of the jacobian
+	ResidualTolerance => null, -- threshold for the norm of the residual
 	-- projectivize and normalize
 	Normalize => null, -- normalize in the Bombieri-Weyl norm
 	Projectivize => null
@@ -67,6 +69,7 @@ solveSystem PolySystem := List => o -> P -> (
 		   );
 	       H := segmentHomotopy(polyS, polyT, NumericalAlgebraicGeometry$gamma=>unit);
 	       trackHomotopy(H,solsS,
+		   Precision => o.Precision,
 		   CorrectorTolerance => o.CorrectorTolerance,
 		   maxCorrSteps => o.maxCorrSteps,
 		   numberSuccessesBeforeIncrease => o.numberSuccessesBeforeIncrease,
@@ -78,19 +81,20 @@ solveSystem PolySystem := List => o -> P -> (
 	       );
 	  if o.PostProcess 
 	  then (
-	      -- endgame
-	      result = select(result, p->status p === Regular) | apply(select(result, p-> status p =!= Regular and p.LastT>0.95), p->endGameCauchy(p#"H",1,p,"backtrack factor"=>2));
-	      -- result = solutionsWithMultiplicity result;
-	      -- result = select(refine(F,result,Software=>o.Software), s->residual(F,s)<DEFAULT.Tolerance);
-	      -- below is a hack!!!
-	      {* scan(result, s->if status s =!= Regular 
-	         and s.?ErrorBoundEstimate 
-	         and s.ErrorBoundEstimate < DEFAULT.ErrorTolerance then (
-		  if DBG>1 then print "path jump occured";
-		  s.Multiplicity = 1;
-		  s.SolutionStatus = Regular;
-		  ));
-	      *}
+	      plausible := select(result, p-> status p =!= Regular and status p =!= Infinity 
+		  and p.LastT > 1-o.EndZoneFactor);
+	        
+	      result = select(result, p->status p === Regular) | select( 
+		  apply(#plausible,     
+		      i -> (
+			  p := plausible#i;
+			  q := endGameCauchy(p#"H",1,p,"backtrack factor"=>2); -- endgame ...
+    	    	    	  if DBG>0 then if (i+1)%10 == 0 or i+1==#plausible then << endl;
+      	      	      	  q
+			  )
+		      ),
+		  p -> norm evaluateH(H,transpose matrix p,1) < o.ResidualTolerance -- ... may result in non-solution
+		  );
 	      );
 	  if overdetermined then result = select(result, s->satisfiesOverdeterminedSystem(s,F))  	      
 	  )
