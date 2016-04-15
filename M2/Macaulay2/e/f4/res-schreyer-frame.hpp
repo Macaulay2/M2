@@ -136,6 +136,7 @@ public:
   void setBettiDisplays();
   int rank(int slanted_degree, int lev); // rank of the degree 'degree' map of scalars level 'lev' to 'lev-1'.
 
+
 private:
   
   struct Level

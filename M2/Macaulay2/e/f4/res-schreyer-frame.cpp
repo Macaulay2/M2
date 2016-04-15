@@ -121,7 +121,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
-             mState = Matrices;
+            show(6);
+            mState = Matrices;
             mCurrentLevel = 2;
             getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
             mSlantedDegree = mLoSlantedDegree;
@@ -145,7 +146,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         if (stop.always_stop) return;
         if (mCurrentLevel > mMaxLength)
           {
-             mCurrentLevel = 2;
+            mCurrentLevel = 2;
             mSlantedDegree++;
             if (mSlantedDegree > mHiSlantedDegree)
               {
@@ -380,7 +381,7 @@ long SchreyerFrame::insertLevelZero(packed_monomial monom, int degree)
 long SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
 {
 
-  long last = insertBasic(1, monom, deg + degree(0, monoid().get_component(monom)));
+  long last = insertBasic(1, monom, deg); // deg is the actual degree of this element.
   long comp = monoid().get_component(monom);
   auto& p = level(0)[comp];
   if (p.mBegin == -1)

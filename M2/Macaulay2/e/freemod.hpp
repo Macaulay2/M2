@@ -15,6 +15,7 @@ class GBMatrix;
 class FreeModule : public EngineObject
 {
   friend class Ring;
+  friend class ResF4toM2Interface;
   FreeModule(const Ring *R, int n, bool has_schreyer_order);
 protected:
 

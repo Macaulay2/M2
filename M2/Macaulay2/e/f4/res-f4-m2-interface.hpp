@@ -6,6 +6,7 @@
 #include "res-schreyer-frame.hpp"
 #include "res-gausser.hpp"
 #include "res-poly-ring.hpp"
+#include "../dmat.hpp"
 
 class MonomialInfo;
 class ResGausser;
@@ -23,15 +24,27 @@ public:
                        const poly &f,
                        const FreeModule *F);
 
+  static FreeModule* to_M2_freemodule(const PolynomialRing* R,
+                                      SchreyerFrame& C,
+                                      int lev);
+  
   static Matrix *to_M2_matrix(SchreyerFrame& C,
                               int lev,
-                              const FreeModule *F);
+                              const FreeModule* tar,
+                              const FreeModule* src);
 
   static MutableMatrix* to_M2_MutableMatrix(
                                             const Ring* K, // should be a ZZ/p ring.
                                             SchreyerFrame& C,
                                             int lev,
                                             int degree);
+
+  template<typename RingType>
+  static double setDegreeZeroMap(
+                                 SchreyerFrame& C,
+                                 DMat<RingType>& result,
+                                 int slanted_degree,
+                                 int lev);
   
 };
 

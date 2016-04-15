@@ -164,7 +164,6 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
     mRing(R),
     mInputGroebnerBasis(*gbmatrix)
 {
-  std::cout << "making a nonminimalResolution" << std::endl;
   mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
 }
 
@@ -204,8 +203,9 @@ void F4ResComputation::text_out(buffer &o) const
 
 const Matrix /* or null */ *F4ResComputation::get_matrix(int level) 
 {
-  const FreeModule* F = get_free(level-1);
-  return ResF4toM2Interface::to_M2_matrix(*mComp, level, F);
+  const FreeModule* tar = get_free(level-1);
+  const FreeModule* src = get_free(level);
+  return ResF4toM2Interface::to_M2_matrix(*mComp, level, tar, src);
 }
 
 MutableMatrix /* or null */ *F4ResComputation::get_matrix(int level, int degree)
@@ -217,7 +217,9 @@ const FreeModule /* or null */ *F4ResComputation::get_free(int lev)
 {
   if (lev < 0 or lev > mComp->maxLevel()) return mOriginalRing.make_FreeModule(0);
   if (lev == 0) return mInputGroebnerBasis.rows();
-  return mOriginalRing.make_FreeModule(static_cast<int>(mComp->level(lev).size()));
+  return ResF4toM2Interface::to_M2_freemodule(&mOriginalRing, *mComp, lev);
+
+  //return mOriginalRing.make_FreeModule(static_cast<int>(mComp->level(lev).size()));
   // TODO: this should return a schreyer order free module, or at least a graded one
 }
 

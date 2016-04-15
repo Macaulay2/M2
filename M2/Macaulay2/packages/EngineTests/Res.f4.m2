@@ -92,7 +92,8 @@ TEST ///
   degrees C_-1
   C_0 
   C_5 
-  C_4 -- BUG!! these are still not correct: they should be Schreyer free modules
+  C_4 
+  assert isHomogeneous C
 ///
 
 TEST ///
@@ -112,7 +113,6 @@ TEST ///
   I = ideal(a^2-b*c, b^2-c*d)
   R = S/I
   M = coker vars R
-  nonminimalResolution M
   assert (try (nonminimalResolution M; false) else true) 
   
   -- don't allow Weyl algebras
@@ -136,19 +136,24 @@ TEST ///
   C = res(M, Strategy=>4)
   betti'ans = new BettiTally from {(0,{0},0) => 1, (3,{3},3) => 4, (1,{1},1) => 4, (4,{4},4) => 1, (2,{2},2) => 6}
   assert(betti'ans == betti C)
-  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)    
+  for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
+  isHomogeneous C
+  debug Core
+  raw source C.dd_3
 ///
 
 TEST ///
   R = ZZ/101[a..d]
   F = R^{0,-1,-2}
   M = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
-  isHomogeneous M  
+  assert isHomogeneous M  
   C = nonminimalResolution M
   betti res M == betti C
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
 
   nonminimalBetti C
+  assert isHomogeneous C
+  C.dd
 ///
 
 TEST ///
@@ -158,9 +163,9 @@ TEST ///
   M1 = coker map(F,,{{a,0,0},{0,0,b},{0,c,0}})
   isHomogeneous M  
   C = nonminimalResolution M
-  betti res M1 == betti C -- BUG?? YES!!
+  betti res M1 == betti C
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
-
+  assert isHomogeneous C
   nonminimalBetti C
 ///
 
@@ -207,6 +212,9 @@ TEST ///
   assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,5)) == 2)
   assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,6)) == 69)
   assert(rank map(kk,rawResolutionGetMatrix2(raw C,4,7)) == 20)
+  
+  assert(schreyerOrder target C.dd_2 != 0)
+  assert(schreyerOrder source C.dd_2 != 0)
 ///
 
 TEST ///  
@@ -215,7 +223,7 @@ TEST ///
   I = ideal"b2c,abc,a2c,a2de,b3d,bc2de,ac2de,ab2d2e,c3d2e2"
   elapsedTime C = nonminimalResolution I
   C1 = res (ideal I_*)
-  elapsedTime  assert(betti C == betti C1)
+  assert(betti C == betti C1)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
   nonminimalBetti C
 ///
@@ -225,215 +233,181 @@ TEST ///
   R = kk[a..f]
   I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
   gbTrace=3
-  elapsedTime C = res(I, Strategy=>4)
-  betti C
-  debug Core
-  rawBetti(raw C.Resolution, 1)
-  rawBetti(raw C.Resolution, 0)
-  
+  elapsedTime C = nonminimalResolution I
+  betti C == betti res ideal(I_*)
+  nonminimalBetti C
   I = ideal I_*
-  C = res(ideal gens gb I, Strategy=>1)
-  rawBetti(raw C.Resolution, 1)
-  rawBetti(raw C.Resolution, 0)
+  C1 = res(ideal gens gb I, Strategy=>1)
+  rawBetti(raw C1.Resolution, 1)
+  rawBetti(raw C1.Resolution, 0)
 
   I = ideal I_*
-  C = res(ideal gens gb I, Strategy=>0)
-  rawBetti(raw C.Resolution, 1)
-  rawBetti(raw C.Resolution, 0)  
+  C2 = res(ideal gens gb I, Strategy=>0)
+  rawBetti(raw C2.Resolution, 1)
+  rawBetti(raw C2.Resolution, 0)  
 ///
 
 TEST ///
   -- this is a small-ish example used to get the logic of matrix building right
-  restart
   setRandomSeed 0
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..3), MonomialOrder=>{Weights=>splice{4:1}}]
+  kk = ZZ/101
+  R = kk[vars(0..3)]
   I = ideal fromDual random(R^1, R^{-3});
-  J = ideal gens gb I;
-  see J  
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)
-  J = ideal gens gb I
-    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>1)
-    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>2)
-    elapsedTime C = res(J, Strategy=>4, DegreeLimit=>3)
-  f1 = map(R, rawResolutionGetMatrix(raw C,1))
-  f2 = map(R, rawResolutionGetMatrix(raw C,2))
-  f3 = map(R, rawResolutionGetMatrix(raw C,3));
-  assert(f1*f2 == 0)
-  assert(f2*f3 == 0)
-  map(kk,rawResolutionGetMatrix2(raw C,2,3))
-  map(kk,rawResolutionGetMatrix2(raw C,2,4))
-
-  map(kk,rawResolutionGetMatrix2(raw C,3,4))
-  map(kk,rawResolutionGetMatrix2(raw C,2,4))
-  C = res(ideal gens gb I, Strategy=>4)
-  rawBetti(raw C.Resolution, 1)
-
-///
-
-TEST ///  
-  restart
-  debug Core
-  kk1 = ZZ/101
-  kk = ZZp(101, Strategy=>"Old")
-  nvars = 13
-  nvars = 14
-  R = kk[vars(0..nvars-1), MonomialOrder=>{Weights=>splice{nvars:1}}]
-  setRandomSeed 0
-  I = ideal fromDual random(R^1, R^{-3});
-  J = ideal gens gb I;
-  gbTrace=2
-  elapsedTime C = res(ideal gens gb I, Strategy=>4, StopBeforeComputation=>true)
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)
-  elapsedTime C = res(J, Strategy=>4, LengthLimit=>16)
-  elapsedTime C = res(J, Strategy=>4);
-  elapsedTime C = res(J, Strategy=>4, DegreeLimit=>0)
-  rawBetti(raw C.Resolution, 1)
-
-  rank matrix map(kk,rawResolutionGetMatrix2(raw C,2,3))
-  rank matrix map(kk,rawResolutionGetMatrix2(raw C,3,4))
-  time matrix map(kk,rawResolutionGetMatrix2(raw C,4,5));
-  time rank oo
-  time matrix map(kk,rawResolutionGetMatrix2(raw C,5,6));
-  time lift(oo,ZZ);
-  time promote(oo,kk1);
-  time mutableMatrix oo;
-  time rank oo  
-  time matrix map(kk,rawResolutionGetMatrix2(raw C,6,7));  
-  time rank oo
-  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,6,7)), ZZ), kk1);
-  time rank oo    
-  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,7,8)), ZZ), kk1);
-  time promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,8,9)), ZZ), kk1);  
-  time rank promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,9,10)), ZZ), kk1)
-  time rank promote(lift(matrix map(kk,rawResolutionGetMatrix2(raw C,7,9)), ZZ), kk1)
-
-  I = ideal I_*
-  C = res(ideal gens gb I, Strategy=>1, DegreeLimit=>0)
-  rawBetti(raw C.Resolution, 1)
-
-  I = ideal I_*;
-  elapsedTime C = res(ideal gens gb I, Strategy=>0, DegreeLimit=>0)
-  rawBetti(raw C.Resolution, 1)
-
-///
-
-TEST ///  
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..15), MonomialOrder=>{Weights=>splice{16:1}}]
-  setRandomSeed 0
-  I = ideal fromDual random(R^1, R^{-3});
-  J = ideal gens gb I;
-  elapsedTime C = res(J, Strategy=>4)
-  elapsedTime C = res(J, Strategy=>4, StopBeforeComputation=>true)
-  rawBetti(raw C.Resolution, 1)
+  C = nonminimalResolution I
   
+  I = ideal(I_*)
+  elapsedTime C1 = nonminimalResolution(I, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing)
+  betti C == 
+  betti C1 -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
+  nonminimalBetti C1
+  elapsedTime C2 = nonminimalResolution(I)
+  betti C2 == betti C
+  assert(C.dd^2 == 0)
+  assert(isHomogeneous C)
+  C1 = betti res ideal(I_*)
+  assert(betti C == betti C1)
+///
+
+TEST ///  
+  kk = ZZ/101
+  nvars = 13
+  R = kk[vars(0..nvars-1)]
+  setRandomSeed 0
+  I = ideal fromDual random(R^1, R^{-3});
+  gbTrace=2
+  elapsedTime C = nonminimalResolution I -- 49.39 seconds on MBP
+///
+
+TEST ///  
+  restart
   kk = ZZ/101
   R = kk[vars(0..10)]
   setRandomSeed 0
   I = ideal fromDual random(R^1, R^{-3});
   elapsedTime C = nonminimalResolution I
-  betti C
+  betti'ans = new BettiTally from {
+      (0,{0},0) => 1, 
+      (1,{2},2) => 55, 
+      (2,{3},3) => 320, 
+      (3,{4},4) => 891, 
+      (4,{5},5) => 1408,
+      (5,{6},6) => 1155, 
+      (6,{8},8) => 1155, 
+      (7,{9},9) => 1408, 
+      (8,{10},10) => 891, 
+      (9,{11},11) => 320, 
+      (10,{12},12) => 55, 
+      (11,{14},14) => 1
+      }
+  assert(betti C == betti'ans)
   nonminimalBetti C
 ///
 
-TEST ///  
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[vars(0..18), MonomialOrder=>{Weights=>splice{19:1}}]
-  I = ideal fromDual random(R^1, R^{-3});
-  J = gens gb I;
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)
-  rawBetti(raw C.Resolution, 1)  
 ///
-
-///
-  restart
-  debug Core
-  load "free-resolutions/g16n2.m2"
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[t_0..t_14, MonomialOrder=>{Weights=>splice{15:1}}]
-  I = sub(I,R);
-  J = ideal groebnerBasis(I, Strategy=>"F4");
-  J = ideal sort(gens J, MonomialOrder=>Descending, DegreeOrder=>Ascending);
-  elapsedTime C = res(J, Strategy=>4)  
-  rawBetti(raw C.Resolution, 1)
-
-  I = ideal J_*;
-  elapsedTime C = res(I, Strategy=>0, DegreeLimit=>-1)
-  rawBetti(raw C.Resolution, 1)
-
-///
-
-///
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_20, MonomialOrder=>{Weights=>splice{20:1}}]
+  kk = ZZ/101
+  R = kk[x_1..x_20]
   I = Grassmannian(2,5,R)
   gbTrace=2
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+  elapsedTime C = nonminimalResolution I
+  betti C
 ///
 
 ///
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_21, MonomialOrder=>{Weights=>splice{21:1}}]
+  kk = ZZ/101
+  R = kk[x_1..x_21]
   I = Grassmannian(1,6,R)
-  gbTrace=2
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+  elapsedTime C = nonminimalResolution I
+  betti C
 ///
 
-///
--- this one takes too much memory on my laptop
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_28, MonomialOrder=>{Weights=>splice{28:1}}]
-  I = Grassmannian(1,7,R)
-  gbTrace=2
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
-///
-
-///
--- this one takes too much memory on my laptop too
-  restart
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_35, MonomialOrder=>{Weights=>splice{35:1}}]
-  I = Grassmannian(2,6,R)
-  gbTrace=2
-  elapsedTime C = res(ideal gens gb I, Strategy=>4)  
+-------------------------------------
+-- Test resolutions of modules ------
+-------------------------------------
+TEST ///
+  R = ZZ/101[vars(0..7)]
+  M = genericMatrix(R,a,2,4)
+  I = minors(2,M)
+  N = syz gens I
+  C = nonminimalResolution coker N
+  assert(betti C == betti res coker syz gens I)
+  nonminimalBetti C  
 ///
 
-///
-  restart 
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_16, MonomialOrder=>{Weights=>splice{16:1}}]
-  M = genericMatrix(R,x_1,4,4)
-  I = permanents(3,M)
-  gbTrace=1
-  J = ideal gens gb(I, Algorithm=>LinearAlgebra);
-  gbTrace=2
-  elapsedTime C = res(J, Strategy=>4)  
-
-  restart 
-  debug Core
-  kk = ZZp(101, Strategy=>"Old")
-  R = kk[x_1..x_16, MonomialOrder=>{Weights=>splice{16:1}}]
-  M = genericMatrix(R,x_1,4,4)
-  I = permanents(3,M)
-  res I
-  codim I
-  phi = map(R,R,random(R^1, R^{16:-1}));
-  J = phi I;
-  gbTrace=2
+TEST ///
+  R = ZZ/101[vars(0..17)]
+  m1 = genericMatrix(R,a,3,3)
+  m2 = genericMatrix(R,j,3,3)
+  I = ideal(m1*m2-m2*m1)
+  C = nonminimalResolution I
+  betti C
+  m3 = C.dd_2;
+  gbTrace=0
   
-  gens gb(J, Algorithm=>LinearAlgebra);
+  nonminimalResolution coker C.dd_2
+  nonminimalResolution coker C.dd_3
+  nonminimalResolution coker C.dd_4
+  nonminimalResolution coker C.dd_5
+  nonminimalResolution coker C.dd_6
+  nonminimalResolution coker C.dd_7  
+  nonminimalResolution coker C.dd_8
+  betti C
+  
+  gensI = schreyerOrder gens gb I
+  P = gens gb syz gensI;
+  nonminimalResolution coker P  
+  
+  degrees C.dd_2
+///
+
+
+TEST ///
+  R = ZZ/101[a..f]
+  I = ideal(a*b-e*f, a*c*e-f^3, a^2*c*d^2-b^2*e*f^2)
+  time betti res I
+  elapsedTime C0 = nonminimalResolution (ideal I_*)
+  P = gens gb syz gens I
+  time C1 = nonminimalResolution coker P
+  betti C1
+  betti C0
+///
+
+TEST ///
+  setRandomSeed "10"
+  R = ZZ/101[a..d]
+  I = ideal random(R^1, R^{-2,-3,-4})
+  P = gens gb syz gens I
+  betti nonminimalResolution coker P  -- This one gives an error: array is out of order.
+  betti P
+  
+  F = source schreyerOrder gens I
+  raw F
+  P1 = map(F,,P)
+  isHomogeneous P1
+  betti nonminimalResolution coker P1
+///
+
+TEST ///
+  needsPackage "BGG"
+  S = ZZ/101[x_0..x_5] -- P^5
+  E = ZZ/101[e_0..e_5, SkewCommutative => true]
+  F = random(S^2, S^{-3,-3})
+  I = ideal F
+  M = S^1/I
+  m = bgg(2,M,E);
+  time gens gb m;
+  gbTrace=0
+  time C1 = nonminimalResolution(coker m, LengthLimit=>10)
+  m = bgg(2,M,E);  
+  time C2 = res(coker m, LengthLimit=>8)
+  betti C2
+  betti C1  
+
+  m = bgg(3,M,E);
+  time gens gb m;
+  time C1 = nonminimalResolution(coker m, LengthLimit=>10)
+  -- the following takes too long for a test
+  --  m = bgg(3,M,E);
+  -- time C2 = res(coker m, LengthLimit=>8)
+  betti C2
+  betti C1  
 ///

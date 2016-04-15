@@ -142,21 +142,56 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   return result;
 }
 
+FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
+                                                 SchreyerFrame& C,
+                                                 int lev)
+{
+  FreeModule* result = new FreeModule(R, 0, true);
+  if (lev < 0 or lev > C.maxLevel())
+    {
+      return result;
+    }
+  const Monoid* M = R->getMonoid();
+  auto& thislevel = C.level(lev);
+  const ResSchreyerOrder& S = C.schreyerOrder(lev);
+  long* longexp = new long[M->n_vars()];
+  int* exp = new int[M->n_vars()];
+  for (auto i = 0; i < thislevel.size(); ++i)
+    {
+      int d[1];
+      d[0] = thislevel[i].mDegree;
+      monomial deg = M->degree_monoid()->make_one();
+      M->degree_monoid()->from_expvector(d, deg);
+      // Now grab the Schreyer info
+      // unpack to exponent vector, then repack into monoid element
+      monomial totalmonom = M->make_one();
+      long comp;
+      C.monoid().to_exponent_vector(S.mTotalMonom[i], longexp, comp);
+      for (int j=0; j<M->n_vars(); ++j)
+        exp[j] = static_cast<int>(longexp[j]);
+      M->from_expvector(exp, totalmonom);
+      result->append_schreyer(deg, totalmonom, S.mTieBreaker[i]);
+    }
+  delete [] longexp;
+  delete [] exp;
+  return result;
+}
 Matrix *ResF4toM2Interface::to_M2_matrix(SchreyerFrame& C,
                                          int lev,
-                                         const FreeModule *F)
+                                         const FreeModule* tar,
+                                         const FreeModule* src)
 {
   if (lev < 0 or lev > C.maxLevel())
     {
-      MatrixConstructor zero(F, 0);
+      MatrixConstructor zero(tar, src);
       return zero.to_matrix();
     }
   auto& thislevel = C.level(lev);
-  MatrixConstructor result(F,INTSIZE(thislevel));
+  MatrixConstructor result(tar, src);
   int j = 0;
   for (auto i = thislevel.cbegin(); i != thislevel.cend(); ++i, ++j)
     {
-      result.set_column(j, to_M2_vec(C.ring(),i->mSyzygy, F));
+      result.set_column(j, to_M2_vec(C.ring(),i->mSyzygy, tar));
     }
   return result.to_matrix();
 }
@@ -217,27 +252,33 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
   return result;
 }
 
-int SchreyerFrame::rank(int slanted_degree, int lev)
+template<typename RingType>
+double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
+                                       DMat<RingType>& result,
+                                       int slanted_degree,
+                                       int lev)
+// 'result' should be previously initialized, but will be resized.
+// return value: -1 means (slanted_degree, lev) is out of range, and the zero matrix was returned.
+//   otherwise: the fraction of non-zero elements is returned.
 {
   // As above, get the size of the matrix, and 'newcols'
   // Now we loop through the elements of degree 'slanted_degree + lev' at level 'lev'
-  if (not (lev > 0 and lev <= maxLevel())
-      and not (slanted_degree >= mLoSlantedDegree and slanted_degree < mHiSlantedDegree))
+  const RingType& R = result.ring();
+  if (not (lev > 0 and lev <= C.maxLevel()))
     {
-      std::cerr << "ERROR: called rank(" << slanted_degree << "," << lev << ")" << std::endl;
-      return 0;
+      result.resize(0,0);
+      return -1;
     }
   M2_ASSERT(lev > 0 and lev <= maxLevel());
-  M2_ASSERT(slanted_degree >= mLoSlantedDegree and slanted_degree < mHiSlantedDegree);
   int degree = slanted_degree + lev;
-  auto& thislevel = level(lev);
+  auto& thislevel = C.level(lev);
   int ncols = 0;
   for (auto p=thislevel.begin(); p != thislevel.end(); ++p)
     {
       if (p->mDegree == degree) ncols++;
     }
 
-  auto& prevlevel = level(lev-1);
+  auto& prevlevel = C.level(lev-1);
   int* newcomps = new int[prevlevel.size()];
   int nrows = 0;
   for (int i=0; i<prevlevel.size(); i++)
@@ -246,33 +287,22 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
     else
       newcomps[i] = -1;
 
-  // Create the ARing
-  // Create a DMat
-  //  M2::ARingZZpFlint R(gausser().get_ring()->characteristic());
-  //  DMat<M2::ARingZZpFlint> M(R, nrows, ncols);
+  result.resize(nrows, ncols);
 
-  M2::ARingZZpFFPACK R(gausser().get_ring()->characteristic());
-  DMat<M2::ARingZZpFFPACK> M(R, nrows, ncols);
-
-  // Fill in DMat
-  // loop through the elements at thislevel,
-  // and for each, loop through the terms of mSyzygy.
-  // if the component x satisfies newcomps[x] >= 0, then place
-  // this coeff into the mutable matrix.
   int col = 0;
-  long nnonzeros = 0;
+  long nnonzeros = 0;  
   for (auto p=thislevel.begin(); p != thislevel.end(); ++p)
     {
       if (p->mDegree != degree) continue;
       auto& f = p->mSyzygy;
-      auto end = poly_iter(ring(), f, 1);
-      auto i = poly_iter(ring(), f);
+      auto end = poly_iter(C.ring(), f, 1);
+      auto i = poly_iter(C.ring(), f);
       for ( ; i != end; ++i)
         {
-          long comp = monoid().get_component(i.monomial());
+          long comp = C.monoid().get_component(i.monomial());
           if (newcomps[comp] >= 0)
             {
-              M.entry(newcomps[comp], col) = gausser().coeff_to_int(i.coefficient());
+              R.set_from_long(result.entry(newcomps[comp], col), C.gausser().coeff_to_int(i.coefficient()));
               nnonzeros++;
             }
         }
@@ -281,22 +311,64 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
   double frac_nonzero = (nrows*ncols);
   frac_nonzero = nnonzeros / frac_nonzero;
 
-  //  buffer o;
-  //  displayMat(o, M);
-  //  std::cout << o.str() << std::endl;
-  
-  // call rank
-  //  auto a = DMatLinAlg<M2::ARingZZpFlint>(M);
+  delete[] newcomps;
+
+  return frac_nonzero;
+}
+
+int SchreyerFrame::rank(int slanted_degree, int lev)
+{
+#if 1
+  M2::ARingZZpFFPACK R(gausser().get_ring()->characteristic());
+  DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
+  double frac = ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
   auto timeA = timer();
   int rk = static_cast<int>(a.rank());
   auto timeB = timer();
-  double nsecs0 = seconds(timeB-timeA);
+  double nsecs = seconds(timeB-timeA);
+#else
+  M2::ARingZZpFlint R(gausser().get_ring()->characteristic());
+  DMat<M2::ARingZZpFlint> M(R, 0, 0);
+  double frac = ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
+  auto a = DMatLinAlg<M2::ARingZZpFlint>(M); 
+  auto timeA = timer();
+  int rk = static_cast<int>(a.rank());
+  auto timeB = timer();
+  double nsecs = seconds(timeB-timeA);
+#endif
+  
   if (M2_gbTrace >= 2)
     {
-      std::cout << "rank (" << slanted_degree << "," << lev << ") = " << rk << " time " << nsecs0 << " size= " << M.numRows() << " x " << M.numColumns() << " nonzero " << nnonzeros << std::endl;
+      std::cout << "rank ("
+                << slanted_degree << ","  << lev << ") = "
+                << rk
+                << " time=" << nsecs << " sec, size= "
+                << M.numRows() << " x " << M.numColumns() << " nonzero " << (100*frac) << " %" << std::endl;
     }
-  
+
+#if 0
+  if (M1.numRows() != M2.numRows() ||
+      (M1.numColumns() != M2.numColumns()) ||
+      rk1 != rk2)
+    {
+      std::cout << "ERROR!!! degree zero computations do not match" << std::endl;
+    }
+
+  if (frac1 != frac2)
+    {
+      std::cout << "frac1=" << frac1 << " frac2=" << frac2 << std::endl;
+    }
+      
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "rank ("
+                << slanted_degree << ","  << lev << ") = "
+                << rk1
+                << " time(" << nsecs1 << ", " << nsecs2 << ") size= "
+                << M1.numRows() << " x " << M1.numColumns() << " nonzero% " << frac1 << std::endl;
+    }
+#endif  
   return rk;
 }
 // Local Variables:
