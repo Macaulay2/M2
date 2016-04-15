@@ -796,7 +796,6 @@ AC_SUBST(BUILTLIBS,)
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
 #    fflas-ffpack is provided as an option for experimentation
-#	 warning: it is licensed only under GPL 2
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
