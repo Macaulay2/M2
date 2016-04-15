@@ -116,13 +116,16 @@ public:
   
   void getBounds(int& loDegree, int& hiDegree, int& length) const;
   
-  long insertLevelZero(packed_monomial monom, int degree);
-  long insertLevelOne(packed_monomial monom, int degree, poly& syzygy); // grabs syzygy
+  void insertLevelZero(packed_monomial monom, int degree, int maxdeglevel0);
+
+  bool insertLevelOne(packed_monomial monom, int degree, poly& syzygy); // grabs syzygy
+  // insertLevelOne: insert element.  If the elements are not in order, then false is returned.
+  
   void endLevel(); // done with the frame for the current level: set's the begin/end's 
                    // for each element at previous level
   void start_computation(StopConditions& stop);
   
-  long insertBasic(int lev, packed_monomial monom, int degree);
+  void insertBasic(int lev, packed_monomial monom, int degree);
 
   
   void setSchreyerOrder(int lev);

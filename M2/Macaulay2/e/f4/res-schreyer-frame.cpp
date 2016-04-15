@@ -111,6 +111,8 @@ SchreyerFrame::~SchreyerFrame()
 void SchreyerFrame::start_computation(StopConditions& stop)
 {
   decltype(timer()) timeA, timeB;
+  if (level(0).size() == 0)
+    mState = Done;;
   while (true)
     {
       switch (mState) {
@@ -121,7 +123,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
           std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
           {
-            show(6);
+            //show(6);
             mState = Matrices;
             mCurrentLevel = 2;
             getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
@@ -185,13 +187,16 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         mCurrentLevel++;
         break;
       case Done:
-        std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
-        std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
-        std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
-        std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
-        std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
-        std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
-        std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
+        if (M2_gbTrace >= 1)
+          {
+            std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
+            std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
+            std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
+            std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
+            std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
+            std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
+            std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
+          }
         return;
       default:
         break;
@@ -290,7 +295,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 
 long SchreyerFrame::computeNextLevel()
 {
-  M2_ASSERT(currentLevel() >= 2);
+  if (currentLevel() == 1) return 0;
   if (currentLevel() >= mFrame.mLevels.size()) return 0;
   //  std::cout << "computeNextLevel: level = " << currentLevel() << std::endl;
   // loop through all the elements at level currentLevel()-2
@@ -346,7 +351,7 @@ void SchreyerFrame::setSchreyerOrder(int lev)
   delete [] tiebreakers;
 }
 
-long SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
+void SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
 {
   // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
   auto& myframe = level(lev);
@@ -371,28 +376,51 @@ long SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
       monoid().copy(myelem.mMonom, myTotalMonom);
     }
   myorder.mTotalMonom.push_back(myTotalMonom);
-  return myframe.size();
 }
 
-long SchreyerFrame::insertLevelZero(packed_monomial monom, int degree)
+void SchreyerFrame::insertLevelZero(packed_monomial monom, int degree, int maxdeglevel0)
 {
-  return insertBasic(0, monom, degree);
-}
-long SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
-{
+  //  return insertBasic(0, monom, degree);
 
-  long last = insertBasic(1, monom, deg); // deg is the actual degree of this element.
+  auto& myframe = level(0);
+  long idx = myframe.size();
+  myframe.emplace_back(FrameElement(monom,degree));
+  auto& myelem = myframe[idx];
+
+  auto& myorder = schreyerOrder(0);
+  auto myTotalMonom = monomialBlock().allocate(monoid().max_monomial_size());
+  // Create the total monomial.  It is monom * (firstvar)^(maxdeglevel0-degree)
+#if 0
+  long comp;
+  ntuple_monomial exp = new int[monoid().n_vars()];
+  to_exponent_vector(monom, exp, comp);
+  exp[0] += (maxdeglevel0 - XXXX);
+  from_exponent_vector(exp, comp, monom); // XXXX not correct, I think.
+#endif
+  monoid().copy(myelem.mMonom, myTotalMonom);
+  myorder.mTotalMonom.push_back(myTotalMonom);
+}
+bool SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
+{
+  insertBasic(1, monom, deg); // deg is the actual degree of this element.
   long comp = monoid().get_component(monom);
+  auto last = level(1).size();
   auto& p = level(0)[comp];
   if (p.mBegin == -1)
     p.mBegin = last-1;
   p.mEnd = last;
   if (!check_poly(ring(), syzygy, schreyerOrder(0)))
     {
-      std::cout << "Error: expected terms of polynomial to be in order" << std::endl;
+      if (M2_gbTrace >= 1)
+        {
+          std::cout << "Error: expected terms of polynomial to be in order, in poly#" << last << ": ";
+          display_poly(stdout, ring(), syzygy);
+          std::cout << std::endl;
+        }
+      return false;
     }
   std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
-  return last;
+  return true;
 }
 //long SchreyerFrame::insert(packed_monomial monom)
 //{

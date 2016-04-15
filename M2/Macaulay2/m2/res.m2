@@ -167,7 +167,8 @@ resolution = method(
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
 	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
-          Strategy => null		  -- algorithm to use, usually 1, but sometimes 2
+          Strategy => null,		  -- algorithm to use, usually 1, but sometimes 2
+          FastNonminimal => false
 	  }
      )
 
@@ -202,7 +203,7 @@ resolution Module := ChainComplex => o -> (M) -> (
      k := ultimate(coefficientRing, R);
      oR := options R;
      if engineReady M and (options R).Heft =!= null
-     then (resolutionInEngine default(o,if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
+     then (resolutionInEngine default(o,if o.FastNonminimal then Strategy4 else if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M and isCommutative R and degreeLength R === 1 then (resolutionByHomogenization o)(M)
      else (resolutionBySyzygies o)(M)

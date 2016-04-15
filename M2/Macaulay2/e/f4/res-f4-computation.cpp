@@ -37,22 +37,22 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     }
   if (origR->is_quotient_ring())
     {
-      ERROR("cannot use nonminimalResolution for quotient rings");
+      ERROR("cannot use res(...,FastNonminimal=>true) for quotient rings");
       return nullptr;
     }
   if (origR->is_weyl_algebra())
     {
-      ERROR("cannot use nonminimalResolution over Weyl algebras");
+      ERROR("cannot use res(...,FastNonminimal=>true) over Weyl algebras");
       return nullptr;
     }
   if (origR->is_solvable_algebra())
     {
-      ERROR("cannot use nonminimalResolution over non-commutative algebras");
+      ERROR("cannot use res(...,FastNonminimal=>true) over non-commutative algebras");
       return nullptr;
     }
   if (!groebnerBasisMatrix->is_homogeneous())
     {
-      ERROR("cannot use nonminimalResolution with inhomogeneous input");
+      ERROR("cannot use res(...,FastNonminimal=>true) with inhomogeneous input");
       return nullptr;
     }
   if (origR->getMonoid()->get_degree_ring()->n_vars() != 1)
@@ -71,14 +71,14 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   const Ring *K = origR->getCoefficients();
   if (!K->isFinitePrimeField())
     {
-      ERROR("currently, nonminimalResolution requires finite prime fields");
+      ERROR("currently, res(...,FastNonminimal=>true) requires finite prime fields");
       return nullptr;
     }
 
   ResGausser *KK = ResGausser::newResGausser(static_cast<int>(K->characteristic()));
   if (KK == 0)
     {
-      ERROR("cannot use Algorithm => 4 with this type of coefficient ring");
+      ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");
       return nullptr;
     }
   auto MI = new ResMonoid(origR->n_vars(), origR->getMonoid()->primary_degree_of_vars(), origR->getMonoid()->getMonomialOrdering());
@@ -97,14 +97,24 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
                                      max_level);
 
   // Set level 0
-  // take the info from F, place it into mComp
+  // take the columns of the matrix, and insert them into mComp
   const FreeModule* F = groebnerBasisMatrix->rows();
+  int maxdeg = 0;
+  if (F->rank() > 0)
+    {
+      maxdeg = F->primary_degree(0);
+      for (int j=1; j<F->rank(); j++)
+        if (maxdeg < F->primary_degree(j)) maxdeg = F->primary_degree(j);
+    }
+  
+  // Set level 0
+  // take the info from F, place it into mComp
   SchreyerFrame& frame = result->frame();
   for (int i=0; i<F->rank(); i++)
     {
       packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       MI->one(i, elem);
-      frame.insertLevelZero(elem, F->primary_degree(i));
+      frame.insertLevelZero(elem, F->primary_degree(i), maxdeg);
     }
   frame.endLevel();
 
@@ -120,8 +130,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       input_polys.emplace_back(f);
     }
 
-  // Set level 1
-  // take the columns of the matrix, and insert them into mComp
+  // Set level 1.
   for (int j=0; j<F->rank(); j++)
     {
       // Only insert the ones whose lead monomials are in component j:
@@ -135,23 +144,19 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
           MI->copy(f.monoms, elem);
           // the following line grabs f.
-          frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f);
+          if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))
+            {
+              ERROR("input polynomials/vectors were computed in a non-compatible monomial order");
+              // TODO: clean up.
+              return nullptr;
+            }
         }
     }
   frame.endLevel();
   //  frame.show(0);
-
   // Remove matrix:
   delete leadterms;
 
-#if 0  
-  int mylevel = 2;
-  while (mylevel <= max_level and frame.computeNextLevel() > 0)
-    {
-      //      frame.show(0);
-      mylevel++;
-    }
-#endif
   return result;
 }
 
