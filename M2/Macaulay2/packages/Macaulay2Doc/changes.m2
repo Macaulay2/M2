@@ -58,9 +58,15 @@ document {
 	  --      UL {
 	  --      	    }
 	  --      },
-     	  }
-     }
-
+      LI { "useful functions involving prime numbers, submitted by Frank Schreyer:",
+          UL {
+              LI { TO "nextPrime", ", a simple function to find the first prime number at least as large as a given number"},
+              LI { TO "getPrimeWithRootOfUnity", ", used to find a prime number p s.t. ZZ/p contains a n-th root of unity"},
+              LI { TO "randomKRationalPoint", ", a function to find a random rational point on a variety over a finite field"}
+              }
+      }
+    }
+  }
 
 document {
      Key => "list of obsolete functions",
