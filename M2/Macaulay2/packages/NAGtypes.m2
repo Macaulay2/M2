@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
      "NAGtypes",
-     Version => "1.8.2.1",
-     Date => "Jan, 2016",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Common types used in Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      Authors => {
@@ -865,17 +865,20 @@ evaluateH (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateH(H
 evaluateHt (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHt(H.ParameterHomotopy,H.Parameters,x,t) 
 evaluateHx (SpecializedParameterHomotopy,Matrix,Number) := (H,x,t) -> evaluateHx(H.ParameterHomotopy,H.Parameters,x,t) 
 
+TEST /// -- miscellaneous tests
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
+assert (round (1000*norm(4.5,p)) == 2312)
+assert isRealPoint p
+assert(round (10000*residual(S,p)) == 4173)
+p2 =  point {{1.001,2.3+ii}}
+p3 =  point {{.999,2.3+ii}}
+assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
+///
+
 
 -- DOCUMENTATION ------------------------------------------------------
-undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
-undocumented {
-    ParameterHomotopy, 
-    Parameters, SpecializedParameterHomotopy, Homotopy,
-    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
-    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
-    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
-    }
-
 beginDocumentation()
 
 document {
@@ -1801,17 +1804,14 @@ doc ///
       D = dualSpace(M,p)
 ///
 
-TEST /// -- miscellaneous tests
-CC[x,y]
-S = polySystem {x^2+y^2-6, 2*x^2-y}
-p = point({{1.0_CC,2.3_CC}, ConditionNumber=>1000, ErrorBoundEstimate =>0.01});
-assert (round (1000*norm(4.5,p)) == 2312)
-assert isRealPoint p
-assert(round (10000*residual(S,p)) == 4173)
-p2 =  point {{1.001,2.3+ii}}
-p3 =  point {{.999,2.3+ii}}
-assert areEqual(sortSolutions {p,p2,p3}, {p3,p,p2})
-///
+undocumented {Reduced,BasePoint,origin,(origin,Ring),Gens,Space,[polySpace,Reduced]} --Robert???
+undocumented {
+    ParameterHomotopy, 
+    Parameters, SpecializedParameterHomotopy, Homotopy,
+    evaluateHt, (evaluateHt,Homotopy,Matrix,Number), (evaluateHt,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHt,SpecializedParameterHomotopy,Matrix,Number), 
+    evaluateHx, (evaluateHx,Homotopy,Matrix,Number), (evaluateHx,ParameterHomotopy,Matrix,Matrix,Number), (evaluateHx,SpecializedParameterHomotopy,Matrix,Number),
+    evaluateH, (evaluateH,Homotopy,Matrix,Number), (evaluateH,ParameterHomotopy,Matrix,Matrix,Number), (evaluateH,SpecializedParameterHomotopy,Matrix,Number)
+    }
 
 undocumented {(toExternalString,Point), (toExternalString,PolySystem),
     unionPointSet,  (unionPointSet,PointSet,PointSet), pointSet, (pointSet,Thing), (areEqual,PointSet,PointSet), PointSet,

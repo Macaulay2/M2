@@ -4,8 +4,8 @@
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
 newPackage select((
      "NAGtools",
-     Version => "1.8.2.1",
-     Date => "Jan 2016",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Tools of NumericalAlgebraicGeometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -111,6 +111,7 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     )
 
 TEST ///
+setRandomSeed 1
 X = inputGate x
 F = matrix{{X^2}} 
 PH = gateHomotopy4preimage(F,{X})
@@ -124,3 +125,16 @@ assert areEqual(norm evaluateHx(SPH,p,0), 2)
 peek PH.GateHomotopy    
 assert (#preimageViaMonodromy(PH,point p,{point p}) == 2)
 ///
+
+beginDocumentation()
+undocumented{
+preimageViaMonodromy,
+(preimageViaMonodromy,ParameterHomotopy,Point,List),
+gateHomotopy4preimage,
+(gateHomotopy4preimage,GateMatrix,GateMatrix,List,List),
+(gateHomotopy4preimage,GateMatrix,List),
+(gateHomotopy4preimage,GateMatrix,List,List),
+StoppingCriterion,
+RandomPointFunction
+    }
+endPackage "NAGtools" 

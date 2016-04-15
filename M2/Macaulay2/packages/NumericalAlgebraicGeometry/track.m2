@@ -887,8 +887,10 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     s = sols#nS;
     	 		     )			 
 		  	 )
-		     )
-		 )
+		     ); -- while ... 
+		     if status s =!= Regular then -- change status to Regular if at t=1 
+		     if abs(realPart s.LastT) < theSmallestNumber then s.SolutionStatus = Regular;   
+		 ) -- for nS ... 
 	     );	      
 	 toList sols 
 	 )
