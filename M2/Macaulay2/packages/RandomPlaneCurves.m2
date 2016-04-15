@@ -20,11 +20,10 @@ newPackage(
     	DebuggingMode => false
         )
 
-if not version#"VERSION" >= "1.4" then
-  error "this package requires Macaulay2 version 1.4 or newer"
+if not version#"VERSION" >= "1.8" then
+  error "this package requires Macaulay2 version 1.8 or newer"
 
-export{"nextPrime",
-       "distinctPlanePoints",
+export{"distinctPlanePoints",
        "constructDistinctPlanePoints",
        "certifyDistinctPlanePoints",
        "nodalPlaneCurve",
@@ -47,14 +46,6 @@ undocumented {
 -- a given number of ANY type
 -- (for complex numbers c this is next
 -- prime number of ceiling(Re(c))
-
-nextPrime=method(TypicalValue=>ZZ)
-nextPrime Number:=n->(
-      n0:=ceiling n;
-      if n0 <= 2 then return 2;
-      if even n0 then n0=n0+1;
-      while not isPrime n0 do n0=n0+2;
-      n0)
 
 
 -- construction of general points in the plane
@@ -153,26 +144,6 @@ imageUnderRationalMap(Ideal,Matrix):=(J,L)->(
      )
 
 beginDocumentation()
-
-doc ///
-  Key
-    nextPrime
-    (nextPrime,Number)
-  Headline
-    compute the smallest prime greater than or equal to a given number
-  Usage
-    nextPrime n
-  Inputs
-    n: Number
-  Outputs
-    : ZZ
-        the smallest prime $\ge n$
-  Description
-     Example
-       nextPrime 10000
-       nextPrime 3.5678
-       nextPrime (3/7)
-///
 
 doc ///
   Key
@@ -322,12 +293,6 @@ doc ///
 
 
 ------------- TESTS --------------
--- tests for nextprime
-TEST ///
-assert( nextPrime(-10) == 2)
-assert( nextPrime 100 == 101)
-assert( nextPrime 1000 == 1009)
-///
 
 -- tests for distinct plane curves
 TEST ///
