@@ -246,6 +246,25 @@ document { Key => {applicationDirectory, "application directory"},
      PARA { "The function ", TO "applicationDirectorySuffix", " determines the value of ", TT "applicationDirectory", ", and can be modified by the user." },
      EXAMPLE "applicationDirectory()",
      SeeAlso => applicationDirectorySuffix}
+
+document {
+     Key => installedPackages,
+     Usage => "installedPackages()",
+     Outputs => { 
+	  List => "a list of strings containing the names of the packages that have been installed in the user's ", TO "application directory", "." 
+	  },
+     SeeAlso => { installPackage }
+     }
+
+document {
+     Key => uninstallAllPackages,
+     Usage => "uninstallAllPackages()",
+     Consequences => {
+	  { "the packages that have been installed in the user's ", TO "application directory", " are uninstalled." }
+	  },
+     SeeAlso => { installPackage, uninstallPackage }
+     }
+
 document { Key => {round,(round,QQ),(round,RR),(round,ZZ,RR),(round,ZZ),(round,CC)},
      Headline => "round a number",
      SYNOPSIS (

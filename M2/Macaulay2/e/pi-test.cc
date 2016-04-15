@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <iostream>
 
-#ifdef DEBUG
+#ifndef NDEBUG
 void trap () {}
 #endif
 

@@ -1,15 +1,15 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "1.6.0.1", 
-  Date => "September 21, 2015",
+  Version => "2.0.0.0", 
+  Date => "March 1, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
      HomePage => "http://math.sjsu.edu/~egross"},
     {Name => "Jose Israel Rodriguez",
-     Email => "jo.ro@ND.edu",
-     HomePage => "http://www3.nd.edu/~jrodri18/"},
+     Email => "JoIsRo@UChicago.edu",
+     HomePage =>"http://home.uchicago.edu/~joisro"},
     {Name => "Dan Bates",
      Email => "bates@math.colostate.edu",
      HomePage => "http://www.math.colostate.edu/~bates"}, 
@@ -23,9 +23,19 @@ newPackage(
   DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true
-)
+) 
 
-export { 
+export {
+  "ReturnGaloisGroupGeneratorFile",
+  "StopBeforeTest",
+  "MapPoints",
+  "RandomGamma",
+  "SubFolder",
+  "StartParameters",
+  "StartPoints",
+  "OnlyCalculateTrace",
+  "b'TraceTestImage", 
+  "subPoint",
   "OrderPaths",
   "storeBM2Files",
   "bertiniZeroDimSolve",
@@ -64,38 +74,20 @@ export {
   "MAXNUMBERSTEPS",  
   "MAXCYCLENUM",
   "REGENSTARTLEVEL",
- -- "SpecifyPoints",
- -- "SpecifyCoordinates",
- -- "PrintNotes",
- -- "InputFilesName",--depracated
- -- "SolutionType",--depracated
- -- "AllowStrings",--depracated
- -- "SubFunctions"
- -- "OutputLocation",
- -- "B'InputFile",--depracated
- -- "B'StartFile",--depracated
- -- "B'StartParameters",--depracated
- "ParameterValues",
-  --"MonodromyStart",
-  --"NumberOfLoops",
-  --"MonodromyTolerance",
-  --"NumberOfWrites",
-  --"MonodromyUpperBound",
-  --"WriteOnly",
-  --"SpecifyDirectory"
+  "ParameterValues",
   "NameB'InputFile",--This option allows us to change the name of the input file.
   "NameParameterFile",
   "NameSolutionsFile",
   "NameIncidenceMatrixFile",
   "NameStartFile",
-  "NameFuntionFile",
+  "NameFunctionFile",
 --
   "makeB'InputFile",
   "B'Configs", --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
-  "HVG", --A list of lists of homogeneous variable groups. 
-  "AVG", --A list of lists of affine variable groups. 	
-  "PG",
-  "VG",
+  "HomVariableGroup", --A list of lists of homogeneous variable groups. 
+  "AffVariableGroup", --A list of lists of affine variable groups. 	
+  "ParameterGroup",
+  "VariableGroup",
   "PathVariable",
   "RandomComplex",
   "RandomReal",  --a list of unknowns whose values will be fixed by Bertini
@@ -116,10 +108,9 @@ export {
   "importParameterFile",   --need doc
   "b'TraceTest",
   "calculateB'Trace",
-  "UseStartPoints",
+  "UseStartPointsFirst",
   "b'PHSequence"   ,
   "b'PHMonodromyCollect",
---  "b'PHMonodromyLoop",
   "importSolutionsFile",
   "importIncidenceMatrix",
   "SaveData",
@@ -129,24 +120,23 @@ export {
   "NumSolBound",
   "SpecifyLoops",
   "b'PHGaloisGroup",
+  "b'PHGaloisGroup2",
+  "LoopRadius",
+  "NameGaloisGroupGeneratorFile",
   "BranchPoints",
   "SolutionFileStyle",
   "B'Section",
   "B'Slice",
-  "B'MultiProjectivePoint",
+--  "B'MultiProjectivePoint",
   "makeB'Section",
   "makeB'Slice",
   "ContainsPoint", 
   "B'NumberCoefficients", 
-  "B'NumberCoordinates",
-  "B'FileCoefficients",
-  "B'FileCoordinates",  
   "B'Homogenization", 
   "RandomCoefficientGenerator", 
-  "SelectVarGroup",
   "B'SectionString",
   "NameB'Section",
-  "ContainsMultiProjectivePoint",
+  "ContainsMultiProjectivePoint",--Eventually we will want to have multiprojective points.
   "NameB'Slice",
   "ListB'Sections",
   "makeB'TraceInput",
@@ -159,7 +149,7 @@ export {
   "readFile",
   "valueBM2",
   "NameMainDataFile",
-  "linesPerSolutions",
+--  "linesPerSolutions",
   "PathNumber",
   "FinalTValue",
   "MaxPrecisionUtilized",
@@ -173,19 +163,25 @@ export {
   "Dimension",
   "SolutionType",
   "DeflationsNeeded",
-  "B'WitnessSet",
+--  "B'WitnessSet",
   "SpecifyDim",
-  "NameWitnessSetFile",
+  "NameWitnessSliceFile",
   "importSliceFile",
   "TextScripts",
-  "NameWitnessPointFile",
+  "NameWitnessSolutionsFile",
   "SpecifyComponent",
-  "makeWitnessSetFile",
-  "makeSamplePointFile",
-  "NameSamplePointFile",
+  "makeWitnessSetFiles",
+  "makeSampleSolutionsFile",
+  "NameSampleSolutionsFile",
   "TestSolutions",
   "makeMembershipFile",
-  "ComponentNumber"
+  "ComponentNumber",
+  "sortMainDataComponents",
+  "moveB'File",
+  "CopyB'File",
+  "MoveToDirectory",
+  "SpecifyVariables",
+  "SubIntoCC"
     }
   
   protect SolutionNumber
@@ -210,7 +206,7 @@ export {
   protect StartSolutions
   protect FailedPath
   protect AllowStrings
-  
+       
 needsPackage "NAGtypes"
 
 --##########################################################################--
@@ -1415,10 +1411,10 @@ makeB'InputFile = method(TypicalValue => String, Options=>{
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
 	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
-	HVG=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
-	AVG=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
-    	PG=>{}, --A list of parameters or list of list of parameters.
-    	VG=>{}, --A list of variables or a list of list of variables.  
+	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
+	AffVariableGroup=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
+    	ParameterGroup=>{}, --A list of parameters or list of list of parameters.
+    	VariableGroup=>{}, --A list of variables or a list of list of variables.  
     	PathVariable=>{}, --A list of path variables or a list of list of path variables.  
     	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
     	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
@@ -1432,10 +1428,10 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
 --Warnings are printed here.     
      if #o.B'Polynomials===0 and #o.NamePolynomials===0 then (print "Warning: NamePolynomials and B'Polynomials are both empty.");
      if #o.B'Polynomials=!=0 and #o.NamePolynomials=!=0 then (print "Warning: NamePolynomials and B'Polynomials are both non-empty.");     
-     if #o.VG===0 and #o.AVG===0 and #o.HVG===0 then stdio << "Warning: VG, AVG, and HVG are all empty." <<endl<<endl;     
+     if #o.VariableGroup===0 and #o.AffVariableGroup===0 and #o.HomVariableGroup===0 then stdio << "Warning: VariableGroup, AffVariableGroup, and HomVariableGroup are all empty." <<endl<<endl;     
 --Errors are printed here. 
-     for onePair to #o.B'Constants-1 do if #((o.B'Constants)_onePair)=!=2 then  error ("B'Constants is not a list of pairs because of element "|onePair);
-     for onePair to #o.B'Functions-1 do if #((o.B'Functions)_onePair)=!=2  and class ((o.B'Functions)_onePair)=!=B'Section and class ((o.B'Functions)_onePair)=!=B'Slice then  error ("B'Functions is not a list of pairs because of element "|onePair);
+     for onePair to #o.B'Constants-1 do if  class((o.B'Constants)_onePair)===List and #((o.B'Constants)_onePair)=!=2 then  error ("B'Constants is not a list of pairs because of element "|onePair);
+     for onePair to #o.B'Functions-1 do if #((o.B'Functions)_onePair)=!=2  and class ((o.B'Functions)_onePair)=!=B'Section and class ((o.B'Functions)_onePair)=!=B'Slice and class ((o.B'Functions)_onePair)=!=Option then  error ("B'Functions is not a list of pairs because of element "|onePair);
      for onePair to #o.B'Functions-1 do if  class ((o.B'Functions)_onePair)===B'Section and not member(NameB'Section,keys ((o.B'Functions)_onePair)) then  error ("B'Functions contains an unnamed B'Section because of element "|onePair|". Set the NameB'Section option.");
      for onePair to #o.B'Functions-1 do if  class ((o.B'Functions)_onePair)===B'Slice and not member(NameB'Slice,keys ((o.B'Functions)_onePair)) then  error ("B'Functions contains an unnamed B'Slice because of element "|onePair|". Set the NameB'Slice option. ");
 --Now we write the file. The first thing we do is create a file named "input" by default (this default is changed by the NameB'InputFile option).
@@ -1452,33 +1448,33 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
      openedInputFile << "INPUT" << endl << endl;
 -----Write the Variable groups, parameters, and constants.
 --Write the homogeneous variable groups
-     if #o.HVG=!=0 and class ((o.HVG)_0 )=!=List then theHVG:={o.HVG} else theHVG=o.HVG;
-     if #theHVG=!=0 then 
-     for oneGroup in theHVG do (
+     if #o.HomVariableGroup=!=0 and class ((o.HomVariableGroup)_0 )=!=List then theHomVariableGroup:={o.HomVariableGroup} else theHomVariableGroup=o.HomVariableGroup;
+     if #theHomVariableGroup=!=0 then 
+     for oneGroup in theHomVariableGroup do (
 	 openedInputFile << "hom_variable_group "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
 --Write the affine variable groups
-     if #o.AVG=!=0 and class ((o.AVG)_0 )=!=List then theAVG:={o.AVG} else theAVG=o.AVG;
-     if #theAVG=!=0 then 
-     for oneGroup in theAVG do (
+     if #o.AffVariableGroup=!=0 and class ((o.AffVariableGroup)_0 )=!=List then theAffVariableGroup:={o.AffVariableGroup} else theAffVariableGroup=o.AffVariableGroup;
+     if #theAffVariableGroup=!=0 then 
+     for oneGroup in theAffVariableGroup do (
 	 openedInputFile << "variable_group "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --Write  variable groups
-     if #o.VG=!=0 and class ((o.VG)_0 )=!=List then theVG:={o.VG} else theVG=o.VG;
-     if #theVG=!=0 then 
-     for oneGroup in theVG do (
+     if #o.VariableGroup=!=0 and class ((o.VariableGroup)_0 )=!=List then theVariableGroup:={o.VariableGroup} else theVariableGroup=o.VariableGroup;
+     if #theVariableGroup=!=0 then 
+     for oneGroup in theVariableGroup do (
 	 openedInputFile << "variable "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
      openedInputFile <<endl;
 --Write the parameters
-     if #o.PG=!=0 and class ((o.PG)_0 )=!=List then thePG:={o.PG} else thePG=o.PG;
-     if #thePG=!=0 then 
-     if #thePG=!=0 then 
-     for oneGroup in thePG do (
+     if #o.ParameterGroup=!=0 and class ((o.ParameterGroup)_0 )=!=List then theParameterGroup:={o.ParameterGroup} else theParameterGroup=o.ParameterGroup;
+     if #theParameterGroup=!=0 then 
+     if #theParameterGroup=!=0 then 
+     for oneGroup in theParameterGroup do (
 	 openedInputFile << "parameter "  ;
 	 for j to #oneGroup-2 do (openedInputFile <<toString (oneGroup_j)  << ", ");
 	 openedInputFile << toString(oneGroup_(-1)) << " ; "<< endl);
@@ -1513,10 +1509,11 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
      if #o.B'Constants=!=0 then (
      openedInputFile << "constant "  ;
      openedInputFile << "ii"  << ", ";
-     for j to #(o.B'Constants)-2 do (openedInputFile <<toString ((o.B'Constants)_j_0)  << ", ");
-     openedInputFile << (o.B'Constants_(-1))_0 << " ; "<< endl;
+     pairsB'Constants:=for i in o.B'Constants list if class i ===List then i else if class i===Option then toList i else error;
+     for j to #(pairsB'Constants)-2 do (openedInputFile <<toString ((pairsB'Constants)_j_0)  << ", ");
+     openedInputFile << (pairsB'Constants_(-1))_0 << " ; "<< endl;
      openedInputFile << "ii = I"  << "; "<<endl;
-     for onePair in (o.B'Constants) do (
+     for onePair in (pairsB'Constants) do (
 	 openedInputFile << toString(onePair_0) << " = " <<toString(onePair_1) <<" ; "<<endl
 	 ));
 --write just the constant "ii = I"
@@ -1545,6 +1542,8 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
     for onePair in  o.B'Functions do (
       if class onePair===List 
       then openedInputFile << toString(onePair_0) << " = "<<toString(onePair_1)<< " ; "<<endl << endl;
+      if class onePair===Option 
+      then openedInputFile << toString( (toList onePair)_0) << " = "<<toString( (toList onePair)_1)<< " ; "<<endl << endl;
       if class onePair===B'Section 
       then (openedInputFile << toString(onePair#NameB'Section) << " = "<<par'String(onePair#B'SectionString)<< " ; "<<endl << endl ); 
       if class onePair===B'Slice 
@@ -1557,7 +1556,7 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
     for onePolynomialIndex to  #o.B'Polynomials-1 do (
       if class ((o.B'Polynomials)_onePolynomialIndex)===B'Section 
       then (
-	if not member(NameB'Section,keys ((o.B'Polynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with an unset NameB'Section option. ");
+	if  member(NameB'Section,keys ((o.B'Polynomials)_onePolynomialIndex)) then print ("Warning: Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with a set NameB'Section option that will be ignored. ");
 	if not member(B'SectionString,keys ((o.B'Polynomials)_onePolynomialIndex)) then error("Element "|onePolynomialIndex|" of B'Polynomials is a B'Section with an unset B'SectionString option. ");
 	openedInputFile << "jade"|toString(onePolynomialIndex) << " = "<<((o.B'Polynomials)_onePolynomialIndex)#B'SectionString<< " ; "<<endl << endl   
 	)
@@ -1570,14 +1569,14 @@ makeB'InputFile(String) := o ->(filesGoHere)->(
     close openedInputFile        		);
 
 
-makeWitnessSetFile = method(TypicalValue => Nothing, Options=>{
-	NameWitnessSetFile=>"linear_slice_file",
-    	NameWitnessPointFile=>"witness_point_file",
+makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
+	NameWitnessSliceFile=>"linear_slice_file",
+    	NameSolutionsFile=>"witness_solutions_file",
 	NameB'InputFile=>"input",
 	SpecifyComponent=>-2,
 	InputFileDirectory=>{}
 		})
-makeWitnessSetFile(String,Number) := o ->(filesGoHere,theDim)->(
+makeWitnessSetFiles(String,Number) := o ->(filesGoHere,theDim)->(
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
 --    if filesGoHere_-1=!="/" then filesGoHere=filesGoHere|"/";     
@@ -1587,20 +1586,28 @@ makeWitnessSetFile(String,Number) := o ->(filesGoHere,theDim)->(
     PFile:= openOut(filesGoHere|"/"|tempfileName); 
     PFile << toString(theDim) << endl ;
     PFile << toString(o.SpecifyComponent) << endl ;
-    PFile << toString(o.NameWitnessPointFile) << endl ;
-    PFile << toString(o.NameWitnessSetFile) << endl ;
+    PFile << toString(o.NameSolutionsFile) << endl ;
+    PFile << toString(o.NameWitnessSliceFile) << endl ;
     close PFile;
     runBertini(filesGoHere,TextScripts=>tempfileName);
     removeFile(filesGoHere|"/"|tempfileName);    
         )
 
 
-makeSamplePointFile = method(TypicalValue => Nothing, Options=>{
-	NameSamplePointFile=>"sample_point_file",
+makeSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
+	NameSolutionsFile=>"sample_solutions_file",
 	NameB'InputFile=>"input",
-	InputFileDirectory=>{}
+	InputFileDirectory=>{},
+	SpecifyComponent=>{}
 		})
-makeSamplePointFile(String,Number,Number,Number) := o ->(filesGoHere,theDim,theComponent,theNumberOfPoints)->(
+makeSampleSolutionsFile(String,Number) := o ->(filesGoHere,aNumber)->(    
+    theNumberOfPoints:=aNumber;
+    if o.SpecifyComponent==={} then error"SpecifyComponent option must be set to a point or a list {dimension,component number}.";
+    if  class o.SpecifyComponent===List     then (    
+      theDim:=(o.SpecifyComponent)_0;
+      theComponent:=(o.SpecifyComponent)_1) else if class o.SpecifyComponent===Point then(
+      theDim=(o.SpecifyComponent)#Dimension;
+      theComponent=(o.SpecifyComponent)#ComponentNumber);         
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
     if theNumberOfPoints<1 then error" The number of sample points should be positive. ";
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
@@ -1613,14 +1620,14 @@ makeSamplePointFile(String,Number,Number,Number) := o ->(filesGoHere,theDim,theC
     PFile << toString(theComponent) << endl ;
     PFile << toString(theNumberOfPoints) << endl ;
     PFile << "0" << endl ;    
-    PFile << toString(o.NameSamplePointFile) << endl ;
+    PFile << toString(o.NameSolutionsFile) << endl ;
     close PFile;
     runBertini(filesGoHere,TextScripts=>tempfileName);
     removeFile(filesGoHere|"/"|tempfileName)            )
 
 
 makeMembershipFile = method(TypicalValue => Nothing, Options=>{
-	NameWitnessPointFile=>"member_points",
+	NameSolutionsFile=>"member_points",
 	NameB'InputFile=>"input",
 	InputFileDirectory=>{},
 	TestSolutions=>{},
@@ -1628,11 +1635,11 @@ makeMembershipFile = method(TypicalValue => Nothing, Options=>{
 		})
 makeMembershipFile(String) := o ->(filesGoHere)->(
     if o.TestSolutions=!={} then writeStartFile(filesGoHere,o.TestSolutions,
-	NameStartFile=>o.NameWitnessPointFile,
+	NameStartFile=>o.NameSolutionsFile,
 	UsePrecision=>o.UsePrecision	);
     if o.InputFileDirectory==={} then IFD:=filesGoHere else IFD=o.InputFileDirectory;	
-    if not fileExists(filesGoHere|"/"|o.NameWitnessPointFile) then error("The file "|o.NameWitnessPointFile|" does not exist. ");
-    copyFile(filesGoHere|"/"|o.NameWitnessPointFile,filesGoHere|"/member_points");    
+    if not fileExists(filesGoHere|"/"|o.NameSolutionsFile) then error("The file "|o.NameSolutionsFile|" does not exist. ");
+    copyFile(filesGoHere|"/"|o.NameSolutionsFile,filesGoHere|"/member_points");    
 --    if filesGoHere_-1===" " then error (filesGoHere|" cannot end with whitespace.");
 --    if filesGoHere_-1=!="/" then filesGoHere=filesGoHere|"/";     
 --    if not fileExists(filesGoHere|"/witness_data") then error"witness_data file does not exist. ";
@@ -1643,7 +1650,8 @@ makeMembershipFile(String) := o ->(filesGoHere)->(
 
 
 
---To do a trace test we need to evaluate the points using a Bertini Tracktype 4. the number of variables in this input file equals the number of points times the number of coordinates.
+--To do a trace test we need to evaluate the points using a Bertini Tracktype 4. 
+--the number of variables in this input file equals the number of points times the number of coordinates.
 makeB'TraceInput = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"inputTT",  --This option allows us to change the name of the input file that we will prodcue. (This imput file is super simple).
 	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
@@ -1653,8 +1661,8 @@ makeB'TraceInput(String,Number,Number) := o ->(filesGoHere,NumberOfPoints,Number
     makeB'InputFile(filesGoHere,
 	NameB'InputFile=>o.NameB'InputFile,
 	B'Configs=>o.B'Configs|{{"TRACKTYPE",-4}},
-	AVG=>theVars,
-	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1))#B'SectionString)
+	AffVariableGroup=>theVars,
+	B'Polynomials=>for aGroup in transpose theVars list ((makeB'Section(aGroup,B'NumberCoefficients=>for i in aGroup list 1/NumberOfPoints))#B'SectionString)
 	))
 
 replaceFirstLine = method(TypicalValue => Nothing, Options=>{
@@ -1666,7 +1674,7 @@ replaceFirstLine(String,String,Thing) := o ->(filesGoHere,fileName,aString)->(
 
 calculateB'Trace = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",---we will read these start points.
-	NameFuntionFile=>"function",---the traces will be written to this file.
+	NameFunctionFile=>"calculatedTrace",---the traces will be written to this file.
 	NameB'InputFile=>"inputTT"---this file should be created prior to calling the calculateB'Trace function.
 	})
 calculateB'Trace(String) := o ->(
@@ -1677,7 +1685,7 @@ calculateB'Trace(String) := o ->(
      if o.NameStartFile=!="start" then copyFile(filesGoHere|o.NameStartFile,filesGoHere|"start");
      replaceFirstLine(filesGoHere,"start",1);
      runBertini(filesGoHere,NameB'InputFile=>o.NameB'InputFile);--maybe an error because of the backslash at the end. 
-     if o.NameFuntionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFuntionFile));      
+     if o.NameFunctionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFunctionFile));      
 
 
 b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
@@ -1688,8 +1696,8 @@ b'TraceTest=method(TypicalValue=>Thing,Options=>{ --assuming the directory conta
 --	NameSolutionsFile=>"nonsingular_solutions",		
 	InputFileDirectory=>{},
 	B'Exe=>BERTINIexe,
-	ParameterValues=>{.5,1},
-	UseStartPoints=>true	})
+	ParameterValues=>{0,.5,1},
+	UseStartPointsFirst=>false	})
 b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoordinates)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
@@ -1706,11 +1714,11 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     makeB'TraceInput(storeFiles,NumberOfPoints,NumberOfCoordinates,NameB'InputFile=>"inputTTjade");
     print "tt2";
     runCount:=1;
-    if o.UseStartPoints===true then (
+    if o.UseStartPointsFirst===true then (
       print "tt3";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       calculateB'Trace(storeFiles,NameStartFile=>"startPHjade",
-	NameFuntionFile=>"trace"|toString(runCount),
+	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       moveFile(storeFiles|"startPHjade",storeFiles|"start");      
       runCount=runCount+1);
@@ -1724,7 +1732,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
       print "tt7Loop";
       calculateB'Trace(storeFiles,NameStartFile=>"nonsingular_solutions",--need a check to make sure we don't lose solutions
-	NameFuntionFile=>"trace"|toString(runCount),
+	NameFunctionFile=>"trace"|toString(runCount),
 	NameB'InputFile=>"inputTTjade");
       print "tt8Loop";
       runCount=runCount+1;      
@@ -1733,6 +1741,74 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     print "tt9";
     return for i from 1 to runCount-1 list ((importSolutionsFile(storeFiles,NameSolutionsFile=>"trace"|toString i))_0)    
      );
+
+
+
+
+
+----------------------------------------------------------------------------------
+--Assume we are given a parameter 2 input file.
+--We only change the FIRST PARAMETER.
+--We import the start parameter P and fix a Gamma. 
+--We take the trace of solutions for the parameter at P, P+Gamma, P-Gamma 
+b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory contains a start file and start parameters and parameter homotopy file with one parameter
+	NameB'InputFile=>"input",
+	SubFolder=>false,
+	B'Exe=>BERTINIexe,
+	RandomGamma=>.27890+.31712*ii,
+	StartPoints=>false,
+	StartParameters=>false,
+	MapPoints=>false,--(List of polynomials or a matrix of polynomials, list of variables)
+	OnlyCalculateTrace=>false,
+	UsePrecision=>53,
+	SubIntoCC=>true,
+	StopBeforeTest=>false
+		})
+b'TraceTestImage(String) := o ->(storeFiles)->(
+    if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
+    if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";
+    IFD:=storeFiles;    
+--
+    if o.SubFolder=!=false then (
+      storeFiles=IFD|"/"|o.SubFolder;
+      if fileExists(storeFiles)===false then makeDirectory(storeFiles)
+      );
+    if o.StartPoints===false then(
+      if false===fileExists(storeFiles|"/"|"start") then 
+        error"The option StartPoints needs to be set or the Bertini 'start' file is in the wrong directory.");
+    if class o.StartPoints===String then( 
+      if false===fileExists(storeFiles|"/"|o.StartPoints) then error"The file "|storeFiles|"/"|o.StartPoints|" does not exist ";
+      if o.StartPoints=!="start" then moveB'File(storeFiles,o.StartPoints,"start",CopyB'File=>true)
+      );
+    if class o.StartPoints===List then writeStartFile(storeFiles,o.StartPoints, UsePrecision=>o.UsePrecision);
+    if o.StartParameters=!=false then writeParameterFile(storeFiles,o.StartParameters,UsePrecision=>o.UsePrecision,NameParameterFile=>"start_parameters");
+    if o.StartParameters===false then (
+      if false===fileExists(storeFiles|"/"|"start_parameters") then error"The file "|storeFiles|"/"|"start_parameters"|" does not exist "
+      );
+    startParameters:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision);
+    if OnlyCalculateTrace=!=true then (
+      writeParameterFile(storeFiles,{first startParameters+o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",UsePrecision=>o.UsePrecision);
+      runBertini(storeFiles,InputFileDirectory=>IFD);
+      moveB'File(storeFiles,"nonsingular_solutions","traceF");--F is for Forward
+      writeParameterFile(storeFiles,{first startParameters-o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",UsePrecision=>o.UsePrecision);
+      runBertini(storeFiles,InputFileDirectory=>IFD);
+      moveB'File(storeFiles,"nonsingular_solutions","traceB");--B is for Backward
+      );
+    solsF:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceF",UsePrecision=>o.UsePrecision);
+    solsC:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start",UsePrecision=>o.UsePrecision);
+    solsB:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceB",UsePrecision=>o.UsePrecision);
+    if o.MapPoints=!=false then (
+      functionMapPoints:=(o.MapPoints)_0;
+      varsMapPoints:=(o.MapPoints)_1;    
+      afterMapTrace:=({
+        for oneSol in solsB list apply(functionMapPoints,i->subPoint(i,varsMapPoints,oneSol)),
+        for oneSol in solsC list apply(functionMapPoints,i->subPoint(i,varsMapPoints,oneSol)),
+        for oneSol in solsF list apply(functionMapPoints,i->subPoint(i,varsMapPoints,oneSol))
+        }/sum)
+      ) else afterMapTrace=({solsB,solsC,solsF}/sum);
+    if o.StopBeforeTest===false then return ((afterMapTrace_0-afterMapTrace_1)-(afterMapTrace_1-afterMapTrace_2)) else return afterMapTrace
+    )
+------------------------------------------------------------------------------
 
 
 --run("sed -i -e "|toExternalString("1s/.*/")|toString(STuFF)|toExternalString("/")|" "|theDir|"/input") 
@@ -1744,7 +1820,17 @@ readFile(String,String,Number) := o ->(filesGoHere,fileName,aInteger)->(
     s:=read(aFile,aInteger);
     close aFile;
     return s
-    );    
+    );  
+readFile(String,Number) := o ->(filesGoHere,aInteger)->(
+    if toString(filesGoHere)_-1==="/" then aDir:=filesGoHere else aDir=filesGoHere|"/";
+    aFile:=openIn(aDir|"bertini_session.log");
+    s:=read(aFile,aInteger);
+    close aFile;
+    return s
+    );  
+  
+ 
+ 
 
 valueBM2=method(TypicalValue=>String,Options=>{
 	UsePrecision=>53})
@@ -1774,16 +1860,16 @@ valueBM2(String) := o->(aString)->(
 
   
 importSliceFile=method(TypicalValue=>String,Options=>{
-	NameWitnessSetFile=>"linear_slice_file"})
+	NameWitnessSliceFile=>"linear_slice_file"})
 importSliceFile(String) := o->(aString)->(
     if aString_-1=!="/" then aString=aString|"/";
-    allInfo:=lines get(aString|o.NameWitnessSetFile);
+    allInfo:=lines get(aString|o.NameWitnessSliceFile);
     theConstants:={};
     theLinearSystems:={};
     for aLine in allInfo do (
       sepLine:=separate("=",aLine);
-      print sepLine;
-      print ( #sepLine);
+--      print sepLine;
+--      print ( #sepLine);
       if #sepLine==2 then (
 	if #select("const",sepLine_0)==1
 	then theConstants=append(theConstants,{sepLine_0,
@@ -1873,26 +1959,26 @@ importMainDataFile(String) := o->(aString)->(
     return theListOfPoints);
     if posDimCase 
     then   (
-	print 1;
+--	print 1;
     allInfo=drop(allInfo,4);
     linesPerSolutions=theNumberOfVariables+6;
     theListOfPoints={};
     while #select("reproduce",allInfo_0)=!=1 do(
-      print 2;
+--      print 2;
       if #select("DIMENSION",allInfo_0)=!=0
       then (
-	print 3;
+	--print 3;
 	theDim:=value (select("[0-9]+",allInfo_0))_0;
         if o.SpecifyDim=!=false and o.SpecifyDim=!=theDim then dimFlag:=false else dimFlag=true;
 	allInfo=drop(allInfo,1))
       else if #select("NONSINGULAR",allInfo_0)=!=0 
       then (
-	print 4;
+	--print 4;
 	theSolutionType:="NONSINGULAR";
 	allInfo=drop(allInfo,1))	
       else if #select("SINGULAR",allInfo_0)=!=0 and #select("NON",allInfo_0)===0  
       then (
-	print 5;
+	--print 5;
 	theSolutionType="SINGULAR";
 	allInfo=drop(allInfo,1))
       else if #select("---------------",allInfo_0)=!=0 
@@ -1913,7 +1999,7 @@ importMainDataFile(String) := o->(aString)->(
         aNewPoint.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables)))_1);
         aNewPoint.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1)))_1);      
       	theListOfPoints=append(theListOfPoints,aNewPoint);
-      	print linesPerSolutions;
+      	--print linesPerSolutions;
       	allInfo=drop(allInfo,linesPerSolutions))
         else allInfo=drop(allInfo,linesPerSolutions)	)
       else allInfo=drop(allInfo,1));
@@ -2289,7 +2375,7 @@ b'PHMonodromyCollect=method(TypicalValue=>Thing,Options=>{
 	NameB'InputFile=>"input",
 	NameStartFile=>"start",
 	NameParameterFile=>"start_parameters",
-	NameSolutionsFile=>"raw_solutions",
+	NameSolutionsFile=>"simple_raw_solutions",
 	InputFileDirectory=>{},
     	StartFileDirectory=>{},
     	StartParameterFileDirectory=>{},	
@@ -2333,7 +2419,7 @@ b'PHMonodromyCollect(String) := o ->(storeFiles)->(
     breakLoop:=false;
     if o.SpecifyLoops=!=false then listsOfListsOfParameterValues:=o.SpecifyLoops;
     while not breakLoop do(
-      if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 3-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
+      if (o.SpecifyLoops===false) then listsOfListsOfParameterValues={for i to 2-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
 	print ("Monodromy loop number",loopCount);
@@ -2386,7 +2472,7 @@ radicalList=(aList,aTolerance)->(
     return newList)
 
      
-b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
+b'PHGaloisGroup2=method(TypicalValue=>Thing,Options=>{
 	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
 	NameStartFile=>"start",  --this start file will be the solutions we start with
 	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
@@ -2403,7 +2489,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
 	UsePrecision=>52
 --	SpecifyLoops=>false
 	})
-b'PHGaloisGroup(String) := o ->(storeFiles)->(
+b'PHGaloisGroup2(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
     if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
 --
@@ -2443,39 +2529,40 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
     --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
     loopCount:=0;
     breakLoop:=false;
+    ---If BranchPoints is specificied we go through the follow if-then statements. 
     if o.BranchPoints=!=false and #bP =!=1 then error "If BranchPoints are specified then there can only be one parameter.";
     if o.BranchPoints=!=false then (
       critTs:=(o.BranchPoints);	
-      centroidT:=sum critTs/#critTs+0;--+.05*ii-.03;--this is the average value of the crtitical ts.
-      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"final_parameters");
-      runBertini(storeFiles);
-      copyFile(storeFiles|"nonsingular_solutions",storeFiles|"ggStartJade");
-      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"ggStartParametersJade");      
+--      centroidT:=sum critTs/#critTs+0;--+.05*ii-.03;--this is the average value of the crtitical ts.
+      centroidT:=bP_0;
+--      writeParameterFile(storeFiles,{centroidT},NameParameterFile=>"final_parameters");
+--      runBertini(storeFiles);
+--      copyFile(storeFiles|"nonsingular_solutions",storeFiles|"ggStartJade");
       solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
--------------------
-      bP={centroidT};
-      print "base parameters:";
+      writeParameterFile(storeFiles,bP,NameParameterFile=>"ggStartParametersJade");      
+--      bP={centroidT};
+--      print "base parameters:";
       normalizedTs:=for i in critTs list i-centroidT;--we subtract the centroidT from each critical point to treat centroidT as the origin
-      pizzaRadius:=max(normalizedTs/abs+for i in normalizedTs list 1);--this is the maximum distance plus .5 from a critical t and the centroid t
+      pizzaRadius:=max(normalizedTs/abs)+ 1;--this is the maximum distance plus 1 from a critical t and the centroid t
       --these refer to the arguments of the endpoints with respect to the centroid
       someEndpoints:= sort( normalizedTs/log/imaginaryPart);--this is the angle of each critical t wrt to the centroid
-      print (1/(2*pi)*someEndpoints);
+--      print (1/(2*pi)*someEndpoints);
       mostPositiveAngle:=max(someEndpoints);
       mostNegativeAngle:=min(someEndpoints);
       moreEndpoints:=prepend(mostPositiveAngle-2*pi, 
     	append(someEndpoints,mostNegativeAngle+2*pi));--we include extra boundary endpoints on the pizza so we can easily get the midangle
-      print (1/(2*pi)*moreEndpoints);
+--      print (1/(2*pi)*moreEndpoints);
       allEndPoints:=flatten append(
     	for i from 1 to #moreEndpoints-2 list {
     	1/2*(moreEndpoints_(i-1)+moreEndpoints_i),
 	moreEndpoints_i},
         1/2*(moreEndpoints_-2+moreEndpoints_-1));--this list includes the angle of each critical t and the midangle between each nearby pair
-      print (1/(2*pi)*allEndPoints);
+--      print (1/(2*pi)*allEndPoints);
       parameterAngles:=for i to #critTs-1 list {
         {allEndPoints_(2*i)},    
     	{allEndPoints_(1+2*i)},    
         {allEndPoints_(2+2*i)} };      
-     for i in parameterAngles do print ((1/(2*pi))*flatten i);
+--     for i in parameterAngles do print ((1/(2*pi))*flatten i);
       if not(#allEndPoints==2*#critTs+1) then error "A mistake was made. An unexpected solution was found or a numerical error occurred.";
       --these above we were working with angles of the imaginary numbers with tCentroid as the origin. Now we renormalize so that 0 is the origin and we are in the standard complex plane realPart+imanginaryPary*ii
       allLandMarkers:=for i to #allEndPoints-1 list pizzaRadius*exp(ii*allEndPoints_i)+centroidT;
@@ -2484,7 +2571,7 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
         {allLandMarkers_(2*i)},    
     	{allLandMarkers_(1+2*i)},    
         {allLandMarkers_(2+2*i)} });      --the tip of the pizza, ie. the centroid will be appened in the b'PHSequence below.
-    print ("ggPVS");
+--    print ("ggPVS");
     for i in listsOfListsOfParameterValues do print (((flatten i)));
     theGaloisG:={};
     loopFailures:=0;
@@ -2492,9 +2579,9 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
       if (o.BranchPoints===false) then listsOfListsOfParameterValues={for i to 3-1 list for j to #bP-1 list (2*random(CC)-random(CC))};
       for listsOfParameterValues in listsOfListsOfParameterValues do(
 	loopCount=loopCount+1;
-	print ("loopCount",loopCount);
-    	print (	 flatten   append(listsOfParameterValues,bP));	
-    	print "Go into b'PHSequence.";
+--	print ("loopCount",loopCount);
+--    	print (	 flatten   append(listsOfParameterValues,bP));	
+--    	print "Go into b'PHSequence.";
     	b'PHSequence(storeFiles,
 	    append(listsOfParameterValues,bP),
 	    B'Exe=>o.B'Exe,
@@ -2503,14 +2590,14 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 	    SaveData=>true,
 	    NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
 	    );
-    	print "Out of b'PHSequence.";
+--    	print "Out of b'PHSequence.";
 --	print ".5";
 --    	print (importSolutionsFile(storeFiles,NameSolutionsFile=>"start"));
 	permutedSols:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
     	copyFile(storeFiles|"ggStartJade",storeFiles|"start");
         trackingSucess:=(#solCollection==#permutedSols);
-	print ("trackingSucess: ",trackingSucess);
-	print (#solCollection,#permutedSols);
+--	print ("trackingSucess: ",trackingSucess);
+--	print (#solCollection,#permutedSols);
         if not trackingSucess then (
 	    loopFailures=loopFailures+1;
 	    print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
@@ -2520,7 +2607,7 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 --    	    print solCollection;
 --	    print permutedSols;
     	    ggGenerator:={};
-    	    for i to #solCollection-1 do for j to #permutedSols-1 do if areEqual({solCollection_i_0},{permutedSols_j_0},Tolerance=>1e-6) then ggGenerator=append(ggGenerator,j);
+    	    for i to #solCollection-1 do for j to #permutedSols-1 do if areEqual({solCollection_i_0,solCollection_i_-1},{permutedSols_j_0,permutedSols_j_-1},Tolerance=>1e-9) then ggGenerator=append(ggGenerator,j);
     	    if #solCollection=!=#ggGenerator then (
     	    	print (#ggGenerator, #solCollection);
 		loopFailures=loopFailures+1;
@@ -2534,28 +2621,163 @@ b'PHGaloisGroup(String) := o ->(storeFiles)->(
 	  print "NumberOfLoops has been reached."); 
       ));
     print ("There were "|toString loopFailures|" loop failures.");
-    return theGaloisG);
+    return convertToGap(theGaloisG));
+
+
+
+b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
+    	LoopRadius=>{},
+	NameB'InputFile=>"input",  --this is the input file that allows us to do the parameter homotopies
+	NameStartFile=>"start",  --this start file will be the solutions we start with
+	NameParameterFile=>"start_parameters", --this file is the start_parameters for our start solutions
+	NameSolutionsFile=>"simple_raw_solutions",--this file tells us which solutions to consider at the end
+	InputFileDirectory=>{},--this says where the input file is located if different from the user's input
+    	StartFileDirectory=>{},--this says where the start file is lcoated if different from the user's unput
+    	StartParameterFileDirectory=>{},	--this says where the start_parameter file is located if different from the user's input
+	SaveData=>false,--if true then we save the NameSolutionsFile's that we produce after the completetion of each loop
+	B'Exe=>BERTINIexe,
+	MonodromyStartPoints=>false,--This will write a start file in the StartFileDirectory with the name NameStartFile
+	MonodromyStartParameters=>false,--This will write a start_parameters file in the StartParametersFileDirectory with the name NameParameterFile
+  	NumberOfLoops=>1,--This is the number of loops we will perform. 
+	BranchPoints=>{.12415+.34636*ii},
+	NameGaloisGroupGeneratorFile=>"gggFile",
+	UsePrecision=>52,
+	ReturnGaloisGroupGeneratorFile=>true
+--	SpecifyLoops=>false
+	})
+b'PHGaloisGroup(String) := o ->(storeFiles)->(
+    if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
+    if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
+--
+    if o.InputFileDirectory==={} then IFD:=storeFiles else IFD=o.InputFileDirectory;
+    if IFD_-1===" " then error (IFD|" cannot end with whitespace.");
+    if IFD_-1=!="/" then IFD=IFD|"/";    
+--
+    if o.StartFileDirectory==={} then SFD:=storeFiles else SFD=o.StartFileDirectory;
+    if SFD_-1===" " then error (SFD|" cannot end with whitespace.");
+    if SFD_-1=!="/" then SFD=SFD|"/";    
+--    
+    if o.StartParameterFileDirectory==={} then SPFD:=storeFiles else SPFD=o.StartParameterFileDirectory;
+    if SPFD_-1===" " then error (SPFD|" cannot end with whitespace.");
+    if SPFD_-1=!="/" then SPFD=SPFD|"/";        
+--
+    --For b'PHGaloisGroup to run we need to have a start file that consists of solutions for a general choice of parameters. 
+    --There are two ways to get this start file. The first way is to tell M2 where to find the start file by specifying StartFileDirectory and NameStartFile options. 
+    --The other way is by specifying MonodromyStartPoints to a list of points or solutions. 
+    --THe following lines check to see if the configurations to run b'PHGaloisGroup are set correctly in regards to the start file. 
+    if o.MonodromyStartPoints=!=false then writeStartFile(SFD,o.MonodromyStartPoints);--write a start file.
+    if fileExists(IFD|o.NameB'InputFile)===false then error "input file does not exist in correct directory.";
+    if o.MonodromyStartPoints===false and fileExists(SFD|o.NameStartFile)===false then error "start file does not exist in correct directory or MonodromyStartPoints needs to be set.";
+    --For b'PHGaloisGroup to run we need to have a start_parameter file that consists of a general choice of parameters. 
+    --There are two ways to get this start_parameter file. The first way is to tell M2 where to find the start_parameter file by specifying StartParameterFileDirectory and NameParameterFile options. 
+    --The other way is by specifying MonodromyStartParameters to a list of parameters. 
+    --THe following lines check to see if the configurations to run b'PHGaloisGroup are set correctly in regards to the start_parameter file. 
+    if o.MonodromyStartParameters=!=false then writeParameterFile(SPFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
+    if o.MonodromyStartParameters===false and fileExists(SPFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory or MonodromyStartParameters needs to be set.";        
+    --Now we want to do our computations in a the directory specified by storeFiles. So we copy files from the StartFileDirectory, InputFileDirectory, StartParameterFileDirectory to the directory given by storeFiles. 
+    if o.NameStartFile=!="start" or SFD=!=storeFiles then copyFile(SFD|o.NameStartFile,storeFiles|"start");
+    if o.NameParameterFile=!="start_parameters" or SPFD=!=storeFiles then copyFile(SPFD|o.NameParameterFile,storeFiles|"start_parameters");
+    --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
+    copyFile(SFD|"start",storeFiles|"ggStartJade");
+    solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
+    --We save the start points' parameters as bP in memory rather than a text file. 
+    basePointT:=(importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision));
+    if #basePointT=!=1 then error "The base point downstairs can only have one coordinate. Parameter space should be restricted to a line parameterized by one copy of complex numbers.";
+    basePointT=basePointT_0;
+    print basePointT;
+    --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
+    loopCount:=0;
+    breakLoop:=false;
+    branchPointsT:=(o.BranchPoints);
+    --put a radical list warning here:
+    gggFile:= openOut(storeFiles|o.NameGaloisGroupGeneratorFile); 
+    gggFile << "[" << endl;    	    
+    solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
+--    writeParameterFile(storeFiles,{basePointT},NameParameterFile=>"ggStartParametersJade");
+    loopFailures:=0;      
+    print branchPointsT;
+    loopPointsT:={};
+    if o.LoopRadius=!={} then theLoopRadius:=o.LoopRadius else (
+      theLoopRadius=1/2*min min(for i to #branchPointsT-2 list for j from i+1 to #branchPointsT-1 list abs(branchPointsT_i-branchPointsT_j)));
+    for oneBranchPointT in branchPointsT  do (
+    	--NWSWE
+      if imaginaryPart(oneBranchPointT-basePointT)<0 then(print "below p";
+	         loopPointsT={
+	  oneBranchPointT+ii*theLoopRadius,
+	  oneBranchPointT-theLoopRadius,
+	  oneBranchPointT-ii*theLoopRadius,
+	  oneBranchPointT+theLoopRadius,
+	  basePointT}) else ---SENW 
+      if imaginaryPart(oneBranchPointT-basePointT)>0 then(print "above p";
+	         loopPointsT={
+	  oneBranchPointT-ii*theLoopRadius,
+	  oneBranchPointT+theLoopRadius,
+	  oneBranchPointT+ii*theLoopRadius,
+	  oneBranchPointT-theLoopRadius,
+	  basePointT}) else
+      print "An error occurred while creating the loops."      ;       
+      print loopPointsT;
+      print for i in loopPointsT list {i};
+      b'PHSequence(storeFiles,for i in loopPointsT list {i},
+	  B'Exe=>o.B'Exe,
+	  InputFileDirectory=>IFD,
+	  NameB'InputFile=>o.NameB'InputFile,
+	  SaveData=>true,
+	  NameSolutionsFile=>"simple_raw_solutions"--"simple_raw_solutions"--this needs to be raw to keep the correct ordering
+	    );
+	permutedSols:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start");
+    	copyFile(storeFiles|"ggStartJade",storeFiles|"start");
+        trackingSucess:=(#solCollection==#permutedSols);
+        if not trackingSucess then (
+	  loopFailures=loopFailures+1;
+	  print ("Warning: There was a path tracking failure durin loop "|toString(loopCount))
+	  );
+        if trackingSucess then(    	
+          if o.SaveData==true then writeStartFile(storeFiles,permutedSols,NameStartFile=>("newSols"|toString(loopCount)));
+    	  ggGenerator:={};
+--    	  for i to #solCollection-1 do for j to #permutedSols-1 do if areEqual({solCollection_i_0,solCollection_i_-1},{permutedSols_j_0,permutedSols_j_-1},Tolerance=>1e-10) then ggGenerator=append(ggGenerator,j+1);
+    	  for i to #solCollection-1 do for j to #permutedSols-1 do
+	    if areEqual( for k to #solCollection_0-1 list solCollection_i_k,
+		for l to #solCollection_0-1 list permutedSols_j_l,Tolerance=>1e-10) then ggGenerator=append(ggGenerator,j+1);
+    	  if #solCollection=!=#ggGenerator then (
+    	    print (#ggGenerator, #solCollection);
+	    loopFailures=loopFailures+1;
+	    print ("Warning: Monodrompy loop "|loopCount|" found unexpected new solutions or a numerical error involving tolerances occurred.")
+	    );
+    	  print ("gg",new Array from ggGenerator);--check that this works.
+	  gggFile << toString (new Array from ggGenerator);
+	  if loopCount=!=#branchPointsT-1 then gggFile << "," << endl;
+	  loopCount=loopCount+1	)      );
+    print ("There were "|toString loopFailures|" loop failures.");
+    gggFile << "]" << endl;
+    close gggFile;
+    print toString (storeFiles|o.NameGaloisGroupGeneratorFile);
+    if o.ReturnGaloisGroupGeneratorFile===true then return value get (storeFiles|o.NameGaloisGroupGeneratorFile) );
+
+
 	    
 
+convertToGap=(aList)->(new Array from for i in aList list  new Array from toList i+for j in i list 1);
 
 
 
 
 -------MULTIPROJECTIVE POINTS AND SLICES 
-B'MultiProjectivePoint=new Type of MutableHashTable;
+--B'MultiProjectivePoint=new Type of MutableHashTable;
 B'Section=new Type of MutableHashTable;
 B'Slice= new Type of MutableHashTable;
-B'WitnessSet= new Type of MutableHashTable;
+--B'WitnessSet= new Type of MutableHashTable;
+
+
 
 
 par'String=(aString)->("("|toString(aString)|")");
 makeB'Section = method(TypicalValue=>Nothing,Options=>{
 	ContainsPoint=>{},
 	B'NumberCoefficients=>{},
-    	B'FileCoefficients=>{},
-	B'Homogenization=>1,
+    	B'Homogenization=>1,
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
-	NameB'Section=>null,
+	NameB'Section=>null
 	 })
 makeB'Section(List) := o -> (oneVariableGroup)-> (
     theSection:=new B'Section;
@@ -2566,7 +2788,6 @@ makeB'Section(List) := o -> (oneVariableGroup)-> (
     if o.B'NumberCoefficients=!={} then (
       theSpecifiedCoefficients=o.B'NumberCoefficients;
       theNumberCoefficients=o.B'NumberCoefficients);
---else if B'FileCoefficients=!={} then theSpecifieCoefficients=o.B'FileCoefficients;    
     for aVar to #oneVariableGroup-1 do (
       if theSpecifiedCoefficients==={} then (
 	theCoefficient:=createsNumbers();
@@ -2596,62 +2817,76 @@ makeB'Slice = method(TypicalValue=>Nothing,Options=>{
 	ContainsMultiProjectivePoint=>{},
     	ContainsPoint=>{},
 	B'NumberCoefficients=>{},
-    	B'FileCoefficients=>{},
 	B'Homogenization=>{},
 	RandomCoefficientGenerator=>(()->(2*random(CC)-random(CC))),
 	NameB'Slice=>null,
 	 })
-makeB'Slice(List,List) := o ->(sliceType,multipleVariableGroups)->(
---
+makeB'Slice(Thing,List) := o ->(sliceType,multipleVariableGroups)->(
+--      
+    if class sliceType===ZZ then (
+      numberOfSections:=sliceType;
+      numSliceTypes:=1;
+      AssumeOneGroup:=true);
+    if class sliceType===List then (
+      numberOfSections=sum sliceType;
+      numSliceTypes=#sliceType;
+      AssumeOneGroup=false);
     if multipleVariableGroups==={} then error "An empty list is not a valid input.";
-    if class multipleVariableGroups_0=!=List then multipleVariableGroups={multipleVariableGroups};
-    if class o.B'Homogenization=!=List then theHomogenization:={o.B'Homogenization} else theHomogenization=o.B'Homogenization;
-    if o.B'FileCoefficients=!={} and #o.B'NumberCoefficients=!=#sliceType then error "sliceType and B'FileCoefficients are not the same size. ";
-    if o.B'Homogenization=!={} and #o.B'Homogenization=!=#multipleVariableGroups then error "multipleVariableGroups and B'Homogenization are not the same size. ";
-    if o.B'Homogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
-    if class o.NameB'Slice===List and #o.NameB'Slice=!=#sliceType then error"NameB'Slice and multipleVariableGroups are not the same size. ";
---    print theHomogenization;
+---------- 
+    if AssumeOneGroup===true then (
+      if class multipleVariableGroups_0===List then error"If sliceType is an integer the second input cannot be a list of lists.";
+      multipleVariableGroups={multipleVariableGroups};
+      if o.B'Homogenization=!={} and class o.B'Homogenization===List then error"If sliceType is an integer then B'Homogenization must be {} or not a list.";
+      if o.B'Homogenization==={} then theHomogenization:={1};
+      if o.B'NumberCoefficients=!={} then(
+	if class ((o.B'NumberCoefficients)_0_0)===List then error"When sliceType is an integer B'NumberCoefficients cannot be a list of lists. ";
+	if class ((o.B'NumberCoefficients)_0_0)=!=List then  theCoefs:=o.B'NumberCoefficients));
+---------- 
+    if AssumeOneGroup===false then (
+      if class o.B'Homogenization=!=List then error"When sliceType is a list, B'Homogenization should be a list.";
+      if o.B'Homogenization==={} then theHomogenization=for i in multipleVariableGroups list 1;
+      if o.B'Homogenization=!={} then theHomogenization=o.B'Homogenization;
+      if o.B'NumberCoefficients=!={} then(
+	if class ((o.B'NumberCoefficients)_0)=!=List then error"When sliceType is a list B'NumberCoefficients should be a list of lists. ";
+	if class ((o.B'NumberCoefficients)_0)===List then  theCoefs=o.B'NumberCoefficients));          
+---------- 
+    if o.B'NumberCoefficients==={} then theCoefs=for i to numberOfSections-1 list {};
+    print numberOfSections;
+    print theCoefs;
+    if #theCoefs=!=numberOfSections then error "The number of sets of coefficients of B'NumberCoefficients does not match the number of sections to be made. ";
+    if #theHomogenization=!=#multipleVariableGroups then error "B'Homogenization does not match the number of variable groups. ";
+    if class o.NameB'Slice===List and #o.NameB'Slice=!=numberOfSections then error"When NameB'Slice is a list, the number of elements should equal the number of sections being made. ";
 --
     createsNumbers:=o.RandomCoefficientGenerator;
+    if class sliceType===ZZ then sliceType={sliceType};
 --
     theSlice:= new B'Slice;
     listSections:={};
-    theSliceSpecifiedCoefficients:=for i in sliceType list {};
-    theSliceNumberCoefficients:=for i in sliceType list {};
---
-    if o.B'NumberCoefficients=!={} and #o.B'NumberCoefficients=!=#sliceType then error "sliceType and B'NumberCoefficients are not the same size. ";
-    if o.B'NumberCoefficients=!={} 
-    then (
-      if class o.B'NumberCoefficients_0=!=List 
-      then (
-	theSliceSpecifiedCoefficients={o.B'NumberCoefficients};
-        theSliceNumberCoefficients={o.B'NumberCoefficients})
-      else (
-        theSliceSpecifiedCoefficients=o.B'NumberCoefficients;
-        theSliceNumberCoefficients=o.B'NumberCoefficients));    
 --
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===MutableHashTable then  theMultiProjectivePoint:=o.ContainsMultiProjectivePoint#Coordinates;
     if o.ContainsMultiProjectivePoint=!={} and parent class o.ContainsMultiProjectivePoint ===VisibleList then  theMultiProjectivePoint=o.ContainsMultiProjectivePoint;
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===MutableHashTable then  theMultiProjectivePoint={o.ContainsPoint#Coordinates};
     if o.ContainsPoint=!={} and parent class o.ContainsPoint===VisibleList then  theMultiProjectivePoint={o.ContainsPoint};
-    if o.ContainsPoint==={} and o.ContainsMultiProjectivePoint==={} then theMultiProjectivePoint=for i in sliceType list {};
-    print theMultiProjectivePoint;
-    for aSlice to #sliceType-1 do(
---
-      oneVariableGroup:=multipleVariableGroups_(sliceType_aSlice);
-      theSpecifiedCoefficients:=theSliceSpecifiedCoefficients_aSlice;
-      theNameB'Section:=if o.NameB'Slice===null then null else(
-        if class o.NameB'Slice===List 
-	then ((o.NameB'Slice)_aSlice) 
-	else (toString (o.NameB'Slice)|toString aSlice));
+    if o.ContainsPoint==={} and o.ContainsMultiProjectivePoint==={} then theMultiProjectivePoint=for i to numberOfSections list {};
+--    print theMultiProjectivePoint;
+    sliceCount:=0;
+    for useGroup to numSliceTypes-1 do(
+      for oneSlice to (sliceType_useGroup)-1 do(
+	oneVariableGroup:=multipleVariableGroups_(useGroup);
+      	oneSetCoefs:=theCoefs_sliceCount;
+      	theNameB'Section:=if o.NameB'Slice===null 
+	then null else(
+          if class o.NameB'Slice===List 
+	  then ((o.NameB'Slice)_sliceCount) 
+	  else (toString (o.NameB'Slice)|toString sliceCount));
       listSections=append(listSections,makeB'Section(oneVariableGroup,
-	  B'Homogenization=>theHomogenization_(sliceType_aSlice),
-	  ContainsPoint=>theMultiProjectivePoint_(sliceType_aSlice),
-	  B'NumberCoefficients=>theSliceNumberCoefficients_aSlice,
---    	  B'FileCoefficients=>{},
+	  B'Homogenization=>theHomogenization_useGroup,
+	  ContainsPoint=>theMultiProjectivePoint_(useGroup),
+	  B'NumberCoefficients=>oneSetCoefs,
 	  RandomCoefficientGenerator=>createsNumbers,
 	  NameB'Section=>theNameB'Section	  
-	  )));
+	  ));
+      sliceCount=sliceCount+1) );
     theSlice.ListB'Sections=listSections;
     theSlice.B'SectionString=for i in theSlice#ListB'Sections list i#B'SectionString;    
     theSlice.B'NumberCoefficients=for i in theSlice#ListB'Sections list i#B'NumberCoefficients;    
@@ -2660,9 +2895,64 @@ makeB'Slice(List,List) := o ->(sliceType,multipleVariableGroups)->(
     return theSlice)
   
 
+sortMainDataComponents = method(TypicalValue=>List,Options=>{
+	 })
+sortMainDataComponents(List) := o ->(importedMD)->(
+    organizedData:={};
+    while #importedMD>0 do(
+      firstPoint:=importedMD_0;
+      oneComponent:={};
+      for onePoint in importedMD do(
+	if (firstPoint#Dimension)==(onePoint#Dimension) and 
+	(firstPoint#ComponentNumber==onePoint#ComponentNumber) then (
+	  oneComponent=append(oneComponent,onePoint);
+          importedMD=delete(onePoint,importedMD)));
+      organizedData=append(organizedData,oneComponent));
+  return organizedData)   
 
 
 
+subPoint = method(TypicalValue=>List,Options=>{
+	SpecifyVariables=>false,
+	SubIntoCC=>false,
+	UsePrecision=>53
+	 })
+subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
+    if o.SubIntoCC===true and o.SpecifyVariables=!=false then (
+      if #o.SpecifyVariables=!=listVars then print"Warning: SubIntoCC may set unassigned variables to be zero." );
+    if class aPoint===Point then coords:=aPoint#Coordinates else
+    if class aPoint===Matrix then coords=flatten entries aPoint else
+    if class aPoint===List then coords=aPoint else print "class of "|toString aPoint|" is not recognized.";     
+    if false=== o.SpecifyVariables then selectedVars:=listVars else selectedVars=o.SpecifyVariables;
+    afterSub:=sub(polyOrMatrix,flatten for i to #listVars-1 list 
+      if member(listVars_i,selectedVars) then listVars_i=>coords_i else {}
+    );
+    if o.SubIntoCC===true then 
+      return sub(afterSub,CC_(o.UsePrecision)) else if
+      o.SubIntoCC===false then return afterSub else error"SubIntoCC should be set to true or false.")
+
+
+moveB'File = method(TypicalValue=>List,Options=>{
+    	SubFolder=>null,
+	MoveToDirectory=>null,
+  	CopyB'File=>false
+	 })
+moveB'File(String,String,String) := o ->(storeFiles,originalName,newName)->(
+    if o.SubFolder=!=null and o.MoveToDirectory=!=null then error"SubFolder and MoveToDirectory cannot both be set.";
+--
+    if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
+    if storeFiles_-1=!="/" then storeFiles=storeFiles|"/";    
+--
+    if o.SubFolder=!=null then finalDirectory:=storeFiles|o.SubFolder;        
+    if o.MoveToDirectory=!=null then finalDirectory=o.MoveToDirectory;    
+    if o.MoveToDirectory===null and o.SubFolder===null then finalDirectory=storeFiles; 
+-- 
+    if finalDirectory_-1===" " then error ("MoveToDirectory nor SubFolder cannot end with whitespace.");
+    if finalDirectory_-1=!="/" then finalDirectory=finalDirectory|"/";    
+--
+    if o.CopyB'File===false then moveFile(storeFiles|originalName,finalDirectory|newName);
+    if o.CopyB'File===true then copyFile(storeFiles|originalName,finalDirectory|newName)    
+)
 
 
 
@@ -2766,6 +3056,39 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bPHSequence.tst.m2")
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bPHMonodromyCollect.tst.m2")
 ///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeBSection.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeBSlice.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeWitnessSetFiles.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeSampleSolutions.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/makeMembershipFile.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bTraceTestImage.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/subPoint.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/moveBFile.tst.m2")
+///
+
 
 ---newtst
 

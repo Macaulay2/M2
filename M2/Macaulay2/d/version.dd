@@ -33,13 +33,16 @@ header "
    #define stringize(a) stringize0(a)
    #define Matrix FactoryMatrix
    #include <factory/factory.h>
-   #include \"git-description.c\"
    #undef Matrix
    extern char timestamp[];
    #undef ASSERT
    #ifdef HAVE_FROBBY
-     #include <stdinc.h>		// to get version number of frobby
-     #define FROBBY_VERSION constants::version
+     #if HAVE_FROBBY_VERSION_NUMBER
+       #include <stdinc.h>		// to get version number of frobby
+       #define FROBBY_VERSION constants::version
+     #else
+       #define FROBBY_VERSION \"unknown\"
+     #endif
    #else
      #define FROBBY_VERSION \"not present\"
    #endif
@@ -228,7 +231,7 @@ setupconst("version", Expr(toHashTable(Sequence(
    "build" => Ccode(constcharstar,"buildsystemtype"),
    "host" => Ccode(constcharstar,"hostsystemtype"),
    "threads" => USE_THREADS,
-   "git description" => Ccode(constcharstar,"gitDescription")
+   "git description" => Ccode(constcharstar,"GIT_DESCRIPTION")
    ))));
 
 -- Local Variables:

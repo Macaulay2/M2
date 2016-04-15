@@ -21,7 +21,13 @@ unexport PROFILE
 
 DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
+
+CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+CPPFLAGS += -I$(HOME)/local/include
+LDFLAGS += -L$(HOME)/local/lib
+CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
@@ -40,14 +46,18 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-_FC  := false
+# _FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
+export CFLAGS += -Wno-unknown-attributes
 else
 _CC  := gcc-4.9 -mtune=generic
 _CXX := g++-4.9 -mtune=generic
-_FC  := 
-# _FC  := gfortran-5
+_FC  := gfortran-4.9 -mtune=generic
 endif
+endif
+
+ifeq ($(GIVARO),yes)
+CONFIGOPTIONS += --enable-fflas-ffpack --enable-givaro
 endif
 
 default: all
@@ -90,5 +100,5 @@ CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no GIVARO=no "
 # End:

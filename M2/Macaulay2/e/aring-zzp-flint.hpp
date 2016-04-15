@@ -105,6 +105,11 @@ namespace M2 {
       ElementType n, d;
       set_from_mpz(n, mpq_numref(a));
       set_from_mpz(d, mpq_denref(a));
+      if (is_zero(d)) {
+         init(result);
+         ERROR("fraction cannot be promoted as it would have zero denominator");
+         return;
+      }
       divide(result,n,d);
     }
 

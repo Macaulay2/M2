@@ -37,15 +37,6 @@ document {
 	  "isHomogeneous(ZZ[x]/(x^3-x-3))"
 	  },
      PARA{},
-     "Rings may be graded, with generators having degree 0.  For example,
-     in the ring B below, every element of A has degree 0.",
-     EXAMPLE {
-	  "A = QQ[a,b,c];",
-	  "B = A[x,y];",
-	  "isHomogeneous B",
-	  "isHomogeneous ideal(a*x+y,y^3-b*x^2*y)"
-	  },
-     PARA{},
      "Quotients of multigraded rings are homogeneous, if the ideal is also multigraded.",
      EXAMPLE {
           "R = QQ[a,b,c,Degrees=>{{1,1},{1,0},{0,1}}];",
@@ -54,6 +45,15 @@ document {
 	  "isHomogeneous(R/I)",
 	  "isHomogeneous(R/(a-b))"
 	  },
+     PARA{},
+     "Polyomial rings over polynomial rings are multigraded.",
+     EXAMPLE lines ///
+	  A = QQ[a]
+	  B = A[x]
+	  degree x
+	  degree a_B
+     	  isHomogeneous B
+     ///,
      PARA{},
      "A matrix is homogeneous if each entry is homogeneous of such a degree
      so that the matrix has a well-defined degree.",

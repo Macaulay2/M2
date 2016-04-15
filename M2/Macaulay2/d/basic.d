@@ -76,8 +76,8 @@ export hash(x:List):int := (
      h := x.Class.hash + 23407;
      foreach y in x.v do h = h * 1299833 + hash(y);
      h);
-export sethash(x:List,mutable:bool):List := (
-     if mutable 
+export sethash(x:List,is_mutable:bool):List := (
+     if is_mutable 
      then (
 	  x.Mutable = true;
 	  x.hash = nextHash();
@@ -107,18 +107,18 @@ export list(a:Sequence):Expr := (
      r := List(listClass,a,0,false);
      r.hash = hash(r);
      Expr(r));     
-export list(class:HashTable,a:Sequence):Expr := (
-     r := List(class,a,0,false);
+export list(classs:HashTable,a:Sequence):Expr := (
+     r := List(classs,a,0,false);
      r.hash = hash(r);
      Expr(r));     
-export list(class:HashTable,a:Sequence,mutable:bool):Expr := (
-     r := List(class,a,0,mutable);
+export list(classs:HashTable,a:Sequence,is_mutable:bool):Expr := (
+     r := List(classs,a,0,is_mutable);
      r.hash = hash(r);
      Expr(r));     
-export list(class:HashTable,e:Expr):Expr := (
+export list(classs:HashTable,e:Expr):Expr := (
      when e
-     is a:Sequence do list(class,a)
-     else list(class,Sequence(e)));
+     is a:Sequence do list(classs,a)
+     else list(classs,Sequence(e)));
 export emptyList := list(Sequence());
 export list():Expr := emptyList;
 export list(e:Expr):Expr := list(Sequence(e));

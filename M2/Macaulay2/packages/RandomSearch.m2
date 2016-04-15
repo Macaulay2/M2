@@ -10,19 +10,30 @@ newPackage ("RandomSearch",
     	DebuggingMode => false
     	)
 
-export {search,
-     randomBinomialFcn, 
-     EMailAddress,
-     AnnounceTime,
-     MailInterval,
-     Iterations,
-     CollectGarbageInterval,
-     RandomSeed,
-     RegularityBound,
-     NumVariables,
-     NumGenerators,
-     randomSparseIdeal     
+export {"search",
+     "randomBinomialFcn",
+     "EMailAddress",
+     "AnnounceTime",
+     "MailInterval",
+     "Iterations",
+     "CollectGarbageInterval",
+     "RandomSeed",
+     "RegularityBound",
+     "NumVariables",
+     "NumGenerators",
+     "randomSparseIdeal"
      }
+
+-- These are all set by search(..)
+examplefilename = "";
+seed = 1;
+exampleFcn = identity;
+lastdone = 0;
+header = "";
+garbageInterval = 0;
+searchOpts = {};
+tempfilename = "";
+
 
 lastemail = 0
 examples'found = 0

@@ -131,116 +131,116 @@ expected(type:string,returned:bool):Expr := buildErrorPacket(
 
 wrongTarget():Expr := buildErrorPacket("'new' expected a type of list or hash table");
 
-newClassParent(e:Expr,class:HashTable,parent:HashTable,returned:bool):Expr := (
+newClassParent(e:Expr,classs:HashTable,parent:HashTable,returned:bool):Expr := (
      -- same as below, but parent specified
-     basicType := basictype(class);
+     basicType := basictype(classs);
      when e
      is Error do e
      is o:HashTable do (
 	  if basicType == hashTableClass then (
-	       if o.Class == class && o.parent == parent then e
-	       else Expr(copy(o,class,parent,ancestor(class,mutableHashTableClass))))
+	       if o.Class == classs && o.parent == parent then e
+	       else Expr(copy(o,classs,parent,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
      	  if basicType == basicListClass then (
 	       if parent != nothingClass
 	       then buildErrorPacket("expected Nothing as parent for list")
-	       else if o.Class == class then e
-	       else if class == sequenceClass then Expr(o.v)
+	       else if o.Class == classs then e
+	       else if classs == sequenceClass then Expr(o.v)
 	       else (
-	       	    mutable := ancestor(class,mutableListClass);
-		    Expr(sethash( List(class, if mutable || o.Mutable then copy(o.v) else o.v, 0,false), mutable))))
+	       	    is_mutable := ancestor(classs,mutableListClass);
+		    Expr(sethash( List(classs, if is_mutable || o.Mutable then copy(o.v) else o.v, 0,false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
      	  if basicType == basicListClass then (
 	       if parent != nothingClass then buildErrorPacket("expected Nothing as parent for list")
-	       else if class == sequenceClass then Expr(v)
+	       else if classs == sequenceClass then Expr(v)
 	       else (
-	       	    mutable := ancestor(class,mutableListClass);
-		    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
+	       	    is_mutable := ancestor(classs,mutableListClass);
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
 	  else if basicType == hashTableClass then expected("a hash table",returned)
 	  else wrongTarget())
      is s:SpecialExpr do (
-	  if s.Class == class && Parent(s.e) == parent then e else newClassParent(s.e,class,parent,returned)
+	  if s.Class == classs && Parent(s.e) == parent then e else newClassParent(s.e,classs,parent,returned)
 	  )
      else (
 	  c := Class(e);
-	  if c == class then e
-	  else if !ancestor(class,c) then buildErrorPacket("expected new class to be a specialization of the old one")
+	  if c == classs then e
+	  else if !ancestor(classs,c) then buildErrorPacket("expected new classs to be a specialization of the old one")
 	  else if Parent(e) != parent then buildErrorPacket("unable to set new parent")
-	  else Expr(SpecialExpr(class,e))));
+	  else Expr(SpecialExpr(classs,e))));
 
-newClass(e:Expr,class:HashTable,returned:bool):Expr := (
+newClass(e:Expr,classs:HashTable,returned:bool):Expr := (
      -- same as above, but no parent specified, so leave what s provided alone
      when e
      is Error do e
      is o:HashTable do (
-	  basicType := basictype(class);
+	  basicType := basictype(classs);
 	  if basicType == hashTableClass then (
-	       if o.Class == class then e
-	       else Expr(copy(o,class,ancestor(class,mutableHashTableClass))))
+	       if o.Class == classs then e
+	       else Expr(copy(o,classs,ancestor(classs,mutableHashTableClass))))
 	  else if basicType == basicListClass then expected("a list",returned)
 	  else wrongTarget())
      is o:List do (
-	  basicType := basictype(class);
+	  basicType := basictype(classs);
 	  if basicType == basicListClass then (
-	       if o.Class == class then e
-	       else if class == sequenceClass then Expr(o.v)
+	       if o.Class == classs then e
+	       else if classs == sequenceClass then Expr(o.v)
 	       else (
-		    mutable := ancestor(class,mutableListClass);
+		    is_mutable := ancestor(classs,mutableListClass);
 		    Expr(
 			 sethash(
-			      List(class,
-				   if mutable || o.Mutable then copy(o.v) else o.v,
+			      List(classs,
+				   if is_mutable || o.Mutable then copy(o.v) else o.v,
 				   0,false),
-			      mutable))))
+			      is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
      is v:Sequence do (
-	  basicType := basictype(class);
+	  basicType := basictype(classs);
 	  if basicType == basicListClass then (
-	       if class == sequenceClass then Expr(v)
+	       if classs == sequenceClass then Expr(v)
 	       else (
-		    mutable := ancestor(class,mutableListClass);
-		    Expr( sethash( List(class, if mutable then copy(v) else v, 0,false), mutable))))
+		    is_mutable := ancestor(classs,mutableListClass);
+		    Expr( sethash( List(classs, if is_mutable then copy(v) else v, 0,false), is_mutable))))
 	  else if basicType == hashTableClass 
 	  then expected("a hash table",returned)
 	  else wrongTarget())
-     is s:SpecialExpr do if s.Class == class then e else newClass(s.e,class,returned)
+     is s:SpecialExpr do if s.Class == classs then e else newClass(s.e,classs,returned)
      else (
 	  c := Class(e);
-	  if c == class then e
-	  else if !ancestor(class,c) 
-	  then buildErrorPacket("expected new class to be a specialization of the old one")
-	  else Expr(SpecialExpr(class,e))));
+	  if c == classs then e
+	  else if !ancestor(classs,c) 
+	  then buildErrorPacket("expected new classs to be a specialization of the old one")
+	  else Expr(SpecialExpr(classs,e))));
 newclassfun(e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 2
      then when a.0
-     is class:HashTable do newClass(a.1,class,false)
+     is classs:HashTable do newClass(a.1,classs,false)
      else WrongArg(1,"a hash table")
      else if length(a) == 3
      then when a.0
-     is class:HashTable do (
+     is classs:HashTable do (
 	  when a.1
-	  is parent:HashTable do newClassParent(a.2,class,parent,false)
+	  is parent:HashTable do newClassParent(a.2,classs,parent,false)
 	  else WrongArg(2,"a hash table"))
      else WrongArg(1,"a hash table")
      else WrongNumArgs(2,3)
      else WrongNumArgs(2,3));
 setupfun("newClass",newclassfun);
 
-makenew(class:HashTable,parent:HashTable):Expr := (
-     basicType := basictype(class);
+makenew(classs:HashTable,parent:HashTable):Expr := (
+     basicType := basictype(classs);
      if basicType == hashTableClass 
      then if parent == sequenceClass then buildErrorPacket("can't make subclass of Sequence")
      else (
-	  o := newHashTable(class,parent);
-	  p := class;
+	  o := newHashTable(classs,parent);
+	  p := classs;
 	  while true do (
 	       if p == hashTableClass then (
 		    o.Mutable = false;
@@ -260,12 +260,12 @@ makenew(class:HashTable,parent:HashTable):Expr := (
      else if basicType == basicListClass then (
 	  if parent != nothingClass
 	  then buildErrorPacket("expected Nothing as parent for list")
-	  else if class == sequenceClass
+	  else if classs == sequenceClass
 	  then Expr(emptySequence)
-	  else Expr(sethash( List(class,emptySequence,0,false), ancestor(class,mutableListClass))))
+	  else Expr(sethash( List(classs,emptySequence,0,false), ancestor(classs,mutableListClass))))
      else if basicType == dictionaryClass then Expr(DictionaryClosure(globalFrame,newGlobalDictionary()))
      else buildErrorPacket("basic type for 'new' method should have been BasicList or HashTable"));
-makenew(class:HashTable):Expr := makenew(class,nothingClass);
+makenew(classs:HashTable):Expr := makenew(classs,nothingClass);
 -----------------------------------------------------------------------------
 
 errt(newClassCode :Code):Expr := printErrorMessageE(newClassCode ,"new: expected a hash table as prospective class");
@@ -275,26 +275,26 @@ newfun(newClassCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:HashTable do (
-	  method := lookup(class,NewS);
+     is classs:HashTable do (
+	  method := lookup(classs,NewS);
 	  if method != nullE
-	  then newClass(applyEE(method,Expr(class)),class,true)
-	  else makenew(class))
+	  then newClass(applyEE(method,Expr(classs)),classs,true)
+	  else makenew(classs))
      else errt(newClassCode));
 NewFun = newfun;
 newoffun(newClassCode:Code,newParentCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:HashTable do (
+     is classs:HashTable do (
 	  newParentExpr := eval(newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
 	  is parent:HashTable do (
-	       method := lookupBinaryMethod(class,parent,NewOfS);
+	       method := lookupBinaryMethod(classs,parent,NewOfS);
 	       if method != nullE
-	       then newClassParent(applyEEE(method,Expr(class),Expr(parent)),class,parent,true)
-	       else makenew(class,parent))
+	       then newClassParent(applyEEE(method,Expr(classs),Expr(parent)),classs,parent,true)
+	       else makenew(classs,parent))
 	  else errp(newParentCode))
      else errt(newClassCode));
 NewOfFun = newoffun;
@@ -302,33 +302,33 @@ newfromfun(newClassCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:HashTable do (
+     is classs:HashTable do (
 	  newInitExpr := eval(newInitCode);
 	  when newInitExpr
 	  is Error do newInitExpr
 	  else (
-	       method := lookupBinaryMethod(class,Class(newInitExpr),NewFromS);
+	       method := lookupBinaryMethod(classs,Class(newInitExpr),NewFromS);
 	       if method != nullE
-	       then newClass(applyEEE(method,Expr(class),newInitExpr),class,true)
+	       then newClass(applyEEE(method,Expr(classs),newInitExpr),classs,true)
 	       else (
 		    when newInitExpr
-		    is s:Sequence do newClass(newInitExpr,class,false)
+		    is s:Sequence do newClass(newInitExpr,classs,false)
 		    is p:List do (
-			 if p.Class == class
+			 if p.Class == classs
 			 then Expr(if p.Mutable then copy(p) else p)
-			 else newClass(newInitExpr,class,false))
+			 else newClass(newInitExpr,classs,false))
 		    is p:HashTable do (
-			 if p.Class == class
+			 if p.Class == classs
 			 then Expr(if p.Mutable then copy(p) else p)
-			 else newClass(newInitExpr,class,false))
-		    else newClass(newInitExpr,class,false))))
+			 else newClass(newInitExpr,classs,false))
+		    else newClass(newInitExpr,classs,false))))
      else errt(newClassCode));
 NewFromFun = newfromfun;
 newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
      classExpr := eval(newClassCode);
      when classExpr 
      is Error do classExpr
-     is class:HashTable do (
+     is classs:HashTable do (
 	  newParentExpr := eval(newParentCode);
 	  when newParentExpr
 	  is Error do newParentExpr
@@ -337,21 +337,21 @@ newoffromfun(newClassCode:Code,newParentCode:Code,newInitCode:Code):Expr := (
 	       when newInitExpr
 	       is Error do newInitExpr
 	       else (
-		    method := lookupTernaryMethod(class,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
+		    method := lookupTernaryMethod(classs,parent,Class(newInitExpr),NewOfFromE,NewOfFromS.symbol.hash);
 		    if method != nullE 
-		    then newClassParent(applyEEEE(method,Expr(class),Expr(parent),newInitExpr),class,parent,true)
+		    then newClassParent(applyEEEE(method,Expr(classs),Expr(parent),newInitExpr),classs,parent,true)
 		    else (
 			 when newInitExpr
-			 is p:Sequence do newClassParent(newInitExpr,class,parent,false)
+			 is p:Sequence do newClassParent(newInitExpr,classs,parent,false)
 			 is p:List do (
-			      if p.Class == class && nothingClass == parent
+			      if p.Class == classs && nothingClass == parent
 			      then Expr(if p.Mutable then copy(p) else p)
-			      else newClassParent(newInitExpr,class,parent,false))
+			      else newClassParent(newInitExpr,classs,parent,false))
 			 is p:HashTable do (
-			      if p.Class == class && p.parent == parent
+			      if p.Class == classs && p.parent == parent
 			      then Expr(if p.Mutable then copy(p) else p)
-			      else newClassParent(newInitExpr,class,parent,false))
-			 else newClassParent(newInitExpr,class,parent,false))))
+			      else newClassParent(newInitExpr,classs,parent,false))
+			 else newClassParent(newInitExpr,classs,parent,false))))
 	  else errp(newParentCode))
      else errt(newClassCode));
 NewOfFromFun = newoffromfun;
@@ -660,21 +660,6 @@ showtimefun(a:Code):Expr := (
      stdIO << "     -- used " << x-v << " seconds" << endl;
      ret);
 setupop(timeS,showtimefun);
-elapsedTimefun(a:Code):Expr := (
-     v := double(currentTime());
-     ret := eval(a);
-     x := double(currentTime());
-     when ret
-     is Error do ret
-     else list(timeClass,Sequence(toExpr(x-v),ret)));
-setupop(elapsedTimingS,elapsedTimefun);
-showElapsedTimefun(a:Code):Expr := (
-     v := double(currentTime());
-     ret := eval(a);
-     x := double(currentTime());
-     stdIO << "     -- " << x-v << " seconds elapsed" << endl;
-     ret);
-setupop(elapsedTimeS,showElapsedTimefun);
 
 exponent(e:Expr):Expr := (
      when e
@@ -719,11 +704,13 @@ registerFinalizer(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("registerFinalizer",registerFinalizer);
 
+header "extern \"C\" void do_nothing();";
+
 spin(e:Expr):Expr := (
      when e is x:ZZcell do (
 	  if isInt(x.v) then (
 	       n := toInt(x.v);
-	       for i from 1 to n do for j from 1 to 290000 do Ccode(void,"{extern void do_nothing(); do_nothing();}");
+	       for i from 1 to n do for j from 1 to 290000 do Ccode(void,"do_nothing()");
 	       nullE)
 	  else WrongArgSmallInteger())
      else WrongArgZZ());
