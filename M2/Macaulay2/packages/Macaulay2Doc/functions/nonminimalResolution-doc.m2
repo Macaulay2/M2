@@ -1,13 +1,11 @@
 doc ///
    Key
-     nonminimalResolution
-     (nonminimalResolution, Ideal)
-     (nonminimalResolution, Matrix)
-     (nonminimalResolution, Module)
+     FastNonminimal
+     [res,FastNonminimal]
    Headline
      compute a non-minimal graded free resolution
    Usage
-     C = nonminimalResolution I
+     C = res(I, FastNonminimal => true, ...)
    Inputs
      I:Ideal
        or @ofClass Matrix@ or @ofClass Module@, in a polynomial ring
@@ -28,16 +26,16 @@ doc ///
     Example
       I = Grassmannian(1,6, CoefficientRing => ZZ/101);
       S = ring I      
-      elapsedTime C = nonminimalResolution I
+      elapsedTime C = res(I, FastNonminimal => true)
       elapsedTime C1 = res ideal(I_*)
       betti C1 == betti C
     Text
       For a non-minimal resolution, @TO betti@ gives the minimal Betti
-      numbers, while @TO "nonminimalBetti"@ gives the actual ranks
+      numbers, and using the @TO "Nonminimal"@ option gives the actual ranks
       of the complex.
     Example
       betti C
-      nonminimalBetti C
+      betti(C, Nonminimal => true)
     Text
       If the resolution is not large, this function can be slower than
       the usual function @TO resolution@.  But for larger examples, 
@@ -47,6 +45,5 @@ doc ///
      Released in M2 1.9, still experimental.  Only works over finite prime fields. Uses quite alot of memory.
    SeeAlso
      betti
-     nonminimalBetti
      resolution
 ///

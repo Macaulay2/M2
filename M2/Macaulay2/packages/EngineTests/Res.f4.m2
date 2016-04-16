@@ -1,3 +1,13 @@
+-- FFPACK:
+--  copy tarfile to uiuc.
+--  d/version.dd: version.
+--  d/startup.m2.in: copyright.
+--  fix Makefile to point to that file.
+--  doc node: linked from "Copyright and license"
+--
+--  configure script
+--  FFPACK enable define.
+
 -- Tests for free resolutions
 
 -- Current caveats:
@@ -5,7 +15,7 @@
 --   b. DONE need to pass in the coker (or ideal) of a groebner basis (in res.m2)
 --   c. REMOVED the elements at level 1 must be inserted in order of monotone increasing component
 --   d. TODO!! if the input free module is a Schreyer order: need to handle that
---   e. some module gradings don't seem to work.  Either fix, or check for this.
+--   e. DONE, but could improve support.  some module gradings don't seem to work.  Either fix, or check for this.
 
 TEST ///
   -- nonminimal resolution.
