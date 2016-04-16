@@ -47,6 +47,12 @@ public:
       minus_one = (p-1)/2;
   }
 
+  void set_from_long(elem &result, long a) const {
+    a = a % p;
+    if (a < 0) a += p;
+    result = log_table[a];
+  }
+
   int to_int(int f) const { return exp_table[f]; }
 
   void init(elem& result) const {}
@@ -81,6 +87,11 @@ public:
       }
   }
 
+  void negate(elem &result, elem a) const
+  {
+    result = modulus_add(a, minus_one, p1);
+  }
+  
   void subtract(elem &result, elem a, elem b) const
   {
     if (b == zero) result = a;

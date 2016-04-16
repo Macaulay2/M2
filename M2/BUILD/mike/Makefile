@@ -17,7 +17,7 @@ darwin64-gcc5 : always
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
-		--enable-build-libraries="mpir flint"
+		--enable-build-libraries="mpir flint gc"
 
 darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
@@ -32,6 +32,41 @@ darwin64-gcc4.9 : always
 		--enable-dmg \
 		--enable-download \
 		--enable-build-libraries="mpir flint"
+
+darwin64-ffpack : always
+	mkdir -p builds.tmp/darwin64-ffpack
+	cd builds.tmp/darwin64-ffpack; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		CC="gcc-4.9 -m64" \
+		CXX="g++-4.9 -m64" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="mpir flint gc"
+
+darwin64-debug-ffpack : always
+	mkdir -p builds.tmp/darwin64-debug-ffpack
+	cd builds.tmp/darwin64-debug-ffpack; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		CC="gcc-4.9 -m64" \
+		CXX="g++-4.9 -m64" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--enable-fflas-ffpack \
+		--enable-givaro \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-debug \
+		--disable-optimize \
+		--enable-download \
+		--enable-build-libraries="mpir flint gc"
 
 darwin64-debug : always
 	mkdir -p builds.tmp/darwin64-debug
@@ -69,18 +104,18 @@ debug64 : always
 #		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
 # the following has all optional libs desired for linalg merge
-opt64-linalg : always
-	mkdir -p builds.tmp/opt64-linalg
-	cd builds.tmp/opt64-linalg; ../../../../configure \
+opt64-ffpack : always
+	mkdir -p builds.tmp/opt64-ffpack
+	cd builds.tmp/opt64-ffpack; ../../../../configure \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
-		CC="gcc -m64" CXX="g++ -m64" \
 		--disable-ntl-wizard \
-		--enable-fflas-ffpack \
-		--enable-givaro \
-		--enable-fplll \
 		--disable-strip \
-		--enable-download \
-		--enable-dmg
+		--enable-dmg \
+		--enable-fflas-ffpack \
+		--enable-download
 
 opt64-mathic : always
 	mkdir -p builds.tmp/opt64-mathic
@@ -250,6 +285,15 @@ linux-debug64 : always
 		--disable-optimize \
 		--enable-download \
 		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+
+linux-profile64 : always
+	mkdir -p builds.tmp/profile64
+	cd builds.tmp/profile64; ../../../../configure \
+		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-profile \
+		--enable-download
 
 linux-opt64-mathic : always
 	mkdir -p builds.tmp/opt64-mathic

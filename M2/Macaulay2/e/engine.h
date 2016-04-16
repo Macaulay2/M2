@@ -1769,6 +1769,9 @@ enum gbTraceValues
   const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level);
   /* rawResolutionGetMatrix */
 
+  MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *G,int level,int degree);
+  /* rawResolutionGetMatrix2 */
+
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/
 

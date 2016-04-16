@@ -700,7 +700,7 @@ texMath BettiTally := v -> (
 	  ))
 tex BettiTally := v -> concatenate("$", texMath v, "$")
 
-betti = method(TypicalValue => BettiTally, Options => { Weights => null })
+betti = method(TypicalValue => BettiTally, Options => { Weights => null, Nonminimal => false })
 heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
 heftfun := (wt1,wt2) -> (
      if wt1 =!= null then heftfun0 wt1
@@ -733,7 +733,7 @@ heft Resolution := heft GradedModule := C -> heft ring C
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
      -- this version works only for rings of degree length 1
-     b := rawBetti(X.RawComputation, 0); -- the raw version takes no weight option
+     b := rawBetti(X.RawComputation, if opts.Nonminimal then 1 else 0); -- the raw version takes no weight option
      heftfn := heftfun(opts.Weights,heft X);
      b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
      b)
@@ -746,6 +746,18 @@ betti GradedModule := opts -> C -> (
 	  new BettiTally from flatten apply(
 	       select(pairs C, (i,F) -> class i === ZZ), 
 	       (i,F) -> apply(pairs tally degrees F, (d,n) -> (i,d,heftfn d) => n))))
+
+nonminimalBetti = method(Options => options betti)
+nonminimalBetti Resolution := BettiTally => o -> (X) -> (
+    -- this version works only for rings of degree length 1
+    b := rawBetti(X.RawComputation, 1); -- the raw version takes no weight option
+    heftfn := heftfun(o.Weights,heft X);
+    b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
+    b)
+nonminimalBetti ChainComplex := BettiTally => o -> (C) -> (
+    if C.?Resolution then nonminimalBetti C.Resolution
+    else betti(C,o)
+    )
 
 -----------------------------------------------------------------------------
 -- some extra betti tally routines by David Eisenbud and Mike :

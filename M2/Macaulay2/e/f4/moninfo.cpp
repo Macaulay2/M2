@@ -109,6 +109,21 @@ void MonomialInfo::show(const_packed_monomial m) const
   fprintf(stderr, "]");
 }
 
+void MonomialInfo::showAlpha(const_packed_monomial m) const
+{
+  long comp = get_component(m);
+
+  m += 2 + nweights; // get by: hashcode, component, weightvals
+  for (int i=0; i<nvars; i++)
+    {
+      long e = *m++;
+      if (e == 0) continue;
+      fprintf(stdout, "%c", 'a' + i);
+      if (e > 1) fprintf(stdout, "%ld", e);
+    }
+  fprintf(stdout, "<%ld>", comp);
+}
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil
