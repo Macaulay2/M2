@@ -95,14 +95,14 @@ approximatione(ZZ,Module) := opts -> (n,M) ->(
     --dual of the n-th syz of the n-th syzy of M
     --n = dim ring M - depth M +1 -- this just slows things down!
     --if n' were 1 or 2 we would not in general get minimal presentations
+    if n == 0 then n = 1;
     F := res(M, LengthLimit =>n);
+    if F.dd_n==0 then return map(M,(ring M)^0,0);
     G := res(coker transpose F.dd_n, LengthLimit =>n);
     F' := chainComplex reverse apply(n, j-> transpose F.dd_(j+1));
     phi := extend(G, F', id_(G_0));
---    error();
     M' := prune coker transpose G.dd_n;
       map(M, M', transpose (matrix(M'.cache.pruningMap)^(-1) * phi_n))  
---    map(M, coker transpose G.dd_n', transpose phi_n')
 )
 
 approximatione Module := opts -> M ->(

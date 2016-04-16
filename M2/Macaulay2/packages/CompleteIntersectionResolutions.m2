@@ -107,6 +107,7 @@ regularitySequence(List, Module) := (R,M) ->(
     --M = module over R_c
     --returns the list of pairs {reg evenExtModule M_i, reg oddExtModule M_i}
     --where M_i is the MCM approximation of M over R_i
+    if M == 0 then return{- infinity, {}, - infinity, {}};
     em := null;
     om := null;
     c := length R-1;
@@ -4430,3 +4431,27 @@ check "CompleteIntersectionResolutions"
 
 viewHelp CompleteIntersectionResolutions
 loadPackage("CompleteIntersectionResolutions", Reload=>true)
+loadPackage("MCMApproximations", Reload => true)
+
+viewHelp setupRings
+viewHelp regularitySequence
+Rlist = setupRings(4,2, Randomize => false)
+S = Rlist_0
+R= Rlist_4
+rsfs = randomSquareFreeStep
+J = monomialIdeal 0_S
+time L= apply(100, j-> (J = rsfs(J,AlexanderProbability => .1))_0);
+I = L_5
+apply (L, I -> regularitySequence (Rlist, module sub(I, R)))
+
+--bug as of April 13
+restart
+loadPackage "MCMApproximations"
+S = ZZ/101[x_0..x_3]
+R = S/ideal(x_0^2)
+N = cokernel matrix {{0, x_1, -x_2, x_3^2, 0, x_2^2}, {x_2, 0, x_1, 0, x_3^2,
+        0}}
+isHomogeneous N
+approximation (N, Total => false)
+
+
