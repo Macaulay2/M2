@@ -723,6 +723,21 @@ M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix
                          int max_corr_steps, 
                          gmp_RR infinity_threshold) 
 {
+  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
+  /*
+  if (inp!=nullptr) { // check precision!!!
+    std::cout << "-- precisions:" << std::endl;      
+    auto& m = inp->getMat();
+    for(int i=0; i<m.numRows(); i++)
+      for(int j=0; j<m.numColumns(); j++) {
+        auto& e = m.entry(i,j);
+        auto p_re = mpfr_get_prec(&m.ring().realPartReference(e));
+        auto p_im = mpfr_get_prec(&m.ring().imaginaryPartReference(e));
+        std::cout << "(" << p_re << "," << p_im << ") ";
+      }
+    std::cout << std::endl;      
+  }
+  */
   return H->track(inputs,outputs, 
                   output_extras,  
                   init_dt, min_dt,
