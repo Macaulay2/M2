@@ -318,7 +318,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
 
 int SchreyerFrame::rank(int slanted_degree, int lev)
 {
-#if 1
+#if defined(HAVE_FFLAS_FFPACK)
   M2::ARingZZpFFPACK R(gausser().get_ring()->characteristic());
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   double frac = ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
