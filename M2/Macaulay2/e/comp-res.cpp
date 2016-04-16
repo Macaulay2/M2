@@ -68,6 +68,11 @@ ResolutionComputation *ResolutionComputation::choose_res(const Matrix *m,
                                                          int strategy
                                                          )
 {
+  // The following modification is because some algorithms do not work if max_level is 0.
+  // github issue (crash, #368).
+  if (max_level <= 0)
+    max_level = 1;
+      
   const Ring *R = m->get_ring();
   ResolutionComputation *C = 0;
   int origsyz;
