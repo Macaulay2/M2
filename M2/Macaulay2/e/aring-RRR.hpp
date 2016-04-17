@@ -149,6 +149,11 @@ namespace M2 {
       mpfr_add(&result, &a, &b, GMP_RNDN);
     }
 
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      mpfr_fma(&result, &a, &b, &result, GMP_RNDN);
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       mpfr_sub(&result, &a, &b, GMP_RNDN);
@@ -245,6 +250,16 @@ namespace M2 {
         negate(result, a);
       else
         set(result, a);
+    }
+
+    double log2abs(const ElementType& a) const //!!! hack
+    {
+      ElementType b;
+      init(b);
+      abs(b,a);
+      double result = log2(mpfr_get_d(&b, GMP_RNDN));
+      clear(b);
+      return result;
     }
 
   private:

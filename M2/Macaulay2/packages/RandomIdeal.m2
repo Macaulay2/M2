@@ -890,14 +890,15 @@ viewHelp RandomIdeal
 restart
 loadPackage "RandomIdeal"
 setRandomSeed(1)
-S=ZZ/2[vars(0..9)]
-setRandomSeed(1)
+S=ZZ/2[vars(0..3)]
 rsfs = randomSquareFreeStep
+J = monomialIdeal (a*b,a*c)
 J = monomialIdeal 0_S
-time T=tally for t from 1 to 1000 list first (J=rsfs(J,AlexanderProbability => .01));
---around 2 sec
-time T=tally for t from 1 to 5000 list first (J=rsfs(J,AlexanderProbability => .01));
---around 20 sec
+time L= apply(10000, j-> (J = rsfs(J,AlexanderProbability => .1))_0);
+tally values tally L
+tally ((unique L)/(J->numgens trim J))
+
+
 
 restart
 loadPackage "RandomIdeal"
