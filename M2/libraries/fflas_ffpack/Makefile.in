@@ -1,8 +1,10 @@
 # svn://linalg.org/fflas-ffpack/
 # http://linalg.org/projects/fflas-ffpack
+# URL = http://linalg.org/
+
+URL = http://www.math.uiuc.edu/Macaulay2/Downloads/OtherSourceCode
 VERSION = 1.6.0
 PATCHFILE = @abs_srcdir@/patch-$(VERSION)
-URL = http://linalg.org/
 
 ## version 2.2.1 works with (only) givaro 4.0.1
 ## version 2.2.1 doesn't yet compile with e dir.
