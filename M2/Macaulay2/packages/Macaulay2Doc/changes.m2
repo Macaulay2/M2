@@ -24,10 +24,18 @@ document {
 document {
      Key => "changes, 1.9",
      UL {
-	  -- LI { "major improvements and additions:",
-	  --      UL {
-	  -- 	    }
-	  --      },
+	  LI { "major improvements and additions:",
+	        UL {
+                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and moduless over 
+                    polynomial rings over finite prime fields.  Also is functional for ideals and
+                    modules over exterior algebras.  See ", TO "FastNonminimal", " and ", TO "Nonminimal", ".  For 
+                    computing minimal betti numbers, on larger examples, this code is often hundreds to thousands of times faster than 
+                    standard use of ", TO "resolution", " and is also, in many cases, much faster than the 
+                    similar code in Singular version 4.0.2 described in Erocal, Motsak, Schreyer, Steenpass, Refined Algorithms to
+                    compute syzygies, arxiv 1502.01654.  A paper describing our algorithm and implementation is forthcoming."
+                    }
+	            }
+            },
 	  LI { "packages that have been published and certified:",
 	       UL {
 	  	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },

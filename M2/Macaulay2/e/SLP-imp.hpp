@@ -518,9 +518,9 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
           // x1 += dx
           submatrix(x1c1, 0,0, n,1) += dx;
 
-          submatrix(dx).normSquared(dx_norm2);
-          submatrix(x1c1, 0,0, n,1).normSquared(x_norm2);
-          
+          normSquared(submatrix(dx), dx_norm2);
+          normSquared(submatrix(x1c1, 0,0, n,1), x_norm2);
+
           R.mult(x_norm2,x_norm2,tol2);
           is_successful = R.compare_elems(dx_norm2,x_norm2) < 0;
         } while (not is_successful and n_corr_steps<max_corr_steps);
@@ -546,7 +546,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
         }       
       }
       
-      submatrix(x0c0,0,0,n,1).normSquared(x_norm2); // x_norm2 = ||x0||^2
+      normSquared(submatrix(x0c0,0,0,n,1), x_norm2); // x_norm2 = ||x0||^2
 
       if (not linearSolve_success)
         status = SINGULAR;
