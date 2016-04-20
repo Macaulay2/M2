@@ -182,6 +182,8 @@ if firstTime then (
 	       then "  MPIR " | version#"mpir version" | ", by Free Software Foundation et al." | newline
 	       else ""
 	       )
+          | "  Givaro " | version#"givaro version" | ", by XXX" | newline
+          | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by XXX" | newline
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
           | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline

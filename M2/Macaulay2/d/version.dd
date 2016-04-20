@@ -100,6 +100,8 @@ givaroVersion():constcharstar := Ccode(returns,"
 	  return \"not present\";
      #endif
      ");
+--ffpackVersion():constcharstar := Ccode(returns,"1.6.0;"); -- I don't see how to get it directly from the code (MES).
+ffpackVersion():string := "1.6.0";
 factoryversion():constcharstar := Ccode(returns,"
      extern const char factoryVersion[]; /* extracted from factory's factory.h */
      char const * p = strrchr(factoryVersion,' ');
@@ -165,6 +167,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 	  #endif
 	  "),
    "givaro version" => givaroVersion(),
+   "fflas_ffpack version" => ffpackVersion(),
    "linbox version" => Ccode(constcharstar,"
 	  #ifdef HAVE_LINBOX
 	       __LINBOX_VERSION

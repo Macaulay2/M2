@@ -852,15 +852,15 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
        esac
     done])
 
-AC_SUBST(ENABLE_FFLAS_FFPACK,no)
-AC_ARG_ENABLE(fflas-ffpack,
-    [AS_HELP_STRING(--enable-fflas-ffpack,enable building the fflas-ffpack library and linking with it)],
-    AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
+#AC_SUBST(ENABLE_FFLAS_FFPACK,no)
+#AC_ARG_ENABLE(fflas-ffpack,
+#    [AS_HELP_STRING(--enable-fflas-ffpack,enable building the fflas-ffpack library and linking with it)],
+#    AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
     BUILD_fflas_ffpack=yes
     ENABLE_FFLAS_FFPACK=yes
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
-    )
+#    )
 
 if test $BUILD_gtest = no
 then
@@ -1307,13 +1307,13 @@ fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
-AC_SUBST(ENABLE_GIVARO,no)
-AC_ARG_ENABLE(givaro,
-    [AS_HELP_STRING(--enable-givaro,[enable building the givaro library and linking with it])],
-    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
+#AC_SUBST(ENABLE_GIVARO,no)
+#AC_ARG_ENABLE(givaro,
+#    [AS_HELP_STRING(--enable-givaro,[enable building the givaro library and linking with it])],
+#    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
     BUILD_givaro=yes
     ENABLE_GIVARO=yes
-    )
+#    )
 
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
