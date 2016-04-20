@@ -2,7 +2,6 @@
 
 #if 0
 // This file is not in use.  These functions are now in dmat.cpp.
-#ifdef HAVE_FFLAS_FFPACK
 #if 0
     template<typename  CoeffRing >
     template<class RingType>
@@ -382,7 +381,7 @@
         FFpackAddMultipleTo(*this, A, B, transposeA, transposeB, a, b);
     }
 
-#ifdef HAVE_GIVARO
+#if 1
 
     //////////////////////////////////////////////////////
     // ARingGFGivaro specific linear algebra functions /////////
@@ -451,8 +450,6 @@
     }
 
   #endif
-#endif
-
 #endif
 
 

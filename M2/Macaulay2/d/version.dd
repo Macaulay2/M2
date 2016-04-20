@@ -59,9 +59,8 @@ header "
    #undef ASSERT
    static int32_t endianness_string[2] = {0x61626364,0};
    #include <readline/readline.h>
-   #ifdef HAVE_GIVARO
-       #include <givaro/givconfig.h>
-   #endif
+   #include <givaro/givinit.h>
+   Givaro::GivaroMain givaroMain;
    #ifdef HAVE_LINBOX
        #include <linbox/linbox-config.h>
    #endif
@@ -91,17 +90,9 @@ atomicopsversion():constcharstar := Ccode(returns,"
 #endif
      ");
 
-givaroVersion():constcharstar := Ccode(returns,"
-     #ifdef HAVE_GIVARO
-	  static char buf[40];
-	  sprintf(buf,\"%d.%d.%d\", GIVARO_MAJOR_VERSION, GIVARO_MINOR_VERSION, GIVARO_REVISION_VERSION);
-	  return buf;
-     #else
-	  return \"not present\";
-     #endif
-     ");
---ffpackVersion():constcharstar := Ccode(returns,"1.6.0;"); -- I don't see how to get it directly from the code (MES).
-ffpackVersion():string := "1.6.0";
+header "#include <fflas-ffpack/fflas-ffpack-config.h>";
+ffpackVersion():constcharstar := Ccode(constcharstar,"__FFLASFFPACK_PACKAGE_VERSION");
+
 factoryversion():constcharstar := Ccode(returns,"
      extern const char factoryVersion[]; /* extracted from factory's factory.h */
      char const * p = strrchr(factoryVersion,' ');
@@ -166,7 +157,7 @@ setupconst("version", Expr(toHashTable(Sequence(
 		   \"not present\"
 	  #endif
 	  "),
-   "givaro version" => givaroVersion(),
+   "givaro version" => Ccode(constcharstar, "givaroMain.Version()"),
    "fflas_ffpack version" => ffpackVersion(),
    "linbox version" => Ccode(constcharstar,"
 	  #ifdef HAVE_LINBOX

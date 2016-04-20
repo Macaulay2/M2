@@ -56,10 +56,6 @@ _FC  := gfortran-4.9 -mtune=generic
 endif
 endif
 
-ifeq ($(GIVARO),yes)
-CONFIGOPTIONS += --enable-fflas-ffpack --enable-givaro
-endif
-
 default: all
 
 # we build pari because brew's pari brings in gmp
@@ -100,5 +96,5 @@ CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no GIVARO=no "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
 # End:

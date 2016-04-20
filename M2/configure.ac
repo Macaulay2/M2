@@ -852,16 +852,6 @@ AC_ARG_ENABLE(build-libraries, AS_HELP_STRING(--enable-build-libraries=...,[list
        esac
     done])
 
-#AC_SUBST(ENABLE_FFLAS_FFPACK,no)
-#AC_ARG_ENABLE(fflas-ffpack,
-#    [AS_HELP_STRING(--enable-fflas-ffpack,enable building the fflas-ffpack library and linking with it)],
-#    AC_DEFINE(HAVE_FFLAS_FFPACK,1,[whether we are linking with the fflas-ffpack library])
-    BUILD_fflas_ffpack=yes
-    ENABLE_FFLAS_FFPACK=yes
-    BUILD_givaro=yes
-    ENABLE_GIVARO=yes
-#    )
-
 if test $BUILD_gtest = no
 then
     CHECK_GTEST
@@ -1243,6 +1233,33 @@ fi
 test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
+# test for givaro
+if test $BUILD_givaro = no
+then AC_MSG_CHECKING(for givaro library)
+     GIVARO_LIBS=`givaro-config --libs 2>&1`
+     dnl warning: a pre-installed givaro library might be compiled and linked against gmp, which could cause a problem if we are building mpir ourselves
+     if test $? = 0
+     then AC_MSG_RESULT(found)
+	  LIBS="$LIBS $GIVARO_LIBS"
+          M2_CPPFLAGS="$M2_CPPFLAGS `givaro-config --cflags`"
+     else AC_MSG_RESULT(not found, will build)
+          BUILD_givaro=yes
+     fi
+fi
+test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
+
+# test for fflas_ffpack
+if test $BUILD_fflas_ffpack = no
+then AC_MSG_CHECKING(for fflas_ffpack library)
+     FFLAS_FFPACK_CPPFLAGS=`fflas-ffpack-config --cflags 2>&1`
+     if test $? = 0
+     then AC_MSG_RESULT(found)
+          M2_CPPFLAGS="$M2_CPPFLAGS $FFLAS_FFPACK_CPPFLAGS="
+     else AC_MSG_RESULT(not found, will build)
+          BUILD_fflas_ffpack=yes
+     fi
+fi
+
 # We are using mpir.  If ntl is present, and sharable, then it depends
 # explicitly on gmp instead of mpir, which can cause a conflict, so we build
 # it, just in case.
@@ -1307,25 +1324,12 @@ fi
 test $BUILD_ntl = yes && BUILTLIBS="-lntl $BUILTLIBS"
 AC_SUBST(BUILD_ntl)		dnl factory needs to know
 
-#AC_SUBST(ENABLE_GIVARO,no)
-#AC_ARG_ENABLE(givaro,
-#    [AS_HELP_STRING(--enable-givaro,[enable building the givaro library and linking with it])],
-#    AC_DEFINE(HAVE_GIVARO,1,[whether we are linking with the givaro library])
-    BUILD_givaro=yes
-    ENABLE_GIVARO=yes
-#    )
-
 AC_SUBST(ENABLE_LINBOX,no)
 AC_ARG_ENABLE(linbox,
     [AS_HELP_STRING(--enable-linbox,enable building the linbox library and linking with it)],
     AC_DEFINE(HAVE_LINBOX,1,[whether we are linking with the linbox library])
     BUILD_linbox=yes
     ENABLE_LINBOX=yes
-    HAVE_GIVARO=1
-    BUILD_givaro=yes
-    ENABLE_GIVARO=yes
-    BUILD_fflas_ffpack=yes
-    ENABLE_FFLAS_FFPACK=yes
     )
 
 AC_SUBST(ENABLE_FPLLL,no)

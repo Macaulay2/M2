@@ -21,11 +21,9 @@
 typedef DMat<M2::ARingZZp> DMatZZp;
 typedef DMat<M2::ARingGFM2> DMatGFM2;
 
-#ifdef HAVE_FFLAS_FFPACK
 #include "aring-zzp-ffpack.hpp"
 typedef M2::ARingZZpFFPACK ZZpFFPACK;
 #define DMatZZpFFPACK DMat<ZZpFFPACK> 
-#endif
 
 #include "aring-zz-gmp.hpp"
 #include "aring-qq.hpp"
@@ -455,7 +453,6 @@ namespace MatrixOps
   ////////////////////////
   // ZZpFFPACK ///////////
   ////////////////////////
-#ifdef HAVE_FFLAS_FFPACK
   // namespace MatrixOps
   void mult(const DMatZZpFFPACK& A, 
             const DMatZZpFFPACK& B, 
@@ -468,7 +465,6 @@ namespace MatrixOps
   void subtractMultipleTo(DMatZZpFFPACK& C, 
                           const DMatZZpFFPACK& A, 
                           const DMatZZpFFPACK& B);
-#endif
 
   //////////////////////
   // ZZ (ARingZZGMP) ///

@@ -146,7 +146,7 @@ const Ring /* or null */ *rawARingGaloisField(int prime, int dimension)
             return 0;
         }
      try {
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
+#if 1
 
         if (prime <= 1  )
         {
@@ -242,7 +242,7 @@ const Ring /* or null */ *rawARingGaloisFieldFromQuotient(const RingElement *a)
 
 M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 {
-#if defined(HAVE_GIVARO)
+#if 1
   const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(R);
   if (RGF == 0)
     {
@@ -260,7 +260,7 @@ M2_arrayintOrNull rawARingGFPolynomial(const Ring *R)
 
 M2_arrayintOrNull rawARingGFCoefficients(const RingElement *f)
 {
-#if defined(HAVE_GIVARO)
+#if 1
   const M2::ConcreteRing<M2::ARingGFGivaro> *RGF = dynamic_cast<const M2::ConcreteRing<M2::ARingGFGivaro> *>(f->get_ring());
   if (RGF == 0)
   {
