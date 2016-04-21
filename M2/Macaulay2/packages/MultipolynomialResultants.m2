@@ -3,7 +3,7 @@ newPackage(
        "MultipolynomialResultants",
 	Version => "1.1", 
     	Date => "April 14, 2016",
-    	Authors => {{Name => "Giovanni Stagliano'", 
+    	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
                    },
