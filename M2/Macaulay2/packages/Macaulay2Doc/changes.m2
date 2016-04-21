@@ -69,10 +69,7 @@ document {
 	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
 	       UL {
 		    LI { "The function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },
-     	       	    LI { "The function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." },
-		    LI { "The function ", TO "randomKRationalPoint", " will try to find a rational point on a variety." },
-		    LI { "The function ", TO "nextPrime", " will compute the smallest prime greater than or equal to a given number." },
-		    LI { "The function ", TO "getPrimeWithRootOfUnity", " will find a prime ", TT "p", " modulo which a given number ", TT "r", " has given order ", TT "n", "." }
+     	       	    LI { "The function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." }
 		    }
 	       },
 	  -- LI { "new constants and operators:",
