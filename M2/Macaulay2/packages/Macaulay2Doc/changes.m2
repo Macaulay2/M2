@@ -45,19 +45,36 @@ document {
 		    LI { star, " ", TO "CharacteristicClasses::CharacteristicClasses", ", a package by Christine Jost and Martin Helmer for computing characteristic classes on toric varieties, has been published." }
 	       	    }
 	       },
-	  -- LI { "new packages:",                       -- get this with : git diff version-1.8.2 ../=distributed-packages 
-	  --      UL {
-	  -- 	    -- LI { TO "::", ", a package by ... for ..., has been added." },
-	  -- 	    }
-	  --      },
+	  LI { "new packages:",                       -- got this with git diff version-1.8.2 =distributed-packages 
+	       UL {
+	  	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	  	    LI { TO "MCMApproximations::MCMApproximations", ", a package by David Eisenbud for maximal Cohen-Macaulay approximations and complete intersections, has been added." },
+	  	    LI { TO "MultiplierIdealsDim2::MultiplierIdealsDim2", ", a package by Ferran Dachs-Cadefau for computing multiplier ideals in 2-dimensional rings, has been added." },
+	  	    LI { TO "RunExternalM2::RunExternalM2", ", a package by Brian Pike for running Macaulay2 functions outside the current Macaulay2 process, has been added." },
+	  	    LI { TO "SLPexpressions::SLPexpressions", ", a package by Anton Leykin for straight line programs and algebraic circuits, has been added." },
+	  	    LI { TO "NumericalSchubertCalculus::NumericalSchubertCalculus", ", a package by Anton Leykin, Abraham Martin del Campo, and Jan Verschelde, for numerical methods in Schubert Calculus, has been added." },
+	  	    LI { TO "ToricTopology::ToricTopology", ", a package by Alvise Trevisan and Alexander I. Suciu for toric topology, has been added." },
+	  	    LI { TO "Cremona::Cremona", ", a package by Giovanni Staglianò for rational maps between projective varieties, has been added." },
+	  	    LI { TO "MultipolynomialResultants::MultipolynomialResultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added." },
+	  	    LI { TO "VectorFields::VectorFields", ", a package by Brian Pike for vector fields, has been added." },
+	  	    LI { TO "RandomIdeal::RandomIdeal", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
+	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }
+	  	    }
+	       },
 	  -- LI { "improved packages:",
 	  --       UL {
 	  -- 	    -- LI { "The package ", TO "::", " has been ..." },
 	  --           }
 	  --      },
-	  -- LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
-	  --      UL {
-	  --      },
+	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
+	       UL {
+		    LI { "The function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },
+     	       	    LI { "The function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." },
+		    LI { "The function ", TO "randomKRationalPoint", " will try to find a rational point on a variety." },
+		    LI { "The function ", TO "nextPrime", " will compute the smallest prime greater than or equal to a given number." },
+		    LI { "The function ", TO "getPrimeWithRootOfUnity", " will find a prime ", TT "p", " modulo which a given number ", TT "r", " has given order ", TT "n", "." }
+		    }
+	       },
 	  -- LI { "new constants and operators:",
 	  --      UL {
 	  --      	    }
