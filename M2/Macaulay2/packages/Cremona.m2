@@ -3,7 +3,7 @@ newPackage(
        "Cremona",
 	Version => "1.0", 
     	Date => "April 10, 2016",
-    	Authors => {{Name => "Giovanni Stagliano'", 
+    	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
                    },
