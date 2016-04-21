@@ -204,6 +204,11 @@ links := tag -> (
      LINK { "href" => toURL doccss, "rel" => "stylesheet", "type" => "text/css" }
      )
 
+-- Also set the character encoding with a meta http-equiv statement. (Sometimes XHTML
+-- is parsed as HTML, and then the HTTP header or a meta tag is used to determine the
+-- character encoding.  Locally-stored documentation does not have an HTTP header.)
+defaultCharSet := () -> META { "http-equiv" => "Content-Type", "content" => "text/html; charset=utf-8" }
+
 BUTTON := (s,alt) -> (
      s = toURL s;
      if alt === null
@@ -408,7 +413,7 @@ makeMasterIndex := (keylist,verbose) -> (
      title := DocumentTag.FormattedKey topDocumentTag | " : Index";
      if verbose then stderr << "--making '" << title << "' in " << fn << endl;
      r := HTML {
-	  HEAD splice { TITLE title, links() },
+	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY nonnull {
 	       DIV { topNodeButton, " | ", tocButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
@@ -430,7 +435,7 @@ maketableOfContents := (verbose) -> (
      if verbose then stderr << "--making  " << title << "' in " << fn << endl;
      fn
      << html HTML {
-	  HEAD splice { TITLE title, links() },
+	  HEAD splice { TITLE title, defaultCharSet(), links() },
 	  BODY {
 	       DIV { topNodeButton, " | ", masterIndexButton, {* " | ", directoryButton, *} " | ", homeButton },
 	       HR{},
@@ -991,6 +996,7 @@ installPackage Package := opts -> pkg -> (
 	       << html HTML { 
 		    HEAD splice {
 			 TITLE {fkey, commentize headline fkey}, -- I hope this works...
+			 defaultCharSet(),
 			 links tag
 			 },
 		    BODY { 
@@ -1177,6 +1183,7 @@ makePackageIndex List := path -> (
      fn << html HTML { 
 	  HEAD splice {
 	       TITLE {key, commentize headline key},
+	       defaultCharSet(),
 	       links()
 	       },
 	  BODY { 
@@ -1284,7 +1291,8 @@ showHtml = show Hypertext := x -> (
      fn := temporaryFileName() | ".html";
      fn << html HTML {
 	  HEAD {
-	       TITLE "Macaulay2 Output"
+	       TITLE "Macaulay2 Output",
+	       defaultCharSet()
 	       },
      	  BODY {
 	       x
