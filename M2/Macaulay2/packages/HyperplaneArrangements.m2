@@ -1745,7 +1745,7 @@ assert((prune image der(A, {2,2,2,2,2,2})) == (ring A)^{-4,-4,-4})
 A3 = arrangement({x,y,z,x-y,x-z,y-z},R)
 describe A3
 assert(rank A3 == 3)
-assert(pdim EPY A3 == 3)
+assert(pdim EPY (A3**QQ) == 3)
 assert(not isDecomposable A3)
 
 X3 = arrangement "X3"
