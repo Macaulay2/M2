@@ -1,8 +1,8 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "2.1.0.0", 
-  Date => "April 22, 2016",
+  Version => "2.1.0.1", 
+  Date => "April 24, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -2405,7 +2405,7 @@ simplifyRawSolutions=(aDirectory)->(
 	orderedStartFile<<endl;
 	for aString in oneSolution do (orderedStartFile <<aString<<endl) );
     close orderedStartFile;
-    print ("Wrote simple_raw_solutions to "|aDirectory|"simple_raw_solutions");
+--    print ("Wrote simple_raw_solutions to "|aDirectory|"simple_raw_solutions");
 --    print "22222222222222222222";
     return storeSolutions    );
      
@@ -2513,12 +2513,7 @@ radicalList(List) := o ->(aList)->(
 	appendToList:=true;
 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
 	if appendToList then newList=append(newList,aList_i));
-    return newList)
-
-
-
-
-     
+    return newList)     
 
 b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
     	LoopRadius=>{},
@@ -2542,7 +2537,9 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
 --
     if o.StorageFolder=!=null 
-    then storeFiles:=addSlash(IFD|o.StorageFolder) 
+    then (
+      storeFiles:=addSlash(IFD|o.StorageFolder);
+      if false === fileExists(storeFiles) then mkdir storeFiles) 
     else storeFiles=addSlash(IFD);
     --For b'PHGaloisGroup to run we need to have a start file that consists of solutions for a general choice of parameters. 
     --There are two ways to get this start file. The first way is to tell M2 where to find the start file by specifying NameStartFile option. 
@@ -2556,10 +2553,19 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     --The other way is by specifying MonodromyStartParameters to a list of parameters. 
     --THe following lines check to see if the configurations to run b'PHGaloisGroup are set correctly in regards to the start_parameter file. 
     if o.MonodromyStartParameters===false and fileExists(IFD|o.NameParameterFile)===false then error "start_parameters file does not exist in correct directory or MonodromyStartParameters needs to be set.";        
-    if o.MonodromyStartParameters=!=false then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file.
-    --Now we want to do our computations in a the directory specified by storeFiles. So we copy files from the StartFileDirectory, InputFileDirectory, StartParameterFileDirectory to the directory given by storeFiles. 
-    if o.NameStartFile=!="start" or null=!=StorageFolder then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
-    if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+    if o.MonodromyStartParameters=!=false then writeParameterFile(IFD,o.MonodromyStartParameters,NameParameterFile=>"start_parameters");--write a start_parameter file. 
+    --Now we want to do our computations in a the directory specified by storeFiles. 
+    --So we copy files from IFD to the directory given by storeFiles. 
+--    print 1;
+    if o.NameStartFile=!="start" or null=!=o.StorageFolder 
+    then moveB'File(IFD,o.NameStartFile,"start",SubFolder=>o.StorageFolder,CopyB'File=>true);
+--    print 2;
+    if o.NameParameterFile=!="start_parameters" or null=!=o.StorageFolder 
+    then moveB'File(IFD,o.NameParameterFile,"start_parameters",SubFolder=>o.StorageFolder,CopyB'File=>true);
+--    print 3;
+    if null=!=o.StorageFolder 
+    then moveB'File(IFD,o.NameB'InputFile,o.NameB'InputFile,SubFolder=>o.StorageFolder,CopyB'File=>true);
+--    print "3.1";
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
     moveB'File(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,CopyB'File=>true);
     --Now all computations are done 
@@ -2568,7 +2574,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     basePointT:=(importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision));
     if #basePointT=!=1 then error "The base point downstairs can only have one coordinate. Parameter space should be restricted to a line parameterized by one copy of complex numbers.";
     basePointT=basePointT_0;
-    print basePointT;
+--    print basePointT;
     --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
     loopCount:=0;
     breakLoop:=false;
@@ -2578,30 +2584,42 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     gggFile << "[" << endl;    	    
     solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
 --    writeParameterFile(storeFiles,{basePointT},NameParameterFile=>"ggStartParametersJade");
+--    print branchPointsT;
     loopFailures:=0;      
-    print branchPointsT;
+    if #branchPointsT===1 and o.LoopRadius==={} 
+    then theLoopRadius:=.1;
+--
+    if o.LoopRadius=!={} 
+    then theLoopRadius=o.LoopRadius;
+--
+    if #branchPointsT=!=1 and o.LoopRadius==={} 
+    then theLoopRadius=1/2*min min(for i to #branchPointsT-2 list for j from i+1 to #branchPointsT-1 list abs(branchPointsT_i-branchPointsT_j));
+--
     loopPointsT:={};
-    if o.LoopRadius=!={} then theLoopRadius:=o.LoopRadius else (
-      theLoopRadius=1/2*min min(for i to #branchPointsT-2 list for j from i+1 to #branchPointsT-1 list abs(branchPointsT_i-branchPointsT_j)));
+--    print 4;
     for oneBranchPointT in branchPointsT  do (
     	--NWSWE
-      if imaginaryPart(oneBranchPointT-basePointT)<0 then(print "below p";
+      if imaginaryPart(oneBranchPointT-basePointT)<0 
+      then(--print "below p";
 	         loopPointsT={
 	  oneBranchPointT+ii*theLoopRadius,
 	  oneBranchPointT-theLoopRadius,
 	  oneBranchPointT-ii*theLoopRadius,
 	  oneBranchPointT+theLoopRadius,
-	  basePointT}) else ---SENW 
-      if imaginaryPart(oneBranchPointT-basePointT)>0 then(print "above p";
+	  basePointT}) 
+  ---SENW 
+      else if imaginaryPart(oneBranchPointT-basePointT)>0 
+      then(--print "above p";
 	         loopPointsT={
 	  oneBranchPointT-ii*theLoopRadius,
 	  oneBranchPointT+theLoopRadius,
 	  oneBranchPointT+ii*theLoopRadius,
 	  oneBranchPointT-theLoopRadius,
-	  basePointT}) else
-      print "An error occurred while creating the loops."      ;       
-      print loopPointsT;
-      print for i in loopPointsT list {i};
+	  basePointT}) 
+      else print "An error occurred while creating the loops."      ;       
+--      print loopPointsT;
+--      print for i in loopPointsT list {i};
+      print 6;
       b'PHSequence(storeFiles,for i in loopPointsT list {i},
 	  B'Exe=>o.B'Exe,
 	  NameB'InputFile=>o.NameB'InputFile,
@@ -2971,6 +2989,10 @@ load concatenate(Bertini#"source directory","./Bertini/TST/subPoint.tst.m2")
 
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/moveBFile.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bPHGaloisGroup.tst.m2")
 ///
 
 

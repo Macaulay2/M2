@@ -494,18 +494,17 @@ doc ///
    Text
      Given a directory that has a Bertini input file that has ParameterHomotopy set to 2, a start file, for start_parameters,
      this function uses parameter homotopies to perform a monodromy homotopy.           
-   Example
+   Example 
      R=CC[x,T]
      f=x^6+2*x^4+3*x^2+T
      makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
      runBertini(storeBM2Files)
      TCoordinates=importSolutionsFile(storeBM2Files)/last
-     TBranchPoints=radicalList(TCoordinates,1e-10)
+     TBranchPoints=radicalList(TCoordinates)
      makeB'InputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
      runBertini(storeBM2Files,PreparePH2=>true)
      b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints)
      b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints,LoopRadius=>.5)
-      
 ///;
 
 
@@ -892,7 +891,7 @@ doc ///
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
-     makeSampleSolutionsFile(storeBM2Files,100,SpecifyComponent=>{2,0})--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
+     makeSampleSolutionsFile(storeBM2Files,4,SpecifyComponent=>{2,0})--creates a witness point file with 4 sample points for the 0th component in dimension 2. 
      theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file") 
       
 ///;
@@ -974,7 +973,7 @@ doc ///
  Headline
    Move or copy files. 
  Usage
-   makeB'Section(s,f,n) 
+   moveB'File(s,f,n) 
  Inputs
    s:String
      A string giving a directory.
@@ -1988,7 +1987,6 @@ doc ///
    FinalTValue
    (b'TraceTest,String,Number,Number)
    (calculateB'Trace,String)
-   (b'PHGaloisGroup,String)
    (importSliceFile,String)
    SolutionType
 --   storeBM2Files
