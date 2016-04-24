@@ -127,6 +127,7 @@ export {
   "SolutionFileStyle",
   "B'Section",
   "B'Slice",
+  "radicalList",
 --  "B'MultiProjectivePoint",
   "makeB'Section",
   "makeB'Slice",
@@ -2496,13 +2497,26 @@ b'PHMonodromyCollect(String) := o ->(IFD)->(
 	    
 ----
 
-radicalList=(aList,aTolerance)->(
+radicalList=method(TypicalValue=>Thing,Options=>{
+	})
+radicalList(List,Number) := o ->(aList,aTolerance)->(
     newList:={aList_0};
     for i to #aList-1 do (
 	appendToList:=true;
 	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
 	if appendToList then newList=append(newList,aList_i));
     return newList)
+radicalList(List) := o ->(aList)->(
+    aTolerance:=1e-10;
+    newList:={aList_0};
+    for i to #aList-1 do (
+	appendToList:=true;
+	for j in newList do if (abs(j-aList_i)<aTolerance) then appendToList=false;
+	if appendToList then newList=append(newList,aList_i));
+    return newList)
+
+
+
 
      
 
