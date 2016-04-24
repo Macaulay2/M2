@@ -1931,7 +1931,7 @@ importMainDataFile=method(TypicalValue=>String,Options=>{
 	NameMainDataFile=>"main_data",
 	SpecifyDim=>false})
 importMainDataFile(String) := o->(aString)->(
-    if aString_-1=!="/" then aString=aString|"/";
+    aString=addSlash aString;
     allInfo:=lines get(aString|o.NameMainDataFile);
     theNumberOfVariables:=value ( (separate(" ",allInfo_0))_3);
     theVariables:=drop(separate(" ",allInfo_1),1);
@@ -2017,14 +2017,28 @@ importMainDataFile(String) := o->(aString)->(
 	theDim:=value (select("[0-9]+",allInfo_0))_0;
         if o.SpecifyDim=!=false and o.SpecifyDim=!=theDim then dimFlag:=false else dimFlag=true;
 	allInfo=drop(allInfo,1))
-      else if #select("NONSINGULAR",allInfo_0)=!=0 
+      else if #select("NONSINGULAR",allInfo_0)=!=0 and #select("UNCLASSIFIED",allInfo_0)===0 
       then (
 	--print 4;
+	solUnclassified:=0;
 	theSolutionType:="NONSINGULAR";
 	allInfo=drop(allInfo,1))	
-      else if #select("SINGULAR",allInfo_0)=!=0 and #select("NON",allInfo_0)===0  
+      else if #select("SINGULAR",allInfo_0)=!=0 and #select("NON",allInfo_0)===0 and #select("UNCLASSIFIED",allInfo_0)===0   
       then (
 	--print 5;
+	solUnclassified=0;
+	theSolutionType="SINGULAR";
+	allInfo=drop(allInfo,1))
+      else if #select("UNCLASSIFIED NONSINGULAR",allInfo_0)=!=0  
+      then (
+	--print 5.1;
+	solUnclassified=1;
+	theSolutionType="NONSINGULAR";
+	allInfo=drop(allInfo,1))
+      else if #select("UNCLASSIFIED SINGULAR",allInfo_0)=!=0  
+      then (
+	--print 5.2;
+    	solUnclassified=1;
 	theSolutionType="SINGULAR";
 	allInfo=drop(allInfo,1))
       else if #select("---------------",allInfo_0)=!=0 
@@ -2035,19 +2049,22 @@ importMainDataFile(String) := o->(aString)->(
 	aNewPoint.Dimension=theDim;
 	aNewPoint.SolutionType=theSolutionType;
 	aNewPoint.PathNumber=value ((separate(":",allInfo_1))_1);
-	aNewPoint.ComponentNumber=value ((separate(":",allInfo_2))_1);
-        aNewPoint.ConditionNumber=valueBM2((separate(":",allInfo_3))_1);
+--
+	if solUnclassified===0 
+	then  aNewPoint.ComponentNumber=value ((separate(":",allInfo_2))_1)
+        else aNewPoint.ComponentNumber=-1;
+	aNewPoint.ConditionNumber=valueBM2((separate(":",allInfo_(3-solUnclassified)))_1);
       	theCoords={};
       	for i to theNumberOfVariables-1 do(
-	  theCoords=append(theCoords,valueBM2(allInfo_(i+4)) ) );
+	  theCoords=append(theCoords,valueBM2(allInfo_(i+4-solUnclassified)) ) );
         aNewPoint.Coordinates=theCoords;
       --multiplicity
-        aNewPoint.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables)))_1);
-        aNewPoint.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1)))_1);      
+        aNewPoint.Multiplicity=value( (separate(":",allInfo_(4+theNumberOfVariables-solUnclassified)))_1);
+        aNewPoint.DeflationsNeeded=value( (separate(":",allInfo_(4+theNumberOfVariables+1-solUnclassified)))_1);      
       	theListOfPoints=append(theListOfPoints,aNewPoint);
       	--print linesPerSolutions;
-      	allInfo=drop(allInfo,linesPerSolutions))
-        else allInfo=drop(allInfo,linesPerSolutions)	)
+      	allInfo=drop(allInfo,linesPerSolutions-solUnclassified))
+        else (allInfo=drop(allInfo,linesPerSolutions); print "1"	))
       else allInfo=drop(allInfo,1));
     return theListOfPoints
     ))

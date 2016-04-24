@@ -720,7 +720,8 @@ doc ///
  Description
    Text
      This function does not import a list of coordinates. Instead it imports points from a main_data file. These points contain coordinates, condition numbers, and etc.      
-     The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.    
+     The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.
+     When TrackType 1 is used, UNCLASSIFIED points will have component number -1.    
    Example
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
@@ -729,7 +730,7 @@ doc ///
      runBertini(storeBM2Files)
      thePoints=importMainDataFile(storeBM2Files)
      witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-      
+     sortMainDataComponents(thePoints)      
 ///;
 
 
