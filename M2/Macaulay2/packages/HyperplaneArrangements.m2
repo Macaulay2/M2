@@ -1750,7 +1750,7 @@ assert(not isDecomposable A3)
 
 X3 = arrangement "X3"
 assert(isDecomposable X3)
-assert(multIdeal(2,X3) == multIdeal(2.2,X3))
+assert(multIdeal(2,X3) == multIdeal(11/5,X3))
 time I1 = orlikTerao(X3);
 time I2 = orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
 assert(I1==I2)
