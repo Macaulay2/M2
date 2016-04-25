@@ -1937,6 +1937,9 @@ M2_arrayint res2_comp::get_betti(int type) const
     return betti_remaining();
   case 3:
     return betti_nmonoms();
+  case 4:
+    ERROR("cannot use Minimize=>true unless res(...,FastNonminimal=>true) was used");
+    return 0;
   }
   ERROR("received unknown betti type");
   return 0;

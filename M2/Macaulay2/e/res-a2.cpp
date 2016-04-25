@@ -408,6 +408,11 @@ M2_arrayint gbres_comp::get_betti(int type) const
 {
   if (type == 0)
     return betti_minimal();
+  if (type == 4)
+    {
+      ERROR("cannot use Minimize=>true unless res(...,FastNonminimal=>true) was used");
+      return 0;
+    }
 
   ERROR("received unsupported betti type for this algorithm");
   return 0;

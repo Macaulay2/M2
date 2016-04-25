@@ -44,7 +44,7 @@ TEST ///
   I = ideal(1_R)
   C = res(I, FastNonminimal => true)
   betti'ans = new BettiTally from {}
-  assert(betti C == betti'ans)
+  assert(betti(C,Minimize=>true) == betti'ans)
   assert(C.dd_1 == 1)
   assert(length C == 1)
   assert(C.dd^2 == 0)
@@ -57,7 +57,7 @@ TEST ///
   I = ideal(a-d, b+13*a)
   C = res(I, FastNonminimal => true)
   betti'ans = new BettiTally from {(1,{1},1) => 2, (0,{0},0) => 1, (2,{2},2) => 1}
-  assert(betti C == betti'ans)
+  assert(betti(C,Minimize=>true) == betti'ans)
   assert(numRows C.dd_1 == 1) 
   assert(numColumns C.dd_1 == 2)
   assert(length C == 2)
@@ -86,9 +86,8 @@ TEST ///
   isHomogeneous I
   B1 = betti res I
   C = res(ideal(I_*), FastNonminimal=>true)
-  B2 = betti C
+  B2 = betti(C, Minimize=>true)
   assert(B1 == B2)
-  betti(C, Nonminimal=>true)
   betti C
   C.dd_-1
   C.dd_0
@@ -161,7 +160,7 @@ TEST ///
   betti res M == betti C
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
 
-  betti(C, Nonminimal => true)
+  betti(C, Minimize=>true)
   assert isHomogeneous C
   C.dd
 ///
@@ -176,14 +175,14 @@ TEST ///
   betti res M1 == betti C
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
   assert isHomogeneous C
-  betti(C, Nonminimal => true)
+  assert(betti(C, Minimize=>true) == betti C)
 ///
 
 TEST ///
   R = ZZ/101[a..e]
   I = monomialCurveIdeal(R,{1,3,7,9})
   C = res(I, FastNonminimal => true)
-  assert(betti C == betti res (ideal I_*))
+  assert(betti(C, Minimize=>true) == betti res (ideal I_*))
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
 ///
 
@@ -193,7 +192,7 @@ TEST ///
   m2 = genericMatrix(R,j,3,3)
   I = ideal(m1*m2-m2*m1)
   elapsedTime C = res(I, FastNonminimal => true)
-  elapsedTime  assert(betti C == betti res (ideal I_*))
+  elapsedTime  assert(betti(C,Minimize=>true) == betti res (ideal I_*))
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
   betti C
 
@@ -202,10 +201,11 @@ TEST ///
   elapsedTime  res(ideal(I_*), Strategy=>2)
   elapsedTime  res(ideal(I_*), Strategy=>3)
 
-  betti(C, Nonminimal => true)
+  betti(C, Minimize=>true)
   debug Core
-  rawBetti(raw C.Resolution, 1) == betti(C, Nonminimal => true)
-  rawBetti(raw C.Resolution, 0) == betti C
+  assert(rawBetti(raw C.Resolution, 1) == betti(C))
+  assert(rawBetti(raw C.Resolution, 0) == betti C)
+  assert(rawBetti(raw C.Resolution, 4) == betti(C, Minimize=>true))
   --rawBetti(raw C.Resolution, 2) -- not implemented yet
   --rawBetti(raw C.Resolution, 3) -- not implemented yet
 
@@ -235,7 +235,7 @@ TEST ///
   C1 = res (ideal I_*)
   assert(betti C == betti C1)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
-  betti(C, Nonminimal => true)
+  assert(betti(C, Minimize=>true) == betti C)
 ///
 
 TEST ///  
@@ -244,8 +244,8 @@ TEST ///
   I = ideal(a*b*c-d*e*f, a*b^2-d*c^2, a*e*f-d^2*b)
   gbTrace=3
   elapsedTime C = res(I, FastNonminimal => true)
-  betti C == betti res ideal(I_*)
-  betti(C, Nonminimal => true)
+  betti(C, Minimize=>true) == betti res ideal(I_*)
+  betti(C)
   I = ideal I_*
   C1 = res(ideal gens gb I, Strategy=>1)
   debug Core
@@ -268,14 +268,14 @@ TEST ///
   
   I = ideal(I_*)
   elapsedTime C1 = res(I, FastNonminimal => true, DegreeLimit=>1) -- DOES NOTHING (i.e. does the whole thing)
-  assert(betti C != betti C1) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
-  betti(C1, Nonminimal => true)
+  assert(betti(C,Minimize=>true) != betti(C1,Minimize=>true)) -- totally non-minimal, so maybe it did do something. ACTUALLY: returns without doing ranks
+  betti C1
   elapsedTime C2 = res(I, FastNonminimal => true)
   betti C2 == betti C
   assert(C.dd^2 == 0)
   assert(isHomogeneous C)
   C1 = betti res ideal(I_*)
-  assert(betti C == betti C1)
+  assert(betti(C,Minimize=>true) == betti(C1,Minimize=>true))
 ///
 
 TEST ///  
@@ -286,6 +286,8 @@ TEST ///
   I = ideal fromDual random(R^1, R^{-3});
   gbTrace=2
   elapsedTime C = res(I, FastNonminimal => true)
+  betti(C, Minimize=>true)
+  betti C
 ///
 
 ///
@@ -299,7 +301,8 @@ TEST ///
   elapsedTime C = res(I, FastNonminimal => true) -- 49.39 seconds on MBP
 ///
 
-TEST ///  
+///  
+  -- disables since it is right on the edge of limits, so sometimes fails sometimes succeeds.
   kk = ZZ/101
   R = kk[vars(0..10)]
   setRandomSeed 0
@@ -328,7 +331,7 @@ TEST ///
   I = Grassmannian(2,5,R)
   gbTrace=2
   elapsedTime C = res(I, FastNonminimal => true)
-  betti C
+  betti(C, Minimize=>true)
 ///
 
 ///
@@ -336,7 +339,7 @@ TEST ///
   R = kk[x_1..x_21]
   I = Grassmannian(1,6,R)
   elapsedTime C = res(I, FastNonminimal => true)
-  betti C
+  betti(C, Minimize=>true)
 ///
 
 -------------------------------------
@@ -348,8 +351,8 @@ TEST ///
   I = minors(2,M)
   N = syz gens I
   C = res(coker N, FastNonminimal => true)
-  assert(betti C == betti res coker syz gens I)
-  betti(C, Nonminimal => true)
+  assert(betti(C,Minimize=>true) == betti res coker syz gens I)
+  betti C
 ///
 
 TEST ///
@@ -422,8 +425,8 @@ TEST ///
   raw F
   P1 = map(F,,P)
   isHomogeneous P1
-  betti res(coker P1, FastNonminimal => true)
-  res coker P1 -- this one looks wrong!!
+  betti(res(coker P1, FastNonminimal => true), Minimize=>true)
+  res coker P1 -- this one looks wrong if one diesn't do the line before this?
 ///
 
 TEST ///
@@ -437,14 +440,14 @@ TEST ///
   time gens gb m;
   gbTrace=0
   time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
-  betti C1
+  betti(C1, Minimize=>true)
   m = bgg(2,M,E);  
   time C2 = res(coker m, LengthLimit=>6)
   betti C2
-  betti C1  
+  betti(C1, Minimize => true)
 
   m = bgg(3,M,E);
   time gens gb m;
   time C1 = res(coker m, FastNonminimal => true, LengthLimit=>7)
-  betti C1 
+  betti(C1, Minimize=>true)
 ///

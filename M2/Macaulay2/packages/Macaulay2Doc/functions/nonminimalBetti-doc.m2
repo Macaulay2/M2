@@ -1,11 +1,10 @@
 doc ///
    Key
-     Nonminimal
-     [betti,Nonminimal]
+     [betti,Minimize]
    Headline
-     non-minimal betti numbers of a non-minimal free resolution
+     minimal betti numbers of a non-minimal free resolution
    Usage
-     betti(C, Nonminimal => true)
+     betti(C, Minimize => true)
    Inputs
      C:ChainComplex
        computed using @TO FastNonminimal@ (and therefore a
@@ -17,12 +16,9 @@ doc ///
    Description
     Text
       Given a chain complex computed using {\tt res(I, FastNonminimal => true)} (@TO FastNonminimal@),
-      returns the nonminimal graded Betti numbers of this complex.
+      returns the minimal graded Betti numbers of this complex.
 
-      To get the minimal betti numbers, use @TO betti@.  This 
-      function is available as internal information, or in the case
-      when it is desirable to work with the
-      non-minimal resolution as a complex.
+      To get the actual betti numbers of the non-minimal resolution, use @TO betti@.
       
       It can be used to get an idea of what might need to be
       computed, in case the minimal betti numbers are needed.
@@ -36,9 +32,11 @@ doc ///
       of the complex.
     Example
       betti C
-      betti(C, Nonminimal => true)
+      betti(C, Minimize=>true)
    Caveat
      Released in M2 1.9, still experimental.  Only works over finite prime field.
+     If the complex is the resolution of a non-homogeneous or multi-homogeneous object,
+     then this function will result in an error.
    SeeAlso
      betti
      resolution

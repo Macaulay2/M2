@@ -28,14 +28,14 @@ doc ///
       S = ring I      
       elapsedTime C = res(I, FastNonminimal => true)
       elapsedTime C1 = res ideal(I_*)
-      betti C1 == betti C
+      betti(C, Minimize => true) == betti C1
     Text
-      For a non-minimal resolution, @TO betti@ gives the minimal Betti
-      numbers, and using the @TO "Nonminimal"@ option gives the actual ranks
-      of the complex.
+      For a non-minimal resolution, @TO betti@ gives the actual Betti
+      numbers, and using the @TO [betti,Minimize]@ option gives the ranks
+      in a minimal resolution (which is itself not computed).
     Example
       betti C
-      betti(C, Nonminimal => true)
+      betti(C, Minimize => true)
     Text
       If the resolution is not large, this function can be slower than
       the usual function @TO resolution@.  But for larger examples, 
@@ -45,5 +45,6 @@ doc ///
      Released in M2 1.9, still experimental.  Only works over finite prime fields. Uses quite alot of memory.
    SeeAlso
      betti
+     [betti,Minimize]
      resolution
 ///

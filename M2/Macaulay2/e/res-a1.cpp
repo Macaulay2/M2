@@ -1221,6 +1221,9 @@ M2_arrayint res_comp::get_betti(int type) const
         case 3:
           val = n_monoms(lev,d);
           break;
+        case 4:
+          ERROR("cannot use Minimize=>true unless res(...,FastNonminimal=>true) was used");
+          return 0;
         default:
           val = -1;
           break;

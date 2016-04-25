@@ -1778,10 +1778,13 @@ enum gbTraceValues
   M2_arrayint rawResolutionBetti(Computation *G,
                                  int type); /* drg: connected rawGBBetti */
   /* type:
-         0: minimal betti numbers,
+         0: minimal betti numbers, (for FastNonminimal=>true, the ACTUAL betti numbers)
          1: non-minimal betti numbers (skeleton size, or size of GB's).
+           (for FastNonminimal=>true, same as "0" case)
          2: number of S-pairs remaining to consider
          3: number of monomials in polynomials at this slot
+         4: for FastNonminimal=>true resolutions, the minimal betti numbers
+            other cases, this is an error.
      Not all of these may be accessible with all algorithms.  If not available,
      A betti diagram with all -1's is displayed.
   */

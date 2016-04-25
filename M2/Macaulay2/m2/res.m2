@@ -220,18 +220,6 @@ resolution Ideal := ChainComplex => options -> (I) -> resolution(
      else I.cache.quotient = (ring I)^1/I,
      options)
 
-nonminimalResolution = method(Options => options resolution)
-nonminimalResolution Module := ChainComplex => o -> (M) -> (
-    resolution(M, o, Strategy=>4)
-    )
-nonminimalResolution Ideal := ChainComplex => o -> (I) -> (
-    resolution(I, o, Strategy=>4)
-    )
-nonminimalResolution Matrix := ChainComplex => o -> (f) -> (
-    resolution(f, o, Strategy=>4)
-    )
-
-
 -----------------------------------------------------------------------------
 getpairs := g -> rawGBBetti(raw g,1)
 remaining := g -> rawGBBetti(raw g,2)

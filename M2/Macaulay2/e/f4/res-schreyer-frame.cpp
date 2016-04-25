@@ -206,9 +206,9 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
 M2_arrayint SchreyerFrame::getBetti(int type) const
 {
-  if (type == 0)
+  if (type == 4)
     return mBettiMinimal.getBetti();
-  if (type == 1)
+  if (type == 0 or type == 1)
     return getBettiFrame();
   
   ERROR("betti display not implemenented yet");
