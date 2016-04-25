@@ -14,6 +14,7 @@ resolutionLength := (R,opts) -> (
 
 resolutionByHomogenization := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by homogenization" << endl;
+     if opts.FastNonminimal then error "cannot specify FastNonminimal=>true with this input";
      R    := ring M;
      f    := presentation M;
      p    := presentation R;
@@ -40,6 +41,7 @@ resolutionByHomogenization := opts -> (M) -> (
 
 resolutionBySyzygies := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by syzygyies" << endl;     
+     if opts.FastNonminimal then error "cannot specify FastNonminimal=>true with this input";
      R := ring M;
      maxlength := resolutionLength(R,opts);
      if M.cache.?resolution 

@@ -268,7 +268,6 @@ export {
 	"NewOfMethod",
 	"NoPrint",
 	"NonAssociativeProduct",
-    "Nonminimal",
 	"Nothing",
 	"Number",
 	"OO",

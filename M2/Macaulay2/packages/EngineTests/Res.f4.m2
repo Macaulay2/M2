@@ -130,8 +130,7 @@ TEST ///
   -- don't allow zero heft vectors
   -- this code never gets to non minimal res code in the engine.
   S = ZZ/101[a,b,c,d,Degrees=>{-1,1,2,-5}]  
-  C = res((ideal gens S)^3, FastNonminimal => true)
-  C.dd^2 == 0
+  assert (try res((ideal gens S)^3, FastNonminimal => true); false) else true;
   
   -- don't allow multi-gradings  
   S = ZZ/101[a,b,c,d,DegreeRank=>4]
