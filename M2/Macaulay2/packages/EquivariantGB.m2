@@ -28,6 +28,7 @@ export {
      OutFile,
      PrincipalSyzygies,
      CompleteReduce,
+     exponentMatrix,
      --for testing
      Shift,
      shift,
@@ -143,6 +144,16 @@ buildERing (Sequence,Ring,ZZ) := o -> (seq,oldR,n) -> (
      R
      )
  
+exponentMatrix = method()
+exponentMatrix RingElement := m -> (
+     R := ring m;
+     assert(all(R.semigroup, i->i==1));
+     L := first first listForm leadMonomial m;
+     Lpos := R.varIndices;
+     M := mutableMatrix(ZZ,#(R.semigroup),R.indexBound);
+     for i from 0 to #L-1 do M_(Lpos#i) = L#i;
+     matrix M
+     )
 
 gensEqual = (F,G) -> (
      R := ring first F; 
