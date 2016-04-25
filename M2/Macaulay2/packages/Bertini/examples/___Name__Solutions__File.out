@@ -1,0 +1,24 @@
+-- -*- M2-comint -*- {* hash: -1763488852 *}
+
+i1 : makeB'InputFile(storeBM2Files,AVG=>{x},B'Polynomials=>{"x^2-2"})
+
+o1 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62263-0/0/input
+
+o1 : File
+
+i2 : runBertini(storeBM2Files)
+bertini
+
+i3 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
+
+o3 = {{1.41421}, {-1.41421}}
+
+o3 : List
+
+i4 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+
+o4 = {{1.41421}, {-1.41421}}
+
+o4 : List
+
+i5 : 

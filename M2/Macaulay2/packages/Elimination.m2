@@ -6,7 +6,7 @@ newPackage("Elimination",
      Headline => "a package for elimination of variables"
      )
 
-export {eliminate, sylvesterMatrix, discriminant, resultant}
+export {"eliminate", "sylvesterMatrix", "discriminant", "resultant"}
 
 ---------------------
 --- Preliminaries  --
@@ -104,21 +104,20 @@ sylvesterMatrix(RingElement,RingElement,RingElement) := (f,g,x) -> (
      R := ring f;
      if R =!= ring g then error "expected same ring";
      v := index x;  -- just to check if x is a variable in the polyring R.
-     if f == 0 or g == 0 
-     then map(R^1,R^1,0)
+     if f == 0 or g == 0 then error "expected nonzero polynomials";
+     degf := degree(x,f);
+     degg := degree(x,g);
+     if degf === 0 and degg === 0 then map(R^0,R^0,1)
+     else if degf === 0 then map(R^degg,R^degg,f)
+     else if degg === 0 then map(R^degf,R^degf,g)
      else (
-       degf := degree(x,f);
-       degg := degree(x,g);
-       if degf === 0 or degg === 0 
-       then matrix {{1_R}}
-       else (
-         x1 := matrix{{1,x}};
-         xfg := transpose symmetricPower(degf + degg - 1, x1);
-         xf := symmetricPower(degf-1, x1);
-         xg := symmetricPower(degg-1, x1);
-	 m := contract(xfg, (f ** xg) | (g ** xf));
-         substitute(m, x=>0)))
-     )
+       x1 := matrix{{x,1}};
+       xfg := transpose symmetricPower(degf + degg - 1, x1);
+       xf := symmetricPower(degf-1, x1);
+       xg := symmetricPower(degg-1, x1);
+       m := contract(xfg, (f ** xg) | (g ** xf));
+       m = transpose m;
+       substitute(m, x=>0)))
 
 resultant = method()
 resultant(RingElement, RingElement, RingElement) := (f,g,x) -> 

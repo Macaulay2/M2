@@ -155,8 +155,12 @@ document {
 document {
      Key => assert,
      Headline => "assert something is true",
-	Usage => "assert x",
-     TT "assert x", " prints an error message if x isn't true."
+	   Usage => "assert x",
+     TT "assert x", " prints an error message if x isn't true.",
+     EXAMPLE lines ///
+     assert( (2+2) === 4 )
+     ///,
+     SeeAlso => {"generateAssertions"}
      }
 
 document {
@@ -617,17 +621,18 @@ document {
      Usage => "setRandomSeed()",
      Consequences => {
 	  {"Initializes the random number generator to a fixed state, identical to the
-	       initial state in version 1.2 and earlier of Macaulay2.  After version 1.2,
-	       the random number seed is initially set to a number that depends on the current date, 
-	       time (in seconds), and process id, except for the running of examples and tests
-	       in packages, where it is always initialized to 0."}
+	       initial state (upon program start) in version 1.2 and earlier of Macaulay2.  (After version 1.2,
+	       the random number seed is initially set (when Macaulay2 starts) to a number that depends on the current date, 
+	       the time (in seconds), and the process id, except for when running examples and tests
+	       in packages (as signalled by use of the command line option ", TT "--no-randomize", "), where it is always initialized to 0.)"}
 	  },
      EXAMPLE lines ///
      setRandomSeed()
      random 2^100
      setRandomSeed()
      random 2^100
-     ///
+     ///,
+     SeeAlso => { (setRandomSeed,ZZ), (setRandomSeed,String) }
      }
 
 document {
@@ -643,7 +648,8 @@ document {
 	  "for i to 10 list random 100",
 	  "setRandomSeed 123456",
 	  "for i to 10 list random 100"
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,String) }
      }
 
 document {
@@ -660,7 +666,8 @@ document {
 	  ///for i to 10 list random 100///,
 	  ///setRandomSeed "thrkwjsxz"///,
 	  ///for i to 10 list random 100///
-	  }
+	  },
+     SeeAlso => { 1:setRandomSeed, (setRandomSeed,ZZ) }
      }
 
 document {

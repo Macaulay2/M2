@@ -121,14 +121,48 @@ document {
      }
 
 document {
-     Key => {pairs,(pairs, HashTable)},
+     Key => {pairs},
+     Headline => "list the pairs in a hash table, dictionary, or basic list",
+     }
+
+document {
+     Key => {(pairs, HashTable)},
      Headline => "list the pairs in a hash table",
-     TT "pairs x", " -- makes a list of all key/value pairs ", TT "(k,v)", " in
-     a hash table ", TT "x", ".",
-     PARA{},
+     Usage => "pairs x",
+     Inputs => { "x" },
+     Outputs => {{ "a list of all pairs ", TT "(k,x#k)" }},
      EXAMPLE {
 	  "x = new HashTable from {a => 1, b => 2, c => 3}",
 	  "pairs x",
+	  }
+     }
+
+document {
+     Key => {(pairs, Dictionary)},
+     Headline => "list the pairs in a dictionary",
+     Usage => "pairs d",
+     Inputs => { "d" },
+     Outputs => {{ "a list of all pairs ", TT "(k,d#k)" }},
+     EXAMPLE lines ///
+     	  d = new Dictionary
+	  getGlobalSymbol (d,"foo")
+	  getGlobalSymbol (d,"bar")
+	  pairs d
+	  first oo
+	  class \ oo
+	  ///
+     }
+
+document {
+     Key => {(pairs, BasicList)},
+     Headline => "list the pairs in a sequence or list",
+     Usage => "pairs L",
+     Inputs => { "L" },
+     Outputs => {{ "a list of pairs ", TT "(i,L#i)" }},
+     EXAMPLE {
+	  "L = (a,b,c)",
+	  "pairs L",
+	  "pairs {x,y,z}",
 	  }
      }
 

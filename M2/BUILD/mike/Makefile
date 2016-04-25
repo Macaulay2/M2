@@ -5,9 +5,10 @@ always:
 ################
 ## mac os x ####
 ################
-darwin64 : always
-	mkdir -p builds.tmp/darwin64
-	cd builds.tmp/darwin64; ../../../../configure \
+darwin64-gcc5 : always
+	mkdir -p builds.tmp/darwin64-gcc5
+	cd builds.tmp/darwin64-gcc5; ../../../../configure \
+		CC=gcc-5 CXX=g++-5 \
 	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
 	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
@@ -15,7 +16,22 @@ darwin64 : always
 		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-dmg \
-		--enable-download
+		--enable-download \
+		--enable-build-libraries="mpir flint"
+
+darwin64-gcc4.9 : always
+	mkdir -p builds.tmp/darwin64-gcc4.9
+	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
+		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-ntl-wizard \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="mpir flint"
 
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
@@ -26,7 +42,8 @@ debug64 : always
 	mkdir -p builds.tmp/debug64
 	cd builds.tmp/debug64; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		CPPFLAGS="-DENGINE_DEBUG_" \
+	    CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include -DENGINE_DEBUG_" \
+	    LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--disable-ntl-wizard \
 		--enable-debug \

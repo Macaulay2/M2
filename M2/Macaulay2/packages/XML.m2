@@ -12,7 +12,7 @@ export {
      }
 scan(pairs Core#"private dictionary", (k,v) -> if match("^(Lib)?xml[A-Z]",k) then (
 	  XML#"private dictionary"#k = v;
-	  export v))
+	  export k))
 
 xmlTypeTable = new HashTable from xmlTypes()
 xmlTypeIndex = new HashTable from apply(xmlTypes(),(a,b) -> (b,a))

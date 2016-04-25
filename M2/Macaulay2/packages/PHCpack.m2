@@ -1,8 +1,8 @@
 
 newPackage(
   "PHCpack",
-  Version => "1.6", 
-  Date => "6 May 2013",
+  Version => "1.6.2", 
+  Date => "21 May 2015",
   Authors => {
     {Name => "Elizabeth Gross",
      Email => "egross7@uic.edu",
@@ -35,7 +35,8 @@ newPackage(
 	"volume number" => "5",
 	"volume URI" => "http://j-sag.org/Volume5/"
 	},
-  DebuggingMode => false,
+  --DebuggingMode => false,
+  DebuggingMode => true,
   AuxiliaryFiles => true,
   CacheExampleOutput => true,
   PackageImports => {"SimpleDoc"},
@@ -57,6 +58,7 @@ export {
   "mixedVolume",
   "nonZeroFilter",
   "numericalIrreducibleDecomposition",
+  "parseSolutions",
   "refineSolutions",
   "solveRationalSystem",
   "solveSystem",
@@ -78,7 +80,7 @@ protect Append
 -- GLOBAL VARIABLES 
 --##########################################################################--
 
-DBG = 0; -- debug level (10=keep temp files)
+PHCDBG = 0; -- debug level (10=keep temp files)
 path'PHC = (options PHCpack).Configuration#"path";
 PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe"; 
 -- this is the executable string that make sures that calls to PHCpack run:
@@ -97,7 +99,7 @@ PHCexe=path'PHC|(options PHCpack).Configuration#"PHCexe";
 --if the user is using an old version of NAGtypes.
 
 if not((class(NumericalVariety))===Type) then
-     (--export {generalEquations, "IsIrreducible"};
+     (--export {"generalEquations", "IsIrreducible"};
       --protect generalEquations;
       protect IsIrreducible;
       NumericalVariety = new Type of MutableHashTable;
@@ -169,7 +171,7 @@ parseSolutions (String,Ring) := o -> (s,R) -> (
   -- because M2 automatically thinks "res"=resolution   	  
   sols := toList apply(value L, sol->new HashTable from toList sol);
   defaultPrecision = oldprec;
-  apply(sols, sol->point( {apply(gens R, v->sol#(value toString v))} | outputToPoint sol ))
+  apply(sols, sol->point( {apply(gens R, v->sol#v)} | outputToPoint sol ))
 )
 
 pointsToFile = method(TypicalValue => Nothing, Options => {Append => false})
@@ -236,6 +238,7 @@ startSystemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
+  s = replace("e\\+00","",s);
   L := lines(s);
   n := value L_0;
   result := {};
@@ -274,9 +277,10 @@ systemFromFile (String) := (name) -> (
   s := get name;
   s = replace("i","ii",s);
   s = replace("E","e",s);
-  --s = replace("e+00","",s);  -- on Mac: M2 crashes at 3.0e+00 as constant
+  s = replace("e\\+","e",s);   -- M2 does not like 3.0e+00 as constant
   L := lines(s);
-  n := value L_0;
+  dimL0 := separate(" ", replace ("^ *","",L_0)); -- deal with case of nonsquare systems
+  n := value dimL0_0;          -- first is always number of equations
   result := {};
   i := 0; j := 1;
   local stop;
@@ -288,8 +292,7 @@ systemFromFile (String) := (name) -> (
       if #L_j != 0 then (
         if (L_j_(#L_j-1) != ";") then (
           -- we have to bite off the first "+" sign of the term
-          term = 
-	  value substring(1,#L_j-1,L_j);
+          term = value substring(1,#L_j-1,L_j);
           if (L_j_0 == "+") then p = p + term else p = p - term;
         ) else ( -- in this case (L_j_(#L_j-1) == ";") holds
           term = value substring(1,#L_j-2,L_j);
@@ -736,7 +739,9 @@ mixedVolume  List := Sequence => opt -> system -> (
   -- Calls an Ada translation of ACM TOMS Algorithm 846:
   --  "MixedVol: a software package for mixed-volume computation" 
   -- by Tangan Gao, T. Y. Li, Mengnien Wu, ACM TOMS 31(4):555-560, 2005.
- 
+  -- With the introduction of double double and quad double arithmetic,
+  -- the menu options after version 2.3.90 changed.
+  -- Fixed in the distribution of 2.3.97 of PHCpack.
   R := ring ideal system;
   n := #system;
   
@@ -759,16 +764,18 @@ mixedVolume  List := Sequence => opt -> system -> (
   -- writing data to the corresponding files
   file := openOut cmdfile; 
   file << "4" << endl; -- call MixedVol in PHCpack
+  if opt.StartSystem
+   then (file << "1" << endl)  -- random coefficient start system wanted
+   else (file << "0" << endl); -- no random coefficient start system
   if opt.StableMixedVolume
    then (file << "y" << endl)  -- stable mixed volume wanted
    else (file << "n" << endl); -- no stable mixed volume 
   file << "n" << endl; -- no mixed-cell configuration on file
-  if opt.StartSystem then (
-    file << "y" << endl; -- random coefficient start system wanted
+  if opt.StartSystem then (    -- file and options for start system
     file << startfile << endl;
     file << "0" << endl << "1" << endl;
-   )
-   else (file << "n" << endl); -- no random coefficient start system
+  );
+
   close file;
   systemToFile(system,infile);
   
@@ -1112,6 +1119,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   Ssolsfile := temporaryFileName() | "PHCstartsols";
   Tsolsfile := temporaryFileName() | "PHCtargetsols";
   batchfile := temporaryFileName() | "PHCbat";
+  logfile := temporaryFileName() | "phc_session_log";
   if o.Verbose then
     stdio   << "using temporary files " << outfile << " and " << Tsolsfile << endl;
   
@@ -1143,7 +1151,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
   -- fourth menu
   bat << "0" << endl; -- exit for now
   close bat;
-  run(PHCexe|" -p <"|batchfile|" >phc_session.log");
+  run(PHCexe|" -p <"|batchfile|" >" |logfile);
   run(PHCexe|" -z "|outfile|" "|Tsolsfile);
   
   -- parse and output the solutions
@@ -1163,7 +1171,7 @@ trackPaths (List,List,List) := List => o -> (T,S,Ssols) -> (
       s-> 
       max(s#0/abs)<10000 -- path failed and/or diverged
     );
-    if DBG>0 and #result < totalN 
+    if PHCDBG>0 and #result < totalN 
     then  -- error "discarded!" 
     << "track[PHCpack]: discarded "<< 
     totalN-#result << " out of " << totalN << " solutions" << endl;
@@ -1382,8 +1390,7 @@ TEST///
      f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
      fSols = solveSystem(f);
      zeroSols = zeroFilter(fSols,1,1.0e-10);
-     assert(  sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} == {{-1, 0}, {1, 0}}
-	      )
+     assert(  max \\ abs \ flatten ( sort {zeroSols_0#Coordinates,zeroSols_1#Coordinates} - {{ -1, 0}, {1, 0}} ) < 1e-17 )
 ///;
 
 --##########################################################################--

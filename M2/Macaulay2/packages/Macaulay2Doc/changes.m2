@@ -10,6 +10,9 @@ document {
 	  TO "changes, 1.5",
 	  TO "changes, 1.6",
 	  TO "changes, 1.7",
+	  TO "changes, 1.8",
+	  TO "changes, 1.8.1",
+	  TO "changes, 1.8.2",
 	  TO "list of obsolete functions"
 	  }
      }
@@ -40,7 +43,8 @@ document {
 		    LI { "'assign' has been replaced by ", TO "<-" },
 		    LI { "'minprimes' has been replaced by ", TO "independentSets" },
 		    LI { "'elapsedTime' has been renamed to ", TO "cpuTime" },
-		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" }
+		    LI { "'pushForward1(f,M)' has been replaced by 'relations coimage map(M,f)'" },
+		    LI { TT "adjoint1", " has been replaced by ", TO "adjoint'", ", whose interface is different" }
 		    }
 	       },
 	  LI {
@@ -62,6 +66,127 @@ document {
      }
 
 star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
+document {
+     Key => "changes, 1.8.2",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { 
+			 "A problem with making finite fields using ", TO "GF", " was fixed.  It involved the third-party
+			 FLINT number theory library not being able to find its file containing a list of Conway polynomials." }}}}}
+
+ 
+document {
+     Key => "changes, 1.8.1",
+     UL {
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { 
+			 "The function ", TO "remainder", " was recently made more general (so the modules involved are not necessarily free),
+			 but as a result, some Gröbner bases were no longer cached, necessitating frequent recomputation in certain examples,
+			 slowing them down substantially. We fixed that for ", TO "remainder", " and also for ", TO "quotient", " and ", TO "gb", "." }}}}}
+
+document {
+     Key => "changes, 1.8",
+     UL {
+	  -- LI { "major improvements and additions:",
+	  --      UL {
+	  -- 	    }
+	  --      },
+	  -- LI { "packages that have been published and certified:",
+	  --      UL {
+	  -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	  --      	    }
+	  --      },
+	  LI { "new packages:",
+	       UL {
+		    -- LI { TO "::", ", a package by ... for ..., has been added." },
+		    LI { TO "BinomialEdgeIdeals::BinomialEdgeIdeals", ", a package by Tobias Windisch for computations with binomial edge ideals, has been added." },
+		    LI { TO "TateOnProducts::TateOnProducts", ", a package by Daniel Erman, David Eisenbud, and Frank-Olaf Schreyer for Tate resolutions on products of projective spaces, has been added." },
+		    LI { TO "LatticePolytopes::LatticePolytopes", ", a package by Anders Lundman and Gustav Sædén Ståhl for computations with lattice polytopes, has been added." },
+		    LI { TO "FiniteFittingIdeals::FiniteFittingIdeals", ", a package by Gustav Sædén Ståhl for computing Fitting ideals of finite modules, has been added." },
+		    LI { TO "HigherCIOperators::HigherCIOperators", ", a package by David Eisenbud for computing higher complete intersection operators, has been added.
+			 It implements some work of Burke, Eisenbud and Schreyer on a structure that exists on resolutions over a complete
+			 intersection. This structure allows one to ", EM "lift", " a resolution over a complete
+			 intersection to a resolution over the ambient ring -— a construction dual, in a sense,
+			 to the well known Eisenbud-Shamash construction, which is also implemented." },
+		    LI { TO "LieTypes::LieTypes", ", a package by Dave Swinarski for defining types used by the package ", TO "ConformalBlocks::ConformalBlocks", ", has been added." },
+		    LI { TO "ConformalBlocks::ConformalBlocks", ", a package by Dave Swinarski for computing ranks and first Chern classes of conformal block bundles
+			 on the moduli space of n-pointed curves of genus 0, has been added." },
+		    LI { TO "M0nbar::M0nbar", ", a package by Han-Bom Moon and David Swinarski for calculations for divisors and F-curves on the moduli space of stable n-pointed genus zero curves, has been added." },
+		    LI { TO "AnalyzeSheafOnP1::AnalyzeSheafOnP1", ", a package by David Eisenbud for decomposing a coherent sheaf on the projective line into a direct sum of line bundles and 
+			 cyclic skyscraper sheaves, has been added." }
+	  	    }
+	       },
+	  LI { "improved packages:",
+	        UL {
+		    -- LI { "The package ", TO "::", " has been ..." },
+		    LI { "The package ", TO "Binomials::Binomials", " has been upgraded from version 1.0 to 1.2." },
+		    LI { "The package ", TO "BoijSoederberg::BoijSoederberg", " has been upgraded from version 1.2 to 1.5." },
+		    LI { "The package ", TO "ChainComplexExtras::ChainComplexExtras", " has been upgraded from version 0.5 to version 1." },
+		    LI { "The package ", TO "MultiplierIdeals::MultiplierIdeals", " has been upgraded from version 1.0 to version 1.1." },
+		    LI { "The package ", TO "CompleteIntersectionResolutions::CompleteIntersectionResolutions", " has been upgraded from version 0.8 to version 0.9.
+			 It implements a number of old and new ideas about minimal resolutions over a complete intersection
+			 developed by Eisenbud-Peeva, Avramov-Jorgensen, Eisenbud-Peeva-Schreyer, and
+			 Burke-Eisenbud-Schreyer. Let ", TT "S = k[x_1..x_n]", " be a
+			 polynomial ring, ff a codimension c regular sequence of homogeneous forms of the same degree, and ", TT "R = S/(ff)", ". It contains:",
+			 UL {
+			      LI { "routines to compute the structure of ", EM { "higher matrix factorization" }, "
+				   on a ", EM { "high" }, " R-syzygy M — one for which the modules ", TT "Ext_R^even(M,k)", "
+				   and ", TT "Ext_R^odd(M,k)", " have negative regularity over the ring of CI operators.
+				   There are also routines to extract various information from the higher matrix factorization." },
+			      LI { "routines that implement the reconstruction algorithm of Avramov and Jorgensen that constructs 
+				   modules M having (certain kinds of) specified Ext-modules." },
+			      LI { "routines to test of a conjecture of Eisenbud about the vanishing of certain local cohomology 
+				   of Ext-modules, implementing the map from a module to its saturation." },
+			      LI { "routines to compute the higher homotopies for ff on an S-free resolution of an S-module M 
+				   annihilated by ff, and understanding the structure of module over an exterior algebra, determined
+				   by the ff-homotopies on a resolution of M, on Tor^S(M,N) and Ext_S(M,N), when M and N are S-modules
+				   annihilated by ff. These routines led to conjectures that were later proven, and will appear in a 
+				   work-in-progress of Eisenbud, Peeva and Schreyer." },
+			      LI { "routines to compute Hom in the stable category of Cohen-Macaulay R-modules, and test for stable 
+				   triviality. This is used in understanding possible obstructions to commutativity of CI-operators." }
+			      }
+			 }
+	            }
+	       },
+	  LI { "functionality added or improved:",
+	       UL {
+		    LI { "The function ", TO "pairs", " will now accept (basic) list (or sequence) ", TT "x", " and return the list of pairs ", TT "(i,x#i)", ",
+			 thanks to Zach Teitler." },
+		    LI { "The function ", TO "minimalPresentation", " has been modified so that it applies its degree-preserving method also for homogeneous
+			 modules over affine algebras over affine algebras." },
+     	       	    LI { "The function ", TO "applyKeys", " will now accept an additional function to be called when collisions occur between new keys, for combining the
+			 corresponding values, thanks to Paul Zinn-Justin." },
+		    LI { "The function ", TO "partition", " now takes a third argument: a list of additional values in the range of the function, allowing
+			 members of the resulting partition to be empty." },
+		    LI { "The function ", TO "loadPackage", " can now be used to reload a package by giving the package itself as the argument.  This
+			 is easier than setting the ", TO "Reload", " option." },
+		    LI { "The function ", TO "adjoint", " has been improved to work not just for free modules, and the function ", TT "adjoint1", " has
+			 been replaced by ", TO "adjoint'", ".  This pair of function now implements both direction in the adjointness between Hom
+			 and tensor product." },
+		    LI { "The new function ", TO "homomorphism'", " complements ", TO "homomorphism", ".  From a map between modules it
+			 produces the element of Hom." },
+		    LI { "The new function ", TO "compose", " expresses composition of maps between modules as a bilinear map between Hom-modules." },
+		    LI { "Bracket powers of ideals (", TO "(symbol ^,Ideal,Array)", ") have been added, thanks to Frank Moore." },
+            LI { "Several bugs related to computing Groebner bases in polynomial rings over ZZ have been fixed.  ", TT "trim I", " in this case
+                now returns an ideal or module with a Groebner basis as generating set, as a minimal generating set isn't well-defined.  In a future release, we hope to 
+                provide a function to determine a smaller set of generators.  ", TT "mingens I", " also returns the Groebner basis matrix.  In a future release this
+                function might be changed to give an error in cases where there is not a well-defined notion of minimal generators."}
+	  	    }
+	       },
+	  LI { "functionality changed:",
+	       UL {
+		    LI { "The function ", TO "export", " now accepts strings and options only, not symbols." }
+	       	    }
+	       },
+	  -- LI { "new constants and operators:",		    -- get this by diffing m2/exports.m2
+	  --      UL {
+	  --      	    }
+	  --      }
+     	  }
+     }
  
 document {
      Key => "changes, 1.7",

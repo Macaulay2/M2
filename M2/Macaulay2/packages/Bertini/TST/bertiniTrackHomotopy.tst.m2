@@ -15,4 +15,4 @@ startPoints={point({{1,1}}),
 
 --the output for bertiniTrackHomotopy is a list of points. 
 targetPoints=bertiniTrackHomotopy(t0, aUserHomotopy,startPoints)
-assert(areEqual(targetPoints, {point {{3, 1}}, point {{-3, 1}}}))
+assert(areEqual(sortSolutions targetPoints, {point {{-3, 1}}, point {{3, 1}}}))

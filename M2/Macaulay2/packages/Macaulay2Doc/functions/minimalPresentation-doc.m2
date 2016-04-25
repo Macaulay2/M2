@@ -148,11 +148,11 @@ document {
 	  "N" => Module => {"isomorphic to ", TT "M"}
 	  },
      Consequences => {
-	  {TT "minimalPresentation", " stores the isomorphism from ", TT "M", " to ", TT "N", 
+	  {TT "The isomorphism from ", TT "N", " to ", TT "M", 
 	       " as ", TT "g = N.cache.pruningMap", " unless ", 
 	       TT "M.cache.pruningMap", " already exists, in which case ", 
-	       TT "N", " is the same as ", TT "M", " and the inverse 
-	       isomorphism is obtained by ", TT "g^-1"}
+	       TT "N", " is the same as ", TT "M", ".  The inverse 
+	       isomorphism can be obtained as ", TT "g^-1"}
 	       },   	      
      "If the Module ", TT "M", " is graded then the module ", TT "N", " 
      is a minimal presentation of ", TT "M", ".  If not, then an 
@@ -166,7 +166,8 @@ document {
 	  g = N.cache.pruningMap
 	  g^-1
      ///,
-     "This function also works when M is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ".",
+     "This function also works when ", TT "M", " is ", ofClass{GradedModule,ChainComplex,CoherentSheaf}, ",
+     by acting on the modules and maps within it.",
      EXAMPLE lines ///
 	  I = ideal(a^2,b^3,c^4,d^7)
      	  X = Proj R

@@ -1,41 +1,63 @@
 newPackage(
 	"BoijSoederberg",
-    	Version => "1.2", 
-    	Date => "February 8, 2009",
-    	Authors => {
+    	Version => "1.5", 
+    	Date => "April 01, 2015",
+    	Authors => { -- This Package was originally written by D. Eisenbud, F. Schreyer, and M. Stillman. 
+	             -- Various revisions and updates were made by C. Gibbons and B. Stone.
 	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
 	     {Name => "Frank Schreyer", Email => "schreyer@math.uni-sb.de"},
-	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"}
-	     },
+	     {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/~mike"},
+	     {Name => "Courtney Gibbons", Email => "crgibbon@hamilton.edu", HomePage => "http://people.hamilton.edu/cgibbons/"},
+	     {Name => "Branden Stone", Email => "bstone@adelphi.edu", HomePage => "http://math.adelphi.edu/~bstone/"}
+	     }, 
     	Headline => "betti diagram operations useful for investigating the Boij-Soederberg conjectures",
     	DebuggingMode => false
     	)
 
 export {
-     mat2betti, -- documented
-     lowestDegrees, -- documented
-     highestDegrees, -- documented
-     isPure, -- documented
-     pureBetti, -- documented
-     pureBettiDiagram, -- documented
+     "mat2betti", -- documented
+     "lowestDegrees", -- documented
+     "highestDegrees", -- documented
+     "isPure", -- documented
+     "makePureBetti", --documented
+     "makePureBettiDiagram", --documented
+     "pureBetti", -- documented
+     "pureBettiDiagram", -- documented
 
-     pureCharFree,
-     pureTwoInvariant,
-     pureWeyman,
-     pureAll,
+     "pureCharFree", -- documented    
+     "pureTwoInvariant", -- documented
+     "pureWeyman", -- documented
+     "pureAll", -- documented
      
-     randomSocleModule, -- documented
-     randomModule, -- documented
+     "randomSocleModule", -- documented
+     "randomModule", -- documented
      
-     pureCohomologyTable, -- documented
-     facetEquation, -- documented
-     dotProduct,
-     supportFunctional, -- not written
+     "pureCohomologyTable", -- documented
+     "facetEquation", -- documented
+     "dotProduct", -- documented
+     "supportFunctional", -- not written
      
-     bott, -- documented
+     "bott", -- documented
      
-     CohomologyTally,
-     mat2cohom
+     "CohomologyTally", -- documented
+     "mat2cohom", -- not written
+     
+     -- Methods
+     "decomposeBetti", -- documented
+     "decomposeDegrees", -- documented
+     "isMassEliminate", -- documented
+     "eliminateBetti", -- documented
+     "makeCI", -- documented
+
+     -- Options -- documented     
+     "EliminationSequence",     
+     "TableEntries",     
+     "LeastIntegerEntries",
+     "HerzogKuhl",
+     "RealizationModules",
+     
+     -- Types
+     "BettiEliminationTally"
      }
 -- Also defined here:
 -- pdim BettiTally
@@ -142,6 +164,7 @@ mat2cohom(Matrix,ZZ) := (M,lowDegree) -> (
      new CohomologyTally from a
      )
 
+--- Test 1
 TEST ///
 M = matrix "1,0,0,0;
         0,4,4,1"
@@ -152,12 +175,13 @@ B2 = mat2betti(M,2)
 assert(M == matrix B2)
 ///
 
+
+--- Test 2
 TEST ///
 m = matrix "5,0,0,0,0;
      	0,1,1,0,0;
 	0,0,0,1,2"
 c = mat2cohom (oo,0)
-
 ///
 
 matrix(BettiTally, ZZ, ZZ) := opts -> (B,lowestDegree, highestDegree) -> (
@@ -182,6 +206,8 @@ matrix(BettiTally,ZZ) := opts -> (B,lo) -> (
      matrix(B,lo,hi)
      )
 
+
+-- Test 3
 TEST ///
 R = ZZ/101[a..e]
 I = ideal borel monomialIdeal"abc,ad3,e4"
@@ -220,6 +246,8 @@ highestDegrees BettiTally := (B) -> (
 isPure = method()
 isPure BettiTally := (B) -> lowestDegrees B == highestDegrees B
 
+
+-- Test 4
 TEST ///
 matrix "1,0,0;
      	0,2,3"  
@@ -231,6 +259,7 @@ B2 = mat2betti oo
 assert(not isPure B2)
 ///
 
+-- Test 5
 TEST ///
 --load "BoijSoederberg.m2"
 m=matrix"1,0,0;
@@ -250,37 +279,225 @@ assert(highestDegrees B == {0,-infinity,4})
 -------------------------------------
 -- Pure Betti diagrams --------------
 -------------------------------------
---Input: Degs must be a strictly increasing list of positive integers
---Output: List of ranks of the minimal integral betti sequence that satisfy the
---"Peskine-Szpiro" equations
-pureBetti = method()
-pureBetti List := (Degs) -> (
+
+makePureBetti = method(Options => {TableEntries => LeastIntegerEntries})
+makePureBetti List := o -> Degs -> (
      c := # Degs;
      p := 1;
      for i from 1 to c-1 do (
-	  if Degs#i <= Degs#(i-1) then error "--pureBetti: expected an increasing list of integers";
-	  for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
-	  );
-     D := for i from 0 to c-1 list (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i);
-     Bettis := for i from 0 to c-1 list (p/D_i);
-     Bettis = Bettis / gcd Bettis;
-     apply(Bettis, x -> lift(x,ZZ)))
+       if Degs#i <= Degs#(i-1) then error "--makePureBetti: expected an increasing list of integers";
+       for j from 0 to i-1 do p=p*(Degs_i-Degs_j)
+       );
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+          D := for i from 0 to c-1 list (
+          (-1)^i * product(i, j->Degs_j-Degs_i) * product(i+1..c-1, j->Degs_j-Degs_i)
+          );
+          Bettis := for i from 0 to c-1 list (p/D_i);
+          Bettis = Bettis / gcd Bettis;
+          apply(Bettis, x -> lift(x,ZZ))
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+          for i from 0 to c-1 list (
+          1/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
+          )
+     )
+     else if o.TableEntries == RealizationModules
+     then (
+          L := for i from 1 to c-1 list (
+               binomial(Degs#i -1,Degs#i-Degs#(i-1) - 1)
+          );
+          tag := first sort keys makePureBettiDiagram(Degs,TableEntries=>HerzogKuhl);
+          b0 := (product L)*(1/(makePureBettiDiagram(Degs,TableEntries=>HerzogKuhl))#tag);
+          --returns an error if the first degree is not 0. need to fix.
+          for i from 0 to c-1 list (
+               b0/(product(for j from 0 to i-1 list Degs#i-Degs#j) * product(for j from i+1 to c-1 list Degs#j-Degs#i))
+          )
+     )
+)
 
+-- alias for previous function; same functionality as original
+pureBetti = method( )
+pureBetti List := (Degs) -> (
+    makePureBetti(Degs)
+    )
+
+
+-- Similar to pureBettiDiagram but with options and M2 naming convention
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method
+makePureBettiDiagram = method(Options => {TableEntries => LeastIntegerEntries})
+makePureBettiDiagram List := o -> (degs) -> (
+     B := makePureBetti(degs, TableEntries => o.TableEntries);
+     new BettiTally from apply(#degs, i -> (i,{degs#i},degs#i) => B#i)
+)
+
+-- alias for previous; same functionality as original
 pureBettiDiagram = method()
 pureBettiDiagram List := (degs) -> (
-     B := pureBetti degs;
-     new BettiTally from apply(#degs, i -> (i, {degs#i}, degs#i) => B#i)
+     makePureBettiDiagram(degs)
      )
+
+
+
+ 
+
+---Methods for general use---
+
+--  input: pure Betti table
+-- output: degree sequence (or an error if the diagram isn't pure)
+listPureDegrees = method();
+listPureDegrees BettiTally := B -> (
+     if lowestDegrees(B)==highestDegrees(B) then return highestDegrees(B)
+     else return "Error: diagram is not pure."
+     )
+
+
+-------------------------------------
+--- Elimination Orders --------------
+-------------------------------------
+BettiEliminationTally = new Type of BettiTally;     
+     
+--  input:  BettiTally of a Cohen-Macaulay Module
+-- output:  Boolean Value, True if more than one betti dies in the
+--     	    decompose algorithm     	    
+-- caveat:  Prints a warning if not the "Generic Case"
+isMassEliminate = method();
+isMassEliminate BettiTally :=  B -> (
+      local SCAN; local D; local LD;
+            
+      scan( values B, i -> if i != 1 then break print "-- Warning: Not Generic Case");
+      
+      D = decomposeDegrees(B,TableEntries=>HerzogKuhl);
+      LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+      
+      SCAN = scan( LD, l -> if #positions( l, i -> i != 0 ) != 1 then break "true" );
+      if SCAN === null
+      then return false 
+      else return true;
+     )
+
+--  input:  BettiTally of a Cohen-Macaulay Module
+--     	    Cohen-Macualay Ideal
+-- output:  List, if no mass elimination occurs, a list is given sequencing
+--     	    the homological degree of the elimination of betti numbers
+-- options: EliminationSequence => Boolean; default is false, thus the output is 
+--     	    a BettiTally.  If true, only the EliminationSequence is returned.
+eliminateBetti = method(Options =>{EliminationSequence => false});
+eliminateBetti BettiTally := o -> B -> (
+     local D; local LD;
+     local C;local L; local LL; local P; local K; local p; local c;
+     
+     if isMassEliminate(B) == true then print"\n --MASS EXTINCTION!--";
+     
+     D = decomposeDegrees(B,TableEntries=>HerzogKuhl);
+     LD = apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+     
+     if o.EliminationSequence == true then return apply( LD, l -> positions( l, i -> i != 0) );
+     
+     c = pdim B + 1;
+     p = #D;
+               
+     C = new MutableHashTable from B;
+     
+     L = prepend( {p}, eliminateBetti( B, EliminationSequence => true ) ); 
+     LL = apply(c, j -> positions(L, l ->  any( l, i -> i == j  )  ) );
+     P = flatten prepend ( p, apply(1..(#LL-1), i ->  append(LL#i, p ) ) );
+     if last LL == {0} then P = delete(0,P);
+     K = sort keys C;
+     scan(#P, i -> C#(K#i) = P#i );
+     return new BettiEliminationTally from C;
+    )
+
+eliminateBetti Ideal := o -> I -> (
+     return eliminateBetti( betti res I, EliminationSequence => o.EliminationSequence );
+     )
+  
+-- Test 6  
+TEST ///
+R = ZZ/8821[x,y,z,w]
+I = ideal(x,y^4,z^8,w^9)
+B = betti res I
+eliminateBetti I
+X = eliminateBetti B
+assert(X#(0,{0},0) === 12)
+assert(X#(2,{13},13) === 10)
+
+assert(isMassEliminate B === false)
+
+R = QQ[x,y,z,w]
+I = ideal(x^2,y^4,z^5,w^7)
+B = makeCI{2,4,5,7}
+C = betti res (R^1/I)
+assert(B===C)
+
+J = ideal(x^4,y^5,z^7,w^9)
+D = makeCI{4,5,7,9}
+E = betti res(R^1/J)
+assert(D===E)
+
+assert(isMassEliminate(E)===true)
+///
+ 
+--  input: List of degrees (type of an artinian complete intersection)
+--  output: BettiTally of such a complete intersection
+makeCI = method();
+makeCI List := degs ->  (
+     Cc := #degs; 
+     S := (ZZ/499)(monoid[vars(0..< Cc)]); -- BettiTally is independent of the field.
+     G := toSequence(for i from 0 to (Cc-1) list S_i^(degs#i));
+     I := ideal G;
+     betti res (S^1/G)
+     )
+
+
+---- helper method, not for export ----
+--  input:  BettiTally of a Cohen-Macaulay Module
+-- output:  List, differnce of degree sequence in decomposeDegreesHK
+degreeDiff = method();
+degreeDiff BettiTally := B -> (
+     local D; 
+     D = decomposeDegrees (B, TableEntries => HerzogKuhl);
+     return apply(#D-1, i-> D#(i+1)#1-D#i#1 );
+)
+     
+-------------------------
+-- end of patch (for now)
+-------------------------  
+
+
+-- Test 7
 
 TEST ///
 assert(pureBetti{0,1,2,3,4} == {1,4,6,4,1})
+assert(makePureBetti{0,1,2,3,4} == pureBetti{0,1,2,3,4})
+assert(makePureBetti({0,1,2,3,4}, TableEntries => HerzogKuhl) === {1/24,1/6,1/4,1/6,1/24})
+assert(makePureBetti({0,1,2,3,4},TableEntries => RealizationModules) == {1,4,6,4,1})
+
 B = pureBettiDiagram {0,1,2,3,4}
 assert(B == mat2betti matrix "1,4,6,4,1")
+C = makePureBettiDiagram {0,1,2,3,4}
+assert(C == mat2betti matrix "1,4,6,4,1")
+D = makePureBettiDiagram({0,1,2,3,4},TableEntries => LeastIntegerEntries)
+assert(B === D)
+assert(B === C)
+E = makePureBettiDiagram({0,1,2,3,4}, TableEntries => HerzogKuhl)
+assert(E === mat2betti matrix "1/24,1/6,1/4,1/6,1/24")
+F = makePureBettiDiagram({0,1,2,3,4}, TableEntries => RealizationModules)
+assert(F === mat2betti matrix "1/1,4,6,4,1")
 
 B1=pureBetti{0,2,3,4}
 assert (B1 == {1,6,8,3})
+assert (makePureBetti{0,2,3,4} == B1)
 D1=pureBettiDiagram {0,2,3,4}
 assert (D1 == mat2betti matrix "1,0,0,0; 0,6,8,3")
+assert (makePureBettiDiagram{0,2,3,4} == D1)
+assert(makePureBetti({0,2,3,4}, TableEntries => HerzogKuhl) == {1/24,1/4,1/3,1/8})
+C1 = makePureBettiDiagram({0,2,3,4}, TableEntries => HerzogKuhl)
+assert(C1 == mat2betti matrix "1/24,0,0,0; 0,1/4,1/3,1/8")
+E1 = makePureBettiDiagram({0,2,3,4}, TableEntries => RealizationModules)
+assert(lift(E1,ZZ) == D1)
 
 B2 = pureBetti {0,2,3,5}
 assert(B2 == {1,5,5,1})
@@ -289,7 +506,9 @@ m = matrix "1,0,0,0;
      	    0,5,5,0;
 	    0,0,0,1"   
 assert(D2 == mat2betti m)
-
+assert(makePureBetti({0,2,3,5},TableEntries=> RealizationModules) == {4,20,20,4})
+C2 = makePureBettiDiagram({0,2,3,5},TableEntries=> RealizationModules)
+assert(lift(C2,ZZ) == mat2betti matrix "4,0,0,0; 0,20,20,0; 0,0,0,4")
 ///
 
 ---------------------------------------------
@@ -303,6 +522,7 @@ isStrictlyIncreasing=L->(
      for i from 0 to #L-2 do t=(t and (L_i<L_(i+1)));
      t)
 
+-- Test 8
 TEST ///
 debug BoijSoederberg
 L={1,4,5,9}
@@ -319,10 +539,73 @@ assert(not isStrictlyIncreasing L)
 decompose1= B->(
      L:=lowestDegrees B;
      if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
-     C:=pureBettiDiagram L;
+--     C:=pureBettiDiagram L;
+     C:=makePureBettiDiagram L;     
      ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
      (C,ratio,merge(B,C, (i,j)->i-ratio*j))
      )
+ 
+--  input: BettiTally
+decompose2 = B -> (
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagram( L,TableEntries=>RealizationModules);
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     ) 
+
+--  input: BettiTally
+decompose3 = B -> (    
+     L:=lowestDegrees B;
+     if not isStrictlyIncreasing L then print "NOT IN THIS SIMPLEX OF PURE BETTI DIAGRAMS";
+     C:=makePureBettiDiagram( L,TableEntries=>HerzogKuhl);
+     ratio:=min apply(#L, i->(B#(i,{L_i}, L_i))/(C#(i,{L_i},L_i)));
+     (C,ratio,merge(B,C, (i,j)->i-ratio*j))
+     )
+
+
+
+-- Same as decompose but with options.
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method.
+-- We would like to replace 'decompse' with 'decomposeBetti'.
+decomposeBetti = method(Options => {TableEntries => LeastIntegerEntries})
+decomposeBetti BettiTally := o -> B -> (
+    
+    Components:={};
+    B1:= new MutableHashTable from B;
+    
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+     	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X:=decompose1(new BettiTally from B1);
+	     B1=new MutableHashTable from X_2;
+	     --change the type of the values in X_0 to ZZ
+	     Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+	     Components = append(Components, hold(X_1) * Y));
+     	 sum Components
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X3:=decompose3(new BettiTally from B1);
+	     B1=new MutableHashTable from X3_2;
+	     --change the type of the values in X3_0 to ZZ
+	     Y3:=new BettiTally from apply(pairs X3_0, i->{first i,last i});
+	     Components = append(Components, hold(X3_1) * Y3));
+	 sum Components	 
+     )
+     else if o.TableEntries == RealizationModules
+     then (
+     	 while min values B1 >= 0 and max values B1 > 0 do (
+	     X2:=decompose2(new BettiTally from B1);
+	     B1=new MutableHashTable from X2_2;
+	     --change the type of the values in X2_0 to ZZ
+	     Y2:=new BettiTally from apply(pairs X2_0, i->{first i,lift(last i,ZZ)});
+	     Components = append(Components, hold(X2_1) * Y2));
+     	sum Components
+     )     
+)
 
 --input: a BettiTally
 --output: The routine prints the Boij-Soederberg summands.
@@ -332,22 +615,18 @@ decompose1= B->(
 --each a rational coefficient followed by a hash table representing a pure betti diagram,
 --if it succeeds.
 decompose BettiTally := B-> (
-     Components:={};
-     B1:= new MutableHashTable from B;
-     while min values B1 >= 0 and max values B1 > 0 do (
-	  X:=decompose1(new BettiTally from B1);
-	  B1=new MutableHashTable from X_2;
-	  --change the type of the values in X_0 to ZZ
-	  Y:=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
-	  Components = append(Components, hold(X_1) * Y));
-     sum Components)
+    	decomposeBetti B
+     )
+ 
 
+-- Test 9
 TEST ///
 M=matrix "1,0,0,0;
         0,4,4,1"
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
 m2=mat2betti matrix "1,0,0;
@@ -355,12 +634,34 @@ m2=mat2betti matrix "1,0,0;
 M'=set{m1,m2}
 assert(L===M')
 
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L2=set apply(toList C2,x->x#1)
+m1c2=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2c2=mat2betti matrix "1/6,0,0;
+                     0,1/2,1/3"		     
+Mc2=set{m1c2,m2c2}
+assert(L2===Mc2)
+
+C3=decomposeBetti (B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"		     
+M'=set{m1,m2}
+assert(L===M')
+
+
+
+
 M=matrix "1,0,0,0;
      	  0,5,5,1;
 	  0,0,1,1"		    
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix "1,0,0,0;
                      0,6,8,3"
 m2=mat2betti matrix "1,0,0,0;
@@ -372,12 +673,43 @@ m3=mat2betti matrix "3,0,0,0;
 M'=set{m1,m2,m3}
 assert(L===M')
 
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L=set apply(toList C2,x->x#1)
+m1=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2=mat2betti matrix "1/30,0,0,0;
+                     0,1/6,1/6,0;
+		     0,0,0,1/30"
+m3=mat2betti matrix "1/40,0,0,0;
+                     0,1/12,0,0;
+		     0,0,1/8,1/15"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+C3=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "4,0,0,0;
+                     0,20,20,0;
+		     0,0,0,4"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+
+
 M=matrix"1,0,0,0;
      	 0,2,0,0;
 	 0,1,3,1"
 B=mat2betti M
-C=decompose B
-L=set apply(toList C,x->x#1)
+
+C1=decomposeBetti(B, TableEntries => LeastIntegerEntries )
+L=set apply(toList C1,x->x#1)
 m1=mat2betti matrix"1,0,0;
      	  0,2,0;
 	  0,0,1"
@@ -389,7 +721,138 @@ m3=mat2betti matrix"1,0,0;
 	  0,4,3"
 M'=set{m1,m2,m3}
 assert(L===M')
+
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L=set apply(toList C2,x->x#1)
+m1=mat2betti matrix"1/8,0,0;
+     	  0,1/4,0;
+	  0,0,1/8"
+m2=mat2betti matrix"1/40,0,0,0;
+     	  0,1/12,0,0;
+	  0,0,1/8,1/15"
+m3=mat2betti matrix"1/12,0,0;
+     	  0,0,0;
+	  0,1/3,1/4"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+C3=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix"3,0,0;
+     	  0,6,0;
+	  0,0,3"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
 ///
+
+-- Similar to decompose but with options.
+-- this was done in order to preserve the old functionality and give 
+-- the ability to add options to the method.
+-- This does not output the Betti tables themselves,
+-- but instead outputs their associated degree sequences. 
+decomposeDegrees = method(Options => {TableEntries => LeastIntegerEntries})
+decomposeDegrees BettiTally := o -> B -> (
+    
+    Components:={};
+    B1:= new MutableHashTable from B;
+    local X; local Y;
+    
+     if o.TableEntries == LeastIntegerEntries 
+     then (
+           while min values B1 >= 0 and max values B1 > 0 do (
+          X=decompose1(new BettiTally from B1);
+          B1=new MutableHashTable from X_2;
+          --change the type of the values in X_0 to ZZ
+          Y=new BettiTally from apply(pairs X_0, i->{first i, lift(last i, ZZ)});
+          Components = append(Components, (X_1,listPureDegrees(Y))));
+          Components
+     )
+     else if o.TableEntries == HerzogKuhl 
+     then (
+     while min values B1 >= 0 and max values B1 > 0 do (
+       X=decompose3(new BettiTally from B1);
+       B1=new MutableHashTable from X_2;
+       --change the type of the values in X_0 to ZZ
+       Y=new BettiTally from apply(pairs X_0, i->{first i,last i});
+       Components = append(Components, (X_1,listPureDegrees(Y))));
+     Components
+     )     
+     else if o.TableEntries == RealizationModules
+     then (
+           while min values B1 >= 0 and max values B1 > 0 do (
+          X=decompose2(new BettiTally from B1);
+          B1=new MutableHashTable from X_2;
+          --change the type of the values in X_0 to ZZ
+          Y=new BettiTally from apply(pairs X_0, i->{first i,last i});
+          Components = append(Components, (X_1,listPureDegrees(Y))));
+     Components
+     )     
+ )
+
+-- Test 10
+TEST ///
+restart
+loadPackage"BoijSoederberg"
+
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M	
+
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/3,{0,2,3,4}), (2/3,{0,2,3})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(8/1,{0,2,3,4}), (4/1,{0,2,3})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/3,{0,2,3,4}), (2/3,{0,2,3})}
+assert(C===D)
+
+
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
+
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/3,{0,2,3,4}), (7/15,{0,2,3,5}), (1/15,{0,2,4,5})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(8/1,{0,2,3,4}), (14/1,{0,2,3,5}), (8/1,{0,2,4,5})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/3,{0,2,3,4}), (7/60,{0,2,3,5}), (1/15,{0,2,4,5})}
+assert(C===D)
+
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+
+D = decomposeDegrees(B, TableEntries => LeastIntegerEntries )
+C = {(1/8,{0,2,4,5}), (3/8,{0,2,4}), (1/4,{0,3,4})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => HerzogKuhl )
+C = {(15/1,{0,2,4,5}), (3/1,{0,2,4}), (3/1,{0,3,4})}
+assert(C===D)
+
+D = decomposeDegrees(B, TableEntries => RealizationModules )
+C = {(1/8,{0,2,4,5}), (1/8,{0,2,4}), (1/4,{0,3,4})}
+assert(C===D)
+///
+
 
 ---------------------------------------------
 -- Cohomology Tables ------------------------
@@ -424,7 +887,8 @@ pureCohomologyTable(List, ZZ, ZZ) := (zeros, lo, hi) -> (
 	  if v == 0 then (w=w+1; continue;);
 	  (n-w,i) => lift(v,ZZ)
 	  ));
-
+  
+-- Test 11
 TEST ///
 m = matrix "4,3,2,1,0,0,0,0;
             0,0,0,0,1,2,3,4"
@@ -625,6 +1089,7 @@ facetEquation(List,ZZ,ZZ,ZZ) := (de,i,lowestDegree, highestDegree) -> (
      B1:=bettiMatrix(de,lowestDegree,highestDegree);
      if dotProduct(F,B1)>0 then F else -F)
 
+-- Test 12
 TEST ///
 m = matrix "0,1,-2;
             0,0,0;
@@ -669,6 +1134,7 @@ dotProduct(Matrix, ZZ, BettiTally) := (A,lowest, B) -> dotProduct(mat2betti(A,lo
 
 dotProduct(Matrix, BettiTally) := (A,B) -> dotProduct(A,0,B)
 
+-- Test 13
 TEST ///
 A = matrix"1,1,0;
      	   0,1,1;
@@ -746,6 +1212,7 @@ rkSchur = (n,L) -> (
      if #M<n then M=L|toList(n-#M:0);
      det map(ZZ^n, ZZ^n, (i,j)->binomial(M_i+n-1-i+j, n-1)))
 
+-- Test 14
 TEST ///
 debug BoijSoederberg
 rkSchur(6,{1,1,1,1}) -- exterior power
@@ -791,6 +1258,7 @@ pureWeyman List := (L) -> (
 pureAll = method()
 pureAll List := (L) -> (pureCharFree L, pureTwoInvariant L, pureWeyman L)
 
+-- Test 15
 TEST ///
 assert(pureAll{0,1,2,3,4} == (1,1,1))
 assert(pureAll{0,1,3,4} == (2,2,3))
@@ -828,6 +1296,7 @@ randomSocleModule(List, ZZ) := opts -> (L, m) -> (
      prune (image (f**(R^{s-r}/mR)))
      )
      
+-- Test 16     
 TEST ///
 setRandomSeed()
 L={0,1,3,4}
@@ -852,6 +1321,7 @@ randomModule(List,ZZ) := opts -> (L, m) -> (
      B:=pureBetti L;
      coker (M:=random(R^{m*B_0:-L_0}, R^{m*B_1:-L_1})))
 
+-- Test 17
 TEST ///
 setRandomSeed()
 L={0,4,9,10}
@@ -970,7 +1440,8 @@ bott(List,ZZ,ZZ):=(L,low,high)->(
 	  );
      new CohomologyTally from select(C, k -> k =!= null)
      )
-     
+
+-- Test 18     
 TEST ///
 B1=bott({3,2,1},-10,10)
 M=matrix"924,640,420,256,140,64,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
@@ -1021,13 +1492,16 @@ document { Key => BoijSoederberg,
 	  TO (matrix,BettiTally,ZZ,ZZ),
 	  TO lowestDegrees,
 	  TO highestDegrees,
-	  TO BettiTally
+	  TO BettiTally,
+	  TO makeCI
           },
      SUBSECTION "Pure Betti diagrams",
      UL {
 	  TO pureBetti,
+	  TO makePureBetti,
 	  TO pureBettiDiagram,
-	  TO isPure,
+	  TO makePureBettiDiagram,
+	  TO isPure
 	  },
      SUBSECTION "Cohomology tables",
      UL {
@@ -1037,7 +1511,11 @@ document { Key => BoijSoederberg,
 	  },
      SUBSECTION "Decomposition into pure diagrams",
      UL {
-	  TO (decompose,BettiTally)
+	  TO (decompose,BettiTally),
+	  TO decomposeBetti,
+	  TO decomposeDegrees,
+	  TO eliminateBetti,
+	  TO isMassEliminate
 	  },
      SUBSECTION "Three constructions for pure resolutions.  These routines provide the
      zero-th betti number given a degree sequence.",
@@ -1070,6 +1548,14 @@ document {
      computations involving CohomologyTally are implemented."
      
      }
+ 
+document {
+     Key => BettiEliminationTally,
+     Headline => "Betti elimination table",
+     "A ", TT "Betti elimination table", " is designed to show the order 
+     in which Betti numbers are eliminated by the Boij-Soederberg algorithm."
+     
+     } 
 
 document { 
      Key => {(lowestDegrees,BettiTally),lowestDegrees},
@@ -1152,6 +1638,34 @@ document {
      Caveat => {},
      SeeAlso => {pureBettiDiagram}
      }
+ 
+ document { 
+     Key => {(makePureBetti,List),makePureBetti,[makePureBetti, TableEntries]},
+     Headline => "list of Betti numbers corresponding to a degree sequence",
+     Usage => "pureBetti L",
+     Inputs => {
+	  "L" => "of strictly increasing integers",
+	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
+	  },
+     Outputs => {
+	  List => "a list of the Betti numbers which satisfy the Herzog-Kuhl equations"
+	  },
+     "The numerator P(t) of the Hilbert function of a module whose free resolution has a pure resolution
+     of type L has the form P(t) = b_0 t^(d_0) - b_1 t^(d_1) + ... + (-1)^c b_c t^(d_c), 
+     where L = {d_0, ..., d_c}.  If (1-t)^c divides P(t), as in the case where the module has codimension c,
+     then the b_0, ..., b_c are determined up to a unique scalar multiple.  This 
+     routine returns the smallest positive integral solution of these (Herzog-Kuhl) equations.",
+     EXAMPLE lines ///
+     	  makePureBetti{0,2,4,5}
+	  makePureBetti({0,2,4,5},TableEntries => HerzogKuhl)
+	  makePureBetti({0,2,4,5},TableEntries => RealizationModules)
+	  makePureBetti{0,3,4,5,6,7,10}
+	  makePureBetti({0,3,4,5,6,7,10},TableEntries => HerzogKuhl)
+	  makePureBetti({0,3,4,5,6,7,10},TableEntries => RealizationModules)
+	  ///,
+     Caveat => {},
+     SeeAlso => {pureBetti,makePureBettiDiagram}
+     }
 
 document { 
      Key => {(pureBettiDiagram,List),pureBettiDiagram},
@@ -1172,6 +1686,33 @@ document {
      Caveat => {},
      SeeAlso => {pureBetti, betti}
      }
+ 
+ document { 
+     Key => {makePureBettiDiagram, (makePureBettiDiagram,List),[makePureBettiDiagram, TableEntries]},
+     Headline => "makes a pure Betti diagram given a list of degrees",
+     Usage => "makePureBettiDiagram L",
+     Inputs => {
+	  "L" => "of strictly increasing integers",
+	  TableEntries => String => "proscribes the scaled versions of the entries of the pure diagram; options are LeastIntegerEntries, HerzogKuhl, and RealizationModules."
+	  },
+     Outputs => {
+	  BettiTally => "containing the Betti numbers which satisfy the Herzog-Kuhl equations according to given options. Defults to the minimal integral Betti numberswhich satisfy the Herzog-Kuhl equations."
+	  },
+     "See ", TO "pureBetti", " for a description of the Herzog-Kuhl equations.",
+     EXAMPLE lines ///
+     	  makePureBettiDiagram{0,2,4,5}
+	  makePureBettiDiagram({0,2,4,5}, TableEntries => HerzogKuhl)
+	  makePureBettiDiagram{0,3,4,5,6,7,10}
+	  makePureBettiDiagram({0,3,4,5,6,7,10}, TableEntries => RealizationModules)
+	  makePureBettiDiagram{0,3,4,5,6,7,8,11}
+	  makePureBettiDiagram({0,3,4,5,6,7,8,11}, TableEntries => HerzogKuhl)
+	  makePureBettiDiagram({0,3,4,5,6,7,8,11}, TableEntries => RealizationModules)
+	  ///,
+     Caveat => {},
+     SeeAlso => {LeastIntegerEntries, HerzogKuhl,RealizationModules}
+     }
+
+
 
 document { 
      Key => (decompose,BettiTally),
@@ -1222,9 +1763,92 @@ document {
      	  try decompose B else "Betti diagram cannot exist"
 	  pureBettiDiagram lowestDegrees B
      	  ///,
-     SeeAlso => {pureBettiDiagram, betti, value, lift, toList, pack}
+     SeeAlso => {decomposeBetti, decomposeDegrees, makePureBettiDiagram, betti, value, lift, toList, pack}
      }
 
+document { 
+     Key => {decomposeBetti,[decomposeBetti,TableEntries]},
+     Headline => "write a Betti diagram as a positive combination of pure integral diagrams",
+     Usage => "decomposeBetti B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  decomposeBetti(B)
+	  ///,
+     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => HerzogKuhl)
+     	  ///,
+     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => RealizationModules)
+	 ///,
+     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
+     }
+
+document {
+    Key => TableEntries,
+    Headline => "Set the convention for what kind of pure Betti diagrams to use in a decomposition.",
+    "The possible options are LeastIntegerEntries, HerzogKuhl, and RealizationModules.",
+    SeeAlso => {decomposeBetti}
+    } 
+
+document {
+    Key => LeastIntegerEntries,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    } 
+
+document {
+    Key => HerzogKuhl,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    }
+
+document {
+    Key => RealizationModules,
+    Headline => "An argument for the option TableEntries",
+    SeeAlso => {decomposeBetti,TableEntries}
+    }
+
+document { 
+     Key => decomposeDegrees,
+     Headline => "Find the degree sequences of pure diagrams occuring in a Boij-Soederberg decomposition of B",
+     Usage => "decomposeDegrees B",
+     Inputs => {
+	  "B" => "not necessarily Cohen-Macaulay"
+	  },
+     Outputs => {
+	  Expression => "a positive combination of pure integral Betti diagrams"
+	  },
+     "This applies the algorithm implied by the Boij-Soederberg conjecture, and also works 
+     even if the diagram does not corresponds to a Cohen-Macaulay module.",
+     EXAMPLE lines ///
+     	  R = ZZ/103[a,b,c]
+	  I = ideal"a3,abc,b4,c4,b2c2"
+	  B = betti res I
+	  decomposeBetti(B)
+	  ///,
+     "We can see what the pure diagrams should be using the Herzog-Kuhl equations from Boij-Soederberg's initial paper",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => HerzogKuhl)
+     	  ///,
+     "And we can also see what the realization modules from the Eisenbud-Schreyer paper will be.",
+     EXAMPLE lines ///
+     	 decomposeBetti(B,TableEntries => RealizationModules)
+	 ///,
+     SeeAlso => {(decompose,BettiTally),decomposeDegrees}
+     }
+ 
 document { 
      Key => {(mat2betti,Matrix,ZZ),(mat2betti,Matrix),mat2betti},
      Headline => "matrix to Betti diagram",
@@ -1244,6 +1868,18 @@ document {
 	  ///,
      SeeAlso => {(matrix,BettiTally)}
      }
+ 
+document {
+    Key => {makeCI},
+    Headline => "Make the Betti diagram of a complete intersection ideal",
+    Usage => "makeCI(degrees)",
+    Inputs => {
+	"degrees" => "A list of degrees of the forms generating the complete intersection ideal",
+	},
+    Outputs => {
+	BettiTally
+	}
+    } 
 
 document { 
      Key => {(matrix,BettiTally,ZZ,ZZ),(matrix,BettiTally,ZZ),(matrix,BettiTally)},
@@ -1633,6 +2269,7 @@ document {
 	SeeAlso => {dotProduct, pureBettiDiagram}
 	}
 
+-- Test 19
 TEST ///
 d={0,2,4}
 facetEquation(d,0,-1,3)
@@ -1660,6 +2297,7 @@ d={5,7,9,11}
 facetEquation(d,2,0,12)
 ///
 
+-- Test 20
 TEST ///
 d={1,3,4,5,7}
 e={1,3,5,6,7}
@@ -1711,6 +2349,52 @@ document {
 	  ///,
      SeeAlso => {facetEquation, pureBettiDiagram}
      }
+ 
+ document {
+    Key => {isMassEliminate, (isMassEliminate,BettiTally)},
+    Headline => "determines whether the Boij-Soederberg decomposition algorithm eliminates multiple Betti numbers at the same time",
+    Usage => "isMassEliminate(B)",
+    Inputs => {
+	"B", BettiTally => "a Betti diagram"
+	},
+    Outputs => {Boolean => "True or false if..."},
+    EXAMPLE lines ///
+    	  R = ZZ/8821[x,y,z,w]
+	  I = ideal(x^2,y^2,z^4,w^8)
+	  B = betti res I
+	  isMassEliminate(B)
+	  J = ideal(x^4,y^5,z^7,w^9)
+          C = betti res J
+	  isMassEliminate(C)
+	///
+	}
+    
+    
+document { 
+     Key => {eliminateBetti, (eliminateBetti,BettiTally), (eliminateBetti,Ideal)},
+     Headline => "elimination table for a Betti diagram",
+     Usage => "eliminateBetti(B)\neliminateBetti(I)",
+     Inputs => {
+	  "B", BettiTally => "a Betti diagram",
+	  "I", Ideal => "an Ideal"
+	  },
+     Outputs => {
+	  BettiEliminationTally => "The elimination table of B or of the Betti table of R/I"
+	  },
+     EXAMPLE lines ///
+          R = ZZ/8821[x,y,z,w]
+	  I = ideal(x,y^2,z^4,w^8)
+	  B = betti res I
+	  eliminateBetti(B)
+	  ///,
+     SeeAlso => {BettiEliminationTally,isMassEliminate}
+     }
+ 
+document { --- option names for eliminateBetti
+    Key => {EliminationSequence},
+    Headline => "option for eliminateBetti"
+    }
+ 
 
 end
 
@@ -1788,3 +2472,121 @@ betti res M
 tateResolution(presentation M, -5,5)
 sheafCohomology(presentation M, E, -5,5)
 setupBGG
+
+--
+-- Branden's tests
+restart
+loadPackage"BoijSoederberg"
+check BoijSoederberg
+
+
+restart
+uninstallPackage "BoijSoederberg"
+restart
+installPackage "BoijSoederberg"
+check BoijSoederberg
+viewHelp BoijSoederberg
+
+makeCI{2,2,3}
+monoid[vars(0..2)]
+QQ(monoid[vars(0..2)])
+
+S = ZZ/499[monoid[vars(0..2)]]
+-- test 1
+restart
+loadPackage"BoijSoederberg"
+M=matrix "1,0,0,0;
+        0,4,4,1"
+B=mat2betti M
+
+C1=decomposeBetti B
+L=set apply(toList C1,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"
+M'=set{m1,m2}
+assert(L===M')
+
+C2=decomposeBetti(B, TableEntries => HerzogKuhl )
+L2=set apply(toList C2,x->x#1)
+m1c2=mat2betti matrix "1/24,0,0,0;
+                     0,1/4,1/3,1/8"
+m2c2=mat2betti matrix "1/6,0,0;
+                     0,1/2,1/3"		     
+Mc2=set{m1c2,m2c2}
+assert(L2===Mc2)
+
+C3=decomposeBetti (B, TableEntries => RealizationModules )
+L=set apply(toList C3,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0;
+                     0,3,2"		     
+M'=set{m1,m2}
+assert(L===M')
+
+
+M=matrix "1,0,0,0;
+     	  0,5,5,1;
+	  0,0,1,1"		    
+B=mat2betti M
+C=decompose B
+C=decomposeBetti B
+C=decomposeBetti(B, TableEntries => HerzogKuhl )
+C=decomposeBetti(B, TableEntries => RealizationModules )
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix "1,0,0,0;
+                     0,6,8,3"
+m2=mat2betti matrix "1,0,0,0;
+                     0,5,5,0;
+		     0,0,0,1"
+m3=mat2betti matrix "3,0,0,0;
+                     0,10,0,0;
+		     0,0,15,8"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+M=matrix"1,0,0,0;
+     	 0,2,0,0;
+	 0,1,3,1"
+B=mat2betti M
+C=decompose B
+L=set apply(toList C,x->x#1)
+m1=mat2betti matrix"1,0,0;
+     	  0,2,0;
+	  0,0,1"
+m2=mat2betti matrix"3,0,0,0;
+     	  0,10,0,0;
+	  0,0,15,8"
+m3=mat2betti matrix"1,0,0;
+     	  0,0,0;
+	  0,4,3"
+M'=set{m1,m2,m3}
+assert(L===M')
+
+
+-- end Branden's tests
+--
+
+-- Courtney's tests
+--
+
+-- Test 21
+TEST ///
+R = QQ[x,y,z,w]
+I = ideal(x^2,y^4,z^5,w^7)
+B = makeCI(2,4,5,7)
+C = betti res (R^1/I)
+assert(B===C)
+
+J = ideal(x^4,y^5,z^7,w^9)
+D = makeCI(4,5,7,9)
+E = betti res(R^1/J)
+assert(D===E)
+
+assert(isMassEliminate(E)===true)
+///
+
+-- end Courtney's tests
+--

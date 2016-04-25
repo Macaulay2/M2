@@ -2,7 +2,7 @@
 -- functions related to numerical primary decomposition
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 -------------------------------------------------------
-export { isPointEmbedded, isPointEmbeddedInCurve, AllVisible }
+export { "isPointEmbedded", "isPointEmbeddedInCurve", "AllVisible" }
 
 debug NumericalHilbert
 

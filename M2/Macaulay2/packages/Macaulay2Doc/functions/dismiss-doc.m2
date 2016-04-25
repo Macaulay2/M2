@@ -19,7 +19,7 @@ document {
 	  },
      EXAMPLE lines ///
      	  newPackage "PKG"
-	  export x1
+	  export "x1"
 	  x1=3
 	  endPackage "PKG"
 	  dictionaryPath

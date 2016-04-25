@@ -45,12 +45,12 @@ newPackage(
      DebuggingMode => false
      )
 
-export {Arrangement, arrangement, arrangementLibrary, CentralArrangement,
-     deCone, deletion, orlikSolomon, orlikTerao, HypAtInfinity,
-     NaiveAlgorithm, typeA, typeB, typeD, graphic, Flat, flat, flats,
-     circuits, tolist, closure, meet, vee, subArrangement, changeRing,
-     restriction, arrangementSum, EPY, der, HS, isDecomposable, isCentral, 
-     multIdeal, lct, randomArrangement}
+export {"Arrangement", "arrangement", "arrangementLibrary", "CentralArrangement",
+     "deCone", "deletion", "orlikSolomon", "orlikTerao", "HypAtInfinity",
+     "NaiveAlgorithm", "typeA", "typeB", "typeD", "graphic", "Flat", "flat", "flats",
+     "circuits", "tolist", "closure", "meet", "vee", "subArrangement", "changeRing",
+     "restriction", "arrangementSum", "EPY", "der", "HS", "isDecomposable", "isCentral", 
+     "multIdeal", "lct", "randomArrangement"}
 
 -- these are already defined: compress, trim, coefficients,
 -- euler, poincare, cone, rank, ring, matrix
@@ -1715,6 +1715,7 @@ assert(trivial**trivial != trivial)
 assert(trivial**QQ != trivial)
 trim trivial
 
+R = QQ[x,y,z];
 A = typeA(3)
 assert((prune image der A) == (ring A)^{-1,-2,-3})  -- free module of derivations?
 assert((prune image der(A, {2,2,2,2,2,2})) == (ring A)^{-4,-4,-4})
@@ -1728,8 +1729,8 @@ assert(not isDecomposable A3)
 X3 = arrangement "X3"
 assert(isDecomposable X3)
 assert(multIdeal(2,X3) == multIdeal(2.2,X3))
-time I1 := orlikTerao(X3);
-time I2 := orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
+time I1 = orlikTerao(X3);
+time I2 = orlikTerao(X3,ring I1,NaiveAlgorithm=>true);
 assert(I1==I2)
 
 M = arrangement "MacLane"
