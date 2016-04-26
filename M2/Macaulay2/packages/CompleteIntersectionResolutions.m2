@@ -13,6 +13,7 @@ newPackage(
 	--things related to Ext over a complete intersection
 	   "ExtModule", 
 	   "evenExtModule", 
+	   "OutRing",
 	   "oddExtModule",
 	   "ExtModuleData",
 	--tools used to construct the "higher matrix factorization"
@@ -370,28 +371,33 @@ ExtModule Module := M -> (
      prune coker v presentation E)
 
   
-evenExtModule = method()
-evenExtModule Module := M -> (
+evenExtModule = method(Options =>{OutRing => 0})
+evenExtModule Module := opts -> M -> (
      --If M is a module over a complete intersection R
      --of codim c, the script returns 
      --Ext^(even)(M,(ring M)^1/(ideal vars ring M))
      --as a module generated in degree 0
      --over the polynomial ring kk[X_1..X_(codim R)],
      --where the vars have degree 1
+     --unless the option Outring => outring is given, with outring being
+     --a polynomial ring with numGens ring E, in chich case this ring is used.
      E := ExtModule M;
      P := positions(flatten degrees E, even);
      Ee:=prune image (E_P);
      T := ring E;
+     if class opts#OutRing === PolynomialRing then T1 := opts#OutRing else
+     (
      kk:= coefficientRing T;
      X := symbol X;
-     T1 := kk[X_0..X_(numgens T -1)];
+     T1 = kk[X_0..X_(numgens T -1)]
+     );
      v1 := map(T1, T, vars T1, DegreeMap => i->{(first i)//2});
      coker v1 presentation Ee
      )
 
 
-oddExtModule = method()
-oddExtModule Module := M -> (
+oddExtModule = method(Options =>{OutRing => 0})
+oddExtModule Module := opts -> M -> (
      --If M is a module over a complete intersection R
      --of codim c, the script returns 
      --Ext^(odd)(M,(ring M)^1/(ideal vars ring M))
@@ -402,9 +408,12 @@ oddExtModule Module := M -> (
      P := positions(flatten degrees E, odd);
      Eo:=prune image (E_P);
      T := ring E;
+     if class opts#OutRing === PolynomialRing then T1 := opts#OutRing else
+     (
      kk:= coefficientRing T;
      X := symbol X;
-     T1 := kk[X_0..X_(numgens T -1)];
+     T1 = kk[X_0..X_(numgens T -1)]
+     );
      v1 := map(T1, T,vars T1, DegreeMap => i->{(first i)//2});
      coker v1 presentation Eo
      )
@@ -1189,7 +1198,7 @@ freeExteriorSummand(Module) := M -> (
 
 S2 = method()
 S2(ZZ,Module) := Matrix => (b,M)-> (
-     --returns a map M --> M', where M' = \oplus_d>=b H^0(\tilde M).
+     --returns a map M --> M', where M' = \oplus_{d>=b} H^0(\tilde M).
      --the map is equal to the S2-ification AT LEAST in degrees >=b.
      S := ring M;
      r:= regularity M;
@@ -1209,7 +1218,6 @@ TateResolution(Module,ZZ,ZZ) := (M,low,high) ->(
 	 F := res (coker d, LengthLimit =>(high-low+2));
 	 complete F;
          T := (chainComplex reverse apply(high-low+1, j->transpose (F.dd_j)))[-low];
-         print betti T;
 	 T
          )
 TateResolution(Module,ZZ) := (M,b) -> TateResolution(M,b,b)
@@ -2829,9 +2837,20 @@ doc ///
 	  oddExtModule
 ///
 doc ///
+   Key
+    OutRing
+   Headline
+    Option allowing specification of the ring over which the output is defined
+   SeeAlso
+    evenExtModule
+    oddExtModule
+///
+
+doc ///
         Key 
 	 evenExtModule
 	 (evenExtModule, Module)
+	 [evenExtModule, OutRing]
         Headline 
 	 even part of Ext^*(M,k) over a complete intersection as module over CI operator ring
         Usage
@@ -2845,6 +2864,8 @@ doc ///
         Description
          Text
 	  Extracts the even degree part from ExtModule M
+	  If the optional argument OutRing => T is given, and class T === PolynomialRing,
+	  then the output will be a module over T.
          Example
 	  kk= ZZ/101
 	  S = kk[x,y,z]
@@ -2859,12 +2880,14 @@ doc ///
         SeeAlso 
 	  ExtModule 
 	  oddExtModule
+	  OutRing
 
      ///
 doc ///
         Key 
 	 oddExtModule
 	 (oddExtModule, Module)
+	 [oddExtModule,OutRing]
         Headline 
 	 odd part of Ext^*(M,k) over a complete intersection as module over CI operator ring
         Usage
@@ -2877,7 +2900,9 @@ doc ///
 	   over a polynomial ring with gens in degree 1
         Description
          Text
-	  Extracts the odd degree part from ExtModule M
+	  Extracts the odd degree part from ExtModule M.
+	  If the optional argument OutRing => T is given, and class T === PolynomialRing,
+	  then the output will be a module over T.
          Example
 	  kk= ZZ/101
 	  S = kk[x,y,z]
@@ -2892,6 +2917,7 @@ doc ///
         SeeAlso 
 	  ExtModule 
 	  evenExtModule
+          OutRing
      ///
 
 
@@ -4017,6 +4043,31 @@ doc ///
 ///
 
 ------TESTs------
+TEST/// -- tests of the "with components" functions
+S = ZZ/101[a,b]
+M = S^{1,2}
+N = S^{3,5}
+M' = (S^{1}++S^{2})
+N' = S^{3}++S^{5}
+
+H = Hom(M,N) 
+T = M**N
+D = dual M
+H' = HomWithComponents (M',N')
+T' = tensorWithComponents(M',N')
+D' = dualWithComponents M'
+assert( H == H' and T == T' and D == D')
+assert(HomWithComponents(M',N') == tensorWithComponents(dualWithComponents M', N'))
+assert(components HomWithComponents(M',N') == components tensorWithComponents(dualWithComponents M', N'))
+M = S^{1,2}/ideal(a^2)
+M' = S^{1}/ideal(a^2)++S^{2}/ideal(a^2)
+M == M'
+(T = M**N) == M'**N'
+assert(T == tensorWithComponents(M',N'))
+M= S^0
+M'=S^0++S^0
+assert(M**M == tensorWithComponents (M',M'))
+///
 TEST///
 setRandomSeed 0
 R1=ZZ/101[a,b,c]/ideal(a^2,b^2,c^5)
@@ -4421,8 +4472,18 @@ assert(isFreeModule E);
 assert(rank E==1);
 ///
 
+///TEST
+R = ZZ/101[a,b,c]/ideal"a3,b3,c3"
+M = R^1/ideal"ab,ac,bc"
+U = ZZ/101[A,B,C]
+Ee = evenExtModule(M, OutRing => U)
+Eo = oddExtModule(M, OutRing => U)
+assert(ring Ee === U)
+assert(ring Eo === U)
+///
 
 end--
+
 restart
 --notify=true
 uninstallPackage "CompleteIntersectionResolutions"
@@ -4430,28 +4491,4 @@ installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 
 viewHelp CompleteIntersectionResolutions
-loadPackage("CompleteIntersectionResolutions", Reload=>true)
-loadPackage("MCMApproximations", Reload => true)
-
-viewHelp setupRings
-viewHelp regularitySequence
-Rlist = setupRings(4,2, Randomize => false)
-S = Rlist_0
-R= Rlist_4
-rsfs = randomSquareFreeStep
-J = monomialIdeal 0_S
-time L= apply(100, j-> (J = rsfs(J,AlexanderProbability => .1))_0);
-I = L_5
-apply (L, I -> regularitySequence (Rlist, module sub(I, R)))
-
---bug as of April 13
-restart
-loadPackage "MCMApproximations"
-S = ZZ/101[x_0..x_3]
-R = S/ideal(x_0^2)
-N = cokernel matrix {{0, x_1, -x_2, x_3^2, 0, x_2^2}, {x_2, 0, x_1, 0, x_3^2,
-        0}}
-isHomogeneous N
-approximation (N, Total => false)
-
 
