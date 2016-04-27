@@ -27,7 +27,7 @@ inv=J-> quotient(ideal first first entries gens gb J, J)
 reduced=J->inv inv J
 
 -- computing the reduced multiplied ideal
-add=(J,K)-> reduced J*K
+add=(J,K)-> reduced (J*K)
 
 -- computing the reduced squared ideal 
 double=J->add(J,J)
