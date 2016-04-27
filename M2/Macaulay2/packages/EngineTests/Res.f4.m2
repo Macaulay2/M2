@@ -114,9 +114,7 @@ TEST ///
   S = ZZ/101[a..d]
   I = ideal(a*b-a-1, b^3-c*d-3)
   time res I
-  C = res(ideal(I_*), FastNonminimal => true) -- Want: to do this, just don't try to minimize??
-  betti C -- ??
-  C.dd 
+  assert try(res(ideal(I_*), FastNonminimal => true); false) else true
   
   -- don't allow quotient rings
   S = ZZ/101[a..d]
@@ -130,7 +128,7 @@ TEST ///
   -- don't allow zero heft vectors
   -- this code never gets to non minimal res code in the engine.
   S = ZZ/101[a,b,c,d,Degrees=>{-1,1,2,-5}]  
-  assert (try res((ideal gens S)^3, FastNonminimal => true); false) else true;
+  assert try (res((ideal gens S)^3, FastNonminimal => true); false) else true;
   
   -- don't allow multi-gradings  
   S = ZZ/101[a,b,c,d,DegreeRank=>4]

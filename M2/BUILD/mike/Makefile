@@ -269,7 +269,8 @@ linux-opt64 : always
 		--prefix="`pwd`/installed" \
 		--disable-ntl-wizard \
 		--disable-strip \
-		--enable-download
+		--enable-download \
+		--enable-build-libraries="gc mpir flint"
 
 #		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 # 		CC="gcc -m64" CXX="g++ -m64" \
