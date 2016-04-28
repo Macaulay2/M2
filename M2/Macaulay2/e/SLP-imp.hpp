@@ -213,13 +213,16 @@ enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILE
 
 // ****************************** XXX **************************************************
 template <typename RT> 
-bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     MutableMatrix* output_extras,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold
-                   ) 
+bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm > :: track(
+     const MutableMatrix* inputs, 
+     MutableMatrix* outputs, 
+     MutableMatrix* output_extras,  
+     gmp_RR init_dt, 
+     gmp_RR min_dt,
+     gmp_RR epsilon, // o.CorrectorTolerance,
+     int max_corr_steps, 
+     gmp_RR infinity_threshold,
+     bool checkPrecision )
 {
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
   size_t solveLinearTime = 0, solveLinearCount = 0, evaluateTime = 0;
@@ -550,7 +553,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 
       if (not linearSolve_success)
         status = SINGULAR;
-      else if (not t0equals1) { // precision check 
+      else if (checkPrecision and not t0equals1) { // precision check 
         mHxH.evaluate(x0c0,HxH);
         MatOps::setFromSubmatrix(HxH,0,n-1,0,n-1,LHSmat); // Hx
         // setRandomUnitVector(RHSmat,n);
@@ -637,13 +640,15 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm >::track(const Mutabl
 }
 
 template <typename RT, typename Algorithm>
-bool HomotopyConcrete< RT, Algorithm >::track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                                              MutableMatrix* output_extras,  
-                                              gmp_RR init_dt, gmp_RR min_dt,
-                                              gmp_RR epsilon, // o.CorrectorTolerance,
-                                              int max_corr_steps, 
-                                              gmp_RR infinity_threshold
-                                              )
+bool HomotopyConcrete< RT, Algorithm >::track(
+     const MutableMatrix* inputs, 
+     MutableMatrix* outputs, 
+     MutableMatrix* output_extras,  
+     gmp_RR init_dt, gmp_RR min_dt,
+     gmp_RR epsilon, // o.CorrectorTolerance,
+     int max_corr_steps, 
+     gmp_RR infinity_threshold,
+     bool checkPrecision)                                              
 {
   ERROR("track: not implemented for this type of ring");
   return false;  

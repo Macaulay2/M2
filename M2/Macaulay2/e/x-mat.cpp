@@ -721,7 +721,8 @@ M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix
                          gmp_RR init_dt, gmp_RR min_dt,
                          gmp_RR epsilon, // o.CorrectorTolerance,
                          int max_corr_steps, 
-                         gmp_RR infinity_threshold) 
+                         gmp_RR infinity_threshold,
+                         M2_bool checkPrecision) 
 {
   auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
   /*
@@ -743,7 +744,8 @@ M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix
                   init_dt, min_dt,
                   epsilon, // o.CorrectorTolerance,
                   max_corr_steps, 
-                  infinity_threshold);
+                  infinity_threshold,
+                  checkPrecision);
 }
 
 M2_string rawHomotopyToString(Homotopy * H) { 

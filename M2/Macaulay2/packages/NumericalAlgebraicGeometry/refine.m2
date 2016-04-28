@@ -285,6 +285,7 @@ endGameCauchy (GateHomotopy, Number, Point):= o -> (H, t'end, p0) -> (
 -- OUTPUT: changes x0 in place, returns the winding number or 0 if failed 
 endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
     assert(numcols x0in === 1);
+    checkPrecision := true;  -- !!! should be adaptive eventually
     if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
     o = fillInDefaultOptions o;
     m := o#"number of vertices";
@@ -302,7 +303,9 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
 	x0out, statusOut, -- output goes here
 	o.tStep, o.tStepMin, 
 	o.CorrectorTolerance, o.maxCorrSteps, 
-	toRR o.InfinityThreshold);
+	toRR o.InfinityThreshold,
+	checkPrecision
+	);
     s'status := solutionStatusLIST#(statusOut_(0,0));
     if s'status =!= Regular then return 0; -- error
     
@@ -323,7 +326,8 @@ endGameCauchy (GateHomotopy, Number, MutableMatrix):= o -> (H, t'end, x0in) -> (
 		out, statusOut, -- output goes here
 		o.tStep, o.tStepMin, 
 		o.CorrectorTolerance, o.maxCorrSteps, 
-		toRR o.InfinityThreshold);
+		toRR o.InfinityThreshold,
+		checkPrecision);
     	    if DBG>2 then << "-- endGameCauchy: trackHomotopyM2engine time = " << first ti'out << " sec." << endl;
     	    s'status = solutionStatusLIST#(statusOut_(0,0));
 	    if s'status =!= Regular then return 0; -- error

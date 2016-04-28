@@ -638,7 +638,8 @@ trackHomotopyM2engine = (H, inp,
 	out, statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
-	InfinityThreshold
+	InfinityThreshold,
+	checkPrecision
 	) -> (
     if numVars H != numrows inp - 1 -- one input is t-value 
     then error "the number of variables does not match the number of inputs"; 
@@ -648,7 +649,8 @@ trackHomotopyM2engine = (H, inp,
 	raw out, raw statusOut,
 	tStep, tStepMin, 
 	CorrectorTolerance, maxCorrSteps, 
-	InfinityThreshold)
+	InfinityThreshold,
+	checkPrecision)
     )
 extractM2engineOutput = method()
 extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
@@ -809,6 +811,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 --------------------- M2engine --------------------------------------------------------------------------
      rawSols := if o.Software===M2engine then ( 
 	 prec := o.Precision; -- current precision
+	 checkPrecision := o.Precision===infinity; 
 	 if prec === infinity then prec = 53; -- for adaptive precision, start with double precision
 	 mainRing := (o.Field)_prec; -- homotopyRing, i.e. RR or CC with current precision !!!
 	 -- if class H === SpecializedParameterHomotopy then 1/0;
@@ -828,7 +831,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     out, statusOut,
 	     o.tStep, o.tStepMin, 
 	     o.CorrectorTolerance, o.maxCorrSteps, 
-	     toRR o.InfinityThreshold);
+	     toRR o.InfinityThreshold,
+	     checkPrecision);
 	 if DBG>2 then 
 	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
     	 sols := new MutableList from extractM2engineOutput(H,out,statusOut);
@@ -858,7 +862,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     out, statusOut,
 			     abs s.LastIncrement, minimalStepSize currentPrec, 
 			     o.CorrectorTolerance, o.maxCorrSteps, 
-			     toRR o.InfinityThreshold);
+			     toRR o.InfinityThreshold,
+			     checkPrecision);
 			 if DBG>3 then 
 			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			 sols#nS = first extractM2engineOutput(H,out,statusOut);
@@ -879,7 +884,8 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     			 out, statusOut,
 	     			 abs s.LastIncrement, minimalStepSize currentPrec, 
 	     			 o.CorrectorTolerance, o.maxCorrSteps, 
-	     			 toRR o.InfinityThreshold);
+	     			 toRR o.InfinityThreshold,
+				 checkPrecision);
 	 		     if DBG>3 then 
 	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
 			     sols#nS = first extractM2engineOutput(H,out,statusOut);
@@ -1079,7 +1085,8 @@ mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
         o.tStepMin,
         o.CorrectorTolerance,
         o.maxCorrSteps,
-        o.InfinityThreshold
+        o.InfinityThreshold,
+	false
         );
     -- now we need to grab results
     --(out, for i from 0 to numColumns statusOut - 1 list (solutionStatusLIST#(statusOut_(0,i)), statusOut_(1,i)))
@@ -1090,7 +1097,7 @@ TEST ///
 restart
 setRandomSeed 0
 debug needsPackage "NumericalAlgebraicGeometry"
-NAGtrace 1
+NAGtrace 2
 n = 2; d = 2;
 R=QQ[x_0..x_(n-1)]
 eps = 1/10^20
@@ -1100,4 +1107,13 @@ H = segmentHomotopy(S,T,gamma=>1+pi*ii)
 sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
 peek sols 
 assert((first sols).NumberOfSteps == 101)
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
+peek sols 
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
+peek sols 
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>1000,EndZoneFactor=>0)
+peek sols 
 ///

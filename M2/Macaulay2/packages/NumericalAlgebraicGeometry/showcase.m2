@@ -38,7 +38,7 @@ timeSystemSoftware = (system,soft) -> (
 	elapsedTime print tally (status \ track(S,T,solsS,gamma=>1+ii,Software=>soft)) ;
 	if soft===M2engine then ( 
 	    print "trackHomotopy";
-	    elapsedTime print tally (status \ trackHomotopy(segmentHomotopy(polySystem S,polySystem T, gamma=>1+ii), solsS))
+	    elapsedTime print tally (status \ trackHomotopy(segmentHomotopy(polySystem S,polySystem T, gamma=>1+ii), solsS,EndZoneFactor=>0))
 	    );
 	print "solveSystem";
 	s := elapsedTime solveSystem(T,Software=>soft);
@@ -51,7 +51,7 @@ end ----------------------------------------------------------------------------
 restart
 load "NumericalAlgebraicGeometry/showcase.m2"
 sols = new HashTable from apply(drop(systems,-1), system->( 
-	(system,soft) -> apply(softwares, soft->timeSystemSoftware(system,soft)) 
+	(system,soft) => apply(softwares, soft->timeSystemSoftware(system,soft)) 
 	))
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
