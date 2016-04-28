@@ -70,11 +70,12 @@ sols / (s->s.NumberOfSteps)
 
 -- run 2 (the target is close to start)
 setRandomSeed 2
-B'' = B+0.1*apply(n,i->random(F^3,F^1))
-C'' = C+0.1*apply(n,i->random(F^3,F^1))
+eps = 0.1
+B'' = B+eps*apply(n,i->random(F^3,F^1))
+C'' = C+eps*apply(n,i->random(F^3,F^1))
 BC'' = matrix{flatten flatten(B''/entries) | flatten flatten(C''/entries)}
 H2 = specialize (PH, transpose (BC|BC''))
-time sols2 = trackHomotopy(H2,ten'sols)
+time sols2 = trackHomotopy(H2,ten'sols);
 assert all(sols2,s->norm evaluate(PS,matrix s | BC'') < 0.001)
 sols2 / (s->s.NumberOfSteps)
 

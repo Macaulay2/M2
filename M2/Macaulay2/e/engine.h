@@ -1989,7 +1989,8 @@ enum gbTraceValues
                            gmp_RR init_dt, gmp_RR min_dt,
                            gmp_RR epsilon, // o.CorrectorTolerance,
                            int max_corr_steps, 
-                           gmp_RR infinity_threshold);
+                           gmp_RR infinity_threshold,
+                           M2_bool checkPrecision);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
   unsigned int rawHomotopyHash(Homotopy *); /* connected */

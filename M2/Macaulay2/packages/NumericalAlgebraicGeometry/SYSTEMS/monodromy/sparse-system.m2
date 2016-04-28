@@ -42,7 +42,8 @@ c0 = point{
     }
 pre0 = point{x0}
 
-end
+end ----------------------------------------------------------------------------
+
 restart
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system.m2"
 stop = (n,L)->n>5

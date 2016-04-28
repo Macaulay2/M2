@@ -61,11 +61,12 @@ document {
 	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }
 	  	    }
 	       },
-	  -- LI { "improved packages:",
-	  --       UL {
-	  -- 	    -- LI { "The package ", TO "::", " has been ..." },
-	  --           }
-	  --      },
+	  LI { "improved packages:",
+	      UL {
+		  LI { "The package ", TO "NumericalAlgebraicGeometry", " implements a version of adaptive precision homotopy continuation tracker
+		      that is now used by default in the black-box solver (", TO "NumericalAlgebraicGeometry::solveSystem", ")." },
+		  }
+	      },
 	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
 	       UL {
 		    LI { "The function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },

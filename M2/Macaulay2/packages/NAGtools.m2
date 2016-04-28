@@ -40,7 +40,7 @@ debug NAGtypes
 --     p0, Point, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     RandomPointFunction, a function that returns a random point p1 suitable for PH  
-preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3),Precision=>DoublePrecision})
 preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := transpose matrix point0; 
@@ -53,18 +53,19 @@ preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> 
     same := 0;
     dir := temporaryFileName(); -- build a directory to store temporary data 
     makeDirectory dir;
-    << "--backup directory created: "<< toString dir << endl;  
+    << "--backup directory created: "<< toString dir << endl;
+    opts := new OptionTable from {Precision=>o.Precision}; 
     while not o.StoppingCriterion(same,sols0) do --try 
     (
     	p1 := transpose matrix nextP();
     	p2 := transpose matrix nextP();
-	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0);
+	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0,opts);
 	sols1 = select(sols1, s->status s === Regular);
 	<< "  H01: " << #sols1 << endl;
-	elapsedTime sols2 := trackHomotopy(specialize(PH,p1||p2),sols1);
+	elapsedTime sols2 := trackHomotopy(specialize(PH,p1||p2),sols1,opts);
 	sols2 = select(sols2, s->status s === Regular);
 	<< "  H12: " << #sols2 << endl;
-    	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
+    	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2,opts);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
 	elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
