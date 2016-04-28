@@ -427,7 +427,9 @@ notAboveLambda(List,ZZ,ZZ) := (lambda,k,n) ->(
 -- Creates Matrix E_{m,l} --
 ---------------------------
 -- option: Inputs, an integer or symbol; if integer then 
-if version#"VERSION" =!= "1.8.2.1" then inputGate = "inputGate"
+
+-- this line of code makes no sense and doesn't work:
+-- if version#"VERSION" =!= "1.8.2.1" then inputGate = "inputGate"
 
 skewSchubertVariety = method(TypicalValue=>Matrix, Options=>{Inputs=>53})
 skewSchubertVariety(Sequence,List,List) := o->(kn,l,m)->(
