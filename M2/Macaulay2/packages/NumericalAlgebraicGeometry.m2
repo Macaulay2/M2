@@ -137,7 +137,7 @@ DEFAULT = new MutableHashTable from {
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e5, -- this may need to go away!!!
-     Precision => infinity,
+     Precision => DoublePrecision, -- infinity,
      maxNumberOfVariables => 50
      }
 
