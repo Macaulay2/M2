@@ -78,8 +78,6 @@ resolutionInEngine := opts -> (M) -> (
      maxlevel := resolutionLength(R,opts);
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < maxlevel
-     or (M.cache.resolution.Resolution.Strategy === 4 and opts.Strategy =!= 4)
-     or (M.cache.resolution.Resolution.Strategy =!= 4 and opts.Strategy === 4)
      then M.cache.resolution = (
           if flagInhomogeneity then (
 	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
@@ -100,7 +98,6 @@ resolutionInEngine := opts -> (M) -> (
 	  W.ring = R;
 	  W.length = maxlevel;
 	  W.DegreeLimit = degreelimit;
-          W.Strategy = opts.Strategy;
 	  log := FunctionApplication { rawResolution, (
 		    raw g,					    -- the matrix
 		    true,					    -- whether to resolve the cokernel of the matrix
