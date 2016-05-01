@@ -1180,7 +1180,7 @@ then AC_LANG(C)
 		AC_RUN_IFELSE([AC_LANG_SOURCE([ 
 		    #include <stdio.h>
 		    #include <gc.h>
-		    main () {
+		    int main () {
 		        FILE *msg = fdopen(AS_MESSAGE_FD,"w");
 #		      ifndef GC_VERSION_MICRO
 			if (GC_ALPHA_VERSION==GC_NOT_ALPHA)
@@ -1453,7 +1453,7 @@ else lapack_found=no
 	  then AC_MSG_RESULT(yes)
 	       blas_found=yes
 	       NEWLIBS=`pkg-config --libs blas`
-	       LIBS="$NEWLIBS $LIB"
+	       LIBS="$NEWLIBS $LIBS"
 	       CPPFLAGS="`pkg-config --cflags blas` $CPPFLAGS"
 	       AC_SEARCH_LIBS(sgemv_,,,AC_MSG_ERROR(blas function sgemv_ not found with $NEWLIBS))
 	  else AC_MSG_RESULT(no)
@@ -1465,7 +1465,7 @@ else lapack_found=no
 	  then AC_MSG_RESULT(yes)
 	       lapack_found=yes
 	       NEWLIBS=`pkg-config --libs lapack`
-	       LIBS="$NEWLIBS $LIB"
+	       LIBS="$NEWLIBS $LIBS"
 	       CPPFLAGS="`pkg-config --cflags lapack` $CPPFLAGS"
 	       AC_SEARCH_LIBS(dgetrf_,,,AC_MSG_ERROR(lapack function dgetrf_ not found with $NEWLIBS))
 	  else AC_MSG_RESULT(no)
