@@ -450,7 +450,9 @@ TEST ///
 ///
 
 TEST ///
-  n = 6
+  -- this tests whether stashed values for FastNonminimal are stashed for actual res.
+  -- they should not be.
+  n= 6
   d = 3
   S = ZZ/101[x_1..x_n]
   soc = random(S^1, S^{ -d});
@@ -468,18 +470,17 @@ TEST ///
   C = res I;
   assert(B == betti C)
   
-  C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
+  C1 = res(I, Strategy=>1);
   C0 = res(I, Strategy=>0);
   C4 = res(I, Strategy=>4);
   assert(C2 === C1)
   assert(C0 === C1)
   assert(C4 =!= C1)
-  C1 = res(I, Strategy=>1);
   C2 = res(I, Strategy=>2);
+  C1 = res(I, Strategy=>1);
   C0 = res(I, Strategy=>0);
   assert(C2 === C1)
   assert(C0 === C1)
   assert(C4 =!= C1)
-  assert(C0 == res I)
 ///
