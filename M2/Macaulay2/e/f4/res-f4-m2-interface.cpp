@@ -269,7 +269,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
       result.resize(0,0);
       return -1;
     }
-  M2_ASSERT(lev > 0 and lev <= maxLevel());
+  M2_ASSERT(lev > 0 and lev <= C.maxLevel());
   int degree = slanted_degree + lev;
   auto& thislevel = C.level(lev);
   int ncols = 0;

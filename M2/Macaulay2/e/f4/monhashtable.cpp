@@ -22,15 +22,6 @@ void MonomialHashTable<ValueType>::reset()
   max_run_length = 0;
   monequal_count = 0;
   monequal_fails = 0;
-
-
-  // slower
-  //  for (unsigned long i=0; i<size; i++)
-  //    hashtab[i] = 0;
-
-  // also bit slower than memset
-  //  deletearray(hashtab);
-  //  hashtab = newarray_clear(value, size);
 }
 
 template <typename ValueType>
@@ -41,7 +32,7 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
   //threshold = size/3; // was 2*size/3
   threshold = 2*size/3; // was 2*size/3
   threshold = size/16; // was 2*size/3  
-  hashtab = newarray(value, size);
+  hashtab = new value[size];
   hashmask = size-1;
   reset();
 }
@@ -84,7 +75,7 @@ MonomialHashTable<ValueType>::MonomialHashTable(const ValueType *M0, int logsize
 template <typename ValueType>
 MonomialHashTable<ValueType>::~MonomialHashTable()
 {
-  deletearray(hashtab);
+  delete [] hashtab;
 }
 
 template <typename ValueType>
