@@ -348,7 +348,6 @@ namespace MatrixOps
   template <typename RT>
     void scalarMultInPlace(DMat<RT>& A, MatrixWindow wA, const typename RT::ElementType& c)
   {
-    M2_ASSERT(wA.sameSize(wB));
     long rA = wA.begin_row;
     for ( ; rA < wA.end_row; ++rA)
       {
