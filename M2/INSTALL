@@ -152,8 +152,10 @@ various modern operating systems:
       sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
     We recommend adding
     	 --enable-build-libraries="pari flint ntl gc"
-    to the "configure" command line below in the section on compiling Macaulay2, since it seems to
-    avoid undiagnosed problems with invalid libgc pointers.    
+      to the "configure" command line below in the section on compiling Macaulay2, since it seems to
+      avoid undiagnosed problems with invalid libgc pointers.    
+    To upgrade the system:
+      pacman -Syu
 
   Mac OS X:
     Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
