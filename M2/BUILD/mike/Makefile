@@ -102,7 +102,7 @@ linux-opt64 : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-download \
-		--enable-build-libraries="gc mpir flint"
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-debug64 : always
 	mkdir -p builds.tmp/debug64
@@ -113,7 +113,7 @@ linux-debug64 : always
 		--enable-debug \
 		--disable-optimize \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
@@ -121,7 +121,8 @@ linux-profile64 : always
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-profile \
-		--enable-download
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
 
 # make sure that CC and CXX are set in environment variables
 #		CC="gcc -m64" CXX="g++ -m64" \
