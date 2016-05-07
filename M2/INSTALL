@@ -491,6 +491,8 @@ we briefly summarize them and the software they depend on:
     gfanInterface StatePolytope need polymake, builds OK
 	    http://polymake.org/lib/exe/fetch.php/download/polymake-2.13-1.tar.bz2
 	    (Make 3.81 has a problem with their makefile, so use 4.0)
+	    Polymake can be installed under Ubuntu with the following command:
+ 	         sudo apt-get install polymake
 
     Bertini needs bertini:
 	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
