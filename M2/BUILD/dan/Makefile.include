@@ -70,6 +70,7 @@ CONFIGOPTIONS += CC="$(_CC)" CXX="$(_CXX)" FC="$(_FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+CONFIGOPTIONS += --build=$(shell ../../config/config.guess)
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:

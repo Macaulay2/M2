@@ -34,8 +34,8 @@ CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 ifeq ($(GCC5),yes)
 BUILDLIBS += mpir flint
-_CC  = gcc-5 -m64
-_CXX = g++-5 -m64
+_CC  = gcc-5
+_CXX = g++-5
 DIRECTORY := $(DIRECTORY)-gcc5
 else
 ifeq ($(CLANG),yes)
@@ -50,9 +50,9 @@ _CXX := /usr/bin/g++
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
 export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9 -mtune=generic
-_CXX := g++-4.9 -mtune=generic
-_FC  := gfortran-4.9 -mtune=generic
+_CC  := gcc-4.9
+_CXX := g++-4.9
+_FC  := gfortran-4.9
 endif
 endif
 

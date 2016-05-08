@@ -295,6 +295,25 @@ files are not backed up.  For your changes to Macaulay2 source code, github.com
 will serve as your backup.
 
 -----------------------
+Building a fat source tarfile to avoid further downloads
+-----------------------
+
+It may be desirable when building Macaulay2 on multiple systems to create a
+"fat" tarfile containing all of our source code as well as all of the source
+code of the submodules and libraries that might later be used, to prevent later
+access to the internt to obtain that source code.  To achieve that, do the
+following:
+
+  - Add the option "--recurse-submodules" to the 'git clone' command above.
+    This populates the submodules' subdirectories with their source code.
+  - Run :
+       ./configure --enable-download
+       make -C libraries fetch-all
+       make distclean
+    This fetches tar files containing the source code of all the libraries and
+      deposits them in BUILD/tarfiles/.
+
+-----------------------
 Compiling Macaulay2
 -----------------------
 
@@ -380,7 +399,7 @@ To see descriptions of all the environment variables that influence
 configuration, run this command and look at the section of the output
 entitled "Some influential environment variables":
 
-        ../../configure --help
+        ./configure --help
 
 The only one of these variables with a nonempty default value is
 CFLAGS, and its default value is "-g -O2".  That will be supplanted if
@@ -422,37 +441,36 @@ our program, and how to initialize the dumped data file, if present:
         /foo/bar/Macaulay2-*/preremove
 
 -------------------------------------------
-Compiling on multiple machine architectures
+Compiling for multiple machine architectures
 -------------------------------------------
 
-If multiple machine architectures are supported by your hardware and operating
-system, a good way to specify which one to use is to use the build option to
-autoconf's configure script with an architecture in config.guess format, as
-well as to specify names for the compilers that include the additional options
-for the architecture to be used.  This will work with gmp, for example, as it
-knows how to produce the additional options to the compilers:
+By default, Macaulay2 will compile in such a way that it is adapted to the
+architectural features of the CPU being used to do the compilation.  This is
+especially true for the library mpir, which exploits many of the advanced
+features of your CPU, determining them by running a small program and uses the
+output from that to determine which optimization options (of the form
+'-mtune=*' and '-march=*') to pass to gcc.
 
-   ../../configure --build=x86_64-apple-darwin CC="gcc -m64" CXX="g++ -m64"
+If you expect the Macaulay2 binary you build to run on other machines (for
+example, if you are making a binary distribution to hand to others), then you
+must prevent that from happening.
 
-Another way to do it is to add the architecture option to CFLAGS and to
-CXXFLAGS.  The disadvantage of that approach is that the package might have its
-own idea about what values to use for those options and ignore these settings:
+One way to do that is to pass an explicit "build target" to the configure
+script, as in this example:
 
-   ../../configure CFLAGS="-O2 -m64" CXXFLAGS="-O2 -m64"
+   ./configure --build=x86_64-apple-darwin
 
-Sometimes a library will get confused by values for CC and CXX with spaces in
-them, or will try to parse the options, and get confused by the "-m64" option.
-In that case, the work-around is to create shell scripts on your path called
-something like gcc-m64 and g++-m64 that can be used as the compilers, and to
-use this instead.  In the shell script gcc-m64 put this single line:
+The build target will be provided to the configure scripts of the libraries
+needed, and, at least in the case of the mpir library, will prevent it from
+optimizing further.
 
-     exec gcc -m64 "$@"
+To find a suitable target, run :
 
-In the shell script g++-m64 put this single line:
+   config/config.guess
 
-     exec g++ -m64 "$@"
+To combine those two steps, run :
 
-Mark both shell scripts executable.
+   ./configure --build=`config/config.guess`
 
 ----------------------
 MacOS X notes
@@ -469,16 +487,16 @@ MacOS X notes
     to the appropriate "configure" command line above, for else it will try to
     build a 32 bit version of Macaulay2.
 
-    Recall that if you are using version 4.8 of gcc, as installed by homebrew,
-    you should add
+    If you are using version 4.9 of gcc, as installed by homebrew, you should
+    add
 
-        CC=gcc-4.8 CXX=g++-4.8
+        CC=gcc-4.9 CXX=g++-4.9
 
     to the "configure" command line (or, better, to your environment setting in
     your .profile).  To sum up, your command line, with all those options, will
     look something like this:
 
-        ../../configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.8 CXX=g++-4.8
+        ./configure --enable-download --prefix=/foo/bar --build=x86_64-apple-darwin CC=gcc-4.9 CXX=g++-4.9
 
 ----------------------
 Rerunning the package examples
