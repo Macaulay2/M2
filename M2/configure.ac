@@ -9,6 +9,9 @@ dnl    - add an entry to distributions/deb/changelog
 dnl Things to do after incrementing the version number and committing:
 dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
 dnl    - make a git tag of the form version-X.Y.Z
+dnl Note:
+dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
+dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 AC_INIT(Macaulay2, 1.9, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
