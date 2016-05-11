@@ -1614,7 +1614,7 @@ done
 AC_MSG_CHECKING([whether __builtin_return_address accepts a non-zero argument])
 AC_LANG(C)
 SAVE="$CFLAGS"
-CFLAGS="$CFLAGS -Werror"
+CFLAGS="$CFLAGS -Wall -Werror"
 AC_LINK_IFELSE(
 	[AC_LANG_PROGRAM([], [[__builtin_return_address(1);]])],
 	[  AC_DEFINE(BUILTIN_RETURN_ADDRESS_ACCEPTS_NONZERO_ARGUMENT,1,[Define if __builtin_return_address accepts a non-zero argument])
