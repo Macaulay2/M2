@@ -176,17 +176,17 @@ various modern operating systems:
 	brew tap homebrew/homebrew-x11
 	brew update
 	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
-	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
+    Next, if intending to distribute the Macaulay2 binaries to others, do:
+	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp cddlib glpk pari flint
+      else do:    
+	brew install bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
     Note: the reason we compile from source with gcc is that the precompiled
       packages that brew would otherwise download are compiled using "clang"
       and assume that the CPU supports advanced vector extensions, which not
       all of the machines of our users do.
     Now remember to add 
-        --enable-build-libraries="pari flint readline" CC="gcc-4.9 -mtune=generic" CXX="g++-4.9 -mtune=generic"
+        --enable-build-libraries="pari flint readline" CC="gcc-4.9" CXX="g++-4.9"
       to the "configure" command line below in the section on compiling Macaulay2.
-    Note: the compiler option "-mtune=generic" ensures that gcc generates code that
-      will run on the most commonly available CPUs.  If you won't be distributing the
-      code to others, it can be omitted.
     Note: including "readline" in the "--enable-build-libraries" option is
       necessary because it doesn't seem to be possible to recompile it from
       source; the binary distribution used by homebrew uses "clang", which will
