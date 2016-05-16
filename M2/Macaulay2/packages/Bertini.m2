@@ -1,8 +1,8 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "2.1.0.1", 
-  Date => "April 24, 2016",
+  Version => "2.1.1.0", 
+  Date => "May 16, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
      Email=> "elizabeth.gross@sjsu.edu",
@@ -2589,13 +2589,17 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
     --We save the start points' parameters as bP in memory rather than a text file. 
     basePointT:=(importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision));
+--    print basePointT;
     if #basePointT=!=1 then error "The base point downstairs can only have one coordinate. Parameter space should be restricted to a line parameterized by one copy of complex numbers.";
     basePointT=basePointT_0;
 --    print basePointT;
     --Now we will perform monodromy loops. We keep track of the number of loops we have performed by loopCount.
     loopCount:=0;
     breakLoop:=false;
-    branchPointsT:=(o.BranchPoints);
+    if class o.BranchPoints=!=String 
+    then branchPointsT:=(o.BranchPoints)
+    else branchPointsT =radicalList(    flatten flatten importSolutionsFile(IFD,
+	    NameSolutionsFile=>o.BranchPoints),1e-12);
     --put a radical list warning here:
     gggFile:= openOut(storeFiles|o.NameGaloisGroupGeneratorFile); 
     gggFile << "[" << endl;    	    
@@ -2636,7 +2640,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
       else print "An error occurred while creating the loops."      ;       
 --      print loopPointsT;
 --      print for i in loopPointsT list {i};
-      print 6;
+--      print 6;
       b'PHSequence(storeFiles,for i in loopPointsT list {i},
 	  B'Exe=>o.B'Exe,
 	  NameB'InputFile=>o.NameB'InputFile,
