@@ -38,6 +38,12 @@ _CC  = gcc-5
 _CXX = g++-5
 DIRECTORY := $(DIRECTORY)-gcc5
 else
+ifeq ($(GCC6),yes)
+BUILDLIBS += mpir flint
+_CC  = gcc-6
+_CXX = g++-6
+DIRECTORY := $(DIRECTORY)-gcc6
+else
 ifeq ($(CLANG),yes)
 # The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
@@ -53,6 +59,7 @@ else
 _CC  := gcc-4.9
 _CXX := g++-4.9
 _FC  := gfortran-4.9
+endif
 endif
 endif
 
