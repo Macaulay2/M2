@@ -351,9 +351,9 @@ the form "-jN" to the command line, where "N" is replaced by the number of
 processors you wish to devote to the task.  (Our makefiles are just begining to
 take advantage of this.)
 
-To skip the running of the NTL "wizard", which conducts time consuming
+To enable the running of the NTL "wizard", which conducts time consuming
 experiments to optimize the speed of its code, before compiling it, add the
-option --disable-ntl-wizard to the "configure" command line above.
+option --enable-ntl-wizard to the "configure" command line above.
 
 By default, the files are installed in appropriate subdirectories of
 /usr/local.  To specify a different location (prefix) you may use an option to
@@ -459,7 +459,7 @@ example, if you are making a binary distribution to hand to others), then you
 must prevent that from happening.
 
 One way to do that is to pass an explicit "build target" to the configure
-script, as in this example:
+script, as in this example under Mac OS X:
 
    ./configure --build=x86_64-apple-darwin
 
@@ -483,7 +483,7 @@ MacOS X notes
     has been buggy, so we compile the latest gcc or we use "brew" to install
     it, as described above.
 
-    To build Macaulay, add the option
+    To build Macaulay2, add the option
 
         --build=x86_64-apple-darwin
 
