@@ -375,22 +375,17 @@ doc ///
      B'Exe is how we call Bertini. The default option is how Bertini is usually called in M2 in the init file. 
      InputFileName has its default as "input". 
    Example
-     R=QQ[x,y]
      makeB'InputFile(storeBM2Files,
-     	 AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x^2-1,y^2-4})
+     	 AffVariableGroup=>{x,y},
+	 B'Polynomials=>{"x^2-1","y^2-4"})
      runBertini(storeBM2Files)
+     readFile(storeBM2Files)
    Example
-     R=QQ[x,y]
-     theDir1 = temporaryFileName()
-     makeDirectory theDir1
-     theDir2 = temporaryFileName()
-     makeDirectory theDir2
-     makeB'InputFile(theDir1,
-     	 AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x^2-1,y^2-4})
-     runBertini(theDir2,InputFileDirectory=>theDir1)
-      
+     makeB'InputFile(storeBM2Files,
+     	 AffVariableGroup=>{x,y},
+	 B'Polynomials=>{"x^2-1","y^2-4"})
+     runBertini(storeBM2Files,StorageFolder=>"StoreMyFiles")
+     readFile(storeBM2Files|"/StoreMyFiles")           
 ///;
 
 
@@ -410,30 +405,32 @@ doc ///
  Description
    Text
      The string s is a directory where the Bertini files are stored. 
-     A Bertini input file should be stored in s, or the InputFileDirectory should be set to a string specifiying where an input file can be found. 
+     A Bertini input file should be stored in s.
      The Bertini input file should be named "input", or the NameB'InputFile should be set to a string giving the name of the input file. 
-     A Bertini start (solutions) file should be stored in s, or the StartFileDirectory should be set to a string specifiying where a start file can be found. 
+     A Bertini start (solutions) file should be stored in s. 
      The Bertini start (solutions) file should be named "start", or the NameStartFile should be set to a string giving the name of the start file. 
-     A Bertini start parameter file should be stored in s, or the StartParameterFileDirectory should be set to a string specifiying where a start parameter file can be found. 
+     A Bertini start parameter file should be stored in s. 
      The Bertini start parameter file should be named "start_parameters", or the NameParameterFile should be set to a string giving the name of the start parameter file. 
      b'PHSequence loops through the elements of l doing a sequence of parameter homotopies.
      Each element of l gives the parameter values  for a parameter homotopy.
-     These parameter values are written to a "final_parameters" file in s. 
+     These parameter values are written to a "final_parameters" file in s or the StorageFolder. 
      Bertini is called (the option B'Exe allows one to change the way in which Bertini is called).
      The resulting nonsingular_solutions and final parameters become start solutions and start parameters for the next parameter homotopy in the sequence.  
      
    Example
-     R=QQ[x,y,t1,t2]
      makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
 	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
-	 B'Polynomials=>{x^2-t1,y-t2})
-     runBertini(storeBM2Files)
-     moveFile(storeBM2Files|"/finite_solutions",storeBM2Files|"/start")
-     makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
-	 B'Configs=>{{"PARAMETERHOMOTOPY",2}},
-	 B'Polynomials=>{x^2-t1,y-t2})
+	 B'Polynomials=>{"x^2-t1","y-t2"})
+     runBertini(storeBM2Files,PreparePH2=>true)
      b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
-      
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions1")
+   Example
+     makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},	 
+	 B'Configs=>{{"PARAMETERHOMOTOPY",1}},
+	 B'Polynomials=>{"x^2-t1","y-t2"})
+     runBertini(storeBM2Files,PreparePH2=>true)
+     b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true,StorageFolder=>"StoreMyFiles")
+     importSolutionsFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameSolutionsFile=>"nonsingular_solutions1")
 ///;
 
 
@@ -470,8 +467,46 @@ doc ///
    	 NameSolutionsFile=>"simple_raw_solutions",
       	 NumberOfLoops=>10,NumSolBound=>3,
 	 MonodromyStartParameters=>{1,0}	)
+   Example
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     b'PHMonodromyCollect(storeBM2Files,
+	 StorageFolder=>"StoreFiles",
+	 MonodromyStartPoints=>{{1,0}},
+      	 NumberOfLoops=>10,NumSolBound=>3,
+	 MonodromyStartParameters=>{1,0}	)
       
 ///;
+
+doc ///
+ Key
+   b'PHGaloisGroup
+   (b'PHGaloisGroup,String)
+ Headline
+   Uses homotopy continuation to compute monodromy/Galois groups.
+ Usage
+   b'PHGaloisGroup(s)
+ Inputs
+   s:String
+     The directory where the files are stored.
+ Description
+   Text
+     Given a directory that has a Bertini input file that has ParameterHomotopy set to 2, a start file, for start_parameters,
+     this function uses parameter homotopies to perform a monodromy homotopy.           
+   Example 
+     R=CC[x,T]
+     f=x^6+2*x^4+3*x^2+T
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
+     runBertini(storeBM2Files)
+     TCoordinates=importSolutionsFile(storeBM2Files)/last
+     TBranchPoints=radicalList(TCoordinates)
+     makeB'InputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
+     runBertini(storeBM2Files,PreparePH2=>true)
+     b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints)
+     b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints,LoopRadius=>.5)
+///;
+
 
 
 doc ///
@@ -685,7 +720,8 @@ doc ///
  Description
    Text
      This function does not import a list of coordinates. Instead it imports points from a main_data file. These points contain coordinates, condition numbers, and etc.      
-     The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.    
+     The information the points contain depend on if regeneration was used and if a TrackType 0 or 1 was used.
+     When TrackType 1 is used, UNCLASSIFIED points will have component number -1.    
    Example
      makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
@@ -694,7 +730,7 @@ doc ///
      runBertini(storeBM2Files)
      thePoints=importMainDataFile(storeBM2Files)
      witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-      
+     sortMainDataComponents(thePoints)      
 ///;
 
 
@@ -732,15 +768,12 @@ doc ///
 ///;
 
 
-------------------------------------------------------------------
-------FUNCTIONS IMPORTING/READING FILES WITHOUT CALLING BERTINI ------------
-------------------------------------------------------------------
-
 doc ///
  Key
    readFile
    (readFile,String,String,Number)
    (readFile,String,Number)
+   (readFile,String)
  Headline
    Read the first lines of a file.
  Usage
@@ -761,6 +794,7 @@ doc ///
      runBertini(storeBM2Files)
      readFile(storeBM2Files,"nonsingular_solutions",1)
      readFile(storeBM2Files,10000)
+     readFile(storeBM2Files)
          
 ///;
 
@@ -858,7 +892,7 @@ doc ///
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
      runBertini(storeBM2Files)
-     makeSampleSolutionsFile(storeBM2Files,100,SpecifyComponent=>{2,0})--creates a witness point file with 100 sample points for the 0th component in dimension 2. 
+     makeSampleSolutionsFile(storeBM2Files,4,SpecifyComponent=>{2,0})--creates a witness point file with 4 sample points for the 0th component in dimension 2. 
      theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file") 
       
 ///;
@@ -940,7 +974,7 @@ doc ///
  Headline
    Move or copy files. 
  Usage
-   makeB'Section(s,f,n) 
+   moveB'File(s,f,n) 
  Inputs
    s:String
      A string giving a directory.
@@ -1567,56 +1601,6 @@ doc///
 
 doc///
  Key
-   InputFileDirectory
-   [runBertini, InputFileDirectory]
- Headline
-   This option is set to the directory where the Bertini input file is located. 
- Description
-   Text
-     Set this option to the directory where the Bertini input file is located.  
-   Example
-     R=QQ[x,y]
-     theDir1 = temporaryFileName()
-     makeDirectory theDir1
-     theDir2 = temporaryFileName()
-     makeDirectory theDir2
-     makeB'InputFile(theDir1,
-	 AffVariableGroup=>{{x,y}},
-	 B'Polynomials=>{x+y-1,x^2-2})
-     runBertini(theDir2,InputFileDirectory=>theDir1)
-     
-///;
-
-doc///
- Key
-   StartFileDirectory
- Headline
-   This option is set to the directory where the Bertini start file is located. 
- Description
-   Text
-     Set this option to the directory where the Bertini start file is located.  
-     
-///;
-
-doc///
- Key
-   StartParameterFileDirectory
- Headline
-   This option is set to the directory where the Bertini start parameter file is located. 
- Description
-   Text
-     Set this option to the directory where the Bertini start parameter file is located.  
-     
-///;
-
-
-
-
-
-
-
-doc///
- Key
    ConditionNumTol
    [bertiniZeroDimSolve, ConditionNumTol]
  Headline
@@ -1972,15 +1956,11 @@ doc ///
  Key
    NumSolBound
    OrderPaths
-   PreRunCopyFiles
    NumberOfLoops
    BranchPoints
-   PreRunMoveFiles
    SpecifyLoops
    NameFunctionFile
-   PostRunCopyFiles
    SaveData
-   PostRunMoveFiles
    ListB'Sections
    NameWitnessSliceFile
    NameWitnessSolutionsFile
@@ -1998,7 +1978,6 @@ doc ///
    MonodromyStartParameters
    B'Exe
    UsePrecision
-   b'PHGaloisGroup
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
@@ -2009,18 +1988,10 @@ doc ///
    FinalTValue
    (b'TraceTest,String,Number,Number)
    (calculateB'Trace,String)
-   (b'PHGaloisGroup,String)
    (importSliceFile,String)
    SolutionType
 --   storeBM2Files
    [makeB'TraceInput,B'Configs]
-   [b'PHGaloisGroup,InputFileDirectory]
-   [b'PHMonodromyCollect,InputFileDirectory]
-   [b'PHSequence,InputFileDirectory]
-   [b'TraceTest,InputFileDirectory]
-   [makeMembershipFile,InputFileDirectory]
-   [makeSampleSolutionsFile,InputFileDirectory]
-   [makeWitnessSetFiles,InputFileDirectory]
    [b'PHGaloisGroup,NameB'InputFile]
    [b'PHMonodromyCollect,NameB'InputFile]
    [b'PHSequence,NameB'InputFile]
@@ -2049,13 +2020,7 @@ doc ///
    [b'TraceTest,ParameterValues]
    (makeB'TraceInput,String,Number,Number)
    [makeB'InputFile,PathVariable]
-   [b'PHGaloisGroup,StartFileDirectory]
-   [b'PHMonodromyCollect,StartFileDirectory]
-   [b'PHSequence,StartFileDirectory]
-   [b'PHGaloisGroup,StartParameterFileDirectory]
-   [b'PHMonodromyCollect,StartParameterFileDirectory]
-   [b'PHSequence,StartParameterFileDirectory]
-   [makeB'InputFile,VariableGroup]
+   [makeB'InputFile,VariableList]
    [makeMembershipFile,TestSolutions]
    [makeMembershipFile,UsePrecision]
    [valueBM2,UsePrecision]
@@ -2081,11 +2046,7 @@ doc ///
    [makeB'Slice,RandomCoefficientGenerator]
    [makeB'Section,B'NumberCoefficients]
    [makeB'Section,NameB'Section]
-   [runBertini,PostRunCopyFiles]
-   [runBertini,PostRunMoveFiles]
    [runBertini,PreparePH2]
-   [runBertini,PreRunCopyFiles]
-   [runBertini,PreRunMoveFiles]
    [runBertini,TextScripts]
    [importSolutionsFile,OrderPaths]
    [importSolutionsFile,UsePrecision]
@@ -2110,7 +2071,7 @@ doc ///
    FunctionResidual
    ParameterValues
    CycleNumber
-   VariableGroup
+   VariableList
    AccuracyEst
    PrecisionIncreased
    AccuracyEstInternal
@@ -2335,3 +2296,4 @@ doc///
      f = {s1*s2, s1*(z+y),z-1};
      sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z}, SubFunctions=>sF)
 ///;
+
