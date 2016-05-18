@@ -1769,16 +1769,22 @@ enum gbTraceValues
   const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level);
   /* rawResolutionGetMatrix */
 
+  MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *G,int level,int degree);
+  /* rawResolutionGetMatrix2 */
+
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/
 
   M2_arrayint rawResolutionBetti(Computation *G,
                                  int type); /* drg: connected rawGBBetti */
   /* type:
-         0: minimal betti numbers,
+         0: minimal betti numbers, (for FastNonminimal=>true, the ACTUAL betti numbers)
          1: non-minimal betti numbers (skeleton size, or size of GB's).
+           (for FastNonminimal=>true, same as "0" case)
          2: number of S-pairs remaining to consider
          3: number of monomials in polynomials at this slot
+         4: for FastNonminimal=>true resolutions, the minimal betti numbers
+            other cases, this is an error.
      Not all of these may be accessible with all algorithms.  If not available,
      A betti diagram with all -1's is displayed.
   */
@@ -1983,7 +1989,8 @@ enum gbTraceValues
                            gmp_RR init_dt, gmp_RR min_dt,
                            gmp_RR epsilon, // o.CorrectorTolerance,
                            int max_corr_steps, 
-                           gmp_RR infinity_threshold);
+                           gmp_RR infinity_threshold,
+                           M2_bool checkPrecision);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
   unsigned int rawHomotopyHash(Homotopy *); /* connected */

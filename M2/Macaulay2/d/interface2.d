@@ -204,7 +204,7 @@ setupfun("rawHomotopy",rawHomotopy);
 
 export rawHomotopyTrack(e:Expr):Expr := (
      when e is s:Sequence do
-     if length(s) != 9 then WrongNumArgs(9)
+     if length(s) != 10 then WrongNumArgs(10)
      else when s.0 is H:RawHomotopyCell do 
 	  when s.1 is inputs:RawMutableMatrixCell do 
 	  when s.2 is outputs:RawMutableMatrixCell do
@@ -214,19 +214,22 @@ export rawHomotopyTrack(e:Expr):Expr := (
 	  when s.6 is epsilon:RRcell do 
 	  when s.7 is maxCorrSteps:ZZcell do
 	  when s.8 is infinityThreshold:RRcell do 
+	  if isBoolean(s.9) then -- checkPrecision 
 	  possibleEngineError(Ccode(bool, 
-		     "rawHomotopyTrack(",
-		     H.p, ",",
-		     inputs.p, ",",
-		     outputs.p, ",",
-		     output_extras.p, ",",
-		     initDt.v,",",
-		     minDt.v,",",
-		     epsilon.v,",",
-		     toInt(s.7),",",
-		     infinityThreshold.v,
-		     ")"
-		     ))
+		  "rawHomotopyTrack(",
+		  H.p, ",",
+		  inputs.p, ",",
+		  outputs.p, ",",
+		  output_extras.p, ",",
+		  initDt.v,",",
+		  minDt.v,",",
+		  epsilon.v,",",
+		  toInt(s.7),",",
+		  infinityThreshold.v,",",
+		  toBoolean(s.9),
+		  ")"
+		  ))
+	  else WrongArgBoolean(10)   
 	  else WrongArgRR(9)
 	  else WrongArgZZ(8)
 	  else WrongArgRR(7)
@@ -274,7 +277,7 @@ export rawEvaluateSLP(e:Expr):Expr := (
      );
 setupfun("rawEvaluateSLP",rawEvaluateSLP);
 
--- ols path trackers
+-- old path trackers --------------------------------------------------------
 
 export rawPathTrackerPrecookedSLPs(e:Expr):Expr := (
      when e is s:Sequence do

@@ -1078,11 +1078,6 @@ bool solve_via_lapack(
                    )
 {
 
-#if !LAPACK
-  ERROR("lapack not present");
-  return false;
-#else
-
   bool ret = true;
   int info;
 
@@ -1129,7 +1124,6 @@ bool solve_via_lapack(
   deletearray(At);
 
   return ret;
-#endif
 }
 
 // lapack solve routine (direct call)
@@ -1140,10 +1134,6 @@ bool solve_via_lapack_without_transposition(
                    )
 {
 
-#if !LAPACK
-  ERROR("lapack not present");
-  return false;
-#else
 
   bool ret = true;
   int info;
@@ -1189,17 +1179,12 @@ bool solve_via_lapack_without_transposition(
   deletearray(permutation);
 
   return ret;
-#endif
 }
 
 // In: A, a square matrix of size "size"
 // Out: true if success, cond = condition number of A
 bool cond_number_via_svd(int size, complex* A, double& cond)
 {
-#if !LAPACK
-  ERROR("lapack not present");
-  return false;
-#else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = size;
@@ -1256,17 +1241,12 @@ bool cond_number_via_svd(int size, complex* A, double& cond)
   deletearray(sigma);
 
   return ret;
-#endif
 }
 
 // In: A, a square matrix of size "size"
 // Out: true if success, "norm" = operator norm of A^{-1}
 bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
 {
-#if !LAPACK
-  ERROR("lapack not present");
-  return false;
-#else
   bool ret = true;
   char doit = 'A';  // other options are 'S' and 'O' for singular vectors only
   int rows = size;
@@ -1325,7 +1305,6 @@ bool norm_of_inverse_via_svd(int size, complex* A, double& norm)
   deletearray(sigma);
 
   return ret;
-#endif
 }
 
 // END lapack-based routines

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- {* hash: 527927397 *}
+-- -*- M2-comint -*- {* hash: 1819512813 *}
 
 i1 : R=QQ[x,y]
 
@@ -7,11 +7,11 @@ o1 = R
 o1 : PolynomialRing
 
 i2 : makeB'InputFile(storeBM2Files,
-         AVG=>{{x,y}},
+         AffVariableGroup=>{{x,y}},
          NamePolynomials=>{f1,f2},
          B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
 
-o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62336-0/0/input
+o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98105-0/0/input
 
 o2 : File
 
@@ -22,11 +22,11 @@ o3 = R
 o3 : PolynomialRing
 
 i4 : makeB'InputFile(storeBM2Files,
-         AVG=>{{x,y}},
+         AffVariableGroup=>{{x,y}},
          B'Functions=>{{A,x^2-1}},--A=x^2-1 is written to the input file
          B'Polynomials=>{A+y,x+y-2})
 
-o4 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62336-0/0/input
+o4 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98105-0/0/input
 
 o4 : File
 

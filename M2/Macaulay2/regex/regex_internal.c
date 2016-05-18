@@ -624,7 +624,7 @@ re_string_reconstruct (pstr, idx, eflags)
 		     pstr->valid_len - offset);
 	  pstr->valid_len -= offset;
 	  pstr->valid_raw_len -= offset;
-#if DEBUG
+#ifndef NDEBUG
 	  assert (pstr->valid_len > 0);
 #endif
 	}
@@ -863,7 +863,7 @@ re_string_context_at (input, idx, eflags)
       int wc_idx = idx;
       while(input->wcs[wc_idx] == WEOF)
 	{
-#ifdef DEBUG
+#ifndef NDEBUG
 	  /* It must not happen.  */
 	  assert (wc_idx >= 0);
 #endif

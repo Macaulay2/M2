@@ -14,6 +14,7 @@ resolutionLength := (R,opts) -> (
 
 resolutionByHomogenization := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by homogenization" << endl;
+     if opts.FastNonminimal then error "cannot specify FastNonminimal=>true with this input";
      R    := ring M;
      f    := presentation M;
      p    := presentation R;
@@ -40,6 +41,7 @@ resolutionByHomogenization := opts -> (M) -> (
 
 resolutionBySyzygies := opts -> (M) -> (
      if gbTrace >= 1 then << "using resolution by syzygyies" << endl;     
+     if opts.FastNonminimal then error "cannot specify FastNonminimal=>true with this input";
      R := ring M;
      maxlength := resolutionLength(R,opts);
      if M.cache.?resolution 
@@ -76,6 +78,8 @@ resolutionInEngine := opts -> (M) -> (
      maxlevel := resolutionLength(R,opts);
      if not M.cache.?resolution 
      or M.cache.resolution.Resolution.length < maxlevel
+     or (M.cache.resolution.Resolution.Strategy === 4 and opts.Strategy =!= 4)
+     or (M.cache.resolution.Resolution.Strategy =!= 4 and opts.Strategy === 4)
      then M.cache.resolution = (
           if flagInhomogeneity then (
 	       if not isHomogeneous M then error "internal error: res: inhomogeneous matrix flagged";
@@ -83,10 +87,11 @@ resolutionInEngine := opts -> (M) -> (
 	       );
 	  g := presentation M;
 	  if not instance(opts.Strategy, ZZ) then error "resolution in engine: expected Strategy option to be an integer";
-	  if opts.Strategy === 0 then
+	  if opts.Strategy === 0 or opts.Strategy === 4 then
 	      g = generators gb g;  -- this is needed since the (current)
 			      -- default algorithm, 0, needs a GB 
 			      -- to be previously computed.
+                              -- The non-minimal resolution algorithm 4 also needs this.
 	  harddegreelimit := (
 	       if class opts.HardDegreeLimit === ZZ then {opts.HardDegreeLimit}
 	       else if harddegreelimit === null then harddegreelimit = {}
@@ -95,6 +100,7 @@ resolutionInEngine := opts -> (M) -> (
 	  W.ring = R;
 	  W.length = maxlevel;
 	  W.DegreeLimit = degreelimit;
+          W.Strategy = opts.Strategy;
 	  log := FunctionApplication { rawResolution, (
 		    raw g,					    -- the matrix
 		    true,					    -- whether to resolve the cokernel of the matrix
@@ -154,6 +160,7 @@ Strategy0 := new OptionTable from { Strategy => 0 }
 Strategy1 := new OptionTable from { Strategy => 1 }
 Strategy2 := new OptionTable from { Strategy => 2 }
 Strategy3 := new OptionTable from { Strategy => 3 }
+Strategy4 := new OptionTable from { Strategy => 4 }
 
 resolution = method(
      Options => {
@@ -165,7 +172,8 @@ resolution = method(
 	  HardDegreeLimit => {},          -- throw out information in degrees above this one
 	  -- HardLengthLimit => infinity,    -- throw out information in lengths above this one
 	  SortStrategy => 0,		  -- strategy choice for sorting S-pairs
-          Strategy => null		  -- algorithm to use, usually 1, but sometimes 2
+          Strategy => null,		  -- algorithm to use, usually 1, but sometimes 2
+          FastNonminimal => false
 	  }
      )
 
@@ -200,7 +208,7 @@ resolution Module := ChainComplex => o -> (M) -> (
      k := ultimate(coefficientRing, R);
      oR := options R;
      if engineReady M and (options R).Heft =!= null
-     then (resolutionInEngine default(o,if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
+     then (resolutionInEngine default(o,if o.FastNonminimal then Strategy4 else if isQuotientRing R or isSkewCommutative R then Strategy2 else Strategy1))(M)
      else if k === ZZ then (resolutionBySyzygies o)(M)
      else if not isHomogeneous M and isCommutative R and degreeLength R === 1 then (resolutionByHomogenization o)(M)
      else (resolutionBySyzygies o)(M)

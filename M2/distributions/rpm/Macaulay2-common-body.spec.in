@@ -18,7 +18,7 @@ prefix=@prefix@
 datarootdir=@datarootdir@
 cd @infodir@
 for p in @PACKAGES@
-do install-info --quiet --info-dir=. $p.info
+do install-info --quiet --info-dir=. $p.info || true
 done
 %preun
 #! /bin/sh -e
@@ -26,7 +26,7 @@ prefix=@prefix@
 datarootdir=@datarootdir@
 cd @infodir@
 for p in @PACKAGES@
-do install-info --remove --quiet --info-dir=. $p.info
+do install-info --remove --quiet --info-dir=. $p.info || true
 done
 %description
 Macaulay2 is a software system for algebraic geometry research, written by

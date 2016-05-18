@@ -12,10 +12,22 @@ newPackage(
     	Headline => "Computes CSM classes, Segre classes and the Euler Char. for some Subschemes of Smooth Complete Toric Varieties",
     	DebuggingMode => false,
 	Configuration => { "pathToBertini" => ""},
-	Reload => true
+	Certification => {
+	     "journal name" => "The Journal of Software for Algebra and Geometry",
+	     "journal URI" => "http://j-sag.org/",
+	     "article title" => "Computing characteristic classes and the topological Euler characteristic of complex projective schemes",
+	     "acceptance date" => "5 June 2015",
+	     "published article URI" => "http://msp.org/jsag/2015/7-1/p04.xhtml",
+	     "published code URI" => "http://msp.org/jsag/2015/7-1/jsag-v7-n1-x04-CharacteristicClasses.m2",
+	     "repository code URI" => "http://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/CharacteristicClasses.m2",
+	     "release at publication" => "82375d8c668f3acf1d825b8ba991081769fba742",	    -- git commit number in hex
+	     "version at publication" => "1.1",
+	     "volume number" => "7",
+	     "volume URI" => "http://msp.org/jsag/2015/7-1/"
+	     }
     	);
     
-    
+
 -- Check the ~/.Macaulay2/init-CharacteristicClasses.m2 file for the absolute path.
 bertini'path = (options CharacteristicClasses).Configuration#"pathToBertini";
 if not instance(bertini'path,String) then error "expected configuration option pathToBertini to be a string."

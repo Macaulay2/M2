@@ -12,7 +12,7 @@ class SLProgram
 public:
   enum GATE_TYPE {Copy, MCopy, Sum, Product, MSum, MProduct, Det, Divide};
   typedef int GATE_SIZE;
-  typedef int GATE_POSITION; // gate position is ABSOLUTE
+  typedef int GATE_POSITION; // gate position is RELATIVE (exception: ABSOLUTE for output)
   std::vector<GATE_TYPE> mNodes; // nodes types
   std::vector<GATE_SIZE> mNumInputs; // corresponding nodes sizes
   std::vector<GATE_POSITION> mInputPositions;/* which nodes does input come from?
@@ -124,7 +124,8 @@ public:
                      gmp_RR init_dt, gmp_RR min_dt,
                      gmp_RR epsilon, // o.CorrectorTolerance,
                      int max_corr_steps, 
-                     gmp_RR infinity_threshold) = 0; 
+                     gmp_RR infinity_threshold,
+                     bool checkPrecision) = 0; 
   virtual void text_out(buffer& o) const = 0;
 };
 
@@ -140,13 +141,16 @@ public:
      outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
      output_extras: the first row gives the status of the solutions (or path) */
 
-  bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     MutableMatrix* output_extras,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold
-                     );
+  bool track(const MutableMatrix* inputs, 
+             MutableMatrix* outputs, 
+             MutableMatrix* output_extras,  
+             gmp_RR init_dt, 
+             gmp_RR min_dt,
+             gmp_RR epsilon, // o.CorrectorTolerance,
+             int max_corr_steps, 
+             gmp_RR infinity_threshold,
+             bool checkPrecision
+             );
   void text_out(buffer& o) const;
 private:
   EType &mHx, &mHxt, &mHxH;
@@ -165,13 +169,15 @@ public:
   /* columns of inputs are initial solutions (last coordinate is the initial value of continuation parameter t,
      outputs have the same shape as inputs (last coordinate of outputs is set to the desirted value of t),
      output_extras: the first row gives the status of the solutions (or path) */
-  bool track(const MutableMatrix* inputs, MutableMatrix* outputs, 
-                     MutableMatrix* output_extras,  
-                     gmp_RR init_dt, gmp_RR min_dt,
-                     gmp_RR epsilon, // o.CorrectorTolerance,
-                     int max_corr_steps, 
-                     gmp_RR infinity_threshold
-                     );
+  bool track(const MutableMatrix* inputs, 
+             MutableMatrix* outputs, 
+             MutableMatrix* output_extras,  
+             gmp_RR init_dt, gmp_RR min_dt,
+             gmp_RR epsilon, // o.CorrectorTolerance,
+             int max_corr_steps, 
+             gmp_RR infinity_threshold,
+             bool checkPrecision
+             );
   void text_out(buffer& o) const;
 private:
   EType &mHx, &mHxt, &mHxH;

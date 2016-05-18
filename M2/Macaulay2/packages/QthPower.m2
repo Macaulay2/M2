@@ -1208,6 +1208,9 @@ assert(icq#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
       GB = {x^6+x^3*z-y^3*z^2};
 time ic0 = rationalIntegralClosure(wtR1,R0,GB); toString(ic0)
 assert(ic0#3 == matrix{{10,9,8,7,5,6,6},{6,9,6,3,3,6,0}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --example 1, disguised Hermitian----------------------------------------------
 -- so, in need of minimization------------------------------------------------
@@ -1225,6 +1228,9 @@ time ic1 = rationalIntegralClosure(wtR2,R0,GB); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = rationalIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{15,10,5,4}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --pseudo-weights--------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -1233,6 +1239,9 @@ assert(ic3#3 == matrix{{15,10,5,4}})
       GB = {u^7-u^3*r^7-r^3};
 time ic0 = rationalIntegralClosure(wtR3,R0,GB); toString(ic0)
 assert(ic0#3==matrix{{34,27,24,17,14,7,4}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --generic example over QQ with moderate coefficients to be reconstructed------
 ------------------------------------------------------------------------------ 
@@ -1241,6 +1250,9 @@ assert(ic0#3==matrix{{34,27,24,17,14,7,4}})
       GB = {(y^2-3/4*y-15/17*x)^3-9*y*x^4*(y^2-3/4*y-15/17*x)-27*x^11};
 time ic0 = rationalIntegralClosure(wtR4,R0,GB); toString(ic0)
 assert(ic0#3 == matrix{{25,21,20,11,10,6}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --example 7, Leonard 2009 with a presentation that is not free as a P-module--
 ------------------------------------------------------------------------------
@@ -1252,6 +1264,9 @@ assert(ic0#3 == matrix{{25,21,20,11,10,6}})
            z19^3+z19*(y15+y12)*(x9+1)*u9+(y15*(x9+u9)+y12*(x9*u9+1))*x9^2*u9};
 time icq = qthIntegralClosure(wtR5,Rq,GB); toString(icq)
 assert(icq#3 == matrix{{34,34,31,29,26,23,19,15,12,9,9},{30,21,21,24,24,15,12,9,9,9,0}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --generic example with non-trivial minimization-------------------------------
 -- M2's integralClosure seizes on flattenRing --------------------------------
@@ -1264,6 +1279,9 @@ time ic1 = qthIntegralClosure(wtR6,Rq,GB); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{38,31,24,12,5}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --from Eisenbud-Neumann p.11: simplest poly with 2 characteristic pairs.------ 
 --QQ[y,x]/(y^4-2*x^3*y^2-4*x^5*y+x^6-x^7)-------------------------------------
@@ -1276,6 +1294,9 @@ assert(ic3#3 == matrix{{38,31,24,12,5}})
 time ic1 = rationalIntegralClosure(wtR7,Rq,GB); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 assert(ic1#3==matrix{{3,2,1,4}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --from the IntegralClosure package--------------------------------------------
 -- not type I, but amenable to grevlex weights--------------------------------
@@ -1285,6 +1306,9 @@ assert(ic1#3==matrix{{3,2,1,4}})
       GB = {1/5*(5*v^6+7*v^2*u^4+6*u^6+21*v^2*u^3+12*u^5+21*v^2*u^2+6*u^4+7*v^2*u)};
 time ic0 = rationalIntegralClosure(wtR8,R0,GB); toString(ic0)
 assert(ic0#3 == matrix{{2,2,2,2,1,1}})
+///
+
+TEST ///
 ------------------------------------------------------------------------------
 --MAGMA example found in GLS--------------------------------------------------
 -- genus 1, but try to figure that out from most pesentations-----------------
@@ -1298,6 +1322,9 @@ time ic1 = qthIntegralClosure(wtR9,Rq,GB); toString(ic1)
 time ic2 = minimization(ic1); toString(ic2)
 time ic3 = qthIntegralClosure(ic2#0,ic2#1,ic2#2); toString(ic3)
 assert(ic3#3 == matrix{{3,2}})
+///
+
+TEST ///
 ---------------------------------------------------------------------------------
 -- Example I_3 from the Normalization paper by the Singular people, not type I---
 -- has currently large numerators and denominators using the deJong approach-----

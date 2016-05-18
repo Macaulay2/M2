@@ -96,3 +96,14 @@ while true do (
     x1 = transpose matrix s;
     assert areEqual(x1, x1known);
     )
+
+-- (-200,[-300,-400,-400,400,400,400],10)
+restart
+load "curl.m2"
+QQ[s,x,y,dx,dy,WeylAlgebra=>{x=>dx,y=>dy}]
+genericBfct({x*dx+y*dy-3,x*dx-y*dy},{x,y},{dx,dy},{1,1})
+
+fdHessian2(-2,{-3,-2},10,{1/2,1/3})
+
+
+

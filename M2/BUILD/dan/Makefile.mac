@@ -21,16 +21,28 @@ unexport PROFILE
 
 DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
+
+CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+CPPFLAGS += -I$(HOME)/local/include
+LDFLAGS += -L$(HOME)/local/lib
+CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
 # export MACOSX_DEPLOYMENT_TARGET=10.9
 
 ifeq ($(GCC5),yes)
 BUILDLIBS += mpir flint
-_CC  = gcc-5 -m64
-_CXX = g++-5 -m64
+_CC  = gcc-5
+_CXX = g++-5
 DIRECTORY := $(DIRECTORY)-gcc5
+else
+ifeq ($(GCC6),yes)
+BUILDLIBS += mpir flint
+_CC  = gcc-6
+_CXX = g++-6
+DIRECTORY := $(DIRECTORY)-gcc6
 else
 ifeq ($(CLANG),yes)
 # The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
@@ -40,13 +52,14 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-_FC  := false
+# _FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
+export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9 -mtune=generic
-_CXX := g++-4.9 -mtune=generic
-_FC  := 
-# _FC  := gfortran-5
+_CC  := gcc-4.9
+_CXX := g++-4.9
+_FC  := gfortran-4.9
+endif
 endif
 endif
 
@@ -90,5 +103,5 @@ CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no "
 # End:

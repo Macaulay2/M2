@@ -1,0 +1,134 @@
+-- -*- M2-comint -*- {* hash: -73199544 *}
+--loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : s=makeB'Section({x,y,z})
+
+o1 = B'Section{...2...}
+
+o1 : B'Section
+
+i2 : class s
+
+o2 = B'Section
+
+o2 : Type
+
+i3 : randomRealCoefficientGenerator=()->random(RR)
+
+o3 = randomRealCoefficientGenerator
+
+o3 : FunctionClosure
+
+i4 : sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
+
+o4 = B'Section{...2...}
+
+o4 : B'Section
+
+i5 : sReal#B'NumberCoefficients
+
+o5 = {.0741835, .808694, .362835}
+
+o5 : List
+
+i6 : randomRationalCoefficientGenerator=()->random(QQ)
+
+o6 = randomRationalCoefficientGenerator
+
+o6 : FunctionClosure
+
+i7 : sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
+
+o7 = B'Section{...2...}
+
+o7 : B'Section
+
+i8 : sRational#B'NumberCoefficients
+
+       7  1   7
+o8 = {--, -, --}
+      10  2  10
+
+o8 : List
+
+i9 : affineSection=makeB'Section({x,y,z,1})
+
+o9 = B'Section{...2...}
+
+o9 : B'Section
+
+i10 : X={x,y,z}
+
+o10 = {x, y, z}
+
+o10 : List
+
+i11 : P={1,2,3}
+
+o11 = {1, 2, 3}
+
+o11 : List
+
+i12 : affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
+
+o12 = B'Section{...3...}
+
+o12 : B'Section
+
+i13 : r= affineContainingPoint#B'SectionString
+
+o13 = (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(
+      1.36945+.015633*ii)*(z-(1)*(3))
+
+i14 : print r
+(1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))
+
+i15 : rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
+
+o15 = B'Section{...3...}
+
+o15 : B'Section
+
+i16 : peek rHomogeSection
+
+o16 = B'Section{B'Homogenization => x+y+z                           
+                B'NumberCoefficients => {.534614-.175945*ii, .426704
+                B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(
+      -----------------------------------------------------------------------
+                                                                             
+      -.97539*ii, -.478803+.0416008*ii}
+      1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+
+      -----------------------------------------------------------------------
+             }
+
+      z)*(3))
+
+i17 : print rHomogeSection#B'SectionString
+(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))
+
+i18 : f="y^3-x*y+1"
+
+o18 = y^3-x*y+1
+
+i19 : s1=makeB'Section({x,y,1})
+
+o19 = B'Section{...2...}
+
+o19 : B'Section
+
+i20 : makeB'InputFile(storeBM2Files,
+        AffVariableGroup=>{x,y},
+        B'Polynomials=>{f,s1})
+
+o20 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22760-0/0/input
+
+o20 : File
+
+i21 : runBertini(storeBM2Files)
+bertini
+
+i22 : #importSolutionsFile(storeBM2Files)==3
+
+o22 = true
+
+i23 : 

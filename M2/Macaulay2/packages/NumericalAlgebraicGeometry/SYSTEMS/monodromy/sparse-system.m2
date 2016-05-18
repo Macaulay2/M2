@@ -41,16 +41,15 @@ c0 = point{
 	    )) 
     }
 pre0 = point{x0}
-stop = (n,L)->n>5
---nextP = () -> point {{ c0 }}
-pre'all = preimageViaMonodromy(PH,c0,{pre0},
-    --RandomPointFunction=>nextP,
-    StoppingCriterion=>stop);
 
-end
+end ----------------------------------------------------------------------------
+
 restart
-load "sparse-system.m2"
-
+load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system.m2"
+stop = (n,L)->n>5
+elapsedTime pre'all = preimageViaMonodromy(PH,c0,{pre0},
+    StoppingCriterion=>stop);
+-- RHEL:  
 
 ---------- PHCpack timing ------------------------
 restart

@@ -700,7 +700,7 @@ texMath BettiTally := v -> (
 	  ))
 tex BettiTally := v -> concatenate("$", texMath v, "$")
 
-betti = method(TypicalValue => BettiTally, Options => { Weights => null })
+betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )
 heftfun := (wt1,wt2) -> (
      if wt1 =!= null then heftfun0 wt1
@@ -733,7 +733,9 @@ heft Resolution := heft GradedModule := C -> heft ring C
 undocumented' (betti,Resolution)
 betti Resolution := opts -> X -> (
      -- this version works only for rings of degree length 1
-     b := rawBetti(X.RawComputation, 0); -- the raw version takes no weight option
+     -- currently if opts.Minimize is true, then an error is given
+     -- unless the FastNonminimal=>true option was given for the free resolution.
+     b := rawBetti(X.RawComputation, if opts.Minimize then 4 else 0); -- the raw version takes no weight option
      heftfn := heftfun(opts.Weights,heft X);
      b = applyKeys(b, (i,d,h) -> (i,d,heftfn d));
      b)
@@ -741,6 +743,7 @@ betti Resolution := opts -> X -> (
 betti GradedModule := opts -> C -> (
      if C.?Resolution and degreeLength ring C === 1 and heft C === {1} then betti(C.Resolution,opts)
      else (
+          if opts.Minimize then error "Minimize=>true is currently only supported for res(...,FastNonminimal=>true)";
 	  complete C;
      	  heftfn := heftfun(opts.Weights,heft C);
 	  new BettiTally from flatten apply(

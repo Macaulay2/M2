@@ -719,7 +719,8 @@ isAmple ToricDivisor := D -> (
 	if w_(0,0) < 0 then w = (-1)* w;
 	(v // w)_(0,0) > 0))))
 
-hilbertBasis Matrix := Matrix => C -> transpose (normaliz(transpose C,0))#"gen"
+hilbertBasis Matrix := Matrix => C -> (
+  transpose (normaliz(transpose C,"integral_closure"))#"gen")
 
 isVeryAmple ToricDivisor := Boolean => D -> (
   if not isAmple D then return false
@@ -754,7 +755,7 @@ latticePoints ToricDivisor := Matrix => D -> (
   if V === null then return null
   else (
     d := numRows V;
-    V = transpose (normaliz(transpose V,2))#"gen";
+    V = transpose (normaliz(transpose V,"polytope"))#"gen";
     s := select(numColumns V, i -> V_(d,i) === 1);
     c := (V_s)^{0..d-1};
     return c_(sortColumns c)))

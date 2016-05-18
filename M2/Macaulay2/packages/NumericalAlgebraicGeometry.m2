@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.8.2.1",
-     Date => "Jan 2016",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -37,12 +37,13 @@ newPackage select((
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
+     "DoublePrecision",
      "setDefault", "getDefault",
      "solveSystem", 
      "solveGenericSystemInTorus", -- works with PHCpack only
      "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
-     -- "multistepPredictor", "multistepPredictorLooseEnd",
+     "Field",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
@@ -64,12 +65,13 @@ exportMutable {
 
 
 -- local functions/symbols:
-protect Processing, protect Undetermined -- possible values of SolutionStatus
+protect Processing; protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+protect LastIncrement;
 
 -- possible solution statuses returned by engine
-solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure}
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -87,6 +89,9 @@ load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2"
 
 -- GLOBAL VARIABLES ----------------------------------
 NAG = NumericalAlgebraicGeometry
+protect symbol NAG
+DoublePrecision = 53
+protect symbol DoublePrecision
 
 --PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
@@ -98,6 +103,7 @@ SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries
 Package % Symbol := (p,s) -> value (toString p | "$" | toString s) -- get an option name from the correct dictionary
 
 DEFAULT = new MutableHashTable from {
+     Field => CC,
      Software=>M2engine, NoOutput=>false, 
      NumericalAlgebraicGeometry$gamma=>1, 
      NumericalAlgebraicGeometry$tDegree=>1,
@@ -116,7 +122,7 @@ DEFAULT = new MutableHashTable from {
      CorrectorTolerance => 1e-6, -- tracking tolerance
      -- end of path
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
-     InfinityThreshold => 100000, -- used to tell if the path is diverging
+     InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
@@ -124,14 +130,14 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => infinity,
+     ResidualTolerance => 1e-4,
      Iterations => 30, 
      Bits => infinity,
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e5, -- this may need to go away!!!
-     maxPrecision => 53,
+     Precision => DoublePrecision, -- infinity,
      maxNumberOfVariables => 50
      }
 
@@ -170,7 +176,8 @@ setDefault = method(Options => {
      -- general
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
      Tolerance => null,
-     SingularConditionNumber => null
+     SingularConditionNumber => null,
+     Precision => null,
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -506,6 +513,25 @@ isSolution(Point,PolySystem) := o -> (P,F) -> (
 beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
+
+undocumented {
+    Field, "DoublePrecision", 
+    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
+    (endGameCauchy,GateHomotopy,Number,Point),
+    (evaluateH,GateHomotopy,Matrix,Number),
+(evaluateH,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHt,GateHomotopy,Matrix,Number),
+(evaluateHt,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHx,GateHomotopy,Matrix,Number),
+(evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number),
+(specialize,GateParameterHomotopy,MutableMatrix),
+[gateHomotopy,Software],
+[trackHomotopy,Software],
+[setDefault,Precision],
+[gateHomotopy,Parameters],
+[gateHomotopy,Strategy],
+    }
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")

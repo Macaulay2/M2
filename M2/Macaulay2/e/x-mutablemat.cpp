@@ -1162,7 +1162,7 @@ engine_RawRingElementArray convertRingelemsToArray(const Ring *R,
 engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
 // returns an array whose coefficients give the characteristic polynomial of the square matrix A
 {
-#ifdef HAVE_FFLAS_FFPACK
+#if 1
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp>* B = A->cast_to_MutableMat< DMatZZp >();
@@ -1189,7 +1189,7 @@ engine_RawRingElementArrayOrNull rawLinAlgCharPoly(MutableMatrix* A)
 engine_RawRingElementArrayOrNull rawLinAlgMinPoly(MutableMatrix* A)
 // returns an array whose coefficients give the minimal polynomial of the square matrix A
 {
-#ifdef HAVE_FFLAS_FFPACK
+#if 1
   const Ring *R = A->get_ring();
   typedef DMat<M2::ARingZZpFFPACK> DMatZZp;
   MutableMat<DMatZZp>* B = A->cast_to_MutableMat< DMatZZp >();

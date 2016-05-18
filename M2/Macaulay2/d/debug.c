@@ -31,7 +31,7 @@ int badBlock() {
      abort();
 }
 
-#if GC_DEBUG
+#ifndef NDEBUG
 extern unsigned int GC_debug_header_size;
 extern void *GC_check_annotated_obj(void *); /* returns NULL or pointer to clobbered debug header location */
 void GC_check(void *p) {

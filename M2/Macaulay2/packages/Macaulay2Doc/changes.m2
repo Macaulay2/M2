@@ -1,4 +1,7 @@
 -- -*- coding:utf-8 -*-
+
+star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
+
 document {
      Key => "changes to Macaulay2, by version",
      Subnodes => {
@@ -13,9 +16,80 @@ document {
 	  TO "changes, 1.8",
 	  TO "changes, 1.8.1",
 	  TO "changes, 1.8.2",
+	  TO "changes, 1.9",
 	  TO "list of obsolete functions"
 	  }
      }
+
+document {
+     Key => "changes, 1.9",
+     UL {
+	  LI { "major improvements and additions:",
+	        UL {
+                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and moduless over 
+                    polynomial rings over finite prime fields.  Also is functional for ideals and
+                    modules over exterior algebras.  See ", TO "FastNonminimal", " and ", TO [betti,Minimize], ".  For 
+                    computing minimal betti numbers, on larger examples, this code is often hundreds to thousands of times faster than 
+                    standard use of ", TO "resolution", " and is also, in many cases, much faster than the 
+                    similar code in Singular version 4.0.2 described in Erocal, Motsak, Schreyer, Steenpass, Refined Algorithms to
+                    compute syzygies, arxiv 1502.01654.  A paper describing our algorithm and implementation is forthcoming."
+                    }
+	            }
+            },
+	  LI { "packages that have been published and certified:",
+	       UL {
+	  	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+		    LI { star, " ", TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been published." },
+		    LI { star, " ", TO "Posets::Posets", ", a package by David Cook II, Sonja Mapes, and Gwyn Whieldon, for processing partially ordered sets, has been published." },
+		    LI { star, " ", TO "MultiplierIdeals::MultiplierIdeals", ", a package by Zach Teitler for computing multiplier ideals of monomial ideals, has been published." },
+		    LI { star, " ", TO "CharacteristicClasses::CharacteristicClasses", ", a package by Christine Jost and Martin Helmer for computing characteristic classes on toric varieties, has been published." }
+	       	    }
+	       },
+	  LI { "new packages:",                       -- got this with git diff version-1.8.2 =distributed-packages 
+	       UL {
+	  	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	  	    LI { TO "MCMApproximations::MCMApproximations", ", a package by David Eisenbud for maximal Cohen-Macaulay approximations and complete intersections, has been added." },
+	  	    LI { TO "MultiplierIdealsDim2::MultiplierIdealsDim2", ", a package by Ferran Dachs-Cadefau for computing multiplier ideals in 2-dimensional rings, has been added." },
+	  	    LI { TO "RunExternalM2::RunExternalM2", ", a package by Brian Pike for running Macaulay2 functions outside the current Macaulay2 process, has been added." },
+	  	    LI { TO "SLPexpressions::SLPexpressions", ", a package by Anton Leykin for straight line programs and algebraic circuits, has been added." },
+	  	    LI { TO "NumericalSchubertCalculus::NumericalSchubertCalculus", ", a package by Anton Leykin, Abraham Martin del Campo, and Jan Verschelde, for numerical methods in Schubert Calculus, has been added." },
+	  	    LI { TO "ToricTopology::ToricTopology", ", a package by Alvise Trevisan and Alexander I. Suciu for toric topology, has been added." },
+	  	    LI { TO "Cremona::Cremona", ", a package by Giovanni Staglianò for rational maps between projective varieties, has been added." },
+	  	    LI { TO "MultipolynomialResultants::MultipolynomialResultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added." },
+	  	    LI { TO "VectorFields::VectorFields", ", a package by Brian Pike for vector fields, has been added." },
+	  	    LI { TO "RandomIdeal::RandomIdeal", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
+	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }
+	  	    }
+	       },
+	  -- LI { "improved packages:",
+	  --     UL {
+	  -- 	  LI { "The package ", TO "NumericalAlgebraicGeometry", " implements a version of adaptive precision homotopy continuation tracker
+	  -- 	      that is now used by default in the black-box solver (", TO "NumericalAlgebraicGeometry::solveSystem", ")." },
+	  -- 	  }
+	  --     },
+	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
+	       UL {
+		    LI { "The function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },
+     	       	    LI { "The function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." }
+		    }
+	       },
+	  -- LI { "new constants and operators:",
+	  --      UL {
+	  --      	    }
+	  --      }
+	  -- LI { "functionality changed:",
+	  --      UL {
+	  --      	    }
+	  --      },
+      LI { "useful functions involving prime numbers, submitted by Frank Schreyer:",
+          UL {
+              LI { TO "nextPrime", ", a simple function to find the first prime number at least as large as a given number"},
+              LI { TO "getPrimeWithRootOfUnity", ", used to find a prime number p s.t. ZZ/p contains a n-th root of unity"},
+              LI { TO "randomKRationalPoint", ", a function to find a random rational point on a variety over a finite field"}
+              }
+      }
+    }
+  }
 
 document {
      Key => "list of obsolete functions",
@@ -64,8 +138,6 @@ document {
 	       }
 	  }
      }
-
-star := IMG { "src" => replace("PKG","Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star" }
 
 document {
      Key => "changes, 1.8.2",
