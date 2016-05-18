@@ -16,6 +16,10 @@ $(foreach d,@LIBLIST@ @PROGLIST@,		\
 	$(foreach t, distclean clean,		\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
+$(foreach d,@LIBLIST@ @PROGLIST@,		\
+	$(foreach t, $(BUILT_TARGETS),		\
+		$(eval $t-all: $t-in-$d)	\
+		$(eval .PHONY: $t-all)))
 
 uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
 all:install-programs

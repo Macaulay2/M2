@@ -7,6 +7,17 @@ CHOWN = chown
 prefixtail=$(shell echo @prefix@ | sed 's,^/,,')
 TAROPTIONS = --owner=0 --group=0 --mode=a+rX,og-ws
 .PHONY: prepare
+
+# see https://www.debian.org/doc/debian-policy/ch-controlfields.html, section 5.6.12, description of "Version"
+# use it this way, for example:
+#    make DEBIAN_REVISION=1
+DEBIAN_REVISION =
+ifeq ($(DEBIAN_REVISION),)
+DIST_VERSION = @PACKAGE_VERSION@
+else
+DIST_VERSION = @PACKAGE_VERSION@-$(DEBIAN_REVISION)
+endif
+
 ############################## main targets
 
 ifeq (@ARCH@,x86_64)
@@ -28,8 +39,8 @@ endif
 endif
 endif
 
-PKG_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-$(DEBARCH)-@OS@-@ISSUE@.deb
-PKG_COM_DEB = @PACKAGE_TARNAME@-@PACKAGE_VERSION@-common.deb
+PKG_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-$(DEBARCH)-@OS@-@ISSUE@.deb
+PKG_COM_DEB = @PACKAGE_TARNAME@-$(DIST_VERSION)-common.deb
 
 all: chk-opts macaulay2/control.prelim tidy_before ../../$(PKG_DEB) ../../$(PKG_COM_DEB) announce maybe-tidy
 
@@ -53,7 +64,11 @@ check-optimize-enabled:; [ @OPTIMIZE@ = yes ]
 check-strip-enabled:; [ @ENABLE_STRIP@ = yes ]
 macaulay2/control.prelim : @srcdir@/macaulay2/control.prelim.in Makefile
 	rm -f $@
-	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/@PACKAGE_VERSION@/g'
+	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
+	! egrep -nH '@[A-Za-z_]+@' <$@
+macaulay2-common/control.prelim : @srcdir@/macaulay2-common/control.prelim.in Makefile
+	rm -f $@
+	<$< >$@ sed -e 's/[@]DEBARCH[@]/$(DEBARCH)/g' -e 's/[@]PACKAGE_VERSION[@]/$(DIST_VERSION)/g'
 	! egrep -nH '@[A-Za-z_]+@' <$@
 announce:
 	@ echo "============================================================================="

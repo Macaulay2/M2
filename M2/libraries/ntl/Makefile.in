@@ -24,6 +24,7 @@ endif
 
 CONFIGUREOPTIONS =						\
 	WIZARD=off						\
+	NATIVE=off						\
 	PREFIX=@pre_libm2dir@					\
 	LIBDIR=@pre_librariesdir@				\
 	INCLUDEDIR=@pre_libm2dir@/include			\
