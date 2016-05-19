@@ -17,6 +17,8 @@ newPackage(
      DebuggingMode => false
      )
 
+-- Bart Snapp is not maintaining this code, so others are welcome to suggest improvements.
+
 --=========================================================================--
      
 export{"regularSequenceCheck","isRegularSequence","regularSequence","isCM","Sparseness","Bound","Attempts","Maximal"} 
