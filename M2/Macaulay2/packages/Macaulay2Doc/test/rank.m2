@@ -13,3 +13,13 @@ end
 R = QQ[x,y]
 r = rank coker (random (R^11, R^3, MaximalRank => true) * matrix "x3+2,,;,5,;,,x+1" * random(R^3,R^5,MaximalRank => true))
 assert ( 3 == r )
+
+-- git issue 359.  For awhile, this gave the incorrect answer of 12.
+k = ZZ/101
+x = symbol x;
+R = k[x_0..x_5]
+M = random(R^6, R^{6:-1})
+M = M - transpose M
+S = R/pfaffians(6,M)
+N = sub(M,S)
+assert(rank N == 4)
