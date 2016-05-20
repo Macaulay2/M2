@@ -1,5 +1,5 @@
 newPackage( "Divisor",
-Version => "0.1q", Date => "February 21st, 2015", Authors => {
+Version => "0.1p", Date => "August 6th, 2015", Authors => {
      {Name => "Karl Schwede",
      Email=> "kschwede@gmail.com",
      HomePage=> "http://www.math.utah.edu/~schwede"
@@ -16,7 +16,7 @@ export{
 	"WDiv",
 	"QDiv",
 	"RDiv",
-    --methods for defining divisors and related options
+    --methods for defining divisors and related operations
 	"divisor",
 	"rationalDivisor",
 	"realDivisor",
@@ -54,6 +54,7 @@ export{
 	"findElementOfDegree", 
 	"getLinearDiophantineSolution",		--has Unsafe option
 	"canonicalDivisor", --has IsGraded option
+	"ramificationDivisor",
     --tests and related constructions
     	"isWDiv",
 	"isEffective",
@@ -770,6 +771,7 @@ idealToDivisor = method();
 idealToDivisor( Ideal ) := (I1) ->
 (
 	if  (I1 == 0*I1) then (error "idealToDivisor: cannot form divisor from the zero ideal";);
+	--question, is it faster to reflexify the ideal or just check whether the ideal has too high of dimension... if multiprocess gets working, then we may want to check both...
 	I2 := reflexifyIdeal(I1);
 	L2 := {};
 	if ( isSubset(ideal sub(1, ring I2), I2) == false ) then (L2 = minimalPrimes(I2););
@@ -1058,6 +1060,45 @@ canonicalDivisor(Ring) := o->(R1) -> (
 		degList = apply(varList, q -> (degree(q))); );
 	M1 := Ext^(dS - dR)(S1^1/I1, S1^{-(sum degList)});
 	moduleToDivisor(R1, M1**R1, IsGraded=>o.IsGraded)
+);
+
+
+--computes a ramification divisor of a finite map Y -> X of normal varieties.  It can also compute the relative canonical divisor of things like blowups (in which case, make sure the IsGraded flag is set to true)
+--warning, the IsGraded functionality is not documented and may not work properly if X is not smooth.
+ramificationDivisor = method(Options => {IsGraded => false});
+--pass it an injective map between normal rings f1 : R1 -> S1 such that S1 is a finite R1 module.  The function assumes the two rings use the same coefficientRing.
+ramificationDivisor(RingMap) := o->( f1 ) ->
+(
+	R1 := source f1;
+	S1 := target f1;
+	kk := coefficientRing S1;
+	--do some sanity checking to prevent the user from getting an incorrect value because the format was wrong.
+	if (o.IsGraded == false) then (
+		if (not (kk === coefficientRing R1)) then error "Expected the map to be between rings with the same coefficient ring when IsGraded is set to false.";
+	)
+	else (
+		if (not (kk === R1)) then error "Expected the coefficientRing of the target to be equal to the source when IsGraded is set to true.";
+	);
+	gradedMod := 0; --this is subtracted from a dimension later, it is set to 1 if IsGraded == true
+	if (o.IsGraded == true) then gradedMod = 1;
+	
+	sourceList := first entries vars R1;
+	targetList := first entries vars S1;
+	numVars := #(targetList);
+	YYY := local YYY;
+	myMon := monoid[(sourceList|toList(YYY_1..YYY_numVars))];
+	--R2 maps to S1 with flattened variables
+	R2 := kk(myMon);
+	f2 := map(S1, R2, (apply(sourceList,t->f1(t))) |targetList);
+	K2 := ker f2;
+	--R3 is the same ring with unflattened variables
+	myMon3 := monoid[toList(YYY_1..YYY_numVars)];
+	R3 := R1(myMon3);
+	S3 := R3/(sub(K2, R3)); --a ring isomorphic to S1, we just wrote S3 = R3[stuff]
+	J3 := minors(numVars-gradedMod, jacobian S3); --this should give us the locus where the map is not smooth
+	J2 := sub(J3, R2); --sub this back into R2 (flattened variables)
+	if (J2 == ideal(sub(0,R2))) then error "Cannot create divisor.  This map seems to be ramified everywhere, is the map inseparable?";
+	divisor(f2(J2))
 );
 
 
@@ -2793,7 +2834,7 @@ doc ///
 	 I2: Ideal
 	Description
 	 Text
-	  Get the double dual (S2 - identification) of an ideal.  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
+	  Returns an ideal isomorphic to Hom(I, R).  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z)
 	  m = ideal(x,y,z)
@@ -3398,6 +3439,53 @@ doc ///
 	  canonicalDivisor(R)
 ///
 
+doc /// 
+	Key
+	 ramificationDivisor
+	 (ramificationDivisor, RingMap)
+	 [ramificationDivisor, IsGraded]
+	Headline
+	 Compute the ramification divisor of a finite inclusion of normal domains
+	Usage
+	 D = ramficationDivisor( f, IsGraded=>b)
+	Inputs
+	 f: RingMap
+	 b: Boolean
+	Outputs
+	 D: WDiv
+	Description
+	 Text
+	  Compute the ramification divisor corresponding the finite inclusion of normal domains.  If you pass it a non-finite map, it will compute the divisorial part of the locus where the map is not smooth.  If IsGraded is set to false (the default value), then the coefficient ring of both the source and target of f must be equal.  If the IsGraded is set to true, then the function will assume that the source of f is affine, and the target is projective over the source.  In this case, the coefficient ring of the target must be equal to the source ring.  This can be useful when computing things like relative canonical divisors over regular bases (it may not give the expected answer over non-regular bases).
+	 Example
+	  R = QQ[x];
+	  S = QQ[y];
+	  f = map(S, R, {y^3});
+	  ramificationDivisor(f)
+	 Text
+	  The next example is a Veronese which is etale in codimension 1.
+	 Example
+	  R = QQ[x,y];
+	  T = QQ[a,b,c,d];
+	  h = map(R, T, {x^3, x^2*y, x*y^2, y^3});
+	  S = T/ker h;
+	  f = map(R, S, {x^3, x^2*y, x*y^2, y^3});
+	  ramificationDivisor(f)
+	 Text
+	  Here is an example with wild ramification.
+	 Example
+	  R = ZZ/2[t];
+	  S = ZZ/2[x];
+	  f = map(S, R, {x^2*(1+x)});
+	  ramificationDivisor(f)
+	 Text
+	  Next we demonstrate how to compute the relative canonical divisor of a blowup over a smooth base.
+	 Example
+	  R = QQ[x,y];
+	  S = reesAlgebra(ideal(x,y^2));
+	  f = map(S, R);
+	  ramificationDivisor(f,IsGraded=>true)
+///
+
 doc ///
 	Key
 	 isWDiv
@@ -3930,6 +4018,29 @@ assert( coeff(ideal(x, y), D) == -2)
 ///
 
 TEST ///
+--- verify ramification divisor in a simple case
+R = ZZ/5[x]
+S = ZZ/5[y]
+f = map(S, R, {y^3});
+D = ramificationDivisor(f);
+assert(D == divisor(y^2))
+///
+
+TEST ///
+--- verify the ramificationDivisor in one case where both source and target are nonsmooth
+T = QQ[x,y];
+R = QQ[a,b,c];
+g = map(T, R, {x^2,x*y,y^2});
+R = R/ker g;
+S = QQ[m,n,o,p,q]
+h = map(T, S, {x^4,x^3*y,x^2*y^2,x*y^3,y^4});
+S = S/ker h;
+f = map(R, S, {a^2,a*b,b^2,b*c,c^2});
+D = ramificationDivisor(f);
+assert(isZeroDivisor(D))
+///
+
+TEST ///
 ---checking idealToDivisor
 R = QQ[x,y,z]/ideal(x^2-y*z);
 J = ideal(x,y,z);
@@ -4078,6 +4189,12 @@ end
 ---***************************
 ---*******CHANGELOG***********
 ---***************************
+--changes 0.1p
+------Added the command ramificationDivisor
+
+--changes 0.1o
+------Added quotes to the exports for compatibility with 1.8
+
 --changes 0.1q
 ------modified moduleToIdeal to allow the user to also output the map via the ReturnMap flag.
 ------fixed a bug in moduleToIdeal which caused it to sometimes not produce the right output for domains.
@@ -4102,7 +4219,8 @@ end
 
 
 ----FUTURE PLANS------
---add the ability to compute relative canonical divisors including ramification divisors for finite maps (there are a couple options for this latter one, if R \subseteq S, then can we figure out how to represent the trace map as a section of Hom(pushForward(S), R)?  If so, it's really easy.  Otherwise maybe we can compute the module of relative differentials.
+--speed up the divisor stuff by doing some simultaneous dimension computations for checking for the zero divisor (seems to be faster frequently)
+--refine the ability to compute relative canonical divisors.  Right now it should handle things pretty well, but there are some ways it can be improved (can we do canonical bundle formulas for fibrations I wonder?)
 --for not necessarily S2 graded rings, handle things (this should be pretty easy, it just takes some re-coding)
 --add a very ample check
 --can we check ampleness, is there a better way to do this than to check if some power is very ample?  Hm, how do we prove that something is *not* ample...

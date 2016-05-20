@@ -15,22 +15,9 @@ int reading_from_readline = FALSE;
 extern void stack_trace();
 
 void
-#if defined(__STDC__)
 fatal(const char *s,...)   {
      va_list ap;
-#else
-fatal( va_alist  ) 
-va_dcl
-{
-     va_list ap;
-     char *s;
-#endif
-#if defined(__STDC__)
      va_start(ap,s);
-#else
-     va_start(ap);
-     s = va_arg(ap, char *);
-#endif
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");
      fflush(stderr);
@@ -918,21 +905,6 @@ int system_openlistener(M2_string interface0,M2_string serv) {
      GC_FREE(tmpserv);
      return sd;
      }
-
-#if defined(HAVE_DECL_SYS_NERR) && !HAVE_DECL_SYS_NERR
-extern int sys_nerr;
-#endif
-
-#ifdef HAVE_HERROR
-extern int h_nerr;
- #if defined(HAVE_DECL_H_ERRLIST) && !HAVE_DECL_H_ERRLIST
- extern const char * const h_errlist[];
- #endif
-#endif
-
-#if defined(HAVE_DECL_SYS_ERRLIST) && !HAVE_DECL_SYS_ERRLIST
-extern const char * const sys_errlist[];
-#endif
 
 int system_errno(void) {
   return 

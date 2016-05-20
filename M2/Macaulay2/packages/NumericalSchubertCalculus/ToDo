@@ -1,0 +1,19 @@
+To Do for the Numerical Schubert Calculus project
+
+* Finish Main paper
+   - Frank needs to read the guts of the program
+   - Need to describe the local coordiantes and 
+   - Give a proof of correctness
+   - Conclusion
+   - Can state that the PHC version computes certain *big* examples
+
+* Decent library of examples, for both Macaulay2 and Phc Pack
+   - Run all problems in G(3,7), G(3,8), and G(4,8)
+
+* Write Software for Macaulay2 paper
+
+* Test repopulating the fiber
+
+* Documentation
+
+* Need parameter homotopy for user defined flags

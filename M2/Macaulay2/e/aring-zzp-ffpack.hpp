@@ -7,27 +7,6 @@
 #include "buffer.hpp"
 #include "ringelem.hpp"
 #include <iostream>
-
-//enable this lines to trick Kdevelop and do not forget to comment out them before committing. Other ideas ?
-// #define HAVE_FFLAS_FFPACK 1 
-// #define HAVE_GIVARO 1
-
-#if not defined(HAVE_FFLAS_FFPACK)  
-namespace M2 {
-  
-  class ARingZZpFFPACK : public DummyRing
-  {
-  public:
-    static const RingID ringID = ring_ZZpFfpack;
-    
-    typedef M2::ARingZZpFFPACK   ring_type;
-    
-    ARingZZpFFPACK(int charac) {}
-
-  };
-  
-};
-#else
 #include <fflas-ffpack/field/modular-balanced.h>
 #include <fflas-ffpack/field/modular-double.h>
 #include <fflas-ffpack/ffpack/ffpack.h>
@@ -249,7 +228,6 @@ namespace M2 {
 
 };
 
-#endif  // HAVE_FFLAS_FFPACK
 #endif
 
 // Local Variables:

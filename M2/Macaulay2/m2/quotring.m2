@@ -323,6 +323,56 @@ getNonUnit = R -> if R.?Engine and R.Engine then (
      r := rawGetNonUnit raw R;
      if r != 0 then new R from r)
 
+-- nextPrime and getPrimeWithRootOfUnity, written by Frank Schreyer.
+nextPrime=method(TypicalValue=>ZZ)
+nextPrime Number := n -> (
+   n0 := ceiling n;
+   if n0 <= 2 then return 2;
+   if even n0 then n0=n0+1;
+   while not isPrime n0 do n0=n0+2;
+   n0
+   )
+
+
+getPrimeWithRootOfUnity = method(Options=>{Range=>(10^4,3*10^4)})
+getPrimeWithRootOfUnity(ZZ,ZZ) := opt-> (n,r1) -> (
+     a := opt.Range_0;
+     b := opt.Range_1;
+     --(a,b)=(100,200),n=12,r=12
+     if b<a+2*log a or b<2 or not ( class a === ZZ and class b === ZZ) then 
+         error "the range (a,b) should be an integral interval of diameter b-a > 2*log a";
+     if n==2 then return (nextPrime(a+random(b-a)),-1);
+     r2 := r1-1;
+     primeFactors := apply(toList factor n, f-> first f); -- the prime factors of n
+     ds := apply(primeFactors, d->lift(n/d,ZZ)); -- the largest factors of n
+     L := toList factor(r2^n-1);
+     q := last L;
+     p := first q;
+     while (
+         while p>b or p<a do (
+                 if #L>1 and p>=a then (
+                     L = delete(q,L);
+                     q = last L;
+                     p = first q
+                     ) 
+                 else (
+                     r2 = r2+1; 
+                     L = toList factor(r2^n-1);
+                     q = last L;
+                     p = first q
+                     );
+                 );
+         -- r2 is now a root of unity in ZZ/p with a <= p <= b  
+         #select(ds, d-> (r2^d)%p == 1) !=0)  --check for primitive
+     do ( 
+         r2 = r2+1; 
+         L = toList factor(r2^n-1);
+         q = last L;
+         p = first q
+         );
+     (p,r2)
+     );
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

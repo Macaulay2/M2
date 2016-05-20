@@ -156,7 +156,6 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-M2_LIBRARIES += -lmathicgb -lmathic -lmemtailor
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
@@ -180,9 +179,7 @@ else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
 M2_LIBDEPS += ../d/libM2inits2.a				\
-	@abs_top_builddir@/submodules/memtailor/libmemtailor.a	\
-	@abs_top_builddir@/submodules/mathic/libmathic.a	\
-	@abs_top_builddir@/submodules/mathicgb/libmathicgb.a
+	$(foreach S, @BUILDSUBLIST@, @abs_top_builddir@/submodules/$S/.libs/lib$S.a)
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else
@@ -207,7 +204,7 @@ ifneq ("$(EXECSTACK)","no")
 	       fi ;\
 	  fi
 endif
-	- printenv LD_LIBRARY_PATH
+	printenv LD_LIBRARY_PATH || true
 ifneq (@LDD@,false)
 	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
 	then echo "some libraries not found" >&2;							\

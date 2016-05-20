@@ -5,7 +5,7 @@
 #include "M2mem.h"
 #include "debug.h"
 
-#ifdef DEBUG
+#ifndef NDEBUG
   #include <M2/config.h>
   #ifndef USE_THREADS
     #define __thread
@@ -48,7 +48,7 @@ char *getmem(size_t n)
   enter_getmem();
   p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarntee to */
   if (p == NULL) outofmem2(n);
-#ifdef DEBUG
+#ifndef NDEBUG
   memset(p,0xbe,n);		/* fill with 0xbebebebe ... */
   trapchk(p);
 #endif
@@ -57,14 +57,14 @@ char *getmem(size_t n)
 }
 
 void freememlen(void *s, size_t old) {
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(s);
 #    endif
      GC_FREE(s);
 }
 
 void freemem(void *s) {
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(s);
 #    endif
      GC_FREE(s);
@@ -83,7 +83,7 @@ char *getmem_clear(size_t n)
   */
   memset(p,0,n);
   #endif
-  #ifdef DEBUG
+  #ifndef NDEBUG
   trapchk(p);
   #endif
   exit_getmem();
@@ -96,7 +96,7 @@ char *getmem_atomic(size_t n)
   enter_getmem();
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem2(n);
-#ifdef DEBUG
+#ifndef NDEBUG
   memset(p,0xac,n);		/* fill with 0xacacacac ... */
   trapchk(p);
 #endif
@@ -110,7 +110,7 @@ char *getmem_malloc(size_t n)
   enter_getmem();
   p = malloc(n);
   if (p == NULL) outofmem2(n);
-#ifdef DEBUG
+#ifndef NDEBUG
   memset(p,0xca,n);		/* fill with 0xcacacaca */
   trapchk(p);
 #endif
@@ -125,7 +125,7 @@ char *getmem_atomic_clear(size_t n)
   p = GC_MALLOC_ATOMIC(n);
   if (p == NULL) outofmem2(n);
   memset(p,0,n);
-#ifdef DEBUG
+#ifndef NDEBUG
   trapchk(p);
 #endif
   exit_getmem();
@@ -137,7 +137,7 @@ char *getmoremem (char *s, size_t old, size_t new) {
      enter_getmem();
      p = GC_REALLOC(s,new);
      if (p == NULL) outofmem2(new);
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(p);
 #    endif
      exit_getmem();
@@ -149,7 +149,7 @@ char *getmoremem1 (char *s, size_t new) {
      enter_getmem();
      p = GC_REALLOC(s,new);
      if (p == NULL) outofmem2(new);
-#    ifdef DEBUG
+#    ifndef NDEBUG
      trapchk(p);
 #    endif
      exit_getmem();
@@ -164,7 +164,7 @@ char *getmoremem_atomic (char *s, size_t old, size_t new) {
      if (p == NULL) outofmem2(new);
      memcpy(p, s, min);
      GC_FREE(s);
-#    ifdef DEBUG
+#    ifndef NDEBUG
      {
        int excess = new - min;
        if (excess > 0) memset((char *)p+min,0xbe,excess); /* fill with 0xbebebebe */

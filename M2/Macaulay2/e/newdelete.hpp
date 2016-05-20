@@ -18,13 +18,13 @@
 #define newitem_clear(T) reinterpret_cast<T*>(getmem_clear(sizeof(T)))
 // this replaces all uses of the construction "delete [] x",
 // except it doesn't delete the individual elements for you, if they happen to be pointers
-#ifdef DEBUG
+#ifndef NDEBUG
 #define deletearray(x) (trapchk(x), GC_FREE(x))
 #else
 #define deletearray(x) GC_FREE(x)
 #endif
 // this replaces all uses of the construction "delete x" (unless a destructor has to be run!):
-#ifdef DEBUG
+#ifndef NDEBUG
 #define deleteitem(x) (TRAPCHK(x), GC_FREE(x))
 #else
 #define deleteitem(x) GC_FREE(x)

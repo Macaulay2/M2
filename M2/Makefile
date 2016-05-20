@@ -134,6 +134,7 @@ count count-source-code-lines:
 	-name BUILD -prune -false -o \
 	-name .svn -prune -false -o \
 	-name bugs -prune -false -o \
+	-name submodules -prune -false -o \
 	-name autoconf-\* -prune -false -o \
 	-name regex -prune -false -o \
 	-name examples -prune -false -o \

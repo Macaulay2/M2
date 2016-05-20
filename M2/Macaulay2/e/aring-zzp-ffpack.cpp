@@ -4,8 +4,6 @@
 #include "error.h"
 #define M2_ASSERT assert
 
-#if defined(HAVE_FFLAS_FFPACK)
-
 #include "ringmap.hpp"
 
 namespace M2 {
@@ -270,7 +268,6 @@ namespace M2 {
   
 };
 
-#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil

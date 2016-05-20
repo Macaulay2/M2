@@ -1,7 +1,9 @@
 #############################################################################
 
-VERSION = 3.1.2
+VERSION = 3.1.4
 LICENSEFILES = README COPYING.LESSER
+TARFILE = $(LIBNAME)-$(VERSION).tar.xz
+TAROPTIONS = --xz
 
 #############################################################################
 CONFIGOPTIONS += --disable-thread-safe
@@ -34,9 +36,6 @@ CONFIGOPTIONS += --disable-shared
 endif
 # PRECONFIGURE = autoreconf -i
 include ../Makefile.library
-
-# the DEBUG flag just makes lots of junk print out:
-CPPFLAGS += -UDEBUG
 
 BUILDOPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CHECKOPTIONS += CPPFLAGS="$(CPPFLAGS)"
