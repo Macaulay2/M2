@@ -23,9 +23,6 @@ DIRECTORY = mac64
 BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
 BRANCH := master
 DIRECTORY := $(DIRECTORY)-$(BRANCH)
-
-CPPFLAGS += -I/usr/local/include -I/usr/include
-LDFLAGS += -L/usr/local/lib -L/usr/lib
 CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 # see the INSTALL file:
