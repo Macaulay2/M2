@@ -228,3 +228,98 @@ statePolytope Ideal := I -> (
      P := convexHull vertmatrix;
      (verts,P));
 
+
+-- PURPOSE : Computing the bipyramid over the polyhedron 'P'
+--   INPUT : 'P',  a polyhedron 
+--  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space and the 
+--     	         points (barycenter of 'P',+-1)
+bipyramid = method(TypicalValue => Polyhedron)
+bipyramid Polyhedron := P -> (
+     -- Saving the vertices
+     V := vertices P;
+     n := numColumns V;
+     if n == 0 then error("P must not be empty");
+     -- Computing the barycenter of P
+     v := matrix toList(n:{1_QQ,1_QQ});
+     v = (1/n)*V*v;
+     (M,LS) := P#"homogenizedVertices";
+     -- Embedding into n+1 space and adding the two new vertices
+     zerorow := map(ZZ^1,source M,0);
+     newvertices := makePrimitiveMatrix(matrix {{1_QQ,1_QQ}} || v || matrix {{1_QQ,-(1_QQ)}});
+     M = (M || zerorow) | newvertices;
+     LS = LS || map(ZZ^1,source LS,0);
+     hyperA := fourierMotzkin(M,LS);
+     --verticesA := fourierMotzkin hyperA;
+     local verticesA;
+     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
+     polyhedronBuilder(hyperA,verticesA))
+
+
+
+-- PURPOSE : Computing the pyramid over the polyhedron 'P'
+--   INPUT : 'P',  a polyhedron 
+--  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space, and the 
+--     	         point (0,...,0,1)
+pyramid = method(TypicalValue => Polyhedron)
+pyramid Polyhedron := P -> (
+     (M,LS) := P#"homogenizedVertices";
+     -- Embedding into n+1 space and adding the new vertex
+     zerorow := map(ZZ^1,source M,0);
+     newvertex := 1 || map(ZZ^((numRows M)-1),ZZ^1,0) || 1;
+     M = (M || zerorow) | newvertex;
+     LS = LS || map(ZZ^1,source LS,0);
+     hyperA := fourierMotzkin(M,LS);
+     --verticesA := fourierMotzkin hyperA;
+     local verticesA;
+     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
+     polyhedronBuilder(hyperA,verticesA))
+
+
+-- PURPOSE : Generating the 'd'-dimensional crosspolytope with edge length 2*'s'
+crossPolytope = method(TypicalValue => Polyhedron)
+
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is
+--     	    	       a strictly positive rational number, the distance of the vertices to the origin
+--  OUTPUT : The 'd'-dimensional crosspolytope with vertex-origin distance 's'
+crossPolytope(ZZ,QQ) := (d,s) -> (
+     -- Checking for input errors
+     if d < 1 then error("dimension must at least be 1");
+     if s <= 0 then error("size of the crosspolytope must be positive");
+     constructMatrix := (d,v) -> (
+	  if d != 0 then flatten {constructMatrix(d-1,v|{-1}),constructMatrix(d-1,v|{1})}
+	  else {v});
+     homHalf := ( sort makePrimitiveMatrix transpose( matrix toList(2^d:{-s}) | promote(matrix constructMatrix(d,{}),QQ)),map(ZZ^(d+1),ZZ^0,0));
+     homVert := (sort makePrimitiveMatrix (matrix {toList(2*d:1_QQ)} || (map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s))),map(ZZ^(d+1),ZZ^0,0));
+     polyhedronBuilder(homHalf,homVert))
+
+
+--   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is a
+--     	    	        strictly positive integer, the distance of the vertices to the origin
+crossPolytope(ZZ,ZZ) := (d,s) -> crossPolytope(d,promote(s,QQ))
+
+
+--   INPUT :  'd',  where 'd' is a strictly positive integer, the dimension of the polytope
+crossPolytope ZZ := d -> crossPolytope(d,1_QQ)
+
+
+
+-- PURPOSE : Generating the empty polyhedron in n space
+--   INPUT : 'n',  a strictly positive integer
+--  OUTPUT : The empty polyhedron in 'n'-space
+emptyPolyhedron = method(TypicalValue => Polyhedron)
+emptyPolyhedron ZZ := n -> (
+     -- Checking for input errors
+     if n < 1 then error("The ambient dimension must be positive");
+     verticesA := 2:map(ZZ^(n+1),ZZ^0,0);
+     hyperA := (map(ZZ^(n+1),ZZ^0,0),map(ZZ^(n+1),ZZ^(n+1),1));
+     polyhedronBuilder(hyperA,verticesA));
+	  
+-- PURPOSE : Generating the 'd'-dimensional standard simplex in QQ^(d+1)
+--   INPUT : 'd',  a positive integer
+--  OUTPUT : The 'd'-dimensional standard simplex as a polyhedron
+stdSimplex = method(TypicalValue => Polyhedron)
+stdSimplex ZZ := d -> (
+     -- Checking for input errors
+     if d < 0 then error("dimension must not be negative");
+     -- Generating the standard basis
+     convexHull map(QQ^(d+1),QQ^(d+1),1))
