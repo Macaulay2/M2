@@ -22,9 +22,5 @@ linSpace PolyhedralObject := P -> P#"linealitySpace"
 halfspaces = method()
 halfspaces PolyhedralObject := P -> P#"halfspaces"
 
--- PURPOSE : Giving the rays
---   INPUT : 'P'  a Polyhedron or Cone
---  OUTPUT : a Matrix, containing the rays of P as column vectors
-rays = method()
 rays PolyhedralObject := P -> P#"rays"
 

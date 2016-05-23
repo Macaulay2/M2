@@ -366,18 +366,10 @@ polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
 
 
 
---   INPUT : 'F'  a Fan
---  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> ((maxCones F)#0)#"linealitySpace"
-
-
-
 
 --   INPUT : 'F'  a Fan
 rays Fan := F -> raySort toList F#"rays"
 
-
-   
 -- PURPOSE : Giving the vertices
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a Matrix, containing the vertices of P as column vectors
@@ -521,28 +513,6 @@ isNormal Polyhedron := (cacheValue symbol isNormal)(P -> (
 isReflexive = method(TypicalValue => Boolean)
 isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
-
-
-
--- PURPOSE : Checks if the input is smooth
-isSmooth = method(TypicalValue => Boolean)
-
---   INPUT : 'C'  a Cone
---  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
-     -- generating the non-linealityspace cone of C
-     R := lift(transpose rays C,ZZ);
-     n := dim C - C#"dimension of lineality space";
-     -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-     numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
-     
-	   
-
---   INPUT : 'F'  a Fan
---  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
-     if not F.cache.?isSmooth then F.cache.isSmooth = all(maxCones F,isSmooth);
-     F.cache.isSmooth)
 
 
 -- PURPOSE : Checks if a polytope is very ample
