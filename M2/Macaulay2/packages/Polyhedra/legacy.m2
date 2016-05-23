@@ -621,11 +621,6 @@ isPointed = method(TypicalValue => Boolean)
 isPointed Cone := C -> rank C#"linealitySpace" == 0
 
 
---   INPUT : 'F',  a Fan
---  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed = isPointed((maxCones F)#0);
-     F.cache.isPointed)
 
 
 

@@ -9,7 +9,7 @@ net Polyhedron := P -> ( horizontalJoin flatten (
 	  "{",
 	  -- prints the parts vertically
 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "dimension of polyhedron",
+			                      "dimension",
 					      "dimension of lineality space",
 					      "number of rays",
 					      "number of vertices", 
@@ -51,7 +51,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	-- Defining the Polyhedron
 	new Polyhedron from {
 	     "ambient dimension" => (numgens target B)-1,
-	     "dimension of polyhedron" =>  ((numgens target B)-1)-(rank(hyperA#1)),
+	     "dimension" =>  ((numgens target B)-1)-(rank(hyperA#1)),
 	     "dimension of lineality space" => numgens source LS,
 	     "linealitySpace" => LS,
 	     "number of vertices" => numgens source B,
@@ -192,7 +192,7 @@ Polyhedron == Polyhedron := (P,Q) -> P === Q
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
 isEmpty = method(TypicalValue => Boolean)
-isEmpty Polyhedron := P -> P#"dimension of polyhedron" == -1
+isEmpty Polyhedron := P -> dim P == -1
 
 
 -- PURPOSE : Tests if a Polyhedron is compact

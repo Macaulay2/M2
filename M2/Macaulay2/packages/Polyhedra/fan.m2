@@ -9,3 +9,8 @@ globalAssignment Fan
 maxCones = method(TypicalValue => List)
 maxCones Fan := F -> toList F#"generatingObjects"
 
+--   INPUT : 'F',  a Fan
+--  OUTPUT : 'true' or 'false'
+isPointed Fan := F -> (
+     if not F.cache.?isPointed then F.cache.isPointed = isPointed((maxCones F)#0);
+     F.cache.isPointed)
