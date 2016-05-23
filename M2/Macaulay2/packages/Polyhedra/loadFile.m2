@@ -30,6 +30,9 @@ load "./directProduct.m2"
 load "./contains.m2"
 load "./minkowskiSum.m2"
 load "./standardConstructions.m2"
+load "./commonFace.m2"
+load "./incompare.m2"
+load "./affineImages.m2"
 
 -- Legacy code
 load "./legacy.m2"
