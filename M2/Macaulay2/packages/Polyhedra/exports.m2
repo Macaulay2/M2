@@ -8,6 +8,8 @@ export {
    "Polyhedron", 
    "convexHull", 
 
+   "generatingCones",
+   "generatingPolyhedra",
    "Fan", 
    "PolyhedralComplex", 
    "intersection", 

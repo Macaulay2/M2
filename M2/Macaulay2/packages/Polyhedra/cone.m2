@@ -88,8 +88,6 @@ posHull(Cone,Cone) := (C1,C2) -> (
 	coneBuilder(genrays,dualgens))
 
 
---   INPUT : 'C'  a Cone
-hyperplanes Cone := C -> C#"hyperplanes"
 
 
 --   INPUT : 'C'  a Cone

@@ -21,6 +21,13 @@ globalAssignment Fan
 PolyhedralComplex = new Type of PolyhedralObjectFamily
 globalAssignment PolyhedralComplex
 
+generatingCones = method()
+generatingCones Fan := F -> F#"generatingObjects"
+
+generatingPolyhedra = method()
+generatingPolyhedra PolyhedralComplex := PC -> PC#"generatingObjects"
+
+
 
 -- Modifying the standard output for a polyhedron to give an overview of its characteristica
 net Polyhedron := P -> ( horizontalJoin flatten (
@@ -466,7 +473,7 @@ fan List := L -> (
 	  rayList = apply(numColumns rayList, i-> rayList_{i});
 	  -- Generating the new fan
 	  F = new Fan from {
-	  "generatingCones" => set {C},
+	  "generatingObjects" => set {C},
 	  "ambient dimension" => ad,
 	  "top dimension of the cones" => C#"dimension of the cone",
 	  "number of generating cones" => 1,
@@ -476,7 +483,7 @@ fan List := L -> (
 	  symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing fans in the list
      -- to their list of generating cones
-     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then toList(C#"generatingCones") else 
+     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then toList(generatingCones C) else 
 	  error ("Input must be a list of cones and fans"));       
      -- Adding the remaining cones of the list with 'addCone'
      scan(L, C -> F = addCone(C,F));
@@ -508,7 +515,7 @@ polyhedralComplex List := L -> (
 	  verticesList = apply(numColumns verticesList, i-> verticesList_{i});
 	  -- Generating the new fan
 	  PC = new PolyhedralComplex from {
-	       "generatingPolyhedra" => set {P},
+	       "generatingObjects" => set {P},
 	       "ambient dimension" => ad,
 	       "top dimension of the polyhedra" => P#"dimension of polyhedron",
 	       "number of generating polyhedra" => 1,
@@ -518,7 +525,7 @@ polyhedralComplex List := L -> (
 	       symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing polyhedral complexes in the list
      -- to their list of generating polyhedra
-     L = flatten apply(L, e -> if instance(e,Polyhedron) then e else if instance(e,PolyhedralComplex) then toList(e#"generatingPolyhedra") else 
+     L = flatten apply(L, e -> if instance(e,Polyhedron) then e else if instance(e,PolyhedralComplex) then toList(generatingPolyhedra e) else 
 	  error ("Input must be a list of polyhedra and polyhedral complexes"));       
      -- Adding the remaining polyhedra of the list with 'addPolyhedron'
      scan(L, e -> PC = addPolyhedron(e,PC));
@@ -532,7 +539,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      -- Checking for input errors
      if P#"ambient dimension" != PC#"ambient dimension" then error("The polyhedra must lie in the same ambient space.");
      -- Extracting data
-     GP := toList PC#"generatingPolyhedra";
+     GP := toList generatingPolyhedra PC;
      d := P#"dimension of polyhedron";
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
@@ -566,7 +573,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
 	  verticesList = unique(verticesList|Vm));
      -- Saving the polyhedral complex
      new PolyhedralComplex from {
-	       "generatingPolyhedra" => set GP,
+	       "generatingObjects" => set GP,
 	       "ambient dimension" => P#"ambient dimension",
 	       "top dimension of the polyhedra" => (GP#0)#"dimension of polyhedron",
 	       "number of generating polyhedra" => #GP,
@@ -590,7 +597,7 @@ addPolyhedron (List,PolyhedralComplex) := (L,PC) -> (
 addPolyhedron (PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> (
      -- Checking for input errors
      if ambDim PC2 != ambDim PC1 then error("The polyhedral complexes must be in the same ambient space");
-     L := toList PC1#"generatingCones";
+     L := toList generatingCones PC1;
      addCone(L,PC2))
      
 
@@ -605,7 +612,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- Checking for input errors
      if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
      -- Extracting data
-     GC := toList F#"generatingCones";
+     GC := toList generatingCones F;
      d := C#"dimension of the cone";
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
@@ -640,7 +647,7 @@ addCone (Cone,Fan) := (C,F) -> (
 	  rayList = unique(rayList|rm));
      -- Saving the fan
      new Fan from {
-	  "generatingCones" => set GC,
+	  "generatingObjects" => set GC,
 	  "ambient dimension" => F#"ambient dimension",
 	  "top dimension of the cones" => dim GC#0,
 	  "number of generating cones" => #GC,
@@ -664,7 +671,7 @@ addCone (List,Fan) := (L,F) -> (
 addCone (Fan,Fan) := (F1,F) -> (
      -- Checking for input errors
      if ambDim F != ambDim F1 then error("The fans must be in the same ambient space");
-     L := toList F1#"generatingCones";
+     L := toList generatingCones F1;
      addCone(L,F))
 
 
@@ -699,7 +706,7 @@ cones = method(TypicalValue => List)
 cones(ZZ,Fan) := (k,F) -> (
 	-- Checking for input errors
 	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(toList F#"generatingCones", C -> dim C >= k);
+	L := select(toList generatingCones F, C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
@@ -711,7 +718,7 @@ polyhedra = method(TypicalValue => List)
 polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
 	-- Checking for input errors
 	if k < 0 or dim PC < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(toList PC#"generatingPolyhedra", P -> dim P >= k);
+	L := select(toList generatingPolyhedra PC, P -> dim P >= k);
 	-- Collecting the 'k'-dim faces of all generating polyhedra of dimension greater than 'k'
 	unique flatten apply(L, P -> faces(dim(P)-k,P)))
 
@@ -740,56 +747,27 @@ dim PolyhedralComplex := PC -> PC#"top dimension of the polyhedra"
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a List of Cones
 maxCones = method(TypicalValue => List)
-maxCones Fan := F -> toList F#"generatingCones"
+maxCones Fan := F -> toList generatingCones F
 
 
 -- PURPOSE : Giving the generating Polyhedra of the PolyhedralComplex
 --   INPUT : 'PC'  a PolyhedralComplex
 --  OUTPUT : a List of Cones
 maxPolyhedra = method(TypicalValue => List)
-maxPolyhedra PolyhedralComplex := PC -> toList PC#"generatingPolyhedra"
-
-
--- PURPOSE : Giving the defining affine half-spaces
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : '(M,v)', where M and v are matrices and P={x in H | Mx<=v}, where 
---		 H is the intersection of the defining affine hyperplanes
-halfspaces = method()
-halfspaces Polyhedron := P -> P#"halfspaces"
-
-
---   INPUT : 'C'  a Cone
---  OUTPUT : 'M', where M is a matrix and C={x in H | Mx>=0}, where 
---		 H is the intersection of the defining hyperplanes
-halfspaces Cone := C -> C#"halfspaces"
-
-
-
-hyperplanes Polyhedron := P -> P#"hyperplanes"
+maxPolyhedra PolyhedralComplex := PC -> toList generatingPolyhedra PC
 
 
 
 
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Polyhedron := P -> P#"linealitySpace"
+
 
 
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> ((toList F#"generatingCones")#0)#"linealitySpace"
+linSpace Fan := F -> ((toList generatingCones F)#0)#"linealitySpace"
 
 
--- PURPOSE : Giving the rays
---   INPUT : 'P'  a Polyhedron
---  OUTPUT : a Matrix, containing the rays of P as column vectors
-rays = method()
-rays Polyhedron := P -> P#"rays"
-
-
---   INPUT : 'C'  a Cone
-rays Cone := C -> C#"rays"
 
 
 --   INPUT : 'F'  a Fan
@@ -986,31 +964,6 @@ isCompact = method(TypicalValue => Boolean)
 isCompact Polyhedron := P -> P#"linealitySpace" == 0 and P#"rays" == 0
 
 
--- PURPOSE : Tests if a Fan is complete
---   INPUT : 'F'  a Fan
---  OUTPUT : 'true' or 'false'
-isComplete = method(TypicalValue => Boolean)
-isComplete Fan := F -> (
-     if not F.cache.?isComplete then (
-	  n := F#"top dimension of the cones";
-	  F.cache.isComplete = if n == ambDim F then (
-	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
-	       Lfaces := {};
-	       scan(maxCones F, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
-	       Lfaces == {})
-	  else false);
-     F.cache.isComplete)
-
-isComplete PolyhedralComplex := PC -> (
-     if not PC.cache.?isComplete then (
-	  n := PC#"top dimension of the polyhedra";
-	  PC.cache.isComplete = if n == ambDim PC then (
-	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
-	       Lfaces := {};
-	       scan(maxPolyhedra PC, P -> if dim P == n then Lfaces = symmDiff(Lfaces,faces(1,P)));
-	       Lfaces == {})
-	  else false);
-     PC.cache.isComplete)
 
 
 -- PURPOSE : Tests if a Polyhedron is empty
@@ -1080,7 +1033,7 @@ isPointed Cone := C -> rank C#"linealitySpace" == 0
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
 isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed = isPointed((toList F#"generatingCones")#0);
+     if not F.cache.?isPointed then F.cache.isPointed = isPointed((toList generatingCones F)#0);
      F.cache.isPointed)
 
 
@@ -1097,7 +1050,7 @@ isPolytopal Fan := F -> (
 	       -- Extracting the generating cones, the ambient dimension, the codim 1 
 	       -- cones (corresponding to the edges of the polytope if it exists)
 	       i := 0;
-	       L := hashTable apply(toList F#"generatingCones", l -> (i=i+1; i=>l));
+	       L := hashTable apply(toList generatingCones F, l -> (i=i+1; i=>l));
 	       n := F#"ambient dimension";
 	       edges := cones(n-1,F);
 	       -- Making a table that indicates in which generating cones each 'edge' is contained
@@ -1188,14 +1141,6 @@ isPolytopal Fan := F -> (
 
 
 
--- PURPOSE : Checks if the Fan is of pure dimension
---   INPUT : 'F'  a Fan
---  OUTPUT : 'true' or 'false'
-isPure = method(TypicalValue => Boolean)
-isPure Fan := F -> F#"isPure"
-
-
-isPure PolyhedralComplex := PC -> PC#"isPure"
 
 -- PURPOSE : Checks if a lattice polytope is reflexive
 --   INPUT : 'P'  a Polyhedron
@@ -1204,17 +1149,6 @@ isReflexive = method(TypicalValue => Boolean)
 isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope P and inInterior(matrix toList(ambDim P:{0}),P) and isLatticePolytope polar P)
 
 
-isSimplicial = method(TypicalValue => Boolean)
-
-isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
-	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
-	else if instance(X,Fan) then all(maxCones X,isSimplicial)
-	else if instance(X,Polyhedron) then (isCompact X and numColumns vertices X == dim X + 1)
-	else all(maxPolyhedra X,isSimplicial)))
---isSimplicial Cone := (cacheValue symbol isSimplicial)(C -> isPointed C and numColumns rays C == dim C)
---isSimplicial Fan := (cacheValue symbol isSimplicial)(F -> all(maxCones F,isSimplicial))
---isSimplicial Polyhedron := (cacheValue symbol isSimplicial)(P -> isCompact P and numColumns vertices P == dim P +1)
---isSimplicial PolyhedralComplex := (cacheValue symbol isSimplicial)(PC -> all(maxPolyhedra PC,isSimplicial))
 
 
 -- PURPOSE : Checks if the input is smooth
@@ -1234,7 +1168,7 @@ isSmooth Cone := C -> (
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isSmooth Fan := F -> (
-     if not F.cache.?isSmooth then F.cache.isSmooth = all(toList F#"generatingCones",isSmooth);
+     if not F.cache.?isSmooth then F.cache.isSmooth = all(toList generatingCones F,isSmooth);
      F.cache.isSmooth)
 
 
@@ -2043,7 +1977,7 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
      GP := polyhedra(n,PC);
      verticesList := unique flatten apply(GP, P -> (Vm := vertices P; apply(numColumns Vm, i -> Vm_{i})));
      new PolyhedralComplex from {
-	       "generatingPolyhedra" => set GP,
+	       "generatingObjects" => set GP,
 	       "ambient dimension" => ambDim PC,
 	       "top dimension of the polyhedra" => n,
 	       "number of generating polyhedra" => #GP,
@@ -2052,8 +1986,6 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
 	       "isPure" => true,
 	       symbol cache => new CacheTable});
      
-
-
 -- PURPOSE : Computing the smallest face of 'P' containing 'p'
 --   INPUT : '(p,P)',  where 'p' is a point given as a matrix and
 --     	    	       'P' is a polyhedron
@@ -2106,7 +2038,7 @@ smoothSubfan Fan := F -> (
      -- recursive function that adds the cones of the list 'L' to 'F' if they are smooth
      -- and calls itself with the faces of the cone if the cone is not smooth
      facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
-     L := toList F#"generatingCones";
+     L := toList generatingCones F;
      fan facerecursion L)
 
 
@@ -2123,7 +2055,7 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
      n := dim L#0;
      R := unique(rays F|{promote(r,QQ)});
      new Fan from {
-	  "generatingCones" => set L,
+	  "generatingObjects" => set L,
 	  "ambient dimension" => ambDim L#0,
 	  "top dimension of the cones" => n,
 	  "number of generating cones" => #L,
@@ -2543,7 +2475,7 @@ directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 --  OUTPUT : A fan, the direct product
 directProduct (Fan,Fan) := (F1,F2) -> (
      -- computing the direct products of all pairs of generating cones
-     fan flatten apply(toList F1#"generatingCones", C1 -> apply(toList F2#"generatingCones", C2 -> directProduct(C1,C2))))
+     fan flatten apply(toList generatingCones F1, C1 -> apply(toList generatingCones F2, C2 -> directProduct(C1,C2))))
 
 
 Polyhedron * Polyhedron := directProduct
@@ -2838,7 +2770,7 @@ normalFan Polyhedron := P -> (
 	  HS := transpose (halfspaces P)#0;
 	  HS = apply(numColumns HS, i -> -HS_{i});
 	  F := new Fan from {
-	       "generatingCones" => set L,
+	       "generatingObjects" => set L,
 	       "ambient dimension" => ambDim P,
 	       "top dimension of the cones" => dim L#0,
 	       "number of generating cones" => #L,
@@ -3056,7 +2988,7 @@ hirzebruch ZZ := r -> (
 	   ((matrix{{1,0},{0,-1}},map(ZZ^2,ZZ^0,0)),(matrix{{-1,0},{0,1}},map(ZZ^2,ZZ^0,0)))};
      L = apply(L,coneBuilder);
      F := new Fan from {
-	  "generatingCones" => set L,
+	  "generatingObjects" => set L,
 	  "ambient dimension" => 2,
 	  "top dimension of the cones" => 2,
 	  "number of generating cones" => 4,
@@ -4991,7 +4923,7 @@ document {
      }
 
 document {
-     Key => {halfspaces, (halfspaces,Cone), (halfspaces,Polyhedron)},
+     Key => {halfspaces, (halfspaces,PolyhedralObject)},
      Headline => "computes the defining half-spaces of a Cone or a Polyhedron",
      Usage => " M = halfspaces C \n(M,v) = halfspaces P",
      Inputs => {
@@ -5032,7 +4964,7 @@ document {
      }
 
 document {
-     Key => {hyperplanes, (hyperplanes,Cone), (hyperplanes,Polyhedron)},
+     Key => {hyperplanes, (hyperplanes,PolyhedralObject)},
      Headline => "computes the defining hyperplanes of a Cone or a Polyhedron",
      Usage => " N = hyperplanes C \n(N,w) = hyperplanes P",
      Inputs => {
@@ -5066,7 +4998,7 @@ document {
      }
 
 document {
-     Key => {linSpace, (linSpace,Cone), (linSpace,Fan), (linSpace,Polyhedron)},
+     Key => {linSpace, (linSpace,Fan), (linSpace,PolyhedralObject)},
      Headline => "computes a basis of the lineality space",
      Usage => " LS = linSpace C \nLS = linSpace F \nLS = linSpace P",
      Inputs => {
@@ -5095,7 +5027,7 @@ document {
      }
 
 document {
-     Key => {rays, (rays,Cone), (rays,Fan), (rays,Polyhedron)},
+     Key => {rays, (rays,Fan), (rays,PolyhedralObject)},
      Headline => "displays all rays of a Cone, a Fan, or a Polyhedron",
      Usage => " R = rays C \nR = rays F \nR = rays P",
      Inputs => {
@@ -5297,7 +5229,7 @@ document {
      }
 
 document {
-     Key => {isComplete, (isComplete,Fan), (isComplete,PolyhedralComplex)},
+     Key => {isComplete, (isComplete,PolyhedralObjectFamily)},
      Headline => "checks completeness of a Fan or PolyhedralComplex",
      Usage => " b = isComplete X",
      Inputs => {
@@ -5492,7 +5424,7 @@ document {
      }
 
 document {
-     Key => {isPure,(isPure,Fan),(isPure,PolyhedralComplex)},
+     Key => {isPure,(isPure,PolyhedralObjectFamily)},
      Headline => "checks if a Fan or PolyhedralComplex is of pure dimension",
      Usage => " b = isPure X",
      Inputs => {
@@ -8247,7 +8179,7 @@ assert (areCompatible(C1,C2))#0
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 F = fan C;
-assert(F#"generatingCones" === set {C})
+assert(generatingCones F === set {C})
 assert(F#"ambient dimension" == 3)
 assert(F#"top dimension of the cones" == 3)
 assert(F#"number of generating cones" == 1)
@@ -8262,7 +8194,7 @@ C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-assert(F#"generatingCones" === set {C,C1,C2,C3})
+assert(generatingCones F === set {C,C1,C2,C3})
 assert(F#"ambient dimension" == 3)
 assert(F#"number of generating cones" == 4)
 assert(F#"isPure")
