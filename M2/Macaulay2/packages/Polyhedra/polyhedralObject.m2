@@ -24,3 +24,9 @@ halfspaces PolyhedralObject := P -> P#"halfspaces"
 
 rays PolyhedralObject := P -> P#"rays"
 
+-- PURPOSE : Computing the f-vector of a polyhedron
+--   INPUT : 'P'  a Polyhedron or fan
+--  OUTPUT : polyhedral case: a List of integers, starting with the number of vertices and going up in dimension
+--           cone case: a List of integers, starting with the number of vertices and going up in dimension
+fVector = method(TypicalValue => List)
+

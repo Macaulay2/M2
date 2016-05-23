@@ -385,6 +385,9 @@ vertexEdgeMatrix Polyhedron := P -> (
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
+fVector Polyhedron := P -> apply(dim P + 1, d -> #faces(dim P - d,P))
+
+
 
 -- PURPOSE : Computing the vertex-facet-matrix of a polyhedron
 --   INPUT : 'P',  a polyhedron
