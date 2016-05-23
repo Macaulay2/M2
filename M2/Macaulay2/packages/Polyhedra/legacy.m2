@@ -243,77 +243,6 @@ addPolyhedron (PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> (
 
 
 
--- PURPOSE : Adding a Cone to an existing fan 
---   INPUT : '(C,F)',  where 'C' is a Cone in the same ambient space as 'F'
---  OUTPUT : The original fan 'F' together with 'C' if it is compatible with the already existing cones, 
---     	     if not there is an error
-addCone = method(TypicalValue => Fan)
-addCone (Cone,Fan) := (C,F) -> (
-     -- Checking for input errors
-     if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
-     -- Extracting data
-     GC := maxCones F;
-     d := dim C;
-     -- We need to memorize for later if 'C' has been inserted
-     inserted := false;
-     -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
-     -- the cones of higher or equal dimension. For this we divide GC into two seperate lists
-     GC = partition(Cf -> (dim Cf) >= d,GC);
-     GC = {if GC#?true then GC#true else {},if GC#?false then GC#false else {}};
-     if all(GC#0, Cf ->  (
-	       (a,b) := areCompatible(Cf,C);
-	       -- if 'Cf' and 'C' are not compatible then there is an error
-	       if not a then error("The cones are not compatible");
-	       -- if they are compatible and 'C' is a face of 'Cf' then 'C' does not 
-	       -- need to be added to 'F'
-	       b != C)) then (
-	  -- otherwise 'Cf' is still a generating Cone and has to be kept and the remaining cones
-	  -- have to be checked
-	  GC = GC#0 | {C} | select(GC#1, Cf -> (
-		    (a,b) := areCompatible(Cf,C);
-		    if not a then error("The cones are not compatible");
-		    -- if one of the remaining cones is a face of 'C' this Cone can be dropped
-		    b != Cf));
-	  inserted = true)     
-     -- Otherwise 'C' was already a face of one of the original cones and does not need to be added
-     else GC = flatten GC;
-     -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
-     -- completeness
-     rayList := raySort toList F#"rays";
-     if inserted then (
-	  -- The rays of 'C' have to be added
-	  rm := rays C;
-	  rm = apply(numColumns rm, i -> rm_{i});
-	  rayList = unique(rayList|rm));
-     -- Saving the fan
-     new Fan from {
-	  "generatingObjects" => set GC,
-	  "ambient dimension" => F#"ambient dimension",
-	  "dimension" => dim GC#0,
-	  "number of generating cones" => #GC,
-	  "rays" => set rayList,
-	  "number of rays" => #rayList,
-	  "isPure" => dim first GC == dim last GC,
-	  symbol cache => new CacheTable})
-
-
---   INPUT : '(L,F)',  where 'L' is a list of Cones in the same ambient space as the fan 'F'
---  OUTPUT : The original fan 'F' together with cones in the list 'L'
-addCone (List,Fan) := (L,F) -> (     
-    -- Checking for input errors
-    if L == {} then error("The list must not be empty");
-    if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("The list may only contain cones and fans");
-    if #L == 1 then addCone(L#0,F) else addCone(drop(L,1),addCone(L#0,F)))
-
-
---   INPUT : '(F1,F)',  where 'F1' is a fan in the same ambient space as the fan 'F'
---  OUTPUT : The original fan 'F' together with cones of the fan 'F1'
-addCone (Fan,Fan) := (F1,F) -> (
-     -- Checking for input errors
-     if ambDim F != ambDim F1 then error("The fans must be in the same ambient space");
-     L := maxCones F1;
-     addCone(L,F))
-
 
 Cone ? Cone := (C1,C2) -> (
      if C1 == C2 then symbol == else (
@@ -339,31 +268,13 @@ Cone ? Cone := (C1,C2) -> (
 
 
 
--- PURPOSE : Giving the k dimensionial Cones of the Fan
---   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
---  OUTPUT : a List of Cones
-cones = method(TypicalValue => List)
-cones(ZZ,Fan) := (k,F) -> objectsOfDim(k,F)
-
-
--- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
---   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
---  OUTPUT : a List of Polyhedra
-polyhedra = method(TypicalValue => List)
-polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> objectsOfDim(k, PC)
-
 	     
 
 
 
 
--- PURPOSE : Giving the vertices
---   INPUT : 'P'  a Polyhedron
---  OUTPUT : a Matrix, containing the vertices of P as column vectors
-vertices = method()
 vertices Polyhedron := P -> P#"vertices"
 
-vertices PolyhedralComplex := PC -> matrix {toList PC#"vertices"}
 
 
 
@@ -1004,42 +915,6 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 	  N = N || M^pos;
 	  intersection(M,N))
      else emptyPolyhedron C#"ambient dimension")
-
-
-
--- PURPOSE : Computing the subfan of all smooth cones of the Fan
---   INPUT : 'F',  a Fan
---  OUTPUT : The Fan of smooth cones
-smoothSubfan = method(TypicalValue => Fan)
-smoothSubfan Fan := F -> (
-     -- recursive function that adds the cones of the list 'L' to 'F' if they are smooth
-     -- and calls itself with the faces of the cone if the cone is not smooth
-     facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
-     L := maxCones F;
-     fan facerecursion L)
-
-
--- PURPOSE : Computing the stellar subdivision
---   INPUT : '(F,r)', where 'F' is a Fan and 'r' is a ray
---  OUTPUT : A fan, which is the stellar subdivision
-stellarSubdivision = method()
-stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
-     -- Checking for input errors
-     if numColumns r != 1 or numRows r != ambDim F then error("The ray must be given by a one column matrix in the ambient dimension of the fan");
-     divider := (C,r) -> if dim C != 1 then flatten apply(faces(1,C), f -> if not contains(f,r) then posHull {f,r} else divider(f,r)) else {C};
-     L := flatten apply(maxCones F, C -> if contains(C,r) then divider(C,r) else {C});
-     L = sort select(L, l -> all(L, e -> not contains(e,l) or e == l));
-     n := dim L#0;
-     R := unique(rays F|{promote(r,QQ)});
-     new Fan from {
-	  "generatingObjects" => set L,
-	  "ambient dimension" => ambDim L#0,
-	  "dimension" => n,
-	  "number of generating cones" => #L,
-	  "rays" => set R,
-	  "number of rays" => #R,
-	  "isPure" => dim L#0 == dim last L,
-	  symbol cache => new CacheTable})
 
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
@@ -1788,67 +1663,6 @@ chkZZQQ = (M,msg) -> (
 chkQQZZ = (M,msg) -> (
      R := ring M;
      if R === ZZ then M else if R === QQ then makePrimitiveMatrix M else error("expected matrix of ",msg," to be over ZZ or QQ"));
-
-
--- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
---   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
---  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
---     	     the positive orthant
-constructHilbertBasis = A -> (
-    -- Defining the function to determine if u is lower v
-    lowvec := (u,v) -> (
-	 n := (numRows u)-1;
-	 diffvec := flatten entries(u-v);
-	 if all(diffvec, i -> i <= 0) then abs(u_(n,0)) <= abs(v_(n,0)) and (u_(n,0))*(v_(n,0)) >= 0
-	 else false);
-    -- Collecting data
-    A = substitute(A,ZZ);
-    H := {A^{0}_{0}};
-    s := numRows A;
-    n := numColumns A;
-    --doing the project and lift algorithm step by step with increasing dimensions
-    scan(n-1, i -> (
-	      -- the set 'F' will contain the lifted basis vectors, 'B' are the first i+2 columns of 'A' as a rowmatrix,
-	      -- the set 'H' contains the vectors from the last loop that are one dimension smaller
-	      F := {};
-	      B := transpose A_{0..(i+1)};
-	      -- Decide between lifting the existing vectors (i > s-1) or also adding the next column of 'B'
-	      if i < s-1 then (
-		   -- Lifting the existing vectors from 'H'
-		   F = apply(H, h -> (
-			     j := 0;
-			     while numRows h == i+1 do (
-				  if isSubset(image(h || matrix{{j}}), image B) then h = (h || matrix{{j}});
-				  j = j+1);
-			     h));
-		   -- Adding +- times the next column of 'B'
-		   F = join(F,{B_{i+1}^{0..(i+1)},-B_{i+1}^{0..(i+1)}}))
-	      else (
-		   -- Lifting the existing vectors from 'H'
-		   nullmap := map(ZZ^1,ZZ^s,0);
-		   nullvec := map(ZZ^1,ZZ^1,0);
-		   F = apply(H, h -> B*substitute(vertices intersection(nullmap,nullvec,B^{0..i},h),ZZ)));
-	      -- Computing the S-pairs from the elements of 'F' and saving them in 'C'
-	      C := select(subsets(#F,2), j -> (
-			f := F#(j#0);
-			g := F#(j#1);
-			(f_(i+1,0))*(g_(i+1,0)) < 0 and f+g != 0*(f+g)));
-	      C = apply(C, j -> F#(j#0)+F#(j#1));
-	      -- The elements of 'F' are saved in 'G'
-	      G := F;
-	      j := 0;
-	      -- Adding those elements of 'C' to 'G' that satisfy the "normalform" condition by increasing last entry
-	      while C != {} do (
-		   Cnow := partition(e -> sum drop(flatten entries e,-1) == j,C);
-		   C = if Cnow#?false then Cnow#false else {};
-		   Cnow = if Cnow#?true then select(Cnow#true, f -> all(G, g -> not lowvec(g,f))) else {};
-		   Cnew := flatten apply(Cnow, f -> apply(select(G, g -> f_(i+1,0)*g_(i+1,0) < 0 and f+g != 0*(f+g)), g -> f+g));
-		   if all(Cnew, e -> sum drop(flatten entries e,-1) != j) then j = j+1;
-		   C = unique (C | Cnew);
-		   G = unique (G | Cnow));
-	      -- saving those elements of 'G' with positive last entry into 'H'
-	      H = select(G, g -> g_(i+1,0) >= 0)));
-    H)
 
 
 

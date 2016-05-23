@@ -187,3 +187,64 @@ hilbertBasis Cone := C -> (
      apply(H,h -> preim(BC*h,A)))
 
 
+-- PURPOSE : Computing the Hilbert basis of a standardised cone (project and lift algorithm
+--   INPUT : 'A' a matrix, the row echolon form of the defining half-spaces of the cone
+--  OUTPUT : a list of one column matrices, the generators of the cone over A intersected with 
+--     	     the positive orthant
+constructHilbertBasis = A -> (
+    -- Defining the function to determine if u is lower v
+    lowvec := (u,v) -> (
+	 n := (numRows u)-1;
+	 diffvec := flatten entries(u-v);
+	 if all(diffvec, i -> i <= 0) then abs(u_(n,0)) <= abs(v_(n,0)) and (u_(n,0))*(v_(n,0)) >= 0
+	 else false);
+    -- Collecting data
+    A = substitute(A,ZZ);
+    H := {A^{0}_{0}};
+    s := numRows A;
+    n := numColumns A;
+    --doing the project and lift algorithm step by step with increasing dimensions
+    scan(n-1, i -> (
+	      -- the set 'F' will contain the lifted basis vectors, 'B' are the first i+2 columns of 'A' as a rowmatrix,
+	      -- the set 'H' contains the vectors from the last loop that are one dimension smaller
+	      F := {};
+	      B := transpose A_{0..(i+1)};
+	      -- Decide between lifting the existing vectors (i > s-1) or also adding the next column of 'B'
+	      if i < s-1 then (
+		   -- Lifting the existing vectors from 'H'
+		   F = apply(H, h -> (
+			     j := 0;
+			     while numRows h == i+1 do (
+				  if isSubset(image(h || matrix{{j}}), image B) then h = (h || matrix{{j}});
+				  j = j+1);
+			     h));
+		   -- Adding +- times the next column of 'B'
+		   F = join(F,{B_{i+1}^{0..(i+1)},-B_{i+1}^{0..(i+1)}}))
+	      else (
+		   -- Lifting the existing vectors from 'H'
+		   nullmap := map(ZZ^1,ZZ^s,0);
+		   nullvec := map(ZZ^1,ZZ^1,0);
+		   F = apply(H, h -> B*substitute(vertices intersection(nullmap,nullvec,B^{0..i},h),ZZ)));
+	      -- Computing the S-pairs from the elements of 'F' and saving them in 'C'
+	      C := select(subsets(#F,2), j -> (
+			f := F#(j#0);
+			g := F#(j#1);
+			(f_(i+1,0))*(g_(i+1,0)) < 0 and f+g != 0*(f+g)));
+	      C = apply(C, j -> F#(j#0)+F#(j#1));
+	      -- The elements of 'F' are saved in 'G'
+	      G := F;
+	      j := 0;
+	      -- Adding those elements of 'C' to 'G' that satisfy the "normalform" condition by increasing last entry
+	      while C != {} do (
+		   Cnow := partition(e -> sum drop(flatten entries e,-1) == j,C);
+		   C = if Cnow#?false then Cnow#false else {};
+		   Cnow = if Cnow#?true then select(Cnow#true, f -> all(G, g -> not lowvec(g,f))) else {};
+		   Cnew := flatten apply(Cnow, f -> apply(select(G, g -> f_(i+1,0)*g_(i+1,0) < 0 and f+g != 0*(f+g)), g -> f+g));
+		   if all(Cnew, e -> sum drop(flatten entries e,-1) != j) then j = j+1;
+		   C = unique (C | Cnew);
+		   G = unique (G | Cnow));
+	      -- saving those elements of 'G' with positive last entry into 'H'
+	      H = select(G, g -> g_(i+1,0) >= 0)));
+    H)
+
+
