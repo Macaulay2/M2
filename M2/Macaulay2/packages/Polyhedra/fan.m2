@@ -2,6 +2,7 @@
 Fan = new Type of PolyhedralObjectFamily
 globalAssignment Fan
 
+Fan == Fan := (F1,F2) -> F1 === F2
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space

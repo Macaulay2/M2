@@ -3,6 +3,8 @@ Cone = new Type of PolyhedralObject
 Cone.synonym = "convex rational cone"
 globalAssignment Cone
 
+Cone == Cone := (C1,C2) -> C1 === C2
+
 -- Modifying the standard output for a Cone to give an overview of its characteristica
 net Cone := C -> ( horizontalJoin flatten (
 	  "{",

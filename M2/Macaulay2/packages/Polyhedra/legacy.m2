@@ -444,15 +444,7 @@ commonFace(Fan,Fan) := (F1,F2) -> all(maxCones F1, C -> commonFace(C,F2))
 commonFace List := L -> all(#L-1, i -> all(i+1..#L-1, j -> commonFace(L#i,L#j)))
 
    
-
-
-
-
-Cone == Cone := (C1,C2) -> C1 === C2
-
-Fan == Fan := (F1,F2) -> F1 === F2
-
-     
+ 
 -- PURPOSE : Tests if the first Polyhedron/Cone is a face of the second Polyhedron/Cone
 isFace = method(TypicalValue => Boolean)
 
