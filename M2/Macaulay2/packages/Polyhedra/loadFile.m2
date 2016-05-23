@@ -26,6 +26,7 @@ load "./polyhedraHash.m2"
 
 -- Method implementations
 load "./intersection.m2"
+load "./directProduct.m2"
 load "./contains.m2"
 load "./minkowskiSum.m2"
 load "./standardConstructions.m2"
