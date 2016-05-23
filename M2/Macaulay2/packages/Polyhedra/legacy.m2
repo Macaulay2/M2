@@ -1172,101 +1172,6 @@ polytope Fan := F -> (
 
 
 
--- PURPOSE : Computing the closest point of a polyhedron to a given point
---   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
---                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
-proximum = method(TypicalValue => Matrix)
-proximum (Matrix,Polyhedron) := (p,P) -> (
-     -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
-     if isEmpty P then error("The polyhedron must not be empty");
-     -- Defining local variables
-     local Flist;
-     d := ambDim P;
-     c := 0;
-     prox := {};
-     -- Checking if 'p' is contained in 'P'
-     if contains(P,p) then p
-     else (
-	  V := vertices P;
-	  R := promote(rays P,QQ);
-	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
-	  if dim P == d then (
-	       -- Continue as long as the proximum has not been found
-	       while instance(prox,List) do (
-		    -- Take the faces of next lower dimension of P
-		    c = c+1;
-		    if c == dim P then (
-			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos := min Vdist;
-			 pos = position(Vdist, j -> j == pos);
-			 prox = V_{pos})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   -- Check for each ray if it is pointing inward
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
-					     else flatten entries(-v)));
-				   -- Take the polyhedron spanned by the inward pointing normal cone 
-				   -- and 'p' and intersect it with the face
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   -- If this intersection is not empty, it contains exactly one point, 
-				   -- the proximum
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false))));
-	       prox)
-	  else (
-	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
-	       while instance(prox,List) do (
-		    if c == dim P then (
-			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos1 := min Vdist1;
-			 pos1 = position(Vdist1, j -> j == pos1);
-			 prox = V_{pos1})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     entryList := flatten entries (v*(V | R));
-					     -- the first two ifs find the vectors not in the hyperspace
-					     -- of 'P'
-					     if any(entryList, e -> e > b) then flatten entries v
-					     else if any(entryList, e -> e < b) then flatten entries(-v)
-					     -- If it is an original hyperplane than take the direction from 
-					     -- 'p' to the polyhedron
-					     else (
-						  bCheck := first flatten entries (v*p);
-						  if bCheck < b then flatten entries v
-						  else flatten entries(-v))));
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false)));
-		    c = c+1);
-	       prox)))
-
-
---   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
---                   'C' is a Cone
---  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
-proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
-
-
 -- PURPOSE : Computing the 'n'-skeleton of a fan
 --   INPUT : (n,F),  where 'n' is a positive integer and
 --                   'F' is a Fan
@@ -1474,43 +1379,10 @@ volume Polyhedron := P -> (
 
 
 
--- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
---   INPUT : 'P',  a polyhedron
---  OUTPUT : a matrix, where the columns are indexed by the edges and the rows indexed by the vertices and has 1 as entry
---           if the corresponding edge contains this vertex
-vertexEdgeMatrix = method(TypicalValue => Matrix)
-vertexEdgeMatrix Polyhedron := P -> (
-     -- list the edges and the vertices
-     eP := apply(faces(dim P -1,P),f -> (
-	       f = vertices f;
-	       set apply(numColumns f, i -> f_{i})));
-     vp := vertices P;
-     vp = apply(numColumns vp, i -> vp_{i});
-     d := #vp;
-     n := #eP;
-     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
-     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
-
-
-
--- PURPOSE : Computing the vertex-facet-matrix of a polyhedron
---   INPUT : 'P',  a polyhedron
---  OUTPUT : a matrix, where the columns are indexed by the facets and the rows are indexed by the vertices and has 1 as entry
---           if the corresponding facet contains this vertex
-vertexFacetMatrix = method(TypicalValue => Matrix)
-vertexFacetMatrix Polyhedron := P -> (
-     -- list the facets and the vertices
-     fP := apply(faces(1,P),f -> (
-	       f = vertices f; 
-	       set apply(numColumns f, i -> f_{i})));
-     vp := vertices P;
-     vp = apply(numColumns vp, i -> vp_{i});
-     d := #vp;
-     n := #fP;
-     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
-     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
-
-
+--   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
+--                   'C' is a Cone
+--  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
+proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 
 
 -- PURPOSE : Computing the affine hull
@@ -1652,31 +1524,6 @@ affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,coneToPolyhedro
 affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(coneToPolyhedron C,b)
 
 
--- PURPOSE : Computing the bipyramid over the polyhedron 'P'
---   INPUT : 'P',  a polyhedron 
---  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space and the 
---     	         points (barycenter of 'P',+-1)
-bipyramid = method(TypicalValue => Polyhedron)
-bipyramid Polyhedron := P -> (
-     -- Saving the vertices
-     V := vertices P;
-     n := numColumns V;
-     if n == 0 then error("P must not be empty");
-     -- Computing the barycenter of P
-     v := matrix toList(n:{1_QQ,1_QQ});
-     v = (1/n)*V*v;
-     (M,LS) := P#"homogenizedVertices";
-     -- Embedding into n+1 space and adding the two new vertices
-     zerorow := map(ZZ^1,source M,0);
-     newvertices := makePrimitiveMatrix(matrix {{1_QQ,1_QQ}} || v || matrix {{1_QQ,-(1_QQ)}});
-     M = (M || zerorow) | newvertices;
-     LS = LS || map(ZZ^1,source LS,0);
-     hyperA := fourierMotzkin(M,LS);
-     --verticesA := fourierMotzkin hyperA;
-     local verticesA;
-     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
-     polyhedronBuilder(hyperA,verticesA))
-
 
 -- PURPOSE : Computes the coarsest common refinement of a given set of rays
 --   INPUT : 'M'  a Matrix
@@ -1728,67 +1575,6 @@ coneToPolyhedron Cone := C -> (
      convexHull(M,N))
 
 
--- PURPOSE : Computing the direct product of two polyhedra in the direct product of their ambient spaces
-directProduct = method()
-
---   INPUT : '(P,Q)',  two polyhedra
---  OUTPUT : A polyhedron, the direct product
-directProduct (Polyhedron,Polyhedron) := (P,Q) -> (
-     -- Extracting half-spaces and hyperplanes of P and Q
-     (Mp,vp) := halfspaces P;
-     (Np,wp) := hyperplanes P;
-     (Mq,vq) := halfspaces Q;
-     (Nq,wq) := hyperplanes Q;
-     -- Constructing the new half-spaces matrix |Mp 0 | and vector |vp|
-     --                                        |0  Mq|            |vq|
-     M := Mp ++ Mq;
-     v := vp || vq;
-     -- Constructing the new hyperplanes matrix |Np 0 | and vector |wp|
-     --                                         |0  Nq|            |wq|
-     N := Np ++ Nq;
-     w := wp || wq;
-     intersection(M,v,N,w))
-
-
---   INPUT : '(C1,C2)',  two cones
---  OUTPUT : A cone, the direct product
-directProduct (Cone,Cone) := (C1,C2) -> (
-     -- Extracting half-spaces and hyperplanes of P and Q
-     Mp := halfspaces C1;
-     Np := hyperplanes C1;
-     Mq := halfspaces C2;
-     Nq := hyperplanes C2;
-     -- Constructing the new half-spaces matrix |Mp 0 |
-     --                                        |0  Mq|
-     M := Mp ++Mq;
-     -- Constructing the new hyperplanes matrix |Np 0 |
-     --                                         |0  Nq|
-     N := Np ++ Nq;
-     intersection(M,N))
-
-
---   INPUT : '(C,P)',  a cone and a polyhedron
---  OUTPUT : A polyhedron, the direct product
-directProduct (Cone,Polyhedron) := (C,P) -> directProduct(coneToPolyhedron C,P)
-
-
---   INPUT : '(P,C)',  a polyhedron and a cone
---  OUTPUT : A polyhedron, the direct product
-directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
-
-
---   INPUT : '(F1,F2)',  two fans
---  OUTPUT : A fan, the direct product
-directProduct (Fan,Fan) := (F1,F2) -> (
-     -- computing the direct products of all pairs of generating cones
-     fan flatten apply(maxCones F1, C1 -> apply(maxCones F2, C2 -> directProduct(C1,C2))))
-
-
-Polyhedron * Polyhedron := directProduct
-Polyhedron * Cone := directProduct
-Cone * Polyhedron := directProduct
-Cone * Cone := directProduct
-Fan * Fan := directProduct
 
 
 dualCayley = method(TypicalValue => Polyhedron)
@@ -2136,26 +1922,6 @@ polarFace Polyhedron := (cacheValue symbol polarFace)(P -> (
 	       Pd)))	       
 	       
 
-
--- PURPOSE : Computing the pyramid over the polyhedron 'P'
---   INPUT : 'P',  a polyhedron 
---  OUTPUT : A polyhedron, the convex hull of 'P', embedded into ambientdim+1 space, and the 
---     	         point (0,...,0,1)
-pyramid = method(TypicalValue => Polyhedron)
-pyramid Polyhedron := P -> (
-     (M,LS) := P#"homogenizedVertices";
-     -- Embedding into n+1 space and adding the new vertex
-     zerorow := map(ZZ^1,source M,0);
-     newvertex := 1 || map(ZZ^((numRows M)-1),ZZ^1,0) || 1;
-     M = (M || zerorow) | newvertex;
-     LS = LS || map(ZZ^1,source LS,0);
-     hyperA := fourierMotzkin(M,LS);
-     --verticesA := fourierMotzkin hyperA;
-     local verticesA;
-     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
-     polyhedronBuilder(hyperA,verticesA))
-
-
 -- PURPOSE : Computing the sublattice basis for a given matrix of lattice points or for the lattice points
 --     	     of a given polytope
 sublatticeBasis = method(TypicalValue => Matrix)
@@ -2197,32 +1963,6 @@ toSublattice Polyhedron := P -> (
      if all(L,l -> l != 0) then L = apply(L, l -> l - L#0);     
      affinePreimage(sublatticeBasis matrix {L},P,b))
 
-
--- PURPOSE : Generating the 'd'-dimensional crosspolytope with edge length 2*'s'
-crossPolytope = method(TypicalValue => Polyhedron)
-
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is
---     	    	       a strictly positive rational number, the distance of the vertices to the origin
---  OUTPUT : The 'd'-dimensional crosspolytope with vertex-origin distance 's'
-crossPolytope(ZZ,QQ) := (d,s) -> (
-     -- Checking for input errors
-     if d < 1 then error("dimension must at least be 1");
-     if s <= 0 then error("size of the crosspolytope must be positive");
-     constructMatrix := (d,v) -> (
-	  if d != 0 then flatten {constructMatrix(d-1,v|{-1}),constructMatrix(d-1,v|{1})}
-	  else {v});
-     homHalf := ( sort makePrimitiveMatrix transpose( matrix toList(2^d:{-s}) | promote(matrix constructMatrix(d,{}),QQ)),map(ZZ^(d+1),ZZ^0,0));
-     homVert := (sort makePrimitiveMatrix (matrix {toList(2*d:1_QQ)} || (map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s))),map(ZZ^(d+1),ZZ^0,0));
-     polyhedronBuilder(homHalf,homVert))
-
-
---   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is a
---     	    	        strictly positive integer, the distance of the vertices to the origin
-crossPolytope(ZZ,ZZ) := (d,s) -> crossPolytope(d,promote(s,QQ))
-
-
---   INPUT :  'd',  where 'd' is a strictly positive integer, the dimension of the polytope
-crossPolytope ZZ := d -> crossPolytope(d,1_QQ)
 
 
 -- PURPOSE : Computing the cyclic polytope of n points in QQ^d
@@ -2266,18 +2006,6 @@ ehrhart Polyhedron := P -> (
 	R := QQ[getSymbol "x"];
 	x := R_"x";
 	1+sum apply(n,i -> M#i * x^(n-i)))
-
-
--- PURPOSE : Generating the empty polyhedron in n space
---   INPUT : 'n',  a strictly positive integer
---  OUTPUT : The empty polyhedron in 'n'-space
-emptyPolyhedron = method(TypicalValue => Polyhedron)
-emptyPolyhedron ZZ := n -> (
-     -- Checking for input errors
-     if n < 1 then error("The ambient dimension must be positive");
-     verticesA := 2:map(ZZ^(n+1),ZZ^0,0);
-     hyperA := (map(ZZ^(n+1),ZZ^0,0),map(ZZ^(n+1),ZZ^(n+1),1));
-     polyhedronBuilder(hyperA,verticesA));
 
 
 
@@ -2510,16 +2238,7 @@ statePolytope Ideal := I -> (
      P := convexHull vertmatrix;
      (verts,P));
 	  
-	  
--- PURPOSE : Generating the 'd'-dimensional standard simplex in QQ^(d+1)
---   INPUT : 'd',  a positive integer
---  OUTPUT : The 'd'-dimensional standard simplex as a polyhedron
-stdSimplex = method(TypicalValue => Polyhedron)
-stdSimplex ZZ := d -> (
-     -- Checking for input errors
-     if d < 0 then error("dimension must not be negative");
-     -- Generating the standard basis
-     convexHull map(QQ^(d+1),QQ^(d+1),1))
+
 
 
 -- PURPOSE : Saving the actual Session of Polyhedra (and PPDivisor)

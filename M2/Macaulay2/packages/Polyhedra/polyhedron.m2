@@ -272,3 +272,133 @@ interiorLatticePoints = method(TypicalValue => List)
 interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P -> (
      L := latticePoints P;
      select(L,e -> inInterior(e,P))))
+
+
+
+-- PURPOSE : Computing the closest point of a polyhedron to a given point
+--   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
+--                   'P' is a Polyhedron
+--  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+proximum = method(TypicalValue => Matrix)
+proximum (Matrix,Polyhedron) := (p,P) -> (
+     -- Checking for input errors
+     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     if isEmpty P then error("The polyhedron must not be empty");
+     -- Defining local variables
+     local Flist;
+     d := ambDim P;
+     c := 0;
+     prox := {};
+     -- Checking if 'p' is contained in 'P'
+     if contains(P,p) then p
+     else (
+	  V := vertices P;
+	  R := promote(rays P,QQ);
+	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
+	  if dim P == d then (
+	       -- Continue as long as the proximum has not been found
+	       while instance(prox,List) do (
+		    -- Take the faces of next lower dimension of P
+		    c = c+1;
+		    if c == dim P then (
+			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos := min Vdist;
+			 pos = position(Vdist, j -> j == pos);
+			 prox = V_{pos})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   -- Check for each ray if it is pointing inward
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
+					     else flatten entries(-v)));
+				   -- Take the polyhedron spanned by the inward pointing normal cone 
+				   -- and 'p' and intersect it with the face
+				   Q := intersection(F,convexHull(p,transpose vL));
+				   -- If this intersection is not empty, it contains exactly one point, 
+				   -- the proximum
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false))));
+	       prox)
+	  else (
+	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
+	       while instance(prox,List) do (
+		    if c == dim P then (
+			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos1 := min Vdist1;
+			 pos1 = position(Vdist1, j -> j == pos1);
+			 prox = V_{pos1})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     entryList := flatten entries (v*(V | R));
+					     -- the first two ifs find the vectors not in the hyperspace
+					     -- of 'P'
+					     if any(entryList, e -> e > b) then flatten entries v
+					     else if any(entryList, e -> e < b) then flatten entries(-v)
+					     -- If it is an original hyperplane than take the direction from 
+					     -- 'p' to the polyhedron
+					     else (
+						  bCheck := first flatten entries (v*p);
+						  if bCheck < b then flatten entries v
+						  else flatten entries(-v))));
+				   Q := intersection(F,convexHull(p,transpose vL));
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false)));
+		    c = c+1);
+	       prox)))
+
+
+
+
+
+-- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : a matrix, where the columns are indexed by the edges and the rows indexed by the vertices and has 1 as entry
+--           if the corresponding edge contains this vertex
+vertexEdgeMatrix = method(TypicalValue => Matrix)
+vertexEdgeMatrix Polyhedron := P -> (
+     -- list the edges and the vertices
+     eP := apply(faces(dim P -1,P),f -> (
+	       f = vertices f;
+	       set apply(numColumns f, i -> f_{i})));
+     vp := vertices P;
+     vp = apply(numColumns vp, i -> vp_{i});
+     d := #vp;
+     n := #eP;
+     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
+     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
+
+
+
+-- PURPOSE : Computing the vertex-facet-matrix of a polyhedron
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : a matrix, where the columns are indexed by the facets and the rows are indexed by the vertices and has 1 as entry
+--           if the corresponding facet contains this vertex
+vertexFacetMatrix = method(TypicalValue => Matrix)
+vertexFacetMatrix Polyhedron := P -> (
+     -- list the facets and the vertices
+     fP := apply(faces(1,P),f -> (
+	       f = vertices f; 
+	       set apply(numColumns f, i -> f_{i})));
+     vp := vertices P;
+     vp = apply(numColumns vp, i -> vp_{i});
+     d := #vp;
+     n := #fP;
+     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
+     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
