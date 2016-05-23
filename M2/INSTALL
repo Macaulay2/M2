@@ -47,6 +47,10 @@ The following commands will download the latest changes to the source code:
     git pull
     git submodule update
 
+On a new repository, replace the last command with
+
+    git submodule update --init --recursive
+
 ---------
 Programs
 ---------
