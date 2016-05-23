@@ -1,11 +1,15 @@
 export {
    "PolyhedralObject", 
-   "Polyhedron", 
+-- Cone object with associated methods:
    "Cone", 
+   "posHull", 
+ 
+-- Polyhedron object with associated methods:
+   "Polyhedron", 
+   "convexHull", 
+
    "Fan", 
    "PolyhedralComplex", 
-   "convexHull", 
-   "posHull", 
    "intersection", 
    "fan", 
    "addCone", 
