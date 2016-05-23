@@ -8,7 +8,7 @@ net Cone := C -> ( horizontalJoin flatten (
 	  "{",
 	  -- prints the parts vertically
 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "dimension of the cone",
+			                      "dimension",
 					      "dimension of lineality space",
 					      "number of rays",
 					      "number of facets"}, key -> (net key, " => ", net C#key))),
@@ -30,7 +30,7 @@ coneBuilder = (genrays,dualgens) -> (
       -- Defining C
       new Cone from {
 	   "ambient dimension" => numgens target RM,
-	   "dimension of the cone" => (numgens target RM)-(rank hyperplanesTmp),
+	   "dimension" => (numgens target RM)-(rank hyperplanesTmp),
 	   "dimension of lineality space" => numgens source LS,
 	   "linealitySpace" => LS,
 	   "number of rays" => numgens source RM,

@@ -337,7 +337,7 @@ C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 F = fan C;
 assert(set maxCones F === set {C})
 assert(F#"ambient dimension" == 3)
-assert(F#"top dimension of the cones" == 3)
+assert(dim F == 3)
 assert(F#"number of generating cones" == 1)
 assert not isComplete F
 ///

@@ -4051,34 +4051,27 @@ document {
      }
 
 document {
-     Key => (dim,Cone),
-     Headline => "computes the dimension of a cone",
-     Usage => " d = dim C",
+     Key => {(dim,PolyhedraHash)},
+     Headline => "computes the dimension of a cone, polyhedron, fan or polyhedral complex",
+     Usage => " d = dim PH",
      Inputs => {
-	  "C" => Cone
+	  "PH" => PolyhedraHash
 	  },
      Outputs => {
 	  "d" => ZZ
+	  },
+     
+     
+     EXAMPLE {
+	  " C = posHull matrix {{2,3},{3,2}}",
+	  " dim C"
 	  },
      
      PARA{}, "Returns the dimension of a cone.",
      
      EXAMPLE {
-	  " C = posHull matrix {{2,3},{3,2}}",
-	  " dim C"
-	  }
-     
-     }
-
-document {
-     Key => (dim,Fan),
-     Headline => "computes the dimension of a fan",
-     Usage => " d = dim F",
-     Inputs => {
-	  "F" => Fan
-	  },
-     Outputs => {
-	  "d" => ZZ
+	  " F = hirzebruch 3",
+	  " dim F"
 	  },
      
      PARA{}, "Returns the dimension of a fan. This 
@@ -4086,52 +4079,22 @@ document {
      the fan.",
      
      EXAMPLE {
-	  " F = hirzebruch 3",
-	  " dim F"
-	  }
-     
-     }
-
-document {
-     Key => (dim,Polyhedron),
-     Headline => "computes the dimension of a polyhedron",
-     Usage => " d = dim P",
-     Inputs => {
-	  "P" => Polyhedron
-	  },
-     Outputs => {
-	  "d" => ZZ
+	  " P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",
+	  " dim P"
 	  },
      
      PARA{}, "Returns the dimension of a polyhedron.",
      
      EXAMPLE {
-	  " P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}}",
-	  " dim P"
-	  }
-     
-     }
-
-document {
-     Key => (dim,PolyhedralComplex),
-     Headline => "computes the dimension of a polyhedral complex",
-     Usage => " d = dim PC",
-     Inputs => {
-	  "PC" => PolyhedralComplex
-	  },
-     Outputs => {
-	  "d" => ZZ
-	  },
-     
-     PARA{}, "Returns the dimension of a polyhedral complex. This 
-     is the maximal dimension of all polyhedra of the complex.",
-     
-     EXAMPLE {
 	  " PC = polyhedralComplex crossPolytope 3",
 	  " dim PC"
-	  }
+	  },
+
+     PARA{}, "Returns the dimension of a polyhedral complex. This 
+     is the maximal dimension of all polyhedra of the complex."
      
-     }
+}
+
 
 document {
      Key => (net,Cone),

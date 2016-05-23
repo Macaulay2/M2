@@ -18,6 +18,10 @@ isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
 	else all(maxPolyhedra X,isSimplicial)))
 
 
+--   INPUT : 'PH'  a Polyhedron, Cone, Fan or Polyhedral Complex
+--  OUTPUT : an integer, the dimension of the Polyhedron, Cone, Fan or Polyhedral Complex,
+--           where for the last two it is defined as the maximum dimension of the subobjects
+dim PolyhedraHash := PH -> PH#"dimension"
 
 
 

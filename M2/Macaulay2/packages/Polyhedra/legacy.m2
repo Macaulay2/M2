@@ -13,7 +13,7 @@ net Fan := F -> ( horizontalJoin flatten (
 	  "{",
 	  -- prints the parts vertically
 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "top dimension of the cones",
+			                      "dimension",
 					      "number of generating cones",
 					      "number of rays"}, key -> (net key, " => ", net F#key))),
 	  "}" ))
@@ -24,7 +24,7 @@ net PolyhedralComplex := F -> ( horizontalJoin flatten (
 	  "{",
 	  -- prints the parts vertically
 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "top dimension of the polyhedra",
+			                      "dimension",
 					      "number of generating polyhedra"}, key -> (net key, " => ", net F#key))),
 	  "}" ))
 
@@ -115,7 +115,7 @@ fan List := L -> (
 	  F = new Fan from {
 	  "generatingObjects" => set {C},
 	  "ambient dimension" => ad,
-	  "top dimension of the cones" => C#"dimension of the cone",
+	  "dimension" => C#"dimension",
 	  "number of generating cones" => 1,
 	  "rays" => set rayList,
 	  "number of rays" => #rayList,
@@ -157,7 +157,7 @@ polyhedralComplex List := L -> (
 	  PC = new PolyhedralComplex from {
 	       "generatingObjects" => set {P},
 	       "ambient dimension" => ad,
-	       "top dimension of the polyhedra" => P#"dimension of polyhedron",
+	       "dimension" => P#"dimension",
 	       "number of generating polyhedra" => 1,
 	       "vertices" => set verticesList,
 	       "number of vertices" => #verticesList,
@@ -180,7 +180,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      if P#"ambient dimension" != PC#"ambient dimension" then error("The polyhedra must lie in the same ambient space.");
      -- Extracting data
      GP := maxPolyhedra PC;
-     d := P#"dimension of polyhedron";
+     d := P#"dimension";
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
      -- the cones of higher or equal dimension. For this we divide GP into two seperate lists
@@ -215,7 +215,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      new PolyhedralComplex from {
 	       "generatingObjects" => set GP,
 	       "ambient dimension" => P#"ambient dimension",
-	       "top dimension of the polyhedra" => (GP#0)#"dimension of polyhedron",
+	       "dimension" => (GP#0)#"dimension",
 	       "number of generating polyhedra" => #GP,
 	       "vertices" => set verticesList,
 	       "number of vertices" => #verticesList,
@@ -253,7 +253,7 @@ addCone (Cone,Fan) := (C,F) -> (
      if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
      -- Extracting data
      GC := maxCones F;
-     d := C#"dimension of the cone";
+     d := C#"dimension";
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
@@ -289,7 +289,7 @@ addCone (Cone,Fan) := (C,F) -> (
      new Fan from {
 	  "generatingObjects" => set GC,
 	  "ambient dimension" => F#"ambient dimension",
-	  "top dimension of the cones" => dim GC#0,
+	  "dimension" => dim GC#0,
 	  "number of generating cones" => #GC,
 	  "rays" => set rayList,
 	  "number of rays" => #rayList,
@@ -363,24 +363,6 @@ polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
 	unique flatten apply(L, P -> faces(dim(P)-k,P)))
 
 	     
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, the dimension of the polyhedron
-dim Polyhedron := P -> P#"dimension of polyhedron"
-
-
---   INPUT : 'C'  a Cone 
---  OUTPUT : an integer, the dimension of the Cone
-dim Cone := C -> C#"dimension of the cone"
-
-
---   INPUT : 'F'  a Fan 
---  OUTPUT : an integer, the highest dimension of Cones in 'F'
-dim Fan := F -> F#"top dimension of the cones"
-
-
---   INPUT : 'PC'  a PolyhedralComplex
---  OUTPUT : an integer, the highest dimension of polyhedra in 'PC'
-dim PolyhedralComplex := PC -> PC#"top dimension of the polyhedra"
 
 
 
@@ -590,10 +572,10 @@ isFace = method(TypicalValue => Boolean)
 --  OUTPUT : 'true' or 'false'
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
      -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-     c := Q#"dimension of polyhedron" - P#"dimension of polyhedron";
+     c := Q#"dimension" - P#"dimension";
      if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
 	  -- Checking if P is the empty polyhedron
-	  if c > Q#"dimension of polyhedron" then true
+	  if c > Q#"dimension" then true
 	  -- Checking if one of the codim 'c' faces of Q is P
 	  else any(faces(c,Q), f -> f === P))
      else false)
@@ -601,7 +583,7 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 isFace(Cone,Cone) := (C1,C2) -> (
-     c := C2#"dimension of the cone" - C1#"dimension of the cone";
+     c := C2#"dimension" - C1#"dimension";
      -- Checking if the two cones lie in the same space and the dimension difference is positive
      if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
 	  -- Checking if one of the codim 'c' faces of C2 is C1
@@ -807,7 +789,7 @@ isVeryAmple Polyhedron := P -> (
 		    	      HSV := matrix for h in HS list if all(flatten entries(h*Ev), e -> e >= 0) then {h} else continue;
 		    	      C := new Cone from {
 	   		      	   "ambient dimension" => numRows Ev,
-	   		      	   "dimension of the cone" => numRows Ev,
+	   		      	   "dimension" => numRows Ev,
 	   		      	   "dimension of lineality space" => 0,
 	   		      	   "linealitySpace" => map(ZZ^(numRows Ev),ZZ^0,0),
 	   		      	   "number of rays" => numColumns Ev,
@@ -957,12 +939,12 @@ faces(ZZ,Cone) := (k,C) -> (
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
-fVector Polyhedron := P -> apply(P#"dimension of polyhedron" + 1, d -> #faces(dim P - d,P))
+fVector Polyhedron := P -> apply(P#"dimension" + 1, d -> #faces(dim P - d,P))
 
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
-fVector Cone := C -> apply(C#"dimension of the cone" + 1, d -> #faces(dim C - d,C))
+fVector Cone := C -> apply(C#"dimension" + 1, d -> #faces(dim C - d,C))
 
 
 -- PURPOSE : Computing the Hilbert basis of a Cone 
@@ -1229,7 +1211,7 @@ minkSummandCone Polyhedron := P -> (
      else (
 	  -- Extracting the data to compute the 2 dimensional faces and the edges
 	  d := P#"ambient dimension";
-          dP := P#"dimension of polyhedron";
+          dP := P#"dimension";
           (HS,v) := halfspaces P;
           (hyperplanesTmp,w) := hyperplanes P;
 	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
@@ -1521,7 +1503,7 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
      new PolyhedralComplex from {
 	       "generatingObjects" => set GP,
 	       "ambient dimension" => ambDim PC,
-	       "top dimension of the polyhedra" => n,
+	       "dimension" => n,
 	       "number of generating polyhedra" => #GP,
 	       "vertices" => set verticesList,
 	       "number of vertices" => #verticesList,
@@ -1599,7 +1581,7 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
      new Fan from {
 	  "generatingObjects" => set L,
 	  "ambient dimension" => ambDim L#0,
-	  "top dimension of the cones" => n,
+	  "dimension" => n,
 	  "number of generating cones" => #L,
 	  "rays" => set R,
 	  "number of rays" => #R,
@@ -2314,7 +2296,7 @@ normalFan Polyhedron := P -> (
 	  F := new Fan from {
 	       "generatingObjects" => set L,
 	       "ambient dimension" => ambDim P,
-	       "top dimension of the cones" => dim L#0,
+	       "dimension" => dim L#0,
 	       "number of generating cones" => #L,
 	       "rays" => set HS,
 	       "number of rays" => #HS,
@@ -2532,7 +2514,7 @@ hirzebruch ZZ := r -> (
      F := new Fan from {
 	  "generatingObjects" => set L,
 	  "ambient dimension" => 2,
-	  "top dimension of the cones" => 2,
+	  "dimension" => 2,
 	  "number of generating cones" => 4,
 	  "rays" => set {matrix{{0}, {-1}},matrix{{1}, {0}},matrix{{-1}, {r}},matrix{{0}, {1}}},
 	  "number of rays" => 4,
@@ -2933,9 +2915,7 @@ faceBuilderCone = (k,C) -> (
 	       C.cache.faces#i = L);
 	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
 	  C.cache.faces#k))
- 
-   
-   
+
 -- PURPOSE : check whether a matrix is over ZZ or QQ
 --   INPUT : '(M,msg)', a matrix 'M' and a string 'msg'
 --  OUTPUT : the matrix 'M' promoted to QQ if it was over ZZ or QQ, otherwise an error
