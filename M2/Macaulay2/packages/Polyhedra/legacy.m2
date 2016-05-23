@@ -299,49 +299,6 @@ areCompatible(Polyhedron,Polyhedron) := (P1,P2) -> (
      else (false,emptyPolyhedron(P1#"ambient dimension")))
 
 
--- PURPOSE : Tests whether the intersection of two Polyhedra/Cones is a face of both
-commonFace = method(TypicalValue => Boolean)
-
---   INPUT : '(P,Q)'  two Polyhedra
---  OUTPUT : 'true' or 'false'
-commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
-	if P#"ambient dimension" == Q#"ambient dimension" then (
-	     I := intersection(P,Q);
-	     isFace(I,P) and isFace(I,Q))
-	else false)
-
---   INPUT : '(C1,C2)'  two Cones
---  OUTPUT : 'true' or 'false'
-commonFace(Cone,Cone) := (C1,C2) -> (
-     if C1#"ambient dimension" == C2#"ambient dimension" then (
-	  I := intersection(C1,C2);
-	  isFace(I,C1) and isFace(I,C2))
-     else false)
-
-
---   INPUT : '(C,F)'  a Cone and a Fan
---  OUTPUT : 'true' or 'false'
--- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
-commonFace(Cone,Fan) := (C,F) -> if C#"ambient dimension" == F#"ambient dimension" then all(maxCones F, C1 -> commonFace(C,C1)) else false
-
-
---   INPUT : '(F,C)'  a Fan and a Cone
---  OUTPUT : 'true' or 'false'
--- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
-commonFace(Fan,Cone) := (F,C) -> commonFace(C,F)
-
-
---   INPUT : '(F1,F2)'  two Fans
---  OUTPUT : 'true' or 'false'
--- COMMENT : For this it checks if all generating cones of 'F1' have a common face with every generating cone of 'F2'
-commonFace(Fan,Fan) := (F1,F2) -> all(maxCones F1, C -> commonFace(C,F2))
-
-
---   INPUT : 'L'  a List
---  OUTPUT : 'true' or 'false'
-commonFace List := L -> all(#L-1, i -> all(i+1..#L-1, j -> commonFace(L#i,L#j)))
-
-   
  
 -- PURPOSE : Tests if the first Polyhedron/Cone is a face of the second Polyhedron/Cone
 isFace = method(TypicalValue => Boolean)
@@ -459,63 +416,6 @@ faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
 
 
 
-
-
--- PURPOSE : Get the pairs of incompatible cones in a list of cones
---   INPUT : 'L',  a list of cones and fans
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones/fans that are  
---                 	not compatible
-incompCones = method(TypicalValue => List)
-incompCones List := L -> (
-     if any(L, l -> (not instance(l,Cone)) and (not instance(l,Fan))) then error("The list may only contain cones and fans");
-     select(apply(subsets(L,2),toSequence), p -> not commonFace p))
-
-
---   INPUT : '(C,F)',  a cone and a fan
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
---                 	'F' that are not compatible
-incompCones(Cone,Fan) := (C,F) -> select(apply(maxCones F, f -> (C,f)), p -> not commonFace p)
-
-
---   INPUT : '(F,C)',  a fan and a cone
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of 'C' with the cones of 
---                 	'F' that are not compatible
-incompCones(Fan,Cone) := (F,C) -> select(apply(maxCones F, f -> (f,C)), p -> not commonFace p)
-
-
---   INPUT : '(F1,F2)',  two fans
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible cones, otherwise it contains the pairs of cones of 'F1' and cones of 
---                 	'F2' that are not compatible
-incompCones(Fan,Fan) := (F1,F2) -> flatten apply(maxCones F1, C1 -> flatten apply(maxCones F2, C2 -> if not commonFace(C1,C2) then (C1,C2) else {}))
-
-
--- PURPOSE : Get the pairs of incompatible polyhedra in a list of polyhedra
---   INPUT : 'L',  a list of polyhedra and polyhedral complexes
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of polyhedra/polyhedral 
---                      complexes that are not compatible
-incompPolyhedra = method(TypicalValue => List)
-incompPolyhedra List := L -> (
-     if any(L, l -> (not instance(l,Polyhedron)) and (not instance(l,PolyhedralComplex))) then error("The list may only contain polyhedra and polyhedral complexes");
-     select(apply(subsets(L,2),toSequence), p -> not commonFace p))
-
-
---   INPUT : '(P,PC)',  a Polyhedron and a PolyhedralComplex
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of 'P' with the polyhedra of 
---                 	'PC' that are not compatible
-incompPolyhedra(Polyhedron,PolyhedralComplex) := (P,PC) -> select(apply(maxPolyhedra PC, p -> (P,p)), e -> not commonFace e)
-
-
---   INPUT : '(PC,P)',  a PolyhedralComplex and a Polyhedron
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of 'P' with the polyhedra of 
---                 	'PC' that are not compatible
-incompPolyhedra(PolyhedralComplex,Polyhedron) := (PC,P) -> select(apply(maxPolyhedra PC, p -> (p,P)), e -> not commonFace e)
-
-
---   INPUT : '(PC1,PC2)',  two PolyhedralComplexes
---  OUTPUT : 'Lpairs',  a list, empty if there is no pair of incompatible polyhedra, otherwise it contains the pairs of polyhedra of 'PC1' and polyhedra of 
---                 	'PC2' that are not compatible
-incompPolyhedra(PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> flatten apply(maxPolyhedra PC1, P1 -> flatten apply(maxPolyhedra PC2, P2 -> if not commonFace(P1,P2) then (P1,P2) else {}))
-     
 
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
@@ -925,99 +825,94 @@ tailCone Polyhedron := P -> posHull(P#"rays",P#"linealitySpace")
 
 
 
--- PURPOSE : Triangulating a compact Polyhedron
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : A list of the simplices of the triangulation. Each simplex is given by a list 
---    	     of its vertices.
---COMMENTS : The triangulation is build recursively, for each face that is not a simplex it takes 
---     	     the weighted centre of the face. for each codim 1 face of this face it either takes the 
---     	     convex hull with the centre if it is a simplex or triangulates this in the same way.
-triangulate = method()
-triangulate Polyhedron := P -> (
-     -- Defining the recursive face triangulation
-     -- This takes a polytope and computes all facets. For each facet that is not a simplex, it calls itself
-     -- again to replace this facet by a triangulation of it. then it has a list of simplices triangulating 
-     -- the facets. Then it computes for each of these simplices the convex hull with the weighted centre of 
-     -- the input polytope. The weighted centre is the sum of the vertices divided by the number of vertices.
-     -- It returns the resulting list of simplices in a list, where each simplex is given by a list of its 
-     -- vertices.
-     -- The function also needs the dimension of the Polyhedron 'd', the list of facets of the original 
-     -- polytope, the list 'L' of triangulations computed so far and the dimension of the original Polytope.
-     -- 'L' contains a hash table for each dimension of faces of the original Polytope (i.e. from 0 to 'n').
-     -- If a face has been triangulated than the list of simplices is saved in the hash table of the 
-     -- corresponding dimension with the weighted centre of the original face as key.
-     recursiveFaceTriangulation := (P,d,originalFacets,L,n) -> (
-	  -- Computing the facets of P, given as lists of their vertices
-	  F := intersectionWithFacets({(set P,set{})},originalFacets);
-	  F = apply(F, f -> toList(f#0));
-	  d = d-1;
-	  -- if the facets are at least 2 dimensional, then check if they are simplices, if not call this 
-	  -- function again
-	  if d > 1 then (
-	       F = flatten apply(F, f -> (
-			 -- Check if the face is a simplex
-			 if #f != d+1 then (
-			      -- Computing the weighted centre
-			      p := (sum f)*(1/#f);
-			      -- Taking the hash table of the corresponding dimension
-			      -- Checking if the triangulation has been computed already
-			      if L#d#?p then L#d#p
-			      else (
-				   -- if not, call this function again for 'f' and then save this in 'L'
-				   (f,L) = recursiveFaceTriangulation(f,d,originalFacets,L,n);
-				   L = merge(L,hashTable {d => hashTable{p => f}},(x,y) -> merge(x,y,));
-				   f))
-			 else {f})));
-	  -- Adding the weighted centre to each face simplex
-	  q := (sum P)*(1/#P);
-	  P = apply(F, f -> f | {q});
-	  (P,L));
+
+-- PURPOSE : Computing the closest point of a polyhedron to a given point
+--   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
+--                   'P' is a Polyhedron
+--  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
+proximum = method(TypicalValue => Matrix)
+proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
-     if not isCompact P then error("The polytope must be compact!");
-     n := dim P;
-     -- Computing the facets of P as lists of their vertices
-     (HS,v) := halfspaces P;
-     (hyperplanesTmp,w) := hyperplanes P;
-     originalFacets := apply(numRows HS, i -> intersection(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
-     originalFacets = apply(originalFacets, f -> (
-	       V := vertices f;
-	       (set apply(numColumns V, i -> V_{i}),set {})));
-     -- Making a list of the vertices of P
-     P = vertices P;
-     P = apply(numColumns P, i -> P_{i});
-     if #P == n+1 then {P} else (
-	  d := n;
-	  -- Initiating the list of already computed triangulations
-	  L := hashTable apply(n+1, i -> i => hashTable {});
-	  (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
-	  P))
-
-
-
--- PURPOSE : Computing the volume of a full dimensional polytope
---   INPUT : 'P',  a compact polyhedron
---  OUTPUT : QQ, giving the volume of the polytope
-volume = method(TypicalValue => QQ)
-volume Polyhedron := P -> (
-     d := dim P;
-     -- Checking for input errors
-     if  not isCompact P then error("The polyhedron must be compact, i.e. a polytope.");
-     -- If P is not full dimensional then project it down
-     if d != ambDim P then (
-	  A := substitute((hyperplanes P)#0,ZZ);
-	  A = inverse (smithNormalForm A)#2;
-	  n := ambDim P;
-	  A = A^{n-d..n-1};
-	  P = affineImage(A,P));
-     -- Computing the triangulation of P
-     P = triangulate P;
-     -- Computing the volume of each simplex without the dimension factor, by 
-     -- taking the absolute of the determinant of |v_1-v_0..v_d-v_0|
-     P = apply(P, p -> abs det matrix transpose apply(toList(1..d), i -> flatten entries(p#i - p#0)));
-     -- Summing up the volumes and dividing out the dimension factor
-     (sum P)/(d!))
-	       
-
+     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     if isEmpty P then error("The polyhedron must not be empty");
+     -- Defining local variables
+     local Flist;
+     d := ambDim P;
+     c := 0;
+     prox := {};
+     -- Checking if 'p' is contained in 'P'
+     if contains(P,p) then p
+     else (
+	  V := vertices P;
+	  R := promote(rays P,QQ);
+	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
+	  if dim P == d then (
+	       -- Continue as long as the proximum has not been found
+	       while instance(prox,List) do (
+		    -- Take the faces of next lower dimension of P
+		    c = c+1;
+		    if c == dim P then (
+			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos := min Vdist;
+			 pos = position(Vdist, j -> j == pos);
+			 prox = V_{pos})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   -- Check for each ray if it is pointing inward
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
+					     else flatten entries(-v)));
+				   -- Take the polyhedron spanned by the inward pointing normal cone 
+				   -- and 'p' and intersect it with the face
+				   Q := intersection(F,convexHull(p,transpose vL));
+				   -- If this intersection is not empty, it contains exactly one point, 
+				   -- the proximum
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false))));
+	       prox)
+	  else (
+	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
+	       while instance(prox,List) do (
+		    if c == dim P then (
+			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
+			 pos1 := min Vdist1;
+			 pos1 = position(Vdist1, j -> j == pos1);
+			 prox = V_{pos1})
+		    else (
+			 Flist = faces(c,P);
+			 -- Search through the faces
+			 any(Flist, F -> (
+				   -- Take the inward pointing normal cone with respect to P
+				   (vL,bL) := hyperplanes F;
+				   vL = matrix apply(numRows vL, i -> (
+					     v := vL^{i};
+					     b := first flatten entries bL^{i};
+					     entryList := flatten entries (v*(V | R));
+					     -- the first two ifs find the vectors not in the hyperspace
+					     -- of 'P'
+					     if any(entryList, e -> e > b) then flatten entries v
+					     else if any(entryList, e -> e < b) then flatten entries(-v)
+					     -- If it is an original hyperplane than take the direction from 
+					     -- 'p' to the polyhedron
+					     else (
+						  bCheck := first flatten entries (v*p);
+						  if bCheck < b then flatten entries v
+						  else flatten entries(-v))));
+				   Q := intersection(F,convexHull(p,transpose vL));
+				   if not isEmpty Q then (
+					prox = vertices Q;
+					true)
+				   else false)));
+		    c = c+1);
+	       prox)))
 
 
 --   INPUT : (p,C),  where 'p' is a point given by a one column matrix over ZZ or QQ and
@@ -1036,133 +931,6 @@ affineHull Polyhedron := P -> (
      -- subtracting the first vertex from all other vertices
      N := (M+M_{0}*(matrix {toList(numColumns M:-1)}))_{1..(numColumns M)-1};
      convexHull(M_{0},N | -N | R | -R));
-
-
--- PURPOSE : Computing the affine image of a polyhedron
-affineImage = method(TypicalValue => Polyhedron)
-
---   INPUT : '(A,P,v)',  where 'A' is a ZZ or QQ matrix from the ambient space of the 
---     	    	      	 polyhedron 'P' to some other target space and 'v' is a matrix
---     	    	      	 defining a vector in the target space of 'A'
---  OUTPUT : a polyhedron, the affine image of 'P':
---                       A*P+v={A*p+v | p in P}
-affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
-     -- Checking for input errors
-     A = chkZZQQ(A,"linear map");
-     v = chkZZQQ(v,"translation vector");
-     if P#"ambient dimension" =!= numColumns A then error("Matrix source must be ambient space");
-     if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
-     if numColumns v =!= 1 then error("Second argument must be a vector");
-     -- Generating nr of vertices many copies of v
-     v = v * (matrix {toList(P#"number of vertices":1_QQ)});
-     Mv := A*(vertices P) + v;
-     Mr := A*(rays P);
-     if numColumns Mr == 0 then Mr = matrix toList(numRows Mv:{0_QQ});
-     convexHull(Mv,Mr))
-
-
---   INPUT : '(A,P)',  where 'A' is a ZZ or QQ matrix from the ambient space of the 
---     	    	      	 polyhedron 'P' to some other target space
---  OUTPUT : A Polyhedron, the image of 'P' under 'A'
-affineImage(Matrix,Polyhedron) := (A,P) -> (
-     -- Generating the zero translation vector
-     A = chkZZQQ(A,"map");
-     v := map(target A,QQ^1,0);
-     affineImage(A,P,v))
-
-
---   INPUT : '(P,v)',  where 'v' is a ZZ or QQ one-column matrix describing a point in
---                     the ambient space of the polyhedron 'P'
---  OUTPUT : A Polyhedron, the translation of 'P' by 'v', i.e. {p+v | p in P} 
-affineImage(Polyhedron,Matrix) := (P,v) -> (
-     -- Generating the identity matrix
-     A := map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1);
-     affineImage(A,P,v))
-
-
---   INPUT : '(M,C,v)',  where 'M' is a ZZ or QQ matrix from the ambient space of 
---     	    	      	 the cone 'C' to some target space and 'v' is a matrix
---     	    	      	 defining a vector in that target space
---  OUTPUT : A polyhedron, the affine image of 'C':
---                       (M*C)+v={(M*c)+v | c in C}
-affineImage(Matrix,Cone,Matrix) := (M,C,v) -> if v == 0 then affineImage(M,C) else affineImage(M,coneToPolyhedron C,v)
-
-
---   INPUT : '(M,C)',  where 'M' is a ZZ or QQ matrix from the 
---     	    	      	 ambient space of the cone 'C' to some target space
---  OUTPUT : A cone, the affine image of 'C':
---                       M*C={M*c | c in C}
-affineImage(Matrix,Cone) := (M,C) -> posHull affineImage(M,coneToPolyhedron C)
-
-
---   INPUT : '(C,v)',  where 'C' is a cone and 'v' is a matrix
---     	    	      	 defining a vector in the ambient space of 'C'
---  OUTPUT : A polyhedron, the affine image of 'C':
---                       C+v={c+v | c in C}
-affineImage(Cone,Matrix) := (C,v) -> affineImage(coneToPolyhedron C,v)
-
-
--- PURPOSE : Computing the affine preimage of a cone or polyhedron
-affinePreimage = method(TypicalValue => Polyhedron)
-
---   INPUT : '(A,P,b)',  where 'A' is a ZZ or QQ matrix from some source space to the 
---     	    	      	 ambient space of the polyhedron 'P' and 'b' is a matrix
---     	    	      	 defining a vector in the ambient space of 'P'
---  OUTPUT : A polyhedron, the affine preimage of 'P':
---                       {q | (A*q)+b in P}
-affinePreimage(Matrix,Polyhedron,Matrix) := (A,P,b) -> (
-     -- Checking for input errors
-     A = chkZZQQ(A,"linear map");
-     b = chkZZQQ(b,"translation vector");
-     if P#"ambient dimension" =!= numRows A then error("Matrix source must be ambient space");
-     if numRows A =!= numRows b then error("Vector must lie in target space of matrix");
-     if numColumns b =!= 1 then error("Second argument must be a vector");
-     -- Constructing the new half-spaces and hyperplanes
-     (M,v) := halfspaces P;
-     (N,w) := hyperplanes P;
-     v = v - (M * b);
-     w = w - (N * b);
-     M = M * A;
-     N = N * A;
-     intersection(M,v,N,w))
-
-
---   INPUT : '(A,P)',  where 'A' is a ZZ or QQ matrix from some source space to the 
---     	    	       ambient space of the polyhedron 'P' 
-affinePreimage(Matrix,Polyhedron) := (A,P) -> (
-     -- Generating the zero translation vector
-     A = chkZZQQ(A,"map");
-     affinePreimage(A,P,map(target A,QQ^1,0)))
-
-
---   INPUT : '(P,b)',  where 'b' is a ZZ or QQ one-column matrix describing a point in
---                     the ambient space of the polyhedron 'P'
---  OUTPUT : A Polyhedron, the negative translation of 'P' by 'b', i.e. {q | q+b in P} 
-affinePreimage(Polyhedron,Matrix) := (P,b) -> affinePreimage(map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1),P,b)
-
-
---   INPUT : '(A,C,b)',  where 'A' is a ZZ or QQ matrix from some source space to the 
---     	    	      	 ambient space of the cone 'C' and 'b' is a matrix
---     	    	      	 defining a vector in the ambient space of 'C'
---  OUTPUT : A polyhedron, the affine preimage of 'C':
---                       {q | (A*q)+b in C}
---     	     or a cone, the affine preimage of 'C' if 'b' is 0:
---     	    	         {q | (A*q) in C}
-affinePreimage(Matrix,Cone,Matrix) := (A,C,b) -> if b == 0 then affinePreimage(A,C) else affinePreimage(A,coneToPolyhedron C,b)
-
-
---   INPUT : '(A,C)',  where 'A' is a ZZ or QQ matrix from some source space to the 
---     	    	      	 ambient space of the cone 'C'
---  OUTPUT : A cone, the affine preimage of 'C':
---                       {q | (A*q) in C}
-affinePreimage(Matrix,Cone) := (A,C) -> posHull affinePreimage(A,coneToPolyhedron C)
-
-
---   INPUT : '(C,b)',   where 'b' is a ZZ or QQ one-column matrix describing a point in
---                     the ambient space of the cone 'C'
---  OUTPUT : A polyhedron, the affine preimage of 'C':
---                       {q | q+b in C}
-affinePreimage(Cone,Matrix) := (C,b) -> affinePreimage(coneToPolyhedron C,b)
 
 
 

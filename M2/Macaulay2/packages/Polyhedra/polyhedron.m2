@@ -275,97 +275,6 @@ interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P 
 
 
 
--- PURPOSE : Computing the closest point of a polyhedron to a given point
---   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
---                   'P' is a Polyhedron
---  OUTPUT : the point in 'P' with the minimal euclidian distance to 'p'
-proximum = method(TypicalValue => Matrix)
-proximum (Matrix,Polyhedron) := (p,P) -> (
-     -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
-     if isEmpty P then error("The polyhedron must not be empty");
-     -- Defining local variables
-     local Flist;
-     d := ambDim P;
-     c := 0;
-     prox := {};
-     -- Checking if 'p' is contained in 'P'
-     if contains(P,p) then p
-     else (
-	  V := vertices P;
-	  R := promote(rays P,QQ);
-	  -- Distinguish between full dimensional polyhedra and not full dimensional ones
-	  if dim P == d then (
-	       -- Continue as long as the proximum has not been found
-	       while instance(prox,List) do (
-		    -- Take the faces of next lower dimension of P
-		    c = c+1;
-		    if c == dim P then (
-			 Vdist := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos := min Vdist;
-			 pos = position(Vdist, j -> j == pos);
-			 prox = V_{pos})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   -- Check for each ray if it is pointing inward
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     if all(flatten entries (v*(V | R)), e -> e >= b) then flatten entries v
-					     else flatten entries(-v)));
-				   -- Take the polyhedron spanned by the inward pointing normal cone 
-				   -- and 'p' and intersect it with the face
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   -- If this intersection is not empty, it contains exactly one point, 
-				   -- the proximum
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false))));
-	       prox)
-	  else (
-	       -- For not full dimensional polyhedra the hyperplanes of 'P' have to be considered also
-	       while instance(prox,List) do (
-		    if c == dim P then (
-			 Vdist1 := apply(numColumns V, j -> ((transpose(V_{j}-p))*(V_{j}-p))_(0,0));
-			 pos1 := min Vdist1;
-			 pos1 = position(Vdist1, j -> j == pos1);
-			 prox = V_{pos1})
-		    else (
-			 Flist = faces(c,P);
-			 -- Search through the faces
-			 any(Flist, F -> (
-				   -- Take the inward pointing normal cone with respect to P
-				   (vL,bL) := hyperplanes F;
-				   vL = matrix apply(numRows vL, i -> (
-					     v := vL^{i};
-					     b := first flatten entries bL^{i};
-					     entryList := flatten entries (v*(V | R));
-					     -- the first two ifs find the vectors not in the hyperspace
-					     -- of 'P'
-					     if any(entryList, e -> e > b) then flatten entries v
-					     else if any(entryList, e -> e < b) then flatten entries(-v)
-					     -- If it is an original hyperplane than take the direction from 
-					     -- 'p' to the polyhedron
-					     else (
-						  bCheck := first flatten entries (v*p);
-						  if bCheck < b then flatten entries v
-						  else flatten entries(-v))));
-				   Q := intersection(F,convexHull(p,transpose vL));
-				   if not isEmpty Q then (
-					prox = vertices Q;
-					true)
-				   else false)));
-		    c = c+1);
-	       prox)))
-
-
-
-
 
 -- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
 --   INPUT : 'P',  a polyhedron
@@ -504,3 +413,96 @@ isNormal Polyhedron := (cacheValue symbol isNormal)(P -> (
 	  all(L,v -> v_(n,0) == 1)))
      
 
+
+-- PURPOSE : Triangulating a compact Polyhedron
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : A list of the simplices of the triangulation. Each simplex is given by a list 
+--    	     of its vertices.
+--COMMENTS : The triangulation is build recursively, for each face that is not a simplex it takes 
+--     	     the weighted centre of the face. for each codim 1 face of this face it either takes the 
+--     	     convex hull with the centre if it is a simplex or triangulates this in the same way.
+triangulate = method()
+triangulate Polyhedron := P -> (
+     -- Defining the recursive face triangulation
+     -- This takes a polytope and computes all facets. For each facet that is not a simplex, it calls itself
+     -- again to replace this facet by a triangulation of it. then it has a list of simplices triangulating 
+     -- the facets. Then it computes for each of these simplices the convex hull with the weighted centre of 
+     -- the input polytope. The weighted centre is the sum of the vertices divided by the number of vertices.
+     -- It returns the resulting list of simplices in a list, where each simplex is given by a list of its 
+     -- vertices.
+     -- The function also needs the dimension of the Polyhedron 'd', the list of facets of the original 
+     -- polytope, the list 'L' of triangulations computed so far and the dimension of the original Polytope.
+     -- 'L' contains a hash table for each dimension of faces of the original Polytope (i.e. from 0 to 'n').
+     -- If a face has been triangulated than the list of simplices is saved in the hash table of the 
+     -- corresponding dimension with the weighted centre of the original face as key.
+     recursiveFaceTriangulation := (P,d,originalFacets,L,n) -> (
+	  -- Computing the facets of P, given as lists of their vertices
+	  F := intersectionWithFacets({(set P,set{})},originalFacets);
+	  F = apply(F, f -> toList(f#0));
+	  d = d-1;
+	  -- if the facets are at least 2 dimensional, then check if they are simplices, if not call this 
+	  -- function again
+	  if d > 1 then (
+	       F = flatten apply(F, f -> (
+			 -- Check if the face is a simplex
+			 if #f != d+1 then (
+			      -- Computing the weighted centre
+			      p := (sum f)*(1/#f);
+			      -- Taking the hash table of the corresponding dimension
+			      -- Checking if the triangulation has been computed already
+			      if L#d#?p then L#d#p
+			      else (
+				   -- if not, call this function again for 'f' and then save this in 'L'
+				   (f,L) = recursiveFaceTriangulation(f,d,originalFacets,L,n);
+				   L = merge(L,hashTable {d => hashTable{p => f}},(x,y) -> merge(x,y,));
+				   f))
+			 else {f})));
+	  -- Adding the weighted centre to each face simplex
+	  q := (sum P)*(1/#P);
+	  P = apply(F, f -> f | {q});
+	  (P,L));
+     -- Checking for input errors
+     if not isCompact P then error("The polytope must be compact!");
+     n := dim P;
+     -- Computing the facets of P as lists of their vertices
+     (HS,v) := halfspaces P;
+     (hyperplanesTmp,w) := hyperplanes P;
+     originalFacets := apply(numRows HS, i -> intersection(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
+     originalFacets = apply(originalFacets, f -> (
+	       V := vertices f;
+	       (set apply(numColumns V, i -> V_{i}),set {})));
+     -- Making a list of the vertices of P
+     P = vertices P;
+     P = apply(numColumns P, i -> P_{i});
+     if #P == n+1 then {P} else (
+	  d := n;
+	  -- Initiating the list of already computed triangulations
+	  L := hashTable apply(n+1, i -> i => hashTable {});
+	  (P,L) = recursiveFaceTriangulation(P,d,originalFacets,L,n);
+	  P))
+
+
+
+-- PURPOSE : Computing the volume of a full dimensional polytope
+--   INPUT : 'P',  a compact polyhedron
+--  OUTPUT : QQ, giving the volume of the polytope
+volume = method(TypicalValue => QQ)
+volume Polyhedron := P -> (
+     d := dim P;
+     -- Checking for input errors
+     if  not isCompact P then error("The polyhedron must be compact, i.e. a polytope.");
+     -- If P is not full dimensional then project it down
+     if d != ambDim P then (
+	  A := substitute((hyperplanes P)#0,ZZ);
+	  A = inverse (smithNormalForm A)#2;
+	  n := ambDim P;
+	  A = A^{n-d..n-1};
+	  P = affineImage(A,P));
+     -- Computing the triangulation of P
+     P = triangulate P;
+     -- Computing the volume of each simplex without the dimension factor, by 
+     -- taking the absolute of the determinant of |v_1-v_0..v_d-v_0|
+     P = apply(P, p -> abs det matrix transpose apply(toList(1..d), i -> flatten entries(p#i - p#0)));
+     -- Summing up the volumes and dividing out the dimension factor
+     (sum P)/(d!))
+	       
