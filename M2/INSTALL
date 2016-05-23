@@ -324,6 +324,10 @@ following:
        make distclean
     This fetches tar files containing the source code of all the libraries and
       deposits them in BUILD/tarfiles/.
+  - When satisfied with the result, remove our git source repository with
+      rm -rf ../.git
+    Alternatively, tar up just this directory and not its parent directory.
+    Everything needed to build Macaulay2 will be included.
 
 -----------------------
 Compiling Macaulay2
