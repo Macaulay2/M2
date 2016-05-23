@@ -15,3 +15,5 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 load "./polyhedralObject.m2"
 load "./cone.m2"
 load "./legacy.m2"
+load "./legacy_tests.m2"
+load "./legacy_doc.m2"
