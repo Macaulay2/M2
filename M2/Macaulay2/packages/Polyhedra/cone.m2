@@ -15,6 +15,34 @@ net Cone := C -> ( horizontalJoin flatten (
 	  "}" ))
 
 
+-- PURPOSE : Building the Cone 'C'
+--   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
+--                                	directly  as generating rays ('genrays') and in the 
+--						dual description as intersection of half-spaces through 
+--						the origin ('dualgens')
+--  OUTPUT : The Cone 'C'
+coneBuilder = (genrays,dualgens) -> (
+      -- Sorting into rays, lineality space generators, supporting half-spaces, and hyperplanes
+      RM := genrays#0;
+      LS := genrays#1;
+      HS := transpose(-dualgens#0);
+      HP := transpose(dualgens#1);
+      -- Defining C
+      new Cone from {
+	   "ambient dimension" => numgens target RM,
+	   "dimension of the cone" => (numgens target RM)-(rank HP),
+	   "dimension of lineality space" => numgens source LS,
+	   "linealitySpace" => LS,
+	   "number of rays" => numgens source RM,
+	   "rays" => RM,
+	   "number of facets" => numgens target HS,
+	   "halfspaces" => HS,
+	   "hyperplanes" => HP,
+	   "genrays" => genrays,
+	   "dualgens" => dualgens,
+	   symbol cache => new CacheTable})
+
+
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
 posHull = method(TypicalValue => Cone)
