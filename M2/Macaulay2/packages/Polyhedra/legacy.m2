@@ -343,32 +343,19 @@ Cone ? Cone := (C1,C2) -> (
 --   INPUT : (k,F)  where 'k' is a positive integer and F is a Fan 
 --  OUTPUT : a List of Cones
 cones = method(TypicalValue => List)
-cones(ZZ,Fan) := (k,F) -> (
-	-- Checking for input errors
-	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(maxCones F, C -> dim C >= k);
-	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
-	unique flatten apply(L, C -> faces(dim(C)-k,C)))
+cones(ZZ,Fan) := (k,F) -> objectsOfDim(k,F)
 
 
 -- PURPOSE : Giving the k dimensionial Polyhedra of the Polyhedral Complex
 --   INPUT : (k,PC)  where 'k' is a positive integer and PC is a PolyhedralComplex 
 --  OUTPUT : a List of Polyhedra
 polyhedra = method(TypicalValue => List)
-polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
-	-- Checking for input errors
-	if k < 0 or dim PC < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(maxPolyhedra PC, P -> dim P >= k);
-	-- Collecting the 'k'-dim faces of all generating polyhedra of dimension greater than 'k'
-	unique flatten apply(L, P -> faces(dim(P)-k,P)))
+polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> objectsOfDim(k, PC)
 
 	     
 
 
 
-
---   INPUT : 'F'  a Fan
-rays Fan := F -> raySort toList F#"rays"
 
 -- PURPOSE : Giving the vertices
 --   INPUT : 'P'  a Polyhedron
@@ -636,46 +623,8 @@ faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
      	  
 
 
--- PURPOSE : Computing the faces of codimension 'k' of 'P'
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'P'  plus one a polyhedron
---  OUTPUT : a List, containing the faces as polyhedra
-faces = method(TypicalValue => List)
-faces(ZZ,Polyhedron) := (k,P) -> (
-     --local faceOf;
-     if k == dim P +1 then (
-	  Pn := emptyPolyhedron ambDim P;
-	  (cacheValue symbol faceOf)(Pn -> P);
-	  --Pn.cache.faceOf := P;
-	  {Pn})
-     else (
-     	  L := faceBuilder(k,P);
-     	  LS := linSpace P;
-     	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-     	  apply(L, l -> (
-	       	    l = (toList l#0,toList l#1);
-	       	    V := matrix transpose apply(l#0, e -> flatten entries e);
-	       	    R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
-	       	    if LS != 0 then R = R | LS | -LS;
-	       	    Pnew := convexHull(V,R);
-		    (cacheValue symbol faceOf)(Pnew -> P);
-	       	    --Pnew.cache.faceOf := P;
-	       	    Pnew))))
 
 
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'C'  a cone
---  OUTPUT : a List, containing the faces as cones
-faces(ZZ,Cone) := (k,C) -> (
-     L := faceBuilderCone(k,C);
-     LS := linSpace C;
-     --local faceOf;
-     -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-     apply(L, l -> (
-	       Cnew := posHull(matrix transpose apply(toList l, e -> flatten entries e),LS);
-	       (cacheValue symbol faceOf)(Cnew -> C);
-	       --Cnew.cache.faceOf = C;
-	       Cnew)))
 
 
 -- PURPOSE : Get the pairs of incompatible cones in a list of cones

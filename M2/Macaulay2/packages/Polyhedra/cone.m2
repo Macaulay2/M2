@@ -33,6 +33,20 @@ isSmooth Cone := C -> (
      numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
 	   
 
+--   INPUT : 'k'  an integer between 0 and the dimension of
+--     	     'C'  a cone
+--  OUTPUT : a List, containing the faces as cones
+faces(ZZ,Cone) := (k,C) -> (
+     L := faceBuilderCone(k,C);
+     LS := linSpace C;
+     --local faceOf;
+     -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
+     apply(L, l -> (
+	       Cnew := posHull(matrix transpose apply(toList l, e -> flatten entries e),LS);
+	       (cacheValue symbol faceOf)(Cnew -> C);
+	       --Cnew.cache.faceOf = C;
+	       Cnew)))
+
 
 -- PURPOSE : Building the Cone 'C'
 --   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C

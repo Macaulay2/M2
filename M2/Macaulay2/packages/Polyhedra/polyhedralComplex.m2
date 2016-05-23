@@ -7,5 +7,5 @@ globalAssignment PolyhedralComplex
 --   INPUT : 'PC'  a PolyhedralComplex
 --  OUTPUT : a List of Cones
 maxPolyhedra = method(TypicalValue => List)
-maxPolyhedra PolyhedralComplex := PC -> toList PC#"generatingObjects"
+maxPolyhedra PolyhedralComplex := PC -> maxObjects PC
 

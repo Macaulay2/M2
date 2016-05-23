@@ -18,7 +18,7 @@ rays Fan := F -> raySort toList F#"rays"
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a List of Cones
 maxCones = method(TypicalValue => List)
-maxCones Fan := F -> toList F#"generatingObjects"
+maxCones Fan := F -> maxObjects F
 
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'

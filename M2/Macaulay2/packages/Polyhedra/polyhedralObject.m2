@@ -30,3 +30,5 @@ rays PolyhedralObject := P -> P#"rays"
 --           cone case: a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
 
+-- PURPOSE : Computing the faces of codimension 'k' of 'P'
+faces = method(TypicalValue => List)
