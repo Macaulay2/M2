@@ -16,6 +16,15 @@ load "./polyhedraHash.m2"
    load "./polyhedralObject.m2"
       load "./cone.m2"
    load "./polyhedralObjectFamily.m2"
+      load "./fan.m2"
+      load "./polyhedralComplex.m2"
 load "./legacy.m2"
 load "./legacy_tests.m2"
 load "./legacy_doc.m2"
+
+end
+
+-------------------------------------------------------------------------------
+restart
+loadPackage "Polyhedra"
+check "Polyhedra"
