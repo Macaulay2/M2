@@ -26,6 +26,7 @@ load "./polyhedraHash.m2"
 
 -- Method implementations
 load "./intersection.m2"
+load "./minkowskiSum.m2"
 
 -- Legacy code
 load "./legacy.m2"
