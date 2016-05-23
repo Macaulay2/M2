@@ -10,6 +10,7 @@ newPackage("Polyhedra",
     Headline => "A package for computations with convex polyhedra",
     Version => "1.3",
     Date => "August 21, 2014",
+    AuxiliaryFiles => true,
     Certification => {
 	 "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	 "journal URI" => "http://j-sag.org/",

@@ -14,7 +14,7 @@ globalAssignment Polyhedron
 
 
 -- Defining the new type Fan
-Fan = new Type of PolyhedralObject
+Fan = new Type of PolyhedralObjectFamily
 globalAssignment Fan
 
 -- Defining the new type PolyhedralComplex
@@ -690,21 +690,6 @@ Cone ? Cone := (C1,C2) -> (
 			 if c#?l then symbol > else symbol <)))))
 
 
--- PURPOSE : Giving the defining affine hyperplanes
-ambDim = method(TypicalValue => ZZ)
-
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, the dimension of the ambient space
-ambDim PolyhedralObject := X -> X#"ambient dimension"
-
---   INPUT : 'C'  a Cone 
---  OUTPUT : an integer, the dimension of the ambient space
---ambDim Cone := C -> C#"ambient dimension"
-
---   INPUT : 'F'  a Fan 
---  OUTPUT : an integer, the dimension of the ambient space
---ambDim Fan := F -> F#"ambient dimension"
-
 
 
 -- PURPOSE : Giving the k dimensionial Cones of the Fan
@@ -780,30 +765,15 @@ halfspaces Cone := C -> C#"halfspaces"
 
 
 
--- PURPOSE : Giving the defining affine hyperplanes
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : '(N,w)', where M and v are matrices and P={x in HS | Nx=w}, where 
---		 HS is the intersection of the defining affine half-spaces
-hyperplanes = method()
 hyperplanes Polyhedron := P -> P#"hyperplanes"
 
 
---   INPUT : 'C'  a Cone
-hyperplanes Cone := C -> C#"hyperplanes"
 
-
-
--- PURPOSE : Giving a basis of the lineality space
-linSpace = method(TypicalValue => Matrix)
 
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
 linSpace Polyhedron := P -> P#"linealitySpace"
 
-
---   INPUT : 'C'  a Cone
---  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Cone := C -> C#"linealitySpace"
 
 
 --   INPUT : 'F'  a Fan
@@ -1149,10 +1119,10 @@ isPolytopal Fan := F -> (
 	       corrList = pairs corrList;
 	       --  Generating the 0 matrix for collecting the conditions on the edges
 	       m := #(keys edgeTable);
-	       -- for each entry of corrlist another matrix is added to HP
-	       HP := flatten apply(#corrList, j -> (
+	       -- for each entry of corrlist another matrix is added to hyperplanesTmp
+	       hyperplanesTmp := flatten apply(#corrList, j -> (
 		    	 v := corrList#j#1;
-		    	 HPnew := map(ZZ^n,ZZ^m,0);
+		    	 hyperplanesTmpnew := map(ZZ^n,ZZ^m,0);
 		    	 -- Scanning trough the top cones containing the active codim2 cone and order them in a circle by their 
 		    	 -- connecting edges
 		    	 v = apply(v, e -> L#e);
@@ -1167,18 +1137,18 @@ isPolytopal Fan := F -> (
 			      	   (a,b) := edgeTable#(intersection(C1,C2));
 			      	   if not contains(dualCone C2,b) then b = -b;
 			      	   -- 'b' is the edge direction inserted in column 'a', the index of this edge
-			      	   HPnew = HPnew_{0..a-2} | b | HPnew_{a..m-1};
+			      	   hyperplanesTmpnew = hyperplanesTmpnew_{0..a-2} | b | hyperplanesTmpnew_{a..m-1};
 			      	   C1 = C2));
 		    	 C3 := intersection(C,C1);
 		    	 (a,b) := edgeTable#C3;
 		    	 if not contains(dualCone C,b) then b = -b;
 		    	 -- 'b' is the edge direction inserted in column 'a', the index of this edge
 		    	 -- the new restriction is that the edges ''around'' this codim2 Cone must add up to 0
-		    	 entries(HPnew_{0..a-2} | b | HPnew_{a..m-1})));
-	       if HP != {} then HP = matrix HP
-	       else HP = map(ZZ^0,ZZ^m,0);
+		    	 entries(hyperplanesTmpnew_{0..a-2} | b | hyperplanesTmpnew_{a..m-1})));
+	       if hyperplanesTmp != {} then hyperplanesTmp = matrix hyperplanesTmp
+	       else hyperplanesTmp = map(ZZ^0,ZZ^m,0);
 	       -- Find an interior vector in the cone of all positive vectors satisfying the restrictions
-	       v := flatten entries interiorVector intersection(id_(ZZ^m),HP);
+	       v := flatten entries interiorVector intersection(id_(ZZ^m),hyperplanesTmp);
 	       M := {};
 	       -- If the vector is strictly positive then there is a polytope with 'F' as normalFan
 	       if all(v, e -> e > 0) then (
@@ -1571,9 +1541,9 @@ inInterior = method(TypicalValue => Boolean)
 --   INPUT : '(p,P)',  where 'p' is a point given by a matrix and 'P' is a Polyhedron
 --  OUTPUT : 'true' or 'false'
 inInterior (Matrix,Polyhedron) := (p,P) -> (
-     HP := hyperplanes P;
-     HP = (HP#0 * p)-HP#1;
-     all(flatten entries HP, e -> e == 0) and (
+     hyperplanesTmp := hyperplanes P;
+     hyperplanesTmp = (hyperplanesTmp#0 * p)-hyperplanesTmp#1;
+     all(flatten entries hyperplanesTmp, e -> e == 0) and (
 	  HS := halfspaces P;
 	  HS = (HS#0 * p)-HS#1;
 	  all(flatten entries HS, e -> e < 0)))
@@ -1582,8 +1552,8 @@ inInterior (Matrix,Polyhedron) := (p,P) -> (
 --   INPUT : '(p,C)',  where 'p' is a point given by a matrix and 'C' is a Cone
 --  OUTPUT : 'true' or 'false'
 inInterior (Matrix,Cone) := (p,C) -> (
-     HP := hyperplanes C;
-     all(flatten entries(HP*p), e -> e == 0) and (
+     hyperplanesTmp := hyperplanes C;
+     all(flatten entries(hyperplanesTmp*p), e -> e == 0) and (
 	  HS := halfspaces C;
 	  all(flatten entries(HS*p), e -> e > 0)))
 
@@ -1785,8 +1755,8 @@ minkSummandCone Polyhedron := P -> (
 	  d := P#"ambient dimension";
           dP := P#"dimension of polyhedron";
           (HS,v) := halfspaces P;
-          (HP,w) := hyperplanes P;
-	  F := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
+          (hyperplanesTmp,w) := hyperplanes P;
+	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
 	  F = apply(F, f -> (
 		    V := vertices f;
 		    R := rays f;
@@ -1926,11 +1896,11 @@ mixedVolume List := L -> (
 	       if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
 	       else (
 		    Elocal = for i from 0 to #Elocal-1 list (
-			 HP := halfspaces(Qsums#k + Qlist#(k+i+1));
-			 HP = for j from 0 to numRows(HP#0)-1 list if (HP#0)_(j,n) < 0 then ((HP#0)^{j},(HP#1)^{j}) else continue;
+			 hyperplanesTmp := halfspaces(Qsums#k + Qlist#(k+i+1));
+			 hyperplanesTmp = for j from 0 to numRows(hyperplanesTmp#0)-1 list if (hyperplanesTmp#0)_(j,n) < 0 then ((hyperplanesTmp#0)^{j},(hyperplanesTmp#1)^{j}) else continue;
 			 returnE := select(Elocal#i, e -> (
 				   p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
-				   any(HP, pair -> (pair#0)*p - pair#1 == 0)));
+				   any(hyperplanesTmp, pair -> (pair#0)*p - pair#1 == 0)));
 			 --if returnE == {} then break{};
 			 returnE);
 		    mV = selectRecursion(Elocal#0,edgeTuple|{e1},drop(Elocal,1),mV,Qsums,Qlist,k+1)));
@@ -2223,8 +2193,8 @@ triangulate Polyhedron := P -> (
      n := dim P;
      -- Computing the facets of P as lists of their vertices
      (HS,v) := halfspaces P;
-     (HP,w) := hyperplanes P;
-     originalFacets := apply(numRows HS, i -> intersection(HS,v, HP || HS^{i}, w || v^{i}));
+     (hyperplanesTmp,w) := hyperplanes P;
+     originalFacets := apply(numRows HS, i -> intersection(HS,v, hyperplanesTmp || HS^{i}, w || v^{i}));
      originalFacets = apply(originalFacets, f -> (
 	       V := vertices f;
 	       (set apply(numColumns V, i -> V_{i}),set {})));
@@ -2691,17 +2661,17 @@ newMinkSum = (P,Q) -> (
      uniqueColumns := M -> (
         if M!=0 then matrix{(unique apply(numColumns M, i -> M_{i}))} else map(ZZ^(numRows M),ZZ^0,0)
 	  );
-     block1 := (P, HPQ) -> (
-          entP := flatten entries((HPQ#0)*(rays P));
-          maxP := flatten entries((HPQ#0)*(vertices P));
-          if all(entP, e -> e == 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1),(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
-          else if all(entP, e -> e <= 0) then {(HPQ#0,matrix{{max maxP}} + HPQ#1)} 
-          else if all(entP, e -> e >= 0) then {(-HPQ#0,-(matrix{{min maxP}} + HPQ#1))}
+     block1 := (P, hyperplanesTmpQ) -> (
+          entP := flatten entries((hyperplanesTmpQ#0)*(rays P));
+          maxP := flatten entries((hyperplanesTmpQ#0)*(vertices P));
+          if all(entP, e -> e == 0) then {(hyperplanesTmpQ#0,matrix{{max maxP}} + hyperplanesTmpQ#1),(-hyperplanesTmpQ#0,-(matrix{{min maxP}} + hyperplanesTmpQ#1))}
+          else if all(entP, e -> e <= 0) then {(hyperplanesTmpQ#0,matrix{{max maxP}} + hyperplanesTmpQ#1)} 
+          else if all(entP, e -> e >= 0) then {(-hyperplanesTmpQ#0,-(matrix{{min maxP}} + hyperplanesTmpQ#1))}
           else 0
      );
-     block2 := (f, P, HPQ) -> (
+     block2 := (f, P, hyperplanesTmpQ) -> (
           if f#1 == {} then (
-              L := block1(P,HPQ);
+              L := block1(P,hyperplanesTmpQ);
               if L=!=0 then L else 0
           )
           else if all(flatten entries((f#1#0#0)*(rays P)), e -> e <= 0) then (
@@ -2710,9 +2680,9 @@ newMinkSum = (P,Q) -> (
              {(f#1#0#0,f#1#0#1 + matrix{{mP}})}
           ) else 0
      );
-     sanitizeHyperplanes := (hyperplanes, HP, n) -> (
-        if numRows hyperplanes#0 == numRows HP#0 then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
-             kPP := (transpose mingens ker(HP#0 * transpose hyperplanes#0))_{0..(numRows hyperplanes#0)-1};
+     sanitizeHyperplanes := (hyperplanes, hyperplanesTmp, n) -> (
+        if numRows hyperplanes#0 == numRows hyperplanesTmp#0 then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+             kPP := (transpose mingens ker(hyperplanesTmp#0 * transpose hyperplanes#0))_{0..(numRows hyperplanes#0)-1};
              (kPP * hyperplanes#0,kPP * hyperplanes#1)
         )
      );
@@ -2720,18 +2690,18 @@ newMinkSum = (P,Q) -> (
      -- Start of main method.
      --
      n := ambDim P;
-     HPP := hyperplanes P;
-     HPQ := hyperplanes Q;
-     HP := if HPP == (0,0) or HPQ == (0,0) then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
-        k := transpose mingens ker transpose(HPP#0|| -HPQ#0);
+     hyperplanesTmpP := hyperplanes P;
+     hyperplanesTmpQ := hyperplanes Q;
+     hyperplanesTmp := if hyperplanesTmpP == (0,0) or hyperplanesTmpQ == (0,0) then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
+        k := transpose mingens ker transpose(hyperplanesTmpP#0|| -hyperplanesTmpQ#0);
         if k == 0 then (map(ZZ^0,ZZ^n,0),map(ZZ^0,ZZ^1,0)) else (
-             dHPP := numRows HPP#0;
-             (k_{0..dHPP-1} * HPP#0,k*(HPP#1||HPQ#1)))
+             dhyperplanesTmpP := numRows hyperplanesTmpP#0;
+             (k_{0..dhyperplanesTmpP-1} * hyperplanesTmpP#0,k*(hyperplanesTmpP#1||hyperplanesTmpQ#1)))
      );
-     d := n - numRows(HP#0);
+     d := n - numRows(hyperplanesTmp#0);
      if d != n then (
-        HPP = sanitizeHyperplanes(HPP, HP, n);
-        HPQ = sanitizeHyperplanes(HPQ, HP, n);
+        hyperplanesTmpP = sanitizeHyperplanes(hyperplanesTmpP, hyperplanesTmp, n);
+        hyperplanesTmpQ = sanitizeHyperplanes(hyperplanesTmpQ, hyperplanesTmp, n);
      );
      LP := reverse apply(dim P + 1, k -> facePairBuilder(k,P));
      LP = LP | toList(max(0,d-#LP):{});
@@ -2739,19 +2709,19 @@ newMinkSum = (P,Q) -> (
      LQ = LQ | toList(max(0,d-#LQ):{});
      HS := unique flatten apply(d, i -> (
 	       if i == 0 then flatten for f in LQ#(d-1) list (
-             L := block2(f,P,HPQ);
+             L := block2(f,P,hyperplanesTmpQ);
              if L=!= 0 then L else continue
           )
 	       else if i == d-1 then flatten for f in LP#(d-1) list (
-             L := block2(f,Q,HPP);
+             L := block2(f,Q,hyperplanesTmpP);
              if L=!= 0 then L else continue
           )
 	       else flatten for Pface in LP#i list (
              for Qface in LQ#(d-i-1) list (
                 -- This fixes the descending vertex number bug. We forgot to add the common hyperplanes.
-                HPPp := hyperplanes P;
-                PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || HPPp#0,matrix apply(Pface#1, f -> {f#1}) || HPPp#1) else HPPp;
-                QfaceHS := if Qface#1 != {} then (matrix apply(Qface#1, f -> {f#0}) || HPQ#0,matrix apply(Qface#1, f -> {f#1}) || HPQ#1) else HPQ;
+                hyperplanesTmpPp := hyperplanes P;
+                PfaceHS := if Pface#1 != {} then (matrix apply(Pface#1, f -> {f#0}) || hyperplanesTmpPp#0,matrix apply(Pface#1, f -> {f#1}) || hyperplanesTmpPp#1) else hyperplanesTmpPp;
+                QfaceHS := if Qface#1 != {} then (matrix apply(Qface#1, f -> {f#0}) || hyperplanesTmpQ#0,matrix apply(Qface#1, f -> {f#1}) || hyperplanesTmpQ#1) else hyperplanesTmpQ;
                 dP := rank PfaceHS#0;
                 dQ := rank QfaceHS#0;
                 PfaceHS = ((PfaceHS#0)^{0..dP-1},(PfaceHS#1)^{0..dP-1});
@@ -2786,9 +2756,9 @@ newMinkSum = (P,Q) -> (
      V = (map(QQ^1,source promote(V,QQ),(i,j)->1) || promote(V,QQ)) | (map(QQ^1,source R,0) || R);
      HS = sort makePrimitiveMatrix transpose(-(HS#1)|HS#0);
      HS = uniqueColumns HS;
-     HP = sort makePrimitiveMatrix transpose(-(HP#1)|HP#0);
-     HP = uniqueColumns HP;
-     polyhedronBuilder reverse fMReplacement(V,HS,HP))
+     hyperplanesTmp = sort makePrimitiveMatrix transpose(-(hyperplanesTmp#1)|hyperplanesTmp#0);
+     hyperplanesTmp = uniqueColumns hyperplanesTmp;
+     polyhedronBuilder reverse fMReplacement(V,HS,hyperplanesTmp))
 
 
 --   INPUT : '(C1,C2)',  two cones
@@ -3361,21 +3331,21 @@ liftable (Matrix,Number) := (f,k) -> try (lift(f,k); true) else false;
 makePrimitiveMatrix = M -> if M != 0 then lift(transpose matrix apply(entries transpose M, w -> (g := abs gcd w; apply(w, e -> e//g))),ZZ) else lift(M,ZZ);
      
 
-fMReplacement = (R,HS,HP) -> (
+fMReplacement = (R,HS,hyperplanesTmp) -> (
      uniqueColumns := M -> matrix{(unique apply(numColumns M, i -> M_{i}))};
      n := numRows R;
-     LS := mingens ker transpose(HS|HP);
+     LS := mingens ker transpose(HS|hyperplanesTmp);
      alpha := rank LS;
      if alpha > 0 then (
 	  LS = lift(gens gb promote(LS,QQ[]),QQ);
 	  CR := mingens ker transpose LS;
 	  CR = CR * (inverse(LS|CR))^{alpha..n-1};
 	  R = CR * R);
-     beta := rank HP;
+     beta := rank hyperplanesTmp;
      if beta > 0 then (
-	  HP = lift(gens gb promote(HP,QQ[]),QQ);
-	  CHS := mingens ker transpose HP;
-	  CHS = CHS * (inverse(HP|CHS))^{beta..n-1};
+	  hyperplanesTmp = lift(gens gb promote(hyperplanesTmp,QQ[]),QQ);
+	  CHS := mingens ker transpose hyperplanesTmp;
+	  CHS = CHS * (inverse(hyperplanesTmp|CHS))^{beta..n-1};
 	  HS = CHS * HS);
      HS = if HS == 0 then map(ZZ^(numRows HS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix HS;
      R = apply(numColumns R, i -> R_{i});
@@ -3384,8 +3354,8 @@ fMReplacement = (R,HS,HP) -> (
 		    #pos >= n-alpha-beta-1 and (n <= 3 or rank HS_pos >= n-alpha-beta-1))));
      if R == {} then R = map(ZZ^(numRows LS),ZZ^0,0) else R = sort matrix {unique apply(R, makePrimitiveMatrix)};
      LS = if LS == 0 then map(ZZ^(numRows LS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix LS;
-     HP = if HP == 0 then map(ZZ^(numRows HP),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix HP;
-     ((R,LS),(HS,HP)))
+     hyperplanesTmp = if hyperplanesTmp == 0 then map(ZZ^(numRows hyperplanesTmp),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix hyperplanesTmp;
+     ((R,LS),(HS,hyperplanesTmp)))
 
 
 faceBuilder = (k,P) -> (
@@ -3420,9 +3390,9 @@ faceBuilder = (k,P) -> (
 	       if i == 1 then (
 		    -- Saving the half-spaces and hyperplanes
 		    (HS,v) := halfspaces P;
-		    (HP,w) := hyperplanes P;
+		    (hyperplanesTmp,w) := hyperplanes P;
 		    -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-		    Fl := apply(numRows HS, i -> intersection(HS,v,HP || HS^{i},w || v^{i}));
+		    Fl := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
 		    Fl = apply(Fl, f -> (
 			      V := vertices f;
 			      R := rays f;
@@ -3470,9 +3440,9 @@ faceBuilderCone = (k,C) -> (
 	  if i == 1 then (
 	       -- Saving the half-spaces and hyperplanes
 	       HS := halfspaces C;
-	       HP := hyperplanes C;
+	       hyperplanesTmp := hyperplanes C;
 	       -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	       F1 := apply(numRows HS, i -> intersection(HS,HP || HS^{i}));
+	       F1 := apply(numRows HS, i -> intersection(HS,hyperplanesTmp || HS^{i}));
 	       F1 = apply(F1, f -> (
 			 R := rays f;
 			 (set apply(numColumns R, i -> R_{i}))));
@@ -3520,8 +3490,8 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	LS := verticesA#1;
 	LS = LS^{1..(numgens target LS)-1};
 	-- Determine the defining hyperplanes
-	HP := transpose(hyperA#1);
-	HP = (HP_{1..(numgens source HP)-1},-HP_{0});
+	hyperplanesTmp := transpose(hyperA#1);
+	hyperplanesTmp = (hyperplanesTmp_{1..(numgens source hyperplanesTmp)-1},-hyperplanesTmp_{0});
 	-- Defining the Polyhedron
 	new Polyhedron from {
 	     "ambient dimension" => (numgens target B)-1,
@@ -3534,7 +3504,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	     "rays" => C^{1..(numgens target C)-1},
 	     "number of facets" => numgens target H,
 	     "halfspaces" => (H_{1..(numgens source H)-1},-H_{0}),
-	     "hyperplanes" => HP,
+	     "hyperplanes" => hyperplanesTmp,
 	     "homogenizedVertices" => verticesA,
 	     "homogenizedHalfspaces" => hyperA,
 	     symbol cache => new CacheTable})
@@ -3805,9 +3775,9 @@ document {
      EXAMPLE {
 	  " HS = transpose (V || matrix {{-1,2,0,1}})",
 	  " v = matrix {{1},{1},{1},{1}}",
-	  " HP = matrix {{1,1,1}}",
+	  " hyperplanesTmp = matrix {{1,1,1}}",
 	  " w = matrix {{3}}",
-	  " P2 = intersection(HS,v,HP,w)"
+	  " P2 = intersection(HS,v,hyperplanesTmp,w)"
 	  },
      
      PARA{}, "This is a triangle in 3-space with the following vertices.",
@@ -3983,8 +3953,8 @@ document {
      
      EXAMPLE {
 	  " HS = transpose R1",
-	  " HP = matrix {{1,1,1}}",
-	  " C2 = intersection(HS,HP)"
+	  " hyperplanesTmp = matrix {{1,1,1}}",
+	  " C2 = intersection(HS,hyperplanesTmp)"
 	  },
      
      PARA{}, "This is a two dimensional cone in 3-space with the following rays:",
@@ -4326,9 +4296,9 @@ document {
      
      EXAMPLE {
 	  " HS = HS | matrix {{0},{0},{0},{0}}",
-	  " HP = matrix {{0,0,1}}",
+	  " hyperplanesTmp = matrix {{0,0,1}}",
 	  " w = matrix {{1}}",
-	  " P = intersection(HS,v,HP,w)",
+	  " P = intersection(HS,v,hyperplanesTmp,w)",
 	  " vertices P"
 	  },
      
@@ -4376,8 +4346,8 @@ document {
 	  " HS = transpose R",
 	  " C = intersection HS",
 	  " rays C",
-	  " HP = transpose LS",
-	  " C = intersection(HS,HP)",
+	  " hyperplanesTmp = transpose LS",
+	  " C = intersection(HS,hyperplanesTmp)",
 	  " rays C"
 	  },
      

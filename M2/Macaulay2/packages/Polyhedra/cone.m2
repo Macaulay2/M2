@@ -1,5 +1,5 @@
 -- Defining the new type Cone
-Cone = new Type of PolyhedralObject
+Cone = new Type of PolyhedralObjectSimple
 Cone.synonym = "convex rational cone"
 globalAssignment Cone
 
@@ -26,18 +26,18 @@ coneBuilder = (genrays,dualgens) -> (
       RM := genrays#0;
       LS := genrays#1;
       HS := transpose(-dualgens#0);
-      HP := transpose(dualgens#1);
+      hyperplanesTmp := transpose(dualgens#1);
       -- Defining C
       new Cone from {
 	   "ambient dimension" => numgens target RM,
-	   "dimension of the cone" => (numgens target RM)-(rank HP),
+	   "dimension of the cone" => (numgens target RM)-(rank hyperplanesTmp),
 	   "dimension of lineality space" => numgens source LS,
 	   "linealitySpace" => LS,
 	   "number of rays" => numgens source RM,
 	   "rays" => RM,
 	   "number of facets" => numgens target HS,
 	   "halfspaces" => HS,
-	   "hyperplanes" => HP,
+	   "hyperplanes" => hyperplanesTmp,
 	   "genrays" => genrays,
 	   "dualgens" => dualgens,
 	   symbol cache => new CacheTable})
@@ -87,4 +87,12 @@ posHull(Cone,Cone) := (C1,C2) -> (
 --	genrays := fourierMotzkin dualgens;
 	coneBuilder(genrays,dualgens))
 
+
+--   INPUT : 'C'  a Cone
+hyperplanes Cone := C -> C#"hyperplanes"
+
+
+--   INPUT : 'C'  a Cone
+--  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
+linSpace Cone := C -> C#"linealitySpace"
 
