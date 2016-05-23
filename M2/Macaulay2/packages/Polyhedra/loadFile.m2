@@ -24,7 +24,7 @@ load "./polyhedraHash.m2"
       load "./fan.m2"
       load "./polyhedralComplex.m2"
 
--- Method implementations
+-- Method not associated with fixed object type
 load "./intersection.m2"
 load "./directProduct.m2"
 load "./contains.m2"
