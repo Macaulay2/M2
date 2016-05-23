@@ -12,6 +12,10 @@ load "./exports.m2"
 
 raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 
+-- Methods declarations for methods defined for several objects, but not all of polyhedraHash
+load "./methods.m2"
+
+-- Objects
 load "./polyhedraHash.m2"
    load "./polyhedralObject.m2"
       load "./cone.m2"
@@ -19,7 +23,11 @@ load "./polyhedraHash.m2"
    load "./polyhedralObjectFamily.m2"
       load "./fan.m2"
       load "./polyhedralComplex.m2"
+
+-- Method implementations
 load "./intersection.m2"
+
+-- Legacy code
 load "./legacy.m2"
 load "./legacy_tests.m2"
 load "./legacy_doc.m2"

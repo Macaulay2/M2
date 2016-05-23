@@ -15,6 +15,13 @@ net Cone := C -> ( horizontalJoin flatten (
 	  "}" ))
 
 
+-- PURPOSE : Tests if a Cone is pointed
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isPointed Cone := C -> rank C#"linealitySpace" == 0
+
+
+
 -- PURPOSE : Building the Cone 'C'
 --   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
 --                                	directly  as generating rays ('genrays') and in the 

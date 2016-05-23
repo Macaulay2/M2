@@ -1,0 +1,2 @@
+isPointed = method(TypicalValue => Boolean)
+
