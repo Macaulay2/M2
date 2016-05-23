@@ -21,6 +21,16 @@ net Cone := C -> ( horizontalJoin flatten (
 isPointed Cone := C -> rank C#"linealitySpace" == 0
 
 
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isSmooth Cone := C -> (
+     -- generating the non-linealityspace cone of C
+     R := lift(transpose rays C,ZZ);
+     n := dim C - C#"dimension of lineality space";
+     -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
+     numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1     
+	   
+
 
 -- PURPOSE : Building the Cone 'C'
 --   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
