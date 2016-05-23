@@ -1,3 +1,16 @@
+-- PURPOSE : Computing the cyclic polytope of n points in QQ^d
+--   INPUT : '(d,n)',  two positive integers
+--  OUTPUT : A polyhedron, the convex hull of 'n' points on the moment curve in 'd' space 
+-- COMMENT : The moment curve is defined by t -> (t,t^2,...,t^d) in QQ^d, if we say we take 'n' points 
+--            on the moment curve, we mean the images of 0,...,n-1
+cyclicPolytope = method(TypicalValue => Polyhedron)
+cyclicPolytope(ZZ,ZZ) := (d,n) -> (
+     -- Checking for input errors
+     if d < 1 then error("The dimension must be positive");
+     if n < 1 then error("There must be a positive number of points");
+     convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
+
+
 -- PURPOSE : Computing the cone of the Hirzebruch surface H_r
 --   INPUT : 'r'  a positive integer
 --  OUTPUT : The Hirzebruch surface H_r

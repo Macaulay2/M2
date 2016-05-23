@@ -115,7 +115,7 @@ fan List := L -> (
 	  F = new Fan from {
 	  "generatingObjects" => set {C},
 	  "ambient dimension" => ad,
-	  "dimension" => C#"dimension",
+	  "dimension" => dim C,
 	  "number of generating cones" => 1,
 	  "rays" => set rayList,
 	  "number of rays" => #rayList,
@@ -157,7 +157,7 @@ polyhedralComplex List := L -> (
 	  PC = new PolyhedralComplex from {
 	       "generatingObjects" => set {P},
 	       "ambient dimension" => ad,
-	       "dimension" => P#"dimension",
+	       "dimension" => dim P,
 	       "number of generating polyhedra" => 1,
 	       "vertices" => set verticesList,
 	       "number of vertices" => #verticesList,
@@ -180,7 +180,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      if P#"ambient dimension" != PC#"ambient dimension" then error("The polyhedra must lie in the same ambient space.");
      -- Extracting data
      GP := maxPolyhedra PC;
-     d := P#"dimension";
+     d := dim P;
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
      -- the cones of higher or equal dimension. For this we divide GP into two seperate lists
@@ -215,7 +215,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      new PolyhedralComplex from {
 	       "generatingObjects" => set GP,
 	       "ambient dimension" => P#"ambient dimension",
-	       "dimension" => (GP#0)#"dimension",
+	       "dimension" => dim(GP#0),
 	       "number of generating polyhedra" => #GP,
 	       "vertices" => set verticesList,
 	       "number of vertices" => #verticesList,
@@ -253,7 +253,7 @@ addCone (Cone,Fan) := (C,F) -> (
      if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
      -- Extracting data
      GC := maxCones F;
-     d := C#"dimension";
+     d := dim C;
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
      -- Cones in the list 'GC' are ordered by decreasing dimension so we start compatibility checks with 
@@ -460,10 +460,10 @@ isFace = method(TypicalValue => Boolean)
 --  OUTPUT : 'true' or 'false'
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
      -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-     c := Q#"dimension" - P#"dimension";
+     c := dim Q - dim P;
      if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
 	  -- Checking if P is the empty polyhedron
-	  if c > Q#"dimension" then true
+	  if c > dim Q then true
 	  -- Checking if one of the codim 'c' faces of Q is P
 	  else any(faces(c,Q), f -> f === P))
      else false)
@@ -471,7 +471,7 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 isFace(Cone,Cone) := (C1,C2) -> (
-     c := C2#"dimension" - C1#"dimension";
+     c := dim C2 - dim C1;
      -- Checking if the two cones lie in the same space and the dimension difference is positive
      if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
 	  -- Checking if one of the codim 'c' faces of C2 is C1
@@ -691,12 +691,12 @@ faces(ZZ,Cone) := (k,C) -> (
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
-fVector Polyhedron := P -> apply(P#"dimension" + 1, d -> #faces(dim P - d,P))
+fVector Polyhedron := P -> apply(dim P + 1, d -> #faces(dim P - d,P))
 
 
 --   INPUT : 'C'  a Cone
 --  OUTPUT : a List of integers, starting with the number of vertices and going up in dimension
-fVector Cone := C -> apply(C#"dimension" + 1, d -> #faces(dim C - d,C))
+fVector Cone := C -> apply(dim C + 1, d -> #faces(dim C - d,C))
 
 
 -- PURPOSE : Computing the Hilbert basis of a Cone 
@@ -963,7 +963,7 @@ minkSummandCone Polyhedron := P -> (
      else (
 	  -- Extracting the data to compute the 2 dimensional faces and the edges
 	  d := P#"ambient dimension";
-          dP := P#"dimension";
+          dP := dim P;
           (HS,v) := halfspaces P;
           (hyperplanesTmp,w) := hyperplanes P;
 	  F := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
@@ -1765,18 +1765,6 @@ toSublattice Polyhedron := P -> (
      affinePreimage(sublatticeBasis matrix {L},P,b))
 
 
-
--- PURPOSE : Computing the cyclic polytope of n points in QQ^d
---   INPUT : '(d,n)',  two positive integers
---  OUTPUT : A polyhedron, the convex hull of 'n' points on the moment curve in 'd' space 
--- COMMENT : The moment curve is defined by t -> (t,t^2,...,t^d) in QQ^d, if we say we take 'n' points 
---            on the moment curve, we mean the images of 0,...,n-1
-cyclicPolytope = method(TypicalValue => Polyhedron)
-cyclicPolytope(ZZ,ZZ) := (d,n) -> (
-     -- Checking for input errors
-     if d < 1 then error("The dimension must be positive");
-     if n < 1 then error("There must be a positive number of points");
-     convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
 --   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
