@@ -335,7 +335,7 @@ assert (areCompatible(C1,C2))#0
 TEST ///
 C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
 F = fan C;
-assert(generatingCones F === set {C})
+assert(set maxCones F === set {C})
 assert(F#"ambient dimension" == 3)
 assert(F#"top dimension of the cones" == 3)
 assert(F#"number of generating cones" == 1)
@@ -350,7 +350,7 @@ C1 = posHull matrix {{1,0,0},{0,-1,0},{0,0,1}};
 C2 = posHull matrix {{-1,0,0},{0,1,0},{0,0,1}};
 C3 = posHull matrix {{1,0,0},{0,1,0},{0,0,-1}};
 F = fan {C,C1,C2,C3};
-assert(generatingCones F === set {C,C1,C2,C3})
+assert(set maxCones F === set {C,C1,C2,C3})
 assert(F#"ambient dimension" == 3)
 assert(F#"number of generating cones" == 4)
 assert(F#"isPure")

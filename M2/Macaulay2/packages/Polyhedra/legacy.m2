@@ -13,19 +13,7 @@ Polyhedron.synonym = "convex polyhedron"
 globalAssignment Polyhedron
 
 
--- Defining the new type Fan
-Fan = new Type of PolyhedralObjectFamily
-globalAssignment Fan
 
--- Defining the new type PolyhedralComplex
-PolyhedralComplex = new Type of PolyhedralObjectFamily
-globalAssignment PolyhedralComplex
-
-generatingCones = method()
-generatingCones Fan := F -> F#"generatingObjects"
-
-generatingPolyhedra = method()
-generatingPolyhedra PolyhedralComplex := PC -> PC#"generatingObjects"
 
 
 
@@ -483,7 +471,7 @@ fan List := L -> (
 	  symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing fans in the list
      -- to their list of generating cones
-     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then toList(generatingCones C) else 
+     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then maxCones C else 
 	  error ("Input must be a list of cones and fans"));       
      -- Adding the remaining cones of the list with 'addCone'
      scan(L, C -> F = addCone(C,F));
@@ -525,7 +513,7 @@ polyhedralComplex List := L -> (
 	       symbol cache => new CacheTable});
      -- Checking the remaining list for input errors and reducing polyhedral complexes in the list
      -- to their list of generating polyhedra
-     L = flatten apply(L, e -> if instance(e,Polyhedron) then e else if instance(e,PolyhedralComplex) then toList(generatingPolyhedra e) else 
+     L = flatten apply(L, e -> if instance(e,Polyhedron) then e else if instance(e,PolyhedralComplex) then maxPolyhedra e else 
 	  error ("Input must be a list of polyhedra and polyhedral complexes"));       
      -- Adding the remaining polyhedra of the list with 'addPolyhedron'
      scan(L, e -> PC = addPolyhedron(e,PC));
@@ -539,7 +527,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      -- Checking for input errors
      if P#"ambient dimension" != PC#"ambient dimension" then error("The polyhedra must lie in the same ambient space.");
      -- Extracting data
-     GP := toList generatingPolyhedra PC;
+     GP := maxPolyhedra PC;
      d := P#"dimension of polyhedron";
      inserted := false;
      -- Polyhedra in the list 'GP' are ordered by decreasing dimension so we start compatibility checks with 
@@ -597,7 +585,7 @@ addPolyhedron (List,PolyhedralComplex) := (L,PC) -> (
 addPolyhedron (PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> (
      -- Checking for input errors
      if ambDim PC2 != ambDim PC1 then error("The polyhedral complexes must be in the same ambient space");
-     L := toList generatingCones PC1;
+     L := maxCones PC1;
      addCone(L,PC2))
      
 
@@ -612,7 +600,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- Checking for input errors
      if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
      -- Extracting data
-     GC := toList generatingCones F;
+     GC := maxCones F;
      d := C#"dimension of the cone";
      -- We need to memorize for later if 'C' has been inserted
      inserted := false;
@@ -671,7 +659,7 @@ addCone (List,Fan) := (L,F) -> (
 addCone (Fan,Fan) := (F1,F) -> (
      -- Checking for input errors
      if ambDim F != ambDim F1 then error("The fans must be in the same ambient space");
-     L := toList generatingCones F1;
+     L := maxCones F1;
      addCone(L,F))
 
 
@@ -706,7 +694,7 @@ cones = method(TypicalValue => List)
 cones(ZZ,Fan) := (k,F) -> (
 	-- Checking for input errors
 	if k < 0 or dim F < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(toList generatingCones F, C -> dim C >= k);
+	L := select(maxCones F, C -> dim C >= k);
 	-- Collecting the 'k'-dim faces of all generating cones of dimension greater than 'k'
 	unique flatten apply(L, C -> faces(dim(C)-k,C)))
 
@@ -718,7 +706,7 @@ polyhedra = method(TypicalValue => List)
 polyhedra(ZZ,PolyhedralComplex) := (k,PC) -> (
 	-- Checking for input errors
 	if k < 0 or dim PC < k then error("k must be between 0 and the dimension of the fan.");
-	L := select(toList generatingPolyhedra PC, P -> dim P >= k);
+	L := select(maxPolyhedra PC, P -> dim P >= k);
 	-- Collecting the 'k'-dim faces of all generating polyhedra of dimension greater than 'k'
 	unique flatten apply(L, P -> faces(dim(P)-k,P)))
 
@@ -743,18 +731,6 @@ dim Fan := F -> F#"top dimension of the cones"
 dim PolyhedralComplex := PC -> PC#"top dimension of the polyhedra"
 
 
--- PURPOSE : Giving the generating Cones of the Fan
---   INPUT : 'F'  a Fan
---  OUTPUT : a List of Cones
-maxCones = method(TypicalValue => List)
-maxCones Fan := F -> toList generatingCones F
-
-
--- PURPOSE : Giving the generating Polyhedra of the PolyhedralComplex
---   INPUT : 'PC'  a PolyhedralComplex
---  OUTPUT : a List of Cones
-maxPolyhedra = method(TypicalValue => List)
-maxPolyhedra PolyhedralComplex := PC -> toList generatingPolyhedra PC
 
 
 
@@ -765,7 +741,7 @@ maxPolyhedra PolyhedralComplex := PC -> toList generatingPolyhedra PC
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> ((toList generatingCones F)#0)#"linealitySpace"
+linSpace Fan := F -> ((maxCones F)#0)#"linealitySpace"
 
 
 
@@ -1033,7 +1009,7 @@ isPointed Cone := C -> rank C#"linealitySpace" == 0
 --   INPUT : 'F',  a Fan
 --  OUTPUT : 'true' or 'false'
 isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed = isPointed((toList generatingCones F)#0);
+     if not F.cache.?isPointed then F.cache.isPointed = isPointed((maxCones F)#0);
      F.cache.isPointed)
 
 
@@ -1050,7 +1026,7 @@ isPolytopal Fan := F -> (
 	       -- Extracting the generating cones, the ambient dimension, the codim 1 
 	       -- cones (corresponding to the edges of the polytope if it exists)
 	       i := 0;
-	       L := hashTable apply(toList generatingCones F, l -> (i=i+1; i=>l));
+	       L := hashTable apply(maxCones F, l -> (i=i+1; i=>l));
 	       n := F#"ambient dimension";
 	       edges := cones(n-1,F);
 	       -- Making a table that indicates in which generating cones each 'edge' is contained
@@ -1168,7 +1144,7 @@ isSmooth Cone := C -> (
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isSmooth Fan := F -> (
-     if not F.cache.?isSmooth then F.cache.isSmooth = all(toList generatingCones F,isSmooth);
+     if not F.cache.?isSmooth then F.cache.isSmooth = all(maxCones F,isSmooth);
      F.cache.isSmooth)
 
 
@@ -2038,7 +2014,7 @@ smoothSubfan Fan := F -> (
      -- recursive function that adds the cones of the list 'L' to 'F' if they are smooth
      -- and calls itself with the faces of the cone if the cone is not smooth
      facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
-     L := toList generatingCones F;
+     L := maxCones F;
      fan facerecursion L)
 
 
@@ -2475,7 +2451,7 @@ directProduct (Polyhedron,Cone) := (P,C) -> directProduct(P,coneToPolyhedron C)
 --  OUTPUT : A fan, the direct product
 directProduct (Fan,Fan) := (F1,F2) -> (
      -- computing the direct products of all pairs of generating cones
-     fan flatten apply(toList generatingCones F1, C1 -> apply(toList generatingCones F2, C2 -> directProduct(C1,C2))))
+     fan flatten apply(maxCones F1, C1 -> apply(maxCones F2, C2 -> directProduct(C1,C2))))
 
 
 Polyhedron * Polyhedron := directProduct
