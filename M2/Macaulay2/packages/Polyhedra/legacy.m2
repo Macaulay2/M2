@@ -18,8 +18,8 @@ Fan = new Type of PolyhedralObjectFamily
 globalAssignment Fan
 
 -- Defining the new type PolyhedralComplex
-PolyhedralComplex = new Type of PolyhedralObject
-globalAssignment PolyhedralObject
+PolyhedralComplex = new Type of PolyhedralObjectFamily
+globalAssignment PolyhedralComplex
 
 
 -- Modifying the standard output for a polyhedron to give an overview of its characteristica
@@ -1206,7 +1206,7 @@ isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope
 
 isSimplicial = method(TypicalValue => Boolean)
 
-isSimplicial PolyhedralObject := (cacheValue symbol isSimplicial)(X -> (
+isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
 	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
 	else if instance(X,Fan) then all(maxCones X,isSimplicial)
 	else if instance(X,Polyhedron) then (isCompact X and numColumns vertices X == dim X + 1)
@@ -1361,7 +1361,7 @@ faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
 faceLattice Cone := C -> apply(dim C + 1, k -> faceLattice(dim C - k,C))
 
 
-faceOf = method(TypicalValue => PolyhedralObject)
+faceOf = method(TypicalValue => PolyhedraHash)
 faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
 	  
      	  
@@ -3309,14 +3309,14 @@ saveSession String := F -> (
 	  F << "needsPackage \"PPDivisor\"" << endl);
      --Save all Matrices to the file
      scan(userSymbols Matrix, s -> F << s << " = " << toExternalString value s << endl);
-     scan(userSymbols PolyhedralObject, s -> F << s << " = " << toExternalString value s << endl);
+     scan(userSymbols PolyhedraHash, s -> F << s << " = " << toExternalString value s << endl);
      -- Save all Lists and Sequences containing only convex polyhedral objects and/or lists of them to the file
      scan(userSymbols List | userSymbols Sequence, s -> (
 	       L := value s;
 	       while L =!= flatten L do L = flatten L;
 	       if all(L, l -> (
-			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedralObject) or instance(l,Matrix)) 
-			 else instance(l,PolyhedralObject) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
+			 if instance(l,Sequence) then all(l, e -> instance(l,PolyhedraHash) or instance(l,Matrix)) 
+			 else instance(l,PolyhedraHash) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
      
 
 
@@ -4229,10 +4229,10 @@ document {
      }
 
 document {
-     Key => PolyhedralObject,
+     Key => PolyhedraHash,
      Headline => "the class of all polyhedral objects in Polyhedra",
           
-     TT "PolyhedralObject"," is the parent class of the three polyhedral objects in Polyhedra:",
+     TT "PolyhedraHash"," is the parent class of the three polyhedral objects in Polyhedra:",
      
      UL {
 	  {TO "Polyhedron"},
@@ -4862,7 +4862,7 @@ document {
      }
 
 document {
-     Key => {ambDim, (ambDim,PolyhedralObject)},
+     Key => {ambDim, (ambDim,PolyhedraHash)},
      Headline => "ambient dimension of a Polyhedron, Cone or Fan",
      Usage => "d = ambDim P \nd = ambDim C \nd = ambDim F",
      Inputs => {
@@ -5553,14 +5553,14 @@ document {
      }
 
 document {
-     Key => {isSimplicial, (isSimplicial,PolyhedralObject)},
+     Key => {isSimplicial, (isSimplicial,PolyhedraHash)},
      Headline => " checks if a polyhedral object is simplicial",
      Usage => " b = isSimplicial X",
      Inputs => {
-	  "X" => PolyhedralObject
+	  "X" => PolyhedraHash
 	  },
      Outputs => {
-	  "b" => {TO true," if the ",TO PolyhedralObject," is simplicial, ",TO false," otherwise"}
+	  "b" => {TO true," if the ",TO PolyhedraHash," is simplicial, ",TO false," otherwise"}
 	  },
      
      PARA{},"A ",TO Polyhedron," of dimension ",TEX///$d$///," is simplicial if it is compact and 

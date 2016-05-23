@@ -1,9 +1,18 @@
--- Definind the new type PolyhedralObject
-PolyhedralObject = new Type of HashTable
-globalAssignment PolyhedralObject
+-- Defining the new type PolyhedraHash
+PolyhedraHash = new Type of HashTable
+globalAssignment PolyhedraHash
 
--- Definind the new type PolyhedralObject
-PolyhedralObjectSimple = new Type of PolyhedralObject
+-- PURPOSE : Giving the defining affine hyperplanes
+ambDim = method(TypicalValue => ZZ)
+
+--   INPUT : 'P'  a Polyhedron 
+--  OUTPUT : an integer, the dimension of the ambient space
+ambDim PolyhedraHash := X -> X#"ambient dimension"
+
+
+
+-- Defining the new type PolyhedralObject
+PolyhedralObject = new Type of PolyhedraHash
 globalAssignment PolyhedralObject
 
 -- PURPOSE : Giving the defining affine hyperplanes
@@ -15,13 +24,9 @@ hyperplanes = method()
 -- PURPOSE : Giving a basis of the lineality space
 linSpace = method(TypicalValue => Matrix)
 
--- PURPOSE : Giving the defining affine hyperplanes
-ambDim = method(TypicalValue => ZZ)
 
---   INPUT : 'P'  a Polyhedron 
---  OUTPUT : an integer, the dimension of the ambient space
-ambDim PolyhedralObject := X -> X#"ambient dimension"
 
--- Definind the new type PolyhedralObjectFamily
-PolyhedralObjectFamily = new Type of PolyhedralObject
+
+-- Defining the new type PolyhedralObjectFamily
+PolyhedralObjectFamily = new Type of PolyhedraHash
 globalAssignment PolyhedralObjectFamily

@@ -1,5 +1,5 @@
 -- Defining the new type Cone
-Cone = new Type of PolyhedralObjectSimple
+Cone = new Type of PolyhedralObject
 Cone.synonym = "convex rational cone"
 globalAssignment Cone
 
