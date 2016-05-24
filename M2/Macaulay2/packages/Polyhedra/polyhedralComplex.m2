@@ -2,6 +2,15 @@
 PolyhedralComplex = new Type of PolyhedralObjectFamily
 globalAssignment PolyhedralComplex
 
+-- Modifying the standard output for a Polyhedral Complex to give an overview of its characteristica
+net PolyhedralComplex := F -> ( horizontalJoin flatten (
+	  "{",
+	  -- prints the parts vertically
+	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+			                      "dimension",
+					      "number of generating polyhedra"}, key -> (net key, " => ", net F#key))),
+	  "}" ))
+
 
 -- PURPOSE : Giving the generating Polyhedra of the PolyhedralComplex
 --   INPUT : 'PC'  a PolyhedralComplex

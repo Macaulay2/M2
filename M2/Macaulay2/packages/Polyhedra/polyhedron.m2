@@ -507,3 +507,63 @@ volume Polyhedron := P -> (
      -- Summing up the volumes and dividing out the dimension factor
      (sum P)/(d!))
 	       
+-- PURPOSE : Computing a point in the relative interior of a Polyhedron 
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : 'p',  a point given as a matrix
+interiorPoint = method(TypicalValue => Matrix)
+interiorPoint Polyhedron := P -> (
+     -- Checking for input errors
+     if isEmpty P then error("The polyhedron must not be empty");
+     Vm := vertices P | promote(rays P,QQ);
+     n := numColumns Vm;
+     ones := matrix toList(n:{1/n});
+     -- Take the '1/n' weighted sum of the vertices
+     Vm * ones)
+
+
+-- PURPOSE : Computing the face of a Polyhedron where a given weight attains its minimum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Polyhedron 'P'
+--  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its minimum
+minFace (Matrix,Polyhedron) := (v,P) -> (
+     -- Checking for input errors
+     if numColumns v =!= 1 or numRows v =!= P#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
+     C := dualCone tailCone P;
+     V := vertices P;
+     R := rays P;
+     LS := linSpace P;
+     -- The weight must lie in the dual of the tailcone of the polyhedron, otherwise there is 
+     -- no minimum and the result is the empty polyhedron
+     if contains(C,v) then (
+	  -- Compute the values of 'v' on the vertices of 'V'
+	  Vind := flatten entries ((transpose v)*V);
+	  -- Take the minimal value(s)
+	  Vmin := min Vind;
+	  Vind = positions(Vind, e -> e == Vmin);
+	  -- If 'v' is in the interior of the dual tailCone then the face is exactly spanned 
+	  -- by these vertices
+	  if inInterior(v,C) then convexHull(V_Vind,LS | -LS)
+	  else (
+	       -- Otherwise, one has to add the rays of the tail cone that are orthogonal to 'v'
+	       Rind := flatten entries ((transpose v)*R);
+	       Rind = positions(Rind, e -> e == 0);
+	       convexHull(V_Vind,R_Rind | LS | -LS)))
+     else emptyPolyhedron ambDim P)
+
+
+-- PURPOSE : Computing the face of a Polyhedron where a given weight attains its maximum
+--   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
+--     	     	       Polyhedron 'P'
+--  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its maximum
+maxFace (Matrix,Polyhedron) := (v,P) -> minFace(-v,P)
+
+
+--   INPUT : '(p,P)',  where 'p' is a point given by a matrix and 'P' is a Polyhedron
+--  OUTPUT : 'true' or 'false'
+inInterior (Matrix,Polyhedron) := (p,P) -> (
+     hyperplanesTmp := hyperplanes P;
+     hyperplanesTmp = (hyperplanesTmp#0 * p)-hyperplanesTmp#1;
+     all(flatten entries hyperplanesTmp, e -> e == 0) and (
+	  HS := halfspaces P;
+	  HS = (HS#0 * p)-HS#1;
+	  all(flatten entries HS, e -> e < 0)))

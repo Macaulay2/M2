@@ -32,3 +32,11 @@ fVector = method(TypicalValue => List)
 
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
 faces = method(TypicalValue => List)
+
+
+minFace = method()
+maxFace = method()
+
+
+-- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
+inInterior = method(TypicalValue => Boolean)

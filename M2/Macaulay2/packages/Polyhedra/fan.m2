@@ -4,6 +4,17 @@ globalAssignment Fan
 
 Fan == Fan := (F1,F2) -> F1 === F2
 
+-- Modifying the standard output for a Fan to give an overview of its characteristica
+net Fan := F -> ( horizontalJoin flatten (
+	  "{",
+	  -- prints the parts vertically
+	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+			                      "dimension",
+					      "number of generating cones",
+					      "number of rays"}, key -> (net key, " => ", net F#key))),
+	  "}" ))
+
+
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
 linSpace Fan := F -> ((maxCones F)#0)#"linealitySpace"
