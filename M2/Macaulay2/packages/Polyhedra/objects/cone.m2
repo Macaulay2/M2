@@ -20,7 +20,7 @@ net Cone := C -> ( horizontalJoin flatten (
 -- PURPOSE : Tests if a Cone is pointed
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
-isPointed Cone := C -> rank C#"linealitySpace" == 0
+isPointed Cone := C -> rank linSpace(C) == 0
 
 
 --   INPUT : 'C'  a Cone
@@ -113,7 +113,7 @@ posHull(Cone,Cone) := (C1,C2) -> (
 	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	-- Combining the rays and the lineality spaces into one matrix each
 	R := rays(C1) | rays(C2);
-	LS := C1#"linealitySpace" | C2#"linealitySpace";
+	LS := linSpace(C1) | linSpace(C2);
 	dualgens := fourierMotzkin(R,LS);
 	local genrays;
 	(genrays,dualgens) = fMReplacement(R,dualgens#0,dualgens#1);
@@ -318,5 +318,5 @@ isFace(Cone,Cone) := (C1,C2) -> (
 dualCone = method(TypicalValue => Cone)
 dualCone Cone := C -> (
 	genrays := (sort transpose halfspaces(C),sort transpose hyperplanes(C));
-	dualgens := (sort (-(rays(C))),sort C#"linealitySpace");
+	dualgens := (sort (-(rays(C))),sort linSpace(C));
 	coneBuilder(genrays,dualgens))

@@ -63,13 +63,16 @@ sub lattice_point_test{
 
 sub hilbert_basis_test_inner{
    my($C) = @_;
-   $result = m2_matrix("raysC", transpose($P->RAYS->minor(All, ~[0])));
+   print "Entered.\n";
+   $result = m2_matrix("raysC", transpose(new Matrix($C->RAYS)));
+   print "Rays ok.\n";
    $result .= ";\n";
-   $result .= m2_matrix("desiredHB", transpose($P->HILBERT_BASIS->minor(All, ~[0])));
+   $result .= m2_matrix("desiredHB", transpose(new Matrix($C->HILBERT_BASIS)));
+   print "Desired ok.\n";
    $result .= ";\n";
    $result .= "desiredHB = sort desiredHB;\n";
-   $result .= "P = posHull(raysP)\n";
-   $result .= "computedHB = sort matrix {hilbertBasis P};\n";
+   $result .= "C = posHull(raysC)\n";
+   $result .= "computedHB = sort matrix {hilbertBasis C};\n";
    $result .= "assert(desiredHB == computedHB);\n";
 }
 
@@ -77,15 +80,40 @@ sub hilbert_basis_test{
    my($file) = @_;
    my $name = split_off_name($file);
    my $result = test_wrapper_start("hilbertBasis", $name);
-   my $C = load($file);
+   print "0: ",$result;
+   my $P = load($file);
+   my $C = new Cone($P);
    $result .= hilbert_basis_test_inner($C);
+   print "1: ",$result;
    $result .= test_wrapper_end();
+   print "2: ",$result;
    return $result;
 }
 
 @a = split(":", $polytopeFiles[0]);
 $file = $a[0];
-print lattice_point_test($file);
+print "LPTest\n",lattice_point_test($file);
+print "HBTest\n",hilbert_basis_test($file);
+
+
+open(FILE, ">hilbert_basis_tests.m2");
+$i=0;
+foreach my $file (@polytopeFiles){
+   print $i,": ",$file,"\n";
+   my @split = split(":",$file);
+   eval{
+      my $P = load($split[0]);
+      my $C = new Cone($P);
+      if($C->POINTED && $C->DIM > 3){
+         print $C->HILBERT_BASIS;
+         print FILE hilbert_basis_test($split[0]);
+      }
+   };
+   $i++;
+}
+close(FILE);
+
+
 
 open(FILE, ">lattice_point_tests.m2");
 $i=0;
@@ -102,3 +130,5 @@ foreach my $file (@polytopeFiles){
    $i++;
 }
 close(FILE);
+
+

@@ -53,11 +53,11 @@ net Fan := F -> ( horizontalJoin flatten (
 
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> ((maxCones F)#0)#"linealitySpace"
+linSpace Fan := F -> linSpace((maxCones F)#0)
 
 
 --   INPUT : 'F'  a Fan
-rays Fan := F -> raySort toList rays(F)
+rays Fan := F -> raySort toList F#"rays"
 
 
    
@@ -254,7 +254,7 @@ addCone (Cone,Fan) := (C,F) -> (
      else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     rayList := raySort toList rays(F);
+     rayList := rays(F);
      if inserted then (
 	  -- The rays of 'C' have to be added
 	  rm := rays C;

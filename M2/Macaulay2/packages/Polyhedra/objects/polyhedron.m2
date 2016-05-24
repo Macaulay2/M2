@@ -69,7 +69,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 --   INPUT : 'P'  a Polyhedron
 posHull Polyhedron := P -> (
      Mrays := makePrimitiveMatrix vertices(P) | rays(P);
-     Mlinspace := P#"linealitySpace";
+     Mlinspace := linSpace(P);
      posHull(Mrays,Mlinspace))
  
 -- PURPOSE : Computing the Convex Hull of a given set of points and rays
@@ -200,7 +200,7 @@ isEmpty Polyhedron := P -> dim P == -1
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
 isCompact = method(TypicalValue => Boolean)
-isCompact Polyhedron := P -> P#"linealitySpace" == 0 and rays(P) == 0
+isCompact Polyhedron := P -> linSpace(P) == 0 and rays(P) == 0
 
 
 

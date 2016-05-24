@@ -12,7 +12,7 @@ faceBuilder = (k,P) -> (
 	  d := dim P - k;
 	  dl := P#"dimension of lineality space";
 	  -- Saving the lineality space of 'P', which is the also the lineality space of each face
-	  LS := P#"linealitySpace";
+	  LS := linSpace(P);
 	  -- for d = dim P it is the polyhedron itself
 	  if d == dim P then (
 	       VP := vertices P;

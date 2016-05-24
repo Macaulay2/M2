@@ -40,7 +40,7 @@ contains(Cone,Polyhedron) := (C,P) -> (
       if ambDim(C) =!= ambDim(P) then error("Cone and Polyhedron must lie in the same ambient space");
       -- Saving the equations of C and vertices/rays of P
       M := makePrimitiveMatrix vertices(P) | rays(P);
-      LS := P#"linealitySpace";
+      LS := linSpace(P);
       C1 := posHull(M,LS);
       contains(C,C1))
 
