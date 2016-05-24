@@ -1,5 +1,3 @@
-use TryCatch;
-
 @polytopeFiles = `grep -R "polytope::Polytope&lt;Rational&gt;" /home/lars/polymake-source/apps/polytope/testsuite`;
 
 sub m2_matrix{
@@ -65,7 +63,7 @@ sub lattice_point_test{
 $file = $a[0];
 print lattice_point_test($file);
 
-
+open(FILE, ">lattice_point_tests.m2");
 $i=0;
 foreach my $file (@polytopeFiles){
    print $i,": ",$file,"\n";
@@ -73,6 +71,10 @@ foreach my $file (@polytopeFiles){
    eval{
       my $P = load($split[0]);
       print $P->FEASIBLE,"\n";
+      if($P->BOUNDED){
+         print FILE, lattice_point_test($file);
+      }
    };
    $i++;
 }
+close(FILE);
