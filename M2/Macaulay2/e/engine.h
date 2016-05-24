@@ -23,6 +23,7 @@ class RingMap;
 class Computation;
 class EngineComputation;
 class SLEvaluator;
+class Homotopy;
 class SLProgram;
 class StraightLineProgram;
 class PathTracker;
@@ -43,6 +44,7 @@ typedef struct EngineComputation EngineComputation;
 typedef struct MonomialOrdering MonomialOrdering;
 typedef struct MonomialIdeal MonomialIdeal;
 typedef struct SLEvaluator SLEvaluator;
+typedef struct Homotopy Homotopy;
 typedef struct SLProgram SLProgram;
 typedef struct StraightLineProgram StraightLineProgram;
 typedef struct PathTracker PathTracker;
@@ -1767,16 +1769,22 @@ enum gbTraceValues
   const Matrix /* or null */ *rawResolutionGetMatrix(Computation *G,int level);
   /* rawResolutionGetMatrix */
 
+  MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *G,int level,int degree);
+  /* rawResolutionGetMatrix2 */
+
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/
 
   M2_arrayint rawResolutionBetti(Computation *G,
                                  int type); /* drg: connected rawGBBetti */
   /* type:
-         0: minimal betti numbers,
+         0: minimal betti numbers, (for FastNonminimal=>true, the ACTUAL betti numbers)
          1: non-minimal betti numbers (skeleton size, or size of GB's).
+           (for FastNonminimal=>true, same as "0" case)
          2: number of S-pairs remaining to consider
          3: number of monomials in polynomials at this slot
+         4: for FastNonminimal=>true resolutions, the minimal betti numbers
+            other cases, this is an error.
      Not all of these may be accessible with all algorithms.  If not available,
      A betti diagram with all -1's is displayed.
   */
@@ -1970,12 +1978,23 @@ enum gbTraceValues
   gmp_RRorNull rawRingElementNorm(gmp_RR p, const RingElement *f);
   gmp_RRorNull rawMutableMatrixNorm(gmp_RR p, const MutableMatrix *M);
 
+  Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH);
   SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts);
+  SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator* H, const MutableMatrix *parameters);
   SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs);
   M2_string rawSLEvaluatorToString(SLEvaluator *); /* connected */
   M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs);
+  M2_string rawHomotopyToString(Homotopy *); /* connected */
+  M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs,
+                           MutableMatrix* output_extras,  
+                           gmp_RR init_dt, gmp_RR min_dt,
+                           gmp_RR epsilon, // o.CorrectorTolerance,
+                           int max_corr_steps, 
+                           gmp_RR infinity_threshold,
+                           M2_bool checkPrecision);
   M2_string rawSLProgramToString(SLProgram *); /* connected */
   unsigned int rawSLEvaluatorHash(SLEvaluator *); /* connected */
+  unsigned int rawHomotopyHash(Homotopy *); /* connected */
   unsigned int rawSLProgramHash(SLProgram *); /* connected */
   gmp_ZZ rawSLPInputGate(SLProgram *S);
   gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a);

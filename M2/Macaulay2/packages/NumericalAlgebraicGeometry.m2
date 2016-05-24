@@ -3,8 +3,8 @@
 
 newPackage select((
      "NumericalAlgebraicGeometry",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Numerical Algebraic Geometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => true,
@@ -17,8 +17,8 @@ newPackage select((
      PackageImports => {"PHCpack","Bertini"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true,
-     --DebuggingMode => false,
+     --DebuggingMode => true,
+     DebuggingMode => false,
      Certification => {
 	  "journal name" => "The Journal of Software for Algebra and Geometry: Macaulay2",
 	  "journal URI" => "http://j-sag.org/",
@@ -37,12 +37,13 @@ newPackage select((
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {
+     "DoublePrecision",
      "setDefault", "getDefault",
      "solveSystem", 
      "solveGenericSystemInTorus", -- works with PHCpack only
-     "refine", "totalDegreeStartSystem", "newton",
+     "totalDegreeStartSystem",
      "parameterHomotopy", "numericalIrreducibleDecomposition",
-     -- "multistepPredictor", "multistepPredictorLooseEnd",
+     "Field",
      "Software", "PostProcess", "PHCPACK", "BERTINI","HOM4PS2","M2","M2engine","M2enginePrecookedSLPs",
      "gamma","tDegree","tStep","tStepMin","stepIncreaseFactor","numberSuccessesBeforeIncrease",
      "Predictor","RungeKutta4","Multistep","Tangent","Euler","Secant","MultistepDegree","Certified",
@@ -62,10 +63,15 @@ export {
 exportMutable {
      }
 
+
 -- local functions/symbols:
-protect Processing, protect Undetermined -- possible values of SolutionStatus
+protect Processing; protect Undetermined -- possible values of SolutionStatus
 protect SolutionAttributes -- option of getSolution 
 protect Tracker -- an internal key in Point 
+protect LastIncrement;
+
+-- possible solution statuses returned by engine
+solutionStatusLIST = {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, Origin, IncreasePrecision, DecreasePrecision, RefinementFailure}
 
 -- experimental:
 protect LanguageCPP, protect MacOsX, protect System, 
@@ -83,6 +89,9 @@ load "./NumericalAlgebraicGeometry/Bertini/Bertini.interface.m2"
 
 -- GLOBAL VARIABLES ----------------------------------
 NAG = NumericalAlgebraicGeometry
+protect symbol NAG
+DoublePrecision = 53
+protect symbol DoublePrecision
 
 --PHCexe = NumericalAlgebraicGeometry#Options#Configuration#"PHCPACK";
 BERTINIexe = NumericalAlgebraicGeometry#Options#Configuration#"BERTINI";
@@ -94,6 +103,7 @@ SLPcounter = 0; -- the number of compiled SLPs (used in naming dynamic libraries
 Package % Symbol := (p,s) -> value (toString p | "$" | toString s) -- get an option name from the correct dictionary
 
 DEFAULT = new MutableHashTable from {
+     Field => CC,
      Software=>M2engine, NoOutput=>false, 
      NumericalAlgebraicGeometry$gamma=>1, 
      NumericalAlgebraicGeometry$tDegree=>1,
@@ -112,7 +122,7 @@ DEFAULT = new MutableHashTable from {
      CorrectorTolerance => 1e-6, -- tracking tolerance
      -- end of path
      EndZoneFactor => 0.05, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
-     InfinityThreshold => 100000, -- used to tell if the path is diverging
+     InfinityThreshold => 1e9, -- used to tell if the path is diverging
      -- projectivize and normalize
      Normalize => false, -- normalize in the Bombieri-Weyl norm
      Projectivize => false, 
@@ -120,14 +130,14 @@ DEFAULT = new MutableHashTable from {
      SLP => false, -- possible values: false, HornerForm, CompiledHornerForm 	  
      -- refine options 
      ErrorTolerance => 1e-8,
-     ResidualTolerance => infinity,
+     ResidualTolerance => 1e-4,
      Iterations => 30, 
      Bits => infinity,
      -- general
      Attempts => 5, -- max number of attempts (e.g., to find a regular path)
      Tolerance => 1e-6,
      SingularConditionNumber => 1e5, -- this may need to go away!!!
-     maxPrecision => 53,
+     Precision => DoublePrecision, -- infinity,
      maxNumberOfVariables => 50
      }
 
@@ -166,7 +176,8 @@ setDefault = method(Options => {
      -- general
      Attempts => null, -- max number of attempts (e.g., to find a regular path)
      Tolerance => null,
-     SingularConditionNumber => null
+     SingularConditionNumber => null,
+     Precision => null,
      })
 installMethod(setDefault, o -> () -> scan(keys o, k->if o#k=!=null then DEFAULT#k=o#k))
 getDefault = method()
@@ -303,7 +314,7 @@ checkCCpolynomials (List,List) := (S,T) -> (
 toCCpolynomials = method()
 toCCpolynomials (List,ZZ) := (F,prec) -> (
     checkCCpolynomials F;
-    R := CC_prec(monoid[gens ring first F]);
+    R := CC_prec(monoid[gens commonRing F]);
     apply(F,f->sub(f,R)) 
     )    
 
@@ -322,48 +333,17 @@ parameterHomotopy (List, List, List) := o -> (F, P, T) -> (
 
 homogenizeSystem = method(TypicalValue => List)
 homogenizeSystem List := List => T -> (
-     R := ring first T;
+     R := commonRing T;
      h := symbol h;
      Rh := (coefficientRing R)[gens R | {h}]; 
      apply(T, f->homogenize(sub(f,Rh), h))
      )
 dehomogenizeSystem = method(TypicalValue => List)
 dehomogenizeSystem List := List => T -> (
-     Rh := ring first T;
+     Rh := commonRing T;
      R := (coefficientRing Rh)[drop(gens Rh,-1)]; 
      apply(T, f -> (map(R,Rh,vars R | matrix{{1_R}})) f)
      )
-
-totalDegreeStartSystem = method(TypicalValue => Sequence)
-totalDegreeStartSystem List := Sequence => T -> (
--- contructs a total degree start system and its solutions 
--- for the given target system T
--- IN:  T = list of polynomials 
--- OUT: (S,solsS}, where 
---      S     = list of polynomials, 
---      solsS = list of sequences
-     R := ring first T;
-     if any(gens R, x->sum degree x != 1) then error "expected degrees of ring generators to be 1";
-     n := #T;
-     if n != numgens R then (
-	  if numgens R == n+1 and all(T, isHomogeneous) 
-	  then isH := true
-	  else error "wrong number of polynomials";
-	  )
-     else isH = false;
-     S := apply(n, i->R_i^(sum degree T_i) - (if isH then R_n^(sum degree T_i) else 1) );
-     s := apply(n, i->( 
-	  d := sum degree T_i; 
-	  set apply(d, j->sequence exp(ii*2*pi*j/d))
-	  ));
-     solsS := first s;
-     scan(drop(s,1), t->solsS=solsS**t);
-     if numgens R === 1 
-     then solsS = toList solsS/(a -> 1:a)
-     else solsS = toList solsS/deepSplice; 
-     if isH then solsS = solsS / (s->s|sequence 1);
-     (S, solsS)
-     ) 
 
 randomGaussian = method()
 randomGaussian := () -> sum(12, i->random 1.0) - 6;
@@ -505,7 +485,7 @@ selectUnique List := o -> sols ->(
      )
  
 NAGtrace = method()
-NAGtrace ZZ := l -> (gbTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
+NAGtrace ZZ := l -> (numericalAlgebraicGeometryTrace=l; oldDBG:=DBG; DBG=l; oldDBG);
 
 -- conjugate all entries of the matrix (should be a part of M2!!!)
 conjugate Matrix := M -> matrix(entries M / (row->row/conjugate))
@@ -533,6 +513,25 @@ isSolution(Point,PolySystem) := o -> (P,F) -> (
 beginDocumentation()
 
 load "./NumericalAlgebraicGeometry/doc.m2";
+
+undocumented {
+    Field, "DoublePrecision", 
+    GateParameterHomotopy, parametricSegmentHomotopy, (parametricSegmentHomotopy,GateMatrix,List,List), (parametricSegmentHomotopy,PolySystem), 
+    GateHomotopy, trackHomotopy, (trackHomotopy,Thing,List), endGameCauchy, (endGameCauchy,GateHomotopy,Number,MutableMatrix), 
+    (endGameCauchy,GateHomotopy,Number,Point),
+    (evaluateH,GateHomotopy,Matrix,Number),
+(evaluateH,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHt,GateHomotopy,Matrix,Number),
+(evaluateHt,GateParameterHomotopy,Matrix,Matrix,Number),
+(evaluateHx,GateHomotopy,Matrix,Number),
+(evaluateHx,GateParameterHomotopy,Matrix,Matrix,Number),
+(specialize,GateParameterHomotopy,MutableMatrix),
+[gateHomotopy,Software],
+[trackHomotopy,Software],
+[setDefault,Precision],
+[gateHomotopy,Parameters],
+[gateHomotopy,Strategy],
+    }
 
 TEST ///
 load concatenate(NumericalAlgebraicGeometry#"source directory","./NumericalAlgebraicGeometry/TST/SoftwareM2.tst.m2")

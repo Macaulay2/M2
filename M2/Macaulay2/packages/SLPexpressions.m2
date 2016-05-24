@@ -3,8 +3,8 @@
 
 newPackage select((
      "SLPexpressions",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Straight Line Programs and Algebraic Circuits",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -16,8 +16,8 @@ newPackage select((
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true
-     --DebuggingMode => false
+     --DebuggingMode => true
+     DebuggingMode => false
      ), x -> x =!= null)
 
 -- Any symbols or functions that the user is to have access to
@@ -227,13 +227,31 @@ constants DetGate := memoize (g -> g.Inputs//flatten/constants//flatten//unique)
 constants List := memoize (L -> L/constants//flatten//unique)
 constants GateMatrix := memoize (M -> constants flatten entries M)
 
+depth InputGate := g -> 0
+depth SumGate := memoize (g -> g.Inputs//depth + 1)
+depth ProductGate := memoize (g -> g.Inputs//depth + 1)
+depth DivideGate := memoize (g -> g.Inputs//depth + 1)
+depth DetGate := memoize (g -> g.Inputs//flatten//depth + 1)
+depth GateMatrix := memoize (M -> depth flatten entries M)
+depth List := memoize (L -> L/depth//max)
+
+flattenGates = method()
+flattenGates InputGate := g -> {}
+flattenGates SumGate := memoize (g -> g.Inputs//unique)
+flattenGates ProductGate := memoize (g -> g.Inputs//unique)
+flattenGates DivideGate := memoize (g -> g.Inputs//unique)
+flattenGates DetGate := memoize (g -> g.Inputs//flatten//unique)
+flattenGates GateMatrix := memoize (M -> flattenGates flatten entries M)
+flattenGates List := memoize (L -> L/flattenGates//flatten//unique)
+
+
 diff (InputGate, InputGate) := (x,y) -> if y === x then oneGate else zeroGate
-diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sum
-diff (InputGate, ProductGate) := (x,g) -> sum apply(#g.Inputs, i->(
+diff (InputGate, SumGate) := (x,g) -> g.Inputs/(s->diff(x,s))//sumGate
+diff (InputGate, ProductGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
 	dgi := diff(x,g.Inputs#i);
-	product(drop(g.Inputs,{i,i}))*dgi -- commutativity assumed
+	productGate drop(g.Inputs,{i,i}) * dgi -- commutativity assumed
 	))
-diff (InputGate, DetGate) := (x,g) -> sum apply(#g.Inputs, i->(
+diff (InputGate, DetGate) := (x,g) -> sumGate apply(#g.Inputs, i->(
 	dgi := apply(g.Inputs#i, a->diff(x,a));
 	detGate replace(i,dgi,g.Inputs)
 	))
@@ -290,7 +308,7 @@ compress SumGate := g -> (
     c := (if s != 0 then {inputGate s} else {}) | L_not'nums;
     if #c == 0 then zeroGate else
     if #c == 1 then first c else 
-    sum c
+    sumGate c
     )
 compress ProductGate := g -> (
     L := g.Inputs/compress;
@@ -301,7 +319,7 @@ compress ProductGate := g -> (
     c := (if p != 1 then {inputGate p} else {}) | L_not'nums; -- assumes commutativity
     if #c == 0 then oneGate else
     if #c == 1 then first c else 
-    product c
+    productGate c
     )
 
 
@@ -380,9 +398,10 @@ assert (abs(last flatten entries rawM - 37/3) < 2^(-999))
 
 old'matrix'List = lookup(matrix,List)
 gateMatrix = method()
+gateMatrix GateMatrix := M -> M
 gateMatrix List := L -> (
     if not isTable L then error "a table is expected";
-    new GateMatrix from L
+    new GateMatrix from applyTable(L,x->if instance(x,Gate) then x else inputGate x) 
     )
 gateMatrix Matrix := M -> if numcols M == 0 then gateMatrix toList (numrows M:{}) else gateMatrix entries M
 
@@ -421,7 +440,7 @@ GateMatrix || Matrix := (A,B) -> A || gateMatrix B
 
 GateMatrix * GateMatrix := (A,B) -> ( -- two tables
     B' := transpose B;
-    matrix table(#A,#B',(i,j)->sum apply(A#i,B'#j,(a,b)->a*b))
+    matrix table(#A,#B',(i,j)->sumGate apply(A#i,B'#j,(a,b)->a*b))
     )
 Matrix * GateMatrix := (A,B) -> gateMatrix A * B
 GateMatrix * Matrix := (A,B) -> A * gateMatrix B
@@ -547,7 +566,7 @@ makeEvaluator(GateMatrix,GateMatrix) := (M,I) -> (
     	};
     E#"constant positions" = positionsOfInputGates(consts,E#"rawSLP");
     E#"input positions" = positionsOfInputGates(flatten entries I,E#"rawSLP");
-    E#"constants" = matrix{consts/(c->c.Name)};
+    E#"constants" = matrix{consts/(c->c.Name)}; -- conceptually: constants should be anything that can be evaluated to any precision
     E
     )
 
@@ -563,6 +582,7 @@ evaluate(Evaluator, MutableMatrix, MutableMatrix) := (E,I,O) -> (
     assert(ring O === K);
     rawSLEvaluatorEvaluate(rawSLEvaluatorK(E,K), raw I, raw O);
     )
+
  
 TEST /// 
 needsPackage "SLPexpressions"
@@ -655,3 +675,160 @@ document {
     SeeAlso=>{Gate, Matrix}
     }
 
+undocumented {
+"zeroGate",
+inputGate,
+(inputGate,Thing),
+sumGate,
+(sumGate,List),
+printAsSLP,
+(printAsSLP,GateMatrix),
+(printAsSLP,List),
+productGate,
+(productGate,List),
+detGate,
+(detGate,List),
+DetGate,
+"minusOneGate",
+DivideGate,
+valueHashTable,
+(valueHashTable,List,List),
+ValueHashTable,
+constants,
+(constants,DetGate),
+(constants,DivideGate),
+(constants,GateMatrix),
+(constants,InputGate),
+(constants,List),
+(constants,ProductGate),
+(constants,SumGate),
+"oneGate",
+(symbol -,Gate),
+(symbol *,CC,Gate),
+(symbol +,CC,Gate),
+(symbol -,CC,Gate),
+(compress,Gate),
+(compress,GateMatrix),
+(compress,ProductGate),
+(compress,SumGate),
+(depth,DetGate),
+(depth,DivideGate),
+(depth,GateMatrix),
+(depth,InputGate),
+(depth,ProductGate),
+(depth,SumGate),
+(determinant,GateMatrix),
+(diff,GateMatrix,GateMatrix),
+(diff,InputGate,DetGate),
+(diff,InputGate,DivideGate),
+(diff,InputGate,GateMatrix),
+(diff,InputGate,InputGate),
+(diff,InputGate,ProductGate),
+(diff,InputGate,SumGate),
+(entries,GateMatrix),
+(symbol *,Gate,CC),
+(symbol *,Gate,Gate),
+(symbol *,Gate,Matrix),
+(symbol *,Gate,QQ),
+(symbol *,Gate,RR),
+(symbol *,Gate,ZZ),
+(symbol +,Gate,CC),
+(symbol +,Gate,Gate),
+(symbol +,Gate,QQ),
+(symbol +,Gate,RR),
+(symbol +,Gate,ZZ),
+(symbol -,Gate,CC),
+(symbol -,Gate,Gate),
+(symbol -,Gate,QQ),
+(symbol -,Gate,RR),
+(symbol -,Gate,ZZ),
+(symbol /,Gate,Gate),
+(symbol ^,Gate,ZZ),
+(symbol *,GateMatrix,GateMatrix),
+(symbol *,GateMatrix,Matrix),
+(symbol *,GateMatrix,RingElement),
+(symbol +,GateMatrix,GateMatrix),
+(symbol +,GateMatrix,Matrix),
+(symbol -,GateMatrix,GateMatrix),
+(symbol -,GateMatrix,Matrix),
+(symbol ^,GateMatrix,List),
+(symbol _,GateMatrix,List),
+(symbol _,GateMatrix,Sequence),
+(symbol |,GateMatrix,GateMatrix),
+(symbol |,GateMatrix,Matrix),
+(symbol ||,GateMatrix,GateMatrix),
+(symbol ||,GateMatrix,Matrix),
+(isConstant,InputGate),
+(symbol *,Matrix,Gate),
+(symbol *,Matrix,GateMatrix),
+(symbol +,Matrix,GateMatrix),
+(symbol -,Matrix,GateMatrix),
+(symbol |,Matrix,GateMatrix),
+(symbol ||,Matrix,GateMatrix),
+(net,DetGate),
+(net,DivideGate),
+(net,InputGate),
+(net,ProductGate),
+(net,SumGate),
+(numColumns,GateMatrix),
+(numRows,GateMatrix),
+(symbol *,QQ,Gate),
+(symbol +,QQ,Gate),
+(symbol -,QQ,Gate),
+(symbol *,RingElement,GateMatrix),
+(symbol *,RR,Gate),
+(symbol +,RR,Gate),
+(symbol -,RR,Gate),
+(submatrix,GateMatrix,List,List),
+(substitute,DetGate,Option),
+(substitute,DivideGate,Option),
+(substitute,Gate,GateMatrix,GateMatrix),
+(substitute,Gate,List),
+(substitute,GateMatrix,GateMatrix,GateMatrix),
+(substitute,GateMatrix,List),
+(substitute,InputGate,Option),
+(substitute,ProductGate,Option),
+(substitute,SumGate,Option),
+(support,DetGate),
+(support,DivideGate),
+(support,GateMatrix),
+(support,InputGate),
+(support,ProductGate),
+(support,SumGate),
+(transpose,GateMatrix),
+(value,DetGate,ValueHashTable),
+(value,DivideGate,ValueHashTable),
+(value,GateMatrix,ValueHashTable),
+(value,InputGate,ValueHashTable),
+(value,ProductGate,ValueHashTable),
+(value,SumGate,ValueHashTable),
+(symbol *,ZZ,Gate),
+(symbol +,ZZ,Gate),
+(symbol -,ZZ,Gate)
+    }
+
+end
+
+-- Here place M2 code that you find useful while developing this
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
+
+restart
+uninstallPackage "SLPexpressions"
+installPackage "SLPexpressions"
+installPackage ("SLPexpressions",RerunExamples=>true, RemakeAllDocumentation=>true)
+installPackage ("SLPexpressions",RerunExamples=>false, RemakeAllDocumentation=>true)
+
+-- (old way) installPackage("SLPexpressions", SeparateExec=>true, AbsoluteLinks=>false)
+
+-- install docs with no absolute links
+uninstallPackage "Style"
+installPackage("Style", AbsoluteLinks=>false)
+installPackage("SLPexpressions", AbsoluteLinks=>false)
+
+installPackage ("SLPexpressions", MakeDocumentation=>false)
+check "SLPexpressions"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=SLPexpressions "
+-- End:

@@ -114,30 +114,37 @@ document { Key => {AffinePatches, [track,AffinePatches], [setDefault,AffinePatch
 	     SLP, [track,SLP], [setDefault,SLP], HornerForm, CompiledHornerForm, 
 	     SLPcorrector, SLPpredictor, [track,SLPcorrector], [setDefault,SLPcorrector], 
 	     [track,SLPpredictor], [setDefault,SLPpredictor],
-	     [trackSegment,AffinePatches], [trackSegment,SLP], [trackSegment,SLPcorrector], [trackSegment,SLPpredictor]},
+	     --[trackSegment,AffinePatches], [trackSegment,SLP], [trackSegment,SLPcorrector], [trackSegment,SLPpredictor]
+	     },
      	Headline => "reserved for developers"
      	} 
 
 document {
 	Key => {(solveSystem, List),solveSystem,(solveSystem,PolySystem)},
-	Headline => "solve a square system of polynomial equations",
+	Headline => "solve a system of polynomial equations",
 	Usage => "s = solveSystem F",
 	Inputs => { "F"=>"contains polynomials with complex coefficients" },
 	Outputs => { "s"=>{"contains all complex solutions to the system ", TT "F=0" }},
-	"Solve a system of polynomial equations using homotopy continuation methods. (See ", TO track, " for more optional arguments.)",
-     	PARA {"The system is assumed to be square (number of equations = number of variables) 
-	     and to have finitely many solutions."},
+	"Solve a system of polynomial equations using homotopy continuation methods.",
+     	PARA {},
 	EXAMPLE lines ///
 R = CC[x,y];
 F = {x^2+y^2-1, x*y};
 solveSystem F 
      	///,
-     	PARA {},
-	"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
-	" obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
-	"In particular, this means that solving a system that 
-	has fewer than Bezout bound many solutions will produce 
-	points that are not marked as regular. See ", TO track, " for detailed examples. "
+	EXAMPLE lines ///
+R = CC[x,y];
+F = {x^2+y^2-1, x*y, x*(y+1)};
+solveSystem F 
+	///,
+     	PARA {"The system is assumed to have finitely many solutions. If it is not square (number of equations = number of variables), ", 
+	    TO squareUp, " is applied and solutions to the original system are then picked out from the resulting (larger) set of solutions."},
+	PARA {"The output (produced by ", TO track, " with default options) contains all ", TO2{Point,"points"}, 
+	    " obtained at the end of homotopy paths when tracking starting at the ", TO totalDegreeStartSystem, ". ",
+	    "In particular, this means that solving a system that 
+	    has fewer than Bezout bound many solutions will produce 
+	    points that are not marked as regular. See ", TO track, " for detailed examples. "
+	    }
 	}
 
 
@@ -167,12 +174,15 @@ document { Key => {"numerical homotopy tracking options",
 	[solveSystem,maxCorrSteps], [solveSystem,Normalize], [solveSystem,numberSuccessesBeforeIncrease],
 	[solveSystem,Predictor], [solveSystem,Projectivize], [solveSystem,SingularConditionNumber],
 	[solveSystem,stepIncreaseFactor], [solveSystem,tDegree], [solveSystem,tStep], [solveSystem,tStepMin],
+	[solveSystem,Precision],[solveSystem,ResidualTolerance],
+	{*
 	-- trackSegment
 	[trackSegment,CorrectorTolerance], [trackSegment,EndZoneFactor], [trackSegment,gamma], [trackSegment,InfinityThreshold], 
 	[trackSegment,maxCorrSteps], [trackSegment,Normalize], [trackSegment,numberSuccessesBeforeIncrease],
 	[trackSegment,Predictor], [trackSegment,Projectivize], [trackSegment,SingularConditionNumber],
 	[trackSegment,stepIncreaseFactor], [trackSegment,tDegree], [trackSegment,tStep], [trackSegment,tStepMin],
 	[trackSegment,MultistepDegree], [trackSegment,NoOutput]
+	*}
 	},
     Headline => "options for core functions of Numerical Algebraic Geometry",
     UL apply({
@@ -202,7 +212,10 @@ document { Key => {"numerical homotopy tracking options",
 	Iterations => {" (default Iterations = ", toString DEFAULT.Iterations, "). Number of refining iterations of Newton's method."}, 
 	Bits => {" (default Bits = ", toString DEFAULT.Bits, "). Number of bits of precision."}, 
 	ErrorTolerance => {" (default ErrorTolerance = ", toString DEFAULT.ErrorTolerance, "). A bound on the desired estimated error."},
-	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."}
+	ResidualTolerance => {" (default ResidualTolerance = ", toString DEFAULT.ResidualTolerance, "). A bound on desired residual."},
+	Precision => {" (default Precision = ", toString DEFAULT.Precision, "). Precision of the floating-point numbers used in computation. If set to ", 
+	    TO "infinity", " the precision in homotopy continuation adapts according to numerical conditioning. ", 
+	    "The other popular setting, ", TT "DoublePrecision", ", forces fast arithmetic and linear algebra in standard precision. "}
     	}, 
         item -> {TT "[", TT toString item#0, TT "]: "} | item#1 
 	)
@@ -384,7 +397,7 @@ document {
 	 [solveSystem,Software],[track,Software],[refine, Software],[setDefault,Software],
 	 [regeneration,Software],[parameterHomotopy,Software],[isOn,Software],
 	 [numericalIrreducibleDecomposition,Software], [hypersurfaceSection,Software],
-	 [trackSegment,Software],
+	 --[trackSegment,Software],
 	 M2,M2engine,M2enginePrecookedSLPs},
      Headline => "specify internal or external software",
      "One may specify which software is used in homotopy continuation. 
@@ -870,12 +883,14 @@ document {
     Caveat => {"Avalaible only with Software=>BERTINI at the moment..."}
     }
 
+{*
 document {
     Key => {(trackSegment,PolySystem,Number,Number,List), trackSegment},
     Headline => "track the one-parametric homotopy",
     "Tracks a homotopy on a linear segment in complex plane..",
     Caveat => {"Experimental: implemented only with SLPs at the moment!!!"}
     }
+*}
 
 document {
     Key => {(solveGenericSystemInTorus,List), solveGenericSystemInTorus, (solveGenericSystemInTorus,PolySystem)},

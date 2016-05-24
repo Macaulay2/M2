@@ -4,8 +4,8 @@
 -- A collection of algorithms that use NumericalAlgebraicGeometry and related packages. 
 newPackage select((
      "NAGtools",
-     Version => "1.8",
-     Date => "August 2015",
+     Version => "1.9",
+     Date => "Apr 2016",
      Headline => "Tools of NumericalAlgebraicGeometry",
      HomePage => "http://people.math.gatech.edu/~aleykin3/NAG4M2",
      AuxiliaryFiles => false,
@@ -17,8 +17,8 @@ newPackage select((
      PackageImports => {},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true
-     --DebuggingMode => false
+     --DebuggingMode => true
+     DebuggingMode => false
      ), x -> x =!= null)
 
 -- Any symbols or functions that the user is to have access to
@@ -26,12 +26,13 @@ newPackage select((
 export {
     "preimageViaMonodromy",
     "gateHomotopy4preimage",
-    "parametricSegmentHomotopy",
     "RandomPointFunction",
     "StoppingCriterion"    
     }
 exportMutable {
     }
+
+debug NAGtypes
 
 -- Monodromy-based algorithm
 -- in: 
@@ -39,7 +40,7 @@ exportMutable {
 --     p0, Point, values of m parameters (assumed generic)
 --     s0, a nonempty list of points, solutions of PH_(p0,*)(0)
 --     RandomPointFunction, a function that returns a random point p1 suitable for PH  
-preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+preimageViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3),Precision=>DoublePrecision})
 preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := transpose matrix point0; 
@@ -52,21 +53,22 @@ preimageViaMonodromy (ParameterHomotopy, Point, List) := o -> (PH,point0,s0) -> 
     same := 0;
     dir := temporaryFileName(); -- build a directory to store temporary data 
     makeDirectory dir;
-    << "--backup directory created: "<< toString dir << endl;  
+    << "--backup directory created: "<< toString dir << endl;
+    opts := new OptionTable from {Precision=>o.Precision}; 
     while not o.StoppingCriterion(same,sols0) do --try 
     (
     	p1 := transpose matrix nextP();
     	p2 := transpose matrix nextP();
-	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0);
+	elapsedTime sols1 := trackHomotopy(specialize(PH,p0||p1),sols0,opts);
 	sols1 = select(sols1, s->status s === Regular);
 	<< "  H01: " << #sols1 << endl;
-	elapsedTime sols2 := trackHomotopy(specialize(PH,p1||p2),sols1);
+	elapsedTime sols2 := trackHomotopy(specialize(PH,p1||p2),sols1,opts);
 	sols2 = select(sols2, s->status s === Regular);
 	<< "  H12: " << #sols2 << endl;
-    	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2);
+    	elapsedTime sols0' := trackHomotopy(specialize(PH,p2||p0),sols2,opts);
 	sols0' = select(sols0', s->status s === Regular);
 	<< "  H20: " << #sols0' << endl;
-	elapsedTime sols0 = solutionsWithMultiplicity(sols0 | sols0'); -- take the union	
+	elapsedTime sols0 = clusterSolutions(sols0 | sols0'); -- take the union	
 	if #sols0 == nSols then same = same + 1 else (
 	    nSols = #sols0; 
 	    same = 0;
@@ -109,23 +111,8 @@ gateHomotopy4preimage(GateMatrix,GateMatrix,List,List) := (F,S,V,W) -> (
     gateHomotopy(H,matrix{V},t,Parameters=>A|B)
     )
 
--- Parameter homotopy for tracking a point on the fiber of a covering (generically finite-to-one onto) map 
--- in: 
---     S, polynomials desribing a subvariety of CC^(V,W)
---     V, variables (list of InputGates)
---     W, parameter variables
--- out: 
---     Homotopy that has A_w and B_w as parameters, 
---     	       	      where v in V|W  are coordinates of the source space 
-parametricSegmentHomotopy = method()
-parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
-    A := matrix{apply(W, w->inputGate symbol A_w)};
-    B := matrix{apply(W, w->inputGate symbol B_w)};
-    t := inputGate symbol t;
-    H := sub(S,matrix{W},(1-t)*A+t*B);
-    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
-    )
 TEST ///
+setRandomSeed 1
 X = inputGate x
 F = matrix{{X^2}} 
 PH = gateHomotopy4preimage(F,{X})
@@ -139,3 +126,16 @@ assert areEqual(norm evaluateHx(SPH,p,0), 2)
 peek PH.GateHomotopy    
 assert (#preimageViaMonodromy(PH,point p,{point p}) == 2)
 ///
+
+beginDocumentation()
+undocumented{
+preimageViaMonodromy,
+(preimageViaMonodromy,ParameterHomotopy,Point,List),
+gateHomotopy4preimage,
+(gateHomotopy4preimage,GateMatrix,GateMatrix,List,List),
+(gateHomotopy4preimage,GateMatrix,List),
+(gateHomotopy4preimage,GateMatrix,List,List),
+StoppingCriterion,
+RandomPointFunction
+    }
+endPackage "NAGtools" 

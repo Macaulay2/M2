@@ -9,14 +9,19 @@
 template <typename ValueType>
 void MonomialHashTable<ValueType>::reset()
 {
+  // best so far
+  if (count > 0)
+    {
+      //dump();
+      //fprintf(stderr, "hashtab reset: size = %ld, count = %ld\n", size, count);
+      memset(hashtab, 0, sizeof(value) * size);
+    }
+
   count = 0;
   nclashes = 0;
   max_run_length = 0;
   monequal_count = 0;
   monequal_fails = 0;
-  //  bzero(hashtab, sizeof(value) * size);
-  for (unsigned long i=0; i<size; i++)
-    hashtab[i] = 0;
 }
 
 template <typename ValueType>
@@ -26,7 +31,8 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
   size = (1<<logsize);
   //threshold = size/3; // was 2*size/3
   threshold = 2*size/3; // was 2*size/3
-  hashtab = newarray(value, size);
+  threshold = size/16; // was 2*size/3  
+  hashtab = new value[size];
   hashmask = size-1;
   reset();
 }
@@ -50,7 +56,7 @@ template <typename ValueType>
 void MonomialHashTable<ValueType>::grow()
 {
   // Increase logsize, reset fields, and repopulate new hash table.
-  dump();
+  if (M2_gbTrace >= 2) dump();
   value *oldtab = hashtab;
   long oldsize = size;
   initialize(logsize+1);
@@ -69,13 +75,11 @@ MonomialHashTable<ValueType>::MonomialHashTable(const ValueType *M0, int logsize
 template <typename ValueType>
 MonomialHashTable<ValueType>::~MonomialHashTable()
 {
-  deletearray(hashtab);
+  delete [] hashtab;
 }
 
 template <typename ValueType>
 bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
-  // return true if the value already exists in the table.
-  // otherwise, result is set to the new value.
 {
   long hashval = HASHVALUE(m) & hashmask;
   if (!hashtab[hashval])
@@ -161,7 +165,10 @@ void MonomialHashTable<ValueType>::show() const
 }
 
 template class MonomialHashTable<MonomialInfo>;
-
+template class MonomialHashTable<MonomialsWithComponent>;
+template class MonomialHashTable<MonomialsIgnoringComponent>;
+template class MonomialHashTable<ResMonomialsWithComponent>;
+template class MonomialHashTable<ResMonomialsIgnoringComponent>;
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

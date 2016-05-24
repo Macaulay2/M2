@@ -2834,7 +2834,7 @@ doc ///
 	 I2: Ideal
 	Description
 	 Text
-	  Get the double dual (S2 - identification) of an ideal.  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
+	  Returns an ideal isomorphic to Hom(I, R).  If KnownNormal is false (default is true), then the computer will first check whether the ambient ring is normal, if it is not then it will perform a (possibly) slower check that will definitely give the right answer.
 	 Example
 	  R = QQ[x,y,z]/ideal(x^2-y*z)
 	  m = ideal(x,y,z)

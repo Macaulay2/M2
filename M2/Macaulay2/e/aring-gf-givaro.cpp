@@ -3,8 +3,6 @@
 #include "aring-gf-givaro.hpp"
 #include "error.h"
 
-#if defined(HAVE_FFLAS_FFPACK) && defined(HAVE_GIVARO)
-
 #include "ringmap.hpp"
 
 // Uncomment the following line to see debugging output
@@ -678,7 +676,6 @@ int ARingGFGivaro::compare_elems(const ElementType f, const ElementType g) const
 
 };
 
-#endif
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
 // indent-tabs-mode: nil

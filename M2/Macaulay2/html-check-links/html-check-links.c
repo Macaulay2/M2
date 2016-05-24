@@ -9,7 +9,7 @@ int abs_links = TRUE;
 int verbose = FALSE;
 extern FILE *yyin, *yyout;
 extern int yyparse(void);
-#ifdef DEBUG
+#ifndef NDEBUG
 extern int yydebug;
 #endif
 
@@ -99,7 +99,7 @@ static void process(char *f) {
 
 int main(int argc, char **argv) {
   int i = 1;
-# ifdef DEBUG
+# ifndef NDEBUG
   /*    yydebug = 1; */
 # endif
   GC_init();

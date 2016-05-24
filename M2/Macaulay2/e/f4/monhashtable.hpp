@@ -4,6 +4,55 @@
 #define _monhashtable_h_
 
 #include "moninfo.hpp"
+#include "res-moninfo.hpp"
+
+class MonomialsWithComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsWithComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
+class ResMonomialsWithComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsWithComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
+
+class MonomialsIgnoringComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  MonomialsIgnoringComponent(const MonomialInfo& MI) : mMonoid(MI) {}
+private:
+  const MonomialInfo& mMonoid;
+};
+
+class ResMonomialsIgnoringComponent {
+public:
+  typedef packed_monomial value;
+  long hash_value(value m) const { return m[0]; }
+  bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsIgnoringComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
 
 // ValueType must implement the following:
 // values should have computed hash values stored with them
@@ -37,7 +86,7 @@ private:
   void initialize(int logsize0);
 public:
 
-  MonomialHashTable(const ValueType *M0, int logsize = 16);
+  MonomialHashTable(const ValueType *M0, int logsize = 24);
   // The hash table size will be a power of 2, and this
   // is the initial power.
 
@@ -49,8 +98,9 @@ public:
   // BUT: the size is kept the same.
 
   bool find_or_insert(value m, value &result);
-  // return true if the value already exists in the table.
-  // otherwise, result is set to the new value.
+  // If the pointer m is in the hashtable already, then return true,
+  // set result to the already existing pointer.  If m is not yet in
+  // the hashtable, insert it, set result to be m, and return false;
 
   void dump() const;
   // displays on stderr some info about the hash table

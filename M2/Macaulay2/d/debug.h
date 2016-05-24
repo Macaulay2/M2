@@ -1,7 +1,7 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_ 1
 
-#ifdef DEBUG
+#ifndef NDEBUG
 
 #if defined(__cplusplus)
 extern "C" {
@@ -14,11 +14,11 @@ extern "C" {
   extern void trapchk(void *);
   extern int badBlock();
 
-#ifdef DEBUG
+#ifndef NDEBUG
   static __attribute__ ((unused)) void debug_version() {}
 #endif
 
-#ifdef GC_DEBUG
+#ifndef NDEBUG
   extern void GC_check(void *);
   extern void gmp_GC_check(void *);
 # define GC_CHECK(p) GC_check((void *)p)

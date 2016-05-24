@@ -82,6 +82,7 @@ Units
 NautyGraphs
 VersalDeformations
 CharacteristicClasses
+RandomIdeal
 RandomObjects
 RandomPlaneCurves
 RandomSpaceCurves
@@ -95,6 +96,7 @@ EliminationMatrices
 EllipticIntegrals
 Triplets
 CompleteIntersectionResolutions
+MCMApproximations
 MultiplierIdeals
 InvariantRing
 QuillenSuslin
@@ -119,6 +121,10 @@ M0nbar
 AnalyzeSheafOnP1
 MultiplierIdealsDim2
 RunExternalM2
-SLPexpressions
 NumericalSchubertCalculus
 ToricTopology
+Cremona
+MultipolynomialResultants
+VectorFields
+SLPexpressions
+Miura

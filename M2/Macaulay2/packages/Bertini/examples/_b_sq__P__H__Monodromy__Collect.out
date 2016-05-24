@@ -1,0 +1,95 @@
+-- -*- M2-comint -*- {* hash: -821716398 *}
+
+i1 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+
+i3 : writeStartFile(storeBM2Files,{{1,0}},NameStartFile=>"startSave");
+
+i4 : writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters");
+
+i5 : makeB'InputFile(storeBM2Files,
+         B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+
+o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94908-0/0/input
+
+o5 : File
+
+i6 : b'PHMonodromyCollect(storeBM2Files,
+         NameStartFile=>"startSave",
+         NameSolutionsFile=>"simple_raw_solutions",
+         NumberOfLoops=>10,NumSolBound=>3,
+         MonodromyStartParameters=>{1,0}        )
+/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94908-0/0/
+(Monodromy loop number, 1)
+bertini
+bertini
+bertini
+(Number of solutions found, 1)
+(Monodromy loop number, 2)
+bertini
+bertini
+bertini
+(Number of solutions found, 2)
+(Monodromy loop number, 3)
+bertini
+bertini
+bertini
+(Number of solutions found, 2)
+(Monodromy loop number, 4)
+bertini
+bertini
+bertini
+(Number of solutions found, 2)
+(Monodromy loop number, 5)
+bertini
+bertini
+bertini
+(Number of solutions found, 3)
+Number of loops: 5
+NumSolBound has been reached
+
+o6 = {{1, -.5-.866025*ii}, {1, -.5+.866025*ii}, {1,
+     ------------------------------------------------------------------------
+     -3.76262e-16-5.27289e-16*ii}}
+
+o6 : List
+
+i7 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+
+i9 : makeB'InputFile(storeBM2Files,
+         B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+
+o9 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94908-0/0/input
+
+o9 : File
+
+i10 : b'PHMonodromyCollect(storeBM2Files,
+          StorageFolder=>"StoreFiles",
+          MonodromyStartPoints=>{{1,0}},
+          NumberOfLoops=>10,NumSolBound=>3,
+          MonodromyStartParameters=>{1,0}        )
+/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94908-0/0/
+(Monodromy loop number, 1)
+bertini
+bertini
+bertini
+(Number of solutions found, 1)
+(Monodromy loop number, 2)
+bertini
+bertini
+bertini
+(Number of solutions found, 2)
+(Monodromy loop number, 3)
+bertini
+bertini
+bertini
+(Number of solutions found, 3)
+Number of loops: 3
+NumSolBound has been reached
+
+o10 = {{1, -.5-.866025*ii}, {1, -.5+.866025*ii}, {1,
+      -----------------------------------------------------------------------
+      -3.43721e-16+8.69481e-17*ii}}
+
+o10 : List
+
+i11 : 

@@ -1,34 +1,45 @@
--- -*- M2-comint -*- {* hash: -986030195 *}
+-- -*- M2-comint -*- {* hash: 602893544 *}
 
-i1 : R=QQ[x,y,t1,t2]
-
-o1 = R
-
-o1 : PolynomialRing
-
-i2 : makeB'InputFile(storeBM2Files, PG=>{t1,t2},AVG=>{{x,y}},
+i1 : makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
          B'Configs=>{{"PARAMETERHOMOTOPY",1}},
-         B'Polynomials=>{x^2-t1,y-t2})
+         B'Polynomials=>{"x^2-t1","y-t2"})
 
-o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62300-0/0/input
+o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94958-0/0/input
 
-o2 : File
+o1 : File
 
-i3 : runBertini(storeBM2Files)
+i2 : runBertini(storeBM2Files,PreparePH2=>true)
 bertini
 
-i4 : moveFile(storeBM2Files|"/finite_solutions",storeBM2Files|"/start")
+i3 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
+bertini
+bertini
 
-i5 : makeB'InputFile(storeBM2Files, PG=>{t1,t2},AVG=>{{x,y}},
-         B'Configs=>{{"PARAMETERHOMOTOPY",2}},
-         B'Polynomials=>{x^2-t1,y-t2})
+i4 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions1")
 
-o5 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62300-0/0/input
+o4 = {{-1, 1}, {1, 1}}
+
+o4 : List
+
+i5 : makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
+         B'Configs=>{{"PARAMETERHOMOTOPY",1}},
+         B'Polynomials=>{"x^2-t1","y-t2"})
+
+o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94958-0/0/input
 
 o5 : File
 
-i6 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
+i6 : runBertini(storeBM2Files,PreparePH2=>true)
+bertini
+
+i7 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true,StorageFolder=>"StoreMyFiles")
 bertini
 bertini
 
-i7 : 
+i8 : importSolutionsFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameSolutionsFile=>"nonsingular_solutions1")
+
+o8 = {{-1, 1}, {1, 1}}
+
+o8 : List
+
+i9 : 

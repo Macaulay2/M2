@@ -18,6 +18,7 @@
 struct MonomialOrdering;
 #include "varpower-monomial.hpp"
 #include "ntuple-monomial.hpp"
+#include "../skew.hpp"
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?
@@ -126,6 +127,14 @@ public:
     return true;
   }
 
+  int skew_vars(const SkewMultiplication* skew, const_packed_monomial m, int* skewvars) const {
+    return skew->skew_vars(m + 2 + nweights, skewvars);
+  }
+
+  int skew_mult_sign(const SkewMultiplication* skew, const_packed_monomial m, const_packed_monomial n) const {
+    return skew->mult_sign(m + 2 + nweights, n + 2 + nweights);
+  }
+  
   bool one(long comp, packed_monomial result) const {
     // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account ???
@@ -221,6 +230,16 @@ public:
     return true;
   }
 
+  bool monomial_part_is_equal(const_packed_monomial m, const_packed_monomial n) const {
+    ncalls_is_equal++;
+    if (*m++ != *n++) return false;
+    m++; n++;
+    for (int j=nslots-2; j>0; --j)
+      if (*m++ != *n++) return false;
+    ncalls_is_equal_true++;
+    return true;
+  }
+
   bool check_monomial(const_packed_monomial m) const {
     // Determine if m represents a well-formed monomial.
     m++;
@@ -239,6 +258,25 @@ public:
     for (int j=nslots; j>0; --j) *result++ = *m++ - *n++;
   }
 
+  bool divide(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
+    ncalls_divide++;
+    // First, divide monomials
+    // Then, if the division is OK, set the component, hash value and rest of the monomial
+    if (m[1] != n[1]) // components are not equal
+      return false;
+    const_packed_monomial m1 = m+nslots;
+    const_packed_monomial n1 = n+nslots;
+    packed_monomial result1 = result+nslots;
+    for (int i=nslots-2; i>0; i--) {
+      varpower_word cmp = *--m1 - *--n1;
+      if (cmp < 0) return false;
+      *--result1 = cmp;
+    }
+    result[1] = 0; // the component of a division is in the ring (comp 0).
+    result[0] = m[0] - n[0]; // subtract hash codes
+    return true;
+  }
+
   bool mult(const_packed_monomial m, const_packed_monomial n, packed_monomial result) const {
     unchecked_mult(m,n,result);
     return check_monomial(result);
@@ -247,6 +285,8 @@ public:
   monomial_word monomial_weight(const_packed_monomial m, const M2_arrayint wts) const;
 
   void show(const_packed_monomial m) const;
+
+  void showAlpha(const_packed_monomial m) const;
 
   int compare_grevlex(const_packed_monomial m, const_packed_monomial n) const {
     ncalls_compare++;
@@ -258,6 +298,37 @@ public:
       if (cmp > 0) return 1;
     }
     monomial_word cmp = m[1]-n[1];
+    if (cmp < 0) return 1;
+    if (cmp > 0) return -1;
+    return 0;
+  }
+
+  int compare_schreyer(const_packed_monomial m, const_packed_monomial n,
+                       const_packed_monomial m0, const_packed_monomial n0,
+                       long tie1, long tie2) const {
+    ncalls_compare++;
+    #if 0
+    printf("compare_schreyer: ");
+    printf("  m=");
+    showAlpha(m);
+    printf("  n=");    
+    showAlpha(n);
+    printf("  m0=");    
+    showAlpha(m0);
+    printf("  n0=");    
+    showAlpha(n0);
+    printf("  tiebreakers: %ld %ld\n", tie1, tie2);
+    #endif
+    const_packed_monomial m1 = m+nslots;
+    const_packed_monomial n1 = n+nslots;
+    const_packed_monomial m2 = m0+nslots;
+    const_packed_monomial n2 = n0+nslots;
+    for (int i=nslots-2; i>0; i--) {
+      varpower_word cmp = *--m1 - *--n1 + *--m2 - *--n2;
+      if (cmp < 0) return -1;
+      if (cmp > 0) return 1;
+    }
+    monomial_word cmp = tie1-tie2;
     if (cmp < 0) return 1;
     if (cmp > 0) return -1;
     return 0;
@@ -393,6 +464,14 @@ public:
     return false;
   }
 
+  void variable_as_vp(int v,
+                      varpower_monomial result) const
+  {
+    result[0] = 1;
+    result[1] = v;
+    result[2] = 1;
+  }
+  
   void quotient_as_vp(const_packed_monomial a,
                       const_packed_monomial b,
                       varpower_monomial result,

@@ -22,10 +22,11 @@ protected:
   // If the stop conditions in stop_ are inappropriate,
   // return false, and use ERROR(...) to provide an error message.
 
-  void betti_init(int lo, int hi, int len, int *&bettis) const;
-  M2_arrayint betti_make(int lo, int hi, int len, int *bettis) const;
-
-  void betti_display(buffer &o, M2_arrayint a) const;
+public:
+  // These three routines should be moved to a utility class
+  static void betti_init(int lo, int hi, int len, int *&bettis);
+  static M2_arrayint betti_make(int lo, int hi, int len, int *bettis);
+  static void betti_display(buffer &o, M2_arrayint a);
 public:
   virtual ResolutionComputation * cast_to_ResolutionComputation() { return this;}
 
@@ -53,6 +54,9 @@ public:
   ////////////////////////////////
   virtual const Matrix /* or null */ *get_matrix(int level) = 0;
 
+  virtual MutableMatrix /* or null */ *get_matrix(int level, int degree);
+  // the default version gives an error that it isn't defined
+
   virtual const FreeModule /* or null */ *get_free(int level) = 0;
 
   virtual M2_arrayint get_betti(int type) const = 0;
@@ -66,29 +70,6 @@ public:
   // This displays statistical information, and depends on the
   // M2_gbTrace value.
 
-};
-
-class EngineResolutionComputation : public EngineComputation
-// This is the base type for all resolution computations
-{
-protected:
-  ResolutionComputation *C;
-protected:
-  EngineResolutionComputation(ResolutionComputation *C);
-  virtual ~EngineResolutionComputation();
-public:
-  virtual EngineResolutionComputation * cast_to_EngineResolutionComputation() { return this;}
-
-  static EngineResolutionComputation * create(ResolutionComputation *C0);
-
-  virtual void destroy();
-
-  virtual void start_computation();
-
-  virtual long complete_thru_degree() const;
-  // The computation is complete up through this slanted degree.
-
-  ResolutionComputation *get_ResolutionComputation() { return C; }
 };
 
 

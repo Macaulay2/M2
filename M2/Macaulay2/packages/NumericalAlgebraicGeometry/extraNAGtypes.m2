@@ -4,20 +4,44 @@
 -- (common types are in ../NAGtypes.m2 
 ------------------------------------------------------
 
-export{ "GateHomotopy", "GateParameterHomotopy", "gateHomotopy" }
+export{ 
+    "GateHomotopy", "GateParameterHomotopy", "gateHomotopy", "parametricSegmentHomotopy"
+    }
 
 debug SLPexpressions
 
 ----------------------------------
--- GateHomotopy
+-- GateHomotopy (::Homotopy::MutableHashTable)
+-- keys: 
+--   "X", GateMatrix: a row of X variables
+--   "T", Gate: the continuation parameter  
+--   "H", "Ht","Hx"; GateMatrix: matrix, derivatives
+--   "EH", "EHx", "EHt", "EHxt", "EHxH"; Evaluators: top-level evaluators
+--   K, a ring: rawEvaluator for the ring
+GateHomotopy = new Type of Homotopy    
+GateParameterHomotopy = new Type of ParameterHomotopy
 
-GateHomotopy := new Type of Homotopy    
-GateParameterHomotopy := new Type of ParameterHomotopy
+numVars = method()
+numVars GateHomotopy := H->numcols H#"X"
+numVars ParameterHomotopy := H->numcols H.GateHomotopy#"X" - numcols H.Parameters
+numVars SpecializedParameterHomotopy := H -> numVars H.ParameterHomotopy 
+ 
 
--- !!! DUMMY engine function
-makeRawHomotopy = S -> null
+canHaveRawHomotopy = method()
+canHaveRawHomotopy Thing := T -> false 
+canHaveRawHomotopy GateHomotopy := H -> H.Software == M2engine
+canHaveRawHomotopy SpecializedParameterHomotopy := H -> canHaveRawHomotopy H.ParameterHomotopy.GateHomotopy
 
-gateHomotopy = method(Options=>{Parameters=>null,Software=>null})
+debug Core
+getRawHomotopy = method() 
+getRawHomotopy(GateHomotopy,Ring) := (GH,K) -> if GH#?K then GH#K else GH#K = --(GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorK(e,K)) // rawHomotopy
+    rawHomotopy(rawSLEvaluatorK(GH#"EHx",K),rawSLEvaluatorK(GH#"EHxt",K),rawSLEvaluatorK(GH#"EHxH",K)) 
+getRawHomotopy(SpecializedParameterHomotopy,Ring) := (H,K) -> if H#?K then H#K else (
+    GH := H.ParameterHomotopy.GateHomotopy;
+    paramsK := raw mutableMatrix promote(H.Parameters,K);
+    H#K = (GH#"EHx",GH#"EHxt",GH#"EHxH") / (e->rawSLEvaluatorSpecialize(rawSLEvaluatorK(e,K),paramsK)) // rawHomotopy 
+    )
+gateHomotopy = method(Options=>{Parameters=>null,Software=>null,Strategy=>compress})
 gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     para := o.Parameters=!=null;
     soft := if o.Software=!=null then o.Software else DEFAULT.Software;
@@ -28,23 +52,28 @@ gateHomotopy (GateMatrix, GateMatrix, InputGate) := o->(H,X,T) -> (
     GH#"H" = H;
     GH#"Hx" = diff(X,H);
     GH#"Ht" = diff(T,H);
+    if o.Strategy === compress then (
+    	GH#"H" = compress H;
+    	GH#"Hx" = compress GH#"Hx";
+    	GH#"Ht" = compress GH#"Ht";
+	);
     GH.Software = soft;
     if soft === M2 then (
 	)
     else if soft === M2engine then (
 	varMat := X | matrix{{T}};
 	if para then varMat = o.Parameters | varMat;
-    	GH#"EH" = makeEvaluator(H,varMat);
-    	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
-    	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
+	GH#"EH" = makeEvaluator(H,varMat);
+	GH#"EHx" = makeEvaluator(GH#"Hx",varMat);
+	GH#"EHt" = makeEvaluator(GH#"Ht",varMat);
 	GH#"EHxt" = makeEvaluator(GH#"Hx"|GH#"Ht",varMat);
 	GH#"EHxH" = makeEvaluator(GH#"Hx"|GH#"H",varMat);
-	GH#"RawHomotopy" = (GH#"EHx",GH#"EHt",GH#"EHxH") / rawSLEvaluatorK // makeRawHomotopy;
 	)
     else error "uknown Software option value";
     if para then (
 	GPH := new GateParameterHomotopy;
 	GPH.GateHomotopy = GH;
+	GPH.Parameters = o.Parameters;
 	GPH
 	) 
     else GH
@@ -78,21 +107,117 @@ evaluateH (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> 
 evaluateHt (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHt(H.GateHomotopy,parameters||x,t)
 evaluateHx (GateParameterHomotopy,Matrix,Matrix,Number) := (H,parameters,x,t) -> evaluateHx(H.GateHomotopy,parameters||x,t)
 
--- !!! DUMMY engine function
-specializeRawHomotopy = (H,M) -> H 
-
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> specialize(PH, mutableMatrix M)
 specialize (GateParameterHomotopy,MutableMatrix) := (PH, M) -> (                                                                                                         
-    SPH := new SpecializedParameterHomotopy;                                                                                                                  
+    if numcols M != 1 then error "1-column matrix expected"; 
+    if numcols PH.Parameters != numrows M then error "wrong number of parameters";  
+    SPH := new SpecializedParameterHomotopy;
     SPH.ParameterHomotopy = PH;                                                                                                                               
     SPH.Parameters = M;                                                                                                                                       
-    if PH#?"RawHomotopy" then SPH#"RawHomotopy" = specializeRawHomotopy(PH#"RawHomotopy",M);
     SPH                                                                                                                                                       
     ) 
 
+getVarGates = method()
+getVarGates PolynomialRing := R -> if R#?"var gates" then R#"var gates" else R#"var gates" = apply(gens R, v->inputGate [v])
+
+makeGateMatrix = method(Options=>{Parameters=>{}})
+makeGateMatrix PolySystem := o -> F -> (
+    R := ring F; 
+    if not isSubset(o.Parameters, gens R) then "parameters do appear in the ring";
+    X := getVarGates R;
+    F.Variables = X_(positions(gens R, x->not member(x,o.Parameters)));  
+    F.NumberOfVariables = #F.Variables; -- reconsile 
+    F.Parameters =X_(positions(gens R, x->member(x,o.Parameters)));
+    polys := flatten entries F.PolyMap;
+    -- one naive way of converting a sparse system to a circuit  
+    F.GateMatrix = gateMatrix apply(polys, p->{ sumGate apply(listForm p,mc->(
+		    (m,c) := mc;
+		    c*product(#m,i->X#i^(m#i))
+		    )) }
+    	)   
+    ) 
+ 
+gateMatrix PolySystem := F -> if F.?GateMatrix then F.GateMatrix else makeGateMatrix F
+
+-- Homotopy that follows a segment in the parameter space 
+parametricSegmentHomotopy = method()
+
+-- in:
+--     F, PolySystem (F.GateMatrix, F.Variables, F.Parameters are assumed to be set)
+-- in-place: 
+--     the output is stored in F.GateParameterHomotopy
+-- out:
+--     GateParameterHomotopy
+parametricSegmentHomotopy PolySystem := F -> if F.?GateParameterHomotopy then F.GateParameterHomotopy else     
+    parametricSegmentHomotopy(F.GateMatrix,F.Variables,F.Parameters)    
+
+-- in: 
+--     S, polynomials (GateMatrix)
+--     V, variables (list of InputGates)
+--     W, parameters
+-- out: 
+--     Homotopy that has A_w and B_w as parameters, 
+--     	       	      where v in V|W  are coordinates of the source space 
+parametricSegmentHomotopy(GateMatrix,List,List) := (S,V,W) -> (
+    A := matrix{apply(W, w->inputGate symbol A_w)};
+    B := matrix{apply(W, w->inputGate symbol B_w)};
+    t := inputGate symbol t;
+    H := sub(S,matrix{W},(1-t)*A+t*B);
+    gateHomotopy(H,matrix{V},t,Parameters=>A|B)
+    )
+TEST /// 
+debug needsPackage "NumericalAlgebraicGeometry"
+R = CC[x,y,a]
+PS = polySystem {x^2+y^2-1, x+a*y, (a^2+1)*y^2-1}
+PS.NumberOfVariables = 2 -- hack!!!
+squarePS = squareUp PS
+makeGateMatrix(squarePS,Parameters=>drop(gens R,2))  
+PH := parametricSegmentHomotopy squarePS
+a0 = 0; a1 = 1;
+H = specialize (PH, transpose matrix{{a0,a1}})
+s'sols = { {{0,1}},{{0,-1}} }/point
+time sols = trackHomotopy(H,s'sols)
+assert areEqual(sols,{{ { -.707107, .707107}, SolutionStatus => Regular }, { {.707107, -.707107}, SolutionStatus => Regular }} / point)
+///
+
+TEST ///
+needsPackage "NAGtools"
+X = inputGate x
+F = matrix{{X^2}} 
+PH = gateHomotopy4preimage(F,{X})
+K = CC_53
+H = specialize (PH, transpose matrix{{1_K,2}})
+time sols = trackHomotopy(H,{point{{1_K}}})
+///
+
+TEST ///
+needsPackage "NumericalAlgebraicGeometry"
+CC[x,y]
+S = polySystem {x^2+y^2-6, 2*x^2-y}
+debug SLPexpressions
+debug NumericalAlgebraicGeometry
+gS = gateMatrix S
+p = point {{1.0+3*ii,2.3+ii}};
+X = getVarGates ring S
+vals = valueHashTable(X, coordinates p)
+assert(evaluate(S,p) == value(gS,vals))
+assert(evaluate(jacobian S, p)== value(diff(matrix{X},gS),vals))
+///
+
+segmentHomotopy = method(Options=>{gamma=>1})
+segmentHomotopy (List, List) := o -> (S,T) -> segmentHomotopy(polySystem S, polySystem T, o)
+segmentHomotopy (PolySystem, PolySystem) := o -> (S,T) -> (
+    R := ring T;
+    if R =!= ring S then error "systems in the same ring expected";  
+    t := local t;
+    tt := inputGate [t];
+    gateHomotopy(o.gamma*(1-tt)*gateMatrix S + tt*gateMatrix T, 
+	gateMatrix{getVarGates R}, tt, Strategy=>compress)
+    )
 -------------------------------------------------------
 -- trackHomotopy tests
 TEST /// 
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -118,6 +243,8 @@ assert (norm evaluatePreSLP(preH, coordinates s|{1}) < 1e-6)
 ///
 
 TEST ///-- Homotopy
+restart
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -155,10 +282,13 @@ gH = transpose matrix {H}
 HS = gateHomotopy(gH,gV,T)
 s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2)
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
+s = first trackHomotopy(HS,{matrix{{1_CC},{1}}},Software=>M2engine)
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-4)
 ///
 
 TEST /// -- ParameterHomotopy
-needsPackage "SLPexpressions"
+restart
+needsPackage "NumericalAlgebraicGeometry"
 X = inputGate symbol X
 Y = inputGate symbol Y
 T = inputGate symbol T
@@ -177,6 +307,36 @@ PHS = gateHomotopy(gH,gV,T,Parameters=>gP)
 HS = specialize(PHS,matrix{{1_CC}})
 x0 = matrix{{1_CC},{1}}
 s = first trackHomotopy(HS,{x0},Software=>M2)
+peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+s = first trackHomotopy(HS,{x0},Software=>M2engine)
+peek s
+assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
+///
+
+TEST ///
+restart
+debug needsPackage "NumericalAlgebraicGeometry"
+X = inputGate symbol X
+Y = inputGate symbol Y
+T = inputGate symbol T
+K = CC
+R = K[x,y,t] 
+F = {X*X-1, Y*Y-1}
+G = {X*X+Y*Y-1, -X*X+Y}
+H = (1 - T) * F + T * G
+Rvars = valueHashTable({X,Y,T},{x,y,t})
+gV = matrix{{X,Y}}
+gH = transpose matrix {H}
+
+HS = gateHomotopy(gH,gV,T)
+inp = matrix{{1_CC},{1}}
+s = first trackHomotopy(HS,{inp},Software=>M2engine)
+peek s
+
+NAGtrace 2
+inpCCC = sub(inp,CC_1000) 
+s = first trackHomotopy(HS,{inpCCC},Software=>M2engine)
 peek s
 assert (norm evaluateH(HS, transpose matrix s, 1) < 1e-6)
 ///

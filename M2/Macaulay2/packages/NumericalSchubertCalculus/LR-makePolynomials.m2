@@ -1,4 +1,4 @@
-if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions" else GateMatrix = List
+if version#"VERSION" >= "1.8.2.1" then needsPackage "SLPexpressions" else GateMatrix = List
 needsPackage "NAGtypes"
 ---------------------------------
 -- squareUpPolynomials
