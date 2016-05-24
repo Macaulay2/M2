@@ -71,8 +71,8 @@ foreach my $file (@polytopeFiles){
    eval{
       my $P = load($split[0]);
       print $P->FEASIBLE,"\n";
-      if($P->BOUNDED){
-         print FILE, lattice_point_test($file);
+      if($P->BOUNDED && $P->DIM > 3){
+         print FILE lattice_point_test($split[0]);
       }
    };
    $i++;
