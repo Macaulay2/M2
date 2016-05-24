@@ -112,7 +112,7 @@ posHull(Cone,Cone) := (C1,C2) -> (
 	-- Checking for input errors
 	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	-- Combining the rays and the lineality spaces into one matrix each
-	R := C1#"rays" | C2#"rays";
+	R := rays(C1) | rays(C2);
 	LS := C1#"linealitySpace" | C2#"linealitySpace";
 	dualgens := fourierMotzkin(R,LS);
 	local genrays;
@@ -318,5 +318,5 @@ isFace(Cone,Cone) := (C1,C2) -> (
 dualCone = method(TypicalValue => Cone)
 dualCone Cone := C -> (
 	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
-	dualgens := (sort (-(C#"rays")),sort C#"linealitySpace");
+	dualgens := (sort (-(rays(C))),sort C#"linealitySpace");
 	coneBuilder(genrays,dualgens))

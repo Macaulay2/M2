@@ -57,7 +57,7 @@ linSpace Fan := F -> ((maxCones F)#0)#"linealitySpace"
 
 
 --   INPUT : 'F'  a Fan
-rays Fan := F -> raySort toList F#"rays"
+rays Fan := F -> raySort toList rays(F)
 
 
    
@@ -254,7 +254,7 @@ addCone (Cone,Fan) := (C,F) -> (
      else GC = flatten GC;
      -- If 'C' was added to the Fan as a generating cone then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     rayList := raySort toList F#"rays";
+     rayList := raySort toList rays(F);
      if inserted then (
 	  -- The rays of 'C' have to be added
 	  rm := rays C;

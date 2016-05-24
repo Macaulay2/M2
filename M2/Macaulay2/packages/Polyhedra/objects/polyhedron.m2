@@ -68,7 +68,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
      
 --   INPUT : 'P'  a Polyhedron
 posHull Polyhedron := P -> (
-     Mrays := makePrimitiveMatrix P#"vertices" | P#"rays";
+     Mrays := makePrimitiveMatrix P#"vertices" | rays(P);
      Mlinspace := P#"linealitySpace";
      posHull(Mrays,Mlinspace))
  
@@ -200,7 +200,7 @@ isEmpty Polyhedron := P -> dim P == -1
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
 isCompact = method(TypicalValue => Boolean)
-isCompact Polyhedron := P -> P#"linealitySpace" == 0 and P#"rays" == 0
+isCompact Polyhedron := P -> P#"linealitySpace" == 0 and rays(P) == 0
 
 
 
