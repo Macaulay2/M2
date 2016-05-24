@@ -6,7 +6,7 @@
 contains = method(TypicalValue => Boolean)
 contains(Polyhedron,Polyhedron) := (P,Q) -> (
       -- checking for input errors
-      if P#"ambient dimension" =!= Q#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
+      if ambDim(P) =!= ambDim(Q) then error("Polyhedra must lie in the same ambient space");
       -- Saving the equations of P and vertices/rays of Q
       (A,B) := P#"homogenizedHalfspaces";
       (C,D) := Q#"homogenizedVertices";
@@ -21,7 +21,7 @@ contains(Polyhedron,Polyhedron) := (P,Q) -> (
 --   INPUT : '(C1,C2)'  two Cones
 contains(Cone,Cone) := (C1,C2) -> (
       -- checking for input errors
-      if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
+      if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
       -- Saving the equations of C1 and rays of C2
       (A,B) := C1#"dualgens";
       (C,D) := C2#"genrays";
@@ -37,7 +37,7 @@ contains(Cone,Cone) := (C1,C2) -> (
 --   INPUT : '(C,P)'  a Cone and a Polyhedron
 contains(Cone,Polyhedron) := (C,P) -> (
       -- checking for input errors
-      if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and Polyhedron must lie in the same ambient space");
+      if ambDim(C) =!= ambDim(P) then error("Cone and Polyhedron must lie in the same ambient space");
       -- Saving the equations of C and vertices/rays of P
       M := makePrimitiveMatrix P#"vertices" | P#"rays";
       LS := P#"linealitySpace";
@@ -50,7 +50,7 @@ contains(Cone,Polyhedron) := (C,P) -> (
 --   INPUT : '(P,C)'  a Polyhedron and a Cone
 contains(Polyhedron,Cone) := (P,C) -> (
       -- checking for input errors
-      if C#"ambient dimension" =!= P#"ambient dimension" then error("Polyhedron and Cone must lie in the same ambient space");
+      if ambDim(C) =!= ambDim(P) then error("Polyhedron and Cone must lie in the same ambient space");
       -- Saving the cone 'C' as a polyhedron and using the function on two polyhedra
       Q := coneToPolyhedron C;
       contains(P,Q))
@@ -61,7 +61,7 @@ contains(Polyhedron,Cone) := (P,C) -> (
 --   INPUT : '(P,p)'  a Polyhedron 'P' and a point 'p' given as a matrix
 contains(Polyhedron,Matrix) := (P,p) -> (
       -- checking for input errors
-      if P#"ambient dimension" =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
+      if ambDim(P) =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
       if numColumns p =!= 1 then error("The point must be given as a one row matrix");
       contains(P,convexHull p))
 
@@ -71,7 +71,7 @@ contains(Polyhedron,Matrix) := (P,p) -> (
 --   INPUT : '(C,p)'  a Cone 'C' and a point 'p' given as a matrix
 contains(Cone,Matrix) := (C,p) -> (
       -- checking for input errors
-      if C#"ambient dimension" =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
+      if ambDim(C) =!= numRows p then error("Polyhedron and point must lie in the same ambient space");
       if numColumns p =!= 1 then error("The point must be given as a one row matrix");
       contains(C,convexHull p))
 

@@ -12,7 +12,7 @@ affineImage(Matrix,Polyhedron,Matrix) := (A,P,v) -> (
      -- Checking for input errors
      A = chkZZQQ(A,"linear map");
      v = chkZZQQ(v,"translation vector");
-     if P#"ambient dimension" =!= numColumns A then error("Matrix source must be ambient space");
+     if ambDim(P) =!= numColumns A then error("Matrix source must be ambient space");
      if numRows A =!= numRows v then error("Vector must lie in target space of matrix");
      if numColumns v =!= 1 then error("Second argument must be a vector");
      -- Generating nr of vertices many copies of v
@@ -38,7 +38,7 @@ affineImage(Matrix,Polyhedron) := (A,P) -> (
 --  OUTPUT : A Polyhedron, the translation of 'P' by 'v', i.e. {p+v | p in P} 
 affineImage(Polyhedron,Matrix) := (P,v) -> (
      -- Generating the identity matrix
-     A := map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1);
+     A := map(QQ^(ambDim(P)),QQ^(ambDim(P)),1);
      affineImage(A,P,v))
 
 
@@ -76,7 +76,7 @@ affinePreimage(Matrix,Polyhedron,Matrix) := (A,P,b) -> (
      -- Checking for input errors
      A = chkZZQQ(A,"linear map");
      b = chkZZQQ(b,"translation vector");
-     if P#"ambient dimension" =!= numRows A then error("Matrix source must be ambient space");
+     if ambDim(P) =!= numRows A then error("Matrix source must be ambient space");
      if numRows A =!= numRows b then error("Vector must lie in target space of matrix");
      if numColumns b =!= 1 then error("Second argument must be a vector");
      -- Constructing the new half-spaces and hyperplanes
@@ -100,7 +100,7 @@ affinePreimage(Matrix,Polyhedron) := (A,P) -> (
 --   INPUT : '(P,b)',  where 'b' is a ZZ or QQ one-column matrix describing a point in
 --                     the ambient space of the polyhedron 'P'
 --  OUTPUT : A Polyhedron, the negative translation of 'P' by 'b', i.e. {q | q+b in P} 
-affinePreimage(Polyhedron,Matrix) := (P,b) -> affinePreimage(map(QQ^(P#"ambient dimension"),QQ^(P#"ambient dimension"),1),P,b)
+affinePreimage(Polyhedron,Matrix) := (P,b) -> affinePreimage(map(QQ^(ambDim(P)),QQ^(ambDim(P)),1),P,b)
 
 
 --   INPUT : '(A,C,b)',  where 'A' is a ZZ or QQ matrix from some source space to the 

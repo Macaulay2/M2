@@ -110,7 +110,7 @@ posHull Matrix := R -> (
 --   INPUT : '(C1,C2)'  two cones
 posHull(Cone,Cone) := (C1,C2) -> (
 	-- Checking for input errors
-	if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
+	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	-- Combining the rays and the lineality spaces into one matrix each
 	R := C1#"rays" | C2#"rays";
 	LS := C1#"linealitySpace" | C2#"linealitySpace";
@@ -264,7 +264,7 @@ maxFace (Matrix,Cone) := (v,C) -> minFace(-v,C)
 --  OUTPUT : a Cone, the face of 'P' where 'v' attains its minimum
 minFace (Matrix,Cone) := (v,C) -> (
      -- Checking for input errors
-     if numColumns v =!= 1 or numRows v =!= C#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
+     if numColumns v =!= 1 or numRows v =!= ambDim(C) then error("The vector must lie in the same space as the polyhedron");
      R := rays C;
      LS := linSpace C;
      C = dualCone C;
@@ -305,7 +305,7 @@ inInterior (Matrix,Cone) := (p,C) -> (
 isFace(Cone,Cone) := (C1,C2) -> (
      c := dim C2 - dim C1;
      -- Checking if the two cones lie in the same space and the dimension difference is positive
-     if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
+     if ambDim(C1) == ambDim(C2) and c >= 0 then (
 	  -- Checking if one of the codim 'c' faces of C2 is C1
 	  any(faces(c,C2), f -> f === C1))
      else false)

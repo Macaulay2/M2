@@ -65,7 +65,7 @@ intersection(Matrix,Matrix) := (M,N) -> (
 --  OUTPUT : 'P', the polyhedron that is the intersection of both
 intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking if P1 and P2 lie in the same space
-	if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
+	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
 	-- Combining the Half-spaces and the Hyperplanes
 	M := (halfspaces P1)#0 || (halfspaces P2)#0;
 	v := (halfspaces P1)#1 || (halfspaces P2)#1;
@@ -92,7 +92,7 @@ intersection Matrix := M -> (
 --  OUTPUT : 'C', the Cone that is the intersection of both
 intersection(Cone,Cone) := (C1,C2) -> (
 	-- Checking if C1 and C2 lie in the same space
-	if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same ambient space");
+	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
 	M := halfspaces C1 || halfspaces C2;
 	N := hyperplanes C1 || hyperplanes C2;
 	intersection(M,N))
@@ -129,13 +129,13 @@ intersection List := L -> (
 	  error ("The input must be cones, polyhedra, inequalities, equalities.");
      -- Adding the inequalities and equalities to 'M,v,N,w', depending on the type of 'C'
      if instance(C,Cone) then (
-	  n = C#"ambient dimension";
+	  n = ambDim(C);
 	  Ml = -(halfspaces C);
 	  vl = map(target halfspaces C,ZZ^1,0);
 	  Nl = hyperplanes C;
 	  wl = map(target hyperplanes C,ZZ^1,0))
      else if instance(C,Polyhedron) then (
-	  n = C#"ambient dimension";
+	  n = ambDim(C);
 	  Ml = (halfspaces C)#0;
 	  vl = (halfspaces C)#1;
 	  Nl = (hyperplanes C)#0;

@@ -5,7 +5,7 @@ minkowskiSum = method(TypicalValue => Polyhedron)
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Polyhedron,Polyhedron) := (P1,P2) -> (
      -- Checking for input errors
-     if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same space");
+     if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same space");
      if isEmpty P1 or isEmpty P2 then emptyPolyhedron ambDim P1 else if P1 == P2 then 2 * P1 else if ambDim P1 <= 3 then oldMinkSum(P1,P2) else newMinkSum(P1,P2))
 
 
@@ -135,7 +135,7 @@ newMinkSum = (P,Q) -> (
 --  OUTPUT : The Minkowskisum as a cone
 minkowskiSum(Cone,Cone) := (C1,C2) -> (
      -- Checking for input errors
-     if C1#"ambient dimension" =!= C2#"ambient dimension" then error("Cones must lie in the same space");
+     if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same space");
      -- Saving the vertices and rays
      R := C1#"rays" | C2#"rays";
      LS := C1#"linealitySpace" | C2#"linealitySpace";
@@ -146,7 +146,7 @@ minkowskiSum(Cone,Cone) := (C1,C2) -> (
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Cone,Polyhedron) := (C,P) -> (
      -- Checking for input errors
-     if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and polyhedron must lie in the same space");
+     if ambDim(C) =!= ambDim(P) then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
      V := P#"vertices";
      R := P#"rays" | C#"rays" | C#"linealitySpace" | -(C#"linealitySpace");
@@ -157,7 +157,7 @@ minkowskiSum(Cone,Polyhedron) := (C,P) -> (
 --  OUTPUT : The Minkowskisum as a polyhedron
 minkowskiSum(Polyhedron,Cone) := (P,C) -> (
      -- Checking for input errors
-     if C#"ambient dimension" =!= P#"ambient dimension" then error("Cone and polyhedron must lie in the same space");
+     if ambDim(C) =!= ambDim(P) then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
      V := P#"vertices";
      R := P#"rays" | C#"rays" | C#"linealitySpace" | -(C#"linealitySpace");

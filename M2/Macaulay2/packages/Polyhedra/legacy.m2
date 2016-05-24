@@ -22,11 +22,11 @@ posHull List := L -> (
 	  error ("The input must be cones, polyhedra, rays, or (rays,linSpace).");
      -- Adding the vertices and rays to 'R,LS', depending on the type of 'C'
      if instance(C,Cone) then (
-	  n = C#"ambient dimension";
+	  n = ambDim(C);
 	  R = rays C;
 	  LS = linSpace C)
      else if instance(C,Polyhedron) then (
-	  n = C#"ambient dimension";
+	  n = ambDim(C);
 	  R = makePrimitiveMatrix vertices C | rays C;
 	  LS = linSpace C)
      else if instance(C,Sequence) then (
@@ -83,7 +83,7 @@ polyhedralComplex List := L -> (
      -- Starting with the first Polyhedron in the list and extracting its information
      P := L#0;
      L = drop(L,1);
-     ad := P#"ambient dimension";
+     ad := ambDim(P);
      local PC;
      if instance(P,PolyhedralComplex) then PC = P
      else (
@@ -114,7 +114,7 @@ polyhedralComplex Polyhedron := P -> polyhedralComplex {P}
 addPolyhedron = method(TypicalValue => PolyhedralComplex)
 addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      -- Checking for input errors
-     if P#"ambient dimension" != PC#"ambient dimension" then error("The polyhedra must lie in the same ambient space.");
+     if ambDim(P) != ambDim(PC) then error("The polyhedra must lie in the same ambient space.");
      -- Extracting data
      GP := maxPolyhedra PC;
      d := dim P;
@@ -151,7 +151,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      -- Saving the polyhedral complex
      new PolyhedralComplex from {
 	       "generatingObjects" => set GP,
-	       "ambient dimension" => P#"ambient dimension",
+	       "ambient dimension" => ambDim(P),
 	       "dimension" => dim(GP#0),
 	       "number of generating polyhedra" => #GP,
 	       "vertices" => set verticesList,
@@ -199,17 +199,17 @@ Cone ? Cone := (C1,C2) -> (
 		    if c#?l then symbol > else symbol <)))))
 
 areCompatible(Cone,Cone) := (C1,C2) -> (
-     if C1#"ambient dimension" == C2#"ambient dimension" then (
+     if ambDim(C1) == ambDim(C2) then (
 	  I := intersection(C1,C2);
 	  (isFace(I,C1) and isFace(I,C2),I))
-     else (false,emptyPolyhedron(C1#"ambient dimension")))
+     else (false,emptyPolyhedron(ambDim(C1))))
 
 
 areCompatible(Polyhedron,Polyhedron) := (P1,P2) -> (
-     if P1#"ambient dimension" == P2#"ambient dimension" then (
+     if ambDim(P1) == ambDim(P2) then (
 	  I := intersection(P1,P2);
 	  (isFace(I,P1) and isFace(I,P2),I))
-     else (false,emptyPolyhedron(P1#"ambient dimension")))
+     else (false,emptyPolyhedron(ambDim(P1))))
 
 
 -- PURPOSE : Compute the dual face lattice
@@ -287,7 +287,7 @@ minkSummandCone Polyhedron := P -> (
      if dim P == 0 or dim P == 1 then (posHull matrix{{1}}, hashTable {0 => P},matrix{{1}})
      else (
 	  -- Extracting the data to compute the 2 dimensional faces and the edges
-	  d := P#"ambient dimension";
+	  d := ambDim(P);
           dP := dim P;
           (HS,v) := halfspaces P;
           (hyperplanesTmp,w) := hyperplanes P;
@@ -367,7 +367,7 @@ minkSummandCone Polyhedron := P -> (
 		    Id := map(source condmatrix,source condmatrix,1);
 		    C := intersection(Id,condmatrix);
 		    R := rays C;
-		    TC := map(ZZ^(P#"ambient dimension"),ZZ^1,0) | P#"rays" | P#"linealitySpace" | -(P#"linealitySpace");
+		    TC := map(ZZ^(ambDim(P)),ZZ^1,0) | P#"rays" | P#"linealitySpace" | -(P#"linealitySpace");
 		    v = (vertices P)_{0};
 		    -- computing the actual summands
 		    summList := hashTable apply(numColumns R, i -> (
@@ -459,7 +459,7 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
 --  OUTPUT : The smallest face containing 'p' as a cone
 smallestFace(Matrix,Cone) := (p,C) -> (
      -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= C#"ambient dimension" then error("The point must lie in the same space");
+     if numColumns p =!= 1 or numRows p =!= ambDim(C) then error("The point must lie in the same space");
      p = chkZZQQ(p,"point");
      -- Checking if 'C' contains 'p' at all
      if contains(C,posHull p) then (
@@ -470,7 +470,7 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == 0);
 	  N = N || M^pos;
 	  intersection(M,N))
-     else emptyPolyhedron C#"ambient dimension")
+     else emptyPolyhedron ambDim(C))
 
 -- PURPOSE : Computing the tail cone of a given Polyhedron
 --   INPUT : 'P',  a Polyhedron
@@ -485,7 +485,7 @@ tailCone Polyhedron := P -> posHull(P#"rays",P#"linealitySpace")
 proximum = method(TypicalValue => Matrix)
 proximum (Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     if numColumns p =!= 1 or numRows p =!= ambDim(P) then error("The point must lie in the same space");
      if isEmpty P then error("The polyhedron must not be empty");
      -- Defining local variables
      local Flist;
@@ -577,7 +577,7 @@ proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 --  OUTPUT : 'P' the Cone saved as a polyhedron
 coneToPolyhedron = method(TypicalValue => Polyhedron)
 coneToPolyhedron Cone := C -> (
-     M := map(QQ^(C#"ambient dimension"),QQ^1,0);
+     M := map(QQ^(ambDim(C)),QQ^1,0);
      N := rays C;
      convexHull(M,N))
 
@@ -651,9 +651,6 @@ normalFan Polyhedron := P -> (
 	  P.cache.normalFan = F);
      P.cache.normalFan)      
 
--- PURPOSE : Computing the sublattice basis for a given matrix of lattice points or for the lattice points
---     	     of a given polytope
-sublatticeBasis = method(TypicalValue => Matrix)
 
 --   INPUT : 'M',  a Matrix
 --  OUTPUT : A matrix, a basis of the sublattice spanned by the lattice points in 'M'

@@ -13,7 +13,7 @@ fan List := L -> (
      -- Starting with the first Cone in the list and extracting its information
      C := L#0;
      L = drop(L,1);
-     ad := C#"ambient dimension";
+     ad := ambDim(C);
      local F;
      if instance(C,Fan) then F = C
      else (
@@ -94,7 +94,7 @@ isPolytopal Fan := F -> (
 	       -- cones (corresponding to the edges of the polytope if it exists)
 	       i := 0;
 	       L := hashTable apply(maxCones F, l -> (i=i+1; i=>l));
-	       n := F#"ambient dimension";
+	       n := ambDim(F);
 	       edges := cones(n-1,F);
 	       -- Making a table that indicates in which generating cones each 'edge' is contained
 	       edgeTCTable := hashTable apply(edges, e -> select(1..#L, j -> contains(L#j,e)) => e);
@@ -225,7 +225,7 @@ smoothSubfan Fan := F -> (
 addCone = method(TypicalValue => Fan)
 addCone (Cone,Fan) := (C,F) -> (
      -- Checking for input errors
-     if C#"ambient dimension" != F#"ambient dimension" then error("Cones must lie in the same ambient space");
+     if ambDim(C) != ambDim(F) then error("Cones must lie in the same ambient space");
      -- Extracting data
      GC := maxCones F;
      d := dim C;
@@ -263,7 +263,7 @@ addCone (Cone,Fan) := (C,F) -> (
      -- Saving the fan
      new Fan from {
 	  "generatingObjects" => set GC,
-	  "ambient dimension" => F#"ambient dimension",
+	  "ambient dimension" => ambDim(F),
 	  "dimension" => dim GC#0,
 	  "number of generating cones" => #GC,
 	  "rays" => set rayList,

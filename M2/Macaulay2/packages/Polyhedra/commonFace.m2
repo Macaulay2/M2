@@ -5,7 +5,7 @@ commonFace = method(TypicalValue => Boolean)
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
-	if P#"ambient dimension" == Q#"ambient dimension" then (
+	if ambDim(P) == ambDim(Q) then (
 	     I := intersection(P,Q);
 	     isFace(I,P) and isFace(I,Q))
 	else false)
@@ -13,7 +13,7 @@ commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
 commonFace(Cone,Cone) := (C1,C2) -> (
-     if C1#"ambient dimension" == C2#"ambient dimension" then (
+     if ambDim(C1) == ambDim(C2) then (
 	  I := intersection(C1,C2);
 	  isFace(I,C1) and isFace(I,C2))
      else false)
@@ -22,7 +22,7 @@ commonFace(Cone,Cone) := (C1,C2) -> (
 --   INPUT : '(C,F)'  a Cone and a Fan
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
-commonFace(Cone,Fan) := (C,F) -> if C#"ambient dimension" == F#"ambient dimension" then all(maxCones F, C1 -> commonFace(C,C1)) else false
+commonFace(Cone,Fan) := (C,F) -> if ambDim(C) == ambDim(F) then all(maxCones F, C1 -> commonFace(C,C1)) else false
 
 
 --   INPUT : '(F,C)'  a Fan and a Cone

@@ -115,7 +115,7 @@ convexHull Matrix := M -> (
 --   INPUT : '(P1,P2)'  two polyhedra
 convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking for input errors
-	if P1#"ambient dimension" =!= P2#"ambient dimension" then error("Polyhedra must lie in the same ambient space");
+	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
 	-- Combining the vertices/rays and the lineality spaces in one matrix each
 	M := (P1#"homogenizedVertices")#0 | (P2#"homogenizedVertices")#0;
 	LS := (P1#"homogenizedVertices")#1 | (P2#"homogenizedVertices")#1;
@@ -141,11 +141,11 @@ convexHull List := L -> (
 	  error ("The input must be cones, polyhedra, vertices, or (vertices,rays).");
      -- Adding the vertices and rays to 'V,R', depending on the type of 'P'
      if instance(P,Cone) then (
-	  n = P#"ambient dimension";
+	  n = ambDim(P);
 	  V = map(QQ^n,QQ^1,0);
 	  R = rays P | linSpace P | -(linSpace P))
      else if instance(P,Polyhedron) then (
-	  n = P#"ambient dimension";
+	  n = ambDim(P);
 	  V = vertices P;
 	  R = rays P | linSpace P | -(linSpace P))
      else if instance(P,Sequence) then (
@@ -527,7 +527,7 @@ interiorPoint Polyhedron := P -> (
 --  OUTPUT : a Polyhedron, the face of 'P' where 'v' attains its minimum
 minFace (Matrix,Polyhedron) := (v,P) -> (
      -- Checking for input errors
-     if numColumns v =!= 1 or numRows v =!= P#"ambient dimension" then error("The vector must lie in the same space as the polyhedron");
+     if numColumns v =!= 1 or numRows v =!= ambDim(P) then error("The vector must lie in the same space as the polyhedron");
      C := dualCone tailCone P;
      V := vertices P;
      R := rays P;
@@ -589,7 +589,7 @@ boundaryMap (ZZ,Polyhedron) := (i,P) -> (
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
      -- Checking if the two polyhedra lie in the same space and computing the dimension difference
      c := dim Q - dim P;
-     if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
+     if ambDim(P) == ambDim(Q) and c >= 0 then (
 	  -- Checking if P is the empty polyhedron
 	  if c > dim Q then true
 	  -- Checking if one of the codim 'c' faces of Q is P
@@ -633,7 +633,7 @@ dualCayleyFace Polyhedron := (cacheValue symbol dualCayleyFace)(P -> (
 --  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
 polar = method(TypicalValue => Polyhedron)
 polar Polyhedron := (cacheValue symbol polar)(P -> (
-     d := P#"ambient dimension";
+     d := ambDim(P);
      -- Make the 'd'-dimensional identity
      M := map(ZZ^d,ZZ^d,-1);
      -- make the block matrix of -1 and the 'd'identity
@@ -758,7 +758,7 @@ affineHull Polyhedron := P -> (
 smallestFace = method()
 smallestFace(Matrix,Polyhedron) := (p,P) -> (
      -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
+     if numColumns p =!= 1 or numRows p =!= ambDim(P) then error("The point must lie in the same space");
      p = chkZZQQ(p,"point");
      -- Checking if 'P' contains 'p' at all
      if contains(P,convexHull p) then (
@@ -771,7 +771,7 @@ smallestFace(Matrix,Polyhedron) := (p,P) -> (
 	  N = N || M^pos;
 	  w = w || lift(v^pos,ZZ);
 	  intersection(M,v,N,w))
-     else emptyPolyhedron P#"ambient dimension")
+     else emptyPolyhedron ambDim(P))
 
 
 -- PURPOSE : Computes the mixed volume of n polytopes in n-space
