@@ -2,7 +2,11 @@
 #ifndef _polyroots_hpp_
 #define _polyroots_hpp_
 
+#define timer timer1
+
 #include <pari/pari.h>
+
+#undef timer
 
 #include "relem.hpp"
 #include "polyring.hpp"
