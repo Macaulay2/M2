@@ -44,9 +44,16 @@ sub test_wrapper_end{
    return "///\n\n";
 }
 
+sub split_off_name{
+   my($file) = @_;
+   my($a, $b) = $file =~ m/(.*)\/(.*\/[^\/]*)/;
+   return $b;
+}
+
 sub lattice_point_test{
    my($file) = @_;
-   my $result = test_wrapper_start("latticePoints", $file);
+   my $name = split_off_name($file);
+   my $result = test_wrapper_start("latticePoints", $name);
    my $P = load($file);
    $result .= lattice_points_test_inner($P);
    $result .= test_wrapper_end();
@@ -55,6 +62,7 @@ sub lattice_point_test{
 
 @a = split(":", $polytopeFiles[0]);
 $file = $a[0];
+print lattice_point_test($file);
 
 
 $i=0;
