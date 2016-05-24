@@ -273,9 +273,6 @@ Cone ? Cone := (C1,C2) -> (
 
 
 
-vertices Polyhedron := P -> P#"vertices"
-
-
 
 
 -- PURPOSE : Tests whether the intersection of two Cones is a face of both

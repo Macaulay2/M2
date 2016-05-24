@@ -3,6 +3,7 @@ Polyhedron = new Type of PolyhedralObject
 Polyhedron.synonym = "convex polyhedron"
 globalAssignment Polyhedron
 
+vertices Polyhedron := P -> P#"vertices"
 
 -- Modifying the standard output for a polyhedron to give an overview of its characteristica
 net Polyhedron := P -> ( horizontalJoin flatten (

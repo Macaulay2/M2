@@ -37,6 +37,7 @@ load "./affineImages.m2"
 -- Legacy code
 load "./legacy.m2"
 load "./legacy_tests.m2"
+load "./new_tests.m2"
 load "./legacy_doc.m2"
 
 end
