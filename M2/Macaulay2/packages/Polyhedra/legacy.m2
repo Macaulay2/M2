@@ -142,7 +142,7 @@ addPolyhedron (Polyhedron,PolyhedralComplex) := (P,PC) -> (
      else GP = flatten GP;
      -- If 'P' was added to the Polyhedron as a generating polyhedron then the codim 1 faces on the boundary have to changed to check for 
      -- completeness
-     verticesList := toList PC#"vertices";
+     verticesList := toList vertices(PC);
      if inserted then (
 	  -- The vertices of 'P' have to be added
 	  Vm := vertices P;

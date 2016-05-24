@@ -68,7 +68,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
      
 --   INPUT : 'P'  a Polyhedron
 posHull Polyhedron := P -> (
-     Mrays := makePrimitiveMatrix P#"vertices" | rays(P);
+     Mrays := makePrimitiveMatrix vertices(P) | rays(P);
      Mlinspace := P#"linealitySpace";
      posHull(Mrays,Mlinspace))
  

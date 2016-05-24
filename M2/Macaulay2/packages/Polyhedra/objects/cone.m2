@@ -177,8 +177,8 @@ hilbertBasis Cone := C -> (
 	  N := gens ker(-h|A);
 	  N = transpose (ref transpose N)#0;
 	  N_{0}^{1..(numRows N)-1});
-     A := C#"halfspaces";
-     if C#"hyperplanes" != 0 then A = A || C#"hyperplanes" || -(C#"hyperplanes");
+     A := halfspaces(C);
+     if hyperplanes(C) != 0 then A = A || hyperplanes(C) || -(hyperplanes(C));
      A = substitute(A,ZZ);
      -- Use the project and lift algorithm to compute a basis of the space of vectors positive on 'A' whose preimages are the HilbertBasis
      (B,BC) := ref transpose A; 
@@ -317,6 +317,6 @@ isFace(Cone,Cone) := (C1,C2) -> (
 --  OUTPUT : The dual Cone, which is {v | v*c>=0 forall c in C}
 dualCone = method(TypicalValue => Cone)
 dualCone Cone := C -> (
-	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
+	genrays := (sort transpose halfspaces(C),sort transpose hyperplanes(C));
 	dualgens := (sort (-(rays(C))),sort C#"linealitySpace");
 	coneBuilder(genrays,dualgens))

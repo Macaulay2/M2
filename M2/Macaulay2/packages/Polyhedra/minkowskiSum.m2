@@ -148,7 +148,7 @@ minkowskiSum(Cone,Polyhedron) := (C,P) -> (
      -- Checking for input errors
      if ambDim(C) =!= ambDim(P) then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
-     V := P#"vertices";
+     V := vertices(P);
      R := rays(P) | rays(C) | C#"linealitySpace" | -(C#"linealitySpace");
      convexHull(V,R))
 
@@ -159,7 +159,7 @@ minkowskiSum(Polyhedron,Cone) := (P,C) -> (
      -- Checking for input errors
      if ambDim(C) =!= ambDim(P) then error("Cone and polyhedron must lie in the same space");
      -- Saving the vertices and rays
-     V := P#"vertices";
+     V := vertices(P);
      R := rays(P) | rays(C) | C#"linealitySpace" | -(C#"linealitySpace");
      convexHull(V,R))
 
