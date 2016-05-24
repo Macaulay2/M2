@@ -554,18 +554,20 @@ document {
      Key => PolyhedraHash,
      Headline => "the class of all polyhedral objects in Polyhedra",
           
-     TT "PolyhedraHash"," is the parent class of the three polyhedral objects in Polyhedra:",
+     TT "PolyhedraHash"," is the parent class of the four polyhedral objects in Polyhedra:",
      
      UL {
-	  {TO "Polyhedron"},
 	  {TO "Cone"},
-	  {TO "Fan"}
+	  {TO "Polyhedron"},
+	  {TO "Fan"},
+	  {TO "PolyhedralComplex"}
 	},
    
      EXAMPLE {
-	  " convexHull matrix {{1,1,0,0},{1,0,1,0}}",
 	  " posHull matrix {{1,2},{2,1}}",
-	  " hirzebruch 3"
+	  " convexHull matrix {{1,1,0,0},{1,0,1,0}}",
+	  " hirzebruch 3",
+	  " polyhedralComplex crossPolytope 3",
 	  }
         
      }
