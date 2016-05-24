@@ -6,12 +6,6 @@
 --  -Symmetry group for polytopes
 
 
-
-
-
-
-
-
 --   INPUT : 'L',   a list of Cones, Polyhedra, rays given by R, 
 --     	    	    and (rays,linSpace) given by '(R,LS)'
 posHull List := L -> (
@@ -72,45 +66,6 @@ posHull List := L -> (
      L = flatten apply(L, l -> l#1);
      if L != {} then LS = LS | matrix {L};
      if LS == 0 then posHull R else posHull(R,LS))
-
-
-
--- PURPOSE : Building the Fan 'F'
---   INPUT : 'L',  a list of cones and fans in the same ambient space
---  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
-fan = method(TypicalValue => Fan)
-fan List := L -> (
-     -- Checking for input errors
-     if L == {} then error("List of cones and fans must not be empty");
-     if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("Input must be a list of cones and fans");
-     -- Starting with the first Cone in the list and extracting its information
-     C := L#0;
-     L = drop(L,1);
-     ad := C#"ambient dimension";
-     local F;
-     if instance(C,Fan) then F = C
-     else (
-	  rayList := rays C;
-	  -- Collecting the rays
-	  rayList = apply(numColumns rayList, i-> rayList_{i});
-	  -- Generating the new fan
-	  F = new Fan from {
-	  "generatingObjects" => set {C},
-	  "ambient dimension" => ad,
-	  "dimension" => dim C,
-	  "number of generating cones" => 1,
-	  "rays" => set rayList,
-	  "number of rays" => #rayList,
-	  "isPure" => true,
-	  symbol cache => new CacheTable});
-     -- Checking the remaining list for input errors and reducing fans in the list
-     -- to their list of generating cones
-     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then maxCones C else 
-	  error ("Input must be a list of cones and fans"));       
-     -- Adding the remaining cones of the list with 'addCone'
-     scan(L, C -> F = addCone(C,F));
-     F);
-
 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : The Fan given by 'C' and all of its faces
@@ -222,40 +177,26 @@ addPolyhedron (PolyhedralComplex,PolyhedralComplex) := (PC1,PC2) -> (
      L := maxCones PC1;
      addCone(L,PC2))
      
-
-
-
-
 Cone ? Cone := (C1,C2) -> (
-     if C1 == C2 then symbol == else (
-	  if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
-	       if dim C1 != dim C2 then dim C1 ? dim C2 else (
-		    R1 := rays C1;
-		    R2 := rays C2;
-		    if R1 != R2 then (
-			 R1 = apply(numColumns R1, i -> R1_{i});
-			 R2 = apply(numColumns R2, i -> R2_{i});
-			 (a,b) := (set R1,set R2); 
-			 r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
-			 if a#?r then symbol > else symbol <)
-		    else (
-			 R1 = linSpace C1;
-			 R2 = linSpace C2;
-			 R1 = apply(numColumns R1, i -> R1_{i});
-			 R2 = apply(numColumns R2, i -> R2_{i});
-			 (c,d) := (set R1,set R2);
-			 l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
-			 if c#?l then symbol > else symbol <)))))
-
-
-
-
-	     
-
-
-
-
-
+    if C1 == C2 then symbol == else (
+	if ambDim C1 != ambDim C2 then ambDim C1 ? ambDim C2 else (
+	    if dim C1 != dim C2 then dim C1 ? dim C2 else (
+		R1 := rays C1;
+		R2 := rays C2;
+		if R1 != R2 then (
+		    R1 = apply(numColumns R1, i -> R1_{i});
+		    R2 = apply(numColumns R2, i -> R2_{i});
+		    (a,b) := (set R1,set R2); 
+		    r := (sort matrix {join(select(R1,i->not b#?i),select(R2,i->not a#?i))})_{0};
+		    if a#?r then symbol > else symbol <)
+		else (
+		    R1 = linSpace C1;
+		    R2 = linSpace C2;
+		    R1 = apply(numColumns R1, i -> R1_{i});
+		    R2 = apply(numColumns R2, i -> R2_{i});
+		    (c,d) := (set R1,set R2);
+		    l := (sort matrix {join(select(R1,i->not d#?i),select(R2,i->not c#?i))})_{0};
+		    if c#?l then symbol > else symbol <)))))
 
 areCompatible(Cone,Cone) := (C1,C2) -> (
      if C1#"ambient dimension" == C2#"ambient dimension" then (
@@ -324,10 +265,7 @@ faceLattice Cone := C -> apply(dim C + 1, k -> faceLattice(dim C - k,C))
 
 faceOf = method(TypicalValue => PolyhedraHash)
 faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
-	  
-     	  
-
-
+  	  
 -- PURPOSE : Computing the Cone of the Minkowskisummands of a Polyhedron 'P', the minimal 
 --           Minkowskisummands, and minimal decompositions
 --   INPUT : 'P',  a polyhedron
@@ -466,45 +404,7 @@ minkSummandCone Polyhedron := P -> (
 		     zerovec :=  map(source R,ZZ^1,0);
 		     Q := intersection(negId,zerovec,R,onevec);
 		     (C,summList,vertices(Q))))))
- 
-
--- PURPOSE : Computes the mixed volume of n polytopes in n-space
---   INPUT : 'L'  a list of n polytopes in n-space
---  OUTPUT : the mixed volume
--- COMMENT : Note that at the moment the input is NOT checked!
-mixedVolume = method()
-mixedVolume List := L -> (
-     n := #L;
-     Elist := apply(L, P -> apply(faces(dim P -1,P),vertices));
-     liftings := apply(n, i -> map(ZZ^n,ZZ^n,1)||matrix{apply(n, j -> random 25)});
-     Qlist := apply(n, i -> affineImage(liftings#i,L#i));
-     local Qsum;
-     Qsums := apply(n, i -> if i == 0 then Qsum = Qlist#0 else Qsum = Qsum + Qlist#i);
-     mV := 0;
-     Elist = apply(n, i -> apply(Elist#i, e -> (e,(liftings#i)*e)));
-     E1 := Elist#0;
-     Elist = drop(Elist,1);
-     center := matrix{{1/2},{1/2}};
-     edgeTuple := {};
-     k := 0;
-     selectRecursion := (E1,edgeTuple,Elist,mV,Qsums,Qlist,k) -> (
-	  for e1 in E1 do (
-	       Elocal := Elist;
-	       if Elocal == {} then mV = mV + (volume sum apply(edgeTuple|{e1}, et -> convexHull first et))
-	       else (
-		    Elocal = for i from 0 to #Elocal-1 list (
-			 hyperplanesTmp := halfspaces(Qsums#k + Qlist#(k+i+1));
-			 hyperplanesTmp = for j from 0 to numRows(hyperplanesTmp#0)-1 list if (hyperplanesTmp#0)_(j,n) < 0 then ((hyperplanesTmp#0)^{j},(hyperplanesTmp#1)^{j}) else continue;
-			 returnE := select(Elocal#i, e -> (
-				   p := (sum apply(edgeTuple|{e1}, et -> et#1 * center)) + (e#1 * center);
-				   any(hyperplanesTmp, pair -> (pair#0)*p - pair#1 == 0)));
-			 --if returnE == {} then break{};
-			 returnE);
-		    mV = selectRecursion(Elocal#0,edgeTuple|{e1},drop(Elocal,1),mV,Qsums,Qlist,k+1)));
-	  mV);
-     selectRecursion(E1,edgeTuple,Elist,mV,Qsums,Qlist,k))
- 
- 
+  
 objectiveVector = method()
 objectiveVector (Polyhedron,Polyhedron) := (P,Q) -> (
      -- Checking for input errors
@@ -554,30 +454,6 @@ skeleton(ZZ,PolyhedralComplex) := (n,PC) -> (
 	       "isPure" => true,
 	       symbol cache => new CacheTable});
      
--- PURPOSE : Computing the smallest face of 'P' containing 'p'
---   INPUT : '(p,P)',  where 'p' is a point given as a matrix and
---     	    	       'P' is a polyhedron
---  OUTPUT : The smallest face containing 'p' as a polyhedron
-smallestFace = method()
-smallestFace(Matrix,Polyhedron) := (p,P) -> (
-     -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= P#"ambient dimension" then error("The point must lie in the same space");
-     p = chkZZQQ(p,"point");
-     -- Checking if 'P' contains 'p' at all
-     if contains(P,convexHull p) then (
-	  (M,v) := halfspaces P;
-     	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
-	  -- and adding them to the hyperplanes
-	  v = promote(v,QQ);
-	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
-	  N = N || M^pos;
-	  w = w || lift(v^pos,ZZ);
-	  intersection(M,v,N,w))
-     else emptyPolyhedron P#"ambient dimension")
-
-
-
 --   INPUT : '(p,C)',  where 'p' is point given as a matrix and
 --     	    	       'C' is a Cone
 --  OUTPUT : The smallest face containing 'p' as a cone
@@ -596,15 +472,11 @@ smallestFace(Matrix,Cone) := (p,C) -> (
 	  intersection(M,N))
      else emptyPolyhedron C#"ambient dimension")
 
-
 -- PURPOSE : Computing the tail cone of a given Polyhedron
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : The Cone generated by the rays and the lineality space of 'P'
 tailCone = method(TypicalValue => Cone)
 tailCone Polyhedron := P -> posHull(P#"rays",P#"linealitySpace")
-
-
-
 
 -- PURPOSE : Computing the closest point of a polyhedron to a given point
 --   INPUT : (p,P),  where 'p' is a point given by a one column matrix over ZZ or QQ and
@@ -700,60 +572,6 @@ proximum (Matrix,Polyhedron) := (p,P) -> (
 --  OUTPUT : the point in 'C' with the minimal euclidian distance to 'p'
 proximum (Matrix,Cone) := (p,C) -> proximum(p,coneToPolyhedron C)
 
-
--- PURPOSE : Computing the affine hull
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : the affine hull of 'P' as a Polyhedron
-affineHull = method(TypicalValue => Polyhedron)
-affineHull Polyhedron := P -> (
-     M := vertices P;
-     R := promote(rays P,QQ);
-     -- subtracting the first vertex from all other vertices
-     N := (M+M_{0}*(matrix {toList(numColumns M:-1)}))_{1..(numColumns M)-1};
-     convexHull(M_{0},N | -N | R | -R));
-
-
-
--- PURPOSE : Computes the coarsest common refinement of a given set of rays
---   INPUT : 'M'  a Matrix
---  OUTPUT : 'F'  a Fan, the coarsest common refinement of the rays in 'M'
-ccRefinement = method(TypicalValue => Fan)
-ccRefinement Matrix := M -> (
-     -- Checking for input errors
-     M = chkZZQQ(M,"rays");
-     -- Extracting data
-     n := numRows M;
-     m := numColumns M;
-     -- Generating all cones generated by 'n' rays in 'M'
-     nCones := apply(subsets(m,n), e -> posHull M_e);
-     -- Selecting those cones that are 'n' dimensional and do not contain any 
-     -- of the others
-     nConesfd := select(nCones, C -> dim C == n);
-     nConesfd = inclMinCones nConesfd;
-     refCones := {};
-     while nConesfd != {} do (
-	  newCones := {};
-	  -- scan through the 'n' dimensional cones and check for each of the cones generated by
-	  -- 'n' rays if their intersection is 'n' dimensional and if the first one is not contained 
-	  -- in the latter. If true, then their intersection will be saved in the list 'newCones'.
-	  -- If false for every cone generated by 'n' rays, then the 'n' dimensional cone will be 
-	  -- appended to the list 'refCones'
-	  refCones = refCones | (flatten apply(nConesfd, C1 -> (
-			 toBeAdded := flatten apply(nCones, C2 -> (
-				   C := intersection(C2,C1);
-				   if dim C == n and (not contains(C2,C1)) then C
-				   else {}));
-			 if toBeAdded == {} then C1
-			 else (
-			      newCones = newCones | toBeAdded;
-			      {}))));
-	  -- now, the new intersections will be the 'n' dimensional cones and the same procedure 
-	  -- starts over again if this list is not empty
-	  nConesfd = unique newCones);
-     -- Compute the fan generated by the 'refCones'
-     fan refCones);
-
-
 -- PURPOSE : Converts the Cone 'C' into itself as a Polyhedron 'P'
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'P' the Cone saved as a polyhedron
@@ -762,51 +580,6 @@ coneToPolyhedron Cone := C -> (
      M := map(QQ^(C#"ambient dimension"),QQ^1,0);
      N := rays C;
      convexHull(M,N))
-
-
-
-
-dualCayley = method(TypicalValue => Polyhedron)
-dualCayley Polyhedron := P -> (
-     V := vertices P;
-     (M,N) := fourierMotzkin V;
-     M = sort(map(QQ^1,source M,(i,j) -> 1)|| -M);
-     R := map(target M,QQ^0,0);
-     HS := map(QQ^1,source V,0) || -V;
-     (hyperA,verticesA) := fMReplacement(HS,M,R);
-     polyhedronBuilder(hyperA,verticesA)) 
-
-
-dualCayleyFace = method(TypicalValue => Polyhedron)
-dualCayleyFace Polyhedron := (cacheValue symbol dualCayleyFace)(P -> (
-	  local Pd;
-	  --local faceOf;
-	  if P.cache.?faceOf then (
-	       V := transpose vertices P;
-	       R := transpose rays P;
-	       P0 := P.cache.faceOf;
-	       P0d := dualCayley P0;
-	       codimensionPd := dim P - P0#"dimension of lineality space" + 1;
-	       L := faces(codimensionPd,P0d);
-	       Pd = first select(1,L, l -> (V || R)*(vertices l | rays l) == 0);
-	       Pd.cache.dualCayleyFace = P;
-	       Pd)
-	  else (
-	       Pdual := dualCayley P;
-	       Pd = first faces(dim P + 1,P);
-	       Pd.cache.dualCayleyFace = P;
-	       Pd))) 
-     
-
--- PURPOSE : Computing the dual cone
---   INPUT : 'C',  a Cone
---  OUTPUT : The dual Cone, which is {v | v*c>=0 forall c in C}
-dualCone = method(TypicalValue => Cone)
-dualCone Cone := C -> (
-	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
-	dualgens := (sort (-(C#"rays")),sort C#"linealitySpace");
-	coneBuilder(genrays,dualgens))
-   
 
 -- PURPOSE : Computing the face fan of a polytope
 --   INPUT : 'P',  a Polyhedron, containing the origin in its interior
@@ -839,22 +612,6 @@ imageFan (Matrix,Cone) := (M,C) -> (
      -- Compute their common refinement
      refineCones L)
 
-
-
-
-
--- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
---   INPUT : '(k,P)',  where 'k' is a strictly positive rational or integer number and 
---     	    	             'P' is a Polyhedron
---  OUTPUT : The polyehdron 'P' scaled by 'k'
-QQ * Polyhedron := (k,P) -> (
-     -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
-     convexHull(k*(vertices P),rays P | linSpace P))
-
-ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
-
-
 -- PURPOSE : Computing the normal cone of a face of a polytope
 --   INPUT : '(P,Q)',  two polyhedra
 --  OUTPUT : 'C',  a Cone, the inner normal cone of P in the face Q
@@ -867,7 +624,6 @@ normalCone (Polyhedron,Polyhedron) := Cone => opts -> (P,Q) -> (
 	  p := interiorPoint Q;
 	  P.cache.normalCone#Q = dualCone posHull affineImage(P,-p));
      P.cache.normalCone#Q)
-
 
 -- PURPOSE : Computing the inner normalFan of a polyhedron
 --   INPUT : 'P',  a Polyhedron
@@ -893,54 +649,7 @@ normalFan Polyhedron := P -> (
 	  F.cache.isPolytopal = true;
 	  F.cache.polytope = P;
 	  P.cache.normalFan = F);
-     P.cache.normalFan)
-
-
--- PURPOSE : Computing the polar of a given polyhedron
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
-polar = method(TypicalValue => Polyhedron)
-polar Polyhedron := (cacheValue symbol polar)(P -> (
-     d := P#"ambient dimension";
-     -- Make the 'd'-dimensional identity
-     M := map(ZZ^d,ZZ^d,-1);
-     -- make the block matrix of -1 and the 'd'identity
-     M = (matrix{{-1_ZZ}} | map(ZZ^1,ZZ^d,0))||(map(ZZ^d,ZZ^1,0) | M);
-     hyperA := P#"homogenizedVertices";
-     hyperA = (sort (M*(hyperA#0)),hyperA#1);
-     verticesA := fourierMotzkin hyperA;
-     (hyperA,verticesA) = fMReplacement(hyperA#0,verticesA#0,verticesA#1);
-     Q := polyhedronBuilder(hyperA,verticesA);
-     Q.cache.polar = P;
-     Q))
-
-
--- PURPOSE : Compute the corresponding face of the polar polytope
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : A Polyhedron, if 'P' is the face of some polyhedron 'Q' then the
---     	     result is the dual face on the polar of 'Q'. If 'P' is not a face
---           then it is considered as the face of itself and thus the 
---           polarFace is the empty Polyhedron
-polarFace = method(TypicalValue => Polyhedron)
-polarFace Polyhedron := (cacheValue symbol polarFace)(P -> (
-	  local Pd;
-	  --local faceOf;
-	  if P.cache.?faceOf then (
-	       V := transpose vertices P;
-	       R := transpose rays P;
-	       P0 := P.cache.faceOf;
-	       P0d := polar P0;
-	       codimensionPd := dim P - P0#"dimension of lineality space" + 1;
-	       L := faces(codimensionPd,P0d);
-	       Pd = first select(1,L, l -> all(flatten entries(V*(vertices l)),e -> e == -1) and V*(rays l) == 0 and R*(vertices l | rays l) == 0);
-	       Pd.cache.polarFace = P;
-	       Pd)
-	  else (
-	       Pdual := polar P;
-	       Pd = first faces(dim P + 1,P);
-	       Pd.cache.polarFace = P;
-	       Pd)))	       
-	       
+     P.cache.normalFan)      
 
 -- PURPOSE : Computing the sublattice basis for a given matrix of lattice points or for the lattice points
 --     	     of a given polytope
@@ -957,65 +666,6 @@ sublatticeBasis Matrix := M -> (
      K := ker M;
      -- Taking minimal generators and applying M gives a basis in target M
      M*(mingens (A/K)))
-
-
---   INPUT : 'P',  a polyhedron,
---  OUTPUT : A matrix, a basis of the sublattice spanned by the lattice points of 'P'
-sublatticeBasis Polyhedron := P -> (
-     L := latticePoints P;
-     -- Checking for input errors
-     if L == {} then error("The polytope must contain lattice points.");
-     -- Translating 'P' so that it contains the origin if it did not already
-     if all(L,l -> l != 0) then L = apply(L, l -> l - L#0);
-     sublatticeBasis(matrix {L}))
-   
-   
--- PURPOSE : Calculating the preimage of a polytope in the sublattice generated by its lattice points
---   INPUT : 'P',  a polyhedron
---  OUTPUT : A polyhedron, the projected polyhedron, which is now normal
-toSublattice = method()
-toSublattice Polyhedron := P -> (
-     L := latticePoints P;
-     -- Checking for input errors
-     if L == {} then error("The polytope must contain lattice points.");
-     b := L#0;
-     -- Translating 'P' so that it contains the origin if it did not already
-     if all(L,l -> l != 0) then L = apply(L, l -> l - L#0);     
-     affinePreimage(sublatticeBasis matrix {L},P,b))
-
-
-
--- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
---   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
---     	    	       many entries
---  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
-cellDecompose = method(TypicalValue => List)
-cellDecompose (Polyhedron,Matrix) := (P,w) -> (
-     n := dim P;
-     LP := latticePoints P;
-     -- Checking for input errors
-     if numColumns w != #LP or numRows w != 1 then error("The weight must be a one row matrix with number of lattice points many entries");
-     LP = matrix{LP}||w;
-     P = convexHull(LP,matrix (toList(dim P:{0})|{{1}}));
-     A := map(QQ^n,QQ^n,1) | map(QQ^n,QQ^1,0);
-     flatten apply(faces(1,P), f -> if isCompact f then affineImage(A,f) else {}))
-
-
--- PURPOSE : Computing the Ehrhart polynomial of a polytope
---   INPUT : 'P',  a polyhedron which must be compact, i.e. a polytope
---  OUTPUT : A polynomial in QQ[x], the Ehrhart polynomial
--- COMMENT : Compactness is checked within latticePoints
-ehrhart = method(TypicalValue => RingElement)
-ehrhart Polyhedron := P -> (
-	n := dim P;
-	v := matrix apply(n,k -> {-1+#latticePoints( (k+1)*P)});
-	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
-	M = flatten entries ((inverse M)*v);
-	R := QQ[getSymbol "x"];
-	x := R_"x";
-	1+sum apply(n,i -> M#i * x^(n-i)))
-
-
 
 
 
@@ -1055,8 +705,6 @@ saveSession String := F -> (
 			 else instance(l,PolyhedraHash) or instance(l,Matrix))) then F << s << " = " << toExternalString value s << endl)))
      
 
-
-
 ---------------------------------------
 -- DECLARING AUXILIARY FUNCTIONS
 -- >> not public <<
@@ -1093,108 +741,6 @@ fMReplacement = (R,HS,hyperplanesTmp) -> (
      hyperplanesTmp = if hyperplanesTmp == 0 then map(ZZ^(numRows hyperplanesTmp),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix hyperplanesTmp;
      ((R,LS),(HS,hyperplanesTmp)))
 
-
-faceBuilder = (k,P) -> (
-     --Checking for input errors
-     if k < 0 or k > dim P then error("the codimension must be between 0 and the dimension of the polyhedron");
-     if not P.cache.?faces then P.cache.faces = new MutableList;
-     i := #(P.cache.faces);
-     if k < i then P.cache.faces#k
-     else (
-	  d := dim P - k;
-	  dl := P#"dimension of lineality space";
-	  -- Saving the lineality space of 'P', which is the also the lineality space of each face
-	  LS := P#"linealitySpace";
-	  -- for d = dim P it is the polyhedron itself
-	  if d == dim P then (
-	       VP := vertices P;
-	       RP := rays P;
-	       P.cache.faces#k = {(set apply(numColumns VP, i -> VP_{i}),set apply(numColumns RP, i -> RP_{i}))};
-	       P.cache.faces#k)
-	  -- for k=dim(P) the faces are the vertices
-	  else if d == dl then (
-	       VP1 := vertices P;
-	       -- Generating the list of vertices with each vertex as a polyhedron
-	       apply(numColumns VP1, i -> (set {VP1_{i}},set {})))
-	  else if d < dl then {}
-	  else (
-	       if i == 0 then (
-		    VP2 := vertices P;
-		    RP2 := rays P;
-		    P.cache.faces#0 = {(set apply(numColumns VP2, i -> VP2_{i}),set apply(numColumns RP2, i -> RP2_{i}))};
-		    i = 1);
-	       if i == 1 then (
-		    -- Saving the half-spaces and hyperplanes
-		    (HS,v) := halfspaces P;
-		    (hyperplanesTmp,w) := hyperplanes P;
-		    -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-		    Fl := apply(numRows HS, i -> intersection(HS,v,hyperplanesTmp || HS^{i},w || v^{i}));
-		    Fl = apply(Fl, f -> (
-			      V := vertices f;
-			      R := rays f;
-			      (set apply(numColumns V, i -> V_{i}),set apply(numColumns R, i -> R_{i}))));
-		    i = 2;
-		    P.cache.faces#1 = Fl);
-	       F := P.cache.faces#1;
-	       i = i - 1;
-	       L := P.cache.faces#i;
-	       -- Intersecting L k-1 times with F and returning the maximal inclusion sets which are the faces of codim plus 1
-	       while i < k do (
-		    L = intersectionWithFacets(L,F);
-		    i = i+1;
-		    P.cache.faces#i = L);
-	       P.cache.faces#k)))
-
-
-faceBuilderCone = (k,C) -> (
-     d := dim C - k;
-     dl := C#"dimension of lineality space";
-     LS := linSpace C;
-     --Checking for input errors
-     if d < 0 or d > dim C then error("the codimension must be between 0 and the dimension of the cone");
-     if not C.cache.?faces then C.cache.faces = new MutableList;
-     i := #(C.cache.faces);
-     if k < i then C.cache.faces#k
-     -- for d = dim C it is the cone itself
-     else if d == dim C then (
-	  Rd := rays C;
-	  C.cache.faces#k = {set apply(numColumns Rd, i -> Rd_{i})};
-	  C.cache.faces#k)
-     -- for d = dl it is the lineality space
-     else if d == dl then {set {map(QQ^(ambDim C),QQ^1,0)}}
-     -- for d = dl+1 it is the lineality space plus one of the rays
-     else if d == dl+1 then (
-	  -- Generating the list of cones given by one ray and the lineality space
-	  R1 := rays C;
-	  apply(numColumns R1, i -> set {R1_{i}}))
-     else if 0 <= d and d < dl then {}
-     else (
-	  if i == 0 then (
-	       R2 := rays C;
-	       C.cache.faces#0 = {set apply(numColumns R2, i -> R2_{i})};
-	       i = 1);
-	  if i == 1 then (
-	       -- Saving the half-spaces and hyperplanes
-	       HS := halfspaces C;
-	       hyperplanesTmp := hyperplanes C;
-	       -- Generating the list of facets where each facet is given by a list of its vertices and a list of its rays
-	       F1 := apply(numRows HS, i -> intersection(HS,hyperplanesTmp || HS^{i}));
-	       F1 = apply(F1, f -> (
-			 R := rays f;
-			 (set apply(numColumns R, i -> R_{i}))));
-	       i = 2;
-	       C.cache.faces#1 = F1);	       
-	  -- Duplicating the list of facets
-	  F := C.cache.faces#1;
-	  i = i-1;
-	  L := C.cache.faces#i;
-	  -- Intersecting L k-1 times with F and returning the maximal inclusion sets. These are the faces of codim plus 1
-	  while i < k do (
-	       L = intersectionWithFacetsCone(L,F);
-	       i = i+1;
-	       C.cache.faces#i = L);
-	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-	  C.cache.faces#k))
 
 -- PURPOSE : check whether a matrix is over ZZ or QQ
 --   INPUT : '(M,msg)', a matrix 'M' and a string 'msg'

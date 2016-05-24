@@ -309,3 +309,14 @@ isFace(Cone,Cone) := (C1,C2) -> (
 	  -- Checking if one of the codim 'c' faces of C2 is C1
 	  any(faces(c,C2), f -> f === C1))
      else false)
+
+     
+
+-- PURPOSE : Computing the dual cone
+--   INPUT : 'C',  a Cone
+--  OUTPUT : The dual Cone, which is {v | v*c>=0 forall c in C}
+dualCone = method(TypicalValue => Cone)
+dualCone Cone := C -> (
+	genrays := (sort transpose C#"halfspaces",sort transpose C#"hyperplanes");
+	dualgens := (sort (-(C#"rays")),sort C#"linealitySpace");
+	coneBuilder(genrays,dualgens))
