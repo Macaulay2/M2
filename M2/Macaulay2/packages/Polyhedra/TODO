@@ -1,2 +1,9 @@
 rays has weird definition
 saveSession in own file?
+
+generate polymake tests for:
+*  hilbertBasis
+*  minkowskiSum
+*  normalFan
+*  faceFan
+*  toric variety things
