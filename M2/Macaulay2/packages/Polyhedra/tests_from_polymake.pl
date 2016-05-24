@@ -27,9 +27,10 @@ sub lattice_points_test_inner{
    $result .= ";\n";
    $result .= m2_matrix("desiredLP", transpose($P->LATTICE_POINTS->minor(All, ~[0])));
    $result .= ";\n";
+   $result .= "desiredLP = sort desiredLP;\n";
    $result .= "P = convexHull(verticesP)\n";
-   $result .= "computedLP = latticePoints P;\n";
-   $result .= "assert(numColumns(desiredLP) == #computedLP);\n";
+   $result .= "computedLP = sort matrix {latticePoints P};\n";
+   $result .= "assert(desiredLP == computedLP);\n";
 }
 
 sub test_wrapper_start{
@@ -69,9 +70,9 @@ $i=0;
 foreach my $file (@polytopeFiles){
    print $i,": ",$file,"\n";
    my @split = split(":",$file);
-   try{
+   eval{
       my $P = load($split[0]);
       print $P->FEASIBLE,"\n";
-   } catch($e){}
+   };
    $i++;
 }
