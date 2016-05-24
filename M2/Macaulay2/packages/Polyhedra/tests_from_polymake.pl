@@ -1,4 +1,6 @@
 @polytopeFiles = `grep -R "polytope::Polytope&lt;Rational&gt;" /home/lars/polymake-source/apps/polytope/testsuite`;
+@coneFiles = `grep -R "polytope::Cone&lt;Rational&gt;" /home/lars/polymake-source/apps/polytope/testsuite`;
+
 
 sub m2_matrix{
    my($name, $A) = @_;
@@ -55,6 +57,28 @@ sub lattice_point_test{
    my $result = test_wrapper_start("latticePoints", $name);
    my $P = load($file);
    $result .= lattice_points_test_inner($P);
+   $result .= test_wrapper_end();
+   return $result;
+}
+
+sub hilbert_basis_test_inner{
+   my($C) = @_;
+   $result = m2_matrix("raysC", transpose($P->RAYS->minor(All, ~[0])));
+   $result .= ";\n";
+   $result .= m2_matrix("desiredHB", transpose($P->HILBERT_BASIS->minor(All, ~[0])));
+   $result .= ";\n";
+   $result .= "desiredHB = sort desiredHB;\n";
+   $result .= "P = posHull(raysP)\n";
+   $result .= "computedHB = sort matrix {hilbertBasis P};\n";
+   $result .= "assert(desiredHB == computedHB);\n";
+}
+
+sub hilbert_basis_test{
+   my($file) = @_;
+   my $name = split_off_name($file);
+   my $result = test_wrapper_start("hilbertBasis", $name);
+   my $C = load($file);
+   $result .= hilbert_basis_test_inner($C);
    $result .= test_wrapper_end();
    return $result;
 }

@@ -299,3 +299,13 @@ inInterior (Matrix,Cone) := (p,C) -> (
      all(flatten entries(hyperplanesTmp*p), e -> e == 0) and (
 	  HS := halfspaces C;
 	  all(flatten entries(HS*p), e -> e > 0)))
+
+--   INPUT : '(C1,C2)'  two Cones
+--  OUTPUT : 'true' or 'false'
+isFace(Cone,Cone) := (C1,C2) -> (
+     c := dim C2 - dim C1;
+     -- Checking if the two cones lie in the same space and the dimension difference is positive
+     if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
+	  -- Checking if one of the codim 'c' faces of C2 is C1
+	  any(faces(c,C2), f -> f === C1))
+     else false)

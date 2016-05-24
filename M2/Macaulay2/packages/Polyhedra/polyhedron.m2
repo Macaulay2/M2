@@ -567,3 +567,31 @@ inInterior (Matrix,Polyhedron) := (p,P) -> (
 	  HS := halfspaces P;
 	  HS = (HS#0 * p)-HS#1;
 	  all(flatten entries HS, e -> e < 0)))
+
+
+boundaryMap (ZZ,Polyhedron) := (i,P) -> (
+     L1 := faces(dim P - i,P);
+     L2 := faces(dim P - i + 1,P);
+     L1 = apply(L1, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
+     L2 = apply(L2, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
+     transpose matrix apply(L1, l1 -> (
+	       apply(L2, l2 -> (
+			 if isSubset(set l2,set l1) then (
+			      l3 := toList(set l1 - set l2);
+			      l3 = apply(l3, e -> position(l1, e1 -> e1 == e));
+			      l := #l3; 
+			      k := #l2; 
+			      (-1)^(k*l + sum l3 - substitute((l^2-l)/2,ZZ))) else 0)))))
+
+
+--   INPUT : '(P,Q)'  two Polyhedra
+--  OUTPUT : 'true' or 'false'
+isFace(Polyhedron,Polyhedron) := (P,Q) -> (
+     -- Checking if the two polyhedra lie in the same space and computing the dimension difference
+     c := dim Q - dim P;
+     if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
+	  -- Checking if P is the empty polyhedron
+	  if c > dim Q then true
+	  -- Checking if one of the codim 'c' faces of Q is P
+	  else any(faces(c,Q), f -> f === P))
+     else false)

@@ -257,13 +257,6 @@ Cone ? Cone := (C1,C2) -> (
 
 
 
--- PURPOSE : Tests whether the intersection of two Cones is a face of both
---   INPUT : '(C1,C2)'  two Cones
---  OUTPUT : '(Boolean,Cone)'   (true,the intersection),if their intersection is a face of each and 
---     	                        (false,the intersection) otherwise. If the two cones do not lie in 
---     	    	      	   	the same ambient space it returns the empty polyhedron instead of 
---     	    	      	   	the intersection
-areCompatible = method()
 areCompatible(Cone,Cone) := (C1,C2) -> (
      if C1#"ambient dimension" == C2#"ambient dimension" then (
 	  I := intersection(C1,C2);
@@ -276,64 +269,6 @@ areCompatible(Polyhedron,Polyhedron) := (P1,P2) -> (
 	  I := intersection(P1,P2);
 	  (isFace(I,P1) and isFace(I,P2),I))
      else (false,emptyPolyhedron(P1#"ambient dimension")))
-
-
- 
--- PURPOSE : Tests if the first Polyhedron/Cone is a face of the second Polyhedron/Cone
-isFace = method(TypicalValue => Boolean)
-
---   INPUT : '(P,Q)'  two Polyhedra
---  OUTPUT : 'true' or 'false'
-isFace(Polyhedron,Polyhedron) := (P,Q) -> (
-     -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-     c := dim Q - dim P;
-     if P#"ambient dimension" == Q#"ambient dimension" and c >= 0 then (
-	  -- Checking if P is the empty polyhedron
-	  if c > dim Q then true
-	  -- Checking if one of the codim 'c' faces of Q is P
-	  else any(faces(c,Q), f -> f === P))
-     else false)
-
---   INPUT : '(C1,C2)'  two Cones
---  OUTPUT : 'true' or 'false'
-isFace(Cone,Cone) := (C1,C2) -> (
-     c := dim C2 - dim C1;
-     -- Checking if the two cones lie in the same space and the dimension difference is positive
-     if C1#"ambient dimension" == C2#"ambient dimension" and c >= 0 then (
-	  -- Checking if one of the codim 'c' faces of C2 is C1
-	  any(faces(c,C2), f -> f === C1))
-     else false)
-
-
-
-boundaryMap = method(TypicalValue => Matrix)
-boundaryMap (ZZ,Polyhedron) := (i,P) -> (
-     L1 := faces(dim P - i,P);
-     L2 := faces(dim P - i + 1,P);
-     L1 = apply(L1, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     L2 = apply(L2, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     transpose matrix apply(L1, l1 -> (
-	       apply(L2, l2 -> (
-			 if isSubset(set l2,set l1) then (
-			      l3 := toList(set l1 - set l2);
-			      l3 = apply(l3, e -> position(l1, e1 -> e1 == e));
-			      l := #l3; 
-			      k := #l2; 
-			      (-1)^(k*l + sum l3 - substitute((l^2-l)/2,ZZ))) else 0)))))
-
-boundaryMap (ZZ,PolyhedralComplex) := (i,PC) -> (
-     L1 := polyhedra(i,PC);
-     L2 := polyhedra(i-1,PC);
-     L1 = apply(L1, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     L2 = apply(L2, e -> (Vm := vertices e; apply(numColumns Vm, i -> Vm_{i})));
-     transpose matrix apply(L1, l1 -> (
-	       apply(L2, l2 -> (
-			 if isSubset(set l2,set l1) then (
-			      l3 := toList(set l1 - set l2);
-			      l3 = apply(l3, e -> position(l1, e1 -> e1 == e));
-			      l := #l3; 
-			      k := #l2; 
-			      (-1)^(k*l + sum l3 - substitute((l^2-l)/2,ZZ))) else 0)))))
 
 
 -- PURPOSE : Compute the dual face lattice

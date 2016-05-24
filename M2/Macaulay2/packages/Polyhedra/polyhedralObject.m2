@@ -40,3 +40,15 @@ maxFace = method()
 
 -- PURPOSE : Checking if a point is an interior point of a Polyhedron or Cone 
 inInterior = method(TypicalValue => Boolean)
+
+ 
+-- PURPOSE : Tests if the first Polyhedron/Cone is a face of the second Polyhedron/Cone
+isFace = method(TypicalValue => Boolean)
+
+-- PURPOSE : Tests whether the intersection of two Cones is a face of both
+--   INPUT : '(C1,C2)'  two Cones
+--  OUTPUT : '(Boolean,Cone)'   (true,the intersection),if their intersection is a face of each and 
+--     	                        (false,the intersection) otherwise. If the two cones do not lie in 
+--     	    	      	   	the same ambient space it returns the empty polyhedron instead of 
+--     	    	      	   	the intersection
+areCompatible = method()
