@@ -1,16 +1,5 @@
 
 #include "polyroots.hpp"
-#include "aring-glue.hpp"
-#include "aring-RR.hpp"
-#include "aring-RRR.hpp"
-
-#define abs(x)  ( ( (x) < 0) ? -(x) : (x) )
-#define max(a, b)  ( ( (a) > (b) ) ? (a) : (b) )
-
-typedef M2::ConcreteRing<M2::ARingRR> RingRR;
-typedef M2::ConcreteRing<M2::ARingRRR> RingRRR;
-typedef M2::ConcreteRing<M2::ARingCC> RingCC;
-typedef M2::ConcreteRing<M2::ARingCCC> RingCCC;
 
 engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
                                           int unique) {
@@ -38,15 +27,23 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
 
   /* Start PARI computations. */
   pari_CATCH(e_STACK) {
-#ifndef DEBUG
+#ifdef NDEBUG
+    /*
+     * Every time the stack is changed PARI writes a message to the file pari_errfile
+     * which by default is /dev/stderr. To avoid showing this message to the user we
+     * redirect to /dev/null before the PARI's stack is modified.
+     */
     FILE *tmp, *dev_null = fopen("/dev/null", "w");
     if (dev_null != NULL) {
       tmp = pari_errfile;
       pari_errfile = dev_null;
     }
 #endif
-    allocatemem(0); //x2
-#ifndef DEBUG
+  allocatemem(0); // passing 0 will double the current stack size.
+#ifdef NDEBUG
+    /*
+     * We set pari_errfile back to the default value just in case PARI crashes.
+     */
     if (dev_null != NULL) {
       pari_errfile = tmp;
       fclose(dev_null);
@@ -160,7 +157,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
 
         mpc_t root;
         pari_mpc_init_set_GEN(root, gel(roots, 1 + i), GMP_RNDN);
-        CCC->ring().to_ring_elem(m2_root, *root);
+        CCC->ring().to_ring_elem(m2_root, **reinterpret_cast<mpfc_t*>(&root));
         result->array[i] = RingElement::make_raw(CCC, m2_root);
 
         avma = av2;

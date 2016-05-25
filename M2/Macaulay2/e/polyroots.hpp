@@ -12,20 +12,25 @@
 #include "polyring.hpp"
 #include "aring-CC.hpp"
 #include "aring-CCC.hpp"
+#include "aring-glue.hpp"
+#include "aring-RR.hpp"
+#include "aring-RRR.hpp"
+
+#define abs(x)  ( ( (x) < 0) ? -(x) : (x) )
+#define max(a, b)  ( ( (a) > (b) ) ? (a) : (b) )
+
+extern "C" {
+  #include "../d/pari-gnump.h"
+};
+
+typedef M2::ConcreteRing<M2::ARingRR> RingRR;
+typedef M2::ConcreteRing<M2::ARingRRR> RingRRR;
+typedef M2::ConcreteRing<M2::ARingCC> RingCC;
+typedef M2::ConcreteRing<M2::ARingCCC> RingCCC;
 
 typedef M2::ARingCC::complex complex;
-
-typedef M2::ARingCCC::mpfc_struct mpc_t[1];
-typedef M2::ARingCCC::mpfc_ptr mpc_ptr;
-
-extern "C" GEN mpz_get_GEN (const mpz_ptr f);
-extern "C" GEN mpq_get_GEN (const mpq_ptr c);
-extern "C" GEN mpfr_get_GEN (const mpfr_ptr f);
-extern "C" GEN mpc_get_GEN (const mpc_ptr c);
-extern "C" void pari_mpfr_init_set_GEN(mpfr_ptr f, GEN x,
-                                       mpfr_prec_t default_prec);
-extern "C" void pari_mpc_init_set_GEN(mpc_ptr c, GEN x,
-                                      mpfr_prec_t default_prec);
+typedef M2::ARingCCC::mpfc_struct mpfc_t[1];
+typedef M2::ARingCCC::mpfc_ptr mpfc_ptr;
 
 engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
                                           int unique);

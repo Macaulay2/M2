@@ -42,6 +42,12 @@ static int self_initialized;
 
 static int pari_disabled;
 
+/*
+ * This function overrides the cb_pari_err_recover which is initialized to pari_exit() by default.
+ * The cb_pari_err_recover function is called after PARI has cleaned-up from an error. In our case
+ * it will be called by PARI with errnum = -1 after using allocatemem.
+ */
+
 static void m2_pari_err_recover(long errnum) {
   if (errnum != -1) {
     exit(1);

@@ -403,8 +403,7 @@ document {
 
 document {
     Key => Precision,
-    Headline => "polynomial roots precision",
-    "A non-negative ", TO "integer", ", the precision to which the roots of a polynomial are computed.",
+    Headline => "name of an optional argument.",
 }
 
 document {
@@ -414,15 +413,19 @@ document {
 }
 
 document {
-    Key => {(roots, RingElement), [roots, Precision, Unique]},
-    Headline => "compute the roots of a polynomial",
-    Usage => "roots x",
-    Inputs => {"x" => "a univariate polynomial"},
-    Outputs => {List => {"the roots of ", TT "x"}},
-    PARA{
-      "The result is a ", TO "List", " each of whose elements is a ", TO "CC", ". The default ",
-      TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", ".",
+    Key => {roots,
+      (roots, RingElement),
+      [roots, Precision],
+      [roots, Unique]
     },
+    Headline => "compute the roots of a polynomial",
+    Usage => "roots p",
+    Inputs => {
+      "p" => "a univariate polynomial over ZZ, QQ, RR or CC.",
+      Precision => "the number of precision bits used to compute the roots.", "The default ", TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", ".",
+      Unique => Boolean => "whether to return multiple roots one or multiple times. By default set to false.",
+    },
+    Outputs => {List => {"The roots of p each one represented as an elements of ", TO "CC", ".", }},
     EXAMPLE {
       "RR_100[x]",
       "p = x^13 + 5*x^9 + 7*x^4 + x +1",
@@ -432,12 +435,12 @@ document {
     EXAMPLE {
       "ZZ[x]",
       "p = x^13 + 5*x^9 + 7*x^4 + x +1",
-      "roots(p^2, Precision=>150)",
+      "roots(p^2, Precision=>150, Unique=>true)",
       "o7#0",
     },
     PARA {
       "The roots are computed using ", TO "pari", ".",
-    }
+    },
 }
 
 document {
