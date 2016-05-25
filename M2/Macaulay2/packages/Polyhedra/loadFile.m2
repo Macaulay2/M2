@@ -1,6 +1,7 @@
 needsPackage "FourierMotzkin"
 
 load "./exports.m2"
+load "./symbols.m2"
 
 ---------------------------------------------------------------
 -- Sorting rays
@@ -41,8 +42,8 @@ load "./legacy.m2"
 
 -- Tests
 load "./tests_from_polymake/hilbert_basis.m2"
-load "./tests_from_polymake/lattice_points.m2"
-load "./legacy_tests.m2"
+-- load "./tests_from_polymake/lattice_points.m2"
+-- load "./legacy_tests.m2"
 
 -- Documentation
 load "./legacy_doc.m2"
@@ -52,4 +53,5 @@ end
 -------------------------------------------------------------------------------
 restart
 loadPackage "Polyhedra"
+C = posHull matrix {{12,3}}
 check "Polyhedra"

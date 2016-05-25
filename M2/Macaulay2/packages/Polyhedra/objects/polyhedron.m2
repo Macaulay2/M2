@@ -18,7 +18,7 @@ net Polyhedron := P -> ( horizontalJoin flatten (
 	  "}" ))
   
   
-  -- PURPOSE : Building the polyhedron 'P'
+-- PURPOSE : Building the polyhedron 'P'
 --   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P
 --                                 directly ('verticesA') and in the dual description ('hyperA')
 --  OUTPUT : The polyhedron 'P'
@@ -65,7 +65,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	     "homogenizedVertices" => verticesA,
 	     "homogenizedHalfspaces" => hyperA,
 	     symbol cache => new CacheTable};
-   result.cache.rays = C^{1..(numgens target C)-1};
+   result.cache.computedRays = C^{1..(numgens target C)-1};
    result
 )
      

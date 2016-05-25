@@ -6,16 +6,16 @@ globalAssignment Cone
 Cone == Cone := (C1,C2) -> C1 === C2
 
 -- Modifying the standard output for a Cone to give an overview of its characteristica
-net Cone := C -> ( horizontalJoin flatten (
-	  "{",
-	  -- prints the parts vertically
-	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "dimension",
-					      "dimension of lineality space",
-					      "number of rays",
-					      "number of facets"}, key -> (net key, " => ", net C#key))),
-	  "}" ))
-
+net Cone := C -> ( )
+-- 	  "{",
+-- 	  -- prints the parts vertically
+-- 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+-- 			                      "dimension",
+-- 					      "dimension of lineality space",
+-- 					      "number of rays",
+-- 					      "number of facets"}, key -> (net key, " => ", net C#key))),
+-- 	  "}" ))
+-- 
 
 -- PURPOSE : Tests if a Cone is pointed
 --   INPUT : 'C'  a Cone
@@ -56,6 +56,7 @@ faces(ZZ,Cone) := (k,C) -> (
 --  OUTPUT : The Cone 'C'
 coneBuilder = (genrays,dualgens) -> (
       -- Sorting into rays, lineality space generators, supporting half-spaces, and hyperplanes
+      << genrays << endl;
       RM := genrays#0;
       LS := genrays#1;
       HS := transpose(-dualgens#0);
@@ -74,10 +75,47 @@ coneBuilder = (genrays,dualgens) -> (
          "genrays" => genrays,
          "dualgens" => dualgens,
          symbol cache => new CacheTable};
-      result.cache.rays = RM;
+      result.cache.computedRays = RM;
       result
 )
 
+computeRaysFromInputRays = method(TypicalValue => Matrix)
+computeRaysFromInputRays Cone := C -> (
+   inputRays := C.cache.inputRays;
+   inputLinealityGenerators := C.cache.inputLinealityGenerators;
+   dual := fourierMotzkin(inputRays, inputLinealityGenerators);
+   (raySide, facetSide) := fMReplacement(inputRays, dual#0, dual#1);
+   C.cache.computedLinealityGenerators = raySide#1;
+   C.cache.computedFacets = transpose( -facetSide#0);
+   C.cache.computedLinealitySpace = transpose( -facetSide#1);
+   raySide#0
+)
+
+computeRaysFromInputFacets = method(TypicalValue => Matrix)
+computeRaysFromInputFacets Cone := C -> (
+   
+)
+
+computeRaysForCone = method()
+computeRaysForCone Cone := C -> (
+   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then computeRaysFromInputRays C
+   else if C.cache.?inequalities and C.cache.?equations then computeRaysFromInputFacets C
+   else error "No method for ray computation."
+)
+
+
+coneFromRays = method(TypicalValue => Cone)
+coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
+     -- checking for input errors
+     if numRows inputRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
+     result := new Cone from {
+         "ambient dimension" => numRows inputRays,
+         symbol cache => new CacheTable
+     };
+     result.cache.inputRays = inputRays;
+     result.cache.inputLinealityGenerators = linealityGenerators;
+     result
+)
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
@@ -90,16 +128,17 @@ posHull = method(TypicalValue => Cone)
 -- COMMENT : The description by rays and lineality space is stored in C as well 
 --		 as the description by defining half-spaces and hyperplanes.
 posHull(Matrix,Matrix) := (Mrays,LS) -> (
-     -- checking for input errors
-     if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
-     Mrays = chkZZQQ(Mrays,"rays");
-     LS = chkZZQQ(LS,"lineality space");
-     -- Computing generators of the cone and its dual cone
-     dualgens := fourierMotzkin(Mrays,LS);
-     local genrays;
-     (genrays,dualgens) = fMReplacement(Mrays,dualgens#0,dualgens#1);
---     genrays := fourierMotzkin dualgens;
-     coneBuilder(genrays,dualgens))
+   coneFromRays(Mrays, LS)
+)
+
+--     Mrays = chkZZQQ(Mrays,"rays");
+--     LS = chkZZQQ(LS,"lineality space");
+--     -- Computing generators of the cone and its dual cone
+--     dualgens := fourierMotzkin(Mrays,LS);
+--     local genrays;
+--     (genrays,dualgens) = fMReplacement(Mrays,dualgens#0,dualgens#1);
+----     genrays := fourierMotzkin dualgens;
+--     coneBuilder(genrays,dualgens))
 
 
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors

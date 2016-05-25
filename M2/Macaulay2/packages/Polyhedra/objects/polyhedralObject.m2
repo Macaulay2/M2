@@ -22,7 +22,11 @@ linSpace PolyhedralObject := P -> P#"linealitySpace"
 halfspaces = method()
 halfspaces PolyhedralObject := P -> P#"halfspaces"
 
-rays PolyhedralObject := P -> P.cache.rays
+rays PolyhedralObject := Matrix => (cacheValue symbol computedRays)(P ->(
+      if instance(P, Cone) then computeRaysForCone P
+      else error "Not implemented yet."
+   )
+)
 
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron or fan
