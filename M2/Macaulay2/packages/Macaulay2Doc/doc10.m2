@@ -182,9 +182,12 @@ document {   -- This node is used as an example for the documentation node: Key,
      Usage => "resolution M\nres M",
      Inputs => { "M" },
      Outputs => { {"a free resolution of ", TT "M"} },
-     "The given set of generators is used; thus if these are not minimal,
-     and a minimal resolution is desired, use res minimalPresentation M.
-     Warning: the resolution can have free modules with unexpected ranks
+     "The given set of generators and relations is used; if these are not minimal,
+     and a minimal resolution is desired, use", 
+     TT "resolution minimalPresentation M", 
+     "instead."},
+ 
+PARA {"Warning: the resolution can have free modules with unexpected ranks
      when the module ", TT "M", " is not homogeneous.  Here is an example
      where even the lengths of the resolutions differ.  We compute
      a resolution of the kernel of a ring map in two ways.
