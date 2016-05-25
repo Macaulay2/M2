@@ -50,7 +50,7 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	hyperplanesTmp := transpose(hyperA#1);
 	hyperplanesTmp = (hyperplanesTmp_{1..(numgens source hyperplanesTmp)-1},-hyperplanesTmp_{0});
 	-- Defining the Polyhedron
-	new Polyhedron from {
+	result := new Polyhedron from {
 	     "ambient dimension" => (numgens target B)-1,
 	     "dimension" =>  ((numgens target B)-1)-(rank(hyperA#1)),
 	     "dimension of lineality space" => numgens source LS,
@@ -58,13 +58,16 @@ polyhedronBuilder = (hyperA,verticesA) -> (
 	     "number of vertices" => numgens source B,
 	     "number of rays" => numgens source C,
 	     "vertices" => B^{1..(numgens target B)-1},
-	     "rays" => C^{1..(numgens target C)-1},
+--	     "rays" => C^{1..(numgens target C)-1},
 	     "number of facets" => numgens target H,
 	     "halfspaces" => (H_{1..(numgens source H)-1},-H_{0}),
 	     "hyperplanes" => hyperplanesTmp,
 	     "homogenizedVertices" => verticesA,
 	     "homogenizedHalfspaces" => hyperA,
-	     symbol cache => new CacheTable})
+	     symbol cache => new CacheTable};
+   result.cache.rays = C^{1..(numgens target C)-1};
+   result
+)
      
 --   INPUT : 'P'  a Polyhedron
 posHull Polyhedron := P -> (

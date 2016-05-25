@@ -61,19 +61,22 @@ coneBuilder = (genrays,dualgens) -> (
       HS := transpose(-dualgens#0);
       hyperplanesTmp := transpose(dualgens#1);
       -- Defining C
-      new Cone from {
-	   "ambient dimension" => numgens target RM,
-	   "dimension" => (numgens target RM)-(rank hyperplanesTmp),
-	   "dimension of lineality space" => numgens source LS,
-	   "linealitySpace" => LS,
-	   "number of rays" => numgens source RM,
-	   "rays" => RM,
-	   "number of facets" => numgens target HS,
-	   "halfspaces" => HS,
-	   "hyperplanes" => hyperplanesTmp,
-	   "genrays" => genrays,
-	   "dualgens" => dualgens,
-	   symbol cache => new CacheTable})
+      result := new Cone from {
+         "ambient dimension" => numgens target RM,
+         "dimension" => (numgens target RM)-(rank hyperplanesTmp),
+         "dimension of lineality space" => numgens source LS,
+         "linealitySpace" => LS,
+         "number of rays" => numgens source RM,
+   --	   "rays" => RM,
+         "number of facets" => numgens target HS,
+         "halfspaces" => HS,
+         "hyperplanes" => hyperplanesTmp,
+         "genrays" => genrays,
+         "dualgens" => dualgens,
+         symbol cache => new CacheTable};
+      result.cache.rays = RM;
+      result
+)
 
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 

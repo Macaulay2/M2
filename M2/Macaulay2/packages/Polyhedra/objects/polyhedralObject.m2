@@ -22,7 +22,7 @@ linSpace PolyhedralObject := P -> P#"linealitySpace"
 halfspaces = method()
 halfspaces PolyhedralObject := P -> P#"halfspaces"
 
-rays PolyhedralObject := P -> P#"rays"
+rays PolyhedralObject := P -> P.cache.rays
 
 -- PURPOSE : Computing the f-vector of a polyhedron
 --   INPUT : 'P'  a Polyhedron or fan
