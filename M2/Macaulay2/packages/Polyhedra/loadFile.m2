@@ -15,6 +15,7 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 
 -- Methods declarations for methods defined for several objects, but not all of polyhedraHash
 load "./methods.m2"
+load "./primitiveRules.m2"
 load "./faceBuilders.m2"
 
 -- Objects
@@ -53,5 +54,6 @@ end
 -------------------------------------------------------------------------------
 restart
 loadPackage "Polyhedra"
-C = posHull matrix {{12,3}}
+C = posHull matrix {{12,3},{3,5}}
+rays C
 check "Polyhedra"

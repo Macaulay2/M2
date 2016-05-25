@@ -12,7 +12,16 @@ hyperplanes PolyhedralObject := P -> P#"hyperplanes"
 
 -- PURPOSE : Giving a basis of the lineality space
 linSpace = method(TypicalValue => Matrix)
-linSpace PolyhedralObject := P -> P#"linealitySpace"
+linSpace PolyhedralObject := P -> linealitySpaceBasis P
+
+linealitySpaceBasis = method(TypicalValue => Matrix)
+linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealitySpaceBasis)(P -> (
+      if instance(P, Cone) then computeLinealityBasisForCone P
+      else error "Not implemented yet."
+   )
+)
+
+
 
 -- PURPOSE : Giving the defining affine half-spaces
 --   INPUT : 'P'  a Polyhedron or Cone

@@ -79,28 +79,40 @@ coneBuilder = (genrays,dualgens) -> (
       result
 )
 
-computeRaysFromInputRays = method(TypicalValue => Matrix)
-computeRaysFromInputRays Cone := C -> (
+computeLinealityBasisForCone = method(TypicalValue => Matrix)
+computeLinealityBasisForCone Cone := C -> (
+   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then computeLinealityBasisFromInputRays C
+   else if C.cache.?inequalities and C.cache.?equations then computeLinealityBasisFromInequalities C
+   else error "No method for ray computation."
+)
+
+computeLinealityBasisFromInputRays = method(TypicalValue => Matrix)
+computeLinealityBasisFromInequalities = method(TypicalValue => Matrix)
+
+rules#((set {inputRays, inputLinealityGenerators}, computedRays)) = method(TypicalValue => Matrix)
+rules#((set {inputRays, inputLinealityGenerators}, computedRays)) Cone := C -> (
    inputRays := C.cache.inputRays;
    inputLinealityGenerators := C.cache.inputLinealityGenerators;
    dual := fourierMotzkin(inputRays, inputLinealityGenerators);
    (raySide, facetSide) := fMReplacement(inputRays, dual#0, dual#1);
-   C.cache.computedLinealityGenerators = raySide#1;
+   C.cache.computedLinealityBasis = raySide#1;
    C.cache.computedFacets = transpose( -facetSide#0);
    C.cache.computedLinealitySpace = transpose( -facetSide#1);
    raySide#0
 )
 
-computeRaysFromInputFacets = method(TypicalValue => Matrix)
-computeRaysFromInputFacets Cone := C -> (
-   
+rules#((set {inequalities, equations}, computedRays)) = method(TypicalValue => Matrix)
+rules#((set {inequalities, equations}, computedRays)) Cone := C -> (
+   inequalities := C.cache.inequalities;
+   equations := C.cache.equations;
+   dual := fourierMotzkin(inequalities, equations);
+   C.cache.computedLinealityBasis = dual#1;
+   dual#0
 )
 
 computeRaysForCone = method()
 computeRaysForCone Cone := C -> (
-   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then computeRaysFromInputRays C
-   else if C.cache.?inequalities and C.cache.?equations then computeRaysFromInputFacets C
-   else error "No method for ray computation."
+   applyFittingRule(C, computedRays)
 )
 
 

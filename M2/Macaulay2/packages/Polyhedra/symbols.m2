@@ -7,7 +7,7 @@ protect inputLinealityGenerators
 protect inputRays
 -- Computed properties
 protect computedFacets
-protect computedLinealityGenerators
+protect computedLinealityBasis
 protect computedLinealitySpace
 protect computedRays
 
