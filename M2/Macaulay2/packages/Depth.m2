@@ -40,7 +40,7 @@ depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
     --gives error if the ultimate coeficient ring of R = ring M is not a field.
     R := ring M;
-    
+    if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
     if not isCommutative R then error"depth undefined for noncommutative rings";
     
     S := (flattenRing R)_0;
