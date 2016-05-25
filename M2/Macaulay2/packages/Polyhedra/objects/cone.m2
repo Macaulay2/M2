@@ -79,18 +79,10 @@ coneBuilder = (genrays,dualgens) -> (
       result
 )
 
-computeLinealityBasisForCone = method(TypicalValue => Matrix)
-computeLinealityBasisForCone Cone := C -> (
-   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then computeLinealityBasisFromInputRays C
-   else if C.cache.?inequalities and C.cache.?equations then computeLinealityBasisFromInequalities C
-   else error "No method for ray computation."
-)
 
-computeLinealityBasisFromInputRays = method(TypicalValue => Matrix)
-computeLinealityBasisFromInequalities = method(TypicalValue => Matrix)
 
-rules#((set {inputRays, inputLinealityGenerators}, computedRays)) = method(TypicalValue => Matrix)
-rules#((set {inputRays, inputLinealityGenerators}, computedRays)) Cone := C -> (
+rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedLinealitySpace, computedLinealityBasis})) = method(TypicalValue => Matrix)
+rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedLinealitySpace, computedLinealityBasis})) Cone := C -> (
    inputRays := C.cache.inputRays;
    inputLinealityGenerators := C.cache.inputLinealityGenerators;
    dual := fourierMotzkin(inputRays, inputLinealityGenerators);
@@ -98,21 +90,16 @@ rules#((set {inputRays, inputLinealityGenerators}, computedRays)) Cone := C -> (
    C.cache.computedLinealityBasis = raySide#1;
    C.cache.computedFacets = transpose( -facetSide#0);
    C.cache.computedLinealitySpace = transpose( -facetSide#1);
-   raySide#0
+   C.cache.computedRays = raySide#0;
 )
 
-rules#((set {inequalities, equations}, computedRays)) = method(TypicalValue => Matrix)
-rules#((set {inequalities, equations}, computedRays)) Cone := C -> (
+rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis})) = method(TypicalValue => Matrix)
+rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis})) Cone := C -> (
    inequalities := C.cache.inequalities;
    equations := C.cache.equations;
    dual := fourierMotzkin(inequalities, equations);
    C.cache.computedLinealityBasis = dual#1;
-   dual#0
-)
-
-computeRaysForCone = method()
-computeRaysForCone Cone := C -> (
-   applyFittingRule(C, computedRays)
+   C.cache.computedRays = dual#0;
 )
 
 
@@ -174,12 +161,6 @@ posHull(Cone,Cone) := (C1,C2) -> (
 --	genrays := fourierMotzkin dualgens;
 	coneBuilder(genrays,dualgens))
 
-
-
-
---   INPUT : 'C'  a Cone
---  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Cone := C -> C#"linealitySpace"
 
 
      

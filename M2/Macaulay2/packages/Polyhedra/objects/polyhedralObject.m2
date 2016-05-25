@@ -15,8 +15,8 @@ linSpace = method(TypicalValue => Matrix)
 linSpace PolyhedralObject := P -> linealitySpaceBasis P
 
 linealitySpaceBasis = method(TypicalValue => Matrix)
-linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealitySpaceBasis)(P -> (
-      if instance(P, Cone) then computeLinealityBasisForCone P
+linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealityBasis)(P -> (
+      if instance(P, Cone) then applyFittingRule(P, computedLinealityBasis)
       else error "Not implemented yet."
    )
 )
@@ -32,7 +32,7 @@ halfspaces = method()
 halfspaces PolyhedralObject := P -> P#"halfspaces"
 
 rays PolyhedralObject := Matrix => (cacheValue symbol computedRays)(P ->(
-      if instance(P, Cone) then computeRaysForCone P
+      if instance(P, Cone) then applyFittingRule(P, computedRays)
       else error "Not implemented yet."
    )
 )
