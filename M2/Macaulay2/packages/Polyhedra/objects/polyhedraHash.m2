@@ -23,7 +23,11 @@ isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
 --   INPUT : 'PH'  a Polyhedron, Cone, Fan or Polyhedral Complex
 --  OUTPUT : an integer, the dimension of the Polyhedron, Cone, Fan or Polyhedral Complex,
 --           where for the last two it is defined as the maximum dimension of the subobjects
-dim PolyhedraHash := PH -> PH#"dimension"
+dim PolyhedraHash := ZZ => (cacheValue symbol computedDimension)(PH -> (
+      if instance(PH, Cone) then applyFittingRules(PH, computedDimension) 
+      else error "Not implemented yet."
+   )
+)
 
 
 

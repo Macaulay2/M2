@@ -11,6 +11,7 @@ export {
    "Polyhedron", 
    "convexHull", 
 
+   "facets",
    "Fan", 
    "PolyhedralComplex", 
    "intersection", 

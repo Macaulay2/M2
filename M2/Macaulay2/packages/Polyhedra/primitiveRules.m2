@@ -3,26 +3,87 @@ protect sourceProperties
 
 rules = new CacheTable
 
-findFittingRule = method()
-findFittingRule(HashTable, Set) := (HT, targets) -> (
+
+
+findOneStepComputableProperties = method()
+findOneStepComputableProperties Set := givenProperties -> (
    allRules := keys rules;
-   << allRules << endl;
+   goodRules := select(allRules, rule -> rule#0 <= givenProperties);
+   result := apply(goodRules, rule -> rule#1);
+   sum result
+)
+
+findRulesForProperty = method()
+findRulesForProperty(Set, Set, Symbol) := (given, forbidden, target) -> (
+   allRules := keys rules;
+   goodRules := select(allRules, rule -> member(target, rule#1));
+   allowedRules := select(goodRules, rule -> #(rule#0 * forbidden) == 0);
+   return allowedRules
+)
+
+resolveTarget = method()
+resolveTarget(Set, Set, Symbol) := (given, forbidden, target) -> (
+   allowedRules := findRulesForProperty(given, forbidden, target);
+   for rule in allowedRules do (
+      resolvent := rule#0;
+      newForbidden := forbidden + set {target};
+      result := findPathRecursively(given, newForbidden, resolvent);
+      if #result > 0 then return append(result, (rule))
+   );
+   return ()
+)
+
+
+findPathRecursively = method()
+findPathRecursively(Set, Set, Set) := (given, forbidden, targets) -> (
+   computableProperties := findOneStepComputableProperties(given);
+   goodTargets := targets * computableProperties;
+   result := toSequence apply(toList goodTargets, target -> (findRulesForProperty(given, forbidden, target))#0);
+   newGiven := given + goodTargets;
+   badTargets := targets - newGiven;
+   for target in toList badTargets do (
+      newRules := resolveTarget(newGiven, forbidden, target);
+      if #newRules == 0 then return () 
+      else (
+         result = result | newRules;
+         newGiven = newGiven + set {target};
+      )
+   );
+   return result
+)
+
+
+
+findFittingRulePath = method()
+findFittingRulePath(HashTable, Set) := (HT, targets) -> (
    givenProperties := set flatten {keys HT, keys HT.cache};
-   goodRules := select(allRules, rule -> targets <= rule#1);
-   bestRules := select(goodRules, rule -> rule#0 <= givenProperties);
-   if #bestRules == 0 then error "No fitting rule found."
-   else bestRules#0
+   path := findPathRecursively(givenProperties, set {}, targets);
+   return path
 )
 
-applyFittingRule = method()
-applyFittingRule(HashTable, Set) := (HT, targets) -> (
-   << "Hello." << instance(targets, Set) <<  endl;
-   rule := findFittingRule(HT, targets);
-   rules#rule HT
+applySingleRule = method()
+applySingleRule(HashTable, Sequence, Set) := (HT, rule, given) -> (
+   if rule#1 <= given then return given
+   else (
+      rules#rule HT;
+      given + rule#1
+   )
 )
 
-applyFittingRule(HashTable, Symbol) := (HT, target) -> (
-   applyFittingRule(HT, set {target});
-   << "Computation done." << endl;
-   HT.cache.target
+applyFittingRules = method()
+applyFittingRules(HashTable, Set) := (HT, targets) -> (
+   givenProperties := set flatten {keys HT, keys HT.cache};
+   rulePath := findFittingRulePath(HT, targets);
+   << "Path: " << rulePath << endl;
+   if #rulePath == 0 then error "Cannot compute properties."
+   else (
+      for edge in rulePath do (
+         givenProperties = applySingleRule(HT, edge, givenProperties);
+      )
+   )
+)
+
+applyFittingRules(HashTable, Symbol) := (HT, target) -> (
+   applyFittingRules(HT, set {target});
+   HT.cache#target
 )

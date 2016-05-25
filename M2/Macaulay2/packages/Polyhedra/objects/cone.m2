@@ -79,18 +79,22 @@ coneBuilder = (genrays,dualgens) -> (
       result
 )
 
+rules#((set{"ambient dimension", computedHyperplanes}, set{computedDimension})) = method(TypicalValue => ZZ)
+rules#((set{"ambient dimension", computedHyperplanes}, set{computedDimension})) Cone := C -> (
+   C.cache#computedDimension = ambDim C - numRows hyperplanes C;
+)
 
 
-rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedLinealitySpace, computedLinealityBasis})) = method(TypicalValue => Matrix)
-rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedLinealitySpace, computedLinealityBasis})) Cone := C -> (
+rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedHyperplanes, computedLinealityBasis})) = method(TypicalValue => Matrix)
+rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedHyperplanes, computedLinealityBasis})) Cone := C -> (
    inputRays := C.cache.inputRays;
    inputLinealityGenerators := C.cache.inputLinealityGenerators;
    dual := fourierMotzkin(inputRays, inputLinealityGenerators);
    (raySide, facetSide) := fMReplacement(inputRays, dual#0, dual#1);
-   C.cache.computedLinealityBasis = raySide#1;
-   C.cache.computedFacets = transpose( -facetSide#0);
-   C.cache.computedLinealitySpace = transpose( -facetSide#1);
-   C.cache.computedRays = raySide#0;
+   C.cache#computedLinealityBasis = raySide#1;
+   C.cache#computedFacets = transpose( -facetSide#0);
+   C.cache#computedHyperplanes = transpose( -facetSide#1);
+   C.cache#computedRays = raySide#0;
 )
 
 rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis})) = method(TypicalValue => Matrix)
@@ -98,8 +102,8 @@ rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis}
    inequalities := C.cache.inequalities;
    equations := C.cache.equations;
    dual := fourierMotzkin(inequalities, equations);
-   C.cache.computedLinealityBasis = dual#1;
-   C.cache.computedRays = dual#0;
+   C.cache#computedLinealityBasis = dual#1;
+   C.cache#computedRays = dual#0;
 )
 
 
@@ -114,6 +118,12 @@ coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
      result.cache.inputRays = inputRays;
      result.cache.inputLinealityGenerators = linealityGenerators;
      result
+)
+
+hilbertBasis = method()
+hilbertBasis Cone := Matrix => (cacheValue symbol computedHilbertBasis)(C -> (
+      applyFittingRules(C, computedHilbertBasis)
+   )
 )
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 

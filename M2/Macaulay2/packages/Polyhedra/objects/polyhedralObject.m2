@@ -8,7 +8,12 @@ globalAssignment PolyhedralObject
 --		 HS is the intersection of the defining affine half-spaces
 --     for cones, 'w' is omitted.
 hyperplanes = method()
-hyperplanes PolyhedralObject := P -> P#"hyperplanes"
+hyperplanes PolyhedralObject := Matrix => (cacheValue symbol computedHyperplanes)(P -> (
+      if instance(P, Cone) then applyFittingRules(P, computedHyperplanes) 
+      else error "Not implemented yet."
+   )
+)
+
 
 -- PURPOSE : Giving a basis of the lineality space
 linSpace = method(TypicalValue => Matrix)
@@ -16,7 +21,7 @@ linSpace PolyhedralObject := P -> linealitySpaceBasis P
 
 linealitySpaceBasis = method(TypicalValue => Matrix)
 linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealityBasis)(P -> (
-      if instance(P, Cone) then applyFittingRule(P, computedLinealityBasis)
+      if instance(P, Cone) then applyFittingRules(P, computedLinealityBasis) 
       else error "Not implemented yet."
    )
 )
@@ -29,10 +34,18 @@ linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLin
 --		 H is the intersection of the defining affine hyperplanes
 --     for cones, 'v' is omitted.
 halfspaces = method()
-halfspaces PolyhedralObject := P -> P#"halfspaces"
+halfspaces PolyhedralObject := P -> facets P
+
+facets = method()
+facets PolyhedralObject := Matrix => (cacheValue symbol computedFacets)(P -> (
+      if instance(P, Cone) then applyFittingRules(P, computedFacets) 
+      else error "Not implemented yet."
+   )
+)
+
 
 rays PolyhedralObject := Matrix => (cacheValue symbol computedRays)(P ->(
-      if instance(P, Cone) then applyFittingRule(P, computedRays)
+      if instance(P, Cone) then applyFittingRules(P, computedRays)
       else error "Not implemented yet."
    )
 )
