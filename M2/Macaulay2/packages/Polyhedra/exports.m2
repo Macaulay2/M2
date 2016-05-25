@@ -1,4 +1,7 @@
 export {
+-- this export is only temporary
+   "accessKey",
+
    "PolyhedralObject", 
 -- Cone object with associated methods:
    "Cone", 
