@@ -19,9 +19,31 @@ unexport DEBUG
 PROFILE=no
 unexport PROFILE
 
-# see the INSTALL file:
-export MACOSX_DEPLOYMENT_TARGET=10.9
+DIRECTORY = mac64
+BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
+BRANCH := master
+DIRECTORY := $(DIRECTORY)-$(BRANCH)
 
+CPPFLAGS += -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/usr/include/libxml2
+CPPFLAGS += -I$(HOME)/local/include
+LDFLAGS += -L$(HOME)/local/lib
+CONFIGOPTIONS += CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
+
+# see the INSTALL file:
+# export MACOSX_DEPLOYMENT_TARGET=10.9
+
+ifeq ($(GCC5),yes)
+BUILDLIBS += mpir flint
+_CC  = gcc-5
+_CXX = g++-5
+DIRECTORY := $(DIRECTORY)-gcc5
+else
+ifeq ($(GCC6),yes)
+BUILDLIBS += mpir flint
+_CC  = gcc-6
+_CXX = g++-6
+DIRECTORY := $(DIRECTORY)-gcc6
+else
 ifeq ($(CLANG),yes)
 # The LLVM compiler, /usr/bin/gcc, has miscompiled pari.
 # To test pari for that bug, make pari's gp and try this factorization:
@@ -30,19 +52,16 @@ ifeq ($(CLANG),yes)
 DIRECTORY := $(DIRECTORY)-clang
 _CC  := /usr/bin/gcc
 _CXX := /usr/bin/g++
-_FC  := false
+# _FC  := false
 CONFIGOPTIONS += --disable-frobby  --disable-gfan
+export CFLAGS += -Wno-unknown-attributes
 else
-_CC  := gcc-4.9 -mtune=generic
-_CXX := g++-4.9 -mtune=generic
-_FC  := 
-# _FC  := gfortran-5
-# BRANCH := $(shell git branch --contains | sed -e s=^..== -e s=/=.=g )
-BRANCH := master
-DIRECTORY := mac64
+_CC  := gcc-4.9
+_CXX := g++-4.9
+_FC  := gfortran-4.9
 endif
-
-DIRECTORY := $(DIRECTORY)-$(BRANCH)
+endif
+endif
 
 default: all
 
@@ -53,12 +72,12 @@ default: all
 #   (gdb) x/i min_bytes_allocd+100
 #   0x2dec <min_bytes_allocd+100>:	shrx   %rcx,%rax,%rcx
 #   Alternatively, could use "brew install --cc=gcc-4.9 --build-from-source bdw-gc".
-CONFIGOPTIONS += --enable-build-libraries="pari flint readline"
+BUILDLIBS += pari flint readline
 
 ifeq ($(PRODUCTION),yes)
    default: check
    CONFIGOPTIONS += --disable-common-staging-area
-   DIRECTORY := $(DIRECTORY).production
+   DIRECTORY := $(DIRECTORY)-production
    PREFIX = /Applications/Macaulay2-1.6
    CONFIGOPTIONS += --enable-dmg
    ifeq ($(DEBUG),yes)
@@ -71,16 +90,18 @@ endif
 ifeq ($(DEBUG),yes)
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-debug --enable-memdebug --disable-optimize --enable-static
-   DIRECTORY := $(DIRECTORY).debug
+   DIRECTORY := $(DIRECTORY)-debug
 endif
 
 ifeq ($(PROFILE),yes)
    INSTALLOPTIONS += prefix=/none
    CONFIGOPTIONS += --enable-profile
-   DIRECTORY := $(DIRECTORY).profile
+   DIRECTORY := $(DIRECTORY)-profile
 endif
+
+CONFIGOPTIONS += --enable-build-libraries="$(BUILDLIBS)"
 include Makefile.include
 
 # Local Variables:
-# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no NTL_WIZARD=no "
+# compile-command: "time make -w -O -j4 -f Makefile.mac PRODUCTION=yes DEBUG=no "
 # End:

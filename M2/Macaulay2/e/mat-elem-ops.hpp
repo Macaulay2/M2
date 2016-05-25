@@ -609,6 +609,16 @@ public:
   }
   //////////////////////////////////
 
+  static void setFromSubmatrix(const Mat& mat, size_t r0, size_t r1, size_t c0, size_t c1, Mat& result)
+  /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
+  {
+    // M2_assert(r1-r0+1<=result.numRows());
+    // M2_assert(c1-c0+1<=result.numColumns());
+    for (size_t r = r0; r <= r1; r++)
+      for (size_t c = c0; c <= c1; c++)
+        mat.ring().set(result.entry(r-r0,c-c0), mat.entry(r,c));
+  }
+
   static void setFromSubmatrix(const Mat& mat, M2_arrayint rows, M2_arrayint cols, Mat& result)
   /* Set 'result' with the given submatrix of 'mat'. TODO: use iterator on result */
   {

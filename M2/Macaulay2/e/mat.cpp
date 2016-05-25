@@ -139,7 +139,6 @@ bool MutableMatrix::set_values(M2_arrayint rows,
 
 engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bool transpose)
 {
-#ifdef HAVE_FFLAS_FFPACK
   // Suppose A is m x n
   // then we get A = LQUP = LSP, see e.g. http://www.ens-lyon.fr/LIP/Pub/Rapports/RR/RR2006/RR2006-28.pdf
   // P and Q are permutation info using LAPACK's convention:, see
@@ -180,8 +179,6 @@ engine_RawArrayIntPairOrNull rawLQUPFactorizationInPlace(MutableMatrix *A, M2_bo
   result->b = stdvector_to_M2_arrayint(P);
 
   return result;
-#endif
-  return 0;
 }
 
 // Local Variables:

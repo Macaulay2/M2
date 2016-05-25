@@ -8,7 +8,7 @@
 toRingXphc = method()
 toRingXphc (List,List) := (F,G) -> (
     R := ring ideal (F|G); 
-    Xphc := getSymbol "xX";
+    Xphc := getSymbol "phcX";
     XphcRing := (coefficientRing R)[Xphc_1..Xphc_(numgens R)];
     M := map(XphcRing,R,gens XphcRing);
     ((M ideal F)_*, (M ideal G)_*)

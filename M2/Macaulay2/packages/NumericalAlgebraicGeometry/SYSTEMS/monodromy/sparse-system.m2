@@ -1,10 +1,10 @@
 restart
 needsPackage "NAGtools"
-setDefault(Software=>M2)
+--setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
 n = 10
-degree cyclicRoots(n,ZZ/32003)
+--time degree cyclicRoots(n,ZZ/32003)
 S = gens cyclicRoots(n,CC)
 R = ring S
 X = apply(gens R, v->inputGate (symbol x)_v) -- variables
@@ -41,12 +41,24 @@ c0 = point{
 	    )) 
     }
 pre0 = point{x0}
-stop = (n,L)->n>5
---nextP = () -> point {{ c0 }}
-pre'all = preimageViaMonodromy(PH,c0,{pre0},
-    --RandomPointFunction=>nextP,
-    StoppingCriterion=>stop);
 
-end
+end ----------------------------------------------------------------------------
+
 restart
-load "sparse-system.m2"
+load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system.m2"
+stop = (n,L)->n>5
+elapsedTime pre'all = preimageViaMonodromy(PH,c0,{pre0},
+    StoppingCriterion=>stop);
+-- RHEL:  
+
+---------- PHCpack timing ------------------------
+restart
+loadPackage "PHCpack"
+
+needsPackage "ExampleIdeals"
+n = 10
+I = cyclicRoots(n,CC);
+R = CC[x_1..x_(numgens ring I)]
+toR = map(R,ring I,vars R)
+elapsedTime (mv,q,qsols) = mixedVolume(I_*/toR,StartSystem => true);
+

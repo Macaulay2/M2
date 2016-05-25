@@ -588,7 +588,7 @@ re_search_internal (preg, string, length, start, range, stop, nmatch, pmatch,
 	  || dfa->init_state_begbuf == NULL, 0))
     return REG_NOMATCH;
 
-#ifdef DEBUG
+#ifndef NDEBUG
   /* We assume front-end functions already check them.  */
   assert (start + range >= 0 && start + range <= length);
 #endif
@@ -851,7 +851,7 @@ prune_impossible_nodes (mctx)
   re_dfastate_t **sifted_states;
   re_dfastate_t **lim_states = NULL;
   re_sift_context_t sctx;
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (mctx->state_log != NULL);
 #endif
   match_last = mctx->match_last;
@@ -1115,7 +1115,7 @@ check_halt_state_context (mctx, state, idx)
 {
   int i;
   unsigned int context;
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (state->halt);
 #endif
   context = re_string_context_at (&mctx->input, idx, mctx->eflags);
@@ -1290,7 +1290,7 @@ set_regs (preg, mctx, nmatch, pmatch, fl_backtrack)
   struct re_fail_stack_t fs_body = { 0, 2, NULL };
   regmatch_t *prev_idx_match;
 
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (nmatch > 1);
   assert (mctx->state_log != NULL);
 #endif
@@ -1466,7 +1466,7 @@ sift_states_backward (mctx, sctx)
   re_node_set cur_dest;
   re_node_set *cur_src; /* Points the state_log[str_idx]->nodes  */
 
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (mctx->state_log != NULL && mctx->state_log[str_idx] != NULL);
 #endif
   cur_src = &mctx->state_log[str_idx]->nodes;
@@ -2399,7 +2399,7 @@ transit_state_mb (mctx, pstate)
       err = clean_state_log_if_needed (mctx, dest_idx);
       if (BE (err != REG_NOERROR, 0))
 	return err;
-#ifdef DEBUG
+#ifndef NDEBUG
       assert (dfa->nexts[cur_node_idx] != -1);
 #endif
       /* `cur_node_idx' may point the entity of the OP_CONTEXT_NODE,
@@ -2467,7 +2467,7 @@ transit_state_bkref (mctx, nodes)
 
       /* And add the epsilon closures (which is `new_dest_nodes') of
 	 the backreference to appropriate state_log.  */
-#ifdef DEBUG
+#ifndef NDEBUG
       assert (dfa->nexts[node_idx] != -1);
 #endif
       for (; bkc_idx < mctx->nbkref_ents; ++bkc_idx)
@@ -2963,7 +2963,7 @@ check_arrival_expand_ecl (dfa, cur_nodes, ex_subexp, type)
   reg_errcode_t err;
   int idx, outside_node;
   re_node_set new_nodes;
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (cur_nodes->nelem);
 #endif
   err = re_node_set_alloc (&new_nodes, cur_nodes->nelem);
@@ -4106,7 +4106,7 @@ match_ctx_add_subtop (mctx, node, str_idx)
      re_match_context_t *mctx;
      int node, str_idx;
 {
-#ifdef DEBUG
+#ifndef NDEBUG
   assert (mctx->sub_tops != NULL);
   assert (mctx->asub_tops > 0);
 #endif

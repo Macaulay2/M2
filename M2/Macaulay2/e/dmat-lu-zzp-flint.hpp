@@ -15,7 +15,9 @@ public:
 public:
   DMatLinAlg(const Mat& A) : mMatrix(A) {}
 
-  size_t rank() { return nmod_mat_rank(mMatrix.nmod_mat()); }
+  size_t rank() {
+    return nmod_mat_rank(mMatrix.nmod_mat());
+  }
 
   void determinant(ElementType& result_det) { result_det = nmod_mat_det(mMatrix.nmod_mat()); }
 

@@ -8,17 +8,12 @@
 #include "ringelem.hpp"
 #include <iostream>
 
-
-//enable this lines to trick Kdevelop
-// #define HAVE_FFLAS_FFPACK 1 
-// #define HAVE_GIVARO 1
-
 #include "polyring.hpp"
 class RingMap;
 
 
 
-#if not   defined(HAVE_GIVARO)
+#if 0
 
 #include "aring-m2-gf.hpp"
 

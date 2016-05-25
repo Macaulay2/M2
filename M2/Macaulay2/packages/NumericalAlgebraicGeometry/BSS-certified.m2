@@ -12,7 +12,7 @@
 --      f, List; z_0, List of one element
 goodInitialPair = method(Options=>{GeneralPosition=>false})
 goodInitialPair List := o -> T -> (
-     R := ring first T;
+     R := commonRing T;
      d := T/first@@degree;
      lastVar := last gens R;
      n := numgens R - 1;
@@ -87,7 +87,7 @@ randomInitialPair List := T -> (
 -- OUT: (S,solsS}, where 
 --      S     = list of polynomials, 
 --      solsS = list of sequences
-     R := ring first T;
+     R := commonRing T;
      n := numgens R - 1; 
      Ml := flatten entries randomInComplexUnitBall dimHd(T/first@@degree);
      M := map(CC^n, n+1, (i,j)->Ml#((n+1)*i+j)); -- n by n+1 matrix formed from n^2+n (first) entries of Ml    

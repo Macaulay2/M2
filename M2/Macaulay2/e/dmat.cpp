@@ -9,7 +9,6 @@
 // dmat code that might have alternate implementations, depending of type //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_FFLAS_FFPACK
 namespace MatrixOps {
   void addMultipleTo(DMatZZpFFPACK& C,
                      const DMatZZpFFPACK::ElementType& a,
@@ -302,8 +301,6 @@ namespace ffpackInterface
   }
   
 }; // namespace ffpackInterface
-
-#endif // HAVE_FFLAS_FFPACK
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "

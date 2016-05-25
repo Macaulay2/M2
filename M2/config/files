@@ -24,7 +24,6 @@ distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
 distributions/deb/Makefile
-distributions/deb/macaulay2-common/control.prelim
 distributions/deb/macaulay2-common/postrm
 distributions/deb/macaulay2-common/postinst
 distributions/deb/macaulay2-common/prerm
@@ -87,6 +86,7 @@ Macaulay2/e/Makefile
 Macaulay2/e/Makefile.common
 Macaulay2/e/f4/Makefile
 Macaulay2/e/unit-tests/Makefile
+Macaulay2/e/free-resolutions/Makefile
 Macaulay2/emacs/M2-init.el
 Macaulay2/emacs/Makefile
 Macaulay2/html-check-links/Makefile

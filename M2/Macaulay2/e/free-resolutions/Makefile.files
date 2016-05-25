@@ -1,0 +1,34 @@
+TARGET := main
+TARGET_CCFILES := \
+    aring-zzp \
+    betti \
+    moninfo \
+    f4-monlookup \
+    res-f4-mem \
+    monhashtable \
+    res-gausser \
+    res-poly-ring \
+    res-poly-io \
+    res-f4 \
+    res-schreyer-frame \
+    rank \
+
+UNITTEST_CCFILES := \
+    testMain \
+    test-moninfo
+
+UNITTEST_CFILES =
+
+UNITTEST_TARGET := testMain
+
+GTEST_DIR := $(BUILTLIBPATH)/include/gtest
+
+UNITTEST_FILES := $(UNITTEST_CCFILES) $(UNITTEST_CFILES)
+
+UNITTEST_OBJECT_FILES :=  $(addsuffix .o, $(UNITTEST_FILES))
+TARGET_OBJECT_CCFILES := $(addsuffix .o, $(TARGET_CCFILES))
+
+
+# Local Variables:
+# compile-command: "make -C $M2BUILDDIR/Macaulay2/e/free-resolutions check"
+# End:

@@ -309,8 +309,6 @@ export rawRingMapClass := newtypeof(rawObjectClass);	    -- RawRingMap
 export rawFreeModuleClass := newtypeof(rawObjectClass);	    -- RawFreeModule
 export rawMatrixClass := newtypeof(rawObjectClass);	    -- RawMatrix
 export rawMutableMatrixClass := newtypeof(rawObjectClass);	    -- RawMutableMatrix
-export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
-export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 export rawStraightLineProgramClass := newtypeof(rawObjectClass);    -- RawStraightLineProgram
 export rawComputationClass := newtypeof(rawObjectClass);	    -- RawComputation
 export nothingClass := newbasictype(); -- we are testing, in basictests/hashcodes.m2, that the hash code of this one doesn't change
@@ -321,6 +319,9 @@ export xmlAttrClass := newbasictype();
 export taskClass := newbasictype();
 export symbolBodyClass := newbasictype();
 export fileOutputSyncStateClass := newbasictype();
+export rawHomotopyClass := newtypeof(rawObjectClass);    -- RawHomotopy
+export rawSLEvaluatorClass := newtypeof(rawObjectClass);    -- RawSLEvaluator
+export rawSLProgramClass := newtypeof(rawObjectClass);    -- RawSLProgram
 -- all new types, dictionaries, and classes go just above this line, if possible, so hash codes don't change gratuitously!
 
 

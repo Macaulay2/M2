@@ -168,7 +168,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +	      int i;
 +	      fmpz_mod_poly_init(mod, p);
 +	      for (i = 0; i < d; i++) fmpz_mod_poly_set_coeff_ui(mod, i, *cp++);
-+	      assert( *cp == -1);
++	      /*For M2 issue #354: assert( *cp == -1); */
 +	      fmpz_mod_poly_set_coeff_ui(mod, d, 1);
 +	      fq_ctx_init_modulus(ctx, mod, var);
 +	      fmpz_mod_poly_clear(mod);
@@ -272,7 +272,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
 +	      int i;
 +	      nmod_poly_init(mod, fmpz_get_ui(p));
 +	      for (i = 0; i < d; i++) nmod_poly_set_coeff_ui(mod, i, *cp++);
-+	      assert( *cp == -1);
++	      /*For M2 issue #354: assert( *cp == -1); */
 +	      nmod_poly_set_coeff_ui(mod, d, 1);
 +	      fq_nmod_ctx_init_modulus(ctx, mod, var);
 +	      nmod_poly_clear(mod);
@@ -393,7 +393,7 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
                  }
              }
  
-+	    assert(cp[d] == -1);
++	    /*For M2 issue #354: assert(cp[d] == -1); */
 +
              fmpz_set_ui(ctx->a + j, 1);
              ctx->j[j] = d;
@@ -415,3 +415,139 @@ diff -ur /Users/dan/src/M2/M2-Macaulay2/M2/BUILD/dan/builds.tmp/mac64-master.pro
      flint_printf("Exception (qadic_ctx_init_conway).  The polynomial for \n");
      flint_printf("(p,d) = (%wd,%wd) is not present in the database.\n", *p, d);
      abort();
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_nmod.h flint-2.4.5/fq_nmod.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_nmod.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq_nmod.h	2015-10-23 14:30:38.000000000 -0400
+@@ -95,7 +95,7 @@
+     int r;
+     slong i, k;
+ 
+-    r = flint_fprintf(file, "p = ");
++    r = (int) flint_fprintf(file, "p = ");
+     if (r <= 0)
+         return r;
+ 
+@@ -103,45 +103,45 @@
+     if (r <= 0)
+         return r;
+ 
+-    r = flint_fprintf(file, "\nd = %wd\nf(X) = ", ctx->j[ctx->len - 1]);
++    r = (int) flint_fprintf(file, "\nd = %wd\nf(X) = ", ctx->j[ctx->len - 1]);
+     if (r <= 0)
+         return r;
+ 
+-    r = flint_fprintf(file, "%wu", ctx->a[0]);
++    r = (int) flint_fprintf(file, "%wu", ctx->a[0]);
+     if (r <= 0)
+         return r;
+ 
+     for (k = 1; k < ctx->len; k++)
+     {
+         i = ctx->j[k];
+-        r = flint_fprintf(file, " + ");
++        r = (int) flint_fprintf(file, " + ");
+         if (r <= 0)
+             return r;
+ 
+         if (ctx->a[k] == UWORD(1))
+         {
+             if (i == 1)
+-                r = flint_fprintf(file, "X");
++              r = (int) flint_fprintf(file, "X");
+             else
+-                r = flint_fprintf(file, "X^%wd", i);
++              r = (int) flint_fprintf(file, "X^%wd", i);
+             if (r <= 0)
+                 return r;
+         }
+         else
+         {
+-            r = flint_fprintf(file, "%wu", ctx->a[k]);
++          r = (int) flint_fprintf(file, "%wu", ctx->a[k]);
+             if (r <= 0)
+                 return r;
+ 
+             if (i == 1)
+-                r = flint_fprintf(file, "*X");
++              r = (int) flint_fprintf(file, "*X");
+             else
+-                r = flint_fprintf(file, "*X^%wd", i);
++              r = (int) flint_fprintf(file, "*X^%wd", i);
+             if (r <= 0)
+                 return r;
+         }
+     }
+-    r = flint_fprintf(file, "\n");
++    r = (int) flint_fprintf(file, "\n");
+     return r;
+ }
+ 
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_zech.h flint-2.4.5/fq_zech.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/fq_zech.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/fq_zech.h	2015-10-23 14:32:26.000000000 -0400
+@@ -99,7 +99,7 @@
+ fq_zech_ctx_fprint(FILE * file, const fq_zech_ctx_t ctx)
+ {
+     int r;
+-    r = flint_fprintf(file, "Zech Representation:\n");
++    r = (int) flint_fprintf(file, "Zech Representation:\n");
+     if (r <= 0)
+         return r;
+     return fq_nmod_ctx_fprint(file, ctx->fq_nmod_ctx);
+@@ -267,7 +267,7 @@
+ static __inline__ int
+ fq_zech_fprint_pretty(FILE * file, const fq_zech_t op, const fq_zech_ctx_t ctx)
+ {
+-    return flint_fprintf(file, "%s^%wd", ctx->fq_nmod_ctx->var, op->value);
++  return (int) flint_fprintf(file, "%s^%wd", ctx->fq_nmod_ctx->var, op->value);
+ }
+ 
+ static __inline__ void
+@@ -279,7 +279,7 @@
+ static __inline__ int
+ fq_zech_fprint(FILE * file, const fq_zech_t op, const fq_zech_ctx_t ctx)
+ {
+-    return flint_fprintf(file, "%wd", op->value);
++  return (int) flint_fprintf(file, "%wd", op->value);
+ }
+ 
+ static __inline__ void
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/longlong.h flint-2.4.5/longlong.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/longlong.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/longlong.h	2015-10-23 14:16:33.000000000 -0400
+@@ -75,7 +75,7 @@
+     mp_limb_t __cbtmp;                                                \
+     FLINT_ASSERT ((x) != 0);                                          \
+     __asm__ ("bsrq %1,%0" : "=r" (__cbtmp) : "rm" ((mp_limb_t)(x)));  \
+-    (count) = __cbtmp ^ (mp_limb_t) 63;                               \
++    (count) = (int)(__cbtmp ^ (mp_limb_t) 63);                       \
+   } while (0)
+ 
+ /* bsfq destination must be a 64-bit register, "%q0" forces this in case
+diff -ur /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/nmod_poly.h flint-2.4.5/nmod_poly.h
+--- /Users/mike/src/M2/M2/BUILD/mike/builds.tmp/darwin64-gcc4.9/libraries/flint/tmp/flint-2.4.5/nmod_poly.h	2015-02-17 09:56:55.000000000 -0500
++++ flint-2.4.5/nmod_poly.h	2015-10-23 14:18:38.000000000 -0400
+@@ -343,7 +343,7 @@
+     r = flint_printf("%wd %wu", a->length, a->mod.n);
+ 
+     if (a->length == 0)
+-        return r;
++      return (int) r;
+     else
+         if (r > 0)
+             r = flint_printf(" ");
+diff -ur /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c flint-2.4.5/fmpz_factor /factor_pp1.c
+--- /home/bapike/git/M2/M2/libraries/flint/tmp/flint-2.4.5/fmpz_factor/factor_pp1.c     2015-02-17 09:56:55.0000 00000 -0500
++++ flint-2.4.5/fmpz_factor/factor_pp1.c        2015-11-19 09:32:37.252776183 -0500
+@@ -35,6 +35,11 @@
+ #include "mpn_extras.h"
+ #include "ulong_extras.h"
+ 
++/* DEBUG can be defined already */
++#ifdef DEBUG
++#undef DEBUG
++#endif
++
+ #define DEBUG 0 /* turn on some trace information */
+ 
+ #define pp1_mulmod(rxx, axx, bxx, nnn, nxx, ninv, norm)             \

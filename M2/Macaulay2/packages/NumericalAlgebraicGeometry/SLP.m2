@@ -821,3 +821,125 @@ preSLPcompiledSLP (ZZ,Sequence) := o -> (nIns,S) -> (
      (map(CC^1,CC^(#consts), {consts}), p)
      )
 
+----------------------------------------------------------------------------------------------------
+-- SLPexpressions tests
+
+-- returns (consts,program), modifies pos
+appendToProgram = method()
+appendToProgram (Gate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
+    )
+appendToProgram (InputGate,List,List,MutableHashTable) := (g,consts,program,pos) -> (
+    if pos#?g then return (consts,program); -- do nothing
+    if isConstant g then (
+	pos#g = #consts;
+	(append(consts,g.Name),program)
+	) else (
+	if not pos#?g then error "a variable is not specified as input";
+	(consts,program)
+	)
+    )
+appendToProgram (SumGate,List,List,MutableHashTable) := (g,consts,program,pos)->( 
+    if pos#?g then return (consts,program); -- do nothing
+    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
+    abs'pos := #program;
+    pos#g = abs'pos;
+    (
+	consts,
+    	append(program, {slpMULTIsum} | {#g.Inputs} | apply(g.Inputs,f->
+	    if instance(f,InputGate) then (
+	    	if isConstant f then CONST=>pos#f
+		else INPUT=>pos#f
+		)
+	    else pos#f-abs'pos))
+        )
+    )
+appendToProgram (ProductGate,List,List,MutableHashTable) := (g,consts,program,pos)->(    
+    if pos#?g then return (consts,program); -- do nothing
+    if #g.Inputs!=2 then error "cannot convert products of more than 2 numbers to preSLP";
+    scan(g.Inputs,f->(consts,program)=appendToProgram(f,consts,program,pos));
+    abs'pos := #program;
+    pos#g = abs'pos;
+    (
+	consts,
+    	append(program, {slpPRODUCT} | apply(g.Inputs,f->
+	    if instance(f,InputGate) then (
+	    	if isConstant f then CONST=>pos#f
+		else INPUT=>pos#f
+		)
+	    else pos#f-abs'pos))
+        )
+    )
+
+-- assembles a preSLP (see NumericalAlgebraicGeometry/SLP.m2) 
+-- that takes a list of InputGates and a list of Gates that produce the output
+toPreSLP = method()
+toPreSLP (List,List) := (inputs,outputs) -> (
+    consts := {};
+    program := {};
+    pos := new MutableHashTable from apply(#inputs,i->inputs#i=>i);
+    scan(outputs,o->(consts,program)=appendToProgram(o,consts,program,pos));
+    (consts, program, matrix{outputs/(o->pos#o)})
+    )  
+
+TEST ///
+needsPackage "SLPexpressions"
+
+--InputGate
+X = inputGate symbol X
+Y = inputGate symbol Y
+
+--SumGate and ProductGate
+C = sumGate {X+Y,Y,X}
+D = productGate {X*Y,Y,C}
+h = valueHashTable({X,Y},{1,ii})
+assert (value(D,h) == product{value(X*Y,h),value(Y,h),value(C,h)})
+support (X*X)
+support (D+C)
+
+-- one way to handle constants
+E = inputGate 2
+F = product{E*(X*X+E*Y)+oneGate, oneGate}
+
+-- sub
+G = sub(sub(F,X=>X+Y),Y=>X*Y) 
+-- sub and compress = evaluate over a ring
+R = CC[x,y] 
+H = sub(sub(G,X=>E),Y=>inputGate(x+2*y))
+I = compress H 
+
+-- DetGate
+J = detGate {{X,C,F},{D,Y,E},{G,F,X}}
+
+-- diff
+diff(X,F)
+diff(X,J)
+h = valueHashTable({X,Y},{x,y})
+assert(
+    value(diff(X,J),h) 
+    ==
+    diff(x, det matrix applyTable(J.Inputs, i->value(i,h)))
+    )
+
+-- DivideGate
+G/F
+diff(X,X/Y)
+diff(Y,X/Y)
+h = valueHashTable({X,Y},{2,3})
+GY = value(diff(Y,G),h)
+FY = value(diff(Y,F),h)
+assert ( value(compress diff(Y,G/F), h) == (GY*value(F,h) - value(G,h)*FY)/(value(F,h))^2 )
+
+debug SLPexpressions
+debug NumericalAlgebraicGeometry
+-- evaluate toPreSLP == compress 
+output = {F, compress diff(X,F), G}
+preSLP = toPreSLP({X,Y},output)
+out'eval = evaluatePreSLP(preSLP, gens R)
+out'comp = matrix{ output/(o->sub(sub(o,X=>inputGate x),Y=>inputGate y))/compress/(g->g.Name) }
+assert(out'eval == out'comp)
+printSLP preSLP
+printAsSLP output
+///
+
+
+

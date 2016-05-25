@@ -33,6 +33,7 @@ setupconst("RawRing",Expr(rawRingClass));
 setupconst("RawFreeModule",Expr(rawFreeModuleClass));
 setupconst("RawMatrix",Expr(rawMatrixClass));
 setupconst("RawMutableMatrix",Expr(rawMutableMatrixClass));
+setupconst("RawHomotopy",Expr(rawHomotopyClass));
 setupconst("RawSLEvaluator",Expr(rawSLEvaluatorClass));
 setupconst("RawSLProgram",Expr(rawSLProgramClass));
 setupconst("RawStraightLineProgram",Expr(rawStraightLineProgramClass));
@@ -150,6 +151,7 @@ export Class(e:Expr):HashTable := (
      is RawFreeModuleCell do rawFreeModuleClass
      is RawMatrixCell do rawMatrixClass
      is RawMutableMatrixCell do rawMutableMatrixClass
+     is RawHomotopyCell do rawHomotopyClass
      is RawSLEvaluatorCell do rawSLEvaluatorClass
      is RawSLProgramCell do rawSLProgramClass
      is RawStraightLineProgramCell do rawStraightLineProgramClass

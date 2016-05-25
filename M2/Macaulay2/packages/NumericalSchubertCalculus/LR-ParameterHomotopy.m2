@@ -1,6 +1,5 @@
 export {"randomSchubertProblemSolution"}
 needsPackage "NumericalAlgebraicGeometry"
-if version#"VERSION" == "1.8.2.1" then needsPackage "SLPexpressions"
 parametricSchubertProblem = method()
 p := symbol p;
 x := symbol x; 

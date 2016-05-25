@@ -2,7 +2,9 @@
 -- core tracking routines 
 -- (loaded by  ../NumericalAlgebraicGeometry.m2)
 ------------------------------------------------------
-export { "track", "trackSegment", "trackHomotopy" }
+export { "track", 
+    -- "trackSegment", 
+    "trackHomotopy" }
 
 track'option'list = {
 	  Software=>null, NoOutput=>null, 
@@ -368,7 +370,7 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
 		    -- default dt; Certified and Multistep modify dt
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-o.EndZoneFactor-t0);
+		    dt = if endZone then min(realPart tStep, realPart(1-t0)) else min(realPart tStep, realPart(1-o.EndZoneFactor-t0));
 
      	       	    -- projective stuff
 		    if o.Predictor == Certified then (
@@ -630,9 +632,78 @@ track (PolySystem,PolySystem,List) := List => o -> (S,T,solsS) -> (
 	     ))
      )
 
--- "track" should eventually go through "trackHomotopy"
+debug Core -------------------------------------------------------------------------
+
+trackHomotopyM2engine = (H, inp, 
+	out, statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold,
+	checkPrecision
+	) -> (
+    if numVars H != numrows inp - 1 -- one input is t-value 
+    then error "the number of variables does not match the number of inputs"; 
+    K := ring inp;
+    if K =!= ring out then error "inp and out have to have the same ring";
+    rawHomotopyTrack(getRawHomotopy(H,K), raw inp, 
+	raw out, raw statusOut,
+	tStep, tStepMin, 
+	CorrectorTolerance, maxCorrSteps, 
+	InfinityThreshold,
+	checkPrecision)
+    )
+extractM2engineOutput = method()
+extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
+    nSols := numColumns out; 
+    n := numRows out - 2;
+    assert(nSols == numColumns statusOut);
+    apply(nSols, sN->(
+	    s'status := solutionStatusLIST#(statusOut_(0,sN));
+	    count := statusOut_(1,sN);
+	    if DBG > 0 then << (if s'status == Regular then "."
+		else if s'status == Singular then "S"
+		else if s'status == MinStepFailure then "M"
+		else if s'status == Infinity then "I"
+		else if s'status == Origin then "O"
+		else if s'status == IncreasePrecision then "P"
+		else if s'status == DecreasePrecision then "p"
+		else error "unknown solution status"
+		) << if (sN+1)%100 == 0 or sN==nSols-1 then endl else flush;
+	    -- create a solution record 
+	    x0 := submatrix(out,toList(0..n-1),{sN});
+	    point {flatten entries x0,
+		SolutionStatus => s'status, 
+		NumberOfSteps => count,
+		LastT => out_(n,sN), 
+		LastIncrement => out_(n+1,sN),
+		"H" => H
+		}
+	    ))
+    )    
+
+minimalStepSize = method() 
+minimalStepSize ZZ := prec -> 2.^(15-prec) 
+
+higherPrecision = new HashTable from {
+    53 => 100,
+    100 => 200,
+    200 => 400,
+    400 => 800,
+    800 => 1600,
+    1600 => null
+    }
+lowerPrecision = new HashTable from {
+    1600 => 800,
+    800 => 400,
+    400 => 200,
+    200 => 100,
+    100 => 53,
+    53 => null
+    }
 trackHomotopy = method(TypicalValue => List, Options =>{
-	  Software=>null, NoOutput=>null, 
+	  Field => null,
+	  Software => null, 
+	  NoOutput => null, 
      	  -- step control
 	  tStep => null, -- initial
           tStepMin => null,
@@ -640,10 +711,9 @@ trackHomotopy = method(TypicalValue => List, Options =>{
 	  numberSuccessesBeforeIncrease => null,
 	  -- predictor 
 	  Predictor=>null, 
-	  MultistepDegree => null, -- used only for Predictor=>Multistep
 	  -- corrector 
 	  maxCorrSteps => null,
---!!!	  maxPrecision => null,
+	  Precision => null, 
      	  CorrectorTolerance => null, -- tracking tolerance
 	  -- end of path
 	  EndZoneFactor => null, -- EndZoneCorrectorTolerance = CorrectorTolerance*EndZoneFactor when 1-t<EndZoneFactor 
@@ -655,6 +725,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 --          or an SLP representing one -- !!! at this point it is preSLP
 --      solsS = list of one-column matrices over CC
 -- OUT: solsT = list of target solutions corresponding to solsS
+     if #solsS === 0 then return {};
      o = fillInDefaultOptions o;
      stepDecreaseFactor := 1/o.stepIncreaseFactor;
      theSmallestNumber := 1e-16;
@@ -666,7 +737,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     
      if instance(H,Sequence) {* preSLP,  if o.Software===M2enginePrecookedSLPs 
 	                        then compile preSLPs in the engine *}
-     then (
+     then ( -- preSLPs (developer only) -------------------------------------------------------
      	 (R,slpH) := H; 
 	 n := numgens R - 1;
      	 K := coefficientRing R;
@@ -710,7 +781,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     tr#1
 	     );
     	 )
-     else if instance(H,HomotopySystem) then (
+     else if instance(H,Homotopy) then ( -- main case... but M2engine does not need these !!!  
      	 K = CC_53; --!!!
       	 --
        	 evalH = (x0,t0)-> (
@@ -731,12 +802,106 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     	 )     
      else error "unexpected type of homotopy (first parameter)";
      
+     -- Sortware=>M2 only ---------------------------------------------------------------------------------
      solveLinear := (A,b) -> solve(A,b,ClosestFit=>true,MaximalRank=>true); -- this takes care of non-square case!!!
      solveHxTimesDXequalsMinusHt := (x0,t0) -> solveLinear(evalHx(x0,t0),-evalHt(x0,t0));
      
      compStartTime := currentTime();      
 
-     rawSols := if o.Software===M2 
+--------------------- M2engine --------------------------------------------------------------------------
+     rawSols := if o.Software===M2engine then ( 
+	 prec := o.Precision; -- current precision
+	 checkPrecision := o.Precision===infinity; 
+	 if prec === infinity then prec = 53; -- for adaptive precision, start with double precision
+	 mainRing := (o.Field)_prec; -- homotopyRing, i.e. RR or CC with current precision !!!
+	 -- if class H === SpecializedParameterHomotopy then 1/0;
+	 if not canHaveRawHomotopy H then error "expected a Homotopy with RawHomotopy";  
+	 nSols := #solsS;
+	 statusOut := mutableMatrix(ZZ,2,nSols); -- 2 rows (status, number of steps), #solutions columns 
+	 inp := mutableMatrix promote(matrix(
+	     	 transpose apply(solsS, s->(if instance(s,Point) 
+		     	 then coordinates s 	 
+		     	 else flatten entries s) | {0} -- track from t=0 
+		     )),
+	     mainRing); 
+	 n = numrows inp - 1;
+	 out := mutableMatrix(mainRing,n+2,nSols); -- one more row than inp (to store last increment)
+	 scan(nSols, i->out_(n,i) = 1); -- track to t=1 
+	 ti'out := timing trackHomotopyM2engine(H, inp, 
+	     out, statusOut,
+	     o.tStep, o.tStepMin, 
+	     o.CorrectorTolerance, o.maxCorrSteps, 
+	     toRR o.InfinityThreshold,
+	     checkPrecision);
+	 if DBG>2 then 
+	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
+    	 sols := new MutableList from extractM2engineOutput(H,out,statusOut);
+	 if o.Precision === infinity then (
+	     tempInpMatrix := memoize (F->mutableMatrix(F,n+1,1));
+	     tempOutMatrix := memoize (F->mutableMatrix(F,n+2,1));
+	     statusOut = mutableMatrix(ZZ,2,1);
+	     for nS to #sols-1 do (
+		 s := sols#nS;
+		 currentPrec := prec;
+	     	 while not ( 
+		     member(status s, {Regular,Infinity,Origin}) 
+		     or realPart(1-s.LastT) < o.EndZoneFactor
+		     or currentPrec === null 
+		     ) do ( 
+		     if status s === DecreasePrecision then (
+			 -- decrease precision increase minimal step size
+			 currentPrec = lowerPrecision#currentPrec;
+			 if currentPrec === null then error "precision can not be lowered (this is a bug)";
+			 F := o.Field_currentPrec;
+			 inp = tempInpMatrix F;
+			 scan(n, i->inp_(i,0) = (coordinates s)#i);
+			 inp_(n,0) = s.LastT;
+			 out = tempOutMatrix F; 
+			 out_(n,0) = 1;
+			 ti'out := timing trackHomotopyM2engine(H, inp, 
+			     out, statusOut,
+			     abs s.LastIncrement, minimalStepSize currentPrec, 
+			     o.CorrectorTolerance, o.maxCorrSteps, 
+			     toRR o.InfinityThreshold,
+			     checkPrecision);
+			 if DBG>3 then 
+			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+			 sols#nS = first extractM2engineOutput(H,out,statusOut);
+			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
+			 s = sols#nS;
+			 )
+		     else ( -- status s === IncreasePrecision... or other reason
+		     	 -- increase precision decrease minimal step size
+			 currentPrec = higherPrecision#currentPrec;
+			 if currentPrec =!= null then (
+			     F = o.Field_currentPrec;
+			     inp = tempInpMatrix F;
+			     scan(n, i->inp_(i,0) = (coordinates s)#i);
+			     inp_(n,0) = s.LastT;
+			     out = tempOutMatrix F; 
+			     out_(n,0) = 1;
+			     ti'out = timing trackHomotopyM2engine(H, inp, 
+	     			 out, statusOut,
+	     			 abs s.LastIncrement, minimalStepSize currentPrec, 
+	     			 o.CorrectorTolerance, o.maxCorrSteps, 
+	     			 toRR o.InfinityThreshold,
+				 checkPrecision);
+	 		     if DBG>3 then 
+	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
+			     sols#nS = first extractM2engineOutput(H,out,statusOut);
+			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
+			     s = sols#nS;
+    	 		     )			 
+		  	 )
+		     ); -- while ... 
+		     if status s =!= Regular then -- change status to Regular if at t=1 
+		     if abs(realPart s.LastT) < theSmallestNumber then s.SolutionStatus = Regular;   
+		 ) -- for nS ... 
+	     );	      
+	 toList sols 
+	 )
+     ---------------- M2 (top-level) -------------------------------------------------------------------------------------
+     else if o.Software===M2 
      or o.Software===M2enginePrecookedSLPs -- !!! used temporarily
      then 
 	 apply(#solsS, sN->(
@@ -762,7 +927,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 		    -- predictor step
 		    if DBG>9 then << ">>> predictor" << endl;
 		    local dx; local dt;
-		    dt = if endZone then min(tStep, 1-t0) else min(tStep, 1-sub(o.EndZoneFactor,K)-t0);
+		    dt = if endZone then min(realPart tStep, realPart(1-t0)) else min(realPart tStep, realPart(1-o.EndZoneFactor-t0));
 
 		    dx = if o.Predictor === zero then 0*x0
 		    else if o.Predictor === Tangent then dt*solveHxTimesDXequalsMinusHt(x0,t0)
@@ -846,21 +1011,16 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     else error "wrong Software option";
     
     if DBG>3 then print rawSols;
-    ret := if o.NoOutput then null 
-    else rawSols/(s->{flatten entries first s} | drop(toList s,1));
-    if DBG>0 then (
-	  if o.Software==M2 then (
-	       << "Number of solutions = " << #ret << endl << "Average number of steps per path = " << toRR sum(ret,s->s#1#1)/#ret << endl;
-     	       if DBG>1 then (
-	       	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
-		    )
-	       )
-	   );
-     apply(ret, s->point toList s)
+    ret := if instance(first rawSols,Point) then rawSols else
+         apply(rawSols,s->point({flatten entries first s} | drop(toList s,1)));
+    if DBG>1 then (
+	if member(o.Software,{M2,M2engine}) then (
+	    << "Number of solutions = " << #ret << endl 
+	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
+	    )
+	);
+     ret
      ) -- trackHomotopy
-
--- possible solution statuses returned by engine
-solutionStatusLIST := {Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure}
 
 getSolution = method(Options =>{SolutionAttributes=>(Coordinates, SolutionStatus, LastT, ConditionNumber, NumberOfSteps)})
 getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
@@ -884,9 +1044,76 @@ getSolution(Thing, ZZ) := Thing => o -> (PT,i) -> (
      if class p === Sequence then ret else first ret
      )
 
+{*
 trackSegment = method(Options=>track'option'list) -- a better implementation needed!!!
 trackSegment (PolySystem,Number,Number,List) := o -> (H,a,b,pts) -> (
     S := specializeContinuationParameter(H,a);
     T := specializeContinuationParameter(H,b);
     track(S,T,pts,o) 
     )
+*}
+
+-- The following code added by MES, for debugging purposes
+-- for adaptive homotopy tracking.  This code is not exported or used elsewhere.
+mesTracker = method(Options => {
+        tStep => .05,
+        tStepMin => .000001,
+        CorrectorTolerance => .000001,
+        maxCorrSteps => 3,
+        InfinityThreshold => 100000.,
+	LastT => 1.
+        })
+mesTracker(Homotopy, MutableMatrix) := o -> (H, inp) -> (
+    -- Returns a pair (out, outStatus)
+    -- out: d x npoints MutableMatrix of points (last coordinate is homotopy parameter)
+    -- outStatus: a list of length npoints, where the i-th element is 
+    --  (status, nsteps)
+    -- status can be:
+    --  Undetermined, Processing, Regular, Singular, Infinity, MinStepFailure, RefinementFailure
+    -- ANTON: which of these can actually occur here?  All of them?
+    -- nsteps: number of tracker steps?
+    n := numrows inp;
+    out := mutableMatrix(ring inp, n+2, numcols inp);
+    for i from 0 to numColumns inp-1 do out_(n, i) = o.LastT;
+    statusOut := mutableMatrix(ZZ, 2, numColumns inp);
+    trackHomotopyM2engine(
+        H, 
+        inp, 
+        out, 
+        statusOut, 
+        o.tStep,
+        o.tStepMin,
+        o.CorrectorTolerance,
+        o.maxCorrSteps,
+        o.InfinityThreshold,
+	false
+        );
+    -- now we need to grab results
+    --(out, for i from 0 to numColumns statusOut - 1 list (solutionStatusLIST#(statusOut_(0,i)), statusOut_(1,i)))
+    (out,statusOut)
+    )
+
+TEST ///
+restart
+setRandomSeed 0
+debug needsPackage "NumericalAlgebraicGeometry"
+NAGtrace 2
+n = 2; d = 2;
+R=QQ[x_0..x_(n-1)]
+eps = 1/10^20
+T = apply(n, i->if i==0 then x_i^d-eps^d else (x_i-i)^d-eps^(d-1)*x_i)
+(S,solsS) = totalDegreeStartSystem T
+H = segmentHomotopy(S,T,gamma=>1+pi*ii)
+sols = trackHomotopy(H,solsS,tStepMin=>minimalStepSize 53,CorrectorTolerance=>1e-15,Precision=>infinity,EndZoneFactor=>0)
+peek sols 
+assert((first sols).NumberOfSteps == 101)
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>53,EndZoneFactor=>0)
+peek sols 
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>100,EndZoneFactor=>0)
+peek sols 
+
+sols = trackHomotopy(H,solsS, CorrectorTolerance=>1e-15,Precision=>1000,EndZoneFactor=>0)
+peek sols 
+///

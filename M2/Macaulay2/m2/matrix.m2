@@ -74,6 +74,8 @@ Number * Matrix := (r,m) -> (
      S := ring m;
      try r = promote(r,S) else error "can't promote scalar to ring of matrix";
      map(target m, source m, reduce(target m, raw r * raw m)))
+InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m))))
+Matrix * InfiniteNumber := (m,r) -> r*m
 RingElement * Matrix := (r,m) -> (
      r = promote(r,ring m);
      map(target m, source m, reduce(target m, raw r * raw m)))
@@ -164,8 +166,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  then error "maps not composable";
 	  dif := degrees P - degrees Q;
 	  deg := (
-	       if same dif
-	       then (degree m + degree n + dif#0)
+	       if #dif === 0
+	       then degree m + degree n
+	       else if same dif
+	       then degree m + degree n + dif#0
  	       else toList (degreeLength R:0)
 	       );
 	  f := m.RawMatrix * n.RawMatrix;

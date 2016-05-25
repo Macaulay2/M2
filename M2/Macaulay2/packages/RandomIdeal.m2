@@ -12,19 +12,19 @@ newPackage(
     	)
 
 export {
-     randomIdeal,
-     randomMonomialIdeal, 
-     randomSquareFreeMonomialIdeal,
-     randomSquareFreeStep,
-     randomBinomialIdeal,
-     randomPureBinomialIdeal,
-     randomSparseIdeal,
-     randomElementsFromIdeal,
-     randomMonomial, 
-     squareFree,
-     regSeq,
-     AlexanderProbability,
-     prepare     
+     "randomIdeal",
+     "randomMonomialIdeal",
+     "randomSquareFreeMonomialIdeal",
+     "randomSquareFreeStep",
+     "randomBinomialIdeal",
+     "randomPureBinomialIdeal",
+     "randomSparseIdeal",
+     "randomElementsFromIdeal",
+     "randomMonomial",
+     "squareFree",
+     "regSeq",
+     "AlexanderProbability",
+     "prepare"
      }
      
 
@@ -787,7 +787,7 @@ Description
   L=for n from 1 to 100 list res randomSquareFreeMonomialIdeal(10:3,S);
   tally apply(L, F -> length F)
   tally apply(L, F -> regularity F - ((max flatten degrees F_2) - 2))
-  L=for n from 1 to 5000 list res randomSquareFreeMonomialIdeal(10:3,S);
+  L=for n from 1 to 500 list res randomSquareFreeMonomialIdeal(10:3,S);
   scan(L, F -> if 1<(regularity F - (max flatten degrees F_2) + 2) then print F.dd_1)
  Text
   A typical problem might be to find how high the regularity of R/I can
@@ -800,13 +800,9 @@ Description
 
     
   looper = (rep,bound, L1, L2) -> (for i from 1 to rep do (
-       
   if i % 1000 == 0 then << "." << flush;
-  
   J := randomMonomialIdeal(L1,S) + randomBinomialIdeal(L2,S);
-  
   m := regularity coker gens J;
-  
   if m >= bound then << "reg " << m << " " << toString J << endl;))
 
 
@@ -870,17 +866,17 @@ assert(ideal(a*b,a*c,a*d,a*e,b*c,b*d,b*e,c*d,c*e,d*e)==squareFree(2,S))
 assert( regSeq((1,2,3,4,5,6), S)==ideal(a,b^2,c^3,d^4,e^5))
 setRandomSeed 123456
 assert(degrees randomElementsFromIdeal({2,3,6},ideal"a2,ab,c5") == {{2}, {3}, {6}})
-setRandomSeed 1
-S=ZZ/2[vars(0..3)]
-J = ideal"ab,ad, bcd"
-assert (randomSquareFreeStep J=={monomialIdeal (a*b, a*c, a*d, b*c*d), {a*b, a*c, a*d, b*c*d}, {c*d, b*d, b*c, a}})
 S=ZZ/2[a,b]
 setRandomSeed 1
 assert(prepare monomialIdeal(a^2, a*b)=={monomialIdeal (a^2 , a*b), {a^2 , a*b}, {0, 1}})
+setRandomSeed 1
+S=ZZ/2[vars(0..3)]
+J = ideal"ab,ad, bcd"
+assert( (randomSquareFreeStep J) === {monomialIdeal map((S)^1,(S)^{{-2},{-2}},{{a*b, a*d}}),{a*b,a*d},{b*c*d,a*c}} );
 ///
 
 
-end  
+end--  
 restart
 --loadPackage "RandomIdeal"
 uninstallPackage "RandomIdeal"
@@ -894,14 +890,15 @@ viewHelp RandomIdeal
 restart
 loadPackage "RandomIdeal"
 setRandomSeed(1)
-S=ZZ/2[vars(0..9)]
-setRandomSeed(1)
+S=ZZ/2[vars(0..3)]
 rsfs = randomSquareFreeStep
+J = monomialIdeal (a*b,a*c)
 J = monomialIdeal 0_S
-time T=tally for t from 1 to 1000 list first (J=rsfs(J,AlexanderProbability => .01));
---around 2 sec
-time T=tally for t from 1 to 5000 list first (J=rsfs(J,AlexanderProbability => .01));
---around 20 sec
+time L= apply(10000, j-> (J = rsfs(J,AlexanderProbability => .1))_0);
+tally values tally L
+tally ((unique L)/(J->numgens trim J))
+
+
 
 restart
 loadPackage "RandomIdeal"
