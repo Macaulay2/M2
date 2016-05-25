@@ -2,13 +2,6 @@
 PolyhedraHash = new Type of HashTable
 globalAssignment PolyhedraHash
 
--- This is the only method allowed accessing the hash table via keys.
-accessKey = method();
-accessKey(PolyhedraHash,String) := (PH, S) -> (
-   if PH#?S then PH#S else error "This value needs to be computed."
-)
-
-
 
 
 -- PURPOSE : Giving the defining affine hyperplanes
@@ -16,7 +9,7 @@ ambDim = method(TypicalValue => ZZ)
 
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : an integer, the dimension of the ambient space
-ambDim PolyhedraHash := X -> accessKey(X, "ambient dimension")
+ambDim PolyhedraHash := X -> X#"ambient dimension"
 
 isSimplicial = method(TypicalValue => Boolean)
 
