@@ -186,6 +186,7 @@ export {
     "isPerfect",
     "isReachable",
     "isRegular",
+    "isRigid",
     "isSimple",
     "isSink",
     "isSource",
@@ -1268,6 +1269,29 @@ isRegular Graph := Boolean => G -> (
     all(drop(vertexSet G,1), v -> degree(G,v) == n)
     )
 
+
+-- input: A graph G
+-- output: Uses Laman's Theorem to determine if a graph is rigid or not
+-- written by Tom Enkosky
+--
+isRigid = method();
+isRigid Graph := G -> (
+    local rigidity; local i; local j;
+    
+    rigidity=true;
+    
+    if #edges G < 2*#vertices G-3 then rigidity = false
+    else (
+	 for j from 2 to #vertices G-1 do(
+	     for i in subsets(vertices G,j) do(
+		 if #edges inducedSubgraph(G,i)>2*#i-3  then rigidity = false 
+		 );
+	     );
+	 );
+    return rigidity;
+    )
+
+
 isSimple = method()
 isSimple Graph := Boolean => G -> (
     A := adjacencyMatrix G;
@@ -1770,6 +1794,41 @@ doc ///
   Key
     Graphs
 ///
+
+-------------------------------
+--Data Types
+-------------------------------
+doc ///
+    Key
+    	Bigraph
+///
+
+doc ///
+    Key
+    	Digraph
+///
+
+doc ///
+    Key
+    	Graph
+///
+
+doc ///
+    Key
+    	LabeledGraph
+///
+
+doc ///
+    Key
+    	MixedGraph
+///
+
+doc ///
+    Key
+    	SortedDigraph
+///
+
+
 
 -------------------------------
 --Graph Constructors
@@ -4490,6 +4549,30 @@ doc ///
         cycleGraph
 ///
 
+--isRigid
+doc ///
+    Key
+        isRigid
+        (isRigid,Graph)
+    Headline
+        checks if a graph is rigid
+    Usage
+        r = isRigid G
+    Inputs
+        G:Graph
+    Outputs
+        r:Boolean
+    Description
+        Text
+            A graph is said to be rigid if PUT DEF HERE.
+        Example
+            G = cycleGraph 4;
+            isRigid G
+	    G' = addEdges' (G, {{1,1},{3,1}})
+            isRigid G'
+///
+
+
 --isSimple
 doc ///
     Key
@@ -5135,6 +5218,7 @@ doc ///
             H = vertexMultiplication(G, 0, 6)
 ///
 
+
 TEST ///
 --test expansion of graphs
 G=pathGraph(7);
@@ -5222,4 +5306,25 @@ assert(isChordal(G)===true);
 assert(isSimple(G)===true);
 ///
 
+TEST ///
+--check rigidity
+assert( isRigid ( graph({{0,1},{0,3},{0,4},{1,3},{2,3}},Singletons => {5}) ) === false )
+assert( isRigid ( graph({{0,4},{0,5},{0,6},{1,4},{1,5},{1,6},{2,4},{2,5},{2,6}}) ) === true )
+assert( isRigid(graph{{0,1}}) === true )
+assert( isRigid(graph{{0,1},{1,2}}) === false )
+///
+
 end;
+
+loadPackage(Graphs, Reload => true)
+
+restart
+uninstallPackage "Graphs"
+restart
+installPackage "Graphs"
+viewHelp Graphs
+
+G = cycleGraph 4
+isRigid G
+G' = addEdges' (G, {{1,1},{3,1}})
+isRigid G'
