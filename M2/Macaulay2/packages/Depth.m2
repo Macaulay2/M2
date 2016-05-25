@@ -52,7 +52,7 @@ depth(Module) := ZZ => M -> (
     COK := prune coker(sub(m,S0) | (presentation S ** target m));
     
     numgens S0 - length res COK    
---    depth(ideal gens ring M,M)
+--    depth(ideal gens ring M,M) -- old method
      )
 
 -----------------------------------------------------------------------------
