@@ -21,7 +21,7 @@ linSpace PolyhedralObject := P -> linealitySpaceBasis P
 
 linealitySpaceBasis = method(TypicalValue => Matrix)
 linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealityBasis)(P -> (
-      if instance(P, Cone) then linSpaceOfCone C
+      if instance(P, Cone) then linSpaceOfCone P
       else error "Not implemented yet."
    )
 )

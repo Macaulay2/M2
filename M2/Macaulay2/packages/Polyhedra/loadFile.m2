@@ -15,7 +15,6 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 
 -- Methods declarations for methods defined for several objects, but not all of polyhedraHash
 load "./methods.m2"
-load "./miniScheduler.m2"
 load "./faceBuilders.m2"
 
 -- Objects

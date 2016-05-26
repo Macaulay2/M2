@@ -109,6 +109,16 @@ facetsOfCone Cone := C -> (
    C.cache#computedFacets
 )
 
+linSpaceOfCone = method()
+linSpaceOfCone Cone := C -> (
+   error "Not implemented yet."
+)
+
+raysOfCone = method()
+raysOfCone Cone := C -> (
+   error "Not implemented yet."
+)
+
 computeMinimalRepresentationFromComputed = method()
 computeMinimalRepresentationFromComputed Cone := C -> (
    cRays := C.cache.computedRays;
@@ -154,11 +164,6 @@ coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
      result
 )
 
-hilbertBasis = method()
-hilbertBasis Cone := Matrix => (cacheValue symbol computedHilbertBasis)(C -> (
-      error "No rules."
-   )
-)
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
