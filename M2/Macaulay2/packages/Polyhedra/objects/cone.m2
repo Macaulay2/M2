@@ -122,7 +122,7 @@ coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
 
 hilbertBasis = method()
 hilbertBasis Cone := Matrix => (cacheValue symbol computedHilbertBasis)(C -> (
-      applyFittingRules(C, computedHilbertBasis)
+      applySuitableRules(C, computedHilbertBasis)
    )
 )
 

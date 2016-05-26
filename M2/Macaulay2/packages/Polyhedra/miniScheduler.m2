@@ -54,8 +54,8 @@ findPathRecursively(Set, Set, Set) := (given, forbidden, targets) -> (
 
 
 
-findFittingRulePath = method()
-findFittingRulePath(HashTable, Set) := (HT, targets) -> (
+findSuitableRulePath = method()
+findSuitableRulePath(HashTable, Set) := (HT, targets) -> (
    givenProperties := set flatten {keys HT, keys HT.cache};
    path := findPathRecursively(givenProperties, set {}, targets);
    return path
@@ -70,10 +70,10 @@ applySingleRule(HashTable, Sequence, Set) := (HT, rule, given) -> (
    )
 )
 
-applyFittingRules = method()
-applyFittingRules(HashTable, Set) := (HT, targets) -> (
+applySuitableRules = method()
+applySuitableRules(HashTable, Set) := (HT, targets) -> (
    givenProperties := set flatten {keys HT, keys HT.cache};
-   rulePath := findFittingRulePath(HT, targets);
+   rulePath := findSuitableRulePath(HT, targets);
    << "Path: " << rulePath << endl;
    if #rulePath == 0 then error "Cannot compute properties."
    else (
@@ -83,7 +83,7 @@ applyFittingRules(HashTable, Set) := (HT, targets) -> (
    )
 )
 
-applyFittingRules(HashTable, Symbol) := (HT, target) -> (
-   applyFittingRules(HT, set {target});
+applySuitableRules(HashTable, Symbol) := (HT, target) -> (
+   applySuitableRules(HT, set {target});
    HT.cache#target
 )
