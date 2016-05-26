@@ -84,14 +84,27 @@ dimOfCone Cone := C -> (
    ambDim C - numRows hyperplanes C
 )
 
+computeRaysAndLinBasis = method()
+computeRaysAndLinBasis Cone := C -> (
+   if C.cache.?computedFacets and C.cache.?computedHyperplanes then (
+      computeDualMinimalRepresentationFromComputed C;
+   ) else if C.cache.?inequalities and C.cache.?equations then (
+      computeMinimalRepresentation C;
+   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
+      computeAllMinimalRepresentations C;
+   ) else (
+      error "Rays or lineality basis not computable."
+   )
+)
+
 computeFacetsAndHyperplanes = method()
 computeFacetsAndHyperplanes Cone := C -> (
-   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
-      computeAllMinimalRepresentations C;
-   ) else if C.cache.?inequalities and C.cache.?equations then (
-      computeDualMinimalRepresentation C;
-   ) else if C.cache.?computedRays and C.cache.?computedLinealityBasis then (
+   if C.cache.?computedRays and C.cache.?computedLinealityBasis then (
       computeMinimalRepresentationFromComputed C;
+   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
+      computeDualMinimalRepresentation C;
+   ) else if C.cache.?inequalities and C.cache.?equations then (
+      computeAllMinimalRepresentations C;
    ) else (
       error "Facets or hyperplanes not computable."
    )
@@ -111,18 +124,31 @@ facetsOfCone Cone := C -> (
 
 linSpaceOfCone = method()
 linSpaceOfCone Cone := C -> (
-   error "Not implemented yet."
+   computeRaysAndLinBasis C;
+   C.cache#computedLinealityBasis
 )
 
 raysOfCone = method()
 raysOfCone Cone := C -> (
-   error "Not implemented yet."
+   computeRaysAndLinBasis C;
+   << "Hello." << endl;
+   C.cache#computedRays
+)
+
+computeDualMinimalRepresentationFromComputed = method()
+computeDualMinimalRepresentationFromComputed Cone := C -> (
+   cFacets := transpose(- facets C);
+   cHyperplanes := transpose hyperplanes C;
+   inRays := C.cache#inputRays;
+   (raySide, facetSide) := fMReplacement(inRays, cFacets, cHyperplanes);
+   C.cache#computedRays = raySide#0;
+   C.cache#computedLinealityBasis = raySide#1;
 )
 
 computeMinimalRepresentationFromComputed = method()
 computeMinimalRepresentationFromComputed Cone := C -> (
-   cRays := C.cache.computedRays;
-   cLin := C.cache.computedLinealityBasis;
+   cRays := rays C;
+   cLin := linSpace C;
    inFacets := C.cache.inequalities;
    (facetSide, rayside) := fMReplacement(inFacets, cRays, cLin);
    C.cache#computedFacets = transpose( -facetSide#0);
@@ -141,8 +167,8 @@ computeAllMinimalRepresentations Cone := C -> (
    C.cache#computedRays = raySide#0;
 )
 
-computeDualMinimalRepresentation = method(TypicalValue => Matrix)
-computeDualMinimalRepresentation Cone := C -> (
+computeMinimalRepresentation = method(TypicalValue => Matrix)
+computeMinimalRepresentation Cone := C -> (
    inequalities := C.cache.inequalities;
    equations := C.cache.equations;
    dual := fourierMotzkin(inequalities, equations);
@@ -150,6 +176,14 @@ computeDualMinimalRepresentation Cone := C -> (
    C.cache#computedRays = dual#0;
 )
 
+computeDualMinimalRepresentation = method(TypicalValue => Matrix)
+computeDualMinimalRepresentation Cone := C -> (
+   rays := C.cache.inputRays;
+   lineality := C.cache.inputLinealityGenerators;
+   dual := fourierMotzkin(rays, lineality);
+   C.cache#computedFacets = transpose( -dual#0);
+   C.cache#computedHyperplanes = transpose(dual#1);
+)
 
 coneFromRays = method(TypicalValue => Cone)
 coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
