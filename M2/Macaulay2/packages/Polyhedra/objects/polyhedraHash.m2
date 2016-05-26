@@ -1,5 +1,5 @@
 -- Defining the new type PolyhedraHash
-PolyhedraHash = new Type of HashTable
+PolyhedraHash = new Type of MutableHashTable
 globalAssignment PolyhedraHash
 
 
@@ -24,7 +24,7 @@ isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
 --  OUTPUT : an integer, the dimension of the Polyhedron, Cone, Fan or Polyhedral Complex,
 --           where for the last two it is defined as the maximum dimension of the subobjects
 dim PolyhedraHash := ZZ => (cacheValue symbol computedDimension)(PH -> (
-      if instance(PH, Cone) then applySuitableRules(PH, computedDimension) 
+      if instance(PH, Cone) then dimOfCone PH 
       else error "Not implemented yet."
    )
 )

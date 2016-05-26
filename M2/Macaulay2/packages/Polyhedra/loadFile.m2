@@ -55,8 +55,12 @@ end
 restart
 loadPackage "Polyhedra"
 C = posHull matrix {{12,3},{3,5}}
+keys C
+keys C.cache
 hilbertBasis C
+keys C.cache
 dim C
+keys C.cache
 linSpace C
 rays C
-check "Polehedra"
+check "Polyhedra"

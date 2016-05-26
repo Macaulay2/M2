@@ -79,14 +79,35 @@ coneBuilder = (genrays,dualgens) -> (
       result
 )
 
-rules#((set{"ambient dimension", computedHyperplanes}, set{computedDimension})) = method(TypicalValue => ZZ)
-rules#((set{"ambient dimension", computedHyperplanes}, set{computedDimension})) Cone := C -> (
-   C.cache#computedDimension = ambDim C - numRows hyperplanes C;
+dimOfCone = method(TypicalValue => ZZ)
+dimOfCone Cone := C -> (
+   ambDim C - numRows hyperplanes C;
 )
 
+facetsOfCone = method()
+facetsOfCone Cone := C -> (
+   if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
+      computeAllMinimalRepresentations C;
+   ) else if C.cache.?inequalities and C.cache.?equations then (
+      computeDualMinimalRepresentation C;
+   ) else if C.cache.?computedRays and C.cache.?computedLinealityBasis then (
+      computeMinimalRepresentationFromComputed C;
+   ) else (
+      error "Facets not computable."
+   )
+   C.cache#facets
+)
 
-rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedHyperplanes, computedLinealityBasis})) = method(TypicalValue => Matrix)
-rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFacets, computedHyperplanes, computedLinealityBasis})) Cone := C -> (
+computeMinimalRepresentationFromComputed = method()
+computeMinimalRepresentationFromComputed Cone := C -> (
+   cRays := C.cache.computedRays;
+   cLin := C.cache.computedLinealityBasis;
+   inFacets := C.cache.inequalities;
+   (facetSide, rayside) := fMReplacement(inFacets, cRays, cLin);
+)
+
+computeAllMinimalRepresentations = method(TypicalValue => Matrix)
+computeAllMinimalRepresentations Cone := C -> (
    inputRays := C.cache.inputRays;
    inputLinealityGenerators := C.cache.inputLinealityGenerators;
    dual := fourierMotzkin(inputRays, inputLinealityGenerators);
@@ -97,8 +118,8 @@ rules#((set {inputRays, inputLinealityGenerators}, set {computedRays, computedFa
    C.cache#computedRays = raySide#0;
 )
 
-rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis})) = method(TypicalValue => Matrix)
-rules#((set {inequalities, equations}, set{computedRays, computedLinealityBasis})) Cone := C -> (
+computeDualMinimalRepresentation = method(TypicalValue => Matrix)
+computeDualMinimalRepresentation Cone := C -> (
    inequalities := C.cache.inequalities;
    equations := C.cache.equations;
    dual := fourierMotzkin(inequalities, equations);
