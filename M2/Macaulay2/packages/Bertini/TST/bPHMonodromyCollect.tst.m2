@@ -33,8 +33,23 @@ collectedSols=b'PHMonodromyCollect(storeBM2Files,
       	NumberOfLoops=>10,NumSolBound=>3,
 	MonodromyStartParameters=>{1,0}
 	)
-assert(#collectedSols>1)
+assert(#collectedSols>0)
 assert(abs(collectedSols_0_0-1)<1e-6)
 traceY=sum for i in collectedSols list i_1
 if #collectedSols==3 then assert(abs(-1-traceY)<1e-6)
+
+
+
+---
+     f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
+     makeB'InputFile(storeBM2Files, 
+    	 B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
+     b'PHMonodromyCollect(storeBM2Files,
+	 StorageFolder=>"StoreFiles",
+	 MonodromyStartPoints=>{{1,0}},
+      	 NumberOfLoops=>10,NumSolBound=>3,
+	 MonodromyStartParameters=>{1,0}	)
+assert(#importSolutionsFile(storeBM2Files,StorageFolder=>"StoreFiles")>0)
+
+
 
