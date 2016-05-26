@@ -4484,9 +4484,9 @@ assert(ring Eo === U)
 
 end--
 
-restart
 --notify=true
 uninstallPackage "CompleteIntersectionResolutions"
+restart
 installPackage "CompleteIntersectionResolutions"
 check "CompleteIntersectionResolutions"
 
