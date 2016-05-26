@@ -86,15 +86,6 @@ dimOfCone Cone := C -> (
 
 computeRaysAndLinBasis = method()
 computeRaysAndLinBasis Cone := C -> (
-   if C.cache.?computedFacets and C.cache.?computedHyperplanes then (
-      computeDualMinimalRepresentationFromComputed C;
-   ) else if C.cache.?inequalities and C.cache.?equations then (
-      computeMinimalRepresentation C;
-   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
-      computeAllMinimalRepresentations C;
-   ) else (
-      error "Rays or lineality basis not computable."
-   )
 )
 
 computeFacetsAndHyperplanes = method()
@@ -124,14 +115,21 @@ facetsOfCone Cone := C -> (
 
 linSpaceOfCone = method()
 linSpaceOfCone Cone := C -> (
-   computeRaysAndLinBasis C;
+   raysOfCone C;
    C.cache#computedLinealityBasis
 )
 
 raysOfCone = method()
 raysOfCone Cone := C -> (
-   computeRaysAndLinBasis C;
-   << "Hello." << endl;
+   if C.cache.?computedFacets and C.cache.?computedHyperplanes then (
+      computeDualMinimalRepresentationFromComputed C;
+   ) else if C.cache.?inequalities and C.cache.?equations then (
+      computeMinimalRepresentation C;
+   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
+      computeAllMinimalRepresentations C;
+   ) else (
+      error "Rays or lineality basis not computable."
+   )
    C.cache#computedRays
 )
 
