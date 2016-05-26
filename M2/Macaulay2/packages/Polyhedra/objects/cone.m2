@@ -81,11 +81,11 @@ coneBuilder = (genrays,dualgens) -> (
 
 dimOfCone = method(TypicalValue => ZZ)
 dimOfCone Cone := C -> (
-   ambDim C - numRows hyperplanes C;
+   ambDim C - numRows hyperplanes C
 )
 
-facetsOfCone = method()
-facetsOfCone Cone := C -> (
+computeFacetsAndHyperplanes = method()
+computeFacetsAndHyperplanes Cone := C -> (
    if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
       computeAllMinimalRepresentations C;
    ) else if C.cache.?inequalities and C.cache.?equations then (
@@ -93,9 +93,20 @@ facetsOfCone Cone := C -> (
    ) else if C.cache.?computedRays and C.cache.?computedLinealityBasis then (
       computeMinimalRepresentationFromComputed C;
    ) else (
-      error "Facets not computable."
+      error "Facets or hyperplanes not computable."
    )
-   C.cache#facets
+)
+
+hyperplanesOfCone = method()
+hyperplanesOfCone Cone := C -> (
+   computeFacetsAndHyperplanes C;
+   C.cache#computedHyperplanes
+)
+
+facetsOfCone = method()
+facetsOfCone Cone := C -> (
+   computeFacetsAndHyperplanes C;
+   C.cache#computedFacets
 )
 
 computeMinimalRepresentationFromComputed = method()
@@ -104,6 +115,8 @@ computeMinimalRepresentationFromComputed Cone := C -> (
    cLin := C.cache.computedLinealityBasis;
    inFacets := C.cache.inequalities;
    (facetSide, rayside) := fMReplacement(inFacets, cRays, cLin);
+   C.cache#computedFacets = transpose( -facetSide#0);
+   C.cache#computedHyperplanes = transpose(facetSide#1);
 )
 
 computeAllMinimalRepresentations = method(TypicalValue => Matrix)
@@ -143,7 +156,7 @@ coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
 
 hilbertBasis = method()
 hilbertBasis Cone := Matrix => (cacheValue symbol computedHilbertBasis)(C -> (
-      applySuitableRules(C, computedHilbertBasis)
+      error "No rules."
    )
 )
 

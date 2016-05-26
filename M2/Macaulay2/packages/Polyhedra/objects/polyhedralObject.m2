@@ -9,7 +9,7 @@ globalAssignment PolyhedralObject
 --     for cones, 'w' is omitted.
 hyperplanes = method()
 hyperplanes PolyhedralObject := Matrix => (cacheValue symbol computedHyperplanes)(P -> (
-      if instance(P, Cone) then applySuitableRules(P, computedHyperplanes) 
+      if instance(P, Cone) then hyperplanesOfCone P
       else error "Not implemented yet."
    )
 )
@@ -21,7 +21,7 @@ linSpace PolyhedralObject := P -> linealitySpaceBasis P
 
 linealitySpaceBasis = method(TypicalValue => Matrix)
 linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealityBasis)(P -> (
-      if instance(P, Cone) then applySuitableRules(P, computedLinealityBasis) 
+      if instance(P, Cone) then linSpaceOfCone C
       else error "Not implemented yet."
    )
 )
@@ -38,14 +38,14 @@ halfspaces PolyhedralObject := P -> facets P
 
 facets = method()
 facets PolyhedralObject := Matrix => (cacheValue symbol computedFacets)(P -> (
-      if instance(P, Cone) then applySuitableRules(P, computedFacets) 
+      if instance(P, Cone) then facetsOfCone P
       else error "Not implemented yet."
    )
 )
 
 
 rays PolyhedralObject := Matrix => (cacheValue symbol computedRays)(P ->(
-      if instance(P, Cone) then applySuitableRules(P, computedRays)
+      if instance(P, Cone) then raysOfCone P
       else error "Not implemented yet."
    )
 )
