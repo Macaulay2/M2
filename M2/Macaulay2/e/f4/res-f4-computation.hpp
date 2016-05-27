@@ -54,8 +54,8 @@ protected:
   void text_out(buffer &o) const;
 private:
   const PolynomialRing& mOriginalRing;
-  ResPolyRing* mRing;
   const Matrix& mInputGroebnerBasis;
+  std::unique_ptr<ResPolyRing> mRing;
   std::unique_ptr<SchreyerFrame> mComp;
 };
 

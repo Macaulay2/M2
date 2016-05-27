@@ -85,11 +85,11 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
-      R = new ResPolyRing(*KK, *MI, & (origR->getSkewInfo()));
+      R = new ResPolyRing(KK, MI, & (origR->getSkewInfo()));
     }
   else
     {
-      R = new ResPolyRing(*KK, *MI);
+      R = new ResPolyRing(KK, MI);
     }
   auto result = new F4ResComputation(origR,
                                      R,
@@ -166,10 +166,11 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
                                    int max_level)
 
   : mOriginalRing(*origR),
+    mInputGroebnerBasis(*gbmatrix),
     mRing(R),
-    mInputGroebnerBasis(*gbmatrix)
+    mComp(new SchreyerFrame(*mRing, max_level))
 {
-  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
+  //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
 }
 
 F4ResComputation::~F4ResComputation()
@@ -191,6 +192,7 @@ int F4ResComputation::complete_thru_degree() const
 
 void F4ResComputation::remove_res()
 {
+  // The following lines should not be required.
   mComp.reset(); mComp = nullptr;
 }
 

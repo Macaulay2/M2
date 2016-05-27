@@ -10,6 +10,8 @@
 #include "res-gausser.hpp"
 #include "res-schreyer-order.hpp"
 
+#include <memory>  // For std::unique_ptr
+
 typedef int FieldElement;
 
 struct poly {
@@ -23,19 +25,19 @@ struct poly {
 class ResPolyRing
 {
 public:
-  ResPolyRing(const ResGausser& G, const ResMonoid& M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
-  ResPolyRing(const ResGausser& G, const ResMonoid& M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
+  ResPolyRing(const ResGausser* G, const ResMonoid* M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
+  ResPolyRing(const ResGausser* G, const ResMonoid* M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
 
-  const ResGausser& resGausser() const { return mResGausser; }
-  const ResMonoid& monoid() const { return mMonoid; }
+  const ResGausser& resGausser() const { return *mResGausser; }
+  const ResMonoid& monoid() const { return *mMonoid; }
 
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
 
   void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
-  const ResGausser& mResGausser;
-  const ResMonoid& mMonoid;
+  std::unique_ptr<const ResGausser> mResGausser;
+  std::unique_ptr<const ResMonoid> mMonoid;
   const SkewMultiplication* mSkew;
 };
 
