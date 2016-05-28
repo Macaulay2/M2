@@ -4564,7 +4564,10 @@ doc ///
         r:Boolean
     Description
         Text
-            A graph is said to be rigid if PUT DEF HERE.
+            A drawing of a graph is rigid in the plane if any continuous motion 
+	    of the vertices that preserve edge lengths must preserve the distance 
+	    between every pair of vertices.  A graph is generically rigid if any 
+	    drawing of the graph with vertices in general position is rigid. 
         Example
             G = cycleGraph 4;
             isRigid G
@@ -5321,10 +5324,10 @@ loadPackage(Graphs, Reload => true)
 restart
 uninstallPackage "Graphs"
 restart
+path = {"~/GitHub/M2/M2/Macaulay2/packages/"}|path
+notify = true
 installPackage "Graphs"
 viewHelp Graphs
 
-G = cycleGraph 4
-isRigid G
-G' = addEdges' (G, {{1,1},{3,1}})
-isRigid G'
+check Graphs
+
