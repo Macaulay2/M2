@@ -4567,7 +4567,8 @@ doc ///
             A drawing of a graph is rigid in the plane if any continuous motion 
 	    of the vertices that preserve edge lengths must preserve the distance 
 	    between every pair of vertices.  A graph is generically rigid if any 
-	    drawing of the graph with vertices in general position is rigid. 
+	    drawing of the graph with vertices in general position is rigid. This 
+	    method uses Laman's Theorem to determine if a graph is rigid or not.
         Example
             G = cycleGraph 4;
             isRigid G
