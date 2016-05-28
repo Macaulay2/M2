@@ -5324,8 +5324,6 @@ loadPackage(Graphs, Reload => true)
 restart
 uninstallPackage "Graphs"
 restart
-path = {"~/GitHub/M2/M2/Macaulay2/packages/"}|path
-notify = true
 installPackage "Graphs"
 viewHelp Graphs
 
