@@ -31,7 +31,9 @@ ResF4Mem::ResF4Mem()
     monom_dealloc(0),
     monom_highwater(0),
     monom_current(0),
+    #if 0
     components("comps"),
+    #endif
     coefficients("coeffs")
 {
 }
@@ -47,7 +49,10 @@ void ResF4Mem::show()
           monom_total,
           monom_freed,
           monom_current);
+  #if 0
   components.show();
+  #endif
+  
   coefficients.show();
 }
 

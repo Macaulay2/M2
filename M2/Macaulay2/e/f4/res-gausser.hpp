@@ -51,12 +51,6 @@ public:
 
   void to_ints(ComponentIndex len, CoefficientArray, int *result) const;
 
-  // leading coefficient
-  FieldElement lead_coeff(CoefficientArray coeffs) const
-  {
-    return coeffs[0];
-  }
-
   // other routines:
   void deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIndex len) const;
 

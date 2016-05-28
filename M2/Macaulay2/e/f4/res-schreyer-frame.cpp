@@ -106,6 +106,8 @@ SchreyerFrame::~SchreyerFrame()
   // Nothing to do here yet
   // the monomial block will free itself
   // as will the std::vector's
+
+  // NO!! what about the frame polynomials??
 }
 
 void SchreyerFrame::start_computation(StopConditions& stop)

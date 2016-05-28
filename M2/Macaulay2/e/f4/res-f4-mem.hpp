@@ -122,11 +122,15 @@ class ResF4Mem
   long monom_current;
 
 public:
+  #if 0
   ResF4Vec components;
+  #endif
+  
   ResF4Vec coefficients;
 
   ResF4Mem();
 
+#if 0  
   monomial_word * allocate_monomial_array(int len) {
     if (len == 0) return 0;
     monom_alloc++;
@@ -146,7 +150,7 @@ public:
     delete[] a;
     a = 0;
   }
-
+#endif
   void show();
 };
 
