@@ -1345,7 +1345,6 @@ AC_ARG_ENABLE(fplll,
     ENABLE_FPLLL=yes
     )
     
-test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
