@@ -54,6 +54,17 @@ end
 restart
 loadPackage "Polyhedra"
 C = posHull matrix {{12,3},{3,5}}
+linSpace C
+rays C
+
+f = (cacheValux {{12,3},{3,5}}e inputRays)(X->(<<"Hello."<<endl; 5))
+C = new CacheTable from {x => 5}
+X = new HashTable from {cache => C}
+f X
+Y = new HashTable from {cache => new CacheTable}
+f Y 
+
+hasProperty(C, computedDimension)
 keys C
 keys C.cache
 hilbertBasis C

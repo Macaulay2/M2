@@ -8,22 +8,18 @@ globalAssignment PolyhedralObject
 --		 HS is the intersection of the defining affine half-spaces
 --     for cones, 'w' is omitted.
 hyperplanes = method()
-hyperplanes PolyhedralObject := Matrix => (cacheValue symbol computedHyperplanes)(P -> (
-      if instance(P, Cone) then hyperplanesOfCone P
-      else error "Not implemented yet."
-   )
+hyperplanes PolyhedralObject := PO -> (
+   getProperty(PO, computedHyperplanes)
 )
 
 
 -- PURPOSE : Giving a basis of the lineality space
 linSpace = method(TypicalValue => Matrix)
-linSpace PolyhedralObject := P -> linealitySpaceBasis P
+linSpace PolyhedralObject := P -> linealitySpace P
 
-linealitySpaceBasis = method(TypicalValue => Matrix)
-linealitySpaceBasis PolyhedralObject := Matrix => (cacheValue symbol computedLinealityBasis)(P -> (
-      if instance(P, Cone) then linSpaceOfCone P
-      else error "Not implemented yet."
-   )
+linealitySpace = method(TypicalValue => Matrix)
+linealitySpace PolyhedralObject := PO -> (
+   getProperty(PO, computedLinealityBasis)
 )
 
 
@@ -37,17 +33,13 @@ halfspaces = method()
 halfspaces PolyhedralObject := P -> facets P
 
 facets = method()
-facets PolyhedralObject := Matrix => (cacheValue symbol computedFacets)(P -> (
-      if instance(P, Cone) then facetsOfCone P
-      else error "Not implemented yet."
-   )
+facets PolyhedralObject := PO -> (
+   getProperty(PO, computedFacets)
 )
 
 
-rays PolyhedralObject := Matrix => (cacheValue symbol computedRays)(P ->(
-      if instance(P, Cone) then raysOfCone P
-      else error "Not implemented yet."
-   )
+rays PolyhedralObject := PO -> (
+   getProperty(PO, computedRays)
 )
 
 -- PURPOSE : Computing the f-vector of a polyhedron

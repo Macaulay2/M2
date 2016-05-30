@@ -2,6 +2,7 @@
 Cone = new Type of PolyhedralObject
 Cone.synonym = "convex rational cone"
 globalAssignment Cone
+compute#Cone = new MutableHashTable
 
 Cone == Cone := (C1,C2) -> C1 === C2
 
@@ -9,7 +10,7 @@ Cone == Cone := (C1,C2) -> C1 === C2
 net Cone := C -> ( )
 -- 	  "{",
 -- 	  -- prints the parts vertically
--- 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
+-- 	  stack (horizontalJoin \ sort apply({ambientDimension, 
 -- 			                      "dimension",
 -- 					      "dimension of lineality space",
 -- 					      "number of rays",
@@ -63,7 +64,7 @@ coneBuilder = (genrays,dualgens) -> (
       hyperplanesTmp := transpose(dualgens#1);
       -- Defining C
       result := new Cone from {
-         "ambient dimension" => numgens target RM,
+         ambientDimension => numgens target RM,
          "dimension" => (numgens target RM)-(rank hyperplanesTmp),
          "dimension of lineality space" => numgens source LS,
          "linealitySpace" => LS,
@@ -84,111 +85,99 @@ dimOfCone Cone := C -> (
    ambDim C - numRows hyperplanes C
 )
 
-computeRaysAndLinBasis = method()
-computeRaysAndLinBasis Cone := C -> (
-)
-
-computeFacetsAndHyperplanes = method()
-computeFacetsAndHyperplanes Cone := C -> (
-   if C.cache.?computedRays and C.cache.?computedLinealityBasis then (
-      computeMinimalRepresentationFromComputed C;
-   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
-      computeDualMinimalRepresentation C;
-   ) else if C.cache.?inequalities and C.cache.?equations then (
-      computeAllMinimalRepresentations C;
+compute#Cone#computedLinealityBasis = method()
+compute#Cone#computedLinealityBasis Cone := C -> (
+   local containingSpace;
+   if hasProperties(C, {computedFacets, computedHyperplanes}) then (
+      containingSpace = (facets C) || (hyperplanes C);
+   ) else if hasProperties(C, {inequalities, equations}) then (
+      containingSpace = getProperty(C, inequalities) || getProperty(C, equations);
+      << "CS: " << containingSpace << endl;
+   ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      rays C;
+      return linealitySpace C
    ) else (
-      error "Facets or hyperplanes not computable."
-   )
+      error "Lineality space not computable."
+   );
+   << "CS: " << containingSpace << endl;
+   orthogonalComplement containingSpace
 )
 
-hyperplanesOfCone = method()
-hyperplanesOfCone Cone := C -> (
-   computeFacetsAndHyperplanes C;
-   C.cache#computedHyperplanes
-)
-
-facetsOfCone = method()
-facetsOfCone Cone := C -> (
-   computeFacetsAndHyperplanes C;
-   C.cache#computedFacets
-)
-
-linSpaceOfCone = method()
-linSpaceOfCone Cone := C -> (
-   raysOfCone C;
-   C.cache#computedLinealityBasis
-)
-
-raysOfCone = method()
-raysOfCone Cone := C -> (
-   if C.cache.?computedFacets and C.cache.?computedHyperplanes then (
-      computeDualMinimalRepresentationFromComputed C;
-   ) else if C.cache.?inequalities and C.cache.?equations then (
-      computeMinimalRepresentation C;
-   ) else if C.cache.?inputRays and C.cache.?inputLinealityGenerators then (
-      computeAllMinimalRepresentations C;
+compute#Cone#computedHyperplanes = method()
+compute#Cone#computedHyperplanes Cone := C -> (
+   local containingSpace;
+   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+      containingSpace = rays C | linealitySpace C;
+   ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      containingSpace = getProperty(C, inputRays) | getProperty(C, inputLinealityGenerators);
+   ) else if hasProperties(C, {inequalities, equations}) then (
+      facets C;
+      return hyperplanes C
    ) else (
-      error "Rays or lineality basis not computable."
-   )
-   C.cache#computedRays
+      error "Hyperplanes not computable"
+   );
+   result := orthogonalComplement transpose containingSpace;
+   transpose result
 )
 
-computeDualMinimalRepresentationFromComputed = method()
-computeDualMinimalRepresentationFromComputed Cone := C -> (
-   cFacets := transpose(- facets C);
-   cHyperplanes := transpose hyperplanes C;
-   inRays := C.cache#inputRays;
-   (raySide, facetSide) := fMReplacement(inRays, cFacets, cHyperplanes);
-   C.cache#computedRays = raySide#0;
-   C.cache#computedLinealityBasis = raySide#1;
+orthogonalComplement = method()
+orthogonalComplement Matrix := M -> (
+   gens kernel M
 )
 
-computeMinimalRepresentationFromComputed = method()
-computeMinimalRepresentationFromComputed Cone := C -> (
-   cRays := rays C;
-   cLin := linSpace C;
-   inFacets := C.cache.inequalities;
-   (facetSide, rayside) := fMReplacement(inFacets, cRays, cLin);
-   C.cache#computedFacets = transpose( -facetSide#0);
-   C.cache#computedHyperplanes = transpose(facetSide#1);
+
+compute#Cone#computedFacets = method()
+compute#Cone#computedFacets Cone := C -> (
+   (facetData, hyperplaneData) := (0,0);
+   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+      (facetData, hyperplaneData) = computeFacetsFromRayData(rays C, linealitySpace C);
+   ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      (facetData, hyperplaneData) = computeFacetsFromRayData(getProperty(C, inputRays), getProperty(C, inputLinealityGenerators));
+   ) else if hasProperties(C, {inequalities, equations}) then (
+      (facetData, hyperplaneData) = computeFacetsFromRayData(rays C, linealitySpace C);
+   ) else (
+      error "Facets not computable."
+   );
+   if not hasProperty(C, computedHyperplanes) then setProperty(C, computedHyperplanes, hyperplaneData);
+   facetData
 )
 
-computeAllMinimalRepresentations = method(TypicalValue => Matrix)
-computeAllMinimalRepresentations Cone := C -> (
-   inputRays := C.cache.inputRays;
-   inputLinealityGenerators := C.cache.inputLinealityGenerators;
-   dual := fourierMotzkin(inputRays, inputLinealityGenerators);
-   (raySide, facetSide) := fMReplacement(inputRays, dual#0, dual#1);
-   C.cache#computedLinealityBasis = raySide#1;
-   C.cache#computedFacets = transpose( -facetSide#0);
-   C.cache#computedHyperplanes = transpose( -facetSide#1);
-   C.cache#computedRays = raySide#0;
+compute#Cone#computedRays = method()
+compute#Cone#computedRays Cone := C -> (
+   local rayData;
+   local linealityData;
+   if hasProperties(C, {computedFacets, computedHyperplanes}) then (
+      (rayData, linealityData) = computeRaysFromFacetData(facets C, hyperplanes C);
+   ) else if hasProperties(C, {inequalities, equations}) then (
+      (rayData, linealityData) = computeRaysFromFacetData(getProperty(C, inequalities), getProperty(C, equations));
+   ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      (rayData, linealityData) = computeRaysFromFacetData(facets C, hyperplanes C);
+   ) else (
+      error "Rays not computable."
+   );
+   if not hasProperty(C, computedLinealityBasis) then setProperty(C, computedLinealityBasis, linealityData);
+   rayData
 )
 
-computeMinimalRepresentation = method(TypicalValue => Matrix)
-computeMinimalRepresentation Cone := C -> (
-   inequalities := C.cache.inequalities;
-   equations := C.cache.equations;
-   dual := fourierMotzkin(inequalities, equations);
-   C.cache#computedLinealityBasis = dual#1;
-   C.cache#computedRays = dual#0;
+computeRaysFromFacetData = method()
+computeRaysFromFacetData(Matrix, Matrix) := (facetData, hyperplaneData) -> (
+   fourierMotzkin(transpose(-facetData), transpose(hyperplaneData))
 )
 
-computeDualMinimalRepresentation = method(TypicalValue => Matrix)
-computeDualMinimalRepresentation Cone := C -> (
-   rays := C.cache.inputRays;
-   lineality := C.cache.inputLinealityGenerators;
-   dual := fourierMotzkin(rays, lineality);
-   C.cache#computedFacets = transpose( -dual#0);
-   C.cache#computedHyperplanes = transpose(dual#1);
+computeFacetsFromRayData = method()
+computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
+   (A, B) := fourierMotzkin(rayData, linealityData);
+   (transpose(-A), transpose(B))
 )
+
+
 
 coneFromRays = method(TypicalValue => Cone)
 coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
      -- checking for input errors
      if numRows inputRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new Cone from {
-         "ambient dimension" => numRows inputRays,
+         ambientDimension => numRows inputRays,
          symbol cache => new CacheTable
      };
      result.cache.inputRays = inputRays;
