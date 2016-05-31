@@ -170,7 +170,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       for (int j=0; j<M->n_vars(); ++j)
         exp[j] = static_cast<int>(longexp[j]);
       M->from_expvector(exp, totalmonom);
-      result->append_schreyer(deg, totalmonom, S.mTieBreaker[i]);
+      result->append_schreyer(deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
     }
   delete [] longexp;
   delete [] exp;
@@ -309,7 +309,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
       ++col;
     }
   double frac_nonzero = (nrows*ncols);
-  frac_nonzero = nnonzeros / frac_nonzero;
+  frac_nonzero = static_cast<double>(nnonzeros) / frac_nonzero;
 
   delete[] newcomps;
 
@@ -319,7 +319,8 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
 int SchreyerFrame::rank(int slanted_degree, int lev)
 {
 #if 1
-  M2::ARingZZpFFPACK R(gausser().get_ring()->characteristic());
+  unsigned int charac = static_cast<unsigned int>(gausser().get_ring()->characteristic());
+  M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   double frac = ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
