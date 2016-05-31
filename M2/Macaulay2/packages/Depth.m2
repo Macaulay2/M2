@@ -25,7 +25,7 @@ newPackage(
 	  }
 	  },
      Headline => "aids in computations related to depth",
-     DebuggingMode => true
+     DebuggingMode => false
      )
 
 --=========================================================================--
@@ -169,21 +169,21 @@ time depth(ideal vars S, S^1)
 depth(Module) := ZZ => M -> (
     --depth of a module with respect to the max ideal, via finite proj dim
     --gives error if the ultimate coeficient ring of R = ring M is not a field.
-    
-    if dim M === 0 then  return 0; -- quick test for depth 0
-    
     R := ring M;
+    if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
+    if not isCommutative R then error"depth undefined for noncommutative rings";
+    
     S := (flattenRing R)_0;
     
-    if not isCommutative R then error"depth undefined for noncommutative rings";
     if not isField coefficientRing S then error"input must be a module over an affine ring";
     
     S0 := ring presentation S;
-        
-    m := presentation M;    
-    mm := (presentation S ** sub(target m, S0)) |sub(m,S0);
-    numgens S0 - length res coker mm
-     )    
+    m := sub(presentation M, S0);
+    COK := prune coker(sub(m,S0) | (presentation S ** target m));
+    
+    numgens S0 - length res COK    
+--    depth(ideal gens ring M,M) -- old method
+     )
 
 -----------------------------------------------------------------------------
 
@@ -203,7 +203,8 @@ depth(Ideal,Ring) := ZZ => (I,A) -> (
 
 -----------------------------------------------------------------------------
 
-depth(Ring) := ZZ => A -> depth(A^1)
+depth(Ring) := ZZ => A -> depth( A^1 )
+
 
 -----------------------------------------------------------------------------
 
@@ -902,8 +903,8 @@ restart
 uninstallPackage "Depth"
 restart
 installPackage "Depth"
-viewHelp Depth
 check Depth
 
+viewHelp Depth
 
 
