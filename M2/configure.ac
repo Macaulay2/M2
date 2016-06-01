@@ -106,10 +106,6 @@ case $OS in
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
 esac
 
-case $OS in
-   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
-
 if test ! "$ISSUE"
 then if test -f /usr/bin/sw_vers
      then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
@@ -139,6 +135,7 @@ then if test -f /usr/bin/sw_vers
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
+	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
@@ -146,6 +143,7 @@ then if test -f /usr/bin/sw_vers
 	 "") AC_MSG_NOTICE([release number not found]) 
 	     ISSUE_RELEASE=unknown ;;
      esac
+     ISSUE_FLAVOR=`echo $ISSUE_FLAVOR | sed 's/ /-/g'`
      ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
 
