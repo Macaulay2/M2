@@ -176,11 +176,6 @@ namespace M2 {
       result = a*a;
     }
 
-    double log2abs(const ElementType& a) const //!!! hack
-    {
-      return log2(fabs(a));
-    }
-
     void abs(ElementType& result, const ElementType& a) const
     {
       result = fabs(a);
@@ -252,6 +247,12 @@ namespace M2 {
       if (mpfr_cmp_d(norm, d) < 0)
         mpfr_set_d(norm, d, GMP_RNDN);
     }
+
+    double coerceToDouble(const ElementType& a) const
+    {
+      return a;
+    }
+    
   };
 
 }; // end namespace M2
