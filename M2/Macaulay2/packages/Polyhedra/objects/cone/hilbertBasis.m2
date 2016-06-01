@@ -1,7 +1,7 @@
 -- PURPOSE : Computing the Hilbert basis of a Cone 
 --   INPUT : 'C',  a Cone
 --  OUTPUT : 'L',  a list containing the Hilbert basis as one column matrices 
-hilbertBasis = method(TypicalValue => List)
+-- hilbertBasis = method(TypicalValue => List)
 hilbertBasis Cone := C -> (
      -- Computing the row echolon form of the matrix M
      ref := M -> (

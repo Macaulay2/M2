@@ -1,4 +1,5 @@
 needsPackage "FourierMotzkin"
+needsPackage "FourTiTwo"
 
 load "./exports.m2"
 load "./symbols.m2"
@@ -21,7 +22,7 @@ load "./faceBuilders.m2"
 load "./objects/polyhedraHash.m2"
    load "./objects/polyhedralObject.m2"
       load "./objects/cone.m2"
-         load "./objects/cone/hilbertBasis.m2"
+--         load "./objects/cone/hilbertBasis.m2"
       load "./objects/polyhedron.m2"
    load "./objects/polyhedralObjectFamily.m2"
       load "./objects/fan.m2"
@@ -46,7 +47,7 @@ load "./tests_from_polymake/hilbert_basis.m2"
 -- load "./legacy_tests.m2"
 
 -- Documentation
-load "./legacy_doc.m2"
+-- load "./legacy_doc.m2"
 
 end
 
@@ -54,6 +55,12 @@ end
 restart
 loadPackage "Polyhedra"
 C = posHull matrix {{12,3},{3,5}}
+facets C
+hilbertBasis C
+
+
+
+loadPackage "FourTiTwo"
 linSpace C
 rays C
 

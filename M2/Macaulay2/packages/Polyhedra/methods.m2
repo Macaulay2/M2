@@ -24,7 +24,7 @@ boundaryMap = method(TypicalValue => Matrix)
 -- PURPOSE : Giving the rays
 --   INPUT : 'P'  a Polyhedron or Cone
 --  OUTPUT : a Matrix, containing the rays of P as column vectors
-rays = method()
+-- rays = method()
 
 -------------------------------------------------------------------------------
 -- Other

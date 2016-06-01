@@ -85,6 +85,30 @@ dimOfCone Cone := C -> (
    ambDim C - numRows hyperplanes C
 )
 
+-- hilbertBasis = method()
+hilbertBasis Cone := List => o -> (C -> (
+      << C << endl;
+      getProperty(C, computedHilbertBasis)
+   )
+)
+
+compute#Cone#computedHilbertBasis = method()
+compute#Cone#computedHilbertBasis Cone := C -> (
+   local inputMatrix;
+   if hasProperties(C, {computedFacets, computedHyperplanes}) then (
+      inputMatrix = transpose facets C;
+   ) else (
+      inputMatrix = transpose facets C;
+   );
+   hb := transpose hilbertBasis(inputMatrix, InputType=>"lattice");
+   << hb << endl;
+   << target hb << endl;
+   << target inputMatrix << endl;
+   result := apply(0..(numcols hb - 1), i -> solve(transpose inputMatrix, promote(matrix hb_i, QQ)));
+   toList apply(result, r-> lift(r, ZZ))
+)
+
+
 compute#Cone#computedLinealityBasis = method()
 compute#Cone#computedLinealityBasis Cone := C -> (
    local containingSpace;
