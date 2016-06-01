@@ -16,8 +16,13 @@ F4Res::F4Res(
   : mFrame(res),
     mRing(res.ring()),
     mSchreyerRes(new ResMonomialsWithComponent(res.ring().monoid())),
-    mHashTable(mSchreyerRes, 10)
+    mHashTable(mSchreyerRes.get(), 10)
 {
+}
+
+F4Res::~F4Res()
+{
+  //  delete mSchreyerRes;
 }
 
 void F4Res::resetMatrix(int lev, int degree)

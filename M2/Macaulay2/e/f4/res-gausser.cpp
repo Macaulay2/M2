@@ -23,7 +23,7 @@ ResGausser::CoefficientArray ResGausser::from_ints(ComponentIndex len, const int
   int i;
   switch (typ) {
   case ZZp:
-    int *result = Mem.coefficients.allocate(len);
+    int *result = new int[len]; // used to be: Mem.coefficients.allocate(len);
     for (i=0; i<len; i++)
       Kp->set_from_long(result[i], elems[i]);
     return result;

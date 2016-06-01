@@ -20,6 +20,8 @@ struct MonomialOrdering;
 #include "ntuple-monomial.hpp"
 #include "../skew.hpp"
 
+#include <vector>
+
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?
 typedef monomial_word * packed_monomial;
@@ -37,7 +39,7 @@ typedef const monomial_word * const_packed_monomial;
 // or is it:
 // [hashvalue comp e1 e2 ... en -wr ... -w1]
 
-class ResMonoid : public our_new_delete
+class ResMonoid
 {
   int nvars;
   int nslots;
@@ -47,7 +49,10 @@ class ResMonoid : public our_new_delete
   
   int firstvar; // = 2, if no weight vector, otherwise 2 + nweights
   int nweights; // number of weight vector values placed.  These should all be positve values?
-  M2_arrayint weight_vectors; // array 0..nweights of array 0..nvars-1 of longs
+
+  // flattened array 0..nweights of array 0..nvars-1 of longs
+  std::vector<int> weight_vectors;
+  ////  M2_arrayint weight_vectors; 
 
   // monomial format: [hashvalue, component, pack1, pack2, ..., packr]
   // other possible:
@@ -72,9 +77,12 @@ public:
   typedef const_packed_monomial const_monomial;
   typedef monomial value;
 
-  ResMonoid(int nvars, M2_arrayint var_degrees, const MonomialOrdering *mo);
+  ResMonoid(int nvars,
+            M2_arrayint var_degrees,
+            const std::vector<int>& weightvecs,
+            const MonomialOrdering *mo);
 
-  virtual ~ResMonoid();
+  ~ResMonoid();
 
   int n_vars() const { return nvars; }
 
@@ -113,7 +121,7 @@ public:
           result[0] += hashfcn[i] * e[i];
       }
 
-    int *wt = weight_vectors->array;
+    const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
         long val = 0;
@@ -205,7 +213,7 @@ public:
           result[0] += e * hashfcn[v];
       }
 
-    int *wt = weight_vectors->array;
+    const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
         long val = 0;

@@ -38,9 +38,9 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   result.len = n;
   int* relem_array = new int[n]; // doesn't need to be allocated with gc, as
           // all these pointers (or values) are still in the element f.
-  result.monoms = new monomial_word[n * R.monoid().max_monomial_size()];
+  result.monoms = std::unique_ptr<monomial_word[]>(new monomial_word[n * R.monoid().max_monomial_size()]);
   n = 0;
-  monomial_word *nextmonom = result.monoms;
+  monomial_word *nextmonom = result.monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
       relem_array[n] = static_cast<int>(K->coerceToLongInteger(t->coeff).second);
@@ -51,7 +51,9 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
       nextmonom += R.monoid().monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = R.resGausser().from_ints(n, relem_array);
+  result.coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
+  delete [] exp;
+  delete [] lexp;
   delete [] relem_array;
 }
 
@@ -99,9 +101,9 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
   ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
 
   int* relem_array = new int[f.len];
-  R.resGausser().to_ints(f.len, f.coeffs, relem_array);
+  R.resGausser().to_ints(f.len, f.coeffs.get(), relem_array);
 
-  const monomial_word *w = f.monoms;
+  const monomial_word *w = f.monoms.get();
   for (int i=0; i<f.len; i++)
     {
       long comp;

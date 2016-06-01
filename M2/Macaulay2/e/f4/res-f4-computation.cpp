@@ -81,7 +81,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
       ERROR("cannot use res(...,FastNonminimal=>true) with this type of coefficient ring");
       return nullptr;
     }
-  auto MI = new ResMonoid(origR->n_vars(), origR->getMonoid()->primary_degree_of_vars(), origR->getMonoid()->getMonomialOrdering());
+  auto MI = new ResMonoid(origR->n_vars(),
+                          origR->getMonoid()->primary_degree_of_vars(),
+                          origR->getMonoid()->getFirstWeightVector(),
+                          origR->getMonoid()->getMonomialOrdering());
   ResPolyRing* R;
   if (origR->is_skew_commutative())
     {
@@ -127,7 +130,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
     {
       poly f;
       ResF4toM2Interface::from_M2_vec(*R, F, groebnerBasisMatrix->elem(i), f);
-      input_polys.emplace_back(f);
+      input_polys.emplace_back(std::move(f));
     }
 
   // Set level 1.
@@ -139,10 +142,10 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           int loc = pos->array[i];
           poly&f = input_polys[loc];
           if (f.len == 0) continue;
-          if (MI->get_component(f.monoms) != j)
+          if (MI->get_component(f.monoms.get()) != j)
             continue;
           packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
-          MI->copy(f.monoms, elem);
+          MI->copy(f.monoms.get(), elem);
           // the following line grabs f.
           if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))
             {

@@ -104,6 +104,7 @@ SchreyerFrame::SchreyerFrame(const ResPolyRing& R, int max_level)
 SchreyerFrame::~SchreyerFrame() 
 {
   // Nothing to do here yet
+  
   // the monomial block will free itself
   // as will the std::vector's
 
@@ -562,7 +563,7 @@ void SchreyerFrame::show(int len) const
 
 void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
 {
-  auto lev0 = level(0);
+  auto& lev0 = level(0);
   loDegree = hiDegree = static_cast<int>(lev0[0].mDegree);
   for (int lev=0; lev<mFrame.mLevels.size(); lev++)
     {

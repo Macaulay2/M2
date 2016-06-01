@@ -3,7 +3,7 @@
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
-#include "memblock.hpp"
+#include "res-memblock.hpp"
 #include "res-f4-mem.hpp"
 #include "monhashtable.hpp"
 #include "res-poly-ring.hpp"
@@ -23,8 +23,7 @@ public:
         SchreyerFrame& res
        );
 
-  ~F4Res() {
-  }
+  ~F4Res();
 
   SchreyerFrame& frame() { return mFrame; }
   const SchreyerFrame& frame() const { return mFrame; }
@@ -85,7 +84,8 @@ private:
   long mNextReducerToProcess;
   packed_monomial mNextMonom;
 
-  const ResMonomialsWithComponent* mSchreyerRes; // Support structure for mHashTable
+  std::unique_ptr<const ResMonomialsWithComponent> mSchreyerRes; // Support structure for mHashTable
+  //  const ResMonomialsWithComponent* mSchreyerRes; // Support structure for mHashTable
   MonomialHashTable<ResMonomialsWithComponent> mHashTable; // keys: monomials at level lev-2, values: indices into mColumns.
   // or: -1: means is determined to not need to be a column.
 

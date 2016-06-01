@@ -23,7 +23,7 @@
 #define _res_schreyer_frame_hpp_
 
 #include "res-moninfo.hpp"
-#include "memblock.hpp"
+#include "res-memblock.hpp"
 #include "varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
 #include "res-schreyer-order.hpp"

@@ -6,10 +6,13 @@
 #include <cstdio>
 #include <cstdlib>
 
-ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering *mo)
+ResMonoid::ResMonoid(int nvars0,
+                     M2_arrayint var_degrees,
+                     const std::vector<int>& weightvecs,
+                     const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = newarray_atomic(monomial_word,nvars);
+  hashfcn = new monomial_word[nvars];
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
@@ -30,7 +33,6 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
   ncalls_quotient_as_vp = 0;
 
   nweights = 0;
-  weight_vectors = 0;
   if (moIsLex(mo))
     {
       compare = &ResMonoid::compare_lex;
@@ -47,8 +49,8 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
     }
   else
     {
-      weight_vectors = moGetWeightValues(mo);
-      nweights = weight_vectors->len / nvars;
+      weight_vectors = weightvecs;
+      nweights = static_cast<int>(weight_vectors.size()) / nvars;
       compare = &ResMonoid::compare_weightvector;
 
       if (M2_gbTrace >= 1)
@@ -61,7 +63,7 @@ ResMonoid::ResMonoid(int nvars0, M2_arrayint var_degrees, const MonomialOrdering
 
 ResMonoid::~ResMonoid()
 {
-  deletearray(hashfcn);
+  delete [] hashfcn;
 }
 
 monomial_word ResMonoid::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const

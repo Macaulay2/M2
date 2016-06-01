@@ -11,15 +11,27 @@
 #include "res-schreyer-order.hpp"
 
 #include <memory>  // For std::unique_ptr
+#include <iostream>
 
 typedef int FieldElement;
 
 struct poly {
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
+  #if 1
+  std::unique_ptr<FieldElement[]> coeffs;
+  std::unique_ptr<monomial_word[]> monoms;
+  poly() : len(0) {}
+  //  ~poly() {
+  //      std::cout << "Calling ~poly()" << std::endl << std::flush;
+  //  }
+  #else
   ResGausser::CoefficientArray coeffs;
   monomial_word *monoms; // This is all of the monomials written contiguously
   poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
+#endif
+  
+
 };
 
 class ResPolyRing
@@ -27,7 +39,7 @@ class ResPolyRing
 public:
   ResPolyRing(const ResGausser* G, const ResMonoid* M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
   ResPolyRing(const ResGausser* G, const ResMonoid* M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
-
+  
   const ResGausser& resGausser() const { return *mResGausser; }
   const ResMonoid& monoid() const { return *mMonoid; }
 
@@ -58,13 +70,13 @@ public:
   void setPoly(poly& result)
   {
     result.len = static_cast<int>(coeffs.size());
-    result.coeffs = new FieldElement[result.len];
-    result.monoms = new monomial_word[mRing.monoid().max_monomial_size()*result.len];
+    result.coeffs = std::unique_ptr<FieldElement[]>(new FieldElement[result.len]);
+    result.monoms = std::unique_ptr<monomial_word[]>(new monomial_word[mRing.monoid().max_monomial_size()*result.len]);
     // copy coeffs
     for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];
     // copy monoms: not pointers, actual monoms
-    monomial_word* monomptr = result.monoms;
+    monomial_word* monomptr = result.monoms.get();
     for (int i=0; i<result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
@@ -97,7 +109,7 @@ public:
   {}
   
   int coefficient() const { return elem.coeffs[coeff_index]; }
-  packed_monomial monomial() const { return elem.monoms + monom_index; }
+  packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
   void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }
 };
 
