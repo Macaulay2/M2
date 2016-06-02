@@ -41,7 +41,10 @@ leak2 = () -> (
 
 doOne = (g,T) -> (
     IC := (random canonicalCurve)(g,T);
+    oldtrace := gbTrace;
+    gbTrace=3;
     res(IC,FastNonminimal=>true);
+    gbTrace=oldtrace;
     )
 leak3 = () -> (
     setRandomSeed "37862873";
@@ -74,6 +77,11 @@ g=9;
 p=12347;
 numEx=100;
 T=ZZ/p[t_0..t_(g-1)]
+IC=(random canonicalCurve)(g,T);
+gbTrace=3
+res(IC,FastNonminimal=>true)
+    betti(res(IC,FastNonminimal=>true),Minimize=>true);
+
 --
 i=0;
 L={};

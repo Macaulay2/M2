@@ -796,11 +796,11 @@ AC_SUBST(BUILTLIBS,)
 #    gfan is used by the packages gfanInterface and StatePolytope
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
-#    linbox needs fflas-ffpack and givaro
-#    fflas-ffpack needs givaro and lapack
+#    linbox needs fflas_ffpack and givaro
+#    fflas_ffpack needs givaro and lapack
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    fflas-ffpack is provided as an option for experimentation
+#    fflas_ffpack is provided as an option for experimentation
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd

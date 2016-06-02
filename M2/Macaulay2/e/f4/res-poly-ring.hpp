@@ -15,6 +15,7 @@
 
 typedef int FieldElement;
 
+#if 0
 struct poly {
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
@@ -32,6 +33,28 @@ struct poly {
 #endif
   
 
+};
+#endif
+
+class poly {
+public:
+  int len; // in monomials?  This only determines both sizes below
+           // in the case of fixed length monomials
+  std::unique_ptr<FieldElement[]> coeffs;
+  std::unique_ptr<monomial_word[]> monoms;
+
+public:  
+  poly() : len(0) {}
+
+  ~poly()
+  {
+    //    std::cout << "Calling ~poly()" << std::endl << std::flush;
+  }
+  
+  poly(const poly& other) = default;
+  poly(poly&& other) = default;
+  poly& operator=(const poly& other) = default;
+  poly& operator=(poly&& other) = default;
 };
 
 class ResPolyRing
