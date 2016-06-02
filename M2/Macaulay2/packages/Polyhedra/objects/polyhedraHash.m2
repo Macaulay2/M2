@@ -43,17 +43,15 @@ dim PolyhedraHash := PH -> (
 getProperty = method()
 getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
    accessProperty := (cacheValue property)(X -> (
-      if X#?property then return X#property else (
-         type := class X;
-         << "Computing property " << property << " of " << type << endl;
-         if compute#type#?property then (
-            return compute#type#property X
-         ) else (
-            error("No method to compute property ", property," for type ", type, ".")
-         )
+      type := class X;
+      << "Computing property " << property << " of " << type << endl;
+      if compute#type#?property then (
+         return compute#type#property X
+      ) else (
+         error("No method to compute property ", property," for type ", type, ".")
       )
    ));
-   accessProperty PH
+   if PH#?property then return PH#property else accessProperty PH
 )
 
 setProperty = method()
@@ -78,8 +76,20 @@ getAvailableProperties = method()
 getAvailableProperties PolyhedraHash := PH -> (
    result := keys PH;
    result = flatten { result, keys PH.cache};
+   result = select(result, r-> r != cache);
    result
 )
+
+net PolyhedraHash := X -> (
+   properties := getAvailableProperties X;
+   horizontalJoin flatten (
+      "{",
+      -- prints the parts vertically
+      stack (horizontalJoin \ sort apply(properties, property -> (net property, " => ", net getProperty(X, property)))),
+      "}" 
+   )
+)
+
 
 
 -- Debug export

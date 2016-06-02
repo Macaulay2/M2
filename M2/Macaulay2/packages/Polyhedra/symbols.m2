@@ -32,5 +32,7 @@ export {
    "pointed",
    "smooth",
    "fullDimensional",
-   "simplicial"
+   "simplicial",
+
+   "points"
 }

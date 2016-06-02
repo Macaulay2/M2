@@ -7,7 +7,7 @@ compute#Cone = new MutableHashTable
 Cone == Cone := (C1,C2) -> C1 === C2
 
 -- Modifying the standard output for a Cone to give an overview of its characteristica
-net Cone := C -> ( )
+-- net Cone := C -> ( )
 -- 	  "{",
 -- 	  -- prints the parts vertically
 -- 	  stack (horizontalJoin \ sort apply({ambientDimension, 
@@ -54,15 +54,15 @@ coneBuilder = (genrays,dualgens) -> (
 
 
 coneFromRays = method(TypicalValue => Cone)
-coneFromRays(Matrix, Matrix) := (inputRays, linealityGenerators) -> (
+coneFromRays(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      -- checking for input errors
-     if numRows inputRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
+     if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new Cone from {
-         ambientDimension => numRows inputRays,
+         ambientDimension => numRows iRays,
          symbol cache => new CacheTable
      };
-     result.cache.inputRays = inputRays;
-     result.cache.inputLinealityGenerators = linealityGenerators;
+     setProperty(result, inputRays, iRays);
+     setProperty(result, inputLinealityGenerators, linealityGenerators);
      result
 )
 
