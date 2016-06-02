@@ -770,13 +770,14 @@ server = () -> (
 	    u = toString( isTree dataValue );
 	)
 
+
 	-- isRigid
 	else if match("^POST /isRigid/(.*) ",r) then (
 	    -- testKey = "isRigid";
 	    fun = identity;
 	    u = toString( isRigid dataValue );
 	)    
-    
+
         -- isWeaklyConnected
 	else if match("^POST /isWeaklyConnected/(.*) ",r) then (
 	    -- testKey = "isWeaklyConnected";
@@ -2233,7 +2234,7 @@ end
 restart
 uninstallPackage"Visualize"
 restart
-path = path|{"~/GitHub/Visualize-M2/"}
+path = {"~/GitHub/M2/M2/Macaulay2/packages/"}|path
 installPackage"Visualize"
 viewHelp Visualize
 viewHelp doc
