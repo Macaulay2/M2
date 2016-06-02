@@ -2875,12 +2875,13 @@ collectAPointIP=(linesToRead,numberOfCoordinates,specifyCoordinates)->(
 --##########################################################################--
 -- TESTS
 --##########################################################################--
-TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniZeroDimSolve.tst.m2")
-/// 
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniTrackHomotopy.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniIsProjective.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomotopy.tst.m2")
 /// 
 
 TEST///
@@ -2888,7 +2889,7 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniPosDimSolve.ts
 /// 
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniParameterHomotopy.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
 /// 
 
 TEST///
@@ -2896,12 +2897,12 @@ load concatenate(Bertini#"source directory","./Bertini/TST/bertiniSample-bertini
 /// 
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniRefineSols.tst.m2")
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniTrackHomotopy.tst.m2")
 /// 
 
 TEST///
-load concatenate(Bertini#"source directory","./Bertini/TST/bertiniIsProjective.tst.m2")
-///
+load concatenate(Bertini#"source directory","./Bertini/TST/bertiniZeroDimSolve.tst.m2")
+/// 
 
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/makeBInputFile.tst.m2")
@@ -2961,6 +2962,10 @@ load concatenate(Bertini#"source directory","./Bertini/TST/moveBFile.tst.m2")
 
 TEST///
 load concatenate(Bertini#"source directory","./Bertini/TST/bPHGaloisGroup.tst.m2")
+///
+
+TEST///
+load concatenate(Bertini#"source directory","./Bertini/TST/radicalList.tst.m2")
 ///
 
 

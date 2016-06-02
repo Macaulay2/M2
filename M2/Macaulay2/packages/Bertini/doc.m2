@@ -1149,6 +1149,29 @@ doc ///
 ///;
 
 
+doc ///
+ Key
+   radicalList
+   (radicalList,List)
+   (radicalList,List,Number)
+ Headline
+   A support function that removes multiplicities of numbers in a list up to a tolerance.
+ Usage
+   radicalList(List,Number)
+   radicalList(List) 
+ Inputs
+   L:List
+     A list of complex or real numbers.
+   N:Number
+     A small real number. 
+ Description
+   Text
+     This outputs a sublist of complex or real numbers that all have distinct norms up to the tolerance N (default is 1e-10).
+   Example
+     radicalList({2.000,1.999})
+     radicalList({2.000,1.999},1e-10)         
+     radicalList({2.000,1.999},1e-2)         
+///;
 
 
 doc ///
@@ -2247,60 +2270,5 @@ doc ///
  Usage
     importPoints(...,SpecifyPoints=>List)
               
-///;
-
-doc///
- Key
-   AllowStrings
-   [bertiniTrackHomotopy, AllowStrings]
-   [bertiniParameterHomotopy, AllowStrings]
-   [bertiniPosDimSolve, AllowStrings]
-   [bertiniZeroDimSolve, AllowStrings]
- Headline
-   input a system of polynomials as strings   
- Description
-   Text
-     Optional input that takes a List of variables and allows for the polynomial system to
-     be passed as a List of strings to @TO bertiniZeroDimSolve@, @TO bertiniTrackHomotopy@,
-     @TO bertiniParameterHomotopy@, and @TO bertiniPosDimSolve@.
-   Example
-     R = CC[x,y,z];
-     f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)), z-1};
-     sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z})
-   Example 
-     R=CC[x,y,z];--u1,u2 are parameters
-     f1=x^2+y^2-z^2;
-     f2="u1*x+u2*y";
-     f3=z-1;
-     finalParameters={{0,1}};
-     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },AllowStrings=>{x,y,z})            
-   Example 
-     R=CC[x,t1];
-     f1="x^2+cos(1-t1)-2*exp(1-t1)";
-     H={f1};
-     sol1 = point {{1}};
-     sol2 = point {{-1}};
-     S1={sol1,sol2}--solutions to H when t=1                 
-     S0 = bertiniTrackHomotopy (t1, H, S1,AllowStrings=>{x}) --solutions to H when t=0|
-     peek S0
-///;
-
-doc///
- Key
-   SubFunctions
-   [bertiniTrackHomotopy, SubFunctions]
-   [bertiniParameterHomotopy, SubFunctions]
-   [bertiniPosDimSolve, SubFunctions]
-   [bertiniZeroDimSolve, SubFunctions]
- Headline
-   optional argument to specify subfunctions to be written to the Bertini input file   
- Description
-   Text
-     The option is a list of pairs that define a subfunction. 
-   Example
-     R = CC[x,y,z][s1,s2];
-     sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
-     f = {s1*s2, s1*(z+y),z-1};
-     sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z}, SubFunctions=>sF)
 ///;
 
