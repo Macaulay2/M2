@@ -79,6 +79,14 @@ isFace(Cone,Cone) := (C1,C2) -> (
 --  OUTPUT : The dual Cone, which is {v | v*c>=0 forall c in C}
 dualCone = method(TypicalValue => Cone)
 dualCone Cone := C -> (
-	genrays := (sort transpose halfspaces(C),sort transpose hyperplanes(C));
-	dualgens := (sort (-(rays(C))),sort linSpace(C));
-	coneBuilder(genrays,dualgens))
+   result := new CacheTable;
+   if hasProperty(C, inequalities) then result#inputRays = getProperty(C, inequalities);
+   if hasProperty(C, equations) then result#inputLinealityGenerators = getProperty(C, equations);
+   if hasProperty(C, inputRays) then result#inequalities = getProperty(C, inputRays);
+   if hasProperty(C, inputLinealityGenerators) then result#equations = getProperty(C, inputLinealityGenerators);
+   if hasProperty(C, computedRays) then result#computedFacets = getProperty(C, computedRays);
+   if hasProperty(C, computedLinealityBasis) then result#computedHyperplanes = getProperty(C, computedLinealityBasis);
+   if hasProperty(C, computedFacets) then result#computedRays = getProperty(C, computedFacets);
+   if hasProperty(C, computedHyperplanes) then result#computedLinealityBasis = getProperty(C, computedHyperplanes);
+   return new Cone from {ambientDimension => ambDim C, cache => result}
+)

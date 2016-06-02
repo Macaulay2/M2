@@ -2,23 +2,35 @@
 PolyhedraHash = new Type of MutableHashTable
 globalAssignment PolyhedraHash
 
+-- This MutableHashTable will store all methods computing properties of
+-- polyhedral objects for easy access via the getProperties method. This will make
+-- interfacing polymake much easier.
 compute = new MutableHashTable
 
 
--- PURPOSE : Giving the defining affine hyperplanes
-ambDim = method(TypicalValue => ZZ)
 
 --   INPUT : 'P'  a Polyhedron 
 --  OUTPUT : an integer, the dimension of the ambient space
-ambDim PolyhedraHash := X -> X#ambientDimension
+ambDim = method(TypicalValue => ZZ)
+ambDim PolyhedraHash := X -> (
+   getProperty(X, ambientDimension)
+)
 
 isSimplicial = method(TypicalValue => Boolean)
+isSimplicial PolyhedraHash := X -> (
+   getProperty(X, simplicial)
+)
 
-isSimplicial PolyhedraHash := (cacheValue symbol isSimplicial)(X -> (
-	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
-	else if instance(X,Fan) then all(maxCones X,isSimplicial)
-	else if instance(X,Polyhedron) then (isCompact X and numColumns vertices X == dim X + 1)
-	else all(maxPolyhedra X,isSimplicial)))
+isFullDimensional = method(TypicalValue => Boolean)
+isFullDimensional PolyhedraHash := X -> (
+   getProperty(X, fullDimensional)
+)
+
+-- 
+-- 	if instance(X,Cone) then (isPointed X and numColumns rays X == dim X)
+-- 	else if instance(X,Fan) then all(maxCones X,isSimplicial)
+-- 	else if instance(X,Polyhedron) then (isCompact X and numColumns vertices X == dim X + 1)
+-- 	else all(maxPolyhedra X,isSimplicial)))
 
 
 --   INPUT : 'PH'  a Polyhedron, Cone, Fan or Polyhedral Complex

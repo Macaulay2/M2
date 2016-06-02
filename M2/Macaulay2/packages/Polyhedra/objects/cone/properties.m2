@@ -11,6 +11,11 @@ compute#Cone#pointed Cone := C -> (
    rank linealitySpace C == 0
 )
 
+compute#Cone#fullDimensional = method()
+compute#Cone#fullDimensional Cone := C -> (
+   dim C == ambDim C
+)
+
 
 
 --   INPUT : 'C'  a Cone
@@ -54,7 +59,8 @@ compute#Cone#computedDimension Cone := C -> (
 -- hilbertBasis = method()
 hilbertBasis Cone := List => o -> (C -> (
       << C << endl;
-      getProperty(C, computedHilbertBasis)
+      if isPointed C and isFullDimensional C then getProperty(C, computedHilbertBasis)
+      else error("Hilbert basis not implemented for non-pointed or non-fulldimensional cones yet.")
    )
 )
 
@@ -141,6 +147,11 @@ compute#Cone#computedRays Cone := C -> (
    );
    if not hasProperty(C, computedLinealityBasis) then setProperty(C, computedLinealityBasis, linealityData);
    rayData
+)
+
+compute#Cone#simplicial = method()
+compute#Cone#simplicial Cone := C -> (
+   (isPointed C) and (numColumns rays C == dim C)
 )
 
 

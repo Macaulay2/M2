@@ -35,6 +35,7 @@ export {
    "isComplete", 
    "isEmpty", 
    "isFace", 
+   "isFullDimensional",
    "isLatticePolytope", 
    "isPointed", 
    "isPolytopal", 

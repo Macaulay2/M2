@@ -31,5 +31,6 @@ export {
    "computedRays",
    "pointed",
    "smooth",
-   "fullDimensional"
+   "fullDimensional",
+   "simplicial"
 }
