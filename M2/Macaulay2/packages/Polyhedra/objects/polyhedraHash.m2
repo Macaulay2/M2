@@ -34,7 +34,11 @@ getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
       if X#?property then return X#property else (
          type := class X;
          << "Computing property " << property << " of " << type << endl;
-         compute#type#property X
+         if compute#type#?property then (
+            return compute#type#property X
+         ) else (
+            error("No method to compute property ", property," for type ", type, ".")
+         )
       )
    ));
    accessProperty PH

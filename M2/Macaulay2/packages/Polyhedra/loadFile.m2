@@ -21,7 +21,10 @@ load "./faceBuilders.m2"
 -- Objects
 load "./objects/polyhedraHash.m2"
    load "./objects/polyhedralObject.m2"
-      load "./objects/cone.m2"
+      load "./objects/cone/constructors.m2"
+      load "./objects/cone/properties.m2"
+      load "./objects/cone/methods.m2"
+
 --         load "./objects/cone/hilbertBasis.m2"
       load "./objects/polyhedron.m2"
    load "./objects/polyhedralObjectFamily.m2"
@@ -57,6 +60,9 @@ loadPackage "Polyhedra"
 C = posHull matrix {{12,3},{3,5}}
 facets C
 hilbertBasis C
+isPointed C
+C = posHull matrix {{1,0,0},{0,-1,1}}
+isPointed C
 
 
 

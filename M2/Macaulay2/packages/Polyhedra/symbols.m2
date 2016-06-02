@@ -13,6 +13,9 @@
 -- protect computedHilbertBasis
 -- protect computedLinealityBasis
 -- protect computedRays
+--   "pointed",
+--   "smooth",
+--   "fullDimensional"
 
 export {
    "equations",
@@ -25,5 +28,8 @@ export {
    "computedHyperplanes",
    "computedHilbertBasis",
    "computedLinealityBasis",
-   "computedRays"
+   "computedRays",
+   "pointed",
+   "smooth",
+   "fullDimensional"
 }
