@@ -3551,6 +3551,26 @@ export rawMarkedGB(e:Expr):Expr := (
      else WrongNumArgs(5));
 setupfun("rawMarkedGB", rawMarkedGB);
 
+export rawMinimalBetti(e:Expr):Expr := (
+    when e is s:Sequence do
+    if length(s) == 3 then
+    when s.0 is rawC:RawComputationCell do
+     if !isSequenceOfSmallIntegers(s.1) then WrongArg(2,"a sequence of small integers") else -- degree_limit ...
+     if getLengthOfSequence(s.1)>1 then WrongArg(2,"a sequence of small integers of length at most 1") else -- ... converted to a heft value
+     if !isSequenceOfSmallIntegers(s.2) then WrongArg(3,"a sequence of small integers") else
+     if getLengthOfSequence(s.2)>1 then WrongArg(3,"a sequence of small integers of length at most 1") else
+     toExpr(Ccode(RawArrayIntOrNull,"rawMinimalBetti(",
+             rawC.p, ",",
+             getSequenceOfSmallIntegers(s.1), ",",
+             getSequenceOfSmallIntegers(s.2), 
+             ")"
+             ))
+     else WrongArg(1, "a raw resolution computation")
+     else WrongNumArgs(3)
+     else WrongNumArgs(3)
+    );
+setupfun("rawMinimalBetti", rawMinimalBetti);
+
 export rawGBSetStop(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 10 then WrongNumArgs(10) else

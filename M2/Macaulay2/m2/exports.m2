@@ -838,6 +838,7 @@ export {
 	"minPosition",
 	"mingens",
 	"mingle",
+    "minimalBetti",
 	"minimalPresentation",
 	"minimalPresentationMap",
 	"minimalPresentationMapInv",

@@ -6,6 +6,7 @@
 #include "../matrix.hpp"
 #include "../mat.hpp"
 #include "../newdelete.hpp"
+#include "res-f4-computation.hpp"
 #include "res-f4-m2-interface.hpp"
 #include "../gbring.hpp"
 #include "../aring-zzp-flint.hpp"
@@ -374,6 +375,25 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
 #endif  
   return rk;
 }
+
+M2_arrayint
+rawMinimalBetti(Computation *C,
+                M2_arrayint slanted_degree_limit,
+                M2_arrayint length_limit)
+{
+  try {
+    F4ResComputation *G = dynamic_cast<F4ResComputation*>(C);
+    if (G != 0)
+      return G->minimal_betti(slanted_degree_limit, length_limit); // Computes it if needed
+    ERROR("expected resolution computed via res(...,FastNonminimal=>true)");
+    return nullptr;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+}
+
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  End:
