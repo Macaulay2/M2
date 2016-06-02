@@ -24,7 +24,8 @@ export{
    "MathMode", 
    "Dominant", 
    "OnlySublist",
-   "approximateInverseMap"
+   "approximateInverseMap",
+   "Multidegree"
 };
 
 needsPackage "Parametrization"
@@ -39,7 +40,7 @@ isInverseMap=method(TypicalValue => Boolean);
 kernelComponent=method(TypicalValue => Ideal);
 projectiveDegrees=method(TypicalValue => List, Options => {OnlySublist => infinity});
 toMap=method(TypicalValue => RingMap, Options => {Dominant => null});
-approximateInverseMap=method(TypicalValue => RingMap);
+approximateInverseMap=method(TypicalValue => RingMap, Options => {Multidegree => null});
 
 composeRationalMaps(RingMap,RingMap) := (phi,psi) -> (
    -- input: phi:P^n-->P^m, psi:P^m-->P^r ; output: P^n-->P^r
@@ -195,13 +196,15 @@ toMap (Ideal,ZZ,ZZ) := o -> (I,v,b) -> (
    toMap(linSys,Dominant=>o.Dominant)
 );
 
-approximateInverseMap (RingMap) := (phi) -> (
+approximateInverseMap (RingMap) := o -> (phi) -> (
     if verbose then  <<"Running 'approximateInverseMap'..."<<endl;
     -- input: a birational map phi:X --->Y 
     -- output: a map Y--->X in some sense related to the inverse of phi
     checkRationalMap phi;
     n:=numgens ambient target phi -1;
-    (d,c,b):=aboutBaseLocusOfInverseMap phi;
+    (d,c,b):=if o.Multidegree =!= null then (
+                   if class o.Multidegree =!= List then error("invalid multidegree provided") else aboutBaseLocusOfInverseMap0(phi,o.Multidegree)
+             ) else aboutBaseLocusOfInverseMap phi;
     phiRes:=local phiRes;
     B:=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
          phiRes=phi;
@@ -416,6 +419,7 @@ projDegree = (phi,i,dimSubVar) -> (
 );
 
 aboutBaseLocusOfInverseMap = (phi) -> (
+   if verbose then <<"Running 'aboutBaseLocusOfInverseMap'..."<<endl;
    -- this is a probabilistic method, an easy application of projDegree
    -- input: a birational transformation of type (d_1,d_2)
    -- output: (d_2,codim B,degree B), where B is the base locus of the inverse map
@@ -427,6 +431,20 @@ aboutBaseLocusOfInverseMap = (phi) -> (
    for i from 2 to k do (
       phi=genericRestriction phi;
       b=z*d^i - projDegree(phi,0,k-i);
+      if b!=0 then return (d,i,b);
+   );
+);
+
+aboutBaseLocusOfInverseMap0 = (phi,m) -> (
+   if verbose then <<"Running 'aboutBaseLocusOfInverseMap0'..."<<endl;
+   -- phi rational map, m the list of projective degrees of phi
+   -- output as aboutBaseLocusOfInverseMap(phi)
+   k:=#m -1; 
+   z:=m_k;   
+   d:=floor(m_(k-1)/z);
+   b:=local b;
+   for i from 2 to k do (
+      b=z*d^i - m_(k-i); 
       if b!=0 then return (d,i,b);
    );
 );
@@ -590,6 +608,10 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
 --    Headline => "to get partial outputs",
     "This is an optional argument of ", TO projectiveDegrees, " and accepts a non-negative integer, the number ", TEX///$-1$///," of projective degrees to be computed.",
           } 
+   document {
+    Key => {Multidegree, [approximateInverseMap,Multidegree]}, 
+    "This is an optional argument of ", TO approximateInverseMap, ". It allows to inform the method about the list of projective degrees of the map in input.",
+          } 
    document { 
     Key => {kernelComponent,(kernelComponent, RingMap,ZZ)}, 
     Headline => "about the image of a rational map", 
@@ -722,17 +744,18 @@ H=trim ideal random(1,ringP11)",
      Outputs => { 
           RingMap => {"a ring map representing a random rational map ",TEX///$Y--->X$///,", which in some sense is related to the inverse of ",TEX///$\Phi$///," (e.g., the base locus of this map has the same dimension and degree of the base locus of the inverse of ",TEX///$\Phi$///,")"}
           }, 
-          "Although at first glance this method may seem crazy, it could be useful in some cases.",
+          "The algorithm proceeds into two stages. Firstly, numerical invariants of the inverse map are computed using ", TO projectiveDegrees," (one can speed up the process by passing the list of projective degrees of ",TEX///$\Phi$///," to the option ", TO Multidegree,"); secondly, we basically construct the ideal of the base locus of the inverse by looking for the images via ", TEX///$\Phi$///," of random linear subspaces (here is used ", TO kernelComponent,"). Although at first glance this method may seem crazy, it could be useful in some cases.",
      PARA{},
     EXAMPLE { 
           "P8=ZZ/97[t_0..t_8];", 
           "phi=invertBirMap toMap(trim(minors(2,genericMatrix(P8,3,3))+random(2,P8)),Dominant=>infinity)",
           "time psi=approximateInverseMap phi",
-          "isInverseMap(phi,psi) and isInverseMap(psi,phi)"
+          "isInverseMap(phi,psi) and isInverseMap(psi,phi)",
+          "time m=projectiveDegrees phi",
+          "time psi'=approximateInverseMap(phi,Multidegree=>m)",
+          "psi===psi'"
           } 
          }
-
-
 
 
 TEST ///  --- quadro-quadric Cremona transformations 
