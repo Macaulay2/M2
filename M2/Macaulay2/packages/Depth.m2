@@ -17,6 +17,8 @@ newPackage(
      DebuggingMode => false
      )
 
+-- Bart Snapp is not maintaining this code, so others are welcome to suggest improvements.
+
 --=========================================================================--
      
 export{"regularSequenceCheck","isRegularSequence","regularSequence","isCM","Sparseness","Bound","Attempts","Maximal"} 
@@ -34,7 +36,24 @@ depth(Ideal,Module) := ZZ => (I,M) -> (
 
 -----------------------------------------------------------------------------
 
-depth(Module) := ZZ => M -> depth(ideal gens ring M,M)
+depth(Module) := ZZ => M -> (
+    --depth of a module with respect to the max ideal, via finite proj dim
+    --gives error if the ultimate coeficient ring of R = ring M is not a field.
+    R := ring M;
+    if isHomogeneous M === false then print "-- Warning: This module is not homogeneous, computation may be incorrect.";
+    if not isCommutative R then error"depth undefined for noncommutative rings";
+    
+    S := (flattenRing R)_0;
+    
+    if not isField coefficientRing S then error"input must be a module over an affine ring";
+    
+    S0 := ring presentation S;
+    m := presentation M;
+    COK := prune coker(sub(m,S0) | (presentation S ** target m));
+    
+    numgens S0 - length res COK    
+--    depth(ideal gens ring M,M) -- old method
+     )
 
 -----------------------------------------------------------------------------
 
@@ -54,7 +73,7 @@ depth(Ideal,QuotientRing) := ZZ => (I,A) -> (
 
 -----------------------------------------------------------------------------
 
-depth(Ring) := ZZ => A -> depth(ideal gens A,A)
+depth(Ring) := ZZ => A -> depth( A^1 )
 
 -----------------------------------------------------------------------------
 

@@ -704,6 +704,97 @@ const Matrix /* or null */ *IM2_Matrix_lift(int *success_return, const FreeModul
      }
 }
 
+gmp_ZZ to_gmp_ZZ(int a) // helper fn!!!
+{
+  gmp_ZZ result = getmemstructtype(gmp_ZZ);
+  mpz_init(result);
+  mpz_set_si(result,a);
+  return result;
+}
+
+Homotopy /* or null */ *rawHomotopy(SLEvaluator *Hx, SLEvaluator *Hxt, SLEvaluator *HxH) {
+  return Hx->createHomotopy(Hxt,HxH);
+}
+
+M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix *outputs, 
+                         MutableMatrix* output_extras,  
+                         gmp_RR init_dt, gmp_RR min_dt,
+                         gmp_RR epsilon, // o.CorrectorTolerance,
+                         int max_corr_steps, 
+                         gmp_RR infinity_threshold,
+                         M2_bool checkPrecision) 
+{
+  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
+  /*
+  if (inp!=nullptr) { // check precision!!!
+    std::cout << "-- precisions:" << std::endl;      
+    auto& m = inp->getMat();
+    for(int i=0; i<m.numRows(); i++)
+      for(int j=0; j<m.numColumns(); j++) {
+        auto& e = m.entry(i,j);
+        auto p_re = mpfr_get_prec(&m.ring().realPartReference(e));
+        auto p_im = mpfr_get_prec(&m.ring().imaginaryPartReference(e));
+        std::cout << "(" << p_re << "," << p_im << ") ";
+      }
+    std::cout << std::endl;      
+  }
+  */
+  return H->track(inputs,outputs, 
+                  output_extras,  
+                  init_dt, min_dt,
+                  epsilon, // o.CorrectorTolerance,
+                  max_corr_steps, 
+                  infinity_threshold,
+                  checkPrecision);
+}
+
+M2_string rawHomotopyToString(Homotopy * H) { 
+  buffer o;
+  H->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawHomotopyHash(Homotopy *) { return 0; }
+
+
+SLEvaluator /* or null */ *rawSLEvaluator(SLProgram *SLP, M2_arrayint constsPos, M2_arrayint varsPos, const MutableMatrix *consts) {
+  return consts->createSLEvaluator(SLP,constsPos,varsPos);
+}
+
+SLEvaluator /* or null */ *rawSLEvaluatorSpecialize(SLEvaluator *H, const MutableMatrix *parameters) {
+  return H->specialize(parameters);
+}
+
+M2_bool rawSLEvaluatorEvaluate(SLEvaluator *sle, const MutableMatrix *inputs, MutableMatrix *outputs) {
+  return sle->evaluate(inputs,outputs);
+}
+
+M2_string rawSLEvaluatorToString(SLEvaluator * sle) { 
+  buffer o;
+  sle->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawSLEvaluatorHash(SLEvaluator *) { return 0; }
+
+SLProgram /* or null */ *rawSLProgram(unsigned long nConstantsAndInputs) { 
+  return new SLProgram;
+  //return nullptr; 
+}
+M2_string rawSLProgramToString(SLProgram * slp) { 
+  buffer o;
+  slp->text_out(o);
+  return o.to_string();
+  }
+unsigned int rawSLProgramHash(SLProgram *) { return 0; }
+gmp_ZZ rawSLPInputGate(SLProgram *S) { return to_gmp_ZZ(S->addInput()); }
+gmp_ZZ rawSLPSumGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMSum(a)); }
+gmp_ZZ rawSLPProductGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addMProduct(a)); }
+gmp_ZZ rawSLPDetGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDet(a)); }
+gmp_ZZ rawSLPsetOutputPositions(SLProgram *S, M2_arrayint a) { 
+  S->setOutputPositions(a); 
+  return to_gmp_ZZ(0); // this function should have returned "void"
+}
+gmp_ZZ rawSLPDivideGate(SLProgram *S, M2_arrayint a) { return to_gmp_ZZ(S->addDivide(a)); }
+
 StraightLineProgram /* or null */ *rawSLP(const Matrix *consts, M2_arrayint program)
 {
   return StraightLineProgram::make(consts, program);

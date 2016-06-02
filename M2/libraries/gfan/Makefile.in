@@ -12,8 +12,6 @@ CHECKTARGET = .
 STRIPFILES = gfan@EXEEXT@
 LICENSEFILES = LICENSE COPYING
 include ../Makefile.library
-# gfan doesn't use the macro "DEBUG" in the standard way
-CPPFLAGS += -UDEBUG
 Makefile: @srcdir@/Makefile.in ; cd ../.. && ./config.status libraries/gfan/Makefile
 # Local Variables:
 # compile-command: "make -C $M2BUILDDIR/libraries/gfan "

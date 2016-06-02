@@ -291,7 +291,7 @@ saturate(Ideal,Ideal) := Ideal => opts -> (J,I) -> (
     R := ring I;
     if ring J =!= R then error "expected ideals in the same ring";
     if I == 0 then return ideal(1_R);
-    linearvars := (n === 1 and first degree(I_0) === 1 and all((degrees R)/first, x -> x === 1));
+    linearvars := (n === 1 and degreeLength R > 0 and first degree(I_0) === 1 and all((degrees R)/first, x -> x === 1));
     homog := isHomogeneous I and isHomogeneous J;
     
     strategy := opts.Strategy;
@@ -315,7 +315,7 @@ saturate(Ideal,Ideal) := Ideal => opts -> (J,I) -> (
 	)
     else if strategy === null then (
 	 -- if the conditions for Linear hold, we use that algorithm.
-	 if isFlatPolynomialRing R and isGRevLexRing R and homog and linearvars then strategy = Linear
+	 if isFlatPolynomialRing R and homog and linearvars and isGRevLexRing R then strategy = Linear
 	 );
 
     if strategy === Linear then

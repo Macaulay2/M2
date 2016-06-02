@@ -1,12 +1,21 @@
 -- -*- M2-comint -*- {* hash: 1464112564 *}
+<<<<<<< HEAD
 --loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+=======
+-- COMPILE TIME: Oct 14 2015, 14:51:21
+--loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+>>>>>>> Macaulay2/master
 
 i1 : R = CC[x,y];
 
 i2 : F = {x^2-2,y^2-2};
 
 i3 : sols = bertiniZeroDimSolve (F)
+<<<<<<< HEAD
 Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34306-0/1
+=======
+Temporary directory for input and output files:/tmp/M2-29687-0/1
+>>>>>>> Macaulay2/master
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -22,7 +31,11 @@ o3 = {{-1.41421, -1.41421}, {-1.41421, 1.41421}, {1.41421, -1.41421},
 o3 : List
 
 i4 : S = bertiniRefineSols (100, F, sols)
+<<<<<<< HEAD
 Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34306-0/2
+=======
+Temporary directory for input and output files:/tmp/M2-29687-0/2
+>>>>>>> Macaulay2/master
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -46,9 +59,15 @@ o5 : List
 i6 : coords_0
 
 o6 = -1.414213562373095048801688724209698078569671875376948073176679737990732
+<<<<<<< HEAD
      478462107038850387534327641573-
      1.8146687832147731751154550352869464319934183860080812970989536078368497
      59907524219475307096655011488e-316*ii
+=======
+     478462107038850387534327641573+
+     9.0733439160738658755772751764347321599670919300404064854947680391842487
+     99537621097376535483275057442e-317*ii
+>>>>>>> Macaulay2/master
 
 o6 : CC (of precision 333)
 

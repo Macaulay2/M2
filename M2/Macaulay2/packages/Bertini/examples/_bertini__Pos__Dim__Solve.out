@@ -1,5 +1,10 @@
 -- -*- M2-comint -*- {* hash: 704393788 *}
+<<<<<<< HEAD
 --loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+=======
+-- COMPILE TIME: Oct 14 2015, 14:51:21
+--loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+>>>>>>> Macaulay2/master
 
 i1 : R = QQ[x,y,z]
 
@@ -15,7 +20,11 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : S = bertiniPosDimSolve F
+<<<<<<< HEAD
 Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34300-0/1
+=======
+Temporary directory for input and output files:/tmp/M2-29634-0/1
+>>>>>>> Macaulay2/master
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -30,9 +39,15 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
+<<<<<<< HEAD
 o4 = {{-8.15428e-72+2.2888e-74*ii, 7.49422e-72-3.67223e-72*ii,
      ------------------------------------------------------------------------
      -.139295-.479623*ii}}
+=======
+o4 = {{-4.96427e-67-2.19502e-67*ii, 4.23657e-67+3.49117e-67*ii,
+     ------------------------------------------------------------------------
+     -.0238961+.0049947*ii}}
+>>>>>>> Macaulay2/master
 
 o4 : VerticalList
 
@@ -44,11 +59,17 @@ o5 : List
 
 i6 : peek oo_0 --then list position
 
-o6 = WitnessSet{ComponentNumber => 0                                                                             }
+o6 = WitnessSet{ComponentNumber => 0                                                                        }
                 IsIrreducible => null
+<<<<<<< HEAD
                 Points => {{-8.15428e-72+2.2888e-74*ii, 7.49422e-72-3.67223e-72*ii, -.139295-.479623*ii}}
                 Slice => | -.146768-.290811i 1.06612-1.2881i 1.76769-1.76246i .690977+.651545i |
                 WitnessDataFileName => /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34300-0/1/witness_data
+=======
+                Points => {{-4.96427e-67-2.19502e-67*ii, 4.23657e-67+3.49117e-67*ii, -.0238961+.0049947*ii}}
+                Slice => | .171754+.11906i 2.00545-1.96198i 3.56221-1.04751i -.631895+.796449i |
+                WitnessDataFileName => /tmp/M2-29634-0/1/witness_data
+>>>>>>> Macaulay2/master
                                3      2      2       2     3      2
                 Equations => {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 

@@ -1,0 +1,22 @@
+-- before release
+
+restart
+check "NAGtypes"
+check "SLPexpressions"
+check "NumericalAlgebraicGeometry"
+check "NAGtools"
+restart
+installPackage("NAGtypes", RerunExamples=>true)
+installPackage("SLPexpressions", RerunExamples=>true)
+installPackage("NumericalAlgebraicGeometry", RerunExamples=>true)
+installPackage("NAGtools", RerunExamples=>true)
+
+grep -nH -e "DebuggingMode => false" ../NAGtypes.m2 ../SLPexpressions.m2 ../NumericalAlgebraicGeometry.m2 ../NAGtools.m2 ../NumericalSchubertCalculus.m2
+
+grep -nH -e "Version" ../NAGtypes.m2 ../SLPexpressions.m2 ../NumericalAlgebraicGeometry.m2 ../NAGtools.m2 ../NumericalSchubertCalculus.m2
+
+grep -nH -e "Date" ../NAGtypes.m2 ../SLPexpressions.m2 ../NumericalAlgebraicGeometry.m2 ../NAGtools.m2 ../NumericalSchubertCalculus.m2
+
+-- undocumented 
+
+grep "no documentation" undocumented.txt | awk 'NF>1{print $NF ","}'

@@ -67,7 +67,7 @@ namespace M2 {
     // Do not take the same element and store it as two different ring_elem's!!
     void to_ring_elem(ring_elem &result, const ElementType &a) const
     {
-      double* res = new double;
+      double* res = newitem(double);
       *res = a;
       result.poly_val = reinterpret_cast<Nterm*>(res);
     }
@@ -146,6 +146,11 @@ namespace M2 {
       result = a+b;
     }
 
+    void addMultipleTo(ElementType &result, const ElementType& a, const ElementType& b) const
+    {
+      result += a*b;
+    }
+
     void subtract(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       result = a-b;
@@ -164,6 +169,16 @@ namespace M2 {
     void divide(ElementType &result, const ElementType& a, const ElementType& b) const
     {
       result = a/b;
+    }
+
+    void abs_squared(ElementType& result, const ElementType& a) const
+    {
+      result = a*a;
+    }
+
+    double log2abs(const ElementType& a) const //!!! hack
+    {
+      return log2(fabs(a));
     }
 
     void abs(ElementType& result, const ElementType& a) const
