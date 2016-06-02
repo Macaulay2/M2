@@ -3,7 +3,7 @@ newPackage(
        "Cremona",
 	Version => "1.1", 
     	Date => "Jun 1, 2016",
-    	Authors => {{Name => "Giovanni Stagliano'", 
+    	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
                    },
@@ -23,7 +23,7 @@ export{
    "toMap",
    "MathMode", 
    "Dominant", 
-   "Limit",
+   "OnlySublist",
    "approximateInverseMap"
 };
 
@@ -37,7 +37,7 @@ invertBirMap=method(TypicalValue => RingMap, Options => {MathMode => false});
 isBirational=method(TypicalValue => Boolean);
 isInverseMap=method(TypicalValue => Boolean);
 kernelComponent=method(TypicalValue => Ideal);
-projectiveDegrees=method(TypicalValue => List, Options => {Limit => infinity});
+projectiveDegrees=method(TypicalValue => List, Options => {OnlySublist => infinity});
 toMap=method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap=method(TypicalValue => RingMap);
 
@@ -106,7 +106,7 @@ isBirational (RingMap) := (phi) -> (
    X:=target phi; Y:=source phi;
    if dim X != dim Y then return false;
    if isPolynomialRing X then return degreeOfRationalMap phi == 1;
-   first projectiveDegrees(phi,Limit=>0) == degree Y 
+   first projectiveDegrees(phi,OnlySublist=>0) == degree Y 
 );
 
 isInverseMap(RingMap,RingMap) := (mapF,mapG) -> (
@@ -137,10 +137,10 @@ kernelComponent(RingMap,ZZ) := (phi,d) -> (
 
 projectiveDegrees (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
-   if o.Limit < 0 then return {};
+   if o.OnlySublist < 0 then return {};
    k:=dim ideal target phi -1;
    L:={projDegree(phi,0,k)};
-   for i from 1 to min(k,o.Limit) do (
+   for i from 1 to min(k,o.OnlySublist) do (
       phi=genericRestriction phi;
       L={projDegree(phi,0,k-i)}|L
    );
@@ -486,7 +486,7 @@ beginDocumentation()
           "time J=kernelComponent(phi,2)", 
           "time degreeOfRationalMap phi", 
           "time projectiveDegrees phi", 
-          "time projectiveDegrees(phi,Limit=>1)", 
+          "time projectiveDegrees(phi,OnlySublist=>1)", 
           "time phi=toMap(phi,Dominant=>J)", 
           "time psi=invertBirMap phi", 
           "time isInverseMap(phi,psi)", 
@@ -568,7 +568,7 @@ GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})",
           "-- map P^8--->P^8 defined by the quadrics through P^2 x P^2 
 phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))", 
           "time projectiveDegrees phi", 
-          "time projectiveDegrees(phi,Limit=>1)" 
+          "time projectiveDegrees(phi,OnlySublist=>1)" 
           }, 
     Caveat => {"This is a probabilistic method."}, 
     SeeAlso => {degreeOfRationalMap} 
@@ -586,7 +586,7 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
            "When a sufficiently large integer (allowed ", TO infinity,") is passed to this option, the kernel of the returned ring map will be zero.",
             } 
    document { 
-    Key => {Limit, [projectiveDegrees,Limit]}, 
+    Key => {OnlySublist, [projectiveDegrees,OnlySublist]}, 
 --    Headline => "to get partial outputs",
     "This is an optional argument of ", TO projectiveDegrees, " and accepts a non-negative integer, the number ", TEX///$-1$///," of projective degrees to be computed.",
           } 
