@@ -2106,6 +2106,60 @@ doc ///
    PrecisionIncreased
    AccuracyEstInternal
    ComponentNumber 
+   [b'PHGaloisGroup,LoopRadius]
+   [b'TraceTestImage,MapPoints]
+   [moveB'File,MoveToDirectory]
+   [b'TraceTestImage,NameB'InputFile]
+   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
+   [b'TraceTestImage,OnlyCalculateTrace]
+   [b'TraceTestImage,RandomGamma]
+   [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
+   [subPoint,SpecifyVariables]
+   [b'TraceTestImage,StartParameters]
+   [b'TraceTestImage,StartPoints]
+   [b'TraceTestImage,StopBeforeTest]
+   [b'PHGaloisGroup,StorageFolder]    
+   [b'PHMonodromyCollect,StorageFolder]	   
+   [b'PHSequence,StorageFolder]
+   [importIncidenceMatrix,StorageFolder]
+   [importParameterFile,StorageFolder]
+   [importSolutionsFile,StorageFolder]
+   [makeB'InputFile,StorageFolder]
+   [makeMembershipFile,StorageFolder]
+   [makeSampleSolutionsFile,StorageFolder]
+   [makeWitnessSetFiles,StorageFolder]
+   [runBertini,StorageFolder]
+   [writeParameterFile,StorageFolder]
+   [writeStartFile,StorageFolder]
+   [b'TraceTestImage,SubFolder]
+   [moveB'File,SubFolder]
+   [b'TraceTestImage,SubIntoCC]
+   [subPoint,SubIntoCC]
+   [subPoint,UsePrecision]
+   [b'TraceTestImage,B'Exe]
+   [b'TraceTestImage,UsePrecision]
+   [b'PHGaloisGroup,B'Exe]
+   [b'PHGaloisGroup,BranchPoints]
+   [b'PHGaloisGroup,MonodromyStartParameters]
+   [b'PHGaloisGroup,MonodromyStartPoints]
+   [b'PHGaloisGroup,NumberOfLoops]
+   [b'PHGaloisGroup,SaveData]
+   [b'PHGaloisGroup,UsePrecision]
+   SpecifyVariables
+   MapPoints
+   ReturnGaloisGroupGeneratorFile
+   OnlyCalculateTrace
+   StopBeforeTest
+   LoopRadius
+   MoveToDirectory
+   RandomGamma
+   NameGaloisGroupGeneratorFile
+   StorageFolder
+   SubFolder
+   StartPoints
+   StartParameters
+   SubIntoCC	  
+
  Headline
    This option or key is for a function that is in active development. 
  Description
