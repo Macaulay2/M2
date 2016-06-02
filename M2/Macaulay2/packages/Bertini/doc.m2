@@ -1633,10 +1633,10 @@ doc ///
     ODEPredictor
     TrackTolBeforeEG
     TrackTolDuringEG
-    FINALTOL
-    MAXNORM
+    FinalTol
+    MaxNorm  
     MinStepSizeBeforeEG
-    MINSTEPSIZEDURINGEG
+    MinStepSizeDuringEG
     ImagThreshold
     CoeffBound
     DegreeBound
@@ -1659,10 +1659,10 @@ doc ///
     [bertiniZeroDimSolve, ODEPredictor]
     [bertiniZeroDimSolve, TrackTolBeforeEG]
     [bertiniZeroDimSolve, TrackTolDuringEG]
-    [bertiniZeroDimSolve, FINALTOL]
-    [bertiniZeroDimSolve, MAXNORM]
+    [bertiniZeroDimSolve, FinalTol]
+    [bertiniZeroDimSolve, MaxNorm]
     [bertiniZeroDimSolve, MinStepSizeBeforeEG]
-    [bertiniZeroDimSolve, MINSTEPSIZEDURINGEG]
+    [bertiniZeroDimSolve, MinStepSizeDuringEG]
     [bertiniZeroDimSolve, ImagThreshold]
     [bertiniZeroDimSolve, CoeffBound]
     [bertiniZeroDimSolve, DegreeBound]
@@ -1685,10 +1685,10 @@ doc ///
     [bertiniComponentMemberTest, ODEPredictor]
     [bertiniComponentMemberTest, TrackTolBeforeEG]
     [bertiniComponentMemberTest, TrackTolDuringEG]
-    [bertiniComponentMemberTest, FINALTOL]
-    [bertiniComponentMemberTest, MAXNORM]
+    [bertiniComponentMemberTest, FinalTol]
+    [bertiniComponentMemberTest, MaxNorm]
     [bertiniComponentMemberTest, MinStepSizeBeforeEG]
-    [bertiniComponentMemberTest, MINSTEPSIZEDURINGEG]
+    [bertiniComponentMemberTest, MinStepSizeDuringEG]
     [bertiniComponentMemberTest, ImagThreshold]
     [bertiniComponentMemberTest, CoeffBound]
     [bertiniComponentMemberTest, DegreeBound]
@@ -1711,10 +1711,10 @@ doc ///
     [bertiniParameterHomotopy, ODEPredictor]
     [bertiniParameterHomotopy, TrackTolBeforeEG]
     [bertiniParameterHomotopy, TrackTolDuringEG]
-    [bertiniParameterHomotopy, FINALTOL]
-    [bertiniParameterHomotopy, MAXNORM]
+    [bertiniParameterHomotopy, FinalTol]
+    [bertiniParameterHomotopy, MaxNorm]
     [bertiniParameterHomotopy, MinStepSizeBeforeEG]
-    [bertiniParameterHomotopy, MINSTEPSIZEDURINGEG]
+    [bertiniParameterHomotopy, MinStepSizeDuringEG]
     [bertiniParameterHomotopy, ImagThreshold]
     [bertiniParameterHomotopy, CoeffBound]
     [bertiniParameterHomotopy, DegreeBound]
@@ -1737,10 +1737,10 @@ doc ///
     [bertiniPosDimSolve, ODEPredictor]
     [bertiniPosDimSolve, TrackTolBeforeEG]
     [bertiniPosDimSolve, TrackTolDuringEG]
-    [bertiniPosDimSolve, FINALTOL]
-    [bertiniPosDimSolve, MAXNORM]
+    [bertiniPosDimSolve, FinalTol]
+    [bertiniPosDimSolve, MaxNorm]
     [bertiniPosDimSolve, MinStepSizeBeforeEG]
-    [bertiniPosDimSolve, MINSTEPSIZEDURINGEG]
+    [bertiniPosDimSolve, MinStepSizeDuringEG]
     [bertiniPosDimSolve, ImagThreshold]
     [bertiniPosDimSolve, CoeffBound]
     [bertiniPosDimSolve, DegreeBound]
@@ -1763,10 +1763,10 @@ doc ///
     [bertiniRefineSols, ODEPredictor]
     [bertiniRefineSols, TrackTolBeforeEG]
     [bertiniRefineSols, TrackTolDuringEG]
-    [bertiniRefineSols, FINALTOL]
-    [bertiniRefineSols, MAXNORM]
+    [bertiniRefineSols, FinalTol]
+    [bertiniRefineSols, MaxNorm]
     [bertiniRefineSols, MinStepSizeBeforeEG]
-    [bertiniRefineSols, MINSTEPSIZEDURINGEG]
+    [bertiniRefineSols, MinStepSizeDuringEG]
     [bertiniRefineSols, ImagThreshold]
     [bertiniRefineSols, CoeffBound]
     [bertiniRefineSols, DegreeBound]
@@ -1789,10 +1789,10 @@ doc ///
     [bertiniSample, ODEPredictor]
     [bertiniSample, TrackTolBeforeEG]
     [bertiniSample, TrackTolDuringEG]
-    [bertiniSample, FINALTOL]
-    [bertiniSample, MAXNORM]
+    [bertiniSample, FinalTol]
+    [bertiniSample, MaxNorm]
     [bertiniSample, MinStepSizeBeforeEG]
-    [bertiniSample, MINSTEPSIZEDURINGEG]
+    [bertiniSample, MinStepSizeDuringEG]
     [bertiniSample, ImagThreshold]
     [bertiniSample, CoeffBound]
     [bertiniSample, DegreeBound]
@@ -1815,10 +1815,10 @@ doc ///
     [bertiniTrackHomotopy, ODEPredictor]
     [bertiniTrackHomotopy, TrackTolBeforeEG]
     [bertiniTrackHomotopy, TrackTolDuringEG]
-    [bertiniTrackHomotopy, FINALTOL]
-    [bertiniTrackHomotopy, MAXNORM]
+    [bertiniTrackHomotopy, FinalTol]
+    [bertiniTrackHomotopy, MaxNorm]
     [bertiniTrackHomotopy, MinStepSizeBeforeEG]
-    [bertiniTrackHomotopy, MINSTEPSIZEDURINGEG]
+    [bertiniTrackHomotopy, MinStepSizeDuringEG]
     [bertiniTrackHomotopy, ImagThreshold]
     [bertiniTrackHomotopy, CoeffBound]
     [bertiniTrackHomotopy, DegreeBound]
@@ -1854,13 +1854,13 @@ doc ///
 
       TrackTolDuringEG: Same as previous, but during endgame.
 
-      FINALTOL: Path is deemed successful if final two endpoint approximations agree to FINALTOL.
+      FinalTol: Path is deemed successful if final two endpoint approximations agree to FinalTol.
 
-      MAXNORM: If SecurityLevel=0, path is truncated if two consecutive endpoint approximations exceed this value. 
+      MaxNorm: If SecurityLevel=0, path is truncated if two consecutive endpoint approximations exceed this value. 
 
       MinStepSizeBeforeEG: Path is truncated if stepsize drops below this level before endgame.
 
-      MINSTEPSIZEDURINGEG: Same as previous, but during endgame.
+      MinStepSizeDuringEG: Same as previous, but during endgame.
 
       ImagThreshold: Endpoint deemed real if infinity norm is smaller than this. 
 
@@ -1901,12 +1901,12 @@ doc ///
       (1) Specify individual parameters in a function call:
     Example
       CC[x,y]; F = {x^2-1,y^2-1};
-      bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FINALTOL=>1e-100)
+      bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100)
     Text
       (2) Store your frequently used favorites in an OptionTable
       and pass it as the last argument in each function call:
     Example
-      opts = new OptionTable from {RandomSeed=>0,TrackTolBeforeEG=>1e-6,FINALTOL=>1e-100}
+      opts = new OptionTable from {RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}
       bertiniZeroDimSolve(F,opts)
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)

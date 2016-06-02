@@ -1,7 +1,7 @@
 needsPackage "NAGtypes"
 newPackage(
   "Bertini",
-  Version => "2.1.1.0", 
+  Version => "2.1.1.1", 
   Date => "May 16, 2016",
   Authors => {
     {Name => "Elizabeth Gross",
@@ -16,7 +16,7 @@ newPackage(
     {Name => "Anton Leykin",
      Email => "leykin@math.gatech.edu",
      HomePage => "http://www.math.gatech.edu/~leykin"}
-  },
+  }, 
   Headline => "Interface to Bertini",
   Configuration => { "BERTINIexecutable"=>"bertini" },
  -- DebuggingMode => true,
@@ -54,10 +54,10 @@ export {
   "ODEPredictor",  
   "TrackTolBeforeEG",  
   "TrackTolDuringEG",
-  "FINALTOL",  
-  "MAXNORM",  
+  "FinalTol",  
+  "MaxNorm",  
   "MinStepSizeBeforeEG",  
-  "MINSTEPSIZEDURINGEG",  
+  "MinStepSizeDuringEG",  
   "ImagThreshold",
   "CoeffBound",  
   "DegreeBound",  
@@ -229,8 +229,8 @@ needsPackage "SimpleDoc"
 bertiniZeroDimSolve = method(TypicalValue => List, Options=>{Verbose=>true, 
 	MultiplicityTol=>1e-6, ConditionNumTol=>1e10,MPType=>-1,
 	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
+	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
 	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
@@ -246,8 +246,8 @@ bertiniZeroDimSolve List := o -> F -> (
 bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
 	Verbose=>true,MPType=>-1,PRECISION=>-1,
 	IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
+	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
 	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
@@ -262,8 +262,8 @@ bertiniPosDimSolve List := o -> F -> (
 
 bertiniSample = method(TypicalValue => List, Options=>{Verbose=>true, MPType=>-1,
 	PRECISION=>-1, IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
+	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
 	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
@@ -282,8 +282,8 @@ bertiniSample (ZZ, WitnessSet) := o -> (n, W) -> (
 bertiniComponentMemberTest = method(TypicalValue => List, Options=>{Verbose=>true, 
 	MPType=>-1, 
 	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
+	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
 	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
 	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
 	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
@@ -301,8 +301,8 @@ bertiniComponentMemberTest (List, NumericalVariety) := o -> (pts, NV) -> (
 bertiniRefineSols = method(TypicalValue => List, Options=>{Verbose=>true, 
 	MPType=>-1, 
 	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FINALTOL=>1e-4,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
+	TrackTolDuringEG=>-1,FinalTol=>1e-4,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
 	DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,
 	EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,
 	OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,
@@ -321,8 +321,8 @@ bertiniRefineSols (ZZ, List, List) := o -> (d, F,p) -> (
 bertiniTrackHomotopy = method(TypicalValue => List, Options=>{
 	  Verbose=>true,MPType=>-1,PRECISION=>-1, 
 	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	  TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	  MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
+	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
 	  DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
 	  SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
 	  SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
@@ -341,8 +341,8 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
 	  Verbose=>true,MPType=>-1,PRECISION=>-1,
 	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	  TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,
-	  MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
+	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
+	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
 	  DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
 	  SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
 	  SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
@@ -368,8 +368,8 @@ bertiniSolve = method(TypicalValue => List, Options=>{
 	IsProjective=>-1,Parameters=>null,ParameterValues=>null,StartSystem=>{},
 	StartSolutions=>{},NVariety=>null, RawData=>null,WitnessData=>null,
 	MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,
-	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,
-	MinStepSizeBeforeEG=>-1,MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,
+	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,
+	MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,
 	CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
 	SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,
 	ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,
@@ -445,8 +445,8 @@ makeBertiniInput = method(TypicalValue=>Nothing,Options=>{
 	Parameters=>null,ParameterValues=>null,StartSystem=>{}, 
 	StartSolutions=>{},RawData=>null,WitnessData=>null,NVariety=>null,
 	MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,
-	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,
-	MinStepSizeBeforeEG=>-1,MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,
+	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,
+	MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,
 	CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
 	SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,
 	ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,
@@ -494,17 +494,17 @@ makeBertiniInput List := o -> T -> ( -- T=polynomials
     if o.TrackTolDuringEG =!= -1 then
         f << "TrackTolDuringEG: " << o.TrackTolDuringEG << ";\n";
     
-    if o.FINALTOL =!= -1 then
-        f << "FINALTOL: " << o.FINALTOL << ";\n";
+    if o.FinalTol =!= -1 then
+        f << "FinalTol: " << o.FinalTol << ";\n";
   
-    if o.MAXNORM =!= -1 then
-        f << "MAXNORM: " << o.MAXNORM << ";\n";
+    if o.MaxNorm =!= -1 then
+        f << "MaxNorm: " << o.MaxNorm << ";\n";
   
     if o.MinStepSizeBeforeEG =!= -1 then
         f << "MinStepSizeBeforeEG: " << o.MinStepSizeBeforeEG << ";\n";
   
-    if o.MINSTEPSIZEDURINGEG =!= -1 then
-        f << "MINSTEPSIZEDURINGEG: " << o.MINSTEPSIZEDURINGEG << ";\n";
+    if o.MinStepSizeDuringEG =!= -1 then
+        f << "MinStepSizeDuringEG: " << o.MinStepSizeDuringEG << ";\n";
   
     if o.ImagThreshold =!= -1 then
         f << "ImagThreshold: " << o.ImagThreshold << ";\n";
@@ -784,7 +784,7 @@ readSolutionsBertini = method(TypicalValue=>NumericalVariety, Options=>{
 	ParameterValues=>null, StartSystem=>{},NVariety=>null, 
 	StartSolutions=>{},RawData=>null,WitnessData=>null,MPType=>-1,
 	PRECISION=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,
-	FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,MINSTEPSIZEDURINGEG=>-1,
+	FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,
 	ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,
 	RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
 	SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
@@ -1357,8 +1357,8 @@ stageTwoParameterRun = method(TypicalValue=>Nothing,Options=>{Verbose=>true,
 	ConditionNumTol=>1e10, Parameters=>null,ParameterValues=>null,
 	StartSystem=>{},StartSolutions=>{},RawData=>null,WitnessData=>null,
 	NVariety=>null,MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,
-	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,
-	MinStepSizeBeforeEG=>-1,MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,
+	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,
+	MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,
 	CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
 	SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,
 	ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,
@@ -3070,7 +3070,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
 ---------------------------
 
 bertiniSegmentHomotopy = method(TypicalValue => List, Options=>{ --StartSystem=>{},-- StartSolutions=>{}
-	  gamma=>1.0,CheckConditionNum=>1,MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FINALTOL=>-1,MAXNORM=>-1,MinStepSizeBeforeEG=>-1,MINSTEPSIZEDURINGEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1})
+	  gamma=>1.0,CheckConditionNum=>1,MPType=>-1,PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1})
 bertiniSegmentHomotopy (List, List,List) := o -> (S,F,Sols) -> (
 --F is the list of polynomials
 --S is the start system
