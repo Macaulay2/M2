@@ -1,11 +1,11 @@
 removeWhitespace = s -> s = replace(" ", "", s)
 needsPackage "Graphs"
-ReactionNetwork = new Type from MutableHashTable
+
+ReactionNetwork = new Type of MutableHashTable
 
 reactionNetwork = method()
-reactionNetwork := () -> new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}}
 reactionNetwork List := rs -> (
-    Rn := reactionNetwork();
+    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -24,15 +24,16 @@ addComplex(String, ReactionNetwork) := (c,Rn) -> (
     for specie in species do addSpecies(specie, Rn);
     v := mutableMatrix(ZZ,1,#Rn.Species);	
     apply(separateRegexp("\\+", c), t -> (
-	    s:=separateRegexp("[0-9]", t);
-	    a:=value separateRegexp("[A-Z]", t);
+	    s:=concatenate separateRegexp("[0-9]", t);
+	    a:=value concatenate separateRegexp("[A-Z]", t);
+	    if a === null then a = 1;
 	    i:=position(Rn.Species, s' -> s' == s);
-	    v#i = v#i + a;
+	    v_(0,i) = v_(0,i) + a;
 	    ));
     v = matrix v;
-    if member(v,Rn.Complexes) then position(v,Rn.Complexes) 
+    if member(v,Rn.Complexes) then position(Rn.Complexes, v' -> v' == v) 
     else (
-	Rn.Complexes = Rn.Complexes | {v};
+	Rn.Complexes = Rn.Complexes | {v};	
         #Rn.Complexes - 1
 	)
     )
@@ -44,10 +45,10 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     if #complexes != 2 then error "Expected two complexes.";
     i := addComplex(first complexes, Rn);
     j := addComplex(last complexes, Rn);
-    delim = concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r)
+    delim = concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
-    else if delim == "<-->" Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
+    else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
     )
  
