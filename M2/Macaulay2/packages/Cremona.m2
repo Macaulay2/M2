@@ -2,7 +2,7 @@
 newPackage(
        "Cremona",
 	Version => "1.1", 
-    	Date => "Jun 1, 2016",
+    	Date => "Jun 3, 2016",
     	Authors => {{Name => "Giovanni Staglianò", 
 		     Email => "giovannistagliano@gmail.com" 
                     }
@@ -202,23 +202,31 @@ approximateInverseMap (RingMap) := o -> (phi) -> (
     -- output: a map Y--->X in some sense related to the inverse of phi
     checkRationalMap phi;
     n:=numgens ambient target phi -1;
-    (d,c,b):=if o.Multidegree =!= null then (
-                   if class o.Multidegree =!= List then error("invalid multidegree provided") else aboutBaseLocusOfInverseMap0(phi,o.Multidegree)
-             ) else aboutBaseLocusOfInverseMap phi;
-    phiRes:=local phiRes;
-    B:=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
-         phiRes=phi;
-         for i from 1 to c-1 do phiRes=genericRestriction phiRes;
-         kernelComponent(phiRes,d)
-       );
+    if o.Multidegree =!= null then (
+        (d,c,b):=if class o.Multidegree === List then aboutBaseLocusOfInverseMap0(phi,o.Multidegree) else error("invalid multidegree provided"); 
+    );
+    phiRes:=local phiRes; B:=local B;
+    if o.Multidegree =!= null then (
+        B=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
+             phiRes=phi;
+             for i0 from 1 to c-1 do phiRes=genericRestriction phiRes;
+             if verbose then <<"Computing kernel(..,SubringLimit=>"<<(c-1)<<")... ("<<i<<" of "<<ceiling((n+1)/(c-1))<<")"<<endl;
+             kernel(phiRes,SubringLimit=>(c-1))  -- kernelComponent(phiRes,d)
+          );
+    ) else (
+        B=trim sum for i from 1 to n+1 list (
+             phiRes=genericRestriction phi;
+             if verbose then <<"Computing kernel(..,SubringLimit=>1)... ("<<i<<" of "<<(n+1)<<")"<<endl;
+             kernel(phiRes,SubringLimit=>1)
+        );
+    );
    if not isPolynomialRing source phi then (
-       B=trim(sub(B,ambient source phi) + ideal image basis(d,ideal source phi));
-       B=sub(ideal for i to numgens target phi -1 list sum for j to numgens B -1 list (random coefficientRing target phi)*B_j,source phi)   
+         B=trim(sub(B,ambient source phi) + ideal image basis(min flatten degrees B,ideal source phi));
+         B=sub(ideal for i to n list sum for j to numgens B -1 list (random coefficientRing target phi)*B_j,source phi)   
    );
-   B=gens B;
-   if numgens source B != numgens target phi then return approximateInverseMap(phi);
-   psi:=map(source phi,target phi,B);
-   Bs:=ideal toMatrix psi; if not (codim Bs == c and degree Bs == b and first flatten degrees Bs == d) then return approximateInverseMap(phi);
+   if not(numgens B == n+1 and min flatten degrees B == max flatten degrees B) then return approximateInverseMap(phi,Multidegree=>o.Multidegree);
+   if o.Multidegree =!= null then if not (codim B == c and degree B == b and min flatten degrees B == d) then return approximateInverseMap(phi,Multidegree=>o.Multidegree);
+   psi:=map(source phi,target phi,gens B);
    psi
 );
 
@@ -418,7 +426,7 @@ projDegree = (phi,i,dimSubVar) -> (
    if dim Z == i+1 then degree Z else 0
 );
 
-aboutBaseLocusOfInverseMap = (phi) -> (
+aboutBaseLocusOfInverseMap = (phi) -> ( -- this is never used --
    if verbose then <<"Running 'aboutBaseLocusOfInverseMap'..."<<endl;
    -- this is a probabilistic method, an easy application of projDegree
    -- input: a birational transformation of type (d_1,d_2)
@@ -476,7 +484,7 @@ genericRestriction = (phi) -> (
    K:=coefficientRing Pn;
    x:=local x;
    H:=K[x_0..x_(n-1)];
-   j:=map(H,Pn,{x_0..x_(n-1),(trim ideal random1 H)_0});
+   j:=map(H,Pn,random(toList(x_0..x_(n-1))|{(trim ideal random1 H)_0}));
    j=map(H/j(ideal target phi),target phi,toMatrix j);
    phi':=j*phi;
    phi'
@@ -744,7 +752,7 @@ H=trim ideal random(1,ringP11)",
      Outputs => { 
           RingMap => {"a ring map representing a random rational map ",TEX///$Y--->X$///,", which in some sense is related to the inverse of ",TEX///$\Phi$///," (e.g., the base locus of this map has the same dimension and degree of the base locus of the inverse of ",TEX///$\Phi$///,")"}
           }, 
-          "The algorithm proceeds into two stages. Firstly, numerical invariants of the inverse map are computed using ", TO projectiveDegrees," (one can speed up the process by passing the list of projective degrees of ",TEX///$\Phi$///," to the option ", TO Multidegree,"); secondly, we basically construct the ideal of the base locus of the inverse by looking for the images via ", TEX///$\Phi$///," of random linear subspaces (here is used ", TO kernelComponent,"). Although at first glance this method may seem crazy, it could be useful in some cases.",
+          "The algorithm is to try to construct the ideal of the base locus of the inverse by looking for the images via ", TEX///$\Phi$///," of random linear sections of the source variety. Generally, one can speed up the process by passing the list of projective degrees of ",TEX///$\Phi$///," to the option ", TO Multidegree," (this is useful because from the multidegree one obtains easily the dimension (and other numerical invariants) of the base locus of the inverse).",
      PARA{},
     EXAMPLE { 
           "P8=ZZ/97[t_0..t_8];", 
@@ -754,6 +762,17 @@ H=trim ideal random(1,ringP11)",
           "time m=projectiveDegrees phi",
           "time psi'=approximateInverseMap(phi,Multidegree=>m)",
           "psi===psi'"
+          }, 
+     EXAMPLE { 
+          "P11=ZZ/12347[x_0..x_11];", 
+          "phi=map(P11,P11,{-4719*x_0^2+2105*x_0*x_1-6092*x_1^2+5204*x_0*x_2-608*x_1*x_2-4519*x_2^2+503*x_0*x_3-3510*x_1*x_3-5403*x_2*x_3-1337*x_3^2-2597*x_0*x_4+3189*x_1*x_4-641*x_2*x_4+1831*x_3*x_4-2697*x_4^2-1427*x_0*x_5-2809*x_1*x_5-3553*x_2*x_5-750*x_3*x_5+3929*x_4*x_5+4899*x_5^2+1093*x_0*x_6+3370*x_1*x_6-2424*x_2*x_6-2035*x_3*x_6+5349*x_4*x_6-2945*x_5*x_6-4062*x_6^2+3494*x_0*x_7-1729*x_1*x_7+5713*x_2*x_7-2147*x_3*x_7+3890*x_4*x_7-4871*x_5*x_7+2259*x_6*x_7-195*x_7^2-3965*x_0*x_8-455*x_1*x_8+4372*x_2*x_8-4920*x_3*x_8+3196*x_4*x_8+3382*x_5*x_8-1648*x_6*x_8+2242*x_7*x_8-1091*x_8^2+4541*x_0*x_9-5407*x_1*x_9+2430*x_2*x_9+1910*x_3*x_9-2021*x_4*x_9+5330*x_5*x_9-893*x_6*x_9+1788*x_7*x_9-3663*x_8*x_9+5099*x_9^2+121*x_0*x_10+3574*x_1*x_10+817*x_2*x_10+4623*x_3*x_10-3623*x_4*x_10+5091*x_5*x_10-2318*x_6*x_10+716*x_7*x_10+886*x_8*x_10-4323*x_9*x_10+3302*x_10^2-3559*x_0*x_11-3407*x_1*x_11-3854*x_2*x_11-1691*x_3*x_11+373*x_4*x_11+5572*x_5*x_11+5258*x_6*x_11+2448*x_7*x_11+2841*x_8*x_11-2030*x_9*x_11-94*x_10*x_11-5324*x_11^2,-3871*x_0^2+3402*x_0*x_1-3663*x_1^2+4268*x_0*x_2+3917*x_1*x_2-4082*x_2^2+2258*x_0*x_3-4325*x_1*x_3+2118*x_2*x_3+3700*x_3^2-2620*x_0*x_4-2806*x_1*x_4+2876*x_2*x_4-5123*x_3*x_4-1092*x_4^2+1672*x_0*x_5+1700*x_1*x_5-5567*x_2*x_5-3035*x_3*x_5+5273*x_4*x_5+5879*x_5^2-1910*x_0*x_6-3984*x_1*x_6-3249*x_2*x_6-4570*x_3*x_6+154*x_4*x_6+657*x_5*x_6-5319*x_6^2+3720*x_0*x_7+4983*x_1*x_7+1212*x_2*x_7-5748*x_3*x_7+760*x_4*x_7-854*x_5*x_7-5874*x_6*x_7+2710*x_7^2-4604*x_0*x_8-4528*x_1*x_8+4459*x_2*x_8+5444*x_3*x_8-1647*x_4*x_8-3084*x_5*x_8+781*x_6*x_8-402*x_7*x_8-5672*x_8^2-1421*x_0*x_9+1067*x_1*x_9-3204*x_2*x_9-4684*x_3*x_9-1279*x_4*x_9+3672*x_5*x_9-1897*x_6*x_9-666*x_7*x_9+2364*x_8*x_9+6117*x_9^2-2901*x_0*x_10+1805*x_1*x_10+4141*x_2*x_10-1896*x_3*x_10+4544*x_4*x_10+1263*x_5*x_10-2731*x_6*x_10+4829*x_7*x_10-2044*x_8*x_10-632*x_9*x_10-1052*x_10^2-5720*x_0*x_11+3986*x_1*x_11-5806*x_2*x_11+3622*x_3*x_11-357*x_4*x_11+4298*x_5*x_11+5254*x_6*x_11+5844*x_7*x_11-3525*x_8*x_11+5658*x_9*x_11+3484*x_10*x_11+2453*x_11^2,-2399*x_0^2+1059*x_0*x_1+283*x_1^2+3684*x_0*x_2+3953*x_1*x_2+4212*x_2^2+2506*x_0*x_3-2474*x_1*x_3+5559*x_2*x_3+728*x_3^2+1325*x_0*x_4+3898*x_1*x_4+5764*x_2*x_4-5631*x_3*x_4-2443*x_4^2-2184*x_0*x_5-5609*x_1*x_5+2935*x_2*x_5+5402*x_3*x_5-3847*x_4*x_5+3945*x_5^2+3570*x_0*x_6+2120*x_1*x_6+4982*x_2*x_6-3837*x_3*x_6+1677*x_4*x_6-5304*x_5*x_6-5439*x_6^2-4924*x_0*x_7-5475*x_1*x_7-3849*x_2*x_7+490*x_3*x_7+5954*x_4*x_7-6157*x_5*x_7+991*x_6*x_7+4365*x_7^2-4907*x_0*x_8+5953*x_1*x_8-2309*x_2*x_8+2268*x_3*x_8-3417*x_4*x_8-1380*x_5*x_8+2969*x_6*x_8-4120*x_7*x_8-5831*x_8^2+1158*x_0*x_9+1899*x_1*x_9+741*x_2*x_9-1629*x_3*x_9-5085*x_4*x_9+5805*x_5*x_9+4990*x_6*x_9-3625*x_7*x_9-5229*x_8*x_9-5913*x_9^2+1322*x_0*x_10+1698*x_1*x_10+3242*x_2*x_10-2786*x_3*x_10-5671*x_4*x_10+2423*x_5*x_10+5336*x_6*x_10+563*x_7*x_10+1896*x_8*x_10-5432*x_9*x_10+4953*x_10^2-4921*x_0*x_11+4350*x_1*x_11-4701*x_2*x_11+225*x_3*x_11-3079*x_4*x_11-5183*x_5*x_11-475*x_6*x_11-349*x_7*x_11+1858*x_8*x_11-1224*x_9*x_11+1135*x_10*x_11+3341*x_11^2,2561*x_0^2+4738*x_0*x_1-2568*x_1^2-2279*x_0*x_2+5882*x_1*x_2-6008*x_2^2+1227*x_0*x_3+2942*x_1*x_3-4899*x_2*x_3-2383*x_3^2+4551*x_0*x_4+584*x_1*x_4-1592*x_2*x_4+1625*x_3*x_4-3963*x_4^2-2081*x_0*x_5-5354*x_1*x_5+2261*x_2*x_5-4855*x_3*x_5+4577*x_4*x_5+6003*x_5^2-4729*x_0*x_6-3542*x_1*x_6-3398*x_2*x_6+4782*x_3*x_6-3162*x_4*x_6-3285*x_5*x_6-1441*x_6^2-5565*x_0*x_7-4432*x_1*x_7+4619*x_2*x_7+1664*x_3*x_7-5976*x_4*x_7-2172*x_5*x_7-5784*x_6*x_7-5727*x_7^2-3709*x_0*x_8+2778*x_1*x_8+5053*x_2*x_8-3324*x_3*x_8+5133*x_4*x_8-2305*x_5*x_8+607*x_6*x_8-1419*x_7*x_8-3327*x_8^2-4622*x_0*x_9-2122*x_1*x_9+5224*x_2*x_9-4912*x_3*x_9-3420*x_4*x_9+16*x_5*x_9+953*x_6*x_9-1040*x_7*x_9-4515*x_8*x_9+1028*x_9^2-3761*x_0*x_10+1711*x_1*x_10-1042*x_2*x_10-2025*x_3*x_10-3103*x_4*x_10+1809*x_5*x_10+625*x_6*x_10+5293*x_7*x_10+5175*x_8*x_10-3391*x_9*x_10+1622*x_10^2-4259*x_0*x_11+3450*x_1*x_11+329*x_2*x_11+3890*x_3*x_11-5200*x_4*x_11-1957*x_5*x_11-622*x_6*x_11-448*x_7*x_11-381*x_8*x_11+2488*x_9*x_11-39*x_10*x_11+1874*x_11^2,-520*x_0^2+5241*x_0*x_1-1282*x_1^2-2173*x_0*x_2+4309*x_1*x_2+3370*x_2^2-5171*x_0*x_3-2253*x_1*x_3-5937*x_2*x_3-1738*x_3^2-78*x_0*x_4+5109*x_1*x_4-2714*x_2*x_4-5863*x_3*x_4-3724*x_4^2+3809*x_0*x_5+3104*x_1*x_5-2993*x_2*x_5-1916*x_3*x_5+4073*x_4*x_5-4291*x_5^2-2149*x_0*x_6+471*x_1*x_6+4166*x_2*x_6-352*x_3*x_6-2086*x_4*x_6+4986*x_5*x_6+5462*x_6^2+6116*x_0*x_7-5797*x_1*x_7-5876*x_2*x_7-4057*x_3*x_7+5112*x_4*x_7-2536*x_5*x_7-4708*x_6*x_7+5266*x_7^2-5759*x_0*x_8-2513*x_1*x_8+5651*x_2*x_8+2035*x_3*x_8-1521*x_4*x_8+1209*x_5*x_8-1625*x_6*x_8-2418*x_7*x_8-6063*x_8^2+6128*x_0*x_9-5895*x_1*x_9+2141*x_2*x_9+318*x_3*x_9+1436*x_4*x_9+4134*x_5*x_9+990*x_6*x_9-2090*x_7*x_9-2413*x_8*x_9+4320*x_9^2-2705*x_0*x_10-4493*x_1*x_10+3526*x_2*x_10-4612*x_3*x_10-4878*x_4*x_10-392*x_5*x_10-922*x_6*x_10+994*x_7*x_10+4286*x_8*x_10-1565*x_9*x_10+2567*x_10^2+5696*x_0*x_11-867*x_1*x_11-3197*x_2*x_11+1303*x_3*x_11+3354*x_4*x_11-1193*x_5*x_11-1320*x_6*x_11+4864*x_7*x_11-3025*x_8*x_11-3261*x_9*x_11+6143*x_10*x_11-492*x_11^2,6156*x_0^2+5975*x_0*x_1+309*x_1^2-663*x_0*x_2-3330*x_1*x_2-5275*x_2^2-220*x_0*x_3-2766*x_1*x_3-3518*x_2*x_3+4592*x_3^2+2571*x_0*x_4+5199*x_1*x_4+5128*x_2*x_4-4182*x_3*x_4-5576*x_4^2-2158*x_0*x_5-3305*x_1*x_5-3255*x_2*x_5+2392*x_3*x_5-2955*x_4*x_5-5673*x_5^2+5021*x_0*x_6-5200*x_1*x_6-5709*x_2*x_6-4335*x_3*x_6+2426*x_4*x_6-1629*x_5*x_6-1976*x_6^2-3420*x_0*x_7+2569*x_1*x_7-5109*x_2*x_7+3287*x_3*x_7-6166*x_4*x_7+3002*x_5*x_7-2564*x_6*x_7-3032*x_7^2+3392*x_0*x_8+1856*x_1*x_8-129*x_2*x_8+3637*x_3*x_8+3719*x_4*x_8-5778*x_5*x_8+2933*x_6*x_8+1468*x_7*x_8+4041*x_8^2+2907*x_0*x_9+937*x_1*x_9-2353*x_2*x_9-3264*x_3*x_9+6023*x_4*x_9+3036*x_5*x_9+3225*x_6*x_9-5316*x_7*x_9+1197*x_8*x_9-5845*x_9^2+1272*x_0*x_10+4484*x_1*x_10-1241*x_2*x_10+189*x_3*x_10+2402*x_4*x_10-3525*x_5*x_10-4024*x_6*x_10+3391*x_7*x_10-1051*x_8*x_10+4694*x_9*x_10+978*x_10^2+2638*x_0*x_11-3850*x_1*x_11+5139*x_2*x_11+2247*x_3*x_11+1916*x_4*x_11+760*x_5*x_11+5190*x_6*x_11+4865*x_7*x_11+2645*x_8*x_11+3698*x_9*x_11+83*x_10*x_11-5890*x_11^2,-959*x_0^2+1246*x_0*x_1+1866*x_1^2-844*x_0*x_2-4673*x_1*x_2+5683*x_2^2-5505*x_0*x_3-1295*x_1*x_3+5049*x_2*x_3+912*x_3^2+2362*x_0*x_4+3439*x_1*x_4+2944*x_2*x_4+1884*x_3*x_4+3771*x_4^2+4896*x_0*x_5-4531*x_1*x_5+248*x_2*x_5+3625*x_3*x_5+3423*x_4*x_5-572*x_5^2+3654*x_0*x_6-643*x_1*x_6+4025*x_2*x_6+3616*x_3*x_6+3086*x_4*x_6-3805*x_5*x_6-159*x_6^2-4524*x_0*x_7-542*x_1*x_7-5479*x_2*x_7-1513*x_3*x_7-5116*x_4*x_7-5862*x_5*x_7-1429*x_6*x_7-2442*x_7^2-2988*x_0*x_8+5719*x_1*x_8-4403*x_2*x_8+2118*x_3*x_8+1321*x_4*x_8-547*x_5*x_8+5989*x_6*x_8-2491*x_7*x_8+4493*x_8^2+31*x_0*x_9-621*x_1*x_9+5989*x_2*x_9+3164*x_3*x_9+4243*x_4*x_9+972*x_5*x_9-4166*x_6*x_9-5072*x_7*x_9-3363*x_8*x_9-4584*x_9^2-5595*x_0*x_10-2132*x_1*x_10-2217*x_2*x_10+5923*x_3*x_10-5169*x_4*x_10-4091*x_5*x_10-1057*x_6*x_10-5807*x_7*x_10+287*x_8*x_10+34*x_9*x_10+2774*x_10^2-3005*x_0*x_11+442*x_1*x_11+5537*x_2*x_11-1382*x_3*x_11-2592*x_4*x_11-1304*x_5*x_11-1297*x_6*x_11-2521*x_7*x_11-3785*x_8*x_11+1959*x_9*x_11+3479*x_10*x_11+2742*x_11^2,2181*x_0^2-4540*x_0*x_1+318*x_1^2-63*x_0*x_2+5210*x_1*x_2+425*x_2^2-2285*x_0*x_3-5883*x_1*x_3-4022*x_2*x_3+4580*x_3^2-5204*x_0*x_4-1804*x_1*x_4-3014*x_2*x_4+4917*x_3*x_4-4059*x_4^2-3114*x_0*x_5-1514*x_1*x_5-2819*x_2*x_5+4097*x_3*x_5+5980*x_4*x_5-3415*x_5^2+4352*x_0*x_6+5481*x_1*x_6-648*x_2*x_6-2857*x_3*x_6-2115*x_4*x_6+918*x_5*x_6-2486*x_6^2+3762*x_0*x_7-2570*x_1*x_7-5569*x_2*x_7-1974*x_3*x_7+4749*x_4*x_7-2786*x_5*x_7-1919*x_6*x_7-4219*x_7^2-1371*x_0*x_8+5162*x_1*x_8-948*x_2*x_8-2661*x_3*x_8+4864*x_4*x_8+3793*x_5*x_8+2964*x_6*x_8+2644*x_7*x_8-4847*x_8^2-2870*x_0*x_9-332*x_1*x_9+4038*x_2*x_9+6138*x_3*x_9+4069*x_4*x_9-2878*x_5*x_9+5950*x_6*x_9+4863*x_7*x_9-2141*x_8*x_9+2706*x_9^2-3750*x_0*x_10+4112*x_1*x_10-47*x_2*x_10+5371*x_3*x_10+3442*x_4*x_10-4770*x_5*x_10+5930*x_6*x_10-260*x_7*x_10-3013*x_8*x_10+5846*x_9*x_10-4774*x_10^2+4269*x_0*x_11+1671*x_1*x_11-339*x_2*x_11+2883*x_3*x_11+5006*x_4*x_11-4509*x_5*x_11+4406*x_6*x_11-1184*x_7*x_11+2189*x_8*x_11-2698*x_9*x_11-2087*x_10*x_11+1638*x_11^2,-4633*x_0^2-1300*x_0*x_1-1687*x_1^2-451*x_0*x_2-5049*x_1*x_2-1797*x_2^2+1208*x_0*x_3+2233*x_1*x_3-4246*x_2*x_3-4893*x_3^2+238*x_0*x_4-743*x_1*x_4-3347*x_2*x_4-5579*x_3*x_4-5167*x_4^2+2914*x_0*x_5-5655*x_1*x_5+415*x_2*x_5-5583*x_3*x_5-1166*x_4*x_5-881*x_5^2+4868*x_0*x_6-2607*x_1*x_6+545*x_2*x_6-3747*x_3*x_6+3772*x_4*x_6-5150*x_5*x_6+2193*x_6^2-614*x_0*x_7+3831*x_1*x_7+4723*x_2*x_7-4360*x_3*x_7+2436*x_4*x_7+12*x_5*x_7+3441*x_6*x_7-4218*x_7^2+2478*x_0*x_8+4190*x_1*x_8+2768*x_2*x_8+2859*x_3*x_8-1226*x_4*x_8+1312*x_5*x_8-4763*x_6*x_8+3168*x_7*x_8+4625*x_8^2+4526*x_0*x_9+4862*x_1*x_9-24*x_2*x_9-675*x_3*x_9-3572*x_4*x_9+963*x_5*x_9-6073*x_6*x_9-4131*x_7*x_9-88*x_8*x_9+3512*x_9^2+5860*x_0*x_10-1462*x_1*x_10+2406*x_2*x_10-728*x_3*x_10+1319*x_4*x_10+2121*x_5*x_10-2628*x_6*x_10+5744*x_7*x_10+3866*x_8*x_10-6054*x_9*x_10-4407*x_10^2-4639*x_0*x_11-1002*x_1*x_11+1878*x_2*x_11+5471*x_3*x_11+3518*x_4*x_11-2501*x_5*x_11+3106*x_6*x_11-2283*x_7*x_11+4926*x_8*x_11+469*x_9*x_11+602*x_10*x_11-3791*x_11^2,3023*x_0^2+323*x_0*x_1-4356*x_1^2-1478*x_0*x_2+4965*x_1*x_2+159*x_2^2+674*x_0*x_3+6134*x_1*x_3-4980*x_2*x_3-2025*x_3^2-4700*x_0*x_4+1082*x_1*x_4-2387*x_2*x_4-3050*x_3*x_4-6128*x_4^2-4665*x_0*x_5+895*x_1*x_5+5877*x_2*x_5-2594*x_3*x_5+2155*x_4*x_5-4995*x_5^2+3254*x_0*x_6-2605*x_1*x_6-6088*x_2*x_6+4388*x_3*x_6-5432*x_4*x_6-1271*x_5*x_6-3076*x_6^2-3145*x_0*x_7-3502*x_1*x_7+1871*x_2*x_7+680*x_3*x_7+964*x_4*x_7+5428*x_5*x_7+969*x_6*x_7+3840*x_7^2-392*x_0*x_8+4987*x_1*x_8-919*x_2*x_8-4702*x_3*x_8-4325*x_4*x_8-4590*x_5*x_8+5582*x_6*x_8-5421*x_7*x_8+1004*x_8^2+3147*x_0*x_9+5676*x_1*x_9+4711*x_2*x_9-91*x_3*x_9-3969*x_4*x_9-844*x_5*x_9+1942*x_6*x_9-4347*x_7*x_9+2242*x_8*x_9-3037*x_9^2-5913*x_0*x_10+5062*x_1*x_10-1616*x_2*x_10-4640*x_3*x_10-1296*x_4*x_10-43*x_5*x_10-3846*x_6*x_10-1614*x_7*x_10-1731*x_8*x_10-2574*x_9*x_10+1396*x_10^2+3970*x_0*x_11+3393*x_1*x_11+3009*x_2*x_11+6029*x_3*x_11+4943*x_4*x_11-2159*x_5*x_11-2039*x_6*x_11+3132*x_7*x_11-4070*x_8*x_11-2913*x_9*x_11-4*x_10*x_11+4004*x_11^2,427*x_0^2+964*x_0*x_1-1894*x_1^2+1891*x_0*x_2+2027*x_1*x_2-3196*x_2^2-1235*x_0*x_3-3554*x_1*x_3-3211*x_2*x_3-1318*x_3^2-4491*x_0*x_4-130*x_1*x_4+380*x_2*x_4-4344*x_3*x_4-1649*x_4^2-937*x_0*x_5+204*x_1*x_5+5548*x_2*x_5+5642*x_3*x_5-1337*x_4*x_5-5180*x_5^2-1839*x_0*x_6-2261*x_1*x_6-173*x_2*x_6+5865*x_3*x_6-3207*x_4*x_6+3195*x_5*x_6-362*x_6^2+1171*x_0*x_7+1369*x_1*x_7+3898*x_2*x_7+3586*x_3*x_7+5014*x_4*x_7+5538*x_5*x_7-4969*x_6*x_7+614*x_7^2-226*x_0*x_8-4641*x_1*x_8+4506*x_2*x_8-4177*x_3*x_8-427*x_4*x_8-4297*x_5*x_8+3007*x_6*x_8+1167*x_7*x_8+4375*x_8^2+2432*x_0*x_9-5751*x_1*x_9+237*x_2*x_9+2014*x_3*x_9+2960*x_4*x_9-1360*x_5*x_9-5453*x_6*x_9-5908*x_7*x_9-3830*x_8*x_9-392*x_9^2-193*x_0*x_10-247*x_1*x_10+2198*x_2*x_10-4158*x_3*x_10+268*x_4*x_10+4390*x_5*x_10+2730*x_6*x_10+576*x_7*x_10-458*x_8*x_10+1120*x_9*x_10+5180*x_10^2+3232*x_0*x_11+5887*x_1*x_11+1020*x_2*x_11+2012*x_3*x_11+5606*x_4*x_11-1003*x_5*x_11+3474*x_6*x_11-1025*x_7*x_11-3246*x_8*x_11+3356*x_9*x_11+4286*x_10*x_11+1870*x_11^2,-5682*x_0^2-5592*x_0*x_1+1611*x_1^2-3557*x_0*x_2+5651*x_1*x_2+5075*x_2^2-1686*x_0*x_3-1285*x_1*x_3+1229*x_2*x_3-1080*x_3^2+2951*x_0*x_4-3250*x_1*x_4-129*x_2*x_4+845*x_3*x_4-881*x_4^2+1885*x_0*x_5-349*x_1*x_5-2678*x_2*x_5-5012*x_3*x_5+3716*x_4*x_5+3132*x_5^2-4951*x_0*x_6-831*x_1*x_6+4012*x_2*x_6+3925*x_3*x_6-4275*x_4*x_6-2941*x_5*x_6+461*x_6^2-4256*x_0*x_7-x_1*x_7+1829*x_2*x_7-2580*x_3*x_7+5292*x_4*x_7-3160*x_5*x_7-3742*x_6*x_7-5990*x_7^2-1687*x_0*x_8+1320*x_1*x_8-4094*x_2*x_8+3557*x_3*x_8-2371*x_4*x_8-3385*x_5*x_8-864*x_6*x_8-5402*x_7*x_8-2275*x_8^2+1011*x_0*x_9-4102*x_1*x_9+5734*x_2*x_9-2889*x_3*x_9-1757*x_4*x_9-1314*x_5*x_9-4279*x_6*x_9+3998*x_7*x_9+2507*x_8*x_9+1604*x_9^2-4999*x_0*x_10+2885*x_1*x_10+5387*x_2*x_10-2762*x_3*x_10-4905*x_4*x_10-2743*x_5*x_10-6085*x_6*x_10+873*x_7*x_10+5658*x_8*x_10-4589*x_9*x_10-442*x_10^2+4187*x_0*x_11-877*x_1*x_11+81*x_2*x_11-3960*x_3*x_11-457*x_4*x_11-1155*x_5*x_11+832*x_6*x_11+5971*x_7*x_11+6153*x_8*x_11+1748*x_9*x_11-5172*x_10*x_11-2049*x_11^2})",
+          "time psi=approximateInverseMap(phi,Multidegree=>{1,2,4,8,16,23,23,16,8,4,2,1})",
+          "-- but...
+isInverseMap(psi,phi)",
+          "-- now we fix the error of the approximation 
+-- (note that the composition of phi with psi is a projective transformation)
+time psi'=composeRationalMaps(psi,toMap((vars P11)*(last coefficients matrix composeRationalMaps(phi,psi))^(-1)))",
+"isInverseMap(psi',phi)",
           } 
          }
 
