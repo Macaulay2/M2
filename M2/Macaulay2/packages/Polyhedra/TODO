@@ -7,3 +7,9 @@ generate polymake tests for:
 *  normalFan
 *  faceFan
 *  toric variety things
+
+Thoughts:
+*  The faceBuilders should be completely removed.
+*  The newMinkSum method should be removed.
+*  The latticePoints method should be replaced by something better.
+*  Sanitize input matrices at some point?

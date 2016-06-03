@@ -21,27 +21,91 @@ compute#Cone#fullDimensional Cone := C -> (
 --   INPUT : 'C'  a Cone
 --  OUTPUT : 'true' or 'false'
 isSmooth Cone := C -> (
-     -- generating the non-linealityspace cone of C
-     R := lift(transpose rays C,ZZ);
-     n := dim C - C#"dimension of lineality space";
-     -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-     numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1))
+   getProperty(C, smooth)
+)
 	   
+
+compute#Cone#smooth = method()
+compute#Cone#smooth Cone := C -> (
+   -- generating the non-linealityspace cone of C
+   R := lift(transpose rays C,ZZ);
+   n := dim C - numColumns linealitySpace C;
+   -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
+   numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1)
+)
 
 --   INPUT : 'k'  an integer between 0 and the dimension of
 --     	     'C'  a cone
 --  OUTPUT : a List, containing the faces as cones
 faces(ZZ,Cone) := (k,C) -> (
-     L := faceBuilderCone(k,C);
-     LS := linSpace C;
-     --local faceOf;
-     -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-     apply(L, l -> (
-	       Cnew := posHull(matrix transpose apply(toList l, e -> flatten entries e),LS);
-	       (cacheValue symbol faceOf)(Cnew -> C);
-	       --Cnew.cache.faceOf = C;
-	       Cnew)))
+   result := faces C;
+   result#k
+)
 
+faces Cone := C -> (
+   getProperty(C, computedFacesThroughRays)
+)
+
+
+compute#Cone#nFacets = method()
+compute#Cone#nFacets Cone := C -> (
+   numRows facets C
+)
+
+compute#Cone#nRays = method()
+compute#Cone#nRays Cone := C -> (
+   numColumns rays C
+)
+
+facetsThroughRays = method()
+facetsThroughRays Cone := C -> (
+   getProperty(C, computedFacetsThroughRays)
+)
+
+compute#Cone#computedFacesThroughRays = method()
+compute#Cone#computedFacesThroughRays Cone := C -> (
+   result := new MutableHashTable;
+   d := dim C;
+   raysC := rays C;
+   ldim := rank linealitySpace C;
+   result#d = {toList (0..(getProperty(C, nRays) - 1))};
+   result#(d-1) = facetsThroughRays C;
+   for i from 0 to d-2-ldim do (
+      oldFaces := result#(d-1-i);
+      newFaces := unique flatten apply(oldFaces,
+         face -> toList apply(result#(d-1),
+            facet -> (
+               toSequence elements ((set face) * (set facet))
+            )
+         )
+      );
+      << newFaces << endl;
+      newFaces = select(newFaces, face -> (rank raysC_face) + ldim == d-2-i);
+      result#(d-2-i) = newFaces
+   );
+   result
+)
+
+compute#Cone#computedFacetsThroughRays = method()
+compute#Cone#computedFacetsThroughRays Cone := C -> (
+   << "Hello." << endl;
+   raysC := rays C;
+   facetsC := facets C;
+   nFacetsC := getProperty(C, nFacets);
+   nRaysC := getProperty(C, nRays);
+   apply(0..(nFacetsC -1), 
+      i -> (
+         facet := facetsC^{i};
+         positions(0..(nRaysC - 1), 
+            j-> (
+               ray := raysC_{j};
+               eval := (flatten entries (facet * ray))#0;
+               eval == 0
+            )
+         )
+      )
+   )
+)
 
 
 compute#Cone#computedDimension = method(TypicalValue => ZZ)

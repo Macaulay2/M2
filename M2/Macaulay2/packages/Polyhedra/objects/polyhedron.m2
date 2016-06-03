@@ -7,20 +7,6 @@ compute#Polyhedron = new MutableHashTable
 
 vertices Polyhedron := P -> P#"vertices"
 
--- Modifying the standard output for a polyhedron to give an overview of its characteristica
--- net Polyhedron := P -> ()
-
--- horizontalJoin flatten (
--- 	  "{",
--- 	  -- prints the parts vertically
--- 	  stack (horizontalJoin \ sort apply({"ambient dimension", 
--- 			                      "dimension",
--- 					      "dimension of lineality space",
--- 					      "number of rays",
--- 					      "number of vertices", 
--- 					      "number of facets"}, key -> (net key, " => ", net P#key))),
--- 	  "}" ))
---   
   
 -- PURPOSE : Building the polyhedron 'P'
 --   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P

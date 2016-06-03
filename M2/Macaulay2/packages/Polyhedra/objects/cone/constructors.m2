@@ -6,19 +6,6 @@ compute#Cone = new MutableHashTable
 
 Cone == Cone := (C1,C2) -> C1 === C2
 
--- Modifying the standard output for a Cone to give an overview of its characteristica
--- net Cone := C -> ( )
--- 	  "{",
--- 	  -- prints the parts vertically
--- 	  stack (horizontalJoin \ sort apply({ambientDimension, 
--- 			                      "dimension",
--- 					      "dimension of lineality space",
--- 					      "number of rays",
--- 					      "number of facets"}, key -> (net key, " => ", net C#key))),
--- 	  "}" ))
--- 
-
-
 
 -- PURPOSE : Building the Cone 'C'
 --   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C

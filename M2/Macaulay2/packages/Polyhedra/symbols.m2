@@ -25,6 +25,8 @@ export {
    "ambientDimension",
    "computedDimension",
    "computedFacets",
+   "computedFacesThroughRays",
+   "computedFacetsThroughRays",
    "computedHyperplanes",
    "computedHilbertBasis",
    "computedLinealityBasis",
@@ -33,6 +35,8 @@ export {
    "smooth",
    "fullDimensional",
    "simplicial",
+   "nRays",
+   "nFacets",
 
    "points"
 }

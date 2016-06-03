@@ -6,6 +6,7 @@ export {
 -- Cone object with associated methods:
    "Cone", 
    "posHull", 
+   "facetsThroughRays",
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 
