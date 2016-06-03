@@ -38,5 +38,7 @@ export {
    "nRays",
    "nFacets",
 
-   "points"
+   "points",
+
+   "maximalCones"
 }

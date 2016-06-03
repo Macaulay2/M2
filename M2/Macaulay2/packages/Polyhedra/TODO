@@ -13,3 +13,5 @@ Thoughts:
 *  The newMinkSum method should be removed.
 *  The latticePoints method should be replaced by something better.
 *  Sanitize input matrices at some point?
+*  addCone should be completely be removed.
+*  There are too many intersection methods.

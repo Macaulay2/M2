@@ -67,6 +67,7 @@ intersection Matrix := M -> (
 
 
 
+
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors
 posHull Matrix := R -> (
    r := ring R;
