@@ -21,7 +21,7 @@ o3 = {x  - 1, y  - 1}
 o3 : List
 
 i4 : solns = bertiniZeroDimSolve(F)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42382-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51680-0/1
 
 The version of Bertini 
 	    you have installed on your computer 

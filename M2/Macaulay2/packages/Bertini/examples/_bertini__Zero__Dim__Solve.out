@@ -6,7 +6,7 @@ i1 : R = CC[x,y];
 i2 : F = {x^2-1,y^2-1};
 
 i3 : S = bertiniZeroDimSolve F
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42526-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51843-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -21,14 +21,14 @@ o3 : List
 
 i4 : peek S_0
 
-o4 = Point{ConditionNumber => 4.18083     }
+o4 = Point{ConditionNumber => 8.46761     }
            Coordinates => {-1, -1}
            CycleNumber => 1
-           FunctionResidual => 5.55112e-17
+           FunctionResidual => 2.48253e-16
            LastT => .0015625
            MaximumPrecision => 52
            Multiplicity => 1
-           NewtonResidual => 4.73029e-17
+           NewtonResidual => 3.1823e-16
            SolutionNumber => -1
            SolutionStatus => Regular
 

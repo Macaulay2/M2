@@ -4,7 +4,7 @@
 i1 : CC[x,y]; F = {x^2-1,y^2-1};
 
 i3 : bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42299-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51599-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -26,7 +26,7 @@ o4 = OptionTable{FinalTol => 1e-100         }
 o4 : OptionTable
 
 i5 : bertiniZeroDimSolve(F,opts)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42299-0/2
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51599-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -42,7 +42,7 @@ o5 : List
 i6 : G = {x^2+y^2-1};
 
 i7 : bertiniPosDimSolve(G,opts)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42299-0/3
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51599-0/3
 
 The version of Bertini 
 	    you have installed on your computer 

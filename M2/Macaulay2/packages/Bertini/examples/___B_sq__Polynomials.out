@@ -12,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x+y-1,x^2-2})
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42457-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51774-0/0/input
 
 o2 : File
 
@@ -27,7 +27,7 @@ i4 : makeB'InputFile(storeBM2Files,
          B'Functions=>{{A,x^2-1}},
          B'Polynomials=>{A+y,x+y-2})
 
-o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42457-0/0/input
+o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51774-0/0/input
 
 o4 : File
 

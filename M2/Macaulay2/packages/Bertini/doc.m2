@@ -349,12 +349,17 @@ doc ///
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})            
      bPH_0--The two solutions for finalParameters0
    Example
-     R=CC[x,u1]
-     f1=x^2-u1
-     finalParameters0={1}
-     finalParameters1={2}
-     bPH=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x})            
-     bPH_0--The two solutions for finalParameters0
+     finParamValues={{1},{2}}
+     bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})            
+     bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")            
+     class bPH1_0_0
+     class bPH2_0_0
+   Example
+     dir1 := temporaryFileName(); -- build a directory to store temporary data 
+     makeDirectory dir1;  
+     bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)            
+     B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")     
+     B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")     
  Caveat
    Variables must begin with a letter (lowercase or capital) and
    can only contain letters, numbers, underscores, and square brackets.     
@@ -1304,6 +1309,34 @@ doc ///
 ///;
 
 doc ///
+  Key
+   OutputSyle
+   [bertiniParameterHomotopy, OutputSyle]
+  Headline
+    Option for bertiniParameterHomotopy.
+  Usage
+    bertiniParameterHomotopy(...,OutputSyle=>String)
+  Description
+    Text
+       Use OutputSyle to change the style of output. 
+///;
+
+
+doc ///
+  Key
+   TopDirectory
+   [bertiniParameterHomotopy, TopDirectory]
+  Headline
+    Option for bertiniParameterHomotopy.
+  Usage
+    bertiniParameterHomotopy(...,TopDirectory=>String)
+  Description
+    Text
+       Use TopDirectory to specify the directory where computations will occur. 
+///;
+
+
+doc ///
  Key
    IsProjective
    [bertiniTrackHomotopy, IsProjective]
@@ -1333,6 +1366,7 @@ doc ///
    [bertiniParameterHomotopy, AffVariableGroup]
    [bertiniParameterHomotopy, HomVariableGroup]
    [makeB'InputFile, AffVariableGroup]
+   [makeB'InputFile, HomVariableGroup]
  Headline
    See help for bertiniParameterHomotopy and/or makeB'InputFile.
  Description
@@ -1395,11 +1429,13 @@ doc///
  Key
    B'Configs
    [makeB'InputFile, B'Configs]
+   [makeB'TraceInput,B'Configs]
+   [bertiniParameterHomotopy,B'Configs]
  Headline
    An option to designate the CONFIG part of a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPTYPE" and and the second element is what the Bertini option will be set to e.g. "2".
+     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
      makeB'InputFile(storeBM2Files,
@@ -1433,42 +1469,32 @@ doc///
 ///;
 
 
-doc///
- Key
-   RandomComplex
-   [makeB'InputFile, RandomComplex]
- Headline
-   An option which designates symbols/strings/variables that will be set to be random complex numbers.
- Description
-   Text
-     This option should be set to a list of symbols, strings, or variables. 
-     Elemenets of this list will be set to random complex numbers when Bertini is called.
-   Example
-     R=QQ[x,y,c1,c2]
-     makeB'InputFile(storeBM2Files,
-	 AffVariableGroup=>{{x,y}},
-	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
-	 B'Polynomials=>{x-c1,y-c2})
-   Text
-     AFTER Bertini is run, the random values are stored in a file named "random_values".
-     
-///;
 
 doc///
  Key
    RandomReal
    [makeB'InputFile, RandomReal]
+   RandomComplex
+   [makeB'InputFile, RandomComplex]
+   [bertiniParameterHomotopy,RandomComplex]
+   [bertiniParameterHomotopy,RandomReal]
  Headline
-   An option which designates symbols/strings/variables that will be set to be a random real number.
+   An option which designates symbols/strings/variables that will be set to be a random real number or random complex number.
  Description
    Text
      This option should be set to a list of symbols, strings, or variables. 
-     Elemenets of this list will be set to random real numbers when Bertini is called.
+     Elemenets of this list will be set to random real/complex numbers when Bertini is called.
    Example
      R=QQ[x,y,c1,c2]
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
+	 B'Polynomials=>{x-c1,y-c2})
+   Example
+     R=QQ[x,y,c1,c2]
+     makeB'InputFile(storeBM2Files,
+	 AffVariableGroup=>{{x,y}},
+	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
    Text
      AFTER Bertini is run, the random values are stored in a file named "random_values".
@@ -1597,23 +1623,66 @@ doc///
      The option can be set to the "simple" style (coordinates only), "raw_solutions" style (path number and coordinates), and "main_data" style (detailed information).          
 
 ///;
-
+ 
 
 doc///
  Key
    NameSolutionsFile
    [importSolutionsFile, NameSolutionsFile]
+   NameFunctionFile
+   NameWitnessSliceFile
+   NameWitnessSolutionsFile
+   NameMainDataFile
+   NameSampleSolutionsFile
+   [b'PHGaloisGroup,NameB'InputFile]
+   [b'PHMonodromyCollect,NameB'InputFile]
+   [b'PHSequence,NameB'InputFile]
+   [calculateB'Trace,NameB'InputFile]
+   [makeB'TraceInput,NameB'InputFile]
+   [makeSampleSolutionsFile,NameB'InputFile]
+   [makeWitnessSetFiles,NameB'InputFile]
+   [runBertini,NameB'InputFile]
+   [runBertini,B'Exe]
+   [b'PHGaloisGroup,NameParameterFile]
+   [b'PHMonodromyCollect,NameParameterFile]
+   [b'PHSequence,NameParameterFile]
+   [importParameterFile,NameParameterFile]
+   [b'PHGaloisGroup,NameSolutionsFile]
+   [b'PHMonodromyCollect,NameSolutionsFile]
+   [b'PHSequence,NameSolutionsFile]
+   [makeMembershipFile,NameSolutionsFile]
+   [makeSampleSolutionsFile,NameSolutionsFile]
+   [makeWitnessSetFiles,NameSolutionsFile]
+   [b'PHGaloisGroup,NameStartFile]
+   [calculateB'Trace,NameStartFile]
+   [makeWitnessSetFiles,NameWitnessSliceFile]
+   [importMainDataFile,NameMainDataFile]
+   NameGaloisGroupGeneratorFile
+   [b'TraceTestImage,NameB'InputFile]
+   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
+   [makeMembershipFile,NameB'InputFile]
+   [b'PHMonodromyCollect,NameStartFile]
+   [b'PHSequence,NameStartFile]
+   NameIncidenceMatrixFile
+   [importIncidenceMatrix, NameIncidenceMatrixFile]
  Headline
-   This option names the solution file which we import. 
+   options determine the name of a file to be imported or written. 
  Description
    Text
-     Set this option to a string to name the solution file. 
+     Set this option to a string to name the file to be imported or written.
    Example
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"})
-     runBertini(storeBM2Files)
-     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")     
-     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")     
-     
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"});
+     runBertini(storeBM2Files);
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions");     
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions");     
+   Example
+     writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
+     writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
+     writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
+     makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
+     runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")          
 ///;
 
 
@@ -1819,7 +1888,7 @@ doc ///
     options for methods of Bertini package
   Description
     Text
-      Every function of the package takes ALL optional arguments listed here.
+      Many functions of the package takes ALL optional arguments listed here.
       The default value for EACH option is -1, which tells Bertini to use its internal default.
       Refer to Appendix E of SIAM Bertini book for full details and list of options. 
 
@@ -1893,28 +1962,6 @@ doc ///
 
 
 
-doc ///
- Key
-   NameIncidenceMatrixFile
-   [importIncidenceMatrix, NameIncidenceMatrixFile]
- Headline
-   An optional argument to import an incidence matrix that has a different name than "incidence_matrix".
- Description
-   Text
-     When this option is set to "another_incidence_matrix", a file named "another_incidence_matrix" is imported. The default is "incidence_matrix".
-///;
-
-doc ///
- Key
-   NameStartFile
-   [writeStartFile, NameStartFile]
- Headline
-   An optional argument to write a start file that has a different name than "start".
- Description
-   Text
-     When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
-///;
-
 
 
 -------------------
@@ -1951,13 +1998,8 @@ doc ///
    NumberOfLoops
    BranchPoints
    SpecifyLoops
-   NameFunctionFile
    SaveData
    ListB'Sections
-   NameWitnessSliceFile
-   NameWitnessSolutionsFile
-   NameMainDataFile
-   NameSampleSolutionsFile
    TextScripts
    PreparePH2
    SpecifyDim
@@ -1981,28 +2023,6 @@ doc ///
    (importSliceFile,String)
    SolutionType
 --   storeBM2Files
-   [makeB'TraceInput,B'Configs]
-   [b'PHGaloisGroup,NameB'InputFile]
-   [b'PHMonodromyCollect,NameB'InputFile]
-   [b'PHSequence,NameB'InputFile]
-   [calculateB'Trace,NameB'InputFile]
-   [makeB'TraceInput,NameB'InputFile]
-   [makeSampleSolutionsFile,NameB'InputFile]
-   [makeWitnessSetFiles,NameB'InputFile]
-   [runBertini,NameB'InputFile]
-   [runBertini,B'Exe]
-   [b'PHGaloisGroup,NameParameterFile]
-   [b'PHMonodromyCollect,NameParameterFile]
-   [b'PHSequence,NameParameterFile]
-   [importParameterFile,NameParameterFile]
-   [b'PHGaloisGroup,NameSolutionsFile]
-   [b'PHMonodromyCollect,NameSolutionsFile]
-   [b'PHSequence,NameSolutionsFile]
-   [makeMembershipFile,NameSolutionsFile]
-   [makeSampleSolutionsFile,NameSolutionsFile]
-   [makeWitnessSetFiles,NameSolutionsFile]
-   [b'PHGaloisGroup,NameStartFile]
-   [calculateB'Trace,NameStartFile]
    [b'PHMonodromyCollect,NumSolBound]
    (makeB'TraceInput,String,Number,Number)
    [makeB'InputFile,PathVariable]
@@ -2038,17 +2058,12 @@ doc ///
    [importSolutionsFile,UsePrecision]
    [importParameterFile,UsePrecision]
    [writeParameterFile,UsePrecision]
-   [importMainDataFile,NameMainDataFile]
    [importMainDataFile,SpecifyDim]
    [importMainDataFile,UsePrecision]
    [b'PHSequence,B'Exe]
    [b'PHSequence,SaveData]
-   [makeWitnessSetFiles,NameWitnessSliceFile]
    [makeWitnessSetFiles,SpecifyComponent]
    [writeStartFile,UsePrecision]
-   [makeMembershipFile,NameB'InputFile]
-   [b'PHMonodromyCollect,NameStartFile]
-   [b'PHSequence,NameStartFile]
    [makeB'Section,B'Homogenization]
    [makeB'Section,ContainsPoint]
    [makeB'Section,RandomCoefficientGenerator]
@@ -2065,8 +2080,6 @@ doc ///
    [b'PHGaloisGroup,LoopRadius]
    [b'TraceTestImage,MapPoints]
    [moveB'File,MoveToDirectory]
-   [b'TraceTestImage,NameB'InputFile]
-   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
    [b'TraceTestImage,OnlyCalculateTrace]
    [b'TraceTestImage,RandomGamma]
    [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
@@ -2109,7 +2122,6 @@ doc ///
    LoopRadius
    MoveToDirectory
    RandomGamma
-   NameGaloisGroupGeneratorFile
    StorageFolder
    SubFolder
    StartPoints
@@ -2318,3 +2330,27 @@ doc///
 	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
      
 ///;
+
+ 
+doc ///
+ Key
+   NameIncidenceMatrixFile
+   [importIncidenceMatrix, NameIncidenceMatrixFile]
+ Headline
+   An optional argument to import an incidence matrix that has a different name than "incidence_matrix".
+ Description
+   Text
+     When this option is set to "another_incidence_matrix", a file named "another_incidence_matrix" is imported. The default is "incidence_matrix".
+///;
+
+doc ///
+ Key
+   NameStartFile
+   [writeStartFile, NameStartFile]
+ Headline
+   An optional argument to write a start file that has a different name than "start".
+ Description
+   Text
+     When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
+///;
+

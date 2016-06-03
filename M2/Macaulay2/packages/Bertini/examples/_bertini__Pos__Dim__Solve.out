@@ -15,7 +15,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : S = bertiniPosDimSolve F
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42263-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51565-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -30,9 +30,9 @@ o3 : NumericalVariety
 
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = {{3.14563e-68-2.66878e-68*ii, 4.02679e-68+1.04238e-68*ii,
+o4 = {{-4.49928e-70-1.16222e-70*ii, -3.90921e-70-2.67891e-70*ii,
      ------------------------------------------------------------------------
-     .247255+.218518*ii}}
+     .154645-.167262*ii}}
 
 o4 : VerticalList
 
@@ -46,9 +46,9 @@ i6 : peek oo_0 --then list position
 
 o6 = WitnessSet{ComponentNumber => 0                                                                             }
                 IsIrreducible => null
-                Points => {{3.14563e-68-2.66878e-68*ii, 4.02679e-68+1.04238e-68*ii, .247255+.218518*ii}}
-                Slice => | -.636172-.137902i -1.22239+.151308i 1.03255-1.31278i -.235324-.0008341i |
-                WitnessDataFileName => /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42263-0/1/witness_data
+                Points => {{-4.49928e-70-1.16222e-70*ii, -3.90921e-70-2.67891e-70*ii, .154645-.167262*ii}}
+                Slice => | .391276-.0258792i 1.52356+.966944i 1.84772-1.58473i .0753419-.0715146i |
+                WitnessDataFileName => /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51565-0/1/witness_data
                                3      2      2       2     3      2
                 Equations => {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 
