@@ -1765,6 +1765,12 @@ collateVertices MixedGraph := g -> (
 
 beginDocumentation()
 
+-- authors: add some text to this documentation node:
+doc ///
+  Key
+    Graphs
+///
+
 -------------------------------
 --Graph Constructors
 -------------------------------
