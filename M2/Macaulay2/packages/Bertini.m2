@@ -26,6 +26,8 @@ newPackage(
 ) 
 
 export {
+  "OutputSyle",
+  "TopDirectory",
   "StorageFolder", 
   "ReturnGaloisGroupGeneratorFile",
   "StopBeforeTest",
@@ -339,56 +341,74 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
          )
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
+    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+    	TopDirectory=>storeBM2Files,
 	B'Configs=>{},
-	AffVariableGroup=>false,
-	HomVariableGroup=>false
+	AffVariableGroup=>{},
+	HomVariableGroup=>{},
+      	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
+      	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
+      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+      	B'Functions=>{}--A list of pairs consisting of a name and a polynomial.  	
 	} )
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
     --myParams are your parameters.
     --myParValues are the values the parametres will take.
-  myAVG:=gens ring first myPol;
-  for i in myParams do myAVG=delete(i,myAVG);
-  print myAVG;
-  if o.AffVariableGroup===false and o.HomVariableGroup===false 
-  then   makeB'InputFile(storeBM2Files,
-      AffVariableGroup=>myAVG,
-      ParameterGroup=>myParams,
-      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
-      B'Polynomials=>myPol
-      )
-  else if o.AffVariableGroup=!=false and o.HomVariableGroup===false
-  then   makeB'InputFile(storeBM2Files,
-      AffVariableGroup=>o.AffVariableGroup,
-      ParameterGroup=>myParams,
-      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
-      B'Polynomials=>myPol
-      )
-  else if o.AffVariableGroup===false and o.HomVariableGroup=!=false
-  then   makeB'InputFile(storeBM2Files,
-      HomVariableGroup=>o.HomVariableGroup,
-      ParameterGroup=>myParams,
-      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
-      B'Polynomials=>myPol
-      )
-  else if o.AffVariableGroup=!=false and o.HomVariableGroup=!=false
-  then   makeB'InputFile(storeBM2Files,
-      AffVariableGroup=>o.AffVariableGroup,
-      HomVariableGroup=>o.HomVariableGroup,
-      ParameterGroup=>myParams,
-      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
-      B'Polynomials=>myPol
-      );
-    runBertini(storeBM2Files,PreparePH2=>true);
+--%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini. 
+--%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files. 
+--%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
+  myTopDir:=o.TopDirectory;
+--%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol with myParams deleted. 
+  myAVG:= o.AffVariableGroup;
+  myHVG:= o.HomVariableGroup;
+  if myAVG==={} and myHVG==={} 
+  then (
+    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    then (myAVG=gens ring first myPol;
+      for i in myParams do myAVG=delete(i,myAVG))
+  else error"AffVariableGroup or HomVariableGroup need to be set. "    );
+--  print myAVG;
+--  print myHVG;
+--%%-- We use the makeB'InputFile method to write a Bertini file. 
+  makeB'InputFile(myTopDir,
+    ParameterGroup=>myParams,
+    B'Polynomials=>myPol,
+    AffVariableGroup=>myAVG,
+    HomVariableGroup=>myHVG,
+--%%--These are extra options the user can specify. For more information refer to their documentation.
+    B'Configs=>({{ParameterHomotopy,1}}|o.B'Configs),
+    RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
+    RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
+    B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+    B'Functions=>o.B'Functions--A list of pairs consisting of a name and a polynomial.  	
+    );
+--%%--We call Bertini and solve the parameter homotopy for random parameters.
+--%%%%--The PreparePH2=>true, will automatically adjust the Bertini input file to set ParameterHomotopy=2.
+--&&&&--Refer to the Bertini manual for more details on parameter homotopies.
+    runBertini(myTopDir,PreparePH2=>true);
+--%%--For each set of parameter values, i.e. each element of myParValues we will do a Bertini run. 
+--%%%%--The output of run # will be stored as a text file named "ph_jade_#".
+--%%%%--Depending on the OutputSyle option, the style of this text file can be main_data or a list of coordinates.
     runNumber:=0;
     for i in myParValues do(
-      runNumber=runNumber+1;
-      writeParameterFile(storeBM2Files,i);
-      runBertini(storeBM2Files);
-      moveB'File(storeBM2Files,"main_data","ph_"|runNumber)    );
+      writeParameterFile(myTopDir,i);
+      runBertini(myTopDir);
+      if o.OutputSyle==="OutPoints" then moveB'File(myTopDir,"main_data","ph_jade_"|runNumber);
+      if o.OutputSyle==="OutNone" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      if o.OutputSyle==="OutSolutions" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
+      runNumber=runNumber+1
+      );
+--%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
+--%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or nonsingular_solutions files. 
     allSols:={};
-    for i from 1 to #myParValues list allSols=allSols|{importMainDataFile(storeBM2Files,NameMainDataFile=>"ph_"|i)};
-    return allSols)   
+    if o.OutputSyle==="OutPoints" 
+    then for i from 0 to #myParValues-1 do allSols=allSols|{importMainDataFile(myTopDir,NameMainDataFile=>"ph_jade_"|i)};
+    if o.OutputSyle==="OutSolutions" 
+    then for i from 0 to #myParValues-1 do allSols=allSols|{importSolutionsFile(myTopDir,NameSolutionsFile=>"ph_jade_"|i,OrderPaths=>true)};
+--
+    if o.OutputSyle=!="OutNone"
+    then return allSols)   
          
 
 ---------------------------------------------------
