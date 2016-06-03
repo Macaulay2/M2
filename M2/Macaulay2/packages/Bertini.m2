@@ -339,24 +339,57 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
          )
 
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
-	  Verbose=>true,MPType=>-1,PRECISION=>-1,
-	  IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	  TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
-	  MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,
-	  DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
-	  SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,
-	  SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,
-	  MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,
-	  RegenStartLevel=>-1} )
-bertiniParameterHomotopy (List, List, List) := o -> (F, P, T) -> (
-         --F is the system of polynomials
-	 --P is list of parameters
-	 --T is list of target parameter values
-	 L := {runType=>7,Parameters=>P,ParameterValues=>T};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-         bertiniSolve(F,o3)
-         )
+	B'Configs=>{},
+	AffVariableGroup=>false,
+	HomVariableGroup=>false
+	} )
+bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
+    --myPol are your polynomial system that you want to solve.
+    --myParams are your parameters.
+    --myParValues are the values the parametres will take.
+  myAVG:=gens ring first myPol;
+  for i in myParams do myAVG=delete(i,myAVG);
+  print myAVG;
+  if o.AffVariableGroup===false and o.HomVariableGroup===false 
+  then   makeB'InputFile(storeBM2Files,
+      AffVariableGroup=>myAVG,
+      ParameterGroup=>myParams,
+      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
+      B'Polynomials=>myPol
+      )
+  else if o.AffVariableGroup=!=false and o.HomVariableGroup===false
+  then   makeB'InputFile(storeBM2Files,
+      AffVariableGroup=>o.AffVariableGroup,
+      ParameterGroup=>myParams,
+      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
+      B'Polynomials=>myPol
+      )
+  else if o.AffVariableGroup===false and o.HomVariableGroup=!=false
+  then   makeB'InputFile(storeBM2Files,
+      HomVariableGroup=>o.HomVariableGroup,
+      ParameterGroup=>myParams,
+      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
+      B'Polynomials=>myPol
+      )
+  else if o.AffVariableGroup=!=false and o.HomVariableGroup=!=false
+  then   makeB'InputFile(storeBM2Files,
+      AffVariableGroup=>o.AffVariableGroup,
+      HomVariableGroup=>o.HomVariableGroup,
+      ParameterGroup=>myParams,
+      B'Configs=>(o.B'Configs|{{ParameterHomotopy,1}}),
+      B'Polynomials=>myPol
+      );
+    runBertini(storeBM2Files,PreparePH2=>true);
+    runNumber:=0;
+    for i in myParValues do(
+      runNumber=runNumber+1;
+      writeParameterFile(storeBM2Files,i);
+      runBertini(storeBM2Files);
+      moveB'File(storeBM2Files,"main_data","ph_"|runNumber)    );
+    allSols:={};
+    for i from 1 to #myParValues list allSols=allSols|{importMainDataFile(storeBM2Files,NameMainDataFile=>"ph_"|i)};
+    return allSols)   
+         
 
 ---------------------------------------------------
 -- bertiniSolve: This is the main control function:

@@ -336,17 +336,24 @@ doc ///
      R=CC[u1,u2,u3,x,y];
      f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
      f2=(x-11)*(x-12)*(x-13)-u1;
-     paramValues0={{1,0,0}};
-     paramValues1={{0,1+2*ii,0}};
+     paramValues0={1,0,0};
+     paramValues1={0,1+2*ii,0};
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
      bPH_0--the solutions to the system with parameters set equal to paramValues0
    Example
      R=CC[x,y,z,u1,u2]
      f1=x^2+y^2-z^2
      f2=u1*x+u2*y
-     finalParameters0={{0,1}}
-     finalParameters1={{1,0}}
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },IsProjective=>1)            
+     finalParameters0={0,1}
+     finalParameters1={1,0}
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})            
+     bPH_0--The two solutions for finalParameters0
+   Example
+     R=CC[x,u1]
+     f1=x^2-u1
+     finalParameters0={1}
+     finalParameters1={2}
+     bPH=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x})            
      bPH_0--The two solutions for finalParameters0
  Caveat
    Variables must begin with a letter (lowercase or capital) and
@@ -1276,7 +1283,7 @@ doc ///
 doc ///
   Key
    [bertiniTrackHomotopy, Verbose]
-   [bertiniParameterHomotopy, Verbose]
+--   [bertiniParameterHomotopy, Verbose]
    [bertiniComponentMemberTest, Verbose]
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
@@ -1286,7 +1293,7 @@ doc ///
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
-    bertiniParameterHomotopy(...,Verbose=>Boolean)
+--    bertiniParameterHomotopy(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
@@ -1300,7 +1307,7 @@ doc ///
  Key
    IsProjective
    [bertiniTrackHomotopy, IsProjective]
-   [bertiniParameterHomotopy, IsProjective]
+--   [bertiniParameterHomotopy, IsProjective]
    [bertiniComponentMemberTest, IsProjective]
    [bertiniPosDimSolve, IsProjective]
    [bertiniRefineSols, IsProjective]
@@ -1316,14 +1323,24 @@ doc ///
      R = CC[x,y,z];
      f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
      bertiniPosDimSolve(f,IsProjective=>1);
-     
-   Example 
-     R=CC[x,y,z,u1,u2];--u1,u2 are parameters
-     f1=x^2+y^2-z^2;
-     f2=u1*x+u2*y;
-     finalParameters={{0,1}};
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },IsProjective=>1)            
+                
 ///;
+
+doc ///
+ Key
+   AffVariableGroup
+   HomVariableGroup   
+   [bertiniParameterHomotopy, AffVariableGroup]
+   [bertiniParameterHomotopy, HomVariableGroup]
+   [makeB'InputFile, AffVariableGroup]
+ Headline
+   See help for bertiniParameterHomotopy and/or makeB'InputFile.
+ Description
+   Text
+     
+                
+///;
+
 
 
 doc ///
@@ -1353,42 +1370,7 @@ doc///
      is 1e-6. 
 ///;
 
-doc///
- Key
-   AffVariableGroup
-   [makeB'InputFile, AffVariableGroup]
- Headline
-   An option which designates the Affine Variable Groups.    
- Description
-   Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x1,x2,y]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 AffVariableGroup=>{{x1,x2},{y}},
-	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
-     
-///;
 
-doc///
- Key
-   HomVariableGroup
-   [makeB'InputFile, HomVariableGroup]
- Headline
-   An option which designates the Homogeneous Variable Groups.    
- Description
-   Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
-	 AffVariableGroup=>{{z}},
-	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
-     
-///;
 
 doc///
  Key
@@ -1729,32 +1711,6 @@ doc ///
     [bertiniComponentMemberTest, MaxNumberSteps]
     [bertiniComponentMemberTest, MaxCycleNum]
     [bertiniComponentMemberTest, RegenStartLevel]
-    [bertiniParameterHomotopy, MPType]
-    [bertiniParameterHomotopy, PRECISION]
-    [bertiniParameterHomotopy, ODEPredictor]
-    [bertiniParameterHomotopy, TrackTolBeforeEG]
-    [bertiniParameterHomotopy, TrackTolDuringEG]
-    [bertiniParameterHomotopy, FinalTol]
-    [bertiniParameterHomotopy, MaxNorm]
-    [bertiniParameterHomotopy, MinStepSizeBeforeEG]
-    [bertiniParameterHomotopy, MinStepSizeDuringEG]
-    [bertiniParameterHomotopy, ImagThreshold]
-    [bertiniParameterHomotopy, CoeffBound]
-    [bertiniParameterHomotopy, DegreeBound]
-    [bertiniParameterHomotopy, CondNumThreshold]
-    [bertiniParameterHomotopy, RandomSeed]
-    [bertiniParameterHomotopy, SingValZeroTol]
-    [bertiniParameterHomotopy, EndGameNum]
-    [bertiniParameterHomotopy, UseRegeneration]
-    [bertiniParameterHomotopy, SecurityLevel]
-    [bertiniParameterHomotopy, ScreenOut]
-    [bertiniParameterHomotopy, OutputLevel]
-    [bertiniParameterHomotopy, StepsForIncrease]
-    [bertiniParameterHomotopy, MaxNewtonIts]
-    [bertiniParameterHomotopy, MaxStepSize]
-    [bertiniParameterHomotopy, MaxNumberSteps]
-    [bertiniParameterHomotopy, MaxCycleNum]
-    [bertiniParameterHomotopy, RegenStartLevel]
     [bertiniPosDimSolve, MPType]
     [bertiniPosDimSolve, PRECISION]
     [bertiniPosDimSolve, ODEPredictor]
@@ -2326,3 +2282,39 @@ doc ///
               
 ///;
 
+doc///
+ Key
+   AffVariableGroup
+   [makeB'InputFile, AffVariableGroup]
+ Headline
+   An option which designates the Affine Variable Groups.    
+ Description
+   Text
+     We can group variables together when using zero-dimensional runs in Bertini. 
+   Example
+     R=QQ[x1,x2,y]
+     makeB'InputFile(storeBM2Files,
+	 B'Configs=>{{"MPTYPE",2}},
+     	 AffVariableGroup=>{{x1,x2},{y}},
+	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+     
+///;
+
+doc///
+ Key
+   HomVariableGroup
+   [makeB'InputFile, HomVariableGroup]
+ Headline
+   An option which designates the Homogeneous Variable Groups.    
+ Description
+   Text
+     We can group variables together when using zero-dimensional runs in Bertini. 
+   Example
+     R=QQ[x0,x1,y0,y1,z]
+     makeB'InputFile(storeBM2Files,
+	 B'Configs=>{{"MPTYPE",2}},
+     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
+	 AffVariableGroup=>{{z}},
+	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
+     
+///;

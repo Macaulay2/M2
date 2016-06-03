@@ -1,10 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1057685552 *}
-<<<<<<< HEAD
 --loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
-=======
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
->>>>>>> Macaulay2/master
 
 i1 : R = CC[x,y,z]
 
@@ -20,11 +15,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : NV = bertiniPosDimSolve(F)
-<<<<<<< HEAD
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34265-0/1
-=======
-Temporary directory for input and output files:/tmp/M2-29516-0/1
->>>>>>> Macaulay2/master
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42228-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -44,11 +35,7 @@ o4 = W
 o4 : WitnessSet
 
 i5 : bertiniSample(4, W)
-<<<<<<< HEAD
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-34265-0/2
-=======
-Temporary directory for input and output files:/tmp/M2-29516-0/2
->>>>>>> Macaulay2/master
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42228-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -57,27 +44,17 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-<<<<<<< HEAD
-o5 = {{5.16193e-277-1.11598e-276*ii, -3.22285e-132+6.96764e-132*ii,
+o5 = {{2.22199e-20+1.73858e-20*ii, 1.63545e-309-5.34224e-310*ii,
      ------------------------------------------------------------------------
-     -.247684+.268573*ii}, {-1.30927e-321-8.3991e-323*ii,
+     -.219782-.295545*ii}, {7.43639e-21-9.15673e-21*ii,
      ------------------------------------------------------------------------
-     -1.6431e-179+2.56247e-178*ii, -.221705+.171192*ii}, {0,
+     -2.75312e-189+5.13867e-189*ii, -.240046-.278047*ii},
      ------------------------------------------------------------------------
-     3.01234e-304-1.28167e-304*ii, -.0053914+.418242*ii}, {0,
+     {-2.08598e-20+1.23393e-20*ii, 6.42992e-310+8.6887e-310*ii,
      ------------------------------------------------------------------------
-     -4.67546e-161+6.89171e-161*ii, -.247422+.250668*ii}}
-=======
-o5 = {{-2.85717e-312+1.9319e-312*ii, 0, -.053369-.588498*ii},
+     -.221949-.293931*ii}, {-5.55249e-21-4.0602e-21*ii,
      ------------------------------------------------------------------------
-     {3.97751e-313-5.3063e-315*ii, 7.6062e-211+5.70151e-209*ii,
-     ------------------------------------------------------------------------
-     -.241676-.0953132*ii}, {0, 0, -.079421+.534184*ii},
-     ------------------------------------------------------------------------
-     {-1.13494e-307-2.19688e-307*ii, 1.17412e-189+5.63179e-190*ii,
-     ------------------------------------------------------------------------
-     1.62639-.368105*ii}}
->>>>>>> Macaulay2/master
+     -5.19017e-313+3.62522e-313*ii, -.199097-.0126565*ii}}
 
 o5 : List
 
