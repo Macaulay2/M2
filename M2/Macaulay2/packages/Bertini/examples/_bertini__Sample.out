@@ -15,7 +15,7 @@ o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
 o2 : List
 
 i3 : NV = bertiniPosDimSolve(F)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51530-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59479-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -35,7 +35,7 @@ o4 = W
 o4 : WitnessSet
 
 i5 : bertiniSample(4, W)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51530-0/2
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59479-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -44,17 +44,15 @@ Bertini is under ongoing development by
 	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
 
-o5 = {{1.30355e-174+1.06483e-174*ii, -8.28862e-313-1.84511e-312*ii,
+o5 = {{1.4822e-323+4.94066e-324*ii, 6.91692e-323-7.90505e-323*ii,
      ------------------------------------------------------------------------
-     -.627835+.22964*ii}, {5.91944e-204-9.74129e-204*ii,
+     -.043600-.580227*ii}, {2.47033e-323-1.97626e-323*ii,
      ------------------------------------------------------------------------
-     -1.75963e-313+2.77147e-314*ii, -.156534+.680081*ii},
+     1.4822e-323-9.88131e-324*ii, .351625-.0244596*ii},
      ------------------------------------------------------------------------
-     {-9.25164e-187+3.18417e-187*ii, -3.21338e-309-1.80875e-309*ii,
+     {-1.33398e-322-3.50787e-322*ii, 0, .0922654+.430232*ii}, {0,
      ------------------------------------------------------------------------
-     -.101979+.446103*ii}, {-9.30666e-175-7.55404e-175*ii, 0,
-     ------------------------------------------------------------------------
-     -.0989182+.478711*ii}}
+     -7.85564e-322+1.10671e-321*ii, -.568011+.389623*ii}}
 
 o5 : List
 

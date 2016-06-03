@@ -1312,10 +1312,12 @@ doc ///
   Key
    OutputSyle
    [bertiniParameterHomotopy, OutputSyle]
+   [bertiniZeroDimSolve,OutputSyle]
   Headline
-    Option for bertiniParameterHomotopy.
+    Used to change the output style.
   Usage
     bertiniParameterHomotopy(...,OutputSyle=>String)
+    bertiniZeroDimSolve(...,OutputSyle=>String)
   Description
     Text
        Use OutputSyle to change the style of output. 
@@ -1326,10 +1328,12 @@ doc ///
   Key
    TopDirectory
    [bertiniParameterHomotopy, TopDirectory]
+   [bertiniZeroDimSolve,TopDirectory]
   Headline
-    Option for bertiniParameterHomotopy.
+    Option to change directory for file storage.
   Usage
     bertiniParameterHomotopy(...,TopDirectory=>String)
+    bertiniZeroDimSolve(...,TopDirectory=>String)
   Description
     Text
        Use TopDirectory to specify the directory where computations will occur. 
@@ -1367,6 +1371,8 @@ doc ///
    [bertiniParameterHomotopy, HomVariableGroup]
    [makeB'InputFile, AffVariableGroup]
    [makeB'InputFile, HomVariableGroup]
+   [bertiniZeroDimSolve,HomVariableGroup]
+   [bertiniZeroDimSolve,AffVariableGroup]
  Headline
    See help for bertiniParameterHomotopy and/or makeB'InputFile.
  Description
@@ -1418,6 +1424,7 @@ doc///
    [makeB'InputFile, B'Configs]
    [makeB'TraceInput,B'Configs]
    [bertiniParameterHomotopy,B'Configs]
+   [bertiniZeroDimSolve,B'Configs]
  Headline
    An option to designate the CONFIG part of a Bertini Input file.
  Description
@@ -1438,19 +1445,21 @@ doc///
  Key
    B'Constants
    [makeB'InputFile, B'Constants]
+   [bertiniParameterHomotopy,B'Constants]
+   [bertiniZeroDimSolve,B'Constants]
  Headline
    An option to designate the constants for a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. 
-     The first element is the name of the Constant.
-     The second element is the value that the consant will be set.
+     This option should be set to a list of lists of 2 elements or options. 
+     The first element of the list of two elements is the name of the Constant, and
+     the second element is the value that the consant will be set. 
    Example
      R=QQ[z,a,b,c]
      makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{z}},
-	 B'Constants=>{{a,2},{b,3+2*ii},{c,3/2}},
+	 B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
 	 B'Polynomials=>{a*z^2+b*z+c})
      
 ///;
@@ -1465,6 +1474,8 @@ doc///
    [makeB'InputFile, RandomComplex]
    [bertiniParameterHomotopy,RandomComplex]
    [bertiniParameterHomotopy,RandomReal]
+   [bertiniZeroDimSolve,RandomComplex]
+   [bertiniZeroDimSolve,RandomReal]
  Headline
    An option which designates symbols/strings/variables that will be set to be a random real number or random complex number.
  Description
@@ -1521,6 +1532,8 @@ doc///
  Key
    B'Functions
    [makeB'InputFile, B'Functions]
+   [bertiniZeroDimSolve,B'Functions]
+   [bertiniParameterHomotopy,B'Functions]
  Headline
    An option which designates sub-functions or a polynomial system as a straight line program.  
  Description
@@ -1532,7 +1545,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
-	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
+	 B'Functions=>{{f1,x+y-1},f2=>x^2-2})--f1=x+y+1,f2=x^2-2 is written to the input file
    Text
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
@@ -1652,6 +1665,8 @@ doc///
    [b'PHSequence,NameStartFile]
    NameIncidenceMatrixFile
    [importIncidenceMatrix, NameIncidenceMatrixFile]
+   [bertiniZeroDimSolve,NameSolutionsFile]
+   [bertiniZeroDimSolve,NameMainDataFile]
  Headline
    options determine the name of a file to be imported or written. 
  Description
@@ -1895,18 +1910,17 @@ doc ///
 
       RegenStartLevel: Level at which regeneration begins. 
 
-      There are two recommended ways of using the optional arguments.
+      There are two recommended ways of using the optional arguments based on zero-dim solving and pos-dim solving.
     
       (1) Specify individual parameters in a function call:
     Example
       CC[x,y]; F = {x^2-1,y^2-1};
-      bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100)
+      bertiniZeroDimSolve(F,B'Configs=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
     Text
       (2) Store your frequently used favorites in an OptionTable
       and pass it as the last argument in each function call:
     Example
       opts = new OptionTable from {RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}
-      bertiniZeroDimSolve(F,opts)
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)
 ///;
@@ -2260,25 +2274,6 @@ doc///
 	 B'Configs=>{{"MPTYPE",2}},
      	 AffVariableGroup=>{{x1,x2},{y}},
 	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
-     
-///;
-
-doc///
- Key
-   HomVariableGroup
-   [makeB'InputFile, HomVariableGroup]
- Headline
-   An option which designates the Homogeneous Variable Groups.    
- Description
-   Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
-	 AffVariableGroup=>{{z}},
-	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
      
 ///;
 

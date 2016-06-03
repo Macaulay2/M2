@@ -10,8 +10,8 @@ g=x^2-y^2
 --output0=bertiniZeroDimSolve({f,g},IsProjective=>1)
 --assert ( #coordinates output0_0==3)
 
---output1=bertiniPosDimSolve({f,g},IsProjective=>1)
---assert (0==dim (output1#0_0))
+output1=bertiniPosDimSolve({f,g},IsProjective=>1)
+assert (0==dim (output1#0_0))
 
 
 

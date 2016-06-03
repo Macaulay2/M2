@@ -10,7 +10,7 @@ i4 : writeParameterFile(storeBM2Files,{1,0},NameParameterFile=>"start_parameters
 i5 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
 
-o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51607-0/0/input
+o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59556-0/0/input
 
 o5 : File
 
@@ -19,7 +19,7 @@ i6 : b'PHMonodromyCollect(storeBM2Files,
          NameSolutionsFile=>"simple_raw_solutions",
          NumberOfLoops=>10,NumSolBound=>3,
          MonodromyStartParameters=>{1,0}        )
-/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51607-0/0/
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59556-0/0/
 (Monodromy loop number, 1)
 ~/bertini
 ~/bertini
@@ -50,7 +50,7 @@ NumSolBound has been reached
 
 o6 = {{1, -.5-.866025*ii}, {1, -.5+.866025*ii}, {1,
      ------------------------------------------------------------------------
-     6.0218e-16-6.49212e-16*ii}}
+     7.0478e-16-2.63643e-16*ii}}
 
 o6 : List
 
@@ -59,7 +59,7 @@ i7 : f="x^3+x*y^2+y+y^3+x-2";     h="a1*x+a2*y-1";
 i9 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{PARAMETERHOMOTOPY,2},{MPTYPE,2}},AffVariableGroup=>{x,y},ParameterGroup=>{a1,a2}, B'Polynomials=>{f,h}    )
 
-o9 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51607-0/0/input
+o9 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59556-0/0/input
 
 o9 : File
 
@@ -68,7 +68,7 @@ i10 : b'PHMonodromyCollect(storeBM2Files,
           MonodromyStartPoints=>{{1,0}},
           NumberOfLoops=>10,NumSolBound=>3,
           MonodromyStartParameters=>{1,0}        )
-/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51607-0/0/
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59556-0/0/
 (Monodromy loop number, 1)
 ~/bertini
 ~/bertini
@@ -89,7 +89,7 @@ NumSolBound has been reached
 
 o10 = {{1, -.5-.866025*ii}, {1, -.5+.866025*ii}, {1,
       -----------------------------------------------------------------------
-      -1.21118e-15-1.21027e-16*ii}}
+      1.41367e-16+3.90969e-16*ii}}
 
 o10 : List
 

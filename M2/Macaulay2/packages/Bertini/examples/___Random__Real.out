@@ -12,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
          B'Polynomials=>{x-c1,y-c2})
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51688-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59637-0/0/input
 
 o2 : File
 
@@ -27,7 +27,7 @@ i4 : makeB'InputFile(storeBM2Files,
          RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
          B'Polynomials=>{x-c1,y-c2})
 
-o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51688-0/0/input
+o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59637-0/0/input
 
 o4 : File
 

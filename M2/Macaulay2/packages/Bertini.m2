@@ -238,7 +238,7 @@ bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
       	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
       	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
       	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
-    	NameSolutionsFile=>"raw_data",
+    	NameSolutionsFile=>"raw_solutions",
     	NameMainDataFile=>"main_data"
 	} )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(        
@@ -271,7 +271,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     );
 --%%--Check for some errors.
 --%%%%--
-  if o.NameSolutionsFile=!="raw_data" and o.OutputSyle=!="OutSolutions" 
+  if o.NameSolutionsFile=!="raw_solutions" and o.OutputSyle=!="OutSolutions" 
   then error"If NameSolutionsFile is set then OutputSyle should be set to OutSolutions. ";
 --%%--We call Bertini and solve the zero dimensional system. 
     successRun:=runBertini(myTopDir);
@@ -388,6 +388,7 @@ bertiniTrackHomotopy (RingElement, List, List) := o -> (t, H, S1) -> (
 bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
+    	B'Functions=>{},
 	B'Configs=>{},
 	AffVariableGroup=>{},
 	HomVariableGroup=>{},
@@ -423,6 +424,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
     HomVariableGroup=>myHVG,
 --%%--These are extra options the user can specify. For more information refer to their documentation.
     B'Configs=>({{ParameterHomotopy,1}}|o.B'Configs),
+    B'Functions=>o.B'Functions,
     RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
     RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
     B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 

@@ -11,7 +11,7 @@ i2 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^3-1})
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51575-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59526-0/0/input
 
 o2 : File
 

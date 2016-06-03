@@ -12,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          B'Polynomials=>{x+y-1,x^2-2},
          NameB'InputFile=>"testInput")--the input file will be named "testInput" rather than the default "input".
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-51725-0/0/testInput
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59674-0/0/testInput
 
 o2 : File
 
