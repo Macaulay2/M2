@@ -7,39 +7,6 @@ compute#Cone = new MutableHashTable
 Cone == Cone := (C1,C2) -> C1 === C2
 
 
--- PURPOSE : Building the Cone 'C'
---   INPUT : '(genrays,dualgens)',  a pair of two matrices each describing the cone C
---                                	directly  as generating rays ('genrays') and in the 
---						dual description as intersection of half-spaces through 
---						the origin ('dualgens')
---  OUTPUT : The Cone 'C'
-coneBuilder = (genrays,dualgens) -> (
-      -- Sorting into rays, lineality space generators, supporting half-spaces, and hyperplanes
-      << genrays << endl;
-      RM := genrays#0;
-      LS := genrays#1;
-      HS := transpose(-dualgens#0);
-      hyperplanesTmp := transpose(dualgens#1);
-      -- Defining C
-      result := new Cone from {
-         ambientDimension => numgens target RM,
-         "dimension" => (numgens target RM)-(rank hyperplanesTmp),
-         "dimension of lineality space" => numgens source LS,
-         "linealitySpace" => LS,
-         "number of rays" => numgens source RM,
-   --	   "rays" => RM,
-         "number of facets" => numgens target HS,
-         "halfspaces" => HS,
-         "hyperplanes" => hyperplanesTmp,
-         "genrays" => genrays,
-         "dualgens" => dualgens,
-         symbol cache => new CacheTable};
-      result.cache.computedRays = RM;
-      result
-)
-
-
-
 
 coneFromRayData = method(TypicalValue => Cone)
 coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
@@ -53,6 +20,7 @@ coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      setProperty(result, computedLinealityBasis, linealityGenerators);
      result
 )
+
 
 coneFromFacetData = method(TypicalValue => Cone)
 coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
@@ -101,9 +69,7 @@ intersection Matrix := M -> (
 
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors
 posHull Matrix := R -> (
-   << "Hello." << endl;
    r := ring R;
-   << ring << endl;
    -- Generating the zero lineality space LS
    LS := map(target R, r^1,0);
    posHull(R,LS)
@@ -111,14 +77,29 @@ posHull Matrix := R -> (
 
 
 --   INPUT : '(C1,C2)'  two cones
+--   Q: Is this used anywhere?
 posHull(Cone,Cone) := (C1,C2) -> (
-	-- Checking for input errors
-	if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
-	-- Combining the rays and the lineality spaces into one matrix each
-	R := rays(C1) | rays(C2);
-	LS := linSpace(C1) | linSpace(C2);
-	dualgens := fourierMotzkin(R,LS);
-	local genrays;
-	(genrays,dualgens) = fMReplacement(R,dualgens#0,dualgens#1);
---	genrays := fourierMotzkin dualgens;
-	coneBuilder(genrays,dualgens))
+   local iRays;
+   local linealityGens;
+   if hasProperties(C1, {computedRays, computedLinealityBasis}) then (
+      iRays = rays C1;
+      linealityGens = linealitySpace C1;
+   ) else if hasProperties(C1, {inputRays, inputLinealityGenerators}) then (
+      iRays = getProperty(C1, inputRays);
+      linealityGens = getProperty(C1, inputLinealityGenerators);
+   ) else (
+      iRays = rays C1;
+      linealityGens = linealitySpace C1;
+   );
+   if hasProperties(C2, {computedRays, computedLinealityBasis}) then (
+      iRays = iRays | rays C2;
+      linealityGens = linealityGens | linealitySpace C2;
+   ) else if hasProperties(C2, {inputRays, inputLinealityGenerators}) then (
+      iRays = iRays | getProperty(C2, inputRays);
+      linealityGens = linealityGens | getProperty(C2, inputLinealityGenerators);
+   ) else (
+      iRays = iRays | rays C2;
+      linealityGens = linealityGens | linealitySpace C2;
+   );
+   posHull(iRays, linealityGens)
+)

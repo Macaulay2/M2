@@ -35,26 +35,22 @@ intersection(Matrix,Matrix) := (M,N) -> (
 	-- Decide whether 'M,N' gives the Cone C={p | M*p >= 0, N*p = 0}
 	if numColumns M == numColumns N and numColumns N != 1 then (
 		genrays = fourierMotzkin(-transpose M,transpose N);
-		--dualgens = fourierMotzkin genrays;
-		local dualgens;
-		(dualgens,genrays) = fMReplacement(-transpose M,genrays#0,genrays#1);
-		coneBuilder(genrays, dualgens))
+      posHull genrays
 	-- or the Cone C={p | M*p >= N=0}
-	else if numRows N == 0 then (
+	) else if numRows N == 0 then (
 		genrays = fourierMotzkin (-transpose M);
---		dualgens = fourierMotzkin genrays;
-                local dualgens;
-		(dualgens,genrays) = fMReplacement(-transpose M,genrays#0,genrays#1);
-		coneBuilder(genrays,dualgens))
+      posHull genrays
 	-- or the Polyhedron P={p | M*p >= N != 0}
-	else (	-- Computing generators of the Polyhedron and its dual cone
+	) else (	-- Computing generators of the Polyhedron and its dual cone
 		M = -N | M;
 		M = transpose M |  map(source M,QQ^1,(i,j) -> if i == 0 then -1 else 0);
 		verticesA := fourierMotzkin M;
 		--hyperA := fourierMotzkin verticesA;
 		local hyperA;
 		(hyperA,verticesA) = fMReplacement(M,verticesA#0,verticesA#1);
-		polyhedronBuilder(hyperA,verticesA)))
+		polyhedronBuilder(hyperA,verticesA)
+   )
+)
    
 
 

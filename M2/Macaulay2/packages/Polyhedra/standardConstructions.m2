@@ -22,7 +22,7 @@ hirzebruch ZZ := r -> (
 	   ((matrix{{0,-1},{-1,r}},map(ZZ^2,ZZ^0,0)),(matrix{{1,r},{0,1}},map(ZZ^2,ZZ^0,0))),
 	   ((matrix{{1,0},{0,1}},map(ZZ^2,ZZ^0,0)),(matrix{{-1,0},{0,-1}},map(ZZ^2,ZZ^0,0))),
 	   ((matrix{{1,0},{0,-1}},map(ZZ^2,ZZ^0,0)),(matrix{{-1,0},{0,1}},map(ZZ^2,ZZ^0,0)))};
-     L = apply(L,coneBuilder);
+     L = apply(L,posHull);
      F := new Fan from {
 	  "generatingObjects" => set L,
 	  "ambient dimension" => 2,
