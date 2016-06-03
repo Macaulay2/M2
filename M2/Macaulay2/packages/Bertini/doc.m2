@@ -1293,7 +1293,7 @@ doc ///
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
    [bertiniSample, Verbose]
-   [bertiniZeroDimSolve, Verbose]
+ --  [bertiniZeroDimSolve, Verbose]
   Headline
     Option to silence additional output 
   Usage
@@ -1345,7 +1345,7 @@ doc ///
    [bertiniPosDimSolve, IsProjective]
    [bertiniRefineSols, IsProjective]
    [bertiniSample, IsProjective]
-   [bertiniZeroDimSolve, IsProjective]
+--   [bertiniZeroDimSolve, IsProjective]
  Headline
    optional argument to specify whether to use homogeneous coordinates
  Description
@@ -1390,19 +1390,6 @@ doc ///
 
 
 
-doc///
- Key
-   MultiplicityTol
-   [bertiniZeroDimSolve, MultiplicityTol]
- Headline
-   numerical tolerance for grouping solutions   
- Description
-   Text
-     Solutions are grouped using
-     @TO solutionsWithMultiplicity@ from the package @TO NAGtypes@; the option @TO MultiplicityTol@
-     is passed to @TO solutionsWithMultiplicity@ as @TO Tolerance@.  The default value of @TO MultiplicityTol@
-     is 1e-6. 
-///;
 
 
 
@@ -1686,17 +1673,7 @@ doc///
 ///;
 
 
-doc///
- Key
-   ConditionNumTol
-   [bertiniZeroDimSolve, ConditionNumTol]
- Headline
-   numerical tolerance for determining singular status   
- Description
-   Text
-     Endpoint is flagged as singular if multiple paths lead to it or condition number exceeds 
-     @TO ConditionNumTol@. The default value of @TO ConditionNumTol@ is 1e10.
-///;
+
 
 
 doc ///
@@ -1728,32 +1705,6 @@ doc ///
     MaxNumberSteps
     MaxCycleNum
     RegenStartLevel
-    [bertiniZeroDimSolve, MPType]
-    [bertiniZeroDimSolve, PRECISION]
-    [bertiniZeroDimSolve, ODEPredictor]
-    [bertiniZeroDimSolve, TrackTolBeforeEG]
-    [bertiniZeroDimSolve, TrackTolDuringEG]
-    [bertiniZeroDimSolve, FinalTol]
-    [bertiniZeroDimSolve, MaxNorm]
-    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
-    [bertiniZeroDimSolve, MinStepSizeDuringEG]
-    [bertiniZeroDimSolve, ImagThreshold]
-    [bertiniZeroDimSolve, CoeffBound]
-    [bertiniZeroDimSolve, DegreeBound]
-    [bertiniZeroDimSolve, CondNumThreshold]
-    [bertiniZeroDimSolve, RandomSeed]
-    [bertiniZeroDimSolve, SingValZeroTol]
-    [bertiniZeroDimSolve, EndGameNum]
-    [bertiniZeroDimSolve, UseRegeneration]
-    [bertiniZeroDimSolve, SecurityLevel]
-    [bertiniZeroDimSolve, ScreenOut]
-    [bertiniZeroDimSolve, OutputLevel]
-    [bertiniZeroDimSolve, StepsForIncrease]
-    [bertiniZeroDimSolve, MaxNewtonIts]
-    [bertiniZeroDimSolve, MaxStepSize]
-    [bertiniZeroDimSolve, MaxNumberSteps]
-    [bertiniZeroDimSolve, MaxCycleNum]
-    [bertiniZeroDimSolve, RegenStartLevel]
     [bertiniComponentMemberTest, MPType]
     [bertiniComponentMemberTest, PRECISION]
     [bertiniComponentMemberTest, ODEPredictor]
@@ -2354,3 +2305,57 @@ doc ///
      When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
 ///;
 
+
+doc///
+ Key
+   MultiplicityTol
+   [bertiniZeroDimSolve, MultiplicityTol]
+ Headline
+   numerical tolerance for grouping solutions   
+ Description
+   Text
+     Solutions are grouped using
+     @TO solutionsWithMultiplicity@ from the package @TO NAGtypes@; the option @TO MultiplicityTol@
+     is passed to @TO solutionsWithMultiplicity@ as @TO Tolerance@.  The default value of @TO MultiplicityTol@
+     is 1e-6. 
+///;
+
+doc///
+ Key
+   ConditionNumTol
+   [bertiniZeroDimSolve, ConditionNumTol]
+ Headline
+   numerical tolerance for determining singular status   
+ Description
+   Text
+     Endpoint is flagged as singular if multiple paths lead to it or condition number exceeds 
+     @TO ConditionNumTol@. The default value of @TO ConditionNumTol@ is 1e10.
+///;
+
+
+    [bertiniZeroDimSolve, MPType]
+    [bertiniZeroDimSolve, PRECISION]
+    [bertiniZeroDimSolve, ODEPredictor]
+    [bertiniZeroDimSolve, TrackTolBeforeEG]
+    [bertiniZeroDimSolve, TrackTolDuringEG]
+    [bertiniZeroDimSolve, FinalTol]
+    [bertiniZeroDimSolve, MaxNorm]
+    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
+    [bertiniZeroDimSolve, MinStepSizeDuringEG]
+    [bertiniZeroDimSolve, ImagThreshold]
+    [bertiniZeroDimSolve, CoeffBound]
+    [bertiniZeroDimSolve, DegreeBound]
+    [bertiniZeroDimSolve, CondNumThreshold]
+    [bertiniZeroDimSolve, RandomSeed]
+    [bertiniZeroDimSolve, SingValZeroTol]
+    [bertiniZeroDimSolve, EndGameNum]
+    [bertiniZeroDimSolve, UseRegeneration]
+    [bertiniZeroDimSolve, SecurityLevel]
+    [bertiniZeroDimSolve, ScreenOut]
+    [bertiniZeroDimSolve, OutputLevel]
+    [bertiniZeroDimSolve, StepsForIncrease]
+    [bertiniZeroDimSolve, MaxNewtonIts]
+    [bertiniZeroDimSolve, MaxStepSize]
+    [bertiniZeroDimSolve, MaxNumberSteps]
+    [bertiniZeroDimSolve, MaxCycleNum]
+    [bertiniZeroDimSolve, RegenStartLevel]

@@ -228,22 +228,67 @@ needsPackage "SimpleDoc"
 -- bertiniSolve then does all the work of building the input file, 
 -- calling bertini, and calling the appropriate output parser. 
 
-bertiniZeroDimSolve = method(TypicalValue => List, Options=>{Verbose=>true, 
-	MultiplicityTol=>1e-6, ConditionNumTol=>1e10,MPType=>-1,
-	PRECISION=>-1,IsProjective=>-1,ODEPredictor=>-1,TrackTolBeforeEG=>-1,
-	TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,MinStepSizeBeforeEG=>-1,
-	MinStepSizeDuringEG=>-1,ImagThreshold=>-1,CoeffBound=>-1,DegreeBound=>-1,
-	CondNumThreshold=>-1,RandomSeed=>-1,SingValZeroTol=>-1,EndGameNum=>-1,
-	UseRegeneration=>-1,SecurityLevel=>-1,ScreenOut=>-1,OutputLevel=>-1,
-	StepsForIncrease=>-1,MaxNewtonIts=>-1,MaxStepSize=>-1,MaxNumberSteps=>-1,
-	MaxCycleNum=>-1,RegenStartLevel=>-1})
-bertiniZeroDimSolve List := o -> F -> (  
---F is the list of polynomials.
-         L := {runType=>0};
-         o2 := new OptionTable from L;
-         o3 := o ++ o2;
-         bertiniSolve(F,o3)
-         ) 
+bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
+    	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
+    	TopDirectory=>storeBM2Files,
+	B'Configs=>{},
+	AffVariableGroup=>{},
+	HomVariableGroup=>{},
+      	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
+      	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
+      	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
+    	NameSolutionsFile=>"raw_data",
+    	NameMainDataFile=>"main_data"
+	} )
+bertiniZeroDimSolve(List) := o -> (myPol) ->(        
+    --myPol are your polynomial system that you want to solve.
+--%%--Bertini is text based. So directories have to be specified to store these text files which are read by Bertini. 
+--%%%%--When loading Bertini.m2 a temporary directory is made where files are stored by default: storeBM2Files. 
+--%%%%--To change the default directory, set the TopDirectory option to the directory you would like.
+  myTopDir:=o.TopDirectory;
+--%%-- We set AffVariableGroup and HomVariableGroup. If the user does not specify these groups then AffVariableGroup is taken to be the generators of the ring the first element of myPol. 
+  myAVG:= o.AffVariableGroup;
+  myHVG:= o.HomVariableGroup;
+  if myAVG==={} and myHVG==={} 
+  then (
+    if not member (class first myPol,{String,B'Section,B'Slice,Product})
+    then (myAVG=gens ring first myPol)
+  else error"AffVariableGroup or HomVariableGroup need to be set. "    );
+--  print myAVG;
+--  print myHVG;
+--%%-- We use the makeB'InputFile method to write a Bertini file. 
+  makeB'InputFile(myTopDir,
+    B'Polynomials=>myPol,
+    AffVariableGroup=>myAVG,
+    HomVariableGroup=>myHVG,
+--%%--These are extra options the user can specify. For more information refer to their documentation.
+    B'Configs=>o.B'Configs,
+    RandomComplex=>o.RandomComplex,--A list or a list of list of symbols that denote random complex numbers.
+    RandomReal=>o.RandomReal, --A list or a list of list of symbols that denote random real numbers.
+    B'Constants=>o.B'Constants,--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
+    B'Functions=>o.B'Functions--A list of pairs consisting of a name and a polynomial.  	
+    );
+--%%--Check for some errors.
+--%%%%--
+  if o.NameSolutionsFile=!="raw_data" and o.OutputSyle=!="OutSolutions" 
+  then error"If NameSolutionsFile is set then OutputSyle should be set to OutSolutions. ";
+--%%--We call Bertini and solve the zero dimensional system. 
+    successRun:=runBertini(myTopDir);
+--    print successRun;
+--%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called theSols below.
+--%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
+    if o.OutputSyle==="OutPoints" 
+    then theSols:=importMainDataFile(myTopDir,NameMainDataFile=>o.NameMainDataFile);
+    if o.OutputSyle==="OutSolutions" 
+    then theSols=importSolutionsFile(myTopDir,NameSolutionsFile=>o.NameSolutionsFile,OrderPaths=>true);
+--
+    if o.OutputSyle=!="OutNone"
+    then return theSols)   
+         
+--For zero dim solve OutStyle and NameSolutionsFile need to both be changed.
+--Do an error for this. 
+
  
 bertiniPosDimSolve = method(TypicalValue => NumericalVariety, Options=>{
 	Verbose=>true,MPType=>-1,PRECISION=>-1,
@@ -400,7 +445,7 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
       runNumber=runNumber+1
       );
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called allSols below.
---%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or nonsingular_solutions files. 
+--%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
     allSols:={};
     if o.OutputSyle==="OutPoints" 
     then for i from 0 to #myParValues-1 do allSols=allSols|{importMainDataFile(myTopDir,NameMainDataFile=>"ph_jade_"|i)};
@@ -1460,7 +1505,7 @@ checkMultiplicity=(listOfPoints)->(
 makeB'InputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
-	B'Configs=>{}, --This option is a list of pairs of strings. These will be written in the CONFIG part of the Bertini input file. 
+	B'Configs=>{}, --This option is a list of pairs of strings or options. These will be written in the CONFIG part of the Bertini input file. 
 --For different functions using Bertini one must state "homogeneous variable groups", "affine variable groups", "parameters", "variables", or "path variables".
 	HomVariableGroup=>{}, --A list  of homogeneous variable groups or a list of list of homogeneous variable groups
 	AffVariableGroup=>{}, --A list  of affine variable groups or a list of list of affine variable groups.
@@ -1497,8 +1542,10 @@ makeB'InputFile(String) := o ->(IFD)->(
 --The first part of a Bertini input file is the configurations.  We write the configuratiosn followed by a line "%%%ENDCONFIG;". We use this line as marker to write configurations after writing the initial file. 
      openedInputFile << "CONFIG" << endl << endl;
      for oneConfig in o.B'Configs do (
-	 openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl
-	 );
+       if class oneConfig===Option 
+       then openedInputFile << toString((toList oneConfig)_0) << " : " << toString((toList oneConfig)_1) << " ; " << endl
+       else if class oneConfig===List then openedInputFile << toString(oneConfig_0) << " : " << toString(oneConfig_1) << " ; " << endl	 
+       else error("B'Config has an unreadable element: "|toString oneConfig));
      openedInputFile <<  endl << "%%%ENDCONFIG;" << endl;
      openedInputFile << "END;" << endl << endl;
 --The second part of a Bertini input file is the INPUT.     
