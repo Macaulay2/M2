@@ -2,7 +2,7 @@ TO DO List
 
 * Basic Functions
  * Constructors (human-readable, other formats?
-** Access functions (say, species, complexes, etc)
+ * Access functions (say, species, complexes, etc)
 ** CHanging alphabets
 ** (maybe) Higher level service functions (elimination, etc)
 
