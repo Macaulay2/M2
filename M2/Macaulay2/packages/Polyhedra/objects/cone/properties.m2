@@ -137,11 +137,9 @@ compute#Cone#computedHilbertBasis Cone := C -> (
       inputMatrix = transpose facets C;
    );
    hb := transpose hilbertBasis(inputMatrix, InputType=>"lattice");
-   << hb << endl;
-   << target hb << endl;
-   << target inputMatrix << endl;
-   result := apply(0..(numcols hb - 1), i -> solve(transpose inputMatrix, promote(matrix hb_i, QQ)));
-   toList apply(result, r-> lift(r, ZZ))
+   r := ring inputMatrix;
+   result := apply(0..(numColumns hb - 1), i -> (promote(matrix hb_i, r)) // (transpose inputMatrix));
+   toList result
 )
 
 

@@ -40,18 +40,32 @@ coneBuilder = (genrays,dualgens) -> (
 
 
 
-coneFromRays = method(TypicalValue => Cone)
-coneFromRays(Matrix, Matrix) := (iRays, linealityGenerators) -> (
+
+coneFromRayData = method(TypicalValue => Cone)
+coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      -- checking for input errors
      if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
      result := new Cone from {
          ambientDimension => numRows iRays,
          symbol cache => new CacheTable
      };
-     setProperty(result, inputRays, iRays);
-     setProperty(result, inputLinealityGenerators, linealityGenerators);
+     setProperty(result, computedRays, iRays);
+     setProperty(result, computedLinealityBasis, linealityGenerators);
      result
 )
+
+coneFromFacetData = method(TypicalValue => Cone)
+coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
+   if numColumns ineq =!= numColumns eq then error("facets and hyperplanes must lie in same space");
+   result := new Cone from {
+      ambientDimension => numColumns ineq,
+      symbol cache => new CacheTable
+   };
+   setProperty(result, computedFacets, ineq);
+   setProperty(result, computedHyperplanes, eq);
+   result
+)
+
 
 
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
@@ -65,25 +79,35 @@ posHull = method(TypicalValue => Cone)
 -- COMMENT : The description by rays and lineality space is stored in C as well 
 --		 as the description by defining half-spaces and hyperplanes.
 posHull(Matrix,Matrix) := (Mrays,LS) -> (
-   coneFromRays(Mrays, LS)
+   if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
+   result := new Cone from {
+      ambientDimension => numRows Mrays,
+      symbol cache => new CacheTable
+   };
+   setProperty(result, inputRays, Mrays);
+   setProperty(result, inputLinealityGenerators, LS);
+   result
 )
 
---     Mrays = chkZZQQ(Mrays,"rays");
---     LS = chkZZQQ(LS,"lineality space");
---     -- Computing generators of the cone and its dual cone
---     dualgens := fourierMotzkin(Mrays,LS);
---     local genrays;
---     (genrays,dualgens) = fMReplacement(Mrays,dualgens#0,dualgens#1);
-----     genrays := fourierMotzkin dualgens;
---     coneBuilder(genrays,dualgens))
+--   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
+--  OUTPUT : 'C', the Cone
+intersection Matrix := M -> (
+   r := ring M;
+   N := transpose map(source M, r^1, 0); 
+   intersection(M, N)
+)
+
 
 
 --   INPUT : 'R'  a Matrix containing the generating rays as column vectors
 posHull Matrix := R -> (
-     R = chkZZQQ(R,"rays");
-     -- Generating the zero lineality space LS
-     LS := map(target R,QQ^1,0);
-     posHull(R,LS))
+   << "Hello." << endl;
+   r := ring R;
+   << ring << endl;
+   -- Generating the zero lineality space LS
+   LS := map(target R, r^1,0);
+   posHull(R,LS)
+)
 
 
 --   INPUT : '(C1,C2)'  two cones

@@ -1,7 +1,5 @@
 
 
--- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
-intersection = method()
 
 --   INPUT : '(M,v,N,w)',  where all four are matrices (although v and w are only vectors), such
 --     	    	      	  that the polyhedron is given by P={x | Mx<=v and Nx=w} 
@@ -74,17 +72,6 @@ intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
 	intersection(M,v,N,w))
 
 
---   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
---  OUTPUT : 'C', the Cone
-intersection Matrix := M -> (
-	-- Checking for input errors
-	M = chkZZQQ(M,"half-spaces");
-	-- Computing generators of the cone and its dual cone
-	genrays := fourierMotzkin (-transpose M);
-	--dualgens := fourierMotzkin genrays;
-	local dualgens;
-	(dualgens,genrays) = fMReplacement(-transpose M,genrays#0,genrays#1);
-	coneBuilder(genrays,dualgens))
 
 
 

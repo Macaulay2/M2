@@ -32,3 +32,6 @@ boundaryMap = method(TypicalValue => Matrix)
 -- PURPOSE : Computing the sublattice basis for a given matrix of lattice points or for the lattice points
 --     	     of a given polytope
 sublatticeBasis = method(TypicalValue => Matrix)
+
+-- PURPOSE : Computing a polyhedron as the intersection of affine half-spaces and hyperplanes
+intersection = method()
