@@ -118,3 +118,13 @@ assert(abs imaginaryPart(S2_0#Coordinates_1)<1e-8)
       
     
 
+---test M2Precision
+s1= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},M2Precision=>300,OutputSyle=>"OutSolutions")
+s2= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},M2Precision=>300)
+s3= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")
+s4= bertiniZeroDimSolve({"(x^2-3+ii)"},B'Configs=>{{FinalTol,1e-100}},UseRegeneration=>1,AffVariableGroup=>{x})
+
+assert(#toExternalString(s1_0_0)>190)
+assert(#toExternalString(s3_0_0)<190)
+assert(#toExternalString((coordinates (s2_0))_0)>190)
+assert(#toExternalString((coordinates (s4_0))_0)<190)
