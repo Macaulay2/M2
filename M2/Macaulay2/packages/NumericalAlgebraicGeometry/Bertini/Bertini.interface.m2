@@ -20,9 +20,9 @@ fromRingXbertini (List,Ring) := (F,R) -> (
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
     opt := {
-	TRACKTOLBEFOREEG=>o.CorrectorTolerance,
-	TRACKTOLDURINGEG=>o.CorrectorTolerance*o.EndZoneFactor,
-	FINALTOL=>o.CorrectorTolerance*o.EndZoneFactor,
+	TrackTolBeforeEG=>o.CorrectorTolerance,
+	TrackTolDuringEG=>o.CorrectorTolerance*o.EndZoneFactor,
+	FinalTol=>o.CorrectorTolerance*o.EndZoneFactor,
 	Verbose=>false	
 	};
     new OptionTable from opt -- TODO: write all options
