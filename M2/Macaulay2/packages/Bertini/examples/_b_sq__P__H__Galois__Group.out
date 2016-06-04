@@ -16,7 +16,7 @@ o2 : R
 
 i3 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
 
-o3 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59725-0/0/input
+o3 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69660-0/0/input
 
 o3 : File
 
@@ -27,19 +27,19 @@ i5 : TCoordinates=importSolutionsFile(storeBM2Files)/last
 
 o5 = {1.40741-.828173*ii, 1.40741+.828173*ii, 1.40741-.828173*ii,
      ------------------------------------------------------------------------
-     1.40741+.828173*ii, 3.15181e-17+1.66982e-18*ii}
+     -2.538e-19+1.62459e-17*ii, 1.40741+.828173*ii}
 
 o5 : List
 
 i6 : TBranchPoints=radicalList(TCoordinates)
 
-o6 = {1.40741-.828173*ii, 1.40741+.828173*ii, 3.15181e-17+1.66982e-18*ii}
+o6 = {1.40741-.828173*ii, 1.40741+.828173*ii, -2.538e-19+1.62459e-17*ii}
 
 o6 : List
 
 i7 : makeB'InputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
 
-o7 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59725-0/0/input
+o7 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69660-0/0/input
 
 o7 : File
 
@@ -52,23 +52,23 @@ i9 : b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints)
 ~/bertini
 ~/bertini
 ~/bertini
+(gg, [2, 1, 3, 5, 4, 6])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
 (gg, [3, 2, 1, 6, 5, 4])
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
-(gg, [1, 3, 2, 4, 6, 5])
-~/bertini
-~/bertini
-~/bertini
-~/bertini
-~/bertini
-(gg, [1, 2, 6, 4, 5, 3])
+(gg, [4, 2, 3, 1, 5, 6])
 There were 0 loop failures.
-/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59725-0/0/gggFile
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69660-0/0/gggFile
 
-o9 = [[3, 2, 1, 6, 5, 4], [1, 3, 2, 4, 6, 5], [1, 2, 6, 4, 5, 3]]
+o9 = [[2, 1, 3, 5, 4, 6], [3, 2, 1, 6, 5, 4], [4, 2, 3, 1, 5, 6]]
 
 o9 : Array
 
@@ -78,23 +78,23 @@ i10 : b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints,LoopRadius=>.5)
 ~/bertini
 ~/bertini
 ~/bertini
-(gg, [3, 2, 4, 6, 5, 1])
+(gg, [2, 1, 3, 5, 4, 6])
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
-(gg, [1, 3, 2, 4, 6, 5])
+(gg, [3, 2, 1, 6, 5, 4])
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
 ~/bertini
-(gg, [1, 2, 6, 4, 5, 3])
+(gg, [4, 2, 3, 1, 5, 6])
 There were 0 loop failures.
-/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59725-0/0/gggFile
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69660-0/0/gggFile
 
-o10 = [[3, 2, 4, 6, 5, 1], [1, 3, 2, 4, 6, 5], [1, 2, 6, 4, 5, 3]]
+o10 = [[2, 1, 3, 5, 4, 6], [3, 2, 1, 6, 5, 4], [4, 2, 3, 1, 5, 6]]
 
 o10 : Array
 

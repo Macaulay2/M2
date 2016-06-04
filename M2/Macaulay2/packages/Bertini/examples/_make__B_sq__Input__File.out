@@ -9,7 +9,7 @@ o1 : PolynomialRing
 
 i2 : theDir = temporaryFileName()
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59536-0/1
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69471-0/1
 
 i3 : makeDirectory theDir
 
@@ -18,7 +18,7 @@ i4 : makeB'InputFile(theDir,
          AffVariableGroup=>{{x1,x2},{y}},
          B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
 
-o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59536-0/1/input
+o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69471-0/1/input
 
 o4 : File
 
@@ -38,7 +38,7 @@ i6 : makeB'InputFile(theDir,
              {f2,x1-x2+1},
              {f3,y-2}})
 
-o6 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59536-0/1/input
+o6 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69471-0/1/input
 
 o6 : File
 
@@ -55,7 +55,7 @@ i8 : makeB'InputFile(theDir,
          B'Functions=>{
              {X,x1+x2+1}})
 
-o8 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59536-0/1/input
+o8 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69471-0/1/input
 
 o8 : File
 

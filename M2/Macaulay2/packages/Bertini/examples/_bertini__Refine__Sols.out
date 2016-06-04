@@ -15,7 +15,7 @@ o3 = {{1.41421, 1.41421}, {1.41421, -1.41421}, {-1.41421, 1.41421},
 o3 : List
 
 i4 : S = bertiniRefineSols (100, F, sols)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59520-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69455-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -39,7 +39,9 @@ o5 : List
 i6 : coords_0
 
 o6 = -1.414213562373095048801688724209698078569671875376948073176679737990732
-     478462107038850387534327641573
+     478462107038850387534327641573+
+     2.2683359790184664688943187941086830399917729825101016213736920097960621
+     9988440527434413387081876436e-317*ii
 
 o6 : CC (of precision 333)
 

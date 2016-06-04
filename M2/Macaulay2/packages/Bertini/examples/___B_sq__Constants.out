@@ -13,7 +13,7 @@ i2 : makeB'InputFile(storeBM2Files,
          B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
          B'Polynomials=>{a*z^2+b*z+c})
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59649-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69584-0/0/input
 
 o2 : File
 

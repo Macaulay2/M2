@@ -120,7 +120,7 @@ i20 : makeB'InputFile(storeBM2Files,
         AffVariableGroup=>{x,y},
         B'Polynomials=>{f,s1})
 
-o20 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59530-0/0/input
+o20 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69465-0/0/input
 
 o20 : File
 

@@ -14,7 +14,7 @@ i2 : makeB'InputFile(storeBM2Files,
          B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
 Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-59514-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-69449-0/0/input
 
 o2 : File
 
