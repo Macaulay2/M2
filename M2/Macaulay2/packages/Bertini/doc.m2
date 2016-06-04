@@ -12,7 +12,8 @@ doc ///
       Interfaces the functionality of the software {\tt Bertini}
       to solve polynomial systems and perform calculations in
       {\em numerical algebraic geometry}. The software is available at
-      @HREF"http://www.nd.edu/~sommese/bertini/"@.
+      @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
+      D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
       The user may place the executable program {\tt bertini} in the executation path. 
       Alternatively, the path to the executable needs to be specified, for instance,
