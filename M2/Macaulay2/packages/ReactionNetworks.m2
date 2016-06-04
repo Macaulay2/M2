@@ -45,6 +45,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     if #complexes != 2 then error "Expected two complexes.";
     i := addComplex(first complexes, Rn);
     j := addComplex(last complexes, Rn);
+    Rn.ReactionGraph = addVertices(Rn.ReactionGraph, {i,j});
     delim = concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
