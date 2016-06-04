@@ -105,7 +105,7 @@ export {
   "StartParameterFileDirectory",  
   "B'Exe",
   "NumberToB'String",
-  "UsePrecision",--needs doc
+  "M2Precision",--needs doc
   "writeParameterFile",
   "writeStartFile",  
   "importParameterFile",   --need doc
@@ -248,7 +248,8 @@ bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
       	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
       	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
     	NameSolutionsFile=>"raw_solutions",
-    	NameMainDataFile=>"main_data"
+    	NameMainDataFile=>"main_data",
+	M2Precision=>53
 	} )
 bertiniZeroDimSolve(List) := o -> (myPol) ->(        
     --myPol are your polynomial system that you want to solve.
@@ -297,6 +298,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
     if o.MaxNumberSteps=!=-1 then myConfigs=append(myConfigs,{"MaxNumberSteps",o.MaxNumberSteps});
     if o.MaxCycleNum=!=-1 then myConfigs=append(myConfigs,{"MaxCycleNum",o.MaxCycleNum});
     if o.RegenStartLevel=!=-1 then myConfigs=append(myConfigs,{"RegenStartLevel",o.RegenStartLevel});    
+--    print myConfigs;
 --%%-- We use the makeB'InputFile method to write a Bertini file. 
   makeB'InputFile(myTopDir,
     B'Polynomials=>myPol,
@@ -319,9 +321,9 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called theSols below.
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
     if o.OutputSyle==="OutPoints" 
-    then theSols:=importMainDataFile(myTopDir,NameMainDataFile=>o.NameMainDataFile);
+    then theSols:=importMainDataFile(myTopDir,NameMainDataFile=>o.NameMainDataFile,M2Precision=>o.M2Precision);
     if o.OutputSyle==="OutSolutions" 
-    then theSols=importSolutionsFile(myTopDir,NameSolutionsFile=>o.NameSolutionsFile,OrderPaths=>true);
+    then theSols=importSolutionsFile(myTopDir,NameSolutionsFile=>o.NameSolutionsFile,OrderPaths=>true,M2Precision=>o.M2Precision);
 --
     if o.OutputSyle=!="OutNone"
     then return theSols)   
@@ -435,7 +437,8 @@ bertiniParameterHomotopy = method(TypicalValue => List, Options=>{
       	RandomComplex=>{}, --A list or a list of list of symbols that denote random complex numbers.
       	RandomReal=>{}, --A list or a list of list of symbols that denote random real numbers.
       	B'Constants=>{},--A list of pairs. Each pair consists of a symbol that will be set to a string and a number. 
-      	B'Functions=>{}--A list of pairs consisting of a name and a polynomial.  	
+      	B'Functions=>{},--A list of pairs consisting of a name and a polynomial.  	
+    	M2Precision=>53
 	} )
 bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValues) ->(
     --myPol are your polynomial system that you want to solve.
@@ -490,9 +493,9 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
     allSols:={};
     if o.OutputSyle==="OutPoints" 
-    then for i from 0 to #myParValues-1 do allSols=allSols|{importMainDataFile(myTopDir,NameMainDataFile=>"ph_jade_"|i)};
+    then for i from 0 to #myParValues-1 do allSols=allSols|{importMainDataFile(myTopDir,M2Precision=>o.M2Precision,NameMainDataFile=>"ph_jade_"|i)};
     if o.OutputSyle==="OutSolutions" 
-    then for i from 0 to #myParValues-1 do allSols=allSols|{importSolutionsFile(myTopDir,NameSolutionsFile=>"ph_jade_"|i,OrderPaths=>true)};
+    then for i from 0 to #myParValues-1 do allSols=allSols|{importSolutionsFile(myTopDir,NameSolutionsFile=>"ph_jade_"|i,OrderPaths=>true,M2Precision=>o.M2Precision)};
 --
     if o.OutputSyle=!="OutNone"
     then return allSols)   
@@ -1809,7 +1812,7 @@ makeMembershipFile = method(TypicalValue => Nothing, Options=>{
 	NameB'InputFile=>"input",
 	StorageFolder=>null,
 	TestSolutions=>{},
-	UsePrecision=>53
+	M2Precision=>53
 		})
 makeMembershipFile(String) := o ->(IFD)->(
     IFD=addSlash(IFD);
@@ -1821,7 +1824,7 @@ makeMembershipFile(String) := o ->(IFD)->(
     if o.TestSolutions=!={} 
     then writeStartFile(IFD,o.TestSolutions,
 	NameStartFile=>o.NameSolutionsFile,
-	UsePrecision=>o.UsePrecision	);	
+	M2Precision=>o.M2Precision	);	
     if not fileExists(IFD|o.NameSolutionsFile) then error("The file "|o.NameSolutionsFile|" does not exist in "|IFD|". ");
     print (filesGoHere);
     print o.NameSolutionsFile;
@@ -1891,7 +1894,7 @@ b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory 
 	StartParameters=>false,
 	MapPoints=>false,--(List of polynomials or a matrix of polynomials, list of variables)
 	OnlyCalculateTrace=>false,
-	UsePrecision=>53,
+	M2Precision=>53,
 	SubIntoCC=>true,
 	StopBeforeTest=>false
 		})
@@ -1911,23 +1914,23 @@ b'TraceTestImage(String) := o ->(storeFiles)->(
       if false===fileExists(storeFiles|"/"|o.StartPoints) then error"The file "|storeFiles|"/"|o.StartPoints|" does not exist ";
       if o.StartPoints=!="start" then moveB'File(storeFiles,o.StartPoints,"start",CopyB'File=>true)
       );
-    if class o.StartPoints===List then writeStartFile(storeFiles,o.StartPoints, UsePrecision=>o.UsePrecision);
-    if o.StartParameters=!=false then writeParameterFile(storeFiles,o.StartParameters,UsePrecision=>o.UsePrecision,NameParameterFile=>"start_parameters");
+    if class o.StartPoints===List then writeStartFile(storeFiles,o.StartPoints, M2Precision=>o.M2Precision);
+    if o.StartParameters=!=false then writeParameterFile(storeFiles,o.StartParameters,M2Precision=>o.M2Precision,NameParameterFile=>"start_parameters");
     if o.StartParameters===false then (
       if false===fileExists(storeFiles|"/"|"start_parameters") then error"The file "|storeFiles|"/"|"start_parameters"|" does not exist "
       );
-    startParameters:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision);
+    startParameters:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters",M2Precision=>o.M2Precision);
     if OnlyCalculateTrace=!=true then (
-      writeParameterFile(storeFiles,{first startParameters+o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",UsePrecision=>o.UsePrecision);
+      writeParameterFile(storeFiles,{first startParameters+o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
       runBertini(storeFiles);
       moveB'File(storeFiles,"nonsingular_solutions","traceF");--F is for Forward
-      writeParameterFile(storeFiles,{first startParameters-o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",UsePrecision=>o.UsePrecision);
+      writeParameterFile(storeFiles,{first startParameters-o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
       runBertini(storeFiles);
       moveB'File(storeFiles,"nonsingular_solutions","traceB");--B is for Backward
       );
-    solsF:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceF",UsePrecision=>o.UsePrecision);
-    solsC:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start",UsePrecision=>o.UsePrecision);
-    solsB:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceB",UsePrecision=>o.UsePrecision);
+    solsF:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceF",M2Precision=>o.M2Precision);
+    solsC:=importSolutionsFile(storeFiles,NameSolutionsFile=>"start",M2Precision=>o.M2Precision);
+    solsB:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceB",M2Precision=>o.M2Precision);
     if o.MapPoints=!=false then (
       functionMapPoints:=(o.MapPoints)_0;
       varsMapPoints:=(o.MapPoints)_1;    
@@ -1971,7 +1974,7 @@ readFile(String) := o ->(filesGoHere)->(
  
 
 valueBM2=method(TypicalValue=>String,Options=>{
-	UsePrecision=>53})
+	M2Precision=>53})
 valueBM2(String) := o->(aString)->(
     if class aString =!=String 
     then error"Input should be a string. ";
@@ -1983,15 +1986,15 @@ valueBM2(String) := o->(aString)->(
       if #coordRealPart===1 then coordRealPart=append(coordRealPart,"0");
       if #coordImagPart===1 then coordImagPart=append(coordImagPart,"0");
       oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
-      return (value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))+
-	ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
+      return (value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))+
+	ii*value((oneCoord_2)|"p"|o.M2Precision|"e"|toString(value(oneCoord_3)))
 	  ))
     else if #sepSpaces===1 
     then (
       coordRealPart=select("[0-9.+-]+",sepSpaces_0);
       if #coordRealPart===1 then coordRealPart=append(coordRealPart,"0");
       oneCoord={coordRealPart_0,coordRealPart_1};
-      return	(value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))
+      return	(value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))
 	  ))
     else error"String formatted incorrectly. "
     );
@@ -2019,7 +2022,7 @@ importSliceFile(String) := o->(aString)->(
     )
   
 importMainDataFile=method(TypicalValue=>String,Options=>{
-	UsePrecision=>53,
+	M2Precision=>53,
 	NameMainDataFile=>"main_data",
 	SpecifyDim=>false})
 importMainDataFile(String) := o->(aString)->(
@@ -2081,7 +2084,7 @@ importMainDataFile(String) := o->(aString)->(
       --coordinaes
       theCoords:={};
       for i to theNumberOfVariables-1 do(
-	  theCoords=append(theCoords,valueBM2(allInfo_(i+10)) ) );
+	  theCoords=append(theCoords,valueBM2(allInfo_(i+10),M2Precision=>o.M2Precision) ) );
       aNewPoint.Coordinates=theCoords;
       --paths with same endpoint
       theLineX:=separate(":",allInfo_(10+theNumberOfVariables));
@@ -2210,18 +2213,18 @@ convertRealNumber=(aNumber)->(
 
 --takes a number and outputs a string to write in a bertini file: ###e# ###e#
 NumberToB'String= method(TypicalValue => Thing, Options=>{
-	UsePrecision=>53})
+	M2Precision=>53})
 NumberToB'String(Thing) := o ->(aNumber)->(
     if class aNumber ===String then print "Warning: String may not  be converted correctly.";
     if class aNumber ===QQ then print "Warning: rational numbers will be converted to floating point.";
     if class aNumber ===String then return aNumber;
-    aCNumber:=sub(aNumber,CC_(o.UsePrecision));
+    aCNumber:=sub(aNumber,CC_(o.M2Precision));
     return(convertRealNumber(realPart aCNumber)|" "|convertRealNumber(imaginaryPart aCNumber))
     )	;  
 
 --takes a number and outputs a string to write in a bertini file: ###e# ###e#
 importParameterFile= method(TypicalValue => String, Options=>{
-	UsePrecision=>53,
+	M2Precision=>53,
 	NameParameterFile=>"final_parameters",
 	StorageFolder=>null})
 importParameterFile(String) := o ->(aString)->(
@@ -2247,8 +2250,8 @@ importParameterFile(String) := o ->(aString)->(
 	if #coordImagPart===1 then coordImagPart=append(coordImagPart,"0");
 	oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
 	collectedCoordinates=append(collectedCoordinates,
-	    value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))+
-	    ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
+	    value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))+
+	    ii*value((oneCoord_2)|"p"|o.M2Precision|"e"|toString(value(oneCoord_3)))
 		   )) else
     if  #i>2  then print ("Warning, a line was not parsed: "|i_0|"...");
     if  #i===1 then   print ("Warning, a line was not parsed: "|i_0|"...");
@@ -2260,7 +2263,7 @@ importParameterFile(String) := o ->(aString)->(
 
 writeParameterFile = method(TypicalValue=>Nothing,Options=>{
 	NameParameterFile=>"final_parameters",
-	UsePrecision=>53,
+	M2Precision=>53,
 	StorageFolder=>null
 	})
 writeParameterFile(String,List) := o ->(IFD,listParameters)->(
@@ -2273,14 +2276,14 @@ writeParameterFile(String,List) := o ->(IFD,listParameters)->(
      PFile:= openOut(filesGoHere|o.NameParameterFile); 
      PFile << toString(length listParameters) << endl << endl;
      for c in listParameters do (
-	 	 PFile <<NumberToB'String(c,UsePrecision=>o.UsePrecision) <<endl
+	 	 PFile <<NumberToB'String(c,M2Precision=>o.M2Precision) <<endl
 	 );
      PFile << endl;      
      close PFile);      
 
 writeStartFile = method(TypicalValue=>Nothing,Options=>{
 	NameStartFile=>"start",
-	UsePrecision=>53,
+	M2Precision=>53,
     	StorageFolder=>null	
 	})
 writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(    
@@ -2295,7 +2298,7 @@ writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(
      for listCoords in listOfListCoords do (
 	 PFile<<endl;
 	 for c in listCoords do(
-             PFile <<NumberToB'String(c,UsePrecision=>o.UsePrecision) <<endl
+             PFile <<NumberToB'String(c,M2Precision=>o.M2Precision) <<endl
 	 ));
      PFile << endl;      
      close PFile);      
@@ -2304,7 +2307,7 @@ writeStartFile(String,List) := o ->(IFD,listOfListCoords) ->(
 
 importSolutionsFile= method(TypicalValue=>Nothing,Options=>{
 	NameSolutionsFile=>"raw_solutions",
-	UsePrecision=>53, OrderPaths=>false,
+	M2Precision=>53, OrderPaths=>false,
 	StorageFolder=>null })
 importSolutionsFile(String) := o -> (importFrom)-> (
     importFrom=addSlash importFrom;
@@ -2338,8 +2341,8 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 	    oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
 --	    print oneCoord;
 	    collectedCoordinates=append(collectedCoordinates,
-	    	value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))+
-	    	ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
+	    	value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))+
+	    	ii*value((oneCoord_2)|"p"|o.M2Precision|"e"|toString(value(oneCoord_3)))
 		   ));
 --	print collectedCoordinates;
     	if  #i>2  then error ("Line was not parsed: "|i_0|"...")));
@@ -2357,8 +2360,8 @@ importSolutionsFile(String) := o -> (importFrom)-> (
 	oneCoord:={coordRealPart_0,coordRealPart_1,coordImagPart_0,coordImagPart_1};
 --	print oneCoord;
 	collectedCoordinates=append(collectedCoordinates,
-	  value((oneCoord_0)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_1)))+
-	    ii*value((oneCoord_2)|"p"|o.UsePrecision|"e"|toString(value(oneCoord_3)))
+	  value((oneCoord_0)|"p"|o.M2Precision|"e"|toString(value(oneCoord_1)))+
+	    ii*value((oneCoord_2)|"p"|o.M2Precision|"e"|toString(value(oneCoord_3)))
 	      ));
 --	print collectedCoordinates;
     	if  #i>2  then error ("Line was not parsed: "|i_0|"...")));
@@ -2637,7 +2640,7 @@ b'PHGaloisGroup=method(TypicalValue=>Thing,Options=>{
   	NumberOfLoops=>1,--This is the number of loops we will perform. 
 	BranchPoints=>{.12415+.34636*ii},
 	NameGaloisGroupGeneratorFile=>"gggFile",
-	UsePrecision=>52,
+	M2Precision=>52,
 	ReturnGaloisGroupGeneratorFile=>true,
     	StorageFolder=>null
 --	SpecifyLoops=>false
@@ -2678,9 +2681,9 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     --We save the start points in a text file by copying it to "ggStartJade" and also in memory as solCollection.
     moveB'File(IFD,"start","ggStartJade",SubFolder=>o.StorageFolder,CopyB'File=>true);
     --Now all computations are done 
-    solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
+    solCollection:= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",M2Precision=>o.M2Precision);
     --We save the start points' parameters as bP in memory rather than a text file. 
-    basePointT:=(importParameterFile(storeFiles,NameParameterFile=>"start_parameters",UsePrecision=>o.UsePrecision));
+    basePointT:=(importParameterFile(storeFiles,NameParameterFile=>"start_parameters",M2Precision=>o.M2Precision));
 --    print basePointT;
     if #basePointT=!=1 then error "The base point downstairs can only have one coordinate. Parameter space should be restricted to a line parameterized by one copy of complex numbers.";
     basePointT=basePointT_0;
@@ -2695,7 +2698,7 @@ b'PHGaloisGroup(String) := o ->(IFD)->(
     --put a radical list warning here:
     gggFile:= openOut(storeFiles|o.NameGaloisGroupGeneratorFile); 
     gggFile << "[" << endl;    	    
-    solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",UsePrecision=>o.UsePrecision);
+    solCollection= importSolutionsFile(storeFiles,NameSolutionsFile=>"ggStartJade",M2Precision=>o.M2Precision);
 --    writeParameterFile(storeFiles,{basePointT},NameParameterFile=>"ggStartParametersJade");
 --    print branchPointsT;
     loopFailures:=0;      
@@ -2929,7 +2932,7 @@ sortMainDataComponents(List) := o ->(importedMD)->(
 subPoint = method(TypicalValue=>List,Options=>{
 	SpecifyVariables=>false,
 	SubIntoCC=>false,
-	UsePrecision=>53
+	M2Precision=>53
 	 })
 subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
     if o.SubIntoCC===true and o.SpecifyVariables=!=false then (
@@ -2942,7 +2945,7 @@ subPoint(Thing,List,Thing) := o ->(polyOrMatrix,listVars,aPoint)->(
       if member(listVars_i,selectedVars) then listVars_i=>coords_i else {}
     );
     if o.SubIntoCC===true then 
-      return sub(afterSub,CC_(o.UsePrecision)) else if
+      return sub(afterSub,CC_(o.M2Precision)) else if
       o.SubIntoCC===false then return afterSub else error"SubIntoCC should be set to true or false.")
  
 

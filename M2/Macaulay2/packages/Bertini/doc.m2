@@ -1201,11 +1201,11 @@ doc ///
  Description
    Text
      This function takes a number as an input then outputs a string to represent this number to Bertini.
-     The numbers are converted to floating point to precision determined by the option UsePrecision.       
+     The numbers are converted to floating point to precision determined by the option M2Precision.       
    Example
      NumberToB'String(2+5*ii)
-     NumberToB'String(1/3,UsePrecision=>16)
-     NumberToB'String(1/3,UsePrecision=>128)
+     NumberToB'String(1/3,M2Precision=>16)
+     NumberToB'String(1/3,M2Precision=>128)
 
 ///;
 
@@ -1224,15 +1224,15 @@ doc ///
  Description
    Text
      This function take a string representing a coordinate in a Bertini solutions file or parameter file and makes a number in CC. 
-     We can adjust the precision using the UsePrecision option.
+     We can adjust the precision using the M2Precision option.
      Fractions should not be in the string s. 
    Example
      valueBM2("1.22e-2 4e-5")
      valueBM2("1.22 4e-5")
      valueBM2("1.22 4")     
      valueBM2("1.22e+2 4 ")           
-     n1=valueBM2("1.11",UsePrecision=>52)
-     n2=valueBM2("1.11",UsePrecision=>300)
+     n1=valueBM2("1.11",M2Precision=>52)
+     n2=valueBM2("1.11",M2Precision=>300)
      toExternalString n1
      toExternalString n2
 ///;
@@ -1268,7 +1268,7 @@ doc ///
      f=z*x+y
      subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
      subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
-	     0,1},SubIntoCC=>true,UsePrecision=>200)
+	     0,1},SubIntoCC=>true,M2Precision=>200)
 
 ///;
 
@@ -1665,6 +1665,8 @@ doc///
    [b'PHMonodromyCollect,NameStartFile]
    [b'PHSequence,NameStartFile]
    NameIncidenceMatrixFile
+   NameStartFile
+   [writeStartFile,NameStartFile]
    [importIncidenceMatrix, NameIncidenceMatrixFile]
    [bertiniZeroDimSolve,NameSolutionsFile]
    [bertiniZeroDimSolve,NameMainDataFile]
@@ -1851,6 +1853,32 @@ doc ///
     [bertiniTrackHomotopy, MaxNumberSteps]
     [bertiniTrackHomotopy, MaxCycleNum]
     [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniZeroDimSolve, MPType]
+    [bertiniZeroDimSolve, PRECISION]
+    [bertiniZeroDimSolve, ODEPredictor]
+    [bertiniZeroDimSolve, TrackTolBeforeEG]
+    [bertiniZeroDimSolve, TrackTolDuringEG]
+    [bertiniZeroDimSolve, FinalTol]
+    [bertiniZeroDimSolve, MaxNorm]
+    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
+    [bertiniZeroDimSolve, MinStepSizeDuringEG]
+    [bertiniZeroDimSolve, ImagThreshold]
+    [bertiniZeroDimSolve, CoeffBound]
+    [bertiniZeroDimSolve, DegreeBound]
+    [bertiniZeroDimSolve, CondNumThreshold]
+    [bertiniZeroDimSolve, RandomSeed]
+    [bertiniZeroDimSolve, SingValZeroTol]
+    [bertiniZeroDimSolve, EndGameNum]
+    [bertiniZeroDimSolve, UseRegeneration]
+    [bertiniZeroDimSolve, SecurityLevel]
+    [bertiniZeroDimSolve, ScreenOut]
+    [bertiniZeroDimSolve, OutputLevel]
+    [bertiniZeroDimSolve, StepsForIncrease]
+    [bertiniZeroDimSolve, MaxNewtonIts]
+    [bertiniZeroDimSolve, MaxStepSize]
+    [bertiniZeroDimSolve, MaxNumberSteps]
+    [bertiniZeroDimSolve, MaxCycleNum]
+    [bertiniZeroDimSolve, RegenStartLevel]
   Headline
     options for methods of Bertini package
   Description
@@ -1959,6 +1987,9 @@ doc ///
 -------------------
 doc ///
  Key
+   StartFileDirectory
+   InputFileDirectory
+   StartParameterFileDirectory
    NumSolBound
    OrderPaths
    NumberOfLoops
@@ -1977,7 +2008,7 @@ doc ///
    UseStartPointsFirst
    MonodromyStartParameters
    B'Exe
-   UsePrecision
+   M2Precision
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
@@ -1994,9 +2025,9 @@ doc ///
    [makeB'InputFile,PathVariable]
    [makeB'InputFile,VariableList]
    [makeMembershipFile,TestSolutions]
-   [makeMembershipFile,UsePrecision]
-   [valueBM2,UsePrecision]
-   [NumberToB'String,UsePrecision]
+   [makeMembershipFile,M2Precision]
+   [valueBM2,M2Precision]
+   [NumberToB'String,M2Precision]
    [makeSampleSolutionsFile,SpecifyComponent]
    [b'PHMonodromyCollect,B'Exe]
    [b'PHMonodromyCollect,MonodromyStartParameters]
@@ -2021,15 +2052,15 @@ doc ///
    [runBertini,PreparePH2]
    [runBertini,TextScripts]
    [importSolutionsFile,OrderPaths]
-   [importSolutionsFile,UsePrecision]
-   [importParameterFile,UsePrecision]
-   [writeParameterFile,UsePrecision]
+   [importSolutionsFile,M2Precision]
+   [importParameterFile,M2Precision]
+   [writeParameterFile,M2Precision]
    [importMainDataFile,SpecifyDim]
-   [importMainDataFile,UsePrecision]
+   [importMainDataFile,M2Precision]
    [b'PHSequence,B'Exe]
    [b'PHSequence,SaveData]
    [makeWitnessSetFiles,SpecifyComponent]
-   [writeStartFile,UsePrecision]
+   [writeStartFile,M2Precision]
    [makeB'Section,B'Homogenization]
    [makeB'Section,ContainsPoint]
    [makeB'Section,RandomCoefficientGenerator]
@@ -2070,16 +2101,16 @@ doc ///
    [moveB'File,SubFolder]
    [b'TraceTestImage,SubIntoCC]
    [subPoint,SubIntoCC]
-   [subPoint,UsePrecision]
+   [subPoint,M2Precision]
    [b'TraceTestImage,B'Exe]
-   [b'TraceTestImage,UsePrecision]
+   [b'TraceTestImage,M2Precision]
    [b'PHGaloisGroup,B'Exe]
    [b'PHGaloisGroup,BranchPoints]
    [b'PHGaloisGroup,MonodromyStartParameters]
    [b'PHGaloisGroup,MonodromyStartPoints]
    [b'PHGaloisGroup,NumberOfLoops]
    [b'PHGaloisGroup,SaveData]
-   [b'PHGaloisGroup,UsePrecision]
+   [b'PHGaloisGroup,M2Precision]
    SpecifyVariables
    MapPoints
    ReturnGaloisGroupGeneratorFile
@@ -2102,6 +2133,7 @@ doc ///
      This option is for a function in version 2. 
      For more information contact Jose Israel Rodriguez at JoIsRo[AT]UChicago.edu.
 ///;
+
 
 
 
@@ -2302,56 +2334,3 @@ doc ///
 ///;
 
 
-doc///
- Key
-   MultiplicityTol
-   [bertiniZeroDimSolve, MultiplicityTol]
- Headline
-   numerical tolerance for grouping solutions   
- Description
-   Text
-     Solutions are grouped using
-     @TO solutionsWithMultiplicity@ from the package @TO NAGtypes@; the option @TO MultiplicityTol@
-     is passed to @TO solutionsWithMultiplicity@ as @TO Tolerance@.  The default value of @TO MultiplicityTol@
-     is 1e-6. 
-///;
-
-doc///
- Key
-   ConditionNumTol
-   [bertiniZeroDimSolve, ConditionNumTol]
- Headline
-   numerical tolerance for determining singular status   
- Description
-   Text
-     Endpoint is flagged as singular if multiple paths lead to it or condition number exceeds 
-     @TO ConditionNumTol@. The default value of @TO ConditionNumTol@ is 1e10.
-///;
-
-
-    [bertiniZeroDimSolve, MPType]
-    [bertiniZeroDimSolve, PRECISION]
-    [bertiniZeroDimSolve, ODEPredictor]
-    [bertiniZeroDimSolve, TrackTolBeforeEG]
-    [bertiniZeroDimSolve, TrackTolDuringEG]
-    [bertiniZeroDimSolve, FinalTol]
-    [bertiniZeroDimSolve, MaxNorm]
-    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
-    [bertiniZeroDimSolve, MinStepSizeDuringEG]
-    [bertiniZeroDimSolve, ImagThreshold]
-    [bertiniZeroDimSolve, CoeffBound]
-    [bertiniZeroDimSolve, DegreeBound]
-    [bertiniZeroDimSolve, CondNumThreshold]
-    [bertiniZeroDimSolve, RandomSeed]
-    [bertiniZeroDimSolve, SingValZeroTol]
-    [bertiniZeroDimSolve, EndGameNum]
-    [bertiniZeroDimSolve, UseRegeneration]
-    [bertiniZeroDimSolve, SecurityLevel]
-    [bertiniZeroDimSolve, ScreenOut]
-    [bertiniZeroDimSolve, OutputLevel]
-    [bertiniZeroDimSolve, StepsForIncrease]
-    [bertiniZeroDimSolve, MaxNewtonIts]
-    [bertiniZeroDimSolve, MaxStepSize]
-    [bertiniZeroDimSolve, MaxNumberSteps]
-    [bertiniZeroDimSolve, MaxCycleNum]
-    [bertiniZeroDimSolve, RegenStartLevel]
