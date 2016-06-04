@@ -227,8 +227,17 @@ needsPackage "SimpleDoc"
 -- toggle (corresp. to the type of run).
 -- bertiniSolve then does all the work of building the input file, 
 -- calling bertini, and calling the appropriate output parser. 
+knownConfigs={
+	MPType=>-1,PRECISION=>-1,ODEPredictor=>-1,
+	TrackTolBeforeEG=>-1,TrackTolDuringEG=>-1,FinalTol=>-1,MaxNorm=>-1,
+	MinStepSizeBeforeEG=>-1,MinStepSizeDuringEG=>-1,ImagThreshold=>-1,
+	CoeffBound=>-1,DegreeBound=>-1,CondNumThreshold=>-1,RandomSeed=>-1,
+	SingValZeroTol=>-1,EndGameNum=>-1,UseRegeneration=>-1,SecurityLevel=>-1,
+	ScreenOut=>-1,OutputLevel=>-1,StepsForIncrease=>-1,MaxNewtonIts=>-1,
+	MaxStepSize=>-1,MaxNumberSteps=>-1,MaxCycleNum=>-1,RegenStartLevel=>-1
+	}
 
-bertiniZeroDimSolve = method(TypicalValue => List, Options=>{
+bertiniZeroDimSolve = method(TypicalValue => List, Options=>knownConfigs|{
     	OutputSyle=>"OutPoints",--{"OutPoints","OutSolutions","OutNone"}--The output can be lists of Points (A muteable hash table), or lists of Solutions (list of complex numbers that are coordinates), or can be None (All information is stored on as a text file in the directory where the computation was ran).
     	TopDirectory=>storeBM2Files,
 	B'Configs=>{},
@@ -257,6 +266,37 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
   else error"AffVariableGroup or HomVariableGroup need to be set. "    );
 --  print myAVG;
 --  print myHVG;
+--%%--We need to set the CONFIGS of the Bertini input file. 
+--%%%%--These CONFIGS come in two flavors: 
+--%%%%--If the same configuration is set twice then Bertini will use the one set last.
+--%%%%--The first is in B'Configs wher we just list the configurations. 
+  myConfigs:=(o.B'Configs);
+--%%%%--The second is as individual options from 'knownConfigs' (search in Beritni.m2 to see the knownConfigs).
+    if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MPType",o.MPType});
+    if o.PRECISION=!=-1 then myConfigs=append(myConfigs,{"PRECISION",o.PRECISION});
+    if o.ODEPredictor=!=-1 then myConfigs=append(myConfigs,{"ODEPredictor",o.ODEPredictor});
+    if o.TrackTolBeforeEG=!=-1 then myConfigs=append(myConfigs,{"TrackTolBeforeEG",o.TrackTolBeforeEG});
+    if o.TrackTolDuringEG=!=-1 then myConfigs=append(myConfigs,{"TrackTolDuringEG",o.TrackTolDuringEG});
+    if o.FinalTol=!=-1 then myConfigs=append(myConfigs,{"FinalTol",o.FinalTol});
+    if o.MinStepSizeBeforeEG=!=-1 then myConfigs=append(myConfigs,{"MaxNorm",o.MaxNorm});
+    if o.MPType=!=-1 then myConfigs=append(myConfigs,{"MinStepSizeBeforeEG",o.MinStepSizeBeforeEG});
+    if o.ImagThreshold=!=-1 then myConfigs=append(myConfigs,{"ImagThreshold",o.ImagThreshold});
+    if o.CoeffBound=!=-1 then myConfigs=append(myConfigs,{"CoeffBound",o.CoeffBound});
+    if o.DegreeBound=!=-1 then myConfigs=append(myConfigs,{"DegreeBound",o.DegreeBound});
+    if o.CondNumThreshold=!=-1 then myConfigs=append(myConfigs,{"CondNumThreshold",o.CondNumThreshold});
+    if o.RandomSeed=!=-1 then myConfigs=append(myConfigs,{"RandomSeed",o.RandomSeed});
+    if o.SingValZeroTol=!=-1 then myConfigs=append(myConfigs,{"SingValZeroTol",o.SingValZeroTol});
+    if o.EndGameNum=!=-1 then myConfigs=append(myConfigs,{"EndGameNum",o.EndGameNum});
+    if o.UseRegeneration=!=-1 then myConfigs=append(myConfigs,{"UseRegeneration",o.UseRegeneration});
+    if o.SecurityLevel=!=-1 then myConfigs=append(myConfigs,{"SecurityLevel",o.SecurityLevel});
+    if o.ScreenOut=!=-1 then myConfigs=append(myConfigs,{"ScreenOut",o.ScreenOut});
+    if o.OutputLevel=!=-1 then myConfigs=append(myConfigs,{"OutputLevel",o.OutputLevel});
+    if o.StepsForIncrease=!=-1 then myConfigs=append(myConfigs,{"StepsForIncrease",o.StepsForIncrease});
+    if o.MaxNewtonIts=!=-1 then myConfigs=append(myConfigs,{"MaxNewtonIts",o.MaxNewtonIts});
+    if o.MaxStepSize=!=-1 then myConfigs=append(myConfigs,{"MaxStepSize",o.MaxStepSize});
+    if o.MaxNumberSteps=!=-1 then myConfigs=append(myConfigs,{"MaxNumberSteps",o.MaxNumberSteps});
+    if o.MaxCycleNum=!=-1 then myConfigs=append(myConfigs,{"MaxCycleNum",o.MaxCycleNum});
+    if o.RegenStartLevel=!=-1 then myConfigs=append(myConfigs,{"RegenStartLevel",o.RegenStartLevel});    
 --%%-- We use the makeB'InputFile method to write a Bertini file. 
   makeB'InputFile(myTopDir,
     B'Polynomials=>myPol,
@@ -1504,6 +1544,9 @@ checkMultiplicity=(listOfPoints)->(
 ---- November 2014 additions
 --FUNCTION 1: makeB'InputFile
 --the input of makeB'InputFile is a string of the directory where we want to write the files.
+
+
+
 makeB'InputFile = method(TypicalValue => String, Options=>{
 	StorageFolder=>null,
 	NameB'InputFile=>"input",  --This option allows us to change the name of the input file that we will make.
