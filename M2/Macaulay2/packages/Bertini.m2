@@ -26,7 +26,6 @@ newPackage(
 ) 
 
 export {
-  "Verbose",
   "OutputSyle",
   "TopDirectory",
   "StorageFolder", 
@@ -199,7 +198,7 @@ export {
   protect ComponentNumber
   protect NVariety
   protect PathVariable
-  protect Parameters
+--  protect Parameters -- used in NAGtypes
   protect ParameterValues
   protect CycleNumber
   protect FunctionResidual

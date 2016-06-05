@@ -23,7 +23,7 @@ toBertiniOptions OptionTable := OptionTable => o -> (
 	TrackTolBeforeEG=>o.CorrectorTolerance,
 	TrackTolDuringEG=>o.CorrectorTolerance*o.EndZoneFactor,
 	FinalTol=>o.CorrectorTolerance*o.EndZoneFactor,
-	Verbose=>false	
+	Verbose=>DBG
 	};
     new OptionTable from opt -- TODO: write all options
     )
