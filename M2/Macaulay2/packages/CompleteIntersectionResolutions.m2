@@ -3074,6 +3074,31 @@ Description
   M = S^1/intersect(ideal"a,b,c", ideal"b,c,d",ideal"c,d,a",ideal"d,a,b")
   prune source S2(0,M)
   prune target S2(0,M)
+ Text
+  At one time DE hoped that, if M were a module over the complete intersection R with
+  residue field k,
+  then the natural map from "complete" Ext module "(widehat Ext)_R(M,k)"
+  to the the S2-ification of Ext_R(M,k) would be surjective; equivalently, if
+  N were a sufficiently negative syzygy of M, then the first local cohomology module
+  of Ext_R(M,k) would be zero. This is false, as shown by the following example:
+ Example
+  needsPackage "CompleteIntersectionResolutions"
+  S = ZZ/101[x_0..x_2];
+  ff = apply(3, i->x_i^2);
+  R = S/ideal ff;
+  M = cokernel matrix {{x_0, x_1*x_2}};
+  b = 5;
+  Mb = prune syzygyModule(-b,M);
+  E = prune evenExtModule Mb;
+  S2map = S2(0,E);
+  SE = prune target S2map;
+  extra = prune coker S2map;
+  KE = prune ker S2map;
+  betti res(Mb, LengthLimit => 10)
+  apply (5, i-> hilbertFunction(i, KE))
+  apply (5, i-> hilbertFunction(i, E))
+  apply (5, i-> hilbertFunction(i, SE))
+  apply (5, i-> hilbertFunction(i, extra))
 SeeAlso
   "IntegralClosure"
   "makeS2"
