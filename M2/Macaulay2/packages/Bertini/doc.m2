@@ -1289,24 +1289,42 @@ doc ///
 doc ///
   Key
    [bertiniTrackHomotopy, Verbose]
---   [bertiniParameterHomotopy, Verbose]
    [bertiniComponentMemberTest, Verbose]
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
    [bertiniSample, Verbose]
- --  [bertiniZeroDimSolve, Verbose]
+   [bertiniZeroDimSolve, Verbose]
+   [bertiniParameterHomotopy, Verbose]
+   [makeB'InputFile, Verbose]
+   [makeMembershipFile, Verbose]
+   [b'PHGaloisGroup,Verbose]
+   [b'PHMonodromyCollect,Verbose]
+   [importIncidenceMatrix,Verbose]
+   [importMainDataFile,Verbose]
+   [importSliceFile,Verbose]
+   [importSolutionsFile,Verbose]
+   [runBertini,Verbose]
   Headline
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
---    bertiniParameterHomotopy(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
-    bertiniZeroDimSolve(...,Verbose=>Boolean)
+    bertiniZeroDimSolve(...,Verbose=>Number)
+    bertiniParameterHomotopy(...,Verbose=>Number)
+    makeB'InputFile(...,Verbose=>Number)
+    makeMembershipFile(...,Verbose=>Number)
+    b'PHGaloisGroup(...,Verbose=>Number)
+    b'PHMonodromyCollect(...,Verbose=>Number)
+    importIncidenceMatrix(...,Verbose=>Number)
+    importMainDataFile(...,Verbose=>Number)
+    importSliceFile(...,Verbose=>Number)
+    importSolutionsFile(...,Verbose=>Number)
+    runBertini(...,Verbose=>Number)
   Description
     Text
-       Use {\tt Verbose=>false} to silence additional output.
+       Use {\tt Verbose=>false} or {\tt Verbose=>0}  to silence additional output.
 ///;
 
 doc ///
