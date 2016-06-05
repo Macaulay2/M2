@@ -1,49 +1,135 @@
--- -*- M2-comint -*- {* hash: 990989090 *}
+-- -*- M2-comint -*- {* hash: 906695289 *}
 
-i1 : R=QQ[x,y]
+i1 : makeB'InputFile(storeBM2Files,
+         AffVariableGroup=>{x,y},
+         B'Polynomials=>{"x^2-1","y^2-4"})
 
-o1 = R
+o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94989-0/0/input
 
-o1 : PolynomialRing
+o1 : File
 
-i2 : makeB'InputFile(storeBM2Files,
-         AffVariableGroup=>{{x,y}},
-         B'Polynomials=>{x^2-1,y^2-4})
-
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/0/input
-
-o2 : File
-
-i3 : runBertini(storeBM2Files)
+i2 : runBertini(storeBM2Files)
 bertini
 
-i4 : R=QQ[x,y]
+i3 : readFile(storeBM2Files)
 
-o4 = R
+o3 = 
+         Bertini(TM) v1.4
+        (October 23, 2013)
 
-o4 : PolynomialRing
+      D.J. Bates, J.D. Hauenstein,
+      A.J. Sommese, C.W. Wampler
 
-i5 : theDir1 = temporaryFileName()
+     (using GMP v4.2.3, MPFR v2.3.1)
 
-o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/1
 
-i6 : makeDirectory theDir1
 
-i7 : theDir2 = temporaryFileName()
+     NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
+     setup the following tolerances appropriately:
+     CoeffBound: 8.201855000000e+00, DegreeBound: 2.000000000000e+00
+     AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
 
-o7 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/2
+     Tracking path 0 of 4
 
-i8 : makeDirectory theDir2
+     Finite Solution Summary
 
-i9 : makeB'InputFile(theDir1,
-         AffVariableGroup=>{{x,y}},
-         B'Polynomials=>{x^2-1,y^2-4})
+     NOTE: nonsingular vs singular is based on condition number and identical endpoints
 
-o9 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98097-0/1/input
+                     | Number of real solns  |  Number of non-real solns     |  Total
+     ------------------------------------------------------------------------------------------
+     Non-singular    |       4               |               0               |   4
+     Singular        |       0               |               0               |   0
+     ------------------------------------------------------------------------------------------
+     Total           |       4               |               0               |   4
 
-o9 : File
 
-i10 : runBertini(theDir2,InputFileDirectory=>theDir1)
+     Finite Multiplicity Summary
+
+       Multiplicity  |  Number of real solns |  Number of non-real solns
+     ------------------------------------------------------------------------------------------
+             1       |       4               |       0
+
+
+     ------------------------------------------------------------------------------------------
+     The following files may be of interest to you:
+
+     main_data:             A human-readable version of the solutions - main output file.
+     raw_solutions:         A list of the solutions with the corresponding path numbers.
+     raw_data:              Similar to the previous, but with the points in Bertini's homogeneous
+                              coordinates along with more information about the solutions.
+     real_finite_solutions: A list of all real finite solutions.
+     finite_solutions:      A list of all finite solutions.
+     nonsingular_solutions: A list of all nonsingular solutions.
+     singular_solutions:    A list of all singular solutions.
+     ------------------------------------------------------------------------------------------
+
+     Paths Tracked: 4
+
+
+i4 : makeB'InputFile(storeBM2Files,
+         AffVariableGroup=>{x,y},
+         B'Polynomials=>{"x^2-1","y^2-4"})
+
+o4 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94989-0/0/input
+
+o4 : File
+
+i5 : runBertini(storeBM2Files,StorageFolder=>"StoreMyFiles")
 bertini
 
-i11 : 
+i6 : readFile(storeBM2Files|"/StoreMyFiles")
+
+o6 = 
+         Bertini(TM) v1.4
+        (October 23, 2013)
+
+      D.J. Bates, J.D. Hauenstein,
+      A.J. Sommese, C.W. Wampler
+
+     (using GMP v4.2.3, MPFR v2.3.1)
+
+
+
+     NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
+     setup the following tolerances appropriately:
+     CoeffBound: 8.201855000000e+00, DegreeBound: 2.000000000000e+00
+     AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
+
+     Tracking path 0 of 4
+
+     Finite Solution Summary
+
+     NOTE: nonsingular vs singular is based on condition number and identical endpoints
+
+                     | Number of real solns  |  Number of non-real solns     |  Total
+     ------------------------------------------------------------------------------------------
+     Non-singular    |       4               |               0               |   4
+     Singular        |       0               |               0               |   0
+     ------------------------------------------------------------------------------------------
+     Total           |       4               |               0               |   4
+
+
+     Finite Multiplicity Summary
+
+       Multiplicity  |  Number of real solns |  Number of non-real solns
+     ------------------------------------------------------------------------------------------
+             1       |       4               |       0
+
+
+     ------------------------------------------------------------------------------------------
+     The following files may be of interest to you:
+
+     main_data:             A human-readable version of the solutions - main output file.
+     raw_solutions:         A list of the solutions with the corresponding path numbers.
+     raw_data:              Similar to the previous, but with the points in Bertini's homogeneous
+                              coordinates along with more information about the solutions.
+     real_finite_solutions: A list of all real finite solutions.
+     finite_solutions:      A list of all finite solutions.
+     nonsingular_solutions: A list of all nonsingular solutions.
+     singular_solutions:    A list of all singular solutions.
+     ------------------------------------------------------------------------------------------
+
+     Paths Tracked: 4
+
+
+i7 : 

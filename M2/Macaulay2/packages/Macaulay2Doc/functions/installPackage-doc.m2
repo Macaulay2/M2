@@ -91,8 +91,8 @@ document {
 	       that cross-reference it."},
 	  CacheExampleOutput => Boolean => {
 	       "whether to cache (newer) example output in a subdirectory of the ", TO2{[newPackage,AuxiliaryFiles],"auxiliary file directory"}, "
-	       named ", TT "examples", ", for use in a future installation.  This value will override any value explicitly specified
-	       when ", TO "newPackage", " is called.  After the directory is created, it will necessary for the user to specify
+	       named ", TT "examples", ", for use in a future installation.  This value, if set to ", TO "true", " or ", TO "false", ", will override any value explicitly specified
+	       when ", TO "newPackage", " is called.  After the directory is created, it will be necessary for the user to specify
 	       ", TT "AuxiliaryFiles=>true", " with the ", TO "newPackage", " command."
 	       },
 	  SeparateExec => Boolean => {
