@@ -7,8 +7,6 @@ needsPackage "ExampleIdeals"
 S = gens cyclicRoots(n,CC)
 R = ring S
 polys = flatten entries S
--- apply(polys, listForm) 
--- L = listForm first polys
 ind = flatten apply(#polys,i-> -- parameteric coefficients 
     apply(exponents polys#i, t->(i,t))
     )
@@ -29,10 +27,13 @@ pre0 = point{toList(n:1_CC)}
 end ----------------------------------------------------------------------------
 
 restart
-n = 10
+n = 5
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system-via-polynomials.m2"
-stop = (n,L)->n>5
+stop = (n,L)->n>1
+getDefault Software
+{*
 setDefault(Software=>PHCPACK)
+*}
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},
     StoppingCriterion=>stop);
 
