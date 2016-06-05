@@ -1,4 +1,4 @@
-// Copyright 2014 Michael E. Stillman
+// Copyright 2014-2016 Michael E. Stillman
 
 #include "f4-monlookup.hpp"
 #include "res-schreyer-frame.hpp"
@@ -201,16 +201,29 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(
 
   for (int lev=1; lev<=length_limit; lev++)
     computeRank(top_degree, lev);
+
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
+      std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
+      std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
+      std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
+      std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
+      std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
+      std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
+    }
   
   BettiDisplay B(mBettiMinimal); // copy
   B.resize(mLoSlantedDegree,
            top_degree,
            length_limit);
+
   return B;
 }
 
 void SchreyerFrame::start_computation(StopConditions& stop)
 {
+  // This is the computation of the non-minimal maps themselves
   decltype(timer()) timeA, timeB;
   //  if (level(0).size() == 0)
   //    mState = Done;;
@@ -226,6 +239,20 @@ void SchreyerFrame::start_computation(StopConditions& stop)
     top_slanted_degree = stop.degree_limit->array[0];
 
   computeSyzygies(top_slanted_degree ,mMaxLength);
+
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
+      std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
+      std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
+      std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
+      std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
+      std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
+      std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
+    }
+  
+  return;
+#if 0  
   if (M2_gbTrace >= 1)
     {
       std::cout << "computation status after computing syzygies: " << std::endl;
@@ -241,19 +268,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
       mComputationStatus.output();
     }
 
-  if (M2_gbTrace >= 1)
-    {
-      std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
-      std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
-      std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
-      std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
-      std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
-      std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
-      std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
-    }
-  
-  return;
-#if 0
+
   // This next part needs to be computed after the frame, as otherwise mHiSlantedDegree isn't yet set.
   int top_slanted_degree = 0;
 
@@ -355,12 +370,23 @@ void SchreyerFrame::start_computation(StopConditions& stop)
   #endif
 }
 
-M2_arrayint SchreyerFrame::getBetti(int type) const
+M2_arrayint SchreyerFrame::getBetti(int type)
 {
   if (type == 4)
-    return mBettiMinimal.getBetti();
+    {
+      computeFrame();
+      decltype(timer()) timeA, timeB;
+      timeA = timer();
+      computeRanks(mHiSlantedDegree, maxLevel());
+      timeB = timer();
+      timeComputeRanks += seconds(timeB-timeA);
+      
+      return mBettiMinimal.getBetti();
+    }
   if (type == 0 or type == 1)
     return getBettiFrame();
+  if (type == 5)
+    return mComputationStatus.getBetti();
   
   ERROR("betti display not implemenented yet");
   return 0;
@@ -807,15 +833,11 @@ void SchreyerFrame::computeSyzygies(int slanted_degree, int maxlevel)
 {
   // Compute everything up to this point
   int toplevel = (maxlevel < maxLevel() ? maxlevel : maxLevel());
-  for (int deg = mLoSlantedDegree; deg < slanted_degree; deg++)
+  for (int deg = mLoSlantedDegree; deg <= slanted_degree; deg++)
     for (int lev=2; lev<=toplevel; lev++)
       {
         fillinSyzygies(deg,lev);
       }
-  for (int lev=2; lev <= maxlevel; lev++)
-    {
-      fillinSyzygies(slanted_degree,lev);
-    }
 }
 void SchreyerFrame::computeRanks(int slanted_degree, int maxlevel)
 {

@@ -112,7 +112,7 @@ public:
   bool debugCheckOrderAll() const;
 
   
-  M2_arrayint getBetti(int type) const;
+  M2_arrayint getBetti(int type); // will compute ranks of matrices, if needed.
   
   void getBounds(int& loDegree, int& hiDegree, int& length) const;
   
