@@ -205,6 +205,19 @@ M2_arrayint F4ResComputation::get_betti(int type) const
   return mComp->getBetti(type);
 }
 
+M2_arrayint F4ResComputation::minimal_betti(M2_arrayint slanted_degree_limit,
+                                            M2_arrayint length_limit)
+{
+  bool stop_after_degree = (slanted_degree_limit->len == 1);
+  int top_slanted_degree = slanted_degree_limit->array[0];
+  int new_length_limit = (length_limit->len == 1 ? length_limit->array[0] : frame().maxLevel()-1);
+  
+  BettiDisplay B = frame().minimalBettiNumbers(stop_after_degree,
+                                               top_slanted_degree,
+                                               new_length_limit);
+  return B.getBetti();
+}
+
 void F4ResComputation::text_out(buffer &o) const
 {
   o << "F4 resolution computation" << newline;

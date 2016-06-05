@@ -33,11 +33,7 @@ public:
   // 'slanted_degree_limit': value is infinity if it has length 0, else it is first entry.
   // then all returned values will be correct for 
   M2_arrayint minimal_betti(M2_arrayint slanted_degree_limit,
-                            M2_arrayint length_limit)
-  {
-    start_computation();
-    return get_betti(4);
-  }
+                            M2_arrayint length_limit);
 protected:
   // These functions override those in ResolutionComputation
   bool stop_conditions_ok() { 

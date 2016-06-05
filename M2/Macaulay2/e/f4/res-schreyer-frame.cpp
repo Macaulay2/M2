@@ -111,17 +111,163 @@ SchreyerFrame::~SchreyerFrame()
   // NO!! what about the frame polynomials??
 }
 
+// Computes the entire frame, unless interrupted.
+// Returns true if whole frame has been completed, otherwise returns false.
+bool SchreyerFrame::computeFrame()
+{
+  if (mState == Initializing)
+    {
+      std::cout << "error: calling computeFrame too soon" << std::endl;
+    }
+  if (mState != Frame) return true; // already computed
+
+  // Uses mCurrentLevel
+  while (mCurrentLevel < mFrame.mLevels.size())
+    {
+      if (M2_gbTrace >= 1)
+        std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
+      if (computeNextLevel() == 0) break; // increments mCurrentLevel
+      //      if (interrupted) return false;
+    }
+
+  // Now change the state of the computation
+
+  mState = Matrices;
+  mCurrentLevel = 2;
+  getBounds(mLoSlantedDegree, mHiSlantedDegree, mMaxLength);
+  mSlantedDegree = mLoSlantedDegree;
+  setBettiDisplays(); // Also sets mMinimalizeTODO
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "non-minimal betti: " << std::endl;
+      mBettiNonminimal.output();
+    }
+
+  //for (int i=0; i<mMinimalizeTODO.size(); i++)
+  //  {
+  //     auto a = mMinimalizeTODO[i];
+  //     std::cout << "(" << a.first << "," << a.second << ") ";
+  //  }
+  // std::cout << std::endl;
+  return true;
+}
+BettiDisplay SchreyerFrame::minimalBettiNumbers(
+                                              bool stop_after_degree,
+                                              int top_slanted_degree,
+                                              int length_limit
+                                              )
+{
+  // The lo degree will be: mLoSlantedDegree.
+  // The highest slanted degree will either be mHiSlantedDegree, or top_slanted_degree (minimum of these two).
+  // The length we need to compute to is either maxLevel(), or length_limit+1.
+  // We set maxlevel to length_limit.  We insist that length_limit <= maxLevel() - 2.
+  // Here is what needs to be computed:
+  //  lo: . . . . . . .
+  //      . . . . . . .
+  /// hi: . . . . . .
+  // Each dot in all rows other than 'hi' needs to have syzygies computed for it.
+  // if hi == mHiSlantedDegree, then we do NOT need to compute syzygies in this last row.
+  //   else we need to compute syzygies in these rows, EXCEPT not at level maxlevel+1
+
+  computeFrame();
+
+  int top_degree; // slanted degree
+  if (stop_after_degree)
+    {
+      top_degree = std::min(top_slanted_degree, mHiSlantedDegree);
+    }
+  else
+    {
+      top_degree = mHiSlantedDegree;
+    }
+  // First: if length_limit is too low, extend the Frame
+  if (length_limit >= maxLevel())
+    {
+      std::cout << "WARNING: cannot extend resolution length" << std::endl;
+      length_limit = maxLevel()-1;
+      // Extend the length of the Frame, change mMaxLength, possibly mHiSlantedDegree
+      // increase mComputationStatus if needed, mMinimalBetti, ...
+      // computeFrame()
+    }
+
+  // What needs to be computed?
+  // lodeg..hideg, level: 0..maxlevel.  Note: need to compute at level maxlevel+1 in order to get min betti numbers at
+  //   level maxlevel.
+  // Also note: if hideg is the highest degree that occurs in the frame, we do not need to compute any matrices for these.
+
+  for (int deg=mLoSlantedDegree; deg <= top_degree-1; deg++)
+    for (int lev=1; lev<=length_limit+1; lev++)
+      computeRank(deg, lev);
+
+  for (int lev=1; lev<=length_limit; lev++)
+    computeRank(top_degree, lev);
+  
+  BettiDisplay B(mBettiMinimal); // copy
+  B.resize(mLoSlantedDegree,
+           top_degree,
+           length_limit);
+  return B;
+}
+
 void SchreyerFrame::start_computation(StopConditions& stop)
 {
   decltype(timer()) timeA, timeB;
-  if (level(0).size() == 0)
-    mState = Done;;
+  //  if (level(0).size() == 0)
+  //    mState = Done;;
+  computeFrame();
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "computation status after computing frame: " << std::endl;
+      mComputationStatus.output();
+    }
+
+  int top_slanted_degree = mHiSlantedDegree;
+  if (stop.stop_after_degree and mHiSlantedDegree > stop.degree_limit->array[0])
+    top_slanted_degree = stop.degree_limit->array[0];
+
+  computeSyzygies(top_slanted_degree ,mMaxLength);
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "computation status after computing syzygies: " << std::endl;
+      mComputationStatus.output();
+    }
+  timeA = timer();
+  computeRanks(mHiSlantedDegree, mMaxLength);
+  timeB = timer();
+  timeComputeRanks += seconds(timeB-timeA);
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "computation status after computing ranks: " << std::endl;
+      mComputationStatus.output();
+    }
+
+  if (M2_gbTrace >= 1)
+    {
+      std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
+      std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
+      std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
+      std::cout << "total time for gauss matrix: " << timeGaussMatrix << std::endl;
+      std::cout << "total time for clear matrix: " << timeClearMatrix << std::endl;
+      std::cout << "total time for reset hash table: " << timeResetHashTable << std::endl; 
+      std::cout << "total time for computing ranks: " << timeComputeRanks << std::endl;
+    }
+  
+  return;
+#if 0
+  // This next part needs to be computed after the frame, as otherwise mHiSlantedDegree isn't yet set.
+  int top_slanted_degree = 0;
+
+  top_slanted_degree = mHiSlantedDegree;
+  if (stop.stop_after_degree and mHiSlantedDegree > stop.degree_limit->array[0])
+    top_slanted_degree = stop.degree_limit->array[0];
+
   while (true)
     {
       switch (mState) {
       case Initializing:
         break;
       case Frame:
+        std::cerr << "ERROR: should not get to this point anymore..." << std::endl;
         if (M2_gbTrace >= 1)
           std::cout << "maxsize = " << mFrame.mLevels.size() << " and mCurrentLevel = " << mCurrentLevel << std::endl;
         if (mCurrentLevel >= mFrame.mLevels.size() or computeNextLevel() == 0)
@@ -149,11 +295,12 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         if (M2_gbTrace >= 1)
           std::cout << "start_computation: entering matrices(" << mSlantedDegree << ", " << mCurrentLevel << ")" << std::endl;
         if (stop.always_stop) return;
+        
         if (mCurrentLevel > mMaxLength)
           {
             mCurrentLevel = 2;
             mSlantedDegree++;
-            if (mSlantedDegree > mHiSlantedDegree)
+            if (mSlantedDegree > top_slanted_degree)
               {
                 if (M2_gbTrace >= 1)
                   showMemoryUsage();
@@ -174,8 +321,8 @@ void SchreyerFrame::start_computation(StopConditions& stop)
                   mBettiMinimal.output();
                  break;
               }
-            if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
-              return;
+            //            if (stop.stop_after_degree and mSlantedDegree > stop.degree_limit->array[0])
+            //              return;
           }
         if (M2_gbTrace >= 2)
           {
@@ -205,6 +352,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
         break;
       }
     }
+  #endif
 }
 
 M2_arrayint SchreyerFrame::getBetti(int type) const
@@ -563,6 +711,13 @@ void SchreyerFrame::show(int len) const
 
 void SchreyerFrame::getBounds(int& loDegree, int& hiDegree, int& length) const
 {
+  if (mFrame.mLevels.size() == 0 or mFrame.mLevels[0].mElements.size() == 0)
+    {
+      loDegree = 0;
+      hiDegree = -1;
+      length = 0;
+      return;
+    }
   auto& lev0 = level(0);
   loDegree = hiDegree = static_cast<int>(lev0[0].mDegree);
   for (int lev=0; lev<mFrame.mLevels.size(); lev++)
@@ -588,7 +743,8 @@ void SchreyerFrame::setBettiDisplays()
   //std::cout << "bounds: lo=" << lo << " hi=" << hi << " len=" << len << std::endl;
   mBettiNonminimal = BettiDisplay(lo,hi,len);
   mBettiMinimal = BettiDisplay(lo,hi,len);
-
+  mComputationStatus = BettiDisplay(lo,hi,maxLevel());
+  
   for (int lev=0; lev<=len; lev++)
     {
       auto& myframe = level(lev);
@@ -600,19 +756,119 @@ void SchreyerFrame::setBettiDisplays()
         }
     }
 
+#if 0  
   // Now set the todo list of pairs (degree, level) for minimalization.
   for (int slanted_degree = lo; slanted_degree < hi; slanted_degree++)
     {
-      for (int lev = 1; lev <= len; lev++)
+      for (int lev = 1; lev <= maxLevel()-1; lev++)
         {
           if (mBettiNonminimal.entry(slanted_degree, lev) > 0 and mBettiNonminimal.entry(slanted_degree+1, lev-1) > 0)
             {
               mMinimalizeTODO.push_back(std::make_pair(slanted_degree, lev));
             }
+          
+        }
+    }
+#endif
+  // Meaning: 0: no syzygies in that (degree,lev)
+  //          1:  there are some, but syzygies have not been constructed yet
+  //          2:  syzygies have been constructed
+  //          3:  syzygies have been constructed AND rank from (deg,lev) to (deg+1,lev-1) has been
+  //              computed, and the ranks taken into account in mMinimalBetti.
+  for (int slanted_degree = lo; slanted_degree <= hi; slanted_degree++)
+    {
+      if (len >= 0)
+        {
+          if (mBettiNonminimal.entry(slanted_degree, 0) == 0)
+            mComputationStatus.entry(slanted_degree, 0) = 0;
+          else
+            mComputationStatus.entry(slanted_degree, 0) = 3;
+        }
+
+      if (len >= 1)
+        {
+          if (mBettiNonminimal.entry(slanted_degree, 1) == 0)
+            mComputationStatus.entry(slanted_degree, 1) = 0;
+          else
+            mComputationStatus.entry(slanted_degree, 1) = 2;
+        }
+      
+      for (int lev = 2; lev <= maxLevel(); lev++)
+        {
+          if ((lev > len) or mBettiNonminimal.entry(slanted_degree, lev) == 0)
+              mComputationStatus.entry(slanted_degree, lev) = 0;
+          else
+              mComputationStatus.entry(slanted_degree, lev) = 1;
         }
     }
 }
 
+void SchreyerFrame::computeSyzygies(int slanted_degree, int maxlevel)
+{
+  // Compute everything up to this point
+  int toplevel = (maxlevel < maxLevel() ? maxlevel : maxLevel());
+  for (int deg = mLoSlantedDegree; deg < slanted_degree; deg++)
+    for (int lev=2; lev<=toplevel; lev++)
+      {
+        fillinSyzygies(deg,lev);
+      }
+  for (int lev=2; lev <= maxlevel; lev++)
+    {
+      fillinSyzygies(slanted_degree,lev);
+    }
+}
+void SchreyerFrame::computeRanks(int slanted_degree, int maxlevel)
+{
+  // Compute all needed ranks to get the minimal Betti numbers in the range
+  // deg <= slanted_degree, lev <=maxlevel.
+  // This means: we need to compute ranks to level maxlevel+1 (or largest that exists)
+  // in degrees <= slanted_degree, EXCEPT we don't need to compute at (slanted_degree,maxlevel+1).
+  int toplevel = (maxlevel < maxLevel() ? maxlevel-1 : mMaxLength);
+  for (int deg=mLoSlantedDegree; deg <=slanted_degree; deg++)
+    for (int lev=1; lev<=toplevel; lev++)
+      computeRank(deg, lev);
+}
+void SchreyerFrame::fillinSyzygies(int slanted_deg, int lev)
+{
+  // Fill in syzygies of slanted degree mSlantedDegree, at level mCurrentLevel = 2.
+  // Assumption/prereq: 
+  // Compute the matrix at this level, where lev >= 2. (lev=0,1 have already been filled in).
+  // Prereqs: fillin(i,lev-1) has been called, for all i <= slanted_degree.
+  // WARNING: this is not currently checked or remembered.
+
+  int& status = mComputationStatus.entry(slanted_deg,lev);
+  if (status != 1) return;
+
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "construct(" << slanted_deg << ", " << lev << ")..." << std::flush;
+    }
+  mComputer.construct(lev, slanted_deg+lev);
+  status = 2;
+  if (M2_gbTrace >= 2)
+    {
+      std::cout << "done" << std::endl;
+    }
+}
+void SchreyerFrame::computeRank(int slanted_degree, int lev)
+{
+  //  std::cout << "computeRank(" << slanted_degree << "," << lev << ")" << std::endl;
+  int& status = mComputationStatus.entry(slanted_degree,lev);
+  if (status == 0) return; // Nothing here
+  if (status == 1)
+    {
+      fillinSyzygies(slanted_degree, lev);
+    }
+  if (status == 3) return; // already done
+  int rk = rank(slanted_degree,lev);
+  if (rk > 0)
+    {
+      mBettiMinimal.entry(slanted_degree,lev) -= rk;
+      if (slanted_degree <= mHiSlantedDegree and lev>0)
+        mBettiMinimal.entry(slanted_degree+1, lev-1) -= rk;
+    }
+  status = 3;
+}
 
 M2_arrayint SchreyerFrame::getBettiFrame() const
 {

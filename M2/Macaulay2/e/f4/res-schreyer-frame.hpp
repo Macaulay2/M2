@@ -139,7 +139,16 @@ public:
   void setBettiDisplays();
   int rank(int slanted_degree, int lev); // rank of the degree 'degree' map of scalars level 'lev' to 'lev-1'.
 
+  bool computeFrame(); // returns true if the whole frame is created.  false if interrupted.
 
+  void computeSyzygies(int slanted_degree, int maxlevel);
+  void computeRanks(int slanted_degree, int maxlevel);
+
+  BettiDisplay minimalBettiNumbers(
+                                   bool stop_after_degree,
+                                   int top_slanted_degree,
+                                   int length_limit
+                                   );
 private:
   
   struct Level
@@ -161,7 +170,11 @@ public:
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
 
+  
 private:
+  void fillinSyzygies(int slanted_deg, int lev);
+  void computeRank(int slanted_degree, int lev);
+  
   //////////////////////////////////////////////
   // Private functions for frame construction //
   //////////////////////////////////////////////
@@ -169,6 +182,7 @@ private:
   long computeIdealQuotient(int lev, long begin, long elem);
   long insertElements(int lev, long elem);
 
+private:
   ///////////////////
   // Private Data ///
   ///////////////////
@@ -179,6 +193,7 @@ private:
   // Betti tables: set after the frame has been constructed.
   BettiDisplay mBettiNonminimal;
   BettiDisplay mBettiMinimal;
+  BettiDisplay mComputationStatus; // -1: no entries, 0: frame only so far, 1: syzygies computed, 2: rank taken into account.
   std::vector<std::pair<int,int>> mMinimalizeTODO; // a list of (slanted deg, level) for which to compute min betti numbers.
   
   // Computation control

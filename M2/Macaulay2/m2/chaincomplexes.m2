@@ -760,7 +760,10 @@ minimalBetti Module := {
         LengthLimit => null,
         Weights => null
     } >> opts -> (I) -> (
-   C := resolution(I, StopBeforeComputation=>true, FastNonminimal=>true);
+   C := if opts.LengthLimit === null then 
+           resolution(I, StopBeforeComputation=>true, FastNonminimal=>true)
+       else
+           resolution(I, StopBeforeComputation=>true, FastNonminimal=>true, LengthLimit=>opts.LengthLimit+1);
    rawC := C.Resolution.RawComputation;
    w := rawMinimalBetti(rawC, 
        if opts.DegreeLimit =!= null then {opts.DegreeLimit} else {},
