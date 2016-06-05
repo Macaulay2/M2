@@ -17,6 +17,7 @@ export{
    "degreeOfRationalMap",   
    "invertBirMap",
    "isBirational",
+   "isDominant",
    "isInverseMap",
    "kernelComponent",
    "projectiveDegrees",
@@ -36,6 +37,7 @@ composeRationalMaps=method(TypicalValue => RingMap);
 degreeOfRationalMap=method(TypicalValue => ZZ, Options => {MathMode => false});
 invertBirMap=method(TypicalValue => RingMap, Options => {MathMode => false});
 isBirational=method(TypicalValue => Boolean);
+isDominant=method(TypicalValue => Boolean);
 isInverseMap=method(TypicalValue => Boolean);
 kernelComponent=method(TypicalValue => Ideal);
 projectiveDegrees=method(TypicalValue => List, Options => {OnlySublist => infinity});
@@ -108,6 +110,15 @@ isBirational (RingMap) := (phi) -> (
    if dim X != dim Y then return false;
    if isPolynomialRing X then return degreeOfRationalMap phi == 1;
    first projectiveDegrees(phi,OnlySublist=>0) == degree Y 
+);
+
+isDominant (RingMap) := (phi) -> (
+   checkRationalMap phi;
+   X:=target phi; Y:=source phi;
+   n:=dim X -1; m:=dim Y -1; 
+   if n < m then return false;
+   for i from 1 to n-m do phi=genericRestriction phi;
+   first projectiveDegrees(phi,OnlySublist=>0) != 0
 );
 
 isInverseMap(RingMap,RingMap) := (mapF,mapG) -> (
@@ -201,10 +212,9 @@ approximateInverseMap (RingMap) := o -> (phi) -> (
     -- input: a birational map phi:X --->Y 
     -- output: a map Y--->X in some sense related to the inverse of phi
     checkRationalMap phi;
+    if o.Multidegree =!= null then try assert(class o.Multidegree === List and dim ideal target phi == #(o.Multidegree) and degree ideal target phi == (o.Multidegree)_0) else error("invalid multidegree provided"); 
     n:=numgens ambient target phi -1;
-    if o.Multidegree =!= null then (
-        (d,c,b):=if class o.Multidegree === List then aboutBaseLocusOfInverseMap0(phi,o.Multidegree) else error("invalid multidegree provided"); 
-    );
+    if o.Multidegree =!= null then (d,c,b):=aboutBaseLocusOfInverseMap0(phi,o.Multidegree);
     phiRes:=local phiRes; B:=local B;
     if o.Multidegree =!= null then (
         B=trim sum for i from 1 to ceiling((n+1)/(c-1)) list (
@@ -220,14 +230,9 @@ approximateInverseMap (RingMap) := o -> (phi) -> (
              kernel(phiRes,SubringLimit=>1)
         );
     );
-   if not isPolynomialRing source phi then (
-         B=trim(sub(B,ambient source phi) + ideal image basis(min flatten degrees B,ideal source phi));
-         B=sub(ideal for i to n list sum for j to numgens B -1 list (random coefficientRing target phi)*B_j,source phi)   
-   );
    if not(numgens B == n+1 and min flatten degrees B == max flatten degrees B) then return approximateInverseMap(phi,Multidegree=>o.Multidegree);
    if o.Multidegree =!= null then if not (codim B == c and degree B == b and min flatten degrees B == d) then return approximateInverseMap(phi,Multidegree=>o.Multidegree);
-   psi:=map(source phi,target phi,gens B);
-   psi
+   if isPolynomialRing target phi then return map(source phi,target phi,gens B) else return toMap(map(source phi,ambient target phi,gens B),Dominant=>ideal(target phi));
 );
 
 checkRationalMap = (phi) -> ( -- phi RingMap
@@ -675,7 +680,27 @@ H=trim ideal random(1,ringP11)",
           "phi=map(X,Y,{10*x_2*x_3+165*x_1*x_4+153*x_2*x_5-102*x_4*x_5-121*x_1*x_6+28*x_2*x_6-152*x_3*x_6-27*x_4*x_6-141*x_6^2+131*x_1*x_7+27*x_3*x_7-38*x_5*x_7-144*x_1*x_8+157*x_2*x_8+83*x_5*x_8-100*x_6*x_8+126*x_7*x_8, -71*x_1*x_3+2*x_0*x_4-98*x_1*x_4-85*x_2*x_4-95*x_3*x_4+59*x_4^2-51*x_0*x_5-86*x_2*x_5-126*x_3*x_5+71*x_4*x_5-68*x_0*x_6-144*x_1*x_6+150*x_2*x_6-155*x_3*x_6-81*x_4*x_6-80*x_6^2-11*x_0*x_7-28*x_1*x_7-80*x_2*x_7+81*x_3*x_7+16*x_5*x_7-32*x_0*x_8-11*x_1*x_8-19*x_4*x_8+155*x_5*x_8-95*x_6*x_8-7*x_7*x_8, -131*x_0*x_3+81*x_0*x_5+142*x_4*x_5-102*x_0*x_6-48*x_3*x_6+159*x_4*x_6+80*x_6^2-159*x_3*x_7-16*x_5*x_7+161*x_0*x_8-148*x_5*x_8-110*x_6*x_8-80*x_7*x_8, 94*x_2^2+2*x_0*x_4-98*x_1*x_4-85*x_2*x_4-95*x_3*x_4+59*x_4^2-51*x_0*x_5+142*x_2*x_5+125*x_3*x_5+71*x_4*x_5-68*x_0*x_6+130*x_1*x_6+90*x_2*x_6+38*x_3*x_6-81*x_4*x_6-145*x_6^2-11*x_0*x_7-17*x_1*x_7-91*x_2*x_7+81*x_3*x_7+29*x_5*x_7-32*x_0*x_8-11*x_1*x_8-19*x_4*x_8+155*x_5*x_8-95*x_6*x_8-7*x_7*x_8, -49*x_1*x_2+107*x_0*x_4-18*x_1*x_4+131*x_2*x_4-134*x_3*x_4+62*x_4^2-66*x_0*x_5-56*x_2*x_5-37*x_3*x_5-29*x_4*x_5-36*x_0*x_6+14*x_1*x_6-109*x_2*x_6-120*x_3*x_6+130*x_4*x_6+8*x_6^2-34*x_0*x_7+125*x_1*x_7+106*x_2*x_7-130*x_3*x_7-134*x_5*x_7+139*x_0*x_8-38*x_1*x_8+142*x_4*x_8-158*x_5*x_8+58*x_6*x_8-32*x_7*x_8, 69*x_0*x_2-58*x_0*x_5+48*x_3*x_5+85*x_0*x_6-96*x_2*x_6+133*x_3*x_6-102*x_6^2+13*x_2*x_7-112*x_5*x_7, -147*x_1^2+87*x_0*x_4-27*x_1*x_4-59*x_2*x_4-121*x_3*x_4+140*x_4^2+123*x_0*x_5-98*x_2*x_5+84*x_3*x_5-106*x_4*x_5+2*x_0*x_6-141*x_1*x_6-156*x_2*x_6-140*x_3*x_6-34*x_4*x_6+117*x_6^2+30*x_0*x_7-133*x_1*x_7-63*x_2*x_7+34*x_3*x_7+109*x_5*x_7-153*x_0*x_8+137*x_1*x_8+148*x_4*x_8-164*x_5*x_8-129*x_6*x_8+109*x_7*x_8, -131*x_0*x_1+87*x_0*x_5-139*x_2*x_5-123*x_0*x_6-48*x_1*x_6-130*x_2*x_6+46*x_6^2-159*x_1*x_7+57*x_5*x_7, -111*x_0*x_1-127*x_1^2-65*x_0*x_2+12*x_1*x_2+26*x_2^2+101*x_0*x_3-51*x_1*x_3+71*x_2*x_3+26*x_3^2+116*x_0*x_4-89*x_1*x_4+55*x_2*x_4+100*x_3*x_4-32*x_4^2+154*x_0*x_5-5*x_2*x_5+138*x_3*x_5+99*x_4*x_5-46*x_0*x_6+84*x_1*x_6+68*x_2*x_6+74*x_3*x_6+129*x_4*x_6+80*x_6^2+135*x_0*x_7+49*x_1*x_7-29*x_2*x_7-129*x_3*x_7-16*x_5*x_7-47*x_0*x_8+104*x_1*x_8-60*x_2*x_8+11*x_3*x_8+18*x_4*x_8-90*x_5*x_8+80*x_6*x_8+47*x_7*x_8})",
           "time isBirational phi"
             }
-          } 
+          }
+   document { 
+    Key => {isDominant,(isDominant,RingMap)}, 
+    Headline => "whether a rational map is dominant", 
+     Usage => "isDominant phi", 
+     Inputs => { 
+          "phi" => RingMap => {"representing a rational map ",TEX///$\Phi:X--->Y$///," (with ",TEX///$X$///," and ",TEX///$Y$///," absolutely irreducible)"}         
+               }, 
+     Outputs => { 
+          Boolean => {"whether ",TEX///$\Phi$///," is dominant"  } 
+                },
+          "This is a probabilistic method through ", TO projectiveDegrees, ". A command like ", TT "kernel phi == ideal source phi", " provides a non-probabilistic one.",
+          PARA{},
+    EXAMPLE { 
+          "phi=map(QQ[x_0..x_5]/ideal(x_2*x_3-x_1*x_4+x_0*x_5),QQ[y_0..y_4],{x_1^2-x_0*x_2-x_0*x_3,x_1*x_2-x_0*x_4,x_2^2-x_0*x_5,x_2*x_4-x_1*x_5,x_4^2-x_2*x_5-x_3*x_5})",
+          "time isDominant phi",
+          "P8=ZZ/331[x_0..x_8]",
+          "phi=toMap ideal jacobian ideal det matrix{{x_0..x_4},{x_1..x_5},{x_2..x_6},{x_3..x_7},{x_4..x_8}}",
+          "time isDominant phi"
+            }
+          }  
    document { 
     Key => {isInverseMap,(isInverseMap,RingMap,RingMap)}, 
     Headline => "checks whether a rational map is the inverse of another", 
@@ -747,12 +772,12 @@ H=trim ideal random(1,ringP11)",
     Headline => "random map related to the inverse of a birational map", 
      Usage => "approximateInverseMap phi", 
      Inputs => { 
-          RingMap => "phi" => {"representing a birational map ",TEX///$\Phi:X--->Y$///}
+          RingMap => "phi" => {"representing a birational map ",TEX///$\Phi:X\subseteq\mathbb{P}^n--->Y$///}
           }, 
      Outputs => { 
-          RingMap => {"a ring map representing a random rational map ",TEX///$Y--->X$///,", which in some sense is related to the inverse of ",TEX///$\Phi$///," (e.g., the base locus of this map has the same dimension and degree of the base locus of the inverse of ",TEX///$\Phi$///,")"}
+          RingMap => {"a ring map representing a random rational map ",TEX///$Y--->\mathbb{P}^n$///," (or ",TEX///$Y--->X$///,"), which in some sense is related to the inverse of ",TEX///$\Phi$///," (e.g., they should have the same list of projective degrees)"}
           }, 
-          "The algorithm is to try to construct the ideal of the base locus of the inverse by looking for the images via ", TEX///$\Phi$///," of random linear sections of the source variety. Generally, one can speed up the process by passing the list of projective degrees of ",TEX///$\Phi$///," to the option ", TO Multidegree," (this is useful because from the multidegree one obtains easily the dimension (and other numerical invariants) of the base locus of the inverse).",
+          "The algorithm is to try to construct the ideal of the base locus of the inverse by looking for the images via ", TEX///$\Phi$///," of random linear sections of the source variety. Generally, one can speed up the process by passing the list of projective degrees of ",TEX///$\Phi$///," to the option ", TO Multidegree," (this is useful because from the multidegree one obtains easily the dimension and other numerical invariants of the base locus of the inverse).",
      PARA{},
     EXAMPLE { 
           "P8=ZZ/97[t_0..t_8];", 
@@ -769,8 +794,7 @@ H=trim ideal random(1,ringP11)",
           "time psi=approximateInverseMap(phi,Multidegree=>{1,2,4,8,16,23,23,16,8,4,2,1})",
           "-- but...
 isInverseMap(psi,phi)",
-          "-- now we fix the error of the approximation 
--- (note that the composition of phi with psi is a projective transformation)
+          "-- now we fix the error of the approximation (note that the composition of phi with psi is a projective transformation)
 time psi'=composeRationalMaps(psi,toMap((vars P11)*(last coefficients matrix composeRationalMaps(phi,psi))^(-1)))",
 "isInverseMap(psi',phi)",
           } 
