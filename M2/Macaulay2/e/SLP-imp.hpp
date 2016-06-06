@@ -210,6 +210,20 @@ inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& res
 
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED, ORIGIN_FAILED, INCREASE_PRECISION, DECREASE_PRECISION};
 
+template<typename RT>
+class ARingElement
+{
+  typename RT::ElementType mValue;
+  const RT& mRing;
+public:
+  ARingElement(const RT& R0) : R(R0) { mRing.init(mValue); }
+  ~ARingElement() { mRing.clear(mValue); }
+  RT::ElementType& get() { return mValue; }
+  const RT::ElementType& get() const { return mValue; }
+  const RT& ring() const { return mRing; }
+
+  RT::RealElementType& getRealPart() { return realPart(mValue); }
+};
 
 // ****************************** XXX **************************************************
 template <typename RT> 
