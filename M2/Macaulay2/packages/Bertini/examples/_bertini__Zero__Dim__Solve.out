@@ -14,19 +14,19 @@ o3 : List
 
 i4 : peek S_0
 
-o4 = Point{AccuracyEst => 1.22294e-16 }
+o4 = Point{AccuracyEst => 3.09883e-16     }
            AccuracyEstInternal => 0
-           ConditionNumber => 13.4982
+           ConditionNumber => 2.80882
            Coordinates => {1, 1}
            CycleNumber => 1
            FinalTValue => .0015625
-           FunctionResidual => 0
+           FunctionResidual => 5.55112e-17
            MaxPrecisionUtilized => 52
            Multiplicity => 1
-           NewtonResidual => 0
+           NewtonResidual => 3.58271e-17
            PathNumber => 0
            PathsWithSameEndpoint => {}
            PrecisionIncreased => 0
-           SolutionNumber => 2
+           SolutionNumber => 1
 
 i5 : 
