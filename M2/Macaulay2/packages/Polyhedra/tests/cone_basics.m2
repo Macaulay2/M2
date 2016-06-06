@@ -35,7 +35,7 @@ assert(not isSmooth C)
 TEST ///
 C = posHull(matrix{{1,0},{0,1},{0,0}},matrix{{0},{0},{1}});
 assert(halfspaces C == matrix{{1,0,0},{0,1,0}})
-assert(C#"number of rays" == 2)
+assert(numColumns rays C == 2)
 ///
 
 -- Test 16
@@ -61,4 +61,3 @@ assert isSmooth C
 C = posHull {C,matrix{{1},{0},{1}}};
 assert isSmooth C
 ///
-
