@@ -318,7 +318,7 @@ bertiniZeroDimSolve(List) := o -> (myPol) ->(
   if o.NameSolutionsFile=!="raw_solutions" and o.OutputSyle=!="OutSolutions" 
   then error"If NameSolutionsFile is set then OutputSyle should be set to OutSolutions. ";
 --%%--We call Bertini and solve the zero dimensional system. 
-    successRun:=runBertini(myTopDir);
+    successRun:=runBertini(myTopDir,Verbose=>o.Verbose);
 --    print successRun;
 --%%--After completing the Bertini runs we import the results into Macaulay2; this is the list called theSols below.
 --%%%%--Depending on the OutputStyle option we import nothing, main_data files to give Points, or raw_solutions files. 
@@ -479,14 +479,14 @@ bertiniParameterHomotopy (List, List, List) := o -> (myPol, myParams, myParValue
 --%%--We call Bertini and solve the parameter homotopy for random parameters.
 --%%%%--The PreparePH2=>true, will automatically adjust the Bertini input file to set ParameterHomotopy=2.
 --&&&&--Refer to the Bertini manual for more details on parameter homotopies.
-    runBertini(myTopDir,PreparePH2=>true);
+    runBertini(myTopDir,PreparePH2=>true,Verbose=>o.Verbose);
 --%%--For each set of parameter values, i.e. each element of myParValues we will do a Bertini run. 
 --%%%%--The output of run # will be stored as a text file named "ph_jade_#".
 --%%%%--Depending on the OutputSyle option, the style of this text file can be main_data or a list of coordinates.
     runNumber:=0;
     for i in myParValues do(
       writeParameterFile(myTopDir,i);
-      runBertini(myTopDir);
+      runBertini(myTopDir,Verbose=>o.Verbose);
       if o.OutputSyle==="OutPoints" then moveB'File(myTopDir,"main_data","ph_jade_"|runNumber);
       if o.OutputSyle==="OutNone" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
       if o.OutputSyle==="OutSolutions" then moveB'File(myTopDir,"raw_solutions","ph_jade_"|runNumber);
@@ -1748,7 +1748,8 @@ makeWitnessSetFiles = method(TypicalValue => Nothing, Options=>{
     	NameSolutionsFile=>"witness_solutions_file",
 	NameB'InputFile=>"input",
 	SpecifyComponent=>-2,
-	StorageFolder=>null
+	StorageFolder=>null,
+	Verbose=>1
 		})
 makeWitnessSetFiles(String,Number) := o ->(IFD,theDim)->(
     IFD=addSlash(IFD);
@@ -1766,7 +1767,7 @@ makeWitnessSetFiles(String,Number) := o ->(IFD,theDim)->(
     PFile << toString(o.NameSolutionsFile) << endl ;
     PFile << toString(o.NameWitnessSliceFile) << endl ;
     close PFile;
-    runBertini(filesGoHere,TextScripts=>tempfileName);
+    runBertini(filesGoHere,TextScripts=>tempfileName,Verbose=>o.Verbose);
     removeFile(filesGoHere|tempfileName);    
         )
 
@@ -1779,7 +1780,8 @@ makeSampleSolutionsFile = method(TypicalValue => Nothing, Options=>{
 	NameSolutionsFile=>"sample_solutions_file",
 	NameB'InputFile=>"input",
 	StorageFolder=>null,
-	SpecifyComponent=>{}
+	SpecifyComponent=>{},
+	Verbose=>1
 		})
 makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(    
     IFD=addSlash(IFD);
@@ -1807,7 +1809,7 @@ makeSampleSolutionsFile(String,Number) := o ->(IFD,aNumber)->(
     PFile << "0" << endl ;    
     PFile << toString(o.NameSolutionsFile) << endl ;
     close PFile;
-    runBertini(IFD,TextScripts=>tempfileName,StorageFolder=>o.StorageFolder);
+    runBertini(IFD,TextScripts=>tempfileName,StorageFolder=>o.StorageFolder,Verbose=>o.Verbose);
     removeFile(filesGoHere|tempfileName)            )
 
 
@@ -1836,7 +1838,7 @@ makeMembershipFile(String) := o ->(IFD)->(
     moveB'File(IFD,o.NameSolutionsFile,"member_points");    
     if not fileExists(filesGoHere|"witness_data") then error"witness_data file does not exist. ";
     s:= run("sed -i -e 's/%%%ENDCONFIG/TRACKTYPE : 3; %%%ENDCONFIG/' "|IFD|o.NameB'InputFile);
-    runBertini(IFD,StorageFolder=>o.StorageFolder)   
+    runBertini(IFD,StorageFolder=>o.StorageFolder,Verbose=>o.Verbose)   
     )
 
 
@@ -1876,7 +1878,7 @@ calculateB'Trace(String) := o ->(
      if not fileExists(filesGoHere|o.NameStartFile) then error("The file "|o.NameStartFile|" does not exist in the directory.");
      if o.NameStartFile=!="start" then copyFile(filesGoHere|o.NameStartFile,filesGoHere|"start");
      replaceFirstLine(filesGoHere,"start",1);
-     runBertini(filesGoHere,NameB'InputFile=>o.NameB'InputFile);--maybe an error because of the backslash at the end. 
+     runBertini(filesGoHere,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);--maybe an error because of the backslash at the end. 
      if o.NameFunctionFile=!="function" then moveFile(filesGoHere|"function",filesGoHere|o.NameFunctionFile));      
 
 
@@ -1901,7 +1903,8 @@ b'TraceTestImage=method(TypicalValue=>Thing,Options=>{ --assuming the directory 
 	OnlyCalculateTrace=>false,
 	M2Precision=>53,
 	SubIntoCC=>true,
-	StopBeforeTest=>false
+	StopBeforeTest=>false,
+    	Verbose=>1
 		})
 b'TraceTestImage(String) := o ->(storeFiles)->(
     if storeFiles_-1===" " then error (storeFiles|" cannot end with whitespace.");
@@ -1927,10 +1930,10 @@ b'TraceTestImage(String) := o ->(storeFiles)->(
     startParameters:=importParameterFile(storeFiles,NameParameterFile=>"start_parameters",M2Precision=>o.M2Precision);
     if OnlyCalculateTrace=!=true then (
       writeParameterFile(storeFiles,{first startParameters+o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
-      runBertini(storeFiles);
+      runBertini(storeFiles,Verbose=>o.Verbose);
       moveB'File(storeFiles,"nonsingular_solutions","traceF");--F is for Forward
       writeParameterFile(storeFiles,{first startParameters-o.RandomGamma}|drop(startParameters,1), NameParameterFile=>"final_parameters",M2Precision=>o.M2Precision);
-      runBertini(storeFiles);
+      runBertini(storeFiles,Verbose=>o.Verbose);
       moveB'File(storeFiles,"nonsingular_solutions","traceB");--B is for Backward
       );
     solsF:=importSolutionsFile(storeFiles,NameSolutionsFile=>"traceF",M2Precision=>o.M2Precision);
@@ -2468,7 +2471,7 @@ b'PHSequence(String,List) := o ->(IFD,listOfListOfParameterValues)->(
     	if o.Verbose>1 then print ("rc seq",runCount);
     	writeParameterFile(storeFiles,listPV,NameParameterFile=>"final_parameters");--writes final parameter file
 	if o.Verbose>1 then print listPV;
-	runBertini(storeFiles,
+	runBertini(storeFiles,Verbose=>o.Verbose,
 	    NameB'InputFile=>o.NameB'InputFile,B'Exe=>o.B'Exe);
 	if o.Verbose>1 then print "-rc";
     	if fileExists(storeFiles|o.NameSolutionsFile)===false and o.NameSolutionsFile=!="simple_raw_solutions" then (
@@ -3186,7 +3189,7 @@ b'TraceTest(String,Number,Number) := o ->(storeFiles,NumberOfPoints,NumberOfCoor
     for aParameter in o.ParameterValues do(
       writeParameterFile(storeFiles,{aParameter});
       print "tt5Loop";
-      runBertini(IFD,NameB'InputFile=>o.NameB'InputFile);
+      runBertini(IFD,NameB'InputFile=>o.NameB'InputFile,Verbose=>o.Verbose);
       print readFile(storeFiles,"bertini_session.log",10000);
       print "tt6Loop";
       moveFile(storeFiles|"start",storeFiles|"startPHjade");
