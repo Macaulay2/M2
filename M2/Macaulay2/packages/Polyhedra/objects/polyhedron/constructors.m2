@@ -72,6 +72,7 @@ convexHull = method(TypicalValue => Polyhedron)
 --           description by defining half-spaces and hyperplanes.
 convexHull(Matrix, Matrix, Matrix) := (Mvert, Mrays, Mlineality) -> (
    if numgens target Mvert =!= numgens target Mrays then error ("points and rays must lie in the same space");
+   if numgens target Mvert =!= numgens target Mlineality then error ("points and lineality generators must lie in the same space");
    result := new Polyhedron from {
       ambientDimension => numRows Mvert,
       cache => new CacheTable
@@ -86,30 +87,12 @@ convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
    r := ring Mvert;
 	Mlineality := map(target Mvert,r^0,0);
    convexHull(Mvert, Mrays, Mlineality)
-	-- checking for input errors
--- 	Mvert = chkZZQQ(Mvert,"points");
--- 	Mrays = chkZZQQ(Mrays,"rays");
--- 	if numRows Mvert == 0 then Mvert = matrix{{0}};
--- 	if numColumns Mvert == 0 then Mvert = map(target Mvert,QQ^1,0);
--- 	if numRows Mrays == 0 then Mrays = matrix{{0}};
--- 	if numColumns Mrays == 0 then Mrays = map(target Mrays,QQ^1,0);
--- 	-- homogenization of M
--- 	Mvert = map(QQ^1,source Mvert,(i,j)->1) || Mvert;
--- 	Mrays = map(QQ^1,source Mrays,0) || Mrays;
--- 	M := Mvert | Mrays;
--- 	-- Computing generators of the cone M and its dual cone
--- 	hyperA := fourierMotzkin M;
--- --	verticesA := fourierMotzkin hyperA;
---      	local verticesA;
--- 	(verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
--- 	polyhedronBuilder(hyperA,verticesA)
 )
 
 
 --   INPUT : 'M'  a Matrix containing the generating points as column vectors
 convexHull Matrix := Mvert -> (
    r := ring Mvert;
-	-- Generating the zero ray R
 	Mrays := map(target Mvert,r^0,0);
 	convexHull(Mvert, Mrays)
 )
