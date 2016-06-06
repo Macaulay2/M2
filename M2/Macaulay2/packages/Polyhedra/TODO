@@ -15,3 +15,18 @@ Thoughts:
 *  Sanitize input matrices at some point?
 *  addCone should be completely be removed.
 *  There are too many intersection methods.
+
+Packages that use Polyhedra:
+[lars@sunfish packages]$ grep -R "Polyhedra" . | grep needsPackage
+./MonomialAlgebras.m2:needsPackage "Polyhedra"
+./Polyhedra2.m2:needsPackage "PolyhedralObjects"
+./SRdeformations.m2:needsPackage "Polyhedra"
+./LatticePolytopes.m2:needsPackage "Polyhedra"
+./supplanted-packages/Polyhedra.m2:     F << "needsPackage \"Polyhedra\"" << endl;
+./Macaulay2Doc/test/schenck-book-2.m2:needsPackage "Polyhedra"
+
+Packages that should go away:
+*  PolyhedralObjects.m2
+*  Polyhedra2.m2
+*  gfanInterface.m2 or gfanInterface2.m2
+*  polymake.m2 or polymakeInterface.m2

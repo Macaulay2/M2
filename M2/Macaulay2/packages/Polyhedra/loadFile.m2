@@ -26,8 +26,11 @@ load "./objects/polyhedraHash.m2"
       load "./objects/cone/methods.m2"
 
 --         load "./objects/cone/hilbertBasis.m2"
+      load "./objects/polyhedron/constructors.m2"
+      load "./objects/polyhedron/properties.m2"
       load "./objects/polyhedron.m2"
    load "./objects/polyhedralObjectFamily.m2"
+      load "./objects/fan/constructors.m2"
       load "./objects/fan.m2"
       load "./objects/polyhedralComplex.m2"
 
@@ -46,6 +49,7 @@ load "./legacy.m2"
 
 -- Tests
 load "./tests/cone_basics.m2"
+load "./tests/polyhedron_basics.m2"
 load "./tests_from_polymake/hilbert_basis.m2"
 -- load "./tests_from_polymake/lattice_points.m2"
 -- load "./legacy_tests.m2"
@@ -58,6 +62,13 @@ end
 -------------------------------------------------------------------------------
 restart
 loadPackage "Polyhedra"
+P = convexHull matrix {{12,3},{3,5}}
+C = getProperty(P, underlyingCone)
+vertices P
+
+
+
+
 C = posHull matrix {{12,3},{3,5}}
 facets C
 hilbertBasis C

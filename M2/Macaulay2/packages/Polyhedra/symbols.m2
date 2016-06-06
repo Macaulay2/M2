@@ -39,6 +39,10 @@ export {
    "nFacets",
 
    "points",
+   "computedVertices",
+   "underlyingCone",
+   "lattice",
+   "empty",
 
    "maximalCones"
 }

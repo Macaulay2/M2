@@ -96,7 +96,8 @@ net PolyhedraHash := X -> (
 export {
    "hasProperties",
    "getAvailableProperties",
-   "hasProperty"
+   "hasProperty",
+   "getProperty"
 }
 
 

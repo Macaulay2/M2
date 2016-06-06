@@ -1,54 +1,6 @@
--- Defining the new type Fan
-Fan = new Type of PolyhedralObjectFamily
-globalAssignment Fan
-
--- PURPOSE : Building the Fan 'F'
---   INPUT : 'L',  a list of cones and fans in the same ambient space
---  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
-fan = method(TypicalValue => Fan)
-fan List := L -> (
-     -- Checking for input errors
-     if L == {} then error("List of cones and fans must not be empty");
-     if (not instance(L#0,Cone)) and (not instance(L#0,Fan)) then error("Input must be a list of cones and fans");
-     -- Starting with the first Cone in the list and extracting its information
-     C := L#0;
-     L = drop(L,1);
-     ad := ambDim(C);
-     local F;
-     if instance(C,Fan) then F = C
-     else (
-	  rayList := rays C;
-	  -- Collecting the rays
-	  rayList = apply(numColumns rayList, i-> rayList_{i});
-	  -- Generating the new fan
-	  F = new Fan from {
-	  "generatingObjects" => set {C},
-	  "ambient dimension" => ad,
-	  "dimension" => dim C,
-	  "number of generating cones" => 1,
-	  "rays" => set rayList,
-	  "number of rays" => #rayList,
-	  "isPure" => true,
-	  symbol cache => new CacheTable});
-     -- Checking the remaining list for input errors and reducing fans in the list
-     -- to their list of generating cones
-     L = flatten apply(L, C -> if instance(C,Cone) then C else if instance(C,Fan) then maxCones C else 
-	  error ("Input must be a list of cones and fans"));       
-     -- Adding the remaining cones of the list with 'addCone'
-     scan(L, C -> F = addCone(C,F));
-     F);
 
 Fan == Fan := (F1,F2) -> F1 === F2
 
--- Modifying the standard output for a Fan to give an overview of its characteristica
-net Fan := F -> ( horizontalJoin flatten (
-	  "{",
-	  -- prints the parts vertically
-	  stack (horizontalJoin \ sort apply({"ambient dimension", 
-			                      "dimension",
-					      "number of generating cones",
-					      "number of rays"}, key -> (net key, " => ", net F#key))),
-	  "}" ))
 
 
 --   INPUT : 'F'  a Fan
