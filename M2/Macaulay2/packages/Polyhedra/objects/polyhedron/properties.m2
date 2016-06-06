@@ -68,19 +68,38 @@ compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
 
 compute#Polyhedron#underlyingCone = method()
 compute#Polyhedron#underlyingCone Polyhedron := P -> (
+   result := new Cone from {cache => new CacheTable};
+   local r;
+   local pMat;
+   local rMat;
    if hasProperties(P, {points, inputRays}) then (
-      pMat := getProperty(P, points);
-      rMat := getProperty(P, inputRays);
-      r := ring pMat;
+      pMat = getProperty(P, points);
+      rMat = getProperty(P, inputRays);
+      r = ring pMat;
       pMat = map(r^1, source pMat, (i,j)-> 1) || pMat;
-      rMat = map(r^1, source rMat, (i,j)-> 1) || rMat;
-      return posHull(pMat, rMat)
-   ) else (
-      -- TODO:
-      -- vertices + rays
-      -- facets + linealitySpace
-      -- ...
-      error("Underlying cone not computable from given data.");
-   )
+      rMat = map(r^1, source rMat, (i,j)-> 0) || rMat;
+      setProperty(result, inputRays, pMat | rMat);
+   );
+   if hasProperties(P, {computedVertices, computedRays}) then (
+      pMat = getProperty(P, computedVertices);
+      rMat = getProperty(P, computedRays);
+      r = ring pMat;
+      pMat = map(r^1, source pMat, (i,j)-> 1) || pMat;
+      rMat = map(r^1, source rMat, (i,j)-> 0) || rMat;
+      setProperty(result, computedRays, pMat | rMat);
+   );
+   if hasProperty(P, inputLinealityGenerators) then (
+      pMat = getProperty(P, inputLinealityGenerators);
+      r = ring pMat;
+      pMat = map(r^1, source pMat, (i,j)-> 0) || pMat;
+      setProperty(result, inputLinealityGenerators, pMat);
+   );
+   if hasProperty(P, computedLinealityBasis) then (
+      pMat = getProperty(P, computedLinealityBasis);
+      r = ring pMat;
+      pMat = map(r^1, source pMat, (i,j)-> 0) || pMat;
+      setProperty(result, computedLinealityBasis, pMat);
+   );
+   return result
 )
 

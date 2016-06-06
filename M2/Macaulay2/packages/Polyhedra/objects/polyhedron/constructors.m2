@@ -70,16 +70,23 @@ convexHull = method(TypicalValue => Polyhedron)
 --  OUTPUT : 'P'  a Polyhedron
 -- COMMENT : The description by vertices and rays is stored in P as well as the 
 --           description by defining half-spaces and hyperplanes.
+convexHull(Matrix, Matrix, Matrix) := (Mvert, Mrays, Mlineality) -> (
+   if numgens target Mvert =!= numgens target Mrays then error ("points and rays must lie in the same space");
+   result := new Polyhedron from {
+      ambientDimension => numRows Mvert,
+      cache => new CacheTable
+   };
+   setProperty(result, points, Mvert);
+   setProperty(result, inputRays, Mrays);
+   setProperty(result, inputLinealityGenerators, Mlineality);
+   result
+)
+
 convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
+   r := ring Mvert;
+	Mlineality := map(target Mvert,r^0,0);
+   convexHull(Mvert, Mrays, Mlineality)
 	-- checking for input errors
-     	if numgens target Mvert =!= numgens target Mrays then error ("points and rays must lie in the same space");
-      result := new Polyhedron from {
-         ambientDimension => numRows Mvert,
-         cache => new CacheTable
-      };
-      setProperty(result, points, Mvert);
-      setProperty(result, inputRays, Mrays);
-      result
 -- 	Mvert = chkZZQQ(Mvert,"points");
 -- 	Mrays = chkZZQQ(Mrays,"rays");
 -- 	if numRows Mvert == 0 then Mvert = matrix{{0}};
@@ -98,12 +105,13 @@ convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
 -- 	polyhedronBuilder(hyperA,verticesA)
 )
 
+
 --   INPUT : 'M'  a Matrix containing the generating points as column vectors
-convexHull Matrix := M -> (
-   r := ring M;
+convexHull Matrix := Mvert -> (
+   r := ring Mvert;
 	-- Generating the zero ray R
-	R := map(target M,r^0,0);
-	convexHull(M,R)
+	Mrays := map(target Mvert,r^0,0);
+	convexHull(Mvert, Mrays)
 )
 
 
