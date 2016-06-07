@@ -204,6 +204,7 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(
 
   if (M2_gbTrace >= 1)
     {
+      showMemoryUsage();
       std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
       std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
       std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
@@ -242,6 +243,7 @@ void SchreyerFrame::start_computation(StopConditions& stop)
 
   if (M2_gbTrace >= 1)
     {
+      showMemoryUsage();
       std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
       std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
       std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;

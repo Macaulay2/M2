@@ -37,6 +37,9 @@ struct poly {
 #endif
 
 class poly {
+  friend class ResPolyRing;
+  friend class poly_constructor;
+  friend class poly_iter;
 public:
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
@@ -44,7 +47,7 @@ public:
   std::unique_ptr<monomial_word[]> monoms;
 
 public:  
-  poly() : len(0) {}
+  poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
 
   ~poly()
   {
@@ -93,8 +96,8 @@ public:
   void setPoly(poly& result)
   {
     result.len = static_cast<int>(coeffs.size());
-    result.coeffs = std::unique_ptr<FieldElement[]>(new FieldElement[result.len]);
-    result.monoms = std::unique_ptr<monomial_word[]>(new monomial_word[mRing.monoid().max_monomial_size()*result.len]);
+    result.coeffs = std::move(std::unique_ptr<FieldElement[]>(new FieldElement[result.len]));
+    result.monoms = std::move(std::unique_ptr<monomial_word[]>(new monomial_word[mRing.monoid().max_monomial_size()*result.len]));
     // copy coeffs
     for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];
@@ -105,6 +108,16 @@ public:
         mRing.monoid().copy(monoms[i], monomptr);
         monomptr += mRing.monoid().max_monomial_size();
       }
+  }
+
+  static void setPolyFromArrays(poly& result,
+                                int len,
+                                std::unique_ptr<FieldElement[]>& coeffs,
+                                std::unique_ptr<monomial_word[]>& monoms)
+  {
+    result.len = len;
+    result.coeffs.swap(coeffs);
+    result.monoms.swap(monoms);
   }
 };
 

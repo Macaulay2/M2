@@ -36,12 +36,12 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   int *exp = new int[M->n_vars()+1];
   ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
 
-  result.len = n;
+  //  result.len = n;
   int* relem_array = new int[n]; // doesn't need to be allocated with gc, as
           // all these pointers (or values) are still in the element f.
-  result.monoms = std::unique_ptr<monomial_word[]>(new monomial_word[n * R.monoid().max_monomial_size()]);
+  auto monoms = std::unique_ptr<monomial_word[]>(new monomial_word[n * R.monoid().max_monomial_size()]);
   n = 0;
-  monomial_word *nextmonom = result.monoms.get();
+  monomial_word *nextmonom = monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
       relem_array[n] = static_cast<int>(K->coerceToLongInteger(t->coeff).second);
@@ -52,7 +52,8 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
       nextmonom += R.monoid().monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
+  auto coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
+  poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
   delete [] exp;
   delete [] lexp;
   delete [] relem_array;
@@ -252,6 +253,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
       ++col;
     }
 
+  delete [] newcomps;
   return result;
 }
 
