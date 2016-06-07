@@ -88,7 +88,6 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
 
 compute#Cone#computedFacetsThroughRays = method()
 compute#Cone#computedFacetsThroughRays Cone := C -> (
-   << "Hello." << endl;
    raysC := rays C;
    facetsC := facets C;
    nFacetsC := getProperty(C, nFacets);
@@ -107,6 +106,25 @@ compute#Cone#computedFacetsThroughRays Cone := C -> (
    )
 )
 
+compute#Cone#computedRaysThroughFacets = method()
+compute#Cone#computedRaysThroughFacets Cone := C -> (
+   raysC := rays C;
+   facetsC := facets C;
+   nFacetsC := getProperty(C, nFacets);
+   nRaysC := getProperty(C, nRays);
+   apply(0..(nRaysC -1), 
+      i -> (
+         ray := raysC_{i};
+         positions(0..(nFacetsC - 1), 
+            j-> (
+               facet := facetsC^{j};
+               eval := (flatten entries (facet * ray))#0;
+               eval == 0
+            )
+         )
+      )
+   )
+)
 
 compute#Cone#computedDimension = method(TypicalValue => ZZ)
 compute#Cone#computedDimension Cone := C -> (
@@ -122,7 +140,6 @@ compute#Cone#computedDimension Cone := C -> (
 
 -- hilbertBasis = method()
 hilbertBasis Cone := List => o -> (C -> (
-      << C << endl;
       if isPointed C and isFullDimensional C then getProperty(C, computedHilbertBasis)
       else error("Hilbert basis not implemented for non-pointed or non-fulldimensional cones yet.")
    )
@@ -150,14 +167,12 @@ compute#Cone#computedLinealityBasis Cone := C -> (
       containingSpace = (facets C) || (hyperplanes C);
    ) else if hasProperties(C, {inequalities, equations}) then (
       containingSpace = getProperty(C, inequalities) || getProperty(C, equations);
-      << "CS: " << containingSpace << endl;
    ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
       rays C;
       return linealitySpace C
    ) else (
       error "Lineality space not computable."
    );
-   << "CS: " << containingSpace << endl;
    orthogonalComplement containingSpace
 )
 

@@ -5,6 +5,20 @@ globalAssignment Polyhedron
 
 compute#Polyhedron = new MutableHashTable
 
+polyhedron = method()
+polyhedron HashTable := inputProperties -> (
+   result := new Polyhedron from {
+      symbol cache => new CacheTable
+   };
+   for key in keys inputProperties do (
+      << "Setting property " << key << endl;
+      setProperty(result, key, inputProperties#key);
+   );
+   result
+)
+
+
+
 -- PURPOSE : Building the polyhedron 'P'
 --   INPUT : '(hyperA,verticesA)',  a pair of two matrices each describing the homogenization of P
 --                                 directly ('verticesA') and in the dual description ('hyperA')
@@ -73,14 +87,13 @@ convexHull = method(TypicalValue => Polyhedron)
 convexHull(Matrix, Matrix, Matrix) := (Mvert, Mrays, Mlineality) -> (
    if numgens target Mvert =!= numgens target Mrays then error ("points and rays must lie in the same space");
    if numgens target Mvert =!= numgens target Mlineality then error ("points and lineality generators must lie in the same space");
-   result := new Polyhedron from {
+   result := new HashTable from {
       ambientDimension => numRows Mvert,
-      cache => new CacheTable
+      points => Mvert,
+      inputRays => Mrays,
+      inputLinealityGenerators => Mlineality
    };
-   setProperty(result, points, Mvert);
-   setProperty(result, inputRays, Mrays);
-   setProperty(result, inputLinealityGenerators, Mlineality);
-   result
+   polyhedron result
 )
 
 convexHull(Matrix,Matrix) := (Mvert,Mrays) -> (
@@ -102,14 +115,14 @@ convexHull Matrix := Mvert -> (
 convexHull(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking for input errors
 	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
-	-- Combining the vertices/rays and the lineality spaces in one matrix each
-	M := (P1#"homogenizedVertices")#0 | (P2#"homogenizedVertices")#0;
-	LS := (P1#"homogenizedVertices")#1 | (P2#"homogenizedVertices")#1;
-	hyperA := fourierMotzkin(M,LS);
---	verticesA := fourierMotzkin hyperA;
-        local verticesA;
-	(verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
-	polyhedronBuilder(hyperA,verticesA))
+   C1 := getProperty(P1, underlyingCone);
+   C2 := getProperty(P2, underlyingCone);
+   result := new HashTable from {
+      ambientDimension => ambDim P1,
+      underlyingCone => posHull(C1, C2)
+   };
+   polyhedron result;
+)
    
 --   INPUT : 'L',   a list of Cones, Polyhedra, vertices given by M, 
 --     	    	    and (vertices,rays) given by '(V,R)'

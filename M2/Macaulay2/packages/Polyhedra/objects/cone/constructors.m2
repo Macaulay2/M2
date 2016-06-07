@@ -7,31 +7,39 @@ compute#Cone = new MutableHashTable
 Cone == Cone := (C1,C2) -> C1 === C2
 
 
+cone HashTable := inputProperties -> (
+   result := new Cone from {
+      symbol cache => new CacheTable
+   };
+   for key in keys inputProperties do (
+      << "Setting property " << key << endl;
+      setProperty(result, key, inputProperties#key);
+   );
+   result
+)
 
 coneFromRayData = method(TypicalValue => Cone)
 coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
      -- checking for input errors
      if numRows iRays =!= numRows linealityGenerators then error("rays and linSpace generators must lie in the same space");
-     result := new Cone from {
+     result := new HashTable from {
          ambientDimension => numRows iRays,
-         symbol cache => new CacheTable
+         computedRays => iRays,
+         computedLinealityBasis => linealityGenerators
      };
-     setProperty(result, computedRays, iRays);
-     setProperty(result, computedLinealityBasis, linealityGenerators);
-     result
+     cone result
 )
 
 
 coneFromFacetData = method(TypicalValue => Cone)
 coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
    if numColumns ineq =!= numColumns eq then error("facets and hyperplanes must lie in same space");
-   result := new Cone from {
+   result := new HashTable from {
       ambientDimension => numColumns ineq,
-      symbol cache => new CacheTable
+      computedFacets => ineq,
+      computedHyperplanes => eq
    };
-   setProperty(result, computedFacets, ineq);
-   setProperty(result, computedHyperplanes, eq);
-   result
+   cone result
 )
 
 
@@ -50,11 +58,10 @@ posHull(Matrix,Matrix) := (Mrays,LS) -> (
    if numRows Mrays =!= numRows LS then error("rays and linSpace generators must lie in the same space");
    result := new Cone from {
       ambientDimension => numRows Mrays,
-      symbol cache => new CacheTable
+      inputRays => Mrays,
+      inputLinealityGenerators => LS
    };
-   setProperty(result, inputRays, Mrays);
-   setProperty(result, inputLinealityGenerators, LS);
-   result
+   cone result
 )
 
 --   INPUT : 'M',  a matrix, such that the Cone is given by C={x | Mx>=0} 
@@ -78,7 +85,6 @@ posHull Matrix := R -> (
 
 
 --   INPUT : '(C1,C2)'  two cones
---   Q: Is this used anywhere?
 posHull(Cone,Cone) := (C1,C2) -> (
    local iRays;
    local linealityGens;

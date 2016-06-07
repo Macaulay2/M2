@@ -315,7 +315,7 @@ assert(ambDim(F) == 3)
 assert(F#"number of generating cones" == 4)
 assert(F#"isPure")
 L = set {matrix {{1},{0},{0}},matrix {{-1},{0},{0}},matrix {{0},{1},{0}},matrix {{0},{-1},{0}},matrix {{0},{0},{1}},matrix {{0},{0},{-1}}};
-assert(L === F#"rays")
+assert(L === rays(F))
 C = posHull matrix {{-1,0},{0,1},{0,0}};
 F1 = addCone(C,F);
 assert(F == F1)

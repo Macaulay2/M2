@@ -51,6 +51,8 @@ load "./legacy.m2"
 load "./tests/cone_basics.m2"
 load "./tests/polyhedron_basics.m2"
 load "./tests_from_polymake/hilbert_basis.m2"
+-- Failing tests
+load "./tests/failing.m2"
 -- load "./tests_from_polymake/lattice_points.m2"
 -- load "./legacy_tests.m2"
 

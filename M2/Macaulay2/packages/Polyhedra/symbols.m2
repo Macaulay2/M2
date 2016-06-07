@@ -25,8 +25,9 @@ export {
    "ambientDimension",
    "computedDimension",
    "computedFacets",
-   "computedFacesThroughRays",
-   "computedFacetsThroughRays",
+   "computedFacesThroughRays", -- Which rays span a face?
+   "computedFacetsThroughRays", -- Which rays span a facet?
+   "computedRaysThroughFacets", -- Which facets intersect in a ray?
    "computedHyperplanes",
    "computedHilbertBasis",
    "computedLinealityBasis",
@@ -43,6 +44,10 @@ export {
    "underlyingCone",
    "lattice",
    "empty",
+   "verticesThroughFacets",
+   "indexOfTrivialFacet",
+   "facetToFacetMap", -- Which facets of underlying cone maps to facet of polyhedron.
+   "computedNormalFan",
 
    "maximalCones"
 }

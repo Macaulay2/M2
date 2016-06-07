@@ -109,12 +109,14 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
       L = getProperty(P, computedFacets);
       pMat = L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
-      setProperty(result, computedFacets, ezero || (-pMat));
+      setProperty(result, inequalities, ezero || (-pMat));
    );
    if hasProperty(P, inequalities) then (
       L = getProperty(P, inequalities);
       pMat = L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
+      -- At this point we do not know whether the height inequality
+      -- is implied.
       setProperty(result, inequalities, ezero || (-pMat));
    );
    if hasProperty(P, computedHyperplanes) then (
@@ -136,7 +138,13 @@ compute#Polyhedron#computedFacets Polyhedron := P -> (
    result := facets C;
    -- Elimination of the trivial half-space
    ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
-   result = result^(toList select(0..(numRows result)-1, i -> (ezero =!= result^{i} )));
+   trivialIndex := positions(0..(numRows result)-1, i -> (ezero === result^{i} ));
+   if #trivialIndex > 0 then (
+      trivialIndex = trivialIndex#0;
+   ) else (
+      trivialIndex = -1;
+   );
+   result = result^(toList select(0..(numRows result)-1, i -> i != trivialIndex));
    (- submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), result_{0})
 )
 
@@ -146,4 +154,58 @@ compute#Polyhedron#computedHyperplanes Polyhedron := P -> (
    result := hyperplanes C;
    (submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), -result_{0})
 )
+
+compute#Polyhedron#verticesThroughFacets = method()
+compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
+   facetsP := facets P;
+   C := getProperty(P, underlyingCone);
+   facetVectors := facetsP#0;
+   facetValues := facets;
+   verticesP := vertices P;
+   L := for i from 0 to (numColumns verticesP -1) list (
+      vertex := verticesP_i;
+      select(0..(numRows facetsP - 1), 
+         j-> (
+            facet := facetsP^{j};
+         )
+      )
+   );
+)
+
+compute#Polyhedron#facetToFacetMap = method()
+compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
+   facetsP := facets P;
+   facetsP = (-facetsP#1) | facetsP#0;
+   C := getProperty(P, underlyingCone);
+   facetsC := facets C;
+   L := for i from 0 to (numRows facetsC - 1) list (
+      cFacet := facetsC^{i};
+      corresponding := positions(0..(numRows facetsP - 1),
+         j -> (
+            pFacet := facetsP^{j};
+            rank (pFacet || cFacet) == 1
+         )
+      );
+      if #corresponding == 1 then i=>corresponding#0
+      else if #corresponding == 0 then i=>-1
+      else error("Facet corresponds to multiple facets.")
+   );
+   new HashTable from L
+)
+
+compute#Polyhedron#computedNormalFan = method()
+compute#Polyhedron#computedNormalFan Polyhedron := P -> (
+   C := getProperty(P, underlyingCone);
+   raysNF := transpose (facets P)#0;
+   facetMap := getProperty(P, facetToFacetMap);
+   maximalConesNF := getProperty(C, computedRaysThroughFacets);
+   maximalConesNF = apply(maximalConesNF,
+      mc -> (
+         apply(mc, i -> facetMap#i)
+      )
+   );
+   << "Rays: " << raysNF << endl;
+   << "MC: " << maximalConesNF << endl;
+)
+
 
