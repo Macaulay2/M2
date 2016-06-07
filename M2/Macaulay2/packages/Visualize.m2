@@ -1276,7 +1276,7 @@ document {
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize G", ", once you 
 	 ended the session, the last graph on the screen would be assigned to ", TT "H", ". After running various computations on this graph, 
 	 you can then visualize it once more with the ", TO "visualize", " method. You can keep using this method until the port is closed with ",
-	 TO "closePort", " or Macualay2 is restarted."},
+	 TO "closePort", " or Macaulay2 is restarted."},
      
      
      SUBSECTION "Browser Menu Options",
@@ -1416,7 +1416,7 @@ document {
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize D", ", once you 
 	 ended the session, the last digraph on the screen would be assigned to ", TT "H", ". After running various computations on this digraph, 
 	 you can then visualize it once more with the ", TO "visualize", " method. You can keep using this method until the port is closed with ",
-	 TO "closePort", " or Macualay2 is restarted."},
+	 TO "closePort", " or Macaulay2 is restarted."},
      
      
      SUBSECTION "Browser Menu Options",
@@ -1432,8 +1432,11 @@ document {
 	 {BOLD "Enable Editing: ", "In the browser, you can edit the digraph (add/delete vertices or edges) by clicking ", TT "Enable Editing",
 	      ".  For example, in order to remove the edges ", TT "{0,1}", " and ", TT "{1,3}", " click on 'Enable Editing' and select 
 	      the edges and press delete on the keyboard. You may also add vertices and edges with the mouse/trackpad. When editing is enabled,
-	      you can move the vertices around by holding down the shift key. Further, to create a loop, select a node and press the 'r' key.", 
+	      you can move the vertices around by holding down the shift key. Further, to create a loop, select a node and press the 'r' key. 
+	      When an edge is selected, you may press the 'l', 'r', and 'b' keys to change the edge to a left-, right-, or two-sided edge, 
+	      respectively.", 
 	      BR{}, BR{}}, 
+ 	      
 	      
 	 {BOLD "Hide Labels: ", "Removes the labels from the vertices.", BR{}, BR{}},  	      
 	 
@@ -1513,7 +1516,7 @@ document {
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize P", ", once you 
 	 ended the session, the last poset on the screen would be assigned to ", TT "H", ". After running various computations on this poset, 
 	 you can then visualize it once more with the ", TO "visualize", " method. You can keep using this method until the port is closed with ",
-	 TO "closePort", " or Macualay2 is restarted."},
+	 TO "closePort", " or Macaulay2 is restarted."},
      
      
      SUBSECTION "Browser Menu Options",
@@ -1612,7 +1615,7 @@ document {
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize D", ", once you 
 	 ended the session, the last simplicial complex on the screen would be assigned to ", TT "H", ". After running various computations on this simplicial complex, 
 	 you can then visualize it once more with the ", TO "visualize", " method. You can keep using this method until the port is closed with ",
-	 TO "closePort", " or Macualay2 is restarted."},
+	 TO "closePort", " or Macaulay2 is restarted."},
      
      
      SUBSECTION "Browser Menu Options",
