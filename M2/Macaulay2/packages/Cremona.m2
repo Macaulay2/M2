@@ -36,11 +36,11 @@ verbose:=false;
 composeRationalMaps=method(TypicalValue => RingMap);
 degreeOfRationalMap=method(TypicalValue => ZZ, Options => {MathMode => false});
 invertBirMap=method(TypicalValue => RingMap, Options => {MathMode => false});
-isBirational=method(TypicalValue => Boolean);
+isBirational=method(TypicalValue => Boolean, Options => {MathMode => false});
 isDominant=method(TypicalValue => Boolean, Options => {MathMode => false});
 isInverseMap=method(TypicalValue => Boolean);
 kernelComponent=method(TypicalValue => Ideal);
-projectiveDegrees=method(TypicalValue => List, Options => {OnlySublist => infinity});
+projectiveDegrees=method(TypicalValue => List, Options => {MathMode => false, OnlySublist => infinity});
 toMap=method(TypicalValue => RingMap, Options => {Dominant => null});
 approximateInverseMap=method(TypicalValue => RingMap, Options => {MathMode => false, CodimBsInv => null});
 
@@ -105,12 +105,12 @@ invertBirMap (RingMap) := o -> (phi) -> (
    psi
 );
 
-isBirational (RingMap) := (phi) -> (
+isBirational (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
    X:=target phi; Y:=source phi;
    if dim X != dim Y then return false;
-   if isPolynomialRing X then return degreeOfRationalMap phi == 1;
-   first projectiveDegrees(phi,OnlySublist=>0) == degree Y 
+-- if isPolynomialRing X then return degreeOfRationalMap(phi,MathMode=>o.MathMode) == 1;
+   first projectiveDegrees(phi,OnlySublist=>0,MathMode=>o.MathMode) == degree Y 
 );
 
 isDominant (RingMap) := o -> (phi) -> (
@@ -169,6 +169,7 @@ projectiveDegrees (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
    if o.OnlySublist < 0 then return {};
    k:=dim ideal target phi -1;
+   if o.MathMode then return projectiveDegreesMath(phi,min(k,o.OnlySublist));
    L:={projDegree(phi,0,k)};
    for i from 1 to min(k,o.OnlySublist) do (
       phi=genericRestriction phi;
@@ -485,6 +486,71 @@ genericRestriction = (phi) -> (
    phi'
 );
 
+blowUp=method(TypicalValue => RingMap);
+   -- p. 65, [Computations in algebraic geometry with Macaulay 2 - Editors: D. Eisenbud, D. Grayson, M. Stillman, and B. Sturmfels]
+   -- p. 10, [Aluffi, Computing characteristic classes of projective schemes]
+   -- Exercise 1.1, p. 331, [Liu, Algebraic geometry and arithmetic curves] 
+   -- Example 7.15.1, p. 165, [Hartshorne, Algebraic geometry]
+
+blowUpPn = (I) -> (
+   if not isPolynomialRing ring I then error("expected ideal in a polynomial ring"); 
+   K := coefficientRing ring I;
+   n := numgens ring I;
+   r := numgens I;
+   t := local t;
+   x := local x;
+   y := local y;
+   tR := K[t, x_0..x_(n-1), y_0..y_(r-1), MonomialOrder => Eliminate 1];
+   f := map(tR, ring I, submatrix(vars tR, {1..n}));
+   F := f(gens I);
+   J := ideal apply(1..r, j -> (gens tR)_(n+j)-t*F_(0,(j-1)));
+   L := ideal selectInSubring(1, gens gb J);
+   R := K[x_0..x_(n-1), y_0..y_(r-1)];
+   g := map(R, tR, 0 | vars R);
+   map(R/(trim g(L)),ring I,(gens R)_{0..(n-1)})
+);
+
+blowUp (Ideal) := (I) -> (
+   if not isPolynomialRing ambient ring I then error("expected ideal in a polynomial ring or a quotient of a polynomial ring"); 
+   if isPolynomialRing ring I then return blowUpPn I;
+  jI := lift(I,ambient ring I);
+   h := blowUpPn jI;
+   R := ambient target h;
+  Pi := map(R,source h,lift(toMatrix h,R));
+   B := ideal target h;
+   E := trim(Pi(jI) + B);
+  B0 := saturate(Pi(ideal ring I) + B, E);
+   map(R/B0,ring I,toMatrix Pi)
+);
+
+projectiveDegreesMath = (phi,oSublist) -> ( 
+   I := ideal toMatrix phi;
+   if verbose then <<"computing blowing-up..."; 
+   B := ideal target blowUp I;
+   if verbose then <<" done"<<endl;
+   K := coefficientRing ring I;
+   n := numgens ring I -1;
+   r := dim ideal ring I -1;
+   m := numgens ring B - n - 2;
+   t := local t;
+  Pm := K[t_0..t_m];
+  p1 := map(ring B,ring I,(gens ring B)_{0..n});
+  p2 := map(ring B,Pm,(gens ring B)_{(n+1)..(n+1+m)});
+   J := local J;
+  J_0 = B;
+   for i from 1 to r do (
+      while true do (
+         if verbose then <<"computing list of subschemes of blowing-up: "<<i<<" of "<<r<<endl;
+         J_i = saturate(p2(ideal random1 Pm) + J_(i-1),ideal toMatrix p2);
+         if ((dim J_i < dim J_(i-1)) or (dim J_i <= 0 and dim J_(i-1) <= 0)) then break;
+      );
+   );
+   if verbose then <<"...done"<<endl;
+   degs:=for i from r-oSublist to r list degree preimage(p1,J_i);
+   <<"MathMode: output certified!"<<endl;
+   degs
+);
+
 beginDocumentation() 
    document { 
     Key => Cremona, 
@@ -579,11 +645,11 @@ phi'=phi*map(ringP14,ringP8,for i to 8 list random(1,ringP14))",
           }, 
      Outputs => { {"the list of the projective degrees of ",TEX///$\Phi$///} 
           }, 
-          "Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,".", 
+          "Let ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///," be a ring map representing a rational map ",TEX///$\Phi: V(I) \subseteq \mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///,". The ",TEX///$i$///,"-th projective degree of ",TEX///$\Phi$///," is defined in terms of dimension and degree of the closure of ",TEX///$\Phi^{-1}(L)$///,", where ",TEX///$L$///," is a general linear subspace of ",TEX///$\mathbb{P}^m$///," of a certain dimension; for the precise definition, see Harris's book (Algebraic geometry: A first course - Vol. 133 of Grad. Texts in Math., p. 240). If ",TEX///$\Phi$///," is defined by elements ",TEX///$F_0(x_0,\ldots,x_n),\ldots,F_m(x_0,\ldots,x_n)$///," and ",TEX///$I_L$///," denotes the ideal of the subspace ",TEX///$L\subseteq \mathbb{P}^m$///,", then the ideal of the closure of ",TEX///$\Phi^{-1}(L) $///," is nothing but the saturation of the ideal ",TEX///$(\phi(I_L))$///," by ",TEX///$(F_0,....,F_m)$///," in the ring ",TEX///$K[x_0,\ldots,x_n]/I$///,". So, replacing in the definition, ", EM "general linear subspace", " by ", EM "random linear subspace", ", we get a probabilistic algorithm to compute all projective degrees. Instead, a deterministic algorithm is described by P. Aluffi in the paper ", HREF{"http://dx.doi.org/10.1016/S0747-7171(02)00089-5","doi:10.1016/S0747-7171(02)00089-5"},".",
     EXAMPLE { 
           "-- map from P^4 to G(1,3) given by the quadrics through a rational normal curve of degree 4
 GF(331^2)[t_0..t_4]; phi=toMap minors(2,matrix{{t_0..t_3},{t_1..t_4}})", 
-          "time projectiveDegrees phi"          
+          "time projectiveDegrees phi"   
            }, 
     EXAMPLE { 
           "-- map P^8--->P^8 defined by the quadrics through P^2 x P^2 
@@ -591,16 +657,16 @@ phi=toMap minors(2,genericMatrix(ZZ/3331[x_0..x_8],3,3))",
           "time projectiveDegrees phi", 
           "time projectiveDegrees(phi,OnlySublist=>1)" 
           }, 
-    Caveat => {"This is a probabilistic method."}, 
+    Caveat => {"  "}, 
     SeeAlso => {degreeOfRationalMap} 
           } 
    document { 
-    Key => {MathMode, [invertBirMap,MathMode], [degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode]}, 
+    Key => {MathMode, [invertBirMap,MathMode], [projectiveDegrees,MathMode],[degreeOfRationalMap,MathMode],[approximateInverseMap,MathMode],[isDominant,MathMode],[isBirational,MathMode]}, 
     Headline => "whether or not to ensure correctness of output", 
     "This option accepts a ", TO Boolean, " value, default value ",TT "false",".",
      PARA{},
      "If turned on in the methods ", TO invertBirMap," and ", TO approximateInverseMap, ", then it will be checked whether the maps in input and output are one the inverse of the other, throwing an error if they are not. Actually, ", TO approximateInverseMap, " will first try to fix the error of the approximation. 
- When turned on in the methods ", TO degreeOfRationalMap," and ", TO isDominant, ", it means whether or not to use a non-probabilistic algorithm."
+ When turned on in the methods ", TO projectiveDegrees,", ", TO degreeOfRationalMap, ", ", TO isBirational," and ", TO isDominant, ", it means whether or not to use a non-probabilistic algorithm."
           } 
    document { 
     Key => {Dominant, [toMap,Dominant]}, 
@@ -673,8 +739,7 @@ H=trim ideal random(1,ringP11)",
      Outputs => { 
           Boolean => {"whether ",TEX///$\Phi$///," is birational"  } 
                 },
-          "The testing passes through the methods ", TO degreeOfRationalMap, " and ", TO projectiveDegrees, ", so that there is a positive (but very small) probability of obtaining a wrong answer.
-",
+          "The testing passes through the methods ", TO degreeOfRationalMap, " and ", TO projectiveDegrees,".",
           PARA{},
           "In the example below we check the birationality of a map between two quadric hypersurfaces in ",TEX///$\mathbb{P}^8$///,".",
     EXAMPLE { 
@@ -874,6 +939,14 @@ TEST ///
     assert( ideal image basis(2,kernel phi) == Out )
     phi'=toMap(phi,Dominant=>ideal(Out_0,Out_1))
     assert( ideal image basis(2,kernel phi') == kernelComponent(phi',2) )
+///
+
+TEST ///
+    R=ZZ/331[t_0,t_1];
+    phi=toMap(kernel toMap((ideal vars R)^4),Dominant=>2)
+    psi=invertBirMap phi
+    assert( projectiveDegrees(phi,MathMode=>true) == {1, 2, 4, 4, 2})
+    assert( projectiveDegrees(psi,MathMode=>true) == reverse({1, 2, 4, 4, 2}))
 ///
 
 end 
