@@ -1304,6 +1304,10 @@ doc ///
    [importSliceFile,Verbose]
    [importSolutionsFile,Verbose]
    [runBertini,Verbose]
+   [makeWitnessSetFiles,Verbose]
+   [b'PHSequence,Verbose]
+   [b'TraceTestImage,Verbose]
+   [makeSampleSolutionsFile,Verbose]
   Headline
     Option to silence additional output 
   Usage
@@ -1357,6 +1361,22 @@ doc ///
     Text
        Use TopDirectory to specify the directory where computations will occur. 
 ///;
+
+doc ///
+  Key
+   M2Precision
+   [bertiniParameterHomotopy,M2Precision]
+   [bertiniZeroDimSolve,M2Precision]   
+  Headline
+    Option to change the precision Macaulay2 uses to import the files.
+  Usage
+    bertiniParameterHomotopy(...,M2Precision=>ZZ)
+    bertiniZeroDimSolve(...,TopDirectory=>ZZ)
+  Description
+    Text
+       When importing solutions, they are first converted to an external string where precision is set. The default is 53. 
+///;
+
 
 
 doc ///
@@ -2026,7 +2046,6 @@ doc ///
    UseStartPointsFirst
    MonodromyStartParameters
    B'Exe
-   M2Precision
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
