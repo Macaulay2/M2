@@ -28,8 +28,8 @@ isPointed Cone := C -> (
 
 -- hilbertBasis = method()
 hilbertBasis Cone := List => o -> (C -> (
-      if isPointed C and isFullDimensional C then getProperty(C, computedHilbertBasis)
-      else error("Hilbert basis not implemented for non-pointed or non-fulldimensional cones yet.")
+      if isPointed C then getProperty(C, computedHilbertBasis)
+      else error("Hilbert basis not implemented for non-pointed cones yet.")
    )
 )
 

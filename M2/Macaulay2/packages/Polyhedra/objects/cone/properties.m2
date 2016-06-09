@@ -115,15 +115,13 @@ compute#Cone#computedDimension Cone := C -> (
 
 compute#Cone#computedHilbertBasis = method()
 compute#Cone#computedHilbertBasis Cone := C -> (
-   local inputMatrix;
-   if hasProperties(C, {computedFacets, computedHyperplanes}) then (
-      inputMatrix = transpose facets C;
-   ) else (
-      inputMatrix = transpose facets C;
-   );
-   hb := transpose hilbertBasis(inputMatrix, InputType=>"lattice");
+   inputMatrix := (facets C) || (hyperplanes C) || ( - hyperplanes C);
+   hb := transpose hilbertBasis(transpose inputMatrix, InputType=>"lattice");
    r := ring inputMatrix;
-   result := apply(0..(numColumns hb - 1), i -> (promote(matrix hb_i, r)) // (transpose inputMatrix));
+   result := apply(0..(numColumns hb - 1), i -> hb_i);
+   eq := hyperplanes C;
+   zero :=  transpose matrix {toList ((numRows eq):0)};
+   result = apply(result, h -> (promote(matrix h, r)) // inputMatrix);
    toList result
 )
 
@@ -201,6 +199,20 @@ compute#Cone#computedRays Cone := C -> (
 compute#Cone#simplicial = method()
 compute#Cone#simplicial Cone := C -> (
    (isPointed C) and (numColumns rays C == dim C)
+)
+
+
+compute#Cone#ambientDimension = method()
+compute#Cone#ambientDimension Cone := C -> (
+   if hasProperty(C, inputRays) then numRows getProperty(C, inputRays)
+   else if hasProperty(C, computedRays) then numRows rays C
+   else if hasProperty(C, inputLinealityGenerators) then numRows getProperty(C, inputLinealityGenerators)
+   else if hasProperty(C, computedLinealityBasis) then numRows linealitySpace C
+   else if hasProperty(C, inequalities) then numColumns getProperty(C, inequalities)
+   else if hasProperty(C, computedFacets) then numColumns facets C
+   else if hasProperty(C, equations) then numColumns getProperty(C, equations)
+   else if hasProperty(C, computedHyperplanes) then numColumns hyperplanes C
+   else error("Is the cone fully defined? Cannot compute ambient dimension.")
 )
 
 

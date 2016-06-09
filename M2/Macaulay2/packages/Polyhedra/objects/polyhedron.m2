@@ -1,90 +1,11 @@
 
-vertices Polyhedron := P -> getProperty(P, computedVertices)
-
-  
- 
-
-
 
 Polyhedron == Polyhedron := (P,Q) -> P === Q
 
 
--- PURPOSE : Tests if a Polyhedron is empty
---   INPUT : 'P'  a Polyhedron
---  OUTPUT : 'true' or 'false'
-isEmpty = method(TypicalValue => Boolean)
-isEmpty Polyhedron := P -> dim P == -1
-
-
--- PURPOSE : Tests if a Polyhedron is compact
---   INPUT : 'P'  a Polyhedron
---  OUTPUT : 'true' or 'false'
-isCompact = method(TypicalValue => Boolean)
-isCompact Polyhedron := P -> linSpace(P) == 0 and rays(P) == 0
 
 
 
--- PURPOSE : Computing the lattice points of a compact Polyhedron 
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : 'L',  a list containing the lattice points of 'P'
-latticePoints = method(TypicalValue => List)
-latticePoints Polyhedron := P -> (
-     if not P.cache.?latticePoints then (
-	  -- Checking for input errors
-	  if  not isCompact P then error("The polyhedron must be compact");
-	  -- Recursive function that intersects the polyhedron with paralell hyperplanes in the axis direction
-	  -- in which P has its minimum extension
-	  latticePointsRec := P -> (
-	       -- Finding the direction with minimum extension of P
-	       V := entries vertices P;
-	       n := ambDim P;
-	       minv := apply(V,min);
-	       maxv := apply(V,max);
-	       minmaxv := maxv-minv;
-	       pos := min minmaxv;
-	       pos = position(minmaxv,v -> v == pos);
-	       -- Determining the lattice heights in this direction
-	       L := toList({{ceiling minv_pos}}..{{floor maxv_pos}});
-	       -- If the dimension is one, than it is just a line and we take the lattice points
-	       if n == 1 then apply(L,matrix)
-	       -- Otherwise intersect with the hyperplanes and project into the hyperplane
-	       else flatten apply(L,p -> (
-			 NP := intersection {P,{map(QQ^1,QQ^n,(i,j) -> if j == pos then 1 else 0),matrix p}};
-			 if NP#"number of vertices" == 1 then (
-			      v := vertices NP;
-			      if promote(substitute(v,ZZ),QQ) == v then substitute(v,ZZ) else {})
-			 else (
-			      A := matrix drop((entries id_(QQ^n)),{pos,pos});
-			      apply(latticePointsRec affineImage(A,NP),v -> v^{0..(pos-1)} || matrix p || v^{pos..(n-2)})))));
-	  -- Checking if the polytope is just a point
-	  if dim P == 0 then P.cache.latticePoints = if liftable(vertices P,ZZ) then {lift(vertices P,ZZ)} else {}
-	  -- Checking if the polytope is full dimensional
-	  else if (dim P == ambDim P) then P.cache.latticePoints = latticePointsRec P
-	  -- If not checking first if the affine hull of P contains lattice points at all and if so projecting the polytope down
-	  -- so that it becomes full dimensional with a map that keeps the lattice
-	  else (
-	       (M,v) := hyperplanes P;
-	       -- Finding a lattice point in the affine hull of P
-	       b := if all(entries M, e -> gcd e == 1) then (
-		    -- Computing the Smith Normal Form to solve the equation over ZZ
-		    (M1,Lmatrix,Rmatrix) := smithNormalForm substitute(M,ZZ);
-		    v1 := flatten entries (Lmatrix*v);
-		    w := apply(numRows M1, i -> M1_(i,i));
-		    -- Checking if the system is at least solvable over QQ
-		    if all(#w, i -> w#i != 0 or v1#i == 0) then (
-			 -- If it is, then solve over QQ
-			 w = apply(#w, i -> (v1#i/w#i,v1#i%w#i));
-			 if all(w, e -> e#1 == 0) then (
-			      -- If the solution is in fact in ZZ then return it
-			      w = transpose matrix{apply(w,first) | toList(numColumns M1 - numRows M1:0)};
-			      Rmatrix * w)));
-	       -- If there is no lattice point in the affine hull then P has none
-	       if b === null then P.cache.latticePoints = {}
-	       else (
-		    A := gens ker substitute(M,ZZ);
-		    -- Project the translated polytope, compute the lattice points and map them back
-		    P.cache.latticePoints = apply(latticePoints affinePreimage(A,P,b),e -> substitute(A*e + b,ZZ)))));
-     P.cache.latticePoints)
 
 -- PURPOSE : Computing the interior lattice points of a compact Polyhedron
 --   INPUT : 'P',  a Polyhedron

@@ -30,6 +30,20 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
 )
 
 
+compute#Polyhedron#empty = method()
+compute#Polyhedron#empty Polyhedron := P -> (
+   if hasProperty(P, points) then (numColumns getProperty(P, points)) == 0
+   else (numColumns vertices P) == 0
+)
+
+
+compute#Polyhedron#computedRays = method()
+compute#Polyhedron#computedRays Polyhedron := P -> (
+   vertices P;
+   getProperty(P, computedRays)
+)
+
+
 compute#Polyhedron#computedDimension = method()
 compute#Polyhedron#computedDimension Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
@@ -180,8 +194,6 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
       )
    );
    linealitySpaceNF := transpose((hyperplanes P)#0);
-   << "Rays: " << raysNF << endl;
-   << "MC: " << maximalConesNF << endl;
    result := fan(raysNF, linealitySpaceNF, maximalConesNF);
    set(result, computedPolytope, P);
    result
@@ -192,6 +204,17 @@ compute#Polyhedron#ambientDimension = method()
 compute#Polyhedron#ambientDimension Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    ambDim C - 1
+)
+
+
+compute#Polyhedron#computedLatticePoints = method()
+compute#Polyhedron#computedLatticePoints Polyhedron := P -> (
+   if isEmpty P then error("Polyhedron is empty!");
+   C := getProperty(P, underlyingCone);
+   H := hilbertBasis C;
+   result := select(H, h -> h_(0,0) == 1);
+   result = apply(result, r -> submatrix(r, 1..(numRows r -1) ,(1:0)));
+   apply(result, r -> lift(r, ZZ))
 )
 
 

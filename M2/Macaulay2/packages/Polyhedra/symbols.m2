@@ -48,6 +48,7 @@ export {
    "indexOfTrivialFacet",
    "facetToFacetMap", -- Which facets of underlying cone maps to facet of polyhedron.
    "computedNormalFan",
+   "computedLatticePoints",
 
    "maximalCones",
    "computedPolytope"

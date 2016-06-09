@@ -53,9 +53,9 @@ load "./legacy.m2"
 load "./tests/cone_basics.m2"
 load "./tests/polyhedron_basics.m2"
 load "./tests/tests_from_polymake/hilbert_basis.m2"
+load "./tests/tests_from_polymake/lattice_points.m2"
 -- Failing tests
 load "./tests/failing.m2"
--- load "./tests/tests_from_polymake/lattice_points.m2"
 -- load "./tests/legacy_tests.m2"
 
 -- Documentation
@@ -64,6 +64,10 @@ load "./tests/failing.m2"
 end
 
 -------------------------------------------------------------------------------
+restart
+loadPackage "Polyhedra"
+check "Polyhedra"
+
 restart
 loadPackage "Polyhedra"
 P = convexHull matrix {{12,3},{3,5}}
@@ -125,3 +129,19 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
+
+restart
+loadPackage "PolyhedraOld"
+verticesP = matrix {{0,0,1/2,0,1,1/2,0,0,0,0,0,1,0,0},{0,1,1/2,0,0,0,1/2,0,0,0,0,0,1,0},{1,0,1/2,0,0,0,0,1/2,0,0,0,0,0,1},{0,0,0,0,0,1/2,1/2,0,0,1,0,0,0,1},{0,0,0,0,0,1/2,0,1/2,1,0,0,0,1,0},{0,0,0,0,0,0,1/2,1/2,0,0,1,1,0,0}};
+desiredLP = matrix {{0,0,0,0,0,0,0,0,1,1},{0,0,0,0,0,0,1,1,0,0},{0,0,0,0,1,1,0,0,0,0},{0,0,0,1,0,1,0,0,0,0},{0,0,1,0,0,0,0,1,0,0},{0,1,0,0,0,0,0,0,0,1}};
+desiredLP = sort desiredLP;
+P = convexHull(verticesP)
+elapsedTime latticePoints P;
+
+restart
+loadPackage "Polyhedra"
+verticesP = matrix {{0,0,1/2,0,1,1/2,0,0,0,0,0,1,0,0},{0,1,1/2,0,0,0,1/2,0,0,0,0,0,1,0},{1,0,1/2,0,0,0,0,1/2,0,0,0,0,0,1},{0,0,0,0,0,1/2,1/2,0,0,1,0,0,0,1},{0,0,0,0,0,1/2,0,1/2,1,0,0,0,1,0},{0,0,0,0,0,0,1/2,1/2,0,0,1,1,0,0}};
+desiredLP = matrix {{0,0,0,0,0,0,0,0,1,1},{0,0,0,0,0,0,1,1,0,0},{0,0,0,0,1,1,0,0,0,0},{0,0,0,1,0,1,0,0,0,0},{0,0,1,0,0,0,0,1,0,0},{0,1,0,0,0,0,0,0,0,1}};
+desiredLP = sort desiredLP;
+P = convexHull(verticesP)
+elapsedTime latticePoints P;
