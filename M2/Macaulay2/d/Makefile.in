@@ -168,7 +168,9 @@ python-c.o : | python-exports.h.tmp
 
 # see https://github.com/Macaulay2/M2/issues/430
 # adding this prevents an error when gcc 6 compiles stack_trace in M2lib.c
+ifeq (@HAVE_WFRAME_ADDRESS@,yes)
 M2lib.o : M2_CFLAGS += -Wno-frame-address
+endif
 
 M2lib.o scclib.o : | interp-exports.h.tmp
 scclib.o : expr-exports.h M2mem.h M2inits.h ../dumpdata/map.h debug.h types.h ../c/compat.h ../e/engine.h ../dumpdata/dumpdata.h
