@@ -8,14 +8,7 @@ Cone == Cone := (C1,C2) -> C1 === C2
 
 
 cone HashTable := inputProperties -> (
-   result := new Cone from {
-      symbol cache => new CacheTable
-   };
-   for key in keys inputProperties do (
-      << "Setting property " << key << endl;
-      setProperty(result, key, inputProperties#key);
-   );
-   result
+   constructTypeFromHash(Cone, inputProperties)
 )
 
 coneFromRayData = method(TypicalValue => Cone)

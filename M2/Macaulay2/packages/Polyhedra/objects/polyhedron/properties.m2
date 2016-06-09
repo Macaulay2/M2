@@ -204,8 +204,12 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
          apply(mc, i -> facetMap#i)
       )
    );
+   linealitySpaceNF := transpose((hyperplanes P)#0);
    << "Rays: " << raysNF << endl;
    << "MC: " << maximalConesNF << endl;
+   result := fan(raysNF, linealitySpaceNF, maximalConesNF);
+   set(result, computedPolytope, P);
+   result
 )
 
 

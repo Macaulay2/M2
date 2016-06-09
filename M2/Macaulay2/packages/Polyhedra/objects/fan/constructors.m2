@@ -9,14 +9,17 @@ compute#Fan = new MutableHashTable;
 --  OUTPUT : The fan of all Cones in 'L' and all Cones in of the fans in 'L' and all their faces
 fan = method(TypicalValue => Fan)
 fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
-   result := new Fan from {
+   result := new HashTable from {
       ambientDimension => numRows irays,
-      symbol cache => new CacheTable
+      computedRays => irays,
+      computedLinealityBasis => linealityGens,
+      maximalCones => icones
    };
-   setProperty(result, computedRays, irays);
-   setProperty(result, computedLinealityBasis, linealityGens);
-   setProperty(result, maximalCones, icones);
-   result
+   fan result
+)
+
+fan(Matrix, Matrix, Sequence) := (irays, linealityGens, icones) -> (
+   fan(irays, linealityGens, toList icones)
 )
 
 fan(Matrix, List) := (irays, icones) -> (
@@ -25,3 +28,10 @@ fan(Matrix, List) := (irays, icones) -> (
    fan(irays, linealityGens, icones)
 )
 
+fan(Matrix, Sequence) := (irays, icones) -> (
+   fan(irays, toList icones)
+)
+
+fan HashTable := inputProperties -> (
+   constructTypeFromHash(Fan, inputProperties)
+)

@@ -27,11 +27,12 @@ isSmooth Cone := C -> (
 
 compute#Cone#smooth = method()
 compute#Cone#smooth Cone := C -> (
-   -- generating the non-linealityspace cone of C
    R := lift(transpose rays C,ZZ);
-   n := dim C - numColumns linealitySpace C;
-   -- if the cone is full dimensional then it is smooth iff its rays form a basis over ZZ
-   numRows R == n and (M := (smithNormalForm R)#0; product apply(n, i -> M_(i,i)) == 1)
+   L := lift(transpose linealitySpace C, ZZ);
+   n := dim C - numRows L;
+   -- The rays need to form a lattice basis in N/L
+   SNF := (smithNormalForm (R || L))#0; 
+   numRows R == n and (product apply(dim C, i -> SNF_(i,i)) == 1)
 )
 
 --   INPUT : 'k'  an integer between 0 and the dimension of

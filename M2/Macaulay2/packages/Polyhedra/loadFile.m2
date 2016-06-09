@@ -28,6 +28,7 @@ load "./objects/polyhedraHash.m2"
 --         load "./objects/cone/hilbertBasis.m2"
       load "./objects/polyhedron/constructors.m2"
       load "./objects/polyhedron/properties.m2"
+      load "./objects/polyhedron/methods.m2"
       load "./objects/polyhedron.m2"
    load "./objects/polyhedralObjectFamily.m2"
       load "./objects/fan/constructors.m2"
@@ -67,6 +68,7 @@ loadPackage "Polyhedra"
 P = convexHull matrix {{12,3},{3,5}}
 C = getProperty(P, underlyingCone)
 vertices P
+getProperty(P, facetToFacetMap )
 
 
 restart

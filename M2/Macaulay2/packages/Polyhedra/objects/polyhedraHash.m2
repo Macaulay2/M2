@@ -80,6 +80,18 @@ getAvailableProperties PolyhedraHash := PH -> (
    result
 )
 
+constructTypeFromHash = method()
+constructTypeFromHash(Type, HashTable) := (PType, H) -> (
+   result := new PType from {
+      symbol cache => new CacheTable
+   };
+   for key in keys H do (
+      << "Setting property " << key << endl;
+      setProperty(result, key, H#key);
+   );
+   result
+)
+
 net PolyhedraHash := X -> (
    properties := getAvailableProperties X;
    horizontalJoin flatten (

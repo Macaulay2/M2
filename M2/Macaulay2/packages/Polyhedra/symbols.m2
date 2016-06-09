@@ -49,5 +49,6 @@ export {
    "facetToFacetMap", -- Which facets of underlying cone maps to facet of polyhedron.
    "computedNormalFan",
 
-   "maximalCones"
+   "maximalCones",
+   "computedPolytope"
 }

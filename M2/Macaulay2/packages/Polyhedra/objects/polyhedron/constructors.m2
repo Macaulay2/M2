@@ -7,14 +7,7 @@ compute#Polyhedron = new MutableHashTable
 
 polyhedron = method()
 polyhedron HashTable := inputProperties -> (
-   result := new Polyhedron from {
-      symbol cache => new CacheTable
-   };
-   for key in keys inputProperties do (
-      << "Setting property " << key << endl;
-      setProperty(result, key, inputProperties#key);
-   );
-   result
+   constructTypeFromHash(Polyhedron, inputProperties)
 )
 
 
