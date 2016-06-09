@@ -10,10 +10,14 @@
 # gfan doesn't compile with g++ 4.5, so I used gcc 4.3 instead
 
 CONFIGOPTIONS += --enable-rpm
-CC=gcc-4.3
-CXX=g++-4.3
-FC=gfortran-4.3
-CONFIGOPTIONS += --build=x86_64-unknown-linux-gnu --with-mpir-config-options="ABI=64"
+CONFIGOPTIONS += --build=x86_64-suse-gnu
+BUILD += givaro
+CONFIGOPTIONS += --enable-build-libraries="$(BUILD)"
+
+# this helps configure by letting g++ understand the thread_local storage class, used in an ntl include file
+# but we build it anyway
+_CXX = g++ -std=c++11
+
 DIRECTORY = suse64
 include Makefile.include
 default: check
