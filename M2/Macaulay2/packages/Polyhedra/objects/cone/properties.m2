@@ -1,29 +1,14 @@
-
--- PURPOSE : Tests if a Cone is pointed
---   INPUT : 'C'  a Cone
---  OUTPUT : 'true' or 'false'
-isPointed Cone := C -> (
-   getProperty(C, pointed)
-)
-
 compute#Cone#pointed = method()
 compute#Cone#pointed Cone := C -> (
    rank linealitySpace C == 0
 )
 
+
 compute#Cone#fullDimensional = method()
 compute#Cone#fullDimensional Cone := C -> (
    dim C == ambDim C
 )
-
-
-
---   INPUT : 'C'  a Cone
---  OUTPUT : 'true' or 'false'
-isSmooth Cone := C -> (
-   getProperty(C, smooth)
-)
-	   
+ 
 
 compute#Cone#smooth = method()
 compute#Cone#smooth Cone := C -> (
@@ -35,33 +20,18 @@ compute#Cone#smooth Cone := C -> (
    numRows R == n and (product apply(dim C, i -> SNF_(i,i)) == 1)
 )
 
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'C'  a cone
---  OUTPUT : a List, containing the faces as cones
-faces(ZZ,Cone) := (k,C) -> (
-   result := faces C;
-   result#k
-)
-
-faces Cone := C -> (
-   getProperty(C, computedFacesThroughRays)
-)
-
 
 compute#Cone#nFacets = method()
 compute#Cone#nFacets Cone := C -> (
    numRows facets C
 )
 
+
 compute#Cone#nRays = method()
 compute#Cone#nRays Cone := C -> (
    numColumns rays C
 )
 
-facetsThroughRays = method()
-facetsThroughRays Cone := C -> (
-   getProperty(C, computedFacetsThroughRays)
-)
 
 compute#Cone#computedFacesThroughRays = method()
 compute#Cone#computedFacesThroughRays Cone := C -> (
@@ -70,7 +40,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    raysC := rays C;
    ldim := rank linealitySpace C;
    result#d = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(d-1) = facetsThroughRays C;
+   result#(d-1) = getProperty(C, computeFacetsFromRayData);
    for i from 0 to d-2-ldim do (
       oldFaces := result#(d-1-i);
       newFaces := unique flatten apply(oldFaces,
@@ -86,6 +56,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    );
    result
 )
+
 
 compute#Cone#computedFacetsThroughRays = method()
 compute#Cone#computedFacetsThroughRays Cone := C -> (
@@ -107,6 +78,7 @@ compute#Cone#computedFacetsThroughRays Cone := C -> (
    )
 )
 
+
 compute#Cone#computedRaysThroughFacets = method()
 compute#Cone#computedRaysThroughFacets Cone := C -> (
    raysC := rays C;
@@ -127,6 +99,7 @@ compute#Cone#computedRaysThroughFacets Cone := C -> (
    )
 )
 
+
 compute#Cone#computedDimension = method(TypicalValue => ZZ)
 compute#Cone#computedDimension Cone := C -> (
    if hasProperties(C, {computedRays, computedLinealityBasis}) then (
@@ -139,12 +112,6 @@ compute#Cone#computedDimension Cone := C -> (
    )
 )
 
--- hilbertBasis = method()
-hilbertBasis Cone := List => o -> (C -> (
-      if isPointed C and isFullDimensional C then getProperty(C, computedHilbertBasis)
-      else error("Hilbert basis not implemented for non-pointed or non-fulldimensional cones yet.")
-   )
-)
 
 compute#Cone#computedHilbertBasis = method()
 compute#Cone#computedHilbertBasis Cone := C -> (
@@ -177,6 +144,7 @@ compute#Cone#computedLinealityBasis Cone := C -> (
    orthogonalComplement containingSpace
 )
 
+
 compute#Cone#computedHyperplanes = method()
 compute#Cone#computedHyperplanes Cone := C -> (
    local containingSpace;
@@ -194,6 +162,7 @@ compute#Cone#computedHyperplanes Cone := C -> (
    transpose result
 )
 
+
 compute#Cone#computedFacets = method()
 compute#Cone#computedFacets Cone := C -> (
    (facetData, hyperplaneData) := (0,0);
@@ -209,6 +178,7 @@ compute#Cone#computedFacets Cone := C -> (
    if not hasProperty(C, computedHyperplanes) then setProperty(C, computedHyperplanes, hyperplaneData);
    facetData
 )
+
 
 compute#Cone#computedRays = method()
 compute#Cone#computedRays Cone := C -> (
@@ -227,6 +197,7 @@ compute#Cone#computedRays Cone := C -> (
    rayData
 )
 
+
 compute#Cone#simplicial = method()
 compute#Cone#simplicial Cone := C -> (
    (isPointed C) and (numColumns rays C == dim C)
@@ -241,15 +212,15 @@ orthogonalComplement Matrix := M -> (
    gens kernel M
 )
 
+
 computeRaysFromFacetData = method()
 computeRaysFromFacetData(Matrix, Matrix) := (facetData, hyperplaneData) -> (
    fourierMotzkin(transpose(-facetData), transpose(hyperplaneData))
 )
+
 
 computeFacetsFromRayData = method()
 computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
    (A, B) := fourierMotzkin(rayData, linealityData);
    (transpose(-A), transpose(B))
 )
-
-

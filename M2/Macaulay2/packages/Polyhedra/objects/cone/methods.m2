@@ -1,10 +1,37 @@
+--   INPUT : 'k'  an integer between 0 and the dimension of
+--     	     'C'  a cone
+--  OUTPUT : a List, containing the faces as cones
+faces(ZZ,Cone) := (k,C) -> (
+   result := faces C;
+   result#k
+)
+
+faces Cone := C -> (
+   getProperty(C, computedFacesThroughRays)
+)
 
 
 
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isSmooth Cone := C -> (
+   getProperty(C, smooth)
+)
 
 
+-- PURPOSE : Tests if a Cone is pointed
+--   INPUT : 'C'  a Cone
+--  OUTPUT : 'true' or 'false'
+isPointed Cone := C -> (
+   getProperty(C, pointed)
+)
 
-
+-- hilbertBasis = method()
+hilbertBasis Cone := List => o -> (C -> (
+      if isPointed C and isFullDimensional C then getProperty(C, computedHilbertBasis)
+      else error("Hilbert basis not implemented for non-pointed or non-fulldimensional cones yet.")
+   )
+)
 
      
 fVector Cone := C -> apply(dim C + 1, d -> #faces(dim C - d,C))
@@ -14,10 +41,6 @@ fVector Cone := C -> apply(dim C + 1, d -> #faces(dim C - d,C))
 --     	     	       Cone 'C'
 --  OUTPUT : a Cone, the face of 'P' where 'v' attains its maximum
 maxFace (Matrix,Cone) := (v,C) -> minFace(-v,C)
-
-
-
-
 
 
 -- PURPOSE : Computing the face of a Cone where a given weight attains its minimum
