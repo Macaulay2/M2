@@ -2,6 +2,7 @@ vertices Polyhedron := P -> (
    getProperty(P, computedVertices)
 )
 
+
 slice = method()
 slice(Vector, List) := (v, L) -> (
    result := entries v;
@@ -9,15 +10,18 @@ slice(Vector, List) := (v, L) -> (
    vector result
 )
 
+
 slice(Vector, Sequence) := (v, S) -> (
    slice(v, toList S)
 )
+
 
 matrixFromVectorList = method()
 matrixFromVectorList(List, ZZ, Ring) := (L, dim, r) -> (
    if #L > 0 then return matrix L
    else return map(r^dim, r^0, 0)
 )
+
 
 compute#Polyhedron#computedVertices = method()
 compute#Polyhedron#computedVertices Polyhedron := P -> (
@@ -50,20 +54,23 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    return vMat
 )
 
+
 compute#Polyhedron#computedDimension = method()
 compute#Polyhedron#computedDimension Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    dim C - 1
 )
 
+
 compute#Polyhedron#computedLinealityBasis = method()
 compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    result := linealitySpace C;
-   test := all(0..(numColumns result - 1), i-> result#i_0 == 0);
+   test := all(0..(numColumns result - 1), i-> result_i_0 == 0);
    if not test then error("Something went wrong while computing linealitySpace.");
    submatrix(result, 1..(numRows result -1), 0..(numColumns result - 1))
 )
+
 
 prependOnes = method()
 prependOnes Matrix := M -> (
@@ -71,11 +78,13 @@ prependOnes Matrix := M -> (
    map(r^1, source M, (i,j) -> 1) || M
 )
 
+
 prependZeros = method()
 prependZeros Matrix := M -> (
    r := ring M;
    map(r^1, source M, (i,j) -> 0) || M
 )
+
 
 compute#Polyhedron#underlyingCone = method()
 compute#Polyhedron#underlyingCone Polyhedron := P -> (
@@ -132,6 +141,7 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
    return result
 )
 
+
 compute#Polyhedron#computedFacets = method()
 compute#Polyhedron#computedFacets Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
@@ -148,12 +158,14 @@ compute#Polyhedron#computedFacets Polyhedron := P -> (
    (- submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), result_{0})
 )
 
+
 compute#Polyhedron#computedHyperplanes = method()
 compute#Polyhedron#computedHyperplanes Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    result := hyperplanes C;
    (submatrix(result, 0..(numRows result - 1), 1..(numColumns result -1)), -result_{0})
 )
+
 
 compute#Polyhedron#verticesThroughFacets = method()
 compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
@@ -171,6 +183,7 @@ compute#Polyhedron#verticesThroughFacets Polyhedron := P -> (
       )
    );
 )
+
 
 compute#Polyhedron#facetToFacetMap = method()
 compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
@@ -193,6 +206,7 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    new HashTable from L
 )
 
+
 compute#Polyhedron#computedNormalFan = method()
 compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
@@ -213,3 +227,8 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
 )
 
 
+compute#Polyhedron#ambientDimension = method()
+compute#Polyhedron#ambientDimension Polyhedron := P -> (
+   C := getProperty(P, underlyingCone);
+   ambDim C - 1
+)

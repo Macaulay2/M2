@@ -12,6 +12,16 @@ v = matrix {{10}};
 assert(hyperplanes P == (M,v) or hyperplanes P == (-M,-v))
 ///
 
+-- Test 1
+-- Checking convexHull basics
+TEST ///
+P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
+P = convexHull {P,(matrix{{4},{0},{-2}},matrix{{1,0,0},{0,1,-1},{0,0,0}})};
+assert(dim P == 3)
+assert(image linSpace P == image matrix {{0},{1},{0}})
+assert(hyperplanes P == (0,0))
+///
+
 -- Test 2
 -- Checking convexHull halfspaces
 TEST ///
