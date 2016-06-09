@@ -1,28 +1,3 @@
-vertices Polyhedron := P -> (
-   getProperty(P, computedVertices)
-)
-
-
-slice = method()
-slice(Vector, List) := (v, L) -> (
-   result := entries v;
-   result = result_L;
-   vector result
-)
-
-
-slice(Vector, Sequence) := (v, S) -> (
-   slice(v, toList S)
-)
-
-
-matrixFromVectorList = method()
-matrixFromVectorList(List, ZZ, Ring) := (L, dim, r) -> (
-   if #L > 0 then return matrix L
-   else return map(r^dim, r^0, 0)
-)
-
-
 compute#Polyhedron#computedVertices = method()
 compute#Polyhedron#computedVertices Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
@@ -69,20 +44,6 @@ compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
    test := all(0..(numColumns result - 1), i-> result_i_0 == 0);
    if not test then error("Something went wrong while computing linealitySpace.");
    submatrix(result, 1..(numRows result -1), 0..(numColumns result - 1))
-)
-
-
-prependOnes = method()
-prependOnes Matrix := M -> (
-   r := ring M;
-   map(r^1, source M, (i,j) -> 1) || M
-)
-
-
-prependZeros = method()
-prependZeros Matrix := M -> (
-   r := ring M;
-   map(r^1, source M, (i,j) -> 0) || M
 )
 
 
@@ -232,3 +193,40 @@ compute#Polyhedron#ambientDimension Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    ambDim C - 1
 )
+
+
+-- Helper methods
+slice = method()
+slice(Vector, List) := (v, L) -> (
+   result := entries v;
+   result = result_L;
+   vector result
+)
+
+
+slice(Vector, Sequence) := (v, S) -> (
+   slice(v, toList S)
+)
+
+
+matrixFromVectorList = method()
+matrixFromVectorList(List, ZZ, Ring) := (L, dim, r) -> (
+   if #L > 0 then return matrix L
+   else return map(r^dim, r^0, 0)
+)
+
+
+prependOnes = method()
+prependOnes Matrix := M -> (
+   r := ring M;
+   map(r^1, source M, (i,j) -> 1) || M
+)
+
+
+prependZeros = method()
+prependZeros Matrix := M -> (
+   r := ring M;
+   map(r^1, source M, (i,j) -> 0) || M
+)
+
+

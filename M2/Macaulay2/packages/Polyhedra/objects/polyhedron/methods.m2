@@ -6,3 +6,8 @@ normalFan Polyhedron := P -> (
    getProperty(P, computedNormalFan)
 )      
 
+
+vertices Polyhedron := P -> (
+   getProperty(P, computedVertices)
+)
+

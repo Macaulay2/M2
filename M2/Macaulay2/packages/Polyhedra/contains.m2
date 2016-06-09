@@ -4,32 +4,47 @@
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 contains = method(TypicalValue => Boolean)
-contains(Polyhedron,Polyhedron) := (P,Q) -> (
-      -- checking for input errors
-      if ambDim(P) =!= ambDim(Q) then error("Polyhedra must lie in the same ambient space");
-      -- Saving the equations of P and vertices/rays of Q
-      (A,B) := P#"homogenizedHalfspaces";
-      (C,D) := Q#"homogenizedVertices";
-      A = transpose A;
-      B = transpose B;
-      E := A*C;
-      -- Checking if vertices/rays of Q satisfy the equations of P
-      all(flatten entries E, e -> e <= 0) and A*D == 0*A*D and B*C == 0*B*C and B*D == 0*B*D)
+contains(Polyhedron,Polyhedron) := (P1,P2) -> (
+   -- checking for input errors
+   if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
+   C1 := getProperty(P1, underlyingCone);
+   C2 := getProperty(P2, underlyingCone);
+   contains(C1, C2)
+)
 
 
 -- PURPOSE : Check if 'C1' contains 'C2'
 --   INPUT : '(C1,C2)'  two Cones
 contains(Cone,Cone) := (C1,C2) -> (
-      -- checking for input errors
-      if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
-      -- Saving the equations of C1 and rays of C2
-      (A,B) := C1#"dualgens";
-      (C,D) := C2#"genrays";
-      A = transpose A;
-      B = transpose B;
-      E := A*C;
-      -- Checking if the rays of C2 satisfy the equations of C1
-      all(flatten entries E, e -> e <= 0) and A*D == 0*A*D and B*C == 0*B*C and B*D == 0*B*D)
+   -- checking for input errors
+   if ambDim(C1) =!= ambDim(C2) then error("Cones must lie in the same ambient space");
+   -- Saving the equations of C1 and rays of C2
+   local C1ineq;
+   local C1eq;
+   -- Extracting inequalities of C1
+   if hasProperty(C1, computedFacets) then C1ineq = facets C1
+   else if hasProperty(C1, inequalities) then C1ineq = getProperty(C1, inequalities)
+   else C1ineq = facets C1;
+   -- Extracting equations of C1
+   if hasProperty(C1, computedHyperplanes) then C1eq = hyperplanes C1
+   else if hasProperty(C1, equations) then C1eq = getProperty(C1, equations)
+   else C1eq = hyperplanes C1;
+   local C2rays;
+   local C2lineality;
+   -- Extracting rays of C2
+   if hasProperty(C2, computedRays) then C2rays = rays C2
+   else if hasProperty(C2, inputRays) then C2rays = getProperty(C2, inputRays)
+   else C2rays = rays C2;
+   -- Extracting lineality of C2
+   if hasProperty(C2, computedLinealityBasis) then C2lineality = linealitySpace C2
+   else if hasProperty(C2, inputLinealityGenerators) then C2lineality = getProperty(C2, inputLinealityGenerators)
+   else C2lineality = linealitySpace C2;
+   gens := C2rays | C2lineality | (-C2lineality);
+   positiveTest := flatten entries (C1ineq * gens);
+   zeroTest := flatten entries (C1eq * gens);
+   all(positiveTest, p -> p>=0) and all(zeroTest, p -> p==0)
+)
+
  
 
  

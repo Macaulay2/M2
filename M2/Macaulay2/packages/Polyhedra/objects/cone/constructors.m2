@@ -4,12 +4,15 @@ Cone.synonym = "convex rational cone"
 globalAssignment Cone
 compute#Cone = new MutableHashTable
 
-Cone == Cone := (C1,C2) -> C1 === C2
+Cone == Cone := (C1,C2) -> (
+   contains(C1, C2) and contains(C2, C1)
+)
 
 
 cone HashTable := inputProperties -> (
    constructTypeFromHash(Cone, inputProperties)
 )
+
 
 coneFromRayData = method(TypicalValue => Cone)
 coneFromRayData(Matrix, Matrix) := (iRays, linealityGenerators) -> (
@@ -36,7 +39,6 @@ coneFromFacetData(Matrix, Matrix) := (ineq, eq) -> (
 )
 
 
-
 -- PURPOSE : Computing the positive hull of a given set of rays lineality 
 --		 space generators
 posHull = method(TypicalValue => Cone)
@@ -61,7 +63,7 @@ posHull(Matrix,Matrix) := (Mrays,LS) -> (
 --  OUTPUT : 'C', the Cone
 intersection Matrix := M -> (
    r := ring M;
-   N := transpose map(source M, r^1, 0); 
+   N := transpose map(source M, r^0, 0); 
    intersection(M, N)
 )
 
@@ -72,7 +74,7 @@ intersection Matrix := M -> (
 posHull Matrix := R -> (
    r := ring R;
    -- Generating the zero lineality space LS
-   LS := map(target R, r^1,0);
+   LS := map(target R, r^0,0);
    posHull(R,LS)
 )
 

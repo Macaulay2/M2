@@ -61,3 +61,23 @@ assert not isSmooth C
 C = posHull {C,matrix{{1},{0},{1}}};
 assert isSmooth C
 ///
+
+-- Test 10
+-- Checking contains for cones
+TEST ///
+C1 = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
+C2 = posHull matrix {{1},{1},{1}};
+assert contains(C1,C2)
+assert(not contains(C2,C1))
+C2 = posHull {C2, matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}}};
+assert contains(C2,C1)
+assert(not contains(C1,C2))
+///
+-- Test 12
+-- Checking dualCone
+TEST ///
+C1 = posHull matrix {{1,2,3},{2,3,1},{3,1,2}};
+C2 = posHull matrix {{-5,7,1},{1,-5,7},{7,1,-5}};
+C1 = dualCone C1;
+assert(C1 == C2)
+///
