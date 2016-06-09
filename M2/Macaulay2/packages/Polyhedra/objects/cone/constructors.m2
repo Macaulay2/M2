@@ -103,3 +103,24 @@ posHull(Cone,Cone) := (C1,C2) -> (
    );
    posHull(iRays, linealityGens)
 )
+
+
+--   INPUT : 'L',   a list of Cones, Polyhedra, rays given by R, 
+--     	    	    and (rays,linSpace) given by '(R,LS)'
+posHull List := L -> (
+   -- Turn everything into cones.
+   cones := apply(L, 
+      l -> (
+         if not instance(l, Cone) then posHull l
+         else l
+      )
+   );
+   result := cones#0;
+   cones = remove(cones, 0);
+   -- Adding the cones is not expensive, since we will not do fourierMotzkin
+   -- every time.
+   for cone in cones do (
+      result = posHull(result, cone);
+   );
+   result
+)

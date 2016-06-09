@@ -32,6 +32,7 @@ load "./objects/polyhedraHash.m2"
       load "./objects/polyhedron.m2"
    load "./objects/polyhedralObjectFamily.m2"
       load "./objects/fan/constructors.m2"
+      load "./objects/fan/methods.m2"
       load "./objects/fan.m2"
       load "./objects/polyhedralComplex.m2"
 

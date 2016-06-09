@@ -3,13 +3,6 @@ Fan == Fan := (F1,F2) -> F1 === F2
 
 
 
---   INPUT : 'F'  a Fan
---  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> linSpace((maxCones F)#0)
-
-
---   INPUT : 'F'  a Fan
-rays Fan := F -> raySort toList F#"rays"
 
 
    
@@ -19,18 +12,6 @@ rays Fan := F -> raySort toList F#"rays"
 maxCones = method(TypicalValue => List)
 maxCones Fan := F -> maxObjects F
 
---   INPUT : 'F',  a Fan
---  OUTPUT : 'true' or 'false'
-isPointed Fan := F -> (
-     if not F.cache.?isPointed then F.cache.isPointed = isPointed((maxCones F)#0);
-     F.cache.isPointed)
-
-
---   INPUT : 'F'  a Fan
---  OUTPUT : 'true' or 'false'
-isSmooth Fan := F -> (
-     if not F.cache.?isSmooth then F.cache.isSmooth = all(maxCones F,isSmooth);
-     F.cache.isSmooth)
 
 
 -- PURPOSE : Tests if a Fan is projective
