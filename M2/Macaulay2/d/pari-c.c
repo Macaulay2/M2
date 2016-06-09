@@ -31,8 +31,8 @@
 #if RETAIN_PARI_STATE
 static void initpari() __attribute__ ((constructor));
 static void closepari() __attribute__ ((destructor));
-#define INIT 
-#define CLOSE 
+#define INIT
+#define CLOSE
 #else
 #define INIT initpari()
 #define CLOSE closepari()
@@ -41,6 +41,18 @@ static void closepari() __attribute__ ((destructor));
 static int self_initialized;
 
 static int pari_disabled;
+
+/*
+ * This function overrides the cb_pari_err_recover which is initialized to pari_exit() by default.
+ * The cb_pari_err_recover function is called after PARI has cleaned-up from an error. In our case
+ * it will be called by PARI with errnum = -1 after using allocatemem.
+ */
+
+static void m2_pari_err_recover(long errnum) {
+  if (errnum != -1) {
+    exit(1);
+  }
+}
 
 static void initpari() {
   if (pari_disabled) return;
@@ -57,6 +69,7 @@ static void initpari() {
     pari_init_opts( PARISIZE, MAXPRIME, init_flags);
     self_initialized = TRUE;
   }
+  cb_pari_err_recover = m2_pari_err_recover;
   enterM2();  /* pari_init sets the memory allocation routines for gmp, so we have to set them back */
 }
 
