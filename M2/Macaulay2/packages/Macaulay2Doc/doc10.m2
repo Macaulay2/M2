@@ -182,18 +182,17 @@ document {   -- This node is used as an example for the documentation node: Key,
      Usage => "resolution M\nres M",
      Inputs => { "M" },
      Outputs => { {"a free resolution of ", TT "M"} },
-     "The given set of generators and relations is used; if these are not minimal,
-     and a minimal resolution is desired, use", 
-     TT "resolution minimalPresentation M", 
-     "instead."},
- 
-PARA {"Warning: the resolution can have free modules with unexpected ranks
-     when the module ", TT "M", " is not homogeneous.  Here is an example
-     where even the lengths of the resolutions differ.  We compute
-     a resolution of the kernel of a ring map in two ways.
-     The ring ", TT "R", " is constructed naively, but the ring
-     ", TT "S", " is constructed with variables of the right degrees
-     so the ring map ", TT "g", " will turn out to be homogeneous.",
+     PARA {
+     	  "The given generators and relations are used to determine a ", TO "presentation", " of ", TT "M", " to serve as the first matrix of the free
+     	  resolution; if the presentation is not minimal, and a minimal resolution is desired, use ", 
+     	  TT "resolution minimalPresentation M", " instead."},
+     PARA {"Warning: the resolution can have free modules with unexpected ranks
+	  when the module ", TT "M", " is not homogeneous.  Here is an example
+	  where even the lengths of the resolutions differ.  We compute
+	  a resolution of the kernel of a ring map in two ways.
+	  The ring ", TT "R", " is constructed naively, but the ring
+	  ", TT "S", " is constructed with variables of the right degrees
+	  so the ring map ", TT "g", " will turn out to be homogeneous."},
      EXAMPLE {
 	  "k = ZZ/101; T = k[v..z];",
 	  "m = matrix {{x,y,z,x^2*v,x*y*v,y^2*v,z*v,x*w,y^3*w,z*w}}",
