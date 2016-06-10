@@ -41,6 +41,7 @@ class poly {
   friend class poly_constructor;
   friend class poly_iter;
 public:
+  static long npoly_destructor;
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
   std::unique_ptr<FieldElement[]> coeffs;
@@ -51,6 +52,7 @@ public:
 
   ~poly()
   {
+    if (coeffs) npoly_destructor++;
     //    std::cout << "Calling ~poly()" << std::endl << std::flush;
   }
   
@@ -85,6 +87,9 @@ private:
   std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
 public:
+  static long ncalls;
+  static long ncalls_fromarray;
+
   poly_constructor(const ResPolyRing& R) : mRing(R) { }
   
   void appendTerm(packed_monomial monom, FieldElement coeff)
@@ -95,6 +100,7 @@ public:
 
   void setPoly(poly& result)
   {
+    ncalls++;
     result.len = static_cast<int>(coeffs.size());
     result.coeffs = std::move(std::unique_ptr<FieldElement[]>(new FieldElement[result.len]));
     result.monoms = std::move(std::unique_ptr<monomial_word[]>(new monomial_word[mRing.monoid().max_monomial_size()*result.len]));
@@ -115,6 +121,7 @@ public:
                                 std::unique_ptr<FieldElement[]>& coeffs,
                                 std::unique_ptr<monomial_word[]>& monoms)
   {
+    ncalls_fromarray++;
     result.len = len;
     result.coeffs.swap(coeffs);
     result.monoms.swap(monoms);

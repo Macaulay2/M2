@@ -10,7 +10,6 @@
 
 #include <iostream>
 
-
 /** createF4Res
  * The only function to create an (F4) resolution computation
  * The constructor for this class is private.  This function 
@@ -160,6 +159,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // Remove matrix:
   delete leadterms;
 
+  nres++;
   return result;
 }
 
@@ -197,6 +197,7 @@ void F4ResComputation::remove_res()
 {
   // The following lines should not be required.
   mComp.reset(); mComp = nullptr;
+  nres_destruct++;
 }
 
 M2_arrayint F4ResComputation::get_betti(int type) const

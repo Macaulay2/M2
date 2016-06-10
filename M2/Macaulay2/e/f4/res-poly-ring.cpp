@@ -2,6 +2,10 @@
 
 #include "res-poly-ring.hpp"
 
+long poly::npoly_destructor = 0;
+long poly_constructor::ncalls = 0;
+long poly_constructor::ncalls_fromarray = 0;
+
 void ResPolyRing::memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const
 {
   long sz = 0;

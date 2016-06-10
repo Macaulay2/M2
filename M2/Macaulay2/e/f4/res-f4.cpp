@@ -558,8 +558,8 @@ void F4Res::gaussReduce()
 #else
               mRing.resGausser().dense_row_cancel_sparse(gauss_row,
                                                          static_cast<ComponentIndex>(mReducers[firstcol].mCoeffs.size()),
-                                                         & mReducers[firstcol].mCoeffs[0],
-                                                         & mReducers[firstcol].mComponents[0],
+                                                         mReducers[firstcol].mCoeffs.data(),
+                                                         mReducers[firstcol].mComponents.data(),
                                                          elem
                                                          );
               result.appendTerm(mReducers[firstcol].mLeadTerm, elem);

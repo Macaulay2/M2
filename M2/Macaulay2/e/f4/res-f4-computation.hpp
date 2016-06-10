@@ -34,6 +34,7 @@ public:
   // then all returned values will be correct for 
   M2_arrayint minimal_betti(M2_arrayint slanted_degree_limit,
                             M2_arrayint length_limit);
+
 protected:
   // These functions override those in ResolutionComputation
   bool stop_conditions_ok() { 

@@ -8,6 +8,9 @@
 #include <iomanip>
 #include <algorithm>
 
+long nres = 0;
+long nres_destruct = 0;
+
 MonomialCounter::MonomialCounter(const ResMonoid& M)
   : mIgnoreMonomials(new ResMonomialsIgnoringComponent(M)),
     mAllMonomials(mIgnoreMonomials),
@@ -205,6 +208,12 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(
   if (M2_gbTrace >= 1)
     {
       showMemoryUsage();
+      std::cout << "total setPoly: " << poly_constructor::ncalls << std::endl;
+      std::cout << "total setPolyFromArray: " << poly_constructor::ncalls_fromarray << std::endl;
+      std::cout << "total ~poly: " << poly::npoly_destructor << std::endl;
+      std::cout << "total create res: " << nres << std::endl;
+      std::cout << "total ~res: " << nres_destruct << std::endl;
+      
       std::cout << "total time for make matrix: " << timeMakeMatrix << std::endl;
       std::cout << "total time for sort matrix: " << timeSortMatrix << std::endl;
       std::cout << "total time for reorder matrix: " << timeReorderMatrix << std::endl;
