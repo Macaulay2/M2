@@ -1214,6 +1214,8 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+dnl mpir and mpfr are always built, so flint should also always be built:
+BUILD_ALWAYS="flint $BUILD_ALWAYS"
 if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
 then BUILD_flint=yes
 fi
