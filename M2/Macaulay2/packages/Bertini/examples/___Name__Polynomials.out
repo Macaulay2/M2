@@ -12,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          NamePolynomials=>{f1,f2},
          B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42421-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74781-0/0/input
 
 o2 : File
 

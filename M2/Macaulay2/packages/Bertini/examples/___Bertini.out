@@ -21,16 +21,9 @@ o3 = {x  - 1, y  - 1}
 o3 : List
 
 i4 : solns = bertiniZeroDimSolve(F)
-Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42382-0/1
+~/bertini
 
-The version of Bertini 
-	    you have installed on your computer 
-	    was used for this run. 
-Bertini is under ongoing development by 
-	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o4 = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}
+o4 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 
 o4 : List
 

@@ -12,7 +12,8 @@ doc ///
       Interfaces the functionality of the software {\tt Bertini}
       to solve polynomial systems and perform calculations in
       {\em numerical algebraic geometry}. The software is available at
-      @HREF"http://www.nd.edu/~sommese/bertini/"@.
+      @HREF"http://bertini.nd.edu/"@. {\tt Bertini} is under ongoing development by
+      D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
 
       The user may place the executable program {\tt bertini} in the executation path. 
       Alternatively, the path to the executable needs to be specified, for instance,
@@ -349,12 +350,17 @@ doc ///
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})            
      bPH_0--The two solutions for finalParameters0
    Example
-     R=CC[x,u1]
-     f1=x^2-u1
-     finalParameters0={1}
-     finalParameters1={2}
-     bPH=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x})            
-     bPH_0--The two solutions for finalParameters0
+     finParamValues={{1},{2}}
+     bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})            
+     bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputSyle=>"OutSolutions")            
+     class bPH1_0_0
+     class bPH2_0_0
+   Example
+     dir1 := temporaryFileName(); -- build a directory to store temporary data 
+     makeDirectory dir1;  
+     bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputSyle=>"OutNone",TopDirectory=>dir1)            
+     B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")     
+     B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")     
  Caveat
    Variables must begin with a letter (lowercase or capital) and
    can only contain letters, numbers, underscores, and square brackets.     
@@ -1195,11 +1201,11 @@ doc ///
  Description
    Text
      This function takes a number as an input then outputs a string to represent this number to Bertini.
-     The numbers are converted to floating point to precision determined by the option UsePrecision.       
+     The numbers are converted to floating point to precision determined by the option M2Precision.       
    Example
      NumberToB'String(2+5*ii)
-     NumberToB'String(1/3,UsePrecision=>16)
-     NumberToB'String(1/3,UsePrecision=>128)
+     NumberToB'String(1/3,M2Precision=>16)
+     NumberToB'String(1/3,M2Precision=>128)
 
 ///;
 
@@ -1218,15 +1224,15 @@ doc ///
  Description
    Text
      This function take a string representing a coordinate in a Bertini solutions file or parameter file and makes a number in CC. 
-     We can adjust the precision using the UsePrecision option.
+     We can adjust the precision using the M2Precision option.
      Fractions should not be in the string s. 
    Example
      valueBM2("1.22e-2 4e-5")
      valueBM2("1.22 4e-5")
      valueBM2("1.22 4")     
      valueBM2("1.22e+2 4 ")           
-     n1=valueBM2("1.11",UsePrecision=>52)
-     n2=valueBM2("1.11",UsePrecision=>300)
+     n1=valueBM2("1.11",M2Precision=>52)
+     n2=valueBM2("1.11",M2Precision=>300)
      toExternalString n1
      toExternalString n2
 ///;
@@ -1262,7 +1268,7 @@ doc ///
      f=z*x+y
      subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
      subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
-	     0,1},SubIntoCC=>true,UsePrecision=>200)
+	     0,1},SubIntoCC=>true,M2Precision=>200)
 
 ///;
 
@@ -1283,25 +1289,95 @@ doc ///
 doc ///
   Key
    [bertiniTrackHomotopy, Verbose]
---   [bertiniParameterHomotopy, Verbose]
    [bertiniComponentMemberTest, Verbose]
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
    [bertiniSample, Verbose]
    [bertiniZeroDimSolve, Verbose]
+   [bertiniParameterHomotopy, Verbose]
+   [makeB'InputFile, Verbose]
+   [makeMembershipFile, Verbose]
+   [b'PHGaloisGroup,Verbose]
+   [b'PHMonodromyCollect,Verbose]
+   [importIncidenceMatrix,Verbose]
+   [importMainDataFile,Verbose]
+   [importSliceFile,Verbose]
+   [importSolutionsFile,Verbose]
+   [runBertini,Verbose]
+   [makeWitnessSetFiles,Verbose]
+   [b'PHSequence,Verbose]
+   [b'TraceTestImage,Verbose]
+   [makeSampleSolutionsFile,Verbose]
   Headline
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
---    bertiniParameterHomotopy(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
-    bertiniZeroDimSolve(...,Verbose=>Boolean)
+    bertiniZeroDimSolve(...,Verbose=>Number)
+    bertiniParameterHomotopy(...,Verbose=>Number)
+    makeB'InputFile(...,Verbose=>Number)
+    makeMembershipFile(...,Verbose=>Number)
+    b'PHGaloisGroup(...,Verbose=>Number)
+    b'PHMonodromyCollect(...,Verbose=>Number)
+    importIncidenceMatrix(...,Verbose=>Number)
+    importMainDataFile(...,Verbose=>Number)
+    importSliceFile(...,Verbose=>Number)
+    importSolutionsFile(...,Verbose=>Number)
+    runBertini(...,Verbose=>Number)
   Description
     Text
-       Use {\tt Verbose=>false} to silence additional output.
+       Use {\tt Verbose=>false} or {\tt Verbose=>0}  to silence additional output.
 ///;
+
+doc ///
+  Key
+   OutputSyle
+   [bertiniParameterHomotopy, OutputSyle]
+   [bertiniZeroDimSolve,OutputSyle]
+  Headline
+    Used to change the output style.
+  Usage
+    bertiniParameterHomotopy(...,OutputSyle=>String)
+    bertiniZeroDimSolve(...,OutputSyle=>String)
+  Description
+    Text
+       Use OutputSyle to change the style of output. 
+///;
+
+
+doc ///
+  Key
+   TopDirectory
+   [bertiniParameterHomotopy, TopDirectory]
+   [bertiniZeroDimSolve,TopDirectory]
+  Headline
+    Option to change directory for file storage.
+  Usage
+    bertiniParameterHomotopy(...,TopDirectory=>String)
+    bertiniZeroDimSolve(...,TopDirectory=>String)
+  Description
+    Text
+       Use TopDirectory to specify the directory where computations will occur. 
+///;
+
+doc ///
+  Key
+   M2Precision
+   [bertiniParameterHomotopy,M2Precision]
+   [bertiniZeroDimSolve,M2Precision]   
+  Headline
+    Option to change the precision Macaulay2 uses to import the files.
+  Usage
+    bertiniParameterHomotopy(...,M2Precision=>ZZ)
+    bertiniZeroDimSolve(...,TopDirectory=>ZZ)
+  Description
+    Text
+       When importing solutions, they are first converted to an external string where precision is set. The default is 53. 
+///;
+
+
 
 doc ///
  Key
@@ -1312,7 +1388,7 @@ doc ///
    [bertiniPosDimSolve, IsProjective]
    [bertiniRefineSols, IsProjective]
    [bertiniSample, IsProjective]
-   [bertiniZeroDimSolve, IsProjective]
+--   [bertiniZeroDimSolve, IsProjective]
  Headline
    optional argument to specify whether to use homogeneous coordinates
  Description
@@ -1333,6 +1409,9 @@ doc ///
    [bertiniParameterHomotopy, AffVariableGroup]
    [bertiniParameterHomotopy, HomVariableGroup]
    [makeB'InputFile, AffVariableGroup]
+   [makeB'InputFile, HomVariableGroup]
+   [bertiniZeroDimSolve,HomVariableGroup]
+   [bertiniZeroDimSolve,AffVariableGroup]
  Headline
    See help for bertiniParameterHomotopy and/or makeB'InputFile.
  Description
@@ -1356,19 +1435,6 @@ doc ///
 
 
 
-doc///
- Key
-   MultiplicityTol
-   [bertiniZeroDimSolve, MultiplicityTol]
- Headline
-   numerical tolerance for grouping solutions   
- Description
-   Text
-     Solutions are grouped using
-     @TO solutionsWithMultiplicity@ from the package @TO NAGtypes@; the option @TO MultiplicityTol@
-     is passed to @TO solutionsWithMultiplicity@ as @TO Tolerance@.  The default value of @TO MultiplicityTol@
-     is 1e-6. 
-///;
 
 
 
@@ -1395,11 +1461,14 @@ doc///
  Key
    B'Configs
    [makeB'InputFile, B'Configs]
+   [makeB'TraceInput,B'Configs]
+   [bertiniParameterHomotopy,B'Configs]
+   [bertiniZeroDimSolve,B'Configs]
  Headline
    An option to designate the CONFIG part of a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPTYPE" and and the second element is what the Bertini option will be set to e.g. "2".
+     This option should be set to a list of lists of 2 elements. The first element is the name of the Bertini option, e.g. "MPType" and and the second element is what the Bertini option will be set to e.g. "2".
    Example
      R=QQ[x0,x1,y0,y1,z]
      makeB'InputFile(storeBM2Files,
@@ -1415,60 +1484,54 @@ doc///
  Key
    B'Constants
    [makeB'InputFile, B'Constants]
+   [bertiniParameterHomotopy,B'Constants]
+   [bertiniZeroDimSolve,B'Constants]
  Headline
    An option to designate the constants for a Bertini Input file.
  Description
    Text
-     This option should be set to a list of lists of 2 elements. 
-     The first element is the name of the Constant.
-     The second element is the value that the consant will be set.
+     This option should be set to a list of lists of 2 elements or options. 
+     The first element of the list of two elements is the name of the Constant, and
+     the second element is the value that the consant will be set. 
    Example
      R=QQ[z,a,b,c]
      makeB'InputFile(storeBM2Files,
 	 B'Configs=>{{"MPTYPE",2}},
 	 AffVariableGroup=>{{z}},
-	 B'Constants=>{{a,2},{b,3+2*ii},{c,3/2}},
+	 B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
 	 B'Polynomials=>{a*z^2+b*z+c})
      
 ///;
 
 
-doc///
- Key
-   RandomComplex
-   [makeB'InputFile, RandomComplex]
- Headline
-   An option which designates symbols/strings/variables that will be set to be random complex numbers.
- Description
-   Text
-     This option should be set to a list of symbols, strings, or variables. 
-     Elemenets of this list will be set to random complex numbers when Bertini is called.
-   Example
-     R=QQ[x,y,c1,c2]
-     makeB'InputFile(storeBM2Files,
-	 AffVariableGroup=>{{x,y}},
-	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
-	 B'Polynomials=>{x-c1,y-c2})
-   Text
-     AFTER Bertini is run, the random values are stored in a file named "random_values".
-     
-///;
 
 doc///
  Key
    RandomReal
    [makeB'InputFile, RandomReal]
+   RandomComplex
+   [makeB'InputFile, RandomComplex]
+   [bertiniParameterHomotopy,RandomComplex]
+   [bertiniParameterHomotopy,RandomReal]
+   [bertiniZeroDimSolve,RandomComplex]
+   [bertiniZeroDimSolve,RandomReal]
  Headline
-   An option which designates symbols/strings/variables that will be set to be a random real number.
+   An option which designates symbols/strings/variables that will be set to be a random real number or random complex number.
  Description
    Text
      This option should be set to a list of symbols, strings, or variables. 
-     Elemenets of this list will be set to random real numbers when Bertini is called.
+     Elemenets of this list will be set to random real/complex numbers when Bertini is called.
    Example
      R=QQ[x,y,c1,c2]
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
+	 B'Polynomials=>{x-c1,y-c2})
+   Example
+     R=QQ[x,y,c1,c2]
+     makeB'InputFile(storeBM2Files,
+	 AffVariableGroup=>{{x,y}},
+	 RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
 	 B'Polynomials=>{x-c1,y-c2})
    Text
      AFTER Bertini is run, the random values are stored in a file named "random_values".
@@ -1508,6 +1571,8 @@ doc///
  Key
    B'Functions
    [makeB'InputFile, B'Functions]
+   [bertiniZeroDimSolve,B'Functions]
+   [bertiniParameterHomotopy,B'Functions]
  Headline
    An option which designates sub-functions or a polynomial system as a straight line program.  
  Description
@@ -1519,7 +1584,7 @@ doc///
      makeB'InputFile(storeBM2Files,
 	 AffVariableGroup=>{{x,y}},
 	 NamePolynomials=>{f1,f2},
-	 B'Functions=>{{f1,x+y-1},{f2,x^2-2}})--f1=x+y+1,f2=x^2-2 is written to the input file
+	 B'Functions=>{{f1,x+y-1},f2=>x^2-2})--f1=x+y+1,f2=x^2-2 is written to the input file
    Text
      B'Polynomials can be in combination with B'Functions. B'Functions allows the user to define subfunctions.  
    Example
@@ -1597,37 +1662,74 @@ doc///
      The option can be set to the "simple" style (coordinates only), "raw_solutions" style (path number and coordinates), and "main_data" style (detailed information).          
 
 ///;
-
+ 
 
 doc///
  Key
    NameSolutionsFile
    [importSolutionsFile, NameSolutionsFile]
+   NameFunctionFile
+   NameWitnessSliceFile
+   NameWitnessSolutionsFile
+   NameMainDataFile
+   NameSampleSolutionsFile
+   [b'PHGaloisGroup,NameB'InputFile]
+   [b'PHMonodromyCollect,NameB'InputFile]
+   [b'PHSequence,NameB'InputFile]
+   [calculateB'Trace,NameB'InputFile]
+   [makeB'TraceInput,NameB'InputFile]
+   [makeSampleSolutionsFile,NameB'InputFile]
+   [makeWitnessSetFiles,NameB'InputFile]
+   [runBertini,NameB'InputFile]
+   [runBertini,B'Exe]
+   [b'PHGaloisGroup,NameParameterFile]
+   [b'PHMonodromyCollect,NameParameterFile]
+   [b'PHSequence,NameParameterFile]
+   [importParameterFile,NameParameterFile]
+   [b'PHGaloisGroup,NameSolutionsFile]
+   [b'PHMonodromyCollect,NameSolutionsFile]
+   [b'PHSequence,NameSolutionsFile]
+   [makeMembershipFile,NameSolutionsFile]
+   [makeSampleSolutionsFile,NameSolutionsFile]
+   [makeWitnessSetFiles,NameSolutionsFile]
+   [b'PHGaloisGroup,NameStartFile]
+   [calculateB'Trace,NameStartFile]
+   [makeWitnessSetFiles,NameWitnessSliceFile]
+   [importMainDataFile,NameMainDataFile]
+   NameGaloisGroupGeneratorFile
+   [b'TraceTestImage,NameB'InputFile]
+   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
+   [makeMembershipFile,NameB'InputFile]
+   [b'PHMonodromyCollect,NameStartFile]
+   [b'PHSequence,NameStartFile]
+   NameIncidenceMatrixFile
+   NameStartFile
+   [writeStartFile,NameStartFile]
+   [importIncidenceMatrix, NameIncidenceMatrixFile]
+   [bertiniZeroDimSolve,NameSolutionsFile]
+   [bertiniZeroDimSolve,NameMainDataFile]
  Headline
-   This option names the solution file which we import. 
+   options determine the name of a file to be imported or written. 
  Description
    Text
-     Set this option to a string to name the solution file. 
+     Set this option to a string to name the file to be imported or written.
    Example
-     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"})
-     runBertini(storeBM2Files)
-     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")     
-     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")     
-     
+     makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"});
+     runBertini(storeBM2Files);
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions");     
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions");     
+   Example
+     writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
+     writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
+     writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
+     makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
+     runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
+     importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")          
 ///;
 
 
-doc///
- Key
-   ConditionNumTol
-   [bertiniZeroDimSolve, ConditionNumTol]
- Headline
-   numerical tolerance for determining singular status   
- Description
-   Text
-     Endpoint is flagged as singular if multiple paths lead to it or condition number exceeds 
-     @TO ConditionNumTol@. The default value of @TO ConditionNumTol@ is 1e10.
-///;
+
 
 
 doc ///
@@ -1659,32 +1761,6 @@ doc ///
     MaxNumberSteps
     MaxCycleNum
     RegenStartLevel
-    [bertiniZeroDimSolve, MPType]
-    [bertiniZeroDimSolve, PRECISION]
-    [bertiniZeroDimSolve, ODEPredictor]
-    [bertiniZeroDimSolve, TrackTolBeforeEG]
-    [bertiniZeroDimSolve, TrackTolDuringEG]
-    [bertiniZeroDimSolve, FinalTol]
-    [bertiniZeroDimSolve, MaxNorm]
-    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
-    [bertiniZeroDimSolve, MinStepSizeDuringEG]
-    [bertiniZeroDimSolve, ImagThreshold]
-    [bertiniZeroDimSolve, CoeffBound]
-    [bertiniZeroDimSolve, DegreeBound]
-    [bertiniZeroDimSolve, CondNumThreshold]
-    [bertiniZeroDimSolve, RandomSeed]
-    [bertiniZeroDimSolve, SingValZeroTol]
-    [bertiniZeroDimSolve, EndGameNum]
-    [bertiniZeroDimSolve, UseRegeneration]
-    [bertiniZeroDimSolve, SecurityLevel]
-    [bertiniZeroDimSolve, ScreenOut]
-    [bertiniZeroDimSolve, OutputLevel]
-    [bertiniZeroDimSolve, StepsForIncrease]
-    [bertiniZeroDimSolve, MaxNewtonIts]
-    [bertiniZeroDimSolve, MaxStepSize]
-    [bertiniZeroDimSolve, MaxNumberSteps]
-    [bertiniZeroDimSolve, MaxCycleNum]
-    [bertiniZeroDimSolve, RegenStartLevel]
     [bertiniComponentMemberTest, MPType]
     [bertiniComponentMemberTest, PRECISION]
     [bertiniComponentMemberTest, ODEPredictor]
@@ -1815,11 +1891,37 @@ doc ///
     [bertiniTrackHomotopy, MaxNumberSteps]
     [bertiniTrackHomotopy, MaxCycleNum]
     [bertiniTrackHomotopy, RegenStartLevel]
+    [bertiniZeroDimSolve, MPType]
+    [bertiniZeroDimSolve, PRECISION]
+    [bertiniZeroDimSolve, ODEPredictor]
+    [bertiniZeroDimSolve, TrackTolBeforeEG]
+    [bertiniZeroDimSolve, TrackTolDuringEG]
+    [bertiniZeroDimSolve, FinalTol]
+    [bertiniZeroDimSolve, MaxNorm]
+    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
+    [bertiniZeroDimSolve, MinStepSizeDuringEG]
+    [bertiniZeroDimSolve, ImagThreshold]
+    [bertiniZeroDimSolve, CoeffBound]
+    [bertiniZeroDimSolve, DegreeBound]
+    [bertiniZeroDimSolve, CondNumThreshold]
+    [bertiniZeroDimSolve, RandomSeed]
+    [bertiniZeroDimSolve, SingValZeroTol]
+    [bertiniZeroDimSolve, EndGameNum]
+    [bertiniZeroDimSolve, UseRegeneration]
+    [bertiniZeroDimSolve, SecurityLevel]
+    [bertiniZeroDimSolve, ScreenOut]
+    [bertiniZeroDimSolve, OutputLevel]
+    [bertiniZeroDimSolve, StepsForIncrease]
+    [bertiniZeroDimSolve, MaxNewtonIts]
+    [bertiniZeroDimSolve, MaxStepSize]
+    [bertiniZeroDimSolve, MaxNumberSteps]
+    [bertiniZeroDimSolve, MaxCycleNum]
+    [bertiniZeroDimSolve, RegenStartLevel]
   Headline
     options for methods of Bertini package
   Description
     Text
-      Every function of the package takes ALL optional arguments listed here.
+      Many functions of the package takes ALL optional arguments listed here.
       The default value for EACH option is -1, which tells Bertini to use its internal default.
       Refer to Appendix E of SIAM Bertini book for full details and list of options. 
 
@@ -1875,45 +1977,22 @@ doc ///
 
       RegenStartLevel: Level at which regeneration begins. 
 
-      There are two recommended ways of using the optional arguments.
+      There are two recommended ways of using the optional arguments based on zero-dim solving and pos-dim solving.
     
       (1) Specify individual parameters in a function call:
     Example
       CC[x,y]; F = {x^2-1,y^2-1};
-      bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100)
+      bertiniZeroDimSolve(F,B'Configs=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
     Text
       (2) Store your frequently used favorites in an OptionTable
       and pass it as the last argument in each function call:
     Example
       opts = new OptionTable from {RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}
-      bertiniZeroDimSolve(F,opts)
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)
 ///;
 
 
-
-doc ///
- Key
-   NameIncidenceMatrixFile
-   [importIncidenceMatrix, NameIncidenceMatrixFile]
- Headline
-   An optional argument to import an incidence matrix that has a different name than "incidence_matrix".
- Description
-   Text
-     When this option is set to "another_incidence_matrix", a file named "another_incidence_matrix" is imported. The default is "incidence_matrix".
-///;
-
-doc ///
- Key
-   NameStartFile
-   [writeStartFile, NameStartFile]
- Headline
-   An optional argument to write a start file that has a different name than "start".
- Description
-   Text
-     When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
-///;
 
 
 
@@ -1946,18 +2025,16 @@ doc ///
 -------------------
 doc ///
  Key
+   StartFileDirectory
+   InputFileDirectory
+   StartParameterFileDirectory
    NumSolBound
    OrderPaths
    NumberOfLoops
    BranchPoints
    SpecifyLoops
-   NameFunctionFile
    SaveData
    ListB'Sections
-   NameWitnessSliceFile
-   NameWitnessSolutionsFile
-   NameMainDataFile
-   NameSampleSolutionsFile
    TextScripts
    PreparePH2
    SpecifyDim
@@ -1969,7 +2046,6 @@ doc ///
    UseStartPointsFirst
    MonodromyStartParameters
    B'Exe
-   UsePrecision
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
@@ -1981,36 +2057,14 @@ doc ///
    (importSliceFile,String)
    SolutionType
 --   storeBM2Files
-   [makeB'TraceInput,B'Configs]
-   [b'PHGaloisGroup,NameB'InputFile]
-   [b'PHMonodromyCollect,NameB'InputFile]
-   [b'PHSequence,NameB'InputFile]
-   [calculateB'Trace,NameB'InputFile]
-   [makeB'TraceInput,NameB'InputFile]
-   [makeSampleSolutionsFile,NameB'InputFile]
-   [makeWitnessSetFiles,NameB'InputFile]
-   [runBertini,NameB'InputFile]
-   [runBertini,B'Exe]
-   [b'PHGaloisGroup,NameParameterFile]
-   [b'PHMonodromyCollect,NameParameterFile]
-   [b'PHSequence,NameParameterFile]
-   [importParameterFile,NameParameterFile]
-   [b'PHGaloisGroup,NameSolutionsFile]
-   [b'PHMonodromyCollect,NameSolutionsFile]
-   [b'PHSequence,NameSolutionsFile]
-   [makeMembershipFile,NameSolutionsFile]
-   [makeSampleSolutionsFile,NameSolutionsFile]
-   [makeWitnessSetFiles,NameSolutionsFile]
-   [b'PHGaloisGroup,NameStartFile]
-   [calculateB'Trace,NameStartFile]
    [b'PHMonodromyCollect,NumSolBound]
    (makeB'TraceInput,String,Number,Number)
    [makeB'InputFile,PathVariable]
    [makeB'InputFile,VariableList]
    [makeMembershipFile,TestSolutions]
-   [makeMembershipFile,UsePrecision]
-   [valueBM2,UsePrecision]
-   [NumberToB'String,UsePrecision]
+   [makeMembershipFile,M2Precision]
+   [valueBM2,M2Precision]
+   [NumberToB'String,M2Precision]
    [makeSampleSolutionsFile,SpecifyComponent]
    [b'PHMonodromyCollect,B'Exe]
    [b'PHMonodromyCollect,MonodromyStartParameters]
@@ -2035,20 +2089,15 @@ doc ///
    [runBertini,PreparePH2]
    [runBertini,TextScripts]
    [importSolutionsFile,OrderPaths]
-   [importSolutionsFile,UsePrecision]
-   [importParameterFile,UsePrecision]
-   [writeParameterFile,UsePrecision]
-   [importMainDataFile,NameMainDataFile]
+   [importSolutionsFile,M2Precision]
+   [importParameterFile,M2Precision]
+   [writeParameterFile,M2Precision]
    [importMainDataFile,SpecifyDim]
-   [importMainDataFile,UsePrecision]
+   [importMainDataFile,M2Precision]
    [b'PHSequence,B'Exe]
    [b'PHSequence,SaveData]
-   [makeWitnessSetFiles,NameWitnessSliceFile]
    [makeWitnessSetFiles,SpecifyComponent]
-   [writeStartFile,UsePrecision]
-   [makeMembershipFile,NameB'InputFile]
-   [b'PHMonodromyCollect,NameStartFile]
-   [b'PHSequence,NameStartFile]
+   [writeStartFile,M2Precision]
    [makeB'Section,B'Homogenization]
    [makeB'Section,ContainsPoint]
    [makeB'Section,RandomCoefficientGenerator]
@@ -2065,8 +2114,6 @@ doc ///
    [b'PHGaloisGroup,LoopRadius]
    [b'TraceTestImage,MapPoints]
    [moveB'File,MoveToDirectory]
-   [b'TraceTestImage,NameB'InputFile]
-   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
    [b'TraceTestImage,OnlyCalculateTrace]
    [b'TraceTestImage,RandomGamma]
    [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
@@ -2091,16 +2138,16 @@ doc ///
    [moveB'File,SubFolder]
    [b'TraceTestImage,SubIntoCC]
    [subPoint,SubIntoCC]
-   [subPoint,UsePrecision]
+   [subPoint,M2Precision]
    [b'TraceTestImage,B'Exe]
-   [b'TraceTestImage,UsePrecision]
+   [b'TraceTestImage,M2Precision]
    [b'PHGaloisGroup,B'Exe]
    [b'PHGaloisGroup,BranchPoints]
    [b'PHGaloisGroup,MonodromyStartParameters]
    [b'PHGaloisGroup,MonodromyStartPoints]
    [b'PHGaloisGroup,NumberOfLoops]
    [b'PHGaloisGroup,SaveData]
-   [b'PHGaloisGroup,UsePrecision]
+   [b'PHGaloisGroup,M2Precision]
    SpecifyVariables
    MapPoints
    ReturnGaloisGroupGeneratorFile
@@ -2109,7 +2156,6 @@ doc ///
    LoopRadius
    MoveToDirectory
    RandomGamma
-   NameGaloisGroupGeneratorFile
    StorageFolder
    SubFolder
    StartPoints
@@ -2124,6 +2170,7 @@ doc ///
      This option is for a function in version 2. 
      For more information contact Jose Israel Rodriguez at JoIsRo[AT]UChicago.edu.
 ///;
+
 
 
 
@@ -2300,21 +2347,27 @@ doc///
      
 ///;
 
-doc///
+ 
+doc ///
  Key
-   HomVariableGroup
-   [makeB'InputFile, HomVariableGroup]
+   NameIncidenceMatrixFile
+   [importIncidenceMatrix, NameIncidenceMatrixFile]
  Headline
-   An option which designates the Homogeneous Variable Groups.    
+   An optional argument to import an incidence matrix that has a different name than "incidence_matrix".
  Description
    Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
-	 AffVariableGroup=>{{z}},
-	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
-     
+     When this option is set to "another_incidence_matrix", a file named "another_incidence_matrix" is imported. The default is "incidence_matrix".
 ///;
+
+doc ///
+ Key
+   NameStartFile
+   [writeStartFile, NameStartFile]
+ Headline
+   An optional argument to write a start file that has a different name than "start".
+ Description
+   Text
+     When this option is set to "another_start_file", a file named "another_start_file" is written. The default is "start".
+///;
+
+

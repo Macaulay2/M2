@@ -5,7 +5,7 @@ i1 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{x,y},
          B'Polynomials=>{"x^2-1","y^2-4"})
 
-o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42423-0/0/input
+o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74783-0/0/input
 
 o1 : File
 
@@ -27,7 +27,7 @@ o3 =
 
      NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
      setup the following tolerances appropriately:
-     CoeffBound: 6.574237000000e+00, DegreeBound: 2.000000000000e+00
+     CoeffBound: 5.988025000000e+00, DegreeBound: 2.000000000000e+00
      AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
 
      Tracking path 0 of 4
@@ -71,7 +71,7 @@ i4 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{x,y},
          B'Polynomials=>{"x^2-1","y^2-4"})
 
-o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42423-0/0/input
+o4 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74783-0/0/input
 
 o4 : File
 
@@ -93,7 +93,7 @@ o6 =
 
      NOTE: You have requested to use adaptive path tracking.  Please make sure that you have
      setup the following tolerances appropriately:
-     CoeffBound: 6.574237000000e+00, DegreeBound: 2.000000000000e+00
+     CoeffBound: 5.988025000000e+00, DegreeBound: 2.000000000000e+00
      AMPSafetyDigits1: 1, AMPSafetyDigits2: 1, AMPMaxPrec: 1024
 
      Tracking path 0 of 4

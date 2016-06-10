@@ -12,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-t})
 
-o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42398-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74758-0/0/input
 
 o2 : File
 
@@ -26,13 +26,13 @@ i5 : makeB'InputFile(storeBM2Files,
          ParameterGroup=>{t},    AffVariableGroup=>{{x,y}},
          B'Polynomials=>{x^2-1,y^2-t})
 
-o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42398-0/0/input
+o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74758-0/0/input
 
 o5 : File
 
 i6 : writeParameterFile(storeBM2Files,{1})
 
-o6 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42398-0/0/final_parameters
+o6 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74758-0/0/final_parameters
 
 o6 : File
 
