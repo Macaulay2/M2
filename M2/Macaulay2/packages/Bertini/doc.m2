@@ -215,7 +215,7 @@ doc ///
      sol1=    point{{1,1}}--{{x,y}} coordinates
      sol2=    point{{ -1,1}}
      S1={sol1,sol2}--solutions to H when t=1
-     S0=bertiniTrackHomotopy(t, H, S1, ISPROJECTIVE=>1) --solutions to H when t=0 
+     S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0 
  Caveat
    Variables must begin with a letter (lowercase or capital) and
    can only contain letters, numbers, underscores, and square brackets.           
@@ -336,17 +336,24 @@ doc ///
      R=CC[u1,u2,u3,x,y];
      f1=u1*(y-1)+u2*(y-2)+u3*(y-3); --parameters are u1, u2, and u3
      f2=(x-11)*(x-12)*(x-13)-u1;
-     paramValues0={{1,0,0}};
-     paramValues1={{0,1+2*ii,0}};
+     paramValues0={1,0,0};
+     paramValues1={0,1+2*ii,0};
      bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
      bPH_0--the solutions to the system with parameters set equal to paramValues0
    Example
      R=CC[x,y,z,u1,u2]
      f1=x^2+y^2-z^2
      f2=u1*x+u2*y
-     finalParameters0={{0,1}}
-     finalParameters1={{1,0}}
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },ISPROJECTIVE=>1)            
+     finalParameters0={0,1}
+     finalParameters1={1,0}
+     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})            
+     bPH_0--The two solutions for finalParameters0
+   Example
+     R=CC[x,u1]
+     f1=x^2-u1
+     finalParameters0={1}
+     finalParameters1={2}
+     bPH=bertiniParameterHomotopy( {f1}, {u1},{finalParameters0 ,finalParameters1 },AffVariableGroup=>{x})            
      bPH_0--The two solutions for finalParameters0
  Caveat
    Variables must begin with a letter (lowercase or capital) and
@@ -1149,6 +1156,29 @@ doc ///
 ///;
 
 
+doc ///
+ Key
+   radicalList
+   (radicalList,List)
+   (radicalList,List,Number)
+ Headline
+   A support function that removes multiplicities of numbers in a list up to a tolerance.
+ Usage
+   radicalList(List,Number)
+   radicalList(List) 
+ Inputs
+   L:List
+     A list of complex or real numbers.
+   N:Number
+     A small real number. 
+ Description
+   Text
+     This outputs a sublist of complex or real numbers that all have distinct norms up to the tolerance N (default is 1e-10).
+   Example
+     radicalList({2.000,1.999})
+     radicalList({2.000,1.999},1e-10)         
+     radicalList({2.000,1.999},1e-2)         
+///;
 
 
 doc ///
@@ -1253,7 +1283,7 @@ doc ///
 doc ///
   Key
    [bertiniTrackHomotopy, Verbose]
-   [bertiniParameterHomotopy, Verbose]
+--   [bertiniParameterHomotopy, Verbose]
    [bertiniComponentMemberTest, Verbose]
    [bertiniPosDimSolve, Verbose]
    [bertiniRefineSols, Verbose]
@@ -1263,7 +1293,7 @@ doc ///
     Option to silence additional output 
   Usage
     bertiniTrackHomotopyVerbose(...,Verbose=>Boolean)
-    bertiniParameterHomotopy(...,Verbose=>Boolean)
+--    bertiniParameterHomotopy(...,Verbose=>Boolean)
     bertiniPosDimSolve(...,Verbose=>Boolean)
     bertiniRefineSols(...,Verbose=>Boolean)
     bertiniSample(...,Verbose=>Boolean)
@@ -1275,14 +1305,14 @@ doc ///
 
 doc ///
  Key
-   ISPROJECTIVE
-   [bertiniTrackHomotopy, ISPROJECTIVE]
-   [bertiniParameterHomotopy, ISPROJECTIVE]
-   [bertiniComponentMemberTest, ISPROJECTIVE]
-   [bertiniPosDimSolve, ISPROJECTIVE]
-   [bertiniRefineSols, ISPROJECTIVE]
-   [bertiniSample, ISPROJECTIVE]
-   [bertiniZeroDimSolve, ISPROJECTIVE]
+   IsProjective
+   [bertiniTrackHomotopy, IsProjective]
+--   [bertiniParameterHomotopy, IsProjective]
+   [bertiniComponentMemberTest, IsProjective]
+   [bertiniPosDimSolve, IsProjective]
+   [bertiniRefineSols, IsProjective]
+   [bertiniSample, IsProjective]
+   [bertiniZeroDimSolve, IsProjective]
  Headline
    optional argument to specify whether to use homogeneous coordinates
  Description
@@ -1292,15 +1322,38 @@ doc ///
    Example
      R = CC[x,y,z];
      f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
-     bertiniPosDimSolve(f,ISPROJECTIVE=>1);
-     
-   Example 
-     R=CC[x,y,z,u1,u2];--u1,u2 are parameters
-     f1=x^2+y^2-z^2;
-     f2=u1*x+u2*y;
-     finalParameters={{0,1}};
-     bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters },ISPROJECTIVE=>1)            
+     bertiniPosDimSolve(f,IsProjective=>1);
+                
 ///;
+
+doc ///
+ Key
+   AffVariableGroup
+   HomVariableGroup   
+   [bertiniParameterHomotopy, AffVariableGroup]
+   [bertiniParameterHomotopy, HomVariableGroup]
+   [makeB'InputFile, AffVariableGroup]
+ Headline
+   See help for bertiniParameterHomotopy and/or makeB'InputFile.
+ Description
+   Text
+     
+                
+///;
+
+
+
+doc ///
+ Key
+   CopyB'File
+   [moveB'File, CopyB'File]
+ Headline
+   optional argument to specify whether make a copy of the file.
+ Description
+   Text
+     When set to true, a file is copy of the file is made rather than just moved. The default in moveB'File is set to false.
+///;
+
 
 
 doc///
@@ -1317,42 +1370,7 @@ doc///
      is 1e-6. 
 ///;
 
-doc///
- Key
-   AffVariableGroup
-   [makeB'InputFile, AffVariableGroup]
- Headline
-   An option which designates the Affine Variable Groups.    
- Description
-   Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x1,x2,y]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 AffVariableGroup=>{{x1,x2},{y}},
-	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
-     
-///;
 
-doc///
- Key
-   HomVariableGroup
-   [makeB'InputFile, HomVariableGroup]
- Headline
-   An option which designates the Homogeneous Variable Groups.    
- Description
-   Text
-     We can group variables together when using zero-dimensional runs in Bertini. 
-   Example
-     R=QQ[x0,x1,y0,y1,z]
-     makeB'InputFile(storeBM2Files,
-	 B'Configs=>{{"MPTYPE",2}},
-     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
-	 AffVariableGroup=>{{z}},
-	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
-     
-///;
 
 doc///
  Key
@@ -1615,214 +1633,188 @@ doc///
 doc ///
   Key
     "Bertini options"
-    MPTYPE
+    MPType
     PRECISION
-    ODEPREDICTOR
-    TRACKTOLBEFOREEG
-    TRACKTOLDURINGEG
-    FINALTOL
-    MAXNORM
-    MINSTEPSIZEBEFOREEG
-    MINSTEPSIZEDURINGEG
-    IMAGTHRESHOLD
-    COEFFBOUND
-    DEGREEBOUND
-    CONDNUMTHRESHOLD
-    RANDOMSEED
-    SINGVALZEROTOL
-    ENDGAMENUM
-    USEREGENERATION
-    SECURITYLEVEL
-    SCREENOUT
-    OUTPUTLEVEL
-    STEPSFORINCREASE
-    MAXNEWTONITS
-    MAXSTEPSIZE
-    MAXNUMBERSTEPS
-    MAXCYCLENUM
-    REGENSTARTLEVEL
-    [bertiniZeroDimSolve, MPTYPE]
+    ODEPredictor
+    TrackTolBeforeEG
+    TrackTolDuringEG
+    FinalTol
+    MaxNorm  
+    MinStepSizeBeforeEG
+    MinStepSizeDuringEG
+    ImagThreshold
+    CoeffBound
+    DegreeBound
+    CondNumThreshold
+    RandomSeed
+    SingValZeroTol
+    EndGameNum
+    UseRegeneration
+    SecurityLevel
+    ScreenOut
+    OutputLevel
+    StepsForIncrease
+    MaxNewtonIts
+    MaxStepSize
+    MaxNumberSteps
+    MaxCycleNum
+    RegenStartLevel
+    [bertiniZeroDimSolve, MPType]
     [bertiniZeroDimSolve, PRECISION]
-    [bertiniZeroDimSolve, ODEPREDICTOR]
-    [bertiniZeroDimSolve, TRACKTOLBEFOREEG]
-    [bertiniZeroDimSolve, TRACKTOLDURINGEG]
-    [bertiniZeroDimSolve, FINALTOL]
-    [bertiniZeroDimSolve, MAXNORM]
-    [bertiniZeroDimSolve, MINSTEPSIZEBEFOREEG]
-    [bertiniZeroDimSolve, MINSTEPSIZEDURINGEG]
-    [bertiniZeroDimSolve, IMAGTHRESHOLD]
-    [bertiniZeroDimSolve, COEFFBOUND]
-    [bertiniZeroDimSolve, DEGREEBOUND]
-    [bertiniZeroDimSolve, CONDNUMTHRESHOLD]
-    [bertiniZeroDimSolve, RANDOMSEED]
-    [bertiniZeroDimSolve, SINGVALZEROTOL]
-    [bertiniZeroDimSolve, ENDGAMENUM]
-    [bertiniZeroDimSolve, USEREGENERATION]
-    [bertiniZeroDimSolve, SECURITYLEVEL]
-    [bertiniZeroDimSolve, SCREENOUT]
-    [bertiniZeroDimSolve, OUTPUTLEVEL]
-    [bertiniZeroDimSolve, STEPSFORINCREASE]
-    [bertiniZeroDimSolve, MAXNEWTONITS]
-    [bertiniZeroDimSolve, MAXSTEPSIZE]
-    [bertiniZeroDimSolve, MAXNUMBERSTEPS]
-    [bertiniZeroDimSolve, MAXCYCLENUM]
-    [bertiniZeroDimSolve, REGENSTARTLEVEL]
-    [bertiniComponentMemberTest, MPTYPE]
+    [bertiniZeroDimSolve, ODEPredictor]
+    [bertiniZeroDimSolve, TrackTolBeforeEG]
+    [bertiniZeroDimSolve, TrackTolDuringEG]
+    [bertiniZeroDimSolve, FinalTol]
+    [bertiniZeroDimSolve, MaxNorm]
+    [bertiniZeroDimSolve, MinStepSizeBeforeEG]
+    [bertiniZeroDimSolve, MinStepSizeDuringEG]
+    [bertiniZeroDimSolve, ImagThreshold]
+    [bertiniZeroDimSolve, CoeffBound]
+    [bertiniZeroDimSolve, DegreeBound]
+    [bertiniZeroDimSolve, CondNumThreshold]
+    [bertiniZeroDimSolve, RandomSeed]
+    [bertiniZeroDimSolve, SingValZeroTol]
+    [bertiniZeroDimSolve, EndGameNum]
+    [bertiniZeroDimSolve, UseRegeneration]
+    [bertiniZeroDimSolve, SecurityLevel]
+    [bertiniZeroDimSolve, ScreenOut]
+    [bertiniZeroDimSolve, OutputLevel]
+    [bertiniZeroDimSolve, StepsForIncrease]
+    [bertiniZeroDimSolve, MaxNewtonIts]
+    [bertiniZeroDimSolve, MaxStepSize]
+    [bertiniZeroDimSolve, MaxNumberSteps]
+    [bertiniZeroDimSolve, MaxCycleNum]
+    [bertiniZeroDimSolve, RegenStartLevel]
+    [bertiniComponentMemberTest, MPType]
     [bertiniComponentMemberTest, PRECISION]
-    [bertiniComponentMemberTest, ODEPREDICTOR]
-    [bertiniComponentMemberTest, TRACKTOLBEFOREEG]
-    [bertiniComponentMemberTest, TRACKTOLDURINGEG]
-    [bertiniComponentMemberTest, FINALTOL]
-    [bertiniComponentMemberTest, MAXNORM]
-    [bertiniComponentMemberTest, MINSTEPSIZEBEFOREEG]
-    [bertiniComponentMemberTest, MINSTEPSIZEDURINGEG]
-    [bertiniComponentMemberTest, IMAGTHRESHOLD]
-    [bertiniComponentMemberTest, COEFFBOUND]
-    [bertiniComponentMemberTest, DEGREEBOUND]
-    [bertiniComponentMemberTest, CONDNUMTHRESHOLD]
-    [bertiniComponentMemberTest, RANDOMSEED]
-    [bertiniComponentMemberTest, SINGVALZEROTOL]
-    [bertiniComponentMemberTest, ENDGAMENUM]
-    [bertiniComponentMemberTest, USEREGENERATION]
-    [bertiniComponentMemberTest, SECURITYLEVEL]
-    [bertiniComponentMemberTest, SCREENOUT]
-    [bertiniComponentMemberTest, OUTPUTLEVEL]
-    [bertiniComponentMemberTest, STEPSFORINCREASE]
-    [bertiniComponentMemberTest, MAXNEWTONITS]
-    [bertiniComponentMemberTest, MAXSTEPSIZE]
-    [bertiniComponentMemberTest, MAXNUMBERSTEPS]
-    [bertiniComponentMemberTest, MAXCYCLENUM]
-    [bertiniComponentMemberTest, REGENSTARTLEVEL]
-    [bertiniParameterHomotopy, MPTYPE]
-    [bertiniParameterHomotopy, PRECISION]
-    [bertiniParameterHomotopy, ODEPREDICTOR]
-    [bertiniParameterHomotopy, TRACKTOLBEFOREEG]
-    [bertiniParameterHomotopy, TRACKTOLDURINGEG]
-    [bertiniParameterHomotopy, FINALTOL]
-    [bertiniParameterHomotopy, MAXNORM]
-    [bertiniParameterHomotopy, MINSTEPSIZEBEFOREEG]
-    [bertiniParameterHomotopy, MINSTEPSIZEDURINGEG]
-    [bertiniParameterHomotopy, IMAGTHRESHOLD]
-    [bertiniParameterHomotopy, COEFFBOUND]
-    [bertiniParameterHomotopy, DEGREEBOUND]
-    [bertiniParameterHomotopy, CONDNUMTHRESHOLD]
-    [bertiniParameterHomotopy, RANDOMSEED]
-    [bertiniParameterHomotopy, SINGVALZEROTOL]
-    [bertiniParameterHomotopy, ENDGAMENUM]
-    [bertiniParameterHomotopy, USEREGENERATION]
-    [bertiniParameterHomotopy, SECURITYLEVEL]
-    [bertiniParameterHomotopy, SCREENOUT]
-    [bertiniParameterHomotopy, OUTPUTLEVEL]
-    [bertiniParameterHomotopy, STEPSFORINCREASE]
-    [bertiniParameterHomotopy, MAXNEWTONITS]
-    [bertiniParameterHomotopy, MAXSTEPSIZE]
-    [bertiniParameterHomotopy, MAXNUMBERSTEPS]
-    [bertiniParameterHomotopy, MAXCYCLENUM]
-    [bertiniParameterHomotopy, REGENSTARTLEVEL]
-    [bertiniPosDimSolve, MPTYPE]
+    [bertiniComponentMemberTest, ODEPredictor]
+    [bertiniComponentMemberTest, TrackTolBeforeEG]
+    [bertiniComponentMemberTest, TrackTolDuringEG]
+    [bertiniComponentMemberTest, FinalTol]
+    [bertiniComponentMemberTest, MaxNorm]
+    [bertiniComponentMemberTest, MinStepSizeBeforeEG]
+    [bertiniComponentMemberTest, MinStepSizeDuringEG]
+    [bertiniComponentMemberTest, ImagThreshold]
+    [bertiniComponentMemberTest, CoeffBound]
+    [bertiniComponentMemberTest, DegreeBound]
+    [bertiniComponentMemberTest, CondNumThreshold]
+    [bertiniComponentMemberTest, RandomSeed]
+    [bertiniComponentMemberTest, SingValZeroTol]
+    [bertiniComponentMemberTest, EndGameNum]
+    [bertiniComponentMemberTest, UseRegeneration]
+    [bertiniComponentMemberTest, SecurityLevel]
+    [bertiniComponentMemberTest, ScreenOut]
+    [bertiniComponentMemberTest, OutputLevel]
+    [bertiniComponentMemberTest, StepsForIncrease]
+    [bertiniComponentMemberTest, MaxNewtonIts]
+    [bertiniComponentMemberTest, MaxStepSize]
+    [bertiniComponentMemberTest, MaxNumberSteps]
+    [bertiniComponentMemberTest, MaxCycleNum]
+    [bertiniComponentMemberTest, RegenStartLevel]
+    [bertiniPosDimSolve, MPType]
     [bertiniPosDimSolve, PRECISION]
-    [bertiniPosDimSolve, ODEPREDICTOR]
-    [bertiniPosDimSolve, TRACKTOLBEFOREEG]
-    [bertiniPosDimSolve, TRACKTOLDURINGEG]
-    [bertiniPosDimSolve, FINALTOL]
-    [bertiniPosDimSolve, MAXNORM]
-    [bertiniPosDimSolve, MINSTEPSIZEBEFOREEG]
-    [bertiniPosDimSolve, MINSTEPSIZEDURINGEG]
-    [bertiniPosDimSolve, IMAGTHRESHOLD]
-    [bertiniPosDimSolve, COEFFBOUND]
-    [bertiniPosDimSolve, DEGREEBOUND]
-    [bertiniPosDimSolve, CONDNUMTHRESHOLD]
-    [bertiniPosDimSolve, RANDOMSEED]
-    [bertiniPosDimSolve, SINGVALZEROTOL]
-    [bertiniPosDimSolve, ENDGAMENUM]
-    [bertiniPosDimSolve, USEREGENERATION]
-    [bertiniPosDimSolve, SECURITYLEVEL]
-    [bertiniPosDimSolve, SCREENOUT]
-    [bertiniPosDimSolve, OUTPUTLEVEL]
-    [bertiniPosDimSolve, STEPSFORINCREASE]
-    [bertiniPosDimSolve, MAXNEWTONITS]
-    [bertiniPosDimSolve, MAXSTEPSIZE]
-    [bertiniPosDimSolve, MAXNUMBERSTEPS]
-    [bertiniPosDimSolve, MAXCYCLENUM]
-    [bertiniPosDimSolve, REGENSTARTLEVEL]
-    [bertiniRefineSols, MPTYPE]
+    [bertiniPosDimSolve, ODEPredictor]
+    [bertiniPosDimSolve, TrackTolBeforeEG]
+    [bertiniPosDimSolve, TrackTolDuringEG]
+    [bertiniPosDimSolve, FinalTol]
+    [bertiniPosDimSolve, MaxNorm]
+    [bertiniPosDimSolve, MinStepSizeBeforeEG]
+    [bertiniPosDimSolve, MinStepSizeDuringEG]
+    [bertiniPosDimSolve, ImagThreshold]
+    [bertiniPosDimSolve, CoeffBound]
+    [bertiniPosDimSolve, DegreeBound]
+    [bertiniPosDimSolve, CondNumThreshold]
+    [bertiniPosDimSolve, RandomSeed]
+    [bertiniPosDimSolve, SingValZeroTol]
+    [bertiniPosDimSolve, EndGameNum]
+    [bertiniPosDimSolve, UseRegeneration]
+    [bertiniPosDimSolve, SecurityLevel]
+    [bertiniPosDimSolve, ScreenOut]
+    [bertiniPosDimSolve, OutputLevel]
+    [bertiniPosDimSolve, StepsForIncrease]
+    [bertiniPosDimSolve, MaxNewtonIts]
+    [bertiniPosDimSolve, MaxStepSize]
+    [bertiniPosDimSolve, MaxNumberSteps]
+    [bertiniPosDimSolve, MaxCycleNum]
+    [bertiniPosDimSolve, RegenStartLevel]
+    [bertiniRefineSols, MPType]
     [bertiniRefineSols, PRECISION]
-    [bertiniRefineSols, ODEPREDICTOR]
-    [bertiniRefineSols, TRACKTOLBEFOREEG]
-    [bertiniRefineSols, TRACKTOLDURINGEG]
-    [bertiniRefineSols, FINALTOL]
-    [bertiniRefineSols, MAXNORM]
-    [bertiniRefineSols, MINSTEPSIZEBEFOREEG]
-    [bertiniRefineSols, MINSTEPSIZEDURINGEG]
-    [bertiniRefineSols, IMAGTHRESHOLD]
-    [bertiniRefineSols, COEFFBOUND]
-    [bertiniRefineSols, DEGREEBOUND]
-    [bertiniRefineSols, CONDNUMTHRESHOLD]
-    [bertiniRefineSols, RANDOMSEED]
-    [bertiniRefineSols, SINGVALZEROTOL]
-    [bertiniRefineSols, ENDGAMENUM]
-    [bertiniRefineSols, USEREGENERATION]
-    [bertiniRefineSols, SECURITYLEVEL]
-    [bertiniRefineSols, SCREENOUT]
-    [bertiniRefineSols, OUTPUTLEVEL]
-    [bertiniRefineSols, STEPSFORINCREASE]
-    [bertiniRefineSols, MAXNEWTONITS]
-    [bertiniRefineSols, MAXSTEPSIZE]
-    [bertiniRefineSols, MAXNUMBERSTEPS]
-    [bertiniRefineSols, MAXCYCLENUM]
-    [bertiniRefineSols, REGENSTARTLEVEL]
-    [bertiniSample, MPTYPE]
+    [bertiniRefineSols, ODEPredictor]
+    [bertiniRefineSols, TrackTolBeforeEG]
+    [bertiniRefineSols, TrackTolDuringEG]
+    [bertiniRefineSols, FinalTol]
+    [bertiniRefineSols, MaxNorm]
+    [bertiniRefineSols, MinStepSizeBeforeEG]
+    [bertiniRefineSols, MinStepSizeDuringEG]
+    [bertiniRefineSols, ImagThreshold]
+    [bertiniRefineSols, CoeffBound]
+    [bertiniRefineSols, DegreeBound]
+    [bertiniRefineSols, CondNumThreshold]
+    [bertiniRefineSols, RandomSeed]
+    [bertiniRefineSols, SingValZeroTol]
+    [bertiniRefineSols, EndGameNum]
+    [bertiniRefineSols, UseRegeneration]
+    [bertiniRefineSols, SecurityLevel]
+    [bertiniRefineSols, ScreenOut]
+    [bertiniRefineSols, OutputLevel]
+    [bertiniRefineSols, StepsForIncrease]
+    [bertiniRefineSols, MaxNewtonIts]
+    [bertiniRefineSols, MaxStepSize]
+    [bertiniRefineSols, MaxNumberSteps]
+    [bertiniRefineSols, MaxCycleNum]
+    [bertiniRefineSols, RegenStartLevel]
+    [bertiniSample, MPType]
     [bertiniSample, PRECISION]
-    [bertiniSample, ODEPREDICTOR]
-    [bertiniSample, TRACKTOLBEFOREEG]
-    [bertiniSample, TRACKTOLDURINGEG]
-    [bertiniSample, FINALTOL]
-    [bertiniSample, MAXNORM]
-    [bertiniSample, MINSTEPSIZEBEFOREEG]
-    [bertiniSample, MINSTEPSIZEDURINGEG]
-    [bertiniSample, IMAGTHRESHOLD]
-    [bertiniSample, COEFFBOUND]
-    [bertiniSample, DEGREEBOUND]
-    [bertiniSample, CONDNUMTHRESHOLD]
-    [bertiniSample, RANDOMSEED]
-    [bertiniSample, SINGVALZEROTOL]
-    [bertiniSample, ENDGAMENUM]
-    [bertiniSample, USEREGENERATION]
-    [bertiniSample, SECURITYLEVEL]
-    [bertiniSample, SCREENOUT]
-    [bertiniSample, OUTPUTLEVEL]
-    [bertiniSample, STEPSFORINCREASE]
-    [bertiniSample, MAXNEWTONITS]
-    [bertiniSample, MAXSTEPSIZE]
-    [bertiniSample, MAXNUMBERSTEPS]
-    [bertiniSample, MAXCYCLENUM]
-    [bertiniSample, REGENSTARTLEVEL]
-    [bertiniTrackHomotopy, MPTYPE]
+    [bertiniSample, ODEPredictor]
+    [bertiniSample, TrackTolBeforeEG]
+    [bertiniSample, TrackTolDuringEG]
+    [bertiniSample, FinalTol]
+    [bertiniSample, MaxNorm]
+    [bertiniSample, MinStepSizeBeforeEG]
+    [bertiniSample, MinStepSizeDuringEG]
+    [bertiniSample, ImagThreshold]
+    [bertiniSample, CoeffBound]
+    [bertiniSample, DegreeBound]
+    [bertiniSample, CondNumThreshold]
+    [bertiniSample, RandomSeed]
+    [bertiniSample, SingValZeroTol]
+    [bertiniSample, EndGameNum]
+    [bertiniSample, UseRegeneration]
+    [bertiniSample, SecurityLevel]
+    [bertiniSample, ScreenOut]
+    [bertiniSample, OutputLevel]
+    [bertiniSample, StepsForIncrease]
+    [bertiniSample, MaxNewtonIts]
+    [bertiniSample, MaxStepSize]
+    [bertiniSample, MaxNumberSteps]
+    [bertiniSample, MaxCycleNum]
+    [bertiniSample, RegenStartLevel]
+    [bertiniTrackHomotopy, MPType]
     [bertiniTrackHomotopy, PRECISION]
-    [bertiniTrackHomotopy, ODEPREDICTOR]
-    [bertiniTrackHomotopy, TRACKTOLBEFOREEG]
-    [bertiniTrackHomotopy, TRACKTOLDURINGEG]
-    [bertiniTrackHomotopy, FINALTOL]
-    [bertiniTrackHomotopy, MAXNORM]
-    [bertiniTrackHomotopy, MINSTEPSIZEBEFOREEG]
-    [bertiniTrackHomotopy, MINSTEPSIZEDURINGEG]
-    [bertiniTrackHomotopy, IMAGTHRESHOLD]
-    [bertiniTrackHomotopy, COEFFBOUND]
-    [bertiniTrackHomotopy, DEGREEBOUND]
-    [bertiniTrackHomotopy, CONDNUMTHRESHOLD]
-    [bertiniTrackHomotopy, RANDOMSEED]
-    [bertiniTrackHomotopy, SINGVALZEROTOL]
-    [bertiniTrackHomotopy, ENDGAMENUM]
-    [bertiniTrackHomotopy, USEREGENERATION]
-    [bertiniTrackHomotopy, SECURITYLEVEL]
-    [bertiniTrackHomotopy, SCREENOUT]
-    [bertiniTrackHomotopy, OUTPUTLEVEL]
-    [bertiniTrackHomotopy, STEPSFORINCREASE]
-    [bertiniTrackHomotopy, MAXNEWTONITS]
-    [bertiniTrackHomotopy, MAXSTEPSIZE]
-    [bertiniTrackHomotopy, MAXNUMBERSTEPS]
-    [bertiniTrackHomotopy, MAXCYCLENUM]
-    [bertiniTrackHomotopy, REGENSTARTLEVEL]
+    [bertiniTrackHomotopy, ODEPredictor]
+    [bertiniTrackHomotopy, TrackTolBeforeEG]
+    [bertiniTrackHomotopy, TrackTolDuringEG]
+    [bertiniTrackHomotopy, FinalTol]
+    [bertiniTrackHomotopy, MaxNorm]
+    [bertiniTrackHomotopy, MinStepSizeBeforeEG]
+    [bertiniTrackHomotopy, MinStepSizeDuringEG]
+    [bertiniTrackHomotopy, ImagThreshold]
+    [bertiniTrackHomotopy, CoeffBound]
+    [bertiniTrackHomotopy, DegreeBound]
+    [bertiniTrackHomotopy, CondNumThreshold]
+    [bertiniTrackHomotopy, RandomSeed]
+    [bertiniTrackHomotopy, SingValZeroTol]
+    [bertiniTrackHomotopy, EndGameNum]
+    [bertiniTrackHomotopy, UseRegeneration]
+    [bertiniTrackHomotopy, SecurityLevel]
+    [bertiniTrackHomotopy, ScreenOut]
+    [bertiniTrackHomotopy, OutputLevel]
+    [bertiniTrackHomotopy, StepsForIncrease]
+    [bertiniTrackHomotopy, MaxNewtonIts]
+    [bertiniTrackHomotopy, MaxStepSize]
+    [bertiniTrackHomotopy, MaxNumberSteps]
+    [bertiniTrackHomotopy, MaxCycleNum]
+    [bertiniTrackHomotopy, RegenStartLevel]
   Headline
     options for methods of Bertini package
   Description
@@ -1831,69 +1823,69 @@ doc ///
       The default value for EACH option is -1, which tells Bertini to use its internal default.
       Refer to Appendix E of SIAM Bertini book for full details and list of options. 
 
-      MPTYPE: Type of precision (0=double, 1=fixed higher, 2=adaptive).
+      MPType: Type of precision (0=double, 1=fixed higher, 2=adaptive).
 
-      PRECISION: Precision, in bits, when used MPTYPE=1.
+      PRECISION: Precision, in bits, when used MPType=1.
 
-      ODEPREDICTOR: Choice of predictor method (9 choices).
+      ODEPredictor: Choice of predictor method (9 choices).
 
-      TRACKTOLBEFOREEG: Before endgame zone, Newton error must be less than this for success. 
+      TrackTolBeforeEG: Before endgame zone, Newton error must be less than this for success. 
 
-      TRACKTOLDURINGEG: Same as previous, but during endgame.
+      TrackTolDuringEG: Same as previous, but during endgame.
 
-      FINALTOL: Path is deemed successful if final two endpoint approximations agree to FINALTOL.
+      FinalTol: Path is deemed successful if final two endpoint approximations agree to FinalTol.
 
-      MAXNORM: If SECURITYLEVEL=0, path is truncated if two consecutive endpoint approximations exceed this value. 
+      MaxNorm: If SecurityLevel=0, path is truncated if two consecutive endpoint approximations exceed this value. 
 
-      MINSTEPSIZEBEFOREEG: Path is truncated if stepsize drops below this level before endgame.
+      MinStepSizeBeforeEG: Path is truncated if stepsize drops below this level before endgame.
 
-      MINSTEPSIZEDURINGEG: Same as previous, but during endgame.
+      MinStepSizeDuringEG: Same as previous, but during endgame.
 
-      IMAGTHRESHOLD: Endpoint deemed real if infinity norm is smaller than this. 
+      ImagThreshold: Endpoint deemed real if infinity norm is smaller than this. 
 
-      COEFFBOUND: Useful only if MPTYPE=2, bound on sum of coefficients of each polynomial. 
+      CoeffBound: Useful only if MPType=2, bound on sum of coefficients of each polynomial. 
 
-      DEGREEBOUND: Useful only if MPTYPE=2, bound on degree of each polynomial.
+      DegreeBound: Useful only if MPType=2, bound on degree of each polynomial.
 
-      CONDNUMTHRESHOLD: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this. 
+      CondNumThreshold: Endpoint is deemed singular if multiple paths lead to it or condition number exceeds this. 
 
-      RANDOMSEED: Useful to repeat runs with the same random numbers.
+      RandomSeed: Useful to repeat runs with the same random numbers.
 
-      SINGVALZEROTOL: Singular value is considered 0 if less than this value, when using fixed precision.
+      SingValZeroTol: Singular value is considered 0 if less than this value, when using fixed precision.
 
-      ENDGAMENUM: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
+      EndGameNum: Choice of endgame (1=power series, 2=Cauchy, 3=trackback Cauchy).
 
-      USEREGENERATION: 1 to use regeneration for a zero-dimensional run.
+      UseRegeneration: 1 to use regeneration for a zero-dimensional run.
 
-      SECURITYLEVEL: 1 to avoid truncation of possibly-infinite paths.
+      SecurityLevel: 1 to avoid truncation of possibly-infinite paths.
 
-      SCREENOUT: Level of output to the screen.
+      ScreenOut: Level of output to the screen.
 
-      OUTPUTLEVEL: Level of output to files.
+      OutputLevel: Level of output to files.
 
-      STEPSFORINCREASE: Number of consecutive Newton corrector successes before increase of stepsize.
+      StepsForIncrease: Number of consecutive Newton corrector successes before increase of stepsize.
 
-      MAXNEWTONITS: Newton corrector step deemed failed if no convergence prior to this number of iterations. 
+      MaxNewtonIts: Newton corrector step deemed failed if no convergence prior to this number of iterations. 
 
-      MAXSTEPSIZE: Largest stepsize allowed. 
+      MaxStepSize: Largest stepsize allowed. 
 
-      MAXNUMBERSTEPS: Max number of steps for entire path.  Path failure if number of steps exceeds this.
+      MaxNumberSteps: Max number of steps for entire path.  Path failure if number of steps exceeds this.
 
-      MAXCYCLENUM: Max cycle number considered during endgame.
+      MaxCycleNum: Max cycle number considered during endgame.
 
-      REGENSTARTLEVEL: Level at which regeneration begins. 
+      RegenStartLevel: Level at which regeneration begins. 
 
       There are two recommended ways of using the optional arguments.
     
       (1) Specify individual parameters in a function call:
     Example
       CC[x,y]; F = {x^2-1,y^2-1};
-      bertiniZeroDimSolve(F,RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100)
+      bertiniZeroDimSolve(F,RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100)
     Text
       (2) Store your frequently used favorites in an OptionTable
       and pass it as the last argument in each function call:
     Example
-      opts = new OptionTable from {RANDOMSEED=>0,TRACKTOLBEFOREEG=>1e-6,FINALTOL=>1e-100}
+      opts = new OptionTable from {RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}
       bertiniZeroDimSolve(F,opts)
       G = {x^2+y^2-1};
       bertiniPosDimSolve(G,opts)
@@ -1981,12 +1973,10 @@ doc ///
    calculateB'Trace
    makeB'TraceInput
    importSliceFile
-   b'TraceTest
    DeflationsNeeded
    Dimension
    MaxPrecisionUtilized
    FinalTValue
-   (b'TraceTest,String,Number,Number)
    (calculateB'Trace,String)
    (importSliceFile,String)
    SolutionType
@@ -1995,7 +1985,6 @@ doc ///
    [b'PHGaloisGroup,NameB'InputFile]
    [b'PHMonodromyCollect,NameB'InputFile]
    [b'PHSequence,NameB'InputFile]
-   [b'TraceTest,NameB'InputFile]
    [calculateB'Trace,NameB'InputFile]
    [makeB'TraceInput,NameB'InputFile]
    [makeSampleSolutionsFile,NameB'InputFile]
@@ -2005,7 +1994,6 @@ doc ///
    [b'PHGaloisGroup,NameParameterFile]
    [b'PHMonodromyCollect,NameParameterFile]
    [b'PHSequence,NameParameterFile]
-   [b'TraceTest,NameParameterFile]
    [importParameterFile,NameParameterFile]
    [b'PHGaloisGroup,NameSolutionsFile]
    [b'PHMonodromyCollect,NameSolutionsFile]
@@ -2014,10 +2002,8 @@ doc ///
    [makeSampleSolutionsFile,NameSolutionsFile]
    [makeWitnessSetFiles,NameSolutionsFile]
    [b'PHGaloisGroup,NameStartFile]
-   [b'TraceTest,NameStartFile]
    [calculateB'Trace,NameStartFile]
    [b'PHMonodromyCollect,NumSolBound]
-   [b'TraceTest,ParameterValues]
    (makeB'TraceInput,String,Number,Number)
    [makeB'InputFile,PathVariable]
    [makeB'InputFile,VariableList]
@@ -2076,6 +2062,60 @@ doc ///
    PrecisionIncreased
    AccuracyEstInternal
    ComponentNumber 
+   [b'PHGaloisGroup,LoopRadius]
+   [b'TraceTestImage,MapPoints]
+   [moveB'File,MoveToDirectory]
+   [b'TraceTestImage,NameB'InputFile]
+   [b'PHGaloisGroup,NameGaloisGroupGeneratorFile]
+   [b'TraceTestImage,OnlyCalculateTrace]
+   [b'TraceTestImage,RandomGamma]
+   [b'PHGaloisGroup,ReturnGaloisGroupGeneratorFile]
+   [subPoint,SpecifyVariables]
+   [b'TraceTestImage,StartParameters]
+   [b'TraceTestImage,StartPoints]
+   [b'TraceTestImage,StopBeforeTest]
+   [b'PHGaloisGroup,StorageFolder]    
+   [b'PHMonodromyCollect,StorageFolder]	   
+   [b'PHSequence,StorageFolder]
+   [importIncidenceMatrix,StorageFolder]
+   [importParameterFile,StorageFolder]
+   [importSolutionsFile,StorageFolder]
+   [makeB'InputFile,StorageFolder]
+   [makeMembershipFile,StorageFolder]
+   [makeSampleSolutionsFile,StorageFolder]
+   [makeWitnessSetFiles,StorageFolder]
+   [runBertini,StorageFolder]
+   [writeParameterFile,StorageFolder]
+   [writeStartFile,StorageFolder]
+   [b'TraceTestImage,SubFolder]
+   [moveB'File,SubFolder]
+   [b'TraceTestImage,SubIntoCC]
+   [subPoint,SubIntoCC]
+   [subPoint,UsePrecision]
+   [b'TraceTestImage,B'Exe]
+   [b'TraceTestImage,UsePrecision]
+   [b'PHGaloisGroup,B'Exe]
+   [b'PHGaloisGroup,BranchPoints]
+   [b'PHGaloisGroup,MonodromyStartParameters]
+   [b'PHGaloisGroup,MonodromyStartPoints]
+   [b'PHGaloisGroup,NumberOfLoops]
+   [b'PHGaloisGroup,SaveData]
+   [b'PHGaloisGroup,UsePrecision]
+   SpecifyVariables
+   MapPoints
+   ReturnGaloisGroupGeneratorFile
+   OnlyCalculateTrace
+   StopBeforeTest
+   LoopRadius
+   MoveToDirectory
+   RandomGamma
+   NameGaloisGroupGeneratorFile
+   StorageFolder
+   SubFolder
+   StartPoints
+   StartParameters
+   SubIntoCC	  
+
  Headline
    This option or key is for a function that is in active development. 
  Description
@@ -2244,56 +2284,37 @@ doc ///
 
 doc///
  Key
-   AllowStrings
-   [bertiniTrackHomotopy, AllowStrings]
-   [bertiniParameterHomotopy, AllowStrings]
-   [bertiniPosDimSolve, AllowStrings]
-   [bertiniZeroDimSolve, AllowStrings]
+   AffVariableGroup
+   [makeB'InputFile, AffVariableGroup]
  Headline
-   input a system of polynomials as strings   
+   An option which designates the Affine Variable Groups.    
  Description
    Text
-     Optional input that takes a List of variables and allows for the polynomial system to
-     be passed as a List of strings to @TO bertiniZeroDimSolve@, @TO bertiniTrackHomotopy@,
-     @TO bertiniParameterHomotopy@, and @TO bertiniPosDimSolve@.
+     We can group variables together when using zero-dimensional runs in Bertini. 
    Example
-     R = CC[x,y,z];
-     f = {"(x^2+y^2-z^2)*(z-x)",toString (hold (x^2+y^2-z^2)*(z+y)), z-1};
-     sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z})
-   Example 
-     R=CC[x,y,z];--u1,u2 are parameters
-     f1=x^2+y^2-z^2;
-     f2="u1*x+u2*y";
-     f3=z-1;
-     finalParameters={{0,1}};
-     bPH=bertiniParameterHomotopy( {f1,f2,f3}, {u1,u2},{finalParameters },AllowStrings=>{x,y,z})            
-   Example 
-     R=CC[x,t1];
-     f1="x^2+cos(1-t1)-2*exp(1-t1)";
-     H={f1};
-     sol1 = point {{1}};
-     sol2 = point {{-1}};
-     S1={sol1,sol2}--solutions to H when t=1                 
-     S0 = bertiniTrackHomotopy (t1, H, S1,AllowStrings=>{x}) --solutions to H when t=0|
-     peek S0
+     R=QQ[x1,x2,y]
+     makeB'InputFile(storeBM2Files,
+	 B'Configs=>{{"MPTYPE",2}},
+     	 AffVariableGroup=>{{x1,x2},{y}},
+	 B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2})
+     
 ///;
 
 doc///
  Key
-   SubFunctions
-   [bertiniTrackHomotopy, SubFunctions]
-   [bertiniParameterHomotopy, SubFunctions]
-   [bertiniPosDimSolve, SubFunctions]
-   [bertiniZeroDimSolve, SubFunctions]
+   HomVariableGroup
+   [makeB'InputFile, HomVariableGroup]
  Headline
-   optional argument to specify subfunctions to be written to the Bertini input file   
+   An option which designates the Homogeneous Variable Groups.    
  Description
    Text
-     The option is a list of pairs that define a subfunction. 
+     We can group variables together when using zero-dimensional runs in Bertini. 
    Example
-     R = CC[x,y,z][s1,s2];
-     sF={ {s1,(x^2+y^2-z^2)},{s2,z-x}}--s1=x^2+y^2-z^2; s2=z-x;
-     f = {s1*s2, s1*(z+y),z-1};
-     sols = bertiniZeroDimSolve(f, AllowStrings=>{x,y,z}, SubFunctions=>sF)
+     R=QQ[x0,x1,y0,y1,z]
+     makeB'InputFile(storeBM2Files,
+	 B'Configs=>{{"MPTYPE",2}},
+     	 HomVariableGroup=>{{x0,x1},{y0,y1}},
+	 AffVariableGroup=>{{z}},
+	 B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
+     
 ///;
-

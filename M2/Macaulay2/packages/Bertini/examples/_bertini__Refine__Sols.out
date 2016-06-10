@@ -1,13 +1,12 @@
 -- -*- M2-comint -*- {* hash: 1464112564 *}
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R = CC[x,y];
 
 i2 : F = {x^2-2,y^2-2};
 
 i3 : sols = bertiniZeroDimSolve (F)
-Temporary directory for input and output files:/tmp/M2-29687-0/1
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42269-0/1
 
 The version of Bertini 
 	    you have installed on your computer 
@@ -23,7 +22,7 @@ o3 = {{-1.41421, -1.41421}, {-1.41421, 1.41421}, {1.41421, -1.41421},
 o3 : List
 
 i4 : S = bertiniRefineSols (100, F, sols)
-Temporary directory for input and output files:/tmp/M2-29687-0/2
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42269-0/2
 
 The version of Bertini 
 	    you have installed on your computer 
