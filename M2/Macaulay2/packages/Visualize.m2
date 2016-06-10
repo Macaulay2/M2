@@ -1088,12 +1088,12 @@ document {
      some features may require you to open the links in a new tab.",
      
      UL {
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"graph-example.html","Visualize Graphs example")},
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"digraph-example.html","Visualize Digraphs example")},	 
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"poset-example.html","Visualize Posets example")},	  
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"simplicial-complex-example.html","Visualize Simplicial Complexes example")},	 
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"ideal2d-example.html","Visualize Ideals in 2 variables example")},	 
-	 {HREF(replace("PKG","Visualize",Layout#1#"package")|"ideal3d-example.html","Visualize Ideals in 3 variables example")}
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"graph-example.html","Visualize Graphs example")},
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"digraph-example.html","Visualize Digraphs example")},	 
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"poset-example.html","Visualize Posets example")},	  
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"simplicial-complex-example.html","Visualize Simplicial Complexes example")},	 
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"ideal2d-example.html","Visualize Ideals in 2 variables example")},	 
+	 {HREF(replace("PKG","Visualize",currentLayout#"package")|"ideal3d-example.html","Visualize Ideals in 3 variables example")}
         },
 
      SUBSECTION "Methods and Workflow",
@@ -1267,10 +1267,10 @@ document {
      PARA {"At this point we wish to visualize ", TT "G", ". To do this simply execute ", TT "H = visualize G", " and 
      browser will open with interactive image. You can view this image in the link below."},
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"graph-example.html","Visualize Graphs example")},
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"graph-example.html","Visualize Graphs example")},
      
      -- make sure this image matches the graph in the example. 
---     PARA IMG ("src" => replace("PKG","Visualize",Layout#1#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
+--     PARA IMG ("src" => replace("PKG","Visualize",currentLayout#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
      
      
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize G", ", once you 
@@ -1326,7 +1326,7 @@ document {
 	 },
 	
      
---     PARA IMG ("src" => replace("PKG","Visualize",Layout#1#"package")|"images/Visualize/Visualize_Graph2.png", "alt" => "Original graph entered into M2"), 
+--     PARA IMG ("src" => replace("PKG","Visualize",currentLayout#"package")|"images/Visualize/Visualize_Graph2.png", "alt" => "Original graph entered into M2"), 
 
      
      
@@ -1360,7 +1360,7 @@ document {
      
      PARA {"In order to visualize this, simply type ", TT "visualize I", " and the following example will appear in the browser."},
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"ideal2d-example.html","Visualize ideal in 2 variables example")},     
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"ideal2d-example.html","Visualize ideal in 2 variables example")},     
      
      EXAMPLE {
 	 "R = QQ[x,y,z]",
@@ -1369,7 +1369,7 @@ document {
      
      PARA {"In order to visualize this, simply type ", TT "visualize J", " and the following example will appear in the browser."},  
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"ideal3d-example.html","Visualize ideal in 3 variables example")},             
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"ideal3d-example.html","Visualize ideal in 3 variables example")},             
      
      Caveat => {"Visualizing ideals is still in development so please be gentle with it."},     
      
@@ -1407,10 +1407,10 @@ document {
      PARA {"At this point we wish to visualize ", TT "D", ". To do this simply execute ", TT "H = visualize D", " and 
      browser will open with interactive image. You can view this image in the link below."},
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"digraph-example.html","Visualize Digraphs example")},
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"digraph-example.html","Visualize Digraphs example")},
      
      -- make sure this image matches the graph in the example. 
---     PARA IMG ("src" => replace("PKG","Visualize",Layout#1#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
+--     PARA IMG ("src" => replace("PKG","Visualize",currentLayout#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
      
      
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize D", ", once you 
@@ -1507,10 +1507,10 @@ document {
      PARA {"At this point we wish to visualize ", TT "P", ". To do this simply execute ", TT "H = visualize P", " and 
      browser will open with interactive image. You can view this image in the link below."},
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"poset-example.html","Visualize Posets example")},
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"poset-example.html","Visualize Posets example")},
      
      -- make sure this image matches the graph in the example. 
---     PARA IMG ("src" => replace("PKG","Visualize",Layout#1#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
+--     PARA IMG ("src" => replace("PKG","Visualize",currentLayout#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
      
      
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize P", ", once you 
@@ -1606,10 +1606,10 @@ document {
      PARA {"At this point we wish to visualize ", TT "D", ". To do this simply execute ", TT "H = visualize D", " and 
      browser will open with interactive image. You can view this image in the link below."},
      
-     PARA {HREF(replace("PKG","Visualize",Layout#1#"package")|"simplicial-complex-example.html","Visualize Simplicial Complex example")},
+     PARA {HREF(replace("PKG","Visualize",currentLayout#"package")|"simplicial-complex-example.html","Visualize Simplicial Complex example")},
      
      -- make sure this image matches the graph in the example. 
---     PARA IMG ("src" => replace("PKG","Visualize",Layout#1#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
+--     PARA IMG ("src" => replace("PKG","Visualize",currentLayout#"package")|"images/Visualize/Visualize_Graph1.png", "alt" => "Original graph entered into M2"), 
      
      
      PARA {"Once finished with a session, you can keep visualizing. For example if you were to say ", TT "H = visualize D", ", once you 
