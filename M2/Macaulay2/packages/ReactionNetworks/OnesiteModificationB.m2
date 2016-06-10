@@ -10,3 +10,4 @@ doc ///
 
     Example
         OnesiteModificationB = {"S_0 + E <--> X","X --> S_1+E", "S_1+E <--> Y", "Y --> S_0+E"}
+    ///
