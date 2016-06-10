@@ -1,5 +1,6 @@
 beginDocumentation()
-doc ///
+doc 
+///
     Key
         CrosslinkingModelCellDeath
     Headline
@@ -10,3 +11,4 @@ doc ///
 
     Example
         CrosslinkingModelCellDeath = {"L + R <--> C_1","C_1 + R <--> C_2", "C_2 + R <--> C_3"}
+///

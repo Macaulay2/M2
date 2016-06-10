@@ -1,5 +1,24 @@
+-- -*- coding: utf-8 -*-
+newPackage(
+	"ReactionNetworks",
+    	Version => "1.0", 
+    	Date => "June, 2016",
+    	Authors => {
+	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     },
+    	HomePage => "http://www.math.uiuc.edu/~doe/",
+    	Headline => "Reaction networks",
+	PackageImports => {"Graphs"},
+	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
+    	DebuggingMode => true		 -- set to true only during development
+    	)
+
+-- Any symbols or functions that the user is to have access to
+-- must be placed in one of the following two lists
+export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph"}
+exportMutable {}
+
 removeWhitespace = s -> s = replace(" ", "", s)
-needsPackage "Graphs"
 
 ReactionNetwork = new Type of MutableHashTable
 
@@ -46,7 +65,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     i := addComplex(first complexes, Rn);
     j := addComplex(last complexes, Rn);
     Rn.ReactionGraph = addVertices(Rn.ReactionGraph, {i,j});
-    delim = concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r);
+    delim := concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
@@ -66,3 +85,36 @@ netComplex = (r,c) -> (
 
 net ReactionNetwork := r -> stack apply(edges r.ReactionGraph, e -> netComplex(r, first e) | "-->" | 
     netComplex(r, last e))
+
+-- end
+
+beginDocumentation()
+scan({
+    "CrosslinkingModelCellDeath.m2",
+    "OnesiteModificationA.m2",
+    "OnesiteModificationB.m2",
+    "OnesiteModificationC.m2",
+    "OnesiteModificationD.m2",
+    "TwolayerCascadeL.m2",
+    "TwositeModificationE.m2",
+    "TwositeModificationF.m2"
+    },
+    motif -> load("./ReactionNetworks/"|motif) 
+    )
+end
+
+-- Here place M2 code that you find useful while developing this
+-- package.  None of it will be executed when the file is loaded,
+-- because loading stops when the symbol "end" is encountered.
+
+restart
+installPackage "ReactionNetworks"
+installPackage("ReactionNetworks", RemakeAllDocumentation=>true)
+check ReactionNetworks
+help "OnesiteModificationA"
+viewHelp "OnesiteModificationA"
+examples "OnesiteModificationA"
+
+-- Local Variables:
+-- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
+-- End:
