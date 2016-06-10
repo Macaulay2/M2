@@ -418,15 +418,13 @@ document {
 }
 
 document {
-    Key => {roots,
-      (roots, RingElement)
-    },
+    Key => {(roots, RingElement), roots },
     Headline => "compute the roots of a polynomial",
     Usage => "roots p",
     Inputs => {
       "p" => "a univariate polynomial over ZZ, QQ, RR or CC.",
-      Precision => "the number of precision bits used to compute the roots.", "The default ", TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", ".",
-      Unique => Boolean => "whether to return multiple roots one or multiple times. By default set to false.",
+      Precision => { "the number of precision bits used to compute the roots.", "The default ", TO "precision", " is 53 bits for polynomials over ", TO "ZZ", " or ", TO "QQ", " and the same as the coefficient ring for ", TO "RR[x]", " or ", TO "CC[x]", "." },
+      Unique => Boolean => { "whether to return multiple roots one or multiple times." },
     },
     Outputs => {List => {"The roots of p each one represented as an elements of ", TO "CC", ".", }},
     EXAMPLE {
