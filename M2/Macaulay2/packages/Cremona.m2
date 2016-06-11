@@ -102,19 +102,18 @@ invertBirMap (RingMap) := o -> (phi) -> (
    checkRationalMap phi;
    a:=ideal source phi;
    F:=toMatrix phi;
-   G:=matrix{{(numgens target phi):0_(source phi)}};
-   if isPolynomialRing target phi then (
-        try G=invertBirationalMapRS(F,a) then (
-                if not (max flatten degrees ideal G == min flatten degrees ideal G and min flatten degrees ideal G > 0) then try G=invertBirationalMapViaParametrization(phi);      
-             ) else (
-                verb:=MathVerb; MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
-                if not isDom then error("trying to invert non-dominant map") else try G=invertBirationalMapViaParametrization(phi);
-             );
-        );
-   if not isPolynomialRing target phi then try G=invertBirationalMapViaParametrization(phi);
+   G:=matrix{{(numgens target phi):0_(source phi)}}; G':=G;
+   if o.MathMode === null then return map(source phi,target phi,invertBirationalMapViaParametrization phi);
+   if isPolynomialRing target phi then try G=invertBirationalMapRS(F,a);
+   if not ((isPolynomialRing target phi) and (max flatten degrees ideal G > 0)) then (
+       verb:=MathVerb; MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
+       if not isDom then error("trying to invert non-dominant map");
+       try G=invertBirationalMapViaParametrization(phi);
+   );
+   if G === G' then error("do not able to obtain an inverse rational map");
    psi:=map(source phi,target phi,G);
    if o.MathMode then (
-        if (isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if MathVerb then <<certificate) else error("MathMode: invertBirMap returned "|toExternalString(psi)|" but this is incorrect");
+        if (isInverseMap(phi,psi) and isInverseMap(psi,phi)) then (if MathVerb then <<certificate) else error("do not able to obtain an inverse rational map");
    ); 
    psi
 );
@@ -127,7 +126,7 @@ isBirational (RingMap) := o -> (phi) -> (
          verb:=MathVerb; MathVerb=false; isDom:=isDominant(phi,MathMode=>true); MathVerb=verb;
          if not isDom then (if MathVerb then <<certificate; return false);      
    );
-   if isPolynomialRing X then return degreeOfRationalMap(phi,MathMode=>o.MathMode) == 1;
+-- if isPolynomialRing X then return degreeOfRationalMap(phi,MathMode=>o.MathMode) == 1;
    first projectiveDegrees(phi,OnlySublist=>0,MathMode=>o.MathMode) == degree Y 
 );
 
@@ -162,7 +161,9 @@ isInverseMap(RingMap,RingMap) := (phi,psi) -> (
    checkRationalMap psi;
    if (source phi =!= target psi or target phi =!= source psi) then return false; 
    try phipsi:=toMatrix(phi*psi) else return false;
-   (q,r):=quotientRemainder(first flatten entries phipsi,first gens target phi);
+   x:=gens target phi; 
+   i:=0; while x_i == 0 do i=i+1;
+   (q,r):=quotientRemainder((flatten entries phipsi)_i,x_i);
    if r != 0 then return false; 
    if q == 0 then return false;
    phipsi - q*(vars target phi) == 0
@@ -575,8 +576,9 @@ checkLinearSystem = (F) -> ( -- F row matrix
    if not isField coefficientRing ring F then error("the coefficient ring needs to be a field");
    if not ((isPolynomialRing ring F or isQuotientRing ring F) and isHomogeneous ideal ring F) then error("the base ring must be a quotient of a polynomial ring by a homogeneous ideal");
    if not (numgens target F == 1) then error("expected a row matrix");
-   if numgens source F == 0 then return true;
-   if not (isHomogeneous ideal F and max degrees ideal F == min degrees ideal F) then error("expected homogeneous elements of the same degree");
+   if numgens source F == 0 then return;
+   if not (isHomogeneous ideal F) then error("expected homogeneous elements of the same degree");
+   D:=degrees ideal compress F; if #D != 0 then if not (min D == max D) then error("expected homogeneous elements of the same degree");
 );
 
 beginDocumentation() 
@@ -614,7 +616,7 @@ beginDocumentation()
           {"a ring map representing the inverse of ",TEX///$\Phi$///,""} 
           }, 
           PARA{}, 
-         "The method computes the inverse rational map of a birational map ",TEX///$V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///, " represented by a ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///,". If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", TO "invertBirationalMap", " in the package ", TO "Parametrization", ". Note that if the option ", TO MathMode, " is set to ", TT "false", " and the passed map is not birational, you might even get a wrong answer.",
+         "The method computes the inverse rational map of a birational map ",TEX///$V(I)\subseteq\mathbb{P}^n=Proj(K[x_0,\ldots,x_n]) ---> V(J) \subseteq \mathbb{P}^m=Proj(K[y_0,\ldots,y_m])$///, " represented by a ring map ",TEX///$\phi:K[y_0,\ldots,y_m]/J \to K[x_0,\ldots,x_n]/I$///,". If the source variety is a projective space and if a further technical condition is satisfied, then the algorithm used is that described in the paper by Russo and Simis - On birational maps and Jacobian matrices - Compos. Math. 126 (3), 335-358, 2001. For the general case, the algorithm used is the same as for ", TO "invertBirationalMap", " in the package ", TO "Parametrization", ". Note that if the passed map is not birational and the option ", TO MathMode, " is set to ", TT "false", ", you might not get any error message.",
     PARA{},
     EXAMPLE { 
           "-- A Cremona transformation of P^20 
