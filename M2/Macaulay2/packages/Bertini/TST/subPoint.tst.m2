@@ -12,5 +12,5 @@ needsPackage "Bertini"
      e3=subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
      assert(CC===    class e3)
      e4=toExternalString subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
-	     0,1},SubIntoCC=>true,UsePrecision=>200)
+	     0,1},SubIntoCC=>true,M2Precision=>200)
           assert(length e4>75)

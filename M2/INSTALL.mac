@@ -1,6 +1,6 @@
-#! /bin/sh
+#! /bin/sh -x
 # This shell script contains the instructions for building Macaulay2 in the file 'INSTALL'.
-# this version of the script does not take care to avoid vector optimizations that may not run on other machines.
+# This version of the script does not take care to avoid vector optimizations that may not run on other machines.
 # The result is provided in the build directory "./tmp".
 xcode-select --install
 brew tap homebrew/versions
@@ -8,8 +8,13 @@ brew tap homebrew/science
 brew tap homebrew/homebrew-x11
 brew update
 brew upgrade
+stty -onlcr
 brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
-brew install bdw-gc libatomic_ops gdbm gmp cddlib glpk
+stty -onlcr
+brew install bdw-gc libatomic_ops gdbm cddlib glpk
+stty -onlcr
+git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
+make -f Makefile
 rm -rf tmp
 mkdir tmp
 cd tmp

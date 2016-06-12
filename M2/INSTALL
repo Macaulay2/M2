@@ -143,8 +143,19 @@ various modern operating systems:
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
 
-  Suse64:
-    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
+  Suse Linux Leap 42.1:
+
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build
+
+    Add
+
+       --enable-build-libraries="givaro"
+
+    to the configure command line, since the givaro installed above has bugs that cause compile time errors.  Add also
+
+       --enable-rpm --build=x86_64-suse-gnu
+
+    to make RPM files for distribution to generic hardware.
 
   Arch Linux:
       sudo pacman -S archlinux-keyring
@@ -324,6 +335,10 @@ following:
        make distclean
     This fetches tar files containing the source code of all the libraries and
       deposits them in BUILD/tarfiles/.
+  - When satisfied with the result, remove our git source repository with
+      rm -rf ../.git
+    Alternatively, tar up just this directory and not its parent directory.
+    Everything needed to build Macaulay2 will be included.
 
 -----------------------
 Compiling Macaulay2
