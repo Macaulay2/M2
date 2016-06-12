@@ -560,7 +560,7 @@ flip = method()
 flip(Module,Module) := Matrix => (F,G) -> map(ring F,rawFlip(raw F, raw G))
 
 -----------------------------------------------------------------------------
-pdim Module := M -> length resolution trim M
+pdim Module := M -> length resolution minimalPresentation M
 
 Module / Module := Module => (M,N) -> (
      L := ambient M;

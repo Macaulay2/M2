@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: 1886000069 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=CC[x,T]
 
@@ -16,16 +16,16 @@ o2 : R
 
 i3 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,T},B'Polynomials=>{f,diff(x,f)})
 
-o3 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-64312-0/0/input
+o3 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74840-0/0/input
 
 o3 : File
 
 i4 : runBertini(storeBM2Files)
-bertini
+~/bertini
 
 i5 : TCoordinates=importSolutionsFile(storeBM2Files)/last
 
-o5 = {1.40741-.828173*ii, 1.40741+.828173*ii, 1.33999e-18-5.65355e-19*ii,
+o5 = {6.86018e-18+1.83757e-18*ii, 1.40741-.828173*ii, 1.40741+.828173*ii,
      ------------------------------------------------------------------------
      1.40741-.828173*ii, 1.40741+.828173*ii}
 
@@ -33,68 +33,68 @@ o5 : List
 
 i6 : TBranchPoints=radicalList(TCoordinates)
 
-o6 = {1.40741-.828173*ii, 1.40741+.828173*ii, 1.33999e-18-5.65355e-19*ii}
+o6 = {6.86018e-18+1.83757e-18*ii, 1.40741-.828173*ii, 1.40741+.828173*ii}
 
 o6 : List
 
 i7 : makeB'InputFile(storeBM2Files,B'Configs=>{{ParameterHomotopy,1}},AffVariableGroup=>{x},ParameterGroup=>{T},B'Polynomials=>{f})
 
-o7 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-64312-0/0/input
+o7 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74840-0/0/input
 
 o7 : File
 
 i8 : runBertini(storeBM2Files,PreparePH2=>true)
-bertini
+~/bertini
 
 i9 : b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints)
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [2, 1, 3, 5, 4, 6])
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [3, 2, 1, 6, 5, 4])
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [4, 2, 3, 1, 5, 6])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [1, 2, 6, 4, 5, 3])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [1, 3, 2, 4, 6, 5])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [6, 2, 4, 3, 5, 1])
 There were 0 loop failures.
-/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-64312-0/0/gggFile
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74840-0/0/gggFile
 
-o9 = [[2, 1, 3, 5, 4, 6], [3, 2, 1, 6, 5, 4], [4, 2, 3, 1, 5, 6]]
+o9 = [[1, 2, 6, 4, 5, 3], [1, 3, 2, 4, 6, 5], [6, 2, 4, 3, 5, 1]]
 
 o9 : Array
 
 i10 : b'PHGaloisGroup(storeBM2Files,BranchPoints=>TBranchPoints,LoopRadius=>.5)
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [2, 1, 3, 5, 4, 6])
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [3, 2, 1, 6, 5, 4])
-bertini
-bertini
-bertini
-bertini
-bertini
-(gg, [4, 2, 3, 1, 5, 6])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [1, 2, 6, 4, 5, 3])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [1, 3, 2, 4, 6, 5])
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+~/bertini
+(gg, [6, 2, 4, 3, 5, 1])
 There were 0 loop failures.
-/var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-64312-0/0/gggFile
+/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74840-0/0/gggFile
 
-o10 = [[2, 1, 3, 5, 4, 6], [3, 2, 1, 6, 5, 4], [4, 2, 3, 1, 5, 6]]
+o10 = [[1, 2, 6, 4, 5, 3], [1, 3, 2, 4, 6, 5], [6, 2, 4, 3, 5, 1]]
 
 o10 : Array
 

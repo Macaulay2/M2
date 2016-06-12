@@ -82,7 +82,7 @@ Units
 NautyGraphs
 VersalDeformations
 CharacteristicClasses
-RandomIdeal
+RandomIdeals
 RandomObjects
 RandomPlaneCurves
 RandomSpaceCurves
@@ -128,3 +128,5 @@ MultipolynomialResultants
 VectorFields
 SLPexpressions
 Miura
+ResidualIntersections
+Visualize
