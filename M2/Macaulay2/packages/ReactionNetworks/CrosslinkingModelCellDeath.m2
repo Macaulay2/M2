@@ -8,7 +8,6 @@ doc
     Description
       Text
         The crosslinking model against the prevailing crosslinking model.	
-
-    Example
+      Example
         CrosslinkingModelCellDeath = {"L + R <--> C_1","C_1 + R <--> C_2", "C_2 + R <--> C_3"}
 ///
