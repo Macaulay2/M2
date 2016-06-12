@@ -95,7 +95,7 @@ document {
 	  	    LI { TO "Cremona::Cremona", ", a package by Giovanni Staglianò for rational maps between projective varieties, has been added." },
 	  	    LI { TO "MultipolynomialResultants::MultipolynomialResultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added." },
 	  	    LI { TO "VectorFields::VectorFields", ", a package by Brian Pike for vector fields, has been added." },
-	  	    LI { TO "RandomIdeal::RandomIdeal", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
+	  	    LI { TO "RandomIdeals::RandomIdeals", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
 	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }
 	  	    }
 	       },
