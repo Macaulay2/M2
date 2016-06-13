@@ -63,6 +63,7 @@ void MonomialHashTable<ValueType>::grow()
   for (long i=0; i<oldsize; i++)
     if (oldtab[i])
       insert(oldtab[i]);
+  delete [] oldtab;
 }
 
 template <typename ValueType>
