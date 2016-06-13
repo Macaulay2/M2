@@ -216,13 +216,13 @@ class ARingElement
   typename RT::ElementType mValue;
   const RT& mRing;
 public:
-  ARingElement(const RT& R0) : R(R0) { mRing.init(mValue); }
+  ARingElement(const RT& R0) : mRing(R0) { mRing.init(mValue); }
   ~ARingElement() { mRing.clear(mValue); }
-  RT::ElementType& get() { return mValue; }
-  const RT::ElementType& get() const { return mValue; }
+  typename RT::ElementType& get() { return mValue; }
+  const typename RT::ElementType& get() const { return mValue; }
   const RT& ring() const { return mRing; }
 
-  RT::RealElementType& getRealPart() { return realPart(mValue); }
+  typename RT::RealElementType& getRealPart() { return realPart(mValue); }
 };
 
 // ****************************** XXX **************************************************
