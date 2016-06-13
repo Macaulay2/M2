@@ -1,10 +1,12 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2016  Michael E. Stillman
 
 #ifndef _monhashtable_h_
 #define _monhashtable_h_
 
 #include "moninfo.hpp"
 #include "res-moninfo.hpp"
+
+#include <memory>  // For std::unique_ptr
 
 class MonomialsWithComponent {
 public:
@@ -68,7 +70,7 @@ class MonomialHashTable
 
 private:
   const ValueType *M;
-  value *hashtab;
+  std::unique_ptr<value[]> hashtab;
 
   unsigned long size;
   unsigned int  logsize;

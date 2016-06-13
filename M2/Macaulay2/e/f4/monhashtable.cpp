@@ -1,6 +1,5 @@
-// Copyright 2005  Michael E. Stillman
+// Copyright 2005-2016  Michael E. Stillman
 
-#include "../newdelete.hpp"
 #include "monhashtable.hpp"
 
 #define HASHVALUE(m) (M->hash_value(m))
@@ -14,7 +13,7 @@ void MonomialHashTable<ValueType>::reset()
     {
       //dump();
       //fprintf(stderr, "hashtab reset: size = %ld, count = %ld\n", size, count);
-      memset(hashtab, 0, sizeof(value) * size);
+      memset(hashtab.get(), 0, sizeof(value) * size);
     }
 
   count = 0;
@@ -30,9 +29,9 @@ void MonomialHashTable<ValueType>::initialize(int logsize0)
   logsize = logsize0;
   size = (1<<logsize);
   //threshold = size/3; // was 2*size/3
-  threshold = 2*size/3; // was 2*size/3
+  //threshold = 2*size/3; // was 2*size/3
   threshold = size/16; // was 2*size/3  
-  hashtab = new value[size];
+  hashtab = std::unique_ptr<value[]>(new value[size]);
   hashmask = size-1;
   reset();
 }
@@ -57,13 +56,12 @@ void MonomialHashTable<ValueType>::grow()
 {
   // Increase logsize, reset fields, and repopulate new hash table.
   if (M2_gbTrace >= 2) dump();
-  value *oldtab = hashtab;
+  std::unique_ptr<value[]> oldtab = std::move(hashtab);
   long oldsize = size;
   initialize(logsize+1);
   for (long i=0; i<oldsize; i++)
     if (oldtab[i])
       insert(oldtab[i]);
-  delete [] oldtab;
 }
 
 template <typename ValueType>
@@ -76,7 +74,7 @@ MonomialHashTable<ValueType>::MonomialHashTable(const ValueType *M0, int logsize
 template <typename ValueType>
 MonomialHashTable<ValueType>::~MonomialHashTable()
 {
-  delete [] hashtab;
+  // Nothing more to do here
 }
 
 template <typename ValueType>
@@ -97,13 +95,13 @@ bool MonomialHashTable<ValueType>::find_or_insert(value m, value &result)
       // Something is there, so we need to find either this value,
       // or a free spot, whichever comes first.
       long mhash = HASHVALUE(m);
-      value *hashtop = hashtab + size;
+      value *hashtop = hashtab.get() + size;
       long run_len = 1;
-      for (value *i = hashtab + hashval; ; i++, run_len++)
+      for (value *i = hashtab.get() + hashval; ; i++, run_len++)
         {
           if (run_len > max_run_length)
             max_run_length = run_len;
-          if (i == hashtop) i = hashtab;
+          if (i == hashtop) i = hashtab.get();
           if (!(*i))
             {
               // Spot is empty, so m is a new value
