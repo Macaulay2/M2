@@ -3,6 +3,7 @@
 #ifndef _res_moninfo_hpp_
 #define _res_moninfo_hpp_
 
+#if 0
 #include <cstdio>
 
 #include <M2/config.h>
@@ -14,6 +15,7 @@
 #else
 #error integer type definitions not available
 #endif
+#endif
 
 struct MonomialOrdering;
 #include "varpower-monomial.hpp"
@@ -21,6 +23,7 @@ struct MonomialOrdering;
 #include "../skew.hpp"
 
 #include <vector>
+#include <memory>
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?
@@ -43,7 +46,7 @@ class ResMonoid
 {
   int nvars;
   int nslots;
-  monomial_word *hashfcn; // array 0..nvars-1 of hash values for each variable
+  std::unique_ptr<monomial_word[]> hashfcn; // array 0..nvars-1 of hash values for each variable
   monomial_word mask;
   M2_arrayint mVarDegrees; // array 0..nvars-1 of primary (heft) degrees for each variable.
   

@@ -12,7 +12,7 @@ ResMonoid::ResMonoid(int nvars0,
                      const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = new monomial_word[nvars];
+  hashfcn = std::unique_ptr<monomial_word[]>(new monomial_word[nvars]);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
@@ -63,7 +63,7 @@ ResMonoid::ResMonoid(int nvars0,
 
 ResMonoid::~ResMonoid()
 {
-  delete [] hashfcn;
+  //  delete [] hashfcn;
 }
 
 monomial_word ResMonoid::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
