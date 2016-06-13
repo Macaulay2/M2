@@ -1,10 +1,9 @@
-// Copyright 2014 Michael E. Stillman
+// Copyright 2014-2016 Michael E. Stillman
 
 #ifndef _res_f4_hpp_
 #define _res_f4_hpp_
 
 #include "res-memblock.hpp"
-#include "res-f4-mem.hpp"
 #include "monhashtable.hpp"
 #include "res-poly-ring.hpp"
 #include <assert.h>

@@ -1,4 +1,4 @@
-// Copyright 2014 Michael E. Stillman
+// Copyright 2014-2016 Michael E. Stillman
 
 #include "res-f4.hpp"
 #include "res-gausser.hpp"
@@ -8,7 +8,6 @@
 #include <ctime>
 #include <algorithm>
 #include "../timing.hpp"
-
 
 F4Res::F4Res(
              SchreyerFrame& res
@@ -22,7 +21,7 @@ F4Res::F4Res(
 
 F4Res::~F4Res()
 {
-  //  delete mSchreyerRes;
+  // Nothing to free here.
 }
 
 void F4Res::resetMatrix(int lev, int degree)

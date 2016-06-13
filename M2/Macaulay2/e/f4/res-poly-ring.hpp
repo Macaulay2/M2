@@ -15,27 +15,6 @@
 
 typedef int FieldElement;
 
-#if 0
-struct poly {
-  int len; // in monomials?  This only determines both sizes below
-           // in the case of fixed length monomials
-  #if 1
-  std::unique_ptr<FieldElement[]> coeffs;
-  std::unique_ptr<monomial_word[]> monoms;
-  poly() : len(0) {}
-  //  ~poly() {
-  //      std::cout << "Calling ~poly()" << std::endl << std::flush;
-  //  }
-  #else
-  ResGausser::CoefficientArray coeffs;
-  monomial_word *monoms; // This is all of the monomials written contiguously
-  poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
-#endif
-  
-
-};
-#endif
-
 class poly {
   friend class ResPolyRing;
   friend class poly_constructor;
