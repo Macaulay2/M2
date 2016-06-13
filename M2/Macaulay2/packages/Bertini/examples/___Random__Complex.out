@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -2078274663 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=QQ[x,y,c1,c2]
 
@@ -11,7 +12,7 @@ i2 : makeB'InputFile(storeBM2Files,
          RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.
          B'Polynomials=>{x-c1,y-c2})
 
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98065-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42267-0/0/input
 
 o2 : File
 

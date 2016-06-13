@@ -1,6 +1,5 @@
 -- -*- M2-comint -*- {* hash: -266964991 *}
--- COMPILE TIME: Oct 14 2015, 14:51:21
---loading configuration for package "Bertini" from file /nethome/aleykin3/.Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
 
@@ -22,16 +21,9 @@ o3 = {x  - 1, y  - 1}
 o3 : List
 
 i4 : solns = bertiniZeroDimSolve(F)
-Temporary directory for input and output files:/tmp/M2-30013-0/1
+~/bertini
 
-The version of Bertini 
-	    you have installed on your computer 
-	    was used for this run. 
-Bertini is under ongoing development by 
-	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
-
-
-o4 = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}}
+o4 = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}
 
 o4 : List
 

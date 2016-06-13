@@ -1,29 +1,30 @@
 -- -*- M2-comint -*- {* hash: 813119967 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : makeB'InputFile(storeBM2Files,
        AffVariableGroup=>{x,y,z},
        B'Configs=>{{TrackType,1}},
        B'Polynomials=>{"(x^2+y^2+z^2-1)*y"})
 
-o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-94974-0/0/input
+o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74737-0/0/input
 
 o1 : File
 
 i2 : runBertini(storeBM2Files)
-bertini
+~/bertini
 
 i3 : makeSampleSolutionsFile(storeBM2Files,4,SpecifyComponent=>{2,0})--creates a witness point file with 4 sample points for the 0th component in dimension 2.
-bertini
+~/bertini
 
 i4 : theSols=importSolutionsFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
 
-o4 = {{-.817594+.175705*ii, 0, -.268042+.380125*ii}, {-.224554-1.30879*ii, 0,
+o4 = {{.025137+.51755*ii, 3.07889e-20-1.64943e-20*ii, -.680383+1.49829*ii},
      ------------------------------------------------------------------------
-     -1.62099-.52502*ii}, {-.646679+.184154*ii, 0, -.169889+.387805*ii},
+     {-.977715-.479647*ii, -2.97048e-20+6.8636e-21*ii, -.307964+1.28775*ii},
      ------------------------------------------------------------------------
-     {-.38372+1.32885*ii, -1.93889e-268+7.48236e-269*ii,
+     {-.46505-.37277*ii, 4.8851e-21-5.46669e-20*ii, .556711+.57644*ii},
      ------------------------------------------------------------------------
-     -1.14839+1.79272*ii}}
+     {-.831929-.394761*ii, -2.8581e-22+3.70569e-20*ii, -.264254+1.35965*ii}}
 
 o4 : List
 

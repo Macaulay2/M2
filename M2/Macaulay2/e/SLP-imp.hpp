@@ -23,7 +23,9 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
 {
   slp = a.slp;
   varsPos = a.varsPos;
-  for(auto i=values.begin(), j=a.values.begin(); i!=values.end(); ++i,++j)
+  auto i=values.begin();
+  auto j=a.values.begin();
+  for(; i!=values.end(); ++i,++j)
     ring().init_set(*i,*j);
 }
 
