@@ -30,12 +30,50 @@ assert(isPointed C)
 assert(not isSimplicial C)
 assert(not isSmooth C)
 ///
+-- Test 3
+-- Checking convexHull and intersection
+TEST ///
+P2 =  convexHull matrix {{1,-2,-1,2},{2,1,-2,-1}};
+M = matrix{{3,1},{-3,-1},{1,-3},{-1,3}};
+v = matrix{{5},{5},{5},{5}};
+assert(intersection(M,v) == P2)
+///
+
+-- Test 4
+-- Checking intersection
+TEST ///
+P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
+V1 = vertices P;
+V1 = set apply(numColumns V1, i -> V1_{i});
+V2 = set {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
+assert(isSubset(V1,V2) and isSubset(V2,V1))
+///
+-- Test 6
+-- Checking intersections that give cones
+TEST ///
+C = intersection matrix {{1,2},{2,1}};
+R1 = rays C;
+R1 = set apply(numColumns R1, i -> R1_{i});
+R2 = set {matrix{{2},{-1}},matrix{{-1},{2}}};
+assert(isSubset(R1,R2) and isSubset(R2,R1))
+assert(linSpace C == 0)
+assert(dim C == 2)
+assert(ambDim C == 2)
+///
 -- Test 8
 -- Checking posHull
 TEST ///
 C = posHull(matrix{{1,0},{0,1},{0,0}},matrix{{0},{0},{1}});
 assert(halfspaces C == matrix{{1,0,0},{0,1,0}})
 assert(numColumns rays C == 2)
+///
+-- Test 12
+-- Checking dualCone
+TEST ///
+C1 = intersection matrix {{0,1,2,3},{1,2,3,0},{2,3,0,1}};
+C2 = intersection matrix {{7,-5,1,1},{0,1,4,-3},{0,9,-6,1},{0,-3,2,9},{-7,5,-1,-1}};
+C1 = dualCone C1;
+assert(C1 == C2)
 ///
 
 -- Test 16

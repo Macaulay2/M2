@@ -5,6 +5,11 @@ globalAssignment Polyhedron
 
 compute#Polyhedron = new MutableHashTable
 
+Polyhedron == Polyhedron := (P1,P2) -> (
+   contains(P1, P2) and contains(P2, P1)
+)
+
+
 polyhedron = method()
 polyhedron HashTable := inputProperties -> (
    constructTypeFromHash(Polyhedron, inputProperties)

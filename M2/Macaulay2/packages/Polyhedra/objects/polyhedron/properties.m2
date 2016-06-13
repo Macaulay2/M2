@@ -22,8 +22,8 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
       );
    );
    setProperty(P, lattice, latticeTest);
-   vMat := matrixFromVectorList(vList, n-1, r);
-   rMat := matrixFromVectorList(rList, n-1, r);
+   vMat := - matrixFromVectorList(vList, n-1, r);
+   rMat := - matrixFromVectorList(rList, n-1, r);
    setProperty(P, computedRays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat
@@ -91,13 +91,13 @@ compute#Polyhedron#underlyingCone Polyhedron := P -> (
    );
    if hasProperty(P, computedFacets) then (
       L = getProperty(P, computedFacets);
-      pMat = L#1 | L#0;
+      pMat = -L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
       setProperty(result, inequalities, ezero || (-pMat));
    );
    if hasProperty(P, inequalities) then (
       L = getProperty(P, inequalities);
-      pMat = L#1 | L#0;
+      pMat = -L#1 | L#0;
       ezero = matrix {flatten {1 , toList ((numgens source L#0):0)}};
       -- At this point we do not know whether the height inequality
       -- is implied.

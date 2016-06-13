@@ -9,16 +9,19 @@ intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
 	if numColumns M =!= numColumns N then error("equations of half-spaces and hyperplanes must have the same dimension");
 	if numRows M =!= numRows v or numColumns v =!= 1 then error("invalid condition vector for half-spaces");
 	if numRows N =!= numRows w or numColumns w =!= 1 then error("invalid condition vector for hyperplanes");
-	M = -chkZZQQ(v,"condition vector for half-spaces") | chkZZQQ(M,"half-spaces");
-	N = -chkZZQQ(w,"condition vector for hyperplanes") | chkZZQQ(N,"hyperplanes");
-	-- Computing generators of the cone and its dual cone
-	M = transpose M | map(source M,QQ^1,(i,j) -> if i == 0 then -1 else 0);
-	N = transpose N;
-	verticesA := fourierMotzkin(M,N);
-	local hyperA;
-	(hyperA,verticesA) = fMReplacement(M,verticesA#0,verticesA#1);
---	hyperA := fourierMotzkin verticesA;
-	polyhedronBuilder(hyperA,verticesA))
+	ineq := v | M;
+   ezero := matrix {flatten {1 , toList ((numgens source M):0)}};
+   ineq = ineq ||  ezero;
+	eq := w | N;
+   uCresult := new HashTable from {
+      inequalities => ineq,
+      equations => eq
+   };
+   result := new HashTable from {
+      underlyingCone => cone uCresult
+   };
+   polyhedron result
+)
 
 
 --   INPUT : '(M,N)',  two matrices where either 'P' is the Cone {x | Mx<=0, Nx=0} if 'M' and 'N' have the same source space 
@@ -28,27 +31,20 @@ intersection(Matrix,Matrix) := (M,N) -> (
 	-- Checking for input errors
 	if ((numColumns M =!= numColumns N and numColumns N =!= 1) or (numColumns N == 1 and numRows M =!= numRows N)) and N != 0*N then 
 		error("invalid condition vector for half-spaces");
-	local genrays;
-	local dualgens;
-	M = chkZZQQ(M,"half-spaces");
-	N = chkZZQQ(N,"condition vector for half-spaces");
 	-- Decide whether 'M,N' gives the Cone C={p | M*p >= 0, N*p = 0}
+   local result;
 	if numColumns M == numColumns N and numColumns N != 1 then (
-		genrays = fourierMotzkin(-transpose M,transpose N);
-      posHull genrays
-	-- or the Cone C={p | M*p >= N=0}
-	) else if numRows N == 0 then (
-		genrays = fourierMotzkin (-transpose M);
-      posHull genrays
+      result = new HashTable from {
+         inequalities => M,
+         equations => N
+      };
+      return cone result
 	-- or the Polyhedron P={p | M*p >= N != 0}
-	) else (	-- Computing generators of the Polyhedron and its dual cone
-		M = -N | M;
-		M = transpose M |  map(source M,QQ^1,(i,j) -> if i == 0 then -1 else 0);
-		verticesA := fourierMotzkin M;
-		--hyperA := fourierMotzkin verticesA;
-		local hyperA;
-		(hyperA,verticesA) = fMReplacement(M,verticesA#0,verticesA#1);
-		polyhedronBuilder(hyperA,verticesA)
+	) else (	
+      r := ring M;
+      Nw := map(r^0, source M, 0);
+      w := map(r^0, r^1, 0);
+      intersection(M, N, Nw, w)
    )
 )
    
@@ -60,12 +56,14 @@ intersection(Matrix,Matrix) := (M,N) -> (
 intersection(Polyhedron,Polyhedron) := (P1,P2) -> (
 	-- Checking if P1 and P2 lie in the same space
 	if ambDim(P1) =!= ambDim(P2) then error("Polyhedra must lie in the same ambient space");
-	-- Combining the Half-spaces and the Hyperplanes
-	M := (halfspaces P1)#0 || (halfspaces P2)#0;
-	v := (halfspaces P1)#1 || (halfspaces P2)#1;
-	N := (hyperplanes P1)#0 || (hyperplanes P2)#0;
-	w := (hyperplanes P1)#1 || (hyperplanes P2)#1;
-	intersection(M,v,N,w))
+   C1 := getProperty(P1, underlyingCone);
+   C2 := getProperty(P2, underlyingCone);
+   C12 := intersection(C1, C2);
+   result := new HashTable from {
+      underlyingCone => C12
+   };
+   polyhedron result
+)
 
 
 

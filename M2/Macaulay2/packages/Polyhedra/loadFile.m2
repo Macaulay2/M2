@@ -70,6 +70,11 @@ check "Polyhedra"
 
 restart
 loadPackage "Polyhedra"
+C = posHull matrix {{0},{1}}
+hilbertBasis C
+
+restart
+loadPackage "Polyhedra"
 P = convexHull matrix {{12,3},{3,5}}
 C = getProperty(P, underlyingCone)
 vertices P

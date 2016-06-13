@@ -1,6 +1,5 @@
 
 
-Polyhedron == Polyhedron := (P,Q) -> P === Q
 
 
 
