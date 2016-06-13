@@ -764,6 +764,12 @@ minimalBetti Module := {
            resolution(I, StopBeforeComputation=>true, FastNonminimal=>true)
        else
            resolution(I, StopBeforeComputation=>true, FastNonminimal=>true, LengthLimit=>opts.LengthLimit+1);
+   if not C.?Resolution or not C.Resolution.?RawComputation then 
+     error "cannot use 'minimalBetti' with this input.  
+     Input must be an ideal or module in a polynomial 
+     ring or skew commutative polynomial ring over 
+     a finite field, which is singly graded.  
+     These restrictions might be removed in the future.";
    rawC := C.Resolution.RawComputation;
    w := rawMinimalBetti(rawC, 
        if opts.DegreeLimit =!= null then {opts.DegreeLimit} else {},

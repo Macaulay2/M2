@@ -178,6 +178,7 @@ BettiDisplay SchreyerFrame::minimalBettiNumbers(
   if (stop_after_degree)
     {
       top_degree = std::min(top_slanted_degree, mHiSlantedDegree);
+      top_degree = std::max(mLoSlantedDegree, top_degree);
     }
   else
     {

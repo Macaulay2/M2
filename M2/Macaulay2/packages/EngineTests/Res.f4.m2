@@ -28,6 +28,14 @@ TEST ///
   assert(C.dd_1 == 0)
   assert(length C == 0)
 
+  assert(betti'ans == minimalBetti (ideal I_*))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>5))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>0))
+  assert((new BettiTally from {}) === minimalBetti (ideal I_*, LengthLimit=>-1))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>1000))  
+  assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>1000))  
+  assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>-1000))
+
   I = trim ideal(0_R)
   C = res(I, FastNonminimal => true)
   betti'ans = new BettiTally from {(0,{0},0) => 1}
@@ -35,6 +43,28 @@ TEST ///
   assert(C.dd_1 == 0)
   assert(length C == 0)
   assert(C.dd^2 == 0)
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti I)
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti (I, LengthLimit=>5))
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti (I, LengthLimit=>0))
+
+  I = trim ideal(0_R)
+  assert((new BettiTally from {}) == minimalBetti (I, LengthLimit=>-1))
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti (I, LengthLimit=>1000))  
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti (I, DegreeLimit=>1000))  
+
+  I = trim ideal(0_R)
+  assert(betti'ans == minimalBetti (I, DegreeLimit=>-1000)) 
+
 ///
 
 TEST ///
@@ -48,6 +78,14 @@ TEST ///
   assert(C.dd_1 == 1)
   assert(length C == 1)
   assert(C.dd^2 == 0)
+  
+  assert(betti'ans == minimalBetti (ideal I_*))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>5))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>0))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>-1))
+  assert(betti'ans == minimalBetti (ideal I_*, LengthLimit=>1000))  
+  assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>1000))  
+  assert(betti'ans == minimalBetti (ideal I_*, DegreeLimit=>-1000))
 ///
 
 TEST ///
@@ -87,7 +125,9 @@ TEST ///
   B1 = betti res I
   C = res(ideal(I_*), FastNonminimal=>true)
   B2 = betti(C, Minimize=>true)
+  B3 = minimalBetti ideal(I_*)
   assert(B1 == B2)
+  assert(B1 == B3)
   betti C
   C.dd_-1
   C.dd_0
@@ -154,12 +194,13 @@ TEST ///
   M = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
   assert isHomogeneous M  
   C = res(M, FastNonminimal => true)
-  betti res M == betti C
+  assert(betti res M == betti C)
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)  
 
-  betti(C, Minimize=>true)
+  M2 = coker map(F,,{{a,0,0},{0,b,0},{0,0,c}})
+  assert(minimalBetti M2 == betti C) -- doesn't always hold, but does here.
+  assert(minimalBetti M2 == betti(C, Minimize=>true))
   assert isHomogeneous C
-  C.dd
 ///
 
 TEST ///
@@ -203,6 +244,7 @@ TEST ///
   assert(rawBetti(raw C.Resolution, 1) == betti(C))
   assert(rawBetti(raw C.Resolution, 0) == betti C)
   assert(rawBetti(raw C.Resolution, 4) == betti(C, Minimize=>true))
+  rawBetti(raw C.Resolution, 5)
   --rawBetti(raw C.Resolution, 2) -- not implemented yet
   --rawBetti(raw C.Resolution, 3) -- not implemented yet
 
