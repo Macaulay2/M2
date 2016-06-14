@@ -3,12 +3,14 @@ TO DO List
 * Basic Functions
  * Constructors (human-readable, other formats?
  * Access functions (say, species, complexes, etc)
- * Changing alphabets
+ * CHanging alphabets
  * (maybe) Higher level service functions (elimination, etc)
 
 * Examples
- * Motifs 
- * Examples from Elizabeth's papers or other papers 
+ * Motifs CHECK
+ * Examples from Elizabeth's papers or other papers
+ * Add WNT Shuttle Model (from Elizabeth's Talk)
+ * Are there other models to add?
  * Examples of solving CRN eqns
  * Elimination, degeneration
  * High-dimensional solution varieties

@@ -15,19 +15,20 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph"}
+export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph",
+    "stoichiometricSubspace"}
 exportMutable {}
 
 removeWhitespace = s -> s = replace(" ", "", s)
 
 stripCoef = (s) -> (
-    i =0;
+    i := 0;
     while regex("[0-9]", s#i) =!= null do i = i+1;
     substring(i,length(s),s)
     )
 
 specProportion = (s) -> (
-    i =0;
+    i := 0;
     while regex("[0-9]", s#i) =!= null do i = i+1;
     value substring(0,i,s)    
     )
@@ -35,6 +36,7 @@ specProportion = (s) -> (
 ReactionNetwork = new Type of MutableHashTable
 
 reactionNetwork = method()
+reactionNetwork String := str -> reactionNetwork separateRegexp(",", str)
 reactionNetwork List := rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
     scan(rs, r -> addReaction(r,Rn));
@@ -98,18 +100,35 @@ netComplex = (r,c) -> (
 net ReactionNetwork := r -> stack apply(edges r.ReactionGraph, e -> netComplex(r, first e) | "-->" | 
     netComplex(r, last e))
 
+stoichiometricSubspace = method()
+stoichiometricSubspace ReactionNetwork := N -> (
+    C := N.Complexes;
+    reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
+    M:=reactions#0;
+    for i from 1 to #reactions - 1 do M=M||reactions#i;
+    ker M
+    )
+
+TEST ///
+CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
+stoichiometricSubspace CRN
+///
+
+load "ReactionNetworks/motifs-Kisun.m2"
+load "ReactionNetworks/motifs-Cvetelina.m2"
+
 -- end
 
 beginDocumentation()
 scan({
-    "CrosslinkingModelCellDeath.m2",
-    "OnesiteModificationA.m2",
-    "OnesiteModificationB.m2",
-    "OnesiteModificationC.m2",
-    "OnesiteModificationD.m2",
-    "TwolayerCascadeL.m2",
-    "TwositeModificationE.m2",
-    "TwositeModificationF.m2"
+    -- "CrosslinkingModelCellDeath.m2",
+    -- "OnesiteModificationA.m2",
+    -- "OnesiteModificationB.m2",
+    -- "OnesiteModificationC.m2",
+    -- "OnesiteModificationD.m2",
+    -- "TwolayerCascadeL.m2",
+    -- "TwositeModificationE.m2",
+    -- "TwositeModificationF.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )
@@ -120,9 +139,11 @@ end
 -- because loading stops when the symbol "end" is encountered.
 
 restart
+uninstallPackage "ReactionNetworks"
 installPackage "ReactionNetworks"
 installPackage("ReactionNetworks", RemakeAllDocumentation=>true)
-check ReactionNetworks
+check "ReactionNetworks"
+peek ReactionNetworks
 help "OnesiteModificationA"
 viewHelp "OnesiteModificationA"
 examples "OnesiteModificationA"

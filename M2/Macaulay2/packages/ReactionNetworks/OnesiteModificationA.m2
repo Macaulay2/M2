@@ -8,6 +8,7 @@ doc ///
       Text
         This motif is recently used as the building block of linear cascades.	
       Example
-        OnesiteModificationA = reactionNetwork {"S_0 + E <-->X","X -->S_1+E","S_1+F<-->Y","Y-->S_0+F"}
+        CRN = oneSiteModificationA {"S_0", "E", "X", "S_1", "F", "Y"}
+	OnesiteModificationA = reactionNetwork {"S_0 + E <-->X","X -->S_1+E","S_1+F<-->Y","Y-->S_0+F"}
     ///
     
