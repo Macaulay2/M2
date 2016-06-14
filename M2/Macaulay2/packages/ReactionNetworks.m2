@@ -16,7 +16,9 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph",
-    "stoichiometricSubspace"}
+    "stoichiometricSubspace",
+    "steadyStateEquations"
+    }
 exportMutable {}
 
 removeWhitespace = s -> s = replace(" ", "", s)
@@ -112,6 +114,61 @@ stoichiometricSubspace ReactionNetwork := N -> (
 TEST ///
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
 stoichiometricSubspace CRN
+///
+
+concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
+    
+termInp = (a,inp,out,N,R) -> if member(a,inp/first) then (     
+    p := position(inp/first,x->x==a);
+    - first inp#p * product(inp,b->concentration(last b,N,R)^(first b)) 
+    ) else 0
+termOut = (a,inp,out,N,R) -> if member(a,out/first) then (     
+    p := position(out/first,x->x==a);
+    first out#p * product(inp,b->concentration(last b,N,R)^(first b)) 
+    ) else 0
+
+steadyStateEquations = method()
+steadyStateEquations ReactionNetwork := N -> (
+    -- K is the parameter ring
+    kk := symbol kk; 
+    rates := apply(edges N.ReactionGraph, e->kk_e);
+    K := QQ[rates];
+    kk = gens K;
+    -- C is a list of pairs (species, input_rate)
+    C := apply(N.Species,a->(a,0));
+    -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
+    R := apply(edges N.ReactionGraph, e->(
+	    (i,j) := toSequence e;
+	    (
+		apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
+	    	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c))
+		,
+		kk#(position(edges N.ReactionGraph,e'->e'==e))
+		,
+		0
+		)  
+	    ));
+    cc := symbol cc;
+    RING := K[apply(C,i->cc_(first i))];
+    cc = gens RING;
+    1/0;
+    F := for i in C list (
+	(a,af) := i;
+	sum(R,reaction->(
+		(inp'out,k1,k2) := reaction;
+		r1 := first inp'out;
+		r2 := last inp'out;
+		k1 * (termInp(a,r1,r2,N,R) + termOut(a,r1,r2,N,R)) +
+		k2 * (termInp(a,r2,r1,N,R) + termOut(a,r2,r1,N,R))
+		))  
+	)
+    )
+
+TEST ///
+restart
+needsPackage "ReactionNetworks"
+CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
+steadyStateEquations CRN
 ///
 
 load "ReactionNetworks/motifs-Kisun.m2"
