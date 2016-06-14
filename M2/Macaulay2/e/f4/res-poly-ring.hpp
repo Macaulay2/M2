@@ -1,4 +1,4 @@
-/* Copyright 2015, Michael E. Stillman */
+/* Copyright 2015-2016, Michael E. Stillman */
 
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
@@ -81,8 +81,9 @@ public:
   {
     ncalls++;
     result.len = static_cast<int>(coeffs.size());
-    result.coeffs = std::move(std::unique_ptr<FieldElement[]>(new FieldElement[result.len]));
-    result.monoms = std::move(std::unique_ptr<monomial_word[]>(new monomial_word[mRing.monoid().max_monomial_size()*result.len]));
+    result.coeffs.reset(new FieldElement[result.len]);
+    result.monoms.reset(new monomial_word[mRing.monoid().max_monomial_size()*result.len]);
+
     // copy coeffs
     for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];

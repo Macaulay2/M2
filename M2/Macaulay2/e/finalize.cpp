@@ -92,7 +92,8 @@ extern "C" void remove_res(void *p, void *cd)
   AO_t nremoved = AO_fetch_and_add1(&res_nremoved);
   if (M2_gbTrace>=3)
     fprintf(stderr, "\n -- removing res %zd at %p\n",nremoved, G);
-  G->remove_res();
+  //  G->remove_res();
+  delete G;
 }
 void intern_res(ResolutionComputation *G)
 {

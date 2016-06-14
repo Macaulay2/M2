@@ -1,4 +1,4 @@
-/* Copyright 2014, Michael E. Stillman */
+/* Copyright 2014-2016, Michael E. Stillman */
 
 #ifndef _res_f4_computation_hpp_
 #define _res_f4_computation_hpp_

@@ -54,32 +54,11 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
     }
   auto coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
   poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
+  GR->gbvector_remove(f);
   delete [] exp;
   delete [] lexp;
   delete [] relem_array;
 }
-
-#if 0
-void ResF4toM2Interface::poly_set_degrees(const ResPolyRing& R,
-                                          const M2_arrayint wts,
-                                          const poly &f,
-                                          int &deg_result,
-                                          int &alpha)
-{
-  const monomial_word *w = f.monoms;
-  monomial_word leaddeg = R.monoid().monomial_weight(w, wts);
-  monomial_word deg = leaddeg;
-
-  for (int i=1; i<f.len; i++)
-    {
-      w = w + R.monoid().monomial_size(w);
-      monomial_word degi = R.monoid().monomial_weight(w,wts);
-      if (degi > deg) deg = degi;
-    }
-  alpha = static_cast<int>(deg-leaddeg);
-  deg_result = static_cast<int>(deg);
-}
-#endif
 
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
                                const poly &f,
