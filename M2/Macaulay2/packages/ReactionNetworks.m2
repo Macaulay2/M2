@@ -20,6 +20,18 @@ exportMutable {}
 
 removeWhitespace = s -> s = replace(" ", "", s)
 
+stripCoef = (s) -> (
+    i =0;
+    while regex("[0-9]", s#i) =!= null do i = i+1;
+    substring(i,length(s),s)
+    )
+
+specProportion = (s) -> (
+    i =0;
+    while regex("[0-9]", s#i) =!= null do i = i+1;
+    value substring(0,i,s)    
+    )
+
 ReactionNetwork = new Type of MutableHashTable
 
 reactionNetwork = method()
@@ -39,12 +51,12 @@ addSpecies(String, ReactionNetwork) := (s,Rn) ->
 
 addComplex = method()
 addComplex(String, ReactionNetwork) := (c,Rn) -> (
-    species := delete("", separateRegexp("[^A-Z]", c));
+    species := apply(delete("", separateRegexp("[^(((A-Z)|(a-z))_?(0-9)*)]", c)), stripCoef);
     for specie in species do addSpecies(specie, Rn);
-    v := mutableMatrix(ZZ,1,#Rn.Species);	
+    v := mutableMatrix(ZZ,1,#Rn.Species);    	
     apply(separateRegexp("\\+", c), t -> (
-	    s:=concatenate separateRegexp("[0-9]", t);
-	    a:=value concatenate separateRegexp("[A-Z]", t);
+	    s:=stripCoef(t);
+	    a:=specProportion(t);
 	    if a === null then a = 1;
 	    i:=position(Rn.Species, s' -> s' == s);
 	    v_(0,i) = v_(0,i) + a;
@@ -65,7 +77,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     i := addComplex(first complexes, Rn);
     j := addComplex(last complexes, Rn);
     Rn.ReactionGraph = addVertices(Rn.ReactionGraph, {i,j});
-    delim := concatenate separateRegexp(///[A-Z]|[0-9]|,|\+| ///, r);
+    delim := concatenate separateRegexp(///[A-Z]|[a-z]|[0-9]|,|_|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
