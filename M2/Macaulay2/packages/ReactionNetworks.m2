@@ -120,11 +120,11 @@ concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
     
 termInp = (a,inp,out,N,R) -> if member(a,inp/first) then (     
     p := position(inp/first,x->x==a);
-    - first inp#p * product(inp,b->concentration(last b,N,R)^(first b)) 
+    - last inp#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
     ) else 0
 termOut = (a,inp,out,N,R) -> if member(a,out/first) then (     
     p := position(out/first,x->x==a);
-    first out#p * product(inp,b->concentration(last b,N,R)^(first b)) 
+    last out#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
     ) else 0
 
 steadyStateEquations = method()
@@ -151,15 +151,23 @@ steadyStateEquations ReactionNetwork := N -> (
     cc := symbol cc;
     RING := K[apply(C,i->cc_(first i))];
     cc = gens RING;
-    1/0;
+    ///
+    debug ReactionNetworks
+    i = first C
+    reaction = first R
+    a = first i
+    inp = r1
+    out = r2
+    R = RING;
+    ///;
     F := for i in C list (
 	(a,af) := i;
 	sum(R,reaction->(
 		(inp'out,k1,k2) := reaction;
 		r1 := first inp'out;
 		r2 := last inp'out;
-		k1 * (termInp(a,r1,r2,N,R) + termOut(a,r1,r2,N,R)) +
-		k2 * (termInp(a,r2,r1,N,R) + termOut(a,r2,r1,N,R))
+		k1 * (termInp(a,r1,r2,N,RING) + termOut(a,r1,r2,N,RING)) +
+		k2 * (termInp(a,r2,r1,N,RING) + termOut(a,r2,r1,N,RING))
 		))  
 	)
     )
@@ -168,7 +176,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
-steadyStateEquations CRN
+netList steadyStateEquations CRN
 ///
 
 load "ReactionNetworks/motifs-Kisun.m2"
