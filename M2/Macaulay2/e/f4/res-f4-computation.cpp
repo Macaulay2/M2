@@ -10,6 +10,9 @@
 
 #include <iostream>
 
+long nres = 0;
+long nres_destruct = 0;
+
 /** createF4Res
  * The only function to create an (F4) resolution computation
  * The constructor for this class is private.  This function 
@@ -159,7 +162,6 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   // Remove matrix:
   delete leadterms;
 
-  nres++;
   return result;
 }
 
@@ -174,11 +176,14 @@ F4ResComputation::F4ResComputation(const PolynomialRing* origR,
     mComp(new SchreyerFrame(*mRing, max_level))
 {
   //  mComp.reset(new SchreyerFrame(*mRing, max_level)); // might need gbmatrix->rows() too
+  nres++;
 }
 
 F4ResComputation::~F4ResComputation()
 {
-  remove_res();
+  // The following lines should not be required.
+  //  mComp.reset(); mComp = nullptr;
+  nres_destruct++;
 }
 
 void F4ResComputation::start_computation()
@@ -195,9 +200,7 @@ int F4ResComputation::complete_thru_degree() const
 
 void F4ResComputation::remove_res()
 {
-  // The following lines should not be required.
-  mComp.reset(); mComp = nullptr;
-  nres_destruct++;
+  std::cerr << "ERROR: calling remove_res" << std::endl;
 }
 
 M2_arrayint F4ResComputation::get_betti(int type) const

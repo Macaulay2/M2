@@ -93,6 +93,7 @@ extern "C" void remove_res(void *p, void *cd)
   if (M2_gbTrace>=3)
     fprintf(stderr, "\n -- removing res %zd at %p\n",nremoved, G);
   //  G->remove_res();
+  // G->~ResolutionComputation();
   delete G;
 }
 void intern_res(ResolutionComputation *G)
@@ -159,3 +160,28 @@ MutableMatrix* internMutableMatrix(MutableMatrix *G)
   return G;
 }
 //////////////////////////////////////////////////////
+extern long nres;
+extern long nres_destruct;
+
+M2_string engineMemory()
+{
+     buffer o;
+     try {
+       stash::stats(o);
+
+       o << "Finalizations of new resolutions:" << newline;
+       o << "# of res objects constructed/deconstructed=(" << nres << "," << nres_destruct << ") #left = " << (nres - nres_destruct) << newline;
+       o << "# of res objects constructed/deconstructed=(" << res_nfinalized << "," << res_nremoved << ") #left = " << (res_nfinalized - res_nremoved) << newline;
+       
+       return o.to_string();
+     }
+     catch (exc::engine_error e) {
+          o << "Internal error: [unprintable memory display]";
+          return o.to_string();
+     }
+}
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
+// indent-tabs-mode: nil
+// End:

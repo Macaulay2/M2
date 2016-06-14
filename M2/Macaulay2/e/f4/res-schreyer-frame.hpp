@@ -41,9 +41,6 @@ typedef int ComponentIndex; // index into f4 matrices over kk.  These tend to be
 
 typedef int FieldElement;
 
-extern long nres;
-extern long nres_destruct;
-
 class MonomialCounter
 {
 public:
