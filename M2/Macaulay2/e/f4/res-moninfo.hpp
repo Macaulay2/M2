@@ -3,27 +3,16 @@
 #ifndef _res_moninfo_hpp_
 #define _res_moninfo_hpp_
 
-#if 0
-#include <cstdio>
-
-#include <M2/config.h>
-#include <stdio.h>
-#if HAVE_STDINT_H
-#include <stdint.h>
-#elif HAVE_INTTYPES_H
-#include <inttypes.h>
-#else
-#error integer type definitions not available
-#endif
-#endif
-
 struct MonomialOrdering;
 #include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
 #include "../skew.hpp"
 
 #include <vector>
 #include <memory>
+
+typedef long ntuple_word;
+typedef ntuple_word * ntuple_monomial;
+typedef const ntuple_word * const_ntuple_monomial;
 
 //typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
 typedef long monomial_word; // Used for all types of monomials.  Is this OK?

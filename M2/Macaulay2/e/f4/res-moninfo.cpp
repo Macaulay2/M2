@@ -1,6 +1,7 @@
 // Copyright 2016  Michael E. Stillman
 
-#include "../newdelete.hpp"
+// THe following is apparently only for moIsLex, and the like.
+#include "../engine.h"
 #include "res-moninfo.hpp"
 #include "monordering.h"
 #include <cstdio>

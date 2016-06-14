@@ -49,8 +49,6 @@ protected:
   int complete_thru_degree() const;
   // The computation is complete up through this slanted degree.
 
-  void remove_res();
-
   const Matrix /* or null */ *get_matrix(int level);
 
   MutableMatrix /* or null */ *get_matrix(int slanted_degree, int level);

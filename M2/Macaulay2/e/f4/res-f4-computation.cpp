@@ -198,11 +198,6 @@ int F4ResComputation::complete_thru_degree() const
   throw exc::engine_error("complete_thru_degree not implemented");
 }
 
-void F4ResComputation::remove_res()
-{
-  std::cerr << "ERROR: calling remove_res" << std::endl;
-}
-
 M2_arrayint F4ResComputation::get_betti(int type) const
   // type is documented under rawResolutionBetti, in engine.h  
 {

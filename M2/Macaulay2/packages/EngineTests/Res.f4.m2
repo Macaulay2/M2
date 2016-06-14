@@ -224,6 +224,58 @@ TEST ///
   for i from 2 to length C do assert(C.dd_(i-1) * C.dd_i == 0)
 ///
 
+///
+  -- memory leak test, not run in general.
+  R = ZZ/101[vars(0..17)]
+  m1 = genericMatrix(R,a,3,3)
+  m2 = genericMatrix(R,j,3,3)
+  I = ideal(m1*m2-m2*m1)
+  elapsedTime for i from 1 to 1000 do (
+      J = ideal I_*;
+      res J;
+      )
+  debug Core
+  engineMemory()
+
+  elapsedTime for i from 1 to 1000 do (
+      J = ideal I_*;
+      res(J, Strategy=>0);
+      )
+  debug Core
+  engineMemory()
+
+  elapsedTime for i from 1 to 1000 do (
+      J = ideal I_*;
+      res(J, Strategy=>2);
+      )
+  debug Core
+  engineMemory()
+
+  elapsedTime for i from 1 to 1000 do (
+      J = ideal I_*;
+      res(J, Strategy=>3);
+      )
+  debug Core
+  engineMemory()
+
+  elapsedTime for i from 1 to 1000 do (
+      J = ideal I_*;
+      res(J, Strategy=>4);
+      )
+  debug Core
+  engineMemory()
+  J = null
+  collectGarbage()
+  engineMemory()  
+
+  elapsedTime for i from 1 to 10 list (
+      J = ideal I_*;
+      res(J, Strategy=>4)
+      );
+  debug Core
+  engineMemory()
+///
+
 TEST ///  
   R = ZZ/101[vars(0..17)]
   m1 = genericMatrix(R,a,3,3)
