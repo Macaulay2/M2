@@ -1,4 +1,5 @@
 -- -*- M2-comint -*- {* hash: -484322668 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : coordinatesOfTwoPnts={{1,0},{3,4}}
 
@@ -8,7 +9,7 @@ o1 : List
 
 i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts)
 
-o2 = /var/folders/yh/4npbdc5j3lbg4vmfn63b5r240000gn/T/M2-62308-0/0/start
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74748-0/0/start
 
 o2 : File
 

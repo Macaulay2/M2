@@ -1,15 +1,16 @@
--- -*- M2-comint -*- {* hash: 1367322643 *}
+-- -*- M2-comint -*- {* hash: 1570067667 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : NumberToB'String(2+5*ii)
 
 o1 = .2e1 .5e1
 
-i2 : NumberToB'String(1/3,UsePrecision=>16)
+i2 : NumberToB'String(1/3,M2Precision=>16)
 Warning: rational numbers will be converted to floating point.
 
 o2 = .33333333333333331e0 .0e0
 
-i3 : NumberToB'String(1/3,UsePrecision=>128)
+i3 : NumberToB'String(1/3,M2Precision=>128)
 Warning: rational numbers will be converted to floating point.
 
 o3 = .3333333333333333333333333333333333333338e0 .0e0

@@ -143,8 +143,19 @@ various modern operating systems:
       to update the environment of your currently running shell.  The latter
       command will also work in your shell initialization file, ".profile".
 
-  Suse64:
-    sudo zypper install -y autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gcc43 gcc43-c++ gcc43-fortran gdbm-devel gmp-devel lapack libgmp3 libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool
+  Suse Linux Leap 42.1:
+
+    sudo zypper -n install man man-pages emacs-x11 gcc git screen autoconf bison createrepo emacs flex gc-devel gcc gcc-c++ gcc-fortran gdbm-devel gmp-devel lapack-devel libxml2-devel make mpfr-devel ncurses-devel patch readline-devel subversion zlib-devel libtool libatomic_ops-devel libmpir-devel mpfr-devel pari-devel ntl-devel flint-devel glpk-devel cddlib-devel givaro-devel boost-devel rpm-build
+
+    Add
+
+       --enable-build-libraries="givaro"
+
+    to the configure command line, since the givaro installed above has bugs that cause compile time errors.  Add also
+
+       --enable-rpm --build=x86_64-suse-gnu
+
+    to make RPM files for distribution to generic hardware.
 
   Arch Linux:
       sudo pacman -S archlinux-keyring
@@ -158,9 +169,13 @@ various modern operating systems:
       pacman -Syu
 
   Mac OS X:
-    Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
-      it will be necessary to reinstall it.  One may use the following command for installing it:
+    The steps described below are combined in the shell script INSTALL.mac, which you could
+      simply run instead.
+    Install the Xcode Command Line Tools, available from Apple.  One may use
+      the following command for installing it:
       	 xcode-select --install
+      After upgrading the OS, it will be necessary to install it again.  (One symptom of
+      forgetting to do this is that /usr/include may be missing.)
     Optionally install a good version of emacs, such as the one available from 
       http://emacsformacosx.com/, which is a native Mac OS X port of emacs. To
       run it from the command line, create an executable shell script called 
@@ -176,10 +191,15 @@ various modern operating systems:
 	brew tap homebrew/homebrew-x11
 	brew update
 	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
+    Periodically upgrade the programs and libraries to the latest versions with
+	brew update
+        brew upgrade
     Next, if intending to distribute the Macaulay2 binaries to others, do:
-	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp cddlib glpk pari flint
+	brew install --build-from-source --cc=gcc-4.9 bdw-gc libatomic_ops gdbm gmp cddlib glpk
       else do:    
-	brew install bdw-gc libatomic_ops gdbm gmp pari cddlib glpk flint
+	brew install bdw-gc libatomic_ops gdbm gmp cddlib glpk
+    Note: the libraries pari and flint are also available from homebrew, but we build them
+      ourselves.
     Note: the reason we compile from source with gcc is that the precompiled
       packages that brew would otherwise download are compiled using "clang"
       and assume that the CPU supports advanced vector extensions, which not
@@ -315,6 +335,10 @@ following:
        make distclean
     This fetches tar files containing the source code of all the libraries and
       deposits them in BUILD/tarfiles/.
+  - When satisfied with the result, remove our git source repository with
+      rm -rf ../.git
+    Alternatively, tar up just this directory and not its parent directory.
+    Everything needed to build Macaulay2 will be included.
 
 -----------------------
 Compiling Macaulay2
@@ -382,7 +406,7 @@ instead of in
 To use a different prefix, say $HOME/local, for finding libraries and include
 files installed in a nonstandard location, add the following options to the
 "configure" command line:
-        LDFLAGS=-L$HOME/local/lib CPPFLAGS=-I$HOME/local/include
+        LDFLAGS="-L$HOME/local/lib" CPPFLAGS="-I$HOME/local/include"
 That step is unnecessary if the compiler was compiled from sources and installed
 with that prefix.
 

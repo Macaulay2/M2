@@ -3,7 +3,7 @@ needsPackage "NAGtools"
 --setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
-n = 10
+-- n = 10
 --time degree cyclicRoots(n,ZZ/32003)
 S = gens cyclicRoots(n,CC)
 R = ring S
@@ -45,6 +45,7 @@ pre0 = point{x0}
 end ----------------------------------------------------------------------------
 
 restart
+n = 7
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system.m2"
 stop = (n,L)->n>5
 elapsedTime pre'all = preimageViaMonodromy(PH,c0,{pre0},

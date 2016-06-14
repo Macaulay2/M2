@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1061455288 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : sliceType={1,1}
 
@@ -44,7 +44,7 @@ o7 : List
 
 i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"})
 
-o8 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22828-0/0/input
+o8 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
 
 o8 : File
 
@@ -90,12 +90,12 @@ i15 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections)
 
-o15 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22828-0/0/input
+o15 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
 
 o15 : File
 
 i16 : runBertini(storeBM2Files)
-bertini
+~/bertini
 
 i17 : xxDegree=#importSolutionsFile(storeBM2Files)
 
@@ -105,12 +105,12 @@ i18 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|xySlice#ListB'Sections)
 
-o18 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22828-0/0/input
+o18 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
 
 o18 : File
 
 i19 : runBertini(storeBM2Files)
-bertini
+~/bertini
 
 i20 : xyDegree=#importSolutionsFile(storeBM2Files)
 
@@ -120,12 +120,12 @@ i21 : makeB'InputFile(storeBM2Files,
           HomVariableGroup=>variableGroups,
           B'Polynomials=>{f1,f2}|yySlice#ListB'Sections)
 
-o21 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22828-0/0/input
+o21 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74911-0/0/input
 
 o21 : File
 
 i22 : runBertini(storeBM2Files)
-bertini
+~/bertini
 
 i23 : yyDegree=#importSolutionsFile(storeBM2Files)
 
