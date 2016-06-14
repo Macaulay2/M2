@@ -965,11 +965,18 @@ Matrix /* or null */ * rawSubduction(const Matrix *M,
      }
 }
 
+extern long nres;
+extern long nres_destruct;
+
 M2_string engineMemory()
 {
      buffer o;
      try {
        stash::stats(o);
+
+       o << "Finalizations of new resolutions:" << newline;
+       o << "# of res objects constructed/deconstructed=(" << nres << "," << nres_destruct << ") #left = " << (nres - nres_destruct) << newline;
+       
        return o.to_string();
      }
      catch (exc::engine_error e) {
