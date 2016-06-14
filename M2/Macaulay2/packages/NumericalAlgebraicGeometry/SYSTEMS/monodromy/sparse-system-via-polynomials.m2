@@ -3,7 +3,9 @@ needsPackage "NAGtools"
 --setDefault(Software=>M2)
 setRandomSeed 0
 needsPackage "ExampleIdeals"
--- n = 3
+///
+n = 6
+///
 S = gens cyclicRoots(n,CC)
 R = ring S
 polys = flatten entries S
@@ -22,8 +24,9 @@ c0 = point{
 	    t | { -sum t }
 	    )) 
     }
+coordinates c0
 pre0 = point{toList(n:1_CC)}
-
+coordinates pre0
 end ----------------------------------------------------------------------------
 
 restart

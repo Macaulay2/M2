@@ -128,11 +128,12 @@ termOut = (a,inp,out,N,R) -> if member(a,out/first) then (
     ) else 0
 
 steadyStateEquations = method()
-steadyStateEquations ReactionNetwork := N -> (
+steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
+steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
     kk := symbol kk; 
     rates := apply(edges N.ReactionGraph, e->kk_e);
-    K := QQ[rates];
+    K := FF[rates];
     kk = gens K;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
@@ -151,15 +152,6 @@ steadyStateEquations ReactionNetwork := N -> (
     cc := symbol cc;
     RING := K[apply(C,i->cc_(first i))];
     cc = gens RING;
-    ///
-    debug ReactionNetworks
-    i = first C
-    reaction = first R
-    a = first i
-    inp = r1
-    out = r2
-    R = RING;
-    ///;
     F := for i in C list (
 	(a,af) := i;
 	sum(R,reaction->(
@@ -176,7 +168,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
-netList steadyStateEquations CRN
+F = steadyStateEquations CRN
 ///
 
 load "ReactionNetworks/motifs-Kisun.m2"

@@ -4,6 +4,7 @@ TO DO List
  * Constructors (human-readable, other formats?
  * Access functions (say, species, complexes, etc)
  * CHanging alphabets
+ * Print complxes with labels, i.e. 1->A+B, 2->C+2D,...   
  * (maybe) Higher level service functions (elimination, etc)
 
 * Examples
