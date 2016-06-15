@@ -95,5 +95,3 @@ twoLayerCascadeL List := A -> (
     R3 := reactionNetwork Re3;
     R3
     )
-A'= {"A", "B", "C", "D", "E"}
-
