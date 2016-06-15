@@ -262,17 +262,20 @@ bipyramid Polyhedron := P -> (
 --     	         point (0,...,0,1)
 pyramid = method(TypicalValue => Polyhedron)
 pyramid Polyhedron := P -> (
-     (M,LS) := P#"homogenizedVertices";
-     -- Embedding into n+1 space and adding the new vertex
-     zerorow := map(ZZ^1,source M,0);
-     newvertex := 1 || map(ZZ^((numRows M)-1),ZZ^1,0) || 1;
-     M = (M || zerorow) | newvertex;
-     LS = LS || map(ZZ^1,source LS,0);
-     hyperA := fourierMotzkin(M,LS);
-     --verticesA := fourierMotzkin hyperA;
-     local verticesA;
-     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
-     polyhedronBuilder(hyperA,verticesA))
+   M := rays P;
+   LS := linealitySpace P;
+   r := ring M;
+   -- Embedding into n+1 space and adding the new vertex
+   zerorow := map(r^1,source M,0);
+   newvertex := 1 || map(r^((numRows M)-1),r^1,0) || 1;
+   M = (M || zerorow) | newvertex;
+   LS = LS || map(r^1,source LS,0);
+   newC := posHull(M, LS);
+   result := new HashTable from {
+      underlyingCone => newC
+   };
+   polyhedron result
+)
 
 
 -- PURPOSE : Generating the 'd'-dimensional crosspolytope with edge length 2*'s'
