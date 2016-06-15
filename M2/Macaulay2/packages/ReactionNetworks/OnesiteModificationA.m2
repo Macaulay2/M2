@@ -1,7 +1,7 @@
 beginDocumentation()
 doc ///
     Key
-    	OnesiteModificationA
+    	"OnesiteModificationA"
     Headline
     	an example for Motifs
     Description
