@@ -30,24 +30,6 @@ assert(isPointed C)
 assert(not isSimplicial C)
 assert(not isSmooth C)
 ///
--- Test 3
--- Checking convexHull and intersection
-TEST ///
-P2 =  convexHull matrix {{1,-2,-1,2},{2,1,-2,-1}};
-M = matrix{{3,1},{-3,-1},{1,-3},{-1,3}};
-v = matrix{{5},{5},{5},{5}};
-assert(intersection(M,v) == P2)
-///
-
--- Test 4
--- Checking intersection
-TEST ///
-P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
-V1 = vertices P;
-V1 = set apply(numColumns V1, i -> V1_{i});
-V2 = set {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
-assert(isSubset(V1,V2) and isSubset(V2,V1))
-///
 -- Test 6
 -- Checking intersections that give cones
 TEST ///

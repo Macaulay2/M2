@@ -40,7 +40,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    raysC := rays C;
    ldim := rank linealitySpace C;
    result#d = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(d-1) = getProperty(C, computeFacetsFromRayData);
+   result#(d-1) = toList getProperty(C, computedFacetsThroughRays);
    for i from 0 to d-2-ldim do (
       oldFaces := result#(d-1-i);
       newFaces := unique flatten apply(oldFaces,
@@ -51,7 +51,15 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
          )
       );
       << newFaces << endl;
-      newFaces = select(newFaces, face -> (rank raysC_face) + ldim == d-2-i);
+      newFaces = select(newFaces, 
+         face -> (
+            << "Face is: " << face << endl;
+            << raysC << endl;
+            << raysC_{face} << endl;
+            (rank raysC_{face}) + ldim == d-2-i
+         )
+      );
+      << "Select ok." << endl;
       result#(d-2-i) = newFaces
    );
    result
@@ -97,6 +105,12 @@ compute#Cone#computedRaysThroughFacets Cone := C -> (
          )
       )
    )
+)
+
+
+compute#Cone#computedFVector = method()
+compute#Cone#computedFVector Cone := C -> (
+   reverse apply(dim C + 1, d -> #faces(dim C - d,C))
 )
 
 
@@ -217,22 +231,3 @@ compute#Cone#ambientDimension Cone := C -> (
 
 
 
--- Helper methods
-
-orthogonalComplement = method()
-orthogonalComplement Matrix := M -> (
-   gens kernel M
-)
-
-
-computeRaysFromFacetData = method()
-computeRaysFromFacetData(Matrix, Matrix) := (facetData, hyperplaneData) -> (
-   fourierMotzkin(transpose(-facetData), transpose(hyperplaneData))
-)
-
-
-computeFacetsFromRayData = method()
-computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
-   (A, B) := fourierMotzkin(rayData, linealityData);
-   (transpose(-A), transpose(B))
-)

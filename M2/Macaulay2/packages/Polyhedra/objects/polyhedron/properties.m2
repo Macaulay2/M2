@@ -22,8 +22,8 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
       );
    );
    setProperty(P, lattice, latticeTest);
-   vMat := - matrixFromVectorList(vList, n-1, r);
-   rMat := - matrixFromVectorList(rList, n-1, r);
+   vMat := matrixFromVectorList(vList, n-1, r);
+   rMat := matrixFromVectorList(rList, n-1, r);
    setProperty(P, computedRays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat
@@ -166,26 +166,14 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    facetsP = (-facetsP#1) | facetsP#0;
    C := getProperty(P, underlyingCone);
    facetsC := facets C;
-   L := for i from 0 to (numRows facetsC - 1) list (
-      cFacet := facetsC^{i};
-      corresponding := positions(0..(numRows facetsP - 1),
-         j -> (
-            pFacet := facetsP^{j};
-            rank (pFacet || cFacet) == 1
-         )
-      );
-      if #corresponding == 1 then i=>corresponding#0
-      else if #corresponding == 0 then i=>-1
-      else error("Facet corresponds to multiple facets.")
-   );
-   new HashTable from L
+   rayCorrespondenceMap(transpose facetsC, transpose facetsP)
 )
 
 
 compute#Polyhedron#computedNormalFan = method()
 compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
-   raysNF := transpose (facets P)#0;
+   raysNF := - transpose (facets P)#0;
    facetMap := getProperty(P, facetToFacetMap);
    maximalConesNF := getProperty(C, computedRaysThroughFacets);
    maximalConesNF = apply(maximalConesNF,
@@ -195,7 +183,7 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    );
    linealitySpaceNF := transpose((hyperplanes P)#0);
    result := fan(raysNF, linealitySpaceNF, maximalConesNF);
-   set(result, computedPolytope, P);
+   setProperty(result, computedPolytope, P);
    result
 )
 
@@ -217,39 +205,39 @@ compute#Polyhedron#computedLatticePoints Polyhedron := P -> (
    apply(result, r -> lift(r, ZZ))
 )
 
-
--- Helper methods
-slice = method()
-slice(Vector, List) := (v, L) -> (
-   result := entries v;
-   result = result_L;
-   vector result
+compute#Polyhedron#computedFacesThroughRays = method()
+compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
+   C := getProperty(P, underlyingCone);
+   vertP := vertices P;
+   raysP := rays P;
+   raysC := rays C;
+   vertPCMap := rayCorrespondenceMap(raysC, prependOnes vertP);
+   raysPCMap := rayCorrespondenceMap(raysC, prependZeros raysP);
+   << "VP: " << vertP << endl;
+   << "RP: " << raysP << endl;
+   << "RC: " << raysC << endl;
+   << vertPCMap << endl;
+   << raysPCMap << endl;
+   facesC := faces C;
+   result := for dim in keys facesC list (
+      facesPdim := apply(facesC#dim,
+         face -> (
+            vertFace := apply(face, v -> vertPCMap#v);
+            vertFace = select(vertFace, v -> v != -1);
+            raysFace := apply(face, v -> raysPCMap#v);
+            raysFace = select(raysFace, v -> v != -1);
+            (vertFace, raysFace)
+         )
+      );
+      << facesPdim << endl;
+      facesPdim = select(facesPdim, face -> #(face#0) > 0);
+      (dim - 1) => facesPdim
+   );
+   new MutableHashTable from result
 )
 
 
-slice(Vector, Sequence) := (v, S) -> (
-   slice(v, toList S)
+compute#Polyhedron#computedFVector = method()
+compute#Polyhedron#computedFVector Polyhedron := P -> (
+   reverse apply(dim P + 1, d -> #faces(dim P - d,P))
 )
-
-
-matrixFromVectorList = method()
-matrixFromVectorList(List, ZZ, Ring) := (L, dim, r) -> (
-   if #L > 0 then return matrix L
-   else return map(r^dim, r^0, 0)
-)
-
-
-prependOnes = method()
-prependOnes Matrix := M -> (
-   r := ring M;
-   map(r^1, source M, (i,j) -> 1) || M
-)
-
-
-prependZeros = method()
-prependZeros Matrix := M -> (
-   r := ring M;
-   map(r^1, source M, (i,j) -> 0) || M
-)
-
-

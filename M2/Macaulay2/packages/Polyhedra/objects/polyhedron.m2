@@ -35,32 +35,7 @@ vertexEdgeMatrix Polyhedron := P -> (
      transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
-fVector Polyhedron := P -> apply(dim P + 1, d -> #faces(dim P - d,P))
 
-
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'P'  plus one a polyhedron
---  OUTPUT : a List, containing the faces as polyhedra
-faces(ZZ,Polyhedron) := (k,P) -> (
-     --local faceOf;
-     if k == dim P +1 then (
-	  Pn := emptyPolyhedron ambDim P;
-	  (cacheValue symbol faceOf)(Pn -> P);
-	  --Pn.cache.faceOf := P;
-	  {Pn})
-     else (
-     	  L := faceBuilder(k,P);
-     	  LS := linSpace P;
-     	  -- Generating the corresponding polytopes out of the lists of vertices, rays and the lineality space
-     	  apply(L, l -> (
-	       	    l = (toList l#0,toList l#1);
-	       	    V := matrix transpose apply(l#0, e -> flatten entries e);
-	       	    R := if l#1 != {} then matrix transpose apply(l#1, e -> flatten entries e) else map(target V,QQ^1,0);
-	       	    if LS != 0 then R = R | LS | -LS;
-	       	    Pnew := convexHull(V,R);
-		    (cacheValue symbol faceOf)(Pnew -> P);
-	       	    --Pnew.cache.faceOf := P;
-	       	    Pnew))))
 
 
 -- PURPOSE : Computing the vertex-facet-matrix of a polyhedron

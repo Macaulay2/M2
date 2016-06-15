@@ -97,7 +97,18 @@ net PolyhedraHash := X -> (
    horizontalJoin flatten (
       "{",
       -- prints the parts vertically
-      stack (horizontalJoin \ sort apply(toList properties, property -> (net property, " => ", net getProperty(X, property)))),
+      stack (horizontalJoin \ sort apply(toList properties, 
+         property -> (
+            val := getProperty(X, property);
+            local rhs;
+            -- Avoid recursion, e.g. for normalFans
+            if instance(val, PolyhedraHash) then
+               rhs = class val
+            else
+               rhs = val;
+            (net property, " => ", net rhs)
+         )
+      )),
       "}" 
    )
 )

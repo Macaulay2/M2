@@ -27,6 +27,7 @@ export {
    "computedFacets",
    "computedFacesThroughRays", -- Which rays span a face?
    "computedFacetsThroughRays", -- Which rays span a facet?
+   "computedFVector",
    "computedRaysThroughFacets", -- Which facets intersect in a ray?
    "computedHyperplanes",
    "computedHilbertBasis",

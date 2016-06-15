@@ -16,29 +16,10 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
 --  OUTPUT : The Hirzebruch surface H_r
 hirzebruch = method(TypicalValue => Fan)
 hirzebruch ZZ := r -> (
-     -- Checking for input errors
-     if r < 0 then error ("Input must be a positive integer");
-     L := {((matrix{{0,-1},{1,r}},map(ZZ^2,ZZ^0,0)),(matrix{{1,-r},{0,-1}},map(ZZ^2,ZZ^0,0))),
-	   ((matrix{{0,-1},{-1,r}},map(ZZ^2,ZZ^0,0)),(matrix{{1,r},{0,1}},map(ZZ^2,ZZ^0,0))),
-	   ((matrix{{1,0},{0,1}},map(ZZ^2,ZZ^0,0)),(matrix{{-1,0},{0,-1}},map(ZZ^2,ZZ^0,0))),
-	   ((matrix{{1,0},{0,-1}},map(ZZ^2,ZZ^0,0)),(matrix{{-1,0},{0,1}},map(ZZ^2,ZZ^0,0)))};
-     L = apply(L,posHull);
-     F := new Fan from {
-	  "generatingObjects" => set L,
-	  "ambient dimension" => 2,
-	  "dimension" => 2,
-	  "number of generating cones" => 4,
-	  "rays" => set {matrix{{0}, {-1}},matrix{{1}, {0}},matrix{{-1}, {r}},matrix{{0}, {1}}},
-	  "number of rays" => 4,
-	  "isPure" => true,
-	  symbol cache => new CacheTable};
-     F.cache.isComplete = true;
-     F.cache.isPointed = true;
-     F.cache.isPolytopal = true;
-     F.cache.isSmooth = true;
-     F.cache.polytope = polyhedronBuilder((map(ZZ^3,ZZ^4,{{0, -1, 0, -1}, {-1, 1, 0, 0}, {0, -r, -1, 1}}),map(ZZ^3,0,0)),
-			 (map(ZZ^3,ZZ^4,{{1, 1, 1, 1}, {0, 1, 0, 1+r}, {0, 0, 1, 1}}),map(ZZ^3,0,0)));
-     F)
+   -- Checking for input errors
+   if r < 0 then error ("Input must be a positive integer");
+   normalFan convexHull matrix {{0, 1, 0, r+1},{0, 0, 1, 1}}
+)
 
 
 -- PURPOSE : Generating the 'd'-dimensional hypercube with edge length 2*'s'
@@ -248,24 +229,30 @@ statePolytope Ideal := I -> (
 --     	         points (barycenter of 'P',+-1)
 bipyramid = method(TypicalValue => Polyhedron)
 bipyramid Polyhedron := P -> (
-     -- Saving the vertices
-     V := vertices P;
-     n := numColumns V;
-     if n == 0 then error("P must not be empty");
-     -- Computing the barycenter of P
-     v := matrix toList(n:{1_QQ,1_QQ});
-     v = (1/n)*V*v;
-     (M,LS) := P#"homogenizedVertices";
-     -- Embedding into n+1 space and adding the two new vertices
-     zerorow := map(ZZ^1,source M,0);
-     newvertices := makePrimitiveMatrix(matrix {{1_QQ,1_QQ}} || v || matrix {{1_QQ,-(1_QQ)}});
-     M = (M || zerorow) | newvertices;
-     LS = LS || map(ZZ^1,source LS,0);
-     hyperA := fourierMotzkin(M,LS);
-     --verticesA := fourierMotzkin hyperA;
-     local verticesA;
-     (verticesA,hyperA) = fMReplacement(M,hyperA#0,hyperA#1);
-     polyhedronBuilder(hyperA,verticesA))
+   -- Saving the vertices
+   V := promote(vertices P, QQ);
+   n := numColumns V;
+   if n == 0 then error("P must not be empty");
+   -- Computing the barycenter of P
+   << "Compute barycenter." << endl;
+   v := matrix toList(n:{1_QQ,1_QQ});
+   v = (1/n)*V*v;
+   << "Compute barycenter done." << endl;
+   C := getProperty(P, underlyingCone);
+   M := promote(rays C, QQ);
+   LS := promote(linealitySpace C, QQ);
+   r := ring M;
+   -- Embedding into n+1 space and adding the two new vertices
+   zerorow := map(r^1,source M,0);
+   newvertices := makePrimitiveMatrix(matrix {{1,1}} || v || matrix {{1,-1}});
+   M = (M || zerorow) | newvertices;
+   LS = LS || map(r^1,source LS,0);
+   newC := posHull(M, LS);
+   result := new HashTable from {
+      underlyingCone => newC
+   };
+   polyhedron result
+)
 
 
 

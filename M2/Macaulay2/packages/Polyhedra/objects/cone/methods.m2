@@ -1,14 +1,4 @@
---   INPUT : 'k'  an integer between 0 and the dimension of
---     	     'C'  a cone
---  OUTPUT : a List, containing the faces as cones
-faces(ZZ,Cone) := (k,C) -> (
-   result := faces C;
-   result#k
-)
 
-faces Cone := C -> (
-   getProperty(C, computedFacesThroughRays)
-)
 
 
 
@@ -34,8 +24,6 @@ hilbertBasis Cone := List => o -> (C -> (
 )
 
      
-fVector Cone := C -> apply(dim C + 1, d -> #faces(dim C - d,C))
-
 
 --   INPUT : '(v,P)',  a weight vector 'v' given by a one column matrix over ZZ or QQ and a 
 --     	     	       Cone 'C'

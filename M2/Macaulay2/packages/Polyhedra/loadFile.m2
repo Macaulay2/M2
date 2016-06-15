@@ -14,8 +14,11 @@ load "./symbols.m2"
 
 raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 
+-- Helper methods
+load "./helpers.m2"
+
 -- Methods declarations for methods defined for several objects, but not all of polyhedraHash
-load "./methods.m2"
+load "./declarations.m2"
 load "./faceBuilders.m2"
 
 -- Objects
@@ -67,6 +70,12 @@ end
 restart
 loadPackage "Polyhedra"
 check "Polyhedra"
+
+restart
+loadPackage "Polyhedra"
+P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
+P = bipyramid P;
+
 
 restart
 loadPackage "Polyhedra"

@@ -47,9 +47,22 @@ rays PolyhedralObject := PO -> (
 --  OUTPUT : polyhedral case: a List of integers, starting with the number of vertices and going up in dimension
 --           cone case: a List of integers, starting with the number of vertices and going up in dimension
 fVector = method(TypicalValue => List)
+fVector PolyhedralObject := PO -> (
+   getProperty(PO, computedFVector)
+)
 
 -- PURPOSE : Computing the faces of codimension 'k' of 'P'
 faces = method(TypicalValue => List)
+faces PolyhedralObject := PO -> (
+   getProperty(PO, computedFacesThroughRays)
+)
+--   INPUT : 'k'  an integer between 0 and the dimension of
+--     	     'C'  a cone
+--  OUTPUT : a List, containing the indices of rays used for the faces
+faces(ZZ,PolyhedralObject) := (k,PO) -> (
+   result := faces PO;
+   result#k
+)
 
 
 minFace = method()

@@ -13,12 +13,9 @@ intersection(Matrix,Matrix,Matrix,Matrix) := (M,v,N,w) -> (
    ezero := matrix {flatten {1 , toList ((numgens source M):0)}};
    ineq = ineq ||  ezero;
 	eq := w | N;
-   uCresult := new HashTable from {
-      inequalities => ineq,
-      equations => eq
-   };
    result := new HashTable from {
-      underlyingCone => cone uCresult
+      inequalities => (M,v),
+      equations => (N,w)
    };
    polyhedron result
 )
