@@ -17,7 +17,9 @@ newPackage(
 -- must be placed in one of the following two lists
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph",
     "stoichiometricSubspace",
-    "steadyStateEquations"
+    "steadyStateEquations",
+    "parameterRing",
+    "glueNetworks"
     }
 exportMutable {}
 
@@ -99,8 +101,25 @@ netComplex = (r,c) -> (
     concatenate l
     )
 
-net ReactionNetwork := r -> stack apply(edges r.ReactionGraph, e -> netComplex(r, first e) | "-->" | 
-    netComplex(r, last e))
+glueNetworks = method()
+glueNetworks = (N1, N2) -> (
+    N := N1;
+    apply(networkToHRF N2, r -> addReaction(r,N));
+    N
+    )
+
+TEST ///
+restart
+needsPackage "ReactionNetworks"
+N1 = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
+N2 = reactionNetwork "A <-- 2B, A + C --> D, D --> B + E"
+glueNetworks(N1,N2)
+///
+
+networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "-->" | 
+    netComplex(N, last e))
+
+net ReactionNetwork := N -> stack networkToHRF N 
 
 stoichiometricSubspace = method()
 stoichiometricSubspace ReactionNetwork := N -> (
@@ -110,6 +129,7 @@ stoichiometricSubspace ReactionNetwork := N -> (
     for i from 1 to #reactions - 1 do M=M||reactions#i;
     ker M
     )
+
 
 TEST ///
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
@@ -126,6 +146,12 @@ termOut = (a,inp,out,N,R) -> if member(a,out/first) then (
     p := position(out/first,x->x==a);
     last out#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
     ) else 0
+
+parameterRing = (N,FF) -> (
+    kk := symbol kk; 
+    rates := apply(edges N.ReactionGraph, e->kk_e);
+    FF[rates]
+    )
 
 steadyStateEquations = method()
 steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
@@ -168,6 +194,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
+parameterRing(CRN, QQ)
 F = steadyStateEquations CRN
 ///
 
