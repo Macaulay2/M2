@@ -101,29 +101,15 @@ netComplex = (r,c) -> (
     concatenate l
     )
 
-glueNetworks = method()
-glueNetworks(ReactionNetwork,ReactionNetwork):= (N1, N2) -> (
-    N := N1;
+
+merge (ReactionNetwork,ReactionNetwork):= (N1, N2) -> (
+    N := copy N1;
     apply(networkToHRF N2, r -> addReaction(r,N));
     N
     );
-glueNetworks(List, ReactionNetwork) := (L, N) -> (
-    N11 := reactionNetwork L;
-    apply(networkToHRF N, s -> addReaction(s,N11));
-    N11
-    );
-glueNetworks(ReactionNetwork, List) := (N, L) -> (
-    N12 := reactionNetwork L;
-    N22 := N;
-    apply(networkToHRF N12, s -> addReaction(s,N22));
-    N22
-    );
-glueNetworks(List, List) := (L1, L2) -> (
-    N13 := reactionNetwork L1;
-    N23 := reactionNetwork L2;
-    apply(networkToHRF N23, s -> addReaction(s,N13));
-    N13
-    );
+merge (List, ReactionNetwork) := (L, N) -> glueNetworks(reactionNetwork L, N)
+merge (ReactionNetwork, List) := (N, L) -> glueNetworks(N, reactionNetwork L)
+
 
 TEST ///
 restart
@@ -131,12 +117,36 @@ needsPackage "ReactionNetworks"
 NM = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
 NN = reactionNetwork "A --> 2B, A + C --> D, D --> B + E"
 glueNetworks(NM,NN)
+NM
+NN
 glueNetworks({"S --> T"}, NM)
 glueNetworks(NN, {"S --> T"})
 glueNetworks({"S --> T"}, {"P <--> Q"})  
 glueNetworks({"S --> T"}, {"S --> T"})  
 NN
 ///
+
+
+
+-- L is a list of options of the form "A" => "B"
+sub(ReactionNetwork, List) := (N, L) -> (
+    T := new HashTable from L;
+    N.Species = for s in N.Species list (if T#?s then T#s else s);
+    N
+    )
+
+
+TEST ///
+restart
+needsPackage "ReactionNetworks"
+NM = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
+sub(NM, {"A" => "Y"})
+
+N = oneSiteModificationA()
+sub(N, {"S_0" => "A"})
+///
+
+
 
 networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "-->" | 
     netComplex(N, last e))
