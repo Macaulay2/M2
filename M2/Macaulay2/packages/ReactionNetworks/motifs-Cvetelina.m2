@@ -9,7 +9,7 @@ installMethod(twoSiteModificationG, () -> reactionNetwork {"S_0+E <--> X_1", "X_
 twoSiteModificationG List := G -> ( 
     -- Alphabet is listed in the following order:
     -- G = {S_0=>G1, E=>G2, X_1=>G3, S_1=>G4, X_2=>G5, F=>G6, S_2=>G7, Y_1=>G8, Y_2=>G9}
-    Re := {"G1+G2 <--> G3", "G3 --> G1+G2",
+    Re := {"G1+G2he <--> G3", "G3 --> G1+G2",
 	   "G4+G2 <--> G5", "G5 --> G7+G2", 
 	   "G4+G6 <--> G8", "G8 --> G1+G6", 
 	   "G7+G6 <--> G9", "G9 --> G4+G6"};
@@ -160,3 +160,31 @@ clusterModelCellDeath List := M -> (
 -- twoLayerCascadeJ(A)
 -- twoLayerCascadeK(B)
 -- clusterModelCellDeath(D)
+
+
+
+
+
+CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
+
+#CRN.Species
+
+renameSpecies = method()
+renameSpecies(ReactionNetwork, List) := (N, L) -> (
+    newSpecies := N.Species;
+    for i from 1 to #N.Species do newSpecies = apply(
+	    	    	    	    newSpecies, s -> replace(N.Species#(i-1), L#(i-1),s)
+	);
+    print newSpecies
+    )
+-- renames all reactions and complexes?
+
+L' = {"a","b","c","d","e"}
+CRN
+
+renameSpecies(CRN, L')
+
+
+
+
+
