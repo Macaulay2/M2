@@ -102,18 +102,40 @@ netComplex = (r,c) -> (
     )
 
 glueNetworks = method()
-glueNetworks = (N1, N2) -> (
+glueNetworks(ReactionNetwork,ReactionNetwork):= (N1, N2) -> (
     N := N1;
     apply(networkToHRF N2, r -> addReaction(r,N));
     N
-    )
+    );
+glueNetworks(List, ReactionNetwork) := (L, N) -> (
+    N11 := reactionNetwork L;
+    apply(networkToHRF N, s -> addReaction(s,N11));
+    N11
+    );
+glueNetworks(ReactionNetwork, List) := (N, L) -> (
+    N12 := reactionNetwork L;
+    N22 := N;
+    apply(networkToHRF N12, s -> addReaction(s,N22));
+    N22
+    );
+glueNetworks(List, List) := (L1, L2) -> (
+    N13 := reactionNetwork L1;
+    N23 := reactionNetwork L2;
+    apply(networkToHRF N23, s -> addReaction(s,N13));
+    N13
+    );
 
 TEST ///
 restart
 needsPackage "ReactionNetworks"
-N1 = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
-N2 = reactionNetwork "A <-- 2B, A + C --> D, D --> B + E"
-glueNetworks(N1,N2)
+NM = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
+NN = reactionNetwork "A --> 2B, A + C --> D, D --> B + E"
+glueNetworks(NM,NN)
+glueNetworks({"S --> T"}, NM)
+glueNetworks(NN, {"S --> T"})
+glueNetworks({"S --> T"}, {"P <--> Q"})  
+glueNetworks({"S --> T"}, {"S --> T"})  
+NN
 ///
 
 networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "-->" | 
