@@ -237,7 +237,7 @@ load "ReactionNetworks/motifs-Cvetelina.m2"
 
 beginDocumentation()
 scan({
-    -- "CrosslinkingModelCellDeath.m2",
+     "CrosslinkingModelCellDeath.m2",
     -- "OnesiteModificationA.m2",
     -- "OnesiteModificationB.m2",
     -- "OnesiteModificationC.m2",
@@ -245,6 +245,7 @@ scan({
     -- "TwolayerCascadeL.m2",
     -- "TwositeModificationE.m2",
     -- "TwositeModificationF.m2"
+    "docCHill.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )

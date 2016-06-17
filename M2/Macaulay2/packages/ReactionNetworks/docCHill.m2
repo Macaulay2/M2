@@ -4,7 +4,8 @@
 doc ///
 -- enter each motif as a list of strings describing each reaction
     Key
-    	"Two-site Modification (g)"
+    	twoSiteModificationG
+	1:(twoSiteModificationG)
     Headline
     	"an example chemical reaction motif"
     Description
@@ -14,14 +15,13 @@ doc ///
 	    catalyzed by the same phosphatase at both sites [ref]"
     	Example
          -- Two-site Modification G
-	    twoSiteModificationG = {"S_0+E <--> X_1", "X_1 --> S_1+E",
-                                "S_1+E <--> X_2", "X_2 --> S_2+E",
-				"S_1+F <--> Y_1", "Y_1 --> S_0+F",
-				"S_2+F <--> Y_2", "Y_2 --> S_1+F"}		    
-	 -- apply reactionNetwork 
-	    reactionNetwork(twoSiteModificationG)
-    ///
-    
+	    twoSiteModificationG()
+	Text
+	    "In the motif Two-site Modification (g), the symbols used in the 
+	     chemical reactions have the following meaning:"
+		
+	     To rename species, use @TO (substitute, ReactionNetwork, List) @.		
+    /// 
     		    
 doc /// 
     Key
@@ -34,12 +34,23 @@ doc ///
 	    catalyzing kinase [ref]."
     	Example
         -- Modification of Two Substrates H
-	    modificationOfTwoSubstratesH = {"S_0+E <--> X_1", "X_1 --> S_1+E",
-    	    	    	    	"S_1+F_1 <--> Y_1", "Y_1 --> S_0+F_1",
-				"P_0+E <--> X_2", "X_2 --> P_1+E",
-				"P_1+F_2 <--> Y_2", "Y_2 --> P_0+F_2"}
-        -- apply reactionNetwork 
-	    reactionNetwork(modificationOfTwoSubstratesH)	
+	   needsPackage "ReactionNetworks"
+	   modificationOfTwoSubstratesH()
+	Text
+	    "In the motif Modification of Two Different Substrates (h), 
+	    the symbols used in the chemical reactions have the following meaning:
+		
+       
+	    The user may choose to change the symbols for one or more of
+	    the species participating in the reaction. This can be done in 
+	    the following manner. To rename one of the species:"
+	Example	
+	    N = modificationOfTwoSubstratesH()
+	    sub(N, {"X_2" => "C"})
+	Text     
+	    "Similarly, more species labels may be replaced."
+	Example	
+	    sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})	   	
     ///
    
 
@@ -54,11 +65,8 @@ doc ///
 	    catalyzing kinase and a joint catalyzing phosphotase [ref]."
         Example 
         -- Modification of Two Substrates I
-	    modificationOfTwoSubstratesI = {"S_0+E <--> X_1", "X_1 --> S_1+E",
-                                "S_1+F <--> Y_1", "Y_1 --> S_0+F", 
-				"P_0+E <--> X_2", "X_2 --> P_1+E",
-				"P_1+F <--> Y_2", "Y_2 --> P_0+F"}		    
-	    reactionNetwork(modificationOfTwoSubstratesI)
+	   needsPackage "ReactionNetworks"
+	   modificationOfTwoSubstratesI()
     ///
     
     
@@ -73,11 +81,8 @@ doc ///
 	    cascade motif with a specific phosphotase acting in each layer [ref]."
         Example
         -- Two-layer Cascade J
-	    twoLayerCascadeJ = {"S_0+E <--> X_1", "X_1 --> S_1+E",
-    	    	    "S_1+F_1 <--> Y_1", "Y_1 --> S_0+F_1",
-		    "P_0+S_1 <--> X_2", "X_2 --> P_1+S_1",
-		    "P_1+F_2 <--> Y_2", "Y_2 --> P_0+F_2"}
-            reactionNetwork(twoLayerCascadeJ)		
+	   needsPackage "ReactionNetworks"
+	   twoLayerCascadeJ()	
     ///
     
 
@@ -93,11 +98,8 @@ doc ///
 	    that is the same phosphotase acts in both layers [ref]."
         Example
         -- Two-layer Cascade K
-	    twoLayerCascadeK = {"S_0+E <--> X_1", "X_1 --> S_1+E",
-    	    	    "S_1+F <--> Y_1", "Y_1 --> S_0+F",
-		    "P_0+S_1 <--> X_2", "X_2 --> P_1+S_1",
-		    "P_1+F <--> Y_2", "Y_2 --> P_0+F"}
-            reactionNetwork(twoLayerCascadeK)
+	   needsPackage "ReactionNetworks"
+	   twoLayerCascadeK()
     ///
     		
 
@@ -113,16 +115,26 @@ doc ///
 	    Fas, denoting closed, open and unstable, and open and stable, i.e., active
 	    and signaling, receptors, respectively [ref]."
         Example
-    	    clusterModelCellDeath = {"Y+Z --> 2Z", "L+Y+Z --> L+2Z",
-	    	    	    	 "2Y --> Y+Z", "L+2Y --> L+Y+Z",
-				 "2Y --> 2Z", "L+2Y --> L+2Z",
-				 "Y+2Z --> 3Z", "L+Y+2Z --> L+3Z",
-				 "2Y+Z --> Y+2Z", "L+2Y+Z --> L+Y+2Z",
-				 "2Y+Z --> 3Z", "L+2Y+Z --> L+3Z",
-				 "3Y --> 2Y+Z", "L+3Y --> L+2Y+Z",
-				 "3Y --> Y+2Z", "L+3Y --> L+Y+2Z",
-				 "3Y --> 3Z", "L+3Y --> L+3Z"}
-	    reactionNetwork(clusterModelCellDeath)
+    	-- Cluster Model Cell Death
+	   needsPackage "ReactionNetworks"
+	   clusterModelCellDeath()
     ///  
     				   		    
- 
+ doc ///
+    Key
+    	(substitute, ReactionNetwork, List)
+    Headline
+    	substitute species names in reaction network
+    Description
+    	Text
+             "The user may choose to change the symbols for one or more of
+	     the species participating in the reaction. This can be done in 
+	     the following manner. To rename one of the species:"
+	Example	
+	     N = twoSiteModificationG()
+	     sub(N, {"S_0" => "A"})
+	Text     
+	     "Similarly, more species labels may be replaced."
+	Example	
+	     sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})
+ ///
