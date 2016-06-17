@@ -15,6 +15,17 @@ class buffer;
 template <typename Key>
 class ResF4MonomialLookupTableT : public our_new_delete
 {
+  typedef res_varpower_word varpower_word;
+  typedef res_varpower_monomial varpower_monomial;
+  typedef res_const_varpower_monomial const_varpower_monomial;
+
+  typedef res_ntuple_word ntuple_word;
+  typedef res_ntuple_monomial ntuple_monomial;
+  typedef res_const_ntuple_monomial const_ntuple_monomial;
+
+  typedef res_packed_monomial packed_monomial;
+  typedef res_const_packed_monomial const_packed_monomial;
+
   struct mi_node : public our_new_delete // monomial ideal internal node ///
   {
     varpower_word       var;
@@ -128,7 +139,7 @@ private:
 
 void
 minimalize_res_varpower_monomials(
-                              const VECTOR(varpower_monomial) &elems,
+                              const VECTOR(res_varpower_monomial) &elems,
                               VECTOR(int) &result_minimals,
                               stash *mi_stash=0);
 

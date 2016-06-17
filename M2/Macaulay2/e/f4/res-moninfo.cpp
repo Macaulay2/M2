@@ -13,7 +13,7 @@ ResMonoid::ResMonoid(int nvars0,
                      const MonomialOrdering *mo)
 {
   nvars = nvars0;
-  hashfcn = std::unique_ptr<monomial_word[]>(new monomial_word[nvars]);
+  hashfcn = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[nvars]);
   for (int i=0; i<nvars; i++)
     hashfcn[i] = rand();
   mask = 0x10000000;
@@ -67,13 +67,13 @@ ResMonoid::~ResMonoid()
   //  delete [] hashfcn;
 }
 
-monomial_word ResMonoid::monomial_weight(const_packed_monomial m, const M2_arrayint wts) const
+res_monomial_word ResMonoid::monomial_weight(res_const_packed_monomial m, const M2_arrayint wts) const
 {
   ncalls_weight++;
-  const_packed_monomial m1 = m+2;
+  res_const_packed_monomial m1 = m+2;
   int top = wts->len;
   int *n = wts->array;
-  monomial_word sum = 0;
+  res_monomial_word sum = 0;
   for (int j=top; j>0; --j) sum += *m1++ * *n++;
   return sum;
 }
@@ -102,7 +102,7 @@ void ResMonoid::show() const
   fprintf(stderr, "  #calls vp quot = %lu\n", ncalls_quotient_as_vp);
 }
 
-void ResMonoid::show(const_packed_monomial m) const
+void ResMonoid::show(res_const_packed_monomial m) const
 {
   fprintf(stderr, "[");
   for (int v=1; v<monomial_size(m); v++)
@@ -113,7 +113,7 @@ void ResMonoid::show(const_packed_monomial m) const
   fprintf(stderr, "]");
 }
 
-void ResMonoid::showAlpha(const_packed_monomial m) const
+void ResMonoid::showAlpha(res_const_packed_monomial m) const
 {
   long comp = get_component(m);
 

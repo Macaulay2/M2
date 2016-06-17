@@ -1,5 +1,9 @@
 // Copyright 2005-2016  Michael E. Stillman
 
+#if !defined(SAFEC_EXPORTS)
+#include <engine-exports.h>
+#endif
+
 #include "monhashtable.hpp"
 
 #define HASHVALUE(m) (M->hash_value(m))
@@ -168,6 +172,7 @@ template class MonomialHashTable<MonomialsWithComponent>;
 template class MonomialHashTable<MonomialsIgnoringComponent>;
 template class MonomialHashTable<ResMonomialsWithComponent>;
 template class MonomialHashTable<ResMonomialsIgnoringComponent>;
+
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 // indent-tabs-mode: nil

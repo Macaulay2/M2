@@ -13,47 +13,47 @@
 
 class res_varpower_monomials {
 public:
-  static long length(const_varpower_monomial m) { return ((*(m))*2+1); }
+  static long length(res_const_varpower_monomial m) { return ((*(m))*2+1); }
 
-  static varpower_word simple_degree(const_varpower_monomial m);
+  static res_varpower_word simple_degree(res_const_varpower_monomial m);
 
-  static varpower_word weight(const_varpower_monomial m,
+  static res_varpower_word weight(res_const_varpower_monomial m,
                               M2_arrayint wts);
 
-  static int equal(const_varpower_monomial m1,
-                   const_varpower_monomial m2);
+  static int equal(res_const_varpower_monomial m1,
+                   res_const_varpower_monomial m2);
 
-  static int compare(const_varpower_monomial m1,
-                     const_varpower_monomial m2); // Which compare is this?
+  static int compare(res_const_varpower_monomial m1,
+                     res_const_varpower_monomial m2); // Which compare is this?
 
-  static void mult(const_varpower_monomial m1,
-                   const_varpower_monomial m2,
-                   varpower_monomial result);
+  static void mult(res_const_varpower_monomial m1,
+                   res_const_varpower_monomial m2,
+                   res_varpower_monomial result);
 
-  static void quotient(const_varpower_monomial m1,
-                       const_varpower_monomial m2,
-                       varpower_monomial result);
+  static void quotient(res_const_varpower_monomial m1,
+                       res_const_varpower_monomial m2,
+                       res_varpower_monomial result);
 
-  static void lcm(const_varpower_monomial m1,
-                  const_varpower_monomial m2,
-                  varpower_monomial result);
+  static void lcm(res_const_varpower_monomial m1,
+                  res_const_varpower_monomial m2,
+                  res_varpower_monomial result);
 
-  static int divides(const_varpower_monomial m1,
-                     const_varpower_monomial m2,
-                     varpower_monomial result);
+  static int divides(res_const_varpower_monomial m1,
+                     res_const_varpower_monomial m2,
+                     res_varpower_monomial result);
 
   static void elem_text_out(FILE *fil,
-                            const_varpower_monomial m);
+                            res_const_varpower_monomial m);
 
 };
 
 class index_res_varpower_monomial
 {
-  const_varpower_monomial loc;
-  const_varpower_monomial hi;
+  res_const_varpower_monomial loc;
+  res_const_varpower_monomial hi;
 public:
   index_res_varpower_monomial() : loc(0), hi(0) {}
-  index_res_varpower_monomial(const_varpower_monomial m) : loc(m+1), hi(m+(2*(*m))) {}
+  index_res_varpower_monomial(res_const_varpower_monomial m) : loc(m+1), hi(m+(2*(*m))) {}
 
                                      //  index_monomial(const int *m, int)
                                      //    : lo(m+1), hi(m+*m-2) { loc = hi; }
@@ -65,8 +65,8 @@ public:
 
   //  index_monomial &operator--() { loc -= 2; return *this; }
 
-  varpower_word var() { return *loc; }
-  varpower_word exponent() { return loc[1]; }
+  res_varpower_word var() { return *loc; }
+  res_varpower_word exponent() { return loc[1]; }
 };
 
 

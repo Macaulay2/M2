@@ -499,14 +499,14 @@ void ResF4MonomialLookupTableT<Key>::text_out(buffer &o) const
 
 void
 minimalize_res_varpower_monomials(
-                              const VECTOR(varpower_monomial) &elems,
+                              const VECTOR(res_varpower_monomial) &elems,
                               VECTOR(int) &result_minimals,
                               stash *mi_stash)
 {
   VECTOR( VECTOR(int) *) bins;
   for (int j=0; j<elems.size(); j++)
     {
-      varpower_word d = res_varpower_monomials::simple_degree(elems[j]);
+      res_varpower_word d = res_varpower_monomials::simple_degree(elems[j]);
       if (d >= bins.size())
         for (int i=INTSIZE(bins); i<=d; i++)
           bins.push_back(NULL);

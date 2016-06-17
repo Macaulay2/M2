@@ -6,8 +6,6 @@
 #include "moninfo.hpp"
 #include "res-moninfo.hpp"
 
-#include <memory>  // For std::unique_ptr
-
 class MonomialsWithComponent {
 public:
   typedef packed_monomial value;
@@ -18,18 +16,6 @@ public:
   MonomialsWithComponent(const MonomialInfo& MI) : mMonoid(MI) {}
 private:
   const MonomialInfo& mMonoid;
-};
-
-class ResMonomialsWithComponent {
-public:
-  typedef packed_monomial value;
-  long hash_value(value m) const { return m[0] + m[1]; }
-  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
-  void show(value m) const { mMonoid.show(m); }
-  
-  ResMonomialsWithComponent(const ResMonoid& MI) : mMonoid(MI) {}
-private:
-  const ResMonoid& mMonoid;
 };
 
 class MonomialsIgnoringComponent {
@@ -44,9 +30,23 @@ private:
   const MonomialInfo& mMonoid;
 };
 
+
+
+class ResMonomialsWithComponent {
+public:
+  typedef res_packed_monomial value;
+  long hash_value(value m) const { return m[0] + m[1]; }
+  bool is_equal(value m, value n) const {  return mMonoid.is_equal(m,n); }
+  void show(value m) const { mMonoid.show(m); }
+  
+  ResMonomialsWithComponent(const ResMonoid& MI) : mMonoid(MI) {}
+private:
+  const ResMonoid& mMonoid;
+};
+
 class ResMonomialsIgnoringComponent {
 public:
-  typedef packed_monomial value;
+  typedef res_packed_monomial value;
   long hash_value(value m) const { return m[0]; }
   bool is_equal(value m, value n) const {  return mMonoid.monomial_part_is_equal(m,n); }
   void show(value m) const { mMonoid.show(m); }
@@ -55,6 +55,9 @@ public:
 private:
   const ResMonoid& mMonoid;
 };
+
+#include <memory>  // For std::unique_ptr
+
 
 // ValueType must implement the following:
 // values should have computed hash values stored with them

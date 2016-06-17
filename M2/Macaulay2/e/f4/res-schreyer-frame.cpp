@@ -56,7 +56,7 @@ namespace {
       ncmps ++;
       if (a->degree > b->degree) return GT;
       if (a->degree < b->degree) return LT;
-      return varpower_monomials::compare(a->vp, b->vp);
+      return res_varpower_monomials::compare(a->vp, b->vp);
     }
     
     bool operator()(value a, value b)
@@ -64,7 +64,7 @@ namespace {
       ncmps ++;
       if (a->degree > b->degree) return false;
       if (a->degree < b->degree) return true;
-      return varpower_monomials::compare(a->vp, b->vp) == LT;
+      return res_varpower_monomials::compare(a->vp, b->vp) == LT;
     }
     
     PreElementSorter() {}
@@ -415,7 +415,7 @@ SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial 
   vp->vp = mVarpowers.reserve(mMaxVPSize);
   monoid().quotient_as_vp(m1, m, vp->vp);
   vp->degree = monoid().degree_of_vp(vp->vp);
-  int len = static_cast<int>(varpower_monomials::length(vp->vp));
+  int len = static_cast<int>(res_varpower_monomials::length(vp->vp));
   mVarpowers.intern(len);
   return vp;
 }
@@ -436,7 +436,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
           vp->vp = mVarpowers.reserve(mMaxVPSize);
           monoid().variable_as_vp(skewvars[i], vp->vp); 
           vp->degree = monoid().degree_of_vp(vp->vp);         
-          int len = static_cast<int>(varpower_monomials::length(vp->vp));
+          int len = static_cast<int>(res_varpower_monomials::length(vp->vp));
           mVarpowers.intern(len);
 
           elements.push_back(vp);

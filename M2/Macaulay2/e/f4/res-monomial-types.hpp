@@ -3,17 +3,21 @@
 #ifndef _res_monomial_types_hpp_
 #define _res_monomial_types_hpp_
 
-typedef long ntuple_word;
-typedef ntuple_word * ntuple_monomial;
-typedef const ntuple_word * const_ntuple_monomial;
+#include <cstdint>
 
-typedef long monomial_word;
-typedef monomial_word * packed_monomial;
-typedef const monomial_word * const_packed_monomial;
+typedef long myword;
 
-typedef long varpower_word;
-typedef varpower_word * varpower_monomial;
-typedef const varpower_word * const_varpower_monomial;
+typedef myword res_ntuple_word;
+typedef res_ntuple_word * res_ntuple_monomial;
+typedef const res_ntuple_word * res_const_ntuple_monomial;
+
+typedef myword res_monomial_word;
+typedef res_monomial_word * res_packed_monomial;
+typedef const res_monomial_word * res_const_packed_monomial;
+
+typedef myword res_varpower_word;
+typedef res_varpower_word * res_varpower_monomial;
+typedef const res_varpower_word * res_const_varpower_monomial;
   // format: [length, v1, e1, ..., vr, er]
   // and v1 > v2 > ... > vr >= 0, and all
   // exponents ei > 0.

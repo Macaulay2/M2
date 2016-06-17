@@ -24,7 +24,7 @@ public:
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
   std::unique_ptr<FieldElement[]> coeffs;
-  std::unique_ptr<monomial_word[]> monoms;
+  std::unique_ptr<res_monomial_word[]> monoms;
 
 public:  
   poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
@@ -62,7 +62,7 @@ private:
 
 class poly_constructor {
 private:
-  std::vector<packed_monomial> monoms;
+  std::vector<res_packed_monomial> monoms;
   std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
 public:
@@ -71,7 +71,7 @@ public:
 
   poly_constructor(const ResPolyRing& R) : mRing(R) { }
   
-  void appendTerm(packed_monomial monom, FieldElement coeff)
+  void appendTerm(res_packed_monomial monom, FieldElement coeff)
   {
     monoms.push_back(monom); // a pointer
     coeffs.push_back(coeff);
@@ -82,13 +82,13 @@ public:
     ncalls++;
     result.len = static_cast<int>(coeffs.size());
     result.coeffs.reset(new FieldElement[result.len]);
-    result.monoms.reset(new monomial_word[mRing.monoid().max_monomial_size()*result.len]);
+    result.monoms.reset(new res_monomial_word[mRing.monoid().max_monomial_size()*result.len]);
 
     // copy coeffs
     for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];
     // copy monoms: not pointers, actual monoms
-    monomial_word* monomptr = result.monoms.get();
+    res_monomial_word* monomptr = result.monoms.get();
     for (int i=0; i<result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
@@ -99,7 +99,7 @@ public:
   static void setPolyFromArrays(poly& result,
                                 int len,
                                 std::unique_ptr<FieldElement[]>& coeffs,
-                                std::unique_ptr<monomial_word[]>& monoms)
+                                std::unique_ptr<res_monomial_word[]>& monoms)
   {
     ncalls_fromarray++;
     result.len = len;
@@ -132,7 +132,7 @@ public:
   {}
   
   int coefficient() const { return elem.coeffs[coeff_index]; }
-  packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
+  res_packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
   void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }
 };
 
@@ -145,7 +145,7 @@ inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
   for (auto it = poly_iter(R, f); it != end; ++it)
     {
       FieldElement c = R.resGausser().coeff_to_int(it.coefficient());
-      packed_monomial mon = it.monomial();
+      res_packed_monomial mon = it.monomial();
       if (c != 1) fprintf(fil, "%d", c);
       R.monoid().showAlpha(mon);
     }
