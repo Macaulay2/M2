@@ -4,7 +4,7 @@
 #define _res_poly_ring_hpp_
 
 #include "../skew.hpp"
-#include "varpower-monomial.hpp"
+#include "res-varpower-monomial.hpp"
 //#include "ntuple-monomial.hpp"
 #include "res-moninfo.hpp"
 #include "res-gausser.hpp"

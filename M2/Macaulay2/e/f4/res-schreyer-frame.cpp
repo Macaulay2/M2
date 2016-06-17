@@ -1,6 +1,6 @@
 // Copyright 2014-2016 Michael E. Stillman
 
-#include "f4-monlookup.hpp"
+#include "res-f4-monlookup.hpp"
 #include "res-schreyer-frame.hpp"
 #include "../timing.hpp"
 
@@ -445,7 +445,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
     }
   for (long i=begin; i<elem; i++)
     elements.push_back(createQuotientElement(monomial(lev,i), m));
-  typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
+  typedef ResF4MonomialLookupTableT<int32_t> MonomialLookupTable;
   MonomialLookupTable montab(monoid().n_vars());
 
 #if 0

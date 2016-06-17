@@ -24,7 +24,7 @@
 
 #include "res-moninfo.hpp"
 #include "res-memblock.hpp"
-#include "varpower-monomial.hpp"
+#include "res-varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
 #include "res-schreyer-order.hpp"
 #include "res-f4.hpp"

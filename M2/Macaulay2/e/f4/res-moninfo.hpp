@@ -4,32 +4,13 @@
 #define _res_moninfo_hpp_
 
 struct MonomialOrdering;
-#include "varpower-monomial.hpp"
 #include "../skew.hpp"
+
+#include "res-monomial-types.hpp"
+#include "res-varpower-monomial.hpp"
 
 #include <vector>
 #include <memory>
-
-typedef long ntuple_word;
-typedef ntuple_word * ntuple_monomial;
-typedef const ntuple_word * const_ntuple_monomial;
-
-//typedef int64_t monomial_word; // Used for all types of monomials.  Is this OK?
-typedef long monomial_word; // Used for all types of monomials.  Is this OK?
-typedef monomial_word * packed_monomial;
-typedef const monomial_word * const_packed_monomial;
-  // format: [hash,component,e1,...,envars],
-  // where [e1,...,envars] is packed.
-  // OR: [hash,component,weight,e1,...,envars]
-  // and weight is NOT packed.
-  // packing info, hash values, weights are all
-  // defined in: PackedMonomials
-
-
-// with weight vector values:
-// [hashvalue comp w1 w2 ... wr e1 e2 ... en]
-// or is it:
-// [hashvalue comp e1 e2 ... en -wr ... -w1]
 
 class ResMonoid
 {
@@ -194,7 +175,7 @@ public:
       {
         result[i] = 0;
       }
-    for (index_varpower_monomial j = m; j.valid(); ++j)
+    for (index_res_varpower_monomial j = m; j.valid(); ++j)
       {
         varpower_word v = j.var();
         varpower_word e = j.exponent();
@@ -209,7 +190,7 @@ public:
     for (int j=0; j<nweights; j++, wt += nvars)
       {
         long val = 0;
-        for (index_varpower_monomial i = m; i.valid(); ++i)
+        for (index_res_varpower_monomial i = m; i.valid(); ++i)
           {
             varpower_word v = i.var();
             varpower_word e = i.exponent();
@@ -384,7 +365,7 @@ public:
 
   int degree_of_vp(const_varpower_monomial a) const
   {
-    return static_cast<int>(varpower_monomials::weight(a, mVarDegrees));
+    return static_cast<int>(res_varpower_monomials::weight(a, mVarDegrees));
   }
   
   void quotient_as_vp(const_packed_monomial a,
