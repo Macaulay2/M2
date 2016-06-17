@@ -1,4 +1,4 @@
-export {"oneSiteModificationA"}
+export {"oneSiteModificationA", "oneSiteModificationB", "oneSiteModificationC", "oneSiteModificationD", "twoSiteModificationE", "twoSiteModificationF", "twoLayerCascadeL", "crossLinkingModelCelldeath"}
 -- oneSiteModificationA
 
 oneSiteModificationA = method()
