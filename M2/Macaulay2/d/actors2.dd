@@ -687,8 +687,10 @@ imaginaryPart(e:Expr):Expr := (
 setupfun("imaginaryPart",imaginaryPart);
 
 Foo := { foo:void };					    -- make a new type of pointer that's innocuous and unusable
+numfinalizer := 0;
 finalizer(x:Foo,msg:string):void := (
-     stderr << "--finalization: " << msg << endl ;
+     numfinalizer = numfinalizer + 1;
+     stderr << "--finalization: (" << tostring(numfinalizer) << ")" << msg << endl ;
      );
 finalizerCount := 0;
 registerFinalizer(e:Expr):Expr := (
