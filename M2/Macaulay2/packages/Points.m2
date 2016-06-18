@@ -11,7 +11,7 @@ newPackage(
 	     },
     	Headline => "computing with sets of points",
 	PackageExports => {"LexIdeals"},
-    	DebuggingMode => true
+    	DebuggingMode => false
     	)
 
 export {
