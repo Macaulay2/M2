@@ -1,13 +1,15 @@
 beginDocumentation()
 doc ///
     Key
-    	"OnesiteModificationB"
+    	oneSiteModificationB
+	1:(oneSiteModificationB)
     Headline
-    	an example for Motifs
+    	an example for chemical reaction motif
     Description
-      Text
-        This is the motif that the two catalyzing enzymes are the same.
-      Example
-        CRN = oneSiteModificationA {"S_0", "E", "X", "S_1", "Y"}
-        OnesiteModificationB = {"S_0 + E <--> X","X --> S_1+E", "S_1+E <--> Y", "Y --> S_0+E"}
+        Text
+            This is the motif that the two catalyzing enzymes are the same.
+        Example
+            oneSiteModificationB()
+        Text
+            To rename species, use @TO (substitute, ReactionNetwork, List) @.		
     ///

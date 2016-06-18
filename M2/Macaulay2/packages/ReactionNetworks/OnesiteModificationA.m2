@@ -1,14 +1,16 @@
 beginDocumentation()
 doc ///
     Key
-    	"OnesiteModificationA"
+    	oneSiteModificationA
+	1:(oneSiteModificationA)
     Headline
-    	an example for Motifs
+    	an example for chemical reaction motif
     Description
       Text
         This motif is recently used as the building block of linear cascades.	
       Example
-        CRN = oneSiteModificationA {"S_0", "E", "X", "S_1", "F", "Y"}
-	OnesiteModificationA = reactionNetwork {"S_0 + E <-->X","X -->S_1+E","S_1+F<-->Y","Y-->S_0+F"}
+        oneSiteModificationA()
+      Text
+        To rename species, use @TO (substitute, ReactionNetwork, List) @.	
     ///
     

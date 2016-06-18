@@ -1,13 +1,15 @@
 beginDocumentation()
 doc ///
     Key
-    	"OnesiteModificationC"
+        oneSiteModificationC
+	1:(oneSiteModificationC)
     Headline
-    	an example for Motifs
+    	an example for chemical reaction motif
     Description
       Text
         This is a one-site modification cycle with two competing kinases.
       Example
-        CRN = oneSiteModificationA {"S_0", "E_k", "X_k", "S_1", "F", "Y"}
-        OnesiteModificationC = {"S_0 + E_k <--> X_k", "X_k --> S_1+E_k", "S_1+F <--> Y", "Y --> S_0+F"}
+        oneSiteModificationC()
+      Text
+        To rename species, use @TO (substitute, ReactionNetwork, List) @.		
     ///
