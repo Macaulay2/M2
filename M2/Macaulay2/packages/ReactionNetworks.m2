@@ -244,7 +244,7 @@ scan({
      "OnesiteModificationD.m2",
      "TwolayerCascadeL.m2",
      "TwositeModificationE.m2",
-     "TwositeModificationF.m2"
+     "TwositeModificationF.m2",
     "docCHill.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
