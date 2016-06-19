@@ -15,11 +15,12 @@ newPackage(
     	)
 
 export {
---    Affine code: first two don't work any more.
---     "affinePointsMat",
---     "affinePoints",
+--   Points in affine space
+     "affinePointsMat",
+     "affinePoints",
      "affinePointsByIntersection",
      "affineMakeRingMaps",
+---------     
 --    points in projective space
      "randomPointsMat",
      "AllRandom",
@@ -59,38 +60,34 @@ affinePointsByIntersection = method(TypicalValue => List)
 affinePointsByIntersection (Matrix,Ring) := (M,R) -> (
      flatten entries gens gb intersect apply (
        entries transpose M, p -> ideal apply(#p, i -> R_i - p#i)))
-{*
+
 reduceColumn = (M,Mchange,H,c) -> (
      -- M is a mutable matrix
      -- Mchange is either null, or a matrix with same number of columns as M
      -- H is a hash table: H#r == c if column c has pivot for row r 
      -- returns true if the element reduces to 0
-     M = raw M;
-     if Mchange =!= null then Mchange = raw Mchange;
-     r := rawNumberOfRows M - 1;
+     r := numRows M - 1;
      while r >= 0 do (
 	  a := M_(r,c);
 	  if a != 0 then (
 	       -- is there a pivot?
 	       if not H#?r then (
-		    b := 1//a;
-		    rawMatrixColumnScale(M, b, c, false);
-		    if Mchange =!= null then rawMatrixColumnScale(Mchange, b, c, false);		    
+		    b := 1/a; -- was 1//a
+		    columnMult(M, c, b);
+		    if Mchange =!= null then columnMult(Mchange, c, b);
 		    H#r = c;
 		    return false;
 		    )
 	       else (
 	       	    pivotc := H#r;
-	       	    rawMatrixColumnChange(M, c, -a, pivotc, false);
-		    if Mchange =!= null then rawMatrixColumnChange(Mchange, c, -a, pivotc, false);
+	       	    columnAdd(M, c, -a, pivotc);
+		    if Mchange =!= null then columnAdd(Mchange, c, -a, pivotc);
 	       ));
      	  r = r-1;
 	  );
      true
      )
-*}
 
-{*
 affinePointsMat = method()
 affinePointsMat(Matrix,Ring) := (M,R) -> (
      -- The columns of M form the points.  M should be a matrix of size
@@ -149,8 +146,7 @@ affinePointsMat(Matrix,Ring) := (M,R) -> (
      A := transpose matrix{apply(Fs, f -> f stds)};
      (A, stds)
      )
- *}
-{*
+
 affinePoints = method()
 affinePoints (Matrix,Ring) := (M,R) -> (
      -- The columns of M form the points.  M should be a matrix of size
@@ -188,7 +184,7 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 	  L = L - monom;
 	  -- Now fix up the matrices P, PC
           addNewMonomial(P,thiscol,monom,Fs);
-	  rawMatrixColumnScale(raw PC, raw(0_K), thiscol, false);
+	  columnMult(PC, thiscol, 0_K);
 	  PC_(thiscol,thiscol) = 1_K;
           isLT := reduceColumn(P,PC,H,thiscol);
 	  if isLT then (
@@ -213,8 +209,6 @@ affinePoints (Matrix,Ring) := (M,R) -> (
 --     print("number of monomials considered = "|nL);
      (Q,inG,G)
      )
-*}
-
 
 -----------------Homogeneous codes
 
@@ -355,6 +349,36 @@ eg := (r,n) -> (
 
 
 beginDocumentation()
+doc ///
+   Key
+    Points
+   Headline
+    A package for making and studying points in affine and projective spaces
+   Description
+    Text
+     The package has routines for points in affine and projective spaces. The affine
+     code, some of which uses the Buchberger-Moeller algorithn to more quickly
+     compute the ideals of points in affine space,
+     was written by Stillman, Smith and Stromme. The projective code was
+     written separately by Eisenbud and Popescu.
+     
+     The purpose of the projective code was to find as many counterexamples
+     as possible to the minimal resolution conjecture; it was of use in the 
+     research for the paper 
+     "Exterior algebra methods for the minimal resolution conjecture",
+     by  David Eisenbud, Sorin Popescu, Frank-Olaf Schreyer and Charles Walter
+     (Duke Mathematical Journal. 112 (2002), no.2, 379-395.)
+     The first few of these counterexamples are:
+     (6,11),
+     (7,12),
+     (8,13),
+     (10,16),
+     where the first integer denotes the ambient dimension and the second the 
+     number of points. Examples are known in every projective space of dimension >=6
+     except for P^9.
+///
+
+--documentation for the code for points in projective space
 doc ///
    Key
     randomPoints
@@ -498,40 +522,7 @@ doc ///
      randomPointsMat(R,7)
 ///
 
-doc ///
-   Key
-    Points
-   Headline
-    A package for making and studying points in affine and projective spaces
-   Description
-    Text
-     The package has routines for points in affine and projective spaces. The affine
-     code was written by Stillman, Smith and Stromme. The projective code was
-     written by Eisenbud and Popescu.
-     
-     The affine code depended on functions that don't seem to be present any longer...
-     
-     The purpose of the projective code was to find as many counterexamples
-     as possible to the minimal resolution conjecture; it was of use in the 
-     research for the paper 
-     "Exterior algebra methods for the minimal resolution conjecture",
-     by  David Eisenbud, Sorin Popescu, Frank-Olaf Schreyer and Charles Walter
-     (Duke Mathematical Journal. 112 (2002), no.2, 379-395.)
-     The first few of these counterexamples are:
-     (6,11),
-     (7,12),
-     (8,13),
-     (10,16),
-     where the first integer denotes the ambient dimension and the second the 
-     number of points. Examples are known in every projective space of dimension >=6
-     except for P^9.
-///
 
-{*
-document {points,
-     TT "points(pointsmat)", " -- returns the ideal of the set of points
-     whose coordinates are the columns of pointsmat."}
-*}
 doc ///
    Key
     points
@@ -554,7 +545,21 @@ doc ///
     randomPointsMat
 ///
 
+doc ///
+   Key
+    AllRandom
+   Headline
+    Option to randomPointsMat.
+   Description
+    Text
+     Default is false, in which case the first (up to) r+1 points
+     returned are the standard simplex; if true, all the points are random.
+   SeeAlso
+    randomPointsMat
+///
 
+
+---documentation for the affine code:
 document {
      Key => {affineMakeRingMaps, (affineMakeRingMaps,Matrix,Ring)},
      Headline => "evaluation on points",
@@ -577,25 +582,13 @@ document {
      ///
      }
 
-doc ///
-   Key
-    AllRandom
-   Headline
-    Option to randomPointsMat.
-   Description
-    Text
-     Default is false, in which case the first (up to) r+1 points
-     returned are the standard simplex; if true, all the points are random.
-   SeeAlso
-    randomPointsMat
-///
 
-{*
+---the affine code documentation
 document {
      Key => {affinePoints, (affinePoints,Matrix,Ring)},
      Headline => "produces the ideal and initial ideal from the coordinates
-     of a finite set of affinePoints",
-     Usage => "(Q,inG,G) = affinePoints(M,R)",
+     of a finite set of points",
+     Usage => "(Q,inG,G) = points(M,R)",
      Inputs => {
      	  "M" => Matrix => "in which each column consists of the coordinates of a point",
 	  "R" => PolynomialRing => "coordinate ring of the affine space containing the points",
@@ -616,7 +609,7 @@ document {
      ///,
      PARA{},
      "Next a larger example that shows that the Buchberger-Moeller algorithm in ",
-     TT "affinePoints", " may be faster than the alternative method using the intersection
+     TT "points", " may be faster than the alternative method using the intersection
      of the ideals for each point.",
      EXAMPLE lines ///
      R = ZZ/32003[vars(0..4), MonomialOrder=>Lex]
@@ -627,9 +620,7 @@ document {
      ///,
      SeeAlso => {affinePointsByIntersection}
      }
-*}
 
-{*
 document {
      Key => {affinePointsMat, (affinePointsMat,Matrix,Ring)},
      Headline => "produces the matrix of values of the standard monomials
@@ -658,7 +649,6 @@ document {
      Caveat => "Program does not check that the points are distinct.",
      SeeAlso => {affinePoints},
      }
-*}
 
 document {
      Key => {affinePointsByIntersection, (affinePointsByIntersection,Matrix,Ring)},
@@ -679,9 +669,16 @@ document {
      R = QQ[x,y,z]
      affinePointsByIntersection(M,R)
      ///,
---     SeeAlso => {affinePoints},
+     SeeAlso => {affinePoints},
      }
 
+TEST///
+     M = random(ZZ^3, ZZ^3)
+     M = id_(ZZ^3)
+     R = QQ[x,y,z]
+     (Q,inG,G) = affinePoints(M,R)
+     assert( G == {x+y+z-1, z^2-z, y*z, y^2-y})
+///
 TEST///
 setRandomSeed 0
 m = randomPoints(3,5) 
@@ -730,8 +727,18 @@ assert ( {4, -10, -4, 6, 0} == apply (gens(R),r->phi#2 r) )
 J = affinePointsByIntersection(M,R);
 ///
 
---test of affinePoints
-{*
+TEST ///
+R = ZZ/32003[vars(0..4), MonomialOrder=>Lex]
+M = matrix(ZZ/32003,  {{0, -9, 4, -2, -4, -9, -10, 6, -8, 0}, 
+            {1, 0, -10, 9, 3, -4, 1, 1, -10, -3}, 
+	    {5, 7, -4, -5, -7, 7, 4, 6, -3, 2}, 
+	    {2, 8, 6, -6, 4, 3, 8, -10, 7, 8}, 
+	    {-9, -9, 0, 4, -3, 9, 4, 4, -4, -4}})
+phi = affineMakeRingMaps(M,R)
+apply (gens(R),r->phi#2 r)
+assert ( {4, -10, -4, 6, 0} == apply (gens(R),r->phi#2 r) )
+
+J = affinePointsByIntersection(M,R);
 C = affinePoints(M,R);
 assert ( J == C_2 )
 assert ( C_1 == ideal(e^6,d*e^3,d^2*e,d^3,c,b,a) )
@@ -746,13 +753,31 @@ assert (
       -4, 16, -64, 256, -1024, 8, -32, 128, 64}})
 )
 assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
-*}
+///
 
+{*
+--test of affinePoints
+TEST///
+C = affinePoints(M,R);
+assert ( J == C_2 )
+assert ( C_1 == ideal(e^6,d*e^3,d^2*e,d^3,c,b,a) )
+assert ( C_0 == sort apply (standardPairs monomialIdeal C_2, p -> p#0) )
+assert (
+     (affinePointsMat(M,R))#0 == 
+      matrix(ZZ/32003, {{1, -9, 81, -729, 6561, 4957, 2, -18, 162, 4}, {1, -9, 81, -729, 6561,
+      4957, 8, -72, 648, 64}, {1, 0, 0, 0, 0, 0, 6, 0, 0, 36}, {1, 4, 16, 64, 256, 1024,
+      -6, -24, -96, 36}, {1, -3, 9, -27, 81, -243, 4, -12, 36, 16}, {1, 9, 81, 729, 6561,
+      -4957, 3, 27, 243, 9}, {1, 4, 16, 64, 256, 1024, 8, 32, 128, 64}, {1, 4, 16, 64,
+      256, 1024, -10, -40, -160, 100}, {1, -4, 16, -64, 256, -1024, 7, -28, 112, 49}, {1,
+      -4, 16, -64, 256, -1024, 8, -32, 128, 64}})
+)
+assert ( first entries transpose (affinePointsMat(M,R))#1 == C_0 )
+///
+*}
 
 end--
 uninstallPackage "Points"
 restart
-loadPackage("Points", Reload=>true)
 installPackage "Points"
 viewHelp Points
 
