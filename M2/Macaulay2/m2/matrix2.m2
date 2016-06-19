@@ -167,7 +167,8 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
-	  N := if M.?generators then (
+     	  if not M.?generators then M = subquotient(ambient M,id_(ambient M),if M.?relations then M.relations);
+	  N := (
 	       if M.?relations then (
 		    if opts.Strategy === Complement then (
 			 gns := mingens(M,opts);
@@ -209,19 +210,8 @@ trim Module := Module => opts -> (cacheValue symbol trim) ((M) -> (
 		    else if opts.Strategy === null then (
 	  	    	 tot = mingb M.generators;
 		    	 subquotient(F, if not epi raw tot then mingens tot, ))
-		    else error "trim: unrecognized Strategy option"))
-	  else (
-	       if M.?relations then (
-		    if opts.Strategy === Complement then (
-			 rel = mingens(image M.relations,opts);
-			 if rel === M.relations then M 
-			 else if rel == 0 then F
-			 else cokernel rel)
-		    else if opts.Strategy === null then (
-		    	 subquotient(F, , zr mingens mingb M.relations ))
-		    else error "trim: unrecognized Strategy option")
-	       else F
-	       );
+		    else error "trim: unrecognized Strategy option"));
+	  if N.?generators and epi raw mingb N.generators then N = subquotient(ambient N,,if N.?relations then N.relations);
 	  if ring M === ZZ then (
 	       LLLBases := needsPackage "LLLBases";
 	       LLL := value LLLBases.Dictionary#"LLL";

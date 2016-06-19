@@ -13,7 +13,7 @@ newPackage ( "ResidualIntersections",
 	{Name => "Jay Yang",
 	    Email => "jkelleyy@gmail.com"}
 	},
-    PackageExports => {"RandomIdeal", "Depth"},
+    PackageExports => {"RandomIdeals", "Depth"},
     Headline => "Package for studying conditions associated to Residual Intersection theory",
     DebuggingMode => false
     )
@@ -82,7 +82,7 @@ genericResidual(ZZ,Ideal):= (s,I) ->(
 
 ///
 restart
-loadPackage("RandomIdeal", Reload => true)
+loadPackage("RandomIdeals", Reload => true)
 loadPackage("ResidualIntersections", Reload =>true)
 
      setRandomSeed 0
@@ -162,7 +162,7 @@ isLicci(linkageBound(I, UseNormalModule => opts.UseNormalModule), I, Verbose => 
 ///
 restart
 loadPackage("ResidualIntersections", Reload=>true)
-installPackage("RandomIdeal")
+installPackage("RandomIdeals")
 --viewHelp RandomIdeal
      setRandomSeed 0     
      S = ZZ/32003[x_0..x_6]
@@ -473,8 +473,7 @@ doc ///
      but other ideals of minors are generally not, as illustrated below.
     Example
      setRandomSeed 0     
-     needsPackage "RandomIdeal"
-     needsPackage "ResidualIntersections"
+     needsPackage "RandomIdeals"
      S = ZZ/32003[x_0..x_6]
      L = idealChainFromShelling(S,randomShelling(7,3,8))
      apply(L, I-> {linkageBound I, linkageBound(I, UseNormalModule =>true)})

@@ -1,9 +1,9 @@
 -- -*- M2-comint -*- {* hash: 1134596342 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : writeStartFile(storeBM2Files,{{2,3},{4,5}})
 
-o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22813-0/0/start
+o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74774-0/0/start
 
 o1 : File
 

@@ -51,6 +51,6 @@ runBertini(storeBM2Files)
 printingPrecision =256 
 rawSolutions=importSolutionsFile(storeBM2Files,
     NameSolutionsFile=>"raw_solutions",
-    UsePrecision=>256)
+    M2Precision=>256)
 assert((#(toString rawSolutions_0_0)>50)===true)
 assert((#toExternalString rawSolutions_0>100)===true)
