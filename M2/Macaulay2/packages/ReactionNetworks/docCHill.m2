@@ -163,14 +163,14 @@ doc ///
     	substitute species names in reaction network
     Description
     	Text
-             "The user may choose to change the symbols for one or more of
-	     the species participating in the reaction. This can be done in 
-	     the following manner. To rename one of the species:"
+            The user may choose to change the symbols for one or more of
+	    the species participating in the reaction. This can be done in 
+	    the following manner. To rename one of the species:
 	Example	
-	     N = twoSiteModificationG()
-	     sub(N, {"S_0" => "A"})
+	    N = twoSiteModificationG()
+	    sub(N, {"S_0" => "A"})
 	Text     
-	     "Similarly, more species labels may be replaced."
+	    Similarly, more species labels may be replaced.
 	Example	
 	     sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})
  ///
