@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- {* hash: -1355618772 *}
---loading configuration for package "Bertini" from file /Users/dan/Library/Application Support/Macaulay2/init-Bertini.m2
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=QQ[x0,x1,y0,y1,z]
 
@@ -12,8 +12,9 @@ i2 : makeB'InputFile(storeBM2Files,
          HomVariableGroup=>{{x0,x1},{y0,y1}},
          AffVariableGroup=>{{z}},
          B'Polynomials=>{z*x1^2+x0^2,y0*z+y1,y0-2*z^2*y1})
+Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
 
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-22766-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-42307-0/0/input
 
 o2 : File
 

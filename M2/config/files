@@ -24,7 +24,6 @@ distributions/freebsd/Makefile
 distributions/freebsd/post-install
 distributions/freebsd/post-deinstall
 distributions/deb/Makefile
-distributions/deb/macaulay2-common/control.prelim
 distributions/deb/macaulay2-common/postrm
 distributions/deb/macaulay2-common/postinst
 distributions/deb/macaulay2-common/prerm

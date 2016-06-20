@@ -582,7 +582,7 @@ installPackage = method(Options => {
 	  EncapsulateDirectory => pkg -> pkg#"title"|"-"|pkg.Options.Version|"/",
 	  IgnoreExampleErrors => false,
 	  FileName => null,
-	  CacheExampleOutput => false,			    -- overrides the value specified by newPackage
+	  CacheExampleOutput => null,			    -- overrides the value specified by newPackage if true or false
 	  CheckDocumentation => true,
 	  MakeDocumentation => true,
 	  MakeInfo => true,
@@ -673,7 +673,13 @@ installPackage Package := opts -> pkg -> (
      if not fileExists fn then error("file ", fn, " not found");
      copyFile(fn, buildPrefix|pkgDirectory|bn, Verbose => debugLevel > 5);
 
-     excludes := Exclude => {"^CVS$", "^\\.svn$"};
+     excludes := Exclude => {
+	  "^CVS$", 
+	  "^\\.svn$", 
+	  -- The package Style has a read-only file "Makefile", made from "Makefile.in", that doesn't need to be distributed.
+	  -- Better would be to fix copyDirectory so it manages to copy even when the target file is read-only
+	  "Makefile"
+	  };
 
      if pkg === Core then (
 	  ) else (
@@ -791,8 +797,8 @@ installPackage Package := opts -> pkg -> (
 		    changefun := () -> remove(rawDocUnchanged,fkey);
 		    inputhash := hash inputs;
 	  	    possiblyCache := () -> (
-			 if opts.CacheExampleOutput or (options pkg).CacheExampleOutput === true 
-			 and not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' 
+			 if opts.CacheExampleOutput =!= false and (options pkg).CacheExampleOutput === true 
+			 and ( not fileExists outf' or fileExists outf' and fileTime outf > fileTime outf' )
 			 then (
 			      if verbose then stderr << "--caching example output for " << fkey << " in " << outf' << endl;
 			      if not isDirectory exampleDir' then makeDirectory exampleDir';

@@ -1,0 +1,18 @@
+-- -*- M2-comint -*- {* hash: 1566708855 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
+
+i1 : R = CC[x,y,z];
+
+i2 : f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
+
+i3 : bertiniPosDimSolve(f,IsProjective=>1);
+Temporary directory for input and output files:/var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74590-0/1
+
+The version of Bertini 
+	    you have installed on your computer 
+	    was used for this run. 
+Bertini is under ongoing development by 
+	    D. Bates, J. Hauenstein, A. Sommese, and C. Wampler.
+
+
+i4 : 
