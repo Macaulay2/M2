@@ -59,7 +59,7 @@ void F4Res::clearMatrix()
 //    m: monomial at level mThisLevel-1
 //    result: monomial at level mThisLevel, IF true is returned
 //  returns true if 'm' == inG(result), for some (unique) 'result'.
-bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
+bool F4Res::findDivisor(res_packed_monomial m, res_packed_monomial result)
 {
   // get component of m
   // find the range of monomials to check
@@ -71,7 +71,7 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
   for (auto j=elem.mBegin; j<elem.mEnd; ++j)
     {
       // Check divisibility of m by this element
-      packed_monomial pj = lev[j].mMonom;
+      res_packed_monomial pj = lev[j].mMonom;
       if (monoid().divide(m, pj, result)) // this sets the component to be 0
         {
           monoid().set_component(j, result); // this sets component correctly
@@ -101,7 +101,7 @@ bool F4Res::findDivisor(packed_monomial m, packed_monomial result)
 //     of the coeff matrices.  It uses mThisLevel.
 //
 // If the ring has skew commuting variables, then result_sign_if_skew is set to 0, 1, or -1.
-ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial n, int& result_sign_if_skew)
+ComponentIndex F4Res::processMonomialProduct(res_packed_monomial m, res_packed_monomial n, int& result_sign_if_skew)
 {
   result_sign_if_skew = 1;
   auto x = monoid().get_component(n);
@@ -136,7 +136,7 @@ ComponentIndex F4Res::processMonomialProduct(packed_monomial m, packed_monomial 
 //    (2A) 
 ComponentIndex F4Res::processCurrentMonomial()
 {
-  packed_monomial new_m; // a pointer to a monomial we are visiting
+  res_packed_monomial new_m; // a pointer to a monomial we are visiting
   if (mHashTable.find_or_insert(mNextMonom, new_m))
     return static_cast<ComponentIndex>(new_m[-1]); // monom exists, don't save monomial space
   
@@ -229,7 +229,7 @@ public:
 private:
   const ResMonoid &M;
   const F4Res& mComputation;
-  const std::vector<packed_monomial>& cols;
+  const std::vector<res_packed_monomial>& cols;
   int lev;
   const ResSchreyerOrder& myorder;
   //  const std::vector<SchreyerFrame::FrameElement>& myframe;
@@ -375,7 +375,7 @@ void F4Res::reorderColumns()
   std::cout <<  std::endl;
 #endif
   // Now move the columns into position
-  std::vector<packed_monomial> sortedColumnArray;
+  std::vector<res_packed_monomial> sortedColumnArray;
   std::vector<Row> sortedRowArray;
 
   sortedColumnArray.reserve(ncols);

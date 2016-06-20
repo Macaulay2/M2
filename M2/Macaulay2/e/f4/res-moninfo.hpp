@@ -65,7 +65,7 @@ public:
 
   void show() const;
 
-  long hash_value(res_const_packed_monomial m) const { return *m; }
+  res_monomial_word hash_value(res_const_packed_monomial m) const { return *m; }
   // This hash value is an ADDITIVE hash (trick due to A. Steel)
 
   void copy(res_const_packed_monomial src, res_packed_monomial target) const {
@@ -81,7 +81,7 @@ public:
 
   long get_component(res_const_packed_monomial m) const { ncalls_get_component++; return m[1]; }
 
-  bool from_exponent_vector(res_const_ntuple_monomial e, long comp, res_packed_monomial result) const {
+  bool from_exponent_vector(res_const_ntuple_monomial e, component_index comp, res_packed_monomial result) const {
     // Pack the vector e[0]..e[nvars-1],comp.  Create the hash value at the same time.
     ncalls_from_exponent_vector++;
     result[0] = 0;
@@ -97,7 +97,7 @@ public:
     const int *wt = weight_vectors.data();
     for (int j=0; j<nweights; j++, wt += nvars)
       {
-        long val = 0;
+        res_monomial_word val = 0;
         for (int i=0; i<nvars; i++)
           {
             long a = e[i];
@@ -117,7 +117,7 @@ public:
     return skew->mult_sign(m + 2 + nweights, n + 2 + nweights);
   }
   
-  bool one(long comp, res_packed_monomial result) const {
+  bool one(component_index comp, res_packed_monomial result) const {
     // Pack the vector (0,...,0,comp) with nvars zeroes.
     // Hash value = 0. ??? Should the hash-function take component into account ???
     result[0] = 0;
@@ -127,7 +127,7 @@ public:
     return true;
   }
 
-  bool to_exponent_vector(res_const_packed_monomial m, res_ntuple_monomial result, long &result_comp) const {
+  bool to_exponent_vector(res_const_packed_monomial m, res_ntuple_monomial result, component_index &result_comp) const {
     // Unpack the monomial m.
     ncalls_to_exponent_vector++;
     result_comp = m[1];
@@ -380,7 +380,7 @@ public:
     res_varpower_word *r = result+1;
     for (int i=nvars-1; i>=0; --i)
       {
-        long c = a[i] - b[i];
+        res_varpower_word c = a[i] - b[i];
         if (c > 0)
           {
             *r++ = i;

@@ -18,7 +18,7 @@ MonomialCounter::MonomialCounter(const ResMonoid& M)
   // start out mNextMonom
   mNextMonom = mMonomSpace.reserve(monoid().max_monomial_size());
 }
-void MonomialCounter::accountForMonomial(const packed_monomial mon)
+void MonomialCounter::accountForMonomial(res_const_packed_monomial mon)
 {
   // First copy monomial
   // Then call find_or_insert
@@ -26,7 +26,7 @@ void MonomialCounter::accountForMonomial(const packed_monomial mon)
   // If there: intern monomial
 
   monoid().copy(mon, mNextMonom);
-  packed_monomial not_used;
+  res_packed_monomial not_used;
   if (mAllMonomials.find_or_insert(mNextMonom, not_used))
     {
       // true, means that it was already there
@@ -409,7 +409,7 @@ void SchreyerFrame::endLevel()
     }
 }
 
-SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(packed_monomial m1, packed_monomial m)
+SchreyerFrame::PreElement* SchreyerFrame::createQuotientElement(res_packed_monomial m1, res_packed_monomial m)
 {
   PreElement* vp = mPreElements.allocate();
   vp->vp = mVarpowers.reserve(mMaxVPSize);
@@ -423,7 +423,7 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
 {
   ///  std::cout << "computeIdealQuotient(" << lev << "," << begin << "," << elem << ")" << std::endl;
   // Returns the number of elements added
-  packed_monomial m = monomial(lev, elem); 
+  res_packed_monomial m = monomial(lev, elem); 
   std::vector<PreElement*> elements;
   if (ring().isSkewCommutative())
     {
@@ -465,9 +465,9 @@ long SchreyerFrame::computeIdealQuotient(int lev, long begin, long elem)
       int32_t not_used;
       bool inideal = montab.find_one_divisor_vp(0, (*i)->vp, not_used);
       if (inideal) continue;
-      // Now we create a packed_monomial, and insert it into 'lev+1'
+      // Now we create a res_packed_monomial, and insert it into 'lev+1'
       montab.insert_minimal_vp(0, (*i)->vp, 0);
-      packed_monomial monom = monomialBlock().allocate(monoid().max_monomial_size());
+      res_packed_monomial monom = monomialBlock().allocate(monoid().max_monomial_size());
       monoid().from_varpower_monomial((*i)->vp, elem, monom);
       // Now insert it into the frame
       insertBasic(currentLevel(), monom, (*i)->degree + degree(currentLevel()-1, monoid().get_component(monom)));
@@ -535,7 +535,7 @@ void SchreyerFrame::setSchreyerOrder(int lev)
   delete [] tiebreakers;
 }
 
-void SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
+void SchreyerFrame::insertBasic(int lev, res_packed_monomial monom, int degree)
 {
   // if lev >= 2, then level(lev-1)[comp].(mBegin,mEnd) is set separately.
   auto& myframe = level(lev);
@@ -562,7 +562,7 @@ void SchreyerFrame::insertBasic(int lev, packed_monomial monom, int degree)
   myorder.mTotalMonom.push_back(myTotalMonom);
 }
 
-void SchreyerFrame::insertLevelZero(packed_monomial monom, int degree, int maxdeglevel0)
+void SchreyerFrame::insertLevelZero(res_packed_monomial monom, int degree, int maxdeglevel0)
 {
   //  return insertBasic(0, monom, degree);
 
@@ -584,7 +584,7 @@ void SchreyerFrame::insertLevelZero(packed_monomial monom, int degree, int maxde
   monoid().copy(myelem.mMonom, myTotalMonom);
   myorder.mTotalMonom.push_back(myTotalMonom);
 }
-bool SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
+bool SchreyerFrame::insertLevelOne(res_packed_monomial monom, int deg, poly& syzygy)
 {
   insertBasic(1, monom, deg); // deg is the actual degree of this element.
   long comp = monoid().get_component(monom);
@@ -606,7 +606,7 @@ bool SchreyerFrame::insertLevelOne(packed_monomial monom, int deg, poly& syzygy)
   std::swap(level(1)[level(1).size()-1].mSyzygy, syzygy);
   return true;
 }
-//long SchreyerFrame::insert(packed_monomial monom)
+//long SchreyerFrame::insert(res_packed_monomial monom)
 //{
 //  return insertBasic(currentLevel(), monom, degree(currentLevel(), monom));
 //}

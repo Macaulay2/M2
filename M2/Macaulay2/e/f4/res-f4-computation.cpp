@@ -117,7 +117,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
   SchreyerFrame& frame = result->frame();
   for (int i=0; i<F->rank(); i++)
     {
-      packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+      res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
       MI->one(i, elem);
       frame.insertLevelZero(elem, F->primary_degree(i), maxdeg);
     }
@@ -146,7 +146,7 @@ ResolutionComputation* createF4Res(const Matrix* groebnerBasisMatrix,
           if (f.len == 0) continue;
           if (MI->get_component(f.monoms.get()) != j)
             continue;
-          packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
+          res_packed_monomial elem = frame.monomialBlock().allocate(MI->max_monomial_size());
           MI->copy(f.monoms.get(), elem);
           // the following line grabs f.
           if (!frame.insertLevelOne(elem, groebnerBasisMatrix->cols()->primary_degree(loc), f))

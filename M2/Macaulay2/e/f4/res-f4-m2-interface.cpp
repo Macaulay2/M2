@@ -34,14 +34,14 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   int n = GR->gbvector_n_terms(f);
 
   int *exp = new int[M->n_vars()+1];
-  ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
+  res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
   //  result.len = n;
   int* relem_array = new int[n]; // doesn't need to be allocated with gc, as
           // all these pointers (or values) are still in the element f.
-  auto monoms = std::unique_ptr<monomial_word[]>(new monomial_word[n * R.monoid().max_monomial_size()]);
+  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n * R.monoid().max_monomial_size()]);
   n = 0;
-  monomial_word *nextmonom = monoms.get();
+  res_monomial_word *nextmonom = monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
       relem_array[n] = static_cast<int>(K->coerceToLongInteger(t->coeff).second);
@@ -79,12 +79,12 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
     }
 
   int *exp = new int[M->n_vars()+1];
-  ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
+  res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
   int* relem_array = new int[f.len];
   R.resGausser().to_ints(f.len, f.coeffs.get(), relem_array);
 
-  const monomial_word *w = f.monoms.get();
+  const res_monomial_word *w = f.monoms.get();
   for (int i=0; i<f.len; i++)
     {
       long comp;
@@ -137,7 +137,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   const Monoid* M = R->getMonoid();
   auto& thislevel = C.level(lev);
   const ResSchreyerOrder& S = C.schreyerOrder(lev);
-  long* longexp = new long[M->n_vars()];
+  res_ntuple_word* longexp = new res_ntuple_word[M->n_vars()];
   int* exp = new int[M->n_vars()];
   for (auto i = 0; i < thislevel.size(); ++i)
     {
