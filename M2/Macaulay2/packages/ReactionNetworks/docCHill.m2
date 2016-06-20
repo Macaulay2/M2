@@ -155,6 +155,39 @@ doc ///
 	    In this example n=m=3.
 	    To rename species, use @TO (substitute, ReactionNetwork, List) @.
     ///  
+    
+    
+ doc ///
+    Key
+    	wnt
+	1:(wnt)
+    Headline
+    	shuttle model for Wnt signaling pathway
+    Description
+    	Text
+	    The cannonical Wnt/beta-catenin signaling pathway is important for essential
+	    cellular functions such as development, homeostasis, and is implicated in many
+	    diseases [MacLean, Rosen, Byrne, & Harrington]. The Wnt shuttle model includes
+	    an abstraction of the signal transduction pathway 
+	    [Gross, Harrington, Rosen, & Sturmfels]. 
+	Example
+	    wnt()
+	Text
+	    In the Wnt shuttle model, the symbols used in the 
+	    chemical reactions have the following meaning:
+	    
+	    X_1 - X_3: dishevelled species;
+	    X_4 - X_7: destruction complex (APC/Axin/GSK3 beta);
+	    X_8 - X_9: phosphatase;
+	    Y_0 - Y_1: beta-catenin;
+	    Y_2: transcription factor;
+	    Y_3 - Y_9: intermediate complex.
+	    
+	    For more details see Algebraic Systems Biology: A Case Study for the Wnt Pathway:
+	    Gross, Harrington, Rosen, & Sturmfels.
+				
+	    To rename species, use @TO (substitute, ReactionNetwork, List) @.
+    ///    
     				   		    
  doc ///
     Key
