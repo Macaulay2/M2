@@ -16,7 +16,7 @@ html TEX := str -> (
      -- we could try replacing \$ by \dollar and then bring it back later...
      -- but watch out for \\$ and \\\\$ ...
      -- but replace \\\$ and \\\\\$ ...
-     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1<div style="text-align:center"><i>\2</i></div>\3///);
+     f(///(^|[^\$])\$\$([^$]*[^\$])?\$\$([^$]|$)///,///\1</p><div style="text-align:center"><i>\2</i></div><p>\3///); -- <div> can't be inside <p>
      f(///(^|[^\$])\$([^$]*[^\$])\$([^$]|$)///,///\1<i>\2</i>\3///);
      if match(///(^|[^\])\$///,str) then error("unmatched dollar signs in TeX string ",abbrev());
      f(///\\\{///,///\lbrace ///);
@@ -55,8 +55,8 @@ html TEX := str -> (
 	  oldstr != str
 	  ) do null;
      f(///\\begin\{pmatrix\}(.*)\\end\{pmatrix\}///, ///
-<table class="matrix" border=1><tr><td><table><tr><td>\1</td></tr></table></td></tr></table>
-///);
+</i><table class="matrix" border="1"><tr><td><table><tr><td>\1</td></tr></table></td></tr></table><i>
+///);							 -- <table> can't be inside <i>; we currently aren't putting <i> inside each entry
      while (
 	  oldstr = str;
 	  f(///\{ *\\bf +([^{}]*)\}///,///{<b>\1</b>}///);
