@@ -267,7 +267,6 @@ linux-opt64 : always
 	mkdir -p builds.tmp/opt64
 	cd builds.tmp/opt64; ../../../../configure \
 		--prefix="`pwd`/installed" \
-		--disable-ntl-wizard \
 		--disable-strip \
 		--enable-download \
 		--enable-build-libraries="gc mpir flint"
@@ -282,10 +281,11 @@ linux-debug64 : always
 		CPPFLAGS="-DENGINE_DEBUG_" \
 		CXXFLAGS=" -U__GNUC_STDC_INLINE__" \
 		--enable-debug \
-		--disable-ntl-wizard \
 		--disable-optimize \
 		--enable-download \
-		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
+		--enable-build-libraries="gc mpir flint"
+
+#		--enable-build-libraries="gc gdbm mpir mpfr readline ntl factory  frobby pari"
 
 linux-profile64 : always
 	mkdir -p builds.tmp/profile64
