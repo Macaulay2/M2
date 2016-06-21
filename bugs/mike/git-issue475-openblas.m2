@@ -1,14 +1,29 @@
 restart
 debug Core
 kk = ZZp(32003, Strategy=>"Ffpack")
-raw kk
-
 kk1 = ZZp(32003, Strategy=>"Flint")
 kk2 = ZZp(32003, Strategy=>"Aring")
+raw kk
 raw kk1
 raw kk2
 
-M = mutableMatrix(kk, 500, 600)
+restart
+kk = ZZ/101
+M = mutableMatrix(ZZ, 2, 2)
+M_(1,1) = 4
+assert(M != 0)
+assert(matrix promote(M, kk) == promote(matrix M, kk)) -- false
+-- the following should not be 0!
+assert(promote(M,ZZ,kk) != 0)
+
+-- lift has the same problem
+M1 = mutableMatrix(kk, 2, 2)
+M1_(1,1) = 4
+assert(M1 != 0)
+assert(matrix lift(M1, ZZ) == lift(matrix M1, ZZ)) -- false
+-- the following should not be 0!
+assert(lift(M1,kk,ZZ) != 0)
+
 
 fillMatrix M
 elapsedTime rank M
