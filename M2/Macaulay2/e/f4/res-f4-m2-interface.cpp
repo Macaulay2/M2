@@ -6,6 +6,7 @@
 #include "../matrix.hpp"
 #include "../mat.hpp"
 #include "../newdelete.hpp"
+#include "res-f4-computation.hpp"
 #include "res-f4-m2-interface.hpp"
 #include "../gbring.hpp"
 #include "../aring-zzp-flint.hpp"
@@ -33,14 +34,14 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
   int n = GR->gbvector_n_terms(f);
 
   int *exp = new int[M->n_vars()+1];
-  ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
+  res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
-  result.len = n;
+  //  result.len = n;
   int* relem_array = new int[n]; // doesn't need to be allocated with gc, as
           // all these pointers (or values) are still in the element f.
-  result.monoms = new monomial_word[n * R.monoid().max_monomial_size()];
+  auto monoms = std::unique_ptr<res_monomial_word[]>(new res_monomial_word[n * R.monoid().max_monomial_size()]);
   n = 0;
-  monomial_word *nextmonom = result.monoms;
+  res_monomial_word *nextmonom = monoms.get();
   for (gbvector *t = f; t != 0; t=t->next)
     {
       relem_array[n] = static_cast<int>(K->coerceToLongInteger(t->coeff).second);
@@ -51,31 +52,13 @@ void ResF4toM2Interface::from_M2_vec(const ResPolyRing& R,
       nextmonom += R.monoid().monomial_size(nextmonom);
       n++;
     }
-  result.coeffs = R.resGausser().from_ints(n, relem_array);
+  auto coeffs = std::unique_ptr<FieldElement[]>(R.resGausser().from_ints(n, relem_array));
+  poly_constructor::setPolyFromArrays(result, n, coeffs, monoms);
+  GR->gbvector_remove(f);
+  delete [] exp;
+  delete [] lexp;
   delete [] relem_array;
 }
-
-#if 0
-void ResF4toM2Interface::poly_set_degrees(const ResPolyRing& R,
-                                          const M2_arrayint wts,
-                                          const poly &f,
-                                          int &deg_result,
-                                          int &alpha)
-{
-  const monomial_word *w = f.monoms;
-  monomial_word leaddeg = R.monoid().monomial_weight(w, wts);
-  monomial_word deg = leaddeg;
-
-  for (int i=1; i<f.len; i++)
-    {
-      w = w + R.monoid().monomial_size(w);
-      monomial_word degi = R.monoid().monomial_weight(w,wts);
-      if (degi > deg) deg = degi;
-    }
-  alpha = static_cast<int>(deg-leaddeg);
-  deg_result = static_cast<int>(deg);
-}
-#endif
 
 vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
                                const poly &f,
@@ -96,12 +79,12 @@ vec ResF4toM2Interface::to_M2_vec(const ResPolyRing& R,
     }
 
   int *exp = new int[M->n_vars()+1];
-  ntuple_word *lexp = new ntuple_word[M->n_vars()+1];
+  res_ntuple_word *lexp = new res_ntuple_word[M->n_vars()+1];
 
   int* relem_array = new int[f.len];
-  R.resGausser().to_ints(f.len, f.coeffs, relem_array);
+  R.resGausser().to_ints(f.len, f.coeffs.get(), relem_array);
 
-  const monomial_word *w = f.monoms;
+  const res_monomial_word *w = f.monoms.get();
   for (int i=0; i<f.len; i++)
     {
       long comp;
@@ -154,7 +137,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
   const Monoid* M = R->getMonoid();
   auto& thislevel = C.level(lev);
   const ResSchreyerOrder& S = C.schreyerOrder(lev);
-  long* longexp = new long[M->n_vars()];
+  res_ntuple_word* longexp = new res_ntuple_word[M->n_vars()];
   int* exp = new int[M->n_vars()];
   for (auto i = 0; i < thislevel.size(); ++i)
     {
@@ -170,7 +153,7 @@ FreeModule* ResF4toM2Interface::to_M2_freemodule(const PolynomialRing* R,
       for (int j=0; j<M->n_vars(); ++j)
         exp[j] = static_cast<int>(longexp[j]);
       M->from_expvector(exp, totalmonom);
-      result->append_schreyer(deg, totalmonom, S.mTieBreaker[i]);
+      result->append_schreyer(deg, totalmonom, static_cast<int>(S.mTieBreaker[i]));
     }
   delete [] longexp;
   delete [] exp;
@@ -249,6 +232,7 @@ MutableMatrix* ResF4toM2Interface::to_M2_MutableMatrix(
       ++col;
     }
 
+  delete [] newcomps;
   return result;
 }
 
@@ -309,7 +293,7 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
       ++col;
     }
   double frac_nonzero = (nrows*ncols);
-  frac_nonzero = nnonzeros / frac_nonzero;
+  frac_nonzero = static_cast<double>(nnonzeros) / frac_nonzero;
 
   delete[] newcomps;
 
@@ -319,7 +303,8 @@ double ResF4toM2Interface::setDegreeZeroMap(SchreyerFrame& C,
 int SchreyerFrame::rank(int slanted_degree, int lev)
 {
 #if 1
-  M2::ARingZZpFFPACK R(gausser().get_ring()->characteristic());
+  unsigned int charac = static_cast<unsigned int>(gausser().get_ring()->characteristic());
+  M2::ARingZZpFFPACK R(charac);
   DMat<M2::ARingZZpFFPACK> M(R, 0, 0);
   double frac = ResF4toM2Interface::setDegreeZeroMap(*this, M, slanted_degree, lev);
   auto a = DMatLinAlg<M2::ARingZZpFFPACK>(M);
@@ -371,6 +356,25 @@ int SchreyerFrame::rank(int slanted_degree, int lev)
 #endif  
   return rk;
 }
+
+M2_arrayint
+rawMinimalBetti(Computation *C,
+                M2_arrayint slanted_degree_limit,
+                M2_arrayint length_limit)
+{
+  try {
+    F4ResComputation *G = dynamic_cast<F4ResComputation*>(C);
+    if (G != 0)
+      return G->minimal_betti(slanted_degree_limit, length_limit); // Computes it if needed
+    ERROR("expected resolution computed via res(...,FastNonminimal=>true)");
+    return nullptr;
+  }
+  catch (exc::engine_error e) {
+    ERROR(e.what());
+    return nullptr;
+  }
+}
+
 // Local Variables:
 //  compile-command: "make -C $M2BUILDDIR/Macaulay2/e "
 //  End:

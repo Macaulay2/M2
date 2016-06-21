@@ -23,8 +23,8 @@
 #define _res_schreyer_frame_hpp_
 
 #include "res-moninfo.hpp"
-#include "memblock.hpp"
-#include "varpower-monomial.hpp"
+#include "res-memblock.hpp"
+#include "res-varpower-monomial.hpp"
 #include "res-poly-ring.hpp"
 #include "res-schreyer-order.hpp"
 #include "res-f4.hpp"
@@ -44,7 +44,7 @@ typedef int FieldElement;
 class MonomialCounter
 {
 public:
-  void accountForMonomial(const packed_monomial mon);
+  void accountForMonomial(res_const_packed_monomial mon);
   long count() const { return mNumAllMonomials; }
 
   MonomialCounter(const ResMonoid& M);
@@ -55,8 +55,8 @@ private:
   const ResMonomialsIgnoringComponent* mIgnoreMonomials; // 
   MonomialHashTable<ResMonomialsIgnoringComponent> mAllMonomials; // all monomials in the ring which appear in the mSyzygy's
   long mNumAllMonomials; // total number of monomials
-  MemoryBlock<monomial_word> mMonomSpace;
-  packed_monomial mNextMonom;
+  MemoryBlock<res_monomial_word> mMonomSpace;
+  res_packed_monomial mNextMonom;
   
   const ResMonoid& mMonoid;
 };
@@ -64,21 +64,21 @@ private:
 namespace SchreyerFrameTypes {
   struct FrameElement
   {
-    packed_monomial mMonom; // has component, degree too
-    //    packed_monomial mTotalMonom; // used for Schreyer order
+    res_packed_monomial mMonom; // has component, degree too
+    //    res_packed_monomial mTotalMonom; // used for Schreyer order
     //    long mTiebreaker; // used for Schreyer order
     int mDegree; // actual degree, not slanted degree
     long mBegin; // points into next level's elements
     long mEnd;
     poly mSyzygy;
     FrameElement() {}
-    FrameElement(packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
-    FrameElement(packed_monomial monom, int deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
+    FrameElement(res_packed_monomial monom) : mMonom(monom), mDegree(0), mBegin(-1), mEnd(-1) {}
+    FrameElement(res_packed_monomial monom, int deg) : mMonom(monom), mDegree(deg), mBegin(-1), mEnd(-1) {}
   };
 
   struct PreElement
   {
-    varpower_monomial vp;
+    res_varpower_monomial vp;
     int degree;
   };
 };
@@ -102,7 +102,7 @@ public:
   
   // This is where we place the monomials in the frame
   // This requires some care from people calling this function
-  MemoryBlock<monomial_word>& monomialBlock() { return mMonomialSpace; }
+  MemoryBlock<res_monomial_word>& monomialBlock() { return mMonomialSpace; }
 
   // Debugging, Memory info //
   void show(int len) const; // len is how much of the polynomials to display (len=-1 means all, len=0 means just the frame)
@@ -112,20 +112,20 @@ public:
   bool debugCheckOrderAll() const;
 
   
-  M2_arrayint getBetti(int type) const;
+  M2_arrayint getBetti(int type); // will compute ranks of matrices, if needed.
   
   void getBounds(int& loDegree, int& hiDegree, int& length) const;
   
-  void insertLevelZero(packed_monomial monom, int degree, int maxdeglevel0);
+  void insertLevelZero(res_packed_monomial monom, int degree, int maxdeglevel0);
 
-  bool insertLevelOne(packed_monomial monom, int degree, poly& syzygy); // grabs syzygy
+  bool insertLevelOne(res_packed_monomial monom, int degree, poly& syzygy); // grabs syzygy
   // insertLevelOne: insert element.  If the elements are not in order, then false is returned.
   
   void endLevel(); // done with the frame for the current level: set's the begin/end's 
                    // for each element at previous level
   void start_computation(StopConditions& stop);
   
-  void insertBasic(int lev, packed_monomial monom, int degree);
+  void insertBasic(int lev, res_packed_monomial monom, int degree);
 
   
   void setSchreyerOrder(int lev);
@@ -133,13 +133,22 @@ public:
 
   long computeNextLevel(); // returns true if new elements are constructed
   
-  packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
+  res_packed_monomial monomial(int lev, long component) { return level(lev)[component].mMonom; }
 
   M2_arrayint getBettiFrame() const;
   void setBettiDisplays();
   int rank(int slanted_degree, int lev); // rank of the degree 'degree' map of scalars level 'lev' to 'lev-1'.
 
+  bool computeFrame(); // returns true if the whole frame is created.  false if interrupted.
 
+  void computeSyzygies(int slanted_degree, int maxlevel);
+  void computeRanks(int slanted_degree, int maxlevel);
+
+  BettiDisplay minimalBettiNumbers(
+                                   bool stop_after_degree,
+                                   int top_slanted_degree,
+                                   int length_limit
+                                   );
 private:
   
   struct Level
@@ -161,24 +170,30 @@ public:
   std::vector<FrameElement>& level(int lev) { return mFrame.mLevels[lev].mElements; }
   const std::vector<FrameElement>& level(int lev) const { return mFrame.mLevels[lev].mElements; }
 
+  
 private:
+  void fillinSyzygies(int slanted_deg, int lev);
+  void computeRank(int slanted_degree, int lev);
+  
   //////////////////////////////////////////////
   // Private functions for frame construction //
   //////////////////////////////////////////////
-  PreElement* createQuotientElement(packed_monomial m1, packed_monomial m);
+  PreElement* createQuotientElement(res_packed_monomial m1, res_packed_monomial m);
   long computeIdealQuotient(int lev, long begin, long elem);
   long insertElements(int lev, long elem);
 
+private:
   ///////////////////
   // Private Data ///
   ///////////////////
   const ResPolyRing& mRing;
   Frame mFrame;
-  MemoryBlock<monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
+  MemoryBlock<res_monomial_word> mMonomialSpace; // We keep all of the monomials here, in order
 
   // Betti tables: set after the frame has been constructed.
   BettiDisplay mBettiNonminimal;
   BettiDisplay mBettiMinimal;
+  BettiDisplay mComputationStatus; // -1: no entries, 0: frame only so far, 1: syzygies computed, 2: rank taken into account.
   std::vector<std::pair<int,int>> mMinimalizeTODO; // a list of (slanted deg, level) for which to compute min betti numbers.
   
   // Computation control
@@ -193,7 +208,7 @@ private:
   // These are used during frame construction
 
   MemoryBlock<PreElement> mPreElements;
-  MemoryBlock<varpower_word> mVarpowers;
+  MemoryBlock<res_varpower_word> mVarpowers;
   int mMaxVPSize;
 
   
