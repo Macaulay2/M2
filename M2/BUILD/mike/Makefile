@@ -10,6 +10,19 @@ always:
 ################
 ## mac os x ####
 ################
+darwin64-gcc6 : always
+	mkdir -p builds.tmp/darwin64-gcc6
+	cd builds.tmp/darwin64-gcc6; ../../../../configure \
+		CC=gcc-6 CXX=g++-6 \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
+
 darwin64-gcc5 : always
 	mkdir -p builds.tmp/darwin64-gcc5
 	cd builds.tmp/darwin64-gcc5; ../../../../configure \
