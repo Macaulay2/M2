@@ -48,7 +48,10 @@ document {
             LI { "The new function ", TO "minimalBetti", " finds minimal Betti numbers of an ideal or module
                 using the new ", TO "FastNonminimal", " functionality, avoiding unneeded computation of matrices in the
                 free resolution."},
-		    LI { "The new function ", TO "roots", " finds roots of univariate polynomials numerically." }
+		    LI { "The new function ", TO "roots", " finds roots of univariate polynomials numerically." },
+            LI { "the new function ", TO "splitWWW", " takes an http response, e.g. from ", TO "getWWW", " and unpacks it into
+                the header, and the body.  Additionally, if the response indicates that this is a chunked response,
+                then the body is unchunked (should be considered a bug fix from previous functionality)." }
 		    }
 	       },
 	  LI { "new constants and operators:",

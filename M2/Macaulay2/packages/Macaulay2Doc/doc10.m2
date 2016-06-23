@@ -528,8 +528,93 @@ document {
      PARA{
 	  "Accessing a secure web site (whose URL begins with ", TT "https:", ")
      	  depends on your having installed ", TT "openssl", " on your system."
-	  }
+	  },
+      SeeAlso => {splitWWW}
      }
+
+doc ///
+   Key
+     splitWWW
+     (splitWWW,String)
+   Headline
+     separate an http response into header and body
+   Usage
+     (head, body) = splitWWW str
+   Inputs
+     str:String
+       an http response, such as that returned by @TO getWWW@.
+   Outputs
+     head:String
+       the header of the response
+     body:String
+       the response body, which has been 'unchunked', if the response type is chunked.
+   Description
+    Text
+      The format of chunked data is described @HREF{"http://www.w3.org/Protocols/rfc2616/rfc2616.html","here"}@.
+      
+      The following is an example obtaining 5 examples from the Kreuzer-Skarke database for
+      4 dimensional reflexive polytopes.  We retrieve 5 examples each having the anti-canonical
+      divisor a Calabi-Yau with $h^{(1,1)} = 10$.
+    CannedExample
+        i1 : str = getWWW "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11=10&L=5";
+
+        i2 : (head,body) = splitWWW str;
+
+        i3 : head
+
+        o3 = HTTP/1.1 200 OK
+             Date: Thu, 23 Jun 2016 12:10:58 GMT
+             Server: Apache/2.2
+             Vary: Accept-Encoding
+             Connection: close
+             Transfer-Encoding: chunked
+             Content-Type: text/html; charset=UTF-8
+
+        i4 : body
+
+        o4 = <head><title>SEARCH RESULTS</title></head>
+             <body><pre><b>Search command:</b>
+             class.x -di x -He EH10:MVNFL5
+
+             <b>Result:</b>
+             4 9  M:22 9 N:14 8 H:10,18 [-16]
+                1   0   1   0   2   0  -2  -2  -2
+                0   1   0   0  -1   1   1  -1   1
+                0   0   2   0   1   1  -3  -1  -4
+                0   0   0   1   1   1  -1  -1  -2
+             4 10  M:23 10 N:15 10 H:10,18 [-16]
+                 1    0    0    0   -1    1   -2    2    0   -1
+                 0    1    0    0    1   -1    2   -1   -2    0
+                 0    0    1    0   -1    1   -1    0    2   -2
+                 0    0    0    1    1   -1    0   -2   -1    2
+             4 9  M:24 9 N:14 8 H:10,20 [-20]
+                1   0   1   0   1  -1  -2   1  -2
+                0   1   0   0   0   2  -2  -1   2
+                0   0   2   0  -1  -1   0  -2  -2
+                0   0   0   1  -1  -1   1  -1  -1
+             4 11  M:25 11 N:15 10 H:10,20 [-20]
+                1   0   0   0   2  -2   0   2  -2  -2   2
+                0   1   0   0  -1   1   1  -1   0   1  -2
+                0   0   1   0  -1   1  -1   0   2   0  -2
+                0   0   0   1  -1   1   1  -2   1   0  -1
+             4 10  M:25 10 N:15 10 H:10,20 [-20]
+                 1    0    0    0   -1    0   -1   -1    2    1
+                 0    1    0    0    0    0    2    0   -1   -2
+                 0    0    1    0    0   -2    2    2   -2   -2
+                 0    0    0    1    0   -1    0    2    0   -2
+             Exceeded limit of 5
+             </pre></body>
+   SeeAlso
+     getWWW
+///
+
+///
+-- example for use with splitWWW
+str = getWWW "http://quark.itp.tuwien.ac.at/cgi-bin/cy/cydata.cgi?h11=10&L=5";
+(head,body) = splitWWW str;
+head
+body
+///
 
 document {
      Key => Descent,

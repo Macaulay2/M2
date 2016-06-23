@@ -100,6 +100,7 @@ header = (str) -> (
     -- str: String, coming from getWWW
     -- return ((offset,len of header), (offset, len of body))
     loc := regex("\r\n\r\n", str);
+    if loc === null then error "string not in http response format (expected \\r\\n\\r\\n to appear in the string, signalling the end oof the header";
     ((0,loc#0#0), (plus loc#0, #str - plus loc#0))
     )
 extractChunk = (offset,str) -> (
