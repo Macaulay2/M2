@@ -550,7 +550,7 @@ doc ///
        the response body, which has been 'unchunked', if the response type is chunked.
    Description
     Text
-      The format of chunked data is described @HREF{"http://www.w3.org/Protocols/rfc2616/rfc2616.html","here"}@.
+      The format of chunked data is described @HREF{"https://www.w3.org/Protocols/", "here"}@.
       
       The following is an example obtaining 5 examples from the Kreuzer-Skarke database for
       4 dimensional reflexive polytopes.  We retrieve 5 examples each having the anti-canonical
@@ -606,6 +606,110 @@ doc ///
              </pre></body>
    SeeAlso
      getWWW
+///
+
+TEST ///
+str = "HTTP/1.1 200 OK\r
+Date: Thu, 23 Jun 2016 13:10:59 GMT\r
+Server: Apache/2.2\r
+Vary: Accept-Encoding\r
+Connection: close\r
+Transfer-Encoding: chunked\r
+Content-Type: text/html; charset=UTF-8\r
+\r
+2b\r
+<head><title>SEARCH RESULTS</title></head>
+\r
+b\r
+<body><pre>\r
+17\r
+<b>Search command:</b>
+\r
+1e\r
+class.x -di x -He EH10:MVNFL5
+\r
+10\r
+
+<b>Result:</b>
+\r
+436\r
+4 9  M:22 9 N:14 8 H:10,18 [-16]
+   1   0   1   0   2   0  -2  -2  -2
+   0   1   0   0  -1   1   1  -1   1
+   0   0   2   0   1   1  -3  -1  -4
+   0   0   0   1   1   1  -1  -1  -2
+4 10  M:23 10 N:15 10 H:10,18 [-16]
+    1    0    0    0   -1    1   -2    2    0   -1
+    0    1    0    0    1   -1    2   -1   -2    0
+    0    0    1    0   -1    1   -1    0    2   -2
+    0    0    0    1    1   -1    0   -2   -1    2
+4 9  M:24 9 N:14 8 H:10,20 [-20]
+   1   0   1   0   1  -1  -2   1  -2
+   0   1   0   0   0   2  -2  -1   2
+   0   0   2   0  -1  -1   0  -2  -2
+   0   0   0   1  -1  -1   1  -1  -1
+4 11  M:25 11 N:15 10 H:10,20 [-20]
+   1   0   0   0   2  -2   0   2  -2  -2   2
+   0   1   0   0  -1   1   1  -1   0   1  -2
+   0   0   1   0  -1   1  -1   0   2   0  -2
+   0   0   0   1  -1   1   1  -2   1   0  -1
+4 10  M:25 10 N:15 10 H:10,20 [-20]
+    1    0    0    0   -1    0   -1   -1    2    1
+    0    1    0    0    0    0    2    0   -1   -2
+    0    0    1    0    0   -2    2    2   -2   -2
+    0    0    0    1    0   -1    0    2    0   -2
+Exceeded limit of 5
+\r
+e\r
+</pre></body>
+\r
+0\r
+\r
+"
+(head,body) = splitWWW str;
+
+assert(head === "HTTP/1.1 200 OK\r
+Date: Thu, 23 Jun 2016 13:10:59 GMT\r
+Server: Apache/2.2\r
+Vary: Accept-Encoding\r
+Connection: close\r
+Transfer-Encoding: chunked\r
+Content-Type: text/html; charset=UTF-8")
+
+assert(body === "<head><title>SEARCH RESULTS</title></head>
+<body><pre><b>Search command:</b>
+class.x -di x -He EH10:MVNFL5
+
+<b>Result:</b>
+4 9  M:22 9 N:14 8 H:10,18 [-16]
+   1   0   1   0   2   0  -2  -2  -2
+   0   1   0   0  -1   1   1  -1   1
+   0   0   2   0   1   1  -3  -1  -4
+   0   0   0   1   1   1  -1  -1  -2
+4 10  M:23 10 N:15 10 H:10,18 [-16]
+    1    0    0    0   -1    1   -2    2    0   -1
+    0    1    0    0    1   -1    2   -1   -2    0
+    0    0    1    0   -1    1   -1    0    2   -2
+    0    0    0    1    1   -1    0   -2   -1    2
+4 9  M:24 9 N:14 8 H:10,20 [-20]
+   1   0   1   0   1  -1  -2   1  -2
+   0   1   0   0   0   2  -2  -1   2
+   0   0   2   0  -1  -1   0  -2  -2
+   0   0   0   1  -1  -1   1  -1  -1
+4 11  M:25 11 N:15 10 H:10,20 [-20]
+   1   0   0   0   2  -2   0   2  -2  -2   2
+   0   1   0   0  -1   1   1  -1   0   1  -2
+   0   0   1   0  -1   1  -1   0   2   0  -2
+   0   0   0   1  -1   1   1  -2   1   0  -1
+4 10  M:25 10 N:15 10 H:10,20 [-20]
+    1    0    0    0   -1    0   -1   -1    2    1
+    0    1    0    0    0    0    2    0   -1   -2
+    0    0    1    0    0   -2    2    2   -2   -2
+    0    0    0    1    0   -1    0    2    0   -2
+Exceeded limit of 5
+</pre></body>
+")
+
 ///
 
 ///
