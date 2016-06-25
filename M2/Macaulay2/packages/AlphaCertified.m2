@@ -1,7 +1,6 @@
 restart
 needsPackage "NumericalAlgebraicGeometry"
 
-help PolySystem
 R = CC[x,y]
 
 HermitianNorm = method()
@@ -16,7 +15,11 @@ OneNorm(Point) := x -> (
 
 PolyNorm = method()
 PolyNorm(RingElement) := r -> (
-    norm r
+    L = listForm r;
+    sum(L,a->(
+	(e,c) := a;
+	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
+ 	))
     )
 
 PolySysNorm = method()
@@ -44,10 +47,29 @@ ComputeConstants(PolySystem, Point) := (f, x) -> (
     beta := HermitianNorm(y);
     gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/OneNorm(x));
     alpha := beta * gamma;
-    Consts := (alpha, beta, gamma)
+    (alpha, beta, gamma)
     )
 
+CertifySolns = method()
+CertifySolns(PolySystem, Point) := (f, x) -> (
+    Consts := ComputeConstants(f,x);
+    if (Consts #0)<((13-3*sqrt(17))/4) then print "The point is an approximate solution to the system"
+    else print "The point is not an approximate solution to the system"
+    )
+
+CertifyDistinctSoln = method()
+CertifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
+    Consts1 := ComputeConstants(f,x1);
+    Consts2 := ComputeConstants(f,x2);
+    if (Consts1 #0) >= ((13-3*sqrt(17))/4) then print "The first point is not an approximate solution to the system";
+    if (Consts2 #0) >= ((13-3*sqrt(17))/4) then print "The second point is not an approximate solution to the system";
+    if HermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#2) then print "Associated solutions are distinct";
+    if (Consts1)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then print "Associated solutions are not distinct";
+    )
 
 f = polySystem {x + y, x - 4}
-p = point{{1+3*ii, 2.3+ii}}
+p = point{{10.0000011, -4.9991}}
+q = point{{10.00011, -4.991+ii}}
 ComputeConstants(f,p)
+CertifySolns(f,p)
+CertifyDistinctSoln(f,p,q)

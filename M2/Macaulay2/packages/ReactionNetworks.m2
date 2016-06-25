@@ -40,7 +40,13 @@ specProportion = (s) -> (
 ReactionNetwork = new Type of MutableHashTable
 
 reactionNetwork = method()
+reactionNetwork (String, String) := (str, zsym) -> reactionNetwork (separateRegexp(",", str),zsym)
 reactionNetwork String := str -> reactionNetwork separateRegexp(",", str)
+reactionNetwork (List, String) := (rs, zsym) -> (
+    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
+    scan(rs, r -> addReaction(r,Rn,zsym));
+    Rn
+    )
 reactionNetwork List := rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
     scan(rs, r -> addReaction(r,Rn));
@@ -56,7 +62,7 @@ addSpecies(String, ReactionNetwork) := (s,Rn) ->
     
 
 addComplex = method()
-addComplex(String, ReactionNetwork) := (c,Rn) -> (
+addComplex(String, ReactionNetwork, String) := (c,Rn,zsym) -> (
     species := apply(delete("", separateRegexp("[^(((A-Z)|(a-z))_?(0-9)*)]", c)), stripCoef);
     for specie in species do addSpecies(specie, Rn);
     v := mutableMatrix(ZZ,1,#Rn.Species);    	
@@ -76,12 +82,12 @@ addComplex(String, ReactionNetwork) := (c,Rn) -> (
     )
 
 addReaction = method()
-addReaction(String, ReactionNetwork) := (r,Rn) -> (
+addReaction(String, ReactionNetwork, String) := (r,Rn,zsym) -> (
     r = removeWhitespace r;
     complexes := apply(separateRegexp("(-->)|(<--)|(<-->)|,", r), removeWhitespace);
     if #complexes != 2 then error "Expected two complexes.";
-    i := addComplex(first complexes, Rn);
-    j := addComplex(last complexes, Rn);
+    i := addComplex(first complexes, Rn, zsym);
+    j := addComplex(last complexes, Rn, zsym);
     Rn.ReactionGraph = addVertices(Rn.ReactionGraph, {i,j});
     delim := concatenate separateRegexp(///[A-Z]|[a-z]|[0-9]|,|_|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
@@ -89,7 +95,6 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
     )
- 
 
 
 netComplex = (r,c) -> (

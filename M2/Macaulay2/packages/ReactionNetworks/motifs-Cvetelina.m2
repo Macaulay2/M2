@@ -64,21 +64,24 @@ wnt = method()
 installMethod(wnt, () -> reactionNetwork {"X_1 <--> X_2", "X_2+X_4 <--> Y_4",
 					  "Y_4 --> X_2+X_5", "X_5+X_8 <--> Y_6",
 					  "Y_6 --> X_4+X_8", "X_4+Y_0 <--> Y_8",
-					  "Y_8 --> X_4+O", "O --> Y_0", 
+					  "Y_8 --> X_4", "O --> Y_0", 
 				          "Y_0 --> O", "X_3+X_6 <--> Y_5",
 					  "Y_5 --> X_3+X_7", "X_7+X_9 <--> Y_7",
 					  "Y_7 --> X_6+X_9", "X_6+Y_1 <--> Y_9",
-					  "Y_9 --> X_6+O", "Y_1 --> O", 
+					  "Y_9 --> X_6", "Y_1 --> O", 
 					  "Y_1+Y_2 <--> Y_3", "X_2 <--> X_3",
 					  "X_5 <--> X_7", "Y_0 <--> Y_1"}
 						)
 TEST ///
 restart
 needsPackage "ReactionNetworks"
+
+W = wnt()
+
 N = clusterModelCellDeath()
 sub(N, {"Y" => "A", "L" => "B", "Z" => "C"})
-N = wnt()
 ///					    
+
 
 
 
