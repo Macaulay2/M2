@@ -55,13 +55,32 @@ solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     sols0
     )    
     
+-- ideally, this function wouldn't be necessary. Currently there's a bug in PHCpack.m2 that
+-- causes it to break when there's a variable named "e". I spent a while trying to fix it,
+-- but it was difficult to fix cleanly. Instead, I chose to write a function that maps 
+-- to a new ring with variables that phc will tolerate, and then computes the mixed volume.
+needsPackage "PHCpack";
+computeMixedVolume = method()
+computeMixedVolume (List) := polys -> (
+  R1 := ring polys#0;
+  R1Gens := gens R1;
+  numDigits := length (toString (#R1Gens));
+  R2 := (coefficientRing R1) (for i in 1..#R1Gens list (
+    value ("x" | demark ("",for i from 1 to numDigits-(length toString i) list "0") | toString i)
+  ) );
+  R2Gens := gens R2;
+  generatorMapping := for i in 0..#(gens R1) - 1 list (R1Gens#i =>R2Gens#i);
+  ringMap := map(R2, R1, generatorMapping);
+  mixedVolume (polys/ringMap)
+)    
+    
 {* 
 The idea of this version is experimenting with making one graph that has 
 some a number of nodes n = 1 + ExtraNodeCount. This function loops around
 these n loops until the number of solutions stabilizes, as in the original
 version. When ExtraNodeCount = 1, this is the minimal graph version.
 *}
-solveViaMonodromyOneLoop = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3),ExtraNodeCount=>1})
+solveViaMonodromyOneLoop = method(Options=>{RandomPointFunction=>null,ExtraNodeCount=>1})
 solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
     p0 := matrix point0; -- points are row matrices
@@ -81,6 +100,11 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     sols0 := s0;
     nSols := #sols0;
     F0 := flatten entries (map(R,PR,X|p0)) PF;
+    allowableThreads := 4;
+    mvFunctionClosure := polys -> () -> computeMixedVolume polys;
+    domvComputation := mvFunctionClosure F0;
+    mvTask := schedule domvComputation;
+    mvComputationCompleted := false;
     FList := for i in 1..o.ExtraNodeCount list(p1 := matrix nextP(); flatten entries (map(R,PR,X|p1)) PF);
     FList = {F0} | FList;
     solsList := for i in 1..o.ExtraNodeCount list({});
@@ -88,11 +112,7 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     solsList = new MutableList from solsList;
     same := 0;
     nPathsTracked := 0;
-    dir := temporaryFileName(); -- build a directory to store temporary data 
-    makeDirectory dir;
-    << "--backup directory created: "<< toString dir << endl;
-    while not o.StoppingCriterion(same,sols0) do --try 
-    (
+    while true do (
         elapsedTime for i in 0..#FList - 1 do (
           F0 := FList#i;
           F1 := FList#((i+1)%(#FList));
@@ -101,18 +121,18 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
           NewSols1 = select(NewSols1, s->status s === Regular);
 	  sols1 := clusterSolutions((solsList#((i+1)%(#FList))) | NewSols1); -- take the union
           solsList#((i+1)%(#FList)) = sols1;
-          << "i:" << i << ". " << #NewSols1 << " , " << #sols1 << endl;
+          << "i:" << i << ". " << #NewSols1 << " , " << #sols1 << ", " << 1.0*(#sols1 - #NewSols1)/#sols1 << endl;
         );
         << "number of paths tracked: " << nPathsTracked << endl;
-	if #solsList#0 == nSols then same = same + 1 else (
-	    nSols = #solsList#0;
-	    same = 0;
-	    ff := openOut (dir|"/backup-"|toString nSols|"-solutions"); 
-	    ff << toExternalString sols0;
-	    close ff; 
-	    );  
-    	<< "found " << #solsList#0 << " points in the fiber so far" << endl;
-    	) -- else print "something went wrong"
+        if isReady mvTask then (
+            mv := taskResult mvTask;
+            << "Mixed volume computation completed! MV = ", << mv << endl;
+            mvComputationCompleted = true;
+        );
+        if mvComputationCompleted then (
+          if #(solsList#0) == mv then break;
+        );
+    ) -- else print "something went wrong"
     ;
     solsList#0
     )
