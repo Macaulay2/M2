@@ -1054,6 +1054,7 @@ export {
 	"sortColumns",
 	"source",
 	"splice",
+    "splitWWW",
 	"sqrt",
 	"stack",
 	"standardForm",
