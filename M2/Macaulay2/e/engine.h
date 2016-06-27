@@ -1808,6 +1808,10 @@ enum gbTraceValues
   /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
   /* drg: connected rawResolutionStatusLevel */
 
+  M2_arrayint rawMinimalBetti(Computation *G,
+                              M2_arrayint slanted_degree_limit,
+                              M2_arrayint length_limit); /* connectd: rawMinimialBetti */
+  
   /****************************************************/
   /**** Chinese remainder and rational reconstruction */
   /****************************************************/

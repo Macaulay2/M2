@@ -1,8 +1,6 @@
-// Copyright 2005 Michael E. Stillman.
+// Copyright 2005-2016 Michael E. Stillman.
 
 #include "res-gausser.hpp"
-#include "res-f4-mem.hpp"
-#include "res-moninfo.hpp"
 
 ResGausser *ResGausser::newResGausser(int p)
 {
@@ -23,12 +21,12 @@ ResGausser::CoefficientArray ResGausser::from_ints(ComponentIndex len, const int
   int i;
   switch (typ) {
   case ZZp:
-    int *result = Mem.coefficients.allocate(len);
+    int *result = new int[len];
     for (i=0; i<len; i++)
       Kp->set_from_long(result[i], elems[i]);
     return result;
   };
-  return 0;
+  return nullptr;
 }
 
 void ResGausser::to_ints(ComponentIndex len, CoefficientArray F, int* result) const
@@ -47,8 +45,8 @@ void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIn
   int* elems = F;
   switch (typ) {
   case ZZp:
-    Mem.coefficients.deallocate(elems);
-    F = 0;
+    delete [] elems;
+    F = nullptr;
   };
 }
 /////////////////////////////////////////////////////////////////////
@@ -57,7 +55,7 @@ void ResGausser::deallocate_F4CCoefficientArray(CoefficientArray &F, ComponentIn
 
 void ResGausser::dense_row_allocate(dense_row &r, ComponentIndex nelems) const
 {
-  int *elems = Mem.coefficients.allocate(nelems);
+  int *elems = new int[nelems];
   r.coeffs = elems;
   r.len = nelems;
   for (ComponentIndex i=0; i<nelems; i++)

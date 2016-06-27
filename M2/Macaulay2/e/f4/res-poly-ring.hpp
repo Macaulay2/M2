@@ -1,53 +1,77 @@
-/* Copyright 2015, Michael E. Stillman */
+/* Copyright 2015-2016, Michael E. Stillman */
 
 #ifndef _res_poly_ring_hpp_
 #define _res_poly_ring_hpp_
 
 #include "../skew.hpp"
-#include "varpower-monomial.hpp"
-#include "ntuple-monomial.hpp"
+#include "res-varpower-monomial.hpp"
+//#include "ntuple-monomial.hpp"
 #include "res-moninfo.hpp"
 #include "res-gausser.hpp"
 #include "res-schreyer-order.hpp"
 
+#include <memory>  // For std::unique_ptr
+#include <iostream>
+
 typedef int FieldElement;
 
-struct poly {
+class poly {
+  friend class ResPolyRing;
+  friend class poly_constructor;
+  friend class poly_iter;
+public:
+  static long npoly_destructor;
   int len; // in monomials?  This only determines both sizes below
            // in the case of fixed length monomials
-  ResGausser::CoefficientArray coeffs;
-  monomial_word *monoms; // This is all of the monomials written contiguously
+  std::unique_ptr<FieldElement[]> coeffs;
+  std::unique_ptr<res_monomial_word[]> monoms;
+
+public:  
   poly() : len(0), coeffs(nullptr), monoms(nullptr) {}
+
+  ~poly()
+  {
+    if (coeffs) npoly_destructor++;
+    //    std::cout << "Calling ~poly()" << std::endl << std::flush;
+  }
+  
+  poly(const poly& other) = default;
+  poly(poly&& other) = default;
+  poly& operator=(const poly& other) = default;
+  poly& operator=(poly&& other) = default;
 };
 
 class ResPolyRing
 {
 public:
-  ResPolyRing(const ResGausser& G, const ResMonoid& M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
-  ResPolyRing(const ResGausser& G, const ResMonoid& M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
-
-  const ResGausser& resGausser() const { return mResGausser; }
-  const ResMonoid& monoid() const { return mMonoid; }
+  ResPolyRing(const ResGausser* G, const ResMonoid* M) : mResGausser(G), mMonoid(M), mSkew(nullptr) {}
+  ResPolyRing(const ResGausser* G, const ResMonoid* M, const SkewMultiplication* skewInfo) : mResGausser(G), mMonoid(M), mSkew(skewInfo) {}  
+  
+  const ResGausser& resGausser() const { return *mResGausser; }
+  const ResMonoid& monoid() const { return *mMonoid; }
 
   bool isSkewCommutative() const { return mSkew != nullptr; }
   const SkewMultiplication* skewInfo() const { return mSkew; }
 
   void memUsage(const poly& f, long& nterms, long& bytes_used, long& bytes_alloc) const;
 private:
-  const ResGausser& mResGausser;
-  const ResMonoid& mMonoid;
+  std::unique_ptr<const ResGausser> mResGausser;
+  std::unique_ptr<const ResMonoid> mMonoid;
   const SkewMultiplication* mSkew;
 };
 
 class poly_constructor {
 private:
-  std::vector<packed_monomial> monoms;
+  std::vector<res_packed_monomial> monoms;
   std::vector<FieldElement> coeffs;
   const ResPolyRing& mRing;
 public:
+  static long ncalls;
+  static long ncalls_fromarray;
+
   poly_constructor(const ResPolyRing& R) : mRing(R) { }
   
-  void appendTerm(packed_monomial monom, FieldElement coeff)
+  void appendTerm(res_packed_monomial monom, FieldElement coeff)
   {
     monoms.push_back(monom); // a pointer
     coeffs.push_back(coeff);
@@ -55,19 +79,32 @@ public:
 
   void setPoly(poly& result)
   {
+    ncalls++;
     result.len = static_cast<int>(coeffs.size());
-    result.coeffs = new FieldElement[result.len];
-    result.monoms = new monomial_word[mRing.monoid().max_monomial_size()*result.len];
+    result.coeffs.reset(new FieldElement[result.len]);
+    result.monoms.reset(new res_monomial_word[mRing.monoid().max_monomial_size()*result.len]);
+
     // copy coeffs
     for (int i=0; i<result.len; i++)
       result.coeffs[i] = coeffs[i];
     // copy monoms: not pointers, actual monoms
-    monomial_word* monomptr = result.monoms;
+    res_monomial_word* monomptr = result.monoms.get();
     for (int i=0; i<result.len; i++)
       {
         mRing.monoid().copy(monoms[i], monomptr);
         monomptr += mRing.monoid().max_monomial_size();
       }
+  }
+
+  static void setPolyFromArrays(poly& result,
+                                int len,
+                                std::unique_ptr<FieldElement[]>& coeffs,
+                                std::unique_ptr<res_monomial_word[]>& monoms)
+  {
+    ncalls_fromarray++;
+    result.len = len;
+    result.coeffs.swap(coeffs);
+    result.monoms.swap(monoms);
   }
 };
 
@@ -95,7 +132,7 @@ public:
   {}
   
   int coefficient() const { return elem.coeffs[coeff_index]; }
-  packed_monomial monomial() const { return elem.monoms + monom_index; }
+  res_packed_monomial monomial() const { return elem.monoms.get() + monom_index; }
   void operator++() { coeff_index++; monom_index += mRing.monoid().max_monomial_size(); }
 };
 
@@ -108,7 +145,7 @@ inline void display_poly(FILE* fil, const ResPolyRing& R, const poly& f)
   for (auto it = poly_iter(R, f); it != end; ++it)
     {
       FieldElement c = R.resGausser().coeff_to_int(it.coefficient());
-      packed_monomial mon = it.monomial();
+      res_packed_monomial mon = it.monomial();
       if (c != 1) fprintf(fil, "%d", c);
       R.monoid().showAlpha(mon);
     }
