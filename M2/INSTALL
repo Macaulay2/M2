@@ -190,7 +190,7 @@ various modern operating systems:
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
 	brew update
-	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost libmpc
+	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost libmpc xz
     Periodically upgrade the programs and libraries to the latest versions with
 	brew update
         brew upgrade
