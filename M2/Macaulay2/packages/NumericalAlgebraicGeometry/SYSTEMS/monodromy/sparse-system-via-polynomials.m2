@@ -27,9 +27,13 @@ pre0 = point{toList(n:1_CC)}
 end ----------------------------------------------------------------------------
 
 restart
-n = 5
+n = 12
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system-via-polynomials.m2"
-stop = (n,L)->n>1
+needsPackage "PHCpack"
+debug NumericalAlgebraicGeometry
+phcF = toRingXphc flatten entries S
+elapsedTime mv =  mixedVolume(phcF,StartSystem => false)
+stop = (n,L)->#L>=mv
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
@@ -42,7 +46,7 @@ restart
 loadPackage "PHCpack"
 
 needsPackage "ExampleIdeals"
-n = 10
+n = 9
 I = cyclicRoots(n,CC);
 R = CC[x_1..x_(numgens ring I)]
 toR = map(R,ring I,vars R)
