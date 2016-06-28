@@ -15,43 +15,63 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
-export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "ReactionGraph",
-    "stoichiometricSubspace",
+export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
+    "stoichiometricSubspace", 
     "steadyStateEquations",
-    "parameterRing",
-    "glueNetworks"
+    "laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
     }
 exportMutable {}
 
+-- helper functions for string parsing: better to move these and other non-exports to bottom of file?
+
 removeWhitespace = s -> s = replace(" ", "", s)
 
+-- returns species component of a summand
 stripCoef = (s) -> (
     i := 0;
     while regex("[0-9]", s#i) =!= null do i = i+1;
     substring(i,length(s),s)
     )
 
+-- returns coefficient component of a summand
 specProportion = (s) -> (
     i := 0;
     while regex("[0-9]", s#i) =!= null do i = i+1;
     value substring(0,i,s)    
     )
 
+-- removes any equationally redundant null symbols from reaction string in HR format
+repairReaction = (r, nsym) -> (
+    l := select(separateRegexp("\\+", removeWhitespace(r)), s -> s != nsym); 
+    r := l#0;
+    for i from 1 to length(l)-1 do (
+	if match("-|>", last l#(i-1)) then r = concatenate(r,l#i) else r = concatenate(r,concatenate("+", l#i));
+    );
+    r
+    )
+
+-- todo: add functionality for different delimiters
+
 ReactionNetwork = new Type of MutableHashTable
 
-reactionNetwork = method()
-reactionNetwork (String, String) := (str, zsym) -> reactionNetwork (separateRegexp(",", str),zsym)
-reactionNetwork String := str -> reactionNetwork separateRegexp(",", str)
-reactionNetwork (List, String) := (rs, zsym) -> (
-    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
-    scan(rs, r -> addReaction(r,Rn,zsym));
-    Rn
-    )
-reactionNetwork List := rs -> (
-    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}};
+-- todo: 1) other types of input (eg. stoichiometry matrix)
+-- 3) check BNF w/ control people, ask about default nullsymbol
+
+reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol => ""})
+reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
+reactionNetwork List := String => o -> rs -> (
+    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, NullSymbol => o.NullSymbol, NullIndex => -1};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
+
+TEST ///
+restart
+needs "ReactionNetworks.m2"
+NN = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
+NN.Complexes
+NN.NullSymbol
+///
 
 addSpecies = method()
 addSpecies(String, ReactionNetwork) := (s,Rn) -> 
@@ -59,35 +79,41 @@ addSpecies(String, ReactionNetwork) := (s,Rn) ->
 	Rn.Species = Rn.Species | {s};
 	Rn.Complexes = apply(Rn.Complexes, c -> c | matrix{{0}})
 	)
-    
 
 addComplex = method()
-addComplex(String, ReactionNetwork, String) := (c,Rn,zsym) -> (
-    species := apply(delete("", separateRegexp("[^(((A-Z)|(a-z))_?(0-9)*)]", c)), stripCoef);
-    for specie in species do addSpecies(specie, Rn);
-    v := mutableMatrix(ZZ,1,#Rn.Species);    	
-    apply(separateRegexp("\\+", c), t -> (
-	    s:=stripCoef(t);
-	    a:=specProportion(t);
-	    if a === null then a = 1;
-	    i:=position(Rn.Species, s' -> s' == s);
-	    v_(0,i) = v_(0,i) + a;
-	    ));
+addComplex(String, ReactionNetwork) := (c,Rn) -> (
+    isNonempty := (c!= Rn.NullSymbol); 
+    if isNonempty then (
+	species := apply(delete("", separateRegexp("[^((A-Z)|(a-z)_?(0-9)*'?)]", c)), stripCoef);
+    	for specie in species do addSpecies(specie, Rn);
+	);	
+    	-- v is a row vector encoding the monomial corresponding to complex c
+    	v := mutableMatrix(ZZ,1,#Rn.Species);
+	if isNonempty then (    	
+    	    apply(separateRegexp("\\+", c), t -> (
+	    	    s:=stripCoef(t);
+	    	    a:=specProportion(t);
+	    	    if a === null then a = 1;
+	    	    i:=position(Rn.Species, s' -> s' == s);
+	    	    v_(0,i) = v_(0,i) + a;	  
+	    	    ));
+    	    );
     v = matrix v;
     if member(v,Rn.Complexes) then position(Rn.Complexes, v' -> v' == v) 
     else (
-	Rn.Complexes = Rn.Complexes | {v};	
+	Rn.Complexes = Rn.Complexes | {v};
+	if not isNonempty then Rn.NullIndex = #Rn.Complexes - 1;
         #Rn.Complexes - 1
 	)
     )
 
 addReaction = method()
-addReaction(String, ReactionNetwork, String) := (r,Rn,zsym) -> (
-    r = removeWhitespace r;
+addReaction(String, ReactionNetwork) := (r,Rn) -> (
+    r = repairReaction(removeWhitespace r, Rn.NullSymbol);
     complexes := apply(separateRegexp("(-->)|(<--)|(<-->)|,", r), removeWhitespace);
     if #complexes != 2 then error "Expected two complexes.";
-    i := addComplex(first complexes, Rn, zsym);
-    j := addComplex(last complexes, Rn, zsym);
+    i := addComplex(first complexes, Rn);
+    j := addComplex(last complexes, Rn);
     Rn.ReactionGraph = addVertices(Rn.ReactionGraph, {i,j});
     delim := concatenate separateRegexp(///[A-Z]|[a-z]|[0-9]|,|_|\+| ///, r);
     if delim == "-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j}})
@@ -97,38 +123,37 @@ addReaction(String, ReactionNetwork, String) := (r,Rn,zsym) -> (
     )
 
 
-netComplex = (r,c) -> (
-    C := flatten entries r.Complexes#c;
-    l := apply(#r.Species, i -> if C#i == 0 then "" 
-	else (if C#i ==1 then "" else toString C#i) | r.Species#i);
+netComplex = (Rn,c) -> (
+    C := flatten entries Rn.Complexes#c;
+    l := apply(#Rn.Species, i -> if C#i == 0 then "" 
+	else (if C#i ==1 then "" else toString C#i) | Rn.Species#i);
     l = delete("", l);
     l = between("+", l);
-    concatenate l
+    l = concatenate l;
+    if l == "" then l = Rn.NullSymbol;
+    l
     )
 
-
-merge (ReactionNetwork,ReactionNetwork):= (N1, N2) -> (
+-- test belows fails when this method inherits from 'merge', not sure why
+glue = method()
+glue (ReactionNetwork,ReactionNetwork) := (N1, N2) -> (
+    assert(N1.NullSymbol == N2.NullSymbol);
     N := copy N1;
     apply(networkToHRF N2, r -> addReaction(r,N));
     N
     );
-merge (List, ReactionNetwork) := (L, N) -> glueNetworks(reactionNetwork L, N)
-merge (ReactionNetwork, List) := (N, L) -> glueNetworks(N, reactionNetwork L)
+glue (List, ReactionNetwork) := (L, N) -> glue(reactionNetwork(L, NullSymbol => N.NullSymbol), N)
+glue (ReactionNetwork, List) := (N, L) -> glue(N, reactionNetwork(L, NullSymbol => N.NullSymbol))
 
 
 TEST ///
 restart
 needsPackage "ReactionNetworks"
-NM = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
-NN = reactionNetwork "A --> 2B, A + C --> D, D --> B + E"
-glueNetworks(NM,NN)
-NM
-NN
-glueNetworks({"S --> T"}, NM)
-glueNetworks(NN, {"S --> T"})
-glueNetworks({"S --> T"}, {"P <--> Q"})  
-glueNetworks({"S --> T"}, {"S --> T"})  
-NN
+NM = reactionNetwork("A <-- 2B, A + C <-- D, B + E --> A + C", NullSymbol => "0")
+NN = reactionNetwork("A --> 2B, A + C --> D, D --> B+E", NullSymbol => "0")
+-- add another example with nul symbols
+needsPackage "Graphs"
+glue(NM, NN)
 ///
 
 
@@ -143,10 +168,9 @@ sub(ReactionNetwork, List) := (N, L) -> (
 
 TEST ///
 restart
-needsPackage "ReactionNetworks"
+needs "ReactionNetworks.m2"
 NM = reactionNetwork "A <-- 2B, A + C <-- D, B + E --> A + C"
 sub(NM, {"A" => "Y"})
-
 N = oneSiteModificationA()
 sub(N, {"S_0" => "A"})
 ///
@@ -169,8 +193,12 @@ stoichiometricSubspace ReactionNetwork := N -> (
 
 
 TEST ///
-CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
+restart
+needsPackage "ReactionNetworks"
+CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
 stoichiometricSubspace CRN
+netList steadyStateEquations CRN
+netList flatten entries laplacian(CRN, QQ)
 ///
 
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
@@ -184,10 +212,53 @@ termOut = (a,inp,out,N,R) -> if member(a,out/first) then (
     last out#p * product(inp,b->(concentration(first b,N,R))^(last b)) 
     ) else 0
 
-parameterRing = (N,FF) -> (
+-- helper function for laplacian: partitions ReactionGraph edges according to those which dont contain a null complex
+sepEdges = Rn -> (
+    seps := new MutableHashTable from {NullEdges => {}, FullEdges => {}};
+    apply(edges Rn.ReactionGraph, 
+	e -> if (first e =!= Rn.NullIndex) and (last e =!= Rn.NullIndex) then seps.FullEdges = append(seps.FullEdges, e)
+	else seps.NullEdges = append(seps.NullEdges,e));
+    seps
+	)
+
+-- interface can be greatly improved, but this seems to work, and also handles CRNs with NullSymbols
+laplacian = (Rn, FF) -> (
+    -- step 1) build parameter ring
+    n := #Rn.Complexes;
+    s := #Rn.Species;
+    seps :=  sepEdges Rn;
     kk := symbol kk; 
-    rates := apply(edges N.ReactionGraph, e->kk_e);
-    FF[rates]
+    K := FF[apply(seps.FullEdges, e -> kk_e)];
+    -- step 2) build Y matrix
+    Y := (Rn.Complexes)#0;
+    for i from 2 to n do  Y = Y || (Rn.Complexes)#(i-1);
+    if Rn.NullIndex >= 0 then (
+	for i from 0 to n - 1 do (
+	     tmp := 0;
+	     if member({i, Rn.NullIndex}, seps.NullEdges) then tmp = tmp +1;
+	     Y^{i} = (Y^{i})_{0..Rn.NullIndex-1} | matrix {{tmp}}  | (Y^{i})_{Rn.NullIndex .. s-1}; 
+	     );
+	);
+    -- step 3 buil support monomials
+    xx := symbol xx;
+    R := K[apply(Rn.Species, s -> xx_(s))];
+    x := vars R;
+    if Rn.NullIndex >= 0 then x = x_{0..Rn.NullIndex} | {{1}} | x_{Rn.NullIndex + 1 .. numgens R -1};
+    mons := apply(1 .. numrows Y, i -> product apply(flatten entries Y^{i-1}, flatten entries x, (a,b) -> b^a));
+    mons = substitute(matrix {toList mons}, R);
+    Y = substitute(Y, R);
+    -- step four, build laplacian matrix
+    rates := new MutableList from append(gens K,1);
+    tmp := rates#(Rn.NullIndex-1);
+    rates#(n-1) = tmp;
+    rates#(Rn.NullIndex-1) = 1;
+    rates = toList rates;
+    L := mutableMatrix(K,n,n);
+    for e in seps.FullEdges do L_(toSequence e) = kk_e;
+    for e in seps.NullEdges do L_(toSequence e) = 1;
+    for i from 0 to n-1 do L_(i,i) = - sum flatten entries matrix L^{i};
+    L = substitute(matrix L, R);
+    mons*L*Y
     )
 
 steadyStateEquations = method()
@@ -230,9 +301,9 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 TEST ///
 restart
 needsPackage "ReactionNetworks"
-CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B + E"
-parameterRing(CRN, QQ)
+CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 F = steadyStateEquations CRN
+netList F
 ///
 
 load "ReactionNetworks/motifs-Kisun.m2"
