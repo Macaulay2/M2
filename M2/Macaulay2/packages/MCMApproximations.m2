@@ -824,4 +824,30 @@ check "MCMApproximations"
 viewHelp MCMApproximations
 
 viewHelp approximation
+restart
 
+n= 3
+S := ZZ/101[x_0..x_(n-1)]
+d = 4
+m := n*(d-1);
+
+(apply(100, u -> rank source fromDual matrix{{
+	    b0+sum apply(2,i->B_(random binomial(n+m-1,n-1)))
+	    }})
+)
+
+
+randomRegularSequences = (S,d,num) ->(
+n := numgens S;
+m := n*(d-1);
+B := ideal basis(m,S);
+b0 := product(n, i-> (S_i)^(d-1));
+L = select(apply(num, u -> fromDual matrix{{
+	    b0+sum apply(2,i->B_(random binomial(n+m-1,n-1)))
+	    }}) ,u -> rank source u == n);
+select(L, j-> max flatten (degrees j)_1 ==d))
+
+S := ZZ/101[x_0..x_2]
+L = randomRegularSequences(S,3,100);
+#L
+L_7
