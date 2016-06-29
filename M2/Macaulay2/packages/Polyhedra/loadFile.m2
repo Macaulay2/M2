@@ -85,7 +85,9 @@ hilbertBasis C
 restart
 loadPackage "Polyhedra"
 P = convexHull matrix {{12,3},{3,5}}
+faces P
 C = getProperty(P, underlyingCone)
+faces C
 vertices P
 getProperty(P, facetToFacetMap )
 
