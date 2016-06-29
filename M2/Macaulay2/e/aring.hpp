@@ -51,7 +51,7 @@ namespace M2 {
 /**
 \ingroup rings
 */
-  class RingInterface {}; ///< inherit from this if the class is to be used as a template parameter for ConcreteRing
+  class RingInterface : public our_new_delete {}; ///< inherit from this if the class is to be used as a template parameter for ConcreteRing
 
 
 

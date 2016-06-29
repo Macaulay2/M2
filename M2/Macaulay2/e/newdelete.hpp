@@ -42,8 +42,8 @@
 #define GETMEM_ATOMIC(T,size) reinterpret_cast<T>(getmem_atomic(size))
 
 struct our_new_delete {
-  static inline void* operator new    ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
-  static inline void* operator new [] ( size_t size ) { void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+  static inline void* operator new    ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
+  static inline void* operator new [] ( size_t size ) { TRAPCHK_SIZE(size); void *p = GC_MALLOC( size ); if (p == NULL) outofmem2(size); TRAPCHK(p); return p; }
 
   static inline void operator delete    ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }
   static inline void operator delete [] ( void* obj ) { TRAPCHK(obj); if (obj != NULL) GC_FREE( obj ); }

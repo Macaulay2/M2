@@ -45,6 +45,7 @@ void outofmem2(size_t new) {
 char *getmem(size_t n)
 {
   char *p;
+  TRAPCHK_SIZE(n);
   enter_getmem();
   p = GC_MALLOC(n);		/* GC_MALLOC clears its memory, but getmem doesn't guarntee to */
   if (p == NULL) outofmem2(n);
