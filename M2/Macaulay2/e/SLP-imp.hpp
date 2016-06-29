@@ -23,7 +23,9 @@ SLEvaluatorConcrete<RT>::SLEvaluatorConcrete(const SLEvaluatorConcrete<RT>& a)
 {
   slp = a.slp;
   varsPos = a.varsPos;
-  for(auto i=values.begin(), j=a.values.begin(); i!=values.end(); ++i,++j)
+  auto i=values.begin();
+  auto j=a.values.begin();
+  for(; i!=values.end(); ++i,++j)
     ring().init_set(*i,*j);
 }
 
@@ -210,6 +212,20 @@ inline void norm2(const DMat<RT>& M, size_t n, typename RT::RealElementType& res
 
 enum SolutionStatus {UNDETERMINED, PROCESSING, REGULAR, SINGULAR, INFINITY_FAILED, MIN_STEP_FAILED, ORIGIN_FAILED, INCREASE_PRECISION, DECREASE_PRECISION};
 
+template<typename RT>
+class ARingElement
+{
+  typename RT::ElementType mValue;
+  const RT& mRing;
+public:
+  ARingElement(const RT& R0) : mRing(R0) { mRing.init(mValue); }
+  ~ARingElement() { mRing.clear(mValue); }
+  typename RT::ElementType& get() { return mValue; }
+  const typename RT::ElementType& get() const { return mValue; }
+  const RT& ring() const { return mRing; }
+
+  typename RT::RealElementType& getRealPart() { return realPart(mValue); }
+};
 
 // ****************************** XXX **************************************************
 template <typename RT> 
@@ -284,7 +300,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm > :: track(
   R.set_from_BigReal(min_step2,min_dt);
   R.mult(min_step2, min_step2, min_step2); //min_step^2
   R.set_from_BigReal(epsilon2,epsilon); 
-  int tolerance_bits = -R.log2abs(epsilon2);  
+  int tolerance_bits = int(log2(fabs(R.coerceToDouble(epsilon2))));
   R.mult(epsilon2, epsilon2, epsilon2); //epsilon^2
   R.set_from_BigReal(infinity_threshold2,infinity_threshold); 
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
@@ -570,7 +586,8 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm > :: track(
                                           //   ||J^{-1}|| should be multiplied by a factor 
                                           //   reflecting an estimate on the error of evaluation of J 
 #define PRECISION_SAFETY_BITS 10
-        int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + R.log2abs(dx_norm2) - 1; // subtract 1 for using squares under "log"
+        int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) - 1; // subtract 1 for using squares under "log". TODO: should this be divide by 2??
+        int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + more_bits; 
         if (R.get_precision() < precision_needed)    
           status = INCREASE_PRECISION;
         else if (R.get_precision() != 53 and R.get_precision() > 2*precision_needed) 

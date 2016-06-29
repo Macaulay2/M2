@@ -13,24 +13,24 @@ SLProgram::GATE_POSITION SLProgram::addMSum(const M2_arrayint a)
   mNodes.push_back(MSum);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
-    mInputPositions.push_back(a->array[i]-mNodes.size()+1);
-  return mNodes.size()-1;
+    mInputPositions.push_back(a->array[i]-static_cast<GATE_POSITION>(mNodes.size())+1);
+  return static_cast<GATE_POSITION>(mNodes.size())-1;
 }
 SLProgram::GATE_POSITION SLProgram::addMProduct(const M2_arrayint a) 
 {
   mNodes.push_back(MProduct);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
-    mInputPositions.push_back(a->array[i]-mNodes.size()+1);
-  return mNodes.size()-1;
+    mInputPositions.push_back(a->array[i]-static_cast<GATE_POSITION>(mNodes.size())+1);
+  return static_cast<GATE_POSITION>(mNodes.size())-1;
 }
 SLProgram::GATE_POSITION SLProgram::addDet(const M2_arrayint a) 
 {
   mNodes.push_back(Det);
   mNumInputs.push_back(a->len);
   for(int i=0; i<a->len; i++)
-    mInputPositions.push_back(a->array[i]-mNodes.size()+1);
-  return mNodes.size()-1;
+    mInputPositions.push_back(a->array[i]-static_cast<GATE_POSITION>(mNodes.size())+1);
+  return static_cast<GATE_POSITION>(mNodes.size())-1;
 }
 SLProgram::GATE_POSITION SLProgram::addDivide(const M2_arrayint a) 
 {
@@ -38,8 +38,8 @@ SLProgram::GATE_POSITION SLProgram::addDivide(const M2_arrayint a)
   if (a->len!=2) 
     ERROR("Divide expected two arguments");
   for(int i=0; i<2; i++)
-    mInputPositions.push_back(a->array[i]-mNodes.size()+1);
-  return mNodes.size()-1;
+    mInputPositions.push_back(a->array[i]-static_cast<GATE_POSITION>(mNodes.size())+1);
+  return static_cast<GATE_POSITION>(mNodes.size())-1;
 }
 void SLProgram::setOutputPositions(const M2_arrayint a) 
 {

@@ -243,7 +243,7 @@ Description
    gives the coapproximation sequence
    0\to M \to N''\to M'' \to 0.
    
-   The routine coapproximation M resurns the map M --> N''.
+   The routine coApproximation M resurns the map M --> N''.
   Example
    setRandomSeed 0
    T = setupRings(3,3)
@@ -376,6 +376,7 @@ doc ///
     coApproximation
     (coApproximation, Module)
     [coApproximation, CoDepth]
+    [coApproximation, Total]
    Headline
     Maximal Cohen-Macaulay co-approximation of M
    Usage
@@ -815,7 +816,9 @@ assert (betti L == betti res M);
 end--
 restart
 loadPackage("MCMApproximations", Reload=>true)
+
 uninstallPackage"MCMApproximations"
+restart
 installPackage"MCMApproximations"
 check "MCMApproximations"
 viewHelp MCMApproximations

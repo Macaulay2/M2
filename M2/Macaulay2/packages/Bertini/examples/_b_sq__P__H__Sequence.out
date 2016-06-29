@@ -1,34 +1,46 @@
--- -*- M2-comint -*- {* hash: 1303877543 *}
+-- -*- M2-comint -*- {* hash: 602893544 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
-i1 : R=QQ[x,y,t1,t2]
-
-o1 = R
-
-o1 : PolynomialRing
-
-i2 : makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
+i1 : makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
          B'Configs=>{{"PARAMETERHOMOTOPY",1}},
-         B'Polynomials=>{x^2-t1,y-t2})
+         B'Polynomials=>{"x^2-t1","y-t2"})
 
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98073-0/0/input
+o1 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74721-0/0/input
 
-o2 : File
+o1 : File
 
-i3 : runBertini(storeBM2Files)
-bertini
+i2 : runBertini(storeBM2Files,PreparePH2=>true)
+~/bertini
 
-i4 : moveFile(storeBM2Files|"/finite_solutions",storeBM2Files|"/start")
+i3 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
+~/bertini
+~/bertini
+
+i4 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions1")
+
+o4 = {{1, 1}, {-1, 1}}
+
+o4 : List
 
 i5 : makeB'InputFile(storeBM2Files, ParameterGroup=>{t1,t2},AffVariableGroup=>{{x,y}},
-         B'Configs=>{{"PARAMETERHOMOTOPY",2}},
-         B'Polynomials=>{x^2-t1,y-t2})
+         B'Configs=>{{"PARAMETERHOMOTOPY",1}},
+         B'Polynomials=>{"x^2-t1","y-t2"})
 
-o5 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98073-0/0/input
+o5 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74721-0/0/input
 
 o5 : File
 
-i6 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true)
-bertini
-bertini
+i6 : runBertini(storeBM2Files,PreparePH2=>true)
+~/bertini
 
-i7 : 
+i7 : b'PHSequence(storeBM2Files,{{1,1},{1,2}},SaveData=>true,StorageFolder=>"StoreMyFiles")
+~/bertini
+~/bertini
+
+i8 : importSolutionsFile(storeBM2Files,StorageFolder=>"StoreMyFiles",NameSolutionsFile=>"nonsingular_solutions1")
+
+o8 = {{1, 1}, {-1, 1}}
+
+o8 : List
+
+i9 : 
