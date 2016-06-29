@@ -1,24 +1,36 @@
--- -*- M2-comint -*- {* hash: 1207386204 *}
+-- -*- M2-comint -*- {* hash: -1273063650 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
-i1 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"})
+i1 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x},B'Polynomials=>{"x^2-2"});
 
-o1 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98059-0/0/input
+i2 : runBertini(storeBM2Files);
+~/bertini
 
-o1 : File
+i3 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions");
 
-i2 : runBertini(storeBM2Files)
-bertini
+i4 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions");
 
-i3 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
+i5 : writeStartFile(storeBM2Files,{{2},{ -2}},NameStartFile=>"start");
 
-o3 = {{1.41421}, {-1.41421}}
+i6 : writeParameterFile(storeBM2Files,{4},NameParameterFile=>"start_parameters");
 
-o3 : List
+i7 : writeParameterFile(storeBM2Files,{3},NameParameterFile=>"final_parameters");
 
-i4 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+i8 : makeB'InputFile(storeBM2Files,B'Polynomials=>{"x^2-t"},ParameterGroup=>{t},B'Configs=>{{ParameterHomotopy,2}},AffVariableGroup=>{x},NameB'InputFile=>"inputWin");
 
-o4 = {{1.41421}, {-1.41421}}
+i9 : runBertini(storeBM2Files,NameB'InputFile=>"inputWin");
+~/bertini
 
-o4 : List
+i10 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"nonsingular_solutions")
 
-i5 : 
+o10 = {{1.73205}, {-1.73205}}
+
+o10 : List
+
+i11 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
+
+o11 = {{1.73205}, {-1.73205}}
+
+o11 : List
+
+i12 : 

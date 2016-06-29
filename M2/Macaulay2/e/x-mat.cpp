@@ -724,8 +724,8 @@ M2_bool rawHomotopyTrack(Homotopy *H, const MutableMatrix *inputs, MutableMatrix
                          gmp_RR infinity_threshold,
                          M2_bool checkPrecision) 
 {
-  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
   /*
+  auto inp = dynamic_cast<const MutableMat<DMat<M2::ARingCCC>>*> (inputs);
   if (inp!=nullptr) { // check precision!!!
     std::cout << "-- precisions:" << std::endl;      
     auto& m = inp->getMat();

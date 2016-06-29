@@ -17,8 +17,52 @@ document {
 	  TO "changes, 1.8.1",
 	  TO "changes, 1.8.2",
 	  TO "changes, 1.9",
+	  TO "changes, 1.9.1",
 	  TO "list of obsolete functions"
 	  }
+     }
+
+document {
+     Key => "changes, 1.9.1",
+     UL {
+	  LI { "major improvements and additions:",
+	        -- UL {
+	        --     }
+            },
+	  LI { "packages that have been published and certified:",
+	       -- UL {
+	       -- 	    -- LI { star, " ", TO "::", ", a package by ... for ..., has been published." },
+	       -- 	    }
+	       },
+	  LI { "new packages:",                       -- got this with git diff version-1.8.2 =distributed-packages 
+	       -- UL {
+	       -- 	    -- LI { TO "::", ", a package by ... for ..., has been added." },
+	       -- 	    }
+	       },
+	  LI { "improved packages:",
+	      -- UL {
+	      -- 	  }
+	      },
+	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
+	       UL {
+            LI { "The new function ", TO "minimalBetti", " finds minimal Betti numbers of an ideal or module
+                using the new ", TO "FastNonminimal", " functionality, avoiding unneeded computation of matrices in the
+                free resolution."},
+		    LI { "The new function ", TO "roots", " finds roots of univariate polynomials numerically." },
+            LI { "the new function ", TO "splitWWW", " takes an http response, e.g. from ", TO "getWWW", " and unpacks it into
+                the header, and the body.  Additionally, if the response indicates that this is a chunked response,
+                then the body is unchunked (should be considered a bug fix from previous functionality)." }
+		    }
+	       },
+	  LI { "new constants and operators:",
+	       -- UL {
+	       -- 	    }
+	       },
+	  LI { "functionality changed:",
+	       -- UL {
+	       -- 	    }
+	       }
+    	  }
      }
 
 document {
@@ -57,7 +101,7 @@ document {
 	  	    LI { TO "Cremona::Cremona", ", a package by Giovanni Staglianò for rational maps between projective varieties, has been added." },
 	  	    LI { TO "MultipolynomialResultants::MultipolynomialResultants", ", a package by Giovanni Staglianò for resultants and discriminants for multivariate polynomials, has been added." },
 	  	    LI { TO "VectorFields::VectorFields", ", a package by Brian Pike for vector fields, has been added." },
-	  	    LI { TO "RandomIdeal::RandomIdeal", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
+	  	    LI { TO "RandomIdeals::RandomIdeals", ", a package by David Eisenbud for creating random ideals of various sorts, has been added." },
 	  	    LI { TO "Miura::Miura", ", a package by Joe Suzuki for divisor class groups on curves, has been added." }
 	  	    }
 	       },
@@ -69,8 +113,8 @@ document {
 	  --     },
 	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
 	       UL {
-		    LI { "The function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },
-     	       	    LI { "The function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." }
+		    LI { "The new function ", TO "installedPackages", " returns a list of names of packages installed by the user with ", TO "installPackage", "." },
+     	       	    LI { "The new function ", TO "uninstallAllPackages", " uninstalls all the packages installed by the user with ", TO "installPackage", "." }
 		    }
 	       },
 	  -- LI { "new constants and operators:",

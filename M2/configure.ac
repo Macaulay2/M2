@@ -106,10 +106,6 @@ case $OS in
   CYGWIN*) OS=MicrosoftWindows ; ISSUE=${ISSUE:-Cygwin} ;;
 esac
 
-case $OS in
-   CYGWIN*) OS=MicrosoftWindows ; ISSUE=Cygwin ;;
-esac
-
 if test ! "$ISSUE"
 then if test -f /usr/bin/sw_vers
      then ISSUE_FLAVOR=`/usr/bin/sw_vers -productName`
@@ -139,6 +135,7 @@ then if test -f /usr/bin/sw_vers
 	 "Scientific"*) ISSUE_FLAVOR="ScientificLinux" ;;
 	 "Raspbian"*) ISSUE_FLAVOR=Raspbian ;;
 	 *"openSUSE") ISSUE_FLAVOR=openSUSE ;;
+	 "SUSE LINUX") ISSUE_FLAVOR=SuseLinux ;;
 	 "") AC_MSG_ERROR([issue not found]) ;;
 	 *)  AC_MSG_NOTICE([unrecognized issue: $ISSUE_FLAVOR]) ;;
      esac
@@ -146,6 +143,7 @@ then if test -f /usr/bin/sw_vers
 	 "") AC_MSG_NOTICE([release number not found]) 
 	     ISSUE_RELEASE=unknown ;;
      esac
+     ISSUE_FLAVOR=`echo $ISSUE_FLAVOR | sed 's/ /-/g'`
      ISSUE=$ISSUE_FLAVOR-$ISSUE_RELEASE
 fi
 
@@ -796,15 +794,15 @@ AC_SUBST(BUILTLIBS,)
 #    gfan is used by the packages gfanInterface and StatePolytope
 #    4ti2 is used by the package FourTiTwo
 #    linbox is provided as an option for experimentation
-#    linbox needs fflas-ffpack and givaro
-#    fflas-ffpack needs givaro and lapack
+#    linbox needs fflas_ffpack and givaro
+#    fflas_ffpack needs givaro and lapack
 #    mpir is used by givaro
 #    mpir and mpfr are used by fplll
-#    fflas-ffpack is provided as an option for experimentation
+#    fflas_ffpack is provided as an option for experimentation
 #        it needs lapack
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
-#    flint depends on mpir and mpfr
+#    flint depends on gmp or mpir and mpfr
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
@@ -1216,11 +1214,16 @@ then AC_LANG(C)
 fi
 test $BUILD_gdbm = yes && BUILTLIBS="-lgdbm $BUILTLIBS"
 
+dnl mpir and mpfr are always built, so flint should also always be built:
+BUILD_ALWAYS="flint $BUILD_ALWAYS"
+if test $BUILD_mpir = yes -o $BUILD_mpfr = yes
+then BUILD_flint=yes
+fi
 if test $BUILD_flint = no
 then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
      if test $BUILD_flint = no
-     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes,-lmpfr -lgmp)
+     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
      fi
      if test $BUILD_flint = no
      then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
@@ -1345,7 +1348,6 @@ AC_ARG_ENABLE(fplll,
     ENABLE_FPLLL=yes
     )
     
-test $BUILD_givaro = yes && BUILTLIBS="-lgivaro $BUILTLIBS"
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
 test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
 
@@ -1622,21 +1624,30 @@ AC_LINK_IFELSE(
 	[  AC_MSG_RESULT(no) ])
 CFLAGS="$SAVE"
 
+TESTFLAG=-Wframe-address
+AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
+AC_SUBST(HAVE_WFRAME_ADDRESS,)
+SAVE=$CFLAGS
+CFLAGS="-Werror $TESTFLAG $CFLAGS"
+AC_LANG(C)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], M2_CFLAGS="$M2_CFLAGS $TESTFLAG" HAVE_WFRAME_ADDRESS=yes, HAVE_WFRAME_ADDRESS=no)
+CFLAGS=$SAVE
+AC_MSG_RESULT($HAVE_WFRAME_ADDRESS)
+
 TESTFLAG=-Wstrict-aliasing
 AC_MSG_CHECKING(whether $CC accepts $TESTFLAG)
 AC_SUBST(HAVE_WSTRICT_ALIASING,)
 SAVE=$CFLAGS
-CFLAGS="$TESTFLAG $CFLAGS"
+CFLAGS="$TESTFLAG -Werror $CFLAGS"
 AC_LANG(C)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
-M2_CFLAGS="$M2_CFLAGS $TESTFLAG"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], M2_CFLAGS="$M2_CFLAGS $TESTFLAG" HAVE_WSTRICT_ALIASING=yes, HAVE_WSTRICT_ALIASING=no)
 CFLAGS=$SAVE
 AC_MSG_RESULT($HAVE_WSTRICT_ALIASING)
 
 AC_MSG_CHECKING(whether $CC accepts -Wfatal-errors)
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wfatal-errors"
+CFLAGS="$CFLAGS -Wfatal-errors -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     M2_CFLAGS="$M2_CFLAGS -Wfatal-errors"
     AC_MSG_RESULT(yes, adding -Wfatal-errors to flags),
@@ -1649,7 +1660,7 @@ dnl about invalid options that turn off warnings, if there are no warnings to be
 dnl It's a feature, not a bug!
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wmismatched-tags"
+CFLAGS="$CFLAGS -Wmismatched-tags -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     CXXFLAGS="$CXXFLAGS -Wno-mismatched-tags"
     # we don't like seeing this warning, especially from the "clang" compiler
@@ -1661,7 +1672,7 @@ AC_MSG_CHECKING(whether $CC accepts -Wparentheses-equality)
 AC_SUBST(HAVE_WPARENTHESES_EQUALITY,)
 AC_LANG(C)
 SAVE=$CFLAGS
-CFLAGS="$CFLAGS -Wparentheses-equality"
+CFLAGS="$CFLAGS -Wparentheses-equality -Werror"
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     HAVE_WPARENTHESES_EQUALITY=yes;  AC_MSG_RESULT(yes),
     HAVE_WPARENTHESES_EQUALITY=no ;  AC_MSG_RESULT(no))
@@ -1671,7 +1682,7 @@ AC_MSG_CHECKING([whether $CC accepts -Wl,-z,noexecstack])
 AC_SUBST(HAVE_WL_X_NOEXECSTACK,)
 AC_LANG(C)
 SAVE=$LDFLAGS
-LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"
+LDFLAGS="$LDFLAGS -Wl,-z,noexecstack -Werror"
 AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     HAVE_WL_X_NOEXECSTACK=yes;  AC_MSG_RESULT(yes),
     HAVE_WL_X_NOEXECSTACK=no ;  AC_MSG_RESULT(no))
@@ -1681,7 +1692,7 @@ AC_MSG_CHECKING([whether $CC accepts -Wl,--enable-auto-import])
 AC_SUBST(HAVE_WL_ENABLE_AUTO_IMPORT,)
 AC_LANG(C)
 SAVE=$LDFLAGS
-LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
+LDFLAGS="$LDFLAGS -Wl,--enable-auto-import -Werror"
 AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     HAVE_WL_ENABLE_AUTO_IMPORT=yes;  AC_MSG_RESULT(yes),
     HAVE_WL_ENABLE_AUTO_IMPORT=no ;  AC_MSG_RESULT(no))
@@ -1691,7 +1702,7 @@ AC_MSG_CHECKING([whether $CC accepts -Wl,-Map,conftest.mapfile])
 AC_SUBST(HAVE_WL_MAP,)
 AC_LANG(C)
 SAVE=$LDFLAGS
-LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile"
+LDFLAGS="$LDFLAGS -Wl,-Map,conftest.mapfile -Werror"
 AC_LINK_IFELSE([AC_LANG_SOURCE([int main() {}])], 
     HAVE_WL_MAP=yes;  AC_MSG_RESULT(yes),
     HAVE_WL_MAP=no ;  AC_MSG_RESULT(no))

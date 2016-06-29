@@ -1,4 +1,3 @@
-needsPackage "RandomObjects"
 newPackage(
 	"RandomPlaneCurves",
     	Version => "0.6",
@@ -17,6 +16,7 @@ newPackage(
 	      HomePage => "http://www.math.uni-sb.de/ag/schreyer/"}
                    },
     	Headline => "Construction of random plane curves",
+	PackageExports => {"RandomObjects"},
     	DebuggingMode => false
         )
 
@@ -144,6 +144,12 @@ imageUnderRationalMap(Ideal,Matrix):=(J,L)->(
      )
 
 beginDocumentation()
+
+-- authors: add some text to this documentation node:
+doc ///
+ Key
+   RandomPlaneCurves
+///
 
 doc ///
   Key

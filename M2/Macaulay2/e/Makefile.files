@@ -127,7 +127,8 @@ INTERFACE = \
 
 COMMANDS2 = \
 	x-monideal \
-	x-factor
+	x-factor \
+	polyroots
 
 COMMANDS = \
 	ntl-internal \

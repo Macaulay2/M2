@@ -179,7 +179,7 @@ gbres_comp::gbres_comp(const Matrix *m, int length, int origsyz,
   //nodes[0]->set_HF(hf);
 }
 
-void gbres_comp::remove_res()
+gbres_comp::~gbres_comp()
 {
   for (int i=0; i<n_nodes; i++)
     {
@@ -188,11 +188,6 @@ void gbres_comp::remove_res()
     }
 
   delete mi_stash;
-}
-
-gbres_comp::~gbres_comp()
-{
-  remove_res();
 }
 
 

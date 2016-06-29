@@ -11,6 +11,7 @@
 #include <vector>
 #include "imonorder.hpp"
 
+#include <vector>
 class PolynomialRing;
 
 typedef int * exponents;
@@ -110,6 +111,10 @@ public:
   int numInvertibleVariables() const { return n_invertible_vars_; }
   int numNonTermOrderVariables() const { return local_vars->len; }
 
+  // returns an empty vector if the first part of the monomial ordering is
+  // not a weight vector
+  std::vector<int> getFirstWeightVector() const;
+
   void text_out(buffer &o) const;
 
   int n_vars()        const { return nvars_; }
@@ -191,7 +196,9 @@ public:
   // True if the first part of the order has a weight vector.
   // MUST be true in order for first_weight_value to not give erroneous value
 
-  long first_weight_value(const_monomial m) const { return m[first_weights_slot_]; }
+  long first_weight_value(const_monomial m) const {
+    return m[first_weights_slot_];
+  }
   // Returns the value of the first weight vector in the monomial order.
   // If none, returns 0.  First call weight_value_exists() before using.
 };
