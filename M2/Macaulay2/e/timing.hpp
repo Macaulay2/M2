@@ -20,7 +20,7 @@ long microseconds(DurationType time_diff)
 template<typename DurationType>
 double seconds(DurationType time_diff)
 {
-  return 1.0e-9 * std::chrono::duration_cast<std::chrono::nanoseconds>(time_diff).count();
+  return 1.0e-9 * static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(time_diff).count());
 }
 
 #define TIME(t,call) {auto __now1 = now(); call; auto __now2 = now(); t += nanoseconds(__now2-__now1);}

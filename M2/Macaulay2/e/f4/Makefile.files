@@ -1,7 +1,8 @@
 F4_CCFILES := \
+  res-varpower-monomial \
+  res-f4-monlookup \
   res-moninfo \
   res-poly-ring \
-  res-f4-mem \
   res-f4-m2-interface \
   res-schreyer-frame \
   res-f4 \

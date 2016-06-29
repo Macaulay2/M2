@@ -17,7 +17,11 @@
 #undef INT64
 #undef Matrix
 #undef ASSERT
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <NTL/ZZ.h>
+#pragma GCC diagnostic pop
 
 #include "matrix.hpp"
 #include "ZZp.hpp"

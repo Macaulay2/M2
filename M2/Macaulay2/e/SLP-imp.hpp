@@ -286,7 +286,7 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm > :: track(
   R.set_from_BigReal(min_step2,min_dt);
   R.mult(min_step2, min_step2, min_step2); //min_step^2
   R.set_from_BigReal(epsilon2,epsilon); 
-  int tolerance_bits = -R.log2abs(epsilon2);  
+  int tolerance_bits = int(log2(fabs(R.coerceToDouble(epsilon2))));
   R.mult(epsilon2, epsilon2, epsilon2); //epsilon^2
   R.set_from_BigReal(infinity_threshold2,infinity_threshold); 
   R.mult(infinity_threshold2, infinity_threshold2, infinity_threshold2);
@@ -572,7 +572,8 @@ bool HomotopyConcrete< RT, FixedPrecisionHomotopyAlgorithm > :: track(
                                           //   ||J^{-1}|| should be multiplied by a factor 
                                           //   reflecting an estimate on the error of evaluation of J 
 #define PRECISION_SAFETY_BITS 10
-        int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + R.log2abs(dx_norm2) - 1; // subtract 1 for using squares under "log"
+        int more_bits = int(log2(fabs(R.coerceToDouble(dx_norm2)))) - 1; // subtract 1 for using squares under "log". TODO: should this be divide by 2??
+        int precision_needed = PRECISION_SAFETY_BITS + tolerance_bits + more_bits; 
         if (R.get_precision() < precision_needed)    
           status = INCREASE_PRECISION;
         else if (R.get_precision() != 53 and R.get_precision() > 2*precision_needed) 
