@@ -1,3 +1,18 @@
+-- Test compress_incidence/2.poly
+-- Checking fVector
+TEST ///
+verticesP = matrix {{-1},{-1},{-1}};
+raysP = matrix {{1,0,0},{0,1,0},{0,0,1}};
+linealityP = map(QQ^3, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+desired = {4,6,4,1};
+computed = fVector P;
+assert(desired == computed)
+///
+
 -- Test wreath/4.poly
 -- Checking latticePoints
 TEST ///

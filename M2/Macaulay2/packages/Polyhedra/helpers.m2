@@ -6,8 +6,8 @@ rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
       corresponding := positions(0..(numColumns targets -1),
          j -> (
             target := targets_{j};
-            << target << endl;
-            << rank(source | target) == 1 << endl;
+            -- << target << endl;
+            -- << rank(source | target) == 1 << endl;
             rank(source | target) == 1
          )
       );

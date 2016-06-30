@@ -53,6 +53,7 @@ load "./affineImages.m2"
 load "./legacy.m2"
 
 -- Tests
+load "./tests/tests_from_polymake/fvector.m2"
 load "./tests/cone_basics.m2"
 load "./tests/polyhedron_basics.m2"
 load "./tests/tests_from_polymake/hilbert_basis.m2"

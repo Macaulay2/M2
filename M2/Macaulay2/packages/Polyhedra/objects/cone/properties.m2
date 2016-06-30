@@ -46,20 +46,22 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
       newFaces := unique flatten apply(oldFaces,
          face -> toList apply(result#(d-1),
             facet -> (
-               toSequence elements ((set face) * (set facet))
+               plop := elements ((set face) * (set facet));
+               <<plop<<endl;
+               sort plop
             )
          )
       );
-      << newFaces << endl;
+      -- << newFaces << endl;
       newFaces = select(newFaces, 
          face -> (
-            << "Face is: " << face << endl;
-            << raysC << endl;
-            << raysC_{face} << endl;
-            (rank raysC_{face}) + ldim == d-2-i
+            -- << "Face is: " << face << endl;
+            -- << raysC << endl;
+            -- << raysC_{face} << endl;
+            (rank raysC_(toList face)) + ldim == d-2-i
          )
       );
-      << "Select ok." << endl;
+      -- << "Select ok." << endl;
       result#(d-2-i) = newFaces
    );
    result

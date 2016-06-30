@@ -12,7 +12,7 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
       if current_0 > 0 then (
          if current_0 != 1 then (
             latticeTest = false;
-            current = (1/(current_0)) * promote(current, QQ);
+            current = (1/(current_0)) * vectorToQQ(current);
          );
          vList = append(vList, slice(current, 1..n));
       ) else if current_0 == 0 then (
@@ -27,6 +27,16 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    setProperty(P, computedRays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat
+)
+
+vectorToQQ = method()
+vectorToQQ Vector := v -> (
+   r := ring v;
+   if r === QQ then return v
+   else (
+      newEntries := apply(entries v, e -> promote(e, QQ));
+      return vector newEntries
+   )
 )
 
 
@@ -213,11 +223,11 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
    raysC := rays C;
    vertPCMap := rayCorrespondenceMap(raysC, prependOnes vertP);
    raysPCMap := rayCorrespondenceMap(raysC, prependZeros raysP);
-   << "VP: " << vertP << endl;
-   << "RP: " << raysP << endl;
-   << "RC: " << raysC << endl;
-   << vertPCMap << endl;
-   << raysPCMap << endl;
+   -- << "VP: " << vertP << endl;
+   -- << "RP: " << raysP << endl;
+   -- << "RC: " << raysC << endl;
+   -- << vertPCMap << endl;
+   -- << raysPCMap << endl;
    facesC := faces C;
    result := for dim in keys facesC list (
       facesPdim := apply(facesC#dim,
@@ -229,7 +239,7 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
             (vertFace, raysFace)
          )
       );
-      << facesPdim << endl;
+      -- << facesPdim << endl;
       facesPdim = select(facesPdim, face -> #(face#0) > 0);
       (dim - 1) => facesPdim
    );
