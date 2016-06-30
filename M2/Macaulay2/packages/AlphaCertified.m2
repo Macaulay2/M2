@@ -63,13 +63,15 @@ CertifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
     Consts2 := ComputeConstants(f,x2);
     if (Consts1 #0) >= ((13-3*sqrt(17))/4) then print "The first point is not an approximate solution to the system";
     if (Consts2 #0) >= ((13-3*sqrt(17))/4) then print "The second point is not an approximate solution to the system";
-    if HermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#2) then print "Associated solutions are distinct";
+    if HermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#1) then print "Associated solutions are distinct";
     if (Consts1)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then print "Associated solutions are not distinct";
     )
 
-f = polySystem {x + y, x - 4}
-p = point{{10.0000011, -4.9991}}
-q = point{{10.00011, -4.991+ii}}
+f = polySystem {x + y, x^2 - 4}
+solveSystem f
+p = point{{2.000001, -2.0}}
 ComputeConstants(f,p)
+q = point{{-2, 2.000001}}
+ComputeConstants(f,q)
 CertifySolns(f,p)
 CertifyDistinctSoln(f,p,q)

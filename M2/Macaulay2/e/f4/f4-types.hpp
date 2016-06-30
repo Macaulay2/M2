@@ -188,6 +188,8 @@ typedef F4MonomialLookupTableT<int32_t> MonomialLookupTable;
 
 template <typename MonInfo> class MonomialHashTable;
 
+
+
 #endif
 
 // Local Variables:

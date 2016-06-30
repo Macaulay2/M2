@@ -15,6 +15,7 @@ newPackage(
 
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
+
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", 
     "steadyStateEquations",
@@ -27,11 +28,13 @@ exportMutable {}
 removeWhitespace = s -> s = replace(" ", "", s)
 
 -- returns species component of a summand
+
 stripCoef = (s) -> (
     i := 0;
     while regex("[0-9]", s#i) =!= null do i = i+1;
     substring(i,length(s),s)
     )
+
 
 -- returns coefficient component of a summand
 specProportion = (s) -> (

@@ -87,7 +87,7 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libatomic-ops-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libatomic-ops-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config libmpc-dev
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -190,7 +190,11 @@ various modern operating systems:
 	brew tap homebrew/science
 	brew tap homebrew/homebrew-x11
 	brew update
+<<<<<<< HEAD
 	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
+=======
+	brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost libmpc xz
+>>>>>>> 4f7136dc25b33b2696ba43c734f81955742f3174
     Periodically upgrade the programs and libraries to the latest versions with
 	brew update
         brew upgrade

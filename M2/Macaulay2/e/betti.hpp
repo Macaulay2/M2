@@ -19,6 +19,13 @@ public:
   M2_arrayint getBetti() const;
   void displayBetti(buffer& o) const;
   void output() const;
+
+  void resize(int new_lo_degree, int new_hi_degree, int new_length);
+  // The following three functions are the given bounds
+  // The actual bounds where there is a non-zero entry are possibly smaller
+  int loDegree() const { return mLoDegree; }
+  int hiDegree() const { return mHiDegree; }
+  int length() const { return mHiLength; }
 private:
   // These two functions were in comp-res.cpp, that code was liftd directly to here.
   static M2_arrayint betti_make(int lo, int hi, int len, int *bettis);
