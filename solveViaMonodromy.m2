@@ -73,7 +73,20 @@ computeMixedVolume (List) := polys -> (
   ringMap := map(R2, R1, generatorMapping);
   mixedVolume (polys/ringMap)
 )    
-    
+
+diffSolutions = method(TypicalValue=>Sequence, Options=>{Tolerance=>1e-3})
+-- in:  A, B (presumably sorted)
+-- out: (a,b), where a and b are lists of indices where A and B differ
+diffSolutions (List,List) := o -> (A,B) -> (
+     i := 0; j := 0;
+     a := {}; b := {};
+     while i<#A and j<#B do 
+     if areEqual(A#i,B#j) then (i = i+1; j = j+1)
+     else if isGEQ(A#i,B#j) then (b = append(b,j); j = j+1)
+     else (a = append(a,i); i = i+1);	  
+     (a|toList(i..#A-1),b|toList(j..#B-1))	      	    
+     )
+
 {* 
 The idea of this version is experimenting with making one graph that has 
 some a number of nodes n = 1 + ExtraNodeCount. This function loops around
@@ -110,29 +123,51 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     solsList := for i in 1..o.ExtraNodeCount list({});
     solsList = {sols0} | solsList;
     solsList = new MutableList from solsList;
+    previousLoopSolsList := new MutableList from for i in 0..o.ExtraNodeCount list({});
+    gammaList := new MutableList;
     same := 0;
     nPathsTracked := 0;
+    mv := -1;
     while true do (
         elapsedTime for i in 0..#FList - 1 do (
-          F0 := FList#i;
-          F1 := FList#((i+1)%(#FList));
-          NewSols1 := track(F0,F1,gamma=>exp(2*pi*ii*random RR),solsList#i);
-          nPathsTracked = nPathsTracked + #(solsList#i);
+          ind1 := i;
+          ind2 := ((i+1)%(#FList));
+          F0 := FList#ind1;
+          F1 := FList#ind2;
+          gammaList#ind1 = exp(2*pi*ii*random RR);
+          NewSols1 := track(F0,F1, gamma=>gammaList#ind1, trackbackwards=>false, solsList#ind1);
+          nPathsTracked = nPathsTracked + #(solsList#ind1);
           NewSols1 = select(NewSols1, s->status s === Regular);
-	  sols1 := clusterSolutions((solsList#((i+1)%(#FList))) | NewSols1); -- take the union
-          solsList#((i+1)%(#FList)) = sols1;
-          << "i:" << i << ". " << #NewSols1 << " , " << #sols1 << ", " << 1.0*(#sols1 - #NewSols1)/#sols1 << endl;
-        );
-        << "number of paths tracked: " << nPathsTracked << endl;
-        if isReady mvTask then (
-            mv := taskResult mvTask;
+          previousLoopSolsList#ind2 = sortSolutions(NewSols1);
+
+	  sols1 := clusterSolutions(solsList#ind2 | NewSols1); -- take the union
+          solsList#ind2 = sortSolutions(sols1);
+          << "i:" << i << ". " << #NewSols1 << " , " << #sols1 << ", " << endl;
+          << "number of paths tracked: " << nPathsTracked << endl;
+
+          if isReady mvTask then (
+            mv = taskResult mvTask;
             << "Mixed volume computation completed! MV = ", << mv << endl;
             mvComputationCompleted = true;
+          );
+
+          if mvComputationCompleted then (
+            if #(solsList#ind2) == mv then (
+              for j in 0..ind2 do (
+                startIndex := ind2 - j;
+                endIndex := startIndex - 1;
+                if startIndex == 0 then return nPathsTracked;
+
+                diffs := diffSolutions(previousLoopSolsList#startIndex, solsList#startIndex);
+                ptsToTrack := for diff in diffs#1 list (solsList#startIndex#diff);
+                newSols := track(FList#endIndex,FList#startIndex, gamma=>gammaList#endIndex,trackbackwards=>true,ptsToTrack);
+                nPathsTracked = nPathsTracked + #ptsToTrack;
+                newSols = select(newSols,s->status s === Regular);
+                solsList#endIndex = sortSolutions(clusterSolutions(solsList#endIndex | newSols));
+                << "number of paths tracked: " << nPathsTracked << endl;
+              )
+            );
+          );
         );
-        if mvComputationCompleted then (
-          if #(solsList#0) == mv then break;
-        );
-    ) -- else print "something went wrong"
-    ;
-    solsList#0
-    )
+    );
+)
