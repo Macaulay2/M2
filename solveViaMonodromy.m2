@@ -3,6 +3,7 @@ debug NAGtypes
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
 --     s0, (as above)
+
 solveViaMonodromy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     if #s0 < 1 then error "at least one solution expected";  
@@ -169,5 +170,11 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
             );
           );
         );
-    );
-)
+
+        if mvComputationCompleted then (
+          if #(solsList#0) == mv then break;
+        );
+    ) -- else print "something went wrong"
+    ;
+    solsList#0
+    )
