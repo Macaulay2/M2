@@ -170,6 +170,7 @@ auslanderInvariant Module := opts->M-> (
     numgens prune coker phi)
 
 setupRings = method(Options =>{Characteristic => 101, Randomize =>true})
+
 setupRings(ZZ,ZZ) := opts -> (c,d)->(
     x := local x;
     p := opts.Characteristic;
@@ -178,6 +179,13 @@ setupRings(ZZ,ZZ) := opts -> (c,d)->(
     if opts.Randomize===true then ff = ff*random(source ff, source ff);
     {S}|apply(c, j->(S/ideal(ff_{0..j})))
     )
+
+setupRings(Matrix) := opts -> (ff)->(
+     S := ring ff;
+     c := numcols ff;
+     if opts.Randomize===true then ff = ff*random(source ff, source ff);
+     {S}|apply(c, j->(S/ideal(ff_{0..j})))
+     )
 
 
 setupModules = method()
@@ -605,17 +613,21 @@ doc ///
    Key
     setupRings
     (setupRings, ZZ, ZZ)
+    (setupRings, Matrix)
     [setupRings, Characteristic]
     [setupRings, Randomize]
    Headline
     Sets up a complete intersection for experiments
    Usage
     R = setupRings(c,d)
+    R = setupRings(ff)    
    Inputs
     c:ZZ
      desired codimension
     d:ZZ
      degree of homogoneous generators
+    ff:Matrix
+     a regular sequence
    Outputs
     R:List
      List of rings R_0..R_c with R_i = S/(f_0..f_(i-1))
