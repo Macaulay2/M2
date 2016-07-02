@@ -181,7 +181,8 @@ doc ///
 	    X_8 - X_9: phosphatase;
 	    Y_0 - Y_1: beta-catenin;
 	    Y_2: transcription factor;
-	    Y_3 - Y_9: intermediate complex.
+	    Y_3 - Y_9: intermediate complex;
+	    0: empty set;
 	    
 	    For more details see Algebraic Systems Biology: A Case Study for the Wnt Pathway:
 	    Gross, Harrington, Rosen, & Sturmfels.

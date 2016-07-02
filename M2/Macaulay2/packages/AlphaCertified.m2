@@ -1,20 +1,18 @@
 restart
 needsPackage "NumericalAlgebraicGeometry"
 
-R = CC[x,y]
-
-HermitianNorm = method()
-HermitianNorm(Point) := x -> (
+hermitianNorm = method()
+hermitianNorm(Point) := x -> (
     N := sqrt(sum(apply(coordinates x, i -> abs(i)^2)))
     )
 
-OneNorm = method()
-OneNorm(Point) := x -> (
-    N := sqrt(1+(HermitianNorm(x)*HermitianNorm(x)))
+oneNorm = method()
+oneNorm(Point) := x -> (
+    N := sqrt(1+(hermitianNorm(x)*hermitianNorm(x)))
     )
 
-PolyNorm = method()
-PolyNorm(RingElement) := r -> (
+polyNorm = method()
+polyNorm(RingElement) := r -> (
     L = listForm r;
     sum(L,a->(
 	(e,c) := a;
@@ -22,17 +20,18 @@ PolyNorm(RingElement) := r -> (
  	))
     )
 
-PolySysNorm = method()
-PolySysNorm(PolySystem) := f -> (
+polySysNorm = method()
+polySysNorm(PolySystem) := f -> (
     listOfEq := equations f;
-    listOfPolyNorms := apply( listOfEq, i -> (PolyNorm(i))^2);
-    N := sum listOfPolyNorms
+    listOfpolyNorms := apply( listOfEq, i -> (polyNorm(i))^2);
+    N := sum listOfpolyNorms
     )
 
 
-ComputeConstants = method()
-ComputeConstants(PolySystem, Point) := (f, x) -> (
-    numOfVari := numgens ring f; 
+computeConstants = method()
+computeConstants(PolySystem, Point) := (f, x) -> (
+    R := ring f;
+    numOfVari := numgens R; 
     numOfPoly := # equations f;
     jacobianOfSys := sub(jacobian f,R);
     J := evaluate(jacobianOfSys, x);
@@ -40,38 +39,73 @@ ComputeConstants(PolySystem, Point) := (f, x) -> (
     eval := evaluate(f,x);
     y := point solve(J, eval);
     degs := flatten for i from 1 to numOfPoly list degree ((equations f)#(numOfPoly-i));
-    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(OneNorm(x))^((degs)#(numOfPoly-i)-1);
+    diagonals := flatten for i from 1 to numOfPoly list sqrt((degs)#(numOfPoly-i))*(oneNorm(x))^((degs)#(numOfPoly-i)-1);
     deltaD := sub(diagonalMatrix diagonals, CC);
-    mu := max {1, PolySysNorm(f)*norm(solve(J,deltaD))};
+    mu := max {1, polySysNorm(f)*norm(solve(J,deltaD))};
     maxdeg := max degs;
-    beta := HermitianNorm(y);
-    gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/OneNorm(x));
+    beta := hermitianNorm(y);
+    gamma := mu*((maxdeg)^(3/2))*(1/2)*(1/oneNorm(x));
     alpha := beta * gamma;
     (alpha, beta, gamma)
     )
 
-CertifySolns = method()
-CertifySolns(PolySystem, Point) := (f, x) -> (
-    Consts := ComputeConstants(f,x);
-    if (Consts #0)<((13-3*sqrt(17))/4) then print "The point is an approximate solution to the system"
-    else print "The point is not an approximate solution to the system"
+
+certifySolutions = method()
+certifySolutions(PolySystem, Point) := (f, x) -> (
+    Consts := computeConstants(f,x);
+    if (Consts #0)<((13-3*sqrt(17))/4) then (
+	 print "The point is an approximate solution to the system";
+	 true
+	 )
+    else (
+	print "The point is not an approximate solution to the system";
+	false
+	)
     )
 
-CertifyDistinctSoln = method()
-CertifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
-    Consts1 := ComputeConstants(f,x1);
-    Consts2 := ComputeConstants(f,x2);
-    if (Consts1 #0) >= ((13-3*sqrt(17))/4) then print "The first point is not an approximate solution to the system";
-    if (Consts2 #0) >= ((13-3*sqrt(17))/4) then print "The second point is not an approximate solution to the system";
-    if HermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#1) then print "Associated solutions are distinct";
-    if (Consts1)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and HermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then print "Associated solutions are not distinct";
+certifyDistinctSoln = method()
+certifyDistinctSoln(PolySystem, Point, Point) := (f, x1, x2) -> (
+    Consts1 := computeConstants(f,x1);
+    Consts2 := computeConstants(f,x2);
+    if (Consts1 #0) >= ((13-3*sqrt(17))/4) then (
+	print "The first point is not an approximate solution to the system";
+	false
+	)
+    else if (Consts2 #0) >= ((13-3*sqrt(17))/4) then (
+	print "The second point is not an approximate solution to the system";
+	false
+	)
+    else if hermitianNorm(point{(coordinates x1)-(coordinates x2)}) > 2*((Consts1)#1 + (Consts2)#1) then (
+	print "Associated solutions are distinct";
+	true
+	)
+    else if (Consts1)#0 < 0.03 and hermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts1)#2) or (Consts2)#0 < 0.03 and hermitianNorm(point{(coordinates x1)-(coordinates x2)}) < 1/(20*(Consts2)#2) then (
+	print "Associated solutions are not distinct";
+	false
+	)
     )
 
+
+TEST ///
+R = CC[x,y]
 f = polySystem {x + y, x^2 - 4}
-solveSystem f
-p = point{{2.000001, -2.0}}
-ComputeConstants(f,p)
+sols = solveSystem f
+assert all(sols, p -> certifySolutions(f,p))
+p = point{{2.0, -2.0}}
 q = point{{-2, 2.000001}}
-ComputeConstants(f,q)
-CertifySolns(f,p)
-CertifyDistinctSoln(f,p,q)
+certifySolutions(f,p)
+certifyDistinctSoln(f,p,q)
+///
+
+end
+
+
+
+restart
+load "AlphaCertified.m2"
+FF = QQ[i]/ideal(i^2 + 1)
+R = FF[x,y]
+p1 = point{{2,4+i}}
+hermitianNorm(p1)
+
+
