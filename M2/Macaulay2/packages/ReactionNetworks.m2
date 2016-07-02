@@ -185,6 +185,7 @@ networkToHRF = N -> apply(edges N.ReactionGraph, e -> netComplex(N, first e) | "
 
 net ReactionNetwork := N -> stack networkToHRF N 
 
+
 stoichiometricSubspace = method()
 stoichiometricSubspace ReactionNetwork := N -> (
     C := N.Complexes;
@@ -309,6 +310,7 @@ CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 F = steadyStateEquations CRN
 netList F
 ///
+
 
 -- Need to allow for parameters, either random or input by user, to translate the 
 -- stoichiometric subspace
