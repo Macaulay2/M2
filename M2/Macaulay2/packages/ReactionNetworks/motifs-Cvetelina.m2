@@ -76,11 +76,18 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 
+M = reactionNetwork ({"A --> B", "A --> 2C", "B --> ", " --> C"})
+netList steadyStateEquations M
+
+
+netList flatten entries(laplacian(twoLayerCascadeK(), QQ))
+netList steadyStateEquations twoLayerCascadeK()
 W = wnt()
 #W.Species
 #W.Complexes
-VerticalList steadyStateEquations W
-#steadyStateEquations W
+VerticalList steadyStateEquations wnt()
+W.NullIndex
+
 N = clusterModelCellDeath()
 sub(N, {"Y" => "A", "L" => "B", "Z" => "C"})
 ///					    

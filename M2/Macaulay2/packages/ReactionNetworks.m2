@@ -237,9 +237,10 @@ laplacian = (Rn, FF) -> (
     for i from 2 to n do  Y = Y || (Rn.Complexes)#(i-1);
     if Rn.NullIndex >= 0 then (
 	for i from 0 to n - 1 do (
-	     tmp := 0;
-	     if member({i, Rn.NullIndex}, seps.NullEdges) then tmp = tmp +1;
-	     Y^{i} = (Y^{i})_{0..Rn.NullIndex-1} | matrix {{tmp}}  | (Y^{i})_{Rn.NullIndex .. s-1}; 
+	     Y = Y_{0..Rn.NullIndex-1 } | matrix(ring Y, {{0}}) | Y_{Rn.NullIndex .. s-1};
+	     --tmp := 0;
+	     --if member({i, Rn.NullIndex}, seps.NullEdges) then tmp = tmp +1;
+	     --Y^{i} = (Y^{i})_{0..Rn.NullIndex -1} | matrix(ring Y, {{tmp}})  | (Y^{i})_{Rn.NullIndex .. s-1}; 
 	     );
 	);
     -- step 3 buil support monomials
