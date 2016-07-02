@@ -45,9 +45,6 @@ document {
 	      },
 	  LI { "functionality added or improved:",		    -- get this with : git diff version-1.8.2 ../../m2/exports.m2
 	       UL {
-<<<<<<< HEAD
-		    LI { "The new function ", TO "roots", " finds roots of univariate polynomials numerically." }
-=======
             LI { "The new function ", TO "minimalBetti", " finds minimal Betti numbers of an ideal or module
                 using the new ", TO "FastNonminimal", " functionality, avoiding unneeded computation of matrices in the
                 free resolution."},
@@ -55,7 +52,6 @@ document {
             LI { "the new function ", TO "splitWWW", " takes an http response, e.g. from ", TO "getWWW", " and unpacks it into
                 the header, and the body.  Additionally, if the response indicates that this is a chunked response,
                 then the body is unchunked (should be considered a bug fix from previous functionality)." }
->>>>>>> 4f7136dc25b33b2696ba43c734f81955742f3174
 		    }
 	       },
 	  LI { "new constants and operators:",

@@ -30,11 +30,6 @@ coordinates pre0
 end ----------------------------------------------------------------------------
 
 restart
-<<<<<<< HEAD
-n = 5
-load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system-via-polynomials.m2"
-stop = (n,L)->n>1
-=======
 n = 12
 load "NumericalAlgebraicGeometry/SYSTEMS/monodromy/sparse-system-via-polynomials.m2"
 needsPackage "PHCpack"
@@ -42,7 +37,6 @@ debug NumericalAlgebraicGeometry
 phcF = toRingXphc flatten entries S
 elapsedTime mv =  mixedVolume(phcF,StartSystem => false)
 stop = (n,L)->#L>=mv
->>>>>>> 4f7136dc25b33b2696ba43c734f81955742f3174
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
