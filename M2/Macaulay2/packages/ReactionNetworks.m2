@@ -18,7 +18,7 @@ newPackage(
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", 
-    "steadyStateEquations",
+    "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
     }
 exportMutable {}
@@ -191,7 +191,7 @@ stoichiometricSubspace ReactionNetwork := N -> (
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
     for i from 1 to #reactions - 1 do M=M||reactions#i;
-    ker M
+    mingens ker M
     )
 
 
@@ -309,6 +309,43 @@ CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 F = steadyStateEquations CRN
 netList F
 ///
+
+-- Need to allow for parameters, either random or input by user, to translate the 
+-- stoichiometric subspace
+conservationEquations = method()
+conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
+conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
+    -- K is the parameter ring
+    kk := symbol kk; 
+    rates := apply(edges N.ReactionGraph, e->kk_e);
+    K := FF[rates];
+    kk = gens K;
+    -- C is a list of pairs (species, input_rate)
+    C := apply(N.Species,a->(a,0));
+    cc := symbol cc;
+    RING := K[apply(C,i->cc_(first i))];
+    cc = gens RING;
+    S := stoichiometricSubspace N;
+    M := matrix{cc};
+    St := flatten entries (M*S);
+    St	  
+    )
+
+TEST ///
+restart 
+needsPackage "ReactionNetworks"
+needsPackage "Graphs"
+N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+CE = conservationEquations N
+SSE = steadyStateEquations N
+F = join (CE, SSE)
+netList F
+I = ideal CE 
+J = ideal SSE
+-- Why can't I and J be combined?  They appear to be in the same ring...
+-- ideal F
+///
+
 
 load "ReactionNetworks/motifs-Kisun.m2"
 load "ReactionNetworks/motifs-Cvetelina.m2"

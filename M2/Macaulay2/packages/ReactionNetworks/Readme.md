@@ -2,11 +2,10 @@ TO DO List
 
 * Basic Functions
  * Constructors (parsing non-HR formats) (Tim)
- * Changing alphabets (Chill)
  * Print complexes with labels, i.e. 1->A+B, 2->C+2D,...   (Chill)
  * (maybe) Higher level service functions (elimination, etc)
  * Accessors for Laplacian, other features (Tim)
- * Glue networks interface (Kisun)
+
 
 * Examples
  * Add WNT Shuttle Model (from Elizabeth's Talk) (Chill)

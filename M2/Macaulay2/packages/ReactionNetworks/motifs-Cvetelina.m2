@@ -75,24 +75,25 @@ installMethod(wnt, () -> reactionNetwork ({"X_1 <--> X_2", "X_2+X_4 <--> Y_4",
 TEST ///
 restart
 needsPackage "ReactionNetworks"
-
-M = reactionNetwork ({"A --> B", "A --> 2C", "B --> ", " --> C"})
-netList steadyStateEquations M
-
-
-netList flatten entries(laplacian(twoLayerCascadeK(), QQ))
 netList steadyStateEquations twoLayerCascadeK()
 W = wnt()
 #W.Species
 #W.Complexes
 VerticalList steadyStateEquations wnt()
 W.NullIndex
-
 N = clusterModelCellDeath()
 sub(N, {"Y" => "A", "L" => "B", "Z" => "C"})
 ///					    
 
 
-
-
-
+TEST ///
+restart 
+needsPackage "ReactionNetworks"
+needsPackage "Graphs"
+N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+S = stoichiometricSubspace N
+N.Species
+N.Complexes
+N.ReactionGraph
+SSE = steadyStateEquations N
+///
