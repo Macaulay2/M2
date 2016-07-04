@@ -1,3 +1,48 @@
+-- Test porta/2.poly
+-- Checking fVector
+TEST ///
+verticesP = matrix {{3,1,5/3},{3,5/2,1},{0,0,0},{2,4,1},{3,5,2}};
+raysP = matrix {{0},{0},{1},{0},{0}};
+linealityP = map(QQ^5, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+desired = {4,6,4,1};
+computed = fVector P;
+assert(desired == computed)
+///
+
+-- Test 4ti2/zsolve2.poly
+-- Checking fVector
+TEST ///
+verticesP = matrix {{-1},{0},{0}};
+raysP = matrix {{1},{0},{0}};
+linealityP = matrix {{0,0},{1,0},{0,1}};
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+desired = {2,1};
+computed = fVector P;
+assert(desired == computed)
+///
+
+-- Test compress_incidence/3.poly
+-- Checking fVector
+TEST ///
+verticesP = matrix {{0,1},{0,0}};
+raysP = matrix {{0},{1}};
+linealityP = map(QQ^2, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+desired = {3,3,1};
+computed = fVector P;
+assert(desired == computed)
+///
+
 -- Test compress_incidence/2.poly
 -- Checking fVector
 TEST ///

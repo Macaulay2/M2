@@ -47,7 +47,6 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
          face -> toList apply(result#(d-1),
             facet -> (
                plop := elements ((set face) * (set facet));
-               <<plop<<endl;
                sort plop
             )
          )
