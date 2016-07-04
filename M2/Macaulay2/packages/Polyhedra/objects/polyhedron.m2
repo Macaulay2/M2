@@ -343,23 +343,7 @@ dualCayleyFace Polyhedron := (cacheValue symbol dualCayleyFace)(P -> (
 	       Pd = first faces(dim P + 1,P);
 	       Pd.cache.dualCayleyFace = P;
 	       Pd))) 
-   -- PURPOSE : Computing the polar of a given polyhedron
---   INPUT : 'P',  a Polyhedron
---  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
-polar = method(TypicalValue => Polyhedron)
-polar Polyhedron := (cacheValue symbol polar)(P -> (
-     d := ambDim(P);
-     -- Make the 'd'-dimensional identity
-     M := map(ZZ^d,ZZ^d,-1);
-     -- make the block matrix of -1 and the 'd'identity
-     M = (matrix{{-1_ZZ}} | map(ZZ^1,ZZ^d,0))||(map(ZZ^d,ZZ^1,0) | M);
-     hyperA := P#"homogenizedVertices";
-     hyperA = (sort (M*(hyperA#0)),hyperA#1);
-     verticesA := fourierMotzkin hyperA;
-     (hyperA,verticesA) = fMReplacement(hyperA#0,verticesA#0,verticesA#1);
-     Q := polyhedronBuilder(hyperA,verticesA);
-     Q.cache.polar = P;
-     Q))
+
 
 
 -- PURPOSE : Compute the corresponding face of the polar polytope

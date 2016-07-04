@@ -93,6 +93,7 @@ C2 = posHull {C2, matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}}};
 assert contains(C2,C1)
 assert(not contains(C1,C2))
 ///
+
 -- Test 12
 -- Checking dualCone
 TEST ///
@@ -101,3 +102,17 @@ C2 = posHull matrix {{-5,7,1},{1,-5,7},{7,1,-5}};
 C1 = dualCone C1;
 assert(C1 == C2)
 ///
+
+-- Test 37
+-- Checking hilbertBasis
+TEST ///
+C = posHull matrix {{1,2},{2,1}};
+H = hilbertBasis C;
+L = {matrix {{1},{1}},matrix {{2},{1}},matrix {{1},{2}}};
+assert(set H === set L)
+C = posHull matrix {{1,1,0},{0,3,0},{0,0,1}};
+H = hilbertBasis C;
+L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},{3},{0}},matrix {{0},{0},{1}}};
+assert(set H === set L)
+///
+

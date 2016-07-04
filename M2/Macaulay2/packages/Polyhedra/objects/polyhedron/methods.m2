@@ -33,3 +33,9 @@ latticePoints = method(TypicalValue => List)
 latticePoints Polyhedron := P -> (
    getProperty(P, computedLatticePoints)
 )
+
+-- PURPOSE : Computing the polar of a given polyhedron
+--   INPUT : 'P',  a Polyhedron
+--  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
+polar = method(TypicalValue => Polyhedron)
+polar Polyhedron := P -> getProperty(P, computedPolar)

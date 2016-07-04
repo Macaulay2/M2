@@ -1,5 +1,6 @@
 rays has weird definition
 saveSession in own file?
+polar is now defined via dual of underlyingCone. Will this fail for having linealitySpace?
 
 generate polymake tests for:
 *  hilbertBasis

@@ -251,3 +251,14 @@ compute#Polyhedron#computedFVector = method()
 compute#Polyhedron#computedFVector Polyhedron := P -> (
    reverse apply(dim P + 1, d -> #faces(dim P - d,P))
 )
+
+compute#Polyhedron#computedPolar = method()
+compute#Polyhedron#computedPolar Polyhedron := P -> (
+   C := getProperty(P, underlyingCone);
+   CD := dualCone C;
+   result := new HashTable from {
+      underlyingCone => CD
+   };
+   polyhedron result
+)
+

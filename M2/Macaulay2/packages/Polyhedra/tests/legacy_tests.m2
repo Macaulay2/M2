@@ -1,19 +1,6 @@
 
 
 
--- Test 5
--- Checking polar
-TEST ///
-P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
-Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
-P = polar P;
-assert(P == Q)
-P = convexHull(matrix {{1,-1,1,-1},{1,1,-1,-1},{1,2,3,4}},matrix {{0,0},{0,0},{1,-1}});
-Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}};
-P = polar P;
-assert(P == Q)
-///
-
 
 -- Test 7
 -- Checking intersection that give a not pointed cone and intersection for lists
@@ -275,30 +262,6 @@ assert(F == F1)
 F = imageFan(matrix {{1,2,0},{0,0,1}},C);
 F1 = fan {posHull matrix {{-3,-1},{1,1}},posHull matrix {{-1,1},{1,1}},posHull matrix {{1,3},{1,1}}};
 assert(F == F1)
-///
-
--- Test 37
--- Checking hilbertBasis
-TEST ///
-C = posHull matrix {{1,2},{2,1}};
-H = hilbertBasis C;
-L = {matrix {{1},{1}},matrix {{2},{1}},matrix {{1},{2}}};
-assert(set H === set L)
-C = posHull matrix {{1,1,0},{0,3,0},{0,0,1}};
-H = hilbertBasis C;
-L = {matrix {{1},{0},{0}},matrix {{1},{1},{0}},matrix {{1},{2},{0}},matrix {{1},{3},{0}},matrix {{0},{0},{1}}};
-assert(set H === set L)
-///
-
--- Test 38
--- Checking latticePoints
-TEST ///
-P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
-LP = latticePoints P;
-LP1 = {matrix {{1},{0}},matrix {{-1},{0}},matrix {{0},{1}},matrix {{0},{-1}},matrix {{0},{0}}};
-assert(set LP === set LP1)
-P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
-assert(latticePoints P == {})
 ///
 
 -- Test 39

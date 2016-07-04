@@ -49,6 +49,19 @@ V2 = set {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
 assert(isSubset(V1,V2) and isSubset(V2,V1))
 ///
 
+-- Test 5
+-- Checking polar
+TEST ///
+P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
+Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
+P = polar P;
+assert(P == Q)
+P = convexHull(matrix {{1,-1,1,-1},{1,1,-1,-1},{1,2,3,4}},matrix {{0,0},{0,0},{1,-1}});
+Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}};
+P = polar P;
+assert(P == Q)
+///
+
 -- Test 11
 -- Checking equality for polyhedra and cones
 TEST ///
@@ -72,6 +85,7 @@ P2 = convexHull matrix {{0,1,1,0},{0,0,1,1},{1,2,3,4}};
 assert(not contains(P2,P1))
 assert contains(P1,P2)
 ///
+
 -- Test 14
 -- Checking bipyramid, faces and fVector
 TEST ///
@@ -82,6 +96,7 @@ desired = sort matrix {elements F2};
 assert(desired == vertices P)
 assert(fVector P == {8,18,12,1})
 ///
+
 -- Test 15
 -- Checking isEmpty
 TEST ///
@@ -90,3 +105,15 @@ assert not isEmpty P
 P = intersection {P,(matrix{{-1,-1,-1}},matrix{{-2}})};
 assert isEmpty P
 ///
+
+-- Test 38
+-- Checking latticePoints
+TEST ///
+P = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
+LP = latticePoints P;
+LP1 = {matrix {{1},{0}},matrix {{-1},{0}},matrix {{0},{1}},matrix {{0},{-1}},matrix {{0},{0}}};
+assert(set LP === set LP1)
+P = intersection(matrix {{-6,0,0},{0,-6,0},{0,0,-6},{1,1,1}},matrix{{-1},{-1},{-1},{1}});
+assert(latticePoints P == {})
+///
+
