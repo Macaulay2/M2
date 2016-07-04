@@ -102,7 +102,7 @@ end
 
 
 restart
-load "AlphaCertified.m2"
+load "AlphaTest.m2"
 FF = QQ[i]/ideal(i^2 + 1)
 R = FF[x,y]
 p1 = point{{2,4+i}}
