@@ -65,6 +65,7 @@ export {
    "mixedVolume", 
    "polytope", 
    "proximum", 
+   "scalarProduct",
    "skeleton", 
    "smallestFace", 
    "smoothSubfan", 

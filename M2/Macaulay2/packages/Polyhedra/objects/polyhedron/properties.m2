@@ -176,7 +176,7 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
    facetsP = (-facetsP#1) | facetsP#0;
    C := getProperty(P, underlyingCone);
    facetsC := facets C;
-   rayCorrespondenceMap(transpose facetsC, transpose facetsP)
+   rayCorrespondenceMap( - transpose facetsC, transpose facetsP)
 )
 
 

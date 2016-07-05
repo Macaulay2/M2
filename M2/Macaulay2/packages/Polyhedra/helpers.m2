@@ -1,3 +1,17 @@
+scalarProduct = method()
+scalarProduct(Vector, Vector) := (v1, v2) -> (
+   if not (rank module v1) == (rank module v2) then error("Vectors have different dimension.");
+   n := rank module v1;
+   result := for i from 0 to n-1 list (
+      v1_i * v2_i
+   );
+   sum result
+)
+
+scalarProduct(Matrix, Matrix) := (m1, m2) -> (
+   if not ((numColumns m1 == 1) and (numColumns m2 == 1))then error("Only column matrices allowed");
+   scalarProduct(m1_0, m2_0)
+)
 
 rayCorrespondenceMap = method()
 rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
@@ -8,7 +22,7 @@ rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
             target := targets_{j};
             -- << target << endl;
             -- << rank(source | target) == 1 << endl;
-            rank(source | target) == 1
+            (rank(source | target) == 1) and scalarProduct(source, target) > 0
          )
       );
       if #corresponding == 1 then i=>corresponding#0
