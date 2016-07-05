@@ -32,7 +32,7 @@ fan(Matrix, Matrix, List) := (irays, linealityGens, icones) -> (
       ambientDimension => numRows irays,
       computedRays => irays,
       computedLinealityBasis => linealityGens,
-      maximalCones => icones
+      generatingObjects => icones
    };
    fan result
 )

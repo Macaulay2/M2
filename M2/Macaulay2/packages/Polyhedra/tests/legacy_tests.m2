@@ -160,17 +160,6 @@ C2 = posHull {matrix {{1,0},{0,1},{0,0}}, C2};
 assert (areCompatible(C1,C2))#0
 ///
 
--- Test 30
--- Checking fan and Fan basics
-TEST ///
-C = posHull matrix {{1,0,0},{0,1,0},{0,0,1}};
-F = fan C;
-assert(set maxCones F === set {C})
-assert(ambDim(F) == 3)
-assert(dim F == 3)
-assert(F#"number of generating cones" == 1)
-assert not isComplete F
-///
 
 -- Test 31
 -- Checking fan and addCone
@@ -218,30 +207,7 @@ assert isPolytopal F
 assert(normalFan polytope F == F)
 ///
 
--- Test 33
--- Checking isSmooth and smoothSubfan
-TEST ///
-C1 = posHull matrix {{1,2},{2,1}};
-C2 = posHull matrix {{1,0},{2,1}};
-C3 = posHull matrix {{1,2},{0,1}};
-F = fan {C1,C2,C3};
-assert not isSmooth F
-F1 = fan {C2,C3};
-assert(smoothSubfan F == F1)
-///
 
--- Test 34
--- Checking normalFan
-TEST ///
-P = convexHull matrix {{1,0,0},{0,1,0}};
-F = normalFan P;
-L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,-1},{0,-1}},posHull matrix {{0,-1},{1,-1}}};
-assert(F == fan L)
-P =  convexHull (matrix {{1,0,0},{0,1,0}},matrix {{1},{1}});
-F = normalFan P;
-L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,1},{0,-1}},posHull matrix {{0,-1},{1,1}}};
-assert(F == fan L)
-///
 
 -- Test 35
 --Checking ccRefinement

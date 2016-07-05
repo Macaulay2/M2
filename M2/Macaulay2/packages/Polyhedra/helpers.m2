@@ -1,3 +1,16 @@
+spanSmoothCone = method();
+spanSmoothCone(Matrix, Matrix) := (rays, lineality) -> (
+   -- The rays need to form a lattice basis in N/L
+   d := rank(rays || lineality);
+   spanSmoothCone(rays, lineality, d)
+)
+
+spanSmoothCone(Matrix, Matrix, ZZ) := (rays, lineality, d) -> (
+   n := d - numRows lineality;
+   SNF := (smithNormalForm (rays || lineality))#0; 
+   numRows rays == n and (product apply(d, i -> SNF_(i,i)) == 1)
+)
+
 scalarProduct = method()
 scalarProduct(Vector, Vector) := (v1, v2) -> (
    if not (rank module v1) == (rank module v2) then error("Vectors have different dimension.");

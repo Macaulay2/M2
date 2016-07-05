@@ -6,7 +6,7 @@ globalAssignment PolyhedralObjectFamily
 --   INPUT : 'PC'  a Fan or PolyhedralComplex
 --  OUTPUT : 'true' or 'false'
 isPure = method(TypicalValue => Boolean)
-isPure PolyhedralObjectFamily := PC -> PC#"isPure"
+isPure PolyhedralObjectFamily := POF -> getProperty(POF, pure)
 
 -- PURPOSE : Tests if a Fan or PolyhedralComplex is complete
 --   INPUT : 'POF'  a Fan or PolyhedralComplex
@@ -24,7 +24,7 @@ isComplete PolyhedralObjectFamily := POF -> (
      POF.cache.isComplete)
 
 maxObjects = method(TypicalValue => List)
-maxObjects PolyhedralObjectFamily := POF -> toList POF#"generatingObjects"
+maxObjects PolyhedralObjectFamily := POF -> getProperty(POF, generatingObjects)
 
 objectsOfDim = method(TypicalValue => List)
 objectsOfDim(ZZ,PolyhedralObjectFamily) := (k,POF) -> (

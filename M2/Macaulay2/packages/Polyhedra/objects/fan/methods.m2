@@ -1,6 +1,10 @@
 --   INPUT : 'F'  a Fan
 --  OUTPUT : a Matrix, where the column vectors are a basis of the lineality space
-linSpace Fan := F -> getProperty(F, computedLinealityBasis)
+linSpace Fan := F -> linealitySpace F
+
+linealitySpace Fan := F -> (
+   getProperty(F, computedLinealityBasis)
+)
 
 
 --   INPUT : 'F'  a Fan
@@ -16,5 +20,5 @@ isPointed Fan := F -> (
 --   INPUT : 'F'  a Fan
 --  OUTPUT : 'true' or 'false'
 isSmooth Fan := F -> (
-     if not F.cache.?isSmooth then F.cache.isSmooth = all(maxCones F,isSmooth);
-     F.cache.isSmooth)
+   getProperty(F, smooth)
+)

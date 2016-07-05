@@ -14,10 +14,7 @@ compute#Cone#smooth = method()
 compute#Cone#smooth Cone := C -> (
    R := lift(transpose rays C,ZZ);
    L := lift(transpose linealitySpace C, ZZ);
-   n := dim C - numRows L;
-   -- The rays need to form a lattice basis in N/L
-   SNF := (smithNormalForm (R || L))#0; 
-   numRows R == n and (product apply(dim C, i -> SNF_(i,i)) == 1)
+   spanSmoothCone(R, L, dim C)
 )
 
 

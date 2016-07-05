@@ -53,5 +53,7 @@ export {
    "computedPolar",
 
    "maximalCones",
-   "computedPolytope"
+   "computedPolytope",
+   "generatingObjects",
+   "pure"
 }

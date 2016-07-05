@@ -57,7 +57,7 @@ getProperty(PolyhedraHash, Symbol) := (PH, property) -> (
 setProperty = method()
 setProperty(PolyhedraHash, Symbol, Thing) := (PH, property, value) -> (
    if not hasProperty(PH, property) then PH.cache#property = value
-   else error "Property already assigned."
+   else << "Warning: Property " << property << " already assigned." << endl
 )
 
 hasProperty = method()
