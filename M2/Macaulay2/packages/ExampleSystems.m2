@@ -16,16 +16,27 @@ newPackage(
 needsPackage "Text"
 needsPackage "SimpleDoc"
 
-needs "./ExampleSystems/katsura.m2"
+examples'names = {
+    "cyclic",
+    "katsura",
+    "randomGeneralizedEigenvalueProblem",
+    "randomSystem"
+    }
+
+for e in examples'names do 
+needs("./ExampleSystems/"|e|".m2")
+
 end
 
 -- Here place M2 code that you find useful while developing this
 -- package.  None of it will be executed when the file is loaded,
 -- because loading stops when the symbol "end" is encountered.
 restart
+uninstallPackage "ExampleSystems"
 installPackage "ExampleSystems"
 installPackage("ExampleSystems", RemakeAllDocumentation=>true)
 check "ExampleSystems"
+help "ExampleSystems"
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
 -- End:

@@ -11,6 +11,7 @@ cyclic (ZZ,Ring) := (n,kk) -> (
 doc /// 
     Key
     	cyclic
+	(cyclic,ZZ,Ring)
     Headline
     	an example of a square polynomial system 
     Description

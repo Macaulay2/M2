@@ -18,6 +18,7 @@ katsura (ZZ,Ring) := (n,kk) -> (
 doc /// 
     Key
     	katsura
+    	(katsura,ZZ,Ring)
     Headline
     	an example of a 0-dimensional square polynomial system 
     Description
