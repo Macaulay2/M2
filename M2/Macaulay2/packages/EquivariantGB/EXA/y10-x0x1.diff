@@ -1,0 +1,90 @@
+3c3
+<        M2 < y10-x0x1-PS-true.m2 > y10-x0x1-PS-true.out
+---
+>        M2 < y10-x0x1-PS-false.m2 > y10-x0x1-PS-false.out
+25c25
+<      egbSignature(F, PrincipalSyzygies=>true)
+---
+>      egbSignature(F, PrincipalSyzygies=>false)
+31c31
+<   syzygies in H: 6
+---
+>   syzygies in H: 0
+39c39
+<   syzygies in H: 58
+---
+>   syzygies in H: 0
+50c50
+<   syzygies in H: 136
+---
+>   syzygies in H: 0
+63,65c63,65
+<    new NOT covered J-pairs: 24
+<   JP queue length: 526
+<   syzygies in H: 240
+---
+>    new NOT covered J-pairs: 26
+>   JP queue length: 528
+>   syzygies in H: 0
+67c67
+< -- 241th syzygy is: (0, x_2*x_0*{}*[0])
+---
+> -- 1th syzygy is: (0, x_2*x_0*{}*[0])
+69c69
+< -- 242th syzygy is: (0, x_2*x_1*{}*[0])
+---
+> -- 2th syzygy is: (0, x_2*x_1*{}*[0])
+71c71
+< -- 243th syzygy is: (0, y_(2,0)*{1}*[0])
+---
+> -- 3th syzygy is: (0, y_(2,0)*{1}*[0])
+73c73
+< -- 244th syzygy is: (0, x_1*y_(2,0)*{}*[0])
+---
+> -- 4th syzygy is: (0, x_1*y_(2,0)*{}*[0])
+78c78
+<    new NOT covered J-pairs: 7
+---
+>    new NOT covered J-pairs: 9
+80c80
+<    new NOT covered J-pairs: 27
+---
+>    new NOT covered J-pairs: 29
+84c84
+<    new NOT covered J-pairs: 36
+---
+>    new NOT covered J-pairs: 37
+87,88c87,88
+<   JP queue length: 1001
+<   syzygies in H: 370
+---
+>   JP queue length: 962
+>   syzygies in H: 4
+90c90
+< -- 371th syzygy is: (0, x_1*y_(2,0)*{0, 2}*[0])
+---
+> -- 5th syzygy is: (0, x_1*y_(2,0)*{0, 2}*[0])
+92c92
+< -- 372th syzygy is: (0, x_2*x_1*x_0*{0, 2}*[0])
+---
+> -- 6th syzygy is: (0, x_2*x_1*x_0*{0, 2}*[0])
+94c94
+< -- 373th syzygy is: (0, x_0^2*y_(2,1)*{0, 2}*[0])
+---
+> -- 7th syzygy is: (0, x_0^2*y_(2,1)*{0, 2}*[0])
+96c96
+< -- 374th syzygy is: (0, x_2*x_1*y_(1,0)*{0, 2}*[0])
+---
+> -- 8th syzygy is: (0, x_2*x_1*y_(1,0)*{0, 2}*[0])
+98c98
+< -- 375th syzygy is: (0, x_0^2*y_(2,1)*{1}*[0])
+---
+> -- 9th syzygy is: (0, x_0^2*y_(2,1)*{1}*[0])
+103c103
+< -- 376th syzygy is: (0, x_2*x_0*y_(2,1)*y_(1,0)*{0, 2}*[0])
+---
+> -- 10th syzygy is: (0, x_2*x_0*y_(2,1)*y_(1,0)*{0, 2}*[0])
+109c109
+<    new NOT covered J-pairs: 24
+---
+>    new NOT covered J-pairs: 25
