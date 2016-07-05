@@ -81,8 +81,6 @@ export {
    "ccRefinement", 
    "coneToPolyhedron", 
    "directProduct",
-   "dualCayley",
-   "dualCayleyFace",
    "dualCone", 
    "faceFan", 
    "imageFan", 
