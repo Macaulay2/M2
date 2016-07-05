@@ -285,15 +285,26 @@ crossPolytope = method(TypicalValue => Polyhedron)
 --     	    	       a strictly positive rational number, the distance of the vertices to the origin
 --  OUTPUT : The 'd'-dimensional crosspolytope with vertex-origin distance 's'
 crossPolytope(ZZ,QQ) := (d,s) -> (
-     -- Checking for input errors
-     if d < 1 then error("dimension must at least be 1");
-     if s <= 0 then error("size of the crosspolytope must be positive");
-     constructMatrix := (d,v) -> (
-	  if d != 0 then flatten {constructMatrix(d-1,v|{-1}),constructMatrix(d-1,v|{1})}
-	  else {v});
-     homHalf := ( sort makePrimitiveMatrix transpose( matrix toList(2^d:{-s}) | promote(matrix constructMatrix(d,{}),QQ)),map(ZZ^(d+1),ZZ^0,0));
-     homVert := (sort makePrimitiveMatrix (matrix {toList(2*d:1_QQ)} || (map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s))),map(ZZ^(d+1),ZZ^0,0));
-     polyhedronBuilder(homHalf,homVert))
+   -- Checking for input errors
+   if d < 1 then error("dimension must at least be 1");
+   if s <= 0 then error("size of the crosspolytope must be positive");
+   constructMatrix := (d,v) -> (
+   if d != 0 then flatten {constructMatrix(d-1,v|{-1}),constructMatrix(d-1,v|{1})}
+   else {v});
+   homHalf := ( sort makePrimitiveMatrix transpose( matrix toList(2^d:{-s}) | promote(matrix constructMatrix(d,{}),QQ)),map(ZZ^(d+1),ZZ^0,0));
+   homVert := (sort makePrimitiveMatrix (matrix {toList(2*d:1_QQ)} || (map(QQ^d,QQ^d,s) | map(QQ^d,QQ^d,-s))),map(ZZ^(d+1),ZZ^0,0));
+   C := new HashTable from {
+      computedRays => homVert#0,
+      computedLinealityBasis => homVert#1,
+      computedFacets => transpose(-homHalf#0),
+      computedHyperplanes => transpose(homHalf#1)
+   };
+   C = cone C;
+   result := new HashTable from {
+      underlyingCone => C
+   };
+   polyhedron result
+)
 
 
 --   INPUT : '(d,s)',  where 'd' is a strictly positive integer, the dimension of the polytope, and 's' is a
@@ -311,11 +322,14 @@ crossPolytope ZZ := d -> crossPolytope(d,1_QQ)
 --  OUTPUT : The empty polyhedron in 'n'-space
 emptyPolyhedron = method(TypicalValue => Polyhedron)
 emptyPolyhedron ZZ := n -> (
-     -- Checking for input errors
-     if n < 1 then error("The ambient dimension must be positive");
-     verticesA := 2:map(ZZ^(n+1),ZZ^0,0);
-     hyperA := (map(ZZ^(n+1),ZZ^0,0),map(ZZ^(n+1),ZZ^(n+1),1));
-     polyhedronBuilder(hyperA,verticesA));
+   -- Checking for input errors
+   if n < 1 then error("The ambient dimension must be positive");
+   C := posHull map(ZZ^(n+1), ZZ^0,0);
+   result := new HashTable from {
+      underlyingCone => C
+   };
+   polyhedron result
+);
 	  
 -- PURPOSE : Generating the 'd'-dimensional standard simplex in QQ^(d+1)
 --   INPUT : 'd',  a positive integer

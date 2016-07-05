@@ -313,39 +313,6 @@ isFace(Polyhedron,Polyhedron) := (P,Q) -> (
 
 
 
-dualCayley = method(TypicalValue => Polyhedron)
-dualCayley Polyhedron := P -> (
-     V := vertices P;
-     (M,N) := fourierMotzkin V;
-     M = sort(map(QQ^1,source M,(i,j) -> 1)|| -M);
-     R := map(target M,QQ^0,0);
-     HS := map(QQ^1,source V,0) || -V;
-     (hyperA,verticesA) := fMReplacement(HS,M,R);
-     polyhedronBuilder(hyperA,verticesA)) 
-
-
-dualCayleyFace = method(TypicalValue => Polyhedron)
-dualCayleyFace Polyhedron := (cacheValue symbol dualCayleyFace)(P -> (
-	  local Pd;
-	  --local faceOf;
-	  if P.cache.?faceOf then (
-	       V := transpose vertices P;
-	       R := transpose rays P;
-	       P0 := P.cache.faceOf;
-	       P0d := dualCayley P0;
-	       codimensionPd := dim P - P0#"dimension of lineality space" + 1;
-	       L := faces(codimensionPd,P0d);
-	       Pd = first select(1,L, l -> (V || R)*(vertices l | rays l) == 0);
-	       Pd.cache.dualCayleyFace = P;
-	       Pd)
-	  else (
-	       Pdual := dualCayley P;
-	       Pd = first faces(dim P + 1,P);
-	       Pd.cache.dualCayleyFace = P;
-	       Pd))) 
-
-
-
 -- PURPOSE : Compute the corresponding face of the polar polytope
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : A Polyhedron, if 'P' is the face of some polyhedron 'Q' then the

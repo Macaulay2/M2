@@ -31,3 +31,7 @@ Packages that should go away:
 *  Polyhedra2.m2
 *  gfanInterface.m2 or gfanInterface2.m2
 *  polymake.m2 or polymakeInterface.m2
+
+Undocumented methods, that have been removed:
+*  newMinkSum: No reference for algorithm given and too long to fix.
+*  dualCayley, dualCayleyFace: Not documented at all, never tested.
