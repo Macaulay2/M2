@@ -101,3 +101,16 @@ dualCone Cone := C -> (
    if hasProperty(C, computedHyperplanes) then result#computedLinealityBasis = transpose getProperty(C, computedHyperplanes);
    return new Cone from {ambientDimension => ambDim C, cache => result}
 )
+
+-- PURPOSE: Getting data from the ray side that determines cone completely,
+--          avoid fourierMotzkin. Always pick best possible data.
+getSufficientRayData = method()
+getSufficientRayData Cone := C -> (
+   if hasProperties(C, {computedRays, computedLinealityBasis}) then (
+      return (rays C, linealitySpace C)
+   ) else if hasProperties(C, {inputRays, inputLinealityGenerators}) then (
+      return (getProperty(C, inputRays), getProperty(C, inputLinealityGenerators))
+   ) else (
+      return (rays C, linealitySpace C)
+   );
+)

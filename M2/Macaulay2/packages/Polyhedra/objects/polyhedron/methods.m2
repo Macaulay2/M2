@@ -39,3 +39,20 @@ latticePoints Polyhedron := P -> (
 --  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}
 polar = method(TypicalValue => Polyhedron)
 polar Polyhedron := P -> getProperty(P, computedPolar)
+
+-- PURPOSE: Getting data from the vertex side that determines polyhedron
+--          completely, avoid fourierMotzkin. Always pick best possible data.
+getSufficientVertexData = method()
+getSufficientVertexData Polyhedron := P -> (
+   if hasProperties(P, {computedVertices, computedRays, computedLinealityBasis}) then (
+      return(vertices P, rays P, linealitySpace P)
+   ) else if hasProperties(P, {points, inputRays, inputLinealityGenerators}) then (
+      return (
+         getProperty(P, points),
+         getProperty(P, inputRays),
+         getProperty(P, inputLinealityGenerators)
+      )
+   ) else (
+      return(vertices P, rays P, linealitySpace P)
+   )
+)

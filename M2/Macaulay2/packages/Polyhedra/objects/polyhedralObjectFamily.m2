@@ -12,7 +12,7 @@ isPure PolyhedralObjectFamily := POF -> getProperty(POF, pure)
 --   INPUT : 'POF'  a Fan or PolyhedralComplex
 --  OUTPUT : 'true' or 'false'
 isComplete = method(TypicalValue => Boolean)
-isComplete PolyhedralObjectFamily := POF -> getProperty(POF, complete)
+isComplete PolyhedralObjectFamily := POF -> getProperty(POF, computedComplete)
 
 --     if not POF.cache.?isComplete then (
 --	  n := dim POF;

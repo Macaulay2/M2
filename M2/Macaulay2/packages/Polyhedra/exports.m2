@@ -10,7 +10,8 @@ export {
  
 -- Polyhedron object with associated methods:
    "Polyhedron", 
-   "convexHull", 
+   "convexHull",
+   "polyhedron",
 
    "facets",
    "Fan", 

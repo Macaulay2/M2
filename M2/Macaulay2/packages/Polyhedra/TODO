@@ -4,7 +4,7 @@ polar is now defined via dual of underlyingCone. Will this fail for having linea
 
 generate polymake tests for:
 *  hilbertBasis
-*  minkowskiSum
+*  minkowskiSum (this used to ignore the lineality space completely?)
 *  normalFan
 *  faceFan
 *  toric variety things
@@ -16,6 +16,11 @@ Thoughts:
 *  Sanitize input matrices at some point?
 *  addCone should be completely be removed.
 *  There are too many intersection methods.
+*  Completeness of fans is probably very expensive to check at the moment.
+*  What is a better naming scheme for the properties? Should we adapt the
+   polymake scheme?
+*  minkowSki sum potentially checks equality of polyhedra? This seems super
+   expensive.
 
 Packages that use Polyhedra:
 [lars@sunfish packages]$ grep -R "Polyhedra" . | grep needsPackage

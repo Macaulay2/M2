@@ -87,3 +87,12 @@ convexHull List := L -> (
    };
    polyhedron result
 )
+
+polyhedron Cone := C -> (
+   n := ambDim C;
+   rayData := getSufficientRayData C;
+   r := ring rayData#0;
+   vertex := map(ZZ^n, ZZ^1, 0);
+   convexHull(vertex, rayData#0, rayData#1)
+)
+

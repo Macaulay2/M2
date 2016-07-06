@@ -27,8 +27,8 @@ compute#Fan#honestMaxObjects Fan := F -> (
    apply(MC, m -> posHull(R_m, L))
 )
 
-compute#Fan#complete = method()
-compute#Fan#complete Fan := F -> (
+compute#Fan#computedComplete = method()
+compute#Fan#computedComplete Fan := F -> (
    n := dim F;
    if n != ambDim F then return false;
    symmDiff := (X,Y) -> (

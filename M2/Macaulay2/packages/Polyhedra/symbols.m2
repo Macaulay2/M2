@@ -57,5 +57,5 @@ export {
    "generatingObjects",
    "pure",
    "honestMaxObjects",
-   "complete"
+   "computedComplete"
 }
