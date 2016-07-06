@@ -288,9 +288,9 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 		0
 		)  
 	    ));
-    cc := symbol cc;
-    RING := K[apply(C,i->cc_(first i))];
-    cc = gens RING;
+    xx := symbol xx;
+    RING := K[apply(C,i->xx_(first i))];
+    xx = gens RING;
     F := for i in C list (
 	(a,af) := i;
 	sum(R,reaction->(
@@ -314,22 +314,25 @@ netList F
 
 -- Need to allow for parameters, either random or input by user, to translate the 
 -- stoichiometric subspace
+-- Not sure if this is the right way to do this???
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
     kk := symbol kk; 
+    cc := symbol cc;
     rates := apply(edges N.ReactionGraph, e->kk_e);
-    K := FF[rates];
+    S := stoichiometricSubspace N;
+    K := FF[rates, cc_1..cc_(numcols S)];
     kk = gens K;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
-    cc := symbol cc;
-    RING := K[apply(C,i->cc_(first i))];
-    cc = gens RING;
-    S := stoichiometricSubspace N;
-    M := matrix{cc};
-    St := flatten entries (M*S);
+    xx := symbol xx;
+    RING := K[apply(C,i->xx_(first i))];
+    xx = gens RING;
+    M := matrix{xx};
+    P := genericMatrix(K, cc_1, 1, numcols S);
+    St := flatten entries (M*S-P);
     St	  
     )
 
@@ -341,7 +344,6 @@ N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 CE = conservationEquations N
 SSE = steadyStateEquations N
 F = join (CE, SSE)
-netList F
 I = ideal CE 
 J = ideal SSE
 -- Why can't I and J be combined?  They appear to be in the same ring...
