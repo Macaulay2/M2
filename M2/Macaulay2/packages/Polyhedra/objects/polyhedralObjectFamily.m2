@@ -12,16 +12,17 @@ isPure PolyhedralObjectFamily := POF -> getProperty(POF, pure)
 --   INPUT : 'POF'  a Fan or PolyhedralComplex
 --  OUTPUT : 'true' or 'false'
 isComplete = method(TypicalValue => Boolean)
-isComplete PolyhedralObjectFamily := POF -> (
-     if not POF.cache.?isComplete then (
-	  n := dim POF;
-	  POF.cache.isComplete = if n == ambDim POF then (
-	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
-	       Lfaces := {};
-	       scan(maxObjects POF, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
-	       Lfaces == {})
-	  else false);
-     POF.cache.isComplete)
+isComplete PolyhedralObjectFamily := POF -> getProperty(POF, complete)
+
+--     if not POF.cache.?isComplete then (
+--	  n := dim POF;
+--	  POF.cache.isComplete = if n == ambDim POF then (
+--	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
+--	       Lfaces := {};
+--	       scan(maxObjects POF, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
+--	       Lfaces == {})
+--	  else false);
+--     POF.cache.isComplete)
 
 maxObjects = method(TypicalValue => List)
 maxObjects PolyhedralObjectFamily := POF -> getProperty(POF, generatingObjects)

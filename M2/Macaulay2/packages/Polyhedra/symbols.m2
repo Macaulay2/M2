@@ -55,5 +55,7 @@ export {
    "maximalCones",
    "computedPolytope",
    "generatingObjects",
-   "pure"
+   "pure",
+   "honestMaxObjects",
+   "complete"
 }
