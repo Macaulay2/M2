@@ -132,7 +132,7 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
 
     const size_t num_roots = lg(roots) - 1;
     result = getmemarraytype(engine_RawRingElementArray, num_roots);
-    result->len = num_roots;
+    result->len = static_cast<int>(num_roots);
 
     ring_elem m2_root;
     if (prec <= 53) {
@@ -156,8 +156,10 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
         const pari_sp av2 = avma;
 
         mpc_t root;
+        auto root1 = reinterpret_cast<mpfc_t*>(&root);
         pari_mpc_init_set_GEN(root, gel(roots, 1 + i), GMP_RNDN);
-        CCC->ring().to_ring_elem(m2_root, **reinterpret_cast<mpfc_t*>(&root));
+        //        CCC->ring().to_ring_elem(m2_root, **reinterpret_cast<mpfc_t*>(&root));
+        CCC->ring().to_ring_elem(m2_root, **root1);
         result->array[i] = RingElement::make_raw(CCC, m2_root);
 
         avma = av2;
@@ -171,3 +173,8 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
 
   return result;
 }
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:
