@@ -18,7 +18,7 @@ isComplete PolyhedralObjectFamily := POF -> (
 	  POF.cache.isComplete = if n == ambDim POF then (
 	       symmDiff := (x,y) -> ((x,y) = (set x,set y); toList ((x-y)+(y-x)));
 	       Lfaces := {};
-	       scan(toList POF#"generatingObjects", C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
+	       scan(maxObjects POF, C -> if dim C == n then Lfaces = symmDiff(Lfaces,faces(1,C)));
 	       Lfaces == {})
 	  else false);
      POF.cache.isComplete)

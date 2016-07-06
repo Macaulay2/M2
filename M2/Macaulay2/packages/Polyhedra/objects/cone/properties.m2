@@ -36,12 +36,12 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
    d := dim C;
    raysC := rays C;
    ldim := rank linealitySpace C;
-   result#d = {toList (0..(getProperty(C, nRays) - 1))};
-   result#(d-1) = toList getProperty(C, computedFacetsThroughRays);
+   result#0 = {toList (0..(getProperty(C, nRays) - 1))};
+   result#(1) = toList getProperty(C, computedFacetsThroughRays);
    for i from 0 to d-2-ldim do (
-      oldFaces := result#(d-1-i);
+      oldFaces := result#(1+i);
       newFaces := unique flatten apply(oldFaces,
-         face -> toList apply(result#(d-1),
+         face -> toList apply(result#(1),
             facet -> (
                plop := elements ((set face) * (set facet));
                sort plop
@@ -58,7 +58,7 @@ compute#Cone#computedFacesThroughRays Cone := C -> (
          )
       );
       -- << "Select ok." << endl;
-      result#(d-2-i) = newFaces
+      result#(2+i) = newFaces
    );
    result
 )

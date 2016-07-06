@@ -229,8 +229,8 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
    -- << vertPCMap << endl;
    -- << raysPCMap << endl;
    facesC := faces C;
-   result := for dim in keys facesC list (
-      facesPdim := apply(facesC#dim,
+   result := for codim in keys facesC list (
+      facesPcodim := apply(facesC#codim,
          face -> (
             vertFace := apply(face, v -> vertPCMap#v);
             vertFace = select(vertFace, v -> v != -1);
@@ -239,9 +239,9 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
             (vertFace, raysFace)
          )
       );
-      -- << facesPdim << endl;
-      facesPdim = select(facesPdim, face -> #(face#0) > 0);
-      (dim - 1) => facesPdim
+      -- << facesPcodim << endl;
+      facesPcodim = select(facesPcodim, face -> #(face#0) > 0);
+      codim  => facesPcodim
    );
    new MutableHashTable from result
 )
@@ -249,7 +249,7 @@ compute#Polyhedron#computedFacesThroughRays Polyhedron := P -> (
 
 compute#Polyhedron#computedFVector = method()
 compute#Polyhedron#computedFVector Polyhedron := P -> (
-   reverse apply(dim P + 1, d -> #faces(dim P - d,P))
+   apply(dim P + 1, d -> #faces(dim P - d,P))
 )
 
 compute#Polyhedron#computedPolar = method()

@@ -57,12 +57,12 @@ load "./legacy.m2"
 load "./tests/tests_from_polymake/fvector.m2"
 load "./tests/cone_basics.m2"
 load "./tests/polyhedron_basics.m2"
-load "./tests/fan_basics.m2"
+-- load "./tests/fan_basics.m2"
 load "./tests/tests_from_polymake/hilbert_basis.m2"
 load "./tests/tests_from_polymake/lattice_points.m2"
 -- Failing tests
 -- load "./tests/failing.m2"
-load "./tests/legacy_tests.m2"
+-- load "./tests/legacy_tests.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
