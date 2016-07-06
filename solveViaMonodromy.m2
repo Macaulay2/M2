@@ -161,7 +161,7 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
                 diffs := diffSolutions(previousLoopSolsList#startIndex, solsList#startIndex);
                 ptsToTrack := for diff in diffs#1 list (solsList#startIndex#diff);
-                newSols := track(FList#endIndex,FList#startIndex, gamma=>gammaList#endIndex,trackbackwards=>true,ptsToTrack);
+                newSols := track(FList#startIndex,gammaList#endIndex*(FList#endIndex), gamma=>1,ptsToTrack);
                 nPathsTracked = nPathsTracked + #ptsToTrack;
                 newSols = select(newSols,s->status s === Regular);
                 solsList#endIndex = sortSolutions(clusterSolutions(solsList#endIndex | newSols));
