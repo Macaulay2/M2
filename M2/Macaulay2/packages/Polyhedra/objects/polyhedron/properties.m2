@@ -183,9 +183,12 @@ compute#Polyhedron#facetToFacetMap Polyhedron := P -> (
 compute#Polyhedron#computedNormalFan = method()
 compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
+   raysC := rays C;
    raysNF := - transpose (facets P)#0;
    facetMap := getProperty(P, facetToFacetMap);
    maximalConesNF := getProperty(C, computedRaysThroughFacets);
+   goodConeIndices := select(numColumns raysC, i -> (raysC_i)_0 > 0);
+   maximalConesNF = maximalConesNF_goodConeIndices;
    maximalConesNF = apply(maximalConesNF,
       mc -> (
          apply(mc, i -> facetMap#i)

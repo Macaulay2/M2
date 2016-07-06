@@ -40,7 +40,9 @@ assert(F == fan(M,L))
 TEST ///
 P =  convexHull (matrix {{1,0,0},{0,1,0}},matrix {{1},{1}});
 F = normalFan P;
-L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,1},{0,-1}},posHull matrix {{0,-1},{1,1}}};
-assert(F == fan L)
+-- L = {posHull matrix {{1,0},{0,1}},posHull matrix {{1,1},{0,-1}},posHull matrix {{0,-1},{1,1}}};
+M = transpose matrix {{1,0},{0,1},{1,-1},{-1,1}}
+L = {{0,1},{0,2},{1,3}}
+assert(F == fan(M,L))
 ///
 
