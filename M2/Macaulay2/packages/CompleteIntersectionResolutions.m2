@@ -1874,7 +1874,7 @@ doc///
 
    Inputs
     R:List
-     list of rings R_i = S/(f_0..f_(i-1), complete intersections
+     list of rings R_i = S/(f_0..f_{(i-1)}), complete intersections
     M:Module
      module over R_c where c = length R - 1.
    Outputs
@@ -1885,7 +1885,7 @@ doc///
      Computes the non-free parts M_i of the MCM approximation to M over R_i, 
      stopping when M_i becomes free, and
      returns the list whose elements are the pairs of regularities, starting
-     with M_(c-1)
+     with M_{(c-1)}
      Note that the first pair is for the 
     Example
      c = 3;d=2
@@ -2019,7 +2019,7 @@ doc ///
      phi is a hash-table of homogeneous maps phi#{j,i}: H#i**F_j\to H#(i+1)
      where F_j = source (E_{j} = matrix {{e_j}}).
      Thus the maps
-     p#{j,i} = (E_j || -phi#{j,i}): t_i**F_j \to t_i++t_(i+1),
+     p#{j,i} = (E_j || -phi#{j,i}): t_i**F_j \to t_i++t_{(i+1)},
      are homogeneous.
      The script returns M = \oplus_i T_
      as an SE-module,
@@ -3555,7 +3555,7 @@ doc ///
 	  output of a matrixFactorization computation
         Outputs
 	 br: List
-	  list of pairs {rank B_(d), rank B_0(d)
+	  list of pairs {rank B_1(d), rank B_0(d)}
         Description
          Example
 	  c = 2
@@ -3832,7 +3832,7 @@ doc ///
    Description
     Text
      ff is quasi-regular if the length of ff is <= dim M and the annihilator of ff_i on
-     M/(ff_0..ff_(i-1))M has finite length for all i=0..(length ff)-1.
+     M/(ff_0..ff_{(i-1))}M has finite length for all i=0..(length ff)-1.
     Example
      kk=ZZ/101;
      S = kk[a,b,c];
@@ -3887,7 +3887,7 @@ doc ///
      A possible obstruction to the commutativity of the CI operators in codim c,
      even assymptotically,
      would be the non-triviality of the map
-     M_(k+4) --> M_k \otimes \wedge^2(S^c)
+     M_{(k+4)} --> M_k \otimes \wedge^2(S^c)
      in the stable category of maximal Cohen-Macaulay modules.
     
      In thw following example, studied in the paper ***** of
@@ -3947,9 +3947,9 @@ doc ///
      
      The complex FF has terms 
      
-     FF_(2*i) = F_0 ++ F_2 ++ .. ++ F_i
+     FF_{2*i} = F_0 ++ F_2 ++ .. ++ F_i
      
-     FF_(2*i+1) = F_1 ++ F_3 ++..++F_(2*i+1)
+     FF_{2*i+1} = F_1 ++ F_3 ++..++F_{2*i+1}
      
      and maps made from the higher homotopies
      In the form Shamash(Rbar,F,len) the complex F is moved over to the ring Rbar.
