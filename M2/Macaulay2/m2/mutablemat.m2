@@ -190,19 +190,6 @@ LUdecomposition Matrix := (A) -> (
      (p, matrix L,matrix U))
 
 solve = method(Options => { ClosestFit => false, MaximalRank => false, Precision=>0, Invertible=>false })
-solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
-     R := ring A;
-     if not opts.ClosestFit then (
-         );
-     if (opts#Precision !=0) then (
-		A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));
-		b=mutableMatrix(promote(matrix(b), CC_(opts#Precision)))
-	);
---     if (precision A > precision b) then b=promote(b, ring A);
---     if (precision b > precision A) then A=promote(A, ring b);
-     x := mutableMatrix(ring A,0,0,Dense=>true);
-     rawLeastSquares(raw A,raw b,raw x,opts.MaximalRank);
-     x)
 
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
@@ -225,6 +212,9 @@ solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
 
 solve(Matrix,Matrix) := opts -> (A,b) -> (
     if not isBasicMatrix A or not isBasicMatrix b then error "expected matrices between free modules";
+     if ultimate(coefficientRing, ring A) === ZZ then (
+         return (b // A);
+        );
      matrix solve(mutableMatrix(A,Dense=>true),
                   mutableMatrix(b,Dense=>true),
 		  opts))
