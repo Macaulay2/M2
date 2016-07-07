@@ -4,7 +4,10 @@
 
 #define timer timer1
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <pari/pari.h>
+#pragma GCC diagnostic pop
 
 #undef timer
 
@@ -36,3 +39,8 @@ engine_RawRingElementArrayOrNull rawRoots(const RingElement *p, long prec,
                                           int unique);
 
 #endif
+
+// Local Variables:
+// compile-command: "make -C $M2BUILDDIR/Macaulay2/e  "
+// indent-tabs-mode: nil
+// End:

@@ -11,7 +11,7 @@ brew upgrade
 stty -onlcr
 brew install gcc49 pkg-config autoconf automake gnu-tar libtool boost
 stty -onlcr
-brew install bdw-gc libatomic_ops gdbm cddlib glpk
+brew install bdw-gc libatomic_ops gdbm cddlib glpk libmpc xz
 stty -onlcr
 git describe --dirty --long --always --abbrev=40 --all # show the current state of the repository
 make -f Makefile
