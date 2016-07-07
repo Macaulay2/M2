@@ -60,10 +60,10 @@ document {
 	       },
 	  LI { "functionality changed:",
 	       UL {
-               LI { "Some linear algebra functions, e.g. ", TO LUdecomposition, ", ", TO "solve", ", ", TO "nullSpace", ", and  ", TO "columnRankProfile", ", ",
-                   " when presented with matrices over ZZ would previously give nonsensical answers sometimes.  These functions have been
-                   disabled for matrices over ZZ.  However, ", TO "solve", " uses Groebner basis methods to solve a linear system.
-                   Caveat: using these functions with a ring which is not a field, even if it runs, might give a nonsensical answer.
+               LI { "Some linear algebra functions, including ", TO LUdecomposition, ", ", TO "solve", ", ", TO "nullSpace", ", and  ", TO "columnRankProfile", ", ",
+                   " when presented with matrices over ", TO "ZZ", " would previously give occasional nonsensical answers.  These functions have been
+                   disabled for matrices over ", TO "ZZ", ".  However, ", TO "solve", " uses Groebner basis methods to solve a linear system, so did not suffer this problem.
+                   Caveat: using these functions with a ring that is not a field, even if it runs, might give a nonsensical answer.
                    This will be cleaned up in a later version."
                    }
                }
