@@ -1050,6 +1050,7 @@ fi
 if [[ $BUILD_mpir = yes ]]
 then AC_MSG_NOTICE([mpir is being built, so we will build pari])
      BUILD_pari=yes
+     BUILD_ALWAYS="pari $BUILD_ALWAYS"
 fi
 
 if test "$PARI" = yes
