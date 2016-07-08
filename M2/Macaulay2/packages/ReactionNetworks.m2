@@ -46,11 +46,11 @@ specProportion = (s) -> (
 -- removes any equationally redundant null symbols from reaction string in HR format
 repairReaction = (r, nsym) -> (
     l := select(separateRegexp("\\+", removeWhitespace(r)), s -> s != nsym); 
-    r := l#0;
+    rr := l#0;
     for i from 1 to length(l)-1 do (
-	if match("-|>", last l#(i-1)) then r = concatenate(r,l#i) else r = concatenate(r,concatenate("+", l#i));
+	if match("-|>", last l#(i-1)) then r = concatenate(rr,l#i) else rr = concatenate(rr,concatenate("+", l#i));
     );
-    r
+    rr
     )
 
 -- todo: add functionality for different delimiters
@@ -320,10 +320,9 @@ conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
     kk := symbol kk; 
-    cc := symbol cc;
     rates := apply(edges N.ReactionGraph, e->kk_e);
     S := stoichiometricSubspace N;
-    K := FF[rates, cc_1..cc_(numcols S)];
+    K := FF[rates];
     kk = gens K;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
@@ -331,8 +330,8 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     RING := K[apply(C,i->xx_(first i))];
     xx = gens RING;
     M := matrix{xx};
-    P := genericMatrix(K, cc_1, 1, numcols S);
-    St := flatten entries (M*S-P);
+    -- P := genericMatrix(K, cc_1, 1, numcols S);
+    St := flatten entries (M*S);
     St	  
     )
 
@@ -370,6 +369,7 @@ scan({
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )
+
 end
 
 -- Here place M2 code that you find useful while developing this
@@ -385,6 +385,7 @@ peek ReactionNetworks
 help "OnesiteModificationA"
 viewHelp "OnesiteModificationA"
 examples "OnesiteModificationA"
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
