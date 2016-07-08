@@ -806,6 +806,7 @@ AC_SUBST(BUILTLIBS,)
 #    Henry Duong is experimenting with mpack, a multi-precision version of blas+lapack based on mpfr
 #    mpack depends on gmp (which mpir provides) mpfr mpc qd
 #    flint depends on gmp or mpir and mpfr
+#    pari uses gmp, so if we build gmp, we should build pari
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
 AC_SUBST(LIBLIST, " atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 AC_SUBST(SUBLIST, " memtailor mathic mathicgb ")
@@ -1044,6 +1045,11 @@ then AC_MSG_CHECKING(for gmp ostream compatibility)
 	[AC_MSG_RESULT(yes)],
 	[BUILD_mpir=yes
          AC_MSG_RESULT([no, will build mpir])])
+fi
+
+if [[ $BUILD_mpir = yes ]]
+then AC_MSG_NOTICE([mpir is being built, so we will build pari])
+     BUILD_pari=yes
 fi
 
 if test "$PARI" = yes
