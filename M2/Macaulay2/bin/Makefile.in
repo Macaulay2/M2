@@ -1,5 +1,7 @@
 # -*- Makefile -*-
 
+# the use of */lib64 below is a kludge
+
 # @configure_input@
 VPATH = @srcdir@
 ENABLE_STRIP = @ENABLE_STRIP@
@@ -37,8 +39,10 @@ relink:
 	rm -f $(EXEFILE)
 	$(MAKE)
 
+foo : ; : @libdir@ $(BUILTLIBPATH)
+
 check: $(EXEFILE)
-	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib64:$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" $< --check 1 --stop -E "exit 0"
 
 ifeq (@OS@,Darwin)
 # We specify the search path for finding shareable libraries, in case there are any,
@@ -206,11 +210,11 @@ ifneq ("$(EXECSTACK)","no")
 endif
 	printenv LD_LIBRARY_PATH || true
 ifneq (@LDD@,false)
-	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
+	if LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib64:$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp | grep "not found";	\
 	then echo "some libraries not found" >&2;							\
 	     exit 1;											\
 	fi
-	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib64:$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
 ifneq (@OTOOL@,false)
 	@OTOOL@ -L $@.tmp

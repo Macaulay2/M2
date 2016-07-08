@@ -69,12 +69,16 @@ ifeq "@ENABLE_MPACK@" "yes"
 CPPFLAGS := -I$(BUILTLIBPATH)/include/mpack $(CPPFLAGS)
 endif
 
+# the use of */lib64 below is a kludge
+
 vpath %.h $(BUILTLIBPATH)/include
 LDFLAGS :=						\
+	-L$(BUILTLIBPATH)/lib64				\
 	-L$(BUILTLIBPATH)/lib				\
 	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS)
 LDFLAGS_FOR_BUILD :=					\
+	-L$(BUILTLIBPATH)/lib64				\
 	-L$(BUILTLIBPATH)/lib				\
 	$(foreach S, @BUILDSUBLIST@, -L@abs_top_builddir@/submodules/$S/.libs) \
 	$(LDFLAGS_FOR_BUILD)
