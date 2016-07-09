@@ -1063,11 +1063,11 @@ doc ///
 
 undocumented {Symmetrize, Completely, [egb,Symmetrize]}
 
-TEST ///
-needs concatenate(EquivariantGB#"source directory","./examples.m2")
-I = exampleISSAC()
-assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
-///
+-- TEST ///
+-- needs concatenate(EquivariantGB#"source directory","./examples.m2")
+-- I = exampleISSAC()
+-- assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
+-- ///
 
 end
 
