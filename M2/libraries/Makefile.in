@@ -40,12 +40,6 @@ install-dynamic-libraries:
 	      then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ;	\
 	      fi ;							\
 	   done
-	cd $(BUILTLIBPATH)/lib64 &&					\
-	   for i in *.dll *.so.* *[0-9].dylib ;				\
-	   do if [ -e $$i ] ;						\
-	      then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ;	\
-	      fi ;							\
-	   done
 ifeq (@SHARED@,yes)
 all: install-dynamic-libraries
 endif
