@@ -27,7 +27,8 @@ doc ///
 		
 	    To rename species, use @TO (substitute, ReactionNetwork, List) @.		
     /// 
-    		    
+    
+ 
 doc /// 
     Key
     	modificationOfTwoSubstratesH
@@ -208,3 +209,44 @@ doc ///
 	Example	
 	     sub(N, {"S_0" => "A", "X_1" => "B", "X_2" => "C", "S_1" => "D"})
  ///
+ 
+    --"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
+    --"stoichiometricSubspace", 
+    --"steadyStateEquations", "conservationEquations", 
+    --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
+    		    
+ 
+ doc /// 
+    Key
+    	reactionNetwork
+	(reactionNetwork, String)
+	(reactionNetwork, List)
+    Headline
+    	create a reaction network
+    Description
+    	Text
+	    Create a reaction network from a string.
+    	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	Text
+	    Create a reaction network from a list.
+	Example
+	    N = reactionNetwork {"S_0+E <--> X_1", "X_1 --> S_1+E",
+	                         "S_1+E <--> X_2", "X_2 --> S_2+E",
+				 "S_1+F <--> Y_1", "Y_1 --> S_0+F", 
+				 "S_2+F <--> Y_2", "Y_2 --> S_1+F"}
+	Text
+    	    Create a reaction network including the empty set.
+	Example
+	    N = reactionNetwork {"A --> 0", "0 --> A", NullSymbol => "0"}
+	Text
+	    The user may view different information stored in the reaction network, 
+	    such as species, complexes, etc.
+	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    N.Species
+	    N.Complexes
+	    N.ReactionGraph
+	    
+	 	
+    ///
