@@ -1549,7 +1549,7 @@ Matrix /* or null */ *Matrix::monomials(M2_arrayint vars) const
   int *mon = M->make_one();
   int *exp = newarray_atomic(int,M->n_vars());
   ring_elem one = K->from_long(1);
-  exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the coefficient
+  exponent_table *E = exponent_table_new(50000, vars->len+1); // the +1 is for the component
 
   for (int c=0; c<n_cols(); c++)
     {
