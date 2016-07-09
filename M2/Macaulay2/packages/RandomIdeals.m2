@@ -1,14 +1,24 @@
 newPackage(
-	"RandomIdeal",
-    	Version => "1.0", 
-    	Date => "April 25, 2009",
-    	Authors => {
-	     {Name => "David Eisenbud", Email => "de@msri.org"}
-	     },
+	"RandomIdeals",
+    	Version => "2.0", 
+    	Date => "May 9, 2016",
+        Authors => {
+	    {Name => "Katie Ansaldi",
+		Email => "kansaldi@gmail.com"},
+	    {Name => "David Eisenbud",
+         	Email => "de@msri.org",
+         	HomePage => "http://www.msri.org/~de"},
+     	    {Name => "Robert Krone",
+	 	Email => "rckrone@gmail.com",
+	 	HomePage => "http://rckr.one"},
+	    {Name => "Jay Yang",
+		Email => "jkelleyy@gmail.com"}
+	    },
     	HomePage => "http://www.msri.org/~de",
     	Headline => "a package for creating random ideals of various sorts",
 	AuxiliaryFiles => false, -- set to true if package comes with auxiliary files,
-    	DebuggingMode => false		 -- set to true only during development
+	PackageExports =>{"EdgeIdeals", "BinomialEdgeIdeals"},
+    	DebuggingMode => false	 -- set to true only during development
     	)
 
 export {
@@ -19,14 +29,22 @@ export {
      "randomBinomialIdeal",
      "randomPureBinomialIdeal",
      "randomSparseIdeal",
+     "randomEdgeIdeal",
+     "randomBinomialEdgeIdeal",
+     "randomToricEdgeIdeal",
      "randomElementsFromIdeal",
      "randomMonomial",
      "squareFree",
      "regSeq",
      "AlexanderProbability",
-     "prepare"
+        "randomAddition", 
+	"randomShelling",
+        "idealFromShelling",
+	"idealChainFromShelling",
+        "isShelling",
+	"randomShellableIdeal",
+	"randomShellableIdealChain"
      }
-     
 
 randomMonomial = method(TypicalValue => RingElement)
 randomMonomial(ZZ,Ring) := RingElement => (d,S) -> (
@@ -192,6 +210,9 @@ randomBinomialIdeal(List, Ring) := Ideal => (L,S)->(
      trim ideal apply(L, d->randomMonomial(d,S)-random(kk)*randomMonomial(d,S))
      )
 
+///
+///
+
 randomSparseIdeal = method(TypicalValue => Ideal)
 randomSparseIdeal(Matrix, ZZ, ZZ) := Ideal => (B,s,n) -> (
      -- B is a 1xt matrix of monomials
@@ -225,12 +246,190 @@ randomElementsFromIdeal(List, Ideal) := Ideal => (L,I)->(
 trim ideal((gens I)*random(source gens I, (ring I)^(-L))))
 
 
-beginDocumentation()
+----------From Shelling
 
+testNewSimplex = method()
+testNewSimplex(List, List) := (P, D) ->(
+--given a pure, d-dimensional simplicial complex (sc) as a list of ordered lists of d+1 vertices in [n], and
+--a simplex D as such a list, tests whether the intersection of D with P is a union of facets of D.
+     d := #D-1; --dimension
+     ints := apply(P, D' -> intersectLists(D',D));
+     facets := apply(unique select(ints, E -> #E==d),set);
+     antiFacets := apply(facets,F -> (D-F)#0);
+     if facets == {} then return false;
+     smalls := unique select(ints, E -> #E<d);
+     all(smalls, e -> any(antiFacets, v -> not member(v,e)))
+)
+
+intersectLists = (D',D) -> D - set(D-set D')
+
+randomSubset = (n,m) -> (
+    L := new MutableList from toList (0..m-1);
+    for i from m to n-1 do (
+	j := random(i+1);
+    	if j < m then L#j = i;
+	);
+    sort toList L
+    )
+
+randomAddition = method()
+randomAddition(ZZ,ZZ,List) := (n,m,P) ->(
+    if #P == 0 then return {randomSubset(n,m+1)};
+    Plarge := select(P, D-> #D >= m+1); -- the facets big enough to be glued to
+    if #Plarge == 0 then error "m is too large";
+    t := false;
+    D' := {null};
+    D := Plarge#(random(#Plarge)); -- a random facet from Plarge
+    compD := toList(0..n-1) - set D;
+    count := 0;
+    while not t and count < 20 do (
+    	i := random (#compD);
+    	J := randomSubset(#D,#D-m);
+    	D' = sort(D - set apply(J, j->D_j) | {compD_i});
+    	t = (testNewSimplex(P,D'));
+	count = count+1);
+    if count == 20 then return P;
+    unique (P|{D'})
+    )
+
+listsToMonomials = (P,R) -> apply(P, D -> product apply(D,d->R_d))
+squareFreeMonomialsToLists = (L,R)->(
+varToIndex := i->position(gens R, j->j==i);
+apply (L/support, j->j/varToIndex))
+    
+///
+S = ZZ/101[a,b,c]
+L = flatten entries matrix"ab,a2,abc2"
+varToIndex b
+viewHelp position
+///
+
+randomAddition(Ring,ZZ,List) := (R,m,L) -> (
+    P := squareFreeMonomialsToLists(L,R);
+    listsToMonomials(randomAddition(numgens R,m,P),R)
+    )
+
+idealFromShelling = method()
+idealFromShelling (Ring,List) := (S,P) -> (
+    Delta := toList (0..numgens S - 1);
+    V := vars S;
+    monomialIdeal intersect apply(P, D -> monomialIdeal {V_(Delta - set D)})
+    )
+
+
+idealFromShelling List := P -> (
+    n := (max flatten P)+1;
+    x := symbol x;
+    S := QQ[x_0..x_(n-1)];
+    idealFromShelling(S,P)
+    )
+///
+R = ZZ/101[x_0..x_4];
+I = randomShellableIdeal(R,2,6)
+S
+///
+
+idealChainFromShelling = method()
+idealChainFromShelling(Ring,List) := (S,P) -> toList apply(#P,i->idealFromShelling(S,take(P,i+1)))
+idealChainFromShelling List := P -> toList apply(#P,i->idealFromShelling(take(P,i+1)))
+
+isShelling = method()
+isShelling(List) := P -> all(#P, i-> i==0 or testNewSimplex(take(P,i),P#i))
+
+randomShelling = method()
+-- random chain of shellable complexes on n vertices, with pure dim m, up to the complete m skeleton
+
+randomShelling(ZZ,ZZ) := (n,m) -> randomShelling(n,m,binomial(n,m+1))
+-- random chain of shellable complexes on n vertices, with pure dim m, and k facets
+
+--Should we change the following to start with {{0..m}, {0..m-1,m} to diminish autos?
+randomShelling(ZZ,ZZ,ZZ) := (n,m,k) -> (
+    if k > binomial(n,m+1) then error "k is too large";
+    P := {};
+    while #P < k do P = randomAddition(n,m,P);
+    P
+    )
+randomShellableIdeal=method()
+randomShellableIdeal(Ring,ZZ,ZZ) := (R,dimProj,deg) -> (
+    idealFromShelling(R,randomShelling(numgens R ,dimProj, deg))
+    )
+
+randomShellableIdealChain=method()
+randomShellableIdealChain(Ring,ZZ,ZZ) := (R,dimProj,deg)->(
+    idealChainFromShelling(R,randomShelling(numgens R,dimProj,deg))
+    )
+randomShellableIdealChain(Ring,ZZ) := (R,dimProj)->(
+    idealChainFromShelling(R,randomShelling(numgens R,dimProj))
+    )
+///
+S = ZZ/101[x_0..x_5]
+I = randomShellableIdeal(S,2,5)
+dim I == 3
+degree I == 5
+
+S = ZZ/101[x_0..x_4]
+I = randomShellableIdeal(S,2,6)
+
+///
+
+randomShelling(Ring,ZZ,ZZ) := (R,m,k) -> listsToMonomials(randomShelling(numgens R,m,k),R)
+randomShelling(Ring,ZZ)    := (R,m)   -> listsToMonomials(randomShelling(numgens R,m),R)
+
+
+
+
+randomEdgeIdeal = method()
+randomEdgeIdeal(ZZ,ZZ) := (n,t) -> (
+    	    needsPackage "EdgeIdeals";
+	    needsPackage "BinomialEdgeIdeals";
+    	    x:=symbol x;
+    	    G:=randomGraph(QQ[x_1..x_n],t);
+	    (G, edgeIdeal(G))
+		)
+	    
+
+TEST///
+randomEdgeIdeal(8, 5)
+randomBinomialEdgeIdeal(7, 4)
+randomToricEdgeIdeal(6,10)
+///
+--Random binomial edge ideal
+--n is number of vertices, t is number of edges of the graph
+
+randomBinomialEdgeIdeal = method();
+randomBinomialEdgeIdeal(ZZ,ZZ) := (n, t) -> ( 
+    	    needsPackage "EdgeIdeals";
+	    needsPackage "BinomialEdgeIdeals";
+    x := symbol x;
+    G := randomGraph(QQ[x_1..x_n], t); 
+    E := apply(edges G, i -> apply(i, j -> index j+1));
+    return (binomialEdgeIdeal(E), G)
+    )
+
+
+--Random toric edge ideal 
+--n is number of variables, t is number of edges of the graph
+
+randomToricEdgeIdeal = method();
+randomToricEdgeIdeal(ZZ,ZZ) := (n, t) -> (
+    needsPackage "BinomialEdgeIdeals";
+    needsPackage "EdgeIdeals";
+    e := local e;
+    x := local x;
+    R := QQ[x_1..x_n];
+    S := QQ[e_1..e_t];
+    G := randomGraph(R,t);
+    E := apply(edges G, product);
+    (ker map(R,S,E), G)
+    )
+
+------------------------------------------------------------
+-- DOCUMENTATION RandomIdeals -- documentation
+------------------------------------------------------------
 
 doc ///
 Key 
-     RandomIdeal
+     RandomIdeals
 Headline 
      A package to construct various sorts of random ideals
 Description
@@ -263,9 +462,356 @@ SeeAlso
      randomSparseIdeal
      randomElementsFromIdeal
      randomMonomial
-     squareFree
-     regSeq
+     randomShellableIdeal
+     randomShellableIdealChain
+     randomShelling
 ///
+
+------------------------------------------------------------
+-- DOCUMENTATION randomShelling
+------------------------------------------------------------
+
+doc ///
+     Key
+          randomShelling
+	  (randomShelling,ZZ,ZZ)
+	  (randomShelling,ZZ,ZZ,ZZ)
+	  (randomShelling,Ring,ZZ)
+	  (randomShelling,Ring,ZZ,ZZ)
+     Headline
+          produces a random chain of shellable complexes
+     Usage
+          P=randomShelling(n,m)
+	  P=randomShelling(n,m,k)
+	  P=randomShelling(R,m)
+	  P=randomShelling(R,m,k)
+     Inputs
+          n:ZZ
+	       the number of vertices
+	  R:Ring
+	       a polynomial ring with a variable for each vertex
+	  m:ZZ
+	       the dimension of the facets
+	  k:ZZ
+	       the number of facets (if omitted, the number will be {\tt n} choose {\tt m+1})
+	      
+     Outputs
+          P:List
+	       A list of lists of integers.  Each list of integers is a facet of the complex and the order is a shelling.  If called with a Ring {\tt R} instead of an integer {\tt n}, each facet is represented by a square-free monomial instead of a list.
+     Description
+          Text
+              The function produces a list of facets of a random shellable simplicial complex.
+	      The order of the facets is a shelling.
+	  Text
+	      The alogorithm works by choosing one of the previous facets at random, and replacing one of its vertices with a new vertex chosen at random.
+	      If the choice meets the criteria of a shelling, that facet is added to list, otherwise it is discarded and the algorithm tries again.
+	      The first facet is chosen uniformly at random.
+
+	      The call randomShelling(n,m) produces a *complete* chain -- that is, a shelling
+	      of the m-skeleton of the (n-1)-simplex, with the simplices listed in order,
+	      so that any initial subsequence of length d gives a (random) shellable simplicial
+	      complex with d facets. 
+	      
+	      The probability distribution for this random selection
+	      is presumably not the uniform one; it would be nice to write a reversible
+	      markov chain that could be used with the Metropolis algorithm to produce
+	      the uniform distribution, as is done in randomSquareFreeStep, and the
+	      randomSquareFreeMonomialIdeal codes
+          Example
+               P = randomShelling(6,3,10)
+	       Q = randomShelling(6,3)
+     Caveat
+     	   No claim is made on the distribution of the random chain.
+     SeeAlso
+     	 randomAddition
+	 idealChainFromShelling
+	 idealFromShelling
+	 randomShellableIdeal
+	 randomSquareFreeStep
+	 randomSquareFreeMonomialIdeal
+///
+
+
+------------------------------------------------------------
+-- DOCUMENTATION isShelling
+------------------------------------------------------------
+doc ///
+     Key
+          isShelling
+	  (isShelling,List)
+     Headline
+          determines whether a list represents a shelling of a simplicial complex.
+     Usage
+          b = isShelling(P)
+     Inputs
+          P:List
+	       A list of lists of integers.  Each list of integers is a facet of the complex and the order is a possible shelling.
+     Outputs
+          b:Boolean
+	       true if and only if P is a shelling.
+     Description
+          Text
+	      An ordering $F_1,..F_d$ of the facets of a simplicial complex $P$ is shellable
+	       if $(F_1 \cup .. \cup F_{k-1}) \cap F_k$ is pure of dim$F_k -1$ for all $k = 2,..,d$.
+              Determines if a list of faces is a shelling order of the simplicial complex. 
+          Example
+	      P = {{1, 2, 3}, {1, 2, 5}};
+	      isShelling(P)
+	      Q = {{1,2,3},{3,4,5},{2,3,4}};
+	      isShelling(Q)	     
+///
+
+
+------------------------------------------------------------
+-- DOCUMENTATION randomAddition
+------------------------------------------------------------
+doc ///
+     Key
+          randomAddition
+	  (randomAddition,ZZ,ZZ,List)
+	  (randomAddition,Ring,ZZ,List)
+     Headline
+          Adds a random facet to a shellable complex
+     Usage
+          p=randomAddition(n,m,P)
+	  p=randomAddition(R,m,P)
+     Inputs
+     	  n:ZZ
+	       the number of vertices (if a ring is specified, {\tt n} is the number of variables. 
+	  m:ZZ
+	       the dimension of the new facet
+          P:List
+	       A list of lists of integers.  Each list of integers is a facet of the complex and the order is a shelling.
+	  R:Ring
+	      A polynomial ring. 
+     Outputs
+          p:List
+	       A list of lists of integers.  Each list of integers is a facet of the complex and the order is a shelling.
+     Description
+          Text
+            This function randomly chooses a facet of size {\tt m+1} and checks whether the facet can be shellably added to the shelling. 
+	    If it can be shellably added to the shelling, it is added to the shelling and the new shelling is returned. 
+	    Otherwise, the process repeats up to 20 times.
+          Text
+	    This function can be used to randomly construct non-pure shellable complexes.  A new {\tt m}-simplex can only be
+	    glued to previous simplices of dimension at least {\tt m}.  If all previous simplices are smaller, then the addition will fail.
+          Example
+            P={{1,2,3}}
+	    P=randomAddition(6,2,P)
+            P=randomAddition(6,1,P)
+     Caveat
+	  If the input is not a shellable simplicial complex, the new complex will not be shellable. The function does not check whether the input is shellable.
+     SeeAlso
+     	  randomShelling
+	  idealChainFromShelling
+	  idealFromShelling
+///
+
+
+------------------------------------------------------------
+-- DOCUMENTATION idealFromShelling
+------------------------------------------------------------
+doc ///
+     Key
+          idealFromShelling
+	  (idealFromShelling,List)
+	  (idealFromShelling,Ring,List)
+     Headline
+          Produces an ideal from a shelling
+     Usage
+          I = idealFromShelling(P)
+	  I = idealFromShelling(S,P)
+     Inputs
+	  S:Ring
+	      (If omitted, it will use {\tt S=QQ[x_0..x_{n-1}]} where {\tt n} is the maximum integer in the lists of {\tt P}.  
+          P:List
+	       A list of lists of integers.  Each list of integers is a facet of the complex and the order is a shelling.
+	  S:Ring
+	      (If omitted, it will use {\tt S=QQ[x_0..x_{n-1}]} where {\tt n} is the maximum integer in the lists of {\tt P}.  
+     Outputs
+          I:Ideal
+	      generated by the monomials representing the minimal nonfaces of {\tt P}
+     Description
+      Text
+      	This gives the Stanley-Reisner ideal for the simplicial complex, that is the ideal generated by the monomials representing the minimal nonfaces of {\tt P}. 
+      Example  
+	      S = QQ[x_0,x_1,x_2,x_3,x_4]
+	      P =  {{1, 2, 4}, {0, 1, 4}, {0, 2, 4}, {0, 3, 4}};
+	      idealFromShelling(S,P)
+     SeeAlso
+    	idealChainFromShelling
+	randomShellableIdeal
+///
+
+
+------------------------------------------------------------
+-- DOCUMENTATION idealChainFromShelling
+------------------------------------------------------------
+doc ///
+     Key
+          idealChainFromShelling
+	  (idealChainFromShelling,List)
+	  (idealChainFromShelling,Ring,List)
+     Headline
+          Produces chains of ideals from a shelling.
+     Usage
+          L = idealChainFromShelling(P)
+	  L = idealChainFromShelling(R,P)
+     Inputs
+     	  R:Ring
+	      Polynomial ring
+          P:List
+	       A (possibly impure) shelled simplicial complex, represented by a
+	       list of lists of integers.
+	       Each list of integers is a facet of the 
+	       complex and the order is a shelling. If the ring R is specified, the output
+	       is a list of ideals in R; else it is a list of ideals in
+	       QQ[x_0..x_{n-1}], where n is the maximum number of elements in one of the lists
+	       of integers
+     Outputs
+          L:List
+	      a list of ideals
+     Description
+          Text  
+	     Outputs the Stanley-Reisner ideal for each successive simplicial complex formed by truncating the shelling. 
+	  Example
+	      P =  {{1, 2, 4}, {0, 1, 4}, {0, 2, 4}, {0, 3, 4}};
+	      idealChainFromShelling(P)
+     SeeAlso
+     	 idealFromShelling
+	 randomShellableIdealChain
+     
+///
+
+------------------------------------------------------------
+-- DOCUMENTATION randomShellableIdeal
+------------------------------------------------------------
+doc ///
+     Key
+          randomShellableIdeal
+	  (randomShellableIdeal,Ring,ZZ,ZZ)
+     Headline
+          Produces a ideal from a random shellable simplicial complex
+     Usage
+          I = randomShellableIdeal(R,m,k)
+     Inputs
+          R:Ring
+	      a polynomial ring
+	  m:ZZ
+	      dimension of facets in shellable complex
+	  k:ZZ
+	      the degree of the shellable complex
+     Outputs
+          I:MonomialIdeal
+	      the Stanley-Reisner ideal of a random shellable complex
+     Description
+     	  Text  
+	    The Stanley-Reisner ideal of a shellable simplicial complex is always
+	    Cohen-Macaulay; the converse is not true, although, to paraphrase Arnol'd,
+	    square-free monomial ideals that have a serious reason to be Cohen-Macaulay
+	    generally do come from shellable complexes.
+	    
+	    The program makes a (Cohen-Macaulay) square-free monomial ideal
+	    from the Stanley-Reisner ideal of a random shellable simplicial complex.
+	    simplicial complex relies on the code for producing random shellable simplicial
+	    complexes; see randomShelling for a description.
+          Example
+	      R = ZZ/101[x_0..x_4];
+	      I = randomShellableIdeal(R,2,6)
+     Caveat
+     	  No claim is made on the distribution of the ideal.
+     SeeAlso
+     	 randomShelling
+	 idealFromShelling
+	 idealChainFromShelling
+	 randomShellableIdealChain
+///         
+
+------------------------------------------------------------
+-- DOCUMENTATION randomShellableIdealChain
+------------------------------------------------------------
+doc ///
+     Key
+          randomShellableIdealChain
+	  (randomShellableIdealChain,Ring,ZZ,ZZ)
+	  (randomShellableIdealChain,Ring,ZZ)
+     Headline
+          Produces a chain of ideals from a random shelling
+     Usage
+          L = randomShellableIdealChain(R,m,k)
+	  L = randomShellableIdealChain(R,m)
+     Inputs
+          R:Ring
+	      a polynomial ring
+	  m:ZZ
+	      dimension of the facets in the shellable complex
+	  k:ZZ
+	      the degree of the smallest ideal
+     Outputs
+          L:List
+	      list of Stanley-Riesner ideals of the simplicial comlexes of the truncations of the shelling.
+     Description
+     	  Text  
+          Example
+	      R = ZZ/101[x_0..x_3];
+	      L = randomShellableIdealChain(R,1)
+     Caveat
+     	  No claim is made on the distribution of the ideal.
+     SeeAlso
+     	 randomShelling
+	 idealFromShelling
+	 idealChainFromShelling
+	 randomShellableIdeal
+///         
+
+TEST///
+setRandomSeed 0
+S = ZZ/101[a,b,c,d,e]
+I = randomShellableIdeal(S,2,3) 
+I == monomialIdeal (a, c*d*e)
+///
+
+TEST///
+assert(#randomShelling(5,2,6)==6)
+assert(#randomShelling(5,2)==binomial(5,3))
+R=QQ[x1,x2,x3,x4,x5];
+assert(#randomShelling(R,2,6)==6)
+///
+
+
+TEST///
+assert(isShelling({}))
+assert(isShelling({{1,2,3}}))
+assert(isShelling({{1,2,3},{2,3,4}}))
+assert(isShelling(randomShelling(5,3,5)))
+--non pure shellings
+assert(isShelling({{1,2,3},{2,4}}))
+assert(isShelling({{1},{2}}))
+assert(not isShelling({{1,3},{2,4}}))
+assert(isShelling({{1,2},{3}}))
+assert(not isShelling({{3},{1,2}}))
+///
+
+
+TEST///
+setRandomSeed(0);
+assert(#randomAddition(6,2,{{1,2,3}})==2)
+assert(#randomAddition(6,3,{{1,2,3,4}})==2)
+///
+
+TEST///
+needsPackage "SimplicialComplexes"
+needsPackage "SimplicialDecomposability"
+R=QQ[x1,x2,x3,x4,x5];
+assert(isShellable simplicialComplex randomShelling(R,2,6))
+///
+
+
+
+
+beginDocumentation()
+
+
 
 
 doc ///
@@ -345,7 +891,7 @@ Key
   (randomSquareFreeStep, List) 
   [randomSquareFreeStep,AlexanderProbability]
 Headline
- A step in a random walk with uniform distribution over all monomomial ideals
+ A step in a random walk with uniform distribution over all monomial ideals
 Usage
   M = randomSquareFreeStep(I)
   M = randomSquareFreeStep(I, AlexanderProbability => p)  
@@ -406,30 +952,6 @@ Description
    J
 ///
 
-doc ///
-Key
-  prepare
-Headline
-  Prepares a MonomialIdeal for "randomSquareFreeStep"
-Usage
-  L = prepare I
-Inputs
-  I: MonomialIdeal
-Outputs
-  L: List 
-    of one monomial ideal and two lists
-Description
-  Text
-   prepare I returns a list 
-   L =  {I, Igens, ISocgens}
-   consisting of I and two lists.
-   Igens is the list of monomial generators of I,
-   while ISocgens is the list of generators of I+squares,
-   where squares is the monomial ideal consisting of all
-   the squares of variables in ring I.
-SeeAlso
-  randomSquareFreeStep
-///  
 
 doc ///
 Key
@@ -845,6 +1367,99 @@ SeeAlso
   randomPureBinomialIdeal
 ///
 
+--Documentation
+doc ///
+   Key
+    randomEdgeIdeal
+    (randomEdgeIdeal, ZZ, ZZ)
+   Headline
+    Creates an edge ideal from a random graph with n vertices and t edges.
+   Usage
+    (I,G) = randomEdgeIdeal(n,t)
+   Inputs
+    n:ZZ
+     number of vertices
+    t:ZZ
+     number of edges
+   Outputs
+    I:Ideal
+     a random edge ideal
+    G:Graph
+     the graph underlying I
+   Description
+    Text
+     The edge ideal of a graph is the quadratic monomial ideal generated by x_v*x_w for all edges (v,w) in the graph.
+     This method returns the edge ideal {\tt I} of a random graph {\tt G} which has n vertices and t edges.
+    Example
+     randomEdgeIdeal(7, 4) 
+   SeeAlso
+    randomGraph
+    edgeIdeal
+///
+
+doc ///
+   Key
+    randomBinomialEdgeIdeal
+    (randomBinomialEdgeIdeal, ZZ, ZZ)
+   Headline
+    Creates a binomial edge ideal from a random graph with n vertices and t edges.
+   Usage
+    (I,G) = randomBinomialEdgeIdeal(n,t)
+   Inputs
+    n:ZZ
+     number of vertices
+    t:ZZ
+     number of edges
+   Outputs
+    I:Ideal
+     a random binomial edge ideal
+    G:Graph
+     the graph underlying I
+   Description
+    Text
+     The binomial edge ideal associated to a graph G is the quadratic binomial ideal generated by the set containinig  x_v*y_w-x_w-y_v for every edge (v,w) in G.
+     This method returns the binomial edge ideal {\tt I} of a random graph {\tt G} which has n vertices and t edges.
+    Example
+     randomBinomialEdgeIdeal(7, 4) 
+   SeeAlso
+    randomGraph
+    binomialEdgeIdeal
+    randomToricEdgeIdeal
+///
+
+doc ///
+   Key
+    randomToricEdgeIdeal
+    (randomToricEdgeIdeal, ZZ, ZZ)
+   Headline
+    Creates a toric edge ideal from a random graph with n vertices and t edges.
+   Usage
+    (I, G) = randomToricEdgeIdeal(n,t)
+   Inputs
+    n:ZZ
+     number of vertices
+    t:ZZ
+     number of edges
+   Outputs
+    I:Ideal
+     a random toric edge ideal
+    G:Graph
+     the graph underlying I
+   Description
+    Text
+     The toric edge ideal of a graph G is the kernel of the map from the polynomial ring k[edges(G)] to the polynomial ring k[vertices G] taking an x_e to y_i*y_j, where e = (i,j).
+     This method returns the toric edge ideal {\tt I} of a random graph {\tt G} which has n vertices and t edges.  {\tt I} is the kernel of the homomorphism from QQ[x_1..x_n] to QQ/101[e_1..e_t] which sends each vertex in the graph {\tt G} to the product of its endpoints.
+    Example
+     randomToricEdgeIdeal(4,5)     
+    Text
+     Note that his is different than the randomBinomialEdgeIdeal!
+    Example
+     randomBinomialEdgeIdeal(4,5)
+   SeeAlso
+    randomGraph
+    randomBinomialEdgeIdeal
+///
+
 
 TEST ///
 S=ZZ/101[a..e]
@@ -868,7 +1483,7 @@ setRandomSeed 123456
 assert(degrees randomElementsFromIdeal({2,3,6},ideal"a2,ab,c5") == {{2}, {3}, {6}})
 S=ZZ/2[a,b]
 setRandomSeed 1
-assert(prepare monomialIdeal(a^2, a*b)=={monomialIdeal (a^2 , a*b), {a^2 , a*b}, {0, 1}})
+--assert(prepare monomialIdeal(a^2, a*b)=={monomialIdeal (a^2 , a*b), {a^2 , a*b}, {0, 1}})
 setRandomSeed 1
 S=ZZ/2[vars(0..3)]
 J = ideal"ab,ad, bcd"
@@ -876,37 +1491,17 @@ assert( (randomSquareFreeStep J) === {monomialIdeal map((S)^1,(S)^{{-2},{-2}},{{
 ///
 
 
+
+
 end--  
 restart
---loadPackage "RandomIdeal"
-uninstallPackage "RandomIdeal"
-installPackage "RandomIdeal"
-check "RandomIdeal"
-viewHelp RandomIdeal
+loadPackage ("RandomIdeals", Reload =>true)
+load "RandomIdeals.m2"
 
-
---temporary:
-
+uninstallPackage "RandomIdeals"
 restart
-loadPackage "RandomIdeal"
-setRandomSeed(1)
-S=ZZ/2[vars(0..3)]
-rsfs = randomSquareFreeStep
-J = monomialIdeal (a*b,a*c)
-J = monomialIdeal 0_S
-time L= apply(10000, j-> (J = rsfs(J,AlexanderProbability => .1))_0);
-tally values tally L
-tally ((unique L)/(J->numgens trim J))
+installPackage "RandomIdeals"
+check "RandomIdeals"
+viewHelp RandomIdeals
 
-
-
-restart
-loadPackage "RandomIdeal"
-S=ZZ/2[a..d]
-setRandomSeed(1)
-rsfs = randomSquareFreeStep
-J = monomialIdeal 0_S
-time T=tally for t from 1 to 10000 list J=rsfs(J,AlexanderProbability => .01);
-first time, 14 sec; 10 sec after the first few times
-around 1.8 sec for 1000
 

@@ -1808,6 +1808,10 @@ enum gbTraceValues
   /* WARNING: 'minimize' is completely ignored, and should be removed from the interface */
   /* drg: connected rawResolutionStatusLevel */
 
+  M2_arrayint rawMinimalBetti(Computation *G,
+                              M2_arrayint slanted_degree_limit,
+                              M2_arrayint length_limit); /* connectd: rawMinimialBetti */
+  
   /****************************************************/
   /**** Chinese remainder and rational reconstruction */
   /****************************************************/
@@ -1951,6 +1955,7 @@ enum gbTraceValues
                  M2_arrayintOrNull *result_powers); /* connected to rawFactor  */
   M2_arrayintOrNull rawIdealReorder(const Matrix *M);/* connected to rawIdealReorder */
   engine_RawMatrixArrayOrNull rawCharSeries(const Matrix *M);/* connected to rawCharSeries */
+  engine_RawRingElementArrayOrNull rawRoots(const RingElement *g, long prec, int unique); /* connected to rawRoots */
 
   void rawDummy(void);          /* connected to rawDummy */
 

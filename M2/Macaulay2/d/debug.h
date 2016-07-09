@@ -12,6 +12,7 @@ extern "C" {
   extern int trapcount;
   extern int trapset;
   extern void trapchk(void *);
+  extern void trapchk_size(size_t);
   extern int badBlock();
 
 #ifndef NDEBUG
@@ -33,10 +34,12 @@ extern "C" {
 #endif
 
 #define TRAPCHK(p) trapchk(p)
+#define TRAPCHK_SIZE(n) trapchk_size(n)
 
 #else
 
 #define TRAPCHK(p)
+#define TRAPCHK_SIZE(n)
 
 #endif
 

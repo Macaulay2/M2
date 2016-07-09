@@ -1,5 +1,6 @@
 // Copyright 1996  Michael E. Stillman
 
+#include "util.hpp"
 #include "freemod.hpp"
 #include "comb.hpp"
 #include "polyring.hpp"
@@ -410,7 +411,6 @@ static bool degree_in_box(int len, int *deg, M2_arrayint lo, M2_arrayint hi)
       if (deg[i] > hi->array[i]) return false;
   return true;
 }
-extern M2_arrayint stdvector_to_M2_arrayint(std::vector<size_t> &v);
 
 M2_arrayintOrNull FreeModule::select_by_degrees(M2_arrayintOrNull lo, M2_arrayintOrNull hi) const
 {

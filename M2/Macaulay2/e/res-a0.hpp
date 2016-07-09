@@ -219,7 +219,6 @@ public:
             int SlantedDegreeLimit,
             int SortStrategy);
 
-  virtual void remove_res();
   virtual ~res2_comp();
 
   void resize(const Ring *new_ring);

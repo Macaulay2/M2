@@ -9,20 +9,20 @@ check-config:
 	rm -rf tmp
 	mkdir tmp
 	@ echo "make: [check-config] remark: the test below is important (only) for testing whether the configure script detects pre-installed libraries properly" >&2
-	cd tmp &&								\
-	    LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)"		\
-	    PATH="$(BUILTLIBPATH)/bin:$(PATH)"					\
-	    @abs_top_srcdir@/configure						\
+	cd tmp &&												\
+	    LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)"			\
+	    PATH="$(BUILTLIBPATH)/bin:$(PATH)"									\
+	    @abs_top_srcdir@/configure										\
 	    PKG_CONFIG_PATH=$(BUILTLIBPATH)/lib/pkgconfig:$(PKG_CONFIG_PATH)	\
-	    GFTABLESDIR=@pre_packagesdir@/Core/factory/				\
-	    LDFLAGS="$(LDFLAGS)"						\
-	    --with-gtest-source-path="@GTEST_PATH@"				\
-	    CPPFLAGS="$(CPPFLAGS)"						\
-	    CC="$(CC)"								\
-	    CXX="$(CXX)"							\
-	    CFLAGS="$(CFLAGS)"							\
-	    CXXFLAGS="$(CXXFLAGS)"						\
-	    --build="@build_alias@"						\
+	    GFTABLESDIR=@pre_packagesdir@/Core/factory/								\
+	    LDFLAGS="$(LDFLAGS)"										\
+	    --with-gtest-source-path="@GTEST_PATH@"								\
+	    CPPFLAGS="$(CPPFLAGS)"										\
+	    CC="$(CC)"												\
+	    CXX="$(CXX)"											\
+	    CFLAGS="$(CFLAGS)"											\
+	    CXXFLAGS="$(CXXFLAGS)"										\
+	    --build="@build_alias@"										\
 	    --disable-building
 distclean:: clean; rm -f Makefile
 Makefile: Makefile.in ; cd .. && ./config.status check-configure/Makefile

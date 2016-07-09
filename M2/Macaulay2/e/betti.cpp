@@ -59,6 +59,19 @@ BettiDisplay::~BettiDisplay()
   mValues = 0;
 }
 
+void BettiDisplay::resize(int new_lo_degree, int new_hi_degree, int new_length)
+{
+  if (new_lo_degree == mLoDegree && new_hi_degree == mHiDegree && new_length == mHiLength)
+    return;
+  BettiDisplay C(new_lo_degree, new_hi_degree, new_length);
+  int lodeg = std::max(new_lo_degree, mLoDegree);
+  int hideg = std::min(new_hi_degree, mHiDegree);
+  int len = std::min(new_length, mHiLength);
+  for (int deg=lodeg; deg <= hideg; deg++)
+    for (int lev=0; lev<=len; lev++)
+      C.entry(deg,lev) = entry(deg,lev);
+  swap(C);
+}
 int& BettiDisplay::entry(int deg, int lev)
 {
   if (deg < mLoDegree 

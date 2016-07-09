@@ -73,8 +73,12 @@ MutableMatrix /* or null */ *rawMutableMatrixPromote(const Ring *S,
   // Given a natural map i : R --> S
   // f is a matrix over R.
   // returns a matrix over S.
+  ERROR("MutableMatrix promote not implemented yet");
+  return nullptr;
+#if 0  
   auto result = MutableMatrix::zero_matrix(S, f->n_rows(), f->n_cols(), f->is_dense());
   return result;
+#endif
 }
 
 MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return, 
@@ -85,9 +89,14 @@ MutableMatrix /* or null */ *rawMutableMatrixLift(int *success_return,
   // f is a matrix over S.
   // returns a matrix over R.
 
+  //ERROR("MutableMatrix lift not implemented yet");
+  *success_return = 0;
+  return nullptr;
+#if 0
   auto result = MutableMatrix::zero_matrix(R, f->n_rows(), f->n_cols(), f->is_dense());
   *success_return = 1;
   return result;
+#endif
 }
 
 int IM2_MutableMatrix_n_rows(const MutableMatrix *M)

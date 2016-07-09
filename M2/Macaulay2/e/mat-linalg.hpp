@@ -52,7 +52,11 @@ typedef DMat<M2::ARingCC> DMatCC;
 
 // The following needs to be included before any flint files are included.
 #include <M2/gc-include.h>
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
 #include <flint/fmpz_mat.h>
+#pragma GCC diagnostic pop
 
 namespace MatrixOps
 {
@@ -470,6 +474,46 @@ namespace MatrixOps
   // ZZ (ARingZZGMP) ///
   //////////////////////
 
+  inline M2_arrayintOrNull LU(const DMatZZGMP& A, 
+                              DMatZZGMP& L,
+                              DMatZZGMP& U)
+  {
+    throw exc::engine_error("'LU' not implemented for this kind of matrix over this ring");
+  }
+
+  inline M2_arrayintOrNull rankProfile(const DMatZZGMP& A, 
+                                       bool row_profile)
+  {
+    throw exc::engine_error("'rankProfile' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool inverse(const DMatZZGMP& A, 
+               DMatZZGMP& result_inv)
+  {
+    throw exc::engine_error("'invert' not implemented for this kind of matrix over this ring");
+  }
+
+  inline size_t nullSpace(const DMatZZGMP& A, 
+                   DMatZZGMP& result_nullspace)
+  {
+    throw exc::engine_error("'nullSpace' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool solveLinear(const DMatZZGMP& A, 
+                   const DMatZZGMP& B, 
+                   DMatZZGMP& X)
+  {
+    throw exc::engine_error("'solveLinear' not implemented for this kind of matrix over this ring");
+  }
+
+  inline bool solveInvertible(const DMatZZGMP& A, 
+                   const DMatZZGMP& B, 
+                   DMatZZGMP& X)
+  {
+    throw exc::engine_error("'solveInvertible' not implemented for this kind of matrix over this ring");
+  }
+
+  
   inline void mult(const DMatZZGMP& A, 
                    const DMatZZGMP& B, 
                    DMatZZGMP& result_product) 

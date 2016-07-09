@@ -1,4 +1,5 @@
--- -*- M2-comint -*- {* hash: 341497219 *}
+-- -*- M2-comint -*- {* hash: 1620065478 *}
+--loading configuration for package "Bertini" from file /Users/jo/Library/Application Support/Macaulay2/init-Bertini.m2
 
 i1 : R=QQ[z,a,b,c]
 
@@ -9,10 +10,10 @@ o1 : PolynomialRing
 i2 : makeB'InputFile(storeBM2Files,
          B'Configs=>{{"MPTYPE",2}},
          AffVariableGroup=>{{z}},
-         B'Constants=>{{a,2},{b,3+2*ii},{c,3/2}},
+         B'Constants=>{{a,2},{b,3+2*ii},c=>3/2},
          B'Polynomials=>{a*z^2+b*z+c})
 
-o2 = /var/folders/46/9b86vqxj4hjcngvy7kd7sb140000gn/T/M2-98093-0/0/input
+o2 = /var/folders/j_/gx42s4z576z_vj47_ym0j5xm0000gn/T/M2-74764-0/0/input
 
 o2 : File
 

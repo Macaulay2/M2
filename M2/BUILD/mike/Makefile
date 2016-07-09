@@ -10,6 +10,19 @@ always:
 ################
 ## mac os x ####
 ################
+darwin64-gcc6 : always
+	mkdir -p builds.tmp/darwin64-gcc6
+	cd builds.tmp/darwin64-gcc6; ../../../../configure \
+		CC=gcc-6 CXX=g++-6 \
+		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
+
 darwin64-gcc5 : always
 	mkdir -p builds.tmp/darwin64-gcc5
 	cd builds.tmp/darwin64-gcc5; ../../../../configure \
@@ -27,14 +40,32 @@ darwin64-gcc4.9 : always
 	mkdir -p builds.tmp/darwin64-gcc4.9
 	cd builds.tmp/darwin64-gcc4.9; ../../../../configure \
 		CC="gcc-4.9 -m64" CXX="g++-4.9 -m64" \
-		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
-		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
 		--build=x86_64-apple-darwin \
 		--prefix="`pwd`/installed" \
 		--disable-strip \
 		--enable-dmg \
 		--enable-download \
 		--enable-build-libraries="gc mpir flint pari ntl"
+
+#		CPPFLAGS="-I/usr/local/include -I/usr/local/opt/readline/include" \
+#		LDFLAGS="-L/usr/local/lib -L/usr/local/opt/readline/lib" \
+
+#  CXX="clang++-3.8 -stdlib=libc++"
+#  CXXFLAGS="$CXXFLAGS -nostdinc++ -I/usr/local/opt/llvm38/lib/llvm-3.8/include/c++/v1"
+#  LDFLAGS="$LDFLAGS -L/usr/local/opt/llvm38/lib/llvm-3.8/lib"
+
+darwin64-clang3.8 : always
+	mkdir -p builds.tmp/darwin64-clang3.8
+	cd builds.tmp/darwin64-clang3.8; ../../../../configure \
+		CXX="clang++-3.8 -stdlib=libc++" \
+		CC="clang-3.8 -stdlib=libc++" \
+		--build=x86_64-apple-darwin \
+		--prefix="`pwd`/installed" \
+		--disable-strip \
+		--enable-dmg \
+		--enable-download \
+		--enable-build-libraries="gc mpir flint pari ntl"
+
 
 darwin64-debug : always
 	mkdir -p builds.tmp/darwin64-debug
