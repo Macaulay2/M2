@@ -10,6 +10,7 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      PackageImports => {"FourTiTwo"},
+     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => true 
@@ -1074,7 +1075,8 @@ end
 restart
 needsPackage "EquivariantGB"
 help egb
-check EquivariantGB
+check "EquivariantGB"
+uninstallPackage "EquivariantGB"
 installPackage "EquivariantGB"
 
 debug EquivariantGB
