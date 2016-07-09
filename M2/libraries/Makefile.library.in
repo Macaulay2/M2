@@ -2,7 +2,7 @@
 LIBRARY_MODE = yes
 include ../../include/config.Makefile
 TARFILE_DIR = @abs_top_srcdir@/BUILD/tarfiles
-export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib64:$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
+export LD_LIBRARY_PATH:=$(BUILTLIBPATH)/lib:$(LD_LIBRARY_PATH)
 # some libraries (gdbm, mpfr, readline, gmp, and gc) use libtool, which 
 # insists on installing its files to a directory whose trailing part is the
 # prefix that was used at compile time, i.e., the only change allowed to the prefix
