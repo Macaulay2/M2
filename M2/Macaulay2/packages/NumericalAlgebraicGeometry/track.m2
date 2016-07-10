@@ -653,7 +653,7 @@ trackHomotopyM2engine = (H, inp,
 	checkPrecision)
     )
 extractM2engineOutput = method()
-extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut) -> (
+extractM2engineOutput (MutableMatrix,MutableMatrix) := (out,statusOut) -> (
     nSols := numColumns out; 
     n := numRows out - 2;
     assert(nSols == numColumns statusOut);
@@ -675,8 +675,7 @@ extractM2engineOutput (Homotopy,MutableMatrix,MutableMatrix) := (H,out,statusOut
 		SolutionStatus => s'status, 
 		NumberOfSteps => count,
 		LastT => out_(n,sN), 
-		LastIncrement => out_(n+1,sN),
-		"H" => H
+		LastIncrement => out_(n+1,sN)
 		}
 	    ))
     )    
@@ -835,7 +834,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 	     checkPrecision);
 	 if DBG>2 then 
 	 << "-- trackHomotopyM2engine time: " << first ti'out << " sec." << endl;
-    	 sols := new MutableList from extractM2engineOutput(H,out,statusOut);
+    	 sols := new MutableList from extractM2engineOutput(out,statusOut);
 	 if o.Precision === infinity then (
 	     tempInpMatrix := memoize (F->mutableMatrix(F,n+1,1));
 	     tempOutMatrix := memoize (F->mutableMatrix(F,n+2,1));
@@ -866,7 +865,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 			     checkPrecision);
 			 if DBG>3 then 
 			 << "-- trackHomotopyM2engine (at decreased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
-			 sols#nS = first extractM2engineOutput(H,out,statusOut);
+			 sols#nS = first extractM2engineOutput(out,statusOut);
 			 (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			 s = sols#nS;
 			 )
@@ -888,7 +887,7 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
 				 checkPrecision);
 	 		     if DBG>3 then 
 	 		     << status s << "-- trackHomotopyM2engine (at increased prec="<< currentPrec << ") time: " << first ti'out << " sec." << endl;
-			     sols#nS = first extractM2engineOutput(H,out,statusOut);
+			     sols#nS = first extractM2engineOutput(out,statusOut);
 			     (sols#nS).NumberOfSteps = (sols#nS).NumberOfSteps+s.NumberOfSteps;
 			     s = sols#nS;
     	 		     )			 
@@ -1012,13 +1011,14 @@ trackHomotopy(Thing,List) := List => o -> (H,solsS) -> (
     
     if DBG>3 then print rawSols;
     ret := if instance(first rawSols,Point) then rawSols else
-         apply(rawSols,s->point({flatten entries first s} | drop(toList s,1)));
+         apply(rawSols,s->point({flatten entries first s} | drop(toList s,1))); 	 
     if DBG>1 then (
 	if member(o.Software,{M2,M2engine}) then (
 	    << "Number of solutions = " << #ret << endl 
 	    << "Evaluation time (M2 measured): Hx = " << etHx << " , Ht = " << etHt << " , H = " << etH << endl;
 	    )
 	);
+     scan(ret,s->s#"H"=H);
      ret
      ) -- trackHomotopy
 
