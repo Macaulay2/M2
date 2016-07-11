@@ -22,8 +22,8 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
       );
    );
    setProperty(P, lattice, latticeTest);
-   vMat := matrixFromVectorList(vList, n-1, r);
-   rMat := matrixFromVectorList(rList, n-1, r);
+   vMat := matrixFromVectorList(vList, n, r);
+   rMat := matrixFromVectorList(rList, n, r);
    setProperty(P, computedRays, rMat);
    setProperty(P, empty, numColumns vMat == 0);
    return vMat
