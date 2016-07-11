@@ -1,9 +1,36 @@
-restart
+newPackage(
+	"AlphaTest",
+    	Version => "1.0", 
+    	Date => "June, 2016",
+    	Authors => {
+	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     },
+    	HomePage => "http://www.math.uiuc.edu/~doe/",
+    	Headline => "Alpha Test",
+	PackageImports => {"NumericalAlgebraicGeometry"},
+	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
+    	DebuggingMode => true		 -- set to true only during development
+    	)
+
+-- Any symbols or functions that the user is to have access to
+-- must be placed in one of the following two lists
+
+export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "computeConstants", "certifySolutions", "certifyDistinctSoln"}
+exportMutable {}
+
 needsPackage "NumericalAlgebraicGeometry"
+
+absValue = method()
+absValue(RingElement) := r -> (
+    R := ring(r);
+    LT := leadTerm(sub(r,R));
+    VV := leadCoefficient(LT)^2 + (sub(r,R)-LT)^2;
+    sqrt(sub(VV,RR))
+    )
 
 hermitianNorm = method()
 hermitianNorm(Point) := x -> (
-    N := sqrt(sum(apply(coordinates x, i -> abs(i)^2)))
+    N := sqrt(sum(apply(coordinates x, i -> absValue(i)^2)))
     )
 
 oneNorm = method()
@@ -13,7 +40,7 @@ oneNorm(Point) := x -> (
 
 polyNorm = method()
 polyNorm(RingElement) := r -> (
-    L = listForm r;
+    L := listForm r;
     sum(L,a->(
 	(e,c) := a;
 	((abs c))^2*(product(e,b->b!)*(((degree r)#0-(sum e))!)/((degree r)#0)!)
@@ -102,10 +129,12 @@ end
 
 
 restart
-load "AlphaTest.m2"
+needsPackage "AlphaTest"
+needsPackage "NumericalAlgebraicGeometry"
 FF = QQ[i]/ideal(i^2 + 1)
 R = FF[x,y]
-p1 = point{{2,4+i}}
+p1 = point{{2+0*i,4+i}}
 hermitianNorm(p1)
-
+absValue(2+0*i)
+absValue(4+i)
 
