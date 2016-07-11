@@ -20,8 +20,22 @@ exportMutable {}
 
 needsPackage "NumericalAlgebraicGeometry"
 
-absValue = method()
-absValue(RingElement) := r -> (
+GaussianRational = new Type of List -- list of two rational numbers
+gaussianRational = method() 
+
+gaussianRational (QQ,QQ) := (a,b) -> new GaussianRational from {a,b} 
+gaussianRational (ZZ,ZZ) := (a,b) -> gaussianRational(promote(a,QQ),promote(b,QQ))
+re = method()
+re GaussianRational := x -> first x
+im = method()
+im GaussianRational := x -> last x
+
+GaussianRational + GaussianRational := (x,y) -> gaussianRational (re x + re y, im x + im y)
+ 
+abs GaussianRational := r -> (
+    ...
+    ...
+    ...
     R := ring(r);
     LT := leadTerm(sub(r,R));
     VV := leadCoefficient(LT)^2 + (sub(r,R)-LT)^2;

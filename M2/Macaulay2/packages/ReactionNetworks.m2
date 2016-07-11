@@ -123,6 +123,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
+    remove(Rn,Ring); -- remove the ring, if cached
     )
 
 
@@ -155,7 +156,6 @@ needsPackage "ReactionNetworks"
 NM = reactionNetwork("A <-- 2B, A + C <-- D, B + E --> A + C", NullSymbol => "0")
 NN = reactionNetwork("A --> 2B, A + C --> D, D --> B+E", NullSymbol => "0")
 -- add another example with nul symbols
-needsPackage "Graphs"
 glue(NM, NN)
 ///
 
@@ -192,9 +192,9 @@ stoichiometricSubspace ReactionNetwork := N -> (
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
     for i from 1 to #reactions - 1 do M=M||reactions#i;
+    -- mingens image M -- perhaps this is more natural?
     mingens ker M
     )
-
 
 TEST ///
 restart
