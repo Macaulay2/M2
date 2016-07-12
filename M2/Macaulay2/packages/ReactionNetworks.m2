@@ -22,7 +22,7 @@ newPackage(
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", 
     "steadyStateEquations", "conservationEquations", 
-    "laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
+    "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF"
     }
 exportMutable {}
 
@@ -66,7 +66,8 @@ ReactionNetwork = new Type of MutableHashTable
 reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol => ""})
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
-    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, NullSymbol => o.NullSymbol, NullIndex => -1};
+    Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, 
+	NullSymbol => o.NullSymbol, NullIndex => -1};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -311,6 +312,7 @@ restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 F = steadyStateEquations CRN
+steadyStateEquations (CRN, ZZ/2)
 netList F
 ///
 
@@ -369,7 +371,7 @@ scan({
      "TwolayerCascadeL.m2",
      "TwositeModificationE.m2",
      "TwositeModificationF.m2",
-    "docCHill.m2"
+     "docCHill.m2"
     },
     motif -> load("./ReactionNetworks/"|motif) 
     )
@@ -390,6 +392,7 @@ peek ReactionNetworks
 --viewHelp "OnesiteModificationA"
 --examples "OnesiteModificationA"
 viewHelp ReactionNetworks
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"

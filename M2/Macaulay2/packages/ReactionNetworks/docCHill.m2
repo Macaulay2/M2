@@ -17,11 +17,7 @@ doc ///
 	  Text
 	       {\bf Basic Functions:}
 	       
-		   $\bullet$ @{TO "reactionNetwork"}@,
-		   $\bullet$ @{TO "Species"}@,
-		   {$\bullet$ @TO "Complexes"@}
-		   
-		   $\bullet$ @TO "ReactionGraph"@
+		   $\bullet$ @TO "reactionNetwork"@
 		   
 		   $\bullet$ @TO "steadyStateEquations"@
 		   
@@ -31,17 +27,17 @@ doc ///
 
 	       {\bf Motifs:}
 
-		   $\bullet$ @TO "OnesiteModificationA"@
+		   $\bullet$ @TO "oneSiteModificationA"@
 		   
-		   $\bullet$ @TO "OnesiteModificationB"@
+		   $\bullet$ @TO "oneSiteModificationB"@
 		   
-		   $\bullet$ @TO "OnesiteModificationC"@
+		   $\bullet$ @TO "oneSiteModificationC"@
 		   
-		   $\bullet$ @TO "OnesiteModificationD"@
+		   $\bullet$ @TO "oneSiteModificationD"@
 		   
-		   $\bullet$ @TO "TwositeModificationE"@
+		   $\bullet$ @TO "twoSiteModificationE"@
 		   
-		   $\bullet$ @TO "TwositeModificationF"@
+		   $\bullet$ @TO "twoSiteModificationF"@
 		   
 		   $\bullet$ @TO "twoSiteModificationG"@
 		   
@@ -53,16 +49,163 @@ doc ///
 		   
 		   $\bullet$ @TO "twoLayerCascadeK"@
 		   
-		   $\bullet$ @TO "TwolayerCascadeL"@
+		   $\bullet$ @TO "twoLayerCascadeL"@
 		   
-		   $\bullet$ @TO "CrosslinkingModelCellDeath"@
+		   $\bullet$ @TO "crosslinkingModelCellDeath"@
 		   
 		   $\bullet$ @TO "clusterModelCellDeath"@
 		   
 		   $\bullet$ @TO "wnt"@
-		   
 	   
 ///
+
+doc /// 
+    Key
+    	ReactionNetwork
+    Headline
+    	a mutable hash table, stores information about a reaction network
+    Description
+    	Text
+	    @TO ReactionNetwork @ is a @TO Type @. 
+    SeeAlso
+	"reactionNetwork"	    	 	
+    ///
+
+
+doc /// 
+    Key
+    	reactionNetwork
+	(reactionNetwork, String)
+	(reactionNetwork, List)
+    Headline
+    	creates a reaction network
+    Description
+    	Text
+	    Create a reaction network from a string.
+    	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	Text
+	    Create a reaction network from a list.
+	Example
+	    N = reactionNetwork {"S_0+E <--> X_1", "X_1 --> S_1+E",
+	                         "S_1+E <--> X_2", "X_2 --> S_2+E",
+				 "S_1+F <--> Y_1", "Y_1 --> S_0+F", 
+				 "S_2+F <--> Y_2", "Y_2 --> S_1+F"}
+	Text
+    	    Create a reaction network including the empty set.
+	Example
+	    N = reactionNetwork ({"A --> 0", "0 --> A"}, NullSymbol => "0")
+	Text
+	    The user may view specific information stored in the reaction network, 
+	    such as species, complexes, etc.
+	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    N.Species
+	    N.Complexes
+	    N.ReactionGraph
+        Text
+	    Or the user may view all stored information about a reaction network:
+	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    peek N
+    SeeAlso
+	"glue"
+	"steadyStateEquations" 
+	"conservationEquations"
+	    	 	
+    ///
+
+
+doc /// 
+    Key
+    	steadyStateEquations
+	(steadyStateEquations, ReactionNetwork)
+	(steadyStateEquations, ReactionNetwork, Ring)
+    Headline
+    	creates steady-state equations of a reaction network
+    Description
+    	Text
+	    Obtain the steady-state equations for a given network.
+    	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    steadyStateEquations N
+	Text
+	    Obtain the steady-state equations for a motif and display equations.
+	Example
+	    netList steadyStateEquations modificationOfTwoSubstratesI()
+	Text
+	    Generate the steady-state equations in a specific ring.
+	Example
+	    N = twoLayerCascadeL()
+	    F = steadyStateEquations(N, ZZ/2)
+    SeeAlso
+	"reactionNetwork"
+	"conservationEquations"
+	    	 	
+    ///
+    
+    
+doc /// 
+    Key
+    	conservationEquations
+	(conservationEquations, ReactionNetwork)
+	(conservationEquations, ReactionNetwork, Ring)
+    Headline
+    	creates the conservation equations of a reaction network
+    Description
+    	Text
+	    Generate the conservation equations using the stoichiometric subspace.
+    	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    conservationEquations N
+	Text
+	    Obtain the conservation equations for a motif and display equations.
+	Example
+	    netList conservationEquations modificationOfTwoSubstratesI()
+	Text
+	    Generate the conservation equations in a specific ring.
+	Example
+	    N = twoLayerCascadeL()
+	    G = conservationEquations(N, ZZ/2)
+	Text
+	    The conservation equations describe a linear subspace going through
+	    the origin.  To translate the subspace, the user may choose to use
+	    random values for the parameters, or enter specific values, such as 
+	    initial conditions.  The examples below illustrate these options. 
+	Example
+	    N = twoLayerCascadeL()
+	    N.Species
+	    G = conservationEquations(N, QQ)
+    	    S1 = netList(G - flatten entries random(QQ^1, QQ^(#G)))
+	    --S2 = sub(G, {xx_(S_0) => (xx_(S_0)-1), xx_E => (xx_E-6/13), xx_(F_1) => (xx_(F_1)-7/10)})	    
+	    --need to cache parameter ring first	    
+    SeeAlso
+	"reactionNetwork"
+	"steadyStateEquations"
+	    	 	
+    ///
+
+
+doc /// 
+    Key
+    	glue
+	(glue, ReactionNetwork, ReactionNetwork)
+	(glue, ReactionNetwork, List)
+	(glue, List, ReactionNetwork)
+    Headline
+    	combine two networks 
+    Description
+    	Text
+	    This function takes two reaction networks, or a reaction network and a 
+	    list and creates a new, combined network.   
+    	Example
+	    N1 = reactionNetwork("A <-- 2B, A + C <-- D, B + E --> A + C")
+	    glue(N1, {"A --> 2B", "A + C --> D", "D --> B+E"})
+    SeeAlso
+	"reactionNetwork"
+	    	 	
+    ///
+
 
 doc ///
 -- enter each motif as a list of strings describing each reaction
@@ -279,41 +422,4 @@ doc ///
     --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
     		    
  
- doc /// 
-    Key
-    	reactionNetwork
-	(reactionNetwork, String)
-	(reactionNetwork, List)
-    Headline
-    	create a reaction network
-    Description
-    	Text
-	    Create a reaction network from a string.
-    	Example
-	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
-	Text
-	    Create a reaction network from a list.
-	Example
-	    N = reactionNetwork {"S_0+E <--> X_1", "X_1 --> S_1+E",
-	                         "S_1+E <--> X_2", "X_2 --> S_2+E",
-				 "S_1+F <--> Y_1", "Y_1 --> S_0+F", 
-				 "S_2+F <--> Y_2", "Y_2 --> S_1+F"}
-	Text
-    	    Create a reaction network including the empty set.
-	Example
-	    N = reactionNetwork ({"A --> 0", "0 --> A"}, NullSymbol => "0")
-	Text
-	    The user may view specific information stored in the reaction network, 
-	    such as species, complexes, etc.
-	Example
-	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
-	    N.Species
-	    N.Complexes
-	    N.ReactionGraph
-        Text
-	    Or the user may view all stored information about a reaction network:
-	Example
-	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
-	    peek N
-	    	 	
-    ///
+ 
