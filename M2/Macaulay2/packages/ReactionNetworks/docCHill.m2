@@ -1,5 +1,68 @@
 -- Documentation for chemical reaction motifs
 
+doc ///
+     Key
+     	  ReactionNetworks
+     Headline
+     	  create chemical reaction networks and corresponding steady-state and conservation equations
+     Description
+     	  Text
+	       The @EM "ReactionNetworks" @ package provides functions for creating the 
+	       steady-state and conservation equations corresponding to a given 
+	       reaction network. Included are some basic building-block motifs,
+	       which can be joined together to create specific reaction network.  
+	       Examples are provided illustrating elimination and degeneration with
+	       removal of a species or a reaction and the corresponding effect
+	       on the solutions of the system. 
+	  Text
+	       {\bf Basic Functions:}
+	       
+		   $\bullet$ @{TO "reactionNetwork"}@,
+		   $\bullet$ @{TO "Species"}@,
+		   {$\bullet$ @TO "Complexes"@}
+		   
+		   $\bullet$ @TO "ReactionGraph"@
+		   
+		   $\bullet$ @TO "steadyStateEquations"@
+		   
+		   $\bullet$ @TO "conservationEquations"@
+		   
+		   $\bullet$ @TO "glue"@
+
+	       {\bf Motifs:}
+
+		   $\bullet$ @TO "OnesiteModificationA"@
+		   
+		   $\bullet$ @TO "OnesiteModificationB"@
+		   
+		   $\bullet$ @TO "OnesiteModificationC"@
+		   
+		   $\bullet$ @TO "OnesiteModificationD"@
+		   
+		   $\bullet$ @TO "TwositeModificationE"@
+		   
+		   $\bullet$ @TO "TwositeModificationF"@
+		   
+		   $\bullet$ @TO "twoSiteModificationG"@
+		   
+		   $\bullet$ @TO "modificationOfTwoSubstratesH"@
+		   
+		   $\bullet$ @TO "modificationOfTwoSubstratesI"@
+		   
+		   $\bullet$ @TO "twoLayerCascadeJ"@
+		   
+		   $\bullet$ @TO "twoLayerCascadeK"@
+		   
+		   $\bullet$ @TO "TwolayerCascadeL"@
+		   
+		   $\bullet$ @TO "CrosslinkingModelCellDeath"@
+		   
+		   $\bullet$ @TO "clusterModelCellDeath"@
+		   
+		   $\bullet$ @TO "wnt"@
+		   
+	   
+///
 
 doc ///
 -- enter each motif as a list of strings describing each reaction
@@ -238,15 +301,19 @@ doc ///
 	Text
     	    Create a reaction network including the empty set.
 	Example
-	    N = reactionNetwork {"A --> 0", "0 --> A", NullSymbol => "0"}
+	    N = reactionNetwork ({"A --> 0", "0 --> A"}, NullSymbol => "0")
 	Text
-	    The user may view different information stored in the reaction network, 
+	    The user may view specific information stored in the reaction network, 
 	    such as species, complexes, etc.
 	Example
 	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 	    N.Species
 	    N.Complexes
 	    N.ReactionGraph
-	    
-	 	
+        Text
+	    Or the user may view all stored information about a reaction network:
+	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    peek N
+	    	 	
     ///

@@ -4,7 +4,10 @@ newPackage(
     	Version => "1.0", 
     	Date => "June, 2016",
     	Authors => {
-	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     {Name => "Anton Leykin", Email => "doe@math.uiuc.edu"},
+	     {Name => "Timothy Duff", Email => "doe@math.uiuc.edu"},
+	     {Name => "Kisun Lee", Email => "doe@math.uiuc.edu"},
+	     {Name => "Cvetelina Hill", Email => "doe@math.uiuc.edu"}
 	     },
     	HomePage => "http://www.math.uiuc.edu/~doe/",
     	Headline => "Reaction networks",
@@ -340,6 +343,7 @@ restart
 needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+peek N
 CE = conservationEquations N
 SSE = steadyStateEquations N
 F = join (CE, SSE)
@@ -382,10 +386,10 @@ installPackage "ReactionNetworks"
 installPackage("ReactionNetworks", RemakeAllDocumentation=>true)
 check "ReactionNetworks"
 peek ReactionNetworks
-help "OnesiteModificationA"
-viewHelp "OnesiteModificationA"
-examples "OnesiteModificationA"
-
+--help "OnesiteModificationA"
+--viewHelp "OnesiteModificationA"
+--examples "OnesiteModificationA"
+viewHelp ReactionNetworks
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages PACKAGES=PackageTemplate pre-install"
