@@ -1,62 +1,74 @@
 -- Documentation for chemical reaction motifs
 
 doc ///
-     Key
-     	  ReactionNetworks
-     Headline
-     	  create chemical reaction networks and corresponding steady-state and conservation equations
-     Description
-     	  Text
-	       The @EM "ReactionNetworks" @ package provides functions for creating the 
-	       steady-state and conservation equations corresponding to a given 
-	       reaction network. Included are some basic building-block motifs,
-	       which can be joined together to create specific reaction network.  
-	       Examples are provided illustrating elimination and degeneration with
-	       removal of a species or a reaction and the corresponding effect
-	       on the solutions of the system. 
-	  Text
-	       {\bf Basic Functions:}
+    Key
+        ReactionNetworks
+    Headline
+     	create chemical reaction networks and corresponding steady-state and conservation equations
+    Description
+     	Text
+	    The @EM "ReactionNetworks" @ package provides functions for creating the 
+	    steady-state and conservation equations corresponding to a given 
+            reaction network. Included are some basic building-block motifs,
+            which can be joined together to create specific reaction network.  
+	    Examples are provided illustrating elimination and degeneration with
+	    removal of a species or a reaction and the corresponding effect
+            on the solutions of the system. 
+	Text
+	    {\bf Basic Functions:}
 	       
-		   $\bullet$ @TO "reactionNetwork"@
+		$\bullet$ @TO "reactionNetwork"@
 		   
-		   $\bullet$ @TO "steadyStateEquations"@
+	        $\bullet$ @TO "steadyStateEquations"@
 		   
-		   $\bullet$ @TO "conservationEquations"@
+        	$\bullet$ @TO "conservationEquations"@
 		   
-		   $\bullet$ @TO "glue"@
+		$\bullet$ @TO "glue"@
 
-	       {\bf Motifs:}
+	    {\bf Motifs:}
 
-		   $\bullet$ @TO "oneSiteModificationA"@
+		$\bullet$ @TO "oneSiteModificationA"@
 		   
-		   $\bullet$ @TO "oneSiteModificationB"@
+	        $\bullet$ @TO "oneSiteModificationB"@
+       	   
+        	$\bullet$ @TO "oneSiteModificationC"@
 		   
-		   $\bullet$ @TO "oneSiteModificationC"@
+		$\bullet$ @TO "oneSiteModificationD"@
 		   
-		   $\bullet$ @TO "oneSiteModificationD"@
+	        $\bullet$ @TO "twoSiteModificationE"@
 		   
-		   $\bullet$ @TO "twoSiteModificationE"@
+		$\bullet$ @TO "twoSiteModificationF"@
 		   
-		   $\bullet$ @TO "twoSiteModificationF"@
+		$\bullet$ @TO "twoSiteModificationG"@
 		   
-		   $\bullet$ @TO "twoSiteModificationG"@
+		$\bullet$ @TO "modificationOfTwoSubstratesH"@
 		   
-		   $\bullet$ @TO "modificationOfTwoSubstratesH"@
+		$\bullet$ @TO "modificationOfTwoSubstratesI"@
 		   
-		   $\bullet$ @TO "modificationOfTwoSubstratesI"@
+		$\bullet$ @TO "twoLayerCascadeJ"@
 		   
-		   $\bullet$ @TO "twoLayerCascadeJ"@
+		$\bullet$ @TO "twoLayerCascadeK"@
 		   
-		   $\bullet$ @TO "twoLayerCascadeK"@
+		$\bullet$ @TO "twoLayerCascadeL"@
 		   
-		   $\bullet$ @TO "twoLayerCascadeL"@
+		$\bullet$ @TO "crosslinkingModelCellDeath"@
 		   
-		   $\bullet$ @TO "crosslinkingModelCellDeath"@
+		$\bullet$ @TO "clusterModelCellDeath"@
 		   
-		   $\bullet$ @TO "clusterModelCellDeath"@
-		   
-		   $\bullet$ @TO "wnt"@
-	   
+		$\bullet$ @TO "wnt"@
+		
+	    {\bf Examples}
+	       
+	        The following example demonstrates how to compute
+		the degree and dimension of the ideal cut out
+		by the steady-state and conservation equations.  
+	Example
+	    N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+	    F' = steadyStateEquations N
+	    F'' = conservationEquations N - flatten entries random(QQ^1, QQ^(#F''))
+	    F = join(F',F'')
+	    -- I = ideal F
+	    -- Assign random values for parameters kk. How to do this?
 ///
 
 doc /// 
