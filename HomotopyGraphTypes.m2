@@ -3,20 +3,29 @@ needs currentFileDirectory | "PointArray.m2"
 HomotopyNode = new Type of MutableHashTable 
 
 addNode = method()
-addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> append(G.Vertices, 
-    new HomotopyNode from {BasePoint => params, PartialSols => partialSols}
-    )
+addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
+    G.Vertices = append(
+        G.Vertices, 
+        new HomotopyNode from {BasePoint => params, PartialSols => partialSols}
+    );
+)
 
 HomotopyEdge = new Type of MutableHashTable
 
 addEdge = method()
-addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> append(G.Edges,
-    new HomotopyEdge from {Node1 => a, Node2 => b, gamma1 => exp(2 * pi* ii * random RR), 
-	gamma2 => exp(2 * pi* ii * random RR), 
-	Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
-	Correspondence21 => new MutableHashTable from {}  -- ............................................2.................1
-	}
-    )
+addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
+    G.Edges = append(
+        G.Edges, 
+        new HomotopyEdge from {
+            Node1 => a, 
+            Node2 => b, 
+            gamma1 => exp(2 * pi* ii * random RR), 
+            gamma2 => exp(2 * pi* ii * random RR), 
+            Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
+            Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
+        }
+    );
+)
 addCorrespondence = method()
 addCorrespondence (HomotopyEdge,ZZ,ZZ,Boolean) := (e,a,b) -> (
     e.Correspondence12#a = b;
