@@ -1,5 +1,6 @@
 debug needsPackage "NumericalAlgebraicGeometry"
 debug NAGtypes
+needs(currentFileDirectory | "HomotopyGraphTypes.m2")
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
 --     s0, (as above)
@@ -11,7 +12,7 @@ solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     nParameters := numgens coefficientRing ring PF;
     assert(nParameters == numcols p0);
     (PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
-    	 -- toPR: ring PF -> PR
+    -- toPR: ring PF -> PR
     X := drop(gens PR, -nParameters); 
     PF = toPR PF;
     C := coefficientRing PR;
@@ -61,55 +62,38 @@ solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 flowerStrategy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 
-    HG := new HomotopyGraph from {
-        System => PF,
-        Vertices => new MutableList from {},
-        Edges => new MutableList from {}
-	};
+    HG := homotopyGraph polySystem transpose PF;
     PA := pointArray s0;
-    addNode(HG, point0, PA);
+    center := addNode(HG, point0, PA);
     
     if #s0 < 1 then error "at least one solution expected";  
-    p0 := matrix point0; -- points are row matrices
-    nParameters := numgens coefficientRing ring PF;
-    assert(nParameters == numcols p0);
-    (PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
-    	 -- toPR: ring PF -> PR
-    X := drop(gens PR, -nParameters); 
-    PF = toPR PF;
-    C := coefficientRing PR;
-    R := C[X];
-    X = vars R;
+
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
-	    K := ring p0;
-	    ()->point {apply(numcols p0, i->exp(2*pi*ii*random RR))}
+	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
     ); 
 	
     same := 0;
-    nsols0 := #HG.Vertices#0#PartialSols;
-    while not o.StoppingCriterion(same,HG.Vertices#0) do (
-        NewNodeIndex := #(HG.Vertices);
-        NewEdgeIndex := #(HG.Edges);
+    nsols0 := #center.PartialSols;
+    while not o.StoppingCriterion(same,{}) do (
     	
         --Create the new node
-        addNode(HG, nextP(), pointArray {});
+        apex := addNode(HG, nextP(), pointArray {});
     	
         --Track to the new node
-        addEdge(HG, HG.Vertices#0, HG.Vertices#NewNodeIndex);
-        trackEdge(HG.Edges#NewEdgeIndex, true);
-        << "  H01: " << #(HG.Vertices#0#PartialSols) << endl;
+        e1 := addEdge(HG, center, apex);
+        trackEdge(e1, true);
+        << "  H01: " << #(apex.PartialSols) << endl;
     	
         --Track back from the new node
-        NewEdgeIndex := #(HG.Edges);
-        addEdge(HG, HG.Vertices#0, HG.Vertices#NewNodeIndex);
-        trackEdge(HG.Edges#NewEdgeIndex, false);
-        << "  H10: " << #(HG.Vertices#NewNodeIndex#PartialSols) << endl;
-
-        if #HG.Vertices#0#PartialSols == nSols then same = same + 1 else (
-            nSols = #HG.Vertices#0#PartialSols;
+        e2 := addEdge(HG, apex, center);
+        trackEdge(e2, true);
+        << "  H01: " << #(center.PartialSols) << endl;
+    	
+        if center.PartialSols == nSols then same = same + 1 else (
+            nSols = center.PartialSols;
             same = 0; 
         );
-        << "found " << #(HG.Vertices#0#PartialSols) << " points in the fiber so far" << endl;
+        << "found " << #(center.PartialSols) << " points in the fiber so far" << endl;
     );
     HG
 )    
