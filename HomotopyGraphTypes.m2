@@ -76,7 +76,7 @@ trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
 	correspondence = e.Correspondence21;
 	);
     untrackedInds := positions(head.PartialSols, s -> not member(s, keys correspondence));
-    newSols := track(e.gamma1 * toSystem head, e.gamma2 * toSystem tail, (head.PartialSols)_(untrackedInds));
+    newSols := track(polySystem (e.gamma1 * toSystem head), polySystem(e.gamma2 * toSystem tail), (head.PartialSols)_(untrackedInds));
     n := #tail.PartialSols;
     appendPoints(tail.PartialSols, newSols);
     scan(#untrackedInds, i->(

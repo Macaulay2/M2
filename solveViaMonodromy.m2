@@ -74,7 +74,7 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 	
     same := 0;
     nsols0 := #center.PartialSols;
-    while not o.StoppingCriterion(same,{}) do (
+    while not o.StoppingCriterion(same,center) do (
     	
         --Create the new node
         apex := addNode(HG, nextP(), pointArray {});
@@ -89,8 +89,8 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
         trackEdge(e2, true);
         << "  H01: " << #(center.PartialSols) << endl;
     	
-        if center.PartialSols == nSols then same = same + 1 else (
-            nSols = center.PartialSols;
+        if #center.PartialSols == nsols0 then same = same + 1 else (
+            nsols0 = #center.PartialSols;
             same = 0; 
         );
         << "found " << #(center.PartialSols) << " points in the fiber so far" << endl;
