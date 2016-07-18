@@ -61,32 +61,31 @@ solveViaMonodromy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 --adds a new node and two new edges.
 flowerStrategy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
 flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
-
     HG := homotopyGraph polySystem transpose PF;
     PA := pointArray s0;
     center := addNode(HG, point0, PA);
-    
     if #s0 < 1 then error "at least one solution expected";  
-
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
 	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
     ); 
-	
     same := 0;
     nsols0 := #center.PartialSols;
-    while not o.StoppingCriterion(same,center) do (
+    npaths := 0;
+    while not o.StoppingCriterion(same,null) do (
     	
         --Create the new node
         apex := addNode(HG, nextP(), pointArray {});
     	
         --Track to the new node
         e1 := addEdge(HG, center, apex);
-        trackEdge(e1, true);
+        npaths = npaths + trackEdge(e1, true);
         << "  H01: " << #(apex.PartialSols) << endl;
     	
+	
         --Track back from the new node
         e2 := addEdge(HG, apex, center);
-        trackEdge(e2, true);
+	npaths = npaths + trackEdge(e2, true);
+	
         << "  H01: " << #(center.PartialSols) << endl;
     	
         if #center.PartialSols == nsols0 then same = same + 1 else (
@@ -95,8 +94,44 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
         );
         << "found " << #(center.PartialSols) << " points in the fiber so far" << endl;
     );
-    HG
+    (HG, npaths)
 )    
+
+
+
+twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
+    HG := homotopyGraph polySystem transpose PF;
+    PA := pointArray s0;
+    node1 := addNode(HG, point0, PA);
+    	
+    if #s0 < 1 then error "at least one solution expected";  
+    nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
+	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
+    );
+
+   --Create the new node
+    node2 := addNode(HG, nextP(), pointArray {});
+ 
+    same := 0;
+    --nsols0 := #node1.PartialSols;
+    npaths := 0;
+    E := apply(nedges, i -> addEdge(HG, node1, node2));
+    while not o.StoppingCriterion(same,null) do (
+	e := E#(random nedges);
+	<< "Correspondences are" << keys e.Correspondence12 << "and" << keys e.Correspondence21  << endl;
+        --Track to the new node
+    	from1to2 := (random 2 == 0);
+	inc := trackEdge(e, from1to2);
+        npaths = npaths + inc;
+        << "  node1: " << #(node1.PartialSols) << endl;
+        << "  node2: " << #(node2.PartialSols) << endl;    	
+        << "inc " << inc << endl; 
+        if inc == 0 then same = same + 1 else same = 0; 
+    );
+    (HG, npaths)
+)    
+
 
 
 

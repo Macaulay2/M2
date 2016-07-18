@@ -69,21 +69,30 @@ trackEdge = method()
 trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
     if one'to'two then (
 	(head, tail) := (e.Node1, e.Node2);
+	(gammaHead, gammaTail) :=  (e.gamma1, e.gamma2);
 	correspondence := e.Correspondence12;
 	)
     else  (
 	(head, tail) = (e.Node2, e.Node1);
+	(gammaHead, gammaTail) =  (e.gamma2, e.gamma1);
 	correspondence = e.Correspondence21;
 	);
-    untrackedInds := positions(head.PartialSols, s -> not member(s, keys correspondence));
-    newSols := track(polySystem (e.gamma1 * toSystem head), polySystem(e.gamma2 * toSystem tail), (head.PartialSols)_(untrackedInds));
+    untrackedInds := keys head.PartialSols - set keys correspondence;
+    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * toSystem head), polySystem(gammaTail * toSystem tail), (head.PartialSols)_(untrackedInds))
+    else {};
     n := #tail.PartialSols;
-    appendPoints(tail.PartialSols, newSols);
     scan(#untrackedInds, i->(
+	    s := newSols#i;
 	    a := untrackedInds#i;
-	    b := n+i;
+	    if member(s, tail.PartialSols) then b:= position(s,tail.PartialSols) 
+	    else (    
+		appendPoint(tail.PartialSols, s);
+		b = n;
+		n = n+1;
+		);
 	    addCorrespondence(if one'to'two then (e,a,b) else (e,b,a))
-	    ))
+	    ));
+    #untrackedInds
     )
 
 

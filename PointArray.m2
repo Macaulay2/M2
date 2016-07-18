@@ -41,7 +41,7 @@ PointArray_ZZ := (A,i) -> A#i
 
 --This is inefficient, but it works for now.
 positions(PointArray, Function) := (A, f) -> (
-  positions(for key in keys A list(A#key),f)
+  select(keys A,k->f(A#k))
 );
 
 TEST /// 
