@@ -39,6 +39,11 @@ PointArray_List := (A,inds) -> apply(inds,i->A#i)
 
 PointArray_ZZ := (A,i) -> A#i
 
+--This is inefficient, but it works for now.
+positions(PointArray, Function) := (A, f) -> (
+  positions(for key in keys A list(A#key),f)
+);
+
 TEST /// 
     restart
     needs "PointArray.m2"
