@@ -119,7 +119,7 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     E := apply(nedges, i -> addEdge(HG, node1, node2));
     while not o.StoppingCriterion(same,null) do (
 	e := E#(random nedges);
-	<< "Correspondences are" << keys e.Correspondence12 << "and" << keys e.Correspondence21  << endl;
+	<< "Correspondences are " << keys e.Correspondence12 << " and " << keys e.Correspondence21  << endl;
         --Track to the new node
     	from1to2 := (random 2 == 0);
 	inc := trackEdge(e, from1to2);
