@@ -9,3 +9,8 @@ getDefault Software
 setDefault(Software=>PHCPACK)
 *}
 elapsedTime sols = flowerStrategy(SP,c0,{pre0},StoppingCriterion=>stop);
+
+
+
+
+
