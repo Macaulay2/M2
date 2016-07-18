@@ -1,13 +1,13 @@
 newPackage(
 	"AlphaTest",
-    	Version => "1.0", 
-    	Date => "June, 2016",
+    	Version => "0.5", 
+    	Date => "July, 2016",
     	Authors => {
-	     {Name => "Jane Doe", Email => "doe@math.uiuc.edu"}
+	     {Name => "Kisun Lee", Email => "klee669@gatech.edu"}
 	     },
-    	HomePage => "http://www.math.uiuc.edu/~doe/",
+    	HomePage => "http://people.math.edu/~klee669",
     	Headline => "Alpha Test",
-	PackageImports => {"NumericalAlgebraicGeometry"},
+	PackageExports => {"NumericalAlgebraicGeometry"},
 	AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
     	DebuggingMode => true		 -- set to true only during development
     	)
@@ -18,9 +18,8 @@ newPackage(
 export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "computeConstants", "certifySolutions", "certifyDistinctSoln"}
 exportMutable {}
 
-needsPackage "NumericalAlgebraicGeometry"
-
 absValue = method()
+absValue ZZ := abs
 absValue(RingElement) := r -> (
     R := ring(r);
     LT := leadTerm(sub(r,R));
@@ -130,11 +129,10 @@ end
 
 restart
 needsPackage "AlphaTest"
-needsPackage "NumericalAlgebraicGeometry"
 FF = QQ[i]/ideal(i^2 + 1)
 R = FF[x,y]
-p1 = point{{2+0*i,4+i}}
+p1 = point matrix{{2,4+i}}
 hermitianNorm(p1)
-absValue(2+0*i)
+absValue(2)
 absValue(4+i)
 
