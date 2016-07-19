@@ -6,7 +6,12 @@ HomotopyGraph = new Type of MutableHashTable
 
 addNode = method()
 addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
-    N := new HomotopyNode from {BasePoint => params, PartialSols => partialSols, Graph => G};
+    N := new HomotopyNode from {
+        BasePoint => params,
+        PartialSols => partialSols,
+        Graph => G,
+        System => toSystem (G, params, G.Family.PolyMap)
+    };
     G.Vertices = append(G.Vertices, N);
     N
 )
