@@ -132,7 +132,46 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     (HG, npaths)
 )    
 
-
+--Single loop strategy. Add a new edge every time. When nodecount = 2, this is
+--the minimal graph version.
+loopStrategy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+loopStrategy (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nodecount) -> (
+    HG := homotopyGraph polySystem transpose PF;
+    PA := pointArray s0;
+    startNode := addNode(HG, point0, PA);
+    if #s0 < 1 then error "at least one solution expected";
+    if nodecount < 2 then error "at least two nodes are necessary";
+    
+    nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
+	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
+    );
+    
+    --Create the nodes
+    for i from 1 to nodecount - 1 do (
+        newNode := addNode(HG, nextP(), pointArray {});
+    );
+    
+    npaths := 0;
+    same := 0;
+    nSols := #s0;
+    while not o.StoppingCriterion(same,null) do (
+        inc := 0;
+        for i from 0 to #(HG.Vertices) - 1 do (
+            node1 := HG.Vertices#i;
+            node2 := HG.Vertices#((i+1)%(#HG.Vertices));
+            e := addEdge(HG, node1, node2);
+            inc = inc + trackEdge(e, true);
+            npaths = npaths + inc;
+            << "  node1: " << #(node1.PartialSols) << endl;
+            << "  node2: " << #(node2.PartialSols) << endl;    	
+            << "npaths " << npaths << endl; 
+        );
+        if #((HG.Vertices#0).PartialSols) == nSols then same = same + 1 else (
+            nSols = #((HG.Vertices#0).PartialSols);
+            same = 0;
+        );
+    )
+)
 
 
 -- ideally, this function wouldn't be necessary. Currently there's a bug in PHCpack.m2 that
