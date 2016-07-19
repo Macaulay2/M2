@@ -44,14 +44,11 @@ homotopyGraph PolySystem := o -> PF -> (
     )
 
 toSystem = method()
-toSystem HomotopyNode := N -> (
-    G := N.Graph;
-    p := N.BasePoint;    
-    PF := transpose G.Family.PolyMap;
+toSystem (HomotopyGraph, Point, Matrix) := (G, p, M) -> (
+    PF := transpose M;
     nParameters := numgens coefficientRing ring PF;
     assert(nParameters == #coordinates p);
-    (PR,toPR) := flattenRing ring PF; -- ring PF = C[a][x]
-    	 -- toPR: ring PF -> PR
+    (PR,toPR) := flattenRing ring PF;
     X := drop(gens PR, -nParameters); 
     PF = toPR PF;
     C := coefficientRing PR;
@@ -78,7 +75,7 @@ trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
 	correspondence = e.Correspondence21;
 	);
     untrackedInds := keys head.PartialSols - set keys correspondence;
-    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * toSystem head), polySystem(gammaTail * toSystem tail), (head.PartialSols)_(untrackedInds))
+    newSols := if #untrackedInds > 0 then track(polySystem (gammaHead * head.System), polySystem(gammaTail * tail.System), (head.PartialSols)_(untrackedInds))
     else {};
     n := #tail.PartialSols;
     scan(#untrackedInds, i->(
@@ -94,5 +91,3 @@ trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
 	    ));
     #untrackedInds
     )
-
-
