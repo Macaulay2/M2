@@ -172,6 +172,62 @@ loopStrategy (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nodecount) -> (
         );
     )
 )
+--This strategy will either: 1) follow an existing loop, 2) add a new loop
+--and follow it, or 3) add a new node, create and follow a loop around it.
+randomFlowerStrategy = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+randomFlowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
+    HG := homotopyGraph polySystem transpose PF;
+    PA := pointArray s0;
+    startNode := addNode(HG, point0, PA);
+    
+    if #s0 < 1 then error "at least one solution expected";
+    nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
+	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
+    );
+    
+    --We start out with a second node and a loop so all of the options are
+    --possible.
+    newNode := addNode(HG, nextP(), pointArray {});
+    e1 := addEdge(HG, startNode, newNode);
+    e2 := addEdge(HG, newNode, startNode);
+    edges := new MutableList from {{e1,e2}};
+    
+    npaths := 0;
+    same := 0;
+    nSols := #s0;
+    while not o.StoppingCriterion(same,null) do (
+        randInt := random 3;
+        --Follow an existing loop
+        if randInt == 0 then (
+            randEdge := edges#(random (#edges));
+            (e1,e2) = (randEdge#0,randEdge#1);
+        
+        --Add a new loop
+        ) else if randInt == 1 then (
+            randNode := HG.Vertices#(random(1, #HG.Vertices - 1));
+            e1 = addEdge(HG, startNode, randNode);
+            e2 = addEdge(HG, randNode, startNode);
+            edges = append(edges, {e1,e2});
+        --Create a new node and loop
+        ) else (
+            newNode = addNode(HG, nextP(), pointArray {});
+            e1 = addEdge(HG, startNode, newNode);
+            e2 = addEdge(HG, newNode, startNode);
+            edges = append(edges, {e1,e2});
+        );
+        
+        npaths = npaths + trackEdge(e1, true);
+        << "  H01: " << #(e1.Node2.PartialSols) << endl;
+        npaths = npaths + trackEdge(e2, true);
+        << "  H10: " << #(e1.Node1.PartialSols) << endl;    	
+        << "npaths " << npaths << endl; 
+
+        if #((HG.Vertices#0).PartialSols) == nSols then same = same + 1 else (
+            nSols = #((HG.Vertices#0).PartialSols);
+            same = 0;
+        );
+    )
+)
 
 
 -- ideally, this function wouldn't be necessary. Currently there's a bug in PHCpack.m2 that
