@@ -61,14 +61,14 @@ setProperty(PolyhedraHash, Symbol, Thing) := (PH, property, value) -> (
 )
 
 hasProperty = method()
-hasProperty(PolyhedraHash, Symbol) := (PH, property) -> (
+hasProperty(PolyhedraHash, Thing) := (PH, property) -> (
    hasProperties(PH, {property})
 )
 
 hasProperties = method()
 hasProperties(PolyhedraHash, List) := (PH, properties) -> (
    givenProperties := getAvailableProperties PH;
-   result := apply(properties, p-> positions(givenProperties, g -> g==p));
+   result := apply(properties, p-> positions(givenProperties, g -> g===p));
    all(result, r -> #r > 0)
 )
 
@@ -76,7 +76,7 @@ getAvailableProperties = method()
 getAvailableProperties PolyhedraHash := PH -> (
    result := keys PH;
    result = flatten { result, keys PH.cache};
-   result = select(result, r-> r != cache);
+   result = select(result, r-> r =!= cache);
    result
 )
 
