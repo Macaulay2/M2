@@ -201,7 +201,15 @@ stoichiometricSubspace ReactionNetwork := N -> (
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
     for i from 1 to #reactions - 1 do M=M||reactions#i;
-    -- mingens image M -- perhaps this is more natural?
+    mingens image M
+    )
+
+stoicSubsplaceKer = method()
+stoicSubsplaceKer := N -> (
+    C := N.Complexes;
+    reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
+    M:=reactions#0;
+    for i from 1 to #reactions - 1 do M=M||reactions#i;
     mingens ker M
     )
 
@@ -331,7 +339,7 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
     kk := symbol kk; 
     rates := apply(edges N.ReactionGraph, e->kk_e);
-    S := stoichiometricSubspace N;
+    S := stoicSubsplaceKer N;
     K := FF[rates];
     kk = gens K;
     -- C is a list of pairs (species, input_rate)
@@ -351,6 +359,7 @@ needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 peek N
+stoichiometricSubspace N
 CE = conservationEquations N
 SSE = steadyStateEquations N
 F = join (CE, SSE)
