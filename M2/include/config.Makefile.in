@@ -6,6 +6,14 @@ CONFIG_MAKEFILE = loaded
 .PHONY: all check initialize clean distclean install always reconfigure big-check
 all:
 
+# clear this environment variable so the ambient system doesn't offer advice to
+# our libraries that use autoconf about where to install install things.  The
+# first example we encountered is under opensuse leap 42.1, which sets the
+# autoconf variable libdir to ${exec_prefix}/lib64 instead of
+# ${exec_prefix}/lib.  Our libraries' files are installed in only our private
+# directories, so it's safe to ignore such system conventions.
+export CONFIG_SITE =
+
 SHELL = /bin/sh
 
 .DELETE_ON_ERROR:

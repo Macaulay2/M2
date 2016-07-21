@@ -64,12 +64,14 @@ TEST(Util, m2array2stdvec_check) {
   EXPECT_EQ(a,c);
 }
 
+#if 0
 TEST(Util, m2strings_basic) {
   std::vector<std::string> a {"a", "b", "c1", "d2", "e_3"};
   M2_ArrayString b = stdvector_to_M2_ArrayString(a);
   auto c = M2_ArrayString_to_stdvector(b);
   EXPECT_EQ(a,c);
 }
+#endif
 
 // Local Variables:
 // compile-command: "make -C $M2BUILDDIR/Macaulay2/e/unit-tests check  "
