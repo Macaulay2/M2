@@ -98,3 +98,20 @@ computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
    (A, B) := fourierMotzkin(rayData, linealityData);
    (transpose(-A), transpose(B))
 )
+
+makeRaysUniqueAndPrimitive = method()
+makeRaysUniqueAndPrimitive(Matrix) := M -> (
+   L := apply(numColumns M, i -> M_i);
+   newCols := {};
+   L = scan(L,
+      l -> (
+         g := gcd entries l;
+         if g != 0 then (
+            newEntries := apply(entries l, e -> e/g);
+            newCols = append(newCols, vector newEntries)
+         ) 
+      )
+   );
+   matrix unique newCols
+)
+
