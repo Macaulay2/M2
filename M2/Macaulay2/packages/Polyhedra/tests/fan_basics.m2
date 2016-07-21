@@ -14,9 +14,6 @@ assert not isComplete F
 -- Test 33
 -- Checking isSmooth and smoothSubfan
 TEST ///
-C1 = posHull matrix {{1,2},{2,1}};
-C2 = posHull matrix {{1,0},{2,1}};
-C3 = posHull matrix {{1,2},{0,1}};
 M = transpose matrix {{1,2},{2,1},{1,0},{0,1}}
 L = {{0,1},{1,2},{0,3}};
 L2 = {{0,3},{1,2}}
