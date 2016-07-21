@@ -75,9 +75,14 @@ reactionNetwork List := String => o -> rs -> (
 TEST ///
 restart
 needs "ReactionNetworks.m2"
+needsPackage "Graphs"
 NN = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
 NN.Complexes
 NN.NullSymbol
+NN.ReactionGraph
+peek NN
+
+
 ///
 
 addSpecies = method()
