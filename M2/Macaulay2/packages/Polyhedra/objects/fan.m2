@@ -139,16 +139,6 @@ stellarSubdivision (Fan,Matrix) := Fan => (F,r) -> (
 
 
 
--- PURPOSE : Computing the subfan of all smooth cones of the Fan
---   INPUT : 'F',  a Fan
---  OUTPUT : The Fan of smooth cones
-smoothSubfan = method(TypicalValue => Fan)
-smoothSubfan Fan := F -> (
-     -- recursive function that adds the cones of the list 'L' to 'F' if they are smooth
-     -- and calls itself with the faces of the cone if the cone is not smooth
-     facerecursion := L -> flatten apply(L, C -> if isSmooth C then C else facerecursion faces(1,C));
-     L := maxCones F;
-     fan facerecursion L)
 
 -- PURPOSE : Adding a Cone to an existing fan 
 --   INPUT : '(C,F)',  where 'C' is a Cone in the same ambient space as 'F'

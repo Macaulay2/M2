@@ -52,10 +52,12 @@ export {
    "computedLatticePoints",
    "computedPolar",
 
-   "maximalCones",
-   "computedPolytope",
-   "generatingObjects",
-   "pure",
-   "honestMaxObjects",
-   "computedComplete"
+   "maximalCones",   -- Maximal cones of a fan.
+   "inputCones",  -- Cones defining a fan. These cones are not neccessarily maximal.
+   "computedPolytope",  -- Polytope whose normal fan is the given fan.
+   "generatingObjects", 
+   "pure",  -- is the fan of pure dimension?
+   "honestMaxObjects",  -- maximal cones as honest cones
+   "computedComplete",  -- is the fan complete?
+   "smoothCones"  -- smooth cones of fan as list of index lists
 }

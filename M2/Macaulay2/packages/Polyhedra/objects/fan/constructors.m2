@@ -43,7 +43,7 @@ fan(Matrix, Matrix, Sequence) := (irays, linealityGens, icones) -> (
 
 fan(Matrix, List) := (irays, icones) -> (
    r := ring irays;
-   linealityGens := map(target irays, r^1, 0);
+   linealityGens := map(target irays, r^0, 0);
    fan(irays, linealityGens, icones)
 )
 

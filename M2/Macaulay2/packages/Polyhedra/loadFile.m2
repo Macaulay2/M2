@@ -108,7 +108,22 @@ assert(linSpace P == 0)
 M = matrix {{3,4,1}};
 v = matrix {{10}};
 
+restart
+loadPackage "Polyhedra"
+P = convexHull matrix {{3,1,0,2},{0,2,2,1},{1,-1,2,0}};
+N = normalFan P
+H = getProperty (N, computedFacesThroughRays )
+smoothSubfan N
 
+restart
+loadPackage "Polyhedra"
+M = transpose matrix {{1,2},{2,1},{1,0},{0,1}}
+L = {{0,1},{1,2},{0,3}};
+L2 = {{0,3},{1,2}}
+F = fan(M, L);
+assert not isSmooth F
+F1 = fan(M, L2);
+assert(smoothSubfan F == F1)
 
 
 C = posHull matrix {{12,3},{3,5}}

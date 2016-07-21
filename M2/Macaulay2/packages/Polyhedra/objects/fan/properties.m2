@@ -54,3 +54,91 @@ compute#Fan#computedComplete Fan := F -> (
    );
    Lfaces == {}
 )
+
+compute#Fan#computedRays = method()
+compute#Fan#computedRays Fan := F -> (
+   if hasProperty(F, inputRays) then (
+      given := getProperty(F, inputRays);
+      makeRaysUniqueAndPrimitive given
+   ) else (
+      -- Could also compute this from the honestMaxObjects?
+      error("No input rays given.")
+   )
+)
+
+compute#Fan#computedFacesThroughRays = method()
+compute#Fan#computedFacesThroughRays Fan := F -> (
+   MC := getProperty(F, honestMaxObjects);
+   raysF := rays F;
+   linealityF := linealitySpace F;
+   result := new MutableHashTable;
+   for i from 0 to dim F do result#i = {};
+   for C in MC do (
+      dimC := dim C;
+      raysC := rays C;
+      facesC := faces C;
+      rc := rayCorrespondenceMap(raysC, linealityF, raysF);
+      for i in keys facesC do (
+         codimiCones := facesC#i;
+         codimiCones = apply(codimiCones,
+            c -> (
+               sort apply(c, e -> rc#e)
+            )
+         );
+         result#i = sort unique flatten {result#i, codimiCones};
+      );
+   );
+   return result
+)
+
+compute#Fan#generatingObjects = method()
+compute#Fan#generatingObjects Fan := F -> (
+   if hasProperty(F, inputCones) then (
+      cones := getProperty(F, inputCones);
+      if hasProperty(F, inputRays) then (
+         inputRaysF := getProperty(F, inputRays);
+         raysF := rays F;
+         linealityF := linealitySpace F;
+         rc := rayCorrespondenceMap(inputRaysF, linealityF, raysF);
+         cones = apply(cones,
+            c -> (
+               sort apply(c, e->rc#e)
+            )
+         );
+      );
+      result := {};
+      for cone in cones do (
+         test := all(cones,
+            c -> (
+               n := #((set c) * (set cone));
+               if n == #cone then (
+                  cone == c
+               ) else (
+                  true
+               )
+            )
+         );
+         if test then result = append(result, cone);
+      );
+      result
+   ) else (
+      -- Given honestMaxObj, compute these?
+      error("No input cones given");
+   )
+)
+
+compute#Fan#smoothCones = method()
+compute#Fan#smoothCones Fan := F -> (
+   result := {};
+   raysF := rays F;
+   linealityF := linealitySpace F;
+   cones := getProperty(F, computedFacesThroughRays);
+   for i in keys cones do (
+      for cone in cones#i do (
+         if spanSmoothCone(transpose(raysF_cone), transpose(linealityF)) then (
+            result = append(result, cone)
+         )
+      )
+   );
+   result
+)

@@ -19,9 +19,10 @@ C2 = posHull matrix {{1,0},{2,1}};
 C3 = posHull matrix {{1,2},{0,1}};
 M = transpose matrix {{1,2},{2,1},{1,0},{0,1}}
 L = {{0,1},{1,2},{0,3}};
+L2 = {{0,3},{1,2}}
 F = fan(M, L);
 assert not isSmooth F
-F1 = fan {C2,C3};
+F1 = fan(M, L2);
 assert(smoothSubfan F == F1)
 ///
 

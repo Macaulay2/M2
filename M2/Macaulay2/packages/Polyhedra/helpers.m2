@@ -28,14 +28,20 @@ scalarProduct(Matrix, Matrix) := (m1, m2) -> (
 
 rayCorrespondenceMap = method()
 rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
+   r := ring sources;
+   rayCorrespondenceMap(sources, map(r^(numRows sources), r^0, 0), targets)
+)
+
+rayCorrespondenceMap(Matrix, Matrix, Matrix) := (sources, lineality, targets) -> (
    L := for i from 0 to (numColumns sources -1) list (
       source := sources_{i};
+      lr := rank lineality;
       corresponding := positions(0..(numColumns targets -1),
          j -> (
             target := targets_{j};
             -- << target << endl;
-            -- << rank(source | target) == 1 << endl;
-            (rank(source | target) == 1) and scalarProduct(source, target) > 0
+            -- << rank(source | target | lineality) == lr + 1 << endl;
+            (rank(source | target | lineality) == lr + 1) and scalarProduct(source, target) > 0
          )
       );
       if #corresponding == 1 then i=>corresponding#0

@@ -22,3 +22,18 @@ isPointed Fan := F -> (
 isSmooth Fan := F -> (
    getProperty(F, smooth)
 )
+
+
+-- PURPOSE : Computing the subfan of all smooth cones of the Fan
+--   INPUT : 'F',  a Fan
+--  OUTPUT : The Fan of smooth cones
+smoothSubfan = method(TypicalValue => Fan)
+smoothSubfan Fan := F -> (
+   cones := getProperty(F, smoothCones);
+   result := new HashTable from {
+      inputCones => cones,
+      computedRays => rays F,
+      computedLinealityBasis => linealitySpace F
+   };
+   fan result
+)
