@@ -19,6 +19,7 @@ fromRingXbertini (List,Ring) := (F,R) -> (
 
 toBertiniOptions = method()
 toBertiniOptions OptionTable := OptionTable => o -> (
+    o = fillInDefaultOptions o;
     opt := {
 	TrackTolBeforeEG=>o.CorrectorTolerance,
 	TrackTolDuringEG=>o.CorrectorTolerance*o.EndZoneFactor,

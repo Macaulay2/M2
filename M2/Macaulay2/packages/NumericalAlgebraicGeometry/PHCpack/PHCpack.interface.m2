@@ -51,6 +51,6 @@ solveGenericSystemInTorus List := F -> (
     (fromRingXphc(S,ring ideal F), solsS)
     )
  
-numericalIrreducibleDecompositionPHCpack = I -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
+numericalIrreducibleDecompositionPHCpack = (I,o) -> PHCpack$numericalIrreducibleDecomposition toRingXphc I_*
 
 dismiss PHCpack

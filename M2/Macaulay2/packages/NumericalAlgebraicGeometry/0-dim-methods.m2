@@ -54,6 +54,7 @@ solveSystem PolySystem := List => o -> P -> (
      v := flatten entries vars R;
      if numgens R > #F then error "expected a 0-dimensional system";
      if member(o.Software, {M2,M2engine,M2enginePrecookedSLPs}) then ( 
+	  if o.Normalize then F = apply(F,normalize);
 	  overdetermined := numgens R < #F; 
 	  T := (if overdetermined 
 	       then generalEquations(numgens R, F)
