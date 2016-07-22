@@ -64,11 +64,6 @@ isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope
 -- PURPOSE : Checks if a lattice polytope is reflexive
 
 
--- PURPOSE : Checks if a polytope is very ample
---   INPUT : 'P'  a Polyhedron, which must be compact
---  OUTPUT : 'true' or 'false'
-isVeryAmple = method()
-isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
 
 
 -- PURPOSE : Checks if the polyhedron is a lattice polytope

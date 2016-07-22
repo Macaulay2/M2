@@ -49,18 +49,6 @@ V2 = set {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
 assert(isSubset(V1,V2) and isSubset(V2,V1))
 ///
 
--- Test 5
--- Checking polar
-TEST ///
-P = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1}};
-Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1}};
-P = polar P;
-assert(P == Q)
-P = convexHull(matrix {{1,-1,1,-1},{1,1,-1,-1},{1,2,3,4}},matrix {{0,0},{0,0},{1,-1}});
-Q = convexHull matrix {{1,-1,0,0},{0,0,1,-1},{0,0,0,0}};
-P = polar P;
-assert(P == Q)
-///
 
 -- Test 11
 -- Checking equality for polyhedra and cones
