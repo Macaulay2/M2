@@ -10,6 +10,7 @@ newPackage(
 	  {Name => "Anton Leykin", Email => "leykin@math.gatech.edu"}
 	  },
      PackageImports => {"FourTiTwo"},
+     AuxiliaryFiles => true, -- set to true if package comes with auxiliary files
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
      DebuggingMode => true,
@@ -1064,18 +1065,19 @@ doc ///
 
 undocumented {Symmetrize, Completely, [egb,Symmetrize]}
 
-TEST ///
-needs concatenate(EquivariantGB#"source directory","./examples.m2")
-I = exampleISSAC()
-assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
-///
+-- TEST ///
+-- needs concatenate(EquivariantGB#"source directory","./examples.m2")
+-- I = exampleISSAC()
+-- assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
+-- ///
 
 end
 
 restart
 needsPackage "EquivariantGB"
 help egb
-check EquivariantGB
+check "EquivariantGB"
+uninstallPackage "EquivariantGB"
 installPackage "EquivariantGB"
 
 debug EquivariantGB

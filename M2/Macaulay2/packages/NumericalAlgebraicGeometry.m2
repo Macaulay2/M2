@@ -389,7 +389,8 @@ squareUp PolySystem := P -> if P.?SquaredUpSystem then P.SquaredUpSystem else(
     n := P.NumberOfVariables;
     m := P.NumberOfPolys;
     if m<=n then "overdetermined system expected";
-    M := sub(randomOrthonormalRows(n,m),coefficientRing ring P);
+    C := coefficientRing ring P;
+    M := if class C === ComplexField then sub(randomOrthonormalRows(n,m), C) else random(C^n,C^m);
     squareUp(P,M)
     )
 squareUp(PolySystem,Matrix) := (P,M) -> (
