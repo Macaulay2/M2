@@ -265,3 +265,19 @@ compute#Polyhedron#computedPolar Polyhedron := P -> (
    polyhedron result
 )
 
+compute#Polyhedron#computedCompact = method()
+compute#Polyhedron#computedCompact Polyhedron := P -> (
+   linealitySpace(P) == 0 and rays(P) == 0
+)
+
+compute#Polyhedron#computedNormal = method()
+compute#Polyhedron#computedNormal Polyhedron := P -> (
+   if not isCompact P then error ("The polyhedron must be compact");
+     -- Computing the Hilbert basis of the cone over 'P' on height 1
+   C := getProperty(P, underlyingCone);
+   L := hilbertBasis C;
+   n := ambDim P;
+   -- Do all lattice points lie in height one?
+   all(L,v -> v_(n,0) == 1)
+)
+

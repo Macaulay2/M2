@@ -51,6 +51,8 @@ export {
    "computedNormalFan",
    "computedLatticePoints",
    "computedPolar",
+   "computedCompact", -- Is the polyhedron compact?
+   "computedNormal", -- Is the polyhedron normal?
 
    "maximalCones",   -- Maximal cones of a fan.
    "inputCones",  -- Cones defining a fan. These cones are not neccessarily maximal.
