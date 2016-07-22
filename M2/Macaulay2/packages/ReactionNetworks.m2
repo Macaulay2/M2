@@ -19,7 +19,8 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", "NullSymbol", "NullIndex", "ReactionGraph",
+export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
+    "ParameterRing", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", 
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF"
@@ -67,7 +68,7 @@ reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, 
-	NullSymbol => o.NullSymbol, NullIndex => -1};
+	NullSymbol => o.NullSymbol, NullIndex => -1, ParameterRing => Ring};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -80,10 +81,20 @@ NN = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
 NN.Complexes
 NN.NullSymbol
 NN.ReactionGraph
-peek NN
-
-
+NN.ParameterRing
 ///
+
+parameterRing = method()
+parameterRing ReactionNetwork := Rn -> (
+    kk := symbol kk; 
+    rates := apply(edges Rn.ReactionGraph, e->kk_e);
+    K := QQ[rates];
+    kk = gens K;
+    C := apply(Rn.Species,a->(a,0));
+    xx := symbol xx;
+    RING := K[apply(C,i->xx_(first i))];
+    Rn.ParameterRing = RING
+    )
 
 addSpecies = method()
 addSpecies(String, ReactionNetwork) := (s,Rn) -> 
@@ -132,6 +143,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
+    Rn.ParameterRing = parameterRing Rn;
     remove(Rn,Ring); -- remove the ring, if cached
     )
 
@@ -204,8 +216,8 @@ stoichiometricSubspace ReactionNetwork := N -> (
     mingens image M
     )
 
-stoicSubsplaceKer = method()
-stoicSubsplaceKer := N -> (
+stoicSubspaceKer = method()
+stoicSubspaceKer := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -339,7 +351,7 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
     kk := symbol kk; 
     rates := apply(edges N.ReactionGraph, e->kk_e);
-    S := stoicSubsplaceKer N;
+    S := stoicSubspaceKer N;
     K := FF[rates];
     kk = gens K;
     -- C is a list of pairs (species, input_rate)
@@ -365,6 +377,10 @@ SSE = steadyStateEquations N
 F = join (CE, SSE)
 I = ideal CE 
 J = ideal SSE
+N.ParameterRing
+gens N.ParameterRing
+I+J
+
 -- Why can't I and J be combined?  They appear to be in the same ring...
 -- ideal F
 ///
