@@ -12,7 +12,8 @@ newPackage(
      PackageImports => {"FourTiTwo"},
      -- DebuggingMode should be true while developing a package, 
      --   but false after it is done
-     DebuggingMode => true 
+     DebuggingMode => true,
+     AuxiliaryFiles => true
      )
 
 export {
