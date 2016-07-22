@@ -40,6 +40,13 @@ latticePoints Polyhedron := P -> (
    getProperty(P, computedLatticePoints)
 )
 
+-- PURPOSE : Computing the Ehrhart polynomial of a polytope
+--   INPUT : 'P',  a polyhedron which must be compact, i.e. a polytope
+--  OUTPUT : A polynomial in QQ[x], the Ehrhart polynomial
+-- COMMENT : Compactness is checked within latticePoints
+ehrhart = method(TypicalValue => RingElement)
+ehrhart Polyhedron := P -> getProperty(P, computedEhrhart)
+
 -- PURPOSE : Computing the polar of a given polyhedron
 --   INPUT : 'P',  a Polyhedron
 --  OUTPUT : A Polyhedron, the set { v | v*p<=1 forall p in P}

@@ -68,42 +68,7 @@ isReflexive Polyhedron := (cacheValue symbol isReflexive)(P -> isLatticePolytope
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
 isVeryAmple = method()
-isVeryAmple Polyhedron := P -> (
-     if not isCompact P then error("The polyhedron must be compact");
-     if not dim P == ambDim P then error("The polyhedron must be full dimensional");
-     if not isLatticePolytope P then error("The polyhedron must be a lattice polytope");
-     if not P.cache.?isVeryAmple then (
-	  E := apply(faces(dim P -1, P), e -> (e = vertices e; {e_{0},e_{1}}));
-     	  V := vertices P;
-     	  V = apply(numColumns V, i -> V_{i});
-     	  HS := -(halfspaces P)#0;
-     	  HS = apply(numRows HS, i -> HS^{i});
-     	  P.cache.isVeryAmple = all(V, v -> (
-	       	    Ev := select(E, e -> member(v,e));
-	       	    Ev = apply(Ev, e -> makePrimitiveMatrix(if e#0 == v then e#1-e#0 else e#0-e#1));
-	       	    ind := (smithNormalForm matrix {Ev})_0;
-	       	    ind = product toList apply(rank ind, i-> ind_(i,i));
-	       	    ind == 1 or (
-		    	 EvSums := apply(subsets Ev, s -> sum(s|{v}));
-	       	    	 all(EvSums, e -> contains(P,e)) or (
-		    	      Ev = matrix{Ev};
-		    	      HSV := matrix for h in HS list if all(flatten entries(h*Ev), e -> e >= 0) then {h} else continue;
-		    	      C := new Cone from {
-	   		      	   "ambient dimension" => numRows Ev,
-	   		      	   "dimension" => numRows Ev,
-	   		      	   "dimension of lineality space" => 0,
-	   		      	   "linealitySpace" => map(ZZ^(numRows Ev),ZZ^0,0),
-	   		      	   "number of rays" => numColumns Ev,
-	   		      	   "rays" => Ev,
-	   		      	   "number of facets" => numColumns HSV,
-	   		      	   "halfspaces" => HSV,
-	   		      	   "hyperplanes" => map(ZZ^0,ZZ^(numRows Ev),0),
-	   		      	   "genrays" => (Ev,map(ZZ^(numRows Ev),ZZ^0,0)),
-	   		      	   "dualgens" => (-(transpose HSV),map(ZZ^(numRows Ev),ZZ^0,0)),
-	   		      	   symbol cache => new CacheTable};
-		    	      HB := hilbertBasis C;
-		    	      all(HB, e -> contains(P,e+v)))))));
-     P.cache.isVeryAmple);
+isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
 
 
 -- PURPOSE : Checks if the polyhedron is a lattice polytope
@@ -366,19 +331,6 @@ cellDecompose (Polyhedron,Matrix) := (P,w) -> (
      flatten apply(faces(1,P), f -> if isCompact f then affineImage(A,f) else {}))
 
 
--- PURPOSE : Computing the Ehrhart polynomial of a polytope
---   INPUT : 'P',  a polyhedron which must be compact, i.e. a polytope
---  OUTPUT : A polynomial in QQ[x], the Ehrhart polynomial
--- COMMENT : Compactness is checked within latticePoints
-ehrhart = method(TypicalValue => RingElement)
-ehrhart Polyhedron := P -> (
-	n := dim P;
-	v := matrix apply(n,k -> {-1+#latticePoints( (k+1)*P)});
-	M := promote(matrix apply(n,i -> reverse apply(n, j -> (i+1)^(j+1))),QQ);
-	M = flatten entries ((inverse M)*v);
-	R := QQ[getSymbol "x"];
-	x := R_"x";
-	1+sum apply(n,i -> M#i * x^(n-i)))
     
 
 -- PURPOSE : Scaling respectively the multiple Minkowski sum of a polyhedron
@@ -386,9 +338,14 @@ ehrhart Polyhedron := P -> (
 --     	    	             'P' is a Polyhedron
 --  OUTPUT : The polyehdron 'P' scaled by 'k'
 QQ * Polyhedron := (k,P) -> (
-     -- Checking for input errors
-     if k <= 0 then error("The factor must be strictly positiv");
-     convexHull(k*(vertices P),rays P | linSpace P))
+   -- Checking for input errors
+   if k <= 0 then error("The factor must be strictly positiv");
+   vertP := vertices P;
+   vertP = promote(vertP, QQ);
+   raysP := promote(rays P, QQ);
+   linP := promote(linealitySpace P, QQ);
+   convexHull(k * vertP, raysP, linP)
+)
 
 ZZ * Polyhedron := (k,P) -> promote(k,QQ) * P
 

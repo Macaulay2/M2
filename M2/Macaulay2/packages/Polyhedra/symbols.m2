@@ -53,6 +53,8 @@ export {
    "computedPolar",
    "computedCompact", -- Is the polyhedron compact?
    "computedNormal", -- Is the polyhedron normal?
+   "computedVeryAmple", -- Is the polyhedron very ample?
+   "computedEhrhart", -- The Ehrhart polynomial
 
    "maximalCones",   -- Maximal cones of a fan.
    "inputCones",  -- Cones defining a fan. These cones are not neccessarily maximal.

@@ -627,32 +627,6 @@ liftable (Matrix,Number) := (f,k) -> try (lift(f,k); true) else false;
 makePrimitiveMatrix = M -> if M != 0 then lift(transpose matrix apply(entries transpose M, w -> (g := abs gcd w; apply(w, e -> e//g))),ZZ) else lift(M,ZZ);
      
 
-fMReplacement = (R,HS,hyperplanesTmp) -> (
-     uniqueColumns := M -> matrix{(unique apply(numColumns M, i -> M_{i}))};
-     n := numRows R;
-     LS := mingens ker transpose(HS|hyperplanesTmp);
-     alpha := rank LS;
-     if alpha > 0 then (
-	  LS = lift(gens gb promote(LS,QQ[]),QQ);
-	  CR := mingens ker transpose LS;
-	  CR = CR * (inverse(LS|CR))^{alpha..n-1};
-	  R = CR * R);
-     beta := rank hyperplanesTmp;
-     if beta > 0 then (
-	  hyperplanesTmp = lift(gens gb promote(hyperplanesTmp,QQ[]),QQ);
-	  CHS := mingens ker transpose hyperplanesTmp;
-	  CHS = CHS * (inverse(hyperplanesTmp|CHS))^{beta..n-1};
-	  HS = CHS * HS);
-     HS = if HS == 0 then map(ZZ^(numRows HS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix HS;
-     R = apply(numColumns R, i -> R_{i});
-     R = select(R, r -> (r != 0 and (
-		    pos := positions(flatten entries((transpose HS) * r), e -> e == 0);
-		    #pos >= n-alpha-beta-1 and (n <= 3 or rank HS_pos >= n-alpha-beta-1))));
-     if R == {} then R = map(ZZ^(numRows LS),ZZ^0,0) else R = sort matrix {unique apply(R, makePrimitiveMatrix)};
-     LS = if LS == 0 then map(ZZ^(numRows LS),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix LS;
-     hyperplanesTmp = if hyperplanesTmp == 0 then map(ZZ^(numRows hyperplanesTmp),ZZ^0,0) else sort uniqueColumns makePrimitiveMatrix hyperplanesTmp;
-     ((R,LS),(HS,hyperplanesTmp)))
-
 
 -- PURPOSE : check whether a matrix is over ZZ or QQ
 --   INPUT : '(M,msg)', a matrix 'M' and a string 'msg'

@@ -21,30 +21,28 @@ load "./helpers.m2"
 load "./declarations.m2"
 load "./faceBuilders.m2"
 
--- Objects
-load "./objects/polyhedraHash.m2"
-   load "./objects/polyhedralObject.m2"
-      load "./objects/cone/constructors.m2"
-      load "./objects/cone/properties.m2"
-      load "./objects/cone/methods.m2"
+-- Core
+load "./core/polyhedraHash.m2"
+   load "./core/polyhedralObject.m2"
+      load "./core/cone/constructors.m2"
+      load "./core/cone/properties.m2"
+      load "./core/cone/methods.m2"
+      load "./core/polyhedron/constructors.m2"
+      load "./core/polyhedron/properties.m2"
+      load "./core/polyhedron/methods.m2"
+      load "./core/polyhedron.m2"
+   load "./core/polyhedralObjectFamily.m2"
+      load "./core/fan/constructors.m2"
+      load "./core/fan/methods.m2"
+      load "./core/fan/properties.m2"
+      load "./core/fan.m2"
+      load "./core/polyhedralComplex.m2"
+load "./core/contains.m2"
+load "./core/intersection.m2"
 
---         load "./objects/cone/hilbertBasis.m2"
-      load "./objects/polyhedron/constructors.m2"
-      load "./objects/polyhedron/properties.m2"
-      load "./objects/polyhedron/methods.m2"
-      load "./objects/polyhedron.m2"
-   load "./objects/polyhedralObjectFamily.m2"
-      load "./objects/fan/constructors.m2"
-      load "./objects/fan/methods.m2"
-      load "./objects/fan/properties.m2"
-      load "./objects/fan.m2"
-      load "./objects/polyhedralComplex.m2"
-
--- Method not associated with fixed object type
-load "./intersection.m2"
-load "./directProduct.m2"
-load "./contains.m2"
-load "./minkowskiSum.m2"
+-- Extended
+load "./extended/directProduct.m2"
+load "./extended/minkowskiSum.m2"
 load "./standardConstructions.m2"
 load "./commonFace.m2"
 load "./incompare.m2"
@@ -64,7 +62,7 @@ load "./tests/tests_from_polymake/minkowskiSum.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
--- load "./tests/legacy_tests.m2"
+load "./tests/legacy_tests.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
@@ -75,6 +73,10 @@ end
 restart
 loadPackage "Polyhedra"
 check "Polyhedra"
+
+restart
+loadPackage "Polyhedra"
+
 
 restart
 loadPackage "Polyhedra"
