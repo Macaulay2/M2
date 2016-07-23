@@ -74,14 +74,27 @@ inInterior (Matrix,Cone) := (p,C) -> (
 	  all(flatten entries(HS*p), e -> e > 0)))
 
 --   INPUT : '(C1,C2)'  two Cones
---  OUTPUT : 'true' or 'false'
+--  OUTPUT : 'true' or 'false' depending on whether C1 is a face of C2.
 isFace(Cone,Cone) := (C1,C2) -> (
-     c := dim C2 - dim C1;
-     -- Checking if the two cones lie in the same space and the dimension difference is positive
-     if ambDim(C1) == ambDim(C2) and c >= 0 then (
-	  -- Checking if one of the codim 'c' faces of C2 is C1
-	  any(faces(c,C2), f -> f === C1))
-     else false)
+   c := dim C2 - dim C1;
+   -- Checking if the two cones lie in the same space and the dimension difference is positive
+   if ambDim(C1) == ambDim(C2) and c >= 0 then (
+      raysC2 := rays C2;
+      linC2 := linealitySpace C2;
+      raysC1 := rays C1;
+      linC1 := linealitySpace C1;
+      if not (image linC2 == image linC1) then return false;
+      rcm := rayCorrespondenceMap(raysC1, linC1, raysC2);
+      L := sort for k in keys rcm list (
+         p := rcm#k;
+         if p == -1 then return false;
+         p
+      );
+      goodFaces := faces(c, C2);
+      any(goodFaces, f -> sort f === L)
+   )
+   else false
+)
 
      
 

@@ -26,3 +26,54 @@ polar Polyhedron := P -> getProperty(P, computedPolar)
 --  OUTPUT : 'true' or 'false'
 isVeryAmple = method()
 isVeryAmple Polyhedron := P -> getProperty(P, computedVeryAmple)
+
+
+-- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : a matrix, where the columns are indexed by the edges and the rows indexed by the vertices and has 1 as entry
+--           if the corresponding edge contains this vertex
+vertexEdgeMatrix = method(TypicalValue => Matrix)
+vertexEdgeMatrix Polyhedron := P -> (
+   -- list the edges and the vertices
+   eP := apply(faces(dim P -1,P), f -> f#0);
+   nEdge := #eP;
+   nVert := numColumns vertices P;
+   result := map (ZZ^nVert, ZZ^nEdge, 0);
+   result = (matrix {{1..nEdge}}) || result;
+   result = (transpose matrix {{0..nVert}}) | result;
+   result = mutableMatrix result;
+   i := 0;
+   for edge in eP do (
+      s := edge#0;
+      t := edge#1;
+      result_(s + 1, i + 1) = 1;
+      result_(t + 1, i + 1) = 1;
+      i = i+1;
+   );
+   matrix result
+)
+
+
+-- PURPOSE : Computing the vertex-facet-matrix of a polyhedron
+--   INPUT : 'P',  a polyhedron
+--  OUTPUT : a matrix, where the columns are indexed by the facets and the rows are indexed by the vertices and has 1 as entry
+--           if the corresponding facet contains this vertex
+vertexFacetMatrix = method(TypicalValue => Matrix)
+vertexFacetMatrix Polyhedron := P -> (
+   -- list the facets and the vertices
+   fP := apply(faces(1,P), f -> f#0);
+   nFacet := #fP;
+   nVert := numColumns vertices P;
+   result := map (ZZ^nVert, ZZ^nFacet, 0);
+   result = (matrix {{1..nFacet}}) || result;
+   result = (transpose matrix {{0..nVert}}) | result;
+   result = mutableMatrix result;
+   i := 0;
+   for facet in fP do (
+      for v in facet do (
+         result_(v + 1, i + 1) = 1;
+      );
+      i = i+1;
+   );
+   matrix result
+)

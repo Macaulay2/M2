@@ -11,6 +11,15 @@ vertices Polyhedron := P -> (
    getProperty(P, computedVertices)
 )
 
+--   INPUT : '(P,Q)'  two Polyhedra
+--  OUTPUT : 'true' or 'false'
+isFace(Polyhedron,Polyhedron) := (P,Q) -> (
+   -- Checking if the two polyhedra lie in the same space and computing the dimension difference
+   CP := getProperty(P, underlyingCone);
+   CQ := getProperty(Q, underlyingCone);
+   isFace(CP, CQ)
+)
+
 
 -- PURPOSE : Tests if a Polyhedron is empty
 --   INPUT : 'P'  a Polyhedron

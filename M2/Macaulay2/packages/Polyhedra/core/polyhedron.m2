@@ -17,43 +17,11 @@ interiorLatticePoints Polyhedron := (cacheValue symbol interiorLatticePoints)(P 
 
 
 
--- PURPOSE : Computing the vertex-edge-matrix of a polyhedron
---   INPUT : 'P',  a polyhedron
---  OUTPUT : a matrix, where the columns are indexed by the edges and the rows indexed by the vertices and has 1 as entry
---           if the corresponding edge contains this vertex
-vertexEdgeMatrix = method(TypicalValue => Matrix)
-vertexEdgeMatrix Polyhedron := P -> (
-     -- list the edges and the vertices
-     eP := apply(faces(dim P -1,P),f -> (
-	       f = vertices f;
-	       set apply(numColumns f, i -> f_{i})));
-     vp := vertices P;
-     vp = apply(numColumns vp, i -> vp_{i});
-     d := #vp;
-     n := #eP;
-     -- Generate the matrix with indeces in the first row and column and for every edge add two 1's in the corresponding column
-     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp,v -> apply(eP,e -> if e#?v then 1 else 0))))
 
 
 
 
 
--- PURPOSE : Computing the vertex-facet-matrix of a polyhedron
---   INPUT : 'P',  a polyhedron
---  OUTPUT : a matrix, where the columns are indexed by the facets and the rows are indexed by the vertices and has 1 as entry
---           if the corresponding facet contains this vertex
-vertexFacetMatrix = method(TypicalValue => Matrix)
-vertexFacetMatrix Polyhedron := P -> (
-     -- list the facets and the vertices
-     fP := apply(faces(1,P),f -> (
-	       f = vertices f; 
-	       set apply(numColumns f, i -> f_{i})));
-     vp := vertices P;
-     vp = apply(numColumns vp, i -> vp_{i});
-     d := #vp;
-     n := #fP;
-     -- Generate the matrix with indeces in the first row and column and for every facet add 1's in the corresponding column
-     transpose matrix {toList(0..d)} | ( matrix {toList(1..n)} || matrix apply(vp, v -> apply(fP,f -> if f#?v then 1 else 0))))
 
 --   INPUT : 'P'  a Polyhedron
 --  OUTPUT : 'true' or 'false'
@@ -245,17 +213,6 @@ boundaryMap (ZZ,Polyhedron) := (i,P) -> (
 			      (-1)^(k*l + sum l3 - substitute((l^2-l)/2,ZZ))) else 0)))))
 
 
---   INPUT : '(P,Q)'  two Polyhedra
---  OUTPUT : 'true' or 'false'
-isFace(Polyhedron,Polyhedron) := (P,Q) -> (
-     -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-     c := dim Q - dim P;
-     if ambDim(P) == ambDim(Q) and c >= 0 then (
-	  -- Checking if P is the empty polyhedron
-	  if c > dim Q then true
-	  -- Checking if one of the codim 'c' faces of Q is P
-	  else any(faces(c,Q), f -> f === P))
-     else false)
 
 
 
