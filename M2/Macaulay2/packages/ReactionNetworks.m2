@@ -23,7 +23,7 @@ export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes",
     "ParameterRing", "NullSymbol", "NullIndex", "ReactionGraph",
     "stoichiometricSubspace", 
     "steadyStateEquations", "conservationEquations", 
-    "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF"
+    "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF", "kk"
     }
 exportMutable {}
 
@@ -84,16 +84,19 @@ NN.ReactionGraph
 NN.ParameterRing
 ///
 
-parameterRing = method()
-parameterRing ReactionNetwork := Rn -> (
+
+createParameterRing = method()
+createParameterRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     kk := symbol kk; 
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    K := QQ[rates];
-    kk = gens K;
-    C := apply(Rn.Species,a->(a,0));
-    xx := symbol xx;
-    RING := K[apply(C,i->xx_(first i))];
-    Rn.ParameterRing = RING
+    Rn.ParameterRing = FF[rates];
+    kk = gens Rn.ParameterRing;
+    Rn.ParameterRing
+--    C := apply(Rn.Species,a->(a,0));
+--    xx := symbol xx;
+--    RING := K[apply(C,i->xx_(first i))];
+--    Rn.ParameterRing = RING;
+--    Rn.ParameterRing
     )
 
 addSpecies = method()
@@ -143,7 +146,7 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
-    Rn.ParameterRing = parameterRing Rn;
+    Rn.ParameterRing = createParameterRing(Rn, QQ);
     remove(Rn,Ring); -- remove the ring, if cached
     )
 
@@ -299,10 +302,10 @@ steadyStateEquations = method()
 steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
 steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
-    kk := symbol kk; 
-    rates := apply(edges N.ReactionGraph, e->kk_e);
-    K := FF[rates];
-    kk = gens K;
+--    kk := symbol kk; 
+--    rates := apply(edges N.ReactionGraph, e->kk_e);
+--    K := FF[rates];
+    kk := gens N.ParameterRing;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
@@ -318,7 +321,7 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 		)  
 	    ));
     xx := symbol xx;
-    RING := K[apply(C,i->xx_(first i))];
+    RING := N.ParameterRing[apply(C,i->xx_(first i))];
     xx = gens RING;
     F := for i in C list (
 	(a,af) := i;
@@ -337,7 +340,7 @@ restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 F = steadyStateEquations CRN
-steadyStateEquations (CRN, ZZ/2)
+steadyStateEquations CRN
 netList F
 ///
 
@@ -349,15 +352,15 @@ conservationEquations = method()
 conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- K is the parameter ring
-    kk := symbol kk; 
-    rates := apply(edges N.ReactionGraph, e->kk_e);
+--    kk := symbol kk; 
+--    rates := apply(edges N.ReactionGraph, e->kk_e);
     S := stoicSubspaceKer N;
-    K := FF[rates];
-    kk = gens K;
+--    K := FF[rates];
+--    kk = gens K;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     xx := symbol xx;
-    RING := K[apply(C,i->xx_(first i))];
+    RING := N.ParameterRing[apply(C,i->xx_(first i))];
     xx = gens RING;
     M := matrix{xx};
     -- P := genericMatrix(K, cc_1, 1, numcols S);
