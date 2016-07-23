@@ -19,7 +19,6 @@ load "./helpers.m2"
 
 -- Methods declarations for methods defined for several objects, but not all of polyhedraHash
 load "./declarations.m2"
-load "./faceBuilders.m2"
 
 -- Core
 load "./core/polyhedraHash.m2"
@@ -67,7 +66,7 @@ load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
--- load "./tests/legacy_tests.m2"
+load "./tests/legacy_tests.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
@@ -79,12 +78,16 @@ restart
 loadPackage "Polyhedra"
 check "Polyhedra"
 
-restart
-loadPackage "Polyhedra"
 
 
 restart
 loadPackage "Polyhedra"
+P = convexHull matrix {{0,-1,1,-1,1},{0,-1,-1,1,1},{-1,1,1,1,1}};
+vertexEdgeMatrix P
+M = matrix {{0,1,2,3,4,5,6,7,8},{1,1,1,0,1,1,0,0,0},{2,1,0,1,0,0,0,1,0},{3,0,0,0,1,0,1,1,0},{4,0,1,1,0,0,0,0,1},{5,0,0,0,0,1,1,0,1}};
+
+
+
 P = convexHull matrix {{0,-1,1,0,0,1,-1},{0,0,0,1,-1,-1,1}};
 P = bipyramid P;
 

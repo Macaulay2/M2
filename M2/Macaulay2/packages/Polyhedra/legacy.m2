@@ -152,57 +152,6 @@ areCompatible(Polyhedron,Polyhedron) := (P1,P2) -> (
      else (false,emptyPolyhedron(ambDim(P1))))
 
 
--- PURPOSE : Compute the dual face lattice
-dualFaceLattice = method(TypicalValue => List)
-
---   INPUT : '(k,P)',  where 'k' is an integer between 0 and dim 'P' where P is a Polyhedron
---  OUTPUT :  a list, where each entry gives a face of 'P' of dim 'k'. Each entry is a list
--- 	      of the positions of the defining halfspaces
-dualFaceLattice(ZZ,Cone) := (k,C) -> (
-     L := faceBuilderCone(dim C - k,C);
-     HS := halfspaces C;
-     HS = apply(numRows HS, i -> HS^{i});
-     apply(L, l -> positions(HS, hs -> all(toList l, v -> hs*v == 0))))
-
-
-dualFaceLattice(ZZ,Polyhedron) := (k,P) -> (
-     L := faceBuilder(dim P - k,P);
-     HS := halfspaces P;
-     HS = apply(numRows HS#0, i -> ((HS#0)^{i},(HS#1)^{i}));
-     apply(L, l -> (
-	       l = (toList l#0,toList l#1);
-	       positions(HS, hs -> (all(l#0, v -> (hs#0)*v - hs#1 == 0) and all(l#1, r -> (hs#0)*r == 0))))))
-
---   INPUT : 'P',  a Polyhedron
---  OUTPUT :  a list, where each entry is dual face lattice of a certain dimension going from 0 to dim 'P'
-dualFaceLattice Polyhedron := P -> apply(dim P + 1, k -> dualFaceLattice(dim P - k,P))
-
-dualFaceLattice Cone := C -> apply(dim C + 1, k -> dualFaceLattice(dim C - k,C))
-
-faceLattice = method(TypicalValue => List)
-faceLattice(ZZ,Polyhedron) := (k,P) -> (
-     L := faceBuilder(k,P);
-     V := vertices P;
-     R := rays P;
-     V = apply(numColumns V, i -> V_{i});
-     R = apply(numColumns R, i -> R_{i});
-     apply(L, l -> (
-	       l = (toList l#0,toList l#1);
-	       (sort apply(l#0, e -> position(V, v -> v == e)),sort apply(l#1, e -> position(R, r -> r == e))))))
-
-faceLattice(ZZ,Cone) := (k,C) -> (
-     L := faceBuilderCone(k,C);
-     R := rays C;
-     R = apply(numColumns R, i -> R_{i});
-     apply(L, l -> sort apply(toList l, e -> position(R, r -> r == e))))
-
-
-faceLattice Polyhedron := P -> apply(dim P + 1, k -> faceLattice(dim P - k,P))
-
-
-faceLattice Cone := C -> apply(dim C + 1, k -> faceLattice(dim C - k,C))
-
-
 faceOf = method(TypicalValue => PolyhedraHash)
 faceOf Polyhedron := (cacheValue symbol faceOf)( P -> P)
   	  
