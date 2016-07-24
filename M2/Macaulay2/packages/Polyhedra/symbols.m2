@@ -63,5 +63,6 @@ export {
    "pure",  -- is the fan of pure dimension?
    "honestMaxObjects",  -- maximal cones as honest cones
    "computedComplete",  -- is the fan complete?
-   "smoothCones"  -- smooth cones of fan as list of index lists
+   "smoothCones",  -- smooth cones of fan as list of index lists
+   "polytopal" -- Is the fan the normal fan of a polytope?
 }

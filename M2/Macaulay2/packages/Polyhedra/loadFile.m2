@@ -60,13 +60,14 @@ load "./tests/core/fan_basics.m2"
 load "./tests/core/tests_from_polymake/fvector.m2"
 load "./tests/core/tests_from_polymake/hilbert_basis.m2"
 load "./tests/core/tests_from_polymake/lattice_points.m2"
+load "./tests/core/tests_from_polymake/normal_fan.m2"
 
 load "./tests/extended/polyhedron.m2"
 load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
-load "./tests/legacy_tests.m2"
+-- load "./tests/legacy_tests.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
@@ -78,9 +79,24 @@ restart
 loadPackage "Polyhedra"
 check "Polyhedra"
 
-
-
 restart
+loadPackage "Polyhedra"
+verticesP = matrix {{0,-2/3,1/3,-1/3,1/3,-1/3,2/3},{0,-2/3,1/3,-1/3,1/3,-1/3,2/3},{0,1/3,-2/3,-1/3,1/3,2/3,-1/3},{0,1/3,-2/3,-1/3,1/3,2/3,-1/3},{0,1/3,1/3,2/3,1/3,2/3,2/3},{0,1/3,1/3,2/3,-2/3,-1/3,-1/3},{0,1/3,1/3,2/3,-2/3,-1/3,-1/3}};
+raysP = matrix {{0,1,-1,1,0,0,1,1,0,1,1,1,0,0},{0,1,1/2,-2,0,0,1,1,1,0,1,1,0,0},{0,-2,1/2,1,0,1,1,1,0,0,1,1,0,0},{0,1,1/2,1,1,0,-2,1,0,0,1,1,0,0},{0,1,1/2,1,0,0,1,1,0,0,1,-2,1,0},{0,1,1/2,1,0,0,1,-2,0,0,1,1,0,1},{1,1,1/2,1,0,0,1,1,0,0,-2,1,0,0}};
+linealityP = map(QQ^7, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = matrix {{0,1,1,0,1,0,0,1,1,1,1,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0},{1,0,0,1,0,1,0,1,1,1,1,1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,1},{0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,1,0,1,1,0,0,1,1,1,0,0,1,1,0,0},{0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,0,0,1,1,1,0,0,1,1,0,0,0,1,1,0,0,1,1},{0,0,1,1,1,1,1,0,0,1,0,0,1,0,0,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0},{1,1,0,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0},{1,1,1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,0,0,0,0,1,1,1,1}};
+linealitydesired = map(QQ^7, QQ^0, 0);
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {{2,3,4,5,15,16,17,18,23,24,25,26,27,28,29,30,31,32,33,34},{2,3,4,5,7,8,9,10,11,15,16,17,18,27,28,29,30,31,32,33,34},{12,13,14,15,16,17,18,19,20,23,24,25,26,27,28,29,30,31,32,33,34},{7,8,13,14,15,16,17,18,27,28,29,30,31,32,33,34},{0,1,2,3,4,5,6,21,22,23,24,25,26,27,28,29,30,31,32,33,34},{0,1,2,3,4,5,10,11,27,28,29,30,31,32,33,34},{19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34}};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+
 loadPackage "Polyhedra"
 P = convexHull matrix {{0,-1,1,-1,1},{0,-1,-1,1,1},{-1,1,1,1,1}};
 vertexEdgeMatrix P

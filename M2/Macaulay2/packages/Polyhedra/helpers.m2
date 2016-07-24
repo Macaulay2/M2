@@ -32,6 +32,23 @@ rayCorrespondenceMap(Matrix, Matrix) := (sources, targets) -> (
    rayCorrespondenceMap(sources, map(r^(numRows sources), r^0, 0), targets)
 )
 
+export{
+   "rayCorrespondenceMap"
+}
+
+pointInSameDirection = method()
+pointInSameDirection(Matrix, Matrix, Matrix) := (v1, v2, lineality) -> (
+   if numColumns v1 != 1 then error("v1 not a vector");
+   if numColumns v2 != 1 then error("v2 not a vector");
+   r := rank lineality;
+   if numColumns lineality != r then error("Not a basis of lineality");
+   if rank(v1 | lineality) == r then error("v1 is lineality");
+   if rank(v2 | lineality) == r then error("v2 is lineality");
+   testmat := v1 | -v2 | lineality;
+   K := generators kernel testmat;
+   K_(0,0) * K_(1,0) > 0
+)
+
 rayCorrespondenceMap(Matrix, Matrix, Matrix) := (sources, lineality, targets) -> (
    L := for i from 0 to (numColumns sources -1) list (
       source := sources_{i};
@@ -41,7 +58,10 @@ rayCorrespondenceMap(Matrix, Matrix, Matrix) := (sources, lineality, targets) ->
             target := targets_{j};
             -- << target << endl;
             -- << rank(source | target | lineality) == lr + 1 << endl;
-            (rank(source | target | lineality) == lr + 1) and scalarProduct(source, target) > 0
+            sameAffineSpace := (rank(source | target | lineality) == lr + 1);
+            if not sameAffineSpace then return false;
+            sameDirection := pointInSameDirection(source, target, lineality);
+            sameAffineSpace and sameDirection
          )
       );
       if #corresponding == 1 then i=>corresponding#0

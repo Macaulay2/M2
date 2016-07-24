@@ -3,10 +3,40 @@ compute#Fan#smooth Fan := F -> (
    R := rays F;
    L := transpose linealitySpace F;
    MC := maxCones F;
-   MC = apply(MC,
-      m -> R_m
-   );
+   MC = apply(MC, m -> R_m);
    all(MC, r -> spanSmoothCone(transpose r, L))
+)
+
+compute#Fan#simplicial = method()
+compute#Fan#simplicial Fan := F -> (
+   if hasProperty(F, honestMaxObjects) then (
+      mc := getProperty(F, honestMaxObjects);
+      return all(mc, cone -> isSimplicial cone)
+   );
+   R := rays F;
+   L := linealitySpace F;
+   MC := maxCones F;
+   MC = apply(MC, m -> R_m);
+   all(MC, 
+      r -> (
+         testmat := r | L;
+         (numColumns testmat) == (rank testmat)
+      )
+   )
+)
+
+compute#Fan#pure = method()
+compute#Fan#pure Fan := F -> (
+   d := dim F;
+   if hasProperty(F, honestMaxObjects) then (
+      mc := getProperty(F, honestMaxObjects);
+      return all(mc, cone -> (dim cone) == d)
+   );
+   R := rays F;
+   L := linealitySpace F;
+   MC := maxCones F;
+   MC = apply(MC, m -> R_m);
+   all(MC, r -> d == (rank (r | L)))
 )
 
 compute#Fan#computedDimension = method()

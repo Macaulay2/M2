@@ -210,7 +210,10 @@ compute#Cone#computedRays Cone := C -> (
 
 compute#Cone#simplicial = method()
 compute#Cone#simplicial Cone := C -> (
-   (isPointed C) and (numColumns rays C == dim C)
+   R := rays C;
+   L := linealitySpace C;
+   testmat := R | L;
+   (numColumns testmat) == (rank testmat)
 )
 
 

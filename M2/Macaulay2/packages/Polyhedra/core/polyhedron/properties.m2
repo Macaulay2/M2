@@ -133,6 +133,8 @@ compute#Polyhedron#computedFacets Polyhedron := P -> (
    result := facets C;
    -- Elimination of the trivial half-space
    ezero := matrix {flatten {1 , toList (((numgens source result)-1):0)}};
+   r := ring result;
+   ezero = promote(ezero, r);
    trivialIndex := positions(0..(numRows result)-1, i -> (ezero === result^{i} ));
    if #trivialIndex > 0 then (
       trivialIndex = trivialIndex#0;
@@ -197,6 +199,7 @@ compute#Polyhedron#computedNormalFan Polyhedron := P -> (
    linealitySpaceNF := transpose((hyperplanes P)#0);
    result := fan(raysNF, linealitySpaceNF, maximalConesNF);
    setProperty(result, computedPolytope, P);
+   setProperty(result, polytopal, true);
    result
 )
 

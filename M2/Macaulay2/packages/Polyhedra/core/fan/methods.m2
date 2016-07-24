@@ -37,3 +37,6 @@ smoothSubfan Fan := F -> (
    };
    fan result
 )
+
+isPolytopal = method(TypicalValue => Boolean)
+isPolytopal Fan := F -> getProperty(F, polytopal)
