@@ -15,7 +15,7 @@ C = posHull matrix {{1,0,0},{0,-1,1}}
 assert(dim C == 2)
 assert(ambDim C == 2)
 assert(not isPointed C)
-assert(not isSimplicial C)
+assert(isSimplicial C)
 D = dualCone C
 assert(not isFullDimensional D)
 assert(isSmooth C)
