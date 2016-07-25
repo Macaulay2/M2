@@ -223,3 +223,104 @@ assert(isPure computed)
 assert(isSimplicial computed)
 assert(isComplete computed)
 ///
+
+
+-- Test ambDim: 6, dim: 5, nvert: 6
+-- Checking normal_fan + several booleans
+TEST ///
+verticesP = matrix {{-5,-5,0,0,5,6},{0,6,-5,5,-5,0},{-5,0,6,-5,0,5},{6,5,0,0,-5,-5},{0,-5,5,-5,6,0},{5,0,-5,6,0,-5}};
+raysP = map(QQ^6, QQ^0, 0);
+linealityP = map(QQ^6, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = matrix {{1,-1,1,-1,-1,1},{-21/211,-231/232,1281/5,-1176/1171,210,105/1276},{-20/211,121/1160,22,-121/1171,-22,25/319},{1176/1055,-105/116,21,-1281/1171,-21,105/116},{1/211,-211/232,232,-1276/1171,1171/5,-5/1276},{0,0,0,0,0,0}};
+linealitydesired = matrix {{1},{1},{1},{1},{1},{1}};
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {{1,2,3,4,5},{0,1,3,4,5},{0,2,3,4,5},{0,1,2,4,5},{0,1,2,3,5},{0,1,2,3,4}};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+assert(isPolytopal computed)
+assert(not isSmooth computed)
+assert(isPure computed)
+assert(isSimplicial computed)
+assert(isComplete computed)
+///
+
+-- Test ambDim: 4, dim: 3, nvert: 6
+-- Checking normal_fan + several booleans
+TEST ///
+verticesP = matrix {{0,0,0,1,1,1},{1,1,1,0,0,0},{1,1,2,1,1,2},{1,2,1,1,2,1}};
+raysP = map(QQ^4, QQ^0, 0);
+linealityP = map(QQ^4, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = matrix {{0,1,-1,0,0},{0,0,0,0,0},{1,0,0,0,-1},{0,0,0,1,-1}};
+linealitydesired = matrix {{1},{1},{0},{0}};
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {{0,1,3},{0,1,4},{1,3,4},{0,2,3},{0,2,4},{2,3,4}};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+assert(isPolytopal computed)
+assert(isSmooth computed)
+assert(isPure computed)
+assert(isSimplicial computed)
+assert(isComplete computed)
+///
+
+-- Test ambDim: 5, dim: 4, nvert: 10
+-- Checking normal_fan + several booleans
+TEST ///
+verticesP = matrix {{0,0,0,1,1,0,0,0,1,1},{0,0,1,0,1,0,1,1,0,0},{0,1,1,0,0,1,0,0,0,1},{1,1,0,0,0,0,0,1,1,0},{1,0,0,1,0,1,1,0,0,0}};
+raysP = map(QQ^5, QQ^0, 0);
+linealityP = map(QQ^5, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = matrix {{0,0,1,1,0,0,-1,0,0,-1},{1,0,0,1,0,-1,0,0,0,-1},{0,-1,0,1,0,0,0,1,0,-1},{0,0,0,1,-1,0,0,0,1,-1},{0,0,0,0,0,0,0,0,0,0}};
+linealitydesired = matrix {{1},{1},{1},{1},{1}};
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {{0,2,3,4,7},{0,1,2,4,9},{1,2,5,8,9},{0,3,6,7,8},{5,6,7,8,9},{0,1,2,3,8},{2,3,5,7,8},{2,4,5,7,9},{0,4,6,7,9},{0,1,6,8,9}};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+assert(isPolytopal computed)
+assert(not isSmooth computed)
+assert(isPure computed)
+assert(not isSimplicial computed)
+assert(isComplete computed)
+///
+
+-- Test ambDim: 3, dim: 3, nvert: 44
+-- Checking normal_fan + several booleans
+TEST ///
+verticesP = matrix {{10,10,9,8,7,6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6,-7,-8,-9,0,1,-1,2,-2,3,-3,4,-4,5,-5,6,-6,7,-7,8,-8,9,-9,-10,-10,0,0},{1,1,81/100,16/25,49/100,9/25,1/4,4/25,9/100,1/25,1/100,0,1/100,1/25,9/100,4/25,1/4,9/25,49/100,16/25,81/100,0,1/100,1/100,1/25,1/25,9/100,9/100,4/25,4/25,1/4,1/4,9/25,9/25,49/100,49/100,16/25,16/25,81/100,81/100,1,1,30,30},{-10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,-10,10,-10,10,-10}};
+raysP = map(QQ^3, QQ^0, 0);
+linealityP = map(QQ^3, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = matrix {{0,1,1,1,1,1,1,1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,-1,-1},{0,100/19,100/17,20/3,100/13,100/11,100/9,100/7,20,100/3,100,-10/29,100,100/3,20,100/7,100/9,100/11,100/13,20/3,100/17,0,-10/29,100/19},{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0}};
+linealitydesired = map(QQ^3, QQ^0, 0);
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {{0,22,23},{21,22,23},{20,21,23},{19,20,21},{18,19,21},{17,18,21},{16,17,21},{15,16,21},{14,15,21},{13,14,21},{12,13,21},{10,12,21},{9,10,21},{8,9,21},{7,8,21},{6,7,21},{5,6,21},{4,5,21},{3,4,21},{2,3,21},{1,2,21},{0,10,12},{0,12,13},{0,9,10},{0,13,14},{0,8,9},{0,14,15},{0,7,8},{0,15,16},{0,6,7},{0,16,17},{0,5,6},{0,17,18},{0,4,5},{0,18,19},{0,3,4},{0,19,20},{0,2,3},{0,20,23},{0,1,2},{1,11,21},{0,1,11},{11,21,22},{0,11,22}};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+assert(isPolytopal computed)
+assert(not isSmooth computed)
+assert(isPure computed)
+assert(isSimplicial computed)
+assert(isComplete computed)
+///

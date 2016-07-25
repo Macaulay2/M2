@@ -68,3 +68,28 @@ P = convexHull(verticesP)
 computedLP = sort matrix {latticePoints P};
 assert(desiredLP == computedLP);
 ///
+
+-- Test ambDim: 2, dim: -1, nvert: 0
+-- Checking normal_fan + several booleans
+TEST ///
+verticesP = map(QQ^2, QQ^0, 0);
+raysP = map(QQ^2, QQ^0, 0);
+linealityP = map(QQ^2, QQ^0, 0);
+verticesP = promote(verticesP, QQ);
+raysP = promote(raysP, QQ);
+linealityP = promote(linealityP, QQ);
+P = convexHull(verticesP,raysP,linealityP);
+raysdesired = map(QQ^2, QQ^0, 0);
+linealitydesired = map(QQ^2, QQ^0, 0);
+raysdesired = promote(raysdesired, QQ);
+linealitydesired = promote(linealitydesired, QQ);
+maxConesdesired = {};
+desired = fan (raysdesired ,linealitydesired ,maxConesdesired);
+computed = normalFan P;
+assert(computed == desired)
+assert(isPolytopal computed)
+assert(isSmooth computed)
+assert(isPure computed)
+assert(isSimplicial computed)
+assert(isComplete computed)
+///
