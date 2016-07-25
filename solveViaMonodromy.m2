@@ -1,6 +1,7 @@
 debug needsPackage "NumericalAlgebraicGeometry"
 debug NAGtypes
 needs(currentFileDirectory | "HomotopyGraphTypes.m2")
+needs(currentFileDirectory | "random_methods.m2")
 -- in: PF, a system of polynomials in a ring of the form CC[parameters][variables]
 --     point0, (as above)
 --     s0, (as above)

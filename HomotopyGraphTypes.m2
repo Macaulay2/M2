@@ -27,9 +27,13 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
             Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
             Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
         };
-    G.Edges = append(G.Edges, E);
+    G.Edges = prepend(E, G.Edges);
     E
 )
+
+drop (HomotopyGraph, HomotopyEdge, ZZ) := (G,E, k) -> (
+    G.Edges = drop(G.Edges, k);
+    )
 
 addCorrespondence = method()
 addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (

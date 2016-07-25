@@ -10,6 +10,17 @@ rp1d = n -> matrix(RR, {drop(flatten apply(ceiling(n/2),i-> (
 	    us = {sqrt(-2* log first us), 2*pi* last us};
 	    {first us * cos last us, first us * sin last us})), sub(mod(n,2),ZZ))})
 
+-- samples from a Poisson(x) distribution (use for x<= 30)
+pois = x -> (
+    (L,k,p) := (exp(-x), 0, 1);
+    while p > L do (
+	k = k+1;
+	u := random(sub(0,RR), sub(1,RR));
+	p = p * u;
+	);
+    k-1
+    )
+
 RPAssembly = new Type of MutableHashTable
 
 rPAssembly = method(TypicalValue => RPAssembly, Options => {MaxLoad=>10})
@@ -70,8 +81,8 @@ insert (Point, RPArray, RPAssembly) := (p, A, S) -> (
 		    	collision = true;
 		    	d = d+1;
 		    	)))
-	    else if comp == symbol > then right = mid -1;
-	    else left = mid +1;
+	    else if comp == symbol > then right = mid -1
+	    else left = mid +1
 	    );
 	);
     )
