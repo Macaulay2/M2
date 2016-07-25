@@ -3,7 +3,7 @@ needs "../code/solveViaMonodromy.m2"
 needs "cyclic.m2"
 plugin'c0 = map(R,AR,vars R | matrix c0) -- the actual polynomial system we solve
 apply(polysP,p->plugin'c0 p) 
-stop = (n,L)->n>10
+stop = (n,L)->n>3
 getDefault Software
 {*
 setDefault(Software=>PHCPACK)
@@ -21,9 +21,14 @@ for e in E do (
     )
 
 -- other strategies
+elapsedTime sols = randomFlowerStrategy(SP,c0,{pre0},StoppingCriterion=>stop);
 elapsedTime sols = solveViaMonodromy(SP,c0,{pre0},StoppingCriterion=>stop)
 elapsedTime sols = flowerStrategy(SP,c0,{pre0},StoppingCriterion=>stop);
 sols
+
+-- currently not working?
+elapsedTime sols = loopStrategy(SP,c0,{pre0},3,StoppingCriterion=>stop);
+
 
 
 
