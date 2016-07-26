@@ -15,17 +15,22 @@ newPackage(
 -- Any symbols or functions that the user is to have access to
 -- must be placed in one of the following two lists
 
-export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "computeConstants", "certifySolutions", "certifyDistinctSoln"}
+export {"absValue", "hermitianNorm", "oneNorm", "polyNorm", "polySysNorm", "complexToRational", "computeConstants", "certifySolutions", "certifyDistinctSoln"}
 exportMutable {}
 
 absValue = method()
 absValue ZZ := abs
+absValue QQ := abs
+absValue RR := abs
+absValue CC := abs
 absValue(RingElement) := r -> (
     R := ring(r);
     LT := leadTerm(sub(r,R));
     VV := leadCoefficient(LT)^2 + (sub(r,R)-LT)^2;
     sqrt(sub(VV,RR))
     )
+
+
 
 hermitianNorm = method()
 hermitianNorm(Point) := x -> (
@@ -51,6 +56,32 @@ polySysNorm(PolySystem) := f -> (
     listOfEq := equations f;
     listOfpolyNorms := apply( listOfEq, i -> (polyNorm(i))^2);
     N := sum listOfpolyNorms
+    )
+
+
+
+complexToRational = method()
+complexToRational(ZZ, QuotientRing) := (x,FF) -> (
+    sub(x,FF)
+    )
+complexToRational(QQ, QuotientRing) := (x,FF) -> (
+    sub(x,FF)
+    )
+complexToRational(RR, QuotientRing) := (x,FF) -> (
+    sub(promote(round(37, x),QQ),FF)
+    )
+complexToRational(CC, QuotientRing) := (x,FF) -> (
+    im := promote(round(37, imaginaryPart x),QQ);
+    re := promote(round(37, realPart x),QQ);
+    Gaussian := re + im*((generators FF)#0)
+    )
+complexToRational(List, QuotientRing) := (A, FF) -> (
+    apply(A, a -> complexToRational(a, FF))
+    )
+complexToRational(Matrix, QuotientRing) := (M, FF) -> (
+    entri := entries M;
+    chan := apply(entri, s -> complexToRational(s, FF));
+    matrix chan
     )
 
 
@@ -81,7 +112,8 @@ certifySolutions(PolySystem, Point) := (f, x) -> (
     Consts := computeConstants(f,x);
     if (Consts #0)<((13-3*sqrt(17))/4) then (
 	 print "The point is an approximate solution to the system";
-	 true
+	 print (computeConstants(f, x))#0 ;
+		 true
 	 )
     else (
 	print "The point is not an approximate solution to the system";
