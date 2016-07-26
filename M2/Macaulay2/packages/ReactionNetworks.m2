@@ -20,8 +20,8 @@ newPackage(
 -- must be placed in one of the following two lists
 
 export {"reactionNetwork", "ReactionNetwork", "Species", "Complexes", 
-    "ParameterRing", "NullSymbol", "NullIndex", "ReactionGraph",
-    "stoichiometricSubspace", 
+    "ReactionRing", "NullSymbol", "NullIndex", "ReactionGraph",
+    "stoichiometricSubspace", "createRing", "ParameterRing",
     "steadyStateEquations", "conservationEquations", 
     "laplacian", "FullEdges", "NullEdges", "glue" --, "netComplex", "networkToHRF", "kk"
     }
@@ -68,7 +68,7 @@ reactionNetwork = method(TypicalValue => ReactionNetwork, Options => {NullSymbol
 reactionNetwork String := String => o -> str -> reactionNetwork(separateRegexp(",", str), o)
 reactionNetwork List := String => o -> rs -> (
     Rn := new ReactionNetwork from {Species => {}, Complexes => {}, ReactionGraph => digraph {}, 
-	NullSymbol => o.NullSymbol, NullIndex => -1, ParameterRing => Ring};
+	NullSymbol => o.NullSymbol, NullIndex => -1, ReactionRing => null};
     scan(rs, r -> addReaction(r,Rn));
     Rn
     )
@@ -81,22 +81,21 @@ NN = reactionNetwork("A --> 2B, A + C --> D, D --> 0", NullSymbol => "0")
 NN.Complexes
 NN.NullSymbol
 NN.ReactionGraph
-NN.ParameterRing
+R = createRing(NN, QQ)
 ///
 
-
-createParameterRing = method()
-createParameterRing(ReactionNetwork, Ring) := (Rn, FF) -> (
+-- todo: do we need to duplicate code in first two methods?
+createRing = method()
+createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     kk := symbol kk; 
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
-    Rn.ParameterRing = FF[rates];
-    kk = gens Rn.ParameterRing;
-    Rn.ParameterRing
---    C := apply(Rn.Species,a->(a,0));
---    xx := symbol xx;
---    RING := K[apply(C,i->xx_(first i))];
---    Rn.ParameterRing = RING;
---    Rn.ParameterRing
+    K := FF[rates];
+--    kk = gens Rn.ParameterRing;
+    C := apply(Rn.Species,a->(a,0));
+    xx := symbol xx;
+    RING := K[apply(C,i->xx_(first i))];
+    Rn.ReactionRing = RING;
+    Rn.ReactionRing
     )
 
 addSpecies = method()
@@ -146,8 +145,6 @@ addReaction(String, ReactionNetwork) := (r,Rn) -> (
     else if delim == "<--" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{j,i}})
     else if delim == "<-->" then Rn.ReactionGraph = addEdges'(Rn.ReactionGraph, {{i,j},{j,i}})
     else error "String not in expected format";
-    Rn.ParameterRing = createParameterRing(Rn, QQ);
-    remove(Rn,Ring); -- remove the ring, if cached
     )
 
 
@@ -305,7 +302,7 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 --    kk := symbol kk; 
 --    rates := apply(edges N.ReactionGraph, e->kk_e);
 --    K := FF[rates];
-    kk := gens N.ParameterRing;
+    kk := gens coefficientRing N.ReactionRing;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
@@ -321,8 +318,8 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 		)  
 	    ));
     xx := symbol xx;
-    RING := N.ParameterRing[apply(C,i->xx_(first i))];
-    xx = gens RING;
+    RING := N.ReactionRing;
+    xx = gens N.ReactionRing;
     F := for i in C list (
 	(a,af) := i;
 	sum(R,reaction->(
@@ -339,6 +336,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+createRing(CRN, QQ)
 F = steadyStateEquations CRN
 steadyStateEquations CRN
 netList F
@@ -351,6 +349,7 @@ netList F
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
+    if N.ReactionRing == null then error("You need to invoke createRing(CRN, FF) first!");
     -- K is the parameter ring
 --    kk := symbol kk; 
 --    rates := apply(edges N.ReactionGraph, e->kk_e);
@@ -360,7 +359,7 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     xx := symbol xx;
-    RING := N.ParameterRing[apply(C,i->xx_(first i))];
+    RING := N.ReactionRing;
     xx = gens RING;
     M := matrix{xx};
     -- P := genericMatrix(K, cc_1, 1, numcols S);
@@ -374,6 +373,7 @@ needsPackage "ReactionNetworks"
 needsPackage "Graphs"
 N = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
 peek N
+createRing(N, QQ)
 stoichiometricSubspace N
 CE = conservationEquations N
 SSE = steadyStateEquations N
@@ -383,7 +383,8 @@ J = ideal SSE
 N.ParameterRing
 gens N.ParameterRing
 I+J
-
+ring J === N.ParameterRing
+gens ring J
 -- Why can't I and J be combined?  They appear to be in the same ring...
 -- ideal F
 ///
