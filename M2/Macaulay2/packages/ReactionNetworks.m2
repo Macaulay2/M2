@@ -82,6 +82,7 @@ NN.Complexes
 NN.NullSymbol
 NN.ReactionGraph
 R = createRing(NN, QQ)
+createRing(NN, RR)
 ///
 
 -- todo: do we need to duplicate code in first two methods?
@@ -90,7 +91,16 @@ createRing(ReactionNetwork, Ring) := (Rn, FF) -> (
     kk := symbol kk; 
     rates := apply(edges Rn.ReactionGraph, e->kk_e);
     K := FF[rates];
---    kk = gens Rn.ParameterRing;
+    C := apply(Rn.Species,a->(a,0));
+    xx := symbol xx;
+    RING := K[apply(C,i->xx_(first i))];
+    Rn.ReactionRing = RING;
+    Rn.ReactionRing
+    )
+createRing(ReactionNetwork, InexactFieldFamily) := (Rn, FF) -> (
+    kk := symbol kk; 
+    rates := apply(edges Rn.ReactionGraph, e->kk_e);
+    K := FF[rates];
     C := apply(Rn.Species,a->(a,0));
     xx := symbol xx;
     RING := K[apply(C,i->xx_(first i))];
@@ -176,8 +186,10 @@ restart
 needsPackage "ReactionNetworks"
 NM = reactionNetwork("A <-- 2B, A + C <-- D, B + E --> A + C", NullSymbol => "0")
 NN = reactionNetwork("A --> 2B, A + C --> D, D --> B+E", NullSymbol => "0")
--- add another example with nul symbols
 glue(NM, NN)
+N1 = reactionNetwork("2A --> 0, B --> A, A+C <-- 0", NullSymbol => "0")
+N2 = reactionNetwork("2B --> 0, B+C --> 2A, C <-- 0", NullSymbol => "0")
+glue(N1, N2)
 ///
 
 
@@ -216,8 +228,8 @@ stoichiometricSubspace ReactionNetwork := N -> (
     mingens image M
     )
 
-stoicSubspaceKer = method()
-stoicSubspaceKer := N -> (
+stoichSubspaceKer = method()
+stoichSubspaceKer := N -> (
     C := N.Complexes;
     reactions := apply(edges N.ReactionGraph, e -> C#(last e) - C#(first e));
     M:=reactions#0;
@@ -230,8 +242,6 @@ restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, A+C --> D"
 stoichiometricSubspace CRN
-netList steadyStateEquations CRN
-netList flatten entries laplacian(CRN, QQ)
 ///
 
 concentration = (species,N,R) -> R_(position(N.Species, s->s==species))
@@ -298,10 +308,7 @@ laplacian = (Rn, FF) -> (
 steadyStateEquations = method()
 steadyStateEquations ReactionNetwork := N -> steadyStateEquations(N,QQ)
 steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
-    -- K is the parameter ring
---    kk := symbol kk; 
---    rates := apply(edges N.ReactionGraph, e->kk_e);
---    K := FF[rates];
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     kk := gens coefficientRing N.ReactionRing;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
@@ -336,6 +343,7 @@ TEST ///
 restart
 needsPackage "ReactionNetworks"
 CRN = reactionNetwork "A <--> 2B, A + C <--> D, B + E --> A + C, D --> B+E"
+CRN.ReactionRing
 createRing(CRN, QQ)
 F = steadyStateEquations CRN
 steadyStateEquations CRN
@@ -349,20 +357,14 @@ netList F
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
-    if N.ReactionRing == null then error("You need to invoke createRing(CRN, FF) first!");
-    -- K is the parameter ring
---    kk := symbol kk; 
---    rates := apply(edges N.ReactionGraph, e->kk_e);
-    S := stoicSubspaceKer N;
---    K := FF[rates];
---    kk = gens K;
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    S := stoichSubspaceKer N;
     -- C is a list of pairs (species, input_rate)
     C := apply(N.Species,a->(a,0));
     xx := symbol xx;
     RING := N.ReactionRing;
     xx = gens RING;
     M := matrix{xx};
-    -- P := genericMatrix(K, cc_1, 1, numcols S);
     St := flatten entries (M*S);
     St	  
     )
@@ -380,13 +382,7 @@ SSE = steadyStateEquations N
 F = join (CE, SSE)
 I = ideal CE 
 J = ideal SSE
-N.ParameterRing
-gens N.ParameterRing
 I+J
-ring J === N.ParameterRing
-gens ring J
--- Why can't I and J be combined?  They appear to be in the same ring...
--- ideal F
 ///
 
 

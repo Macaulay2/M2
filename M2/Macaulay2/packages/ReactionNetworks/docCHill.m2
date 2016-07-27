@@ -432,6 +432,7 @@ doc ///
     --"stoichiometricSubspace", 
     --"steadyStateEquations", "conservationEquations", 
     --"laplacian", "FullEdges", "NullEdges" --, "netComplex", "networkToHRF", "glue"
+    --"ReactionRing", "createRing", "ParameterRing",
     		    
  
  
