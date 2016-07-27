@@ -353,3 +353,24 @@ solveViaMonodromyOneLoop (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     ;
     solsList#0
     )
+
+-- ?????????
+-- edge potential function: counts how many new points are obtained at the target node
+-- function definitely needs to be fixed!!!!
+edgePotential = method()
+edgePotential (HomotopyEdge, HomotopyNode) := (E, N) -> (
+    A := N.PartialSols;
+    trackEdge(E, to'a');
+    B := N.PartialSols;
+    New := scan(#B, i -> (
+	    b := B#i;
+	    a := A#i;
+	    if member(b, A) then n := 0  
+	    else (    
+		n = n+1;
+		);
+	    ));
+    << "There are" << n << "new points" 
+    )
+
+
