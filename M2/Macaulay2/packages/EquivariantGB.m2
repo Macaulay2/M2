@@ -26,22 +26,18 @@ export {
      "Symmetrize",
      "Completely",
      "Diagonal",
+     "Buchberger",
      "reduce",
      "OutFile",
      "PrincipalSyzygies",
      "CompleteReduce",
      "exponentMatrix",
-     --for testing
-     "Shift",
-     "shift",
-     "ShiftMonomial",
-     "shiftMonomial",
-     "divWitness",
      --priority queue
      "PriorityQueue",
      "priorityQueue",
      "mergePQ",
-     "deleteMin"
+     "deleteMin",
+     "pop"
      }
 
 protect \ { symbols, varIndices, varTable, varPosTable, semigroup, indexBound, rings, Seed, Extend, Sh, Roots, Min, Value, Children, pos, shM, polynomial, len, degreesList }
@@ -55,8 +51,9 @@ MPair = new Type of HashTable
 
 -- In:
 -- Out: 
-egb = method(Options=>{Symmetrize=>false, OutFile=>null})
+egb = method(Options=>{Symmetrize=>false, OutFile=>null, Strategy=>Buchberger})
 egb (List) := o -> F -> (
+     if o.Strategy == Increment then return egbIncremental F;
      g := o.OutFile;
      n := width ring first F;
      k := 0;
@@ -387,6 +384,7 @@ shiftPairs = (n0,n1,k) -> (
 --     If Extend => false then S = R, otherwise S has index bound equal to the max entry of s -1.
 --     If s#i == -1 then all variables with index i go to 0_S.
 shiftMap = method(Options=>{Extend=>false})
+shiftMap(Ring,List) := o -> (R,L) -> shiftMap(R,shift L,Extend=>o.Extend)
 shiftMap(Ring,Shift) := o -> (R,I) -> (
     I = crop(I,width R);
     S := R;
@@ -413,7 +411,7 @@ symmetrize RingElement := f -> (
      R := ring f;
      is := indexSupport {f};
      IS := select(#is, j->(is#j > 0)); -- list of indices present in f
-     apply(permutations IS, p->((shiftMap(R,p)) f))
+     apply(permutations IS, p->((shiftMap(R,shift p)) f))
      )
 
 
@@ -594,21 +592,55 @@ egbToric = M -> (
      k = lastNewk;
      R = buildERing(R,lastNewk);
      GBtrad := flatten entries sort gens toBinomial(transpose lastNewG, R);
-     seen := new MutableHashTable;
-     GB := select(GBtrad, g -> (
-	       if not seen#?g then (
-	       	    n := width g;
-	       	    shifts := subsets(k,n);
-		    shifts = apply(shifts, s->(s|(toList ((k-n):(-1)))));
-		    --print shiftMap(R,shifts#0);
-	       	    for s in shifts do seen#((shiftMap(R,s))g) = true;
-		    true
-		    )
-	       else false
-	       ));
-     GB
+     minIncGens GBtrad
      )
 
+minIncGens = F -> (
+    n := width F;
+    seen := new MutableHashTable;
+    select(F, g -> (
+	    if not seen#?g then (
+	        for f in incOrbits({g},n) do (seen#f = true; seen#(-1*f) = true);
+		true
+		)
+	    else false
+	    ))
+    )
+
+incOrbits = (F,n) -> (
+    F = apply(F, f->matchRing(f,n));
+    R := ring first F;
+    flatten for f in F list (
+	k := width f;
+	shifts := apply(subsets(n,k), shift);
+	for s in shifts list (shiftMap(R,s))f
+	)
+    )
+
+egbIncremental = method(Options=>{Symmetrize=>false, OutFile=>null})
+egbIncremental(List) := o -> F -> (
+    if #F == 0 then return F;
+    k := width F;
+    lastNewk := k;
+    while 2*lastNewk > k do (
+	F = sort apply(F, f->matchRing(f,k));
+	incF := incOrbits(F,k);
+	incG := flatten entries gens gb ideal incF;
+	G := sort minIncGens incG;
+	if G != F then (
+	    F = G;
+	    lastNewk = k;
+	    );
+	k = k+1;
+	);
+    n := width G;
+    apply(G, g->matchRing(g,n))
+    )
+
+ 
+-----------------------------------------------------
+--Shift and ShiftMonomial for egbSignature
+-----------------------------------------------------
 net Shift := S -> net toList S 
 shift = method()
 shift List := L -> new Shift from L
@@ -693,23 +725,23 @@ Shift * MPair := (I,M) -> mPair(I*M.shM,M.pos,I*M.polynomial)
 width MPair := M -> max {width M.shM, width M.polynomial}
 
 matchRing = method()
-matchRing (RingElement,RingElement) := (p,q) -> (
+matchRing(RingElement,RingElement) := (p,q) -> (
     (R,S) := (p,q)/ring;
     if width R < width S then p = (ringMap(S,R))p;
     if width R > width S then q = (ringMap(R,S))q;
     (p,q)
     )
-matchRing (RingElement,ZZ) := (p,n) -> (
+matchRing(RingElement,ZZ) := (p,n) -> (
     S := buildERing(ring p, n);
-    ringMap(S,ring p)*p
+    (ringMap(S,ring p))p
     )
-matchRing (RingElement,Ring) := (p,S) -> ringMap(S,ring p)*p
+matchRing(RingElement,Ring) := (p,S) -> (ringMap(S,ring p))p
 matchRing List := L -> (
     n := max width@@ring\L;
     apply(L, p->(matchRing(p,n)))
     )
 compare = method()
-compare (RingElement,RingElement) := (p,q) -> (
+compare(RingElement,RingElement) := (p,q) -> (
     (p,q) = matchRing(p,q);
     p ? q
     )
@@ -929,7 +961,7 @@ min PriorityQueue := Q -> if Q.Min === null then null else nValue Q.Min
 deleteMin = method()
 deleteMin (PriorityQueue) := Q -> (
     if Q.Min === null then return null;
-    Q.len = Q.len - 1;
+    l := Q.len;
     m := min Q;
     k := position(toList Q.Roots, r->(r === Q.Min));
     Rroots := (Q.Roots#k).Children;
@@ -940,7 +972,9 @@ deleteMin (PriorityQueue) := Q -> (
     Q.Min = if #Qroots == 0 then null else min toList Qroots;
     deg := position(toList Q.Roots, r->(r =!= null), Reverse=>true);
     Q.Degree = if deg === null then 0 else deg + 1;
-    mergePQ(Q,R)
+    mergePQ(Q,R);
+    Q.len = l-1;
+    Q
     )
 
 pop = method()
@@ -982,7 +1016,9 @@ doc ///
 	  I:List
 	       a list of integers, the number of indices for each variable block
 	  F:Ring
+	       the coefficient ring
 	  n:ZZ
+	       the width bound
      Outputs
           R:Ring
 	       a Ring with coefficient field {\tt F}, and a block of variables for each entry of {\tt X}.
@@ -992,7 +1028,8 @@ doc ///
           Text
 	       For now the monomial order on {\tt R} is always @TO Lex@, with variables ordered from the last
 	       block to the first, with larger indices before smaller indices.  For blocks with multiple indices
-	       the first index is most significant, followed by the second, etc.
+	       the order of the variables is also lexicographic with first index most significant, followed by
+	       the second, etc.
           Example
                R = buildERing({symbol y, symbol x}, {2,1}, QQ, 2)
                vars R
@@ -1063,13 +1100,227 @@ doc ///
 	  The output does not necessarily belong to the same ring as the input.
 ///
 
+-------------------------------------
+-- PriorityQueue
+-------------------------------------
+doc ///
+    Key
+        PriorityQueue
+    Headline
+        an efficient mutable priority queue implementation
+    Description
+        Text
+            A priority queue is a data structure for storing a collection of totally ordered 
+	    objects and keeping track of the minimum. This binomial heap implementation allows 
+	    for efficiently adding a new element to the queue, accessing or deleting the minimum 
+	    element, or merging two queues.  Efficiently means time logarithmic in the size of the
+	    queue, or better.
+    Subnodes
+        priorityQueue
+	(insert,PriorityQueue,Thing)
+	(min,PriorityQueue)
+	deleteMin
+	pop
+	mergePQ
+	(length,PriorityQueue)
+    Description
+        Example
+	    Q = priorityQueue {3,7,1,5}
+	    min Q
+	    deleteMin Q;
+	    insert(Q,2);
+	    min Q
+	    R = priorityQueue {4,6,8};
+	    QR = mergePQ(Q,R);
+	    length QR
+///
+
+doc ///
+    Key
+        priorityQueue
+	(priorityQueue,List)
+    Headline
+        create a new @TO PriorityQueue@
+    Usage
+        Q = priorityQueue()
+        Q = priorityQueue L
+    Inputs
+        L:List
+     	    a list of comparable elements
+    Outputs
+        Q:PriorityQueue
+            a priority queue storing the elements of L
+    Description
+        Example
+            Q = priorityQueue {1,5,2,-3,0}
+            min Q
+///
+
+doc ///
+    Key
+	(min,PriorityQueue)
+    Headline
+        return the minimum element of the queue
+    Usage
+        m = min Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        m:Thing
+            the minimum of {\tt Q}
+    Description
+        Example
+            Q = priorityQueue {1,5,2,-3,0}
+            min Q
+    Caveat
+        If the queue is empty, {\tt null} is returned.
+///
+
+doc ///
+    Key
+	(insert,PriorityQueue,Thing)
+    Headline
+        insert a new element into the queue
+    Usage
+        Q = insert(Q,x)
+    Inputs
+        Q:PriorityQueue
+	x:Thing
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the input, now with a new element inserted
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            insert(Q,0)
+	    insert(Q,4)
+	    min Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by insert.
+	{\tt Q} is also the output of the function.
+///
+
+doc ///
+    Key
+        deleteMin
+	(deleteMin,PriorityQueue)
+    Headline
+        deletes the minimum element of the queue
+    Usage
+        Q = deleteMin Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the input, now with the minimum deleted
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            deleteMin Q
+	    min Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by deleteMin.
+	{\tt Q} is also the output of the function.
+    SeeAlso
+        pop
+///
+
+doc ///
+    Key
+        pop
+	(pop,PriorityQueue)
+    Headline
+        returns the minimum element of the queue and deletes it
+    Usage
+        m = pop Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        m:Thing
+            the minimum element
+    Description
+        Text
+	    pop both returns the minimum element and deletes it from the queue.
+        Example
+            Q = priorityQueue {1,2,3}
+            pop Q
+	    pop Q
+	    pop Q
+	    pop Q
+    Caveat
+        Both {\tt pop Q} and {\tt min Q} return the same value, but Q is altered by pop.
+    SeeAlso
+        (min,PriorityQueue)
+	deleteMin
+///
+
+doc ///
+    Key
+	(length,PriorityQueue)
+    Headline
+        returns the number of elements in the queue
+    Usage
+        n = length Q
+    Inputs
+        Q:PriorityQueue
+    Outputs
+        n:ZZ
+    Description
+        Example
+            Q = priorityQueue {1,2,3}
+            length Q
+	    insert(Q,0)
+	    length Q
+///
+
+doc ///
+    Key
+        mergePQ
+	(mergePQ,PriorityQueue,PriorityQueue)
+    Headline
+        merges two queues
+    Usage
+        Q = mergePQ(Q,R)
+    Inputs
+        Q:PriorityQueue
+	R:PriorityQueue
+    Outputs
+        Q:PriorityQueue
+            the same PriorityQueue as the first input, now with the second merged into it
+    Description
+        Text
+	    The output of the function is the priority queue whose elements are the disjoint union of
+	    the elements of {\tt Q} and {\tt R}.  Note that {\tt Q} is altered in the process to become
+	    the merged queue.
+        Example
+            Q = priorityQueue {2,4,6}
+	    R = priorityQueue {1,3,5}
+            mergePQ(Q,R)
+	    pop Q
+	    pop Q
+    Caveat
+        The priority queue {\tt Q} is mutable and is altered by mergePQ.
+        The elements of {\tt Q} and {\tt R} must be comparable to each other.
+///
+
 undocumented {Symmetrize, Completely, [egb,Symmetrize]}
 
--- TEST ///
--- needs concatenate(EquivariantGB#"source directory","./examples.m2")
--- I = exampleISSAC()
--- assert(toString egb(I,Symmetrize=>true) == toString {x_1*x_0^3, x_1^2*x_0^2, x_1^3*x_0, x_2*x_1*x_0^2, x_2*x_1^2-x_2*x_0^2, x_2^2*x_0-x_1^2*x_0, x_2^2*x_1-x_1*x_0^2})
--- ///
+
+TEST ///
+R = buildERing({symbol x, symbol y}, {1,1}, QQ, 3);
+S = buildERing({symbol z}, {2}, QQ, 3);
+m = buildEMonomialMap(R,S,{x_0*y_1})
+egbToric m
+///
+
+TEST ///
+R = buildERing({symbol x}, {1}, QQ, 2);
+egb({x_0 + x_1}, Strategy=>Increment)
+R = buildERing({symbol x, symbol y}, {1,2}, QQ, 2);
+egb({y_(0,0) - x_0^2, y_(1,0) - x_1*x_0, y_(0,1) - x_0*x_1}, Strategy=>Increment)
+egb({y_(0,1) - x_0^2*x_1, y_(1,0) - x_1^2*x_0}, Strategy=>Increment)
+///
+
 
 end
 
