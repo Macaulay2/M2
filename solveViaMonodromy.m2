@@ -98,11 +98,10 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
     (HG, npaths)
 )    
 
-
-
-twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3)})
+twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3), 
+	SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0))})
 twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
-    HG := homotopyGraph polySystem transpose PF;
+    HG := homotopyGraph(polySystem transpose PF, Potential=>potentialLowerBound);
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
     	
@@ -110,7 +109,7 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     nextP := if o.RandomPointFunction =!= null then o.RandomPointFunction else (
 	    ()->point {apply(#coordinates point0, i->exp(2*pi*ii*random RR))}
     );
-
+   selectEdgeAndDirection := o.SelectEdgeAndDirection;
    --Create the new node
     node2 := addNode(HG, nextP(), pointArray {});
  
@@ -119,16 +118,15 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     npaths := 0;
     E := apply(nedges, i -> addEdge(HG, node1, node2));
     while not o.StoppingCriterion(same,null) do (
-	e := E#(random nedges);
-	<< "Correspondences are " << keys e.Correspondence12 << " and " << keys e.Correspondence21  << endl;
-        --Track to the new node
-    	from1to2 := (random 2 == 0);
-	inc := trackEdge(e, from1to2);
-        npaths = npaths + inc;
+	(e, from1to2) := selectEdgeAndDirection(HG);
+	<< "Correspondences are " << (keys e.Correspondence12 , e.Potential12) << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
+	<< "Direction is " << from1to2 << endl;
+	trackedPaths := trackEdge(e, from1to2);
+        npaths = npaths + trackedPaths;
         << "  node1: " << #(node1.PartialSols) << endl;
         << "  node2: " << #(node2.PartialSols) << endl;    	
-        << "inc " << inc << endl; 
-        if inc == 0 then same = same + 1 else same = 0; 
+        << "trackedPaths " << trackedPaths << endl; 
+        if trackedPaths == 0 then same = same + 1 else same = 0; 
     );
     (HG, npaths)
 )    
@@ -156,13 +154,13 @@ loopStrategy (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nodecount) -> (
     same := 0;
     nSols := #s0;
     while not o.StoppingCriterion(same,null) do (
-        inc := 0;
+        trackedPaths := 0;
         for i from 0 to #(HG.Vertices) - 1 do (
             node1 := HG.Vertices#i;
             node2 := HG.Vertices#((i+1)%(#HG.Vertices));
             e := addEdge(HG, node1, node2);
-            inc = inc + trackEdge(e, true);
-            npaths = npaths + inc;
+            trackedPaths = trackedPaths + trackEdge(e, true);
+            npaths = npaths + trackedPaths;
             << "  node1: " << #(node1.PartialSols) << endl;
             << "  node2: " << #(node2.PartialSols) << endl;    	
             << "npaths " << npaths << endl; 

@@ -28,6 +28,10 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
             Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
         };
     G.Edges = prepend(E, G.Edges);
+    if G.Potential =!= null then (	
+    	E.Potential12 = G.Potential (E, true);
+    	E.Potential21 = G.Potential (E, false);
+    	);
     E
 )
 
@@ -41,7 +45,7 @@ addCorrespondence (HomotopyEdge,ZZ,ZZ) := (e,a,b) -> (
     e.Correspondence21#b = a;
     )
 
-homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport"})
+homotopyGraph = method(TypicalValue => HomotopyGraph, Options => {Family=>"IdSupport", Potential=>null})
 installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 	Vertices => new MutableList from {},
 	Edges => new MutableList from {}
@@ -49,6 +53,7 @@ installMethod(homotopyGraph, o -> ()-> new HomotopyGraph from {
 homotopyGraph PolySystem := o -> PF -> (
     G := homotopyGraph();
     G.Family = PF;
+    G.Potential = o.Potential;
     G
     )
 
@@ -66,14 +71,38 @@ toSystem (HomotopyGraph, Point, Matrix) := (G, p, M) -> (
     flatten entries (map(R,PR,X|matrix p)) PF
     )
 
+potentialLowerBound = (e,from1to2) -> (
+        if from1to2 then (
+	(head, tail) := (e.Node1, e.Node2);
+	correspondence := e.Correspondence12;
+	correspondence' := e.Correspondence21;
+	)
+    else  (
+	(head, tail) = (e.Node2, e.Node1);
+	correspondence = e.Correspondence21;
+	correspondence' = e.Correspondence12;
+	);
+    n1 := #(keys head.PartialSols - set keys correspondence);
+    n2 := #(keys tail.PartialSols - set keys correspondence');
+    max(n1-n2, 0)
+    ) 
+
+selectBestEdgeAndDirection = G -> (
+    m1 := maxPosition(apply(G.Edges, e -> e.Potential12));
+    m2 := maxPosition(apply(G.Edges, e -> e.Potential21));
+    if (G.Edges#m1).Potential12 < (G.Edges#m2).Potential21 then (G.Edges#m2, false)
+    else (G.Edges#m1, true)
+    )
+
 -- prototype for edge tracking function
 -- assumptions: 1) member function is working/optimized for PointAray objects 2) toSystem method
 -- which converts parametric coefficients to a list of polynomials (inputs to track),
 -- 3) positions method defined for pointset object
 -- Output: 
 trackEdge = method()
-trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
-    if one'to'two then (
+trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
+    G := e.Graph;
+    if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
 	(gammaHead, gammaTail) :=  (e.gamma1, e.gamma2);
 	correspondence := e.Correspondence12;
@@ -96,7 +125,9 @@ trackEdge (HomotopyEdge, Boolean) := (e, one'to'two) -> (
 		b = n;
 		n = n+1;
 		);
-	    addCorrespondence(if one'to'two then (e,a,b) else (e,b,a))
+	    addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 	    ));
+    e.Potential12 = G.Potential (e, true);
+    e.Potential21 = G.Potential (e, false);
     #untrackedInds
     )
