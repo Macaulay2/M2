@@ -61,7 +61,7 @@ compute#Polyhedron#computedDimension Polyhedron := P -> (
 compute#Polyhedron#computedLinealityBasis = method()
 compute#Polyhedron#computedLinealityBasis Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
-   result := linealitySpace C;
+   result := promote(linealitySpace C, QQ);
    test := all(0..(numColumns result - 1), i-> result_i_0 == 0);
    if not test then error("Something went wrong while computing linealitySpace.");
    submatrix(result, 1..(numRows result -1), 0..(numColumns result - 1))

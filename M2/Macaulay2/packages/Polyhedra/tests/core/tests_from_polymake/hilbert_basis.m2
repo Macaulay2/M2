@@ -6,7 +6,7 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1},{0,0,0,0,0,1,1,1,1},{0,0,0,1,1,0,0,0,1},
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test gc_closure/3-0.poly
@@ -16,7 +16,7 @@ raysC = matrix {{1,1,1,1,1,1,1,1},{3/2,-1/2,1/2,1/2,1/2,1/2,1/2,1/2},{1/2,1/2,3/
 desiredHB = matrix {{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3},{-1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,3,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3},{1,0,1,1,1,1,1,2,-1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,3,0,1,1,1,1,1,2,1,1,1,1,1,2,2,2,2,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,1,1,1,1,2,2,2,2},{1,1,0,1,1,1,2,1,1,0,1,1,1,2,-1,0,0,0,1,1,1,1,1,2,2,2,3,0,1,1,1,2,1,1,0,1,1,1,2,1,1,1,1,2,2,1,1,2,2,1,1,2,2,0,0,1,1,1,1,2,2,2,2,3,3,0,0,1,1,1,1,2,2,2,2,3,3,1,1,2,2,1,1,2,2,0,0,1,1,1,1,2,2,2,2,3,3,0,0,1,1,1,1,2,2,2,2,3,3,1,1,2,2,1,1,2,2,1,1,2,2},{1,1,1,0,1,2,1,1,1,1,0,1,2,1,1,0,1,2,-1,0,1,2,3,0,1,2,1,1,0,1,2,1,1,1,1,0,1,2,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,0,1,2,3,0,1,2,3,1,2,1,2,0,1,2,3,0,1,2,3,1,2,1,2,1,2,1,2,1,2,1,2,0,1,2,3,0,1,2,3,1,2,1,2,0,1,2,3,0,1,2,3,1,2,1,2,1,2,1,2,1,2,1,2,1,2}};
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test SCHLEGEL_VERTEX_COLORS/1.poly
@@ -27,7 +27,7 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test VISUAL_DUAL_FACE_LATTICE/1.poly
@@ -38,7 +38,7 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},{-1,
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test zonotope/6.poly
@@ -49,7 +49,7 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test zonotope/9.poly
@@ -60,7 +60,7 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test random_edge_epl/1.poly
@@ -70,7 +70,7 @@ raysC = matrix {{1,1,1,1,1,1,1,1},{1,0,0,1,0,1,0,1},{3/4,1,0,1/4,0,1/4,1,3/4},{3
 desiredHB = matrix {{1,1,2,2,2,2,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,11,11,12,12,12,12,13,13,14,14,15,15,16,16,16,16},{0,0,0,0,1,2,0,0,1,1,2,2,3,3,3,3,0,0,1,1,2,2,3,3,3,4,4,4,4,4,4,4,4,1,1,2,2,3,3,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,11,11,12,12,12,12,13,13,14,14,15,15,16,16,16,16},{0,0,1,2,1,1,3,3,2,2,2,2,1,1,2,2,4,4,3,3,3,3,3,3,3,1,1,1,2,2,3,3,3,4,4,4,4,4,4,4,4,4,4,2,2,3,3,4,4,2,2,3,3,4,4,2,2,3,3,4,4,2,2,3,3,4,4,3,3,4,4,3,3,4,4,3,3,4,4,8,8,3,3,4,4,4,4,4,4,4,4,4,4,12,12},{0,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,3,1,3,1,3,1,2,3,1,2,3,1,3,1,2,3,1,4,1,4,1,4,1,2,3,4,1,4,1,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,7,1,7,1,7,1,8,1,8,1,9,1,9,1,10,1,10,2,9,1,11,1,11,1,12,1,13,1,14,1,15,3,13}};
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
 -- Test schlegel_params/2.poly
@@ -81,6 +81,6 @@ desiredHB = matrix {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 desiredHB = sort desiredHB;
 C = posHull(raysC)
 computedHB = sort matrix {hilbertBasis C};
-assert(desiredHB == computedHB);
+assert(sort desiredHB == sort computedHB);
 ///
 
