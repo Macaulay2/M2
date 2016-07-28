@@ -10,7 +10,8 @@ addNode (HomotopyGraph, Point, PointArray) := (G, params, partialSols) -> (
         BasePoint => params,
         PartialSols => partialSols,
         Graph => G,
-        System => toSystem (G, params, G.Family.PolyMap)
+        System => toSystem (G, params, G.Family.PolyMap),
+	Edges => new MutableList from {}
     };
     G.Vertices = append(G.Vertices, N);
     N
@@ -27,6 +28,8 @@ addEdge (HomotopyGraph, HomotopyNode, HomotopyNode) := (G,a,b) -> (
             Correspondence12 => new MutableHashTable from {}, -- think: the map from labels of points of Node1 to those of Node2
             Correspondence21 => new MutableHashTable from {} -- ............................................2.................1
         };
+    a.Edges#(#a.Edges) = E;
+    b.Edges#(#b.Edges) = E;
     G.Edges = prepend(E, G.Edges);
     if G.Potential =!= null then (	
     	E.Potential12 = G.Potential (E, true);
@@ -72,7 +75,7 @@ toSystem (HomotopyGraph, Point, Matrix) := (G, p, M) -> (
     )
 
 potentialLowerBound = (e,from1to2) -> (
-        if from1to2 then (
+    if from1to2 then (
 	(head, tail) := (e.Node1, e.Node2);
 	correspondence := e.Correspondence12;
 	correspondence' := e.Correspondence21;
@@ -87,11 +90,40 @@ potentialLowerBound = (e,from1to2) -> (
     max(n1-n2, 0)
     ) 
 
+
+potentialAsymptotic = (e,from1to2) -> (
+    if from1to2 then (
+	(head, tail) := (e.Node1, e.Node2);
+	correspondence := e.Correspondence12;
+	correspondence' := e.Correspondence21;
+	)
+    else  (    
+	(head, tail) = (e.Node2, e.Node1);
+	correspondence = e.Correspondence21;
+	correspondence' = e.Correspondence12;
+	);
+    a := #(keys head.PartialSols - set keys correspondence);
+    b := #(keys tail.PartialSols - set keys correspondence');
+    d := (e.Graph).TargetSolutionCount;
+    c := length keys correspondence;
+    print(a,b,c,d);
+    a * (d-c-b) / (d-c)
+    ) 
+
+
 selectBestEdgeAndDirection = G -> (
-    m1 := maxPosition(apply(G.Edges, e -> e.Potential12));
-    m2 := maxPosition(apply(G.Edges, e -> e.Potential21));
-    if (G.Edges#m1).Potential12 < (G.Edges#m2).Potential21 then (G.Edges#m2, false)
-    else (G.Edges#m1, true)
+    p12 := apply(G.Edges, e -> e.Potential12);
+    p21 := apply(G.Edges, e -> e.Potential21);
+    m12 := max toList p12;
+    m21 := max toList p21;
+    if m12 > m21 then (
+	e := positions(p12, m -> m == m12);
+	(G.Edges#(e#(random length e)), true)
+	)
+    else (
+	e = positions(p21, m -> m == m21);
+	(G.Edges#(e#(random length e)), false)
+	)
     )
 
 -- prototype for edge tracking function
@@ -127,7 +159,10 @@ trackEdge (HomotopyEdge, Boolean) := (e, from1to2) -> (
 		);
 	    addCorrespondence(if from1to2 then (e,a,b) else (e,b,a))
 	    ));
-    e.Potential12 = G.Potential (e, true);
-    e.Potential21 = G.Potential (e, false);
+
+    for e in tail.Edges do (
+    	e.Potential12 = G.Potential (e, true);
+    	e.Potential21 = G.Potential (e, false);
+	);
     #untrackedInds
     )

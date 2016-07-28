@@ -99,9 +99,15 @@ flowerStrategy (Matrix, Point, List) := o -> (PF,point0,s0) -> (
 )    
 
 twoNodes = method(Options=>{RandomPointFunction=>null,StoppingCriterion=>((n,L)->n>3), 
-	SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0))})
+	SelectEdgeAndDirection => (G-> (G.Edges#(random (#G.Edges)),random 2 == 0)), 
+    TargetSolutionCount=>null, Potential=>potentialLowerBound})
 twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
-    HG := homotopyGraph(polySystem transpose PF, Potential=>potentialLowerBound);
+    HG := homotopyGraph(polySystem transpose PF, Potential=>o.Potential);
+    if o.TargetSolutionCount =!= null then (
+	HG.TargetSolutionCount = o.TargetSolutionCount;
+	stoppingCriterion := (n,L) -> #L >= o.TargetSolutionCount;
+	)
+    else stoppingCriterion = o.StoppingCriterion; 
     PA := pointArray s0;
     node1 := addNode(HG, point0, PA);
     	
@@ -117,7 +123,7 @@ twoNodes (Matrix, Point, List, ZZ) := o -> (PF,point0,s0,nedges) -> (
     --nsols0 := #node1.PartialSols;
     npaths := 0;
     E := apply(nedges, i -> addEdge(HG, node1, node2));
-    while not o.StoppingCriterion(same,null) do (
+    while not stoppingCriterion(same,node1.PartialSols) do (
 	(e, from1to2) := selectEdgeAndDirection(HG);
 	<< "Correspondences are " << (keys e.Correspondence12 , e.Potential12) << " and " << (keys e.Correspondence21, e.Potential21)  << endl;
 	<< "Direction is " << from1to2 << endl;
