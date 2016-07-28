@@ -54,20 +54,20 @@ load "./affineImages.m2"
 load "./legacy.m2"
 
 -- Tests
-load "./tests/core/cone_basics.m2"
-load "./tests/core/polyhedron_basics.m2"
-load "./tests/core/fan_basics.m2"
-load "./tests/core/tests_from_polymake/fvector.m2"
-load "./tests/core/tests_from_polymake/hilbert_basis.m2"
-load "./tests/core/tests_from_polymake/lattice_points.m2"
-load "./tests/core/tests_from_polymake/normal_fan.m2"
-
-load "./tests/extended/polyhedron.m2"
-load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
+-- load "./tests/core/cone_basics.m2"
+-- load "./tests/core/polyhedron_basics.m2"
+-- load "./tests/core/fan_basics.m2"
+-- load "./tests/core/tests_from_polymake/fvector.m2"
+-- load "./tests/core/tests_from_polymake/hilbert_basis.m2"
+-- load "./tests/core/tests_from_polymake/lattice_points.m2"
+-- load "./tests/core/tests_from_polymake/normal_fan.m2"
+-- 
+-- load "./tests/extended/polyhedron.m2"
+-- load "./tests/extended/tests_from_polymake/minkowskiSum.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
--- load "./tests/legacy_tests.m2"
+load "./tests/legacy_tests.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"

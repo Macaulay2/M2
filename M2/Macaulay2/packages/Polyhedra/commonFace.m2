@@ -5,10 +5,10 @@ commonFace = method(TypicalValue => Boolean)
 --   INPUT : '(P,Q)'  two Polyhedra
 --  OUTPUT : 'true' or 'false'
 commonFace(Polyhedron,Polyhedron) := (P,Q) -> (
-	if ambDim(P) == ambDim(Q) then (
-	     I := intersection(P,Q);
-	     isFace(I,P) and isFace(I,Q))
-	else false)
+   CP := getProperty(P, underlyingCone);
+   CQ := getProperty(Q, underlyingCone);
+   commonFace(CP, CQ)
+)
 
 --   INPUT : '(C1,C2)'  two Cones
 --  OUTPUT : 'true' or 'false'
@@ -22,7 +22,11 @@ commonFace(Cone,Cone) := (C1,C2) -> (
 --   INPUT : '(C,F)'  a Cone and a Fan
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if the cone has a common face with every generating cone of the fan
-commonFace(Cone,Fan) := (C,F) -> if ambDim(C) == ambDim(F) then all(maxCones F, C1 -> commonFace(C,C1)) else false
+commonFace(Cone,Fan) := (C,F) -> (
+   if ambDim(C) == ambDim(F) then 
+      all(getProperty(F, honestMaxObjects), C1 -> commonFace(C,C1)) 
+   else false
+)
 
 
 --   INPUT : '(F,C)'  a Fan and a Cone
@@ -34,7 +38,9 @@ commonFace(Fan,Cone) := (F,C) -> commonFace(C,F)
 --   INPUT : '(F1,F2)'  two Fans
 --  OUTPUT : 'true' or 'false'
 -- COMMENT : For this it checks if all generating cones of 'F1' have a common face with every generating cone of 'F2'
-commonFace(Fan,Fan) := (F1,F2) -> all(maxCones F1, C -> commonFace(C,F2))
+commonFace(Fan,Fan) := (F1,F2) -> all(getProperty(F1, honestMaxObjects), 
+   C -> commonFace(C,F2)
+)
 
 
 --   INPUT : 'L'  a List
