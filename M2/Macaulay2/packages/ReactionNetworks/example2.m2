@@ -21,10 +21,12 @@ K = apply(gens coefficientRing R, k -> k => random FF)
 T = transpose gens F
 rM = sub(random(FF^5, FF^7),R)
 
+-- is this the correct way to create a polynomial system?
 G = polySystem(rM * T)
 peek G
 
-x0 = apply(flatten entries vars R, i -> 1)
-
-
+-- Problems:
+-- conservationEquations and steadyStateEquations does not work for InexactFieldFamily
+-- does solveViaMonodromy work for QQ?
+-- 
 
