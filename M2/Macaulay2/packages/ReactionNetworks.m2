@@ -396,7 +396,7 @@ conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
     RING := N.ReactionRing;
     xx = gens RING;
     M := matrix{xx};
-    St := flatten entries (M*S);
+    St := flatten entries (M*sub(S, FF));
     St	  
     )
 conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
@@ -408,7 +408,7 @@ conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     RING := N.ReactionRing;
     xx = gens RING;
     M := matrix{xx};
-    St := flatten entries (M*S);
+    St := flatten entries (M*sub(S, FF));
     St	  
     )
 
