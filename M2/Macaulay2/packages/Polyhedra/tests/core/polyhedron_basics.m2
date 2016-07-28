@@ -45,7 +45,8 @@ TEST ///
 P = intersection (matrix{{1,0},{0,1},{-1,0},{0,-1}},matrix{{1},{2},{3},{4}});
 V1 = vertices P;
 V1 = set apply(numColumns V1, i -> V1_{i});
-V2 = set {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
+V2 = {matrix{{1},{2}},matrix{{1},{-4}},matrix{{-3},{2}},matrix{{-3},{-4}}};
+V2 = set apply(V2, v->promote(v, QQ))
 assert(isSubset(V1,V2) and isSubset(V2,V1))
 ///
 

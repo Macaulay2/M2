@@ -128,16 +128,34 @@ computeFacetsFromRayData(Matrix, Matrix) := (rayData, linealityData) -> (
 makeRaysUniqueAndPrimitive = method()
 makeRaysUniqueAndPrimitive(Matrix) := M -> (
    L := apply(numColumns M, i -> M_i);
+   L = select(L, l -> gcd entries l != 0);
+   matrix unique L
+)
+
+makeRaysPrimitive = method()
+makeRaysPrimitive Matrix := M -> (
+   if numColumns M == 0 then return lift(M,ZZ);
+   if ring M === QQ then (
+      factor := lcm apply(flatten entries M, e -> denominator e);
+      M = factor * M;
+      M = lift(M, ZZ);
+   ) else if ring M =!= ZZ then error("We only support polyhedral objects over QQ or ZZ");
+   L := apply(numColumns M, i -> M_i);
    newCols := {};
    L = scan(L,
       l -> (
          g := gcd entries l;
-         if g != 0 then (
-            newEntries := apply(entries l, e -> e/g);
-            newCols = append(newCols, vector newEntries)
-         ) 
+         if g == 0 then g = 1;
+         newEntries := apply(entries l, e -> e/g);
+         newCols = append(newCols, vector newEntries)
       )
    );
-   matrix unique newCols
+   lift(matrix newCols, ZZ)
+)
+
+makeFacetsPrimitive = method()
+makeFacetsPrimitive Matrix := M -> (
+   result := makeRaysPrimitive transpose M;
+   transpose result
 )
 

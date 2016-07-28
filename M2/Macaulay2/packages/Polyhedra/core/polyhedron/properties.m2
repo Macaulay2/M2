@@ -2,7 +2,7 @@ compute#Polyhedron#computedVertices = method()
 compute#Polyhedron#computedVertices Polyhedron := P -> (
    C := getProperty(P, underlyingCone);
    n := ambDim P;
-   homogVert := rays C;
+   homogVert := promote(rays C, QQ);
    r := ring homogVert;
    vList := {};
    rList := {};
@@ -10,10 +10,7 @@ compute#Polyhedron#computedVertices Polyhedron := P -> (
    for i from 0 to numColumns homogVert - 1 do (
       current := homogVert_i;
       if current_0 > 0 then (
-         if current_0 != 1 then (
-            latticeTest = false;
-            current = (1/(current_0)) * vectorToQQ(current);
-         );
+         current = (1/(current_0)) * vectorToQQ(current);
          vList = append(vList, slice(current, 1..n));
       ) else if current_0 == 0 then (
          rList = append(rList, slice(current, 1..n));

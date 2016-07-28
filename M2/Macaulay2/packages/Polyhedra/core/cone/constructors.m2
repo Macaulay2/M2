@@ -10,7 +10,31 @@ Cone == Cone := (C1,C2) -> (
 
 
 cone HashTable := inputProperties -> (
-   constructTypeFromHash(Cone, inputProperties)
+   resultHash := sanitizeConeInput inputProperties;
+   constructTypeFromHash(Cone, resultHash)
+)
+
+sanitizeConeInput = method()
+sanitizeConeInput HashTable := given -> (
+   rayProperties := {inputRays, inputLinealityGenerators, computedRays, computedLinealityBasis};
+   facetProperties := {inequalities, equations, computedFacets, computedHyperplanes};
+   remainingProperties := keys given;
+   remainingProperties = select(remainingProperties, p -> all(rayProperties, rp -> rp=!=p));
+   remainingProperties = select(remainingProperties, p -> all(facetProperties, rp -> rp=!=p));
+   result := apply(remainingProperties, rp -> rp=>given#rp);
+   for rp in rayProperties do (
+      if given#?rp then (
+         primitive := makeRaysPrimitive given#rp;
+         result = append(result, rp=>primitive)
+      )
+   );
+   for fp in facetProperties do (
+      if given#?fp then (
+         primitive := makeFacetsPrimitive given#fp;
+         result = append(result, fp=>primitive)
+      )
+   );
+   new HashTable from result
 )
 
 
