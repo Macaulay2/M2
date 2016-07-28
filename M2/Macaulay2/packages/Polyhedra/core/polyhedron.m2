@@ -312,28 +312,6 @@ affineHull Polyhedron := P -> (
      N := (M+M_{0}*(matrix {toList(numColumns M:-1)}))_{1..(numColumns M)-1};
      convexHull(M_{0},N | -N | R | -R));
  
- -- PURPOSE : Computing the smallest face of 'P' containing 'p'
---   INPUT : '(p,P)',  where 'p' is a point given as a matrix and
---     	    	       'P' is a polyhedron
---  OUTPUT : The smallest face containing 'p' as a polyhedron
-smallestFace = method()
-smallestFace(Matrix,Polyhedron) := (p,P) -> (
-     -- Checking for input errors
-     if numColumns p =!= 1 or numRows p =!= ambDim(P) then error("The point must lie in the same space");
-     p = chkZZQQ(p,"point");
-     -- Checking if 'P' contains 'p' at all
-     if contains(P,convexHull p) then (
-	  (M,v) := halfspaces P;
-     	  (N,w) := hyperplanes P;
-     	  -- Selecting the half-spaces that fullfil equality for p
-	  -- and adding them to the hyperplanes
-	  v = promote(v,QQ);
-	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
-	  N = N || M^pos;
-	  w = w || lift(v^pos,ZZ);
-	  intersection(M,v,N,w))
-     else emptyPolyhedron ambDim(P))
-
 
 -- PURPOSE : Computes the mixed volume of n polytopes in n-space
 --   INPUT : 'L'  a list of n polytopes in n-space

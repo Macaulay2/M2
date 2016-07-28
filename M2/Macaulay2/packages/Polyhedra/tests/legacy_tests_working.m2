@@ -58,6 +58,19 @@ C = posHull matrix{{1,1,-3},{1,-3,1},{-3,1,1}};
 assert(tailCone P == C)
 ///
 
+
+-- Test 22
+-- Checking smallestFace for polyhedra
+TEST ///
+P = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+F1 = convexHull matrix {{1,1,-1,-1},{1,-1,1,-1},{1,1,1,1}};
+F2 = convexHull matrix {{1,1},{1,1},{-1,1}};
+assert(smallestFace(matrix{{0},{0},{0}},P) == P)
+assert(smallestFace(matrix{{1/2},{1/3},{1}},P) == F1)
+assert(smallestFace(matrix{{1},{1},{3/4}},P) == F2)
+///
+
+
 -- Test 23
 -- Checking smallestFace for cones
 TEST ///

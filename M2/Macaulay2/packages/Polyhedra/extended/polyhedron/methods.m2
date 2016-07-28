@@ -1,3 +1,27 @@
+ -- PURPOSE : Computing the smallest face of 'P' containing 'p'
+--   INPUT : '(p,P)',  where 'p' is a point given as a matrix and
+--     	    	       'P' is a polyhedron
+--  OUTPUT : The smallest face containing 'p' as a polyhedron
+smallestFace = method()
+smallestFace(Matrix,Polyhedron) := (p,P) -> (
+     -- Checking for input errors
+     if numColumns p =!= 1 or numRows p =!= ambDim(P) then error("The point must lie in the same space");
+     -- p = chkZZQQ(p,"point");
+     -- Checking if 'P' contains 'p' at all
+     if contains(P,convexHull p) then (
+	      (M,v) := halfspaces P;
+     	   (N,w) := hyperplanes P;
+     	  -- Selecting the half-spaces that fullfil equality for p
+	  -- and adding them to the hyperplanes
+	  v = promote(v,QQ);
+	  pos := select(toList(0..(numRows M)-1), i -> (M^{i})*p == v^{i});
+	  N = N || M^pos;
+	  w = w || lift(v^pos,ZZ);
+	  intersection(M,lift(v,ZZ),N,w))
+     else emptyPolyhedron ambDim(P))
+
+
+
 -- PURPOSE : Checks if the polytope is normal
 --   INPUT : 'P'  a Polyhedron, which must be compact
 --  OUTPUT : 'true' or 'false'
