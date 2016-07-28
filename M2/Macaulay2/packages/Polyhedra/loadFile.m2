@@ -67,7 +67,7 @@ load "./legacy.m2"
 
 -- Failing tests
 -- load "./tests/failing.m2"
-load "./tests/legacy_tests.m2"
+load "./tests/legacy_tests_failing.m2"
 
 -- Documentation
 -- load "./legacy_doc.m2"
@@ -78,6 +78,12 @@ end
 restart
 loadPackage "Polyhedra"
 check "Polyhedra"
+
+loadPackage "PolyhedraOld"
+P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
+P2 = intersection(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
+assert isFace(P2,P1)
+
 
 restart
 loadPackage "Polyhedra"

@@ -20,18 +20,6 @@ assert(set values L === set L1)
 
 
 
--- Test 19
--- Checking isFace
-TEST ///
-P1 = convexHull matrix {{1,1,1,1,-1,-1,-1,-1},{1,1,-1,-1,1,1,-1,-1},{1,-1,1,-1,1,-1,1,-1}};
-P2 = intersection(matrix {{1,0,0},{-1,0,0}},matrix {{-1},{-1}});
-assert isFace(P2,P1)
-P2 = convexHull matrix {{1,1,1},{1,1,-1},{1,-1,1}};
-assert not isFace(P2,P1)
-P2 = intersection {P2,{matrix{{0,1,0}},matrix{{1}}}};
-assert isFace(P2,P1)
-///
-
 -- Test 22
 -- Checking smallestFace for polyhedra
 TEST ///

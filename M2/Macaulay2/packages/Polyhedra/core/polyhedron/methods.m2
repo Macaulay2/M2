@@ -15,9 +15,11 @@ vertices Polyhedron := P -> (
 --  OUTPUT : 'true' or 'false'
 isFace(Polyhedron,Polyhedron) := (P,Q) -> (
    -- Checking if the two polyhedra lie in the same space and computing the dimension difference
-   CP := getProperty(P, underlyingCone);
-   CQ := getProperty(Q, underlyingCone);
-   isFace(CP, CQ)
+   if not isEmpty P then (
+      CP := getProperty(P, underlyingCone);
+      CQ := getProperty(Q, underlyingCone);
+      isFace(CP, CQ)
+   ) else return ambDim P == ambDim Q
 )
 
 
