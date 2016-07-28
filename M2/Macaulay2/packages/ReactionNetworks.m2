@@ -338,6 +338,37 @@ steadyStateEquations (ReactionNetwork,Ring) := (N,FF) -> (
 		))  
 	)
     )
+steadyStateEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    kk := gens coefficientRing N.ReactionRing;
+    -- C is a list of pairs (species, input_rate)
+    C := apply(N.Species,a->(a,0));
+    -- R is a list of reaction equations, formatted ({(specie, coefficient), ... } => {(specie, coefficient), ...}, fwdrate, bckwd rate)
+    R := apply(edges N.ReactionGraph, e->(
+	    (i,j) := toSequence e;
+	    (
+		apply(N.Species, flatten entries N.Complexes#i, (s,c)->(s,c)) =>
+	    	apply(N.Species, flatten entries N.Complexes#j, (s,c)->(s,c))
+		,
+		kk#(position(edges N.ReactionGraph,e'->e'==e))
+		,
+		0
+		)  
+	    ));
+    xx := symbol xx;
+    RING := N.ReactionRing;
+    xx = gens N.ReactionRing;
+    F := for i in C list (
+	(a,af) := i;
+	sum(R,reaction->(
+		(inp'out,k1,k2) := reaction;
+		r1 := first inp'out;
+		r2 := last inp'out;
+		k1 * (termInp(a,r1,r2,N,RING) + termOut(a,r1,r2,N,RING)) +
+		k2 * (termInp(a,r2,r1,N,RING) + termOut(a,r2,r1,N,RING))
+		))  
+	)
+    )
 
 TEST ///
 restart
@@ -357,6 +388,18 @@ netList F
 conservationEquations = method()
 conservationEquations ReactionNetwork := N -> conservationEquations(N,QQ)
 conservationEquations (ReactionNetwork,Ring) := (N,FF) -> (
+    if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
+    S := stoichSubspaceKer N;
+    -- C is a list of pairs (species, input_rate)
+    C := apply(N.Species,a->(a,0));
+    xx := symbol xx;
+    RING := N.ReactionRing;
+    xx = gens RING;
+    M := matrix{xx};
+    St := flatten entries (M*S);
+    St	  
+    )
+conservationEquations (ReactionNetwork,InexactFieldFamily) := (N,FF) -> (
     if N.ReactionRing === null then error("You need to invoke createRing(CRN, FF) first!");
     S := stoichSubspaceKer N;
     -- C is a list of pairs (species, input_rate)
